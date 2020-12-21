@@ -12,4 +12,4 @@ variables.json
 99-Vagrant/
 **/openshift.local.clusterup/
 base-vm/**/config.yaml
-
+.idea

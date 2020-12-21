@@ -74,10 +74,10 @@ git clone ${githubCloneUrl}/Accenture/kx.as.code-techradar.git /home/$VM_USER/Do
 ln -s /home/$VM_USER/Documents/kx.as.code_source /home/$VM_USER/Desktop/\"KX.AS.CODE Source\"; \
 cd /home/$VM_USER/Documents/kx.as.code_source; \
 git config credential.helper 'cache --timeout=3600'; \
-if [[ ! -z $GITHUB_TOKEN_ENCODED ]]; then
+if [[ ! -z $GITHUB_TOKEN_ENCODED ]]; then \
   sed -i 's/'$GITHUB_USER':'$GITHUB_TOKEN_ENCODED'@//g' /home/$VM_USER/Documents/kx.as.code_source/.git/config; \
   sed -i 's/'$GITHUB_USER':'$GITHUB_TOKEN_ENCODED'@//g' /home/$VM_USER/Documents/kx.as.code_docs/.git/config; \
-  sed -i 's/'$GITHUB_USER':'$GITHUB_TOKEN_ENCODED'@//g' /home/$VM_USER/Documents/kx.as.code_techradar/.git/config
+  sed -i 's/'$GITHUB_USER':'$GITHUB_TOKEN_ENCODED'@//g' /home/$VM_USER/Documents/kx.as.code_techradar/.git/config; \
 fi
 "
 
