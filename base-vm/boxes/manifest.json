@@ -1,0 +1,21 @@
+{
+  "builds": [
+    {
+      "name": "kx.as.code-worker-virtualbox",
+      "builder_type": "virtualbox-iso",
+      "build_time": 1608582375,
+      "files": [
+        {
+          "name": "kx.as.code-worker-demo-0.6.3.ova",
+          "size": 1641400832
+        }
+      ],
+      "artifact_id": "VM",
+      "packer_run_uuid": "1c8e82f0-9600-ddac-0692-ab876251bce4",
+      "custom_data": {
+        "version": "0.6.3"
+      }
+    }
+  ],
+  "last_run_uuid": "1c8e82f0-9600-ddac-0692-ab876251bce4"
+}
