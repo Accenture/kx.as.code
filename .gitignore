@@ -13,3 +13,4 @@ variables.json
 **/openshift.local.clusterup/
 base-vm/**/config.yaml
 .idea
+*.lock
