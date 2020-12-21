@@ -1,0 +1,39 @@
+---
+
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: "netdata-db-pv"
+spec:
+  storageClassName: manual
+  capacity:
+    storage: "2Gi"
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  claimRef:
+    namespace: netdata
+    name: database-netdata-master-0
+  hostPath:
+    path: "/home/kx.hero/KX_Data/netdata/db"
+
+---
+
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: "netdata-alarms-pv"
+spec:
+  storageClassName: manual
+  capacity:
+    storage: "100Mi"
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  claimRef:
+    namespace: netdata
+    name: alarms-netdata-master-0
+  hostPath:
+    path: "/home/kx.hero/KX_Data/netdata/alarms"
+
+---

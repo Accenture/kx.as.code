@@ -1,0 +1,34 @@
+#new-prof-gen-form {
+  width: 100%;
+  padding: 60px;
+  background-color: #263041;
+}
+
+#new-prof-gen-form > div {
+  width: 525px;
+}
+
+#new-prof-gen-form > div > div,
+#new-prof-gen-form > div > div > div > input {
+  width: 460px;
+}
+
+#root #new-prof-gen-form > div > div > div > input {
+  margin-top: 20px;
+}
+
+#root #new-prof-gen-form > div > div > div {
+  margin-bottom: 30px;
+}
+
+
+#new-prof-gen-form > div > div > ul>li {
+  font-size: 14px;
+  line-height: 17px;
+}
+
+#new-prof-gen-form > div > div > ul {
+  margin:0;
+  padding:0;
+  list-style-type: none;
+}

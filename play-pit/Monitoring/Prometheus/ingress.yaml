@@ -1,0 +1,45 @@
+---
+
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: prometheus-ingress
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/proxy-body-size: "0"
+spec:
+  tls:
+  - hosts:
+    - prometheus.kx-as-code.local
+  rules:
+  - host: prometheus.kx-as-code.local
+    http:
+      paths:
+       - path: /
+         backend:
+           serviceName: prometheus-server
+           servicePort: 80
+
+---
+
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: alertmanager-ingress
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/proxy-body-size: "0"
+spec:
+  tls:
+  - hosts:
+    - alertmanager.kx-as-code.local
+  rules:
+  - host: alertmanager.kx-as-code.local
+    http:
+      paths:
+       - path: /
+         backend:
+           serviceName: prometheus-alertmanager
+           servicePort: 80
+
+---

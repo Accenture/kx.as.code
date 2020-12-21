@@ -1,0 +1,61 @@
+{
+    "name": "nexus3",
+    "namespace": "nexus3",
+    "installation_type": "argocd",
+    "installation_group_folder": "cicd",
+    "argocd_params": {
+        "repository": "{{gitUrl}}/devops/nexus3.git",
+        "path": ".",
+        "dest_server": "https://kubernetes.default.svc",
+        "dest_namespace": "{{namespace}}",
+        "sync_policy": "automated",
+        "auto_prune": true,
+        "self_heal": true
+    },
+    "categories": [
+        "artifact-repository",
+        "docker-registry"
+    ],
+    "urls": [
+        {
+            "url": "https://{{componentName}}.{{baseDomain}}",
+            "healthchecks": {
+                "liveliness": {
+                    "http_path": "/service/metrics/ping",
+                    "http_auth_required": false,
+                    "expected_http_response_code": "200",
+                    "expected_http_response_string": "",
+                    "expected_json_response": {
+                        "json_path": "",
+                        "json_value": ""
+                    },
+                    "health_shell_check_command": "",
+                    "expected_shell_check_command_response": ""
+                },
+                "readiness": {
+                    "http_path": "/service/metrics/ping",
+                    "http_auth_required": false,
+                    "expected_http_response_code": "200",
+                    "expected_http_response_string": "",
+                    "expected_json_response": {
+                        "json_path": "",
+                        "json_value": ""
+                    },
+                    "health_shell_check_command": "",
+                    "expected_shell_check_command_response": ""
+                }
+            }
+        }
+    ],
+    "Description": "Nexus3 Description",
+    "shortcut_text": "Nexus3 OSS",
+    "shortcut_icon": "nexus.png",
+    "swagger_docs_url": "https://{{componentName}}.{{baseDomain}}/#admin/system/api",
+    "api_docs_url": "https://help.sonatype.com/repomanager3/rest-and-integration-api",
+    "vendor_docs_url": "https://help.sonatype.com/repomanager3",
+    "pre_install_scripts": [
+        "createGitProject.sh",
+        "populateGitProject.sh"
+    ],
+    "post_install_scripts": []
+}

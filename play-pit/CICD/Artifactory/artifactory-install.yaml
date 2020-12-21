@@ -1,0 +1,122 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: artifactory
+  labels:
+    name: artifactory
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: artifactory-pv
+  namespace: artifactory
+  labels:
+    app: artifactory
+    type: local
+    purpose: artifactory-deployment
+spec:
+  storageClassName: manual
+  capacity:
+    storage: 5Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: /home/kx.hero/KX_Data/Artifactory
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: artifactory-pvclaim
+  namespace: artifactory
+spec:
+  storageClassName: manual
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 3Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "artifactory-deployment"
+  namespace: artifactory
+  labels:
+    app: artifactory
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: artifactory
+  template:
+    metadata:
+      labels:
+        app: artifactory
+    spec:
+      securityContext:
+        fsGroup: 1000
+      initContainers:
+       - name: artifactory-volume
+         image: alpine:3.6
+         command:
+          - chown
+          - -R
+          - 1030:1030
+          - /var/opt/jfrog/artifactory
+         volumeMounts:
+          - name: artifactory-home
+            mountPath: /var/opt/jfrog/artifactory
+      containers:
+       - name: artifactory
+         image: docker.bintray.io/jfrog/artifactory-oss:6.19.1
+         imagePullPolicy: "IfNotPresent"
+         env:
+          - name: JAVA_OPTS
+            value: -Xms512m -Xmx4g
+         ports:
+          - name: http-port
+            containerPort: 8081
+         volumeMounts:
+          - name: artifactory-home
+            mountPath: /var/opt/jfrog/artifactory
+      volumes:
+       - name: artifactory-home
+         persistentVolumeClaim:
+           claimName: artifactory-pvclaim
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: artifactory-service
+  namespace: artifactory
+  labels:
+    app: artifactory
+spec:
+  type: ClusterIP
+  ports:
+   - port: 8081
+     targetPort: 8081
+     protocol: TCP
+  selector:
+    app: artifactory
+---
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: artifactory-ingress
+  namespace: artifactory
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+spec:
+  tls:
+    - hosts:
+        - artifactory.kx-as-code.local
+  rules:
+  - host: artifactory.kx-as-code.local
+    http:
+      paths:
+       - path: /
+         backend:
+           serviceName: artifactory-service
+           servicePort: 8081

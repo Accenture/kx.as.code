@@ -1,0 +1,4 @@
+[submodule "boxes"]
+	path = boxes
+	url = https://innersource.accenture.com/scm/kxas/z2h_vagrant_boxes.git
+	branch = master

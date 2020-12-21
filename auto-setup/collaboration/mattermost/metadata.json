@@ -1,0 +1,72 @@
+{
+    "name": "mattermost",
+    "namespace": "gitlab-ce",
+    "installation_type": "helm",
+    "installation_group_folder": "collaboration",
+    "minimum_resources": {
+        "cpu": "250",
+        "memory": "256"
+    },
+    "helm_params": {
+        "repository_url": "https://helm.mattermost.com",
+        "repository_name": "mattermost/mattermost-team-edition",
+        "helm_version": "",
+        "set_key_values": []
+    },
+    "categories": [
+        "chatops",
+        "collaboration"
+    ],
+    "urls": [
+        {
+            "url": "https://{{componentName}}.{{baseDomain}}",
+            "healthchecks": {
+                "liveliness": {
+                    "http_path": "/api/v4/system/ping",
+                    "http_auth_required": false,
+                    "expected_http_response_code": "200",
+                    "expected_http_response_string": "",
+                    "expected_json_response": {
+                        "json_path": "",
+                        "json_value": ""
+                    },
+                    "health_shell_check_command": "",
+                    "expected_shell_check_command_response": ""
+                },
+                "readiness": {
+                    "http_path": "/api/v4/system/ping",
+                    "http_auth_required": false,
+                    "expected_http_response_code": "200",
+                    "expected_http_response_string": "",
+                    "expected_json_response": {
+                        "json_path": ".status",
+                        "json_value": "OK"
+                    },
+                    "health_shell_check_command": "",
+                    "expected_shell_check_command_response": ""
+                }
+            }
+        }
+    ],
+    "Description": "Mattermost ChatOps Collaboration",
+    "shortcut_text": "Mattermost",
+    "shortcut_icon": "mattermost.png",
+    "postman_docs_url": "https://documenter.getpostman.com/view/4508214/RW8FERUn",
+    "api_docs_url": "https://api.mattermost.com/",
+    "vendor_docs_url": "https://docs.mattermost.com/",
+    "health_check_command": "",
+    "expected_check_command_response": "",
+    "pre_install_scripts": [
+        "createOauthIntegration.sh",
+        "createSecret.sh",
+        "createS3Bucket.sh"
+    ],
+    "post_install_scripts": [
+        "createInitialAdminUser.sh",
+        "createNotificationUsers.sh",
+        "createTeams.sh",
+        "mapUsersToTeams.sh",
+        "createChannels.sh",
+        "createWebhooks.sh"
+    ]
+}

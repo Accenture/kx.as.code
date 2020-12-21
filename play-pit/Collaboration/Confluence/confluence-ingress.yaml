@@ -1,0 +1,21 @@
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: confluence-ingress
+  namespace: confluence
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/proxy-body-size: "0"
+spec:
+  tls:
+  - hosts:
+    - confluence.kx-as-code.local
+  rules:
+  - host: confluence.kx-as-code.local
+    http:
+      paths:
+       - path: /
+         backend:
+           serviceName: confluence-server-service
+           servicePort: 8090
+

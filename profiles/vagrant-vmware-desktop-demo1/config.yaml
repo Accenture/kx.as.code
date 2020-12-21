@@ -1,0 +1,7 @@
+configs:
+  box_version: "0.6.2"
+  worker_node_count: 4
+  environment_prefix: "demo1"
+  dockerhub_username: ""
+  dockerhub_email: ""
+  dockerhub_password: ""

@@ -1,0 +1,63 @@
+---
+
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: influxdb-ingress
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/proxy-body-size: "0"
+spec:
+  rules:
+  - host: influxdb.kx-as-code.local
+    http:
+      paths:
+       - path: /
+         backend:
+           serviceName: influxdb
+           servicePort: 8086
+
+---
+
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: chronograf-ingress
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/proxy-body-size: "0"
+spec:
+  tls:
+  - hosts:
+    - chronograf.kx-as-code.local
+  rules:
+  - host: chronograf.kx-as-code.local
+    http:
+      paths:
+       - path: /
+         backend:
+           serviceName: chronograf-chronograf
+           servicePort: 8888
+
+---
+
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: kapacitor-ingress
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/proxy-body-size: "0"
+spec:
+  rules:
+  - host: kapacitor.kx-as-code.local
+    http:
+      paths:
+       - path: /
+         backend:
+           serviceName: kapacitor-kapacitor
+           servicePort: 9092
+
+---

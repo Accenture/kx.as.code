@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+ name: {{componentName}}
+ namespace: {{namespace}}
+ labels:
+  app: {{componentName}}
+spec:
+ replicas: 1
+ selector:
+  matchLabels:
+   app: {{componentName}}
+ template:
+  metadata:
+   labels:
+    app: {{componentName}}
+  spec:
+   containers:
+   - name: {{componentName}}
+     image: {{dockerRegistryDomain}}/devops/teamcity-server:{{teamcityVersion}}
+     imagePullPolicy: "Always"
+     ports:
+     - containerPort: 8111
+     volumeMounts:
+     - mountPath: "/data/teamcity_server/datadir"
+       name: teamcitydata
+   volumes:
+     - name: teamcitydata
+       persistentVolumeClaim:
+         claimName: teamcitydata

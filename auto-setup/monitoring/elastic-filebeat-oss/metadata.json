@@ -1,0 +1,55 @@
+{
+    "name": "elastic-filebeat-oss",
+    "namespace": "elastic-stack",
+    "installation_type": "helm",
+    "installation_group_folder": "monitoring",
+    "environment_variables": {
+        "elasticVersion": "7.10.0"
+    },
+    "helm_params": {
+        "repository_url": "https://helm.elastic.co",
+        "repository_name": "elastic/filebeat",
+        "helm_version": "",
+        "set_key_values": []
+    },
+    "categories": [
+        "monitoring",
+        "log-harvester"
+    ],
+    "urls": [
+        {
+            "url": "",
+            "healthchecks": {
+                "liveliness": {
+                    "http_path": "/",
+                    "http_auth_required": false,
+                    "expected_http_response_code": "",
+                    "expected_http_response_string": "",
+                    "expected_json_response": {
+                        "json_path": "",
+                        "json_value": ""
+                    },
+                    "health_shell_check_command": "",
+                    "expected_shell_check_command_response": ""
+                },
+                "readiness": {
+                    "http_path": "/",
+                    "http_auth_required": false,
+                    "expected_http_response_code": "",
+                    "expected_http_response_string": "",
+                    "expected_json_response": {
+                        "json_path": "",
+                        "json_value": ""
+                    },
+                    "health_shell_check_command": "",
+                    "expected_shell_check_command_response": ""
+                }
+            }
+        }
+    ],
+    "Description": "Filebeat Description",
+    "shortcut_text": "",
+    "shortcut_icon": "",
+    "pre_install_scripts": [],
+    "post_install_scripts": []
+}

@@ -1,0 +1,18 @@
+{
+  "name": "kx.as.code-vmware",
+  "description": "This is a description",
+  "provider": "vmware",
+  "versions": [
+    {
+      "version": "2.3.1",
+      "providers": [
+        {
+          "name": "vmware",
+          "url": "boxes/vmware/kx.as.code-vmware.box",
+          "checksum_type": "sha512",
+          "checksum": "b2904404b03213a5a51caca177734a035b7172deb27bfd3e6ed45403ad958b9e954d16d128eeef2688d2435a76bd11b9e5937015ad325bef0ac6f73024eba113"
+        }
+      ]
+    }
+  ]
+}

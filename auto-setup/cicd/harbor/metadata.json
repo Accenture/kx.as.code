@@ -1,0 +1,85 @@
+{
+    "name": "harbor",
+    "namespace": "harbor",
+    "installation_type": "helm",
+    "installation_group_folder": "cicd",
+    "helm_params": {
+        "repository_url": "https://helm.goharbor.io",
+        "repository_name": "harbor/harbor",
+        "set_key_values": [
+            "persistence.enabled=true",
+            "persistence.persistentVolumeClaim.registry.storageClass=local-storage",
+            "persistence.persistentVolumeClaim.registry.size=9Gi",
+            "persistence.persistentVolumeClaim.chartmuseum.size=5Gi",
+            "persistence.persistentVolumeClaim.chartmuseum.storageClass=gluster-heketi",
+            "persistence.persistentVolumeClaim.database.size=5Gi",
+            "persistence.persistentVolumeClaim.database.storageClass=local-storage",
+            "persistence.persistentVolumeClaim.redis.storageClass=local-storage",
+            "persistence.persistentVolumeClaim.jobservice.storageClass=gluster-heketi",
+            "persistence.persistentVolumeClaim.trivy.storageClass=gluster-heketi",
+            "expose.type=ingress",
+            "externalURL=https://{{componentName}}.{{baseDomain}}",
+            "expose.ingress.hosts.core={{componentName}}.{{baseDomain}}",
+            "expose.ingress.hosts.notary=notary.{{baseDomain}}",
+            "expose.tls.enabled=true",
+            "expose.tls.caBundleSecretName=kx.as.code-wildcard-cert",
+            "expose.tls.caSecretName=kx.as.code-wildcard-cert",
+            "expose.tls.secretName=kx.as.code-wildcard-cert",
+            "expose.tls.notarySecretName=kx.as.code-wildcard-cert",
+            "harborAdminPassword=\"{{vmPassword}}\"",
+            "expose.ingress.annotations.\"nginx\\.ingress\\.kubernetes\\.io/proxy-body-size\"=\"10000m\"",
+            "imagePullSecrets[0].name={{defaultDockerHubSecret}}",
+            "logLevel=debug"
+        ]
+    },
+    "categories": [
+        "docker-registry",
+        "helm-repository"
+    ],
+    "urls": [
+        {
+            "url": "https://{{componentName}}.{{baseDomain}}",
+            "healthchecks": {
+                "liveliness": {
+                    "http_path": "/",
+                    "http_auth_required": false,
+                    "expected_http_response_code": "200",
+                    "expected_http_response_string": "",
+                    "expected_json_response": {
+                        "json_path": "",
+                        "json_value": ""
+                    },
+                    "health_shell_check_command": "",
+                    "expected_shell_check_command_response": ""
+                },
+                "readiness": {
+                    "http_path": "/",
+                    "http_auth_required": false,
+                    "expected_http_response_code": "200",
+                    "expected_http_response_string": "",
+                    "expected_json_response": {
+                        "json_path": "",
+                        "json_value": ""
+                    },
+                    "health_shell_check_command": "",
+                    "expected_shell_check_command_response": ""
+                }
+            }
+        }
+    ],
+    "Description": "Harbor Description",
+    "shortcut_text": "Harbor",
+    "shortcut_icon": "harbor.png",
+    "swagger_docs_url": "https://{{componentName}}.{{baseDomain}}/devcenter-api-2.0",
+    "api_docs_url": "https://goharbor.io/docs/2.1.0/build-customize-contribute/configure-swagger/",
+    "vendor_docs_url": "https://goharbor.io/docs",
+    "pre_install_scripts": [
+        "createSecret.sh"
+    ],
+    "post_install_scripts": [
+        "createIngress.sh",
+        "createProjects.sh",
+        "createRobotAccounts.sh",
+        "createGitlabGroupVariables.sh"
+    ]
+}

@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+ name: confluence-server
+ namespace: confluence
+ labels:
+  app: confluence-server
+spec:
+ replicas: 1
+ selector:
+  matchLabels:
+   app: confluence-server
+ template:
+  metadata:
+   labels:
+    app: confluence-server
+  spec:
+   securityContext:
+    fsGroup: 1000
+   initContainers:
+   - name: confluence-volume
+     image: alpine:3.6
+     command:
+     - chown
+     - -R
+     - 1000:1000
+     - /var/atlassian/application-data/confluence
+     volumeMounts:
+     - name: confluence-home
+       mountPath: /var/atlassian/application-data/confluence
+   containers:
+     - name: confluence-server
+       image: atlassian/confluence-server
+       imagePullPolicy: "IfNotPresent"
+       env:
+         - name: JAVA_OPTS
+           value: -Xms384m -Xmx786m
+         - name: CATALINA_OPTS
+           value: -Datlassian.plugins.enable.wait=1200 -Duser.language=en -Duser.country=DE -Duser.timezone=UTC 
+       ports:
+        - name: http-port
+          containerPort: 8080
+       volumeMounts:
+         - name: confluence-home
+           mountPath: /var/atlassian/application-data/confluence
+         - name: server-xml-volume
+           mountPath: /opt/atlassian/confluence/conf/server.xml
+           subPath: server.xml
+   volumes:
+     - name: confluence-home
+       persistentVolumeClaim:
+         claimName: confluence-server-pvclaim
+     - name: server-xml-volume
+       configMap:
+         name: server-xml

@@ -1,0 +1,12 @@
+@import "../../variables.scss";
+
+
+#LeftPanel-wrapper, #LeftPanel {
+  width: 81px;
+  background-color: $navbg;
+  height: 100%
+}
+
+.left-nav {
+  margin-bottom: 20px;
+}

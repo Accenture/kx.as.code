@@ -1,0 +1,15 @@
+packer_cache/
+packerlog.txt
+iso/*.iso
+*.box
+base-vm/*output*/**
+*~
+variables.json
+*.log
+.DS_Store
+**/.vagrant/*
+*.previous
+99-Vagrant/
+**/openshift.local.clusterup/
+base-vm/**/config.yaml
+

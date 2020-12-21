@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+ name: {{ componentName }}
+ namespace: {{ namespace }}
+ labels:
+  app: {{ componentName }}
+spec:
+ replicas: 1
+ selector:
+  matchLabels:
+   app: {{ componentName }}
+ template:
+  metadata:
+   labels:
+    app: {{ componentName }}
+  spec:
+   securityContext:
+    fsGroup: 200
+   containers:
+     - image: sonatype/nexus3
+       imagePullPolicy: Always
+       name: {{ componentName }}
+       ports:
+       - containerPort: 8081
+       - containerPort: 5000
+       volumeMounts:
+         - mountPath: /nexus-data
+           name: nexus-data-volume
+   volumes:
+     - name: nexus-data-volume
+       persistentVolumeClaim:
+         claimName: nexus-pvc

@@ -1,0 +1,21 @@
+#################################################################################################################
+#                                                                                                               #
+#  Use this file for creating the vagrantfile after a packer build.                                             #
+#                                                                                                               #
+#  Command Example:                                                                                             #
+#  $ vagrant init z2h-kx-as-code-1.1.4 z2h-kx-as-code-1.1.4.box --template ../../z2h_kx.as.code.erb             #
+#                                                                                                               #
+#################################################################################################################
+
+Vagrant.configure("2") do |config|
+  config.vm.box = "z2h_kx.as.code-parallels"
+  config.vm.box_version = "1.2.0"
+  config.vm.box_url = "parallels/z2h_kx.as.code-parallels.box"
+  config.vm.provider "parallels" do |v|
+    v.name = "z2h_kx.as.code"
+    v.memory = 16384
+    v.cpus = 2
+    v.customize ["set", :id, "--3d-accelerate", "highest"]
+    v.customize ["set", :id, "--high-resolution", "on"]
+  end
+end

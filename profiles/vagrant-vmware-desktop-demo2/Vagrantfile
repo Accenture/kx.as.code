@@ -1,0 +1,65 @@
+# The number of worker nodes you want to provision alongside the main node
+
+require 'yaml'
+
+current_dir    = File.dirname(File.expand_path(__FILE__))
+configs        = YAML.load_file("#{current_dir}/config.yaml")
+vagrant_config = configs['configs']
+
+ENVIRONMENT_PREFIX = vagrant_config['environment_prefix']
+WORKER_NODE_COUNT = vagrant_config['worker_node_count']
+DOCKERHUB_USER = vagrant_config['dockerhub_username']
+DOCKERHUB_EMAIL = vagrant_config['dockerhub_email']
+DOCKERHUB_PASSWORD = vagrant_config['dockerhub_password']
+BOX_VERSION = "0.5.2"
+
+Vagrant.configure("2") do |config|
+    config.vm.define "kx.as.code-main" do |subconfig|
+        subconfig.vm.box = "kx.as.code-main-vmware-#{BOX_VERSION}"
+        subconfig.vm.box_url = "../boxes/vmware/kx.as.code-main-vmware-#{BOX_VERSION}.box"
+        subconfig.vm.synced_folder "c:/Users/Patrick/KX_Share", "/home/kx.hero/KX_Share",
+            owner: "kx.hero", group: "kx.hero"
+            subconfig.vm.provision "file", source: "./autoSetup.json", destination: "/var/tmp/autoSetup.json"
+            subconfig.vm.provision "shell", inline: 'sudo mv /var/tmp/autoSetup.json /home/kx.hero/Kubernetes/autoSetup.json'           
+            subconfig.vm.provision "shell", inline: 'echo -e "$(date "+%Y-%m-%d_%H%M%S") | KX-Worker VM created by Vagrant" | sudo tee /home/kx.hero/Kubernetes/vagrant'
+            subconfig.vm.provision :shell do |s|
+              s.inline = "echo -e \"DOCKERHUB_USER=#{DOCKERHUB_USER}\nDOCKERHUB_EMAIL=#{DOCKERHUB_EMAIL}\nDOCKERHUB_PASSWORD=#{DOCKERHUB_PASSWORD}\" | sudo tee /var/tmp/.textfile"
+            end
+            subconfig.vm.provider "vmware_desktop" do |v|
+            v.gui = true
+            v.whitelist_verified = true
+            v.vmx['displayname'] = "kx.as.code-#{ENVIRONMENT_PREFIX}-main-#{BOX_VERSION}"
+            v.vmx["memsize"] = "24576"
+            v.vmx["numvcpus"] = "3"
+            v.vmx["mks.enable3d"] = "FALSE"
+            v.vmx["ethernet0.pcislotnumber"] = "33"
+            v.vmx["sound.startconnected"] = "FALSE"
+            v.vmx["sound.present"] = "FALSE"
+        end
+    end
+
+    (1..WORKER_NODE_COUNT).each do |i|
+        config.vm.define "kx.as.code-worker#{i}" do |subconfig|
+          subconfig.vm.box = "kx.as.code-worker-vmware-#{BOX_VERSION}"
+          subconfig.vm.box_url = "../boxes/vmware/kx.as.code-worker-vmware-#{BOX_VERSION}.box"
+          subconfig.vm.hostname = "kx-worker#{i}"
+          subconfig.vm.provision "file", source: "./autoSetup.json", destination: "/tmp/autoSetup.json"
+          subconfig.vm.provision "shell", inline: 'sudo mv /tmp/autoSetup.json /home/kx.hero/Kubernetes/autoSetup.json'
+          subconfig.vm.provision "shell", inline: 'echo -e "$(date "+%Y-%m-%d_%H%M%S") | KX-Worker VM created by Vagrant" | sudo tee /home/kx.hero/Kubernetes/vagrant'
+          subconfig.vm.provider "vmware_desktop" do |v|
+            v.gui = true
+            v.whitelist_verified = true
+            v.vmx['displayname'] = "kx.as.code-#{ENVIRONMENT_PREFIX}-worker#{i}-#{BOX_VERSION}"
+            v.vmx["memsize"] = "12288"
+            v.vmx["numvcpus"] = "3"
+            v.vmx["mks.enable3d"] = "FALSE"
+            v.vmx["ethernet0.pcislotnumber"] = "33"
+            v.vmx["sound.startconnected"] = "FALSE"
+            v.vmx["sound.present"] = "FALSE"
+          end
+        end
+      end
+  end
+
+
+  

@@ -1,0 +1,34 @@
+grafana.ini:
+  paths:
+    data: /var/lib/grafana/data
+    logs: /var/log/grafana
+    plugins: /var/lib/grafana/plugins
+    provisioning: /etc/grafana/provisioning
+  analytics:
+    check_for_updates: true
+  log:
+    mode: console
+  grafana_net:
+    url: https://grafana.net
+  external_image_storage:
+    provider: s3
+  external_image_storage.s3:
+    endpoint: http://minios3.minio-s3:9000
+    bucket: grafana-image-storage
+    region: eu-central-1
+    access_key: {{minioAccessKey}}
+    secret_key: {{minioSecretKey}}
+  rendering:
+    server_url: http://grafana-image-renderer-service.monitoring:8081/render
+    callback_url: http://grafana.monitoring
+  auth.gitlab:
+    enabled: true
+    allow_sign_up: true
+    client_id: {{grafanaGitIntegrationId}}
+    client_secret: {{grafanaGitIntegrationSecret}}
+    scopes: read_user
+    auth_url: {{gitUrl}}/oauth/authorize
+    token_url: {{gitUrl}}/oauth/token
+    api_url: {{gitUrl}}/api/v4
+  server:
+    root_url: https://{{componentName}}.{{baseDomain}}

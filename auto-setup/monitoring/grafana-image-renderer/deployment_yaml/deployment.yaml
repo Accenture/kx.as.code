@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+ name: grafana-image-renderer
+ namespace: {{namespace}}
+ labels:
+  app: grafana-image-renderer
+spec:
+ replicas: 1
+ selector:
+  matchLabels:
+   app: grafana-image-renderer
+ template:
+  metadata:
+   labels:
+    app: grafana-image-renderer
+  spec:
+   containers:
+   - name: grafana-image-renderer
+     image: grafana/grafana-image-renderer:latest
+     imagePullPolicy: "IfNotPresent"
+     ports:
+     - containerPort: 8081

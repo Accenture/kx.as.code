@@ -1,0 +1,58 @@
+{
+    "name": "confluence",
+    "namespace": "atlassian",
+    "installation_type": "argocd",
+    "installation_group_folder": "collaboration",
+    "argocd_params": {
+        "repository": "{{gitUrl}}/devops/confluence.git",
+        "path": ".",
+        "dest_server": "https://kubernetes.default.svc",
+        "dest_namespace": "{{namespace}}",
+        "sync_policy": "automated",
+        "auto_prune": true,
+        "self_heal": true
+    },
+    "categories": [
+        "collaboration",
+        "wiki"
+    ],
+    "urls": [
+        {
+            "url": "https://{{componentName}}.{{baseDomain}}",
+            "healthchecks": {
+                "liveliness": {
+                    "http_path": "/",
+                    "http_auth_required": false,
+                    "expected_http_response_code": "200",
+                    "expected_http_response_string": "",
+                    "expected_json_response": {
+                        "json_path": "",
+                        "json_value": ""
+                    },
+                    "health_shell_check_command": "",
+                    "expected_shell_check_command_response": ""
+                },
+                "readiness": {
+                    "http_path": "/",
+                    "http_auth_required": false,
+                    "expected_http_response_code": "200",
+                    "expected_http_response_string": "",
+                    "expected_json_response": {
+                        "json_path": "",
+                        "json_value": ""
+                    },
+                    "health_shell_check_command": "",
+                    "expected_shell_check_command_response": ""
+                }
+            }
+        }
+    ],
+    "Description": "Atlassian Confluence Description",
+    "shortcut_text": "Atlassian Confluence",
+    "shortcut_icon": "confluence.png",
+    "pre_install_scripts": [
+        "createGitProject.sh",
+        "populateGitProject.sh"
+    ],
+    "post_install_scripts": []
+}

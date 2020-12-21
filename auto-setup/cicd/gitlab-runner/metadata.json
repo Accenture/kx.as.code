@@ -1,0 +1,19 @@
+{
+    "name": "gitlab-runner",
+    "namespace": "gitlab-ce",
+    "installation_type": "script",
+    "installation_group_folder": "cicd",
+    "install_scripts": [
+        "buildAndPushCustomImages.sh"
+    ],
+    "environment_variables": {
+        "gitlabDindImageVersion": "19.03.13-dind",
+        "gitabRunnerVersion": "v13.4.1"
+    },
+    "categories": [
+        "cicd"
+    ],
+    "Description": "Customized Gitlab Runner for Gitlab-CE",
+    "pre_install_scripts": [],
+    "post_install_scripts": []
+}

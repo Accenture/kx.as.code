@@ -1,0 +1,8 @@
+{
+  "github_user": "",
+  "github_token": "",
+  "host_data_directory": "{{env `HOME`}}/KX_Share",
+  "version": "0.6.3",
+  "vm_user": "kx.hero",
+  "vm_password": "learnandshare!"
+}

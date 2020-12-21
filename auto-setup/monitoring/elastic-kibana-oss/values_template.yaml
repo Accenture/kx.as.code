@@ -1,0 +1,12 @@
+elasticsearchHosts: "http://elasticsearch-master:9200"
+replicas: 1
+image: "docker.elastic.co/kibana/kibana-oss"
+imageTag: "{{elasticVersion}}"
+imagePullPolicy: "IfNotPresent"
+resources:
+  requests:
+    cpu: "1000m"
+    memory: "2Gi"
+  limits:
+    cpu: "1000m"
+    memory: "2Gi"

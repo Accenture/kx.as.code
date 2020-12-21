@@ -1,0 +1,40 @@
+#################################################################################################################
+#                                                                                                               #
+#  Use this file for creating the vagrantfile after a packer build.                                             #
+#                                                                                                               #
+#  Command Example:                                                                                             #
+#  $ vagrant init z2h-kx-as-code-1.1.4 z2h-kx-as-code-1.1.4.box --template ../../z2h_kx.as.code.erb             #
+#                                                                                                               #
+#################################################################################################################
+
+WORKER_NODE_COUNT = 2
+
+Vagrant.configure("2") do |config|
+  config.vm.define "kx.as.code-main-virtulbox" do |subconfig|
+    subconfig.vm.box = "kx.as.code-main"
+    subconfig.vm.box_url = "boxes/virtualbox/kx.as.code-main-virtualbox.box"
+    subconfig.vm.provider "virtualbox" do |v|
+      v.name = "kx.as.code-main"
+      v.customize ["modifyvm", :id, "--memory", "8192"]
+      v.customize ["modifyvm", :id, "--cpus", "2"]
+      v.customize ["modifyvm", :id, "--graphicscontroller", "vmsvga"]
+      v.customize ["modifyvm", :id, "--accelerate3d", "off"]
+      v.customize ["modifyvm", :id, "--vram", "128"]
+    end
+  end
+  
+  (1..WORKER_NODE_COUNT).each do |i|
+    config.vm.define "kx.as.code-worker#{i}" do |subconfig|
+      subconfig.vm.box = "kx.as.code-worker-virtualbox"
+      subconfig.vm.hostname = "kx-worker#{i}"
+      subconfig.vm.box_url = "boxes/virtualbox/kx.as.code-worker-virtualbox.box"
+      subconfig.vm.synced_folder "c:/Users/Patrick/KX_Share", "/home/kx.hero/KX_Share",
+        owner: "kx.hero", group: "kx.hero"
+      subconfig.vm.provider "virtualbox" do |v|
+        v.name = "kx-worker#{i}"
+        v.customize ["modifyvm", :id, "--memory", "8192"]
+        v.customize ["modifyvm", :id, "--cpus", "2"]
+      end
+    end
+  end
+end

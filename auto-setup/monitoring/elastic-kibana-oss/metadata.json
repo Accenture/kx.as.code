@@ -1,0 +1,59 @@
+{
+    "name": "elastic-kibana-oss",
+    "namespace": "elastic-stack",
+    "installation_type": "helm",
+    "installation_group_folder": "monitoring",
+    "environment_variables": {
+        "elasticVersion": "7.10.0"
+    },
+    "helm_params": {
+        "repository_url": "https://helm.elastic.co",
+        "repository_name": "elastic/kibana",
+        "helm_version": "",
+        "set_key_values": [
+            "ingress.enabled=true",
+            "ingress.hosts[0]={{componentName}}.{{baseDomain}}",
+            "ingress.tls[0].hosts[0]={{componentName}}.{{baseDomain}}"
+        ]
+    },
+    "categories": [
+        "monitoring",
+        "visualization"
+    ],
+    "urls": [
+        {
+            "url": "https://{{componentName}}.{{baseDomain}}",
+            "healthchecks": {
+                "liveliness": {
+                    "http_path": "/status",
+                    "http_auth_required": false,
+                    "expected_http_response_code": "200",
+                    "expected_http_response_string": "",
+                    "expected_json_response": {
+                        "json_path": "",
+                        "json_value": ""
+                    },
+                    "health_shell_check_command": "",
+                    "expected_shell_check_command_response": ""
+                },
+                "readiness": {
+                    "http_path": "/status",
+                    "http_auth_required": false,
+                    "expected_http_response_code": "200",
+                    "expected_http_response_string": "",
+                    "expected_json_response": {
+                        "json_path": "",
+                        "json_value": ""
+                    },
+                    "health_shell_check_command": "",
+                    "expected_shell_check_command_response": ""
+                }
+            }
+        }
+    ],
+    "Description": "Elastic-Stack Description",
+    "shortcut_text": "Kibana",
+    "shortcut_icon": "kibana.png",
+    "pre_install_scripts": [],
+    "post_install_scripts": []
+}

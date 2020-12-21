@@ -1,0 +1,21 @@
+#Home {
+  text-align: center;
+  width: 100%;
+}
+
+#Home > p {
+  margin-top: 0px;
+  white-space: pre-line;
+}
+
+#Home > div > button {
+  height: 64px;
+  width: 315px;
+  margin: 20px 10px 10px 10px;
+}
+
+#Home > .profile-cards {
+  margin-top: 40px;
+}
+
+

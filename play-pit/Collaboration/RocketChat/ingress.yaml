@@ -1,0 +1,18 @@
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: rocketchat-ingress
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+spec:
+  tls:
+  - hosts:
+    - chat.kx-as-code.local
+  rules:
+  - host: chat.kx-as-code.local
+    http:
+      paths:
+       - path: /
+         backend:
+           serviceName: rocketchat-rocketchat
+           servicePort: 80

@@ -1,0 +1,15 @@
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: rocketchat-app-storageclass
+provisioner: kubernetes.io/no-provisioner
+volumeBindingMode: WaitForFirstConsumer
+---
+  apiVersion: storage.k8s.io/v1
+  kind: StorageClass
+  metadata:
+    name: rocketchat-db-storageclass
+  provisioner: kubernetes.io/no-provisioner
+  volumeBindingMode: WaitForFirstConsumer
+---

@@ -1,0 +1,157 @@
+{
+  "builds": [
+    {
+      "name": "kx.as.code-vmware",
+      "builder_type": "vmware-iso",
+      "build_time": 1593379658,
+      "files": [
+        {
+          "name": "disk-s001.vmdk",
+          "size": 1669595136
+        },
+        {
+          "name": "disk-s002.vmdk",
+          "size": 3668049920
+        },
+        {
+          "name": "disk-s003.vmdk",
+          "size": 3127705600
+        },
+        {
+          "name": "disk-s004.vmdk",
+          "size": 299106304
+        },
+        {
+          "name": "disk-s005.vmdk",
+          "size": 669777920
+        },
+        {
+          "name": "disk-s006.vmdk",
+          "size": 273547264
+        },
+        {
+          "name": "disk-s007.vmdk",
+          "size": 378011648
+        },
+        {
+          "name": "disk-s008.vmdk",
+          "size": 387842048
+        },
+        {
+          "name": "disk-s009.vmdk",
+          "size": 470024192
+        },
+        {
+          "name": "disk-s010.vmdk",
+          "size": 175636480
+        },
+        {
+          "name": "disk-s011.vmdk",
+          "size": 286785536
+        },
+        {
+          "name": "disk.vmdk",
+          "size": 869
+        },
+        {
+          "name": "kx.as.code-2.3.1.nvram",
+          "size": 8684
+        },
+        {
+          "name": "kx.as.code-2.3.1.vmsd",
+          "size": 0
+        },
+        {
+          "name": "kx.as.code-2.3.1.vmx",
+          "size": 3834
+        },
+        {
+          "name": "kx.as.code-2.3.1.vmxf",
+          "size": 374
+        }
+      ],
+      "artifact_id": "kx.as.code-2.3.1",
+      "packer_run_uuid": "9887d006-aa7b-78ea-418a-31c577e7514a",
+      "custom_data": {
+        "version": "2.3.1"
+      }
+    },
+    {
+      "name": "kx.as.code-vmware",
+      "builder_type": "vmware-iso",
+      "build_time": 1593384126,
+      "files": [
+        {
+          "name": "disk-s001.vmdk",
+          "size": 1640431616
+        },
+        {
+          "name": "disk-s002.vmdk",
+          "size": 2197487616
+        },
+        {
+          "name": "disk-s003.vmdk",
+          "size": 3668705280
+        },
+        {
+          "name": "disk-s004.vmdk",
+          "size": 1503395840
+        },
+        {
+          "name": "disk-s005.vmdk",
+          "size": 510525440
+        },
+        {
+          "name": "disk-s006.vmdk",
+          "size": 354746368
+        },
+        {
+          "name": "disk-s007.vmdk",
+          "size": 433717248
+        },
+        {
+          "name": "disk-s008.vmdk",
+          "size": 507379712
+        },
+        {
+          "name": "disk-s009.vmdk",
+          "size": 183500800
+        },
+        {
+          "name": "disk-s010.vmdk",
+          "size": 250281984
+        },
+        {
+          "name": "disk-s011.vmdk",
+          "size": 65536
+        },
+        {
+          "name": "disk.vmdk",
+          "size": 864
+        },
+        {
+          "name": "kx.as.code-2.3.1.nvram",
+          "size": 8684
+        },
+        {
+          "name": "kx.as.code-2.3.1.vmsd",
+          "size": 0
+        },
+        {
+          "name": "kx.as.code-2.3.1.vmx",
+          "size": 3834
+        },
+        {
+          "name": "kx.as.code-2.3.1.vmxf",
+          "size": 374
+        }
+      ],
+      "artifact_id": "kx.as.code-2.3.1",
+      "packer_run_uuid": "91b91063-bcbc-657e-48e1-2b1cefac4d75",
+      "custom_data": {
+        "version": "2.3.1"
+      }
+    }
+  ],
+  "last_run_uuid": "91b91063-bcbc-657e-48e1-2b1cefac4d75"
+}

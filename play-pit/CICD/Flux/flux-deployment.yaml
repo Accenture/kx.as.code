@@ -1,0 +1,216 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+ name: flux
+ labels:
+  name: flux
+---
+# The service account, cluster roles, and cluster role binding are
+# only needed for Kubernetes with role-based access control (RBAC).
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  labels:
+    name: flux
+  name: flux
+  namespace: flux
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRole
+metadata:
+  labels:
+    name: flux
+  name: flux
+  namespace: flux
+rules:
+  - apiGroups: ['*']
+    resources: ['*']
+    verbs: ['*']
+  - nonResourceURLs: ['*']
+    verbs: ['*']
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRoleBinding
+metadata:
+  labels:
+    name: flux
+  name: flux
+  namespace: flux
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: flux
+subjects:
+  - kind: ServiceAccount
+    name: flux
+    namespace: flux
+---
+apiVersion: v1
+data:
+  known_hosts: |
+    [lwa.accenture.com]:443,[34.249.89.137]:443 ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBGExHkLky3Rc76QSOxjU42gXEJCgoY1ZEyAuLzU0SCgT5Tfh0b8weAH30kKEOcPs184pT5j0ZzKBUPjaTwn52u8=
+    innersource.accenture.com ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDVPoZZne6VcvVo/IVm/7ORE/5bFcGLrsb6Ez59T9z1foYsDmU+gMD1u9eK+jKMX518o+ZraKxDoluhFJCdXc2D06GgxpoFqgA+WykQMbBWPchGM5TgR1Yf6aGhV9VEr41nxsHsNgz6b0jIM3VwaJ9OEG3BWvZba+VGoJ/mDgpwGHdCSG1S1FxZqBmnMjgUAIQC8NMHhd/rY0v0XeTPFXTrfhpsfHejw8LauBaMdUwhV7Ro/Hgk5aD7py0qojDNy6TbIy/rTXv6EVBCmBVzX4R6LyC5rVG/f5HBtGoeBAlQLB/eh64jIjfwzNBmDDeq83sonXOdf8EtJkoZf06kXBc7
+kind: ConfigMap
+metadata:
+  name: flux-ssh-config
+  namespace: flux
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flux
+  namespace: flux
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: flux
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        prometheus.io.port: "3031" # tell prometheus to scrape /metrics endpoint's port.
+      labels:
+        name: flux
+    spec:
+      serviceAccount: flux
+      volumes:
+      - name: git-key
+        secret:
+          secretName: flux-git-deploy
+          defaultMode: 0400 # when mounted read-only, we won't be able to chmod
+
+      # This is a tmpfs used for generating SSH keys. In K8s >= 1.10,
+      # mounted secrets are read-only, so we need a separate volume we
+      # can write to.
+      - name: git-keygen
+        emptyDir:
+          medium: Memory
+
+      # The following volume is for using a customised known_hosts
+      # file, which you will need to do if you host your own git
+      # repo rather than using github or the like. You'll also need to
+      # mount it into the container, below. See
+      # https://github.com/weaveworks/flux/blob/master/site/standalone-setup.md#using-a-private-git-host
+      - name: ssh-config
+        configMap:
+          name: flux-ssh-config
+
+      # The following volume is for using a customised .kube/config,
+      # which you will need to do if you wish to have a different
+      # default namespace. You will also need to provide the configmap
+      # with an entry for `config`, and uncomment the volumeMount and
+      # env entries below.
+      # - name: kubeconfig
+      #   configMap:
+      #     name: flux-kubeconfig
+
+      containers:
+      - name: flux
+        # There are no ":latest" images for flux. Find the most recent
+        # release or image version at https://quay.io/weaveworks/flux
+        # and replace the tag here.
+        image: fluxcd/flux:1.18.0
+        imagePullPolicy: IfNotPresent
+        resources:
+          requests:
+            cpu: 50m
+            memory: 64Mi
+        ports:
+        - containerPort: 3030 # informational
+        volumeMounts:
+        - name: git-key
+          mountPath: /etc/fluxd/ssh # to match location given in image's /etc/ssh/config
+          readOnly: true # this will be the case perforce in K8s >=1.10
+        - name: git-keygen
+          mountPath: /var/fluxd/keygen # to match location given in image's /etc/ssh/config
+
+        # Include this if you need to mount a customised known_hosts
+        # file; you'll also need the volume declared above.
+        - name: ssh-config
+          mountPath: /root/.ssh
+
+        # Include this and the volume "kubeconfig" above, and the
+        # environment entry "KUBECONFIG" below, to override the config
+        # used by kuebctl.
+        # - name: kubeconfig
+        #   mountPath: /etc/fluxd/kube
+
+        # Include this to point kubectl at a different config; you
+        # will need to do this if you have mounted an alternate config
+        # from a configmap, as in commented blocks above.
+        # env:
+        # - name: KUBECONFIG
+        #   value: /etc/fluxd/kube/config
+
+        args:
+
+        # if you deployed memcached in a different namespace to flux,
+        # or with a different service name, you can supply these
+        # following two arguments to tell fluxd how to connect to it.
+        # - --memcached-hostname=memcached.default.svc.cluster.local
+        # - --memcached-service=memcached
+
+        # this must be supplied, and be in the tmpfs (emptyDir)
+        # mounted above, for K8s >= 1.10
+        - --ssh-keygen-dir=/var/fluxd/keygen
+
+        # replace or remove the following URL
+        - --git-url=ssh://git@innersource.accenture.com/kxas/z2h_git_operations.git
+        - --git-branch=develop
+      # - --git-path=workloads/01_CICD/01_Jenkins
+
+        # include these next two to connect to an "upstream" service
+        # (e.g., Weave Cloud). The token is particular to the service.
+        # - --connect=wss://cloud.weave.works/api/flux
+        # - --token=abc123abc123abc123abc123
+
+        # serve /metrics endpoint at different port.
+        # make sure to set prometheus' annotation to scrape the port value.
+        - --listen-metrics=:3031
+---
+# You can optionally deploy memcache, for the Flux daemon to cache
+# container image metadata.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: memcached
+  namespace: flux
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: memcached
+  template:
+    metadata:
+      labels:
+        name: memcached
+    spec:
+      containers:
+      - name: memcached
+        image: memcached:1.4.25
+        imagePullPolicy: IfNotPresent
+         args:
+        - -m 64    # Maximum memory to use, in megabytes. 64MB is default.
+        - -p 11211    # Default port, but being explicit is nice.
+        # - -vv    # Uncomment to get logs of each request and response.
+        ports:
+        - name: clients
+          containerPort: 11211
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: memcached
+  namespace: flux
+spec:
+  # The memcache client uses DNS to get a list of memcached servers and then
+  # uses a consistent hash of the key to determine which server to pick.
+  clusterIP: None
+  ports:
+    - name: memcached
+      port: 11211
+  selector:
+    name: memcached

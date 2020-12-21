@@ -1,0 +1,8 @@
+[Plymouth Theme]
+Name=kx.as.code
+Description=KX.AS.CODE Boot Splash Screen
+ModuleName=script
+
+[script]
+ImageDir=/usr/share/plymouth/themes/kx.as.code
+ScriptFile=/usr/share/plymouth/themes/kx.as.code/kx.as.code.script

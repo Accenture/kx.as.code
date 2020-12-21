@@ -1,0 +1,65 @@
+{
+    "name": "gitea",
+    "namespace": "gitea",
+    "installation_type": "helm",
+    "installation_group_folder": "cicd",
+    "helm_params": {
+        "repository_url": "https://dl.gitea.io/charts/",
+        "repository_name": "gitea-charts/gitea",
+        "set_key_values": [
+            "postgresql.global.postgresql.postgresqlDatabase=gitea",
+            "postgresql.global.postgresql.postgresqlUsername=gitea",
+            "postgresql.global.postgresql.postgresqlPassword={{postgresqlPassword}}",
+            "postgresql.global.postgresql.servicePort=5432",
+            "postgresql.persistence.size=1Gi",
+            "ingress.enabled=true",
+            "ingress.hosts[0]={{componentName}}.{{baseDomain}}",
+            "ingress.tls[0].hosts[0]={{componentName}}.{{baseDomain}}"
+        ]
+    },
+    "categories": [
+        "git-repository",
+        "oauth-provider"
+    ],
+    "urls": [
+        {
+            "url": "https://{{componentName}}.{{baseDomain}}",
+            "healthchecks": {
+                "liveliness": {
+                    "http_path": "/",
+                    "http_auth_required": false,
+                    "expected_http_response_code": "200",
+                    "expected_http_response_string": "",
+                    "expected_json_response": {
+                        "json_path": "",
+                        "json_value": ""
+                    },
+                    "health_shell_check_command": "",
+                    "expected_shell_check_command_response": ""
+                },
+                "readiness": {
+                    "http_path": "/",
+                    "http_auth_required": false,
+                    "expected_http_response_code": "200",
+                    "expected_http_response_string": "",
+                    "expected_json_response": {
+                        "json_path": "",
+                        "json_value": ""
+                    },
+                    "health_shell_check_command": "",
+                    "expected_shell_check_command_response": ""
+                }
+            }
+        }
+    ],
+    "Description": "Gitea Description",
+    "shortcut_text": "Gitea",
+    "shortcut_icon": "gitea.png",
+    "swagger_docs_url": "https://{{componentName}}.{{baseDomain}}/devcenter-api-2.0",
+    "api_docs_url": "https://docs.gitea.io/en-us/api-usage/",
+    "vendor_docs_url": "https://docs.gitea.io/",
+    "pre_install_scripts": [
+        "createPostgresPassword.sh"
+    ],
+    "post_install_scripts": []
+}

@@ -1,0 +1,6 @@
+configs:
+  worker_node_count: 3
+  environment_prefix: "demo2"
+  dockerhub_username: "patdel76"
+  dockerhub_email: "patdel76@gmail.com"
+  dockerhub_password: "XE1n-r8gv9D-i5A1i_Fy"

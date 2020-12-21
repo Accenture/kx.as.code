@@ -1,0 +1,80 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: server-xml
+  namespace: {{namespace}}
+data:
+  server.xml: |+
+    <?xml version="1.0" encoding="utf-8"?>
+
+    <Server port="8000"
+            shutdown="SHUTDOWN">
+
+      <Listener className="org.apache.catalina.startup.VersionLoggerListener"/>
+      <Listener className="org.apache.catalina.core.AprLifecycleListener"
+                SSLEngine="on"/>
+      <Listener className="org.apache.catalina.core.JreMemoryLeakPreventionListener"/>
+      <Listener className="org.apache.catalina.mbeans.GlobalResourcesLifecycleListener"/>
+      <Listener className="org.apache.catalina.core.ThreadLocalLeakPreventionListener"/>
+
+      <Service name="Catalina">
+
+        <Connector port="8090"
+                   maxThreads="100"
+                   minSpareThreads="10"
+                   connectionTimeout="20000"
+                   enableLookups="false"
+                   protocol="HTTP/1.1"
+                   redirectPort="8443"
+                   acceptCount="10"
+                   secure="false"
+                   scheme="https"
+                   proxyName="{{componentName}}.{{baseDomain}}"
+                   proxyPort="443"
+
+                   relaxedPathChars="[]|"
+                   relaxedQueryChars="[]|{}^\`&quot;&lt;&gt;"
+                   bindOnInit="false"
+                   maxHttpHeaderSize="8192"
+                   useBodyEncodingForURI="true"
+                   disableUploadTimeout="true" />
+
+        <Engine name="Standalone"
+                defaultHost="localhost"
+                debug="0">
+          <Host name="localhost"
+                debug="0"
+                appBase="webapps"
+                unpackWARs="true"
+                autoDeploy="false"
+                startStopThreads="4">
+            <Context path=""
+                     docBase="../confluence"
+                     debug="0"
+                     reloadable="false"
+                     useHttpOnly="true">
+              <!-- Logging configuration for Confluence is specified in confluence/WEB-INF/classes/log4j.properties -->
+              <Manager pathname=""/>
+              <Valve className="org.apache.catalina.valves.StuckThreadDetectionValve"
+                     threshold="60"/>
+
+            </Context>
+
+            <Context path="${confluence.context.path}/synchrony-proxy"
+                     docBase="../synchrony-proxy"
+                     debug="0"
+                     reloadable="false"
+                     useHttpOnly="true">
+              <Valve className="org.apache.catalina.valves.StuckThreadDetectionValve"
+                     threshold="60"/>
+            </Context>
+
+          </Host>
+        </Engine>
+
+      </Service>
+
+    </Server>
+
+
+

@@ -1,0 +1,91 @@
+# Default values for gitea.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+replicaCount: 1
+clusterDomain: cluster.local
+
+imagePullSecrets: []
+service:
+  http:
+    type: ClusterIP
+    port: 3000
+    annotations:
+  ssh:
+    type: ClusterIP
+    port: 22
+
+    annotations:
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+nodeSelector: {}
+tolerations: []
+affinity: {}
+statefulset:
+  env: []
+  terminationGracePeriodSeconds: 60
+persistence:
+  enabled: true
+  size: 1Gi
+  accessModes:
+    - ReadWriteOnce
+gitea:
+  admin:
+    username: admin
+    password: {{vmPassword}}
+    email: "gitea@{{baseDomain}}"
+  ldap:
+    enabled: false
+    name: ""
+    securityProtocol: ""
+    host: ""
+    port: ""
+    userSearchBase: ""
+    userFilter: ""
+    adminFilter: ""
+    emailAttribute: ""
+    bindDn: ""
+    bindPassword: ""
+    usernameAttribute: ""
+  config: {}
+  #  APP_NAME: "Gitea: Git with a cup of tea"
+  #  RUN_MODE: dev   
+  #   
+  #  server:
+  #    SSH_PORT: 22
+  #
+  #  security:
+  #    PASSWORD_COMPLEXITY: spec
+  podAnnotations: {}
+  database:
+    builtIn:
+      postgresql:
+        enabled: true
+      mysql:
+        enabled: false
+      mariadb:
+        enabled: false
+  cache:
+    builtIn:
+      enabled: true
+memcached:
+  service:
+    port: 11211
+postgresql:
+  global:
+    postgresql:
+      postgresqlDatabase: gitea
+      postgresqlUsername: gitea
+      postgresqlPassword: {{postgresqlPassword}}
+      servicePort: 5432
+  persistence:
+    size: 1Gi
+

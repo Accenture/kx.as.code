@@ -1,0 +1,12 @@
+{
+    "name": "cfssl-certificate-authority",
+    "Description": "CFSSL Certificate Authority",
+    "namespace": "kube-system",
+    "installation_type": "script",
+    "installation_group_folder": "kubernetes_core",
+    "install_scripts": [
+        "installCfsslCertificateAuthority.sh"
+    ],
+    "pre_install_scripts": [],
+    "post_install_scripts": []
+}

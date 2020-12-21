@@ -1,0 +1,31 @@
+apiVersion: v1
+data:
+  # Enables application status badge feature
+  statusbadge.enabled: 'true'
+  repositories: |
+    - url: ssh://git@innersource.accenture.com/kxas/z2h_kx.as.code.git
+      sshPrivateKeySecret:
+        key: ssh-privatekey
+        name: ssh-key-secret
+    - url: ssh://git@lwa.accenture.com:443/kx.as.code/z2h_kx.as.code.git
+      sshPrivateKeySecret:
+        key: ssh-privatekey
+        name: ssh-key-secret-gitlab
+    - url: https://innersource.accenture.com/scm/kxas/z2h_git_operations.git
+    - url: https://innersource.accenture.com/scm/kxas/z2h_kx.as.code.git
+  repository.credentials: |
+    - url: https://innersource.accenture.com  
+      passwordSecret:
+        key: password
+        name: git-operations-secret
+      type: git
+      usernameSecret:
+        key: username
+        name: git-operations-secret
+kind: ConfigMap
+metadata:
+  labels:
+    app.kubernetes.io/name: argocd-cm
+    app.kubernetes.io/part-of: argocd
+  name: argocd-cm
+  namespace: argocd

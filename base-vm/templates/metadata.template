@@ -1,0 +1,18 @@
+{
+  "name": "##NAME##",
+  "description": "##DESCRIPTION##",
+  "provider": "##PROVIDER##",
+  "versions": [
+    {
+      "version": "##VERSION##",
+      "providers": [
+        {
+          "name": "##PROVIDER##",
+          "url": "##URL##",
+          "checksum_type": "sha512",
+          "checksum": "##CHECKSUM##"
+        }
+      ]
+    }
+  ]
+}

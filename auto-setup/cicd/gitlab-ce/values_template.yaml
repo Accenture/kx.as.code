@@ -1,0 +1,4 @@
+# Needed for the docker in docker CI builds to work. The Gitab docker service did not work. Will revisit this point again in future.
+gitlab-runner:
+  preEntrypointScript: |
+      echo -e '    [[runners.kubernetes.volumes.host_path]]\n      name = "docker"\n      mount_path = "/var/run/docker.sock" '>> /home/gitlab-runner/.gitlab-runner/config.toml

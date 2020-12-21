@@ -1,0 +1,76 @@
+{
+    "name": "nextcloud",
+    "namespace": "nextcloud",
+    "installation_type": "helm",
+    "installation_group_folder": "storage",
+    "helm_params": {
+        "repository_url": "https://nextcloud.github.io/helm/",
+        "repository_name": "nextcloud/nextcloud",
+        "helm_version": "",
+        "set_key_values": [
+            "nextcloud.host={{componentName}}.{{baseDomain}}",
+            "nextcloud.username=admin",
+            "nextcloud.password={{vmPassword}}",
+            "persistence.enabled=true",
+            "persistence.storageClass=local-storage",
+            "persistence.size=1Gi",
+            "persistence.accessMode=ReadWriteOnce",
+            "postgresql.enabled=true",
+            "postgresql.global.postgresql.postgresqlUsername=nextcloud",
+            "postgresql.global.postgresql.postgresqlPassword={{nextcloudPostgresqlPassword}}",
+            "postgresql.global.postgresql.postgresqlDatabase=nextcloud",
+            "postgresql.persistence.enabled=true",
+            "postgresql.persistence.storageClass=local-storage",
+            "ingress.enabled=true",
+            "ingress.hosts[0]={{componentName}}.{{baseDomain}}",
+            "ingress.tls[0].hosts[0]={{componentName}}.{{baseDomain}}",
+            "ingress.annotations.\"nginx\\.ingress\\.kubernetes\\.io/proxy-body-size\"=\"5000m\"",
+            "service.type=ClusterIP"
+        ]
+    },
+    "categories": [
+        "storage",
+        "cloud"
+    ],
+    "urls": [
+        {
+            "url": "https://{{componentName}}.{{baseDomain}}",
+            "healthchecks": {
+                "liveliness": {
+                    "http_path": "/status.php",
+                    "http_auth_required": false,
+                    "expected_http_response_code": "200",
+                    "expected_http_response_string": "",
+                    "expected_json_response": {
+                        "json_path":".installed",
+                        "json_value": "true"
+                    },
+                    "health_shell_check_command": "",
+                    "expected_shell_check_command_response": ""
+                },
+                "readiness": {
+                    "http_path": "/status.php",
+                    "http_auth_required": false,
+                    "expected_http_response_code": "200",
+                    "expected_http_response_string": "",
+                    "expected_json_response": {
+                        "json_path": ".installed",
+                        "json_value": "true"
+                    },
+                    "health_shell_check_command": "",
+                    "expected_shell_check_command_response": ""
+                }
+            }
+        }
+    ],
+    "Description": "Nextcloud Storage",
+    "shortcut_text": "Nextcloud",
+    "shortcut_icon": "nextcloud.png",
+    "api_docs_type": "web",
+    "api_docs_url": "https://docs.nextcloud.com/server/18/developer_manual/client_apis/index.html",
+    "vendor_docs_url": "https://docs.nextcloud.com/",
+    "pre_install_scripts": [
+        "createPostgresqlDbPasswords.sh"
+    ],
+    "post_install_scripts": []
+}

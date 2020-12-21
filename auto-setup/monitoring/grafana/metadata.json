@@ -1,0 +1,102 @@
+{
+    "name": "grafana",
+    "namespace": "monitoring",
+    "installation_type": "helm",
+    "installation_group_folder": "monitoring",
+    "environment_variables": {
+        "grafanaVersion": "7.1.5"
+    },
+    "helm_params": {
+        "repository_url": "",
+        "repository_name": "stable/grafana",
+        "helm_version": "",
+        "set_key_values": [
+            "image.repository={{dockerRegistryDomain}}/devops/grafana",
+            "image.tag={{grafanaVersion}}",
+            "ingress.enabled=true",
+            "ingress.hosts[0]={{componentName}}.{{baseDomain}}",
+            "ingress.tls[0].hosts[0]={{componentName}}.{{baseDomain}}",
+            "persistence.enabled=true",
+            "persistence.size=4Gi",
+            "persistence.storageClassName=gluster-heketi",
+            "admin.userKey=admin-user",
+            "admin.passwordKey=admin-password",
+            "admin.existingSecret=grafana-admin-credentials",
+            "datasources.\"datasources\\.yaml\".datasources[0].name=Prometheus",
+            "datasources.\"datasources\\.yaml\".datasources[0].type=prometheus",
+            "datasources.\"datasources\\.yaml\".datasources[0].url=http://prometheus-server.monitoring:80",
+            "datasources.\"datasources\\.yaml\".datasources[0].access=proxy",
+            "datasources.\"datasources\\.yaml\".datasources[0].isDefault=true",
+            "datasources.\"datasources\\.yaml\".datasources[1].name=Graphite",
+            "datasources.\"datasources\\.yaml\".datasources[1].type=graphite",
+            "datasources.\"datasources\\.yaml\".datasources[1].url=http://graphite:8080",
+            "datasources.\"datasources\\.yaml\".datasources[1].access=proxy",
+            "datasources.\"datasources\\.yaml\".datasources[1].isDefault=false",
+            "dashboardProviders.\"dashboardproviders\\.yaml\".apiVersion=1",
+            "dashboardProviders.\"dashboardproviders\\.yaml\".providers[0].name=default",
+            "dashboardProviders.\"dashboardproviders\\.yaml\".providers[0].orgId=1",
+            "dashboardProviders.\"dashboardproviders\\.yaml\".providers[0].type=file",
+            "dashboardProviders.\"dashboardproviders\\.yaml\".providers[0].disableDeletion=false",
+            "dashboardProviders.\"dashboardproviders\\.yaml\".providers[0].editable=true",
+            "dashboardProviders.\"dashboardproviders\\.yaml\".providers[0].options.path=/var/lib/grafana/dashboards/default",
+            "dashboards.default.node-exporter.gnetId=1860",
+            "dashboards.default.node-exporter.revision=21",
+            "dashboards.default.node-exporter.datasource=Prometheus",
+            "notifiers.\"notifiers\\.yaml\".notifiers[0].name=slack-notifier",
+            "notifiers.\"notifiers\\.yaml\".notifiers[0].type=slack",
+            "notifiers.\"notifiers\\.yaml\".notifiers[0].uid=slack",
+            "notifiers.\"notifiers\\.yaml\".notifiers[0].settings.url=http://mattermost-team-edition.gitlab-ce:8065/hooks/{{monitoringWebhookId}}",
+            "plugins[0]=grafana-image-renderer",
+            "plugins[1]=grafana-piechart-panel"
+        ]
+    },
+    "categories": [
+        "visualization",
+        "monitoring"
+    ],
+    "urls": [
+        {
+            "url": "https://{{componentName}}.{{baseDomain}}",
+            "healthchecks": {
+                "liveliness": {
+                    "http_path": "/api/health",
+                    "http_auth_required": false,
+                    "expected_http_response_code": "200",
+                    "expected_http_response_string": "",
+                    "expected_json_response": {
+                        "json_path": "",
+                        "json_value": ""
+                    },
+                    "health_shell_check_command": "",
+                    "expected_shell_check_command_response": ""
+                },
+                "readiness": {
+                    "http_path": "/api/health",
+                    "http_auth_required": false,
+                    "expected_http_response_code": "200",
+                    "expected_http_response_string": "",
+                    "expected_json_response": {
+                        "json_path": "",
+                        "json_value": ""
+                    },
+                    "health_shell_check_command": "",
+                    "expected_shell_check_command_response": ""
+                }
+            }
+        }
+    ],
+    "Description": "Grafana Description",
+    "shortcut_text": "Grafana",
+    "shortcut_icon": "grafana.png",
+    "api_docs_type": "web",
+    "api_docs_url": "https://grafana.com/docs/grafana/latest/http_api/curl-examples/?src=grafana_gettingstarted",
+    "vendor_docs_url": "https://grafana.com/docs/",
+    "pre_install_scripts": [
+        "getMinIoAccessKey.sh",
+        "createAdminCredentialsSecret.sh",
+        "rebuildDockerImage.sh",
+        "createOauthIntegration.sh",
+        "getMattermostApplicationId.sh"
+    ],
+    "post_install_scripts": []
+}

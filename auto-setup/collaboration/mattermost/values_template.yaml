@@ -1,0 +1,154 @@
+persistence:
+  data:
+    enabled: true
+    size: 1Gi
+    storageClass: gluster-heketi
+  plugins:
+    enabled: true
+    size: 0.5Gi
+    storageClass: gluster-heketi 
+
+configJSON:
+  ServiceSettings:
+    SiteUrl: "https://{{componentName}}.{{baseDomain}}"
+    EnableInsecureOutgoingConnections: true
+  TeamSettings:
+    SiteName: "KX.AS.CODE ChatOps"
+  EmailSettings:
+    EnableSignUpWithEmail: false
+  GitLabSettings:
+    Enable: "true"
+    Secret: "{{mattermostGitIntegrationSecret}}"
+    Id: "{{mattermostGitIntegrationId}}"
+    Scope: ""
+    AuthEndpoint: "{{gitUrl}}/oauth/authorize"
+    TokenEndpoint: "{{gitUrl}}/oauth/token"
+    UserApiEndpoint: "{{gitUrl}}/api/v4/user"
+
+ingress:
+  enabled: true
+  path: /
+  annotations:
+    kubernetes.io/ingress.class:  nginx
+    kubernetes.io/ingress.provider: nginx
+  hosts:
+    - {{componentName}}.{{baseDomain}}
+  tls:
+    - secretName: kx.as.code-wildcard-cert
+      hosts:
+        - {{componentName}}.{{baseDomain}}
+
+externalDB:
+  enabled: true
+  existingUser: gitlab
+  existingSecret: "gitlab-ce-postgresql-password"
+
+mysql:
+  enabled: false
+
+## Additional env vars
+extraEnvVars:
+  - name: POSTGRES_PASSWORD_GITLAB
+    valueFrom:
+      secretKeyRef:
+        name: gitlab-ce-postgresql-password
+        key: postgresql-password
+  - name: POSTGRES_USER_GITLAB
+    value: gitlab
+  - name: POSTGRES_HOST_GITLAB
+    value: gitlab-ce-postgresql.gitlab-ce
+  - name: POSTGRES_PORT_GITLAB
+    value: "5432"
+  - name: POSTGRES_DB_NAME_MATTERMOST
+    value: mattermost
+  - name: MM_SQLSETTINGS_DRIVERNAME
+    value: "postgres"
+  - name: MM_SQLSETTINGS_DATASOURCE
+    value: postgres://$(POSTGRES_USER_GITLAB):$(POSTGRES_PASSWORD_GITLAB)@$(POSTGRES_HOST_GITLAB):$(POSTGRES_PORT_GITLAB)/$(POSTGRES_DB_NAME_MATTERMOST)?sslmode=disable&connect_timeout=10
+  - name: MINIO_ENDPOINT
+    value: minio-s3.minio-s3
+  - name: MINIO_PORT
+    value: "9000"
+  - name: MM_FILESETTINGS_DRIVERNAME
+    value: amazons3
+  - name: MM_FILESETTINGS_AMAZONS3ENDPOINT
+    value: minio-s3.minio-s3:9000
+  - name: MM_FILESETTINGS_AMAZONS3ACCESSKEYID
+    valueFrom:
+      secretKeyRef:
+        name: minio-accesskey-secret
+        key: accesskey
+  - name: MM_FILESETTINGS_AMAZONS3SECRETACCESSKEY
+    valueFrom:
+      secretKeyRef:
+        name: minio-accesskey-secret
+        key: secretkey
+  - name: MM_FILESETTINGS_AMAZONS3BUCKET
+    value: mattermost-file-storage
+
+## Additional init containers
+extraInitContainers:
+  - name: bootstrap-database
+    image: "postgres:9.6-alpine"
+    imagePullPolicy: IfNotPresent
+    env:
+      - name: POSTGRES_PASSWORD_GITLAB
+        valueFrom:
+          secretKeyRef:
+            name: gitlab-ce-postgresql-password
+            key: postgresql-password
+      - name: POSTGRES_USER_GITLAB
+        value: gitlab
+      - name: POSTGRES_HOST_GITLAB
+        value: gitlab-ce-postgresql.gitlab-ce
+      - name: POSTGRES_PORT_GITLAB
+        value: "5432"
+      - name: POSTGRES_DB_NAME_MATTERMOST
+        value: mattermost
+    command:
+      - sh
+      - "-c"
+      - |
+        if PGPASSWORD=$POSTGRES_PASSWORD_GITLAB psql -h $POSTGRES_HOST_GITLAB -p $POSTGRES_PORT_GITLAB -U $POSTGRES_USER_GITLAB -lqt | cut -d \| -f 1 | grep -qw $POSTGRES_DB_NAME_MATTERMOST; then
+        echo "database already exist, exiting initContainer"
+        exit 0
+        else
+        echo "Database does not exist. creating...."
+        PGPASSWORD=$POSTGRES_PASSWORD_GITLAB createdb -h $POSTGRES_HOST_GITLAB -p $POSTGRES_PORT_GITLAB -U $POSTGRES_USER_GITLAB $POSTGRES_DB_NAME_MATTERMOST
+        echo "Done"
+        fi
+  - name: create-minio-bucket
+    image: "minio/mc:RELEASE.2018-07-13T00-53-22Z"
+    env:
+      - name: MINIO_ENDPOINT
+        value: minio-s3.minio-s3
+      - name: MINIO_PORT
+        value: "9000"
+      - name: MINIO_ACCESS_KEY
+        valueFrom:
+          secretKeyRef:
+            name: minio-accesskey-secret
+            key: accesskey
+      - name: MINIO_SECRET_KEY
+        valueFrom:
+          secretKeyRef:
+            name: minio-accesskey-secret
+            key: secretkey
+      - name: MATTERMOST_BUCKET_NAME
+        value: mattermost-file-storage
+    command:
+      - sh
+      - "-c"
+      - |
+        echo "Connecting to Minio server: http://$MINIO_ENDPOINT:$MINIO_PORT"
+        mc config host add myminio http://$MINIO_ENDPOINT:$MINIO_PORT $MINIO_ACCESS_KEY $MINIO_SECRET_KEY
+        /usr/bin/mc ls myminio
+        echo $?
+        /usr/bin/mc ls myminio/$MATTERMOST_BUCKET_NAME > /dev/null 2>&1
+        if [ $? -eq 1 ] ; then
+          echo "Creating bucket '$MATTERMOST_BUCKET_NAME'"
+          /usr/bin/mc mb myminio/$MATTERMOST_BUCKET_NAME
+        else
+          echo "Bucket '$MATTERMOST_BUCKET_NAME' already exists."
+          exit 0
+        fi
