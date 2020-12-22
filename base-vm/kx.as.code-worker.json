@@ -222,8 +222,9 @@
       "type": "shell-local",
       "environment_vars": ["VERSION={{user `version`}}"],
       "execute_command": ["bash", "-c", "{{.Vars}} {{.Script}}"],
-      "use_linux_pathing": true,
-      "script": "scripts/post-processing/create-manifest-json.sh"
+      "use_linux_pathing": false,
+      "only_on": ["windows"],
+      "script": ".\\scripts\\post-processing\\create-manifest-json.sh"
     },
     {
       "type": "manifest",
@@ -237,8 +238,9 @@
       "type": "shell-local",
       "environment_vars": ["VERSION={{user `version`}}"],
       "execute_command": ["bash", "-c", "{{.Vars}} {{.Script}}"],
-      "use_linux_pathing": true,
-      "script": "scripts/post-processing/create-info-json.sh"
+      "use_linux_pathing": false,
+      "only_on": ["windows"],
+      "script": ".\\scripts\\post-processing\\create-info-json.sh"
     },
     {
       "keep_input_artifact": true,
@@ -288,31 +290,35 @@
     "type": "shell-local",
     "environment_vars": ["VERSION={{user `version`}}"],
     "execute_command": ["bash", "-c", "{{.Vars}} {{.Script}}"],
-    "use_linux_pathing": true,
-    "script": "scripts/post-processing/export-vmware-ova.sh",
+    "use_linux_pathing": false,
+    "only_on": ["windows"],
+    "script": ".\\scripts\\post-processing\\export-vmware-ova.sh",
     "only": ["{{user `vm_name`}}-vmware-desktop"]
   },
   {
     "type": "shell-local",
     "environment_vars": ["VERSION={{user `version`}}"],
     "execute_command": ["bash", "-c", "{{.Vars}} {{.Script}}"],
-    "use_linux_pathing": true,
-    "script": "scripts/post-processing/export-vmware-ova.sh",
+    "use_linux_pathing": false,
+    "only_on": ["windows"],
+    "script": ".\\scripts\\post-processing\\export-vmware-ova.sh",
     "only": ["{{user `vm_name`}}-vmware-vsphere"]
   },
   {
     "type": "shell-local",
     "environment_vars": ["VERSION={{user `version`}}"],
     "execute_command": ["bash", "-c", "{{.Vars}} {{.Script}}"],
-    "use_linux_pathing": true,
-    "script": "scripts/post-processing/create-metadata-json.sh"
+    "use_linux_pathing": false,
+    "only_on": ["windows"],
+    "script": ".\\scripts\\post-processing\\create-metadata-json.sh"
   },
   {
     "type": "shell-local",
     "environment_vars": ["VERSION={{user `version`}}"],
     "execute_command": ["bash", "-c", "{{.Vars}} {{.Script}}"],
-    "use_linux_pathing": true,
-    "script": "scripts/post-processing/add-vagrant-box.sh"
+    "use_linux_pathing": false,
+    "only_on": ["windows"],
+    "script": ".\\scripts\\post-processing\\add-vagrant-box.sh"
   }
 ],
   "provisioners": [
