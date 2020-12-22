@@ -1,6 +1,16 @@
 language: node_js
 node_js:
   - 14
+os:
+  - linux
+  - osx
+  - windows
+
+before_install:
+  - cd client
+
+before_script:
+  - cd client
 
 script:
   - npm run lint
