@@ -9,9 +9,6 @@ os:
 before_install:
   - cd client
 
-before_script:
-  - cd client
-
 script:
   - npm run lint
   - npm run make
