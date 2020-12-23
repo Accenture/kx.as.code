@@ -8,6 +8,10 @@ os:
 
 before_install:
   - cd client
+  - sudo apt-get -y install dpkg fakeroot
+
+install:
+  - npm ci --progress false --no-audit
 
 script:
   - npm run lint
