@@ -8,6 +8,8 @@
     "start": "electron-forge start",
     "package": "electron-forge package",
     "make": "electron-forge make",
+    "make:deb": "electron-forge make --targets @electron-forge/maker-deb",
+    "make:rpm": "electron-forge make --targets @electron-forge/maker-rpm",
     "publish": "electron-forge publish",
     "lint": "eslint --ext .js ."
   },

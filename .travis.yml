@@ -1,18 +1,18 @@
 language: node_js
 node_js:
   - 14
-os:
-  - linux
-  - osx
-  - windows
+# os:
+#   - linux
+#   - osx
+#   - windows
 
 before_install:
   - cd client
-  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then sudo apt-get -y install dpkg fakeroot rpmbuild; fi 
+  # - if [ "$TRAVIS_OS_NAME" = "linux" ]; then sudo apt-get -y install dpkg fakeroot rpmbuild; fi 
 
 install:
   - npm ci --progress false --no-audit
 
 script:
   - npm run lint
-  - npm run make
+  - npm run make:deb
