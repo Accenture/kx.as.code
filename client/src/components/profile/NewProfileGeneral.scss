@@ -1,3 +1,9 @@
+#NewProfileGeneral {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+}
 
 #NewProfileGeneral > p {
   margin-bottom: 60px;
@@ -11,29 +17,33 @@
 #new-prof-gen-steps {
   width: 652px;
   margin: 0 auto;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-start;
 }
 
-#new-prof-gen-steps>.step1 {
-  background-color: #141A23;
+#new-prof-gen-steps > .step1 {
+  background-color: #141a23;
   border-radius: 50%;
-  border: solid 1px #141A23;
+  border: solid 1px #141a23;
   width: 64px;
   height: 64px;
 }
 
-#new-prof-gen-steps>.step2 {
-  background-color: #141A23;
+#new-prof-gen-steps > .step2 {
+  background-color: #141a23;
   border-radius: 50%;
-  border: solid 1px #141A23;
+  border: solid 1px #141a23;
   width: 64px;
   height: 64px;
   margin: 0 230px;
 }
 
-#new-prof-gen-steps>.step3 {
-  background-color: #141A23;
+#new-prof-gen-steps > .step3 {
+  background-color: #141a23;
   border-radius: 50%;
-  border: solid 1px #141A23;
+  border: solid 1px #141a23;
   width: 64px;
   height: 64px;
 }
@@ -44,7 +54,7 @@
   left: 100px;
   width: 652px;
   height: 3px;
-  background-color: #141A23;
+  background-color: #141a23;
   margin: 0 auto;
 }
 
@@ -53,19 +63,23 @@
   margin: 0 auto;
   padding-top: 15px;
   padding-bottom: 45px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-start;
 }
 
-#new-prof-gen-step-labels>.step1-label {
+#new-prof-gen-step-labels > .step1-label {
   line-height: 22px;
   text-align: center;
 }
 
-#new-prof-gen-step-labels>.step2-label {
+#new-prof-gen-step-labels > .step2-label {
   line-height: 22px;
   text-align: center;
 }
 
-#new-prof-gen-step-labels>.step3-label {
+#new-prof-gen-step-labels > .step3-label {
   line-height: 22px;
   text-align: center;
 }

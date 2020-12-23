@@ -10,13 +10,7 @@ const NewProfileGeneral = () => {
   const history = useHistory();
 
   return (
-    <Box
-      id="NewProfileGeneral"
-      display="flex"
-      flexDirection="column"
-      justifyContent="start-flex"
-      alignItems="center"
-    >
+    <Box id="NewProfileGeneral">
       <Button id="new-prof-profiles-button" onClick={() => history.push("/")}>
         Profiles
       </Button>
@@ -25,24 +19,12 @@ const NewProfileGeneral = () => {
 
       <Box id="new-prof-gen-steps-container">
         <Box className="horizontal-line"></Box>
-        <Box
-          id="new-prof-gen-steps"
-          display="flex"
-          flexDirection="row"
-          justifyContent="space-between"
-          alignItems="flex-start"
-        >
+        <Box id="new-prof-gen-steps">
           <Box className="step1"></Box>
           <Box className="step2"></Box>
           <Box className="step3"></Box>
         </Box>
-        <Box
-          id="new-prof-gen-step-labels"
-          display="flex"
-          flexDirection="row"
-          justifyContent="space-between"
-          alignItems="flex-start"
-        >
+        <Box id="new-prof-gen-step-labels">
           <Box className="step1-label">General Configurations</Box>
           <Box className="step2-label">Advanced Configurations</Box>
           <Box className="step3-label">Optional Configurations</Box>
