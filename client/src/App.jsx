@@ -43,13 +43,7 @@ class App extends Component {
 
   render() {
     return (
-      <Box
-        id="App"
-        display="flex"
-        flexDirection="column"
-        justifyContent="flex-start"
-        alignItems="flex-start"
-      >
+      <Box id="App">
         {/* Top panel */}
         <Box id="TopPanel-wrapper">
           <HashRouter>
@@ -58,14 +52,7 @@ class App extends Component {
         </Box>
         {/* Main section - below top panel */}
         <Box id="main" flex="1">
-          <Box
-            id="main-container"
-            display="flex"
-            flexDirection="row"
-            justifyContent="flex-start"
-            alignItems="flex-start"
-            height="100%"
-          >
+          <Box id="main-container">
             {/* Left panel */}
             <Box id="LeftPanel-wrapper">
               <LeftPanel />

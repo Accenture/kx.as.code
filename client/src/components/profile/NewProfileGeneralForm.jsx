@@ -4,13 +4,7 @@ import "./NewProfileGeneralForm.scss";
 import { Box, Grid, Input } from "@material-ui/core";
 
 const NewProfileGeneralForm = () => (
-  <Box
-    id="new-prof-gen-form"
-    display="flex"
-    flexDirection="row"
-    justifyContent="center"
-    alignItems="flex-start"
-  >
+  <Box id="new-prof-gen-form">
     <Grid container direction="column" justify="flex-start" alignItems="center">
       <Grid item>
         <label htmlFor="new-prof-gen-form-profile-name">Profile Name</label>
