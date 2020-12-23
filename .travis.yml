@@ -7,7 +7,15 @@ addons:
     packages:
       - dpkg
       - fakeroot
+  sonarcloud:
+    organization: "accenture-1"
+    token:
+      secure: "c9458a117422b9d01cd79bb1936b0556e64963e8"
 
+script:
+  # the following command line builds the project, runs the tests with coverage and then execute the SonarCloud analysis
+  - sonar-scanner
+  
 before_install:
   - cd client
 
