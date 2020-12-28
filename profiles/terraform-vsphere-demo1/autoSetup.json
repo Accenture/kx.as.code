@@ -11,31 +11,34 @@
             "thirty_gb": 0,
             "fifty_gb": 0
         },
-        "virtualizationType": "vmware_esxi",
+        "virtualizationType": "vmware_vsphere",
         "environmentPrefix": "demo1",
         "glusterFsDiskSize": "200",
         "sslProvider": "self-signed",
-        "baseDomain": "travelers-kx-as-code.local",
+        "baseDomain": "lab-kx-as-code.local",
         "baseUser": "kx.hero",
         "basePassword": "L3arnandshare",
         "baseIpType": "static",
-        "baseIpRangeStart": "10.100.76.100",
-        "baseIpRangeEnd": "10.100.76.110",
         "metalLbIpRange": {
             "ipRangeStart": "10.10.76.100",
             "ipRangeEnd": "10.10.76.250"
         },
         "staticNetworkSetup": {
             "baseFixedIpAddresses": {
-                "kx-main": "192.168.40.150",
-                "kx-worker1": "192.168.40.151",
-                "kx-worker2": "192.168.40.152",
-                "kx-worker3": "192.168.40.153",
-                "kx-worker4": "192.168.40.154"
+                "kx-main": "10.3.76.240",
+                "kx-worker1": "10.3.76.241",
+                "kx-worker2": "10.3.76.242",
+                "kx-worker3": "10.3.76.243",
+                "kx-worker4": "10.3.76.244"
             },
-            "gateway": "192.168.40.2",
-            "dns1": "192.168.40.150",
+            "gateway": "10.3.76.1",
+            "dns1": "10.3.76.13",
             "dns2": "8.8.8.8"
+        },
+        "proxy_settings": {
+            "http_proxy": "https://10.3.76.26:3128",
+            "https_proxy": "https://10.3.76.26:3128",
+            "no_proxy": ""
         },
         "nic_names": {
             "vmware_esxi": "ens",
@@ -43,18 +46,7 @@
             "virtualbox": "enp",
             "parallels": "enp",
             "awsec2": "ens"
-        },
-        "esxi-ip": "192.168.40.160",
-        "esxi-diskstore": "datastore1",
-        "esxi_network": "VM Network",
-        "esxi-user": "root",
-        "esxi-password": "L3arnandshare",
-        "aws_region": "eu-central-1",
-        "aws_ami": "ami-xxxxxx",
-        "aws_access_key": "",
-        "aws_secret_key": "",
-        "aws_ec2_instance_type": "",
-        "aws_cidr_block": ""
+        }
     },
     "action_queues": {
         "install": [
