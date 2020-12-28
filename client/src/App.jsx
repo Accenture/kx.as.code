@@ -10,7 +10,8 @@ import TopPanel from "./layout/components/TopPanel";
 import LeftPanel from "./layout/components/LeftPanel";
 import { HashRouter, Route } from "react-router-dom";
 import Home from "./components/home/Home";
-import NewProfileGeneral from "./components/profile/NewProfileGeneral";
+import { NewProfileGeneral, NewProfileResource, NewProfileStorage, NewProfileReview, NewProfileOptional } from "./components/profile/index";
+
 
 window.Intl = IntlPolyfill;
 require("intl/locale-data/jsonp/en-US.js");
@@ -58,15 +59,25 @@ class App extends Component {
               <LeftPanel />
             </Box>
             {/* Content */}
-            <Box id="content" padding="20px">
+            <Box id="content" >
               <HashRouter>
                 <div>
                   <Route path="/" exact={true} component={Home} />
-                  <Route
-                    path="/new-profile-general/"
-                    exact={true}
-                    component={NewProfileGeneral}
-                  />
+                  <Route path="/new-profile-general">
+                    <NewProfileGeneral/>
+                  </Route>
+                  <Route path="/new-profile-resource">
+                    <NewProfileResource/>
+                  </Route>
+                  <Route path="/new-profile-storage">
+                    <NewProfileStorage/>
+                  </Route>
+                  <Route path="/new-profile-optional">
+                    <NewProfileOptional/>
+                  </Route>
+                  <Route path="/new-profile-review">
+                    <NewProfileReview/>
+                  </Route>
                 </div>
               </HashRouter>
             </Box>

@@ -1,11 +1,7 @@
 #new-prof-gen-form {
-  width: 100%;
+  width: 90%;
   padding: 60px;
   background-color: #263041;
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: flex-start;
 }
 
 #new-prof-gen-form > div {
@@ -25,13 +21,21 @@
   margin-bottom: 30px;
 }
 
-#new-prof-gen-form > div > div > ul > li {
+
+#new-prof-gen-form > div > div > ul>li {
   font-size: 14px;
   line-height: 17px;
 }
 
 #new-prof-gen-form > div > div > ul {
-  margin: 0;
-  padding: 0;
+  margin:0px;
+  padding:0;
+  height: 125px;
   list-style-type: none;
 }
+
+#certification-checkbox {
+  top: 30px;
+
+}
+
