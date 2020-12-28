@@ -1,6 +1,13 @@
 @import "../../variables.scss";
 
 
+#LeftPanel{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+}
+
 #LeftPanel-wrapper, #LeftPanel {
   width: 81px;
   background-color: $navbg;

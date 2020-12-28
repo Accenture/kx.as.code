@@ -14,13 +14,7 @@ const Home = (props) => {
     history.push("/new-profile-general")
   };
   return (
-    <Box
-      id="Home"
-      display="flex"
-      flexDirection="column"
-      justifyContent="start-flex"
-      alignItems="center"
-    >
+    <Box id="Home">
       <h1>{intl.get("HOME_TITLE")}</h1>
       <p>{intl.get("HOME_SUBTITLE")}</p>
 
@@ -30,14 +24,7 @@ const Home = (props) => {
         </Button>
         <Button>{intl.get("HOME_IMPORT_CONFIG_BUTTON")}</Button>
       </Box>
-      <Box
-        className="profile-cards"
-        display="flex"
-        flexDirection="row"
-        justifyContent="center"
-        alignItems="flex-start"
-        flexWrap="wrap"
-      >
+      <Box className="profile-cards">
         <ProfileCard
           subVmCategory="VMWare vSphere"
           profileName="Profile Name"
@@ -57,7 +44,7 @@ const Home = (props) => {
           ipAddress="IP Address"
         />
         <ProfileCard
-          machineType="VMWare vSphere"
+          subVmCategory="VMWare vSphere"
           profileName="Profile Name"
           domainName="Domain Name"
           ipAddress="IP Address"

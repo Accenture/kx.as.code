@@ -2,6 +2,7 @@ import React from "react";
 import { withRouter } from "react-router";
 import "./NewProfileGeneralForm.scss";
 import { Box, Grid, Input } from "@material-ui/core";
+import { TextBox, DropDown, CustomizedCheckbox } from "../../../ReusableComponent/index";
 
 const NewProfileGeneralForm = () => (
   <Box
@@ -13,30 +14,38 @@ const NewProfileGeneralForm = () => (
   >
     <Grid container direction="column" justify="flex-start" alignItems="center">
       <Grid item>
-        <label htmlFor="new-prof-gen-form-profile-name">Profile Name</label>
+        <label htmlFor="new-prof-gen-form-profile-name">Profile Name*</label>
       </Grid>
       <Grid item>
-        <Input id="new-prof-gen-form-profile-name" type="text" />
+        {/* <Input id="new-prof-gen-form-profile-name" type="text" /> */}
+        <TextBox htmlFor="new-prof-gen-form-profile-name" />
       </Grid>
       <Grid item>
         <label htmlFor="new-prof-gen-form-team-name">Team Name</label>
       </Grid>
       <Grid item>
-        <Input id="new-prof-gen-form-team-name" type="text" />
+        {/* <Input id="new-prof-gen-form-team-name" type="text" /> */}
+        <TextBox htmlFor="new-prof-gen-form-team-name" />
       </Grid>
       <Grid item>
-        <label htmlFor="new-prof-gen-form-ssl-provider">SSL Provider</label>
+        <label htmlFor="new-prof-gen-form-ssl-provider">Profile Type*</label>
       </Grid>
       <Grid item>
         <Input id="new-prof-gen-form-ssl-provider" type="text" />
+        {/* <DropDown data={["OPTIONS"]} id="new-prof-gen-form-ssl-provider"/> */}
       </Grid>
       <Grid item>
         <label htmlFor="new-prof-gen-form-platform-selection-type">
-          Platform Selection Type
+          Profile Sub Type
         </label>
       </Grid>
       <Grid item>
         <Input id="new-prof-gen-form-platform-selection-type" type="text" />
+        {/* <DropDown data={[" OPTIONS"]} id="new-prof-gen-form-ssl-provider"/> */}
+      </Grid>
+      <Grid item>
+        <CustomizedCheckbox />
+        <label >Disable Kubernetes Session Timeout</label>
       </Grid>
     </Grid>
 
@@ -48,13 +57,13 @@ const NewProfileGeneralForm = () => (
         <Input id="new-prof-gen-form-base-domain" type="text" />
       </Grid>
       <Grid item>
-        <label htmlFor="new-prof-gen-form-base-user">Base User</label>
+        <label htmlFor="new-prof-gen-form-base-user">Default User</label>
       </Grid>
       <Grid item>
         <Input id="new-prof-gen-form-base-user" type="text" />
       </Grid>
       <Grid item>
-        <label htmlFor="new-prof-gen-form-base-password">Base Password</label>
+        <label htmlFor="new-prof-gen-form-base-password">Default Password</label>
       </Grid>
       <Grid item>
         <Input id="new-prof-gen-form-base-password" type="text" />
@@ -70,6 +79,10 @@ const NewProfileGeneralForm = () => (
             in Web browsers.
           </li>
         </ul>
+      </Grid>
+      <Grid item >
+        <CustomizedCheckbox />
+          <label >Certification Mode</label>
       </Grid>
     </Grid>
   </Box>
