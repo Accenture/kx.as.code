@@ -10,7 +10,7 @@ addons:
   sonarcloud:
     organization: "accenture-1"
     token:
-      secure: "$SONARQUBE_TOKEN"
+      secure: "$SONAR_TOKEN"
   
 before_install:
   - cd client
