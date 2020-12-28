@@ -9,7 +9,7 @@ import { setNextView, setLastView } from "../../../redux/actions";
 
 const NewProfileHeader = (props) => {
   const history = useHistory();
-  let currentView = props.view;
+  const currentView = props.view;
   let path = "/";
   const onClickNext = () => {
     currentView != UIView.Review && props.setNextView();
