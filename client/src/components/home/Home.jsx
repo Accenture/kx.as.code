@@ -5,12 +5,12 @@ import { Box, Button } from "@material-ui/core";
 import intl from "react-intl-universal";
 import ProfileCard from "./ProfileCard";
 import { connect } from "react-redux";
-import { setCurrentView } from "../../redux/actions";
+import { setNextView } from "../../redux/actions";
 
 const Home = (props) => {
   const history = useHistory();
   const handleClick = () => {
-    props.setView(1);
+    props.setNextView();
     history.push("/new-profile-general")
   };
   return (
@@ -53,11 +53,13 @@ const Home = (props) => {
     </Box>
   );
 };
+
 const mapDispatchToProps = (dispatch) => {
   return {
-      setView: (view) => {
-          dispatch(setCurrentView(view))
+    setNextView: () => {
+          dispatch(setNextView())
       }
   }
 }
-export default connect(mapDispatchToProps)(Home);
+
+export default connect(null, mapDispatchToProps)(Home);

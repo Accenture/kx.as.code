@@ -1,8 +1,7 @@
 import React from "react";
 import { Box } from "@material-ui/core";
 import "./NewProfileSteps.scss";
-import UIView from "../index";
-
+import { UIView } from "../../../redux/reducers/viewsReducer";
 
 const NewProfileSteps = (props) => {
   const currentView = props.view;

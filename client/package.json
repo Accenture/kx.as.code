@@ -117,7 +117,6 @@
     "react-router": "^5.2.0",
     "react-router-dom": "^5.2.0",
     "react-scripts": "^4.0.0",
-    "react-tap-event-plugin": "^3.0.3",
     "redux": "^4.0.5"
   }
 }
