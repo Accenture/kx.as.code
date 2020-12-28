@@ -8,12 +8,3 @@ export { default as NewProfileStorage } from "./NewProfileViews/Storage&NetworkC
 export { default as NewProfileSteps } from "./Header/NewProfileSteps";
 export { default as NewProfileTemplate } from "./ProfileWrapper/NewProfileTemplate";
 export { default as NewProfileGeneralForm } from "./NewProfileViews/GeneralConfig/NewProfileGeneralForm";
-const UIView = {
-    Welcome : 1,
-    General : 2,
-    Resource : 3,
-    Optional: 4,
-    Storage: 5,
-    Review: 6
-}
-export default UIView;
