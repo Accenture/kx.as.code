@@ -31,7 +31,7 @@ const NewProfileOptionalForm = () => {
                 </Grid>
                 <hr className="hz-line" />
                 <Grid item className="custom-color">
-                    <label className="align-label" htmlFor="new-prof-opt-form-primary-color-selection">Custom HEX Color</label>
+                    <label className="align-label" htmlFor="new-prof-opt-form-primary-color-selection">Custom Hex Color</label>
                     <span className="dot dot-black"></span>
                 </Grid>
             </Grid>

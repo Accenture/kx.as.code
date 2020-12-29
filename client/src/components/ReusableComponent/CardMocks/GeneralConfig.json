@@ -1,0 +1,11 @@
+{
+    "Profile Colour": "Colour",
+    "Team Name": "team1",
+    "Base Domain": "kx.as.code.local",
+    "Default User id": "kx.hero",
+    "Default User Password": "********",
+    "Certification Mode": "False",
+    "Disable k8s Dashboard": "True",
+    "Profile Type": "Local Virtualization",
+    "Profile Sub Type": "VirtualBox"
+}
