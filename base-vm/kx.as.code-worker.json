@@ -221,9 +221,9 @@
     {
       "type": "shell-local",
       "environment_vars": ["VERSION={{user `version`}}"],
-      "execute_command": ["bash", "-c", "{{.Vars}} {{.Script}}"],
-      "use_linux_pathing": true,
-      "script": "scripts/post-processing/create-manifest-json.sh"
+      "execute_command": ["cmd", "/c", "{{.Vars}} {{.Script}}"],
+      "use_linux_pathing": false,
+      "script": "C:/Users/Patrick/github.com/kx.as.code/base-vm/scripts/post-processing/create-manifest-json.sh"
     },
     {
       "type": "manifest",
@@ -236,9 +236,9 @@
     {
       "type": "shell-local",
       "environment_vars": ["VERSION={{user `version`}}"],
-      "execute_command": ["bash", "-c", "{{.Vars}} {{.Script}}"],
-      "use_linux_pathing": true,
-      "script": "scripts/post-processing/create-info-json.sh"
+      "execute_command": ["cmd", "/c", "{{.Vars}} {{.Script}}"],
+      "use_linux_pathing": false,
+      "script": "C:/Users/Patrick/github.com/kx.as.code/base-vm/scripts/post-processing/create-info-json.sh"
     },
     {
       "keep_input_artifact": true,
@@ -287,32 +287,32 @@
     {
     "type": "shell-local",
     "environment_vars": ["VERSION={{user `version`}}"],
-    "execute_command": ["bash", "-c", "{{.Vars}} {{.Script}}"],
-    "use_linux_pathing": true,
-    "script": "scripts/post-processing/export-vmware-ova.sh",
+    "execute_command": ["cmd", "/c", "{{.Vars}} {{.Script}}"],
+    "use_linux_pathing": false,
+    "script": "C:/Users/Patrick/github.com/kx.as.code/base-vm/scripts/post-processing/export-vmware-ova.sh",
     "only": ["{{user `vm_name`}}-vmware-desktop"]
   },
   {
     "type": "shell-local",
     "environment_vars": ["VERSION={{user `version`}}"],
-    "execute_command": ["bash", "-c", "{{.Vars}} {{.Script}}"],
-    "use_linux_pathing": true,
-    "script": "scripts/post-processing/export-vmware-ova.sh",
+    "execute_command": ["cmd", "/c", "{{.Vars}} {{.Script}}"],
+    "use_linux_pathing": false,
+    "script": "C:/Users/Patrick/github.com/kx.as.code/base-vm/scripts/post-processing/export-vmware-ova.sh",
     "only": ["{{user `vm_name`}}-vmware-vsphere"]
   },
   {
     "type": "shell-local",
     "environment_vars": ["VERSION={{user `version`}}"],
-    "execute_command": ["bash", "-c", "{{.Vars}} {{.Script}}"],
-    "use_linux_pathing": true,
-    "script": "scripts/post-processing/create-metadata-json.sh"
+    "execute_command": ["cmd", "/c", "{{.Vars}} {{.Script}}"],
+    "use_linux_pathing": false,
+    "script": "C:/Users/Patrick/github.com/kx.as.code/base-vm/scripts/post-processing/create-metadata-json.sh"
   },
   {
     "type": "shell-local",
     "environment_vars": ["VERSION={{user `version`}}"],
-    "execute_command": ["bash", "-c", "{{.Vars}} {{.Script}}"],
-    "use_linux_pathing": true,
-    "script": "scripts/post-processing/add-vagrant-box.sh"
+    "execute_command": ["cmd", "/c", "{{.Vars}} {{.Script}}"],
+    "use_linux_pathing": false,
+    "script": "C:/Users/Patrick/github.com/kx.as.code/base-vm/scripts/post-processing/add-vagrant-box.sh"
   }
 ],
   "provisioners": [
@@ -323,8 +323,7 @@
       ],
       "scripts": [
         "scripts/base/vagrant-user.sh",
-        "scripts/base/kx-user.sh",
-        "scripts/base/update.sh"
+        "scripts/base/kx-user.sh"
       ],
       "type": "shell",
       "start_retry_timeout": "15m",
@@ -394,11 +393,7 @@
            "COMPUTE_ENGINE_BUILD={{user `compute_engine_build`}}"
        ],
        "scripts": [
-        "scripts/common/motd.sh",
-        "scripts/common/kx.as.code.sh",
-        "scripts/common/tools.sh",        
-        "scripts/common/powerline.sh", 
-        "scripts/common/docker.sh"
+        "scripts/common/motd.sh"
        ],
        "type": "shell",
        "pause_before": "120s",
@@ -412,8 +407,6 @@
            "VERSION={{user `version`}}"
        ],
        "scripts": [
-        "scripts/worker-node/tools.sh",
-        "scripts/worker-node/k8s-base.sh",
         "scripts/worker-node/cleanup.sh"
        ],
        "type": "shell",

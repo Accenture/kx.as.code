@@ -40,7 +40,7 @@ resource "esxi_guest" "kx-main-demo1" {
   memsize            = 16384
   numvcpus           = 4
 
-  ovf_source        = "../output-main-demo/vmware/kx.as.code-main-demo-0.5.1.ovf"
+  ovf_source        = "../output-main-demo/vmware/kx.as.code-main-demo-0.6.3.ovf"
 
   network_interfaces {
     virtual_network = "VM Network"
@@ -80,7 +80,7 @@ resource "esxi_guest" "kx-worker1-demo1" {
   memsize            = 16384
   numvcpus           = 4
 
-  ovf_source        = "../output-worker-demo/vmware/kx.as.code-worker-demo-0.5.1.ovf"
+  ovf_source        = "../output-worker-demo/vmware/kx.as.code-worker-demo-0.6.3.ovf"
 
   network_interfaces {
     virtual_network = "VM Network"
@@ -131,7 +131,7 @@ resource "esxi_guest" "kx-worker2-demo1" {
   memsize            = 16384
   numvcpus           = 4
 
-  ovf_source        = "../output-worker-demo/vmware/kx.as.code-worker-demo-0.5.1.ovf"
+  ovf_source        = "../output-worker-demo/vmware/kx.as.code-worker-demo-0.6.3.ovf"
 
   network_interfaces {
     virtual_network = "VM Network"

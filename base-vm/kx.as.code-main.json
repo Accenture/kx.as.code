@@ -173,15 +173,16 @@
       "shutdown_command": "{{user `shutdown_command`}}"
   },
   {
-    "type": "vmware-iso",
+    "type": "vsphere-iso",
     "name": "{{user `vm_name`}}-vmware-vsphere",
     "vm_name": "{{user `vm_name`}}{{user `vm_suffix`}}-{{user `version`}}",
-    "output_directory": "output-main{{user `vm_suffix`}}/vmware-vsphere-{{user `version`}}",
+    "floppy_files": [ "http/preseed-worker.cfg" ],
     "boot_wait": "10s",
+    "boot_order": "disk,cdrom",
     "boot_command": [
       "<esc><wait>",
       "install <wait>",
-      " preseed/url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/{{user `preseed_path`}} <wait>",
+      " preseed/url=http://{{user `builder_ip`}}:{{ .HTTPPort }}/{{user `preseed_path`}} <wait>",
       "debian-installer=en_US.UTF-8 <wait>",
       "auto <wait>",
       "locale=en_US.UTF-8 <wait>",
@@ -196,24 +197,9 @@
       "grub-installer/bootdev=/dev/sda <wait>",
       "<enter><wait>"
     ],
-    "disk_size": "{{user `disk_size`}}",
-    "network": "nat",
-    "vmx_data": {
-      "numvcpus": "{{user `cpus`}}",
-      "memsize": "{{user `memory`}}",
-      "sharedFolder0.present": "TRUE",
-      "sharedFolder0.enabled": "TRUE",
-      "sharedFolder0.readAccess": "TRUE",
-      "sharedFolder0.writeAccess": "TRUE",
-      "sharedFolder0.hostPath": "{{user `host_data_directory`}}",
-      "sharedFolder0.guestName": "KX_Share",
-      "sharedFolder0.expiration": "never",
-      "isolation.tools.hgfs.disable": "FALSE",
-      "pref.sharedFolder.maxNum": "1"
-    },
     "guest_os_type": "{{user `vmware_guest_os_type`}}",
     "http_directory": "http",
-    "iso_urls": [
+    "iso_urls": [ 
       "{{user `iso_path`}}/{{user `iso_file`}}",
       "{{user `iso_url`}}"
     ],
@@ -222,10 +208,62 @@
     "ssh_password": "vagrant",
     "ssh_port": 22,
     "ssh_timeout": "3600s",
-    "shutdown_command": "{{user `shutdown_command`}}"
+    "shutdown_command": "{{user `shutdown_command`}}",
+    "convert_to_template": true,
+    "vcenter_server": "{{user `vsphere_server`}}",
+    "host": "{{user `vsphere_host`}}",
+    "username": "{{user `vsphere_username`}}",
+    "password": "{{user `vsphere_password`}}",
+    "insecure_connection": "true",
+    "datacenter": "{{user `vsphere_dc`}}",
+    "cluster": "{{user `vsphere_cluster`}}",
+    "network_adapters": [
+      {
+        "network": "{{user `vsphere_network`}}",
+        "network_card": "vmxnet3"
+      }
+    ],    "datastore": "{{user `vsphere_datastore`}}",
+    "folder": "{{user `vsphere_folder`}}",
+    "CPUs": "{{user `vsphere_cpu`}}",
+    "RAM": "{{user `vsphere_memory`}}",
+    "RAM_reserve_all": true,
+    "firmware": "bios",
+    "disk_controller_type": "lsilogic-sas",
+    "storage": [
+      {
+        "disk_size": "{{user `vsphere_disk_size`}}",
+        "disk_thin_provisioned": true
+      }
+    ]
 }],
   "post-processors":
   [
+    {
+      "type": "vsphere",
+      "cluster": "{{user `vsphere_cluster`}}",
+      "host": "{{user `vsphere_host`}}",
+      "datacenter": "{{user `vsphere_dc`}}",
+      "username": "{{user `vsphere_username`}}",
+      "password": "{{user `vsphere_password`}}",
+      "datastore": "{{user `vsphere_datastore`}}",
+      "vm_name": "{{user `vm_name`}}{{user `vm_suffix`}}-{{user `version`}}",
+      "vm_network": "VM Network",
+      "vm_folder": "{{user `vsphere_folder`}}",
+      "disk_mode": "thin",
+      "insecure": "true",
+      "overwrite": "true",
+      "only": ["{{user `vm_name`}}-vmware-vsphere"]
+    },
+    {
+      "type": "vsphere-template",
+      "host": "{{user `vsphere_host`}}",
+      "insecure": "true",
+      "datacenter": "{{user `vsphere_dc`}}",
+      "username": "{{user `esxi_vsphere_username`}}",
+      "password": "{{user `esxi_vsphere_password`}}",
+      "folder": "{{user `vsphere_folder`}}",
+      "only": ["{{user `vm_name`}}-vmware-vsphere"]
+    },
     {
       "type": "shell-local",
       "environment_vars": ["VERSION={{user `version`}}"],
@@ -404,11 +442,7 @@
            "COMPUTE_ENGINE_BUILD={{user `compute_engine_build`}}"
        ],
        "scripts": [
-        "scripts/common/motd.sh",
-        "scripts/common/kx.as.code.sh",
-        "scripts/common/tools.sh",        
-        "scripts/common/powerline.sh", 
-        "scripts/common/docker.sh"
+        "scripts/common/motd.sh"
        ],
        "type": "shell",
        "pause_before": "120s",
@@ -428,16 +462,6 @@
            "DNS2={{user `dns2`}}"
        ],
        "scripts": [
-        "scripts/main-node/dns.sh",
-        "scripts/main-node/look-and-feel.sh",
-        "scripts/main-node/kx.as.code.sh",
-        "scripts/main-node/profile.sh",
-        "scripts/main-node/tools.sh",
-        "scripts/main-node/rabbitmq.sh",
-        "scripts/main-node/atom.sh",
-        "scripts/main-node/vscode.sh",
-        "scripts/main-node/upgrade-xfce.sh",
-        "scripts/main-node/remoteDesktop.sh",
         "scripts/main-node/cleanup.sh"
        ],
        "type": "shell",
