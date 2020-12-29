@@ -1,7 +1,7 @@
 import React from "react";
 import { withRouter } from "react-router";
 import "./NewProfileGeneralForm.scss";
-import { Box, Grid, Input } from "@material-ui/core";
+import { Box, Grid } from "@material-ui/core";
 import { TextBox, DropDown, CustomizedCheckbox } from "../../../ReusableComponent/index";
 
 const NewProfileGeneralForm = () => (
@@ -31,16 +31,16 @@ const NewProfileGeneralForm = () => (
         <label htmlFor="new-prof-gen-form-ssl-provider">Profile Type*</label>
       </Grid>
       <Grid item>
-        <Input id="new-prof-gen-form-ssl-provider" type="text" />
+        <TextBox htmlFor="new-prof-gen-form-ssl-provider" type="text" placeholder="OPTIONS" />
         {/* <DropDown data={["OPTIONS"]} id="new-prof-gen-form-ssl-provider"/> */}
       </Grid>
       <Grid item>
         <label htmlFor="new-prof-gen-form-platform-selection-type">
-          Profile Sub Type
+          Profile Sub Type*
         </label>
       </Grid>
       <Grid item>
-        <Input id="new-prof-gen-form-platform-selection-type" type="text" />
+        <TextBox htmlFor="new-prof-gen-form-platform-selection-type" type="text" placeholder="OPTIONS" />
         {/* <DropDown data={[" OPTIONS"]} id="new-prof-gen-form-ssl-provider"/> */}
       </Grid>
       <Grid item>
@@ -54,22 +54,22 @@ const NewProfileGeneralForm = () => (
         <label htmlFor="new-prof-gen-form-base-domain">Base Domain</label>
       </Grid>
       <Grid item>
-        <Input id="new-prof-gen-form-base-domain" type="text" />
+        <TextBox htmlFor="new-prof-gen-form-base-domain" type="text" placeholder="Default: kx-as-code.local" />
       </Grid>
       <Grid item>
         <label htmlFor="new-prof-gen-form-base-user">Default User</label>
       </Grid>
       <Grid item>
-        <Input id="new-prof-gen-form-base-user" type="text" />
+        <TextBox htmlFor="new-prof-gen-form-base-user" type="text" placeholder="Default: kx.hero" />
       </Grid>
       <Grid item>
         <label htmlFor="new-prof-gen-form-base-password">Default Password</label>
       </Grid>
       <Grid item>
-        <Input id="new-prof-gen-form-base-password" type="text" />
+        <TextBox htmlFor="new-prof-gen-form-base-password" type="password" placeholder="Default: L3arnandshare" />
       </Grid>
       <Grid item>
-        <ul>
+        <ul className="align-list">
           <li>At least 8 characters—the more characters, the better.</li>
           <li>A mixture of both uppercase and lowercase letters.</li>
           <li>A mixture of letters and numbers.</li>
@@ -82,7 +82,7 @@ const NewProfileGeneralForm = () => (
       </Grid>
       <Grid item >
         <CustomizedCheckbox />
-          <label >Certification Mode</label>
+        <label >Certification Mode</label>
       </Grid>
     </Grid>
   </Box>
