@@ -18,15 +18,15 @@ const NewProfileReview = () => {
                 alignItems="flex-start"
             >
                 <Grid container direction="row" justify="flex-start" alignItems="center" id="container">
-                    <Box item >
+                    <Box>
                         <label id="card-title">General</label>
                         <Cards card={generalConfig}/>
                     </Box>
-                    <Box item>
+                    <Box>
                         <label id="card-title">Networking</label>
                         <Cards card={networkConfig}/>
                     </Box>
-                    <Box item>
+                    <Box>
                         <label id="card-title">Storage</label>
                         <Cards card={networkConfig}/>
                     </Box>
