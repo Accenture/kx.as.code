@@ -1,0 +1,22 @@
+#general, #networking, #storage {
+    width: 300px;
+    height: 200px;
+    margin: 20px;
+    background-color: #72737e65;
+}
+
+#card-container {
+    #card {
+        width: 350px;
+        margin: 10px 0px;
+        #card-key, #card-value {
+            height: 20px;
+            font-size: 12px;
+            padding: 0px 15px;        
+        }
+        #card-value {
+            float: right;
+            padding: 0px; 
+        }
+    }
+}

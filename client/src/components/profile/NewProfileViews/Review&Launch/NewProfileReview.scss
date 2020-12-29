@@ -1,4 +1,28 @@
-#new-profile-review {
-    text-align: center;
-    height: 150px;
+#new-prof-review-container {
+    width: 90%;
+    padding: 60px;
+    background-color: #263041;
+}
+
+#general, #networking, #storage {
+    width: 300px;
+    height: 250px;
+    margin: 20px;
+    background-color: #72737e65;
+}
+
+#container{
+    margin: 20px;
+}
+
+#card-title {
+    margin: 0px 20px;
+}
+
+#card-container {
+    width: 100%;
+    #card-left, #card-right {
+        width: 40%;
+        padding: 5%;
+    }
 }
