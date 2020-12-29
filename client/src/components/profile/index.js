@@ -8,3 +8,4 @@ export { default as NewProfileStorage } from "./NewProfileViews/Storage&NetworkC
 export { default as NewProfileSteps } from "./Header/NewProfileSteps";
 export { default as NewProfileTemplate } from "./ProfileWrapper/NewProfileTemplate";
 export { default as NewProfileGeneralForm } from "./NewProfileViews/GeneralConfig/NewProfileGeneralForm";
+export { default as NewProfileOptionalForm } from "./NewProfileViews/OptionalConfig/NewProfileOptionalForm";
