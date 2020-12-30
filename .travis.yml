@@ -1,0 +1,24 @@
+language: node_js
+node_js:
+  - 14
+
+addons:
+  apt:
+    packages:
+      - dpkg
+      - fakeroot
+  sonarcloud:
+    organization: "accenture-1"
+    token:
+      secure: "bkvxlQoulm2e31e8eXC+rnKU8ydfFPg6PZmt2T901uZzA1WqQiSnwJibT3z5HOCINSL0WdJKQuU0LV2poPmkMZWfiMXTdncHFWW+uiaX9f98bg7dj9f8KBeNsOsipB9O7KPeuoRjC0cR8Crb7MVJ7YUayywStaxnaIrYFo6U1o+Jo7u3q24ZQw8lbW+wnZ3iesSLkrpnntoH+at/7zGLlN3fiSJ6zyL72on5kmOZylmCMnW3IdGaa56YAoTnXskH5/PK32OHWfo+/ag7uSMbu3D/LBuO0LjAWChYJOt9kpc7kMxFyD3LTkggjWdCl68H7p62v77cG0wub//pEqEVZomjxu8i7/GMc5tic2uupBuXuhqS3MAFCkZvMYH8WaTdOqATi9S7CpLpVlshsUDQpR1zeCyxMFesJp0ZeqnhJuAEB6A8epVG29zglCCi7lWkHXjhGzFnW69R4rF3EofYWt3FgYOqaMc76+Aib7j/MA6tgwrSzWrpOsShLn6B/WoPwAD/2EtgIMngAk2blg0zj764tWL6gGj9qB4eGJYyZszlnxxijN7zlWkH069Ehz4Q4DNzUIy05JQaUHuJv2wQ2pmb7BCf5oS1CALGz4m0MJQiAo3CRnj5/ZduZ4zD8YBTSyq+fX6C8wFCvt1chTUdY9Pfcv97QhT1wQ3xUFfEweo="
+  
+before_install:
+  - cd client
+
+install:
+  - npm ci --progress false --no-audit
+
+script:
+  - npm run lint
+  - npm run make:deb
+  - sonar-scanner

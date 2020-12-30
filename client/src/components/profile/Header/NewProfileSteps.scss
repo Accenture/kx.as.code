@@ -1,0 +1,87 @@
+
+  
+  #new-prof-gen-steps-container {
+    position: relative;
+    width: 852px;
+  }
+  
+  #new-prof-gen-steps {
+    width: 752px;
+    margin: 0 auto;
+  }
+  
+  #new-prof-gen-steps>.step1,
+  #new-prof-gen-steps>.step2, 
+  #new-prof-gen-steps>.step3, 
+  #new-prof-gen-steps>.step4, 
+  #new-prof-gen-steps>.step5  {
+    background-color: #141A23;
+    border-radius: 50%;
+    border: solid 1px #141A23;
+    width: 50px;
+    height: 50px;
+    text-align: center;
+    z-index: 1;
+  }
+
+  #new-prof-gen-steps>.step1>#current-step1,
+  #new-prof-gen-steps>.step2>#current-step2,
+  #new-prof-gen-steps>.step3>#current-step3,
+  #new-prof-gen-steps>.step4>#current-step4,
+  #new-prof-gen-steps>.step5>#current-step5 {
+    background-color: rgb(69, 128, 240);
+    border-radius: 50%;
+    border: solid 1px rgb(69, 128, 240);
+    width: 16px;
+    height: 16px;
+    margin: 16px;
+  }
+  
+  .horizontal-line {
+    position: absolute;
+    top: 25px;
+    left: 100px;
+    width: 652px;
+    height: 3px;
+    background-color: #141A23;
+    margin: 0 auto;
+  }
+  
+  #new-prof-gen-step-labels {
+    width: 800px;
+    margin: 0 auto;
+    padding-top: 15px;
+    padding-bottom: 45px;
+  }
+  
+  #new-prof-gen-step-labels>.step1-label {
+    line-height: 22px;
+    text-align: center;
+    width: 100px;
+  }
+  
+  #new-prof-gen-step-labels>.step2-label {
+    line-height: 22px;
+    text-align: center;
+    width: 160px;
+  }
+  
+  #new-prof-gen-step-labels>.step3-label {
+    line-height: 22px;
+    text-align: center;
+    width: 100px;
+  }
+
+  #new-prof-gen-step-labels>.step4-label {
+    line-height: 22px;
+    text-align: center;
+    width: 150px;
+  }
+
+  #new-prof-gen-step-labels>.step5-label {
+    line-height: 22px;
+    text-align: center;
+    width: 100px;
+  }
+  
+  
