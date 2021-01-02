@@ -48,7 +48,6 @@
         "VM_PASSWORD={{user `vm_password`}}"
       ],
       "scripts": [
-        "scripts/base/vagrant-user.sh",
         "scripts/base/kx-user.sh",
         "scripts/base/update.sh"
       ],
