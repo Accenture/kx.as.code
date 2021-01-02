@@ -31,6 +31,9 @@ pipeline {
     parameters {
         string(name: 'github_repo_url', defaultValue: "github.com/Accenture/kx.as.code.git", description: "Source Github repository")
         string(name: 'github_source_branch', defaultValue: "feature/aws_ami_packer_build", description: "Source Github branch to build from")
+        string(name: 'kx_compute_engine_build', defaultValue: "true", description: "Needs to be true for AWS to avoid 'grub' changes")
+        string(name: 'kx_hostname', defaultValue: "kx-main", description: "KX.AS.CODE main node hostname")
+        string(name: 'kx_domain', defaultValue: "kx-as-code.local", description: "KX.AS.CODE local domain")
         string(name: 'vpc_region', defaultValue: 'us-east-2', description: 'VPC region, eg. us-east-2')
         string(name: 'vpc_id', defaultValue: 'vpc-bd2785d6', description: 'VPC Id')
         string(name: 'vpc_subnet_id', defaultValue: 'subnet-a4bcd7e8', description: 'VPC Subnet Id')
@@ -62,10 +65,13 @@ pipeline {
                     accessKeyVariable: 'AWS_ACCESS_KEY_ID',
                     secretKeyVariable: 'AWS_SECRET_ACCESS_KEY'
                   ]]) {
-                       echo "${AWS_ACCESS_KEY_ID} ${AWS_SECRET_ACCESS_KEY} ${mfa}"
-                        sh'''
-                        cd kx.as.code/base-vm
-                        packer build -force -only kx.as.code-main-aws-ami \
+                       def packerPath = tool 'packer-linux-1.6.6'
+                        sh """
+                        cd base-vm
+                        ${packerPath}/packer build -force -only kx.as.code-main-aws-ami \
+                        -var "compute_engine_build=${kx_compute_engine_build}" \
+                        -var "hostname=${kx_hostname}" \
+                        -var "domain=${kx_domain}" \
                         -var "instance_type=${instance_type}" \
                         -var "access_key=${AWS_ACCESS_KEY_ID}" \
                         -var "secret_key=${AWS_SECRET_ACCESS_KEY}" \
@@ -79,8 +85,8 @@ pipeline {
                         -var "ssh_username=${ssh_username}" \
                         -var "shutdown_behavior=${shutdown_behavior}" \
                         -var-file variables.json \
-                        ./kx.as.code-aws-main.json
-                        '''
+                        ./kx.as.code-main.json
+                        """
                     }
                 }
             }

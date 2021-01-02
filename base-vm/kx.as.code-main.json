@@ -259,8 +259,7 @@
       "ssh_username": "{{user `ssh_username`}}",
       "ssh_port": 22,
       "ssh_timeout": "3600s",
-      "shutdown_behavior": "{{user `shutdown_behavior`}}",
-      "shutdown_command": "{{user `shutdown_command`}}"
+      "shutdown_behavior": "{{user `shutdown_behavior`}}"
     }],
   "post-processors":
   [
