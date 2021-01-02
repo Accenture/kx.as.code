@@ -467,7 +467,11 @@
         "COMPUTE_ENGINE_BUILD={{user `compute_engine_build`}}"
       ],
       "scripts": [
-        "scripts/common/motd.sh"
+        "scripts/common/motd.sh",
+        "scripts/common/kx.as.code.sh",
+        "scripts/common/tools.sh",
+        "scripts/common/powerline.sh",
+        "scripts/common/docker.sh"
       ],
       "type": "shell",
       "pause_before": "120s",
@@ -487,6 +491,16 @@
         "DNS2={{user `dns2`}}"
       ],
       "scripts": [
+        "scripts/main-node/dns.sh",
+        "scripts/main-node/look-and-feel.sh",
+        "scripts/main-node/kx.as.code.sh",
+        "scripts/main-node/profile.sh",
+        "scripts/main-node/tools.sh",
+        "scripts/main-node/rabbitmq.sh",
+        "scripts/main-node/atom.sh",
+        "scripts/main-node/vscode.sh",
+        "scripts/main-node/upgrade-xfce.sh",
+        "scripts/main-node/remoteDesktop.sh",
         "scripts/main-node/cleanup.sh"
       ],
       "type": "shell",
