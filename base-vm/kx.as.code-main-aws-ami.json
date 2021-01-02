@@ -1,8 +1,7 @@
 {
   "sensitive-variables": [
     "vm_password",
-    "github_token",
-    "aws_secret_access_key"
+    "github_token"
   ],
   "_comment": "Read README.md for details on executing the Packer builds.",
   "builders": [
@@ -55,29 +54,6 @@
       "type": "shell",
       "start_retry_timeout": "15m",
       "expect_disconnect": "true"
-    },
-    {
-      "environment_vars": [
-        "VM_USER={{user `vm_user`}}"
-      ],
-      "script":"scripts/base/virtualbox.sh",
-      "only": ["{{user `vm_name`}}-virtualbox"],
-      "type": "shell"
-    },
-    {
-      "script":"scripts/base/parallels.sh",
-      "only": ["{{user `vm_name`}}-parallels"],
-      "type": "shell"
-    },
-    {
-      "script": "scripts/base/vmware.sh",
-      "only": ["{{user `vm_name`}}-vmware-vsphere"],
-      "type": "shell"
-    },
-    {
-      "script": "scripts/base/vmware.sh",
-      "only": ["{{user `vm_name`}}-vmware-desktop"],
-      "type": "shell"
     },
     {
       "environment_vars": [
