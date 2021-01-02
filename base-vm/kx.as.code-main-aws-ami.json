@@ -9,7 +9,7 @@
       "type": "amazon-ebs",
       "name": "{{user `vm_name`}}-aws-ami",
       "ami_name": "{{user `vm_name`}}{{user `vm_suffix`}}-{{user `version`}}",
-      "ami_groups": "all",
+      "ami_groups": "{{user `ami_groups`}}",
       "instance_type": "{{user `instance_type`}}",
       "access_key": "{{user `access_key`}}",
       "secret_key": "{{user `secret_key`}}",

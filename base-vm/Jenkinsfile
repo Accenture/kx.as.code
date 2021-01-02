@@ -1,11 +1,6 @@
-  def mfa = input(
-    message: "Enter MFA Token",
-    parameters: [[$class: 'StringParameterDefinition', name: 'mfa', trim: true]]
-  )
-
 pipeline {
 
-    agent { label "aws-packer" }
+    agent { label "master" }
 
     options {
         ansiColor('xterm')
@@ -37,6 +32,7 @@ pipeline {
         string(name: 'kx_compute_engine_build', defaultValue: "true", description: "Needs to be true for AWS to avoid 'grub' changes")
         string(name: 'kx_hostname', defaultValue: "kx-main", description: "KX.AS.CODE main node hostname")
         string(name: 'kx_domain', defaultValue: "kx-as-code.local", description: "KX.AS.CODE local domain")
+        string(name: 'ami_groups', defaultValue: "kxascode", description: "AWS user group that can launch AMI")
         string(name: 'vpc_region', defaultValue: 'us-east-2', description: 'VPC region, eg. us-east-2')
         string(name: 'vpc_id', defaultValue: 'vpc-bd2785d6', description: 'VPC Id')
         string(name: 'vpc_subnet_id', defaultValue: 'subnet-a4bcd7e8', description: 'VPC Subnet Id')
@@ -44,7 +40,7 @@ pipeline {
         string(name: 'associate_public_ip_address', defaultValue: 'false', description: 'Assign public IP. Should be true or false')
         string(name: 'source_ami', defaultValue: 'ami-06be10ae4a207f54a', description: 'Source AMI set to Debian Buster 10')
         string(name: 'security_group_id', defaultValue: 'sg-0772da3ed04fe2677', description: 'VPC Security Group Id')
-        string(name: 'instance_type', defaultValue: 't2.small', description: 'Instance type, eg t2.small')
+        string(name: 'instance_type', defaultValue: 't3.small', description: 'Instance type, eg t3.small')
         string(name: 'shutdown_behavior', defaultValue: 'terminate', description: 'Stop or Terminate instance on failure')
         string(name: 'ssh_username', defaultValue: 'admin', description: 'SSH user used during packer build process')
     }
@@ -85,7 +81,7 @@ pipeline {
                         -var "github_user=${GITHUB_USER}" \
                         -var "github_token=${GITHUB_TOKEN}" \
                         -var "source_ami=${source_ami}" \
-                        -var "mfa_code=${mfa}" \
+                        -var "ami_groups=${ami_groups}" \
                         -var "vpc_region=${vpc_region}" \
                         -var "availability_zone=${availability_zone}" \
                         -var "vpc_id=${vpc_id}" \
