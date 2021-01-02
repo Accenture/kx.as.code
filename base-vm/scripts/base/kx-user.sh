@@ -1,7 +1,5 @@
 #!/bin/bash -eux
 
-if
-
 # Create user (if not already present)
 if ! id -u $VM_USER > /dev/null 2>&1; then
     sudo groupadd $VM_USER -g 1500
