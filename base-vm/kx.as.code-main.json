@@ -44,10 +44,10 @@
           ["modifyvm", "{{.Name}}", "--cpus", "{{user `cpus`}}"],
           ["modifyvm", "{{.Name}}", "--clipboard", "bidirectional"],
           ["sharedfolder", "add", "{{.Name}}", "--name", "KX_Share", "--hostpath", "{{user `host_data_directory`}}", "--automount"],
-          ["createhd", "--format", "VDI", "--filename", "output/virtualbox/{{.Name}}-local-k8s-storage.vdi", "--size", "104448" ],
-          ["storageattach", "{{.Name}}", "--storagectl", "SATA Controller", "--port", "1", "--device","0","--type", "hdd", "--medium", "output/virtualbox/{{.Name}}-local-k8s-storage.vdi" ],
-          ["createhd", "--format", "VDI", "--filename", "output/virtualbox/{{.Name}}-glusterfs-k8s-storage.vdi", "--size", "51200" ],
-          ["storageattach", "{{.Name}}", "--storagectl", "SATA Controller", "--port", "2", "--device","0","--type", "hdd", "--medium", "output/virtualbox/{{.Name}}-glusterfs-k8s-storage.vdi" ]
+          ["createhd", "--format", "VDI", "--filename", "output-main{{user `vm_suffix`}}/virtualbox-{{user `version`}}/{{.Name}}-local-k8s-storage.vdi", "--size", "104448" ],
+          ["storageattach", "{{.Name}}", "--storagectl", "SATA Controller", "--port", "1", "--device","0","--type", "hdd", "--medium", "output-main{{user `vm_suffix`}}/virtualbox-{{user `version`}}/{{.Name}}-local-k8s-storage.vdi" ],
+          ["createhd", "--format", "VDI", "--filename", "output-main{{user `vm_suffix`}}/virtualbox-{{user `version`}}/{{.Name}}-glusterfs-k8s-storage.vdi", "--size", "51200" ],
+          ["storageattach", "{{.Name}}", "--storagectl", "SATA Controller", "--port", "2", "--device","0","--type", "hdd", "--medium", "output-main{{user `vm_suffix`}}/virtualbox-{{user `version`}}/{{.Name}}-glusterfs-k8s-storage.vdi" ]
       ],
       "vboxmanage_post": [
           ["setextradata", "{{.Name}}", "CustomVideoMode1", "1920x1200x32"],
@@ -288,7 +288,7 @@
     },
     {
       "keep_input_artifact": true,
-      "output": "boxes/{{.Provider}}/{{user `vm_name`}}-{{.Provider}}-{{user `version`}}.box",
+      "output": "boxes/{{.Provider}}/{{user `vm_name`}}{{user `vm_suffix`}}-{{user `version`}}.box",
       "type": "vagrant",
       "vagrantfile_template": "boxes/kx.as.code-main-virtualbox.Vagrantfile",
       "only": ["{{user `vm_name`}}-virtualbox"],
@@ -299,7 +299,7 @@
     },
     {
       "keep_input_artifact": true,
-      "output": "boxes/{{.Provider}}/{{user `vm_name`}}-{{.Provider}}-{{user `version`}}.box",
+      "output": "boxes/{{.Provider}}/{{user `vm_name`}}{{user `vm_suffix`}}-{{user `version`}}.box",
       "type": "vagrant",
       "vagrantfile_template": "boxes/kx.as.code-main-parallels.Vagrantfile",
       "only": ["{{user `vm_name`}}-parallels"],
@@ -310,7 +310,7 @@
     },
     {
       "keep_input_artifact": true,
-      "output": "boxes/{{.Provider}}/{{user `vm_name`}}-{{.Provider}}-{{user `version`}}.box",
+      "output": "boxes/{{.Provider}}/{{user `vm_name`}}{{user `vm_suffix`}}-{{user `version`}}.box",
       "type": "vagrant",
       "vagrantfile_template": "boxes/kx.as.code-main-vmware.Vagrantfile",
       "only": ["{{user `vm_name`}}-vmware-vsphere"],

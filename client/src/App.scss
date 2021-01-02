@@ -1,7 +1,22 @@
 @import "variables.scss";
 
+#App{
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+}
+
 #main, #main-container {
   height: 100%;
+  bottom: 0px;
+}
+
+#main-container{
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: flex-start;
 }
 
 #content {

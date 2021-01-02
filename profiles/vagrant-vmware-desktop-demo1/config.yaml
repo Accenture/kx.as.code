@@ -1,5 +1,5 @@
 configs:
-  box_version: "0.6.2"
+  box_version: "0.6.3"
   worker_node_count: 4
   environment_prefix: "demo1"
   dockerhub_username: ""

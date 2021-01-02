@@ -1,5 +1,5 @@
 #new-prof-gen-form {
-  width: 100%;
+  width: 90%;
   padding: 60px;
   background-color: #263041;
 }
@@ -28,7 +28,16 @@
 }
 
 #new-prof-gen-form > div > div > ul {
-  margin:0;
+  margin:0px;
   padding:0;
+  height: 125px;
   list-style-type: none;
+}
+
+#certification-checkbox {
+  top: 30px;
+}
+
+.align-list {
+  margin-top: 20px !important;
 }
