@@ -1,0 +1,33 @@
+{
+  "builds": [
+    {
+      "name": "kx.as.code-main-vmware-vsphere",
+      "builder_type": "vsphere-iso",
+      "build_time": 1609374224,
+      "files": [
+        {
+          "name": "kx.as.code-main-demo-0.6.3-disk-0.vmdk",
+          "size": 1006230528
+        },
+        {
+          "name": "kx.as.code-main-demo-0.6.3.mf",
+          "size": 218
+        },
+        {
+          "name": "kx.as.code-main-demo-0.6.3.ova",
+          "size": 4092900352
+        },
+        {
+          "name": "kx.as.code-main-demo-0.6.3.ovf",
+          "size": 9286
+        }
+      ],
+      "artifact_id": "kx.as.code-main-demo-0.6.3",
+      "packer_run_uuid": "80e61173-a73e-7a0d-541f-b72507ca1a97",
+      "custom_data": {
+        "version": "0.6.3"
+      }
+    }
+  ],
+  "last_run_uuid": "80e61173-a73e-7a0d-541f-b72507ca1a97"
+}
