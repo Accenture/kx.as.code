@@ -23,7 +23,7 @@
         {
           "device_name": "/dev/sda1",
           "volume_type": "gp2",
-          "volume_size": "20",
+          "volume_size": "40",
           "delete_on_termination": true
         }
       ],
@@ -90,6 +90,7 @@
     },
     {
       "environment_vars": [
+        "BASE_IMAGE_SSH_USER={{user `base_image_ssh_user`}}",
         "VM_USER={{user `vm_user`}}",
         "VM_PASSWORD={{user `vm_password`}}",
         "GITHUB_USER={{user `github_user`}}",
@@ -111,6 +112,7 @@
     },
     {
       "environment_vars": [
+        "BASE_IMAGE_SSH_USER={{user `base_image_ssh_user`}}",
         "VM_USER={{user `vm_user`}}",
         "VM_PASSWORD={{user `vm_password`}}",
         "GITHUB_USER={{user `github_user`}}",

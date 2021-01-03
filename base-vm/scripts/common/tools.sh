@@ -12,6 +12,8 @@ sudo apt-get -y install \
     jq \
     htop \
     sshpass \
+    fontconfig \
+    fontconfig-config \
     vim-nox # Debian package compiped with Python - for Powerline plugin
 
 # Install Powerline Status
