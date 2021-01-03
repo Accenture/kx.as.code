@@ -99,7 +99,7 @@ xkb=de
 EOF"
 
 # Prevent vagrant user showing on login screen user list
-sudo bash -c 'cat <<EOF > /var/lib/AccountsService/users/${BASE_IMAGE_SSH_USER}
+sudo bash -c "cat <<EOF > /var/lib/AccountsService/users/${BASE_IMAGE_SSH_USER}
 [org.freedesktop.DisplayManager.AccountsService]
 BackgroundFile='/usr/share/backgrounds/background.jpg'
 
@@ -111,7 +111,7 @@ SystemAccount=true
 
 [InputSource0]
 xkb=de
-EOF'
+EOF"
 
 # Prevent lightdm user showing on login screen user list
 sudo bash -c 'cat <<EOF > /var/lib/AccountsService/users/lightdm
