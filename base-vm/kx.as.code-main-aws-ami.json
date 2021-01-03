@@ -36,10 +36,9 @@
   "post-processors":
   [
     {
-      "type": "shell-local",
-      "environment_vars": ["VERSION={{user `version`}}"],
-      "execute_command": ["bash", "-c", "{{.Vars}} {{.Script}}"],
-      "script": "scripts/post-processing/create-manifest-json.sh"
+      "type": "manifest",
+      "output": "manifest.json",
+      "strip_path": true
     }
   ],
   "provisioners": [
