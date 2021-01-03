@@ -6,18 +6,17 @@ if [[ ! -z $GITHUB_TOKEN ]]; then
 fi
 # Install LightDM theme for login and lock screens
 sudo mkdir -p /var/lib/lightdm/.local/share/webkitgtk/
-sudo mv /home/vagrant/lightdm_theme/localstorage /var/lib/lightdm/.local/share/webkitgtk/
+sudo mv /home/${BASE_IMAGE_SSH_USER}/lightdm_theme/localstorage /var/lib/lightdm/.local/share/webkitgtk/
 sudo chown -hR lightdm:lightdm /var/lib/lightdm/
 sudo mkdir -p /usr/share/lightdm-webkit/themes/material
-sudo mv /home/vagrant/lightdm_theme/* /usr/share/lightdm-webkit/themes/material
+sudo mv /home/${BASE_IMAGE_SSH_USER}/lightdm_theme/* /usr/share/lightdm-webkit/themes/material
 sudo fc-cache -vf /usr/share/fonts/
 
 # Install to import XFCE panel configuration for kx.hero
 sudo mkdir -p /home/$VM_USER/.config/xfce4/desktop
-#sudo mv /home/vagrant/user_profile/xfce4_user /home/$VM_USER/.config/xfce4
 sudo wget http://de.archive.ubuntu.com/ubuntu/pool/universe/x/xfpanel-switch/xfpanel-switch_1.0.7-0ubuntu2_all.deb
 sudo dpkg -i xfpanel-switch_1.0.7-0ubuntu2_all.deb
-sudo cp /home/vagrant/user_profile/xfce4_panel/exported-config.tar.bz2 /home/$VM_USER/.config/
+sudo cp /home/${BASE_IMAGE_SSH_USER}/user_profile/xfce4_panel/exported-config.tar.bz2 /home/$VM_USER/.config/
 sudo bash -c "cat <<EOF > /home/$VM_USER/.config/xfce4/desktop/icons.screen0-1904x1136.rc
 [xfdesktop-version-4.10.3+-rcfile_format]
 4.10.3+=true
@@ -100,7 +99,7 @@ xkb=de
 EOF"
 
 # Prevent vagrant user showing on login screen user list
-sudo bash -c 'cat <<EOF > /var/lib/AccountsService/users/vagrant
+sudo bash -c 'cat <<EOF > /var/lib/AccountsService/users/${BASE_IMAGE_SSH_USER}
 [org.freedesktop.DisplayManager.AccountsService]
 BackgroundFile='/usr/share/backgrounds/background.jpg'
 
