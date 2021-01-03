@@ -393,7 +393,11 @@
            "COMPUTE_ENGINE_BUILD={{user `compute_engine_build`}}"
        ],
        "scripts": [
-        "scripts/common/motd.sh"
+         "scripts/common/motd.sh",
+         "scripts/common/kx.as.code.sh",
+         "scripts/common/tools.sh",
+         "scripts/common/powerline.sh",
+         "scripts/common/docker.sh"
        ],
        "type": "shell",
        "pause_before": "120s",
@@ -407,7 +411,9 @@
            "VERSION={{user `version`}}"
        ],
        "scripts": [
-        "scripts/worker-node/cleanup.sh"
+         "scripts/worker-node/tools.sh",
+         "scripts/worker-node/k8s-base.sh",
+         "scripts/worker-node/cleanup.sh"
        ],
        "type": "shell",
        "pause_before": "120s",
