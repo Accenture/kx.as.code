@@ -1,0 +1,34 @@
+.counter-center  {
+  color: #FFFFFF !important;
+  height: 25px;
+  width: 114px;
+  border:none !important;
+  background-color: #798ca3 !important;
+  border-radius: 0 !important;
+  letter-spacing: 1.67px;
+  font-size: 13px;
+  text-align: center !important;
+}
+
+.counter{
+  display:flex;
+
+}
+
+.prof-counter-btn-duplicate  {
+  color: #FFFFFF !important;
+  height: 25px;
+  width: 114px;
+  border: none !important;
+  background-color: #72737e65 !important;
+  border-radius: 0 !important;
+}
+
+.prof-counter-btn-duplicate > span  {
+  height: 25px;
+  width: 114px;
+  color: #FFFFFF !important;
+  font-size: 14px;
+  font-weight: bold;
+  text-align: center;
+}
