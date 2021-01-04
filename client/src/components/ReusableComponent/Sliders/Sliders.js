@@ -4,6 +4,7 @@ import { withStyles, makeStyles } from '@material-ui/core/styles';
 import Slider from '@material-ui/core/Slider';
 import Typography from '@material-ui/core/Typography';
 import Tooltip from '@material-ui/core/Tooltip';
+import './Sliders.scss';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -37,7 +38,9 @@ ValueLabelComponent.propTypes = {
 const PrettoSlider = withStyles({
   root: {
     color: '#141A23',
-    height: 5,
+    height: 1,
+    display:'flex',
+    alignItem:'center',
   },
   thumb: {
     height: 18,
@@ -70,6 +73,10 @@ export default function CustomizedSlider(props) {
 
   return (
     <div className={classes.root}>
+      <div className='sliders'>
+        <p>{props.name}</p>
+        <p>{props.size}</p>
+      </div>
       <Typography gutterBottom>{props.label}</Typography>
       <PrettoSlider valueLabelDisplay="auto" aria-label="pretto slider" defaultValue={props.defaultValue} min={props.min} max={props.max}/>
       <div className={classes.margin} />
