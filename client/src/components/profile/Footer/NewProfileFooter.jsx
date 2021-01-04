@@ -6,18 +6,19 @@ import { useHistory } from "react-router-dom";
 import { UIView } from "../../../redux/reducers/viewsReducer";
 import { connect } from "react-redux";
 import { setNextView, setLastView } from "../../../redux/actions";
+import { Label } from "@material-ui/icons";
 
 const NewProfileHeader = (props) => {
   const history = useHistory();
   const currentView = props.view;
   let path = "/";
   const onClickNext = () => {
-    currentView != UIView.Review && props.setNextView();
+    currentView != UIView.ReviewB && props.setNextView();
     currentView === UIView.General && (path = "/new-profile-resource");
     currentView === UIView.Resource && (path = "/new-profile-optional");
     currentView === UIView.Optional && (path = "/new-profile-storage");
     currentView === UIView.Storage && (path = "/new-profile-review");
-    currentView === UIView.Review && (path = "/new-profile-review");
+    currentView === UIView.Review && (path = "/new-profile-reviewA");
     history.push(path);
   }
   const onClickBack = () => {
@@ -26,19 +27,22 @@ const NewProfileHeader = (props) => {
     currentView === UIView.Optional && (path = "/new-profile-resource");
     currentView === UIView.Storage && (path = "/new-profile-optional");
     currentView === UIView.Review && (path = "/new-profile-storage")
+    currentView === UIView.ReviewA && (path = "/new-profile-review")
+    currentView === UIView.ReviewB && (path = "/new-profile-reviewA")
     history.push(path);
   }
   return (
     <Box id="new-profile-footer"
       textAlign="center">
-      {((currentView === UIView.Resource) || (currentView === UIView.Optional) || (currentView === UIView.Storage) || (currentView === UIView.Review)) &&
+      {(currentView!= UIView.General) &&
         <Button id="new-prof-profiles-Next-button" onClick={onClickBack}>
           Back
-          </Button>
-      }
-      <Button id="new-prof-profiles-Next-button" onClick={onClickNext}>
-        Next
         </Button>
+      }
+      {(currentView != UIView.ReviewA) && <Button id="new-prof-profiles-Next-button" onClick={onClickNext}>
+        {(currentView != UIView.Review) ? "Next" : "Confirm"}
+      </Button>}
+      {(currentView === UIView.ReviewA) && <label id="loader">WAITING FOR SERVERS TO COME UP</label>}
     </Box>
   );
 };

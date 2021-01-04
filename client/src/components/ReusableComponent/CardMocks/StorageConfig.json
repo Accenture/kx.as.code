@@ -1,0 +1,12 @@
+{
+    "MainNode": {
+        "GlusterFS Storage": "100 GB",
+        "Local volumes": "100 GB"
+    },
+    "WorkerNode": {
+        "Local volumes": "200 GB"
+    },
+    "TOTAL": {
+        "OVERALLTOTAL": "400 GB"
+    }
+}

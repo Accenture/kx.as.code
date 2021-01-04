@@ -6,7 +6,8 @@ export const UIView = {
     Resource: 3,
     Optional: 4,
     Storage: 5,
-    Review: 6
+    Review: 6,
+    ReviewA: 7,
 }
 
 const initialState = {

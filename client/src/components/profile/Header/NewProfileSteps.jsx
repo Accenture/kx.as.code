@@ -28,7 +28,7 @@ const NewProfileSteps = (props) => {
             {currentView===UIView.Storage &&<Box id="current-step4"></Box>}
           </Box>
           <Box className="step5">
-            {currentView===UIView.Review &&<Box id="current-step5"></Box>}
+            {((currentView===UIView.Review) || (currentView===UIView.ReviewA)) &&<Box id="current-step5"></Box>}
           </Box>
         </Box>
         <Box

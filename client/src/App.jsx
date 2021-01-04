@@ -10,7 +10,7 @@ import TopPanel from "./layout/components/TopPanel";
 import LeftPanel from "./layout/components/LeftPanel";
 import { HashRouter, Route } from "react-router-dom";
 import Home from "./components/home/Home";
-import { NewProfileGeneral, NewProfileResource, NewProfileStorage, NewProfileReview, NewProfileOptional } from "./components/profile/index";
+import { NewProfileGeneral, NewProfileResource, NewProfileStorage, NewProfileReview, NewProfileReviewA, NewProfileOptional } from "./components/profile/index";
 
 
 window.Intl = IntlPolyfill;
@@ -77,6 +77,9 @@ class App extends Component {
                   </Route>
                   <Route path="/new-profile-review">
                     <NewProfileReview/>
+                  </Route>
+                  <Route path="/new-profile-reviewA">
+                    <NewProfileReviewA/>
                   </Route>
                 </div>
               </HashRouter>
