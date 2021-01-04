@@ -1,21 +1,49 @@
 {
   "builds": [
     {
-      "name": "kx.as.code-worker-virtualbox",
-      "builder_type": "virtualbox-iso",
-      "build_time": 1608596336,
+      "name": "kx.as.code-vpn-vmware-desktop",
+      "builder_type": "vmware-iso",
+      "build_time": 1609777635,
       "files": [
         {
-          "name": "kx.as.code-worker-demo-0.6.3.ova",
-          "size": 1628387840
+          "name": "disk-s001.vmdk",
+          "size": 2511011840
+        },
+        {
+          "name": "disk-s002.vmdk",
+          "size": 433455104
+        },
+        {
+          "name": "disk-s003.vmdk",
+          "size": 458752
+        },
+        {
+          "name": "disk.vmdk",
+          "size": 592
+        },
+        {
+          "name": "kx.as.code-vpn-demo-0.6.4.nvram",
+          "size": 8684
+        },
+        {
+          "name": "kx.as.code-vpn-demo-0.6.4.vmsd",
+          "size": 0
+        },
+        {
+          "name": "kx.as.code-vpn-demo-0.6.4.vmx",
+          "size": 3663
+        },
+        {
+          "name": "kx.as.code-vpn-demo-0.6.4.vmxf",
+          "size": 280
         }
       ],
-      "artifact_id": "VM",
-      "packer_run_uuid": "e1a5add1-7ea4-b7cc-ad5e-64cf7c4ac340",
+      "artifact_id": "kx.as.code-vpn-demo-0.6.4",
+      "packer_run_uuid": "0ab5bbb0-91bc-6a9e-4b2c-4cdd8d4c2d4f",
       "custom_data": {
-        "version": "0.6.3"
+        "version": "0.6.4"
       }
     }
   ],
-  "last_run_uuid": "e1a5add1-7ea4-b7cc-ad5e-64cf7c4ac340"
+  "last_run_uuid": "0ab5bbb0-91bc-6a9e-4b2c-4cdd8d4c2d4f"
 }
