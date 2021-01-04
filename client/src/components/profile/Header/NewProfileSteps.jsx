@@ -22,10 +22,10 @@ const NewProfileSteps = (props) => {
             {currentView===UIView.Resource &&<Box id="current-step2"></Box>}
           </Box>
           <Box className="step3">
-            {currentView===UIView.Optional &&<Box id="current-step3"></Box>}
+            {currentView===UIView.Storage &&<Box id="current-step4"></Box>}
           </Box>
           <Box className="step4">
-            {currentView===UIView.Storage &&<Box id="current-step4"></Box>}
+            {currentView===UIView.Optional &&<Box id="current-step3"></Box>}
           </Box>
           <Box className="step5">
             {((currentView===UIView.Review) || (currentView===UIView.ReviewA)) &&<Box id="current-step5"></Box>}
@@ -40,8 +40,8 @@ const NewProfileSteps = (props) => {
         >
           <Box className="step1-label">General configurations</Box>
           <Box className="step2-label">Resource configurations</Box>
-          <Box className="step3-label">Optional configurations</Box>
-          <Box className="step4-label">Storage & Network configurations </Box>
+          <Box className="step3-label">Storage & Network configurations </Box>
+          <Box className="step4-label">Optional configurations</Box>
           <Box className="step5-label">Review & Launch</Box>
         </Box>
       </Box>

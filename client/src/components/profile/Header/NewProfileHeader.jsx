@@ -20,7 +20,7 @@ const NewProfileHeader = (props) => {
             Profiles
         </Button>
         <h1>{intl.get("NEW_PROFILE_GENERAL_TITLE")}</h1>
-        <p>{intl.get("NEW_PROFILE_GENERAL_SUBTITLE")}</p>
+        <p id="para">{intl.get("NEW_PROFILE_GENERAL_SUBTITLE")}</p>
         <NewProfileSteps view={props.view}/>
       </Box>
   );
