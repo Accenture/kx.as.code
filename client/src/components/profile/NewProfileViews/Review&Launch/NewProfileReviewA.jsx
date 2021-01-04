@@ -1,5 +1,5 @@
 import React from "react";
-import "./NewProfileReview.scss";
+import "./NewProfileReviewA.scss";
 import { withRouter } from "react-router";
 import { Box, Grid } from "@material-ui/core";
 import { NewProfileTemplate } from "../../index";
@@ -9,12 +9,15 @@ const NewProfileReview = () => {
     const generalConfig = Object.entries(require("../../../ReusableComponent/CardMocks/GeneralConfig.json"));
     const networkConfig = Object.entries(require("../../../ReusableComponent/CardMocks/NetworkConfig.json"));
     const storageConfig = require("../../../ReusableComponent/CardMocks/StorageConfig.json");
+    const preFlightChecks = require("../../../ReusableComponent/CardMocks/PreFlightChecks.json");
+    const download = require("../../../ReusableComponent/CardMocks/Download.json");
+    const launchStatus = require("../../../ReusableComponent/CardMocks/LaunchStatus.json");
     return (
         <NewProfileTemplate>
             <Box
                 id="new-prof-review-container"
                 display="flex"
-                flexDirection="row"
+                flexDirection="column"
                 justifyContent="center"
                 alignItems="flex-start"
             >
@@ -40,6 +43,40 @@ const NewProfileReview = () => {
                             </Box>
                             <Box>
                                 {Object.entries(storageConfig.TOTAL).map(([key, value]) => <Box id="storage-key" key={key}>{key}<span id="storage-value">{value.toString()}</span></Box>)}
+                            </Box>
+                        </Cards>
+                    </Box>
+                </Grid>
+
+                <Grid container direction="row" justify="flex-start" alignItems="center" id="container-1">
+                    <Box>
+                        <label id="title">Pre Flight Checks</label>
+                        <Cards >
+                            <Box id="main-node">
+                                <Box id="card-title">Software Dependencies</Box>
+                                {Object.entries(preFlightChecks.SoftwareDependencies).map(([key, value]) => <Box id="storage-key" key={key}>{key}<span id="storage-value">{value.toString()}</span></Box>)}
+                            </Box>
+                            <Box id="worker-node">
+                                <Box id="card-title">Other Dependencies</Box>
+                                {Object.entries(preFlightChecks.OtherDependencies).map(([key, value]) => <Box id="storage-key" key={key}>{key}<span id="storage-value">{value.toString()}</span></Box>)}
+                            </Box>
+                        </Cards>
+                    </Box>
+                    <Box>
+                        <label id="title">Download</label>
+                        <Cards >
+                            <Box id="main-node">
+                                <Box id="card-title">Versions</Box>
+                                {Object.entries(download.Versions).map(([key, value]) => <Box id="storage-key" key={key}>{key}<span id="storage-value">{value.toString()}</span></Box>)}
+                            </Box>
+                        </Cards>
+                    </Box>
+                    <Box>
+                        <label id="title">Launch status</label>
+                        <Cards >
+                            <Box id="main-node">
+                                <Box id="card-title">Main Node</Box>
+                                {Object.entries(launchStatus["Main Node"]).map(([key, value]) => <Box id="storage-key" key={key}>{key}<span id="storage-value">{value.toString()}</span></Box>)}
                             </Box>
                         </Cards>
                     </Box>
