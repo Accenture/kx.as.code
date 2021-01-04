@@ -17,7 +17,7 @@ pipeline {
         stage('Clone the repository'){
             steps {
                 script {
-                    checkout([$class: 'GitSCM', branches: [[name: "$github_source_branch"]], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'CleanBeforeCheckout']], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'Jithin', url: 'https://${github_repo_url}']]])
+                    checkout([$class: 'GitSCM', branches: [[name: "$github_source_branch"]], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'CleanBeforeCheckout']], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'monikadhariwal', url: 'https://${github_repo_url}']]])
                 }
             }
         }
@@ -35,8 +35,7 @@ pipeline {
         steps {
           sh 'TF_VAR_ACCESS_KEY=<YOUR_ACESS_KEY> \
               TF_VAR_SECRET_KEY=<YOUR_SECRET_KEY> \
-              TF_VAR_AMI_ID=<YOUR_AMI_ID> \
-              TF_VAR_KEY_NAME=<YOUR_KEY_NAME> \
+              TF_VAR_AMI_ID=$(source_ami) \
               terraform apply'
         }
       }
