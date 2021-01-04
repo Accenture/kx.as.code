@@ -1,7 +1,7 @@
 #!/bin/bash -eux
 
 # Copy scripts to ${vmUser}
-sudo cp -r ${BASE_IMAGE_SSH_USER}/scripts ${VM_USER}
+sudo cp -r /home/${BASE_IMAGE_SSH_USER}/scripts /home/${VM_USER}
 
 # Update repository and install OpenVPN
 sudo apt install -y openvpn ufw
@@ -15,7 +15,7 @@ wget https://github.com/OpenVPN/easy-rsa/releases/download/${easyRsaVersion}/Eas
 tar xvf EasyRSA-unix-${easyRsaVersion}.tgz
 
 # Correct permissions
-sudo chown -R ${VM_USER}:${VM_USER} ${VM_USER}
+sudo chown -R ${VM_USER}:${VM_USER} /home/${VM_USER}
 sudo chmod 700 /home/${VM_USER}/scripts/*.sh
 
 # Deploy default OpenVPN configuration
