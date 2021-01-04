@@ -4,8 +4,8 @@ export const UIView = {
     Welcome: 1,
     General: 2,
     Resource: 3,
-    Optional: 4,
-    Storage: 5,
+    Storage: 4,
+    Optional: 5,
     Review: 6,
     ReviewA: 7,
 }

@@ -15,7 +15,7 @@ const Cards = (props) => {
             <Grid container direction="row" justify="flex-start" alignItems="center" id="card-container">
                 {props.children && <Box id="card">{props.children}</Box>}
                 {card && <Box id="card">
-                    {card?.map(([key, value]) => <Box id="card-key" key={key}>{key}<span id="card-value">{value.toString()}</span></Box>)}
+                    {card.map(([key, value]) => <Box id="card-key" key={key}>{key}<span id="card-value">{value.toString()}</span></Box>)}
                 </Box>}
             </Grid>
         </Box>

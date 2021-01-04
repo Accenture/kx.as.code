@@ -15,18 +15,18 @@ const NewProfileHeader = (props) => {
   const onClickNext = () => {
     currentView != UIView.ReviewB && props.setNextView();
     currentView === UIView.General && (path = "/new-profile-resource");
-    currentView === UIView.Resource && (path = "/new-profile-optional");
-    currentView === UIView.Optional && (path = "/new-profile-storage");
-    currentView === UIView.Storage && (path = "/new-profile-review");
+    currentView === UIView.Resource && (path = "/new-profile-storage");
+    currentView === UIView.Storage && (path = "/new-profile-optional");
+    currentView === UIView.Optional && (path = "/new-profile-review");
     currentView === UIView.Review && (path = "/new-profile-reviewA");
     history.push(path);
   }
   const onClickBack = () => {
     props.setLastView();
     currentView === UIView.Resource && (path = "/new-profile-general");
-    currentView === UIView.Optional && (path = "/new-profile-resource");
-    currentView === UIView.Storage && (path = "/new-profile-optional");
-    currentView === UIView.Review && (path = "/new-profile-storage")
+    currentView === UIView.Storage && (path = "/new-profile-resource");
+    currentView === UIView.Optional && (path = "/new-profile-storage");
+    currentView === UIView.Review && (path = "/new-profile-optional")
     currentView === UIView.ReviewA && (path = "/new-profile-review")
     currentView === UIView.ReviewB && (path = "/new-profile-reviewA")
     history.push(path);
