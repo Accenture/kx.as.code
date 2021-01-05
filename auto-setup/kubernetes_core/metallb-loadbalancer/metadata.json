@@ -1,6 +1,5 @@
 {
     "name": "metallb-loadbalancer",
-    "Description": "MetalLB Load Balancer",
     "namespace": "metallb-system",
     "installation_type": "script",
     "installation_group_folder": "kubernetes_core",
@@ -11,5 +10,8 @@
     "pre_install_scripts": [
         "createMemberListSecret.sh"
     ],
+    "Description": "MetalLB Load Balancer",
+    "shortcut_text": "MetalLB Load Balancer",
+    "shortcut_icon": "metallb.png",
     "post_install_scripts": []
 }
