@@ -8,11 +8,11 @@ sudo apt install -y openvpn ufw
 
 # Download Easy RSA
 export easyRsaVersion=v3.0.6
-cd /home/${VM_USER}
 wget https://github.com/OpenVPN/easy-rsa/releases/download/${easyRsaVersion}/EasyRSA-unix-${easyRsaVersion}.tgz
 
 # Untar EasyRSA archive
 tar xvf EasyRSA-unix-${easyRsaVersion}.tgz
+sudo mv EasyRSA-${easyRsaVersion} /home/${VM_USER}
 
 # Correct permissions
 sudo chown -R ${VM_USER}:${VM_USER} /home/${VM_USER}
@@ -23,7 +23,7 @@ sudo cp /usr/share/doc/openvpn/examples/sample-config-files/server.conf.gz /etc/
 sudo gzip -d /etc/openvpn/server.conf.gz
 
 # Change OpenVPN configuration
-sudo sed -i 's/^;tls-auth ta.key 0 # This file is secret/s/^;//' /etc/opesudo sed -i 's/^;tls-auth ta.key 0 # This file is secret/s/^;//' /etc/openvpn/server.conf
+sudo sed -i '/^;tls-auth ta.key 0 # This file is secret/s/^;//' /etc/openvpn/server.conf
 sudo sed -i 's/^dh dh2048.pem/dh dh.pem/' /etc/openvpn/server.conf
 sudo sed -i '/^;cipher AES-256-CBC/s/^;//' /etc/openvpn/server.conf
 sudo sed -i '/^cipher AES-256-CBC/a auth SHA256' /etc/openvpn/server.conf
