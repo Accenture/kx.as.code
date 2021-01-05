@@ -23,7 +23,7 @@
         {
           "device_name": "/dev/xvda",
           "volume_type": "gp2",
-          "volume_size": "20",
+          "volume_size": "10",
           "delete_on_termination": true
         }
       ],
@@ -48,6 +48,7 @@
         "VM_PASSWORD={{user `vm_password`}}"
       ],
       "scripts": [
+        "scripts/base/vagrant-user.sh",
         "scripts/base/kx-user.sh",
         "scripts/base/update.sh"
       ],
@@ -57,6 +58,30 @@
     },
     {
       "environment_vars": [
+        "VM_USER={{user `vm_user`}}"
+      ],
+      "script":"scripts/base/virtualbox.sh",
+      "only": ["{{user `vm_name`}}-virtualbox"],
+      "type": "shell"
+    },
+    {
+      "script":"scripts/base/parallels.sh",
+      "only": ["{{user `vm_name`}}-parallels"],
+      "type": "shell"
+    },
+    {
+      "script": "scripts/base/vmware.sh",
+      "only": ["{{user `vm_name`}}-vmware-vsphere"],
+      "type": "shell"
+    },
+    {
+      "script": "scripts/base/vmware.sh",
+      "only": ["{{user `vm_name`}}-vmware-desktop"],
+      "type": "shell"
+    },
+    {
+      "environment_vars": [
+        "BASE_IMAGE_SSH_USER={{user `base_image_ssh_user`}}",
         "IP_ADDRESS={{user `ip_address`}}",
         "GATEWAY={{user `gateway`}}",
         "DNS1={{user `dns1`}}",
@@ -76,12 +101,22 @@
     {
       "type": "file",
       "source": "./dependencies/plymouth_theme",
-      "destination": "/home/admin/plymouth_theme"
+      "destination": "/home/vagrant/plymouth_theme"
     },
     {
       "type": "file",
       "source": "./dependencies/user_profile",
-      "destination": "/home/admin/user_profile"
+      "destination": "/home/vagrant/user_profile"
+    },
+    {
+      "type": "file",
+      "source": "./dependencies/lightdm_theme",
+      "destination": "/home/vagrant/lightdm_theme"
+    },
+    {
+      "type": "file",
+      "source": "./scripts/vpn-node",
+      "destination": "/home/vagrant/scripts"
     },
     {
       "environment_vars": [
@@ -109,7 +144,13 @@
         "BASE_IMAGE_SSH_USER={{user `base_image_ssh_user`}}",
         "VM_USER={{user `vm_user`}}",
         "VM_PASSWORD={{user `vm_password`}}",
-        "VERSION={{user `version`}}"
+        "GITHUB_USER={{user `github_user`}}",
+        "GITHUB_TOKEN={{user `github_token`}}",
+        "VERSION={{user `version`}}",
+        "IP_ADDRESS={{user `ip_address`}}",
+        "GATEWAY={{user `gateway`}}",
+        "DNS1={{user `dns1`}}",
+        "DNS2={{user `dns2`}}"
       ],
       "scripts": [
         "scripts/vpn-node/openvpn.sh",
@@ -122,7 +163,8 @@
     }
   ],
   "variables": {
-    "disk_size": "40960",
+    "disk_size": "10240",
+    "hostname": "kx-vpn",
     "headless": "true",
     "ssh_fullname": "KX Hero",
     "update": "true",
