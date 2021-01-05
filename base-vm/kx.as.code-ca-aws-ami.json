@@ -58,29 +58,6 @@
     },
     {
       "environment_vars": [
-        "VM_USER={{user `vm_user`}}"
-      ],
-      "script":"scripts/base/virtualbox.sh",
-      "only": ["{{user `vm_name`}}-virtualbox"],
-      "type": "shell"
-    },
-    {
-      "script":"scripts/base/parallels.sh",
-      "only": ["{{user `vm_name`}}-parallels"],
-      "type": "shell"
-    },
-    {
-      "script": "scripts/base/vmware.sh",
-      "only": ["{{user `vm_name`}}-vmware-vsphere"],
-      "type": "shell"
-    },
-    {
-      "script": "scripts/base/vmware.sh",
-      "only": ["{{user `vm_name`}}-vmware-desktop"],
-      "type": "shell"
-    },
-    {
-      "environment_vars": [
         "IP_ADDRESS={{user `ip_address`}}",
         "GATEWAY={{user `gateway`}}",
         "DNS1={{user `dns1`}}",
