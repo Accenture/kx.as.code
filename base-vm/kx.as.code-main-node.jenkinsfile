@@ -9,8 +9,8 @@ pipeline {
         string(name: 'github_repo_url', defaultValue: "github.com/Accenture/kx.as.code.git", description: "Source Github repository")
         string(name: 'github_source_branch', defaultValue: "feature/aws_ami_packer_build", description: "Source Github branch to build from")
         string(name: 'source_ami', defaultValue: 'ami-06be10ae4a207f54a', description: 'Source AMI set to Debian Buster 10')
-        string(name: 'access_key', description: 'access key')\
-	    string(name: 'secret_access', description: 'Secret key')
+        string(name: 'access_key', description: 'access key')
+	string(name: 'secret_access', description: 'Secret key')
       
     }
 
