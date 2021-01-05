@@ -17,6 +17,8 @@
         ]
     },
     "Description": "NGINX Ingress Controller",
+    "shortcut_text": "NGINX Ingress Controller",
+    "shortcut_icon": "nginx.png",
     "pre_install_scripts": [
         "createWildcardCertSecret.sh"
     ],

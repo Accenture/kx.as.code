@@ -63,7 +63,7 @@ greeter-session=lightdm-webkit2-greeter
 EOF'
 
 # Copy files needed for KX.AS.CODE look and file to relevant places
-sudo mv /home/vagrant/user_profile/images/* /usr/share/backgrounds/
+sudo mv /home/${BASE_IMAGE_SSH_USER}/user_profile/images/* /usr/share/backgrounds/
 
 # Set background image
 sudo cp /usr/share/backgrounds/background.jpg /usr/share/backgrounds/background.png

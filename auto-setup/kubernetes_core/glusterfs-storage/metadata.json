@@ -1,12 +1,14 @@
 {
     "name": "glusterfs-storage",
-    "Description": "GlusterFS Network Storage (slow)",
     "namespace": "kube-system",
     "installation_type": "script",
     "installation_group_folder": "kubernetes_core",
     "install_scripts": [
         "installGlusterFs.sh"
     ],
+    "Description": "GlusterFS Network Storage (slow)",
+    "shortcut_text": "GlusterFS",
+    "shortcut_icon": "glusterfs.png",
     "pre_install_scripts": [],
     "post_install_scripts": []
 }

@@ -2,8 +2,8 @@
 
 # Create user (if not already present)
 if ! id -u $VM_USER > /dev/null 2>&1; then
-    sudo groupadd $VM_USER -g 1000
-    sudo useradd $VM_USER -u 1000 -g $VM_USER -G sudo -d /home/$VM_USER --create-home
+    sudo groupadd $VM_USER -g 1600
+    sudo useradd $VM_USER -u 1600 -g $VM_USER -G sudo -d /home/$VM_USER --create-home
     echo "${VM_USER}:${VM_PASSWORD}" | sudo chpasswd
 fi
 
