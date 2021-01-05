@@ -77,22 +77,22 @@
     {
       "type": "file",
       "source": "./dependencies/plymouth_theme",
-      "destination": "/home/vagrant/plymouth_theme"
+      "destination": "/home/admin/plymouth_theme"
     },
     {
       "type": "file",
       "source": "./dependencies/user_profile",
-      "destination": "/home/vagrant/user_profile"
+      "destination": "/home/admin/user_profile"
     },
     {
       "type": "file",
       "source": "./dependencies/lightdm_theme",
-      "destination": "/home/vagrant/lightdm_theme"
+      "destination": "/home/admin/lightdm_theme"
     },
     {
       "type": "file",
       "source": "./scripts/vpn-node",
-      "destination": "/home/vagrant/scripts"
+      "destination": "/home/admin/scripts"
     },
     {
       "environment_vars": [
