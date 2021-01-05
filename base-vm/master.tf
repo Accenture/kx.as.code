@@ -1,7 +1,7 @@
 variable "ACCESS_KEY" {}
 variable "SECRET_KEY" {}
 variable "AMI_ID" {}
-variable "REGION"
+variable "REGION" {}
 
 provider "aws" {
   access_key = var.ACCESS_KEY
