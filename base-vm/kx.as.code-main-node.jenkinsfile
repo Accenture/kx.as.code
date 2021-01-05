@@ -9,6 +9,8 @@ pipeline {
         string(name: 'github_repo_url', defaultValue: "github.com/Accenture/kx.as.code.git", description: "Source Github repository")
         string(name: 'github_source_branch', defaultValue: "feature/aws_ami_packer_build", description: "Source Github branch to build from")
         string(name: 'source_ami', defaultValue: 'ami-06be10ae4a207f54a', description: 'Source AMI set to Debian Buster 10')
+        string(name: 'access_key', description: 'access key')\
+	    string(name: 'secret_access', description: 'Secret key')
       
     }
 
@@ -33,8 +35,8 @@ pipeline {
 
       stage('TF Apply') {
         steps {
-          sh 'TF_VAR_ACCESS_KEY=<YOUR_ACESS_KEY> \
-              TF_VAR_SECRET_KEY=<YOUR_SECRET_KEY> \
+          sh 'TF_VAR_ACCESS_KEY=$(access_key) \
+              TF_VAR_SECRET_KEY=$(secret_access) \
               TF_VAR_AMI_ID=$(source_ami) \
               terraform apply'
         }
