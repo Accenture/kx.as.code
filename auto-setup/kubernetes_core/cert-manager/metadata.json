@@ -1,6 +1,5 @@
 {
     "name": "cert-manager",
-    "Description": "Cert Manager",
     "namespace": "cert-manager",
     "installation_type": "script",
     "installation_group_folder": "kubernetes_core",
@@ -8,6 +7,9 @@
     "install_scripts": [
         "installCertManager.sh"
     ],
+    "Description": "Cert Manager",
+    "shortcut_text": "Cert Manager Network",
+    "shortcut_icon": "cert-manager.png",
     "pre_install_scripts": [],
     "post_install_scripts": []
 }
