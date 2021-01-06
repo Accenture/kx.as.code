@@ -4,6 +4,7 @@ export { default as NewProfileFooter } from "./Footer/NewProfileFooter";
 export { default as NewProfileResource } from "./NewProfileViews/Resourceconfig/NewProfileResource";
 export { default as NewProfileOptional } from "./NewProfileViews/OptionalConfig/NewProfileOptional";
 export { default as NewProfileReview } from "./NewProfileViews/Review&Launch/NewProfileReview";
+export { default as NewProfileReviewA } from "./NewProfileViews/Review&Launch/NewProfileReviewA";
 export { default as NewProfileStorage } from "./NewProfileViews/Storage&NetworkConfig/NewProfileStorage";
 export { default as NewProfileSteps } from "./Header/NewProfileSteps";
 export { default as NewProfileTemplate } from "./ProfileWrapper/NewProfileTemplate";

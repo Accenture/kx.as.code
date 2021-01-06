@@ -1,12 +1,14 @@
 {
     "name": "kubernetes-base-services",
-    "Description": "Kubernetes Base Services",
     "namespace": "kube-system",
     "installation_type": "script",
     "installation_group_folder": "kubernetes_core",
     "install_scripts": [
         "installKubernetesBaseServices.sh"
     ],
+    "Description": "Kubernetes Base Services",
+    "shortcut_text": "Kubernetes Base Services",
+    "shortcut_icon": "kubernetes.png",
     "pre_install_scripts": [],
     "post_install_scripts": [
         "configureCoreDnsWithKxAsCodeDnsServer.sh",

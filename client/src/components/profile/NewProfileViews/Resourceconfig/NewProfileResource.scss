@@ -3,3 +3,52 @@
     text-align: center;
     height: 200px;
 }
+#new-profile-storage {
+    text-align: center;
+    height: 150px;
+}
+#new-title {
+    text-align: left;
+    height: 50px;
+    font-size: x-large;
+    opacity: 0.8;
+    font-weight: 500;
+    display: block;
+}
+#new-title2 {
+    text-align: left;
+    height: 50px;
+    font-size: large;
+    opacity: 0.8;
+    font-weight: 500;
+}
+.card {
+    transition: 0.3s;
+    width: 400px;
+    height: 10%;
+    display: flex;
+    background-color: #212938;
+    flex-direction: column;
+    align-items: center;
+    justify-items: center;
+    margin: 20px;
+} 
+.card2 {
+    transition: 0.3s;
+    width: 395px !important;
+    height: 100px !important;
+    display: flex;
+    background-color: #212938;
+    flex-direction: column;
+    align-items: center;
+    justify-items: center;
+    margin: 20px;
+}
+#title3{
+    text-align: center;
+    text-justify:inter-word;
+    height: 50px;
+    font-size: 14px;
+    opacity: 0.8;
+    font-weight: 500;
+}

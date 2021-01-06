@@ -17,7 +17,7 @@ if [[ $UPDATE =~ true || $UPDATE =~ 1 ]]; then
     echo "==> Upgrading packages"
     sudo apt-get -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" dist-upgrade
 fi
-sudo apt-get -y install --no-install-recommends build-essential linux-headers-generic
+sudo apt-get -y install --no-install-recommends build-essential
 sudo apt-get -y install --no-install-recommends ssh nfs-common curl git vim
 
 # Clean up the apt cache
