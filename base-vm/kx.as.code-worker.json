@@ -112,57 +112,6 @@
       "parallels_tools_flavor": "{{user `parallels_tools_flavor`}}"
   },
   {
-      "type": "vmware-iso",
-      "name": "{{user `vm_name`}}-vmware-vsphere",
-      "vm_name": "{{user `vm_name`}}{{user `vm_suffix`}}-{{user `version`}}",
-      "output_directory": "output-worker{{user `vm_suffix`}}/vmware-vsphere-{{user `version`}}",
-      "boot_wait": "10s",
-      "boot_command": [
-        "<esc><wait>",
-        "install <wait>",
-        " preseed/url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/{{user `preseed_path`}} <wait>",
-        "debian-installer=en_US.UTF-8 <wait>",
-        "auto <wait>",
-        "locale=en_US.UTF-8 <wait>",
-        "kbd-chooser/method=us <wait>",
-        "keyboard-configuration/xkb-keymap=us <wait>",
-        "netcfg/get_hostname={{user `hostname` }} <wait>",
-        "netcfg/get_domain={{user `domain` }} <wait>",
-        "fb=false <wait>",
-        "debconf/frontend=noninteractive <wait>",
-        "console-setup/ask_detect=false <wait>",
-        "console-keymaps-at/keymap=us <wait>",
-        "grub-installer/bootdev=/dev/sda <wait>",
-        "<enter><wait>"
-      ],
-      "disk_size": "{{user `disk_size`}}",
-      "vmx_data": {
-        "numvcpus": "{{user `cpus`}}",
-        "memsize": "{{user `memory`}}",
-        "sharedFolder0.present": "TRUE",
-        "sharedFolder0.enabled": "TRUE",
-        "sharedFolder0.readAccess": "TRUE",
-        "sharedFolder0.writeAccess": "TRUE",
-        "sharedFolder0.hostPath": "{{user `host_data_directory`}}",
-        "sharedFolder0.guestName": "KX_Share",
-        "sharedFolder0.expiration": "never",
-        "isolation.tools.hgfs.disable": "FALSE",
-        "pref.sharedFolder.maxNum": "1"
-      },
-      "guest_os_type": "{{user `vmware_guest_os_type`}}",
-      "http_directory": "http",
-      "iso_urls": [
-        "{{user `iso_path`}}/{{user `iso_file`}}",
-        "{{user `iso_url`}}"
-      ],
-      "iso_checksum": "{{user `iso_checksum_type`}}:{{user `iso_checksum`}}",
-      "ssh_username": "vagrant",
-      "ssh_password": "vagrant",
-      "ssh_port": 22,
-      "ssh_timeout": "3600s",
-      "shutdown_command": "{{user `shutdown_command`}}"
-  },
-  {
     "type": "vmware-iso",
     "name": "{{user `vm_name`}}-vmware-desktop",
     "vm_name": "{{user `vm_name`}}{{user `vm_suffix`}}-{{user `version`}}",
@@ -215,7 +164,70 @@
     "ssh_port": 22,
     "ssh_timeout": "3600s",
     "shutdown_command": "{{user `shutdown_command`}}"
-}],
+  },{
+      "type": "vsphere-iso",
+      "name": "{{user `vm_name`}}-vmware-vsphere",
+      "vm_name": "{{user `vm_name`}}{{user `vm_suffix`}}-{{user `version`}}",
+      "floppy_files": [ "http/preseed-worker.cfg" ],
+      "boot_wait": "10s",
+      "boot_order": "disk,cdrom",
+      "boot_command": [
+        "<esc><wait>",
+        "install <wait>",
+        " preseed/url=http://{{user `builder_ip`}}:{{ .HTTPPort }}/{{user `preseed_path`}} <wait>",
+        "debian-installer=en_US.UTF-8 <wait>",
+        "auto <wait>",
+        "locale=en_US.UTF-8 <wait>",
+        "kbd-chooser/method=us <wait>",
+        "keyboard-configuration/xkb-keymap=us <wait>",
+        "netcfg/get_hostname={{user `hostname` }} <wait>",
+        "netcfg/get_domain={{user `domain` }} <wait>",
+        "fb=false <wait>",
+        "debconf/frontend=noninteractive <wait>",
+        "console-setup/ask_detect=false <wait>",
+        "console-keymaps-at/keymap=us <wait>",
+        "grub-installer/bootdev=/dev/sda <wait>",
+        "<enter><wait>"
+      ],
+      "guest_os_type": "{{user `vmware_guest_os_type`}}",
+      "http_directory": "http",
+      "iso_urls": [
+        "{{user `iso_path`}}/{{user `iso_file`}}",
+        "{{user `iso_url`}}"
+      ],
+      "iso_checksum": "{{user `iso_checksum_type`}}:{{user `iso_checksum`}}",
+      "ssh_username": "vagrant",
+      "ssh_password": "vagrant",
+      "ssh_port": 22,
+      "ssh_timeout": "3600s",
+      "shutdown_command": "{{user `shutdown_command`}}",
+      "convert_to_template": true,
+      "vcenter_server": "{{user `vsphere_server`}}",
+      "host": "{{user `vsphere_host`}}",
+      "username": "{{user `vsphere_username`}}",
+      "password": "{{user `vsphere_password`}}",
+      "insecure_connection": "true",
+      "datacenter": "{{user `vsphere_dc`}}",
+      "cluster": "{{user `vsphere_cluster`}}",
+      "network_adapters": [
+        {
+          "network": "{{user `vsphere_network`}}",
+          "network_card": "vmxnet3"
+        }
+      ],    "datastore": "{{user `vsphere_datastore`}}",
+      "folder": "{{user `vsphere_folder`}}",
+      "CPUs": "{{user `vsphere_cpu`}}",
+      "RAM": "{{user `vsphere_memory`}}",
+      "RAM_reserve_all": true,
+      "firmware": "bios",
+      "disk_controller_type": "lsilogic-sas",
+      "storage": [
+        {
+          "disk_size": "{{user `vsphere_disk_size`}}",
+          "disk_thin_provisioned": true
+        }
+      ]
+    }],
   "post-processors":
   [
     {
@@ -445,7 +457,7 @@
       "virtualbox_guest_os_type": "Debian_64",
       "vm_name": "kx.as.code-worker",
       "vm_suffix": "-demo",
-      "vmware_guest_os_type": "debian10_64Guest",
+      "vmware_guest_os_type": "ubuntu64Guest",
       "ip_address":"10.100.76.100"
   }
 }

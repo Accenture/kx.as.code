@@ -3,7 +3,7 @@ variable "vsphere_user" {
 }
 
 variable "vsphere_password" {
-  default = "VMware1!!"
+  default = "VMware1!"
 }
 
 variable "vsphere_datacenter" {
@@ -18,8 +18,12 @@ variable "vsphere_host" {
   default = "192.168.40.184"
 }
 
-variable "vsphere_folder" {
+variable "vsphere_kx_vms_folder" {
   default = "kx.as.code-vms"
+}
+
+variable "vsphere_kx_templates_folder" {
+  default = "kx.as.code-templates"
 }
 
 variable "vsphere_network" {
@@ -34,6 +38,14 @@ variable "vsphere_resource_pool" {
   default = "kx01-m01-cl01/Resources"
 }
 
+variable "kx_main_vm_template" {
+  default = "kx.as.code-main-demo-0.6.4"
+}
+
+variable "kx_worker_vm_template" {
+    default = "kx.as.code-worker-demo-0.6.4"
+}
+
 variable "main_node_num_cpus" {
   default = 2
 }
@@ -43,7 +55,7 @@ variable "main_node_memory" {
 }
 
 variable "main_node_guest_id" {
-  default = "other3xLinux64Guest"
+  default = "debian10_64Guest"
 }
 
 variable "worker_node_num_cpus" {
@@ -55,5 +67,5 @@ variable "worker_node_memory" {
 }
 
 variable "worker_node_guest_id" {
-  default = "other3xLinux64Guest"
+  default = "debian10_64Guest"
 }
