@@ -26,10 +26,9 @@ pipeline {
 
       stage('TF Init&Plan') {
         steps {
-	  sh """
-	  PATH=/bin/terraform
-          terraform init
-          terraform plan"
+	  
+          sh 'terraform init'
+          sh 'terraform plan'
         }      
       }
 
