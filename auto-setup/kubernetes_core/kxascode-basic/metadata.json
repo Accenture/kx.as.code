@@ -1,6 +1,5 @@
 {
     "name": "kxascode-basic",
-    "Description": "KX.AS.CODE Basic Install without ArgoCD, Gitlab and Harbor",
     "namespace": "devops",
     "installation_type": "script",
     "installation_group_folder": "kubernetes_core",
@@ -8,6 +7,9 @@
     "install_scripts": [
         "installKxAsCodeAppsWithoutTools.sh"
     ],
+    "Description": "KX.AS.CODE Basic Install without ArgoCD, Gitlab and Harbor",
+    "shortcut_text": "KX.AS.CODE Base Apps",
+    "shortcut_icon": "kxascode.png",
     "pre_install_scripts": [],
     "post_install_scripts": []
 }

@@ -31,8 +31,8 @@ const NewProfileGeneralForm = () => (
         <label htmlFor="new-prof-gen-form-ssl-provider">Profile Type*</label>
       </Grid>
       <Grid item>
-        <TextBox htmlFor="new-prof-gen-form-ssl-provider" type="text" placeholder="OPTIONS" />
-        {/* <DropDown data={["OPTIONS"]} id="new-prof-gen-form-ssl-provider"/> */}
+        {/* <TextBox htmlFor="new-prof-gen-form-ssl-provider" type="text" placeholder="OPTIONS" /> */}
+        <DropDown data={["OPTIONS"]} id="new-prof-gen-form-ssl-provider"/>
       </Grid>
       <Grid item>
         <label htmlFor="new-prof-gen-form-platform-selection-type">
@@ -40,8 +40,8 @@ const NewProfileGeneralForm = () => (
         </label>
       </Grid>
       <Grid item>
-        <TextBox htmlFor="new-prof-gen-form-platform-selection-type" type="text" placeholder="OPTIONS" />
-        {/* <DropDown data={[" OPTIONS"]} id="new-prof-gen-form-ssl-provider"/> */}
+        {/* <TextBox htmlFor="new-prof-gen-form-platform-selection-type" type="text" placeholder="OPTIONS" /> */}
+        <DropDown data={["OPTIONS"]} id="new-prof-gen-form-ssl-provider"/>
       </Grid>
       <Grid item>
         <CustomizedCheckbox />
