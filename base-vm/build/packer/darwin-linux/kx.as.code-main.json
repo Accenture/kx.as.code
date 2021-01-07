@@ -10,7 +10,7 @@
       "type": "virtualbox-iso",
       "name": "{{user `vm_name`}}-virtualbox",
       "vm_name": "{{user `vm_name`}}{{user `vm_suffix`}}-{{user `version`}}",
-      "output_directory": "output-main{{user `vm_suffix`}}/virtualbox-{{user `version`}}",
+      "output_directory": "../../../output-main{{user `vm_suffix`}}/virtualbox-{{user `version`}}",
       "boot_wait": "10s",
       "format": "ova",
       "boot_command": [
@@ -81,7 +81,7 @@
       "type": "parallels-iso",
       "name": "{{user `vm_name`}}-parallels",
       "vm_name": "{{user `vm_name`}}{{user `vm_suffix`}}-{{user `version`}}",
-      "output_directory": "output-main{{user `vm_suffix`}}/parallels-{{user `version`}}",
+      "output_directory": "../../../output-main{{user `vm_suffix`}}/parallels-{{user `version`}}",
       "boot_wait": "1s",
       "boot_command": "{{user `boot_command`}}{{.HTTPIP}}:{{.HTTPPort}}/preseed.cfg<wait> , --- <enter>",
       "disk_size": "{{user `disk_size`}}",
@@ -120,7 +120,7 @@
       "type": "vmware-iso",
       "name": "{{user `vm_name`}}-vmware-desktop",
       "vm_name": "{{user `vm_name`}}{{user `vm_suffix`}}-{{user `version`}}",
-      "output_directory": "output-main{{user `vm_suffix`}}/vmware-desktop-{{user `version`}}",
+      "output_directory": "../../../output-main{{user `vm_suffix`}}/vmware-desktop-{{user `version`}}",
       "boot_wait": "10s",
       "boot_command": [
         "<esc><wait>",
@@ -228,22 +228,37 @@
     "RAM": "{{user `vsphere_memory`}}",
     "RAM_reserve_all": true,
     "firmware": "bios",
-    "disk_controller_type": "lsilogic-sas",
+    "disk_controller_type": ["lsilogic-sas", "lsilogic-sas"],
     "storage": [
       {
-        "disk_size": "{{user `vsphere_disk_size`}}",
-        "disk_thin_provisioned": true
+        "disk_size": "{{user `vsphere_disk_size_sda`}}",
+        "disk_thin_provisioned": true,
+        "disk_controller_index": 0
+      },
+      {
+        "disk_size": "{{user `vsphere_disk_size_sdb`}}",
+        "disk_thin_provisioned": true,
+        "disk_controller_index": 0
+      },
+      {
+        "disk_size": "{{user `vsphere_disk_size_sdc`}}",
+        "disk_thin_provisioned": true,
+        "disk_controller_index": 1
       }
-    ]
-}],
+    ],
+    "export": {
+      "force": true,
+      "output_directory": "../../../output-main{{user `vm_suffix`}}/vmware-vsphere-{{user `version`}}"
+    }
+  }],
   "post-processors":
   [
     {
       "type": "shell-local",
       "environment_vars": ["VERSION={{user `version`}}"],
       "execute_command": ["bash", "-c", "{{.Vars}} {{.Script}}"],
-      "use_linux_pathing": true,
-      "script": "scripts/post-processing/create-manifest-json.sh"
+      "only_on": ["darwin","linux"],
+      "script": "../../../scripts/post-processing/create-manifest-json.sh"
     },
     {
       "type": "manifest",
@@ -257,14 +272,14 @@
       "type": "shell-local",
       "environment_vars": ["VERSION={{user `version`}}"],
       "execute_command": ["bash", "-c", "{{.Vars}} {{.Script}}"],
-      "use_linux_pathing": true,
-      "script": "scripts/post-processing/create-info-json.sh"
+      "only_on": ["darwin","linux"],
+      "script": "../../../scripts/post-processing/create-info-json.sh"
     },
     {
       "keep_input_artifact": true,
-      "output": "boxes/{{.Provider}}/{{user `vm_name`}}{{user `vm_suffix`}}-{{user `version`}}.box",
+      "output": "../../../boxes/{{.Provider}}/{{user `vm_name`}}{{user `vm_suffix`}}-{{user `version`}}.box",
       "type": "vagrant",
-      "vagrantfile_template": "boxes/kx.as.code-main-virtualbox.Vagrantfile",
+      "vagrantfile_template": "../../../boxes/kx.as.code-main-virtualbox.Vagrantfile",
       "only": ["{{user `vm_name`}}-virtualbox"],
       "include": [
           "boxes/info.json",
@@ -273,9 +288,9 @@
     },
     {
       "keep_input_artifact": true,
-      "output": "boxes/{{.Provider}}/{{user `vm_name`}}{{user `vm_suffix`}}-{{user `version`}}.box",
+      "output": "../../../boxes/{{.Provider}}/{{user `vm_name`}}{{user `vm_suffix`}}-{{user `version`}}.box",
       "type": "vagrant",
-      "vagrantfile_template": "boxes/kx.as.code-main-parallels.Vagrantfile",
+      "vagrantfile_template": "../../../boxes/kx.as.code-main-parallels.Vagrantfile",
       "only": ["{{user `vm_name`}}-parallels"],
       "include": [
           "boxes/info.json",
@@ -284,55 +299,55 @@
     },
     {
       "keep_input_artifact": true,
-      "output": "boxes/{{.Provider}}/{{user `vm_name`}}{{user `vm_suffix`}}-{{user `version`}}.box",
+      "output": "../../../boxes/{{.Provider}}/{{user `vm_name`}}{{user `vm_suffix`}}-{{user `version`}}.box",
       "type": "vagrant",
-      "vagrantfile_template": "boxes/kx.as.code-main-vmware.Vagrantfile",
+      "vagrantfile_template": "../../../boxes/kx.as.code-main-vmware.Vagrantfile",
       "only": ["{{user `vm_name`}}-vmware-vsphere"],
       "include": [
-          "boxes/info.json",
-          "boxes/manifest.json"
+          "../../../boxes/info.json",
+          "../../../boxes/manifest.json"
       ]
     },
     {
       "keep_input_artifact": true,
-      "output": "boxes/{{.Provider}}/{{user `vm_name`}}-{{.Provider}}-{{user `version`}}.box",
+      "output": "../../../boxes/{{.Provider}}/{{user `vm_name`}}-{{.Provider}}-{{user `version`}}.box",
       "type": "vagrant",
-      "vagrantfile_template": "boxes/kx.as.code-main-vmware.Vagrantfile",
+      "vagrantfile_template": "../../../boxes/kx.as.code-main-vmware.Vagrantfile",
       "only": ["{{user `vm_name`}}-vmware-desktop"],
       "include": [
-          "boxes/info.json",
-          "boxes/manifest.json"
+          "../../../boxes/info.json",
+          "../../../boxes/manifest.json"
       ]
     },
-    {
+  {
     "type": "shell-local",
     "environment_vars": ["VERSION={{user `version`}}"],
     "execute_command": ["bash", "-c", "{{.Vars}} {{.Script}}"],
-    "use_linux_pathing": true,
-    "script": "scripts/post-processing/export-vmware-ova.sh",
+    "only_on": ["darwin","linux"],
+    "script": "../../../scripts/post-processing/export-vmware-ova.sh",
     "only": ["{{user `vm_name`}}-vmware-vsphere"]
   },
   {
     "type": "shell-local",
     "environment_vars": ["VERSION={{user `version`}}"],
     "execute_command": ["bash", "-c", "{{.Vars}} {{.Script}}"],
-    "use_linux_pathing": true,
-    "script": "scripts/post-processing/export-vmware-ova.sh",
+    "only_on": ["darwin","linux"],
+    "script": "../../../scripts/post-processing/export-vmware-ova.sh",
     "only": ["{{user `vm_name`}}-vmware-desktop"]
   },
   {
     "type": "shell-local",
     "environment_vars": ["VERSION={{user `version`}}"],
     "execute_command": ["bash", "-c", "{{.Vars}} {{.Script}}"],
-    "use_linux_pathing": true,
-    "script": "scripts/post-processing/create-metadata-json.sh"
+    "only_on": ["darwin","linux"],
+    "script": "../../../scripts/post-processing/create-metadata-json.sh"
   },
   {
     "type": "shell-local",
     "environment_vars": ["VERSION={{user `version`}}"],
     "execute_command": ["bash", "-c", "{{.Vars}} {{.Script}}"],
-    "use_linux_pathing": true,
-    "script": "scripts/post-processing/add-vagrant-box.sh"
+    "only_on": ["darwin","linux"],
+    "script": "../../../scripts/post-processing/add-vagrant-box.sh"
   }
 ],
   "provisioners": [
@@ -342,9 +357,9 @@
           "VM_PASSWORD={{user `vm_password`}}"
       ],
       "scripts": [
-        "scripts/base/vagrant-user.sh",
-        "scripts/base/kx-user.sh",
-        "scripts/base/update.sh"
+        "../../../scripts/base/vagrant-user.sh",
+        "../../../scripts/base/kx-user.sh",
+        "../../../scripts/base/update.sh"
       ],
       "type": "shell",
       "start_retry_timeout": "15m",
@@ -354,22 +369,22 @@
       "environment_vars": [
           "VM_USER={{user `vm_user`}}"
       ],
-      "script":"scripts/base/virtualbox.sh",
+      "script":"../../../scripts/base/virtualbox.sh",
       "only": ["{{user `vm_name`}}-virtualbox"],
       "type": "shell"
     },
     {
-      "script":"scripts/base/parallels.sh",
+      "script":"../../../scripts/base/parallels.sh",
       "only": ["{{user `vm_name`}}-parallels"],
       "type": "shell"
     },
     {
-      "script": "scripts/base/vmware.sh",
+      "script": "../../../scripts/base/vmware.sh",
       "only": ["{{user `vm_name`}}-vmware-vsphere"],
       "type": "shell"
     },
     {
-      "script": "scripts/base/vmware.sh",
+      "script": "../../../scripts/base/vmware.sh",
       "only": ["{{user `vm_name`}}-vmware-desktop"],
       "type": "shell"
     },
@@ -381,10 +396,10 @@
         "DNS2={{user `dns2`}}"
     ],
       "scripts": [
-        "scripts/base/cleanup.sh",
-        "scripts/base/localtime.sh",
-        "scripts/base/power.sh",
-        "scripts/base/network.sh"
+        "../../../scripts/base/cleanup.sh",
+        "../../../scripts/base/localtime.sh",
+        "../../../scripts/base/power.sh",
+        "../../../scripts/base/network.sh"
       ],
       "type": "shell",
       "pause_before": "120s",
@@ -393,21 +408,22 @@
     },
     {
       "type": "file",
-      "source": "./dependencies/plymouth_theme",
+      "source": "../../../dependencies/plymouth_theme",
       "destination": "/home/vagrant/plymouth_theme"
     },
     {
       "type": "file",
-      "source": "./dependencies/user_profile",
+      "source": "../../../dependencies/user_profile",
       "destination": "/home/vagrant/user_profile"
     },
     {
       "type": "file",
-      "source": "./dependencies/lightdm_theme",
+      "source": "../../../dependencies/lightdm_theme",
       "destination": "/home/vagrant/lightdm_theme"
     },
     {
       "environment_vars": [
+           "BASE_IMAGE_SSH_USER={{user `base_image_ssh_user`}}",
            "VM_USER={{user `vm_user`}}",
            "VM_PASSWORD={{user `vm_password`}}",
            "GITHUB_USER={{user `github_user`}}",
@@ -416,8 +432,12 @@
            "COMPUTE_ENGINE_BUILD={{user `compute_engine_build`}}"
        ],
        "scripts": [
-        "scripts/common/motd.sh"
-       ],
+           "../../../scripts/common/motd.sh",
+           "../../../scripts/common/kx.as.code.sh",
+           "../../../scripts/common/tools.sh",
+           "../../../scripts/common/powerline.sh",
+           "../../../scripts/common/docker.sh"
+     ],
        "type": "shell",
        "pause_before": "120s",
        "start_retry_timeout": "15m",
@@ -425,6 +445,7 @@
      },
      {
       "environment_vars": [
+           "BASE_IMAGE_SSH_USER={{user `base_image_ssh_user`}}",
            "VM_USER={{user `vm_user`}}",
            "VM_PASSWORD={{user `vm_password`}}",
            "GITHUB_USER={{user `github_user`}}",
@@ -436,7 +457,17 @@
            "DNS2={{user `dns2`}}"
        ],
        "scripts": [
-        "scripts/main-node/cleanup.sh"
+           "../../../scripts/main-node/dns.sh",
+           "../../../scripts/main-node/look-and-feel.sh",
+           "../../../scripts/main-node/kx.as.code.sh",
+           "../../../scripts/main-node/profile.sh",
+           "../../../scripts/main-node/tools.sh",
+           "../../../scripts/main-node/rabbitmq.sh",
+           "../../../scripts/main-node/atom.sh",
+           "../../../scripts/main-node/vscode.sh",
+           "../../../scripts/main-node/upgrade-xfce.sh",
+           "../../../scripts/main-node/remoteDesktop.sh",
+           "../../../scripts/main-node/cleanup.sh"
        ],
        "type": "shell",
        "pause_before": "120s",
@@ -462,12 +493,13 @@
       "no_proxy": "{{env `no_proxy`}}",
       "parallels_guest_os_type": "linux-2.6",
       "parallels_tools_flavor": "lin",
-      "preseed_path": "preseed-worker.cfg",
+      "preseed_path": "preseed.cfg",
       "shutdown_command": "echo 'vagrant' | sudo -Srm -rf shutdown -P now",
       "ssh_fullname": "KX Hero",
       "update": "true",
       "video_memory": "128",
       "virtualbox_guest_os_type": "Debian_64",
+      "base_image_ssh_user": "vagrant",
       "vm_name": "kx.as.code-main",
       "vm_suffix": "-demo",
       "vmware_guest_os_type": "ubuntu64Guest"
