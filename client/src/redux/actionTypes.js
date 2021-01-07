@@ -1,3 +1,4 @@
 export const SET_NEXT_VIEW = "SET_NEXT_VIEW";
 export const SET_LAST_VIEW = "SET_LAST_VIEW";
 export const SET_DEFAULT_VIEW = "SET_DEFAULT_VIEW";
+export const SET_GENERAL_CONFIG = "SET_GENERAL_CONFIG";
