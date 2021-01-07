@@ -43,8 +43,8 @@
           ["modifyvm", "{{.Name}}", "--cpus", "{{user `cpus`}}"],
           ["modifyvm", "{{.Name}}", "--clipboard", "bidirectional"],
           ["sharedfolder", "add", "{{.Name}}", "--name", "KX_Share", "--hostpath", "{{user `host_data_directory`}}", "--automount"],
-          ["createhd", "--format", "VDI", "--filename", "output-worker{{user `vm_suffix`}}/virtualbox-{{user `version`}}/{{.Name}}-local-k8s-storage.vdi", "--size", "104448" ],
-          ["storageattach", "{{.Name}}", "--storagectl", "SATA Controller", "--port", "1", "--device","0","--type", "hdd", "--medium", "output-worker{{user `vm_suffix`}}/virtualbox-{{user `version`}}/{{.Name}}-local-k8s-storage.vdi" ]
+          ["createhd", "--format", "VDI", "--filename", "../../../output-worker{{user `vm_suffix`}}/virtualbox-{{user `version`}}/{{.Name}}-local-k8s-storage.vdi", "--size", "104448" ],
+          ["storageattach", "{{.Name}}", "--storagectl", "SATA Controller", "--port", "1", "--device","0","--type", "hdd", "--medium", "../../../output-worker{{user `vm_suffix`}}/virtualbox-{{user `version`}}/{{.Name}}-local-k8s-storage.vdi" ]
       ],
       "vboxmanage_post": [
         ["modifyvm", "{{.Name}}", "--nic1", "natnetwork","--natnetwork1","kxascode"]
