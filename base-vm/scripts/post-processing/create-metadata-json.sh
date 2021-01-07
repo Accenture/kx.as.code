@@ -22,7 +22,7 @@ if [ -f ../../../boxes/${PROVIDERDIR}/${PACKER_BUILD_NAME}_metadata.json ]; then
     mv ../../../boxes/${PROVIDERDIR}/${PACKER_BUILD_NAME}_metadata.json boxes/${PROVIDERDIR}/${PACKER_BUILD_NAME}_metadata.json.previous
 fi
 
-cp templates/metadata.template ../../../boxes/${PROVIDERDIR}/${PACKER_BUILD_NAME}_metadata.json
+cp ../../../templates/metadata.template ../../../boxes/${PROVIDERDIR}/${PACKER_BUILD_NAME}_metadata.json
 
 # Check is running from Mac (Darwin) or Linux (including WSL and Windows Git Bash)
 if [ "$(uname)" == "Darwin" ]; then
