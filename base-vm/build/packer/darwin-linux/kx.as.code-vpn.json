@@ -491,7 +491,7 @@
     "no_proxy": "{{env `no_proxy`}}",
     "parallels_guest_os_type": "linux-2.6",
     "parallels_tools_flavor": "lin",
-    "preseed_path": "preseed-worker.cfg",
+    "preseed_path": "preseed.cfg",
     "shutdown_command": "echo 'vagrant' | sudo -Srm -rf shutdown -P now",
     "base_image_ssh_user": "vagrant",
     "ssh_fullname": "KX Hero",
