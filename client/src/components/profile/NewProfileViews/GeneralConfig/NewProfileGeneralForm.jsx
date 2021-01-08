@@ -6,6 +6,7 @@ import { TextBox, DropDown, CustomizedCheckbox } from "../../../ReusableComponen
 import { connect } from "react-redux";
 import { setGeneralConfig } from "../../../../redux/actions";
 
+
 const NewProfileGeneralForm = (props) => {
   const initialState = props.config;
   console.log(initialState)
