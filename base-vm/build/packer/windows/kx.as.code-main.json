@@ -262,7 +262,7 @@
     },
     {
       "type": "manifest",
-      "output": "boxes/manifest.json",
+      "output": "../../../boxes/manifest.json",
       "strip_path": true,
       "custom_data": {
           "version": "{{user `version`}}"
