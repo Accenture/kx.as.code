@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -x
 
 export PROVIDERDIR=$(echo $PACKER_BUILDER_TYPE | sed 's/-iso//')
 
@@ -15,11 +15,11 @@ if [ ! -d ../../../boxes/${PROVIDERDIR} ]; then
 fi
 
 if [ -f ../../../boxes/manifest.json ]; then
-    mv ../../../boxes/manifest.json boxes/${PROVIDERDIR}/${PACKER_BUILD_NAME}_manifest.json
+    mv ../../../boxes/manifest.json ../../../boxes/${PROVIDERDIR}/${PACKER_BUILD_NAME}_manifest.json
 fi
 
 if [ -f ../../../boxes/${PROVIDERDIR}/${PACKER_BUILD_NAME}_metadata.json ]; then 
-    mv ../../../boxes/${PROVIDERDIR}/${PACKER_BUILD_NAME}_metadata.json boxes/${PROVIDERDIR}/${PACKER_BUILD_NAME}_metadata.json.previous
+    mv ../../../boxes/${PROVIDERDIR}/${PACKER_BUILD_NAME}_metadata.json ../../../boxes/${PROVIDERDIR}/${PACKER_BUILD_NAME}_metadata.json.previous
 fi
 
 cp ../../../templates/metadata.template ../../../boxes/${PROVIDERDIR}/${PACKER_BUILD_NAME}_metadata.json
