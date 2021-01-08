@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -x
 
 export PROVIDER=$(echo $PACKER_BUILDER_TYPE | sed 's/-iso//')
 
