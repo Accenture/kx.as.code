@@ -9,7 +9,6 @@ import { setGeneralConfig } from "../../../../redux/actions";
 
 const NewProfileGeneralForm = (props) => {
   const initialState = props.config;
-  console.log(initialState)
   const [generalConfig, setGeneralConfig] = useReducer(
     (state, newState) => ({...state, ...newState}),
     initialState)
