@@ -10,7 +10,7 @@ const NewProfileOptionalForm = (props) => {
     const [activeColor, setActiveColor] = useState(props.primaryColor);
     const initialState = props.config;
     const [optionalConfig, setOptionalConfig] = useReducer(
-        (state, newState) => ({...state, ...newState}),
+        (state, newState) => ((Object.assign(state), Object.assign(newState))),
         initialState)
     const onHandleChange = (e) => {
        const name = e.target.name;

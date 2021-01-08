@@ -1,4 +1,4 @@
-import React, { useState, useRef, useReducer } from "react";
+import React, { useReducer } from "react";
 import { withRouter } from "react-router";
 import "./NewProfileGeneralForm.scss";
 import { Box, Grid } from "@material-ui/core";
@@ -10,7 +10,7 @@ import { setGeneralConfig } from "../../../../redux/actions";
 const NewProfileGeneralForm = (props) => {
   const initialState = props.config;
   const [generalConfig, setGeneralConfig] = useReducer(
-    (state, newState) => ({...state, ...newState}),
+     (state, newState) => ((Object.assign(state), Object.assign(newState))),
     initialState)
   const handleChange = (e) => {
     const name = e.target.name;
