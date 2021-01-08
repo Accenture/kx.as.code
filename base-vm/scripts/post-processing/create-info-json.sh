@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -x
 
 cp ../../../templates/info.template boxes/info.json
 

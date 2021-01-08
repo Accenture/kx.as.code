@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -x
 
 vmName="{{user `vm_name`}}"
 if [[ "${vmName}" =~ "main" ]]; then

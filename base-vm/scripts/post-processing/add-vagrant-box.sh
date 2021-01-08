@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -x
 
 # if running in Windows WSL, set additional parameter
 if [ ! -z ${LOGNAME} ]; then
