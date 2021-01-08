@@ -1,7 +1,7 @@
 import { hot } from "react-hot-loader";
 import React, { Component } from "react";
 import { library } from "@fortawesome/fontawesome-svg-core";
-import { faChevronRight,faSpinner, faInfoCircle } from "@fortawesome/free-solid-svg-icons";
+import { faChevronRight,faSpinner, faInfoCircle, faBars } from "@fortawesome/free-solid-svg-icons";
 import { Box } from "@material-ui/core";
 import intl from "react-intl-universal";
 import IntlPolyfill from "intl";
@@ -10,7 +10,7 @@ import TopPanel from "./layout/components/TopPanel";
 import LeftPanel from "./layout/components/LeftPanel";
 import { HashRouter, Route } from "react-router-dom";
 import Home from "./components/home/Home";
-import { NewProfileGeneral, NewProfileResource, NewProfileStorage, NewProfileReview, NewProfileReviewA, NewProfileOptional, KubernetesInstallation } from "./components/profile/index";
+import { NewProfileGeneral, NewProfileResource, NewProfileStorage, NewProfileReview, NewProfileReviewA, NewProfileOptional, KubernetesInstallation, ListApplication } from "./components/profile/index";
 
 
 window.Intl = IntlPolyfill;
@@ -28,7 +28,7 @@ const SUPPORTED_LOCALES = [
   },
 ];
 
-library.add(faChevronRight,faSpinner,faInfoCircle);
+library.add(faChevronRight,faSpinner,faInfoCircle, faBars);
 
 class App extends Component {
   constructor() {
@@ -83,6 +83,9 @@ class App extends Component {
                   </Route>
                   <Route path="/kubernetes-installation">
                     <KubernetesInstallation/>
+                  </Route>
+                  <Route path="/list-application">
+                    <ListApplication/>
                   </Route>
                 </div>
               </HashRouter>

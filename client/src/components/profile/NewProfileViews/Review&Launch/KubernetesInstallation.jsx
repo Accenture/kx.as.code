@@ -9,7 +9,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const KubernetesInstallation = () => {
 
-    const installedData = [
+    const installedData1 = [
         {
             name: "Kubernetes Tools",
             status: "Completed",
@@ -41,6 +41,34 @@ const KubernetesInstallation = () => {
             progress: "Install Pending"
         },
 
+
+    ];
+    const installedData2 = [
+        {
+            name: "Local Storage",
+            status: "",
+            progress: "Install Pending"
+        },
+        {
+            name: "GlusterFS Storage",
+            status: "",
+            progress: "Install Pending"
+        },
+        {
+            name: "NgINX Inprogress Controller",
+            status: "",
+            progress: "Install Pending"
+        },
+        {
+            name: "Metrics Server",
+            status: "",
+            progress: "Install Pending"
+        },
+        {
+            name: "Kubernetes DashBoard",
+            status: "",
+            progress: "Install Pending"
+        },
 
     ]
 
@@ -136,39 +164,75 @@ const KubernetesInstallation = () => {
                 </div>
                 <hr className="hz-line" />
                 <div className="installProgress">
-                    <span>{installedData.length} Applications Installing</span>
+                    <span>{installedData1.length + installedData2.length} Applications Installing</span>
                     <span className="installTime">Remaining for completion - 00:12:59</span>
                 </div>
-                <Grid container direction="column" justify="flex-start" alignItems="start">
-                    <Grid item>
-                        {
-                            installedData.map(data => (
-                                <>
-                                    <Box className="applicationCard">
-                                        <div>
+                <Box
 
-                                            <FontAwesomeIcon icon="info-circle" />
-                                            <img className="icons" src={String(avatarIcon)} />
-                                            <div>
-                                                <span className="installConfirm">{data.name}</span>
-                                                {
-                                                    data.status === "spinner" ?
-                                                        <FontAwesomeIcon className="font-icon-progress" icon="spinner" /> :
-                                                        <b><span className="installStatus">{data.status}</span></b>
-                                                }
-                                            </div>
-                                            <div>
-                                                <span>{data.progress}</span>
-                                            </div>
-                                        </div>
-                                    </Box>
-                                </>
-                            ))
-                        }
+                    display="flex"
+                    flexDirection="row"
+                    justifyContent="center"
+                    alignItems="flex-start"
+                >
+                    <Grid container direction="column" justify="flex-start" alignItems="start">
+                        <Grid id="grid1" item>
+                            {
+                                installedData1.map(data => (
+                                    <>
+                                        <Box className="applicationCard">
+                                            <div className="app1">
 
+                                                <FontAwesomeIcon icon="info-circle" />
+                                                <img className="icons" src={String(avatarIcon)} />
+                                                <div>
+                                                    <span className="installConfirm">{data.name}</span>
+                                                    {
+                                                        data.status === "spinner" ?
+                                                            <FontAwesomeIcon className="font-icon-progress" icon="spinner" /> :
+                                                            <b><span className="installStatus">{data.status}</span></b>
+                                                    }
+                                                </div>
+                                                <div>
+                                                    <span>{data.progress}</span>
+                                                </div>
+                                            </div>
+                                        </Box>
+                                    </>
+                                ))
+                            }
+
+                        </Grid>
                     </Grid>
-                </Grid>
 
+                    <Grid container direction="column" justify="flex-start" alignItems="start">
+                        <Grid id="grid2" item>
+                            {
+                                installedData2.map(data => (
+                                    <>
+                                        <Box className="applicationCard">
+                                            <div className="app2">
+
+                                                <FontAwesomeIcon icon="info-circle" />
+                                                <img className="icons" src={String(avatarIcon)} />
+                                                <div>
+                                                    <span className="installConfirm">{data.name}</span>
+                                                    {
+                                                        data.status === "spinner" ?
+                                                            <FontAwesomeIcon className="font-icon-progress" icon="spinner" /> :
+                                                            <b><span className="installStatus">{data.status}</span></b>
+                                                    }
+                                                </div>
+                                                <div>
+                                                    <span>{data.progress}</span>
+                                                </div>
+                                            </div>
+                                        </Box>
+                                    </>
+                                ))
+                            }
+                        </Grid>
+                    </Grid>
+                </Box>
             </div>
         </NewProfileTemplate>
 
