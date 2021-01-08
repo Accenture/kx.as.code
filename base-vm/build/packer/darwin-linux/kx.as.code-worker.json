@@ -78,7 +78,7 @@
       "vm_name": "{{user `vm_name`}}{{user `vm_suffix`}}-{{user `version`}}",
       "output_directory": "../../../output-worker{{user `vm_suffix`}}/parallels-{{user `version`}}",
       "boot_wait": "1s",
-      "boot_command": "{{user `boot_command`}}{{.HTTPIP}}:{{.HTTPPort}}/preseed.cfg<wait> , --- <enter>",
+      "boot_command": "{{user `boot_command`}}{{.HTTPIP}}:{{.HTTPPort}}/{{user `preseed_path`}}<wait> , --- <enter>",
       "disk_size": "{{user `disk_size`}}",
       "hard_drive_interface": "sata",
       "prlctl": [
@@ -109,7 +109,9 @@
       "ssh_port": 22,
       "ssh_wait_timeout": "3600s",
       "shutdown_command": "{{user `shutdown_command`}}",
-      "parallels_tools_flavor": "{{user `parallels_tools_flavor`}}"
+      "parallels_tools_flavor": "{{user `parallels_tools_flavor`}}",
+      "parallels_tools_mode": "{{user `parallels_tools_mode`}}",
+      "parallels_tools_guest_path": "{{user `parallels_tools_guest_path`}}"
   },
   {
     "type": "vmware-iso",
@@ -120,7 +122,7 @@
     "boot_command": [
       "<esc><wait>",
       "install <wait>",
-      " preseed/url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/{{user `preseed_path`}} <wait>",
+      " preseed/url=http://{{user `http_bind_address`}}:{{.HTTPPort}}/{{user `preseed_path`}} <wait>",
       "debian-installer=en_US.UTF-8 <wait>",
       "auto <wait>",
       "locale=en_US.UTF-8 <wait>",
@@ -153,7 +155,8 @@
       "pref.sharedFolder.maxNum": "1"
     },
     "guest_os_type": "{{user `vmware_guest_os_type`}}",
-    "http_directory": "http",
+    "http_directory": "{{user `http_directory`}}",
+    "http_bind_address": "{{user `http_bind_address`}}",
     "iso_urls": [
       "{{user `iso_path`}}/{{user `iso_file`}}",
       "{{user `iso_url`}}"
@@ -169,7 +172,6 @@
     "type": "vsphere-iso",
     "name": "{{user `vm_name`}}-vmware-vsphere",
     "vm_name": "{{user `vm_name`}}{{user `vm_suffix`}}-{{user `version`}}",
-    "floppy_files": [ "http/preseed-worker.cfg" ],
     "boot_wait": "10s",
     "boot_order": "disk,cdrom",
     "boot_command": [
@@ -310,7 +312,12 @@
     },
   {
     "type": "shell-local",
-    "environment_vars": ["VERSION={{user `version`}}"],
+    "environment_vars": [
+      "VERSION={{user `version`}}",
+      "VM_NAME={{user `vm_name`}}",
+      "VM_SUFFIX={{user `vm_suffix`}}"
+
+    ],
     "execute_command": ["bash", "-c", "{{.Vars}} {{.Script}}"],
     "only_on": ["darwin","linux"],
     "script": "../../../scripts/post-processing/export-vmware-ova.sh",
@@ -318,7 +325,10 @@
   },
   {
     "type": "shell-local",
-    "environment_vars": ["VERSION={{user `version`}}"],
+    "environment_vars": [
+      "VERSION={{user `version`}}",
+      "BOX_NAME={{user `vm_name`}}{{user `vm_suffix`}}-{{user `version`}}"
+    ],
     "execute_command": ["bash", "-c", "{{.Vars}} {{.Script}}"],
     "only_on": ["darwin","linux"],
     "script": "../../../scripts/post-processing/export-vmware-ova.sh",
@@ -333,7 +343,10 @@
   },
   {
     "type": "shell-local",
-    "environment_vars": ["VERSION={{user `version`}}"],
+    "environment_vars": [
+      "VERSION={{user `version`}}",
+      "BOX_NAME={{user `vm_name`}}{{user `vm_suffix`}}-{{user `version`}}"
+    ],
     "execute_command": ["bash", "-c", "{{.Vars}} {{.Script}}"],
     "only_on": ["darwin","linux"],
     "script": "../../../scripts/post-processing/add-vagrant-box.sh"
@@ -367,6 +380,9 @@
       "type": "shell"
     },
     {
+      "environment_vars": [
+        "PARALLELS_TOOLS_GUEST_PATH={{user `parallels_tools_guest_path`}}"
+    ],
       "script":"../../../scripts/base/parallels.sh",
       "only": ["{{user `vm_name`}}-parallels"],
       "type": "shell"
@@ -448,7 +464,7 @@
      }
    ],
   "variables": {
-      "boot_command": "<esc><wait>install <wait> preseed/url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/preseed-worker.cfg <wait>debian-installer=en_US.UTF-8 <wait>auto <wait>locale=en_US.UTF-8 <wait>kbd-chooser/method=de <wait>keyboard-configuration/xkb-keymap=de <wait>netcfg/get_hostname={{ .Name }} <wait>netcfg/get_domain=vagrantup.com <wait>fb=false <wait>debconf/frontend=noninteractive <wait>console-setup/ask_detect=false <wait>console-keymaps-at/keymap=us <wait>grub-installer/bootdev=/dev/sda <wait><enter><wait>",
+      "boot_command": "<esc><wait>install <wait> preseed/url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/{{user `preseed_path`}} <wait>debian-installer=en_US.UTF-8 <wait>auto <wait>locale=en_US.UTF-8 <wait>kbd-chooser/method=de <wait>keyboard-configuration/xkb-keymap=de <wait>netcfg/get_hostname={{ .Name }} <wait>netcfg/get_domain=vagrantup.com <wait>fb=false <wait>debconf/frontend=noninteractive <wait>console-setup/ask_detect=false <wait>console-keymaps-at/keymap=us <wait>grub-installer/bootdev=/dev/sda <wait><enter><wait>",
       "cpus": "2",
       "compute_engine_build": "false",
       "hostname": "kx-worker",
@@ -467,9 +483,14 @@
       "guest_additions_checksum": "88db771a5efd7c048228e5c1e0b8fba56542e9d8c1b75f7af5b0c4cf334f0584",
       "memory": "8192",
       "no_proxy": "{{env `no_proxy`}}",
+      "parallels_tools_mode": "upload",
+      "parallels_tools_guest_path": "/var/tmp/prl-tools-lin.iso",
       "parallels_guest_os_type": "linux-2.6",
       "parallels_tools_flavor": "lin",
       "preseed_path": "preseed.cfg",
+      "http_directory": "./http",
+      "http_bind_address": "10.2.76.141",
+      "http_bind_port": "8081",
       "shutdown_command": "echo 'vagrant' | sudo -Srm -rf shutdown -P now",
       "ssh_fullname": "KX Hero",
       "update": "true",
