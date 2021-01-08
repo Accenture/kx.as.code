@@ -50,7 +50,7 @@ export default function CustomizedCheckbox(props) {
         checkedIcon={<span className={clsx(classes.icon, classes.checkedIcon)} />}
         icon={<span className={classes.icon} />}
         inputProps={{ 'aria-label': 'decorative checkbox' }}
-        {...props}
+        onChange={props.handleCheckbox}
       />
     )
   }

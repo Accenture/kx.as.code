@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import "./NewProfileResource.scss";
 import { withRouter } from "react-router";
 import { NewProfileTemplate } from "../../index";
@@ -6,6 +6,56 @@ import CustomizedSlider from '../../../ReusableComponent/Sliders/Sliders.js'
 import { Box, Grid } from "@material-ui/core";
 import CustomizedCheckbox from '../../../ReusableComponent/Checkbox/checkbox'
 const NewProfileResource = () => {
+    const [data,setData]=useState({
+        "PyCpu":1,
+        "PyMemory":1,
+        "DisMemory":1,
+        "DisCpu":1,
+        "WorkerNode":1,
+        "allowKubernetes":false
+    });
+    const handlePyCpu = (e,value)=>{
+        setData({
+            ...data,
+            "PyCpu":value,
+        })
+        console.log(data)
+    }
+    const handlePyMemory = (e,value)=>{
+        setData({
+            ...data,
+            "PyMemory":value,
+        })
+        console.log(data)
+    }
+    const handleDisMemory = (e,value)=>{
+        setData({
+            ...data,
+            "DisMemory":value,
+        })
+        console.log(data)
+    }
+    const handleDisCPU = (e,value)=>{
+        setData({
+            ...data,
+            "DisCpu":value,
+        })
+        console.log(data)
+    }
+    const handleWorker = (e,value)=>{
+        setData({
+            ...data,
+            "WorkerNode":value,
+        })
+        console.log(data)
+    }
+    const handleCheckbox=(e,value)=>{
+        setData({
+            ...data,
+            "allowKubernetes":!value
+        })
+        console.log(data)
+    }
     return (
         <NewProfileTemplate>
             <Box
@@ -19,8 +69,8 @@ const NewProfileResource = () => {
                     <Grid item>
                         <label id="new-title">Allocate Physical Resources</label>
                         <Box className="card">
-                            <CustomizedSlider defaultValue={0} min={0} max={6} name={'CPU'} size={'6 VCORES'}></CustomizedSlider>
-                            <CustomizedSlider defaultValue={0} min={0} max={12} name={'MEMORY'} size={'12 GB'}></CustomizedSlider>
+                            <CustomizedSlider defaultValue={0} min={0} max={6} name={'CPU'} size={'6 VCORES'} handleChange={handlePyCpu}></CustomizedSlider>
+                            <CustomizedSlider defaultValue={0} min={0} max={12} name={'MEMORY'} size={'12 GB'} handleChange={handlePyMemory}></CustomizedSlider>
                         </Box>
                     </Grid>
                     <Grid item>
@@ -28,8 +78,8 @@ const NewProfileResource = () => {
                         <label id="new-title2">Main Node</label>
                         <Box className="card">
 
-                            <CustomizedSlider defaultValue={0} min={0} max={2} name={'CPU'} size={'2 VCORES'}></CustomizedSlider>
-                            <CustomizedSlider defaultValue={0} min={0} max={4} name={'MEMORY'} size={'4 GB'}></CustomizedSlider>
+                            <CustomizedSlider defaultValue={0} min={0} max={2} name={'CPU'} size={'2 VCORES'} handleChange={handleDisCPU}></CustomizedSlider>
+                            <CustomizedSlider defaultValue={0} min={0} max={4} name={'MEMORY'} size={'4 GB'} handleChange={handleDisMemory}></CustomizedSlider>
                         </Box>
                     </Grid>
                     <Grid item>
@@ -44,7 +94,7 @@ const NewProfileResource = () => {
                 <Grid container direction="column" justify="flex-start" alignItems="center">
                     <Grid item>
                         <Box className="checkbox">
-                            <CustomizedCheckbox />
+                            <CustomizedCheckbox handleCheckbox={handleCheckbox} />
                             <label id="title3">Allow Kubernetes workloads to be scheduled on the main node</label>
                         </Box>
                     </Grid>
@@ -66,7 +116,7 @@ const NewProfileResource = () => {
                     <Grid>
                         <label id="new-title2">Worker Nodes</label>
                         <Box className="card2">
-                            <CustomizedSlider defaultValue={0} min={0} max={2} name={'NUMBER OF WORKER NODES '} size={'2'}></CustomizedSlider>
+                            <CustomizedSlider defaultValue={0} min={0} max={2} name={'NUMBER OF WORKER NODES '} size={'2'} handleChange={handleWorker}></CustomizedSlider>
                         </Box>
                     </Grid>
                     <Grid item>
