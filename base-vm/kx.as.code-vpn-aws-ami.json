@@ -1,0 +1,174 @@
+{
+  "sensitive-variables": [
+    "vm_password",
+    "github_token"
+  ],
+  "_comment": "Read README.md for details on executing the Packer builds.",
+  "builders": [
+  {
+      "type": "amazon-ebs",
+      "name": "{{user `vm_name`}}-aws-ami",
+      "ami_name": "{{user `vm_name`}}{{user `vm_suffix`}}-{{user `version`}}",
+      "ami_groups": "",
+      "snapshot_groups": "",
+      "instance_type": "{{user `instance_type`}}",
+      "access_key": "{{user `access_key`}}",
+      "secret_key": "{{user `secret_key`}}",
+      "source_ami": "{{user `source_ami`}}",
+      "region": "{{user `vpc_region`}}",
+      "vpc_id": "{{user `vpc_id`}}",
+      "subnet_id": "{{user `vpc_subnet_id`}}",
+      "associate_public_ip_address": "{{user `associate_public_ip_address`}}",
+      "launch_block_device_mappings": [
+        {
+          "device_name": "/dev/xvda",
+          "volume_type": "gp2",
+          "volume_size": "10",
+          "delete_on_termination": true
+        }
+      ],
+      "ssh_username": "{{user `ssh_username`}}",
+      "ssh_interface": "private_ip",
+      "ssh_port": 22,
+      "ssh_timeout": "3600s",
+      "shutdown_behavior": "{{user `shutdown_behavior`}}"
+    }],
+  "post-processors":
+  [
+    {
+      "type": "manifest",
+      "output": "manifest.json",
+      "strip_path": true
+    }
+  ],
+  "provisioners": [
+    {
+      "environment_vars": [
+        "VM_USER={{user `vm_user`}}",
+        "VM_PASSWORD={{user `vm_password`}}"
+      ],
+      "scripts": [
+        "scripts/base/vagrant-user.sh",
+        "scripts/base/kx-user.sh",
+        "scripts/base/update.sh"
+      ],
+      "type": "shell",
+      "start_retry_timeout": "15m",
+      "expect_disconnect": "true"
+    },
+    {
+      "environment_vars": [
+        "VM_USER={{user `vm_user`}}"
+      ],
+      "script":"scripts/base/virtualbox.sh",
+      "only": ["{{user `vm_name`}}-virtualbox"],
+      "type": "shell"
+    },
+    {
+      "script":"scripts/base/parallels.sh",
+      "only": ["{{user `vm_name`}}-parallels"],
+      "type": "shell"
+    },
+    {
+      "script": "scripts/base/vmware.sh",
+      "only": ["{{user `vm_name`}}-vmware-vsphere"],
+      "type": "shell"
+    },
+    {
+      "script": "scripts/base/vmware.sh",
+      "only": ["{{user `vm_name`}}-vmware-desktop"],
+      "type": "shell"
+    },
+    {
+      "environment_vars": [
+        "BASE_IMAGE_SSH_USER={{user `base_image_ssh_user`}}",
+        "IP_ADDRESS={{user `ip_address`}}",
+        "GATEWAY={{user `gateway`}}",
+        "DNS1={{user `dns1`}}",
+        "DNS2={{user `dns2`}}"
+      ],
+      "scripts": [
+        "scripts/base/cleanup.sh",
+        "scripts/base/localtime.sh",
+        "scripts/base/power.sh",
+        "scripts/base/network.sh"
+      ],
+      "type": "shell",
+      "pause_before": "120s",
+      "start_retry_timeout": "15m",
+      "expect_disconnect": "true"
+    },
+    {
+      "type": "file",
+      "source": "./dependencies/plymouth_theme",
+      "destination": "/home/vagrant/plymouth_theme"
+    },
+    {
+      "type": "file",
+      "source": "./dependencies/user_profile",
+      "destination": "/home/vagrant/user_profile"
+    },
+    {
+      "type": "file",
+      "source": "./dependencies/lightdm_theme",
+      "destination": "/home/vagrant/lightdm_theme"
+    },
+    {
+      "type": "file",
+      "source": "./scripts/vpn-node",
+      "destination": "/home/vagrant/scripts"
+    },
+    {
+      "environment_vars": [
+        "BASE_IMAGE_SSH_USER={{user `base_image_ssh_user`}}",
+        "VM_USER={{user `vm_user`}}",
+        "VM_PASSWORD={{user `vm_password`}}",
+        "GITHUB_USER={{user `github_user`}}",
+        "GITHUB_TOKEN={{user `github_token`}}",
+        "VERSION={{user `version`}}",
+        "COMPUTE_ENGINE_BUILD={{user `compute_engine_build`}}"
+      ],
+      "scripts": [
+        "scripts/common/motd.sh",
+        "scripts/common/kx.as.code.sh",
+        "scripts/common/tools.sh",
+        "scripts/common/powerline.sh"
+      ],
+      "type": "shell",
+      "pause_before": "120s",
+      "start_retry_timeout": "15m",
+      "expect_disconnect": "true"
+    },
+    {
+      "environment_vars": [
+        "BASE_IMAGE_SSH_USER={{user `base_image_ssh_user`}}",
+        "VM_USER={{user `vm_user`}}",
+        "VM_PASSWORD={{user `vm_password`}}",
+        "GITHUB_USER={{user `github_user`}}",
+        "GITHUB_TOKEN={{user `github_token`}}",
+        "VERSION={{user `version`}}",
+        "IP_ADDRESS={{user `ip_address`}}",
+        "GATEWAY={{user `gateway`}}",
+        "DNS1={{user `dns1`}}",
+        "DNS2={{user `dns2`}}"
+      ],
+      "scripts": [
+        "scripts/vpn-node/openvpn.sh",
+        "scripts/vpn-node/cleanup.sh"
+      ],
+      "type": "shell",
+      "pause_before": "120s",
+      "start_retry_timeout": "15m",
+      "expect_disconnect": "true"
+    }
+  ],
+  "variables": {
+    "disk_size": "10240",
+    "hostname": "kx-vpn",
+    "headless": "true",
+    "ssh_fullname": "KX Hero",
+    "update": "true",
+    "vm_name": "kx.as.code-vpn",
+    "vm_suffix": "-demo"
+  }
+}

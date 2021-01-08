@@ -6,15 +6,16 @@ import { useHistory } from "react-router-dom";
 import { UIView } from "../../../redux/reducers/viewsReducer";
 import { connect } from "react-redux";
 import { setNextView, setLastView } from "../../../redux/actions";
-import { Label } from "@material-ui/icons";
 
-const NewProfileHeader = (props) => {
+const NewProfileFooter = (props) => {
   const history = useHistory();
   const currentView = props.view;
   let path = "/";
   const onClickNext = () => {
     currentView != UIView.ReviewB && props.setNextView();
-    currentView === UIView.General && (path = "/new-profile-resource");
+    currentView === UIView.General && (
+      (path = "/new-profile-resource")
+    );
     currentView === UIView.Resource && (path = "/new-profile-storage");
     currentView === UIView.Storage && (path = "/new-profile-optional");
     currentView === UIView.Optional && (path = "/new-profile-review");
@@ -70,8 +71,11 @@ const mapDispatchToProps = (dispatch) => {
     },
     setLastView: () => {
       dispatch(setLastView())
+    },
+    setGeneralConfig: () => {
+      dispatch(setGeneralConfig())
     }
   }
 }
 
-export default connect(null, mapDispatchToProps)(withRouter(NewProfileHeader));
+export default connect(null, mapDispatchToProps)(withRouter(NewProfileFooter));
