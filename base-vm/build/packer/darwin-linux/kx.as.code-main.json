@@ -325,7 +325,11 @@
     },
   {
     "type": "shell-local",
-    "environment_vars": ["VERSION={{user `version`}}"],
+    "environment_vars": [
+      "VM_VERSION={{user `version`}}",
+      "VM_NAME={{user `vm_name`}}",
+      "VM_SUFFIX={{user `vm_suffix`}}"
+    ],
     "execute_command": ["bash", "-c", "{{.Vars}} {{.Script}}"],
     "only_on": ["darwin","linux"],
     "script": "../../../scripts/post-processing/export-vmware-ova.sh",

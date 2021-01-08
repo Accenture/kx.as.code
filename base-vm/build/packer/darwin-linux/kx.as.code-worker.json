@@ -313,21 +313,9 @@
   {
     "type": "shell-local",
     "environment_vars": [
-      "VERSION={{user `version`}}",
+      "VM_VERSION={{user `version`}}",
       "VM_NAME={{user `vm_name`}}",
       "VM_SUFFIX={{user `vm_suffix`}}"
-
-    ],
-    "execute_command": ["bash", "-c", "{{.Vars}} {{.Script}}"],
-    "only_on": ["darwin","linux"],
-    "script": "../../../scripts/post-processing/export-vmware-ova.sh",
-    "only": ["{{user `vm_name`}}-vmware-vsphere"]
-  },
-  {
-    "type": "shell-local",
-    "environment_vars": [
-      "VERSION={{user `version`}}",
-      "BOX_NAME={{user `vm_name`}}{{user `vm_suffix`}}-{{user `version`}}"
     ],
     "execute_command": ["bash", "-c", "{{.Vars}} {{.Script}}"],
     "only_on": ["darwin","linux"],
@@ -500,6 +488,7 @@
       "vm_name": "kx.as.code-worker",
       "vm_suffix": "-demo",
       "vmware_guest_os_type": "ubuntu64Guest",
-      "ip_address":"10.100.76.100"
+      "ip_address":"10.100.76.100",
+      "bash-executor": "bash"
   }
 }
