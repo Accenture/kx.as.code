@@ -6,12 +6,13 @@ import "./NewProfileHeader.scss";
 import { useHistory } from "react-router-dom";
 import intl from "react-intl-universal";
 import { connect } from "react-redux";
-import { setDefaultView, setGeneralConfig } from "../../../redux/actions";
+import { setDefaultView, setGeneralConfig, setOptionalConfig } from "../../../redux/actions";
 
-
-
-const config = {
-  profileColor: "",
+export const initialOptionalConfig = {
+  dockerHubUserName: "",
+  dockerHubPassword: "",   
+}
+const initialGeneralConfig = {
   profileName: "",
   teamName: "",
   profileType: "",
@@ -22,12 +23,12 @@ const config = {
   defaultPassword: "",
   certificationMode: false,
 }
-
 const NewProfileHeader = (props) => {
   const history = useHistory();
   const handleClick = () => {
     props.setDefaultView();
-    props.setGeneralConfig(config)
+    props.setGeneralConfig(initialGeneralConfig)
+    props.setOptionalConfig(initialOptionalConfig)
     history.push("/");
   };
   return (
@@ -49,7 +50,10 @@ const mapDispatchToProps = (dispatch) => {
     },
     setGeneralConfig: (generalConfig) => {
         dispatch(setGeneralConfig(generalConfig))
-    }
+    },
+    setOptionalConfig: (optionalConfig) => {
+      dispatch(setOptionalConfig(optionalConfig))
+  }
   }
 }
 

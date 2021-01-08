@@ -3,10 +3,11 @@ import "./NewProfileReviewA.scss";
 import { withRouter } from "react-router";
 import { Box, Grid } from "@material-ui/core";
 import { NewProfileTemplate } from "../../index";
-import { Cards } from "../../../ReusableComponent/index"
+import { Cards } from "../../../ReusableComponent/index";
+import { connect } from "react-redux";
 
-const NewProfileReview = () => {
-    const generalConfig = Object.entries(require("../../../ReusableComponent/CardMocks/GeneralConfig.json"));
+const NewProfileReviewA = (props) => {
+    const generalConfig = Object.entries(props.generalConfig);
     const networkConfig = Object.entries(require("../../../ReusableComponent/CardMocks/NetworkConfig.json"));
     const storageConfig = require("../../../ReusableComponent/CardMocks/StorageConfig.json");
     const preFlightChecks = require("../../../ReusableComponent/CardMocks/PreFlightChecks.json");
@@ -86,4 +87,9 @@ const NewProfileReview = () => {
     )
 }
 
-export default withRouter(NewProfileReview);
+
+const mapStateToProps = state => ({
+    generalConfig: state.generalConfigReducer.generalConfig,
+  });
+
+export default connect(mapStateToProps, null)(withRouter(NewProfileReviewA));

@@ -6,8 +6,9 @@ import avatarIcon from "../../../../media/images/common/kubernetes.png";
 import { NewProfileTemplate } from "../../index";
 import { Cards } from "../../../ReusableComponent/index";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { connect } from "react-redux";
 
-const KubernetesInstallation = () => {
+const KubernetesInstallation = (props) => {
 
     const installedData = [
         {
@@ -44,7 +45,7 @@ const KubernetesInstallation = () => {
 
     ]
 
-    const generalConfig = Object.entries(require("../../../ReusableComponent/CardMocks/GeneralConfig.json"));
+    const generalConfig = Object.entries(props.generalConfig);
     const networkConfig = Object.entries(require("../../../ReusableComponent/CardMocks/NetworkConfig.json"));
     const storageConfig = require("../../../ReusableComponent/CardMocks/StorageConfig.json");
     const preFlightChecks = require("../../../ReusableComponent/CardMocks/PreFlightChecks.json");
@@ -175,4 +176,8 @@ const KubernetesInstallation = () => {
     )
 };
 
-export default withRouter(KubernetesInstallation);
+const mapStateToProps = state => ({
+    generalConfig: state.generalConfigReducer.generalConfig,
+  });
+
+export default connect(mapStateToProps, null)(withRouter(KubernetesInstallation));
