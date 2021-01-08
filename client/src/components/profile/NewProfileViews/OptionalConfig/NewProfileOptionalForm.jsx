@@ -6,7 +6,15 @@ import { TextBox } from "../../../ReusableComponent/index";
 
 const NewProfileOptionalForm = () => {
     const [activeColor, setActiveColor] = useState('#3290d1');
-
+    const [username, setUserName] = useState('');
+    const [password, setPassword] = useState('');
+     const onHandleChange = (e) => {
+       if(e.target.name === "username")
+       setUserName(e.target.value);
+       else if(e.target.name === "password")
+       setPassword(e.target.value);
+     }; 
+     
     return (
         <Box
             id="new-prof-gen-form"
@@ -20,7 +28,7 @@ const NewProfileOptionalForm = () => {
                     <label htmlFor="new-prof-opt-form-primary-color-selection">Primary Color Selection</label>
                 </Grid>
                 <Grid item>
-                    <TextBox htmlFor="new-prof-opt-form-primary-color-selection" placeholder="Hex: #" />
+                    <TextBox htmlFor="new-prof-opt-form-primary-color-selection" placeholder="Hex: #" value={activeColor} />
                 </Grid>
                 <Grid item>
                     <span className={`dot dot-grey ${activeColor == '#3b6e81' ? 'active' : ''}`} onClick={() => setActiveColor('#3b6e81')}></span>
@@ -41,13 +49,13 @@ const NewProfileOptionalForm = () => {
                     <label htmlFor="new-prof-opt-form-docker-hub-username">Docker Hub Username</label>
                 </Grid>
                 <Grid item>
-                    <TextBox id="new-prof-opt-form-docker-hub-username" />
+                    <TextBox id="new-prof-opt-form-docker-hub-username"  onChange={onHandleChange} name="username"/>
                 </Grid>
                 <Grid item>
                     <label htmlFor="new-prof-opt-form-docker-hub-password">Docker Hub Password</label>
                 </Grid>
                 <Grid item>
-                    <TextBox id="new-prof-opt-form-docker-hub-password" type="password" />
+                    <TextBox id="new-prof-opt-form-docker-hub-password" type="password"  onChange={onHandleChange} name="password"/>
                 </Grid>
                 <Grid item>
                     <ul>
