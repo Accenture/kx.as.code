@@ -10,10 +10,17 @@
     letter-spacing: normal;
     color: #c4cfdd;
   }
-  .applicationCard {
-      border: solid 1px #283040;
-      background-color: #283040;
-    
+
+  #grid1 > .applicationCard > .app1{
+    border: solid 1px #283040;
+    background-color: #283040;
+      width : 200%;
+  }
+
+  #grid2 > .applicationCard > .app2{
+    border: solid 1px #283040;
+    background-color: #283040;
+      width : 200%;
   }
   .kubernetesContainer {  
       width: 85%;
@@ -59,7 +66,7 @@
       margin-bottom: 30px;
       
   }
-  .installedConfirm{
+  #grid1 > .applicationCard > .app1 > div > .installedConfirm{
       margin-left: 70px;
       margin-bottom: 10px;
   }

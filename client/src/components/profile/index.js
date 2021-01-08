@@ -11,3 +11,4 @@ export { default as NewProfileTemplate } from "./ProfileWrapper/NewProfileTempla
 export { default as NewProfileGeneralForm } from "./NewProfileViews/GeneralConfig/NewProfileGeneralForm";
 export { default as NewProfileOptionalForm } from "./NewProfileViews/OptionalConfig/NewProfileOptionalForm";
 export {default as KubernetesInstallation } from "./NewProfileViews/Review&Launch/KubernetesInstallation";
+export {default as ListApplication} from "./NewProfileViews/ListApplication/ListApplication";

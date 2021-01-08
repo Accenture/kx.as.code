@@ -34,6 +34,10 @@ const NewProfileFooter = (props) => {
     currentView === UIView.Installation && (path = "/kubernetes-installation");
     history.push(path);
   }
+  const onClickSubmit = () => {
+    currentView === UIView.Installation && (path = "/list-application");
+    history.push(path);
+  }
   return (
     <Box id="new-profile-footer"
       textAlign="center">
@@ -44,7 +48,7 @@ const NewProfileFooter = (props) => {
       }
       {
         (currentView === UIView.Installation) &&
-        <Button id="new-prof-profiles-Next-button" >
+        <Button id="new-prof-profiles-Next-button" onClick={onClickSubmit}>
           Submit
         </Button>
       }
