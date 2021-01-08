@@ -20,6 +20,7 @@ const NewProfileFooter = (props) => {
     currentView === UIView.Storage && (path = "/new-profile-optional");
     currentView === UIView.Optional && (path = "/new-profile-review");
     currentView === UIView.Review && (path = "/new-profile-reviewA");
+    currentView === UIView.ReviewA && (path = "/kubernetes-installation");
     history.push(path);
   }
   const onClickBack = () => {
@@ -30,20 +31,31 @@ const NewProfileFooter = (props) => {
     currentView === UIView.Review && (path = "/new-profile-optional")
     currentView === UIView.ReviewA && (path = "/new-profile-review")
     currentView === UIView.ReviewB && (path = "/new-profile-reviewA")
+    currentView === UIView.Installation && (path = "/kubernetes-installation");
     history.push(path);
   }
   return (
     <Box id="new-profile-footer"
       textAlign="center">
-      {(currentView!= UIView.General) &&
+      {(currentView != UIView.General) ? ((currentView != UIView.Installation) &&
         <Button id="new-prof-profiles-Next-button" onClick={onClickBack}>
           Back
+        </Button>) : ''
+      }
+      {
+        (currentView === UIView.Installation) &&
+        <Button id="new-prof-profiles-Next-button" >
+          Submit
         </Button>
       }
-      {(currentView != UIView.ReviewA) && <Button id="new-prof-profiles-Next-button" onClick={onClickNext}>
+      {(currentView != UIView.ReviewA) ? ((currentView != UIView.Installation) && <Button id="new-prof-profiles-Next-button" onClick={onClickNext}>
         {(currentView != UIView.Review) ? "Next" : "Confirm"}
-      </Button>}
-      {(currentView === UIView.ReviewA) && <label id="loader">WAITING FOR SERVERS TO COME UP</label>}
+      </Button>) : ''}
+      {(currentView === UIView.ReviewA) &&
+        <Button id="new-prof-profiles-Next-button" onClick={onClickNext}>
+          Next
+      </Button>
+      }
     </Box>
   );
 };

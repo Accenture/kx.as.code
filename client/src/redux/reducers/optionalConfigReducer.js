@@ -1,13 +1,13 @@
 import { SET_OPTIONAL_CONFIG, SET_PRIMARY_COLOR} from "../actionTypes";
 
-export const config = {
+export const initialOptionalConfig = {
     dockerHubUserName: "",
     dockerHubPassword: "",   
 }
 
 const initialState = {
     primaryColor: "#3290d1",
-    optionalConfig: config
+    optionalConfig: initialOptionalConfig
 };
 
 export default function (state = initialState, action) {

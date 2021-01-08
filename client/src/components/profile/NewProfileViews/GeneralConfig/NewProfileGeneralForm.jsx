@@ -10,8 +10,9 @@ import { setGeneralConfig } from "../../../../redux/actions";
 const NewProfileGeneralForm = (props) => {
   const initialState = props.config;
   const [generalConfig, setGeneralConfig] = useReducer(
-     (state, newState) => ((Object.assign(state), Object.assign(newState))),
-    initialState)
+     (state, newState) => ({...state, ...newState}),
+     initialState
+  )
   const handleChange = (e) => {
     const name = e.target.name;
     const newValue = e.target.value;

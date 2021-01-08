@@ -1,7 +1,6 @@
 import { SET_GENERAL_CONFIG } from "../actionTypes";
 
-export const config = {
-    profileColor: "",
+export const initialGeneralConfig = {
     profileName: "",
     teamName: "",
     profileType: "",
@@ -14,7 +13,7 @@ export const config = {
 }
 
 const initialState = {
-    generalConfig: config
+    generalConfig: initialGeneralConfig
 };
 
 export default function (state = initialState, action) {
