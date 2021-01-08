@@ -6,19 +6,21 @@ import { useHistory } from "react-router-dom";
 import { UIView } from "../../../redux/reducers/viewsReducer";
 import { connect } from "react-redux";
 import { setNextView, setLastView } from "../../../redux/actions";
-import { Label } from "@material-ui/icons";
 
-const NewProfileHeader = (props) => {
+const NewProfileFooter = (props) => {
   const history = useHistory();
   const currentView = props.view;
   let path = "/";
   const onClickNext = () => {
     currentView != UIView.ReviewB && props.setNextView();
-    currentView === UIView.General && (path = "/new-profile-resource");
+    currentView === UIView.General && (
+      (path = "/new-profile-resource")
+    );
     currentView === UIView.Resource && (path = "/new-profile-storage");
     currentView === UIView.Storage && (path = "/new-profile-optional");
     currentView === UIView.Optional && (path = "/new-profile-review");
     currentView === UIView.Review && (path = "/new-profile-reviewA");
+    currentView === UIView.ReviewA && (path = "/kubernetes-installation");
     history.push(path);
   }
   const onClickBack = () => {
@@ -29,20 +31,31 @@ const NewProfileHeader = (props) => {
     currentView === UIView.Review && (path = "/new-profile-optional")
     currentView === UIView.ReviewA && (path = "/new-profile-review")
     currentView === UIView.ReviewB && (path = "/new-profile-reviewA")
+    currentView === UIView.Installation && (path = "/kubernetes-installation");
     history.push(path);
   }
   return (
     <Box id="new-profile-footer"
       textAlign="center">
-      {(currentView!= UIView.General) &&
+      {(currentView != UIView.General) ? ((currentView != UIView.Installation) &&
         <Button id="new-prof-profiles-Next-button" onClick={onClickBack}>
           Back
+        </Button>) : ''
+      }
+      {
+        (currentView === UIView.Installation) &&
+        <Button id="new-prof-profiles-Next-button" >
+          Submit
         </Button>
       }
-      {(currentView != UIView.ReviewA) && <Button id="new-prof-profiles-Next-button" onClick={onClickNext}>
+      {(currentView != UIView.ReviewA) ? ((currentView != UIView.Installation) && <Button id="new-prof-profiles-Next-button" onClick={onClickNext}>
         {(currentView != UIView.Review) ? "Next" : "Confirm"}
-      </Button>}
-      {(currentView === UIView.ReviewA) && <label id="loader">WAITING FOR SERVERS TO COME UP</label>}
+      </Button>) : ''}
+      {(currentView === UIView.ReviewA) &&
+        <Button id="new-prof-profiles-Next-button" onClick={onClickNext}>
+          Next
+      </Button>
+      }
     </Box>
   );
 };
@@ -54,8 +67,11 @@ const mapDispatchToProps = (dispatch) => {
     },
     setLastView: () => {
       dispatch(setLastView())
+    },
+    setGeneralConfig: () => {
+      dispatch(setGeneralConfig())
     }
   }
 }
 
-export default connect(null, mapDispatchToProps)(withRouter(NewProfileHeader));
+export default connect(null, mapDispatchToProps)(withRouter(NewProfileFooter));

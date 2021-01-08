@@ -7,6 +7,9 @@ const DropDown = (props) => {
         <Select
             native
             className="select"
+            onChange={props.onChange}
+            name={props.name}
+            value={props.value}
         >
             <option value="" disabled defaultValue>OPTIONS</option>
             {props.data.map((data,id) =>

@@ -94,7 +94,7 @@ const NewProfileResource = () => {
                 <Grid container direction="column" justify="flex-start" alignItems="center">
                     <Grid item>
                         <Box className="checkbox">
-                            <CustomizedCheckbox handleCheckbox={handleCheckbox} />
+                            <CustomizedCheckbox onChange={handleCheckbox} />
                             <label id="title3">Allow Kubernetes workloads to be scheduled on the main node</label>
                         </Box>
                     </Grid>
