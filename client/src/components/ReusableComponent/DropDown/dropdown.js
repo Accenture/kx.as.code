@@ -11,9 +11,8 @@ const DropDown = (props) => {
             name={props.name}
             value={props.value}
         >
-            <option value="" disabled defaultValue>OPTIONS</option>
-            {props.data.map((data,id) =>
-                <option key={id} value={data} style={{backgroundColor: '#212938',color:'white',textAlign:'center'}}>{data}</option>
+            {props.data.map((data, id) =>
+                <option key={id} value={data} style={{ backgroundColor: '#212938', color: 'white', textAlign: 'center' }}>{data}</option>
             )}
         </Select>
     )

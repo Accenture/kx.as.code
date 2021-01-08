@@ -47,7 +47,7 @@ const NewProfileGeneralForm = (props) => {
         </Grid>
         <Grid item>
           <DropDown 
-            data={["OPTIONS", "Local Virtualization"]} 
+            data={["Local Virtualization"]} 
             id="new-prof-gen-form-ssl-provider" 
             name="profileType" 
             onChange={handleChange}
@@ -60,7 +60,7 @@ const NewProfileGeneralForm = (props) => {
         </Grid>
         <Grid item>
           <DropDown 
-            data={["OPTIONS", "VMWare", "VirtualBox", "Parallels"]} 
+            data={["VMWare", "VirtualBox", "Parallels"]} 
             id="new-prof-gen-form-ssl-provider" 
             name="profileSubType" 
             onChange={handleChange}

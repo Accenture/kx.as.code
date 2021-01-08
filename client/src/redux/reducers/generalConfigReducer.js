@@ -3,9 +3,9 @@ import { SET_GENERAL_CONFIG } from "../actionTypes";
 export const initialGeneralConfig = {
     profileName: "",
     teamName: "",
-    profileType: "",
+    profileType: "Local Virtualization",
     kubernetesSeesionTimeout: false,
-    profileSubType: "",
+    profileSubType: "VMWare",
     baseDomain: "",
     defaultUser: "",
     defaultPassword: "",

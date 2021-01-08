@@ -13,7 +13,7 @@ const InstalledCard = (props) => {
             justifyContent="center"
             alignItems="flex-start"
         >
-            <Grid container direction="column" justify="flex-start" alignItems="center" id="card-container">
+            <Grid container direction="column" justify="flex-start" alignItems="center" id="card-container1">
               <Box className="first-1">
               <label>{card.group}</label>
               <FontAwesomeIcon className="font-icon-progress1" icon="bars" />
