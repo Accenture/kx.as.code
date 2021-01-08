@@ -83,7 +83,7 @@
       "vm_name": "{{user `vm_name`}}{{user `vm_suffix`}}-{{user `version`}}",
       "output_directory": "../../../output-main{{user `vm_suffix`}}/parallels-{{user `version`}}",
       "boot_wait": "1s",
-      "boot_command": "{{user `boot_command`}}{{.HTTPIP}}:{{.HTTPPort}}/preseed.cfg<wait> , --- <enter>",
+      "boot_command": "{{user `boot_command`}}{{.HTTPIP}}:{{.HTTPPort}}//{{user `preseed_path`}}<wait> , --- <enter>",
       "disk_size": "{{user `disk_size`}}",
       "hard_drive_interface": "sata",
       "prlctl": [
@@ -114,7 +114,9 @@
       "ssh_port": 22,
       "ssh_wait_timeout": "3600s",
       "shutdown_command": "{{user `shutdown_command`}}",
-      "parallels_tools_flavor": "{{user `parallels_tools_flavor`}}"
+      "parallels_tools_flavor": "{{user `parallels_tools_flavor`}}",
+      "parallels_tools_mode": "{{user `parallels_tools_mode`}}",
+      "parallels_tools_guest_path": "{{user `parallels_tools_guest_path`}}"
   },
   {
       "type": "vmware-iso",
@@ -161,6 +163,9 @@
       },
       "guest_os_type": "{{user `vmware_guest_os_type`}}",
       "http_directory": "http",
+      "http_port_min": "8080",
+      "http_port_max": "8089",
+      "http_bind_address": "10.2.76.141",
       "iso_urls": [
         "{{user `iso_path`}}/{{user `iso_file`}}",
         "{{user `iso_url`}}"
@@ -176,7 +181,6 @@
     "type": "vsphere-iso",
     "name": "{{user `vm_name`}}-vmware-vsphere",
     "vm_name": "{{user `vm_name`}}{{user `vm_suffix`}}-{{user `version`}}",
-    "floppy_files": [ "http/preseed-worker.cfg" ],
     "boot_wait": "10s",
     "boot_order": "disk,cdrom",
     "boot_command": [
@@ -262,7 +266,7 @@
     },
     {
       "type": "manifest",
-      "output": "boxes/manifest.json",
+      "output": "../../../boxes/manifest.json",
       "strip_path": true,
       "custom_data": {
           "version": "{{user `version`}}"
@@ -282,8 +286,8 @@
       "vagrantfile_template": "../../../boxes/kx.as.code-main-virtualbox.Vagrantfile",
       "only": ["{{user `vm_name`}}-virtualbox"],
       "include": [
-          "boxes/info.json",
-          "boxes/manifest.json"
+          "../../../boxes/info.json",
+          "../../../boxes/manifest.json"
       ]
     },
     {
@@ -293,8 +297,8 @@
       "vagrantfile_template": "../../../boxes/kx.as.code-main-parallels.Vagrantfile",
       "only": ["{{user `vm_name`}}-parallels"],
       "include": [
-          "boxes/info.json",
-          "boxes/manifest.json"
+          "../../../boxes/info.json",
+          "../../../boxes/manifest.json"
       ]
     },
     {
@@ -307,7 +311,7 @@
           "../../../boxes/info.json",
           "../../../boxes/manifest.json"
       ]
-    },
+    },  
     {
       "keep_input_artifact": true,
       "output": "../../../boxes/{{.Provider}}/{{user `vm_name`}}-{{.Provider}}-{{user `version`}}.box",
@@ -336,7 +340,10 @@
   },
   {
     "type": "shell-local",
-    "environment_vars": ["VERSION={{user `version`}}"],
+    "environment_vars": [
+      "VERSION={{user `version`}}",
+      "BOX_NAME={{user `vm_name`}}{{user `vm_suffix`}}-{{user `version`}}"
+    ],
     "execute_command": ["bash", "-c", "{{.Vars}} {{.Script}}"],
     "only_on": ["darwin","linux"],
     "script": "../../../scripts/post-processing/add-vagrant-box.sh"
@@ -366,6 +373,9 @@
       "type": "shell"
     },
     {
+      "environment_vars": [
+          "PARALLELS_TOOLS_GUEST_PATH={{user `parallels_tools_guest_path`}}"
+    ],
       "script":"../../../scripts/base/parallels.sh",
       "only": ["{{user `vm_name`}}-parallels"],
       "type": "shell"
@@ -469,7 +479,7 @@
    ],
   "variables": {
       "hostname": "kx-main",
-      "boot_command": "<esc><wait>install <wait> preseed/url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/preseed-worker.cfg <wait>debian-installer=en_US.UTF-8 <wait>auto <wait>locale=en_US.UTF-8 <wait>kbd-chooser/method=de <wait>keyboard-configuration/xkb-keymap=de <wait>netcfg/get_hostname={{ .Name }} <wait>netcfg/get_domain=vagrantup.com <wait>fb=false <wait>debconf/frontend=noninteractive <wait>console-setup/ask_detect=false <wait>console-keymaps-at/keymap=us <wait>grub-installer/bootdev=/dev/sda <wait><enter><wait>",
+      "boot_command": "<esc><wait>install <wait> preseed/url=http://{{ .HTTPIP }}:{{ .HTTPPort }}//{{user `preseed_path`}} <wait>debian-installer=en_US.UTF-8 <wait>auto <wait>locale=en_US.UTF-8 <wait>kbd-chooser/method=de <wait>keyboard-configuration/xkb-keymap=de <wait>netcfg/get_hostname={{ .Name }} <wait>netcfg/get_domain=vagrantup.com <wait>fb=false <wait>debconf/frontend=noninteractive <wait>console-setup/ask_detect=false <wait>console-keymaps-at/keymap=us <wait>grub-installer/bootdev=/dev/sda <wait><enter><wait>",
       "disable_ipv6": "true",
       "disk_size": "40960",
       "headless": "true",
@@ -483,6 +493,8 @@
       "guest_additions_url": "https://download.virtualbox.org/virtualbox/6.1.16/VBoxGuestAdditions_6.1.16.iso",
       "guest_additions_checksum": "88db771a5efd7c048228e5c1e0b8fba56542e9d8c1b75f7af5b0c4cf334f0584",
       "no_proxy": "{{env `no_proxy`}}",
+      "parallels_tools_mode": "upload",
+      "parallels_tools_guest_path": "/var/tmp/prl-tools-lin.iso",
       "parallels_guest_os_type": "linux-2.6",
       "parallels_tools_flavor": "lin",
       "preseed_path": "preseed.cfg",
