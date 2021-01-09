@@ -247,7 +247,7 @@
       "execute_command": ["bash", "-c", "{{.Vars}} {{.Script}}"],
       "use_linux_pathing": "{{user `use_linux_pathing`}}",
       "only_on": ["windows"],
-      "script": "../../../scripts/post-processing/create-manifest-json.sh"
+      "script": "{{user `scripts_directory_absolute_path`}}/post-processing/create-manifest-json.sh"
     },
     {
       "type": "manifest",
@@ -263,7 +263,7 @@
       "execute_command": ["bash", "-c", "{{.Vars}} {{.Script}}"],
       "use_linux_pathing": "{{user `use_linux_pathing`}}",
       "only_on": ["windows"],
-      "script": "../../../scripts/post-processing/create-info-json.sh"
+      "script": "{{user `scripts_directory_absolute_path`}}/post-processing/create-info-json.sh"
     },
     {
       "keep_input_artifact": true,
@@ -308,7 +308,7 @@
     "execute_command": ["bash", "-c", "{{.Vars}} {{.Script}}"],
     "use_linux_pathing": "{{user `use_linux_pathing`}}",
     "only_on": ["windows"],
-    "script": "../../../scripts/post-processing/export-vmware-ova.sh",
+    "script": "{{user `scripts_directory_absolute_path`}}/post-processing/export-vmware-ova.sh",
     "only": ["{{user `vm_name`}}-vmware-desktop"]
   },
   {
@@ -317,7 +317,7 @@
     "execute_command": ["bash", "-c", "{{.Vars}} {{.Script}}"],
     "use_linux_pathing": "{{user `use_linux_pathing`}}",
     "only_on": ["windows"],
-    "script": "../../../scripts/post-processing/create-metadata-json.sh"
+    "script": "{{user `scripts_directory_absolute_path`}}/post-processing/create-metadata-json.sh"
   },
   {
     "type": "shell-local",
@@ -325,7 +325,7 @@
     "execute_command": ["bash", "-c", "{{.Vars}} {{.Script}}"],
     "use_linux_pathing": "{{user `use_linux_pathing`}}",
     "only_on": ["windows"],
-    "script": "../../../scripts/post-processing/add-vagrant-box.sh"
+    "script": "{{user `scripts_directory_absolute_path`}}/post-processing/add-vagrant-box.sh"
   }
 ],
   "provisioners": [
@@ -473,7 +473,6 @@
       "vm_name": "kx.as.code-worker",
       "vm_suffix": "-demo",
       "vmware_guest_os_type": "ubuntu64Guest",
-      "ip_address":"10.100.76.100",
-      "use_linux_pathing": "false"
+      "ip_address":"10.100.76.100"
   }
 }
