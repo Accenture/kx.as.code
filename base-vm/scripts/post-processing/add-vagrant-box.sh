@@ -19,4 +19,4 @@ if [ ! -z ${LOGNAME} ]; then
 fi
 
 # Add box to local Vagrant box library
-vagrant box add ${PACKER_BUILD_NAME} ../../../boxes/${OUTPUT_DIR}-${VM_VERSION}/${VM_NAME}-${VM_VERSION}.box --force
+vagrant box add ${PACKER_BUILD_NAME} ../../../boxes/${OUTPUT_DIR}-${VM_VERSION}/${VM_NAME}${VM_SUFFIX}-${VM_VERSION}.box --force

@@ -246,8 +246,11 @@
   [
     {
       "type": "shell-local",
-      "environment_vars": ["VERSION={{user `version`}}"],
-      "execute_command": ["bash", "-c", "{{.Vars}} {{.Script}}"],
+      "environment_vars": [
+        "VM_VERSION={{user `version`}}",
+        "VM_NAME={{user `vm_name`}}",
+        "VM_SUFFIX={{user `vm_suffix`}}"
+      ],      
       "only_on": ["darwin","linux"],
       "script": "../../../scripts/post-processing/create-manifest-json.sh"
     },
@@ -261,14 +264,17 @@
     },
     {
       "type": "shell-local",
-      "environment_vars": ["VERSION={{user `version`}}"],
-      "execute_command": ["bash", "-c", "{{.Vars}} {{.Script}}"],
+      "environment_vars": [
+        "VM_VERSION={{user `version`}}",
+        "VM_NAME={{user `vm_name`}}",
+        "VM_SUFFIX={{user `vm_suffix`}}"
+      ],      
       "only_on": ["darwin","linux"],
       "script": "../../../scripts/post-processing/create-info-json.sh"
     },
     {
       "keep_input_artifact": true,
-      "output": "../../../boxes/{{.Provider}}/{{user `vm_name`}}{{user `vm_suffix`}}-{{user `version`}}.box",
+      "output": "../../../boxes/virtualbox-{{user `version`}}/{{user `vm_name`}}{{user `vm_suffix`}}-{{user `version`}}.box",
       "type": "vagrant",
       "vagrantfile_template": "../../../boxes/kx.as.code-main-virtualbox.Vagrantfile",
       "only": ["{{user `vm_name`}}-virtualbox"],
@@ -279,7 +285,7 @@
     },
     {
       "keep_input_artifact": true,
-      "output": "../../../boxes/{{.Provider}}/{{user `vm_name`}}{{user `vm_suffix`}}-{{user `version`}}.box",
+      "output": "../../../boxes/parallels-{{user `version`}}/{{user `vm_name`}}{{user `vm_suffix`}}-{{user `version`}}.box",
       "type": "vagrant",
       "vagrantfile_template": "../../../boxes/kx.as.code-main-parallels.Vagrantfile",
       "only": ["{{user `vm_name`}}-parallels"],
@@ -290,18 +296,7 @@
     },
     {
       "keep_input_artifact": true,
-      "output": "../../../boxes/{{.Provider}}/{{user `vm_name`}}{{user `vm_suffix`}}-{{user `version`}}.box",
-      "type": "vagrant",
-      "vagrantfile_template": "../../../boxes/kx.as.code-main-vmware.Vagrantfile",
-      "only": ["{{user `vm_name`}}-vmware-vsphere"],
-      "include": [
-          "../../../boxes/info.json",
-          "../../../boxes/manifest.json"
-      ]
-    },
-    {
-      "keep_input_artifact": true,
-      "output": "../../../boxes/{{.Provider}}/{{user `vm_name`}}-{{.Provider}}-{{user `version`}}.box",
+      "output": "../../../boxes/vmware-desktop-{{user `version`}}/{{user `vm_name`}}{{user `vm_suffix`}}-{{user `version`}}.box",
       "type": "vagrant",
       "vagrantfile_template": "../../../boxes/kx.as.code-main-vmware.Vagrantfile",
       "only": ["{{user `vm_name`}}-vmware-desktop"],
@@ -317,27 +312,22 @@
       "VM_NAME={{user `vm_name`}}",
       "VM_SUFFIX={{user `vm_suffix`}}"
     ],
-    "execute_command": ["bash", "-c", "{{.Vars}} {{.Script}}"],
     "only_on": ["darwin","linux"],
     "script": "../../../scripts/post-processing/export-vmware-ova.sh",
     "only": ["{{user `vm_name`}}-vmware-desktop"]
   },
   {
     "type": "shell-local",
-    "environment_vars": ["VERSION={{user `version`}}"],
-    "execute_command": ["bash", "-c", "{{.Vars}} {{.Script}}"],
-    "only_on": ["darwin","linux"],
-    "script": "../../../scripts/post-processing/create-metadata-json.sh"
-  },
-  {
-    "type": "shell-local",
     "environment_vars": [
-      "VERSION={{user `version`}}",
-      "BOX_NAME={{user `vm_name`}}{{user `vm_suffix`}}-{{user `version`}}"
+      "VM_VERSION={{user `version`}}",
+      "VM_NAME={{user `vm_name`}}",
+      "VM_SUFFIX={{user `vm_suffix`}}"
     ],
-    "execute_command": ["bash", "-c", "{{.Vars}} {{.Script}}"],
     "only_on": ["darwin","linux"],
-    "script": "../../../scripts/post-processing/add-vagrant-box.sh"
+    "scripts": [
+      "../../../scripts/post-processing/create-metadata-json.sh",
+      "../../../scripts/post-processing/add-vagrant-box.sh"
+    ]
   }
 ],
   "provisioners": [
@@ -406,12 +396,17 @@
     {
       "type": "file",
       "source": "../../../dependencies/plymouth_theme",
-      "destination": "/home/vagrant/plymouth_theme"
+      "destination": "/home/{{user `base_image_ssh_user`}}/plymouth_theme"
     },
     {
       "type": "file",
       "source": "../../../dependencies/user_profile",
-      "destination": "/home/vagrant/user_profile"
+      "destination": "/home/{{user `base_image_ssh_user`}}/user_profile"
+    },
+    {
+      "type": "file",
+      "source": "../../../scripts/worker-node",
+      "destination": "/home/{{user `base_image_ssh_user`}}/scripts"
     },
     {
       "environment_vars": [
@@ -422,12 +417,8 @@
         "COMPUTE_ENGINE_BUILD={{user `compute_engine_build`}}"
        ],
        "scripts": [
-         "../../../scripts/common/motd.sh",
-         "../../../scripts/common/kx.as.code.sh",
-         "../../../scripts/common/tools.sh",
-         "../../../scripts/common/powerline.sh",
-         "../../../scripts/common/docker.sh"
-       ],
+         "../../../scripts/common/motd.sh"
+      ],
        "type": "shell",
        "pause_before": "120s",
        "start_retry_timeout": "15m",
@@ -441,8 +432,6 @@
         "VERSION={{user `version`}}"
        ],
        "scripts": [
-         "../../../scripts/worker-node/tools.sh",
-         "../../../scripts/worker-node/k8s-base.sh",
          "../../../scripts/worker-node/cleanup.sh"
        ],
        "type": "shell",
