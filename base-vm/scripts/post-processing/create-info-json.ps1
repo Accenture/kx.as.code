@@ -6,6 +6,11 @@ $VM_SUFFIX = $env:VM_SUFFIX
 $VM_NAME = $env:VM_NAME
 $VM_VERSION = $env:VM_VERSION
 
+if ( -not ( Test-Path -Path "..\..\..\boxes\${PROVIDER}-${VM_VERSION}" ) )
+{
+    New-Item -ItemType Directory -Force "..\..\..\boxes\${PROVIDER}-${VM_VERSION}"
+}
+
 if ( Test-Path -Path "..\..\..\boxes\${PROVIDER}-${VM_VERSION}\info.json" -PathType Leaf )
 {
     if ( Test-Path -Path "..\..\..\boxes\${PROVIDER}-${VM_VERSION}\info.json.previous" -PathType Leaf )
