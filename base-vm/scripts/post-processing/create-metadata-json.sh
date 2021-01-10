@@ -43,13 +43,13 @@ if [ "$(uname)" == "Darwin" ]; then
     sed -i '' "s/##DESCRIPTION##/Accenture Interactive KX.AS.CODE DevOps VM - PLAY LEARN INNOVATE/" ../../../boxes/${OUTPUT_DIR}-${VM_VERSION}/${VM_NAME}${VM_SUFFIX}-${VM_VERSION}_metadata.json
     sed -i '' "s/##VERSION##/$VERSION/" ../../../boxes/${OUTPUT_DIR}-${VM_VERSION}/${VM_NAME}${VM_SUFFIX}-${VM_VERSION}_metadata.json
     sed -i '' "s/##PROVIDER##/$PROVIDER/g" ../../../boxes/${OUTPUT_DIR}-${VM_VERSION}/${VM_NAME}${VM_SUFFIX}-${VM_VERSION}_metadata.json
-    sed -i '' "s/##URL##/boxes\/$PROVIDERDIR\/$PACKER_BUILD_NAME.box/" ../../../boxes/${OUTPUT_DIR}-${VM_VERSION}/${VM_NAME}${VM_SUFFIX}-${VM_VERSION}_metadata.json
+    sed -i '' "s/##URL##/boxes\/${OUTPUT_DIR}-${VM_VERSION}\/$PACKER_BUILD_NAME.box/" ../../../boxes/${OUTPUT_DIR}-${VM_VERSION}/${VM_NAME}${VM_SUFFIX}-${VM_VERSION}_metadata.json
     sed -i '' "s/##CHECKSUM##/$CHECKSUM/" ../../../boxes/${OUTPUT_DIR}-${VM_VERSION}/${VM_NAME}${VM_SUFFIX}-${VM_VERSION}_metadata.json
 else
     sed -i "s/##NAME##/$PACKER_BUILD_NAME/" ../../../boxes/${OUTPUT_DIR}-${VM_VERSION}/${VM_NAME}${VM_SUFFIX}-${VM_VERSION}_metadata.json
     sed -i "s/##DESCRIPTION##/Accenture Interactive KX.AS.CODE DevOps VM - PLAY LEARN INNOVATE/" ../../../boxes/${OUTPUT_DIR}-${VM_VERSION}/${VM_NAME}${VM_SUFFIX}-${VM_VERSION}_metadata.json
     sed -i "s/##VERSION##/$VERSION/" ../../../boxes/${OUTPUT_DIR}-${VM_VERSION}/${VM_NAME}${VM_SUFFIX}-${VM_VERSION}_metadata.json
     sed -i "s/##PROVIDER##/$PROVIDER/g" ../../../boxes/${OUTPUT_DIR}-${VM_VERSION}/${VM_NAME}${VM_SUFFIX}-${VM_VERSION}_metadata.json
-    sed -i "s/##URL##/boxes\/$PROVIDERDIR\/$PACKER_BUILD_NAME.box/" ../../../boxes/${OUTPUT_DIR}-${VM_VERSION}/${VM_NAME}${VM_SUFFIX}-${VM_VERSION}_metadata.json
+    sed -i "s/##URL##/boxes\/${OUTPUT_DIR}-${VM_VERSION}\/$PACKER_BUILD_NAME.box/" ../../../boxes/${OUTPUT_DIR}-${VM_VERSION}/${VM_NAME}${VM_SUFFIX}-${VM_VERSION}_metadata.json
     sed -i "s/##CHECKSUM##/$CHECKSUM/" ../../../boxes/${OUTPUT_DIR}-${VM_VERSION}/${VM_NAME}${VM_SUFFIX}-${VM_VERSION}_metadata.json
 fi

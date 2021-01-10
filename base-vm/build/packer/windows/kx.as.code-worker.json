@@ -242,90 +242,108 @@
   "post-processors":
   [
     {
-      "type": "shell-local",
-      "environment_vars": ["VERSION={{user `version`}}"],
-      "execute_command": ["bash", "-c", "{{.Vars}} {{.Script}}"],
-      "use_linux_pathing": "{{user `use_linux_pathing`}}",
-      "only_on": ["windows"],
-      "script": "{{user `scripts_directory_absolute_path`}}/post-processing/create-manifest-json.sh"
-    },
-    {
       "type": "manifest",
-      "output": "../../../boxes/manifest.json",
-      "strip_path": true,
+      "output": "{{user `vm_name`}}{{user `vm_suffix`}}-{{user `version`}}_manifest.json",
       "custom_data": {
           "version": "{{user `version`}}"
       }
     },
     {
       "type": "shell-local",
-      "environment_vars": ["VERSION={{user `version`}}"],
-      "execute_command": ["bash", "-c", "{{.Vars}} {{.Script}}"],
-      "use_linux_pathing": "{{user `use_linux_pathing`}}",
+      "environment_vars": [
+        "VM_VERSION={{user `version`}}",
+        "VM_NAME={{user `vm_name`}}",
+        "VM_SUFFIX={{user `vm_suffix`}}"
+      ],
+      "execute_command": ["powershell.exe", "{{.Vars}} {{.Script}}"],
+      "env_var_format": "$env:%s=\"%s\"; ",
       "only_on": ["windows"],
-      "script": "{{user `scripts_directory_absolute_path`}}/post-processing/create-info-json.sh"
+      "script": "../../../scripts/post-processing/create-info-json.ps1"
     },
     {
       "keep_input_artifact": true,
-      "output": "../../../boxes/{{.Provider}}/{{user `vm_name`}}{{user `vm_suffix`}}-{{user `version`}}.box",
+      "output": "../../../boxes/{{.Provider}}-{{user `version`}}/{{user `vm_name`}}{{user `vm_suffix`}}-{{user `version`}}.box",
       "type": "vagrant",
-      "vagrantfile_template": "../../../boxes/kx.as.code-main-virtualbox.Vagrantfile",
+      "vagrantfile_template": "../../../boxes/kx.as.code-worker-virtualbox.Vagrantfile",
       "only": ["{{user `vm_name`}}-virtualbox"],
       "include": [
-          "../../../boxes/info.json",
-          "../../../boxes/manifest.json"
+          "../../../boxes/virtualbox-{{user `version`}}/info.json",
+          "{{user `vm_name`}}{{user `vm_suffix`}}-{{user `version`}}_manifest.json"
       ]
     },
     {
       "keep_input_artifact": true,
-      "output": "../../../boxes/{{.Provider}}/{{user `vm_name`}}{{user `vm_suffix`}}-{{user `version`}}.box",
+      "output": "../../../boxes/{{.Provider}}-{{user `version`}}/{{user `vm_name`}}{{user `vm_suffix`}}-{{user `version`}}.box",
       "type": "vagrant",
-      "vagrantfile_template": "../../../boxes/kx.as.code-main-parallels.Vagrantfile",
+      "vagrantfile_template": "../../../boxes/kx.as.code-worker-parallels.Vagrantfile",
       "only": ["{{user `vm_name`}}-parallels"],
       "include": [
-          "../../../boxes/info.json",
-          "../../../boxes/manifest.json"
+          "../../../boxes/parallels-{{user `version`}}/info.json",
+          "{{user `vm_name`}}{{user `vm_suffix`}}-{{user `version`}}_manifest.json"
       ]
     },
     {
       "keep_input_artifact": true,
-      "output": "../../../boxes/{{.Provider}}/{{user `vm_name`}}-{{.Provider}}-{{user `version`}}.box",
+      "output": "../../../boxes/{{.Provider}}-{{user `version`}}/{{user `vm_name`}}{{user `vm_suffix`}}-{{user `version`}}.box",
       "type": "vagrant",
-      "vagrantfile_template": "../../../boxes/kx.as.code-main-vmware.Vagrantfile",
+      "vagrantfile_template": "../../../boxes/kx.as.code-worker-vmware.Vagrantfile",
       "only": ["{{user `vm_name`}}-vmware-desktop"],
       "include": [
-          "../../../boxes/info.json",
-          "../../../boxes/manifest.json"
+          "../../../boxes/vmware-{{user `version`}}/info.json",
+          "{{user `vm_name`}}{{user `vm_suffix`}}-{{user `version`}}_manifest.json"
       ]
+    },
+    {
+      "type": "shell-local",
+      "environment_vars": [
+        "VM_VERSION={{user `version`}}",
+        "VM_NAME={{user `vm_name`}}",
+        "VM_SUFFIX={{user `vm_suffix`}}"
+      ],
+      "execute_command": ["powershell.exe", "{{.Vars}} {{.Script}}"],
+      "env_var_format": "$env:%s=\"%s\"; ",
+      "only_on": ["windows"],
+      "script": "../../../scripts/post-processing/move-manifest-json.ps1"
     },
   {
     "type": "shell-local",
     "environment_vars": [
       "VM_VERSION={{user `version`}}",
       "VM_NAME={{user `vm_name`}}",
-      "VM_SUFFIX={{user `vm_suffix`}}"
+      "VM_SUFFIX={{user `vm_suffix`}}",
+      "PROVIDER={{.Provider}}"
     ],
-    "execute_command": ["bash", "-c", "{{.Vars}} {{.Script}}"],
-    "use_linux_pathing": "{{user `use_linux_pathing`}}",
+    "execute_command": ["powershell.exe", "{{.Vars}} {{.Script}}"],
+    "env_var_format": "$env:%s=\"%s\"; ",
     "only_on": ["windows"],
-    "script": "{{user `scripts_directory_absolute_path`}}/post-processing/export-vmware-ova.sh",
+    "script": "../../../scripts/post-processing/export-vmware-ova.ps1",
     "only": ["{{user `vm_name`}}-vmware-desktop"]
   },
   {
     "type": "shell-local",
-    "environment_vars": ["VERSION={{user `version`}}"],
-    "execute_command": ["bash", "-c", "{{.Vars}} {{.Script}}"],
-    "use_linux_pathing": "{{user `use_linux_pathing`}}",
+    "environment_vars": [
+      "VM_VERSION={{user `version`}}",
+      "VM_NAME={{user `vm_name`}}",
+      "VM_SUFFIX={{user `vm_suffix`}}",
+      "PROVIDER={{.Provider}}"
+    ],
+    "execute_command": ["powershell.exe", "{{.Vars}} {{.Script}}"],
+    "env_var_format": "$env:%s=\"%s\"; ",
     "only_on": ["windows"],
-    "script": "{{user `scripts_directory_absolute_path`}}/post-processing/create-metadata-json.sh"
+    "script": "../../../scripts/post-processing/create-metadata-json.ps1"
   },
   {
     "type": "shell-local",
-    "environment_vars": ["VERSION={{user `version`}}"],
-    "execute_command": ["bash", "-c", "{{.Vars}} {{.Script}}"],
-    "use_linux_pathing": "{{user `use_linux_pathing`}}",
+    "environment_vars": [
+      "VM_VERSION={{user `version`}}",
+      "VM_NAME={{user `vm_name`}}",
+      "VM_SUFFIX={{user `vm_suffix`}}",
+      "PROVIDER={{.Provider}}"
+    ],
+    "execute_command": ["powershell.exe", "{{.Vars}} {{.Script}}"],
+    "env_var_format": "$env:%s=\"%s\"; ",
     "only_on": ["windows"],
-    "script": "{{user `scripts_directory_absolute_path`}}/post-processing/add-vagrant-box.sh"
+    "script": "../../../scripts/post-processing/add-vagrant-box.ps1"
   }
 ],
   "provisioners": [
@@ -384,7 +402,7 @@
         "../../../scripts/base/network.sh"
       ],
       "type": "shell",
-      "pause_before": "120s",
+      "pause_before": "60s",
       "start_retry_timeout": "15m",
       "expect_disconnect": "true"
     },
@@ -412,14 +430,10 @@
         "COMPUTE_ENGINE_BUILD={{user `compute_engine_build`}}"
        ],
        "scripts": [
-         "../../../scripts/common/motd.sh",
-         "../../../scripts/common/kx.as.code.sh",
-         "../../../scripts/common/tools.sh",
-         "../../../scripts/common/powerline.sh",
-         "../../../scripts/common/docker.sh"
+         "../../../scripts/common/motd.sh"
        ],
        "type": "shell",
-       "pause_before": "120s",
+       "pause_before": "60s",
        "start_retry_timeout": "15m",
        "expect_disconnect": "true"
      },
@@ -431,12 +445,10 @@
         "VERSION={{user `version`}}"
        ],
        "scripts": [
-         "../../../scripts/worker-node/tools.sh",
-         "../../../scripts/worker-node/k8s-base.sh",
          "../../../scripts/worker-node/cleanup.sh"
        ],
        "type": "shell",
-       "pause_before": "120s",
+       "pause_before": "60s",
        "start_retry_timeout": "15m",
        "expect_disconnect": "true"
      }
