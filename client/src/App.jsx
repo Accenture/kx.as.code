@@ -10,7 +10,7 @@ import TopPanel from "./layout/components/TopPanel";
 import LeftPanel from "./layout/components/LeftPanel";
 import { HashRouter, Route } from "react-router-dom";
 import Home from "./components/home/Home";
-import { NewProfileGeneral, NewProfileResource, NewProfileStorage, NewProfileReview, NewProfileReviewA, NewProfileOptional, KubernetesInstallation, ListApplication } from "./components/profile/index";
+import { NewProfileGeneral, NewProfileResource, NewProfileStorage, NewProfileReview, NewProfileOptional, KubernetesInstallation, ListApplication } from "./components/profile/index";
 
 
 window.Intl = IntlPolyfill;
@@ -79,10 +79,10 @@ class App extends Component {
                     <NewProfileReview/>
                   </Route>
                   <Route path="/new-profile-reviewA">
-                    <NewProfileReviewA/>
+                    <NewProfileReview/>
                   </Route>
                   <Route path="/kubernetes-installation">
-                    <KubernetesInstallation/>
+                    <NewProfileReview/>
                   </Route>
                   <Route path="/list-application">
                     <ListApplication/>
