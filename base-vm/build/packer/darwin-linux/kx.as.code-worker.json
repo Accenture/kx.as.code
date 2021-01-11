@@ -245,19 +245,8 @@
   "post-processors":
   [
     {
-      "type": "shell-local",
-      "environment_vars": [
-        "VM_VERSION={{user `version`}}",
-        "VM_NAME={{user `vm_name`}}",
-        "VM_SUFFIX={{user `vm_suffix`}}"
-      ],      
-      "only_on": ["darwin","linux"],
-      "script": "../../../scripts/post-processing/create-manifest-json.sh"
-    },
-    {
       "type": "manifest",
-      "output": "../../../boxes/manifest.json",
-      "strip_path": true,
+      "output": "{{user `vm_name`}}{{user `vm_suffix`}}-{{user `version`}}_manifest.json",
       "custom_data": {
           "version": "{{user `version`}}"
       }
@@ -268,7 +257,8 @@
         "VM_VERSION={{user `version`}}",
         "VM_NAME={{user `vm_name`}}",
         "VM_SUFFIX={{user `vm_suffix`}}"
-      ],      
+      ],
+      "execute_command": ["bash", "-c", "{{.Vars}} {{.Script}}"],
       "only_on": ["darwin","linux"],
       "script": "../../../scripts/post-processing/create-info-json.sh"
     },
@@ -279,8 +269,8 @@
       "vagrantfile_template": "../../../boxes/kx.as.code-main-virtualbox.Vagrantfile",
       "only": ["{{user `vm_name`}}-virtualbox"],
       "include": [
-          "../../../boxes/info.json",
-          "../../../boxes/manifest.json"
+        "../../../boxes/virtualbox-{{user `version`}}/info.json",
+        "{{user `vm_name`}}{{user `vm_suffix`}}-{{user `version`}}_manifest.json"
       ]
     },
     {
@@ -290,8 +280,8 @@
       "vagrantfile_template": "../../../boxes/kx.as.code-main-parallels.Vagrantfile",
       "only": ["{{user `vm_name`}}-parallels"],
       "include": [
-          "../../../boxes/info.json",
-          "../../../boxes/manifest.json"
+        "../../../boxes/virtualbox-{{user `version`}}/info.json",
+        "{{user `vm_name`}}{{user `vm_suffix`}}-{{user `version`}}_manifest.json"
       ]
     },
     {
@@ -301,9 +291,20 @@
       "vagrantfile_template": "../../../boxes/kx.as.code-main-vmware.Vagrantfile",
       "only": ["{{user `vm_name`}}-vmware-desktop"],
       "include": [
-          "../../../boxes/info.json",
-          "../../../boxes/manifest.json"
+        "../../../boxes/virtualbox-{{user `version`}}/info.json",
+        "{{user `vm_name`}}{{user `vm_suffix`}}-{{user `version`}}_manifest.json"
       ]
+    },
+    {
+      "type": "shell-local",
+      "environment_vars": [
+        "VM_VERSION={{user `version`}}",
+        "VM_NAME={{user `vm_name`}}",
+        "VM_SUFFIX={{user `vm_suffix`}}"
+      ],      
+      "execute_command": ["bash", "-c", "{{.Vars}} {{.Script}}"],
+      "only_on": ["darwin","linux"],
+      "script": "../../../scripts/post-processing/move-manifest-json.sh"
     },
   {
     "type": "shell-local",
@@ -323,6 +324,7 @@
       "VM_NAME={{user `vm_name`}}",
       "VM_SUFFIX={{user `vm_suffix`}}"
     ],
+    "execute_command": ["bash", "-c", "{{.Vars}} {{.Script}}"],
     "only_on": ["darwin","linux"],
     "scripts": [
       "../../../scripts/post-processing/create-metadata-json.sh",

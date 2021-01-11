@@ -1,18 +1,32 @@
 #!/bin/bash -x
 
-if [[ "${PACKER_BUILDER_TYPE}" =~ "vmware-iso" ]]; then
-    export OUTPUT_DIR="vmware-desktop"
-elif [[ "${PACKER_BUILDER_TYPE}" =~ "vsphere-iso" ]]; then
-    export OUTPUT_DIR="vmware-vsphere"
-elif [[ "${PACKER_BUILDER_TYPE}" =~ "parallels" ]]; then
-    export OUTPUT_DIR="parallels"
-elif [[ "${PACKER_BUILDER_TYPE}" =~ "virtualbox" ]]; then
-    export OUTPUT_DIR="virtualbox"
+export PROVIDER=$(echo ${PACKER_BUILDER_TYPE} | sed 's/-iso//g')
+
+if [[ "${VM_NAME}" =~ "main" ]]; then
+    export KX_VM_TYPE="main"
+elif [[ "${VM_NAME}" =~ "worker" ]]; then
+    export KX_VM_TYPE="worker"
 else
-    echo "Packer build type ${PACKER_BUILDER_TYPE} not recognized. Exiting add-vagrant-box script"
+    echo "Packer build name ${VM_NAME} not recognized. Exiting move-manifest.sh script"
     exit 1
 fi
 
-if [ -f ../../../boxes/${OUTPUT_DIR}-${VM_VERSION}/${VM_NAME}${VM_SUFFIX}-${VM_VERSION}_manifest.json ]; then 
-    ../../../boxes/${OUTPUT_DIR}-${VM_VERSION}/${VM_NAME}${VM_SUFFIX}-${VM_VERSION}_manifest.json ../../../boxes/${OUTPUT_DIR}-${VM_VERSION}/${VM_NAME}${VM_SUFFIX}-${VM_VERSION}_manifest.json.previous
+if [[ "${PACKER_BUILDER_TYPE}" =~ "vmware-iso" ]]; then
+    export OUTPUT_DIR="vmware-desktop"
+elif [[ "${PACKER_BUILDER_TYPE}" =~ "parallels-iso" ]]; then
+    export OUTPUT_DIR="parallels"
+elif [[ "${PACKER_BUILDER_TYPE}" =~ "virtualbox-iso" ]]; then
+    export OUTPUT_DIR="virtualbox"
+else
+    echo "Packer build type ${PACKER_BUILDER_TYPE} not recognized. Exiting move-manifest.sh script"
+    exit 1
+fi
+
+
+if [[ -f ../../../output-${KX_VM_TYPE}${VM_SUFFIX}/${OUTPUT_DIR}-${VM_VERSION}/${VM_NAME}${VM_SUFFIX}-${VM_VERSION}_manifest.json ]]; then
+    mv ../../../output-${KX_VM_TYPE}${VM_SUFFIX}/${OUTPUT_DIR}-${VM_VERSION}/${VM_NAME}${VM_SUFFIX}-${VM_VERSION}_manifest.json.previous
+fi
+
+if [[ -f ${VM_NAME}${VM_SUFFIX}-${VM_VERSION}_manifest.json ]]; then 
+    mv ${VM_NAME}${VM_SUFFIX}-${VM_VERSION}_manifest.json ../../../output-${KX_VM_TYPE}${VM_SUFFIX}/${OUTPUT_DIR}-${VM_VERSION}/${VM_NAME}${VM_SUFFIX}-${VM_VERSION}_manifest.json
 fi
