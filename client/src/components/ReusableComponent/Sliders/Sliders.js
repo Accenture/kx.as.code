@@ -78,7 +78,7 @@ export default function CustomizedSlider(props) {
         <p>{props.size}</p>
       </div>
       <Typography gutterBottom>{props.label}</Typography>
-      <PrettoSlider valueLabelDisplay="auto" aria-label="pretto slider" defaultValue={props.defaultValue} min={props.min} max={props.max}/>
+      <PrettoSlider valueLabelDisplay="auto" aria-label="pretto slider" defaultValue={props.defaultValue} min={props.min} max={props.max} onChange={props.handleChange}/>
       <div className={classes.margin} />
     </div>
   );

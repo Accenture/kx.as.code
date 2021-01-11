@@ -8,7 +8,8 @@ export const UIView = {
     Optional: 5,
     Review: 6,
     ReviewA: 7,
-    Installation: 8
+    Installation: 8,
+    ListApplication: 9
 }
 
 const initialState = {
