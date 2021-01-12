@@ -266,7 +266,7 @@
       "keep_input_artifact": true,
       "output": "../../../boxes/virtualbox-{{user `version`}}/{{user `vm_name`}}{{user `vm_suffix`}}-{{user `version`}}.box",
       "type": "vagrant",
-      "vagrantfile_template": "../../../boxes/kx.as.code-main-virtualbox.Vagrantfile",
+      "vagrantfile_template": "../../../boxes/kx.as.code-worker-virtualbox.Vagrantfile",
       "only": ["{{user `vm_name`}}-virtualbox"],
       "include": [
         "../../../boxes/virtualbox-{{user `version`}}/info.json",
@@ -277,7 +277,7 @@
       "keep_input_artifact": true,
       "output": "../../../boxes/parallels-{{user `version`}}/{{user `vm_name`}}{{user `vm_suffix`}}-{{user `version`}}.box",
       "type": "vagrant",
-      "vagrantfile_template": "../../../boxes/kx.as.code-main-parallels.Vagrantfile",
+      "vagrantfile_template": "../../../boxes/kx.as.code-worker-parallels.Vagrantfile",
       "only": ["{{user `vm_name`}}-parallels"],
       "include": [
         "../../../boxes/virtualbox-{{user `version`}}/info.json",
@@ -288,11 +288,11 @@
       "keep_input_artifact": true,
       "output": "../../../boxes/vmware-desktop-{{user `version`}}/{{user `vm_name`}}{{user `vm_suffix`}}-{{user `version`}}.box",
       "type": "vagrant",
-      "vagrantfile_template": "../../../boxes/kx.as.code-main-vmware.Vagrantfile",
+      "vagrantfile_template": "../../../boxes/kx.as.code-worker-vmware.Vagrantfile",
       "only": ["{{user `vm_name`}}-vmware-desktop"],
       "include": [
-        "../../../boxes/virtualbox-{{user `version`}}/info.json",
-        "{{user `vm_name`}}{{user `vm_suffix`}}-{{user `version`}}_manifest.json"
+          "../../../boxes/virtualbox-{{user `version`}}/info.json",
+          "{{user `vm_name`}}{{user `vm_suffix`}}-{{user `version`}}_manifest.json"
       ]
     },
     {
@@ -302,7 +302,6 @@
         "VM_NAME={{user `vm_name`}}",
         "VM_SUFFIX={{user `vm_suffix`}}"
       ],      
-      "execute_command": ["bash", "-c", "{{.Vars}} {{.Script}}"],
       "only_on": ["darwin","linux"],
       "script": "../../../scripts/post-processing/move-manifest-json.sh"
     },
@@ -324,7 +323,6 @@
       "VM_NAME={{user `vm_name`}}",
       "VM_SUFFIX={{user `vm_suffix`}}"
     ],
-    "execute_command": ["bash", "-c", "{{.Vars}} {{.Script}}"],
     "only_on": ["darwin","linux"],
     "scripts": [
       "../../../scripts/post-processing/create-metadata-json.sh",

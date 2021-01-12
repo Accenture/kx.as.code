@@ -127,7 +127,7 @@
       "boot_command": [
         "<esc><wait>",
         "install <wait>",
-        " preseed/url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/{{user `preseed_path`}} <wait>",
+        " preseed/url=http://{{user `http_bind_address`}}:{{.HTTPPort}}/{{user `preseed_path`}} <wait>",
         "debian-installer=en_US.UTF-8 <wait>",
         "auto <wait>",
         "locale=en_US.UTF-8 <wait>",
@@ -258,71 +258,78 @@
   "post-processors":
   [
     {
-      "type": "shell-local",
-      "environment_vars": ["VERSION={{user `version`}}"],
-      "execute_command": ["bash", "-c", "{{.Vars}} {{.Script}}"],
-      "only_on": ["darwin","linux"],
-      "script": "../../../scripts/post-processing/create-manifest-json.sh"
-    },
-    {
       "type": "manifest",
-      "output": "../../../boxes/manifest.json",
-      "strip_path": true,
+      "output": "{{user `vm_name`}}{{user `vm_suffix`}}-{{user `version`}}_manifest.json",
       "custom_data": {
           "version": "{{user `version`}}"
       }
     },
     {
       "type": "shell-local",
-      "environment_vars": ["VERSION={{user `version`}}"],
+      "environment_vars": [
+        "VM_VERSION={{user `version`}}",
+        "VM_NAME={{user `vm_name`}}",
+        "VM_SUFFIX={{user `vm_suffix`}}"
+      ],
       "execute_command": ["bash", "-c", "{{.Vars}} {{.Script}}"],
       "only_on": ["darwin","linux"],
       "script": "../../../scripts/post-processing/create-info-json.sh"
     },
     {
       "keep_input_artifact": true,
-      "output": "../../../boxes/{{.Provider}}/{{user `vm_name`}}{{user `vm_suffix`}}-{{user `version`}}.box",
+      "output": "../../../boxes/virtualbox-{{user `version`}}/{{user `vm_name`}}{{user `vm_suffix`}}-{{user `version`}}.box",
       "type": "vagrant",
       "vagrantfile_template": "../../../boxes/kx.as.code-main-virtualbox.Vagrantfile",
       "only": ["{{user `vm_name`}}-virtualbox"],
       "include": [
-          "../../../boxes/info.json",
-          "../../../boxes/manifest.json"
+        "../../../boxes/virtualbox-{{user `version`}}/info.json",
+        "{{user `vm_name`}}{{user `vm_suffix`}}-{{user `version`}}_manifest.json"
       ]
     },
     {
       "keep_input_artifact": true,
-      "output": "../../../boxes/{{.Provider}}/{{user `vm_name`}}{{user `vm_suffix`}}-{{user `version`}}.box",
+      "output": "../../../boxes/parallels-{{user `version`}}/{{user `vm_name`}}{{user `vm_suffix`}}-{{user `version`}}.box",
       "type": "vagrant",
       "vagrantfile_template": "../../../boxes/kx.as.code-main-parallels.Vagrantfile",
       "only": ["{{user `vm_name`}}-parallels"],
       "include": [
-          "../../../boxes/info.json",
-          "../../../boxes/manifest.json"
+        "../../../boxes/virtualbox-{{user `version`}}/info.json",
+        "{{user `vm_name`}}{{user `vm_suffix`}}-{{user `version`}}_manifest.json"
       ]
     },
     {
       "keep_input_artifact": true,
-      "output": "../../../boxes/{{.Provider}}/{{user `vm_name`}}{{user `vm_suffix`}}-{{user `version`}}.box",
-      "type": "vagrant",
-      "vagrantfile_template": "../../../boxes/kx.as.code-main-vmware.Vagrantfile",
-      "only": ["{{user `vm_name`}}-vmware-vsphere"],
-      "include": [
-          "../../../boxes/info.json",
-          "../../../boxes/manifest.json"
-      ]
-    },  
-    {
-      "keep_input_artifact": true,
-      "output": "../../../boxes/{{.Provider}}/{{user `vm_name`}}-{{.Provider}}-{{user `version`}}.box",
+      "output": "../../../boxes/vmware-desktop-{{user `version`}}/{{user `vm_name`}}{{user `vm_suffix`}}-{{user `version`}}.box",
       "type": "vagrant",
       "vagrantfile_template": "../../../boxes/kx.as.code-main-vmware.Vagrantfile",
       "only": ["{{user `vm_name`}}-vmware-desktop"],
       "include": [
-          "../../../boxes/info.json",
-          "../../../boxes/manifest.json"
+        "../../../boxes/virtualbox-{{user `version`}}/info.json",
+        "{{user `vm_name`}}{{user `vm_suffix`}}-{{user `version`}}_manifest.json"
       ]
     },
+    {
+      "type": "shell-local",
+      "environment_vars": [
+        "VM_VERSION={{user `version`}}",
+        "VM_NAME={{user `vm_name`}}",
+        "VM_SUFFIX={{user `vm_suffix`}}"
+      ],      
+      "execute_command": ["bash", "-c", "{{.Vars}} {{.Script}}"],
+      "only_on": ["darwin","linux"],
+      "script": "../../../scripts/post-processing/move-manifest-json.sh"
+    },
+  {
+    "type": "shell-local",
+    "environment_vars": [
+      "VM_VERSION={{user `version`}}",
+      "VM_NAME={{user `vm_name`}}",
+      "VM_SUFFIX={{user `vm_suffix`}}"
+    ],
+    "only_on": ["darwin","linux"],
+    "script": "../../../scripts/post-processing/export-vmware-ova.sh",
+    "only": ["{{user `vm_name`}}-vmware-desktop"]
+  },
   {
     "type": "shell-local",
     "environment_vars": [
@@ -332,25 +339,10 @@
     ],
     "execute_command": ["bash", "-c", "{{.Vars}} {{.Script}}"],
     "only_on": ["darwin","linux"],
-    "script": "../../../scripts/post-processing/export-vmware-ova.sh",
-    "only": ["{{user `vm_name`}}-vmware-desktop"]
-  },
-  {
-    "type": "shell-local",
-    "environment_vars": ["VERSION={{user `version`}}"],
-    "execute_command": ["bash", "-c", "{{.Vars}} {{.Script}}"],
-    "only_on": ["darwin","linux"],
-    "script": "../../../scripts/post-processing/create-metadata-json.sh"
-  },
-  {
-    "type": "shell-local",
-    "environment_vars": [
-      "VERSION={{user `version`}}",
-      "BOX_NAME={{user `vm_name`}}{{user `vm_suffix`}}-{{user `version`}}"
-    ],
-    "execute_command": ["bash", "-c", "{{.Vars}} {{.Script}}"],
-    "only_on": ["darwin","linux"],
-    "script": "../../../scripts/post-processing/add-vagrant-box.sh"
+    "scripts": [
+      "../../../scripts/post-processing/create-metadata-json.sh",
+      "../../../scripts/post-processing/add-vagrant-box.sh"
+    ]
   }
 ],
   "provisioners": [
@@ -502,6 +494,9 @@
       "parallels_guest_os_type": "linux-2.6",
       "parallels_tools_flavor": "lin",
       "preseed_path": "preseed.cfg",
+      "http_directory": "./http",
+      "http_bind_address": "10.2.76.141",
+      "http_bind_port": "8081",
       "shutdown_command": "echo 'vagrant' | sudo -Srm -rf shutdown -P now",
       "ssh_fullname": "KX Hero",
       "update": "true",
