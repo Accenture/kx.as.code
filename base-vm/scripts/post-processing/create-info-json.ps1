@@ -1,6 +1,5 @@
 
 $PACKER_BUILDER_TYPE = $env:PACKER_BUILDER_TYPE
-$PROVIDER = $PACKER_BUILDER_TYPE -replace "-.*"
 
 if (${PACKER_BUILDER_TYPE} -eq "vmware-iso")
 {
