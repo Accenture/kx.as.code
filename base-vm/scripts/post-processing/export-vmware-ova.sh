@@ -1,7 +1,5 @@
 #!/bin/bash -x
 
-export PROVIDER=$(echo ${PACKER_BUILDER_TYPE} | sed 's/-iso//g')
-
 if [[ "${PACKER_BUILDER_TYPE}" =~ "vmware-iso" ]]; then
     export OUTPUT_DIR="vmware-desktop"
 elif [[ "${PACKER_BUILDER_TYPE}" =~ "parallels" ]]; then

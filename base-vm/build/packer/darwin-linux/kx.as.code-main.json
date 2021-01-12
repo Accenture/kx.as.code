@@ -303,18 +303,7 @@
     },
     {
       "keep_input_artifact": true,
-      "output": "../../../boxes/{{.Provider}}/{{user `vm_name`}}{{user `vm_suffix`}}-{{user `version`}}.box",
-      "type": "vagrant",
-      "vagrantfile_template": "../../../boxes/kx.as.code-main-vmware.Vagrantfile",
-      "only": ["{{user `vm_name`}}-vmware-vsphere"],
-      "include": [
-          "../../../boxes/info.json",
-          "../../../boxes/manifest.json"
-      ]
-    },  
-    {
-      "keep_input_artifact": true,
-      "output": "../../../boxes/{{.Provider}}/{{user `vm_name`}}-{{.Provider}}-{{user `version`}}.box",
+      "output": "../../../boxes/vmware-desktop-{{user `version`}}/{{user `vm_name`}}{{user `vm_suffix`}}-{{user `version`}}.box",
       "type": "vagrant",
       "vagrantfile_template": "../../../boxes/kx.as.code-main-vmware.Vagrantfile",
       "only": ["{{user `vm_name`}}-vmware-desktop"],
