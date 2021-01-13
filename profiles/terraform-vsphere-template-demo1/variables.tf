@@ -11,11 +11,11 @@ variable "vsphere_datacenter" {
 }
 
 variable "vsphere_server" {
-  default = "192.168.40.191"
+  default = "x.x.x.x"
 }
 
 variable "vsphere_host" {
-  default = "192.168.40.184"
+  default = "x.x.x.x"
 }
 
 variable "vsphere_kx_vms_folder" {
@@ -55,7 +55,7 @@ variable "main_node_memory" {
 }
 
 variable "main_node_guest_id" {
-  default = "debian10_64Guest"
+  default = "ubuntu64Guest"
 }
 
 variable "worker_node_num_cpus" {
@@ -67,5 +67,5 @@ variable "worker_node_memory" {
 }
 
 variable "worker_node_guest_id" {
-  default = "debian10_64Guest"
+  default = "ubuntu64Guest"
 }
