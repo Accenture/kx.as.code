@@ -109,6 +109,52 @@ resource "aws_route_table_association" "RT-IG-Association" {
 }
 
 
+resource "aws_eip" "elastic_ip" {
+  vpc      = true
+}
+
+# NAT gateway
+resource "aws_nat_gateway" "nat_gateway" {
+  depends_on = [
+    aws_subnet.public,
+    aws_eip.elastic_ip,
+  ]
+  allocation_id = aws_eip.elastic_ip.id
+  subnet_id     = aws_subnet.public.id
+
+  tags = {
+    Name = "nat-gateway"
+  }
+}
+
+
+resource "aws_route_table" "NAT_route_table" {
+  depends_on = [
+    aws_vpc.kx-vpc,
+    aws_nat_gateway.nat_gateway,
+  ]
+
+  vpc_id = aws_vpc.kx-vpc.id
+
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_nat_gateway.nat_gateway.id
+  }
+
+  tags = {
+    Name = "NAT-route-table"
+  }
+}
+
+# associate route table to private subnet
+resource "aws_route_table_association" "associate_routetable_to_private_subnet" {
+  depends_on = [
+    aws_subnet.private,
+    aws_route_table.NAT_route_table,
+  ]
+  subnet_id      = aws_subnet.private.id
+  route_table_id = aws_route_table.NAT_route_table.id
+}
 
 resource "aws_security_group" "kx-as-code_sg" {
   description = "Allow limited inbound external traffic"
