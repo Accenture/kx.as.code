@@ -9,7 +9,7 @@
       "type": "virtualbox-iso",
       "name": "{{user `vm_name`}}-virtualbox",
       "vm_name": "{{user `vm_name`}}{{user `vm_suffix`}}-{{user `version`}}",
-      "output_directory": "output-worker{{user `vm_suffix`}}/virtualbox-{{user `version`}}",
+      "output_directory": "../../../output-worker{{user `vm_suffix`}}/virtualbox-{{user `version`}}",
       "boot_wait": "10s",
       "format": "ova",
       "boot_command": [
@@ -43,8 +43,8 @@
           ["modifyvm", "{{.Name}}", "--cpus", "{{user `cpus`}}"],
           ["modifyvm", "{{.Name}}", "--clipboard", "bidirectional"],
           ["sharedfolder", "add", "{{.Name}}", "--name", "KX_Share", "--hostpath", "{{user `host_data_directory`}}", "--automount"],
-          ["createhd", "--format", "VDI", "--filename", "output-worker{{user `vm_suffix`}}/virtualbox-{{user `version`}}/{{.Name}}-local-k8s-storage.vdi", "--size", "104448" ],
-          ["storageattach", "{{.Name}}", "--storagectl", "SATA Controller", "--port", "1", "--device","0","--type", "hdd", "--medium", "output-worker{{user `vm_suffix`}}/virtualbox-{{user `version`}}/{{.Name}}-local-k8s-storage.vdi" ]
+          ["createhd", "--format", "VDI", "--filename", "../../../output-worker{{user `vm_suffix`}}/virtualbox-{{user `version`}}/{{.Name}}-local-k8s-storage.vdi", "--size", "104448" ],
+          ["storageattach", "{{.Name}}", "--storagectl", "SATA Controller", "--port", "1", "--device","0","--type", "hdd", "--medium", "../../../output-worker{{user `vm_suffix`}}/virtualbox-{{user `version`}}/{{.Name}}-local-k8s-storage.vdi" ]
       ],
       "vboxmanage_post": [
         ["modifyvm", "{{.Name}}", "--nic1", "natnetwork","--natnetwork1","kxascode"]
@@ -68,7 +68,7 @@
       "post_shutdown_delay": "30s",
       "guest_additions_url": "{{user `guest_additions_url`}}",
       "guest_additions_sha256": "{{user `guest_additions_checksum`}}",
-      "guest_additions_path": "/home/vagrant/VBoxGuestAdditions_{{.Version}}.iso",
+      "guest_additions_path": "/home/{{user `base_image_ssh_user`}}/VBoxGuestAdditions_{{.Version}}.iso",
       "guest_additions_mode": "upload",
       "virtualbox_version_file": "VBoxVersion.txt"
   },
@@ -76,9 +76,9 @@
       "type": "parallels-iso",
       "name": "{{user `vm_name`}}-parallels",
       "vm_name": "{{user `vm_name`}}{{user `vm_suffix`}}-{{user `version`}}",
-      "output_directory": "output-worker{{user `vm_suffix`}}/parallels-{{user `version`}}",
+      "output_directory": "../../../output-worker{{user `vm_suffix`}}/parallels-{{user `version`}}",
       "boot_wait": "1s",
-      "boot_command": "{{user `boot_command`}}{{.HTTPIP}}:{{.HTTPPort}}/preseed.cfg<wait> , --- <enter>",
+      "boot_command": "{{user `boot_command`}}{{.HTTPIP}}:{{.HTTPPort}}/{{user `preseed_path`}}<wait> , --- <enter>",
       "disk_size": "{{user `disk_size`}}",
       "hard_drive_interface": "sata",
       "prlctl": [
@@ -112,61 +112,10 @@
       "parallels_tools_flavor": "{{user `parallels_tools_flavor`}}"
   },
   {
-      "type": "vmware-iso",
-      "name": "{{user `vm_name`}}-vmware-vsphere",
-      "vm_name": "{{user `vm_name`}}{{user `vm_suffix`}}-{{user `version`}}",
-      "output_directory": "output-worker{{user `vm_suffix`}}/vmware-vsphere-{{user `version`}}",
-      "boot_wait": "10s",
-      "boot_command": [
-        "<esc><wait>",
-        "install <wait>",
-        " preseed/url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/{{user `preseed_path`}} <wait>",
-        "debian-installer=en_US.UTF-8 <wait>",
-        "auto <wait>",
-        "locale=en_US.UTF-8 <wait>",
-        "kbd-chooser/method=us <wait>",
-        "keyboard-configuration/xkb-keymap=us <wait>",
-        "netcfg/get_hostname={{user `hostname` }} <wait>",
-        "netcfg/get_domain={{user `domain` }} <wait>",
-        "fb=false <wait>",
-        "debconf/frontend=noninteractive <wait>",
-        "console-setup/ask_detect=false <wait>",
-        "console-keymaps-at/keymap=us <wait>",
-        "grub-installer/bootdev=/dev/sda <wait>",
-        "<enter><wait>"
-      ],
-      "disk_size": "{{user `disk_size`}}",
-      "vmx_data": {
-        "numvcpus": "{{user `cpus`}}",
-        "memsize": "{{user `memory`}}",
-        "sharedFolder0.present": "TRUE",
-        "sharedFolder0.enabled": "TRUE",
-        "sharedFolder0.readAccess": "TRUE",
-        "sharedFolder0.writeAccess": "TRUE",
-        "sharedFolder0.hostPath": "{{user `host_data_directory`}}",
-        "sharedFolder0.guestName": "KX_Share",
-        "sharedFolder0.expiration": "never",
-        "isolation.tools.hgfs.disable": "FALSE",
-        "pref.sharedFolder.maxNum": "1"
-      },
-      "guest_os_type": "{{user `vmware_guest_os_type`}}",
-      "http_directory": "http",
-      "iso_urls": [
-        "{{user `iso_path`}}/{{user `iso_file`}}",
-        "{{user `iso_url`}}"
-      ],
-      "iso_checksum": "{{user `iso_checksum_type`}}:{{user `iso_checksum`}}",
-      "ssh_username": "vagrant",
-      "ssh_password": "vagrant",
-      "ssh_port": 22,
-      "ssh_timeout": "3600s",
-      "shutdown_command": "{{user `shutdown_command`}}"
-  },
-  {
     "type": "vmware-iso",
     "name": "{{user `vm_name`}}-vmware-desktop",
     "vm_name": "{{user `vm_name`}}{{user `vm_suffix`}}-{{user `version`}}",
-    "output_directory": "output-worker{{user `vm_suffix`}}/vmware-desktop-{{user `version`}}",
+    "output_directory": "../../../output-worker{{user `vm_suffix`}}/vmware-desktop-{{user `version`}}",
     "boot_wait": "10s",
     "boot_command": [
       "<esc><wait>",
@@ -215,104 +164,186 @@
     "ssh_port": 22,
     "ssh_timeout": "3600s",
     "shutdown_command": "{{user `shutdown_command`}}"
-}],
+  },
+  {
+    "type": "vsphere-iso",
+    "name": "{{user `vm_name`}}-vmware-vsphere",
+    "vm_name": "{{user `vm_name`}}{{user `vm_suffix`}}-{{user `version`}}",
+    "boot_wait": "10s",
+    "boot_order": "disk,cdrom",
+    "boot_command": [
+      "<esc><wait>",
+      "install <wait>",
+      " preseed/url=http://{{user `builder_ip`}}:{{ .HTTPPort }}/{{user `preseed_path`}} <wait>",
+      "debian-installer=en_US.UTF-8 <wait>",
+      "auto <wait>",
+      "locale=en_US.UTF-8 <wait>",
+      "kbd-chooser/method=us <wait>",
+      "keyboard-configuration/xkb-keymap=us <wait>",
+      "netcfg/get_hostname={{user `hostname` }} <wait>",
+      "netcfg/get_domain={{user `domain` }} <wait>",
+      "fb=false <wait>",
+      "debconf/frontend=noninteractive <wait>",
+      "console-setup/ask_detect=false <wait>",
+      "console-keymaps-at/keymap=us <wait>",
+      "grub-installer/bootdev=/dev/sda <wait>",
+      "<enter><wait>"
+    ],
+    "guest_os_type": "{{user `vmware_guest_os_type`}}",
+    "http_directory": "http",
+    "iso_urls": [ 
+      "{{user `iso_path`}}/{{user `iso_file`}}",
+      "{{user `iso_url`}}"
+    ],
+    "iso_checksum": "{{user `iso_checksum_type`}}:{{user `iso_checksum`}}",
+    "ssh_username": "vagrant",
+    "ssh_password": "vagrant",
+    "ssh_port": 22,
+    "ssh_timeout": "3600s",
+    "shutdown_command": "{{user `shutdown_command`}}",
+    "convert_to_template": true,
+    "vcenter_server": "{{user `vsphere_server`}}",
+    "host": "{{user `vsphere_host`}}",
+    "username": "{{user `vsphere_username`}}",
+    "password": "{{user `vsphere_password`}}",
+    "insecure_connection": "true",
+    "datacenter": "{{user `vsphere_dc`}}",
+    "cluster": "{{user `vsphere_cluster`}}",
+    "network_adapters": [
+      {
+        "network": "{{user `vsphere_network`}}",
+        "network_card": "vmxnet3"
+      }
+    ],
+    "datastore": "{{user `vsphere_datastore`}}",
+    "folder": "{{user `vsphere_folder`}}",
+    "CPUs": "{{user `vsphere_cpu`}}",
+    "RAM": "{{user `vsphere_memory`}}",
+    "RAM_reserve_all": true,
+    "firmware": "bios",
+    "disk_controller_type": ["lsilogic-sas"],
+    "storage": [
+      {
+        "disk_size": "{{user `vsphere_disk_size_sda`}}",
+        "disk_thin_provisioned": true,
+        "disk_controller_index": 0
+      },
+      {
+        "disk_size": "{{user `vsphere_disk_size_sdb`}}",
+        "disk_thin_provisioned": true,
+        "disk_controller_index": 0
+      }
+    ],
+    "export": {
+      "force": true,
+      "output_directory": "../../../output-worker{{user `vm_suffix`}}/vmware-vsphere-{{user `version`}}"
+    }
+  }],
   "post-processors":
   [
     {
-      "type": "shell-local",
-      "environment_vars": ["VERSION={{user `version`}}"],
-      "execute_command": ["cmd", "/c", "{{.Vars}} {{.Script}}"],
-      "use_linux_pathing": false,
-      "script": "C:/Users/Patrick/github.com/kx.as.code/base-vm/scripts/post-processing/create-manifest-json.sh"
-    },
-    {
       "type": "manifest",
-      "output": "boxes/manifest.json",
-      "strip_path": true,
+      "output": "{{user `vm_name`}}{{user `vm_suffix`}}-{{user `version`}}_manifest.json",
       "custom_data": {
           "version": "{{user `version`}}"
       }
     },
     {
       "type": "shell-local",
-      "environment_vars": ["VERSION={{user `version`}}"],
-      "execute_command": ["cmd", "/c", "{{.Vars}} {{.Script}}"],
-      "use_linux_pathing": false,
-      "script": "C:/Users/Patrick/github.com/kx.as.code/base-vm/scripts/post-processing/create-info-json.sh"
+      "environment_vars": [
+        "VM_VERSION={{user `version`}}",
+        "VM_NAME={{user `vm_name`}}",
+        "VM_SUFFIX={{user `vm_suffix`}}"
+      ],
+      "execute_command": ["powershell.exe", "{{.Vars}} {{.Script}}"],
+      "env_var_format": "$env:%s=\"%s\"; ",
+      "only_on": ["windows"],
+      "script": "../../../scripts/post-processing/create-info-json.ps1"
     },
     {
       "keep_input_artifact": true,
-      "output": "boxes/{{.Provider}}/{{user `vm_name`}}-{{.Provider}}-{{user `version`}}.box",
+      "output": "../../../boxes/{{.Provider}}-{{user `version`}}/{{user `vm_name`}}{{user `vm_suffix`}}-{{user `version`}}.box",
       "type": "vagrant",
-      "vagrantfile_template": "boxes/kx.as.code-worker-virtualbox.Vagrantfile",
+      "vagrantfile_template": "../../../boxes/kx.as.code-worker-virtualbox.Vagrantfile",
       "only": ["{{user `vm_name`}}-virtualbox"],
       "include": [
-          "boxes/info.json",
-          "boxes/manifest.json"
+          "../../../boxes/virtualbox-{{user `version`}}/info.json",
+          "{{user `vm_name`}}{{user `vm_suffix`}}-{{user `version`}}_manifest.json"
       ]
     },
     {
       "keep_input_artifact": true,
-      "output": "boxes/{{.Provider}}/{{user `vm_name`}}-{{.Provider}}-{{user `version`}}.box",
+      "output": "../../../boxes/{{.Provider}}-{{user `version`}}/{{user `vm_name`}}{{user `vm_suffix`}}-{{user `version`}}.box",
       "type": "vagrant",
-      "vagrantfile_template": "boxes/Vagrantfile.Parallels",
+      "vagrantfile_template": "../../../boxes/kx.as.code-worker-parallels.Vagrantfile",
       "only": ["{{user `vm_name`}}-parallels"],
       "include": [
-          "boxes/info.json",
-          "boxes/manifest.json"
+          "../../../boxes/parallels-{{user `version`}}/info.json",
+          "{{user `vm_name`}}{{user `vm_suffix`}}-{{user `version`}}_manifest.json"
       ]
     },
     {
       "keep_input_artifact": true,
-      "output": "boxes/{{.Provider}}/{{user `vm_name`}}-{{.Provider}}-{{user `version`}}.box",
+      "output": "../../../boxes/vmware-desktop-{{user `version`}}/{{user `vm_name`}}{{user `vm_suffix`}}-{{user `version`}}.box",
       "type": "vagrant",
-      "vagrantfile_template": "boxes/kx.as.code-worker-vmware.Vagrantfile",
+      "vagrantfile_template": "../../../boxes/kx.as.code-worker-vmware.Vagrantfile",
       "only": ["{{user `vm_name`}}-vmware-desktop"],
       "include": [
-          "boxes/info.json",
-          "boxes/manifest.json"
+          "../../../boxes/vmware-desktop-{{user `version`}}/info.json",
+          "{{user `vm_name`}}{{user `vm_suffix`}}-{{user `version`}}_manifest.json"
       ]
     },
     {
-      "keep_input_artifact": true,
-      "output": "boxes/{{.Provider}}/{{user `vm_name`}}-{{.Provider}}-{{user `version`}}.box",
-      "type": "vagrant",
-      "vagrantfile_template": "boxes/kx.as.code-worker-vmware.Vagrantfile",
-      "only": ["{{user `vm_name`}}-vmware-vsphere"],
-      "include": [
-          "boxes/info.json",
-          "boxes/manifest.json"
-      ]
+      "type": "shell-local",
+      "environment_vars": [
+        "VM_VERSION={{user `version`}}",
+        "VM_NAME={{user `vm_name`}}",
+        "VM_SUFFIX={{user `vm_suffix`}}"
+      ],
+      "execute_command": ["powershell.exe", "{{.Vars}} {{.Script}}"],
+      "env_var_format": "$env:%s=\"%s\"; ",
+      "only_on": ["windows"],
+      "script": "../../../scripts/post-processing/move-manifest-json.ps1"
     },
-    {
+  {
     "type": "shell-local",
-    "environment_vars": ["VERSION={{user `version`}}"],
-    "execute_command": ["cmd", "/c", "{{.Vars}} {{.Script}}"],
-    "use_linux_pathing": false,
-    "script": "C:/Users/Patrick/github.com/kx.as.code/base-vm/scripts/post-processing/export-vmware-ova.sh",
+    "environment_vars": [
+      "VM_VERSION={{user `version`}}",
+      "VM_NAME={{user `vm_name`}}",
+      "VM_SUFFIX={{user `vm_suffix`}}",
+      "PROVIDER={{.Provider}}"
+    ],
+    "execute_command": ["powershell.exe", "{{.Vars}} {{.Script}}"],
+    "env_var_format": "$env:%s=\"%s\"; ",
+    "only_on": ["windows"],
+    "script": "../../../scripts/post-processing/export-vmware-ova.ps1",
     "only": ["{{user `vm_name`}}-vmware-desktop"]
   },
   {
     "type": "shell-local",
-    "environment_vars": ["VERSION={{user `version`}}"],
-    "execute_command": ["cmd", "/c", "{{.Vars}} {{.Script}}"],
-    "use_linux_pathing": false,
-    "script": "C:/Users/Patrick/github.com/kx.as.code/base-vm/scripts/post-processing/export-vmware-ova.sh",
-    "only": ["{{user `vm_name`}}-vmware-vsphere"]
+    "environment_vars": [
+      "VM_VERSION={{user `version`}}",
+      "VM_NAME={{user `vm_name`}}",
+      "VM_SUFFIX={{user `vm_suffix`}}",
+      "PROVIDER={{.Provider}}"
+    ],
+    "execute_command": ["powershell.exe", "{{.Vars}} {{.Script}}"],
+    "env_var_format": "$env:%s=\"%s\"; ",
+    "only_on": ["windows"],
+    "script": "../../../scripts/post-processing/create-metadata-json.ps1"
   },
   {
     "type": "shell-local",
-    "environment_vars": ["VERSION={{user `version`}}"],
-    "execute_command": ["cmd", "/c", "{{.Vars}} {{.Script}}"],
-    "use_linux_pathing": false,
-    "script": "C:/Users/Patrick/github.com/kx.as.code/base-vm/scripts/post-processing/create-metadata-json.sh"
-  },
-  {
-    "type": "shell-local",
-    "environment_vars": ["VERSION={{user `version`}}"],
-    "execute_command": ["cmd", "/c", "{{.Vars}} {{.Script}}"],
-    "use_linux_pathing": false,
-    "script": "C:/Users/Patrick/github.com/kx.as.code/base-vm/scripts/post-processing/add-vagrant-box.sh"
+    "environment_vars": [
+      "VM_VERSION={{user `version`}}",
+      "VM_NAME={{user `vm_name`}}",
+      "VM_SUFFIX={{user `vm_suffix`}}",
+      "PROVIDER={{.Provider}}"
+    ],
+    "execute_command": ["powershell.exe", "{{.Vars}} {{.Script}}"],
+    "env_var_format": "$env:%s=\"%s\"; ",
+    "only_on": ["windows"],
+    "script": "../../../scripts/post-processing/add-vagrant-box.ps1"
   }
 ],
   "provisioners": [
@@ -322,8 +353,8 @@
           "VM_PASSWORD={{user `vm_password`}}"
       ],
       "scripts": [
-        "scripts/base/vagrant-user.sh",
-        "scripts/base/kx-user.sh"
+        "../../../scripts/base/vagrant-user.sh",
+        "../../../scripts/base/kx-user.sh"
       ],
       "type": "shell",
       "start_retry_timeout": "15m",
@@ -331,29 +362,29 @@
     },
     {
       "type": "file",
-      "source": "../auto-setup/autoSetup.json",
+      "source": "../../../../auto-setup/autoSetup.json",
       "destination": "/home/vagrant/autoSetup.json"
     },
     {
       "environment_vars": [
           "VM_USER={{user `vm_user`}}"
       ],
-      "script":"scripts/base/virtualbox.sh",
+      "script":"../../../scripts/base/virtualbox.sh",
       "only": ["{{user `vm_name`}}-virtualbox"],
       "type": "shell"
     },
     {
-      "script":"scripts/base/parallels.sh",
+      "script":"../../../scripts/base/parallels.sh",
       "only": ["{{user `vm_name`}}-parallels"],
       "type": "shell"
     },
     {
-      "script": "scripts/base/vmware.sh",
+      "script": "../../../scripts/base/vmware.sh",
       "only": ["{{user `vm_name`}}-vmware-desktop"],
       "type": "shell"
     },
     {
-      "script": "scripts/base/vmware.sh",
+      "script": "../../../scripts/base/vmware.sh",
       "only": ["{{user `vm_name`}}-vmware-vsphere"],
       "type": "shell"
     },
@@ -365,25 +396,30 @@
         "DNS2={{user `dns2`}}"
     ],
       "scripts": [
-        "scripts/base/cleanup.sh",
-        "scripts/base/localtime.sh",
-        "scripts/base/power.sh",
-        "scripts/base/network.sh"
+        "../../../scripts/base/cleanup.sh",
+        "../../../scripts/base/localtime.sh",
+        "../../../scripts/base/power.sh",
+        "../../../scripts/base/network.sh"
       ],
       "type": "shell",
-      "pause_before": "120s",
+      "pause_before": "60s",
       "start_retry_timeout": "15m",
       "expect_disconnect": "true"
     },
     {
       "type": "file",
-      "source": "./dependencies/plymouth_theme",
-      "destination": "/home/vagrant/plymouth_theme"
+      "source": "../../../dependencies/plymouth_theme",
+      "destination": "/home/{{user `base_image_ssh_user`}}/plymouth_theme"
     },
     {
       "type": "file",
-      "source": "./dependencies/user_profile",
-      "destination": "/home/vagrant/user_profile"
+      "source": "../../../dependencies/user_profile",
+      "destination": "/home/{{user `base_image_ssh_user`}}/user_profile"
+    },
+    {
+      "type": "file",
+      "source": "../../../scripts/worker-node",
+      "destination": "/home/{{user `base_image_ssh_user`}}/scripts"
     },
     {
       "environment_vars": [
@@ -394,14 +430,10 @@
         "COMPUTE_ENGINE_BUILD={{user `compute_engine_build`}}"
        ],
        "scripts": [
-         "scripts/common/motd.sh",
-         "scripts/common/kx.as.code.sh",
-         "scripts/common/tools.sh",
-         "scripts/common/powerline.sh",
-         "scripts/common/docker.sh"
+         "../../../scripts/common/motd.sh"
        ],
        "type": "shell",
-       "pause_before": "120s",
+       "pause_before": "60s",
        "start_retry_timeout": "15m",
        "expect_disconnect": "true"
      },
@@ -413,18 +445,16 @@
         "VERSION={{user `version`}}"
        ],
        "scripts": [
-         "scripts/worker-node/tools.sh",
-         "scripts/worker-node/k8s-base.sh",
-         "scripts/worker-node/cleanup.sh"
+         "../../../scripts/worker-node/cleanup.sh"
        ],
        "type": "shell",
-       "pause_before": "120s",
+       "pause_before": "60s",
        "start_retry_timeout": "15m",
        "expect_disconnect": "true"
      }
    ],
   "variables": {
-      "boot_command": "<esc><wait>install <wait> preseed/url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/preseed-worker.cfg <wait>debian-installer=en_US.UTF-8 <wait>auto <wait>locale=en_US.UTF-8 <wait>kbd-chooser/method=de <wait>keyboard-configuration/xkb-keymap=de <wait>netcfg/get_hostname={{ .Name }} <wait>netcfg/get_domain=vagrantup.com <wait>fb=false <wait>debconf/frontend=noninteractive <wait>console-setup/ask_detect=false <wait>console-keymaps-at/keymap=us <wait>grub-installer/bootdev=/dev/sda <wait><enter><wait>",
+      "boot_command": "<esc><wait>install <wait> preseed/url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/{{user `preseed_path`}} <wait>debian-installer=en_US.UTF-8 <wait>auto <wait>locale=en_US.UTF-8 <wait>kbd-chooser/method=de <wait>keyboard-configuration/xkb-keymap=de <wait>netcfg/get_hostname={{ .Name }} <wait>netcfg/get_domain=vagrantup.com <wait>fb=false <wait>debconf/frontend=noninteractive <wait>console-setup/ask_detect=false <wait>console-keymaps-at/keymap=us <wait>grub-installer/bootdev=/dev/sda <wait><enter><wait>",
       "cpus": "2",
       "compute_engine_build": "false",
       "hostname": "kx-worker",
@@ -445,16 +475,16 @@
       "no_proxy": "{{env `no_proxy`}}",
       "parallels_guest_os_type": "linux-2.6",
       "parallels_tools_flavor": "lin",
-      "preseed_path": "preseed-worker.cfg",
+      "preseed_path": "preseed.cfg",
       "shutdown_command": "echo 'vagrant' | sudo -Srm -rf shutdown -P now",
-      "base_image_ssh_user": "vagrant",
       "ssh_fullname": "KX Hero",
       "update": "true",
       "video_memory": "128",
       "virtualbox_guest_os_type": "Debian_64",
+      "base_image_ssh_user": "vagrant",
       "vm_name": "kx.as.code-worker",
       "vm_suffix": "-demo",
-      "vmware_guest_os_type": "debian10_64Guest",
+      "vmware_guest_os_type": "ubuntu64Guest",
       "ip_address":"10.100.76.100"
   }
 }
