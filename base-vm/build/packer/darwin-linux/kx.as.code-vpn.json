@@ -10,7 +10,7 @@
       "type": "virtualbox-iso",
       "name": "{{user `vm_name`}}-virtualbox",
       "vm_name": "{{user `vm_name`}}{{user `vm_suffix`}}-{{user `version`}}",
-      "output_directory": "output-ca{{user `vm_suffix`}}/virtualbox-{{user `version`}}",
+      "output_directory": "output-vpn{{user `vm_suffix`}}/virtualbox-{{user `version`}}",
       "boot_wait": "10s",
       "format": "ova",
       "boot_command": [
@@ -77,7 +77,7 @@
       "type": "parallels-iso",
       "name": "{{user `vm_name`}}-parallels",
       "vm_name": "{{user `vm_name`}}{{user `vm_suffix`}}-{{user `version`}}",
-      "output_directory": "output-ca{{user `vm_suffix`}}/parallels-{{user `version`}}",
+      "output_directory": "output-vpn{{user `vm_suffix`}}/parallels-{{user `version`}}",
       "boot_wait": "1s",
       "boot_command": "{{user `boot_command`}}{{.HTTPIP}}:{{.HTTPPort}}/preseed.cfg<wait> , --- <enter>",
       "disk_size": "{{user `disk_size`}}",
@@ -116,7 +116,7 @@
       "type": "vmware-iso",
       "name": "{{user `vm_name`}}-vmware-desktop",
       "vm_name": "{{user `vm_name`}}{{user `vm_suffix`}}-{{user `version`}}",
-      "output_directory": "output-ca{{user `vm_suffix`}}/vmware-desktop-{{user `version`}}",
+      "output_directory": "output-vpn{{user `vm_suffix`}}/vmware-desktop-{{user `version`}}",
       "boot_wait": "10s",
       "boot_command": [
         "<esc><wait>",
@@ -282,7 +282,7 @@
       "keep_input_artifact": true,
       "output": "boxes/{{.Provider}}/{{user `vm_name`}}-{{.Provider}}-{{user `version`}}.box",
       "type": "vagrant",
-      "vagrantfile_template": "boxes/kx.as.code-ca-virtualbox.Vagrantfile",
+      "vagrantfile_template": "boxes/kx.as.code-vpn-virtualbox.Vagrantfile",
       "only": ["{{user `vm_name`}}-virtualbox"],
       "include": [
         "boxes/info.json",
@@ -293,7 +293,7 @@
       "keep_input_artifact": true,
       "output": "boxes/{{.Provider}}/{{user `vm_name`}}-{{.Provider}}-{{user `version`}}.box",
       "type": "vagrant",
-      "vagrantfile_template": "boxes/kx.as.code-ca-parallels.Vagrantfile",
+      "vagrantfile_template": "boxes/kx.as.code-vpn-parallels.Vagrantfile",
       "only": ["{{user `vm_name`}}-parallels"],
       "include": [
         "boxes/info.json",
@@ -304,7 +304,7 @@
       "keep_input_artifact": true,
       "output": "boxes/{{.Provider}}/{{user `vm_name`}}-{{.Provider}}-{{user `version`}}.box",
       "type": "vagrant",
-      "vagrantfile_template": "boxes/kx.as.code-ca-vmware.Vagrantfile",
+      "vagrantfile_template": "boxes/kx.as.code-vpn-vmware.Vagrantfile",
       "only": ["{{user `vm_name`}}-vmware-vsphere"],
       "include": [
         "boxes/info.json",
@@ -315,7 +315,7 @@
       "keep_input_artifact": true,
       "output": "boxes/{{.Provider}}/{{user `vm_name`}}-{{.Provider}}-{{user `version`}}.box",
       "type": "vagrant",
-      "vagrantfile_template": "boxes/kx.as.code-ca-vmware.Vagrantfile",
+      "vagrantfile_template": "boxes/kx.as.code-vpn-vmware.Vagrantfile",
       "only": ["{{user `vm_name`}}-vmware-desktop"],
       "include": [
         "boxes/info.json",
@@ -393,6 +393,7 @@
     },
     {
       "environment_vars": [
+        "BASE_IMAGE_SSH_USER={{user `base_image_ssh_user`}}",
         "IP_ADDRESS={{user `ip_address`}}",
         "GATEWAY={{user `gateway`}}",
         "DNS1={{user `dns1`}}",
@@ -426,7 +427,7 @@
     },
     {
       "type": "file",
-      "source": "./scripts/ca-node",
+      "source": "./scripts/vpn-node",
       "destination": "/home/vagrant/scripts"
     },
     {
@@ -464,8 +465,8 @@
         "DNS2={{user `dns2`}}"
       ],
       "scripts": [
-        "scripts/ca-node/easyrsa.sh",
-        "scripts/ca-node/cleanup.sh"
+        "scripts/vpn-node/openvpn.sh",
+        "scripts/vpn-node/cleanup.sh"
       ],
       "type": "shell",
       "pause_before": "120s",
@@ -474,7 +475,7 @@
     }
   ],
   "variables": {
-    "boot_command": "<esc><wait>install <wait> preseed/url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/preseed-worker.cfg <wait>debian-installer=en_US.UTF-8 <wait>auto <wait>locale=en_US.UTF-8 <wait>kbd-chooser/method=de <wait>keyboard-configuration/xkb-keymap=de <wait>netcfg/get_hostname={{ .Name }} <wait>netcfg/get_domain=vagrantup.com <wait>fb=false <wait>debconf/frontend=noninteractive <wait>console-setup/ask_detect=false <wait>console-keymaps-at/keymap=us <wait>grub-installer/bootdev=/dev/sda <wait><enter><wait>",
+    "boot_command": "<esc><wait>install <wait> preseed/url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/preseed.cfg <wait>debian-installer=en_US.UTF-8 <wait>auto <wait>locale=en_US.UTF-8 <wait>kbd-chooser/method=de <wait>keyboard-configuration/xkb-keymap=de <wait>netcfg/get_hostname={{ .Name }} <wait>netcfg/get_domain=vagrantup.com <wait>fb=false <wait>debconf/frontend=noninteractive <wait>console-setup/ask_detect=false <wait>console-keymaps-at/keymap=us <wait>grub-installer/bootdev=/dev/sda <wait><enter><wait>",
     "disable_ipv6": "true",
     "disk_size": "10240",
     "headless": "true",
@@ -490,15 +491,15 @@
     "no_proxy": "{{env `no_proxy`}}",
     "parallels_guest_os_type": "linux-2.6",
     "parallels_tools_flavor": "lin",
-    "preseed_path": "preseed-worker.cfg",
+    "preseed_path": "preseed.cfg",
     "shutdown_command": "echo 'vagrant' | sudo -Srm -rf shutdown -P now",
     "base_image_ssh_user": "vagrant",
     "ssh_fullname": "KX Hero",
     "update": "true",
     "video_memory": "128",
     "virtualbox_guest_os_type": "Debian_64",
-    "vm_name": "kx.as.code-ca",
-    "hostname": "kx-ca",
+    "vm_name": "kx.as.code-vpn",
+    "hostname": "kx-vpn",
     "vm_suffix": "-demo",
     "vmware_guest_os_type": "debian10_64Guest"
   }

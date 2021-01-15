@@ -3,19 +3,19 @@ variable "vsphere_user" {
 }
 
 variable "vsphere_password" {
-  default = "L3arnandshare!"
+  default = "VMware1!!"
 }
 
 variable "vsphere_datacenter" {
-  default = "kx01dc01"
+  default = "kx01-dc01"
 }
 
 variable "vsphere_server" {
-  default = "192.168.40.158"
+  default = "192.168.40.191"
 }
 
 variable "vsphere_host" {
-  default = "192.168.40.160"
+  default = "192.168.40.184"
 }
 
 variable "vsphere_folder" {
@@ -23,15 +23,15 @@ variable "vsphere_folder" {
 }
 
 variable "vsphere_network" {
-  default = "kx01infranet01"
+  default = "kx01-m01-vds01-vmnet"
 }
 
 variable "vsphere_datastore" {
-  default = "datastore1"
+  default = "dsEsx01a"
 }
 
 variable "vsphere_resource_pool" {
-  default = "kx01cl01/Resources"
+  default = "kx01-m01-cl01/Resources"
 }
 
 variable "main_node_num_cpus" {

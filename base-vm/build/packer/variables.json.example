@@ -25,5 +25,6 @@
   "vsphere_disk_size": "40960",
   "esxi_vsphere_username": "root",
   "esxi_vsphere_password": "",
-  "builder_ip": "x.x.x.x"
+  "builder_ip": "x.x.x.x",
+  "scripts_directory_absolute_path": "V:/jenkins_remote/workspace/VirtualBox/KX.AS.CODE_Worker_Build/base-vm/scripts"
 }

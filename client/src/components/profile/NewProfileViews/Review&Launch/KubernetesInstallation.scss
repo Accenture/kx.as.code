@@ -1,0 +1,89 @@
+
+.kubernetesTitle {
+    height: 43px;
+    margin: 132px 185px 24px 74px;
+    font-family: Helvetica;
+    font-size: 36px;
+    font-weight: normal;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: normal;
+    letter-spacing: normal;
+    color: #c4cfdd;
+  }
+
+  #grid1 > .applicationCard > .app1{
+    border: solid 1px #283040;
+    background-color: #283040;
+      width : 200%;
+  }
+
+  #grid2 > .applicationCard > .app2{
+    border: solid 1px #283040;
+    background-color: #283040;
+      width : 200%;
+  }
+  .kubernetesContainer {  
+      width: 85%;
+      height: 1030px;
+      margin-left: 85px;
+      margin-bottom: 2%;
+      border-radius: 4px;
+      box-shadow: 0 5px 10px -10px rgba(0, 0, 0, 0.5);
+      background-color: #131a24;
+  }
+  .baseTitle {
+      margin: 0 5%;
+      padding-top: 5%;
+  }
+  .baseInstallProgress {
+      float:right;
+  }
+  .progress {
+      margin-top: 20px;
+      
+  .progress-bar {
+      width: 30%;
+  }
+  }
+  
+  .hz-line {
+      border-color: #d8d8d8;
+      margin-top: 30px;
+      height: 2px;
+      width: 90%;
+  }
+  .installProgress {
+      margin: 0 5%;
+      padding-top: 5%;
+      .installTime {
+          float:right;
+      }
+  }
+  .installStatus {
+      float:right;
+      color: blue;
+      font-size: 70%;
+      margin-bottom: 30px;
+      
+  }
+  #grid1 > .applicationCard > .app1 > div > .installedConfirm{
+      margin-left: 70px;
+      margin-bottom: 10px;
+  }
+  .icons {
+      height: 46px;
+      width: 45px;
+      margin-top: 7px;
+      margin-left: 10px;
+  }
+  .applicationCard {
+      width: 35%;
+      margin-left: 5%;
+      margin-top: 3%;
+  }
+  .font-icon-progress{
+    float:right;
+    color: blue;
+    font-size: 100%;
+  }

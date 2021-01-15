@@ -7,7 +7,7 @@ output/
 output-main/
 output-worker/
 *~
-variables.json
+build/packer/variables.json
 *.log
 .DS_Store
 .vagrant/*
