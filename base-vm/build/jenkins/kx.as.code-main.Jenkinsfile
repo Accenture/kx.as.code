@@ -38,12 +38,13 @@ pipeline {
         string(name: 'vpc_id', defaultValue: 'vpc-bd2785d6', description: 'VPC Id')
         string(name: 'vpc_subnet_id', defaultValue: 'subnet-a4bcd7e8', description: 'VPC Subnet Id')
         string(name: 'availability_zone', defaultValue: 'us-east-2c', description: 'VPC Availability zone, eg. us-east-2c')
-        string(name: 'associate_public_ip_address', defaultValue: 'false', description: 'Assign public IP. Should be true or false')
+        string(name: 'associate_public_ip_address', defaultValue: 'true', description: 'Assign public IP. Should be true or false')
         string(name: 'source_ami', defaultValue: 'ami-06be10ae4a207f54a', description: 'Source AMI set to Debian Buster 10')
         string(name: 'security_group_id', defaultValue: 'sg-0772da3ed04fe2677', description: 'VPC Security Group Id')
         string(name: 'instance_type', defaultValue: 't3.small', description: 'Instance type, eg t3.small')
         string(name: 'shutdown_behavior', defaultValue: 'terminate', description: 'Stop or Terminate instance on failure')
         string(name: 'ssh_username', defaultValue: 'admin', description: 'SSH user used during packer build process')
+        string(name: 'ssh_interface', defaultValue: 'public_ip', description: 'Options are private_ip or public_ip')
     }
 
     stages {
@@ -88,6 +89,7 @@ pipeline {
                         -var "vpc_id=${vpc_id}" \
                         -var "vpc_subnet_id=${vpc_subnet_id}" \
                         -var "associate_public_ip_address=${associate_public_ip_address}" \
+                        -var "ssh_username=${ssh_interface}" \
                         -var "ssh_username=${ssh_username}" \
                         -var "base_image_ssh_user=${base_image_ssh_user}" \
                         -var "shutdown_behavior=${shutdown_behavior}" \

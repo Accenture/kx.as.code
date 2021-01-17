@@ -28,7 +28,7 @@
         }
       ],
       "ssh_username": "{{user `ssh_username`}}",
-      "ssh_interface": "private_ip",
+      "ssh_interface": "{{user `ssh_interface`}}",
       "ssh_port": 22,
       "ssh_timeout": "3600s",
       "shutdown_behavior": "{{user `shutdown_behavior`}}"
