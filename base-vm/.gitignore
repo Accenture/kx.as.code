@@ -19,3 +19,14 @@ ovf_cmd.bat
 *.tfstate*
 plan
 .config.yaml
+/deploy/aws/jq
+/deploy/aws/kx-as-code.ovpn
+/deploy/aws/aws/
+/deploy/aws/awscliv2.zip
+/deploy/aws/temp.ovpn
+/deploy/aws/terraform
+/deploy/aws/config.json
+/deploy/aws/.ovpn/cert
+/deploy/aws/.ovpn/key
+/deploy/aws/.ssh/id_rsa
+/deploy/aws/.ssh/id_rsa.pub

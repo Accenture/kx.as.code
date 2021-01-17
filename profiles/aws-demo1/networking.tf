@@ -1,47 +1,7 @@
-variable "ACCESS_KEY" {}
-variable "SECRET_KEY" {}
-variable "KX_MAIN_AMI_ID" {}
-variable "KX_WORKER_AMI_ID" {}
-variable "REGION" {}
-variable "VPC_CIDR_BLOCK" {}
-variable "PRIVATE_ONE_SUBNET_CIDR" {}
-variable "PRIVATE_TWO_SUBNET_CIDR" {}
-variable "PUBLIC_SUBNET_CIDR" {}
-variable "AVAILABILITY_ZONE" {}
-variable "PUBLIC_KEY" {}
-variable "VPN_SERVER_CERT_ARN" {}
-variable "VPN_CLIENT_CERT_ARN" {}
-
-output "aws_vpc_id" {
-  value = aws_vpc.kx-vpc.id
-}
-
-output "kx-main_instance_ip_addr" {
-  value = aws_instance.kx-main.private_ip
-}
-
-output "kx-worker_instance_ip_addr" {
-  value = aws_instance.kx-worker.*.private_ip
-}
-
-output "vpn_endpoint" {
-  value = aws_ec2_client_vpn_endpoint.vpn.dns_name
-}
-
-provider "aws" {
-  access_key = var.ACCESS_KEY
-  secret_key = var.SECRET_KEY
-  region = var.REGION
-}
-
-resource "aws_key_pair" "kx-key" {
-  key_name   = "kx-key"
-  public_key = file(".ssh/id_rsa.pub")
-}
-
 resource "aws_vpc" "kx-vpc" {
   cidr_block       = var.VPC_CIDR_BLOCK
   enable_dns_hostnames = true
+  enable_dns_support = true
 }
 
 resource "aws_subnet" "private_one" {
@@ -143,7 +103,7 @@ resource "aws_nat_gateway" "nat_gateway" {
   subnet_id     = aws_subnet.public.id
 
   tags = {
-    Name = "nat-gateway"
+    Name = "NAT Gateway"
   }
 }
 
@@ -162,7 +122,7 @@ resource "aws_route_table" "NAT_route_table" {
   }
 
   tags = {
-    Name = "NAT-route-table"
+    Name = "NAT Route Table"
   }
 }
 
@@ -210,39 +170,39 @@ resource aws_ec2_client_vpn_endpoint vpn {
   }
 }
 
-  resource aws_ec2_client_vpn_network_association private {
-    client_vpn_endpoint_id = aws_ec2_client_vpn_endpoint.vpn.id
-    subnet_id              = aws_subnet.private_one.id
-  }
+resource aws_ec2_client_vpn_network_association private {
+  client_vpn_endpoint_id = aws_ec2_client_vpn_endpoint.vpn.id
+  subnet_id              = aws_subnet.private_one.id
+}
 
-  resource aws_route53_resolver_endpoint vpn_dns {
-    name = "vpn-dns-access"
-    direction = "INBOUND"
-    security_group_ids = [aws_security_group.vpn_dns.id]
-    ip_address {
-      subnet_id = aws_subnet.private_one.id
-    }
-    ip_address {
-      subnet_id = aws_subnet.private_two.id
-    }
+resource aws_route53_resolver_endpoint vpn_dns {
+  name = "vpn-dns-access"
+  direction = "INBOUND"
+  security_group_ids = [aws_security_group.vpn_dns.id]
+  ip_address {
+    subnet_id = aws_subnet.private_one.id
   }
+  ip_address {
+    subnet_id = aws_subnet.private_two.id
+  }
+}
 
-  resource aws_security_group vpn_dns {
-    name = "vpn_dns"
-    vpc_id = aws_vpc.kx-vpc.id
-    ingress {
-      from_port = 0
-      protocol = "-1"
-      to_port = 0
-      security_groups = [aws_security_group.vpn_access.id]
-    }
-    egress {
-      from_port = 0
-      protocol = "-1"
-      to_port = 0
-      cidr_blocks = ["0.0.0.0/0"]
-    }
+resource aws_security_group vpn_dns {
+  name = "vpn_dns"
+  vpc_id = aws_vpc.kx-vpc.id
+  ingress {
+    from_port = 0
+    protocol = "-1"
+    to_port = 0
+    security_groups = [aws_security_group.vpn_access.id]
   }
+  egress {
+    from_port = 0
+    protocol = "-1"
+    to_port = 0
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
 
 resource null_resource client_vpn_ingress {
   depends_on = [aws_ec2_client_vpn_endpoint.vpn]
@@ -303,7 +263,7 @@ resource "aws_security_group" "kx-as-code-main_sg" {
     to_port     = 4000
   }
 
- ingress {
+  ingress {
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
     from_port   = 443
@@ -345,88 +305,44 @@ resource "aws_security_group" "kx-as-code-worker_sg" {
   }
 }
 
-resource "aws_instance" "kx-main" {
-  depends_on = [ aws_security_group.kx-as-code-main_sg, aws_key_pair.kx-key ]
-  ami = var.KX_MAIN_AMI_ID
-  key_name = aws_key_pair.kx-key.key_name
-  instance_type = "t3.large"
-  vpc_security_group_ids = [ aws_security_group.kx-as-code-main_sg.id ]
-  subnet_id = aws_subnet.private_one.id
-  availability_zone = var.AVAILABILITY_ZONE
-  #private_dns = "kx-main"
-
-  ebs_block_device {
-    device_name = "/dev/xvdb"
-    volume_type = "gp2"
-    volume_size = 100
-  }
-
-  ebs_block_device {
-    device_name = "/dev/xvdc"
-    volume_type = "gp2"
-    volume_size = 100
-  }
-
-  connection {
-    user        = "admin"
-    private_key = file(".ssh/id_rsa")
-  }
-
-  tags = {
-    Name = "KX.AS.CODE Main"
-  }
-}
-
 resource "aws_route53_zone" "kx-as-code" {
-  name = "kx-as-code.local"
+  name = var.KX_DOMAIN
 
   vpc {
     vpc_id = aws_vpc.kx-vpc.id
   }
 }
 
-resource "aws_route53_record" "main" {
+resource "aws_route53_record" "kx-main" {
   zone_id = aws_route53_zone.kx-as-code.zone_id
-  name    = "kx-main.kx-as-code.local"
+  name    = "kx-main.${var.KX_DOMAIN}"
   type    = "A"
   ttl     = 300
   records  = [ aws_instance.kx-main.private_ip ]
 }
 
-resource "aws_instance" "kx-worker" {
-  depends_on = [ aws_instance.kx-main, aws_security_group.kx-as-code-worker_sg, aws_key_pair.kx-key ]
-  ami = var.KX_WORKER_AMI_ID
-  key_name = aws_key_pair.kx-key.key_name
-  instance_type = "t3.large"
-  vpc_security_group_ids = [ aws_security_group.kx-as-code-worker_sg.id ]
-  subnet_id = aws_subnet.private_one.id
-  count = 2
-  availability_zone = var.AVAILABILITY_ZONE
-  #private_dns = "kx-worker${count.index + 1}"
-
-  ebs_block_device {
-    device_name = "/dev/xvdb"
-    volume_type = "gp2"
-    volume_size = 100
-  }
-
-  connection {
-    user        = "admin"
-    private_key = file(".ssh/id_rsa")
-  }
-
-  tags = {
-    Name = "KX.AS.CODE Worker ${count.index + 1}"
-  }
-
+resource "aws_route53_record" "kx-main-cname" {
+  zone_id = aws_route53_zone.kx-as-code.zone_id
+  name    = "kx-main"
+  type    = "CNAME"
+  ttl     = 300
+  records  = [ "kx-main.${var.KX_DOMAIN}" ]
 }
 
 resource "aws_route53_record" "kx-worker" {
   zone_id = aws_route53_zone.kx-as-code.zone_id
-  name    = "kx-worker${count.index + 1}.kx-as-code.local"
-  count   = 2
+  name    = "kx-worker${count.index + 1}.${var.KX_DOMAIN}"
+  count   = var.NUM_KX_WORKER_NODES
   type    = "A"
   ttl     = 300
   records = [ element(aws_instance.kx-worker.*.private_ip, count.index) ]
 }
 
+resource "aws_route53_record" "kx-worker-cname" {
+  zone_id = aws_route53_zone.kx-as-code.zone_id
+  name    = "kx-worker${count.index + 1}"
+  count   = var.NUM_KX_WORKER_NODES
+  type    = "CNAME"
+  ttl     = 300
+  records  = [ "kx-worker${count.index + 1}.${var.KX_DOMAIN}" ]
+}
