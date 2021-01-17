@@ -57,22 +57,25 @@ if [[ -z ${environmentUp} ]] || [[ "${environmentUp}" == "null" ]]; then
       -C "kx.hero@kx-as-code.local" \
       -f .ssh/id_rsa \
       -N '' <<<y 2>&1 >/dev/null
+fi
 
   id_rsa=$(<.ssh/id_rsa)
   id_rsa_pub=$(<.ssh/id_rsa.pub)
+  autoSetup_json=$(<./autoSetup.json)
 
   # Create Init KX-Main TPL file with new SSH keys
   template=$(<init-main.tpl_template)
   echo "${template//---ID_RSA_PLACEHOLDER---/$id_rsa}" > init-main.tpl
   template=$(<init-main.tpl)
   echo "${template//---ID_RSA_PUB_PLACEHOLDER---/$id_rsa_pub}" > init-main.tpl
+  echo "${template//---AUTO_SETUP_JSON_PLACEHOLDER---/$autoSetup_json}" > init-main.tpl
 
   # Create Init KX-Worker TPL file with new SSH keys
   template=$(<init-worker.tpl_template)
   echo "${template//---ID_RSA_PLACEHOLDER---/$id_rsa}" > init-worker.tpl
   template=$(<init-worker.tpl)
   echo "${template//---ID_RSA_PUB_PLACEHOLDER---/$id_rsa_pub}" > init-worker.tpl
-fi
+  echo "${template//---AUTO_SETUP_JSON_PLACEHOLDER---/$autoSetup_json}" > init-worker.tpl
 
 # Deploy KX.AS.CODE to AWS
 terraform init

@@ -68,7 +68,7 @@ pipeline {
                   ]]) {
                        def packerPath = tool 'packer-linux-1.6.6'
                         sh """
-                        cd base-vm
+                        cd base-vm/build/packer/darwin-linux
                         PACKER_LOG=1 ${packerPath}/packer build -force -only kx.as.code-worker-aws-ami \
                         -var "compute_engine_build=${kx_compute_engine_build}" \
                         -var "hostname=${kx_hostname}" \
@@ -91,7 +91,7 @@ pipeline {
                         -var "ssh_username=${ssh_username}" \
                         -var "base_image_ssh_user=${base_image_ssh_user}" \
                         -var "shutdown_behavior=${shutdown_behavior}" \
-                        ./kx.as.code-worker-aws-ami.json
+                        kx.as.code-main-aws-ami.json
                         """
                         }
                     }

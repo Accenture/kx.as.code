@@ -129,55 +129,59 @@ export httpsProxySetting=$(cat ${installationWorkspace}/autoSetup.json | jq -r '
 export noProxySetting=$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.proxy_settings.no_proxy')
 
 # Get fixed IPs if defined
-export fixedIpHosts=$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.staticNetworkSetup.baseFixedIpAddresses | keys[]')
-for fixIpHost in ${fixedIpHosts}
-do
-    fixIpHostVariableName=$(echo ${fixIpHost} | sed 's/-/__/g')
-    export ${fixIpHostVariableName}_IpAddress="$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.staticNetworkSetup.baseFixedIpAddresses."'${fixIpHost}'"')"
-done
-export fixedNicConfigGateway=$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.staticNetworkSetup.gateway')
-export fixedNicConfigDns1=$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.staticNetworkSetup.dns1')
-export fixedNicConfigDns2=$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.staticNetworkSetup.dns2')
+if [ "${baseIpType}" == "static" ]; then
+  export fixedIpHosts=$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.staticNetworkSetup.baseFixedIpAddresses | keys[]')
+  for fixIpHost in ${fixedIpHosts}
+  do
+      fixIpHostVariableName=$(echo ${fixIpHost} | sed 's/-/__/g')
+      export ${fixIpHostVariableName}_IpAddress="$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.staticNetworkSetup.baseFixedIpAddresses."'${fixIpHost}'"')"
+  done
+  export fixedNicConfigGateway=$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.staticNetworkSetup.gateway')
+  export fixedNicConfigDns1=$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.staticNetworkSetup.dns1')
+  export fixedNicConfigDns2=$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.staticNetworkSetup.dns2')
+fi
 
-if [[ -z "$(cat /etc/resolv.conf | grep \\"${fixedNicConfigDns1}\\")" ]]; then
+if [[ "baseIpType" = "static" ]]; then
+  if [[ -z "$(cat /etc/resolv.conf | grep \\"${fixedNicConfigDns1}\\")" ]]; then
 
-    # Prevent DHCLIENT updating static IP
-    echo "supersede domain-name-servers ${fixedNicConfigDns1}, ${fixedNicConfigDns2};" | sudo tee -a /etc/dhcp/dhclient.conf
-    echo '''
-    #!/bin/sh
-    make_resolv_conf(){
-        :
-    }
-    ''' | sed -e 's/^[ \t]*//' | sed 's/:/    :/g' | sudo tee /etc/dhcp/dhclient-enter-hooks.d/nodnsupdate
-    sudo chmod +x /etc/dhcp/dhclient-enter-hooks.d/nodnsupdate
+      # Prevent DHCLIENT updating static IP
+      echo "supersede domain-name-servers ${fixedNicConfigDns1}, ${fixedNicConfigDns2};" | sudo tee -a /etc/dhcp/dhclient.conf
+      echo '''
+      #!/bin/sh
+      make_resolv_conf(){
+          :
+      }
+      ''' | sed -e 's/^[ \t]*//' | sed 's/:/    :/g' | sudo tee /etc/dhcp/dhclient-enter-hooks.d/nodnsupdate
+      sudo chmod +x /etc/dhcp/dhclient-enter-hooks.d/nodnsupdate
 
-    # Change DNS resolution to allow wildcards for resolving deployed K8s services
-    echo "DNSStubListener=no" | sudo tee -a /etc/systemd/resolved.conf
-    sudo systemctl restart systemd-resolved
-    sudo rm -f /etc/resolv.conf
+      # Change DNS resolution to allow wildcards for resolving deployed K8s services
+      echo "DNSStubListener=no" | sudo tee -a /etc/systemd/resolved.conf
+      sudo systemctl restart systemd-resolved
+      sudo rm -f /etc/resolv.conf
 
-    # Update DNS Entry for hosts if ip type set to static
-    if [ "${baseIpType}" == "static" ]; then
-        export kxMainIp="$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.staticNetworkSetup.baseFixedIpAddresses."kx-main"')"
-        export kxWorkerIp="$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.staticNetworkSetup.baseFixedIpAddresses."'$(hostname)'"')"
-    fi
+      # Update DNS Entry for hosts if ip type set to static
+      if [ "${baseIpType}" == "static" ]; then
+          export kxMainIp="$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.staticNetworkSetup.baseFixedIpAddresses."kx-main"')"
+          export kxWorkerIp="$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.staticNetworkSetup.baseFixedIpAddresses."'$(hostname)'"')"
+      fi
 
-    # Create resolv.conf for desktop user with for resolving local domain with DNSMASQ
-    echo '''
-    # File Generated During KX.AS.CODE initialization
-    nameserver '${fixedNicConfigDns1}'
-    nameserver '${fixedNicConfigDns2}'
-    ''' | sed -e 's/^[ \t]*//' | sudo tee /etc/resolv.conf
+      # Create resolv.conf for desktop user with for resolving local domain with DNSMASQ
+      echo '''
+      # File Generated During KX.AS.CODE initialization
+      nameserver '${fixedNicConfigDns1}'
+      nameserver '${fixedNicConfigDns2}'
+      ''' | sed -e 's/^[ \t]*//' | sudo tee /etc/resolv.conf
 
-    # Configure IF to be managed/confgured by network-manager
-    sudo rm -f /etc/NetworkManager/system-connections/*
-    sudo mv /etc/network/interfaces /etc/network/interfaces.unused
-    sudo nmcli con add con-name "${netDevice}" ifname ${netDevice} type ethernet ip4 ${kxWorkerIp}/24 gw4 ${fixedNicConfigGateway}
-    sudo nmcli con mod "${netDevice}" ipv4.method "manual"
-    sudo nmcli con mod "${netDevice}" ipv4.dns "${fixedNicConfigDns1},${fixedNicConfigDns2}"
-    sudo systemctl restart network-manager
-    sudo nmcli con up "${netDevice}"
+      # Configure IF to be managed/confgured by network-manager
+      sudo rm -f /etc/NetworkManager/system-connections/*
+      sudo mv /etc/network/interfaces /etc/network/interfaces.unused
+      sudo nmcli con add con-name "${netDevice}" ifname ${netDevice} type ethernet ip4 ${kxWorkerIp}/24 gw4 ${fixedNicConfigGateway}
+      sudo nmcli con mod "${netDevice}" ipv4.method "manual"
+      sudo nmcli con mod "${netDevice}" ipv4.dns "${fixedNicConfigDns1},${fixedNicConfigDns2}"
+      sudo systemctl restart network-manager
+      sudo nmcli con up "${netDevice}"
 
+  fi
 fi
 
 # Wait until network and DNS resolution is back up. Also need to wait for kx-main, in case the worker node comes up first

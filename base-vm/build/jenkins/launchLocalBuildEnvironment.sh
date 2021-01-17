@@ -13,21 +13,21 @@ fi
 # Checking if Vagrant is installed
 vagrantInstalled=$(vagrant -v 2>/dev/null | grep -E "Vagrant.*([0-9]+)\.([0-9]+)\.([0-9]+)")
 if [[ -z ${vagrantInstalled} ]]; then
-  echo "- [ERROR] Vagrant not installed or not reachable. Download packer from https://www.vagrantup.com/downloads.html and ensure it is reachable on you PATH"
+  echo "- [ERROR] Vagrant not installed or not reachable. Download packer from https://www.vagrantup.com/downloads.html and ensure it is reachable on your PATH"
   error="true"
 fi
 
 # Checking if Packer is installed
 packerInstalled=$(packer -v 2>/dev/null | grep -E "([0-9]+)\.([0-9]+)\.([0-9]+)")
 if [[ -z ${vagrantInstalled} ]]; then
-  echo "- [ERROR] Packer not installed or not reachable. Download packer from https://www.packer.io/downloads and ensure it is reachable on you PATH"
+  echo "- [ERROR] Packer not installed or not reachable. Download packer from https://www.packer.io/downloads and ensure it is reachable on your PATH"
   error="true"
 fi
 
 # Check if Docker is installed
 dockerComposeInstalled=$(docker-compose -v 2>/dev/null | grep -E "docker-compose version ([0-9]+)\.([0-9]+)\.([0-9]+)")
 if [[ -z ${dockerComposeInstalled} ]]; then
-  echo "- [ERROR] Docker-Compose not installed or not reachable. See https://docs.docker.com/compose/install/ for installation guidelines and ensure it is reachable on you PATH"
+  echo "- [ERROR] Docker-Compose not installed or not reachable. See https://docs.docker.com/compose/install/ for installation guidelines and ensure it is reachable on your PATH"
   error="true"
 fi
 
@@ -39,15 +39,21 @@ if [[ -z ${dockerInstalled} ]]; then
 fi
 
 # Check if Java is installed
-javaInstalled=$(java --version 2>/dev/null | head -1 | grep -E ".*([0-9]+)\.([0-9]+)\.([0-9]+).*")
-if [[ -z ${javaInstalled} ]]; then
-  echo "- [ERROR] Java not installed or not reachable. Download Java from https://docs.aws.amazon.com/corretto/latest/corretto-11-ug/downloads-list.html and ensure it is reachable on you PATH"
-  error="true"
+if [[ ! -f java/bin/java ]]; then
+  javaInstalled=$(java --version 2>/dev/null | head -1 | grep -E ".*([0-9]+)\.([0-9]+)\.([0-9]+).*")
+  if [[ -z ${javaInstalled} ]]; then
+    echo "- [ERROR] Java not installed or not reachable. Download Java from https://docs.aws.amazon.com/corretto/latest/corretto-11-ug/downloads-list.html and ensure it is reachable on your PATH"
+    wget https://corretto.aws/downloads/latest/amazon-corretto-11-x64-linux-jdk.tar.gz
+    mkdir java
+    tar xvzf amazon-corretto-11-x64-linux-jdk.tar.gz --strip-components=1 -C ./java
+    javaBinary=./java/bin/java
+    error="true"
+  fi
 fi
 
 ovftoolInstalled=$(ovftool --version 2>/dev/null | grep -E "VMware ovftool ([0-9]+)\.([0-9]+)\.([0-9]+)")
 if [[ -z ${ovftoolInstalled} ]]; then
-  echo "- [WARNING] OVFTool not installed or not reachable. Download OVTOool from https://code.vmware.com/web/tool/4.4.0/ovf and ensure it is reachable on you PATH"
+  echo "- [WARNING] OVFTool not installed or not reachable. Download OVTOool from https://code.vmware.com/web/tool/4.4.0/ovf and ensure it is reachable on your PATH"
   warning="true"
 fi
 

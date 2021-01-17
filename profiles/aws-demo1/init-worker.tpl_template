@@ -4,14 +4,18 @@
 echo "127.0.0.1 ${hostname}" | sudo tee -a /etc/hosts
 sudo hostnamectl set-hostname ${hostname}
 
-echo """
+echo '''
 ---ID_RSA_PLACEHOLDER---
-""" | sudo tee /home/kx.hero/.ssh/id_rsa
+''' | sudo tee /home/kx.hero/.ssh/id_rsa
 
-echo """
+echo '''
 ---ID_RSA_PUB_PLACEHOLDER---
-""" | sudo tee /home/kx.hero/.ssh/id_rsa.pub /home/kx.hero/.ssh/authorized_keys
+''' | sudo tee /home/kx.hero/.ssh/id_rsa.pub /home/kx.hero/.ssh/authorized_keys
 
 sudo chmod 700 /home/kx.hero/.ssh
 sudo chmod 400 /home/kx.hero/.ssh/*
 sudo chown -R kx.hero:kx.hero /home/kx.hero/.ssh
+
+echo '''
+---AUTO_SETUP_JSON_PLACEHOLDER---
+''' | sudo tee /home/kx.hero/Kubernetes/autoSetup.json

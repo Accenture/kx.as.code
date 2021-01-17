@@ -313,6 +313,13 @@ resource "aws_route53_zone" "kx-as-code" {
   }
 }
 
+resource "aws_route53_record" "wildcard" {
+  zone_id = aws_route53_zone.kx-as-code.zone_id
+  name    = "*.${var.KX_DOMAIN}"
+  type    = "CNAME"
+  ttl     = 300
+  records  = [ "kx-main.${var.KX_DOMAIN}" ]
+}
 resource "aws_route53_record" "kx-main" {
   zone_id = aws_route53_zone.kx-as-code.zone_id
   name    = "kx-main.${var.KX_DOMAIN}"
