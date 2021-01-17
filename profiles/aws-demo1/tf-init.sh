@@ -1,5 +1,10 @@
 #!/bin/bash
 
+if [[ ! -f ./config.json ]] || [[ ! -f ./autoSetup.json ]]; then
+  echo "One of the config files needed to start KX.AS.CODE on AWS is missing. Please ensure that both config.json and autoSetup.json are present in this AWS profile directory and try again"
+  exit 1
+fi
+
 export TF_VAR_ACCESS_KEY=$(cat ./config.json | jq -r '.config.ACCESS_KEY')
 if [[ -z "${TF_VAR_ACCESS_KEY}" ]]; then
   echo "- [ERROR] ACCESS_KEY not defined in ./config.json"
@@ -78,10 +83,19 @@ if [[ -z "${TF_VAR_VPN_CLIENT_CERT_ARN}" ]]; then
   error="true"
 fi
 
-export TF_VAR_KX_DOMAIN=$(cat ./config.json | jq -r '.config.KX_DOMAIN')
-if [[ -z "${TF_VAR_VPN_CLIENT_CERT_ARN}" ]]; then
-  echo "- [ERROR] KX_DOMAIN not defined in ./config.json"
+export TF_VAR_KX_ENV_PREFIX=$(cat ./autoSetup.json | jq -r '.config.environmentPrefix')
+if [[ -z "${TF_VAR_KX_ENV_PREFIX}" ]]; then
+  echo "- [WARNING] Optional parameter KX_ENV_PREFIX not defined as '.config.environmentPrefix' in ./autoSetup.json"
+fi
+
+export TF_VAR_KX_DOMAIN=$(cat ./autoSetup.json | jq -r '.config.baseDomain')
+if [[ -z "${TF_VAR_KX_DOMAIN}" ]]; then
+  echo "- [ERROR] KX_DOMAIN not defined as '.config.baseDomain' in ./autoSetup.json"
   error="true"
+fi
+
+if [[ ! -z ${TF_VAR_KX_ENV_PREFIX} ]] && [[ ! -z ${TF_VAR_KX_DOMAIN} ]]; then
+  export TF_VAR_KX_DOMAIN="${TF_VAR_KX_ENV_PREFIX}.${TF_VAR_KX_DOMAIN}"
 fi
 
 export TF_VAR_NUM_KX_WORKER_NODES=$(cat ./config.json | jq -r '.config.NUM_KX_WORKER_NODES')

@@ -321,14 +321,6 @@ resource "aws_route53_record" "kx-main" {
   records  = [ aws_instance.kx-main.private_ip ]
 }
 
-resource "aws_route53_record" "kx-main-cname" {
-  zone_id = aws_route53_zone.kx-as-code.zone_id
-  name    = "kx-main"
-  type    = "CNAME"
-  ttl     = 300
-  records  = [ "kx-main.${var.KX_DOMAIN}" ]
-}
-
 resource "aws_route53_record" "kx-worker" {
   zone_id = aws_route53_zone.kx-as-code.zone_id
   name    = "kx-worker${count.index + 1}.${var.KX_DOMAIN}"
@@ -338,11 +330,3 @@ resource "aws_route53_record" "kx-worker" {
   records = [ element(aws_instance.kx-worker.*.private_ip, count.index) ]
 }
 
-resource "aws_route53_record" "kx-worker-cname" {
-  zone_id = aws_route53_zone.kx-as-code.zone_id
-  name    = "kx-worker${count.index + 1}"
-  count   = var.NUM_KX_WORKER_NODES
-  type    = "CNAME"
-  ttl     = 300
-  records  = [ "kx-worker${count.index + 1}.${var.KX_DOMAIN}" ]
-}

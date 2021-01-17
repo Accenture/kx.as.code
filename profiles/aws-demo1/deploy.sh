@@ -104,4 +104,4 @@ fi
 # Start OpenVPN connection
 echo "Important: In order to access KX.AS.CODE, you will need to import the generated ovpn file into your openvpn client, and start the connection"
 echo "Once your VPN session has started, you can access the remote desktop via NoMachine, or using the following SSH command:"
-echo "sudo ssh -i .ssh/id_rsa kx.her@kx-main.${TF_VAR_KX_DOMAIN}"
+echo "sudo ssh -i .ssh/id_rsa kx.hero@kx-main.${TF_VAR_KX_DOMAIN}"
