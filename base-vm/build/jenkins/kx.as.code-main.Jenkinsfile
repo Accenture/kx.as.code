@@ -59,10 +59,10 @@ pipeline {
         stage('Build the AMI'){
             steps {
                 script {
-                withCredentials([usernamePassword(credentialsId: 'Jithin', passwordVariable: 'GITHUB_TOKEN', usernameVariable: 'GITHUB_USER')]) {
+                withCredentials([usernamePassword(credentialsId: 'GITHUB_KX.AS.CODE', passwordVariable: 'GITHUB_TOKEN', usernameVariable: 'GITHUB_USER')]) {
                   withCredentials([[
                     $class: 'AmazonWebServicesCredentialsBinding',
-                    credentialsId: "AWS_Packer_Access",
+                    credentialsId: "AWS_PACKER_ACCESS",
                     accessKeyVariable: 'AWS_ACCESS_KEY_ID',
                     secretKeyVariable: 'AWS_SECRET_ACCESS_KEY'
                   ]]) {
