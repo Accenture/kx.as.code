@@ -27,7 +27,7 @@ resource "aws_instance" "kx-main" {
 
   tags = {
     Name = "KX.AS.CODE Main"
-    Hostname = "kx-main.kx-as-code.local"
+    Hostname = "kx-main.${var.KX_DOMAIN}"
   }
 }
 
@@ -50,7 +50,7 @@ resource "aws_instance" "kx-worker" {
 
   tags = {
     Name = "KX.AS.CODE Worker ${count.index + 1}"
-    Hostname = "kx-worker${count.index + 1}.kx-as-code.local"
+    Hostname = "kx-worker${count.index + 1}.${var.KX_DOMAIN}"
   }
 
 }

@@ -14,6 +14,7 @@ data "template_file" "init-worker" {
     aws_access_key_id = var.ACCESS_KEY
     secret_access_key_id = var.SECRET_KEY
     hostname = "kx-worker${count.index + 1}"
+    kx_main_private_ip = aws_instance.kx-main.private_ip
   }
 }
 

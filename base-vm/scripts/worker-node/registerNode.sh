@@ -109,7 +109,7 @@ cd ${installationWorkspace}
 # Get configs from autoSetup.json
 export virtualizationType=$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.virtualizationType')
 export nicPrefix=$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.nic_names.'${virtualizationType}'')
-export netDevice=$(nmcli device status | grep ethernet | grep ${nicPrefix} | awk {'print $1'})
+export netDevice=$(nmcli device show | grep -E 'enp|ens' | grep 'GENERAL.DEVICE' | awk '{print $2}')
 export environmentPrefix=$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.environmentPrefix')
 if [ -z ${environmentPrefix} ]; then
     export baseDomain="$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.baseDomain')"
@@ -141,7 +141,7 @@ if [ "${baseIpType}" == "static" ]; then
   export fixedNicConfigDns2=$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.staticNetworkSetup.dns2')
 fi
 
-if [[ "baseIpType" = "static" ]]; then
+if [[ "${baseIpType}" == "static" ]]; then
   if [[ -z "$(cat /etc/resolv.conf | grep \\"${fixedNicConfigDns1}\\")" ]]; then
 
       # Prevent DHCLIENT updating static IP
@@ -184,34 +184,36 @@ if [[ "baseIpType" = "static" ]]; then
   fi
 fi
 
+# Try to get KX-Main IP address via a lookup if baseIpType is set to dynamic
+ if [ "${baseIpType}" == "dynamic" ]; then
+  export kxMainIp=$(dig +short kx-main.${baseDomain})
+fi
+
 # Wait until network and DNS resolution is back up. Also need to wait for kx-main, in case the worker node comes up first
 timeout -s TERM 3000 bash -c 'while [[ "$rc" != "0" ]];         do
-nslookup kx-main; rc=$?;
+nslookup kx-main.'${baseDomain}'; rc=$?;
 echo "Waiting for kx-main DNS resolution to function" && sleep 5;         done'
 
 KUBEDIR=/home/${VM_USER}/Kubernetes
 mkdir -p ${KUBEDIR}
 chown -R ${VM_USER}:${VM_USER} ${KUBEDIR}
 
-# Create RSA key for kx.hero user
-mkdir -p /home/${VM_USER}/.ssh
-chown -R ${VM_USER}:${VM_USER} /home/${VM_USER}/.ssh
-chmod 700 /home/${VM_USER}/.ssh
-yes | sudo -u ${VM_USER} ssh-keygen -f ssh-keygen -m PEM -t rsa -b 4096 -q -f /home/${VM_USER}/.ssh/id_rsa -N ''
+if [[ "${virtualizationType}" != "aws" ]]; then
+  # Create RSA key for kx.hero user
+  mkdir -p /home/${VM_USER}/.ssh
+  chown -R ${VM_USER}:${VM_USER} /home/${VM_USER}/.ssh
+  chmod 700 /home/${VM_USER}/.ssh
+  yes | sudo -u ${VM_USER} ssh-keygen -f ssh-keygen -m PEM -t rsa -b 4096 -q -f /home/${VM_USER}/.ssh/id_rsa -N ''
 
-# Add key to KX-Main host
-sudo -H -i -u ${VM_USER} bash -c "sshpass -f /home/${VM_USER}/.config/kx.as.code/.user.cred ssh-copy-id -o StrictHostKeyChecking=no ${VM_USER}@${kxMainIp}"
-# Add server IP to DNS servince on KX-Main host (now taken care of directly on main node via JSON)
-if [ "${baseIpType}" != "static" ]; then
-        sudo -H -i -u ${VM_USER} bash -c "ssh -o StrictHostKeyChecking=no $VM_USER@${kxMainIp} \"echo \\\"address=/$(hostname)/${IP_TO_USE}\\\" | sudo tee -a /etc/dnsmasq.d/kx-as-code.local.conf; sudo systemctl restart dnsmasq\""
+  # Add key to KX-Main host
+  sudo -H -i -u ${VM_USER} bash -c "sshpass -f /home/${VM_USER}/.config/kx.as.code/.user.cred ssh-copy-id -o StrictHostKeyChecking=no ${VM_USER}@${kxMainIp}"
+
+  # Add KX-Main key to worker
+  sudo -H -i -u ${VM_USER} bash -c "ssh -o StrictHostKeyChecking=no $VM_USER@${kxMainIp} \"cat /home/$VM_USER/.ssh/id_rsa.pub\" | tee -a /home/$VM_USER/.ssh/authorized_keys"
+  sudo mkdir -p /root/.ssh
+  sudo chmod 700 /root/.ssh
+  sudo cp /home/$VM_USER/.ssh/authorized_keys /root/.ssh/
 fi
-
-# Add KX-Main key to worker
-sudo -H -i -u ${VM_USER} bash -c "ssh -o StrictHostKeyChecking=no $VM_USER@${kxMainIp} \"cat /home/$VM_USER/.ssh/id_rsa.pub\" | tee -a /home/$VM_USER/.ssh/authorized_keys"
-sudo mkdir -p /root/.ssh
-sudo chmod 700 /root/.ssh
-sudo cp /home/$VM_USER/.ssh/authorized_keys /root/.ssh/
-
 # Copy KX.AS.CODE CA certificates from main node and restart docker
 export REMOTE_KX_MAIN_KUBEDIR=/home/$VM_USER/Kubernetes
 export REMOTE_KX_MAIN_CERTSDIR=$REMOTE_KX_MAIN_KUBEDIR/certificates

@@ -30,7 +30,7 @@ cd ${installationWorkspace}
 # Get configs from autoSetup.json
 export virtualizationType=$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.virtualizationType')
 export nicPrefix=$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.nic_names.'${virtualizationType}'')
-export netDevice=$(nmcli device status | grep ethernet | grep ${nicPrefix} | awk {'print $1'})
+export netDevice=$(nmcli device show | grep -E 'enp|ens' | grep 'GENERAL.DEVICE' | awk '{print $2}')
 export mainIpAddress=$(ip -o -4 addr show ${netDevice} | awk -F '[ /]+' '/global/ {print $4}')
 export environmentPrefix=$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.environmentPrefix')
 if [ -z ${environmentPrefix} ]; then
@@ -48,17 +48,19 @@ export metalLbIpRangeStart=$(cat ${installationWorkspace}/autoSetup.json | jq -r
 export metalLbIpRangeEnd=$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.metalLbIpRange.ipRangeEnd')
 export sslProvider=$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.sslProvider')
 
-# Get fixed IPs if defined
-export fixedIpHosts=$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.staticNetworkSetup.baseFixedIpAddresses | keys[]')
-for fixIpHost in ${fixedIpHosts}
-do
-    fixIpHostVariableName=$(echo ${fixIpHost} | sed 's/-/__/g')
-    export ${fixIpHostVariableName}_IpAddress="$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.staticNetworkSetup.baseFixedIpAddresses."'${fixIpHost}'"')"
-done
-export fixedNicConfigGateway=$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.staticNetworkSetup.gateway')
-export fixedNicConfigDns1=$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.staticNetworkSetup.dns1')
-export fixedNicConfigDns2=$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.staticNetworkSetup.dns2')
- 
+if [ "${baseIpType}" == "static" ]; then
+  # Get fixed IPs if defined
+  export fixedIpHosts=$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.staticNetworkSetup.baseFixedIpAddresses | keys[]')
+  for fixIpHost in ${fixedIpHosts}
+  do
+      fixIpHostVariableName=$(echo ${fixIpHost} | sed 's/-/__/g')
+      export ${fixIpHostVariableName}_IpAddress="$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.staticNetworkSetup.baseFixedIpAddresses."'${fixIpHost}'"')"
+  done
+  export fixedNicConfigGateway=$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.staticNetworkSetup.gateway')
+  export fixedNicConfigDns1=$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.staticNetworkSetup.dns1')
+  export fixedNicConfigDns2=$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.staticNetworkSetup.dns2')
+fi
+
 # Get proxy settings
 export httpProxySetting=$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.proxy_settings.http_proxy')
 export httpsProxySetting=$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.proxy_settings.https_proxy')
@@ -105,7 +107,7 @@ log_debug() {
     echo "$(date '+%Y-%m-%d_%H%M%S') [DEBUG] ${1}" | tee -a ${installationWorkspace}/${componentName}_${logTimestamp}.log
 }
 
-if [[ ! -f /home/${vmUser}/.config/kx.as.code/network_status ]] && [[ "${baseIpType}" != "static" ]]; then
+if [[ ! -f /home/${vmUser}/.config/kx.as.code/network_status ]] && [[ "${baseIpType}" == "static" ]]; then
 
     # Update  DNS Entry for hosts if ip type set to static
     if [ "${baseIpType}" == "static" ]; then
