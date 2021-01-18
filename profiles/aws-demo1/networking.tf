@@ -154,7 +154,7 @@ resource aws_security_group vpn_access {
 }
 
 resource aws_ec2_client_vpn_endpoint vpn {
-  client_cidr_block = "10.10.0.0/21"
+  client_cidr_block = var.VPN_SUBNET_CIDR
   split_tunnel = false
   server_certificate_arn = var.VPN_SERVER_CERT_ARN
   dns_servers = [
@@ -239,43 +239,88 @@ resource null_resource client_vpn_security_group {
 
 resource "aws_security_group" "kx-as-code-main_sg" {
   description = "Allow limited inbound external traffic"
-  vpc_id      = aws_vpc.kx-vpc.id
-  name        = "kx-as-code-main_sg"
+  vpc_id = aws_vpc.kx-vpc.id
+  name = "kx-as-code-main_sg"
 
   ingress {
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-    from_port   = 22
-    to_port     = 22
+    description = "SSH"
+    protocol = "tcp"
+    cidr_blocks = [ aws_subnet.private_one.cidr_block ]
+    from_port = 22
+    to_port = 22
   }
 
   ingress {
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-    from_port   = 4000
-    to_port     = 4000
+    description = "NoMachine Remote Desktop"
+    protocol = "tcp"
+    cidr_blocks = [ aws_subnet.private_one.cidr_block ]
+    from_port = 4000
+    to_port = 4000
   }
 
   ingress {
-    protocol    = "udp"
-    cidr_blocks = ["0.0.0.0/0"]
-    from_port   = 4000
-    to_port     = 4000
+    description = "NoMachine Remote Desktop"
+    protocol = "udp"
+    cidr_blocks = [ aws_subnet.private_one.cidr_block ]
+    from_port = 4000
+    to_port = 4000
   }
 
   ingress {
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-    from_port   = 443
-    to_port     = 443
+    description = "HTTPS"
+    protocol = "tcp"
+    cidr_blocks = [ aws_subnet.private_one.cidr_block ]
+    from_port = 443
+    to_port = 443
+  }
+
+  ingress {
+    description = "Kubernetes API server"
+    protocol = "tcp"
+    cidr_blocks = [ aws_subnet.private_one.cidr_block ]
+    from_port = 6443
+    to_port = 6443
+  }
+
+  ingress {
+    description = "Kubernetes etcd server client API"
+    protocol = "tcp"
+    cidr_blocks = [ aws_subnet.private_one.cidr_block ]
+    from_port = 2379
+    to_port = 2380
+  }
+
+  ingress {
+    description = "kubelet API which allows full node access"
+    protocol = "tcp"
+    cidr_blocks = [ aws_subnet.private_one.cidr_block]
+    from_port = 10250
+    to_port = 10250
+  }
+
+  ingress {
+    description = "Kube Scheduler"
+    protocol = "tcp"
+    cidr_blocks = [ aws_subnet.private_one.cidr_block ]
+    from_port = 10251
+    to_port = 10251
+  }
+
+  ingress {
+    description = "Kube Controller Manager"
+    protocol = "tcp"
+    cidr_blocks = [ aws_subnet.private_one.cidr_block ]
+    from_port = 10252
+    to_port = 10252
   }
 
   egress {
-    protocol    = -1
+    protocol = -1
     cidr_blocks = ["0.0.0.0/0"]
-    from_port   = 0
-    to_port     = 0
+    from_port = 0
+    to_port = 0
   }
+
 }
 
 resource "aws_security_group" "kx-as-code-worker_sg" {
@@ -285,16 +330,32 @@ resource "aws_security_group" "kx-as-code-worker_sg" {
 
   ingress {
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = [ aws_subnet.private_one.cidr_block ]
     from_port   = 22
     to_port     = 22
   }
 
   ingress {
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = [ aws_subnet.private_one.cidr_block ]
     from_port   = 443
     to_port     = 443
+  }
+
+  ingress {
+    description = "kubelet API which allows full node access"
+    protocol = "tcp"
+    cidr_blocks = [ aws_subnet.private_one.cidr_block]
+    from_port = 10250
+    to_port = 10250
+  }
+
+  ingress {
+    description = "Kubernetes NodePort Services"
+    protocol = "tcp"
+    cidr_blocks = [ aws_subnet.private_one.cidr_block ]
+    from_port = 30000
+    to_port = 32767
   }
 
   egress {

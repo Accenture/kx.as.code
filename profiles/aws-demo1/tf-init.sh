@@ -65,6 +65,12 @@ if [[ -z "${TF_VAR_PUBLIC_SUBNET_CIDR}" ]]; then
   error="true"
 fi
 
+export TF_VAR_VPN_SUBNET_CIDR=$(cat ./config.json | jq -r '.config.VPN_SUBNET_CIDR')
+if [[ -z "${TF_VAR_VPN_SUBNET_CIDR}" ]]; then
+  echo "- [ERROR] VPN_SUBNET_CIDR not defined in ./config.json"
+  error="true"
+fi
+
 export TF_VAR_PUBLIC_KEY=$(cat ./config.json | jq -r '.config.PUBLIC_KEY')
 if [[ -z "${TF_VAR_PUBLIC_KEY}" ]]; then
   echo "- [ERROR] PUBLIC_KEY not defined in ./config.json"

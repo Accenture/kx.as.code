@@ -7,6 +7,7 @@ variable "VPC_CIDR_BLOCK" {}
 variable "PRIVATE_ONE_SUBNET_CIDR" {}
 variable "PRIVATE_TWO_SUBNET_CIDR" {}
 variable "PUBLIC_SUBNET_CIDR" {}
+variable "VPN_SUBNET_CIDR" {}
 variable "AVAILABILITY_ZONE" {}
 variable "PUBLIC_KEY" {}
 variable "VPN_SERVER_CERT_ARN" {}

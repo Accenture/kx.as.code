@@ -1,7 +1,8 @@
 #cloud-boothook
 #!/bin/bash
 
-echo "127.0.0.1 ${hostname}" | sudo tee -a /etc/hosts
+echo "127.0.0.1 ${hostname}" | sudo tee -a /etc/cloud/templates/hosts.debian.tmpl
+echo "${kx_main_private_ip} kx-main" | sudo tee -a /etc/cloud/templates/hosts.debian.tmpl
 sudo hostnamectl set-hostname ${hostname}
 
 echo '''
