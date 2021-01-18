@@ -23,9 +23,9 @@ if [[ -z "${TF_VAR_KX_MAIN_AMI_ID}" ]]; then
   error="true"
 fi
 
-export TF_VAR_KX_WORKER_AMI_ID=$(cat ./config.json | jq -r '.config.KX_MAIN_AMI_ID')
+export TF_VAR_KX_WORKER_AMI_ID=$(cat ./config.json | jq -r '.config.KX_WORKER_AMI_ID')
 if [[ -z "${TF_VAR_KX_WORKER_AMI_ID}" ]]; then
-  echo "- [ERROR] KX_MAIN_AMI_ID not defined in ./config.json"
+  echo "- [ERROR] KX_WORKER_AMI_ID not defined in ./config.json"
   error="true"
 fi
 
