@@ -105,7 +105,7 @@ log_debug() {
     echo "$(date '+%Y-%m-%d_%H%M%S') [DEBUG] ${1}" | tee -a ${installationWorkspace}/${componentName}_${logTimestamp}.log
 }
 
-if [[ ! -f /home/${vmUser}/.config/kx.as.code/network_status ]]; then
+if [[ ! -f /home/${vmUser}/.config/kx.as.code/network_status ]] && [[ "${baseIpType}" != "static" ]]; then
 
     # Update  DNS Entry for hosts if ip type set to static
     if [ "${baseIpType}" == "static" ]; then
