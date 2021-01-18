@@ -48,36 +48,12 @@
         "VM_PASSWORD={{user `vm_password`}}"
       ],
       "scripts": [
-        "scripts/base/vagrant-user.sh",
         "scripts/base/kx-user.sh",
         "scripts/base/update.sh"
       ],
       "type": "shell",
       "start_retry_timeout": "15m",
       "expect_disconnect": "true"
-    },
-    {
-      "environment_vars": [
-        "VM_USER={{user `vm_user`}}"
-      ],
-      "script":"scripts/base/virtualbox.sh",
-      "only": ["{{user `vm_name`}}-virtualbox"],
-      "type": "shell"
-    },
-    {
-      "script":"scripts/base/parallels.sh",
-      "only": ["{{user `vm_name`}}-parallels"],
-      "type": "shell"
-    },
-    {
-      "script": "scripts/base/vmware.sh",
-      "only": ["{{user `vm_name`}}-vmware-vsphere"],
-      "type": "shell"
-    },
-    {
-      "script": "scripts/base/vmware.sh",
-      "only": ["{{user `vm_name`}}-vmware-desktop"],
-      "type": "shell"
     },
     {
       "environment_vars": [
@@ -101,22 +77,22 @@
     {
       "type": "file",
       "source": "./dependencies/plymouth_theme",
-      "destination": "/home/vagrant/plymouth_theme"
+      "destination": "/home/admin/plymouth_theme"
     },
     {
       "type": "file",
       "source": "./dependencies/user_profile",
-      "destination": "/home/vagrant/user_profile"
+      "destination": "/home/admin/user_profile"
     },
     {
       "type": "file",
       "source": "./dependencies/lightdm_theme",
-      "destination": "/home/vagrant/lightdm_theme"
+      "destination": "/home/admin/lightdm_theme"
     },
     {
       "type": "file",
       "source": "./scripts/vpn-node",
-      "destination": "/home/vagrant/scripts"
+      "destination": "/home/admin/scripts"
     },
     {
       "environment_vars": [

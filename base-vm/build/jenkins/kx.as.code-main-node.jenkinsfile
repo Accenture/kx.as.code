@@ -26,6 +26,7 @@ pipeline {
 
       stage('TF Init&Plan') {
         steps {
+	  
           sh 'terraform init'
           sh 'terraform plan'
         }      
@@ -38,7 +39,7 @@ pipeline {
           sh 'TF_VAR_ACCESS_KEY=$(access_key) \
               TF_VAR_SECRET_KEY=$(secret_access) \
               TF_VAR_AMI_ID=$(source_ami) \
-              terraform apply'
+              terraform apply --auto-approve'
         }
       }
     } 

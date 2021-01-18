@@ -30,7 +30,7 @@ pipeline {
         string(name: 'kx_vm_user', defaultValue: "kx.hero", description: "KX.AS.CODE VM user login")
         string(name: 'kx_vm_password', defaultValue: "L3arnandshare", description: "KX.AS.CODE VM user login password")
         string(name: 'kx_compute_engine_build', defaultValue: "true", description: "Needs to be true for AWS to avoid 'grub' changes")
-        string(name: 'kx_hostname', defaultValue: "kx-ca", description: "KX.AS.CODE main node hostname")
+        string(name: 'kx_hostname', defaultValue: "kx-ca", description: "KX.AS.CODE CA node hostname")
         string(name: 'kx_domain', defaultValue: "kx-as-code.local", description: "KX.AS.CODE local domain")
         string(name: 'base_image_ssh_user', defaultValue: "admin", description: "Default AMI SSH user")
         string(name: 'ami_groups', defaultValue: "kxascode", description: "AWS user group that can launch AMI")
