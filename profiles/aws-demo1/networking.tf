@@ -314,6 +314,78 @@ resource "aws_security_group" "kx-as-code-main_sg" {
     to_port = 10252
   }
 
+  ingress {
+    description = "Calico Network"
+    protocol = "tcp"
+    cidr_blocks = [ aws_subnet.private_one.cidr_block ]
+    from_port = 9099
+    to_port = 9100
+  }
+
+  ingress {
+    description = "Calico Network - BGP"
+    protocol = "tcp"
+    cidr_blocks = [ aws_subnet.private_one.cidr_block ]
+    from_port = 179
+    to_port = 179
+  }
+
+  ingress {
+    description = "GlusterFS Daemon"
+    protocol = "tcp"
+    cidr_blocks = [ aws_subnet.private_one.cidr_block ]
+    from_port = 24007
+    to_port = 24008
+  }
+
+  ingress {
+    description = "GlusterFS Bricks"
+    protocol = "tcp"
+    cidr_blocks = [ aws_subnet.private_one.cidr_block ]
+    from_port = 38465
+    to_port = 38467
+  }
+
+  ingress {
+    description = "GlusterFS Port Mapper"
+    protocol = "tcp"
+    cidr_blocks = [ aws_subnet.private_one.cidr_block ]
+    from_port = 111
+    to_port = 111
+  }
+
+  ingress {
+    description = "GlusterFS Port Mapper"
+    protocol = "tcp"
+    cidr_blocks = [ aws_subnet.private_one.cidr_block ]
+    from_port = 111
+    to_port = 111
+  }
+
+  ingress {
+    description = "GlusterFS Port Mapper"
+    protocol = "udp"
+    cidr_blocks = [ aws_subnet.private_one.cidr_block ]
+    from_port = 111
+    to_port = 111
+  }
+
+  ingress {
+    description = "GlusterFS Port Mapper"
+    protocol = "udp"
+    cidr_blocks = [ aws_subnet.private_one.cidr_block ]
+    from_port = 2049
+    to_port = 2049
+  }
+
+  ingress {
+    description = "GlusterFS NFS Server"
+    protocol = "tcp"
+    cidr_blocks = [ aws_subnet.private_one.cidr_block ]
+    from_port = 49152
+    to_port = 49155
+  }
+
   egress {
     protocol = -1
     cidr_blocks = ["0.0.0.0/0"]
