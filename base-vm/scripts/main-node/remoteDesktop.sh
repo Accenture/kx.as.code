@@ -146,6 +146,6 @@ sudo sed -i 's/^    -khtml-background-size:  3em 3em;/    -khtml-background-size
 sudo sed -i 's/width:3em;height:3em;background-size:3em 3em;-moz-background-size:3em 3em;-webkit-background-size:3em 3em;-khtml-background-size:3em 3em;/width:9em;height:9em;background-size:9em 9em;-moz-background-size:9em 9em;-webkit-background-size:9em 9em;-khtml-background-size:9em 9em;/g' /var/lib/tomcat9//webapps/guacamole/guacamole.min.css
 
 # Install NoMachine
-wget  https://download.nomachine.com/download/6.12/Linux/nomachine_6.12.3_7_amd64.deb
-sudo apt-get install -y ./nomachine_6.12.3_7_amd64.deb
-rm -f ./nomachine_6.12.3_7_amd64.deb
+wget  https://download.nomachine.com/download/7.0/Linux/nomachine_7.0.211_4_amd64.deb
+sudo apt-get install -y ./nomachine_7.0.211_4_amd64.deb
+rm -f ./nomachine_7.0.211_4_amd64.deb
