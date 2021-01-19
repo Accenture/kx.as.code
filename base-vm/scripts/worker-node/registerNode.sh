@@ -4,10 +4,9 @@
 
 TIMESTAMP=$(date "+%Y-%m-%d_%H%M%S")
 # Define base variables
-export VM_USER=${VM_USER}
-export vmPassword=$(cat /home/${VM_USER}/.config/kx.as.code/.user.cred)
-export installationWorkspace=/home/${VM_USER}/Kubernetes
-export autoSetupHome=/home/${VM_USER}/Documents/kx.as.code_source/auto-setup
+export vmPassword=$(cat /home/${vmUser}/.config/kx.as.code/.user.cred)
+export installationWorkspace=/home/${vmUser}/Kubernetes
+export autoSetupHome=/home/${vmUser}/Documents/kx.as.code_source/auto-setup
 
 # Check autoSetup.json file is present before starting script
 wait-for-file() {
@@ -186,7 +185,8 @@ fi
 
 # Try to get KX-Main IP address via a lookup if baseIpType is set to dynamic
  if [ "${baseIpType}" == "dynamic" ]; then
-  export kxMainIp=$(dig +short kx-main.${baseDomain})
+   # Read the file dropped by Terraform
+  export kxMainIp=$(cat /home/${vmUser}/Kubernetes/kxMainIpAddress)
 fi
 
 # Wait until network and DNS resolution is back up. Also need to wait for kx-main, in case the worker node comes up first
@@ -194,36 +194,36 @@ timeout -s TERM 3000 bash -c 'while [[ "$rc" != "0" ]];         do
 nslookup kx-main.'${baseDomain}'; rc=$?;
 echo "Waiting for kx-main DNS resolution to function" && sleep 5;         done'
 
-KUBEDIR=/home/${VM_USER}/Kubernetes
+KUBEDIR=/home/${vmUser}/Kubernetes
 mkdir -p ${KUBEDIR}
-chown -R ${VM_USER}:${VM_USER} ${KUBEDIR}
+chown -R ${vmUser}:${vmUser} ${KUBEDIR}
 
 if [[ "${virtualizationType}" != "aws" ]]; then
   # Create RSA key for kx.hero user
-  mkdir -p /home/${VM_USER}/.ssh
-  chown -R ${VM_USER}:${VM_USER} /home/${VM_USER}/.ssh
-  chmod 700 /home/${VM_USER}/.ssh
-  yes | sudo -u ${VM_USER} ssh-keygen -f ssh-keygen -m PEM -t rsa -b 4096 -q -f /home/${VM_USER}/.ssh/id_rsa -N ''
+  mkdir -p /home/${vmUser}/.ssh
+  chown -R ${vmUser}:${vmUser} /home/${vmUser}/.ssh
+  chmod 700 /home/${vmUser}/.ssh
+  yes | sudo -u ${vmUser} ssh-keygen -f ssh-keygen -m PEM -t rsa -b 4096 -q -f /home/${vmUser}/.ssh/id_rsa -N ''
 
   # Add key to KX-Main host
-  sudo -H -i -u ${VM_USER} bash -c "sshpass -f /home/${VM_USER}/.config/kx.as.code/.user.cred ssh-copy-id -o StrictHostKeyChecking=no ${VM_USER}@${kxMainIp}"
+  sudo -H -i -u ${vmUser} bash -c "sshpass -f /home/${vmUser}/.config/kx.as.code/.user.cred ssh-copy-id -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp}"
 
   # Add KX-Main key to worker
-  sudo -H -i -u ${VM_USER} bash -c "ssh -o StrictHostKeyChecking=no $VM_USER@${kxMainIp} \"cat /home/$VM_USER/.ssh/id_rsa.pub\" | tee -a /home/$VM_USER/.ssh/authorized_keys"
+  sudo -H -i -u ${vmUser} bash -c "ssh -o StrictHostKeyChecking=no $vmUser@${kxMainIp} \"cat /home/$vmUser/.ssh/id_rsa.pub\" | tee -a /home/$vmUser/.ssh/authorized_keys"
   sudo mkdir -p /root/.ssh
   sudo chmod 700 /root/.ssh
-  sudo cp /home/$VM_USER/.ssh/authorized_keys /root/.ssh/
+  sudo cp /home/$vmUser/.ssh/authorized_keys /root/.ssh/
 fi
 # Copy KX.AS.CODE CA certificates from main node and restart docker
-export REMOTE_KX_MAIN_KUBEDIR=/home/$VM_USER/Kubernetes
+export REMOTE_KX_MAIN_KUBEDIR=/home/$vmUser/Kubernetes
 export REMOTE_KX_MAIN_CERTSDIR=$REMOTE_KX_MAIN_KUBEDIR/certificates
 
 CERTIFICATES="kx_root_ca.pem kx_intermediate_ca.pem"
 
 ## Wait for certificates to be available on KX-Main
 wait-for-certificate() {
-        timeout -s TERM 3000 bash -c 'while [[ ! -f '/home/'$VM_USER'/Kubernetes/$CERTIFICATE' ]];         do
-        sudo -H -i -u ${VM_USER} bash -c "scp -o StrictHostKeyChecking=no ${VM_USER}@${kxMainIp}:'$REMOTE_KX_MAIN_CERTSDIR'/'$CERTIFICATE' /home/$VM_USER/Kubernetes";
+        timeout -s TERM 3000 bash -c 'while [[ ! -f '/home/'$vmUser'/Kubernetes/$CERTIFICATE' ]];         do
+        sudo -H -i -u ${vmUser} bash -c "scp -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp}:'$REMOTE_KX_MAIN_CERTSDIR'/'$CERTIFICATE' /home/$vmUser/Kubernetes";
         echo "Waiting for ${0}" && sleep 5;         done'
 }
 
@@ -231,7 +231,7 @@ sudo mkdir -p /usr/share/ca-certificates/kubernetes
 for CERTIFICATE in $CERTIFICATES
 do
         wait-for-certificate $CERTIFICATE
-        sudo cp /home/$VM_USER/Kubernetes/$CERTIFICATE /usr/share/ca-certificates/kubernetes/
+        sudo cp /home/$vmUser/Kubernetes/$CERTIFICATE /usr/share/ca-certificates/kubernetes/
         echo "kubernetes/$CERTIFICATE" | sudo tee -a /etc/ca-certificates.conf
 done
 
@@ -252,7 +252,7 @@ wait-for-url() {
 wait-for-url https://${kxMainIp}:6443/livez
 
 # Kubernetes master is reachable, join the worker node to cluster
-sudo -H -i -u ${VM_USER} bash -c "ssh -o StrictHostKeyChecking=no $VM_USER@${kxMainIp} 'kubeadm token create --print-join-command 2>/dev/null'" > ${KUBEDIR}/kubeJoin.sh
+sudo -H -i -u ${vmUser} bash -c "ssh -o StrictHostKeyChecking=no $vmUser@${kxMainIp} 'kubeadm token create --print-join-command 2>/dev/null'" > ${KUBEDIR}/kubeJoin.sh
 sudo chmod 755 ${KUBEDIR}/kubeJoin.sh
 sudo ${KUBEDIR}/kubeJoin.sh
 
@@ -288,7 +288,7 @@ if [[ ! -z ${httpProxySetting} ]] || [[ ! -z ${httpsProxySetting} ]]; then
     printf -v service '"'"'%s,'"'"' '${baseip}'.{1..253}
     export no_proxy="${lan%,},${service%,},${pool%,},127.0.0.1,.'${baseDomain}'";
     export NO_PROXY=$no_proxy
-    ''' | sudo tee -a /root/.bashrc /root/.zshrc /home/$VM_USER/.bashrc /home/$VM_USER/.zshrc
+    ''' | sudo tee -a /root/.bashrc /root/.zshrc /home/$vmUser/.bashrc /home/$vmUser/.zshrc
 fi
 
 # Create script to pull KX App Images from Main on second boot (after reboot in this script)
@@ -297,10 +297,10 @@ echo """
 #!/bin/bash -x
 
 . /etc/environment
-export VM_USER=$VM_USER
+export vmUser=$vmUser
 
 echo \"Attempting to download KX Apps from KX-Main\"
-sudo -H -i -u ${VM_USER} bash -c 'scp -o StrictHostKeyChecking=no '${VM_USER}'@'${kxMainIp}':'${KUBEDIR}'/docker-kx-*.tar '${KUBEDIR}'';
+sudo -H -i -u ${vmUser} bash -c 'scp -o StrictHostKeyChecking=no '${vmUser}'@'${kxMainIp}':'${KUBEDIR}'/docker-kx-*.tar '${KUBEDIR}'';
 
 if [ -f ${KUBEDIR}/docker-kx-docs.tar ]; then
     docker load -i ${KUBEDIR}/docker-kx-docs.tar
@@ -349,5 +349,6 @@ BACKSPACE=\"guess\"
 ''' | sudo tee /etc/default/keyboard
 
 # Reboot machine to ensure all network changes are active
-sudo reboot
-
+if [ "${baseIpType}" == "static" ]; then
+  sudo reboot
+fi

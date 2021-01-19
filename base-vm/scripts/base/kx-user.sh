@@ -30,6 +30,7 @@ date --utc | sudo tee /etc/vagrant_box_build_time
 
 # Set user ID as global variable
 echo "vmUser=\"$VM_USER\"" | sudo tee -a /etc/environment
+echo "export vmUser=\"$VM_USER\"" | sudo tee -a /etc/profile.d/kxascode.sh
 
 # Save password for later automated processing
 sudo mkdir -p /home/${VM_USER}/.config/kx.as.code
