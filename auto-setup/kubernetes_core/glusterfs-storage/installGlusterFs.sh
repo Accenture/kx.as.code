@@ -11,9 +11,7 @@ sudo apt install -y glusterfs-server
 sudo sudo systemctl enable --now glusterd
 
 # Install Heketi for automatically provisioning Kubernetes volumes
-wget -O - $(curl -s https://api.github.com/repos/heketi/heketi/releases/latest \
-| grep browser_download_url | grep -e $(echo "heketi-v.*$(uname -s)\.$(uname -r \
-| cut -f3 -d-)" | tr '[:upper:]' '[:lower:]') | cut -d '"' -f 4) \
+wget -O - $(curl https://api.github.com/repos/heketi/heketi/releases/latest | jq -r '.assets[] | select(.browser_download_url | contains("client") | not) | .browser_download_url | select(. | contains("'$(dpkg --print-architecture)'"))') \
 | sudo tar xvzf - \
 && sudo cp -f heketi/{heketi,heketi-cli} /usr/local/bin
 
@@ -212,7 +210,7 @@ sleep 5
 
 # Check Heketi service is definitely up before executing the heketi-cli commands
 wait-for-service() {
-        timeout -s TERM 600 bash -c \
+        timeout -s TERM 300 bash -c \
         'while [[ "$(systemctl show -p SubState --value ${0})" != "running" ]];\
         do echo "Waiting for ${0} service" && sleep 5;\
         done' ${1}
@@ -222,7 +220,7 @@ wait-for-service heketi
 
 # Wait for Heketi service to be available on port 8080
 wait-for-url() {
-        timeout -s TERM 600 bash -c \
+        timeout -s TERM 300 bash -c \
         'while [[ "$(curl -s -o /dev/null -L -w ''%{http_code}'' ${0})" != "200" ]];\
         do echo "Waiting for ${0}" && sleep 5;\
         done' ${1}
