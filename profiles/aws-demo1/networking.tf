@@ -266,168 +266,144 @@ resource "aws_security_group" "kx-as-code-main_sg" {
     to_port = 4000
   }
 
-  ingress {
-    description = "HTTPS"
-    protocol = "tcp"
-    cidr_blocks = [ aws_subnet.private_one.cidr_block ]
-    from_port = 443
-    to_port = 443
-  }
-
-  ingress {
-    description = "Kubernetes API server"
-    protocol = "tcp"
-    cidr_blocks = [ aws_subnet.private_one.cidr_block ]
-    from_port = 6443
-    to_port = 6443
-  }
-
-  ingress {
-    description = "Kubernetes etcd server client API"
-    protocol = "tcp"
-    cidr_blocks = [ aws_subnet.private_one.cidr_block ]
-    from_port = 2379
-    to_port = 2380
-  }
-
-  ingress {
-    description = "kubelet API which allows full node access"
-    protocol = "tcp"
-    cidr_blocks = [ aws_subnet.private_one.cidr_block]
-    from_port = 10250
-    to_port = 10250
-  }
-
-  ingress {
-    description = "Kube Scheduler"
-    protocol = "tcp"
-    cidr_blocks = [ aws_subnet.private_one.cidr_block ]
-    from_port = 10251
-    to_port = 10251
-  }
-
-  ingress {
-    description = "Kube Controller Manager"
-    protocol = "tcp"
-    cidr_blocks = [ aws_subnet.private_one.cidr_block ]
-    from_port = 10252
-    to_port = 10252
-  }
-
-  ingress {
-    description = "Calico Network"
-    protocol = "tcp"
-    cidr_blocks = [ aws_subnet.private_one.cidr_block ]
-    from_port = 9099
-    to_port = 9100
-  }
-
-  ingress {
-    description = "Calico Network - BGP"
-    protocol = "tcp"
-    cidr_blocks = [ aws_subnet.private_one.cidr_block ]
-    from_port = 179
-    to_port = 179
-  }
-
-  ingress {
-    description = "GlusterFS Daemon"
-    protocol = "tcp"
-    cidr_blocks = [ aws_subnet.private_one.cidr_block ]
-    from_port = 24007
-    to_port = 24008
-  }
-
-  ingress {
-    description = "GlusterFS Bricks"
-    protocol = "tcp"
-    cidr_blocks = [ aws_subnet.private_one.cidr_block ]
-    from_port = 38465
-    to_port = 38467
-  }
-
-  ingress {
-    description = "GlusterFS Port Mapper"
-    protocol = "tcp"
-    cidr_blocks = [ aws_subnet.private_one.cidr_block ]
-    from_port = 111
-    to_port = 111
-  }
-
-  ingress {
-    description = "GlusterFS Port Mapper"
-    protocol = "tcp"
-    cidr_blocks = [ aws_subnet.private_one.cidr_block ]
-    from_port = 111
-    to_port = 111
-  }
-
-  ingress {
-    description = "GlusterFS Port Mapper"
-    protocol = "udp"
-    cidr_blocks = [ aws_subnet.private_one.cidr_block ]
-    from_port = 111
-    to_port = 111
-  }
-
-  ingress {
-    description = "GlusterFS Port Mapper"
-    protocol = "udp"
-    cidr_blocks = [ aws_subnet.private_one.cidr_block ]
-    from_port = 2049
-    to_port = 2049
-  }
-
-  ingress {
-    description = "GlusterFS NFS Server"
-    protocol = "tcp"
-    cidr_blocks = [ aws_subnet.private_one.cidr_block ]
-    from_port = 49152
-    to_port = 49155
-  }
-
   egress {
     protocol = -1
     cidr_blocks = ["0.0.0.0/0"]
     from_port = 0
     to_port = 0
   }
+}
 
+  resource "aws_security_group_rule" "kx_main_tcp_443" {
+    type        = "ingress"
+    source_security_group_id = aws_security_group.kx-as-code-worker_sg.id
+    security_group_id = aws_security_group.kx-as-code-main_sg.id
+    description = "HTTPS"
+    protocol = "tcp"
+    from_port = 443
+    to_port = 443
+  }
+
+  resource "aws_security_group_rule" "kx_main_tcp_6443" {
+    type        = "ingress"
+    source_security_group_id = aws_security_group.kx-as-code-worker_sg.id
+    security_group_id = aws_security_group.kx-as-code-main_sg.id
+    description = "Kubernetes API server"
+    protocol = "tcp"
+    from_port = 6443
+    to_port = 6443
+  }
+
+  resource "aws_security_group_rule" "kx_main_tcp_2379_2380" {
+    type        = "ingress"
+    source_security_group_id = aws_security_group.kx-as-code-worker_sg.id
+    security_group_id = aws_security_group.kx-as-code-main_sg.id
+    description = "Kubernetes etcd server client API"
+    protocol = "tcp"
+    from_port = 2379
+    to_port = 2380
+  }
+
+  resource "aws_security_group_rule" "kx_main_tcp_10250" {
+    type        = "ingress"
+    source_security_group_id = aws_security_group.kx-as-code-worker_sg.id
+    security_group_id = aws_security_group.kx-as-code-main_sg.id
+    description = "kubelet API which allows full node access"
+    protocol = "tcp"
+    from_port = 10250
+    to_port = 10252
+  }
+
+  resource "aws_security_group_rule" "kx_main_tcp_9099_9100" {
+    type        = "ingress"
+    source_security_group_id = aws_security_group.kx-as-code-worker_sg.id
+    security_group_id = aws_security_group.kx-as-code-main_sg.id
+    description = "Calico Network"
+    protocol = "tcp"
+    from_port = 9099
+    to_port = 9100
+  }
+
+  resource "aws_security_group_rule" "kx_main_tcp_179" {
+    type        = "ingress"
+    source_security_group_id = aws_security_group.kx-as-code-worker_sg.id
+    security_group_id = aws_security_group.kx-as-code-main_sg.id
+    description = "Calico Network - BGP"
+    protocol = "tcp"
+    from_port = 179
+    to_port = 179
+  }
+
+  resource "aws_security_group_rule" "kx_main_tcp_24007_24008" {
+    type        = "ingress"
+    source_security_group_id = aws_security_group.kx-as-code-worker_sg.id
+    security_group_id = aws_security_group.kx-as-code-main_sg.id
+    description = "GlusterFS Daemon"
+    protocol = "tcp"
+    from_port = 24007
+    to_port = 24008
+  }
+
+  resource "aws_security_group_rule" "kx_main_tcp_38465_38467" {
+    type        = "ingress"
+    source_security_group_id = aws_security_group.kx-as-code-worker_sg.id
+    security_group_id = aws_security_group.kx-as-code-main_sg.id
+    description = "GlusterFS Bricks"
+    protocol = "tcp"
+    from_port = 38465
+    to_port = 38467
+  }
+
+  resource "aws_security_group_rule" "kx_main_tcp_111" {
+    type        = "ingress"
+    source_security_group_id = aws_security_group.kx-as-code-worker_sg.id
+    security_group_id = aws_security_group.kx-as-code-main_sg.id
+    description = "GlusterFS Port Mapper"
+    protocol = "tcp"
+    from_port = 111
+    to_port = 111
+  }
+
+  resource "aws_security_group_rule" "kx_main_udp_111" {
+    type        = "ingress"
+    source_security_group_id = aws_security_group.kx-as-code-worker_sg.id
+    security_group_id = aws_security_group.kx-as-code-main_sg.id
+    description = "GlusterFS Port Mapper"
+    protocol = "udp"
+    from_port = 111
+    to_port = 111
+  }
+
+  resource "aws_security_group_rule" "kx_main_tcp_2049" {
+    type        = "ingress"
+    source_security_group_id = aws_security_group.kx-as-code-worker_sg.id
+    security_group_id = aws_security_group.kx-as-code-main_sg.id
+    description = "GlusterFS Port Mapper"
+    protocol = "udp"
+    from_port = 2049
+    to_port = 2049
+  }
+
+  resource "aws_security_group_rule" "kx_main_tcp_49152_49155" {
+    type        = "ingress"
+    source_security_group_id = aws_security_group.kx-as-code-worker_sg.id
+    security_group_id = aws_security_group.kx-as-code-main_sg.id
+    description = "GlusterFS NFS Server"
+    protocol = "tcp"
+    from_port = 49152
+    to_port = 49155
 }
 
 resource "aws_security_group" "kx-as-code-worker_sg" {
-  description = "Allow limited inbound external traffic"
-  vpc_id      = aws_vpc.kx-vpc.id
-  name        = "kx-as-code-worker_sg"
+  description = "Allow limited inbound traffic from external and worker nodes"
+  vpc_id = aws_vpc.kx-vpc.id
+  name = "kx-as-code-worker_sg"
 
   ingress {
-    protocol    = "tcp"
-    cidr_blocks = [ aws_subnet.private_one.cidr_block ]
-    from_port   = 22
-    to_port     = 22
-  }
-
-  ingress {
-    protocol    = "tcp"
-    cidr_blocks = [ aws_subnet.private_one.cidr_block ]
-    from_port   = 443
-    to_port     = 443
-  }
-
-  ingress {
-    description = "kubelet API which allows full node access"
-    protocol = "tcp"
-    cidr_blocks = [ aws_subnet.private_one.cidr_block]
-    from_port = 10250
-    to_port = 10250
-  }
-
-  ingress {
-    description = "Kubernetes NodePort Services"
     protocol = "tcp"
     cidr_blocks = [ aws_subnet.private_one.cidr_block ]
-    from_port = 30000
-    to_port = 32767
+    from_port = 22
+    to_port = 22
   }
 
   egress {
@@ -437,6 +413,36 @@ resource "aws_security_group" "kx-as-code-worker_sg" {
     to_port     = 0
   }
 }
+  resource "aws_security_group_rule" "kx_worker_tcp_443" {
+    type        = "ingress"
+    source_security_group_id = aws_security_group.kx-as-code-main_sg.id
+    security_group_id = aws_security_group.kx-as-code-worker_sg.id
+    protocol    = "tcp"
+    from_port   = 443
+    to_port     = 443
+  }
+
+resource "aws_security_group_rule" "kx_worker_tcp_10250" {
+    type        = "ingress"
+    source_security_group_id = aws_security_group.kx-as-code-main_sg.id
+    security_group_id = aws_security_group.kx-as-code-worker_sg.id
+    description = "kubelet API which allows full node access"
+    protocol    = "tcp"
+    from_port   = 10250
+    to_port     = 10250
+  }
+
+resource "aws_security_group_rule" "kx_worker_tcp_30000_32767" {
+    type        = "ingress"
+    source_security_group_id = aws_security_group.kx-as-code-main_sg.id
+    security_group_id = aws_security_group.kx-as-code-worker_sg.id
+    description = "Kubernetes NodePort Services"
+    protocol = "tcp"
+    from_port = 30000
+    to_port = 32767
+  }
+
+
 
 resource "aws_route53_zone" "kx-as-code" {
   name = var.KX_DOMAIN
