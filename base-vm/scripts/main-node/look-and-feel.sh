@@ -20,7 +20,7 @@ else
   sudo pip3 install meson ninja
   git clone https://github.com/snwh/paper-icon-theme.git
   cd paper-icon-theme
-  sudo /root/.local/bin/meson "build" --prefix=/usr
+  sudo meson "build" --prefix=/usr
   sudo ninja -C "build" install
 fi
 
