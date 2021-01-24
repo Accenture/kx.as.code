@@ -62,5 +62,5 @@ RemainAfterExit=no
 [Install]
 WantedBy=multi-user.target
 EOF"
-#sudo systemctl enable k8s-register-node
-#sudo systemctl daemon-reload
+sudo systemctl enable k8s-register-node
+sudo systemctl daemon-reload
