@@ -10,6 +10,7 @@ resource "aws_instance" "kx-main" {
   instance_type = "t3.large"
   vpc_security_group_ids = [ aws_security_group.kx-as-code-main_sg.id ]
   subnet_id = aws_subnet.private_one.id
+  source_dest_check = false
   availability_zone = var.AVAILABILITY_ZONE
   user_data_base64 = data.template_cloudinit_config.config-main.rendered
 
@@ -38,6 +39,7 @@ resource "aws_instance" "kx-worker" {
   instance_type = "t3.large"
   vpc_security_group_ids = [ aws_security_group.kx-as-code-worker_sg.id ]
   subnet_id = aws_subnet.private_one.id
+  source_dest_check = false
   count = var.NUM_KX_WORKER_NODES
   availability_zone = var.AVAILABILITY_ZONE
   user_data_base64 = data.template_cloudinit_config.config-worker[count.index].rendered

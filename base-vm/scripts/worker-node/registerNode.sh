@@ -263,9 +263,17 @@ sudo systemctl disable k8s-register-node.service
 sudo sed -i '/^\[Service\]/a Environment="KUBELET_EXTRA_ARGS=--resolv-conf=\/etc\/resolv.conf"' /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
 
 # Setup proxy settings if they exist
-if [[ ! -z ${httpProxySetting} ]] || [[ ! -z ${httpsProxySetting} ]]; then
+if [[ -n ${httpProxySetting} ]] || [[ -n ${httpsProxySetting} ]]; then
+  if [[ "${httpProxySetting}" != "null" ]] || [[ "${httpsProxySetting}" != "null" ]]; then
 
+    if [[ "${httpProxySetting}" == "null" ]]; then
+      httpProxySetting=${httpsProxySetting}
+    fi
     httpProxySettingBase=$(echo ${httpProxySetting} | sed 's/https:\/\///g' | sed 's/http:\/\///g')
+
+    if [[ "${httpsProxySetting}" == "null" ]]; then
+      httpsProxySetting=${httpProxySetting}
+    fi
     httpsProxySettingBase=$(echo ${httpsProxySetting} | sed 's/https:\/\///g' | sed 's/http:\/\///g')
 
     echo '''
@@ -289,6 +297,7 @@ if [[ ! -z ${httpProxySetting} ]] || [[ ! -z ${httpsProxySetting} ]]; then
     export no_proxy="${lan%,},${service%,},${pool%,},127.0.0.1,.'${baseDomain}'";
     export NO_PROXY=$no_proxy
     ''' | sudo tee -a /root/.bashrc /root/.zshrc /home/$vmUser/.bashrc /home/$vmUser/.zshrc
+  fi
 fi
 
 # Create script to pull KX App Images from Main on second boot (after reboot in this script)
