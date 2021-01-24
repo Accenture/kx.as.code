@@ -400,7 +400,7 @@
         "../../../scripts/base/network.sh"
       ],
       "type": "shell",
-      "pause_before": "120s",
+      "pause_before": "60s",
       "start_retry_timeout": "15m",
       "expect_disconnect": "true"
     },
@@ -442,7 +442,7 @@
            "../../../scripts/common/docker.sh"
      ],
        "type": "shell",
-       "pause_before": "120s",
+       "pause_before": "60s",
        "start_retry_timeout": "15m",
        "expect_disconnect": "true"
      },
@@ -476,7 +476,7 @@
            "../../../scripts/main-node/cleanup.sh"
        ],
        "type": "shell",
-       "pause_before": "120s",
+       "pause_before": "60s",
        "start_retry_timeout": "15m",
        "expect_disconnect": "true"
      }
