@@ -9,13 +9,10 @@ export installationWorkspace=/home/${vmUser}/Kubernetes
 export autoSetupHome=/home/${vmUser}/Documents/kx.as.code_source/auto-setup
 
 # Check autoSetup.json file is present before starting script
-wait-for-file() {
-        timeout -s TERM 6000 bash -c \
-        'while [[ ! -f ${0} ]];\
-        do echo "Waiting for ${0} file" && sleep 15;\
-        done' ${1}
-}
-wait-for-file ${installationWorkspace}/autoSetup.json
+timeout -s TERM 6000 bash -c \
+'while [[ ! -f '${installationWorkspace}'/autoSetup.json ]];\
+do echo "Waiting for '${installationWorkspace}'/autoSetup.json file" && sleep 15;\
+done'
 
 # Get number of local volumes to pre-provision
 export number1gbVolumes=$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.local_volumes.one_gb')
