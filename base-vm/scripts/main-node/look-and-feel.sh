@@ -11,8 +11,18 @@ sudo ./vimix-gtk-themes/install.sh
 sudo -u $VM_USER bash -c 'eval `dbus-launch --sh-syntax` xfconf-query -c xsettings -p /Net/ThemeName -s "vimix-dark-doder"'
 
 # Install Paper Icon Theme
-wget https://snwh.org/paper/download.php\?owner\=snwh\&ppa\=ppa\&pkg\=paper-icon-theme,18.04 -O paper-icons.deb
-sudo dpkg -i paper-icons.deb
+wget https://snwh.org/paper/download.php\?owner\=snwh\&ppa\=ppa\&pkg\=paper-icon-theme,18.04 -O paper-icons.deb || true
+if [[ -s ./paper-icons.deb ]]; then
+  # Install package
+  sudo dpkg -i paper-icons.deb
+else
+  # Install from source (added as snwh.org currently down)
+  sudo pip3 install meson ninja
+  git clone https://github.com/snwh/paper-icon-theme.git
+  cd paper-icon-theme
+  sudo /root/.local/bin/meson "build" --prefix=/usr
+  sudo ninja -C "build" install
+fi
 
 # Changee icons to Paper theme
 sudo -u $VM_USER bash -c 'eval `dbus-launch --sh-syntax` xfconf-query -c xsettings -p /Net/IconThemeName -s Paper'
