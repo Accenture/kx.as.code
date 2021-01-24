@@ -65,11 +65,29 @@ else
   githubCloneUrl="https://github.com"
 fi 
 
+if [[ -z ${GIT_SOURCE_BRANCH} ]]; then
+  gitSourceBranch="master"
+else
+  gitSourceBranch="${GIT_SOURCE_BRANCH}"
+fi
+
+if [[ -z ${GIT_DOCS_BRANCH} ]]; then
+  gitDocsBranch="master"
+else
+  gitDocsBranch="${GIT_DOCS_BRANCH}"
+fi
+
+if [[ -z ${GIT_TECHRADAR_BRANCH} ]]; then
+  gitTechRadarBranch="master"
+else
+  gitTechRadarBranch="${GIT_TECHRADAR_BRANCH}"
+fi
+
 # Clone KX.AS.CODE GIT repository into VM
 sudo -H -i -u $VM_USER -- sh -c " \
-git clone ${githubCloneUrl}/Accenture/kx.as.code.git /home/$VM_USER/Documents/kx.as.code_source; \
-git clone ${githubCloneUrl}/Accenture/kx.as.code-docs.git /home/$VM_USER/Documents/kx.as.code_docs; \
-git clone ${githubCloneUrl}/Accenture/kx.as.code-techradar.git /home/$VM_USER/Documents/kx.as.code_techradar; \
+git clone --single-branch --branch ${gitSourceBranch} ${githubCloneUrl}/Accenture/kx.as.code.git /home/$VM_USER/Documents/kx.as.code_source; \
+git clone --single-branch --branch ${gitDocsBranch} ${githubCloneUrl}/Accenture/kx.as.code-docs.git /home/$VM_USER/Documents/kx.as.code_docs; \
+git clone --single-branch --branch ${gitTechRadarBranch} ${githubCloneUrl}/Accenture/kx.as.code-techradar.git /home/$VM_USER/Documents/kx.as.code_techradar; \
 ln -s /home/$VM_USER/Documents/kx.as.code_source /home/$VM_USER/Desktop/\"KX.AS.CODE Source\"; \
 cd /home/$VM_USER/Documents/kx.as.code_source; \
 git config credential.helper 'cache --timeout=3600'; \
