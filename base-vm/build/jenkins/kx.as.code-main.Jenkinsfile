@@ -84,9 +84,9 @@ pipeline {
                         -var "secret_key=${AWS_SECRET_ACCESS_KEY}" \
                         -var "github_user=${GITHUB_USER}" \
                         -var "github_token=${GITHUB_TOKEN}" \
-                        -var "git_source_branch=${GIT_SOURCE_BRANCH}",
-                        -var "git_docs_branch=${GIT_DOCS_BRANCH}",
-                        -var "git_techradar_branch=${GIT_TECHRADAR_BRANCH}",
+                        -var "git_source_branch=${GIT_SOURCE_BRANCH}" \
+                        -var "git_docs_branch=${GIT_DOCS_BRANCH}" \
+                        -var "git_techradar_branch=${GIT_TECHRADAR_BRANCH}" \
                         -var "source_ami=${source_ami}" \
                         -var "ami_groups=${ami_groups}" \
                         -var "vpc_region=${vpc_region}" \
