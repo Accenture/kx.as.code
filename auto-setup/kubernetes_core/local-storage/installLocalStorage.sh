@@ -1,5 +1,28 @@
 #!/bin/bash
 
+# Install nvme-cli if running on host with NVMe block devices (for example on AWS with EBS)
+sudo lsblk -i -o kname,mountpoint,fstype,size,maj:min,name,state,rm,rota,ro,type,label,model,serial
+nvme_cli_needed=$(df -h | grep "nvme")
+if [[ -n "nvme_cli_needed" ]]; then
+  # For AWS
+  sudo apt install nvme-cli
+  drives=$(lsblk -i -o kname,mountpoint,fstype,size,type | grep disk | awk {'print $1'})
+  for drive in ${drives}
+  do
+    partitions=$(lsblk -i -o kname,mountpoint,fstype,size,type | grep ${drive} | grep part)
+    if [[ -z ${partitions} ]]; then
+      export driveB=${drive}
+      break
+    fi
+  done
+else
+  # For VirtualBox, VNWare etc
+  export driveB=sdb
+fi
+
+echo "${driveB}" | sudo tee /home/${vmUser}/.config/kx.as.code/driveB
+cat /home/${vmUser}/.config/kx.as.code/driveB
+
 # Get number of local volumes to pre-provision
 export number1gbVolumes=$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.local_volumes.one_gb')
 export number5gbVolumes=$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.local_volumes.five_gb')
@@ -12,11 +35,11 @@ sudo lvs
 sudo df -hT
 sudo lsblk
 
-# Create full partition on /dev/sdb
-echo 'type=83' | sudo sfdisk /dev/sdb
+# Create full partition on /dev/${driveB}
+echo 'type=83' | sudo sfdisk /dev/${driveB}
 
-sudo pvcreate /dev/sdb1
-sudo vgcreate k8s_local_vol_group /dev/sdb1
+sudo pvcreate /dev/${driveB}1
+sudo vgcreate k8s_local_vol_group /dev/${driveB}1
 
 BASE_K8S_LOCAL_VOLUMES_DIR=/mnt/k8s_local_volumes
 

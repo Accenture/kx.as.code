@@ -3,6 +3,29 @@
 # Get GlusterFS volume size from autoSetup.json
 export glusterFsDiskSize=$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.glusterFsDiskSize')
 
+# Install nvme-cli if running on host with NVMe block devices (for example on AWS with EBS)
+sudo lsblk -i -o kname,mountpoint,fstype,size,maj:min,name,state,rm,rota,ro,type,label,model,serial
+nvme_cli_needed=$(df -h | grep "nvme")
+if [[ -n "nvme_cli_needed" ]]; then
+  # For AWS
+  sudo apt install nvme-cli
+  drives=$(lsblk -i -o kname,mountpoint,fstype,size,type | grep disk | awk {'print $1'})
+  for drive in ${drives}
+  do
+    partitions=$(lsblk -i -o kname,mountpoint,fstype,size,type | grep ${drive} | grep part)
+    if [[ -z ${partitions} ]]; then
+      export driveC=${drive}
+      break
+    fi
+  done
+else
+  # For VirtualBox, VNWare etc
+  export driveC=sdc
+fi
+
+echo "${driveC}" | sudo tee /home/${vmUser}/.config/kx.as.code/driveC
+cat /home/${vmUser}/.config/kx.as.code/driveC
+
 # Update Debian repositories as default is old
 wget -O - https://download.gluster.org/pub/gluster/glusterfs/8/rsa.pub | sudo apt-key add -
 echo deb [arch=amd64] https://download.gluster.org/pub/gluster/glusterfs/8/LATEST/Debian/buster/amd64/apt buster main | sudo tee /etc/apt/sources.list.d/gluster.list
@@ -19,7 +42,7 @@ wget -O - $(curl https://api.github.com/repos/heketi/heketi/releases/latest | jq
 sudo groupadd --system heketi || echo "Group heketi already exists"
 sudo useradd -s /usr/sbin/nologin --system -g heketi heketi || echo "User heketi already exists"
 
-# Make needed Heketi direcotries
+# Make needed Heketi directories
 sudo mkdir -p /etc/heketi /var/log/heketi /var/lib/heketi 
 sudo chown -R heketi:heketi /etc/heketi /var/log/heketi /var/lib/heketi 
 
@@ -177,7 +200,7 @@ sudo chown -R heketi:heketi /etc/heketi /var/lib/heketi /var/log/heketi
 sudo systemctl daemon-reload
 sudo systemctl enable --now heketi
 
-# Create Heketi topology configuration file with VirtualBox mounted dedicated 2nd drive /dev/sdc
+# Create Heketi topology configuration file with VirtualBox mounted dedicated 2nd drive /dev/${driveC}
 sudo bash -c 'cat <<EOF > /etc/heketi/topology.json 
 {
   "clusters": [
@@ -196,7 +219,7 @@ sudo bash -c 'cat <<EOF > /etc/heketi/topology.json
             "zone": 1
           },
           "devices": [
-            "/dev/sdc"
+            "/dev/'${driveC}'"
           ]
         }
       ]
