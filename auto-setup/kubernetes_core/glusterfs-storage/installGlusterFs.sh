@@ -8,19 +8,21 @@ sudo lsblk -i -o kname,mountpoint,fstype,size,maj:min,name,state,rm,rota,ro,type
 nvme_cli_needed=$(df -h | grep "nvme")
 if [[ -n "nvme_cli_needed" ]]; then
   # For AWS
-  sudo apt install nvme-cli
+  sudo apt install -y nvme-cli lvm2
   drives=$(lsblk -i -o kname,mountpoint,fstype,size,type | grep disk | awk {'print $1'})
   for drive in ${drives}
   do
     partitions=$(lsblk -i -o kname,mountpoint,fstype,size,type | grep ${drive} | grep part)
     if [[ -z ${partitions} ]]; then
-      export driveC=${drive}
+      export driveC="${drive}"
+      export partition="p1"
       break
     fi
   done
 else
   # For VirtualBox, VNWare etc
-  export driveC=sdc
+  export driveC="sdc"
+  export partition="1"
 fi
 
 echo "${driveC}" | sudo tee /home/${vmUser}/.config/kx.as.code/driveC

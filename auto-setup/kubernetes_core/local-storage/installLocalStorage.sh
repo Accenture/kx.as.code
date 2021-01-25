@@ -5,19 +5,21 @@ sudo lsblk -i -o kname,mountpoint,fstype,size,maj:min,name,state,rm,rota,ro,type
 nvme_cli_needed=$(df -h | grep "nvme")
 if [[ -n "nvme_cli_needed" ]]; then
   # For AWS
-  sudo apt install nvme-cli
+  sudo apt install -y nvme-cli lvm2
   drives=$(lsblk -i -o kname,mountpoint,fstype,size,type | grep disk | awk {'print $1'})
   for drive in ${drives}
   do
     partitions=$(lsblk -i -o kname,mountpoint,fstype,size,type | grep ${drive} | grep part)
     if [[ -z ${partitions} ]]; then
-      export driveB=${drive}
+      export driveB="${drive}"
+      export partition="p1"
       break
     fi
   done
 else
   # For VirtualBox, VNWare etc
-  export driveB=sdb
+  export driveB="sdb"
+  export partition="1"
 fi
 
 echo "${driveB}" | sudo tee /home/${vmUser}/.config/kx.as.code/driveB
@@ -38,8 +40,8 @@ sudo lsblk
 # Create full partition on /dev/${driveB}
 echo 'type=83' | sudo sfdisk /dev/${driveB}
 
-sudo pvcreate /dev/${driveB}1
-sudo vgcreate k8s_local_vol_group /dev/${driveB}1
+sudo pvcreate /dev/${driveB}${partition}
+sudo vgcreate k8s_local_vol_group /dev/${driveB}${partition}
 
 BASE_K8S_LOCAL_VOLUMES_DIR=/mnt/k8s_local_volumes
 
