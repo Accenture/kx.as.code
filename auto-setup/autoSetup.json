@@ -214,6 +214,10 @@
                     "name": "kubernetes-tools"
                 },
                 {
+                    "install_folder": "kubernetes_core",
+                    "name": "kxascode-basic"
+                },
+                {
                     "install_folder": "kx_as_code",
                     "name": "kx.as.code_docs"
                 },
@@ -238,8 +242,12 @@
                     "name": "metrics-server"
                 },
                 {
-                    "install_folder": "cicd",
+                    "install_folder": "storage",
                     "name": "minio-s3"
+                },
+                {
+                    "install_folder": "storage",
+                    "name": "nextcloud"
                 },
                 {
                     "install_folder": "cicd",
