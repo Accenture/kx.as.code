@@ -530,7 +530,7 @@ if [[ "${action}" == "install" ]]; then
         if [[ -z ${arrayLength} ]]; then
             arrayLength=0
         fi
-        if [[ "${componentJson}" == "null" ]]; then
+        if [[ "${componentJson}" == "null" ]] || [[ -z ${componentJson} ]]; then
             log_warn "ComponentJson is null for ${componentName}"
         else
             cat ${installationWorkspace}/autoSetup.json | jq '.metadata.installed['${arrayLength}'] |= . + '"${componentJson}"'' | tee ${installationWorkspace}/autoSetup.json.tmp.2
