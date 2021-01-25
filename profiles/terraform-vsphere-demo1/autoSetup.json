@@ -88,6 +88,10 @@
             },
             {
                 "install_folder": "kubernetes_core",
+                "name": "kxascode-basic"
+            },
+            {
+                "install_folder": "kubernetes_core",
                 "name": "metrics-server"
             },
             {
