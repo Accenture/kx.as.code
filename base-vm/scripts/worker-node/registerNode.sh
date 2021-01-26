@@ -231,7 +231,7 @@ if [[ "${virtualizationType}" != "aws" ]]; then
   sudo -H -i -u ${vmUser} bash -c "sshpass -f /home/${vmUser}/.config/kx.as.code/.user.cred ssh-copy-id -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp}"
 
   # Add KX-Main key to worker
-  sudo -H -i -u ${vmUser} bash -c "ssh -o StrictHostKeyChecking=no $vmUser@${kxMainIp} \"cat /home/$vmUser/.ssh/id_rsa.pub\" | tee -a /home/$vmUser/.ssh/authorized_keys"
+  sudo -H -i -u ${vmUser} bash -c "ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} \"cat /home/$vmUser/.ssh/id_rsa.pub\" | tee -a /home/$vmUser/.ssh/authorized_keys"
   sudo mkdir -p /root/.ssh
   sudo chmod 700 /root/.ssh
   sudo cp /home/$vmUser/.ssh/authorized_keys /root/.ssh/
@@ -244,17 +244,17 @@ CERTIFICATES="kx_root_ca.pem kx_intermediate_ca.pem"
 
 ## Wait for certificates to be available on KX-Main
 wait-for-certificate() {
-        timeout -s TERM 3000 bash -c 'while [[ ! -f '/home/'$vmUser'/Kubernetes/$CERTIFICATE' ]];         do
-        sudo -H -i -u ${vmUser} bash -c "scp -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp}:'$REMOTE_KX_MAIN_CERTSDIR'/'$CERTIFICATE' /home/$vmUser/Kubernetes";
+        timeout -s TERM 3000 bash -c 'while [[ ! -f /home/'${vmUser}'/Kubernetes/'${CERTIFICATE}' ]];         do
+        sudo -H -i -u '${vmUser}' bash -c "scp -o StrictHostKeyChecking=no '${vmUser}'@'${kxMainIp}':'${REMOTE_KX_MAIN_CERTSDIR}'/'${CERTIFICATE}' /home/'${vmUser}'/Kubernetes";
         echo "Waiting for ${0}" && sleep 5;         done'
 }
 
 sudo mkdir -p /usr/share/ca-certificates/kubernetes
-for CERTIFICATE in $CERTIFICATES
+for CERTIFICATE in ${CERTIFICATES}
 do
-        wait-for-certificate $CERTIFICATE
-        sudo cp /home/$vmUser/Kubernetes/$CERTIFICATE /usr/share/ca-certificates/kubernetes/
-        echo "kubernetes/$CERTIFICATE" | sudo tee -a /etc/ca-certificates.conf
+        wait-for-certificate ${CERTIFICATE}
+        sudo cp /home/${vmUser}/Kubernetes/${CERTIFICATE} /usr/share/ca-certificates/kubernetes/
+        echo "kubernetes/${CERTIFICATE}" | sudo tee -a /etc/ca-certificates.conf
 done
 
 # Install Root and Intermediate Root CA Certificates into System Trust Store
