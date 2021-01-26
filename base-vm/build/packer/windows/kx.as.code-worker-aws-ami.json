@@ -103,7 +103,8 @@
         "scripts/common/kx.as.code.sh",
         "scripts/common/tools.sh",
         "scripts/common/powerline.sh",
-        "scripts/common/docker.sh"
+        "scripts/common/docker.sh",
+        "scripts/common/calico.sh"
       ],
       "type": "shell",
       "pause_before": "60s",
