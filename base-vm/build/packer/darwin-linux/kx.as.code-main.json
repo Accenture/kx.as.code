@@ -277,24 +277,24 @@
     },
     {
       "keep_input_artifact": true,
-      "output": "../../../boxes/virtualbox-{{user `version`}}/{{user `vm_name`}}{{user `vm_suffix`}}-{{user `version`}}.box",
+      "output": "../../../boxes/{{.Provider}}-{{user `version`}}/{{user `vm_name`}}{{user `vm_suffix`}}-{{user `version`}}.box",
       "type": "vagrant",
       "vagrantfile_template": "../../../boxes/kx.as.code-main-virtualbox.Vagrantfile",
       "only": ["{{user `vm_name`}}-virtualbox"],
       "include": [
-        "../../../boxes/virtualbox-{{user `version`}}/info.json",
-        "{{user `vm_name`}}{{user `vm_suffix`}}-{{user `version`}}_manifest.json"
+          "../../../boxes/virtualbox-{{user `version`}}/info.json",
+          "{{user `vm_name`}}{{user `vm_suffix`}}-{{user `version`}}_manifest.json"
       ]
     },
     {
       "keep_input_artifact": true,
-      "output": "../../../boxes/parallels-{{user `version`}}/{{user `vm_name`}}{{user `vm_suffix`}}-{{user `version`}}.box",
+      "output": "../../../boxes/{{.Provider}}-{{user `version`}}/{{user `vm_name`}}{{user `vm_suffix`}}-{{user `version`}}.box",
       "type": "vagrant",
       "vagrantfile_template": "../../../boxes/kx.as.code-main-parallels.Vagrantfile",
       "only": ["{{user `vm_name`}}-parallels"],
       "include": [
-        "../../../boxes/virtualbox-{{user `version`}}/info.json",
-        "{{user `vm_name`}}{{user `vm_suffix`}}-{{user `version`}}_manifest.json"
+          "../../../boxes/parallels-{{user `version`}}/info.json",
+          "{{user `vm_name`}}{{user `vm_suffix`}}-{{user `version`}}_manifest.json"
       ]
     },
     {
@@ -304,8 +304,8 @@
       "vagrantfile_template": "../../../boxes/kx.as.code-main-vmware.Vagrantfile",
       "only": ["{{user `vm_name`}}-vmware-desktop"],
       "include": [
-        "../../../boxes/virtualbox-{{user `version`}}/info.json",
-        "{{user `vm_name`}}{{user `vm_suffix`}}-{{user `version`}}_manifest.json"
+          "../../../boxes/vmware-desktop-{{user `version`}}/info.json",
+          "{{user `vm_name`}}{{user `vm_suffix`}}-{{user `version`}}_manifest.json"
       ]
     },
     {
@@ -429,6 +429,9 @@
            "BASE_IMAGE_SSH_USER={{user `base_image_ssh_user`}}",
            "VM_USER={{user `vm_user`}}",
            "VM_PASSWORD={{user `vm_password`}}",
+           "GIT_SOURCE_BRANCH={{user `git_source_branch`}}",
+           "GIT_DOCS_BRANCH={{user `git_docs_branch`}}",
+           "GIT_TECHRADAR_BRANCH={{user `git_techradar_branch`}}",
            "GITHUB_USER={{user `github_user`}}",
            "GITHUB_TOKEN={{user `github_token`}}",
            "VERSION={{user `version`}}",
@@ -451,6 +454,9 @@
            "BASE_IMAGE_SSH_USER={{user `base_image_ssh_user`}}",
            "VM_USER={{user `vm_user`}}",
            "VM_PASSWORD={{user `vm_password`}}",
+           "GIT_SOURCE_BRANCH={{user `git_source_branch`}}",
+           "GIT_DOCS_BRANCH={{user `git_docs_branch`}}",
+           "GIT_TECHRADAR_BRANCH={{user `git_techradar_branch`}}",
            "GITHUB_USER={{user `github_user`}}",
            "GITHUB_TOKEN={{user `github_token`}}",
            "GIT_SOURCE_BRANCH={{user `git_source_branch`}}",
