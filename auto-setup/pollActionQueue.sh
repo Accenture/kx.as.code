@@ -117,6 +117,7 @@ if [[ ! -f /home/${vmUser}/.config/kx.as.code/network_status ]] && [[ "${baseIpT
              hostname="$(echo ${ipAddress} | sed 's/__/-/g' | sed 's/_IpAddress//g' | cut -f1 -d'=')"
              hostIpAddress="$(echo ${ipAddress} | cut -f2 -d'=')"
             echo "address=/${hostname}/${hostIpAddress}" | sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
+            echo "address=/${hostname}.${baseDomain}/${hostIpAddress}" | sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
             if [[ "${hostname}" == "kx-main" ]]; then
                 export mainIpAddress=${hostIpAddress}
             fi
