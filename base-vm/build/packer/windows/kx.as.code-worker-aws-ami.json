@@ -48,8 +48,8 @@
         "VM_PASSWORD={{user `vm_password`}}"
       ],
       "scripts": [
-        "scripts/base/kx-user.sh",
-        "scripts/base/update.sh"
+        "../../../scripts/base/kx-user.sh",
+        "../../../scripts/base/update.sh"
       ],
       "type": "shell",
       "start_retry_timeout": "15m",
@@ -63,10 +63,10 @@
         "DNS2={{user `dns2`}}"
       ],
       "scripts": [
-        "scripts/base/cleanup.sh",
-        "scripts/base/localtime.sh",
-        "scripts/base/power.sh",
-        "scripts/base/network.sh"
+        "../../../scripts/base/cleanup.sh",
+        "../../../scripts/base/localtime.sh",
+        "../../../scripts/base/power.sh",
+        "../../../scripts/base/network.sh"
       ],
       "type": "shell",
       "pause_before": "60s",
@@ -99,12 +99,12 @@
         "COMPUTE_ENGINE_BUILD={{user `compute_engine_build`}}"
       ],
       "scripts": [
-        "scripts/common/motd.sh",
-        "scripts/common/kx.as.code.sh",
-        "scripts/common/tools.sh",
-        "scripts/common/powerline.sh",
-        "scripts/common/docker.sh",
-        "scripts/common/calico.sh"
+        "../../../scripts/common/motd.sh",
+        "../../../scripts/common/kx.as.code.sh",
+        "../../../scripts/common/tools.sh",
+        "../../../scripts/common/powerline.sh",
+        "../../../scripts/common/docker.sh",
+        "../../../scripts/common/calico.sh"
       ],
       "type": "shell",
       "pause_before": "60s",
@@ -119,9 +119,9 @@
         "VERSION={{user `version`}}"
       ],
       "scripts": [
-        "scripts/worker-node/tools.sh",
-        "scripts/worker-node/k8s-base.sh",
-        "scripts/worker-node/cleanup.sh"
+        "../../../scripts/worker-node/tools.sh",
+        "../../../scripts/worker-node/k8s-base.sh",
+        "../../../scripts/worker-node/cleanup.sh"
       ],
       "type": "shell",
       "pause_before": "60s",
