@@ -3,24 +3,23 @@
 # Install nvme-cli if running on host with NVMe block devices (for example on AWS with EBS)
 sudo lsblk -i -o kname,mountpoint,fstype,size,maj:min,name,state,rm,rota,ro,type,label,model,serial
 nvme_cli_needed=$(df -h | grep "nvme")
-if [[ -n "nvme_cli_needed" ]]; then
+if [[ -n ${nvme_cli_needed} ]]; then
   # For AWS
   sudo apt install -y nvme-cli lvm2
-  drives=$(lsblk -i -o kname,mountpoint,fstype,size,type | grep disk | awk {'print $1'})
-  for drive in ${drives}
-  do
-    partitions=$(lsblk -i -o kname,mountpoint,fstype,size,type | grep ${drive} | grep part)
-    if [[ -z ${partitions} ]]; then
-      export driveB="${drive}"
-      export partition="p1"
-      break
-    fi
-  done
+  export partition="p1"
 else
-  # For VirtualBox, VNWare etc
-  export driveB="sdb"
   export partition="1"
 fi
+
+drives=$(lsblk -i -o kname,mountpoint,fstype,size,type | grep disk | awk {'print $1'})
+for drive in ${drives}
+do
+  partitions=$(lsblk -i -o kname,mountpoint,fstype,size,type | grep ${drive} | grep part)
+  if [[ -z ${partitions} ]]; then
+    export driveB="${drive}"
+    break
+  fi
+done
 
 echo "${driveB}" | sudo tee /home/${vmUser}/.config/kx.as.code/driveB
 cat /home/${vmUser}/.config/kx.as.code/driveB
@@ -45,7 +44,6 @@ sudo vgcreate k8s_local_vol_group /dev/${driveB}${partition}
 
 BASE_K8S_LOCAL_VOLUMES_DIR=/mnt/k8s_local_volumes
 
-
 create_volumes() {
   if [[ ${2} -ne 0 ]]; then
     for i in $(eval echo "{1..$2}")
@@ -54,8 +52,13 @@ create_volumes() {
         sudo mkfs.xfs /dev/k8s_local_vol_group/k8s_${1}_local_k8s_volume_${i}
         sudo mkdir -p ${BASE_K8S_LOCAL_VOLUMES_DIR}/k8s_${1}_local_k8s_volume_${i}
         sudo mount /dev/k8s_local_vol_group/k8s_${1}_local_k8s_volume_${i} ${BASE_K8S_LOCAL_VOLUMES_DIR}/k8s_${1}_local_k8s_volume_${i}
+        # Don't add entry to /etc/fstab if the volumes was not created, possibly due to running out of diskspace
         if [[ -L /dev/k8s_local_vol_group/k8s_${1}_local_k8s_volume_${i} ]] && [[ -e /dev/k8s_local_vol_group/k8s_${1}_local_k8s_volume_${i} ]]; then
-          sudo echo '/dev/k8s_local_vol_group/k8s_'${1}'_local_k8s_volume_'${i}' '${BASE_K8S_LOCAL_VOLUMES_DIR}'/k8s_'${1}'_local_k8s_volume_'${i}' xfs defaults 0 0' | sudo tee -a /etc/fstab
+          entryAlreadyExists=$(cat /etc/fstab | grep "/dev/k8s_local_vol_group/k8s_${1}_local_k8s_volume_${i}")
+          # Don't add entry to /etc/fstab if it already exists
+          if [[ -z ${entryAlreadyExists} ]]; then
+            sudo echo '/dev/k8s_local_vol_group/k8s_'${1}'_local_k8s_volume_'${i}' '${BASE_K8S_LOCAL_VOLUMES_DIR}'/k8s_'${1}'_local_k8s_volume_'${i}' xfs defaults 0 0' | sudo tee -a /etc/fstab
+          fi
         else
           echo "/dev/k8s_local_vol_group/k8s_${1}_local_k8s_volume_${i} does not exist. Not adding to /etc/fstab. Possible reason is that there was not enough space left on the drive to create it"
         fi
