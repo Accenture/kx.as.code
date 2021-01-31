@@ -201,7 +201,7 @@ User=0
 Environment=VM_USER=${VM_USER}
 Environment=KUBEDIR=/home/${VM_USER}/Kubernetes
 Type=forking
-ExecStart=/home/${VM_USER}/Documents/kx.as.code_source/auto-setup/pollActionQueue.sh
+ExecStart=/usr/share/kx.as.code/git/kx.as.code/auto-setup/pollActionQueue.sh
 TimeoutSec=infinity
 Restart=no
 RemainAfterExit=no

@@ -12,7 +12,7 @@ fi
 export vmUser=kx.hero
 export vmPassword=$(cat /home/${vmUser}/.config/kx.as.code/.user.cred)
 export installationWorkspace=/home/${vmUser}/Kubernetes
-export autoSetupHome=/home/${vmUser}/Documents/kx.as.code_source/auto-setup
+export autoSetupHome=/usr/share/kx.as.code/git/kx.as.code/auto-setup
 export actionWorkflows="pending wip completed failed retry"
 export defaultDockerHubSecret="default/regcred"
 
