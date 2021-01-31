@@ -1,5 +1,8 @@
 #!/bin/bash -eux
 
+export SKELDIR=/usr/share/kx.as.code/skel
+export SHARED_GIT_REPOSITORIES=/usr/share/kx.as.code/git
+
 # UrlEncode GIT password in case of special characters
 if [[ ! -z $GITHUB_TOKEN ]]; then
   GITHUB_TOKEN_ENCODED=$(python3 -c "import urllib.parse; print(urllib.parse.quote(input()))" <<< "$GITHUB_TOKEN")
@@ -83,20 +86,21 @@ else
   gitTechRadarBranch="${GIT_TECHRADAR_BRANCH}"
 fi
 
+sudo mkdir -p ${SHARED_GIT_REPOSITORIES}/
+
 # Clone KX.AS.CODE GIT repository into VM
-sudo -H -i -u $VM_USER -- sh -c " \
-git clone --single-branch --branch ${gitSourceBranch} ${githubCloneUrl}/Accenture/kx.as.code.git /home/$VM_USER/Documents/kx.as.code_source; \
-git clone --single-branch --branch ${gitDocsBranch} ${githubCloneUrl}/Accenture/kx.as.code-docs.git /home/$VM_USER/Documents/kx.as.code_docs; \
-git clone --single-branch --branch ${gitTechRadarBranch} ${githubCloneUrl}/Accenture/kx.as.code-techradar.git /home/$VM_USER/Documents/kx.as.code_techradar; \
-ln -s /home/$VM_USER/Documents/kx.as.code_source /home/$VM_USER/Desktop/\"KX.AS.CODE Source\"; \
-cd /home/$VM_USER/Documents/kx.as.code_source; \
-git config credential.helper 'cache --timeout=3600'; \
+
+sudo git clone --single-branch --branch ${gitSourceBranch} ${githubCloneUrl}/Accenture/kx.as.code.git ${SHARED_GIT_REPOSITORIES}/kx.as.code; \
+sudo git clone --single-branch --branch ${gitDocsBranch} ${githubCloneUrl}/Accenture/kx.as.code-docs.git ${SHARED_GIT_REPOSITORIES}/kx.as.code_docs; \
+sudo git clone --single-branch --branch ${gitTechRadarBranch} ${githubCloneUrl}/Accenture/kx.as.code-techradar.git ${SHARED_GIT_REPOSITORIES}/kx.as.code_techradar; \
+sudo ln -s ${SHARED_GIT_REPOSITORIES}/kx.as.code /home/$VM_USER/Desktop/\"KX.AS.CODE Source\"; \
+cd ${SHARED_GIT_REPOSITORIES}/kx.as.code; \
+sudo git config credential.helper 'cache --timeout=3600'; \
 if [[ ! -z $GITHUB_TOKEN_ENCODED ]]; then \
-  sed -i 's/'$GITHUB_USER':'$GITHUB_TOKEN_ENCODED'@//g' /home/$VM_USER/Documents/kx.as.code_source/.git/config; \
-  sed -i 's/'$GITHUB_USER':'$GITHUB_TOKEN_ENCODED'@//g' /home/$VM_USER/Documents/kx.as.code_docs/.git/config; \
-  sed -i 's/'$GITHUB_USER':'$GITHUB_TOKEN_ENCODED'@//g' /home/$VM_USER/Documents/kx.as.code_techradar/.git/config; \
+  sudo sed -i 's/'$GITHUB_USER':'$GITHUB_TOKEN_ENCODED'@//g' ${SHARED_GIT_REPOSITORIES}/kx.as.code/.git/config; \
+  sudo sed -i 's/'$GITHUB_USER':'$GITHUB_TOKEN_ENCODED'@//g' ${SHARED_GIT_REPOSITORIES}/kx.as.code_docs/.git/config; \
+  sudo sed -i 's/'$GITHUB_USER':'$GITHUB_TOKEN_ENCODED'@//g' ${SHARED_GIT_REPOSITORIES}/kx.as.code_techradar/.git/config; \
 fi
-"
 
 # Change user avatar and language settings
 sudo mkdir -p /usr/share/pixmaps/faces
@@ -231,12 +235,25 @@ xfconf-query --create --channel xfce4-power-manager --property /xfce4-power-mana
 xfconf-query --create --channel xfce4-power-manager --property /xfce4-power-manager/presentation-mode --type bool --set false
 xfconf-query --create --channel xfce4-power-manager --property /xfce4-power-manager/show-panel-label --type int --set 0
 xfpanel-switch load /home/$VM_USER/.config/exported-config.tar.bz2 &
-/usr/bin/typora /home/$VM_USER/Documents/kx.as.code_source/README.md &
+/usr/bin/typora /usr/share/kx.as.code/git/kx.as.code/README.md &
 sleep 5
 rm -f /home/$VM_USER/.config/autostart/show-welcome.desktop
 EOF"
 sudo chmod +x /usr/share/kx.as.code/showWelcome.sh
 sudo chown -R $VM_USER:$VM_USER /usr/share/kx.as.code
+
+# Create shortcut directories
+shortcutsDirectory="/usr/share/kx.as.code/DevOps Tools"
+sudo mkdir -p "${shortcutsDirectory}"
+sudo ln -s "${shortcutsDirectory}" /home/$VM_USER/Desktop/
+
+apiDocsDirectory="/usr/share/kx.as.code/API Docs"
+sudo sudo mkdir -p "${apiDocsDirectory}"
+sudo ln -s "${apiDocsDirectory}" /home/$VM_USER/Desktop/
+
+vendorDocsDirectory="/usr/share/kx.as.code/Vendor Docs"
+sudo mkdir -p "${vendorDocsDirectory}"
+sudo ln -s "${vendorDocsDirectory}" /home/$VM_USER/Desktop/
 
 # Load Welcome.md automatically on desktop login
 sudo -H -i -u $VM_USER sh -c "mkdir -p /home/$VM_USER/.config/autostart"
@@ -332,10 +349,10 @@ Version=1.0
 Name=KX.AS.CODE Readme
 GenericName=KX.AS.CODE Readme
 Comment=KX.AS.CODE Readme
-Exec=/usr/bin/typora /home/$VM_USER/Documents/kx.as.code_source/README.md
+Exec=/usr/bin/typora ${SHARED_GIT_REPOSITORIES}/kx.as.code/README.md
 StartupNotify=true
 Terminal=false
-Icon=/home/$VM_USER/Documents/kx.as.code_source/kxascode_logo_white_small.png
+Icon=${SHARED_GIT_REPOSITORIES}/kx.as.code/kxascode_logo_white_small.png
 Type=Application
 EOF"
 
@@ -346,10 +363,10 @@ Version=1.0
 Name=How to Contribute
 GenericName=How to Contribute
 Comment=How to Contribute
-Exec=/usr/bin/typora /home/$VM_USER/Documents/kx.as.code_source/CONTRIBUTE.md
+Exec=/usr/bin/typora ${SHARED_GIT_REPOSITORIES}/kx.as.code/CONTRIBUTE.md
 StartupNotify=true
 Terminal=false
-Icon=/home/$VM_USER/Documents/kx.as.code_source/kxascode_logo_white_small.png
+Icon=${SHARED_GIT_REPOSITORIES}/kx.as.code/kxascode_logo_white_small.png
 Type=Application
 EOF"
 

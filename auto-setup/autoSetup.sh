@@ -379,7 +379,7 @@ if [[ "${action}" == "install" ]]; then
 
         if [[ ! -z ${primaryUrl} ]] && [[ "${primaryUrl}" != "null" ]] && [[ -f ${iconPath} ]] && [[ ! -z ${shortcutText} ]]; then
 
-            shortcutsDirectory="/home/${vmUser}/Desktop/DevOps Tools"
+            shortcutsDirectory="/usr/share/kx.as.code/DevOps Tools"
             mkdir -p "${shortcutsDirectory}"; chown ${vmUser}:${vmUser} "${shortcutsDirectory}"
 
             echo """                        
@@ -422,7 +422,7 @@ if [[ "${action}" == "install" ]]; then
 
     apiDocsUrl=$(cat ${componentMetadataJson} | jq -r '.api_docs_url' | mo)
     if [[ ! -z ${apiDocsUrl} ]] && [[ "${apiDocsUrl}" != "null" ]]; then
-        apiDocsDirectory="/home/${vmUser}/Desktop/API Docs"
+        apiDocsDirectory="/usr/share/kx.as.code/API Docs"
         mkdir -p "${apiDocsDirectory}"; chown ${vmUser}:${vmUser} "${apiDocsDirectory}"
         echo """                        
         [Desktop Entry]
@@ -441,12 +441,11 @@ if [[ "${action}" == "install" ]]; then
         """ | tee "${apiDocsDirectory}"/"${componentName}".desktop
         sed -i 's/^[ \t]*//g' "${apiDocsDirectory}"/"${componentName}".desktop
         chmod 755 "${apiDocsDirectory}"/"${componentName}".desktop
-        chown ${vmUser}:${vmUser} "${apiDocsDirectory}"/"${componentName}".desktop
     fi
 
     swaggerApiDocsUrl=$(cat ${componentMetadataJson} | jq -r '.swagger_docs_url' | mo)
     if [[ ! -z ${swaggerApiDocsUrl} ]] && [[ "${swaggerApiDocsUrl}" != "null" ]]; then
-        apiDocsDirectory="/home/${vmUser}/Desktop/API Docs"
+        apiDocsDirectory="/usr/share/kx.as.code/API Docs"
         mkdir -p "${apiDocsDirectory}"; chown ${vmUser}:${vmUser} "${apiDocsDirectory}"
         echo """                        
         [Desktop Entry]
@@ -465,12 +464,11 @@ if [[ "${action}" == "install" ]]; then
         """ | tee "${apiDocsDirectory}"/"${componentName}"_Swagger.desktop
         sed -i 's/^[ \t]*//g' "${apiDocsDirectory}"/"${componentName}"_Swagger.desktop
         chmod 755 "${apiDocsDirectory}"/"${componentName}"_Swagger.desktop
-        chown ${vmUser}:${vmUser} "${apiDocsDirectory}"/"${componentName}"_Swagger.desktop
-    fi    
+    fi
 
     postmanApiDocsUrl=$(cat ${componentMetadataJson} | jq -r '.postman_docs_url' | mo)
     if [[ ! -z ${postmanApiDocsUrl} ]] && [[ "${postmanApiDocsUrl}" != "null" ]]; then
-        apiDocsDirectory="/home/${vmUser}/Desktop/API Docs"
+        apiDocsDirectory="/usr/share/kx.as.code/API Docs"
         mkdir -p "${apiDocsDirectory}"; chown ${vmUser}:${vmUser} "${apiDocsDirectory}"
         echo """                        
         [Desktop Entry]
@@ -489,12 +487,11 @@ if [[ "${action}" == "install" ]]; then
         """ | tee "${apiDocsDirectory}"/"${componentName}"_Postman.desktop
         sed -i 's/^[ \t]*//g' "${apiDocsDirectory}"/"${componentName}"_Postman.desktop
         chmod 755 "${apiDocsDirectory}"/"${componentName}"_Postman.desktop
-        chown ${vmUser}:${vmUser} "${apiDocsDirectory}"/"${componentName}"_Postman.desktop
-    fi    
+    fi
 
     vendorDocsUrl=$(cat ${componentMetadataJson} | jq -r '.vendor_docs_url' | mo)
     if [[ ! -z ${vendorDocsUrl} ]] && [[ "${vendorDocsUrl}" != "null" ]]; then
-        vendorDocsDirectory="/home/${vmUser}/Desktop/Vendor Docs"
+        vendorDocsDirectory="/usr/share/kx.as.code/Vendor Docs"
         mkdir -p "${vendorDocsDirectory}"; chown ${vmUser}:${vmUser} "${vendorDocsDirectory}"
         echo """                        
         [Desktop Entry]
@@ -513,7 +510,6 @@ if [[ "${action}" == "install" ]]; then
         """ | tee "${vendorDocsDirectory}"/"${componentName}".desktop
         sed -i 's/^[ \t]*//g' "${vendorDocsDirectory}"/"${componentName}".desktop
         chmod 755 "${vendorDocsDirectory}"/"${componentName}".desktop
-        chown ${vmUser}:${vmUser} "${vendorDocsDirectory}"/"${componentName}".desktop
     fi
 
     # Get slot number to add installed app to JSON array

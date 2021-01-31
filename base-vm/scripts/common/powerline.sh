@@ -5,6 +5,10 @@ sudo apt-get install -y fonts-font-awesome
 git clone https://github.com/powerline/fonts.git --depth=1
 cd fonts; sudo ./install.sh; cd ..; rm -rf fonts
 
+# Create template home profile directory for future users
+mkdir -p /usr/share/kx.as.code/skel
+export SKELDIR=/usr/share/kx.as.code/skel
+
 sudo -H -i -u root sh -c 'mkdir -p /root/.local/share/fonts'
 sudo -H -i -u root sh -c 'cd /root/.local/share/fonts && curl -fLo "Droid Sans Mono for Powerline Nerd Font Complete.otf" https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/DroidSansMono/complete/Droid%20Sans%20Mono%20Nerd%20Font%20Complete.otf'
 sudo -H -i -u $VM_USER sh -c 'mkdir -p /home/'$VM_USER'/.local/share/fonts'
@@ -47,3 +51,5 @@ sudo wget https://github.com/powerline/powerline/raw/develop/font/10-powerline-s
 sudo mv -f PowerlineSymbols.otf /usr/share/fonts/
 sudo fc-cache -vf /usr/share/fonts/
 sudo mv -f 10-powerline-symbols.conf /etc/fonts/conf.d/
+
+

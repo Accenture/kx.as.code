@@ -1,5 +1,7 @@
 #!/bin/bash -eux
 
+export SHARED_GIT_REPOSITORIES=/usr/share/kx.as.code/git
+
 # Download and install latest Atom editor
 wget https://github.com/$(curl -L -s https://github.com/atom/atom/releases/latest \
   | grep amd64.deb \
@@ -35,4 +37,4 @@ sudo -H -i -u $VM_USER sh -c "echo '\"*\":\n
     showOnStartup: false' > /home/$VM_USER/.atom/config.cson"
 
 # Configure Atom with kx.as.code project folder
-sudo -H -i -u $VM_USER sh -c "echo \"{\\\"version\\\":\\\"1\\\",\\\"windows\\\":[{\\\"projectRoots\\\":[\\\"/home/$VM_USER/Documents/kx.as.code_source\\\",\\\"/home/$VM_USER/Documents/kx.as.code_docs\\\",\\\"/home/$VM_USER/Documents/kx.as.code_techradar\\\"]}]}\" > /home/$VM_USER/.atom/storage/application.json"
+sudo -H -i -u $VM_USER sh -c "echo \"{\\\"version\\\":\\\"1\\\",\\\"windows\\\":[{\\\"projectRoots\\\":[\\\"${SHARED_GIT_REPOSITORIES}/git/kx.as.code\\\",\\\"${SHARED_GIT_REPOSITORIES}/git/kx.as.code_docs\\\",\\\"${SHARED_GIT_REPOSITORIES}/git/kx.as.code_techradar\\\"]}]}\" > /home/$VM_USER/.atom/storage/application.json"
