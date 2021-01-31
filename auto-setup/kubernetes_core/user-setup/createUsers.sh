@@ -29,5 +29,7 @@ if [[ ${numUsersToCreate} -ne 0 ]]; then
       echo "${userid}:${generatedPassword}" | sudo tee -a /usr/share/kx.as.code/.users
     fi
 
+    sudo ln -s ${SHARED_GIT_REPOSITORIES}/kx.as.code /home/${userid}/Desktop/"KX.AS.CODE Source";
+
   done
 fi

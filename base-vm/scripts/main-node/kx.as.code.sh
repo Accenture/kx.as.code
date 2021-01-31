@@ -86,17 +86,16 @@ else
   gitTechRadarBranch="${GIT_TECHRADAR_BRANCH}"
 fi
 
-sudo mkdir -p ${SHARED_GIT_REPOSITORIES}/
+sudo mkdir -p ${SHARED_GIT_REPOSITORIES}
 
 # Clone KX.AS.CODE GIT repository into VM
-
 sudo git clone --single-branch --branch ${gitSourceBranch} ${githubCloneUrl}/Accenture/kx.as.code.git ${SHARED_GIT_REPOSITORIES}/kx.as.code; \
 sudo git clone --single-branch --branch ${gitDocsBranch} ${githubCloneUrl}/Accenture/kx.as.code-docs.git ${SHARED_GIT_REPOSITORIES}/kx.as.code_docs; \
 sudo git clone --single-branch --branch ${gitTechRadarBranch} ${githubCloneUrl}/Accenture/kx.as.code-techradar.git ${SHARED_GIT_REPOSITORIES}/kx.as.code_techradar; \
-sudo ln -s ${SHARED_GIT_REPOSITORIES}/kx.as.code /home/$VM_USER/Desktop/\"KX.AS.CODE Source\"; \
+sudo ln -s ${SHARED_GIT_REPOSITORIES}/kx.as.code /home/$VM_USER/Desktop/"KX.AS.CODE Source"; \
 cd ${SHARED_GIT_REPOSITORIES}/kx.as.code; \
 sudo git config credential.helper 'cache --timeout=3600'; \
-if [[ ! -z $GITHUB_TOKEN_ENCODED ]]; then \
+if [[ -n $GITHUB_TOKEN_ENCODED ]]; then \
   sudo sed -i 's/'$GITHUB_USER':'$GITHUB_TOKEN_ENCODED'@//g' ${SHARED_GIT_REPOSITORIES}/kx.as.code/.git/config; \
   sudo sed -i 's/'$GITHUB_USER':'$GITHUB_TOKEN_ENCODED'@//g' ${SHARED_GIT_REPOSITORIES}/kx.as.code_docs/.git/config; \
   sudo sed -i 's/'$GITHUB_USER':'$GITHUB_TOKEN_ENCODED'@//g' ${SHARED_GIT_REPOSITORIES}/kx.as.code_techradar/.git/config; \
