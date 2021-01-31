@@ -3,6 +3,8 @@
 vmUser=${VM_USER}
 vmPassword=${VM_PASSWORD}
 
+SHARED_GIT_REPOSITORIES=/usr/share/kx.as.code/git
+
 # Install packages
 sudo apt install -y build-essential libcairo2-dev libjpeg62-turbo-dev libpng-dev libtool-bin libossp-uuid-dev libvncserver-dev freerdp2-dev libssh2-1-dev libtelnet-dev libwebsockets-dev libpulse-dev libvorbis-dev libwebp-dev libssl-dev libpango1.0-dev libswscale-dev libavcodec-dev libavutil-dev libavformat-dev
 
@@ -136,7 +138,7 @@ sudo systemctl reload nginx
 
 # Customize Guacamole
 sudo sed -i 's/"Apache Guacamole"/"KX.AS.CODE"/g' /var/lib/tomcat9/webapps/guacamole/translations/en.json
-sudo cp -f /home/kx.hero/Documents/kx.as.code_source/base-vm/images/guacamole/* /var/lib/tomcat9/webapps/guacamole/images/
+sudo cp -f ${SHARED_GIT_REPOSITORIES}/kx.as.code/base-vm/images/guacamole/* /var/lib/tomcat9/webapps/guacamole/images/
 sudo sed -i 's/^    width: 3em;/    width: 9em;/g' /var/lib/tomcat9/webapps/guacamole/guacamole.css
 sudo sed -i 's/^    height: 3em;/    height: 9em;/g' /var/lib/tomcat9/webapps/guacamole/guacamole.css
 sudo sed -i 's/^    background-size:         3em 3em;/    background-size:         9em 9em;/g' /var/lib/tomcat9/webapps/guacamole/guacamole.css
