@@ -6,7 +6,7 @@ git clone https://github.com/powerline/fonts.git --depth=1
 cd fonts; sudo ./install.sh; cd ..; rm -rf fonts
 
 # Create template home profile directory for future users
-mkdir -p /usr/share/kx.as.code/skel
+sudo mkdir -p /usr/share/kx.as.code/skel
 export SKELDIR=/usr/share/kx.as.code/skel
 
 sudo -H -i -u root sh -c 'mkdir -p /root/.local/share/fonts'

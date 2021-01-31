@@ -12,6 +12,6 @@ sudo cp -r /home/${VM_USER}/.atom ${SKELDIR}
 sudo cp -r /home/${VM_USER}/.vscode ${SKELDIR}
 sudo cp -r /home/${VM_USER}/.config ${SKELDIR}
 
-sudo mkdir -p ${SKELDIR}/Desktop
+sudo sudo mkdir -p ${SKELDIR}/Desktop
 sudo cp -r /home/${VM_USER}/Desktop/* ${SKELDIR}/Desktop
 
