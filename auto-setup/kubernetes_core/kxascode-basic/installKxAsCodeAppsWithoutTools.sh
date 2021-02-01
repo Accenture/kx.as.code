@@ -5,7 +5,7 @@ cd /usr/share/kx.as.code/git/kx.as.code_docs
 . ./build.sh
 
 # Build KX.AS.CODE "TechRadar" Image
-cd /usr/share/kx.as.code/kx.as.code_techradar
+cd /usr/share/kx.as.code/git/kx.as.code_techradar
 . ./build.sh
 
 # Save builds as tar files
