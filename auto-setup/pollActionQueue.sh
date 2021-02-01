@@ -107,7 +107,7 @@ log_debug() {
     echo "$(date '+%Y-%m-%d_%H%M%S') [DEBUG] ${1}" | tee -a ${installationWorkspace}/${componentName}_${logTimestamp}.log
 }
 
-if [[ ! -f /home/${vmUser}/.config/kx.as.code/network_status ]] && [[ "${baseIpType}" == "static" ]]; then
+if [[ ! -f /usr/share/kx.as.code/.config/network_status ]] && [[ "${baseIpType}" == "static" ]]; then
 
     # Update  DNS Entry for hosts if ip type set to static
     if [ "${baseIpType}" == "static" ]; then
@@ -196,7 +196,8 @@ if [[ ! -f /home/${vmUser}/.config/kx.as.code/network_status ]] && [[ "${baseIpT
     fi
 
     # Ensure the whole network setup does not execute again on next run after reboot
-    echo "KX.AS.CODE network config done" | sudo tee /home/${vmUser}/.config/kx.as.code/network_status
+    sudo mkdir -p /usr/share/kx.as.code/.config
+    echo "KX.AS.CODE network config done" | sudo tee /usr/share/kx.as.code/.config/network_status
 
     # Set default keyboard language
     keyboardLanguages=""
