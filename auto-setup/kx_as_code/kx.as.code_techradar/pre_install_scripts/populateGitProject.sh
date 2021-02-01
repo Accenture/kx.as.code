@@ -11,7 +11,7 @@ git config --global user.email "kx.hero@${baseDomain}"
 
 # Add KX.AS.CODE TechRadar to new Gitlab project
 export techradarApplicationUrl=$(cat ${componentMetadataJson} | jq -r '.urls[].url')
-cp -r /home/${vmUser}/Documents/kx.as.code_techradar /var/tmp/
+cp -r /usr/share/kx.as.code/git/kx.as.code_techradar /var/tmp/
 rm -rf /var/tmp/kx.as.code_techradar/.git
 if [[ ! -d ${installationWorkspace}/staging/kx.as.code_techradar/.git  ]]; then
     mkdir -p ${installationWorkspace}/staging/kx.as.code_techradar

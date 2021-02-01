@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [[ ! -f /home/${vmUser}/.config/kx.as.code/.admin.gitlab.pat ]]; then
+if [[ ! -f /usr/share/kx.as.code/.config/.admin.gitlab.pat ]]; then
 
   # Set Gitlab admin user
   export adminUser="root"
@@ -15,9 +15,9 @@ if [[ ! -f /home/${vmUser}/.config/kx.as.code/.admin.gitlab.pat ]]; then
   kubectl exec -n ${namespace} ${podName} -- gitlab-rails runner "token = User.find_by_username('${adminUser}').personal_access_tokens.create(scopes: [:api], name: 'Automation token'); token.set_token('${personalAccessToken}'); token.save!"
 
   # Save token to file for use in later script executions
-  echo ${personalAccessToken} | sudo tee /home/${vmUser}/.config/kx.as.code/.admin.gitlab.pat
+  echo ${personalAccessToken} | sudo tee /usr/share/kx.as.code/.config/.admin.gitlab.pat
 
   # Change ownership of script to kx.hero
-  chown ${vmUser}:${vmUser} /home/${vmUser}/.config/kx.as.code/.admin.gitlab.pat
+  chown ${vmUser}:${vmUser} /usr/share/kx.as.code/.config/.admin.gitlab.pat
 
 fi

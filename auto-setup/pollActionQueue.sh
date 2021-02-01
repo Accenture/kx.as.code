@@ -10,8 +10,8 @@ fi
 
 # Define base variables
 export vmUser=kx.hero
-export vmPassword=$(cat /home/${vmUser}/.config/kx.as.code/.user.cred)
-export installationWorkspace=/home/${vmUser}/Kubernetes
+export vmPassword=$(cat /usr/share/kx.as.code/.config/.user.cred)
+export installationWorkspace=/usr/share/kx.as.code/Kubernetes
 export autoSetupHome=/usr/share/kx.as.code/git/kx.as.code/auto-setup
 export actionWorkflows="pending wip completed failed retry"
 export defaultDockerHubSecret="default/regcred"

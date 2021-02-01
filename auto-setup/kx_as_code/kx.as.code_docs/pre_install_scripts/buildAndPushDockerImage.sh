@@ -17,7 +17,7 @@ pip3 install -r requirements.txt
 export PATH=$PATH:/home/$vmUser/.local/bin
 
 # Copy Latest README.md Docs
-sourceRepoLocation=/home/${vmUser}/Documents/kx.as.code_source
+sourceRepoLocation=/usr/share/kx.as.code/git/kx.as.code
 tempLocation=${installationWorkspace}/staging/kx.as.code_docs/tmp
 targetMkDocsLocation=${installationWorkspace}/staging/kx.as.code_docs/docs
 
@@ -25,7 +25,7 @@ mkdir -p $tempLocation
 mkdir -p $targetMkDocsLocation
 cp -rf $sourceRepoLocation/* $tempLocation/
 cp -rf ${installationWorkspace}/staging/kx.as.code_docs/images $targetMkDocsLocation
-cp -rf /home/$VM_USER/Documents/kx.as.code_source/images/* $targetMkDocsLocation/images/
+cp -rf /usr/share/kx.as.code/git/kx.as.code/images/* $targetMkDocsLocation/images/
 find $tempLocation -type f -iname "*.md" -exec sed -i '/Zero2Hero_Logo_Black\.png/d' {} +
 find $tempLocation -type f -iname "*.md" -exec sed -i '/kxascode_logo_black_small\.png/d' {} +
 find $tempLocation -type f -iname "*.md" -exec sed -i '/# README/d' {} +

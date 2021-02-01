@@ -21,8 +21,8 @@ do
   fi
 done
 
-echo "${driveB}" | sudo tee /home/${vmUser}/.config/kx.as.code/driveB
-cat /home/${vmUser}/.config/kx.as.code/driveB
+echo "${driveB}" | sudo tee /usr/share/kx.as.code/.config/driveB
+cat /usr/share/kx.as.code/.config/driveB
 
 # Get number of local volumes to pre-provision
 export number1gbVolumes=$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.local_volumes.one_gb')
