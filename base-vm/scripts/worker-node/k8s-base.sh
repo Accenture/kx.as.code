@@ -3,7 +3,7 @@
 # Ensure time is accurate
 sudo apt-get install -y ntpdate
 
-KUBEDIR=/home/$VM_USER/Kubernetes
+KUBEDIR=/usr/share/kx.as.code/Kubernetes
 sudo mkdir -p $KUBEDIR
 sudo chown $VM_USER:$VM_USER $KUBEDIR
 
@@ -52,9 +52,9 @@ After=ntp.service
 [Service]
 User=0
 Environment=VM_USER=$VM_USER
-Environment=KUBEDIR=/home/$VM_USER/Kubernetes
+Environment=KUBEDIR=$KUBEDIR
 Type=forking
-ExecStart=/home/$VM_USER/Kubernetes/registerNode.sh
+ExecStart=$KUBEDIR/registerNode.sh
 TimeoutSec=infinity
 Restart=no
 RemainAfterExit=no
