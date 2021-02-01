@@ -192,16 +192,16 @@ chown -R ${vmUser}:${vmUser} ${kubeDir}
 
 if [[ "${virtualizationType}" != "aws" ]]; then
   # Create RSA key for kx.hero user
-  mkdir -p $kubeDir/.ssh
-  chown -R ${vmUser}:${vmUser} $kubeDir/.ssh
+  mkdir -p /home/${vmUser}/.ssh
+  chown -R ${vmUser}:${vmUser} /home/${vmUser}/.ssh
   chmod 700 $kubeDir/.ssh
-  yes | sudo -u ${vmUser} ssh-keygen -f ssh-keygen -m PEM -t rsa -b 4096 -q -f $kubeDir/.ssh/id_rsa -N ''
+  yes | sudo -u ${vmUser} ssh-keygen -f ssh-keygen -m PEM -t rsa -b 4096 -q -f /home/${vmUser}/.ssh/id_rsa -N ''
 
   # Add key to KX-Main host
-  sudo -H -i -u ${vmUser} bash -c "sshpass -f $kubeDir/.config/.user.cred ssh-copy-id -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp}"
+  sudo -H -i -u ${vmUser} bash -c "sshpass -f ${kxHomeDir}/.config/.user.cred ssh-copy-id -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp}"
 
   # Add KX-Main key to worker
-  sudo -H -i -u ${vmUser} bash -c "ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} \"cat /home/$vmUser/.ssh/id_rsa.pub\" | tee -a /home/$vmUser/.ssh/authorized_keys"
+  sudo -H -i -u ${vmUser} bash -c "ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} \"cat /home/${vmUser}/.ssh/id_rsa.pub\" | tee -a /home/${vmUser}/.ssh/authorized_keys"
   sudo mkdir -p /root/.ssh
   sudo chmod 700 /root/.ssh
   sudo cp /home/$vmUser/.ssh/authorized_keys /root/.ssh/

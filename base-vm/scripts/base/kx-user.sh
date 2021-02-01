@@ -35,7 +35,7 @@ echo "vmUser=\"$VM_USER\"" | sudo tee -a /etc/environment
 echo "export vmUser=\"$VM_USER\"" | sudo tee -a /etc/profile.d/kxascode.sh
 
 # Save password for later automated processing
-sudo mkdir -p ${KX_HOME}/.config/kx.as.code
+sudo mkdir -p ${KX_HOME}/.config
 echo "$VM_PASSWORD" | sudo tee ${KX_HOME}/.config/.user.cred
 sudo chmod -R 400 ${KX_HOME}/.config/.user.cred
 sudo chown -R ${VM_USER}:${VM_USER} ${KX_HOME}/.config
