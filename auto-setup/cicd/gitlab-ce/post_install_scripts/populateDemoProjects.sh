@@ -1,5 +1,7 @@
 #!/bin/bash -eux
 
+export sharedGitRepositories=/usr/share/kx.as.code/git
+
 # Create base directory for Gitlab Demo repositories
 mkdir -p ${installationWorkspace}/staging/
 
@@ -10,7 +12,7 @@ git config --global user.name "${vmUser}"
 git config --global user.email "${vmUser}@${baseDomain}" 
 
 # Add KX.AS.CODE Docs to new Gitlab project
-cp -r /home/${vmUser}/Documents/kx.as.code_docs /var/tmp/
+cp -r ${sharedGitRepositories}/kx.as.code_docs /var/tmp/
 rm -rf /var/tmp/kx.as.code_docs/.git
 for i in {1..5}
 do
@@ -25,7 +27,7 @@ git commit -m 'Initial push of KX.AS.CODE "Docs" into Gitlab'
 git push
 
 # Add KX.AS.CODE TechRadar to new Gitlab project
-cp -r /home/${vmUser}/Documents/kx.as.code_techradar /var/tmp
+cp -r ${sharedGitRepositories}/kx.as.code_techradar /var/tmp
 rm -rf /var/tmp/kx.as.code_techradar/.git
 for i in {1..5}
 do
@@ -40,14 +42,14 @@ git commit -m 'Initial push of KX.AS.CODE "TechRadar" into Gitlab'
 git push
 
 # Add KX.AS.CODE to new Gitlab project
-cp -r /home/${vmUser}/Documents/kx.as.code_source /var/tmp
-rm -rf /var/tmp/kx.as.code_source/.git
+cp -r ${sharedGitRepositories}/kx.as.code /var/tmp
+rm -rf /var/tmp/kx.as.code/.git
 for i in {1..5}
 do
     git clone https://"${vmUser}":"${vmPassword}"@${gitlabDomain}/kx.as.code/kx.as.code.git ${installationWorkspace}/staging/kx.as.code
     if [[ $? -eq 0 ]] || [[ $? -eq 128 ]]; then break; else sleep 5; fi
 done
-cp -rf /var/tmp/kx.as.code_source/. ${installationWorkspace}/staging/kx.as.code/
+cp -rf /var/tmp/kx.as.code/. ${installationWorkspace}/staging/kx.as.code/
 chown -R ${vmUser}:${vmUser} ${installationWorkspace}/staging/kx.as.code
 cd ${installationWorkspace}/staging/kx.as.code
 git add .
