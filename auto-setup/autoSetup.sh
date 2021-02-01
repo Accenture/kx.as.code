@@ -408,10 +408,10 @@ if [[ "${action}" == "install" ]]; then
 
     case "${apiDocsType}" in
     swagger)
-        iconPath=/home/${vmUser}/Documents/kx.as.code_source/base-vm/images/api_docs_icon.png
+        iconPath=/usr/share/kx.as.code/git/kx.as.code/base-vm/images/api_docs_icon.png
         ;;
     *)
-        iconPath=/home/${vmUser}/Documents/kx.as.code_source/base-vm/images/api_docs_icon.png
+        iconPath=/usr/share/kx.as.code/git/kx.as.code/base-vm/images/api_docs_icon.png
         ;;
     esac
 
@@ -456,7 +456,7 @@ if [[ "${action}" == "install" ]]; then
         Exec=/usr/bin/google-chrome-stable %U ${swaggerApiDocsUrl} --use-gl=angle --password-store=basic ${browserOptions}
         StartupNotify=true
         Terminal=false
-        Icon=/home/${vmUser}/Documents/kx.as.code_source/base-vm/images/swagger.png
+        Icon=/usr/share/kx.as.code/git/kx.as.code/base-vm/images/swagger.png
         Type=Application
         Categories=Development
         MimeType=text/html;text/xml;application/xhtml_xml;image/webp;x-scheme-handler/http;x-scheme-handler/https;x-scheme-handler/ftp;
@@ -479,7 +479,7 @@ if [[ "${action}" == "install" ]]; then
         Exec=/usr/bin/google-chrome-stable %U ${postmanApiDocsUrl} --use-gl=angle --password-store=basic ${browserOptions}
         StartupNotify=true
         Terminal=false
-        Icon=/home/${vmUser}/Documents/kx.as.code_source/base-vm/images/postman.png
+        Icon=/usr/share/kx.as.code/git/kx.as.code/base-vm/images/postman.png
         Type=Application
         Categories=Development
         MimeType=text/html;text/xml;application/xhtml_xml;image/webp;x-scheme-handler/http;x-scheme-handler/https;x-scheme-handler/ftp;
@@ -502,7 +502,7 @@ if [[ "${action}" == "install" ]]; then
         Exec=/usr/bin/google-chrome-stable %U ${vendorDocsUrl} --use-gl=angle --password-store=basic ${browserOptions}
         StartupNotify=true
         Terminal=false
-        Icon=/home/${vmUser}/Documents/kx.as.code_source/base-vm/images/vendor_docs_icon.png
+        Icon=/usr/share/kx.as.code/git/kx.as.code/base-vm/images/vendor_docs_icon.png
         Type=Application
         Categories=Development
         MimeType=text/html;text/xml;application/xhtml_xml;image/webp;x-scheme-handler/http;x-scheme-handler/https;x-scheme-handler/ftp;
