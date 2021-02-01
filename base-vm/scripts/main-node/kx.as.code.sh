@@ -244,14 +244,17 @@ sudo chown -R $VM_USER:$VM_USER /usr/share/kx.as.code
 # Create shortcut directories
 shortcutsDirectory="/usr/share/kx.as.code/DevOps Tools"
 sudo mkdir -p "${shortcutsDirectory}"
+sudo chmod a+rwx "${shortcutsDirectory}"
 sudo ln -s "${shortcutsDirectory}" /home/$VM_USER/Desktop/
 
 apiDocsDirectory="/usr/share/kx.as.code/API Docs"
 sudo sudo mkdir -p "${apiDocsDirectory}"
+sudo chmod a+rwx "${apiDocsDirectory}"
 sudo ln -s "${apiDocsDirectory}" /home/$VM_USER/Desktop/
 
 vendorDocsDirectory="/usr/share/kx.as.code/Vendor Docs"
 sudo mkdir -p "${vendorDocsDirectory}"
+sudo chmod a+rwx "${vendorDocsDirectory}"
 sudo ln -s "${vendorDocsDirectory}" /home/$VM_USER/Desktop/
 
 # Load Welcome.md automatically on desktop login
