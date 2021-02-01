@@ -373,6 +373,6 @@ EOF"
 sudo chmod 755 /home/$VM_USER/Desktop/*.desktop
 
 # Create Kubernetes logging and custom scripts directory
-sudo mkdir -p /home/$VM_USER/Kubernetes
-sudo chown $VM_USER:$VM_USER /home/$VM_USER/Kubernetes
-sudo chmod 755 /home/$VM_USER/Kubernetes
+sudo mkdir -p /usr/share/kx.as.code/Kubernetes
+sudo chown $VM_USER:$VM_USER /usr/share/kx.as.code/Kubernetes
+sudo chmod 755 /usr/share/kx.as.code/Kubernetes
