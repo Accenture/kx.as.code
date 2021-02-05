@@ -15,6 +15,9 @@ if [[ ! ${kubeAdminStatus} ]]; then
     sudo -H -i -u ${vmUser} sh -c "mkdir -p /home/${vmUser}/.kube"
     sudo cp -f /etc/kubernetes/admin.conf /home/${vmUser}/.kube/config
     sudo chown $(id -u ${vmUser}):$(id -g ${vmUser}) /home/${vmUser}/.kube/config
+    # Add kube config to skel directory for future users
+    sudo mkdir -p /usr/share/kx.as.code/skel/.kube
+    sudo cp -f /etc/kubernetes/admin.conf /usr/share/kx.as.code/skel/.kube/config
 else
     log_warn "Kubernetes cluster is already initialitzed. Skipping"
 fi 
@@ -35,3 +38,4 @@ if [[ -f /var/tmp/.texfile ]]; then
     kubectl create secret docker-registry regcred --docker-server=https://index.docker.io/v1/ --docker-username=${DOCKERHUB_USER} --docker-password=${DOCKERHUB_PASSWORD} --docker-email=${DOCKERHUB_EMAIL}
     rm -f /var/tmp/.texfile
 fi
+
