@@ -61,9 +61,9 @@ sudo systemctl restart keycloak
 echo '''
 [Desktop Entry]
 Version=1.0
-Name=RabbitMQ
-GenericName=RabbitMQ
-Comment=RabbitMQ Action Queues
+Name=Keycloak IAM
+GenericName=Keycloak IAM
+Comment=Keycloak IAM
 Exec=/usr/bin/google-chrome-stable %U http://localhost:9080/auth --use-gl=angle --password-store=basic
 StartupNotify=true
 Terminal=false
