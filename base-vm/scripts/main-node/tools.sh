@@ -56,7 +56,7 @@ draw-margin=80
 visible-name='Default'
 cell-width-scale=1.0
 use-system-font=false
-font='Source Code Pro for Powerline 12'"
+font='MesloLGS NF 12'"
 
 sudo apt install -y dconf-cli
 sudo -H -i -u $VM_USER sh -c "dbus-launch dconf load /com/gexperts/Tilix/ < /home/$VM_USER/.config/tilix.dconf"

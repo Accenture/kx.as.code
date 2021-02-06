@@ -70,7 +70,7 @@ echo "export PROMPT_EOL_MARK=''" | sudo tee -a /home/$VM_USER/.zshrc
 sudo mkdir -p /home/$VM_USER/.config/xfce4/terminal
 sudo bash -c "cat <<EOF > /home/$VM_USER/.config/xfce4/terminal/terminalrc
 [Configuration]
-FontName=Meslo LG S DZ for Powerline 11
+FontName=MesloLGS NF 11
 MiscAlwaysShowTabs=FALSE
 MiscBell=FALSE
 MiscBellUrgent=FALSE
