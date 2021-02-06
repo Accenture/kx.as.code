@@ -51,7 +51,7 @@ sudo systemctl start keycloak
 sudo systemctl status keycloak
 
 # Create initial default admin user
-sudo /opt/keycloak/bin/add-user-keycloak.sh -r master -u $VM_USER -p $VM_PASSWORD
+sudo /opt/keycloak/bin/add-user-keycloak.sh -r master -u ${VM_USER} -p ${VM_PASSWORD}
 
 # Restart Keycloak
 sudo systemctl restart keycloak
@@ -72,8 +72,8 @@ Type=Application
 Categories=Development
 MimeType=text/html;text/xml;application/xhtml_xml;image/webp;x-scheme-handler/http;x-scheme-handler/https;x-scheme-handler/ftp;
 Actions=new-window;new-private-window;
-''' | sudo tee /home/${$VM_USER}/Desktop/Keycloak.desktop
+''' | sudo tee /home/${VM_USER}/Desktop/Keycloak.desktop
 
 # Give *.desktop files execute permissions
-sudo chmod 755 /home/${$VM_USER}/Desktop/Keycloak.desktop
-sudo chown ${$VM_USER}:${$VM_USER} /home/${$VM_USER}/Desktop/Keycloak.desktop
+sudo chmod 755 /home/${VM_USER}/Desktop/Keycloak.desktop
+sudo chown ${VM_USER}:${VM_USER} /home/${VM_USER}/Desktop/Keycloak.desktop
