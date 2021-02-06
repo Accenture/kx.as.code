@@ -1,5 +1,7 @@
 #!/bin/bash -eux
 
+skelDirectory=/usr/share/kx.as.code/skel
+
 shortcutIcon=$(cat ${componentMetadataJson} | jq -r '.shortcut_icon')
 shortcutText=$(cat ${componentMetadataJson} | jq -r '.shortcut_text')
 iconPath=${installComponentDirectory}/${shortcutIcon}
@@ -54,3 +56,7 @@ EOF
 # Give *.desktop files execute permissions
 chmod 755 /home/${vmUser}/Desktop/*.desktop
 chown ${vmUser}:${vmUser} /home/${vmUser}/Desktop/*.desktop
+
+# Copy desktop icons to skel directory for future users
+sudo cp /home/${vmUser}/Desktop/Kubernetes-Dashboard.desktop ${skelDirectory}/Desktop
+sudo cp /home/${vmUser}/Desktop/Get-Kubernetes-Token.desktop ${skelDirectory}/Desktop

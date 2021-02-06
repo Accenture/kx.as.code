@@ -1,5 +1,7 @@
 #!/bin/bash -eux
 
+skelDirectory=/usr/share/kx.as.code/skel
+
 # Build KX.AS.CODE "Docs" Image
 cd /usr/share/kx.as.code/git/kx.as.code_docs
 . ./build.sh
@@ -24,3 +26,7 @@ cd /usr/share/kx.as.code/git/kx.as.code_techradar/kubernetes
 
 # Return to previous directory
 cd -
+
+# Copy desktop icons to skel directory for future users
+sudo cp /home/${vmUser}/Desktop/KX.AS.CODE-Docs.desktop ${skelDirectory}/Desktop
+sudo cp /home/${vmUser}/Desktop/Tech-Radar.desktop ${skelDirectory}/Desktop

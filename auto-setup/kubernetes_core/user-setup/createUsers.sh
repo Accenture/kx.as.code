@@ -22,14 +22,38 @@ if [[ ${numUsersToCreate} -ne 0 ]]; then
     echo "${userid} ${firstname} ${surname} ${email}"
 
     if ! id -u ${userid} > /dev/null 2>&1; then
+
       sudo groupadd ${userid}
-      sudo useradd ${userid} -g ${userid} -G sudo -d /home/${userid} -s /bin/zsh --create-home
+      sudo useradd ${userid} -g ${userid} -G sudo -d /home/${userid} -s /bin/zsh -m  -k /usr/share/kx.as.code/skel
       generatedPassword=$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${1:-12};echo;)
       echo "${userid}:${generatedPassword}" | sudo chpasswd
       echo "${userid}:${generatedPassword}" | sudo tee -a /usr/share/kx.as.code/.users
+
+      # Give user root priviliges
+      printf "${userid}        ALL=(ALL)       NOPASSWD: ALL\n" | sudo tee -a /etc/sudoers
+
+    fi
+
+    if [ ! -f /home/${userid}/.ssh/id_rsa ]; then
+      # Create the kx.hero user ssh directory.
+      sudo mkdir -pm 700 /home/${userid}/.ssh
+
+      # Ensure the permissions are set correct
+      sudo chmod 0600 /home/${userid}/.ssh/authorized_keys
+      sudo chown -R ${userid}:${userid} /home/${userid}/.ssh
+
+      # Create SSH key kx.hero user
+      sudo chmod 700 /home/${userid}/.ssh
+      yes | sudo -u ${userid} ssh-keygen -f ssh-keygen -m PEM -t rsa -b 4096 -q -f /home/${userid}/.ssh/id_rsa -N ''
     fi
 
     sudo ln -s ${SHARED_GIT_REPOSITORIES}/kx.as.code /home/${userid}/Desktop/"KX.AS.CODE Source";
 
   done
 fi
+
+
+
+
+
+
