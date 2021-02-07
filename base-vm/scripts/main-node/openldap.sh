@@ -69,9 +69,9 @@ sudo ldapadd -D "cn=admin,${LDAP_DN}" -w "${VM_PASSWORD}" -H ldapi:/// -f /etc/l
 
 # Add user group
 echo '''
-dn: cn=users,ou=Groups,ou=People,'${LDAP_DN}'
+dn: cn='${INITIAL_LDAP_VM_USER}',ou=Groups,ou=People,'${LDAP_DN}'
 objectClass: posixGroup
-cn: users
+cn: '${INITIAL_LDAP_VM_USER}'
 gidNumber: 10002
 ''' | sudo tee /etc/ldap/users_group.ldif
 sudo ldapadd -D "cn=admin,${LDAP_DN}" -w "${VM_PASSWORD}" -H ldapi:/// -f /etc/ldap/users_group.ldif
