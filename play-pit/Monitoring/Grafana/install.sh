@@ -33,4 +33,3 @@ helm upgrade --install grafana stable/grafana -f values.yaml --namespace grafana
   --name="Grafana" \
   --url=https://grafana.kx-as-code.local \
   --icon=/home/$VM_USER/Documents/git/kx.as.code_library/02_Kubernetes/02_Monitoring/05_Grafana/grafana.png
-

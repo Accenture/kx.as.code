@@ -15,7 +15,7 @@ Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod 
 
 !["screenshot"](screenshot-kibana2.png "screenshot")
 
-     
+
 !["screenshot"](screenshot-kibana3.png "screenshot")
 
 

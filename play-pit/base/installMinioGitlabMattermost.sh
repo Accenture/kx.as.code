@@ -1,4 +1,4 @@
-#!/bin/bash -eux 
+#!/bin/bash -eux
 
 # This script installs MinIO, Gitlab-CE and Mattermost
 
@@ -99,7 +99,7 @@ host: s3.kx-as-code.local
 endpoint: \"http://minio-service:9000\"
 path_style: true
 """ | tee $KUBEDIR/rails.minio.yaml
- 
+
 # Install S3 Secrets
 kubectl create secret generic object-storage --dry-run=client -o yaml --from-file=connection=$KUBEDIR/rails.minio.yaml -n gitlab-ce | kubectl apply -f -
 kubectl create secret generic s3cmd-config --dry-run=client -o yaml --from-file=config=$KUBEDIR/rails.minio.yaml -n gitlab-ce | kubectl apply -f -
@@ -215,7 +215,7 @@ spec:
        - path: /
          backend:
            serviceName: gitlab-ce-webservice
-           servicePort: 8181     
+           servicePort: 8181
 ''' | kubectl apply -n gitlab-ce -f -
 
 # Install the desktop shortcut
@@ -378,8 +378,8 @@ curl --header "Private-Token: ${PERSONAL_ACCESS_TOKEN}" https://gitlab.kx-as-cod
 mkdir -p $KUBEDIR/gitlab_demo/
 
 # Set Git commiter details
-git config --global user.name "kx.hero" 
-git config --global user.email "kx.hero@kx-as-code.local" 
+git config --global user.name "kx.hero"
+git config --global user.email "kx.hero@kx-as-code.local"
 
 # Add KX.AS.CODE Docs to new Gitlab project
 cp -r /home/${VM_USER}/Documents/git/kx.as.code_docs /var/tmp/

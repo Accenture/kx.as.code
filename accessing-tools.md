@@ -39,15 +39,8 @@ To make it easier to access the tools, they are all configured with the same use
 
 ##### API Documentation
 
-In order to get a quick entry to developing new functions and scripts, a link is added to the desktop for each 
+In order to get a quick entry to developing new functions and scripts, a link is added to the desktop for each
 
 
 
 ![API_Docs_Shortcuts](images/image-20201112191554160.png){: align=left }
-
-
-
-
-
-
-

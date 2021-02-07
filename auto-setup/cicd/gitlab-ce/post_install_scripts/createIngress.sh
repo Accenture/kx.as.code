@@ -23,5 +23,5 @@ spec:
        - path: /
          backend:
            serviceName: '${namespace}'-webservice
-           servicePort: 8181     
+           servicePort: 8181
 ''' | kubectl apply -n ${namespace} -f -

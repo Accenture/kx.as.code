@@ -157,7 +157,7 @@ function MdTooltipDirective($timeout, $window, $$rAF, $document, $mdUtil, $mdThe
       function windowScrollHandler() {
         setVisible(false);
       }
-      
+
       ngWindow.on('blur', windowBlurHandler);
       ngWindow.on('resize', debouncedOnResize);
       document.addEventListener('scroll', windowScrollHandler, true);

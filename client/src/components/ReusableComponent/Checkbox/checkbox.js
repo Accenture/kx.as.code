@@ -11,7 +11,7 @@ const useStyles = makeStyles({
     borderRadius: 3,
     width: 48,
     height: 48,
-    
+
     backgroundImage: 'linear-gradient(white, white)',
     '$root.Mui-focusVisible &': {
       outline: '2px auto #fffff',

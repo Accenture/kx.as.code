@@ -36,4 +36,3 @@ if ( Test-Path -Path "..\..\..\boxes\${OUTPUT_DIR}-${VM_VERSION}\info.json" -Pat
 
 Copy-Item -Force -Path "..\..\..\templates\info.template" -Destination "..\..\..\boxes\${OUTPUT_DIR}-${VM_VERSION}\info.json"
 (Get-Content "..\..\..\boxes\${OUTPUT_DIR}-${VM_VERSION}\info.json").replace('##USERNAME##', 'Accenture Interactive') | Set-Content "..\..\..\boxes\${OUTPUT_DIR}-${VM_VERSION}\info.json"
-

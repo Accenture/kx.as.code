@@ -1,19 +1,19 @@
 
-  
+
   #new-prof-gen-steps-container {
     position: relative;
     width: 852px;
   }
-  
+
   #new-prof-gen-steps {
     width: 752px;
     margin: 0 auto;
   }
-  
+
   #new-prof-gen-steps>.step1,
-  #new-prof-gen-steps>.step2, 
-  #new-prof-gen-steps>.step3, 
-  #new-prof-gen-steps>.step4, 
+  #new-prof-gen-steps>.step2,
+  #new-prof-gen-steps>.step3,
+  #new-prof-gen-steps>.step4,
   #new-prof-gen-steps>.step5  {
     background-color: #141A23;
     border-radius: 50%;
@@ -36,7 +36,7 @@
     height: 16px;
     margin: 16px;
   }
-  
+
   .horizontal-line {
     position: absolute;
     top: 25px;
@@ -46,26 +46,26 @@
     background-color: #141A23;
     margin: 0 auto;
   }
-  
+
   #new-prof-gen-step-labels {
     width: 800px;
     margin: 0 auto;
     padding-top: 15px;
     padding-bottom: 45px;
   }
-  
+
   #new-prof-gen-step-labels>.step1-label {
     line-height: 22px;
     text-align: center;
     width: 100px;
   }
-  
+
   #new-prof-gen-step-labels>.step2-label {
     line-height: 22px;
     text-align: center;
     width: 130px;
   }
-  
+
   #new-prof-gen-step-labels>.step3-label {
     line-height: 22px;
     text-align: center;
@@ -83,5 +83,3 @@
     text-align: center;
     width: 120px;
   }
-  
-  

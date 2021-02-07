@@ -16,5 +16,3 @@ helm delete filebeat --namespace elastic-stack
 
 # Uninstall desktop shortcut
 rm -f /home/$VM_USER/Desktop/Kibana.desktop
-
-

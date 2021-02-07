@@ -26,4 +26,3 @@ helm upgrade --install vault hashicorp/vault --namespace vault
   --name="vault" \
   --url=https://vault.kx-as-code.local \
   --icon=/home/$VM_USER/Documents/git/kx.as.code_library/02_Kubernetes/05_DevSecOps/05_Vault/vault.png
-

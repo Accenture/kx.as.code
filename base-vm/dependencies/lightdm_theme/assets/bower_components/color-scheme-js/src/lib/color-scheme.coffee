@@ -7,7 +7,7 @@ class ColorScheme
   # List of possible color scheme types
   @SCHEMES = {};
   @SCHEMES[word] = true for word in "mono monochromatic contrast triade tetrade analogic".split /\s+/
-  
+
   @PRESETS =
     default : [ -1,   -1,    1,   -0.7, 0.25, 1,   0.5,  1 ],
     pastel  : [ 0.5,  -0.9,  0.5, 0.5,  0.1,  0.9, 0.75, 0.75 ]
@@ -62,7 +62,7 @@ class ColorScheme
   (without a leading "#") depending on the color scheme and addComplement
   parameter. For each set of four, the first is usually the most saturated color,
   the second a darkened version, the third a pale version and fourth
-  a less-pale version. 
+  a less-pale version.
 
   For example: With a contrast scheme, "colors()" would return eight colors.
   Indexes 1 and 5 could be background colors, 2 and 6 could be foreground colors.
@@ -77,13 +77,13 @@ class ColorScheme
     h           = @col[0].get_hue()
 
     # Should these be fat arrows (=>) so that the @ refers to the right object?
-    dispatch = 
+    dispatch =
       mono     : () =>
       contrast : () =>
         used_colors = 2;
         @col[1].set_hue h
         @col[1].rotate(180)
-      
+
       triade : () =>
         used_colors = 3
         dif = 60 * @_distance
@@ -91,7 +91,7 @@ class ColorScheme
         @col[1].rotate 180 - dif
         @col[2].set_hue h
         @col[2].rotate 180 + dif
-      
+
       tetrade : () =>
         used_colors = 4
         dif = 90 * @_distance
@@ -101,7 +101,7 @@ class ColorScheme
         @col[2].rotate 180 + dif
         @col[3].set_hue h
         @col[3].rotate dif
-      
+
       analogic : () =>
         used_colors = if @_add_complement then 4 else 3
         dif = 60 * @_distance
@@ -114,7 +114,7 @@ class ColorScheme
         @col[2].rotate 360 - dif
         @col[3].set_hue h
         @col[3].rotate 180
-    
+
     # Alias for monochromatic
     dispatch['monochromatic'] = dispatch['mono']
 
@@ -242,7 +242,7 @@ class ColorScheme
     wheelKeys = []; wheelKeys.push i for own i of ColorScheme.COLOR_WHEEL
     for i of wheelKeys.sort( (a, b) -> a - b )
       c = ColorScheme.COLOR_WHEEL[ wheelKeys[i] ]
-      
+
       hsv1 = @rgb2hsv( i / 255 for i in c[ 0 .. 2 ] )
       h = hsv1[0]
       if h >= h1 and h <= h0
@@ -264,7 +264,7 @@ class ColorScheme
 
     @from_hue h
     @_set_variant_preset( [ s, v, s, v * 0.7, s * 0.25, 1, s * 0.5, 1 ] )
-    
+
     return this
 
   ###
@@ -272,7 +272,7 @@ class ColorScheme
   add_complement( BOOLEAN )
 
   If BOOLEAN is true, an extra set of colors will be produced using the
-  complement of the selected color. 
+  complement of the selected color.
 
   This only works with the analogic color scheme. The default is false.
 
@@ -288,7 +288,7 @@ class ColorScheme
   web_safe( BOOL )
 
   Sets whether the colors returned by L<"colors()"> or L<"colorset()"> will be
-  web-safe. 
+  web-safe.
 
   The default is false.
 
@@ -338,7 +338,7 @@ class ColorScheme
 
   variation( name )
 
-  'name' must be a valid color variation name. See "Color Variations" 
+  'name' must be a valid color variation name. See "Color Variations"
 
   ###
 
@@ -356,7 +356,7 @@ class ColorScheme
       return obj
 
     if obj instanceof Date
-      return new Date(obj.getTime()) 
+      return new Date(obj.getTime())
 
     if obj instanceof RegExp
       flags = ''
@@ -364,7 +364,7 @@ class ColorScheme
       flags += 'i' if obj.ignoreCase?
       flags += 'm' if obj.multiline?
       flags += 'y' if obj.sticky?
-      return new RegExp(obj.source, flags) 
+      return new RegExp(obj.source, flags)
 
     newInstance = new obj.constructor()
 

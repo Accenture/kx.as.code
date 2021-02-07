@@ -4,12 +4,12 @@ Please file issues and pull requests against that repo.
 
 ## Installing Angular Material
 
-You can install this package locally either with `npm`, `jspm`, or `bower`. 
+You can install this package locally either with `npm`, `jspm`, or `bower`.
 
 ### npm
 
 ```shell
-# To install latest formal release 
+# To install latest formal release
 npm install angular-material
 
 # To install latest release and update package.json
@@ -18,7 +18,7 @@ npm install angular-material --save
 # To install from HEAD of master
 npm install http://github.com/angular/bower-material/tarball/master
 
-# To view all installed package 
+# To view all installed package
 npm list;
 ```
 
@@ -58,9 +58,9 @@ bower update
 
 ## Using the Angular Material Library
 
-Now that you have installed the Angular libraries, simply include the scripts and 
-stylesheet in your main HTML file, in the order shown in the example below. Note that npm 
-will install the files under `/node_modules/angular-material/` and bower will install them 
+Now that you have installed the Angular libraries, simply include the scripts and
+stylesheet in your main HTML file, in the order shown in the example below. Note that npm
+will install the files under `/node_modules/angular-material/` and bower will install them
 under `/bower_components/angular-material/`.
 
 ### npm
@@ -129,11 +129,11 @@ under `/bower_components/angular-material/`.
 
 ## Using the CDN
 
-CDN versions of Angular Material are now available at 
-[Google Hosted Libraries](https://developers.google.com/speed/libraries/devguide#angularmaterial). 
+CDN versions of Angular Material are now available at
+[Google Hosted Libraries](https://developers.google.com/speed/libraries/devguide#angularmaterial).
 
 With the Google CDN, you will not need to download local copies of the distribution files.
-Instead simply reference the CDN urls to easily use those remote library files. 
+Instead simply reference the CDN urls to easily use those remote library files.
 This is especially useful when using online tools such as CodePen, Plunkr, or jsFiddle.
 
 ```html
@@ -144,19 +144,19 @@ This is especially useful when using online tools such as CodePen, Plunkr, or js
 
   </head>
   <body>
-  
+
     <!-- Angular Material Dependencies -->
     <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.3.6/angular.min.js"></script>
     <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.3.6/angular-animate.min.js"></script>
     <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.3.6/angular-aria.min.js"></script>
-    
+
     <!-- Angular Material Javascript now available via Google CDN; version 0.9.4 used here -->
     <script src="//ajax.googleapis.com/ajax/libs/angular_material/0.9.4/angular-material.min.js"></script>
-    
+
   </body>
 ```
 
-> Note that the above sample references the 0.9.4 CDN release. Your version will change 
+> Note that the above sample references the 0.9.4 CDN release. Your version will change
 based on the latest stable release version.
 
 ## Jasmine Testing with Angular Material
@@ -184,7 +184,7 @@ module.exports = function(config) {
     'node_modules/angular-animate/angular-animate.js',
     'node_modules/angular-aria/angular-aria.js',
     'node_modules/angular-material/angular-material.js',
-    
+
     'node_modules/angular-mocks/angular-mocks.js',
     'node_modules/angular-material/angular-material-mocks.js'
   ];
@@ -193,7 +193,7 @@ module.exports = function(config) {
 
     basePath: __dirname + '/..',
     frameworks: ['jasmine'],
-    
+
     files: LIBS.concat(SRC),
 
     port: 9876,
@@ -208,4 +208,3 @@ module.exports = function(config) {
 
 };
 ```
-

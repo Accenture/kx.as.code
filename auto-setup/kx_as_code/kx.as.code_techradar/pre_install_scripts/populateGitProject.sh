@@ -6,8 +6,8 @@ mkdir -p ${installationWorkspace}/staging/
 gitDomain=$(echo ${gitUrl} | sed 's/https:\/\///g')
 
 # Set Git committer details
-git config --global user.name "kx.hero" 
-git config --global user.email "kx.hero@${baseDomain}" 
+git config --global user.name "kx.hero"
+git config --global user.email "kx.hero@${baseDomain}"
 
 # Add KX.AS.CODE TechRadar to new Gitlab project
 export techradarApplicationUrl=$(cat ${componentMetadataJson} | jq -r '.urls[].url')
@@ -31,10 +31,10 @@ cp -rf /var/tmp/kx.as.code_techradar/* ${installationWorkspace}/staging/kx.as.co
 yamlFiles=$(find /var/tmp/kx.as.code_techradar/kubernetes -name "*.yaml")
 for yamlFile in ${yamlFiles}
 do
-  envhandlebars < ${yamlFile} > ${installationWorkspace}/staging/kx.as.code_techradar/kubernetes/$(basename ${yamlFile}) 
+  envhandlebars < ${yamlFile} > ${installationWorkspace}/staging/kx.as.code_techradar/kubernetes/$(basename ${yamlFile})
 done
 
-gitStatus=($(git status | tail -1)) 
+gitStatus=($(git status | tail -1))
 if [[ "${gitStatus[@]:0:3}" =~ "nothing to commit" ]]; then
     log_info "KX.AS.CODE TechRadar - nothing to commit. Moving on"
 else

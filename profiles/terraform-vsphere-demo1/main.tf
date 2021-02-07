@@ -64,16 +64,15 @@ resource "vsphere_virtual_machine" "kx-main-demo1" {
 
   vapp {
     properties = {
-     "guestinfo.hostname" = "kx-main-test",
+      "guestinfo.hostname"  = "kx-main-test",
       "guestinfo.ipaddress" = "192.168.50.100",
-      "guestinfo.netmask" = "255.255.255.0",
-      "guestinfo.gateway" = "192.168.50.1",
-      "guestinfo.dns" = "192.168.50.1",
-      "guestinfo.domain" = "lab-kx-as-code.local",
-      "guestinfo.ntp" = "pool.ntp.org",
-      "guestinfo.password" = "L3arnandshare",
-      "guestinfo.ssh" = "True"    
+      "guestinfo.netmask"   = "255.255.255.0",
+      "guestinfo.gateway"   = "192.168.50.1",
+      "guestinfo.dns"       = "192.168.50.1",
+      "guestinfo.domain"    = "lab-kx-as-code.local",
+      "guestinfo.ntp"       = "pool.ntp.org",
+      "guestinfo.password"  = "L3arnandshare",
+      "guestinfo.ssh"       = "True"
     }
   }
 }
-

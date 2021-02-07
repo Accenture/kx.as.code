@@ -6,8 +6,8 @@ mkdir -p ${installationWorkspace}/staging/
 gitDomain=$(echo ${gitUrl} | sed 's/https:\/\///g')
 
 # Set Git committer details
-git config --global user.name "kx.hero" 
-git config --global user.email "kx.hero@kx-as-code.local" 
+git config --global user.name "kx.hero"
+git config --global user.email "kx.hero@kx-as-code.local"
 
 # Push Application YAML files to new Gitlab project
 if [[ ! -d ${installationWorkspace}/staging/${componentName}/.git  ]]; then

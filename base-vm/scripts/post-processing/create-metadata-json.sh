@@ -15,11 +15,11 @@ export PROVIDER=$(echo ${OUTPUT_DIR} | sed 's/-/_/g')
 
 export CHECKSUM=$(shasum -a 512 ..\/..\/..\/boxes\/${OUTPUT_DIR}-${VM_VERSION}\/${VM_NAME}${VM_SUFFIX}-${VM_VERSION}.box | awk '{ print $1 }')
 
-if [[ ! -d ../../../boxes/${OUTPUT_DIR}-${VM_VERSION} ]]; then 
+if [[ ! -d ../../../boxes/${OUTPUT_DIR}-${VM_VERSION} ]]; then
     mkdir -p ../../../boxes/${OUTPUT_DIR}-${VM_VERSION}
 fi
 
-if [[ -f ../../../boxes/${OUTPUT_DIR}-${VM_VERSION}/${VM_NAME}${VM_SUFFIX}-${VM_VERSION}_metadata.json ]]; then 
+if [[ -f ../../../boxes/${OUTPUT_DIR}-${VM_VERSION}/${VM_NAME}${VM_SUFFIX}-${VM_VERSION}_metadata.json ]]; then
     mv ../../../boxes/${OUTPUT_DIR}-${VM_VERSION}/${VM_NAME}${VM_SUFFIX}-${VM_VERSION}_metadata.json ../../../boxes/${OUTPUT_DIR}-${VM_VERSION}/${VM_NAME}${VM_SUFFIX}-${VM_VERSION}_metadata.json.previous
 fi
 

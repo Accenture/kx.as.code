@@ -27,7 +27,7 @@ fi
 # Changee icons to Paper theme
 sudo -u $VM_USER bash -c 'eval `dbus-launch --sh-syntax` xfconf-query -c xsettings -p /Net/IconThemeName -s Paper'
 
-# Add/Remove desktop icons 
+# Add/Remove desktop icons
 sudo -u $VM_USER bash -c 'eval `dbus-launch --sh-syntax` xfconf-query --create --channel xfce4-desktop --property /desktop-icons/file-icons/show-filesystem --type bool --set false'
 sudo -u $VM_USER bash -c 'eval `dbus-launch --sh-syntax` xfconf-query --create --channel xfce4-desktop --property /desktop-icons/file-icons/show-home --type bool --set true'
 sudo -u $VM_USER bash -c 'eval `dbus-launch --sh-syntax` xfconf-query --create --channel xfce4-desktop --property /desktop-icons/file-icons/show-trash --type bool --set false'
@@ -35,13 +35,13 @@ sudo -u $VM_USER bash -c 'eval `dbus-launch --sh-syntax` xfconf-query --create -
 # Disable feature that causes mouse to get stuck in VirtualBox
 sudo -u $VM_USER bash -c 'eval `dbus-launch --sh-syntax` xfconf-query --create --channel xfwm4 --property /general/easy_click --type string --set none'
 
-# Remove top panel 
-sudo -u $VM_USER bash -c 'eval `dbus-launch --sh-syntax` xfconf-query --create --channel xfce4-panel --property /panels --type int --set 0 --force-array' 
+# Remove top panel
+sudo -u $VM_USER bash -c 'eval `dbus-launch --sh-syntax` xfconf-query --create --channel xfce4-panel --property /panels --type int --set 0 --force-array'
 
-# Set Icon Size for Bottom Bar - Panel 2 
+# Set Icon Size for Bottom Bar - Panel 2
 sudo -u $VM_USER bash -c 'eval `dbus-launch --sh-syntax` xfconf-query --create --channel xfce4-panel --property /panels/panel-2/size --type int --set 48'
 
-# Set Length of Bottom Panel to 85% - Panel 2 
+# Set Length of Bottom Panel to 85% - Panel 2
 sudo -u $VM_USER bash -c 'eval `dbus-launch --sh-syntax` xfconf-query --create --channel xfce4-panel --property /panels/panel-2/length --type int --set 85'
 
 # Change XFCE4 configuration to use new desktop and icon themes

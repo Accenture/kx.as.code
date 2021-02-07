@@ -48,6 +48,3 @@ Copy-Item -Force "..\..\..\templates\metadata.template" -Destination "..\..\..\b
 (Get-Content ..\..\..\boxes\${OUTPUT_DIR}-${VM_VERSION}\${VM_NAME}${VM_SUFFIX}-${VM_VERSION}_metadata.json).replace("##PROVIDER##", "${PROVIDER}") | Set-Content ..\..\..\boxes\${OUTPUT_DIR}-${VM_VERSION}\${VM_NAME}${VM_SUFFIX}-${VM_VERSION}_metadata.json
 (Get-Content ..\..\..\boxes\${OUTPUT_DIR}-${VM_VERSION}\${VM_NAME}${VM_SUFFIX}-${VM_VERSION}_metadata.json).replace("##URL##", "../../../boxes/${OUTPUT_DIR}-${VM_VERSION}/${VM_NAME}${VM_SUFFIX}-${VM_VERSION}.box") | Set-Content ..\..\..\boxes\${OUTPUT_DIR}-${VM_VERSION}\${VM_NAME}${VM_SUFFIX}-${VM_VERSION}_metadata.json
 (Get-Content ..\..\..\boxes\${OUTPUT_DIR}-${VM_VERSION}\${VM_NAME}${VM_SUFFIX}-${VM_VERSION}_metadata.json).replace("##CHECKSUM##", "${CHECKSUM}") | Set-Content ..\..\..\boxes\${OUTPUT_DIR}-${VM_VERSION}\${VM_NAME}${VM_SUFFIX}-${VM_VERSION}_metadata.json
-
-
-

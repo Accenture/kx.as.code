@@ -18,4 +18,3 @@ spec:
          backend:
            serviceName: confluence-server-service
            servicePort: 8090
-

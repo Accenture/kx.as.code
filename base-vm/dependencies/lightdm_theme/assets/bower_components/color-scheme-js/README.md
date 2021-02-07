@@ -64,7 +64,7 @@ npm install color-scheme
 var ColorScheme = require('color-scheme');
 
 var scheme = new ColorScheme;
-scheme.from_hue(21)         // Start the scheme 
+scheme.from_hue(21)         // Start the scheme
       .scheme('triade')     // Use the 'triade' scheme, that is, colors
                             // selected from 3 points equidistant around
                             // the color wheel.
@@ -87,8 +87,8 @@ var colors = scheme.colors();
 <script>
   // Pretty much the same exact syntax!
   var scheme = new ColorScheme;
-  scheme.from_hue(21)         
-        .scheme('triade')   
+  scheme.from_hue(21)
+        .scheme('triade')
         .variation('soft');
 
 

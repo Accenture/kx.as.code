@@ -23,12 +23,12 @@ const NewProfileReview = (props) => {
                     <Grid item>
                         <NewProfileReview1/>
                     </Grid>
-                    {((props.view ===UIView.Installation) ||(props.view === UIView.ReviewA)) && 
+                    {((props.view ===UIView.Installation) ||(props.view === UIView.ReviewA)) &&
                         <Grid item>
                             <NewProfileReview2/>
                         </Grid>
                     }
-                    {(props.view ===UIView.Installation) && 
+                    {(props.view ===UIView.Installation) &&
                         <Grid item id="installation-container">
                                 <KubernetesInstallation/>
                         </Grid>

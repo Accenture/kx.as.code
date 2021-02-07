@@ -13,8 +13,8 @@ PERSONAL_ACCESS_TOKEN=$(cat /home/$VM_USER/.config/kx.as.code/.admin.gitlab.pat)
 ROOT_USER_ID=$(curl -s --header "Private-Token: ${PERSONAL_ACCESS_TOKEN}" https://gitlab.kx-as-code.local/api/v4/users | jq -r '.[] | select (.username=="root") | .id')
 
 # Set Git commiter details
-git config --global user.name "kx.hero" 
-git config --global user.email "kx.hero@kx-as-code.local" 
+git config --global user.name "kx.hero"
+git config --global user.email "kx.hero@kx-as-code.local"
 
 # Get DevOps Group in Gitlab
 REGISTRY_DEVOPS_GROUP_ID=$(curl -s -u 'admin:'${VM_PASSWORD}'' -X GET "https://registry.kx-as-code.local/api/projects" -H "accept: application/json" | jq -r '.[] | select(.name=="devops") | .project_id')
@@ -133,4 +133,3 @@ done
   --name="Atlassian Confluence" \
   --url=https://conflence.kx-as-code.local \
   --icon=/home/$VM_USER/Documents/git/kx.as.code_library/02_Kubernetes/04_Collaboration/02_Confluence/confluence.png
-

@@ -117,7 +117,7 @@ Here a list of global variables that can be used in any script with `${variable}
 
 **Local**
 
-These are defined in each solution's metadata.json in the `environment_variables[]` array. 
+These are defined in each solution's metadata.json in the `environment_variables[]` array.
 
 For example, here from Grafana.
 
@@ -174,13 +174,13 @@ These scripts run after the main installation has completed. Example could be us
 
 #### Health Checks
 
-Health checks are executed after the pre- and main installation routines have run, but before the post- steps are executed. This is so that the solution is up and working before any post-steps run, which may be reliant on the solution's API. 
+Health checks are executed after the pre- and main installation routines have run, but before the post- steps are executed. This is so that the solution is up and working before any post-steps run, which may be reliant on the solution's API.
 
-Below is an example from the `metadata.json` for Gitlab CE. 
+Below is an example from the `metadata.json` for Gitlab CE.
 
-Apart from defining the expected HTTP return code, it is also possible to define either the expected string or json response on a successful health-check. 
+Apart from defining the expected HTTP return code, it is also possible to define either the expected string or json response on a successful health-check.
 
-The json_path uses the `JSONPath ` notation. See the following [link](https://restfulapi.net/json-jsonpath/#:~:text=JSONPath%20Syntax&text=The%20dollar%20sign%20is%20followed,important%20JSONPath%20syntax%20rules%20are%3A&text=%5B%20%5D%20is%20the%20subscript%20operator%2C,(by%20name%20or%20index).) for more details. The tool use at the backend is `jq`, so if your query works with that, it will work here too. 
+The json_path uses the `JSONPath ` notation. See the following [link](https://restfulapi.net/json-jsonpath/#:~:text=JSONPath%20Syntax&text=The%20dollar%20sign%20is%20followed,important%20JSONPath%20syntax%20rules%20are%3A&text=%5B%20%5D%20is%20the%20subscript%20operator%2C,(by%20name%20or%20index).) for more details. The tool use at the backend is `jq`, so if your query works with that, it will work here too.
 
 ```json
 {
@@ -433,8 +433,3 @@ Below a description for each parameter.
 | self_heal      | If selfHeal flag is set to true then sync will be attempted again after self heal timeout (5 seconds by default) |                    |
 
 For full instructions on the workings of ArgoCD, see their detailed [documentation](https://argoproj.github.io/argo-cd/core_concepts/).
-
-
-
-
-

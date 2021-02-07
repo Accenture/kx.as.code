@@ -7,3 +7,4 @@ if [[ -z ${secretExists} ]]; then
 else
     log_info "Metallb memberlist secret already exists. Skipping creation"
 fi
+

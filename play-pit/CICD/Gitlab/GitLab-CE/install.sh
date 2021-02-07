@@ -42,7 +42,7 @@ s3:
   secretkey: ${MINIO_SECRET_KEY}
   chunksize: 5242880
 """ | tee registry.minio.yaml
-  
+
 # Install S3 Secrets
 kubectl create secret generic registry-storage --dry-run=client -o yaml --from-file=config=registry.minio.yaml -n gitlab-ce | kubectl apply -f -
 kubectl create secret generic object-storage --dry-run=client -o yaml --from-file=connection=rails.minio.yaml -n gitlab-ce | kubectl apply -f -

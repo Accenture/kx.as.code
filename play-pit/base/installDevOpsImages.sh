@@ -23,5 +23,3 @@ cd /home/$VM_USER/Documents/kx.as.code_techradar/kubernetes
 sudo docker rmi -f $(sudo docker images python -q)
 sudo docker rmi -f $(sudo docker images nginx --format '{{.Repository}}:{{.Tag}}')
 sudo docker rmi -f $(sudo docker images -f "dangling=true" -q | tr "\n" " ")
-
-

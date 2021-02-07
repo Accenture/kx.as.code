@@ -42,9 +42,9 @@ data "vsphere_virtual_machine" "kx_worker_template" {
 }
 
 resource "vsphere_virtual_machine" "kx-main-demo1" {
-  name                       = "kx-main-demo1"
-  resource_pool_id           = data.vsphere_resource_pool.pool.id
-  datastore_id               = data.vsphere_datastore.datastore.id
+  name             = "kx-main-demo1"
+  resource_pool_id = data.vsphere_resource_pool.pool.id
+  datastore_id     = data.vsphere_datastore.datastore.id
 
   num_cpus = var.main_node_num_cpus
   memory   = var.main_node_memory
@@ -83,10 +83,10 @@ resource "vsphere_virtual_machine" "kx-main-demo1" {
 }
 
 resource "vsphere_virtual_machine" "kx-worker-demo1" {
-  count                      = 2
-  name                       = "kx-worker${count.index + 1}-demo1"
-  resource_pool_id           = data.vsphere_resource_pool.pool.id
-  datastore_id               = data.vsphere_datastore.datastore.id
+  count            = 2
+  name             = "kx-worker${count.index + 1}-demo1"
+  resource_pool_id = data.vsphere_resource_pool.pool.id
+  datastore_id     = data.vsphere_datastore.datastore.id
 
   num_cpus = var.worker_node_num_cpus
   memory   = var.worker_node_memory

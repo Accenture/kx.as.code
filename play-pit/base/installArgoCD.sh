@@ -235,7 +235,7 @@ spec:
       containers:
       - name: slack-notification
         image: curlimages/curl
-        command: 
+        command:
           - "curl"
           - "-X"
           - "POST"
