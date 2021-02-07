@@ -16,7 +16,7 @@ const NewProfileOptionalForm = (props) => {
        const name = e.target.name;
        const newValue = e.target.value;
        setOptionalConfig({[name]: newValue}, props.setOptionalConfig(optionalConfig))
-     }; 
+     };
 
     return (
         <Box

@@ -15,4 +15,3 @@ sudo -u kx.hero bash ./InstallHalyard.sh
 
 # Test Halyard is working
 hal -v
-

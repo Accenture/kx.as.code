@@ -1,4 +1,4 @@
-#!/bin/bash -eux 
+#!/bin/bash -eux
 
 . /etc/environment
 export VM_USER=$VM_USER
@@ -62,7 +62,7 @@ COPY ca.crt /etc/docker/certs.d/registry.kx-as-code.local/ca.crt
 RUN echo "kubernetes/kx-root-ca.crt" | tee -a /etc/ca-certificates.conf \
  && echo "kubernetes/kx-intermediate-ca.crt" | tee -a /etc/ca-certificates.conf \
  && apt-get update \
- && apt-get install -y ca-certificates \ 
+ && apt-get install -y ca-certificates \
  && update-ca-certificates --fresh \
  && apt-get install -y \
     ca-certificates \

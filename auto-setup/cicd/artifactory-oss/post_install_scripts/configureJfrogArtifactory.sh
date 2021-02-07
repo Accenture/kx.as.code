@@ -5,15 +5,15 @@ urlBase: https://${componentName}.${baseDomain}
 fileUploadMaxSizeMb: 100
 dateFormat: dd-MM-yy HH:mm:ss z
 offlineMode: false
-security:   
+security:
   anonAccessEnabled: false
-localRepositories:   
+localRepositories:
   kx-as-code:
     type: maven
     description: "KX.AS.CODE maven repository"
     repoLayout: maven-2-default
-  devops:   
-    type: generic  
+  devops:
+    type: generic
     description: "DevOps repository for general artifacts"
 """ | sudo tee ${installationWorkspace}/artifactory-configuration.yml
 

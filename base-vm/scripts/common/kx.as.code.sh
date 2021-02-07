@@ -1,7 +1,7 @@
 #!/bin/bash -eux
 
 echo "COMPUTE_ENGINE_BUILD: ${COMPUTE_ENGINE_BUILD}"
-# 
+#
 if [[ "${COMPUTE_ENGINE_BUILD}" == "true" ]]; then
   # Remove splash screen from bootloader for GCP
   sudo sed -E -i 's/GRUB_CMDLINE_LINUX_DEFAULT="(.+)"/GRUB_CMDLINE_LINUX_DEFAULT="console=ttyS0,38400n8d"/g' /etc/default/grub

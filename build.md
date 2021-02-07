@@ -7,7 +7,7 @@
 In order to build KX.AS.CODE, you will need the following pre-requisites
 
 - HashiCorp Packer - https://www.packer.io/downloads
-- Your chosen virtualization solution: 
+- Your chosen virtualization solution:
   - VMWare Workstation/Fusion
   - Parallels Pro
   - VirtualBox - https://www.virtualbox.org/wiki/Downloads
@@ -52,7 +52,7 @@ For vSphere, you need to build for VMWare desktop. The same OVA is used to deplo
 
 #### Configuration
 
-Before you can start building, you need to create a `variables.json` file, which will contain the passwords amongst others to be used during the build process. 
+Before you can start building, you need to create a `variables.json` file, which will contain the passwords amongst others to be used during the build process.
 
 The contents of the JSON file must be as follows:
 
@@ -84,7 +84,7 @@ Here description for each parameter:
 
 ### Building on Windows
 
- 
+
 
 Start a shell session. This can be Powershell or WSL and enter trhe following command:
 
@@ -109,16 +109,3 @@ packer.exe build -force -only kx.as.code-{{node type}}-{{virtualization}}-deskto
 
 
 ### Building on MacOSX
-
-
-
-
-
-
-
-
-
-
-
-
-

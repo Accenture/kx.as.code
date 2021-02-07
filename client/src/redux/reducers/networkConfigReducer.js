@@ -9,7 +9,7 @@ export const initialNetworkConfig = {
     "end": "",
     "HTTPProxy": "not defined",
     "HTTPSProxy": "not defined",
-    "NoProxy": "not defined"  
+    "NoProxy": "not defined"
 }
 
 const initialState = {

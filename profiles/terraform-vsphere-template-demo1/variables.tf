@@ -43,7 +43,7 @@ variable "kx_main_vm_template" {
 }
 
 variable "kx_worker_vm_template" {
-    default = "kx.as.code-worker-demo-0.6.4"
+  default = "kx.as.code-worker-demo-0.6.4"
 }
 
 variable "main_node_num_cpus" {

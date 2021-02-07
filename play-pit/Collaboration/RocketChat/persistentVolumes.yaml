@@ -35,5 +35,5 @@ spec:
   storageClassName: rocketchat-db-storageclass
   hostPath:
     path: "/home/kx.hero/KX_Data/rocketchat/db"
-    
+
 ---

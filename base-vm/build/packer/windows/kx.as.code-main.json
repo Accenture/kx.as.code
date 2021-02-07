@@ -52,7 +52,7 @@
       "vboxmanage_post": [
           ["setextradata", "{{.Name}}", "CustomVideoMode1", "1920x1200x32"],
           ["modifyvm", "{{.Name}}", "--nic1", "natnetwork","--natnetwork1","kxascode"]
-          
+
       ],
       "guest_os_type": "{{user `virtualbox_guest_os_type`}}",
       "http_directory": "http",
@@ -198,7 +198,7 @@
     ],
     "guest_os_type": "{{user `vmware_guest_os_type`}}",
     "http_directory": "http",
-    "iso_urls": [ 
+    "iso_urls": [
       "{{user `iso_path`}}/{{user `iso_file`}}",
       "{{user `iso_url`}}"
     ],

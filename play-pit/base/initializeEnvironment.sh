@@ -120,7 +120,7 @@ mkdir -p ${installationWorkspace}
       systemctl isolate multi-user.target
    fi
 
-   # Open Tilix terminal on desktop to show K88s intialitation progress 
+   # Open Tilix terminal on desktop to show K88s intialitation progress
    export loggedInUser=$(who | cut -d' ' -f1 | sort | uniq | grep $VM_USER)
    if [[ -z $loggedInUser ]]; then
       # If kx.hero user is not yet logged in, then add execution to be launched when user logs in
@@ -146,12 +146,12 @@ mkdir -p ${installationWorkspace}
       sudo -u $VM_USER DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus notify-send -t 300000 "KX.AS.CODE Notification" "Kubernetes cluster intialization started. View logs in ~/Kubernetes for more details" --icon=dialog-information
    fi
 
-   while read script; do 
+   while read script; do
       scriptNumber=$(echo ${script} | cut -f1 -d';')
       scriptName=$(echo ${script} | cut -f2 -d';')
       scriptNotificationMessage=$(echo ${script} | cut -f3 -d';')
       scriptWeight=$(echo ${script} | cut -f4 -d';')
-      
+
       scriptBooleon=$(jq --arg scriptName $scriptName '.optional_scripts[$scriptName]' ${installationWorkspace}/vagrant.json)
       if [[ "${scriptBooleon}" == "null" ]]; then
          scriptBooleon=$(jq --arg scriptName $scriptName '.base_scripts[$scriptName]' ${installationWorkspace}/vagrant.json)
@@ -160,7 +160,7 @@ mkdir -p ${installationWorkspace}
       # Check if first install or re-run
       if [[ -f ${installationWorkspace}/vagrant.json.previous ]]; then
          # Checking if scriptBooleon "true" was different from previous run
-         DIFF=$(grep "${scriptName}" ${installationWorkspace}/vagrant_scripts.diff)         
+         DIFF=$(grep "${scriptName}" ${installationWorkspace}/vagrant_scripts.diff)
       else
          DIFF=""
       fi
@@ -168,7 +168,7 @@ mkdir -p ${installationWorkspace}
       if [[ ( ! -f ${installationWorkspace}/vagrant.json.previous || ( -f ${installationWorkspace}/vagrant.json.previous  && ! -z $DIFF ) ]]; then
          if [[ "${scriptBooleon}" == "true" ]]; then
             gui-status-output "INSTALLING ${scriptNumber} | ${scriptName} | ${scriptNotificationMessage} | ${scriptWeight}"
-            scriptInstallationWorkspace=${installationWorkspace}/${scriptName}            
+            scriptInstallationWorkspace=${installationWorkspace}/${scriptName}
             mkdir -p ${scriptInstallationWorkspace}
             scriptStartTimestamp=$(date "+%Y-%m-%d_%H%M%S")
             scriptStartTimestampSeconds=$(date +"%s")
@@ -185,7 +185,7 @@ mkdir -p ${installationWorkspace}
                ${uninstallScriptName} = "un$(${scriptName})"
                scriptNotificationMessage="$(echo ${scriptNotificationMessage} | sed 's/Installing/Uninstalling/g')"
                gui-status-output "UNINSTALLING ${scriptNumber} | ${uninstallScriptName} | ${scriptNotificationMessage} | ${scriptWeight}"
-               scriptInstallationWorkspace=${installationWorkspace}/${uninstallScriptName} 
+               scriptInstallationWorkspace=${installationWorkspace}/${uninstallScriptName}
                mkdir -p ${scriptInstallationWorkspace}
                scriptStartTimestamp=$(date "+%Y-%m-%d_%H%M%S")
                scriptStartTimestampSeconds=$(date +"%s")
@@ -215,4 +215,3 @@ if [ $? != 0 ] ; then
    zenity --error \
       --text="Environment setup errored or was cancelled!"
 fi
-

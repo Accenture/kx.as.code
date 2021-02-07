@@ -1,10 +1,10 @@
 !["kx.as.code_logo"](../../../kxascode_logo_black_small.png "kx.as.code_logo")
 
-# Flux :The GitOps Kubernetes operator 
+# Flux :The GitOps Kubernetes operator
 
 Flux is a tool that automates the deployment of containers to Kubernetes. It fills the automation void that exists
 between building and monitoring.
-- You declaratively describe the entire desired state of your system in git. 
+- You declaratively describe the entire desired state of your system in git.
 - What can be described can be automated: You don't need to run kubectl, all changes go through git.
 - You push code not containers.
 

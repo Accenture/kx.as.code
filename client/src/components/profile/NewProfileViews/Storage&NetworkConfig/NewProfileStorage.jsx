@@ -55,10 +55,10 @@ const NewProfileStorage = (props) => {
                         <label htmlFor="MainNodeIP">Main Node Ip Address</label>
                     </Grid>
                     <Grid item>
-                        <TextBox 
-                            name="MainNodeIP" 
-                            type="text" 
-                            className='text-input3' 
+                        <TextBox
+                            name="MainNodeIP"
+                            type="text"
+                            className='text-input3'
                             placeholder="             -          -          -                 "
                             onChange={handleChange}
                             value={networkConfig.MainNodeIP}
@@ -68,23 +68,23 @@ const NewProfileStorage = (props) => {
                         <label htmlFor="WorkerNode1IP">Worker Node 1 Ip Address</label>
                     </Grid>
                     <Grid item>
-                        <TextBox 
-                            name="WorkerNode1IP" 
-                            type="text" 
-                            className='text-input3' 
+                        <TextBox
+                            name="WorkerNode1IP"
+                            type="text"
+                            className='text-input3'
                             placeholder="             -          -          -                 "
                             onChange={handleChange}
-                            value={networkConfig.WorkerNode1IP} 
+                            value={networkConfig.WorkerNode1IP}
                         />
                     </Grid>
                     <Grid item>
                         <label htmlFor="WorkerNode2IP">Worker Node 2 Ip Address</label>
                     </Grid>
                     <Grid item>
-                        <TextBox 
-                            name="WorkerNode2IP" 
-                            className="text-input3" 
-                            type="text" 
+                        <TextBox
+                            name="WorkerNode2IP"
+                            className="text-input3"
+                            type="text"
                             placeholder="             -          -          -                 "
                             onChange={handleChange}
                             value={networkConfig.WorkerNode2IP}
@@ -94,26 +94,26 @@ const NewProfileStorage = (props) => {
                         <label htmlFor="SecondaryDNS">Secondary DNS Server</label>
                     </Grid>
                     <Grid item>
-                        <TextBox 
-                            name="SecondaryDNS" 
-                            className="text-input3" 
-                            type="text" 
+                        <TextBox
+                            name="SecondaryDNS"
+                            className="text-input3"
+                            type="text"
                             placeholder="           8    .   8   .    8   .   8         "
                             onChange={handleChange}
-                            value={networkConfig.SecondaryDNS} 
+                            value={networkConfig.SecondaryDNS}
                         />
                     </Grid>
                     <Grid item>
                         <label htmlFor="Gateway">Gateway</label>
                     </Grid>
                     <Grid item>
-                        <TextBox 
-                            name="Gateway" 
-                            type="text" 
-                            className="text-input3" 
-                            placeholder="             -          -          -                 " 
+                        <TextBox
+                            name="Gateway"
+                            type="text"
+                            className="text-input3"
+                            placeholder="             -          -          -                 "
                             onChange={handleChange}
-                            value={networkConfig.Gateway}    
+                            value={networkConfig.Gateway}
                         />
                     </Grid>
                 </Grid>
@@ -131,20 +131,20 @@ const NewProfileStorage = (props) => {
                         <br>
                         </br>
                         <label htmlFor="start" className="titlecustom">Start</label>
-                        <TextBox 
-                            name="start" 
-                            className="text-input2" 
+                        <TextBox
+                            name="start"
+                            className="text-input2"
                             type="text" placeholder="      10    .    100    .    76    .    10"
                             onChange={handleChange} value={networkConfig.start}
                         />
                     </Grid>
                     <Grid item>
                         <label htmlFor="end" className="titlecustom">End </label>
-                        <TextBox 
-                            name="end" 
-                            className="text-input2" 
+                        <TextBox
+                            name="end"
+                            className="text-input2"
                             type="text" placeholder="      10    .    100    .    76    .    60"
-                            onChange={handleChange} 
+                            onChange={handleChange}
                             value={networkConfig.end}
                         />
                     </Grid>
@@ -195,7 +195,7 @@ const NewProfileStorage = (props) => {
                         <TextBox name="NoProxy" className="text-input3" type="text"  onChange={handleChange} value={networkConfig.NoProxy}/>
                     </Grid>
                 </Grid>
- 
+
             </Box>
         </NewProfileTemplate>
     )

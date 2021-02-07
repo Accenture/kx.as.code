@@ -15,5 +15,5 @@ falco-extras/scripts/rules2helm ./falco_rules.local.yaml > ./custom-rules.yaml
 # Merge the custom rules file with the values file
 cat values.yaml custom-rules.yaml > values_custom_rules.yaml
 
-# Perform the helm upgade with the generated custom rules and values file 
+# Perform the helm upgade with the generated custom rules and values file
 helm upgrade --install sysdig-falco stable/falco -f values_custom_rules.yaml --version 1.1.0

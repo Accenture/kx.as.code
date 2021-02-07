@@ -17,11 +17,11 @@ persistence:
   enabled: true
 ingress:
   enabled: true
-  annotations: 
+  annotations:
      kubernetes.io/ingress.class: nginx
   path: /
   hosts:
     - {{componentName}}.{{baseDomain}}
-  tls: 
+  tls:
     - hosts:
        - {{componentName}}.{{baseDomain}}

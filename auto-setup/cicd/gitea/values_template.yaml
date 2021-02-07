@@ -57,8 +57,8 @@ gitea:
     usernameAttribute: ""
   config: {}
   #  APP_NAME: "Gitea: Git with a cup of tea"
-  #  RUN_MODE: dev   
-  #   
+  #  RUN_MODE: dev
+  #
   #  server:
   #    SSH_PORT: 22
   #
@@ -88,4 +88,3 @@ postgresql:
       servicePort: 5432
   persistence:
     size: 1Gi
-

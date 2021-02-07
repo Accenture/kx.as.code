@@ -4,4 +4,3 @@
 kubectl delete -n argocd  \
   -f argocd-install.yaml \
   -f argocd-ingress.yaml
-

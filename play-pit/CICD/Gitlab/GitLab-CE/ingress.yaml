@@ -17,4 +17,3 @@ spec:
          backend:
            serviceName: gitlab-ce-webservice
            servicePort: 8181
-

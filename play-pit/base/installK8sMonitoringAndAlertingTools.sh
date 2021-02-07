@@ -168,8 +168,8 @@ spec:
 ''' | tee $KUBEDIR/grafana-image-renderer-kubernetes.yaml
 
 # Set Git commiter details
-git config --global user.name "kx.hero" 
-git config --global user.email "kx.hero@kx-as-code.local" 
+git config --global user.name "kx.hero"
+git config --global user.email "kx.hero@kx-as-code.local"
 
 # Push file to new Gitlab project
 git clone https://"${VM_USER}":"${VM_PASSWORD}"@gitlab.kx-as-code.local/devops/grafana_image_renderer.git
@@ -320,7 +320,7 @@ grafana.ini:
   server:
     root_url: https://grafana.kx-as-code.local
 """ | tee $KUBEDIR/additional-grafana-values.yaml
-    
+
 # Install Grafana
 helm upgrade --install grafana stable/grafana \
     --set 'image.repository=registry.kx-as-code.local/devops/grafana' \

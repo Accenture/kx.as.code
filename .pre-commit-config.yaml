@@ -10,8 +10,6 @@ repos:
     -   id: check-case-conflict
     -   id: end-of-file-fixer
     -   id: check-executables-have-shebangs
-    # -   id: pretty-format-json
-    #     args: ['--autofix', '--no-sort-keys']
     -   id: mixed-line-ending
         args: ['--fix=lf']
     -   id: trailing-whitespace
@@ -27,7 +25,7 @@ repos:
     hooks:
     -   id: shellcheck
 
-# -   repo: https://github.com/tfsec/tfsec
-#     rev: v0.37.2
-#     hooks:
-#     -   id: tfsec
+-   repo: https://github.com/tfsec/tfsec
+    rev: v0.37.2
+    hooks:
+    -   id: tfsec

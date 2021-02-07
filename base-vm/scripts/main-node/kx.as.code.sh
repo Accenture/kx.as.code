@@ -63,7 +63,7 @@ if [[ ! -z $GITHUB_TOKEN_ENCODED ]]; then
   githubCloneUrl="https://$GITHUB_USER:$GITHUB_TOKEN_ENCODED@github.com"
 else
   githubCloneUrl="https://github.com"
-fi 
+fi
 
 # Clone KX.AS.CODE GIT repository into VM
 sudo -H -i -u $VM_USER -- sh -c " \

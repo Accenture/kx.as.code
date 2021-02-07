@@ -67,4 +67,4 @@ mkdocs build --clean
 docker build -t ${harborDomain}/kx-as-code/docs:latest .
 
 # Push KX.AS.CODE Docs Docker Image
-docker push ${harborDomain}/kx-as-code/docs:latest 
+docker push ${harborDomain}/kx-as-code/docs:latest

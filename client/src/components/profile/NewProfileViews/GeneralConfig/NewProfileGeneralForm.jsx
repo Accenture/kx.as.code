@@ -19,7 +19,7 @@ const NewProfileGeneralForm = (props) => {
     setGeneralConfig({[name]: newValue}, props.setGeneralConfig(generalConfig))
   }
   return (
-    
+
     <Box
       id="new-prof-gen-form"
       display="flex"
@@ -46,10 +46,10 @@ const NewProfileGeneralForm = (props) => {
           <label htmlFor="new-prof-gen-form-ssl-provider">Profile Type*</label>
         </Grid>
         <Grid item>
-          <DropDown 
-            data={["Local Virtualization"]} 
-            id="new-prof-gen-form-ssl-provider" 
-            name="profileType" 
+          <DropDown
+            data={["Local Virtualization"]}
+            id="new-prof-gen-form-ssl-provider"
+            name="profileType"
             onChange={handleChange}
             value={generalConfig.profileType}/>
         </Grid>
@@ -59,10 +59,10 @@ const NewProfileGeneralForm = (props) => {
         </label>
         </Grid>
         <Grid item>
-          <DropDown 
-            data={["VMWare", "VirtualBox", "Parallels"]} 
-            id="new-prof-gen-form-ssl-provider" 
-            name="profileSubType" 
+          <DropDown
+            data={["VMWare", "VirtualBox", "Parallels"]}
+            id="new-prof-gen-form-ssl-provider"
+            name="profileSubType"
             onChange={handleChange}
             value={generalConfig.profileSubType}
           />

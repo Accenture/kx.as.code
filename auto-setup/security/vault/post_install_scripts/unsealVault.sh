@@ -11,9 +11,9 @@ if [[ "${vaultUnsealStatus}" == "true" ]]; then
             echo ${unsealKey}>unsealKey
             cat -v unsealKey
             kubectl exec -ti -n ${namespace} vault-0 -- vault operator unseal "${unsealKey}" || error="true"
-            if [[ "${error}" == "false" ]]; then 
+            if [[ "${error}" == "false" ]]; then
                 break
-            else 
+            else
                 echo "Unsealing failed. Trying again"
                 sleep 5
             fi

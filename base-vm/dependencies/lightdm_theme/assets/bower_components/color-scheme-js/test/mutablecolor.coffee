@@ -10,7 +10,7 @@ describe 'ColorScheme class', ->
       ColorScheme.mutablecolor.should.exist
     it 'should be a function', ->
       ColorScheme.mutablecolor.should.be.a 'function'
-    
+
 describe '"mutablecolor"', ->
   describe 'constructor', ->
     describe 'with no hue specified', ->

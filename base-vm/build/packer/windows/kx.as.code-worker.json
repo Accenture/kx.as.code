@@ -191,7 +191,7 @@
     ],
     "guest_os_type": "{{user `vmware_guest_os_type`}}",
     "http_directory": "http",
-    "iso_urls": [ 
+    "iso_urls": [
       "{{user `iso_path`}}/{{user `iso_file`}}",
       "{{user `iso_url`}}"
     ],

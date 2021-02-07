@@ -15,4 +15,3 @@ if [[ "${vaultInitializedStatus}" != "true" ]]; then
     kubectl get secret vault-unseal-keys -n ${namespace} ||
         kubectl create secret generic vault-unseal-keys --from-literal=unseal-keys="${unsealKeys}" -n ${namespace}
 fi
-

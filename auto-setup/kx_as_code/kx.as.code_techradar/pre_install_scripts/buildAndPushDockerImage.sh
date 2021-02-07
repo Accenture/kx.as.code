@@ -15,4 +15,4 @@ cd ${installationWorkspace}/staging/kx.as.code_techradar/
 docker build -t ${harborDomain}/kx-as-code/techradar:latest .
 
 # Push Tech Radar Docker Image
-docker push ${harborDomain}/kx-as-code/techradar:latest 
+docker push ${harborDomain}/kx-as-code/techradar:latest
