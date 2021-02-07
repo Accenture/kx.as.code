@@ -71,6 +71,12 @@ if [[ -z "${TF_VAR_VPN_SUBNET_CIDR}" ]]; then
   error="true"
 fi
 
+export TF_VAR_METALLB_FIRST_IP=$(cat ./config.json | jq -r '.config.METALLB_FIRST_IP')
+if [[ -z "${TF_VAR_METALLB_FIRST_IP}" ]]; then
+  echo "- [ERROR] METALLB_FIRST_IP not defined in ./config.json"
+  error="true"
+fi
+
 export TF_VAR_PUBLIC_KEY=$(cat ./config.json | jq -r '.config.PUBLIC_KEY')
 if [[ -z "${TF_VAR_PUBLIC_KEY}" ]]; then
   echo "- [ERROR] PUBLIC_KEY not defined in ./config.json"

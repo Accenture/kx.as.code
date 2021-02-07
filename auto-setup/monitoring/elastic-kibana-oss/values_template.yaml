@@ -1,4 +1,15 @@
 elasticsearchHosts: "http://elasticsearch-master:9200"
+extraEnvs:
+  - name: ELASTIC_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: elastic-stack/elastic-credentials
+        key: password
+  - name: ELASTIC_USERNAME
+    valueFrom:
+      secretKeyRef:
+        name: elastic-stack/elastic-credentials
+        key: username
 replicas: 1
 image: "docker.elastic.co/kibana/kibana-oss"
 imageTag: "{{elasticVersion}}"

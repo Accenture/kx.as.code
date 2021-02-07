@@ -1,6 +1,10 @@
 configs:
-  box_version: "0.6.3"
+  box_version: "0.6.4"
+  main_node_cpu_cores: 4
+  main_node_memory: 32768
   worker_node_count: 4
+  worker_node_cpu_cores: 4
+  worker_node_memory: 16384
   environment_prefix: "demo1"
   dockerhub_username: ""
   dockerhub_email: ""

@@ -1,6 +1,6 @@
 {
     "config": {
-        "allowWorkloadsOnMaster": false,
+        "allowWorkloadsOnMaster": true,
         "disableSessionTimeout": true,
         "certificationMode": false,
         "disableLinuxDesktop": false,
