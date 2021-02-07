@@ -64,3 +64,7 @@ WantedBy=multi-user.target
 EOF"
 sudo systemctl enable k8s-register-node
 sudo systemctl daemon-reload
+
+# Create SKEL directory for future users
+mkdir -p /usr/share/kx.as.code/skel
+cp -rf /home/kx.hero/* /usr/share/kx.as.code/skel

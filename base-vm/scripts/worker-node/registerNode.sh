@@ -298,7 +298,7 @@ echo """
 #!/bin/bash -x
 
 . /etc/environment
-export vmUser=$vmUser
+export vmUser=${vmUser}
 
 echo \"Attempting to download KX Apps from KX-Main\"
 sudo -H -i -u ${vmUser} bash -c 'scp -o StrictHostKeyChecking=no '${vmUser}'@'${kxMainIp}':'${kubeDir}'/docker-kx-*.tar '${kubeDir}'';
@@ -349,7 +349,81 @@ XKBOPTIONS=""
 BACKSPACE=\"guess\"
 ''' | sudo tee /etc/default/keyboard
 
+# Enable LDAP on worker node
+export initialLdapUser=${vmUser}
+export ldapDn="dc=kx-as-code,dc=local"
+export ldapServer=${kxMainIp}
+
+# Configure Client selections before install
+cat << EOF | sudo debconf-set-selections
+libnss-ldap libnss-ldap/dblogin boolean false
+libnss-ldap shared/ldapns/base-dn   string  ${ldapDn}
+libnss-ldap libnss-ldap/binddn  string  cn=admin,${ldapDn}
+libnss-ldap libnss-ldap/dbrootlogin boolean true
+libnss-ldap libnss-ldap/override    boolean true
+libnss-ldap shared/ldapns/ldap-server   string  ldap://${ldapServer}/
+libnss-ldap libnss-ldap/confperm    boolean false
+libnss-ldap libnss-ldap/rootbinddn  string  cn=admin,${ldapDn}
+libnss-ldap shared/ldapns/ldap_version  select  3
+libnss-ldap libnss-ldap/nsswitch    note
+EOF
+sudo DEBIAN_FRONTEND=noninteractive apt-get install -q -y libnss-ldapd libpam-ldap
+
+# Add LDAP client config
+echo "BASE    dc=kx-as-code,dc=local" | tee -a /etc/ldap/ldap.conf
+echo "URI     ldap://${ldapServer}" | tee -a /etc/ldap/ldap.conf
+
+# Add LDAP auth method to /etc/nsswitch.conf
+sudo sed -i '/^passwd:/s/$/ ldap/' /etc/nsswitch.conf
+sudo sed -i '/^group:/s/$/ ldap/' /etc/nsswitch.conf
+sudo sed -i '/^shadow:/s/$/ ldap/' /etc/nsswitch.conf
+sudo sed -i '/^gshadow:/s/$/ ldap/' /etc/nsswitch.conf
+
+echo '''
+# nslcd configuration file. See nslcd.conf(5)
+# for details.
+
+# The user and group nslcd should run as.
+uid nslcd
+gid nslcd
+
+# The location at which the LDAP server(s) should be reachable.
+uri ldap://'${ldapServer}'
+
+# The search base that will be used for all queries.
+base ou=People,'${ldapDn}'
+
+# The LDAP protocol version to use.
+#ldap_version 3
+
+# The DN to bind with for normal lookups.
+binddn cn=admin,'${ldapDn}'
+bindpw '${vmPassword}'
+
+# The DN used for password modifications by root.
+rootpwmoddn cn=admin,'${ldapDn}'
+
+# SSL options
+ssl off
+#tls_reqcert never
+tls_cacertfile /etc/ssl/certs/ca-certificates.crt
+
+''' | sudo tee /etc/nslcd.conf
+
+# Ensure home directory is created on first login
+echo "session required      pam_mkhomedir.so   skel=/usr/share/kx.as.code/skel umask=0002" | sudo tee -a /etc/pam.d/common-session
+
+# Check if ldap users are returned with getent passwd
+getent passwd
+
+# Delete local user and replace with ldap user if added to LDAP correctly
+ldapUserExists=$(sudo ldapsearch -x -b "uid=${vmUser},ou=Users,ou=People,${ldapDn}" | grep numEntries)
+if [[ -n ${ldapUserExists} ]]; then
+  userdel ${vmUser}
+fi
+
 # Reboot machine to ensure all network changes are active
 if [ "${baseIpType}" == "static" ]; then
   sudo reboot
 fi
+
