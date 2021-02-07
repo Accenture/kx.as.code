@@ -5,17 +5,20 @@ export LDAP_DN="dc=kx-as-code,dc=local"
 export LDAP_SERVER=127.0.0.1
 
 # Install OpenLDAP server and utilities
-sudo debconf-set-selections <<< 'slapd/root_password password '${VM_PASSWORD}''
-sudo debconf-set-selections <<< 'slapd/root_password_again password '${VM_PASSWORD}''
+sudo debconf-set-selections <<< 'slapd/root_password password password'
+sudo debconf-set-selections <<< 'slapd/root_password_again password password'
 sudo DEBIAN_FRONTEND=noninteractive apt-get install -q -y slapd ldap-utils libnss-ldap ldapscripts
 
 # Update admin root password
-VM_PASSWORD_HASH=$(slappasswd -s ${VM_PASSWORD})
-ldapmodify -Y EXTERNAL -H ldapi:/// << E0F
+VM_PASSWORD_HASH=$(sudo slappasswd -s ${VM_PASSWORD})
+sudo ldapmodify -Y EXTERNAL -H ldapi:/// << E0F
 dn: olcDatabase={1}mdb,cn=config
 replace: olcRootPW
 olcRootPW: ${VM_PASSWORD_HASH}
 E0F
+
+# Show base dn after base install of OpenLDAP
+sudo slapcat | grep dn
 
 # Add "People" OU
 echo '''
@@ -153,7 +156,7 @@ ssl off
 #tls_reqcert never
 tls_cacertfile /etc/ssl/certs/ca-certificates.crt
 
-''' | sudo tee -a  /etc/nslcd.conf
+''' | sudo tee -a /etc/nslcd.conf
 
 # Ensure home directory is created on first login
 echo "session required      pam_mkhomedir.so   skel=/usr/share/kx.as.code/skel umask=0002" | sudo tee -a /etc/pam.d/common-session
@@ -164,5 +167,5 @@ getent passwd
 # Delete local user and replace with ldap user if added to LDAP correctly
 ldapUserExists=$(sudo ldapsearch -x -b "uid=${INITIAL_LDAP_VM_USER},ou=Users,ou=People,${LDAP_DN}" | grep numEntries)
 if [[ -n ${ldapUserExists} ]]; then
-  userdel ${INITIAL_LDAP_VM_USER}
+  sudo userdel ${INITIAL_LDAP_VM_USER}
 fi

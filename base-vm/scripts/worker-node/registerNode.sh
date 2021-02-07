@@ -419,7 +419,7 @@ getent passwd
 # Delete local user and replace with ldap user if added to LDAP correctly
 ldapUserExists=$(sudo ldapsearch -x -b "uid=${vmUser},ou=Users,ou=People,${ldapDn}" | grep numEntries)
 if [[ -n ${ldapUserExists} ]]; then
-  userdel ${vmUser}
+  sudo userdel ${vmUser}
 fi
 
 # Reboot machine to ensure all network changes are active
