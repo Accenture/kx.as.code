@@ -62,6 +62,7 @@ Other version should work as well, but the versions below are what the base VM b
 
 - As well as code changes, a change will only be approved if documentation in the form of a README.md is provided in the respective code directory.
 
+- It is recommended to install [pre-commit](https://pre-commit.com) framework and initialize it for the project before committing your changes in order to follow best linting practices.
 
 
 ## Coding Conventions
