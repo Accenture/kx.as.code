@@ -69,18 +69,18 @@ ColorScheme = (function() {
 
 
   /*
-  
+
   colors()
-  
+
   Returns an array of 4, 8, 12 or 16 colors in RRGGBB hexidecimal notation
   (without a leading "#") depending on the color scheme and addComplement
   parameter. For each set of four, the first is usually the most saturated color,
   the second a darkened version, the third a pale version and fourth
-  a less-pale version. 
-  
+  a less-pale version.
+
   For example: With a contrast scheme, "colors()" would return eight colors.
   Indexes 1 and 5 could be background colors, 2 and 6 could be foreground colors.
-  
+
   Trust me, it's much better if you check out the Color Scheme web site, whose
   URL is listed in "Description"
    */
@@ -155,25 +155,25 @@ ColorScheme = (function() {
 
 
   /*
-  
+
   colorset()
-  
+
   Returns a list of lists of the colors in groups of four. This method simply
   allows you to reference a color in the scheme by its group isntead of its
   absolute index in the list of colors.  I am assuming that "colorset()"
   will make it easier to use this module with the templating systems that are
   out there.
-  
+
   For example, if you were to follow the synopsis, say you wanted to retrieve
   the two darkest colors from the first two groups of the scheme, which is
   typically the second color in the group. You could retrieve them with
   "colors()"
-  
+
       first_background  = (scheme.colors())[1];
       second_background = (scheme.colors())[5];
-  
+
   Or, with this method,
-  
+
       first_background  = (scheme.colorset())[0][1]
       second_background = (scheme.colorset())[1][1]
    */
@@ -190,12 +190,12 @@ ColorScheme = (function() {
 
 
   /*
-  
+
   from_hue( degrees )
-  
+
   Sets the base color hue, where 'degrees' is an integer. (Values greater than
   359 and less than 0 wrap back around the wheel.)
-  
+
   The default base hue is 0, or bright red.
    */
 
@@ -235,12 +235,12 @@ ColorScheme = (function() {
 
 
   /*
-  
+
   from_hex( color )
-  
+
   Sets the base color to the given color, where 'color' is in the hexidecimal
   form RRGGBB. 'color' should not be preceded with a hash (#).
-  
+
   The default base color is the equivalent of #ff0000, or bright red.
    */
 
@@ -326,12 +326,12 @@ ColorScheme = (function() {
 
 
   /*
-  
+
   add_complement( BOOLEAN )
-  
+
   If BOOLEAN is true, an extra set of colors will be produced using the
-  complement of the selected color. 
-  
+  complement of the selected color.
+
   This only works with the analogic color scheme. The default is false.
    */
 
@@ -345,12 +345,12 @@ ColorScheme = (function() {
 
 
   /*
-  
+
   web_safe( BOOL )
-  
+
   Sets whether the colors returned by L<"colors()"> or L<"colorset()"> will be
-  web-safe. 
-  
+  web-safe.
+
   The default is false.
    */
 
@@ -364,12 +364,12 @@ ColorScheme = (function() {
 
 
   /*
-  
+
   distance( FLOAT )
-  
+
   'FLOAT'> must be a value from 0 to 1. You might use this with the "triade"
   "tetrade" or "analogic" color schemes.
-  
+
   The default is 0.5.
    */
 
@@ -389,9 +389,9 @@ ColorScheme = (function() {
 
 
   /*
-  
+
   scheme( name )
-  
+
   'name' must be a valid color scheme name. See "Color Schemes". The default
   is "mono"
    */
@@ -410,9 +410,9 @@ ColorScheme = (function() {
 
 
   /*
-  
+
   variation( name )
-  
+
   'name' must be a valid color variation name. See "Color Variations"
    */
 

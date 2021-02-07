@@ -4,9 +4,9 @@
 
 ## Logs
 
-Logs are held in /home/`${vmUser}`/Kubernetes. 
+Logs are held in /home/`${vmUser}`/Kubernetes.
 
-Each solution has it's own logs. 
+Each solution has it's own logs.
 
 If you execute `ls -altr` in this directory, you will see the component currently being installed at the bottom of the list. In this example it is gitlab-ce.
 
@@ -53,7 +53,7 @@ Here for the Mattermost installation you can see three files:
 
 - Log output
 
-  
+
 
 ![image-20201119215833691](images/image-20201119215833691.png){: align=left }
 
@@ -82,6 +82,3 @@ To make things easier, the KX.AS.CODE Git repositories are pre-configured into t
 ### VS Code
 
 ![image-20201119220606776](images/image-20201119220606776.png){: align=left }
-
-
-

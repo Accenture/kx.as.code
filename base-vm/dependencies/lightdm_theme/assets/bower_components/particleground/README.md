@@ -6,7 +6,7 @@ A JavaScript plugin for snazzy background particle systems. Includes an optional
 [See a demo](https://jnicol.github.io/particleground)
 
 ## Usage
-    
+
     particleground(document.getElementById('your-element');
 
 jQuery:
@@ -122,7 +122,7 @@ A callback executed after Particleground is destroyed.
 Particleground exposes public methods which can be used to interact with your Particleground instance e.g.
 
     var pg = particleground(document.getElementById('your-element');
-    pg.pause(); 
+    pg.pause();
 
 jQuery:
 

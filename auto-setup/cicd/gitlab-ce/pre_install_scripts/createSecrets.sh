@@ -10,7 +10,7 @@ host: ${s3ObjectStoreDomain}
 endpoint: \"http://minio-service:9000\"
 path_style: true
 """ | tee ${installationWorkspace}/rails.minio.yaml
- 
+
 # Install S3 Secrets
 kubectl get secret object-storage -n ${namespace} || \
     kubectl create secret generic object-storage --dry-run=client -o yaml \

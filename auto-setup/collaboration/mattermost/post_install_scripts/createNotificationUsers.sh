@@ -19,4 +19,3 @@ do
     log_info "Mattermost user \"'${user}'\" already exists. Skipping creation"
   fi
 done
-

@@ -29,4 +29,3 @@ export const setPrimaryColor = (primaryColor) => ({
   type: SET_PRIMARY_COLOR,
   payload: primaryColor,
 });
-

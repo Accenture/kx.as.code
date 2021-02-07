@@ -22,7 +22,7 @@ As well as learning and sharing knowledge, there are several more use cases for 
 
 - Ensure your feature request description is easy to understand
 
-  
+
 
 ## Development Approach
 
@@ -32,7 +32,7 @@ As well as learning and sharing knowledge, there are several more use cases for 
 
 -  `Use the README_TEMPLATE.md` in the root of the KX.AS.CODE repository as the basis of your README.md
 
-  
+
 
 ## Testing
 
@@ -40,7 +40,7 @@ As well as learning and sharing knowledge, there are several more use cases for 
 
 - It is not sufficient to validate on local workstation only
 
-  
+
 
 ## Environment Details
 
@@ -54,7 +54,7 @@ Other version should work as well, but the versions below are what the base VM b
 
 - [Packer][] 1.6.4  (optional - only needed for building base VM itself)
 
-  
+
 
 ## Submitting Changes
 
@@ -64,7 +64,6 @@ Other version should work as well, but the versions below are what the base VM b
 
 - It is recommended to install [pre-commit](https://pre-commit.com) framework and initialize it for the project before committing your changes in order to follow best linting practices.
 
-  
 
 ## Coding Conventions
 
@@ -76,7 +75,7 @@ Other version should work as well, but the versions below are what the base VM b
 
 - Do not simply copy & paste code without understanding what it does
 
-  
+
 
 ## Code Branching
 
@@ -96,7 +95,7 @@ Once tested, you must create a pull request to have the code reviewed and merged
 
 - hotfix/ + _[ jira bug id where available ] - change description_
 
-  
+
 
 ## Reporting Bugs
 
@@ -106,7 +105,7 @@ Once tested, you must create a pull request to have the code reviewed and merged
 
 - Link to Bug Reporting Template
 
-  
+
 
 ## Fixing Bugs
 Bugs can be reported
@@ -136,7 +135,7 @@ _{Emoji - see below} - [jira task id] - {description}_
 
 - :page_facing_up: Documentation change/fix &rarr; &colon;page_facing_up&colon;
 
-  
+
 
 ## Code of Conduct
 
@@ -146,15 +145,14 @@ _{Emoji - see below} - [jira task id] - {description}_
 
 - Appreciate and support each other
 
-  
+
 
 ## Product Owner
 
 - Product Owner: [Patrick Delamere](mailto:patrick.g.delamere@accenture.com)
 
-  
+
 
 
 ## Question?
 :email: kx.as.code@accenture.com
-

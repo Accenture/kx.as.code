@@ -6,8 +6,8 @@ mkdir -p ${installationWorkspace}/staging/
 gitlabDomain="gitlab.${baseDomain}"
 
 # Set Git commiter details
-git config --global user.name "${vmUser}" 
-git config --global user.email "${vmUser}@${baseDomain}" 
+git config --global user.name "${vmUser}"
+git config --global user.email "${vmUser}@${baseDomain}"
 
 # Add KX.AS.CODE Docs to new Gitlab project
 cp -r /home/${vmUser}/Documents/kx.as.code_docs /var/tmp/

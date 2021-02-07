@@ -18,4 +18,3 @@ spec:
          backend:
            serviceName: jira-software-service
            servicePort: 8080
-

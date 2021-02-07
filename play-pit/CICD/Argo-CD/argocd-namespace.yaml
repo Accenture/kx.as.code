@@ -4,4 +4,3 @@ metadata:
  name: argocd
  labels:
   name: argocd
-

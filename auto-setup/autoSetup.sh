@@ -65,7 +65,7 @@ if [[ "${action}" == "install" ]]; then
 
     export applicationUrl=$(cat ${componentMetadataJson} | jq -r '.urls[0]?.url?')
     export applicationDomain=$(echo $applicationUrl | sed 's/https:\/\///g')
-    
+
     # Export Git credential
     if [[ -f /home/${vmUser}/.config/kx.as.code/.admin.gitlab.pat ]]; then
         export personalAccessToken=$(cat /home/${vmUser}/.config/kx.as.code/.admin.gitlab.pat)
@@ -79,7 +79,7 @@ if [[ "${action}" == "install" ]]; then
             do export ${environmentVariable}
         done
     fi
-    
+
     log_info "installationType: ${installationType}"
 
     ####################################################################################################################################################################
@@ -92,9 +92,9 @@ if [[ "${action}" == "install" ]]; then
     do
         if [[ ! -f ${installComponentDirectory}/pre_install_scripts/${script} ]]; then
             log_error "Pre-install script ${installComponentDirectory}/pre_install_scripts/${script} does not exist. Check your spelling in the \"kxascode.json\" file and that it is checked in correctly into Git"
-        else 
+        else
             log_info "Executing pre-install script ${installComponentDirectory}/pre_install_scripts/${script}"
-            . ${installComponentDirectory}/pre_install_scripts/${script} 
+            . ${installComponentDirectory}/pre_install_scripts/${script}
             rc=$?
             if [[ ${rc} -ne 0 ]]; then
                 log_error "Execution of pre install script \"${script}\" ended in a non zero return code ($rc)"
@@ -105,12 +105,12 @@ if [[ "${action}" == "install" ]]; then
     ####################################################################################################################################################################
     ##      S C R I P T    I N S T A L L
     ####################################################################################################################################################################
-    
+
     if [[ "${installationType}" == "script" ]]; then
         log_info "Established installation type is \"${installationType}\". Proceeding in that way"
         # Get script list to execute
         scriptsToExecute=$(cat ${componentMetadataJson} | jq -r '.install_scripts[]?')
-        
+
         # Warn if there are no scripts to execute for componentName
         if [[ -z ${scriptsToExecute} ]]; then
             log_warn "installationType for \"${componentName}\" was \"script\", but there was no scripts listed in the install_scripts[] array. Please check the file \"${componentMetadataJson}\" to make sure everything is correct"
@@ -120,7 +120,7 @@ if [[ "${action}" == "install" ]]; then
         for script in ${scriptsToExecute}
         do
             log_info "Excuting script \"${script}\" in directory ${installComponentDirectory}"
-            . ${installComponentDirectory}/${script} 
+            . ${installComponentDirectory}/${script}
             rc=$?
             if [[ ${rc} -ne 0 ]]; then
                 log_error "Execution of install script \"${script}\" ended in a non zero return code ($rc)"
@@ -128,7 +128,7 @@ if [[ "${action}" == "install" ]]; then
         done
 
     ####################################################################################################################################################################
-    ##      H E L M    I N S T A L L   /   U P G R A D E  
+    ##      H E L M    I N S T A L L   /   U P G R A D E
     ####################################################################################################################################################################
     elif [[ "${installationType}" == "helm" ]]; then
         log_debug "Established installation type is \"${installationType}\". Proceeding in that way"
@@ -174,7 +174,7 @@ if [[ "${action}" == "install" ]]; then
         echo ${helmCommmand} | tee ${installationWorkspace}/helm_${componentName}.sh
         log_debug "Helm command: $(cat ${installationWorkspace}/helm_${componentName}.sh)"
         chmod 755 ${installationWorkspace}/helm_${componentName}.sh
-        ${installationWorkspace}/helm_${componentName}.sh 
+        ${installationWorkspace}/helm_${componentName}.sh
         rc=$?
         if [[ ${rc} -ne 0 ]]; then
             log_error "Execution of Helm command \"${helmCommmand}\" ended in a non zero return code ($rc)"
@@ -225,12 +225,12 @@ if [[ "${action}" == "install" ]]; then
 
         # Login to ArgoCD
         argoCdInstallScriptsHome="${autoSetupHome}/cicd/argocd"
-        . ${argoCdInstallScriptsHome}/helper_scripts/login.sh 
+        . ${argoCdInstallScriptsHome}/helper_scripts/login.sh
 
         # Add Git repository to ArgoCD if not already present
         argoRepoExists=$(argocd repo list --output json | jq -r '.[] | select(.repo=="'${argoCdRepositoryUrl}'") | .repo')
         if [[ -z ${argoRepoExists} ]]; then
-            argocd repo add --insecure-skip-server-verification ${argoCdRepositoryUrl} --username ${vmUser} --password ${vmPassword} 
+            argocd repo add --insecure-skip-server-verification ${argoCdRepositoryUrl} --username ${vmUser} --password ${vmPassword}
         fi
 
         # Check if auto-prune option should be added to deploy command
@@ -246,7 +246,7 @@ if [[ "${action}" == "install" ]]; then
         # Add App to ArgoCD
         argoCdAppAddCommand="argocd app create $(echo ${componentName} | sed 's/_/-/g') --repo  ${argoCdRepositoryUrl} --path ${argoCdRepositoryPath}  --dest-server ${argoCdDestinationServer} --dest-namespace ${argoCdDestinationNameSpace} --sync-policy ${argoCdSyncPolicy} ${argoCdAutoPruneOption} ${argoCdSelfHealOption}"
         log_debug "ArgoCD command: ${argoCdAppAddCommand}"
-        ${argoCdAppAddCommand} 
+        ${argoCdAppAddCommand}
         rc=$?
         if [[ ${rc} -ne 0 ]]; then
             log_error "Execution of ArgoCD command ended in a non zero return code ($rc)"
@@ -270,7 +270,7 @@ if [[ "${action}" == "install" ]]; then
 
     # PODS RUNNING CHECKS
     if [[ "${componentInstallationFolder}" != "kubernetes_core" ]]; then
-    # Excluding kubernetes_core_groups to avoid missing cross dependency issues between core services, for example, 
+    # Excluding kubernetes_core_groups to avoid missing cross dependency issues between core services, for example,
     # coredns waiting for calico network to be installed, preventing other service from being provisioned
         for i in {1..60}
         do
@@ -288,7 +288,7 @@ if [[ "${action}" == "install" ]]; then
         fi
 
         # URL READINESS HEALTH CHECK
-        applicationUrls=$(cat ${componentMetadataJson} | jq -r '.urls[]?.url?' | mo)             
+        applicationUrls=$(cat ${componentMetadataJson} | jq -r '.urls[]?.url?' | mo)
 
         for applicationUrl in ${applicationUrls}
         do
@@ -298,19 +298,19 @@ if [[ "${action}" == "install" ]]; then
             expectedHttpResponseCode=$(echo ${readinessCheckData} | jq -r '.expected_http_response_code')
             expectedContentString=$(echo ${readinessCheckData} | jq -r '.expected_http_response_string')
             expectedJsonValue=$(echo ${readinessCheckData} | jq -r '.expected_json_response.json_value')
-            
+
             timeout -s TERM 300 bash -c 'while [[ "$(curl -s -o /dev/null -L -w ''%{http_code}'' '${applicationUrl}${urlCheckPath}')" != "'${expectedHttpResponseCode}'" ]]; do \
             echo "Waiting for '${applicationUrl}${urlCheckPath}'"; sleep 5; done'
-            
+
             finalReturnCode=$(curl -s -o /dev/null -L -w '%{http_code}' ${applicationUrl}${urlCheckPath})
             if [[ ${finalReturnCode} -ne ${expectedHttpResponseCode} ]]; then
                 log_warn "Final health check (60/60) of URL ${applicationUrl} failed. Expected RC ${expectedHttpResponseCode}, but got RC ${finalReturnCode} instead"
             fi
-            
+
             if [[ ! -z ${expectedContentString} ]]; then
                 for i in {1..5}
                 do
-                    returnedContent=$(curl -s -L ${applicationUrl}${urlCheckPath})                        
+                    returnedContent=$(curl -s -L ${applicationUrl}${urlCheckPath})
                     if [[ "${expectedContentString}" =~ "${returnedContent}" ]]; then
                         log_info "Expected content matched returned health check content, exiting loop"
                         break
@@ -344,17 +344,17 @@ if [[ "${action}" == "install" ]]; then
     ####################################################################################################################################################################
     ##      P O S T    I N S T A L L    S T E P S
     ####################################################################################################################################################################
-    
+
     componentPostInstallScripts=$(cat ${componentMetadataJson} | jq -r '.post_install_scripts[]?')
     # Loop round post-install scripts
     for script in ${componentPostInstallScripts}
     do
         if [[ ! -f ${installComponentDirectory}/post_install_scripts/${script} ]]; then
             log_error "Post-install script ${installComponentDirectory}/post_install_scripts/${script} does not exist. Check your spelling in the \"kxascode.json\" file and that it is checked in correctly into Git"0
-        else 
+        else
             echo "Executing post-install script ${installComponentDirectory}/post_install_scripts/${script}"
             log_info "Executing post-install script ${installComponentDirectory}/post_install_scripts/${script}"
-            . ${installComponentDirectory}/post_install_scripts/${script} 
+            . ${installComponentDirectory}/post_install_scripts/${script}
             rc=$?
             if [[ ${rc} -ne 0 ]]; then
                 log_error "Execution of post install script \"${script}\" ended in a non zero return code ($rc)"
@@ -363,7 +363,7 @@ if [[ "${action}" == "install" ]]; then
     done
 
     ####################################################################################################################################################################
-    ##      I N S T A L L    D E S K T O P    S H O R T C U T S  
+    ##      I N S T A L L    D E S K T O P    S H O R T C U T S
     ####################################################################################################################################################################
 
     # if Primary URL[0] in URLs Array exists and Icon is defined, create Desktop Shortcut
@@ -382,7 +382,7 @@ if [[ "${action}" == "install" ]]; then
             shortcutsDirectory="/home/${vmUser}/Desktop/DevOps Tools"
             mkdir -p "${shortcutsDirectory}"; chown ${vmUser}:${vmUser} "${shortcutsDirectory}"
 
-            echo """                        
+            echo """
             [Desktop Entry]
             Version=1.0
             Name=${shortcutText}
@@ -424,7 +424,7 @@ if [[ "${action}" == "install" ]]; then
     if [[ ! -z ${apiDocsUrl} ]] && [[ "${apiDocsUrl}" != "null" ]]; then
         apiDocsDirectory="/home/${vmUser}/Desktop/API Docs"
         mkdir -p "${apiDocsDirectory}"; chown ${vmUser}:${vmUser} "${apiDocsDirectory}"
-        echo """                        
+        echo """
         [Desktop Entry]
         Version=1.0
         Name=${shortcutText}
@@ -448,7 +448,7 @@ if [[ "${action}" == "install" ]]; then
     if [[ ! -z ${swaggerApiDocsUrl} ]] && [[ "${swaggerApiDocsUrl}" != "null" ]]; then
         apiDocsDirectory="/home/${vmUser}/Desktop/API Docs"
         mkdir -p "${apiDocsDirectory}"; chown ${vmUser}:${vmUser} "${apiDocsDirectory}"
-        echo """                        
+        echo """
         [Desktop Entry]
         Version=1.0
         Name=${shortcutText} Swagger
@@ -466,13 +466,13 @@ if [[ "${action}" == "install" ]]; then
         sed -i 's/^[ \t]*//g' "${apiDocsDirectory}"/"${componentName}"_Swagger.desktop
         chmod 755 "${apiDocsDirectory}"/"${componentName}"_Swagger.desktop
         chown ${vmUser}:${vmUser} "${apiDocsDirectory}"/"${componentName}"_Swagger.desktop
-    fi    
+    fi
 
     postmanApiDocsUrl=$(cat ${componentMetadataJson} | jq -r '.postman_docs_url' | mo)
     if [[ ! -z ${postmanApiDocsUrl} ]] && [[ "${postmanApiDocsUrl}" != "null" ]]; then
         apiDocsDirectory="/home/${vmUser}/Desktop/API Docs"
         mkdir -p "${apiDocsDirectory}"; chown ${vmUser}:${vmUser} "${apiDocsDirectory}"
-        echo """                        
+        echo """
         [Desktop Entry]
         Version=1.0
         Name=${shortcutText} Postman
@@ -490,13 +490,13 @@ if [[ "${action}" == "install" ]]; then
         sed -i 's/^[ \t]*//g' "${apiDocsDirectory}"/"${componentName}"_Postman.desktop
         chmod 755 "${apiDocsDirectory}"/"${componentName}"_Postman.desktop
         chown ${vmUser}:${vmUser} "${apiDocsDirectory}"/"${componentName}"_Postman.desktop
-    fi    
+    fi
 
     vendorDocsUrl=$(cat ${componentMetadataJson} | jq -r '.vendor_docs_url' | mo)
     if [[ ! -z ${vendorDocsUrl} ]] && [[ "${vendorDocsUrl}" != "null" ]]; then
         vendorDocsDirectory="/home/${vmUser}/Desktop/Vendor Docs"
         mkdir -p "${vendorDocsDirectory}"; chown ${vmUser}:${vmUser} "${vendorDocsDirectory}"
-        echo """                        
+        echo """
         [Desktop Entry]
         Version=1.0
         Name=${shortcutText}
@@ -537,7 +537,7 @@ if [[ "${action}" == "install" ]]; then
             if [[ ! -s ${installationWorkspace}/autoSetup.json.tmp.2 ]]; then export rc=1; fi
             cp ${installationWorkspace}/autoSetup.json ${installationWorkspace}/autoSetup.json.previous.2
             if [[ -s ${installationWorkspace}/autoSetup.json.tmp.2 ]]; then
-                cp ${installationWorkspace}/autoSetup.json.tmp.2 ${installationWorkspace}/autoSetup.json  
+                cp ${installationWorkspace}/autoSetup.json.tmp.2 ${installationWorkspace}/autoSetup.json
             fi
         fi
     fi
@@ -547,7 +547,7 @@ if [[ "${action}" == "install" ]]; then
     if [[ ! -s ${installationWorkspace}/autoSetup.json.tmp.4 ]]; then export rc=1; fi
     cp ${installationWorkspace}/autoSetup.json ${installationWorkspace}/autoSetup.json.previous.4
     if [[ -s ${installationWorkspace}/autoSetup.json.tmp.4 ]]; then
-        cp ${installationWorkspace}/autoSetup.json.tmp.4 ${installationWorkspace}/autoSetup.json                
+        cp ${installationWorkspace}/autoSetup.json.tmp.4 ${installationWorkspace}/autoSetup.json
     fi
 
 elif [[ "${action}" == "upgrade" ]]; then
@@ -568,13 +568,13 @@ elif [[ "${action}" == "uninstall" ]] || [[ "${action}" == "purge" ]]; then
 
         # Login to ArgoCD
         argoCdInstallScriptsHome="${autoSetupHome}/cicd/argocd"
-        . ${argoCdInstallScriptsHome}/helper_scripts/login.sh 
+        . ${argoCdInstallScriptsHome}/helper_scripts/login.sh
 
         # ArgoCD uninstall application
         argocd app delete ${componentName} --cascade
 
     elif [[ "${installationType}" == "script" ]]; then
-    
+
         # Script uninstall
         echo "Executing Scripted uninstall routine"
 
@@ -610,4 +610,3 @@ elif [[ "${action}" == "uninstall" ]] || [[ "${action}" == "purge" ]]; then
 fi # end of action actions condition
 
 cp ${installationWorkspace}/autoSetup.json ${installationWorkspace}/autoSetup.json.previous
-

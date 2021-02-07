@@ -13,7 +13,7 @@
             "controller.extraArgs.default-ssl-certificate={{namespace}}/kx.as.code-wildcard-cert",
             "controller.extraArgs.enable-ssl-passthrough=",
             "controller.hostNetwork=true",
-            "controller.extraArgs.report-node-internal-ip-address="     
+            "controller.extraArgs.report-node-internal-ip-address="
         ]
     },
     "Description": "NGINX Ingress Controller",

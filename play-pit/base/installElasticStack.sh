@@ -36,12 +36,12 @@ persistence:
   enabled: true
 ingress:
   enabled: true
-  annotations: 
+  annotations:
      kubernetes.io/ingress.class: nginx
   path: /
   hosts:
     - es.kx-as-code.local
-  tls: 
+  tls:
     - hosts:
        - es.kx-as-code.local
 ''' | sudo tee $KUBEDIR/elastic-stack-elasticsearch.yaml
@@ -114,4 +114,3 @@ helm upgrade --install filebeat elastic/filebeat -f $KUBEDIR/elastic-stack-fileb
   --name="Kibana" \
   --url=https://kibana.kx-as-code.local \
   --icon=/home/$VM_USER/Documents/git/kx.as.code_library/02_Kubernetes/02_Monitoring/01_Elastic-Stack/kibana.png
-

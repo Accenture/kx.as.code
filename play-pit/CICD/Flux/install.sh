@@ -8,6 +8,6 @@ if [ "$(kubectl get namespace flux --template={{.status.phase}})" = "Active" ]; 
   # Create Kubernetes Objects for flux
   kubectl delete -f .
 fi
- 
+
 # Apply the Flux configuration files
 kubectl apply -f .

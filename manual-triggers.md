@@ -184,12 +184,3 @@ Included in this group are:
 rabbitmqadmin publish exchange=action_workflow routing_key=pending_queue payload='{"install_folder":"security","name":"vault","action":"install"}'
 rabbitmqadmin publish exchange=action_workflow routing_key=pending_queue payload='{"install_folder":"security","name":"vault","action":"install"}'
 ```
-
-
-
-
-
-
-
-
-

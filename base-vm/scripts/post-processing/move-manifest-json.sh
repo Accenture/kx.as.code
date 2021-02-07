@@ -27,6 +27,6 @@ if [[ -f ../../../output-${KX_VM_TYPE}${VM_SUFFIX}/${OUTPUT_DIR}-${VM_VERSION}/$
     mv ../../../output-${KX_VM_TYPE}${VM_SUFFIX}/${OUTPUT_DIR}-${VM_VERSION}/${VM_NAME}${VM_SUFFIX}-${VM_VERSION}_manifest.json.previous
 fi
 
-if [[ -f ${VM_NAME}${VM_SUFFIX}-${VM_VERSION}_manifest.json ]]; then 
+if [[ -f ${VM_NAME}${VM_SUFFIX}-${VM_VERSION}_manifest.json ]]; then
     mv ${VM_NAME}${VM_SUFFIX}-${VM_VERSION}_manifest.json ../../../output-${KX_VM_TYPE}${VM_SUFFIX}/${OUTPUT_DIR}-${VM_VERSION}/${VM_NAME}${VM_SUFFIX}-${VM_VERSION}_manifest.json
 fi

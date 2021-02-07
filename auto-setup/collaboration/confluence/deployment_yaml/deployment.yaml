@@ -36,7 +36,7 @@ spec:
          - name: JAVA_OPTS
            value: -Xms256m -Xmx512m
          - name: CATALINA_OPTS
-           value: -Datlassian.plugins.enable.wait=1200 -Duser.language=en -Duser.country=DE -Duser.timezone=UTC 
+           value: -Datlassian.plugins.enable.wait=1200 -Duser.language=en -Duser.country=DE -Duser.timezone=UTC
        ports:
         - name: http-port
           containerPort: 8090

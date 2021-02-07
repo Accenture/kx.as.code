@@ -21,11 +21,11 @@
       margin-left: 20px;
       margin-top: -19px;
     }
-    
+
     .bordered {
       border-top: 1px solid #ccc;
     }
-    
+
     #hex-box {
       background-color: #fff;
       position: relative;
@@ -77,7 +77,7 @@ scm.from_hue(21)
    .add_complement(false)
    .variation('pastel')
    .web_safe(true);
-   
+
 var colors = scm.colors();
 
 console.log(colors);
@@ -174,8 +174,8 @@ console.log(colors);
         <h3>Todo</h3>
         <p>
           The code is translated but all the docs and tests need to be written/copied. Hang tight!
-          
-          
+
+
         </p>
       </div>
     </div>
@@ -196,15 +196,15 @@ console.log(colors);
           setHue(ui.value)
         }
       });
-      
+
       $('#hex').change(function(){
         setHex( $('#hex').val() );
       });
-      
+
       $('#set-hex').click(function(){
         setHex( $('#hex').val() );
       });
-      
+
       $("#distance-slider").slider({
         min: 0,
         max: 1,
@@ -215,14 +215,14 @@ console.log(colors);
           setDistance(ui.value)
         }
       });
-      
+
       scheme = new ColorScheme;
       setHue(0);
       generateColors();
-      
+
       $('#add-complement').click(addComplement);
     });
-    
+
     function generateColors() {
       $('#colors').html('');
       var colors = scheme.colors();
@@ -232,44 +232,44 @@ console.log(colors);
         $('#colors').append(newDiv);
       }
     }
-    
+
     function setHue(hue) {
       scheme.from_hue(hue);
-      
+
       var bg = scheme.colors()[0];
       $('#hue-box').css('background-color', '#' + bg);
-      
+
       $('#hex').val( bg );
       $('#hex-box').css('background-color', '#' + bg);
-      
+
       generateColors();
     }
-    
+
     function setHex(hex) {
       // Strip possible leading hash
       hex = hex.replace('#', '');
-      
+
       console.log(hex);
       scheme.from_hex(hex);
-      
+
       var bg = scheme.colors()[0];
       $('#hue-box').css('background-color', '#' + bg);
       $('#hex-box').css('background-color', '#' + hex);
-      
+
       generateColors();
     }
-    
+
     function setScheme(newScheme) {
       if (newScheme == 'analogic') {
         $('#add-complement').show();
       }
       else {
-       $('#add-complement').hide(); 
+       $('#add-complement').hide();
       }
       scheme.scheme(newScheme);
       generateColors();
     }
-    
+
     function addComplement() {
       if ( $('#add-complement').hasClass('active') ) {
         scheme.add_complement(false);
@@ -279,22 +279,22 @@ console.log(colors);
       }
       generateColors();
     }
-    
+
     function setDistance(distance) {
       scheme.distance(distance);
       generateColors();
     }
-    
+
     function setVariation(variation) {
       scheme.variation(variation);
       generateColors();
     }
-    
+
     function setWebSafe(websafe) {
       scheme.web_safe(websafe);
       generateColors();
     }
-    
+
     function randomHue() {
       var h = Math.round(Math.random() * 360);
       scheme.from_hue(h);

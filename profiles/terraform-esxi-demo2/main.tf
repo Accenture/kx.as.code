@@ -1,6 +1,6 @@
 terraform {
   required_version = ">= 0.13"
-    required_providers {
+  required_providers {
     esxi = {
       source = "registry.terraform.io/josenk/esxi"
       #
@@ -24,39 +24,39 @@ output "kx-worker2-ip" {
 }
 
 provider "esxi" {
-  esxi_hostname      = "192.168.40.160"
-  esxi_hostport      = "22"
-  esxi_hostssl       = "443"
-  esxi_username      = "root"
-  esxi_password      = "L3arnandshare!"
+  esxi_hostname = "192.168.40.160"
+  esxi_hostport = "22"
+  esxi_hostssl  = "443"
+  esxi_username = "root"
+  esxi_password = "L3arnandshare!"
 }
 
 resource "esxi_guest" "kx-main-demo2" {
 
-  guest_name         = "kx-main-demo2"
-  power              = "on"
-  disk_store         = "datastore1"
-  guestos            = "debian10_64Guest"
-  memsize            = 16384
-  numvcpus           = 4
+  guest_name = "kx-main-demo2"
+  power      = "on"
+  disk_store = "datastore1"
+  guestos    = "debian10_64Guest"
+  memsize    = 16384
+  numvcpus   = 4
 
-  ovf_source        = "../output-main-demo/vmware/kx.as.code-main-demo-0.5.1.ovf"
+  ovf_source = "../output-main-demo/vmware/kx.as.code-main-demo-0.5.1.ovf"
 
   network_interfaces {
     virtual_network = "VM Network"
   }
 
   virtual_disks {
-    virtual_disk_id  = esxi_virtual_disk.LocalStorage1.id
-    slot             = "0:1"
+    virtual_disk_id = esxi_virtual_disk.LocalStorage1.id
+    slot            = "0:1"
   }
   virtual_disks {
-    virtual_disk_id  = esxi_virtual_disk.GlusterFsStorage1.id
-    slot             = "0:2"
+    virtual_disk_id = esxi_virtual_disk.GlusterFsStorage1.id
+    slot            = "0:2"
   }
 
   provisioner "file" {
-    
+
     source      = "./autoSetup.json"
     destination = "/home/kx.hero/Kubernetes/autoSetup.json"
 
@@ -72,27 +72,27 @@ resource "esxi_guest" "kx-main-demo2" {
 }
 
 resource "esxi_guest" "kx-worker1-demo2" {
-  
-  guest_name         = "kx-worker1-demo2"
-  power              = "on"
-  disk_store         = "datastore1"
-  guestos            = "debian10_64Guest"
-  memsize            = 16384
-  numvcpus           = 4
 
-  ovf_source        = "../output-worker-demo/vmware/kx.as.code-worker-demo-0.5.1.ovf"
+  guest_name = "kx-worker1-demo2"
+  power      = "on"
+  disk_store = "datastore1"
+  guestos    = "debian10_64Guest"
+  memsize    = 16384
+  numvcpus   = 4
+
+  ovf_source = "../output-worker-demo/vmware/kx.as.code-worker-demo-0.5.1.ovf"
 
   network_interfaces {
     virtual_network = "VM Network"
   }
 
   virtual_disks {
-    virtual_disk_id  = esxi_virtual_disk.LocalStorage2.id
-    slot             = "0:1"
+    virtual_disk_id = esxi_virtual_disk.LocalStorage2.id
+    slot            = "0:1"
   }
 
   provisioner "file" {
-    
+
     source      = "./autoSetup.json"
     destination = "/home/kx.hero/Kubernetes/autoSetup.json"
 
@@ -112,10 +112,10 @@ resource "esxi_guest" "kx-worker1-demo2" {
     ]
 
     connection {
-        type     = "ssh"
-        user     = "kx.hero"
-        password = "L3arnandshare"
-        host     = esxi_guest.kx-worker1-demo2.ip_address
+      type     = "ssh"
+      user     = "kx.hero"
+      password = "L3arnandshare"
+      host     = esxi_guest.kx-worker1-demo2.ip_address
     }
 
   }
@@ -123,15 +123,15 @@ resource "esxi_guest" "kx-worker1-demo2" {
 }
 
 resource "esxi_guest" "kx-worker2-demo2" {
-  
-  guest_name         = "kx-worker2-demo2"
-  power              = "on"
-  disk_store         = "datastore1"
-  guestos            = "debian10_64Guest"
-  memsize            = 16384
-  numvcpus           = 4
 
-  ovf_source        = "../output-worker-demo/vmware/kx.as.code-worker-demo-0.5.1.ovf"
+  guest_name = "kx-worker2-demo2"
+  power      = "on"
+  disk_store = "datastore1"
+  guestos    = "debian10_64Guest"
+  memsize    = 16384
+  numvcpus   = 4
+
+  ovf_source = "../output-worker-demo/vmware/kx.as.code-worker-demo-0.5.1.ovf"
 
   network_interfaces {
     virtual_network = "VM Network"
@@ -139,8 +139,8 @@ resource "esxi_guest" "kx-worker2-demo2" {
 
   virtual_disks {
 
-    virtual_disk_id  = esxi_virtual_disk.LocalStorage3.id
-    slot             = "0:1"
+    virtual_disk_id = esxi_virtual_disk.LocalStorage3.id
+    slot            = "0:1"
   }
 
   provisioner "file" {
@@ -164,10 +164,10 @@ resource "esxi_guest" "kx-worker2-demo2" {
     ]
 
     connection {
-        type     = "ssh"
-        user     = "kx.hero"
-        password = "L3arnandshare"
-        host     = esxi_guest.kx-worker2-demo2.ip_address
+      type     = "ssh"
+      user     = "kx.hero"
+      password = "L3arnandshare"
+      host     = esxi_guest.kx-worker2-demo2.ip_address
     }
 
   }

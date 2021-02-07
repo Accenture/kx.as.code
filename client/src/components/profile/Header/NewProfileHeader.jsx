@@ -10,7 +10,7 @@ import { setDefaultView, setGeneralConfig, setOptionalConfig, setNetworkConfig, 
 
 export const initialOptionalConfig = {
   dockerHubUserName: "",
-  dockerHubPassword: "",   
+  dockerHubPassword: "",
 }
 const initialGeneralConfig = {
   profileName: "",
@@ -33,7 +33,7 @@ const initialNetworkConfig = {
   "end": "",
   "HTTPProxy": "not defined",
   "HTTPSProxy": "not defined",
-  "NoProxy": "not defined"  
+  "NoProxy": "not defined"
 }
 
 const initialStorageConfig = {

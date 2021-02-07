@@ -46,7 +46,7 @@ echo '''
          username="'${vmUser}'"
          password="'${md5Password}'"
          encoding="md5">
-      
+
        <connection name="default">
          <protocol>vnc</protocol>
          <param name="hostname">localhost</param>
@@ -106,7 +106,7 @@ sudo systemctl status vncserver@1.service
 sudo apt install -y nginx
 
 # Removed default service listening on port 80
-sudo rm -f /etc/nginx/sites-enabled/default 
+sudo rm -f /etc/nginx/sites-enabled/default
 
 # Add NGINX configuration for Guacamole
 echo '''
