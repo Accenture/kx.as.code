@@ -12,6 +12,6 @@ spec:
   - port: 5000
     targetPort: 5000
     protocol: TCP
-    name: docker 
+    name: docker
   selector:
     app: {{ componentName }}

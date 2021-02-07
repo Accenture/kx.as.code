@@ -40,4 +40,3 @@ ui:
   enabled: true
   publishNotReadyAddresses: true
   serviceType: "ClusterIP"
-  

@@ -48,12 +48,13 @@ sudo useradd -s /usr/sbin/nologin --system -g heketi heketi || echo "User heketi
 sudo mkdir -p /etc/heketi /var/log/heketi /var/lib/heketi 
 sudo chown -R heketi:heketi /etc/heketi /var/log/heketi /var/lib/heketi 
 
+
 # Generate random passwords for Heketi
 if [ ! -f /usr/share/kx.as.code/Kubernetes/heketi_creds.sh ]; then
   # If statement in case this script is being rerun
   adminPassword=$(< /dev/urandom tr -dc A-Za-z0-9 | head -c${1:-12};echo;)
   userPassword=$(< /dev/urandom tr -dc A-Za-z0-9 | head -c${1:-12};echo;)
-else 
+else
   # If credentials already exist because this script is being re-run, use those instead to avoid issues
   . /usr/share/kx.as.code/Kubernetes/heketi_creds.sh
 fi
@@ -204,10 +205,11 @@ sudo systemctl enable --now heketi
 
 # Create Heketi topology configuration file with VirtualBox mounted dedicated 2nd drive /dev/${driveC}
 sudo bash -c 'cat <<EOF > /etc/heketi/topology.json 
+
 {
   "clusters": [
     {
-      "nodes": [    
+      "nodes": [
                 {
           "node": {
             "hostnames": {
@@ -269,7 +271,7 @@ if [ ! -f /usr/share/kx.as.code/Kubernetes/heketi_creds.sh ]; then
   echo -e "\nexport HEKETI_CLI_SERVER=http://${mainIpAddress}:8080" >> /home/${vmUser}/.bashrc
   echo "export HEKETI_CLI_USER=admin" >> /home/${vmUser}/.bashrc
   echo "export HEKETI_CLI_KEY=\"${adminPassword}\"" >> /home/${vmUser}/.bashrc
-  
+
   # Add heketi cluster details to bashrc and zshrc for heketi-cli (root)
   echo -e "\nexport HEKETI_CLI_SERVER=http://${mainIpAddress}:8080" | sudo tee -a /root/.zshrc
   echo "export HEKETI_CLI_USER=admin" | sudo tee -a /root/.zshrc
@@ -277,13 +279,14 @@ if [ ! -f /usr/share/kx.as.code/Kubernetes/heketi_creds.sh ]; then
   echo -e "\nexport HEKETI_CLI_SERVER=http://${mainIpAddress}:8080" | sudo tee -a /root/.bashrc
   echo "export HEKETI_CLI_USER=admin" | sudo tee -a /root/.bashrc
   echo "export HEKETI_CLI_KEY=\"${adminPassword}\"" | sudo tee -a /root/.bashrc
-  
+
   # Create credential file in case this script needs to rerun
   echo '#!/bin/bash' > /usr/share/kx.as.code/Kubernetes/heketi_creds.sh
   echo '# File created in case GlusterFS script is rerun' >> /usr/share/kx.as.code/Kubernetes/heketi_creds.sh
   echo "export adminPassword=\"${adminPassword}\"" >> /usr/share/kx.as.code/Kubernetes/heketi_creds.sh
   echo "export userPassword=\"${userPassword}\"" >> /usr/share/kx.as.code/Kubernetes/heketi_creds.sh
   chmod 755 /usr/share/kx.as.code/Kubernetes/heketi_creds.sh 
+
 fi
 
 # Check cluster was created successfully
@@ -326,8 +329,8 @@ reclaimPolicy: Retain
 volumeBindingMode: Immediate
 allowVolumeExpansion: true
 parameters:
-  resturl: "http://${mainIpAddress}:8080" 
-  restuser: "admin" 
+  resturl: "http://${mainIpAddress}:8080"
+  restuser: "admin"
   restuserkey: "$adminPassword"
   volumenameprefix: "k8s-kxascode"
   volumetype: "none"

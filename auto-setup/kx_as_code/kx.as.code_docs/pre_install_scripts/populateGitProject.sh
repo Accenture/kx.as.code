@@ -6,8 +6,8 @@ mkdir -p ${installationWorkspace}/staging/
 gitDomain=$(echo ${gitUrl} | sed 's/https:\/\///g')
 
 # Set Git committer details
-git config --global user.name "kx.hero" 
-git config --global user.email "kx.hero@${baseDomain}" 
+git config --global user.name "kx.hero"
+git config --global user.email "kx.hero@${baseDomain}"
 
 # Add KX.AS.CODE Docs to new Gitlab project
 export kxdocsApplicationUrl=$(cat ${componentMetadataJson} | jq -r '.urls[].url')
@@ -34,7 +34,7 @@ do
   envhandlebars < ${yamlFile} > ${installationWorkspace}/staging/kx.as.code_docs/kubernetes/$(basename ${yamlFile})
 done
 
-gitStatus=($(git status | tail -1)) 
+gitStatus=($(git status | tail -1))
 if [[ "${gitStatus[@]:0:3}" =~ "nothing to commit" ]]; then
     log_info "KX.AS.CODE Docs - nothng to commit. Moving on"
 else

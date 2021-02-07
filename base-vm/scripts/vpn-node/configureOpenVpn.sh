@@ -80,7 +80,7 @@ openVpnKeyDir=/home/\${vmUser}/openvpn-configs/keys
 openVpnOutputDir=/home/\${vmUser}/openvpn-configs/client-vpn-files
 openVpnBaseConfig=/home/\${vmUser}/openvpn-configs/client.conf
 
-# Generate OpenVPN config 
+# Generate OpenVPN config
 cat \${openVpnBaseConfig} \\
     <(echo -e '<ca>') \\
     \${openVpnKeyDir}/ca.crt \\

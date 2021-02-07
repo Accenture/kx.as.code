@@ -104,7 +104,7 @@ helm upgrade --install nginx-ingress ingress-nginx/ingress-nginx --install --nam
 NGINX_INGRESS_IP=$(kubectl get svc nginx-ingress-ingress-nginx-controller -n kube-system -o jsonpath={.spec.clusterIP})
 echo "address=/.kx-as-code.local/$NGINX_INGRESS_IP" | sudo tee -a /etc/dnsmasq.d/kx-as-code.local.conf
 sudo systemctl restart dnsmasq
-  
+
 gui-status-output "# Waiting for K8s Dashboard"
 # Test to see if the Kubernetes Cluster is up and notify when done
 wait-for-url() {
@@ -167,7 +167,7 @@ chown $VM_USER:$VM_USER /home/$VM_USER/.config/autostart/check-k8s.desktop
 EXECUTION_END=$(date +"%s")
 TIME_DIFFERENCE=$(($EXECUTION_END-$EXECUTION_START))
 
-# Add notification to desktop to notify that K8s intialization is completed 
+# Add notification to desktop to notify that K8s intialization is completed
 export LOGGED_IN_USER=$(who | cut -d' ' -f1 | sort | uniq | grep $VM_USER)
 if [[ -z $LOGGED_IN_USER ]]; then
    # If kx.hero user is not yet logged in, then add notification to be launched when user logs in
@@ -185,4 +185,3 @@ fi
 
 # Make Desktop Icons Available in Application Menu
 sudo cp /home/$VM_USER/Desktop/*.desktop /usr/share/applications
-

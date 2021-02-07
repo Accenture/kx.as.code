@@ -27,7 +27,7 @@ ingress:
       host: 'keycloak.kx-as-code.local'
       paths:
         - /
-  
+
   tls:
     - hosts:
         - keycloak.kx-as-code.local

@@ -4,7 +4,7 @@
 
 ## Accessing KX.AS.CODE Remotely
 
-There are three ways to access KX.AS.CODE remotely. 
+There are three ways to access KX.AS.CODE remotely.
 
 To reach them, the following ports needed to be opened and NATed.
 
@@ -43,8 +43,3 @@ This service is used by Guacamole to serve up the VNC traffic remotely via VNC. 
 NoMachine has it's own proprietary security transport protocol (read more [here](https://www.nomachine.com/AR10K00705)) and is the most performant of the options here.
 
 This is the recommended solution of all three here, however, do to the restrictions often imposed on enterprise laptops, we also provide the option to use Guacamole's web based access to overcome that.
-
-
-
-
-

@@ -20,7 +20,7 @@ if [[ ! ${kubeAdminStatus} ]]; then
     sudo cp -f /etc/kubernetes/admin.conf /usr/share/kx.as.code/skel/.kube/config
 else
     log_warn "Kubernetes cluster is already initialitzed. Skipping"
-fi 
+fi
 
 # Fix reliance on non existent file: /run/systemd/resolve/resolv.conf
 sudo sed -i '/^\[Service\]/a Environment="KUBELET_EXTRA_ARGS=--resolv-conf=\/etc\/resolv.conf"' /etc/systemd/system/kubelet.service.d/10-kubeadm.conf

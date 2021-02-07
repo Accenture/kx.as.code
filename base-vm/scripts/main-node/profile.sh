@@ -131,5 +131,3 @@ echo -e "\nsource /etc/environment" | sudo tee -a /home/$VM_USER/.bashrc /home/$
 #''' | sudo tee -a /root/.gnupg/gpg-agent.conf /home/$VM_USER/.gnupg/gpg-agent.conf
 #echo ""
 #sudo chown -R $VM_USER:$VM_USER /home/$VM_USER/.gnupg
-
-

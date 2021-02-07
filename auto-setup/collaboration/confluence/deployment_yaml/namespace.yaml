@@ -4,4 +4,3 @@ metadata:
  name: {{namespace}}
  labels:
   name: {{namespace}}
-

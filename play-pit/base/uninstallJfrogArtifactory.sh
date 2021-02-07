@@ -10,4 +10,3 @@ helm delete artifactory-oss --namespace artifactory
 
 # Delete the desktop shortcut
 rm -f /home/$VM_USER JFrog-Artifactory.Desktop
-

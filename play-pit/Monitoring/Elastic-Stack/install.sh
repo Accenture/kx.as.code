@@ -35,4 +35,3 @@ helm upgrade --install metricbeat elastic/metricbeat -f values_metricbeat.yaml -
   --name="Kibana" \
   --url=https://kibana.kx-as-code.local \
   --icon=/home/$VM_USER/Documents/git/kx.as.code_library/02_Kubernetes/02_Monitoring/01_Elastic-Stack/kibana.png
-

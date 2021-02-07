@@ -12,7 +12,7 @@ Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod 
 
 !["screenshot"](screenshot-prometheus.png "screenshot")
 
-    
+
 !["screenshot"](screenshot-alertmanager.png "screenshot")
 
 ## Metdata

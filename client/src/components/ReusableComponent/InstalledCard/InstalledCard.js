@@ -29,7 +29,7 @@ const InstalledCard = (props) => {
                     INSTALL
                    </Button>
                </Box>
-               
+
                <label className="cores">{card.cores}</label>
             </Grid>
         </Box>

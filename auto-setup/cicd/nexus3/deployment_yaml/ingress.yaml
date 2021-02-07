@@ -10,18 +10,18 @@ metadata:
 spec:
   tls:
   - hosts:
-    - {{ componentName }}-docker.{{ baseDomain }} 
-    - {{ componentName }}.{{ baseDomain }}  
+    - {{ componentName }}-docker.{{ baseDomain }}
+    - {{ componentName }}.{{ baseDomain }}
     secretName: nexus-tls
   rules:
-  - host: {{ componentName }}.{{ baseDomain }} 
+  - host: {{ componentName }}.{{ baseDomain }}
     http:
       paths:
       - path: /
         backend:
           serviceName: nexus-service
           servicePort: 80
-  - host: {{ componentName }}-docker.{{ baseDomain }} 
+  - host: {{ componentName }}-docker.{{ baseDomain }}
     http:
       paths:
       - path: /

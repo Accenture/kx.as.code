@@ -20,6 +20,6 @@ do
     "user_id": "'${userId}'"
     }'
   else
-    log_info "Mattermost user \"${userId}\" is already a member of team \"kxascode\". Nothing to do" 
+    log_info "Mattermost user \"${userId}\" is already a member of team \"kxascode\". Nothing to do"
   fi
 done

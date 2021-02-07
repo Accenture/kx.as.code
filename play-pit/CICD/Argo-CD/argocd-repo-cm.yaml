@@ -14,7 +14,7 @@ data:
     - url: https://innersource.accenture.com/scm/kxas/z2h_git_operations.git
     - url: https://innersource.accenture.com/scm/kxas/z2h_kx.as.code.git
   repository.credentials: |
-    - url: https://innersource.accenture.com  
+    - url: https://innersource.accenture.com
       passwordSecret:
         key: password
         name: git-operations-secret

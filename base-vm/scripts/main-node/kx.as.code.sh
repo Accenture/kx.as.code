@@ -66,7 +66,7 @@ if [[ ! -z $GITHUB_TOKEN_ENCODED ]]; then
   githubCloneUrl="https://$GITHUB_USER:$GITHUB_TOKEN_ENCODED@github.com"
 else
   githubCloneUrl="https://github.com"
-fi 
+fi
 
 if [[ -z ${GIT_SOURCE_BRANCH} ]]; then
   gitSourceBranch="master"

@@ -10,4 +10,3 @@ helm delete sonarqube -n sonarqube
 
 # Delete desktop shortcut
 /home/$VM_USER/Desktop/SonarQube.desktop
-

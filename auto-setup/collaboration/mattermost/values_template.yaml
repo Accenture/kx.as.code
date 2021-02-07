@@ -6,7 +6,7 @@ persistence:
   plugins:
     enabled: true
     size: 0.5Gi
-    storageClass: gluster-heketi 
+    storageClass: gluster-heketi
 
 configJSON:
   ServiceSettings:

@@ -75,11 +75,11 @@ customRules:
     # See the License for the specific language governing permissions and
     # limitations under the License.
     #
-    
+
     ####################
     # Your custom rules!
     ####################
-    
+
     # Add new rules, like this one
     # - rule: The program "sudo" is run in a container
     #   desc: An event will trigger every time you run sudo in a container
@@ -87,21 +87,21 @@ customRules:
     #   output: "Sudo run in container (user=%user.name %container.info parent=%proc.pname cmdline=%proc.cmdline)"
     #   priority: ERROR
     #   tags: [users, container]
-    
+
     # Or override/append to any rule, macro, or list from the Default Rules
-    
+
     #- rule: The program "sudo" is run in a container
     #  desc: An event will trigger every time you run sudo in a container
     #  condition: evt.type = execve and evt.dir=< and container.id != host and proc.name = sudo
     #  output: "Sudo run in container (user=%user.name %container.info parent=%proc.pname cmdline=%proc.cmdline)"
     #  priority: ERROR
     #  tags: [users, container]
-    
+
     - rule: Write below root
       append: true
       condition: >
         and not proc.cmdline = "auth -w"
-    
+
     - rule: Change thread namespace
       append: true
       condition: >
@@ -113,70 +113,70 @@ customRules:
         and not proc.cmdline startswith "sh -c /health/ping_liveness_local.sh"
         and not k8s.pod.name startswith calico-node
         and container.id != host
-    
+
     - rule: Set Setuid or Setgid bit
       append: true
-      condition: > 
+      condition: >
         and not evt.arg.filename startswith /var/lib/kubelet/pods
         and not proc.cmdline startswith "dockerd -H fd"
         and not proc.cmdline = "chrome"
-    
+
     - rule: Non sudo setuid
       append: true
       condition: >
         and user.name != "<NA>"
         and proc.cmdline != "script-login -d /bin/log-dovecot-imap-auth.sh"
         and not proc.cmdline startswith "dockerd -H fd"
-    
+
     - list: user_known_shell_spawn_binaries
       append: true
       items: []
-    
+
     - list: mail_binaries
       append: true
       items: [dovecot]
-    
+
     - rule: System procs network activity
       append: true
       condition: >
-        and not k8s.pod.name startswith gitlab-redis-master 
+        and not k8s.pod.name startswith gitlab-redis-master
         and not proc.cmdline startswith "sh -c jq 'if (.priority =="
         and not proc.cmdline startswith "sh /health/ping_readiness_local.sh"
-    
+
     - rule: Clear Log Activities
       append: true
       condition: >
         and proc.cmdline != "dockerd -H fd:// --containerd=/run/containerd/containerd.sock"
         and not fd.name contains "dpkg.log"
-    
+
     - rule: Delete or rename shell history
       append: true
       condition: >
         and proc.cmdline != "PLACEHOLDER"
-    
+
     - rule: DB program spawned process
       append: true
       condition: and not proc.cmdline = "pgrep -f gitlab-exporter"
-    
+
     - list: web_fetch_binaries
       items: [curl, wget]
-    
+
     - macro: web_fetch_programs
       condition: (proc.name in (web_fetch_binaries))
-    
+
     - macro: spawn_web_fetcher
       condition: (spawned_process and web_fetch_programs)
-    
+
     - macro: allowed_web_fetch_containers
       condition: (container.image startswith XXX/PLACEHOLDER)
-    
+
     - rule: Run Web Fetch Program in Container
       desc: Detect any attempt to spawn a web fetch program in a container
       condition: spawn_web_fetcher and container and not allowed_web_fetch_containers and not proc.cmdline in (commands_whitelist)
       output: Web Fetch Program run in container (user=%user.name, command=%proc.cmdline, %container.info, image=%container.image)
       priority: INFO
       tags: [container]
-    
+
     - list: commands_whitelist
       items: [
         '"curl --fail --max-time 10 --insecure http://localhost:80/help"',
@@ -184,7 +184,7 @@ customRules:
         '"dovecot -c \/etc\/dovecot\/dovecot.conf -F"',
         '"curl -H Content-Type: application/json -d @- -X POST http://mattermost-team-edition.gitlab-ce:8065/hooks/${MONITORING_WEBHOOK_ID}"'
       ]
-    
+
     - list: known_shell_spawn_cmdlines
       append: true
       items: [

@@ -79,7 +79,7 @@ function MdProgressLinearDirective($mdTheming, $mdUtil, $log) {
       '</div>',
     compile: compile
   };
-  
+
   function compile(tElement, tAttrs, transclude) {
     tElement.attr('aria-valuemin', 0);
     tElement.attr('aria-valuemax', 100);

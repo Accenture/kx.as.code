@@ -14,6 +14,7 @@ resource "aws_instance" "kx-main" {
   availability_zone = var.AVAILABILITY_ZONE
   user_data_base64 = data.template_cloudinit_config.config-main.rendered
 
+
   ebs_block_device {
     device_name = "/dev/xvdb"
     volume_type = "gp2"
@@ -27,7 +28,7 @@ resource "aws_instance" "kx-main" {
   }
 
   tags = {
-    Name = "KX.AS.CODE Main"
+    Name     = "KX.AS.CODE Main"
     Hostname = "kx-main.${var.KX_DOMAIN}"
   }
 }
@@ -44,6 +45,7 @@ resource "aws_instance" "kx-worker" {
   availability_zone = var.AVAILABILITY_ZONE
   user_data_base64 = data.template_cloudinit_config.config-worker[count.index].rendered
 
+
   ebs_block_device {
     device_name = "/dev/xvdb"
     volume_type = "gp2"
@@ -51,7 +53,7 @@ resource "aws_instance" "kx-worker" {
   }
 
   tags = {
-    Name = "KX.AS.CODE Worker ${count.index + 1}"
+    Name     = "KX.AS.CODE Worker ${count.index + 1}"
     Hostname = "kx-worker${count.index + 1}.${var.KX_DOMAIN}"
   }
 

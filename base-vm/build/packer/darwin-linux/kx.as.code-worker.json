@@ -194,7 +194,7 @@
     ],
     "guest_os_type": "{{user `vmware_guest_os_type`}}",
     "http_directory": "http",
-    "iso_urls": [ 
+    "iso_urls": [
       "{{user `iso_path`}}/{{user `iso_file`}}",
       "{{user `iso_url`}}"
     ],
@@ -301,7 +301,7 @@
         "VM_VERSION={{user `version`}}",
         "VM_NAME={{user `vm_name`}}",
         "VM_SUFFIX={{user `vm_suffix`}}"
-      ],      
+      ],
       "only_on": ["darwin","linux"],
       "script": "../../../scripts/post-processing/move-manifest-json.sh"
     },

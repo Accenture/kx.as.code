@@ -1,6 +1,6 @@
 #!/bin/bash -x
 
-#### Using script approach rather than direct Helm install, 
+#### Using script approach rather than direct Helm install,
 #### as standard Helm install was not working. Persistence
 #### settings were not being picked up.
 

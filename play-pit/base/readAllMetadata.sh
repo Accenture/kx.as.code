@@ -1,4 +1,4 @@
-#!/bin/bash 
+#!/bin/bash
 
 timestamp=$(date "+%Y%m%d_%H%M")
 jsonFiles=$(find . -name "metadata.json")
@@ -16,4 +16,3 @@ echo "}" | tee json_footer.txt
 cat json_header.txt json2_${timestamp}.txt json_footer.txt | tee json3_${timestamp}.json
 
 cat json3_${timestamp}.json | jq -S '.available_applications | sort_by(.name)[]'
-

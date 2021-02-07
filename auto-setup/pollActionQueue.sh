@@ -172,7 +172,7 @@ if [[ ! -f /usr/share/kx.as.code/.config/network_status ]] && [[ "${baseIpType}"
         httpsProxySettingBase=$(echo ${httpsProxySetting} | sed 's/https:\/\///g' | sed 's/http:\/\///g')
 
         echo '''
-        [Service]    
+        [Service]
         Environment="HTTP_PROXY='${httpProxySettingBase}'/" "HTTPS_PROXY='${httpsProxySettingBase}'/" "NO_PROXY=localhost,127.0.0.1,.'${baseDomain}'"
         ''' | sudo tee /etc/systemd/system/docker.service.d/http-proxy.conf
 
@@ -214,7 +214,7 @@ if [[ ! -f /usr/share/kx.as.code/.config/network_status ]] && [[ "${baseIpType}"
             fi
         fi
     done
-    
+
     echo '''
     # KEYBOARD CONFIGURATION FILE
 
@@ -309,10 +309,10 @@ do
             export action=$(echo ${payload} | jq -r '.action')
             export componentName=$(echo ${payload} | jq -r '.name')
             export componentInstallationFolder=$(echo ${payload} | jq -r '.install_folder')
-            
+
             # Define component install directory
-            export installComponentDirectory=${autoSetupHome}/${componentInstallationFolder}/${componentName}   
-            
+            export installComponentDirectory=${autoSetupHome}/${componentInstallationFolder}/${componentName}
+
             # Define location of metadata JSON file for component
             export componentMetadataJson=${installComponentDirectory}/metadata.json
 
@@ -321,7 +321,7 @@ do
 
             # Add item to wip queue to notify install is in progress
             rabbitmqadmin publish exchange=action_workflow routing_key=wip_queue properties="{\"delivery_mode\": 2}" payload=''${payload}''
-            
+
             # Launch autoSetup.sh
             . ${autoSetupHome}/autoSetup.sh &> ${installationWorkspace}/${componentName}_${logTimestamp}.log
             logRc=$?

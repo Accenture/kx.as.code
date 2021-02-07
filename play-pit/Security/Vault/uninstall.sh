@@ -17,4 +17,3 @@ sudo rm -rf $HOME/KX_Data/vault
 
 # Delete desktop shortcut for Vault
 /home/$VM_USER/Documents/git/kx.as.code_library/02_Kubernetes/00_Base/removeDesktopShortcut.sh --name="Vault"
-

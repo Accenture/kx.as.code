@@ -6,8 +6,8 @@ mkdir -p ${installationWorkspace}/staging/
 gitDomain=$(echo ${gitUrl} | sed 's/https:\/\///g')
 
 # Set Git committer details
-git config --global user.name "kx.hero" 
-git config --global user.email "kx.hero@kx-as-code.local" 
+git config --global user.name "kx.hero"
+git config --global user.email "kx.hero@kx-as-code.local"
 
 gitProject=$(echo ${componentName} | sed 's/-/_/g')
 
@@ -30,7 +30,7 @@ do
 done
 
 # Commit and push modified files
-gitStatus=($(git status | tail -1)) 
+gitStatus=($(git status | tail -1))
 if [[ "${gitStatus[@]:0:3}" =~ "nothing to commit" ]]; then
     log_info "Grafana Image Renderer - nothng to commit. Moving on"
 else
