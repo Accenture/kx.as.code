@@ -86,7 +86,6 @@ objectClass: shadowAccount
 cn: '${INITIAL_LDAP_VM_USER}'
 uid: '${INITIAL_LDAP_VM_USER}'
 uidNumber: 10002
-memberUid: users
 gidNumber: 10002
 homeDirectory: /home/'${INITIAL_LDAP_VM_USER}'
 userPassword: '${VM_PASSWORD}'
