@@ -478,10 +478,10 @@
            "../../../scripts/main-node/atom.sh",
            "../../../scripts/main-node/vscode.sh",
            "../../../scripts/main-node/upgrade-xfce.sh",
-           "../../../scripts/main-node/remoteDesktop.sh",
            "../../../scripts/main-node/keycloak.sh",
            "../../../scripts/main-node/createskel.sh",
            "../../../scripts/main-node/openldap.sh",
+           "../../../scripts/main-node/remoteDesktop.sh",
            "../../../scripts/main-node/cleanup.sh"
        ],
        "type": "shell",
