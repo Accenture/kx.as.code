@@ -3,6 +3,9 @@
 # Set Keycloak version
 export keyCloakVersion=12.0.2
 
+# Install dependencies
+sudp apt-get install -y openjdk-11-jre-headless
+
 # Download and Install Keyclok
 sudo wget https://github.com/keycloak/keycloak/releases/download/${keyCloakVersion}/keycloak-${keyCloakVersion}.tar.gz
 sudo tar -xzf keycloak-${keyCloakVersion}.tar.gz -C /opt/
