@@ -158,7 +158,7 @@ getent passwd
 ldapUserExists=$(sudo ldapsearch -x -b "uid=${INITIAL_LDAP_VM_USER},ou=Users,ou=People,${LDAP_DN}" | grep numEntries)
 if [[ -n ${ldapUserExists} ]]; then
   sudo ps -ef | grep ${INITIAL_LDAP_VM_USER}
-  sudo ps -U ${INITIAL_LDAP_VM_USER} -u ${INITIAL_LDAP_VM_USER} | grep -v PID | awk '{print $1}' | sudo xargs kill -9 -
+  sudo ps -U ${INITIAL_LDAP_VM_USER} -u ${INITIAL_LDAP_VM_USER} | grep -v PID | awk '{print $1}' | sudo xargs kill -9
   sudo ps -ef | grep ${INITIAL_LDAP_VM_USER}
   sudo userdel ${INITIAL_LDAP_VM_USER}
 fi
