@@ -156,6 +156,6 @@ getent passwd
 
 # Delete local user and replace with ldap user if added to LDAP correctly
 ldapUserExists=$(sudo ldapsearch -x -b "uid=${INITIAL_LDAP_VM_USER},ou=Users,ou=People,${LDAP_DN}" | grep numEntries)
-if [[ -n ${ldapUserExists} ]]; then
-  sudo userdel ${INITIAL_LDAP_VM_USER}
-fi
+#if [[ -n ${ldapUserExists} ]]; then
+#  sudo userdel ${INITIAL_LDAP_VM_USER}
+#fi
