@@ -93,13 +93,6 @@ loginShell: /bin/zsh
 ''' | sudo tee /etc/ldap/new_user.ldif
 sudo ldapadd -D "cn=admin,${LDAP_DN}" -w "${VM_PASSWORD}" -H ldapi:/// -f /etc/ldap/new_user.ldif
 
-
-echo '''
-dn: cn='delampat',ou=People,'${LDAP_DN}'
-changetype: delete
-''' | sudo tee /etc/ldap/new_user.ldif
-sudo ldapmodify -D "cn=admin,${LDAP_DN}" -w "${VM_PASSWORD}" -H ldapi:/// -f /etc/ldap/new_user.ldif
-
 # Check Result
 sudo ldapsearch -x -b "ou=People,${LDAP_DN}"
 
@@ -123,8 +116,6 @@ sudo sed -i '/^passwd:/s/$/ ldap/' /etc/nsswitch.conf
 sudo sed -i '/^group:/s/$/ ldap/' /etc/nsswitch.conf
 sudo sed -i '/^shadow:/s/$/ ldap/' /etc/nsswitch.conf
 sudo sed -i '/^gshadow:/s/$/ ldap/' /etc/nsswitch.conf
-
-
 
 echo '''
 # nslcd configuration file. See nslcd.conf(5)
