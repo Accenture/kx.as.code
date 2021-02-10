@@ -84,7 +84,7 @@ kubectl -n ${namespace} exec ${kcPod} -- \
 
 # Obtain Realm Id
 kcParentId=$(kubectl -n ${namespace} exec ${kcPod} -- \
-    ${kcAdmCli} get /auth/admin/realms/${kcRealm} --fields id --format csv --noquotes)
+    ${kcAdmCli} get / --fields id --format csv --noquotes)
 
 # Create LDAP User Federation
 ldapProviderId=$(kubectl -n ${namespace} exec ${kcPod} -- \
