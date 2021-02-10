@@ -18,6 +18,18 @@ kubectl -n ${namespace} exec ${kcPod} -- \
 kubectl -n ${namespace} exec ${kcPod} -- \
   ${kcAdmCli} create realms -s realm=${kcRealm} -s enabled=true -o
 
+# Create admin user in KX.AS.CODE Realm
+kubectl -n ${namespace} exec ${kcPod} -- \
+  ${kcAdmCli} create users --realm ${kcRealm} -s username=admin -s enabled=true
+
+# Give new admin user a password
+kubectl -n ${namespace} exec ${kcPod} -- \
+  ${kcAdmCli} set-password --realm ${kcRealm} --username admin --new-password ${vmPassword}
+
+# Get credential token in new Realm
+kubectl -n ${namespace} exec ${kcPod} -- \
+  ${kcAdmCli} config credentials --server ${kcInternalUrl}/auth --realm master --user admin --password ${vmPassword} --client admin-cli
+
 # Create Admins Group
 kubectl -n ${namespace} exec ${kcPod} -- \
   ${kcAdmCli} create groups --realm ${kcRealm} -s name=users
@@ -61,14 +73,6 @@ kubectl -n ${namespace} exec ${kcPod} -- \
    --rolename manage-realm \
    --rolename manage-authorization \
    --rolename view-clients
-
-# Create admin user in KX.AS.CODE Realm
-kubectl -n ${namespace} exec ${kcPod} -- \
-  ${kcAdmCli} create users --realm ${kcRealm} -s username=admin -s enabled=true
-
-# Give new admin user a password
-kubectl -n ${namespace} exec ${kcPod} -- \
-  ${kcAdmCli} set-password --realm ${kcRealm} --username admin --new-password ${vmPassword}
 
 # Get credentials in Realm
 kubectl -n ${namespace} exec ${kcPod} -- \
