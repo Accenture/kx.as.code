@@ -20,6 +20,11 @@ E0F
 # Show base dn after base install of OpenLDAP
 sudo slapcat | grep dn
 
+# Set variables for base DN
+export LDAP_DN_FIRST_PART=$(sudo slapcat | grep dn | head -1 | sed 's/dn: //g' | sed 's/dc=//g' | cut -f1 -d',')
+export LDAP_DN_SECOND_PART=$(sudo slapcat | grep dn | head -1 | sed 's/dn: //g' | sed 's/dc=//g' | cut -f2 -d',')
+export LDAP_DN="dc=${LDAP_DN_FIRST_PART},dc=${LDAP_DN_SECOND_PART}"
+
 # Add "People" OU
 echo '''
 dn: ou=People,'${LDAP_DN}'
@@ -109,7 +114,7 @@ libnss-ldap libnss-ldap/rootbinddn  string  cn=admin,${LDAP_DN}
 libnss-ldap shared/ldapns/ldap_version  select  3
 libnss-ldap libnss-ldap/nsswitch    note
 EOF
-sudo DEBIAN_FRONTEND=noninteractive apt-get install -q -y libnss-ldapd
+sudo DEBIAN_FRONTEND=noninteractive apt-get install -q -y libnss-ldapd libpam-ldapds
 
 # Add LDAP auth method to /etc/nsswitch.conf
 sudo sed -i '/^passwd:/s/$/ ldap/' /etc/nsswitch.conf
@@ -146,7 +151,7 @@ ssl off
 #tls_reqcert never
 tls_cacertfile /etc/ssl/certs/ca-certificates.crt
 
-''' | sudo tee -a /etc/nslcd.conf
+''' | sudo tee /etc/nslcd.conf
 
 # Ensure home directory is created on first login
 echo "session required      pam_mkhomedir.so   skel=/usr/share/kx.as.code/skel umask=0002" | sudo tee -a /etc/pam.d/common-session

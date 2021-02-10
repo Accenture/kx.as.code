@@ -54,7 +54,7 @@ sudo systemctl start keycloak
 sudo systemctl status keycloak
 
 # Create initial default admin user
-sudo /opt/keycloak/bin/add-user-keycloak.sh -r master -u ${VM_USER} -p ${VM_PASSWORD}
+sudo /opt/keycloak/bin/add-user-keycloak.sh -r master -u "admin" -p ${VM_PASSWORD}
 
 # Restart Keycloak
 sudo systemctl restart keycloak
@@ -80,3 +80,4 @@ Actions=new-window;new-private-window;
 # Give *.desktop files execute permissions
 sudo chmod 755 /home/${VM_USER}/Desktop/Keycloak.desktop
 sudo chown ${VM_USER}:${VM_USER} /home/${VM_USER}/Desktop/Keycloak.desktop
+

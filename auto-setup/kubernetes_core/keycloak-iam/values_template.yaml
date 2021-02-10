@@ -1,0 +1,25 @@
+extraEnv: |
+    - name: PROXY_ADDRESS_FORWARDING
+      value: "true"
+    - name: KEYCLOAK_USER
+      value: "admin"
+    - name: KEYCLOAK_PASSWORD
+      value: "{{vmPassword}}"
+
+podDisruptionBudget:
+  maxUnavailable: 1
+  minAvailable: 1
+
+ingress:
+  enabled: true
+  servicePort: http
+  annotations: {}
+  labels: {}
+  rules:
+    -
+      host: '{{ componentName }}.{{ baseDomain }}'
+      paths:
+        - /
+  tls:
+    - hosts:
+        - {{ componentName }}.{{ baseDomain }}
