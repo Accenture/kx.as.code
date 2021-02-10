@@ -114,7 +114,7 @@ libnss-ldap libnss-ldap/rootbinddn  string  cn=admin,${LDAP_DN}
 libnss-ldap shared/ldapns/ldap_version  select  3
 libnss-ldap libnss-ldap/nsswitch    note
 EOF
-sudo DEBIAN_FRONTEND=noninteractive apt-get install -q -y libnss-ldapd libpam-ldapds
+sudo DEBIAN_FRONTEND=noninteractive apt-get install -q -y libnss-ldapd libpam-ldapd
 
 # Add LDAP auth method to /etc/nsswitch.conf
 sudo sed -i '/^passwd:/s/$/ ldap/' /etc/nsswitch.conf
