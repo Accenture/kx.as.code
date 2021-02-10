@@ -18,17 +18,21 @@ kubectl -n ${namespace} exec ${kcPod} -- \
 kubectl -n ${namespace} exec ${kcPod} -- \
   ${kcAdmCli} create realms -s realm=${kcRealm} -s enabled=true -o
 
-# Create admin user in KX.AS.CODE Realm
+# Create Admin User in KX.AS.CODE Realm
 kubectl -n ${namespace} exec ${kcPod} -- \
-  ${kcAdmCli} create users --realm ${kcRealm} -s username=admin -s enabled=true
+  ${kcBinDir}/add-user-keycloak.sh -r ${kcRealm} -u admin -p ${vmPassword}
+
+# Reload JBoss Instance
+kubectl -n ${namespace} exec ${kcPod} -- \
+  /opt/jboss/keycloak/bin/jboss-cli.sh --connect --commands=:reload
+
+# Get credential token in new Realm
+kubectl -n ${namespace} exec ${kcPod} -- \
+  ${kcAdmCli} config credentials --server ${kcInternalUrl}/auth --realm ${kcRealm} --user admin --password ${vmPassword} --client admin-cli
 
 # Give new admin user a password
 kubectl -n ${namespace} exec ${kcPod} -- \
   ${kcAdmCli} set-password --realm ${kcRealm} --username admin --new-password ${vmPassword}
-
-# Get credential token in new Realm
-kubectl -n ${namespace} exec ${kcPod} -- \
-  ${kcAdmCli} config credentials --server ${kcInternalUrl}/auth --realm master --user admin --password ${vmPassword} --client admin-cli
 
 # Create Admins Group
 kubectl -n ${namespace} exec ${kcPod} -- \
@@ -74,9 +78,13 @@ kubectl -n ${namespace} exec ${kcPod} -- \
    --rolename manage-authorization \
    --rolename view-clients
 
-# Get credentials in Realm
+# Set CLI credentials for Realm
 kubectl -n ${namespace} exec ${kcPod} -- \
   ${kcAdmCli} config credentials --server ${kcInternalUrl}/auth --realm ${kcRealm} --user admin --password ${vmPassword} --client admin-cli
+
+# Obtain Realm Id
+kcParentId=$(kubectl -n ${namespace} exec ${kcPod} -- \
+    ${kcAdmCli} get /auth/admin/realms/${kcRealm} --fields id --format csv --noquotes)
 
 # Create LDAP User Federation
 ldapProviderId=$(kubectl -n ${namespace} exec ${kcPod} -- \
@@ -84,7 +92,7 @@ ldapProviderId=$(kubectl -n ${namespace} exec ${kcPod} -- \
   -s name=ldap-provider \
   -s providerId=ldap \
   -s providerType=org.keycloak.storage.UserStorageProvider \
-  -s parentId=kxascode \
+  -s parentId=${kcParentId} \
   -s 'config.priority=["1"]' \
   -s 'config.fullSyncPeriod=["-1"]' \
   -s 'config.changedSyncPeriod=["-1"]' \
