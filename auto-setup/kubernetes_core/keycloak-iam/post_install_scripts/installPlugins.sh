@@ -17,6 +17,3 @@ export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
 
 # Install OIDC Login and KauthProxy
 kubectl krew install auth-proxy oidc-login
-
-# Create Desktop Icon
-kubectl auth-proxy -n kubernetes-dashboard https://kubernetes-dashboard.svc
