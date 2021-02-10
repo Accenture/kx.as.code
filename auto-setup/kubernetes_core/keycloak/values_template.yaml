@@ -7,7 +7,6 @@ extraEnv: |
       value: "{{vmPassword}}"
 
 podDisruptionBudget:
-  maxUnavailable: 1
   minAvailable: 1
 
 ingress:
