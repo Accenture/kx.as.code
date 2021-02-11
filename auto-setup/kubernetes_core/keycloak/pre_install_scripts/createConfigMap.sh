@@ -11,3 +11,5 @@ data:
   ca.crt: |-
     $(sudo cat /etc/ldap/sasl2/ca.crt | sed '2,30s/^/    /')
 """ | sudo tee ${installationWorkspace}/keycload-ca-configmap.yaml
+
+sudo kubectl apply -f ${installationWorkspace}/keycload-ca-configmap.yaml
