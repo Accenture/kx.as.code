@@ -147,8 +147,10 @@ member: cn=kx.hero,ou=Groups,ou=People,'${LDAP_DN}'
 sudo ldapadd -Q -Y EXTERNAL -H ldapi:/// -f /etc/ldap/memberof_config.ldif
 sudo ldapmodify -Q -Y EXTERNAL -H ldapi:/// -f /etc/ldap/refint1.ldif
 sudo ldapadd -Q -Y EXTERNAL -H ldapi:/// -f /etc/ldap/refint2.ldif
-sudo ldapadd -Q -Y EXTERNAL -H ldapi:/// -f /etc/ldap/group_of_names.ldif
-sudo ldapadd -D "cn=admin,${LDAP_DN}" -w "${VM_PASSWORD}" -H ldapi:/// -f /etc/ldap/group_of_names.ldif
+
+#TODO: Fix permissions for applying groupOfName LDIF files ==> ldap_add: Insufficient access ==> additional info: no write access to parent
+#sudo ldapadd -Q -Y EXTERNAL -H ldapi:/// -f /etc/ldap/group_of_names.ldif
+#sudo ldapadd -D "cn=admin,${LDAP_DN}" -w "${VM_PASSWORD}" -H ldapi:/// -f /etc/ldap/group_of_names.ldif
 
 # Test memberOf query
 ldapsearch -x -LLL -H ldap:/// -b uid=kx.hero,ou=Users,ou=People,${LDAP_DN} dn memberof
