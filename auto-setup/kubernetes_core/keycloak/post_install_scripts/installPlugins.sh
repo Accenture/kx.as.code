@@ -10,10 +10,10 @@
 )
 
 # Add Krew to global profile
-echo 'export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"' | tee -a /etc/profile.d/krew.sh
+echo 'export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"' | sudo tee -a /etc/profile.d/krew.sh
 
 # Put Krew on the path before calling it
 export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
 
 # Install OIDC Login and KauthProxy
-kubectl krew install auth-proxy oidc-login
+sudo kubectl krew install auth-proxy oidc-login

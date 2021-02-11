@@ -112,6 +112,10 @@ if [[ ! -f /usr/share/kx.as.code/.config/network_status ]] && [[ "${baseIpType}"
     # Update  DNS Entry for hosts if ip type set to static
     if [ "${baseIpType}" == "static" ]; then
         ipAddresses=$(env | grep "_IpAddress")
+        echo "address=/ldap/${mainIpAddress}" | sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
+        echo "address=/ldap.${baseDomain}/${mainIpAddress}" | sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
+        echo "address=/rabbitmq/${mainIpAddress}" | sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
+        echo "address=/rabbitmq.${baseDomain}/${mainIpAddress}" | sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
         for ipAddress in ${ipAddresses}
         do
              hostname="$(echo ${ipAddress} | sed 's/__/-/g' | sed 's/_IpAddress//g' | cut -f1 -d'=')"

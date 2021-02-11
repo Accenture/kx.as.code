@@ -10,5 +10,8 @@
     "shortcut_text": "CFSSL-CA",
     "shortcut_icon": "cloudflare.png",
     "pre_install_scripts": [],
-    "post_install_scripts": []
+    "post_install_scripts": [
+        "enableOpenLdapTls.sh",
+        "installSsd.sh"
+    ]
 }

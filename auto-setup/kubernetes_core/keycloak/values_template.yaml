@@ -5,6 +5,17 @@ extraEnv: |
       value: "admin"
     - name: KEYCLOAK_PASSWORD
       value: "{{vmPassword}}"
+    - name: X509_CA_BUNDLE
+      value: "/tmp/certs/*.crt"
+
+extraVolumeMounts: |
+  - name: openldap-ca-certificate
+    mountPath: /tmp/certs
+
+extraVolumes: |
+  - name: openldap-ca-certificate
+    configMap:
+      name: openldap-ca-certificate
 
 podDisruptionBudget:
   minAvailable: 1
@@ -22,3 +33,5 @@ ingress:
   tls:
     - hosts:
         - {{ componentName }}.{{ baseDomain }}
+
+

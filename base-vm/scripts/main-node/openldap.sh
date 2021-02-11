@@ -1,7 +1,6 @@
 #!/bin/bash -eux
 
 export INITIAL_LDAP_VM_USER=${VM_USER}
-export LDAP_DN="dc=kx-as-code,dc=local"
 export LDAP_SERVER=127.0.0.1
 
 # Install OpenLDAP server and utilities
@@ -100,6 +99,59 @@ sudo ldapadd -D "cn=admin,${LDAP_DN}" -w "${VM_PASSWORD}" -H ldapi:/// -f /etc/l
 
 # Check Result
 sudo ldapsearch -x -b "ou=People,${LDAP_DN}"
+
+# Add memberOf config for Keycloak sync
+echo '''
+dn: cn=module,cn=config
+cn: module
+objectClass: olcModuleList
+olcModuleLoad: memberof
+olcModulePath: /usr/lib/ldap
+
+dn: olcOverlay={0}memberof,olcDatabase={1}mdb,cn=config
+objectClass: olcConfig
+objectClass: olcMemberOf
+objectClass: olcOverlayConfig
+objectClass: top
+olcOverlay: memberof
+olcMemberOfDangling: ignore
+olcMemberOfRefInt: TRUE
+olcMemberOfGroupOC: groupOfNames
+olcMemberOfMemberAD: member
+''' | sudo tee /etc/ldap/memberof_config.ldif
+
+echo '''
+dn: cn=module{1},cn=config
+add: olcmoduleload
+olcmoduleload: refint
+''' | sudo tee /etc/ldap/refint1.ldif
+
+echo '''
+dn: olcOverlay={1}refint,olcDatabase={1}mdb,cn=config
+objectClass: olcConfig
+objectClass: olcOverlayConfig
+objectClass: olcRefintConfig
+objectClass: top
+olcOverlay: {1}refint
+olcRefintAttribute: memberof member manager owner
+''' | sudo tee /etc/ldap/refint2.ldif
+
+echo '''
+dn: cn=admins_gon,ou=Groups,ou=People,'${LDAP_DN}'
+objectClass: groupOfNames
+cn: admins_gon
+member: cn=kx.hero,ou=Groups,ou=People,'${LDAP_DN}'
+''' | sudo tee /etc/ldap/group_of_names.ldif
+
+# Apply LDIF files for memberOf config
+sudo ldapadd -Q -Y EXTERNAL -H ldapi:/// -f /etc/ldap/memberof_config.ldif
+sudo ldapmodify -Q -Y EXTERNAL -H ldapi:/// -f /etc/ldap/refint1.ldif
+sudo ldapadd -Q -Y EXTERNAL -H ldapi:/// -f /etc/ldap/refint2.ldif
+sudo ldapadd -Q -Y EXTERNAL -H ldapi:/// -f /etc/ldap/group_of_names.ldif
+sudo ldapadd -D "cn=admin,${LDAP_DN}" -w "${VM_PASSWORD}" -H ldapi:/// -f /etc/ldap/group_of_names.ldif
+
+# Test memberOf query
+ldapsearch -x -LLL -H ldap:/// -b uid=kx.hero,ou=Users,ou=People,${LDAP_DN} dn memberof
 
 # Configure Client selections before install
 cat << EOF | sudo debconf-set-selections

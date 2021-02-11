@@ -44,7 +44,9 @@
     "Description": "Keycloak IAM",
     "shortcut_text": "Keycloak IAM",
     "shortcut_icon": "keycloak.png",
-    "pre_install_scripts": [],
+    "pre_install_scripts": [
+        "createConfigMap.sh"
+    ],
     "post_install_scripts": [
         "configureKeycloak.sh",
         "configureK8s.sh",
