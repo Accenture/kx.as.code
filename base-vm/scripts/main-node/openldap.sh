@@ -220,4 +220,5 @@ if [[ -n ${ldapUserExists} ]]; then
   sudo ps -U ${INITIAL_LDAP_VM_USER} -u ${INITIAL_LDAP_VM_USER} | grep -v grep | grep -v PID | awk '{print $1}' | sudo xargs kill -9 || true
   sudo ps -ef | grep ${INITIAL_LDAP_VM_USER}
   sudo userdel ${INITIAL_LDAP_VM_USER}
+  chown -R ${INITIAL_LDAP_VM_USER}:${INITIAL_LDAP_VM_USER} /usr/share/kx.as.code
 fi

@@ -10,10 +10,10 @@ sudo cp /home/${VM_USER}/.tmux.conf ${SKELDIR}
 sudo cp /home/${VM_USER}/.zshrc ${SKELDIR}
 sudo cp /home/${VM_USER}/.bashrc ${SKELDIR}
 
+sudo cp -r /home/${BASE_IMAGE_SSH_USER}/user_profile/.config ${SKELDIR}
 sudo cp -r /home/${VM_USER}/.oh-my-zsh ${SKELDIR}
 sudo cp -r /home/${VM_USER}/.atom ${SKELDIR}
 sudo cp -r /home/${VM_USER}/.vscode ${SKELDIR}
-sudo cp -r /home/${VM_USER}/.config ${SKELDIR}
 
 sudo mkdir -p ${SKELDIR}/.ssh
 sudo chmod 700 ${SKELDIR}/.ssh
