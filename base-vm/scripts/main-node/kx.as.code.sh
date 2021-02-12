@@ -19,40 +19,6 @@ sudo fc-cache -vf /usr/share/fonts/
 sudo mkdir -p /home/$VM_USER/.config/xfce4/desktop
 sudo wget http://de.archive.ubuntu.com/ubuntu/pool/universe/x/xfpanel-switch/xfpanel-switch_1.0.7-0ubuntu2_all.deb
 sudo dpkg -i xfpanel-switch_1.0.7-0ubuntu2_all.deb
-sudo cp /home/${BASE_IMAGE_SSH_USER}/user_profile/xfce4_panel/exported-config.tar.bz2 /home/$VM_USER/.config/
-sudo bash -c "cat <<EOF > /home/$VM_USER/.config/xfce4/desktop/icons.screen0-1904x1136.rc
-[xfdesktop-version-4.10.3+-rcfile_format]
-4.10.3+=true
-
-[/home/kx.hero/Desktop/RabbitMQ.desktop]
-row=4
-col=0
-
-[/home/kx.hero/Desktop/README.desktop]
-row=1
-col=0
-
-[/home/kx.hero/Desktop/CONTRIBUTE.desktop]
-row=2
-col=0
-
-[/home/kx.hero/Desktop/postman.desktop]
-row=5
-col=0
-
-[/home/kx.hero/Desktop/KX.AS.CODE Source]
-row=3
-col=0
-
-[/home/kx.hero]
-row=0
-col=0
-
-EOF"
-
-sudo bash -c "cp /home/$VM_USER/.config/xfce4/desktop/icons.screen0-1904x1136.rc /home/$VM_USER/.config/xfce4/desktop/icons.screen0-784x536.rc"
-sudo bash -c "cp /home/$VM_USER/.config/xfce4/desktop/icons.screen0-1904x1136.rc /home/$VM_USER/.config/xfce4/desktop/icons.screen0-2218x1224.rc"
-sudo bash -c "cd /home/$VM_USER/.config/xfce4/desktop; ln -s /home/$VM_USER/.config/xfce4/desktop/icons.screen0-1904x1136.rc icons.screen.latest.rc"
 sudo chown -hR $VM_USER:$VM_USER /home/$VM_USER
 
 # Work-Around to get around the background resetting on reboot bug
