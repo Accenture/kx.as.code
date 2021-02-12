@@ -1,0 +1,14 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Exec=tmux
+Icon=utilities-terminal
+StartupNotify=true
+Terminal=true
+Categories=Utility;X-XFCE;X-Xfce-Toplevel;
+OnlyShowIn=XFCE;
+X-AppStream-Ignore=True
+Name=Tmux
+Comment=Terminal-Multiplexer
+X-XFCE-Source=file:///usr/share/applications/exo-terminal-emulator.desktop
+Path=
