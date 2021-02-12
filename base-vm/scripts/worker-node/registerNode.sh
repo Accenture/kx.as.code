@@ -350,9 +350,18 @@ BACKSPACE=\"guess\"
 ''' | sudo tee /etc/default/keyboard
 
 # Enable LDAP on worker node
-export initialLdapUser=${vmUser}
 export ldapDn="dc=kx-as-code,dc=local"
-export ldapServer=${kxMainIp}
+
+sudo -H -i -u ${vmUser} bash -c "ssh -o StrictHostKeyChecking=no $vmUser@${kxMainIp} 'kubeadm token create --print-join-command 2>/dev/null'" > ${kubeDir}/kubeJoin.sh
+
+# Get LdapDN from main node and setup base variables
+ldapDnFull=$(sudo -H -i -u ${vmUser} bash -c "ssh -o StrictHostKeyChecking=no $vmUser@${kxMainIp} 'sudo slapcat | grep dn'")
+ldapDnFirstPart=$(echo ${ldapDnFull} | head -1 | sed 's/dn: //g' | sed 's/dc=//g' | cut -f1 -d',')
+ldapDnSecondPart=$(echo ${ldapDnFull} | head -1 | sed 's/dn: //g' | sed 's/dc=//g' | cut -f2 -d',')
+
+export kcRealm=${ldapDnFirstPart}
+export ldapDn="dc=${ldapDnFirstPart},dc=${ldapDnSecondPart}"
+export ldapServer=ldap.${baseDomain}
 
 # Configure Client selections before install
 cat << EOF | sudo debconf-set-selections
@@ -370,7 +379,7 @@ EOF
 sudo DEBIAN_FRONTEND=noninteractive apt-get install -q -y libnss-ldapd libpam-ldap
 
 # Add LDAP client config
-echo "BASE    dc=kx-as-code,dc=local" | tee -a /etc/ldap/ldap.conf
+echo "BASE    ${ldapDn}" | tee -a /etc/ldap/ldap.conf
 echo "URI     ldap://${ldapServer}" | tee -a /etc/ldap/ldap.conf
 
 # Add LDAP auth method to /etc/nsswitch.conf
@@ -411,7 +420,7 @@ tls_cacertfile /etc/ssl/certs/ca-certificates.crt
 ''' | sudo tee /etc/nslcd.conf
 
 # Ensure home directory is created on first login
-echo "session required      pam_mkhomedir.so   skel=/usr/share/kx.as.code/skel umask=0002" | sudo tee -a /etc/pam.d/common-session
+echo "session required      pam_mkhomedir.so   skel=${kxHomeDir}/skel umask=0002" | sudo tee -a /etc/pam.d/common-session
 
 # Check if ldap users are returned with getent passwd
 getent passwd
