@@ -81,7 +81,18 @@ if [[ ${numUsersToCreate} -ne 0 ]]; then
 
     sudo mkdir -p /home/${userid}/Desktop
     sudo ln -s ${SHARED_GIT_REPOSITORIES}/kx.as.code /home/${userid}/Desktop/"KX.AS.CODE Source";
-    sudo chown -R ${userid}:${userid} /home/${userid}
+
+    # Loop change ownership to allow user to be available for setting ownership
+    for i in {1..5}
+    do
+      sudo chown -R ${userid}:${userid} /home/${userid} || true
+      directoryOwnership=$(ls -l /home/${userid} | grep ${userid})
+      if [[ -z ${directoryOwnership} ]]; then
+        sleep 5
+      else
+        break
+      fi
+    done
 
   done
 fi
