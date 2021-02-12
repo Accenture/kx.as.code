@@ -51,7 +51,7 @@ if [[ ${numUsersToCreate} -ne 0 ]]; then
       objectClass: posixGroup
       cn: '${userid}'
       gidNumber: '${newGid}'
-      ''' | sudo tee /etc/ldap/users_group_${userid}.ldif
+      ''' | sed -e 's/^[ \t]*//' | sed '/^$/d' | sudo tee /etc/ldap/users_group_${userid}.ldif
       sudo ldapadd -D "cn=admin,${ldapDn}" -w "${vmPassword}" -H ldapi:/// -f /etc/ldap/users_group_${userid}.ldif
 
       # Add User to OpenLDAP
@@ -68,7 +68,7 @@ if [[ ${numUsersToCreate} -ne 0 ]]; then
       homeDirectory: /home/'${userid}'
       userPassword: '${vmPassword}'
       loginShell: /bin/zsh
-      ''' | sudo tee /etc/ldap/new_user_${userid}.ldif
+      ''' | sed -e 's/^[ \t]*//' | sed '/^$/d' | sudo tee /etc/ldap/new_user_${userid}.ldif
       sudo ldapadd -D "cn=admin,${ldapDn}" -w "${vmPassword}" -H ldapi:/// -f /etc/ldap/new_user_${userid}.ldif
 
       # Check Result
@@ -79,7 +79,9 @@ if [[ ${numUsersToCreate} -ne 0 ]]; then
 
     fi
 
+    sudo mkdir -p /home/${userid}/Desktop
     sudo ln -s ${SHARED_GIT_REPOSITORIES}/kx.as.code /home/${userid}/Desktop/"KX.AS.CODE Source";
+    sudo chown -R ${userid}:${userid} /home/${userid}
 
   done
 fi
