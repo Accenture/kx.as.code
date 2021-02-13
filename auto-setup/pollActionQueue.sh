@@ -15,6 +15,9 @@ export installationWorkspace=/usr/share/kx.as.code/Kubernetes
 export autoSetupHome=/usr/share/kx.as.code/git/kx.as.code/auto-setup
 export actionWorkflows="pending wip completed failed retry"
 export defaultDockerHubSecret="default/regcred"
+export sharedGitHome=/usr/share/kx.as.code/git
+export sharedKxHome=/usr/share/kx.as.code
+export kxSkelDir=/usr/share/kx.as.code/skel
 
 # Set variables for base DN
 export ldapDnFirstPart=$(sudo slapcat | grep dn | head -1 | sed 's/dn: //g' | sed 's/dc=//g' | cut -f1 -d',')

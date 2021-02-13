@@ -220,5 +220,16 @@ if [[ -n ${ldapUserExists} ]]; then
   sudo ps -U ${INITIAL_LDAP_VM_USER} -u ${INITIAL_LDAP_VM_USER} | grep -v grep | grep -v PID | awk '{print $1}' | sudo xargs kill -9 || true
   sudo ps -ef | grep ${INITIAL_LDAP_VM_USER}
   sudo userdel ${INITIAL_LDAP_VM_USER}
-  chown -R ${INITIAL_LDAP_VM_USER}:${INITIAL_LDAP_VM_USER} /usr/share/kx.as.code
+  # Loop change ownership to allow OpenLDAP user to be available for setting ownership
+  for i in {1..10}
+  do
+    sudo chown -R ${INITIAL_LDAP_VM_USER}:${INITIAL_LDAP_VM_USER} /usr/share/kx.as.code || true
+    DIRECTORY_OWNERSHIP=$(ls -l /usr/share/kx.as.code | grep ${INITIAL_LDAP_VM_USER})
+    if [[ -z ${DIRECTORY_OWNERSHIP} ]]; then
+      sleep 5
+    else
+      break
+    fi
+  done
+
 fi

@@ -1,6 +1,5 @@
 #!/bin/bash -x
 
-export SKELDIR=/usr/share/kx.as.code/skel
 numUsersToCreate=$(jq -r '.config.additionalUsers[].firstname' ${installationWorkspace}/autoSetup.json | wc -l)
 
 if [[ ${numUsersToCreate} -ne 0 ]]; then
@@ -37,7 +36,7 @@ if [[ ${numUsersToCreate} -ne 0 ]]; then
 
       # Generatw password
       generatedPassword=$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${1:-12};echo;)
-      echo "${userid}:${generatedPassword}" | sudo tee -a /usr/share/kx.as.code/.users
+      echo "${userid}:${generatedPassword}" | sudo tee -a ${sharedKxHome}/.users
 
       # Determine UID/GID for new user
       lastLdapGid=$(sudo ldapsearch -x -b "ou=People,${ldapDn}" | grep gidNumber | sed 's/gidNumber: //' | sort | uniq | tail -1)
@@ -80,10 +79,10 @@ if [[ ${numUsersToCreate} -ne 0 ]]; then
     fi
 
     sudo mkdir -p /home/${userid}/Desktop
-    sudo ln -s ${SHARED_GIT_REPOSITORIES}/kx.as.code /home/${userid}/Desktop/"KX.AS.CODE Source";
+    sudo ln -s ${sharedGitHome}/kx.as.code /home/${userid}/Desktop/"KX.AS.CODE Source";
 
-    # Loop change ownership to allow user to be available for setting ownership
-    for i in {1..5}
+    # Loop change ownership to allow OPenLDAP user to be available for setting ownership
+    for i in {1..10}
     do
       sudo chown -R ${userid}:${userid} /home/${userid} || true
       directoryOwnership=$(ls -l /home/${userid} | grep ${userid})
