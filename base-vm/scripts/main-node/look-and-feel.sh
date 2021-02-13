@@ -7,9 +7,6 @@ sudo apt install -y xfce4 lightdm xfce4-terminal synaptic lightdm-gtk-greeter li
 sudo git clone https://github.com/vinceliuice/vimix-gtk-themes.git --depth=1
 sudo ./vimix-gtk-themes/install.sh
 
-# Change Desktop Theme to vimix-dark-doder
-sudo -u $VM_USER bash -c 'eval `dbus-launch --sh-syntax` xfconf-query -c xsettings -p /Net/ThemeName -s "vimix-dark-doder"'
-
 # Install Paper Icon Theme
 wget https://snwh.org/paper/download.php\?owner\=snwh\&ppa\=ppa\&pkg\=paper-icon-theme,18.04 -O paper-icons.deb || true
 if [[ -s ./paper-icons.deb ]]; then
@@ -23,26 +20,6 @@ else
   sudo meson "build" --prefix=/usr
   sudo ninja -C "build" install
 fi
-
-# Changee icons to Paper theme
-sudo -u $VM_USER bash -c 'eval `dbus-launch --sh-syntax` xfconf-query -c xsettings -p /Net/IconThemeName -s Paper'
-
-# Add/Remove desktop icons
-sudo -u $VM_USER bash -c 'eval `dbus-launch --sh-syntax` xfconf-query --create --channel xfce4-desktop --property /desktop-icons/file-icons/show-filesystem --type bool --set false'
-sudo -u $VM_USER bash -c 'eval `dbus-launch --sh-syntax` xfconf-query --create --channel xfce4-desktop --property /desktop-icons/file-icons/show-home --type bool --set true'
-sudo -u $VM_USER bash -c 'eval `dbus-launch --sh-syntax` xfconf-query --create --channel xfce4-desktop --property /desktop-icons/file-icons/show-trash --type bool --set false'
-
-# Disable feature that causes mouse to get stuck in VirtualBox
-sudo -u $VM_USER bash -c 'eval `dbus-launch --sh-syntax` xfconf-query --create --channel xfwm4 --property /general/easy_click --type string --set none'
-
-# Remove top panel
-sudo -u $VM_USER bash -c 'eval `dbus-launch --sh-syntax` xfconf-query --create --channel xfce4-panel --property /panels --type int --set 0 --force-array'
-
-# Set Icon Size for Bottom Bar - Panel 2
-sudo -u $VM_USER bash -c 'eval `dbus-launch --sh-syntax` xfconf-query --create --channel xfce4-panel --property /panels/panel-2/size --type int --set 48'
-
-# Set Length of Bottom Panel to 85% - Panel 2
-sudo -u $VM_USER bash -c 'eval `dbus-launch --sh-syntax` xfconf-query --create --channel xfce4-panel --property /panels/panel-2/length --type int --set 85'
 
 # Change XFCE4 configuration to use new desktop and icon themes
 sudo sed -i 's/Greybird/vimix-dark-doder/' /etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xsettings.xml

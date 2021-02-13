@@ -179,9 +179,44 @@ sudo systemctl enable k8s-initialize-cluster
 sudo systemctl daemon-reload
 
 sudo mkdir -p /usr/share/kx.as.code
-sudo bash -c "cat <<EOF > /usr/share/kx.as.code/showWelcome.sh
+
+echo '''
 #!/bin/bash
-export VM_USER=$VM_USER
+vmUser=$(id -nu)
+vmUserId=$(id -u)
+# Make desktop icon text transparent
+echo """
+style \"xfdesktop-icon-view\" {
+
+XfdesktopIconView::label-alpha = 0
+
+base[NORMAL] = \"#ffffff\"
+base[SELECTED] = \"#5D97D1\"
+base[ACTIVE] = \"#5D97D1\"
+
+fg[NORMAL] = \"#ffffff\"
+fg[SELECTED] = \"#ffffff\"
+fg[ACTIVE] = \"#ffffff\"
+}
+widget_class \"*XfdesktopIconView*\" style \"xfdesktop-icon-view\"
+""" | sudo tee $HOME/.gtkrc-2.0
+sudo chown ${vmUser}:${vmUser} $HOME/.gtkrc-2.0
+# Change Desktop Theme to vimix-dark-doder
+xfconf-query -c xsettings -p /Net/ThemeName -s "vimix-dark-doder"
+# Change icons to Paper theme
+xfconf-query -c xsettings -p /Net/IconThemeName -s Paper
+# Add/Remove desktop icons
+xfconf-query --create --channel xfce4-desktop --property /desktop-icons/file-icons/show-filesystem --type bool --set false
+xfconf-query --create --channel xfce4-desktop --property /desktop-icons/file-icons/show-home --type bool --set true
+xfconf-query --create --channel xfce4-desktop --property /desktop-icons/file-icons/show-trash --type bool --set false
+# Disable feature that causes mouse to get stuck in VirtualBox
+xfconf-query --create --channel xfwm4 --property /general/easy_click --type string --set none
+# Remove top panel
+xfconf-query --create --channel xfce4-panel --property /panels --type int --set 0 --force-array
+# Set Icon Size for Bottom Bar - Panel 2
+xfconf-query --create --channel xfce4-panel --property /panels/panel-2/size --type int --set 48
+# Set Length of Bottom Panel to 85% - Panel 2
+xfconf-query --create --channel xfce4-panel --property /panels/panel-2/length --type int --set 85
 xfconf-query --create --channel xfce4-desktop --property /desktop-icons/file-icons/show-filesystem --type bool --set false
 xfconf-query --create --channel xfce4-desktop --property /desktop-icons/file-icons/show-home --type bool --set true
 xfconf-query --create --channel xfce4-desktop --property /desktop-icons/file-icons/show-trash --type bool --set false
@@ -199,11 +234,25 @@ xfconf-query --create --channel xfce4-power-manager --property /xfce4-power-mana
 xfconf-query --create --channel xfce4-power-manager --property /xfce4-power-manager/power-button-action --type int --set 0
 xfconf-query --create --channel xfce4-power-manager --property /xfce4-power-manager/presentation-mode --type bool --set false
 xfconf-query --create --channel xfce4-power-manager --property /xfce4-power-manager/show-panel-label --type int --set 0
-xfpanel-switch load /home/$VM_USER/.config/exported-config.tar.bz2 &
+xfpanel-switch load $HOME/.config/exported-config.tar.bz2 &
 /usr/bin/typora /usr/share/kx.as.code/git/kx.as.code/README.md &
+sudo cp /usr/share/kx.as.code/skel/p10k.zsh $HOME/.p10k.zsh
+sudo cp /usr/share/kx.as.code/skel/zshrc $HOME/.zshrc
+sudo cp -r /usr/share/kx.as.code/skel/.oh-my-zsh $HOME/.oh-my-zsh
+# Add check for every login telling user if K8s is ready or not
+sudo -H -i -u ${vmUser} sh -c "mkdir -p /home/${vmUser}/.config/autostart"
+cat <<EOF > /home/${vmUser}/.config/autostart/check-k8s.desktop
+[Desktop Entry]
+Type=Application
+Name=K8s-Startup-Status
+Exec=/usr/share/kx.as.code/checkK8sStartup.sh
+EOF
+chmod 755 /home/${vmUser}/.config/autostart/check-k8s.desktop
+chown ${vmUser}:${vmUser} /home/${vmUser}/.config/autostart/check-k8s.desktop
 sleep 5
-rm -f /home/$VM_USER/.config/autostart/show-welcome.desktop
-EOF"
+rm -f $HOME/.config/autostart/show-welcome.desktop
+''' | sudo tee /usr/share/kx.as.code/showWelcome.sh
+
 sudo chmod +x /usr/share/kx.as.code/showWelcome.sh
 sudo chown -R $VM_USER:$VM_USER /usr/share/kx.as.code
 

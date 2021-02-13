@@ -65,7 +65,7 @@ if [[ ${numUsersToCreate} -ne 0 ]]; then
       uidNumber: '${newGid}'
       gidNumber: '${newGid}'
       homeDirectory: /home/'${userid}'
-      userPassword: '${vmPassword}'
+      userPassword: '${generatedPassword}'
       loginShell: /bin/zsh
       ''' | sed -e 's/^[ \t]*//' | sed '/^$/d' | sudo tee /etc/ldap/new_user_${userid}.ldif
       sudo ldapadd -D "cn=admin,${ldapDn}" -w "${vmPassword}" -H ldapi:/// -f /etc/ldap/new_user_${userid}.ldif
@@ -80,6 +80,10 @@ if [[ ${numUsersToCreate} -ne 0 ]]; then
 
     sudo mkdir -p /home/${userid}/Desktop
     sudo ln -s ${sharedGitHome}/kx.as.code /home/${userid}/Desktop/"KX.AS.CODE Source";
+
+    sudo cp -rf /usr/share/kx.as.code/skel/* /home/${userid}/
+    sudo cp -rf /usr/share/kx.as.code/skel/.* /home/${userid}/
+    sudo rm -rf /home/${userid}/.cache/sessions
 
     # Loop change ownership to wait for OpenLDAP user to be available for setting ownership
     for i in {1..10}

@@ -2,6 +2,7 @@
 
 export INITIAL_LDAP_VM_USER=${VM_USER}
 export LDAP_SERVER=127.0.0.1
+export KX_SKEL_DIR=/usr/share/kx.as.code/skel
 
 # Install OpenLDAP server and utilities
 sudo debconf-set-selections <<< 'slapd/root_password password password'
@@ -71,32 +72,6 @@ gidNumber: 10001
 ''' | sudo tee /etc/ldap/users_group.ldif
 sudo ldapadd -D "cn=admin,${LDAP_DN}" -w "${VM_PASSWORD}" -H ldapi:/// -f /etc/ldap/users_group.ldif
 
-# Add user group
-echo '''
-dn: cn='${INITIAL_LDAP_VM_USER}',ou=Groups,ou=People,'${LDAP_DN}'
-objectClass: posixGroup
-cn: '${INITIAL_LDAP_VM_USER}'
-gidNumber: 10002
-''' | sudo tee /etc/ldap/users_group.ldif
-sudo ldapadd -D "cn=admin,${LDAP_DN}" -w "${VM_PASSWORD}" -H ldapi:/// -f /etc/ldap/users_group.ldif
-
-# Add Base User
-echo '''
-dn: uid='${INITIAL_LDAP_VM_USER}',ou=Users,ou=People,'${LDAP_DN}'
-objectClass: top
-objectClass: account
-objectClass: posixAccount
-objectClass: shadowAccount
-cn: '${INITIAL_LDAP_VM_USER}'
-uid: '${INITIAL_LDAP_VM_USER}'
-uidNumber: 10002
-gidNumber: 10002
-homeDirectory: /home/'${INITIAL_LDAP_VM_USER}'
-userPassword: '${VM_PASSWORD}'
-loginShell: /bin/zsh
-''' | sudo tee /etc/ldap/new_user.ldif
-sudo ldapadd -D "cn=admin,${LDAP_DN}" -w "${VM_PASSWORD}" -H ldapi:/// -f /etc/ldap/new_user.ldif
-
 # Check Result
 sudo ldapsearch -x -b "ou=People,${LDAP_DN}"
 
@@ -136,13 +111,6 @@ olcOverlay: {1}refint
 olcRefintAttribute: memberof member manager owner
 ''' | sudo tee /etc/ldap/refint2.ldif
 
-echo '''
-dn: cn=admins_gon,ou=Groups,ou=People,'${LDAP_DN}'
-objectClass: groupOfNames
-cn: admins_gon
-member: cn=kx.hero,ou=Groups,ou=People,'${LDAP_DN}'
-''' | sudo tee /etc/ldap/group_of_names.ldif
-
 # Apply LDIF files for memberOf config
 sudo ldapadd -Q -Y EXTERNAL -H ldapi:/// -f /etc/ldap/memberof_config.ldif
 sudo ldapmodify -Q -Y EXTERNAL -H ldapi:/// -f /etc/ldap/refint1.ldif
@@ -151,9 +119,6 @@ sudo ldapadd -Q -Y EXTERNAL -H ldapi:/// -f /etc/ldap/refint2.ldif
 #TODO: Fix permissions for applying groupOfName LDIF files ==> ldap_add: Insufficient access ==> additional info: no write access to parent
 #sudo ldapadd -Q -Y EXTERNAL -H ldapi:/// -f /etc/ldap/group_of_names.ldif
 #sudo ldapadd -D "cn=admin,${LDAP_DN}" -w "${VM_PASSWORD}" -H ldapi:/// -f /etc/ldap/group_of_names.ldif
-
-# Test memberOf query
-ldapsearch -x -LLL -H ldap:/// -b uid=kx.hero,ou=Users,ou=People,${LDAP_DN} dn memberof
 
 # Configure Client selections before install
 cat << EOF | sudo debconf-set-selections
@@ -208,28 +173,5 @@ tls_cacertfile /etc/ssl/certs/ca-certificates.crt
 ''' | sudo tee /etc/nslcd.conf
 
 # Ensure home directory is created on first login
-echo "session required      pam_mkhomedir.so   skel=/usr/share/kx.as.code/skel umask=0002" | sudo tee -a /etc/pam.d/common-session
+echo "session required      pam_mkhomedir.so   skel=${KX_SKEL_DIR} umask=0002" | sudo tee -a /etc/pam.d/common-session
 
-# Check if ldap users are returned with getent passwd
-getent passwd
-
-# Delete local user and replace with OpenLDAP user if added to OpenLDAP correctly
-ldapUserExists=$(sudo ldapsearch -x -b "uid=${INITIAL_LDAP_VM_USER},ou=Users,ou=People,${LDAP_DN}" | grep numEntries)
-if [[ -n ${ldapUserExists} ]]; then
-  sudo ps -ef | grep ${INITIAL_LDAP_VM_USER}
-  sudo ps -U ${INITIAL_LDAP_VM_USER} -u ${INITIAL_LDAP_VM_USER} | grep -v grep | grep -v PID | awk '{print $1}' | sudo xargs kill -9 || true
-  sudo ps -ef | grep ${INITIAL_LDAP_VM_USER}
-  sudo userdel ${INITIAL_LDAP_VM_USER}
-  # Loop change ownership to wait for OpenLDAP user to be available for setting ownership
-  for i in {1..10}
-  do
-    echo "i: $i"
-    sudo chown -f -R ${INITIAL_LDAP_VM_USER}:${INITIAL_LDAP_VM_USER} /usr/share/kx.as.code || true
-    directoryOwnership=$(stat -c '%u' /usr/share/kx.as.code)
-    if [[ ${directoryOwnership} -eq 10002 ]]; then
-      break
-    else
-      sleep 10
-    fi
-  done
-fi
