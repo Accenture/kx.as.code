@@ -234,7 +234,7 @@ xfconf-query --create --channel xfce4-power-manager --property /xfce4-power-mana
 xfconf-query --create --channel xfce4-power-manager --property /xfce4-power-manager/power-button-action --type int --set 0
 xfconf-query --create --channel xfce4-power-manager --property /xfce4-power-manager/presentation-mode --type bool --set false
 xfconf-query --create --channel xfce4-power-manager --property /xfce4-power-manager/show-panel-label --type int --set 0
-xfpanel-switch load $HOME/.config/exported-config.tar.bz2 &
+xfpanel-switch load /usr/share/kx.as.code/skel/.config/exported-config.tar.bz2 &
 /usr/bin/typora /usr/share/kx.as.code/git/kx.as.code/README.md &
 sudo cp /usr/share/kx.as.code/skel/p10k.zsh $HOME/.p10k.zsh
 sudo cp /usr/share/kx.as.code/skel/zshrc $HOME/.zshrc
@@ -250,6 +250,7 @@ EOF
 chmod 755 /home/${vmUser}/.config/autostart/check-k8s.desktop
 chown ${vmUser}:${vmUser} /home/${vmUser}/.config/autostart/check-k8s.desktop
 sleep 5
+sudo chmod 777 /usr/share/kx.as.code/git/*
 rm -f $HOME/.config/autostart/show-welcome.desktop
 ''' | sudo tee /usr/share/kx.as.code/showWelcome.sh
 
