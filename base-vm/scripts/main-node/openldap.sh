@@ -213,23 +213,23 @@ echo "session required      pam_mkhomedir.so   skel=/usr/share/kx.as.code/skel u
 # Check if ldap users are returned with getent passwd
 getent passwd
 
-# Delete local user and replace with ldap user if added to LDAP correctly
+# Delete local user and replace with OpenLDAP user if added to OpenLDAP correctly
 ldapUserExists=$(sudo ldapsearch -x -b "uid=${INITIAL_LDAP_VM_USER},ou=Users,ou=People,${LDAP_DN}" | grep numEntries)
 if [[ -n ${ldapUserExists} ]]; then
   sudo ps -ef | grep ${INITIAL_LDAP_VM_USER}
   sudo ps -U ${INITIAL_LDAP_VM_USER} -u ${INITIAL_LDAP_VM_USER} | grep -v grep | grep -v PID | awk '{print $1}' | sudo xargs kill -9 || true
   sudo ps -ef | grep ${INITIAL_LDAP_VM_USER}
   sudo userdel ${INITIAL_LDAP_VM_USER}
-  # Loop change ownership to allow OpenLDAP user to be available for setting ownership
+  # Loop change ownership to wait for OpenLDAP user to be available for setting ownership
   for i in {1..10}
   do
-    sudo chown -R ${INITIAL_LDAP_VM_USER}:${INITIAL_LDAP_VM_USER} /usr/share/kx.as.code || true
-    DIRECTORY_OWNERSHIP=$(ls -l /usr/share/kx.as.code | grep ${INITIAL_LDAP_VM_USER})
-    if [[ -z ${DIRECTORY_OWNERSHIP} ]]; then
-      sleep 5
-    else
+    echo "i: $i"
+    sudo chown -f -R ${INITIAL_LDAP_VM_USER}:${INITIAL_LDAP_VM_USER} /usr/share/kx.as.code || true
+    directoryOwnership=$(stat -c '%u' /usr/share/kx.as.code)
+    if [[ ${directoryOwnership} -eq 10002 ]]; then
       break
+    else
+      sleep 10
     fi
   done
-
 fi

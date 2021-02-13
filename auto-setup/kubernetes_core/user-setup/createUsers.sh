@@ -81,18 +81,18 @@ if [[ ${numUsersToCreate} -ne 0 ]]; then
     sudo mkdir -p /home/${userid}/Desktop
     sudo ln -s ${sharedGitHome}/kx.as.code /home/${userid}/Desktop/"KX.AS.CODE Source";
 
-    # Loop change ownership to allow OPenLDAP user to be available for setting ownership
+    # Loop change ownership to wait for OpenLDAP user to be available for setting ownership
     for i in {1..10}
     do
-      sudo chown -R ${userid}:${userid} /home/${userid} || true
-      directoryOwnership=$(ls -l /home/${userid} | grep ${userid})
-      if [[ -z ${directoryOwnership} ]]; then
-        sleep 5
-      else
+      echo "i: $i"
+      sudo chown -f -R ${userid}:${userid} /home/${userid} || true
+      directoryOwnership=$(stat -c '%u' /home/${userid})
+      if [[ ${directoryOwnership} -eq ${newGid} ]]; then
         break
+      else
+        sleep 10
       fi
     done
-
   done
 fi
 
