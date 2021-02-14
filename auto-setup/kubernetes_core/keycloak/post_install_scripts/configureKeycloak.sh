@@ -17,7 +17,8 @@ do
   containerReadyState=$(kubectl get pods -l 'app.kubernetes.io/name=keycloak' -n ${namespace} -o json | jq '.items[].status.containerStatuses[].ready')
   if [[ "${containerReadyState}" == "true" ]]; then
     kubectl -n ${namespace} exec ${kcPod} -- \
-      ${kcAdmCli} config credentials --server ${kcInternalUrl}/auth --realm master --user admin --password ${vmPassword} --client admin-cli || true
+      ${kcAdmCli} config credentials --server ${kcInternalUrl}/auth --realm master --user admin --password ${vmPassword} --client admin-cli
+    break
   else
     sleep 10
   fi
