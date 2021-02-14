@@ -29,3 +29,5 @@ base-vm/**/config.yaml
 /profiles/*/terraform
 /profiles/*/terraform.tfstate
 /profiles/*/terraform.tfstate.backup
+/KX.AS.CODE.iml
+/workspace.code-workspace
