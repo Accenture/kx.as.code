@@ -31,3 +31,4 @@ base-vm/**/config.yaml
 /profiles/*/terraform.tfstate.backup
 /KX.AS.CODE.iml
 /workspace.code-workspace
+/.idea/
