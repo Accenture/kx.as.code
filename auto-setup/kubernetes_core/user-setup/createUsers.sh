@@ -82,7 +82,7 @@ if [[ ${numUsersToCreate} -ne 0 ]]; then
         objectClass: groupOfNames
         cn: kcadmins
         member: uid='${userid}',ou=Users,ou=People,'${ldapDn}'
-        ''' | sudo tee /etc/ldap/create-groupOfNames-group.ldif
+        ''' | sed -e 's/^[ \t]*//' | sed '/^$/d' | sudo tee /etc/ldap/create-groupOfNames-group.ldif
         sudo ldapadd -D "cn=admin,${ldapDn}" -w "${vmPassword}" -H ldapi:/// -f /etc/ldap/create-groupOfNames-group.ldif
       else
         # Add user to existing kcadmins group
