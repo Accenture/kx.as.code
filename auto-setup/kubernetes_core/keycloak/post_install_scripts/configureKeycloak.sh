@@ -11,7 +11,7 @@ export kcAdmCli=/opt/jboss/keycloak/bin/kcadm.sh
 export kcPod=$(kubectl get pods -l 'app.kubernetes.io/name=keycloak' -n keycloak --output=json | jq -r '.items[].metadata.name')
 
 # Set Keycloak credential for upcoming API calls
-for i in {1..10}
+for i in {1..50}
 do
   # Check if Keyclock is ready to receive requests, else wait and try again
   containerReadyState=$(kubectl get pods -l 'app.kubernetes.io/name=keycloak' -n ${namespace} -o json | jq '.items[].status.containerStatuses[].ready')
