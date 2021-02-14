@@ -82,7 +82,7 @@ changetype: modify
 add: olcModuleLoad
 olcModuleLoad: memberof.la
 ''' | sudo tee /etc/ldap/update-module.ldif
-sudo ldapadd -D "cn=admin,${LDAP_DN}" -w "${VM_PASSWORD}" -H ldapi:/// -f /etc/ldap/update-module.ldif
+sudo ldapadd -D "cn=admin,${LDAP_DN}" -w "${VM_PASSWORD}" -H ldapi:/// -f /etc/ldap/update-module.ldif || true
 
 # Check module loaded correctly
 ldapsearch -LLL -Y EXTERNAL -H ldapi:/// -b cn=config -LLL | grep -i module
@@ -100,7 +100,7 @@ olcMemberOfGroupOC: groupOfNames
 olcMemberOfMemberAD: member
 olcMemberOfMemberOfAD: memberOf
 ''' | sudo tee /etc/ldap/add-memberof-overlay.ldif
-sudo ldapadd -D "cn=admin,${LDAP_DN}" -w "${VM_PASSWORD}" -H ldapi:/// -f /etc/ldap/add-memberof-overlay.ldif
+sudo ldapadd -D "cn=admin,${LDAP_DN}" -w "${VM_PASSWORD}" -H ldapi:/// -f /etc/ldap/add-memberof-overlay.ldif  || true
 
 echo '''
 dn: cn=module{0},cn=config
@@ -108,7 +108,7 @@ changetype: modify
 add: olcModuleLoad
 olcModuleLoad: refint.la
 ''' | sudo tee /etc/ldap/add-refint.ldif
-sudo ldapadd -D "cn=admin,${LDAP_DN}" -w "${VM_PASSWORD}" -H ldapi:/// -f /etc/ldap/add-refint.ldif
+sudo ldapadd -D "cn=admin,${LDAP_DN}" -w "${VM_PASSWORD}" -H ldapi:/// -f /etc/ldap/add-refint.ldif  || true
 
 # Create "groupOfNames" group for Keycloak
 echo '''
@@ -116,7 +116,7 @@ dn: cn=kcadmins,ou=Groups,ou=People,'${LDAP_DN}'
 objectClass: groupOfNames
 cn: kcadmins
 ''' | sudo tee /etc/ldap/create-groupOfNames-group.ldif
-sudo ldapadd -D "cn=admin,${LDAP_DN}" -w "${VM_PASSWORD}" -H ldapi:/// -f /etc/ldap/create-groupOfNames-group.ldif
+sudo ldapadd -D "cn=admin,${LDAP_DN}" -w "${VM_PASSWORD}" -H ldapi:/// -f /etc/ldap/create-groupOfNames-group.ldif  || true
 
 # Configure Client selections before install
 cat << EOF | sudo debconf-set-selections
