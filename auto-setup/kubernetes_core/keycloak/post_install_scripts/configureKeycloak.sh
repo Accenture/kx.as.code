@@ -10,9 +10,18 @@ export kcBinDir=/opt/jboss/keycloak/bin/
 export kcAdmCli=/opt/jboss/keycloak/bin/kcadm.sh
 export kcPod=$(kubectl get pods -l 'app.kubernetes.io/name=keycloak' -n keycloak --output=json | jq -r '.items[].metadata.name')
 
-# Get credential token
-kubectl -n ${namespace} exec ${kcPod} -- \
-  ${kcAdmCli} config credentials --server ${kcInternalUrl}/auth --realm master --user admin --password ${vmPassword} --client admin-cli
+# Set Keycloak credential for upcoming API calls
+for i in {1..10}
+do
+  # Check if Keyclock is ready to receive requests, else wait and try again
+  containerReadyState=$(kubectl get pods -l 'app.kubernetes.io/name=keycloak' -n ${namespace} -o json | jq '.items[].status.containerStatuses[].ready')
+  if [[ "${containerReadyState}" == "true" ]]; then
+    kubectl -n ${namespace} exec ${kcPod} -- \
+      ${kcAdmCli} config credentials --server ${kcInternalUrl}/auth --realm master --user admin --password ${vmPassword} --client admin-cli || true
+  else
+    sleep 10
+  fi
+done
 
 # Create KX.AS.CODE Realm
 kubectl -n ${namespace} exec ${kcPod} -- \
@@ -94,8 +103,8 @@ ldapProviderId=$(kubectl -n ${namespace} exec ${kcPod} -- \
   -s providerType=org.keycloak.storage.UserStorageProvider \
   -s parentId=${kcParentId} \
   -s 'config.priority=["1"]' \
-  -s 'config.fullSyncPeriod=["-1"]' \
-  -s 'config.changedSyncPeriod=["-1"]' \
+  -s 'config.fullSyncPeriod=["86400"]' \
+  -s 'config.changedSyncPeriod=["600"]' \
   -s 'config.cachePolicy=["DEFAULT"]' \
   -s 'config.batchSizeForSync=["1000"]' \
   -s 'config.editMode=["WRITABLE"]' \
@@ -129,7 +138,7 @@ kubectl -n ${namespace} exec ${kcPod} -- \
   -s 'config."preserve.group.inheritance"=["true"]' \
   -s 'config."membership.ldap.attribute"=["member"]' \
   -s 'config."membership.attribute.type"=["DN"]' \
-  -s 'config."groups.ldap.filter"=[]' \
+  -s 'config."groups.ldap.filter"=["(&(objectClass=groupOfNames)(cn=kcadmins))"]' \
   -s 'config.mode=["LDAP_ONLY"]' \
   -s 'config."user.roles.retrieve.strategy"=["LOAD_GROUPS_BY_MEMBER_ATTRIBUTE"]' \
   -s 'config."mapped.group.attributes"=["admins"]' \

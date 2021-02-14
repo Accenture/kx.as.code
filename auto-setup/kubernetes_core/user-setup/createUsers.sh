@@ -35,7 +35,7 @@ if [[ ${numUsersToCreate} -ne 0 ]]; then
       fi
 
       # Generate password
-      generatedPassword=$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${1:-12};echo;)
+      generatedPassword=$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${1:-8};echo;)
       echo "${userid}:${generatedPassword}" | sudo tee -a ${sharedKxHome}/.users
 
       # Determine UID/GID for new user
