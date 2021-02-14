@@ -23,6 +23,6 @@ sudo cp -r /home/${VM_USER}/Desktop/* ${SKELDIR}/Desktop
 
 # Ensure KX.HERO user is in sync
 sudo cp -rf ${SKELDIR}/* /home/${VM_USER}/
-sudo cp -rf ${SKELDIR}/.* /home/${VM_USER}/
+sudo cp -rf ${SKELDIR}/.config/* /home/${VM_USER}/.config/
 sudo rm -rf /home/${VM_USER}/.cache/sessions
 sudo chown -R  ${VM_USER}:${VM_USER} /home/${VM_USER}
