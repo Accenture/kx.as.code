@@ -110,14 +110,6 @@ olcModuleLoad: refint.la
 ''' | sudo tee /etc/ldap/add-refint.ldif
 sudo ldapadd -Y EXTERNAL -H ldapi:/// -f /etc/ldap/add-refint.ldif
 
-# Create "groupOfNames" group for Keycloak
-echo '''
-dn: cn=kcadmins,ou=Groups,ou=People,'${LDAP_DN}'
-objectClass: groupOfNames
-cn: kcadmins
-''' | sudo tee /etc/ldap/create-groupOfNames-group.ldif
-sudo ldapadd -D "cn=admin,${LDAP_DN}" -w "${VM_PASSWORD}" -H ldapi:/// -f /etc/ldap/create-groupOfNames-group.ldif
-
 # Configure Client selections before install
 cat << EOF | sudo debconf-set-selections
 libnss-ldap libnss-ldap/dblogin boolean false

@@ -73,14 +73,27 @@ if [[ ${numUsersToCreate} -ne 0 ]]; then
       # Check Result
       sudo ldapsearch -x -b "ou=People,${ldapDn}"
 
-      # Add user to kcadmins
-      echo '''
-      dn: uid='${userid}',ou=Users,ou=People,'${ldapDn}'
-      changetype: modify
-      add: memberOf
-      memberOf: cn=kcadmins,ou=Groups,ou=People,'${ldapDn}'
-      ''' | sed -e 's/^[ \t]*//' | sed '/^$/d' | sudo tee /etc/ldap/add_user_${userid}_to_kcadmins.ldif
-      sudo ldapadd -D "cn=admin,${ldapDn}" -w "${vmPassword}"  -H ldapi:/// -f /etc/ldap/add_user_${userid}_to_kcadmins.ldif
+      # Create "groupOfNames" group for Keycloak if it does not already exist
+      kcadminGroupExists=$(sudo ldapsearch -H ldapi:/// -Y EXTERNAL -LLL -b "${ldapDn}" cn=kcadmins 2>/dev/null)
+      if [[ -z ${kcadminGroupExists} ]]; then
+        # Create kcadmins group with new user
+        echo '''
+        dn: cn=kcadmins,ou=Groups,ou=People,'${ldapDn}'
+        objectClass: groupOfNames
+        cn: kcadmins
+        member: uid='${userid}',ou=Users,ou=People,'${ldapDn}'
+        ''' | sudo tee /etc/ldap/create-groupOfNames-group.ldif
+        sudo ldapadd -D "cn=admin,${ldapDn}" -w "${vmPassword}" -H ldapi:/// -f /etc/ldap/create-groupOfNames-group.ldif
+      else
+        # Add user to existing kcadmins group
+        echo '''
+        dn: uid='${userid}',ou=Users,ou=People,'${ldapDn}'
+        changetype: modify
+        add: memberOf
+        memberOf: cn=kcadmins,ou=Groups,ou=People,'${ldapDn}'
+        ''' | sed -e 's/^[ \t]*//' | sed '/^$/d' | sudo tee /etc/ldap/add_user_${userid}_to_kcadmins.ldif
+        sudo ldapadd -D "cn=admin,${ldapDn}" -w "${vmPassword}"  -H ldapi:/// -f /etc/ldap/add_user_${userid}_to_kcadmins.ldif
+      fi
 
       # Check user was added successfully
       ldapsearch -H ldapi:/// -Y EXTERNAL -LLL -b "${ldapDn}" memberOf 2>/dev/null | grep memberOf
