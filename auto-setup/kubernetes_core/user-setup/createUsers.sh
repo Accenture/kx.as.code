@@ -34,7 +34,7 @@ if [[ ${numUsersToCreate} -ne 0 ]]; then
         yes | sudo -u ${userid} ssh-keygen -f ssh-keygen -m PEM -t rsa -b 4096 -q -f /home/${userid}/.ssh/id_rsa -N ''
       fi
 
-      # Generatw password
+      # Generate password
       generatedPassword=$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${1:-12};echo;)
       echo "${userid}:${generatedPassword}" | sudo tee -a ${sharedKxHome}/.users
 
@@ -44,7 +44,7 @@ if [[ ${numUsersToCreate} -ne 0 ]]; then
       newGid=$(( $lastLdapGid + 1 ))
       echo "New GID: $newGid"
  
-       # Add User Group to OpenLDAP
+       # Add User Group to OpenLDAP for Linux login
       echo '''
       dn: cn='${userid}',ou=Groups,ou=People,'${ldapDn}'
       objectClass: posixGroup
@@ -72,6 +72,18 @@ if [[ ${numUsersToCreate} -ne 0 ]]; then
 
       # Check Result
       sudo ldapsearch -x -b "ou=People,${ldapDn}"
+
+      # Add user to kcadmins
+      echo '''
+      dn: uid='${userid}',ou=Users,ou=People,'${ldapDn}'
+      changetype: modify
+      add: memberOf
+      memberOf: cn=kcadmins,ou=Groups,ou=People,'${ldapDn}'
+      ''' | sed -e 's/^[ \t]*//' | sed '/^$/d' | sudo tee /etc/ldap/add_user_${userid}_to_kcadmins.ldif
+      sudo ldapadd -D "cn=admin,${ldapDn}" -w "${vmPassword}"  -H ldapi:/// -f /etc/ldap/add_user_${userid}_to_kcadmins.ldif
+
+      # Check user was added successfully
+      ldapsearch -H ldapi:/// -Y EXTERNAL -LLL -b "${ldapDn}" memberOf 2>/dev/null | grep memberOf
 
       # Give user root priviliges
       printf "${userid}        ALL=(ALL)       NOPASSWD: ALL\n" | sudo tee -a /etc/sudoers
@@ -152,6 +164,15 @@ if [[ ${numUsersToCreate} -ne 0 ]]; then
         sleep 10
       fi
     done
+
+    # Add KX.AS.CODE Root CA cert to Chrome CA Store
+    sudo rm -rf /home/${userid}/.pki
+    mkdir -p /home/${userid}/.pki/nssdb/
+    chown -R ${userid}:${userid} /home/${userid}/.pki
+    sudo -H -i -u ${userid} sh -c "certutil -N --empty-password -d sql:/home/${userid}/.pki/nssdb"
+    sudo -H -i -u ${userid} sh -c "/usr/local/bin/trustKXRootCAs.sh"
+    sudo -H -i -u ${userid} sh -c "certutil -L -d sql:/home/${userid}/.pki/nssdb"
+
   done
 fi
 

@@ -75,50 +75,48 @@ sudo ldapadd -D "cn=admin,${LDAP_DN}" -w "${VM_PASSWORD}" -H ldapi:/// -f /etc/l
 # Check Result
 sudo ldapsearch -x -b "ou=People,${LDAP_DN}"
 
-# Add memberOf config for Keycloak sync
+# Add memberOf Overlay Module
 echo '''
-dn: cn=module,cn=config
-cn: module
-objectClass: olcModuleList
-olcModuleLoad: memberof
-olcModulePath: /usr/lib/ldap
+dn: cn=module{0},cn=config
+changetype: modify
+add: olcModuleLoad
+olcModuleLoad: memberof.la
+''' | sudo tee /etc/ldap/update-module.ldif
+ldapadd -Y EXTERNAL -H ldapi:/// -f /etc/ldap/update-module.ldif
 
-dn: olcOverlay={0}memberof,olcDatabase={1}mdb,cn=config
-objectClass: olcConfig
+# Check module loaded correctly
+ldapsearch -LLL -Y EXTERNAL -H ldapi:/// -b  cn=config -LLL | grep -i module
+
+echo '''
+dn: olcOverlay=memberof,olcDatabase={1}mdb,cn=config
 objectClass: olcMemberOf
 objectClass: olcOverlayConfig
+objectClass: olcConfig
 objectClass: top
 olcOverlay: memberof
-olcMemberOfDangling: ignore
 olcMemberOfRefInt: TRUE
+olcMemberOfDangling: ignore
 olcMemberOfGroupOC: groupOfNames
 olcMemberOfMemberAD: member
-''' | sudo tee /etc/ldap/memberof_config.ldif
+olcMemberOfMemberOfAD: memberOf
+''' | sudo tee /etc/ldap/add-memberof-overlay.ldif
+ldapadd -Y EXTERNAL -H ldapi:/// -f /etc/ldap/add-memberof-overlay.ldif
 
 echo '''
-dn: cn=module{1},cn=config
-add: olcmoduleload
-olcmoduleload: refint
-''' | sudo tee /etc/ldap/refint1.ldif
+dn: cn=module{0},cn=config
+changetype: modify
+add: olcModuleLoad
+olcModuleLoad: refint.la
+''' | sudo tee /etc/ldap/add-refint.ldif
+ldapadd -Y EXTERNAL -H ldapi:/// -f /etc/ldap/add-refint.ldif
 
+# Create "groupOfNames" group for Keycloak
 echo '''
-dn: olcOverlay={1}refint,olcDatabase={1}mdb,cn=config
-objectClass: olcConfig
-objectClass: olcOverlayConfig
-objectClass: olcRefintConfig
-objectClass: top
-olcOverlay: {1}refint
-olcRefintAttribute: memberof member manager owner
-''' | sudo tee /etc/ldap/refint2.ldif
-
-# Apply LDIF files for memberOf config
-sudo ldapadd -Q -Y EXTERNAL -H ldapi:/// -f /etc/ldap/memberof_config.ldif
-sudo ldapmodify -Q -Y EXTERNAL -H ldapi:/// -f /etc/ldap/refint1.ldif
-sudo ldapadd -Q -Y EXTERNAL -H ldapi:/// -f /etc/ldap/refint2.ldif
-
-#TODO: Fix permissions for applying groupOfName LDIF files ==> ldap_add: Insufficient access ==> additional info: no write access to parent
-#sudo ldapadd -Q -Y EXTERNAL -H ldapi:/// -f /etc/ldap/group_of_names.ldif
-#sudo ldapadd -D "cn=admin,${LDAP_DN}" -w "${VM_PASSWORD}" -H ldapi:/// -f /etc/ldap/group_of_names.ldif
+dn: cn=kcadmins,ou=Groups,ou=People,'${LDAP_DN}'
+objectClass: groupOfNames
+cn: kcadmins
+''' | sudo tee /etc/ldap/create-groupOfNames-group.ldif
+sudo ldapadd -D "cn=admin,${LDAP_DN}" -w "${VM_PASSWORD}"  -H ldapi:/// -f /etc/ldap/create-groupOfNames-group.ldif
 
 # Configure Client selections before install
 cat << EOF | sudo debconf-set-selections
