@@ -1,11 +1,12 @@
 #!/bin/bash -eux
+set -o pipefail
 
 # Ensure time is accurate
 sudo apt-get install -y ntpdate
 
 KUBEDIR=/home/$VM_USER/Kubernetes
-sudo mkdir -p $KUBEDIR
-sudo chown $VM_USER:$VM_USER $KUBEDIR
+sudo mkdir -p "$KUBEDIR"
+sudo chown "$VM_USER":"$VM_USER" "$KUBEDIR"
 
 # Let iptables see bridged traffic
 sudo bash -c 'cat <<EOF > /etc/sysctl.d/k8s.conf
@@ -35,9 +36,9 @@ sudo apt-mark hold kubelet kubeadm kubectl
 sudo swapoff -a
 sudo sed -i '/swap/d' /etc/fstab
 
-sudo chmod 755 /home/${BASE_IMAGE_SSH_USER}/scripts/registerNode.sh
-sudo chown $VM_USER:$VM_USER /home/${BASE_IMAGE_SSH_USER}/scripts/registerNode.sh
-sudo cp /home/${BASE_IMAGE_SSH_USER}/scripts/registerNode.sh $KUBEDIR
+sudo chmod 755 "/home/${BASE_IMAGE_SSH_USER}/scripts/registerNode.sh"
+sudo chown "$VM_USER":"$VM_USER" "/home/${BASE_IMAGE_SSH_USER}/scripts/registerNode.sh"
+sudo cp "/home/${BASE_IMAGE_SSH_USER}/scripts/registerNode.sh" "$KUBEDIR"
 
 # Add Kubernetes Join Script to systemd
 sudo bash -c "cat <<EOF > /etc/systemd/system/k8s-register-node.service

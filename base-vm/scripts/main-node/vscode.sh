@@ -1,4 +1,5 @@
 #!/bin/bash -eux
+set -o pipefail
 
 # Install Visual Studio Code editor
 curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg
@@ -9,14 +10,14 @@ sudo apt-get update -y
 sudo apt-get install -y code
 
 # Create the VSCode user config directory
-sudo mkdir -p /home/$VM_USER/.config/Code/User
+sudo mkdir -p "/home/$VM_USER/.config/Code/User"
 
 # Install fonts for VSCODE terminal
 wget https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Regular.ttf
 wget https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Bold.ttf
 wget https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Italic.ttf
 wget https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Bold%20Italic.ttf
-sudo mv *.ttf /usr/share/fonts/truetype
+sudo mv ./*.ttf /usr/share/fonts/truetype
 sudo fc-cache -vf /usr/share/fonts/
 
 # Switch off telemetry consent
@@ -30,7 +31,7 @@ sudo bash -c "cat <<EOF > /home/$VM_USER/.config/Code/User/settings.json
 }
 EOF"
 
-sudo mkdir -p /home/$VM_USER/.vscode/
+sudo mkdir -p "/home/$VM_USER/.vscode/"
 sudo bash -c "cat <<EOF > /home/$VM_USER/.vscode/KX.AS.CODE.code-workspace
 {
 	\"folders\": [
@@ -1540,5 +1541,5 @@ sudo bash -c "cat <<EOF > /home/$VM_USER/.config/Code/storage.json
 EOF"
 
 # Change the ownership to the $VM_USER user
-sudo chown -R $VM_USER:$VM_USER /home/$VM_USER/.config
-sudo chown -R $VM_USER:$VM_USER /home/$VM_USER/.vscode
+sudo chown -R "$VM_USER":"$VM_USER" "/home/$VM_USER/.config"
+sudo chown -R "$VM_USER":"$VM_USER" "/home/$VM_USER/.vscode"

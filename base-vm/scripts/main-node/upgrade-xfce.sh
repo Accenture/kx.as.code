@@ -1,4 +1,5 @@
 #!/bin/bash -eux
+set -o pipefail
 
 # Update XFCE for GTK3 theme support - work-around until Debian Bullseye arrives
 sudo bash -c """

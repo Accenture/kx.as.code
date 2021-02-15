@@ -1,4 +1,5 @@
 #!/bin/bash -eux
+set -o pipefail
 
 vmUser=${VM_USER}
 vmPassword=${VM_PASSWORD}
@@ -35,7 +36,7 @@ auth-provider: net.sourceforge.guacamole.net.basic.BasicFileAuthenticationProvid
 basic-user-mapping: /etc/guacamole/user-mapping.xml
 ''' | sudo tee /etc/guacamole/guacamole.properties
 
-md5Password=$(echo -n ${vmPassword} | openssl md5 | cut -f2 -d' ')
+md5Password=$(echo -n "${vmPassword}" | openssl md5 | cut -f2 -d' ')
 vncPassword=$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${1:-8};echo;)
 
 echo '''
@@ -62,15 +63,15 @@ echo '''
 
 sudo apt -y install tigervnc-standalone-server
 
-sudo mkdir -p /home/${vmUser}/.vnc
-echo ${vncPassword} | sudo bash -c "vncpasswd -f > /home/${vmUser}/.vnc/passwd"
-sudo chown -R ${vmUser}:${vmUser} /home/${vmUser}/.vnc
-sudo chmod 0600 /home/${vmUser}/.vnc/passwd
+sudo mkdir -p "/home/${vmUser}/.vnc"
+echo "${vncPassword}" | sudo bash -c "vncpasswd -f > /home/${vmUser}/.vnc/passwd"
+sudo chown -R "${vmUser}":"${vmUser}" "/home/${vmUser}/.vnc"
+sudo chmod 0600 "/home/${vmUser}/.vnc/passwd"
 
-sudo -H -i -u ${vmUser} sh -c "vncserver"
+sudo -H -i -u "${vmUser}" sh -c "vncserver"
 
-vmUserId=$(id -g ${vmUser})
-vmUserGroupId=$(id -u ${vmUser})
+vmUserId=$(id -g "${vmUser}")
+vmUserGroupId=$(id -u "${vmUser}")
 
 echo '''
 [Unit]
@@ -96,7 +97,7 @@ ExecStop=/usr/bin/vncserver -kill :%i
 WantedBy=multi-user.target
 ''' | sudo tee /etc/systemd/system/vncserver@.service
 
-sudo -H -i -u ${vmUser} sh -c "vncserver -kill :1"
+sudo -H -i -u "${vmUser}" sh -c "vncserver -kill :1"
 sudo systemctl start vncserver@1.service
 sudo systemctl enable vncserver@1.service
 sudo systemctl status vncserver@1.service

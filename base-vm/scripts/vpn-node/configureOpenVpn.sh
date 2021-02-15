@@ -1,11 +1,15 @@
 #!/bin/bash -eux
+set -o pipefail
+
+vmUser=${VM_USER}
 
 export easyRsaVersion=v3.0.6
 export easyRsaServerIp=192.168.40.204
 export EASYRSA_BATCH=1
-export serverIpAddress=$(/sbin/ifconfig ens33 | awk '/inet /{print $2}')
+serverIpAddress=$(/sbin/ifconfig ens33 | awk '/inet /{print $2}')
+export serverIpAddress
 # Add user SSH key to CA server
-sshpass -f /home/${vmUser}/.config/kx.as.code/.user.cred ssh-copy-id -o StrictHostKeyChecking=no ${vmUser}@${easyRsaServerIp}
+sshpass -f "/home/${vmUser}/.config/kx.as.code/.user.cred" ssh-copy-id -o StrictHostKeyChecking=no "${vmUser}@${easyRsaServerIp}"
 
 tar xvf ~/EasyRSA-unix-${easyRsaVersion}.tgz -C ~/
 cd ~/EasyRSA-${easyRsaVersion}/
@@ -23,16 +27,16 @@ if [ ! -f /etc/openvpn/server.crt ]; then
   sed -i 's/^RANDFILE/#&/' pki/openssl-easyrsa.cnf
   ./easyrsa gen-req server nopass
   sudo cp ~/EasyRSA-${easyRsaVersion}/pki/private/server.key /etc/openvpn/
-  scp ~/EasyRSA-${easyRsaVersion}/pki/reqs/server.req ${vmUser}@${easyRsaServerIp}:/tmp
-  ssh -tt ${vmUser}@${easyRsaServerIp} -o StrictHostKeyChecking=no "export EASYRSA_BATCH=1; cd /home/${vmUser}/EasyRSA-${easyRsaVersion}; ./easyrsa import-req /tmp/server.req server"
-  ssh -tt ${vmUser}@${easyRsaServerIp} -o StrictHostKeyChecking=no "export EASYRSA_BATCH=1; cd /home/${vmUser}/EasyRSA-${easyRsaVersion}; ./easyrsa sign-req server server"
-  scp -o StrictHostKeyChecking=no ${vmUser}@${easyRsaServerIp}:/home/${vmUser}/EasyRSA-${easyRsaVersion}/pki/issued/server.crt /tmp
-  sudo cp /tmp/{server.crt} /etc/openvpn/
+  scp ~/EasyRSA-${easyRsaVersion}/pki/reqs/server.req "${vmUser}@${easyRsaServerIp}:/tmp"
+  ssh -tt "${vmUser}@${easyRsaServerIp}" -o StrictHostKeyChecking=no "export EASYRSA_BATCH=1; cd /home/${vmUser}/EasyRSA-${easyRsaVersion}; ./easyrsa import-req /tmp/server.req server"
+  ssh -tt "${vmUser}@${easyRsaServerIp}" -o StrictHostKeyChecking=no "export EASYRSA_BATCH=1; cd /home/${vmUser}/EasyRSA-${easyRsaVersion}; ./easyrsa sign-req server server"
+  scp -o StrictHostKeyChecking=no "${vmUser}@${easyRsaServerIp}:/home/${vmUser}/EasyRSA-${easyRsaVersion}/pki/issued/server.crt" /tmp
+  sudo cp "/tmp/{server.crt}" /etc/openvpn/
 fi
 
 if [ ! -f /etc/openvpn/ca.crt ]; then
-  scp -o StrictHostKeyChecking=no ${vmUser}@${easyRsaServerIp}:/home/${vmUser}/EasyRSA-${easyRsaVersion}/pki/ca.crt /tmp
-  sudo cp /tmp/{ca.crt} /etc/openvpn/
+  scp -o StrictHostKeyChecking=no "${vmUser}@${easyRsaServerIp}:/home/${vmUser}/EasyRSA-${easyRsaVersion}/pki/ca.crt" /tmp
+  sudo cp "/tmp/{ca.crt}" /etc/openvpn/
   # Trust ca.crt
   sudo cp /tmp/ca.crt /usr/local/share/ca-certificates/
   sudo update-ca-certificates
@@ -65,7 +69,7 @@ sudo sed -i '/^#cipher AES-256-CBC/s/^#//' ~/openvpn-configs/client.conf
 sudo sed -i '/^cipher AES-256-CBC/a auth SHA256' ~/openvpn-configs/client.conf
 echo "key-direction 1" | sudo tee -a ~/openvpn-configs/client.conf
 
-sudo chown -R ${vmUser}:${vmUser} /home/${vmUser}/openvpn-configs
+sudo chown -R "${vmUser}":"${vmUser}" "/home/${vmUser}/openvpn-configs"
 
 # Create script for generating OpenVPN client config files
 cat <<EOF > ~/openvpn-configs/generate_openvpn_config.sh
@@ -102,24 +106,24 @@ cd ~/EasyRSA-${easyRsaVersion}/
 clientCertsToCreate=('kx.hero' 'patrick.g.delamere')
   for client in "${clientCertsToCreate[@]}"
   do
-    if [ ! -f /home/${vmUser}/EasyRSA-${easyRsaVersion}/pki/issued/${client}.crt ]; then
+    if [ ! -f "/home/${vmUser}/EasyRSA-${easyRsaVersion}/pki/issued/${client}.crt" ]; then
       echo "Generating client cert for ${client}"
       cd ~/EasyRSA-${easyRsaVersion}/
-      ./easyrsa gen-req ${client} nopass
-      cp pki/private/${client}.key ~/openvpn-configs/keys/
-      scp -o StrictHostKeyChecking=no pki/reqs/${client}.req ${vmUser}@${easyRsaServerIp}:/tmp
-      ssh -tt ${vmUser}@${easyRsaServerIp} -o StrictHostKeyChecking=no "rm -f /home/${vmUser}/EasyRSA-v3.0.6/pki/reqs/${client}.req; export EASYRSA_BATCH=1; cd /home/${vmUser}/EasyRSA-${easyRsaVersion}; ./easyrsa import-req /tmp/${client}.req ${client}"
-      ssh -tt ${vmUser}@${easyRsaServerIp} -o StrictHostKeyChecking=no "export EASYRSA_BATCH=1; cd /home/${vmUser}/EasyRSA-${easyRsaVersion}; ./easyrsa sign-req client ${client}"
-      scp -o StrictHostKeyChecking=no ${vmUser}@${easyRsaServerIp}:/home/${vmUser}/EasyRSA-${easyRsaVersion}/pki/issued/${client}.crt /tmp
-      cp /tmp/${client}.crt ~/openvpn-configs/keys/
+      ./easyrsa gen-req "${client}" nopass
+      cp "pki/private/${client}.key" ~/openvpn-configs/keys/
+      scp -o StrictHostKeyChecking=no "pki/reqs/${client}.req" "${vmUser}@${easyRsaServerIp}:/tmp"
+      ssh -tt "${vmUser}@${easyRsaServerIp}" -o StrictHostKeyChecking=no "rm -f /home/${vmUser}/EasyRSA-v3.0.6/pki/reqs/${client}.req; export EASYRSA_BATCH=1; cd /home/${vmUser}/EasyRSA-${easyRsaVersion}; ./easyrsa import-req /tmp/${client}.req ${client}"
+      ssh -tt "${vmUser}@${easyRsaServerIp}" -o StrictHostKeyChecking=no "export EASYRSA_BATCH=1; cd /home/${vmUser}/EasyRSA-${easyRsaVersion}; ./easyrsa sign-req client ${client}"
+      scp -o StrictHostKeyChecking=no "${vmUser}@${easyRsaServerIp}:/home/${vmUser}/EasyRSA-${easyRsaVersion}/pki/issued/${client}.crt" /tmp
+      cp "/tmp/${client}.crt" ~/openvpn-configs/keys/
       sudo cp ~/EasyRSA-${easyRsaVersion}/ta.key ~/openvpn-configs/keys/
       sudo cp /etc/openvpn/ca.crt ~/openvpn-configs/keys/
     else
       echo "Client cert for ${client} already exists, skipping generation ==> /home/${vmUser}/EasyRSA-${easyRsaVersion}/pki/issued/${client}.crt"
     fi
-    if [ ! -f /home/${vmUser}/openvpn-configs/client-vpn-files/${client} ]; then
+    if [ ! -f "/home/${vmUser}/openvpn-configs/client-vpn-files/${client}" ]; then
       cd ~/openvpn-configs
-      ~/openvpn-configs/generate_openvpn_config.sh ${client}
+      ~/openvpn-configs/generate_openvpn_config.sh "${client}"
     else
       echo "OpenVPN client file already exists for ${client} ==> "
     fi

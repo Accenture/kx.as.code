@@ -1,4 +1,5 @@
 #!/bin/bash -eux
+set -o pipefail
 
 # Create plugin list to enable for RabbitMQ
 sudo mkdir -p /etc/rabbitmq
@@ -35,5 +36,5 @@ Actions=new-window;new-private-window;
 ''' | sudo tee /home/${vmUser}/Desktop/RabbitMQ.desktop
 
 # Give *.desktop files execute permissions
-sudo chmod 755 /home/${vmUser}/Desktop/RabbitMQ.desktop
-sudo chown ${vmUser}:${vmUser} /home/${vmUser}/Desktop/RabbitMQ.desktop
+sudo chmod 755 "/home/${vmUser}/Desktop/RabbitMQ.desktop"
+sudo chown "${vmUser}":"${vmUser}" "/home/${vmUser}/Desktop/RabbitMQ.desktop"

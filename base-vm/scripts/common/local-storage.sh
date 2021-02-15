@@ -1,4 +1,5 @@
 #!/bin/bash -eux
+set -o pipefail
 
 # Check logical partitions
 sudo lvs

@@ -1,22 +1,23 @@
 #!/bin/bash -eux
+set -o pipefail
 
 # UrlEncode GIT password in case of special characters
-if [[ ! -z $GITHUB_TOKEN ]]; then
+if [[ -n $GITHUB_TOKEN ]]; then
   GITHUB_TOKEN_ENCODED=$(python3 -c "import urllib.parse; print(urllib.parse.quote(input()))" <<< "$GITHUB_TOKEN")
 fi
 # Install LightDM theme for login and lock screens
 sudo mkdir -p /var/lib/lightdm/.local/share/webkitgtk/
-sudo mv /home/${BASE_IMAGE_SSH_USER}/lightdm_theme/localstorage /var/lib/lightdm/.local/share/webkitgtk/
+sudo mv "/home/${BASE_IMAGE_SSH_USER}/lightdm_theme/localstorage" /var/lib/lightdm/.local/share/webkitgtk/
 sudo chown -hR lightdm:lightdm /var/lib/lightdm/
 sudo mkdir -p /usr/share/lightdm-webkit/themes/material
-sudo mv /home/${BASE_IMAGE_SSH_USER}/lightdm_theme/* /usr/share/lightdm-webkit/themes/material
+sudo mv "/home/${BASE_IMAGE_SSH_USER}/lightdm_theme/*" /usr/share/lightdm-webkit/themes/material
 sudo fc-cache -vf /usr/share/fonts/
 
 # Install to import XFCE panel configuration for kx.hero
-sudo mkdir -p /home/$VM_USER/.config/xfce4/desktop
+sudo mkdir -p "/home/$VM_USER/.config/xfce4/desktop"
 sudo wget http://de.archive.ubuntu.com/ubuntu/pool/universe/x/xfpanel-switch/xfpanel-switch_1.0.7-0ubuntu2_all.deb
 sudo dpkg -i xfpanel-switch_1.0.7-0ubuntu2_all.deb
-sudo cp /home/${BASE_IMAGE_SSH_USER}/user_profile/xfce4_panel/exported-config.tar.bz2 /home/$VM_USER/.config/
+sudo cp "/home/${BASE_IMAGE_SSH_USER}/user_profile/xfce4_panel/exported-config.tar.bz2" "/home/$VM_USER/.config/"
 sudo bash -c "cat <<EOF > /home/$VM_USER/.config/xfce4/desktop/icons.screen0-1904x1136.rc
 [xfdesktop-version-4.10.3+-rcfile_format]
 4.10.3+=true
@@ -50,23 +51,23 @@ EOF"
 sudo bash -c "cp /home/$VM_USER/.config/xfce4/desktop/icons.screen0-1904x1136.rc /home/$VM_USER/.config/xfce4/desktop/icons.screen0-784x536.rc"
 sudo bash -c "cp /home/$VM_USER/.config/xfce4/desktop/icons.screen0-1904x1136.rc /home/$VM_USER/.config/xfce4/desktop/icons.screen0-2218x1224.rc"
 sudo bash -c "cd /home/$VM_USER/.config/xfce4/desktop; ln -s /home/$VM_USER/.config/xfce4/desktop/icons.screen0-1904x1136.rc icons.screen.latest.rc"
-sudo chown -hR $VM_USER:$VM_USER /home/$VM_USER
+sudo chown -hR "$VM_USER":"$VM_USER" "/home/$VM_USER"
 
 # Work-Around to get around the background resetting on reboot bug
 sudo cp /usr/share/backgrounds/background.jpg /usr/share/backgrounds/background.png
 
 # Make directories for KX.AS.CODE checkout
-sudo mkdir -p /home/$VM_USER/Desktop/
-sudo chown -R $VM_USER:$VM_USER /home/$VM_USER
+sudo mkdir -p "/home/$VM_USER/Desktop/"
+sudo chown -R "$VM_USER":"$VM_USER" "/home/$VM_USER"
 
-if [[ ! -z $GITHUB_TOKEN_ENCODED ]]; then
+if [[ -n $GITHUB_TOKEN_ENCODED ]]; then
   githubCloneUrl="https://$GITHUB_USER:$GITHUB_TOKEN_ENCODED@github.com"
 else
   githubCloneUrl="https://github.com"
 fi
 
 # Clone KX.AS.CODE GIT repository into VM
-sudo -H -i -u $VM_USER -- sh -c " \
+sudo -H -i -u "$VM_USER" -- sh -c " \
 git clone ${githubCloneUrl}/Accenture/kx.as.code.git /home/$VM_USER/Documents/kx.as.code_source; \
 git clone ${githubCloneUrl}/Accenture/kx.as.code-docs.git /home/$VM_USER/Documents/kx.as.code_docs; \
 git clone ${githubCloneUrl}/Accenture/kx.as.code-techradar.git /home/$VM_USER/Documents/kx.as.code_techradar; \
@@ -129,10 +130,10 @@ xkb=de
 EOF'
 
 # Configure Typora to show Welcome message after XFCE login
-sudo -H -i -u $VM_USER sh -c "mkdir -p /home/$VM_USER/.config/Typora/"
-sudo -H -i -u $VM_USER sh -c "echo \"7b22696e697469616c697a655f766572223a22302e392e3936222c226c696e655f656e64696e675f63726c66223a66616c73652c227072654c696e65627265616b4f6e4578706f7274223a747275652c2275756964223a2264336161313134302d623865362d346661612d623563372d373165353233383135313864222c227374726963745f6d6f6465223a747275652c22636f70795f6d61726b646f776e5f62795f64656661756c74223a747275652c226261636b67726f756e64436f6c6f72223a2223303030303030222c22736964656261725f746162223a226f75746c696e65222c22757365547265655374796c65223a66616c73652c2273686f77537461747573426172223a66616c73652c226c617374436c6f736564426f756e6473223a7b2266756c6c73637265656e223a66616c73652c226d6178696d697a6564223a66616c73652c2278223a3533362c2279223a3138322c227769647468223a3830302c22686569676874223a3730307d2c2269734461726b4d6f6465223a747275652c227468656d65223a226769746c61622e637373222c227072657365745f7370656c6c5f636865636b223a2264697361626c6564227d\" > /home/$VM_USER/.config/Typora/profile.data"
+sudo -H -i -u "$VM_USER" sh -c "mkdir -p /home/$VM_USER/.config/Typora/"
+sudo -H -i -u "$VM_USER" sh -c "echo \"7b22696e697469616c697a655f766572223a22302e392e3936222c226c696e655f656e64696e675f63726c66223a66616c73652c227072654c696e65627265616b4f6e4578706f7274223a747275652c2275756964223a2264336161313134302d623865362d346661612d623563372d373165353233383135313864222c227374726963745f6d6f6465223a747275652c22636f70795f6d61726b646f776e5f62795f64656661756c74223a747275652c226261636b67726f756e64436f6c6f72223a2223303030303030222c22736964656261725f746162223a226f75746c696e65222c22757365547265655374796c65223a66616c73652c2273686f77537461747573426172223a66616c73652c226c617374436c6f736564426f756e6473223a7b2266756c6c73637265656e223a66616c73652c226d6178696d697a6564223a66616c73652c2278223a3533362c2279223a3138322c227769647468223a3830302c22686569676874223a3730307d2c2269734461726b4d6f6465223a747275652c227468656d65223a226769746c61622e637373222c227072657365745f7370656c6c5f636865636b223a2264697361626c6564227d\" > /home/$VM_USER/.config/Typora/profile.data"
 
-sudo -H -i -u $VM_USER sh -c "mkdir -p /home/$VM_USER/.config/Typora/conf"
+sudo -H -i -u "$VM_USER" sh -c "mkdir -p /home/$VM_USER/.config/Typora/conf"
 echo '''
 /** For advanced users. */
 {
@@ -160,9 +161,9 @@ echo '''
   "maxFetchCountOnFileList": 500,
   "flags": [] // default [], append Chrome launch flags, e.g: [["disable-gpu"], ["host-rules", "MAP * 127.0.0.1"]]
 }
-''' | sudo tee /home/$VM_USER/.config/Typora/conf/conf.user.json
+''' | sudo tee "/home/$VM_USER/.config/Typora/conf/conf.user.json"
 
-sudo chown -R $VM_USER:$VM_USER /home/$VM_USER/.config/Typora
+sudo chown -R "$VM_USER":"$VM_USER" "/home/$VM_USER/.config/Typora"
 
 # Add Kubernetes Initialize Script to systemd
 sudo bash -c "cat <<EOF > /etc/systemd/system/k8s-initialize-cluster.service
@@ -218,10 +219,10 @@ sleep 5
 rm -f /home/$VM_USER/.config/autostart/show-welcome.desktop
 EOF"
 sudo chmod +x /usr/share/kx.as.code/showWelcome.sh
-sudo chown -R $VM_USER:$VM_USER /usr/share/kx.as.code
+sudo chown -R "$VM_USER":"$VM_USER" /usr/share/kx.as.code
 
 # Load Welcome.md automatically on desktop login
-sudo -H -i -u $VM_USER sh -c "mkdir -p /home/$VM_USER/.config/autostart"
+sudo -H -i -u "$VM_USER" sh -c "mkdir -p /home/$VM_USER/.config/autostart"
 sudo bash -c "cat <<EOF > /home/$VM_USER/.config/autostart/show-welcome.desktop
 [Desktop Entry]
 Type=Application
@@ -279,33 +280,33 @@ EOF
 #sudo mv /var/tmp/changeBackground /etc/cron.hourly/
 #sudo chmod 755 /etc/cron.hourly/changeBackground
 
-sudo mkdir -p /home/$VM_USER/KX_Data
-sudo chown $VM_USER:$VM_USER /home/$VM_USER/KX_Data
+sudo mkdir -p "/home/$VM_USER/KX_Data"
+sudo chown "$VM_USER":"$VM_USER" "/home/$VM_USER/KX_Data"
 #sudo ln -s /home/$VM_USER/KX_Data /home/$VM_USER/Desktop/KX_Data
 
 # Link mounted shared data drive to desktop (VirtualBox)
 if [[ $PACKER_BUILDER_TYPE =~ virtualbox ]]; then
-  sudo ln -s /media/sf_KX_Share /home/$VM_USER/Desktop/KX_Share
+  sudo ln -s /media/sf_KX_Share "/home/$VM_USER/Desktop/KX_Share"
 fi
 
 # Link mounted shared data drive to desktop (Parallels)
 if [[ $PACKER_BUILDER_TYPE =~ parallels ]]; then
-  sudo ln -s /media/psf/KX_Share /home/$VM_USER/Desktop/KX_Share
+  sudo ln -s /media/psf/KX_Share "/home/$VM_USER/Desktop/KX_Share"
 fi
 
 # Link mounted shared data drive to desktop (VMWare)
 if [[ $PACKER_BUILDER_TYPE =~ vmware_desktop ]]; then
-  sudo ln -s /mnt/hgfs/KX_Share /home/$VM_USER/Desktop/KX_Share
+  sudo ln -s /mnt/hgfs/KX_Share "/home/$VM_USER/Desktop/KX_Share"
 fi
 
 # Show /etc/motd even when in X-Windows terminal (not SSH)
 echo -e '\n# Added to show KX.AS.CODE MOTD also in X-Windows Terminal (already showing in SSH per default)
 if [ -z $(echo $SSH_TTY) ]; then
  cat /etc/motd | sed -e "s/^/ /"
-fi' | sudo tee -a /home/$VM_USER/.zshrc
+fi' | sudo tee -a "/home/$VM_USER/.zshrc"
 
 # Stop ZSH adding % to the output of every commands_whitelist
-echo "export PROMPT_EOL_MARK=''" | sudo tee -a /home/$VM_USER/.zshrc
+echo "export PROMPT_EOL_MARK=''" | sudo tee -a "/home/$VM_USER/.zshrc"
 
 # Put README Icon on Desktop
 sudo bash -c "cat <<EOF > /home/$VM_USER/Desktop/README.desktop
@@ -336,9 +337,9 @@ Type=Application
 EOF"
 
 # Give *.desktop files execute permissions
-sudo chmod 755 /home/$VM_USER/Desktop/*.desktop
+sudo chmod 755 "/home/$VM_USER/Desktop/*.desktop"
 
 # Create Kubernetes logging and custom scripts directory
-sudo mkdir -p /home/$VM_USER/Kubernetes
-sudo chown $VM_USER:$VM_USER /home/$VM_USER/Kubernetes
-sudo chmod 755 /home/$VM_USER/Kubernetes
+sudo mkdir -p "/home/$VM_USER/Kubernetes"
+sudo chown "$VM_USER":"$VM_USER" "/home/$VM_USER/Kubernetes"
+sudo chmod 755 "/home/$VM_USER/Kubernetes"

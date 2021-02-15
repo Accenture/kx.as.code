@@ -1,4 +1,5 @@
 #!/bin/bash -x
+set -o pipefail
 
 if [[ "${PACKER_BUILDER_TYPE}" =~ "vmware-iso" ]]; then
     export OUTPUT_DIR="vmware-desktop"

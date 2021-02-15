@@ -1,4 +1,5 @@
 #!/bin/bash -eux
+set -o pipefail
 
 sudo apt-get -y install \
     fonts-cantarell \
@@ -36,7 +37,7 @@ sudo apt-get -y install typora
 git clone https://github.com/elitistsnob/typora-gitlab-theme.git
 sudo mkdir -p /home/kx.hero/.config/Typora/themes/
 sudo mv typora-gitlab-theme/gitlab* /home/kx.hero/.config/Typora/themes/
-sudo chown -R $VM_USER:$VM_USER /home/$VM_USER/.config/Typora
+sudo chown -R "$VM_USER":"$VM_USER" "/home/$VM_USER/.config/Typora"
 
 # Install Tilix
 sudo apt-get -y install tilix
@@ -59,7 +60,7 @@ use-system-font=false
 font='Source Code Pro for Powerline 12'"
 
 sudo apt install -y dconf-cli
-sudo -H -i -u $VM_USER sh -c "dbus-launch dconf load /com/gexperts/Tilix/ < /home/$VM_USER/.config/tilix.dconf"
+sudo -H -i -u "$VM_USER" sh -c "dbus-launch dconf load /com/gexperts/Tilix/ < /home/$VM_USER/.config/tilix.dconf"
 
 # Install Tools to Generate Certificate Authority
 sudo curl -L https://github.com/cloudflare/cfssl/releases/download/v1.4.1/cfssl_1.4.1_linux_amd64 -o cfssl
@@ -100,6 +101,6 @@ Type=Application
 Categories=Development;
 ''' | sudo tee /usr/share/applications/postman.desktop
 
-sudo cp /usr/share/applications/postman.desktop /home/$VM_USER/Desktop
-sudo chmod 755 /home/$VM_USER/Desktop/postman.desktop
-sudo chown $VM_USER:$VM_USER /home/$VM_USER/Desktop/postman.desktop
+sudo cp /usr/share/applications/postman.desktop "/home/$VM_USER/Desktop"
+sudo chmod 755 "/home/$VM_USER/Desktop/postman.desktop"
+sudo chown "$VM_USER":"$VM_USER" "/home/$VM_USER/Desktop/postman.desktop"

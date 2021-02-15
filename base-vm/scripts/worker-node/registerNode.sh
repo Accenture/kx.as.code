@@ -1,10 +1,12 @@
-#!/bin/bash -x
+#!/bin/bash -eux
+set -o pipefail
 
 . /etc/environment
 
 TIMESTAMP=$(date "+%Y-%m-%d_%H%M%S")
 # Define base variables
-export vmPassword=$(cat /home/${vmUser}/.config/kx.as.code/.user.cred)
+vmPassword=$(cat "/home/${vmUser}/.config/kx.as.code/.user.cred")
+export vmPassword
 export installationWorkspace=/home/${vmUser}/Kubernetes
 export autoSetupHome=/home/${vmUser}/Documents/kx.as.code_source/auto-setup
 
@@ -13,16 +15,21 @@ wait-for-file() {
         timeout -s TERM 6000 bash -c \
         'while [[ ! -f ${0} ]];\
         do echo "Waiting for ${0} file" && sleep 15;\
-        done' ${1}
+        done' "${1}"
 }
-wait-for-file ${installationWorkspace}/autoSetup.json
+wait-for-file "${installationWorkspace}/autoSetup.json"
 
 # Get number of local volumes to pre-provision
-export number1gbVolumes=$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.local_volumes.one_gb')
-export number5gbVolumes=$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.local_volumes.five_gb')
-export number10gbVolumes=$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.local_volumes.ten_gb')
-export number30gbVolumes=$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.local_volumes.thirty_gb')
-export number50gbVolumes=$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.local_volumes.fifty_gb')
+number1gbVolumes=$(jq -r '.config.local_volumes.one_gb' "${installationWorkspace}/autoSetup.json")
+export number1gbVolumes
+number5gbVolumes=$(jq -r '.config.local_volumes.five_gb' "${installationWorkspace}/autoSetup.json")
+export number5gbVolumes
+number10gbVolumes=$(jq -r '.config.local_volumes.ten_gb' "${installationWorkspace}/autoSetup.json")
+export number10gbVolumes
+number30gbVolumes=$(jq -r '.config.local_volumes.thirty_gb' "${installationWorkspace}/autoSetup.json")
+export number30gbVolumes
+number50gbVolumes=$(jq -r '.config.local_volumes.fifty_gb' "${installationWorkspace}/autoSetup.json")
+export number50gbVolumes
 
 # Check logical partitions
 sudo lvs
@@ -103,41 +110,61 @@ sudo lvs
 sudo df -hT
 sudo lsblk
 
-cd ${installationWorkspace}
+cd "${installationWorkspace}"
 
 # Get configs from autoSetup.json
-export virtualizationType=$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.virtualizationType')
-export nicPrefix=$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.nic_names.'${virtualizationType}'')
-export netDevice=$(nmcli device show | grep -E 'enp|ens' | grep 'GENERAL.DEVICE' | awk '{print $2}')
-export environmentPrefix=$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.environmentPrefix')
+virtualizationType=$(jq -r '.config.virtualizationType' "${installationWorkspace}/autoSetup.json")
+export virtualizationType
+nicPrefix=$(jq -r '.config.nic_names.'${virtualizationType}'' "${installationWorkspace}/autoSetup.json")
+export nicPrefix
+netDevice=$(nmcli device show | grep -E 'enp|ens' | grep 'GENERAL.DEVICE' | awk '{print $2}')
+export netDevice
+environmentPrefix=$(jq -r '.config.environmentPrefix' "${installationWorkspace}/autoSetup.json")
+export environmentPrefix
 if [ -z ${environmentPrefix} ]; then
-    export baseDomain="$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.baseDomain')"
+    baseDomain="$(jq -r '.config.baseDomain' ${installationWorkspace}/autoSetup.json)"
+    export baseDomain
 else
-    export baseDomain="${environmentPrefix}.$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.baseDomain')"
+    baseDomain="${environmentPrefix}.$(jq -r '.config.baseDomain' ${installationWorkspace}/autoSetup.json)"
+    export baseDomain
 fi
-export defaultKeyboardLanguage=$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.defaultKeyboardLanguage')
-export baseUser=$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.baseUser')
-export basePassword=$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.basePassword')
-export baseIpType=$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.baseIpType')
-export baseIpRangeStart=$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.baseIpRangeStart')
-export baseIpRangeEnd=$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.baseIpRangeEnd')
+defaultKeyboardLanguage=$(jq -r '.config.defaultKeyboardLanguage' "${installationWorkspace}/autoSetup.json")
+export defaultKeyboardLanguage
+baseUser=$(jq -r '.config.baseUser' "${installationWorkspace}/autoSetup.json")
+export baseUser
+basePassword=$(jq -r '.config.basePassword' "${installationWorkspace}/autoSetup.json")
+export basePassword
+baseIpType=$(jq -r '.config.baseIpType' "${installationWorkspace}/autoSetup.json")
+export baseIpType
+baseIpRangeStart=$(jq -r '.config.baseIpRangeStart' "${installationWorkspace}/autoSetup.json")
+export baseIpRangeStart
+baseIpRangeEnd=$(jq -r '.config.baseIpRangeEnd' "${installationWorkspace}/autoSetup.json")
+export baseIpRangeEnd
 
 # Get proxy settings
-export httpProxySetting=$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.proxy_settings.http_proxy')
-export httpsProxySetting=$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.proxy_settings.https_proxy')
-export noProxySetting=$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.proxy_settings.no_proxy')
+httpProxySetting=$(jq -r '.config.proxy_settings.http_proxy' "${installationWorkspace}/autoSetup.json")
+export httpProxySetting
+httpsProxySetting=$(jq -r '.config.proxy_settings.https_proxy' "${installationWorkspace}/autoSetup.json")
+export httpsProxySetting
+noProxySetting=$(jq -r '.config.proxy_settings.no_proxy' "${installationWorkspace}/autoSetup.json")
+export noProxySetting
 
 # Get fixed IPs if defined
 if [ "${baseIpType}" == "static" ]; then
-  export fixedIpHosts=$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.staticNetworkSetup.baseFixedIpAddresses | keys[]')
+  fixedIpHosts=$(jq -r '.config.staticNetworkSetup.baseFixedIpAddresses | keys[]' "${installationWorkspace}/autoSetup.json")
+  export fixedIpHosts
   for fixIpHost in ${fixedIpHosts}
   do
-      fixIpHostVariableName=$(echo ${fixIpHost} | sed 's/-/__/g')
-      export ${fixIpHostVariableName}_IpAddress="$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.staticNetworkSetup.baseFixedIpAddresses."'${fixIpHost}'"')"
+      fixIpHostVariableName=${fixIpHost//-/__}
+      ${fixIpHostVariableName}_IpAddress="$(jq -r '.config.staticNetworkSetup.baseFixedIpAddresses."'${fixIpHost}'"' ${installationWorkspace}/autoSetup.json)"
+      export ${fixIpHostVariableName}_IpAddress
   done
-  export fixedNicConfigGateway=$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.staticNetworkSetup.gateway')
-  export fixedNicConfigDns1=$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.staticNetworkSetup.dns1')
-  export fixedNicConfigDns2=$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.staticNetworkSetup.dns2')
+  fixedNicConfigGateway=$(jq -r '.config.staticNetworkSetup.gateway' "${installationWorkspace}/autoSetup.json")
+  export fixedNicConfigGateway
+  fixedNicConfigDns1=$(jq -r '.config.staticNetworkSetup.dns1' "${installationWorkspace}/autoSetup.json")
+  export fixedNicConfigDns1
+  fixedNicConfigDns2=$(jq -r '.config.staticNetworkSetup.dns2' "${installationWorkspace}/autoSetup.json")
+  export fixedNicConfigDns2
 fi
 
 if [[ "${baseIpType}" == "static" ]]; then
@@ -160,8 +187,10 @@ if [[ "${baseIpType}" == "static" ]]; then
 
       # Update DNS Entry for hosts if ip type set to static
       if [ "${baseIpType}" == "static" ]; then
-          export kxMainIp="$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.staticNetworkSetup.baseFixedIpAddresses."kx-main"')"
-          export kxWorkerIp="$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.staticNetworkSetup.baseFixedIpAddresses."'$(hostname)'"')"
+          kxMainIp=$(jq -r '.config.staticNetworkSetup.baseFixedIpAddresses."kx-main"' "${installationWorkspace}/autoSetup.json")
+          export kxMainIp
+          kxWorkerIp="$(jq -r '.config.staticNetworkSetup.baseFixedIpAddresses."'$(hostname)'"' ${installationWorkspace}/autoSetup.json)"
+          export kxWorkerIp
       fi
 
       # Create resolv.conf for desktop user with for resolving local domain with DNSMASQ
@@ -174,7 +203,7 @@ if [[ "${baseIpType}" == "static" ]]; then
       # Configure IF to be managed/confgured by network-manager
       sudo rm -f /etc/NetworkManager/system-connections/*
       sudo mv /etc/network/interfaces /etc/network/interfaces.unused
-      sudo nmcli con add con-name "${netDevice}" ifname ${netDevice} type ethernet ip4 ${kxWorkerIp}/24 gw4 ${fixedNicConfigGateway}
+      sudo nmcli con add con-name "${netDevice}" ifname "${netDevice}" type ethernet ip4 "${kxWorkerIp}/24" gw4 "${fixedNicConfigGateway}"
       sudo nmcli con mod "${netDevice}" ipv4.method "manual"
       sudo nmcli con mod "${netDevice}" ipv4.dns "${fixedNicConfigDns1},${fixedNicConfigDns2}"
       sudo systemctl restart network-manager
@@ -186,7 +215,8 @@ fi
 # Try to get KX-Main IP address via a lookup if baseIpType is set to dynamic
  if [ "${baseIpType}" == "dynamic" ]; then
    # Read the file dropped by Terraform
-  export kxMainIp=$(cat /home/${vmUser}/Kubernetes/kxMainIpAddress)
+  kxMainIp=$(cat "/home/${vmUser}/Kubernetes/kxMainIpAddress")
+  export kxMainIp
 fi
 
 # Wait until network and DNS resolution is back up. Also need to wait for kx-main, in case the worker node comes up first
@@ -195,24 +225,24 @@ nslookup kx-main.'${baseDomain}'; rc=$?;
 echo "Waiting for kx-main DNS resolution to function" && sleep 5;         done'
 
 KUBEDIR=/home/${vmUser}/Kubernetes
-mkdir -p ${KUBEDIR}
-chown -R ${vmUser}:${vmUser} ${KUBEDIR}
+mkdir -p "${KUBEDIR}"
+chown -R "${vmUser}":"${vmUser}" "${KUBEDIR}"
 
 if [[ "${virtualizationType}" != "aws" ]]; then
   # Create RSA key for kx.hero user
-  mkdir -p /home/${vmUser}/.ssh
-  chown -R ${vmUser}:${vmUser} /home/${vmUser}/.ssh
-  chmod 700 /home/${vmUser}/.ssh
-  yes | sudo -u ${vmUser} ssh-keygen -f ssh-keygen -m PEM -t rsa -b 4096 -q -f /home/${vmUser}/.ssh/id_rsa -N ''
+  mkdir -p "/home/${vmUser}/.ssh"
+  chown -R "${vmUser}":"${vmUser}" "/home/${vmUser}/.ssh"
+  chmod 700 "/home/${vmUser}/.ssh"
+  yes | sudo -u "${vmUser}" ssh-keygen -f ssh-keygen -m PEM -t rsa -b 4096 -q -f "/home/${vmUser}/.ssh/id_rsa" -N ''
 
   # Add key to KX-Main host
-  sudo -H -i -u ${vmUser} bash -c "sshpass -f /home/${vmUser}/.config/kx.as.code/.user.cred ssh-copy-id -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp}"
+  sudo -H -i -u "${vmUser}" bash -c "sshpass -f /home/${vmUser}/.config/kx.as.code/.user.cred ssh-copy-id -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp}"
 
   # Add KX-Main key to worker
-  sudo -H -i -u ${vmUser} bash -c "ssh -o StrictHostKeyChecking=no $vmUser@${kxMainIp} \"cat /home/$vmUser/.ssh/id_rsa.pub\" | tee -a /home/$vmUser/.ssh/authorized_keys"
+  sudo -H -i -u "${vmUser}" bash -c "ssh -o StrictHostKeyChecking=no $vmUser@${kxMainIp} \"cat /home/$vmUser/.ssh/id_rsa.pub\" | tee -a /home/$vmUser/.ssh/authorized_keys"
   sudo mkdir -p /root/.ssh
   sudo chmod 700 /root/.ssh
-  sudo cp /home/$vmUser/.ssh/authorized_keys /root/.ssh/
+  sudo cp "/home/$vmUser/.ssh/authorized_keys" /root/.ssh/
 fi
 # Copy KX.AS.CODE CA certificates from main node and restart docker
 export REMOTE_KX_MAIN_KUBEDIR=/home/$vmUser/Kubernetes
@@ -230,8 +260,8 @@ wait-for-certificate() {
 sudo mkdir -p /usr/share/ca-certificates/kubernetes
 for CERTIFICATE in $CERTIFICATES
 do
-        wait-for-certificate $CERTIFICATE
-        sudo cp /home/$vmUser/Kubernetes/$CERTIFICATE /usr/share/ca-certificates/kubernetes/
+        wait-for-certificate "$CERTIFICATE"
+        sudo cp "/home/$vmUser/Kubernetes/$CERTIFICATE" /usr/share/ca-certificates/kubernetes/
         echo "kubernetes/$CERTIFICATE" | sudo tee -a /etc/ca-certificates.conf
 done
 
@@ -252,9 +282,9 @@ wait-for-url() {
 wait-for-url https://${kxMainIp}:6443/livez
 
 # Kubernetes master is reachable, join the worker node to cluster
-sudo -H -i -u ${vmUser} bash -c "ssh -o StrictHostKeyChecking=no $vmUser@${kxMainIp} 'kubeadm token create --print-join-command 2>/dev/null'" > ${KUBEDIR}/kubeJoin.sh
-sudo chmod 755 ${KUBEDIR}/kubeJoin.sh
-sudo ${KUBEDIR}/kubeJoin.sh
+sudo -H -i -u "${vmUser}" bash -c "ssh -o StrictHostKeyChecking=no $vmUser@${kxMainIp} 'kubeadm token create --print-join-command 2>/dev/null'" > "${KUBEDIR}/kubeJoin.sh"
+sudo chmod 755 "${KUBEDIR}/kubeJoin.sh"
+sudo "${KUBEDIR}/kubeJoin.sh"
 
 # Disable the Service After it Ran
 sudo systemctl disable k8s-register-node.service
@@ -263,7 +293,7 @@ sudo systemctl disable k8s-register-node.service
 sudo sed -i '/^\[Service\]/a Environment="KUBELET_EXTRA_ARGS=--resolv-conf=\/etc\/resolv.conf"' /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
 
 # Setup proxy settings if they exist
-if [[ ! -z ${httpProxySetting} ]] || [[ ! -z ${httpsProxySetting} ]]; then
+if [[ -n ${httpProxySetting} ]] || [[ -n ${httpsProxySetting} ]]; then
 
     httpProxySettingBase=$(echo ${httpProxySetting} | sed 's/https:\/\///g' | sed 's/http:\/\///g')
     httpsProxySettingBase=$(echo ${httpsProxySetting} | sed 's/https:\/\///g' | sed 's/http:\/\///g')
@@ -276,7 +306,7 @@ if [[ ! -z ${httpProxySetting} ]] || [[ ! -z ${httpsProxySetting} ]]; then
     systemctl daemon-reload
     systemctl restart docker
 
-    baseip=$(echo ${kxWorkerIp} | cut -d'.' -f1-3)
+    baseip=$(echo "${kxWorkerIp}" | cut -d'.' -f1-3)
 
     echo '''
     export http_proxy='${httpProxySetting}'
@@ -288,7 +318,7 @@ if [[ ! -z ${httpProxySetting} ]] || [[ ! -z ${httpsProxySetting} ]]; then
     printf -v service '"'"'%s,'"'"' '${baseip}'.{1..253}
     export no_proxy="${lan%,},${service%,},${pool%,},127.0.0.1,.'${baseDomain}'";
     export NO_PROXY=$no_proxy
-    ''' | sudo tee -a /root/.bashrc /root/.zshrc /home/$vmUser/.bashrc /home/$vmUser/.zshrc
+    ''' | sudo tee -a /root/.bashrc /root/.zshrc "/home/$vmUser/.bashrc" "/home/$vmUser/.zshrc"
 fi
 
 # Create script to pull KX App Images from Main on second boot (after reboot in this script)
@@ -314,9 +344,9 @@ if [ -f ${KUBEDIR}/docker-kx-docs.tar ] && [ -f ${KUBEDIR}/docker-kx-techradar.t
     sudo crontab -r
 fi
 
-""" | sudo tee ${KUBEDIR}/scpKxTars.sh
+""" | sudo tee "${KUBEDIR}/scpKxTars.sh"
 
-sudo chmod 755 ${KUBEDIR}/scpKxTars.sh
+sudo chmod 755 "${KUBEDIR}/scpKxTars.sh"
 sudo crontab -l | { cat; echo "* * * * * ${KUBEDIR}/scpKxTars.sh"; } | sudo crontab -
 
 # Set default keyboard language

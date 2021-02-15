@@ -1,20 +1,21 @@
 #!/bin/bash -eux
+set -o pipefail
 
 # Basic tools for all nodes - main and workers
 sudo apt-get -y install \
-    xfsprogs \
-    net-tools \
     dnsutils \
-    network-manager \
-    python3-pip \
-    zsh \
-    git \
-    jq \
-    htop \
-    sshpass \
     fontconfig \
     fontconfig-config \
-    vim-nox # Debian package compiped with Python - for Powerline plugin
+    git \
+    htop \
+    jq \
+    net-tools \
+    network-manager \
+    python3-pip \
+    sshpass \
+    vim-nox \ # Debian package compiled with Python - for Powerline plugin
+    xfsprogs \
+    zsh
 
 # Install Powerline Status
 sudo pip3 install powerline-status

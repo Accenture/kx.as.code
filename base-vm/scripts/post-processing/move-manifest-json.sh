@@ -1,6 +1,7 @@
 #!/bin/bash -x
+set -o pipefail
 
-export PROVIDER=$(echo ${PACKER_BUILDER_TYPE} | sed 's/-iso//g')
+export PROVIDER=${PACKER_BUILDER_TYPE//-iso/}
 
 if [[ "${VM_NAME}" =~ "main" ]]; then
     export KX_VM_TYPE="main"
@@ -24,9 +25,9 @@ fi
 
 
 if [[ -f ../../../output-${KX_VM_TYPE}${VM_SUFFIX}/${OUTPUT_DIR}-${VM_VERSION}/${VM_NAME}${VM_SUFFIX}-${VM_VERSION}_manifest.json ]]; then
-    mv ../../../output-${KX_VM_TYPE}${VM_SUFFIX}/${OUTPUT_DIR}-${VM_VERSION}/${VM_NAME}${VM_SUFFIX}-${VM_VERSION}_manifest.json.previous
+    mv "../../../output-${KX_VM_TYPE}${VM_SUFFIX}/${OUTPUT_DIR}-${VM_VERSION}/${VM_NAME}${VM_SUFFIX}-${VM_VERSION}_manifest.json" "../../../output-${KX_VM_TYPE}${VM_SUFFIX}/${OUTPUT_DIR}-${VM_VERSION}/${VM_NAME}${VM_SUFFIX}-${VM_VERSION}_manifest.json.previous"
 fi
 
 if [[ -f ${VM_NAME}${VM_SUFFIX}-${VM_VERSION}_manifest.json ]]; then
-    mv ${VM_NAME}${VM_SUFFIX}-${VM_VERSION}_manifest.json ../../../output-${KX_VM_TYPE}${VM_SUFFIX}/${OUTPUT_DIR}-${VM_VERSION}/${VM_NAME}${VM_SUFFIX}-${VM_VERSION}_manifest.json
+    mv "${VM_NAME}${VM_SUFFIX}-${VM_VERSION}_manifest.json" "../../../output-${KX_VM_TYPE}${VM_SUFFIX}/${OUTPUT_DIR}-${VM_VERSION}/${VM_NAME}${VM_SUFFIX}-${VM_VERSION}_manifest.json"
 fi

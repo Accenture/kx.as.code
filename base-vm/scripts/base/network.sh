@@ -1,4 +1,5 @@
 #!/bin/bash -eux
+set -o pipefail
 
 # Install networking tools
 sudo apt-get -y install \

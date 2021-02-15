@@ -1,4 +1,5 @@
 #!/bin/bash -eux
+set -o pipefail
 
 # Install Docker to Debian
 sudo apt-get -y install \
@@ -22,7 +23,7 @@ sudo apt-get update
 sudo apt-get -y install docker-ce docker-ce-cli containerd.io
 
 # Add user to Docker group
-sudo usermod -aG docker $VM_USER
+sudo usermod -aG docker "$VM_USER"
 
 # Setup daemon.
 sudo bash -c 'cat > /etc/docker/daemon.json <<EOF

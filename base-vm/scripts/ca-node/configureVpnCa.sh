@@ -1,4 +1,5 @@
-#!/bin/bash -x
+#!/bin/bash -eux
+set -o pipefail
 
 export easyRsaVersion=v3.0.6
 export EASYRSA_BATCH=1

@@ -1,4 +1,5 @@
-#!/bin/bash -x
+#!/bin/bash -eux
+set -o pipefail
 
 if [[ "${PACKER_BUILDER_TYPE}" =~ "vmware-iso" ]]; then
     export OUTPUT_DIR="vmware-desktop"
@@ -12,9 +13,9 @@ else
 fi
 
 # if running in Windows WSL, set additional parameter
-if [ ! -z ${LOGNAME} ]; then
+if [ -n "${LOGNAME}" ]; then
     export VAGRANT_WSL_ENABLE_WINDOWS_ACCESS="1"
 fi
 
 # Add box to local Vagrant box library
-vagrant box add ${PACKER_BUILD_NAME} ../../../boxes/${OUTPUT_DIR}-${VM_VERSION}/${VM_NAME}${VM_SUFFIX}-${VM_VERSION}_metadata.json --force
+vagrant box add "${PACKER_BUILD_NAME}" "../../../boxes/${OUTPUT_DIR}-${VM_VERSION}/${VM_NAME}${VM_SUFFIX}-${VM_VERSION}_metadata.json" --force

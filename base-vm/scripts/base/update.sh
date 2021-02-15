@@ -1,5 +1,5 @@
-
 #!/bin/bash -eu
+set -o pipefail
 
 # Mark the vagrant box build start time.
 date --utc | sudo tee /etc/vagrant_box_build_start_time

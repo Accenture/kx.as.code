@@ -1,4 +1,5 @@
-#!/bin/bash -x
+#!/bin/bash -eux
+set -o pipefail
 
 if [[ "${PACKER_BUILDER_TYPE}" =~ "vmware-iso" ]]; then
     export OUTPUT_DIR="vmware-desktop"
@@ -13,14 +14,14 @@ fi
 
 
 if [[ ! -d ../../../boxes/${OUTPUT_DIR}-${VM_VERSION} ]]; then
-    mkdir -p ../../../boxes/${OUTPUT_DIR}-${VM_VERSION}
+    mkdir -p "../../../boxes/${OUTPUT_DIR}-${VM_VERSION}"
 fi
 
-cp ../../../templates/info.template ../../../boxes/${OUTPUT_DIR}-${VM_VERSION}/info.json
+cp ../../../templates/info.template "../../../boxes/${OUTPUT_DIR}-${VM_VERSION}/info.json"
 
 # Check is running from Mac (Darwin) or Linux (including WSL and Windows Git Bash)
 if [[ "$(uname)" == "Darwin" ]]; then
-    sed -i '' "s/##USERNAME##/Accenture Interactive/" ../../../boxes/${OUTPUT_DIR}-${VM_VERSION}/info.json
+    sed -i '' "s/##USERNAME##/Accenture Interactive/" "../../../boxes/${OUTPUT_DIR}-${VM_VERSION}/info.json"
 else
-    sed -i "s/##USERNAME##/Accenture Interactive/" ../../../boxes/${OUTPUT_DIR}-${VM_VERSION}/info.json
+    sed -i "s/##USERNAME##/Accenture Interactive/" "../../../boxes/${OUTPUT_DIR}-${VM_VERSION}/info.json"
 fi
