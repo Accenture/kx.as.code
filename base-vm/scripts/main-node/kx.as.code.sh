@@ -249,10 +249,9 @@ Exec=/usr/share/kx.as.code/checkK8sStartup.sh
 EOF
 chmod 755 /home/${vmUser}/.config/autostart/check-k8s.desktop
 chown ${vmUser}:${vmUser} /home/${vmUser}/.config/autostart/check-k8s.desktop
-xfce4-panel --restart
-sleep 5
 sudo chmod 777 /usr/share/kx.as.code/git/*
 rm -f $HOME/.config/autostart/show-welcome.desktop
+timeout 5 xfce4-panel &
 ''' | sudo tee /usr/share/kx.as.code/showWelcome.sh
 
 sudo chmod +x /usr/share/kx.as.code/showWelcome.sh
