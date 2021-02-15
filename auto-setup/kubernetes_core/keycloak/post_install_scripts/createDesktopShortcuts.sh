@@ -10,9 +10,9 @@ iconPath=${installComponentDirectory}/kubernetes.png
 cat <<EOF > /home/${vmUser}/Desktop/Kubernetes-Dashboard-OIDC.desktop
 [Desktop Entry]
 Version=1.0
-Name=${shortcutText} OIDC
-GenericName=${shortcutText} OIDC
-Comment=${shortcutText} OIDC
+Name=Kubernetes Dashboard
+GenericName=Kubernetes Dashboard
+Comment=Kubernetes Dashboard
 Exec=kubectl auth-proxy -n kubernetes-dashboard https://kubernetes-dashboard.svc
 StartupNotify=true
 Terminal=false

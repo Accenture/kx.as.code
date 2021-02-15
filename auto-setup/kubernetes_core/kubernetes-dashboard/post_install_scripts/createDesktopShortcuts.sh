@@ -56,7 +56,3 @@ EOF
 # Give *.desktop files execute permissions
 chmod 755 /home/${vmUser}/Desktop/*.desktop
 chown ${vmUser}:${vmUser} /home/${vmUser}/Desktop/*.desktop
-
-# Copy desktop icons to skel directory for future users
-sudo cp /home/${vmUser}/Desktop/Kubernetes-Dashboard.desktop ${skelDirectory}/Desktop
-sudo cp /home/${vmUser}/Desktop/Get-Kubernetes-Token.desktop ${skelDirectory}/Desktop

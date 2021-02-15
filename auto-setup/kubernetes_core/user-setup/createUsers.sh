@@ -194,13 +194,17 @@ if [[ ${numUsersToCreate} -ne 0 ]]; then
     sudo -H -i -u ${userid} sh -c "/usr/local/bin/trustKXRootCAs.sh"
     sudo -H -i -u ${userid} sh -c "certutil -L -d sql:/home/${userid}/.pki/nssdb"
 
+    # Get credential token in new Realm
+    kubectl -n keycloak exec ${kcPod} -- \
+      ${kcAdmCli} config credentials --server ${kcInternalUrl}/auth --realm ${kcRealm} --user admin --password ${vmPassword} --client admin-cli
+
     # Enable Keycloak OIDC for new user
     sudo -H -i -u ${userid} sh -c "/usr/share/kx.as.code/Kubernetes/client-oidc-setup.sh"
-    export kcUserId=$(kubectl -n ${namespace} exec ${kcPod} -- \
+    export kcUserId=$(kubectl -n keycloak exec ${kcPod} -- \
       ${kcAdmCli} get users -r ${kcRealm} -q username=${userid} | jq -r '.[].id')
     sudo -H -i -u ${userid} sh -c  "kubectl config set-context --current --user=oidc"
-    sudo kubectl create clusterrolebinding oidc-cluster-admin --clusterrole=cluster-admin --user='https://keycloak.'${baseDomain}'/auth/realms/'${kcRealm}'#'${kcUserId}''
-
+    sudo kubectl create clusterrolebinding oidc-cluster-admin-${userid} --clusterrole=cluster-admin --user='https://keycloak.'${baseDomain}'/auth/realms/'${kcRealm}'#'${kcUserId}''
+    sudo rm -f
   done
 fi
 
