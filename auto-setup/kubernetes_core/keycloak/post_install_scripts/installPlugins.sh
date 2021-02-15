@@ -43,10 +43,15 @@ clientSecret=$(kubectl -n ${namespace} exec ${kcPod} -- \
 # Create setup script for new users
 echo '''
 #!/bin/bash
-kubectl oidc-login setup \
-	  --oidc-issuer-url=https://'${componentName}'.'${baseDomain}'/auth/realms/'${kcRealm}' \
-	  --oidc-client-id=kubernetes \
-	  --oidc-client-secret='${clientSecret}'
-pause
+kubectl config set-credentials oidc \
+	  --exec-api-version=client.authentication.k8s.io/v1beta1 \
+	  --exec-command=kubectl \
+	  --exec-arg=oidc-login \
+	  --exec-arg=get-token \
+	  --exec-arg=--oidc-issuer-url=https://'${componentName}'.'${baseDomain}'/auth/realms/'${kcRealm}' \
+	  --exec-arg=--oidc-client-id=kubernetes \
+	  --exec-arg=--oidc-client-secret='${clientSecret}'
 ''' | sudo tee /usr/share/kx.as.code/Kubernetes/client-oidc-setup.sh
-ln -s /usr/share/kx.as.code/Kubernetes/client-oidc-setup.sh /usr/share/kx.as.code/skel/Desktop/
+sudo chmod 755 /usr/share/kx.as.code/Kubernetes/client-oidc-setup.sh
+
+

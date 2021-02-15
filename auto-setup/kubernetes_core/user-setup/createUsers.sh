@@ -1,6 +1,14 @@
 #!/bin/bash -x
 
-numUsersToCreate=$(jq -r '.config.additionalUsers[].firstname' ${installationWorkspace}/autoSetup.json | wc -l)
+export numUsersToCreate=$(jq -r '.config.additionalUsers[].firstname' ${installationWorkspace}/autoSetup.json | wc -l)
+export ldapDnFirstPart=$(sudo slapcat | grep dn | head -1 | sed 's/dn: //g' | sed 's/dc=//g' | cut -f1 -d',')
+export ldapDnSecondPart=$(sudo slapcat | grep dn | head -1 | sed 's/dn: //g' | sed 's/dc=//g' | cut -f2 -d',')
+export kcRealm=${ldapDnFirstPart}
+export ldapDn="dc=${ldapDnFirstPart},dc=${ldapDnSecondPart}"
+export kcInternalUrl=http://localhost:8080
+export kcBinDir=/opt/jboss/keycloak/bin/
+export kcAdmCli=/opt/jboss/keycloak/bin/kcadm.sh
+export kcPod=$(kubectl get pods -l 'app.kubernetes.io/name=keycloak' -n keycloak --output=json | jq -r '.items[].metadata.name')
 
 if [[ ${numUsersToCreate} -ne 0 ]]; then
   for i in $(seq 0 $(((numUsersToCreate-1))))
@@ -185,6 +193,13 @@ if [[ ${numUsersToCreate} -ne 0 ]]; then
     sudo -H -i -u ${userid} sh -c "certutil -N --empty-password -d sql:/home/${userid}/.pki/nssdb"
     sudo -H -i -u ${userid} sh -c "/usr/local/bin/trustKXRootCAs.sh"
     sudo -H -i -u ${userid} sh -c "certutil -L -d sql:/home/${userid}/.pki/nssdb"
+
+    # Enable Keycloak OIDC for new user
+    sudo -H -i -u ${userid} sh -c "/usr/share/kx.as.code/Kubernetes/client-oidc-setup.sh"
+    export kcUserId=$(kubectl -n ${namespace} exec ${kcPod} -- \
+      ${kcAdmCli} get users -r ${kcRealm} -q username=${userid} | jq -r '.[].id')
+    sudo -H -i -u ${userid} sh -c  "kubectl config set-context --current --user=oidc"
+    sudo kubectl create clusterrolebinding oidc-cluster-admin --clusterrole=cluster-admin --user='https://keycloak.'${baseDomain}'/auth/realms/'${kcRealm}'#'${kcUserId}''
 
   done
 fi
