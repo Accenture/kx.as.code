@@ -18,8 +18,9 @@ if [[ ! ${kubeAdminStatus} ]]; then
     # Add kube config to skel directory for future users
     sudo mkdir -p /usr/share/kx.as.code/skel/.kube
     sudo cp -f /etc/kubernetes/admin.conf /usr/share/kx.as.code/skel/.kube/config
+    sed -n -i '/users:/q;p' /usr/share/kx.as.code/skel/.kube/config
 else
-    log_warn "Kubernetes cluster is already initialitzed. Skipping"
+    log_warn "Kubernetes cluster is already initialized. Skipping"
 fi
 
 # Fix reliance on non existent file: /run/systemd/resolve/resolv.conf
