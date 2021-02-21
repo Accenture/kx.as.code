@@ -152,7 +152,7 @@ kubectl -n ${namespace} exec ${kcPod} -- \
 
 # Create Client
 clientId=$(kubectl -n ${namespace} exec ${kcPod} -- \
-  ${kcAdmCli} create clients --realm ${kcRealm} -s clientId=kubernetes -s 'redirectUris=["http://localhost:8000"]' -s publicClient="true" -s enabled=true -i)
+  ${kcAdmCli} create clients --realm ${kcRealm} -s clientId=kubernetes -s 'redirectUris=["http://localhost:8000"]' -s publicClient="false" -s enabled=true -i)
 
 # Create protocol mapper
 kubectl -n ${namespace} exec ${kcPod} -- \

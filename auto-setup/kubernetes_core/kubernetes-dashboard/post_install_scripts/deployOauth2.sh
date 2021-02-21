@@ -1,14 +1,18 @@
 #!/bin/bash -x
 
+export kcRealm=${ldapDnFirstPart}
+export kcInternalUrl=http://localhost:8080
+export kcAdmCli=/opt/jboss/keycloak/bin/kcadm.sh
+export kcPod=$(kubectl get pods -l 'app.kubernetes.io/name=keycloak' -n keycloak --output=json | jq -r '.items[].metadata.name')
 
 # Set credential token in new Realm
 kubectl -n keycloak exec ${kcPod} -- \
   ${kcAdmCli} config credentials --server ${kcInternalUrl}/auth --realm ${kcRealm} --user admin --password ${vmPassword} --client admin-cli
 
-clientId=$(kubectl -n ${namespace} exec ${kcPod} -- \
+clientId=$(kubectl -n keycloak exec ${kcPod} -- \
   ${kcAdmCli} get clients -r ${kcRealm} --fields id,clientId | jq -r '.[] | select(.clientId=="kubernetes") | .id')
 
-clientSecret=$(kubectl -n ${namespace} exec ${kcPod} -- \
+clientSecret=$(kubectl -n keycloak exec ${kcPod} -- \
   ${kcAdmCli} get clients/${clientId}/client-secret | jq -r '.value')
 
 # Set variables for oauth-proxy

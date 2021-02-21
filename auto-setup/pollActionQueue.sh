@@ -19,11 +19,10 @@ export sharedGitHome=/usr/share/kx.as.code/git
 export sharedKxHome=/usr/share/kx.as.code
 export kxSkelDir=/usr/share/kx.as.code/skel
 
-# Set variables for base DN
+# Set variables for LDAP Base DN
 export ldapDnFirstPart=$(sudo slapcat | grep dn | head -1 | sed 's/dn: //g' | sed 's/dc=//g' | cut -f1 -d',')
 export ldapDnSecondPart=$(sudo slapcat | grep dn | head -1 | sed 's/dn: //g' | sed 's/dc=//g' | cut -f2 -d',')
 export ldapDn="dc=${ldapDnFirstPart},dc=${ldapDnSecondPart}"
-
 
 # Check autoSetup.json file is present before starting script
 wait-for-file() {
