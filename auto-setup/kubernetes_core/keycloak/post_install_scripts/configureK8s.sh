@@ -9,7 +9,7 @@ if [[ -z ${lineExists} ]]; then
   sudo sed -i '/^    image: k8s.gcr.io\/kube-apiserver:.*/i \    - --oidc-issuer-url=https:\/\/'${componentName}'.'${baseDomain}'\/auth\/realms\/'${ldapDnFirstPart}'' /etc/kubernetes/manifests/kube-apiserver.yaml
 fi
 
-lineExists=$(grep " - --oidc-client-id=kubernetesX" /etc/kubernetes/manifests/kube-apiserver.yaml)
+lineExists=$(grep " - --oidc-client-id=kubernetes" /etc/kubernetes/manifests/kube-apiserver.yaml)
 if [[ -z ${lineExists} ]]; then
   sudo sed -i '/^    image: k8s.gcr.io\/kube-apiserver:.*/i \    - --oidc-client-id=kubernetes' /etc/kubernetes/manifests/kube-apiserver.yaml
 fi
