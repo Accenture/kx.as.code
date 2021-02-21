@@ -14,7 +14,12 @@ if [[ -z ${lineExists} ]]; then
   sudo sed -i '/^    image: k8s.gcr.io\/kube-apiserver:.*/i \    - --oidc-client-id=kubernetes' /etc/kubernetes/manifests/kube-apiserver.yaml
 fi
 
-lineExists=$(grep " - --oidc-groups-claim=groupsX" /etc/kubernetes/manifests/kube-apiserver.yaml)
+lineExists=$(grep " - --oidc-groups-claim=groups" /etc/kubernetes/manifests/kube-apiserver.yaml)
 if [[ -z ${lineExists} ]]; then
   sudo sed -i '/^    image: k8s.gcr.io\/kube-apiserver:.*/i \    - --oidc-groups-claim=groups' /etc/kubernetes/manifests/kube-apiserver.yaml
+fi
+
+lineExists=$(grep " - --oidc-username-claim=preferred_username" /etc/kubernetes/manifests/kube-apiserver.yaml)
+if [[ -z ${lineExists} ]]; then
+  sudo sed -i '/^    image: k8s.gcr.io\/kube-apiserver:.*/i \    - --oidc-username-claim=preferred_username' /etc/kubernetes/manifests/kube-apiserver.yaml
 fi
