@@ -194,7 +194,7 @@ if [[ ${numUsersToCreate} -ne 0 ]]; then
     sudo -H -i -u ${userid} sh -c "/usr/local/bin/trustKXRootCAs.sh"
     sudo -H -i -u ${userid} sh -c "certutil -L -d sql:/home/${userid}/.pki/nssdb"
 
-    # Get credential token in new Realm
+    # Set credential token in new Realm
     kubectl -n keycloak exec ${kcPod} -- \
       ${kcAdmCli} config credentials --server ${kcInternalUrl}/auth --realm ${kcRealm} --user admin --password ${vmPassword} --client admin-cli
 
