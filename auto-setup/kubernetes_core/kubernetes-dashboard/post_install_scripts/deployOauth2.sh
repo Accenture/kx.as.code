@@ -133,10 +133,10 @@ spec:
     targetPort: 4180
   selector:
     k8s-app: oauth2-proxy
-''' | sudo tee /usr/share/kx.as.code/Kubernetes/oauth2-proxy-deployment.yaml
-sudo kubectl apply -f /usr/share/kx.as.code/Kubernetes/oauth2-proxy-deployment.yaml
+''' | sudo tee ${installationWorkspace}/oauth2-proxy-deployment.yaml
+sudo kubectl apply -f ${installationWorkspace}/oauth2-proxy-deployment.yaml
 
-
+# Create ClusterRole binding for Keycloak User Group
 echo '''
 kind: ClusterRoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
@@ -150,5 +150,19 @@ subjects:
 - apiGroup: rbac.authorization.k8s.io
   kind: Group
   name: /kcadmins
-''' | sudo tee /usr/share/kx.as.code/Kubernetes/keycloak-admin-group-clusterbinding.yaml
-sudo kubectl apply -f /usr/share/kx.as.code/Kubernetes/keycloak-admin-group-clusterbinding.yaml
+''' | sudo tee ${installationWorkspace}/keycloak-admin-group-clusterbinding.yaml
+sudo kubectl apply -f ${installationWorkspace}/keycloak-admin-group-clusterbinding.yaml
+
+# Create CA config map for connecting to Kubrnetes Dashboard from Oauth2-Proxy
+echo """
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: kubernetes-dashboard-ca-certificate
+  namespace: kubernetes-dashboard
+data:
+  ca.crt: |-
+    $(sudo cat ${installationWorkspace}/kx-certs/ca.crt | sed '2,30s/^/    /')
+""" | sudo tee  ${installationWorkspace}/kubernetes-dashboard-ca-configmap.yaml
+
+sudo kubectl apply -f  ${installationWorkspace}/kubernetes-dashboard-ca-configmap.yaml
