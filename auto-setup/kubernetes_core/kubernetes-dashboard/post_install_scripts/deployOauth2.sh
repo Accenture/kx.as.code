@@ -137,7 +137,7 @@ spec:
 sudo kubectl apply -f /usr/share/kx.as.code/Kubernetes/oauth2-proxy-deployment.yaml
 
 
-echo '''                                                                                                                                     ✔  18:45:09 
+echo '''
 kind: ClusterRoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
