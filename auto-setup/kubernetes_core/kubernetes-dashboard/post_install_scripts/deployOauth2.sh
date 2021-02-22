@@ -95,8 +95,8 @@ spec:
           - --set-authorization-header=true
           - --http-address=0.0.0.0:4180
           - --email-domain=*
-          - --oidc-groups-claim="groups"
-          - --user-id-claim=preferred_username
+          - --oidc-groups-claim=groups
+          - --user-id-claim=sub
          env:
           - name: OAUTH2_PROXY_CLIENT_ID
             value: '${clientId}'

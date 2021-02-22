@@ -21,5 +21,5 @@ fi
 
 lineExists=$(grep " - --oidc-username-claim=preferred_username" /etc/kubernetes/manifests/kube-apiserver.yaml)
 if [[ -z ${lineExists} ]]; then
-  sudo sed -i '/^    image: k8s.gcr.io\/kube-apiserver:.*/i \    - --oidc-username-claim=preferred_username' /etc/kubernetes/manifests/kube-apiserver.yaml
+  sudo sed -i '/^    image: k8s.gcr.io\/kube-apiserver:.*/i \    - --oidc-username-claim=sub' /etc/kubernetes/manifests/kube-apiserver.yaml
 fi
