@@ -274,6 +274,14 @@ resource "aws_security_group" "kx-as-code-main_sg" {
     to_port = 4000
   }
 
+  ingress {
+    description = "Kubernetes Ingress HTTPS"
+    protocol = "tcp"
+    cidr_blocks = [ aws_subnet.private_one.cidr_block ]
+    from_port = 443
+    to_port = 443
+  }
+
   egress {
     protocol = -1
     cidr_blocks = ["0.0.0.0/0"]
