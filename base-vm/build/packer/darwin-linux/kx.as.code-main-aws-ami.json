@@ -144,7 +144,6 @@
         "../../../scripts/main-node/createskel.sh",
         "../../../scripts/main-node/upgrade-xfce.sh",
         "../../../scripts/main-node/createskel.sh",
-        "../../../scripts/main-node/openldap.sh",
         "../../../scripts/main-node/remoteDesktop.sh",
         "../../../scripts/main-node/cleanup.sh"
       ],
