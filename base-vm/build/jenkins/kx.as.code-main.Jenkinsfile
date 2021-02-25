@@ -25,7 +25,7 @@ pipeline {
 
     parameters {
         string(name: 'github_repo_url', defaultValue: "github.com/Accenture/kx.as.code.git", description: "Source Github repository")
-        string(name: 'github_source_branch', defaultValue: "feature/aws_ami_packer_build", description: "Source Github branch to build from")
+        string(name: 'github_source_branch', defaultValue: "feature/multi-user-enablement", description: "Source Github branch to build from")
         string(name: 'kx_version', defaultValue: "0.6.6", description: "KX.AS.CODE Version")
         string(name: 'kx_vm_user', defaultValue: "kx.hero", description: "KX.AS.CODE VM user login")
         string(name: 'kx_vm_password', defaultValue: "L3arnandshare", description: "KX.AS.CODE VM user login password")
