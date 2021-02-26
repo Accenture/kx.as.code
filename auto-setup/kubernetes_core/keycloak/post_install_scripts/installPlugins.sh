@@ -1,10 +1,8 @@
 #!/bin/bash -x
 
 # Set variables
-export ldapDnFirstPart=$(sudo slapcat | grep dn | head -1 | sed 's/dn: //g' | sed 's/dc=//g' | cut -f1 -d',')
-export ldapDnSecondPart=$(sudo slapcat | grep dn | head -1 | sed 's/dn: //g' | sed 's/dc=//g' | cut -f2 -d',')
-export kcRealm=${ldapDnFirstPart}
-export ldapDn="dc=${ldapDnFirstPart},dc=${ldapDnSecondPart}"
+export kcRealm=${baseDomain}
+export ldapDn=$(sudo slapcat | grep dn | head -1 | cut -f2 -d' ')
 export kcInternalUrl=http://localhost:8080
 export kcBinDir=/opt/jboss/keycloak/bin/
 export kcAdmCli=/opt/jboss/keycloak/bin/kcadm.sh

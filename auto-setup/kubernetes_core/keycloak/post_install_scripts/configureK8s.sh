@@ -2,11 +2,11 @@
 
 # Add OIDC auth to Kubernetes API server
 
-export ldapDnFirstPart=$(sudo slapcat | grep dn | head -1 | sed 's/dn: //g' | sed 's/dc=//g' | cut -f1 -d',')
+export kcRealm=${baseDomain}
 
-lineExists=$(grep "/auth/realms/${ldapDnFirstPart}" /etc/kubernetes/manifests/kube-apiserver.yaml)
+lineExists=$(grep "/auth/realms/${kcRealm}" /etc/kubernetes/manifests/kube-apiserver.yaml)
 if [[ -z ${lineExists} ]]; then
-  sudo sed -i '/^    image: k8s.gcr.io\/kube-apiserver:.*/i \    - --oidc-issuer-url=https:\/\/'${componentName}'.'${baseDomain}'\/auth\/realms\/'${ldapDnFirstPart}'' /etc/kubernetes/manifests/kube-apiserver.yaml
+  sudo sed -i '/^    image: k8s.gcr.io\/kube-apiserver:.*/i \    - --oidc-issuer-url=https:\/\/'${componentName}'.'${baseDomain}'\/auth\/realms\/'${kcRealm}'' /etc/kubernetes/manifests/kube-apiserver.yaml
 fi
 
 lineExists=$(grep " - --oidc-client-id=kubernetes" /etc/kubernetes/manifests/kube-apiserver.yaml)

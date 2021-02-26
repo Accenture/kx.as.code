@@ -1,79 +1,84 @@
-#!/bin/bash -eux
+#!/bin/bash -x
 
-export INITIAL_LDAP_VM_USER=${VM_USER}
-export LDAP_SERVER=127.0.0.1
-export KX_SKEL_DIR=/usr/share/kx.as.code/skel
+export ldapServer=127.0.0.1
+export kxSkelDir=/usr/share/kx.as.code/skel
 
 # Install OpenLDAP server and utilities
-sudo debconf-set-selections <<< 'slapd/root_password password password'
-sudo debconf-set-selections <<< 'slapd/root_password_again password password'
+echo -e " \
+slapd slapd/internal/generated_adminpw password ${vmPassword}
+slapd slapd/password2 password ${vmPassword}
+slapd slapd/internal/adminpw password ${vmPassword}
+slapd slapd/password1 password ${vmPassword}
+slapd slapd/domain string ${baseDomain}
+slapd shared/organization string ${baseDomain}
+slapd slapd/purge_database boolean true
+slapd slapd/password_mismatch note" | sudo debconf-set-selections
+
 sudo DEBIAN_FRONTEND=noninteractive apt-get install -q -y slapd ldap-utils libnss-ldap ldapscripts
 
 # Update admin root password
-VM_PASSWORD_HASH=$(sudo slappasswd -s ${VM_PASSWORD})
+vmPassword_HASH=$(sudo slappasswd -s ${vmPassword})
 sudo ldapmodify -Y EXTERNAL -H ldapi:/// << E0F
 dn: olcDatabase={1}mdb,cn=config
 replace: olcRootPW
-olcRootPW: ${VM_PASSWORD_HASH}
+olcRootPW: ${vmPassword_HASH}
 E0F
 
 # Show base dn after base install of OpenLDAP
 sudo slapcat | grep dn
 
-# Set variables for base DN
-export LDAP_DN_FIRST_PART=$(sudo slapcat | grep dn | head -1 | sed 's/dn: //g' | sed 's/dc=//g' | cut -f1 -d',')
-export LDAP_DN_SECOND_PART=$(sudo slapcat | grep dn | head -1 | sed 's/dn: //g' | sed 's/dc=//g' | cut -f2 -d',')
-export LDAP_DN="dc=${LDAP_DN_FIRST_PART},dc=${LDAP_DN_SECOND_PART}"
+# Set variable for base DN
+export ldapDn=$(sudo slapcat | grep dn | head -1 | cut -f2 -d' ')
 
 # Add "People" OU
 echo '''
-dn: ou=People,'${LDAP_DN}'
+dn: ou=People,'${ldapDn}'
 objectClass: organizationalUnit
 ou: People
 ''' | sudo tee /etc/ldap/users.ldif
-sudo ldapadd -D "cn=admin,${LDAP_DN}" -w "${VM_PASSWORD}" -H ldapi:/// -f /etc/ldap/users.ldif
+sudo ldapadd -D "cn=admin,${ldapDn}" -w "${vmPassword}" -H ldapi:/// -f /etc/ldap/users.ldif
 
 # Check Result
-sudo ldapsearch -x -b "${LDAP_DN}" ou
+sudo ldapsearch -x -b "${ldapDn}" ou
 
 # Add base OU node for groups
 echo '''
-dn: ou=Groups,ou=People,'${LDAP_DN}'
+dn: ou=Groups,ou=People,'${ldapDn}'
 objectClass: organizationalUnit
 objectClass: top
 ou: Groups
 ''' | sudo tee /etc/ldap/base_groups_ou.ldif
-sudo ldapadd -D "cn=admin,${LDAP_DN}" -w "${VM_PASSWORD}" -H ldapi:/// -f /etc/ldap/base_groups_ou.ldif
+sudo ldapadd -D "cn=admin,${ldapDn}" -w "${vmPassword}" -H ldapi:/// -f /etc/ldap/base_groups_ou.ldif
 
 # Add base OU node for users
 echo '''
-dn: ou=Users,ou=People,'${LDAP_DN}'
+dn: ou=Users,ou=People,'${ldapDn}'
 objectClass: organizationalUnit
 objectClass: top
 ou: Users
 ''' | sudo tee /etc/ldap/base_users_ou.ldif
-sudo ldapadd -D "cn=admin,${LDAP_DN}" -w "${VM_PASSWORD}" -H ldapi:/// -f /etc/ldap/base_users_ou.ldif
+sudo ldapadd -D "cn=admin,${ldapDn}" -w "${vmPassword}" -H ldapi:/// -f /etc/ldap/base_users_ou.ldif
 
 # Add admin group
 echo '''
-dn: cn=admins,ou=Groups,ou=People,'${LDAP_DN}'
+dn: cn=admins,ou=Groups,ou=People,'${ldapDn}'
 objectClass: posixGroup
 cn: admins
 gidNumber: 10000
 ''' | sudo tee /etc/ldap/admin_group.ldif
-sudo ldapadd -D "cn=admin,${LDAP_DN}" -w "${VM_PASSWORD}" -H ldapi:/// -f /etc/ldap/admin_group.ldif
+sudo ldapadd -D "cn=admin,${ldapDn}" -w "${vmPassword}" -H ldapi:/// -f /etc/ldap/admin_group.ldif
 
 # Add users group
 echo '''
-dn: cn=users,ou=Groups,ou=People,'${LDAP_DN}'
+dn: cn=users,ou=Groups,ou=People,'${ldapDn}'
 objectClass: posixGroup
 cn: users
 gidNumber: 10001
 ''' | sudo tee /etc/ldap/users_group.ldif
-sudo ldapadd -D "cn=admin,${LDAP_DN}" -w "${VM_PASSWORD}" -H ldapi:/// -f /etc/ldap/users_group.ldif
+sudo ldapadd -D "cn=admin,${ldapDn}" -w "${vmPassword}" -H ldapi:/// -f /etc/ldap/users_group.ldif
 
 # Check Result
-sudo ldapsearch -x -b "ou=People,${LDAP_DN}"
+sudo ldapsearch -x -b "ou=People,${ldapDn}"
 
 # Add memberOf Overlay Module
 echo '''
@@ -113,13 +118,13 @@ sudo ldapadd -Y EXTERNAL -H ldapi:/// -f /etc/ldap/add-refint.ldif
 # Configure Client selections before install
 cat << EOF | sudo debconf-set-selections
 libnss-ldap libnss-ldap/dblogin boolean false
-libnss-ldap shared/ldapns/base-dn   string  ${LDAP_DN}
-libnss-ldap libnss-ldap/binddn  string  cn=admin,${LDAP_DN}
+libnss-ldap shared/ldapns/base-dn   string  ${ldapDn}
+libnss-ldap libnss-ldap/binddn  string  cn=admin,${ldapDn}
 libnss-ldap libnss-ldap/dbrootlogin boolean true
 libnss-ldap libnss-ldap/override    boolean true
-libnss-ldap shared/ldapns/ldap-server   string  ldap://${LDAP_SERVER}/
+libnss-ldap shared/ldapns/ldap-server   string  ldap://${ldapServer}/
 libnss-ldap libnss-ldap/confperm    boolean false
-libnss-ldap libnss-ldap/rootbinddn  string  cn=admin,${LDAP_DN}
+libnss-ldap libnss-ldap/rootbinddn  string  cn=admin,${ldapDn}
 libnss-ldap shared/ldapns/ldap_version  select  3
 libnss-ldap libnss-ldap/nsswitch    note
 EOF
@@ -140,20 +145,20 @@ uid nslcd
 gid nslcd
 
 # The location at which the LDAP server(s) should be reachable.
-uri ldap://'${LDAP_SERVER}'
+uri ldap://'${ldapServer}'
 
 # The search base that will be used for all queries.
-base ou=People,'${LDAP_DN}'
+base ou=People,'${ldapDn}'
 
 # The LDAP protocol version to use.
 #ldap_version 3
 
 # The DN to bind with for normal lookups.
-binddn cn=admin,'${LDAP_DN}'
-bindpw '${VM_PASSWORD}'
+binddn cn=admin,'${ldapDn}'
+bindpw '${vmPassword}'
 
 # The DN used for password modifications by root.
-rootpwmoddn cn=admin,'${LDAP_DN}'
+rootpwmoddn cn=admin,'${ldapDn}'
 
 # SSL options
 ssl off
@@ -163,5 +168,5 @@ tls_cacertfile /etc/ssl/certs/ca-certificates.crt
 ''' | sudo tee /etc/nslcd.conf
 
 # Ensure home directory is created on first login
-echo "session required      pam_mkhomedir.so   skel=${KX_SKEL_DIR} umask=0002" | sudo tee -a /etc/pam.d/common-session
+echo "session required      pam_mkhomedir.so   skel=${kxSkelDir} umask=0002" | sudo tee -a /etc/pam.d/common-session
 
