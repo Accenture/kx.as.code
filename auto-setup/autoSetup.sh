@@ -51,16 +51,18 @@ shortcutsDirectory="/home/${vmUser}/Desktop/DevOps Tools"
 if [[ "${action}" == "install" ]]; then
 
     # Create namespace if it does not exist
-    if [[ -z ${namespace} ]] && [[ "${namespace}" != "kube-system" ]] && [[ "${namespace}" != "default" ]]; then
-        log_error "Namespace name could not be established. Subsequent actions will fail. Please validate the namespace entry is correct for \"${component}\" in metadata.json"
+    if [[ -z "${namespace}" ]] && [[ "${namespace}" != "kube-system" ]] && [[ "${namespace}" != "default" ]]; then
+        log_warn "Namespace name could not be established. Subsequent actions may fail if they have a dependency on this. Please validate the namespace entry is correct for \"${component}\" in metadata.json"
     fi
 
     # Create namespace if it does not exists
-    if [ "$(kubectl get namespace ${namespace} --template={{.status.phase}})" != "Active" ] && [[ "${namespace}" != "kube-system" ]] && [[ "${namespace}" != "default" ]]; then
-        log_info "Namespace \"${namespace}\" does not exist. Creating"
-        kubectl create namespace ${namespace}
-    else
-        log_info "Namespace \"${namespace}\" already exists. Moving on"
+    if [[ -n "${namespace}" ]]; then
+        if [[ "$(kubectl get namespace ${namespace} --template={{.status.phase}})" != "Active" ]] && [[ "${namespace}" != "kube-system" ]] && [[ "${namespace}" != "default" ]]; then
+            log_info "Namespace \"${namespace}\" does not exist. Creating"
+            kubectl create namespace ${namespace}
+        else
+            log_info "Namespace \"${namespace}\" already exists. Moving on"
+        fi
     fi
 
     export applicationUrl=$(cat ${componentMetadataJson} | jq -r '.urls[0]?.url?')
