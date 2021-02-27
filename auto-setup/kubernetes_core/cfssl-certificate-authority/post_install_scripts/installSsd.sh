@@ -3,9 +3,7 @@
 # Install System Security Services Daemon (SSSD)
 
 # Set variables for base DN
-export ldapDnFirstPart=$(sudo slapcat | grep dn | head -1 | sed 's/dn: //g' | sed 's/dc=//g' | cut -f1 -d',')
-export ldapDnSecondPart=$(sudo slapcat | grep dn | head -1 | sed 's/dn: //g' | sed 's/dc=//g' | cut -f2 -d',')
-export ldapDn="dc=${ldapDnFirstPart},dc=${ldapDnSecondPart}"
+export ldapDn=$(sudo slapcat | grep dn | head -1 | cut -f2 -d' ')
 
 # Install SSSD
 sudo apt-get install -y sssd libpam-sss libnss-sss

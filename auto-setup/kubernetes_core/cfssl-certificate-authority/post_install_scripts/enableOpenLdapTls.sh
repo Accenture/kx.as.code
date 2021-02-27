@@ -1,9 +1,7 @@
 #!/bin/bash -x
 
 # Set variables for base DN
-export ldapDnFirstPart=$(sudo slapcat | grep dn | head -1 | sed 's/dn: //g' | sed 's/dc=//g' | cut -f1 -d',')
-export ldapDnSecondPart=$(sudo slapcat | grep dn | head -1 | sed 's/dn: //g' | sed 's/dc=//g' | cut -f2 -d',')
-export ldapDn="dc=${ldapDnFirstPart},dc=${ldapDnSecondPart}"
+export ldapDn=$(sudo slapcat | grep dn | head -1 | cut -f2 -d' ')
 
 # Copy SSL Certs
 sudo cp ${installationWorkspace}/kx-certs/ca.crt /etc/ldap/sasl2/ca.crt

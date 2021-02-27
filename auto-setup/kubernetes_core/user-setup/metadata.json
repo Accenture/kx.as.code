@@ -1,6 +1,6 @@
 {
     "name": "user-setup",
-    "namespace": "na",
+    "namespace": "",
     "installation_type": "script",
     "installation_group_folder": "kubernetes_core",
     "install_scripts": [
