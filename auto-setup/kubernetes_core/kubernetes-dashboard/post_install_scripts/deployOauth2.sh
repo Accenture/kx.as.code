@@ -1,6 +1,6 @@
 #!/bin/bash -x
 
-export kcRealm=${ldapDnFirstPart}
+export kcRealm=${baseDomain}
 export kcInternalUrl=http://localhost:8080
 export kcAdmCli=/opt/jboss/keycloak/bin/kcadm.sh
 export kcPod=$(kubectl get pods -l 'app.kubernetes.io/name=keycloak' -n keycloak --output=json | jq -r '.items[].metadata.name')
@@ -86,10 +86,10 @@ spec:
       containers:
        - args:
           - --provider=oidc
-          - --provider-display-name="KX.AS.CODE"
+          - --provider-display-name="'${baseDomain}'"
           - --client-id=kubernetes
           - --redirect-url=https://'${componentName}'-iam.'${baseDomain}'/oauth2/callback
-          - --oidc-issuer-url=https://keycloak.'${baseDomain}'/auth/realms/kx-as-code
+          - --oidc-issuer-url=https://keycloak.'${baseDomain}'/auth/realms/'${baseDomain}'
           - --provider-ca-file=/etc/ssl/kx-ca-cert/ca.crt
           - --reverse-proxy=true
           - --set-authorization-header=true
