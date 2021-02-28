@@ -100,8 +100,32 @@ cd ${installationWorkspace}
 
 # Get configs from autoSetup.json
 export virtualizationType=$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.virtualizationType')
-export nicPrefix=$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.nic_names.'${virtualizationType}'')
-export netDevice=$(nmcli device show | grep -E 'enp|ens' | grep 'GENERAL.DEVICE' | awk '{print $2}')
+
+# Determine which NIC to bind to, to avoid binding to interal VirtualBox NAT NICs for example, where all hosts have the same IP - 10.0.2.15
+export nicList=$(nmcli device show | grep -E 'enp|ens' | grep 'GENERAL.DEVICE' | awk '{print $2}')
+export ipsToExclude="10.0.2.15"   # IP addresses not to configure with static IP. For example, default Virtualbox IP 10.0.2.15
+export nicExclusions=""
+for nic in ${nicList}
+do
+  for ipToExclude in ${ipsToExclude}
+  do
+    ip=$(ip a s ${nic} | egrep -o 'inet [0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | cut -d' ' -f2)
+    echo ${ip}
+    if [[ "${ip}" == "${ipToExclude}" ]]; then
+      excludeNic="true"
+    fi
+  done
+  if [[ "${excludeNic}" == "true" ]]; then
+    echo "Excluding NIC ${nic}"
+    nicExclusions="${nicExclusions} ${nic}"
+    excludeNic="false"
+  else
+    netDevice=${nic}
+  fi
+done
+echo "NIC Exclusions: ${nicExclusions}"
+echo "NIC to use: ${netDevice}"
+
 export environmentPrefix=$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.environmentPrefix')
 if [ -z ${environmentPrefix} ]; then
     export baseDomain="$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.baseDomain')"
