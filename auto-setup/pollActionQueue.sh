@@ -55,7 +55,7 @@ do
     netDevice=${nic}
   fi
 done
-echo "NIC Exclusions: ${nicExclusions}"
+echo "NIC exclusions: ${nicExclusions}"
 echo "NIC to use: ${netDevice}"
 export mainIpAddress=$(ip a s ${netDevice} | egrep -o 'inet [0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | cut -d' ' -f2)
 export environmentPrefix=$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.environmentPrefix')
