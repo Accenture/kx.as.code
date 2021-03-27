@@ -76,7 +76,12 @@ if [[ ${numUsersToCreate} -ne 0 ]]; then
       ''' | sed -e 's/^[ \t]*//' | sed '/^$/d' | sudo tee /etc/ldap/new_user_${userid}.ldif
       sudo ldapadd -D "cn=admin,${ldapDn}" -w "${vmPassword}" -H ldapi:/// -f /etc/ldap/new_user_${userid}.ldif
 
+      # Restart NSCLD to renew user cache
+      sudo systemctl restart nslcd.service
+
       # Check Result
+      sudo getent passwd | grep ${newGid} # Check ldap user is active, ie. shows up with getent
+      sudo getent group | grep ${newGid} # Check ldap group is active, ie. shows up with getent
       sudo ldapsearch -x -b "ou=People,${ldapDn}"
 
       # Create "groupOfNames" group for Keycloak if it does not already exist
@@ -100,10 +105,6 @@ if [[ ${numUsersToCreate} -ne 0 ]]; then
         ''' | sed -e 's/^[ \t]*//' | sed '/^$/d' | sudo tee /etc/ldap/add_user_${userid}_to_kcadmins.ldif
         sudo ldapadd -D "cn=admin,${ldapDn}" -w "${vmPassword}"  -H ldapi:/// -f /etc/ldap/add_user_${userid}_to_kcadmins.ldif
       fi
-
-      # Restart SLAPD
-      sudo systemctl restart slapd.service
-      sudo systemctl restart nscd.service
 
       # Check user was added successfully
       ldapsearch -H ldapi:/// -Y EXTERNAL -LLL -b "${ldapDn}" memberOf 2>/dev/null | grep memberOf
@@ -210,8 +211,6 @@ if [[ ${numUsersToCreate} -ne 0 ]]; then
   done
 fi
 
-
-
-
-
+# Restart LightDM to show new users on LightDM WebGreeter
+sudo service lightdm restart
 
