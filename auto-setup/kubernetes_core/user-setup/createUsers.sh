@@ -76,8 +76,9 @@ if [[ ${numUsersToCreate} -ne 0 ]]; then
       ''' | sed -e 's/^[ \t]*//' | sed '/^$/d' | sudo tee /etc/ldap/new_user_${userid}.ldif
       sudo ldapadd -D "cn=admin,${ldapDn}" -w "${vmPassword}" -H ldapi:/// -f /etc/ldap/new_user_${userid}.ldif
 
-      # Restart NSCLD to renew user cache
+      # Restart NSLCD and NSCD to make new users available for logging in
       sudo systemctl restart nslcd.service
+      sudo systemctl restart nscd.service
 
       # Check Result
       sudo getent passwd | grep ${newGid} # Check ldap user is active, ie. shows up with getent
@@ -180,7 +181,7 @@ if [[ ${numUsersToCreate} -ne 0 ]]; then
     for i in {1..10}
     do
       echo "i: $i"
-      sudo chown -f -R ${userid}:${userid} /home/${userid} || true
+      sudo chown -f -R ${newGid}:${newGid} /home/${userid} || true
       directoryOwnership=$(stat -c '%u' /home/${userid})
       if [[ ${directoryOwnership} -eq ${newGid} ]]; then
         break
@@ -192,7 +193,7 @@ if [[ ${numUsersToCreate} -ne 0 ]]; then
     # Add KX.AS.CODE Root CA cert to Chrome CA Store
     sudo rm -rf /home/${userid}/.pki
     mkdir -p /home/${userid}/.pki/nssdb/
-    chown -R ${userid}:${userid} /home/${userid}/.pki
+    chown -R ${newGid}:${newGid} /home/${userid}/.pki
     sudo -H -i -u ${userid} sh -c "certutil -N --empty-password -d sql:/home/${userid}/.pki/nssdb"
     sudo -H -i -u ${userid} sh -c "/usr/local/bin/trustKXRootCAs.sh"
     sudo -H -i -u ${userid} sh -c "certutil -L -d sql:/home/${userid}/.pki/nssdb"
