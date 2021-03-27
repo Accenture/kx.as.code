@@ -101,6 +101,10 @@ if [[ ${numUsersToCreate} -ne 0 ]]; then
         sudo ldapadd -D "cn=admin,${ldapDn}" -w "${vmPassword}"  -H ldapi:/// -f /etc/ldap/add_user_${userid}_to_kcadmins.ldif
       fi
 
+      # Restart SLAPD
+      sudo systemctl restart slapd.service
+      sudo systemctl restart nscd.service
+
       # Check user was added successfully
       ldapsearch -H ldapi:/// -Y EXTERNAL -LLL -b "${ldapDn}" memberOf 2>/dev/null | grep memberOf
 
