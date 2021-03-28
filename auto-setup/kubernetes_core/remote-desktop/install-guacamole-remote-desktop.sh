@@ -1,8 +1,5 @@
 #!/bin/bash -eux
 
-vmUser=${VM_USER}
-vmPassword=${VM_PASSWORD}
-
 SHARED_GIT_REPOSITORIES=/usr/share/kx.as.code/git
 
 # Install packages
@@ -43,8 +40,8 @@ do
 done
 
 # Download Postgresql JDBC driver
-sudo mkdir -p /var/lib/guacamole/classpath
-sudo curl -o /var/lib/guacamole/classpath/postgresql-42.2.19.jar -L https://jdbc.postgresql.org/download/postgresql-42.2.19.jar
+sudo mkdir -p /etc/guacamole/lib
+sudo curl -o /etc/guacamole/lib/postgresql-42.2.19.jar -L https://jdbc.postgresql.org/download/postgresql-42.2.19.jar
 
 # Install
 sudo apt-get install -y postgresql postgresql-contrib
@@ -67,6 +64,13 @@ sudo su - postgres -c "psql -d guacamole_db -c \"GRANT SELECT,USAGE ON ALL SEQUE
 export ldapDn=$(sudo slapcat | grep dn | head -1 | cut -f2 -d' ')
 
 echo '''
+guacd-hostname: localhost
+guacd-port: 4822
+
+# Auth provider class (authenticates user/pass combination, needed if using the provided login screen)
+auth-provider: net.sourceforge.guacamole.net.basic.BasicFileAuthenticationProvider
+basic-user-mapping: /etc/guacamole/user-mapping.xml
+
 # Configure LDAP connection
 ldap-hostname: localhost
 ldap-port: 389
@@ -174,7 +178,7 @@ echo '''
 server {
         listen 8099;
         listen [::]:8099;
-        server_name demo1.kx-as-code.com;
+        server_name '${baseDomain}';
 
         access_log  /var/log/nginx/guac_access.log;
         error_log  /var/log/nginx/guac_error.log;
@@ -190,7 +194,10 @@ server {
         }
 
 }
-''' | sudo tee /etc/nginx/conf.d/guacamole.conf
+''' | sudo tee /etc/nginx/sites-available/guacamole.conf
+
+# Create shortcut to enable NGINX virtual host
+ln -s /etc/nginx/sites-available/guacamole.conf /etc/nginx/sites-enabled/guacamole.conf
 
 sudo nginx -t
 sudo systemctl reload nginx
@@ -206,7 +213,3 @@ sudo sed -i 's/^    -webkit-background-size: 3em 3em;/    -webkit-background-siz
 sudo sed -i 's/^    -khtml-background-size:  3em 3em;/    -khtml-background-size:  9em 9em;/g' /var/lib/tomcat9/webapps/guacamole/guacamole.css
 sudo sed -i 's/width:3em;height:3em;background-size:3em 3em;-moz-background-size:3em 3em;-webkit-background-size:3em 3em;-khtml-background-size:3em 3em;/width:9em;height:9em;background-size:9em 9em;-moz-background-size:9em 9em;-webkit-background-size:9em 9em;-khtml-background-size:9em 9em;/g' /var/lib/tomcat9//webapps/guacamole/guacamole.min.css
 
-# Install NoMachine
-wget  https://download.nomachine.com/download/7.0/Linux/nomachine_7.0.211_4_amd64.deb
-sudo apt-get install -y ./nomachine_7.0.211_4_amd64.deb
-rm -f ./nomachine_7.0.211_4_amd64.deb
