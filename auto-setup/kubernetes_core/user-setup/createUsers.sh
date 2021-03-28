@@ -80,7 +80,19 @@ if [[ ${numUsersToCreate} -ne 0 ]]; then
       sudo systemctl restart nslcd.service
       sudo systemctl restart nscd.service
 
-      # Check Result
+      # Test for user availability
+      for i in {1..10}
+      do
+        echo "i: $i"
+        userAvailability=$(sudo -H -i -u ${userid} sh -c 'id')
+        if [[ -n ${userAvailability} ]]; then
+          break
+        else
+          sleep 10
+        fi
+      done
+
+      # Check new user user via getent and ldapsearch
       sudo getent passwd | grep ${newGid} # Check ldap user is active, ie. shows up with getent
       sudo getent group | grep ${newGid} # Check ldap group is active, ie. shows up with getent
       sudo ldapsearch -x -b "ou=People,${ldapDn}"
