@@ -1,5 +1,5 @@
 
-# Defaults changed at the ennd
+# Defaults changed at the end
 user=admin
 password=admin
 

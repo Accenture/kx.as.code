@@ -1,22 +1,23 @@
 #!/bin/bash
 
-# Create Gitlab Personal Access Token
-export initialGitlabRootPassword="$(kubectl get secret gitlab-ce-gitlab-initial-root-password -n ${namespace} -o json | jq -r '.data.password' | base64 --decode)"
-export adminUser="root"
+if [[ ! -f /usr/share/kx.as.code/.config/.admin.gitlab.pat ]]; then
 
-csrfToken=$(curl -c cookies.txt -i "https://gitlab.${baseDomain}/users/sign_in" -s | grep "authenticity_token" | sed -n 's/.*value="\([^"]*\).*/\1/p' | head -1)
+  # Set Gitlab admin user
+  export adminUser="root"
 
-curl -b cookies.txt -c cookies.txt -i "https://gitlab.${baseDomain}/users/sign_in" \
-    --data "user[login]=${adminUser}&user[password]=${initialGitlabRootPassword}" \
-    --data-urlencode "authenticity_token=${csrfToken}" | grep "authenticity_token" | sed -n 's/.*value="\([^"]*\).*/\1/p' | tail -1
+  # Get Gitlab-CE task-runner pod name
+  export podName=$(kubectl get pods -n ${namespace} -l app=task-runner -o=custom-columns=:metadata.name --no-headers)
 
-csrfToken=$(curl -H 'user-agent: curl' -b cookies.txt -i "https://gitlab.${baseDomain}/profile/personal_access_tokens" -s | grep "authenticity_token" | sed -n 's/.*value="\([^"]*\).*/\1/p' | tail -1)
+  # Generate personal access token
+  export personalAccessToken=$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${1:-32};echo;)
 
-curl -s -L -b cookies.txt "https://gitlab.${baseDomain}/profile/personal_access_tokens" \
-    --data-urlencode "authenticity_token=${csrfToken}" \
-    --data 'personal_access_token[name]=golab-generated&personal_access_token[expires_at]=&personal_access_token[scopes][]=api' \
-    | grep "created-personal-access-token" | sed -n 's/.*value="\([^"]*\).*/\1/p' | tail -1 | tee /home/${vmUser}/.config/kx.as.code/.admin.gitlab.pat
+  # Save generated token to admin user account
+  kubectl exec -n ${namespace} ${podName} -- gitlab-rails runner "token = User.find_by_username('${adminUser}').personal_access_tokens.create(scopes: [:api], name: 'Automation token'); token.set_token('${personalAccessToken}'); token.save!"
 
-chown ${vmUser}:${vmUser} /home/${vmUser}/.config/kx.as.code/.admin.gitlab.pat
+  # Save token to file for use in later script executions
+  echo ${personalAccessToken} | sudo tee /usr/share/kx.as.code/.config/.admin.gitlab.pat
 
-export personalAccessToken=$(cat /home/${vmUser}/.config/kx.as.code/.admin.gitlab.pat)
+  # Change ownership of script to kx.hero
+  chown ${vmUser}:${vmUser} /usr/share/kx.as.code/.config/.admin.gitlab.pat
+
+fi

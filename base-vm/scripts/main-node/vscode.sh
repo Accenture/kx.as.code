@@ -1,5 +1,7 @@
 #!/bin/bash -eux
 
+export SHARED_GIT_REPOSITORIES=/usr/share/kx.as.code/git
+
 # Install Visual Studio Code editor
 curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg
 sudo install -o root -g root -m 644 microsoft.gpg /usr/share/keyrings/microsoft-archive-keyring.gpg
@@ -35,13 +37,13 @@ sudo bash -c "cat <<EOF > /home/$VM_USER/.vscode/KX.AS.CODE.code-workspace
 {
 	\"folders\": [
 		{
-			\"path\": \"../Documents/kx.as.code_source\"
+			\"path\": \"${SHARED_GIT_REPOSITORIES}/kx.as.code\"
 		},
 		{
-			\"path\": \"../Documents/kx.as.code_docs\"
+			\"path\": \"${SHARED_GIT_REPOSITORIES}/kx.as.code_docs\"
 		},
 		{
-			\"path\": \"../Documents/kx.as.code_techradar\"
+			\"path\": \"${SHARED_GIT_REPOSITORIES}/kx.as.code_techradar\"
 		}
 	],
 	\"settings\": {}
@@ -58,7 +60,7 @@ sudo bash -c "cat <<EOF > /home/$VM_USER/.config/Code/storage.json
         \"id\": \"d1b9a0d329ac9faccadc5afb54ee2eba\",
         \"configURIPath\": \"file:///home/$VM_USER/.vscode/KX.AS.CODE.code-workspace\"
       },
-      \"file:///home/$VM_USER/Documents/kx.as.code_source\"
+      \"file://${SHARED_GIT_REPOSITORIES}/git/kx.as.code\"
     ],
     \"files2\": [
 
@@ -120,11 +122,11 @@ sudo bash -c "cat <<EOF > /home/$VM_USER/.config/Code/storage.json
                   \"id\": \"openRecentFolder\",
                   \"uri\": {
                     \"\$mid\": 1,
-                    \"path\": \"/home/$VM_USER/Documents/kx.as.code_source\",
+                    \"path\": \"${SHARED_GIT_REPOSITORIES}/kx.as.code\",
                     \"scheme\": \"file\"
                   },
                   \"enabled\": true,
-                  \"label\": \"~/Documents/kx.as.code_source\"
+                  \"label\": \"${SHARED_GIT_REPOSITORIES}/kx.as.code\"
                 },
                 {
                   \"id\": \"vscode.menubar.separator\"

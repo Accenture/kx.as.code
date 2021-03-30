@@ -3,7 +3,7 @@
 # Ensure time is accurate
 sudo apt-get install -y ntpdate
 
-certificatesWorkspace=/home/${vmUser}/Kubernetes
+certificatesWorkspace=/usr/share/kx.as.code/Kubernetes
 sudo mkdir -p ${certificatesWorkspace}
 sudo chown $(id -u ${vmUser}):$(id -g ${vmUser}) ${certificatesWorkspace}
 cd ${certificatesWorkspace}

@@ -55,6 +55,8 @@
     "Description": "Elasticsearch Description",
     "shortcut_text": "Elasticsearch",
     "shortcut_icon": "elasticsearch.png",
-    "pre_install_scripts": [],
+    "pre_install_scripts": [
+        "createSecret.sh"
+    ],
     "post_install_scripts": []
 }

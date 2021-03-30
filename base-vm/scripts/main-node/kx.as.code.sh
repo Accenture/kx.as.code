@@ -1,5 +1,8 @@
 #!/bin/bash -eux
 
+export SKELDIR=/usr/share/kx.as.code/skel
+export SHARED_GIT_REPOSITORIES=/usr/share/kx.as.code/git
+
 # UrlEncode GIT password in case of special characters
 if [[ ! -z $GITHUB_TOKEN ]]; then
   GITHUB_TOKEN_ENCODED=$(python3 -c "import urllib.parse; print(urllib.parse.quote(input()))" <<< "$GITHUB_TOKEN")
@@ -16,40 +19,6 @@ sudo fc-cache -vf /usr/share/fonts/
 sudo mkdir -p /home/$VM_USER/.config/xfce4/desktop
 sudo wget http://de.archive.ubuntu.com/ubuntu/pool/universe/x/xfpanel-switch/xfpanel-switch_1.0.7-0ubuntu2_all.deb
 sudo dpkg -i xfpanel-switch_1.0.7-0ubuntu2_all.deb
-sudo cp /home/${BASE_IMAGE_SSH_USER}/user_profile/xfce4_panel/exported-config.tar.bz2 /home/$VM_USER/.config/
-sudo bash -c "cat <<EOF > /home/$VM_USER/.config/xfce4/desktop/icons.screen0-1904x1136.rc
-[xfdesktop-version-4.10.3+-rcfile_format]
-4.10.3+=true
-
-[/home/kx.hero/Desktop/RabbitMQ.desktop]
-row=4
-col=0
-
-[/home/kx.hero/Desktop/README.desktop]
-row=1
-col=0
-
-[/home/kx.hero/Desktop/CONTRIBUTE.desktop]
-row=2
-col=0
-
-[/home/kx.hero/Desktop/postman.desktop]
-row=5
-col=0
-
-[/home/kx.hero/Desktop/KX.AS.CODE Source]
-row=3
-col=0
-
-[/home/kx.hero]
-row=0
-col=0
-
-EOF"
-
-sudo bash -c "cp /home/$VM_USER/.config/xfce4/desktop/icons.screen0-1904x1136.rc /home/$VM_USER/.config/xfce4/desktop/icons.screen0-784x536.rc"
-sudo bash -c "cp /home/$VM_USER/.config/xfce4/desktop/icons.screen0-1904x1136.rc /home/$VM_USER/.config/xfce4/desktop/icons.screen0-2218x1224.rc"
-sudo bash -c "cd /home/$VM_USER/.config/xfce4/desktop; ln -s /home/$VM_USER/.config/xfce4/desktop/icons.screen0-1904x1136.rc icons.screen.latest.rc"
 sudo chown -hR $VM_USER:$VM_USER /home/$VM_USER
 
 # Work-Around to get around the background resetting on reboot bug
@@ -65,20 +34,38 @@ else
   githubCloneUrl="https://github.com"
 fi
 
-# Clone KX.AS.CODE GIT repository into VM
-sudo -H -i -u $VM_USER -- sh -c " \
-git clone ${githubCloneUrl}/Accenture/kx.as.code.git /home/$VM_USER/Documents/kx.as.code_source; \
-git clone ${githubCloneUrl}/Accenture/kx.as.code-docs.git /home/$VM_USER/Documents/kx.as.code_docs; \
-git clone ${githubCloneUrl}/Accenture/kx.as.code-techradar.git /home/$VM_USER/Documents/kx.as.code_techradar; \
-ln -s /home/$VM_USER/Documents/kx.as.code_source /home/$VM_USER/Desktop/\"KX.AS.CODE Source\"; \
-cd /home/$VM_USER/Documents/kx.as.code_source; \
-git config credential.helper 'cache --timeout=3600'; \
-if [[ ! -z $GITHUB_TOKEN_ENCODED ]]; then \
-  sed -i 's/'$GITHUB_USER':'$GITHUB_TOKEN_ENCODED'@//g' /home/$VM_USER/Documents/kx.as.code_source/.git/config; \
-  sed -i 's/'$GITHUB_USER':'$GITHUB_TOKEN_ENCODED'@//g' /home/$VM_USER/Documents/kx.as.code_docs/.git/config; \
-  sed -i 's/'$GITHUB_USER':'$GITHUB_TOKEN_ENCODED'@//g' /home/$VM_USER/Documents/kx.as.code_techradar/.git/config; \
+if [[ -z ${GIT_SOURCE_BRANCH} ]]; then
+  gitSourceBranch="master"
+else
+  gitSourceBranch="${GIT_SOURCE_BRANCH}"
 fi
-"
+
+if [[ -z ${GIT_DOCS_BRANCH} ]]; then
+  gitDocsBranch="master"
+else
+  gitDocsBranch="${GIT_DOCS_BRANCH}"
+fi
+
+if [[ -z ${GIT_TECHRADAR_BRANCH} ]]; then
+  gitTechRadarBranch="master"
+else
+  gitTechRadarBranch="${GIT_TECHRADAR_BRANCH}"
+fi
+
+sudo mkdir -p ${SHARED_GIT_REPOSITORIES}
+
+# Clone KX.AS.CODE GIT repository into VM
+sudo git clone --single-branch --branch ${gitSourceBranch} ${githubCloneUrl}/Accenture/kx.as.code.git ${SHARED_GIT_REPOSITORIES}/kx.as.code; \
+sudo git clone --single-branch --branch ${gitDocsBranch} ${githubCloneUrl}/Accenture/kx.as.code-docs.git ${SHARED_GIT_REPOSITORIES}/kx.as.code_docs; \
+sudo git clone --single-branch --branch ${gitTechRadarBranch} ${githubCloneUrl}/Accenture/kx.as.code-techradar.git ${SHARED_GIT_REPOSITORIES}/kx.as.code_techradar; \
+sudo ln -s ${SHARED_GIT_REPOSITORIES}/kx.as.code /home/$VM_USER/Desktop/"KX.AS.CODE Source"; \
+cd ${SHARED_GIT_REPOSITORIES}/kx.as.code; \
+sudo git config credential.helper 'cache --timeout=3600'; \
+if [[ -n $GITHUB_TOKEN_ENCODED ]]; then \
+  sudo sed -i 's/'$GITHUB_USER':'$GITHUB_TOKEN_ENCODED'@//g' ${SHARED_GIT_REPOSITORIES}/kx.as.code/.git/config; \
+  sudo sed -i 's/'$GITHUB_USER':'$GITHUB_TOKEN_ENCODED'@//g' ${SHARED_GIT_REPOSITORIES}/kx.as.code_docs/.git/config; \
+  sudo sed -i 's/'$GITHUB_USER':'$GITHUB_TOKEN_ENCODED'@//g' ${SHARED_GIT_REPOSITORIES}/kx.as.code_techradar/.git/config; \
+fi
 
 # Change user avatar and language settings
 sudo mkdir -p /usr/share/pixmaps/faces
@@ -180,7 +167,7 @@ User=0
 Environment=VM_USER=${VM_USER}
 Environment=KUBEDIR=/home/${VM_USER}/Kubernetes
 Type=forking
-ExecStart=/home/${VM_USER}/Documents/kx.as.code_source/auto-setup/pollActionQueue.sh
+ExecStart=/usr/share/kx.as.code/git/kx.as.code/auto-setup/pollActionQueue.sh
 TimeoutSec=infinity
 Restart=no
 RemainAfterExit=no
@@ -192,12 +179,48 @@ sudo systemctl enable k8s-initialize-cluster
 sudo systemctl daemon-reload
 
 sudo mkdir -p /usr/share/kx.as.code
-sudo bash -c "cat <<EOF > /usr/share/kx.as.code/showWelcome.sh
+
+echo '''
 #!/bin/bash
-export VM_USER=$VM_USER
+vmUser=$(id -nu)
+vmUserId=$(id -u)
+# Make desktop icon text transparent
+echo """
+style \"xfdesktop-icon-view\" {
+
+XfdesktopIconView::label-alpha = 0
+
+base[NORMAL] = \"#ffffff\"
+base[SELECTED] = \"#5D97D1\"
+base[ACTIVE] = \"#5D97D1\"
+
+fg[NORMAL] = \"#ffffff\"
+fg[SELECTED] = \"#ffffff\"
+fg[ACTIVE] = \"#ffffff\"
+}
+widget_class \"*XfdesktopIconView*\" style \"xfdesktop-icon-view\"
+""" | sudo tee $HOME/.gtkrc-2.0
+sudo chown ${vmUser}:${vmUser} $HOME/.gtkrc-2.0
+# Change Desktop Theme to vimix-dark-doder
+xfconf-query -c xsettings -p /Net/ThemeName -s "vimix-dark-doder"
+# Change icons to Paper theme
+xfconf-query -c xsettings -p /Net/IconThemeName -s Paper
+# Add/Remove desktop icons
 xfconf-query --create --channel xfce4-desktop --property /desktop-icons/file-icons/show-filesystem --type bool --set false
 xfconf-query --create --channel xfce4-desktop --property /desktop-icons/file-icons/show-home --type bool --set true
 xfconf-query --create --channel xfce4-desktop --property /desktop-icons/file-icons/show-trash --type bool --set false
+# Disable feature that causes mouse to get stuck in VirtualBox
+xfconf-query --create --channel xfwm4 --property /general/easy_click --type string --set none
+# Remove top panel
+xfconf-query --create --channel xfce4-panel --property /panels --type int --set 0 --force-array
+# Set Icon Size for Bottom Bar - Panel 2
+xfconf-query --create --channel xfce4-panel --property /panels/panel-2/size --type int --set 48
+# Set Length of Bottom Panel to 85% - Panel 2
+xfconf-query --create --channel xfce4-panel --property /panels/panel-2/length --type int --set 85
+xfconf-query --create --channel xfce4-desktop --property /desktop-icons/file-icons/show-filesystem --type bool --set false
+xfconf-query --create --channel xfce4-desktop --property /desktop-icons/file-icons/show-home --type bool --set true
+xfconf-query --create --channel xfce4-desktop --property /desktop-icons/file-icons/show-trash --type bool --set false
+xfconf-query --create --channel xfce4-desktop --property /desktop-icons/file-icons/show-device-removable --type bool --set false
 xfconf-query --create --channel xfce4-power-manager --property /xfce4-power-manager/dpms-enabled --type bool --set false
 xfconf-query --create --channel xfce4-power-manager --property /xfce4-power-manager/blank-on-ac --type int --set 0
 xfconf-query --create --channel xfce4-power-manager --property /xfce4-power-manager/blank-on-battery --type int --set 0
@@ -212,13 +235,44 @@ xfconf-query --create --channel xfce4-power-manager --property /xfce4-power-mana
 xfconf-query --create --channel xfce4-power-manager --property /xfce4-power-manager/power-button-action --type int --set 0
 xfconf-query --create --channel xfce4-power-manager --property /xfce4-power-manager/presentation-mode --type bool --set false
 xfconf-query --create --channel xfce4-power-manager --property /xfce4-power-manager/show-panel-label --type int --set 0
-xfpanel-switch load /home/$VM_USER/.config/exported-config.tar.bz2 &
-/usr/bin/typora /home/$VM_USER/Documents/kx.as.code_source/README.md &
-sleep 5
-rm -f /home/$VM_USER/.config/autostart/show-welcome.desktop
-EOF"
+xfpanel-switch load /usr/share/kx.as.code/skel/.config/exported-config.tar.bz2 &
+/usr/bin/typora /usr/share/kx.as.code/git/kx.as.code/README.md &
+sudo cp /usr/share/kx.as.code/skel/p10k.zsh $HOME/.p10k.zsh
+sudo cp /usr/share/kx.as.code/skel/zshrc $HOME/.zshrc
+sudo cp -r /usr/share/kx.as.code/skel/.oh-my-zsh $HOME/.oh-my-zsh
+# Add check for every login telling user if K8s is ready or not
+sudo -H -i -u ${vmUser} sh -c "mkdir -p /home/${vmUser}/.config/autostart"
+cat <<EOF > /home/${vmUser}/.config/autostart/check-k8s.desktop
+[Desktop Entry]
+Type=Application
+Name=K8s-Startup-Status
+Exec=/usr/share/kx.as.code/checkK8sStartup.sh
+EOF
+chmod 755 /home/${vmUser}/.config/autostart/check-k8s.desktop
+chown ${vmUser}:${vmUser} /home/${vmUser}/.config/autostart/check-k8s.desktop
+sudo chmod 777 /usr/share/kx.as.code/git/*
+rm -f $HOME/.config/autostart/show-welcome.desktop
+timeout 5 xfce4-panel &
+''' | sudo tee /usr/share/kx.as.code/showWelcome.sh
+
 sudo chmod +x /usr/share/kx.as.code/showWelcome.sh
 sudo chown -R $VM_USER:$VM_USER /usr/share/kx.as.code
+
+# Create shortcut directories
+shortcutsDirectory="/usr/share/kx.as.code/DevOps Tools"
+sudo mkdir -p "${shortcutsDirectory}"
+sudo chmod a+rwx "${shortcutsDirectory}"
+sudo ln -s "${shortcutsDirectory}" /home/$VM_USER/Desktop/
+
+apiDocsDirectory="/usr/share/kx.as.code/API Docs"
+sudo sudo mkdir -p "${apiDocsDirectory}"
+sudo chmod a+rwx "${apiDocsDirectory}"
+sudo ln -s "${apiDocsDirectory}" /home/$VM_USER/Desktop/
+
+vendorDocsDirectory="/usr/share/kx.as.code/Vendor Docs"
+sudo mkdir -p "${vendorDocsDirectory}"
+sudo chmod a+rwx "${vendorDocsDirectory}"
+sudo ln -s "${vendorDocsDirectory}" /home/$VM_USER/Desktop/
 
 # Load Welcome.md automatically on desktop login
 sudo -H -i -u $VM_USER sh -c "mkdir -p /home/$VM_USER/.config/autostart"
@@ -314,10 +368,10 @@ Version=1.0
 Name=KX.AS.CODE Readme
 GenericName=KX.AS.CODE Readme
 Comment=KX.AS.CODE Readme
-Exec=/usr/bin/typora /home/$VM_USER/Documents/kx.as.code_source/README.md
+Exec=/usr/bin/typora ${SHARED_GIT_REPOSITORIES}/kx.as.code/README.md
 StartupNotify=true
 Terminal=false
-Icon=/home/$VM_USER/Documents/kx.as.code_source/kxascode_logo_white_small.png
+Icon=${SHARED_GIT_REPOSITORIES}/kx.as.code/kxascode_logo_white_small.png
 Type=Application
 EOF"
 
@@ -328,10 +382,10 @@ Version=1.0
 Name=How to Contribute
 GenericName=How to Contribute
 Comment=How to Contribute
-Exec=/usr/bin/typora /home/$VM_USER/Documents/kx.as.code_source/CONTRIBUTE.md
+Exec=/usr/bin/typora ${SHARED_GIT_REPOSITORIES}/kx.as.code/CONTRIBUTE.md
 StartupNotify=true
 Terminal=false
-Icon=/home/$VM_USER/Documents/kx.as.code_source/kxascode_logo_white_small.png
+Icon=${SHARED_GIT_REPOSITORIES}/kx.as.code/kxascode_logo_white_small.png
 Type=Application
 EOF"
 
@@ -339,6 +393,6 @@ EOF"
 sudo chmod 755 /home/$VM_USER/Desktop/*.desktop
 
 # Create Kubernetes logging and custom scripts directory
-sudo mkdir -p /home/$VM_USER/Kubernetes
-sudo chown $VM_USER:$VM_USER /home/$VM_USER/Kubernetes
-sudo chmod 755 /home/$VM_USER/Kubernetes
+sudo mkdir -p /usr/share/kx.as.code/Kubernetes
+sudo chown $VM_USER:$VM_USER /usr/share/kx.as.code/Kubernetes
+sudo chmod 755 /usr/share/kx.as.code/Kubernetes

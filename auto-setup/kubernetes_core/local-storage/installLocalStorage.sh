@@ -1,5 +1,29 @@
 #!/bin/bash
 
+# Install nvme-cli if running on host with NVMe block devices (for example on AWS with EBS)
+sudo lsblk -i -o kname,mountpoint,fstype,size,maj:min,name,state,rm,rota,ro,type,label,model,serial
+nvme_cli_needed=$(df -h | grep "nvme")
+if [[ -n ${nvme_cli_needed} ]]; then
+  # For AWS
+  sudo apt install -y nvme-cli lvm2
+  export partition="p1"
+else
+  export partition="1"
+fi
+
+drives=$(lsblk -i -o kname,mountpoint,fstype,size,type | grep disk | awk {'print $1'})
+for drive in ${drives}
+do
+  partitions=$(lsblk -i -o kname,mountpoint,fstype,size,type | grep ${drive} | grep part)
+  if [[ -z ${partitions} ]]; then
+    export driveB="${drive}"
+    break
+  fi
+done
+
+echo "${driveB}" | sudo tee /usr/share/kx.as.code/.config/driveB
+cat /usr/share/kx.as.code/.config/driveB
+
 # Get number of local volumes to pre-provision
 export number1gbVolumes=$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.local_volumes.one_gb')
 export number5gbVolumes=$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.local_volumes.five_gb')
@@ -12,74 +36,41 @@ sudo lvs
 sudo df -hT
 sudo lsblk
 
-# Create full partition on /dev/sdb
-echo 'type=83' | sudo sfdisk /dev/sdb
+# Create full partition on /dev/${driveB}
+echo 'type=83' | sudo sfdisk /dev/${driveB}
 
-sudo pvcreate /dev/sdb1
-sudo vgcreate k8s_local_vol_group /dev/sdb1
+sudo pvcreate /dev/${driveB}${partition}
+sudo vgcreate k8s_local_vol_group /dev/${driveB}${partition}
 
 BASE_K8S_LOCAL_VOLUMES_DIR=/mnt/k8s_local_volumes
 
-# Pre-create 1G volumes to be used by the K8s local-volume-provisioner
-if [[ ${number1gbVolumes} -ne 0 ]]; then
-    for i in $(eval echo "{1..$number1gbVolumes}")
+create_volumes() {
+  if [[ ${2} -ne 0 ]]; then
+    for i in $(eval echo "{1..$2}")
     do
-        sudo lvcreate -L 1G -n k8s_1g_local_k8s_volume_${i} k8s_local_vol_group
-        sudo mkfs.xfs /dev/k8s_local_vol_group/k8s_1g_local_k8s_volume_${i}
-        sudo mkdir -p ${BASE_K8S_LOCAL_VOLUMES_DIR}/k8s_1g_local_k8s_volume_${i}
-        sudo mount /dev/k8s_local_vol_group/k8s_1g_local_k8s_volume_${i} ${BASE_K8S_LOCAL_VOLUMES_DIR}/k8s_1g_local_k8s_volume_${i}
-        sudo echo '/dev/k8s_local_vol_group/k8s_1g_local_k8s_volume_'${i}' '${BASE_K8S_LOCAL_VOLUMES_DIR}'/k8s_1g_local_k8s_volume_'${i}' xfs defaults 0 0' | sudo tee -a /etc/fstab
+        sudo lvcreate -L ${1} -n k8s_${1}_local_k8s_volume_${i} k8s_local_vol_group
+        sudo mkfs.xfs /dev/k8s_local_vol_group/k8s_${1}_local_k8s_volume_${i}
+        sudo mkdir -p ${BASE_K8S_LOCAL_VOLUMES_DIR}/k8s_${1}_local_k8s_volume_${i}
+        sudo mount /dev/k8s_local_vol_group/k8s_${1}_local_k8s_volume_${i} ${BASE_K8S_LOCAL_VOLUMES_DIR}/k8s_${1}_local_k8s_volume_${i}
+        # Don't add entry to /etc/fstab if the volumes was not created, possibly due to running out of diskspace
+        if [[ -L /dev/k8s_local_vol_group/k8s_${1}_local_k8s_volume_${i} ]] && [[ -e /dev/k8s_local_vol_group/k8s_${1}_local_k8s_volume_${i} ]]; then
+          entryAlreadyExists=$(cat /etc/fstab | grep "/dev/k8s_local_vol_group/k8s_${1}_local_k8s_volume_${i}")
+          # Don't add entry to /etc/fstab if it already exists
+          if [[ -z ${entryAlreadyExists} ]]; then
+            sudo echo '/dev/k8s_local_vol_group/k8s_'${1}'_local_k8s_volume_'${i}' '${BASE_K8S_LOCAL_VOLUMES_DIR}'/k8s_'${1}'_local_k8s_volume_'${i}' xfs defaults 0 0' | sudo tee -a /etc/fstab
+          fi
+        else
+          echo "/dev/k8s_local_vol_group/k8s_${1}_local_k8s_volume_${i} does not exist. Not adding to /etc/fstab. Possible reason is that there was not enough space left on the drive to create it"
+        fi
     done
-fi
+  fi
+}
 
-# Pre-create 5G volumes to be used by the K8s local-volume-provisioner
-if [[ ${number5gbVolumes} -ne 0 ]]; then
-    for i in $(eval echo "{1..$number5gbVolumes}")
-    do
-        sudo lvcreate -L 5G -n k8s_5g_local_k8s_volume_${i} k8s_local_vol_group
-        sudo mkfs.xfs /dev/k8s_local_vol_group/k8s_5g_local_k8s_volume_${i}
-        sudo mkdir -p ${BASE_K8S_LOCAL_VOLUMES_DIR}/k8s_5g_local_k8s_volume_${i}
-        sudo mount /dev/k8s_local_vol_group/k8s_5g_local_k8s_volume_${i} ${BASE_K8S_LOCAL_VOLUMES_DIR}/k8s_5g_local_k8s_volume_${i}
-        sudo echo '/dev/k8s_local_vol_group/k8s_5g_local_k8s_volume_'${i}' '${BASE_K8S_LOCAL_VOLUMES_DIR}'/k8s_5g_local_k8s_volume_'${i}' xfs defaults 0 0' | sudo tee -a /etc/fstab
-    done
-fi
-
-# Pre-create 10G volumes to be used by the K8s local-volume-provisioner
-if [[ ${number10gbVolumes} -ne 0 ]]; then
-    for i in $(eval echo "{1..$number10gbVolumes}")
-    do
-        sudo lvcreate -L 10G -n k8s_10g_local_k8s_volume_${i} k8s_local_vol_group
-        sudo mkfs.xfs /dev/k8s_local_vol_group/k8s_10g_local_k8s_volume_${i}
-        sudo mkdir -p ${BASE_K8S_LOCAL_VOLUMES_DIR}/k8s_10g_local_k8s_volume_${i}
-        sudo mount /dev/k8s_local_vol_group/k8s_10g_local_k8s_volume_${i} ${BASE_K8S_LOCAL_VOLUMES_DIR}/k8s_10g_local_k8s_volume_${i}
-        sudo echo '/dev/k8s_local_vol_group/k8s_10g_local_k8s_volume_'${i}' '${BASE_K8S_LOCAL_VOLUMES_DIR}'/k8s_10g_local_k8s_volume_'${i}' xfs defaults 0 0' | sudo tee -a /etc/fstab
-    done
-fi
-
-# Pre-create 30G volumes to be used by the K8s local-volume-provisioner
-if [[ ${number30gbVolumes} -ne 0 ]]; then
-    for i in $(eval echo "{1..$number30gbVolumes}")
-    do
-        sudo lvcreate -L 50G -n k8s_50g_local_k8s_volume_${i} k8s_local_vol_group
-        sudo mkfs.xfs /dev/k8s_local_vol_group/k8s_50g_local_k8s_volume_${i}
-        sudo mkdir -p ${BASE_K8S_LOCAL_VOLUMES_DIR}/k8s_50g_local_k8s_volume_${i}
-        sudo mount /dev/k8s_local_vol_group/k8s_50g_local_k8s_volume_${i} ${BASE_K8S_LOCAL_VOLUMES_DIR}/k8s_50g_local_k8s_volume_${i}
-        sudo echo '/dev/k8s_local_vol_group/k8s_50g_local_k8s_volume_'${i}' '${BASE_K8S_LOCAL_VOLUMES_DIR}'/k8s_50g_local_k8s_volume_'${i}' xfs defaults 0 0' | sudo tee -a /etc/fstab
-    done
-fi
-
-
-# Pre-create 50G volumes to be used by the K8s local-volume-provisioner
-if [[ ${number50gbVolumes} -ne 0 ]]; then
-    for i in $(eval echo "{1..$number50gbVolumes}")
-    do
-        sudo lvcreate -L 50G -n k8s_50g_local_k8s_volume_${i} k8s_local_vol_group
-        sudo mkfs.xfs /dev/k8s_local_vol_group/k8s_50g_local_k8s_volume_${i}
-        sudo mkdir -p ${BASE_K8S_LOCAL_VOLUMES_DIR}/k8s_50g_local_k8s_volume_${i}
-        sudo mount /dev/k8s_local_vol_group/k8s_50g_local_k8s_volume_${i} ${BASE_K8S_LOCAL_VOLUMES_DIR}/k8s_50g_local_k8s_volume_${i}
-        sudo echo '/dev/k8s_local_vol_group/k8s_50g_local_k8s_volume_'${i}' '${BASE_K8S_LOCAL_VOLUMES_DIR}'/k8s_50g_local_k8s_volume_'${i}' xfs defaults 0 0' | sudo tee -a /etc/fstab
-    done
-fi
+create_volumes "1G" ${number1gbVolumes}
+create_volumes "5G" ${number5gbVolumes}
+create_volumes "10G" ${number10gbVolumes}
+create_volumes "30G" ${number30gbVolumes}
+create_volumes "50G" ${number50gbVolumes}
 
 # Check logical partitions
 sudo lvs

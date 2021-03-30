@@ -48,8 +48,8 @@
         "VM_PASSWORD={{user `vm_password`}}"
       ],
       "scripts": [
-        "scripts/base/kx-user.sh",
-        "scripts/base/update.sh"
+        "../../../scripts/base/kx-user.sh",
+        "../../../scripts/base/update.sh"
       ],
       "type": "shell",
       "start_retry_timeout": "15m",
@@ -63,13 +63,13 @@
         "DNS2={{user `dns2`}}"
       ],
       "scripts": [
-        "scripts/base/cleanup.sh",
-        "scripts/base/localtime.sh",
-        "scripts/base/power.sh",
-        "scripts/base/network.sh"
+        "../../../scripts/base/cleanup.sh",
+        "../../../scripts/base/localtime.sh",
+        "../../../scripts/base/power.sh",
+        "../../../scripts/base/network.sh"
       ],
       "type": "shell",
-      "pause_before": "120s",
+      "pause_before": "60s",
       "start_retry_timeout": "15m",
       "expect_disconnect": "true"
     },
@@ -104,14 +104,15 @@
         "COMPUTE_ENGINE_BUILD={{user `compute_engine_build`}}"
       ],
       "scripts": [
-        "scripts/common/motd.sh",
-        "scripts/common/kx.as.code.sh",
-        "scripts/common/tools.sh",
-        "scripts/common/powerline.sh",
-        "scripts/common/docker.sh"
+        "../../../scripts/common/motd.sh",
+        "../../../scripts/common/kx.as.code.sh",
+        "../../../scripts/common/tools.sh",
+        "../../../scripts/common/powerline.sh",
+        "../../../scripts/common/docker.sh",
+        "../../../scripts/common/calico.sh"
       ],
       "type": "shell",
-      "pause_before": "120s",
+      "pause_before": "60s",
       "start_retry_timeout": "15m",
       "expect_disconnect": "true"
     },
@@ -122,6 +123,9 @@
         "VM_PASSWORD={{user `vm_password`}}",
         "GITHUB_USER={{user `github_user`}}",
         "GITHUB_TOKEN={{user `github_token`}}",
+        "GIT_SOURCE_BRANCH={{user `git_source_branch`}}",
+        "GIT_DOCS_BRANCH={{user `git_docs_branch`}}",
+        "GIT_TECHRADAR_BRANCH={{user `git_techradar_branch`}}",
         "VERSION={{user `version`}}",
         "IP_ADDRESS={{user `ip_address`}}",
         "GATEWAY={{user `gateway`}}",
@@ -129,20 +133,21 @@
         "DNS2={{user `dns2`}}"
       ],
       "scripts": [
-        "scripts/main-node/dns.sh",
-        "scripts/main-node/look-and-feel.sh",
-        "scripts/main-node/kx.as.code.sh",
-        "scripts/main-node/profile.sh",
-        "scripts/main-node/tools.sh",
-        "scripts/main-node/rabbitmq.sh",
-        "scripts/main-node/atom.sh",
-        "scripts/main-node/vscode.sh",
-        "scripts/main-node/upgrade-xfce.sh",
-        "scripts/main-node/remoteDesktop.sh",
-        "scripts/main-node/cleanup.sh"
+        "../../../scripts/main-node/dns.sh",
+        "../../../scripts/main-node/look-and-feel.sh",
+        "../../../scripts/main-node/kx.as.code.sh",
+        "../../../scripts/main-node/profile.sh",
+        "../../../scripts/main-node/tools.sh",
+        "../../../scripts/main-node/rabbitmq.sh",
+        "../../../scripts/main-node/atom.sh",
+        "../../../scripts/main-node/vscode.sh",
+        "../../../scripts/main-node/upgrade-xfce.sh",
+        "../../../scripts/main-node/createskel.sh",
+        "../../../scripts/main-node/remoteDesktop.sh",
+        "../../../scripts/main-node/cleanup.sh"
       ],
       "type": "shell",
-      "pause_before": "120s",
+      "pause_before": "60s",
       "start_retry_timeout": "15m",
       "expect_disconnect": "true"
     }

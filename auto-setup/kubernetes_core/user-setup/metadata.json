@@ -1,0 +1,14 @@
+{
+    "name": "user-setup",
+    "namespace": "",
+    "installation_type": "script",
+    "installation_group_folder": "kubernetes_core",
+    "install_scripts": [
+        "createUsers.sh"
+    ],
+    "Description": "Create additional users",
+    "shortcut_text": "Create Users",
+    "shortcut_icon": "",
+    "pre_install_scripts": [],
+    "post_install_scripts": []
+}

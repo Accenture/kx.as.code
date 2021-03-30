@@ -11,7 +11,7 @@ if [[ -z ${kxDocsProjectId} ]]; then
       --data 'namespace_id='${kxascodeGroupId}'' \
       --data 'path=kx.as.code_docs' \
       --data 'default_branch=master' \
-      --data 'visibility=private' \
+      --data 'visibility=internal' \
       --data 'container_registry_enabled=false' \
       --data 'auto_devops_enabled=false' \
       https://gitlab.${baseDomain}/api/v4/projects
@@ -33,7 +33,7 @@ if [[ -z ${techRadarProjectId} ]]; then
       --data 'namespace_id='${kxascodeGroupId}'' \
       --data 'path=kx.as.code_techradar' \
       --data 'default_branch=master' \
-      --data 'visibility=private' \
+      --data 'visibility=internal' \
       --data 'container_registry_enabled=false' \
       --data 'auto_devops_enabled=false' \
       https://gitlab.${baseDomain}/api/v4/projects
@@ -55,7 +55,7 @@ if [[ -z ${kxascodeProjectId} ]]; then
       --data 'namespace_id='${kxascodeGroupId}'' \
       --data 'path=kx.as.code' \
       --data 'default_branch=master' \
-      --data 'visibility=private' \
+      --data 'visibility=internal' \
       --data 'container_registry_enabled=false' \
       --data 'auto_devops_enabled=false' \
       https://gitlab.${baseDomain}/api/v4/projects
@@ -77,7 +77,7 @@ if [[ -z ${grafanaImageRendererProjectId} ]]; then
       --data 'namespace_id='$devopsGroupId'' \
       --data 'path=grafana_image_renderer' \
       --data 'default_branch=master' \
-      --data 'visibility=private' \
+      --data 'visibility=internal' \
       --data 'container_registry_enabled=false' \
       --data 'auto_devops_enabled=false' \
       https://gitlab.${baseDomain}/api/v4/projects
@@ -99,7 +99,7 @@ if [[ -z ${nexus3ProjectId} ]]; then
       --data 'namespace_id='$devopsGroupId'' \
       --data 'path=nexus3' \
       --data 'default_branch=master' \
-      --data 'visibility=private' \
+      --data 'visibility=internal' \
       --data 'container_registry_enabled=false' \
       --data 'auto_devops_enabled=false' \
       https://gitlab.${baseDomain}/api/v4/projects
@@ -121,7 +121,7 @@ if [[ -z ${jiraProjectId} ]]; then
       --data 'namespace_id='${devopsGroupId}'' \
       --data 'path=jira' \
       --data 'default_branch=master' \
-      --data 'visibility=private' \
+      --data 'visibility=internal' \
       --data 'container_registry_enabled=false' \
       --data 'auto_devops_enabled=false' \
       https://gitlab.${baseDomain}/api/v4/projects | jq '.id'
@@ -143,7 +143,7 @@ if [[ -z ${confluenceProjectId} ]]; then
       --data 'namespace_id='${devopsGroupId}'' \
       --data 'path=confluence' \
       --data 'default_branch=master' \
-      --data 'visibility=private' \
+      --data 'visibility=internal' \
       --data 'container_registry_enabled=false' \
       --data 'auto_devops_enabled=false' \
       https://gitlab.${baseDomain}/api/v4/projects | jq '.id'

@@ -3,9 +3,9 @@
 # Ensure time is accurate
 sudo apt-get install -y ntpdate
 
-KUBEDIR=/home/$VM_USER/Kubernetes
-sudo mkdir -p $KUBEDIR
-sudo chown $VM_USER:$VM_USER $KUBEDIR
+KUBEDIR=/usr/share/kx.as.code/Kubernetes
+sudo mkdir -p ${KUBEDIR}
+sudo chown ${VM_USER}:${VM_USER} ${KUBEDIR}
 
 # Let iptables see bridged traffic
 sudo bash -c 'cat <<EOF > /etc/sysctl.d/k8s.conf
@@ -36,8 +36,8 @@ sudo swapoff -a
 sudo sed -i '/swap/d' /etc/fstab
 
 sudo chmod 755 /home/${BASE_IMAGE_SSH_USER}/scripts/registerNode.sh
-sudo chown $VM_USER:$VM_USER /home/${BASE_IMAGE_SSH_USER}/scripts/registerNode.sh
-sudo cp /home/${BASE_IMAGE_SSH_USER}/scripts/registerNode.sh $KUBEDIR
+sudo chown ${VM_USER}:${VM_USER} /home/${BASE_IMAGE_SSH_USER}/scripts/registerNode.sh
+sudo cp /home/${BASE_IMAGE_SSH_USER}/scripts/registerNode.sh ${KUBEDIR}
 
 # Add Kubernetes Join Script to systemd
 sudo bash -c "cat <<EOF > /etc/systemd/system/k8s-register-node.service
@@ -51,10 +51,10 @@ After=ntp.service
 
 [Service]
 User=0
-Environment=VM_USER=$VM_USER
-Environment=KUBEDIR=/home/$VM_USER/Kubernetes
+Environment=VM_USER=${VM_USER}
+Environment=KUBEDIR=${KUBEDIR}
 Type=forking
-ExecStart=/home/$VM_USER/Kubernetes/registerNode.sh
+ExecStart=${KUBEDIR}/registerNode.sh
 TimeoutSec=infinity
 Restart=no
 RemainAfterExit=no
@@ -62,5 +62,17 @@ RemainAfterExit=no
 [Install]
 WantedBy=multi-user.target
 EOF"
-#sudo systemctl enable k8s-register-node
-#sudo systemctl daemon-reload
+sudo systemctl enable k8s-register-node
+sudo systemctl daemon-reload
+
+# Create SKEL directory for future users
+SKELDIR=/usr/share/kx.as.code/skel
+sudo mkdir -p ${SKELDIR}
+sudo cp /home/${VM_USER}/.bashrc ${SKELDIR}
+sudo cp -r /home/${VM_USER}/.local ${SKELDIR}
+sudo cp -r /home/${VM_USER}/.oh-my-zsh ${SKELDIR}
+sudo cp /home/${VM_USER}/.p10k.zsh ${SKELDIR}
+sudo cp /home/${VM_USER}/.profile ${SKELDIR}
+sudo cp /home/${VM_USER}/.tmux.conf ${SKELDIR}
+sudo cp /home/${VM_USER}/.vimrc ${SKELDIR}
+sudo cp /home/${VM_USER}/.zshrc ${SKELDIR}

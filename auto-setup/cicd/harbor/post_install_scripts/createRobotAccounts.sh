@@ -31,7 +31,7 @@ if [[ -z ${kxRobotAccount} ]]; then
     "name": "kx-cicd-user",
     "expires_at": -1,
     "description": "KX.AS.CODE CICD User"
-  }' | tee /home/${vmUser}/.config/kx.as.code/.kx-harbor-robot.cred
+  }' | sudo tee /usr/share/kx.as.code/.config/.kx-harbor-robot.cred
 else
   log_info "Harbor robot account already exists for KX.AS.CODE project. Skipping creation"
 fi
@@ -61,7 +61,7 @@ curl -s -u 'admin:'${vmPassword}'' -X POST "https://${componentName}.${baseDomai
   "name": "devops-cicd-user",
   "expires_at": -1,
   "description": "DEVOPS CICD User"
-}' | tee /home/${vmUser}/.config/kx.as.code/.devops-harbor-robot.cred
+}' | sudo tee /usr/share/kx.as.code/.config/.devops-harbor-robot.cred
 else
   log_info "Harbor robot account already exists for DEVOPS project. Skipping creation"
 fi

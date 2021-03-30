@@ -5,6 +5,15 @@
         "certificationMode": false,
         "disableLinuxDesktop": false,
         "defaultKeyboardLanguage": "de",
+        "additionalUsers":
+        [
+            {
+                "firstname": "Patrick",
+                "surname": "Delamere",
+                "email": "patrick.g.delamere@accenture.com",
+                "keyboard_language": "de"
+            }
+        ],
         "local_volumes": {
             "one_gb": 10,
             "five_gb": 8,
@@ -12,11 +21,11 @@
             "thirty_gb": 0,
             "fifty_gb": 0
         },
-        "virtualizationType": "vmware_esxi",
+        "virtualizationType": "vmware_desktop",
         "environmentPrefix": "demo1",
         "glusterFsDiskSize": "200",
         "sslProvider": "self-signed",
-        "baseDomain": "travelers-kx-as-code.local",
+        "baseDomain": "kx-as-code.local",
         "baseUser": "kx.hero",
         "basePassword": "L3arnandshare",
         "baseIpType": "static",

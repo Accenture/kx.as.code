@@ -46,6 +46,7 @@
     "pre_install_scripts": [],
     "post_install_scripts": [
         "checkK8sHealthAfterReboot.sh",
-        "createDesktopShortcuts.sh"
+        "createDesktopShortcuts.sh",
+        "deployOauth2.sh"
     ]
 }

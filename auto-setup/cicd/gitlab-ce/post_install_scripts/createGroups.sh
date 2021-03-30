@@ -10,7 +10,7 @@ if [[ -z ${kxascodeGroupId} ]]; then
       --data 'path=kx.as.code' \
       --data 'full_name=kx.as.code' \
       --data 'full_path=kx.as.code' \
-      --data 'visibility=private' \
+      --data 'visibility=internal' \
       --data 'lfs_enabled=true' \
       --data 'subgroup_creation_level=maintainer' \
       --data 'project_creation_level=developer' \
@@ -32,7 +32,7 @@ if [[ -z ${devopsGroupId} ]]; then
       --data 'path=devops' \
       --data 'full_name=DevOps' \
       --data 'full_path=devops' \
-      --data 'visibility=private' \
+      --data 'visibility=internal' \
       --data 'lfs_enabled=true' \
       --data 'subgroup_creation_level=maintainer' \
       --data 'project_creation_level=developer' \

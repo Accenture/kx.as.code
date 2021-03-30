@@ -1,5 +1,7 @@
 #!/bin/bash -eux
 
+export KX_HOME=/usr/share/kx.as.code
+
 # Create user (if not already present)
 if ! id -u $VM_USER > /dev/null 2>&1; then
     sudo groupadd $VM_USER -g 1600
@@ -33,7 +35,7 @@ echo "vmUser=\"$VM_USER\"" | sudo tee -a /etc/environment
 echo "export vmUser=\"$VM_USER\"" | sudo tee -a /etc/profile.d/kxascode.sh
 
 # Save password for later automated processing
-sudo mkdir -p /home/${VM_USER}/.config/kx.as.code
-echo "$VM_PASSWORD" | sudo tee /home/${VM_USER}/.config/kx.as.code/.user.cred
-sudo chmod -R 400 /home/${VM_USER}/.config/kx.as.code/.user.cred
-sudo chown -R ${VM_USER}:${VM_USER} /home/${VM_USER}/.config/kx.as.code
+sudo mkdir -p ${KX_HOME}/.config
+echo "$VM_PASSWORD" | sudo tee ${KX_HOME}/.config/.user.cred
+sudo chmod -R 400 ${KX_HOME}/.config/.user.cred
+sudo chown -R ${VM_USER}:${VM_USER} ${KX_HOME}/.config

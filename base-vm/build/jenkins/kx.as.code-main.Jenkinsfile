@@ -24,8 +24,10 @@ pipeline {
     }
 
     parameters {
-        string(name: 'github_repo_url', defaultValue: "github.com/Accenture/kx.as.code.git", description: "Source Github repository")
-        string(name: 'github_source_branch', defaultValue: "feature/multi-user-enablement", description: "Source Github branch to build from")
+        string(name: 'git_repo_url', defaultValue: "github.com/Accenture/kx.as.code.git", description: "Source Github repository")
+        string(name: 'git_source_branch', defaultValue: "feature/multi-user-enablement", description: "Source Github branch to build from and clone inside VM")
+        string(name: 'git_docs_branch', defaultValue: "master", description: "Docs Github branch to clone")
+        string(name: 'git_techradar_branch', defaultValue: "master", description: "TechRadar Github branch to clone")
         string(name: 'kx_version', defaultValue: "0.6.6", description: "KX.AS.CODE Version")
         string(name: 'kx_vm_user', defaultValue: "kx.hero", description: "KX.AS.CODE VM user login")
         string(name: 'kx_vm_password', defaultValue: "L3arnandshare", description: "KX.AS.CODE VM user login password")
@@ -52,7 +54,7 @@ pipeline {
         stage('Clone the repository'){
             steps {
                 script {
-                    checkout([$class: 'GitSCM', branches: [[name: "$github_source_branch"]], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'CleanBeforeCheckout']], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'GITHUB_KX.AS.CODE', url: 'https://${github_repo_url}']]])
+                    checkout([$class: 'GitSCM', branches: [[name: "$git_source_branch"]], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'CleanBeforeCheckout']], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'GITHUB_KX.AS.CODE', url: 'https://${git_repo_url}']]])
                 }
             }
         }
@@ -82,6 +84,9 @@ pipeline {
                         -var "secret_key=${AWS_SECRET_ACCESS_KEY}" \
                         -var "github_user=${GITHUB_USER}" \
                         -var "github_token=${GITHUB_TOKEN}" \
+                        -var "git_source_branch=${GIT_SOURCE_BRANCH}" \
+                        -var "git_docs_branch=${GIT_DOCS_BRANCH}" \
+                        -var "git_techradar_branch=${GIT_TECHRADAR_BRANCH}" \
                         -var "source_ami=${source_ami}" \
                         -var "ami_groups=${ami_groups}" \
                         -var "vpc_region=${vpc_region}" \

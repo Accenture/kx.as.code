@@ -51,16 +51,18 @@ shortcutsDirectory="/home/${vmUser}/Desktop/DevOps Tools"
 if [[ "${action}" == "install" ]]; then
 
     # Create namespace if it does not exist
-    if [[ -z ${namespace} ]] && [[ "${namespace}" != "kube-system" ]] && [[ "${namespace}" != "default" ]]; then
-        log_error "Namespace name could not be established. Subsequent actions will fail. Please validate the namespace entry is correct for \"${component}\" in metadata.json"
+    if [[ -z "${namespace}" ]] && [[ "${namespace}" != "kube-system" ]] && [[ "${namespace}" != "default" ]]; then
+        log_warn "Namespace name could not be established. Subsequent actions may fail if they have a dependency on this. Please validate the namespace entry is correct for \"${component}\" in metadata.json"
     fi
 
     # Create namespace if it does not exists
-    if [ "$(kubectl get namespace ${namespace} --template={{.status.phase}})" != "Active" ] && [[ "${namespace}" != "kube-system" ]] && [[ "${namespace}" != "default" ]]; then
-        log_info "Namespace \"${namespace}\" does not exist. Creating"
-        kubectl create namespace ${namespace}
-    else
-        log_info "Namespace \"${namespace}\" already exists. Moving on"
+    if [[ -n "${namespace}" ]]; then
+        if [[ "$(kubectl get namespace ${namespace} --template={{.status.phase}})" != "Active" ]] && [[ "${namespace}" != "kube-system" ]] && [[ "${namespace}" != "default" ]]; then
+            log_info "Namespace \"${namespace}\" does not exist. Creating"
+            kubectl create namespace ${namespace}
+        else
+            log_info "Namespace \"${namespace}\" already exists. Moving on"
+        fi
     fi
 
     export applicationUrl=$(cat ${componentMetadataJson} | jq -r '.urls[0]?.url?')
@@ -367,7 +369,6 @@ if [[ "${action}" == "install" ]]; then
     ####################################################################################################################################################################
 
     # if Primary URL[0] in URLs Array exists and Icon is defined, create Desktop Shortcut
-
     primaryUrl=$(echo ${applicationUrls} | cut -f1 -d' ')
 
     if [[ ! -z ${primaryUrl} ]]; then
@@ -379,7 +380,7 @@ if [[ "${action}" == "install" ]]; then
 
         if [[ ! -z ${primaryUrl} ]] && [[ "${primaryUrl}" != "null" ]] && [[ -f ${iconPath} ]] && [[ ! -z ${shortcutText} ]]; then
 
-            shortcutsDirectory="/home/${vmUser}/Desktop/DevOps Tools"
+            shortcutsDirectory="/usr/share/kx.as.code/DevOps Tools"
             mkdir -p "${shortcutsDirectory}"; chown ${vmUser}:${vmUser} "${shortcutsDirectory}"
 
             echo """
@@ -408,10 +409,10 @@ if [[ "${action}" == "install" ]]; then
 
     case "${apiDocsType}" in
     swagger)
-        iconPath=/home/${vmUser}/Documents/kx.as.code_source/base-vm/images/api_docs_icon.png
+        iconPath=/usr/share/kx.as.code/git/kx.as.code/base-vm/images/api_docs_icon.png
         ;;
     *)
-        iconPath=/home/${vmUser}/Documents/kx.as.code_source/base-vm/images/api_docs_icon.png
+        iconPath=/usr/share/kx.as.code/git/kx.as.code/base-vm/images/api_docs_icon.png
         ;;
     esac
 
@@ -422,7 +423,7 @@ if [[ "${action}" == "install" ]]; then
 
     apiDocsUrl=$(cat ${componentMetadataJson} | jq -r '.api_docs_url' | mo)
     if [[ ! -z ${apiDocsUrl} ]] && [[ "${apiDocsUrl}" != "null" ]]; then
-        apiDocsDirectory="/home/${vmUser}/Desktop/API Docs"
+        apiDocsDirectory="/usr/share/kx.as.code/API Docs"
         mkdir -p "${apiDocsDirectory}"; chown ${vmUser}:${vmUser} "${apiDocsDirectory}"
         echo """
         [Desktop Entry]
@@ -441,12 +442,11 @@ if [[ "${action}" == "install" ]]; then
         """ | tee "${apiDocsDirectory}"/"${componentName}".desktop
         sed -i 's/^[ \t]*//g' "${apiDocsDirectory}"/"${componentName}".desktop
         chmod 755 "${apiDocsDirectory}"/"${componentName}".desktop
-        chown ${vmUser}:${vmUser} "${apiDocsDirectory}"/"${componentName}".desktop
     fi
 
     swaggerApiDocsUrl=$(cat ${componentMetadataJson} | jq -r '.swagger_docs_url' | mo)
     if [[ ! -z ${swaggerApiDocsUrl} ]] && [[ "${swaggerApiDocsUrl}" != "null" ]]; then
-        apiDocsDirectory="/home/${vmUser}/Desktop/API Docs"
+        apiDocsDirectory="/usr/share/kx.as.code/API Docs"
         mkdir -p "${apiDocsDirectory}"; chown ${vmUser}:${vmUser} "${apiDocsDirectory}"
         echo """
         [Desktop Entry]
@@ -457,7 +457,7 @@ if [[ "${action}" == "install" ]]; then
         Exec=/usr/bin/google-chrome-stable %U ${swaggerApiDocsUrl} --use-gl=angle --password-store=basic ${browserOptions}
         StartupNotify=true
         Terminal=false
-        Icon=/home/${vmUser}/Documents/kx.as.code_source/base-vm/images/swagger.png
+        Icon=/usr/share/kx.as.code/git/kx.as.code/base-vm/images/swagger.png
         Type=Application
         Categories=Development
         MimeType=text/html;text/xml;application/xhtml_xml;image/webp;x-scheme-handler/http;x-scheme-handler/https;x-scheme-handler/ftp;
@@ -465,12 +465,11 @@ if [[ "${action}" == "install" ]]; then
         """ | tee "${apiDocsDirectory}"/"${componentName}"_Swagger.desktop
         sed -i 's/^[ \t]*//g' "${apiDocsDirectory}"/"${componentName}"_Swagger.desktop
         chmod 755 "${apiDocsDirectory}"/"${componentName}"_Swagger.desktop
-        chown ${vmUser}:${vmUser} "${apiDocsDirectory}"/"${componentName}"_Swagger.desktop
     fi
 
     postmanApiDocsUrl=$(cat ${componentMetadataJson} | jq -r '.postman_docs_url' | mo)
     if [[ ! -z ${postmanApiDocsUrl} ]] && [[ "${postmanApiDocsUrl}" != "null" ]]; then
-        apiDocsDirectory="/home/${vmUser}/Desktop/API Docs"
+        apiDocsDirectory="/usr/share/kx.as.code/API Docs"
         mkdir -p "${apiDocsDirectory}"; chown ${vmUser}:${vmUser} "${apiDocsDirectory}"
         echo """
         [Desktop Entry]
@@ -481,7 +480,7 @@ if [[ "${action}" == "install" ]]; then
         Exec=/usr/bin/google-chrome-stable %U ${postmanApiDocsUrl} --use-gl=angle --password-store=basic ${browserOptions}
         StartupNotify=true
         Terminal=false
-        Icon=/home/${vmUser}/Documents/kx.as.code_source/base-vm/images/postman.png
+        Icon=/usr/share/kx.as.code/git/kx.as.code/base-vm/images/postman.png
         Type=Application
         Categories=Development
         MimeType=text/html;text/xml;application/xhtml_xml;image/webp;x-scheme-handler/http;x-scheme-handler/https;x-scheme-handler/ftp;
@@ -489,12 +488,11 @@ if [[ "${action}" == "install" ]]; then
         """ | tee "${apiDocsDirectory}"/"${componentName}"_Postman.desktop
         sed -i 's/^[ \t]*//g' "${apiDocsDirectory}"/"${componentName}"_Postman.desktop
         chmod 755 "${apiDocsDirectory}"/"${componentName}"_Postman.desktop
-        chown ${vmUser}:${vmUser} "${apiDocsDirectory}"/"${componentName}"_Postman.desktop
     fi
 
     vendorDocsUrl=$(cat ${componentMetadataJson} | jq -r '.vendor_docs_url' | mo)
     if [[ ! -z ${vendorDocsUrl} ]] && [[ "${vendorDocsUrl}" != "null" ]]; then
-        vendorDocsDirectory="/home/${vmUser}/Desktop/Vendor Docs"
+        vendorDocsDirectory="/usr/share/kx.as.code/Vendor Docs"
         mkdir -p "${vendorDocsDirectory}"; chown ${vmUser}:${vmUser} "${vendorDocsDirectory}"
         echo """
         [Desktop Entry]
@@ -505,7 +503,7 @@ if [[ "${action}" == "install" ]]; then
         Exec=/usr/bin/google-chrome-stable %U ${vendorDocsUrl} --use-gl=angle --password-store=basic ${browserOptions}
         StartupNotify=true
         Terminal=false
-        Icon=/home/${vmUser}/Documents/kx.as.code_source/base-vm/images/vendor_docs_icon.png
+        Icon=/usr/share/kx.as.code/git/kx.as.code/base-vm/images/vendor_docs_icon.png
         Type=Application
         Categories=Development
         MimeType=text/html;text/xml;application/xhtml_xml;image/webp;x-scheme-handler/http;x-scheme-handler/https;x-scheme-handler/ftp;
@@ -513,7 +511,6 @@ if [[ "${action}" == "install" ]]; then
         """ | tee "${vendorDocsDirectory}"/"${componentName}".desktop
         sed -i 's/^[ \t]*//g' "${vendorDocsDirectory}"/"${componentName}".desktop
         chmod 755 "${vendorDocsDirectory}"/"${componentName}".desktop
-        chown ${vmUser}:${vmUser} "${vendorDocsDirectory}"/"${componentName}".desktop
     fi
 
     # Get slot number to add installed app to JSON array
@@ -530,7 +527,7 @@ if [[ "${action}" == "install" ]]; then
         if [[ -z ${arrayLength} ]]; then
             arrayLength=0
         fi
-        if [[ "${componentJson}" == "null" ]]; then
+        if [[ "${componentJson}" == "null" ]] || [[ -z ${componentJson} ]]; then
             log_warn "ComponentJson is null for ${componentName}"
         else
             cat ${installationWorkspace}/autoSetup.json | jq '.metadata.installed['${arrayLength}'] |= . + '"${componentJson}"'' | tee ${installationWorkspace}/autoSetup.json.tmp.2

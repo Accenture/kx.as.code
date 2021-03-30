@@ -69,7 +69,7 @@
         "../../../scripts/base/network.sh"
       ],
       "type": "shell",
-      "pause_before": "120s",
+      "pause_before": "60s",
       "start_retry_timeout": "15m",
       "expect_disconnect": "true"
     },
@@ -108,10 +108,11 @@
         "../../../scripts/common/kx.as.code.sh",
         "../../../scripts/common/tools.sh",
         "../../../scripts/common/powerline.sh",
-        "../../../scripts/common/docker.sh"
+        "../../../scripts/common/docker.sh",
+        "../../../scripts/common/calico.sh"
       ],
       "type": "shell",
-      "pause_before": "120s",
+      "pause_before": "60s",
       "start_retry_timeout": "15m",
       "expect_disconnect": "true"
     },
@@ -122,6 +123,9 @@
         "VM_PASSWORD={{user `vm_password`}}",
         "GITHUB_USER={{user `github_user`}}",
         "GITHUB_TOKEN={{user `github_token`}}",
+        "GIT_SOURCE_BRANCH={{user `git_source_branch`}}",
+        "GIT_DOCS_BRANCH={{user `git_docs_branch`}}",
+        "GIT_TECHRADAR_BRANCH={{user `git_techradar_branch`}}",
         "VERSION={{user `version`}}",
         "IP_ADDRESS={{user `ip_address`}}",
         "GATEWAY={{user `gateway`}}",
@@ -137,12 +141,14 @@
         "../../../scripts/main-node/rabbitmq.sh",
         "../../../scripts/main-node/atom.sh",
         "../../../scripts/main-node/vscode.sh",
+        "../../../scripts/main-node/createskel.sh",
         "../../../scripts/main-node/upgrade-xfce.sh",
+        "../../../scripts/main-node/createskel.sh",
         "../../../scripts/main-node/remoteDesktop.sh",
         "../../../scripts/main-node/cleanup.sh"
       ],
       "type": "shell",
-      "pause_before": "120s",
+      "pause_before": "60s",
       "start_retry_timeout": "15m",
       "expect_disconnect": "true"
     }

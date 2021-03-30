@@ -1,7 +1,7 @@
 #!/bin/bash -eux
 
 # Get Personal Access Token
-export personalAccessToken=$(cat /home/${vmUser}/.config/kx.as.code/.admin.gitlab.pat)
+export personalAccessToken=$(cat /usr/share/kx.as.code/.config/.admin.gitlab.pat)
 
 # Get Group Id
 export kxascodeGroupId=$(curl -s --header "Private-Token: ${personalAccessToken}" https://gitlab.${baseDomain}/api/v4/groups | jq '.[] | select(.name=="kx.as.code") | .id')

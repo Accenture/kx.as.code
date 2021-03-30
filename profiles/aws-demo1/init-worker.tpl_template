@@ -19,6 +19,6 @@ sudo chown -R kx.hero:kx.hero /home/kx.hero/.ssh
 
 echo '''
 ---AUTO_SETUP_JSON_PLACEHOLDER---
-''' | sudo tee /home/kx.hero/Kubernetes/autoSetup.json
+''' | sudo tee /usr/share/kx.as.code/Kubernetes/autoSetup.json
 
 sudo echo "${kx_main_private_ip}" | tee /home/kx.hero/Kubernetes/kxMainIpAddress

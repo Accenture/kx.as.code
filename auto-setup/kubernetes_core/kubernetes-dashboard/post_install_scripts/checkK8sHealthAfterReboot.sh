@@ -3,6 +3,9 @@
 cat <<EOF >/usr/share/kx.as.code/checkK8sStartup.sh
 #!/bin/bash -eux
 
+vmUser=\$(id -nu)
+vmUserId=\$(id -u)
+
 # Test to see if the Kubernetes Cluster is up and notify when done
 wait-for-url() {
     echo "Testing \$1"
@@ -14,7 +17,7 @@ wait-for-url() {
 wait-for-url https://${componentName}.${baseDomain}
 
 # Add notification to desktop to notify that K8s intialization is completed
-sudo -u ${vmUser} DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus notify-send -t 300000 'K8s is Ready' 'KX.AS.CODE - Kubernetes cluster is started' --icon=dialog-information
+DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/\${vmUserId}/bus notify-send -t 300000 'K8s is Ready' 'KX.AS.CODE - Kubernetes cluster is started' --icon=dialog-information
 EOF
 chmod 755 /usr/share/kx.as.code/checkK8sStartup.sh
 chown ${vmUser}:${vmUser} /usr/share/kx.as.code/checkK8sStartup.sh

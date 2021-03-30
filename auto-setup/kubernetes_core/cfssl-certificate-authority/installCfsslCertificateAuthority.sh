@@ -1,6 +1,6 @@
 #!/bin/bash -eux
 
-export installationWorkspace=/home/${vmUser}/Kubernetes
+export installationWorkspace=/usr/share/kx.as.code/Kubernetes
 export certificatesWorkspace=${installationWorkspace}/certificates
 
 # Only run this script automatically on first login

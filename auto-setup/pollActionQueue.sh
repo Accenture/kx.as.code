@@ -10,11 +10,14 @@ fi
 
 # Define base variables
 export vmUser=kx.hero
-export vmPassword=$(cat /home/${vmUser}/.config/kx.as.code/.user.cred)
-export installationWorkspace=/home/${vmUser}/Kubernetes
-export autoSetupHome=/home/${vmUser}/Documents/kx.as.code_source/auto-setup
+export vmPassword=$(cat /usr/share/kx.as.code/.config/.user.cred)
+export installationWorkspace=/usr/share/kx.as.code/Kubernetes
+export autoSetupHome=/usr/share/kx.as.code/git/kx.as.code/auto-setup
 export actionWorkflows="pending wip completed failed retry"
 export defaultDockerHubSecret="default/regcred"
+export sharedGitHome=/usr/share/kx.as.code/git
+export sharedKxHome=/usr/share/kx.as.code
+export kxSkelDir=/usr/share/kx.as.code/skel
 
 # Check autoSetup.json file is present before starting script
 wait-for-file() {
@@ -29,9 +32,32 @@ cd ${installationWorkspace}
 
 # Get configs from autoSetup.json
 export virtualizationType=$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.virtualizationType')
-export nicPrefix=$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.nic_names.'${virtualizationType}'')
-export netDevice=$(nmcli device show | grep -E 'enp|ens' | grep 'GENERAL.DEVICE' | awk '{print $2}')
-export mainIpAddress=$(ip -o -4 addr show ${netDevice} | awk -F '[ /]+' '/global/ {print $4}')
+
+# Determine which NIC to bind to, to avoid binding to interal VirtualBox NAT NICs for example, where all hosts have the same IP - 10.0.2.15
+export nicList=$(nmcli device show | grep -E 'enp|ens' | grep 'GENERAL.DEVICE' | awk '{print $2}')
+export ipsToExclude="10.0.2.15"   # IP addresses not to configure with static IP. For example, default Virtualbox IP 10.0.2.15
+export nicExclusions=""
+for nic in ${nicList}
+do
+  for ipToExclude in ${ipsToExclude}
+  do
+    ip=$(ip a s ${nic} | egrep -o 'inet [0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | cut -d' ' -f2)
+    echo ${ip}
+    if [[ "${ip}" == "${ipToExclude}" ]]; then
+      excludeNic="true"
+    fi
+  done
+  if [[ "${excludeNic}" == "true" ]]; then
+    echo "Excluding NIC ${nic}"
+    nicExclusions="${nicExclusions} ${nic}"
+    excludeNic="false"
+  else
+    netDevice=${nic}
+  fi
+done
+echo "NIC exclusions: ${nicExclusions}"
+echo "NIC to use: ${netDevice}"
+export mainIpAddress=$(ip a s ${netDevice} | egrep -o 'inet [0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | cut -d' ' -f2)
 export environmentPrefix=$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.environmentPrefix')
 if [ -z ${environmentPrefix} ]; then
     export baseDomain=$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.baseDomain')
@@ -107,7 +133,7 @@ log_debug() {
     echo "$(date '+%Y-%m-%d_%H%M%S') [DEBUG] ${1}" | tee -a ${installationWorkspace}/${componentName}_${logTimestamp}.log
 }
 
-if [[ ! -f /home/${vmUser}/.config/kx.as.code/network_status ]] && [[ "${baseIpType}" == "static" ]]; then
+if [[ ! -f /usr/share/kx.as.code/.config/network_status ]] && [[ "${baseIpType}" == "static" ]]; then
 
     # Update  DNS Entry for hosts if ip type set to static
     if [ "${baseIpType}" == "static" ]; then
@@ -117,8 +143,14 @@ if [[ ! -f /home/${vmUser}/.config/kx.as.code/network_status ]] && [[ "${baseIpT
              hostname="$(echo ${ipAddress} | sed 's/__/-/g' | sed 's/_IpAddress//g' | cut -f1 -d'=')"
              hostIpAddress="$(echo ${ipAddress} | cut -f2 -d'=')"
             echo "address=/${hostname}/${hostIpAddress}" | sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
+            echo "address=/${hostname}.${baseDomain}/${hostIpAddress}" | sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
             if [[ "${hostname}" == "kx-main" ]]; then
                 export mainIpAddress=${hostIpAddress}
+                echo "address=/ldap/${hostIpAddress}" | sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
+                echo "address=/ldap.${baseDomain}/${hostIpAddress}" | sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
+                echo "address=/rabbitmq/${hostIpAddress}" | sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
+                echo "address=/rabbitmq.${baseDomain}/${hostIpAddress}" | sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
+
             fi
         done
     fi
@@ -195,7 +227,8 @@ if [[ ! -f /home/${vmUser}/.config/kx.as.code/network_status ]] && [[ "${baseIpT
     fi
 
     # Ensure the whole network setup does not execute again on next run after reboot
-    echo "KX.AS.CODE network config done" | sudo tee /home/${vmUser}/.config/kx.as.code/network_status
+    sudo mkdir -p /usr/share/kx.as.code/.config
+    echo "KX.AS.CODE network config done" | sudo tee /usr/share/kx.as.code/.config/network_status
 
     # Set default keyboard language
     keyboardLanguages=""

@@ -3,6 +3,31 @@
 # Get GlusterFS volume size from autoSetup.json
 export glusterFsDiskSize=$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.glusterFsDiskSize')
 
+# Install nvme-cli if running on host with NVMe block devices (for example on AWS with EBS)
+sudo lsblk -i -o kname,mountpoint,fstype,size,maj:min,name,state,rm,rota,ro,type,label,model,serial
+nvme_cli_needed=$(df -h | grep "nvme")
+if [[ -n "nvme_cli_needed" ]]; then
+  # For AWS
+  sudo apt install -y nvme-cli lvm2
+  drives=$(lsblk -i -o kname,mountpoint,fstype,size,type | grep disk | awk {'print $1'})
+  for drive in ${drives}
+  do
+    partitions=$(lsblk -i -o kname,mountpoint,fstype,size,type | grep ${drive} | grep part)
+    if [[ -z ${partitions} ]]; then
+      export driveC="${drive}"
+      export partition="p1"
+      break
+    fi
+  done
+else
+  # For VirtualBox, VNWare etc
+  export driveC="sdc"
+  export partition="1"
+fi
+
+echo "${driveC}" | sudo tee /usr/share/kx.as.code/.config/driveC
+cat /usr/share/kx.as.code/.config/driveC
+
 # Update Debian repositories as default is old
 wget -O - https://download.gluster.org/pub/gluster/glusterfs/8/rsa.pub | sudo apt-key add -
 echo deb [arch=amd64] https://download.gluster.org/pub/gluster/glusterfs/8/LATEST/Debian/buster/amd64/apt buster main | sudo tee /etc/apt/sources.list.d/gluster.list
@@ -19,18 +44,19 @@ wget -O - $(curl https://api.github.com/repos/heketi/heketi/releases/latest | jq
 sudo groupadd --system heketi || echo "Group heketi already exists"
 sudo useradd -s /usr/sbin/nologin --system -g heketi heketi || echo "User heketi already exists"
 
-# Make needed Heketi direcotries
-sudo mkdir -p /etc/heketi /var/log/heketi /var/lib/heketi
-sudo chown -R heketi:heketi /etc/heketi /var/log/heketi /var/lib/heketi
+# Make needed Heketi directories
+sudo mkdir -p /etc/heketi /var/log/heketi /var/lib/heketi 
+sudo chown -R heketi:heketi /etc/heketi /var/log/heketi /var/lib/heketi 
+
 
 # Generate random passwords for Heketi
-if [ ! -f /home/${vmUser}/Kubernetes/heketi_creds.sh ]; then
+if [ ! -f /usr/share/kx.as.code/Kubernetes/heketi_creds.sh ]; then
   # If statement in case this script is being rerun
   adminPassword=$(< /dev/urandom tr -dc A-Za-z0-9 | head -c${1:-12};echo;)
   userPassword=$(< /dev/urandom tr -dc A-Za-z0-9 | head -c${1:-12};echo;)
 else
   # If credentials already exist because this script is being re-run, use those instead to avoid issues
-  . /home/${vmUser}/Kubernetes/heketi_creds.sh
+  . /usr/share/kx.as.code/Kubernetes/heketi_creds.sh
 fi
 
 # Create base Heketi configuration file
@@ -177,8 +203,9 @@ sudo chown -R heketi:heketi /etc/heketi /var/lib/heketi /var/log/heketi
 sudo systemctl daemon-reload
 sudo systemctl enable --now heketi
 
-# Create Heketi topology configuration file with VirtualBox mounted dedicated 2nd drive /dev/sdc
-sudo bash -c 'cat <<EOF > /etc/heketi/topology.json
+# Create Heketi topology configuration file with VirtualBox mounted dedicated 2nd drive /dev/${driveC}
+sudo bash -c 'cat <<EOF > /etc/heketi/topology.json 
+
 {
   "clusters": [
     {
@@ -196,7 +223,7 @@ sudo bash -c 'cat <<EOF > /etc/heketi/topology.json
             "zone": 1
           },
           "devices": [
-            "/dev/sdc"
+            "/dev/'${driveC}'"
           ]
         }
       ]
@@ -236,7 +263,7 @@ export HEKETI_CLI_KEY="${adminPassword}"
 # Add VirtualBox HDD #2 as GlusterFS drive managed by Heketi
 heketi-cli topology load --user admin --secret ${adminPassword} --json=/etc/heketi/topology.json
 
-if [ ! -f /home/${vmUser}/Kubernetes/heketi_creds.sh ]; then
+if [ ! -f /usr/share/kx.as.code/Kubernetes/heketi_creds.sh ]; then
   # Add heketi cluster details to bashrc and zshrc for heketi-cli (kx user)
   echo -e "\nexport HEKETI_CLI_SERVER=http://${mainIpAddress}:8080" >> /home/${vmUser}/.zshrc
   echo "export HEKETI_CLI_USER=admin" >> /home/${vmUser}/.zshrc
@@ -254,11 +281,12 @@ if [ ! -f /home/${vmUser}/Kubernetes/heketi_creds.sh ]; then
   echo "export HEKETI_CLI_KEY=\"${adminPassword}\"" | sudo tee -a /root/.bashrc
 
   # Create credential file in case this script needs to rerun
-  echo '#!/bin/bash' > /home/${vmUser}/Kubernetes/heketi_creds.sh
-  echo '# File created in case GlusterFS script is rerun' >> /home/${vmUser}/Kubernetes/heketi_creds.sh
-  echo "export adminPassword=\"${adminPassword}\"" >> /home/${vmUser}/Kubernetes/heketi_creds.sh
-  echo "export userPassword=\"${userPassword}\"" >> /home/${vmUser}/Kubernetes/heketi_creds.sh
-  chmod 755 /home/${vmUser}/Kubernetes/heketi_creds.sh
+  echo '#!/bin/bash' > /usr/share/kx.as.code/Kubernetes/heketi_creds.sh
+  echo '# File created in case GlusterFS script is rerun' >> /usr/share/kx.as.code/Kubernetes/heketi_creds.sh
+  echo "export adminPassword=\"${adminPassword}\"" >> /usr/share/kx.as.code/Kubernetes/heketi_creds.sh
+  echo "export userPassword=\"${userPassword}\"" >> /usr/share/kx.as.code/Kubernetes/heketi_creds.sh
+  chmod 755 /usr/share/kx.as.code/Kubernetes/heketi_creds.sh 
+
 fi
 
 # Check cluster was created successfully
@@ -275,7 +303,7 @@ adminPassword_BASE64=$(echo "${adminPassword}" | base64)
 
 # Currently the secrets based approach is not working, leading to a 401
 # TODO: Will pick this again in future. Will hardcode as "restuserkey" in storage class for now
-cat <<EOF > /home/${vmUser}/Kubernetes/gluster-secret.yaml
+cat <<EOF > /usr/share/kx.as.code/Kubernetes/gluster-secret.yaml
 apiVersion: v1
 kind: Secret
 metadata:
@@ -285,13 +313,13 @@ type: "kubernetes.io/glusterfs"
 data:
     key: "${adminPassword_BASE64}"
 EOF
-  kubectl create -f /home/${vmUser}/Kubernetes/gluster-secret.yaml
+  kubectl create -f /usr/share/kx.as.code/Kubernetes/gluster-secret.yaml
 fi
 
 clusterId=$(heketi-cli cluster list | cut -f2 -d: | cut -f1 -d' ' | tr -d '\n')
 
 # Volume type of "none" is important, as kx.as.code will only have 1 storage (eg, 0 replicas) - provisioning would fail without this
-cat <<EOF > /home/${vmUser}/Kubernetes/glusterfs-sc.yaml
+cat <<EOF > /usr/share/kx.as.code/Kubernetes/glusterfs-sc.yaml
 kind: StorageClass
 apiVersion: storage.k8s.io/v1beta1
 metadata:
@@ -308,7 +336,7 @@ parameters:
   volumetype: "none"
   clusterid: "${clusterId}"
 EOF
-kubectl apply -f /home/${vmUser}/Kubernetes/glusterfs-sc.yaml
+kubectl apply -f /usr/share/kx.as.code/Kubernetes/glusterfs-sc.yaml
 
 # Make gluster-heketi storage class Kubernetes NOT default (switched default to local storage)
 kubectl patch storageclass gluster-heketi -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"false"}}}'

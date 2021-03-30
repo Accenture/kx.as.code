@@ -5,5 +5,6 @@ secretExists=$(kubectl get secret -n ${namespace} memberlist -o json | jq -r '.m
 if [[ -z ${secretExists} ]]; then
     kubectl create secret generic -n metallb-system memberlist --from-literal=secretkey="$(openssl rand -base64 128)"
 else
-    log_info "Metallb memberlist secret already exists. Skkipping creation"
+    log_info "Metallb memberlist secret already exists. Skipping creation"
 fi
+
