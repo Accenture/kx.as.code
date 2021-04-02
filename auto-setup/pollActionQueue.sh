@@ -148,6 +148,10 @@ if [[ ! -f /usr/share/kx.as.code/.config/network_status ]] && [[ "${baseIpType}"
                 export mainIpAddress=${hostIpAddress}
                 echo "address=/ldap/${hostIpAddress}" | sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
                 echo "address=/ldap.${baseDomain}/${hostIpAddress}" | sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
+                echo "address=/pgadmin/${hostIpAddress}" | sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
+                echo "address=/pgadmin.${baseDomain}/${hostIpAddress}" | sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
+                echo "address=/ldapadmin/${hostIpAddress}" | sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
+                echo "address=/ldapadmin.${baseDomain}/${hostIpAddress}" | sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
                 echo "address=/rabbitmq/${hostIpAddress}" | sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
                 echo "address=/rabbitmq.${baseDomain}/${hostIpAddress}" | sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
 

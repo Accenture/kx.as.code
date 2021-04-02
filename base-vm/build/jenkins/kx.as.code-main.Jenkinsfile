@@ -28,7 +28,7 @@ pipeline {
         string(name: 'git_source_branch', defaultValue: "feature/multi-user-enablement", description: "Source Github branch to build from and clone inside VM")
         string(name: 'git_docs_branch', defaultValue: "master", description: "Docs Github branch to clone")
         string(name: 'git_techradar_branch', defaultValue: "master", description: "TechRadar Github branch to clone")
-        string(name: 'kx_version', defaultValue: "0.6.6", description: "KX.AS.CODE Version")
+        string(name: 'kx_version', defaultValue: "0.6.7", description: "KX.AS.CODE Version")
         string(name: 'kx_vm_user', defaultValue: "kx.hero", description: "KX.AS.CODE VM user login")
         string(name: 'kx_vm_password', defaultValue: "L3arnandshare", description: "KX.AS.CODE VM user login password")
         string(name: 'kx_compute_engine_build', defaultValue: "true", description: "Needs to be true for AWS to avoid 'grub' changes")

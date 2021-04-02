@@ -10,5 +10,9 @@
     "shortcut_text": "Guacamole Remote Desktop",
     "shortcut_icon": "",
     "pre_install_scripts": [],
-    "post_install_scripts": []
+    "post_install_scripts": [
+        "configureXrdpConnection.sh",
+        "installPgAdmin.sh",
+        "createDesktopShortcuts.sh"
+    ]
 }

@@ -10,5 +10,8 @@
     "shortcut_text": "OpenLDAP User Directory",
     "shortcut_icon": "",
     "pre_install_scripts": [],
-    "post_install_scripts": []
+    "post_install_scripts": [
+        "installAdminClient.sh",
+        "createDesktopShortcut.sh"
+    ]
 }

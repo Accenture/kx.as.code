@@ -2,7 +2,12 @@
 
 SHARED_GIT_REPOSITORIES=/usr/share/kx.as.code/git
 
-# Install packages
+# Install & configure XRDP to ensure support for multiple users
+sudo apt install -y xrdp
+sudo sed -i '/^test -x \/etc\/X11\/Xsession && exec \/etc\/X11\/Xsession.*/i \unset DBUS_SESSION_BUS_ADDRESS' /etc/xrdp/startwm.sh
+sudo sed -i '/^test -x \/etc\/X11\/Xsession && exec \/etc\/X11\/Xsession.*/i \unset XDG_RUNTIME_DIR' /etc/xrdp/startwm.sh
+
+# Install Guacamole dependencies
 sudo apt install -y build-essential libcairo2-dev libjpeg62-turbo-dev libpng-dev libtool-bin libossp-uuid-dev libvncserver-dev freerdp2-dev libssh2-1-dev libtelnet-dev libwebsockets-dev libpulse-dev libvorbis-dev libwebp-dev libssl-dev libpango1.0-dev libswscale-dev libavcodec-dev libavutil-dev libavformat-dev
 
 # Download, build, install and enable Guacamole
@@ -26,7 +31,7 @@ sudo systemctl restart tomcat9 guacd
 sudo mkdir /etc/guacamole/
 
 # Download extensions
-export extensionsToDownload="jdbc openid ldap totp"
+export extensionsToDownload="jdbc ldap totp"
 for extension in ${extensionsToDownload}
 do
   curl -o guacamole-auth-${extension}-${guacamoleVersion}.tar.gz -L "https://apache.org/dyn/closer.cgi?action=download&filename=guacamole/${guacamoleVersion}/binary/guacamole-auth-${extension}-${guacamoleVersion}.tar.gz"
@@ -43,17 +48,27 @@ done
 sudo mkdir -p /etc/guacamole/lib
 sudo curl -o /etc/guacamole/lib/postgresql-42.2.19.jar -L https://jdbc.postgresql.org/download/postgresql-42.2.19.jar
 
-# Install
+# Install Postgresql
 sudo apt-get install -y postgresql postgresql-contrib
+
 # Start Postgresql
 sudo pg_ctlcluster 11 main start
+
 # Test Postgresql
 sudo -u postgres psql -c "SELECT version();"
+
 # Create Guacamole Database and User
 sudo su - postgres -c "createdb guacamole_db"
+
+# Change default guacadmin/guacadmin password
+guacAdminPassword=$(< /dev/urandom tr -dc '_A-Z-a-z-0-9%' | head -c${1:-32};echo;)
+echo ${guacAdminPassword} | sudo tee ${installationWorkspace}/.guac
+sudo sed -i "s/-- 'guacadmin'/-- '${guacAdminPassword}'/g" guacamole-auth-jdbc-${guacamoleVersion}/postgresql/schema/002-create-admin-user.sql
 cat guacamole-auth-jdbc-${guacamoleVersion}/postgresql/schema/*.sql | sudo su - postgres -c "psql -d guacamole_db -f -"
+
+# Create Guacamole database users
 guacUser=$(echo $vmUser | sed 's/\./_/g')
-guacPassword=$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${1:-8};echo;)
+guacPassword=$(< /dev/urandom tr -dc '_A-Z-a-z-0-9' | head -c${1:-8};echo;)
 sudo su - postgres -c "psql -d guacamole_db -c \"CREATE USER guacamole_user WITH PASSWORD '${guacPassword}';\""
 sudo su - postgres -c "psql -d guacamole_db -c \"GRANT SELECT,INSERT,UPDATE,DELETE ON ALL TABLES IN SCHEMA public TO guacamole_user;\""
 sudo su - postgres -c "psql -d guacamole_db -c \"GRANT SELECT,USAGE ON ALL SEQUENCES IN SCHEMA public TO guacamole_user;\""
@@ -85,7 +100,7 @@ ldap-user-search-filter: (objectClass=*)
 totp-issuer: apache_guacamole
 totp-digits: 6
 totp-period: 30
-totp-mode: sha512
+totp-mode: sha1
 
 # Postgresql connection properties
 postgresql-hostname: localhost
@@ -97,6 +112,19 @@ postgresql-password: '${guacPassword}'
 # Allow a user to connect once only
 postgresql-default-max-connections: 1
 postgresql-default-max-group-connections: 1
+
+# Password Policies
+postgresql-user-password-min-length: 8
+postgresql-user-password-require-multiple-case: true
+postgresql-user-password-require-symbol: true
+postgresql-user-password-require-digit: true
+postgresql-user-password-prohibit-username: true
+postgresql-user-password-min-age: 7
+postgresql-user-password-max-age: 75
+postgresql-user-password-history-size: 6
+
+# Auto create users in PGSQL that authenticated via LDAP
+postgresql-auto-create-accounts: true
 
 ''' | sudo tee /etc/guacamole/guacamole.properties
 
@@ -178,7 +206,13 @@ echo '''
 server {
         listen 8099;
         listen [::]:8099;
-        server_name '${baseDomain}';
+
+        server_name remote-desktop.'${baseDomain}';
+
+        listen [::]:8043 ssl ipv6only=on;
+        listen 8043 ssl;
+        ssl_certificate /usr/share/kx.as.code/Kubernetes/kx-certs/tls.crt;
+        ssl_certificate_key /usr/share/kx.as.code/Kubernetes/kx-certs/tls.key;
 
         access_log  /var/log/nginx/guac_access.log;
         error_log  /var/log/nginx/guac_error.log;
