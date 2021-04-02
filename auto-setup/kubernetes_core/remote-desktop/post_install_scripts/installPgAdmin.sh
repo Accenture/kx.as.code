@@ -9,12 +9,12 @@ sudo mkdir /var/log/pgadmin4
 sudo mkdir /usr/pgadmin4
 sudo chown -R ${vmUSer}:${vmUSer} /var/lib/pgadmin4/
 sudo chown -R ${vmUSer}:${vmUSer} /var/log/pgadmin4/
-sudo cd /usr/pgadmin4
+cd /usr/pgadmin4
 sudo wget https://ftp.postgresql.org/pub/pgadmin/pgadmin4/v5.1/pip/pgadmin4-5.1-py3-none-any.whl
-sudo pip3 install pgadmin4-5.1-py3-none-any.whl
 sudo pip3 install virtualenv
-sudo virtualenv pgadmin-env
-sudo source pgadmin-env/bin/activate
+virtualenv pgadmin-env
+source pgadmin-env/bin/activate
+pip3 install pgadmin4-5.1-py3-none-any.whl
 
 echo """
 LOG_FILE = '/var/log/pgadmin4/pgadmin4.log'
@@ -30,12 +30,16 @@ LDAP_USERNAME_ATTRIBUTE = 'uid'
 LDAP_BASE_DN = '${ldapDn}'
 LDAP_SEARCH_BASE_DN = 'ou=Users,ou=People,${ldapDn}'
 LDAP_BIND_USER = 'cn=admin,${ldapDn}'
-LDAP_BIND_PASSWORD = '${vmUser}'
+LDAP_BIND_PASSWORD = '${vmPassword}'
 LDAP_AUTO_CREATE_USER = True
 LDAP_ANONYMOUS_BIND = False
 LDAP_SEARCH_FILTER = '(objectclass=*)'
 LDAP_SEARCH_SCOPE = 'SUBTREE'
 """ | sudo tee /usr/pgadmin4/pgadmin-env/lib/python3.7/site-packages/pgadmin4/config_local.py
+
+# Install dependencies
+sudo apt-get install -y libpq-dev
+sudo pip3 install psycopg2
 
 # Install UWSGI
 sudo apt-get install -y uwsgi-core uwsgi-plugin-python3 build-essential python3 python3-dev libpcre3-dev libpcre3
@@ -47,8 +51,25 @@ sudo -H pip3 install --upgrade cheroot flask flask_babelex flask_login flask_mai
 sudo chown -R www-data:www-data /var/lib/pgadmin4
 sudo chown -R www-data:www-data /var/log/pgadmin4
 
+# Set default email and password to use and setup on first start of PGADMIN
+export PGADMIN_DEFAULT_EMAIL='admin@'${basedOomain}''
+export PGADMIN_DEFAULT_PASSWORD=''${vmPassword}''
+export PGADMIN_SETUP_EMAIL=${PGADMIN_DEFAULT_EMAIL}
+export PGADMIN_SETUP_PASSWORD=${PGADMIN_DEFAULT_PASSWORD}
+
+# Start and setup initial username and password
+uwsgi \
+    --socket /tmp/pgadmin4.sock \
+    --processes 1 \
+    --threads 25 \
+    --chdir /usr/pgadmin4/pgadmin-env/lib/python3.7/site-packages/pgadmin4/ \
+    --manage-script-name \
+    --mount /=pgAdmin4:app \
+    --uid www-data \
+    --plugin python3 &
+
 # Create SYSTEMD service
-'''
+echo '''
 [Unit]
 Description=pgadmin4 on uWSGI
 Requires=network.target
@@ -82,18 +103,45 @@ WantedBy=multi-user.target
 sudo systemctl enable pgadmin4-on-uwsgi.service
 
 # Alter default postgres admin password
-sudo su - postgres -c "ALTER USER postgres PASSWORD 'L3arnandshare';
+sudo su - postgres -c "psql -U postgres -c \"ALTER USER postgres PASSWORD '${vmPassword}';\""
+
+# Create JSON containing postgresql server to connect to
+echo '''
+{
+    "Servers": {
+        "1": {
+            "Name": "'${baseDomain}'",
+            "Group": "Servers",
+            "Host": "localhost",
+            "Port": 5432,
+            "MaintenanceDB": "postgres",
+            "Username": "postgres",
+            "SSLMode": "prefer",
+            "SSLCert": "<STORAGE_DIR>/.postgresql/postgresql.crt",
+            "SSLKey": "<STORAGE_DIR>/.postgresql/postgresql.key",
+            "SSLCompression": 0,
+            "Timeout": 10,
+            "UseSSHTunnel": 0,
+            "TunnelPort": "22",
+            "TunnelAuthentication": 0
+        }
+    }
+}
+''' | sudo tee /usr/pgadmin4/pgadmin-env/lib/python3.7/site-packages/pgadmin4/servers.json
+
+# Import sevrer JSON into PGADMIN
+python3 /usr/pgadmin4/pgadmin-env/lib/python3.7/site-packages/pgadmin4/setup.py --load-servers "/usr/pgadmin4/pgadmin-env/lib/python3.7/site-packages/pgadmin4/servers.json" --user ${PGADMIN_DEFAULT_EMAIL}
 
 # Add PGADMIN config to NGINX
 echo '''
 server {
   listen 5080;
-  server_name pgadmin.${baseDomain};
+  server_name pgadmin.'${baseDomain}';
 
   listen [::]:7043 ssl ipv6only=on;
   listen 7043 ssl;
-  ssl_certificate /usr/share/kx.as.code/Kubernetes/kx-certs/tls.crt;
-  ssl_certificate_key /usr/share/kx.as.code/Kubernetes/kx-certs/tls.key;
+  ssl_certificate '${installationWorkspace}'/kx-certs/tls.crt;
+  ssl_certificate_key '${installationWorkspace}'/kx-certs/tls.key;
 
   access_log  /var/log/nginx/pgadmin_access.log;
   error_log  /var/log/nginx/pgadmin_error.log;

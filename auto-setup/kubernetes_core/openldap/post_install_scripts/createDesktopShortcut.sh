@@ -1,16 +1,18 @@
 #!/bin/bash -eux
 
-skelDirectory=/usr/share/kx.as.code/skel
+# Add Desktop Icon to SKEL directory
+shortcutIcon=ldap-account-manager.png
+shortcutText="LDAP Account Manager"
+iconPath=${installComponentDirectory}/${shortcutIcon}
 
-# Put PGADMIN Icon on Desktop
-iconPath=${installComponentDirectory}/ldap-account-manager.png
-cat <<EOF > /home/${vmUser}/Desktop/Postgresql-Admin.desktop
+shortcutsDirectory="/usr/share/kx.as.code/skel/Desktop"
+echo """
 [Desktop Entry]
 Version=1.0
-Name=LDAP Account Manager
-GenericName=LDAP Account Manager
-Comment=LDAP Account Manager
-Exec=/usr/bin/google-chrome-stable %U https://ldapmanager.${baseDomain}:6043 --use-gl=angle --password-store=basic ${browserOptions}
+Name=${shortcutText}
+GenericName=${shortcutText}
+Comment=${shortcutText}
+Exec=/usr/bin/google-chrome-stable %U https://ldapadmin.${baseDomain}:6043/lam --use-gl=angle --password-store=basic
 StartupNotify=true
 Terminal=false
 Icon=${iconPath}
@@ -18,9 +20,12 @@ Type=Application
 Categories=Development
 MimeType=text/html;text/xml;application/xhtml_xml;image/webp;x-scheme-handler/http;x-scheme-handler/https;x-scheme-handler/ftp;
 Actions=new-window;new-private-window;
-EOF
-cp /home/${vmUser}/Desktop/Postgresql-Admin.desktop ${skelDirectory}/Desktop
+""" | tee "${shortcutsDirectory}"/${componentName}.desktop
+sed -i 's/^[ \t]*//g' "${shortcutsDirectory}"/${componentName}.desktop
+cp "${shortcutsDirectory}"/${componentName}.desktop /home/${vmUser}/Desktop/
+chmod 755 "${shortcutsDirectory}"/${componentName}.desktop
+chmod 755 /home/${vmUser}/Desktop/${componentName}.desktop
+chown ${vmUser}:${vmUser} /home/${vmUser}/Desktop/${componentName}.desktop
 
-# Give *.desktop files execute permissions
-chmod 755 /home/${vmUser}/Desktop/*.desktop
-chown ${vmUser}:${vmUser} /home/${vmUser}/Desktop/*.desktop
+
+

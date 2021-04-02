@@ -6,8 +6,8 @@
     "install_scripts": [
         "install-and-configure-openldap.sh"
     ],
-    "Description": "OpenLDAP User Directory",
-    "shortcut_text": "OpenLDAP User Directory",
+    "Description": "",
+    "shortcut_text": "",
     "shortcut_icon": "",
     "pre_install_scripts": [],
     "post_install_scripts": [
