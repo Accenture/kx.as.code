@@ -221,6 +221,51 @@ if [[ ${numUsersToCreate} -ne 0 ]]; then
     sudo -H -i -u ${userid} sh -c  "kubectl config set-context --current --user=oidc"
     sudo kubectl create clusterrolebinding oidc-cluster-admin-${userid} --clusterrole=cluster-admin --user='https://keycloak.'${baseDomain}'/auth/realms/'${kcRealm}'#'${kcUserId}''
     sudo rm -f
+
+    # Create and configure XRDP connection in Guacamole database
+    echo """
+    INSERT INTO guacamole_entity (name, type) VALUES ('${userid}', 'USER');
+    INSERT INTO guacamole_user (entity_id, password_hash, password_salt, password_date)
+    SELECT
+        entity_id,
+        decode('CA458A7D494E3BE824F5E1E175A1556C0F8EEF2C2D7DF3633BEC4A29C4411960', 'hex'),  -- '${generatedPassword}'
+        decode('FE24ADC5E11E2B25288D1704ABE67A79E342ECC26064CE69C5B3177795A82264', 'hex'),
+        CURRENT_TIMESTAMP
+    FROM guacamole_entity WHERE name = '${userid}' AND guacamole_entity.type = 'USER';
+
+    -- Grant admin permission to read/update/administer self
+    INSERT INTO guacamole_user_permission (entity_id, affected_user_id, permission)
+    SELECT guacamole_entity.entity_id, guacamole_user.user_id, permission::guacamole_object_permission_type
+    FROM (
+        VALUES
+            ('${userid}', '${userid}', 'READ'),
+            ('${userid}', '${userid}', 'UPDATE'),
+            ('${userid}', '${userid}', 'ADMINISTER')
+    ) permissions (username, affected_username, permission)
+    JOIN guacamole_entity          ON permissions.username = guacamole_entity.name AND guacamole_entity.type = 'USER'
+    JOIN guacamole_entity affected ON permissions.affected_username = affected.name AND guacamole_entity.type = 'USER'
+    JOIN guacamole_user            ON guacamole_user.entity_id = affected.entity_id;
+    """ | sudo su - postgres -c "psql -U postgres -d guacamole_db" -
+
+    # Create and configure XRDP connection in Guacamole database
+    echo """
+
+    INSERT INTO public.guacamole_connection_group_permission(entity_id, connection_group_id, permission)
+    VALUES (
+      (select entity_id from guacamole_entity where name = '${userid}'),
+      (select connection_group_id from guacamole_connection_group where connection_group_name = 'kx-as-code'),
+      'READ'
+    );
+
+    INSERT INTO public.guacamole_connection_permission(entity_id, connection_id, permission)
+    VALUES (
+      (select entity_id from guacamole_entity where name = '${userid}'),
+      (select connection_id from guacamole_connection where connection_name = 'rdp'),
+      'READ'
+    );
+
+    """ | sudo su - postgres -c "psql -U postgres -d guacamole_db" -
+
   done
 fi
 

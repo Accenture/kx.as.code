@@ -108,10 +108,7 @@ postgresql-port: 5432
 postgresql-database: guacamole_db
 postgresql-username: guacamole_user
 postgresql-password: '${guacPassword}'
-
-# Allow a user to connect once only
-postgresql-default-max-connections: 1
-postgresql-default-max-group-connections: 1
+postgresql-user-required: false
 
 # Password Policies
 postgresql-user-password-min-length: 8
@@ -234,7 +231,7 @@ server {
 ln -s /etc/nginx/sites-available/guacamole.conf /etc/nginx/sites-enabled/guacamole.conf
 
 sudo nginx -t
-sudo systemctl reload nginx
+sudo systemctl restart nginx
 
 # Customize Guacamole
 sudo sed -i 's/"Apache Guacamole"/"KX.AS.CODE"/g' /var/lib/tomcat9/webapps/guacamole/translations/en.json
@@ -247,3 +244,9 @@ sudo sed -i 's/^    -webkit-background-size: 3em 3em;/    -webkit-background-siz
 sudo sed -i 's/^    -khtml-background-size:  3em 3em;/    -khtml-background-size:  9em 9em;/g' /var/lib/tomcat9/webapps/guacamole/guacamole.css
 sudo sed -i 's/width:3em;height:3em;background-size:3em 3em;-moz-background-size:3em 3em;-webkit-background-size:3em 3em;-khtml-background-size:3em 3em;/width:9em;height:9em;background-size:9em 9em;-moz-background-size:9em 9em;-webkit-background-size:9em 9em;-khtml-background-size:9em 9em;/g' /var/lib/tomcat9//webapps/guacamole/guacamole.min.css
 
+# Ensure user has rights to start X11
+sed -i 's/allowed_users=console/allowed_users=anybody/g' /etc/X11/Xwrapper.config
+
+# Stop & Disable Apach2
+systemctl stop apache2
+systemctl disable apache2

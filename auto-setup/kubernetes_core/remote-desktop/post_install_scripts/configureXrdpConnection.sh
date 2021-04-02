@@ -42,11 +42,8 @@ INSERT INTO public.guacamole_connection_parameter(
         connection_id, parameter_name, parameter_value)
         VALUES (1, 'password', '\${GUAC_PASSWORD}');
 
-INSERT INTO public.guacamole_connection_group_permission(
-        entity_id, connection_group_id, permission)
-        VALUES (3, 1, 'READ');
-
-INSERT INTO public.guacamole_connection_permission(
-        entity_id, connection_id, permission)
-        VALUES (3, 1, 'READ');
 """ | sudo su - postgres -c "psql -U postgres -d guacamole_db" -
+
+# Restart services
+systemctl restart tomcat9
+systemctl restart guacd
