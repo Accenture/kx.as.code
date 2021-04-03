@@ -158,7 +158,8 @@ if [[ ! -f /usr/share/kx.as.code/.config/network_status ]] && [[ "${baseIpType}"
                 echo "address=/ldapadmin.${baseDomain}/${hostIpAddress}" | sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
                 echo "address=/rabbitmq/${hostIpAddress}" | sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
                 echo "address=/rabbitmq.${baseDomain}/${hostIpAddress}" | sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
-
+                echo "address=/remote-desktop/${hostIpAddress}" | sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
+                echo "address=/remote-desktop.${baseDomain}/${hostIpAddress}" | sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
             fi
         done
     fi

@@ -10,7 +10,7 @@ Version=1.0
 Name=Guacamole Remote Desktop
 GenericName=Guacamole Remote Desktop
 Comment=Guacamole Remote Desktop
-Exec=/usr/bin/google-chrome-stable %U https://guacamole.${baseDomain} --use-gl=angle --password-store=basic ${browserOptions}
+Exec=/usr/bin/google-chrome-stable %U https://remote-desktop.${baseDomain}:8043 --use-gl=angle --password-store=basic ${browserOptions}
 StartupNotify=true
 Terminal=false
 Icon=${iconPath}
