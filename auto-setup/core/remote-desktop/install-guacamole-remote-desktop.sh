@@ -208,8 +208,8 @@ server {
 
         listen [::]:8043 ssl ipv6only=on;
         listen 8043 ssl;
-        ssl_certificate /usr/share/kx.as.code/Kubernetes/kx-certs/tls.crt;
-        ssl_certificate_key /usr/share/kx.as.code/Kubernetes/kx-certs/tls.key;
+        ssl_certificate '${installationWorkspace}'/kx-certs/tls.crt;
+        ssl_certificate_key '${installationWorkspace}'/kx-certs/tls.key;
 
         access_log  /var/log/nginx/guac_access.log;
         error_log  /var/log/nginx/guac_error.log;
