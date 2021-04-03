@@ -49,7 +49,7 @@ kubectl config set-credentials oidc \
 	  --exec-arg=--oidc-issuer-url=https://'${componentName}'.'${baseDomain}'/auth/realms/'${kcRealm}' \
 	  --exec-arg=--oidc-client-id=kubernetes \
 	  --exec-arg=--oidc-client-secret='${clientSecret}'
-''' | sudo tee /usr/share/kx.as.code/Kubernetes/client-oidc-setup.sh
-sudo chmod 755 /usr/share/kx.as.code/Kubernetes/client-oidc-setup.sh
+''' | sudo tee ${installationWorkspace}/client-oidc-setup.sh
+sudo chmod 755 ${installationWorkspace}/client-oidc-setup.sh
 
 

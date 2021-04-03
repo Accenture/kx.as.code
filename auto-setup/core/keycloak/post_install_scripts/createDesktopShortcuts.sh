@@ -15,7 +15,7 @@ if [[ ! -z ${primaryUrl} ]]; then
 
     if [[ ! -z ${primaryUrl} ]] && [[ "${primaryUrl}" != "null" ]] && [[ -f ${iconPath} ]] && [[ ! -z ${shortcutText} ]]; then
 
-        shortcutsDirectory="/usr/share/kx.as.code/skel/Desktop"
+        shortcutsDirectory="${skelDirectory}/Desktop"
         echo """
         [Desktop Entry]
         Version=1.0
