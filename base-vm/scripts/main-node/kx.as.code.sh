@@ -2,6 +2,7 @@
 
 export SKELDIR=/usr/share/kx.as.code/skel
 export SHARED_GIT_REPOSITORIES=/usr/share/kx.as.code/git
+export INSTALLATION_WORKSPACE=/usr/share/kx.as.code/workspace
 
 # UrlEncode GIT password in case of special characters
 if [[ ! -z $GITHUB_TOKEN ]]; then
@@ -165,7 +166,7 @@ After=dnsmasq
 [Service]
 User=0
 Environment=VM_USER=${VM_USER}
-Environment=KUBEDIR=/home/${VM_USER}/Kubernetes
+Environment=KUBEDIR=${INSTALLATION_WORKSPACE}
 Type=forking
 ExecStart=/usr/share/kx.as.code/git/kx.as.code/auto-setup/pollActionQueue.sh
 TimeoutSec=infinity
@@ -393,6 +394,6 @@ EOF"
 sudo chmod 755 /home/$VM_USER/Desktop/*.desktop
 
 # Create Kubernetes logging and custom scripts directory
-sudo mkdir -p /usr/share/kx.as.code/Kubernetes
-sudo chown $VM_USER:$VM_USER /usr/share/kx.as.code/Kubernetes
-sudo chmod 755 /usr/share/kx.as.code/Kubernetes
+sudo mkdir -p ${INSTALLATION_WORKSPACE}
+sudo chown $VM_USER:$VM_USER ${INSTALLATION_WORKSPACE}
+sudo chmod 755 ${INSTALLATION_WORKSPACE}
