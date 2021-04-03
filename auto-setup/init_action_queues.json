@@ -1,0 +1,73 @@
+{
+    "action_queues": {
+        "install": [
+            {
+                "install_folder": "core",
+                "name": "openldap"
+            },
+            {
+                "install_folder": "core",
+                "name": "remote-desktop"
+            },
+            {
+                "install_folder": "core",
+                "name": "kubernetes-tools"
+            },
+            {
+                "install_folder": "core",
+                "name": "kubernetes-base-services"
+            },
+            {
+                "install_folder": "core",
+                "name": "calico-network"
+            },
+            {
+                "install_folder": "core",
+                "name": "cfssl-certificate-authority"
+            },
+            {
+                "install_folder": "core",
+                "name": "metallb-loadbalancer"
+            },
+            {
+                "install_folder": "core",
+                "name": "cert-manager"
+            },
+            {
+                "install_folder": "core",
+                "name": "local-storage"
+            },
+            {
+                "install_folder": "core",
+                "name": "glusterfs-storage"
+            },
+            {
+                "install_folder": "core",
+                "name": "nginx-ingress-controller"
+            },
+            {
+                "install_folder": "core",
+                "name": "kxascode-basic"
+            },
+            {
+                "install_folder": "core",
+                "name": "metrics-server"
+            },
+            {
+                "install_folder": "core",
+                "name": "keycloak"
+            },
+            {
+                "install_folder": "core",
+                "name": "kubernetes-dashboard"
+            },
+            {
+                "install_folder": "core",
+                "name": "user-setup"
+            }
+        ],
+        "uninstall": [],
+        "purge": [],
+        "upgrade": []
+    }
+}

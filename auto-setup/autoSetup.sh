@@ -5,7 +5,7 @@ export rc=0
 mkdir -p ${installationWorkspace}
 
 # Switch off GUI if switch set to do so in KX.AS.CODE launcher
-disableLinuxDesktop=$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.disableLinuxDesktop')
+disableLinuxDesktop=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.disableLinuxDesktop')
 if [[ "${disableLinuxDesktop}" == "true" ]]; then
     systemctl set-default multi-user
     systemctl isolate multi-user.target
@@ -271,8 +271,8 @@ if [[ "${action}" == "install" ]]; then
     ####################################################################################################################################################################
 
     # PODS RUNNING CHECKS
-    if [[ "${componentInstallationFolder}" != "kubernetes_core" ]]; then
-    # Excluding kubernetes_core_groups to avoid missing cross dependency issues between core services, for example,
+    if [[ "${componentInstallationFolder}" != "core" ]]; then
+    # Excluding core_groups to avoid missing cross dependency issues between core services, for example,
     # coredns waiting for calico network to be installed, preventing other service from being provisioned
         for i in {1..60}
         do
@@ -514,37 +514,37 @@ if [[ "${action}" == "install" ]]; then
     fi
 
     # Get slot number to add installed app to JSON array
-    arrayLength=$(cat ${installationWorkspace}/autoSetup.json | jq -r '.metadata.installed[].name' | wc -l)
+    arrayLength=$(cat ${installationWorkspace}/metadata.json | jq -r '.metadata.installed[].name' | wc -l)
     if [[ -z ${arrayLength} ]]; then
         arrayLength=0
     fi
 
-    # Add component json to "installed" node in autoSetup.json
-    componentInstalledExists=$(cat ${installationWorkspace}/autoSetup.json | jq '.metadata.installed[] | select(.name=="'${componentName}'")')
+    # Add component json to "installed" node in metadata.json
+    componentInstalledExists=$(cat ${installationWorkspace}/metadata.json | jq '.metadata.installed[] | select(.name=="'${componentName}'")')
     if [[ -z ${componentInstalledExists} ]]; then
-        componentJson=$(cat ${installationWorkspace}/autoSetup.json | jq '.metadata.available.applications[] | select(.name=="'${componentName}'")')
-        arrayLength=$(cat ${installationWorkspace}/autoSetup.json | jq -r '.metadata.installed[].name' | wc -l)
+        componentJson=$(cat ${installationWorkspace}/metadata.json | jq '.metadata.available.applications[] | select(.name=="'${componentName}'")')
+        arrayLength=$(cat ${installationWorkspace}/metadata.json | jq -r '.metadata.installed[].name' | wc -l)
         if [[ -z ${arrayLength} ]]; then
             arrayLength=0
         fi
         if [[ "${componentJson}" == "null" ]] || [[ -z ${componentJson} ]]; then
             log_warn "ComponentJson is null for ${componentName}"
         else
-            cat ${installationWorkspace}/autoSetup.json | jq '.metadata.installed['${arrayLength}'] |= . + '"${componentJson}"'' | tee ${installationWorkspace}/autoSetup.json.tmp.2
-            if [[ ! -s ${installationWorkspace}/autoSetup.json.tmp.2 ]]; then export rc=1; fi
-            cp ${installationWorkspace}/autoSetup.json ${installationWorkspace}/autoSetup.json.previous.2
-            if [[ -s ${installationWorkspace}/autoSetup.json.tmp.2 ]]; then
-                cp ${installationWorkspace}/autoSetup.json.tmp.2 ${installationWorkspace}/autoSetup.json
+            cat ${installationWorkspace}/metadata.json | jq '.metadata.installed['${arrayLength}'] |= . + '"${componentJson}"'' | tee ${installationWorkspace}/metadata.json.tmp.2
+            if [[ ! -s ${installationWorkspace}/metadata.json.tmp.2 ]]; then export rc=1; fi
+            cp ${installationWorkspace}/metadata.json ${installationWorkspace}/metadata.json.previous.2
+            if [[ -s ${installationWorkspace}/metadata.json.tmp.2 ]]; then
+                cp ${installationWorkspace}/metadata.json.tmp.2 ${installationWorkspace}/metadata.json
             fi
         fi
     fi
 
     # Remove completed component installation from install action
-    cat ${installationWorkspace}/autoSetup.json | jq 'del(.action_queues.install[] | select(.name=="'${componentName}'"))' | tee ${installationWorkspace}/autoSetup.json.tmp.4
-    if [[ ! -s ${installationWorkspace}/autoSetup.json.tmp.4 ]]; then export rc=1; fi
-    cp ${installationWorkspace}/autoSetup.json ${installationWorkspace}/autoSetup.json.previous.4
-    if [[ -s ${installationWorkspace}/autoSetup.json.tmp.4 ]]; then
-        cp ${installationWorkspace}/autoSetup.json.tmp.4 ${installationWorkspace}/autoSetup.json
+    cat ${installationWorkspace}/metadata.json | jq 'del(.action_queues.install[] | select(.name=="'${componentName}'"))' | tee ${installationWorkspace}/metadata.json.tmp.4
+    if [[ ! -s ${installationWorkspace}/metadata.json.tmp.4 ]]; then export rc=1; fi
+    cp ${installationWorkspace}/metadata.json ${installationWorkspace}/metadata.json.previous.4
+    if [[ -s ${installationWorkspace}/metadata.json.tmp.4 ]]; then
+        cp ${installationWorkspace}/metadata.json.tmp.4 ${installationWorkspace}/metadata.json
     fi
 
 elif [[ "${action}" == "upgrade" ]]; then
@@ -606,4 +606,4 @@ elif [[ "${action}" == "uninstall" ]] || [[ "${action}" == "purge" ]]; then
 
 fi # end of action actions condition
 
-cp ${installationWorkspace}/autoSetup.json ${installationWorkspace}/autoSetup.json.previous
+cp ${installationWorkspace}/metadata.json ${installationWorkspace}/metadata.json.previous

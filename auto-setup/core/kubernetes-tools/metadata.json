@@ -1,0 +1,15 @@
+{
+    "name": "kubernetes-tools",
+    "namespace": "kube-system",
+    "installation_type": "script",
+    "installation_group_folder": "core",
+    "retry": "true",
+    "install_scripts": [
+        "installKubernetesTools.sh"
+    ],
+    "Description": "Kubernetes Tools",
+    "shortcut_text": "Kubernetes Tools",
+    "shortcut_icon": "kubernetes.png",
+    "pre_install_scripts": [],
+    "post_install_scripts": []
+}

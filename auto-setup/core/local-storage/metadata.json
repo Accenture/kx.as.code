@@ -1,0 +1,14 @@
+{
+    "name": "local-storage",
+    "namespace": "kube-system",
+    "installation_type": "script",
+    "installation_group_folder": "core",
+    "install_scripts": [
+        "installLocalStorage.sh"
+    ],
+    "Description": "Local Storage (fast)",
+    "shortcut_text": "Local Storage",
+    "shortcut_icon": "local-storage.png",
+    "pre_install_scripts": [],
+    "post_install_scripts": []
+}

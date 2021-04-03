@@ -1,0 +1,17 @@
+{
+    "name": "metallb-loadbalancer",
+    "namespace": "metallb-system",
+    "installation_type": "script",
+    "installation_group_folder": "core",
+    "retry": "true",
+    "install_scripts": [
+        "installMetalLb.sh"
+    ],
+    "pre_install_scripts": [
+        "createMemberListSecret.sh"
+    ],
+    "Description": "MetalLB Load Balancer",
+    "shortcut_text": "MetalLB Load Balancer",
+    "shortcut_icon": "metallb.png",
+    "post_install_scripts": []
+}

@@ -1,0 +1,19 @@
+{
+    "name": "openldap",
+    "namespace": "",
+    "installation_type": "script",
+    "installation_group_folder": "core",
+    "install_scripts": [
+        "install-and-configure-openldap.sh"
+    ],
+    "Description": "",
+    "shortcut_text": "",
+    "shortcut_icon": "",
+    "pre_install_scripts": [],
+    "post_install_scripts": [
+        "enableOpenLdapTls.sh",
+        "installSsd.sh",
+        "installAdminClient.sh",
+        "createDesktopShortcut.sh"
+    ]
+}
