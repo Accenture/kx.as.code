@@ -206,10 +206,10 @@ if [[ "${action}" == "install" ]]; then
 
         # Upload KX.AS.CODE CA certificate to ArgoCD
         if [[ -z $(argocd --insecure cert list | grep gitlab.kx-as-code.local) ]]; then
-            if [[ -f /home/kx.hero/Kubernetes/kx-certs/ca.crt ]]; then
-                argocd cert add-tls ${gitDomain} --from /home/kx.hero/Kubernetes/kx-certs/ca.crt
+            if [[ -f ${installationWorkspace}/kx-certs/ca.crt ]]; then
+                argocd cert add-tls ${gitDomain} --from ${installationWorkspace}/kx-certs/ca.crt
             else
-                log_error "Could not upload KX.AS.CODE CA (/home/kx.hero/Kubernetes/kx-certs/ca.crt) to ArgoCD. It appears to be missing."
+                log_error "Could not upload KX.AS.CODE CA (${installationWorkspace}/kx-certs/ca.crt) to ArgoCD. It appears to be missing."
             fi
         fi
 
@@ -514,37 +514,37 @@ if [[ "${action}" == "install" ]]; then
     fi
 
     # Get slot number to add installed app to JSON array
-    arrayLength=$(cat ${installationWorkspace}/metadata.json | jq -r '.metadata.installed[].name' | wc -l)
+    arrayLength=$(cat ${installationWorkspace}/actionQueues.json | jq -r '.state.installed[].name' | wc -l)
     if [[ -z ${arrayLength} ]]; then
         arrayLength=0
     fi
 
     # Add component json to "installed" node in metadata.json
-    componentInstalledExists=$(cat ${installationWorkspace}/metadata.json | jq '.metadata.installed[] | select(.name=="'${componentName}'")')
+    componentInstalledExists=$(cat ${installationWorkspace}/actionQueues.json | jq '.state.installed[] | select(.name=="'${componentName}'")')
     if [[ -z ${componentInstalledExists} ]]; then
         componentJson=$(cat ${installationWorkspace}/metadata.json | jq '.metadata.available.applications[] | select(.name=="'${componentName}'")')
-        arrayLength=$(cat ${installationWorkspace}/metadata.json | jq -r '.metadata.installed[].name' | wc -l)
+        arrayLength=$(cat ${installationWorkspace}/actionQueues.json | jq -r '.state.installed[].name' | wc -l)
         if [[ -z ${arrayLength} ]]; then
             arrayLength=0
         fi
         if [[ "${componentJson}" == "null" ]] || [[ -z ${componentJson} ]]; then
             log_warn "ComponentJson is null for ${componentName}"
         else
-            cat ${installationWorkspace}/metadata.json | jq '.metadata.installed['${arrayLength}'] |= . + '"${componentJson}"'' | tee ${installationWorkspace}/metadata.json.tmp.2
-            if [[ ! -s ${installationWorkspace}/metadata.json.tmp.2 ]]; then export rc=1; fi
-            cp ${installationWorkspace}/metadata.json ${installationWorkspace}/metadata.json.previous.2
-            if [[ -s ${installationWorkspace}/metadata.json.tmp.2 ]]; then
-                cp ${installationWorkspace}/metadata.json.tmp.2 ${installationWorkspace}/metadata.json
+            cat ${installationWorkspace}/actionQueues.json | jq '.state.installed['${arrayLength}'] |= . + '"${componentJson}"'' | tee ${installationWorkspace}/actionQueues.json.tmp.2
+            if [[ ! -s ${installationWorkspace}/actionQueues.json.tmp.2 ]]; then export rc=1; fi
+            cp ${installationWorkspace}/actionQueues.json ${installationWorkspace}/actionQueues.json.previous.2
+            if [[ -s ${installationWorkspace}/actionQueues.json.tmp.2 ]]; then
+                cp ${installationWorkspace}/actionQueues.json.tmp.2 ${installationWorkspace}/actionQueues.json
             fi
         fi
     fi
 
     # Remove completed component installation from install action
-    cat ${installationWorkspace}/metadata.json | jq 'del(.action_queues.install[] | select(.name=="'${componentName}'"))' | tee ${installationWorkspace}/metadata.json.tmp.4
-    if [[ ! -s ${installationWorkspace}/metadata.json.tmp.4 ]]; then export rc=1; fi
-    cp ${installationWorkspace}/metadata.json ${installationWorkspace}/metadata.json.previous.4
-    if [[ -s ${installationWorkspace}/metadata.json.tmp.4 ]]; then
-        cp ${installationWorkspace}/metadata.json.tmp.4 ${installationWorkspace}/metadata.json
+    cat ${installationWorkspace}/actionQueues.json | jq 'del(.action_queues.install[] | select(.name=="'${componentName}'"))' | tee ${installationWorkspace}/actionQueues.json.tmp.4
+    if [[ ! -s ${installationWorkspace}/actionQueues.json.tmp.4 ]]; then export rc=1; fi
+    cp ${installationWorkspace}/actionQueues.json ${installationWorkspace}/actionQueues.json.previous.4
+    if [[ -s ${installationWorkspace}/actionQueues.json.tmp.4 ]]; then
+        cp ${installationWorkspace}/actionQueues.json.tmp.4 ${installationWorkspace}/actionQueues.json
     fi
 
 elif [[ "${action}" == "upgrade" ]]; then
@@ -606,4 +606,4 @@ elif [[ "${action}" == "uninstall" ]] || [[ "${action}" == "purge" ]]; then
 
 fi # end of action actions condition
 
-cp ${installationWorkspace}/metadata.json ${installationWorkspace}/metadata.json.previous
+cp ${installationWorkspace}/actionQueues.json ${installationWorkspace}/actionQueues.json.previous

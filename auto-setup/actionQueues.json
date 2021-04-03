@@ -3,6 +3,10 @@
         "install": [
             {
                 "install_folder": "core",
+                "name": "cfssl-certificate-authority"
+            },
+            {
+                "install_folder": "core",
                 "name": "openldap"
             },
             {
@@ -20,10 +24,6 @@
             {
                 "install_folder": "core",
                 "name": "calico-network"
-            },
-            {
-                "install_folder": "core",
-                "name": "cfssl-certificate-authority"
             },
             {
                 "install_folder": "core",
@@ -69,5 +69,9 @@
         "uninstall": [],
         "purge": [],
         "upgrade": []
+    },
+    "state": {
+        "installed": [],
+        "uninstalled": []
     }
 }

@@ -7,8 +7,6 @@
             "docker-registry": "cicd/harbor",
             "s3-object-store": "storage/minio-s3"
         },
-        "installed": [],
-        "uninstalled": [],
         "available": {
             "applications": [
                 {

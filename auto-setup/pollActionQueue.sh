@@ -30,9 +30,9 @@ wait-for-file ${installationWorkspace}/profile-config.json
 
 cd ${installationWorkspace}
 
-# Copy metadata.json and init_action_queues.json to installation workspace
+# Copy metadata.json and actionQueues.json to installation workspace
 cp ${autoSetupHome}/metadata.json ${installationWorkspace}
-cp ${autoSetupHome}/init_action_queues.json ${installationWorkspace}
+cp ${autoSetupHome}/actionQueues.json ${installationWorkspace}
 
 # Get configs from profile-config.json
 export virtualizationType=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.virtualizationType')
@@ -308,10 +308,10 @@ do
 done
 
 # Populate pending queue on first start with default core components
-defaultComponentsToInstall=$(cat ${installationWorkspace}/init_action_queues.json | jq -r '.action_queues.install[].name')
+defaultComponentsToInstall=$(cat ${installationWorkspace}/actionQueues.json | jq -r '.action_queues.install[].name')
 for componentName in ${defaultComponentsToInstall}
 do
-    payload=$(cat ${installationWorkspace}/init_action_queues.json | jq -c '.action_queues.install[] | select(.name=="'${componentName}'") | {install_folder:.install_folder,"name":.name,"action":"install"}')
+    payload=$(cat ${installationWorkspace}/actionQueues.json | jq -c '.action_queues.install[] | select(.name=="'${componentName}'") | {install_folder:.install_folder,"name":.name,"action":"install"}')
     rabbitmqadmin publish exchange=action_workflow routing_key=pending_queue payload=''${payload}''
 done
 
