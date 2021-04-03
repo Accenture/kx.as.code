@@ -11,6 +11,8 @@
     "shortcut_icon": "",
     "pre_install_scripts": [],
     "post_install_scripts": [
+        "enableOpenLdapTls.sh",
+        "installSsd.sh",
         "installAdminClient.sh",
         "createDesktopShortcut.sh"
     ]
