@@ -345,11 +345,6 @@
       "expect_disconnect": "true"
     },
     {
-      "type": "file",
-      "source": "../../../../auto-setup/autoSetup.json",
-      "destination": "/home/vagrant/autoSetup.json"
-    },
-    {
       "environment_vars": [
           "VM_USER={{user `vm_user`}}"
       ],
