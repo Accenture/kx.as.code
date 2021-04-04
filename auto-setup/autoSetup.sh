@@ -364,6 +364,7 @@ if [[ "${action}" == "install" ]]; then
     ####################################################################################################################################################################
 
     # if Primary URL[0] in URLs Array exists and Icon is defined, create Desktop Shortcut
+    applicationUrls=$(cat ${componentMetadataJson} | jq -r '.urls[]?.url?' | mo)
     primaryUrl=$(echo ${applicationUrls} | cut -f1 -d' ')
 
     if [[ ! -z ${primaryUrl} ]]; then

@@ -153,7 +153,7 @@ subjects:
 ''' | sudo tee ${installationWorkspace}/keycloak-admin-group-clusterbinding.yaml
 sudo kubectl apply -f ${installationWorkspace}/keycloak-admin-group-clusterbinding.yaml
 
-# Create CA config map for connecting to Kubrnetes Dashboard from Oauth2-Proxy
+# Create CA config map for connecting to Kubernetes Dashboard from Oauth2-Proxy
 echo """
 kind: ConfigMap
 apiVersion: v1
