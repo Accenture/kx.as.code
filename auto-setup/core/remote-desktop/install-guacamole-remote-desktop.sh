@@ -247,6 +247,6 @@ sudo sed -i 's/width:3em;height:3em;background-size:3em 3em;-moz-background-size
 # Ensure user has rights to start X11
 sed -i 's/allowed_users=console/allowed_users=anybody/g' /etc/X11/Xwrapper.config
 
-# Stop & Disable Apach2
+# Stop & Disable Apache2
 systemctl stop apache2
 systemctl disable apache2

@@ -30,9 +30,15 @@ wait-for-file ${installationWorkspace}/profile-config.json
 
 cd ${installationWorkspace}
 
-# Copy metadata.json and actionQueues.json to installation workspace
-cp ${autoSetupHome}/metadata.json ${installationWorkspace}
-cp ${autoSetupHome}/actionQueues.json ${installationWorkspace}
+# Copy metadata.json to installation workspace if it doesn't exist
+if [[ ! -f ${installationWorkspace}/metadata.json ]]; then
+  cp ${autoSetupHome}/metadata.json ${installationWorkspace}
+fi
+
+# Copy actionQueues.json to installation workspace if it doesn't exist
+if [[ ! -f ${installationWorkspace}/actionQueues.json ]]; then
+  cp ${autoSetupHome}/actionQueues.json ${installationWorkspace}
+fi
 
 # Get configs from profile-config.json
 export virtualizationType=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.virtualizationType')
