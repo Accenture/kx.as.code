@@ -50,6 +50,7 @@
     "post_install_scripts": [
         "configureKeycloak.sh",
         "configureK8s.sh",
+        "activateAdditionalSettings.sh",
         "installPlugins.sh",
         "createDesktopShortcuts.sh"
     ]
