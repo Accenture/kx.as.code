@@ -160,6 +160,12 @@ fi
 if [[ "${baseIpType}" == "static" ]]; then
   if [[ -z "$(cat /etc/resolv.conf | grep \\"${fixedNicConfigDns1}\\")" ]]; then
 
+      # Wait for last Vagrant shell action to complete before changing network settings
+      timeout -s TERM 6000 bash -c \
+      'while [[ ! -f /usr/share/kx.as.code/workspace/vagrant ]];\
+      do echo "Waiting for /usr/share/kx.as.code/workspace/vagrant file" && sleep 15;\
+      done'
+
       # Prevent DHCLIENT updating static IP
       echo "supersede domain-name-servers ${fixedNicConfigDns1}, ${fixedNicConfigDns2};" | sudo tee -a /etc/dhcp/dhclient.conf
       echo '''

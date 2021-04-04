@@ -139,6 +139,12 @@ log_debug() {
 
 if [[ ! -f /usr/share/kx.as.code/.config/network_status ]] && [[ "${baseIpType}" == "static" ]]; then
 
+    # Wait for last Vagrant shell action to complete before changing network settings
+    timeout -s TERM 6000 bash -c \
+    'while [[ ! -f /usr/share/kx.as.code/workspace/vagrant ]];\
+    do echo "Waiting for /usr/share/kx.as.code/workspace/vagrant file" && sleep 15;\
+    done'
+
     # Update  DNS Entry for hosts if ip type set to static
     if [ "${baseIpType}" == "static" ]; then
         ipAddresses=$(env | grep "_IpAddress")
