@@ -16,7 +16,7 @@ if [[ ${numUsersToCreate} -ne 0 ]]; then
     surname=$(jq -r '.config.additionalUsers['$i'].surname' ${installationWorkspace}/users.json)
     email=$(jq -r '.config.additionalUsers['$i'].email' ${installationWorkspace}/users.json)
     keyboard_language=$(jq -r '.config.additionalUsers['$i'].keyboard_language' ${installationWorkspace}/users.json)
-    role=$(jq -r '.config.additionalUsers['$i'].role' ${installationWorkspace}/users.json)
+    userRole=$(jq -r '.config.additionalUsers['$i'].role' ${installationWorkspace}/users.json)
 
     firstnameSubstringLength=$((8-${#surname}))
 
@@ -129,9 +129,18 @@ if [[ ${numUsersToCreate} -ne 0 ]]; then
 
     fi
 
+    # Create user's desktop folder
     sudo mkdir -p /home/${userid}/Desktop
+
+    # Add desktop shortcuts for all users
     sudo ln -s ${sharedGitHome}/kx.as.code /home/${userid}/Desktop/"KX.AS.CODE Source";
 
+    # Add admin tools folder to desktop if user has admin role
+    if [[ "${userRole}" == "admin" ]]; then
+      ln -s "${adminShortcutsDirectory}" /home/${userid}/Desktop/
+    fi
+
+    # Copy all file to user
     sudo cp -rf /usr/share/kx.as.code/skel/* /home/${userid}/
     sudo cp -rf /usr/share/kx.as.code/skel/.* /home/${userid}/
     sudo rm -rf /home/${userid}/.cache/sessions

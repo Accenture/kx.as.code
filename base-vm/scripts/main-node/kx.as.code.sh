@@ -221,7 +221,7 @@ xfconf-query --create --channel xfce4-panel --property /panels/panel-2/length --
 xfconf-query --create --channel xfce4-desktop --property /desktop-icons/file-icons/show-filesystem --type bool --set false
 xfconf-query --create --channel xfce4-desktop --property /desktop-icons/file-icons/show-home --type bool --set true
 xfconf-query --create --channel xfce4-desktop --property /desktop-icons/file-icons/show-trash --type bool --set false
-xfconf-query --create --channel xfce4-desktop --property /desktop-icons/file-icons/show-device-removable --type bool --set false
+xfconf-query --create --channel xfce4-desktop --property /desktop-icons/file-icons/show-unknown-removable --type bool --set false
 xfconf-query --create --channel xfce4-power-manager --property /xfce4-power-manager/dpms-enabled --type bool --set false
 xfconf-query --create --channel xfce4-power-manager --property /xfce4-power-manager/blank-on-ac --type int --set 0
 xfconf-query --create --channel xfce4-power-manager --property /xfce4-power-manager/blank-on-battery --type int --set 0
@@ -264,6 +264,11 @@ shortcutsDirectory="/usr/share/kx.as.code/DevOps Tools"
 sudo mkdir -p "${shortcutsDirectory}"
 sudo chmod a+rwx "${shortcutsDirectory}"
 sudo ln -s "${shortcutsDirectory}" /home/$VM_USER/Desktop/
+
+adminShortcutsDirectory="/usr/share/kx.as.code/Admin Tools"
+sudo mkdir -p "${adminShortcutsDirectory}"
+sudo chmod a+rwx "${adminShortcutsDirectory}"
+sudo ln -s "${adminShortcutsDirectory}" /home/$VM_USER/Desktop/
 
 apiDocsDirectory="/usr/share/kx.as.code/API Docs"
 sudo sudo mkdir -p "${apiDocsDirectory}"

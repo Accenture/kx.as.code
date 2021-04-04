@@ -34,6 +34,11 @@ MimeType=text/html;text/xml;application/xhtml_xml;image/webp;x-scheme-handler/ht
 Actions=new-window;new-private-window;
 ''' | sudo tee /home/${vmUser}/Desktop/RabbitMQ.desktop
 
+adminShortcutsDirectory="/usr/share/kx.as.code/Admin Tools"
+
 # Give *.desktop files execute permissions
-sudo chmod 755 /home/${vmUser}/Desktop/RabbitMQ.desktop
-sudo chown ${vmUser}:${vmUser} /home/${vmUser}/Desktop/RabbitMQ.desktop
+sudo chmod 755 "${adminShortcutsDirectory}/RabbitMQ.desktop"
+sudo chown ${vmUser}:${vmUser} "${adminShortcutsDirectory}/RabbitMQ.desktop"
+
+# Add bash-completion for RabbitMQAdmin
+sudo sh -c 'rabbitmqadmin --bash-completion > /etc/bash_completion.d/rabbitmqadmin'

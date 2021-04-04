@@ -1,7 +1,5 @@
 #!/bin/bash -eux
 
-skelDirectory=/usr/share/kx.as.code/skel
-
 # Build KX.AS.CODE "Docs" Image
 cd /usr/share/kx.as.code/git/kx.as.code_docs
 . ./build.sh

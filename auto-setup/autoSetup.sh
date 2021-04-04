@@ -42,11 +42,6 @@ export namespace=$(cat ${componentMetadataJson} | jq -r '.namespace' | sed 's/_/
 # Get installation type (valid values are script, helm or argocd) and path to scripts
 export installationType=$(cat ${componentMetadataJson} | jq -r '.installation_type')
 
-# Set Shortcut Directories
-vendorDocsDirectory="/home/${vmUser}/Desktop/Vendor Docs"
-apiDocsDirectory="/home/${vmUser}/Desktop/API Docs"
-shortcutsDirectory="/home/${vmUser}/Desktop/DevOps Tools"
-
 # Start the installation process for the pending or retry queues
 if [[ "${action}" == "install" ]]; then
 
@@ -380,7 +375,6 @@ if [[ "${action}" == "install" ]]; then
 
         if [[ ! -z ${primaryUrl} ]] && [[ "${primaryUrl}" != "null" ]] && [[ -f ${iconPath} ]] && [[ ! -z ${shortcutText} ]]; then
 
-            shortcutsDirectory="/usr/share/kx.as.code/DevOps Tools"
             mkdir -p "${shortcutsDirectory}"; chown ${vmUser}:${vmUser} "${shortcutsDirectory}"
 
             echo """

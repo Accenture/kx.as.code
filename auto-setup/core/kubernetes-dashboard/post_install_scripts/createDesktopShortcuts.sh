@@ -1,7 +1,5 @@
 #!/bin/bash -eux
 
-skelDirectory=/usr/share/kx.as.code/skel
-
 shortcutIcon=$(cat ${componentMetadataJson} | jq -r '.shortcut_icon')
 shortcutText=$(cat ${componentMetadataJson} | jq -r '.shortcut_text')
 iconPath=${installComponentDirectory}/${shortcutIcon}

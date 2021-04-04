@@ -1,7 +1,6 @@
 #!/bin/bash -x
 
 export ldapServer=127.0.0.1
-export kxSkelDir=/usr/share/kx.as.code/skel
 
 # Install OpenLDAP server and utilities
 echo -e " \
@@ -168,5 +167,5 @@ tls_cacertfile /etc/ssl/certs/ca-certificates.crt
 ''' | sudo tee /etc/nslcd.conf
 
 # Ensure home directory is created on first login
-echo "session required      pam_mkhomedir.so   skel=${kxSkelDir} umask=0002" | sudo tee -a /etc/pam.d/common-session
+echo "session required      pam_mkhomedir.so   skel=${skelDirectory} umask=0002" | sudo tee -a /etc/pam.d/common-session
 

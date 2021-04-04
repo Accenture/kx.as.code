@@ -47,9 +47,7 @@ Type=Application
 Categories=Development
 MimeType=text/html;text/xml;application/xhtml_xml;image/webp;x-scheme-handler/http;x-scheme-handler/https;x-scheme-handler/ftp;
 Actions=new-window;new-private-window;
-''' | sudo tee /home/${vmUser}/Desktop/RabbitMQ.desktop
-cp /home/${vmUser}/Desktop/RabbitMQ.desktop ${skelDirectory}/Desktop
+''' | sudo tee "${adminShortcutsDirectory}/RabbitMQ.desktop"
 
 # Give *.desktop files execute permissions
-sudo chmod 755 /home/${vmUser}/Desktop/RabbitMQ.desktop
-sudo chown ${vmUser}:${vmUser} /home/${vmUser}/Desktop/RabbitMQ.desktop
+sudo chmod 755 "${adminShortcutsDirectory}/RabbitMQ.desktop"

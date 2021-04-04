@@ -1,10 +1,8 @@
 #!/bin/bash -eux
 
-skelDirectory=/usr/share/kx.as.code/skel
-
 # Put Guacamole Remote Desktop Icon on Desktop
 iconPath=${installComponentDirectory}/guacamole.png
-cat <<EOF > /home/${vmUser}/Desktop/Guacamole-Remote-Desktop.desktop
+cat <<EOF > "${adminShortcutsDirectory}/Guacamole-Remote-Desktop.desktop"
 [Desktop Entry]
 Version=1.0
 Name=Guacamole Remote Desktop
@@ -19,11 +17,10 @@ Categories=Development
 MimeType=text/html;text/xml;application/xhtml_xml;image/webp;x-scheme-handler/http;x-scheme-handler/https;x-scheme-handler/ftp;
 Actions=new-window;new-private-window;
 EOF
-cp /home/${vmUser}/Desktop/Guacamole-Remote-Desktop.desktop ${skelDirectory}/Desktop
 
 # Put PGADMIN Icon on Desktop
 iconPath=${installComponentDirectory}/postgresql.png
-cat <<EOF > /home/${vmUser}/Desktop/Postgresql-Admin.desktop
+cat <<EOF > "${adminShortcutsDirectory}/Postgresql-Admin.desktop"
 [Desktop Entry]
 Version=1.0
 Name=Postgresql Admin
@@ -38,8 +35,6 @@ Categories=Development
 MimeType=text/html;text/xml;application/xhtml_xml;image/webp;x-scheme-handler/http;x-scheme-handler/https;x-scheme-handler/ftp;
 Actions=new-window;new-private-window;
 EOF
-cp /home/${vmUser}/Desktop/Postgresql-Admin.desktop ${skelDirectory}/Desktop
 
 # Give *.desktop files execute permissions
-chmod 755 /home/${vmUser}/Desktop/*.desktop
-chown ${vmUser}:${vmUser} /home/${vmUser}/Desktop/*.desktop
+chmod 755 "${adminShortcutsDirectory}"/*.desktop

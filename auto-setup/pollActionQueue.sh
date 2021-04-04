@@ -9,15 +9,19 @@ else
 fi
 
 # Define base variables
-export vmUser=kx.hero
-export vmPassword=$(cat /usr/share/kx.as.code/.config/.user.cred)
-export installationWorkspace=/usr/share/kx.as.code/workspace
-export autoSetupHome=/usr/share/kx.as.code/git/kx.as.code/auto-setup
+export sharedKxHome=/usr/share/kx.as.code
+export installationWorkspace=${sharedKxHome}/workspace
 export actionWorkflows="pending wip completed failed retry"
 export defaultDockerHubSecret="default/regcred"
-export sharedGitHome=/usr/share/kx.as.code/git
-export sharedKxHome=/usr/share/kx.as.code
-export kxSkelDir=/usr/share/kx.as.code/skel
+export sharedGitHome=${sharedKxHome}/git
+export autoSetupHome=${sharedGitHome}/kx.as.code/auto-setup
+export skelDirectory=${sharedKxHome}/skel
+export vendorDocsDirectory="${sharedKxHome}/Vendor Docs"
+export apiDocsDirectory="${sharedKxHome}/API Docs"
+export shortcutsDirectory="${sharedKxHome}/DevOps Tools"
+export adminShortcutsDirectory="${sharedKxHome}/Admin Tools"
+export vmUser=kx.hero
+export vmPassword=$(cat ${sharedKxHome}/.config/.user.cred)
 
 # Check profile-config.json file is present before starting script
 wait-for-file() {
