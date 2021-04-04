@@ -41,4 +41,4 @@ sudo chmod 755 "${adminShortcutsDirectory}/RabbitMQ.desktop"
 sudo chown ${vmUser}:${vmUser} "${adminShortcutsDirectory}/RabbitMQ.desktop"
 
 # Add bash-completion for RabbitMQAdmin
-sudo sh -c 'rabbitmqadmin --bash-completion > /etc/bash_completion.d/rabbitmqadmin'
+sudo sh -c '/usr/local/bin/rabbitmqadmin --bash-completion > /etc/bash_completion.d/rabbitmqadmin'
