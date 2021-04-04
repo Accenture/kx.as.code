@@ -52,7 +52,7 @@ sudo chown -R www-data:www-data /var/lib/pgadmin4
 sudo chown -R www-data:www-data /var/log/pgadmin4
 
 # Set default email and password to use and setup on first start of PGADMIN
-export PGADMIN_DEFAULT_EMAIL='admin@'${basedDomain}''
+export PGADMIN_DEFAULT_EMAIL='admin@'${baseDomain}''
 export PGADMIN_DEFAULT_PASSWORD=''${vmPassword}''
 export PGADMIN_SETUP_EMAIL=${PGADMIN_DEFAULT_EMAIL}
 export PGADMIN_SETUP_PASSWORD=${PGADMIN_DEFAULT_PASSWORD}

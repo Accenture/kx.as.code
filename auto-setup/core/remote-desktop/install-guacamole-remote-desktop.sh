@@ -97,7 +97,7 @@ ldap-user-base-dn: ou=Users,ou=People,'${ldapDn}'
 ldap-username-attribute: uid
 ldap-user-search-filter: (objectClass=*)
 
-totp-issuer: apache_guacamole
+totp-issuer: '${baseDomain}'
 totp-digits: 6
 totp-period: 30
 totp-mode: sha1
