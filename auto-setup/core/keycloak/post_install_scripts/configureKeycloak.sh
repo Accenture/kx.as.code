@@ -6,6 +6,14 @@ export ldapDn=$(sudo slapcat | grep dn | head -1 | cut -f2 -d' ')
 export kcInternalUrl=http://localhost:8080
 export kcBinDir=/opt/jboss/keycloak/bin/
 export kcAdmCli=/opt/jboss/keycloak/bin/kcadm.sh
+
+# Ensure Kubernetes is available before proceeding to the next step
+timeout -s TERM 600 bash -c \
+'while [[ "$(curl -s -k https://localhost:6443/livez)" != "ok" ]];\
+do sleep 5;\
+done'
+
+# Get Keycloak POD name for subsequent Keycloak CLI commands
 export kcPod=$(kubectl get pods -l 'app.kubernetes.io/name=keycloak' -n keycloak --output=json | jq -r '.items[].metadata.name')
 
 # Set Keycloak credential for upcoming API calls

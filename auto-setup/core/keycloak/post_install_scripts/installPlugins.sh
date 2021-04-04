@@ -6,7 +6,15 @@ export ldapDn=$(sudo slapcat | grep dn | head -1 | cut -f2 -d' ')
 export kcInternalUrl=http://localhost:8080
 export kcBinDir=/opt/jboss/keycloak/bin/
 export kcAdmCli=/opt/jboss/keycloak/bin/kcadm.sh
-export kcPod=$(kubectl get pods -l 'app.kubernetes.io/name=keycloak' -n keycloak --output=json | jq -r '.items[].metadata.name')
+
+# Ensure Kubernetes is available before proceeding to the next step
+timeout -s TERM 600 bash -c \
+'while [[ "$(curl -s -k https://localhost:6443/livez)" != "ok" ]];\
+do sleep 5;\
+done'
+
+# Get Keycloak POD name for subsequent Keycloak CLI commands
+export kcPod=$(kubectl get pods -l 'app.kubernetes.io/name=keycloak' -n ${namespace} --output=json | jq -r '.items[].metadata.name')
 
 # Install Krew for installing kauthproxy and kubelogin
 (
@@ -25,8 +33,6 @@ sudo kubectl krew install auth-proxy oidc-login
 
 # Make plugins available to all
 cp /root/.krew/bin/kubectl-* /usr/local/bin
-
-export kcPod=$(kubectl get pods -l 'app.kubernetes.io/name=keycloak' -n ${namespace} --output=json | jq -r '.items[].metadata.name')
 
 # Get credential token in new Realm
 kubectl -n ${namespace} exec ${kcPod} -- \
