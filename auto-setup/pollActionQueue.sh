@@ -40,8 +40,53 @@ if [[ ! -f ${installationWorkspace}/metadata.json ]]; then
 fi
 
 # Copy actionQueues.json to installation workspace if it doesn't exist
+# and merge with user aq* files if present
 if [[ ! -f ${installationWorkspace}/actionQueues.json ]]; then
-  cp ${autoSetupHome}/actionQueues.json ${installationWorkspace}
+
+  cp ${autoSetupHome}/actionQueues.json ${installationWorkspace}/
+  export aqFiles=($(ls ${installationWorkspace}/aq* || true))
+
+  # Merge json files if user vagrant uploaded aq* files present
+  if [[ -n ${aqFiles} ]]; then
+    # Loop around all user aq* files and merge them to one large json
+    for i in ${!aqFiles[@]}; do
+            echo "$i: ${aqFiles[$i]}"
+
+      if [[ -f ${installationWorkspace}/actionQueues_temp.json ]]; then
+        cp ${installationWorkspace}/actionQueues_temp.json ${installationWorkspace}/actionQueues.json
+      fi
+
+      # Credit to this great jq block goes to "peak" - https://stackoverflow.com/users/997358/peak
+      # https://stackoverflow.com/a/56659008
+      jq -n --slurpfile file1 actionQueues.json --slurpfile file2 ${aqFiles[$i]} '
+
+        # a and b are expected to be jq paths ending with a string
+        # emit the array of the intersection of key names
+        def common(a;b):
+          ((a|map(.[-1])) + (b|map(.[-1])))
+          | unique;
+
+        $file1[0] as $f1
+        | $file2[0] as $f2
+        | [$f1 | paths as $p | select(getpath($p) | type == "array") | $p] as $p1
+        | [$f2 | paths as $p | select(getpath($p) | type == "array") | $p] as $p2
+        | $f1+$f2
+        | if ($p1|length) > 0 and ($p2|length) > 0
+          then common($p1; $p2) as $both
+          | if ($both|length) > 0
+            then first( $p1[] | select(.[-1] == $both[0])) as $p1
+            |    first( $p2[] | select(.[-1] == $both[0])) as $p2
+            | ($f1 | getpath($p1)) as $a1
+            | ($f2 | getpath($p2)) as $a2
+            | setpath($p1; $a1 + $a2)
+            else .
+            end
+          else .
+          end
+        ' | tee actionQueues_temp.json
+
+    done
+  fi
 fi
 
 # Get configs from profile-config.json
