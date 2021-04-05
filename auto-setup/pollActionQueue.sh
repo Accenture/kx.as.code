@@ -39,6 +39,13 @@ if [[ ! -f ${installationWorkspace}/metadata.json ]]; then
   cp ${autoSetupHome}/metadata.json ${installationWorkspace}
 fi
 
+# Wait for last Vagrant shell action to complete before proceeding to next steps
+# such as changing network settings and merging action files
+timeout -s TERM 6000 bash -c \
+'while [[ ! -f '${installationWorkspace}'/vagrant ]];\
+do echo "Waiting for '${installationWorkspace}'/vagrant file" && sleep 15;\
+done'
+
 # Copy actionQueues.json to installation workspace if it doesn't exist
 # and merge with user aq* files if present
 if [[ ! -f ${installationWorkspace}/actionQueues.json ]]; then
@@ -193,12 +200,6 @@ log_debug() {
 }
 
 if [[ ! -f /usr/share/kx.as.code/.config/network_status ]] && [[ "${baseIpType}" == "static" ]]; then
-
-    # Wait for last Vagrant shell action to complete before changing network settings
-    timeout -s TERM 6000 bash -c \
-    'while [[ ! -f /usr/share/kx.as.code/workspace/vagrant ]];\
-    do echo "Waiting for /usr/share/kx.as.code/workspace/vagrant file" && sleep 15;\
-    done'
 
     # Update  DNS Entry for hosts if ip type set to static
     if [ "${baseIpType}" == "static" ]; then
