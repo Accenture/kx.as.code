@@ -39,11 +39,11 @@ if [[ ! -f ${installationWorkspace}/metadata.json ]]; then
   cp ${autoSetupHome}/metadata.json ${installationWorkspace}
 fi
 
-# Wait for last Vagrant shell action to complete before proceeding to next steps
+# Wait for last provisioning shell action to complete before proceeding to next steps
 # such as changing network settings and merging action files
 timeout -s TERM 6000 bash -c \
-'while [[ ! -f '${installationWorkspace}'/vagrant ]];\
-do echo "Waiting for '${installationWorkspace}'/vagrant file" && sleep 15;\
+'while [[ ! -f '${installationWorkspace}'/gogogo ]];\
+do echo "Waiting for '${installationWorkspace}'/gogogo file" && sleep 15;\
 done'
 
 # Copy actionQueues.json to installation workspace if it doesn't exist
@@ -53,7 +53,7 @@ if [[ ! -f ${installationWorkspace}/actionQueues.json ]]; then
   cp ${autoSetupHome}/actionQueues.json ${installationWorkspace}/
   export aqFiles=($(ls ${installationWorkspace}/aq* || true))
 
-  # Merge json files if user vagrant uploaded aq* files present
+  # Merge json files if user uploaded aq* files present
   if [[ -n ${aqFiles} ]]; then
     # Loop around all user aq* files and merge them to one large json
     for i in ${!aqFiles[@]}; do
