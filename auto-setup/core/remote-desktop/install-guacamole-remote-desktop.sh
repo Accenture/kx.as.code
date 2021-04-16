@@ -12,7 +12,7 @@ sudo apt install -y build-essential libcairo2-dev libjpeg62-turbo-dev libpng-dev
 
 # Download, build, install and enable Guacamole
 guacamoleVersion=1.3.0
-wget http://mirror.cc.columbia.edu/pub/software/apache/guacamole/${guacamoleVersion}/source/guacamole-server-${guacamoleVersion}.tar.gz
+curl -L -o guacamole-server-${guacamoleVersion}.tar.gz https://apache.org/dyn/closer.cgi\?action\=download\&filename\=guacamole/${guacamoleVersion}/source/guacamole-server-${guacamoleVersion}.tar.gz
 tar -xvf guacamole-server-${guacamoleVersion}.tar.gz
 cd guacamole-server-${guacamoleVersion}
 ./configure --with-init-dir=/etc/init.d --enable-allow-freerdp-snapshots
