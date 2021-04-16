@@ -1,7 +1,7 @@
 #!/bin/bash -eux
 
 # Install XFCE4 GUI
-sudo apt install -y xfce4 lightdm xfce4-terminal synaptic lightdm-gtk-greeter lightdm-gtk-greeter-settings gtk-theme-switch dbus-x11 dconf-editor
+sudo DEBIAN_FRONTEND=noninteractive apt install -y xfce4 lightdm xfce4-terminal synaptic lightdm-gtk-greeter lightdm-gtk-greeter-settings gtk-theme-switch dbus-x11 dconf-editor
 
 # Install Material Design Desktop Theme
 sudo git clone https://github.com/vinceliuice/vimix-gtk-themes.git --depth=1
