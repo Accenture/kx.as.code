@@ -36,8 +36,12 @@ sudo apt install -y glusterfs-server
 sudo sudo systemctl enable --now glusterd
 
 # Install Heketi for automatically provisioning Kubernetes volumes
-wget -O - $(curl https://api.github.com/repos/heketi/heketi/releases/latest | jq -r '.assets[] | select(.browser_download_url | contains("client") | not) | .browser_download_url | select(. | contains("'$(dpkg --print-architecture)'"))') \
-| sudo tar xvzf - \
+#wget -O - $(curl https://api.github.com/repos/heketi/heketi/releases/latest | jq -r '.assets[] | select(.browser_download_url | contains("client") | not) | .browser_download_url | select(. | contains("'$(dpkg --print-architecture)'"))') \
+#| sudo tar xvzf - \
+# Hard coding Heketi version 10.2.0, as 10.3.0 breaks with Debian Buster due to outdated GLIBC.
+#TODO - Upgrade again after updating to Debian Bullseye
+heketiVersion=10.2.0
+wget -O - https://github.com/heketi/heketi/releases/download/v${heketiVersion}/heketi-v${heketiVersion}.linux.amd64.tar.gz
 && sudo cp -f heketi/{heketi,heketi-cli} /usr/local/bin
 
 # Add Heketi user and group

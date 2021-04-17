@@ -247,6 +247,11 @@ sudo sed -i 's/width:3em;height:3em;background-size:3em 3em;-moz-background-size
 # Ensure user has rights to start X11
 sed -i 's/allowed_users=console/allowed_users=anybody/g' /etc/X11/Xwrapper.config
 
-# Stop & Disable Apache2
-systemctl stop apache2
-systemctl disable apache2
+# Temporary workaround to prevent later failures
+# TODO: Find a better solution in future. Check again whether Apache can be removed without breaking something
+sed -i 's/:80/:8018/g' /etc/apache2/sites-available/000-default.conf
+sed -i 's/:80/:8018/g' /etc/apache2/sites-enabled/000-default.conf
+sed -i 's/Listen 80/Listen 8081/g' /etc/apache2/ports.conf
+sed -i 's/Listen 443/Listen 4481/g' /etc/apache2/ports.conf
+systemctl restart apache2
+systemctl status apache2.service
