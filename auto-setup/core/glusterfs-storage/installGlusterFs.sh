@@ -41,7 +41,7 @@ sudo sudo systemctl enable --now glusterd
 # Hard coding Heketi version 10.2.0, as 10.3.0 breaks with Debian Buster due to outdated GLIBC.
 #TODO - Upgrade again once issue fixed - https://github.com/heketi/heketi/issues/1848
 heketiVersion=10.2.0
-wget -O - https://github.com/heketi/heketi/releases/download/v${heketiVersion}/heketi-v${heketiVersion}.linux.amd64.tar.gz
+wget -O - https://github.com/heketi/heketi/releases/download/v${heketiVersion}/heketi-v${heketiVersion}.linux.amd64.tar.gz | sudo tar xvzf - \
 && sudo cp -f heketi/{heketi,heketi-cli} /usr/local/bin
 
 # Add Heketi user and group
