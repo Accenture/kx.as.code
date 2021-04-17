@@ -206,21 +206,27 @@ if [[ "${baseIpType}" == "static" ]]; then
   fi
 fi
 
-# Try to get KX-Main IP address via a lookup if baseIpType is set to dynamic
- if [ "${baseIpType}" == "dynamic" ]; then
-   # Read the file dropped by Terraform
-  export kxMainIp=$(cat $kubeDir/kxMainIpAddress)
-fi
-
 # Wait until network and DNS resolution is back up. Also need to wait for kx-main, in case the worker node comes up first
 timeout -s TERM 3000 bash -c 'while [[ "$rc" != "0" ]];         do
 nslookup kx-main.'${baseDomain}'; rc=$?;
 echo "Waiting for kx-main DNS resolution to function" && sleep 5;         done'
 
-mkdir -p ${$kubeDir}
+
+# Try to get KX-Main IP address via a lookup if baseIpType is set to dynamic
+ if [ "${baseIpType}" == "dynamic" ]; then
+   # First try to get ip from DNS
+   kxMainIp=$(dig +short kx-main.${baseDomain})
+   # Try an alternative. Mostly deprecated and not needed
+   if [[ -z ${kxMainIp} ]]; then
+    # Read the file dropped by Terraform
+    export kxMainIp=$(cat $kubeDir/kxMainIpAddress)
+  fi
+fi
+
+mkdir -p ${kubeDir}
 chown -R ${vmUser}:${vmUser} ${kubeDir}
 
-if [[ "${virtualizationType}" != "aws" ]]; then
+if [[ "${virtualizationType}" != "public-cloud" ]]; then
   # Create RSA key for kx.hero user
   mkdir -p /home/${vmUser}/.ssh
   chown -R ${vmUser}:${vmUser} /home/${vmUser}/.ssh
