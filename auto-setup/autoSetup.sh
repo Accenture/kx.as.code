@@ -146,8 +146,14 @@ if [[ "${action}" == "install" ]]; then
                 helm repo update
             fi
         fi
-        helm_set_key_value_params=$(echo ${helm_params} | jq -r '.set_key_values[] | "--set \(.)" ' | mo ) # Mo adds mustache {{variables}} support to helm --set options in kxascode.yaml
+        # Get --set parameters from metadata.json
+        helm_set_key_value_params=$(echo ${helm_params} | jq -r '.set_key_values[] | "--set \(.)" ' | mo ) # Mo adds mustache {{variables}} support to helm --set options
         log_debug "${helm_set_key_value_params}"
+
+        # Get --set-string parameters from metadata.json
+        helm_set_string_key_value_params=$(echo ${helm_params} | jq -r '.set_string_key_values[] | "--set-string \(.)" ' | mo ) # Mo adds mustache {{variables}} support to helm --set-string options
+        log_debug "${helm_set_string_key_value_params}"
+
         helmRepositoryName=$(echo ${helm_params} | jq -r '.repository_name')
 
         # Determine whether a values_template.yaml file exists for the solution and use it if so - and replace mustache variables such as url etc
@@ -167,7 +173,7 @@ if [[ "${action}" == "install" ]]; then
         fi
 
         # Execute installation via Helm
-        helmCommmand=$(echo -e "helm upgrade --install ${helmVersionOption} ${valuesFileOption} ${componentName} --namespace ${namespace} ${helm_set_key_value_params} ${helmRepositoryName}")
+        helmCommmand=$(echo -e "helm upgrade --install ${helmVersionOption} ${valuesFileOption} ${componentName} --namespace ${namespace} ${helm_set_string_key_value_params} ${helm_set_key_value_params} ${helmRepositoryName}")
         echo ${helmCommmand} | tee ${installationWorkspace}/helm_${componentName}.sh
         log_debug "Helm command: $(cat ${installationWorkspace}/helm_${componentName}.sh)"
         chmod 755 ${installationWorkspace}/helm_${componentName}.sh

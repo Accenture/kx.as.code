@@ -13,14 +13,20 @@
             "controller.extraArgs.default-ssl-certificate={{namespace}}/kx.as.code-wildcard-cert",
             "controller.extraArgs.enable-ssl-passthrough=",
             "controller.hostNetwork=true",
-            "controller.extraArgs.report-node-internal-ip-address="
-        ]
+            "controller.extraArgs.report-node-internal-ip-address=",
+            "controller.tolerations[0].effect=NoSchedule",
+            "controller.tolerations[0].key=node-role.kubernetes.io/master"
+        ],
+        "set_string_key_values": [
+            "controller.nodeSelector.\"ingress-controller\"=true"
+      ]
     },
     "Description": "NGINX Ingress Controller",
     "shortcut_text": "NGINX Ingress Controller",
     "shortcut_icon": "nginx.png",
     "pre_install_scripts": [
-        "createWildcardCertSecret.sh"
+        "createWildcardCertSecret.sh",
+        "addNodeLabel.sh"
     ],
     "post_install_scripts": [
         "configureWildcardDns.sh",
