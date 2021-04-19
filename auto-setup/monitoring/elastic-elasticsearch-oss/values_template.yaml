@@ -4,20 +4,30 @@ replicas: 1
 image: "docker.elastic.co/elasticsearch/elasticsearch-oss"
 imageTag: "{{elasticVersion}}"
 esJavaOpts: "-Xmx1g -Xms1g"
+protocol: https
 esConfig:
   elasticsearch.yml: |
     xpack.security.enabled: true
+    xpack.security.http.ssl.enabled: true
+    xpack.security.transport.ssl.enabled: true
+    xpack.security.http.ssl.key: certs/elasticsearch.key
+    xpack.security.http.ssl.certificate: certs/elasticsearch.crt
+    xpack.security.http.ssl.certificate_authorities: certs/ca.crt
+    xpack.security.transport.ssl.key: certs/elasticsearch.key
+    xpack.security.transport.ssl.certificate: certs/elasticsearch.crt
+    xpack.security.transport.ssl.certificate_authorities: certs/ca.crt
     xpack.security.authc.realms.native.local.order: 0
+    xpack.monitoring.enabled: true
 extraEnvs:
   - name: ELASTIC_PASSWORD
     valueFrom:
       secretKeyRef:
-        name: elastic-stack/elastic-credentials
+        name: elastic-credentials
         key: password
   - name: ELASTIC_USERNAME
     valueFrom:
       secretKeyRef:
-        name: elastic-stack/elastic-credentials
+        name: elastic-credentials
         key: username
 resources:
   requests:
@@ -40,3 +50,7 @@ ingress:
   tls:
     - hosts:
        - {{componentName}}.{{baseDomain}}
+secretMounts:
+  - name: elastic-certificates
+    secretName: elastic-certificates
+    path: /usr/share/elasticsearch/config/certs

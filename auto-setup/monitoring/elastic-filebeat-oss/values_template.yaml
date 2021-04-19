@@ -10,11 +10,19 @@ filebeatConfig:
           matchers:
           - logs_path:
               logs_path: "/var/log/containers/"
-
     output.elasticsearch:
-      host: '${NODE_NAME}'
-      hosts: '${ELASTICSEARCH_HOSTS:elasticsearch-master:9200}'
-
+      hosts: '${ELASTICSEARCH_HOSTS:elastic-elasticsearch-oss:9200}'
+      ssl:
+        certificate_authorities: ["certs/ca.crt"]
+        certificate: certs/elasticsearch.crt
+        key: certs/elasticsearch.key
+    setup.kibana:
+      host: "https://elastic-kibana-oss:5601"
+      ssl:
+        enabled: true
+        certificate_authorities: ["certs/ca.crt"]
+        certificate: certs/kibana.crt
+        key: certs/kibana.key
 image: "docker.elastic.co/beats/filebeat-oss"
 imageTag: "{{elasticVersion}}"
 resources:
@@ -24,3 +32,7 @@ resources:
   limits:
     cpu: "1000m"
     memory: "200Mi"
+secretMounts:
+  - name: elastic-certificates
+    secretName: elastic-certificates
+    path: /usr/share/filebeat/config/certs

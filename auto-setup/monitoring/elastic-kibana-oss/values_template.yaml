@@ -1,19 +1,40 @@
-elasticsearchHosts: "http://elasticsearch-master:9200"
+elasticsearchHosts: "https://elastic-elasticsearch-oss:9200"
 extraEnvs:
   - name: ELASTIC_PASSWORD
     valueFrom:
       secretKeyRef:
-        name: elastic-stack/elastic-credentials
+        name: elastic-credentials
         key: password
   - name: ELASTIC_USERNAME
     valueFrom:
       secretKeyRef:
-        name: elastic-stack/elastic-credentials
+        name: elastic-credentials
         key: username
+  - name: KIBANA_ENCRYPTION_KEY
+    valueFrom:
+      secretKeyRef:
+        key: encryptionkey
+        name: kibana-encryption-key
 replicas: 1
 image: "docker.elastic.co/kibana/kibana-oss"
-imageTag: "{{elasticVersion}}"
+imageTag: "{{ elasticVersion }}"
 imagePullPolicy: "IfNotPresent"
+kibanaConfig:
+  kibana.yml: |
+    server:
+      name: {{ componentName }}
+      ssl:
+        enabled: true
+        key: /usr/share/kibana/config/certs/kibana.key
+        certificate: /usr/share/kibana/config/certs/kibana.crt
+    xpack.security.encryptionKey: ${KIBANA_ENCRYPTION_KEY}
+    elasticsearch:
+      hosts: ["https://elastic-elasticsearch-oss:9200"]
+      ssl:
+        certificateAuthorities: /usr/share/kibana/config/certs/ca.crt
+        verificationMode: certificate
+      username: ${ELASTIC_USERNAME}
+      password: ${ELASTIC_PASSWORD}
 resources:
   requests:
     cpu: "1000m"
@@ -21,3 +42,8 @@ resources:
   limits:
     cpu: "1000m"
     memory: "2Gi"
+protocol: https
+secretMounts:
+  - name: elastic-certificates
+    secretName: elastic-certificates
+    path: /usr/share/kibana/config/certs
