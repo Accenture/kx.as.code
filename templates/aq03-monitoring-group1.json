@@ -1,0 +1,34 @@
+{
+  "action_queues": {
+    "install": [
+      {
+        "install_folder": "monitoring",
+        "name": "prometheus"
+      },
+      {
+        "install_folder": "monitoring",
+        "name": "grafana"
+      },
+      {
+        "install_folder": "monitoring",
+        "name": "grafana-image-renderer"
+      },
+      {
+        "install_folder": "monitoring",
+        "name": "graphite"
+      },
+      {
+        "install_folder": "monitoring",
+        "name": "elastic-elasticsearch"
+      },
+      {
+        "install_folder": "monitoring",
+        "name": "elastic-kibana"
+      },
+      {
+        "install_folder": "monitoring",
+        "name": "elastic-filebeat"
+      }
+    ]
+  }
+}
