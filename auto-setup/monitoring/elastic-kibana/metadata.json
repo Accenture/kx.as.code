@@ -12,7 +12,8 @@
         "helm_version": "",
         "set_key_values": [
             "ingress.enabled=true",
-            "ingress.hosts[0]={{componentName}}.{{baseDomain}}",
+            "ingress.hosts[0].host=={{componentName}}.{{baseDomain}}",
+            "ingress.hosts[0].paths[0].path=/",
             "ingress.tls[0].hosts[0]={{componentName}}.{{baseDomain}}"
         ]
     },

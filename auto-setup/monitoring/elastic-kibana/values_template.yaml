@@ -1,4 +1,4 @@
-elasticsearchHosts: "https://elastic-elasticsearch-oss:9200"
+elasticsearchHosts: "https://elastic-elasticsearch:9200"
 extraEnvs:
   - name: ELASTIC_PASSWORD
     valueFrom:
