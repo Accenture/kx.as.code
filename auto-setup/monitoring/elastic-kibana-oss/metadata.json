@@ -4,7 +4,7 @@
     "installation_type": "helm",
     "installation_group_folder": "monitoring",
     "environment_variables": {
-        "elasticVersion": "7.10.0"
+        "elasticVersion": "7.12.0"
     },
     "helm_params": {
         "repository_url": "https://helm.elastic.co",
@@ -54,6 +54,8 @@
     "Description": "Elastic-Stack Description",
     "shortcut_text": "Kibana",
     "shortcut_icon": "kibana.png",
-    "pre_install_scripts": [],
+    "pre_install_scripts": [
+        "generateEncryptionKey.sh"
+    ],
     "post_install_scripts": []
 }
