@@ -1,5 +1,5 @@
 {
-    "name": "elastic-kibana-oss",
+    "name": "elastic-filebeat",
     "namespace": "elastic-stack",
     "installation_type": "helm",
     "installation_group_folder": "monitoring",
@@ -8,26 +8,22 @@
     },
     "helm_params": {
         "repository_url": "https://helm.elastic.co",
-        "repository_name": "elastic/kibana",
+        "repository_name": "elastic/filebeat",
         "helm_version": "",
-        "set_key_values": [
-            "ingress.enabled=true",
-            "ingress.hosts[0]={{componentName}}.{{baseDomain}}",
-            "ingress.tls[0].hosts[0]={{componentName}}.{{baseDomain}}"
-        ]
+        "set_key_values": []
     },
     "categories": [
         "monitoring",
-        "visualization"
+        "log-harvester"
     ],
     "urls": [
         {
-            "url": "https://{{componentName}}.{{baseDomain}}",
+            "url": "",
             "healthchecks": {
                 "liveliness": {
-                    "http_path": "/status",
+                    "http_path": "/",
                     "http_auth_required": false,
-                    "expected_http_response_code": "200",
+                    "expected_http_response_code": "",
                     "expected_http_response_string": "",
                     "expected_json_response": {
                         "json_path": "",
@@ -37,9 +33,9 @@
                     "expected_shell_check_command_response": ""
                 },
                 "readiness": {
-                    "http_path": "/status",
+                    "http_path": "/",
                     "http_auth_required": false,
-                    "expected_http_response_code": "200",
+                    "expected_http_response_code": "",
                     "expected_http_response_string": "",
                     "expected_json_response": {
                         "json_path": "",
@@ -51,11 +47,9 @@
             }
         }
     ],
-    "Description": "Elastic-Stack Description",
-    "shortcut_text": "Kibana",
-    "shortcut_icon": "kibana.png",
-    "pre_install_scripts": [
-        "generateEncryptionKey.sh"
-    ],
+    "Description": "Filebeat Description",
+    "shortcut_text": "",
+    "shortcut_icon": "",
+    "pre_install_scripts": [],
     "post_install_scripts": []
 }

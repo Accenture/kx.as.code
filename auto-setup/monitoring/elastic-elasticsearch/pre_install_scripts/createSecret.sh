@@ -14,12 +14,12 @@ instances:
       - ${componentName}
   - name: kibana
     dns:
-      - elastic-kibana-oss.${baseDomain}
-      - elastic-kibana-oss
+      - elastic-kibana.${baseDomain}
+      - elastic-kibana
   - name: filebeat
     dns:
-      - elastic-filebeat-oss.${baseDomain}
-      - elastic-filebeat-oss
+      - elastic-filebeat.${baseDomain}
+      - elastic-filebeat
 """ | sudo tee ${elasticStackCertsDir}/instance.yml
 
 # Create Elastic certificates

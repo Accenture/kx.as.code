@@ -1,5 +1,5 @@
 {
-    "name": "elastic-elasticsearch-oss",
+    "name": "elastic-kibana",
     "namespace": "elastic-stack",
     "installation_type": "helm",
     "installation_group_folder": "monitoring",
@@ -8,25 +8,24 @@
     },
     "helm_params": {
         "repository_url": "https://helm.elastic.co",
-        "repository_name": "elastic/elasticsearch",
+        "repository_name": "elastic/kibana",
         "helm_version": "",
         "set_key_values": [
-            "replicas=1",
-            "volumeClaimTemplate.storageClassName=local-storage",
-            "volumeClaimTemplate.resources.requests.storage=1Gi"
+            "ingress.enabled=true",
+            "ingress.hosts[0]={{componentName}}.{{baseDomain}}",
+            "ingress.tls[0].hosts[0]={{componentName}}.{{baseDomain}}"
         ]
     },
     "categories": [
         "monitoring",
-        "datastore",
-        "search-engine"
+        "visualization"
     ],
     "urls": [
         {
             "url": "https://{{componentName}}.{{baseDomain}}",
             "healthchecks": {
                 "liveliness": {
-                    "http_path": "/",
+                    "http_path": "/status",
                     "http_auth_required": false,
                     "expected_http_response_code": "200",
                     "expected_http_response_string": "",
@@ -38,7 +37,7 @@
                     "expected_shell_check_command_response": ""
                 },
                 "readiness": {
-                    "http_path": "/",
+                    "http_path": "/status",
                     "http_auth_required": false,
                     "expected_http_response_code": "200",
                     "expected_http_response_string": "",
@@ -52,11 +51,11 @@
             }
         }
     ],
-    "Description": "Elasticsearch Description",
-    "shortcut_text": "Elasticsearch",
-    "shortcut_icon": "elasticsearch.png",
+    "Description": "Elastic-Stack Description",
+    "shortcut_text": "Kibana",
+    "shortcut_icon": "kibana.png",
     "pre_install_scripts": [
-        "createSecret.sh"
+        "generateEncryptionKey.sh"
     ],
     "post_install_scripts": []
 }
