@@ -3,19 +3,19 @@
     "install": [
       {
         "install_folder": "monitoring",
-        "name": "elastic-elasticsearch"
+        "name": "prometheus"
       },
       {
         "install_folder": "monitoring",
-        "name": "elastic-kibana"
+        "name": "grafana"
       },
       {
         "install_folder": "monitoring",
-        "name": "elastic-filebeat"
+        "name": "grafana-image-renderer"
       },
       {
         "install_folder": "monitoring",
-        "name": "elastic-metricbeat"
+        "name": "graphite"
       }
     ]
   }

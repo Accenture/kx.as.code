@@ -17,10 +17,15 @@ instances:
     dns:
       - elastic-kibana.${baseDomain}
       - elastic-kibana
+      - elastic-kibana-kibana
   - name: filebeat
     dns:
       - elastic-filebeat.${baseDomain}
       - elastic-filebeat
+  - name: metricbeat
+    dns:
+      - elastic-metricbeat.${baseDomain}
+      - elastic-metricbeat
 """ | sudo tee ${elasticStackCertsDir}/instance.yml
 
 # Create Elastic certificates
@@ -41,7 +46,9 @@ kubectl -n ${namespace} create secret generic elastic-certificates \
     --from-file=${elasticStackCertsDir}/kibana/kibana.crt \
     --from-file=${elasticStackCertsDir}/kibana/kibana.key \
     --from-file=${elasticStackCertsDir}/filebeat/filebeat.crt \
-    --from-file=${elasticStackCertsDir}/filebeat/filebeat.key
+    --from-file=${elasticStackCertsDir}/filebeat/filebeat.key \
+    --from-file=${elasticStackCertsDir}/metricbeat/metricbeat.crt \
+    --from-file=${elasticStackCertsDir}/metricbeat/metricbeat.key
 
 
 # Create credentials secret
