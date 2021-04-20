@@ -11,7 +11,7 @@ filebeatConfig:
           - logs_path:
               logs_path: "/var/log/containers/"
     output.elasticsearch:
-      hosts: '${ELASTICSEARCH_HOSTS:elastic-elasticsearch:9200}'
+      hosts: '${ELASTICSEARCH_HOSTS:elasticsearch-master-0:9200}'
       ssl:
         certificate_authorities: ["certs/ca.crt"]
         certificate: certs/elasticsearch.crt

@@ -10,12 +10,7 @@
         "repository_url": "https://helm.elastic.co",
         "repository_name": "elastic/kibana",
         "helm_version": "",
-        "set_key_values": [
-            "ingress.enabled=true",
-            "ingress.hosts[0].host=={{componentName}}.{{baseDomain}}",
-            "ingress.hosts[0].paths[0].path=/",
-            "ingress.tls[0].hosts[0]={{componentName}}.{{baseDomain}}"
-        ]
+        "set_key_values": []
     },
     "categories": [
         "monitoring",
