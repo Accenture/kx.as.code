@@ -31,6 +31,6 @@ kubectl get secret gitlab-ce-gitlab-initial-root-password -n ${namespace} || \
 # Add KX.AS.CODE CA cert to Gitlab-CE namespace (important for Gitlab to act as OIDC provider - including global.hosts.https=true + gitlab.webservice.ingress.tls.secretName parameters)
 kubectl get secret kx.as.code-wildcard-cert --namespace=gitlab-ce || \
     kubectl create secret generic kx.as.code-wildcard-cert \
-    --from-file=/usr/share/kx.as.code/Kubernetes/kx-certs \
+    --from-file=${installationWorkspace}/kx-certs \
     --namespace=${namespace}
 

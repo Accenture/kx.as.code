@@ -32,3 +32,8 @@ grafana.ini:
     api_url: {{gitUrl}}/api/v4
   server:
     root_url: https://{{componentName}}.{{baseDomain}}
+  extraConfigmapMounts:
+    - name: certs-configmap
+      mountPath: /etc/grafana/ssl/
+      configMap: certs-configmap
+      readOnly: true
