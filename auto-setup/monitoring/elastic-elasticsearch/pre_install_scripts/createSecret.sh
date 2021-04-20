@@ -13,6 +13,7 @@ instances:
       - ${componentName}.${baseDomain}
       - ${componentName}
       - elasticsearch-master
+      - elasticsearch-master.${namespace}
   - name: kibana
     dns:
       - elastic-kibana.${baseDomain}
@@ -48,8 +49,7 @@ kubectl -n ${namespace} create secret generic elastic-certificates \
     --from-file=${elasticStackCertsDir}/filebeat/filebeat.crt \
     --from-file=${elasticStackCertsDir}/filebeat/filebeat.key \
     --from-file=${elasticStackCertsDir}/metricbeat/metricbeat.crt \
-    --from-file=${elasticStackCertsDir}/metricbeat/metricbeat.key
-
+    --from-file=${elasticStackCertsDir}/metricbeat/metricbeat.key \
 
 # Create credentials secret
 kubectl get secret elastic-credentials --namespace ${namespace} || \

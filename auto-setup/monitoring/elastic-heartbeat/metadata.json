@@ -1,0 +1,24 @@
+{
+    "name": "elastic-heartbeat",
+    "namespace": "kube-system",
+    "installation_type": "script",
+    "installation_group_folder": "monitoring",
+    "environment_variables": {
+        "elasticVersion": "7.12.0"
+    },
+    "categories": [
+        "monitoring"
+    ],
+    "Description": "Heartbeat Description",
+    "shortcut_text": "",
+    "shortcut_icon": "",
+    "install_scripts": [
+        "installHeartbeat.sh"
+    ],
+    "pre_install_scripts": [
+        "copyElasticSecrets.sh",
+        "createKxCertsSecret.sh",
+        "createConfigMap.sh"
+    ],
+    "post_install_scripts": []
+}

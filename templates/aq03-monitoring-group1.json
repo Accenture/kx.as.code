@@ -16,6 +16,10 @@
       {
         "install_folder": "monitoring",
         "name": "elastic-metricbeat"
+      },
+      {
+        "install_folder": "monitoring",
+        "name": "elastic-heartbeat"
       }
     ]
   }
