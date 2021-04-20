@@ -12,7 +12,7 @@ instances:
     dns:
       - ${componentName}.${baseDomain}
       - ${componentName}
-      - elasticsearch-master-0
+      - elasticsearch-master
   - name: kibana
     dns:
       - elastic-kibana.${baseDomain}

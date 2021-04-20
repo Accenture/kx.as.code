@@ -1,4 +1,4 @@
-elasticsearchHosts: "https://elasticsearch-master-0:9200"
+elasticsearchHosts: "https://elasticsearch-master:9200"
 extraEnvs:
   - name: ELASTIC_PASSWORD
     valueFrom:
@@ -29,7 +29,7 @@ kibanaConfig:
         certificate: /usr/share/kibana/config/certs/kibana.crt
     xpack.security.encryptionKey: ${KIBANA_ENCRYPTION_KEY}
     elasticsearch:
-      hosts: ["https://elasticsearch-master-0:9200"]
+      hosts: ["https://elasticsearch-master:9200"]
       ssl:
         certificateAuthorities: /usr/share/kibana/config/certs/ca.crt
         verificationMode: certificate
