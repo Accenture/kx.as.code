@@ -44,6 +44,7 @@ filebeatConfig:
         key: /usr/share/filebeat/config/certs/kibana.key
       username: ${ELASTIC_USERNAME}
       password: ${ELASTIC_PASSWORD}
+    http.port: "5067"
 image: "docker.elastic.co/beats/filebeat"
 imageTag: "{{elasticVersion}}"
 protocol: https
