@@ -18,6 +18,23 @@ daemonset:
   metricbeatConfig:
     metricbeat.yml: |
       metricbeat.modules:
+      - module: elasticsearch
+        metricsets:
+          - ccr
+          - cluster_stats
+          - enrich
+          - index
+          - index_recovery
+          - index_summary
+          - ml_job
+          - node_stats
+          - shard
+        period: 30s
+        hosts: ["https://elasticsearch-master:9200"]
+        ssl.certificate_authorities: ["/usr/share/metricbeat/config/certs/ca.crt"]
+        username: ${ELASTIC_USERNAME}
+        password: ${ELASTIC_PASSWORD}
+        xpack.enabled: true
       - module: kubernetes
         metricsets:
           - container
@@ -25,7 +42,7 @@ daemonset:
           - pod
           - system
           - volume
-        period: 10s
+        period: 30s
         host: "${NODE_NAME}"
         hosts: ["https://${NODE_NAME}:10250"]
         ssl.verification_mode: none
@@ -37,7 +54,7 @@ daemonset:
         metricsets:
           - event
       - module: system
-        period: 10s
+        period: 30s
         metricsets:
           - cpu
           - load

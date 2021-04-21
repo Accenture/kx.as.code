@@ -1,5 +1,5 @@
 {
-    "name": "elastic-heartbeat",
+    "name": "elastic-packetbeat",
     "namespace": "elastic-stack",
     "installation_type": "script",
     "installation_group_folder": "monitoring",
@@ -9,15 +9,12 @@
     "categories": [
         "monitoring"
     ],
-    "Description": "Heartbeat Description",
+    "Description": "Packetbeat Description",
     "shortcut_text": "",
     "shortcut_icon": "",
     "install_scripts": [
-        "installHeartbeat.sh"
+        "installPacketbeat.sh"
     ],
-    "pre_install_scripts": [
-        "createKxCertsSecret.sh",
-        "createConfigMap.sh"
-    ],
+    "pre_install_scripts": [],
     "post_install_scripts": []
 }

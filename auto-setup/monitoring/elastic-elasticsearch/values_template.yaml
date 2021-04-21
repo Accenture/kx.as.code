@@ -18,6 +18,7 @@ esConfig:
     xpack.security.transport.ssl.certificate_authorities: certs/ca.crt
     xpack.security.authc.realms.native.local.order: 0
     xpack.monitoring.enabled: true
+    xpack.monitoring.collection.enabled: true
 extraEnvs:
   - name: ELASTIC_PASSWORD
     valueFrom:
