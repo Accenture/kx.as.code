@@ -49,9 +49,9 @@ data:
     output.elasticsearch:
       hosts: '${ELASTICSEARCH_HOSTS:https://elasticsearch-master:9200}'
       ssl:
-        certificate_authorities: ["/usr/share/filebeat/config/certs/ca.crt"]
-        certificate: /usr/share/filebeat/config/certs/elasticsearch.crt
-        key: /usr/share/filebeat/config/certs/elasticsearch.key
+        certificate_authorities: ["/usr/share/auditbeat/config/certs/ca.crt"]
+        certificate: /usr/share/auditbeat/config/certs/elasticsearch.crt
+        key: /usr/share/auditbeat/config/certs/elasticsearch.key
       username: ${ELASTIC_USERNAME}
       password: ${ELASTIC_PASSWORD}
     http.port: "5068"
@@ -114,7 +114,7 @@ spec:
       dnsPolicy: ClusterFirstWithHostNet
       containers:
         - name: auditbeat
-          image: docker.elastic.co/beats/auditbeat:{{ elasticVersion }
+          image: docker.elastic.co/beats/auditbeat:{{ elasticVersion }}
           args: [
               "-c", "/etc/auditbeat.yml",
               "-e",
@@ -189,6 +189,8 @@ spec:
             - name: run-containerd
               mountPath: /run/containerd
               readOnly: true
+            - name: elastic-certificates
+              mountPath: /usr/share/auditbeat/config/certs
       volumes:
         - name: bin
           hostPath:
@@ -222,6 +224,9 @@ spec:
           hostPath:
             path: /run/containerd
             type: DirectoryOrCreate
+        - name: elastic-certificates
+          secret:
+            secretName: elastic-certificates
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding

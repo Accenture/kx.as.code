@@ -97,7 +97,7 @@ fi
 
 # Copy last actionQueues_temp.json file over after loop
 if [[ -f ${installationWorkspace}/actionQueues_temp.json ]]; then
-  cp ${installationWorkspace}/actionQueues_temp.json ${installationWorkspace}/actionQueues.json
+  sudo mv ${installationWorkspace}/actionQueues_temp.json ${installationWorkspace}/actionQueues.json
 fi
 
 # Get configs from profile-config.json

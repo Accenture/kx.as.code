@@ -31,7 +31,7 @@ echo """apiVersion: v1
 kind: ConfigMap
 metadata:
   name: heartbeat-deployment-config
-  namespace: kube-system
+  namespace: {{ namespace }}
   labels:
     k8s-app: heartbeat
 data:
