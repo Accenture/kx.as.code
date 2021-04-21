@@ -1,11 +1,11 @@
 #!/bin/bash -x
 
-# Create directory for storing certs
+# Create directory for storing generated certs
 export elasticStackCertsDir=${installationWorkspace}/elastic-stack-certs
 sudo mkdir -p ${elasticStackCertsDir}
 sudo chmod 777 ${elasticStackCertsDir}
 
-# Create certificate instances file
+# Create certificate instances file for generating Elastic-Stack certs with elasticsearch-certutil
 echo """
 instances:
   - name: elasticsearch
@@ -19,6 +19,7 @@ instances:
       - elastic-kibana.${baseDomain}
       - elastic-kibana
       - elastic-kibana-kibana
+      - elastic-kibana-kibana.${namespace}
   - name: filebeat
     dns:
       - elastic-filebeat.${baseDomain}
@@ -27,9 +28,13 @@ instances:
     dns:
       - elastic-metricbeat.${baseDomain}
       - elastic-metricbeat
+  - name: heartbeat
+    dns:
+      - elastic-heartbeat.${baseDomain}
+      - elastic-heartbeat
 """ | sudo tee ${elasticStackCertsDir}/instance.yml
 
-# Create Elastic certificates
+# Create Elastic certificates with elasticsearch-certutil
 password=$(docker run --rm busybox /bin/sh -c "< /dev/urandom tr -cd '[:alnum:]' | head -c32")
 docker run --rm -v ${elasticStackCertsDir}:/certs -i -w /app \
         docker.elastic.co/elasticsearch/elasticsearch:${elasticVersion} \
@@ -50,6 +55,8 @@ kubectl -n ${namespace} create secret generic elastic-certificates \
     --from-file=${elasticStackCertsDir}/filebeat/filebeat.key \
     --from-file=${elasticStackCertsDir}/metricbeat/metricbeat.crt \
     --from-file=${elasticStackCertsDir}/metricbeat/metricbeat.key \
+    --from-file=${elasticStackCertsDir}/heartbeat/heartbeat.crt \
+    --from-file=${elasticStackCertsDir}/heartbeat/heartbeat.key
 
 # Create credentials secret
 kubectl get secret elastic-credentials --namespace ${namespace} || \

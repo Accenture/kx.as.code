@@ -3,7 +3,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: heartbeat
-  namespace: kube-system
+  namespace: {{ namespace }}
   labels:
     k8s-app: heartbeat
 spec:
@@ -20,7 +20,7 @@ spec:
       dnsPolicy: ClusterFirstWithHostNet
       containers:
         - name: heartbeat
-          image: docker.elastic.co/beats/heartbeat:7.12.0
+          image: docker.elastic.co/beats/heartbeat:{{ elasticVersion }}
           args: [
               "-c", "/etc/heartbeat.yml",
               "-e",
@@ -90,7 +90,7 @@ metadata:
 subjects:
   - kind: ServiceAccount
     name: heartbeat
-    namespace: kube-system
+    namespace: {{ namespace }}
 roleRef:
   kind: ClusterRole
   name: heartbeat
@@ -118,7 +118,7 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: heartbeat
-  namespace: kube-system
+  namespace: {{ namespace }}
   labels:
     k8s-app: heartbeat
 ---
