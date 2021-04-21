@@ -9,6 +9,10 @@ extraEnvs:
       secretKeyRef:
         name: elastic-credentials
         key: username
+  - name: NODE_NAME
+    valueFrom:
+      fieldRef:
+        fieldPath: spec.nodeName
 daemonset:
   metricbeatConfig:
     metricbeat.yml: |

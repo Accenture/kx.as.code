@@ -18,7 +18,7 @@ echo """
       hosts: [ \"https://${ingressTlsUrl}:443\" ]
       schedule: '@every 30s'
       check.request.method: HEAD
-      check.response.status: [200]
+      check.response.status: [200,401,302]
       ssl:
         certificate_authorities: ['/usr/share/heartbeat/config/kx-certs/kx_root_ca.pem', '/usr/share/heartbeat/config/kx-certs/kx_intermediate_ca.pem']
         supported_protocols: [\"TLSv1.0\", \"TLSv1.1\", \"TLSv1.2\"]
@@ -64,3 +64,6 @@ $(cat ${installationWorkspace}/heartbeat-monitors.temp-config | sed '/^$/d')
 """ | sudo tee ${installationWorkspace}/elastic-heartbeat-configmap.yaml
 
 cat ${installationWorkspace}/elastic-heartbeat-configmap.yaml
+
+# Apply generated config
+kubectl apply -f ${installationWorkspace}/elastic-heartbeat-configmap.yaml -n ${namespace}
