@@ -14,6 +14,7 @@ extraEnvs:
       fieldRef:
         fieldPath: spec.nodeName
 daemonset:
+  hostNetworking: true
   metricbeatConfig:
     metricbeat.yml: |
       metricbeat.modules:

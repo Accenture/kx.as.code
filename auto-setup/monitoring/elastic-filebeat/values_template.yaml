@@ -1,3 +1,5 @@
+daemonset:
+  hostNetworking: true
 extraEnvs:
   - name: ELASTIC_PASSWORD
     valueFrom:
