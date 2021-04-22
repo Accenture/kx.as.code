@@ -13,34 +13,14 @@ export number50gbVolumes=$(cat ${installationWorkspace}/profile-config.json | jq
 # Calculate total needed disk size (should match the value the VM was provisioned with)
 export localKubeVolumesDiskSize=$(( ( ${number1gbVolumes} * 1 ) + ( ${number5gbVolumes} * 5 ) + ( ${number10gbVolumes} * 10 ) + ( ${number30gbVolumes} * 30 ) + ( ${number50gbVolumes} * 50 ) + 1 ))
 
+# Install NVME CLI if needed, for example, for AWS
 nvme_cli_needed=$(df -h | grep "nvme")
 if [[ -n ${nvme_cli_needed} ]]; then
-  # For AWS
   sudo apt install -y nvme-cli lvm2
 fi
 
 # Determine Drive B (Local K8s Volumes Storage)
 driveB=$(lsblk -o NAME,FSTYPE,SIZE -dsn -J | jq -r '.[] | .[] | select(.fstype==null) | select(.size=="'${localKubeVolumesDiskSize}'G") | .name')
-
-#TODO Cleanup after confirming change
-#nvme_cli_needed=$(df -h | grep "nvme")
-#if [[ -n ${nvme_cli_needed} ]]; then
-#  # For AWS
-#  sudo apt install -y nvme-cli lvm2
-#  export partition="p1"
-#else
-#  export partition="1"
-#fi
-
-#drives=$(lsblk -i -o kname,mountpoint,fstype,size,type | grep disk | awk {'print $1'})
-#for drive in ${drives}
-#do
-#  partitions=$(lsblk -i -o kname,mountpoint,fstype,size,type | grep ${drive} | grep part)
-#  if [[ -z ${partitions} ]]; then
-#    export driveB="${drive}"
-#    break
-#  fi
-#done
 
 echo "${driveB}" | sudo tee /usr/share/kx.as.code/.config/driveB
 cat /usr/share/kx.as.code/.config/driveB
@@ -53,8 +33,11 @@ sudo lsblk
 # Create full partition on /dev/${driveB}
 echo 'type=83' | sudo sfdisk /dev/${driveB}
 
-sudo pvcreate /dev/${driveB}${partition}
-sudo vgcreate k8s_local_vol_group /dev/${driveB}${partition}
+# Get partition name
+driveB_Partition=$(lsblk -o NAME,FSTYPE,SIZE -J | jq -r '.[] | .[]  | select(.name=="'${driveB}'") | .children[].name')
+
+sudo pvcreate /dev/${driveB_Partition}
+sudo vgcreate k8s_local_vol_group /dev/${driveB_Partition}
 
 BASE_K8S_LOCAL_VOLUMES_DIR=/mnt/k8s_local_volumes
 
