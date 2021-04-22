@@ -24,14 +24,27 @@ instances:
     dns:
       - elastic-filebeat.${baseDomain}
       - elastic-filebeat
+      - elastic-filebeat-filebeat
   - name: metricbeat
     dns:
       - elastic-metricbeat.${baseDomain}
       - elastic-metricbeat
+      - elastic-metricbeat-metricbeat
   - name: heartbeat
     dns:
       - elastic-heartbeat.${baseDomain}
       - elastic-heartbeat
+      - elastic-heartbeat-heartbeat
+  - name: auditbeat
+    dns:
+      - elastic-auditbeat.${baseDomain}
+      - elastic-auditbeat
+      - elastic-auditbeat-auditbeat
+  - name: packetbeat
+    dns:
+      - elastic-packetbeat.${baseDomain}
+      - elastic-packetbeat
+      - elastic-packetbeat-packetbeat
 """ | sudo tee ${elasticStackCertsDir}/instance.yml
 
 # Create Elastic certificates with elasticsearch-certutil
@@ -56,7 +69,11 @@ kubectl -n ${namespace} create secret generic elastic-certificates \
     --from-file=${elasticStackCertsDir}/metricbeat/metricbeat.crt \
     --from-file=${elasticStackCertsDir}/metricbeat/metricbeat.key \
     --from-file=${elasticStackCertsDir}/heartbeat/heartbeat.crt \
-    --from-file=${elasticStackCertsDir}/heartbeat/heartbeat.key
+    --from-file=${elasticStackCertsDir}/heartbeat/heartbeat.key \
+    --from-file=${elasticStackCertsDir}/auditbeat/auditbeat.crt \
+    --from-file=${elasticStackCertsDir}/auditbeat/auditbeat.key \
+    --from-file=${elasticStackCertsDir}/packetbeat/packetbeat.crt \
+    --from-file=${elasticStackCertsDir}/packetbeat/packetbeat.key
 
 # Create credentials secret
 kubectl get secret elastic-credentials --namespace ${namespace} || \
