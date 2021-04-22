@@ -3,27 +3,37 @@
 # Get GlusterFS volume size from profile-config.json
 export glusterFsDiskSize=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.glusterFsDiskSize')
 
-# Install nvme-cli if running on host with NVMe block devices (for example on AWS with EBS)
-sudo lsblk -i -o kname,mountpoint,fstype,size,maj:min,name,state,rm,rota,ro,type,label,model,serial
 nvme_cli_needed=$(df -h | grep "nvme")
-if [[ -n "nvme_cli_needed" ]]; then
+if [[ -n ${nvme_cli_needed} ]]; then
   # For AWS
   sudo apt install -y nvme-cli lvm2
-  drives=$(lsblk -i -o kname,mountpoint,fstype,size,type | grep disk | awk {'print $1'})
-  for drive in ${drives}
-  do
-    partitions=$(lsblk -i -o kname,mountpoint,fstype,size,type | grep ${drive} | grep part)
-    if [[ -z ${partitions} ]]; then
-      export driveC="${drive}"
-      export partition="p1"
-      break
-    fi
-  done
-else
-  # For VirtualBox, VNWare etc
-  export driveC="sdc"
-  export partition="1"
 fi
+
+#TODO Cleanup after confirming change
+# Install nvme-cli if running on host with NVMe block devices (for example on AWS with EBS)
+#sudo lsblk -i -o kname,mountpoint,fstype,size,maj:min,name,state,rm,rota,ro,type,label,model,serial
+#nvme_cli_needed=$(df -h | grep "nvme")
+#if [[ -n "nvme_cli_needed" ]]; then
+#  # For AWS
+#  sudo apt install -y nvme-cli lvm2
+#  drives=$(lsblk -i -o kname,mountpoint,fstype,size,type | grep disk | awk {'print $1'})
+#  for drive in ${drives}
+#  do
+#    partitions=$(lsblk -i -o kname,mountpoint,fstype,size,type | grep ${drive} | grep part)
+#    if [[ -z ${partitions} ]]; then
+#      export driveC="${drive}"
+#      export partition="p1"
+#      break
+#    fi
+#  done
+#else
+#  # For VirtualBox, VNWare etc
+#  export driveC="sdc"
+#  export partition="1"
+#fi
+
+# Determine Drive C (GlusterFS) - Relevant for KX-Main only
+driveC=$(lsblk -o NAME,FSTYPE,SIZE -dsn -J | jq -r '.[] | .[] | select(.fstype==null) | select(.size=="'${glusterFsDiskSize}'G") | .name')
 
 echo "${driveC}" | sudo tee /usr/share/kx.as.code/.config/driveC
 cat /usr/share/kx.as.code/.config/driveC

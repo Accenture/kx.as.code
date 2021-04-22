@@ -2,27 +2,6 @@
 
 # Install nvme-cli if running on host with NVMe block devices (for example on AWS with EBS)
 sudo lsblk -i -o kname,mountpoint,fstype,size,maj:min,name,state,rm,rota,ro,type,label,model,serial
-nvme_cli_needed=$(df -h | grep "nvme")
-if [[ -n ${nvme_cli_needed} ]]; then
-  # For AWS
-  sudo apt install -y nvme-cli lvm2
-  export partition="p1"
-else
-  export partition="1"
-fi
-
-drives=$(lsblk -i -o kname,mountpoint,fstype,size,type | grep disk | awk {'print $1'})
-for drive in ${drives}
-do
-  partitions=$(lsblk -i -o kname,mountpoint,fstype,size,type | grep ${drive} | grep part)
-  if [[ -z ${partitions} ]]; then
-    export driveB="${drive}"
-    break
-  fi
-done
-
-echo "${driveB}" | sudo tee /usr/share/kx.as.code/.config/driveB
-cat /usr/share/kx.as.code/.config/driveB
 
 # Get number of local volumes to pre-provision
 export number1gbVolumes=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.local_volumes.one_gb')
@@ -30,6 +9,41 @@ export number5gbVolumes=$(cat ${installationWorkspace}/profile-config.json | jq 
 export number10gbVolumes=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.local_volumes.ten_gb')
 export number30gbVolumes=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.local_volumes.thirty_gb')
 export number50gbVolumes=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.local_volumes.fifty_gb')
+
+# Calculate total needed disk size (should match the value the VM was provisioned with)
+export localKubeVolumesDiskSize=$(( ( ${number1gbVolumes} * 1 ) + ( ${number5gbVolumes} * 5 ) + ( ${number10gbVolumes} * 10 ) + ( ${number30gbVolumes} * 30 ) + ( ${number50gbVolumes} * 50 ) + 1 ))
+
+nvme_cli_needed=$(df -h | grep "nvme")
+if [[ -n ${nvme_cli_needed} ]]; then
+  # For AWS
+  sudo apt install -y nvme-cli lvm2
+fi
+
+# Determine Drive B (Local K8s Volumes Storage)
+driveB=$(lsblk -o NAME,FSTYPE,SIZE -dsn -J | jq -r '.[] | .[] | select(.fstype==null) | select(.size=="'${localKubeVolumesDiskSize}'G") | .name')
+
+#TODO Cleanup after confirming change
+#nvme_cli_needed=$(df -h | grep "nvme")
+#if [[ -n ${nvme_cli_needed} ]]; then
+#  # For AWS
+#  sudo apt install -y nvme-cli lvm2
+#  export partition="p1"
+#else
+#  export partition="1"
+#fi
+
+#drives=$(lsblk -i -o kname,mountpoint,fstype,size,type | grep disk | awk {'print $1'})
+#for drive in ${drives}
+#do
+#  partitions=$(lsblk -i -o kname,mountpoint,fstype,size,type | grep ${drive} | grep part)
+#  if [[ -z ${partitions} ]]; then
+#    export driveB="${drive}"
+#    break
+#  fi
+#done
+
+echo "${driveB}" | sudo tee /usr/share/kx.as.code/.config/driveB
+cat /usr/share/kx.as.code/.config/driveB
 
 # Check logical partitions
 sudo lvs
@@ -88,30 +102,20 @@ envhandlebars < ${installComponentDirectory}/values.yaml > ${installationWorkspa
 helm template -f ${installationWorkspace}/${componentName}_values.yaml local-volume-provisioner --namespace ${namespace} ./helm/provisioner > ${installationWorkspace}/local-volume-provisioner.generated.yaml
 
 # Apply YAML file
-kubectl create -f local-volume-provisioner.generated.yaml ${installationWorkspace}/local-volume-provisioner.generated.yaml
-
-
-#TODO Remove once above change tested
-# Deploy local volume provisioner. To be used for databases etc
-#wget https://raw.githubusercontent.com/kubernetes-sigs/sig-storage-local-static-provisioner/master/deployment/kubernetes/example/default_example_provisioner_generated.yaml -O ${installationWorkspace}/local_storage_provisioner_install.yaml
-#sed -i 's/\/mnt\/fast-disks/\/mnt\/k8s_local_volumes/g' ${installationWorkspace}/local_storage_provisioner_install.yaml
-#sed -i 's/ext4/xfs/g' ${installationWorkspace}/local_storage_provisioner_install.yaml
-#sed -i 's/fast-disks/local-storage/g' ${installationWorkspace}/local_storage_provisioner_install.yaml
-#sed -i 's/namespace: default/namespace: kube-system/g' ${installationWorkspace}/local_storage_provisioner_install.yaml
-#kubectl apply -f ${installationWorkspace}/local_storage_provisioner_install.yaml -n kube-system
+kubectl create -f ${installationWorkspace}/local-volume-provisioner.generated.yaml
 
 # Provision Storage Class
-#echo '''
-## Only create this for K8s 1.9+
-#apiVersion: storage.k8s.io/v1
-#kind: StorageClass
-#metadata:
-#  name: local-storage
-#provisioner: kubernetes.io/no-provisioner
-#volumeBindingMode: WaitForFirstConsumer
-## Supported policies: Delete, Retain
-#reclaimPolicy: Delete
-#''' | kubectl apply -f -
+echo '''
+# Only create this for K8s 1.9+
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: local-storage
+provisioner: kubernetes.io/no-provisioner
+volumeBindingMode: WaitForFirstConsumer
+# Supported policies: Delete, Retain
+reclaimPolicy: Delete
+''' | kubectl apply -f -
 
 # Make local storage class default
-#kubectl patch storageclass local-storage -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
+kubectl patch storageclass local-storage -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
