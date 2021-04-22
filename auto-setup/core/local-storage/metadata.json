@@ -3,6 +3,12 @@
     "namespace": "kube-system",
     "installation_type": "script",
     "installation_group_folder": "core",
+    "environment_variables": {
+        "localProvisionerVersion": "2.4.0",
+        "hostDirectory": "/mnt/k8s_local_volumes",
+        "storageClassName": "local-storage",
+        "fsType": "xfs"
+    },
     "install_scripts": [
         "installLocalStorage.sh"
     ],

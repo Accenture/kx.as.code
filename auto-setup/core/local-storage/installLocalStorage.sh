@@ -77,26 +77,41 @@ sudo lvs
 sudo df -hT
 sudo lsblk
 
+# Checkout Storage Provisioner
+git clone --depth=1 https://github.com/kubernetes-sigs/sig-storage-local-static-provisioner.git
+cd sig-storage-local-static-provisioner
+
+# Replace placeholders with environment variables from metadata.json
+envhandlebars < ${installComponentDirectory}/values.yaml > ${installationWorkspace}/${componentName}_values.yaml
+
+# Generate install YAML file via Helm
+helm template -f ${installationWorkspace}/${componentName}_values.yaml local-volume-provisioner --namespace ${namespace} ./helm/provisioner > ${installationWorkspace}/local-volume-provisioner.generated.yaml
+
+# Apply YAML file
+kubectl create -f local-volume-provisioner.generated.yaml ${installationWorkspace}/local-volume-provisioner.generated.yaml
+
+
+#TODO Remove once above change tested
 # Deploy local volume provisioner. To be used for databases etc
-wget https://raw.githubusercontent.com/kubernetes-sigs/sig-storage-local-static-provisioner/master/deployment/kubernetes/example/default_example_provisioner_generated.yaml -O ${installationWorkspace}/local_storage_provisioner_install.yaml
-sed -i 's/\/mnt\/fast-disks/\/mnt\/k8s_local_volumes/g' ${installationWorkspace}/local_storage_provisioner_install.yaml
-sed -i 's/ext4/xfs/g' ${installationWorkspace}/local_storage_provisioner_install.yaml
-sed -i 's/fast-disks/local-storage/g' ${installationWorkspace}/local_storage_provisioner_install.yaml
-sed -i 's/namespace: default/namespace: kube-system/g' ${installationWorkspace}/local_storage_provisioner_install.yaml
-kubectl apply -f ${installationWorkspace}/local_storage_provisioner_install.yaml -n kube-system
+#wget https://raw.githubusercontent.com/kubernetes-sigs/sig-storage-local-static-provisioner/master/deployment/kubernetes/example/default_example_provisioner_generated.yaml -O ${installationWorkspace}/local_storage_provisioner_install.yaml
+#sed -i 's/\/mnt\/fast-disks/\/mnt\/k8s_local_volumes/g' ${installationWorkspace}/local_storage_provisioner_install.yaml
+#sed -i 's/ext4/xfs/g' ${installationWorkspace}/local_storage_provisioner_install.yaml
+#sed -i 's/fast-disks/local-storage/g' ${installationWorkspace}/local_storage_provisioner_install.yaml
+#sed -i 's/namespace: default/namespace: kube-system/g' ${installationWorkspace}/local_storage_provisioner_install.yaml
+#kubectl apply -f ${installationWorkspace}/local_storage_provisioner_install.yaml -n kube-system
 
 # Provision Storage Class
-echo '''
-# Only create this for K8s 1.9+
-apiVersion: storage.k8s.io/v1
-kind: StorageClass
-metadata:
-  name: local-storage
-provisioner: kubernetes.io/no-provisioner
-volumeBindingMode: WaitForFirstConsumer
-# Supported policies: Delete, Retain
-reclaimPolicy: Delete
-''' | kubectl apply -f -
+#echo '''
+## Only create this for K8s 1.9+
+#apiVersion: storage.k8s.io/v1
+#kind: StorageClass
+#metadata:
+#  name: local-storage
+#provisioner: kubernetes.io/no-provisioner
+#volumeBindingMode: WaitForFirstConsumer
+## Supported policies: Delete, Retain
+#reclaimPolicy: Delete
+#''' | kubectl apply -f -
 
 # Make local storage class default
-kubectl patch storageclass local-storage -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
+#kubectl patch storageclass local-storage -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
