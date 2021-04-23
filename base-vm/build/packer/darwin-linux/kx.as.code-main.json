@@ -43,11 +43,7 @@
           ["modifyvm", "{{.Name}}", "--memory", "{{user `memory`}}"],
           ["modifyvm", "{{.Name}}", "--cpus", "{{user `cpus`}}"],
           ["modifyvm", "{{.Name}}", "--clipboard", "bidirectional"],
-          ["sharedfolder", "add", "{{.Name}}", "--name", "KX_Share", "--hostpath", "{{user `host_data_directory`}}", "--automount"],
-          ["createhd", "--format", "VDI", "--filename", "../../../output-main{{user `vm_suffix`}}/virtualbox-{{user `version`}}/{{.Name}}-local-k8s-storage.vdi", "--size", "104448" ],
-          ["storageattach", "{{.Name}}", "--storagectl", "SATA Controller", "--port", "1", "--device","0","--type", "hdd", "--medium", "../../../output-main{{user `vm_suffix`}}/virtualbox-{{user `version`}}/{{.Name}}-local-k8s-storage.vdi" ],
-          ["createhd", "--format", "VDI", "--filename", "../../../output-main{{user `vm_suffix`}}/virtualbox-{{user `version`}}/{{.Name}}-glusterfs-k8s-storage.vdi", "--size", "104448" ],
-          ["storageattach", "{{.Name}}", "--storagectl", "SATA Controller", "--port", "2", "--device","0","--type", "hdd", "--medium", "../../../output-main{{user `vm_suffix`}}/virtualbox-{{user `version`}}/{{.Name}}-glusterfs-k8s-storage.vdi" ]
+          ["sharedfolder", "add", "{{.Name}}", "--name", "KX_Share", "--hostpath", "{{user `host_data_directory`}}", "--automount"]
       ],
       "vboxmanage_post": [
           ["setextradata", "{{.Name}}", "CustomVideoMode1", "1920x1200x32"],
@@ -143,10 +139,6 @@
         "<enter><wait>"
       ],
       "disk_size": "{{user `disk_size`}}",
-      "disk_additional_size": [
-        "107520",
-        "107520"
-      ],
       "network": "nat",
       "vmx_data": {
         "numvcpus": "{{user `cpus`}}",
