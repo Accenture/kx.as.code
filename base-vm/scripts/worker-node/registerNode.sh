@@ -6,6 +6,15 @@ export sharedGitRepositories=/usr/share/kx.as.code/git
 export installationWorkspace=/usr/share/kx.as.code/workspace
 export kxHomeDir=/usr/share/kx.as.code
 
+# Check profile-config.json file is present before executing script
+wait-for-file() {
+        timeout -s TERM 6000 bash -c \
+        'while [[ ! -f ${0} ]];\
+        do echo "Waiting for ${0} file" && sleep 15;\
+        done' ${1}
+}
+wait-for-file ${installationWorkspace}/profile-config.json
+
 # Install nvme-cli if running on host with NVMe block devices (for example on AWS with EBS)
 sudo lsblk -i -o kname,mountpoint,fstype,size,maj:min,name,state,rm,rota,ro,type,label,model,serial
 
