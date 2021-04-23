@@ -8,40 +8,6 @@ export kxHomeDir=/usr/share/kx.as.code
 
 # Install nvme-cli if running on host with NVMe block devices (for example on AWS with EBS)
 sudo lsblk -i -o kname,mountpoint,fstype,size,maj:min,name,state,rm,rota,ro,type,label,model,serial
-nvme_cli_needed=$(df -h | grep "nvme")
-if [[ -n ${nvme_cli_needed} ]]; then
-  # For AWS
-  sudo apt install -y nvme-cli lvm2
-  export partition="p1"
-else
-  export partition="1"
-fi
-
-drives=$(lsblk -i -o kname,mountpoint,fstype,size,type | grep disk | awk {'print $1'})
-for drive in ${drives}
-do
-  partitions=$(lsblk -i -o kname,mountpoint,fstype,size,type | grep ${drive} | grep part)
-  if [[ -z ${partitions} ]]; then
-    export driveB="${drive}"
-    break
-  fi
-done
-
-sudo mkdir -p ${kxHomeDir}/.config
-echo "${driveB}" | sudo tee ${kxHomeDir}/.config/driveB
-cat ${kxHomeDir}/.config/driveB
-
-TIMESTAMP=$(date "+%Y-%m-%d_%H%M%S")
-# Define base variables
-export vmPassword=$(cat ${kxHomeDir}/.config/.user.cred)
-export installationWorkspace=$kubeDir
-export autoSetupHome=$sharedGitRepositories/kx.as.code/auto-setup
-
-# Check profile-config.json file is present before starting script
-timeout -s TERM 6000 bash -c \
-'while [[ ! -f '${installationWorkspace}'/profile-config.json ]];\
-do echo "Waiting for '${installationWorkspace}'/profile-config.json file" && sleep 15;\
-done'
 
 # Get number of local volumes to pre-provision
 export number1gbVolumes=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.local_volumes.one_gb')
@@ -49,6 +15,24 @@ export number5gbVolumes=$(cat ${installationWorkspace}/profile-config.json | jq 
 export number10gbVolumes=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.local_volumes.ten_gb')
 export number30gbVolumes=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.local_volumes.thirty_gb')
 export number50gbVolumes=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.local_volumes.fifty_gb')
+
+# Calculate total needed disk size (should match the value the VM was provisioned with)
+export localKubeVolumesDiskSize=$(( ( ${number1gbVolumes} * 1 ) + ( ${number5gbVolumes} * 5 ) + ( ${number10gbVolumes} * 10 ) + ( ${number30gbVolumes} * 30 ) + ( ${number50gbVolumes} * 50 ) + 1 ))
+
+# Install NVME CLI if needed, for example, for AWS
+nvme_cli_needed=$(df -h | grep "nvme")
+if [[ -n ${nvme_cli_needed} ]]; then
+  sudo apt install -y nvme-cli lvm2
+fi
+
+# Determine Drive B (Local K8s Volumes Storage)
+driveB=$(lsblk -o NAME,FSTYPE,SIZE -dsn -J | jq -r '.[] | .[] | select(.fstype==null) | select(.size=="'${localKubeVolumesDiskSize}'G") | .name')
+
+log_error "An available unpartitioned drive could not be found that matches the needed capacity of ${localKubeVolumesDiskSize}G. This is calculated from all required local volumes defined in profile-config.json + 1GB"
+
+
+echo "${driveB}" | sudo tee /usr/share/kx.as.code/.config/driveB
+cat /usr/share/kx.as.code/.config/driveB
 
 # Check logical partitions
 sudo lvs
@@ -58,8 +42,11 @@ sudo lsblk
 # Create full partition on /dev/${driveB}
 echo 'type=83' | sudo sfdisk /dev/${driveB}
 
-sudo pvcreate /dev/${driveB}${partition}
-sudo vgcreate k8s_local_vol_group /dev/${driveB}${partition}
+# Get partition name
+driveB_Partition=$(lsblk -o NAME,FSTYPE,SIZE -J | jq -r '.[] | .[]  | select(.name=="'${driveB}'") | .children[].name')
+
+sudo pvcreate /dev/${driveB_Partition}
+sudo vgcreate k8s_local_vol_group /dev/${driveB_Partition}
 
 BASE_K8S_LOCAL_VOLUMES_DIR=/mnt/k8s_local_volumes
 
@@ -160,10 +147,10 @@ fi
 if [[ "${baseIpType}" == "static" ]]; then
   if [[ -z "$(cat /etc/resolv.conf | grep \\"${fixedNicConfigDns1}\\")" ]]; then
 
-      # Wait for last Vagrant shell action to complete before changing network settings
+      # Wait for last Vagrant or Terraform shell action to complete before changing network settings
       timeout -s TERM 6000 bash -c \
-      'while [[ ! -f /usr/share/kx.as.code/workspace/vagrant ]];\
-      do echo "Waiting for /usr/share/kx.as.code/workspace/vagrant file" && sleep 15;\
+      'while [[ ! -f /usr/share/kx.as.code/workspace/gogogo ]];\
+      do echo "Waiting for /usr/share/kx.as.code/workspace/gogogo file" && sleep 15;\
       done'
 
       # Prevent DHCLIENT updating static IP
