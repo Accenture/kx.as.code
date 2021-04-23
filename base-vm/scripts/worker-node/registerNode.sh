@@ -3,7 +3,7 @@
 . /etc/environment
 
 export sharedGitRepositories=/usr/share/kx.as.code/git
-export kubeDir=/usr/share/kx.as.code/workspace
+export installationWorkspace=/usr/share/kx.as.code/workspace
 export kxHomeDir=/usr/share/kx.as.code
 
 # Install nvme-cli if running on host with NVMe block devices (for example on AWS with EBS)
@@ -206,18 +206,18 @@ echo "Waiting for kx-main DNS resolution to function" && sleep 5;         done'
    # Try an alternative. Mostly deprecated and not needed
    if [[ -z ${kxMainIp} ]]; then
     # Read the file dropped by Terraform
-    export kxMainIp=$(cat $kubeDir/kxMainIpAddress)
+    export kxMainIp=$(cat $installationWorkspace/kxMainIpAddress)
   fi
 fi
 
-mkdir -p ${kubeDir}
-chown -R ${vmUser}:${vmUser} ${kubeDir}
+mkdir -p ${installationWorkspace}
+chown -R ${vmUser}:${vmUser} ${installationWorkspace}
 
 if [[ "${virtualizationType}" != "public-cloud" ]]; then
   # Create RSA key for kx.hero user
   mkdir -p /home/${vmUser}/.ssh
   chown -R ${vmUser}:${vmUser} /home/${vmUser}/.ssh
-  chmod 700 $kubeDir/.ssh
+  chmod 700 $installationWorkspace/.ssh
   yes | sudo -u ${vmUser} ssh-keygen -f ssh-keygen -m PEM -t rsa -b 4096 -q -f /home/${vmUser}/.ssh/id_rsa -N ''
 
   # Add key to KX-Main host
@@ -230,15 +230,15 @@ if [[ "${virtualizationType}" != "public-cloud" ]]; then
   sudo cp /home/$vmUser/.ssh/authorized_keys /root/.ssh/
 fi
 # Copy KX.AS.CODE CA certificates from main node and restart docker
-export REMOTE_KX_MAIN_KUBEDIR=$kubeDir
-export REMOTE_KX_MAIN_CERTSDIR=$REMOTE_KX_MAIN_KUBEDIR/certificates
+export REMOTE_KX_MAIN_installationWorkspace=$installationWorkspace
+export REMOTE_KX_MAIN_CERTSDIR=$REMOTE_KX_MAIN_installationWorkspace/certificates
 
 CERTIFICATES="kx_root_ca.pem kx_intermediate_ca.pem"
 
 ## Wait for certificates to be available on KX-Main
 wait-for-certificate() {
-        timeout -s TERM 3000 bash -c 'while [[ ! -f '${kubeDir}'/'${CERTIFICATE}' ]];         do
-        sudo -H -i -u '${vmUser}' bash -c "scp -o StrictHostKeyChecking=no '${vmUser}'@'${kxMainIp}':'${REMOTE_KX_MAIN_CERTSDIR}'/'${CERTIFICATE}' '${kubeDir}'";
+        timeout -s TERM 3000 bash -c 'while [[ ! -f '${installationWorkspace}'/'${CERTIFICATE}' ]];         do
+        sudo -H -i -u '${vmUser}' bash -c "scp -o StrictHostKeyChecking=no '${vmUser}'@'${kxMainIp}':'${REMOTE_KX_MAIN_CERTSDIR}'/'${CERTIFICATE}' '${installationWorkspace}'";
         echo "Waiting for ${0}" && sleep 5;         done'
 }
 
@@ -246,7 +246,7 @@ sudo mkdir -p /usr/share/ca-certificates/kubernetes
 for CERTIFICATE in ${CERTIFICATES}
 do
         wait-for-certificate ${CERTIFICATE}
-        sudo cp ${kubeDir}/${CERTIFICATE} /usr/share/ca-certificates/kubernetes/
+        sudo cp ${installationWorkspace}/${CERTIFICATE} /usr/share/ca-certificates/kubernetes/
         echo "kubernetes/${CERTIFICATE}" | sudo tee -a /etc/ca-certificates.conf
 done
 
@@ -267,9 +267,9 @@ wait-for-url() {
 wait-for-url https://${kxMainIp}:6443/livez
 
 # Kubernetes master is reachable, join the worker node to cluster
-sudo -H -i -u ${vmUser} bash -c "ssh -o StrictHostKeyChecking=no $vmUser@${kxMainIp} 'kubeadm token create --print-join-command 2>/dev/null'" > ${kubeDir}/kubeJoin.sh
-sudo chmod 755 ${kubeDir}/kubeJoin.sh
-sudo ${kubeDir}/kubeJoin.sh
+sudo -H -i -u ${vmUser} bash -c "ssh -o StrictHostKeyChecking=no $vmUser@${kxMainIp} 'kubeadm token create --print-join-command 2>/dev/null'" > ${installationWorkspace}/kubeJoin.sh
+sudo chmod 755 ${installationWorkspace}/kubeJoin.sh
+sudo ${installationWorkspace}/kubeJoin.sh
 
 # Disable the Service After it Ran
 sudo systemctl disable k8s-register-node.service
@@ -324,24 +324,24 @@ echo """
 export vmUser=${vmUser}
 
 echo \"Attempting to download KX Apps from KX-Main\"
-sudo -H -i -u ${vmUser} bash -c 'scp -o StrictHostKeyChecking=no '${vmUser}'@'${kxMainIp}':'${kubeDir}'/docker-kx-*.tar '${kubeDir}'';
+sudo -H -i -u ${vmUser} bash -c 'scp -o StrictHostKeyChecking=no '${vmUser}'@'${kxMainIp}':'${installationWorkspace}'/docker-kx-*.tar '${installationWorkspace}'';
 
-if [ -f ${kubeDir}/docker-kx-docs.tar ]; then
-    docker load -i ${kubeDir}/docker-kx-docs.tar
+if [ -f ${installationWorkspace}/docker-kx-docs.tar ]; then
+    docker load -i ${installationWorkspace}/docker-kx-docs.tar
 fi
 
-if [ -f ${kubeDir}/docker-kx-techradar.tar ]; then
-    docker load -i ${kubeDir}/docker-kx-techradar.tar
+if [ -f ${installationWorkspace}/docker-kx-techradar.tar ]; then
+    docker load -i ${installationWorkspace}/docker-kx-techradar.tar
 fi
 
-if [ -f ${kubeDir}/docker-kx-docs.tar ] && [ -f ${kubeDir}/docker-kx-techradar.tar ]; then
+if [ -f ${installationWorkspace}/docker-kx-docs.tar ] && [ -f ${installationWorkspace}/docker-kx-techradar.tar ]; then
     sudo crontab -r
 fi
 
-""" | sudo tee ${kubeDir}/scpKxTars.sh
+""" | sudo tee ${installationWorkspace}/scpKxTars.sh
 
-sudo chmod 755 ${kubeDir}/scpKxTars.sh
-sudo crontab -l | { cat; echo "* * * * * ${kubeDir}/scpKxTars.sh"; } | sudo crontab -
+sudo chmod 755 ${installationWorkspace}/scpKxTars.sh
+sudo crontab -l | { cat; echo "* * * * * ${installationWorkspace}/scpKxTars.sh"; } | sudo crontab -
 
 # Set default keyboard language
 keyboardLanguages=""
@@ -375,7 +375,7 @@ BACKSPACE=\"guess\"
 # Enable LDAP on worker node
 export ldapDn="dc=kx-as-code,dc=local"
 
-sudo -H -i -u ${vmUser} bash -c "ssh -o StrictHostKeyChecking=no $vmUser@${kxMainIp} 'kubeadm token create --print-join-command 2>/dev/null'" > ${kubeDir}/kubeJoin.sh
+sudo -H -i -u ${vmUser} bash -c "ssh -o StrictHostKeyChecking=no $vmUser@${kxMainIp} 'kubeadm token create --print-join-command 2>/dev/null'" > ${installationWorkspace}/kubeJoin.sh
 
 # Get LdapDN from main node and setup base variables
 ldapDnFull=$(sudo -H -i -u ${vmUser} bash -c "ssh -o StrictHostKeyChecking=no $vmUser@${kxMainIp} 'sudo slapcat | grep dn'")
