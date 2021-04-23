@@ -42,7 +42,7 @@
           ["modifyvm", "{{.Name}}", "--memory", "{{user `memory`}}"],
           ["modifyvm", "{{.Name}}", "--cpus", "{{user `cpus`}}"],
           ["modifyvm", "{{.Name}}", "--clipboard", "bidirectional"],
-          ["sharedfolder", "add", "{{.Name}}", "--name", "KX_Share", "--hostpath", "{{user `host_data_directory`}}", "--automount"],
+          ["sharedfolder", "add", "{{.Name}}", "--name", "KX_Share", "--hostpath", "{{user `host_data_directory`}}", "--automount"]
       ],
       "vboxmanage_post": [
         ["modifyvm", "{{.Name}}", "--nic1", "natnetwork","--natnetwork1","kxascode"]
