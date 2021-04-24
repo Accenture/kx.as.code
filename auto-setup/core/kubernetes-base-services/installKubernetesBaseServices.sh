@@ -24,7 +24,11 @@ else
 fi
 
 # Fix reliance on non existent file: /run/systemd/resolve/resolv.conf
-sudo sed -i '/^\[Service\]/a Environment="KUBELET_EXTRA_ARGS=--resolv-conf=\/etc\/resolv.conf"' /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+sudo sed -i '/^\[Service\]/a Environment="KUBELET_EXTRA_ARGS=--resolv-conf=\/etc\/resolv.conf --node-ip='${mainIpAddress}'"' /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+
+# Restart Kubelet
+sudo systemctl daemon-reload
+sudo systemctl restart kubelet
 
 # Output K8s cluster health
 kubectl cluster-info

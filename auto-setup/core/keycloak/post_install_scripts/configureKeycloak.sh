@@ -22,7 +22,7 @@ do
   # Check if Keyclock is ready to receive requests, else wait and try again
   containerReadyState=$(kubectl get pods -l 'app.kubernetes.io/name=keycloak' -n ${namespace} -o json | jq '.items[].status.containerStatuses[].ready')
   if [[ "${containerReadyState}" == "true" ]]; then
-    kubectl -n ${namespace} exec ${kcPod} -- \
+    kubectl -n ${namespace} exec ${kcPod} --container ${kcContainer} -- \
       ${kcAdmCli} config credentials --server ${kcInternalUrl}/auth --realm master --user admin --password ${vmPassword} --client admin-cli
     break
   else
@@ -31,35 +31,35 @@ do
 done
 
 # Create KX.AS.CODE Realm
-kubectl -n ${namespace} exec ${kcPod} -- \
+kubectl -n ${namespace} exec ${kcPod} --container ${kcContainer} -- \
   ${kcAdmCli} create realms -s realm=${kcRealm} -s enabled=true -o
 
 # Create Admin User in KX.AS.CODE Realm
-kubectl -n ${namespace} exec ${kcPod} -- \
+kubectl -n ${namespace} exec ${kcPod} --container ${kcContainer} -- \
   ${kcBinDir}/add-user-keycloak.sh -r ${kcRealm} -u admin -p ${vmPassword}
 
 # Reload JBoss Instance
-kubectl -n ${namespace} exec ${kcPod} -- \
+kubectl -n ${namespace} exec ${kcPod} --container ${kcContainer} -- \
   /opt/jboss/keycloak/bin/jboss-cli.sh --connect --commands=:reload
 
 # Get credential token in new Realm
-kubectl -n ${namespace} exec ${kcPod} -- \
+kubectl -n ${namespace} exec ${kcPod} --container ${kcContainer} -- \
   ${kcAdmCli} config credentials --server ${kcInternalUrl}/auth --realm ${kcRealm} --user admin --password ${vmPassword} --client admin-cli
 
 # Give new admin user a password
-kubectl -n ${namespace} exec ${kcPod} -- \
+kubectl -n ${namespace} exec ${kcPod} --container ${kcContainer} -- \
   ${kcAdmCli} set-password --realm ${kcRealm} --username admin --new-password ${vmPassword}
 
 # Create Admins Group
-kubectl -n ${namespace} exec ${kcPod} -- \
+kubectl -n ${namespace} exec ${kcPod} --container ${kcContainer} -- \
   ${kcAdmCli} create groups --realm ${kcRealm} -s name=users
 
 # Create Users Group
-kubectl -n ${namespace} exec ${kcPod} -- \
+kubectl -n ${namespace} exec ${kcPod} --container ${kcContainer} -- \
   ${kcAdmCli} create groups --realm ${kcRealm} -s name=admins
 
 # Add Roles to Users Group
-kubectl -n ${namespace} exec ${kcPod} -- \
+kubectl -n ${namespace} exec ${kcPod} --container ${kcContainer} -- \
   ${kcAdmCli} add-roles --realm ${kcRealm} --gname users --cclientid realm-management \
    --rolename query-realms \
    --rolename view-realm \
@@ -73,7 +73,7 @@ kubectl -n ${namespace} exec ${kcPod} -- \
    --rolename view-clients
 
 # Add Roles to Admin Group
-kubectl -n ${namespace} exec ${kcPod} -- \
+kubectl -n ${namespace} exec ${kcPod} --container ${kcContainer} -- \
   ${kcAdmCli} add-roles --realm ${kcRealm} --gname admins --cclientid realm-management \
    --rolename manage-events \
    --rolename manage-identity-providers \
@@ -95,15 +95,15 @@ kubectl -n ${namespace} exec ${kcPod} -- \
    --rolename view-clients
 
 # Set CLI credentials for Realm
-kubectl -n ${namespace} exec ${kcPod} -- \
+kubectl -n ${namespace} exec ${kcPod} --container ${kcContainer} -- \
   ${kcAdmCli} config credentials --server ${kcInternalUrl}/auth --realm ${kcRealm} --user admin --password ${vmPassword} --client admin-cli
 
 # Obtain Realm Id
-kcParentId=$(kubectl -n ${namespace} exec ${kcPod} -- \
+kcParentId=$(kubectl -n ${namespace} exec ${kcPod} --container ${kcContainer} -- \
     ${kcAdmCli} get / --fields id --format csv --noquotes)
 
 # Create LDAP User Federation
-ldapProviderId=$(kubectl -n ${namespace} exec ${kcPod} -- \
+ldapProviderId=$(kubectl -n ${namespace} exec ${kcPod} --container ${kcContainer} -- \
   ${kcAdmCli} create components --realm ${kcRealm} \
   -s name=ldap-provider \
   -s providerId=ldap \
@@ -133,7 +133,7 @@ ldapProviderId=$(kubectl -n ${namespace} exec ${kcPod} -- \
   -i)
 
 # Add Group Mapper
-kubectl -n ${namespace} exec ${kcPod} -- \
+kubectl -n ${namespace} exec ${kcPod} --container ${kcContainer} -- \
   ${kcAdmCli} create components --realm ${kcRealm} \
   -s name=group-ldap-mapper \
   -s providerId=group-ldap-mapper \
@@ -157,11 +157,11 @@ kubectl -n ${namespace} exec ${kcPod} -- \
   -s 'config.membership=["member"]'
 
 # Create Client
-clientId=$(kubectl -n ${namespace} exec ${kcPod} -- \
+clientId=$(kubectl -n ${namespace} exec ${kcPod} --container ${kcContainer} -- \
   ${kcAdmCli} create clients --realm ${kcRealm} -s clientId=kubernetes -s 'redirectUris=["http://localhost:8000","https://kubernetes-dashboard-iam.'${baseDomain}'/oauth2/callback"]' -s publicClient="false" -s enabled=true -i)
 
 # Create protocol mapper
-kubectl -n ${namespace} exec ${kcPod} -- \
+kubectl -n ${namespace} exec ${kcPod} --container ${kcContainer} -- \
   ${kcAdmCli} create clients/${clientId}/protocol-mappers/models \
   --realm ${kcRealm} \
   -s name=groups \

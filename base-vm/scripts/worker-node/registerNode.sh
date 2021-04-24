@@ -284,7 +284,12 @@ sudo ${installationWorkspace}/kubeJoin.sh
 sudo systemctl disable k8s-register-node.service
 
 # Fix reliance on non existent file: /run/systemd/resolve/resolv.conf
-sudo sed -i '/^\[Service\]/a Environment="KUBELET_EXTRA_ARGS=--resolv-conf=\/etc\/resolv.conf"' /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+export nodeIp=$(ip a s ${netDevice} | egrep -o 'inet [0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | cut -d' ' -f2)
+sudo sed -i '/^\[Service\]/a Environment="KUBELET_EXTRA_ARGS=--resolv-conf=\/etc\/resolv.conf --node-ip='${nodeIp}'"' /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+
+# Restart Kubelet
+sudo systemctl daemon-reload
+sudo systemctl restart kubelet
 
 # Setup proxy settings if they exist
 if [[ -n ${httpProxySetting} ]] || [[ -n ${httpsProxySetting} ]]; then
