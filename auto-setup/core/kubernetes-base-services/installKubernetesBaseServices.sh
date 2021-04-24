@@ -7,7 +7,7 @@ if [[ ! ${kubeAdminStatus} ]]; then
     sudo kubeadm config images pull
 
     # Initialization Kube Control Pane
-    sudo kubeadm init --apiserver-advertise-address=${mainIpAddress}
+    sudo kubeadm init --apiserver-advertise-address=${mainIpAddress} --pod-network-cidr=20.96.0.0/12
 
     # Setup KX and root users as Kubernetes Admin
     mkdir -p /root/.kube
