@@ -32,3 +32,5 @@ base-vm/**/config.yaml
 /KX.AS.CODE.iml
 /workspace.code-workspace
 /.idea/
+**/*.vdi
+**/*.vmdk

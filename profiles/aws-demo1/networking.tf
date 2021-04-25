@@ -259,6 +259,54 @@ resource "aws_security_group" "kx-as-code-main_sg" {
   }
 
   ingress {
+    description = "Guacamole Remote Desktop"
+    protocol = "tcp"
+    cidr_blocks = [ aws_subnet.private_one.cidr_block ]
+    from_port = 8098
+    to_port = 8098
+  }
+
+  ingress {
+    description = "Guacamole Remote Desktop"
+    protocol = "tcp"
+    cidr_blocks = [ aws_subnet.private_one.cidr_block ]
+    from_port = 8043
+    to_port = 8043
+  }
+
+  ingress {
+    description = "Postgresql Admin"
+    protocol = "tcp"
+    cidr_blocks = [ aws_subnet.private_one.cidr_block ]
+    from_port = 7043
+    to_port = 7043
+  }
+
+  ingress {
+    description = "LDAP Account Manager"
+    protocol = "tcp"
+    cidr_blocks = [ aws_subnet.private_one.cidr_block ]
+    from_port = 6043
+    to_port = 6043
+  }
+
+  ingress {
+    description = "LDAP Account Manager"
+    protocol = "tcp"
+    cidr_blocks = [ aws_subnet.private_one.cidr_block ]
+    from_port = 5043
+    to_port = 5043
+  }
+
+    ingress {
+    description = "Rabbitmq Admin"
+    protocol = "tcp"
+    cidr_blocks = [ aws_subnet.private_one.cidr_block ]
+    from_port = 4043
+    to_port = 4043
+  }
+
+  ingress {
     description = "NoMachine Remote Desktop"
     protocol = "tcp"
     cidr_blocks = [ aws_subnet.private_one.cidr_block ]
@@ -348,14 +396,6 @@ resource "aws_route53_zone" "kx-as-code" {
   }
 }
 
-resource "aws_route53_record" "wildcard" {
-  zone_id = aws_route53_zone.kx-as-code.zone_id
-  name    = "*.${var.KX_DOMAIN}"
-  type    = "A"
-  ttl     = 300
-  records  = [ var.METALLB_FIRST_IP ]
-}
-
 resource "aws_route53_record" "kx-main" {
   zone_id = aws_route53_zone.kx-as-code.zone_id
   name    = "kx-main.${var.KX_DOMAIN}"
@@ -373,3 +413,10 @@ resource "aws_route53_record" "kx-worker" {
   records = [ element(aws_instance.kx-worker.*.private_ip, count.index) ]
 }
 
+resource "aws_route53_record" "wildcard" {
+  zone_id = aws_route53_zone.kx-as-code.zone_id
+  name    = "*.${var.KX_DOMAIN}"
+  type    = "CNAME"
+  ttl     = 300
+  records  = [ "kx-main.${var.KX_DOMAIN}" ]
+}

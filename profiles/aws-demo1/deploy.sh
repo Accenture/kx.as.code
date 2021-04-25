@@ -61,27 +61,52 @@ fi
 
   id_rsa=$(<.ssh/id_rsa)
   id_rsa_pub=$(<.ssh/id_rsa.pub)
-  autoSetup_json=$(<./autoSetup.json)
+  profile_config_json=$(<./profile-config.json)
 
   echo "********** DEBUG ************"
   echo $id_rsa
   echo $id_rsa_pub
 
-  # Create Init KX-Main TPL file with new SSH keys
-  template=$(<init-main.tpl_template)
-  echo "${template//---ID_RSA_PLACEHOLDER---/$id_rsa}" > init-main.tpl
-  template=$(<init-main.tpl)
-  echo "${template//---ID_RSA_PUB_PLACEHOLDER---/$id_rsa_pub}" > init-main.tpl
-  template=$(<init-main.tpl)
-  echo "${template//---AUTO_SETUP_JSON_PLACEHOLDER---/$autoSetup_json}" > init-main.tpl
 
-  # Create Init KX-Worker TPL file with new SSH keys
-  template=$(<init-worker.tpl_template)
-  echo "${template//---ID_RSA_PLACEHOLDER---/$id_rsa}" > init-worker.tpl
-  template=$(<init-worker.tpl)
-  echo "${template//---ID_RSA_PUB_PLACEHOLDER---/$id_rsa_pub}" > init-worker.tpl
-  template=$(<init-worker.tpl)
-  echo "${template//---AUTO_SETUP_JSON_PLACEHOLDER---/$autoSetup_json}" > init-worker.tpl
+nodeTypes="main worker"
+
+for nodeType in ${nodeTypes}
+do
+  # Create Init TPL files with new SSH keys
+  template=$(<init-main.tpl_template)
+  echo "${template//---ID_RSA_PLACEHOLDER---/$id_rsa}" > init-${nodeType}.tpl
+  template=$(<init-main.tpl)
+  echo "${template//---ID_RSA_PUB_PLACEHOLDER---/$id_rsa_pub}" > init-${nodeType}.tpl
+  template=$(<init-main.tpl)
+  echo "${template//---PROFILE_CONFIG_JSON_PLACEHOLDER---/$profile_config_json}" > init-${nodeType}.tpl
+
+
+if [ -f ./users.json ]; then
+
+echo """
+echo '''
+$(cat ./users.json)
+''' | sudo tee /usr/share/kx.as.code/workspace/users.json
+""" | tee -a init-${nodeType}.tpl
+
+fi
+
+aqJsonFiles=$(find . -name "aq*.json")
+echo $aqJsonFiles
+
+for aqJsonFile in ${aqJsonFiles}
+do
+echo "$(basename $aqJsonFile)"
+echo """
+echo '''
+$(cat ${aqJsonFile})
+''' | sudo tee /usr/share/kx.as.code/workspace/$(basename $aqJsonFile)
+""" | tee -a init-${nodeType}.tpl
+done
+
+echo 'echo "A simple flag file to let the poller know provisioning can start" | tee /usr/share/kx.as.code/workspace/gogogo' | tee -a init-${nodeType}.tpl
+
+done
 
 # Deploy KX.AS.CODE to AWS
 terraform init

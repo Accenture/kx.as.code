@@ -17,5 +17,7 @@ sudo chmod 400 /home/kx.hero/.ssh/*
 sudo chown -R kx.hero:kx.hero /home/kx.hero/.ssh
 
 echo '''
----AUTO_SETUP_JSON_PLACEHOLDER---
-''' | sudo tee /usr/share/kx.as.code/Kubernetes/autoSetup.json
+---PROFILE_CONFIG_JSON_PLACEHOLDER---
+''' | sudo tee /usr/share/kx.as.code/workspace/profile-config.json
+
+
