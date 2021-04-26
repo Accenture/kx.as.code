@@ -331,10 +331,7 @@
     ],
     "execute_command": ["bash", "-c", "{{.Vars}} {{.Script}}"],
     "only_on": ["darwin","linux"],
-    "scripts": [
-      "../../../scripts/post-processing/create-metadata-json.sh",
-      "../../../scripts/post-processing/add-vagrant-box.sh"
-    ]
+    "script": "../../../scripts/post-processing/create-metadata-json.sh"
   }
 ],
   "provisioners": [

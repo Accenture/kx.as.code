@@ -66,7 +66,7 @@
       "post_shutdown_delay": "30s",
       "guest_additions_url": "{{user `guest_additions_url`}}",
       "guest_additions_sha256": "{{user `guest_additions_checksum`}}",
-      "guest_additions_path": "/home/vagrant/VBoxGuestAdditions_{{.Version}}.iso",
+      "guest_additions_path": "/home/{{user `base_image_ssh_user`}}/VBoxGuestAdditions_{{.Version}}.iso",
       "guest_additions_mode": "upload",
       "virtualbox_version_file": "VBoxVersion.txt"
   },
@@ -379,7 +379,7 @@
         "../../../scripts/base/network.sh"
       ],
       "type": "shell",
-      "pause_before": "120s",
+      "pause_before": "60s",
       "start_retry_timeout": "15m",
       "expect_disconnect": "true"
     },
@@ -415,7 +415,7 @@
          "../../../scripts/common/calico.sh"
       ],
        "type": "shell",
-       "pause_before": "120s",
+       "pause_before": "60s",
        "start_retry_timeout": "15m",
        "expect_disconnect": "true"
      },
@@ -432,7 +432,7 @@
          "../../../scripts/worker-node/cleanup.sh"
        ],
        "type": "shell",
-       "pause_before": "120s",
+       "pause_before": "60s",
        "start_retry_timeout": "15m",
        "expect_disconnect": "true"
      }
