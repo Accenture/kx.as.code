@@ -319,10 +319,7 @@
       "VM_SUFFIX={{user `vm_suffix`}}"
     ],
     "only_on": ["darwin","linux"],
-    "scripts": [
-      "../../../scripts/post-processing/create-metadata-json.sh",
-      "../../../scripts/post-processing/add-vagrant-box.sh"
-    ]
+    "scripts": "../../../scripts/post-processing/create-metadata-json.sh"
   }
 ],
   "provisioners": [
