@@ -212,10 +212,10 @@ echo "Waiting for kx-main DNS resolution to function" && sleep 5;         done'
  if [ "${baseIpType}" == "dynamic" ]; then
    # First try to get ip from DNS
    kxMainIp=$(dig +short kx-main.${baseDomain})
-   # Try an alternative. Mostly deprecated and not needed
+   # Try an alternative. This is usually necessary when getting an IP address from DHCP and there is no DNS (AWS OK with Route53, local virtualizations, NOK)
    if [[ -z ${kxMainIp} ]]; then
-    # Read the file dropped by Terraform
-    export kxMainIp=$(cat $installationWorkspace/kxMainIpAddress)
+    # Read the file dropped by Terraform or Vagrant
+    export kxMainIp=$(cat /var/tmp/kx.as.code_main-ip-address)
   fi
 fi
 
