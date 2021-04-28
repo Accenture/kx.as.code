@@ -1,7 +1,30 @@
-#!/bin/bash
+#!/bin/bash -x
 
-if [[ ! -f ./config.json ]] || [[ ! -f ./autoSetup.json ]]; then
-  echo "One of the config files needed to start KX.AS.CODE on AWS is missing. Please ensure that both config.json and autoSetup.json are present in this AWS profile directory and try again"
+# Get needed capacity for GlusterFS volumes disk size
+export TF_VAR_GLUSTERFS_KUBE_VOLUMES_DISK_SIZE=$(cat ./profile-config.json | jq -r '.config.glusterFsDiskSize')
+
+# Calculate needed local disk capacity
+export number1gbVolumes=$(cat ./profile-config.json | jq -r '.config.local_volumes.one_gb')
+export number5gbVolumes=$(cat ./profile-config.json | jq -r '.config.local_volumes.five_gb')
+export number10gbVolumes=$(cat ./profile-config.json | jq -r '.config.local_volumes.ten_gb')
+export number30gbVolumes=$(cat ./profile-config.json | jq -r '.config.local_volumes.thirty_gb')
+export number50gbVolumes=$(cat ./profile-config.json | jq -r '.config.local_volumes.fifty_gb')
+export TF_VAR_LOCAL_KUBE_VOLUMES_DISK_SIZE=$(( ( ${number1gbVolumes} * 1 ) + ( ${number5gbVolumes} * 5 ) + ( ${number10gbVolumes} * 10 ) + ( ${number30gbVolumes} * 30 ) + ( ${number50gbVolumes} * 50 ) + 1 ))
+
+# Get instance types
+export TF_VAR_MAIN_INSTANCE_TYPE=$(cat ./config.json | jq -r '.config.instance_types.main')
+if [[ -z "${TF_VAR_MAIN_INSTANCE_TYPE}" ]]; then
+  echo "- [ERROR] MAIN_INSTANCE_TYPE not defined in ./config.json"
+  error="true"
+fi
+export TF_VAR_WORKER_INSTANCE_TYPE=$(cat ./config.json | jq -r '.config.instance_types.worker')
+if [[ -z "${TF_VAR_WORKER_INSTANCE_TYPE}" ]]; then
+  echo "- [ERROR] WORKER_INSTANCE_TYPE not defined in ./config.json"
+  error="true"
+fi
+
+if [[ ! -f ./config.json ]] || [[ ! -f ./profile-config.json ]]; then
+  echo "One of the config files needed to start KX.AS.CODE on AWS is missing. Please ensure that both config.json and profile-config.json are present in this AWS profile directory and try again"
   exit 1
 fi
 
@@ -95,14 +118,14 @@ if [[ -z "${TF_VAR_VPN_CLIENT_CERT_ARN}" ]]; then
   error="true"
 fi
 
-export TF_VAR_KX_ENV_PREFIX=$(cat ./autoSetup.json | jq -r '.config.environmentPrefix')
+export TF_VAR_KX_ENV_PREFIX=$(cat ./profile-config.json | jq -r '.config.environmentPrefix')
 if [[ -z "${TF_VAR_KX_ENV_PREFIX}" ]]; then
-  echo "- [WARNING] Optional parameter KX_ENV_PREFIX not defined as '.config.environmentPrefix' in ./autoSetup.json"
+  echo "- [WARNING] Optional parameter KX_ENV_PREFIX not defined as '.config.environmentPrefix' in ./profile-config.json"
 fi
 
-export TF_VAR_KX_DOMAIN=$(cat ./autoSetup.json | jq -r '.config.baseDomain')
+export TF_VAR_KX_DOMAIN=$(cat ./profile-config.json | jq -r '.config.baseDomain')
 if [[ -z "${TF_VAR_KX_DOMAIN}" ]]; then
-  echo "- [ERROR] KX_DOMAIN not defined as '.config.baseDomain' in ./autoSetup.json"
+  echo "- [ERROR] KX_DOMAIN not defined as '.config.baseDomain' in ./profile-config.json"
   error="true"
 fi
 

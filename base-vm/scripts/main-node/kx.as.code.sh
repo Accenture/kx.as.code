@@ -2,6 +2,7 @@
 
 export SKELDIR=/usr/share/kx.as.code/skel
 export SHARED_GIT_REPOSITORIES=/usr/share/kx.as.code/git
+export INSTALLATION_WORKSPACE=/usr/share/kx.as.code/workspace
 
 # UrlEncode GIT password in case of special characters
 if [[ ! -z $GITHUB_TOKEN ]]; then
@@ -165,7 +166,7 @@ After=dnsmasq
 [Service]
 User=0
 Environment=VM_USER=${VM_USER}
-Environment=KUBEDIR=/home/${VM_USER}/Kubernetes
+Environment=KUBEDIR=${INSTALLATION_WORKSPACE}
 Type=forking
 ExecStart=/usr/share/kx.as.code/git/kx.as.code/auto-setup/pollActionQueue.sh
 TimeoutSec=infinity
@@ -220,7 +221,7 @@ xfconf-query --create --channel xfce4-panel --property /panels/panel-2/length --
 xfconf-query --create --channel xfce4-desktop --property /desktop-icons/file-icons/show-filesystem --type bool --set false
 xfconf-query --create --channel xfce4-desktop --property /desktop-icons/file-icons/show-home --type bool --set true
 xfconf-query --create --channel xfce4-desktop --property /desktop-icons/file-icons/show-trash --type bool --set false
-xfconf-query --create --channel xfce4-desktop --property /desktop-icons/file-icons/show-device-removable --type bool --set false
+xfconf-query --create --channel xfce4-desktop --property /desktop-icons/file-icons/show-unknown-removable --type bool --set false
 xfconf-query --create --channel xfce4-power-manager --property /xfce4-power-manager/dpms-enabled --type bool --set false
 xfconf-query --create --channel xfce4-power-manager --property /xfce4-power-manager/blank-on-ac --type int --set 0
 xfconf-query --create --channel xfce4-power-manager --property /xfce4-power-manager/blank-on-battery --type int --set 0
@@ -263,6 +264,11 @@ shortcutsDirectory="/usr/share/kx.as.code/DevOps Tools"
 sudo mkdir -p "${shortcutsDirectory}"
 sudo chmod a+rwx "${shortcutsDirectory}"
 sudo ln -s "${shortcutsDirectory}" /home/$VM_USER/Desktop/
+
+adminShortcutsDirectory="/usr/share/kx.as.code/Admin Tools"
+sudo mkdir -p "${adminShortcutsDirectory}"
+sudo chmod a+rwx "${adminShortcutsDirectory}"
+sudo ln -s "${adminShortcutsDirectory}" /home/$VM_USER/Desktop/
 
 apiDocsDirectory="/usr/share/kx.as.code/API Docs"
 sudo sudo mkdir -p "${apiDocsDirectory}"
@@ -393,6 +399,6 @@ EOF"
 sudo chmod 755 /home/$VM_USER/Desktop/*.desktop
 
 # Create Kubernetes logging and custom scripts directory
-sudo mkdir -p /usr/share/kx.as.code/Kubernetes
-sudo chown $VM_USER:$VM_USER /usr/share/kx.as.code/Kubernetes
-sudo chmod 755 /usr/share/kx.as.code/Kubernetes
+sudo mkdir -p ${INSTALLATION_WORKSPACE}
+sudo chown $VM_USER:$VM_USER ${INSTALLATION_WORKSPACE}
+sudo chmod 755 ${INSTALLATION_WORKSPACE}

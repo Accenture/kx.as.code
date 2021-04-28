@@ -42,9 +42,7 @@
           ["modifyvm", "{{.Name}}", "--memory", "{{user `memory`}}"],
           ["modifyvm", "{{.Name}}", "--cpus", "{{user `cpus`}}"],
           ["modifyvm", "{{.Name}}", "--clipboard", "bidirectional"],
-          ["sharedfolder", "add", "{{.Name}}", "--name", "KX_Share", "--hostpath", "{{user `host_data_directory`}}", "--automount"],
-          ["createhd", "--format", "VDI", "--filename", "../../../output-worker{{user `vm_suffix`}}/virtualbox-{{user `version`}}/{{.Name}}-local-k8s-storage.vdi", "--size", "104448" ],
-          ["storageattach", "{{.Name}}", "--storagectl", "SATA Controller", "--port", "1", "--device","0","--type", "hdd", "--medium", "../../../output-worker{{user `vm_suffix`}}/virtualbox-{{user `version`}}/{{.Name}}-local-k8s-storage.vdi" ]
+          ["sharedfolder", "add", "{{.Name}}", "--name", "KX_Share", "--hostpath", "{{user `host_data_directory`}}", "--automount"]
       ],
       "vboxmanage_post": [
         ["modifyvm", "{{.Name}}", "--nic1", "natnetwork","--natnetwork1","kxascode"]
@@ -73,45 +71,6 @@
       "virtualbox_version_file": "VBoxVersion.txt"
   },
   {
-      "type": "parallels-iso",
-      "name": "{{user `vm_name`}}-parallels",
-      "vm_name": "{{user `vm_name`}}{{user `vm_suffix`}}-{{user `version`}}",
-      "output_directory": "../../../output-worker{{user `vm_suffix`}}/parallels-{{user `version`}}",
-      "boot_wait": "1s",
-      "boot_command": "{{user `boot_command`}}{{.HTTPIP}}:{{.HTTPPort}}/{{user `preseed_path`}}<wait> , --- <enter>",
-      "disk_size": "{{user `disk_size`}}",
-      "hard_drive_interface": "sata",
-      "prlctl": [
-        ["set", "{{.Name}}", "--memsize", "{{user `memory`}}"],
-        ["set", "{{.Name}}", "--cpus", "{{user `cpus`}}"],
-        ["set", "{{.Name}}", "--distribution", "{{user `parallels_guest_os_type`}}"],
-        ["set", "{{.Name}}", "--videosize", "{{user `video_memory`}}"],
-        ["set", "{{.Name}}", "--3d-accelerate", "highest"],
-        ["set", "{{.Name}}", "--high-resolution", "off"],
-        ["set", "{{.Name}}", "--high-resolution-in-guest", "off"],
-        ["set", "{{.Name}}", "--auto-share-camera", "off"],
-        ["set", "{{.Name}}", "--auto-share-bluetooth", "off"],
-        ["set", "{{.Name}}", "--on-window-close", "keep-running"],
-        ["set", "{{.Name}}", "--startup-view", "same"],
-        ["set", "{{.Name}}", "--on-shutdown", "close"],
-        ["set", "{{.Name}}", "--shf-host", "on"],
-        ["set", "{{.Name}}", "--shf-host-add", "KX_Share", "--path", "{{user `host_data_directory`}}"]
-      ],
-      "guest_os_type": "{{user `parallels_guest_os_type`}}",
-      "http_directory": "http",
-      "iso_urls": [
-        "{{user `iso_path`}}/{{user `iso_file`}}",
-        "{{user `iso_url`}}"
-      ],
-      "iso_checksum": "{{user `iso_checksum_type`}}:{{user `iso_checksum`}}",
-      "ssh_username": "vagrant",
-      "ssh_password": "vagrant",
-      "ssh_port": 22,
-      "ssh_wait_timeout": "3600s",
-      "shutdown_command": "{{user `shutdown_command`}}",
-      "parallels_tools_flavor": "{{user `parallels_tools_flavor`}}"
-  },
-  {
     "type": "vmware-iso",
     "name": "{{user `vm_name`}}-vmware-desktop",
     "vm_name": "{{user `vm_name`}}{{user `vm_suffix`}}-{{user `version`}}",
@@ -136,9 +95,6 @@
       "<enter><wait>"
     ],
     "disk_size": "{{user `disk_size`}}",
-    "disk_additional_size": [
-      "107520"
-    ],
     "vmx_data": {
       "numvcpus": "{{user `cpus`}}",
       "memsize": "{{user `memory`}}",
@@ -273,17 +229,6 @@
     },
     {
       "keep_input_artifact": true,
-      "output": "../../../boxes/{{.Provider}}-{{user `version`}}/{{user `vm_name`}}{{user `vm_suffix`}}-{{user `version`}}.box",
-      "type": "vagrant",
-      "vagrantfile_template": "../../../boxes/kx.as.code-worker-parallels.Vagrantfile",
-      "only": ["{{user `vm_name`}}-parallels"],
-      "include": [
-          "../../../boxes/parallels-{{user `version`}}/info.json",
-          "{{user `vm_name`}}{{user `vm_suffix`}}-{{user `version`}}_manifest.json"
-      ]
-    },
-    {
-      "keep_input_artifact": true,
       "output": "../../../boxes/vmware-desktop-{{user `version`}}/{{user `vm_name`}}{{user `vm_suffix`}}-{{user `version`}}.box",
       "type": "vagrant",
       "vagrantfile_template": "../../../boxes/kx.as.code-worker-vmware.Vagrantfile",
@@ -361,21 +306,11 @@
       "expect_disconnect": "true"
     },
     {
-      "type": "file",
-      "source": "../../../../auto-setup/autoSetup.json",
-      "destination": "/home/vagrant/autoSetup.json"
-    },
-    {
       "environment_vars": [
           "VM_USER={{user `vm_user`}}"
       ],
       "script":"../../../scripts/base/virtualbox.sh",
       "only": ["{{user `vm_name`}}-virtualbox"],
-      "type": "shell"
-    },
-    {
-      "script":"../../../scripts/base/parallels.sh",
-      "only": ["{{user `vm_name`}}-parallels"],
       "type": "shell"
     },
     {
@@ -480,8 +415,6 @@
       "guest_additions_checksum": "904432eb331d7ae517afaa4e4304e6492b7947b46ecb8267de7ef792c4921b4c",
       "memory": "8192",
       "no_proxy": "{{env `no_proxy`}}",
-      "parallels_guest_os_type": "linux-2.6",
-      "parallels_tools_flavor": "lin",
       "preseed_path": "preseed.cfg",
       "shutdown_command": "echo 'vagrant' | sudo -Srm -rf shutdown -P now",
       "ssh_fullname": "KX Hero",

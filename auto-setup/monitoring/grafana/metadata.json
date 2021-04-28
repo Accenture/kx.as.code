@@ -4,14 +4,13 @@
     "installation_type": "helm",
     "installation_group_folder": "monitoring",
     "environment_variables": {
-        "grafanaVersion": "7.1.5"
+        "grafanaVersion": "7.5.4"
     },
     "helm_params": {
         "repository_url": "",
         "repository_name": "stable/grafana",
         "helm_version": "",
         "set_key_values": [
-            "image.repository={{dockerRegistryDomain}}/devops/grafana",
             "image.tag={{grafanaVersion}}",
             "ingress.enabled=true",
             "ingress.hosts[0]={{componentName}}.{{baseDomain}}",
@@ -94,7 +93,7 @@
     "pre_install_scripts": [
         "getMinIoAccessKey.sh",
         "createAdminCredentialsSecret.sh",
-        "rebuildDockerImage.sh",
+        "uploadCaConfigMap.sh",
         "createOauthIntegration.sh",
         "getMattermostApplicationId.sh"
     ],

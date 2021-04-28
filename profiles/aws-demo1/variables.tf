@@ -15,3 +15,7 @@ variable "VPN_SERVER_CERT_ARN" {}
 variable "VPN_CLIENT_CERT_ARN" {}
 variable "KX_DOMAIN" {}
 variable "NUM_KX_WORKER_NODES" {}
+variable "LOCAL_KUBE_VOLUMES_DISK_SIZE" {}
+variable "GLUSTERFS_KUBE_VOLUMES_DISK_SIZE" {}
+variable "MAIN_INSTANCE_TYPE" {}
+variable "WORKER_INSTANCE_TYPE" {}

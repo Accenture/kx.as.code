@@ -3,52 +3,45 @@
 . /etc/environment
 
 export sharedGitRepositories=/usr/share/kx.as.code/git
-export kubeDir=/usr/share/kx.as.code/Kubernetes
+export installationWorkspace=/usr/share/kx.as.code/workspace
 export kxHomeDir=/usr/share/kx.as.code
+
+# Check profile-config.json file is present before executing script
+wait-for-file() {
+        timeout -s TERM 6000 bash -c \
+        'while [[ ! -f ${0} ]];\
+        do echo "Waiting for ${0} file" && sleep 15;\
+        done' ${1}
+}
+wait-for-file ${installationWorkspace}/profile-config.json
 
 # Install nvme-cli if running on host with NVMe block devices (for example on AWS with EBS)
 sudo lsblk -i -o kname,mountpoint,fstype,size,maj:min,name,state,rm,rota,ro,type,label,model,serial
-nvme_cli_needed=$(df -h | grep "nvme")
-if [[ -n ${nvme_cli_needed} ]]; then
-  # For AWS
-  sudo apt install -y nvme-cli lvm2
-  export partition="p1"
-else
-  export partition="1"
-fi
-
-drives=$(lsblk -i -o kname,mountpoint,fstype,size,type | grep disk | awk {'print $1'})
-for drive in ${drives}
-do
-  partitions=$(lsblk -i -o kname,mountpoint,fstype,size,type | grep ${drive} | grep part)
-  if [[ -z ${partitions} ]]; then
-    export driveB="${drive}"
-    break
-  fi
-done
-
-sudo mkdir -p ${kxHomeDir}/.config
-echo "${driveB}" | sudo tee ${kxHomeDir}/.config/driveB
-cat ${kxHomeDir}/.config/driveB
-
-TIMESTAMP=$(date "+%Y-%m-%d_%H%M%S")
-# Define base variables
-export vmPassword=$(cat ${kxHomeDir}/.config/.user.cred)
-export installationWorkspace=$kubeDir
-export autoSetupHome=$sharedGitRepositories/kx.as.code/auto-setup
-
-# Check autoSetup.json file is present before starting script
-timeout -s TERM 6000 bash -c \
-'while [[ ! -f '${installationWorkspace}'/autoSetup.json ]];\
-do echo "Waiting for '${installationWorkspace}'/autoSetup.json file" && sleep 15;\
-done'
 
 # Get number of local volumes to pre-provision
-export number1gbVolumes=$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.local_volumes.one_gb')
-export number5gbVolumes=$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.local_volumes.five_gb')
-export number10gbVolumes=$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.local_volumes.ten_gb')
-export number30gbVolumes=$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.local_volumes.thirty_gb')
-export number50gbVolumes=$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.local_volumes.fifty_gb')
+export number1gbVolumes=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.local_volumes.one_gb')
+export number5gbVolumes=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.local_volumes.five_gb')
+export number10gbVolumes=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.local_volumes.ten_gb')
+export number30gbVolumes=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.local_volumes.thirty_gb')
+export number50gbVolumes=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.local_volumes.fifty_gb')
+
+# Calculate total needed disk size (should match the value the VM was provisioned with)
+export localKubeVolumesDiskSize=$(( ( ${number1gbVolumes} * 1 ) + ( ${number5gbVolumes} * 5 ) + ( ${number10gbVolumes} * 10 ) + ( ${number30gbVolumes} * 30 ) + ( ${number50gbVolumes} * 50 ) + 1 ))
+
+# Install NVME CLI if needed, for example, for AWS
+nvme_cli_needed=$(df -h | grep "nvme")
+if [[ -n ${nvme_cli_needed} ]]; then
+  sudo apt install -y nvme-cli lvm2
+fi
+
+# Determine Drive B (Local K8s Volumes Storage)
+driveB=$(lsblk -o NAME,FSTYPE,SIZE -dsn -J | jq -r '.[] | .[] | select(.fstype==null) | select(.size=="'${localKubeVolumesDiskSize}'G") | .name')
+
+log_error "An available unpartitioned drive could not be found that matches the needed capacity of ${localKubeVolumesDiskSize}G. This is calculated from all required local volumes defined in profile-config.json + 1GB"
+
+
+echo "${driveB}" | sudo tee /usr/share/kx.as.code/.config/driveB
+cat /usr/share/kx.as.code/.config/driveB
 
 # Check logical partitions
 sudo lvs
@@ -58,8 +51,11 @@ sudo lsblk
 # Create full partition on /dev/${driveB}
 echo 'type=83' | sudo sfdisk /dev/${driveB}
 
-sudo pvcreate /dev/${driveB}${partition}
-sudo vgcreate k8s_local_vol_group /dev/${driveB}${partition}
+# Get partition name
+driveB_Partition=$(lsblk -o NAME,FSTYPE,SIZE -J | jq -r '.[] | .[]  | select(.name=="'${driveB}'") | .children[].name')
+
+sudo pvcreate /dev/${driveB_Partition}
+sudo vgcreate k8s_local_vol_group /dev/${driveB_Partition}
 
 BASE_K8S_LOCAL_VOLUMES_DIR=/mnt/k8s_local_volumes
 
@@ -98,10 +94,10 @@ sudo lsblk
 
 cd ${installationWorkspace}
 
-# Get configs from autoSetup.json
-export virtualizationType=$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.virtualizationType')
+# Get configs from profile-config.json
+export virtualizationType=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.virtualizationType')
 
-# Determine which NIC to bind to, to avoid binding to interal VirtualBox NAT NICs for example, where all hosts have the same IP - 10.0.2.15
+# Determine which NIC to bind to, to avoid binding to internal VirtualBox NAT NICs for example, where all hosts have the same IP - 10.0.2.15
 export nicList=$(nmcli device show | grep -E 'enp|ens' | grep 'GENERAL.DEVICE' | awk '{print $2}')
 export ipsToExclude="10.0.2.15"   # IP addresses not to configure with static IP. For example, default Virtualbox IP 10.0.2.15
 export nicExclusions=""
@@ -126,39 +122,45 @@ done
 echo "NIC Exclusions: ${nicExclusions}"
 echo "NIC to use: ${netDevice}"
 
-export environmentPrefix=$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.environmentPrefix')
+export environmentPrefix=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.environmentPrefix')
 if [ -z ${environmentPrefix} ]; then
-    export baseDomain="$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.baseDomain')"
+    export baseDomain="$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.baseDomain')"
 else
-    export baseDomain="${environmentPrefix}.$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.baseDomain')"
+    export baseDomain="${environmentPrefix}.$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.baseDomain')"
 fi
-export defaultKeyboardLanguage=$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.defaultKeyboardLanguage')
-export baseUser=$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.baseUser')
-export basePassword=$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.basePassword')
-export baseIpType=$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.baseIpType')
-export baseIpRangeStart=$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.baseIpRangeStart')
-export baseIpRangeEnd=$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.baseIpRangeEnd')
+export defaultKeyboardLanguage=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.defaultKeyboardLanguage')
+export baseUser=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.baseUser')
+export basePassword=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.basePassword')
+export baseIpType=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.baseIpType')
+export baseIpRangeStart=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.baseIpRangeStart')
+export baseIpRangeEnd=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.baseIpRangeEnd')
 
 # Get proxy settings
-export httpProxySetting=$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.proxy_settings.http_proxy')
-export httpsProxySetting=$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.proxy_settings.https_proxy')
-export noProxySetting=$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.proxy_settings.no_proxy')
+export httpProxySetting=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.proxy_settings.http_proxy')
+export httpsProxySetting=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.proxy_settings.https_proxy')
+export noProxySetting=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.proxy_settings.no_proxy')
 
 # Get fixed IPs if defined
 if [ "${baseIpType}" == "static" ]; then
-  export fixedIpHosts=$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.staticNetworkSetup.baseFixedIpAddresses | keys[]')
+  export fixedIpHosts=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.staticNetworkSetup.baseFixedIpAddresses | keys[]')
   for fixIpHost in ${fixedIpHosts}
   do
       fixIpHostVariableName=$(echo ${fixIpHost} | sed 's/-/__/g')
-      export ${fixIpHostVariableName}_IpAddress="$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.staticNetworkSetup.baseFixedIpAddresses."'${fixIpHost}'"')"
+      export ${fixIpHostVariableName}_IpAddress="$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.staticNetworkSetup.baseFixedIpAddresses."'${fixIpHost}'"')"
   done
-  export fixedNicConfigGateway=$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.staticNetworkSetup.gateway')
-  export fixedNicConfigDns1=$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.staticNetworkSetup.dns1')
-  export fixedNicConfigDns2=$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.staticNetworkSetup.dns2')
+  export fixedNicConfigGateway=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.staticNetworkSetup.gateway')
+  export fixedNicConfigDns1=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.staticNetworkSetup.dns1')
+  export fixedNicConfigDns2=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.staticNetworkSetup.dns2')
 fi
 
 if [[ "${baseIpType}" == "static" ]]; then
   if [[ -z "$(cat /etc/resolv.conf | grep \\"${fixedNicConfigDns1}\\")" ]]; then
+
+      # Wait for last Vagrant or Terraform shell action to complete before changing network settings
+      timeout -s TERM 6000 bash -c \
+      'while [[ ! -f /usr/share/kx.as.code/workspace/gogogo ]];\
+      do echo "Waiting for /usr/share/kx.as.code/workspace/gogogo file" && sleep 15;\
+      done'
 
       # Prevent DHCLIENT updating static IP
       echo "supersede domain-name-servers ${fixedNicConfigDns1}, ${fixedNicConfigDns2};" | sudo tee -a /etc/dhcp/dhclient.conf
@@ -177,8 +179,8 @@ if [[ "${baseIpType}" == "static" ]]; then
 
       # Update DNS Entry for hosts if ip type set to static
       if [ "${baseIpType}" == "static" ]; then
-          export kxMainIp="$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.staticNetworkSetup.baseFixedIpAddresses."kx-main"')"
-          export kxWorkerIp="$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.staticNetworkSetup.baseFixedIpAddresses."'$(hostname)'"')"
+          export kxMainIp="$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.staticNetworkSetup.baseFixedIpAddresses."kx-main"')"
+          export kxWorkerIp="$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.staticNetworkSetup.baseFixedIpAddresses."'$(hostname)'"')"
       fi
 
       # Create resolv.conf for desktop user with for resolving local domain with DNSMASQ
@@ -200,25 +202,31 @@ if [[ "${baseIpType}" == "static" ]]; then
   fi
 fi
 
-# Try to get KX-Main IP address via a lookup if baseIpType is set to dynamic
- if [ "${baseIpType}" == "dynamic" ]; then
-   # Read the file dropped by Terraform
-  export kxMainIp=$(cat $kubeDir/kxMainIpAddress)
-fi
-
 # Wait until network and DNS resolution is back up. Also need to wait for kx-main, in case the worker node comes up first
 timeout -s TERM 3000 bash -c 'while [[ "$rc" != "0" ]];         do
 nslookup kx-main.'${baseDomain}'; rc=$?;
 echo "Waiting for kx-main DNS resolution to function" && sleep 5;         done'
 
-mkdir -p ${$kubeDir}
-chown -R ${vmUser}:${vmUser} ${kubeDir}
 
-if [[ "${virtualizationType}" != "aws" ]]; then
+# Try to get KX-Main IP address via a lookup if baseIpType is set to dynamic
+ if [ "${baseIpType}" == "dynamic" ]; then
+   # First try to get ip from DNS
+   kxMainIp=$(dig +short kx-main.${baseDomain})
+   # Try an alternative. Mostly deprecated and not needed
+   if [[ -z ${kxMainIp} ]]; then
+    # Read the file dropped by Terraform
+    export kxMainIp=$(cat $installationWorkspace/kxMainIpAddress)
+  fi
+fi
+
+mkdir -p ${installationWorkspace}
+chown -R ${vmUser}:${vmUser} ${installationWorkspace}
+
+if [[ "${virtualizationType}" != "public-cloud" ]]; then
   # Create RSA key for kx.hero user
   mkdir -p /home/${vmUser}/.ssh
   chown -R ${vmUser}:${vmUser} /home/${vmUser}/.ssh
-  chmod 700 $kubeDir/.ssh
+  chmod 700 $installationWorkspace/.ssh
   yes | sudo -u ${vmUser} ssh-keygen -f ssh-keygen -m PEM -t rsa -b 4096 -q -f /home/${vmUser}/.ssh/id_rsa -N ''
 
   # Add key to KX-Main host
@@ -231,15 +239,15 @@ if [[ "${virtualizationType}" != "aws" ]]; then
   sudo cp /home/$vmUser/.ssh/authorized_keys /root/.ssh/
 fi
 # Copy KX.AS.CODE CA certificates from main node and restart docker
-export REMOTE_KX_MAIN_KUBEDIR=$kubeDir
-export REMOTE_KX_MAIN_CERTSDIR=$REMOTE_KX_MAIN_KUBEDIR/certificates
+export REMOTE_KX_MAIN_installationWorkspace=$installationWorkspace
+export REMOTE_KX_MAIN_CERTSDIR=$REMOTE_KX_MAIN_installationWorkspace/certificates
 
 CERTIFICATES="kx_root_ca.pem kx_intermediate_ca.pem"
 
 ## Wait for certificates to be available on KX-Main
 wait-for-certificate() {
-        timeout -s TERM 3000 bash -c 'while [[ ! -f '${kubeDir}'/'${CERTIFICATE}' ]];         do
-        sudo -H -i -u '${vmUser}' bash -c "scp -o StrictHostKeyChecking=no '${vmUser}'@'${kxMainIp}':'${REMOTE_KX_MAIN_CERTSDIR}'/'${CERTIFICATE}' '${kubeDir}'";
+        timeout -s TERM 3000 bash -c 'while [[ ! -f '${installationWorkspace}'/'${CERTIFICATE}' ]];         do
+        sudo -H -i -u '${vmUser}' bash -c "scp -o StrictHostKeyChecking=no '${vmUser}'@'${kxMainIp}':'${REMOTE_KX_MAIN_CERTSDIR}'/'${CERTIFICATE}' '${installationWorkspace}'";
         echo "Waiting for ${0}" && sleep 5;         done'
 }
 
@@ -247,7 +255,7 @@ sudo mkdir -p /usr/share/ca-certificates/kubernetes
 for CERTIFICATE in ${CERTIFICATES}
 do
         wait-for-certificate ${CERTIFICATE}
-        sudo cp ${kubeDir}/${CERTIFICATE} /usr/share/ca-certificates/kubernetes/
+        sudo cp ${installationWorkspace}/${CERTIFICATE} /usr/share/ca-certificates/kubernetes/
         echo "kubernetes/${CERTIFICATE}" | sudo tee -a /etc/ca-certificates.conf
 done
 
@@ -268,15 +276,20 @@ wait-for-url() {
 wait-for-url https://${kxMainIp}:6443/livez
 
 # Kubernetes master is reachable, join the worker node to cluster
-sudo -H -i -u ${vmUser} bash -c "ssh -o StrictHostKeyChecking=no $vmUser@${kxMainIp} 'kubeadm token create --print-join-command 2>/dev/null'" > ${kubeDir}/kubeJoin.sh
-sudo chmod 755 ${kubeDir}/kubeJoin.sh
-sudo ${kubeDir}/kubeJoin.sh
+sudo -H -i -u ${vmUser} bash -c "ssh -o StrictHostKeyChecking=no $vmUser@${kxMainIp} 'kubeadm token create --print-join-command 2>/dev/null'" > ${installationWorkspace}/kubeJoin.sh
+sudo chmod 755 ${installationWorkspace}/kubeJoin.sh
+sudo ${installationWorkspace}/kubeJoin.sh
 
 # Disable the Service After it Ran
 sudo systemctl disable k8s-register-node.service
 
 # Fix reliance on non existent file: /run/systemd/resolve/resolv.conf
-sudo sed -i '/^\[Service\]/a Environment="KUBELET_EXTRA_ARGS=--resolv-conf=\/etc\/resolv.conf"' /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+export nodeIp=$(ip a s ${netDevice} | egrep -o 'inet [0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | cut -d' ' -f2)
+sudo sed -i '/^\[Service\]/a Environment="KUBELET_EXTRA_ARGS=--resolv-conf=\/etc\/resolv.conf --node-ip='${nodeIp}'"' /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+
+# Restart Kubelet
+sudo systemctl daemon-reload
+sudo systemctl restart kubelet
 
 # Setup proxy settings if they exist
 if [[ -n ${httpProxySetting} ]] || [[ -n ${httpsProxySetting} ]]; then
@@ -325,24 +338,24 @@ echo """
 export vmUser=${vmUser}
 
 echo \"Attempting to download KX Apps from KX-Main\"
-sudo -H -i -u ${vmUser} bash -c 'scp -o StrictHostKeyChecking=no '${vmUser}'@'${kxMainIp}':'${kubeDir}'/docker-kx-*.tar '${kubeDir}'';
+sudo -H -i -u ${vmUser} bash -c 'scp -o StrictHostKeyChecking=no '${vmUser}'@'${kxMainIp}':'${installationWorkspace}'/docker-kx-*.tar '${installationWorkspace}'';
 
-if [ -f ${kubeDir}/docker-kx-docs.tar ]; then
-    docker load -i ${kubeDir}/docker-kx-docs.tar
+if [ -f ${installationWorkspace}/docker-kx-docs.tar ]; then
+    docker load -i ${installationWorkspace}/docker-kx-docs.tar
 fi
 
-if [ -f ${kubeDir}/docker-kx-techradar.tar ]; then
-    docker load -i ${kubeDir}/docker-kx-techradar.tar
+if [ -f ${installationWorkspace}/docker-kx-techradar.tar ]; then
+    docker load -i ${installationWorkspace}/docker-kx-techradar.tar
 fi
 
-if [ -f ${kubeDir}/docker-kx-docs.tar ] && [ -f ${kubeDir}/docker-kx-techradar.tar ]; then
+if [ -f ${installationWorkspace}/docker-kx-docs.tar ] && [ -f ${installationWorkspace}/docker-kx-techradar.tar ]; then
     sudo crontab -r
 fi
 
-""" | sudo tee ${kubeDir}/scpKxTars.sh
+""" | sudo tee ${installationWorkspace}/scpKxTars.sh
 
-sudo chmod 755 ${kubeDir}/scpKxTars.sh
-sudo crontab -l | { cat; echo "* * * * * ${kubeDir}/scpKxTars.sh"; } | sudo crontab -
+sudo chmod 755 ${installationWorkspace}/scpKxTars.sh
+sudo crontab -l | { cat; echo "* * * * * ${installationWorkspace}/scpKxTars.sh"; } | sudo crontab -
 
 # Set default keyboard language
 keyboardLanguages=""
@@ -376,7 +389,7 @@ BACKSPACE=\"guess\"
 # Enable LDAP on worker node
 export ldapDn="dc=kx-as-code,dc=local"
 
-sudo -H -i -u ${vmUser} bash -c "ssh -o StrictHostKeyChecking=no $vmUser@${kxMainIp} 'kubeadm token create --print-join-command 2>/dev/null'" > ${kubeDir}/kubeJoin.sh
+sudo -H -i -u ${vmUser} bash -c "ssh -o StrictHostKeyChecking=no $vmUser@${kxMainIp} 'kubeadm token create --print-join-command 2>/dev/null'" > ${installationWorkspace}/kubeJoin.sh
 
 # Get LdapDN from main node and setup base variables
 ldapDnFull=$(sudo -H -i -u ${vmUser} bash -c "ssh -o StrictHostKeyChecking=no $vmUser@${kxMainIp} 'sudo slapcat | grep dn'")

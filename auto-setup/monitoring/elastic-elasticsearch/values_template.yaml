@@ -1,0 +1,59 @@
+clusterName: "elasticsearch"
+nodeGroup: "master"
+replicas: 1
+image: "docker.elastic.co/elasticsearch/elasticsearch"
+imageTag: "{{elasticVersion}}"
+esJavaOpts: "-Xmx1g -Xms1g"
+protocol: https
+esConfig:
+  elasticsearch.yml: |
+    xpack.security.enabled: true
+    xpack.security.http.ssl.enabled: true
+    xpack.security.transport.ssl.enabled: true
+    xpack.security.http.ssl.key: certs/elasticsearch.key
+    xpack.security.http.ssl.certificate: certs/elasticsearch.crt
+    xpack.security.http.ssl.certificate_authorities: certs/ca.crt
+    xpack.security.transport.ssl.key: certs/elasticsearch.key
+    xpack.security.transport.ssl.certificate: certs/elasticsearch.crt
+    xpack.security.transport.ssl.certificate_authorities: certs/ca.crt
+    xpack.security.authc.realms.native.local.order: 0
+    xpack.monitoring.enabled: true
+    xpack.monitoring.collection.enabled: true
+extraEnvs:
+  - name: ELASTIC_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: elastic-credentials
+        key: password
+  - name: ELASTIC_USERNAME
+    valueFrom:
+      secretKeyRef:
+        name: elastic-credentials
+        key: username
+resources:
+  requests:
+    cpu: "1000m"
+    memory: "2Gi"
+  limits:
+    cpu: "1000m"
+    memory: "2Gi"
+volumeClaimTemplate:
+  accessModes: [ "ReadWriteOnce" ]
+persistence:
+  enabled: true
+ingress:
+  enabled: true
+  annotations:
+     kubernetes.io/ingress.class: nginx
+     nginx.ingress.kubernetes.io/proxy-ssl-verify: "false"
+     nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+  path: /
+  hosts:
+    - {{componentName}}.{{baseDomain}}
+  tls:
+    - hosts:
+       - {{componentName}}.{{baseDomain}}
+secretMounts:
+  - name: elastic-certificates
+    secretName: elastic-certificates
+    path: /usr/share/elasticsearch/config/certs

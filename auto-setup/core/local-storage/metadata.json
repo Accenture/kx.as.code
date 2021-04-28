@@ -1,0 +1,20 @@
+{
+    "name": "local-storage",
+    "namespace": "kube-system",
+    "installation_type": "script",
+    "installation_group_folder": "core",
+    "environment_variables": {
+        "localProvisionerVersion": "2.4.0",
+        "hostDirectory": "/mnt/k8s_local_volumes",
+        "storageClassName": "local-storage",
+        "fsType": "xfs"
+    },
+    "install_scripts": [
+        "installLocalStorage.sh"
+    ],
+    "Description": "Local Storage (fast)",
+    "shortcut_text": "Local Storage",
+    "shortcut_icon": "local-storage.png",
+    "pre_install_scripts": [],
+    "post_install_scripts": []
+}

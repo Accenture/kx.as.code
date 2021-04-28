@@ -1,0 +1,15 @@
+{
+    "name": "calico-network",
+    "namespace": "kube-system",
+    "installation_type": "script",
+    "installation_group_folder": "core",
+    "retry": "true",
+    "install_scripts": [
+        "installCalicoNetwork.sh"
+    ],
+    "Description": "Calico Network",
+    "shortcut_text": "Calico Network",
+    "shortcut_icon": "calico.png",
+    "pre_install_scripts": [],
+    "post_install_scripts": []
+}

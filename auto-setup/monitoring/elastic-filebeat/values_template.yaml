@@ -1,0 +1,61 @@
+daemonset:
+  hostNetworking: true
+extraEnvs:
+  - name: ELASTIC_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: elastic-credentials
+        key: password
+  - name: ELASTIC_USERNAME
+    valueFrom:
+      secretKeyRef:
+        name: elastic-credentials
+        key: username
+  - name: NODE_NAME
+    valueFrom:
+      fieldRef:
+        fieldPath: spec.nodeName
+filebeatConfig:
+  filebeat.yml: |
+    filebeat.inputs:
+    - type: container
+      paths:
+        - /var/log/containers/*.log
+      processors:
+      - add_kubernetes_metadata:
+          host: ${NODE_NAME}
+          matchers:
+          - logs_path:
+              logs_path: "/var/log/containers/"
+    output.elasticsearch:
+      hosts: '${ELASTICSEARCH_HOSTS:https://elasticsearch-master:9200}'
+      ssl:
+        certificate_authorities: ["/usr/share/filebeat/config/certs/ca.crt"]
+        certificate: /usr/share/filebeat/config/certs/elasticsearch.crt
+        key: /usr/share/filebeat/config/certs/elasticsearch.key
+      username: ${ELASTIC_USERNAME}
+      password: ${ELASTIC_PASSWORD}
+    setup.kibana:
+      host: "https://elastic-kibana-kibana:5601"
+      ssl:
+        enabled: true
+        certificate_authorities: ["/usr/share/filebeat/config/certs/ca.crt"]
+        certificate: /usr/share/filebeat/config/certs/kibana.crt
+        key: /usr/share/filebeat/config/certs/kibana.key
+      username: ${ELASTIC_USERNAME}
+      password: ${ELASTIC_PASSWORD}
+    http.port: "5067"
+image: "docker.elastic.co/beats/filebeat"
+imageTag: "{{elasticVersion}}"
+protocol: https
+resources:
+  requests:
+    cpu: "100m"
+    memory: "100Mi"
+  limits:
+    cpu: "1000m"
+    memory: "200Mi"
+secretMounts:
+  - name: elastic-certificates
+    secretName: elastic-certificates
+    path: /usr/share/filebeat/config/certs

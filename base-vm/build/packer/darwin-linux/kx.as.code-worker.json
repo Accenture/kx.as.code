@@ -42,9 +42,7 @@
           ["modifyvm", "{{.Name}}", "--memory", "{{user `memory`}}"],
           ["modifyvm", "{{.Name}}", "--cpus", "{{user `cpus`}}"],
           ["modifyvm", "{{.Name}}", "--clipboard", "bidirectional"],
-          ["sharedfolder", "add", "{{.Name}}", "--name", "KX_Share", "--hostpath", "{{user `host_data_directory`}}", "--automount"],
-          ["createhd", "--format", "VDI", "--filename", "../../../output-worker{{user `vm_suffix`}}/virtualbox-{{user `version`}}/{{.Name}}-local-k8s-storage.vdi", "--size", "104448" ],
-          ["storageattach", "{{.Name}}", "--storagectl", "SATA Controller", "--port", "1", "--device","0","--type", "hdd", "--medium", "../../../output-worker{{user `vm_suffix`}}/virtualbox-{{user `version`}}/{{.Name}}-local-k8s-storage.vdi" ]
+          ["sharedfolder", "add", "{{.Name}}", "--name", "KX_Share", "--hostpath", "{{user `host_data_directory`}}", "--automount"]
       ],
       "vboxmanage_post": [
         ["modifyvm", "{{.Name}}", "--nic1", "natnetwork","--natnetwork1","kxascode"]
@@ -68,7 +66,7 @@
       "post_shutdown_delay": "30s",
       "guest_additions_url": "{{user `guest_additions_url`}}",
       "guest_additions_sha256": "{{user `guest_additions_checksum`}}",
-      "guest_additions_path": "/home/vagrant/VBoxGuestAdditions_{{.Version}}.iso",
+      "guest_additions_path": "/home/{{user `base_image_ssh_user`}}/VBoxGuestAdditions_{{.Version}}.iso",
       "guest_additions_mode": "upload",
       "virtualbox_version_file": "VBoxVersion.txt"
   },
@@ -138,9 +136,6 @@
       "<enter><wait>"
     ],
     "disk_size": "{{user `disk_size`}}",
-    "disk_additional_size": [
-      "107520"
-    ],
     "vmx_data": {
       "numvcpus": "{{user `cpus`}}",
       "memsize": "{{user `memory`}}",
@@ -324,10 +319,7 @@
       "VM_SUFFIX={{user `vm_suffix`}}"
     ],
     "only_on": ["darwin","linux"],
-    "scripts": [
-      "../../../scripts/post-processing/create-metadata-json.sh",
-      "../../../scripts/post-processing/add-vagrant-box.sh"
-    ]
+    "scripts": "../../../scripts/post-processing/create-metadata-json.sh"
   }
 ],
   "provisioners": [
@@ -343,11 +335,6 @@
       "type": "shell",
       "start_retry_timeout": "15m",
       "expect_disconnect": "true"
-    },
-    {
-      "type": "file",
-      "source": "../../../../auto-setup/autoSetup.json",
-      "destination": "/home/vagrant/autoSetup.json"
     },
     {
       "environment_vars": [
@@ -389,7 +376,7 @@
         "../../../scripts/base/network.sh"
       ],
       "type": "shell",
-      "pause_before": "120s",
+      "pause_before": "60s",
       "start_retry_timeout": "15m",
       "expect_disconnect": "true"
     },
@@ -425,7 +412,7 @@
          "../../../scripts/common/calico.sh"
       ],
        "type": "shell",
-       "pause_before": "120s",
+       "pause_before": "60s",
        "start_retry_timeout": "15m",
        "expect_disconnect": "true"
      },
@@ -442,7 +429,7 @@
          "../../../scripts/worker-node/cleanup.sh"
        ],
        "type": "shell",
-       "pause_before": "120s",
+       "pause_before": "60s",
        "start_retry_timeout": "15m",
        "expect_disconnect": "true"
      }

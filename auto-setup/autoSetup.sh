@@ -5,7 +5,7 @@ export rc=0
 mkdir -p ${installationWorkspace}
 
 # Switch off GUI if switch set to do so in KX.AS.CODE launcher
-disableLinuxDesktop=$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.disableLinuxDesktop')
+disableLinuxDesktop=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.disableLinuxDesktop')
 if [[ "${disableLinuxDesktop}" == "true" ]]; then
     systemctl set-default multi-user
     systemctl isolate multi-user.target
@@ -41,11 +41,6 @@ export namespace=$(cat ${componentMetadataJson} | jq -r '.namespace' | sed 's/_/
 
 # Get installation type (valid values are script, helm or argocd) and path to scripts
 export installationType=$(cat ${componentMetadataJson} | jq -r '.installation_type')
-
-# Set Shortcut Directories
-vendorDocsDirectory="/home/${vmUser}/Desktop/Vendor Docs"
-apiDocsDirectory="/home/${vmUser}/Desktop/API Docs"
-shortcutsDirectory="/home/${vmUser}/Desktop/DevOps Tools"
 
 # Start the installation process for the pending or retry queues
 if [[ "${action}" == "install" ]]; then
@@ -151,8 +146,14 @@ if [[ "${action}" == "install" ]]; then
                 helm repo update
             fi
         fi
-        helm_set_key_value_params=$(echo ${helm_params} | jq -r '.set_key_values[] | "--set \(.)" ' | mo ) # Mo adds mustache {{variables}} support to helm --set options in kxascode.yaml
+        # Get --set parameters from metadata.json
+        helm_set_key_value_params=$(echo ${helm_params} | jq -r '.set_key_values[] | "--set \(.)" ' | mo ) # Mo adds mustache {{variables}} support to helm --set options
         log_debug "${helm_set_key_value_params}"
+
+        # Get --set-string parameters from metadata.json
+        helm_set_string_key_value_params=$(echo ${helm_params} | jq -r '.set_string_key_values[] | "--set-string \(.)" ' | mo ) # Mo adds mustache {{variables}} support to helm --set-string options
+        log_debug "${helm_set_string_key_value_params}"
+
         helmRepositoryName=$(echo ${helm_params} | jq -r '.repository_name')
 
         # Determine whether a values_template.yaml file exists for the solution and use it if so - and replace mustache variables such as url etc
@@ -172,7 +173,7 @@ if [[ "${action}" == "install" ]]; then
         fi
 
         # Execute installation via Helm
-        helmCommmand=$(echo -e "helm upgrade --install ${helmVersionOption} ${valuesFileOption} ${componentName} --namespace ${namespace} ${helm_set_key_value_params} ${helmRepositoryName}")
+        helmCommmand=$(echo -e "helm upgrade --install ${helmVersionOption} ${valuesFileOption} ${componentName} --namespace ${namespace} ${helm_set_string_key_value_params} ${helm_set_key_value_params} ${helmRepositoryName}")
         echo ${helmCommmand} | tee ${installationWorkspace}/helm_${componentName}.sh
         log_debug "Helm command: $(cat ${installationWorkspace}/helm_${componentName}.sh)"
         chmod 755 ${installationWorkspace}/helm_${componentName}.sh
@@ -206,10 +207,10 @@ if [[ "${action}" == "install" ]]; then
 
         # Upload KX.AS.CODE CA certificate to ArgoCD
         if [[ -z $(argocd --insecure cert list | grep gitlab.kx-as-code.local) ]]; then
-            if [[ -f /home/kx.hero/Kubernetes/kx-certs/ca.crt ]]; then
-                argocd cert add-tls ${gitDomain} --from /home/kx.hero/Kubernetes/kx-certs/ca.crt
+            if [[ -f ${installationWorkspace}/kx-certs/ca.crt ]]; then
+                argocd cert add-tls ${gitDomain} --from ${installationWorkspace}/kx-certs/ca.crt
             else
-                log_error "Could not upload KX.AS.CODE CA (/home/kx.hero/Kubernetes/kx-certs/ca.crt) to ArgoCD. It appears to be missing."
+                log_error "Could not upload KX.AS.CODE CA (${installationWorkspace}/kx-certs/ca.crt) to ArgoCD. It appears to be missing."
             fi
         fi
 
@@ -271,8 +272,8 @@ if [[ "${action}" == "install" ]]; then
     ####################################################################################################################################################################
 
     # PODS RUNNING CHECKS
-    if [[ "${componentInstallationFolder}" != "kubernetes_core" ]]; then
-    # Excluding kubernetes_core_groups to avoid missing cross dependency issues between core services, for example,
+    if [[ "${componentInstallationFolder}" != "core" ]]; then
+    # Excluding core_groups to avoid missing cross dependency issues between core services, for example,
     # coredns waiting for calico network to be installed, preventing other service from being provisioned
         for i in {1..60}
         do
@@ -369,6 +370,7 @@ if [[ "${action}" == "install" ]]; then
     ####################################################################################################################################################################
 
     # if Primary URL[0] in URLs Array exists and Icon is defined, create Desktop Shortcut
+    applicationUrls=$(cat ${componentMetadataJson} | jq -r '.urls[]?.url?' | mo)
     primaryUrl=$(echo ${applicationUrls} | cut -f1 -d' ')
 
     if [[ ! -z ${primaryUrl} ]]; then
@@ -380,7 +382,6 @@ if [[ "${action}" == "install" ]]; then
 
         if [[ ! -z ${primaryUrl} ]] && [[ "${primaryUrl}" != "null" ]] && [[ -f ${iconPath} ]] && [[ ! -z ${shortcutText} ]]; then
 
-            shortcutsDirectory="/usr/share/kx.as.code/DevOps Tools"
             mkdir -p "${shortcutsDirectory}"; chown ${vmUser}:${vmUser} "${shortcutsDirectory}"
 
             echo """
@@ -514,37 +515,37 @@ if [[ "${action}" == "install" ]]; then
     fi
 
     # Get slot number to add installed app to JSON array
-    arrayLength=$(cat ${installationWorkspace}/autoSetup.json | jq -r '.metadata.installed[].name' | wc -l)
+    arrayLength=$(cat ${installationWorkspace}/actionQueues.json | jq -r '.state.installed[].name' | wc -l)
     if [[ -z ${arrayLength} ]]; then
         arrayLength=0
     fi
 
-    # Add component json to "installed" node in autoSetup.json
-    componentInstalledExists=$(cat ${installationWorkspace}/autoSetup.json | jq '.metadata.installed[] | select(.name=="'${componentName}'")')
+    # Add component json to "installed" node in metadata.json
+    componentInstalledExists=$(cat ${installationWorkspace}/actionQueues.json | jq '.state.installed[] | select(.name=="'${componentName}'")')
     if [[ -z ${componentInstalledExists} ]]; then
-        componentJson=$(cat ${installationWorkspace}/autoSetup.json | jq '.metadata.available.applications[] | select(.name=="'${componentName}'")')
-        arrayLength=$(cat ${installationWorkspace}/autoSetup.json | jq -r '.metadata.installed[].name' | wc -l)
+        componentJson=$(cat ${installationWorkspace}/metadata.json | jq '.metadata.available.applications[] | select(.name=="'${componentName}'")')
+        arrayLength=$(cat ${installationWorkspace}/actionQueues.json | jq -r '.state.installed[].name' | wc -l)
         if [[ -z ${arrayLength} ]]; then
             arrayLength=0
         fi
         if [[ "${componentJson}" == "null" ]] || [[ -z ${componentJson} ]]; then
             log_warn "ComponentJson is null for ${componentName}"
         else
-            cat ${installationWorkspace}/autoSetup.json | jq '.metadata.installed['${arrayLength}'] |= . + '"${componentJson}"'' | tee ${installationWorkspace}/autoSetup.json.tmp.2
-            if [[ ! -s ${installationWorkspace}/autoSetup.json.tmp.2 ]]; then export rc=1; fi
-            cp ${installationWorkspace}/autoSetup.json ${installationWorkspace}/autoSetup.json.previous.2
-            if [[ -s ${installationWorkspace}/autoSetup.json.tmp.2 ]]; then
-                cp ${installationWorkspace}/autoSetup.json.tmp.2 ${installationWorkspace}/autoSetup.json
+            cat ${installationWorkspace}/actionQueues.json | jq '.state.installed['${arrayLength}'] |= . + '"${componentJson}"'' | tee ${installationWorkspace}/actionQueues.json.tmp.2
+            if [[ ! -s ${installationWorkspace}/actionQueues.json.tmp.2 ]]; then export rc=1; fi
+            cp ${installationWorkspace}/actionQueues.json ${installationWorkspace}/actionQueues.json.previous.2
+            if [[ -s ${installationWorkspace}/actionQueues.json.tmp.2 ]]; then
+                cp ${installationWorkspace}/actionQueues.json.tmp.2 ${installationWorkspace}/actionQueues.json
             fi
         fi
     fi
 
     # Remove completed component installation from install action
-    cat ${installationWorkspace}/autoSetup.json | jq 'del(.action_queues.install[] | select(.name=="'${componentName}'"))' | tee ${installationWorkspace}/autoSetup.json.tmp.4
-    if [[ ! -s ${installationWorkspace}/autoSetup.json.tmp.4 ]]; then export rc=1; fi
-    cp ${installationWorkspace}/autoSetup.json ${installationWorkspace}/autoSetup.json.previous.4
-    if [[ -s ${installationWorkspace}/autoSetup.json.tmp.4 ]]; then
-        cp ${installationWorkspace}/autoSetup.json.tmp.4 ${installationWorkspace}/autoSetup.json
+    cat ${installationWorkspace}/actionQueues.json | jq 'del(.action_queues.install[] | select(.name=="'${componentName}'"))' | tee ${installationWorkspace}/actionQueues.json.tmp.4
+    if [[ ! -s ${installationWorkspace}/actionQueues.json.tmp.4 ]]; then export rc=1; fi
+    cp ${installationWorkspace}/actionQueues.json ${installationWorkspace}/actionQueues.json.previous.4
+    if [[ -s ${installationWorkspace}/actionQueues.json.tmp.4 ]]; then
+        cp ${installationWorkspace}/actionQueues.json.tmp.4 ${installationWorkspace}/actionQueues.json
     fi
 
 elif [[ "${action}" == "upgrade" ]]; then
@@ -606,4 +607,4 @@ elif [[ "${action}" == "uninstall" ]] || [[ "${action}" == "purge" ]]; then
 
 fi # end of action actions condition
 
-cp ${installationWorkspace}/autoSetup.json ${installationWorkspace}/autoSetup.json.previous
+cp ${installationWorkspace}/actionQueues.json ${installationWorkspace}/actionQueues.json.previous

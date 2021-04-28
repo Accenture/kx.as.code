@@ -9,29 +9,99 @@ else
 fi
 
 # Define base variables
-export vmUser=kx.hero
-export vmPassword=$(cat /usr/share/kx.as.code/.config/.user.cred)
-export installationWorkspace=/usr/share/kx.as.code/Kubernetes
-export autoSetupHome=/usr/share/kx.as.code/git/kx.as.code/auto-setup
+export sharedKxHome=/usr/share/kx.as.code
+export installationWorkspace=${sharedKxHome}/workspace
 export actionWorkflows="pending wip completed failed retry"
 export defaultDockerHubSecret="default/regcred"
-export sharedGitHome=/usr/share/kx.as.code/git
-export sharedKxHome=/usr/share/kx.as.code
-export kxSkelDir=/usr/share/kx.as.code/skel
+export sharedGitHome=${sharedKxHome}/git
+export autoSetupHome=${sharedGitHome}/kx.as.code/auto-setup
+export skelDirectory=${sharedKxHome}/skel
+export vendorDocsDirectory="${sharedKxHome}/Vendor Docs"
+export apiDocsDirectory="${sharedKxHome}/API Docs"
+export shortcutsDirectory="${sharedKxHome}/DevOps Tools"
+export adminShortcutsDirectory="${sharedKxHome}/Admin Tools"
+export vmUser=kx.hero
+export vmPassword=$(cat ${sharedKxHome}/.config/.user.cred)
 
-# Check autoSetup.json file is present before starting script
+# Check profile-config.json file is present before starting script
 wait-for-file() {
         timeout -s TERM 6000 bash -c \
         'while [[ ! -f ${0} ]];\
         do echo "Waiting for ${0} file" && sleep 15;\
         done' ${1}
 }
-wait-for-file ${installationWorkspace}/autoSetup.json
+wait-for-file ${installationWorkspace}/profile-config.json
 
 cd ${installationWorkspace}
 
-# Get configs from autoSetup.json
-export virtualizationType=$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.virtualizationType')
+# Copy metadata.json to installation workspace if it doesn't exist
+if [[ ! -f ${installationWorkspace}/metadata.json ]]; then
+  cp ${autoSetupHome}/metadata.json ${installationWorkspace}
+fi
+
+# Wait for last provisioning shell action to complete before proceeding to next steps
+# such as changing network settings and merging action files
+timeout -s TERM 6000 bash -c \
+'while [[ ! -f '${installationWorkspace}'/gogogo ]];\
+do echo "Waiting for '${installationWorkspace}'/gogogo file" && sleep 15;\
+done'
+
+# Copy actionQueues.json to installation workspace if it doesn't exist
+# and merge with user aq* files if present
+if [[ ! -f ${installationWorkspace}/actionQueues.json ]]; then
+
+  cp ${autoSetupHome}/actionQueues.json ${installationWorkspace}/
+  export aqFiles=($(ls ${installationWorkspace}/aq* || true))
+
+  # Merge json files if user uploaded aq* files present
+  if [[ -n ${aqFiles} ]]; then
+    # Loop around all user aq* files and merge them to one large json
+    for i in ${!aqFiles[@]}; do
+            echo "$i: ${aqFiles[$i]}"
+
+      if [[ -f ${installationWorkspace}/actionQueues_temp.json ]]; then
+        cp ${installationWorkspace}/actionQueues_temp.json ${installationWorkspace}/actionQueues.json
+      fi
+
+      # Credit to this great jq block goes to "peak" - https://stackoverflow.com/users/997358/peak
+      # https://stackoverflow.com/a/56659008
+      jq -n --slurpfile file1 actionQueues.json --slurpfile file2 ${aqFiles[$i]} '
+
+        # a and b are expected to be jq paths ending with a string
+        # emit the array of the intersection of key names
+        def common(a;b):
+          ((a|map(.[-1])) + (b|map(.[-1])))
+          | unique;
+
+        $file1[0] as $f1
+        | $file2[0] as $f2
+        | [$f1 | paths as $p | select(getpath($p) | type == "array") | $p] as $p1
+        | [$f2 | paths as $p | select(getpath($p) | type == "array") | $p] as $p2
+        | $f1+$f2
+        | if ($p1|length) > 0 and ($p2|length) > 0
+          then common($p1; $p2) as $both
+          | if ($both|length) > 0
+            then first( $p1[] | select(.[-1] == $both[0])) as $p1
+            |    first( $p2[] | select(.[-1] == $both[0])) as $p2
+            | ($f1 | getpath($p1)) as $a1
+            | ($f2 | getpath($p2)) as $a2
+            | setpath($p1; $a1 + $a2)
+            else .
+            end
+          else .
+          end
+        ' | tee actionQueues_temp.json
+    done
+  fi
+fi
+
+# Copy last actionQueues_temp.json file over after loop
+if [[ -f ${installationWorkspace}/actionQueues_temp.json ]]; then
+  sudo mv ${installationWorkspace}/actionQueues_temp.json ${installationWorkspace}/actionQueues.json
+fi
+
+# Get configs from profile-config.json
+export virtualizationType=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.virtualizationType')
 
 # Determine which NIC to bind to, to avoid binding to interal VirtualBox NAT NICs for example, where all hosts have the same IP - 10.0.2.15
 export nicList=$(nmcli device show | grep -E 'enp|ens' | grep 'GENERAL.DEVICE' | awk '{print $2}')
@@ -58,59 +128,59 @@ done
 echo "NIC exclusions: ${nicExclusions}"
 echo "NIC to use: ${netDevice}"
 export mainIpAddress=$(ip a s ${netDevice} | egrep -o 'inet [0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | cut -d' ' -f2)
-export environmentPrefix=$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.environmentPrefix')
+export environmentPrefix=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.environmentPrefix')
 if [ -z ${environmentPrefix} ]; then
-    export baseDomain=$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.baseDomain')
+    export baseDomain=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.baseDomain')
 else
-    export baseDomain="${environmentPrefix}.$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.baseDomain')"
+    export baseDomain="${environmentPrefix}.$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.baseDomain')"
 fi
-export defaultKeyboardLanguage=$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.defaultKeyboardLanguage')
-export baseUser=$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.baseUser')
-export basePassword=$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.basePassword')
-export baseIpType=$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.baseIpType')
-export baseIpRangeStart=$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.baseIpRangeStart')
-export baseIpRangeEnd=$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.baseIpRangeEnd')
-export metalLbIpRangeStart=$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.metalLbIpRange.ipRangeStart')
-export metalLbIpRangeEnd=$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.metalLbIpRange.ipRangeEnd')
-export sslProvider=$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.sslProvider')
+export defaultKeyboardLanguage=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.defaultKeyboardLanguage')
+export baseUser=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.baseUser')
+export basePassword=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.basePassword')
+export baseIpType=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.baseIpType')
+export baseIpRangeStart=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.baseIpRangeStart')
+export baseIpRangeEnd=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.baseIpRangeEnd')
+export metalLbIpRangeStart=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.metalLbIpRange.ipRangeStart')
+export metalLbIpRangeEnd=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.metalLbIpRange.ipRangeEnd')
+export sslProvider=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.sslProvider')
 
 if [ "${baseIpType}" == "static" ]; then
   # Get fixed IPs if defined
-  export fixedIpHosts=$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.staticNetworkSetup.baseFixedIpAddresses | keys[]')
+  export fixedIpHosts=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.staticNetworkSetup.baseFixedIpAddresses | keys[]')
   for fixIpHost in ${fixedIpHosts}
   do
       fixIpHostVariableName=$(echo ${fixIpHost} | sed 's/-/__/g')
-      export ${fixIpHostVariableName}_IpAddress="$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.staticNetworkSetup.baseFixedIpAddresses."'${fixIpHost}'"')"
+      export ${fixIpHostVariableName}_IpAddress="$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.staticNetworkSetup.baseFixedIpAddresses."'${fixIpHost}'"')"
   done
-  export fixedNicConfigGateway=$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.staticNetworkSetup.gateway')
-  export fixedNicConfigDns1=$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.staticNetworkSetup.dns1')
-  export fixedNicConfigDns2=$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.staticNetworkSetup.dns2')
+  export fixedNicConfigGateway=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.staticNetworkSetup.gateway')
+  export fixedNicConfigDns1=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.staticNetworkSetup.dns1')
+  export fixedNicConfigDns2=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.staticNetworkSetup.dns2')
 fi
 
 # Get proxy settings
-export httpProxySetting=$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.proxy_settings.http_proxy')
-export httpsProxySetting=$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.proxy_settings.https_proxy')
-export noProxySetting=$(cat ${installationWorkspace}/autoSetup.json | jq -r '.config.proxy_settings.no_proxy')
+export httpProxySetting=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.proxy_settings.http_proxy')
+export httpsProxySetting=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.proxy_settings.https_proxy')
+export noProxySetting=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.proxy_settings.no_proxy')
 
 # Get default applications for certain services
 ## Git
-export defaultGitPath=$(cat ${installationWorkspace}/autoSetup.json | jq -r '.metadata.defaultApplications.git')
+export defaultGitPath=$(cat ${installationWorkspace}/metadata.json | jq -r '.metadata.defaultApplications.git')
 export gitDomain="$(cat ${autoSetupHome}/${defaultGitPath}/metadata.json | jq -r '.name' | sed 's/-ce//g').${baseDomain}"
 export gitUrl="https://${gitDomain}"
 ## OAUTH
-export defaultOauthPath=$(cat ${installationWorkspace}/autoSetup.json | jq -r '.metadata.defaultApplications.oauth')
+export defaultOauthPath=$(cat ${installationWorkspace}/metadata.json | jq -r '.metadata.defaultApplications.oauth')
 export oauthDomain="$(cat ${autoSetupHome}/${defaultOauthPath}/metadata.json | jq -r '.name').${baseDomain}"
 export oauthUrl="https://${oauthDomain}"
 ## ChatOps
-export defaultChatopsPath=$(cat ${installationWorkspace}/autoSetup.json | jq -r '.metadata.defaultApplications.chatops')
+export defaultChatopsPath=$(cat ${installationWorkspace}/metadata.json | jq -r '.metadata.defaultApplications.chatops')
 export chatopsDomain="$(cat ${autoSetupHome}/${defaultChatopsPath}/metadata.json | jq -r '.name').${baseDomain}"
 export chatopsUrl="https://${chatopsDomain}"
 ## Docker Registry
-export defaultDockerRegistryPath=$(cat ${installationWorkspace}/autoSetup.json | jq -r '.metadata.defaultApplications."docker-registry"')
+export defaultDockerRegistryPath=$(cat ${installationWorkspace}/metadata.json | jq -r '.metadata.defaultApplications."docker-registry"')
 export dockerRegistryDomain="$(cat ${autoSetupHome}/${defaultDockerRegistryPath}/metadata.json | jq -r '.name').${baseDomain}"
 export dockerRegistryUrl="https://${dockerRegistryDomain}"
 ## S3 Objhect Store
-export defaultS3ObjectStorePath=$(cat ${installationWorkspace}/autoSetup.json | jq -r '.metadata.defaultApplications."s3-object-store"')
+export defaultS3ObjectStorePath=$(cat ${installationWorkspace}/metadata.json | jq -r '.metadata.defaultApplications."s3-object-store"')
 export s3ObjectStoreDomain="$(cat ${autoSetupHome}/${defaultS3ObjectStorePath}/metadata.json | jq -r '.name').${baseDomain}"
 export s3ObjectStoreUrl="https://${s3ObjectStoreDomain}"
 
@@ -148,9 +218,14 @@ if [[ ! -f /usr/share/kx.as.code/.config/network_status ]] && [[ "${baseIpType}"
                 export mainIpAddress=${hostIpAddress}
                 echo "address=/ldap/${hostIpAddress}" | sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
                 echo "address=/ldap.${baseDomain}/${hostIpAddress}" | sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
+                echo "address=/pgadmin/${hostIpAddress}" | sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
+                echo "address=/pgadmin.${baseDomain}/${hostIpAddress}" | sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
+                echo "address=/ldapadmin/${hostIpAddress}" | sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
+                echo "address=/ldapadmin.${baseDomain}/${hostIpAddress}" | sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
                 echo "address=/rabbitmq/${hostIpAddress}" | sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
                 echo "address=/rabbitmq.${baseDomain}/${hostIpAddress}" | sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
-
+                echo "address=/remote-desktop/${hostIpAddress}" | sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
+                echo "address=/remote-desktop.${baseDomain}/${hostIpAddress}" | sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
             fi
         done
     fi
@@ -299,11 +374,11 @@ do
     fi
 done
 
-# Populate pending queue on first start with default kubernetes_core componets
-defaultComponentsToInstall=$(cat ${installationWorkspace}/autoSetup.json | jq -r '.action_queues.install[].name')
+# Populate pending queue on first start with default core components
+defaultComponentsToInstall=$(cat ${installationWorkspace}/actionQueues.json | jq -r '.action_queues.install[].name')
 for componentName in ${defaultComponentsToInstall}
 do
-    payload=$(cat ${installationWorkspace}/autoSetup.json | jq -c '.action_queues.install[] | select(.name=="'${componentName}'") | {install_folder:.install_folder,"name":.name,"action":"install"}')
+    payload=$(cat ${installationWorkspace}/actionQueues.json | jq -c '.action_queues.install[] | select(.name=="'${componentName}'") | {install_folder:.install_folder,"name":.name,"action":"install"}')
     rabbitmqadmin publish exchange=action_workflow routing_key=pending_queue payload=''${payload}''
 done
 

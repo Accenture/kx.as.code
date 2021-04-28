@@ -1,17 +1,24 @@
-"config": {
-  "ACCESS_KEY": "",
-  "SECRET_KEY": "",
-  "KX_MAIN_AMI_ID": "",
-  "KX_WORKER_AMI_ID": "",
-  "REGION": "",
-  "AVAILABILITY_ZONE": "",
-  "VPC_CIDR_BLOCK": "10.0.0.0/16",
-  "PRIVATE_ONE_SUBNET_CIDR": "10.0.76.0/24",
-  "PRIVATE_TWO_SUBNET_CIDR": "10.0.5.0/24",
-  "PUBLIC_SUBNET_CIDR": "10.0.3.0/24",
-  "PUBLIC_KEY": "",
-  "VPN_SERVER_CERT_ARN": "",
-  "VPN_CLIENT_CERT_ARN": "",
-  "KX_DOMAIN": "kx-as-code.local"
-  "NUM_KX_WORKER_NODES": 2
+{
+    "config": {
+      "ACCESS_KEY": "",
+      "SECRET_KEY": "",
+      "KX_MAIN_AMI_ID": "",
+      "KX_WORKER_AMI_ID": "",
+      "REGION": "",
+      "AVAILABILITY_ZONE": "",
+      "VPC_CIDR_BLOCK": "10.0.0.0/16",
+      "PRIVATE_ONE_SUBNET_CIDR": "10.0.76.0/24",
+      "PRIVATE_TWO_SUBNET_CIDR": "10.0.5.0/24",
+      "PUBLIC_SUBNET_CIDR": "10.0.3.0/24",
+      "VPN_SUBNET_CIDR": "10.10.0.0/21",
+      "METALLB_FIRST_IP": "10.0.76.100",
+      "PUBLIC_KEY": "",
+      "VPN_SERVER_CERT_ARN": "",
+      "VPN_CLIENT_CERT_ARN": "",
+      "NUM_KX_WORKER_NODES": 2
+      "INSTANCE_TYPES": {
+        "MAIN": "t3.xlarge",
+        "WORKER": "t3.xlarge"
+      }
+    }
 }

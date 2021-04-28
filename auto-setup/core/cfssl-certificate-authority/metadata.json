@@ -1,0 +1,16 @@
+{
+    "name": "cfssl-certificate-authority",
+    "namespace": "kube-system",
+    "installation_type": "script",
+    "installation_group_folder": "core",
+    "install_scripts": [
+        "installCfsslCertificateAuthority.sh"
+    ],
+    "Description": "CFSSL Certificate Authority",
+    "shortcut_text": "CFSSL-CA",
+    "shortcut_icon": "cloudflare.png",
+    "pre_install_scripts": [],
+    "post_install_scripts": [
+        "installNginx.sh"
+    ]
+}

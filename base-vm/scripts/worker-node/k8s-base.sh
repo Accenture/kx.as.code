@@ -3,7 +3,7 @@
 # Ensure time is accurate
 sudo apt-get install -y ntpdate
 
-KUBEDIR=/usr/share/kx.as.code/Kubernetes
+KUBEDIR=/usr/share/kx.as.code/workspace
 sudo mkdir -p ${KUBEDIR}
 sudo chown ${VM_USER}:${VM_USER} ${KUBEDIR}
 
