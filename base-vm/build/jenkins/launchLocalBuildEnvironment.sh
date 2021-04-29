@@ -1,7 +1,17 @@
 #!/bin/bash
+dockerMachineEnvironment=$(which docker-machine)
+if [[ $? = 1 ]]; then 
+  echo "Not a docker-machine environment, setting docker host to localhost"
+  JENKINS_URL=http://localhost:8080
 
-JENKINS_URL=http://192.168.99.100:8080 # You might need to change this. This is the default docker-machine IP
-WORKING_DIRECTORY=v:\jenkins_remote
+else
+  echo "Jenkins is running on docker-machine, setting docker host to 192.168.99.100"
+  JENKINS_URL=http://192.168.99.100:8080 # You might need to change this. This is the default docker-machine IP
+
+fi
+
+WORKING_DIRECTORY=$HOME/jenkins_remote
+mkdir -p ${WORKING_DIRECTORY}
 JNLP_SECRET=ed2517ec668944018b6a6eab667c4f88cef3eea982dfc2f89ca89de72ecc1f20
 
 # Check that docker-compose.yml is available on the current path
