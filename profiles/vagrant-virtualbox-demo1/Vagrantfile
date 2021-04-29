@@ -1,6 +1,29 @@
 require 'yaml'
 require 'json'
 
+if Vagrant::Util::Platform.windows?
+  # Is Windows
+  puts "Vagrant launched from windows."
+  VMWARE_DISK_UTILITY="C:/Program Files (x86)/VMware/VMware Workstation/vmware-vdiskmanager.exe"
+  KX_SYNC_FOLDER_PATH="c:/Users/Patrick/KX_Share"
+  KX_MAIN_BOX_LOCATION="V:/jenkins_remote/workspace/VMWare_Workstation/KX.AS.CODE_Main_Build/base-vm/boxes/virtualbox-#{BOX_VERSION}/kx.as.code-main-demo-#{BOX_VERSION}.box"
+  KX_WORKER_BOX_LOCATION="V:/jenkins_remote/workspace/VMWare_Workstation/KX.AS.CODE_Worker_Build/base-vm/boxes/virtualbox-#{BOX_VERSION}/kx.as.code-worker-demo-#{BOX_VERSION}.box"
+elsif Vagrant::Util::Platform.darwin?
+  # Is Mac
+  puts "Vagrant launched from mac."
+  VMWARE_DISK_UTILITY="/Applications/VMware\ Fusion.app/Contents/Library/vmware-vdiskmanager"
+  KX_SYNC_FOLDER_PATH="/Users/patrick/KX_Share"
+  KX_MAIN_BOX_LOCATION="/Users/patrick/jenkins_remote/workspace/VMWare_Workstation/KX.AS.CODE_Main_Build/base-vm/boxes/virtualbox-#{BOX_VERSION}/kx.as.code-main-demo-#{BOX_VERSION}.box"
+  KX_WORKER_BOX_LOCATION="/Users/patrick/jenkins_remote/workspace/VMWare_Workstation/KX.AS.CODE_Worker_Build/base-vm/boxes/virtualbox-#{BOX_VERSION}/kx.as.code-worker-demo-#{BOX_VERSION}.box"
+else
+  # Assume WSL for now
+  puts "Vagrant launched from other system, maybe WSL?"
+  VMWARE_DISK_UTILITY="/mnt/c/Program Files (x86)/VMware/VMware Workstation/vmware-vdiskmanager.exe"
+  KX_SYNC_FOLDER_PATH="/mnt/c/Users/patrick/KX_Share"
+  KX_MAIN_BOX_LOCATION="/mnt/v/jenkins_remote/workspace/VMWare_Workstation/KX.AS.CODE_Main_Build/base-vm/boxes/virtualbox-#{BOX_VERSION}/kx.as.code-main-demo-#{BOX_VERSION}.box"
+  KX_WORKER_BOX_LOCATION="/mnt/v/jenkins_remote/workspace/VMWare_Workstation/KX.AS.CODE_Worker_Build/base-vm/boxes/virtualbox-#{BOX_VERSION}/kx.as.code-worker-demo-#{BOX_VERSION}.box"
+end
+
 file = File.read('profile-config.json')
 profile_config = JSON.parse(file)
 
@@ -44,7 +67,9 @@ Vagrant.configure("2") do |config|
     subconfig.vm.hostname = "kx-main"
     subconfig.vm.network :forwarded_port, guest: 22, host: 2222, id: "ssh", disabled: true
     subconfig.vm.network :forwarded_port, guest: 22, host: 2230, id: "ssh-kx-main", auto_correct: true
-    subconfig.vm.box_url = "V:/jenkins_remote/workspace/VirtualBox/KX.AS.CODE_Main_Build/base-vm/boxes/virtualbox-#{BOX_VERSION}/kx.as.code-main-demo-#{BOX_VERSION}.box"
+    subconfig.vm.box_url = KX_MAIN_BOX_LOCATION
+    subconfig.vm.synced_folder KX_SYNC_FOLDER_PATH, "/home/kx.hero/KX_Share",
+      owner: "kx.hero", group: "kx.hero"
     subconfig.vm.provision "file", source: "profile-config.json", destination: "/var/tmp/profile-config.json"
     subconfig.vm.provision "file", source: "./users.json", destination: "/var/tmp/users.json"
     Dir[File.dirname(__FILE__) + '/aq*.json'].each do |file|

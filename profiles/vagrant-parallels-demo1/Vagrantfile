@@ -1,0 +1,105 @@
+require 'yaml'
+require 'json'
+
+# Clean up old IP before starting up a new deployment
+File.exist?("kx.as.code_main-ip-address") ? File.delete("kx.as.code_main-ip-address") : 
+
+file = File.read('profile-config.json')
+profile_config = JSON.parse(file)
+
+profile_config_local_volumes=profile_config['config']['local_volumes']
+puts "Profile Config #{profile_config_local_volumes}"
+
+# Get needed capacity for GlusterFS volumes disk size
+GLUSTERFS_KUBE_VOLUMES_DISK_SIZE=profile_config['config']['glusterFsDiskSize']
+
+# Calculate needed local disk capacity
+NUM_1GB_LOCAL_SIZE=profile_config_local_volumes['one_gb'].to_i * 1
+NUM_5GB_LOCAL_SIZE=profile_config_local_volumes['five_gb'].to_i * 5
+NUM_10GB_LOCAL_SIZE=profile_config_local_volumes['ten_gb'].to_i * 10
+NUM_30GB_LOCAL_SIZE=profile_config_local_volumes['thirty_gb'].to_i * 30
+NUM_50GB_LOCAL_SIZE=profile_config_local_volumes['fifty_gb'].to_i * 50
+
+# Calculate disk size needs for requested local volumes configured in profile-config.json
+LOCAL_KUBE_VOLUMES_DISK_SIZE=NUM_1GB_LOCAL_SIZE+NUM_5GB_LOCAL_SIZE+NUM_10GB_LOCAL_SIZE+NUM_30GB_LOCAL_SIZE+NUM_50GB_LOCAL_SIZE+1
+
+puts "Local Disk Size: #{LOCAL_KUBE_VOLUMES_DISK_SIZE}GB"
+puts "GlusterFS Disk Size: #{GLUSTERFS_KUBE_VOLUMES_DISK_SIZE}GB"
+
+current_dir    = File.dirname(File.expand_path(__FILE__))
+configs        = YAML.load_file("#{current_dir}/config.yaml")
+vagrant_config = configs['configs']
+
+ENVIRONMENT_PREFIX = vagrant_config['environment_prefix']
+MAIN_NODE_CPU_CORES = vagrant_config['main_node_cpu_cores']
+MAIN_NODE_MEMORY = vagrant_config['main_node_memory']
+WORKER_NODE_COUNT = vagrant_config['worker_node_count']
+WORKER_NODE_CPU_CORES = vagrant_config['worker_node_cpu_cores']
+WORKER_NODE_MEMORY = vagrant_config['worker_node_memory']
+DOCKERHUB_USER = vagrant_config['dockerhub_username']
+DOCKERHUB_EMAIL = vagrant_config['dockerhub_email']
+DOCKERHUB_PASSWORD = vagrant_config['dockerhub_password']
+BOX_VERSION = vagrant_config['box_version']
+
+VMWARE_DISK_UTILITY="/Applications/VMware\ Fusion.app/Contents/Library/vmware-vdiskmanager"
+KX_SYNC_FOLDER_PATH="/Users/patrick.g.delamere/KX_Share"
+KX_MAIN_BOX_LOCATION="/Users/patrick.g.delamere/jenkins_remote/workspace/Parallels/KX.AS.CODE_Main_Build/base-vm/boxes/parallels-#{BOX_VERSION}/kx.as.code-main-demo-#{BOX_VERSION}.box"
+KX_WORKER_BOX_LOCATION="/Users/patrick.g.delamere/jenkins_remote/workspace/Parallels/KX.AS.CODE_Worker_Build/base-vm/boxes/parallels-#{BOX_VERSION}/kx.as.code-worker-demo-#{BOX_VERSION}.box"
+
+Vagrant.configure("2") do |config|
+  (1..WORKER_NODE_COUNT).each do |i|
+    config.vm.define "kx.as.code-worker#{i}" do |subconfig|
+      subconfig.vm.box = "kx.as.code-worker"
+      subconfig.vm.hostname = "kx-worker#{i}"
+      subconfig.vm.network :forwarded_port, guest: 22, host: 2222, id: "ssh", disabled: true
+      subconfig.vm.network :forwarded_port, guest: 22, host: "223#{i}", id: "ssh-kx-worker#{i}", auto_correct: true
+      subconfig.vm.box_url = KX_WORKER_BOX_LOCATION
+      subconfig.vm.provision "file", source: "kx.as.code_main-ip-address", destination: "/var/tmp/kx.as.code_main-ip-address"
+      subconfig.vm.provision "file", source: "profile-config.json", destination: "/var/tmp/profile-config.json"
+      subconfig.vm.provision "shell", inline: "sudo mv /var/tmp/profile-config.json /usr/share/kx.as.code/workspace/"
+      subconfig.vm.provision "shell", inline: "cat /usr/share/kx.as.code/workspace/profile-config.json | jq '.'"
+      subconfig.vm.provision "shell", inline: 'echo -e "$(date "+%Y-%m-%d_%H%M%S") | KX-Worker VM created by Vagrant" | sudo tee /usr/share/kx.as.code/workspace/gogogo'
+      subconfig.vm.provider "parallels" do |v|
+        v.name = "kx.as.code-#{ENVIRONMENT_PREFIX}-worker#{i}-#{BOX_VERSION}"
+        v.memory = WORKER_NODE_MEMORY
+        v.cpus = WORKER_NODE_CPU_CORES
+        v.customize ["set", :id, "--3d-accelerate", "highest"]
+        v.customize ["set", :id, "--high-resolution", "on"]
+        v.customize ["set", :id, "--device-add", "hdd", "--size", LOCAL_KUBE_VOLUMES_DISK_SIZE.to_i * 1024]
+      end
+    end
+  end
+
+  config.vm.define "kx.as.code-main",primary: true do |subconfig|
+    subconfig.vm.box = "kx.as.code-main"
+    subconfig.vm.hostname = "kx-main"
+    subconfig.vm.network :forwarded_port, guest: 22, host: 2222, id: "ssh", disabled: true
+    subconfig.vm.network :forwarded_port, guest: 22, host: 2230, id: "ssh-kx-main", auto_correct: true
+    subconfig.vm.box_url = KX_MAIN_BOX_LOCATION
+    subconfig.vm.synced_folder KX_SYNC_FOLDER_PATH, "/home/kx.hero/Desktop/KX_Share2/",
+        owner: "kx.hero", group: "kx.hero"
+    subconfig.vm.provision "file", source: "profile-config.json", destination: "/var/tmp/profile-config.json"
+    subconfig.vm.provision "file", source: "./users.json", destination: "/var/tmp/users.json"
+    Dir[File.dirname(__FILE__) + '/aq*.json'].each do |file|
+        file_name = File.basename(file)
+        subconfig.vm.provision "file", source: file_name, destination: "/var/tmp/" + file_name
+    end
+    subconfig.vm.provision "shell", inline: "hostname -I | awk {'print $1'} | tr -d ' \\t\\n\\r' | sudo tee /vagrant/kx.as.code_main-ip-address"
+    subconfig.vm.provision "shell", inline: 'sudo mv /var/tmp/aq*.json /usr/share/kx.as.code/workspace/'
+    subconfig.vm.provision "shell", inline: "sudo mv /var/tmp/profile-config.json /usr/share/kx.as.code/workspace/"
+    subconfig.vm.provision "shell", inline: "cat /usr/share/kx.as.code/workspace/profile-config.json | jq '.'"
+    subconfig.vm.provision "shell", inline: 'echo -e "$(date "+%Y-%m-%d_%H%M%S") | KX-Main VM created by Vagrant" | sudo tee /usr/share/kx.as.code/workspace/gogogo'
+    subconfig.vm.provision :shell do |s|
+      s.inline = "echo -e \"DOCKERHUB_USER=#{DOCKERHUB_USER}\nDOCKERHUB_EMAIL=#{DOCKERHUB_EMAIL}\nDOCKERHUB_PASSWORD=#{DOCKERHUB_PASSWORD}\" | sudo tee /var/tmp/.textfile"
+    end
+    subconfig.vm.provider "parallels" do |v|
+      v.name = "kx.as.code-#{ENVIRONMENT_PREFIX}-main-#{BOX_VERSION}"
+      v.memory = MAIN_NODE_MEMORY
+      v.cpus = MAIN_NODE_CPU_CORES
+      v.customize ["set", :id, "--3d-accelerate", "highest"]
+      v.customize ["set", :id, "--high-resolution", "on"]
+      v.customize ["set", :id, "--device-add", "hdd", "--size", LOCAL_KUBE_VOLUMES_DISK_SIZE.to_i * 1024]
+      v.customize ["set", :id, "--device-add", "hdd", "--size", GLUSTERFS_KUBE_VOLUMES_DISK_SIZE.to_i * 1024]
+    end
+  end
+end
