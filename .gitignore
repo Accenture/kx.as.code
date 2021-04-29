@@ -34,3 +34,4 @@ base-vm/**/config.yaml
 /.idea/
 **/*.vdi
 **/*.vmdk
+**/kx.as.code_main-ip-address

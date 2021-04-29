@@ -1,0 +1,21 @@
+{
+    "config": {
+        "additionalUsers":
+        [
+            {
+                "firstname": "Joe",
+                "surname": "Bloggs",
+                "email": "joe@kx-as-code.local",
+                "keyboard_language": "de",
+                "role": "admin"
+            },
+            {
+                "firstname": "Max",
+                "surname": "Mustermann",
+                "email": "max@kx-as-code.local",
+                "keyboard_language": "en",
+                "role": "user"
+            }
+        ]
+    }
+}
