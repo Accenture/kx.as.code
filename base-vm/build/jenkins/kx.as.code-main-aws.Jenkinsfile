@@ -1,3 +1,11 @@
+import org.apache.commons.lang.SystemUtils
+
+if (SystemUtils.IS_OS_UNIX || SystemUtils.IS_OS_MAC) {
+    os="darwin-linux"
+} else {
+    os="windows"
+}
+
 pipeline {
 
     agent { label "master" }
@@ -71,7 +79,7 @@ pipeline {
                   ]]) {
                        def packerPath = tool 'packer-linux-1.6.6'
                         sh """
-                        cd base-vm/build/packer/darwin-linux
+                        cd base-vm/build/packer/${os}
                         PACKER_LOG=1 ${packerPath}/packer build -force -only kx.as.code-main-aws-ami \
                         -var "compute_engine_build=${kx_compute_engine_build}" \
                         -var "hostname=${kx_hostname}" \
