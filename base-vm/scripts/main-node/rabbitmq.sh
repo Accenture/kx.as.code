@@ -10,7 +10,7 @@ sudo apt-key adv --keyserver "hkps://keys.openpgp.org" --recv-keys "0x0A9AF2115F
 ## Launchpad PPA that provides modern Erlang releases
 sudo apt-key adv --keyserver "keyserver.ubuntu.com" --recv-keys "F77F1EDA57EBB1CC"
 ## PackageCloud RabbitMQ repository
-curl -1sLf 'https://packagecloud.io/rabbitmq/rabbitmq-server/gpgkey' | apt-key add -
+curl -1sLf 'https://packagecloud.io/rabbitmq/rabbitmq-server/gpgkey' | sudo apt-key add -
 
 # Install RabbitMQ apt repositories
 sudo tee /etc/apt/sources.list.d/rabbitmq.list <<EOF
