@@ -4,12 +4,27 @@
 sudo mkdir -p /etc/rabbitmq
 sudo echo "[rabbitmq_federation_management,rabbitmq_management,rabbitmq_mqtt,rabbitmq_stomp,rabbitmq_shovel,rabbitmq_shovel_management]." | sudo tee /etc/rabbitmq/enabled_plugins
 
-# Install RabbitM;Q apt key
-curl -fsSL https://github.com/rabbitmq/signing-keys/releases/download/2.0/rabbitmq-release-signing-key.asc | sudo apt-key add -
+# Install RabbitMQ apt key
+## Team RabbitMQ's main signing key
+sudo apt-key adv --keyserver "hkps://keys.openpgp.org" --recv-keys "0x0A9AF2115F4687BD29803A206B73A36E6026DFCA"
+## Launchpad PPA that provides modern Erlang releases
+sudo apt-key adv --keyserver "keyserver.ubuntu.com" --recv-keys "F77F1EDA57EBB1CC"
+## PackageCloud RabbitMQ repository
+curl -1sLf 'https://packagecloud.io/rabbitmq/rabbitmq-server/gpgkey' | apt-key add -
 
 # Install RabbitMQ apt repositories
-echo "deb https://dl.bintray.com/rabbitmq-erlang/debian buster erlang-22.x" | sudo tee /etc/apt/sources.list.d/bintray.erlang.list
-echo "deb https://dl.bintray.com/rabbitmq/debian buster main" | sudo tee /etc/apt/sources.list.d/bintray.rabbitmq.list
+sudo tee /etc/apt/sources.list.d/rabbitmq.list <<EOF
+## Provides modern Erlang/OTP releases
+##
+## "bionic" as distribution name should work for any reasonably recent Ubuntu or Debian release.
+deb http://ppa.launchpad.net/rabbitmq/rabbitmq-erlang/ubuntu bionic main
+deb-src http://ppa.launchpad.net/rabbitmq/rabbitmq-erlang/ubuntu bionic main
+
+## Provides RabbitMQ
+##
+deb https://packagecloud.io/rabbitmq/rabbitmq-server/debian/ buster main
+deb-src https://packagecloud.io/rabbitmq/rabbitmq-server/debian/ buster main
+EOF
 
 # Install RabbitMQ
 sudo apt-get update -y
