@@ -9,3 +9,6 @@ configs:
   dockerhub_username: ""
   dockerhub_email: ""
   dockerhub_password: ""
+  kx_sync_folder_path: "/Users/<username>/KX_Share"
+  kx_main_box_location: "/Users/<username>/jenkins/jenkins_home/workspace/kxascode-main-vmbox/base-vm/boxes/virtualbox-<boxversion>/kx.as.code-main-demo-<boxversion>.box"
+  kx_worker_box_location: "/Users/<username>/jenkins/jenkins_home/workspace/kxascode-worker-vmbox/base-vm/boxes/virtualbox-<boxversion>/kx.as.code-worker-demo-<boxversion>.box"

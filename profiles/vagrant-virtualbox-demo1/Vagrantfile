@@ -4,24 +4,12 @@ require 'json'
 if Vagrant::Util::Platform.windows?
   # Is Windows
   puts "Vagrant launched from windows."
-  VMWARE_DISK_UTILITY="C:/Program Files (x86)/VMware/VMware Workstation/vmware-vdiskmanager.exe"
-  KX_SYNC_FOLDER_PATH="c:/Users/Patrick/KX_Share"
-  KX_MAIN_BOX_LOCATION="V:/jenkins_remote/workspace/VMWare_Workstation/KX.AS.CODE_Main_Build/base-vm/boxes/virtualbox-#{BOX_VERSION}/kx.as.code-main-demo-#{BOX_VERSION}.box"
-  KX_WORKER_BOX_LOCATION="V:/jenkins_remote/workspace/VMWare_Workstation/KX.AS.CODE_Worker_Build/base-vm/boxes/virtualbox-#{BOX_VERSION}/kx.as.code-worker-demo-#{BOX_VERSION}.box"
 elsif Vagrant::Util::Platform.darwin?
   # Is Mac
   puts "Vagrant launched from mac."
-  VMWARE_DISK_UTILITY="/Applications/VMware\ Fusion.app/Contents/Library/vmware-vdiskmanager"
-  KX_SYNC_FOLDER_PATH="/Users/patrick/KX_Share"
-  KX_MAIN_BOX_LOCATION="/Users/patrick/jenkins_remote/workspace/VMWare_Workstation/KX.AS.CODE_Main_Build/base-vm/boxes/virtualbox-#{BOX_VERSION}/kx.as.code-main-demo-#{BOX_VERSION}.box"
-  KX_WORKER_BOX_LOCATION="/Users/patrick/jenkins_remote/workspace/VMWare_Workstation/KX.AS.CODE_Worker_Build/base-vm/boxes/virtualbox-#{BOX_VERSION}/kx.as.code-worker-demo-#{BOX_VERSION}.box"
 else
   # Assume WSL for now
   puts "Vagrant launched from other system, maybe WSL?"
-  VMWARE_DISK_UTILITY="/mnt/c/Program Files (x86)/VMware/VMware Workstation/vmware-vdiskmanager.exe"
-  KX_SYNC_FOLDER_PATH="/mnt/c/Users/patrick/KX_Share"
-  KX_MAIN_BOX_LOCATION="/mnt/v/jenkins_remote/workspace/VMWare_Workstation/KX.AS.CODE_Main_Build/base-vm/boxes/virtualbox-#{BOX_VERSION}/kx.as.code-main-demo-#{BOX_VERSION}.box"
-  KX_WORKER_BOX_LOCATION="/mnt/v/jenkins_remote/workspace/VMWare_Workstation/KX.AS.CODE_Worker_Build/base-vm/boxes/virtualbox-#{BOX_VERSION}/kx.as.code-worker-demo-#{BOX_VERSION}.box"
 end
 
 file = File.read('profile-config.json')
@@ -60,6 +48,9 @@ DOCKERHUB_USER = vagrant_config['dockerhub_username']
 DOCKERHUB_EMAIL = vagrant_config['dockerhub_email']
 DOCKERHUB_PASSWORD = vagrant_config['dockerhub_password']
 BOX_VERSION = vagrant_config['box_version']
+KX_SYNC_FOLDER_PATH = vagrant_config['kx_sync_folder_path']
+KX_MAIN_BOX_LOCATION = vagrant_config['kx_main_box_location']
+KX_WORKER_BOX_LOCATION = vagrant_config['kx_worker_box_location']
 
 Vagrant.configure("2") do |config|
   config.vm.define "kx.as.code-main" do |subconfig|
@@ -140,7 +131,7 @@ Vagrant.configure("2") do |config|
       subconfig.vm.hostname = "kx-worker#{i}"
       subconfig.vm.network :forwarded_port, guest: 22, host: 2222, id: "ssh", disabled: true
       subconfig.vm.network :forwarded_port, guest: 22, host: "223#{i}", id: "ssh-kx-worker#{i}", auto_correct: true
-      subconfig.vm.box_url = "V:/jenkins_remote/workspace/VirtualBox/KX.AS.CODE_Worker_Build/base-vm/boxes/virtualbox-#{BOX_VERSION}/kx.as.code-worker-demo-#{BOX_VERSION}.box"
+      subconfig.vm.box_url = KX_WORKER_BOX_LOCATION
       subconfig.vm.provision "file", source: "profile-config.json", destination: "/var/tmp/profile-config.json"
       subconfig.vm.provision "shell", inline: "sudo mv /var/tmp/profile-config.json /usr/share/kx.as.code/workspace/"
       subconfig.vm.provision "shell", inline: "cat /usr/share/kx.as.code/workspace/profile-config.json | jq '.'"
