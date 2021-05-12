@@ -10,9 +10,9 @@ else
 
 fi
 
-WORKING_DIRECTORY=/Users/akshay.u.gupta/Documents
+WORKING_DIRECTORY=$HOME/jenkins_remote
 mkdir -p ${WORKING_DIRECTORY}
-JNLP_SECRET=7f4ad940a238444d73d0b69b83c5187946d39b64be5764f9cdb5003b9bf31ced
+JNLP_SECRET=ed2517ec668944018b6a6eab667c4f88cef3eea982dfc2f89ca89de72ecc1f20
 
 # Check that docker-compose.yml is available on the current path
 if [ ! -f ./docker-compose.yml ]; then
