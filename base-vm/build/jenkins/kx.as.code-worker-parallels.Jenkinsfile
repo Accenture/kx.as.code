@@ -63,7 +63,6 @@ pipeline {
                         -var "memory=8192" \
                         -var "cpus=2" \
                         -var "video_memory=128" \
-                        -var "host_data_directory=/Users/patrick.g.delamere/KX_Share" \
                         -var "hostname=${kx_hostname}" \
                         -var "domain=${kx_domain}" \
                         -var "version=${kx_version}" \
