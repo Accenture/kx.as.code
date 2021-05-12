@@ -3,7 +3,7 @@
 # Ensure time is accurate
 sudo apt-get install -y ntpdate
 
-KUBEDIR=/usr/share/kx.as.code/workspace
+KUBEDIR=${INSTALLATION_WORKSPACE}
 sudo mkdir -p ${KUBEDIR}
 sudo chown ${VM_USER}:${VM_USER} ${KUBEDIR}
 
@@ -66,7 +66,7 @@ sudo systemctl enable k8s-register-node
 sudo systemctl daemon-reload
 
 # Create SKEL directory for future users
-SKELDIR=/usr/share/kx.as.code/skel
+SKELDIR=${SKELDIR}
 sudo mkdir -p ${SKELDIR}
 sudo cp /home/${VM_USER}/.bashrc ${SKELDIR}
 sudo cp -r /home/${VM_USER}/.local ${SKELDIR}

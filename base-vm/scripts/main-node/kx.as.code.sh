@@ -164,7 +164,7 @@ User=0
 Environment=VM_USER=${VM_USER}
 Environment=KUBEDIR=${INSTALLATION_WORKSPACE}
 Type=forking
-ExecStart=/usr/share/kx.as.code/git/kx.as.code/auto-setup/pollActionQueue.sh
+ExecStart=${SHARED_GIT_REPOSITORIES}/kx.as.code/auto-setup/pollActionQueue.sh
 TimeoutSec=infinity
 Restart=no
 RemainAfterExit=no
@@ -232,11 +232,11 @@ xfconf-query --create --channel xfce4-power-manager --property /xfce4-power-mana
 xfconf-query --create --channel xfce4-power-manager --property /xfce4-power-manager/power-button-action --type int --set 0
 xfconf-query --create --channel xfce4-power-manager --property /xfce4-power-manager/presentation-mode --type bool --set false
 xfconf-query --create --channel xfce4-power-manager --property /xfce4-power-manager/show-panel-label --type int --set 0
-xfpanel-switch load /usr/share/kx.as.code/skel/.config/exported-config.tar.bz2 &
-/usr/bin/typora /usr/share/kx.as.code/git/kx.as.code/README.md &
-sudo cp /usr/share/kx.as.code/skel/p10k.zsh $HOME/.p10k.zsh
-sudo cp /usr/share/kx.as.code/skel/zshrc $HOME/.zshrc
-sudo cp -r /usr/share/kx.as.code/skel/.oh-my-zsh $HOME/.oh-my-zsh
+xfpanel-switch load ${SKELDIR}/.config/exported-config.tar.bz2 &
+/usr/bin/typora ${SHARED_GIT_REPOSITORIES}/kx.as.code/README.md &
+sudo cp ${SKELDIR}/p10k.zsh $HOME/.p10k.zsh
+sudo cp ${SKELDIR}/zshrc $HOME/.zshrc
+sudo cp -r ${SKELDIR}/.oh-my-zsh $HOME/.oh-my-zsh
 # Add check for every login telling user if K8s is ready or not
 sudo -H -i -u ${vmUser} sh -c "mkdir -p /home/${vmUser}/.config/autostart"
 cat <<EOF > /home/${vmUser}/.config/autostart/check-k8s.desktop
@@ -247,7 +247,7 @@ Exec=/usr/share/kx.as.code/checkK8sStartup.sh
 EOF
 chmod 755 /home/${vmUser}/.config/autostart/check-k8s.desktop
 chown ${vmUser}:${vmUser} /home/${vmUser}/.config/autostart/check-k8s.desktop
-sudo chmod 777 /usr/share/kx.as.code/git/*
+sudo chmod 777 ${SHARED_GIT_REPOSITORIES}/*
 rm -f $HOME/.config/autostart/show-welcome.desktop
 timeout 5 xfce4-panel &
 ''' | sudo tee /usr/share/kx.as.code/showWelcome.sh

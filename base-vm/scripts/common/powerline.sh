@@ -6,8 +6,8 @@ git clone https://github.com/powerline/fonts.git --depth=1
 cd fonts; sudo ./install.sh; cd ..; rm -rf fonts
 
 # Create template home profile directory for future users
-sudo mkdir -p /usr/share/kx.as.code/skel
-export SKELDIR=/usr/share/kx.as.code/skel
+sudo mkdir -p ${SKELDIR}
+export SKELDIR=${SKELDIR}
 
 sudo -H -i -u root sh -c 'mkdir -p /root/.local/share/fonts'
 sudo -H -i -u root sh -c 'cd /root/.local/share/fonts && curl -fLo "Droid Sans Mono for Powerline Nerd Font Complete.otf" https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/DroidSansMono/complete/Droid%20Sans%20Mono%20Nerd%20Font%20Complete.otf'

@@ -1,7 +1,7 @@
 #!/bin/bash -eux
 
 # Create SKEL directory for future users
-export SKELDIR=/usr/share/kx.as.code/skel
+export SKELDIR=${SKELDIR}
 
 sudo cp /home/${BASE_IMAGE_SSH_USER}/user_profile/zsh/p10k.zsh ${SKELDIR}
 sudo cp /home/${BASE_IMAGE_SSH_USER}/user_profile/zsh/zshrc ${SKELDIR}

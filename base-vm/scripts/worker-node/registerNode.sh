@@ -2,8 +2,8 @@
 
 . /etc/environment
 
-export sharedGitRepositories=/usr/share/kx.as.code/git
-export installationWorkspace=/usr/share/kx.as.code/workspace
+export sharedGitRepositories=${SHARED_GIT_REPOSITORIES}
+export installationWorkspace=${INSTALLATION_WORKSPACE}
 export kxHomeDir=/usr/share/kx.as.code
 
 # Check profile-config.json file is present before executing script
@@ -158,8 +158,8 @@ if [[ "${baseIpType}" == "static" ]]; then
 
       # Wait for last Vagrant or Terraform shell action to complete before changing network settings
       timeout -s TERM 6000 bash -c \
-      'while [[ ! -f /usr/share/kx.as.code/workspace/gogogo ]];\
-      do echo "Waiting for /usr/share/kx.as.code/workspace/gogogo file" && sleep 15;\
+      'while [[ ! -f ${INSTALLATION_WORKSPACE}/gogogo ]];\
+      do echo "Waiting for ${INSTALLATION_WORKSPACE}/gogogo file" && sleep 15;\
       done'
 
       # Prevent DHCLIENT updating static IP

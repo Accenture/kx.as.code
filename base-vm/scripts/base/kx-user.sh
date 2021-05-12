@@ -1,6 +1,8 @@
 #!/bin/bash -eux
 
 export KX_HOME=/usr/share/kx.as.code
+sudo mkdir -p $KX_HOME
+sudo chmod 777 $KX_HOME
 
 # Create user (if not already present)
 if ! id -u $VM_USER > /dev/null 2>&1; then
