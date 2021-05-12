@@ -360,7 +360,7 @@
     {
       "environment_vars": [
           "VM_USER={{user `vm_user`}}",
-          "VM_PASSWORD={{user `vm_password`}}"
+          "VM_PASSWORD={{user `vm_password`}}",
 	  "SKELDIR={{user `skeldir`}}",
           "SHARED_GIT_REPOSITORIES={{user `shared_git_repositories`}}",
           "INSTALLATION_WORKSPACE={{user `installation_workspace`}}"

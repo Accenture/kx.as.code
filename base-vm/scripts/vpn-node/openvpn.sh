@@ -1,7 +1,7 @@
 #!/bin/bash -eux
 
 # Copy scripts to ${vmUser}
-sudo cp -r /home/${BASE_IMAGE_SSH_USER}/scripts /home/${VM_USER}
+sudo cp -r ${INSTALLATION_WORKSPACE}/scripts /home/${VM_USER}
 
 # Update repository and install OpenVPN
 sudo apt install -y openvpn ufw
