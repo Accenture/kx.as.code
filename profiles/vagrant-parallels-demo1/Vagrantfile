@@ -42,7 +42,7 @@ DOCKERHUB_PASSWORD = vagrant_config['dockerhub_password']
 BOX_VERSION = vagrant_config['box_version']
 
 VMWARE_DISK_UTILITY="/Applications/VMware\ Fusion.app/Contents/Library/vmware-vdiskmanager"
-KX_SYNC_FOLDER_PATH="/Users/akshay.u.gupta/Documents/KX_Share"
+KX_SYNC_FOLDER_PATH="/Users/patrick.g.delamere/KX_Share"
 KX_MAIN_BOX_LOCATION="/Users/patrick.g.delamere/jenkins_remote/workspace/Parallels/KX.AS.CODE_Main_Build/base-vm/boxes/parallels-#{BOX_VERSION}/kx.as.code-main-demo-#{BOX_VERSION}.box"
 KX_WORKER_BOX_LOCATION="/Users/patrick.g.delamere/jenkins_remote/workspace/Parallels/KX.AS.CODE_Worker_Build/base-vm/boxes/parallels-#{BOX_VERSION}/kx.as.code-worker-demo-#{BOX_VERSION}.box"
 
