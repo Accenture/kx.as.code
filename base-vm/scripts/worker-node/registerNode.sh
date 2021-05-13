@@ -2,9 +2,10 @@
 
 . /etc/environment
 
-export sharedGitRepositories=${SHARED_GIT_REPOSITORIES}
-export installationWorkspace=${INSTALLATION_WORKSPACE}
 export kxHomeDir=/usr/share/kx.as.code
+export sharedGitRepositories=${kxHomeDir}/git
+export installationWorkspace=${kxHomeDir}/workspace
+
 
 # Check profile-config.json file is present before executing script
 wait-for-file() {
