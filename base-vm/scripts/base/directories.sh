@@ -1,6 +1,10 @@
 #!/bin/bash -eux
 
-sudo mkdir -p ${SKELDIR} && sudo chmod 777 ${SKELDIR}
-sudo mkdir -p ${SHARED_GIT_REPOSITORIES} && sudo chmod 777 ${SHARED_GIT_REPOSITORIES}
-sudo mkdir -p ${INSTALLATION_WORKSPACE} && sudo chmod 777 ${INSTALLATION_WORKSPACE}
+# Create base directories
+sudo mkdir -p ${KX_HOME}/skel
+sudo mkdir -p ${KX_HOME}/git
+sudo mkdir -p ${KX_HOME}/workspace
+
+# Make permissions world writable during initial build
+sudo chmod -R 777 ${KX_HOME}
 

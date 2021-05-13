@@ -17,7 +17,19 @@ sudo apt-get -y install \
     vim-nox # Debian package compiped with Python - for Powerline plugin
 
 # Install Powerline Status
-sudo pip3 install powerline-status
+sudo git clone https://github.com/vim-airline/vim-airline ~/.vim/pack/dist/start/vim-airline
+sudo git clone https://github.com/vim-airline/vim-airline-themes ~/.vim/pack/dist/start/vim-airline-themes
+sudo git clone https://github.com/altercation/vim-colors-solarized.git
+sudo mkdir -p ~/.vim/colors/
+sudo mv vim-colors-solarized/colors/solarized.vim ~/.vim/colors/
+echo """
+syntax enable
+set background=dark
+colorscheme solarized
+let g:airline_solarized_bg='dark'
+set mouse-=a
+""" | sudo tee ~/.vimrc
+sudo cp -r ~/.vim* $VM_USER/
 
 # Install yq
 sudo wget https://github.com/mikefarah/yq/releases/download/3.3.2/yq_linux_amd64 -O /usr/local/bin/yq && sudo chmod +x /usr/local/bin/yq

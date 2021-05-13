@@ -175,8 +175,6 @@ EOF"
 sudo systemctl enable k8s-initialize-cluster
 sudo systemctl daemon-reload
 
-sudo mkdir -p /usr/share/kx.as.code
-
 echo '''
 #!/bin/bash
 vmUser=$(id -nu)

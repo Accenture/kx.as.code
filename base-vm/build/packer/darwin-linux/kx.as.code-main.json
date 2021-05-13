@@ -361,9 +361,10 @@
       "environment_vars": [
           "VM_USER={{user `vm_user`}}",
           "VM_PASSWORD={{user `vm_password`}}",
-	  "SKELDIR={{user `skeldir`}}",
-          "SHARED_GIT_REPOSITORIES={{user `shared_git_repositories`}}",
-          "INSTALLATION_WORKSPACE={{user `installation_workspace`}}"
+          "KX_HOME={{user `kx_home`}}",
+	      "SKELDIR={{user `kx_home`}}/skel",
+          "SHARED_GIT_REPOSITORIES={{user `kx_home`}}/git",
+          "INSTALLATION_WORKSPACE={{user `kx_home`}}/workspace"
       ],
       "scripts": [
         "../../../scripts/base/directories.sh",
@@ -437,7 +438,7 @@
     {
       "type": "file",
       "source": "../../../scripts/main-node",
-      "destination": "/home/{{user `base_image_ssh_user`}}/scripts"
+      "destination": "{{user `installation_workspace`}}/scripts"
     },
     {
       "environment_vars": [
@@ -451,9 +452,10 @@
            "GITHUB_TOKEN={{user `github_token`}}",
            "VERSION={{user `version`}}",
            "COMPUTE_ENGINE_BUILD={{user `compute_engine_build`}}",
-           "SKELDIR={{user `skeldir`}}",
-           "SHARED_GIT_REPOSITORIES={{user `shared_git_repositories`}}",
-           "INSTALLATION_WORKSPACE={{user `installation_workspace`}}"
+           "KX_HOME={{user `kx_home`}}",
+           "SKELDIR={{user `kx_home`}}/skel",
+           "SHARED_GIT_REPOSITORIES={{user `kx_home`}}/git",
+           "INSTALLATION_WORKSPACE={{user `kx_home`}}/workspace"
        ],
        "scripts": [
            "../../../scripts/common/motd.sh",
@@ -485,9 +487,10 @@
            "GATEWAY={{user `gateway`}}",
            "DNS1={{user `dns1`}}",
            "DNS2={{user `dns2`}}",
-	   "SKELDIR={{user `skeldir`}}",
-           "SHARED_GIT_REPOSITORIES={{user `shared_git_repositories`}}",
-           "INSTALLATION_WORKSPACE={{user `installation_workspace`}}"
+           "KX_HOME={{user `kx_home`}}",
+           "SKELDIR={{user `kx_home`}}/skel",
+           "SHARED_GIT_REPOSITORIES={{user `kx_home`}}/git",
+           "INSTALLATION_WORKSPACE={{user `kx_home`}}/workspace"
        ],
        "scripts": [
            "../../../scripts/main-node/dns.sh",

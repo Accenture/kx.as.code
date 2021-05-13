@@ -1,8 +1,5 @@
 #!/bin/bash -eux
 
-# Create SKEL directory for future users
-export SKELDIR=${SKELDIR}
-
 sudo cp ${INSTALLATION_WORKSPACE}/user_profile/zsh/p10k.zsh ${SKELDIR}
 sudo cp ${INSTALLATION_WORKSPACE}/user_profile/zsh/zshrc ${SKELDIR}
 sudo cp /home/${VM_USER}/.vimrc ${SKELDIR}
