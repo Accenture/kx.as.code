@@ -9,7 +9,7 @@ sudo mkdir -p /var/lib/lightdm/.local/share/webkitgtk/
 sudo mv ${INSTALLATION_WORKSPACE}/lightdm_theme/localstorage /var/lib/lightdm/.local/share/webkitgtk/
 sudo chown -hR lightdm:lightdm /var/lib/lightdm/
 sudo mkdir -p /usr/share/lightdm-webkit/themes/material
-sudo mv ${INSTALLATION_WORKSPACE}lightdm_theme/* /usr/share/lightdm-webkit/themes/material
+sudo mv ${INSTALLATION_WORKSPACE}/lightdm_theme/* /usr/share/lightdm-webkit/themes/material
 sudo fc-cache -vf /usr/share/fonts/
 
 # Install to import XFCE panel configuration for kx.hero
