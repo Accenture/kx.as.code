@@ -29,7 +29,7 @@ colorscheme solarized
 let g:airline_solarized_bg='dark'
 set mouse-=a
 """ | sudo tee ~/.vimrc
-sudo cp -r ~/.vim* $VM_USER/
+sudo cp -r ~/.vim* /home/$VM_USER/
 
 # Install yq
 sudo wget https://github.com/mikefarah/yq/releases/download/3.3.2/yq_linux_amd64 -O /usr/local/bin/yq && sudo chmod +x /usr/local/bin/yq
