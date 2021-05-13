@@ -41,8 +41,7 @@
           ["modifyvm", "{{.Name}}", "--vrde", "off"],
           ["modifyvm", "{{.Name}}", "--memory", "{{user `memory`}}"],
           ["modifyvm", "{{.Name}}", "--cpus", "{{user `cpus`}}"],
-          ["modifyvm", "{{.Name}}", "--clipboard", "bidirectional"],
-          ["sharedfolder", "add", "{{.Name}}", "--name", "KX_Share", "--hostpath", "{{user `host_data_directory`}}", "--automount"]
+          ["modifyvm", "{{.Name}}", "--clipboard", "bidirectional"]
       ],
       "vboxmanage_post": [
         ["modifyvm", "{{.Name}}", "--nic1", "natnetwork","--natnetwork1","kxascode"]
@@ -98,15 +97,7 @@
     "vmx_data": {
       "numvcpus": "{{user `cpus`}}",
       "memsize": "{{user `memory`}}",
-      "sharedFolder0.present": "TRUE",
-      "sharedFolder0.enabled": "TRUE",
-      "sharedFolder0.readAccess": "TRUE",
-      "sharedFolder0.writeAccess": "TRUE",
-      "sharedFolder0.hostPath": "{{user `host_data_directory`}}",
-      "sharedFolder0.guestName": "KX_Share",
-      "sharedFolder0.expiration": "never",
-      "isolation.tools.hgfs.disable": "FALSE",
-      "pref.sharedFolder.maxNum": "1"
+      "isolation.tools.hgfs.disable": "FALSE"
     },
     "guest_os_type": "{{user `vmware_guest_os_type`}}",
     "http_directory": "http",
@@ -194,7 +185,29 @@
       "force": true,
       "output_directory": "../../../output-worker{{user `vm_suffix`}}/vmware-vsphere-{{user `version`}}"
     }
-  }],
+  },
+    {
+      "type": "openstack",
+      "name": "{{user `vm_name`}}-openstack",
+      "identity_endpoint": "http://10.2.76.201:5000/v3",
+      "domain_name": "Default",
+      "tenant_name": "admin",
+      "username": "admin",
+      "password": "jp6z6B8539OrtnqvjRu58Bm2MylLwR7z",
+      "region": "microstack",
+      "ssh_username": "debian",
+      "image_name": "{{user `vm_name`}}{{user `vm_suffix`}}-{{user `version`}}",
+      "source_image": "54f87748-dc85-4afd-be3c-789e12f87c89",
+      "networks": "d3683c6d-e4f7-4b59-8321-6326ec13a8f4",
+      "use_floating_ip": true,
+      "floating_ip_pool": "public",
+      "floating_ip_network": "a5f6d6c9-6327-4377-826a-26b3606d87c6",
+      "flavor": "m1.medium",
+      "availability_zone": "nova",
+      "ssh_timeout": "10000s",
+      "insecure": "true"
+    }
+  ],
   "post-processors":
   [
     {
@@ -295,9 +308,14 @@
     {
       "environment_vars": [
           "VM_USER={{user `vm_user`}}",
-          "VM_PASSWORD={{user `vm_password`}}"
+          "VM_PASSWORD={{user `vm_password`}}",
+          "KX_HOME={{user `kx_home`}}",
+          "SKELDIR={{user `kx_home`}}/skel",
+          "SHARED_GIT_REPOSITORIES={{user `kx_home`}}/git",
+          "INSTALLATION_WORKSPACE={{user `kx_home`}}/workspace"
       ],
       "scripts": [
+        "../../../scripts/base/directories.sh",
         "../../../scripts/base/vagrant-user.sh",
         "../../../scripts/base/kx-user.sh"
       ],
@@ -324,12 +342,6 @@
       "type": "shell"
     },
     {
-      "environment_vars": [
-        "IP_ADDRESS={{user `ip_address`}}",
-        "GATEWAY={{user `gateway`}}",
-        "DNS1={{user `dns1`}}",
-        "DNS2={{user `dns2`}}"
-    ],
       "scripts": [
         "../../../scripts/base/cleanup.sh",
         "../../../scripts/base/localtime.sh",
@@ -344,17 +356,17 @@
     {
       "type": "file",
       "source": "../../../dependencies/plymouth_theme",
-      "destination": "/home/{{user `base_image_ssh_user`}}/plymouth_theme"
+      "destination": "{{user `kx_home`}}/workspace//plymouth_theme"
     },
     {
       "type": "file",
       "source": "../../../dependencies/user_profile",
-      "destination": "/home/{{user `base_image_ssh_user`}}/user_profile"
+      "destination": "{{user `kx_home`}}/workspace//user_profile"
     },
     {
       "type": "file",
       "source": "../../../scripts/worker-node",
-      "destination": "/home/{{user `base_image_ssh_user`}}/scripts"
+      "destination": "{{user `kx_home`}}/workspace//scripts"
     },
     {
       "environment_vars": [
@@ -362,7 +374,11 @@
         "VM_USER={{user `vm_user`}}",
         "VM_PASSWORD={{user `vm_password`}}",
         "VERSION={{user `version`}}",
-        "COMPUTE_ENGINE_BUILD={{user `compute_engine_build`}}"
+        "COMPUTE_ENGINE_BUILD={{user `compute_engine_build`}}",
+        "KX_HOME={{user `kx_home`}}",
+        "SKELDIR={{user `kx_home`}}/skel",
+        "SHARED_GIT_REPOSITORIES={{user `kx_home`}}/git",
+        "INSTALLATION_WORKSPACE={{user `kx_home`}}/workspace"
        ],
        "scripts": [
          "../../../scripts/common/motd.sh",
@@ -382,7 +398,11 @@
         "BASE_IMAGE_SSH_USER={{user `base_image_ssh_user`}}",
         "VM_USER={{user `vm_user`}}",
         "VM_PASSWORD={{user `vm_password`}}",
-        "VERSION={{user `version`}}"
+        "VERSION={{user `version`}}",
+        "KX_HOME={{user `kx_home`}}",
+        "SKELDIR={{user `kx_home`}}/skel",
+        "SHARED_GIT_REPOSITORIES={{user `kx_home`}}/git",
+        "INSTALLATION_WORKSPACE={{user `kx_home`}}/workspace"
        ],
        "scripts": [
          "../../../scripts/worker-node/tools.sh",

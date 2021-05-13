@@ -42,8 +42,7 @@
           ["modifyvm", "{{.Name}}", "--vrde", "off"],
           ["modifyvm", "{{.Name}}", "--memory", "{{user `memory`}}"],
           ["modifyvm", "{{.Name}}", "--cpus", "{{user `cpus`}}"],
-          ["modifyvm", "{{.Name}}", "--clipboard", "bidirectional"],
-          ["sharedfolder", "add", "{{.Name}}", "--name", "KX_Share", "--hostpath", "{{user `host_data_directory`}}", "--automount"]
+          ["modifyvm", "{{.Name}}", "--clipboard", "bidirectional"]
       ],
       "vboxmanage_post": [
           ["setextradata", "{{.Name}}", "CustomVideoMode1", "1920x1200x32"],
@@ -94,9 +93,7 @@
         ["set", "{{.Name}}", "--auto-share-bluetooth", "off"],
         ["set", "{{.Name}}", "--on-window-close", "keep-running"],
         ["set", "{{.Name}}", "--startup-view", "same"],
-        ["set", "{{.Name}}", "--on-shutdown", "close"],
-        ["set", "{{.Name}}", "--shf-host", "on"],
-        ["set", "{{.Name}}", "--shf-host-add", "KX_Share", "--path", "{{user `host_data_directory`}}"]
+        ["set", "{{.Name}}", "--on-shutdown", "close"]
       ],
       "guest_os_type": "{{user `parallels_guest_os_type`}}",
       "http_directory": "http",
@@ -143,15 +140,7 @@
       "vmx_data": {
         "numvcpus": "{{user `cpus`}}",
         "memsize": "{{user `memory`}}",
-        "sharedFolder0.present": "TRUE",
-        "sharedFolder0.enabled": "TRUE",
-        "sharedFolder0.readAccess": "TRUE",
-        "sharedFolder0.writeAccess": "TRUE",
-        "sharedFolder0.hostPath": "{{user `host_data_directory`}}",
-        "sharedFolder0.guestName": "KX_Share",
-        "sharedFolder0.expiration": "never",
-        "isolation.tools.hgfs.disable": "FALSE",
-        "pref.sharedFolder.maxNum": "1"
+        "isolation.tools.hgfs.disable": "FALSE"
       },
       "guest_os_type": "{{user `vmware_guest_os_type`}}",
       "http_directory": "http",
@@ -257,7 +246,7 @@
       "password": "jp6z6B8539OrtnqvjRu58Bm2MylLwR7z",
       "region": "microstack",
       "ssh_username": "debian",
-      "image_name": "debian-10-9-qcow2",
+      "image_name": "{{user `vm_name`}}{{user `vm_suffix`}}-{{user `version`}}",
       "source_image": "54f87748-dc85-4afd-be3c-789e12f87c89",
       "networks": "d3683c6d-e4f7-4b59-8321-6326ec13a8f4",
       "use_floating_ip": true,
@@ -403,12 +392,6 @@
       "type": "shell"
     },
     {
-      "environment_vars": [
-        "IP_ADDRESS={{user `ip_address`}}",
-        "GATEWAY={{user `gateway`}}",
-        "DNS1={{user `dns1`}}",
-        "DNS2={{user `dns2`}}"
-    ],
       "scripts": [
         "../../../scripts/base/cleanup.sh",
         "../../../scripts/base/localtime.sh",
