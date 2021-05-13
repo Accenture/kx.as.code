@@ -14,7 +14,21 @@ sudo apt-get -y install \
     sshpass \
     fontconfig \
     fontconfig-config \
-    vim-nox # Debian package compiped with Python - for Powerline plugin
+    vim-nox \
+    sudo \
+    bzip2 \
+    acpid \
+    cryptsetup \
+    zlib1g-dev \
+    wget \
+    curl \
+    dkms \
+    fuse \
+    make \
+    nfs-common \
+    cifs-utils \
+    rsync \
+    open-vm-tools
 
 # Install Powerline Status
 sudo apt-get install -y python3-setuptools
