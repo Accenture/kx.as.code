@@ -20,7 +20,9 @@ fi
 sudo apt-get -y install --no-install-recommends build-essential
 sudo apt-get -y install --no-install-recommends ssh nfs-common curl git vim
 
-# Clean up the apt cache
+# Full upgrade and clean up the apt cache
+sudo apt-get update
+sudo apt-get full-upgrade -y
 sudo apt-get -y autoremove --purge
 sudo apt-get clean
 
