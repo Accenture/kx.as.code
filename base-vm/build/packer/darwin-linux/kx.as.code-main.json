@@ -423,22 +423,22 @@
     {
       "type": "file",
       "source": "../../../dependencies/plymouth_theme",
-      "destination": "{{user `installation_workspace`}}/plymouth_theme"
+      "destination": "{{user `kx_home`}}/workspace/plymouth_theme"
     },
     {
       "type": "file",
       "source": "../../../dependencies/user_profile",
-      "destination": "{{user `installation_workspace`}}/user_profile"
+      "destination": "{{user `kx_home`}}/workspace/user_profile"
     },
     {
       "type": "file",
       "source": "../../../dependencies/lightdm_theme",
-      "destination": "{{user `installation_workspace`}}/lightdm_theme"
+      "destination": "{{user `kx_home`}}/workspace/lightdm_theme"
     },
     {
       "type": "file",
       "source": "../../../scripts/main-node",
-      "destination": "{{user `installation_workspace`}}/scripts"
+      "destination": "{{user `kx_home`}}/workspace/scripts"
     },
     {
       "environment_vars": [
