@@ -237,12 +237,12 @@
   ],
   "variables": {
     "disk_size": "40960",
+    "kx_home": "/usr/share/kx.as.code",
     "compute_engine_build": "true",
     "headless": "true",
     "ssh_fullname": "KX Hero",
     "update": "true",
     "vm_name": "kx.as.code-worker",
-    "vm_suffix": "-demo",
-    "kx_home": "/usr/share/kx.as.code"
+    "vm_suffix": "-demo"
   }
 }

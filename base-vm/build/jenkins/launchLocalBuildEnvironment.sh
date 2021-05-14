@@ -84,11 +84,11 @@ if [[ "${error}" = "true" ]]; then
   exit 1
 fi
 
-jenkinsContainerExists=$(docker ps -a -f "name=jenkins" -q)
-if [ -z ${jenkinsContainerExists} ]; then
-	docker-compose up -d
+jenkinsContainer=$(docker ps -a -f "name=jenkins" -q)
+if [ -z ${jenkinsContainer} ]; then
+        docker-compose up -d
 else
-	docker-compose start jenkins
+        docker start ${jenkinsContainer}
 fi
 
 echo "Waiting for agent.jar to become available...(URL ${JENKINS_URL})"
