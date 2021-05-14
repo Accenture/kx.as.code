@@ -75,7 +75,7 @@ pipeline {
                         -var "git_techradar_branch=${git_techradar_branch}" \
                         -var "ssh_username=${ssh_username}" \
                         -var "base_image_ssh_user=${base_image_ssh_user}" \
-                        ./kx.as.code-worker.json
+                        ./kx.as.code-worker-local-profiles.json
                         """
                     }
                 }

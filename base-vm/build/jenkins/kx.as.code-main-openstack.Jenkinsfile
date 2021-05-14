@@ -8,7 +8,7 @@ if (SystemUtils.IS_OS_UNIX || SystemUtils.IS_OS_MAC) {
 
 pipeline {
 
-    agent { label "packer" }
+    agent { label "master" }
 
     options {
         ansiColor('xterm')
@@ -17,6 +17,10 @@ pipeline {
         timestamps()
         disableConcurrentBuilds()
         timeout(time: 3, unit: 'HOURS')
+    }
+
+    tools {
+        'biz.neustar.jenkins.plugins.packer.PackerInstallation' 'packer-linux-1.6.6'
     }
 
     environment {
@@ -35,11 +39,12 @@ pipeline {
         string(name: 'kx_version', defaultValue: "0.6.7", description: "KX.AS.CODE Version")
         string(name: 'kx_vm_user', defaultValue: "kx.hero", description: "KX.AS.CODE VM user login")
         string(name: 'kx_vm_password', defaultValue: "L3arnandshare", description: "KX.AS.CODE VM user login password")
-        string(name: 'kx_compute_engine_build', defaultValue: "false", description: "Needs to be true for AWS to avoid 'grub' changes")
+        string(name: 'kx_compute_engine_build', defaultValue: "true", description: "Needs to be true for AWS to avoid 'grub' changes")
         string(name: 'kx_hostname', defaultValue: "kx-main", description: "KX.AS.CODE main node hostname")
         string(name: 'kx_domain', defaultValue: "kx-as-code.local", description: "KX.AS.CODE local domain")
-        string(name: 'base_image_ssh_user', defaultValue: "vagrant", description: "Default VM SSH user")
-        string(name: 'ssh_username', defaultValue: 'vagrant', description: 'SSH user used during packer build process')
+        string(name: 'base_image_ssh_user', defaultValue: "admin", description: "Default AMI SSH user")
+        string(name: 'ssh_username', defaultValue: 'admin', description: 'SSH user used during packer build process')
+        string(name: 'ssh_interface', defaultValue: 'public_ip', description: 'Options are private_ip or public_ip')
     }
 
     stages {
@@ -52,31 +57,36 @@ pipeline {
             }
         }
 
-        stage('Build the OVA/BOX'){
+        stage('Build the AMI'){
             steps {
                 script {
                 withCredentials([usernamePassword(credentialsId: 'GITHUB_KX.AS.CODE', passwordVariable: 'GITHUB_TOKEN', usernameVariable: 'GITHUB_USER')]) {
+                  withCredentials([[
+                    $class: 'AmazonWebServicesCredentialsBinding',
+                    credentialsId: "AWS_PACKER_ACCESS",
+                    accessKeyVariable: 'AWS_ACCESS_KEY_ID',
+                    secretKeyVariable: 'AWS_SECRET_ACCESS_KEY'
+                  ]]) {
+                       def packerPath = tool 'packer-linux-1.6.6'
                         sh """
                         cd base-vm/build/packer/${os}
-                        packer build -force -only kx.as.code-worker-parallels \
-                        -var "compute_engine_build=${kx_compute_engine_build}" \
-                        -var "memory=8192" \
-                        -var "cpus=2" \
-                        -var "video_memory=128" \
-                        -var "hostname=${kx_hostname}" \
-                        -var "domain=${kx_domain}" \
-                        -var "version=${kx_version}" \
-                        -var "vm_user=${kx_vm_user}" \
-                        -var "vm_password=${kx_vm_password}" \
-                        -var "github_user=${GITHUB_USER}" \
-                        -var "github_token=${GITHUB_TOKEN}" \
-                        -var "git_source_branch=${git_source_branch}" \
-                        -var "git_docs_branch=${git_docs_branch}" \
-                        -var "git_techradar_branch=${git_techradar_branch}" \
-                        -var "ssh_username=${ssh_username}" \
-                        -var "base_image_ssh_user=${base_image_ssh_user}" \
-                        ./kx.as.code-worker-local-profiles.json
+                        PACKER_LOG=1 ${packerPath}/packer build -force -only kx.as.code-main-openstack \
+                            -var "compute_engine_build=${kx_compute_engine_build}" \
+                            -var "hostname=${kx_hostname}" \
+                            -var "domain=${kx_domain}" \
+                            -var "version=${kx_version}" \
+                            -var "vm_user=${kx_vm_user}" \
+                            -var "vm_password=${kx_vm_password}" \
+                            -var "github_user=${GITHUB_USER}" \
+                            -var "github_token=${GITHUB_TOKEN}" \
+                            -var "git_source_branch=${GIT_SOURCE_BRANCH}" \
+                            -var "git_docs_branch=${GIT_DOCS_BRANCH}" \
+                            -var "git_techradar_branch=${GIT_TECHRADAR_BRANCH}" \
+                            -var "ssh_username=${ssh_username}" \
+                            -var "base_image_ssh_user=${base_image_ssh_user}" \
+                            ./kx.as.code-main-cloud-profiles.json
                         """
+                        }
                     }
                 }
             }

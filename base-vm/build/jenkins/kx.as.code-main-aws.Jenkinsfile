@@ -106,7 +106,7 @@ pipeline {
                         -var "ssh_username=${ssh_username}" \
                         -var "base_image_ssh_user=${base_image_ssh_user}" \
                         -var "shutdown_behavior=${shutdown_behavior}" \
-                        kx.as.code-main-aws-ami.json
+                        ./kx.as.code-main-cloud-profiles.json
                         """
                         }
                     }
