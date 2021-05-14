@@ -10,9 +10,10 @@ else
 
 fi
 
-WORKING_DIRECTORY=$HOME/jenkins_remote
+WORKING_DIRECTORY=/var/jenkins_remote
 mkdir -p ${WORKING_DIRECTORY}
-JNLP_SECRET=ed2517ec668944018b6a6eab667c4f88cef3eea982dfc2f89ca89de72ecc1f20
+AGENT_NAME=local
+JNLP_SECRET=fd52917427fe3d5c55a5d9e5b70aa12a3bd56a59ce40200ffc3457a83414eab7
 
 # Check that docker-compose.yml is available on the current path
 if [ ! -f ./docker-compose.yml ]; then
@@ -99,4 +100,13 @@ if [ ! -f ./agent.jar ]; then
   curl ${JENKINS_URL}/jnlpJars/agent.jar -o agent.jar
 fi
 
-java -jar agent.jar -jnlpUrl ${JENKINS_URL}/computer/Local/slave-agent.jnlp -secret ${JNLP_SECRET} -workDir "${WORKING_DIRECTORY}"
+which java
+if [ $? -ne 0 ] && [ -f java/bin/java ]; then
+  export PATH=$PATH:$(pwd)/java/bin
+else
+  echo "Java not found and could not be downloaded/installed. Exiting"
+  exit 1
+fi
+
+# Start Jenkins Agent
+java -jar agent.jar -jnlpUrl ${JENKINS_URL}/computer/${AGENT_NAME}/slave-agent.jnlp -secret ${JNLP_SECRET} -workDir "${WORKING_DIRECTORY}"
