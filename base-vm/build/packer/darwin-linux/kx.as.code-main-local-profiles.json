@@ -284,11 +284,6 @@
     },
     {
       "script": "../../../scripts/base/vmware.sh",
-      "only": ["{{user `vm_name`}}-vmware-vsphere"],
-      "type": "shell"
-    },
-    {
-      "script": "../../../scripts/base/vmware.sh",
       "only": ["{{user `vm_name`}}-vmware-desktop"],
       "type": "shell"
     },

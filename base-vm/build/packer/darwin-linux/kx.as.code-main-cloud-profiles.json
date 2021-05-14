@@ -161,6 +161,11 @@
       "expect_disconnect": "true"
     },
     {
+      "script": "../../../scripts/base/vmware.sh",
+      "only": ["{{user `vm_name`}}-vmware-vsphere"],
+      "type": "shell"
+    },
+    {
       "scripts": [
         "../../../scripts/base/cleanup.sh",
         "../../../scripts/base/localtime.sh",
