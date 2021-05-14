@@ -42,9 +42,8 @@ pipeline {
         string(name: 'kx_compute_engine_build', defaultValue: "true", description: "Needs to be true for AWS to avoid 'grub' changes")
         string(name: 'kx_hostname', defaultValue: "kx-main", description: "KX.AS.CODE main node hostname")
         string(name: 'kx_domain', defaultValue: "kx-as-code.local", description: "KX.AS.CODE local domain")
-        string(name: 'base_image_ssh_user', defaultValue: "admin", description: "Default AMI SSH user")
-        string(name: 'ssh_username', defaultValue: 'admin', description: 'SSH user used during packer build process')
-        string(name: 'ssh_interface', defaultValue: 'public_ip', description: 'Options are private_ip or public_ip')
+        string(name: 'base_image_ssh_user', defaultValue: "debian", description: "Default AMI SSH user")
+        string(name: 'ssh_username', defaultValue: 'debian', description: 'SSH user used during packer build process')
     }
 
     stages {
