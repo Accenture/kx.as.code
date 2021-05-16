@@ -127,6 +127,7 @@
         "use_floating_ip": true,
         "floating_ip_pool": "public",
         "floating_ip_network": "{{user `openstack_floating_ip_network`}}",
+        "openstack_security_groups": [ "{{user `openstack_security_groups`}}" ],
         "flavor": "{{user `openstack_flavor`}}",
         "availability_zone": "nova",
         "ssh_timeout": "10000s",
