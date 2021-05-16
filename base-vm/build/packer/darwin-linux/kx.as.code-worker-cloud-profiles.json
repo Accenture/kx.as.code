@@ -107,27 +107,28 @@
         "output_directory": "../../../output-worker{{user `vm_suffix`}}/vmware-vsphere-{{user `version`}}"
       }
     },
-      {
-        "type": "openstack",
-        "name": "{{user `vm_name`}}-openstack",
-        "identity_endpoint": "http://10.2.76.201:5000/v3",
-        "domain_name": "Default",
-        "tenant_name": "admin",
-        "username": "admin",
-        "password": "jp6z6B8539OrtnqvjRu58Bm2MylLwR7z",
-        "region": "microstack",
-        "ssh_username": "debian",
-        "image_name": "{{user `vm_name`}}{{user `vm_suffix`}}-{{user `version`}}",
-        "source_image": "54f87748-dc85-4afd-be3c-789e12f87c89",
-        "networks": "d3683c6d-e4f7-4b59-8321-6326ec13a8f4",
-        "use_floating_ip": true,
-        "floating_ip_pool": "public",
-        "floating_ip_network": "a5f6d6c9-6327-4377-826a-26b3606d87c6",
-        "flavor": "m1.medium",
-        "availability_zone": "nova",
-        "ssh_timeout": "10000s",
-        "insecure": "true"
-      }  
+    {
+      "type": "openstack",
+      "name": "{{user `vm_name`}}-openstack",
+      "identity_endpoint": "http://10.2.76.201:5000/v3",
+      "domain_name": "Default",
+      "tenant_name": "admin",
+      "username": "{{user `openstack_user`}}",
+      "password": "{{user `openstack_password`}}",
+      "region": "{{user `openstack_region`}}",
+      "ssh_username": "debian",
+      "image_name": "{{user `vm_name`}}{{user `vm_suffix`}}-{{user `version`}}",
+      "source_image": "{{user `openstack_source_image`}}",
+      "networks": "{{user `openstack_networks`}}",
+      "use_floating_ip": true,
+      "floating_ip_pool": "public",
+      "floating_ip_network": "{{user `openstack_floating_ip_network`}}",
+      "security_groups": [ "{{user `openstack_security_groups`}}" ],
+      "flavor": "{{user `openstack_flavor`}}",
+      "availability_zone": "nova",
+      "ssh_timeout": "10000s",
+      "insecure": "true"
+    }
   ],
   "post-processors":
   [
