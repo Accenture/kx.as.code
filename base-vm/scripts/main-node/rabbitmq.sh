@@ -4,34 +4,26 @@
 sudo mkdir -p /etc/rabbitmq
 sudo echo "[rabbitmq_federation_management,rabbitmq_management,rabbitmq_mqtt,rabbitmq_stomp,rabbitmq_shovel,rabbitmq_shovel_management]." | sudo tee /etc/rabbitmq/enabled_plugins
 
-##############################################################################
-######## Block below from https://www.rabbitmq.com/install-debian.html #######
-##############################################################################
-
 sudo apt-get install curl gnupg debian-keyring debian-archive-keyring apt-transport-https -y
 
 ## Team RabbitMQ's main signing key
 sudo apt-key adv --keyserver "hkps://keys.openpgp.org" --recv-keys "0x0A9AF2115F4687BD29803A206B73A36E6026DFCA"
-## Launchpad PPA that provides modern Erlang releases
-sudo apt-key adv --keyserver "keyserver.ubuntu.com" --recv-keys "F77F1EDA57EBB1CC"
-## PackageCloud RabbitMQ repository
-curl -1sLf 'https://packagecloud.io/rabbitmq/rabbitmq-server/gpgkey' | sudo apt-key add -
+## Cloudsmith: modern Erlang repository
+curl -1sLf https://dl.cloudsmith.io/public/rabbitmq/rabbitmq-erlang/gpg.E495BB49CC4BBE5B.key | sudo apt-key add -
+## Cloudsmith: RabbitMQ repository
+curl -1sLf https://dl.cloudsmith.io/public/rabbitmq/rabbitmq-server/gpg.9F4587F226208342.key | sudo apt-key add -
 
 ## Add apt repositories maintained by Team RabbitMQ
 sudo tee /etc/apt/sources.list.d/rabbitmq.list <<EOF
 ## Provides modern Erlang/OTP releases
 ##
-## "bionic" as distribution name should work for any reasonably recent Ubuntu or Debian release.
-## See the release to distribution mapping table in RabbitMQ doc guides to learn more.
-deb http://ppa.launchpad.net/rabbitmq/rabbitmq-erlang/ubuntu bionic main
-deb-src http://ppa.launchpad.net/rabbitmq/rabbitmq-erlang/ubuntu bionic main
+deb https://dl.cloudsmith.io/public/rabbitmq/rabbitmq-erlang/deb/ubuntu buster main
+deb-src https://dl.cloudsmith.io/public/rabbitmq/rabbitmq-erlang/deb/ubuntu buster main
 
 ## Provides RabbitMQ
 ##
-## "bionic" as distribution name should work for any reasonably recent Ubuntu or Debian release.
-## See the release to distribution mapping table in RabbitMQ doc guides to learn more.
-deb https://packagecloud.io/rabbitmq/rabbitmq-server/ubuntu/ bionic main
-deb-src https://packagecloud.io/rabbitmq/rabbitmq-server/ubuntu/ bionic main
+deb https://dl.cloudsmith.io/public/rabbitmq/rabbitmq-server/deb/ubuntu buster main
+deb-src https://dl.cloudsmith.io/public/rabbitmq/rabbitmq-server/deb/ubuntu buster main
 EOF
 
 ## Update package indices
@@ -46,16 +38,6 @@ sudo apt-get install -y erlang-base \
 
 ## Install rabbitmq-server and its dependencies
 sudo apt-get install rabbitmq-server -y --fix-missing
-
-#############################################################################
-######## End block from https://www.rabbitmq.com/install-debian.html ########
-#############################################################################
-
-# Install RabbitMQ
-sudo apt-get update -y
-sudo apt-get install -y erlang-base amqp-tools rabbitmq-server
-sudo rabbitmqctl status
-sudo rabbitmq-plugins list
 
 adminShortcutsDirectory="/usr/share/kx.as.code/Admin Tools"
 
