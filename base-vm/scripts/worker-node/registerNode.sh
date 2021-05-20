@@ -221,16 +221,17 @@ if [[ "${virtualizationType}" != "public-cloud" ]] && [[ "${virtualizationType}"
   chown -R ${vmUser}:${vmUser} /home/${vmUser}/.ssh
   chmod 700 $installationWorkspace/.ssh
   yes | sudo -u ${vmUser} ssh-keygen -f ssh-keygen -m PEM -t rsa -b 4096 -q -f /home/${vmUser}/.ssh/id_rsa -N ''
-
-  # Add key to KX-Main host
-  sudo -H -i -u ${vmUser} bash -c "sshpass -f ${kxHomeDir}/.config/.user.cred ssh-copy-id -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp}"
-
-  # Add KX-Main key to worker
-  sudo -H -i -u ${vmUser} bash -c "ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} \"cat /home/${vmUser}/.ssh/id_rsa.pub\" | tee -a /home/${vmUser}/.ssh/authorized_keys"
-  sudo mkdir -p /root/.ssh
-  sudo chmod 700 /root/.ssh
-  sudo cp /home/$vmUser/.ssh/authorized_keys /root/.ssh/
 fi
+
+# Add key to KX-Main host
+sudo -H -i -u ${vmUser} bash -c "sshpass -f ${kxHomeDir}/.config/.user.cred ssh-copy-id -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp}"
+
+# Add KX-Main key to worker
+sudo -H -i -u ${vmUser} bash -c "ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} \"cat /home/${vmUser}/.ssh/id_rsa.pub\" | tee -a /home/${vmUser}/.ssh/authorized_keys"
+sudo mkdir -p /root/.ssh
+sudo chmod 700 /root/.ssh
+sudo cp /home/$vmUser/.ssh/authorized_keys /root/.ssh/
+
 # Copy KX.AS.CODE CA certificates from main node and restart docker
 export REMOTE_KX_MAIN_installationWorkspace=$installationWorkspace
 export REMOTE_KX_MAIN_CERTSDIR=$REMOTE_KX_MAIN_installationWorkspace/certificates
