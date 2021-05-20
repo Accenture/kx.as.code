@@ -1,19 +1,20 @@
-#!/bin/bash
+#!/bin/bash -x
+source ./jenkins.env
 dockerMachineEnvironment=$(which docker-machine)
 if [[ $? = 1 ]]; then 
   echo "Not a docker-machine environment, setting docker host to localhost"
-  JENKINS_URL=http://localhost:8080
-
+  JENKINS_HOST=localhost
+  JENKINS_URL=http://${JENKINS_HOST}:${JENKINS_SERVER_PORT}
 else
   echo "Jenkins is running on docker-machine, setting docker host to 192.168.99.100"
-  JENKINS_URL=http://192.168.99.100:8080 # You might need to change this. This is the default docker-machine IP
-
+  JENKINS_HOST=192.168.99.100
+  JENKINS_URL=http://${JENKINS_HOST}:{JENKINS_SERVER_PORT} # You might need to change this. This is the default docker-machine IP
 fi
 
 WORKING_DIRECTORY=/var/jenkins_remote
 mkdir -p ${WORKING_DIRECTORY}
 AGENT_NAME=local
-JNLP_SECRET=fd52917427fe3d5c55a5d9e5b70aa12a3bd56a59ce40200ffc3457a83414eab7
+JNLP_SECRET=4f355f4702872f6b8431b52b566179d3598e26eb344cb1229f10882c64e520d1
 
 # Check that docker-compose.yml is available on the current path
 if [ ! -f ./docker-compose.yml ]; then
@@ -29,7 +30,15 @@ if [[ -z ${vagrantInstalled} ]]; then
 fi
 
 # Checking if Packer is installed
-packerInstalled=$(packer -v 2>/dev/null | grep -E "([0-9]+)\.([0-9]+)\.([0-9]+)")
+if [ -f /usr/sbin/packer ]; then
+# Ensure that the wrong packer is not used for Centos/Fedora distributions)
+  if [ -f /usr/bin/packer ]; then
+    export packerExecutable=/usr/bin/packer
+  elif [ -f ./packer ]; then
+    export packerExecutable=./packer
+  fi
+fi
+packerInstalled=$(${packerExecutable} -v 2>/dev/null | grep -E "([0-9]+)\.([0-9]+)\.([0-9]+)")
 if [[ -z ${vagrantInstalled} ]]; then
   echo "- [ERROR] Packer not installed or not reachable. Download packer from https://www.packer.io/downloads and ensure it is reachable on your PATH"
   error="true"
@@ -86,7 +95,7 @@ fi
 
 jenkinsContainer=$(docker ps -a -f "name=jenkins" -q)
 if [ -z ${jenkinsContainer} ]; then
-        docker-compose up -d
+        docker-compose --env-file ./jenkins.env up -d
 else
         docker start ${jenkinsContainer}
 fi
@@ -109,4 +118,4 @@ else
 fi
 
 # Start Jenkins Agent
-java -jar agent.jar -jnlpUrl ${JENKINS_URL}/computer/${AGENT_NAME}/slave-agent.jnlp -secret ${JNLP_SECRET} -workDir "${WORKING_DIRECTORY}"
+java -jar agent.jar -jnlpUrl ${JENKINS_URL}/computer/${AGENT_NAME}/slave-agent.jnlp -connectTo ${JENKINS_HOST}:${JENKINS_JNLP_PORT} -secret ${JNLP_SECRET} -workDir "${WORKING_DIRECTORY}"
