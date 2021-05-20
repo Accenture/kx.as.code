@@ -204,7 +204,7 @@ if [[ "${baseIpType}" == "static" ]]; then
 fi
 
 # Wait until the worker has the main node's IP file
-timeout -s TERM 3000 bash -c 'while [ -f /var/tmp/kx.as.code_main-ip-address ];         do
+timeout -s TERM 3000 bash -c 'while [ ! -f /var/tmp/kx.as.code_main-ip-address ];         do
 echo "Waiting for kx-main IP address" && sleep 5;         done'
 export kxMainIp=$(cat /var/tmp/kx.as.code_main-ip-address)
 
