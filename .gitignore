@@ -38,3 +38,4 @@ base-vm/**/config.yaml
 agent.jar
 amazon-corretto*
 **/jenkins/java
+.terraform*

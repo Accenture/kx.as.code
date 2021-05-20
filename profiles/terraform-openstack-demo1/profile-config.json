@@ -1,0 +1,45 @@
+{
+    "config": {
+        "allowWorkloadsOnMaster": true,
+        "disableSessionTimeout": true,
+        "certificationMode": false,
+        "disableLinuxDesktop": false,
+        "defaultKeyboardLanguage": "de",
+        "local_volumes": {
+            "one_gb": 20,
+            "five_gb": 15,
+            "ten_gb": 8,
+            "thirty_gb": 2,
+            "fifty_gb": 1
+        },
+        "virtualizationType": "private-cloud",
+        "environmentPrefix": "demo1",
+        "glusterFsDiskSize": "200",
+        "sslProvider": "self-signed",
+        "baseDomain": "kx-as-code.local",
+        "baseUser": "kx.hero",
+        "basePassword": "L3arnandshare",
+        "baseIpType": "dynamic",
+        "metalLbIpRange": {
+            "ipRangeStart": "10.10.76.100",
+            "ipRangeEnd": "10.10.76.150"
+        },
+        "staticNetworkSetup": {
+            "baseFixedIpAddresses": {
+                "kx-main": "10.100.76.150",
+                "kx-worker1": "10.100.76.151",
+                "kx-worker2": "10.100.76.152",
+                "kx-worker3": "10.100.76.153",
+                "kx-worker4": "10.100.76.154"
+            },
+            "gateway": "10.100.76.2",
+            "dns1": "10.100.76.150",
+            "dns2": "8.8.8.8"
+        },
+        "proxy_settings": {
+            "http_proxy": "",
+            "https_proxy": "",
+            "no_proxy": ""
+        }
+    }
+}
