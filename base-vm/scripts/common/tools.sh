@@ -1,7 +1,7 @@
 #!/bin/bash -eux
 
 # Basic tools for all nodes - main and workers
-sudo apt-get -y install \
+sudo DEBIAN_FRONTEND=noninteractive apt-get -y install \
     xfsprogs \
     net-tools \
     dnsutils \

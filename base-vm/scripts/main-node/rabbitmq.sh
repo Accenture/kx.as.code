@@ -17,13 +17,13 @@ curl -1sLf https://dl.cloudsmith.io/public/rabbitmq/rabbitmq-server/gpg.9F4587F2
 sudo tee /etc/apt/sources.list.d/rabbitmq.list <<EOF
 ## Provides modern Erlang/OTP releases
 ##
-deb https://dl.cloudsmith.io/public/rabbitmq/rabbitmq-erlang/deb/ubuntu buster main
-deb-src https://dl.cloudsmith.io/public/rabbitmq/rabbitmq-erlang/deb/ubuntu buster main
+deb https://dl.cloudsmith.io/public/rabbitmq/rabbitmq-erlang/deb/debian buster main
+deb-src https://dl.cloudsmith.io/public/rabbitmq/rabbitmq-erlang/deb/debian buster main
 
 ## Provides RabbitMQ
 ##
-deb https://dl.cloudsmith.io/public/rabbitmq/rabbitmq-server/deb/ubuntu buster main
-deb-src https://dl.cloudsmith.io/public/rabbitmq/rabbitmq-server/deb/ubuntu buster main
+deb https://dl.cloudsmith.io/public/rabbitmq/rabbitmq-server/deb/debian buster main
+deb-src https://dl.cloudsmith.io/public/rabbitmq/rabbitmq-server/deb/debian buster main
 EOF
 
 ## Update package indices
