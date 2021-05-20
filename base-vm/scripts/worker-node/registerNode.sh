@@ -203,27 +203,19 @@ if [[ "${baseIpType}" == "static" ]]; then
   fi
 fi
 
-# Wait until network and DNS resolution is back up. Also need to wait for kx-main, in case the worker node comes up first
-timeout -s TERM 3000 bash -c 'while [[ "$rc" != "0" ]];         do
-nslookup kx-main.'${baseDomain}'; rc=$?;
-echo "Waiting for kx-main DNS resolution to function" && sleep 5;         done'
+# Wait until the worker has the main node's IP file
+timeout -s TERM 3000 bash -c 'while [ -f /var/tmp/kx.as.code_main-ip-address ];         do
+echo "Waiting for kx-main IP address" && sleep 5;         done'
+export kxMainIp=$(cat /var/tmp/kx.as.code_main-ip-address)
 
-
-# Try to get KX-Main IP address via a lookup if baseIpType is set to dynamic
- if [ "${baseIpType}" == "dynamic" ]; then
-   # First try to get ip from DNS
-   kxMainIp=$(dig +short kx-main.${baseDomain})
-   # Try an alternative. This is usually necessary when getting an IP address from DHCP and there is no DNS (AWS OK with Route53, local virtualizations, NOK)
-   if [[ -z ${kxMainIp} ]]; then
-    # Read the file dropped by Terraform or Vagrant
-    export kxMainIp=$(cat /var/tmp/kx.as.code_main-ip-address)
-  fi
+if [[ -n ${kxMainIp} ]]; then
+  echo "${kxMainIp} kx-main kx-main.${baseDomain}" | sudo tee -a /etc/hosts
 fi
 
 mkdir -p ${installationWorkspace}
 chown -R ${vmUser}:${vmUser} ${installationWorkspace}
 
-if [[ "${virtualizationType}" != "public-cloud" ]]; then
+if [[ "${virtualizationType}" != "public-cloud" ]] && [[ "${virtualizationType}" != "private-cloud" ]]; then
   # Create RSA key for kx.hero user
   mkdir -p /home/${vmUser}/.ssh
   chown -R ${vmUser}:${vmUser} /home/${vmUser}/.ssh
