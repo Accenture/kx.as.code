@@ -10,14 +10,15 @@ resource "openstack_compute_instance_v2" "kx-main" {
     openstack_networking_subnet_v2.kx-internal-network-subnet,
     openstack_blockstorage_volume_v3.kx-main-local-storage,
     openstack_blockstorage_volume_v3.kx-main-glusterfs-storage,
-    openstack_networking_floatingip_v2.kx-main-floating-ip
+    openstack_networking_floatingip_v2.kx-main-floating-ip,
+    openstack_networking_secgroup_v2.kx_security_group
   ]
   name      = "kx-main"
   image_id  = "1ecf9915-30da-42c7-ac43-69d09c68c47c"
   region    = "RegionOne"
   flavor_id = "4"
   key_pair  = openstack_compute_keypair_v2.kx-keypair.name
-  security_groups = [ openstack_compute_secgroup_v2.kx_security_group.name ]
+  security_groups = [ openstack_networking_secgroup_v2.kx_security_group.name ]
 
   block_device {
     boot_index            = 0
@@ -54,14 +55,15 @@ resource "openstack_compute_instance_v2" "kx-worker" {
     openstack_networking_subnet_v2.kx-internal-network-subnet,
     openstack_compute_instance_v2.kx-main,
     openstack_blockstorage_volume_v3.kx-worker-local-storage,
-    openstack_networking_floatingip_v2.kx-worker-floating-ip
+    openstack_networking_floatingip_v2.kx-worker-floating-ip,
+    openstack_networking_secgroup_v2.kx_security_group
   ]
   name      = "kx-worker"
-   image_id  = "4b04d2f0-f12f-4f3c-89b8-f667d8dbb876"
+   image_id  = "e356ac26-918b-40ad-b6aa-5f0992131b12"
   flavor_id = "4"
   key_pair  = openstack_compute_keypair_v2.kx-keypair.name
   region = "RegionOne"
-  security_groups = [ openstack_compute_secgroup_v2.kx_security_group.name ]
+  security_groups = [ openstack_networking_secgroup_v2.kx_security_group.name ]
 
   block_device {
     boot_index            = 0
@@ -69,7 +71,7 @@ resource "openstack_compute_instance_v2" "kx-worker" {
     destination_type      = "volume"
     source_type           = "image"
     volume_size           = 40
-    uuid                  = "4b04d2f0-f12f-4f3c-89b8-f667d8dbb876"
+    uuid                  = "e356ac26-918b-40ad-b6aa-5f0992131b12"
   }
 
   network {
