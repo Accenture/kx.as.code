@@ -138,6 +138,7 @@ export defaultKeyboardLanguage=$(cat ${installationWorkspace}/profile-config.jso
 export baseUser=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.baseUser')
 export basePassword=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.basePassword')
 export baseIpType=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.baseIpType')
+export dnsResolution=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.dnsResolution')
 export baseIpRangeStart=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.baseIpRangeStart')
 export baseIpRangeEnd=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.baseIpRangeEnd')
 export metalLbIpRangeStart=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.metalLbIpRange.ipRangeStart')
@@ -337,6 +338,18 @@ if [[ ! -f /usr/share/kx.as.code/.config/network_status ]] && [[ "${baseIpType}"
     # Reboot machine to ensure all network changes are active
     sudo reboot
 
+fi
+
+# Execute actions required when IP type is set to dynamic (eg. dhcp)
+if [[ ! -f /usr/share/kx.as.code/.config/network_status ]] && [[ "${baseIpType}" == "dynamic" ]]; then
+    if [[ "${dnsResolution}" == "hybrid" ]]; then
+        # Set local dns server if DNS resolution is set to hybris. eg. Dynamic IP, but DNS resolution Static
+        echo "prepend domain-name-servers ${kxMainIp};" | tee -a /etc/dhclient.conf
+        sudo /etc/init.d/networking restart
+        # Ensure the whole network setup does not execute again on next run after reboot
+        sudo mkdir -p /usr/share/kx.as.code/.config
+        echo "KX.AS.CODE network config done" | sudo tee /usr/share/kx.as.code/.config/network_status
+    fi
 fi
 
 # Wait for RabbitMQ web service to be reachable before continuing
