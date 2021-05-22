@@ -214,7 +214,6 @@ if [[ ! -f /usr/share/kx.as.code/.config/network_status ]]; then
         # Configue dnsmasq - /etc/resolv.conf
         sudo rm -f /etc/resolv.conf
         sudo echo "nameserver ${mainIpAddress}" | sudo tee /etc/resolv.conf
-
         sudo sed -i 's/^#no-resolv/no-resolv/' /etc/dnsmasq.conf
         sudo sed -i 's/^#interface=/interface='${netDevice}'/' /etc/dnsmasq.conf
         sudo sed -i 's/^#bind-interfaces/bind-interfaces/' /etc/dnsmasq.conf
@@ -240,79 +239,66 @@ if [[ ! -f /usr/share/kx.as.code/.config/network_status ]]; then
         }
         ''' | sed -e 's/^[ \t]*//' | sed 's/:/    :/g' | sudo tee /etc/dhcp/dhclient-enter-hooks.d/nodnsupdate
         sudo chmod +x /etc/dhcp/dhclient-enter-hooks.d/nodnsupdate
+
+        # Update DNS Entry for hosts if ip type set to static
+        hostname="$(hostname)"
+        echo "address=/${hostname}/${mainIpAddress}" | sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
+        echo "address=/${hostname}.${baseDomain}/${mainIpAddress}" | sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
+        echo "address=/ldap/${mainIpAddress}" | sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
+        echo "address=/ldap.${baseDomain}/${mainIpAddress}" | sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
+        echo "address=/pgadmin/${mainIpAddress}" | sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
+        echo "address=/pgadmin.${baseDomain}/${mainIpAddress}" | sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
+        echo "address=/ldapadmin/${mainIpAddress}" | sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
+        echo "address=/ldapadmin.${baseDomain}/${mainIpAddress}" | sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
+        echo "address=/rabbitmq/${mainIpAddress}" | sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
+        echo "address=/rabbitmq.${baseDomain}/${mainIpAddress}" | sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
+        echo "address=/remote-desktop/${mainIpAddress}" | sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
+        echo "address=/remote-desktop.${baseDomain}/${mainIpAddress}" | sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
     fi
 
+    if [[ "${baseIpType}" == "static" ]]; then
+        # Configure IF to be managed/confgured by network-manager
+        rm -f /etc/NetworkManager/system-connections/*
+        sudo mv /etc/network/interfaces /etc/network/interfaces.unused
+        nmcli con add con-name "${netDevice}" ifname ${netDevice} type ethernet ip4 ${mainIpAddress}/24 gw4 ${fixedNicConfigGateway}
+        nmcli con mod "${netDevice}" ipv4.method "manual"
+        nmcli con mod "${netDevice}" ipv4.dns "${fixedNicConfigDns1},${fixedNicConfigDns2}"
+        systemctl restart network-manager
+        nmcli con up "${netDevice}"
+    fi
 
-    if [[ "${baseIpType}" == "static" ]] || [[ "${dnsResolution}" == "hybrid" ]]; then
+    if  [[ "${baseIpType}" == "static" ]] || [[ "${dnsResolution}" == "hybrid" ]]; then
+      sudo systemctl enable --now dnsmasq.service
+      sudo systemctl enable --now systemd-networkd-wait-online.service
+    fi
 
-        # Update  DNS Entry for hosts if ip type set to static
-        if [ "${baseIpType}" == "static" ]; then
-            ipAddresses=$(env | grep "_IpAddress")
-            for ipAddress in ${ipAddresses}
-            do
-                hostname="$(echo ${ipAddress} | sed 's/__/-/g' | sed 's/_IpAddress//g' | cut -f1 -d'=')"
-                hostIpAddress="$(echo ${ipAddress} | cut -f2 -d'=')"
-                echo "address=/${hostname}/${hostIpAddress}" | sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
-                echo "address=/${hostname}.${baseDomain}/${hostIpAddress}" | sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
-                if [[ "${hostname}" == "kx-main" ]]; then
-                    export mainIpAddress=${hostIpAddress}
-                    echo "address=/ldap/${hostIpAddress}" | sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
-                    echo "address=/ldap.${baseDomain}/${hostIpAddress}" | sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
-                    echo "address=/pgadmin/${hostIpAddress}" | sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
-                    echo "address=/pgadmin.${baseDomain}/${hostIpAddress}" | sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
-                    echo "address=/ldapadmin/${hostIpAddress}" | sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
-                    echo "address=/ldapadmin.${baseDomain}/${hostIpAddress}" | sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
-                    echo "address=/rabbitmq/${hostIpAddress}" | sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
-                    echo "address=/rabbitmq.${baseDomain}/${hostIpAddress}" | sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
-                    echo "address=/remote-desktop/${hostIpAddress}" | sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
-                    echo "address=/remote-desktop.${baseDomain}/${hostIpAddress}" | sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
-                fi
-            done
-        fi
+    # Setup proxy settings if they exist
+    if [[ ! -z ${httpProxySetting} ]] || [[ ! -z ${httpsProxySetting} ]]; then
 
-        if [[ "${baseIpType}" == "static" ]]; then
-            # Configure IF to be managed/confgured by network-manager
-            rm -f /etc/NetworkManager/system-connections/*
-            sudo mv /etc/network/interfaces /etc/network/interfaces.unused
-            nmcli con add con-name "${netDevice}" ifname ${netDevice} type ethernet ip4 ${mainIpAddress}/24 gw4 ${fixedNicConfigGateway}
-            nmcli con mod "${netDevice}" ipv4.method "manual"
-            nmcli con mod "${netDevice}" ipv4.dns "${fixedNicConfigDns1},${fixedNicConfigDns2}"
-            systemctl restart network-manager
-            nmcli con up "${netDevice}"
-        fi
+        httpProxySettingBase=$(echo ${httpProxySetting} | sed 's/https:\/\///g' | sed 's/http:\/\///g')
+        httpsProxySettingBase=$(echo ${httpsProxySetting} | sed 's/https:\/\///g' | sed 's/http:\/\///g')
 
-        sudo systemctl enable --now dnsmasq.service
-        sudo systemctl enable --now systemd-networkd-wait-online.service
+        echo '''
+        [Service]
+        Environment="HTTP_PROXY='${httpProxySettingBase}'/" "HTTPS_PROXY='${httpsProxySettingBase}'/" "NO_PROXY=localhost,127.0.0.1,.'${baseDomain}'"
+        ''' | sudo tee /etc/systemd/system/docker.service.d/http-proxy.conf
 
-        # Setup proxy settings if they exist
-        if [[ ! -z ${httpProxySetting} ]] || [[ ! -z ${httpsProxySetting} ]]; then
+        systemctl daemon-reload
+        systemctl restart docker
 
-            httpProxySettingBase=$(echo ${httpProxySetting} | sed 's/https:\/\///g' | sed 's/http:\/\///g')
-            httpsProxySettingBase=$(echo ${httpsProxySetting} | sed 's/https:\/\///g' | sed 's/http:\/\///g')
+        baseip=$(echo ${mainIpAddress} | cut -d'.' -f1-3)
 
-            echo '''
-            [Service]
-            Environment="HTTP_PROXY='${httpProxySettingBase}'/" "HTTPS_PROXY='${httpsProxySettingBase}'/" "NO_PROXY=localhost,127.0.0.1,.'${baseDomain}'"
-            ''' | sudo tee /etc/systemd/system/docker.service.d/http-proxy.conf
-
-            systemctl daemon-reload
-            systemctl restart docker
-
-            baseip=$(echo ${mainIpAddress} | cut -d'.' -f1-3)
-
-            echo '''
-            export http_proxy='${httpProxySetting}'
-            export HTTP_PROXY=$http_proxy
-            export https_proxy='${httpsProxySetting}'
-            export HTTPS_PROXY=$https_proxy
-            printf -v lan '"'"'%s,'"'"' '${mainIpAddress}'
-            printf -v pool '"'"'%s,'"'"' '${baseip}'.{1..253}
-            printf -v service '"'"'%s,'"'"' '${baseip}'.{1..253}
-            export no_proxy="${lan%,},${service%,},${pool%,},127.0.0.1,.'${baseDomain}'";
-            export NO_PROXY=$no_proxy
-            ''' | sudo tee -a /root/.bashrc /root/.zshrc /home/${vmUser}/.bashrc /home/${vmUser}/.zshrc
-
-        fi
+        echo '''
+        export http_proxy='${httpProxySetting}'
+        export HTTP_PROXY=$http_proxy
+        export https_proxy='${httpsProxySetting}'
+        export HTTPS_PROXY=$https_proxy
+        printf -v lan '"'"'%s,'"'"' '${mainIpAddress}'
+        printf -v pool '"'"'%s,'"'"' '${baseip}'.{1..253}
+        printf -v service '"'"'%s,'"'"' '${baseip}'.{1..253}
+        export no_proxy="${lan%,},${service%,},${pool%,},127.0.0.1,.'${baseDomain}'";
+        export NO_PROXY=$no_proxy
+        ''' | sudo tee -a /root/.bashrc /root/.zshrc /home/${vmUser}/.bashrc /home/${vmUser}/.zshrc
 
     fi
 
