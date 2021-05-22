@@ -155,70 +155,53 @@ if [ "${baseIpType}" == "static" ]; then
   export fixedNicConfigDns2=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.staticNetworkSetup.dns2')
 fi
 
-if [[ "${baseIpType}" == "static" ]]; then
-  if [[ -z "$(cat /etc/resolv.conf | grep \\"${fixedNicConfigDns1}\\")" ]]; then
-
-      # Wait for last Vagrant or Terraform shell action to complete before changing network settings
-      timeout -s TERM 6000 bash -c \
-      'while [[ ! -f ${INSTALLATION_WORKSPACE}/gogogo ]];\
-      do echo "Waiting for ${INSTALLATION_WORKSPACE}/gogogo file" && sleep 15;\
-      done'
-
-      # Prevent DHCLIENT updating static IP
-      echo "supersede domain-name-servers ${fixedNicConfigDns1}, ${fixedNicConfigDns2};" | sudo tee -a /etc/dhcp/dhclient.conf
-      echo '''
-      #!/bin/sh
-      make_resolv_conf(){
-          :
-      }
-      ''' | sed -e 's/^[ \t]*//' | sed 's/:/    :/g' | sudo tee /etc/dhcp/dhclient-enter-hooks.d/nodnsupdate
-      sudo chmod +x /etc/dhcp/dhclient-enter-hooks.d/nodnsupdate
-
-      # Change DNS resolution to allow wildcards for resolving deployed K8s services
-      echo "DNSStubListener=no" | sudo tee -a /etc/systemd/resolved.conf
-      sudo systemctl restart systemd-resolved
-      sudo rm -f /etc/resolv.conf
-
-      # Update DNS Entry for hosts if ip type set to static
-      if [ "${baseIpType}" == "static" ]; then
-          export kxMainIp="$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.staticNetworkSetup.baseFixedIpAddresses."kx-main"')"
-          export kxWorkerIp="$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.staticNetworkSetup.baseFixedIpAddresses."'$(hostname)'"')"
-      fi
-
-      # Create resolv.conf for desktop user with for resolving local domain with DNSMASQ
-      echo '''
-      # File Generated During KX.AS.CODE initialization
-      nameserver '${fixedNicConfigDns1}'
-      nameserver '${fixedNicConfigDns2}'
-      ''' | sed -e 's/^[ \t]*//' | sudo tee /etc/resolv.conf
-
-      # Configure IF to be managed/confgured by network-manager
-      sudo rm -f /etc/NetworkManager/system-connections/*
-      sudo mv /etc/network/interfaces /etc/network/interfaces.unused
-      sudo nmcli con add con-name "${netDevice}" ifname ${netDevice} type ethernet ip4 ${kxWorkerIp}/24 gw4 ${fixedNicConfigGateway}
-      sudo nmcli con mod "${netDevice}" ipv4.method "manual"
-      sudo nmcli con mod "${netDevice}" ipv4.dns "${fixedNicConfigDns1},${fixedNicConfigDns2}"
-      sudo systemctl restart network-manager
-      sudo nmcli con up "${netDevice}"
-
-  fi
-fi
-
 # Wait until the worker has the main node's IP file
 timeout -s TERM 3000 bash -c 'while [ ! -f /var/tmp/kx.as.code_main-ip-address ];         do
 echo "Waiting for kx-main IP address" && sleep 5;         done'
 export kxMainIp=$(cat /var/tmp/kx.as.code_main-ip-address)
 
-# Execute actions required when IP type is set to dynamic (eg. dhcp)
-if [[ ! -f /usr/share/kx.as.code/.config/network_status ]] && [[ "${baseIpType}" == "dynamic" ]]; then
+if [[ ! -f /usr/share/kx.as.code/.config/network_status ]]; then
+
+  if  [[ "${baseIpType}" == "static" ]] || [[ "${dnsResolution}" == "hybrid" ]]; then
+    # Change DNS resolution to allow wildcards for resolving locally deployed K8s services
+    echo "DNSStubListener=no" | sudo tee -a /etc/systemd/resolved.conf
+    sudo systemctl restart systemd-resolved
+    sudo rm -f /etc/resolv.conf
+
+    # Configue dnsmasq - /etc/resolv.conf
+    sudo sed -i 's/^#nameserver 127.0.0.1/nameserver '${mainIpAddress}'/g' /etc/resolv.conf
+
+    # Prevent DHCLIENT updating static IP
     if [[ "${dnsResolution}" == "hybrid" ]]; then
-        # Set local dns server if DNS resolution is set to hybris. eg. Dynamic IP, but DNS resolution Static
-        echo "prepend domain-name-servers ${kxMainIp};" | tee -a /etc/dhclient.conf
-        sudo /etc/init.d/networking restart
-        # Ensure the whole network setup does not execute again on next run after reboot
-        sudo mkdir -p /usr/share/kx.as.code/.config
-        echo "KX.AS.CODE network config done" | sudo tee /usr/share/kx.as.code/.config/network_status
+        echo "supersede domain-name-servers ${mainIpAddress};" | sudo tee -a /etc/dhcp/dhclient.conf
+    else
+        echo "supersede domain-name-servers ${fixedNicConfigDns1}, ${fixedNicConfigDns2};" | sudo tee -a /etc/dhcp/dhclient.conf
     fi
+    echo "supersede domain-name \"${baseDomain}\";" | tee -a /etc/dhcp/dhclient.conf
+    echo '''
+    #!/bin/sh
+    make_resolv_conf(){
+        :
+    }
+    ''' | sed -e 's/^[ \t]*//' | sed 's/:/    :/g' | sudo tee /etc/dhcp/dhclient-enter-hooks.d/nodnsupdate
+    sudo chmod +x /etc/dhcp/dhclient-enter-hooks.d/nodnsupdate
+  fi
+
+  if [[ "${baseIpType}" == "static" ]]; then
+    # Configure IF to be managed/confgured by network-manager
+    sudo rm -f /etc/NetworkManager/system-connections/*
+    sudo mv /etc/network/interfaces /etc/network/interfaces.unused
+    sudo nmcli con add con-name "${netDevice}" ifname ${netDevice} type ethernet ip4 ${kxWorkerIp}/24 gw4 ${fixedNicConfigGateway}
+    sudo nmcli con mod "${netDevice}" ipv4.method "manual"
+    sudo nmcli con mod "${netDevice}" ipv4.dns "${fixedNicConfigDns1},${fixedNicConfigDns2}"
+    sudo systemctl restart network-manager
+    sudo nmcli con up "${netDevice}"
+  fi
+
+  # Ensure the whole network setup does not execute again on next run after reboot
+  sudo mkdir -p /usr/share/kx.as.code/.config
+  echo "KX.AS.CODE network config done" | sudo tee /usr/share/kx.as.code/.config/network_status
+
 fi
 
 if [[ -n ${kxMainIp} ]]; then
