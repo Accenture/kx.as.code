@@ -254,6 +254,7 @@ if [[ ! -f /usr/share/kx.as.code/.config/network_status ]]; then
         echo "address=/rabbitmq.${baseDomain}/${mainIpAddress}" | sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
         echo "address=/remote-desktop/${mainIpAddress}" | sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
         echo "address=/remote-desktop.${baseDomain}/${mainIpAddress}" | sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
+        sudo systemctl restart dnsmasq
     fi
 
     if [[ "${baseIpType}" == "static" ]]; then
