@@ -28,7 +28,8 @@ sudo DEBIAN_FRONTEND=noninteractive apt-get -y install \
     nfs-common \
     cifs-utils \
     rsync \
-    open-vm-tools
+    open-vm-tools \
+    lvm2
 
 # Install Powerline Status
 sudo apt-get install -y python3-setuptools
