@@ -39,3 +39,5 @@ agent.jar
 amazon-corretto*
 **/jenkins/java
 .terraform*
+/base-vm/build/jenkins/oracle_vbox.asc
+/profiles/terraform-openstack-demo1/hosts_file_entries.txt

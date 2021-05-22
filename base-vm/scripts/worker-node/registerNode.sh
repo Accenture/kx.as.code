@@ -169,11 +169,11 @@ if [[ ! -f /usr/share/kx.as.code/.config/network_status ]]; then
     sudo rm -f /etc/resolv.conf
 
     # Configue dnsmasq - /etc/resolv.conf
-    sudo sed -i 's/^#nameserver 127.0.0.1/nameserver '${mainIpAddress}'/g' /etc/resolv.conf
+    sudo sed -i 's/^#nameserver 127.0.0.1/nameserver '${kxMainIp}'/g' /etc/resolv.conf
 
     # Prevent DHCLIENT updating static IP
     if [[ "${dnsResolution}" == "hybrid" ]]; then
-        echo "supersede domain-name-servers ${mainIpAddress};" | sudo tee -a /etc/dhcp/dhclient.conf
+        echo "supersede domain-name-servers ${kxMainIp};" | sudo tee -a /etc/dhcp/dhclient.conf
     else
         echo "supersede domain-name-servers ${fixedNicConfigDns1}, ${fixedNicConfigDns2};" | sudo tee -a /etc/dhcp/dhclient.conf
     fi
@@ -226,7 +226,7 @@ sudo -H -i -u ${vmUser} bash -c "sshpass -f ${kxHomeDir}/.config/.user.cred ssh-
 sudo -H -i -u ${vmUser} bash -c "ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} \"cat /home/${vmUser}/.ssh/id_rsa.pub\" | tee -a /home/${vmUser}/.ssh/authorized_keys"
 sudo mkdir -p /root/.ssh
 sudo chmod 700 /root/.ssh
-sudo cp /home/$vmUser/.ssh/authorized_keys /root/.ssh/
+sudo cp /home/${vmUser}/.ssh/authorized_keys /root/.ssh/
 
 # Copy KX.AS.CODE CA certificates from main node and restart docker
 export REMOTE_KX_MAIN_installationWorkspace=$installationWorkspace

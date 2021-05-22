@@ -2,7 +2,7 @@
 
 # Check if PID file already exists and ensure this script only runs once
 if [ ! -f /var/run/kxascode.pid ]; then
-    echo $(ps -ef | grep "pollActionQueue\.sh" | grep -v grep | awk {'print $2'}) | sudo tee /var/run/kxascode.pid
+    pgrep "pollActionQueue\.sh" | sudo tee /var/run/kxascode.pid
 else
     echo "/var/run/kxascode.pid already exists. Script already running. If you are sure this is an error, remove the PID file and try again. Exiting"
     exit
@@ -21,7 +21,7 @@ export apiDocsDirectory="${sharedKxHome}/API Docs"
 export shortcutsDirectory="${sharedKxHome}/DevOps Tools"
 export adminShortcutsDirectory="${sharedKxHome}/Admin Tools"
 export vmUser=kx.hero
-export vmPassword=$(cat ${sharedKxHome}/.config/.user.cred)
+export vmPassword="$(cat ${sharedKxHome}/.config/.user.cred)"
 
 # Check profile-config.json file is present before starting script
 wait-for-file() {
@@ -56,7 +56,7 @@ if [[ ! -f ${installationWorkspace}/actionQueues.json ]]; then
   # Merge json files if user uploaded aq* files present
   if [[ -n ${aqFiles} ]]; then
     # Loop around all user aq* files and merge them to one large json
-    for i in ${!aqFiles[@]}; do
+    for i in "${!aqFiles[@]}"; do
             echo "$i: ${aqFiles[$i]}"
 
       if [[ -f ${installationWorkspace}/actionQueues_temp.json ]]; then
@@ -103,7 +103,7 @@ fi
 # Get configs from profile-config.json
 export virtualizationType=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.virtualizationType')
 
-# Determine which NIC to bind to, to avoid binding to interal VirtualBox NAT NICs for example, where all hosts have the same IP - 10.0.2.15
+# Determine which NIC to bind to, to avoid binding to internal VirtualBox NAT NICs for example, where all hosts have the same IP - 10.0.2.15
 export nicList=$(nmcli device show | grep -E 'enp|ens' | grep 'GENERAL.DEVICE' | awk '{print $2}')
 export ipsToExclude="10.0.2.15"   # IP addresses not to configure with static IP. For example, default Virtualbox IP 10.0.2.15
 export nicExclusions=""
@@ -270,7 +270,7 @@ if [[ ! -f /usr/share/kx.as.code/.config/network_status ]]; then
             done
         fi
 
-        if [[ "${baseIpType}" == "static" ]]
+        if [[ "${baseIpType}" == "static" ]]; then
             # Configure IF to be managed/confgured by network-manager
             rm -f /etc/NetworkManager/system-connections/*
             sudo mv /etc/network/interfaces /etc/network/interfaces.unused
@@ -321,7 +321,7 @@ if [[ ! -f /usr/share/kx.as.code/.config/network_status ]]; then
     echo "KX.AS.CODE network config done" | sudo tee /usr/share/kx.as.code/.config/network_status
 
     # Reboot if static network settings to activate them
-    if  [[ "${baseIpType}" == "static" ]] || ; then
+    if  [[ "${baseIpType}" == "static" ]]; then
         # Reboot machine to ensure all network changes are active
         sudo reboot
     fi
