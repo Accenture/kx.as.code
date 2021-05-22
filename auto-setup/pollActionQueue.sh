@@ -210,10 +210,11 @@ if [[ ! -f /usr/share/kx.as.code/.config/network_status ]]; then
         # Change DNS resolution to allow wildcards for resolving locally deployed K8s services
         echo "DNSStubListener=no" | sudo tee -a /etc/systemd/resolved.conf
         sudo systemctl restart systemd-resolved
-        sudo rm -f /etc/resolv.conf
 
         # Configue dnsmasq - /etc/resolv.conf
-        sudo sed -i 's/^#nameserver 127.0.0.1/nameserver '${mainIpAddress}'/g' /etc/resolv.conf
+        sudo rm -f /etc/resolv.conf
+        sudo echo "nameserver ${mainIpAddress}" | sudo tee /etc/resolv.conf
+
         sudo sed -i 's/^#no-resolv/no-resolv/' /etc/dnsmasq.conf
         sudo sed -i 's/^#interface=/interface='${netDevice}'/' /etc/dnsmasq.conf
         sudo sed -i 's/^#bind-interfaces/bind-interfaces/' /etc/dnsmasq.conf
@@ -232,7 +233,6 @@ if [[ ! -f /usr/share/kx.as.code/.config/network_status ]]; then
         else
             echo "supersede domain-name-servers ${fixedNicConfigDns1}, ${fixedNicConfigDns2};" | sudo tee -a /etc/dhcp/dhclient.conf
         fi
-        echo "supersede domain-name \"${baseDomain}\";" | tee -a /etc/dhcp/dhclient.conf
         echo '''
         #!/bin/sh
         make_resolv_conf(){

@@ -167,6 +167,7 @@ if [[ ! -f /usr/share/kx.as.code/.config/network_status ]]; then
     echo "DNSStubListener=no" | sudo tee -a /etc/systemd/resolved.conf
     sudo systemctl restart systemd-resolved
     sudo rm -f /etc/resolv.conf
+    sudo echo "nameserver ${kxMainIp}" | sudo tee /etc/resolv.conf
 
     # Configue dnsmasq - /etc/resolv.conf
     sudo sed -i 's/^#nameserver 127.0.0.1/nameserver '${kxMainIp}'/g' /etc/resolv.conf
@@ -177,7 +178,6 @@ if [[ ! -f /usr/share/kx.as.code/.config/network_status ]]; then
     else
         echo "supersede domain-name-servers ${fixedNicConfigDns1}, ${fixedNicConfigDns2};" | sudo tee -a /etc/dhcp/dhclient.conf
     fi
-    echo "supersede domain-name \"${baseDomain}\";" | tee -a /etc/dhcp/dhclient.conf
     echo '''
     #!/bin/sh
     make_resolv_conf(){
