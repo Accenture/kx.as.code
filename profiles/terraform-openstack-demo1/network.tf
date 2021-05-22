@@ -8,7 +8,6 @@ resource "openstack_networking_subnet_v2" "kx-internal-network-subnet" {
   depends_on = [ openstack_networking_network_v2.kx-internal-network ]
   network_id = openstack_networking_network_v2.kx-internal-network.id
   cidr       = "10.20.76.0/24"
-  dns_nameservers = [ "10.20.76.2", "8.8.8.8"]
   ip_version  = 4
   enable_dhcp = true
 }
