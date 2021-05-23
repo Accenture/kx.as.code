@@ -70,7 +70,7 @@ sudo mkdir -p /var/lib/AccountsService/users
 sudo cp /usr/share/backgrounds/avatar.png /usr/share/pixmaps/faces/digital_avatar.png
 sudo bash -c "cat <<EOF > /var/lib/AccountsService/users/$VM_USER
 [org.freedesktop.DisplayManager.AccountsService]
-BackgroundFile='/usr/share/kx.as.code/background.png'
+BackgroundFile=/usr/share/kx.as.code/background.jpg
 
 [User]
 Session=
@@ -85,7 +85,7 @@ EOF"
 # Prevent vagrant user showing on login screen user list
 sudo bash -c "cat <<EOF > /var/lib/AccountsService/users/${BASE_IMAGE_SSH_USER}
 [org.freedesktop.DisplayManager.AccountsService]
-BackgroundFile='/usr/share/backgrounds/background.jpg'
+BackgroundFile=/usr/share/backgrounds/background.jpg
 
 [User]
 Session=
@@ -100,7 +100,7 @@ EOF"
 # Prevent lightdm user showing on login screen user list
 sudo bash -c 'cat <<EOF > /var/lib/AccountsService/users/lightdm
 [org.freedesktop.DisplayManager.AccountsService]
-BackgroundFile='/usr/share/backgrounds/background.jpg'
+BackgroundFile=/usr/share/backgrounds/background.jpg
 
 [User]
 Session=
