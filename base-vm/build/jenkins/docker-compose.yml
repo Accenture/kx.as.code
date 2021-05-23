@@ -7,5 +7,5 @@ services:
       - ${JENKINS_JNLP_PORT}:50000
     container_name: jenkins
     volumes:
-      - /var/jenkins_home:/var/jenkins_home
+      - ${JENKINS_HOME}:/var/jenkins_home
 

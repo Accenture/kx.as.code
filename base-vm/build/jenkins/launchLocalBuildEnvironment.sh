@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash 
 source ./jenkins.env
 dockerMachineEnvironment=$(which docker-machine)
 if [[ $? = 1 ]]; then 
@@ -8,13 +8,10 @@ if [[ $? = 1 ]]; then
 else
   echo "Jenkins is running on docker-machine, setting docker host to 192.168.99.100"
   JENKINS_HOST=192.168.99.100
-  JENKINS_URL=http://${JENKINS_HOST}:{JENKINS_SERVER_PORT} # You might need to change this. This is the default docker-machine IP
+  JENKINS_URL=http://${JENKINS_HOST}:${JENKINS_SERVER_PORT} # You might need to change this. This is the default docker-machine IP
 fi
 
-WORKING_DIRECTORY=/var/jenkins_remote
 mkdir -p ${WORKING_DIRECTORY}
-AGENT_NAME=local
-JNLP_SECRET=4f355f4702872f6b8431b52b566179d3598e26eb344cb1229f10882c64e520d1
 
 # Check that docker-compose.yml is available on the current path
 if [ ! -f ./docker-compose.yml ]; then
@@ -44,14 +41,30 @@ if [[ -z ${vagrantInstalled} ]]; then
   error="true"
 fi
 
-# Check if Docker is installed
-dockerComposeInstalled=$(docker-compose -v 2>/dev/null | grep -E "docker-compose version ([0-9]+)\.([0-9]+)\.([0-9]+)")
-if [[ -z ${dockerComposeInstalled} ]]; then
-  echo "- [ERROR] Docker-Compose not installed or not reachable. See https://docs.docker.com/compose/install/ for installation guidelines and ensure it is reachable on your PATH"
-  error="true"
+# Check if Docker-Compose is installed
+if [[ ! -f ./docker-compose ]] && [[ -z $(which docker-compose) ]]; then
+  echo "- [WARNING] Docker-compose is not installed or not reachable. Downloading from https://docs.docker.com/compose/install/"
+    curl -o ./docker-compose https://github.com/docker/compose/releases/download/1.29.2/docker-compose-Windows-x86_64.exe
+    chmod -L 755 ./docker-compose
+    dockerComposeExecutable="./docker-compose"
+elif [[ -f ./docker-compose ]]; then
+  dockerComposeExec=./docker-compose
+else 
+  dockerComposeExec=$(which docker-compose)
 fi
 
-# Check if Docker-Compose is installed
+dockerComposeVersion=$("${dockerComposeExec}" -v 2>/dev/null | sed 's/[^0-9.]*\([0-9.]*\).*/\1/')
+minimalComposeVersion=1.25.0
+if [[ "$(printf '%s\n' "${minimalComposeVersion}" "${dockerComposeVersion}" | sort -V | head -n1)" = "${dockerComposeVersion}" ]]; then
+  echo "[WARNING] You are using an outdated docker-compose executable, which means --env-file option will not be present. Downloading updated version from https://docs.docker.com/compose/install/"
+  curl -L -o ./docker-compose https://github.com/docker/compose/releases/download/1.29.2/docker-compose-Windows-x86_64.exe
+  chmod 755 ./docker-compose
+  dockerComposeExecutable="./docker-compose"
+else
+  echo "All good with docker-compose. Proceeding."
+fi
+
+# Check if Docker is installed
 dockerInstalled=$(docker -v 2>/dev/null | grep -E "Docker version ([0-9]+)\.([0-9]+)\.([0-9]+)")
 if [[ -z ${dockerInstalled} ]]; then
   echo "- [ERROR] Docker not installed or not reachable. Read the guide for you distribution for HOW-TO install docker. Also, check your user has permissions to access Docker and that is is reachable on the PATH"
@@ -95,27 +108,30 @@ fi
 
 jenkinsContainer=$(docker ps -a -f "name=jenkins" -q)
 if [ -z ${jenkinsContainer} ]; then
-        docker-compose --env-file ./jenkins.env up -d
+        ${dockerComposeExec} --env-file ./jenkins.env up -d
 else
         docker start ${jenkinsContainer}
 fi
 
 echo "Waiting for agent.jar to become available...(URL ${JENKINS_URL})"
 
-timeout -s TERM 60 bash -c 'while [[ "$(curl -s -o /dev/null -L -w ''%{http_code}'' '${JENKINS_URL}/jnlpJars/agent.jar')" != "200" ]]; do \
+timeout --foreground -s TERM 60 bash -c 'while [[ "$(curl -s -o /dev/null -L -w ''%{http_code}'' '${JENKINS_URL}/jnlpJars/agent.jar')" != "200" ]]; do \
   echo "Waiting for '${JENKINS_URL}/jnlpJars/agent.jar'"; sleep 5; done'
 
 if [ ! -f ./agent.jar ]; then
   curl ${JENKINS_URL}/jnlpJars/agent.jar -o agent.jar
 fi
 
-which java
-if [ $? -ne 0 ] && [ -f java/bin/java ]; then
+whichJava=$(which java)
+if [ -n "${whichJava}" ] ; then
+  javaExecutable=$(which java)
+elif [ -f java/bin/java ]; then
   export PATH=$PATH:$(pwd)/java/bin
+  javaExecutable=$(pwd)/java/bin/java
 else
   echo "Java not found and could not be downloaded/installed. Exiting"
   exit 1
 fi
 
 # Start Jenkins Agent
-java -jar agent.jar -jnlpUrl ${JENKINS_URL}/computer/${AGENT_NAME}/slave-agent.jnlp -connectTo ${JENKINS_HOST}:${JENKINS_JNLP_PORT} -secret ${JNLP_SECRET} -workDir "${WORKING_DIRECTORY}"
+"${javaExecutable}" -jar agent.jar -jnlpUrl ${JENKINS_URL}/computer/${AGENT_NAME}/slave-agent.jnlp -connectTo ${JENKINS_HOST}:${JENKINS_JNLP_PORT} -secret ${JNLP_SECRET} -workDir "${WORKING_DIRECTORY}" 
