@@ -134,4 +134,9 @@ else
 fi
 
 # Start Jenkins Agent
-"${javaExecutable}" -jar agent.jar -jnlpUrl ${JENKINS_URL}/computer/${AGENT_NAME}/slave-agent.jnlp -connectTo ${JENKINS_HOST}:${JENKINS_JNLP_PORT} -secret ${JNLP_SECRET} -workDir "${WORKING_DIRECTORY}" 
+if [[ -n "${JNLP_SECRET}" ]]; then
+  "${javaExecutable}" -jar agent.jar -jnlpUrl ${JENKINS_URL}/computer/${AGENT_NAME}/slave-agent.jnlp -connectTo ${JENKINS_HOST}:${JENKINS_JNLP_PORT} -secret ${JNLP_SECRET} -workDir "${WORKING_DIRECTORY}" 
+else
+  echo "JNLP_SECRET is not set. Will try to connect without it. If this was meant, then OK, otherwise add the value to jenkins.env and try again"
+  "${javaExecutable}" -jar agent.jar -jnlpUrl ${JENKINS_URL}/computer/${AGENT_NAME}/slave-agent.jnlp -workDir "${WORKING_DIRECTORY}"
+fi
