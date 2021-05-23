@@ -179,6 +179,10 @@ echo '''
 #!/bin/bash
 vmUser=$(id -nu)
 vmUserId=$(id -u)
+KX_HOME='${KX_HOME}'
+SKELDIR=${KX_HOME}/skel
+SHARED_GIT_REPOSITORIES=${KX_HOME}/git
+INSTALLATION_WORKSPACE=${KX_HOME}/workspace
 # Make desktop icon text transparent
 echo """
 style \"xfdesktop-icon-view\" {
