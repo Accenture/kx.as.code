@@ -59,6 +59,8 @@ resource "null_resource" "worker_provisioner" {
 
   depends_on = [ openstack_compute_floatingip_associate_v2.kx-worker-floating-ip-associate ]
 
+  count = local.worker_node_count
+
   provisioner "file" {
     source      = "profile-config.json"
     destination = "/var/tmp/profile-config.json"
@@ -67,7 +69,7 @@ resource "null_resource" "worker_provisioner" {
         type     = "ssh"
         user     = "debian"
         private_key = openstack_compute_keypair_v2.kx-keypair.private_key
-        host     = openstack_networking_floatingip_v2.kx-worker-floating-ip.address
+        host     = element(openstack_networking_floatingip_v2.kx-worker-floating-ip.*.address, count.index)
     }
 
   }
@@ -80,7 +82,7 @@ resource "null_resource" "worker_provisioner" {
         type     = "ssh"
         user     = "debian"
         private_key = openstack_compute_keypair_v2.kx-keypair.private_key
-        host     = openstack_networking_floatingip_v2.kx-worker-floating-ip.address
+        host     = element(openstack_networking_floatingip_v2.kx-worker-floating-ip.*.address, count.index)
     }
   }
 
@@ -95,7 +97,7 @@ resource "null_resource" "worker_provisioner" {
         type     = "ssh"
         user     = "debian"
         private_key = openstack_compute_keypair_v2.kx-keypair.private_key
-        host     = openstack_networking_floatingip_v2.kx-worker-floating-ip.address
+        host     = element(openstack_networking_floatingip_v2.kx-worker-floating-ip.*.address, count.index)
     }
 
   }
