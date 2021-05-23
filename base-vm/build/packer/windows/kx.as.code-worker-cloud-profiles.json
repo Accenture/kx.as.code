@@ -135,6 +135,7 @@
     "ssh_fullname": "KX Hero",
     "update": "true",
     "vm_name": "kx.as.code-worker",
+    "kx_home": "/usr/share/kx.as.code",
     "vm_suffix": "-demo"
   }
 }

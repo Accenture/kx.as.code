@@ -420,6 +420,7 @@
       "cpus": "2",
       "compute_engine_build": "false",
       "hostname": "kx-worker",
+      "kx_home": "/usr/share/kx.as.code",
       "domain": "kx-as-code.local",
       "disable_ipv6": "true",
       "disk_size": "40960",

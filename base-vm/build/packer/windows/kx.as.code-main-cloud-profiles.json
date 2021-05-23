@@ -270,6 +270,7 @@
     "ssh_fullname": "KX Hero",
     "update": "true",
     "vm_name": "kx.as.code-main",
+    "kx_home": "/usr/share/kx.as.code",
     "vm_suffix": "-demo",
     "git_docs_branch": "master",
     "git_techradar_branch": "master"
