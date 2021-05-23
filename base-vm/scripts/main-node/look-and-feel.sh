@@ -53,9 +53,7 @@ EOF'
 sudo mv ${INSTALLATION_WORKSPACE}/user_profile/images/* /usr/share/backgrounds/
 
 # Set background image
-sudo cp /usr/share/backgrounds/background.jpg /usr/share/backgrounds/background.png
-#TODO - fix below for OpenStack image
-#sudo update-alternatives --install /usr/share/images/desktop-base/desktop-background desktop-background /usr/share/backgrounds/background.png 100
+sudo update-alternatives --install /usr/share/images/desktop-base/desktop-background desktop-background /usr/share/backgrounds/background.jpg 100
 
 # Make desktop icon text transparent
 sudo bash -c "cat <<EOF > /home/$VM_USER/.gtkrc-2.0

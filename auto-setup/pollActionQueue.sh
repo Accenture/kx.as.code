@@ -138,7 +138,7 @@ if [[ "${baseIpType}" == "static" ]]; then
       fixIpHostVariableName=$(echo ${fixIpHost} | sed 's/-/__/g')
       export ${fixIpHostVariableName}_IpAddress="$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.staticNetworkSetup.baseFixedIpAddresses."'${fixIpHost}'"')"
       if [[ "${fixIpHost}" == "kx-main" ]]; then
-        export mainIpAddress=${fixIpHostVariableName}_IpAddress
+        export mainIpAddress="$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.staticNetworkSetup.baseFixedIpAddresses."'${fixIpHost}'"')"
       fi
   done
   export fixedNicConfigGateway=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.staticNetworkSetup.gateway')
