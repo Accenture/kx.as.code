@@ -255,6 +255,11 @@ sudo update-ca-certificates --fresh
 # Restart Docker to pick up the new KX.AS.CODE CA certificates
 sudo systemctl restart docker
 
+# Wait until DNS resolution is back up before proceeding with Kubernetes node registration
+timeout -s TERM 3000 bash -c 'while [[ "$rc" != "0" ]];         do
+nslookup kx-main.'${baseDomain}'; rc=$?;
+echo "Waiting for kx-main DNS resolution to function" && sleep 5;         done'
+
 # Wait for Kubernetes to be available
 wait-for-url() {
         timeout -s TERM 3000 bash -c \
