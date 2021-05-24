@@ -256,24 +256,24 @@ sudo update-ca-certificates --fresh
 sudo systemctl restart docker
 
 # Wait until DNS resolution is back up before proceeding with Kubernetes node registration
-timeout -s TERM 3000 bash -c 'while [[ "$rc" != "0" ]];         do
+timeout -s TERM 3000 bash -c 'while [[ "$rc" != "0" ]]; do
 nslookup kx-main.'${baseDomain}'; rc=$?;
-echo "Waiting for kx-main DNS resolution to function" && sleep 5;         done'
+echo "Waiting for kx-main DNS resolution to function" && sleep 5; done'
 
 # Wait for Kubernetes to be available
-wait-for-url() {
-        timeout -s TERM 3000 bash -c \
-        'while [[ "$(curl -k -s ${0})" != "ok" ]];\
-        do echo "Waiting for ${0}" && sleep 5;\
-        done' ${1}
-        curl -k $1
-}
-wait-for-url https://${kxMainIp}:6443/livez
+timeout -s TERM 3000 bash -c \
+'while [[ "$(curl -k -s https://'${kxMainIp}':6443/livez)" != "ok" ]];\
+do echo "Waiting for https://'${kxMainIp}':6443/livez" && sleep 5;  done'
+
 
 # Kubernetes master is reachable, join the worker node to cluster
-sudo -H -i -u ${vmUser} bash -c "ssh -o StrictHostKeyChecking=no $vmUser@${kxMainIp} 'kubeadm token create --print-join-command 2>/dev/null'" > ${installationWorkspace}/kubeJoin.sh
+sudo -H -i -u ${vmUser} bash -c "ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} 'kubeadm token create --print-join-command 2>/dev/null'" > ${installationWorkspace}/kubeJoin.sh
 sudo chmod 755 ${installationWorkspace}/kubeJoin.sh
-sudo ${installationWorkspace}/kubeJoin.sh
+
+# Keep trying to join Kubernetes cluster until successful
+timeout -s TERM 3000 bash -c 'while [[ ! -f /var/lib/kubelet/config.yaml ]]; do
+  sudo '${installationWorkspace}'/kubeJoin.sh
+  echo "Waiting for kx-worker to be connected successfully to main node" && sleep 15; done'
 
 # Disable the Service After it Ran
 sudo systemctl disable k8s-register-node.service
