@@ -142,23 +142,26 @@ export httpProxySetting=$(cat ${installationWorkspace}/profile-config.json | jq 
 export httpsProxySetting=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.proxy_settings.https_proxy')
 export noProxySetting=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.proxy_settings.no_proxy')
 
-# Get fixed IPs if defined
-if [ "${baseIpType}" == "static" ]; then
+# Wait until the worker has the main node's IP file
+if [[ "${baseIpType}" == "static" ]]; then
+  # Get fixed IPs if defined
   export fixedIpHosts=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.staticNetworkSetup.baseFixedIpAddresses | keys[]')
   for fixIpHost in ${fixedIpHosts}
   do
       fixIpHostVariableName=$(echo ${fixIpHost} | sed 's/-/__/g')
       export ${fixIpHostVariableName}_IpAddress="$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.staticNetworkSetup.baseFixedIpAddresses."'${fixIpHost}'"')"
+      if [[ "${fixIpHost}" == "kx-main" ]]; then
+        export kxMainIp="$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.staticNetworkSetup.baseFixedIpAddresses."'${fixIpHost}'"')"
+      fi
   done
   export fixedNicConfigGateway=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.staticNetworkSetup.gateway')
   export fixedNicConfigDns1=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.staticNetworkSetup.dns1')
   export fixedNicConfigDns2=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.staticNetworkSetup.dns2')
+else
+  timeout -s TERM 3000 bash -c 'while [ ! -f /var/tmp/kx.as.code_main-ip-address ];         do
+  echo "Waiting for kx-main IP address" && sleep 5;         done'
+  export kxMainIp=$(cat /var/tmp/kx.as.code_main-ip-address)
 fi
-
-# Wait until the worker has the main node's IP file
-timeout -s TERM 3000 bash -c 'while [ ! -f /var/tmp/kx.as.code_main-ip-address ];         do
-echo "Waiting for kx-main IP address" && sleep 5;         done'
-export kxMainIp=$(cat /var/tmp/kx.as.code_main-ip-address)
 
 if [[ ! -f /usr/share/kx.as.code/.config/network_status ]]; then
 
