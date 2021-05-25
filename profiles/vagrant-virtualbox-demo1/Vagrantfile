@@ -1,8 +1,5 @@
 require 'json'
 
-# Clean up old IP before starting up a new deployment
-#File.exist?("kx.as.code_main-ip-address") ? File.delete("kx.as.code_main-ip-address") :
-
 if Vagrant::Util::Platform.windows?
   # Is Windows
   puts "Vagrant launched from windows."

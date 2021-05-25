@@ -1,5 +1,18 @@
 {
     "config": {
+        "vm_properties": {
+            "kx_version": "0.6.7",
+            "main_node_cpu_cores": 4,
+            "main_node_memory": 16384,
+            "worker_node_count": 2,
+            "worker_node_cpu_cores": 4,
+            "worker_node_memory": 16384,
+            "environment_prefix": "demo1",
+            "kx_sync_folder_path": "/Users/patrick/KX_Share",
+            "kx_main_box_location": "V:/jenkins_remote/workspace/VMWare_Workstation/KX.AS.CODE_Main_Build/base-vm/boxes/vmware-desktop-0.6.7/kx.as.code-main-demo-0.6.7.box",
+            "kx_worker_box_location": "V:/jenkins_remote/workspace/VMWare_Workstation/KX.AS.CODE_Worker_Build/base-vm/boxes/vmware-desktop-0.6.7/kx.as.code-worker-demo-0.6.7.box",
+            "vmware_disk_utility": "C:/Program Files (x86)/VMware/VMware Workstation/vmware-vdiskmanager.exe"
+        },
         "allowWorkloadsOnMaster": true,
         "disableSessionTimeout": true,
         "certificationMode": false,
@@ -12,7 +25,7 @@
             "thirty_gb": 0,
             "fifty_gb": 0
         },
-        "virtualizationType": "vmware_desktop",
+        "virtualizationType": "local",
         "environmentPrefix": "demo1",
         "glusterFsDiskSize": "200",
         "sslProvider": "self-signed",
@@ -20,6 +33,7 @@
         "baseUser": "kx.hero",
         "basePassword": "L3arnandshare",
         "baseIpType": "static",
+        "dnsResolution": "static",
         "metalLbIpRange": {
             "ipRangeStart": "10.10.76.100",
             "ipRangeEnd": "10.10.76.150"
@@ -35,6 +49,11 @@
             "gateway": "192.168.81.2",
             "dns1": "192.168.81.150",
             "dns2": "8.8.8.8"
+        },
+        "docker": {
+            "dockerhub_username": "",
+            "dockerhub_email": "",
+            "dockerhub_password": ""
         },
         "proxy_settings": {
           "http_proxy": "",
