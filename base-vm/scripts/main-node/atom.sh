@@ -1,7 +1,5 @@
 #!/bin/bash -eux
 
-export SHARED_GIT_REPOSITORIES=/usr/share/kx.as.code/git
-
 # Download and install latest Atom editor
 wget https://github.com/$(curl -L -s https://github.com/atom/atom/releases/latest \
   | grep amd64.deb \

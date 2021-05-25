@@ -7,10 +7,7 @@
             "worker_node_count": 2,
             "worker_node_cpu_cores": 4,
             "worker_node_memory": 16384,
-            "environment_prefix": "demo1",
-            "kx_sync_folder_path": "/Users/patrick/KX_Share",
-            "kx_main_box_location": "V:/jenkins_remote/workspace/VirtualBox/KX.AS.CODE_Main_Build/base-vm/boxes/virtualbox-0.6.7/kx.as.code-main-demo-0.6.7.box",
-            "kx_worker_box_location": "V:/jenkins_remote/workspace/VirtualBox/KX.AS.CODE_Worker_Build/base-vm/boxes/virtualbox-0.6.7/kx.as.code-worker-demo-0.6.7.box"
+            "environment_prefix": "demo1"
         },
         "allowWorkloadsOnMaster": true,
         "disableSessionTimeout": true,
@@ -24,30 +21,18 @@
             "thirty_gb": 2,
             "fifty_gb": 1
         },
-        "virtualizationType": "local",
+        "virtualizationType": "private-cloud",
         "environmentPrefix": "demo1",
         "glusterFsDiskSize": "200",
         "sslProvider": "self-signed",
         "baseDomain": "kx-as-code.local",
         "baseUser": "kx.hero",
         "basePassword": "L3arnandshare",
-        "baseIpType": "static",
-        "dnsResolution": "static",
+        "baseIpType": "dynamic",
+        "dnsResolution": "hybrid",
         "metalLbIpRange": {
             "ipRangeStart": "10.10.76.100",
             "ipRangeEnd": "10.10.76.150"
-        },
-        "staticNetworkSetup": {
-            "baseFixedIpAddresses": {
-                "kx-main": "10.100.76.150",
-                "kx-worker1": "10.100.76.151",
-                "kx-worker2": "10.100.76.152",
-                "kx-worker3": "10.100.76.153",
-                "kx-worker4": "10.100.76.154"
-            },
-            "gateway": "10.100.76.2",
-            "dns1": "10.100.76.150",
-            "dns2": "8.8.8.8"
         },
         "docker": {
             "dockerhub_username": "",

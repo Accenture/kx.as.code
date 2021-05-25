@@ -2,7 +2,7 @@
 
 # Check if PID file already exists and ensure this script only runs once
 if [ ! -f /var/run/kxascode.pid ]; then
-    echo $(ps -ef | grep "pollActionQueue\.sh" | grep -v grep | awk {'print $2'}) | sudo tee /var/run/kxascode.pid
+    pgrep "pollActionQueue\.sh" | sudo tee /var/run/kxascode.pid
 else
     echo "/var/run/kxascode.pid already exists. Script already running. If you are sure this is an error, remove the PID file and try again. Exiting"
     exit
@@ -21,7 +21,7 @@ export apiDocsDirectory="${sharedKxHome}/API Docs"
 export shortcutsDirectory="${sharedKxHome}/DevOps Tools"
 export adminShortcutsDirectory="${sharedKxHome}/Admin Tools"
 export vmUser=kx.hero
-export vmPassword=$(cat ${sharedKxHome}/.config/.user.cred)
+export vmPassword="$(cat ${sharedKxHome}/.config/.user.cred)"
 
 # Check profile-config.json file is present before starting script
 wait-for-file() {
@@ -56,7 +56,7 @@ if [[ ! -f ${installationWorkspace}/actionQueues.json ]]; then
   # Merge json files if user uploaded aq* files present
   if [[ -n ${aqFiles} ]]; then
     # Loop around all user aq* files and merge them to one large json
-    for i in ${!aqFiles[@]}; do
+    for i in "${!aqFiles[@]}"; do
             echo "$i: ${aqFiles[$i]}"
 
       if [[ -f ${installationWorkspace}/actionQueues_temp.json ]]; then
@@ -103,7 +103,7 @@ fi
 # Get configs from profile-config.json
 export virtualizationType=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.virtualizationType')
 
-# Determine which NIC to bind to, to avoid binding to interal VirtualBox NAT NICs for example, where all hosts have the same IP - 10.0.2.15
+# Determine which NIC to bind to, to avoid binding to internal VirtualBox NAT NICs for example, where all hosts have the same IP - 10.0.2.15
 export nicList=$(nmcli device show | grep -E 'enp|ens' | grep 'GENERAL.DEVICE' | awk '{print $2}')
 export ipsToExclude="10.0.2.15"   # IP addresses not to configure with static IP. For example, default Virtualbox IP 10.0.2.15
 export nicExclusions=""
@@ -127,7 +127,27 @@ do
 done
 echo "NIC exclusions: ${nicExclusions}"
 echo "NIC to use: ${netDevice}"
-export mainIpAddress=$(ip a s ${netDevice} | egrep -o 'inet [0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | cut -d' ' -f2)
+
+export baseIpType=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.baseIpType')
+export dnsResolution=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.dnsResolution')
+if [[ "${baseIpType}" == "static" ]]; then
+  # Get fixed IPs if defined
+  export fixedIpHosts=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.staticNetworkSetup.baseFixedIpAddresses | keys[]')
+  for fixIpHost in ${fixedIpHosts}
+  do
+      fixIpHostVariableName=$(echo ${fixIpHost} | sed 's/-/__/g')
+      export ${fixIpHostVariableName}_IpAddress="$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.staticNetworkSetup.baseFixedIpAddresses."'${fixIpHost}'"')"
+      if [[ "${fixIpHost}" == "kx-main" ]]; then
+        export mainIpAddress="$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.staticNetworkSetup.baseFixedIpAddresses."'${fixIpHost}'"')"
+      fi
+  done
+  export fixedNicConfigGateway=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.staticNetworkSetup.gateway')
+  export fixedNicConfigDns1=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.staticNetworkSetup.dns1')
+  export fixedNicConfigDns2=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.staticNetworkSetup.dns2')
+else
+  export mainIpAddress=$(ip a s ${netDevice} | egrep -o 'inet [0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | cut -d' ' -f2)
+fi
+
 export environmentPrefix=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.environmentPrefix')
 if [ -z ${environmentPrefix} ]; then
     export baseDomain=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.baseDomain')
@@ -137,25 +157,11 @@ fi
 export defaultKeyboardLanguage=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.defaultKeyboardLanguage')
 export baseUser=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.baseUser')
 export basePassword=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.basePassword')
-export baseIpType=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.baseIpType')
 export baseIpRangeStart=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.baseIpRangeStart')
 export baseIpRangeEnd=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.baseIpRangeEnd')
 export metalLbIpRangeStart=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.metalLbIpRange.ipRangeStart')
 export metalLbIpRangeEnd=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.metalLbIpRange.ipRangeEnd')
 export sslProvider=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.sslProvider')
-
-if [ "${baseIpType}" == "static" ]; then
-  # Get fixed IPs if defined
-  export fixedIpHosts=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.staticNetworkSetup.baseFixedIpAddresses | keys[]')
-  for fixIpHost in ${fixedIpHosts}
-  do
-      fixIpHostVariableName=$(echo ${fixIpHost} | sed 's/-/__/g')
-      export ${fixIpHostVariableName}_IpAddress="$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.staticNetworkSetup.baseFixedIpAddresses."'${fixIpHost}'"')"
-  done
-  export fixedNicConfigGateway=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.staticNetworkSetup.gateway')
-  export fixedNicConfigDns1=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.staticNetworkSetup.dns1')
-  export fixedNicConfigDns2=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.staticNetworkSetup.dns2')
-fi
 
 # Get proxy settings
 export httpProxySetting=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.proxy_settings.http_proxy')
@@ -203,73 +209,74 @@ log_debug() {
     echo "$(date '+%Y-%m-%d_%H%M%S') [DEBUG] ${1}" | tee -a ${installationWorkspace}/${componentName}_${logTimestamp}.log
 }
 
-if [[ ! -f /usr/share/kx.as.code/.config/network_status ]] && [[ "${baseIpType}" == "static" ]]; then
+if [[ ! -f /usr/share/kx.as.code/.config/network_status ]]; then
 
-    # Update  DNS Entry for hosts if ip type set to static
-    if [ "${baseIpType}" == "static" ]; then
-        ipAddresses=$(env | grep "_IpAddress")
-        for ipAddress in ${ipAddresses}
-        do
-             hostname="$(echo ${ipAddress} | sed 's/__/-/g' | sed 's/_IpAddress//g' | cut -f1 -d'=')"
-             hostIpAddress="$(echo ${ipAddress} | cut -f2 -d'=')"
-            echo "address=/${hostname}/${hostIpAddress}" | sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
-            echo "address=/${hostname}.${baseDomain}/${hostIpAddress}" | sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
-            if [[ "${hostname}" == "kx-main" ]]; then
-                export mainIpAddress=${hostIpAddress}
-                echo "address=/ldap/${hostIpAddress}" | sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
-                echo "address=/ldap.${baseDomain}/${hostIpAddress}" | sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
-                echo "address=/pgadmin/${hostIpAddress}" | sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
-                echo "address=/pgadmin.${baseDomain}/${hostIpAddress}" | sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
-                echo "address=/ldapadmin/${hostIpAddress}" | sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
-                echo "address=/ldapadmin.${baseDomain}/${hostIpAddress}" | sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
-                echo "address=/rabbitmq/${hostIpAddress}" | sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
-                echo "address=/rabbitmq.${baseDomain}/${hostIpAddress}" | sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
-                echo "address=/remote-desktop/${hostIpAddress}" | sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
-                echo "address=/remote-desktop.${baseDomain}/${hostIpAddress}" | sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
-            fi
-        done
+    if  [[ "${baseIpType}" == "static" ]] || [[ "${dnsResolution}" == "hybrid" ]]; then
+        # Change DNS resolution to allow wildcards for resolving locally deployed K8s services
+        echo "DNSStubListener=no" | sudo tee -a /etc/systemd/resolved.conf
+        sudo systemctl restart systemd-resolved
+
+        # Configue dnsmasq - /etc/resolv.conf
+        sudo rm -f /etc/resolv.conf
+        sudo echo "nameserver ${mainIpAddress}" | sudo tee /etc/resolv.conf
+        sudo sed -i 's/^#no-resolv/no-resolv/' /etc/dnsmasq.conf
+        sudo sed -i 's/^#interface=/interface='${netDevice}'/' /etc/dnsmasq.conf
+        sudo sed -i 's/^#bind-interfaces/bind-interfaces/' /etc/dnsmasq.conf
+        sudo sed -i 's/^#listen-address=/listen-address=::1,127.0.0.1,'${mainIpAddress}'/' /etc/dnsmasq.conf
+        # Ensure dnsmasq returns system IP and not IP of loop-back device 127.0.1.1
+        sudo sed -i 's/^#no-hosts$/no-hosts/g' /etc/dnsmasq.conf
+        echo "server=8.8.8.8" | sudo tee -a /etc/dnsmasq.conf
+        echo "server=8.8.4.4" | sudo tee -a /etc/dnsmasq.conf
+        sudo systemctl restart dnsmasq
+        # Configue dnsmasq - /lib/systemd/system/dnsmasq.service (bugfix so dnsmasq starts automatically)
+        sudo sed -i 's/Wants=nss-lookup.target/Wants=network-online.target/' /lib/systemd/system/dnsmasq.service
+        sudo sed -i 's/After=network.target/After=network-online.target/' /lib/systemd/system/dnsmasq.service
+        # Prevent DHCLIENT updating static IP
+        if [[ "${dnsResolution}" == "hybrid" ]]; then
+            echo "supersede domain-name-servers ${mainIpAddress};" | sudo tee -a /etc/dhcp/dhclient.conf
+        else
+            echo "supersede domain-name-servers ${fixedNicConfigDns1}, ${fixedNicConfigDns2};" | sudo tee -a /etc/dhcp/dhclient.conf
+        fi
+        echo '''
+        #!/bin/sh
+        make_resolv_conf(){
+            :
+        }
+        ''' | sed -e 's/^[ \t]*//' | sed 's/:/    :/g' | sudo tee /etc/dhcp/dhclient-enter-hooks.d/nodnsupdate
+        sudo chmod +x /etc/dhcp/dhclient-enter-hooks.d/nodnsupdate
+
+        # Update DNS Entry for hosts if ip type set to static
+        hostname="$(hostname)"
+        echo "address=/${hostname}/${mainIpAddress}" | sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
+        echo "address=/${hostname}.${baseDomain}/${mainIpAddress}" | sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
+        echo "address=/ldap/${mainIpAddress}" | sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
+        echo "address=/ldap.${baseDomain}/${mainIpAddress}" | sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
+        echo "address=/pgadmin/${mainIpAddress}" | sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
+        echo "address=/pgadmin.${baseDomain}/${mainIpAddress}" | sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
+        echo "address=/ldapadmin/${mainIpAddress}" | sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
+        echo "address=/ldapadmin.${baseDomain}/${mainIpAddress}" | sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
+        echo "address=/rabbitmq/${mainIpAddress}" | sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
+        echo "address=/rabbitmq.${baseDomain}/${mainIpAddress}" | sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
+        echo "address=/remote-desktop/${mainIpAddress}" | sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
+        echo "address=/remote-desktop.${baseDomain}/${mainIpAddress}" | sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
+        sudo systemctl restart dnsmasq
     fi
 
-    # Change DNS resolution to allow wildcards for resolving locally deployed K8s services
-    echo "DNSStubListener=no" | sudo tee -a /etc/systemd/resolved.conf
-    sudo systemctl restart systemd-resolved
-    sudo rm -f /etc/resolv.conf
+    if [[ "${baseIpType}" == "static" ]]; then
+        # Configure IF to be managed/confgured by network-manager
+        rm -f /etc/NetworkManager/system-connections/*
+        sudo mv /etc/network/interfaces /etc/network/interfaces.unused
+        nmcli con add con-name "${netDevice}" ifname ${netDevice} type ethernet ip4 ${mainIpAddress}/24 gw4 ${fixedNicConfigGateway}
+        nmcli con mod "${netDevice}" ipv4.method "manual"
+        nmcli con mod "${netDevice}" ipv4.dns "${fixedNicConfigDns1},${fixedNicConfigDns2}"
+        systemctl restart network-manager
+        nmcli con up "${netDevice}"
+    fi
 
-    # Configue dnsmasq - /etc/resolv.conf
-    sudo sed -i 's/^#nameserver 127.0.0.1/nameserver '${mainIpAddress}'/g' /etc/resolv.conf
-    sudo sed -i 's/^#no-resolv/no-resolv/' /etc/dnsmasq.conf
-    sudo sed -i 's/^#interface=/interface='${netDevice}'/' /etc/dnsmasq.conf
-    sudo sed -i 's/^#bind-interfaces/bind-interfaces/' /etc/dnsmasq.conf
-    sudo sed -i 's/^#listen-address=/listen-address=::1,127.0.0.1,'${mainIpAddress}'/' /etc/dnsmasq.conf
-    # Ensure dnsmasq returns system IP and not IP of loop-back device 127.0.1.1
-    sudo sed -i 's/^#no-hosts$/no-hosts/g' /etc/dnsmasq.conf
-    echo "server=8.8.8.8" | sudo tee -a /etc/dnsmasq.conf
-    echo "server=8.8.4.4" | sudo tee -a /etc/dnsmasq.conf
-    sudo systemctl restart dnsmasq
-    # Configue dnsmasq - /lib/systemd/system/dnsmasq.service (bugfix so dnsmasq starts automatically)
-    sudo sed -i 's/Wants=nss-lookup.target/Wants=network-online.target/' /lib/systemd/system/dnsmasq.service
-    sudo sed -i 's/After=network.target/After=network-online.target/' /lib/systemd/system/dnsmasq.service
-    # Prevent DHCLIENT updating static IP
-    echo "supersede domain-name-servers ${fixedNicConfigDns1}, ${fixedNicConfigDns2};" | sudo tee -a /etc/dhcp/dhclient.conf
-    echo '''
-    #!/bin/sh
-    make_resolv_conf(){
-        :
-    }
-    ''' | sed -e 's/^[ \t]*//' | sed 's/:/    :/g' | sudo tee /etc/dhcp/dhclient-enter-hooks.d/nodnsupdate
-    sudo chmod +x /etc/dhcp/dhclient-enter-hooks.d/nodnsupdate
-
-    # Configure IF to be managed/confgured by network-manager
-    rm -f /etc/NetworkManager/system-connections/*
-    sudo mv /etc/network/interfaces /etc/network/interfaces.unused
-    nmcli con add con-name "${netDevice}" ifname ${netDevice} type ethernet ip4 ${mainIpAddress}/24 gw4 ${fixedNicConfigGateway}
-    nmcli con mod "${netDevice}" ipv4.method "manual"
-    nmcli con mod "${netDevice}" ipv4.dns "${fixedNicConfigDns1},${fixedNicConfigDns2}"
-    systemctl restart network-manager
-    nmcli con up "${netDevice}"
-
-    sudo systemctl enable --now dnsmasq.service
-    sudo systemctl enable --now systemd-networkd-wait-online.service
+    if  [[ "${baseIpType}" == "static" ]] || [[ "${dnsResolution}" == "hybrid" ]]; then
+      sudo systemctl enable --now dnsmasq.service
+      sudo systemctl enable --now systemd-networkd-wait-online.service
+    fi
 
     # Setup proxy settings if they exist
     if [[ ! -z ${httpProxySetting} ]] || [[ ! -z ${httpsProxySetting} ]]; then
@@ -305,39 +312,42 @@ if [[ ! -f /usr/share/kx.as.code/.config/network_status ]] && [[ "${baseIpType}"
     sudo mkdir -p /usr/share/kx.as.code/.config
     echo "KX.AS.CODE network config done" | sudo tee /usr/share/kx.as.code/.config/network_status
 
-    # Set default keyboard language
-    keyboardLanguages=""
-    availableLanguages="us de gb fr it es"
-    for language in ${availableLanguages}
-    do
-        if [[ -z ${keyboardLanguages} ]]; then
-            keyboardLanguages="${language}"
-        else
-            if [[ "${language}" == "${defaultKeyboardLanguage}" ]]; then
-                keyboardLanguages="${language},${keyboardLanguages}"
-            else
-                keyboardLanguages="${keyboardLanguages},${language}"
-            fi
-        fi
-    done
-
-    echo '''
-    # KEYBOARD CONFIGURATION FILE
-
-    # Consult the keyboard(5) manual page.
-
-    XKBMODEL="pc105"
-    XKBLAYOUT="'${keyboardLanguages}'"
-    XKBVARIANT=""
-    XKBOPTIONS=""
-
-    BACKSPACE=\"guess\"
-    ''' | sudo tee /etc/default/keyboard
-
-    # Reboot machine to ensure all network changes are active
-    sudo reboot
+    # Reboot if static network settings to activate them
+    if  [[ "${baseIpType}" == "static" ]]; then
+        # Reboot machine to ensure all network changes are active
+        sudo reboot
+    fi
 
 fi
+
+# Set default keyboard language
+keyboardLanguages=""
+availableLanguages="us de gb fr it es"
+for language in ${availableLanguages}
+do
+    if [[ -z ${keyboardLanguages} ]]; then
+        keyboardLanguages="${language}"
+    else
+        if [[ "${language}" == "${defaultKeyboardLanguage}" ]]; then
+            keyboardLanguages="${language},${keyboardLanguages}"
+        else
+            keyboardLanguages="${keyboardLanguages},${language}"
+        fi
+    fi
+done
+
+echo '''
+# KEYBOARD CONFIGURATION FILE
+
+# Consult the keyboard(5) manual page.
+
+XKBMODEL="pc105"
+XKBLAYOUT="'${keyboardLanguages}'"
+XKBVARIANT=""
+XKBOPTIONS=""
+
+BACKSPACE=\"guess\"
+''' | sudo tee /etc/default/keyboard
 
 # Wait for RabbitMQ web service to be reachable before continuing
 timeout -s TERM 600 bash -c 'while [[ "$(curl -s -o /dev/null -L -w ''%{http_code}'' http://127.0.0.1:15672/cli/rabbitmqadmin)" != "200" ]]; do \

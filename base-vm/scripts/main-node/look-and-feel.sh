@@ -50,11 +50,10 @@ greeter-session=lightdm-webkit2-greeter
 EOF'
 
 # Copy files needed for KX.AS.CODE look and file to relevant places
-sudo mv /home/${BASE_IMAGE_SSH_USER}/user_profile/images/* /usr/share/backgrounds/
+sudo mv ${INSTALLATION_WORKSPACE}/user_profile/images/* /usr/share/backgrounds/
 
 # Set background image
-sudo cp /usr/share/backgrounds/background.jpg /usr/share/backgrounds/background.png
-sudo update-alternatives --install /usr/share/images/desktop-base/desktop-background desktop-background /usr/share/backgrounds/background.png 100
+sudo update-alternatives --install /usr/share/images/desktop-base/desktop-background desktop-background /usr/share/backgrounds/background.jpg 100
 
 # Make desktop icon text transparent
 sudo bash -c "cat <<EOF > /home/$VM_USER/.gtkrc-2.0

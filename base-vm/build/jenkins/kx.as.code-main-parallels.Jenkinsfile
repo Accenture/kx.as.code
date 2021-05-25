@@ -63,7 +63,6 @@ pipeline {
                         -var "memory=8192" \
                         -var "cpus=2" \
                         -var "video_memory=128" \
-                        -var "host_data_directory=/Users/patrick.g.delamere/KX_Share" \
                         -var "hostname=${kx_hostname}" \
                         -var "domain=${kx_domain}" \
                         -var "version=${kx_version}" \
@@ -76,7 +75,7 @@ pipeline {
                         -var "git_techradar_branch=${git_techradar_branch}" \
                         -var "ssh_username=${ssh_username}" \
                         -var "base_image_ssh_user=${base_image_ssh_user}" \
-                        ./kx.as.code-main.json
+                        ./kx.as.code-main-local-profiles.json
                         """
                     }
                 }

@@ -1,0 +1,279 @@
+{
+  "sensitive-variables": [
+    "vm_password",
+    "github_token"
+  ],
+  "_comment": "Read README.md for details on executing the Packer builds.",
+  "builders": [
+  {
+      "type": "amazon-ebs",
+      "name": "{{user `vm_name`}}-aws-ami",
+      "ami_name": "{{user `vm_name`}}{{user `vm_suffix`}}-{{user `version`}}",
+      "ami_groups": "",
+      "snapshot_groups": "",
+      "instance_type": "{{user `instance_type`}}",
+      "access_key": "{{user `access_key`}}",
+      "secret_key": "{{user `secret_key`}}",
+      "source_ami": "{{user `source_ami`}}",
+      "region": "{{user `vpc_region`}}",
+      "vpc_id": "{{user `vpc_id`}}",
+      "subnet_id": "{{user `vpc_subnet_id`}}",
+      "associate_public_ip_address": "{{user `associate_public_ip_address`}}",
+      "launch_block_device_mappings": [
+        {
+          "device_name": "/dev/xvda",
+          "volume_type": "gp2",
+          "volume_size": "{{user `disk_size`}}",
+          "delete_on_termination": true
+        }
+      ],
+      "ssh_username": "{{user `ssh_username`}}",
+      "ssh_interface": "{{user `ssh_interface`}}",
+      "ssh_port": 22,
+      "ssh_timeout": "3600s",
+      "shutdown_behavior": "{{user `shutdown_behavior`}}"
+    },
+    {
+      "type": "vsphere-iso",
+      "name": "{{user `vm_name`}}-vmware-vsphere",
+      "vm_name": "{{user `vm_name`}}{{user `vm_suffix`}}-{{user `version`}}",
+      "boot_wait": "10s",
+      "boot_order": "disk,cdrom",
+      "boot_command": [
+        "<esc><wait>",
+        "install <wait>",
+        " preseed/url=http://{{user `builder_ip`}}:{{ .HTTPPort }}/{{user `preseed_path`}} <wait>",
+        "debian-installer=en_US.UTF-8 <wait>",
+        "auto <wait>",
+        "locale=en_US.UTF-8 <wait>",
+        "kbd-chooser/method=us <wait>",
+        "keyboard-configuration/xkb-keymap=us <wait>",
+        "netcfg/get_hostname={{user `hostname` }} <wait>",
+        "netcfg/get_domain={{user `domain` }} <wait>",
+        "fb=false <wait>",
+        "debconf/frontend=noninteractive <wait>",
+        "console-setup/ask_detect=false <wait>",
+        "console-keymaps-at/keymap=us <wait>",
+        "grub-installer/bootdev=/dev/sda <wait>",
+        "<enter><wait>"
+      ],
+      "guest_os_type": "{{user `vmware_guest_os_type`}}",
+      "http_directory": "http",
+      "iso_urls": [
+        "{{user `iso_path`}}/{{user `iso_file`}}",
+        "{{user `iso_url`}}"
+      ],
+      "iso_checksum": "{{user `iso_checksum_type`}}:{{user `iso_checksum`}}",
+      "ssh_username": "vagrant",
+      "ssh_password": "vagrant",
+      "ssh_port": 22,
+      "ssh_timeout": "3600s",
+      "shutdown_command": "{{user `shutdown_command`}}",
+      "convert_to_template": true,
+      "vcenter_server": "{{user `vsphere_server`}}",
+      "host": "{{user `vsphere_host`}}",
+      "username": "{{user `vsphere_username`}}",
+      "password": "{{user `vsphere_password`}}",
+      "insecure_connection": "true",
+      "datacenter": "{{user `vsphere_dc`}}",
+      "cluster": "{{user `vsphere_cluster`}}",
+      "network_adapters": [
+        {
+          "network": "{{user `vsphere_network`}}",
+          "network_card": "vmxnet3"
+        }
+      ],    "datastore": "{{user `vsphere_datastore`}}",
+      "folder": "{{user `vsphere_folder`}}",
+      "CPUs": "{{user `vsphere_cpu`}}",
+      "RAM": "{{user `vsphere_memory`}}",
+      "RAM_reserve_all": true,
+      "firmware": "bios",
+      "disk_controller_type": ["lsilogic-sas", "lsilogic-sas"],
+      "storage": [
+        {
+          "disk_size": "{{user `vsphere_disk_size_sda`}}",
+          "disk_thin_provisioned": true,
+          "disk_controller_index": 0
+        },
+        {
+          "disk_size": "{{user `vsphere_disk_size_sdb`}}",
+          "disk_thin_provisioned": true,
+          "disk_controller_index": 0
+        },
+        {
+          "disk_size": "{{user `vsphere_disk_size_sdc`}}",
+          "disk_thin_provisioned": true,
+          "disk_controller_index": 1
+        }
+      ],
+      "export": {
+        "force": true,
+        "output_directory": "../../../output-main{{user `vm_suffix`}}/vmware-vsphere-{{user `version`}}"
+      }
+    },
+    {
+        "type": "openstack",
+        "name": "{{user `vm_name`}}-openstack",
+        "identity_endpoint": "http://10.2.76.201:5000/v3",
+        "domain_name": "Default",
+        "tenant_name": "admin",
+        "username": "{{user `openstack_user`}}",
+        "password": "{{user `openstack_password`}}",
+        "region": "{{user `openstack_region`}}",
+        "ssh_username": "debian",
+        "image_name": "{{user `vm_name`}}{{user `vm_suffix`}}-{{user `version`}}",
+        "source_image": "{{user `openstack_source_image`}}",
+        "networks": "{{user `openstack_networks`}}",
+        "use_floating_ip": true,
+        "floating_ip_pool": "public",
+        "floating_ip_network": "{{user `openstack_floating_ip_network`}}",
+        "security_groups": [ "{{user `openstack_security_groups`}}" ],
+        "flavor": "{{user `openstack_flavor`}}",
+        "availability_zone": "nova",
+        "ssh_timeout": "10000s",
+        "insecure": "true"
+      }
+  ],
+  "post-processors":
+  [
+    {
+      "type": "manifest",
+      "output": "manifest.json",
+      "strip_path": true
+    }
+  ],
+  "provisioners": [
+    {
+      "environment_vars": [
+        "VM_USER={{user `vm_user`}}",
+        "VM_PASSWORD={{user `vm_password`}}",
+        "KX_HOME={{user `kx_home`}}",
+        "SKELDIR={{user `kx_home`}}/skel",
+        "SHARED_GIT_REPOSITORIES={{user `kx_home`}}/git",
+        "INSTALLATION_WORKSPACE={{user `kx_home`}}/workspace"
+      ],
+      "scripts": [
+        "../../../scripts/base/directories.sh",
+        "../../../scripts/base/kx-user.sh",
+        "../../../scripts/base/update.sh"
+      ],
+      "type": "shell",
+      "start_retry_timeout": "15m",
+      "expect_disconnect": "true"
+    },
+    {
+      "script": "../../../scripts/base/vmware.sh",
+      "only": ["{{user `vm_name`}}-vmware-vsphere"],
+      "type": "shell"
+    },
+    {
+      "scripts": [
+        "../../../scripts/base/cleanup.sh",
+        "../../../scripts/base/localtime.sh",
+        "../../../scripts/base/power.sh",
+        "../../../scripts/base/network.sh"
+      ],
+      "type": "shell",
+      "pause_before": "60s",
+      "start_retry_timeout": "15m",
+      "expect_disconnect": "true"
+    },
+    {
+      "type": "file",
+      "source": "../../../dependencies/plymouth_theme",
+      "destination": "{{user `kx_home`}}/workspace/plymouth_theme"
+    },
+    {
+      "type": "file",
+      "source": "../../../dependencies/user_profile",
+      "destination": "{{user `kx_home`}}/workspace/user_profile"
+    },
+    {
+      "type": "file",
+      "source": "../../../dependencies/lightdm_theme",
+      "destination": "{{user `kx_home`}}/workspace/lightdm_theme"
+    },
+    {
+      "type": "file",
+      "source": "../../../scripts/main-node",
+      "destination": "{{user `kx_home`}}/workspace/scripts"
+    },
+    {
+      "environment_vars": [
+        "BASE_IMAGE_SSH_USER={{user `base_image_ssh_user`}}",
+        "VM_USER={{user `vm_user`}}",
+        "VM_PASSWORD={{user `vm_password`}}",
+        "GIT_SOURCE_BRANCH={{user `git_source_branch`}}",
+        "GIT_DOCS_BRANCH={{user `git_docs_branch`}}",
+        "GIT_TECHRADAR_BRANCH={{user `git_techradar_branch`}}",
+        "GITHUB_USER={{user `github_user`}}",
+        "GITHUB_TOKEN={{user `github_token`}}",
+        "VERSION={{user `version`}}",
+        "COMPUTE_ENGINE_BUILD={{user `compute_engine_build`}}",
+        "KX_HOME={{user `kx_home`}}",
+        "SKELDIR={{user `kx_home`}}/skel",
+        "SHARED_GIT_REPOSITORIES={{user `kx_home`}}/git",
+        "INSTALLATION_WORKSPACE={{user `kx_home`}}/workspace"
+      ],
+      "scripts": [
+        "../../../scripts/common/motd.sh",
+        "../../../scripts/common/kx.as.code.sh",
+        "../../../scripts/common/tools.sh",
+        "../../../scripts/common/powerline.sh",
+        "../../../scripts/common/docker.sh"
+      ],
+      "type": "shell",
+      "pause_before": "60s",
+      "start_retry_timeout": "15m",
+      "expect_disconnect": "true"
+    },
+    {
+      "environment_vars": [
+        "BASE_IMAGE_SSH_USER={{user `base_image_ssh_user`}}",
+        "VM_USER={{user `vm_user`}}",
+        "VM_PASSWORD={{user `vm_password`}}",
+        "GIT_SOURCE_BRANCH={{user `git_source_branch`}}",
+        "GIT_DOCS_BRANCH={{user `git_docs_branch`}}",
+        "GIT_TECHRADAR_BRANCH={{user `git_techradar_branch`}}",
+        "GITHUB_USER={{user `github_user`}}",
+        "GITHUB_TOKEN={{user `github_token`}}",
+        "GIT_SOURCE_BRANCH={{user `git_source_branch`}}",
+        "GIT_DOCS_BRANCH={{user `git_docs_branch`}}",
+        "GIT_TECHRADAR_BRANCH={{user `git_techradar_branch`}}",
+        "VERSION={{user `version`}}",
+        "KX_HOME={{user `kx_home`}}",
+        "SKELDIR={{user `kx_home`}}/skel",
+        "SHARED_GIT_REPOSITORIES={{user `kx_home`}}/git",
+        "INSTALLATION_WORKSPACE={{user `kx_home`}}/workspace"
+      ],
+      "scripts": [
+        "../../../scripts/main-node/dns.sh",
+        "../../../scripts/main-node/look-and-feel.sh",
+        "../../../scripts/main-node/kx.as.code.sh",
+        "../../../scripts/main-node/profile.sh",
+        "../../../scripts/main-node/tools.sh",
+        "../../../scripts/main-node/rabbitmq.sh",
+        "../../../scripts/main-node/atom.sh",
+        "../../../scripts/main-node/vscode.sh",
+        "../../../scripts/main-node/createskel.sh",
+        "../../../scripts/main-node/cleanup.sh"
+      ],
+      "type": "shell",
+      "pause_before": "60s",
+      "start_retry_timeout": "15m",
+      "expect_disconnect": "true"
+    }
+  ],
+  "variables": {
+    "disk_size": "40",
+    "kx_home": "/usr/share/kx.as.code",
+    "compute_engine_build": "true",
+    "headless": "true",
+    "ssh_fullname": "KX Hero",
+    "update": "true",
+    "vm_name": "kx.as.code-main",
+    "vm_suffix": "-demo",
+    "git_docs_branch": "master",
+    "git_techradar_branch": "master"
+  }
+}

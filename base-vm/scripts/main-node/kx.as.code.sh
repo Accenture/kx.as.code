@@ -1,19 +1,15 @@
 #!/bin/bash -eux
 
-export SKELDIR=/usr/share/kx.as.code/skel
-export SHARED_GIT_REPOSITORIES=/usr/share/kx.as.code/git
-export INSTALLATION_WORKSPACE=/usr/share/kx.as.code/workspace
-
 # UrlEncode GIT password in case of special characters
 if [[ ! -z $GITHUB_TOKEN ]]; then
   GITHUB_TOKEN_ENCODED=$(python3 -c "import urllib.parse; print(urllib.parse.quote(input()))" <<< "$GITHUB_TOKEN")
 fi
 # Install LightDM theme for login and lock screens
 sudo mkdir -p /var/lib/lightdm/.local/share/webkitgtk/
-sudo mv /home/${BASE_IMAGE_SSH_USER}/lightdm_theme/localstorage /var/lib/lightdm/.local/share/webkitgtk/
+sudo mv ${INSTALLATION_WORKSPACE}/lightdm_theme/localstorage /var/lib/lightdm/.local/share/webkitgtk/
 sudo chown -hR lightdm:lightdm /var/lib/lightdm/
 sudo mkdir -p /usr/share/lightdm-webkit/themes/material
-sudo mv /home/${BASE_IMAGE_SSH_USER}/lightdm_theme/* /usr/share/lightdm-webkit/themes/material
+sudo mv ${INSTALLATION_WORKSPACE}/lightdm_theme/* /usr/share/lightdm-webkit/themes/material
 sudo fc-cache -vf /usr/share/fonts/
 
 # Install to import XFCE panel configuration for kx.hero
@@ -74,7 +70,7 @@ sudo mkdir -p /var/lib/AccountsService/users
 sudo cp /usr/share/backgrounds/avatar.png /usr/share/pixmaps/faces/digital_avatar.png
 sudo bash -c "cat <<EOF > /var/lib/AccountsService/users/$VM_USER
 [org.freedesktop.DisplayManager.AccountsService]
-BackgroundFile='/usr/share/kx.as.code/background.png'
+BackgroundFile=/usr/share/kx.as.code/background.jpg
 
 [User]
 Session=
@@ -89,7 +85,7 @@ EOF"
 # Prevent vagrant user showing on login screen user list
 sudo bash -c "cat <<EOF > /var/lib/AccountsService/users/${BASE_IMAGE_SSH_USER}
 [org.freedesktop.DisplayManager.AccountsService]
-BackgroundFile='/usr/share/backgrounds/background.jpg'
+BackgroundFile=/usr/share/backgrounds/background.jpg
 
 [User]
 Session=
@@ -104,7 +100,7 @@ EOF"
 # Prevent lightdm user showing on login screen user list
 sudo bash -c 'cat <<EOF > /var/lib/AccountsService/users/lightdm
 [org.freedesktop.DisplayManager.AccountsService]
-BackgroundFile='/usr/share/backgrounds/background.jpg'
+BackgroundFile=/usr/share/backgrounds/background.jpg
 
 [User]
 Session=
@@ -168,7 +164,7 @@ User=0
 Environment=VM_USER=${VM_USER}
 Environment=KUBEDIR=${INSTALLATION_WORKSPACE}
 Type=forking
-ExecStart=/usr/share/kx.as.code/git/kx.as.code/auto-setup/pollActionQueue.sh
+ExecStart=${SHARED_GIT_REPOSITORIES}/kx.as.code/auto-setup/pollActionQueue.sh
 TimeoutSec=infinity
 Restart=no
 RemainAfterExit=no
@@ -179,12 +175,14 @@ EOF"
 sudo systemctl enable k8s-initialize-cluster
 sudo systemctl daemon-reload
 
-sudo mkdir -p /usr/share/kx.as.code
-
 echo '''
 #!/bin/bash
 vmUser=$(id -nu)
 vmUserId=$(id -u)
+KX_HOME='${KX_HOME}'
+SKELDIR=${KX_HOME}/skel
+SHARED_GIT_REPOSITORIES=${KX_HOME}/git
+INSTALLATION_WORKSPACE=${KX_HOME}/workspace
 # Make desktop icon text transparent
 echo """
 style \"xfdesktop-icon-view\" {
@@ -236,11 +234,11 @@ xfconf-query --create --channel xfce4-power-manager --property /xfce4-power-mana
 xfconf-query --create --channel xfce4-power-manager --property /xfce4-power-manager/power-button-action --type int --set 0
 xfconf-query --create --channel xfce4-power-manager --property /xfce4-power-manager/presentation-mode --type bool --set false
 xfconf-query --create --channel xfce4-power-manager --property /xfce4-power-manager/show-panel-label --type int --set 0
-xfpanel-switch load /usr/share/kx.as.code/skel/.config/exported-config.tar.bz2 &
-/usr/bin/typora /usr/share/kx.as.code/git/kx.as.code/README.md &
-sudo cp /usr/share/kx.as.code/skel/p10k.zsh $HOME/.p10k.zsh
-sudo cp /usr/share/kx.as.code/skel/zshrc $HOME/.zshrc
-sudo cp -r /usr/share/kx.as.code/skel/.oh-my-zsh $HOME/.oh-my-zsh
+xfpanel-switch load ${SKELDIR}/.config/exported-config.tar.bz2 &
+/usr/bin/typora ${SHARED_GIT_REPOSITORIES}/kx.as.code/README.md &
+sudo cp ${SKELDIR}/p10k.zsh $HOME/.p10k.zsh
+sudo cp ${SKELDIR}/zshrc $HOME/.zshrc
+sudo cp -r ${SKELDIR}/.oh-my-zsh $HOME/.oh-my-zsh
 # Add check for every login telling user if K8s is ready or not
 sudo -H -i -u ${vmUser} sh -c "mkdir -p /home/${vmUser}/.config/autostart"
 cat <<EOF > /home/${vmUser}/.config/autostart/check-k8s.desktop
@@ -251,7 +249,7 @@ Exec=/usr/share/kx.as.code/checkK8sStartup.sh
 EOF
 chmod 755 /home/${vmUser}/.config/autostart/check-k8s.desktop
 chown ${vmUser}:${vmUser} /home/${vmUser}/.config/autostart/check-k8s.desktop
-sudo chmod 777 /usr/share/kx.as.code/git/*
+sudo chmod 777 ${SHARED_GIT_REPOSITORIES}/*
 rm -f $HOME/.config/autostart/show-welcome.desktop
 timeout 5 xfce4-panel &
 ''' | sudo tee /usr/share/kx.as.code/showWelcome.sh

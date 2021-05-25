@@ -12,7 +12,7 @@ sudo sed -i "s/^.*requiretty/#Defaults requiretty/" /etc/sudoers
 #sudo chmod 0440 /etc/sudoers.d/vagrant
 
 # Create the vagrant user ssh directory.
-mkdir -pm 700 /home/vagrant/.ssh
+sudo mkdir -pm 700 /home/vagrant/.ssh
 
 # Create an authorized keys file and insert the insecure public vagrant key.
 sudo bash -c 'cat <<-EOF > /home/vagrant/.ssh/authorized_keys

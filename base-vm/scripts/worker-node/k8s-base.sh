@@ -3,7 +3,7 @@
 # Ensure time is accurate
 sudo apt-get install -y ntpdate
 
-KUBEDIR=/usr/share/kx.as.code/workspace
+KUBEDIR=${INSTALLATION_WORKSPACE}
 sudo mkdir -p ${KUBEDIR}
 sudo chown ${VM_USER}:${VM_USER} ${KUBEDIR}
 
@@ -35,9 +35,9 @@ sudo apt-mark hold kubelet kubeadm kubectl
 sudo swapoff -a
 sudo sed -i '/swap/d' /etc/fstab
 
-sudo chmod 755 /home/${BASE_IMAGE_SSH_USER}/scripts/registerNode.sh
-sudo chown ${VM_USER}:${VM_USER} /home/${BASE_IMAGE_SSH_USER}/scripts/registerNode.sh
-sudo cp /home/${BASE_IMAGE_SSH_USER}/scripts/registerNode.sh ${KUBEDIR}
+sudo chmod 755 ${INSTALLATION_WORKSPACE}/scripts/registerNode.sh
+sudo chown ${VM_USER}:${VM_USER} ${INSTALLATION_WORKSPACE}/scripts/registerNode.sh
+sudo cp ${INSTALLATION_WORKSPACE}/scripts/registerNode.sh ${KUBEDIR}
 
 # Add Kubernetes Join Script to systemd
 sudo bash -c "cat <<EOF > /etc/systemd/system/k8s-register-node.service
@@ -66,7 +66,7 @@ sudo systemctl enable k8s-register-node
 sudo systemctl daemon-reload
 
 # Create SKEL directory for future users
-SKELDIR=/usr/share/kx.as.code/skel
+SKELDIR=${SKELDIR}
 sudo mkdir -p ${SKELDIR}
 sudo cp /home/${VM_USER}/.bashrc ${SKELDIR}
 sudo cp -r /home/${VM_USER}/.local ${SKELDIR}

@@ -35,3 +35,11 @@ base-vm/**/config.yaml
 **/*.vdi
 **/*.vmdk
 **/kx.as.code_main-ip-address
+agent.jar
+amazon-corretto*
+**/jenkins/java
+.terraform*
+/base-vm/build/jenkins/oracle_vbox.asc
+/profiles/terraform-openstack-demo1/hosts_file_entries.txt
+/base-vm/build/jenkins/docker-compose
+/base-vm/build/jenkins/jenkins.env

@@ -2,9 +2,10 @@
 
 . /etc/environment
 
-export sharedGitRepositories=/usr/share/kx.as.code/git
-export installationWorkspace=/usr/share/kx.as.code/workspace
 export kxHomeDir=/usr/share/kx.as.code
+export sharedGitRepositories=${kxHomeDir}/git
+export installationWorkspace=${kxHomeDir}/workspace
+
 
 # Check profile-config.json file is present before executing script
 wait-for-file() {
@@ -132,6 +133,7 @@ export defaultKeyboardLanguage=$(cat ${installationWorkspace}/profile-config.jso
 export baseUser=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.baseUser')
 export basePassword=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.basePassword')
 export baseIpType=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.baseIpType')
+export dnsResolution=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.dnsResolution')
 export baseIpRangeStart=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.baseIpRangeStart')
 export baseIpRangeEnd=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.baseIpRangeEnd')
 
@@ -140,104 +142,97 @@ export httpProxySetting=$(cat ${installationWorkspace}/profile-config.json | jq 
 export httpsProxySetting=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.proxy_settings.https_proxy')
 export noProxySetting=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.proxy_settings.no_proxy')
 
-# Get fixed IPs if defined
-if [ "${baseIpType}" == "static" ]; then
+# Wait until the worker has the main node's IP file
+if [[ "${baseIpType}" == "static" ]]; then
+  # Get fixed IPs if defined
   export fixedIpHosts=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.staticNetworkSetup.baseFixedIpAddresses | keys[]')
   for fixIpHost in ${fixedIpHosts}
   do
       fixIpHostVariableName=$(echo ${fixIpHost} | sed 's/-/__/g')
       export ${fixIpHostVariableName}_IpAddress="$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.staticNetworkSetup.baseFixedIpAddresses."'${fixIpHost}'"')"
+      if [[ "${fixIpHost}" == "kx-main" ]]; then
+        export kxMainIp="$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.staticNetworkSetup.baseFixedIpAddresses."'${fixIpHost}'"')"
+      elif [[ "${fixIpHost}" == "$(hostname)" ]]; then
+        export kxWorkerIp="$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.staticNetworkSetup.baseFixedIpAddresses."'${fixIpHost}'"')"
+      fi
   done
   export fixedNicConfigGateway=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.staticNetworkSetup.gateway')
   export fixedNicConfigDns1=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.staticNetworkSetup.dns1')
   export fixedNicConfigDns2=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.staticNetworkSetup.dns2')
+else
+  timeout -s TERM 3000 bash -c 'while [ ! -f /var/tmp/kx.as.code_main-ip-address ];         do
+  echo "Waiting for kx-main IP address" && sleep 5;         done'
+  export kxMainIp=$(cat /var/tmp/kx.as.code_main-ip-address)
 fi
 
-if [[ "${baseIpType}" == "static" ]]; then
-  if [[ -z "$(cat /etc/resolv.conf | grep \\"${fixedNicConfigDns1}\\")" ]]; then
+if [[ ! -f /usr/share/kx.as.code/.config/network_status ]]; then
 
-      # Wait for last Vagrant or Terraform shell action to complete before changing network settings
-      timeout -s TERM 6000 bash -c \
-      'while [[ ! -f /usr/share/kx.as.code/workspace/gogogo ]];\
-      do echo "Waiting for /usr/share/kx.as.code/workspace/gogogo file" && sleep 15;\
-      done'
+  if  [[ "${baseIpType}" == "static" ]] || [[ "${dnsResolution}" == "hybrid" ]]; then
+    # Change DNS resolution to allow wildcards for resolving locally deployed K8s services
+    echo "DNSStubListener=no" | sudo tee -a /etc/systemd/resolved.conf
+    sudo systemctl restart systemd-resolved
+    sudo rm -f /etc/resolv.conf
+    sudo echo "nameserver ${kxMainIp}" | sudo tee /etc/resolv.conf
 
-      # Prevent DHCLIENT updating static IP
-      echo "supersede domain-name-servers ${fixedNicConfigDns1}, ${fixedNicConfigDns2};" | sudo tee -a /etc/dhcp/dhclient.conf
-      echo '''
-      #!/bin/sh
-      make_resolv_conf(){
-          :
-      }
-      ''' | sed -e 's/^[ \t]*//' | sed 's/:/    :/g' | sudo tee /etc/dhcp/dhclient-enter-hooks.d/nodnsupdate
-      sudo chmod +x /etc/dhcp/dhclient-enter-hooks.d/nodnsupdate
+    # Configue dnsmasq - /etc/resolv.conf
+    sudo sed -i 's/^#nameserver 127.0.0.1/nameserver '${kxMainIp}'/g' /etc/resolv.conf
 
-      # Change DNS resolution to allow wildcards for resolving deployed K8s services
-      echo "DNSStubListener=no" | sudo tee -a /etc/systemd/resolved.conf
-      sudo systemctl restart systemd-resolved
-      sudo rm -f /etc/resolv.conf
-
-      # Update DNS Entry for hosts if ip type set to static
-      if [ "${baseIpType}" == "static" ]; then
-          export kxMainIp="$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.staticNetworkSetup.baseFixedIpAddresses."kx-main"')"
-          export kxWorkerIp="$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.staticNetworkSetup.baseFixedIpAddresses."'$(hostname)'"')"
-      fi
-
-      # Create resolv.conf for desktop user with for resolving local domain with DNSMASQ
-      echo '''
-      # File Generated During KX.AS.CODE initialization
-      nameserver '${fixedNicConfigDns1}'
-      nameserver '${fixedNicConfigDns2}'
-      ''' | sed -e 's/^[ \t]*//' | sudo tee /etc/resolv.conf
-
-      # Configure IF to be managed/confgured by network-manager
-      sudo rm -f /etc/NetworkManager/system-connections/*
-      sudo mv /etc/network/interfaces /etc/network/interfaces.unused
-      sudo nmcli con add con-name "${netDevice}" ifname ${netDevice} type ethernet ip4 ${kxWorkerIp}/24 gw4 ${fixedNicConfigGateway}
-      sudo nmcli con mod "${netDevice}" ipv4.method "manual"
-      sudo nmcli con mod "${netDevice}" ipv4.dns "${fixedNicConfigDns1},${fixedNicConfigDns2}"
-      sudo systemctl restart network-manager
-      sudo nmcli con up "${netDevice}"
-
+    # Prevent DHCLIENT updating static IP
+    if [[ "${dnsResolution}" == "hybrid" ]]; then
+        echo "supersede domain-name-servers ${kxMainIp};" | sudo tee -a /etc/dhcp/dhclient.conf
+    else
+        echo "supersede domain-name-servers ${fixedNicConfigDns1}, ${fixedNicConfigDns2};" | sudo tee -a /etc/dhcp/dhclient.conf
+    fi
+    echo '''
+    #!/bin/sh
+    make_resolv_conf(){
+        :
+    }
+    ''' | sed -e 's/^[ \t]*//' | sed 's/:/    :/g' | sudo tee /etc/dhcp/dhclient-enter-hooks.d/nodnsupdate
+    sudo chmod +x /etc/dhcp/dhclient-enter-hooks.d/nodnsupdate
   fi
+
+  if [[ "${baseIpType}" == "static" ]]; then
+    # Configure IF to be managed/confgured by network-manager
+    sudo rm -f /etc/NetworkManager/system-connections/*
+    sudo mv /etc/network/interfaces /etc/network/interfaces.unused
+    sudo nmcli con add con-name "${netDevice}" ifname ${netDevice} type ethernet ip4 ${kxWorkerIp}/24 gw4 ${fixedNicConfigGateway}
+    sudo nmcli con mod "${netDevice}" ipv4.method "manual"
+    sudo nmcli con mod "${netDevice}" ipv4.dns "${fixedNicConfigDns1},${fixedNicConfigDns2}"
+    sudo systemctl restart network-manager
+    sudo nmcli con up "${netDevice}"
+  fi
+
+  # Ensure the whole network setup does not execute again on next run after reboot
+  sudo mkdir -p /usr/share/kx.as.code/.config
+  echo "KX.AS.CODE network config done" | sudo tee /usr/share/kx.as.code/.config/network_status
+
 fi
 
-# Wait until network and DNS resolution is back up. Also need to wait for kx-main, in case the worker node comes up first
-timeout -s TERM 3000 bash -c 'while [[ "$rc" != "0" ]];         do
-nslookup kx-main.'${baseDomain}'; rc=$?;
-echo "Waiting for kx-main DNS resolution to function" && sleep 5;         done'
-
-
-# Try to get KX-Main IP address via a lookup if baseIpType is set to dynamic
- if [ "${baseIpType}" == "dynamic" ]; then
-   # First try to get ip from DNS
-   kxMainIp=$(dig +short kx-main.${baseDomain})
-   # Try an alternative. This is usually necessary when getting an IP address from DHCP and there is no DNS (AWS OK with Route53, local virtualizations, NOK)
-   if [[ -z ${kxMainIp} ]]; then
-    # Read the file dropped by Terraform or Vagrant
-    export kxMainIp=$(cat /var/tmp/kx.as.code_main-ip-address)
-  fi
+if [[ -n ${kxMainIp} ]]; then
+  echo "${kxMainIp} kx-main kx-main.${baseDomain}" | sudo tee -a /etc/hosts
 fi
 
 mkdir -p ${installationWorkspace}
 chown -R ${vmUser}:${vmUser} ${installationWorkspace}
 
-if [[ "${virtualizationType}" != "public-cloud" ]]; then
+if [[ "${virtualizationType}" != "public-cloud" ]] && [[ "${virtualizationType}" != "private-cloud" ]]; then
   # Create RSA key for kx.hero user
   mkdir -p /home/${vmUser}/.ssh
   chown -R ${vmUser}:${vmUser} /home/${vmUser}/.ssh
   chmod 700 $installationWorkspace/.ssh
   yes | sudo -u ${vmUser} ssh-keygen -f ssh-keygen -m PEM -t rsa -b 4096 -q -f /home/${vmUser}/.ssh/id_rsa -N ''
-
-  # Add key to KX-Main host
-  sudo -H -i -u ${vmUser} bash -c "sshpass -f ${kxHomeDir}/.config/.user.cred ssh-copy-id -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp}"
-
-  # Add KX-Main key to worker
-  sudo -H -i -u ${vmUser} bash -c "ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} \"cat /home/${vmUser}/.ssh/id_rsa.pub\" | tee -a /home/${vmUser}/.ssh/authorized_keys"
-  sudo mkdir -p /root/.ssh
-  sudo chmod 700 /root/.ssh
-  sudo cp /home/$vmUser/.ssh/authorized_keys /root/.ssh/
 fi
+
+# Add key to KX-Main host
+sudo -H -i -u ${vmUser} bash -c "sshpass -f ${kxHomeDir}/.config/.user.cred ssh-copy-id -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp}"
+
+# Add KX-Main key to worker
+sudo -H -i -u ${vmUser} bash -c "ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} \"cat /home/${vmUser}/.ssh/id_rsa.pub\" | tee -a /home/${vmUser}/.ssh/authorized_keys"
+sudo mkdir -p /root/.ssh
+sudo chmod 700 /root/.ssh
+sudo cp /home/${vmUser}/.ssh/authorized_keys /root/.ssh/
+
 # Copy KX.AS.CODE CA certificates from main node and restart docker
 export REMOTE_KX_MAIN_installationWorkspace=$installationWorkspace
 export REMOTE_KX_MAIN_CERTSDIR=$REMOTE_KX_MAIN_installationWorkspace/certificates
@@ -265,20 +260,25 @@ sudo update-ca-certificates --fresh
 # Restart Docker to pick up the new KX.AS.CODE CA certificates
 sudo systemctl restart docker
 
+# Wait until DNS resolution is back up before proceeding with Kubernetes node registration
+timeout -s TERM 3000 bash -c 'while [[ "$rc" != "0" ]]; do
+nslookup kx-main.'${baseDomain}'; rc=$?;
+echo "Waiting for kx-main DNS resolution to function" && sleep 5; done'
+
 # Wait for Kubernetes to be available
-wait-for-url() {
-        timeout -s TERM 3000 bash -c \
-        'while [[ "$(curl -k -s ${0})" != "ok" ]];\
-        do echo "Waiting for ${0}" && sleep 5;\
-        done' ${1}
-        curl -k $1
-}
-wait-for-url https://${kxMainIp}:6443/livez
+timeout -s TERM 3000 bash -c \
+'while [[ "$(curl -k -s https://'${kxMainIp}':6443/livez)" != "ok" ]];\
+do echo "Waiting for https://'${kxMainIp}':6443/livez" && sleep 5;  done'
+
 
 # Kubernetes master is reachable, join the worker node to cluster
-sudo -H -i -u ${vmUser} bash -c "ssh -o StrictHostKeyChecking=no $vmUser@${kxMainIp} 'kubeadm token create --print-join-command 2>/dev/null'" > ${installationWorkspace}/kubeJoin.sh
+sudo -H -i -u ${vmUser} bash -c "ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} 'kubeadm token create --print-join-command 2>/dev/null'" > ${installationWorkspace}/kubeJoin.sh
 sudo chmod 755 ${installationWorkspace}/kubeJoin.sh
-sudo ${installationWorkspace}/kubeJoin.sh
+
+# Keep trying to join Kubernetes cluster until successful
+timeout -s TERM 3000 bash -c 'while [[ ! -f /var/lib/kubelet/config.yaml ]]; do
+  sudo '${installationWorkspace}'/kubeJoin.sh
+  echo "Waiting for kx-worker to be connected successfully to main node" && sleep 15; done'
 
 # Disable the Service After it Ran
 sudo systemctl disable k8s-register-node.service

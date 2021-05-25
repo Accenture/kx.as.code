@@ -1,6 +1,6 @@
 #!/bin/bash -eux
 
-export SHARED_GIT_REPOSITORIES=/usr/share/kx.as.code/git
+export SHARED_GIT_REPOSITORIES=${SHARED_GIT_REPOSITORIES}
 
 # Install Visual Studio Code editor
 curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg
