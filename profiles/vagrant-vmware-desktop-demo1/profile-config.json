@@ -32,23 +32,11 @@
         "baseDomain": "kx-as-code.local",
         "baseUser": "kx.hero",
         "basePassword": "L3arnandshare",
-        "baseIpType": "static",
-        "dnsResolution": "static",
+        "baseIpType": "dynamic",
+        "dnsResolution": "hybrid",
         "metalLbIpRange": {
             "ipRangeStart": "10.10.76.100",
             "ipRangeEnd": "10.10.76.150"
-        },
-        "staticNetworkSetup": {
-            "baseFixedIpAddresses": {
-                "kx-main": "192.168.81.150",
-                "kx-worker1": "192.168.81.151",
-                "kx-worker2": "192.168.81.152",
-                "kx-worker3": "192.168.81.153",
-                "kx-worker4": "192.168.81.154"
-            },
-            "gateway": "192.168.81.2",
-            "dns1": "192.168.81.150",
-            "dns2": "8.8.8.8"
         },
         "docker": {
             "dockerhub_username": "",

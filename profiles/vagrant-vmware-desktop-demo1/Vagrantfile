@@ -89,12 +89,12 @@ Vagrant.configure("2") do |config|
         subconfig.vm.provider "vmware_desktop" do |v|
             kx_main_local_k8s_storage="#{current_dir}/kx-main-local-k8s-storage.vmdk"
             if ARGV[0] == "up" && ! File.exist?(kx_main_local_k8s_storage)
-              `"#{VMWARE_DISK_UTILITY}" -c -s #{LOCAL_KUBE_VOLUMES_DISK_SIZE}GB -a lsilogic -t 1 #{kx_main_local_k8s_storage}`
+              `"#{VMWARE_DISK_UTILITY}" -c -s #{LOCAL_KUBE_VOLUMES_DISK_SIZE}GB -a lsilogic -t 0 #{kx_main_local_k8s_storage}`
             end
 
             kx_main_glusterfs_k8s_storage="#{current_dir}/kx-main-glusterfs-k8s-storage.vmdk"
             if ARGV[0] == "up" && ! File.exist?(kx_main_glusterfs_k8s_storage)
-              `"#{VMWARE_DISK_UTILITY}" -c -s #{GLUSTERFS_KUBE_VOLUMES_DISK_SIZE}GB -a lsilogic -t 1 #{kx_main_glusterfs_k8s_storage}`
+              `"#{VMWARE_DISK_UTILITY}" -c -s #{GLUSTERFS_KUBE_VOLUMES_DISK_SIZE}GB -a lsilogic -t 0 #{kx_main_glusterfs_k8s_storage}`
             end
             v.gui = true
             v.whitelist_verified = true
@@ -105,12 +105,12 @@ Vagrant.configure("2") do |config|
             v.vmx["ethernet0.pcislotnumber"] = "33"
             v.vmx["sound.startconnected"] = "FALSE"
             v.vmx["sound.present"] = "FALSE"
-            v.vmx['scsi0:1.filename'] = kx_main_local_k8s_storage
+            v.vmx['scsi0:1.filename'] = kx_main_local_k8s_storage.gsub(/\//, '\\')
             v.vmx['scsi0:1.present']  = 'TRUE'
             v.vmx['scsi0:1.redo']     = ''
-            v.vmx['scsi0:1.filename'] = kx_main_glusterfs_k8s_storage
-            v.vmx['scsi0:1.present']  = 'TRUE'
-            v.vmx['scsi0:1.redo']     = ''
+            v.vmx['scsi0:2.filename'] = kx_main_glusterfs_k8s_storage.gsub(/\//, '\\')
+            v.vmx['scsi0:2.present']  = 'TRUE'
+            v.vmx['scsi0:2.redo']     = ''
         end
     end
 
@@ -128,7 +128,7 @@ Vagrant.configure("2") do |config|
 
             kx_worker_local_k8s_storage="#{current_dir}/kx-worker#{i}-local-k8s-storage.vmdk"
             if ARGV[0] == "up" && ! File.exist?(kx_worker_local_k8s_storage)
-              `"#{VMWARE_DISK_UTILITY}" -c -s #{LOCAL_KUBE_VOLUMES_DISK_SIZE}GB -a lsilogic -t 1 #{kx_worker_local_k8s_storage}`
+              `"#{VMWARE_DISK_UTILITY}" -c -s #{LOCAL_KUBE_VOLUMES_DISK_SIZE}GB -a lsilogic -t 0 #{kx_worker_local_k8s_storage}`
             end
 
             v.gui = true
@@ -140,7 +140,7 @@ Vagrant.configure("2") do |config|
             v.vmx["ethernet0.pcislotnumber"] = "33"
             v.vmx["sound.startconnected"] = "FALSE"
             v.vmx["sound.present"] = "FALSE"
-            v.vmx['scsi0:1.filename'] = kx_worker_local_k8s_storage
+            v.vmx['scsi0:1.filename'] = kx_worker_local_k8s_storage.gsub(/\//, '\\')
             v.vmx['scsi0:1.present']  = 'TRUE'
             v.vmx['scsi0:1.redo']     = ''
           end
