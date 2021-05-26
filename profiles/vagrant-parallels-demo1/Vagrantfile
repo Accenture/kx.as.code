@@ -1,5 +1,7 @@
 require 'json'
 
+current_dir    = File.dirname(File.expand_path(__FILE__))
+
 file = File.read('profile-config.json')
 profile_config = JSON.parse(file)
 
@@ -21,8 +23,6 @@ LOCAL_KUBE_VOLUMES_DISK_SIZE=NUM_1GB_LOCAL_SIZE+NUM_5GB_LOCAL_SIZE+NUM_10GB_LOCA
 
 puts "Local Disk Size: #{LOCAL_KUBE_VOLUMES_DISK_SIZE}GB"
 puts "GlusterFS Disk Size: #{GLUSTERFS_KUBE_VOLUMES_DISK_SIZE}GB"
-
-current_dir    = File.dirname(File.expand_path(__FILE__))
 
 ENVIRONMENT_PREFIX = profile_config['config']['vm_properties']['environment_prefix']
 puts "ENVIRONMENT_PREFIX: #{ENVIRONMENT_PREFIX}"

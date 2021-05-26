@@ -1,5 +1,7 @@
 require 'json'
 
+current_dir    = File.dirname(File.expand_path(__FILE__))
+
 if Vagrant::Util::Platform.windows?
   # Is Windows
   puts "Vagrant launched from windows."
@@ -64,8 +66,6 @@ puts "KX_WORKER_BOX_LOCATION: #{KX_WORKER_BOX_LOCATION}"
 VMWARE_DISK_UTILITY = profile_config['config']['vm_properties']['vmware_disk_utility']
 puts "VMWARE_DISK_UTILITY: #{VMWARE_DISK_UTILITY}"
 
-current_dir    = File.dirname(File.expand_path(__FILE__))
-
 Vagrant.configure("2") do |config|
     config.vm.define "kx.as.code-main" do |subconfig|
         subconfig.vm.box = "kx.as.code-main-vmware-#{BOX_VERSION}"
@@ -88,14 +88,29 @@ Vagrant.configure("2") do |config|
         end
         subconfig.vm.provider "vmware_desktop" do |v|
             kx_main_local_k8s_storage="#{current_dir}/kx-main-local-k8s-storage.vmdk"
+            if Vagrant::Util::Platform.windows?
+                kx_main_local_k8s_storage = kx_main_local_k8s_storage.gsub(/\//, '\\')
+            end
             if ARGV[0] == "up" && ! File.exist?(kx_main_local_k8s_storage)
               `"#{VMWARE_DISK_UTILITY}" -c -s #{LOCAL_KUBE_VOLUMES_DISK_SIZE}GB -a lsilogic -t 0 #{kx_main_local_k8s_storage}`
             end
 
+            if ARGV[0] == "destroy" && File.exist?(kx_main_local_k8s_storage)
+                File.delete(kx_main_local_k8s_storage)
+            end
+
             kx_main_glusterfs_k8s_storage="#{current_dir}/kx-main-glusterfs-k8s-storage.vmdk"
+            if Vagrant::Util::Platform.windows?
+                kx_main_glusterfs_k8s_storage = kx_main_glusterfs_k8s_storage.gsub(/\//, '\\')
+            end
             if ARGV[0] == "up" && ! File.exist?(kx_main_glusterfs_k8s_storage)
               `"#{VMWARE_DISK_UTILITY}" -c -s #{GLUSTERFS_KUBE_VOLUMES_DISK_SIZE}GB -a lsilogic -t 0 #{kx_main_glusterfs_k8s_storage}`
             end
+
+            if ARGV[0] == "destroy" && File.exist?(kx_main_glusterfs_k8s_storage)
+                File.delete(kx_main_glusterfs_k8s_storage)
+            end
+
             v.gui = true
             v.whitelist_verified = true
             v.vmx['displayname'] = "kx.as.code-#{ENVIRONMENT_PREFIX}-main-#{BOX_VERSION}"
@@ -105,10 +120,10 @@ Vagrant.configure("2") do |config|
             v.vmx["ethernet0.pcislotnumber"] = "33"
             v.vmx["sound.startconnected"] = "FALSE"
             v.vmx["sound.present"] = "FALSE"
-            v.vmx['scsi0:1.filename'] = kx_main_local_k8s_storage.gsub(/\//, '\\')
+            v.vmx['scsi0:1.filename'] = kx_main_local_k8s_storage
             v.vmx['scsi0:1.present']  = 'TRUE'
             v.vmx['scsi0:1.redo']     = ''
-            v.vmx['scsi0:2.filename'] = kx_main_glusterfs_k8s_storage.gsub(/\//, '\\')
+            v.vmx['scsi0:2.filename'] = kx_main_glusterfs_k8s_storage
             v.vmx['scsi0:2.present']  = 'TRUE'
             v.vmx['scsi0:2.redo']     = ''
         end
@@ -127,8 +142,15 @@ Vagrant.configure("2") do |config|
           subconfig.vm.provider "vmware_desktop" do |v|
 
             kx_worker_local_k8s_storage="#{current_dir}/kx-worker#{i}-local-k8s-storage.vmdk"
+            if Vagrant::Util::Platform.windows?
+                kx_worker_local_k8s_storage = kx_worker_local_k8s_storage.gsub(/\//, '\\')
+            end
             if ARGV[0] == "up" && ! File.exist?(kx_worker_local_k8s_storage)
               `"#{VMWARE_DISK_UTILITY}" -c -s #{LOCAL_KUBE_VOLUMES_DISK_SIZE}GB -a lsilogic -t 0 #{kx_worker_local_k8s_storage}`
+            end
+
+            if ARGV[0] == "destroy" && File.exist?(kx_worker_local_k8s_storage)
+                File.delete(kx_worker_local_k8s_storage)
             end
 
             v.gui = true
@@ -140,7 +162,7 @@ Vagrant.configure("2") do |config|
             v.vmx["ethernet0.pcislotnumber"] = "33"
             v.vmx["sound.startconnected"] = "FALSE"
             v.vmx["sound.present"] = "FALSE"
-            v.vmx['scsi0:1.filename'] = kx_worker_local_k8s_storage.gsub(/\//, '\\')
+            v.vmx['scsi0:1.filename'] = kx_worker_local_k8s_storage
             v.vmx['scsi0:1.present']  = 'TRUE'
             v.vmx['scsi0:1.redo']     = ''
           end

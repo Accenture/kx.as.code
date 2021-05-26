@@ -1,5 +1,7 @@
 require 'json'
 
+current_dir    = File.dirname(File.expand_path(__FILE__))
+
 if Vagrant::Util::Platform.windows?
   # Is Windows
   puts "Vagrant launched from windows."
@@ -59,8 +61,6 @@ KX_MAIN_BOX_LOCATION = profile_config['config']['vm_properties']['kx_main_box_lo
 puts "KX_MAIN_BOX_LOCATION: #{KX_MAIN_BOX_LOCATION}"
 KX_WORKER_BOX_LOCATION = profile_config['config']['vm_properties']['kx_worker_box_location']
 puts "KX_WORKER_BOX_LOCATION: #{KX_WORKER_BOX_LOCATION}"
-
-current_dir    = File.dirname(File.expand_path(__FILE__))
 
 Vagrant.configure("2") do |config|
   config.vm.define "kx.as.code-main" do |subconfig|
