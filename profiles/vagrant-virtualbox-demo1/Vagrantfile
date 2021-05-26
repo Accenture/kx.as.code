@@ -82,6 +82,10 @@ Vagrant.configure("2") do |config|
     subconfig.vm.provision "shell", inline: "sudo mv /var/tmp/profile-config.json /usr/share/kx.as.code/workspace/"
     subconfig.vm.provision "shell", inline: "cat /usr/share/kx.as.code/workspace/profile-config.json | jq '.'"
     subconfig.vm.provision "shell", inline: 'echo -e "$(date "+%Y-%m-%d_%H%M%S") | KX-Main VM created by Vagrant" | sudo tee /usr/share/kx.as.code/workspace/gogogo'
+    subconfig.trigger.after :destroy do |trigger|
+    trigger.warn = "Destroying VM's disks"
+        trigger.run = { :inline => "bash -c 'rm -f kx.as.code_main-ip-address kx-main-local-k8s-storage.vdi kx-main-glusterfs-k8s-storage.vdi'" }
+    end
     subconfig.vm.provision :shell do |s|
       s.inline = "echo -e \"DOCKERHUB_USER=#{DOCKERHUB_USER}\nDOCKERHUB_EMAIL=#{DOCKERHUB_EMAIL}\nDOCKERHUB_PASSWORD=#{DOCKERHUB_PASSWORD}\" | sudo tee /var/tmp/.textfile"
     end
@@ -147,6 +151,10 @@ Vagrant.configure("2") do |config|
         subconfig.vm.provision "shell", inline: "sudo mv /var/tmp/profile-config.json /usr/share/kx.as.code/workspace/"
         subconfig.vm.provision "shell", inline: "cat /usr/share/kx.as.code/workspace/profile-config.json | jq '.'"
         subconfig.vm.provision "shell", inline: 'echo -e "$(date "+%Y-%m-%d_%H%M%S") | KX-Worker VM created by Vagrant" | sudo tee /usr/share/kx.as.code/workspace/gogogo'
+        subconfig.trigger.after :destroy do |trigger|
+          trigger.warn = "Destroying VM's disks"
+          trigger.run = { :inline => "bash -c 'rm -f kx-worker#{i}-local-k8s-storage.vdi'" }
+        end
         subconfig.vm.provider "virtualbox" do |v|
 
           kx_worker_local_k8s_storage="#{current_dir}/kx-worker#{i}-local-k8s-storage.vdi"
