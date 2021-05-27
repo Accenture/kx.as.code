@@ -1,27 +1,16 @@
-require 'yaml'
 require 'json'
 
+current_dir    = File.dirname(File.expand_path(__FILE__))
+
 if Vagrant::Util::Platform.windows?
-    # Is Windows
-    puts "Vagrant launched from windows."
-    VMWARE_DISK_UTILITY="C:/Program Files (x86)/VMware/VMware Workstation/vmware-vdiskmanager.exe"
-    KX_SYNC_FOLDER_PATH="c:/Users/Patrick/KX_Share"
-    KX_MAIN_BOX_LOCATION="V:/jenkins_remote/workspace/VMWare_Workstation/KX.AS.CODE_Main_Build/base-vm/boxes/vmware-desktop-#{BOX_VERSION}/kx.as.code-main-demo-#{BOX_VERSION}.box"
-    KX_WORKER_BOX_LOCATION="V:/jenkins_remote/workspace/VMWare_Workstation/KX.AS.CODE_Worker_Build/base-vm/boxes/vmware-desktop-#{BOX_VERSION}/kx.as.code-worker-demo-#{BOX_VERSION}.box"
+  # Is Windows
+  puts "Vagrant launched from windows."
 elsif Vagrant::Util::Platform.darwin?
-    # Is Mac
-    puts "Vagrant launched from mac."
-    VMWARE_DISK_UTILITY="/Applications/VMware\ Fusion.app/Contents/Library/vmware-vdiskmanager"
-    KX_SYNC_FOLDER_PATH="/Users/patrick/KX_Share"
-    KX_MAIN_BOX_LOCATION="/Users/patrick/jenkins_remote/workspace/VMWare_Workstation/KX.AS.CODE_Main_Build/base-vm/boxes/vmware-desktop-#{BOX_VERSION}/kx.as.code-main-demo-#{BOX_VERSION}.box"
-    KX_WORKER_BOX_LOCATION="/Users/patrick/jenkins_remote/workspace/VMWare_Workstation/KX.AS.CODE_Worker_Build/base-vm/boxes/vmware-desktop-#{BOX_VERSION}/kx.as.code-worker-demo-#{BOX_VERSION}.box"
+  # Is Mac
+  puts "Vagrant launched from mac."
 else
-    # Assume WSL for now
-    puts "Vagrant launched from other system, maybe WSL?"
-    VMWARE_DISK_UTILITY="/mnt/c/Program Files (x86)/VMware/VMware Workstation/vmware-vdiskmanager.exe"
-    KX_SYNC_FOLDER_PATH="/mnt/c/Users/patrick/KX_Share"
-    KX_MAIN_BOX_LOCATION="/mnt/v/jenkins_remote/workspace/VMWare_Workstation/KX.AS.CODE_Main_Build/base-vm/boxes/vmware-desktop-#{BOX_VERSION}/kx.as.code-main-demo-#{BOX_VERSION}.box"
-    KX_WORKER_BOX_LOCATION="/mnt/v/jenkins_remote/workspace/VMWare_Workstation/KX.AS.CODE_Worker_Build/base-vm/boxes/vmware-desktop-#{BOX_VERSION}/kx.as.code-worker-demo-#{BOX_VERSION}.box"
+  # Assume WSL for now
+  puts "Vagrant launched from other system, maybe WSL?"
 end
 
 file = File.read('profile-config.json')
@@ -46,20 +35,36 @@ LOCAL_KUBE_VOLUMES_DISK_SIZE=NUM_1GB_LOCAL_SIZE+NUM_5GB_LOCAL_SIZE+NUM_10GB_LOCA
 puts "Local Disk Size: #{LOCAL_KUBE_VOLUMES_DISK_SIZE}GB"
 puts "GlusterFS Disk Size: #{GLUSTERFS_KUBE_VOLUMES_DISK_SIZE}GB"
 
-current_dir    = File.dirname(File.expand_path(__FILE__))
-configs        = YAML.load_file("#{current_dir}/config.yaml")
-vagrant_config = configs['configs']
+ENVIRONMENT_PREFIX = profile_config['config']['vm_properties']['environment_prefix']
+puts "ENVIRONMENT_PREFIX: #{ENVIRONMENT_PREFIX}"
+MAIN_NODE_CPU_CORES = profile_config['config']['vm_properties']['main_node_cpu_cores']
+puts "MAIN_NODE_CPU_CORES: #{MAIN_NODE_CPU_CORES}"
+MAIN_NODE_MEMORY = profile_config['config']['vm_properties']['main_node_memory']
+puts "MAIN_NODE_MEMORY: #{MAIN_NODE_MEMORY}"
+WORKER_NODE_COUNT = profile_config['config']['vm_properties']['worker_node_count']
+puts "WORKER_NODE_COUNT: #{WORKER_NODE_COUNT}"
+WORKER_NODE_CPU_CORES = profile_config['config']['vm_properties']['worker_node_cpu_cores']
+puts "WORKER_NODE_CPU_CORES: #{WORKER_NODE_CPU_CORES}"
+WORKER_NODE_MEMORY = profile_config['config']['vm_properties']['worker_node_memory']
+puts "WORKER_NODE_MEMORY: #{WORKER_NODE_MEMORY}"
+DOCKERHUB_USER = profile_config['config']['docker']['dockerhub_username']
+puts "DOCKERHUB_USER: #{DOCKERHUB_USER}"
+DOCKERHUB_EMAIL = profile_config['config']['docker']['dockerhub_email']
+puts "DOCKERHUB_EMAIL: #{DOCKERHUB_EMAIL}"
+DOCKERHUB_PASSWORD = profile_config['config']['docker']['dockerhub_password']
+puts "DOCKERHUB_PASSWORD: #{DOCKERHUB_PASSWORD}"
+BOX_VERSION = profile_config['config']['vm_properties']['kx_version']
+puts "BOX_VERSION: #{BOX_VERSION}"
+KX_SYNC_FOLDER_PATH = profile_config['config']['vm_properties']['kx_sync_folder_path']
+puts "KX_SYNC_FOLDER_PATH: #{KX_SYNC_FOLDER_PATH}"
+KX_MAIN_BOX_LOCATION = profile_config['config']['vm_properties']['kx_main_box_location']
+puts "KX_MAIN_BOX_LOCATION: #{KX_MAIN_BOX_LOCATION}"
+KX_WORKER_BOX_LOCATION = profile_config['config']['vm_properties']['kx_worker_box_location']
+puts "KX_WORKER_BOX_LOCATION: #{KX_WORKER_BOX_LOCATION}"
 
-ENVIRONMENT_PREFIX = vagrant_config['environment_prefix']
-MAIN_NODE_CPU_CORES = vagrant_config['main_node_cpu_cores']
-MAIN_NODE_MEMORY = vagrant_config['main_node_memory']
-WORKER_NODE_COUNT = vagrant_config['worker_node_count']
-WORKER_NODE_CPU_CORES = vagrant_config['worker_node_cpu_cores']
-WORKER_NODE_MEMORY = vagrant_config['worker_node_memory']
-DOCKERHUB_USER = vagrant_config['dockerhub_username']
-DOCKERHUB_EMAIL = vagrant_config['dockerhub_email']
-DOCKERHUB_PASSWORD = vagrant_config['dockerhub_password']
-BOX_VERSION = vagrant_config['box_version']
+# VMWare Specific Property for creating additional disks
+VMWARE_DISK_UTILITY = profile_config['config']['vm_properties']['vmware_disk_utility']
+puts "VMWARE_DISK_UTILITY: #{VMWARE_DISK_UTILITY}"
 
 Vagrant.configure("2") do |config|
     config.vm.define "kx.as.code-main" do |subconfig|
@@ -67,46 +72,56 @@ Vagrant.configure("2") do |config|
         subconfig.vm.box_url = KX_MAIN_BOX_LOCATION
         subconfig.vm.synced_folder KX_SYNC_FOLDER_PATH, "/home/kx.hero/KX_Share",
             owner: "kx.hero", group: "kx.hero"
-            subconfig.vm.provision "file", source: "./profile-config.json", destination: "/var/tmp/profile-config.json"
-            subconfig.vm.provision "file", source: "./users.json", destination: "/var/tmp/users.json"
-            Dir[File.dirname(__FILE__) + '/aq*.json'].each do |file|
-                file_name = File.basename(file)
-                subconfig.vm.provision "file", source: file_name, destination: "/var/tmp/" + file_name
+        subconfig.vm.provision "file", source: "./profile-config.json", destination: "/var/tmp/profile-config.json"
+        subconfig.vm.provision "file", source: "./users.json", destination: "/var/tmp/users.json"
+        Dir[File.dirname(__FILE__) + '/aq*.json'].each do |file|
+            file_name = File.basename(file)
+            subconfig.vm.provision "file", source: file_name, destination: "/var/tmp/" + file_name
+        end
+        subconfig.vm.provision "shell", inline: "hostname -I | awk {'print $1'} | tr -d ' \\t\\n\\r' | sudo tee /vagrant/kx.as.code_main-ip-address"
+        subconfig.vm.provision "shell", inline: 'sudo mv /var/tmp/aq*.json /usr/share/kx.as.code/workspace/'
+        subconfig.vm.provision "shell", inline: "sudo mv /var/tmp/profile-config.json /usr/share/kx.as.code/workspace/"
+        subconfig.vm.provision "shell", inline: "cat /usr/share/kx.as.code/workspace/profile-config.json | jq '.'"
+        subconfig.vm.provision "shell", inline: 'echo -e "$(date "+%Y-%m-%d_%H%M%S") | KX-Main VM created by Vagrant" | sudo tee /usr/share/kx.as.code/workspace/gogogo'
+        subconfig.trigger.after :destroy do |trigger|
+        trigger.warn = "Destroying VM's disks"
+            trigger.run = { :inline => "bash -c 'rm -f kx.as.code_main-ip-address kx-main-local-k8s-storage.vmdk kx-main-glusterfs-k8s-storage.vmdk'" }
+        end
+        subconfig.vm.provision :shell do |s|
+          s.inline = "echo -e \"DOCKERHUB_USER=#{DOCKERHUB_USER}\nDOCKERHUB_EMAIL=#{DOCKERHUB_EMAIL}\nDOCKERHUB_PASSWORD=#{DOCKERHUB_PASSWORD}\" | sudo tee /var/tmp/.textfile"
+        end
+        subconfig.vm.provider "vmware_desktop" do |v|
+            kx_main_local_k8s_storage="#{current_dir}/kx-main-local-k8s-storage.vmdk"
+            if Vagrant::Util::Platform.windows?
+                kx_main_local_k8s_storage = kx_main_local_k8s_storage.gsub(/\//, '\\')
             end
-            subconfig.vm.provision "shell", inline: 'sudo mv /var/tmp/profile-config.json /usr/share/kx.as.code/workspace/profile-config.json'
-            subconfig.vm.provision "shell", inline: 'sudo mv /var/tmp/users.json /usr/share/kx.as.code/workspace/users.json'
-            subconfig.vm.provision "shell", inline: 'sudo mv /var/tmp/aq*.json /usr/share/kx.as.code/workspace/'
-            subconfig.vm.provision "shell", inline: 'echo -e "$(date "+%Y-%m-%d_%H%M%S") | KX-Worker VM created by Vagrant" | sudo tee /usr/share/kx.as.code/workspace/gogogo'
-            subconfig.vm.provision :shell do |s|
-              s.inline = "echo -e \"DOCKERHUB_USER=#{DOCKERHUB_USER}\nDOCKERHUB_EMAIL=#{DOCKERHUB_EMAIL}\nDOCKERHUB_PASSWORD=#{DOCKERHUB_PASSWORD}\" | sudo tee /var/tmp/.textfile"
+            if ARGV[0] == "up" && ! File.exist?(kx_main_local_k8s_storage)
+              `"#{VMWARE_DISK_UTILITY}" -c -s #{LOCAL_KUBE_VOLUMES_DISK_SIZE}GB -a lsilogic -t 0 #{kx_main_local_k8s_storage}`
             end
-            subconfig.vm.provider "vmware_desktop" do |v|
 
-                kx_main_local_k8s_storage="#{current_dir}/kx-main-local-k8s-storage.vmdk"
-                if ARGV[0] == "up" && ! File.exist?(kx_main_local_k8s_storage)
-                  `"#{VMWARE_DISK_UTILITY}" -c -s #{LOCAL_KUBE_VOLUMES_DISK_SIZE}GB -a lsilogic -t 1 #{kx_main_local_k8s_storage}`
-                end
+            kx_main_glusterfs_k8s_storage="#{current_dir}/kx-main-glusterfs-k8s-storage.vmdk"
+            if Vagrant::Util::Platform.windows?
+                kx_main_glusterfs_k8s_storage = kx_main_glusterfs_k8s_storage.gsub(/\//, '\\')
+            end
+            if ARGV[0] == "up" && ! File.exist?(kx_main_glusterfs_k8s_storage)
+              `"#{VMWARE_DISK_UTILITY}" -c -s #{GLUSTERFS_KUBE_VOLUMES_DISK_SIZE}GB -a lsilogic -t 0 #{kx_main_glusterfs_k8s_storage}`
+            end
 
-                kx_main_glusterfs_k8s_storage="#{current_dir}/kx-main-glusterfs-k8s-storage.vmdk"
-                if ARGV[0] == "up" && ! File.exist?(kx_main_glusterfs_k8s_storage)
-                  `"#{VMWARE_DISK_UTILITY}" -c -s #{GLUSTERFS_KUBE_VOLUMES_DISK_SIZE}GB -a lsilogic -t 1 #{kx_main_glusterfs_k8s_storage}`
-                end
-
-                v.gui = true
-                v.whitelist_verified = true
-                v.vmx['displayname'] = "kx.as.code-#{ENVIRONMENT_PREFIX}-main-#{BOX_VERSION}"
-                v.vmx["memsize"] = "#{MAIN_NODE_MEMORY}"
-                v.vmx["numvcpus"] = "#{MAIN_NODE_CPU_CORES}"
-                v.vmx["mks.enable3d"] = "FALSE"
-                v.vmx["ethernet0.pcislotnumber"] = "33"
-                v.vmx["sound.startconnected"] = "FALSE"
-                v.vmx["sound.present"] = "FALSE"
-                v.vmx['scsi0:1.filename'] = kx_main_local_k8s_storage
-                v.vmx['scsi0:1.present']  = 'TRUE'
-                v.vmx['scsi0:1.redo']     = ''
-                v.vmx['scsi0:1.filename'] = kx_main_glusterfs_k8s_storage
-                v.vmx['scsi0:1.present']  = 'TRUE'
-                v.vmx['scsi0:1.redo']     = ''
+            v.gui = true
+            v.whitelist_verified = true
+            v.vmx['displayname'] = "kx.as.code-#{ENVIRONMENT_PREFIX}-main-#{BOX_VERSION}"
+            v.vmx["memsize"] = "#{MAIN_NODE_MEMORY}"
+            v.vmx["numvcpus"] = "#{MAIN_NODE_CPU_CORES}"
+            v.vmx["mks.enable3d"] = "FALSE"
+            v.vmx["ethernet0.pcislotnumber"] = "33"
+            v.vmx["sound.startconnected"] = "FALSE"
+            v.vmx["sound.present"] = "FALSE"
+            v.vmx['scsi0:1.filename'] = kx_main_local_k8s_storage
+            v.vmx['scsi0:1.present']  = 'TRUE'
+            v.vmx['scsi0:1.redo']     = ''
+            v.vmx['scsi0:2.filename'] = kx_main_glusterfs_k8s_storage
+            v.vmx['scsi0:2.present']  = 'TRUE'
+            v.vmx['scsi0:2.redo']     = ''
 
         end
     end
@@ -114,17 +129,26 @@ Vagrant.configure("2") do |config|
     (1..WORKER_NODE_COUNT).each do |i|
         config.vm.define "kx.as.code-worker#{i}" do |subconfig|
           subconfig.vm.box = "kx.as.code-worker-vmware-#{BOX_VERSION}"
-          subconfig.vm.box_url = ""
+          subconfig.vm.box_url = KX_WORKER_BOX_LOCATION
           subconfig.vm.hostname = "kx-worker#{i}"
+          subconfig.vm.provision "file", source: "kx.as.code_main-ip-address", destination: "/var/tmp/kx.as.code_main-ip-address"
           subconfig.vm.provision "file", source: "./profile-config.json", destination: "/var/tmp/profile-config.json"
-          subconfig.vm.provision "shell", inline: 'sudo mkdir -p /usr/share/kx.as.code/workspace; sudo chown kx.hero:kx.hero /usr/share/kx.as.code/workspace'
-          subconfig.vm.provision "shell", inline: 'sudo mv /var/tmp/profile-config.json /usr/share/kx.as.code/workspace/profile-config.json'
+          subconfig.vm.provision "shell", inline: "sudo mv /var/tmp/profile-config.json /usr/share/kx.as.code/workspace/"
+          subconfig.vm.provision "shell", inline: "cat /usr/share/kx.as.code/workspace/profile-config.json | jq '.'"
           subconfig.vm.provision "shell", inline: 'echo -e "$(date "+%Y-%m-%d_%H%M%S") | KX-Worker VM created by Vagrant" | sudo tee /usr/share/kx.as.code/workspace/gogogo'
+          subconfig.trigger.after :destroy do |trigger|
+            trigger.warn = "Destroying VM's disks"
+            trigger.run = { :inline => "bash -c 'rm -f kx-worker#{i}-local-k8s-storage.vmdk'" }
+          end
           subconfig.vm.provider "vmware_desktop" do |v|
 
             kx_worker_local_k8s_storage="#{current_dir}/kx-worker#{i}-local-k8s-storage.vmdk"
+            if Vagrant::Util::Platform.windows?
+                kx_worker_local_k8s_storage = kx_worker_local_k8s_storage.gsub(/\//, '\\')
+            end
+
             if ARGV[0] == "up" && ! File.exist?(kx_worker_local_k8s_storage)
-              `"#{VMWARE_DISK_UTILITY}" -c -s #{LOCAL_KUBE_VOLUMES_DISK_SIZE}GB -a lsilogic -t 1 #{kx_worker_local_k8s_storage}`
+              `"#{VMWARE_DISK_UTILITY}" -c -s #{LOCAL_KUBE_VOLUMES_DISK_SIZE}GB -a lsilogic -t 0 #{kx_worker_local_k8s_storage}`
             end
 
             v.gui = true
@@ -142,8 +166,8 @@ Vagrant.configure("2") do |config|
 
           end
         end
-      end
-  end
+    end
+end
 
 
   

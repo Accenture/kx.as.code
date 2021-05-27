@@ -1,0 +1,28 @@
+{
+    "config": {
+        "allowWorkloadsOnMaster": true,
+        "disableSessionTimeout": true,
+        "certificationMode": false,
+        "disableLinuxDesktop": false,
+        "defaultKeyboardLanguage": "de",
+        "local_volumes": {
+            "one_gb": 20,
+            "five_gb": 15,
+            "ten_gb": 10,
+            "thirty_gb": 2,
+            "fifty_gb": 1
+        },
+        "virtualizationType": "public-cloud",
+        "environmentPrefix": "demo1",
+        "glusterFsDiskSize": "200",
+        "sslProvider": "self-signed",
+        "baseDomain": "kx-as-code.local",
+        "baseUser": "kx.hero",
+        "basePassword": "L3arnandshare",
+        "baseIpType": "dynamic",
+        "metalLbIpRange": {
+            "ipRangeStart": "10.0.76.200",
+            "ipRangeEnd": "10.0.76.250"
+        }
+    }
+}

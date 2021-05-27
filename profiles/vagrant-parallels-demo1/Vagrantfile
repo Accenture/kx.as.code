@@ -1,8 +1,6 @@
-require 'yaml'
 require 'json'
 
-# Clean up old IP before starting up a new deployment
-File.exist?("kx.as.code_main-ip-address") ? File.delete("kx.as.code_main-ip-address") : 
+current_dir    = File.dirname(File.expand_path(__FILE__))
 
 file = File.read('profile-config.json')
 profile_config = JSON.parse(file)
@@ -26,51 +24,36 @@ LOCAL_KUBE_VOLUMES_DISK_SIZE=NUM_1GB_LOCAL_SIZE+NUM_5GB_LOCAL_SIZE+NUM_10GB_LOCA
 puts "Local Disk Size: #{LOCAL_KUBE_VOLUMES_DISK_SIZE}GB"
 puts "GlusterFS Disk Size: #{GLUSTERFS_KUBE_VOLUMES_DISK_SIZE}GB"
 
-current_dir    = File.dirname(File.expand_path(__FILE__))
-configs        = YAML.load_file("#{current_dir}/config.yaml")
-vagrant_config = configs['configs']
-
-ENVIRONMENT_PREFIX = vagrant_config['environment_prefix']
-MAIN_NODE_CPU_CORES = vagrant_config['main_node_cpu_cores']
-MAIN_NODE_MEMORY = vagrant_config['main_node_memory']
-WORKER_NODE_COUNT = vagrant_config['worker_node_count']
-WORKER_NODE_CPU_CORES = vagrant_config['worker_node_cpu_cores']
-WORKER_NODE_MEMORY = vagrant_config['worker_node_memory']
-DOCKERHUB_USER = vagrant_config['dockerhub_username']
-DOCKERHUB_EMAIL = vagrant_config['dockerhub_email']
-DOCKERHUB_PASSWORD = vagrant_config['dockerhub_password']
-BOX_VERSION = vagrant_config['box_version']
-
-VMWARE_DISK_UTILITY="/Applications/VMware\ Fusion.app/Contents/Library/vmware-vdiskmanager"
-KX_SYNC_FOLDER_PATH="/Users/patrick.g.delamere/KX_Share"
-KX_MAIN_BOX_LOCATION="/Users/patrick.g.delamere/jenkins_remote/workspace/Parallels/KX.AS.CODE_Main_Build/base-vm/boxes/parallels-#{BOX_VERSION}/kx.as.code-main-demo-#{BOX_VERSION}.box"
-KX_WORKER_BOX_LOCATION="/Users/patrick.g.delamere/jenkins_remote/workspace/Parallels/KX.AS.CODE_Worker_Build/base-vm/boxes/parallels-#{BOX_VERSION}/kx.as.code-worker-demo-#{BOX_VERSION}.box"
+ENVIRONMENT_PREFIX = profile_config['config']['vm_properties']['environment_prefix']
+puts "ENVIRONMENT_PREFIX: #{ENVIRONMENT_PREFIX}"
+MAIN_NODE_CPU_CORES = profile_config['config']['vm_properties']['main_node_cpu_cores']
+puts "MAIN_NODE_CPU_CORES: #{MAIN_NODE_CPU_CORES}"
+MAIN_NODE_MEMORY = profile_config['config']['vm_properties']['main_node_memory']
+puts "MAIN_NODE_MEMORY: #{MAIN_NODE_MEMORY}"
+WORKER_NODE_COUNT = profile_config['config']['vm_properties']['worker_node_count']
+puts "WORKER_NODE_COUNT: #{WORKER_NODE_COUNT}"
+WORKER_NODE_CPU_CORES = profile_config['config']['vm_properties']['worker_node_cpu_cores']
+puts "WORKER_NODE_CPU_CORES: #{WORKER_NODE_CPU_CORES}"
+WORKER_NODE_MEMORY = profile_config['config']['vm_properties']['worker_node_memory']
+puts "WORKER_NODE_MEMORY: #{WORKER_NODE_MEMORY}"
+DOCKERHUB_USER = profile_config['config']['docker']['dockerhub_username']
+puts "DOCKERHUB_USER: #{DOCKERHUB_USER}"
+DOCKERHUB_EMAIL = profile_config['config']['docker']['dockerhub_email']
+puts "DOCKERHUB_EMAIL: #{DOCKERHUB_EMAIL}"
+DOCKERHUB_PASSWORD = profile_config['config']['docker']['dockerhub_password']
+puts "DOCKERHUB_PASSWORD: #{DOCKERHUB_PASSWORD}"
+BOX_VERSION = profile_config['config']['vm_properties']['kx_version']
+puts "BOX_VERSION: #{BOX_VERSION}"
+KX_SYNC_FOLDER_PATH = profile_config['config']['vm_properties']['kx_sync_folder_path']
+puts "KX_SYNC_FOLDER_PATH: #{KX_SYNC_FOLDER_PATH}"
+KX_MAIN_BOX_LOCATION = profile_config['config']['vm_properties']['kx_main_box_location']
+puts "KX_MAIN_BOX_LOCATION: #{KX_MAIN_BOX_LOCATION}"
+KX_WORKER_BOX_LOCATION = profile_config['config']['vm_properties']['kx_worker_box_location']
+puts "KX_WORKER_BOX_LOCATION: #{KX_WORKER_BOX_LOCATION}"
 
 Vagrant.configure("2") do |config|
-  (1..WORKER_NODE_COUNT).each do |i|
-    config.vm.define "kx.as.code-worker#{i}" do |subconfig|
-      subconfig.vm.box = "kx.as.code-worker"
-      subconfig.vm.hostname = "kx-worker#{i}"
-      subconfig.vm.network :forwarded_port, guest: 22, host: 2222, id: "ssh", disabled: true
-      subconfig.vm.network :forwarded_port, guest: 22, host: "223#{i}", id: "ssh-kx-worker#{i}", auto_correct: true
-      subconfig.vm.box_url = KX_WORKER_BOX_LOCATION
-      subconfig.vm.provision "file", source: "kx.as.code_main-ip-address", destination: "/var/tmp/kx.as.code_main-ip-address"
-      subconfig.vm.provision "file", source: "profile-config.json", destination: "/var/tmp/profile-config.json"
-      subconfig.vm.provision "shell", inline: "sudo mv /var/tmp/profile-config.json /usr/share/kx.as.code/workspace/"
-      subconfig.vm.provision "shell", inline: "cat /usr/share/kx.as.code/workspace/profile-config.json | jq '.'"
-      subconfig.vm.provision "shell", inline: 'echo -e "$(date "+%Y-%m-%d_%H%M%S") | KX-Worker VM created by Vagrant" | sudo tee /usr/share/kx.as.code/workspace/gogogo'
-      subconfig.vm.provider "parallels" do |v|
-        v.name = "kx.as.code-#{ENVIRONMENT_PREFIX}-worker#{i}-#{BOX_VERSION}"
-        v.memory = WORKER_NODE_MEMORY
-        v.cpus = WORKER_NODE_CPU_CORES
-        v.customize ["set", :id, "--3d-accelerate", "highest"]
-        v.customize ["set", :id, "--high-resolution", "on"]
-        v.customize ["set", :id, "--device-add", "hdd", "--size", LOCAL_KUBE_VOLUMES_DISK_SIZE.to_i * 1024]
-      end
-    end
-  end
 
-  config.vm.define "kx.as.code-main",primary: true do |subconfig|
+  config.vm.define "kx.as.code-main", primary: true do |subconfig|
     subconfig.vm.box = "kx.as.code-main"
     subconfig.vm.hostname = "kx-main"
     subconfig.vm.network :forwarded_port, guest: 22, host: 2222, id: "ssh", disabled: true
@@ -102,4 +85,28 @@ Vagrant.configure("2") do |config|
       v.customize ["set", :id, "--device-add", "hdd", "--size", GLUSTERFS_KUBE_VOLUMES_DISK_SIZE.to_i * 1024]
     end
   end
+
+  (1..WORKER_NODE_COUNT).each do |i|
+    config.vm.define "kx.as.code-worker#{i}" do |subconfig|
+      subconfig.vm.box = "kx.as.code-worker"
+      subconfig.vm.hostname = "kx-worker#{i}"
+      subconfig.vm.network :forwarded_port, guest: 22, host: 2222, id: "ssh", disabled: true
+      subconfig.vm.network :forwarded_port, guest: 22, host: "223#{i}", id: "ssh-kx-worker#{i}", auto_correct: true
+      subconfig.vm.box_url = KX_WORKER_BOX_LOCATION
+      subconfig.vm.provision "file", source: "kx.as.code_main-ip-address", destination: "/var/tmp/kx.as.code_main-ip-address"
+      subconfig.vm.provision "file", source: "profile-config.json", destination: "/var/tmp/profile-config.json"
+      subconfig.vm.provision "shell", inline: "sudo mv /var/tmp/profile-config.json /usr/share/kx.as.code/workspace/"
+      subconfig.vm.provision "shell", inline: "cat /usr/share/kx.as.code/workspace/profile-config.json | jq '.'"
+      subconfig.vm.provision "shell", inline: 'echo -e "$(date "+%Y-%m-%d_%H%M%S") | KX-Worker VM created by Vagrant" | sudo tee /usr/share/kx.as.code/workspace/gogogo'
+      subconfig.vm.provider "parallels" do |v|
+        v.name = "kx.as.code-#{ENVIRONMENT_PREFIX}-worker#{i}-#{BOX_VERSION}"
+        v.memory = WORKER_NODE_MEMORY
+        v.cpus = WORKER_NODE_CPU_CORES
+        v.customize ["set", :id, "--3d-accelerate", "highest"]
+        v.customize ["set", :id, "--high-resolution", "on"]
+        v.customize ["set", :id, "--device-add", "hdd", "--size", LOCAL_KUBE_VOLUMES_DISK_SIZE.to_i * 1024]
+      end
+    end
+  end
 end
+
