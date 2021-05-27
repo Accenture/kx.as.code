@@ -1,5 +1,31 @@
 {
     "config": {
+        "vm_properties": {
+            "kx_version": "0.6.7",
+            "main_node_cpu_cores": 4,
+            "main_node_memory": 16384,
+            "worker_node_count": 2,
+            "worker_node_cpu_cores": 4,
+            "worker_node_memory": 16384,
+            "environment_prefix": "demo1",
+            "access_key": "",
+            "secret_key": "",
+            "kx_main_ami_id": "ami-034f5ad4b4a43c34f",
+            "kx_worker_amni_id": "ami-0fb721708bd3e204e",
+            "region": "us-east-2",
+            "availability_zone": "us-east-2c",
+            "vpc_cidr_block": "10.0.0.0/16",
+            "private_one_subnet_cidr": "10.0.76.0/24",
+            "private_two_subnet_cidr": "10.0.5.0/24",
+            "public_subnet_cidr": "10.0.3.0/24",
+            "metallb_first_ip": "10.0.76.100",
+            "public_key": "",
+            "num_kx_worker_nodes": 2,
+            "instance_types": {
+                "main": "t3.xlarge",
+                "worker": "t3.xlarge"
+            }
+        },
         "allowWorkloadsOnMaster": true,
         "disableSessionTimeout": true,
         "certificationMode": false,
@@ -20,9 +46,20 @@
         "baseUser": "kx.hero",
         "basePassword": "L3arnandshare",
         "baseIpType": "dynamic",
+        "dnsResolution": "dynamic",
         "metalLbIpRange": {
             "ipRangeStart": "10.0.76.200",
             "ipRangeEnd": "10.0.76.250"
+        },
+        "docker": {
+            "dockerhub_username": "",
+            "dockerhub_email": "",
+            "dockerhub_password": ""
+        },
+        "proxy_settings": {
+            "http_proxy": "",
+            "https_proxy": "",
+            "no_proxy": ""
         }
     }
 }
