@@ -1,0 +1,34 @@
+{
+  "action_queues": {
+    "install": [
+      {
+        "install_folder": "monitoring",
+        "name": "elastic-elasticsearch"
+      },
+      {
+        "install_folder": "monitoring",
+        "name": "elastic-kibana"
+      },
+      {
+        "install_folder": "monitoring",
+        "name": "elastic-filebeat"
+      },
+      {
+        "install_folder": "monitoring",
+        "name": "elastic-metricbeat"
+      },
+      {
+        "install_folder": "monitoring",
+        "name": "elastic-heartbeat"
+      },
+      {
+        "install_folder": "monitoring",
+        "name": "elastic-auditbeat"
+      },
+      {
+        "install_folder": "monitoring",
+        "name": "elastic-packetbeat"
+      }
+    ]
+  }
+}
