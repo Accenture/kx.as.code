@@ -8,7 +8,7 @@ if [[ $? = 1 ]]; then
 else
   echo "Jenkins is running on docker-machine, setting docker host to 192.168.99.100"
   JENKINS_HOST=192.168.99.100
-  JENKINS_URL=http://${JENKINS_HOST}:${JENKINS_SERVER_PORT} # You might need to change this. This is the default docker-machine IP
+  JENKINS_URL=http://${JENKINS_HOST}:${JENKINS_SERVER_PORT}
 fi
 
 mkdir -p ${WORKING_DIRECTORY}
