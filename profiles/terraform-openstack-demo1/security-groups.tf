@@ -36,7 +36,7 @@ resource "openstack_networking_secgroup_rule_v2" "secgroup_rule_egress_tcp" {
 resource "openstack_networking_secgroup_rule_v2" "secgroup_rule_egress_udp" {
   direction         = "egress"
   ethertype         = "IPv4"
-  protocol          = "tcp"
+  protocol          = "udp"
   port_range_min    = 1
   port_range_max    = 65535
   remote_ip_prefix  = "0.0.0.0/0"
