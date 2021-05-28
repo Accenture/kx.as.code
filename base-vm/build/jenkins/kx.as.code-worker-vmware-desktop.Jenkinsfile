@@ -1,11 +1,3 @@
-import org.apache.commons.lang.SystemUtils
-
-if (SystemUtils.IS_OS_UNIX || SystemUtils.IS_OS_MAC) {
-    os="darwin-linux"
-} else {
-    os="windows"
-}
-
 pipeline {
 
     agent { label "packer" }
@@ -29,9 +21,9 @@ pipeline {
 
     parameters {
         string(name: 'git_repo_url', defaultValue: "github.com/Accenture/kx.as.code.git", description: "Source Github repository")
-        string(name: 'git_source_branch', defaultValue: "feature/multi-user-enablement", description: "Source Github branch to build from and clone inside VM")
-        string(name: 'git_docs_branch', defaultValue: "master", description: "Docs Github branch to clone")
-        string(name: 'git_techradar_branch', defaultValue: "master", description: "TechRadar Github branch to clone")
+        string(name: 'git_source_branch', defaultValue: "main", description: "Source Github branch to build from and clone inside VM")
+        string(name: 'git_docs_branch', defaultValue: "main", description: "Docs Github branch to clone")
+        string(name: 'git_techradar_branch', defaultValue: "main", description: "TechRadar Github branch to clone")
         string(name: 'kx_version', defaultValue: "0.6.7", description: "KX.AS.CODE Version")
         string(name: 'kx_vm_user', defaultValue: "kx.hero", description: "KX.AS.CODE VM user login")
         string(name: 'kx_vm_password', defaultValue: "L3arnandshare", description: "KX.AS.CODE VM user login password")
@@ -57,12 +49,13 @@ pipeline {
                 script {
                 withCredentials([usernamePassword(credentialsId: 'GITHUB_KX.AS.CODE', passwordVariable: 'GITHUB_TOKEN', usernameVariable: 'GITHUB_USER')]) {
                         sh """
-                        cd base-vm/build/packer/${os}
+                        cd base-vm/build/packer/windows
                         packer build -force -only kx.as.code-worker-vmware-desktop \
                         -var "compute_engine_build=${kx_compute_engine_build}" \
                         -var "memory=8192" \
                         -var "cpus=2" \
                         -var "video_memory=128" \
+                        -var "host_data_directory=c:/Users/Patrick/KX_Share" \
                         -var "hostname=${kx_hostname}" \
                         -var "domain=${kx_domain}" \
                         -var "version=${kx_version}" \
