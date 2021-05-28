@@ -15,11 +15,12 @@ resource "openstack_compute_instance_v2" "kx-main" {
     openstack_compute_flavor_v2.kx-main-flavor
   ]
   name      = "kx-main"
-  image_id  = "863cea4c-9497-454a-b915-ae705f4d9840"
+  image_id  = "4afc68e8-907d-4dfb-a790-c5cd30272eeb"
   region    = "RegionOne"
   flavor_id = openstack_compute_flavor_v2.kx-main-flavor.id
   key_pair  = openstack_compute_keypair_v2.kx-keypair.name
   security_groups = [ openstack_networking_secgroup_v2.kx_security_group.name ]
+  user_data       = "#cloud-config\nhostname: kx-main"
 
   block_device {
     boot_index            = 0
@@ -27,7 +28,7 @@ resource "openstack_compute_instance_v2" "kx-main" {
     destination_type      = "volume"
     source_type           = "image"
     volume_size           = 40
-    uuid                  = "863cea4c-9497-454a-b915-ae705f4d9840"
+    uuid                  = "4afc68e8-907d-4dfb-a790-c5cd30272eeb"
   }
 
   network {
@@ -53,12 +54,13 @@ resource "openstack_compute_instance_v2" "kx-worker" {
     openstack_networking_secgroup_v2.kx_security_group,
     openstack_compute_flavor_v2.kx-worker-flavor
   ]
-  name      = "kx-worker"
-  image_id  = "67832cb6-034a-4796-bf31-03cb8efce6a4"
+  name      = "kx-worker${count.index + 1}"
+  image_id  = "cac49823-c9e0-422d-8d94-4e64b2971c41"
   flavor_id = openstack_compute_flavor_v2.kx-worker-flavor.id
   key_pair  = openstack_compute_keypair_v2.kx-keypair.name
   region = "RegionOne"
   security_groups = [ openstack_networking_secgroup_v2.kx_security_group.name ]
+  user_data       = "#cloud-config\nhostname: kx-worker${count.index + 1}"
   count = local.worker_node_count
 
   block_device {
@@ -67,7 +69,7 @@ resource "openstack_compute_instance_v2" "kx-worker" {
     destination_type      = "volume"
     source_type           = "image"
     volume_size           = 40
-    uuid                  = "67832cb6-034a-4796-bf31-03cb8efce6a4"
+    uuid                  = "cac49823-c9e0-422d-8d94-4e64b2971c41"
   }
 
   network {

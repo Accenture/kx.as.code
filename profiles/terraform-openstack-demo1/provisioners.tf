@@ -17,6 +17,19 @@ resource "null_resource" "main_provisioner" {
   }
 
   provisioner "file" {
+    source      = "users.json"
+    destination = "/var/tmp/users.json"
+
+    connection {
+      type     = "ssh"
+      user     = "debian"
+      private_key = openstack_compute_keypair_v2.kx-keypair.private_key
+      host     = openstack_networking_floatingip_v2.kx-main-floating-ip.address
+    }
+
+  }
+
+  provisioner "file" {
     source      = "aq03-monitoring-group1.json"
     destination = "/var/tmp/aq03-monitoring-group1.json"
 
