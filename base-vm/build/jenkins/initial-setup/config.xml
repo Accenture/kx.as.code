@@ -36,6 +36,9 @@
         <string>AWS</string>
         <string>AWS/KX.AS.CODE_Main_Build</string>
         <string>AWS/KX.AS.CODE_Worker_Build</string>
+        <string>OpenStack</string>
+        <string>OpenStack/KX.AS.CODE_Main_Build</string>
+        <string>OpenStack/KX.AS.CODE_Worker_Build</string>
         <string>Parallels</string>
         <string>Parallels/KX.AS.CODE_Main_Build</string>
         <string>Parallels/KX.AS.CODE_Worker_Build</string>
