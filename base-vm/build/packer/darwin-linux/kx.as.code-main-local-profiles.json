@@ -146,7 +146,7 @@
       "http_directory": "http",
       "http_port_min": "8080",
       "http_port_max": "8089",
-      "http_bind_address": "10.2.76.141",
+      "http_bind_address": "0.0.0.0",
       "iso_urls": [
         "{{user `iso_path`}}/{{user `iso_file`}}",
         "{{user `iso_url`}}"
