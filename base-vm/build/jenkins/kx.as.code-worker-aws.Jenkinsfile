@@ -1,9 +1,14 @@
 import org.apache.commons.lang.SystemUtils
 
-if (SystemUtils.IS_OS_UNIX || SystemUtils.IS_OS_MAC) {
-    os="darwin-linux"
+if ( SystemUtils.IS_OS_MAC) {
+    os="darwin"
+    packerOsFolder="darwin-linux"
+} else if (SystemUtils.IS_OS_UNIX) {
+    os="linux"
+    packerOsFolder="darwin-linux"
 } else {
     os="windows"
+    packerOsFolder="windows"
 }
 
 pipeline {
@@ -20,7 +25,7 @@ pipeline {
     }
 
     tools {
-        'biz.neustar.jenkins.plugins.packer.PackerInstallation' 'packer-linux-1.6.6'
+        'biz.neustar.jenkins.plugins.packer.PackerInstallation' "packer-${os}"
     }
 
     environment {
@@ -75,10 +80,10 @@ pipeline {
                     accessKeyVariable: 'AWS_ACCESS_KEY_ID',
                     secretKeyVariable: 'AWS_SECRET_ACCESS_KEY'
                   ]]) {
-                       def packerPath = tool 'packer-linux-1.6.6'
+                        def packerPath = tool "packer-${os}"
                         sh """
-                        cd base-vm/build/packer/${os}
-                        PACKER_LOG=1 ${packerPath}/packer build -force -only kx.as.code-worker-aws-ami \
+                        cd base-vm/build/packer/${packerOsFolder}
+                        ${packerPath}/packer build -force -only kx.as.code-worker-aws-ami \
                         -var "compute_engine_build=${kx_compute_engine_build}" \
                         -var "hostname=${kx_hostname}" \
                         -var "domain=${kx_domain}" \

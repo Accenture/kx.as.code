@@ -56,7 +56,7 @@
         <hudson.model.StringParameterDefinition>
           <name>git_source_branch</name>
           <description>Source Github branch to build from and clone inside VM</description>
-          <defaultValue>feature/multi-user-enablement</defaultValue>
+          <defaultValue>main</defaultValue>
           <trim>false</trim>
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>

@@ -61,19 +61,19 @@
         <hudson.model.StringParameterDefinition>
           <name>git_source_branch</name>
           <description>Source Github branch to build from and clone inside VM</description>
-          <defaultValue>feature/multi-user-enablement</defaultValue>
+          <defaultValue>main</defaultValue>
           <trim>false</trim>
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
           <name>git_docs_branch</name>
           <description>Docs Github branch to clone</description>
-          <defaultValue>master</defaultValue>
+          <defaultValue>main</defaultValue>
           <trim>false</trim>
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
           <name>git_techradar_branch</name>
           <description>TechRadar Github branch to clone</description>
-          <defaultValue>master</defaultValue>
+          <defaultValue>main</defaultValue>
           <trim>false</trim>
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
@@ -204,7 +204,7 @@
       </userRemoteConfigs>
       <branches>
         <hudson.plugins.git.BranchSpec>
-          <name>feature/multi-user-enablement</name>
+          <name>main</name>
         </hudson.plugins.git.BranchSpec>
       </branches>
       <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
