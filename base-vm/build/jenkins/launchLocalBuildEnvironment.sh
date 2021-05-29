@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -x
 
 # Define ansi colours
 red="\033[31m"
@@ -95,23 +95,22 @@ if [[ ! -f ./java ]]; then
   fi
 fi
 
-#whichJava=$(which java)
+whichJava=$(which java)
 if [ -n "${whichJava}" ] ; then
   javaBinary=$(which java)
-elif [ -f $(find ./java/**/bin/ -executable -type f \( -name "java.*" ! -name "*.dll" \)) ]; then
+elif [ -f $(find ./java/**/bin/ -type f \( -name "java.*" ! -name "*.dll" \)) ]; then
   export PATH=$PATH:$(pwd)/java/bin
-  javaBinary=$(find ./java/**/bin/ -executable -type f \( -name "java.*" ! -name "*.dll" \))
+  javaBinary=$(find ./java/**/bin/ -type f \( -name "java.*" ! -name "*.dll" \))
 else
   echo "Java not found and could not be downloaded/installed. Exiting"
   exit 1
 fi
 
-
-
 if [ -d ${JENKINS_HOME} ]; then
   echo -e "${blue}- [INFO] ${JENKINS_HOME} already exists. Will skip Jenkins setup. Delete or rename ${JENKINS_HOME} if you want to re-install Jenkins${nc}"
 fi
 
+# Checking if running on docker-machine to set correct Jenkins URL
 dockerMachineEnvironment=$(which docker-machine)
 if [[ $? = 1 ]]; then 
   echo -e "${blue}- [INFO] Not a docker-machine environment, setting docker host to localhost${nc}"
@@ -123,19 +122,26 @@ else
   JENKINS_URL=http://${JENKINS_HOST}:${JENKINS_SERVER_PORT}
 fi
 
-if [ ! -d ${JENKINS_HOME} ]; then
-
+#Building Docker Image if it does not exist
+if [[ -z $(docker images ${KX_JENKINS_IMAGE} -q) ]]; then
+  echo -e "${blue}- [INFO] Image ${KX_JENKINS_IMAGE} not present on this machine. Building...${nc}"
   docker build -t ${KX_JENKINS_IMAGE} ./initial-setup
-
-  mkdir -p ${WORKING_DIRECTORY}
-  mkdir -p ${JENKINS_HOME}
-
-  cp -R ./initial-setup/* ${JENKINS_HOME}
-
-  sed -i 's;{{WORKING_DIRECTORY}};'${WORKING_DIRECTORY}';g' ${JENKINS_HOME}/nodes/local/config.xml
-
+  if [[ $? -ne 0 ]]; then
+    echo -e "${red}- [INFO] Build of image ${KX_JENKINS_IMAGE} failed${nc}"
+  else
+    echo -e "${green}- [INFO] Build of image ${KX_JENKINS_IMAGE} completed successfully${nc}"
+  fi
 fi
 
+# Checking if Jenkins home already exsits to avoid overwriting configurations and breaking something
+if [ ! -d ${JENKINS_HOME} ]; then
+  mkdir -p ${WORKING_DIRECTORY}
+  mkdir -p ${JENKINS_HOME}
+  cp -R ./initial-setup/* ${JENKINS_HOME}
+  sed -i 's;{{WORKING_DIRECTORY}};'${WORKING_DIRECTORY}';g' ${JENKINS_HOME}/nodes/local/config.xml
+fi
+
+# Start Jenkins
 jenkinsContainer=$(docker ps -a -f "name=jenkins" -q)
 if [ -z ${jenkinsContainer} ]; then
         "${dockerComposeExecutable}" --env-file ./jenkins.env up -d
@@ -144,22 +150,38 @@ else
 fi
 
 # Downloading Jenkins CLI used for creating Jenkins credentials
-echo -e "${orange}- [INFO] The next steps - downloading Jar files - might take a couple of minutes, as Jenkins needs to finish coming up before it will work${nc}"
-echo -e "${blue}- [INFO] Waiting for jenkins-cli.jar to become available...${nc}"
-timeout --foreground -s TERM 600 bash -c 'while [[ "$(curl -s -o /dev/null -L -w ''%{http_code}'' '${JENKINS_URL}'/jnlpJars/jenkins-cli.jar)" != "200" ]]; do \
-  echo -e "'${blue}'- [INFO] Waiting for '${JENKINS_URL}'/jnlpJars/jenkins-cli.jar'${nc}'"; sleep 5; done'
-
-if [ ! -f ./jenkins-cli.jar ]; then
-  curl ${JENKINS_URL}/jnlpJars/jenkins-cli.jar -o jenkins-cli.jar
+if [[ ! -f ./jenkins-cli.jar ]]; then
+  echo -e "${orange}- [INFO] The next steps - downloading Jar files - might take a couple of minutes, as Jenkins needs to finish coming up before it will work${nc}"
+  echo -e "${blue}- [INFO] Waiting for jenkins-cli.jar to become available...${nc}"
+  for i in {1..30}
+  do
+    http_code=$(curl -s -o /dev/null -L -w '%{http_code}' ${JENKINS_URL}/jnlpJars/jenkins-cli.jar)
+    if [[ "${http_code}"=="200" ]]; then
+      curl -s ${JENKINS_URL}/jnlpJars/jenkins-cli.jar -o jenkins-cli.jar
+      break
+    fi
+    echo -e "${blue}- [INFO] Waiting for ${JENKINS_URL}/jnlpJars/jenkins-cli.jar'${nc}'"
+    sleep 10
+  done
+else
+  echo -e "${blue}- [INFO] Jenkins jenkins-cli.jar already downloaded, continuing...${nc}"
 fi
 
 # Downloading Jenkins agent
-echo -e "${blue}- [INFO] Waiting for agent.jar to become available...${nc}"
-timeout --foreground -s TERM 600 bash -c 'while [[ "$(curl -s -o /dev/null -L -w ''%{http_code}'' '${JENKINS_URL}'/jnlpJars/agent.jar)" != "200" ]]; do \
-  echo -e "'${blue}'- [INFO] Waiting for '${JENKINS_URL}'/jnlpJars/agent.jar'${nc}'"; sleep 5; done'
-
-if [ ! -f ./agent.jar ]; then
-  curl ${JENKINS_URL}/jnlpJars/agent.jar -o agent.jar
+if [[ ! -f ./agent.jar ]]; then
+  echo -e "${blue}- [INFO] Waiting for agent.jar to become available...${nc}"
+  for i in {1..30}
+  do
+    http_code=$(curl -s -o /dev/null -L -w '%{http_code}' ${JENKINS_URL}/jnlpJars/agent.jar)
+    if [[ "${http_code}"=="200" ]]; then
+      curl -s ${JENKINS_URL}/jnlpJars/agent.jar -o agent.jar
+      break
+    fi
+    echo -e "${blue}- [INFO] Waiting for ${JENKINS_URL}/jnlpJars/agent.jar${nc}"
+    sleep 10
+  done
+else
+  echo -e "${blue}- [INFO] Jenkins agent.jar already downloaded, continuing...${nc}"
 fi
 
 # Check that docker-compose.yml is available on the current path
@@ -223,6 +245,7 @@ fi
 echo -e "${green}Congratulations! Jenkins for KX.AS.CODE is successfully configured and running. Access Jenkins via the following URL: ${JENKINS_URL}${nc}"
 
 # Start Jenkins Agent
+echo "Connecting the local agent to Jenkins..."
 if [[ -n "${JNLP_SECRET}" ]]; then
   "${javaBinary}" -jar agent.jar -jnlpUrl ${JENKINS_URL}/computer/${AGENT_NAME}/slave-agent.jnlp -connectTo ${JENKINS_HOST}:${JENKINS_JNLP_PORT} -secret ${JNLP_SECRET} -workDir "${WORKING_DIRECTORY}"
 else
