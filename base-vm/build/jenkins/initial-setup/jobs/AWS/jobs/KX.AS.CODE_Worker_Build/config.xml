@@ -59,7 +59,7 @@
         <hudson.model.StringParameterDefinition>
           <name>github_source_branch</name>
           <description>Source Github branch to build from</description>
-          <defaultValue>feature/multi-user-enablement</defaultValue>
+          <defaultValue>main</defaultValue>
           <trim>false</trim>
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
@@ -190,7 +190,7 @@
       </userRemoteConfigs>
       <branches>
         <hudson.plugins.git.BranchSpec>
-          <name>feature/multi-user-enablement</name>
+          <name>main</name>
         </hudson.plugins.git.BranchSpec>
       </branches>
       <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
