@@ -1,3 +1,16 @@
+import org.apache.commons.lang.SystemUtils
+
+if ( SystemUtils.IS_OS_MAC) {
+    os="darwin"
+    packerOsFolder="darwin-linux"
+} else if (SystemUtils.IS_OS_UNIX) {
+    os="linux"
+    packerOsFolder="darwin-linux"
+} else {
+    os="windows"
+    packerOsFolder="windows"
+}
+
 pipeline {
 
     agent { label "packer" }
@@ -9,6 +22,10 @@ pipeline {
         timestamps()
         disableConcurrentBuilds()
         timeout(time: 3, unit: 'HOURS')
+    }
+
+    tools {
+        'biz.neustar.jenkins.plugins.packer.PackerInstallation' "packer-${os}"
     }
 
     environment {
@@ -48,9 +65,10 @@ pipeline {
             steps {
                 script {
                 withCredentials([usernamePassword(credentialsId: 'GITHUB_KX.AS.CODE', passwordVariable: 'GITHUB_TOKEN', usernameVariable: 'GITHUB_USER')]) {
+                        def packerPath = tool "packer-${os}"
                         sh """
-                        cd base-vm/build/packer/windows
-                        packer build -force -only kx.as.code-worker-vmware-desktop \
+                        cd base-vm/build/packer/${packerOsFolder}
+                        ${packerPath}/packer build -force -only kx.as.code-worker-vmware-desktop \
                         -var "compute_engine_build=${kx_compute_engine_build}" \
                         -var "memory=8192" \
                         -var "cpus=2" \

@@ -1,9 +1,14 @@
 import org.apache.commons.lang.SystemUtils
 
-if (SystemUtils.IS_OS_UNIX || SystemUtils.IS_OS_MAC) {
-    os="darwin-linux"
+if ( SystemUtils.IS_OS_MAC) {
+    os="darwin"
+    packerOsFolder="darwin-linux"
+} else if (SystemUtils.IS_OS_UNIX) {
+    os="linux"
+    packerOsFolder="darwin-linux"
 } else {
     os="windows"
+    packerOsFolder="windows"
 }
 
 pipeline {
@@ -20,7 +25,7 @@ pipeline {
     }
 
     tools {
-        'biz.neustar.jenkins.plugins.packer.PackerInstallation' 'packer-linux-1.7.2'
+        'biz.neustar.jenkins.plugins.packer.PackerInstallation' "packer-${os}"
     }
 
     environment {
@@ -67,9 +72,9 @@ pipeline {
                 script {
                 withCredentials([usernamePassword(credentialsId: 'GITHUB_KX.AS.CODE', passwordVariable: 'GITHUB_TOKEN', usernameVariable: 'GITHUB_USER')]) {
                   withCredentials([usernamePassword(credentialsId: 'OPENSTACK_ADMIN_CREDENTIAL', usernameVariable: 'OPENSTACK_USER', passwordVariable: 'OPENSTACK_PASSWORD')]) {
-                       def packerPath = tool 'packer-linux-1.7.2'
+                        def packerPath = tool "packer-${os}"
                         sh """
-                        cd base-vm/build/packer/${os}
+                        cd base-vm/build/packer/${packerOsFolder}
                         ${packerPath}/packer build -force -only kx.as.code-worker-openstack \
                             -var "compute_engine_build=${kx_compute_engine_build}" \
                             -var "hostname=${kx_hostname}" \
