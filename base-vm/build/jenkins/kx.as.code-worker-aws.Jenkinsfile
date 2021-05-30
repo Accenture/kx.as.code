@@ -69,7 +69,7 @@ pipeline {
         stage('Clone the repository'){
             steps {
                 script {
-                    checkout([$class: 'GitSCM', branches: [[name: "$github_source_branch"]], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'CleanBeforeCheckout']], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'GITHUB_KX.AS.CODE', url: 'https://${github_repo_url}']]])
+                    checkout([$class: 'GitSCM', branches: [[name: "$github_source_branch"]], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'GITHUB_KX.AS.CODE', url: 'https://${github_repo_url}']]])
                 }
             }
         }

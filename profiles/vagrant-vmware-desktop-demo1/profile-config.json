@@ -2,16 +2,16 @@
     "config": {
         "vm_properties": {
             "kx_version": "0.6.7",
-            "main_node_cpu_cores": 4,
-            "main_node_memory": 16384,
-            "worker_node_count": 2,
+            "main_node_cpu_cores": 2,
+            "main_node_memory": 6144,
+            "worker_node_count": 1,
             "worker_node_cpu_cores": 4,
-            "worker_node_memory": 16384,
+            "worker_node_memory": 6144,
             "environment_prefix": "demo1",
-            "kx_sync_folder_path": "/Users/patrick/KX_Share",
-            "kx_main_box_location": "V:/jenkins_remote/workspace/VMWare_Workstation/KX.AS.CODE_Main_Build/base-vm/boxes/vmware-desktop-0.6.7/kx.as.code-main-demo-0.6.7.box",
-            "kx_worker_box_location": "V:/jenkins_remote/workspace/VMWare_Workstation/KX.AS.CODE_Worker_Build/base-vm/boxes/vmware-desktop-0.6.7/kx.as.code-worker-demo-0.6.7.box",
-            "vmware_disk_utility": "C:/Program Files (x86)/VMware/VMware Workstation/vmware-vdiskmanager.exe"
+            "kx_sync_folder_path": "./KX_Share",
+            "kx_main_box_location": "../../../KX.AS.CODE_Main_Build/base-vm/boxes/vmware-desktop-0.6.7/kx.as.code-main-demo-0.6.7.box",
+            "kx_worker_box_location": "../../../KX.AS.CODE_Worker_Build/base-vm/boxes/vmware-desktop-0.6.7/kx.as.code-worker-demo-0.6.7.box",
+            "vmware_disk_utility": "/Applications/VMware Fusion.app/Contents/Library/vmware-vdiskmanager"
         },
         "allowWorkloadsOnMaster": true,
         "disableSessionTimeout": true,
