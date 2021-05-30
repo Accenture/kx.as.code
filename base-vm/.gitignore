@@ -30,3 +30,4 @@ plan
 /deploy/aws/.ovpn/key
 /deploy/aws/.ssh/id_rsa
 /deploy/aws/.ssh/id_rsa.pub
+agent.jar
