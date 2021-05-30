@@ -9,8 +9,8 @@
             "worker_node_memory": 6144,
             "environment_prefix": "demo1",
             "kx_sync_folder_path": "./KX_Share",
-            "kx_main_box_location": "../../../KX.AS.CODE_Main_Build/base-vm/boxes/virtualbox-0.6.7/kx.as.code-main-demo-0.6.7.box",
-            "kx_worker_box_location": "../../../KX.AS.CODE_Worker_Build/base-vm/boxes/virtualbox-0.6.7/kx.as.code-worker-demo-0.6.7.box"
+            "kx_main_box_location": "../../../01_Build_KX.AS.CODE_Main/base-vm/boxes/virtualbox-0.6.7/kx.as.code-main-demo-0.6.7.box",
+            "kx_worker_box_location": "../../../02_Build_KX.AS.CODE_Worker/base-vm/boxes/virtualbox-0.6.7/kx.as.code-worker-demo-0.6.7.box"
         },
         "allowWorkloadsOnMaster": true,
         "disableSessionTimeout": true,
@@ -18,9 +18,9 @@
         "disableLinuxDesktop": false,
         "defaultKeyboardLanguage": "de",
         "local_volumes": {
-            "one_gb": 20,
-            "five_gb": 15,
-            "ten_gb": 8,
+            "one_gb": 10,
+            "five_gb": 10,
+            "ten_gb": 10,
             "thirty_gb": 0,
             "fifty_gb": 0
         },
