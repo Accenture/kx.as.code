@@ -1,14 +1,18 @@
-import org.apache.commons.lang.SystemUtils
-
-if ( SystemUtils.IS_OS_MAC) {
-    os="darwin"
-    packerOsFolder="darwin-linux"
-} else if (SystemUtils.IS_OS_UNIX) {
-    os="linux"
-    packerOsFolder="darwin-linux"
-} else {
-    os="windows"
-    packerOsFolder="windows"
+node('packer') {
+    os = sh (
+        script: 'uname -s',
+        returnStdout: true
+    ).toLowerCase().trim()
+    if ( os == "darwin" ) {
+        echo "Running on Mac"
+        packerOsFolder="darwin-linux"
+    } else if ( os == "linux" ) {
+        echo "Running on Linux"
+        packerOsFolder="darwin-linux"
+    } else {
+        echo "Running on Windows"
+        packerOsFolder="windows"
+    }
 }
 
 pipeline {
