@@ -15,8 +15,6 @@
         <string>kx_vm_password</string>
         <string>git_repo_url</string>
         <string>kx_compute_engine_build</string>
-        <string>git_docs_branch</string>
-        <string>git_techradar_branch</string>
         <string>kx_version</string>
         <string>kx_domain</string>
         <string>base_image_ssh_user</string>
@@ -51,18 +49,6 @@
           <name>git_source_branch</name>
           <description>Source Github branch to build from and clone inside VM</description>
           <defaultValue>main</defaultValue>
-          <trim>false</trim>
-        </hudson.model.StringParameterDefinition>
-        <hudson.model.StringParameterDefinition>
-          <name>git_docs_branch</name>
-          <description>Docs Github branch to clone</description>
-          <defaultValue>master</defaultValue>
-          <trim>false</trim>
-        </hudson.model.StringParameterDefinition>
-        <hudson.model.StringParameterDefinition>
-          <name>git_techradar_branch</name>
-          <description>TechRadar Github branch to clone</description>
-          <defaultValue>master</defaultValue>
           <trim>false</trim>
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
