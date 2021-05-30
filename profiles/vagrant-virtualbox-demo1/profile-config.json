@@ -9,8 +9,8 @@
             "worker_node_memory": 16384,
             "environment_prefix": "demo1",
             "kx_sync_folder_path": "./KX_Share",
-            "kx_main_box_location": "../../base-vm/build/jenkins/jenkins_remote/workspace/VirtualBox/KX.AS.CODE_Main_Build/base-vm/boxes/virtualbox-0.6.7/kx.as.code-main-demo-0.6.7.box",
-            "kx_worker_box_location": "../../base-vm/build/jenkins/jenkins_remote/workspace/VirtualBox/KX.AS.CODE_Worker_Build/base-vm/boxes/virtualbox-0.6.7/kx.as.code-worker-demo-0.6.7.box"
+            "kx_main_box_location": "../../../KX.AS.CODE_Main_Build/base-vm/boxes/virtualbox-0.6.7/kx.as.code-main-demo-0.6.7.box",
+            "kx_worker_box_location": "../../../KX.AS.CODE_Worker_Build/base-vm/boxes/virtualbox-0.6.7/kx.as.code-worker-demo-0.6.7.box"
         },
         "allowWorkloadsOnMaster": true,
         "disableSessionTimeout": true,
