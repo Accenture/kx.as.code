@@ -58,7 +58,7 @@ Vagrant.configure("2") do |config|
     subconfig.vm.hostname = "kx-main"
     subconfig.vm.network :forwarded_port, guest: 22, host: 2222, id: "ssh", disabled: true
     subconfig.vm.network :forwarded_port, guest: 22, host: 2230, id: "ssh-kx-main", auto_correct: true
-    subconfig.vm.box_url = KX_MAIN_BOX_LOCATION
+    subconfig.vm.box_url = "file://#{KX_MAIN_BOX_LOCATION}"
     subconfig.vm.synced_folder KX_SYNC_FOLDER_PATH, "/home/kx.hero/Desktop/KX_Share2/",
         owner: "kx.hero", group: "kx.hero"
     subconfig.vm.provision "file", source: "profile-config.json", destination: "/var/tmp/profile-config.json"
@@ -92,7 +92,7 @@ Vagrant.configure("2") do |config|
       subconfig.vm.hostname = "kx-worker#{i}"
       subconfig.vm.network :forwarded_port, guest: 22, host: 2222, id: "ssh", disabled: true
       subconfig.vm.network :forwarded_port, guest: 22, host: "223#{i}", id: "ssh-kx-worker#{i}", auto_correct: true
-      subconfig.vm.box_url = KX_WORKER_BOX_LOCATION
+      subconfig.vm.box_url = "file://#{KX_WORKER_BOX_LOCATION}"
       subconfig.vm.provision "file", source: "kx.as.code_main-ip-address", destination: "/var/tmp/kx.as.code_main-ip-address"
       subconfig.vm.provision "file", source: "profile-config.json", destination: "/var/tmp/profile-config.json"
       subconfig.vm.provision "shell", inline: "sudo mv /var/tmp/profile-config.json /usr/share/kx.as.code/workspace/"

@@ -2,15 +2,15 @@
     "config": {
         "vm_properties": {
             "kx_version": "0.6.7",
-            "main_node_cpu_cores": 4,
-            "main_node_memory": 16384,
-            "worker_node_count": 2,
+            "main_node_cpu_cores": 2,
+            "main_node_memory": 6144,
+            "worker_node_count": 1,
             "worker_node_cpu_cores": 4,
-            "worker_node_memory": 16384,
+            "worker_node_memory": 6144,
             "environment_prefix": "demo1",
-            "kx_sync_folder_path": "/Users/patrick/KX_Share",
-            "kx_main_box_location": "/users/patrick/jenkins_remote/workspace/Parallels/KX.AS.CODE_Main_Build/base-vm/boxes/parallels-0.6.7/kx.as.code-main-demo-0.6.7.box",
-            "kx_worker_box_location": "/users/patrick/jenkins_remote/workspace/Parallels/KX.AS.CODE_Worker_Build/base-vm/boxes/parallels-0.6.7/kx.as.code-worker-demo-0.6.7.box"
+            "kx_sync_folder_path": "./KX_Share",
+            "kx_main_box_location": "../../../01_Build_KX.AS.CODE_Main/base-vm/boxes/parallels-0.6.7/kx.as.code-main-demo-0.6.7.box",
+            "kx_worker_box_location": "../../../02_Build_KX.AS.CODE_Worker/base-vm/boxes/parallels-0.6.7/kx.as.code-worker-demo-0.6.7.box"
         },
         "allowWorkloadsOnMaster": true,
         "disableSessionTimeout": true,
@@ -18,11 +18,11 @@
         "disableLinuxDesktop": false,
         "defaultKeyboardLanguage": "de",
         "local_volumes": {
-            "one_gb": 20,
-            "five_gb": 15,
-            "ten_gb": 8,
-            "thirty_gb": 2,
-            "fifty_gb": 1
+            "one_gb": 10,
+            "five_gb": 10,
+            "ten_gb": 10,
+            "thirty_gb": 0,
+            "fifty_gb": 0
         },
         "virtualizationType": "local",
         "environmentPrefix": "demo1",
