@@ -35,33 +35,35 @@ LOCAL_KUBE_VOLUMES_DISK_SIZE=NUM_1GB_LOCAL_SIZE+NUM_5GB_LOCAL_SIZE+NUM_10GB_LOCA
 puts "Local Disk Size: #{LOCAL_KUBE_VOLUMES_DISK_SIZE}GB"
 puts "GlusterFS Disk Size: #{GLUSTERFS_KUBE_VOLUMES_DISK_SIZE}GB"
 
-ENVIRONMENT_PREFIX = profile_config['config']['vm_properties']['environment_prefix']
+# Environment variables will override the profile-config.json file properties. This was added for the Jenkins jobs, so that they can override parameters
+ENVIRONMENT_PREFIX = ENV['environmentPrefix'] || profile_config['config']['vm_properties']['environment_prefix']
 puts "ENVIRONMENT_PREFIX: #{ENVIRONMENT_PREFIX}"
-MAIN_NODE_CPU_CORES = profile_config['config']['vm_properties']['main_node_cpu_cores']
+MAIN_NODE_CPU_CORES = ENV['mainNodeCpuCores'] || profile_config['config']['vm_properties']['main_node_cpu_cores']
 puts "MAIN_NODE_CPU_CORES: #{MAIN_NODE_CPU_CORES}"
-MAIN_NODE_MEMORY = profile_config['config']['vm_properties']['main_node_memory']
+MAIN_NODE_MEMORY = ENV['mainNodeMemory'] || profile_config['config']['vm_properties']['main_node_memory']
 puts "MAIN_NODE_MEMORY: #{MAIN_NODE_MEMORY}"
-WORKER_NODE_COUNT = profile_config['config']['vm_properties']['worker_node_count']
+WORKER_NODE_COUNT = ENV['workerNodeCount'] || profile_config['config']['vm_properties']['worker_node_count']
 puts "WORKER_NODE_COUNT: #{WORKER_NODE_COUNT}"
-WORKER_NODE_CPU_CORES = profile_config['config']['vm_properties']['worker_node_cpu_cores']
+WORKER_NODE_CPU_CORES = ENV['workerNodeCpuCores'] || profile_config['config']['vm_properties']['worker_node_cpu_cores']
 puts "WORKER_NODE_CPU_CORES: #{WORKER_NODE_CPU_CORES}"
-WORKER_NODE_MEMORY = profile_config['config']['vm_properties']['worker_node_memory']
+WORKER_NODE_MEMORY = ENV['WorkerNodeMemory'] || profile_config['config']['vm_properties']['worker_node_memory']
 puts "WORKER_NODE_MEMORY: #{WORKER_NODE_MEMORY}"
-DOCKERHUB_USER = profile_config['config']['docker']['dockerhub_username']
+DOCKERHUB_USER = ENV['dockerHubUser'] || profile_config['config']['docker']['dockerhub_username']
 puts "DOCKERHUB_USER: #{DOCKERHUB_USER}"
-DOCKERHUB_EMAIL = profile_config['config']['docker']['dockerhub_email']
+DOCKERHUB_EMAIL = ENV['dockerHubEmail'] || profile_config['config']['docker']['dockerhub_email']
 puts "DOCKERHUB_EMAIL: #{DOCKERHUB_EMAIL}"
-DOCKERHUB_PASSWORD = profile_config['config']['docker']['dockerhub_password']
+DOCKERHUB_PASSWORD = ENV['DockerHubPassword'] || profile_config['config']['docker']['dockerhub_password']
 puts "DOCKERHUB_PASSWORD: #{DOCKERHUB_PASSWORD}"
-BOX_VERSION = profile_config['config']['vm_properties']['kx_version']
+BOX_VERSION = ENV['boxVersion'] || profile_config['config']['vm_properties']['kx_version']
 puts "BOX_VERSION: #{BOX_VERSION}"
-KX_SYNC_FOLDER_PATH = profile_config['config']['vm_properties']['kx_sync_folder_path']
+KX_SYNC_FOLDER_PATH = ENV['kxSyncFolderPath'] || profile_config['config']['vm_properties']['kx_sync_folder_path']
 puts "KX_SYNC_FOLDER_PATH: #{KX_SYNC_FOLDER_PATH}"
-KX_MAIN_BOX_LOCATION = profile_config['config']['vm_properties']['kx_main_box_location']
+KX_MAIN_BOX_LOCATION = ENV['kxMainBoxLocation'] || profile_config['config']['vm_properties']['kx_main_box_location']
 puts "KX_MAIN_BOX_LOCATION: #{KX_MAIN_BOX_LOCATION}"
-KX_WORKER_BOX_LOCATION = profile_config['config']['vm_properties']['kx_worker_box_location']
+KX_WORKER_BOX_LOCATION = ENV['kxWorkerBoxLocation'] || profile_config['config']['vm_properties']['kx_worker_box_location']
 puts "KX_WORKER_BOX_LOCATION: #{KX_WORKER_BOX_LOCATION}"
 
+# Create shared folder if it does not exist
 if not FileTest::directory?(KX_SYNC_FOLDER_PATH)
   Dir::mkdir(KX_SYNC_FOLDER_PATH)
 end

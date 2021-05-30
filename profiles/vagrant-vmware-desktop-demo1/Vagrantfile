@@ -67,6 +67,11 @@ puts "KX_WORKER_BOX_LOCATION: #{KX_WORKER_BOX_LOCATION}"
 VMWARE_DISK_UTILITY = ENV['vmWareDiskUtilityPath'] || profile_config['config']['vm_properties']['vmware_disk_utility']
 puts "VMWARE_DISK_UTILITY: #{VMWARE_DISK_UTILITY}"
 
+# Create shared folder if it does not exist
+if not FileTest::directory?(KX_SYNC_FOLDER_PATH)
+  Dir::mkdir(KX_SYNC_FOLDER_PATH)
+end
+
 Vagrant.configure("2") do |config|
     config.vm.define "kx.as.code-main" do |subconfig|
         subconfig.vm.box = "kx.as.code-main-vmware-#{BOX_VERSION}"
