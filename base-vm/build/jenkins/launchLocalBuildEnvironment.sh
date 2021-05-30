@@ -1,10 +1,10 @@
-#!/bin/bash -x
+#!/bin/bash
 
 # Define ansi colours
 red="\033[31m"
 green="\033[32m"
 orange="\033[33m"
-blue="\033[94m"
+blue="\033[36m"
 nc="\033[0m" # No Color
 
 if [ ! -f ./jenkins.env ]; then
@@ -20,28 +20,31 @@ source ./jenkins.env
 composeDownloadVersion=1.29.2
 javaDownloadVersion=11.0.3.7.1
 
-# Determine OS this script is running on and set appropriate download links
+# Determine OS this script is running on and set appropriate download links and commands
 case $(uname -s) in
 
     Linux)
       echo -e "${blue}- [INFO] Script running on Linux. Setting appropriate download links${nc}"
       dockerComposeInstallerUrl= "https://github.com/docker/compose/releases/download/${composeDownloadVersion}/docker-compose-Linux-x86_64"
       javaInstallerUrl="https://d3pxv6yz143wms.cloudfront.net/${javaDownloadVersion}/amazon-corretto-${javaDownloadVersion}-linux-x64.tar.gz"
+      sedCommand="sed -i"
       ;;
     Darwin)
-      echo -e "${blue}- [INFO] Script running on Darwin Setting appropriate download links${nc}"
+      echo -e "${blue}- [INFO] Script running on Darwin. Setting appropriate download links${nc}"
       dockerComposeInstallerUrl="https://github.com/docker/compose/releases/download/${composeDownloadVersion}/docker-compose-Darwin-x86_64"
       javaInstallerUrl="https://d3pxv6yz143wms.cloudfront.net/${javaDownloadVersion}/amazon-corretto-${javaDownloadVersion}-macosx-x64.tar.gz"
+      sedCommand="sed -i ''"
       ;;
     *)
-      echo -e "${blue}- [INFO] Script running on Windows Setting appropriate download links${nc}"
+      echo -e "${blue}- [INFO] Script running on Windows. Setting appropriate download links${nc}"
       dockerComposeInstallerUrl="https://github.com/docker/compose/releases/download/${composeDownloadVersion}/docker-compose-Windows-x86_64.exe"
       javaInstallerUrl="https://d3pxv6yz143wms.cloudfront.net/${javaDownloadVersion}/amazon-corretto-${javaDownloadVersion}-windows-x64.zip"
+      sedCommand="sed -i"
       ;;
 esac
 
-echo "- [INFO] Set docker-compose download link to: ${dockerComposeInstallerUrl}${nc}"
-echo "- [INFO] Set java download link to: ${javaInstallerUrl}${nc}"
+echo "- [INFO] Set docker-compose download link to: ${dockerComposeInstallerUrl}"
+echo "- [INFO] Set java download link to: ${javaInstallerUrl}"
 
 # Check if Docker-Compose is installed
 if [[ ! -f ./docker-compose ]] && [[ -z $(which docker-compose) ]]; then
@@ -133,12 +136,24 @@ if [[ -z $(docker images ${KX_JENKINS_IMAGE} -q) ]]; then
   fi
 fi
 
-# Checking if Jenkins home already exsits to avoid overwriting configurations and breaking something
+# Checking if Jenkins home already exists to avoid overwriting configurations and breaking something
 if [ ! -d ${JENKINS_HOME} ]; then
   mkdir -p ${WORKING_DIRECTORY}
   mkdir -p ${JENKINS_HOME}
   cp -R ./initial-setup/* ${JENKINS_HOME}
-  sed -i 's;{{WORKING_DIRECTORY}};'${WORKING_DIRECTORY}';g' ${JENKINS_HOME}/nodes/local/config.xml
+  firstTwoChars=$(echo "${WORKING_DIRECTORY}" | head -c2)
+  firstChar=$(echo "${WORKING_DIRECTORY}" | head -c1)
+  if [[ "${firstTwoChars}" == "./" ]]; then
+    # if workspace directory starts with ./, convert relative directory to absolute
+    WORKDIR_ABSOLUTE_PATH=$(pwd)/$(echo ${WORKING_DIRECTORY} | sed 's;\./;;g')
+  elif [[ "${firstChar}" != "/" ]]; then
+    # If no ./ or / at beginning, assume relative working directory and convert to absolute
+    WORKDIR_ABSOLUTE_PATH="$(pwd)/${WORKING_DIRECTORY}"
+  else
+    # If / at start, assume provided directory is already absolute and use it
+    WORKDIR_ABSOLUTE_PATH=${WORKING_DIRECTORY}
+  fi
+  ${sedCommand} 's;{{WORKING_DIRECTORY}};'${WORKDIR_ABSOLUTE_PATH}';g' ${JENKINS_HOME}/nodes/local/config.xml
 fi
 
 # Start Jenkins
@@ -151,37 +166,48 @@ fi
 
 # Downloading Jenkins CLI used for creating Jenkins credentials
 if [[ ! -f ./jenkins-cli.jar ]]; then
-  echo -e "${orange}- [INFO] The next steps - downloading Jar files - might take a couple of minutes, as Jenkins needs to finish coming up before it will work${nc}"
+  echo -e "${orange}- [INFO] The next steps - downloading Jar files from Jenkins - might take a few minutes, as Jenkins needs to finish coming up before it will work${nc}"
   echo -e "${blue}- [INFO] Waiting for jenkins-cli.jar to become available...${nc}"
-  for i in {1..30}
+  for i in {1..60}
   do
     http_code=$(curl -s -o /dev/null -L -w '%{http_code}' ${JENKINS_URL}/jnlpJars/jenkins-cli.jar)
-    if [[ "${http_code}"=="200" ]]; then
+    if [[ "${http_code}" == "200" ]]; then
       curl -s ${JENKINS_URL}/jnlpJars/jenkins-cli.jar -o jenkins-cli.jar
       break
     fi
-    echo -e "${blue}- [INFO] Waiting for ${JENKINS_URL}/jnlpJars/jenkins-cli.jar'${nc}'"
-    sleep 10
+    echo -e "${blue}- [INFO] Waiting for ${JENKINS_URL}/jnlpJars/jenkins-cli.jar${nc}"
+    sleep 15
   done
 else
   echo -e "${blue}- [INFO] Jenkins jenkins-cli.jar already downloaded, continuing...${nc}"
 fi
 
+# Check if Jenkins CLI is now available, if not exit script with error
+if [[ ! -f ./jenkins-cli.jar ]]; then
+  echo -e "${red}- [ERROR] Jenkins jenkins-cli.jar is still not available even after 15 minutes. It should not take this long for Jenkins to start... ${nc}"
+  exit 1
+fi
+
 # Downloading Jenkins agent
 if [[ ! -f ./agent.jar ]]; then
   echo -e "${blue}- [INFO] Waiting for agent.jar to become available...${nc}"
-  for i in {1..30}
+  for i in {1..60}
   do
     http_code=$(curl -s -o /dev/null -L -w '%{http_code}' ${JENKINS_URL}/jnlpJars/agent.jar)
-    if [[ "${http_code}"=="200" ]]; then
+    if [[ "${http_code}" == "200" ]]; then
       curl -s ${JENKINS_URL}/jnlpJars/agent.jar -o agent.jar
       break
     fi
     echo -e "${blue}- [INFO] Waiting for ${JENKINS_URL}/jnlpJars/agent.jar${nc}"
-    sleep 10
+    sleep 15
   done
 else
   echo -e "${blue}- [INFO] Jenkins agent.jar already downloaded, continuing...${nc}"
+fi
+
+# Check if Jenkins CLI is now available, if not exit script with error
+if [[ ! -f ./agent.jar ]]; then
+  echo -e "${red}- [ERROR] Jenkins agent.jar is still not available even after 15 minutes. If you get this, then something weird happened, since jenkins-cli managed to download, but agent.jar didn't... ${nc}"
 fi
 
 # Check that docker-compose.yml is available on the current path
