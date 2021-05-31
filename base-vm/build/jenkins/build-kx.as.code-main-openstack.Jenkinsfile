@@ -17,7 +17,7 @@ node('packer') {
 
 pipeline {
 
-    agent { label "master" }
+    agent { label "packer" }
 
     options {
         ansiColor('xterm')

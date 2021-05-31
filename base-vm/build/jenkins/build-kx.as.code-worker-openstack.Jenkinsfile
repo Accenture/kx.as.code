@@ -17,7 +17,7 @@ node('packer') {
 
 pipeline {
 
-    agent { label "master" }
+    agent { label "packer" }
 
     options {
         ansiColor('xterm')
@@ -77,8 +77,10 @@ pipeline {
                 withCredentials([usernamePassword(credentialsId: 'GITHUB_KX.AS.CODE', passwordVariable: 'GITHUB_TOKEN', usernameVariable: 'GITHUB_USER')]) {
                   withCredentials([usernamePassword(credentialsId: 'OPENSTACK_ADMIN_CREDENTIAL', usernameVariable: 'OPENSTACK_USER', passwordVariable: 'OPENSTACK_PASSWORD')]) {
                         def packerPath = tool "packer-${os}"
+                        echo "packerPath=${packerPath}/packer"
                         sh """
                         cd base-vm/build/packer/${packerOsFolder}
+                        echo "packerPath=${packerPath}/packer"
                         ${packerPath}/packer build -force -only kx.as.code-worker-openstack \
                             -var "compute_engine_build=${kx_compute_engine_build}" \
                             -var "hostname=${kx_hostname}" \
@@ -89,6 +91,8 @@ pipeline {
                             -var "github_user=${GITHUB_USER}" \
                             -var "github_token=${GITHUB_TOKEN}" \
                             -var "git_source_branch=${GIT_SOURCE_BRANCH}" \
+                            -var "git_docs_branch=${GIT_DOCS_BRANCH}" \
+                            -var "git_techradar_branch=${GIT_TECHRADAR_BRANCH}" \
                             -var "ssh_username=${ssh_username}" \
                             -var "base_image_ssh_user=${base_image_ssh_user}" \
                             -var "openstack_user=${openstack_user}" \
