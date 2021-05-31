@@ -89,8 +89,6 @@ pipeline {
                             -var "github_user=${GITHUB_USER}" \
                             -var "github_token=${GITHUB_TOKEN}" \
                             -var "git_source_branch=${GIT_SOURCE_BRANCH}" \
-                            -var "git_docs_branch=${GIT_DOCS_BRANCH}" \
-                            -var "git_techradar_branch=${GIT_TECHRADAR_BRANCH}" \
                             -var "ssh_username=${ssh_username}" \
                             -var "base_image_ssh_user=${base_image_ssh_user}" \
                             -var "openstack_user=${openstack_user}" \
