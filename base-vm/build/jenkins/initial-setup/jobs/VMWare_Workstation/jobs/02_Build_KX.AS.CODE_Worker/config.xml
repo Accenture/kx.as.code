@@ -71,7 +71,7 @@
         <hudson.model.StringParameterDefinition>
           <name>vagrant_compute_engine_build</name>
           <description>Should be false for Vagrant targeted builds</description>
-          <defaultValue>{{vagrant_kx_compute_engine_build}}</defaultValue>
+          <defaultValue>{{vagrant_compute_engine_build}}</defaultValue>
           <trim>false</trim>
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
