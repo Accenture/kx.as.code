@@ -169,7 +169,17 @@ initialSetupJobConfgXmlFiles=$(find jenkins_home/jobs -name "config.xml")
 for initialSetupJobConfgXmlFile in ${initialSetupJobConfgXmlFiles}
 do
   echo "Replacing placeholders with values in ${initialSetupJobConfgXmlFile}"
-  cat ${initialSetupJobConfgXmlFile} | ./mo | tee ${initialSetupJobConfgXmlFile}
+  for i in {1..5}
+    do
+    cat "${initialSetupJobConfgXmlFile}" | ./mo | tee "${initialSetupJobConfgXmlFile}_tmp"
+    if [ -s "${initialSetupJobConfgXmlFile}_tmp" ]
+    then
+       mv "${initialSetupJobConfgXmlFile}_tmp" "${initialSetupJobConfgXmlFile}"
+       break
+    else
+       echo "${red}- [ERROR] Target config.xml file was empty after mustach replacement. Trying again${nc}"
+    fi
+  done
 done
 IFS=${OLD_IFS}
 
