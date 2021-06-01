@@ -28,21 +28,21 @@ case $(uname -s) in
       echo -e "${blue}- [INFO] Script running on Linux. Setting appropriate download links${nc}"
       dockerComposeInstallerUrl="https://github.com/docker/compose/releases/download/${composeDownloadVersion}/docker-compose-Linux-x86_64"
       javaInstallerUrl="https://d3pxv6yz143wms.cloudfront.net/${javaDownloadVersion}/amazon-corretto-${javaDownloadVersion}-linux-x64.tar.gz"
-      jqDownloadUrl="https://github.com/stedolan/jq/releases/download/jq-${jqDownloadVersion}/jq-linux64"
+      jqInstallerUrl="https://github.com/stedolan/jq/releases/download/jq-${jqDownloadVersion}/jq-linux64"
       os=linux
       ;;
     Darwin)
       echo -e "${blue}- [INFO] Script running on Darwin. Setting appropriate download links${nc}"
       dockerComposeInstallerUrl="https://github.com/docker/compose/releases/download/${composeDownloadVersion}/docker-compose-Darwin-x86_64"
       javaInstallerUrl="https://d3pxv6yz143wms.cloudfront.net/${javaDownloadVersion}/amazon-corretto-${javaDownloadVersion}-macosx-x64.tar.gz"
-      jqDownloadUrl="https://github.com/stedolan/jq/releases/download/jq-${jqDownloadVersion}/jq-osx-amd64"
+      jqInstallerUrl="https://github.com/stedolan/jq/releases/download/jq-${jqDownloadVersion}/jq-osx-amd64"
       os=darwin
       ;;
     *)
       echo -e "${blue}- [INFO] Script running on Windows. Setting appropriate download links${nc}"
       dockerComposeInstallerUrl="https://github.com/docker/compose/releases/download/${composeDownloadVersion}/docker-compose-Windows-x86_64.exe"
       javaInstallerUrl="https://d3pxv6yz143wms.cloudfront.net/${javaDownloadVersion}/amazon-corretto-${javaDownloadVersion}-windows-x64.zip"
-      jqDownloadUrl="https://github.com/stedolan/jq/releases/download/jq-${jqDownloadVersion}/jq-win64.exe"
+      jqInstallerUrl="https://github.com/stedolan/jq/releases/download/jq-${jqDownloadVersion}/jq-win64.exe"
       os=windows
       ;;
 esac
@@ -53,13 +53,13 @@ echo "- [INFO] Set jq download link to: ${jqInstallerUrl}"
 
 # Check if Docker-Compose is installed
 dockerComposeBinaryWhich=$(which docker-compose | sed 's;docker-compose not found;;g')
-dockerComposeBinaryLocal=$(find ./ -executable -type f \( -name "docker-compose" -or -name "docker-compose.exe"\))
+dockerComposeBinaryLocal=$(find ./ -type f \( -name "docker-compose" -or -name "docker-compose.exe" \))
 dockerComposeBinary=${dockerComposeBinaryWhich:-${dockerComposeBinaryLocal}}
 echo "${dockerComposeBinary}"
 if [[ -z "${dockerComposeBinary}" ]]; then
     echo -e "${blue}- [INFO] Docker-compose is not installed or not reachable. Downloading from https://docs.docker.com/compose/install/${nc}"
-    curl -o ./docker-compose ${dockerComposeInstallerUrl}
-    chmod -L 755 ./docker-compose
+    curl -L -s -o ./docker-compose ${dockerComposeInstallerUrl}
+    chmod 755 ./docker-compose
     if [[ "os" == "windows" ]]; then
       mv ./docker-compose ./docker-compose.exe
       dockerComposeBinary="./docker-compose.exe"
@@ -81,13 +81,13 @@ fi
 
 # Check if jq is installed
 jqBinaryWhich=$(which jq | sed 's;jq not found;;g')
-jqBinaryLocal=$(find ./ -executable -type f \( -name "jq" -or -name "jq.exe"\))
+jqBinaryLocal=$(find ./ -type f \( -name "jq" -or -name "jq.exe" \))
 jqBinary=${jqBinaryWhich:-${jqBinaryLocal}}
 echo "${jqBinary}"
 if [[ -z "${jqBinary}" ]]; then
     echo -e "${blue}- [INFO] jq is not installed or not reachable. Downloading from https://github.com/stedolan/jq/releases/download/${nc}"
-    curl -o ./jq ${jqInstallerUrl}
-    chmod -L 755 ./jq
+    curl -L -s -o ./jq ${jqInstallerUrl}
+    chmod 755 ./jq
     if [[ "os" == "windows" ]]; then
       mv ./jq ./jq.exe
       jqBinary="./jq.exe"
@@ -112,7 +112,7 @@ dockerComposeVersion=$("${dockerComposeBinary}" -v 2>/dev/null | sed 's/[^0-9.]*
 minimalComposeVersion=1.25.0
 if [[ "$(printf '%s\n' "${minimalComposeVersion}" "${dockerComposeVersion}" | sort -V | head -n1)" = "${dockerComposeVersion}" ]]; then
   echo -e "${blue}- [INFO] You are using an outdated docker-compose executable, which means --env-file option will not be present. Downloading updated version from https://docs.docker.com/compose/install/${nc}"
-  curl -L -o ./docker-compose ${dockerComposeInstallerUrl}
+  curl -L -s -o ./docker-compose ${dockerComposeInstallerUrl}
   chmod 755 ./docker-compose
   dockerComposeBinary="./docker-compose"
 else
@@ -127,9 +127,9 @@ if [[ -z ${dockerInstalled} ]]; then
 fi
 
 # Check if Java is installed
-#javaBinary=${$(which java | sed 's;java not found;;g'):-$(find ./java/**/bin/ -executable -type f \( -name "java" -or -name "java.exe" ! -name "*.dll" \))}
+#javaBinary=${$(which java | sed 's;java not found;;g'):-$(find ./java/**/bin/ -type f \( -name "java" -or -name "java.exe" ! -name "*.dll" \))}
 javaBinaryWhich=$(which java | sed 's;java not found;;g')
-javaBinaryLocal=$(find ./java/**/bin/ -executable -type f \( -name "java" -or -name "java.exe" ! -name "*.dll" \))
+javaBinaryLocal=$(find ./java/**/bin/ -type f \( -name "java" -or -name "java.exe" ! -name "*.dll" \))
 javaBinary=${javaBinaryWhich:-${javaBinaryLocal}}
 echo ${javaBinary}
 if [[ -z "${javaBinary}" ]]; then
@@ -140,7 +140,7 @@ if [[ -z "${javaBinary}" ]]; then
     base=${javaInstallerUrl%.*}
     ext=${javaInstallerUrl#$base.}
     if [[ "${ext}" == "gz" ]]; then
-      curl -o amazon-corretto-11-x64-linux-jdk.tar.gz -L ${javaInstallerUrl}
+      curl -s -o amazon-corretto-11-x64-linux-jdk.tar.gz -L ${javaInstallerUrl}
       tar tzf amazon-corretto-11-x64-linux-jdk.tar.gz 1>/dev/null 2>/dev/null
       if [[ $? -ne 0 ]]; then
         echo -e "${red}- [ERROR] The downloaded Java compressed tar.gz file does not seem to be valid. Please check your internet connection and try again${nc}"
@@ -149,7 +149,7 @@ if [[ -z "${javaBinary}" ]]; then
       echo -e "${blue}- [INFO] The downloaded Java compressed tar.gz file seems to be complete. Extracting files and continuing${nc}"
       tar xvzf amazon-corretto-11-x64-linux-jdk.tar.gz -C ./java
     elif [[ "${ext}" == "zip" ]]; then
-      curl -o amazon-corretto-11-x64-linux-jdk.zip -L ${javaInstallerUrl}
+      curl -s -o amazon-corretto-11-x64-linux-jdk.zip -L ${javaInstallerUrl}
       unzip -t amazon-corretto-11-x64-linux-jdk.zip
       if [[ $? -ne 0 ]]; then
         echo -e "${red}- [ERROR] The downloaded Java compressed zip file does not seem to be valid. Please check your internet connection and try again${nc}"
@@ -158,7 +158,7 @@ if [[ -z "${javaBinary}" ]]; then
       echo -e "${blue}- [INFO] The downloaded Java compressed zip file seems to be complete. Extracting files and continuing${nc}"
       unzip amazon-corretto-11-x64-linux-jdk.zip -d ./java
     fi
-    javaBinary=$(find ./java/**/bin/ -executable -type f \( -name "java" -or -name "java.exe" ! -name "*.dll" \))
+    javaBinary=$(find ./java/**/bin/ -type f \( -name "java" -or -name "java.exe" ! -name "*.dll" \))
     if [[ -z ${javaBinary} ]]; then
       echo -e "${red}[ERROR] Java not found and could not be downloaded/installed. Exiting${nc}"
       exit 1
@@ -172,7 +172,7 @@ if [ -d ${JENKINS_HOME} ]; then
 fi
 
 # Checking if running on docker-machine to set correct Jenkins URL
-if [[ $(docker -D info --format '{{json .}}' | jq -r '.KernelVersion') =~ boot2docker ]]; then
+if [[ $(docker -D info --format '{{json .}}' | ${jqBinary} -r '.KernelVersion') =~ boot2docker ]]; then
   echo -e "${blue}- [INFO] Jenkins is running on docker-machine, setting docker host to 192.168.99.100${nc}"
   JENKINS_HOST=192.168.99.100
   JENKINS_URL=http://${JENKINS_HOST}:${JENKINS_SERVER_PORT}
@@ -228,7 +228,7 @@ fi
 initialSetupJobConfgXmlFiles=$(find jenkins_home/jobs -name "config.xml")
 for initialSetupJobConfgXmlFile in ${initialSetupJobConfgXmlFiles}
 do
-  echo "Replacing placeholders with values in ${initialSetupJobConfgXmlFile}"
+  echo "[INFO] Replacing placeholders with values in ${initialSetupJobConfgXmlFile}"
   for i in {1..5}
     do
     cat "${initialSetupJobConfgXmlFile}" | ./mo | tee "${initialSetupJobConfgXmlFile}_tmp"
@@ -317,7 +317,7 @@ fi
 
 # Create Github Credentials
 if [[ -n ${GITHUB_USERNAME} ]] && [[ -n ${GITHUB_PASSWORD} ]]; then
-  cat initial-setup/credential_github.xml | sed 's/{{GITHUB_USERNAME}}/'${GITHUB_USERNAME}'/g' | sed 's/{{GITHUB_PASSWORD}}/'${GITHUB_PASSWORD}'/g' | ${javaBinary} -jar jenkins-cli.jar -s ${JENKINS_URL} create-credentials-by-xml system::system::jenkins _
+  cat initial-setup/credential_github.xml | sed 's/{{GITHUB_USERNAME}}/'${GITHUB_USERNAME}'/g' | sed 's/{{GITHUB_PASSWORD}}/'${GITHUB_PASSWORD}'/g' | "${javaBinary}" -jar jenkins-cli.jar -s ${JENKINS_URL} create-credentials-by-xml system::system::jenkins _
 else
   echo -e "${red}- [ERROR] GITHUB credential must be set in jenkins.env, else the build will fail. Please set and try again${nc}"
   error="true"
@@ -325,28 +325,28 @@ fi
 
 # Creating Openstack Packer credentials in Jenkins
 if [[ -n ${OPENSTACK_PACKER_USERNAME}  ]] && [[ -n ${OPENSTACK_PACKER_PASSWORD} ]]; then
-  cat initial-setup/credential_openstack_packer.xml  | sed 's/{{OPENSTACK_PACKER_USERNAME}}/'${OPENSTACK_PACKER_USERNAME}'/g' | sed 's/{{OPENSTACK_PACKER_PASSWORD}}/'${OPENSTACK_PACKER_PASSWORD}'/g' |  ${javaBinary} -jar jenkins-cli.jar -s ${JENKINS_URL} create-credentials-by-xml system::system::jenkins _
+  cat initial-setup/credential_openstack_packer.xml  | sed 's/{{OPENSTACK_PACKER_USERNAME}}/'${OPENSTACK_PACKER_USERNAME}'/g' | sed 's/{{OPENSTACK_PACKER_PASSWORD}}/'${OPENSTACK_PACKER_PASSWORD}'/g' |  "${javaBinary}" -jar jenkins-cli.jar -s ${JENKINS_URL} create-credentials-by-xml system::system::jenkins _
 else
   echo -e "${orange}- [WARN] Openstack Packer credentials not set in jenkins.env. Dummy value will be used for user and password. You can update these manually later in Jenkins, or updated jenkins.env and launch this script again${nc}"
 fi
 
 # Creating AWS Packer credentials in Jenkins
 if [[ -n ${PACKER_AWS_PACKER_ACCESS_KEY} ]] && [[ -n ${PACKER_AWS_PACKER_ACCESS_SECRET} ]]; then
-  cat initial-setup/credential_aws_packer.xml  | sed 's/{{PACKER_AWS_PACKER_ACCESS_KEY}}/'${PACKER_AWS_PACKER_ACCESS_KEY}'/g' | sed 's/{{PACKER_AWS_PACKER_ACCESS_SECRET}}/'${PACKER_AWS_PACKER_ACCESS_SECRET}'/g' |  ${javaBinary} -jar jenkins-cli.jar -s ${JENKINS_URL} create-credentials-by-xml system::system::jenkins _
+  cat initial-setup/credential_aws_packer.xml  | sed 's/{{PACKER_AWS_PACKER_ACCESS_KEY}}/'${PACKER_AWS_PACKER_ACCESS_KEY}'/g' | sed 's/{{PACKER_AWS_PACKER_ACCESS_SECRET}}/'${PACKER_AWS_PACKER_ACCESS_SECRET}'/g' |  "${javaBinary}" -jar jenkins-cli.jar -s ${JENKINS_URL} create-credentials-by-xml system::system::jenkins _
 else
   echo -e "${orange}- [WARN] AWS Packer credentials not set in jenkins.env. Dummy value will be used for user and password. You can update these manually later in Jenkins, or updated jenkins.env and launch this script again${nc}"
 fi
 
 # Creating Openstack Terraform credentials in Jenkins
 if [[ -n ${OPENSTACK_TERRAFORM_USERNAME}  ]] && [[ -n ${OPENSTACK_TERRAFORM_PASSWORD} ]]; then
-  cat initial-setup/credential_openstack_terraform.xml  | sed 's/{{OPENSTACK_TERRAFORM_USERNAME}}/'${OPENSTACK_TERRAFORM_USERNAME}'/g' | sed 's/{{OPENSTACK_TERRAFORM_PASSWORD}}/'${OPENSTACK_TERRAFORM_PASSWORD}'/g' |  ${javaBinary} -jar jenkins-cli.jar -s ${JENKINS_URL} create-credentials-by-xml system::system::jenkins _
+  cat initial-setup/credential_openstack_terraform.xml  | sed 's/{{OPENSTACK_TERRAFORM_USERNAME}}/'${OPENSTACK_TERRAFORM_USERNAME}'/g' | sed 's/{{OPENSTACK_TERRAFORM_PASSWORD}}/'${OPENSTACK_TERRAFORM_PASSWORD}'/g' |  "${javaBinary}" -jar jenkins-cli.jar -s ${JENKINS_URL} create-credentials-by-xml system::system::jenkins _
 else
   echo -e "${orange}- [WARN] Openstack Terraform credentials not set in jenkins.env. Dummy value will be used for user and password. You can update these manually later in Jenkins, or updated jenkins.env and launch this script again${nc}"
 fi
 
 # Creating AWS Terraform credentials in Jenkins
 if [[ -n ${PACKER_AWS_TERRAFORM_ACCESS_KEY} ]] && [[ -n ${PACKER_AWS_TERRAFORM_ACCESS_SECRET} ]]; then
-  cat initial-setup/credential_aws_terraform.xml  | sed 's/{{PACKER_AWS_TERRAFORM_ACCESS_KEY}}/'${PACKER_AWS_TERRAFORM_ACCESS_KEY}'/g' | sed 's/{{PACKER_AWS_TERRAFORM_ACCESS_SECRET}}/'${PACKER_AWS_TERRAFORM_ACCESS_SECRET}'/g' |  ${javaBinary} -jar jenkins-cli.jar -s ${JENKINS_URL} create-credentials-by-xml system::system::jenkins _
+  cat initial-setup/credential_aws_terraform.xml  | sed 's/{{PACKER_AWS_TERRAFORM_ACCESS_KEY}}/'${PACKER_AWS_TERRAFORM_ACCESS_KEY}'/g' | sed 's/{{PACKER_AWS_TERRAFORM_ACCESS_SECRET}}/'${PACKER_AWS_TERRAFORM_ACCESS_SECRET}'/g' |  "${javaBinary}" -jar jenkins-cli.jar -s ${JENKINS_URL} create-credentials-by-xml system::system::jenkins _
 else
   echo -e "${orange}- [WARN] AWS Terraform credentials not set in jenkins.env. Dummy value will be used for user and password. You can update these manually later in Jenkins, or updated jenkins.env and launch this script again${nc}"
 fi
