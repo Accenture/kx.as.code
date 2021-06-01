@@ -1,7 +1,10 @@
 <?xml version='1.1' encoding='UTF-8'?>
 <hudson>
-  <disabledAdministrativeMonitors/>
-  <version>2.277.3</version>
+  <disabledAdministrativeMonitors>
+    <string>jenkins.diagnostics.SecurityIsOffMonitor</string>
+    <string>jenkins.diagnostics.RootUrlNotSetMonitor</string>
+  </disabledAdministrativeMonitors>
+  <version>2.277.4</version>
   <numExecutors>2</numExecutors>
   <mode>NORMAL</mode>
   <useSecurity>true</useSecurity>
@@ -33,21 +36,22 @@
       <properties class="hudson.model.View$PropertyList"/>
       <jobNames>
         <comparator class="hudson.util.CaseInsensitiveComparator"/>
-        <string>AWS</string>
-        <string>AWS/KX.AS.CODE_Main_Build</string>
-        <string>AWS/KX.AS.CODE_Worker_Build</string>
-        <string>OpenStack</string>
-        <string>OpenStack/KX.AS.CODE_Main_Build</string>
-        <string>OpenStack/KX.AS.CODE_Worker_Build</string>
-        <string>Parallels</string>
-        <string>Parallels/KX.AS.CODE_Main_Build</string>
-        <string>Parallels/KX.AS.CODE_Worker_Build</string>
-        <string>VirtualBox</string>
-        <string>VirtualBox/KX.AS.CODE_Main_Build</string>
-        <string>VirtualBox/KX.AS.CODE_Worker_Build</string>
-        <string>VMWare_Workstation</string>
-        <string>VMWare_Workstation/KX.AS.CODE_Main_Build</string>
-        <string>VMWare_Workstation/KX.AS.CODE_Worker_Build</string>
+        <string>AWS/01_Build_KX.AS.CODE_Main</string>
+        <string>AWS/02_Build_KX.AS.CODE_Worker</string>
+        <string>AWS/03_Run_KX.AS.CODE (VPN)</string>
+        <string>AWS/04_Run_KX.AS.CODE (IP Whitelisting)</string>
+        <string>OpenStack/01_Buid_KX.AS.CODE_Main</string>
+        <string>OpenStack/02_Build_KX.AS.CODE_Worker</string>
+        <string>OpenStack/03_Run_KX.AS.CODE</string>
+        <string>Parallels/01_Build_KX.AS.CODE_Main</string>
+        <string>Parallels/02_Build_KX.AS.CODE_Worker</string>
+        <string>Parallels/03_Run_KX.AS.CODE</string>
+        <string>VirtualBox/01_Build_KX.AS.CODE_Main</string>
+        <string>VirtualBox/02_Build_KX.AS.CODE_Worker</string>
+        <string>VirtualBox/03_Run_KX.AS.CODE</string>
+        <string>VMWare_Workstation/01_Build_KX.AS.CODE_Main</string>
+        <string>VMWare_Workstation/02_Build_KX.AS.CODE_Worker</string>
+        <string>VMWare_Workstation/03_Run_KX.AS.CODE</string>
       </jobNames>
       <jobFilters/>
       <columns/>
@@ -67,5 +71,23 @@
     <excludeClientIPFromCrumb>false</excludeClientIPFromCrumb>
   </crumbIssuer>
   <nodeProperties/>
-  <globalNodeProperties/>
+  <globalNodeProperties>
+    <hudson.slaves.EnvironmentVariablesNodeProperty>
+      <envVars serialization="custom">
+        <unserializable-parents/>
+        <tree-map>
+          <default>
+            <comparator class="hudson.util.CaseInsensitiveComparator" reference="../../../../../../views/com.smartcodeltd.jenkinsci.plugins.buildmonitor.BuildMonitorView/jobNames/comparator"/>
+          </default>
+          <int>3</int>
+          <string>JQ_DARWIN_DOWNLOAD_URL</string>
+          <string>https://github.com/stedolan/jq/releases/download/jq-1.6/jq-osx-amd64</string>
+          <string>JQ_LINUX_DOWNLOAD_URL</string>
+          <string>https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64</string>
+          <string>JQ_WINDOWS_DOWNLOAD_URL</string>
+          <string>https://github.com/stedolan/jq/releases/download/jq-1.6/jq-win64.exe</string>
+        </tree-map>
+      </envVars>
+    </hudson.slaves.EnvironmentVariablesNodeProperty>
+  </globalNodeProperties>
 </hudson>

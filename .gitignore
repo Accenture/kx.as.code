@@ -43,3 +43,4 @@ amazon-corretto*
 /profiles/terraform-openstack-demo1/hosts_file_entries.txt
 /base-vm/build/jenkins/docker-compose
 /base-vm/build/jenkins/jenkins.env
+/base-vm/build/jenkins/mo

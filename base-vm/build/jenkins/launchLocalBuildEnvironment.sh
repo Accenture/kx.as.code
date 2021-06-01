@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -x
 
 # Define ansi colours
 red="\033[31m"
@@ -27,19 +27,16 @@ case $(uname -s) in
       echo -e "${blue}- [INFO] Script running on Linux. Setting appropriate download links${nc}"
       dockerComposeInstallerUrl= "https://github.com/docker/compose/releases/download/${composeDownloadVersion}/docker-compose-Linux-x86_64"
       javaInstallerUrl="https://d3pxv6yz143wms.cloudfront.net/${javaDownloadVersion}/amazon-corretto-${javaDownloadVersion}-linux-x64.tar.gz"
-      sedCommand="sed -i"
       ;;
     Darwin)
       echo -e "${blue}- [INFO] Script running on Darwin. Setting appropriate download links${nc}"
       dockerComposeInstallerUrl="https://github.com/docker/compose/releases/download/${composeDownloadVersion}/docker-compose-Darwin-x86_64"
       javaInstallerUrl="https://d3pxv6yz143wms.cloudfront.net/${javaDownloadVersion}/amazon-corretto-${javaDownloadVersion}-macosx-x64.tar.gz"
-      sedCommand="sed -i ''"
       ;;
     *)
       echo -e "${blue}- [INFO] Script running on Windows. Setting appropriate download links${nc}"
       dockerComposeInstallerUrl="https://github.com/docker/compose/releases/download/${composeDownloadVersion}/docker-compose-Windows-x86_64.exe"
       javaInstallerUrl="https://d3pxv6yz143wms.cloudfront.net/${javaDownloadVersion}/amazon-corretto-${javaDownloadVersion}-windows-x64.zip"
-      sedCommand="sed -i"
       ;;
 esac
 
@@ -153,8 +150,28 @@ if [ ! -d ${JENKINS_HOME} ]; then
     # If / at start, assume provided directory is already absolute and use it
     WORKDIR_ABSOLUTE_PATH=${WORKING_DIRECTORY}
   fi
-  ${sedCommand} 's;{{WORKING_DIRECTORY}};'${WORKDIR_ABSOLUTE_PATH}';g' ${JENKINS_HOME}/nodes/local/config.xml
+  if [[ "$(uname)" == "Darwin" ]]; then
+    sed -i '' 's;{{WORKING_DIRECTORY}};'${WORKDIR_ABSOLUTE_PATH}';g' ${JENKINS_HOME}/nodes/local/config.xml
+  else
+    $sed -i 's;{{WORKING_DIRECTORY}};'${WORKDIR_ABSOLUTE_PATH}';g' ${JENKINS_HOME}/nodes/local/config.xml
+  fi
 fi
+
+# Replace variable placeholders in Jenkins jobs
+OLD_IFS=${IFS}
+IFS=$'\n'
+# Download tool for replacing mustache variables
+if [[ ! -f ./mo ]]; then
+  curl -sSL https://git.io/get-mo -o mo
+  chmod +x ./mo
+fi
+initialSetupJobConfgXmlFiles=$(find jenkins_home/jobs -name "config.xml")
+for initialSetupJobConfgXmlFile in ${initialSetupJobConfgXmlFiles}
+do
+  echo "Replacing placeholders with values in ${initialSetupJobConfgXmlFile}"
+  cat ${initialSetupJobConfgXmlFile} | ./mo | tee ${initialSetupJobConfgXmlFile}
+done
+IFS=${OLD_IFS}
 
 # Start Jenkins
 jenkinsContainer=$(docker ps -a -f "name=jenkins" -q)
@@ -165,50 +182,62 @@ else
 fi
 
 # Downloading Jenkins CLI used for creating Jenkins credentials
-if [[ ! -f ./jenkins-cli.jar ]]; then
-  echo -e "${orange}- [INFO] The next steps - downloading Jar files from Jenkins - might take a few minutes, as Jenkins needs to finish coming up before it will work${nc}"
-  echo -e "${blue}- [INFO] Waiting for jenkins-cli.jar to become available...${nc}"
+echo -e "${orange}- [INFO] The next steps - downloading Jar files from Jenkins - might take a few minutes, as Jenkins needs to finish coming up before it will work${nc}"
+echo -e "${blue}- [INFO] Waiting for jenkins-cli.jar to become available...${nc}"
+while [[ ! -f ./jenkins-cli.jar ]]
+do
   for i in {1..60}
   do
     http_code=$(curl -s -o /dev/null -L -w '%{http_code}' ${JENKINS_URL}/jnlpJars/jenkins-cli.jar)
     if [[ "${http_code}" == "200" ]]; then
       curl -s ${JENKINS_URL}/jnlpJars/jenkins-cli.jar -o jenkins-cli.jar
-      break
+      break 2
     fi
-    echo -e "${blue}- [INFO] Waiting for ${JENKINS_URL}/jnlpJars/jenkins-cli.jar${nc}"
-    sleep 15
+    echo -e "${blue}- [INFO] Waiting for ${JENKINS_URL}/jnlpJars/jenkins-cli.jar [RC=${http_code}]${nc}"
+    sleep 30
   done
-else
-  echo -e "${blue}- [INFO] Jenkins jenkins-cli.jar already downloaded, continuing...${nc}"
-fi
+done
 
 # Check if Jenkins CLI is now available, if not exit script with error
 if [[ ! -f ./jenkins-cli.jar ]]; then
-  echo -e "${red}- [ERROR] Jenkins jenkins-cli.jar is still not available even after 15 minutes. It should not take this long for Jenkins to start... ${nc}"
+  echo -e "${red}- [ERROR] Jenkins jenkins-cli.jar is still not available even after 30 minutes. It should not take this long for Jenkins to start... ${nc}"
   exit 1
 fi
 
 # Downloading Jenkins agent
-if [[ ! -f ./agent.jar ]]; then
-  echo -e "${blue}- [INFO] Waiting for agent.jar to become available...${nc}"
+echo -e "${blue}- [INFO] Waiting for agent.jar to become available...${nc}"
+while [[ ! -f ./agent.jar ]]
+do
   for i in {1..60}
   do
     http_code=$(curl -s -o /dev/null -L -w '%{http_code}' ${JENKINS_URL}/jnlpJars/agent.jar)
     if [[ "${http_code}" == "200" ]]; then
       curl -s ${JENKINS_URL}/jnlpJars/agent.jar -o agent.jar
-      break
+      break 2
     fi
-    echo -e "${blue}- [INFO] Waiting for ${JENKINS_URL}/jnlpJars/agent.jar${nc}"
-    sleep 15
+    echo -e "${blue}- [INFO] Waiting for ${JENKINS_URL}/jnlpJars/agent.jar [RC=${http_code}]${nc}"
+    sleep 30
   done
-else
-  echo -e "${blue}- [INFO] Jenkins agent.jar already downloaded, continuing...${nc}"
+done
+
+# Check if agent.jar is now available, if not exit script with error
+if [[ ! -f ./agent.jar ]]; then
+  echo -e "${red}- [ERROR] Jenkins agent.jar is still not available even after 30 minutes. It should not take this long for Jenkins to start... ${nc}"
+  exit 1
 fi
 
-# Check if Jenkins CLI is now available, if not exit script with error
-if [[ ! -f ./agent.jar ]]; then
-  echo -e "${red}- [ERROR] Jenkins agent.jar is still not available even after 15 minutes. If you get this, then something weird happened, since jenkins-cli managed to download, but agent.jar didn't... ${nc}"
-fi
+# In case jars already existed, add an additional check to wait for RC200
+echo -e "${blue}- [INFO] Waiting for Jenkins to be fully up before continuing...${nc}"
+for i in {1..60}
+do
+  http_code=$(curl -s -o /dev/null -L -w '%{http_code}' ${JENKINS_URL}/view/Status/)
+  if [[ "${http_code}" == "200" ]]; then
+    echo "${green}- [INFO] Jenkins is up, continuing with setting up the build & deploy environment${nc}"
+    break
+  fi
+  echo -e "${blue}- [INFO] Waiting for ${JENKINS_URL}/view/Status/ [RC=${http_code}]${nc}"
+  sleep 30
+done
 
 # Check that docker-compose.yml is available on the current path
 if [ ! -f ./docker-compose.yml ]; then
@@ -224,18 +253,32 @@ else
   error="true"
 fi
 
-# Creating Openstack credentials in Jenkins
-if [[ -n ${OPENSTACK_USERNAME}  ]] && [[ -n ${OPENSTACK_PASSWORD} ]]; then
-  cat initial-setup/credential_openstack_packer.xml  | sed 's/{{OPENSTACK_USERNAME}}/'${OPENSTACK_USERNAME}'/g' | sed 's/{{OPENSTACK_PASSWORD}}/'${OPENSTACK_PASSWORD}'/g' |  java -jar jenkins-cli.jar -s ${JENKINS_URL} create-credentials-by-xml system::system::jenkins _
+# Creating Openstack Packer credentials in Jenkins
+if [[ -n ${OPENSTACK_PACKER_USERNAME}  ]] && [[ -n ${OPENSTACK_PACKER_PASSWORD} ]]; then
+  cat initial-setup/credential_openstack_packer.xml  | sed 's/{{OPENSTACK_PACKER_USERNAME}}/'${OPENSTACK_PACKER_USERNAME}'/g' | sed 's/{{OPENSTACK_PACKER_PASSWORD}}/'${OPENSTACK_PACKER_PASSWORD}'/g' |  java -jar jenkins-cli.jar -s ${JENKINS_URL} create-credentials-by-xml system::system::jenkins _
 else
-  echo -e "${orange}- [WARN] Openstack credentials not set in jenkins.env. Dummy value will be used for user and password. You can update these manually later in Jenkins, or updated jenkins.env and launch this script again${nc}"
+  echo -e "${orange}- [WARN] Openstack Packer credentials not set in jenkins.env. Dummy value will be used for user and password. You can update these manually later in Jenkins, or updated jenkins.env and launch this script again${nc}"
 fi
 
-# Creating AWS credentials in Jenkins
-if [[ -n ${PACKER_AWS_ACCESS_KEY} ]] && [[ -n ${PACKER_AWS_ACCESS_SECRET} ]]; then
-  cat initial-setup/credential_aws_packer.xml  | sed 's/{{PACKER_AWS_ACCESS_KEY}}/'${PACKER_AWS_ACCESS_KEY}'/g' | sed 's/{{PACKER_AWS_ACCESS_SECRET}}/'${PACKER_AWS_ACCESS_SECRET}'/g' |  java -jar jenkins-cli.jar -s ${JENKINS_URL} create-credentials-by-xml system::system::jenkins _
+# Creating AWS Packer credentials in Jenkins
+if [[ -n ${PACKER_AWS_PACKER_ACCESS_KEY} ]] && [[ -n ${PACKER_AWS_PACKER_ACCESS_SECRET} ]]; then
+  cat initial-setup/credential_aws_packer.xml  | sed 's/{{PACKER_AWS_PACKER_ACCESS_KEY}}/'${PACKER_AWS_PACKER_ACCESS_KEY}'/g' | sed 's/{{PACKER_AWS_PACKER_ACCESS_SECRET}}/'${PACKER_AWS_PACKER_ACCESS_SECRET}'/g' |  java -jar jenkins-cli.jar -s ${JENKINS_URL} create-credentials-by-xml system::system::jenkins _
 else
-  echo -e "${orange}- [WARN] AWS credentials not set in jenkins.env. Dummy value will be used for user and password. You can update these manually later in Jenkins, or updated jenkins.env and launch this script again${nc}"
+  echo -e "${orange}- [WARN] AWS Packer credentials not set in jenkins.env. Dummy value will be used for user and password. You can update these manually later in Jenkins, or updated jenkins.env and launch this script again${nc}"
+fi
+
+# Creating Openstack Terraform credentials in Jenkins
+if [[ -n ${OPENSTACK_TERRAFORM_USERNAME}  ]] && [[ -n ${OPENSTACK_TERRAFORM_PASSWORD} ]]; then
+  cat initial-setup/credential_openstack_terraform.xml  | sed 's/{{OPENSTACK_TERRAFORM_USERNAME}}/'${OPENSTACK_TERRAFORM_USERNAME}'/g' | sed 's/{{OPENSTACK_TERRAFORM_PASSWORD}}/'${OPENSTACK_TERRAFORM_PASSWORD}'/g' |  java -jar jenkins-cli.jar -s ${JENKINS_URL} create-credentials-by-xml system::system::jenkins _
+else
+  echo -e "${orange}- [WARN] Openstack Terraform credentials not set in jenkins.env. Dummy value will be used for user and password. You can update these manually later in Jenkins, or updated jenkins.env and launch this script again${nc}"
+fi
+
+# Creating AWS Terraform credentials in Jenkins
+if [[ -n ${PACKER_AWS_TERRAFORM_ACCESS_KEY} ]] && [[ -n ${PACKER_AWS_TERRAFORM_ACCESS_SECRET} ]]; then
+  cat initial-setup/credential_aws_terraform.xml  | sed 's/{{PACKER_AWS_TERRAFORM_ACCESS_KEY}}/'${PACKER_AWS_TERRAFORM_ACCESS_KEY}'/g' | sed 's/{{PACKER_AWS_TERRAFORM_ACCESS_SECRET}}/'${PACKER_AWS_TERRAFORM_ACCESS_SECRET}'/g' |  java -jar jenkins-cli.jar -s ${JENKINS_URL} create-credentials-by-xml system::system::jenkins _
+else
+  echo -e "${orange}- [WARN] AWS Terraform credentials not set in jenkins.env. Dummy value will be used for user and password. You can update these manually later in Jenkins, or updated jenkins.env and launch this script again${nc}"
 fi
 
 # Checking if Vagrant is installed
