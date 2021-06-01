@@ -53,7 +53,7 @@ echo "- [INFO] Set jq download link to: ${jqInstallerUrl}"
 
 # Check if Docker-Compose is installed
 dockerComposeBinaryWhich=$(which docker-compose | sed 's;docker-compose not found;;g')
-dockerComposeBinaryLocal=$(find ./ -executable -type f \( -name "docker-compose" -or -name "docker-compose.exe"\))
+dockerComposeBinaryLocal=$(find ./ -type f \( -name "docker-compose" -or -name "docker-compose.exe"\))
 dockerComposeBinary=${dockerComposeBinaryWhich:-${dockerComposeBinaryLocal}}
 echo "${dockerComposeBinary}"
 if [[ -z "${dockerComposeBinary}" ]]; then
@@ -81,7 +81,7 @@ fi
 
 # Check if jq is installed
 jqBinaryWhich=$(which jq | sed 's;jq not found;;g')
-jqBinaryLocal=$(find ./ -executable -type f \( -name "jq" -or -name "jq.exe"\))
+jqBinaryLocal=$(find ./ -type f \( -name "jq" -or -name "jq.exe"\))
 jqBinary=${jqBinaryWhich:-${jqBinaryLocal}}
 echo "${jqBinary}"
 if [[ -z "${jqBinary}" ]]; then
@@ -127,9 +127,9 @@ if [[ -z ${dockerInstalled} ]]; then
 fi
 
 # Check if Java is installed
-#javaBinary=${$(which java | sed 's;java not found;;g'):-$(find ./java/**/bin/ -executable -type f \( -name "java" -or -name "java.exe" ! -name "*.dll" \))}
+#javaBinary=${$(which java | sed 's;java not found;;g'):-$(find ./java/**/bin/ -type f \( -name "java" -or -name "java.exe" ! -name "*.dll" \))}
 javaBinaryWhich=$(which java | sed 's;java not found;;g')
-javaBinaryLocal=$(find ./java/**/bin/ -executable -type f \( -name "java" -or -name "java.exe" ! -name "*.dll" \))
+javaBinaryLocal=$(find ./java/**/bin/ -type f \( -name "java" -or -name "java.exe" ! -name "*.dll" \))
 javaBinary=${javaBinaryWhich:-${javaBinaryLocal}}
 echo ${javaBinary}
 if [[ -z "${javaBinary}" ]]; then
@@ -158,7 +158,7 @@ if [[ -z "${javaBinary}" ]]; then
       echo -e "${blue}- [INFO] The downloaded Java compressed zip file seems to be complete. Extracting files and continuing${nc}"
       unzip amazon-corretto-11-x64-linux-jdk.zip -d ./java
     fi
-    javaBinary=$(find ./java/**/bin/ -executable -type f \( -name "java" -or -name "java.exe" ! -name "*.dll" \))
+    javaBinary=$(find ./java/**/bin/ -type f \( -name "java" -or -name "java.exe" ! -name "*.dll" \))
     if [[ -z ${javaBinary} ]]; then
       echo -e "${red}[ERROR] Java not found and could not be downloaded/installed. Exiting${nc}"
       exit 1
