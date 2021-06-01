@@ -101,7 +101,7 @@
           <trim>false</trim>
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
-          <name>ssh_username</name>
+          <name>vagrant_ssh_username</name>
           <description>SSH user used during packer build process</description>
           <defaultValue>{{vagrant_ssh_username}}</defaultValue>
           <trim>false</trim>
