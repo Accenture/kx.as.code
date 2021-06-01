@@ -14,6 +14,6 @@
     </workDirSettings>
     <webSocket>false</webSocket>
   </launcher>
-  <label>packer</label>
+  <label>local</label>
   <nodeProperties/>
 </slave>
