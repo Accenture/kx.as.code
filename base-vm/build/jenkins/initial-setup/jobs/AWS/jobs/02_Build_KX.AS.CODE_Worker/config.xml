@@ -19,7 +19,7 @@
         <string>aws_ssh_interface</string>
         <string>github_repo_url</string>
         <string>kx_version</string>
-        <string>kx_hostname</string>
+        <string>kx_worker_hostname</string>
         <string>aws_vpc_subnet_id</string>
         <string>github_source_branch</string>
         <string>aws_ami_groups</string>
@@ -86,9 +86,9 @@
           <trim>false</trim>
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
-          <name>kx_hostname</name>
-          <description>KX.AS.CODE main node hostname</description>
-          <defaultValue>{{kx_hostname}}</defaultValue>
+          <name>kx_worker_hostname</name>
+          <description>KX.AS.CODE worker node hostname</description>
+          <defaultValue>{{kx_worker_hostname}}</defaultValue>
           <trim>false</trim>
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
