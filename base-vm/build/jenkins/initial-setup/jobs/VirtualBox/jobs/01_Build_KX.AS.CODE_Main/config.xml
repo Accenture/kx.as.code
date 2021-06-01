@@ -14,7 +14,7 @@
         <string>kx_vm_user</string>
         <string>kx_vm_password</string>
         <string>github_repo_url</string>
-        <string>vagrant_kx_compute_engine_build</string>
+        <string>vagrant_compute_engine_build</string>
         <string>git_docs_branch</string>
         <string>git_techradar_branch</string>
         <string>kx_version</string>
@@ -83,9 +83,9 @@
           <trim>false</trim>
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
-          <name>vagrant_kx_compute_engine_build</name>
+          <name>vagrant_compute_engine_build</name>
           <description>Needs to be true for AWS to avoid &apos;grub&apos; changes</description>
-          <defaultValue>{{vagrant_kx_compute_engine_build}}</defaultValue>
+          <defaultValue>{{vagrant_compute_engine_build}}</defaultValue>
           <trim>false</trim>
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
