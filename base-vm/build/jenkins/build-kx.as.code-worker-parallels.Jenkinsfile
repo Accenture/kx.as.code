@@ -11,6 +11,7 @@ node('local') {
         packerOsFolder="darwin-linux"
     } else {
         echo "Running on Windows"
+        os="windows"
         packerOsFolder="windows"
     }
 }

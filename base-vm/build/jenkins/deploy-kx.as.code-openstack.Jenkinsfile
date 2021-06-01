@@ -13,6 +13,7 @@ node('local') {
         jqDownloadUrl="${JQ_LINUX_DOWNLOAD_URL}"
     } else {
         echo "Running on Windows"
+        os="windows"
         packerOsFolder="windows"
         jqDownloadUrl="${JQ_WINDOWS_DOWNLOAD_URL}"
     }
