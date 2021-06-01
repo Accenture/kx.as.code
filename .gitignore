@@ -44,3 +44,6 @@ amazon-corretto*
 /base-vm/build/jenkins/docker-compose
 /base-vm/build/jenkins/jenkins.env
 /base-vm/build/jenkins/mo
+/base-vm/build/jenkins/jenkins_home/
+/base-vm/build/jenkins/jenkins_remote/
+/base-vm/build/jenkins/jenkins-cli.jar
