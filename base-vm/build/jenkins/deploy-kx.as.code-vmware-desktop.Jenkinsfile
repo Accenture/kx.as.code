@@ -13,6 +13,7 @@ node('local') {
         vmWareDiskUtilityPath=""
     } else {
         echo "Running on Windows"
+        os="windows"
         vmWareDiskUtilityPath="c:/Program Files (x86)/VMware/VMware Workstation/vmware-vdiskmanager.exe"
         packerOsFolder="windows"
     }
