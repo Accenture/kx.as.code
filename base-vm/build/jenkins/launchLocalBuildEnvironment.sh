@@ -102,7 +102,7 @@ elif [ -f $(find ./java/**/bin/ -type f \( -name "java.*" ! -name "*.dll" \)) ];
   export PATH=$PATH:$(pwd)/java/bin
   javaBinary=$(find ./java/**/bin/ -type f \( -name "java.*" ! -name "*.dll" \))
 else
-  echo "Java not found and could not be downloaded/installed. Exiting"
+  echo -e "${red}[ERROR] Java not found and could not be downloaded/installed. Exiting${nc}"
   exit 1
 fi
 
@@ -177,7 +177,7 @@ do
        mv "${initialSetupJobConfgXmlFile}_tmp" "${initialSetupJobConfgXmlFile}"
        break
     else
-       echo "${red}- [ERROR] Target config.xml file was empty after mustach replacement. Trying again${nc}"
+       echo -e "${red}- [ERROR] Target config.xml file was empty after mustach replacement. Trying again${nc}"
     fi
   done
 done
@@ -242,7 +242,7 @@ for i in {1..60}
 do
   http_code=$(curl -s -o /dev/null -L -w '%{http_code}' ${JENKINS_URL}/view/Status/)
   if [[ "${http_code}" == "200" ]]; then
-    echo "${green}- [INFO] Jenkins is up, continuing with setting up the build & deploy environment${nc}"
+    echo -e "${green}- [INFO] Jenkins is up, continuing with setting up the build & deploy environment${nc}"
     break
   fi
   echo -e "${blue}- [INFO] Waiting for ${JENKINS_URL}/view/Status/ [RC=${http_code}]${nc}"
@@ -324,10 +324,10 @@ fi
 echo -e "${green}Congratulations! Jenkins for KX.AS.CODE is successfully configured and running. Access Jenkins via the following URL: ${JENKINS_URL}${nc}"
 
 # Start Jenkins Agent
-echo "Connecting the local agent to Jenkins..."
+echo -e "${blue}- [INFO] Connecting the local agent to Jenkins...${nc}"
 if [[ -n "${JNLP_SECRET}" ]]; then
   "${javaBinary}" -jar agent.jar -jnlpUrl ${JENKINS_URL}/computer/${AGENT_NAME}/slave-agent.jnlp -connectTo ${JENKINS_HOST}:${JENKINS_JNLP_PORT} -secret ${JNLP_SECRET} -workDir "${WORKING_DIRECTORY}"
 else
-  echo -e "- [INFO] JNLP_SECRET is not set. This is OK for a local setup. Will try to connect without it. If this was meant, then OK, otherwise add the value to jenkins.env and try again"
+  echo -e "${orange}- [INFO] JNLP_SECRET is not set. This is OK for a local setup. Will try to connect without it. If this was meant, then OK, otherwise add the value to jenkins.env and try again${nc}"
   "${javaBinary}" -jar agent.jar -jnlpUrl ${JENKINS_URL}/computer/${AGENT_NAME}/slave-agent.jnlp -workDir "${WORKING_DIRECTORY}"
 fi
