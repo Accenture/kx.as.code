@@ -20,7 +20,7 @@
         <string>git_docs_branch</string>
         <string>git_techradar_branch</string>
         <string>kx_version</string>
-        <string>kx_hostname</string>
+        <string>kx_main_hostname</string>
         <string>aws_vpc_subnet_id</string>
         <string>git_source_branch</string>
         <string>aws_ami_groups</string>
@@ -100,9 +100,9 @@
           <trim>false</trim>
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
-          <name>kx_hostname</name>
+          <name>kx_main_hostname</name>
           <description>KX.AS.CODE main node hostname</description>
-          <defaultValue>{{kx_hostname}}</defaultValue>
+          <defaultValue>{{kx_main_hostname}}</defaultValue>
           <trim>false</trim>
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
