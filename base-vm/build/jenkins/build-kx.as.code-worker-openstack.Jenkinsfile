@@ -61,7 +61,7 @@ pipeline {
                             -var "github_user=${GITHUB_USER}" \
                             -var "github_token=${GITHUB_TOKEN}" \
                             -var "git_source_branch=${git_source_branch}" \
-                            -var "ssh_username=${openstack_ssh_username}" \
+                            -var "base_image_ssh_user=${openstack_ssh_username}" \
                             -var "openstack_user=${openstack_user}" \
                             -var "openstack_password=${openstack_password}" \
                             -var "openstack_region=${openstack_region}" \

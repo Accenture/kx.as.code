@@ -63,7 +63,7 @@ pipeline {
                         -var "git_source_branch=${git_source_branch}" \
                         -var "git_docs_branch=${git_docs_branch}" \
                         -var "git_techradar_branch=${git_techradar_branch}" \
-                        -var "ssh_username=${vagrant_ssh_username}" \
+                        -var "base_image_ssh_user=${vagrant_ssh_username}" \
                         ./kx.as.code-main-local-profiles.json
                         """
                     }

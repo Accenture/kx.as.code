@@ -74,8 +74,8 @@ pipeline {
                         -var "vpc_id=${aws_vpc_id}" \
                         -var "vpc_subnet_id=${aws_vpc_subnet_id}" \
                         -var "associate_public_ip_address=${aws_associate_public_ip_address}" \
-                        -var "ssh_username=${aws_ssh_interface}" \
-                        -var "ssh_username=${aws_ssh_username}" \
+                        -var "ssh_interface=${aws_ssh_interface}" \
+                        -var "base_image_ssh_user=${aws_ssh_username}" \
                         -var "shutdown_behavior=${aws_shutdown_behavior}" \
                         ./kx.as.code-worker-cloud-profiles.json
                         """
