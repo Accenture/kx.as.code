@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash
 
 # Define ansi colours
 red="\033[31m"
