@@ -153,7 +153,7 @@ if [ ! -d ${JENKINS_HOME} ]; then
   if [[ "$(uname)" == "Darwin" ]]; then
     sed -i '' 's;{{WORKING_DIRECTORY}};'${WORKDIR_ABSOLUTE_PATH}';g' ${JENKINS_HOME}/nodes/local/config.xml
   else
-    $sed -i 's;{{WORKING_DIRECTORY}};'${WORKDIR_ABSOLUTE_PATH}';g' ${JENKINS_HOME}/nodes/local/config.xml
+    sed -i 's;{{WORKING_DIRECTORY}};'${WORKDIR_ABSOLUTE_PATH}';g' ${JENKINS_HOME}/nodes/local/config.xml
   fi
 fi
 
