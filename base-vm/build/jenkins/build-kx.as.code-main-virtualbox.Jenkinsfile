@@ -32,6 +32,22 @@ pipeline {
         NC="\033[0m" // No Color
     }
 
+   parameters {
+        
+        string(name: 'git_repo_url', defaultValue: "https://github.com/Accenture/kx.as.code.git", description: "Source Github repository")
+        string(name: 'git_source_branch', defaultValue: "feature/sso-sonarqube-keycloak", description: "Source Github branch to build from and clone inside VM")
+        string(name: 'git_docs_branch', defaultValue: "main", description: "Docs Github branch to clone")
+        string(name: 'git_techradar_branch', defaultValue: "main", description: "TechRadar Github branch to clone")
+        string(name: 'kx_version', defaultValue: "0.6.7", description: "KX.AS.CODE Version")
+        string(name: 'kx_vm_user', defaultValue: "kx.hero", description: "KX.AS.CODE VM user login")
+        string(name: 'kx_vm_password', defaultValue: "L3arnandshare", description: "KX.AS.CODE VM user login password")
+        string(name: 'vagrant_compute_engine_build', defaultValue: "false", description: "Needs to be true for AWS to avoid 'grub' changes")
+        string(name: 'kx_main_hostname', defaultValue: "kx-main", description: "KX.AS.CODE VM main node hostname")
+        string(name: 'kx_domain', defaultValue: "kx-as-code.local", description: "KX.AS.CODE VM local domain")
+        string(name: 'vagrant_ssh_username', defaultValue: "vagrant", description: "SSH user used during packer build process")
+       
+    }
+
     stages {
 
         stage('Clone the repository'){
