@@ -366,7 +366,7 @@ if [[ -z ${ovftoolInstalled} ]]; then
 fi
 
 if [[ "${warning}" = "true" ]]; then
-  echo -e "One or more OPTIONAL components required to successfully build packer images for KX.AS.CODE for VMWARE were missing. Ignore if not building VMware images"
+  echo -e "- [WARN] One or more OPTIONAL components required to successfully build packer images for KX.AS.CODE for VMWARE were missing. Ignore if not building VMware images"
   echo -e "Do you wish to continue anyway?"
   select yn in "Yes" "No"; do
       case $yn in
@@ -377,17 +377,17 @@ if [[ "${warning}" = "true" ]]; then
 fi
 
 if [[ "${error}" = "true" ]]; then
-  echo -e "${error}One or more components required to successfully build packer images for KX.AS.CODE were missing. Please resolve errors and try again"
+  echo -e "${error}- [ERROR] One or more components required to successfully build packer images for KX.AS.CODE were missing. Please resolve errors and try again"
   exit 1
 fi
 
-echo -e "${green}Congratulations! Jenkins for KX.AS.CODE is successfully configured and running. Access Jenkins via the following URL: ${JENKINS_URL}${nc}"
+echo -e "${green}- [INFO] Congratulations! Jenkins for KX.AS.CODE is successfully configured and running. Access Jenkins via the following URL: ${JENKINS_URL}${nc}"
 
 # Start Jenkins Agent
 echo -e "${blue}- [INFO] Connecting the local agent to Jenkins...${nc}"
 if [[ -n "${JNLP_SECRET}" ]]; then
   "${javaBinary}" -jar agent.jar -jnlpUrl ${JENKINS_URL}/computer/${AGENT_NAME}/slave-agent.jnlp -connectTo ${JENKINS_HOST}:${JENKINS_JNLP_PORT} -secret ${JNLP_SECRET} -workDir "${WORKING_DIRECTORY}"
 else
-  echo -e "${orange}- [INFO] JNLP_SECRET is not set. This is OK for a local setup. Will try to connect without it. If this was meant, then OK, otherwise add the value to jenkins.env and try again${nc}"
+  echo -e "${orange}- [INFO] JNLP_SECRET is not set. This is OK for a local setup. If you want to add it, you'll have to configure it manually after everything has started${nc}"
   "${javaBinary}" -jar agent.jar -jnlpUrl ${JENKINS_URL}/computer/${AGENT_NAME}/slave-agent.jnlp -workDir "${WORKING_DIRECTORY}"
 fi
