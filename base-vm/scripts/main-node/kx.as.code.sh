@@ -32,19 +32,19 @@ else
 fi
 
 if [[ -z ${GIT_SOURCE_BRANCH} ]]; then
-  gitSourceBranch="master"
+  gitSourceBranch="main"
 else
   gitSourceBranch="${GIT_SOURCE_BRANCH}"
 fi
 
 if [[ -z ${GIT_DOCS_BRANCH} ]]; then
-  gitDocsBranch="master"
+  gitDocsBranch="main"
 else
   gitDocsBranch="${GIT_DOCS_BRANCH}"
 fi
 
 if [[ -z ${GIT_TECHRADAR_BRANCH} ]]; then
-  gitTechRadarBranch="master"
+  gitTechRadarBranch="main"
 else
   gitTechRadarBranch="${GIT_TECHRADAR_BRANCH}"
 fi
