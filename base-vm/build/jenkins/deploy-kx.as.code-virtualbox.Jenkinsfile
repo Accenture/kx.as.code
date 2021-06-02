@@ -37,7 +37,13 @@ pipeline {
         BLUE="\033[34m"
         NC="\033[0m" // No Color
     }
-
+    parameters {
+        
+        string(name: 'vagrant_action', defaultValue: "up", description: "Selection vagrant action to execute")
+        string(name: 'git_repo_url', defaultValue: "https://github.com/Accenture/kx.as.code.git", description: "Source Github repository")
+        string(name: 'git_source_branch', defaultValue: "feature/sso-sonarqube-keycloak", description: "Source Github branch to build from and clone inside VM")
+        
+    }
     stages {
 
         stage('Clone the repository'){
