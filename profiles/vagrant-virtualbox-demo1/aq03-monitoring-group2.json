@@ -1,0 +1,14 @@
+{
+  "action_queues": {
+    "install": [
+      {
+        "install_folder": "monitoring",
+        "name": "prometheus"
+      },  
+      {
+        "install_folder": "monitoring",
+        "name": "grafana"
+      }
+    ]
+  }
+}
