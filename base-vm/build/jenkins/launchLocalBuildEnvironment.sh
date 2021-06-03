@@ -51,7 +51,7 @@ while getopts :dhrsf opt; do
       -f  [f]ully destroy and rebuild, including ALL built images and ALL KX.AS.CODE virtual machines!
       -h  [h]elp me and show this help text
       -r  [r]ecreate Jenkins jobs with updated parameters. Will keep history
-      -s  [s]op the Jenkins build environment environment
+      -s  [s]op the Jenkins build environment
       -u  [u]ninstall and give me back my disk space\n"""
       ;;
     \?)
