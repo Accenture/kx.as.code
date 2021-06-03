@@ -81,11 +81,11 @@ if [[ "${override_action}" == "recreate" ]] || [[ "${override_action}" == "destr
       echo -e "${red}- [INFO] OK! Proceeding to ${override_action} the KX.AS.CODE Jenkins environment${nc}"
       echo -e "${red}- [INFO] Deleting Jenkins jobs...${nc}"
       rm -rf ./jenkins_home/jobs
+      echo -e "${red}- [INFO] Deleting Docker container...${nc}"
+      docker rm -f jenkins
+      echo -e "${red}- [INFO] Docker container deleted${nc}"
       echo -e "${red}- [INFO] Jenkins jobs deleted${nc}"
       if [[ "${override_action}" == "destroy" ]] || [[ "${override_action}" == "fully-destroy" ]] || [[ "${override_action}" == "uninstall" ]]; then
-        echo -e "${red}- [INFO] Deleting Docker container...${nc}"
-        docker rm -f jenkins
-        echo -e "${red}- [INFO] Docker container deleted${nc}"
         echo -e "${red}- [INFO] Deleting Jenkins image...${nc}"
         docker rmi "$(docker images ${KX_JENKINS_IMAGE} -q)"
         echo -e "${red}- [INFO] Docker image deleted${nc}"
