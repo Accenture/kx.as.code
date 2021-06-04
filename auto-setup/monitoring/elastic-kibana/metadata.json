@@ -53,5 +53,7 @@
     "pre_install_scripts": [
         "generateEncryptionKey.sh"
     ],
-    "post_install_scripts": []
+    "post_install_scripts": [
+        "oauth2.sh"
+    ]
 }

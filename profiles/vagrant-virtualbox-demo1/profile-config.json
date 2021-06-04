@@ -2,9 +2,9 @@
     "config": {
         "vm_properties": {
             "kx_version": "0.7.1",
-            "main_node_cpu_cores": 6,
-            "main_node_memory": 32768,
-            "worker_node_count": 2,
+            "main_node_cpu_cores": 4,
+            "main_node_memory": 8192,
+            "worker_node_count": 0,
             "worker_node_cpu_cores": 4,
             "worker_node_memory": 32768,
             "environment_prefix": "demo1",
