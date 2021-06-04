@@ -15,7 +15,7 @@ fi
 
 # Check the correct number of parameters have been passed
 if [[ ${#1} -gt 2 ]] || [[ -n $2 ]]; then
-  echo -e "${red}- [ERROR] You must provide one parameter only.\n${nc}"
+  echo -e "${red}- [ERROR] You must provide one parameter only\n${nc}"
   ${0} -h
   exit 1
 fi
