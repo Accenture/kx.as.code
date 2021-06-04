@@ -19,12 +19,66 @@ function Blue
     process { Write-Host $_ -ForegroundColor Blue }
 }
 
+$ErrorActionPreference = "SilentlyContinue"
+
 # Settings that will be used for provisioning Jenkins, including credentials etc
-. ./jenkins.env.ps1
+if ( ! ( Test-Path -Path ".\jenkins.env" ) )
+{
+    Write-Output "- [ERROR] Please create the jenkins.env file in the base-vm/build/jenkins folder by copying the template (jenkins.env.template --> jenkins.env), and adding/amending the values" | Red
+    Exit
+}
 
 if ( $args.count -gt 1 ) {
     Write-Output "- [ERROR] You must provide one parameter only" | Red
     Exit
+}
+
+Foreach ($line in (Get-Content -Path "jenkins.env" | Where-Object {$_ -notmatch '^#.*'} | Where-Object {$_ -notmatch '^$'}))
+{
+    # Created for sourcing for this script
+    $line -replace '^', '$' | Add-Content -Path 'jenkins.env.ps1'
+    # Created for using with Docker-Compose
+    $line -replace '^', '$env:' | Add-Content -Path 'jenkins.env.docker-compose.ps1'
+}
+
+. ./jenkins.env.ps1
+
+# Checking Windows specific pre-requisites
+# Git bash must be installed and available, else "sh" will not work in the Jenkins pipeline
+if (Get-Command "c:\Program Files\Git\bin\sh.exe" -ErrorAction SilentlyContinue)
+{
+    if ( Get-Command "sh.exe" -ErrorAction SilentlyContinue )
+    {
+        Write-Output "sh.exe on path. All good" | Green
+        $env:Path += ";c:\Program Files\Git\bin\;c:\Program Files\Git\usr\bin\"
+    } else
+    {
+        Write-Output "sh.exe not on path. Adding it"
+        $env:Path += ";c:\Program Files\Git\bin\;c:\Program Files\Git\usr\bin\"
+        if ( Get-Command "sh.exe" -ErrorAction SilentlyContinue )
+        {
+            Write-Output "sh.exe is now accessible on path. All good" | Green
+        } else {
+            Write-Output "sh.exe is still not accessible on the path. Check that Git Bash is installed correctly and try again" | Red
+            Exit
+        }
+    }
+}
+
+# Create git usr/bin directory if not existing
+if ( ! ( Test-Path -Path "C:\Program Files\git\usr\bin" ) )
+{
+    New-Item -ItemType "directory" -Path "C:\Program Files\git\usr\bin"
+    # Check links are created so Jenkins slave has access to nohup
+    if ( ! ( Test-Path -Path "C:\Program Files\git\usr\bin\nohup.exe" ) ) {
+        & mklink "C:\Program Files\Git\bin\nohup.exe" "C:\Program Files\Git\usr\bin\nohup.exe"
+    }
+    if ( ! ( Test-Path -Path "C:\Program Files\git\usr\bin\msys-2.0.dll" ) ) {
+        & mklink "C:\Program Files\Git\bin\msys-2.0.dll" "C:\Program Files\Git\usr\bin\msys-2.0.dll"
+    }
+    if ( ! ( Test-Path -Path "C:\Program Files\git\usr\bin\msys-iconv-2.dll" ) ) {
+        & mklink "C:\Program Files\Git\bin\msys-iconv-2.dll" "C:\Program Files\Git\usr\bin\msys-iconv-2.dll"
+    }
 }
 
 switch ( $args[0] )
@@ -198,19 +252,13 @@ Foreach-Object {
     Write-Output "Replacing parameters in job XML defintion file $(Write-Output $_.FullName)"
     $filename = $_.FullName
     $tempFilePath = "$filename.tmp"
-    #$content = Get-Content $_.FullName
-    #$pattern = "/{{(.*?)}}/"
     select-string -path $_.FullName -pattern '(?<={{)(.*?)(?=}})' -allmatches  |
             foreach-object {$_.matches} |
             foreach-object {$_.groups[1].value} |
             Select-Object -Unique |
             ForEach-Object {
-                #Write-Output "Found string : $_"
-                #Write-Output "Variable '$((Get-Variable -Name "$($_)").Name)' have a value of $((Get-Variable -Name "$($_)").Value)"
                 (Get-Content -path $filename -Raw) -replace "{{$((Get-Variable -Name "$($_)").Name)}}","$((Get-Variable -Name "$($_)").Value)" | Set-Content -Path $tempFilePath
                 Move-Item -Path $tempFilePath -Destination $filename -Force
-                #Write-Output $tempFilePath
-
             }
             (Get-Content -path $filename -Raw) -replace "base-vm/build/jenkins/","base-vm\build\jenkins\" | Set-Content -Path $tempFilePath
             Move-Item -Path $tempFilePath -Destination $filename -Force
@@ -219,26 +267,20 @@ Foreach-Object {
 
 # Replace mustache variables in local agent xml file
 $firstTwoChars = $WORKING_DIRECTORY.Substring(0,2)
-Write-Output "firstTwoChars: $firstTwoChars"
 $firstChar = $WORKING_DIRECTORY.Substring(0,1)
-Write-Output "firstChar: $firstChar"
 if ( $firstTwoChars -eq ".\" ) {
-    Write-Output "One"
     $WORKDIR_ABSOLUTE_PATH = $WORKING_DIRECTORY.Substring(2)
     $WORKDIR_ABSOLUTE_PATH = "$PSScriptRoot\$WORKDIR_ABSOLUTE_PATH"
 }
 elseif ( $firstChar -ne "\" )
 {
-    Write-Output "Two"
     $WORKDIR_ABSOLUTE_PATH = "$PSScriptRoot\$WORKING_DIRECTORY"
 }
 else
 {
-    Write-Output "Three"
     $WORKDIR_ABSOLUTE_PATH = $WORKING_DIRECTORY
 }
 $WORKING_DIRECTORY = $WORKDIR_ABSOLUTE_PATH -replace "/","\"
-Write-Output $WORKING_DIRECTORY
 
 $filename = ".\jenkins_home\nodes\local\config.xml"
 $tempFilePath = "$filename.tmp"
@@ -248,23 +290,27 @@ select-string -path $filename -pattern '(?<={{)(.*?)(?=}})' -allmatches  |
         foreach-object {$_.groups[1].value} |
         Select-Object -Unique |
         ForEach-Object {
-            Write-Output "Found string : $_"
-            Write-Output "Variable '$((Get-Variable -Name "$($_)").Name)' have a value of $((Get-Variable -Name "$($_)").Value)"
-            (Get-Content -path $filename -Raw) -replace "{{$((Get-Variable -Name "$($_)").Name)}}","$((Get-Variable -Name "$($_)").Value)" | Set-Content -Path $tempFilePath
+            try
+            {
+                Write-Output "Variable '$( (Get-Variable -Name "$( $_ )").Name )' has a value of $( (Get-Variable -Name "$( $_ )").Value )"
+                (Get-Content -path $filename -Raw) -replace "{{$((Get-Variable -Name "$($_)").Name)}}","$((Get-Variable -Name "$($_)").Value)" | Set-Content -Path $tempFilePath
+            } catch {
+                Write-Output "Variable $_ could not be found. Check your jenkins.env file"
+            }
             Move-Item -Path $tempFilePath -Destination $filename -Force
         }
 
 # Check if in a Docker-Machine environment
 if (Get-Command docker-machine.exe -ErrorAction SilentlyContinue)
 {
-    Write-Output "Running on a computer using Docker-Machine. Setting up the environment appropriately" | Blue
+    Write-Output "- [INFO] Running on a computer using Docker-Machine. Setting up the environment appropriately" | Blue
     docker-machine.exe -v
     $dockerMachineStatus = $( & docker-machine.exe status )
     if ( $dockerMachineStatus -ne "Running" ) {
-        Write-Output "Docker-Machine not running. Please start your Docker-Machine environment and try again"
+        Write-Output "- [ERROR] Docker-Machine not running. Please start your Docker-Machine environment and try again" | Red
         Exit
     } else {
-        Write-Output "Docker-Machine is running OK. Proceeding with Jenkins environment setup for KX.AS.CODE"
+        Write-Output "- [INFO] Docker-Machine is running OK. Proceeding with Jenkins environment setup for KX.AS.CODE" | Blue
         $jenkinsUrl = "http://192.168.99.100:8080"
     }
 } else {
@@ -277,6 +323,7 @@ if ( $( & docker ps -a --filter=name=jenkins -q) ) {
     docker start jenkins
 } else {
     Write-Output "Jenkins not yet running. Starting with Docker-Compose.exe"
+    . ./jenkins.env.docker-compose.ps1
     & ${dockerComposeBinary} --env-file ./jenkins.env.ps1 up -d
 }
 
@@ -314,17 +361,18 @@ Get-ChildItem ".\jenkins_home\" -Filter credential_*.xml |
                     foreach-object {$_.groups[1].value} |
                     Select-Object -Unique |
                     ForEach-Object {
-                        Write-Output "Found string : $_"
-                        Write-Output "Variable '$((Get-Variable -Name "$($_)").Name)' have a value of $((Get-Variable -Name "$($_)").Value)"
                         (Get-Content -path $filename -Raw) -replace "{{$((Get-Variable -Name "$($_)").Name)}}","$((Get-Variable -Name "$($_)").Value)" | Set-Content -Path $tempFilePath
                         Move-Item -Path $tempFilePath -Destination $filename -Force
                     }
-            Write-Output "& $javaBinary -jar .\jenkins-cli.jar -s $jenkinsUrl create-credentials-by-xml system::system::jenkins _"
-            $content = Get-Content -Path $filename -Raw
-            Write-Output $content | & $javaBinary -jar .\jenkins-cli.jar -s $jenkinsUrl create-credentials-by-xml system::system::jenkins _
+            Write-Output "Variable replacements for $filename succeeded" | Green
+            try
+            {
+                $content = Get-Content -Path $filename -Raw
+                Write-Output $content | & $javaBinary -jar .\jenkins-cli.jar -s $jenkinsUrl create-credentials-by-xml system::system::jenkins _
+            } catch {
+                Write-Output "Variable replacements for $filename failed. Please make sure the XML credential for $filename is valid" | Red
+            }
         }
 
 # Start Jenkins agent
 & $javaBinary -jar .\agent.jar -jnlpUrl $jenkinsUrl/computer/$AGENT_NAME/slave-agent.jnlp -workDir "$WORKING_DIRECTORY"
-
-

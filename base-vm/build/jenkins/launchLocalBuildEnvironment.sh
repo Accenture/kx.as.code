@@ -53,10 +53,12 @@ while getopts :dhrsf opt; do
       -r  [r]ecreate Jenkins jobs with updated parameters. Will keep history
       -s  [s]op the Jenkins build environment
       -u  [u]ninstall and give me back my disk space\n"""
+      exit 0
       ;;
     \?)
       echo -e "${red}[ERROR] Invalid option: -$OPTARG. Call \"$0 -h\" to display help text\n${nc}" >&2
       ${0} -h
+      exit 1
       ;;
   esac
 done
@@ -80,7 +82,7 @@ if [[ "${override_action}" == "recreate" ]] || [[ "${override_action}" == "destr
   if [[ $REPLY =~ ^[Yy]$ ]]; then
       echo -e "${red}- [INFO] OK! Proceeding to ${override_action} the KX.AS.CODE Jenkins environment${nc}"
       echo -e "${red}- [INFO] Deleting Jenkins jobs...${nc}"
-      rm -rf ./jenkins_home/jobs
+      find ./jenkins_home/jobs -type f -name "config.xml" -exec rm -f {} \;
       echo -e "${red}- [INFO] Deleting Docker container...${nc}"
       docker rm -f jenkins
       echo -e "${red}- [INFO] Docker container deleted${nc}"
