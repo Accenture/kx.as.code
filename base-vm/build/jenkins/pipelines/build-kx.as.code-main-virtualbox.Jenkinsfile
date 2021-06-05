@@ -57,7 +57,7 @@ pipeline {
                 withCredentials([usernamePassword(credentialsId: 'GITHUB_KX.AS.CODE', passwordVariable: 'GITHUB_TOKEN', usernameVariable: 'GITHUB_USER')]) {
                         def packerPath = tool "packer-${os}"
                         if ( "${os}" == "windows" ) {
-                            packerPath = packerPath.replaceAll("\\","\\\\")
+                            packerPath = packerPath.replaceAll("\\\\","/")
                         }
                         sh """
                         cd base-vm/build/packer/${packerOsFolder}
