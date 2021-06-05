@@ -5,13 +5,18 @@ current_dir    = File.dirname(File.expand_path(__FILE__))
 if Vagrant::Util::Platform.windows?
   # Is Windows
   puts "Vagrant launched from windows."
+  VMWARE_DISK_UTILITY="C:\Program Files (x86)\VMware\VMware Workstation\vmware-vdiskmanager.exe"
+
 elsif Vagrant::Util::Platform.darwin?
   # Is Mac
   puts "Vagrant launched from mac."
+  VMWARE_DISK_UTILITY="/Applications/VMware Fusion.app/Contents/Library/vmware-vdiskmanager"
 else
   # Assume WSL for now
   puts "Vagrant launched from other system, maybe WSL?"
 end
+
+puts "VMWARE_DISK_UTILITY: #{VMWARE_DISK_UTILITY}"
 
 file = File.read('profile-config.json')
 profile_config = JSON.parse(file)
@@ -62,10 +67,6 @@ KX_MAIN_BOX_LOCATION = ENV['kxMainBoxLocation'] || profile_config['config']['vm_
 puts "KX_MAIN_BOX_LOCATION: #{KX_MAIN_BOX_LOCATION}"
 KX_WORKER_BOX_LOCATION = ENV['kxWorkerBoxLocation'] || profile_config['config']['vm_properties']['kx_worker_box_location']
 puts "KX_WORKER_BOX_LOCATION: #{KX_WORKER_BOX_LOCATION}"
-
-# VMWare Specific Property for creating additional disks
-VMWARE_DISK_UTILITY = ENV['vmWareDiskUtilityPath'] || profile_config['config']['vm_properties']['vmware_disk_utility']
-puts "VMWARE_DISK_UTILITY: #{VMWARE_DISK_UTILITY}"
 
 # Create shared folder if it does not exist
 if not FileTest::directory?(KX_SYNC_FOLDER_PATH)
