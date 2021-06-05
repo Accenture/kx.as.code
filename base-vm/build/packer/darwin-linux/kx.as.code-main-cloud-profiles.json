@@ -190,11 +190,6 @@
     },
     {
       "type": "file",
-      "source": "../../../dependencies/lightdm_theme",
-      "destination": "{{user `kx_home`}}/workspace/lightdm_theme"
-    },
-    {
-      "type": "file",
       "source": "../../../scripts/main-node",
       "destination": "{{user `kx_home`}}/workspace/scripts"
     },
