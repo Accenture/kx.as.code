@@ -13,9 +13,12 @@ if [ ! -f ./jenkins.env ]; then
   exit 1
 fi
 
+# Source variables in jenkins.env file
+set -a; . ./jenkins.env; set +a
+
 # Check the correct number of parameters have been passed
 if [[ ${#1} -gt 2 ]] || [[ -n $2 ]]; then
-  echo -e "${red}- [ERROR] You must provide one parameter only.\n${nc}"
+  echo -e "${red}- [ERROR] You must provide one parameter only\n${nc}"
   ${0} -h
   exit 1
 fi
@@ -53,10 +56,12 @@ while getopts :dhrsf opt; do
       -r  [r]ecreate Jenkins jobs with updated parameters. Will keep history
       -s  [s]op the Jenkins build environment
       -u  [u]ninstall and give me back my disk space\n"""
+      exit 0
       ;;
     \?)
       echo -e "${red}[ERROR] Invalid option: -$OPTARG. Call \"$0 -h\" to display help text\n${nc}" >&2
       ${0} -h
+      exit 1
       ;;
   esac
 done
@@ -80,7 +85,7 @@ if [[ "${override_action}" == "recreate" ]] || [[ "${override_action}" == "destr
   if [[ $REPLY =~ ^[Yy]$ ]]; then
       echo -e "${red}- [INFO] OK! Proceeding to ${override_action} the KX.AS.CODE Jenkins environment${nc}"
       echo -e "${red}- [INFO] Deleting Jenkins jobs...${nc}"
-      rm -rf ./jenkins_home/jobs
+      find ./jenkins_home/jobs -type f -name "config.xml" -exec rm -f {} \;
       echo -e "${red}- [INFO] Deleting Docker container...${nc}"
       docker rm -f jenkins
       echo -e "${red}- [INFO] Docker container deleted${nc}"
@@ -257,7 +262,7 @@ if [[ -z "${javaBinary}" ]]; then
   fi
 fi
 
-if [ -d ${JENKINS_HOME} ]; then
+if [ -d ${JENKINS_HOME} ] && [[ "${override_action}" != "recreate" ]] && [[ "${override_action}" != "destroy" ]] && [[ "${override_action}" != "fully-destroy" ]]; then
   echo -e "${blue}- [INFO] ${JENKINS_HOME} already exists. Will skip Jenkins setup. Delete or rename ${JENKINS_HOME} if you want to re-install Jenkins${nc}"
 fi
 
@@ -284,7 +289,7 @@ if [[ -z $(docker images ${KX_JENKINS_IMAGE} -q) ]]; then
 fi
 
 # Checking if Jenkins home already exists to avoid overwriting configurations and breaking something
-if [ ! -d "${JENKINS_HOME}/jobs" ]; then
+if [ ! -d "${JENKINS_HOME}/jobs" ] || [[ "${override_action}" == "recreate" ]] || [[ "${override_action}" == "destroy" ]] || [[ "${override_action}" == "fully-destroy" ]]; then
   mkdir -p ${WORKING_DIRECTORY}
   mkdir -p ${JENKINS_HOME}
   cp -R ./initial-setup/* ${JENKINS_HOME}
