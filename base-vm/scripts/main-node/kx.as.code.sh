@@ -4,17 +4,6 @@
 if [[ ! -z $GITHUB_TOKEN ]]; then
   GITHUB_TOKEN_ENCODED=$(python3 -c "import urllib.parse; print(urllib.parse.quote(input()))" <<< "$GITHUB_TOKEN")
 fi
-# Install LightDM theme for login and lock screens
-sudo chown -hR lightdm:lightdm /var/lib/lightdm/
-sudo mkdir -p /usr/share/lightdm-webkit/themes/material
-sudo mv ${INSTALLATION_WORKSPACE}/lightdm_theme/* /usr/share/lightdm-webkit/themes/material
-sudo fc-cache -vf /usr/share/fonts/
-
-# Install to import XFCE panel configuration for kx.hero
-sudo mkdir -p /home/$VM_USER/.config/xfce4/desktop
-sudo wget http://de.archive.ubuntu.com/ubuntu/pool/universe/x/xfpanel-switch/xfpanel-switch_1.0.7-0ubuntu2_all.deb
-sudo dpkg -i xfpanel-switch_1.0.7-0ubuntu2_all.deb
-sudo chown -hR $VM_USER:$VM_USER /home/$VM_USER
 
 # Work-Around to get around the background resetting on reboot bug
 sudo cp /usr/share/backgrounds/background.jpg /usr/share/backgrounds/background.png
@@ -110,7 +99,7 @@ SystemAccount=true
 xkb=de
 EOF'
 
-# Configure Typora to show Welcome message after XFCE login
+# Configure Typora to show Welcome message after login
 sudo -H -i -u $VM_USER sh -c "mkdir -p /home/$VM_USER/.config/Typora/"
 sudo -H -i -u $VM_USER sh -c "echo \"7b22696e697469616c697a655f766572223a22302e392e3936222c226c696e655f656e64696e675f63726c66223a66616c73652c227072654c696e65627265616b4f6e4578706f7274223a747275652c2275756964223a2264336161313134302d623865362d346661612d623563372d373165353233383135313864222c227374726963745f6d6f6465223a747275652c22636f70795f6d61726b646f776e5f62795f64656661756c74223a747275652c226261636b67726f756e64436f6c6f72223a2223303030303030222c22736964656261725f746162223a226f75746c696e65222c22757365547265655374796c65223a66616c73652c2273686f77537461747573426172223a66616c73652c226c617374436c6f736564426f756e6473223a7b2266756c6c73637265656e223a66616c73652c226d6178696d697a6564223a66616c73652c2278223a3533362c2279223a3138322c227769647468223a3830302c22686569676874223a3730307d2c2269734461726b4d6f6465223a747275652c227468656d65223a226769746c61622e637373222c227072657365745f7370656c6c5f636865636b223a2264697361626c6564227d\" > /home/$VM_USER/.config/Typora/profile.data"
 
@@ -181,58 +170,6 @@ KX_HOME='${KX_HOME}'
 SKELDIR=${KX_HOME}/skel
 SHARED_GIT_REPOSITORIES=${KX_HOME}/git
 INSTALLATION_WORKSPACE=${KX_HOME}/workspace
-# Make desktop icon text transparent
-echo """
-style \"xfdesktop-icon-view\" {
-
-XfdesktopIconView::label-alpha = 0
-
-base[NORMAL] = \"#ffffff\"
-base[SELECTED] = \"#5D97D1\"
-base[ACTIVE] = \"#5D97D1\"
-
-fg[NORMAL] = \"#ffffff\"
-fg[SELECTED] = \"#ffffff\"
-fg[ACTIVE] = \"#ffffff\"
-}
-widget_class \"*XfdesktopIconView*\" style \"xfdesktop-icon-view\"
-""" | sudo tee $HOME/.gtkrc-2.0
-sudo chown ${vmUser}:${vmUser} $HOME/.gtkrc-2.0
-# Change Desktop Theme to vimix-dark-doder
-xfconf-query -c xsettings -p /Net/ThemeName -s "vimix-dark-doder"
-# Change icons to Paper theme
-xfconf-query -c xsettings -p /Net/IconThemeName -s Paper
-# Add/Remove desktop icons
-xfconf-query --create --channel xfce4-desktop --property /desktop-icons/file-icons/show-filesystem --type bool --set false
-xfconf-query --create --channel xfce4-desktop --property /desktop-icons/file-icons/show-home --type bool --set true
-xfconf-query --create --channel xfce4-desktop --property /desktop-icons/file-icons/show-trash --type bool --set false
-# Disable feature that causes mouse to get stuck in VirtualBox
-xfconf-query --create --channel xfwm4 --property /general/easy_click --type string --set none
-# Remove top panel
-xfconf-query --create --channel xfce4-panel --property /panels --type int --set 0 --force-array
-# Set Icon Size for Bottom Bar - Panel 2
-xfconf-query --create --channel xfce4-panel --property /panels/panel-2/size --type int --set 48
-# Set Length of Bottom Panel to 85% - Panel 2
-xfconf-query --create --channel xfce4-panel --property /panels/panel-2/length --type int --set 85
-xfconf-query --create --channel xfce4-desktop --property /desktop-icons/file-icons/show-filesystem --type bool --set false
-xfconf-query --create --channel xfce4-desktop --property /desktop-icons/file-icons/show-home --type bool --set true
-xfconf-query --create --channel xfce4-desktop --property /desktop-icons/file-icons/show-trash --type bool --set false
-xfconf-query --create --channel xfce4-desktop --property /desktop-icons/file-icons/show-unknown-removable --type bool --set false
-xfconf-query --create --channel xfce4-power-manager --property /xfce4-power-manager/dpms-enabled --type bool --set false
-xfconf-query --create --channel xfce4-power-manager --property /xfce4-power-manager/blank-on-ac --type int --set 0
-xfconf-query --create --channel xfce4-power-manager --property /xfce4-power-manager/blank-on-battery --type int --set 0
-xfconf-query --create --channel xfce4-power-manager --property /xfce4-power-manager/dpms-enabled --type bool --set false
-xfconf-query --create --channel xfce4-power-manager --property /xfce4-power-manager/dpms-on-ac-off --type int --set 0
-xfconf-query --create --channel xfce4-power-manager --property /xfce4-power-manager/dpms-on-ac-sleep --type int --set 0
-xfconf-query --create --channel xfce4-power-manager --property /xfce4-power-manager/dpms-on-battery-off --type int --set 0
-xfconf-query --create --channel xfce4-power-manager --property /xfce4-power-manager/dpms-on-battery-sleep --type int --set 0
-xfconf-query --create --channel xfce4-power-manager --property /xfce4-power-manager/general-notification --type bool --set false
-xfconf-query --create --channel xfce4-power-manager --property /xfce4-power-manager/lock-screen-suspend-hibernate --type bool --set false
-xfconf-query --create --channel xfce4-power-manager --property /xfce4-power-manager/logind-handle-lid-switch --type bool --set false
-xfconf-query --create --channel xfce4-power-manager --property /xfce4-power-manager/power-button-action --type int --set 0
-xfconf-query --create --channel xfce4-power-manager --property /xfce4-power-manager/presentation-mode --type bool --set false
-xfconf-query --create --channel xfce4-power-manager --property /xfce4-power-manager/show-panel-label --type int --set 0
-xfpanel-switch load ${SKELDIR}/.config/exported-config.tar.bz2 &
 /usr/bin/typora ${SHARED_GIT_REPOSITORIES}/kx.as.code/README.md &
 sudo cp ${SKELDIR}/p10k.zsh $HOME/.p10k.zsh
 sudo cp ${SKELDIR}/zshrc $HOME/.zshrc
