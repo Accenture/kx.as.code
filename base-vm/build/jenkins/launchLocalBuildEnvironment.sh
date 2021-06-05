@@ -13,6 +13,9 @@ if [ ! -f ./jenkins.env ]; then
   exit 1
 fi
 
+# Source variables in jenkins.env file
+set -a; . ./jenkins.env; set +a
+
 # Check the correct number of parameters have been passed
 if [[ ${#1} -gt 2 ]] || [[ -n $2 ]]; then
   echo -e "${red}- [ERROR] You must provide one parameter only\n${nc}"
@@ -259,7 +262,7 @@ if [[ -z "${javaBinary}" ]]; then
   fi
 fi
 
-if [ -d ${JENKINS_HOME} ]; then
+if [ -d ${JENKINS_HOME} ] && [[ "${override_action}" != "recreate" ]] && [[ "${override_action}" != "destroy" ]] && [[ "${override_action}" != "fully-destroy" ]]; then
   echo -e "${blue}- [INFO] ${JENKINS_HOME} already exists. Will skip Jenkins setup. Delete or rename ${JENKINS_HOME} if you want to re-install Jenkins${nc}"
 fi
 
@@ -286,7 +289,7 @@ if [[ -z $(docker images ${KX_JENKINS_IMAGE} -q) ]]; then
 fi
 
 # Checking if Jenkins home already exists to avoid overwriting configurations and breaking something
-if [ ! -d "${JENKINS_HOME}/jobs" ]; then
+if [ ! -d "${JENKINS_HOME}/jobs" ] || [[ "${override_action}" == "recreate" ]] || [[ "${override_action}" == "destroy" ]] || [[ "${override_action}" == "fully-destroy" ]]; then
   mkdir -p ${WORKING_DIRECTORY}
   mkdir -p ${JENKINS_HOME}
   cp -R ./initial-setup/* ${JENKINS_HOME}
