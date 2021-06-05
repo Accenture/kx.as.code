@@ -356,17 +356,17 @@
     {
       "type": "file",
       "source": "../../../dependencies/plymouth_theme",
-      "destination": "{{user `kx_home`}}/workspace//plymouth_theme"
+      "destination": "{{user `kx_home`}}/workspace/plymouth_theme"
     },
     {
       "type": "file",
       "source": "../../../dependencies/user_profile",
-      "destination": "{{user `kx_home`}}/workspace//user_profile"
+      "destination": "{{user `kx_home`}}/workspace/user_profile"
     },
     {
       "type": "file",
       "source": "../../../scripts/worker-node",
-      "destination": "{{user `kx_home`}}/workspace//scripts"
+      "destination": "{{user `kx_home`}}/workspace/scripts"
     },
     {
       "environment_vars": [

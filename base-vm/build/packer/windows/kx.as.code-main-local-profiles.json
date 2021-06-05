@@ -349,22 +349,22 @@
     },
     {
       "type": "file",
-      "source": "../../../dependencies/plymouth_theme/",
+      "source": "../../../dependencies/plymouth_theme",
       "destination": "{{user `kx_home`}}/workspace/plymouth_theme"
     },
     {
       "type": "file",
-      "source": "../../../dependencies/user_profile/",
+      "source": "../../../dependencies/user_profile",
       "destination": "{{user `kx_home`}}/workspace/user_profile"
     },
     {
       "type": "file",
-      "source": "../../../dependencies/lightdm_theme/",
+      "source": "../../../dependencies/lightdm_theme",
       "destination": "{{user `kx_home`}}/workspace/lightdm_theme"
     },
     {
       "type": "file",
-      "source": "../../../scripts/main-node/",
+      "source": "../../../scripts/main-node",
       "destination": "{{user `kx_home`}}/workspace/scripts"
     },
     {
