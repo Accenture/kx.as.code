@@ -57,6 +57,9 @@ pipeline {
                 withCredentials([usernamePassword(credentialsId: 'GITHUB_KX.AS.CODE', passwordVariable: 'GITHUB_TOKEN', usernameVariable: 'GITHUB_USER')]) {
                   withCredentials([usernamePassword(credentialsId: 'OPENSTACK_PACKER_CREDENTIAL', usernameVariable: 'OPENSTACK_USER', passwordVariable: 'OPENSTACK_PASSWORD')]) {
                        def packerPath = tool "packer-${os}"
+                        if ( "${os}" == "windows" ) {
+                            packerPath = packerPath.replaceAll("\\\\","/")
+                        }
                         sh """
                         cd base-vm/build/packer/${packerOsFolder}
                         ${packerPath}/packer build -force -only kx.as.code-main-openstack \

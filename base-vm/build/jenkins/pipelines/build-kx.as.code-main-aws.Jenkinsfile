@@ -62,6 +62,9 @@ pipeline {
                     secretKeyVariable: 'AWS_PACKER_SECRET_ACCESS_KEY'
                   ]]) {
                         def packerPath = tool "packer-${os}"
+                        if ( "${os}" == "windows" ) {
+                            packerPath = packerPath.replaceAll("\\\\","/")
+                        }
                         sh """
                         cd base-vm/build/packer/${packerOsFolder}
                         ${packerPath}/packer build -force -only kx.as.code-main-aws-ami \
