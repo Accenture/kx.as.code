@@ -51,7 +51,7 @@ body {
     background-size: cover;
     background-position: 50%;
     background-color: transparent;
-    border: 1px solid #c0c0c0;
+    border: 0px;
     outline: none;
 }
 .card label {
