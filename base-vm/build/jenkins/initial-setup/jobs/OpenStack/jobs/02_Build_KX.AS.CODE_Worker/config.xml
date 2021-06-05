@@ -34,7 +34,7 @@
   <concurrentBuild>false</concurrentBuild>
   <builders>
     <javaposse.jobdsl.plugin.ExecuteDslScripts plugin="job-dsl@1.77">
-      <targets>base-vm/build/jenkins/job_dsl/build-kx.as.code-worker-openstack.Jenkinsfile</targets>
+      <targets>base-vm/build/jenkins/job_dsl/build_kx_as_code_worker_openstack.groovy</targets>
       <usingScriptText>false</usingScriptText>
       <sandbox>false</sandbox>
       <ignoreExisting>false</ignoreExisting>
