@@ -12,7 +12,7 @@ jobProperties.each {
    println "${it.dump()}"
 }
 
-pipelineJob('VirtualBox/GeneratedJobs/01_Build_KX.AS.CODE_Main') {
+pipelineJob('VirtualBox/GeneratedJobs/03_Run_KX.AS.CODE') {
     definition {
       cps {
         script(readFileFromWorkspace('base-vm/build/jenkins/pipelines/deploy-kx.as.code-vmware-desktop.Jenkinsfile'))

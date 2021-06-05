@@ -3,7 +3,7 @@ import hudson.model.Item
 import hudson.model.Items
 
 def jobProperties
-Item currentJob = Jenkins.instance.getItemByFullName('AWS/GeneratedJobs/01_Build_KX.AS.CODE_Worker')
+Item currentJob = Jenkins.instance.getItemByFullName('AWS/GeneratedJobs/02_Build_KX.AS.CODE_Worker')
 if (currentJob) {
   jobProperties = currentJob.@properties
 }
@@ -12,13 +12,13 @@ jobProperties.each {
    println "${it.dump()}"
 }
 
-pipelineJob('AWS/GeneratedJobs/01_Build_KX.AS.CODE_Worker') {
+pipelineJob('AWS/GeneratedJobs/02_Build_KX.AS.CODE_Worker') {
     definition {
       cps {
         script(readFileFromWorkspace('base-vm/build/jenkins/pipelines/build-kx.as.code-worker-aws.Jenkinsfile'))
         sandbox()
       }
-      queue("AWS/GeneratedJobs/01_Build_KX.AS.CODE_Worker")
+      queue("AWS/GeneratedJobs/02_Build_KX.AS.CODE_Worker")
       if (jobProperties) {
       configure { root ->
         def properties = root / 'properties'
