@@ -348,24 +348,22 @@
       "expect_disconnect": "true"
     },
     {
-      "type": "file",
-      "source": "../../../dependencies/plymouth_theme/",
-      "destination": "{{user `kx_home`}}/workspace/plymouth_theme"
+      "type": "shell-local",
+      "command": "tar -cvzf dependencies_upload.tgz ../../../dependencies/plymouth_theme ../../../dependencies/user_profile ../../../dependencies/lightdm_theme ../../../scripts/main-node"
     },
     {
-      "type": "file",
-      "source": "../../../dependencies/user_profile/",
-      "destination": "{{user `kx_home`}}/workspace/user_profile"
+      "destination": "{{user `kx_home`}}/workspace",
+      "source": "./dependencies_upload.tgz",
+      "type": "file"
     },
     {
-      "type": "file",
-      "source": "../../../dependencies/lightdm_theme/",
-      "destination": "{{user `kx_home`}}/workspace/lightdm_theme"
-    },
-    {
-      "type": "file",
-      "source": "../../../scripts/main-node/",
-      "destination": "{{user `kx_home`}}/workspace/scripts"
+      "inline": [
+        "cd {{user `kx_home`}}/workspace",
+        "tar xvzf ./dependencies_upload.tgz",
+        "rm ./dependencies_upload.tgz",
+        "ls -l"
+      ],
+      "type": "shell"
     },
     {
       "environment_vars": [
