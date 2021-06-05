@@ -4,6 +4,7 @@
 sudo DEBIAN_FRONTEND=noninteractive apt install -y sddm kde-plasma-desktop synaptic dbus-x11 dconf-editor
 
 # Copy files needed for KX.AS.CODE look and file to relevant places
+mkdir -p /usr/share/backgrounds/
 sudo mv ${INSTALLATION_WORKSPACE}/user_profile/images/* /usr/share/backgrounds/
 
 # Set background image
