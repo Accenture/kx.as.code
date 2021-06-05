@@ -103,3 +103,8 @@ Categories=Development;
 sudo cp /usr/share/applications/postman.desktop /home/$VM_USER/Desktop
 sudo chmod 755 /home/$VM_USER/Desktop/postman.desktop
 sudo chown $VM_USER:$VM_USER /home/$VM_USER/Desktop/postman.desktop
+
+# Install NoMachine
+wget https://download.nomachine.com/download/7.0/Linux/nomachine_7.6.2_4_amd64.deb
+sudo apt-get install -y ./nomachine_7.6.2_4_amd64.deb
+rm -f ./nomachine_7.6.2_4_amd64.deb
