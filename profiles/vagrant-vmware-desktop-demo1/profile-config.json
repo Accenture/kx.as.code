@@ -11,7 +11,6 @@
             "kx_sync_folder_path": "./KX_Share",
             "kx_main_box_location": "../../../01_Build_KX.AS.CODE_Main/base-vm/boxes/vmware-desktop-0.6.7/kx.as.code-main-demo-0.6.7.box",
             "kx_worker_box_location": "../../../02_Build_KX.AS.CODE_Worker/base-vm/boxes/vmware-desktop-0.6.7/kx.as.code-worker-demo-0.6.7.box",
-            "vmware_disk_utility": "/Applications/VMware Fusion.app/Contents/Library/vmware-vdiskmanager"
         },
         "allowWorkloadsOnMaster": true,
         "disableSessionTimeout": true,

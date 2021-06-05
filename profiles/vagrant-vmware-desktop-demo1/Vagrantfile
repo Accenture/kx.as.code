@@ -5,7 +5,7 @@ current_dir    = File.dirname(File.expand_path(__FILE__))
 if Vagrant::Util::Platform.windows?
   # Is Windows
   puts "Vagrant launched from windows."
-  VMWARE_DISK_UTILITY="C:\Program Files (x86)\VMware\VMware Workstation\vmware-vdiskmanager.exe"
+  VMWARE_DISK_UTILITY="C:\\Program Files (x86)\\VMware\\VMware Workstation\\vmware-vdiskmanager.exe"
 
 elsif Vagrant::Util::Platform.darwin?
   # Is Mac
