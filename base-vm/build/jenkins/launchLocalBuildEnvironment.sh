@@ -228,7 +228,7 @@ if [[ "${forceJavaInstall}" == "true" ]]; then
 else
   javaBinaryWhich=$(which java | sed 's;java not found;;g')
 fi
-javaBinaryLocal=$(find ./java/**/bin/ -type f \( -name "java" -or -name "java.exe" ! -name "*.dll" \))
+javaBinaryLocal=$(find ./java -type f -name "java" 2>/dev/null)
 javaBinary=${javaBinaryWhich:-${javaBinaryLocal}}
 if [[ -z "${javaBinary}" ]]; then
   javaInstalled=$(${javaBinary} --version 2>/dev/null | head -1 | grep -E ".*([0-9]+)\.([0-9]+)\.([0-9]+).*")
@@ -245,18 +245,9 @@ if [[ -z "${javaBinary}" ]]; then
         exit 1
       fi
       echo -e "${blue}- [INFO] The downloaded Java compressed tar.gz file seems to be complete. Extracting files and continuing${nc}"
-      tar xvzf amazon-corretto-11-x64-linux-jdk.tar.gz -C ./java
-    elif [[ "${ext}" == "zip" ]]; then
-      curl -s -o amazon-corretto-11-x64-linux-jdk.zip -L ${javaInstallerUrl}
-      unzip -t amazon-corretto-11-x64-linux-jdk.zip
-      if [[ $? -ne 0 ]]; then
-        echo -e "${red}- [ERROR] The downloaded Java compressed zip file does not seem to be valid. Please check your internet connection and try again${nc}"
-        exit 1
-      fi
-      echo -e "${blue}- [INFO] The downloaded Java compressed zip file seems to be complete. Extracting files and continuing${nc}"
-      unzip amazon-corretto-11-x64-linux-jdk.zip -d ./java
+      tar xvzf amazon-corretto-11-x64-linux-jdk.tar.gz -C ./java --strip-components=1
     fi
-    javaBinary=$(find ./java/**/bin/ -type f \( -name "java" -or -name "java.exe" ! -name "*.dll" \))
+    javaBinary=$(find ./java -type f -name "java")
     if [[ -z ${javaBinary} ]]; then
       echo -e "${red}[ERROR] Java not found and could not be downloaded/installed. Exiting${nc}"
       exit 1
