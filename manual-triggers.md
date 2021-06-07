@@ -15,9 +15,9 @@ Until that is ready, there is also the possibility to add items to the installat
 |                         Application                          | Category          | Short  Description                         | Install  Command                                             |
 | :----------------------------------------------------------: | ----------------- | ------------------------------------------ | ------------------------------------------------------------ |
 |              ![argocd](images/argocd.png)ArgoCD              | CICD              | Git-Ops                                    | rabbitmqadmin publish exchange=action_workflow  routing_key=pending_queue  payload='{"install_folder":"cicd","name":"argocd","action":"install"}' |
-| ![elasticsearch](images/elasticsearch.png)Elastic ElasticSearch | Monitoring        | Data Store and Search Engine               | rabbitmqadmin publish  exchange=action_workflow routing_key=pending_queue  payload='{"install_folder":"monitoring","name":"elastic-elasticsearch-oss","action":"install"}' |
-|       ![filebeat](images/filebeat.png)Elastic Filebeat       | Monitoring        | Log Aggregation                            | rabbitmqadmin publish  exchange=action_workflow routing_key=pending_queue  payload='{"install_folder":"monitoring","name":"elastic-filebeat-oss","action":"install"}' |
-|          ![kibana](images/kibana.png)Elastic Kibana          | Monitoring        | Monitoring Visualization                   | rabbitmqadmin publish  exchange=action_workflow routing_key=pending_queue  payload='{"install_folder":"monitoring","name":"elastic-kibana-oss","action":"install"} |
+| ![elasticsearch](images/elasticsearch.png)Elastic ElasticSearch | Monitoring        | Data Store and Search Engine               | rabbitmqadmin publish  exchange=action_workflow routing_key=pending_queue  payload='{"install_folder":"monitoring","name":"elastic-elasticsearch","action":"install"}' |
+|       ![filebeat](images/filebeat.png)Elastic Filebeat       | Monitoring        | Log Aggregation                            | rabbitmqadmin publish  exchange=action_workflow routing_key=pending_queue  payload='{"install_folder":"monitoring","name":"elastic-filebeat","action":"install"}' |
+|          ![kibana](images/kibana.png)Elastic Kibana          | Monitoring        | Monitoring Visualization                   | rabbitmqadmin publish  exchange=action_workflow routing_key=pending_queue  payload='{"install_folder":"monitoring","name":"elastic-kibana","action":"install"} |
 |               ![gitea](images/gitea.png)Gitea                | CICD              | Git Repository                             | rabbitmqadmin publish  exchange=action_workflow routing_key=pending_queue  payload='{"install_folder":"cicd","name":"gitea","action":"install"}' |
 |               ![](images/gitlab.png)Gitlab CE                | CICD              | Git Repository and CICD  Pipelines         | rabbitmqadmin publish  exchange=action_workflow routing_key=pending_queue  payload='{"install_folder":"cicd","name":"gitlab-ce","action":"install"}' |
 |          ![gitlab](images/gitlab.png)Gitlab Runner           | CICD              | Gitlab Runner Agent                        | rabbitmqadmin publish  exchange=action_workflow routing_key=pending_queue  payload='{"install_folder":"cicd","name":"gitlab-runner","action":"install"}' |
@@ -166,9 +166,9 @@ rabbitmqadmin publish exchange=action_workflow routing_key=pending_queue payload
 rabbitmqadmin publish exchange=action_workflow routing_key=pending_queue payload='{"install_folder":"monitoring","name":"grafana","action":"install"}'
 rabbitmqadmin publish exchange=action_workflow routing_key=pending_queue payload='{"install_folder":"monitoring","name":"grafana-image-renderer","action":"install"}'
 rabbitmqadmin publish exchange=action_workflow routing_key=pending_queue payload='{"install_folder":"monitoring","name":"graphite","action":"install"}'
-rabbitmqadmin publish exchange=action_workflow routing_key=pending_queue payload='{"install_folder":"monitoring","name":"elastic-elasticsearch-oss","action":"install"}'
-rabbitmqadmin publish exchange=action_workflow routing_key=pending_queue payload='{"install_folder":"monitoring","name":"elastic-kibana-oss","action":"install"}'
-rabbitmqadmin publish exchange=action_workflow routing_key=pending_queue payload='{"install_folder":"monitoring","name":"elastic-filebeat-oss","action":"install"}'
+rabbitmqadmin publish exchange=action_workflow routing_key=pending_queue payload='{"install_folder":"monitoring","name":"elastic-elasticsearch","action":"install"}'
+rabbitmqadmin publish exchange=action_workflow routing_key=pending_queue payload='{"install_folder":"monitoring","name":"elastic-kibana","action":"install"}'
+rabbitmqadmin publish exchange=action_workflow routing_key=pending_queue payload='{"install_folder":"monitoring","name":"elastic-filebeat","action":"install"}'
 ```
 
 

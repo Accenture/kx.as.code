@@ -153,19 +153,19 @@
                 },
                 {
                     "install_folder": "monitoring",
-                    "name": "elastic-apm-oss"
+                    "name": "elastic-apm"
                 },
                 {
                     "install_folder": "monitoring",
-                    "name": "elastic-elasticsearch-oss"
+                    "name": "elastic-elasticsearch"
                 },
                 {
                     "install_folder": "monitoring",
-                    "name": "elastic-filebeat-oss"
+                    "name": "elastic-filebeat"
                 },
                 {
                     "install_folder": "monitoring",
-                    "name": "elastic-kibana-oss"
+                    "name": "elastic-kibana"
                 },
                 {
                     "install_folder": "cicd",
@@ -322,9 +322,9 @@
                         "prometheus",
                         "grafana",
                         "grafana-image-renderer",
-                        "elastic-elasticsearch-oss",
-                        "elastic-kibana-oss",
-                        "elastic-filebeat-oss"
+                        "elastic-elasticsearch",
+                        "elastic-kibana",
+                        "elastic-filebeat"
                     ]
                 },
                 {
@@ -335,9 +335,9 @@
                         "tickstack",
                         "grafana",
                         "grafana-image-renderer",
-                        "elastic-elasticsearch-oss",
-                        "elastic-kibana-oss",
-                        "elastic-filebeat-oss"
+                        "elastic-elasticsearch",
+                        "elastic-kibana",
+                        "elastic-filebeat"
                     ]
                 },
                 {
@@ -345,9 +345,9 @@
                     "group_category": "monitoring",
                     "description": "Kubernetes monitoring with the Tick Stack",
                     "components": [
-                        "elastic-elasticsearch-oss",
-                        "elastic-kibana-oss",
-                        "elastic-filebeat-oss"
+                        "elastic-elasticsearch",
+                        "elastic-kibana",
+                        "elastic-filebeat"
                     ]
                 },
                 {
