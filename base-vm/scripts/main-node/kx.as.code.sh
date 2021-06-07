@@ -5,8 +5,6 @@ if [[ ! -z $GITHUB_TOKEN ]]; then
   GITHUB_TOKEN_ENCODED=$(python3 -c "import urllib.parse; print(urllib.parse.quote(input()))" <<< "$GITHUB_TOKEN")
 fi
 # Install LightDM theme for login and lock screens
-sudo mkdir -p /var/lib/lightdm/.local/share/webkitgtk/
-sudo mv ${INSTALLATION_WORKSPACE}/lightdm_theme/localstorage /var/lib/lightdm/.local/share/webkitgtk/
 sudo chown -hR lightdm:lightdm /var/lib/lightdm/
 sudo mkdir -p /usr/share/lightdm-webkit/themes/material
 sudo mv ${INSTALLATION_WORKSPACE}/lightdm_theme/* /usr/share/lightdm-webkit/themes/material
@@ -32,19 +30,19 @@ else
 fi
 
 if [[ -z ${GIT_SOURCE_BRANCH} ]]; then
-  gitSourceBranch="master"
+  gitSourceBranch="main"
 else
   gitSourceBranch="${GIT_SOURCE_BRANCH}"
 fi
 
 if [[ -z ${GIT_DOCS_BRANCH} ]]; then
-  gitDocsBranch="master"
+  gitDocsBranch="main"
 else
   gitDocsBranch="${GIT_DOCS_BRANCH}"
 fi
 
 if [[ -z ${GIT_TECHRADAR_BRANCH} ]]; then
-  gitTechRadarBranch="master"
+  gitTechRadarBranch="main"
 else
   gitTechRadarBranch="${GIT_TECHRADAR_BRANCH}"
 fi

@@ -40,18 +40,34 @@
         <string>AWS/02_Build_KX.AS.CODE_Worker</string>
         <string>AWS/03_Run_KX.AS.CODE (VPN)</string>
         <string>AWS/04_Run_KX.AS.CODE (IP Whitelisting)</string>
+        <string>AWS/GeneratedJobs/01_Build_KX.AS.CODE_Main</string>
+        <string>AWS/GeneratedJobs/02_Build_KX.AS.CODE_Worker</string>
+        <string>AWS/GeneratedJobs/03_Run_KX.AS.CODE (VPN)</string>
+        <string>AWS/GeneratedJobs/04_Run_KX.AS.CODE (IP Whitelisting)</string>
         <string>OpenStack/01_Buid_KX.AS.CODE_Main</string>
         <string>OpenStack/02_Build_KX.AS.CODE_Worker</string>
         <string>OpenStack/03_Run_KX.AS.CODE</string>
+        <string>OpenStack/GeneratedJobs/01_Buid_KX.AS.CODE_Main</string>
+        <string>OpenStack/GeneratedJobs/02_Build_KX.AS.CODE_Worker</string>
+        <string>OpenStack/GeneratedJobs/03_Run_KX.AS.CODE</string>
         <string>Parallels/01_Build_KX.AS.CODE_Main</string>
         <string>Parallels/02_Build_KX.AS.CODE_Worker</string>
         <string>Parallels/03_Run_KX.AS.CODE</string>
+        <string>Parallels/GeneratedJobs/01_Build_KX.AS.CODE_Main</string>
+        <string>Parallels/GeneratedJobs/02_Build_KX.AS.CODE_Worker</string>
+        <string>Parallels/GeneratedJobs/03_Run_KX.AS.CODE</string>
         <string>VirtualBox/01_Build_KX.AS.CODE_Main</string>
         <string>VirtualBox/02_Build_KX.AS.CODE_Worker</string>
         <string>VirtualBox/03_Run_KX.AS.CODE</string>
+        <string>VirtualBox/GeneratedJobs/01_Build_KX.AS.CODE_Main</string>
+        <string>VirtualBox/GeneratedJobs/02_Build_KX.AS.CODE_Worker</string>
+        <string>VirtualBox/GeneratedJobs/03_Run_KX.AS.CODE</string>
         <string>VMWare_Workstation/01_Build_KX.AS.CODE_Main</string>
         <string>VMWare_Workstation/02_Build_KX.AS.CODE_Worker</string>
         <string>VMWare_Workstation/03_Run_KX.AS.CODE</string>
+        <string>VMWare_Workstation/GeneratedJobs/01_Build_KX.AS.CODE_Main</string>
+        <string>VMWare_Workstation/GeneratedJobs/02_Build_KX.AS.CODE_Worker</string>
+        <string>VMWare_Workstation/GeneratedJobs/03_Run_KX.AS.CODE</string>
       </jobNames>
       <jobFilters/>
       <columns/>
