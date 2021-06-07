@@ -26,7 +26,7 @@ fi
 # Settings that will be used for provisioning Jenkins, including credentials etc
 source ./jenkins.env
 
-while getopts :dhrsf opt; do
+while getopts :dhrsfu opt; do
   case $opt in
     r)
       override_action="recreate"
@@ -222,11 +222,14 @@ if [[ -z ${dockerInstalled} ]]; then
 fi
 
 # Check if Java is installed
-#javaBinary=${$(which java | sed 's;java not found;;g'):-$(find ./java/**/bin/ -type f \( -name "java" -or -name "java.exe" ! -name "*.dll" \))}
-javaBinaryWhich=$(which java | sed 's;java not found;;g')
+if [[ "${forceJavaInstall}" == "true" ]]; then
+  echo -e "${red}- [INFO] Java forced install flag set. Ignoring any locally installed Java and proceeding to download Java for this Jenkins environment${nc}"
+  javaBinaryWhich=""
+else
+  javaBinaryWhich=$(which java | sed 's;java not found;;g')
+fi
 javaBinaryLocal=$(find ./java/**/bin/ -type f \( -name "java" -or -name "java.exe" ! -name "*.dll" \))
 javaBinary=${javaBinaryWhich:-${javaBinaryLocal}}
-echo ${javaBinary}
 if [[ -z "${javaBinary}" ]]; then
   javaInstalled=$(${javaBinary} --version 2>/dev/null | head -1 | grep -E ".*([0-9]+)\.([0-9]+)\.([0-9]+).*")
   if [[ -z ${javaInstalled} ]]; then
