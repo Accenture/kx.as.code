@@ -69,7 +69,7 @@
 
 
 ####################################################################
-    ${goto 6}${voffset 6}${image /vagrant/kxascode_white_logo_conky4.png -s 200x100} 
+    ${goto 6}${voffset 6}${image /usr/share/logos/kxascode_white_logo_conky.png -s 200x100}
 
 
 

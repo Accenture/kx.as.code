@@ -2,7 +2,9 @@
 
 # Copy Skel
 sudo cp -rf ${INSTALLATION_WORKSPACE}/skel/* /home/$VM_USER
+sudo cp -rf ${INSTALLATION_WORKSPACE}/skel/.* /home/$VM_USER
 sudo chown -R $VM_USER:$VM_USER /home/$VM_USER
+sudo chmod -R 755 $VM_USER:$VM_USER /home/$VM_USER/Desktop/*.desktop
 
 # Change screen resolution to more respecable 1920x1200 (default is 800x600)
 sudo bash -c 'cat <<EOF > /etc/X11/xorg.conf
@@ -69,6 +71,26 @@ BACKSPACE="guess"'
 echo -e "\nsource /etc/environment" | sudo tee -a /home/$VM_USER/.bashrc /home/$VM_USER/.zshrc /root/.bashrc /root/.zshrc
 
 # Disable DPMS and Screensaver when user logs in
-echo -e "\nxset s off" | sudo tee -a /home/$VM_USER/.bashrc /home/$VM_USER/.zshrc /root/.bashrc /root/.zshrc
-echo -e "\nxset s noblank" | sudo tee -a /home/$VM_USER/.bashrc /home/$VM_USER/.zshrc /root/.bashrc /root/.zshrc
-echo -e "\nxset -dpms" | sudo tee -a /home/$VM_USER/.bashrc /home/$VM_USER/.zshrc /root/.bashrc /root/.zshrc
+echo -e "\nxset s off" | sudo tee -a /home/$VM_USER/.bashrc /home/$VM_USER/.zshrc
+echo -e "\nxset s noblank" | sudo tee -a /home/$VM_USER/.bashrc /home/$VM_USER/.zshrc
+echo -e "\nxset -dpms" | sudo tee -a /home/$VM_USER/.bashrc /home/$VM_USER/.zshrc
+
+# Hide Vagrant user from Login screen
+echo '''[Autologin]
+Relogin=false
+Session=
+User=
+
+[General]
+HaltCommand=
+RebootCommand=
+
+[Theme]
+Current=debian-theme
+CursorTheme=Adwaita
+
+[Users]
+MaximumUid=60000
+MinimumUid=1000
+HideUsers=vagrant
+''' | sudo tee /etc/sddm.conf
