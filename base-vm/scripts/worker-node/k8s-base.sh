@@ -68,15 +68,3 @@ WantedBy=multi-user.target
 EOF"
 sudo systemctl enable k8s-register-node
 sudo systemctl daemon-reload
-
-# Create SKEL directory for future users
-SKELDIR=${SKELDIR}
-sudo mkdir -p ${SKELDIR}
-sudo cp /home/${VM_USER}/.bashrc ${SKELDIR}
-sudo cp -r /home/${VM_USER}/.local ${SKELDIR}
-sudo cp -r /home/${VM_USER}/.oh-my-zsh ${SKELDIR}
-sudo cp /home/${VM_USER}/.p10k.zsh ${SKELDIR}
-sudo cp /home/${VM_USER}/.profile ${SKELDIR}
-sudo cp /home/${VM_USER}/.tmux.conf ${SKELDIR}
-sudo cp /home/${VM_USER}/.vimrc ${SKELDIR}
-sudo cp /home/${VM_USER}/.zshrc ${SKELDIR}
