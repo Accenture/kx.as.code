@@ -45,9 +45,14 @@
     {
       "environment_vars": [
         "VM_USER={{user `vm_user`}}",
-        "VM_PASSWORD={{user `vm_password`}}"
+        "VM_PASSWORD={{user `vm_password`}}",
+        "KX_HOME={{user `kx_home`}}",
+        "SKELDIR={{user `kx_home`}}/workspace/skel",
+        "SHARED_GIT_REPOSITORIES={{user `kx_home`}}/git",
+        "INSTALLATION_WORKSPACE={{user `kx_home`}}/workspace"
       ],
       "scripts": [
+        "../../../scripts/base/directories.sh",
         "../../../scripts/base/kx-user.sh",
         "../../../scripts/base/update.sh"
       ],
@@ -75,28 +80,25 @@
     },
     {
       "type": "file",
-      "source": "./dependencies/plymouth_theme",
-      "destination": "/home/admin/plymouth_theme"
-    },
-    {
-      "type": "file",
-      "source": "./dependencies/user_profile",
-      "destination": "/home/admin/user_profile"
+      "source": "../../../dependencies/skel",
+      "destination": "{{user `kx_home`}}/workspace/skel"
     },
     {
       "type": "file",
       "source": "../../../scripts/worker-node",
-      "destination": "/home/{{user `base_image_ssh_user`}}/scripts"
+      "destination": "{{user `kx_home`}}/workspace/scripts"
     },
     {
       "environment_vars": [
         "BASE_IMAGE_SSH_USER={{user `base_image_ssh_user`}}",
         "VM_USER={{user `vm_user`}}",
         "VM_PASSWORD={{user `vm_password`}}",
-        "GITHUB_USER={{user `github_user`}}",
-        "GITHUB_TOKEN={{user `github_token`}}",
         "VERSION={{user `version`}}",
-        "COMPUTE_ENGINE_BUILD={{user `compute_engine_build`}}"
+        "COMPUTE_ENGINE_BUILD={{user `compute_engine_build`}}",
+        "KX_HOME={{user `kx_home`}}",
+        "SKELDIR={{user `kx_home`}}/workspace/skel",
+        "SHARED_GIT_REPOSITORIES={{user `kx_home`}}/git",
+        "INSTALLATION_WORKSPACE={{user `kx_home`}}/workspace"
       ],
       "scripts": [
         "../../../scripts/common/motd.sh",
@@ -116,7 +118,11 @@
         "BASE_IMAGE_SSH_USER={{user `base_image_ssh_user`}}",
         "VM_USER={{user `vm_user`}}",
         "VM_PASSWORD={{user `vm_password`}}",
-        "VERSION={{user `version`}}"
+        "VERSION={{user `version`}}",
+        "KX_HOME={{user `kx_home`}}",
+        "SKELDIR={{user `kx_home`}}/workspace/skel",
+        "SHARED_GIT_REPOSITORIES={{user `kx_home`}}/git",
+        "INSTALLATION_WORKSPACE={{user `kx_home`}}/workspace"
       ],
       "scripts": [
         "../../../scripts/worker-node/tools.sh",

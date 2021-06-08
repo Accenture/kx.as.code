@@ -13,7 +13,7 @@ else
 
   # Customize boot splash screen
   sudo apt-get install -y plymouth-themes
-  sudo cp -iRv ${INSTALLATION_WORKSPACE}/plymouth_theme/kx.as.code /usr/share/plymouth/themes/
+  sudo cp -iRv ${INSTALLATION_WORKSPACE}/theme/plymouth/kx.as.code /usr/share/plymouth/themes/
   sudo plymouth-set-default-theme -R kx.as.code
 fi
 

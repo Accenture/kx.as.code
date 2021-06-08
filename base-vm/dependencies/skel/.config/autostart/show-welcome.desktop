@@ -1,0 +1,4 @@
+[Desktop Entry]
+Type=Application
+Name=Welcome-Message
+Exec=/usr/share/kx.as.code/showWelcome.sh

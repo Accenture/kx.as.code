@@ -19,8 +19,8 @@ sudo -H -i -u root sh -c 'yes | sh -c "$(wget -qO- https://raw.githubusercontent
 sudo -H -i -u root sh -c 'git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions'
 sudo -H -i -u root sh -c "git clone --depth=1 https://github.com/romkatv/powerlevel10k.git /root/.oh-my-zsh/custom/themes/powerlevel10k"
 
-sudo cp ${INSTALLATION_WORKSPACE}/user_profile/zsh/p10k.zsh /root/.p10k.zsh
-sudo cp ${INSTALLATION_WORKSPACE}/user_profile/zsh/zshrc /root/.zshrc
+#sudo cp ${INSTALLATION_WORKSPACE}/user_profile/zsh/p10k.zsh /root/.p10k.zsh
+#sudo cp ${INSTALLATION_WORKSPACE}/user_profile/zsh/zshrc /root/.zshrc
 
 echo -e "set rtp+=/usr/local/lib/python3.7/dist-packages/powerline/bindings/vim/\nset laststatus=2\nset t_Co=256" | sudo tee /root/.vimrc
 echo "source /usr/local/lib/python3.7/dist-packages/powerline/bindings/tmux/powerline.conf" | sudo tee /root/.tmux.conf
@@ -31,8 +31,8 @@ sudo -H -i -u $VM_USER sh -c 'yes | sh -c "$(wget -qO- https://raw.githubusercon
 sudo -H -i -u $VM_USER sh -c 'git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions'
 sudo -H -i -u $VM_USER sh -c "git clone --depth=1 https://github.com/romkatv/powerlevel10k.git /home/$VM_USER/.oh-my-zsh/custom/themes/powerlevel10k"
 
-sudo cp ${INSTALLATION_WORKSPACE}/user_profile/zsh/p10k.zsh /home/$VM_USER/.p10k.zsh
-sudo cp ${INSTALLATION_WORKSPACE}/user_profile/zsh/zshrc /home/$VM_USER/.zshrc
+#sudo cp ${INSTALLATION_WORKSPACE}/user_profile/zsh/p10k.zsh /home/$VM_USER/.p10k.zsh
+#sudo cp ${INSTALLATION_WORKSPACE}/user_profile/zsh/zshrc /home/$VM_USER/.zshrc
 
 echo -e "set rtp+=/usr/local/lib/python3.7/dist-packages/powerline/bindings/vim/\nset laststatus=2\nset t_Co=256" | sudo tee /home/$VM_USER/.vimrc
 echo "source /usr/local/lib/python3.7/dist-packages/powerline/bindings/tmux/powerline.conf" | sudo tee /home/$VM_USER/.tmux.conf

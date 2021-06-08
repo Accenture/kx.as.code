@@ -141,64 +141,14 @@ if [[ ${numUsersToCreate} -ne 0 ]]; then
     fi
 
     # Copy all file to user
-    sudo cp -rf /usr/share/kx.as.code/skel/* /home/${userid}/
-    sudo cp -rf /usr/share/kx.as.code/skel/.* /home/${userid}/
+    sudo cp -rf ${installationWorkspace}/skel/* /home/${userid}/
+    sudo cp -rf ${installationWorkspace}/skel/.* /home/${userid}/
     sudo rm -rf /home/${userid}/.cache/sessions
 
-    echo '''
-    [Desktop Entry]
-    Type=Application
-    Name=Welcome-Message
-    Exec=/usr/share/kx.as.code/showWelcome.sh
-    ''' | sudo tee /home/${userid}/.config/autostart/show-welcome.desktop
-    sudo chmod 755 /home/${userid}/.config/autostart/show-welcome.desktop
-
-    # Configure Typora with content list and hidden menu
-    sudo mkdir -p /home/${userid}/.config/Typora/
-    echo "7b22696e697469616c697a655f766572223a22302e392e3936222c226c696e655f656e64696e675f63726c66223a66616c73652c227072654c696e65627265616b4f6e4578706f7274223a747275652c2275756964223a2264336161313134302d623865362d346661612d623563372d373165353233383135313864222c227374726963745f6d6f6465223a747275652c22636f70795f6d61726b646f776e5f62795f64656661756c74223a747275652c226261636b67726f756e64436f6c6f72223a2223303030303030222c22736964656261725f746162223a226f75746c696e65222c22757365547265655374796c65223a66616c73652c2273686f77537461747573426172223a66616c73652c226c617374436c6f736564426f756e6473223a7b2266756c6c73637265656e223a66616c73652c226d6178696d697a6564223a66616c73652c2278223a3533362c2279223a3138322c227769647468223a3830302c22686569676874223a3730307d2c2269734461726b4d6f6465223a747275652c227468656d65223a226769746c61622e637373222c227072657365745f7370656c6c5f636865636b223a2264697361626c6564227d" | sudo tee /home/${userid}/.config/Typora/profile.data
-    sudo mkdir -p /home/${userid}/.config/Typora/conf
-    echo '''
-    /** For advanced users. */
-    {
-      "defaultFontFamily": {
-        "standard": null, //String - Defaults to "Times New Roman".
-        "serif": null, // String - Defaults to "Times New Roman".
-        "sansSerif": null, // String - Defaults to "Arial".
-        "monospace": null // String - Defaults to "Courier New".
-      },
-      "autoHideMenuBar": true, //Boolean - Auto hide the menu bar unless the \`Alt\` key is pressed. Default is false.
-    
-      // Array - Search Service user can access from context menu after a range of text is selected. Each item is formatted as [caption, url]
-      "searchService": [
-        ["Search with Google", "https://google.com/search?q=%s"]
-      ],
-    
-      // Custom key binding, which will override the default ones.
-      "keyBinding": {
-        // for example:
-        // "Always on Top": "Ctrl+Shift+P"
-      },
-    
-      "monocolorEmoji": false, //default false. Only work for Windows
-      "autoSaveTimer" : 3, // Deprecidated, Typora will do auto save automatically. default 3 minutes
-      "maxFetchCountOnFileList": 500,
-      "flags": [] // default [], append Chrome launch flags, e.g: [["disable-gpu"], ["host-rules", "MAP * 127.0.0.1"]]
-    }
-    ''' | sudo tee /home/${userid}/.config/Typora/conf/conf.user.json
-
-    echo '''
-    [org.freedesktop.DisplayManager.AccountsService]
-    BackgroundFile="/usr/share/backgrounds/background.jpg"
-
-    [User]
-    Session=
-    XSession=xfce
-    Icon=/usr/share/pixmaps/faces/digital_avatar.png
-    SystemAccount=false
-
-    [InputSource0]
-    xkb=de
-    ''' | sudo tee /var/lib/AccountsService/users/${userid}
+    # Assign random avatar to user
+    ls /usr/share/avatars/avatar_*.png | sort -R | tail -1 | while read file; do
+        sudo cp -f $file /home/${userid}/.face.icon
+    done
 
     # Loop change ownership to wait for OpenLDAP user to be available for setting ownership
     for i in {1..10}

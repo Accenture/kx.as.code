@@ -1,5 +1,9 @@
 #!/bin/bash -eux
 
+# Copy Skel
+sudo cp -rf ${INSTALLATION_WORKSPACE}/skel/* /home/$VM_USER
+sudo chown -R $VM_USER:$VM_USER /home/$VM_USER
+
 # Change screen resolution to more respecable 1920x1200 (default is 800x600)
 sudo bash -c 'cat <<EOF > /etc/X11/xorg.conf
 Section "Device"
@@ -38,9 +42,15 @@ sudo chown -R $VM_USER:$VM_USER /home/$VM_USER
 # Remove ZSH adding % to output with no new-line character
 echo "export PROMPT_EOL_MARK=''" | sudo tee -a /home/$VM_USER/.zshrc
 
-# Create Avatar Image for KX.Hero user
-sudo cp /usr/share/backgrounds/avatar.png /home/$VM_USER/.face
-sudo chown $VM_USER:$VM_USER /home/$VM_USER/.face
+# Copy avatar images to shared directory
+sudo mkdir -p /usr/share/avatars
+sudo cp -r ${INSTALLATION_WORKSPACE}/theme/avatars /usr/share
+
+# Assign random avatar to kx.hero user
+ls /usr/share/avatars/avatar_*.png | sort -R | tail -1 | while read file; do
+    sudo cp -f $file /home/$VM_USER/.face.icon
+done
+sudo chown $VM_USER:$VM_USER /home/$VM_USER/.face.icon
 
 # Add keyboard layouts so they can be selected from XFCE4 panel
 sudo bash -c 'cat <<EOF > /etc/default/keyboard
@@ -58,3 +68,7 @@ BACKSPACE="guess"'
 # Add load of global variables to bashrc and zshrc
 echo -e "\nsource /etc/environment" | sudo tee -a /home/$VM_USER/.bashrc /home/$VM_USER/.zshrc /root/.bashrc /root/.zshrc
 
+# Disable DPMS and Screensaver when user logs in
+echo -e "\nxset s off" | sudo tee -a /home/$VM_USER/.bashrc /home/$VM_USER/.zshrc /root/.bashrc /root/.zshrc
+echo -e "\nxset s noblank" | sudo tee -a /home/$VM_USER/.bashrc /home/$VM_USER/.zshrc /root/.bashrc /root/.zshrc
+echo -e "\nxset -dpms" | sudo tee -a /home/$VM_USER/.bashrc /home/$VM_USER/.zshrc /root/.bashrc /root/.zshrc
