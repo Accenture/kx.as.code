@@ -1,8 +1,7 @@
 #!/bin/bash -eux
 
 # Copy Skel
-sudo cp -rf ${INSTALLATION_WORKSPACE}/skel/* /home/$VM_USER
-sudo cp -rf ${INSTALLATION_WORKSPACE}/skel/.* /home/$VM_USER
+sudo cp -rf ${INSTALLATION_WORKSPACE}/skel /home/$VM_USER
 sudo chown -R $VM_USER:$VM_USER /home/$VM_USER
 sudo chmod -R 755 $VM_USER:$VM_USER /home/$VM_USER/Desktop/*.desktop
 

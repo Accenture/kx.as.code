@@ -9,7 +9,6 @@ sudo mkdir -p ${SKELDIR}/.ssh
 sudo chmod 700 ${SKELDIR}/.ssh
 
 # Ensure KX.HERO user is in sync
-sudo cp -rf ${SKELDIR}/* /home/${VM_USER}/
-sudo cp -rf ${SKELDIR}/.config/* /home/${VM_USER}/.config/
+sudo cp -rf ${SKELDIR} /home/${VM_USER}
 sudo rm -rf /home/${VM_USER}/.cache/sessions
 sudo chown -R  ${VM_USER}:${VM_USER} /home/${VM_USER}
