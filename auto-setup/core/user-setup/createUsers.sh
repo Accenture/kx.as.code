@@ -141,8 +141,7 @@ if [[ ${numUsersToCreate} -ne 0 ]]; then
     fi
 
     # Copy all file to user
-    sudo cp -rf ${installationWorkspace}/skel/* /home/${userid}/
-    sudo cp -rf ${installationWorkspace}/skel/.* /home/${userid}/
+    sudo cp -rfT ${installationWorkspace}/skel /home/${userid}
     sudo rm -rf /home/${userid}/.cache/sessions
 
     # Assign random avatar to user
