@@ -300,6 +300,11 @@
     },
     {
       "type": "file",
+      "source": "../../../dependencies/theme",
+      "destination": "{{user `kx_home`}}/workspace/theme"
+    },
+    {
+      "type": "file",
       "source": "../../../scripts/worker-node",
       "destination": "{{user `kx_home`}}/workspace/scripts"
     },
