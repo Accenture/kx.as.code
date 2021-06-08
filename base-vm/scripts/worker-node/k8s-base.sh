@@ -7,6 +7,10 @@ KUBEDIR=${INSTALLATION_WORKSPACE}
 sudo mkdir -p ${KUBEDIR}
 sudo chown ${VM_USER}:${VM_USER} ${KUBEDIR}
 
+# Copy Skel
+sudo cp -rf ${INSTALLATION_WORKSPACE}/skel/* /home/$VM_USER
+sudo chown -R $VM_USER:$VM_USER /home/$VM_USER
+
 # Let iptables see bridged traffic
 sudo bash -c 'cat <<EOF > /etc/sysctl.d/k8s.conf
 net.bridge.bridge-nf-call-ip6tables = 1
