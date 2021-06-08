@@ -306,7 +306,7 @@
     },
     {
       "type": "file",
-      "source": "../../../scripts/theme",
+      "source": "../../../dependencies/theme",
       "destination": "{{user `kx_home`}}/workspace/theme"
     },
     {
