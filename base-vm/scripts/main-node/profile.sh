@@ -3,7 +3,7 @@
 # Copy Skel
 sudo cp -rf ${INSTALLATION_WORKSPACE}/skel /home/$VM_USER
 sudo chown -R $VM_USER:$VM_USER /home/$VM_USER
-sudo chmod -R 755 $VM_USER:$VM_USER /home/$VM_USER/Desktop/*.desktop
+sudo chmod -R 755 /home/$VM_USER/Desktop/*.desktop
 
 # Change screen resolution to more respecable 1920x1200 (default is 800x600)
 sudo bash -c 'cat <<EOF > /etc/X11/xorg.conf
