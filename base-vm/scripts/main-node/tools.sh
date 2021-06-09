@@ -13,7 +13,8 @@ sudo apt-get -y install \
     libxss1 \
     fonts-liberation \
     conky-all \
-    bc
+    bc \
+    dbus-x11
 
 # Install Google-Chrome
 wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
