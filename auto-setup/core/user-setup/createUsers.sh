@@ -229,6 +229,3 @@ if [[ ${numUsersToCreate} -ne 0 ]]; then
   done
 fi
 
-# Restart LightDM to show new users on LightDM WebGreeter
-sudo service lightdm restart
-
