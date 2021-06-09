@@ -1,4 +1,0 @@
-[Desktop Entry]
-Type=Application
-Name=K8s-Startup-Status
-Exec=/usr/share/kx.as.code/checkK8sStartup.sh

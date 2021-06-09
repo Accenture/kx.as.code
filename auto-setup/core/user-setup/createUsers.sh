@@ -15,7 +15,7 @@ if [[ ${numUsersToCreate} -ne 0 ]]; then
     firstname=$(jq -r '.config.additionalUsers['$i'].firstname' ${installationWorkspace}/users.json)
     surname=$(jq -r '.config.additionalUsers['$i'].surname' ${installationWorkspace}/users.json)
     email=$(jq -r '.config.additionalUsers['$i'].email' ${installationWorkspace}/users.json)
-    keyboard_language=$(jq -r '.config.additionalUsers['$i'].keyboard_language' ${installationWorkspace}/users.json)
+    defaultUserKeyboardLanguage=$(jq -r '.config.additionalUsers['$i'].keyboard_language' ${installationWorkspace}/users.json)
     userRole=$(jq -r '.config.additionalUsers['$i'].role' ${installationWorkspace}/users.json)
 
     firstnameSubstringLength=$((8-${#surname}))
@@ -143,6 +143,28 @@ if [[ ${numUsersToCreate} -ne 0 ]]; then
     # Copy all file to user
     sudo cp -rfT ${installationWorkspace}/skel /home/${userid}
     sudo rm -rf /home/${userid}/.cache/sessions
+
+    # Set default keyboard language as per users.json
+    keyboardLanguages=""
+    availableLanguages="us de gb fr it es"
+    for language in ${availableLanguages}
+    do
+        if [[ -z ${keyboardLanguages} ]]; then
+            keyboardLanguages="${language}"
+        else
+            if [[ "${language}" == "${defaultUserKeyboardLanguage}" ]]; then
+                keyboardLanguages="${language},${keyboardLanguages}"
+            else
+                keyboardLanguages="${keyboardLanguages},${language}"
+            fi
+        fi
+    done
+
+    echo """[Desktop Entry]
+    Type=Application
+    Name=SetKeyboardLanguage
+    Exec=setxkbmap ${keyboardLanguages} -option grp:alt_shift_toggle
+    """ | sudo tee /home/${userid}/.config/autostart/keyboard-language.desktop
 
     # Assign random avatar to user
     ls /usr/share/avatars/avatar_*.png | sort -R | tail -1 | while read file; do

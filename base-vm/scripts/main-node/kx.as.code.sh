@@ -78,8 +78,7 @@ EOF"
 sudo systemctl enable k8s-initialize-cluster
 sudo systemctl daemon-reload
 
-echo '''
-#!/bin/bash
+echo '''#!/bin/bash
 # Set background image
 qdbus org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript '\''var allDesktops = desktops();print (allDesktops);for (i=0;i<allDesktops.length;i++) {d = allDesktops[i];d.wallpaperPlugin = "org.kde.image";d.currentConfigGroup = Array("Wallpaper", "org.kde.image", "General");d.writeConfig("Image", "file:///usr/share/backgrounds/background.jpg")}'\''
 qdbus org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript '\''var allDesktops = desktops();print (allDesktops);for (i=0;i<allDesktops.length;i++) {d = allDesktops[i];d.currentConfigGroup = Array("org.kde.desktopcontainment", "General");d.writeConfig("arrangement", "1")}'\''
@@ -90,6 +89,32 @@ qdbus org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript '\''va
 
 # Change to dark theme
 lookandfeeltool -a org.kde.breezedark.desktop
+
+# Set default keyboard language as per users.json
+defaultUserKeyboardLanguage=$(jq -r '\''.config.defaultKeyboardLanguage'\'' '${INSTALLATION_WORKSPACE}'/profile-config.json)
+keyboardLanguages=""
+availableLanguages="us de gb fr it es"
+for language in ${availableLanguages}
+do
+    if [[ -z ${keyboardLanguages} ]]; then
+        keyboardLanguages="${language}"
+    else
+        if [[ "${language}" == "${defaultUserKeyboardLanguage}" ]]; then
+            keyboardLanguages="${language},${keyboardLanguages}"
+        else
+            keyboardLanguages="${keyboardLanguages},${language}"
+        fi
+    fi
+done
+
+echo """[Desktop Entry]
+Type=Application
+Name=SetKeyboardLanguage
+Exec=setxkbmap ${keyboardLanguages} -option grp:alt_shift_toggle
+""" | sudo tee /home/${userid}/.config/autostart/keyboard-language.desktop
+
+
+# Correct permissions
 vmUser=$(id -nu)
 vmUserId=$(id -u)
 KX_HOME='${KX_HOME}'
@@ -98,7 +123,13 @@ SHARED_GIT_REPOSITORIES=${KX_HOME}/git
 chmod 755 /home/${vmUser}/.config/autostart/check-k8s.desktop
 chown ${vmUser}:${vmUser} /home/${vmUser}/.config/autostart/check-k8s.desktop
 sudo chmod 777 ${SHARED_GIT_REPOSITORIES}/*
-rm -f $HOME/.config/autostart/show-welcome.desktop
+
+# Switch off screensaver and power management
+xset s off
+xset s noblank
+xset -dpms
+
+#rm -f $HOME/.config/autostart/show-welcome.desktop
 ''' | sudo tee /usr/share/kx.as.code/showWelcome.sh
 
 sudo chmod +x /usr/share/kx.as.code/showWelcome.sh
@@ -162,6 +193,7 @@ StartupNotify=true
 Terminal=false
 Icon=${SHARED_GIT_REPOSITORIES}/kx.as.code/kxascode_logo_white_small.png
 Type=Application
+Categories=Development
 EOF"
 
 # Put CONTRIBUTE Icon on Desktop
@@ -176,10 +208,12 @@ StartupNotify=true
 Terminal=false
 Icon=${SHARED_GIT_REPOSITORIES}/kx.as.code/kxascode_logo_white_small.png
 Type=Application
+Categories=Development
 EOF"
 
 # Give *.desktop files execute permissions
 sudo chmod 755 /home/$VM_USER/Desktop/*.desktop
+sudo cp /home/$VM_USER/Desktop/*.desktop /usr/share/applications
 
 # Create Kubernetes logging and custom scripts directory
 sudo mkdir -p ${INSTALLATION_WORKSPACE}

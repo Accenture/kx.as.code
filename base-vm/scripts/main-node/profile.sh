@@ -45,6 +45,7 @@ sudo chown -R $VM_USER:$VM_USER /home/$VM_USER
 
 # Remove ZSH adding % to output with no new-line character
 echo "export PROMPT_EOL_MARK=''" | sudo tee -a /home/$VM_USER/.zshrc
+echo ". ./p10k.zsh" | sudo tee -a /home/$VM_USER/.zshrc
 
 # Copy avatar images to shared directory
 sudo mkdir -p /usr/share/avatars
@@ -63,7 +64,7 @@ sudo bash -c 'cat <<EOF > /etc/default/keyboard
 # Consult the keyboard(5) manual page.
 
 XKBMODEL="pc105"
-XKBLAYOUT="us,de,gb,fr,it,es"
+XKBLAYOUT="de,us,gb,fr,it,es"
 XKBVARIANT=""
 XKBOPTIONS=""
 
@@ -71,11 +72,6 @@ BACKSPACE="guess"'
 
 # Add load of global variables to bashrc and zshrc
 echo -e "\nsource /etc/environment" | sudo tee -a /home/$VM_USER/.bashrc /home/$VM_USER/.zshrc /root/.bashrc /root/.zshrc
-
-# Disable DPMS and Screensaver when user logs in
-echo -e "\nxset s off" | sudo tee -a /home/$VM_USER/.bashrc /home/$VM_USER/.zshrc
-echo -e "\nxset s noblank" | sudo tee -a /home/$VM_USER/.bashrc /home/$VM_USER/.zshrc
-echo -e "\nxset -dpms" | sudo tee -a /home/$VM_USER/.bashrc /home/$VM_USER/.zshrc
 
 # Hide Vagrant user from Login screen
 echo '''[Autologin]
