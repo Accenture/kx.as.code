@@ -1,6 +1,7 @@
 version: '3.8'
 services:
   jenkins:
+    build: ./initial-setup
     image: ${KX_JENKINS_IMAGE}
     ports:
       - ${JENKINS_SERVER_PORT}:8080

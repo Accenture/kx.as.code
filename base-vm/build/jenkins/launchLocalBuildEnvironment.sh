@@ -7,14 +7,111 @@ orange="\033[33m"
 blue="\033[36m"
 nc="\033[0m" # No Color
 
+# Source the user configured env file before creating the KX.AS.CODE Jenkins environment
 if [ ! -f ./jenkins.env ]; then
   echo -e "${red}- [ERROR] Please create the jenkins.env file in the base-vm/build/jenkins folder by copying the template (jenkins.env.template --> jenkins.env), and adding the details"
-  echo -e "        Additionally, you must cd into the base-vm/build/jenkins directory before launching this script${nc}"
+  exit 1
+fi
+
+# Source variables in jenkins.env file
+set -a; . ./jenkins.env; set +a
+
+# Check the correct number of parameters have been passed
+if [[ ${#1} -gt 2 ]] || [[ -n $2 ]]; then
+  echo -e "${red}- [ERROR] You must provide one parameter only\n${nc}"
+  ${0} -h
   exit 1
 fi
 
 # Settings that will be used for provisioning Jenkins, including credentials etc
 source ./jenkins.env
+
+while getopts :dhrsfu opt; do
+  case $opt in
+    r)
+      override_action="recreate"
+      areYouSureQuestion="Are you sure you want to recreate the jobs in the jenkins environment?"
+      ;;
+    d)
+      override_action="destroy"
+      areYouSureQuestion="Are you sure you want to destroy and rebuild the jenkins environment, losing all history?"
+      ;;
+    f)
+      override_action="fully-destroy"
+      areYouSureQuestion="Are you sure you want to fully destroy and rebuild the jenkins environment, losing all history, virtual-machines and built images?"
+      ;;
+    u)
+      override_action="uninstall"
+      areYouSureQuestion="Are you sure you want to uninstall the jenkins environment?"
+      ;;
+    s)
+      override_action="stop"
+      areYouSureQuestion="Are you sure you want to stop the jenkins environment?"
+      ;;
+    h)
+      echo -e """The $0 script has the following options:
+      -d  [d]estroy and rebuild Jenkins environment. All history is also deleted
+      -f  [f]ully destroy and rebuild, including ALL built images and ALL KX.AS.CODE virtual machines!
+      -h  [h]elp me and show this help text
+      -r  [r]ecreate Jenkins jobs with updated parameters. Will keep history
+      -s  [s]op the Jenkins build environment
+      -u  [u]ninstall and give me back my disk space\n"""
+      exit 0
+      ;;
+    \?)
+      echo -e "${red}[ERROR] Invalid option: -$OPTARG. Call \"$0 -h\" to display help text\n${nc}" >&2
+      ${0} -h
+      exit 1
+      ;;
+  esac
+done
+
+# Stop Jenkins if so desired
+if [[ "${override_action}" == "stop" ]]; then
+  echo -e "${orange}- [WARN] This will not stop the KX.AS.CODE VMs. You need to use the jenkins run job to \"halt\" the environment"
+  echo -e "- [INFO] Stopping the KX.AS.CODE Jenkins environment..."
+  echo -e "- [INFO] Killing the agent..."
+  killall agent.jar
+  echo -e "- [INFO] Jenkins Agent killed"
+  echo -e "- [INFO] Stopping the Docker container..."
+  docker stop jenkins
+  echo -e "- [INFO] Stopped the Jenkins container"
+  exit 0
+fi
+
+if [[ "${override_action}" == "recreate" ]] || [[ "${override_action}" == "destroy" ]] || [[ "${override_action}" == "fully-destroy" ]] || [[ "${override_action}" == "uninstall" ]]; then
+  echo -e "${red}${areYouSureQuestion} [Y/N]${nc} "
+  read REPLY
+  if [[ $REPLY =~ ^[Yy]$ ]]; then
+      echo -e "${red}- [INFO] OK! Proceeding to ${override_action} the KX.AS.CODE Jenkins environment${nc}"
+      echo -e "${red}- [INFO] Deleting Jenkins jobs...${nc}"
+      find ./jenkins_home/jobs -type f -name "config.xml" -exec rm -f {} \;
+      echo -e "${red}- [INFO] Deleting Docker container...${nc}"
+      docker rm -f jenkins
+      echo -e "${red}- [INFO] Docker container deleted${nc}"
+      echo -e "${red}- [INFO] Jenkins jobs deleted${nc}"
+      if [[ "${override_action}" == "destroy" ]] || [[ "${override_action}" == "fully-destroy" ]] || [[ "${override_action}" == "uninstall" ]]; then
+        echo -e "${red}- [INFO] Deleting Jenkins image...${nc}"
+        docker rmi "$(docker images ${KX_JENKINS_IMAGE} -q)"
+        echo -e "${red}- [INFO] Docker image deleted${nc}"
+        echo -e "${red}- [INFO] Deleting jenkins_home directory...${nc}"
+        rm -rf ./jenkins_home
+        echo -e "${red}- [INFO] jenkins_home deleted${nc}"
+        if [[ "${override_action}" == "fully-destroy" ]]; then
+          echo -e "${red}- [INFO] Deleting jenkins_remote directory...${nc}"
+          rm -rf ./jenkins_remote
+          echo -e "${red}- [INFO] jenkins_remote deleted${nc}"
+        fi
+        echo -e "${red}- [INFO] Deleting downloaded tools...${nc}"
+        rm -rf ./jq ./java ./agent.jar ./jenkins-cli.jar ./mo ./docker-compose
+        echo -e "${red}- [INFO] Downloaded tools deleted${nc}"
+     fi
+     if [[ "${override_action}" == "uninstall" ]]; then
+       echo -e "Uninstall complete"
+       exit 0
+     fi
+  fi
+fi
 
 # Versions that will be downloaded if already installed binaries not found
 composeDownloadVersion=1.29.2
@@ -55,7 +152,6 @@ echo "- [INFO] Set jq download link to: ${jqInstallerUrl}"
 dockerComposeBinaryWhich=$(which docker-compose | sed 's;docker-compose not found;;g')
 dockerComposeBinaryLocal=$(find ./ -type f \( -name "docker-compose" -or -name "docker-compose.exe" \))
 dockerComposeBinary=${dockerComposeBinaryWhich:-${dockerComposeBinaryLocal}}
-echo "${dockerComposeBinary}"
 if [[ -z "${dockerComposeBinary}" ]]; then
     echo -e "${blue}- [INFO] Docker-compose is not installed or not reachable. Downloading from https://docs.docker.com/compose/install/${nc}"
     curl -L -s -o ./docker-compose ${dockerComposeInstallerUrl}
@@ -83,8 +179,7 @@ fi
 jqBinaryWhich=$(which jq | sed 's;jq not found;;g')
 jqBinaryLocal=$(find ./ -type f \( -name "jq" -or -name "jq.exe" \))
 jqBinary=${jqBinaryWhich:-${jqBinaryLocal}}
-echo "${jqBinary}"
-if [[ -z "${jqBinary}" ]]; then
+  if [[ -z "${jqBinary}" ]]; then
     echo -e "${blue}- [INFO] jq is not installed or not reachable. Downloading from https://github.com/stedolan/jq/releases/download/${nc}"
     curl -L -s -o ./jq ${jqInstallerUrl}
     chmod 755 ./jq
@@ -127,11 +222,14 @@ if [[ -z ${dockerInstalled} ]]; then
 fi
 
 # Check if Java is installed
-#javaBinary=${$(which java | sed 's;java not found;;g'):-$(find ./java/**/bin/ -type f \( -name "java" -or -name "java.exe" ! -name "*.dll" \))}
-javaBinaryWhich=$(which java | sed 's;java not found;;g')
-javaBinaryLocal=$(find ./java/**/bin/ -type f \( -name "java" -or -name "java.exe" ! -name "*.dll" \))
+if [[ "${forceJavaInstall}" == "true" ]]; then
+  echo -e "${red}- [INFO] Java forced install flag set. Ignoring any locally installed Java and proceeding to download Java for this Jenkins environment${nc}"
+  javaBinaryWhich=""
+else
+  javaBinaryWhich=$(which java | sed 's;java not found;;g')
+fi
+javaBinaryLocal=$(find ./java -type f -name "java" 2>/dev/null)
 javaBinary=${javaBinaryWhich:-${javaBinaryLocal}}
-echo ${javaBinary}
 if [[ -z "${javaBinary}" ]]; then
   javaInstalled=$(${javaBinary} --version 2>/dev/null | head -1 | grep -E ".*([0-9]+)\.([0-9]+)\.([0-9]+).*")
   if [[ -z ${javaInstalled} ]]; then
@@ -147,18 +245,9 @@ if [[ -z "${javaBinary}" ]]; then
         exit 1
       fi
       echo -e "${blue}- [INFO] The downloaded Java compressed tar.gz file seems to be complete. Extracting files and continuing${nc}"
-      tar xvzf amazon-corretto-11-x64-linux-jdk.tar.gz -C ./java
-    elif [[ "${ext}" == "zip" ]]; then
-      curl -s -o amazon-corretto-11-x64-linux-jdk.zip -L ${javaInstallerUrl}
-      unzip -t amazon-corretto-11-x64-linux-jdk.zip
-      if [[ $? -ne 0 ]]; then
-        echo -e "${red}- [ERROR] The downloaded Java compressed zip file does not seem to be valid. Please check your internet connection and try again${nc}"
-        exit 1
-      fi
-      echo -e "${blue}- [INFO] The downloaded Java compressed zip file seems to be complete. Extracting files and continuing${nc}"
-      unzip amazon-corretto-11-x64-linux-jdk.zip -d ./java
+      tar xvzf amazon-corretto-11-x64-linux-jdk.tar.gz -C ./java --strip-components=1
     fi
-    javaBinary=$(find ./java/**/bin/ -type f \( -name "java" -or -name "java.exe" ! -name "*.dll" \))
+    javaBinary=$(find ./java -type f -name "java")
     if [[ -z ${javaBinary} ]]; then
       echo -e "${red}[ERROR] Java not found and could not be downloaded/installed. Exiting${nc}"
       exit 1
@@ -167,7 +256,7 @@ if [[ -z "${javaBinary}" ]]; then
   fi
 fi
 
-if [ -d ${JENKINS_HOME} ]; then
+if [ -d ${JENKINS_HOME} ] && [[ "${override_action}" != "recreate" ]] && [[ "${override_action}" != "destroy" ]] && [[ "${override_action}" != "fully-destroy" ]]; then
   echo -e "${blue}- [INFO] ${JENKINS_HOME} already exists. Will skip Jenkins setup. Delete or rename ${JENKINS_HOME} if you want to re-install Jenkins${nc}"
 fi
 
@@ -194,7 +283,7 @@ if [[ -z $(docker images ${KX_JENKINS_IMAGE} -q) ]]; then
 fi
 
 # Checking if Jenkins home already exists to avoid overwriting configurations and breaking something
-if [ ! -d ${JENKINS_HOME} ]; then
+if [ ! -d "${JENKINS_HOME}/jobs" ] || [[ "${override_action}" == "recreate" ]] || [[ "${override_action}" == "destroy" ]] || [[ "${override_action}" == "fully-destroy" ]]; then
   mkdir -p ${WORKING_DIRECTORY}
   mkdir -p ${JENKINS_HOME}
   cp -R ./initial-setup/* ${JENKINS_HOME}

@@ -19,7 +19,7 @@ if (!('lightdm' in window)) {
     lightdm.default_language = lightdm.languages[0];
     lightdm.layouts = [
         {
-            name: "us",
+            name: "test",
             short_description: "test description",
             short_description:"really long epic description"
         }
@@ -28,13 +28,13 @@ if (!('lightdm' in window)) {
     lightdm.layout = lightdm.layouts[0];
     lightdm.sessions = [
         {
-            key: "gnome",
-            name: "GNOME",
+            key: "key1",
+            name: "session 1",
             comment: "no comment"
         },
         {
-            key: "kde",
-            name: "KDE",
+            key: "key2",
+            name: "session 2",
             comment: "no comment"
         }
     ];
@@ -52,7 +52,7 @@ if (!('lightdm' in window)) {
             name: "clarkk",
             real_name: "Superman",
             display_name: "Clark Kent",
-            image: "assets/ui/avatar.png",
+            image: "https://d2ffutrenqvap3.cloudfront.net/items/2e312W101Q0R1U2a1Q2k/1756295270.jpg.x160.jpg",
             language: "en_US",
             layout: null,
             session: null,
@@ -62,6 +62,16 @@ if (!('lightdm' in window)) {
             name: "brucew",
             real_name: "Batman",
             display_name: "Bruce Wayne",
+            image: "https://d2ffutrenqvap3.cloudfront.net/items/31411b1L1l1k1M062s1R/OW-blog-Batman.jpg",
+            language: "en_US",
+            layout: null,
+            session: null,
+            logged_in: false
+        },
+        {
+            name: "peterp",
+            real_name:"Spiderman",
+            display_name: "Peter Parker",
             image: "",
             language: "en_US",
             layout: null,
@@ -188,9 +198,3 @@ var _lightdm_mock_get_user = function (username) {
     }
     return user;
 }
-window.show_prompt = function(msg) {
-    console.log(msg);
-};
-window.show_error = function(msg) {
-    console.error(msg);
-};
