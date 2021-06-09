@@ -48,6 +48,8 @@ WORKER_NODE_CPU_CORES = ENV['workerNodeCpuCores'] || profile_config['config']['v
 puts "WORKER_NODE_CPU_CORES: #{WORKER_NODE_CPU_CORES}"
 WORKER_NODE_MEMORY = ENV['WorkerNodeMemory'] || profile_config['config']['vm_properties']['worker_node_memory']
 puts "WORKER_NODE_MEMORY: #{WORKER_NODE_MEMORY}"
+3D_ACCELERATION = ENV['3dAcceleration'] || profile_config['config']['vm_properties']['3d_acceleration']
+puts "WORKER_NODE_MEMORY: #{3D_ACCELERATION}"
 DOCKERHUB_USER = ENV['dockerHubUser'] || profile_config['config']['docker']['dockerhub_username']
 puts "DOCKERHUB_USER: #{DOCKERHUB_USER}"
 DOCKERHUB_EMAIL = ENV['dockerHubEmail'] || profile_config['config']['docker']['dockerhub_email']
@@ -139,7 +141,7 @@ Vagrant.configure("2") do |config|
       v.customize ["modifyvm", :id, "--memory", "#{MAIN_NODE_MEMORY}"]
       v.customize ["modifyvm", :id, "--cpus", "#{MAIN_NODE_CPU_CORES}"]
       v.customize ["modifyvm", :id, "--graphicscontroller", "vmsvga"]
-      v.customize ["modifyvm", :id, "--accelerate3d", "off"]
+      v.customize ["modifyvm", :id, "--accelerate3d", "#{3D_ACCELERATION}"]
       v.customize ["modifyvm", :id, "--vram", "128"]
       v.customize ["setextradata", :id, "CustomVideoMode1", "1920x1200x32"]
       v.customize ["modifyvm", :id, "--nic1", "nat"]
