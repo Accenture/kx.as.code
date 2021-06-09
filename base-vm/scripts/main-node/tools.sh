@@ -77,4 +77,4 @@ sudo apt-get install -y ./nomachine_7.6.2_4_amd64.deb
 rm -f ./nomachine_7.6.2_4_amd64.deb
 
 # Enable Desktop Notifications with "notify-send" from bash scripts
-sudo apt-get install libnotify-bin
+sudo apt-get install -y libnotify-bin
