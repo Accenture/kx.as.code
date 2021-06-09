@@ -66,7 +66,7 @@ pipeline {
                         -var "memory=8192" \
                         -var "cpus=2" \
                         -var "video_memory=128" \
-                        -var "hostname=${kx_worker_hostname}" \
+                        -var "hostname=${kx_main_hostname}" \
                         -var "domain=${kx_domain}" \
                         -var "version=${kx_version}" \
                         -var "vm_user=${kx_vm_user}" \
