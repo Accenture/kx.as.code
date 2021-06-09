@@ -1,4 +1,5 @@
-#!/bin/bash -eux
+#!/bin/bash -x
+set -euo pipefail
 
 echo "==> Installing Parallels tools"
 ls -l "${PARALLELS_TOOLS_GUEST_PATH}"

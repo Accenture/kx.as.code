@@ -1,4 +1,5 @@
-#!/bin/bash -eux
+#!/bin/bash -x
+set -euo pipefail
 
 # Create Ingress for Gitlab
 echo '''

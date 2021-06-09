@@ -1,4 +1,5 @@
-#!/bin/bash -eux
+#!/bin/bash -x
+set -euo pipefail
 
 # Install Self-Signing TLS Certificate Manager
 kubectl apply --validate=false -f https://github.com/jetstack/cert-manager/releases/download/v1.3.1/cert-manager.yaml
@@ -7,7 +8,7 @@ kubectl apply --validate=false -f https://github.com/jetstack/cert-manager/relea
 kubectl rollout status deployment cert-manager-webhook -n ${namespace} --timeout=30m
 
 # Create Cert Manager Self Signing Issuer
-cat <<EOF > ${installationWorkspace}/certificate-issuer.yaml
+cat << EOF > ${installationWorkspace}/certificate-issuer.yaml
 apiVersion: cert-manager.io/v1
 kind: Issuer
 metadata:

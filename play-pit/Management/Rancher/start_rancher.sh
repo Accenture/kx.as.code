@@ -1,4 +1,5 @@
-#!/bin/bash
+#!/bin/bash -x
+set -euo pipefail
 # Add rancher-stable repo in helm
 helm repo add rancher-stable https://releases.rancher.com/server-charts/stable
 # Create namespace cattle-system for rancher

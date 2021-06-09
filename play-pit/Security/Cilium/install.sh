@@ -1,4 +1,5 @@
-#!/bin/bash -eux
+#!/bin/bash -x
+set -euo pipefail
 
 # Install Cilium
 kubectl create -f https://raw.githubusercontent.com/cilium/cilium/1.7.3/install/kubernetes/quick-install.yaml
@@ -14,6 +15,6 @@ helm template hubble \
     --namespace kube-system \
     --set metrics.enabled="{dns,drop,tcp,flow,port-distribution,icmp,http}" \
     --set ui.enabled=true \
-> hubble.yaml
+    > hubble.yaml
 
 kubectl apply -f hubble.yaml

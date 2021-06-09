@@ -1,4 +1,5 @@
-#!/bin/bash -eux
+#!/bin/bash -x
+set -euo pipefail
 
 # Update Debian repositories as default is old
 wget -O - https://download.gluster.org/pub/gluster/glusterfs/8/rsa.pub | sudo apt-key add -

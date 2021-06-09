@@ -1,9 +1,10 @@
-#!/bin/bash -eux
+#!/bin/bash -x
+set -euo pipefail
 
 # Import KX.AS.CODE Wildcard Certificate into Kubernetes
 secretExists=$(kubectl get secret kx.as.code-wildcard-cert -n ${namespace} -o json | jq -r '.metadata.name')
 if [[ -z ${secretExists} ]]; then
-  kubectl create secret generic kx.as.code-wildcard-cert -n ${namespace} --from-file=${installationWorkspace}/kx-certs
+    kubectl create secret generic kx.as.code-wildcard-cert -n ${namespace} --from-file=${installationWorkspace}/kx-certs
 fi
 
 # Check Self-Signed TLS certificate is valid

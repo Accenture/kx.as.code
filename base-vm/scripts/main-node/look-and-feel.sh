@@ -1,4 +1,5 @@
-#!/bin/bash -eux
+#!/bin/bash -x
+set -euo pipefail
 
 # Install KDE-Plasma GUI
 sudo DEBIAN_FRONTEND=noninteractive apt install -y sddm kde-plasma-desktop

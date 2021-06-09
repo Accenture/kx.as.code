@@ -1,4 +1,5 @@
-#!/bin/bash -eux
+#!/bin/bash -x
+set -euo pipefail
 
 export kcRealm=${baseDomain}
 export kcInternalUrl=http://localhost:8080
@@ -7,13 +8,13 @@ export kcPod=$(kubectl get pods -l 'app.kubernetes.io/name=keycloak' -n keycloak
 
 # Set credential token in new Realm
 kubectl -n keycloak exec ${kcPod} -- \
-  ${kcAdmCli} config credentials --server ${kcInternalUrl}/auth --realm ${kcRealm} --user admin --password ${vmPassword} --client admin-cli
+    ${kcAdmCli} config credentials --server ${kcInternalUrl}/auth --realm ${kcRealm} --user admin --password ${vmPassword} --client admin-cli
 
 clientId=$(kubectl -n keycloak exec ${kcPod} -- \
-  ${kcAdmCli} get clients -r ${kcRealm} --fields id,clientId | jq -r '.[] | select(.clientId=="kubernetes") | .id')
+    ${kcAdmCli} get clients -r ${kcRealm} --fields id,clientId | jq -r '.[] | select(.clientId=="kubernetes") | .id')
 
 clientSecret=$(kubectl -n keycloak exec ${kcPod} -- \
-  ${kcAdmCli} get clients/${clientId}/client-secret | jq -r '.value')
+    ${kcAdmCli} get clients/${clientId}/client-secret | jq -r '.value')
 
 # Set variables for oauth-proxy
 cookieSecret=$(python -c 'import os,base64; print(base64.urlsafe_b64encode(os.urandom(16)).decode())')

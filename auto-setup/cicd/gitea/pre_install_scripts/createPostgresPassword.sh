@@ -1,11 +1,12 @@
-#!/bin/bash -eux
+#!/bin/bash -x
+set -euo pipefail
 
 # Create postgresql password or use existing if it already exists
 postgresqlPasswordExists=$(kubectl get secret --namespace ${namespace} gitea-postgresql -o json | jq -r '.data."postgresql-password"')
-if [[ ! -z ${postgresqlPasswordExists} ]]; then
+if [[ -n ${postgresqlPasswordExists}   ]]; then
     export postgresqlPassword=$(echo ${postgresqlPasswordExists} | base64 --decode)
     log_info "Gitea postgresql password already exists. Using that one"
 else
-    export postgresqlPassword=$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${1:-32};echo;)
+    export postgresqlPassword=$(pwgen -1s 32)
     log_info "Gitea postgresql password does not exist. Creating a new one"
 fi

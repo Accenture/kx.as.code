@@ -1,4 +1,5 @@
-#!/bin/bash -eux
+#!/bin/bash -x
+set -euo pipefail
 
 export ldapDn=$(sudo slapcat | grep dn | head -1 | cut -f2 -d' ')
 

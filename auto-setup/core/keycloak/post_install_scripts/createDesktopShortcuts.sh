@@ -1,17 +1,18 @@
-#!/bin/bash -eux
+#!/bin/bash -x
+set -euo pipefail
 
 # if Primary URL[0] in URLs Array exists and Icon is defined, create Desktop Shortcut
 applicationUrls=$(cat ${componentMetadataJson} | jq -r '.urls[]?.url?' | mo)
 primaryUrl=$(echo ${applicationUrls} | cut -f1 -d' ')
 
-if [[ ! -z ${primaryUrl} ]]; then
+if [[ -n ${primaryUrl}   ]]; then
 
     shortcutIcon=$(cat ${componentMetadataJson} | jq -r '.shortcut_icon')
     shortcutText=$(cat ${componentMetadataJson} | jq -r '.shortcut_text')
     iconPath=${installComponentDirectory}/${shortcutIcon}
     browserOptions="" # placeholder
 
-    if [[ ! -z ${primaryUrl} ]] && [[ "${primaryUrl}" != "null" ]] && [[ -f ${iconPath} ]] && [[ ! -z ${shortcutText} ]]; then
+    if [[ -n ${primaryUrl}   ]] && [[ ${primaryUrl} != "null"   ]] && [[ -f ${iconPath} ]] && [[ -n ${shortcutText}   ]]; then
 
         echo """
         [Desktop Entry]

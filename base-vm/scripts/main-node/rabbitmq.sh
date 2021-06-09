@@ -1,4 +1,5 @@
-#!/bin/bash -eux
+#!/bin/bash -x
+set -euo pipefail
 
 # Create plugin list to enable for RabbitMQ
 sudo mkdir -p /etc/rabbitmq
@@ -14,7 +15,7 @@ curl -1sLf https://dl.cloudsmith.io/public/rabbitmq/rabbitmq-erlang/gpg.E495BB49
 curl -1sLf https://dl.cloudsmith.io/public/rabbitmq/rabbitmq-server/gpg.9F4587F226208342.key | sudo apt-key add -
 
 ## Add apt repositories maintained by Team RabbitMQ
-sudo tee /etc/apt/sources.list.d/rabbitmq.list <<EOF
+sudo tee /etc/apt/sources.list.d/rabbitmq.list << EOF
 ## Provides modern Erlang/OTP releases
 ##
 deb https://dl.cloudsmith.io/public/rabbitmq/rabbitmq-erlang/deb/debian buster main

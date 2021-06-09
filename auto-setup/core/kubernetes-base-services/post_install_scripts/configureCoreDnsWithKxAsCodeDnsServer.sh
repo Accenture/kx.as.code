@@ -1,9 +1,10 @@
-#!/bin/bash -eux
+#!/bin/bash -x
+set -euo pipefail
 
-if [[ "${virtualizationType}" == "public-cloud" ]] && [[ "${baseIpType}" == "dynamic" ]];  then
-  dnsServer=$(cat /etc/resolv.conf | grep nameserver | tail -1 | cut -f2 -d' ')
+if [[ ${virtualizationType} == "public-cloud"   ]] && [[ ${baseIpType} == "dynamic"   ]]; then
+    dnsServer=$(cat /etc/resolv.conf | grep nameserver | tail -1 | cut -f2 -d' ')
 else
-  dnsServer=${mainIpAddress}
+    dnsServer=${mainIpAddress}
 fi
 
 # Enable DNS resolution in Kubernetes for *.${baseDomain} domain

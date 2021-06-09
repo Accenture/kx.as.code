@@ -1,4 +1,5 @@
-#!/bin/bash -eux
+#!/bin/bash -x
+set -euo pipefail
 
 # Create directory for storing generated certs
 export elasticStackCertsDir=${installationWorkspace}/elastic-stack-certs
@@ -76,8 +77,8 @@ kubectl -n ${namespace} create secret generic elastic-certificates \
     --from-file=${elasticStackCertsDir}/packetbeat/packetbeat.key
 
 # Create credentials secret
-kubectl get secret elastic-credentials --namespace ${namespace} || \
-kubectl create secret generic elastic-credentials \
-      --from-literal=username=elastic \
-      --from-literal=password=${vmPassword} \
-      --namespace ${namespace}
+kubectl get secret elastic-credentials --namespace ${namespace} ||
+    kubectl create secret generic elastic-credentials \
+        --from-literal=username=elastic \
+        --from-literal=password=${vmPassword} \
+        --namespace ${namespace}

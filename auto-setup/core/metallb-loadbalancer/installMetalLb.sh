@@ -1,4 +1,5 @@
-#!/bin/bash -eux
+#!/bin/bash -x
+set -euo pipefail
 
 # Get MetalLB IP ranges from config
 export metalLbIpRangeStart=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.metalLbIpRange.ipRangeStart')
@@ -9,7 +10,7 @@ curl https://raw.githubusercontent.com/google/metallb/v0.9.3/manifests/metallb.y
 kubectl apply -f ${installationWorkspace}/metallb.yaml
 
 # Create and Apply Metallb Configmap
-cat <<EOF > ${installationWorkspace}/metallb-configmap.yaml
+cat << EOF > ${installationWorkspace}/metallb-configmap.yaml
 apiVersion: v1
 kind: ConfigMap
 metadata:

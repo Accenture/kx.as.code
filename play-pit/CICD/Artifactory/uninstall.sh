@@ -1,4 +1,5 @@
-#!/bin/bash -eux
+#!/bin/bash -x
+set -euo pipefail
 
 # Delete diretories
 rm -rf $HOME/KX_Data/Artifactory

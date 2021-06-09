@@ -1,14 +1,15 @@
-#!/bin/bash -eux
+#!/bin/bash -x
+set -euo pipefail
 
 # UrlEncode GIT password in case of special characters
 if [[ -n $GIT_SOURCE_TOKEN ]]; then
-  GIT_SOURCE_TOKEN_ENCODED=$(python3 -c "import urllib.parse; print(urllib.parse.quote(input()))" <<< "${GIT_SOURCE_TOKEN}")
+    GIT_SOURCE_TOKEN_ENCODED=$(python3 -c "import urllib.parse; print(urllib.parse.quote(input()))" <<< "${GIT_SOURCE_TOKEN}")
 fi
 if [[ -n $GIT_DOCS_TOKEN ]]; then
-  GIT_DOCS_TOKEN_ENCODED=$(python3 -c "import urllib.parse; print(urllib.parse.quote(input()))" <<< "${GIT_DOCS_TOKEN}")
+    GIT_DOCS_TOKEN_ENCODED=$(python3 -c "import urllib.parse; print(urllib.parse.quote(input()))" <<< "${GIT_DOCS_TOKEN}")
 fi
 if [[ -n $GIT_TECHRADAR_TOKEN ]]; then
-  GIT_TECHRADAR_TOKEN_ENCODED=$(python3 -c "import urllib.parse; print(urllib.parse.quote(input()))" <<< "${GIT_TECHRADAR_TOKEN}")
+    GIT_TECHRADAR_TOKEN_ENCODED=$(python3 -c "import urllib.parse; print(urllib.parse.quote(input()))" <<< "${GIT_TECHRADAR_TOKEN}")
 fi
 # Make directories for KX.AS.CODE checkout
 sudo mkdir -p /home/${VM_USER}/Desktop/
@@ -19,39 +20,39 @@ gitDocsUrl=$(echo "${GIT_DOCS_URL}" | sed 's;https://;;g')
 gitTechRadarUrl=$(echo "${GIT_TECHRADAR_URL}" | sed 's;https://;;g')
 
 if [[ -n ${GIT_SOURCE_TOKEN_ENCODED} ]]; then
-  gitSourceCloneUrl="https://${GIT_SOURCE_USER}:${GIT_SOURCE_TOKEN_ENCODED}@${gitSourceUrl}"
+    gitSourceCloneUrl="https://${GIT_SOURCE_USER}:${GIT_SOURCE_TOKEN_ENCODED}@${gitSourceUrl}"
 else
-  gitSourceCloneUrl="https://${gitSourceUrl}"
+    gitSourceCloneUrl="https://${gitSourceUrl}"
 fi
 
 if [[ -n ${GIT_DOCS_TOKEN_ENCODED} ]]; then
-  gitDocsCloneUrl="https://${GIT_DOCS_USER}:${GIT_DOCS_TOKEN_ENCODED}@${gitDocsUrl}"
+    gitDocsCloneUrl="https://${GIT_DOCS_USER}:${GIT_DOCS_TOKEN_ENCODED}@${gitDocsUrl}"
 else
-  gitDocsCloneUrl="https://${gitDocsUrl}"
+    gitDocsCloneUrl="https://${gitDocsUrl}"
 fi
 
 if [[ -n ${GIT_TECHRADAR_TOKEN_ENCODED} ]]; then
-  gitTechRadarCloneUrl="https://${GIT_TECHRADAR_USER}:${GIT_TECHRADAR_TOKEN_ENCODED}@${gitTechRadarUrl}"
+    gitTechRadarCloneUrl="https://${GIT_TECHRADAR_USER}:${GIT_TECHRADAR_TOKEN_ENCODED}@${gitTechRadarUrl}"
 else
-  gitTechRadarCloneUrl="https://${gitTechRadarUrl}"
+    gitTechRadarCloneUrl="https://${gitTechRadarUrl}"
 fi
 
 if [[ -z ${GIT_SOURCE_BRANCH} ]]; then
-  gitSourceBranch="main"
+    gitSourceBranch="main"
 else
-  gitSourceBranch="${GIT_SOURCE_BRANCH}"
+    gitSourceBranch="${GIT_SOURCE_BRANCH}"
 fi
 
 if [[ -z ${GIT_DOCS_BRANCH} ]]; then
-  gitDocsBranch="main"
+    gitDocsBranch="main"
 else
-  gitDocsBranch="${GIT_DOCS_BRANCH}"
+    gitDocsBranch="${GIT_DOCS_BRANCH}"
 fi
 
 if [[ -z ${GIT_TECHRADAR_BRANCH} ]]; then
-  gitTechRadarBranch="main"
+    gitTechRadarBranch="main"
 else
-  gitTechRadarBranch="${GIT_TECHRADAR_BRANCH}"
+    gitTechRadarBranch="${GIT_TECHRADAR_BRANCH}"
 fi
 
 sudo mkdir -p ${SHARED_GIT_REPOSITORIES}
@@ -67,15 +68,15 @@ cd ${SHARED_GIT_REPOSITORIES}/kx.as.code
 sudo git config credential.helper 'cache --timeout=3600'
 
 if [[ -n ${GIT_SOURCE_TOKEN_ENCODED} ]]; then
-  sudo sed -i 's/'${GIT_SOURCE_USER}':'${GIT_SOURCE_TOKEN_ENCODED}'@//g' ${SHARED_GIT_REPOSITORIES}/kx.as.code/.git/config
+    sudo sed -i 's/'${GIT_SOURCE_USER}':'${GIT_SOURCE_TOKEN_ENCODED}'@//g' ${SHARED_GIT_REPOSITORIES}/kx.as.code/.git/config
 fi
 
 if [[ -n ${GIT_DOCS_TOKEN_ENCODED} ]]; then
-  sudo sed -i 's/'${GIT_DOCS_USER}':'${GIT_DOCS_TOKEN_ENCODED}'@//g' ${SHARED_GIT_REPOSITORIES}/kx.as.code_docs/.git/config
+    sudo sed -i 's/'${GIT_DOCS_USER}':'${GIT_DOCS_TOKEN_ENCODED}'@//g' ${SHARED_GIT_REPOSITORIES}/kx.as.code_docs/.git/config
 fi
 
 if [[ -n ${GIT_TECHRADAR_TOKEN_ENCODED} ]]; then
-  sudo sed -i 's/'${GIT_TECHRADAR_USER}':'${GIT_TECHRADAR_TOKEN_ENCODED}'@//g' ${SHARED_GIT_REPOSITORIES}/kx.as.code_techradar/.git/config
+    sudo sed -i 's/'${GIT_TECHRADAR_USER}':'${GIT_TECHRADAR_TOKEN_ENCODED}'@//g' ${SHARED_GIT_REPOSITORIES}/kx.as.code_techradar/.git/config
 fi
 
 # Configure Typora to show Welcome message after login
@@ -118,8 +119,8 @@ while [[ ! $(pgrep plasmashell) ]]; do sleep 2; done
 # Customize desktop
 while [[ -z ${getPlasmaWallpaper} ]];
 do
-  DISPLAY=:0 qdbus org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript '\''var allDesktops = desktops();print (allDesktops);for (i=0;i<allDesktops.length;i++) {d = allDesktops[i];d.wallpaperPlugin = "org.kde.image";d.currentConfigGroup = Array("Wallpaper", "org.kde.image", "General");d.writeConfig("Image", "file:///usr/share/backgrounds/background.jpg")}'\''
-  getPlasmaWallpaper=$(qdbus org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.dumpCurrentLayoutJS | grep "file:///usr/share/backgrounds/background.jpg")
+DISPLAY=:0 qdbus org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript '\''var allDesktops = desktops();print (allDesktops);for (i=0;i<allDesktops.length;i++) {d = allDesktops[i];d.wallpaperPlugin = "org.kde.image";d.currentConfigGroup = Array("Wallpaper", "org.kde.image", "General");d.writeConfig("Image", "file:///usr/share/backgrounds/background.jpg")}'\''
+getPlasmaWallpaper=$(qdbus org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.dumpCurrentLayoutJS | grep "file:///usr/share/backgrounds/background.jpg")
 done
 
 DISPLAY=:0 qdbus org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript '\''var allDesktops = desktops();print (allDesktops);for (i=0;i<allDesktops.length;i++) {d = allDesktops[i];d.currentConfigGroup = Array("org.kde.desktopcontainment", "General");d.writeConfig("arrangement", "1")}'\''
@@ -138,15 +139,15 @@ keyboardLanguages=""
 availableLanguages="us de gb fr it es"
 for language in ${availableLanguages}
 do
-    if [[ -z ${keyboardLanguages} ]]; then
-        keyboardLanguages="${language}"
-    else
-        if [[ "${language}" == "${defaultUserKeyboardLanguage}" ]]; then
-            keyboardLanguages="${language},${keyboardLanguages}"
-        else
-            keyboardLanguages="${keyboardLanguages},${language}"
-        fi
-    fi
+if [[ -z ${keyboardLanguages} ]]; then
+keyboardLanguages="${language}"
+else
+if [[ "${language}" == "${defaultUserKeyboardLanguage}" ]]; then
+keyboardLanguages="${language},${keyboardLanguages}"
+else
+keyboardLanguages="${keyboardLanguages},${language}"
+fi
+fi
 done
 
 echo """[Desktop Entry]
@@ -201,7 +202,7 @@ sudo ln -s "${vendorDocsDirectory}" /home/${VM_USER}/Desktop/
 # Show /etc/motd even when in X-Windows terminal (not SSH)
 echo -e '\n# Added to show KX.AS.CODE MOTD also in X-Windows Terminal (already showing in SSH per default)
 if [ -z $(echo $SSH_TTY) ]; then
- cat /etc/motd | sed -e "s/^/ /"
+cat /etc/motd | sed -e "s/^/ /"
 fi' | sudo tee -a /home/${VM_USER}/.zshrc
 
 # Stop ZSH adding % to the output of every commands_whitelist
@@ -239,36 +240,36 @@ EOF"
 
 if [[ $PACKER_BUILDER_TYPE =~ virtualbox ]]; then
 
-# Add icon for restarting the VirtualBox clipboard service
-sudo bash -c "cat <<EOF > /home/${VM_USER}/Desktop/RestartVBox.desktop
-[Desktop Entry]
-Actions=new-window;new-private-window;
-Categories=Utilities
-Comment[en_US]=Restart VBoxClient
-Comment=Restart VBoxClient
-Exec=/usr/share/kx.as.code/restartVBoxClient.sh
-GenericName[en_US]=Restart VBoxClient
-GenericName=Restart VBoxClient
-Icon=VBox
-MimeType=text/html;image/webp;application/xml;
-Name=Restart VBoxClient
-Path=
-StartupNotify=true
-Terminal=true
-TerminalOptions=
-Type=Application
-Version=1.0
-X-DBUS-ServiceName=
-X-DBUS-StartupType=
-X-KDE-SubstituteUID=false
-X-KDE-Username=
-EOF"
+    # Add icon for restarting the VirtualBox clipboard service
+    sudo bash -c "cat <<EOF > /home/${VM_USER}/Desktop/RestartVBox.desktop
+    [Desktop Entry]
+    Actions=new-window;new-private-window;
+    Categories=Utilities
+    Comment[en_US]=Restart VBoxClient
+    Comment=Restart VBoxClient
+    Exec=/usr/share/kx.as.code/restartVBoxClient.sh
+    GenericName[en_US]=Restart VBoxClient
+    GenericName=Restart VBoxClient
+    Icon=VBox
+    MimeType=text/html;image/webp;application/xml;
+    Name=Restart VBoxClient
+    Path=
+    StartupNotify=true
+    Terminal=true
+    TerminalOptions=
+    Type=Application
+    Version=1.0
+    X-DBUS-ServiceName=
+    X-DBUS-StartupType=
+    X-KDE-SubstituteUID=false
+    X-KDE-Username=
+    EOF"
 
-echo '''#!/bin/bash
-pkill "VBoxClient --clipboard" -f
-/usr/bin/VBoxClient --clipboard
-''' | sudo tee /usr/share/kx.as.code/restartVBoxClient.sh
-sudo chmod 755 /usr/share/kx.as.code/restartVBoxClient.sh
+    echo '''#!/bin/bash
+    pkill "VBoxClient --clipboard" -f
+    /usr/bin/VBoxClient --clipboard
+    ''' | sudo tee /usr/share/kx.as.code/restartVBoxClient.sh
+    sudo chmod 755 /usr/share/kx.as.code/restartVBoxClient.sh
 
 fi
 
@@ -281,4 +282,3 @@ sudo mkdir -p ${INSTALLATION_WORKSPACE}
 sudo chown ${VM_USER}:${VM_USER} ${INSTALLATION_WORKSPACE}
 sudo chmod 755 ${INSTALLATION_WORKSPACE}
 sudo chown -R ${VM_USER}:${VM_USER} /home/${VM_USER}
-

@@ -1,4 +1,5 @@
-#!/bin/bash -eux
+#!/bin/bash -x
+set -euo pipefail
 
 SHARED_GIT_REPOSITORIES=/usr/share/kx.as.code/git
 
@@ -32,16 +33,15 @@ sudo mkdir /etc/guacamole/
 
 # Download extensions
 export extensionsToDownload="jdbc ldap totp"
-for extension in ${extensionsToDownload}
-do
-  curl -o guacamole-auth-${extension}-${guacamoleVersion}.tar.gz -L "https://apache.org/dyn/closer.cgi?action=download&filename=guacamole/${guacamoleVersion}/binary/guacamole-auth-${extension}-${guacamoleVersion}.tar.gz"
-  tar xvzf guacamole-auth-${extension}-${guacamoleVersion}.tar.gz
-  sudo mkdir -p /etc/guacamole/extensions
-  if [[ "${extension}" == "jdbc" ]]; then
-    sudo mv guacamole-auth-${extension}-${guacamoleVersion}/postgresql/guacamole-auth-${extension}-postgresql-${guacamoleVersion}.jar /etc/guacamole/extensions
-  else
-    sudo mv guacamole-auth-${extension}-${guacamoleVersion}/guacamole-auth-${extension}-${guacamoleVersion}.jar /etc/guacamole/extensions
-  fi
+for extension in ${extensionsToDownload}; do
+    curl -o guacamole-auth-${extension}-${guacamoleVersion}.tar.gz -L "https://apache.org/dyn/closer.cgi?action=download&filename=guacamole/${guacamoleVersion}/binary/guacamole-auth-${extension}-${guacamoleVersion}.tar.gz"
+    tar xvzf guacamole-auth-${extension}-${guacamoleVersion}.tar.gz
+    sudo mkdir -p /etc/guacamole/extensions
+    if [[ ${extension} == "jdbc" ]]; then
+        sudo mv guacamole-auth-${extension}-${guacamoleVersion}/postgresql/guacamole-auth-${extension}-postgresql-${guacamoleVersion}.jar /etc/guacamole/extensions
+    else
+        sudo mv guacamole-auth-${extension}-${guacamoleVersion}/guacamole-auth-${extension}-${guacamoleVersion}.jar /etc/guacamole/extensions
+    fi
 done
 
 # Download Postgresql JDBC driver
@@ -61,17 +61,17 @@ sudo -u postgres psql -c "SELECT version();"
 sudo su - postgres -c "createdb guacamole_db"
 
 # Change default guacadmin/guacadmin password
-guacAdminPassword=$(< /dev/urandom tr -dc '_A-Z-a-z-0-9%' | head -c${1:-32};echo;)
+guacAdminPassword=$(pwgen -1s 32)
 echo ${guacAdminPassword} | sudo tee ${installationWorkspace}/.guac
 sudo sed -i "s/-- 'guacadmin'/-- '${guacAdminPassword}'/g" guacamole-auth-jdbc-${guacamoleVersion}/postgresql/schema/002-create-admin-user.sql
 cat guacamole-auth-jdbc-${guacamoleVersion}/postgresql/schema/*.sql | sudo su - postgres -c "psql -d guacamole_db -f -"
 
 # Create Guacamole database users
 guacUser=$(echo $vmUser | sed 's/\./_/g')
-guacPassword=$(< /dev/urandom tr -dc '_A-Z-a-z-0-9' | head -c${1:-8};echo;)
+guacPassword=$(pwgen -1s 8)
 sudo su - postgres -c "psql -d guacamole_db -c \"CREATE USER guacamole_user WITH PASSWORD '${guacPassword}';\""
-sudo su - postgres -c "psql -d guacamole_db -c \"GRANT SELECT,INSERT,UPDATE,DELETE ON ALL TABLES IN SCHEMA public TO guacamole_user;\""
-sudo su - postgres -c "psql -d guacamole_db -c \"GRANT SELECT,USAGE ON ALL SEQUENCES IN SCHEMA public TO guacamole_user;\""
+sudo su - postgres -c 'psql -d guacamole_db -c "GRANT SELECT,INSERT,UPDATE,DELETE ON ALL TABLES IN SCHEMA public TO guacamole_user;"'
+sudo su - postgres -c 'psql -d guacamole_db -c "GRANT SELECT,USAGE ON ALL SEQUENCES IN SCHEMA public TO guacamole_user;"'
 sudo su - postgres -c "psql -d guacamole_db -c \"CREATE USER ${guacUser} WITH PASSWORD '${vmPassword}';\""
 sudo su - postgres -c "psql -d guacamole_db -c \"GRANT SELECT,INSERT,UPDATE,DELETE ON ALL TABLES IN SCHEMA public TO ${guacUser};\""
 sudo su - postgres -c "psql -d guacamole_db -c \"GRANT SELECT,USAGE ON ALL SEQUENCES IN SCHEMA public TO ${guacUser};\""
@@ -126,23 +126,23 @@ postgresql-auto-create-accounts: true
 ''' | sudo tee /etc/guacamole/guacamole.properties
 
 md5Password=$(echo -n ${vmPassword} | openssl md5 | cut -f2 -d' ')
-vncPassword=$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${1:-8};echo;)
+vncPassword=$(pwgen -1s 8)
 
 echo '''
 <user-mapping>
 
     <!-- Per-user authentication and config information -->
     <authorize
-         username="'${vmUser}'"
-         password="'${md5Password}'"
-         encoding="md5">
+        username="'${vmUser}'"
+        password="'${md5Password}'"
+        encoding="md5">
 
-       <connection name="default">
-         <protocol>vnc</protocol>
-         <param name="hostname">localhost</param>
-         <param name="port">5901</param>
-         <param name="password">'${vncPassword}'</param>
-       </connection>
+        <connection name="default">
+            <protocol>vnc</protocol>
+            <param name="hostname">localhost</param>
+            <param name="port">5901</param>
+            <param name="password">'${vncPassword}'</param>
+        </connection>
     </authorize>
 
 </user-mapping>
@@ -191,7 +191,6 @@ sudo systemctl start vncserver@1.service
 sudo systemctl enable vncserver@1.service
 sudo systemctl status vncserver@1.service
 
-
 # Install NGINX as reverse proxy
 sudo apt install -y nginx
 
@@ -201,28 +200,28 @@ sudo rm -f /etc/nginx/sites-enabled/default
 # Add NGINX configuration for Guacamole
 echo '''
 server {
-        listen 8099;
-        listen [::]:8099;
+    listen 8099;
+    listen [::]:8099;
 
-        server_name remote-desktop.'${baseDomain}';
+    server_name remote-desktop.'${baseDomain}';
 
-        listen [::]:8043 ssl ipv6only=on;
-        listen 8043 ssl;
-        ssl_certificate '${installationWorkspace}'/kx-certs/tls.crt;
-        ssl_certificate_key '${installationWorkspace}'/kx-certs/tls.key;
+    listen [::]:8043 ssl ipv6only=on;
+    listen 8043 ssl;
+    ssl_certificate '${installationWorkspace}'/kx-certs/tls.crt;
+    ssl_certificate_key '${installationWorkspace}'/kx-certs/tls.key;
 
-        access_log  /var/log/nginx/guac_access.log;
-        error_log  /var/log/nginx/guac_error.log;
+    access_log  /var/log/nginx/guac_access.log;
+    error_log  /var/log/nginx/guac_error.log;
 
-        location / {
-                    proxy_pass http://127.0.0.1:8098/guacamole/;
-                    proxy_buffering off;
-                    proxy_http_version 1.1;
-                    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-                    proxy_set_header Upgrade $http_upgrade;
-                    proxy_set_header Connection $http_connection;
-                    proxy_cookie_path /guacamole/ /;
-        }
+    location / {
+        proxy_pass http://127.0.0.1:8098/guacamole/;
+        proxy_buffering off;
+        proxy_http_version 1.1;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection $http_connection;
+        proxy_cookie_path /guacamole/ /;
+    }
 
 }
 ''' | sudo tee /etc/nginx/sites-available/guacamole.conf

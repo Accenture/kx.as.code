@@ -1,14 +1,15 @@
-#!/bin/bash -eux
+#!/bin/bash -x
+set -euo pipefail
 
 # Uninstall RocketChat with Helm
 helm uninstall rocketchat --namespace rocketchat
 
 # Remove the RocketChat configurations
 kubectl delete --namespace rocketchat \
-  -f storageClass.yaml \
-  -f persistentVolumes.yaml \
-  -f ingress.yaml \
-  --ignore-not-found
+    -f storageClass.yaml \
+    -f persistentVolumes.yaml \
+    -f ingress.yaml \
+    --ignore-not-found
 
 # Delete Kubernetes Namespace for RocketChat
 kubectl delete -f namespace.yaml --ignore-not-found

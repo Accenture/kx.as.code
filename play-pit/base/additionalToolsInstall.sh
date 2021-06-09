@@ -1,4 +1,5 @@
-#!/bin/bash -eux
+#!/bin/bash -x
+set -euo pipefail
 
 # Install Fluxctl
 curl -sL https://fluxcd.io/install | sh

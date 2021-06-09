@@ -1,4 +1,5 @@
-#!/bin/bash -eux
+#!/bin/bash -x
+set -euo pipefail
 
 # Get Harbor parameters
 export harborScriptDirectory="${autoSetupHome}/${defaultDockerRegistryPath}"

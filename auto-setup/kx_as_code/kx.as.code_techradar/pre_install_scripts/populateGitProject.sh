@@ -1,4 +1,5 @@
-#!/bin/bash -eux
+#!/bin/bash -x
+set -euo pipefail
 
 # Create base directory for Gitlab Demo repositories
 mkdir -p ${installationWorkspace}/staging/
@@ -16,12 +17,12 @@ rm -rf /var/tmp/kx.as.code_techradar/.git
 if [[ ! -d ${installationWorkspace}/staging/kx.as.code_techradar/.git  ]]; then
     mkdir -p ${installationWorkspace}/staging/kx.as.code_techradar
     git clone https://"${vmUser}":"${vmPassword}"@${gitDomain}/kx.as.code/kx.as.code_techradar.git ${installationWorkspace}/staging/kx.as.code_techradar
-    gitCommitMessage="Initial push of KX.AS.CODE \"TechRadar\" into Gitlab"
+    gitCommitMessage='Initial push of KX.AS.CODE "TechRadar" into Gitlab'
     cd ${installationWorkspace}/staging/kx.as.code_techradar
 else
     cd ${installationWorkspace}/staging/kx.as.code_techradar
     git pull
-    gitCommitMessage="Updated KX.AS.CODE \"TechRadar\""
+    gitCommitMessage='Updated KX.AS.CODE "TechRadar"'
 fi
 
 chown -R ${vmUser}:${vmUser} ${installationWorkspace}/staging/kx.as.code_techradar
@@ -29,13 +30,12 @@ cp -rf /var/tmp/kx.as.code_techradar/* ${installationWorkspace}/staging/kx.as.co
 
 # Replace mustache placeholders in YAML files
 yamlFiles=$(find /var/tmp/kx.as.code_techradar/kubernetes -name "*.yaml")
-for yamlFile in ${yamlFiles}
-do
-  envhandlebars < ${yamlFile} > ${installationWorkspace}/staging/kx.as.code_techradar/kubernetes/$(basename ${yamlFile})
+for yamlFile in ${yamlFiles}; do
+    envhandlebars < ${yamlFile} > ${installationWorkspace}/staging/kx.as.code_techradar/kubernetes/$(basename ${yamlFile})
 done
 
 gitStatus=($(git status | tail -1))
-if [[ "${gitStatus[@]:0:3}" =~ "nothing to commit" ]]; then
+if [[ ${gitStatus[@]:0:3} =~ "nothing to commit"   ]]; then
     log_info "KX.AS.CODE TechRadar - nothing to commit. Moving on"
 else
     git add .

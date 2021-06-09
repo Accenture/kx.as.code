@@ -1,5 +1,6 @@
 #cloud-boothook
-#!/bin/bash
+#!/bin/bash -x
+set -euo pipefail
 
 echo "127.0.0.1 ${hostname}" | sudo tee -a /etc/cloud/templates/hosts.debian.tmpl
 echo "${kx_main_private_ip} kx-main" | sudo tee -a /etc/cloud/templates/hosts.debian.tmpl

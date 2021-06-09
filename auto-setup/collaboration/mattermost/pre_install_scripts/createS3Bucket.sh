@@ -1,4 +1,5 @@
-#!/bin/bash -eux
+#!/bin/bash -x
+set -euo pipefail
 
 bucketExists=$(mc ls  minio --insecure --json | jq '. | select(.key=="mattermost-file-storage/")')
 if [[ -z ${bucketExists} ]]; then

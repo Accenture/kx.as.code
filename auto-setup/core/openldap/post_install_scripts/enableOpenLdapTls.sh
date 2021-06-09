@@ -1,4 +1,5 @@
-#!/bin/bash -eux
+#!/bin/bash -x
+set -euo pipefail
 
 # Set variables for base DN
 export ldapDn=$(sudo slapcat | grep dn | head -1 | cut -f2 -d' ')
@@ -37,4 +38,3 @@ sudo sed -i 's/#ssl start_tls/ssl start_tls/g' /etc/libnss-ldap.conf
 
 # Restart OpenLDAP to activate changes
 sudo service slapd restart
-

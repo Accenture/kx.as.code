@@ -1,13 +1,14 @@
-#!/bin/bash -eux
+#!/bin/bash -x
+set -euo pipefail
 
 # Uninstall Netdata with Helm
 helm uninstall netdata --namespace netdata
 
 # Remove the Tick-Stack configurations
 kubectl delete --namespace netdata \
-  -f persistentVolumes.yaml \
-  -f ingress.yaml \
-  --ignore-not-found
+    -f persistentVolumes.yaml \
+    -f ingress.yaml \
+    --ignore-not-found
 
 # Delete Kubernetes Namespace for Netdata
 kubectl delete -f namespace.yaml --ignore-not-found

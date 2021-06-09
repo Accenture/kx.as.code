@@ -1,5 +1,6 @@
-#!/bin/bash
-cat <<EOF > $HOME/Desktop/Confluence.desktop
+#!/bin/bash -x
+set -euo pipefail
+cat << EOF > $HOME/Desktop/Confluence.desktop
 [Desktop Entry]
 Version=1.0
 Name=Confluence

@@ -1,4 +1,5 @@
-#!/bin/bash -eux
+#!/bin/bash -x
+set -euo pipefail
 
 # Create secret for CA certificates. This ensures the ALM integration with Gitlab works
 kubectl get secret kx-ca-certs -n ${namespace} ||

@@ -1,4 +1,5 @@
-#!/bin/bash -eux
+#!/bin/bash -x
+set -euo pipefail
 
 # Create memberlist secret if it does not already exist
 secretExists=$(kubectl get secret -n ${namespace} memberlist -o json | jq -r '.metadata.name')
@@ -7,4 +8,3 @@ if [[ -z ${secretExists} ]]; then
 else
     log_info "Metallb memberlist secret already exists. Skipping creation"
 fi
-
