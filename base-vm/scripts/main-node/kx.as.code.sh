@@ -84,6 +84,7 @@ plasmashellPid=""
 while [[ -z ${plasmashellPid} ]]
 do
   plasmashellPid=$(pgrep -xn plasmashell)
+  sleep 1
 done
 
 # Customize desktop
