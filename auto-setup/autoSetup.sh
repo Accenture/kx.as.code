@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash
 
 export rc=0
 

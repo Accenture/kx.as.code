@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash
 
 # Check if PID file already exists and ensure this script only runs once
 if [ ! -f /var/run/kxascode.pid ]; then
