@@ -174,10 +174,7 @@ DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$(id -u)/bus notify-send
 ''' | sudo tee /home/${VM_USER}/.config/autostart-scripts/init-started-notification.sh
 
 sudo chmod 755  /home/${VM_USER}/.config/autostart-scripts/*.sh
-sudo chown ${vmUser}:${vmUser} /home/${VM_USER}/.config/autostart-scripts/*.sh
-
-sudo chmod +x ${INSTALLATION_WORKSPACE}/showWelcome.sh
-sudo chown -R ${VM_USER}:${VM_USER} /usr/share/kx.as.code
+sudo chown ${VM_USER}:${VM_USER} /home/${VM_USER}/.config/autostart-scripts/*.sh
 
 # Create shortcut directories
 shortcutsDirectory="/usr/share/kx.as.code/DevOps Tools"
@@ -261,5 +258,7 @@ sudo cp /home/${VM_USER}/Desktop/*.desktop /usr/share/applications
 
 # Create Kubernetes logging and custom scripts directory
 sudo mkdir -p ${INSTALLATION_WORKSPACE}
-sudo chown ${VM_USER}:${VM_USER} ${INSTALLATION_WORKSPACE}
+sudo ${VM_USER}:${VM_USER} ${INSTALLATION_WORKSPACE}
 sudo chmod 755 ${INSTALLATION_WORKSPACE}
+sudo chown -R ${VM_USER}:${VM_USER} /home/${VM_USER}
+
