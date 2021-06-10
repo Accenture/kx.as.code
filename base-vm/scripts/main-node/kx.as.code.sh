@@ -21,7 +21,7 @@ gitDocsUrl=$(echo "${GIT_DOCS_URL}" | sed 's;https://;;g')
 gitTechRadarUrl=$(echo "${GIT_TECHRADAR_URL}" | sed 's;https://;;g')
 
 if [[ ! -z GIT_SOURCE_TOKEN_ENCODED ]]; then
-  gitSourceCloneUrl="https://$GIT_USER:$GIT_TOKEN_ENCODED@${gitSourceUrl}"
+  gitSourceCloneUrl="https://$GIT_SOURCE_USER:$GIT_TOKEN_ENCODED@${gitSourceUrl}"
 else
   gitSourceCloneUrl="https://${gitSourceUrl}"
 fi
@@ -66,9 +66,9 @@ sudo ln -s ${SHARED_GIT_REPOSITORIES}/kx.as.code /home/$VM_USER/Desktop/"KX.AS.C
 cd ${SHARED_GIT_REPOSITORIES}/kx.as.code; \
 sudo git config credential.helper 'cache --timeout=3600'; \
 if [[ -n $GIT_TOKEN_ENCODED ]]; then \
-  sudo sed -i 's/'$GIT_USER':'$GIT_TOKEN_ENCODED'@//g' ${SHARED_GIT_REPOSITORIES}/kx.as.code/.git/config; \
-  sudo sed -i 's/'$GIT_USER':'$GIT_TOKEN_ENCODED'@//g' ${SHARED_GIT_REPOSITORIES}/kx.as.code_docs/.git/config; \
-  sudo sed -i 's/'$GIT_USER':'$GIT_TOKEN_ENCODED'@//g' ${SHARED_GIT_REPOSITORIES}/kx.as.code_techradar/.git/config; \
+  sudo sed -i 's/'$GIT_SOURCE_USER':'GIT_SOURCE_TOKEN_ENCODED'@//g' ${SHARED_GIT_REPOSITORIES}/kx.as.code/.git/config; \
+  sudo sed -i 's/'$GIT_DOCS_USER':'GIT_DOCS_TOKEN_ENCODED'@//g' ${SHARED_GIT_REPOSITORIES}/kx.as.code_docs/.git/config; \
+  sudo sed -i 's/'$GIT_TECHRADAR_USER':'GIT_TECHRADAR_TOKEN_ENCODED'@//g' ${SHARED_GIT_REPOSITORIES}/kx.as.code_techradar/.git/config; \
 fi
 
 # Configure Typora to show Welcome message after login
