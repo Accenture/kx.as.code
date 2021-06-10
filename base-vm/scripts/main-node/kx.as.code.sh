@@ -27,13 +27,13 @@ else
 fi
 
 if [[ ! -z GIT_DOCS_TOKEN_ENCODED ]]; then
-  gitDocsCloneUrl="https://$GIT_DOCS_USER:$GIT_TOKEN_DOCS_ENCODED@${gitDocsUrl}"
+  gitDocsCloneUrl="https://$GIT_DOCS_USER:$GIT_DOCS_TOKEN_ENCODED@${gitDocsUrl}"
 else
   gitDocsCloneUrl="https://${gitDocsUrl}"
 fi
 
 if [[ ! -z GIT_TECHRADAR_TOKEN_ENCODED ]]; then
-  gitTechradarCloneUrl="https://$GIT_TECHRADAR_USER:$GIT_TOKEN_TECHRADAR_ENCODED@${gitTechradarUrl}"
+  gitTechradarCloneUrl="https://$GIT_TECHRADAR_USER:$GIT_TECHRADAR_TOKEN_ENCODED@${gitTechradarUrl}"
 else
   gitTechradarCloneUrl="https://${gitTechradarUrl}"
 fi
