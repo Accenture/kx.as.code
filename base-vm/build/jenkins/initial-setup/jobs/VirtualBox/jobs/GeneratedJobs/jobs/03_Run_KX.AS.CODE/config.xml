@@ -12,7 +12,7 @@
       <parameters>
         <string>vagrant_action</string>
         <string>git_source_branch</string>
-        <string>git_repo_url</string>
+        <string>git_source_url</string>
       </parameters>
       <options>
         <string>skipDefaultCheckout</string>
@@ -47,9 +47,9 @@
           </choices>
         </hudson.model.ChoiceParameterDefinition>
         <hudson.model.StringParameterDefinition>
-          <name>git_repo_url</name>
-          <description>Source Github repository</description>
-          <defaultValue>{{git_repo_url}}</defaultValue>
+          <name>git_source_url</name>
+          <description>Source Git repository</description>
+          <defaultValue>{{git_source_url}}</defaultValue>
           <trim>false</trim>
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
@@ -66,8 +66,8 @@
       <configVersion>2</configVersion>
       <userRemoteConfigs>
         <hudson.plugins.git.UserRemoteConfig>
-          <url>{{git_repo_url}}</url>
-          <credentialsId>GITHUB_KX.AS.CODE</credentialsId>
+          <url>{{git_source_url}}</url>
+          <credentialsId>GIT_KX.AS.CODE_SOURCE</credentialsId>
         </hudson.plugins.git.UserRemoteConfig>
       </userRemoteConfigs>
       <branches>

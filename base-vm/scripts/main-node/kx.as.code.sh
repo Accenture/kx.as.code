@@ -1,18 +1,41 @@
 #!/bin/bash -eux
 
 # UrlEncode GIT password in case of special characters
-if [[ ! -z $GITHUB_TOKEN ]]; then
-  GITHUB_TOKEN_ENCODED=$(python3 -c "import urllib.parse; print(urllib.parse.quote(input()))" <<< "$GITHUB_TOKEN")
+if [[ ! -z $GIT_SOURCE_TOKEN ]]; then
+  GIT_SOURCE_TOKEN_ENCODED=$(python3 -c "import urllib.parse; print(urllib.parse.quote(input()))" <<< "$GIT_SOURCE_TOKEN")
 fi
-
+if [[ ! -z $GIT_DOCS_TOKEN ]]; then
+  GIT_DOCS_TOKEN_ENCODED=$(python3 -c "import urllib.parse; print(urllib.parse.quote(input()))" <<< "$GIT_DOCS_TOKEN")
+fi
+if [[ ! -z $GIT_TECHRADAR_TOKEN ]]; then
+  GIT_TECHRADAR_TOKEN_ENCODED=$(python3 -c "import urllib.parse; print(urllib.parse.quote(input()))" <<< "$GIT_TECHRADAR_TOKEN")
+fi
 # Make directories for KX.AS.CODE checkout
 sudo mkdir -p /home/$VM_USER/Desktop/
 sudo chown -R $VM_USER:$VM_USER /home/$VM_USER
 
-if [[ ! -z $GITHUB_TOKEN_ENCODED ]]; then
-  githubCloneUrl="https://$GITHUB_USER:$GITHUB_TOKEN_ENCODED@github.com"
+echo $url | sed 's;https://;;g'
+
+gitSourceUrl=$(echo "${GIT_SOURCE_URL}" | sed 's;https://;;g')
+gitDocsUrl=$(echo "${GIT_DOCS_URL}" | sed 's;https://;;g')
+gitTechRadarUrl=$(echo "${GIT_TECHRADAR_URL}" | sed 's;https://;;g')
+
+if [[ ! -z GIT_SOURCE_TOKEN_ENCODED ]]; then
+  gitSourceCloneUrl="https://$GIT_USER:$GIT_TOKEN_ENCODED@${gitSourceUrl}"
 else
-  githubCloneUrl="https://github.com"
+  gitSourceCloneUrl="https://${gitSourceUrl}"
+fi
+
+if [[ ! -z GIT_DOCS_TOKEN_ENCODED ]]; then
+  gitDocsCloneUrl="https://$GIT_DOCS_USER:$GIT_TOKEN_DOCS_ENCODED@${gitDocsUrl}"
+else
+  gitDocsCloneUrl="https://${gitDocsUrl}"
+fi
+
+if [[ ! -z GIT_TECHRADAR_TOKEN_ENCODED ]]; then
+  gitTechradarCloneUrl="https://$GIT_TECHRADAR_USER:$GIT_TOKEN_TECHRADAR_ENCODED@${gitTechradarUrl}"
+else
+  gitTechradarCloneUrl="https://${gitTechradarUrl}"
 fi
 
 if [[ -z ${GIT_SOURCE_BRANCH} ]]; then
@@ -36,16 +59,16 @@ fi
 sudo mkdir -p ${SHARED_GIT_REPOSITORIES}
 
 # Clone KX.AS.CODE GIT repository into VM
-sudo git clone --single-branch --branch ${gitSourceBranch} ${githubCloneUrl}/Accenture/kx.as.code.git ${SHARED_GIT_REPOSITORIES}/kx.as.code; \
-sudo git clone --single-branch --branch ${gitDocsBranch} ${githubCloneUrl}/Accenture/kx.as.code-docs.git ${SHARED_GIT_REPOSITORIES}/kx.as.code_docs; \
-sudo git clone --single-branch --branch ${gitTechRadarBranch} ${githubCloneUrl}/Accenture/kx.as.code-techradar.git ${SHARED_GIT_REPOSITORIES}/kx.as.code_techradar; \
+sudo git clone --branch ${gitSourceBranch} ${gitSourceCloneUrl} ${SHARED_GIT_REPOSITORIES}/kx.as.code; \
+sudo git clone --branch ${gitDocsBranch} ${gitDocsCloneUrl} ${SHARED_GIT_REPOSITORIES}/kx.as.code_docs; \
+sudo git clone --branch ${gitTechRadarBranch} ${gitTechradarCloneUrl} ${SHARED_GIT_REPOSITORIES}/kx.as.code_techradar; \
 sudo ln -s ${SHARED_GIT_REPOSITORIES}/kx.as.code /home/$VM_USER/Desktop/"KX.AS.CODE Source"; \
 cd ${SHARED_GIT_REPOSITORIES}/kx.as.code; \
 sudo git config credential.helper 'cache --timeout=3600'; \
-if [[ -n $GITHUB_TOKEN_ENCODED ]]; then \
-  sudo sed -i 's/'$GITHUB_USER':'$GITHUB_TOKEN_ENCODED'@//g' ${SHARED_GIT_REPOSITORIES}/kx.as.code/.git/config; \
-  sudo sed -i 's/'$GITHUB_USER':'$GITHUB_TOKEN_ENCODED'@//g' ${SHARED_GIT_REPOSITORIES}/kx.as.code_docs/.git/config; \
-  sudo sed -i 's/'$GITHUB_USER':'$GITHUB_TOKEN_ENCODED'@//g' ${SHARED_GIT_REPOSITORIES}/kx.as.code_techradar/.git/config; \
+if [[ -n $GIT_TOKEN_ENCODED ]]; then \
+  sudo sed -i 's/'$GIT_USER':'$GIT_TOKEN_ENCODED'@//g' ${SHARED_GIT_REPOSITORIES}/kx.as.code/.git/config; \
+  sudo sed -i 's/'$GIT_USER':'$GIT_TOKEN_ENCODED'@//g' ${SHARED_GIT_REPOSITORIES}/kx.as.code_docs/.git/config; \
+  sudo sed -i 's/'$GIT_USER':'$GIT_TOKEN_ENCODED'@//g' ${SHARED_GIT_REPOSITORIES}/kx.as.code_techradar/.git/config; \
 fi
 
 # Configure Typora to show Welcome message after login

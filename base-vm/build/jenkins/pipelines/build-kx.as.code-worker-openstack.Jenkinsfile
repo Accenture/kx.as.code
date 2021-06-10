@@ -46,7 +46,7 @@ pipeline {
         stage('Clone the repository'){
             steps {
                 script {
-                    checkout([$class: 'GitSCM', branches: [[name: "$git_source_branch"]], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'GITHUB_KX.AS.CODE', url: '${git_repo_url}']]])
+                    checkout([$class: 'GitSCM', branches: [[name: "$git_source_branch"]], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'GIT_KX.AS.CODE_SOURCE', url: '${git_source_url}']]])
                 }
             }
         }
@@ -70,9 +70,6 @@ pipeline {
                             -var "version=${kx_version}" \
                             -var "vm_user=${kx_vm_user}" \
                             -var "vm_password=${kx_vm_password}" \
-                            -var "github_user=${GITHUB_USER}" \
-                            -var "github_token=${GITHUB_TOKEN}" \
-                            -var "git_source_branch=${git_source_branch}" \
                             -var "base_image_ssh_user=${openstack_ssh_username}" \
                             -var "openstack_user=${openstack_user}" \
                             -var "openstack_password=${openstack_password}" \

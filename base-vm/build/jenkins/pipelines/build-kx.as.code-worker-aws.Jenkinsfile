@@ -46,7 +46,7 @@ pipeline {
         stage('Clone the repository'){
             steps {
                 script {
-                    checkout([$class: 'GitSCM', branches: [[name: "$git_source_branch"]], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'GITHUB_KX.AS.CODE', url: '${git_repo_url}']]])
+                    checkout([$class: 'GitSCM', branches: [[name: "$git_source_branch"]], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'GIT_KX.AS.CODE_SOURCE', url: '${git_source_url}']]])
                 }
             }
         }
@@ -77,9 +77,6 @@ pipeline {
                         -var "instance_type=${aws_instance_type}" \
                         -var "access_key=${AWS_ACCESS_KEY_ID}" \
                         -var "secret_key=${AWS_SECRET_ACCESS_KEY}" \
-                        -var "github_user=${GITHUB_USER}" \
-                        -var "github_token=${GITHUB_TOKEN}" \
-                        -var "git_source_branch=${git_source_branch}" \
                         -var "source_ami=${aws_source_ami}" \
                         -var "ami_groups=${aws_ami_groups}" \
                         -var "vpc_region=${aws_vpc_region}" \
