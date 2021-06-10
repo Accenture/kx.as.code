@@ -258,7 +258,7 @@ sudo cp /home/${VM_USER}/Desktop/*.desktop /usr/share/applications
 
 # Create Kubernetes logging and custom scripts directory
 sudo mkdir -p ${INSTALLATION_WORKSPACE}
-sudo ${VM_USER}:${VM_USER} ${INSTALLATION_WORKSPACE}
+sudo chown ${VM_USER}:${VM_USER} ${INSTALLATION_WORKSPACE}
 sudo chmod 755 ${INSTALLATION_WORKSPACE}
 sudo chown -R ${VM_USER}:${VM_USER} /home/${VM_USER}
 
