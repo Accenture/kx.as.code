@@ -7,7 +7,7 @@ sudo chown -R $VM_USER:$VM_USER /home/$VM_USER
 sudo chmod -R 755 /home/$VM_USER/Desktop/*.desktop
 
 # Update system desktop icon file for HTOP
-cp /home/$VM_USER/Desktop/HTOP.desktop /usr/share/applications/htop.desktop
+sudo cp /home/$VM_USER/Desktop/HTOP.desktop /usr/share/applications/htop.desktop
 
 # Change screen resolution to more respectable 1920x1200 (default is 800x600)
 sudo bash -c 'cat <<EOF > /etc/X11/xorg.conf
