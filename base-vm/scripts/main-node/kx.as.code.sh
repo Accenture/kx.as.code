@@ -21,7 +21,7 @@ gitDocsUrl=$(echo "${GIT_DOCS_URL}" | sed 's;https://;;g')
 gitTechRadarUrl=$(echo "${GIT_TECHRADAR_URL}" | sed 's;https://;;g')
 
 if [[ ! -z GIT_SOURCE_TOKEN_ENCODED ]]; then
-  gitSourceCloneUrl="https://$GIT_SOURCE_USER:$GIT_TOKEN_ENCODED@${gitSourceUrl}"
+  gitSourceCloneUrl="https://$GIT_SOURCE_USER:$GIT_SOURCE_TOKEN_ENCODED@${gitSourceUrl}"
 else
   gitSourceCloneUrl="https://${gitSourceUrl}"
 fi
