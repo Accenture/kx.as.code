@@ -21,6 +21,7 @@ export apiDocsDirectory="${sharedKxHome}/API Docs"
 export shortcutsDirectory="${sharedKxHome}/DevOps Tools"
 export adminShortcutsDirectory="${sharedKxHome}/Admin Tools"
 export vmUser=kx.hero
+export vmUserId=$(id -u ${vmUser})
 export vmPassword="$(cat ${sharedKxHome}/.config/.user.cred)"
 
 # Check profile-config.json file is present before starting script
@@ -448,6 +449,7 @@ do
                 rabbitmqadmin get queue=wip_queue --format=pretty_json ackmode=ack_requeue_false | jq -r '.[].payload'
                 rabbitmqadmin publish exchange=action_workflow routing_key=completed_queue properties="{\"delivery_mode\": 2}" payload=''${payload}''
                 log_info "The installation of \"${componentName}\" completed succesfully"
+                DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/${vmUserId}/bus notify-send -t 300000 'KX.AS.CODE Notification' 'Component "'${componentName}'" installed successfully' --icon=dialog-information
                 retries=0
             else
                 if [[ "${retryParameter}" == "true" ]] && [[ ${retries} -lt 3 ]]; then
@@ -461,6 +463,8 @@ do
                     rabbitmqadmin publish exchange=action_workflow routing_key=failed_queue properties="{\"delivery_mode\": 2}" payload=''${payload}''
                     retries=0
                     log_error "Previous attempt to install \"${componentName}\" did not complete succesfully. There will be no (further) retries"
+                    DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/${vmUserId}/bus notify-send -t 300000 'KX.AS.CODE Notification' 'Component "'${componentName}'" installation failed!' --icon=dialog-error
+
                 fi
             fi
         fi

@@ -10,6 +10,7 @@ sudo cp ${INSTALLATION_WORKSPACE}/theme/logos/* /usr/share/logos/
 # Copy files needed for KX.AS.CODE look and file to relevant places
 sudo mkdir -p /usr/share/backgrounds/
 sudo cp ${INSTALLATION_WORKSPACE}/theme/backgrounds/* /usr/share/backgrounds/
+sudo rm -rf /usr/share/wallpapers/*
 
 # Change SDDM Login Screen
 sudo apt-get install -y qt5-default

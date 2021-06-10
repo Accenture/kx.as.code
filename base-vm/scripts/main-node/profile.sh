@@ -47,7 +47,7 @@ sudo chown -R ${VM_USER}:${VM_USER} /home/${VM_USER}
 
 # Remove ZSH adding % to output with no new-line character
 echo "export PROMPT_EOL_MARK=''" | sudo tee -a /home/${VM_USER}/.zshrc
-echo ". ./p10k.zsh" | sudo tee -a /home/${VM_USER}/.zshrc
+echo ". ~/p10k.zsh" | sudo tee -a /home/${VM_USER}/.zshrc
 
 # Copy avatar images to shared directory
 sudo mkdir -p /usr/share/avatars
