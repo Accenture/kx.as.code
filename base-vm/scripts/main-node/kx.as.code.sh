@@ -59,16 +59,25 @@ fi
 sudo mkdir -p ${SHARED_GIT_REPOSITORIES}
 
 # Clone KX.AS.CODE GIT repository into VM
-sudo git clone --branch ${gitSourceBranch} ${gitSourceCloneUrl} ${SHARED_GIT_REPOSITORIES}/kx.as.code; \
-sudo git clone --branch ${gitDocsBranch} ${gitDocsCloneUrl} ${SHARED_GIT_REPOSITORIES}/kx.as.code_docs; \
-sudo git clone --branch ${gitTechRadarBranch} ${gitTechradarCloneUrl} ${SHARED_GIT_REPOSITORIES}/kx.as.code_techradar; \
-sudo ln -s ${SHARED_GIT_REPOSITORIES}/kx.as.code /home/$VM_USER/Desktop/"KX.AS.CODE Source"; \
-cd ${SHARED_GIT_REPOSITORIES}/kx.as.code; \
-sudo git config credential.helper 'cache --timeout=3600'; \
-if [[ -n $GIT_TOKEN_ENCODED ]]; then \
-  sudo sed -i 's/'$GIT_SOURCE_USER':'GIT_SOURCE_TOKEN_ENCODED'@//g' ${SHARED_GIT_REPOSITORIES}/kx.as.code/.git/config; \
-  sudo sed -i 's/'$GIT_DOCS_USER':'GIT_DOCS_TOKEN_ENCODED'@//g' ${SHARED_GIT_REPOSITORIES}/kx.as.code_docs/.git/config; \
-  sudo sed -i 's/'$GIT_TECHRADAR_USER':'GIT_TECHRADAR_TOKEN_ENCODED'@//g' ${SHARED_GIT_REPOSITORIES}/kx.as.code_techradar/.git/config; \
+sudo git clone --branch ${gitSourceBranch} ${gitSourceCloneUrl} ${SHARED_GIT_REPOSITORIES}/kx.as.code
+sudo git clone --branch ${gitDocsBranch} ${gitDocsCloneUrl} ${SHARED_GIT_REPOSITORIES}/kx.as.code_docs
+sudo git clone --branch ${gitTechRadarBranch} ${gitTechradarCloneUrl} ${SHARED_GIT_REPOSITORIES}/kx.as.code_techradar
+
+sudo ln -s ${SHARED_GIT_REPOSITORIES}/kx.as.code /home/${VM_USER}/Desktop/"KX.AS.CODE Source"
+
+cd ${SHARED_GIT_REPOSITORIES}/kx.as.code
+sudo git config credential.helper 'cache --timeout=3600'
+
+if [[ -n ${GIT_SOURCE_TOKEN_ENCODED} ]]; then
+  sudo sed -i 's/'${GIT_SOURCE_USER}':'${GIT_SOURCE_TOKEN_ENCODED}'@//g' ${SHARED_GIT_REPOSITORIES}/kx.as.code/.git/config
+fi
+
+if [[ -n ${GIT_DOCS_TOKEN_ENCODED} ]]; then
+  sudo sed -i 's/'${GIT_DOCS_USER}':'${GIT_DOCS_TOKEN_ENCODED}'@//g' ${SHARED_GIT_REPOSITORIES}/kx.as.code_docs/.git/config
+fi
+
+if [[ -n ${GIT_TECHRADAR_TOKEN_ENCODED} ]]; then
+  sudo sed -i 's/'${GIT_TECHRADAR_USER}':'${GIT_TECHRADAR_TOKEN_ENCODED}'@//g' ${SHARED_GIT_REPOSITORIES}/kx.as.code_techradar/.git/config
 fi
 
 # Configure Typora to show Welcome message after login
