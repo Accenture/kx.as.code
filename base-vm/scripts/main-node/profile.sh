@@ -6,10 +6,10 @@ sudo cp -rfT ${INSTALLATION_WORKSPACE}/skel /root
 sudo chown -R $VM_USER:$VM_USER /home/$VM_USER
 sudo chmod -R 755 /home/$VM_USER/Desktop/*.desktop
 
-# TEMP DEBUG
-sudo ls -altR /home/$VM_USER
+# Update system desktop icon file for HTOP
+cp /home/$VM_USER/Desktop/HTOP.desktop /usr/share/applications/htop.desktop
 
-# Change screen resolution to more respecable 1920x1200 (default is 800x600)
+# Change screen resolution to more respectable 1920x1200 (default is 800x600)
 sudo bash -c 'cat <<EOF > /etc/X11/xorg.conf
 Section "Device"
     Identifier    "Device0"

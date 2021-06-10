@@ -37,7 +37,7 @@ sudo apt-get -y install typora
 # Install Tilix
 sudo apt-get -y install tilix
 sudo ln -s /etc/profile.d/vte-2.91.sh /etc/profile.d/vte.sh
-sudo sed -i 's/Icon=.*/Icon=utilities-terminal/g' /usr/share/applications/com.gexperts.Tilix.desktop
+sudo cp -f /home/${VM_USER}/Desktop/Tilix.desktop /usr/share/applications/com.gexperts.Tilix.desktop
 
 # Install Tools to Generate Certificate Authority
 sudo curl -L https://github.com/cloudflare/cfssl/releases/download/v1.4.1/cfssl_1.4.1_linux_amd64 -o cfssl
