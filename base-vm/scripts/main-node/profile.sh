@@ -40,14 +40,14 @@ sudo chown -R ${VM_USER}:${VM_USER} /home/${VM_USER}/.config
 # Source VTE config (for Tilix) in .zshrc
 echo -e '\n# Fix for Tilix\nif [ $TILIX_ID ] || [ $VTE_VERSION ]; then
         source /etc/profile.d/vte.sh
-fi' | sudo tee -a /home/${VM_USER}/.zshrc
+fi' | sudo tee -a /home/${VM_USER}/.zshrc /root/.zshrc
 
 # Ensure users permissions are correct
 sudo chown -R ${VM_USER}:${VM_USER} /home/${VM_USER}
 
 # Remove ZSH adding % to output with no new-line character
-echo "export PROMPT_EOL_MARK=''" | sudo tee -a /home/${VM_USER}/.zshrc
-echo ". ~/p10k.zsh" | sudo tee -a /home/${VM_USER}/.zshrc
+echo "export PROMPT_EOL_MARK=''" | sudo tee -a /home/${VM_USER}/.zshrc /root/.zshrc
+echo ". ~/p10k.zsh" | sudo tee -a /home/${VM_USER}/.zshrc /root/.zshrc
 
 # Copy avatar images to shared directory
 sudo mkdir -p /usr/share/avatars
