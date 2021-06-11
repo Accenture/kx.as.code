@@ -68,6 +68,10 @@ puts "KX_MAIN_BOX_LOCATION: #{KX_MAIN_BOX_LOCATION}"
 KX_WORKER_BOX_LOCATION = ENV['kxWorkerBoxLocation'] || profile_config['config']['vm_properties']['kx_worker_box_location']
 puts "KX_WORKER_BOX_LOCATION: #{KX_WORKER_BOX_LOCATION}"
 
+# Path for current Jenkins solution
+WORKSPACE_HOME = File.dirname(File.expand_path('../../..', __FILE__))
+
+
 # Create shared folder if it does not exist
 if not FileTest::directory?(KX_SYNC_FOLDER_PATH)
   Dir::mkdir(KX_SYNC_FOLDER_PATH)
@@ -76,7 +80,7 @@ end
 Vagrant.configure("2") do |config|
     config.vm.define "kx.as.code-main" do |subconfig|
         subconfig.vm.box = "kx.as.code-main-vmware-#{BOX_VERSION}"
-        subconfig.vm.box_url = KX_MAIN_BOX_LOCATION
+        subconfig.vm.box_url = "file://#{WORKSPACE_HOME}/#{KX_MAIN_BOX_LOCATION}"
         subconfig.vm.synced_folder KX_SYNC_FOLDER_PATH, "/home/kx.hero/KX_Share",
             owner: "kx.hero", group: "kx.hero"
         subconfig.vm.provision "file", source: "profile-config.json", destination: "/var/tmp/profile-config.json"
@@ -138,7 +142,7 @@ Vagrant.configure("2") do |config|
     (1..WORKER_NODE_COUNT).each do |i|
         config.vm.define "kx.as.code-worker#{i}" do |subconfig|
           subconfig.vm.box = "kx.as.code-worker-vmware-#{BOX_VERSION}"
-          subconfig.vm.box_url = KX_WORKER_BOX_LOCATION
+          subconfig.vm.box_url = "file://#{WORKSPACE_HOME}/#{KX_WORKER_BOX_LOCATION}"
           subconfig.vm.hostname = "kx-worker#{i}"
           subconfig.vm.provision "file", source: "kx.as.code_main-ip-address", destination: "/var/tmp/kx.as.code_main-ip-address"
           subconfig.vm.provision "file", source: "./profile-config.json", destination: "/var/tmp/profile-config.json"
