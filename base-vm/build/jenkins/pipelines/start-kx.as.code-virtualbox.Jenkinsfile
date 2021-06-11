@@ -50,11 +50,13 @@ pipeline {
         stage('Execute Vagrant Action'){
             steps {
                 script {
-                    sh """
-                    cd profiles/vagrant-virtualbox-demo1
-                    vagrant up
-                    VBoxManage list vms
-                    """
+                    dir(shared_workspace) {
+                        sh """
+                        cd profiles/vagrant-virtualbox-demo1
+                        vagrant up
+                        VBoxManage list vms
+                        """
+                    }
                 }
             }
         }

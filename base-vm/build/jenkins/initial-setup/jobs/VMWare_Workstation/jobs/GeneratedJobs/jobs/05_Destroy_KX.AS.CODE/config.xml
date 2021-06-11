@@ -9,9 +9,9 @@
       </jobProperties>
       <triggers/>
       <parameters>
-        <string>vagrant_action</string>
         <string>git_source_branch</string>
         <string>git_source_url</string>
+        <string>shared_workspace</string>
       </parameters>
       <options>
         <string>skipDefaultCheckout</string>
@@ -32,19 +32,6 @@
     <org.jenkinsci.plugins.workflow.job.properties.DisableConcurrentBuildsJobProperty/>
     <hudson.model.ParametersDefinitionProperty>
       <parameterDefinitions>
-        <hudson.model.ChoiceParameterDefinition>
-          <name>vagrant_action</name>
-          <description>Selection vagrant action to execute</description>
-          <choices class="java.util.Arrays$ArrayList">
-            <a class="string-array">
-              <string>up</string>
-              <string>halt</string>
-              <string>resume</string>
-              <string>suspend</string>
-              <string>destroy</string>
-            </a>
-          </choices>
-        </hudson.model.ChoiceParameterDefinition>
         <hudson.model.StringParameterDefinition>
           <name>git_source_url</name>
           <description>Source Git repository</description>
@@ -55,6 +42,12 @@
           <name>git_source_branch</name>
           <description>Source Github branch to deploy from and clone inside VM</description>
           <defaultValue>{{git_source_branch}}</defaultValue>
+          <trim>false</trim>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>shared_workspace</name>
+          <description>Shared workspace for the KX.AS.CODE start/stop/destroy jobs</description>
+          <defaultValue>{{shared_workspace}}</defaultValue>
           <trim>false</trim>
         </hudson.model.StringParameterDefinition>
       </parameterDefinitions>
@@ -78,7 +71,7 @@
       <submoduleCfg class="list"/>
       <extensions/>
     </scm>
-    <scriptPath>base-vm/build/jenkins/pipelines/deploy-kx.as.code-vmware-desktop.Jenkinsfile</scriptPath>
+    <scriptPath>base-vm/build/jenkins/pipelines/destroy-kx.as.code-vmware-desktop.Jenkinsfile</scriptPath>
     <lightweight>true</lightweight>
   </definition>
   <triggers/>

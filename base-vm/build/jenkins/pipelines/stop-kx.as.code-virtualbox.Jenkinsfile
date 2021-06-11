@@ -41,10 +41,12 @@ pipeline {
         stage('Execute Vagrant Action'){
             steps {
                 script {
-                    sh """
-                    cd profiles/vagrant-virtualbox-demo1
-                    vagrant halt
-                    """
+                    dir(shared_workspace) {
+                        sh """
+                        cd profiles/vagrant-virtualbox-demo1
+                        vagrant halt
+                        """
+                    }
                 }
             }
         }

@@ -10,9 +10,9 @@
       </jobProperties>
       <triggers/>
       <parameters>
-        <string>vagrant_action</string>
         <string>git_source_branch</string>
         <string>git_source_url</string>
+        <string>shared_workspace</string>
       </parameters>
       <options>
         <string>skipDefaultCheckout</string>
@@ -43,6 +43,12 @@
           <name>git_source_branch</name>
           <description>Source Github branch to deploy from and clone inside VM</description>
           <defaultValue>{{git_source_branch}}</defaultValue>
+          <trim>false</trim>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>shared_workspace</name>
+          <description>Shared workspace for the KX.AS.CODE start/stop/destroy jobs</description>
+          <defaultValue>{{virtualbox_shared_directory_path}}</defaultValue>
           <trim>false</trim>
         </hudson.model.StringParameterDefinition>
       </parameterDefinitions>

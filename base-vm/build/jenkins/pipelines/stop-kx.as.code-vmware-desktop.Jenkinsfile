@@ -44,10 +44,12 @@ pipeline {
         stage('Execute Vagrant Action'){
             steps {
                 script {
-                    sh """
-                    cd profiles/vagrant-vmware-desktop-demo1
-                    vagrant halt
-                    """
+                    dir(shared_workspace) {
+                        sh """
+                        cd profiles/vagrant-vmware-desktop-demo1
+                        vagrant halt
+                        """
+                    }
                 }
             }
         }

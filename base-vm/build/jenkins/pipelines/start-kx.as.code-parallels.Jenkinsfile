@@ -50,10 +50,12 @@ pipeline {
         stage('Execute Vagrant Action'){
             steps {
                 script {
-                    sh """
-                    cd profiles/vagrant-parallels-demo1
-                    vagrant up
-                    """
+                    dir(shared_workspace) {
+                        sh """
+                        cd profiles/vagrant-parallels-demo1
+                        vagrant up
+                        """
+                    }
                 }
             }
         }

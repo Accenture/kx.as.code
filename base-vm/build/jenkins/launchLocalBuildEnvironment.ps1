@@ -244,6 +244,27 @@ else
     & $javaBinary -version
 }
 
+# Determine absolute work and shared_workspace directory paths
+$firstTwoChars = $WORKING_DIRECTORY.Substring(0,2)
+$firstChar = $WORKING_DIRECTORY.Substring(0,1)
+if ( $firstTwoChars -eq ".\" ) {
+    $WORKDIR_ABSOLUTE_PATH = $WORKING_DIRECTORY.Substring(2)
+    $WORKDIR_ABSOLUTE_PATH = "$PSScriptRoot\$WORKDIR_ABSOLUTE_PATH"
+}
+elseif ( $firstChar -ne "\" )
+{
+    $WORKDIR_ABSOLUTE_PATH = "$PSScriptRoot\$WORKING_DIRECTORY"
+}
+else
+{
+    $WORKDIR_ABSOLUTE_PATH = $WORKING_DIRECTORY
+}
+$WORKING_DIRECTORY = $WORKDIR_ABSOLUTE_PATH -replace "/","\"
+
+$virtualbox_shared_directory_path = "$WORKING_DIRECTORY\VirtualBox\shared_workspace"
+$paralells_shared_directory_path = "$WORKING_DIRECTORY\Paralells\shared_workspace"
+$vmware_workstation_shared_directory_path = "$WORKING_DIRECTORY\VMWare_Workstation\shared_workspace"
+
 # Replace mustache variables in job config.xml files
 New-Item -Path ".\jenkins_home\jobs" -Name "logfiles" -ItemType "directory"
 Copy-Item -Path ".\initial-setup\*" -Destination ".\jenkins_home\" -Recurse -Force
@@ -266,22 +287,6 @@ Foreach-Object {
 }
 
 # Replace mustache variables in local agent xml file
-$firstTwoChars = $WORKING_DIRECTORY.Substring(0,2)
-$firstChar = $WORKING_DIRECTORY.Substring(0,1)
-if ( $firstTwoChars -eq ".\" ) {
-    $WORKDIR_ABSOLUTE_PATH = $WORKING_DIRECTORY.Substring(2)
-    $WORKDIR_ABSOLUTE_PATH = "$PSScriptRoot\$WORKDIR_ABSOLUTE_PATH"
-}
-elseif ( $firstChar -ne "\" )
-{
-    $WORKDIR_ABSOLUTE_PATH = "$PSScriptRoot\$WORKING_DIRECTORY"
-}
-else
-{
-    $WORKDIR_ABSOLUTE_PATH = $WORKING_DIRECTORY
-}
-$WORKING_DIRECTORY = $WORKDIR_ABSOLUTE_PATH -replace "/","\"
-
 $filename = ".\jenkins_home\nodes\local\config.xml"
 $tempFilePath = "$filename.tmp"
 
