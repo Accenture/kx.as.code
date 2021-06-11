@@ -70,7 +70,7 @@ kubectl apply -f ${installationWorkspace}/argocd-repo-server-tls.yaml
 # patch the argocd-secret with keycloak client id and add tls certs to avoid self signed certs trust issue in argocd
 export encodedClientID=$(echo -n "$clientSecret" | base64)
 export encodedTlsCrt=$(sudo cat $installationWorkspace/kx-certs/tls.crt | base64 | tr -d '\n\r')
-export encodedTlsKey=$(sudo cat $installationWorkspace/kx-certs/tls.key | BASE64 | tr -d '\n\r')
+export encodedTlsKey=$(sudo cat $installationWorkspace/kx-certs/tls.key | base64 | tr -d '\n\r')
 kubectl patch secret argocd-secret -n argocd -p='{"data":{"oidc.keycloak.clientSecret": "'$encodedClientID'", "tls.crt": "'$encodedTlsCrt'", "tls.key": "'$encodedTlsKey'"}}'
 
 # apply sso configured configmap
