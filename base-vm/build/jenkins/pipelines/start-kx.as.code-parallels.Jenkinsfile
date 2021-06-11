@@ -6,15 +6,12 @@ node('local') {
     if ( os == "darwin" ) {
         echo "Running on Mac"
         packerOsFolder="darwin-linux"
-        vmWareDiskUtilityPath="/System/Volumes/Data/Applications/VMware Fusion.app/Contents/Library/vmware-vdiskmanager"
     } else if ( os == "linux" ) {
         echo "Running on Linux"
         packerOsFolder="darwin-linux"
-        vmWareDiskUtilityPath=""
     } else {
         echo "Running on Windows"
         os="windows"
-        vmWareDiskUtilityPath="c:/Program Files (x86)/VMware/VMware Workstation/vmware-vdiskmanager.exe"
         packerOsFolder="windows"
     }
 }
@@ -43,11 +40,6 @@ pipeline {
     stages {
 
         stage('Clone the repository'){
-            when {
-                allOf {
-                  expression{vagrant_action == 'up'}
-                }
-            }
             steps {
                 script {
                     checkout([$class: 'GitSCM', branches: [[name: "$git_source_branch"]], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'GIT_KX.AS.CODE_SOURCE', url: '${git_source_url}']]])
@@ -59,15 +51,8 @@ pipeline {
             steps {
                 script {
                     sh """
-                    env
-                    cd profiles/vagrant-vmware-desktop-demo1
-                    ls -altR
-                    if [[ "${vagrant_action}" == "destroy" ]]; then
-                        vagrant halt
-                        vagrant ${vagrant_action} -f
-                    else
-                        vagrant ${vagrant_action}
-                    fi
+                    cd profiles/vagrant-parallels-demo1
+                    vagrant up
                     """
                 }
             }

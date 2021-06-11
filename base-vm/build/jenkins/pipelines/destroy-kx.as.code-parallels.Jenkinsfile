@@ -38,31 +38,13 @@ pipeline {
     }
 
     stages {
-
-        stage('Clone the repository'){
-            when {
-                allOf {
-                  expression{vagrant_action == 'up'}
-                }
-            }
-            steps {
-                script {
-                    checkout([$class: 'GitSCM', branches: [[name: "$git_source_branch"]], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'GIT_KX.AS.CODE_SOURCE', url: '${git_source_url}']]])
-                }
-            }
-        }
-
         stage('Execute Vagrant Action'){
             steps {
                 script {
                     sh """
                     cd profiles/vagrant-parallels-demo1
-                    if [[ "${vagrant_action}" == "destroy" ]]; then
-                        vagrant halt
-                        vagrant ${vagrant_action} -f
-                    else
-                        vagrant ${vagrant_action}
-                    fi
+                    vagrant halt
+                    vagrant destroy -f
                     """
                 }
             }

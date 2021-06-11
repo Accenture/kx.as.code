@@ -3,7 +3,7 @@ import hudson.model.Item
 import hudson.model.Items
 
 def jobProperties
-Item currentJob = Jenkins.instance.getItemByFullName('VirtualBox/GeneratedJobs/03_Run_KX.AS.CODE')
+Item currentJob = Jenkins.instance.getItemByFullName('VirtualBox/GeneratedJobs/04_Stop_KX.AS.CODE')
 if (currentJob) {
   jobProperties = currentJob.@properties
 }
@@ -12,13 +12,13 @@ jobProperties.each {
    println "${it.dump()}"
 }
 
-pipelineJob('VirtualBox/GeneratedJobs/03_Run_KX.AS.CODE') {
+pipelineJob('VirtualBox/GeneratedJobs/04_Stop_KX.AS.CODE') {
     definition {
       cps {
-        script(readFileFromWorkspace('base-vm/build/jenkins/pipelines/deploy-kx.as.code-vmware-desktop.Jenkinsfile'))
+        script(readFileFromWorkspace('base-vm/build/jenkins/pipelines/stop-kx.as.code-vmware-desktop.Jenkinsfile'))
         sandbox()
       }
-      queue("VirtualBox/GeneratedJobs/03_Run_KX.AS.CODE")
+      queue("VirtualBox/GeneratedJobs/04_Stop_KX.AS.CODE")
       if (jobProperties) {
       configure { root ->
         def properties = root / 'properties'

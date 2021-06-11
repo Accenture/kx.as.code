@@ -34,7 +34,7 @@
   <concurrentBuild>false</concurrentBuild>
   <builders>
     <javaposse.jobdsl.plugin.ExecuteDslScripts plugin="job-dsl@1.77">
-      <targets>base-vm/build/jenkins/job_dsl/deploy_kx_as_code_virtualbox.groovy</targets>
+      <targets>base-vm/build/jenkins/job_dsl/start_kx_as_code_parallels.groovy</targets>
       <usingScriptText>false</usingScriptText>
       <sandbox>false</sandbox>
       <ignoreExisting>false</ignoreExisting>
