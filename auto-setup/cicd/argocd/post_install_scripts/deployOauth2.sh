@@ -7,7 +7,7 @@ export kcPod=$(kubectl get pods -l 'app.kubernetes.io/name=keycloak' -n keycloak
 
 # Set credential token in new Realm
 kubectl -n keycloak exec ${kcPod} -- \
-  ${kcAdmCli} config credentials --server ${kcInternalUrl}/auth --realm ${kcRealm} --user admin --password L3arnandshare
+  ${kcAdmCli} config credentials --server ${kcInternalUrl}/auth --realm ${kcRealm} --user admin --password ${vmPassword}
 
 ## create a clients
 kubectl -n keycloak exec ${kcPod} -- \
