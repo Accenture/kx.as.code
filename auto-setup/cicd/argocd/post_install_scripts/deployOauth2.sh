@@ -11,9 +11,9 @@ kubectl -n keycloak exec ${kcPod} -- \
 
 ## create a clients
 kubectl -n keycloak exec ${kcPod} -- \
-/opt/jboss/keycloak/bin/kcadm.sh create clients --realm demo1.kx-as-code.local -s clientId=argocd \
--s 'redirectUris=["https://argocd.demo1.kx-as-code.local/auth/callback"]' \
--s publicClient="false" -s enabled=true -s rootUrl="https://argocd.${baseDomain}" -s baseUrl="/applications" -i 
+/opt/jboss/keycloak/bin/kcadm.sh create clients --realm ${baseDomain} -s clientId=${componentName} \
+-s 'redirectUris=["https://'${componentName}'.'${baseDomain}'/auth/callback"]' \
+-s publicClient="false" -s enabled=true -s rootUrl="https://'${componentName}'.'${baseDomain}'" -s baseUrl="/applications" -i 
 
 ## export clientId
 export clientID=$(kubectl -n keycloak exec ${kcPod} -- \
@@ -25,7 +25,7 @@ export clientSecret=$(kubectl -n keycloak exec ${kcPod} -- \
 
 ## create client scopes
 kubectl -n keycloak exec keycloak-0 --container keycloak -- \
-/opt/jboss/keycloak/bin/kcadm.sh  create -x client-scopes -s name=argocd -s protocol=openid-connect
+/opt/jboss/keycloak/bin/kcadm.sh  create -x client-scopes -s name=${componentName} -s protocol=openid-connect
 
 ## export the client scope id
 export clientscopeID=$(kubectl -n keycloak exec ${kcPod} -- \
