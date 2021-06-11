@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash -eux
 
 # Install System Security Services Daemon (SSSD)
 

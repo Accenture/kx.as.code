@@ -1,0 +1,4 @@
+[Desktop Entry]
+Type=Application
+Name=SetKeyboardLanguage
+Exec=setxkbmap de,us,gb,fr,it,es -option grp:alt_shift_toggle

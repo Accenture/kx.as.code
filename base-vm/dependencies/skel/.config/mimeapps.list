@@ -1,0 +1,7 @@
+[Added Associations]
+image/jpeg=google-chrome.desktop;
+
+[Default Applications]
+image/jpeg=google-chrome.desktop;
+text/html=kfmclient_html.desktop
+x-scheme-handler/postman=Postman.desktop

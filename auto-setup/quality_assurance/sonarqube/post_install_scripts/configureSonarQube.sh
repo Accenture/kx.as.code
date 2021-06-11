@@ -1,3 +1,4 @@
+#!/bin/bash -eux
 
 # Defaults changed at the end
 user=admin

@@ -9,8 +9,8 @@
       <configVersion>2</configVersion>
       <userRemoteConfigs>
         <hudson.plugins.git.UserRemoteConfig>
-          <url>{{git_repo_url}}</url>
-          <credentialsId>GITHUB_KX.AS.CODE</credentialsId>
+          <url>{{git_source_url}}</url>
+          <credentialsId>GIT_KX.AS.CODE_SOURCE</credentialsId>
         </hudson.plugins.git.UserRemoteConfig>
       </userRemoteConfigs>
       <branches>

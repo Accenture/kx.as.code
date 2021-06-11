@@ -1,17 +1,16 @@
 {
     "config": {
         "vm_properties": {
-            "kx_version": "0.6.7",
-            "main_node_cpu_cores": 2,
-            "main_node_memory": 6144,
-            "worker_node_count": 1,
+            "kx_version": "0.7.0",
+            "main_node_cpu_cores": 4,
+            "main_node_memory": 16384,
+            "worker_node_count": 0,
             "worker_node_cpu_cores": 4,
             "worker_node_memory": 6144,
             "environment_prefix": "demo1",
             "kx_sync_folder_path": "./KX_Share",
-            "kx_main_box_location": "../../../01_Build_KX.AS.CODE_Main/base-vm/boxes/vmware-desktop-0.6.7/kx.as.code-main-demo-0.6.7.box",
-            "kx_worker_box_location": "../../../02_Build_KX.AS.CODE_Worker/base-vm/boxes/vmware-desktop-0.6.7/kx.as.code-worker-demo-0.6.7.box",
-            "vmware_disk_utility": "/Applications/VMware Fusion.app/Contents/Library/vmware-vdiskmanager"
+            "kx_main_box_location": "../../../01_Build_KX.AS.CODE_Main/base-vm/boxes/vmware-desktop-0.7.0/kx.as.code-main-demo-0.7.0.box",
+            "kx_worker_box_location": "../../../02_Build_KX.AS.CODE_Worker/base-vm/boxes/vmware-desktop-0.7.0/kx.as.code-worker-demo-0.7.0.box",
         },
         "allowWorkloadsOnMaster": true,
         "disableSessionTimeout": true,

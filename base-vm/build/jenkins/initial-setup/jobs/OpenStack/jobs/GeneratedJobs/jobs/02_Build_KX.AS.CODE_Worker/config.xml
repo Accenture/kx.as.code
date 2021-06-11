@@ -20,9 +20,9 @@
         <string>openstack_networks</string>
         <string>openstack_floating_ip_network</string>
         <string>openstack_source_image</string>
+        <string>git_source_url</string>
         <string>git_source_branch</string>
         <string>kx_vm_password</string>
-        <string>git_repo_url</string>
         <string>openstack_compute_engine_build</string>
         <string>kx_domain</string>
       </parameters>
@@ -46,14 +46,14 @@
     <hudson.model.ParametersDefinitionProperty>
       <parameterDefinitions>
         <hudson.model.StringParameterDefinition>
-          <name>git_repo_url</name>
-          <description>Source Github repository</description>
-          <defaultValue>{{git_repo_url}}</defaultValue>
+          <name>git_source_url</name>
+          <description>Source Git repository</description>
+          <defaultValue>{{git_source_url}}</defaultValue>
           <trim>false</trim>
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
           <name>git_source_branch</name>
-          <description>Source Github branch to build from and clone inside VM</description>
+          <description>Source Git branch to build from and clone inside VM</description>
           <defaultValue>{{git_source_branch}}</defaultValue>
           <trim>false</trim>
         </hudson.model.StringParameterDefinition>
@@ -143,8 +143,8 @@
       <configVersion>2</configVersion>
       <userRemoteConfigs>
         <hudson.plugins.git.UserRemoteConfig>
-          <url>{{git_repo_url}}</url>
-          <credentialsId>GITHUB_KX.AS.CODE</credentialsId>
+          <url>{{git_source_url}}</url>
+          <credentialsId>GIT_KX.AS.CODE_SOURCE</credentialsId>
         </hudson.plugins.git.UserRemoteConfig>
       </userRemoteConfigs>
       <branches>

@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash
 
 # Check if PID file already exists and ensure this script only runs once
 if [ ! -f /var/run/kxascode.pid ]; then
@@ -21,6 +21,7 @@ export apiDocsDirectory="${sharedKxHome}/API Docs"
 export shortcutsDirectory="${sharedKxHome}/DevOps Tools"
 export adminShortcutsDirectory="${sharedKxHome}/Admin Tools"
 export vmUser=kx.hero
+export vmUserId=$(id -u ${vmUser})
 export vmPassword="$(cat ${sharedKxHome}/.config/.user.cred)"
 
 # Check profile-config.json file is present before starting script
@@ -403,6 +404,11 @@ sudo systemctl restart guacd
 # Set tries to 0. If an install failed and the retry flag is set to true for that component in metadata.json, attempts will be made to retrz up to 3 times
 retries=0
 
+# Get first and last elements from Core install Queue
+lastCoreElementToInstall=$(cat ${autoSetupHome}/actionQueues.json | jq -r 'last(.action_queues.install[] | select(.install_folder=="core")) | .name')
+firstCoreElementToInstall=$(cat ${autoSetupHome}/actionQueues.json | jq -r 'first(.action_queues.install[] | select(.install_folder=="core")) | .name')
+numCoreElementsToInstall=$(cat ${autoSetupHome}/actionQueues.json | jq -r '.action_queues.install[] | select(.install_folder=="core") | .name' | wc -l)
+count=0
 # Poll pending queue and trigger actions if message is present
 while :
 do
@@ -439,6 +445,10 @@ do
             rabbitmqadmin publish exchange=action_workflow routing_key=wip_queue properties="{\"delivery_mode\": 2}" payload=''${payload}''
 
             # Launch autoSetup.sh
+            if [[ "${componentName}" == "${firstCoreElementToInstall}" ]]; then
+              sudo -H -i -u ${vmUser} sh -c "DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/${vmUserId}/bus notify-send -t 300000 \"KX.AS.CODE Notification\" \"Initialization started. Please be patient. This could take up to 30 minutes, depending on your system size and speed of internet connection\" --icon=dialog-warning"
+            fi
+            count=$((count+1))
             . ${autoSetupHome}/autoSetup.sh &> ${installationWorkspace}/${componentName}_${logTimestamp}.log
             logRc=$?
             log_info "Installation process for \"${componentName}\" returned with \$?=${logRc} and \$rc=$rc"
@@ -448,6 +458,10 @@ do
                 rabbitmqadmin get queue=wip_queue --format=pretty_json ackmode=ack_requeue_false | jq -r '.[].payload'
                 rabbitmqadmin publish exchange=action_workflow routing_key=completed_queue properties="{\"delivery_mode\": 2}" payload=''${payload}''
                 log_info "The installation of \"${componentName}\" completed succesfully"
+                sudo -H -i -u ${vmUser} sh -c "DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/${vmUserId}/bus notify-send -t 300000 \"KX.AS.CODE Notification\" \"${componentName} installed successfully [${count}/${numCoreElementsToInstall}]\" --icon=dialog-information"
+                if [[ "${componentName}" == "${lastCoreElementToInstall}" ]]; then
+                  sudo -H -i -u ${vmUser} sh -c "DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/${vmUserId}/bus notify-send -t 300000 \"KX.AS.CODE Notification\" \"CONGRATULATIONS\! That concludes the core setup\! Your optional components will now be installed\" --icon=dialog-information"
+                fi
                 retries=0
             else
                 if [[ "${retryParameter}" == "true" ]] && [[ ${retries} -lt 3 ]]; then
@@ -461,6 +475,7 @@ do
                     rabbitmqadmin publish exchange=action_workflow routing_key=failed_queue properties="{\"delivery_mode\": 2}" payload=''${payload}''
                     retries=0
                     log_error "Previous attempt to install \"${componentName}\" did not complete succesfully. There will be no (further) retries"
+                    sudo -H -i -u ${vmUser} sh -c "DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/${vmUserId}/bus notify-send -t 300000 \"KX.AS.CODE Notification\" \"${componentName} installation failed\! [${count}/${numCoreElementsToInstall}]\" --icon=dialog-error"
                 fi
             fi
         fi

@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash -eux
 
 # Add KX-CA to monitoring namespace
 kubectl -n ${namespace} create configmap certs-configmap \

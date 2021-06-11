@@ -1544,3 +1544,6 @@ EOF"
 # Change the ownership to the $VM_USER user
 sudo chown -R $VM_USER:$VM_USER /home/$VM_USER/.config
 sudo chown -R $VM_USER:$VM_USER /home/$VM_USER/.vscode
+
+# Update shared desktop icon
+sudo cp -f /home/${VM_USER}/Desktop/code.desktop /usr/share/applications/code.desktop

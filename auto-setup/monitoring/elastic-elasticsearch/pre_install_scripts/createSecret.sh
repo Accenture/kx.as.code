@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash -eux
 
 # Create directory for storing generated certs
 export elasticStackCertsDir=${installationWorkspace}/elastic-stack-certs

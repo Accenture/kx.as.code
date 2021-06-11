@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash -eux
 
 # Set variables for base DN
 export ldapDn=$(sudo slapcat | grep dn | head -1 | cut -f2 -d' ')
