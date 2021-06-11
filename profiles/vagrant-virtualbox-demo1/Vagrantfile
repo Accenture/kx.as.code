@@ -64,7 +64,7 @@ KX_MAIN_BOX_LOCATION = ENV['kxMainBoxLocation'] || profile_config['config']['vm_
 puts "KX_MAIN_BOX_LOCATION: #{KX_MAIN_BOX_LOCATION}"
 KX_WORKER_BOX_LOCATION = ENV['kxWorkerBoxLocation'] || profile_config['config']['vm_properties']['kx_worker_box_location']
 puts "KX_WORKER_BOX_LOCATION: #{KX_WORKER_BOX_LOCATION}"
-WORKSPACE_HOME = File.dirname(File.expand_path('..', __FILE__))
+WORKSPACE_HOME = File.dirname(File.expand_path('../..', __FILE__))
 
 
 # Create shared folder if it does not exist

@@ -55,13 +55,13 @@
         <hudson.model.StringParameterDefinition>
           <name>kx_main_box_location</name>
           <description>Location of built Vagrant box for KX.AS.CODE Main Node</description>
-          <defaultValue>../GeneratedJobs/01_Build_KX.AS.CODE_Main/base-vm/boxes/vmware-desktop-{{kx_version}}/kx.as.code-main-demo-{{kx_version}}.box</defaultValue>
+          <defaultValue>GeneratedJobs/01_Build_KX.AS.CODE_Main/base-vm/boxes/vmware-desktop-{{kx_version}}/kx.as.code-main-demo-{{kx_version}}.box</defaultValue>
           <trim>false</trim>
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
           <name>kx_worker_box_location</name>
           <description>Location of built Vagrant box for KX.AS.CODE Worker Node</description>
-          <defaultValue>../GeneratedJobs/01_Build_KX.AS.CODE_Worker/base-vm/boxes/vmware-desktop-{{kx_version}}/kx.as.code-worker-demo-{{kx_version}}.box</defaultValue>
+          <defaultValue>GeneratedJobs/01_Build_KX.AS.CODE_Worker/base-vm/boxes/vmware-desktop-{{kx_version}}/kx.as.code-worker-demo-{{kx_version}}.box</defaultValue>
           <trim>false</trim>
         </hudson.model.StringParameterDefinition>
       </parameterDefinitions>
