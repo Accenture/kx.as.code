@@ -168,11 +168,6 @@ xset -dpms
 #rm -f /home/${VM_USER}/.config/autostart-scripts/showWelcome.sh
 ''' | sudo tee /home/${VM_USER}/.config/autostart-scripts/showWelcome.sh
 
-echo '''#!/bin/bash -eux
-# Add notification to desktop to notify that K8s intialization has completed
-DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$(id -u)/bus notify-send -t 300000 "KX.AS.CODE Initialization Started" "KX.AS.CODE - Initialization started. Please be patient. This could take up to 30 minutes, depending on your system size and speed of internet connection" --icon=dialog-warning
-''' | sudo tee /home/${VM_USER}/.config/autostart-scripts/init-started-notification.sh
-
 sudo chmod 755  /home/${VM_USER}/.config/autostart-scripts/*.sh
 sudo chown ${VM_USER}:${VM_USER} /home/${VM_USER}/.config/autostart-scripts/*.sh
 
