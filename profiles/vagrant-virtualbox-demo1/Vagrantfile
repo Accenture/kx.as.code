@@ -64,6 +64,8 @@ KX_MAIN_BOX_LOCATION = ENV['kxMainBoxLocation'] || profile_config['config']['vm_
 puts "KX_MAIN_BOX_LOCATION: #{KX_MAIN_BOX_LOCATION}"
 KX_WORKER_BOX_LOCATION = ENV['kxWorkerBoxLocation'] || profile_config['config']['vm_properties']['kx_worker_box_location']
 puts "KX_WORKER_BOX_LOCATION: #{KX_WORKER_BOX_LOCATION}"
+WORKSPACE_HOME = File.expand_path("..", Dir.pwd)
+
 
 # Create shared folder if it does not exist
 if not FileTest::directory?(KX_SYNC_FOLDER_PATH)
@@ -76,7 +78,7 @@ Vagrant.configure("2") do |config|
     subconfig.vm.hostname = "kx-main"
     subconfig.vm.network :forwarded_port, guest: 22, host: 2222, id: "ssh", disabled: true
     subconfig.vm.network :forwarded_port, guest: 22, host: 2230, id: "ssh-kx-main", auto_correct: true
-    subconfig.vm.box_url = "file://#{current_dir}/#{KX_MAIN_BOX_LOCATION}"
+    subconfig.vm.box_url = "file://#{WORKSPACE_HOME}/#{KX_MAIN_BOX_LOCATION}"
     subconfig.vm.synced_folder KX_SYNC_FOLDER_PATH, "/home/kx.hero/KX_Share",
       owner: "kx.hero", group: "kx.hero"
     subconfig.vm.provision "file", source: "profile-config.json", destination: "/var/tmp/profile-config.json"
@@ -155,7 +157,7 @@ Vagrant.configure("2") do |config|
         subconfig.vm.hostname = "kx-worker#{i}"
         subconfig.vm.network :forwarded_port, guest: 22, host: 2222, id: "ssh", disabled: true
         subconfig.vm.network :forwarded_port, guest: 22, host: "223#{i}", id: "ssh-kx-worker#{i}", auto_correct: true
-        subconfig.vm.box_url = "file://#{current_dir}/#{KX_WORKER_BOX_LOCATION}"
+        subconfig.vm.box_url = "file://#{WORKSPACE_HOME}/#{KX_WORKER_BOX_LOCATION}"
         subconfig.vm.provision "file", source: "kx.as.code_main-ip-address", destination: "/var/tmp/kx.as.code_main-ip-address"
         subconfig.vm.provision "file", source: "profile-config.json", destination: "/var/tmp/profile-config.json"
         subconfig.vm.provision "shell", inline: "sudo mv /var/tmp/profile-config.json /usr/share/kx.as.code/workspace/"
