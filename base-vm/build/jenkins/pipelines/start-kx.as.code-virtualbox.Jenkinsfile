@@ -54,6 +54,8 @@ pipeline {
                 script {
                     dir(shared_workspace) {
                         sh """
+                        export kxMainBoxLocation=${kx_main_box_location}
+                        export kxWorkerBoxLocation=${kx_worker_box_location}
                         cd profiles/vagrant-virtualbox-demo1
                         vagrant up
                         VBoxManage list vms
