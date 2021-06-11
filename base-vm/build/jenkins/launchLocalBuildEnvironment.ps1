@@ -261,9 +261,25 @@ else
 }
 $WORKING_DIRECTORY = $WORKDIR_ABSOLUTE_PATH -replace "/","\"
 
+# Create shared directories for Vagrant and Terraform jobs
 $virtualbox_shared_directory_path = "$WORKING_DIRECTORY\VirtualBox\shared_workspace"
+if ( ! ( Test-Path -Path $virtualbox_shared_directory_path ) )
+{
+    New-Item -ItemType "directory" -Path $virtualbox_shared_directory_path
+}
+
 $paralells_shared_directory_path = "$WORKING_DIRECTORY\Paralells\shared_workspace"
+if ( ! ( Test-Path -Path $paralells_shared_directory_path ) )
+{
+    New-Item -ItemType "directory" -Path $paralells_shared_directory_path
+}
+
 $vmware_workstation_shared_directory_path = "$WORKING_DIRECTORY\VMWare_Workstation\shared_workspace"
+if ( ! ( Test-Path -Path $vmware_workstation_shared_directory_path ) )
+{
+    New-Item -ItemType "directory" -Path $vmware_workstation_shared_directory_path
+}
+
 
 # Replace mustache variables in job config.xml files
 New-Item -Path ".\jenkins_home\jobs" -Name "logfiles" -ItemType "directory"
