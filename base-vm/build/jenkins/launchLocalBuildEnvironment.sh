@@ -13,6 +13,13 @@ if [ ! -f ./jenkins.env ]; then
   exit 1
 fi
 
+# Ensure Mac/Linux compatible properties file
+if [[ "$(uname)" == "Darwin" ]]; then
+  sed -i '' 's/ = /=/g' ./jenkins.env
+else
+  sed -i 's/ = /=/g' ./jenkins.env
+fi
+
 # Source variables in jenkins.env file
 set -a; . ./jenkins.env; set +a
 
