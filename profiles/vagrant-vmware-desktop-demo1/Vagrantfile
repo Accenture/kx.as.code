@@ -61,8 +61,6 @@ DOCKERHUB_PASSWORD = ENV['DockerHubPassword'] || profile_config['config']['docke
 puts "DOCKERHUB_PASSWORD: #{DOCKERHUB_PASSWORD}"
 BOX_VERSION = ENV['boxVersion'] || profile_config['config']['vm_properties']['kx_version']
 puts "BOX_VERSION: #{BOX_VERSION}"
-KX_SYNC_FOLDER_PATH = ENV['kxSyncFolderPath'] || profile_config['config']['vm_properties']['kx_sync_folder_path']
-puts "KX_SYNC_FOLDER_PATH: #{KX_SYNC_FOLDER_PATH}"
 KX_MAIN_BOX_LOCATION = ENV['kxMainBoxLocation'] || profile_config['config']['vm_properties']['kx_main_box_location']
 puts "KX_MAIN_BOX_LOCATION: #{KX_MAIN_BOX_LOCATION}"
 KX_WORKER_BOX_LOCATION = ENV['kxWorkerBoxLocation'] || profile_config['config']['vm_properties']['kx_worker_box_location']
@@ -71,18 +69,10 @@ puts "KX_WORKER_BOX_LOCATION: #{KX_WORKER_BOX_LOCATION}"
 # Path for current Jenkins solution
 WORKSPACE_HOME = File.dirname(File.expand_path('../../..', __FILE__))
 
-
-# Create shared folder if it does not exist
-if not FileTest::directory?(KX_SYNC_FOLDER_PATH)
-  Dir::mkdir(KX_SYNC_FOLDER_PATH)
-end
-
 Vagrant.configure("2") do |config|
     config.vm.define "kx.as.code-main" do |subconfig|
         subconfig.vm.box = "kx.as.code-main-vmware-#{BOX_VERSION}"
         subconfig.vm.box_url = "file://#{WORKSPACE_HOME}/#{KX_MAIN_BOX_LOCATION}"
-        subconfig.vm.synced_folder KX_SYNC_FOLDER_PATH, "/home/kx.hero/KX_Share",
-            owner: "kx.hero", group: "kx.hero"
         subconfig.vm.provision "file", source: "profile-config.json", destination: "/var/tmp/profile-config.json"
         subconfig.vm.provision "file", source: "users.json", destination: "/var/tmp/users.json"
         Dir[File.dirname(__FILE__) + '/aq*.json'].each do |file|
