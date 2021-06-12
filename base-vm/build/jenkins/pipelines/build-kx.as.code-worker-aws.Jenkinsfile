@@ -54,7 +54,7 @@ pipeline {
         stage('Build the AMI'){
             steps {
                 script {
-                withCredentials([usernamePassword(credentialsId: 'GITHUB_KX.AS.CODE', passwordVariable: 'GITHUB_TOKEN', usernameVariable: 'GITHUB_USER')]) {
+                withCredentials([usernamePassword(credentialsId: 'GIT_KX.AS.CODE_SOURCE', passwordVariable: 'git_source_token', usernameVariable: 'git_source_user')]) {
                   withCredentials([[
                     $class: 'AmazonWebServicesCredentialsBinding',
                     credentialsId: "AWS_PACKER_ACCESS",
