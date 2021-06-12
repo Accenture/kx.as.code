@@ -47,7 +47,7 @@
         <hudson.model.StringParameterDefinition>
           <name>shared_workspace</name>
           <description>Shared workspace for the KX.AS.CODE start/stop/destroy jobs</description>
-          <defaultValue>{{shared_workspace}}</defaultValue>
+          <defaultValue>{{vmware_workstation_shared_directory_path}}</defaultValue>
           <trim>false</trim>
         </hudson.model.StringParameterDefinition>
       </parameterDefinitions>
