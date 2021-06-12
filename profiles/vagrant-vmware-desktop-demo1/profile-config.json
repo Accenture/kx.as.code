@@ -1,7 +1,7 @@
 {
     "config": {
         "vm_properties": {
-            "kx_version": "0.7.0",
+            "kx_version": "0.7.1",
             "main_node_cpu_cores": 4,
             "main_node_memory": 16384,
             "worker_node_count": 0,
