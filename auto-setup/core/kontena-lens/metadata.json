@@ -1,0 +1,17 @@
+{
+    "name": "konetena-lens",
+    "namespace": "",
+    "installation_type": "script",
+    "installation_group_folder": "core",
+    "environment_variables": {
+        "lensVersion": "4.2.4"
+    },
+    "install_scripts": [
+        "installKontenaLens.sh"
+    ],
+    "Description": "Kubernetes Admin Client",
+    "shortcut_text": "Kontena Lens",
+    "shortcut_icon": "",
+    "pre_install_scripts": [],
+    "post_install_scripts": []
+}

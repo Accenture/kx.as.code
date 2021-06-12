@@ -310,7 +310,7 @@
           "VM_USER={{user `vm_user`}}",
           "VM_PASSWORD={{user `vm_password`}}",
           "KX_HOME={{user `kx_home`}}",
-          "SKELDIR={{user `kx_home`}}/skel",
+          "SKELDIR={{user `kx_home`}}/workspace/skel",
           "SHARED_GIT_REPOSITORIES={{user `kx_home`}}/git",
           "INSTALLATION_WORKSPACE={{user `kx_home`}}/workspace"
       ],
@@ -355,13 +355,13 @@
     },
     {
       "type": "file",
-      "source": "../../../dependencies/plymouth_theme",
-      "destination": "{{user `kx_home`}}/workspace/plymouth_theme"
+      "source": "../../../dependencies/skel",
+      "destination": "{{user `kx_home`}}/workspace/skel"
     },
     {
       "type": "file",
-      "source": "../../../dependencies/user_profile",
-      "destination": "{{user `kx_home`}}/workspace/user_profile"
+      "source": "../../../dependencies/theme",
+      "destination": "{{user `kx_home`}}/workspace/theme"
     },
     {
       "type": "file",
@@ -376,7 +376,7 @@
         "VERSION={{user `version`}}",
         "COMPUTE_ENGINE_BUILD={{user `compute_engine_build`}}",
         "KX_HOME={{user `kx_home`}}",
-        "SKELDIR={{user `kx_home`}}/skel",
+        "SKELDIR={{user `kx_home`}}/workspace/skel",
         "SHARED_GIT_REPOSITORIES={{user `kx_home`}}/git",
         "INSTALLATION_WORKSPACE={{user `kx_home`}}/workspace"
        ],
@@ -400,7 +400,7 @@
         "VM_PASSWORD={{user `vm_password`}}",
         "VERSION={{user `version`}}",
         "KX_HOME={{user `kx_home`}}",
-        "SKELDIR={{user `kx_home`}}/skel",
+        "SKELDIR={{user `kx_home`}}/workspace/skel",
         "SHARED_GIT_REPOSITORIES={{user `kx_home`}}/git",
         "INSTALLATION_WORKSPACE={{user `kx_home`}}/workspace"
        ],

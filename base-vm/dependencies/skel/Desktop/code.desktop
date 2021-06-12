@@ -1,0 +1,28 @@
+[Desktop Action new-empty-window]
+Exec=/usr/share/code/code --no-sandbox --new-window %F
+Icon=com.visualstudio.code
+Name=New Empty Window
+
+[Desktop Entry]
+Actions=new-empty-window;
+Categories=Utility;TextEditor;Development;IDE;
+Comment[en_US]=Code Editing. Redefined.
+Comment=Code Editing. Redefined.
+Exec=/usr/share/code/code --no-sandbox --unity-launch %F
+GenericName[en_US]=Visual Studio Code
+GenericName=Visual Studio Code
+Icon=/usr/share/pixmaps/com.visualstudio.code.png
+Keywords=vscode;
+MimeType=text/plain;inode/directory;application/x-code-workspace;
+Name=Visual Studio Code
+Path=
+StartupNotify=false
+StartupWMClass=Code
+Terminal=false
+TerminalOptions=
+Type=Application
+X-DBUS-ServiceName=
+X-DBUS-StartupType=
+X-Desktop-File-Install-Version=0.23
+X-KDE-SubstituteUID=false
+X-KDE-Username=

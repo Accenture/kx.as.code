@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -eux
 
 # Install Kubernetes Metrics server
 curl -L -o ${installationWorkspace}/metric-server-components.yaml https://github.com/kubernetes-sigs/metrics-server/releases/download/v0.3.7/components.yaml

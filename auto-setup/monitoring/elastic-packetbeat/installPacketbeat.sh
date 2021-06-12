@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash -eux
 
 # Replace variables
 envhandlebars < ${installComponentDirectory}/deployment_yaml/install.yaml > ${installationWorkspace}/${componentName}_install.yaml

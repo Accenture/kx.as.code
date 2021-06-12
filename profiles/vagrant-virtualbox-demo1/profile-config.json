@@ -1,16 +1,17 @@
 {
     "config": {
         "vm_properties": {
-            "kx_version": "0.6.7",
-            "main_node_cpu_cores": 2,
+            "kx_version": "0.7.1",
+            "main_node_cpu_cores": 3,
             "main_node_memory": 6144,
             "worker_node_count": 1,
-            "worker_node_cpu_cores": 4,
+            "worker_node_cpu_cores": 3,
             "worker_node_memory": 6144,
             "environment_prefix": "demo1",
+            "3d_acceleration": "off",
             "kx_sync_folder_path": "./KX_Share",
-            "kx_main_box_location": "../../../01_Build_KX.AS.CODE_Main/base-vm/boxes/virtualbox-0.6.7/kx.as.code-main-demo-0.6.7.box",
-            "kx_worker_box_location": "../../../02_Build_KX.AS.CODE_Worker/base-vm/boxes/virtualbox-0.6.7/kx.as.code-worker-demo-0.6.7.box"
+            "kx_main_box_location": "../../../01_Build_KX.AS.CODE_Main/base-vm/boxes/virtualbox-0.7.1/kx.as.code-main-demo-0.7.1.box",
+            "kx_worker_box_location": "../../../02_Build_KX.AS.CODE_Worker/base-vm/boxes/virtualbox-0.7.1/kx.as.code-worker-demo-0.7.1.box"
         },
         "allowWorkloadsOnMaster": true,
         "disableSessionTimeout": true,
@@ -39,14 +40,14 @@
         },
         "staticNetworkSetup": {
             "baseFixedIpAddresses": {
-                "kx-main": "10.100.76.150",
-                "kx-worker1": "10.100.76.151",
-                "kx-worker2": "10.100.76.152",
-                "kx-worker3": "10.100.76.153",
-                "kx-worker4": "10.100.76.154"
+                "kx-main": "10.100.76.200",
+                "kx-worker1": "10.100.76.201",
+                "kx-worker2": "10.100.76.202",
+                "kx-worker3": "10.100.76.203",
+                "kx-worker4": "10.100.76.204"
             },
             "gateway": "10.100.76.2",
-            "dns1": "10.100.76.150",
+            "dns1": "10.100.76.200",
             "dns2": "8.8.8.8"
         },
         "docker": {
