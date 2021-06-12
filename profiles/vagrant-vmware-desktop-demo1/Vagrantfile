@@ -10,7 +10,7 @@ if Vagrant::Util::Platform.windows?
 elsif Vagrant::Util::Platform.darwin?
   # Is Mac
   puts "Vagrant launched from mac."
-  VMWARE_DISK_UTILITY="/Applications/VMware Fusion.app/Contents/Library/vmware-vdiskmanager"
+  VMWARE_DISK_UTILITY="/System/Volumes/Data/Applications/VMware Fusion.app/Contents/Library/vmware-vdiskmanager"
 else
   # Assume WSL for now
   puts "Vagrant launched from other system, maybe WSL?"
