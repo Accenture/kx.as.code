@@ -11,13 +11,13 @@ kubectl -n keycloak exec ${kcPod} -- \
 
 ## create a clients
 kubectl -n keycloak exec ${kcPod} -- \
-/opt/jboss/keycloak/bin/kcadm.sh create clients --realm ${baseDomain} -s clientId=${componentName} \
+${kcAdmCli} create clients --realm ${kcRealm} -s clientId=${componentName} \
 -s 'redirectUris=["https://'${componentName}'.'${baseDomain}'/auth/callback"]' \
 -s publicClient="false" -s enabled=true -s rootUrl="https://'${componentName}'.'${baseDomain}'" -s baseUrl="/applications" -i 
 
 ## export clientId
 export clientID=$(kubectl -n keycloak exec ${kcPod} -- \
-/opt/jboss/keycloak/bin/kcadm.sh  get clients --fields id,clientId | jq -r '.[] | select(.clientId=="argocd") | .id')
+${kcAdmCli}  get clients --fields id,clientId | jq -r '.[] | select(.clientId=="argocd") | .id')
 
 # export client secret
 export clientSecret=$(kubectl -n keycloak exec ${kcPod} -- \
@@ -25,15 +25,15 @@ export clientSecret=$(kubectl -n keycloak exec ${kcPod} -- \
 
 ## create client scopes
 kubectl -n keycloak exec keycloak-0 --container keycloak -- \
-/opt/jboss/keycloak/bin/kcadm.sh  create -x client-scopes -s name=${componentName} -s protocol=openid-connect
+${kcAdmCli}  create -x client-scopes -s name=${componentName} -s protocol=openid-connect
 
 ## export the client scope id
 export clientscopeID=$(kubectl -n keycloak exec ${kcPod} -- \
-/opt/jboss/keycloak/bin/kcadm.sh  get -x client-scopes | jq -r '.[] | select(.name=="argocd") | .id')
+${kcAdmCli}  get -x client-scopes | jq -r '.[] | select(.name=="argocd") | .id')
 
 ## client scope protocol mapper 
 kubectl -n keycloak exec ${kcPod} -- \
-/opt/jboss/keycloak/bin/kcadm.sh  create client-scopes/$clientscopeID/protocol-mappers/models \
+${kcAdmCli}  create client-scopes/$clientscopeID/protocol-mappers/models \
 -s name=groups \
   -s protocol=openid-connect \
   -s protocolMapper=oidc-group-membership-mapper \
@@ -43,7 +43,7 @@ kubectl -n keycloak exec ${kcPod} -- \
 
 ## map the above client scope id to the client 
 kubectl -n keycloak exec ${kcPod} -- \
-/opt/jboss/keycloak/bin/kcadm.sh  update clients/$clientID/default-client-scopes/$clientscopeID
+${kcAdmCli}  update clients/$clientID/default-client-scopes/$clientscopeID
 
 ################### kubernetes manifests CRUD operations #####################################
 
@@ -88,10 +88,10 @@ metadata:
     app.kubernetes.io/part-of: argocd
 data:
   application.instanceLabelKey: argocd.argoproj.io/instance
-  url: https://argocd.${baseDomain}
+  url: https://${componentName}.${baseDomain}
   oidc.config: |-
     name: Keycloak
-    issuer: https://keycloak.${baseDomain}/auth/realms/${baseDomain}
+    issuer: https://keycloak.${baseDomain}/auth/realms/${kcRealm}
     clientId: argocd
     clientSecret: \$oidc.keycloak.clientSecret
     requestedScopes: ['openid', 'profile', 'email', 'argocd']
