@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -eux
 
 if [[ ! -f /usr/share/kx.as.code/.config/.admin.gitlab.pat ]]; then
 

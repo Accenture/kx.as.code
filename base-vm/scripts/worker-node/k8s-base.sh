@@ -7,6 +7,10 @@ KUBEDIR=${INSTALLATION_WORKSPACE}
 sudo mkdir -p ${KUBEDIR}
 sudo chown ${VM_USER}:${VM_USER} ${KUBEDIR}
 
+# Copy Skel
+sudo cp -rfT ${INSTALLATION_WORKSPACE}/skel /home/$VM_USER
+sudo chown -R $VM_USER:$VM_USER /home/$VM_USER
+
 # Let iptables see bridged traffic
 sudo bash -c 'cat <<EOF > /etc/sysctl.d/k8s.conf
 net.bridge.bridge-nf-call-ip6tables = 1
@@ -64,15 +68,3 @@ WantedBy=multi-user.target
 EOF"
 sudo systemctl enable k8s-register-node
 sudo systemctl daemon-reload
-
-# Create SKEL directory for future users
-SKELDIR=${SKELDIR}
-sudo mkdir -p ${SKELDIR}
-sudo cp /home/${VM_USER}/.bashrc ${SKELDIR}
-sudo cp -r /home/${VM_USER}/.local ${SKELDIR}
-sudo cp -r /home/${VM_USER}/.oh-my-zsh ${SKELDIR}
-sudo cp /home/${VM_USER}/.p10k.zsh ${SKELDIR}
-sudo cp /home/${VM_USER}/.profile ${SKELDIR}
-sudo cp /home/${VM_USER}/.tmux.conf ${SKELDIR}
-sudo cp /home/${VM_USER}/.vimrc ${SKELDIR}
-sudo cp /home/${VM_USER}/.zshrc ${SKELDIR}

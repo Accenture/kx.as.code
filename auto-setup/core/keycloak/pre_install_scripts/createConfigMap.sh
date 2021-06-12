@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash -eux
 
 # Create CA config map for connecting to LDAPS from Keycloak for User Federation
 echo """

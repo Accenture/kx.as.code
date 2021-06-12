@@ -13,6 +13,13 @@ if [ ! -f ./jenkins.env ]; then
   exit 1
 fi
 
+# Ensure Mac/Linux compatible properties file
+if [[ "$(uname)" == "Darwin" ]]; then
+  sed -i '' 's/ = /=/g' ./jenkins.env
+else
+  sed -i 's/ = /=/g' ./jenkins.env
+fi
+
 # Source variables in jenkins.env file
 set -a; . ./jenkins.env; set +a
 
@@ -256,54 +263,70 @@ if [[ -z "${javaBinary}" ]]; then
   fi
 fi
 
-if [ -d ${JENKINS_HOME} ] && [[ "${override_action}" != "recreate" ]] && [[ "${override_action}" != "destroy" ]] && [[ "${override_action}" != "fully-destroy" ]]; then
+if [ -d ${jenkins_home} ] && [[ "${override_action}" != "recreate" ]] && [[ "${override_action}" != "destroy" ]] && [[ "${override_action}" != "fully-destroy" ]]; then
   echo -e "${blue}- [INFO] ${JENKINS_HOME} already exists. Will skip Jenkins setup. Delete or rename ${JENKINS_HOME} if you want to re-install Jenkins${nc}"
 fi
 
 # Checking if running on docker-machine to set correct Jenkins URL
 if [[ $(docker -D info --format '{{json .}}' | ${jqBinary} -r '.KernelVersion') =~ boot2docker ]]; then
   echo -e "${blue}- [INFO] Jenkins is running on docker-machine, setting docker host to 192.168.99.100${nc}"
-  JENKINS_HOST=192.168.99.100
-  JENKINS_URL=http://${JENKINS_HOST}:${JENKINS_SERVER_PORT}
+  jenkins_host=192.168.99.100
+  jenkins_url=http://${jenkins_host}:${jenkins_server_port}
 else
   echo -e "${blue}- [INFO] Not a docker-machine environment, setting docker host to localhost${nc}"
-  JENKINS_HOST=localhost
-  JENKINS_URL=http://${JENKINS_HOST}:${JENKINS_SERVER_PORT}
+  jenkins_host=localhost
+  jenkins_url=http://${jenkins_host}:${jenkins_server_port}
 fi
 
-#Building Docker Image if it does not exist
-if [[ -z $(docker images ${KX_JENKINS_IMAGE} -q) ]]; then
-  echo -e "${blue}- [INFO] Image ${KX_JENKINS_IMAGE} not present on this machine. Building...${nc}"
-  docker build -t ${KX_JENKINS_IMAGE} ./initial-setup
+# Building Docker Image if it does not exist
+if [[ -z $(docker images ${kx_jenkins_image} -q) ]]; then
+  echo -e "${blue}- [INFO] Image ${kx_jenkins_image} not present on this machine. Building...${nc}"
+  docker build -t ${kx_jenkins_image} ./initial-setup
   if [[ $? -ne 0 ]]; then
-    echo -e "${red}- [INFO] Build of image ${KX_JENKINS_IMAGE} failed${nc}"
+    echo -e "${red}- [INFO] Build of image ${kx_jenkins_image} failed${nc}"
   else
-    echo -e "${green}- [INFO] Build of image ${KX_JENKINS_IMAGE} completed successfully${nc}"
+    echo -e "${green}- [INFO] Build of image ${kx_jenkins_image} completed successfully${nc}"
   fi
 fi
 
 # Checking if Jenkins home already exists to avoid overwriting configurations and breaking something
-if [ ! -d "${JENKINS_HOME}/jobs" ] || [[ "${override_action}" == "recreate" ]] || [[ "${override_action}" == "destroy" ]] || [[ "${override_action}" == "fully-destroy" ]]; then
-  mkdir -p ${WORKING_DIRECTORY}
-  mkdir -p ${JENKINS_HOME}
-  cp -R ./initial-setup/* ${JENKINS_HOME}
-  firstTwoChars=$(echo "${WORKING_DIRECTORY}" | head -c2)
-  firstChar=$(echo "${WORKING_DIRECTORY}" | head -c1)
+if [ ! -d "${jenkins_home}/jobs" ] || [[ "${override_action}" == "recreate" ]] || [[ "${override_action}" == "destroy" ]] || [[ "${override_action}" == "fully-destroy" ]]; then
+  mkdir -p ${working_directory}
+  mkdir -p ${jenkins_home}
+  cp -R ./initial-setup/* ${jenkins_home}
+  firstTwoChars=$(echo "${working_directory}" | head -c2)
+  firstChar=$(echo "${working_directory}" | head -c1)
   if [[ "${firstTwoChars}" == "./" ]]; then
     # if workspace directory starts with ./, convert relative directory to absolute
-    WORKDIR_ABSOLUTE_PATH=$(pwd)/$(echo ${WORKING_DIRECTORY} | sed 's;\./;;g')
+    workdir_absolute_path=$(pwd)/$(echo ${working_directory} | sed 's;\./;;g')
   elif [[ "${firstChar}" != "/" ]]; then
     # If no ./ or / at beginning, assume relative working directory and convert to absolute
-    WORKDIR_ABSOLUTE_PATH="$(pwd)/${WORKING_DIRECTORY}"
+    workdir_absolute_path="$(pwd)/${working_directory}"
   else
     # If / at start, assume provided directory is already absolute and use it
-    WORKDIR_ABSOLUTE_PATH=${WORKING_DIRECTORY}
+    workdir_absolute_path=${working_directory}
   fi
   if [[ "$(uname)" == "Darwin" ]]; then
-    sed -i '' 's;{{WORKING_DIRECTORY}};'${WORKDIR_ABSOLUTE_PATH}';g' ${JENKINS_HOME}/nodes/local/config.xml
+    sed -i '' 's;{{WORKING_DIRECTORY}};'${workdir_absolute_path}';g' ${jenkins_home}/nodes/local/config.xml
   else
-    sed -i 's;{{WORKING_DIRECTORY}};'${WORKDIR_ABSOLUTE_PATH}';g' ${JENKINS_HOME}/nodes/local/config.xml
+    sed -i 's;{{WORKING_DIRECTORY}};'${workdir_absolute_path}';g' ${jenkins_home}/nodes/local/config.xml
   fi
+fi
+
+# Create shared directories for Vagrant and Terraform jobs
+export virtualbox_shared_directory_path="${workdir_absolute_path}/workspace/VirtualBox/shared_workspace"
+if [[ ! -d "${virtualbox_shared_directory_path}" ]]; then
+  mkdir -p "${virtualbox_shared_directory_path}"
+fi
+
+export parallels_shared_directory_path="${workdir_absolute_path}/workspace/Parallels/shared_workspace"
+if [[ ! -d "${parallels_shared_directory_path}" ]]; then
+  mkdir -p "${parallels_shared_directory_path}"
+fi
+
+export vmware_workstation_shared_directory_path="${workdir_absolute_path}/workspace/VMWare_Workstation/shared_workspace"
+if [[ ! -d "${vmware_workstation_shared_directory_path}" ]]; then
+  mkdir -p "${vmware_workstation_shared_directory_path}"
 fi
 
 # Replace variable placeholders in Jenkins jobs
@@ -320,7 +343,7 @@ do
   echo "[INFO] Replacing placeholders with values in ${initialSetupJobConfgXmlFile}"
   for i in {1..5}
     do
-    cat "${initialSetupJobConfgXmlFile}" | ./mo | tee "${initialSetupJobConfgXmlFile}_tmp"
+    cat "${initialSetupJobConfgXmlFile}" | ./mo | tee "${initialSetupJobConfgXmlFile}_tmp" >/dev/null
     if [ -s "${initialSetupJobConfgXmlFile}_tmp" ]
     then
        mv "${initialSetupJobConfgXmlFile}_tmp" "${initialSetupJobConfgXmlFile}"
@@ -347,12 +370,12 @@ while [[ ! -f ./jenkins-cli.jar ]]
 do
   for i in {1..60}
   do
-    http_code=$(curl -s -o /dev/null -L -w '%{http_code}' ${JENKINS_URL}/jnlpJars/jenkins-cli.jar)
+    http_code=$(curl -s -o /dev/null -L -w '%{http_code}' ${jenkins_url}/jnlpJars/jenkins-cli.jar)
     if [[ "${http_code}" == "200" ]]; then
-      curl -s ${JENKINS_URL}/jnlpJars/jenkins-cli.jar -o jenkins-cli.jar
+      curl -s ${jenkins_url}/jnlpJars/jenkins-cli.jar -o jenkins-cli.jar
       break 2
     fi
-    echo -e "${blue}- [INFO] Waiting for ${JENKINS_URL}/jnlpJars/jenkins-cli.jar [RC=${http_code}]${nc}"
+    echo -e "${blue}- [INFO] Waiting for ${jenkins_url}/jnlpJars/jenkins-cli.jar [RC=${http_code}]${nc}"
     sleep 30
   done
 done
@@ -369,12 +392,12 @@ while [[ ! -f ./agent.jar ]]
 do
   for i in {1..60}
   do
-    http_code=$(curl -s -o /dev/null -L -w '%{http_code}' ${JENKINS_URL}/jnlpJars/agent.jar)
+    http_code=$(curl -s -o /dev/null -L -w '%{http_code}' ${jenkins_url}/jnlpJars/agent.jar)
     if [[ "${http_code}" == "200" ]]; then
-      curl -s ${JENKINS_URL}/jnlpJars/agent.jar -o agent.jar
+      curl -s ${jenkins_url}/jnlpJars/agent.jar -o agent.jar
       break 2
     fi
-    echo -e "${blue}- [INFO] Waiting for ${JENKINS_URL}/jnlpJars/agent.jar [RC=${http_code}]${nc}"
+    echo -e "${blue}- [INFO] Waiting for ${jenkins_url}/jnlpJars/agent.jar [RC=${http_code}]${nc}"
     sleep 30
   done
 done
@@ -389,12 +412,12 @@ fi
 echo -e "${blue}- [INFO] Waiting for Jenkins to be fully up before continuing...${nc}"
 for i in {1..60}
 do
-  http_code=$(curl -s -o /dev/null -L -w '%{http_code}' ${JENKINS_URL}/view/Status/)
+  http_code=$(curl -s -o /dev/null -L -w '%{http_code}' ${jenkins_url}/view/Status/)
   if [[ "${http_code}" == "200" ]]; then
     echo -e "${green}- [INFO] Jenkins is up, continuing with setting up the build & deploy environment${nc}"
     break
   fi
-  echo -e "${blue}- [INFO] Waiting for ${JENKINS_URL}/view/Status/ [RC=${http_code}]${nc}"
+  echo -e "${blue}- [INFO] Waiting for ${jenkins_url}/view/Status/ [RC=${http_code}]${nc}"
   sleep 30
 done
 
@@ -404,41 +427,25 @@ if [ ! -f ./docker-compose.yml ]; then
   error="true"
 fi
 
-# Create Github Credentials
-if [[ -n ${GITHUB_USERNAME} ]] && [[ -n ${GITHUB_PASSWORD} ]]; then
-  cat initial-setup/credential_github.xml | sed 's/{{GITHUB_USERNAME}}/'${GITHUB_USERNAME}'/g' | sed 's/{{GITHUB_PASSWORD}}/'${GITHUB_PASSWORD}'/g' | "${javaBinary}" -jar jenkins-cli.jar -s ${JENKINS_URL} create-credentials-by-xml system::system::jenkins _
-else
-  echo -e "${red}- [ERROR] GITHUB credential must be set in jenkins.env, else the build will fail. Please set and try again${nc}"
-  error="true"
-fi
-
-# Creating Openstack Packer credentials in Jenkins
-if [[ -n ${OPENSTACK_PACKER_USERNAME}  ]] && [[ -n ${OPENSTACK_PACKER_PASSWORD} ]]; then
-  cat initial-setup/credential_openstack_packer.xml  | sed 's/{{OPENSTACK_PACKER_USERNAME}}/'${OPENSTACK_PACKER_USERNAME}'/g' | sed 's/{{OPENSTACK_PACKER_PASSWORD}}/'${OPENSTACK_PACKER_PASSWORD}'/g' |  "${javaBinary}" -jar jenkins-cli.jar -s ${JENKINS_URL} create-credentials-by-xml system::system::jenkins _
-else
-  echo -e "${orange}- [WARN] Openstack Packer credentials not set in jenkins.env. Dummy value will be used for user and password. You can update these manually later in Jenkins, or updated jenkins.env and launch this script again${nc}"
-fi
-
-# Creating AWS Packer credentials in Jenkins
-if [[ -n ${PACKER_AWS_PACKER_ACCESS_KEY} ]] && [[ -n ${PACKER_AWS_PACKER_ACCESS_SECRET} ]]; then
-  cat initial-setup/credential_aws_packer.xml  | sed 's/{{PACKER_AWS_PACKER_ACCESS_KEY}}/'${PACKER_AWS_PACKER_ACCESS_KEY}'/g' | sed 's/{{PACKER_AWS_PACKER_ACCESS_SECRET}}/'${PACKER_AWS_PACKER_ACCESS_SECRET}'/g' |  "${javaBinary}" -jar jenkins-cli.jar -s ${JENKINS_URL} create-credentials-by-xml system::system::jenkins _
-else
-  echo -e "${orange}- [WARN] AWS Packer credentials not set in jenkins.env. Dummy value will be used for user and password. You can update these manually later in Jenkins, or updated jenkins.env and launch this script again${nc}"
-fi
-
-# Creating Openstack Terraform credentials in Jenkins
-if [[ -n ${OPENSTACK_TERRAFORM_USERNAME}  ]] && [[ -n ${OPENSTACK_TERRAFORM_PASSWORD} ]]; then
-  cat initial-setup/credential_openstack_terraform.xml  | sed 's/{{OPENSTACK_TERRAFORM_USERNAME}}/'${OPENSTACK_TERRAFORM_USERNAME}'/g' | sed 's/{{OPENSTACK_TERRAFORM_PASSWORD}}/'${OPENSTACK_TERRAFORM_PASSWORD}'/g' |  "${javaBinary}" -jar jenkins-cli.jar -s ${JENKINS_URL} create-credentials-by-xml system::system::jenkins _
-else
-  echo -e "${orange}- [WARN] Openstack Terraform credentials not set in jenkins.env. Dummy value will be used for user and password. You can update these manually later in Jenkins, or updated jenkins.env and launch this script again${nc}"
-fi
-
-# Creating AWS Terraform credentials in Jenkins
-if [[ -n ${PACKER_AWS_TERRAFORM_ACCESS_KEY} ]] && [[ -n ${PACKER_AWS_TERRAFORM_ACCESS_SECRET} ]]; then
-  cat initial-setup/credential_aws_terraform.xml  | sed 's/{{PACKER_AWS_TERRAFORM_ACCESS_KEY}}/'${PACKER_AWS_TERRAFORM_ACCESS_KEY}'/g' | sed 's/{{PACKER_AWS_TERRAFORM_ACCESS_SECRET}}/'${PACKER_AWS_TERRAFORM_ACCESS_SECRET}'/g' |  "${javaBinary}" -jar jenkins-cli.jar -s ${JENKINS_URL} create-credentials-by-xml system::system::jenkins _
-else
-  echo -e "${orange}- [WARN] AWS Terraform credentials not set in jenkins.env. Dummy value will be used for user and password. You can update these manually later in Jenkins, or updated jenkins.env and launch this script again${nc}"
-fi
+# Creating credentials in Jenkins
+credentialXmlFiles=$(find jenkins_home/ -name "credential_*.xml")
+for credentialXmlFile in ${credentialXmlFiles}
+do
+  echo "[INFO] Replacing placeholders with values in ${credentialXmlFile}"
+  for i in {1..5}
+    do
+    cat "${credentialXmlFile}" | ./mo | tee "${credentialXmlFile}_mo" >/dev/null
+    if [ -s "${credentialXmlFile}_mo" ]
+    then
+       cat "${credentialXmlFile}_mo" | "${javaBinary}" -jar jenkins-cli.jar -s ${jenkins_url} create-credentials-by-xml system::system::jenkins _
+       rm "${credentialXmlFile}_mo"
+       break
+    else
+       echo -e "${red}- [ERROR] Target config.xml file was empty after mustach replacement. Trying again${nc}"
+    fi
+  done
+done
+IFS=${OLD_IFS}
 
 # Checking if Vagrant is installed
 vagrantInstalled=$(vagrant -v 2>/dev/null | grep -E "Vagrant.*([0-9]+)\.([0-9]+)\.([0-9]+)")
@@ -470,13 +477,13 @@ if [[ "${error}" = "true" ]]; then
   exit 1
 fi
 
-echo -e "${green}- [INFO] Congratulations! Jenkins for KX.AS.CODE is successfully configured and running. Access Jenkins via the following URL: ${JENKINS_URL}${nc}"
+echo -e "${green}- [INFO] Congratulations! Jenkins for KX.AS.CODE is successfully configured and running. Access Jenkins via the following URL: ${jenkins_url}${nc}"
 
 # Start Jenkins Agent
 echo -e "${blue}- [INFO] Connecting the local agent to Jenkins...${nc}"
-if [[ -n "${JNLP_SECRET}" ]]; then
-  "${javaBinary}" -jar agent.jar -jnlpUrl ${JENKINS_URL}/computer/${AGENT_NAME}/slave-agent.jnlp -connectTo ${JENKINS_HOST}:${JENKINS_JNLP_PORT} -secret ${JNLP_SECRET} -workDir "${WORKING_DIRECTORY}"
+if [[ -n "${jnlp_secret}" ]]; then
+  "${javaBinary}" -jar agent.jar -jnlpUrl ${jenkins_url}/computer/${agent_name}/slave-agent.jnlp -connectTo ${jenkins_host}:${jenkins_jnlp_port} -secret ${jnlp_secret} -workDir "${working_directory}"
 else
   echo -e "${orange}- [INFO] JNLP_SECRET is not set. This is OK for a local setup. If you want to add it, you'll have to configure it manually after everything has started${nc}"
-  "${javaBinary}" -jar agent.jar -jnlpUrl ${JENKINS_URL}/computer/${AGENT_NAME}/slave-agent.jnlp -workDir "${WORKING_DIRECTORY}"
+  "${javaBinary}" -jar agent.jar -jnlpUrl ${jenkins_url}/computer/${agent_name}/slave-agent.jnlp -workDir "${working_directory}"
 fi

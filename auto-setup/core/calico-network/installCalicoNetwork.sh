@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -eux
 
 # Install Calico Network
 curl https://docs.projectcalico.org/v3.17/manifests/calico.yaml --output ${installationWorkspace}/calico.yaml

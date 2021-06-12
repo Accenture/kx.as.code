@@ -52,22 +52,34 @@
         <string>OpenStack/GeneratedJobs/03_Run_KX.AS.CODE</string>
         <string>Parallels/01_Build_KX.AS.CODE_Main</string>
         <string>Parallels/02_Build_KX.AS.CODE_Worker</string>
-        <string>Parallels/03_Run_KX.AS.CODE</string>
+        <string>Parallels/03_Start_KX.AS.CODE</string>
+        <string>Parallels/04_Stop_KX.AS.CODE</string>
+        <string>Parallels/05_Destroy_KX.AS.CODE</string>
         <string>Parallels/GeneratedJobs/01_Build_KX.AS.CODE_Main</string>
         <string>Parallels/GeneratedJobs/02_Build_KX.AS.CODE_Worker</string>
-        <string>Parallels/GeneratedJobs/03_Run_KX.AS.CODE</string>
+        <string>Parallels/GeneratedJobs/03_Start_KX.AS.CODE</string>
+        <string>Parallels/GeneratedJobs/04_Stop_KX.AS.CODE</string>
+        <string>Parallels/GeneratedJobs/05_Destroy_KX.AS.CODE</string>
         <string>VirtualBox/01_Build_KX.AS.CODE_Main</string>
         <string>VirtualBox/02_Build_KX.AS.CODE_Worker</string>
-        <string>VirtualBox/03_Run_KX.AS.CODE</string>
+        <string>VirtualBox/03_Start_KX.AS.CODE</string>
+        <string>VirtualBox/04_Stop_KX.AS.CODE</string>
+        <string>VirtualBox/05_Destroy_KX.AS.CODE</string>
         <string>VirtualBox/GeneratedJobs/01_Build_KX.AS.CODE_Main</string>
         <string>VirtualBox/GeneratedJobs/02_Build_KX.AS.CODE_Worker</string>
-        <string>VirtualBox/GeneratedJobs/03_Run_KX.AS.CODE</string>
+        <string>VirtualBox/GeneratedJobs/03_Start_KX.AS.CODE</string>
+        <string>VirtualBox/GeneratedJobs/04_Stop_KX.AS.CODE</string>
+        <string>VirtualBox/GeneratedJobs/05_Destroy_KX.AS.CODE</string>
         <string>VMWare_Workstation/01_Build_KX.AS.CODE_Main</string>
         <string>VMWare_Workstation/02_Build_KX.AS.CODE_Worker</string>
-        <string>VMWare_Workstation/03_Run_KX.AS.CODE</string>
+        <string>VMWare_Workstation/03_Start_KX.AS.CODE</string>
+        <string>VMWare_Workstation/04_Stop_KX.AS.CODE</string>
+        <string>VMWare_Workstation/05_Destroy_KX.AS.CODE</string>
         <string>VMWare_Workstation/GeneratedJobs/01_Build_KX.AS.CODE_Main</string>
         <string>VMWare_Workstation/GeneratedJobs/02_Build_KX.AS.CODE_Worker</string>
-        <string>VMWare_Workstation/GeneratedJobs/03_Run_KX.AS.CODE</string>
+        <string>VMWare_Workstation/GeneratedJobs/03_Start_KX.AS.CODE</string>
+        <string>VMWare_Workstation/GeneratedJobs/04_Stop_KX.AS.CODE</string>
+        <string>VMWare_Workstation/GeneratedJobs/05_Destroy_KX.AS.CODE</string>
       </jobNames>
       <jobFilters/>
       <columns/>

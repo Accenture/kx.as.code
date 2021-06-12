@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash -eux
 
 export kcRealm=${baseDomain}
 export kcInternalUrl=http://localhost:8080

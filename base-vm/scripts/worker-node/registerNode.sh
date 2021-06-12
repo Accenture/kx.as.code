@@ -358,6 +358,7 @@ sudo chmod 755 ${installationWorkspace}/scpKxTars.sh
 sudo crontab -l | { cat; echo "* * * * * ${installationWorkspace}/scpKxTars.sh"; } | sudo crontab -
 
 # Set default keyboard language
+defaultUserKeyboardLanguage=$(jq -r '.config.defaultKeyboardLanguage' ${installationWorkspace}/profile-config.json)
 keyboardLanguages=""
 availableLanguages="us de gb fr it es"
 for language in ${availableLanguages}
@@ -365,7 +366,7 @@ do
     if [[ -z ${keyboardLanguages} ]]; then
         keyboardLanguages="${language}"
     else
-        if [[ "${language}" == "${defaultKeyboardLanguage}" ]]; then
+        if [[ "${language}" == "${defaultUserKeyboardLanguage}" ]]; then
             keyboardLanguages="${language},${keyboardLanguages}"
         else
             keyboardLanguages="${keyboardLanguages},${language}"
