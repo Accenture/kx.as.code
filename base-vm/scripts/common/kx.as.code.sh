@@ -19,24 +19,3 @@ fi
 
 cat /etc/default/grub
 
-# Create folder for mounting shared data drive (VirtualBox)
-if [[ $PACKER_BUILDER_TYPE =~ virtualbox ]]; then
-  sudo mkdir -p /media/sf_KX_Share
-  sudo chown $VM_USER:$VM_USER  /media/sf_KX_Share
-  sudo ln -s /media/sf_KX_Share /home/$VM_USER/KX_Share
-fi
-
-# Create folder for mounting shared data drive (Parallels)
-if [[ $PACKER_BUILDER_TYPE =~ parallels ]]; then
-  sudo mkdir -p /media/psf/KX_Share
-  sudo chown $VM_USER:$VM_USER /media/psf/KX_Share
-  sudo ln -s /media/psf/KX_Share /home/$VM_USER/KX_Share
-fi
-
-# Create folder for mounting shared data drive (VMWare)
-if [[ $PACKER_BUILDER_TYPE =~ vmware_desktop ]]; then
-  echo "vmhgfs-fuse    /mnt/hgfs    fuse    defaults,allow_other,nonempty    0    0" | sudo tee -a /etc/fstab
-  sudo mkdir -p /mnt/hgfs/KX_Share
-  sudo chown $VM_USER:$VM_USER /mnt/hgfs/KX_Share
-  sudo ln -s /mnt/hgfs/KX_Share /home/$VM_USER/KX_Share
-fi

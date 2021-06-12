@@ -198,22 +198,6 @@ sudo mkdir -p "${vendorDocsDirectory}"
 sudo chmod a+rwx "${vendorDocsDirectory}"
 sudo ln -s "${vendorDocsDirectory}" /home/${VM_USER}/Desktop/
 
-
-# Link mounted shared data drive to desktop (VirtualBox)
-if [[ $PACKER_BUILDER_TYPE =~ virtualbox ]]; then
-  sudo ln -s /media/sf_KX_Share /home/${VM_USER}/Desktop/KX_Share
-fi
-
-# Link mounted shared data drive to desktop (Parallels)
-if [[ $PACKER_BUILDER_TYPE =~ parallels ]]; then
-  sudo ln -s /media/psf/KX_Share /home/${VM_USER}/Desktop/KX_Share
-fi
-
-# Link mounted shared data drive to desktop (VMWare)
-if [[ $PACKER_BUILDER_TYPE =~ vmware_desktop ]]; then
-  sudo ln -s /mnt/hgfs/KX_Share /home/${VM_USER}/Desktop/KX_Share
-fi
-
 # Show /etc/motd even when in X-Windows terminal (not SSH)
 echo -e '\n# Added to show KX.AS.CODE MOTD also in X-Windows Terminal (already showing in SSH per default)
 if [ -z $(echo $SSH_TTY) ]; then
