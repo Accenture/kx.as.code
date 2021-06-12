@@ -405,9 +405,9 @@ sudo systemctl restart guacd
 retries=0
 
 # Get first and last elements from Core install Queue
-lastCoreElementToInstall=$(cat ${autoSetupHome}/actionQueues.json | jq -r 'last(.action_queues.install[] | select(.install_folder=="core")) | .name')
-firstCoreElementToInstall=$(cat ${autoSetupHome}/actionQueues.json | jq -r 'first(.action_queues.install[] | select(.install_folder=="core")) | .name')
-numCoreElementsToInstall=$(cat ${autoSetupHome}/actionQueues.json | jq -r '.action_queues.install[] | select(.install_folder=="core") | .name' | wc -l)
+lastCoreElementToInstall=$(cat ${installationWorkspace}/actionQueues.json | jq -r 'last(.action_queues.install[] | select(.install_folder=="core")) | .name')
+firstCoreElementToInstall=$(cat ${installationWorkspace}/actionQueues.json | jq -r 'first(.action_queues.install[] | select(.install_folder=="core")) | .name')
+numCoreElementsToInstall=$(cat ${installationWorkspace}/actionQueues.json | jq -r '.action_queues.install[] | .name' | wc -l)
 count=0
 # Poll pending queue and trigger actions if message is present
 while :
