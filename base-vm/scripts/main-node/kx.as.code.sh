@@ -237,6 +237,41 @@ Type=Application
 Categories=Development
 EOF"
 
+if [[ $PACKER_BUILDER_TYPE =~ virtualbox ]]; then
+
+# Add icon for restarting the VirtualBox clipboard service
+sudo bash -c "cat <<EOF > /home/${VM_USER}/Desktop/RestartVBox.desktop
+[Desktop Entry]
+Actions=new-window;new-private-window;
+Categories=Utilities
+Comment[en_US]=Restart VBoxClient
+Comment=Restart VBoxClient
+Exec=/usr/share/kx.as.code/restartVBoxClient.sh
+GenericName[en_US]=Restart VBoxClient
+GenericName=Restart VBoxClient
+Icon=VBox
+MimeType=text/html;image/webp;application/xml;
+Name=Restart VBoxClient
+Path=
+StartupNotify=true
+Terminal=true
+TerminalOptions=
+Type=Application
+Version=1.0
+X-DBUS-ServiceName=
+X-DBUS-StartupType=
+X-KDE-SubstituteUID=false
+X-KDE-Username=
+EOF"
+
+echo '''#!/bin/bash
+pkill "VBoxClient --clipboard" -f
+/usr/bin/VBoxClient --clipboard
+''' | sudo tee /usr/share/kx.as.code/restartVBoxClient.sh
+sudo chmod 755 /usr/share/kx.as.code/restartVBoxClient.sh
+
+fi
+
 # Give *.desktop files execute permissions
 sudo chmod 755 /home/${VM_USER}/Desktop/*.desktop
 sudo cp /home/${VM_USER}/Desktop/*.desktop /usr/share/applications
