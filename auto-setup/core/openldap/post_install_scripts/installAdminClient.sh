@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash -eux
 
 # Download LDAP Account Manager
 lamVersion=7.4-1

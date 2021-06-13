@@ -1,0 +1,10 @@
+{
+  "action_queues": {
+    "install": [
+      {
+        "install_folder": "storage",
+        "name": "minio-s3"
+      }
+    ]
+  }
+}
