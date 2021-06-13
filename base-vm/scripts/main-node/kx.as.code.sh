@@ -268,7 +268,7 @@ echo '''#!/bin/bash
 pkill "VBoxClient --clipboard" -f
 /usr/bin/VBoxClient --clipboard
 ''' | sudo tee /usr/share/kx.as.code/restartVBoxClient.sh
-chmod 755 /usr/share/kx.as.code/restartVBoxClient.sh
+sudo chmod 755 /usr/share/kx.as.code/restartVBoxClient.sh
 
 fi
 
