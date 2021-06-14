@@ -38,7 +38,7 @@ grafana.ini:
     auth_url: https://keycloak.demo1.kx-as-code.local/auth/realms/demo1.kx-as-code.local/protocol/openid-connect/auth
     token_url: https://keycloak.demo1.kx-as-code.local/auth/realms/demo1.kx-as-code.local/protocol/openid-connect/token
     api_url: https://keycloak.demo1.kx-as-code.local/auth/realms/demo1.kx-as-code.local/protocol/openid-connect/userinfo
-    scopes: openid profile email
+    scopes: openid profile roles email offline_access
     allow_sign_up: true
     tls_skip_verify_insecure: true
   server:
