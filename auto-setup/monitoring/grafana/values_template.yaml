@@ -40,7 +40,7 @@ grafana.ini:
     api_url: https://keycloak.demo1.kx-as-code.local/auth/realms/demo1.kx-as-code.local/protocol/openid-connect/userinfo
     scopes: openid profile
     allow_sign_up: true
-    tls_skip_verify_insecure: false
+    tls_skip_verify_insecure: true
   server:
     #root_url: https://{{componentName}}.{{baseDomain}}
     domain: grafana.demo1.kx-as-code.local
