@@ -1,9 +1,11 @@
-#!/bin/bash -eux
+#!/bin/bash -x
+set -euo pipefail
 
 . /etc/environment
 export VM_USER=$VM_USER
 export VM_PASSWORD=$(cat /home/$VM_USER/.config/kx.as.code/.user.cred)
-export KUBEDIR=/home/$VM_USER/Kubernetes; cd $KUBEDIR
+export KUBEDIR=/home/$VM_USER/Kubernetes
+cd $KUBEDIR
 
 # Get webhook from Mattermost
 MATTERMOST_LOGIN_TOKEN=$(curl -i -d '{"login_id":"admin@kx-as-code.local","password":"'$VM_PASSWORD'"}' https://mattermost.kx-as-code.local/api/v4/users/login | grep 'token' | sed 's/token: //g')
@@ -67,15 +69,15 @@ helm upgrade --install prometheus stable/prometheus \
 
 # Install the desktop shortcut for Prometheus
 /home/$VM_USER/Documents/git/kx.as.code_library/02_Kubernetes/00_Base/createDesktopShortcut.sh \
-  --name="Prometheus" \
-  --url=https://prometheus.kx-as-code.local \
-  --icon=/home/$VM_USER/Documents/git/kx.as.code_library/02_Kubernetes/02_Monitoring/02_Prometheus/prometheus.png
+    --name="Prometheus" \
+    --url=https://prometheus.kx-as-code.local \
+    --icon=/home/$VM_USER/Documents/git/kx.as.code_library/02_Kubernetes/02_Monitoring/02_Prometheus/prometheus.png
 
 # Install the desktop shortcut for Alert Manager
 /home/$VM_USER/Documents/git/kx.as.code_library/02_Kubernetes/00_Base/createDesktopShortcut.sh \
-  --name="Alert Manager" \
-  --url=https://alertmanager.kx-as-code.local \
-  --icon=/home/$VM_USER/Documents/git/kx.as.code_library/02_Kubernetes/02_Monitoring/02_Prometheus/prometheus.png
+    --name="Alert Manager" \
+    --url=https://alertmanager.kx-as-code.local \
+    --icon=/home/$VM_USER/Documents/git/kx.as.code_library/02_Kubernetes/02_Monitoring/02_Prometheus/prometheus.png
 
 ### Install Grafana
 
@@ -84,19 +86,21 @@ PERSONAL_ACCESS_TOKEN=$(cat /home/$VM_USER/.config/kx.as.code/.admin.gitlab.pat)
 CREATED_DEVOPS_GROUP_ID=$(curl -s --header "Private-Token: ${PERSONAL_ACCESS_TOKEN}" https://gitlab.kx-as-code.local/api/v4/groups | jq '.[] | select(.name=="devops") | .id')
 
 # Create Grafana Image Renderer project in Gitlab
-for i in {1..5}
-do
-  curl -s -XPOST --header "Private-Token: ${PERSONAL_ACCESS_TOKEN}" \
-    --data 'description=Grafana image renderer Kubernetes deployment files' \
-    --data 'name=grafana_image_renderer' \
-    --data 'namespace_id='$CREATED_DEVOPS_GROUP_ID'' \
-    --data 'path=grafana_image_renderer' \
-    --data 'default_branch=master' \
-    --data 'visibility=private' \
-    --data 'container_registry_enabled=false' \
-    https://gitlab.kx-as-code.local/api/v4/projects
+for i in {1..5}; do
+    curl -s -XPOST --header "Private-Token: ${PERSONAL_ACCESS_TOKEN}" \
+        --data 'description=Grafana image renderer Kubernetes deployment files' \
+        --data 'name=grafana_image_renderer' \
+        --data 'namespace_id='$CREATED_DEVOPS_GROUP_ID'' \
+        --data 'path=grafana_image_renderer' \
+        --data 'default_branch=master' \
+        --data 'visibility=private' \
+        --data 'container_registry_enabled=false' \
+        https://gitlab.kx-as-code.local/api/v4/projects
     CREATED_GRAFANA_IMAGE_RENDERER_PROJECT_ID=$(curl -s --header "Private-Token: ${PERSONAL_ACCESS_TOKEN}" https://gitlab.kx-as-code.local/api/v4/projects | jq '.[] | select(.name=="grafana_image_renderer") | .id')
-    if [[ ! -z "${CREATED_GRAFANA_IMAGE_RENDERER_PROJECT_ID}" ]]; then break; else echo "grafana_image_renderer project not created. Trying again ($i of 5)"; sleep 5; fi
+    if [[ -n ${CREATED_GRAFANA_IMAGE_RENDERER_PROJECT_ID}   ]]; then break; else
+        echo "grafana_image_renderer project not created. Trying again ($i of 5)"
+        sleep 5
+    fi
 done
 
 export ROOT_USER_ID=$(curl -s --header "Private-Token: ${PERSONAL_ACCESS_TOKEN}" https://gitlab.kx-as-code.local/api/v4/users | jq -r '.[] | select (.username=="root") | .id')
@@ -185,31 +189,31 @@ argocd login grpc.argocd.kx-as-code.local --username admin --password ${VM_PASSW
 
 # Add Grafana Image Renderer Git Repository to ArgoCD
 argocd repo add --insecure-skip-server-verification https://gitlab.kx-as-code.local/devops/grafana_image_renderer.git --username ${VM_USER} --password ${VM_PASSWORD}
-for i in {1..10}
-do
-  RESPONSE=$(argocd repo list --output json | jq -r '.[] | select(.repo=="https://gitlab.kx-as-code.local/devops/grafana_image_renderer.git") | .repo')
-  if [[ ! -z "$RESPONSE" ]]; then
-    echo "Added Grafana Image Renderer Repository to ArgoCD OK. Exiting loop"; break
-    sleep 5
-  fi
+for i in {1..10}; do
+    RESPONSE=$(argocd repo list --output json | jq -r '.[] | select(.repo=="https://gitlab.kx-as-code.local/devops/grafana_image_renderer.git") | .repo')
+    if [[ -n $RESPONSE ]]; then
+        echo "Added Grafana Image Renderer Repository to ArgoCD OK. Exiting loop"
+        break
+        sleep 5
+    fi
 done
 
 # Add Grafana Image Renderer app to ArgoCD
 argocd app create grafana-image-renderer \
---repo https://gitlab.kx-as-code.local/devops/grafana_image_renderer.git \
---path . \
---dest-server https://kubernetes.default.svc \
---dest-namespace devops \
---sync-policy automated \
---auto-prune \
---self-heal
-for i in {1..10}
-do
-  RESPONSE=$(argocd app list --output json | jq -r '.[] | select (.metadata.name=="grafana-image-renderer") | .metadata.name')
-  if [[ ! -z "$RESPONSE" ]]; then
-    echo "Added Grafana Image Renderer App to ArgoCD OK. Exiting loop"; break
-    sleep 5
-  fi
+    --repo https://gitlab.kx-as-code.local/devops/grafana_image_renderer.git \
+    --path . \
+    --dest-server https://kubernetes.default.svc \
+    --dest-namespace devops \
+    --sync-policy automated \
+    --auto-prune \
+    --self-heal
+for i in {1..10}; do
+    RESPONSE=$(argocd app list --output json | jq -r '.[] | select (.metadata.name=="grafana-image-renderer") | .metadata.name')
+    if [[ -n $RESPONSE ]]; then
+        echo "Added Grafana Image Renderer App to ArgoCD OK. Exiting loop"
+        break
+        sleep 5
+    fi
 done
 
 # Create Grafana admin user secret
@@ -256,28 +260,31 @@ docker push registry.kx-as-code.local/devops/grafana:${GRAFANA_DOCKER_VERSION_TA
 DEVOPS_PROJECT_ID=$(curl -s -u admin:${VM_PASSWORD} https://registry.kx-as-code.local/api/projects | jq '.[] | select(.name=="devops") | .project_id')
 
 # Due to some issues with Harbor that still need to be worked out, implementing a workaround for now
-for i in {1..5}
-do
-  # Check if image pushed successfully
-  REPO_ID=$(curl -s -u admin:${VM_PASSWORD} https://registry.kx-as-code.local/api/repositories?project_id=${DEVOPS_PROJECT_ID} | jq ' .[] | select(.name=="devops/grafana") | .id')
-  if [[ ! -z ${REPO_ID} ]]; then
-    echo "Image exists. Grafana image uploaded to Harbor Registry successfully"; break
-  else echo "Image didn't upload successfully, trying again...(probably an unothorized issue on push to Harbor"
-    echo  "${DEVOPS_ROBOT_TOKEN}" | docker login registry.kx-as-code.local -u ${DEVOPS_ROBOT_USER} --password-stdin
-    docker push registry.kx-as-code.local/devops/grafana:${GRAFANA_DOCKER_VERSION_TAG}
-  fi
-  sleep 60
+for i in {1..5}; do
+    # Check if image pushed successfully
+    REPO_ID=$(curl -s -u admin:${VM_PASSWORD} https://registry.kx-as-code.local/api/repositories?project_id=${DEVOPS_PROJECT_ID} | jq ' .[] | select(.name=="devops/grafana") | .id')
+    if [[ -n ${REPO_ID} ]]; then
+        echo "Image exists. Grafana image uploaded to Harbor Registry successfully"
+        break
+    else
+        echo "Image didn't upload successfully, trying again...(probably an unothorized issue on push to Harbor"
+        echo "${DEVOPS_ROBOT_TOKEN}" | docker login registry.kx-as-code.local -u ${DEVOPS_ROBOT_USER} --password-stdin
+        docker push registry.kx-as-code.local/devops/grafana:${GRAFANA_DOCKER_VERSION_TAG}
+    fi
+    sleep 60
 done
 
 # Create OAUTH application in Gitlab for Grafana
 PERSONAL_ACCESS_TOKEN=$(cat /home/$VM_USER/.config/kx.as.code/.admin.gitlab.pat)
-for i in {1..5}
-do
-  curl -s --request POST --header "PRIVATE-TOKEN: ${PERSONAL_ACCESS_TOKEN}" \
-    --data "name=Grafana&redirect_uri=https://grafana.kx-as-code.local/login/gitlab&scopes=read_user" \
-    "https://gitlab.kx-as-code.local/api/v4/applications" | sudo tee $KUBEDIR/grafana_gitlab_integration.json
+for i in {1..5}; do
+    curl -s --request POST --header "PRIVATE-TOKEN: ${PERSONAL_ACCESS_TOKEN}" \
+        --data "name=Grafana&redirect_uri=https://grafana.kx-as-code.local/login/gitlab&scopes=read_user" \
+        "https://gitlab.kx-as-code.local/api/v4/applications" | sudo tee $KUBEDIR/grafana_gitlab_integration.json
     GRAFANA_APPLICATION_ID=$(curl -s --header "Private-Token: ${PERSONAL_ACCESS_TOKEN}" https://gitlab.kx-as-code.local/api/v4/applications | jq '.[] | select(.application_name=="Grafana") | .id')
-    if [[ ! -z ${GRAFANA_APPLICATION_ID} ]]; then break; else echo "Grafana application was not created in Gitlab. Trying again"; sleep 5; fi
+    if [[ -n ${GRAFANA_APPLICATION_ID} ]]; then break; else
+        echo "Grafana application was not created in Gitlab. Trying again"
+        sleep 5
+    fi
 done
 
 GITLAB_INTEGRATION_SECRET=$(cat $KUBEDIR/grafana_gitlab_integration.json | jq -r '.secret')
@@ -360,6 +367,6 @@ helm upgrade --install grafana stable/grafana \
 
 # Create desktop shortcut
 /home/$VM_USER/Documents/git/kx.as.code_library/02_Kubernetes/00_Base/createDesktopShortcut.sh \
-  --name="Grafana" \
-  --url=https://grafana.kx-as-code.local \
-  --icon=/home/$VM_USER/Documents/git/kx.as.code_library/02_Kubernetes/02_Monitoring/05_Grafana/grafana.png
+    --name="Grafana" \
+    --url=https://grafana.kx-as-code.local \
+    --icon=/home/$VM_USER/Documents/git/kx.as.code_library/02_Kubernetes/02_Monitoring/05_Grafana/grafana.png

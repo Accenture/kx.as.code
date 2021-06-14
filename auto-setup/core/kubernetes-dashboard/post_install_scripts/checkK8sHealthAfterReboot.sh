@@ -1,7 +1,9 @@
-#!/bin/bash -eux
+#!/bin/bash -x
+set -euo pipefail
 
-cat <<EOF >/usr/share/kx.as.code/checkK8sStartup.sh
-#!/bin/bash -eux
+cat << EOF > /usr/share/kx.as.code/checkK8sStartup.sh
+#!/bin/bash -x
+set -euo pipefail
 
 vmUser=\$(id -nu)
 vmUserId=\$(id -u)
@@ -24,7 +26,7 @@ chown ${vmUser}:${vmUser} /usr/share/kx.as.code/checkK8sStartup.sh
 
 # Add check for every login telling user if K8s is ready or not
 sudo -H -i -u ${vmUser} sh -c "mkdir -p /home/${vmUser}/.config/autostart"
-cat <<EOF > /home/${vmUser}/.config/autostart/check-k8s.desktop
+cat << EOF > /home/${vmUser}/.config/autostart/check-k8s.desktop
 [Desktop Entry]
 Type=Application
 Name=K8s-Startup-Status

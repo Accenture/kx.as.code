@@ -1,4 +1,5 @@
 #!/bin/bash -x
+set -euo pipefail
 
 . /etc/environment
 
@@ -6,13 +7,12 @@ export kxHomeDir=/usr/share/kx.as.code
 export sharedGitRepositories=${kxHomeDir}/git
 export installationWorkspace=${kxHomeDir}/workspace
 
-
 # Check profile-config.json file is present before executing script
 wait-for-file() {
-        timeout -s TERM 6000 bash -c \
+    timeout -s TERM 6000 bash -c \
         'while [[ ! -f ${0} ]];\
-        do echo "Waiting for ${0} file" && sleep 15;\
-        done' ${1}
+    do echo "Waiting for ${0} file" && sleep 15;\
+done' ${1}
 }
 wait-for-file ${installationWorkspace}/profile-config.json
 
@@ -27,19 +27,18 @@ export number30gbVolumes=$(cat ${installationWorkspace}/profile-config.json | jq
 export number50gbVolumes=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.local_volumes.fifty_gb')
 
 # Calculate total needed disk size (should match the value the VM was provisioned with)
-export localKubeVolumesDiskSize=$(( ( ${number1gbVolumes} * 1 ) + ( ${number5gbVolumes} * 5 ) + ( ${number10gbVolumes} * 10 ) + ( ${number30gbVolumes} * 30 ) + ( ${number50gbVolumes} * 50 ) + 1 ))
+export localKubeVolumesDiskSize=$(((number1gbVolumes * 1) + (number5gbVolumes * 5) + (number10gbVolumes * 10) + (number30gbVolumes * 30) + (number50gbVolumes * 50) + 1))
 
 # Install NVME CLI if needed, for example, for AWS
 nvme_cli_needed=$(df -h | grep "nvme")
 if [[ -n ${nvme_cli_needed} ]]; then
-  sudo apt install -y nvme-cli lvm2
+    sudo apt install -y nvme-cli lvm2
 fi
 
 # Determine Drive B (Local K8s Volumes Storage)
 driveB=$(lsblk -o NAME,FSTYPE,SIZE -dsn -J | jq -r '.[] | .[] | select(.fstype==null) | select(.size=="'${localKubeVolumesDiskSize}'G") | .name')
 
 log_error "An available unpartitioned drive could not be found that matches the needed capacity of ${localKubeVolumesDiskSize}G. This is calculated from all required local volumes defined in profile-config.json + 1GB"
-
 
 echo "${driveB}" | sudo tee /usr/share/kx.as.code/.config/driveB
 cat /usr/share/kx.as.code/.config/driveB
@@ -61,25 +60,24 @@ sudo vgcreate k8s_local_vol_group /dev/${driveB_Partition}
 BASE_K8S_LOCAL_VOLUMES_DIR=/mnt/k8s_local_volumes
 
 create_volumes() {
-  if [[ ${2} -ne 0 ]]; then
-    for i in $(eval echo "{1..$2}")
-    do
-        sudo lvcreate -L ${1} -n k8s_${1}_local_k8s_volume_${i} k8s_local_vol_group
-        sudo mkfs.xfs /dev/k8s_local_vol_group/k8s_${1}_local_k8s_volume_${i}
-        sudo mkdir -p ${BASE_K8S_LOCAL_VOLUMES_DIR}/k8s_${1}_local_k8s_volume_${i}
-        sudo mount /dev/k8s_local_vol_group/k8s_${1}_local_k8s_volume_${i} ${BASE_K8S_LOCAL_VOLUMES_DIR}/k8s_${1}_local_k8s_volume_${i}
-        # Don't add entry to /etc/fstab if the volumes was not created, possibly due to running out of diskspace
-        if [[ -L /dev/k8s_local_vol_group/k8s_${1}_local_k8s_volume_${i} ]] && [[ -e /dev/k8s_local_vol_group/k8s_${1}_local_k8s_volume_${i} ]]; then
-          entryAlreadyExists=$(cat /etc/fstab | grep "/dev/k8s_local_vol_group/k8s_${1}_local_k8s_volume_${i}")
-          # Don't add entry to /etc/fstab if it already exists
-          if [[ -z ${entryAlreadyExists} ]]; then
-            sudo echo '/dev/k8s_local_vol_group/k8s_'${1}'_local_k8s_volume_'${i}' '${BASE_K8S_LOCAL_VOLUMES_DIR}'/k8s_'${1}'_local_k8s_volume_'${i}' xfs defaults 0 0' | sudo tee -a /etc/fstab
-          fi
-        else
-          echo "/dev/k8s_local_vol_group/k8s_${1}_local_k8s_volume_${i} does not exist. Not adding to /etc/fstab. Possible reason is that there was not enough space left on the drive to create it"
-        fi
-    done
-  fi
+    if [[ ${2} -ne 0 ]]; then
+        for i in $(eval echo "{1..$2}"); do
+            sudo lvcreate -L ${1} -n k8s_${1}_local_k8s_volume_${i} k8s_local_vol_group
+            sudo mkfs.xfs /dev/k8s_local_vol_group/k8s_${1}_local_k8s_volume_${i}
+            sudo mkdir -p ${BASE_K8S_LOCAL_VOLUMES_DIR}/k8s_${1}_local_k8s_volume_${i}
+            sudo mount /dev/k8s_local_vol_group/k8s_${1}_local_k8s_volume_${i} ${BASE_K8S_LOCAL_VOLUMES_DIR}/k8s_${1}_local_k8s_volume_${i}
+            # Don't add entry to /etc/fstab if the volumes was not created, possibly due to running out of diskspace
+            if [[ -L /dev/k8s_local_vol_group/k8s_${1}_local_k8s_volume_${i} ]] && [[ -e /dev/k8s_local_vol_group/k8s_${1}_local_k8s_volume_${i} ]]; then
+                entryAlreadyExists=$(cat /etc/fstab | grep "/dev/k8s_local_vol_group/k8s_${1}_local_k8s_volume_${i}")
+                # Don't add entry to /etc/fstab if it already exists
+                if [[ -z ${entryAlreadyExists} ]]; then
+                    sudo echo '/dev/k8s_local_vol_group/k8s_'${1}'_local_k8s_volume_'${i}' '${BASE_K8S_LOCAL_VOLUMES_DIR}'/k8s_'${1}'_local_k8s_volume_'${i}' xfs defaults 0 0' | sudo tee -a /etc/fstab
+                fi
+            else
+                echo "/dev/k8s_local_vol_group/k8s_${1}_local_k8s_volume_${i} does not exist. Not adding to /etc/fstab. Possible reason is that there was not enough space left on the drive to create it"
+            fi
+        done
+    fi
 }
 
 create_volumes "1G" ${number1gbVolumes}
@@ -102,23 +100,21 @@ export virtualizationType=$(cat ${installationWorkspace}/profile-config.json | j
 export nicList=$(nmcli device show | grep -E 'enp|ens' | grep 'GENERAL.DEVICE' | awk '{print $2}')
 export ipsToExclude="10.0.2.15"   # IP addresses not to configure with static IP. For example, default Virtualbox IP 10.0.2.15
 export nicExclusions=""
-for nic in ${nicList}
-do
-  for ipToExclude in ${ipsToExclude}
-  do
-    ip=$(ip a s ${nic} | egrep -o 'inet [0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | cut -d' ' -f2)
-    echo ${ip}
-    if [[ "${ip}" == "${ipToExclude}" ]]; then
-      excludeNic="true"
+for nic in ${nicList}; do
+    for ipToExclude in ${ipsToExclude}; do
+        ip=$(ip a s ${nic} | egrep -o 'inet [0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | cut -d' ' -f2)
+        echo ${ip}
+        if [[ ${ip} == "${ipToExclude}" ]]; then
+            excludeNic="true"
+        fi
+    done
+    if [[ ${excludeNic} == "true" ]]; then
+        echo "Excluding NIC ${nic}"
+        nicExclusions="${nicExclusions} ${nic}"
+        excludeNic="false"
+    else
+        netDevice=${nic}
     fi
-  done
-  if [[ "${excludeNic}" == "true" ]]; then
-    echo "Excluding NIC ${nic}"
-    nicExclusions="${nicExclusions} ${nic}"
-    excludeNic="false"
-  else
-    netDevice=${nic}
-  fi
 done
 echo "NIC Exclusions: ${nicExclusions}"
 echo "NIC to use: ${netDevice}"
@@ -143,85 +139,84 @@ export httpsProxySetting=$(cat ${installationWorkspace}/profile-config.json | jq
 export noProxySetting=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.proxy_settings.no_proxy')
 
 # Wait until the worker has the main node's IP file
-if [[ "${baseIpType}" == "static" ]]; then
-  # Get fixed IPs if defined
-  export fixedIpHosts=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.staticNetworkSetup.baseFixedIpAddresses | keys[]')
-  for fixIpHost in ${fixedIpHosts}
-  do
-      fixIpHostVariableName=$(echo ${fixIpHost} | sed 's/-/__/g')
-      export ${fixIpHostVariableName}_IpAddress="$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.staticNetworkSetup.baseFixedIpAddresses."'${fixIpHost}'"')"
-      if [[ "${fixIpHost}" == "kx-main" ]]; then
-        export kxMainIp="$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.staticNetworkSetup.baseFixedIpAddresses."'${fixIpHost}'"')"
-      elif [[ "${fixIpHost}" == "$(hostname)" ]]; then
-        export kxWorkerIp="$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.staticNetworkSetup.baseFixedIpAddresses."'${fixIpHost}'"')"
-      fi
-  done
-  export fixedNicConfigGateway=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.staticNetworkSetup.gateway')
-  export fixedNicConfigDns1=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.staticNetworkSetup.dns1')
-  export fixedNicConfigDns2=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.staticNetworkSetup.dns2')
+if [[ ${baseIpType} == "static"   ]]; then
+    # Get fixed IPs if defined
+    export fixedIpHosts=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.staticNetworkSetup.baseFixedIpAddresses | keys[]')
+    for fixIpHost in ${fixedIpHosts}; do
+        fixIpHostVariableName=$(echo ${fixIpHost} | sed 's/-/__/g')
+        export ${fixIpHostVariableName}_IpAddress="$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.staticNetworkSetup.baseFixedIpAddresses."'${fixIpHost}'"')"
+        if [[ ${fixIpHost} == "kx-main" ]]; then
+            export kxMainIp="$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.staticNetworkSetup.baseFixedIpAddresses."'${fixIpHost}'"')"
+        elif [[ ${fixIpHost} == "$(hostname)" ]]; then
+            export kxWorkerIp="$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.staticNetworkSetup.baseFixedIpAddresses."'${fixIpHost}'"')"
+        fi
+    done
+    export fixedNicConfigGateway=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.staticNetworkSetup.gateway')
+    export fixedNicConfigDns1=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.staticNetworkSetup.dns1')
+    export fixedNicConfigDns2=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.staticNetworkSetup.dns2')
 else
-  timeout -s TERM 3000 bash -c 'while [ ! -f /var/tmp/kx.as.code_main-ip-address ];         do
-  echo "Waiting for kx-main IP address" && sleep 5;         done'
-  export kxMainIp=$(cat /var/tmp/kx.as.code_main-ip-address)
+    timeout -s TERM 3000 bash -c 'while [ ! -f /var/tmp/kx.as.code_main-ip-address ];         do
+    echo "Waiting for kx-main IP address" && sleep 5;         done'
+    export kxMainIp=$(cat /var/tmp/kx.as.code_main-ip-address)
 fi
 
 if [[ ! -f /usr/share/kx.as.code/.config/network_status ]]; then
 
-  if  [[ "${baseIpType}" == "static" ]] || [[ "${dnsResolution}" == "hybrid" ]]; then
-    # Change DNS resolution to allow wildcards for resolving locally deployed K8s services
-    echo "DNSStubListener=no" | sudo tee -a /etc/systemd/resolved.conf
-    sudo systemctl restart systemd-resolved
-    sudo rm -f /etc/resolv.conf
-    sudo echo "nameserver ${kxMainIp}" | sudo tee /etc/resolv.conf
+    if [[ ${baseIpType} == "static"  ]] || [[ ${dnsResolution} == "hybrid"   ]]; then
+        # Change DNS resolution to allow wildcards for resolving locally deployed K8s services
+        echo "DNSStubListener=no" | sudo tee -a /etc/systemd/resolved.conf
+        sudo systemctl restart systemd-resolved
+        sudo rm -f /etc/resolv.conf
+        sudo echo "nameserver ${kxMainIp}" | sudo tee /etc/resolv.conf
 
-    # Configue dnsmasq - /etc/resolv.conf
-    sudo sed -i 's/^#nameserver 127.0.0.1/nameserver '${kxMainIp}'/g' /etc/resolv.conf
+        # Configue dnsmasq - /etc/resolv.conf
+        sudo sed -i 's/^#nameserver 127.0.0.1/nameserver '${kxMainIp}'/g' /etc/resolv.conf
 
-    # Prevent DHCLIENT updating static IP
-    if [[ "${dnsResolution}" == "hybrid" ]]; then
-        echo "supersede domain-name-servers ${kxMainIp};" | sudo tee -a /etc/dhcp/dhclient.conf
-    else
-        echo "supersede domain-name-servers ${fixedNicConfigDns1}, ${fixedNicConfigDns2};" | sudo tee -a /etc/dhcp/dhclient.conf
+        # Prevent DHCLIENT updating static IP
+        if [[ ${dnsResolution} == "hybrid" ]]; then
+            echo "supersede domain-name-servers ${kxMainIp};" | sudo tee -a /etc/dhcp/dhclient.conf
+        else
+            echo "supersede domain-name-servers ${fixedNicConfigDns1}, ${fixedNicConfigDns2};" | sudo tee -a /etc/dhcp/dhclient.conf
+        fi
+        echo '''
+        #!/bin/sh
+        make_resolv_conf(){
+            :
+        }
+        ''' | sed -e 's/^[ \t]*//' | sed 's/:/    :/g' | sudo tee /etc/dhcp/dhclient-enter-hooks.d/nodnsupdate
+        sudo chmod +x /etc/dhcp/dhclient-enter-hooks.d/nodnsupdate
     fi
-    echo '''
-    #!/bin/sh
-    make_resolv_conf(){
-        :
-    }
-    ''' | sed -e 's/^[ \t]*//' | sed 's/:/    :/g' | sudo tee /etc/dhcp/dhclient-enter-hooks.d/nodnsupdate
-    sudo chmod +x /etc/dhcp/dhclient-enter-hooks.d/nodnsupdate
-  fi
 
-  if [[ "${baseIpType}" == "static" ]]; then
-    # Configure IF to be managed/confgured by network-manager
-    sudo rm -f /etc/NetworkManager/system-connections/*
-    sudo mv /etc/network/interfaces /etc/network/interfaces.unused
-    sudo nmcli con add con-name "${netDevice}" ifname ${netDevice} type ethernet ip4 ${kxWorkerIp}/24 gw4 ${fixedNicConfigGateway}
-    sudo nmcli con mod "${netDevice}" ipv4.method "manual"
-    sudo nmcli con mod "${netDevice}" ipv4.dns "${fixedNicConfigDns1},${fixedNicConfigDns2}"
-    sudo systemctl restart network-manager
-    sudo nmcli con up "${netDevice}"
-  fi
+    if [[ ${baseIpType} == "static" ]]; then
+        # Configure IF to be managed/confgured by network-manager
+        sudo rm -f /etc/NetworkManager/system-connections/*
+        sudo mv /etc/network/interfaces /etc/network/interfaces.unused
+        sudo nmcli con add con-name "${netDevice}" ifname ${netDevice} type ethernet ip4 ${kxWorkerIp}/24 gw4 ${fixedNicConfigGateway}
+        sudo nmcli con mod "${netDevice}" ipv4.method "manual"
+        sudo nmcli con mod "${netDevice}" ipv4.dns "${fixedNicConfigDns1},${fixedNicConfigDns2}"
+        sudo systemctl restart network-manager
+        sudo nmcli con up "${netDevice}"
+    fi
 
-  # Ensure the whole network setup does not execute again on next run after reboot
-  sudo mkdir -p /usr/share/kx.as.code/.config
-  echo "KX.AS.CODE network config done" | sudo tee /usr/share/kx.as.code/.config/network_status
+    # Ensure the whole network setup does not execute again on next run after reboot
+    sudo mkdir -p /usr/share/kx.as.code/.config
+    echo "KX.AS.CODE network config done" | sudo tee /usr/share/kx.as.code/.config/network_status
 
 fi
 
 if [[ -n ${kxMainIp} ]]; then
-  echo "${kxMainIp} kx-main kx-main.${baseDomain}" | sudo tee -a /etc/hosts
+    echo "${kxMainIp} kx-main kx-main.${baseDomain}" | sudo tee -a /etc/hosts
 fi
 
 mkdir -p ${installationWorkspace}
 chown -R ${vmUser}:${vmUser} ${installationWorkspace}
 
-if [[ "${virtualizationType}" != "public-cloud" ]] && [[ "${virtualizationType}" != "private-cloud" ]]; then
-  # Create RSA key for kx.hero user
-  mkdir -p /home/${vmUser}/.ssh
-  chown -R ${vmUser}:${vmUser} /home/${vmUser}/.ssh
-  chmod 700 $installationWorkspace/.ssh
-  yes | sudo -u ${vmUser} ssh-keygen -f ssh-keygen -m PEM -t rsa -b 4096 -q -f /home/${vmUser}/.ssh/id_rsa -N ''
+if [[ ${virtualizationType} != "public-cloud"   ]] && [[ ${virtualizationType} != "private-cloud"   ]]; then
+    # Create RSA key for kx.hero user
+    mkdir -p /home/${vmUser}/.ssh
+    chown -R ${vmUser}:${vmUser} /home/${vmUser}/.ssh
+    chmod 700 $installationWorkspace/.ssh
+    yes | sudo -u ${vmUser} ssh-keygen -f ssh-keygen -m PEM -t rsa -b 4096 -q -f /home/${vmUser}/.ssh/id_rsa -N ''
 fi
 
 # Add key to KX-Main host
@@ -241,17 +236,16 @@ CERTIFICATES="kx_root_ca.pem kx_intermediate_ca.pem"
 
 ## Wait for certificates to be available on KX-Main
 wait-for-certificate() {
-        timeout -s TERM 3000 bash -c 'while [[ ! -f '${installationWorkspace}'/'${CERTIFICATE}' ]];         do
-        sudo -H -i -u '${vmUser}' bash -c "scp -o StrictHostKeyChecking=no '${vmUser}'@'${kxMainIp}':'${REMOTE_KX_MAIN_CERTSDIR}'/'${CERTIFICATE}' '${installationWorkspace}'";
-        echo "Waiting for ${0}" && sleep 5;         done'
+    timeout -s TERM 3000 bash -c 'while [[ ! -f '${installationWorkspace}'/'${CERTIFICATE}' ]];         do
+    sudo -H -i -u '${vmUser}' bash -c "scp -o StrictHostKeyChecking=no '${vmUser}'@'${kxMainIp}':'${REMOTE_KX_MAIN_CERTSDIR}'/'${CERTIFICATE}' '${installationWorkspace}'";
+    echo "Waiting for ${0}" && sleep 5;         done'
 }
 
 sudo mkdir -p /usr/share/ca-certificates/kubernetes
-for CERTIFICATE in ${CERTIFICATES}
-do
-        wait-for-certificate ${CERTIFICATE}
-        sudo cp ${installationWorkspace}/${CERTIFICATE} /usr/share/ca-certificates/kubernetes/
-        echo "kubernetes/${CERTIFICATE}" | sudo tee -a /etc/ca-certificates.conf
+for CERTIFICATE in ${CERTIFICATES}; do
+    wait-for-certificate ${CERTIFICATE}
+    sudo cp ${installationWorkspace}/${CERTIFICATE} /usr/share/ca-certificates/kubernetes/
+    echo "kubernetes/${CERTIFICATE}" | sudo tee -a /etc/ca-certificates.conf
 done
 
 # Install Root and Intermediate Root CA Certificates into System Trust Store
@@ -267,9 +261,8 @@ echo "Waiting for kx-main DNS resolution to function" && sleep 5; done'
 
 # Wait for Kubernetes to be available
 timeout -s TERM 3000 bash -c \
-'while [[ "$(curl -k -s https://'${kxMainIp}':6443/livez)" != "ok" ]];\
+    'while [[ "$(curl -k -s https://'${kxMainIp}':6443/livez)" != "ok" ]];\
 do echo "Waiting for https://'${kxMainIp}':6443/livez" && sleep 5;  done'
-
 
 # Kubernetes master is reachable, join the worker node to cluster
 sudo -H -i -u ${vmUser} bash -c "ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} 'kubeadm token create --print-join-command 2>/dev/null'" > ${installationWorkspace}/kubeJoin.sh
@@ -277,8 +270,8 @@ sudo chmod 755 ${installationWorkspace}/kubeJoin.sh
 
 # Keep trying to join Kubernetes cluster until successful
 timeout -s TERM 3000 bash -c 'while [[ ! -f /var/lib/kubelet/config.yaml ]]; do
-  sudo '${installationWorkspace}'/kubeJoin.sh
-  echo "Waiting for kx-worker to be connected successfully to main node" && sleep 15; done'
+sudo '${installationWorkspace}'/kubeJoin.sh
+echo "Waiting for kx-worker to be connected successfully to main node" && sleep 15; done'
 
 # Disable the Service After it Ran
 sudo systemctl disable k8s-register-node.service
@@ -293,46 +286,47 @@ sudo systemctl restart kubelet
 
 # Setup proxy settings if they exist
 if [[ -n ${httpProxySetting} ]] || [[ -n ${httpsProxySetting} ]]; then
-  if [[ "${httpProxySetting}" != "null" ]] || [[ "${httpsProxySetting}" != "null" ]]; then
+    if [[ ${httpProxySetting} != "null" ]] || [[ ${httpsProxySetting} != "null"   ]]; then
 
-    if [[ "${httpProxySetting}" == "null" ]]; then
-      httpProxySetting=${httpsProxySetting}
+        if [[ ${httpProxySetting} == "null" ]]; then
+            httpProxySetting=${httpsProxySetting}
+        fi
+        httpProxySettingBase=$(echo ${httpProxySetting} | sed 's/https:\/\///g' | sed 's/http:\/\///g')
+
+        if [[ ${httpsProxySetting} == "null" ]]; then
+            httpsProxySetting=${httpProxySetting}
+        fi
+        httpsProxySettingBase=$(echo ${httpsProxySetting} | sed 's/https:\/\///g' | sed 's/http:\/\///g')
+
+        echo '''
+        [Service]
+        Environment="HTTP_PROXY='${httpProxySettingBase}'/" "HTTPS_PROXY='${httpsProxySettingBase}'/" "NO_PROXY=localhost,127.0.0.1,.'${baseDomain}'"
+        ''' | sudo tee /etc/systemd/system/docker.service.d/http-proxy.conf
+
+        systemctl daemon-reload
+        systemctl restart docker
+
+        baseip=$(echo ${kxWorkerIp} | cut -d'.' -f1-3)
+
+        echo '''
+        export http_proxy='${httpProxySetting}'
+        export HTTP_PROXY=$http_proxy
+        export https_proxy='${httpsProxySetting}'
+        export HTTPS_PROXY=$https_proxy
+        printf -v lan '"'"'%s,'"'"' '${kxWorkerIp}'
+        printf -v pool '"'"'%s,'"'"' '${baseip}'.{1..253}
+        printf -v service '"'"'%s,'"'"' '${baseip}'.{1..253}
+        export no_proxy="${lan%,},${service%,},${pool%,},127.0.0.1,.'${baseDomain}'";
+        export NO_PROXY=$no_proxy
+        ''' | sudo tee -a /root/.bashrc /root/.zshrc /home/$vmUser/.bashrc /home/$vmUser/.zshrc
     fi
-    httpProxySettingBase=$(echo ${httpProxySetting} | sed 's/https:\/\///g' | sed 's/http:\/\///g')
-
-    if [[ "${httpsProxySetting}" == "null" ]]; then
-      httpsProxySetting=${httpProxySetting}
-    fi
-    httpsProxySettingBase=$(echo ${httpsProxySetting} | sed 's/https:\/\///g' | sed 's/http:\/\///g')
-
-    echo '''
-    [Service]
-    Environment="HTTP_PROXY='${httpProxySettingBase}'/" "HTTPS_PROXY='${httpsProxySettingBase}'/" "NO_PROXY=localhost,127.0.0.1,.'${baseDomain}'"
-    ''' | sudo tee /etc/systemd/system/docker.service.d/http-proxy.conf
-
-    systemctl daemon-reload
-    systemctl restart docker
-
-    baseip=$(echo ${kxWorkerIp} | cut -d'.' -f1-3)
-
-    echo '''
-    export http_proxy='${httpProxySetting}'
-    export HTTP_PROXY=$http_proxy
-    export https_proxy='${httpsProxySetting}'
-    export HTTPS_PROXY=$https_proxy
-    printf -v lan '"'"'%s,'"'"' '${kxWorkerIp}'
-    printf -v pool '"'"'%s,'"'"' '${baseip}'.{1..253}
-    printf -v service '"'"'%s,'"'"' '${baseip}'.{1..253}
-    export no_proxy="${lan%,},${service%,},${pool%,},127.0.0.1,.'${baseDomain}'";
-    export NO_PROXY=$no_proxy
-    ''' | sudo tee -a /root/.bashrc /root/.zshrc /home/$vmUser/.bashrc /home/$vmUser/.zshrc
-  fi
 fi
 
 # Create script to pull KX App Images from Main on second boot (after reboot in this script)
 set +o histexpand
 echo """
 #!/bin/bash -x
+set -euo pipefail
 
 . /etc/environment
 export vmUser=${vmUser}
@@ -341,32 +335,34 @@ echo \"Attempting to download KX Apps from KX-Main\"
 sudo -H -i -u ${vmUser} bash -c 'scp -o StrictHostKeyChecking=no '${vmUser}'@'${kxMainIp}':'${installationWorkspace}'/docker-kx-*.tar '${installationWorkspace}'';
 
 if [ -f ${installationWorkspace}/docker-kx-docs.tar ]; then
-    docker load -i ${installationWorkspace}/docker-kx-docs.tar
+docker load -i ${installationWorkspace}/docker-kx-docs.tar
 fi
 
 if [ -f ${installationWorkspace}/docker-kx-techradar.tar ]; then
-    docker load -i ${installationWorkspace}/docker-kx-techradar.tar
+docker load -i ${installationWorkspace}/docker-kx-techradar.tar
 fi
 
 if [ -f ${installationWorkspace}/docker-kx-docs.tar ] && [ -f ${installationWorkspace}/docker-kx-techradar.tar ]; then
-    sudo crontab -r
+sudo crontab -r
 fi
 
 """ | sudo tee ${installationWorkspace}/scpKxTars.sh
 
 sudo chmod 755 ${installationWorkspace}/scpKxTars.sh
-sudo crontab -l | { cat; echo "* * * * * ${installationWorkspace}/scpKxTars.sh"; } | sudo crontab -
+sudo crontab -l | {
+    cat
+    echo "* * * * * ${installationWorkspace}/scpKxTars.sh"
+} | sudo crontab -
 
 # Set default keyboard language
 defaultUserKeyboardLanguage=$(jq -r '.config.defaultKeyboardLanguage' ${installationWorkspace}/profile-config.json)
 keyboardLanguages=""
 availableLanguages="us de gb fr it es"
-for language in ${availableLanguages}
-do
+for language in ${availableLanguages}; do
     if [[ -z ${keyboardLanguages} ]]; then
         keyboardLanguages="${language}"
     else
-        if [[ "${language}" == "${defaultUserKeyboardLanguage}" ]]; then
+        if [[ ${language} == "${defaultUserKeyboardLanguage}"   ]]; then
             keyboardLanguages="${language},${keyboardLanguages}"
         else
             keyboardLanguages="${keyboardLanguages},${language}"
@@ -466,11 +462,10 @@ getent passwd
 # Delete local user and replace with ldap user if added to LDAP correctly
 ldapUserExists=$(sudo ldapsearch -x -b "uid=${vmUser},ou=Users,ou=People,${ldapDn}" | grep numEntries)
 if [[ -n ${ldapUserExists} ]]; then
-  sudo userdel ${vmUser}
+    sudo userdel ${vmUser}
 fi
 
 # Reboot machine to ensure all network changes are active
 if [ "${baseIpType}" == "static" ]; then
-  sudo reboot
+    sudo reboot
 fi
-

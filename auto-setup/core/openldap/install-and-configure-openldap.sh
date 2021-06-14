@@ -1,4 +1,5 @@
-#!/bin/bash -eux
+#!/bin/bash -x
+set -euo pipefail
 
 export ldapServer=127.0.0.1
 
@@ -168,4 +169,3 @@ tls_cacertfile /etc/ssl/certs/ca-certificates.crt
 
 # Ensure home directory is created on first login
 echo "session required      pam_mkhomedir.so   skel=${skelDirectory} umask=0002" | sudo tee -a /etc/pam.d/common-session
-

@@ -1,4 +1,5 @@
-#!/bin/bash -eux
+#!/bin/bash -x
+set -euo pipefail
 
 sudo bash -c 'cat << EOF > /etc/motd
 Welcome to the KX.AS.CODE workstation.

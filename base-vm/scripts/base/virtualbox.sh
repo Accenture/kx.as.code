@@ -1,4 +1,5 @@
-#!/bin/bash -eu
+#!/bin/bash -x
+set -euo pipefail
 
 if [[ $PACKER_BUILDER_TYPE =~ virtualbox ]]; then
     echo "==> Installing VirtualBox guest additions"

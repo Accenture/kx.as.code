@@ -1,9 +1,10 @@
-#!/bin/bash -eux
+#!/bin/bash -x
+set -euo pipefail
 
 # Create namespace if it does not already exist
 if [ "$(kubectl get namespace mattermost --template={{.status.phase}})" != "Active" ]; then
-  # Create Kubernetes Namespace for Mattermost
-  kubectl create namespace mattermost
+    # Create Kubernetes Namespace for Mattermost
+    kubectl create namespace mattermost
 fi
 
 # Update Helm Repositories
@@ -28,6 +29,6 @@ helm install mattermost mattermost/mattermost-team-edition \
 
 # Install the desktop shortcut
 /home/$VM_USER/Documents/git/kx.as.code_library/02_Kubernetes/00_Base/createDesktopShortcut.sh \
-  --name="Mattermost" \
-  --url=https://mattermost.kx-as-code.local \
-  --icon=/home/$VM_USER/Documents/git/kx.as.code_library/02_Kubernetes/04_Collaboration/04_Mattermost/mattermost.png
+    --name="Mattermost" \
+    --url=https://mattermost.kx-as-code.local \
+    --icon=/home/$VM_USER/Documents/git/kx.as.code_library/02_Kubernetes/04_Collaboration/04_Mattermost/mattermost.png

@@ -1,4 +1,5 @@
-#!/bin/bash -eux
+#!/bin/bash -x
+set -euo pipefail
 
 # Long Boot Time Fixes
 # https://acn-interactive.atlassian.net/browse/KXAS-24

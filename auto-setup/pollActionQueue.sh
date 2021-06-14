@@ -1,4 +1,5 @@
 #!/bin/bash
+set -eu
 
 # Check if PID file already exists and ensure this script only runs once
 if [ ! -f /var/run/kxascode.pid ]; then
@@ -37,13 +38,13 @@ cd ${installationWorkspace}
 
 # Copy metadata.json to installation workspace if it doesn't exist
 if [[ ! -f ${installationWorkspace}/metadata.json ]]; then
-  cp ${autoSetupHome}/metadata.json ${installationWorkspace}
+    cp ${autoSetupHome}/metadata.json ${installationWorkspace}
 fi
 
 # Wait for last provisioning shell action to complete before proceeding to next steps
 # such as changing network settings and merging action files
 timeout -s TERM 6000 bash -c \
-'while [[ ! -f '${installationWorkspace}'/gogogo ]];\
+    'while [[ ! -f '${installationWorkspace}'/gogogo ]];\
 do echo "Waiting for '${installationWorkspace}'/gogogo file" && sleep 15;\
 done'
 
@@ -51,22 +52,22 @@ done'
 # and merge with user aq* files if present
 if [[ ! -f ${installationWorkspace}/actionQueues.json ]]; then
 
-  cp ${autoSetupHome}/actionQueues.json ${installationWorkspace}/
-  export aqFiles=($(ls ${installationWorkspace}/aq* || true))
+    cp ${autoSetupHome}/actionQueues.json ${installationWorkspace}/
+    export aqFiles=($(ls ${installationWorkspace}/aq* || true))
 
-  # Merge json files if user uploaded aq* files present
-  if [[ -n ${aqFiles} ]]; then
-    # Loop around all user aq* files and merge them to one large json
-    for i in "${!aqFiles[@]}"; do
+    # Merge json files if user uploaded aq* files present
+    if [[ -n ${aqFiles} ]]; then
+        # Loop around all user aq* files and merge them to one large json
+        for i in "${!aqFiles[@]}"; do
             echo "$i: ${aqFiles[$i]}"
 
-      if [[ -f ${installationWorkspace}/actionQueues_temp.json ]]; then
-        cp ${installationWorkspace}/actionQueues_temp.json ${installationWorkspace}/actionQueues.json
-      fi
+            if [[ -f ${installationWorkspace}/actionQueues_temp.json ]]; then
+                cp ${installationWorkspace}/actionQueues_temp.json ${installationWorkspace}/actionQueues.json
+            fi
 
-      # Credit to this great jq block goes to "peak" - https://stackoverflow.com/users/997358/peak
-      # https://stackoverflow.com/a/56659008
-      jq -n --slurpfile file1 actionQueues.json --slurpfile file2 ${aqFiles[$i]} '
+            # Credit to this great jq block goes to "peak" - https://stackoverflow.com/users/997358/peak
+            # https://stackoverflow.com/a/56659008
+            jq -n --slurpfile file1 actionQueues.json --slurpfile file2 ${aqFiles[$i]} '
 
         # a and b are expected to be jq paths ending with a string
         # emit the array of the intersection of key names
@@ -92,13 +93,13 @@ if [[ ! -f ${installationWorkspace}/actionQueues.json ]]; then
           else .
           end
         ' | tee actionQueues_temp.json
-    done
-  fi
+        done
+    fi
 fi
 
 # Copy last actionQueues_temp.json file over after loop
 if [[ -f ${installationWorkspace}/actionQueues_temp.json ]]; then
-  sudo mv ${installationWorkspace}/actionQueues_temp.json ${installationWorkspace}/actionQueues.json
+    sudo mv ${installationWorkspace}/actionQueues_temp.json ${installationWorkspace}/actionQueues.json
 fi
 
 # Get configs from profile-config.json
@@ -108,45 +109,42 @@ export virtualizationType=$(cat ${installationWorkspace}/profile-config.json | j
 export nicList=$(nmcli device show | grep -E 'enp|ens' | grep 'GENERAL.DEVICE' | awk '{print $2}')
 export ipsToExclude="10.0.2.15"   # IP addresses not to configure with static IP. For example, default Virtualbox IP 10.0.2.15
 export nicExclusions=""
-for nic in ${nicList}
-do
-  for ipToExclude in ${ipsToExclude}
-  do
-    ip=$(ip a s ${nic} | egrep -o 'inet [0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | cut -d' ' -f2)
-    echo ${ip}
-    if [[ "${ip}" == "${ipToExclude}" ]]; then
-      excludeNic="true"
+for nic in ${nicList}; do
+    for ipToExclude in ${ipsToExclude}; do
+        ip=$(ip a s ${nic} | egrep -o 'inet [0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | cut -d' ' -f2)
+        echo ${ip}
+        if [[ ${ip} == "${ipToExclude}" ]]; then
+            excludeNic="true"
+        fi
+    done
+    if [[ ${excludeNic} == "true" ]]; then
+        echo "Excluding NIC ${nic}"
+        nicExclusions="${nicExclusions} ${nic}"
+        excludeNic="false"
+    else
+        netDevice=${nic}
     fi
-  done
-  if [[ "${excludeNic}" == "true" ]]; then
-    echo "Excluding NIC ${nic}"
-    nicExclusions="${nicExclusions} ${nic}"
-    excludeNic="false"
-  else
-    netDevice=${nic}
-  fi
 done
 echo "NIC exclusions: ${nicExclusions}"
 echo "NIC to use: ${netDevice}"
 
 export baseIpType=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.baseIpType')
 export dnsResolution=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.dnsResolution')
-if [[ "${baseIpType}" == "static" ]]; then
-  # Get fixed IPs if defined
-  export fixedIpHosts=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.staticNetworkSetup.baseFixedIpAddresses | keys[]')
-  for fixIpHost in ${fixedIpHosts}
-  do
-      fixIpHostVariableName=$(echo ${fixIpHost} | sed 's/-/__/g')
-      export ${fixIpHostVariableName}_IpAddress="$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.staticNetworkSetup.baseFixedIpAddresses."'${fixIpHost}'"')"
-      if [[ "${fixIpHost}" == "kx-main" ]]; then
-        export mainIpAddress="$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.staticNetworkSetup.baseFixedIpAddresses."'${fixIpHost}'"')"
-      fi
-  done
-  export fixedNicConfigGateway=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.staticNetworkSetup.gateway')
-  export fixedNicConfigDns1=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.staticNetworkSetup.dns1')
-  export fixedNicConfigDns2=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.staticNetworkSetup.dns2')
+if [[ ${baseIpType} == "static"   ]]; then
+    # Get fixed IPs if defined
+    export fixedIpHosts=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.staticNetworkSetup.baseFixedIpAddresses | keys[]')
+    for fixIpHost in ${fixedIpHosts}; do
+        fixIpHostVariableName=$(echo ${fixIpHost} | sed 's/-/__/g')
+        export ${fixIpHostVariableName}_IpAddress="$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.staticNetworkSetup.baseFixedIpAddresses."'${fixIpHost}'"')"
+        if [[ ${fixIpHost} == "kx-main" ]]; then
+            export mainIpAddress="$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.staticNetworkSetup.baseFixedIpAddresses."'${fixIpHost}'"')"
+        fi
+    done
+    export fixedNicConfigGateway=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.staticNetworkSetup.gateway')
+    export fixedNicConfigDns1=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.staticNetworkSetup.dns1')
+    export fixedNicConfigDns2=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.staticNetworkSetup.dns2')
 else
-  export mainIpAddress=$(ip a s ${netDevice} | egrep -o 'inet [0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | cut -d' ' -f2)
+    export mainIpAddress=$(ip a s ${netDevice} | egrep -o 'inet [0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | cut -d' ' -f2)
 fi
 
 export environmentPrefix=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.environmentPrefix')
@@ -191,7 +189,6 @@ export defaultS3ObjectStorePath=$(cat ${installationWorkspace}/metadata.json | j
 export s3ObjectStoreDomain="$(cat ${autoSetupHome}/${defaultS3ObjectStorePath}/metadata.json | jq -r '.name').${baseDomain}"
 export s3ObjectStoreUrl="https://${s3ObjectStoreDomain}"
 
-
 # Establish common logging format
 export logTimestamp=$(date '+%Y-%m-%d')
 log_info() {
@@ -212,7 +209,7 @@ log_debug() {
 
 if [[ ! -f /usr/share/kx.as.code/.config/network_status ]]; then
 
-    if  [[ "${baseIpType}" == "static" ]] || [[ "${dnsResolution}" == "hybrid" ]]; then
+    if  [[ ${baseIpType} == "static"   ]] || [[ ${dnsResolution} == "hybrid"   ]]; then
         # Change DNS resolution to allow wildcards for resolving locally deployed K8s services
         echo "DNSStubListener=no" | sudo tee -a /etc/systemd/resolved.conf
         sudo systemctl restart systemd-resolved
@@ -233,7 +230,7 @@ if [[ ! -f /usr/share/kx.as.code/.config/network_status ]]; then
         sudo sed -i 's/Wants=nss-lookup.target/Wants=network-online.target/' /lib/systemd/system/dnsmasq.service
         sudo sed -i 's/After=network.target/After=network-online.target/' /lib/systemd/system/dnsmasq.service
         # Prevent DHCLIENT updating static IP
-        if [[ "${dnsResolution}" == "hybrid" ]]; then
+        if [[ ${dnsResolution} == "hybrid"   ]]; then
             echo "supersede domain-name-servers ${mainIpAddress};" | sudo tee -a /etc/dhcp/dhclient.conf
         else
             echo "supersede domain-name-servers ${fixedNicConfigDns1}, ${fixedNicConfigDns2};" | sudo tee -a /etc/dhcp/dhclient.conf
@@ -263,7 +260,7 @@ if [[ ! -f /usr/share/kx.as.code/.config/network_status ]]; then
         sudo systemctl restart dnsmasq
     fi
 
-    if [[ "${baseIpType}" == "static" ]]; then
+    if [[ ${baseIpType} == "static"   ]]; then
         # Configure IF to be managed/confgured by network-manager
         rm -f /etc/NetworkManager/system-connections/*
         sudo mv /etc/network/interfaces /etc/network/interfaces.unused
@@ -274,13 +271,13 @@ if [[ ! -f /usr/share/kx.as.code/.config/network_status ]]; then
         nmcli con up "${netDevice}"
     fi
 
-    if  [[ "${baseIpType}" == "static" ]] || [[ "${dnsResolution}" == "hybrid" ]]; then
-      sudo systemctl enable --now dnsmasq.service
-      sudo systemctl enable --now systemd-networkd-wait-online.service
+    if  [[ ${baseIpType} == "static"   ]] || [[ ${dnsResolution} == "hybrid"   ]]; then
+        sudo systemctl enable --now dnsmasq.service
+        sudo systemctl enable --now systemd-networkd-wait-online.service
     fi
 
     # Setup proxy settings if they exist
-    if [[ ! -z ${httpProxySetting} ]] || [[ ! -z ${httpsProxySetting} ]]; then
+    if [[ -n ${httpProxySetting}   ]] || [[ -n ${httpsProxySetting}   ]]; then
 
         httpProxySettingBase=$(echo ${httpProxySetting} | sed 's/https:\/\///g' | sed 's/http:\/\///g')
         httpsProxySettingBase=$(echo ${httpsProxySetting} | sed 's/https:\/\///g' | sed 's/http:\/\///g')
@@ -314,7 +311,7 @@ if [[ ! -f /usr/share/kx.as.code/.config/network_status ]]; then
     echo "KX.AS.CODE network config done" | sudo tee /usr/share/kx.as.code/.config/network_status
 
     # Reboot if static network settings to activate them
-    if  [[ "${baseIpType}" == "static" ]]; then
+    if  [[ ${baseIpType} == "static"   ]]; then
         # Reboot machine to ensure all network changes are active
         sudo reboot
     fi
@@ -324,12 +321,11 @@ fi
 # Set default keyboard language
 keyboardLanguages=""
 availableLanguages="us de gb fr it es"
-for language in ${availableLanguages}
-do
+for language in ${availableLanguages}; do
     if [[ -z ${keyboardLanguages} ]]; then
         keyboardLanguages="${language}"
     else
-        if [[ "${language}" == "${defaultKeyboardLanguage}" ]]; then
+        if [[ ${language} == "${defaultKeyboardLanguage}"   ]]; then
             keyboardLanguages="${language},${keyboardLanguages}"
         else
             keyboardLanguages="${keyboardLanguages},${language}"
@@ -368,8 +364,7 @@ if [ -z "${exchangeExists}" ]; then
 fi
 
 # Create RabbitMQ Queues if they does not exist
-for actionWorkflowQueue in ${actionWorkflows}
-do
+for actionWorkflowQueue in ${actionWorkflows}; do
     actionWorkflowQueueExists=$(rabbitmqadmin list queues --format=raw_json | jq -r '.[] | select(.name=="'${actionWorkflowQueue}'_queue")')
     if [ -z "${actionWorkflowQueueExists}" ]; then
         rabbitmqadmin declare queue name=${actionWorkflowQueue}_queue durable=true
@@ -377,8 +372,7 @@ do
 done
 
 # Create RabbitMQ Bindings if they does not exist
-for actionWorkflowBinding in ${actionWorkflows}
-do
+for actionWorkflowBinding in ${actionWorkflows}; do
     actionWorkflowBindingExists=$(rabbitmqadmin list bindings --format=raw_json | jq -r '.[] | select(.source=="action_workflow" and .destination=="'${actionWorkflowBinding}'_queue")')
     if [ -z "${actionWorkflowBindingExists}" ]; then
         rabbitmqadmin declare binding source="action_workflow" destination_type="queue" destination="${actionWorkflowBinding}_queue" routing_key="${actionWorkflowBinding}_queue"
@@ -387,14 +381,13 @@ done
 
 # Populate pending queue on first start with default core components
 defaultComponentsToInstall=$(cat ${installationWorkspace}/actionQueues.json | jq -r '.action_queues.install[].name')
-for componentName in ${defaultComponentsToInstall}
-do
+for componentName in ${defaultComponentsToInstall}; do
     payload=$(cat ${installationWorkspace}/actionQueues.json | jq -c '.action_queues.install[] | select(.name=="'${componentName}'") | {install_folder:.install_folder,"name":.name,"action":"install"}')
     rabbitmqadmin publish exchange=action_workflow routing_key=pending_queue payload=''${payload}''
 done
 
 # Update Guacamlo with Team Name
-if [[ ! -z ${environmentPrefix} ]]; then
+if [[ -n ${environmentPrefix}   ]]; then
     sudo sed -i 's/KX.AS.CODE/'${environmentPrefix}'/g' /var/lib/tomcat9/webapps/guacamole/translations/en.json
 fi
 
@@ -410,11 +403,10 @@ firstCoreElementToInstall=$(cat ${installationWorkspace}/actionQueues.json | jq 
 numCoreElementsToInstall=$(cat ${installationWorkspace}/actionQueues.json | jq -r '.action_queues.install[] | .name' | wc -l)
 count=0
 # Poll pending queue and trigger actions if message is present
-while :
-do
-   wipQueue=$(rabbitmqadmin list queues name messages --format raw_json | jq -r '.[] | select(.name=="wip_queue") | .messages')
-   failedQueue=$(rabbitmqadmin list queues name messages --format raw_json | jq -r '.[] | select(.name=="failed_queue") | .messages')
-   retryQueue=$(rabbitmqadmin list queues name messages --format raw_json | jq -r '.[] | select(.name=="retry_queue") | .messages')
+while :; do
+    wipQueue=$(rabbitmqadmin list queues name messages --format raw_json | jq -r '.[] | select(.name=="wip_queue") | .messages')
+    failedQueue=$(rabbitmqadmin list queues name messages --format raw_json | jq -r '.[] | select(.name=="failed_queue") | .messages')
+    retryQueue=$(rabbitmqadmin list queues name messages --format raw_json | jq -r '.[] | select(.name=="retry_queue") | .messages')
     # If there is something in the wip or failed queue, do not schedule an installation
     if [[ ${wipQueue} -eq 0 ]] && [[ ${failedQueue} -eq 0 ]]; then
         # If no errors or wip, check first if there are any installation items that need to be retried, after a failure was fixed
@@ -445,10 +437,10 @@ do
             rabbitmqadmin publish exchange=action_workflow routing_key=wip_queue properties="{\"delivery_mode\": 2}" payload=''${payload}''
 
             # Launch autoSetup.sh
-            if [[ "${componentName}" == "${firstCoreElementToInstall}" ]]; then
-              sudo -H -i -u ${vmUser} sh -c "DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/${vmUserId}/bus notify-send -t 300000 \"KX.AS.CODE Notification\" \"Initialization started. Please be patient. This could take up to 30 minutes, depending on your system size and speed of internet connection\" --icon=dialog-warning"
+            if [[ ${componentName} == "${firstCoreElementToInstall}"   ]]; then
+                sudo -H -i -u ${vmUser} sh -c "DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/${vmUserId}/bus notify-send -t 300000 \"KX.AS.CODE Notification\" \"Initialization started. Please be patient. This could take up to 30 minutes, depending on your system size and speed of internet connection\" --icon=dialog-warning"
             fi
-            count=$((count+1))
+            count=$((count + 1))
             . ${autoSetupHome}/autoSetup.sh &> ${installationWorkspace}/${componentName}_${logTimestamp}.log
             logRc=$?
             log_info "Installation process for \"${componentName}\" returned with \$?=${logRc} and \$rc=$rc"
@@ -459,16 +451,16 @@ do
                 rabbitmqadmin publish exchange=action_workflow routing_key=completed_queue properties="{\"delivery_mode\": 2}" payload=''${payload}''
                 log_info "The installation of \"${componentName}\" completed succesfully"
                 sudo -H -i -u ${vmUser} sh -c "DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/${vmUserId}/bus notify-send -t 300000 \"KX.AS.CODE Notification\" \"${componentName} installed successfully [${count}/${numCoreElementsToInstall}]\" --icon=dialog-information"
-                if [[ "${componentName}" == "${lastCoreElementToInstall}" ]]; then
-                  sudo -H -i -u ${vmUser} sh -c "DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/${vmUserId}/bus notify-send -t 300000 \"KX.AS.CODE Notification\" \"CONGRATULATIONS\! That concludes the core setup\! Your optional components will now be installed\" --icon=dialog-information"
+                if [[ ${componentName} == "${lastCoreElementToInstall}"   ]]; then
+                    sudo -H -i -u ${vmUser} sh -c "DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/${vmUserId}/bus notify-send -t 300000 \"KX.AS.CODE Notification\" \"CONGRATULATIONS\! That concludes the core setup\! Your optional components will now be installed\" --icon=dialog-information"
                 fi
                 retries=0
             else
-                if [[ "${retryParameter}" == "true" ]] && [[ ${retries} -lt 3 ]]; then
+                if [[ ${retryParameter} == "true"   ]] && [[ ${retries} -lt 3 ]]; then
                     sleep 10
                     rabbitmqadmin get queue=wip_queue --format=pretty_json ackmode=ack_requeue_false | jq -r '.[].payload'
                     rabbitmqadmin publish exchange=action_workflow routing_key=retry_queue properties="{\"delivery_mode\": 2}" payload=''${payload}''
-                    ((retries=retries+1))
+                    ((retries = retries + 1))
                     log_warning "Previous attempt to install \"${componentName}\" did not complete succesfully. Trying again (${retries} of 3)"
                 else
                     rabbitmqadmin get queue=wip_queue --format=pretty_json ackmode=ack_requeue_false | jq -r '.[].payload'

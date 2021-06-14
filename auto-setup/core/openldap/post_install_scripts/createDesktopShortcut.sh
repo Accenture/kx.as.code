@@ -1,4 +1,5 @@
-#!/bin/bash -eux
+#!/bin/bash -x
+set -euo pipefail
 
 # Add Desktop Icon to SKEL directory
 shortcutIcon=ldap-account-manager.png
@@ -22,6 +23,3 @@ Actions=new-window;new-private-window;
 """ | tee "${adminShortcutsDirectory}"/${componentName}.desktop
 sed -i 's/^[ \t]*//g' "${adminShortcutsDirectory}"/${componentName}.desktop
 chmod 755 "${adminShortcutsDirectory}"/${componentName}.desktop
-
-
-

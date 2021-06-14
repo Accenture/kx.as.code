@@ -1,4 +1,5 @@
-#!/bin/bash -eux
+#!/bin/bash -x
+set -euo pipefail
 
 # Copy Skel
 sudo cp -rfT ${INSTALLATION_WORKSPACE}/skel /home/${VM_USER}

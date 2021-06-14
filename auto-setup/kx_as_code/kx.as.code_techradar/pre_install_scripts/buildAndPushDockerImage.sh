@@ -1,4 +1,5 @@
-#!/bin/bash -eux
+#!/bin/bash -x
+set -euo pipefail
 
 export harborDomain=${dockerRegistryDomain}
 export harborScriptDirectory="${autoSetupHome}/${defaultDockerRegistryPath}"

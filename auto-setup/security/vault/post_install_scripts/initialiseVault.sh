@@ -1,7 +1,8 @@
-#!/bin/bash -eux
+#!/bin/bash -x
+set -euo pipefail
 
 vaultInitializedStatus=$(kubectl exec -ti -n ${namespace} vault-0 -- vault status -format=json | jq -r '.initialized')
-if [[ "${vaultInitializedStatus}" != "true" ]]; then
+if [[ ${vaultInitializedStatus} != "true"   ]]; then
     kubectl exec -ti -n ${namespace} vault-0 -- vault operator init | tee ${installationWorkspace}/vaultTmp.txt
     cat -v ${installationWorkspace}/vaultTmp.txt | sed 's/\^\[\[0m//g' | sed 's/\^M//g' | tee ${installationWorkspace}/vaultInit.txt
 

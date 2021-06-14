@@ -1,11 +1,12 @@
-#!/bin/bash -eux
+#!/bin/bash -x
+set -euo pipefail
 
 # Apply the Gitlab configuration files
 kubectl delete --namespace gitlab \
-  -f persistentVolumeClaims.yaml \
-  -f persistentVolumes.yaml \
-  -f ingress.yaml \
-  --ignore-not-found
+    -f persistentVolumeClaims.yaml \
+    -f persistentVolumes.yaml \
+    -f ingress.yaml \
+    --ignore-not-found
 
 # Delete S3 Secrets
 kubectl delete secret registry-storage -n gitlab --ignore-not-found

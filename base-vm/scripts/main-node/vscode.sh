@@ -1,4 +1,5 @@
-#!/bin/bash -eux
+#!/bin/bash -x
+set -euo pipefail
 
 export SHARED_GIT_REPOSITORIES=${SHARED_GIT_REPOSITORIES}
 
@@ -35,18 +36,18 @@ EOF"
 sudo mkdir -p /home/$VM_USER/.vscode/
 sudo bash -c "cat <<EOF > /home/$VM_USER/.vscode/KX.AS.CODE.code-workspace
 {
-	\"folders\": [
-		{
-			\"path\": \"${SHARED_GIT_REPOSITORIES}/kx.as.code\"
-		},
-		{
-			\"path\": \"${SHARED_GIT_REPOSITORIES}/kx.as.code_docs\"
-		},
-		{
-			\"path\": \"${SHARED_GIT_REPOSITORIES}/kx.as.code_techradar\"
-		}
-	],
-	\"settings\": {}
+  \"folders\": [
+    {
+      \"path\": \"${SHARED_GIT_REPOSITORIES}/kx.as.code\"
+    },
+    {
+      \"path\": \"${SHARED_GIT_REPOSITORIES}/kx.as.code_docs\"
+    },
+    {
+      \"path\": \"${SHARED_GIT_REPOSITORIES}/kx.as.code_techradar\"
+    }
+  ],
+  \"settings\": {}
 }
 EOF"
 

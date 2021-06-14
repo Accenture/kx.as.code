@@ -1,14 +1,15 @@
-#!/bin/bash -eux
+#!/bin/bash -x
+set -euo pipefail
 
 # Uninstall Grafana with Helm
 helm uninstall grafana --namespace grafana
 
 # Remove the Tick-Stack configurations
 kubectl delete --namespace grafana \
-  -f persistentVolumeClaims.yaml \
-  -f persistentVolumes.yaml \
-  -f ingress.yaml \
-  --ignore-not-found
+    -f persistentVolumeClaims.yaml \
+    -f persistentVolumes.yaml \
+    -f ingress.yaml \
+    --ignore-not-found
 
 # Delete Kubernetes Namespace for Grafana
 kubectl delete -f namespace.yaml --ignore-not-found

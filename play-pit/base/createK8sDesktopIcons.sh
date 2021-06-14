@@ -1,7 +1,8 @@
-#!/bin/bash -eux
+#!/bin/bash -x
+set -euo pipefail
 
 # Put Kubernetes Dashboard Icon on Desktop
-cat <<EOF > /home/$VM_USER/Desktop/Kubernetes-Dashboard.desktop
+cat << EOF > /home/$VM_USER/Desktop/Kubernetes-Dashboard.desktop
 [Desktop Entry]
 Version=1.0
 Name=Kubernetes Dashboard
@@ -18,7 +19,7 @@ Actions=new-window;new-private-window;
 EOF
 
 # Put Shortcut to get K8s Admin Token on Desktop
-cat <<EOF > /home/$VM_USER/Desktop/Get-Kubernetes-Token.desktop
+cat << EOF > /home/$VM_USER/Desktop/Get-Kubernetes-Token.desktop
 [Desktop Entry]
 Version=1.0
 Name=Get Kubernetes Token

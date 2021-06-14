@@ -1,4 +1,5 @@
-#!/bin/bash -eux
+#!/bin/bash -x
+set -euo pipefail
 
 # Ensure time is accurate
 sudo apt-get install -y ntpdate

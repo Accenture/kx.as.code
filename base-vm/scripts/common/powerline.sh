@@ -1,9 +1,13 @@
-#!/bin/bash -eux
+#!/bin/bash -x
+set -euo pipefail
 
 # Install powerline fonts
 sudo apt-get install -y fonts-font-awesome
 git clone https://github.com/powerline/fonts.git --depth=1
-cd fonts; sudo ./install.sh; cd ..; rm -rf fonts
+cd fonts
+sudo ./install.sh
+cd ..
+rm -rf fonts
 
 # Create template home profile directory for future users
 sudo mkdir -p ${SKELDIR}
@@ -45,5 +49,3 @@ sudo wget https://github.com/powerline/powerline/raw/develop/font/10-powerline-s
 sudo mv -f PowerlineSymbols.otf /usr/share/fonts/
 sudo fc-cache -vf /usr/share/fonts/
 sudo mv -f 10-powerline-symbols.conf /etc/fonts/conf.d/
-
-

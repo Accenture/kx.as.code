@@ -1,16 +1,16 @@
-#!/bin/bash -eux
+#!/bin/bash -x
+set -euo pipefail
 
 # Get list of Ingress TLS URLs
 export ingressTlsUrls=$(kubectl get ingress --all-namespaces -o json | jq -r '"\(.items[].spec.tls[].hosts[])"' | sort | uniq)
 sudo rm -f ${installationWorkspace}/heartbeat-monitors.temp-config
 
 # Generate HTTP monitors for Elastic Heartbeat
-for ingressTlsUrl in ${ingressTlsUrls}
-do
-serviceName=$(echo ${ingressTlsUrl} | sed 's/\.'${baseDomain}'//g')
-echo -e "${serviceName}\t${ingressTlsUrl}"
+for ingressTlsUrl in ${ingressTlsUrls}; do
+    serviceName=$(echo ${ingressTlsUrl} | sed 's/\.'${baseDomain}'//g')
+    echo -e "${serviceName}\t${ingressTlsUrl}"
 
-echo """
+    echo """
     - type: http
       id: ${serviceName}
       name: ${serviceName}

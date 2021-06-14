@@ -1,4 +1,5 @@
-#!/usr/bin/env bash
+#!/bin/bash -x
+set -euo pipefail
 
 # How-To documentation: https://helm.sh/docs/intro/install/
 

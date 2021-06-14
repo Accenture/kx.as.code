@@ -1,4 +1,5 @@
-#!/bin/bash -eux
+#!/bin/bash -x
+set -euo pipefail
 
 . /etc/environment
 export VM_USER=$VM_USER
@@ -14,7 +15,7 @@ MATTERMOST_LOGIN_TOKEN=$(curl -i -d '{"login_id":"admin@kx-as-code.local","passw
 MONITORING_WEBHOOK_ID=$(curl -s -H 'Authorization: Bearer '${MATTERMOST_LOGIN_TOKEN}'' -X GET https://mattermost.kx-as-code.local/api/v4/hooks/incoming | jq -r '.[] | select(.display_name=="Security") | .id')
 
 # Create Sysdig Falco Configuration
-cat <<EOF > $KUBEDIR/sysdig_falco_values_file.yaml
+cat << EOF > $KUBEDIR/sysdig_falco_values_file.yaml
 image:
   registry: docker.io
   repository: falcosecurity/falco

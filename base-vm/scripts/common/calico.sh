@@ -1,4 +1,5 @@
-#!/bin/bash -eux
+#!/bin/bash -x
+set -euo pipefail
 
 # Install calicoctl
 curl -O -L  https://github.com/projectcalico/calicoctl/releases/download/v3.17.1/calicoctl

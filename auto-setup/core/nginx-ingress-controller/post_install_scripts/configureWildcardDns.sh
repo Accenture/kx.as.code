@@ -1,4 +1,5 @@
-#!/bin/bash -eux
+#!/bin/bash -x
+set -euo pipefail
 
 # Update Wildcard DNS entry for kx-as-code.local
 export nginxIngressControllerIp=$(kubectl get svc ${namespace}-ingress-nginx-controller -n ${namespace} -o jsonpath={.spec.clusterIP})

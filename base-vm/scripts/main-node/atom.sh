@@ -1,9 +1,10 @@
-#!/bin/bash -eux
+#!/bin/bash -x
+set -euo pipefail
 
 # Download and install latest Atom editor
-wget https://github.com/$(curl -L -s https://github.com/atom/atom/releases/latest \
-  | grep amd64.deb \
-  | grep -oP 'href="\K[^\"]+')
+wget https://github.com/$(curl -L -s https://github.com/atom/atom/releases/latest |
+    grep amd64.deb |
+    grep -oP 'href="\K[^\"]+')
 sudo apt-get install -y ./atom-amd64.deb
 
 # Install useful Atom plugins

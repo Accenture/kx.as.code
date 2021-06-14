@@ -1,4 +1,5 @@
-#!/bin/bash -eux
+#!/bin/bash -x
+set -euo pipefail
 
 kubeAdminStatus=$(kubectl cluster-info | grep "is running at" || true)
 
@@ -43,4 +44,3 @@ if [[ -f /var/tmp/.texfile ]]; then
     kubectl create secret docker-registry regcred --docker-server=https://index.docker.io/v1/ --docker-username=${DOCKERHUB_USER} --docker-password=${DOCKERHUB_PASSWORD} --docker-email=${DOCKERHUB_EMAIL}
     rm -f /var/tmp/.texfile
 fi
-

@@ -1,4 +1,5 @@
-#!/bin/bash -eux
+#!/bin/bash -x
+set -euo pipefail
 
 echo "==> Installing Open VM Tools"
 # Install open-vm-tools so we can mount shared folders

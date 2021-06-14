@@ -1,4 +1,5 @@
-#!/bin/bash -eux
+#!/bin/bash -x
+set -euo pipefail
 
 # Execute Kubernetes Cluster Validation Tests (add --mode quick for a quick test)
 $HOME/sonobuoy/sonobuoy run --wait

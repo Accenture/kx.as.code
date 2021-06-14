@@ -1,4 +1,5 @@
-#!/bin/bash -eux
+#!/bin/bash -x
+set -euo pipefail
 
 # Download LDAP Account Manager
 lamVersion=7.4-1
@@ -33,8 +34,8 @@ installedPhpVersion=$(php --version | head -n 1 | cut -d " " -f 2 | cut -c 1-3)
 configuredPhpVersion=$(cat /etc/ldap-account-manager/nginx.conf | grep 'fpm.sock' | cut -d'/' -f 5 | sed 's/php//g' | cut -c 1-3)
 
 # Correct PHP version in supplied LAM NGINX config file
-if [[ "${configuredPhpVersion}" != "${installedPhpVersion}" ]]; then
-  sed -i 's/php'${configuredPhpVersion}'-fpm/php'${installedPhpVersion}'-fpm/g' /etc/ldap-account-manager/nginx.conf
+if [[ ${configuredPhpVersion} != "${installedPhpVersion}"   ]]; then
+    sed -i 's/php'${configuredPhpVersion}'-fpm/php'${installedPhpVersion}'-fpm/g' /etc/ldap-account-manager/nginx.conf
 fi
 
 # Enable new Site
@@ -50,4 +51,3 @@ sed -i 's/^loginSearchDN: .*$/loginSearchDN: cn=admin,'${ldapDn}'/' /var/lib/lda
 
 # Reload NGINX
 sudo service nginx restart
-

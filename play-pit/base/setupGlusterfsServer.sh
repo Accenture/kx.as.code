@@ -1,4 +1,5 @@
-#!/bin/bash -eux
+#!/bin/bash -x
+set -euo pipefail
 
 # Load global variables
 . /etc/environment
@@ -14,11 +15,11 @@ sudo apt install -y glusterfs-server
 sudo sudo systemctl enable --now glusterd
 
 # Install Heketi for automatically provisioning Kubernetes volumes
-wget -O - $(curl -s https://api.github.com/repos/heketi/heketi/releases/latest \
-| grep browser_download_url | grep -e $(echo "heketi-v.*$(uname -s)\.$(uname -r \
-| cut -f3 -d-)" | tr '[:upper:]' '[:lower:]') | cut -d '"' -f 4) \
-| sudo tar xvzf - \
-&& sudo cp -f heketi/{heketi,heketi-cli} /usr/local/bin
+wget -O - $(curl -s https://api.github.com/repos/heketi/heketi/releases/latest |
+    grep browser_download_url | grep -e $(echo "heketi-v.*$(uname -s)\.$(uname -r |
+        cut -f3 -d-)" | tr '[:upper:]' '[:lower:]') | cut -d '"' -f 4) |
+    sudo tar xvzf - &&
+    sudo cp -f heketi/{heketi,heketi-cli} /usr/local/bin
 
 # Add Heketi user and group
 sudo groupadd --system heketi || echo "Group heketi already exists"
@@ -30,12 +31,12 @@ sudo chown -R heketi:heketi /etc/heketi /var/log/heketi /var/lib/heketi
 
 # Generate random passwords for Heketi
 if [ ! -f /home/$VM_USER/Kubernetes/heketi_creds.sh ]; then
-  # If statement in case this script is being rerun
-  ADMIN_PASSWORD=$(< /dev/urandom tr -dc A-Za-z0-9 | head -c${1:-12};echo;)
-  USER_PASSWORD=$(< /dev/urandom tr -dc A-Za-z0-9 | head -c${1:-12};echo;)
+    # If statement in case this script is being rerun
+    ADMIN_PASSWORD=$(pwgen -1s 12)
+    USER_PASSWORD=$(pwgen -1s 12)
 else
-  # If credentials already exist because this script is being re-run, use those instead to avoid issues
-  . /home/$VM_USER/Kubernetes/heketi_creds.sh
+    # If credentials already exist because this script is being re-run, use those instead to avoid issues
+    . /home/$VM_USER/Kubernetes/heketi_creds.sh
 fi
 
 # Create base Heketi configuration file
@@ -44,14 +45,14 @@ sudo bash -c 'cat <<EOF > /etc/heketi/heketi.json
   "_port_comment": "Heketi Server Port Number",
   "port": "8080",
 
-	"_enable_tls_comment": "Enable TLS in Heketi Server",
-	"enable_tls": false,
+  "_enable_tls_comment": "Enable TLS in Heketi Server",
+  "enable_tls": false,
 
-	"_cert_file_comment": "Path to a valid certificate file",
-	"cert_file": "",
+  "_cert_file_comment": "Path to a valid certificate file",
+  "cert_file": "",
 
-	"_key_file_comment": "Path to a valid private key file",
-	"key_file": "",
+  "_key_file_comment": "Path to a valid private key file",
+  "key_file": "",
 
 
   "_use_auth": "Enable JWT authorization. Please enable for deployment",
@@ -139,21 +140,21 @@ EOF'
 
 # Generate Heketi SSH Key if it does not already exist
 if [ -z "$(sudo ls -l /etc/heketi/heketi_key)" ]; then
-  yes | sudo -u heketi ssh-keygen -f ssh-keygen -m PEM -t rsa -b 4096 -q -f /etc/heketi/heketi_key -N ''
-  sudo chown -R heketi:heketi /etc/heketi
+    yes | sudo -u heketi ssh-keygen -f ssh-keygen -m PEM -t rsa -b 4096 -q -f /etc/heketi/heketi_key -N ''
+    sudo chown -R heketi:heketi /etc/heketi
 fi
 
 # Add Heketi to sudoers file if not there
 if [ -z "$(sudo grep "heketi" /etc/sudoers)" ]; then
-  sudo bash -c "echo \"heketi        ALL=(ALL)       NOPASSWD: ALL\"" | sudo tee -a /etc/sudoers
+    sudo bash -c 'echo "heketi        ALL=(ALL)       NOPASSWD: ALL"' | sudo tee -a /etc/sudoers
 fi
 
 # Add Heketi public key to authorized hosts
 if [ -z "$(sudo grep "heketi@kx-main" /root/.ssh/authorized_keys)" ]; then
-  sudo mkdir -p /root/.ssh
-  sudo chmod 700 /root/.ssh
-  sudo cat /etc/heketi/heketi_key.pub | sudo tee -a /root/.ssh/authorized_keys
-  sudo chmod 600 /root/.ssh/authorized_keys
+    sudo mkdir -p /root/.ssh
+    sudo chmod 700 /root/.ssh
+    sudo cat /etc/heketi/heketi_key.pub | sudo tee -a /root/.ssh/authorized_keys
+    sudo chmod 600 /root/.ssh/authorized_keys
 fi
 
 # Create Heketi service
@@ -242,28 +243,28 @@ export HEKETI_CLI_KEY="${ADMIN_PASSWORD}"
 heketi-cli topology load --user admin --secret ${ADMIN_PASSWORD} --json=/etc/heketi/topology.json
 
 if [ ! -f /home/$VM_USER/Kubernetes/heketi_creds.sh ]; then
-  # Add heketi cluster details to bashrc and zshrc for heketi-cli (kx user)
-  echo -e "\nexport HEKETI_CLI_SERVER=http://${KXMAIN_IP_ADDRESS}:8080" >> /home/$VM_USER/.zshrc
-  echo "export HEKETI_CLI_USER=admin" >> /home/$VM_USER/.zshrc
-  echo "export HEKETI_CLI_KEY=\"${ADMIN_PASSWORD}\"" >> /home/$VM_USER/.zshrc
-  echo -e "\nexport HEKETI_CLI_SERVER=http://${KXMAIN_IP_ADDRESS}:8080" >> /home/$VM_USER/.bashrc
-  echo "export HEKETI_CLI_USER=admin" >> /home/$VM_USER/.bashrc
-  echo "export HEKETI_CLI_KEY=\"${ADMIN_PASSWORD}\"" >> /home/$VM_USER/.bashrc
+    # Add heketi cluster details to bashrc and zshrc for heketi-cli (kx user)
+    echo -e "\nexport HEKETI_CLI_SERVER=http://${KXMAIN_IP_ADDRESS}:8080" >> /home/$VM_USER/.zshrc
+    echo "export HEKETI_CLI_USER=admin" >> /home/$VM_USER/.zshrc
+    echo "export HEKETI_CLI_KEY=\"${ADMIN_PASSWORD}\"" >> /home/$VM_USER/.zshrc
+    echo -e "\nexport HEKETI_CLI_SERVER=http://${KXMAIN_IP_ADDRESS}:8080" >> /home/$VM_USER/.bashrc
+    echo "export HEKETI_CLI_USER=admin" >> /home/$VM_USER/.bashrc
+    echo "export HEKETI_CLI_KEY=\"${ADMIN_PASSWORD}\"" >> /home/$VM_USER/.bashrc
 
-  # Add heketi cluster details to bashrc and zshrc for heketi-cli (root)
-  echo -e "\nexport HEKETI_CLI_SERVER=http://${KXMAIN_IP_ADDRESS}:8080" | sudo tee -a /root/.zshrc
-  echo "export HEKETI_CLI_USER=admin" | sudo tee -a /root/.zshrc
-  echo "export HEKETI_CLI_KEY=\"${ADMIN_PASSWORD}\"" | sudo tee -a /root/.zshrc
-  echo -e "\nexport HEKETI_CLI_SERVER=http://${KXMAIN_IP_ADDRESS}:8080" | sudo tee -a /root/.bashrc
-  echo "export HEKETI_CLI_USER=admin" | sudo tee -a /root/.bashrc
-  echo "export HEKETI_CLI_KEY=\"${ADMIN_PASSWORD}\"" | sudo tee -a /root/.bashrc
+    # Add heketi cluster details to bashrc and zshrc for heketi-cli (root)
+    echo -e "\nexport HEKETI_CLI_SERVER=http://${KXMAIN_IP_ADDRESS}:8080" | sudo tee -a /root/.zshrc
+    echo "export HEKETI_CLI_USER=admin" | sudo tee -a /root/.zshrc
+    echo "export HEKETI_CLI_KEY=\"${ADMIN_PASSWORD}\"" | sudo tee -a /root/.zshrc
+    echo -e "\nexport HEKETI_CLI_SERVER=http://${KXMAIN_IP_ADDRESS}:8080" | sudo tee -a /root/.bashrc
+    echo "export HEKETI_CLI_USER=admin" | sudo tee -a /root/.bashrc
+    echo "export HEKETI_CLI_KEY=\"${ADMIN_PASSWORD}\"" | sudo tee -a /root/.bashrc
 
-  # Create credential file in case this script needs to rerun
-  echo '#!/bin/bash' > /home/$VM_USER/Kubernetes/heketi_creds.sh
-  echo '# File created in case GlusterFS script is rerun' >> /home/$VM_USER/Kubernetes/heketi_creds.sh
-  echo "export ADMIN_PASSWORD=\"${ADMIN_PASSWORD}\"" >> /home/$VM_USER/Kubernetes/heketi_creds.sh
-  echo "export USER_PASSWORD=\"${USER_PASSWORD}\"" >> /home/$VM_USER/Kubernetes/heketi_creds.sh
-  chmod 755 /home/$VM_USER/Kubernetes/heketi_creds.sh
+    # Create credential file in case this script needs to rerun
+    echo '#!/bin/bash' > /home/$VM_USER/Kubernetes/heketi_creds.sh
+    echo '# File created in case GlusterFS script is rerun' >> /home/$VM_USER/Kubernetes/heketi_creds.sh
+    echo "export ADMIN_PASSWORD=\"${ADMIN_PASSWORD}\"" >> /home/$VM_USER/Kubernetes/heketi_creds.sh
+    echo "export USER_PASSWORD=\"${USER_PASSWORD}\"" >> /home/$VM_USER/Kubernetes/heketi_creds.sh
+    chmod 755 /home/$VM_USER/Kubernetes/heketi_creds.sh
 fi
 
 # Check cluster was created successfully
@@ -278,7 +279,7 @@ ADMIN_PASSWORD_BASE64=$(echo "$ADMIN_PASSWORD" | base64)
 
 # Currently the secrets based approach is not working, leading to a 401
 # TODO: Will pick this again in future. Will hardcode as "restuserkey" in storage class for now
-cat <<EOF > /home/$VM_USER/Kubernetes/gluster-secret.yaml
+cat << EOF > /home/$VM_USER/Kubernetes/gluster-secret.yaml
 apiVersion: v1
 kind: Secret
 metadata:
@@ -293,7 +294,7 @@ kubectl create -f /home/$VM_USER/Kubernetes/gluster-secret.yaml
 CLUSTER_ID=$(heketi-cli cluster list | cut -f2 -d: | cut -f1 -d' ' | tr -d '\n')
 
 # Volume tyype of "none" is important, as kx.as.code will only have 1 storage - provisioning would fail without this
-cat <<EOF > /home/$VM_USER/Kubernetes/glusterfs-sc.yaml
+cat << EOF > /home/$VM_USER/Kubernetes/glusterfs-sc.yaml
 kind: StorageClass
 apiVersion: storage.k8s.io/v1beta1
 metadata:

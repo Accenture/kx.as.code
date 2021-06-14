@@ -1,4 +1,5 @@
-#!/bin/bash -eux
+#!/bin/bash -x
+set -euo pipefail
 
 # Build KX.AS.CODE "Docs" Image
 cd /usr/share/kx.as.code/git/kx.as.code_docs

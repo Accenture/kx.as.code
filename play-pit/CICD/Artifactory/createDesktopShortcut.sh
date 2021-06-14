@@ -1,5 +1,6 @@
-#!/bin/bash
-cat <<EOF > $HOME/Desktop/Artifactory.desktop
+#!/bin/bash -x
+set -euo pipefail
+cat << EOF > $HOME/Desktop/Artifactory.desktop
 [Desktop Entry]
 Version=1.0
 Name=Artifactory
