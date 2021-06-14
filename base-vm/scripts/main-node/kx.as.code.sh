@@ -62,6 +62,7 @@ sudo git clone --branch ${gitSourceBranch} ${gitSourceCloneUrl} ${SHARED_GIT_REP
 sudo git clone --branch ${gitDocsBranch} ${gitDocsCloneUrl} ${SHARED_GIT_REPOSITORIES}/kx.as.code_docs
 sudo git clone --branch ${gitTechRadarBranch} ${gitTechRadarCloneUrl} ${SHARED_GIT_REPOSITORIES}/kx.as.code_techradar
 
+sudo chown -R ${VM_USER}:${VM_USER} ${SHARED_GIT_REPOSITORIES}
 sudo ln -s ${SHARED_GIT_REPOSITORIES}/kx.as.code /home/${VM_USER}/Desktop/"KX.AS.CODE Source"
 
 cd ${SHARED_GIT_REPOSITORIES}/kx.as.code
