@@ -33,8 +33,8 @@ grafana.ini:
   auth.generic_oauth:
     enabled: true
     #disable_login_form: true      
-    client_id:  grafana
-    client_secret: 64d3422c-a31e-458f-a8cb-dfdfcbeeafc6
+    client_id: grafana
+    client_secret: b6d4cf47-d6cb-45ee-a29e-a13e110138bf
     auth_url: https://keycloak.demo1.kx-as-code.local/auth/realms/demo1.kx-as-code.local/protocol/openid-connect/auth
     token_url: https://keycloak.demo1.kx-as-code.local/auth/realms/demo1.kx-as-code.local/protocol/openid-connect/token
     api_url: https://keycloak.demo1.kx-as-code.local/auth/realms/demo1.kx-as-code.local/protocol/openid-connect/userinfo
