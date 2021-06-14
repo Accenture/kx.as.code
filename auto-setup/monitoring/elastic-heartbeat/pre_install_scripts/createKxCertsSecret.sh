@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash -eux
 
 # Add CA certs secret for the local domain
 kubectl -n ${namespace} create secret generic kx-certificates \

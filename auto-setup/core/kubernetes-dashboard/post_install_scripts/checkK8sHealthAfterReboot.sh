@@ -17,7 +17,7 @@ wait-for-url() {
 wait-for-url https://${componentName}.${baseDomain}
 
 # Add notification to desktop to notify that K8s intialization is completed
-DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/\${vmUserId}/bus notify-send -t 300000 'K8s is Ready' 'KX.AS.CODE - Kubernetes cluster is started' --icon=dialog-information
+DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/\${vmUserId}/bus notify-send -t 300000 'KX.AS.CODE Notification' 'Kubernetes cluster is started and ready' --icon=dialog-information
 EOF
 chmod 755 /usr/share/kx.as.code/checkK8sStartup.sh
 chown ${vmUser}:${vmUser} /usr/share/kx.as.code/checkK8sStartup.sh

@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash -eux
 
 # Create and configure XRDP connection in Guacamole database
 echo """

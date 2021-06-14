@@ -1,3 +1,5 @@
+#!/bin/bash -eux
+
 echo '''
 ---
 apiVersion: extensions/v1beta1
