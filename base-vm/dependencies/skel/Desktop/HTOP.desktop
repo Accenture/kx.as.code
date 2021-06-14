@@ -1,0 +1,22 @@
+[Desktop Entry]
+Actions=new-window;new-private-window;
+Categories=Development
+Comment[en_US]=HTOP
+Comment=HTOP
+Exec=tilix -a app-new-window -x "htop"
+GenericName[en_US]=HTOP
+GenericName=HTOP
+Icon=utilities-system-monitor
+MimeType=text/html;image/webp;application/xml;
+Name=HTOP
+Path=
+StartupNotify=true
+Terminal=true
+TerminalOptions=
+Type=Application
+Version=1.0
+X-DBUS-ServiceName=
+X-DBUS-StartupType=
+X-KDE-SubstituteUID=false
+X-KDE-Username=
+Categories=Development

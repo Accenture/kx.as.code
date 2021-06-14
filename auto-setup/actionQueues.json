@@ -64,6 +64,10 @@
             {
                 "install_folder": "core",
                 "name": "user-setup"
+            },
+            {
+                "install_folder": "core",
+                "name": "kontena-lens"
             }
         ],
         "uninstall": [],

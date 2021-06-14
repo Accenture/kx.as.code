@@ -1,34 +1,39 @@
 #!/bin/bash -eux
 
 # UrlEncode GIT password in case of special characters
-if [[ ! -z $GITHUB_TOKEN ]]; then
-  GITHUB_TOKEN_ENCODED=$(python3 -c "import urllib.parse; print(urllib.parse.quote(input()))" <<< "$GITHUB_TOKEN")
+if [[ -n $GIT_SOURCE_TOKEN ]]; then
+  GIT_SOURCE_TOKEN_ENCODED=$(python3 -c "import urllib.parse; print(urllib.parse.quote(input()))" <<< "${GIT_SOURCE_TOKEN}")
 fi
-# Install LightDM theme for login and lock screens
-sudo mkdir -p /var/lib/lightdm/.local/share/webkitgtk/
-sudo mv ${INSTALLATION_WORKSPACE}/lightdm_theme/localstorage /var/lib/lightdm/.local/share/webkitgtk/
-sudo chown -hR lightdm:lightdm /var/lib/lightdm/
-sudo mkdir -p /usr/share/lightdm-webkit/themes/material
-sudo mv ${INSTALLATION_WORKSPACE}/lightdm_theme/* /usr/share/lightdm-webkit/themes/material
-sudo fc-cache -vf /usr/share/fonts/
-
-# Install to import XFCE panel configuration for kx.hero
-sudo mkdir -p /home/$VM_USER/.config/xfce4/desktop
-sudo wget http://de.archive.ubuntu.com/ubuntu/pool/universe/x/xfpanel-switch/xfpanel-switch_1.0.7-0ubuntu2_all.deb
-sudo dpkg -i xfpanel-switch_1.0.7-0ubuntu2_all.deb
-sudo chown -hR $VM_USER:$VM_USER /home/$VM_USER
-
-# Work-Around to get around the background resetting on reboot bug
-sudo cp /usr/share/backgrounds/background.jpg /usr/share/backgrounds/background.png
-
+if [[ -n $GIT_DOCS_TOKEN ]]; then
+  GIT_DOCS_TOKEN_ENCODED=$(python3 -c "import urllib.parse; print(urllib.parse.quote(input()))" <<< "${GIT_DOCS_TOKEN}")
+fi
+if [[ -n $GIT_TECHRADAR_TOKEN ]]; then
+  GIT_TECHRADAR_TOKEN_ENCODED=$(python3 -c "import urllib.parse; print(urllib.parse.quote(input()))" <<< "${GIT_TECHRADAR_TOKEN}")
+fi
 # Make directories for KX.AS.CODE checkout
-sudo mkdir -p /home/$VM_USER/Desktop/
-sudo chown -R $VM_USER:$VM_USER /home/$VM_USER
+sudo mkdir -p /home/${VM_USER}/Desktop/
+sudo chown -R ${VM_USER}:${VM_USER} /home/${VM_USER}
 
-if [[ ! -z $GITHUB_TOKEN_ENCODED ]]; then
-  githubCloneUrl="https://$GITHUB_USER:$GITHUB_TOKEN_ENCODED@github.com"
+gitSourceUrl=$(echo "${GIT_SOURCE_URL}" | sed 's;https://;;g')
+gitDocsUrl=$(echo "${GIT_DOCS_URL}" | sed 's;https://;;g')
+gitTechRadarUrl=$(echo "${GIT_TECHRADAR_URL}" | sed 's;https://;;g')
+
+if [[ -n ${GIT_SOURCE_TOKEN_ENCODED} ]]; then
+  gitSourceCloneUrl="https://${GIT_SOURCE_USER}:${GIT_SOURCE_TOKEN_ENCODED}@${gitSourceUrl}"
 else
-  githubCloneUrl="https://github.com"
+  gitSourceCloneUrl="https://${gitSourceUrl}"
+fi
+
+if [[ -n ${GIT_DOCS_TOKEN_ENCODED} ]]; then
+  gitDocsCloneUrl="https://${GIT_DOCS_USER}:${GIT_DOCS_TOKEN_ENCODED}@${gitDocsUrl}"
+else
+  gitDocsCloneUrl="https://${gitDocsUrl}"
+fi
+
+if [[ -n ${GIT_TECHRADAR_TOKEN_ENCODED} ]]; then
+  gitTechRadarCloneUrl="https://${GIT_TECHRADAR_USER}:${GIT_TECHRADAR_TOKEN_ENCODED}@${gitTechRadarUrl}"
+else
+  gitTechRadarCloneUrl="https://${gitTechRadarUrl}"
 fi
 
 if [[ -z ${GIT_SOURCE_BRANCH} ]]; then
@@ -52,101 +57,29 @@ fi
 sudo mkdir -p ${SHARED_GIT_REPOSITORIES}
 
 # Clone KX.AS.CODE GIT repository into VM
-sudo git clone --single-branch --branch ${gitSourceBranch} ${githubCloneUrl}/Accenture/kx.as.code.git ${SHARED_GIT_REPOSITORIES}/kx.as.code; \
-sudo git clone --single-branch --branch ${gitDocsBranch} ${githubCloneUrl}/Accenture/kx.as.code-docs.git ${SHARED_GIT_REPOSITORIES}/kx.as.code_docs; \
-sudo git clone --single-branch --branch ${gitTechRadarBranch} ${githubCloneUrl}/Accenture/kx.as.code-techradar.git ${SHARED_GIT_REPOSITORIES}/kx.as.code_techradar; \
-sudo ln -s ${SHARED_GIT_REPOSITORIES}/kx.as.code /home/$VM_USER/Desktop/"KX.AS.CODE Source"; \
-cd ${SHARED_GIT_REPOSITORIES}/kx.as.code; \
-sudo git config credential.helper 'cache --timeout=3600'; \
-if [[ -n $GITHUB_TOKEN_ENCODED ]]; then \
-  sudo sed -i 's/'$GITHUB_USER':'$GITHUB_TOKEN_ENCODED'@//g' ${SHARED_GIT_REPOSITORIES}/kx.as.code/.git/config; \
-  sudo sed -i 's/'$GITHUB_USER':'$GITHUB_TOKEN_ENCODED'@//g' ${SHARED_GIT_REPOSITORIES}/kx.as.code_docs/.git/config; \
-  sudo sed -i 's/'$GITHUB_USER':'$GITHUB_TOKEN_ENCODED'@//g' ${SHARED_GIT_REPOSITORIES}/kx.as.code_techradar/.git/config; \
+sudo git clone --branch ${gitSourceBranch} ${gitSourceCloneUrl} ${SHARED_GIT_REPOSITORIES}/kx.as.code
+sudo git clone --branch ${gitDocsBranch} ${gitDocsCloneUrl} ${SHARED_GIT_REPOSITORIES}/kx.as.code_docs
+sudo git clone --branch ${gitTechRadarBranch} ${gitTechRadarCloneUrl} ${SHARED_GIT_REPOSITORIES}/kx.as.code_techradar
+
+sudo ln -s ${SHARED_GIT_REPOSITORIES}/kx.as.code /home/${VM_USER}/Desktop/"KX.AS.CODE Source"
+
+cd ${SHARED_GIT_REPOSITORIES}/kx.as.code
+sudo git config credential.helper 'cache --timeout=3600'
+
+if [[ -n ${GIT_SOURCE_TOKEN_ENCODED} ]]; then
+  sudo sed -i 's/'${GIT_SOURCE_USER}':'${GIT_SOURCE_TOKEN_ENCODED}'@//g' ${SHARED_GIT_REPOSITORIES}/kx.as.code/.git/config
 fi
 
-# Change user avatar and language settings
-sudo mkdir -p /usr/share/pixmaps/faces
-sudo mkdir -p /var/lib/AccountsService/users
-sudo cp /usr/share/backgrounds/avatar.png /usr/share/pixmaps/faces/digital_avatar.png
-sudo bash -c "cat <<EOF > /var/lib/AccountsService/users/$VM_USER
-[org.freedesktop.DisplayManager.AccountsService]
-BackgroundFile=/usr/share/kx.as.code/background.jpg
+if [[ -n ${GIT_DOCS_TOKEN_ENCODED} ]]; then
+  sudo sed -i 's/'${GIT_DOCS_USER}':'${GIT_DOCS_TOKEN_ENCODED}'@//g' ${SHARED_GIT_REPOSITORIES}/kx.as.code_docs/.git/config
+fi
 
-[User]
-Session=
-XSession=xfce
-Icon=/usr/share/pixmaps/faces/digital_avatar.png
-SystemAccount=false
+if [[ -n ${GIT_TECHRADAR_TOKEN_ENCODED} ]]; then
+  sudo sed -i 's/'${GIT_TECHRADAR_USER}':'${GIT_TECHRADAR_TOKEN_ENCODED}'@//g' ${SHARED_GIT_REPOSITORIES}/kx.as.code_techradar/.git/config
+fi
 
-[InputSource0]
-xkb=de
-EOF"
-
-# Prevent vagrant user showing on login screen user list
-sudo bash -c "cat <<EOF > /var/lib/AccountsService/users/${BASE_IMAGE_SSH_USER}
-[org.freedesktop.DisplayManager.AccountsService]
-BackgroundFile=/usr/share/backgrounds/background.jpg
-
-[User]
-Session=
-XSession=xfce
-Icon=/usr/share/pixmaps/faces/digital_avatar.png
-SystemAccount=true
-
-[InputSource0]
-xkb=de
-EOF"
-
-# Prevent lightdm user showing on login screen user list
-sudo bash -c 'cat <<EOF > /var/lib/AccountsService/users/lightdm
-[org.freedesktop.DisplayManager.AccountsService]
-BackgroundFile=/usr/share/backgrounds/background.jpg
-
-[User]
-Session=
-XSession=xfce
-Icon=/usr/share/pixmaps/faces/digital_avatar.png
-SystemAccount=true
-
-[InputSource0]
-xkb=de
-EOF'
-
-# Configure Typora to show Welcome message after XFCE login
-sudo -H -i -u $VM_USER sh -c "mkdir -p /home/$VM_USER/.config/Typora/"
-sudo -H -i -u $VM_USER sh -c "echo \"7b22696e697469616c697a655f766572223a22302e392e3936222c226c696e655f656e64696e675f63726c66223a66616c73652c227072654c696e65627265616b4f6e4578706f7274223a747275652c2275756964223a2264336161313134302d623865362d346661612d623563372d373165353233383135313864222c227374726963745f6d6f6465223a747275652c22636f70795f6d61726b646f776e5f62795f64656661756c74223a747275652c226261636b67726f756e64436f6c6f72223a2223303030303030222c22736964656261725f746162223a226f75746c696e65222c22757365547265655374796c65223a66616c73652c2273686f77537461747573426172223a66616c73652c226c617374436c6f736564426f756e6473223a7b2266756c6c73637265656e223a66616c73652c226d6178696d697a6564223a66616c73652c2278223a3533362c2279223a3138322c227769647468223a3830302c22686569676874223a3730307d2c2269734461726b4d6f6465223a747275652c227468656d65223a226769746c61622e637373222c227072657365745f7370656c6c5f636865636b223a2264697361626c6564227d\" > /home/$VM_USER/.config/Typora/profile.data"
-
-sudo -H -i -u $VM_USER sh -c "mkdir -p /home/$VM_USER/.config/Typora/conf"
-echo '''
-/** For advanced users. */
-{
-  "defaultFontFamily": {
-    "standard": null, //String - Defaults to "Times New Roman".
-    "serif": null, // String - Defaults to "Times New Roman".
-    "sansSerif": null, // String - Defaults to "Arial".
-    "monospace": null // String - Defaults to "Courier New".
-  },
-  "autoHideMenuBar": true, //Boolean - Auto hide the menu bar unless the \`Alt\` key is pressed. Default is false.
-
-  // Array - Search Service user can access from context menu after a range of text is selected. Each item is formatted as [caption, url]
-  "searchService": [
-    ["Search with Google", "https://google.com/search?q=%s"]
-  ],
-
-  // Custom key binding, which will override the default ones.
-  "keyBinding": {
-    // for example:
-    // "Always on Top": "Ctrl+Shift+P"
-  },
-
-  "monocolorEmoji": false, //default false. Only work for Windows
-  "autoSaveTimer" : 3, // Deprecidated, Typora will do auto save automatically. default 3 minutes
-  "maxFetchCountOnFileList": 500,
-  "flags": [] // default [], append Chrome launch flags, e.g: [["disable-gpu"], ["host-rules", "MAP * 127.0.0.1"]]
-}
-''' | sudo tee /home/$VM_USER/.config/Typora/conf/conf.user.json
-
-sudo chown -R $VM_USER:$VM_USER /home/$VM_USER/.config/Typora
+# Configure Typora to show Welcome message after login
+sudo -H -i -u ${VM_USER} sh -c "mkdir -p /home/${VM_USER}/.config/Typora/"
 
 # Add Kubernetes Initialize Script to systemd
 sudo bash -c "cat <<EOF > /etc/systemd/system/k8s-initialize-cluster.service
@@ -175,198 +108,107 @@ EOF"
 sudo systemctl enable k8s-initialize-cluster
 sudo systemctl daemon-reload
 
-echo '''
-#!/bin/bash
+sudo mkdir -p /home/${VM_USER}/.config/autostart-scripts
+
+echo '''#!/bin/bash
+
+# Wait for Plasmashell to be available
+while [[ ! $(pgrep plasmashell) ]]; do sleep 2; done
+
+# Customize desktop
+while [[ -z ${getPlasmaWallpaper} ]];
+do
+  DISPLAY=:0 qdbus org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript '\''var allDesktops = desktops();print (allDesktops);for (i=0;i<allDesktops.length;i++) {d = allDesktops[i];d.wallpaperPlugin = "org.kde.image";d.currentConfigGroup = Array("Wallpaper", "org.kde.image", "General");d.writeConfig("Image", "file:///usr/share/backgrounds/background.jpg")}'\''
+  getPlasmaWallpaper=$(qdbus org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.dumpCurrentLayoutJS | grep "file:///usr/share/backgrounds/background.jpg")
+done
+
+DISPLAY=:0 qdbus org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript '\''var allDesktops = desktops();print (allDesktops);for (i=0;i<allDesktops.length;i++) {d = allDesktops[i];d.currentConfigGroup = Array("org.kde.desktopcontainment", "General");d.writeConfig("arrangement", "1")}'\''
+DISPLAY=:0 qdbus org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript '\''var allDesktops = desktops();print (allDesktops);for (i=0;i<allDesktops.length;i++) {d = allDesktops[i];d.currentConfigGroup = Array("org.kde.desktopcontainment", "General");d.writeConfig("alignment", "0")}'\''
+DISPLAY=:0 qdbus org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript '\''var allDesktops = desktops();print (allDesktops);for (i=0;i<allDesktops.length;i++) {d = allDesktops[i];d.currentConfigGroup = Array("org.kde.desktopcontainment", "General");d.writeConfig("previews", "false")}'\''
+DISPLAY=:0 qdbus org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript '\''var allDesktops = desktops();print (allDesktops);for (i=0;i<allDesktops.length;i++) {d = allDesktops[i];d.currentConfigGroup = Array("org.kde.desktopcontainment", "General");d.writeConfig("iconSize", "4")}'\''
+DISPLAY=:0 qdbus org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript '\''var allDesktops = desktops();print (allDesktops);for (i=0;i<allDesktops.length;i++) {d = allDesktops[i];d.currentConfigGroup = Array("org.kde.desktopcontainment", "General");d.writeConfig("textLines", "2")}'\''
+
+
+# Change to dark theme
+lookandfeeltool -a org.kde.breezedark.desktop
+
+# Set default keyboard language as per users.json
+defaultUserKeyboardLanguage=$(jq -r '\''.config.defaultKeyboardLanguage'\'' '${INSTALLATION_WORKSPACE}'/profile-config.json)
+keyboardLanguages=""
+availableLanguages="us de gb fr it es"
+for language in ${availableLanguages}
+do
+    if [[ -z ${keyboardLanguages} ]]; then
+        keyboardLanguages="${language}"
+    else
+        if [[ "${language}" == "${defaultUserKeyboardLanguage}" ]]; then
+            keyboardLanguages="${language},${keyboardLanguages}"
+        else
+            keyboardLanguages="${keyboardLanguages},${language}"
+        fi
+    fi
+done
+
+echo """[Desktop Entry]
+Type=Application
+Name=SetKeyboardLanguage
+Exec=setxkbmap ${keyboardLanguages} -option grp:alt_shift_toggle
+""" | sudo tee /home/${userid}/.config/autostart/keyboard-language.desktop
+
+
+# Correct permissions
 vmUser=$(id -nu)
 vmUserId=$(id -u)
 KX_HOME='${KX_HOME}'
-SKELDIR=${KX_HOME}/skel
 SHARED_GIT_REPOSITORIES=${KX_HOME}/git
-INSTALLATION_WORKSPACE=${KX_HOME}/workspace
-# Make desktop icon text transparent
-echo """
-style \"xfdesktop-icon-view\" {
-
-XfdesktopIconView::label-alpha = 0
-
-base[NORMAL] = \"#ffffff\"
-base[SELECTED] = \"#5D97D1\"
-base[ACTIVE] = \"#5D97D1\"
-
-fg[NORMAL] = \"#ffffff\"
-fg[SELECTED] = \"#ffffff\"
-fg[ACTIVE] = \"#ffffff\"
-}
-widget_class \"*XfdesktopIconView*\" style \"xfdesktop-icon-view\"
-""" | sudo tee $HOME/.gtkrc-2.0
-sudo chown ${vmUser}:${vmUser} $HOME/.gtkrc-2.0
-# Change Desktop Theme to vimix-dark-doder
-xfconf-query -c xsettings -p /Net/ThemeName -s "vimix-dark-doder"
-# Change icons to Paper theme
-xfconf-query -c xsettings -p /Net/IconThemeName -s Paper
-# Add/Remove desktop icons
-xfconf-query --create --channel xfce4-desktop --property /desktop-icons/file-icons/show-filesystem --type bool --set false
-xfconf-query --create --channel xfce4-desktop --property /desktop-icons/file-icons/show-home --type bool --set true
-xfconf-query --create --channel xfce4-desktop --property /desktop-icons/file-icons/show-trash --type bool --set false
-# Disable feature that causes mouse to get stuck in VirtualBox
-xfconf-query --create --channel xfwm4 --property /general/easy_click --type string --set none
-# Remove top panel
-xfconf-query --create --channel xfce4-panel --property /panels --type int --set 0 --force-array
-# Set Icon Size for Bottom Bar - Panel 2
-xfconf-query --create --channel xfce4-panel --property /panels/panel-2/size --type int --set 48
-# Set Length of Bottom Panel to 85% - Panel 2
-xfconf-query --create --channel xfce4-panel --property /panels/panel-2/length --type int --set 85
-xfconf-query --create --channel xfce4-desktop --property /desktop-icons/file-icons/show-filesystem --type bool --set false
-xfconf-query --create --channel xfce4-desktop --property /desktop-icons/file-icons/show-home --type bool --set true
-xfconf-query --create --channel xfce4-desktop --property /desktop-icons/file-icons/show-trash --type bool --set false
-xfconf-query --create --channel xfce4-desktop --property /desktop-icons/file-icons/show-unknown-removable --type bool --set false
-xfconf-query --create --channel xfce4-power-manager --property /xfce4-power-manager/dpms-enabled --type bool --set false
-xfconf-query --create --channel xfce4-power-manager --property /xfce4-power-manager/blank-on-ac --type int --set 0
-xfconf-query --create --channel xfce4-power-manager --property /xfce4-power-manager/blank-on-battery --type int --set 0
-xfconf-query --create --channel xfce4-power-manager --property /xfce4-power-manager/dpms-enabled --type bool --set false
-xfconf-query --create --channel xfce4-power-manager --property /xfce4-power-manager/dpms-on-ac-off --type int --set 0
-xfconf-query --create --channel xfce4-power-manager --property /xfce4-power-manager/dpms-on-ac-sleep --type int --set 0
-xfconf-query --create --channel xfce4-power-manager --property /xfce4-power-manager/dpms-on-battery-off --type int --set 0
-xfconf-query --create --channel xfce4-power-manager --property /xfce4-power-manager/dpms-on-battery-sleep --type int --set 0
-xfconf-query --create --channel xfce4-power-manager --property /xfce4-power-manager/general-notification --type bool --set false
-xfconf-query --create --channel xfce4-power-manager --property /xfce4-power-manager/lock-screen-suspend-hibernate --type bool --set false
-xfconf-query --create --channel xfce4-power-manager --property /xfce4-power-manager/logind-handle-lid-switch --type bool --set false
-xfconf-query --create --channel xfce4-power-manager --property /xfce4-power-manager/power-button-action --type int --set 0
-xfconf-query --create --channel xfce4-power-manager --property /xfce4-power-manager/presentation-mode --type bool --set false
-xfconf-query --create --channel xfce4-power-manager --property /xfce4-power-manager/show-panel-label --type int --set 0
-xfpanel-switch load ${SKELDIR}/.config/exported-config.tar.bz2 &
 /usr/bin/typora ${SHARED_GIT_REPOSITORIES}/kx.as.code/README.md &
-sudo cp ${SKELDIR}/p10k.zsh $HOME/.p10k.zsh
-sudo cp ${SKELDIR}/zshrc $HOME/.zshrc
-sudo cp -r ${SKELDIR}/.oh-my-zsh $HOME/.oh-my-zsh
-# Add check for every login telling user if K8s is ready or not
-sudo -H -i -u ${vmUser} sh -c "mkdir -p /home/${vmUser}/.config/autostart"
-cat <<EOF > /home/${vmUser}/.config/autostart/check-k8s.desktop
-[Desktop Entry]
-Type=Application
-Name=K8s-Startup-Status
-Exec=/usr/share/kx.as.code/checkK8sStartup.sh
-EOF
 chmod 755 /home/${vmUser}/.config/autostart/check-k8s.desktop
 chown ${vmUser}:${vmUser} /home/${vmUser}/.config/autostart/check-k8s.desktop
 sudo chmod 777 ${SHARED_GIT_REPOSITORIES}/*
-rm -f $HOME/.config/autostart/show-welcome.desktop
-timeout 5 xfce4-panel &
-''' | sudo tee /usr/share/kx.as.code/showWelcome.sh
 
-sudo chmod +x /usr/share/kx.as.code/showWelcome.sh
-sudo chown -R $VM_USER:$VM_USER /usr/share/kx.as.code
+# Switch off screensaver and power management
+xset s off
+xset s noblank
+xset -dpms
+
+#rm -f /home/${VM_USER}/.config/autostart-scripts/showWelcome.sh
+''' | sudo tee /home/${VM_USER}/.config/autostart-scripts/showWelcome.sh
+
+sudo chmod 755  /home/${VM_USER}/.config/autostart-scripts/*.sh
+sudo chown ${VM_USER}:${VM_USER} /home/${VM_USER}/.config/autostart-scripts/*.sh
 
 # Create shortcut directories
 shortcutsDirectory="/usr/share/kx.as.code/DevOps Tools"
 sudo mkdir -p "${shortcutsDirectory}"
 sudo chmod a+rwx "${shortcutsDirectory}"
-sudo ln -s "${shortcutsDirectory}" /home/$VM_USER/Desktop/
+sudo ln -s "${shortcutsDirectory}" /home/${VM_USER}/Desktop/
 
 adminShortcutsDirectory="/usr/share/kx.as.code/Admin Tools"
 sudo mkdir -p "${adminShortcutsDirectory}"
 sudo chmod a+rwx "${adminShortcutsDirectory}"
-sudo ln -s "${adminShortcutsDirectory}" /home/$VM_USER/Desktop/
+sudo ln -s "${adminShortcutsDirectory}" /home/${VM_USER}/Desktop/
 
 apiDocsDirectory="/usr/share/kx.as.code/API Docs"
 sudo sudo mkdir -p "${apiDocsDirectory}"
 sudo chmod a+rwx "${apiDocsDirectory}"
-sudo ln -s "${apiDocsDirectory}" /home/$VM_USER/Desktop/
+sudo ln -s "${apiDocsDirectory}" /home/${VM_USER}/Desktop/
 
 vendorDocsDirectory="/usr/share/kx.as.code/Vendor Docs"
 sudo mkdir -p "${vendorDocsDirectory}"
 sudo chmod a+rwx "${vendorDocsDirectory}"
-sudo ln -s "${vendorDocsDirectory}" /home/$VM_USER/Desktop/
-
-# Load Welcome.md automatically on desktop login
-sudo -H -i -u $VM_USER sh -c "mkdir -p /home/$VM_USER/.config/autostart"
-sudo bash -c "cat <<EOF > /home/$VM_USER/.config/autostart/show-welcome.desktop
-[Desktop Entry]
-Type=Application
-Name=Welcome-Message
-Exec=/usr/share/kx.as.code/showWelcome.sh
-EOF"
-
-# Install ImageMagick for image conversions
-sudo apt-get install -y imagemagick
-sudo convert -background none "/usr/share/backgrounds/kxascode_logo_white.png" -resize 1200x1047 /usr/share/backgrounds/kx.as.code_Logo_White.png
-
-# Add cronjob to regularly change the background for variety. :)
-cat <<EOF > /var/tmp/changeBackground
-#!/bin/bash
-
-if [ -z "\$(uptime | grep min)"  ]; then
-
-  . /etc/environment
-  export VM_USER=$VM_USER
-
-  # Set new image location
-  TIMESTAMP=\$(date "+%Y-%m-%d_%H%M%S")
-  NEW_BACKGROUND=/usr/share/backgrounds/background_\$TIMESTAMP.jpg
-
-  # Download new image from the Z2H image collection on Unsplash.com
-  wget https://source.unsplash.com/collection/8996343/3506x2329 -O /usr/share/backgrounds/unsplash_download.jpg
-
-  # Only use new image if downloaded OK and valid
-  identify /usr/share/backgrounds/unsplash_download.jpg && export DOWNLOADED_IMAGE="VALID" || export DOWNLOADED_IMAGE="INVALID"
-  if [ "\$DOWNLOADED_IMAGE" == "VALID" ]; then
-
-          # Image OK
-          mv /usr/share/backgrounds/unsplash_download.jpg /usr/share/backgrounds/unsplash.jpg
-
-          # Merge KX.AS.CODE Logo with Background
-          composite -density 300 -quality 100 -gravity center /usr/share/backgrounds/kx.as.code_Logo_White.png /usr/share/backgrounds/unsplash.jpg \$NEW_BACKGROUND
-
-          # Move new background and screensaver to new files
-          mv \$NEW_BACKGROUND /usr/share/backgrounds/background.png
-          mv /usr/share/backgrounds/unsplash.jpg /usr/share/backgrounds/gdmlock.jpg
-
-          LAST_IMAGES=\$(sudo -H -i -u \$VM_USER sh -c 'xfconf-query --channel xfce4-desktop --list | grep last-image')
-          for LAST_IMAGE in \$LAST_IMAGES
-          do
-              echo "Last Image in Loop: \$LAST_IMAGE"
-              sudo -H -i -u \$VM_USER sh -c "DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus xfconf-query --channel xfce4-desktop --property \$LAST_IMAGE --set /usr/share/backgrounds/background.png"
-          done
-  else
-          # Do not use the new image as not valid
-          rm -f /usr/share/backgrounds/unsplash_download.jpg || true
-  fi
-fi
-EOF
-#### Temporarily disabled
-#sudo mv /var/tmp/changeBackground /etc/cron.hourly/
-#sudo chmod 755 /etc/cron.hourly/changeBackground
-
-sudo mkdir -p /home/$VM_USER/KX_Data
-sudo chown $VM_USER:$VM_USER /home/$VM_USER/KX_Data
-#sudo ln -s /home/$VM_USER/KX_Data /home/$VM_USER/Desktop/KX_Data
-
-# Link mounted shared data drive to desktop (VirtualBox)
-if [[ $PACKER_BUILDER_TYPE =~ virtualbox ]]; then
-  sudo ln -s /media/sf_KX_Share /home/$VM_USER/Desktop/KX_Share
-fi
-
-# Link mounted shared data drive to desktop (Parallels)
-if [[ $PACKER_BUILDER_TYPE =~ parallels ]]; then
-  sudo ln -s /media/psf/KX_Share /home/$VM_USER/Desktop/KX_Share
-fi
-
-# Link mounted shared data drive to desktop (VMWare)
-if [[ $PACKER_BUILDER_TYPE =~ vmware_desktop ]]; then
-  sudo ln -s /mnt/hgfs/KX_Share /home/$VM_USER/Desktop/KX_Share
-fi
+sudo ln -s "${vendorDocsDirectory}" /home/${VM_USER}/Desktop/
 
 # Show /etc/motd even when in X-Windows terminal (not SSH)
 echo -e '\n# Added to show KX.AS.CODE MOTD also in X-Windows Terminal (already showing in SSH per default)
 if [ -z $(echo $SSH_TTY) ]; then
  cat /etc/motd | sed -e "s/^/ /"
-fi' | sudo tee -a /home/$VM_USER/.zshrc
+fi' | sudo tee -a /home/${VM_USER}/.zshrc
 
 # Stop ZSH adding % to the output of every commands_whitelist
-echo "export PROMPT_EOL_MARK=''" | sudo tee -a /home/$VM_USER/.zshrc
+echo "export PROMPT_EOL_MARK=''" | sudo tee -a /home/${VM_USER}/.zshrc
 
 # Put README Icon on Desktop
-sudo bash -c "cat <<EOF > /home/$VM_USER/Desktop/README.desktop
+sudo bash -c "cat <<EOF > /home/${VM_USER}/Desktop/README.desktop
 [Desktop Entry]
 Version=1.0
 Name=KX.AS.CODE Readme
@@ -377,26 +219,66 @@ StartupNotify=true
 Terminal=false
 Icon=${SHARED_GIT_REPOSITORIES}/kx.as.code/kxascode_logo_white_small.png
 Type=Application
+Categories=Development
 EOF"
 
 # Put CONTRIBUTE Icon on Desktop
-sudo bash -c "cat <<EOF > /home/$VM_USER/Desktop/CONTRIBUTE.desktop
+sudo bash -c "cat <<EOF > /home/${VM_USER}/Desktop/CONTRIBUTE.desktop
 [Desktop Entry]
 Version=1.0
-Name=How to Contribute
-GenericName=How to Contribute
-Comment=How to Contribute
+Name=KX.AS.CODE Contribute
+GenericName=KX.AS.CODE Contribute
+Comment=KX.AS.CODE Contribute
 Exec=/usr/bin/typora ${SHARED_GIT_REPOSITORIES}/kx.as.code/CONTRIBUTE.md
 StartupNotify=true
 Terminal=false
 Icon=${SHARED_GIT_REPOSITORIES}/kx.as.code/kxascode_logo_white_small.png
 Type=Application
+Categories=Development
 EOF"
 
+if [[ $PACKER_BUILDER_TYPE =~ virtualbox ]]; then
+
+# Add icon for restarting the VirtualBox clipboard service
+sudo bash -c "cat <<EOF > /home/${VM_USER}/Desktop/RestartVBox.desktop
+[Desktop Entry]
+Actions=new-window;new-private-window;
+Categories=Utilities
+Comment[en_US]=Restart VBoxClient
+Comment=Restart VBoxClient
+Exec=/usr/share/kx.as.code/restartVBoxClient.sh
+GenericName[en_US]=Restart VBoxClient
+GenericName=Restart VBoxClient
+Icon=VBox
+MimeType=text/html;image/webp;application/xml;
+Name=Restart VBoxClient
+Path=
+StartupNotify=true
+Terminal=true
+TerminalOptions=
+Type=Application
+Version=1.0
+X-DBUS-ServiceName=
+X-DBUS-StartupType=
+X-KDE-SubstituteUID=false
+X-KDE-Username=
+EOF"
+
+echo '''#!/bin/bash
+pkill "VBoxClient --clipboard" -f
+/usr/bin/VBoxClient --clipboard
+''' | sudo tee /usr/share/kx.as.code/restartVBoxClient.sh
+sudo chmod 755 /usr/share/kx.as.code/restartVBoxClient.sh
+
+fi
+
 # Give *.desktop files execute permissions
-sudo chmod 755 /home/$VM_USER/Desktop/*.desktop
+sudo chmod 755 /home/${VM_USER}/Desktop/*.desktop
+sudo cp /home/${VM_USER}/Desktop/*.desktop /usr/share/applications
 
 # Create Kubernetes logging and custom scripts directory
 sudo mkdir -p ${INSTALLATION_WORKSPACE}
-sudo chown $VM_USER:$VM_USER ${INSTALLATION_WORKSPACE}
+sudo chown ${VM_USER}:${VM_USER} ${INSTALLATION_WORKSPACE}
 sudo chmod 755 ${INSTALLATION_WORKSPACE}
+sudo chown -R ${VM_USER}:${VM_USER} /home/${VM_USER}
+

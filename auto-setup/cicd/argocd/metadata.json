@@ -64,5 +64,7 @@
         "createArgoCdPassword.sh",
         "createIngressObjects.sh"
     ],
-    "post_install_scripts": []
+    "post_install_scripts": [
+        "deployOauth2.sh"
+    ]
 }

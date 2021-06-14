@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash -eux
 
 #### Using script approach rather than direct Helm install,
 #### as standard Helm install was not working. Persistence
