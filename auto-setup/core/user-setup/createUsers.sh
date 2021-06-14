@@ -65,15 +65,19 @@ if [[ ${numUsersToCreate} -ne 0 ]]; then
       echo '''
       dn: uid='${userid}',ou=Users,ou=People,'${ldapDn}'
       objectClass: top
-      objectClass: account
       objectClass: posixAccount
       objectClass: shadowAccount
+      objectClass: inetOrgPerson
+      objectClass: organizationalPerson
+      objectClass: person
       cn: '${userid}'
+      sn: '${userid}'
       uid: '${userid}'
       uidNumber: '${newGid}'
       gidNumber: '${newGid}'
       homeDirectory: /home/'${userid}'
       userPassword: '${generatedPassword}'
+      mail: '${email}'
       loginShell: /bin/zsh
       ''' | sed -e 's/^[ \t]*//' | sed '/^$/d' | sudo tee /etc/ldap/new_user_${userid}.ldif
       sudo ldapadd -D "cn=admin,${ldapDn}" -w "${vmPassword}" -H ldapi:/// -f /etc/ldap/new_user_${userid}.ldif

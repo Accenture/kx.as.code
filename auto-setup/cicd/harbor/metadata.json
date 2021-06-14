@@ -80,6 +80,7 @@
         "createIngress.sh",
         "createProjects.sh",
         "createRobotAccounts.sh",
-        "createGitlabGroupVariables.sh"
+        "createGitlabGroupVariables.sh",
+        "deployOidc.sh"
     ]
 }
