@@ -21,19 +21,33 @@ grafana.ini:
   rendering:
     server_url: http://grafana-image-renderer-service.monitoring:8081/render
     callback_url: http://grafana.monitoring
-  auth.gitlab:
+  # auth.gitlab:
+  #   enabled: true
+  #   allow_sign_up: true
+  #   client_id: {{grafanaGitIntegrationId}}
+  #   client_secret: {{grafanaGitIntegrationSecret}}
+  #   scopes: read_user
+  #   auth_url: {{gitUrl}}/oauth/authorize
+  #   token_url: {{gitUrl}}/oauth/token
+  #   api_url: {{gitUrl}}/api/v4
+  auth.generic_oauth:
     enabled: true
+    disable_login_form: true      
+    client_id:  grafana
+    client_secret: d71f7fb5-f526-4a58-bda7-d42e984a7ed8
+    auth_url: https://keycloak.demo1.kx-as-code.local/auth/realms/demo1.kx-as-code.local/protocol/openid-connect/auth
+    token_url: https://keycloak.demo1.kx-as-code.local/auth/realms/demo1.kx-as-code.local/protocol/openid-connect/token
+    api_url: https://keycloak.demo1.kx-as-code.local/auth/realms/demo1.kx-as-code.local/protocol/openid-connect/userinfo
+    scopes: openid profile grafana
     allow_sign_up: true
-    client_id: {{grafanaGitIntegrationId}}
-    client_secret: {{grafanaGitIntegrationSecret}}
-    scopes: read_user
-    auth_url: {{gitUrl}}/oauth/authorize
-    token_url: {{gitUrl}}/oauth/token
-    api_url: {{gitUrl}}/api/v4
+    tls_skip_verify_insecure: false
   server:
-    root_url: https://{{componentName}}.{{baseDomain}}
+    #root_url: https://{{componentName}}.{{baseDomain}}
+    domain: grafana.demo1.kx-as-code.local
+    root_url: https://grafana.demo1.kx-as-code.local
   extraConfigmapMounts:
     - name: certs-configmap
       mountPath: /etc/grafana/ssl/
       configMap: certs-configmap
       readOnly: true
+ 
