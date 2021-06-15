@@ -17,7 +17,7 @@ dn: cn=readonly,ou=Users,ou=People,${ldapDn}
 cn: readonly
 objectClass: simpleSecurityObject
 objectClass: organizationalRole
-userPassword: ${vmPasword}
+userPassword: ${vmPassword}
 """ | sudo tee /etc/ldap/ldap-readonly-user.ldif
 
 # Apply readonly user LDIF file

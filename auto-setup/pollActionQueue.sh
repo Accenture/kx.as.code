@@ -109,6 +109,8 @@ export virtualizationType=$(cat ${installationWorkspace}/profile-config.json | j
 export nicList=$(nmcli device show | grep -E 'enp|ens' | grep 'GENERAL.DEVICE' | awk '{print $2}')
 export ipsToExclude="10.0.2.15"   # IP addresses not to configure with static IP. For example, default Virtualbox IP 10.0.2.15
 export nicExclusions=""
+export excludeNic=""
+export 
 for nic in ${nicList}; do
     for ipToExclude in ${ipsToExclude}; do
         ip=$(ip a s ${nic} | egrep -o 'inet [0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | cut -d' ' -f2)
@@ -225,7 +227,6 @@ if [[ ! -f /usr/share/kx.as.code/.config/network_status ]]; then
         sudo sed -i 's/^#no-hosts$/no-hosts/g' /etc/dnsmasq.conf
         echo "server=8.8.8.8" | sudo tee -a /etc/dnsmasq.conf
         echo "server=8.8.4.4" | sudo tee -a /etc/dnsmasq.conf
-        sudo systemctl restart dnsmasq
         # Configue dnsmasq - /lib/systemd/system/dnsmasq.service (bugfix so dnsmasq starts automatically)
         sudo sed -i 's/Wants=nss-lookup.target/Wants=network-online.target/' /lib/systemd/system/dnsmasq.service
         sudo sed -i 's/After=network.target/After=network-online.target/' /lib/systemd/system/dnsmasq.service
@@ -257,7 +258,6 @@ if [[ ! -f /usr/share/kx.as.code/.config/network_status ]]; then
         echo "address=/rabbitmq.${baseDomain}/${mainIpAddress}" | sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
         echo "address=/remote-desktop/${mainIpAddress}" | sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
         echo "address=/remote-desktop.${baseDomain}/${mainIpAddress}" | sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
-        sudo systemctl restart dnsmasq
     fi
 
     if [[ ${baseIpType} == "static"   ]]; then
@@ -314,6 +314,8 @@ if [[ ! -f /usr/share/kx.as.code/.config/network_status ]]; then
     if  [[ ${baseIpType} == "static"   ]]; then
         # Reboot machine to ensure all network changes are active
         sudo reboot
+    else
+        sudo systemctl restart dnsmasq
     fi
 
 fi
@@ -387,12 +389,12 @@ for componentName in ${defaultComponentsToInstall}; do
 done
 
 # Update Guacamlo with Team Name
-if [[ -n ${environmentPrefix}   ]]; then
-    sudo sed -i 's/KX.AS.CODE/'${environmentPrefix}'/g' /var/lib/tomcat9/webapps/guacamole/translations/en.json
-fi
+#if [[ -n ${environmentPrefix}   ]]; then
+#    sudo sed -i 's/KX.AS.CODE/'${environmentPrefix}'/g' /var/lib/tomcat9/webapps/guacamole/translations/en.json
+#fi
 
 # Restart Guacamole to ensure it picks up the correct VNC configuration
-sudo systemctl restart guacd
+#sudo systemctl restart guacd
 
 # Set tries to 0. If an install failed and the retry flag is set to true for that component in metadata.json, attempts will be made to retrz up to 3 times
 retries=0

@@ -20,7 +20,7 @@ if [ -f $NVM_DIR/nvm.sh ]; then
     . "$NVM_DIR/bash_completion" # This loads nvm bash_completion
 fi
 
-handelbarsUtilityInstalled=$(which envhandlebars)
+handelbarsUtilityInstalled=$(which envhandlebars || true)
 
 if [[ -z ${handelbarsUtilityInstalled} ]]; then
     curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.3/install.sh | bash
@@ -48,7 +48,7 @@ if [[ ${action} == "install"   ]]; then
 
     # Create namespace if it does not exist
     if [[ -z ${namespace} ]] && [[ ${namespace} != "kube-system" ]] && [[ ${namespace} != "default"   ]]; then
-        log_warn "Namespace name could not be established. Subsequent actions may fail if they have a dependency on this. Please validate the namespace entry is correct for \"${component}\" in metadata.json"
+        log_warn "Namespace name could not be established. Subsequent actions may fail if they have a dependency on this. Please validate the namespace entry is correct for \"${componentName}\" in metadata.json"
     fi
 
     # Create namespace if it does not exists
@@ -398,15 +398,6 @@ if [[ ${action} == "install"   ]]; then
     fi
 
     browserOptions="" # placeholder
-
-    case "${apiDocsType}" in
-        swagger)
-            iconPath=/usr/share/kx.as.code/git/kx.as.code/base-vm/images/api_docs_icon.png
-            ;;
-        *)
-            iconPath=/usr/share/kx.as.code/git/kx.as.code/base-vm/images/api_docs_icon.png
-            ;;
-    esac
 
     shortcutText=$(cat ${componentMetadataJson} | jq -r '.shortcut_text')
     if [[ -z ${shortcutText} ]] || [[ ${shortcutText} == "null" ]]; then
