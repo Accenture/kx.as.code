@@ -396,4 +396,4 @@ Get-ChildItem ".\jenkins_home\" -Filter credential_*.xml |
         }
 
 # Start Jenkins agent
-& $javaBinary -jar .\agent.jar -jnlpUrl $jenkinsUrl/computer/$AGENT_NAME/slave-agent.jnlp -workDir "$WORKING_DIRECTORY"
+& $javaBinary -jar .\agent.jar -jnlpUrl $jenkinsUrl/computer/$agent_name/slave-agent.jnlp -workDir "$WORKING_DIRECTORY"
