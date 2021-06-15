@@ -297,23 +297,24 @@ if [[ -z $(docker images ${kx_jenkins_image} -q) ]]; then
     fi
 fi
 
-# Checking if Jenkins home already exists to avoid overwriting configurations and breaking something
-if [ ! -d "${jenkins_home}/jobs" ] || [[ ${override_action} == "recreate"   ]] || [[ ${override_action} == "destroy"   ]] || [[ ${override_action} == "fully-destroy"   ]]; then
-    mkdir -p ${working_directory}
-    mkdir -p ${jenkins_home}
-    cp -R ./initial-setup/* ${jenkins_home}
     firstTwoChars=$(echo "${working_directory}" | head -c2)
     firstChar=$(echo "${working_directory}" | head -c1)
     if [[ ${firstTwoChars} == "./" ]]; then
         # if workspace directory starts with ./, convert relative directory to absolute
         workdir_absolute_path=$(pwd)/$(echo ${working_directory} | sed 's;\./;;g')
-    elif [[ ${firstChar} != "/" ]]; then
+elif     [[ ${firstChar} != "/" ]]; then
         # If no ./ or / at beginning, assume relative working directory and convert to absolute
         workdir_absolute_path="$(pwd)/${working_directory}"
-    else
+else
         # If / at start, assume provided directory is already absolute and use it
         workdir_absolute_path=${working_directory}
-    fi
+fi
+
+# Checking if Jenkins home already exists to avoid overwriting configurations and breaking something
+if [ ! -d "${jenkins_home}/jobs" ] || [[ ${override_action} == "recreate"   ]] || [[ ${override_action} == "destroy"   ]] || [[ ${override_action} == "fully-destroy"   ]]; then
+    mkdir -p ${working_directory}
+    mkdir -p ${jenkins_home}
+    cp -R ./initial-setup/* ${jenkins_home}
     if [[ "$(uname)" == "Darwin" ]]; then
         sed -i '' 's;{{WORKING_DIRECTORY}};'${workdir_absolute_path}';g' ${jenkins_home}/nodes/local/config.xml
     else
@@ -432,9 +433,9 @@ credentialXmlFiles=$(find jenkins_home/ -name "credential_*.xml")
 for credentialXmlFile in ${credentialXmlFiles}; do
     echo "[INFO] Replacing placeholders with values in ${credentialXmlFile}"
     for i in {1..5}; do
-        cat "${credentialXmlFile}" | ./mo | tee "${credentialXmlFile}_mo" > /dev/null
+        cat "${credentialXmlFile}" | ./mo > "${credentialXmlFile}_mo"
         if [ -s "${credentialXmlFile}_mo" ]; then
-            cat "${credentialXmlFile}_mo" | "${javaBinary}" -jar jenkins-cli.jar -s ${jenkins_url} create-credentials-by-xml system::system::jenkins _
+            cat "${credentialXmlFile}_mo" | "${javaBinary}" -jar jenkins-cli.jar -s ${jenkins_url} create-credentials-by-xml system::system::jenkins _ || true
             rm "${credentialXmlFile}_mo"
             break
         else
