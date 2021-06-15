@@ -21,7 +21,7 @@ userPassword: ${vmPassword}
 """ | sudo tee /etc/ldap/ldap-readonly-user.ldif
 
 # Apply readonly user LDIF file
-sudo ldapadd -D "cn=admin,${ldapDn}" -w "${vmPasword}" -H ldapi:/// -f /etc/ldap/ldap-readonly-user.ldif
+sudo ldapadd -D "cn=admin,${ldapDn}" -w "${vmPassword}" -H ldapi:/// -f /etc/ldap/ldap-readonly-user.ldif
 
 # Create LDIF for user access
 echo """
@@ -44,7 +44,7 @@ olcAccess: {2}to *
 """ | sudo tee /etc/ldap/readonly-user_access.ldif
 
 # TODO: Commented out as currently not working
-#sudo ldapadd -D "cn=admin,${ldapDn}" -w "${vmPasword}" -H ldapi:/// -f /etc/ldap/readonly-user_access.ldif
+#sudo ldapadd -D "cn=admin,${ldapDn}" -w "${vmPassword}" -H ldapi:/// -f /etc/ldap/readonly-user_access.ldif
 
 # Output LDAP config
 sudo ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:/// -b cn=config '(olcDatabase={1}mdb)' olcAccess
@@ -71,7 +71,7 @@ chpass_provider = ldap
 access_provider = ldap
 ldap_uri = ldap://ldap.${baseDomain}
 ldap_default_bind_dn = admin,${ldapDn}
-ldap_default_authtok = ${vmPasword}
+ldap_default_authtok = ${vmPassword}
 ldap_tls_reqcert = demand
 ldap_tls_cacert = /etc/ldap/sasl2/ca.crt
 ldap_tls_cacertdir = /etc/ldap/sasl2
