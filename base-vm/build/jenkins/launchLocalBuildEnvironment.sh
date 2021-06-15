@@ -106,7 +106,7 @@ if [[ ${override_action} == "recreate"   ]] || [[ ${override_action} == "destroy
         echo -e "${red}- [INFO] Jenkins jobs deleted${nc}"
         if [[ ${override_action} == "destroy" ]] || [[ ${override_action} == "fully-destroy"   ]] || [[ ${override_action} == "uninstall"   ]]; then
             echo -e "${red}- [INFO] Deleting Jenkins image...${nc}"
-            docker rmi "$(docker images "${KX_JENKINS_IMAGE}" -q)" || true
+            docker rmi "$(docker images "${kx_jenkins_image}" -q)" || true
             echo -e "${red}- [INFO] Docker image deleted${nc}"
             echo -e "${red}- [INFO] Deleting jenkins_home directory...${nc}"
             rm -rf ./jenkins_home || true
@@ -373,7 +373,7 @@ echo -e "${orange}- [INFO] The next steps - downloading Jar files from Jenkins -
 echo -e "${blue}- [INFO] Waiting for jenkins-cli.jar to become available...${nc}"
 while [[ ! -f ./jenkins-cli.jar ]]; do
     for i in {1..60}; do
-        http_code=$(curl -s -o /dev/null -L -w '%{http_code}' ${JENKINS_URL}/jnlpJars/jenkins-cli.jar || true)
+        http_code=$(curl -s -o /dev/null -L -w '%{http_code}' ${jenkins_url}/jnlpJars/jenkins-cli.jar || true)
         if [[ ${http_code} == "200" ]]; then
             curl -s ${jenkins_url}/jnlpJars/jenkins-cli.jar -o jenkins-cli.jar
             break 2
@@ -393,7 +393,7 @@ fi
 echo -e "${blue}- [INFO] Waiting for agent.jar to become available...${nc}"
 while [[ ! -f ./agent.jar ]]; do
     for i in {1..60}; do
-        http_code=$(curl -s -o /dev/null -L -w '%{http_code}' ${JENKINS_URL}/jnlpJars/agent.jar || true)
+        http_code=$(curl -s -o /dev/null -L -w '%{http_code}' ${jenkins_url}/jnlpJars/agent.jar || true)
         if [[ ${http_code} == "200" ]]; then
             curl -s ${jenkins_url}/jnlpJars/agent.jar -o agent.jar
             break 2
@@ -412,7 +412,7 @@ fi
 # In case jars already existed, add an additional check to wait for RC200
 echo -e "${blue}- [INFO] Waiting for Jenkins to be fully up before continuing...${nc}"
 for i in {1..60}; do
-    http_code=$(curl -s -o /dev/null -L -w '%{http_code}' ${JENKINS_URL}/view/Status/ || true)
+    http_code=$(curl -s -o /dev/null -L -w '%{http_code}' ${jenkins_url}/view/Status/ || true)
     if [[ ${http_code} == "200" ]]; then
         echo -e "${green}- [INFO] Jenkins is up, continuing with setting up the build & deploy environment${nc}"
         break
