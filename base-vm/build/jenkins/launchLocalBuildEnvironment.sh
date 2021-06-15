@@ -271,7 +271,7 @@ if [[ -z ${javaBinary}   ]]; then
 fi
 
 if [ -d ${jenkins_home} ] && [[ ${override_action} != "recreate"   ]] && [[ ${override_action} != "destroy"   ]] && [[ ${override_action} != "fully-destroy"   ]]; then
-    echo -e "${blue}- [INFO] ${JENKINS_HOME} already exists. Will skip Jenkins setup. Delete or rename ${JENKINS_HOME} if you want to re-install Jenkins${nc}"
+    echo -e "${blue}- [INFO] ${jenkins_home} already exists. Will skip Jenkins setup. Delete or rename ${jenkins_home} if you want to re-install Jenkins${nc}"
 fi
 
 # Checking if running on docker-machine to set correct Jenkins URL
@@ -487,6 +487,6 @@ echo -e "${blue}- [INFO] Connecting the local agent to Jenkins...${nc}"
 if [[ -n ${jnlp_secret}   ]]; then
     "${javaBinary}" -jar agent.jar -jnlpUrl ${jenkins_url}/computer/${agent_name}/slave-agent.jnlp -connectTo ${jenkins_host}:${jenkins_jnlp_port} -secret ${jnlp_secret} -workDir "${working_directory}"
 else
-    echo -e "${orange}- [INFO] JNLP_SECRET is not set. This is OK for a local setup. If you want to add it, you'll have to configure it manually after everything has started${nc}"
+    echo -e "${orange}- [INFO] jnlp_secret is not set. This is OK for a local setup. If you want to add it, you'll have to configure it manually after everything has started${nc}"
     "${javaBinary}" -jar agent.jar -jnlpUrl ${jenkins_url}/computer/${agent_name}/slave-agent.jnlp -workDir "${working_directory}"
 fi
