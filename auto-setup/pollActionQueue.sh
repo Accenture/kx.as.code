@@ -388,14 +388,6 @@ for componentName in ${defaultComponentsToInstall}; do
     rabbitmqadmin publish exchange=action_workflow routing_key=pending_queue payload=''${payload}''
 done
 
-# Update Guacamlo with Team Name
-#if [[ -n ${environmentPrefix}   ]]; then
-#    sudo sed -i 's/KX.AS.CODE/'${environmentPrefix}'/g' /var/lib/tomcat9/webapps/guacamole/translations/en.json
-#fi
-
-# Restart Guacamole to ensure it picks up the correct VNC configuration
-#sudo systemctl restart guacd
-
 # Set tries to 0. If an install failed and the retry flag is set to true for that component in metadata.json, attempts will be made to retrz up to 3 times
 retries=0
 
@@ -443,12 +435,13 @@ while :; do
                 sudo -H -i -u ${vmUser} sh -c "DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/${vmUserId}/bus notify-send -t 300000 \"KX.AS.CODE Notification\" \"Initialization started. Please be patient. This could take up to 30 minutes, depending on your system size and speed of internet connection\" --icon=dialog-warning"
             fi
             count=$((count + 1))
+            export error=""
             . ${autoSetupHome}/autoSetup.sh &> ${installationWorkspace}/${componentName}_${logTimestamp}.log
             logRc=$?
             log_info "Installation process for \"${componentName}\" returned with \$?=${logRc} and \$rc=$rc"
 
             # Move item from pending to completed or error queue
-            if [[ $logRc -eq 0 ]] && [[ $rc -eq 0 ]]; then
+            if [[ $logRc -eq 0 ]] && [[ $rc -eq 0 ]] && [[ "${error}" != "true" ]]; then
                 rabbitmqadmin get queue=wip_queue --format=pretty_json ackmode=ack_requeue_false | jq -r '.[].payload'
                 rabbitmqadmin publish exchange=action_workflow routing_key=completed_queue properties="{\"delivery_mode\": 2}" payload=''${payload}''
                 log_info "The installation of \"${componentName}\" completed succesfully"
