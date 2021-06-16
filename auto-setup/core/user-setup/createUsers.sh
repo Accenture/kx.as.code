@@ -165,13 +165,13 @@ if [[ ${numUsersToCreate} -ne 0 ]]; then
         sudo mkdir -p /home/${userid}/Desktop
 
         # Add desktop shortcuts for all users
-        if sudo test -f /home/${userid}/Desktop/"KX.AS.CODE Source"; then
+        if sudo test ! -f /home/${userid}/Desktop/"KX.AS.CODE Source"; then
             sudo ln -s ${sharedGitHome}/kx.as.code /home/${userid}/Desktop/"KX.AS.CODE Source"
         fi
 
         # Add admin tools folder to desktop if user has admin role
         if [[ "${userRole}" == "admin" ]]; then
-            if sudo test -f /home/${userid}/Desktop/"${adminShortcutsDirectory}"; then
+            if sudo test ! -f /home/${userid}/Desktop/"${adminShortcutsDirectory}"; then
                 ln -s "${adminShortcutsDirectory}" /home/${userid}/Desktop/
             fi
         fi
@@ -195,7 +195,7 @@ if [[ ${numUsersToCreate} -ne 0 ]]; then
             fi
         done
 
-        if sudo test -f /home/${userid}/.config/autostart/keyboard-language.desktop; then
+        if sudo test ! -f /home/${userid}/.config/autostart/keyboard-language.desktop; then
         echo """[Desktop Entry]
     Type=Application
     Name=SetKeyboardLanguage
@@ -205,7 +205,7 @@ if [[ ${numUsersToCreate} -ne 0 ]]; then
 
         # Assign random avatar to user
         ls /usr/share/avatars/avatar_*.png | sort -R | tail -1 | while read file; do
-            if sudo test -f /home/${userid}/.face.icon; then
+            if sudo test ! -f /home/${userid}/.face.icon; then
                 sudo cp -f $file /home/${userid}/.face.icon
             fi
         done
@@ -223,7 +223,7 @@ if [[ ${numUsersToCreate} -ne 0 ]]; then
         done
 
         # Add KX.AS.CODE Root CA cert to Chrome CA Store
-        if [ ! -f /home/${userid}/.pki/nssdb ]; then
+        if sudo test ! -f /home/${userid}/.pki/nssdb; then
             sudo rm -rf /home/${userid}/.pki
             mkdir -p /home/${userid}/.pki/nssdb/
             chown -R ${newGid}:${newGid} /home/${userid}/.pki
@@ -236,11 +236,13 @@ if [[ ${numUsersToCreate} -ne 0 ]]; then
         sudo chmod 700 /home/${userid}/.ssh
         sudo -H -i -u ${userid} sh -c "yes | ssh-keygen -f ssh-keygen -m PEM -t rsa -b 4096 -q -f /home/${userid}/.ssh/id_rsa -N ''"
 
-	# Create Kubeconfig file
-	sudo mkdir -p /home/${userid}/.kube
-	sudo cat /etc/kubernetes/admin.conf | sed '/users:/,$d' | sed 's/kubernetes-admin/oidc/g' | sudo tee /home/${userid}/.kube/config
-	sudo chown -R ${userid}:${userid} /home/${userid}/.kube
-	sudo chmod 400 /home/${userid}/.kube/config
+        # Create Kubeconfig file
+        if sudo test ! -f /home/${userid}/.kube/config; then 
+            sudo mkdir -p /home/${userid}/.kube
+            sudo cat /etc/kubernetes/admin.conf | sed '/users:/,$d' | sed 's/kubernetes-admin/oidc/g' | sudo tee /home/${userid}/.kube/config
+            sudo chown -R ${userid}:${userid} /home/${userid}/.kube
+            sudo chmod 400 /home/${userid}/.kube/config
+        fi
 
         # Set credential token in new Realm
         kubectl -n keycloak exec ${kcPod} -- \
