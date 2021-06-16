@@ -233,29 +233,39 @@ if [[ ${numUsersToCreate} -ne 0 ]]; then
         fi
 
         # Create SSH key kx.hero user
-        sudo chmod 700 /home/${userid}/.ssh
-        sudo -H -i -u ${userid} sh -c "yes | ssh-keygen -f ssh-keygen -m PEM -t rsa -b 4096 -q -f /home/${userid}/.ssh/id_rsa -N ''"
+        if sudo test ! -f /home/${userid}/.ssh/id_rsa; then 
+            sudo chmod 700 /home/${userid}/.ssh
+            sudo -H -i -u ${userid} sh -c "yes | ssh-keygen -f ssh-keygen -m PEM -t rsa -b 4096 -q -f /home/${userid}/.ssh/id_rsa -N ''"
+        fi
 
-        # Create Kubeconfig file
-        if sudo test ! -f /home/${userid}/.kube/config; then 
+        if sudo test ! -f /home/${userid}/.kube/config; then
+            # Create Kubeconfig file
             sudo mkdir -p /home/${userid}/.kube
             sudo cat /etc/kubernetes/admin.conf | sed '/users:/,$d' | sed 's/kubernetes-admin/oidc/g' | sudo tee /home/${userid}/.kube/config
             sudo chown -R ${userid}:${userid} /home/${userid}/.kube
             sudo chmod 400 /home/${userid}/.kube/config
+            # Enable Keycloak OIDC for new user
+            sudo -H -i -u ${userid} sh -c "${installationWorkspace}/client-oidc-setup.sh"
+            sudo -H -i -u ${userid} sh -c "kubectl config set-context --current --user=oidc"
+        fi
+
+        # Add desktop customization script to new users autostart-scripts folder
+        if sudo test ! -f /home/${userid}/.config/autostart-scripts/showWelcome.sh; then
+            sudo mkdir -p /home/${userid}/.config/autostart-scripts
+            sudo cp -f ${installationWorkspace}/showWelcome.sh /home/${userid}/.config/autostart-scripts
+            sudo chmod -R 755 /home/${userid}/.config/autostart-scripts
+            sudo chown -R ${userid}:${userid} /home/${userid}/.config/autostart-scripts
         fi
 
         # Set credential token in new Realm
         kubectl -n keycloak exec ${kcPod} -- \
             ${kcAdmCli} config credentials --server ${kcInternalUrl}/auth --realm ${kcRealm} --user admin --password ${vmPassword} --client admin-cli
 
-        # Enable Keycloak OIDC for new user
-        sudo -H -i -u ${userid} sh -c "${installationWorkspace}/client-oidc-setup.sh"
-        
+        # Get Keycloak User Id
         export kcUserId=$(kubectl -n keycloak exec ${kcPod} -- \
             ${kcAdmCli} get users -r ${kcRealm} -q username=${userid} | jq -r '.[].id')
-        
-        sudo -H -i -u ${userid} sh -c "kubectl config set-context --current --user=oidc"
-        
+
+        # Create K8s cluster role binding for OIDC user if it does not exist
         sudo kubectl get clusterrolebinding oidc-cluster-admin-${userid} || \
             sudo kubectl create clusterrolebinding oidc-cluster-admin-${userid} --clusterrole=cluster-admin --user='https://keycloak.'${baseDomain}'/auth/realms/'${kcRealm}'#'${kcUserId}''
 
