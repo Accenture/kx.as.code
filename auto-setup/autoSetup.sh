@@ -129,11 +129,11 @@ if [[ ${action} == "install"   ]]; then
             fi
         fi
         # Get --set parameters from metadata.json
-        helm_set_key_value_params=$(echo ${helm_params} | jq -r '.set_key_values[] | "--set \(.)" ' | mo) # Mo adds mustache {{variables}} support to helm --set options
+        helm_set_key_value_params=$(echo ${helm_params} | jq -r '.set_key_values[]? | "--set \(.)" ' | mo) # Mo adds mustache {{variables}} support to helm --set options
         log_debug "${helm_set_key_value_params}"
 
         # Get --set-string parameters from metadata.json
-        helm_set_string_key_value_params=$(echo ${helm_params} | jq -r '.set_string_key_values[] | "--set-string \(.)" ' | mo) # Mo adds mustache {{variables}} support to helm --set-string options
+        helm_set_string_key_value_params=$(echo ${helm_params} | jq -r '.set_string_key_values[]? | "--set-string \(.)" ' | mo) # Mo adds mustache {{variables}} support to helm --set-string options
         log_debug "${helm_set_string_key_value_params}"
 
         helmRepositoryName=$(echo ${helm_params} | jq -r '.repository_name')
