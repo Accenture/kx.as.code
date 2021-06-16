@@ -165,15 +165,30 @@ if [[ ${numUsersToCreate} -ne 0 ]]; then
         sudo mkdir -p /home/${userid}/Desktop
 
         # Add desktop shortcuts for all users
-        if sudo test ! -f /home/${userid}/Desktop/"KX.AS.CODE Source"; then
+        if sudo test ! -e /home/${userid}/Desktop/"KX.AS.CODE Source"; then
             sudo ln -s ${sharedGitHome}/kx.as.code /home/${userid}/Desktop/"KX.AS.CODE Source"
         fi
 
         # Add admin tools folder to desktop if user has admin role
         if [[ "${userRole}" == "admin" ]]; then
-            if sudo test ! -f /home/${userid}/Desktop/"${adminShortcutsDirectory}"; then
-                ln -s "${adminShortcutsDirectory}" /home/${userid}/Desktop/
+            if sudo test ! -e /home/${userid}/Desktop/"Admin Tools"; then
+                sudo ln -s "${adminShortcutsDirectory}" /home/${userid}/Desktop/
             fi
+        fi
+
+        # Add DevOps tools folder to desktop
+        if sudo test ! -e /home/${userid}/Desktop/"DevOps Tools"; then
+            sudo ln -s "${shortcutsDirectory}" /home/${userid}/Desktop/
+        fi
+
+        # Add Vendor Docs folder to desktop
+        if sudo test ! -e /home/${userid}/Desktop/"Vendor Docs"; then
+            sudo ln -s "${vendorDocsDirectory}" /home/${userid}/Desktop/
+        fi
+
+        # Add API Docs folder to desktop
+        if sudo test ! -e /home/${userid}/Desktop/"API Docs"; then
+            sudo ln -s "${apiDocsDirectory}" /home/${userid}/Desktop/
         fi
 
         # Copy all file to user
