@@ -37,7 +37,7 @@ kubectl -n ${namespace} exec ${kcPod} --container ${kcContainer} -- \
   -s protocol=openid-connect \
   -s protocolMapper=oidc-usermodel-client-role-mapper \
   -s 'config."claim.name"=roles' \
-  -s clentID=$clientID \
+  -s clientID=$clientID \
   -s 'config."multivalued"=true' \
   -s 'config."jsonType.label"=String'
 
