@@ -5,16 +5,21 @@ set -euo pipefail
 export glusterFsDiskSize=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.glusterFsDiskSize')
 
 # Install NVME CLI if needed, for example, for AWS
-nvme_cli_needed=$(df -h | grep "nvme")
+nvme_cli_needed=$(df -h | grep "nvme" || true)
 if [[ -n ${nvme_cli_needed} ]]; then
     sudo apt install -y nvme-cli lvm2
 fi
 
 # Determine Drive C (GlusterFS) - Relevant for KX-Main only
-driveC=$(lsblk -o NAME,FSTYPE,SIZE -dsn -J | jq -r '.[] | .[] | select(.fstype==null) | select(.size=="'${glusterFsDiskSize}'G") | .name')
-
-echo "${driveC}" | sudo tee /usr/share/kx.as.code/.config/driveC
-cat /usr/share/kx.as.code/.config/driveC
+driveC=$(lsblk -o NAME,FSTYPE,SIZE -dsn -J | jq -r '.[] | .[] | select(.fstype==null) | select(.size=="'${glusterFsDiskSize}'G") | .name' || true)
+formatted=""
+if [[ ! -f /usr/share/kx.as.code/.config/driveC ]]; then
+    echo "${driveC}" | sudo tee /usr/share/kx.as.code/.config/driveC
+    cat /usr/share/kx.as.code/.config/driveC
+else
+    driveC=$(cat /usr/share/kx.as.code/.config/driveC)
+    formatted=true
+fi
 
 # Update Debian repositories as default is old
 wget -O - https://download.gluster.org/pub/gluster/glusterfs/8/rsa.pub | sudo apt-key add -
@@ -150,18 +155,18 @@ EOF'
 # TODO - Update: ssh-keygen -m PEM -t rsa -b 4096 -q -f /etc/heketi/heketi_key -N ''
 
 # Generate Heketi SSH Key if it does not already exist
-if [ -z "$(sudo ls -l /etc/heketi/heketi_key)" ]; then
+if [ -z "$(sudo ls -l /etc/heketi/heketi_key || true)" ]; then
     yes | sudo -u heketi ssh-keygen -f ssh-keygen -m PEM -t rsa -b 4096 -q -f /etc/heketi/heketi_key -N ''
     sudo chown -R heketi:heketi /etc/heketi
 fi
 
 # Add Heketi to sudoers file if not there
-if [ -z "$(sudo grep "heketi" /etc/sudoers)" ]; then
+if [ -z "$(sudo grep "heketi" /etc/sudoers || true)" ]; then
     sudo bash -c 'echo "heketi        ALL=(ALL)       NOPASSWD: ALL"' | sudo tee -a /etc/sudoers
 fi
 
 # Add Heketi public key to authorized hosts
-if [ -z "$(sudo grep "heketi@kx-main" /root/.ssh/authorized_keys)" ]; then
+if [ -z "$(sudo grep "heketi@kx-main" /root/.ssh/authorized_keys || true)" ]; then
     sudo mkdir -p /root/.ssh
     sudo chmod 700 /root/.ssh
     sudo cat /etc/heketi/heketi_key.pub | sudo tee -a /root/.ssh/authorized_keys
@@ -288,7 +293,7 @@ heketi-cli node list
 # Integrate Heketi with Kubernetes #
 ####################################
 
-secretExists=$(kubectl get secret heketi-secret -o json | jq -r '.data.key')
+secretExists=$(kubectl get secret heketi-secret -o json | jq -r '.data.key' || true)
 if [[ -z ${secretExists} ]]; then
     adminPassword_BASE64=$(echo "${adminPassword}" | base64)
 
@@ -304,7 +309,7 @@ type: "kubernetes.io/glusterfs"
 data:
     key: "${adminPassword_BASE64}"
 EOF
-    kubectl create -f /usr/share/kx.as.code/Kubernetes/gluster-secret.yaml
+    kubectl apply -f /usr/share/kx.as.code/Kubernetes/gluster-secret.yaml
 fi
 
 clusterId=$(heketi-cli cluster list | cut -f2 -d: | cut -f1 -d' ' | tr -d '\n')
