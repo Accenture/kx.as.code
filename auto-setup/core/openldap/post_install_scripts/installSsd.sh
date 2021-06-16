@@ -11,40 +11,48 @@ sudo apt-get install -y sssd libpam-sss libnss-sss
 
 # TODO: The readonly stuff below is currently not working
 
-# Create LDIF file for Read Only User
-echo """
-dn: cn=readonly,ou=Users,ou=People,${ldapDn}
-cn: readonly
-objectClass: simpleSecurityObject
-objectClass: organizationalRole
-userPassword: ${vmPassword}
-""" | sudo tee /etc/ldap/ldap-readonly-user.ldif
+exists=""
 
-# Apply readonly user LDIF file
-sudo ldapadd -D "cn=admin,${ldapDn}" -w "${vmPassword}" -H ldapi:/// -f /etc/ldap/ldap-readonly-user.ldif
+# Create LDIF file for Read Only User
+sudo ldapsearch -x -b "cn=admins,ou=Groups,ou=People,${ldapDn}" || exists=false
+if [[ "${exists}" == "false" ]]; then
+  echo """
+  dn: cn=readonly,ou=Users,ou=People,${ldapDn}
+  cn: readonly
+  objectClass: simpleSecurityObject
+  objectClass: organizationalRole
+  userPassword: ${vmPassword}
+  """ | sudo tee /etc/ldap/ldap-readonly-user.ldif
+  # Apply readonly user LDIF file
+  sudo ldapadd -D "cn=admin,${ldapDn}" -w "${vmPassword}" -H ldapi:/// -f /etc/ldap/ldap-readonly-user.ldif
+  exists=""
+fi
 
 # Create LDIF for user access
-echo """
-dn: olcDatabase={1}mdb,cn=config
-changetype: modify
-replace: olcAccess
-olcAccess: {0}to attrs=userPassword,shadowLastChange
-  by dn=\"cn=admin,${ldapDn}\" write
-  by cn=readonly,ou=Users,ou=People,${ldapDn} read
-  by self write
-  by anonymous auth
-  by * none
-olcAccess: {1}to dn.base=\"\" by * read
-olcAccess: {2}to *
-  by dn=\"cn=admin,${ldapDn}\" write
-  by dn=\"cn=readonly,ou=Users,ou=People,${ldapDn}\" read
-  by self write
-  by anonymous auth
-  by * none
-""" | sudo tee /etc/ldap/readonly-user_access.ldif
-
-# TODO: Commented out as currently not working
-#sudo ldapadd -D "cn=admin,${ldapDn}" -w "${vmPassword}" -H ldapi:/// -f /etc/ldap/readonly-user_access.ldif
+sudo ldapsearch -Y EXTERNAL -H ldapi:/// -b cn=config | grep -i readonly || exists=false
+if [[ "${exists}" == "false" ]]; then
+  echo """
+  dn: olcDatabase={1}mdb,cn=config
+  changetype: modify
+  replace: olcAccess
+  olcAccess: {0}to attrs=userPassword,shadowLastChange
+    by dn=\"cn=admin,${ldapDn}\" write
+    by cn=readonly,ou=Users,ou=People,${ldapDn} read
+    by self write
+    by anonymous auth
+    by * none
+  olcAccess: {1}to dn.base=\"\" by * read
+  olcAccess: {2}to *
+    by dn=\"cn=admin,${ldapDn}\" write
+    by dn=\"cn=readonly,ou=Users,ou=People,${ldapDn}\" read
+    by self write
+    by anonymous auth
+    by * none
+  """ | sudo tee /etc/ldap/readonly-user_access.ldif
+  # TODO: Commented out as currently not working
+  #sudo ldapadd -D "cn=admin,${ldapDn}" -w "${vmPassword}" -H ldapi:/// -f /etc/ldap/readonly-user_access.ldif
+  exists=""
+fi
 
 # Output LDAP config
 sudo ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:/// -b cn=config '(olcDatabase={1}mdb)' olcAccess
