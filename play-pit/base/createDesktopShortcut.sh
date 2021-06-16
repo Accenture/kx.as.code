@@ -4,6 +4,12 @@ set -euo pipefail
 . /etc/environment
 export VM_USER=$vmUser
 
+NAME=""
+URL=""
+ICONPATH=""
+CATEGORIES=""
+BROWSEROPTIONS=""
+
 check_arguments() {
     if [ $# -eq 0 ]; then
         display_usage
@@ -109,4 +115,4 @@ sudo cp /home/$VM_USER/Desktop/$FILENAME /usr/share/applications
 # Ensure shortcut has correct permissions
 chmod 755 /home/$VM_USER/Desktop/$FILENAME
 chown $VM_USER:$VM_USER /home/$VM_USER/Desktop/$FILENAME
-dbus-launch gio set /home/$VM_USER/Desktop/$FILENAME "metadata::trusted" true
+dbus-launch gio set /home/$VM_USER/Desktop/$FILENAME "metadata::trusted" true || true # relevant for GNOME only
