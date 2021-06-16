@@ -26,7 +26,7 @@ ${certificatesWorkspace}/get_helm.sh
 sudo chown -hR ${vmUser}:${vmUser} /home/${vmUser}
 
 # Add stable helm repo if it does not already exist
-helmRepoExists=$(helm repo list --output json | jq -r '.[] | select(.name=="stable") | .name')
+helmRepoExists=$(helm repo list --output json | jq -r '.[] | select(.name=="stable") | .name' || true)
 if [[ -z ${helmRepoExists} ]]; then
     helm repo add stable https://charts.helm.sh/stable
 fi
