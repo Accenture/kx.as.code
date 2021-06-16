@@ -33,8 +33,10 @@ grafana.ini:
   auth.generic_oauth:
     enabled: true
     #disable_login_form: true      
-    client_id: grafana
-    client_secret: 74b95572-aa89-4c21-a0e6-70040887fa2e
+    #client_id: grafana
+    clieent_id: $clientID
+    #client_secret: 74b95572-aa89-4c21-a0e6-70040887fa2e
+    client_secret: $clientSecret
     auth_url: https://keycloak.demo1.kx-as-code.local/auth/realms/demo1.kx-as-code.local/protocol/openid-connect/auth
     token_url: https://keycloak.demo1.kx-as-code.local/auth/realms/demo1.kx-as-code.local/protocol/openid-connect/token
     api_url: https://keycloak.demo1.kx-as-code.local/auth/realms/demo1.kx-as-code.local/protocol/openid-connect/userinfo
@@ -42,9 +44,10 @@ grafana.ini:
     allow_sign_up: true
     tls_skip_verify_insecure: true
   server:
-    #root_url: https://{{componentName}}.{{baseDomain}}
-    domain: grafana.demo1.kx-as-code.local
-    root_url: https://grafana.demo1.kx-as-code.local
+    root_url: https://{{componentName}}.{{baseDomain}}
+    domain: {{componentName}}.{{baseDomain}}
+    #root_url: https://grafana.demo1.kx-as-code.local
+    #domain: grafana.demo1.kx-as-code.local
   extraConfigmapMounts:
     - name: certs-configmap
       mountPath: /etc/grafana/ssl/
