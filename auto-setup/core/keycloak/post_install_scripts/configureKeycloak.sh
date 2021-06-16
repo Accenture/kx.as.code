@@ -31,8 +31,7 @@ for i in {1..50}; do
 done
 
 # Create KX.AS.CODE Realm
-exists=$(kubectl -n ${namespace} exec ${kcPod} --container ${kcContainer} -- ${kcAdmCli} get realms | jq -r '.[] | select(.realm=="'${kcRealm}'") | .realm' || true)
-if [[ -z ${exists} ]]; then
+if [[ ! $(kubectl -n ${namespace} exec ${kcPod} --container ${kcContainer} -- ${kcAdmCli} get realms | jq -r '.[] | select(.realm=="'${kcRealm}'") | .realm') ]]; then
     # Create new Realm
     kubectl -n ${namespace} exec ${kcPod} --container ${kcContainer} -- \
         ${kcAdmCli} create realms -s realm=${kcRealm} -s enabled=true -o
@@ -42,8 +41,7 @@ else
 fi
 
 # Create Admin User in KX.AS.CODE Realm
-exists=$(kubectl -n ${namespace} exec ${kcPod} --container ${kcContainer} -- ${kcAdmCli} get users -r ${kcRealm} | jq -r '.[] | select(.username=="admin") | .username' || true)
-if [[ -z ${exists} ]]; then
+if [[ ! $(kubectl -n ${namespace} exec ${kcPod} --container ${kcContainer} -- ${kcAdmCli} get users -r ${kcRealm} | jq -r '.[] | select(.username=="admin") | .username') ]]; then
     kubectl -n ${namespace} exec ${kcPod} --container ${kcContainer} -- \
         ${kcBinDir}/add-user-keycloak.sh -r ${kcRealm} -u admin -p ${vmPassword}
 fi
@@ -61,17 +59,15 @@ kubectl -n ${namespace} exec ${kcPod} --container ${kcContainer} -- \
     ${kcAdmCli} set-password --realm ${kcRealm} --username admin --new-password ${vmPassword}
 
 # Create Admins Group
-exists=$(kubectl -n ${namespace} exec ${kcPod} --container ${kcContainer} -- ${kcAdmCli} get groups -r ${kcRealm} | jq -r '.[] | select(.name=="admins") | .name' || true)
-if [[ -z ${exists} ]]; then
+if [[ ! $(kubectl -n ${namespace} exec ${kcPod} --container ${kcContainer} -- ${kcAdmCli} get groups -r ${kcRealm} | jq -r '.[] | select(.name=="admins") | .name') ]]; then
     kubectl -n ${namespace} exec ${kcPod} --container ${kcContainer} -- \
-        ${kcAdmCli} create groups --realm ${kcRealm} -s name=users
+        ${kcAdmCli} create groups --realm ${kcRealm} -s name=admins
 fi
 
 # Create Users Group
-exists=$(kubectl -n ${namespace} exec ${kcPod} --container ${kcContainer} -- ${kcAdmCli} get groups -r ${kcRealm} | jq -r '.[] | select(.name=="users") | .name' || true)
-if [[ -z ${exists} ]]; then
+if [[ ! $(kubectl -n ${namespace} exec ${kcPod} --container ${kcContainer} -- ${kcAdmCli} get groups -r ${kcRealm} | jq -r '.[] | select(.name=="users") | .name') ]]; then
     kubectl -n ${namespace} exec ${kcPod} --container ${kcContainer} -- \
-        ${kcAdmCli} create groups --realm ${kcRealm} -s name=admins
+        ${kcAdmCli} create groups --realm ${kcRealm} -s name=users
 fi
 
 # Function to check if roles already assigned to group, assign if not
@@ -105,8 +101,7 @@ kcParentId=$(kubectl -n ${namespace} exec ${kcPod} --container ${kcContainer} --
     ${kcAdmCli} get / --fields id --format csv --noquotes)
 
 # Create LDAP User Federation
-exists=$(kubectl -n ${namespace} exec ${kcPod} --container ${kcContainer} -- ${kcAdmCli} get components -r ${kcRealm} | jq -r '.[] | select(.providerId=="ldap") | .name' || true)
-if [[ -z ${exists} ]]; then
+if [[ ! $(kubectl -n ${namespace} exec ${kcPod} --container ${kcContainer} -- ${kcAdmCli} get components -r ${kcRealm} | jq -r '.[] | select(.providerId=="ldap") | .name') ]]; then
     ldapProviderId=$(kubectl -n ${namespace} exec ${kcPod} --container ${kcContainer} -- \
         ${kcAdmCli} create components --realm ${kcRealm} \
         -s name=ldap-provider \
@@ -138,8 +133,7 @@ if [[ -z ${exists} ]]; then
 fi
 
 # Add Group Mapper
-exists=$(kubectl -n ${namespace} exec ${kcPod} --container ${kcContainer} -- ${kcAdmCli} get components -r ${kcRealm} | jq -r '.[] | select(.providerId=="group-ldap-mapper") | .name' || true)
-if [[ -z ${exists} ]]; then
+if [[ ! $(kubectl -n ${namespace} exec ${kcPod} --container ${kcContainer} -- ${kcAdmCli} get components -r ${kcRealm} | jq -r '.[] | select(.providerId=="group-ldap-mapper") | .name') ]]; then
     kubectl -n ${namespace} exec ${kcPod} --container ${kcContainer} -- \
         ${kcAdmCli} create components --realm ${kcRealm} \
         -s name=group-ldap-mapper \
@@ -165,15 +159,13 @@ if [[ -z ${exists} ]]; then
 fi
 
 # Create Client
-exists=$(kubectl -n ${namespace} exec ${kcPod} --container ${kcContainer} -- ${kcAdmCli} get clients -r demo1.kx-as-code.local | jq -r '.[] | select(.clientId=="kubernetes") | .clientId'  || true)
-if [[ -z ${exists} ]]; then
+if [[ ! $(kubectl -n ${namespace} exec ${kcPod} --container ${kcContainer} -- ${kcAdmCli} get clients -r demo1.kx-as-code.local | jq -r '.[] | select(.clientId=="kubernetes") | .clientId') ]]; then
     clientId=$(kubectl -n ${namespace} exec ${kcPod} --container ${kcContainer} -- \
         ${kcAdmCli} create clients --realm ${kcRealm} -s clientId=kubernetes -s 'redirectUris=["http://localhost:8000","https://kubernetes-dashboard-iam.'${baseDomain}'/oauth2/callback"]' -s publicClient="false" -s enabled=true -i)
 fi
 
 # Create protocol mapper
-exists=$(kubectl -n ${namespace} exec ${kcPod} --container ${kcContainer} -- ${kcAdmCli} get clients -r demo1.kx-as-code.local | jq '.[] | select(.clientId=="kubernetes") | .protocolMappers[] | select(.protocolMapper=="oidc-group-membership-mapper") | .protocolMapper' || true)
-if [[ -z ${exists} ]]; then
+if [[ ! $(kubectl -n ${namespace} exec ${kcPod} --container ${kcContainer} -- ${kcAdmCli} get clients -r demo1.kx-as-code.local | jq '.[] | select(.clientId=="kubernetes") | .protocolMappers[] | select(.protocolMapper=="oidc-group-membership-mapper") | .protocolMapper') ]]; then
     kubectl -n ${namespace} exec ${kcPod} --container ${kcContainer} -- \
         ${kcAdmCli} create clients/${clientId}/protocol-mappers/models \
         --realm ${kcRealm} \
