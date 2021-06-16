@@ -29,7 +29,7 @@ wget https://downloads.apache.org/guacamole/${guacamoleVersion}/binary/guacamole
 sudo mv guacamole-${guacamoleVersion}.war /var/lib/tomcat9/webapps/guacamole.war
 sudo sed -i 's/8080/8098/g' /var/lib/tomcat9/conf/server.xml
 sudo systemctl restart tomcat9 guacd
-sudo mkdir /etc/guacamole/
+sudo mkdir -p /etc/guacamole/
 
 # Download extensions
 export extensionsToDownload="jdbc ldap totp"

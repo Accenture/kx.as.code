@@ -8,8 +8,8 @@ sudo mkdir -p /var/lib/pgadmin4/sessions
 sudo mkdir /var/lib/pgadmin4/storage
 sudo mkdir /var/log/pgadmin4
 sudo mkdir /usr/pgadmin4
-sudo chown -R ${vmUSer}:${vmUSer} /var/lib/pgadmin4/
-sudo chown -R ${vmUSer}:${vmUSer} /var/log/pgadmin4/
+sudo chown -R ${vmUser}:${vmUser} /var/lib/pgadmin4/
+sudo chown -R ${vmUser}:${vmUser} /var/log/pgadmin4/
 cd /usr/pgadmin4
 sudo wget https://ftp.postgresql.org/pub/pgadmin/pgadmin4/v5.1/pip/pgadmin4-5.1-py3-none-any.whl
 sudo pip3 install virtualenv
