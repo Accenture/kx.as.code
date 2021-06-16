@@ -12,22 +12,6 @@ if [[ ${disableLinuxDesktop} == "true"   ]]; then
     systemctl isolate multi-user.target
 fi
 
-# Check if handlebars utility is installed for {{ variable }} substitutions
-# Fyi - not using pure bash "mo" solution as exclusions were not working
-export NVM_DIR="$HOME/.nvm"
-if [ -f $NVM_DIR/nvm.sh ]; then
-    . "$NVM_DIR/nvm.sh" # This loads nvm
-    . "$NVM_DIR/bash_completion" # This loads nvm bash_completion
-fi
-
-handelbarsUtilityInstalled=$(which envhandlebars || true)
-
-if [[ -z ${handelbarsUtilityInstalled} ]]; then
-    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.3/install.sh | bash
-    nvm install node
-    npm i -g envhandlebars
-fi
-
 # Un/Installing Components
 log_info "-------- Component: ${componentName} Component Folder: ${componentInstallationFolder} Action: ${action}"
 
