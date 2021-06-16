@@ -11,7 +11,7 @@ export kcRealm=${baseDomain}
 export kcInternalUrl=http://localhost:8080
 export kcAdmCli=/opt/jboss/keycloak/bin/kcadm.sh
 export kcPod=`$(kubectl get pods -l 'app.kubernetes.io/name=keycloak' -n keycloak --output=json | jq -r '.items[].metadata.name')`
-export clientID=${solution}
+#export clientID=${solution}
 
 # Create Client
 clientId=$(kubectl -n ${namespace} exec ${kcPod} --container ${kcContainer} -- \
@@ -48,8 +48,8 @@ kubectl -n ${namespace} exec ${kcPod} --container ${kcContainer} -- \
 
 
 ## export clientId
-# export clientID=$(kubectl -n keycloak exec ${kcPod} -- \
-# ${kcAdmCli}  get clients --fields id,clientId | jq -r '.[] | select(.clientId=="argocd") | .id')
+export clientID=$(kubectl -n keycloak exec ${kcPod} -- \
+${kcAdmCli}  get clients --fields id,clientId | jq -r '.[] | select(.clientId=="grafana") | .id')
 
 
 # ## create client scopes
