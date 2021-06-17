@@ -1,0 +1,31 @@
+@import "../../variables.scss";
+
+#TopPanel {
+  background-color: $navbg;
+  width: 100%;
+  height: 80px;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+#TopPanel>#avatar {
+  width: 81px;
+  text-align: center;
+}
+
+#TopPanel>#avatar>a>img {
+  width: 40px;
+  cursor: pointer;
+}
+
+#TopPanel>div>h1 {
+    color: $titlecolor;
+    font-size: 24px;
+    font-weight: 900;
+    letter-spacing: 0;
+    line-height: 29px;
+    margin:0;
+    padding-left: 40px;
+}

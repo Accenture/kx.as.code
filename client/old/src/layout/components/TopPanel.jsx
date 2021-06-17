@@ -10,7 +10,7 @@ const TopPanel = () => {
     <Box id="TopPanel">
       <Box id="avatar">
         <Link onClick={() => history.push("/")}>
-          <img src={String(avatarIcon)} alt="profile" />
+          <img src={String(avatarIcon)} />
         </Link>
       </Box>
       <Box>
