@@ -25,6 +25,10 @@ clientId=$(kubectl -n ${namespace} exec ${kcPod} --container ${kcContainer} -- \
   -s accessType=confidential \
   -s enabled=true -i)
 
+## export clientId
+export clientID=$(kubectl -n keycloak exec ${kcPod} -- \
+${kcAdmCli}  get clients --fields id,clientId | jq -r '.[] | select(.clientId=="grafana-test") | .id')
+
 # export client secret
 export clientSecret=$(kubectl -n keycloak exec ${kcPod} -- \
   ${kcAdmCli} get clients/$clientID/client-secret | jq -r '.value')
@@ -41,15 +45,9 @@ kubectl -n ${namespace} exec ${kcPod} --container ${kcContainer} -- \
   -s 'config."multivalued"=true' \
   -s 'config."jsonType.label"=String'
 
-
 # Set credential token in new Realm
 # kubectl -n keycloak exec ${kcPod} -- \
 #   ${kcAdmCli} config credentials --server ${kcInternalUrl}/auth --realm ${kcRealm} --user admin --password ${vmPassword}
-
-
-## export clientId
-export clientID=$(kubectl -n keycloak exec ${kcPod} -- \
-${kcAdmCli}  get clients --fields id,clientId | jq -r '.[] | select(.clientId=="grafana") | .id')
 
 
 # ## create client scopes
