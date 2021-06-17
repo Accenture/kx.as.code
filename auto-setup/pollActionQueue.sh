@@ -93,6 +93,7 @@ if [[ ! -f ${installationWorkspace}/actionQueues.json ]]; then
           else .
           end
         ' | tee actionQueues_temp.json
+        sudo mv ${aqFiles[$i]} ${aqFiles[$i]}_processed
         done
     fi
 fi
