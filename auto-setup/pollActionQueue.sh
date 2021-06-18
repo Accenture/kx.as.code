@@ -387,8 +387,42 @@ defaultComponentsToInstall=$(cat ${installationWorkspace}/actionQueues.json | jq
 for componentName in ${defaultComponentsToInstall}; do
     payload=$(cat ${installationWorkspace}/actionQueues.json | jq -c '.action_queues.install[] | select(.name=="'${componentName}'") | {install_folder:.install_folder,"name":.name,"action":"install"}')
     rabbitmqadmin publish exchange=action_workflow routing_key=pending_queue payload=''${payload}''
+
+    # Get slot number to add installed app to JSON array
+    arrayLength=$(cat ${installationWorkspace}/actionQueues.json | jq -r '.state.processed[].name' | wc -l)
+    if [[ -z ${arrayLength} ]]; then
+        arrayLength=0
+    fi
+
+    # Add component json to "processed" node in actionQueue.json
+    componentInstalledExists=$(cat ${installationWorkspace}/actionQueues.json | jq '.state.processed[] | select(.name=="'${componentName}'")')
+    if [[ -z ${componentInstalledExists} ]]; then
+        componentJson=$(cat ${installationWorkspace}/metadata.json | jq '.metadata.available.applications[] | select(.name=="'${componentName}'")')
+        arrayLength=$(cat ${installationWorkspace}/actionQueues.json | jq -r '.state.processed[].name' | wc -l)
+        if [[ -z ${arrayLength} ]]; then
+            arrayLength=0
+        fi
+        if [[ ${componentJson} == "null" ]] || [[ -z ${componentJson} ]]; then
+            log_warn "ComponentJson is null for ${componentName}"
+        else
+            cat ${installationWorkspace}/actionQueues.json | jq '.state.processed['${arrayLength}'] |= . + '"${componentJson}"'' | tee ${installationWorkspace}/actionQueues.json.tmp.2
+            if [[ ! -s ${installationWorkspace}/actionQueues.json.tmp.2 ]]; then export rc=1; fi
+                cp ${installationWorkspace}/actionQueues.json ${installationWorkspace}/actionQueues.json.previous.2
+            if [[ -s ${installationWorkspace}/actionQueues.json.tmp.2 ]]; then
+                cp ${installationWorkspace}/actionQueues.json.tmp.2 ${installationWorkspace}/actionQueues.json
+            fi
+        fi
+    fi
+
+    # Remove component from installation queue as added to processed queue in actionQueue.json
+    cat ${installationWorkspace}/actionQueues.json | jq 'del(.action_queues.install[] | select(.name=="'${componentName}'"))' | tee ${installationWorkspace}/actionQueues.json.tmp.4
+    if [[ ! -s ${installationWorkspace}/actionQueues.json.tmp.4 ]]; then export rc=1; fi
+        cp ${installationWorkspace}/actionQueues.json ${installationWorkspace}/actionQueues.json.previous.4
+    if [[ -s ${installationWorkspace}/actionQueues.json.tmp.4 ]]; then
+        cp ${installationWorkspace}/actionQueues.json.tmp.4 ${installationWorkspace}/actionQueues.json
+    fi
+
 done
-sudo mv ${installationWorkspace}/actionQueues.json ${installationWorkspace}/actionQueues.json_processed
 
 # Set tries to 0. If an install failed and the retry flag is set to true for that component in metadata.json, attempts will be made to retrz up to 3 times
 retries=0

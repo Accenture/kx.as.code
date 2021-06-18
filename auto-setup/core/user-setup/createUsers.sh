@@ -37,20 +37,20 @@ if [[ ${numUsersToCreate} -ne 0 ]]; then
                 sudo mkdir -pm 700 /home/${userid}/.ssh
 
                 # Ensure the permissions are set correct
-                for i in {1..10}; do
+                for i in {1..20}; do
                     echo "i: $i"
                     sudo chown -R ${userid}:${userid} /home/${userid}/.ssh || true
                     if [[ $(stat -c '%u' /home/${userid}/.ssh) -eq ${newGid} ]]; then
                         break
                     else
-                        sleep 10
+                        sleep 15
                     fi
                 done
 
             fi
 
             # Generate password
-            if [ -f ${sharedKxHome}/.users.json ]; then 
+            if [ -f ${sharedKxHome}/.users.json ]; then
                 if [ -z $(cat ${sharedKxHome}/.users.json | jq -r '.[] | select(.user=="'${userid}'") | .user' || true) ]; then
                     generatedPassword=$(pwgen -1s 8)
                     echo "[ { \"user\": \"${userid}\", \"password\": \"${generatedPassword}\" } ]" | sudo tee ${sharedKxHome}/.temp.users.json
@@ -103,7 +103,7 @@ if [[ ${numUsersToCreate} -ne 0 ]]; then
       ''' | sed -e 's/^[ \t]*//' | sed '/^$/d' | sudo tee /etc/ldap/new_user_${userid}.ldif
             sudo ldapadd -D "cn=admin,${ldapDn}" -w "${vmPassword}" -H ldapi:/// -f /etc/ldap/new_user_${userid}.ldif
             fi
-            
+
             # Restart NSLCD and NSCD to make new users available for logging in
             sudo systemctl restart nslcd.service
             sudo systemctl restart nscd.service
@@ -224,7 +224,7 @@ if [[ ${numUsersToCreate} -ne 0 ]]; then
                 sudo cp -f $file /home/${userid}/.face.icon
             fi
         done
-        
+
         # Loop change ownership to wait for OpenLDAP user to be available for setting ownership
         newGid=$(id -g ${userid}) # In case script is re-run and the variable not set as a result
         for i in {1..10}; do
@@ -248,7 +248,7 @@ if [[ ${numUsersToCreate} -ne 0 ]]; then
         fi
 
         # Create SSH key kx.hero user
-        if sudo test ! -f /home/${userid}/.ssh/id_rsa; then 
+        if sudo test ! -f /home/${userid}/.ssh/id_rsa; then
             sudo chmod 700 /home/${userid}/.ssh
             sudo -H -i -u ${userid} sh -c "yes | ssh-keygen -f ssh-keygen -m PEM -t rsa -b 4096 -q -f /home/${userid}/.ssh/id_rsa -N ''"
         fi
@@ -258,7 +258,7 @@ if [[ ${numUsersToCreate} -ne 0 ]]; then
             sudo mkdir -p /home/${userid}/.kube
             sudo cat /etc/kubernetes/admin.conf | sed '/users:/,$d' | sed 's/kubernetes-admin/oidc/g' | sudo tee /home/${userid}/.kube/config
             sudo chown -R ${userid}:${userid} /home/${userid}/.kube
-            sudo chmod 400 /home/${userid}/.kube/config
+            sudo chmod 600 /home/${userid}/.kube/config
             # Enable Keycloak OIDC for new user
             sudo -H -i -u ${userid} sh -c "${installationWorkspace}/client-oidc-setup.sh"
             sudo -H -i -u ${userid} sh -c "kubectl config set-context --current --user=oidc"

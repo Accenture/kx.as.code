@@ -26,7 +26,7 @@ for i in {1..50}; do
             ${kcAdmCli} config credentials --server ${kcInternalUrl}/auth --realm master --user admin --password ${vmPassword} --client admin-cli
         break
     else
-        sleep 10
+        sleep 15
     fi
 done
 

@@ -493,40 +493,6 @@ if [[ ${action} == "install"   ]]; then
         chmod 755 "${vendorDocsDirectory}"/"${componentName}".desktop
     fi
 
-    # Get slot number to add installed app to JSON array
-    arrayLength=$(cat ${installationWorkspace}/actionQueues.json | jq -r '.state.installed[].name' | wc -l)
-    if [[ -z ${arrayLength} ]]; then
-        arrayLength=0
-    fi
-
-    # Add component json to "installed" node in metadata.json
-    componentInstalledExists=$(cat ${installationWorkspace}/actionQueues.json | jq '.state.installed[] | select(.name=="'${componentName}'")')
-    if [[ -z ${componentInstalledExists} ]]; then
-        componentJson=$(cat ${installationWorkspace}/metadata.json | jq '.metadata.available.applications[] | select(.name=="'${componentName}'")')
-        arrayLength=$(cat ${installationWorkspace}/actionQueues.json | jq -r '.state.installed[].name' | wc -l)
-        if [[ -z ${arrayLength} ]]; then
-            arrayLength=0
-        fi
-        if [[ ${componentJson} == "null" ]] || [[ -z ${componentJson} ]]; then
-            log_warn "ComponentJson is null for ${componentName}"
-        else
-            cat ${installationWorkspace}/actionQueues.json | jq '.state.installed['${arrayLength}'] |= . + '"${componentJson}"'' | tee ${installationWorkspace}/actionQueues.json.tmp.2
-            if [[ ! -s ${installationWorkspace}/actionQueues.json.tmp.2 ]]; then export rc=1; fi
-                cp ${installationWorkspace}/actionQueues.json ${installationWorkspace}/actionQueues.json.previous.2
-            if [[ -s ${installationWorkspace}/actionQueues.json.tmp.2 ]]; then
-                cp ${installationWorkspace}/actionQueues.json.tmp.2 ${installationWorkspace}/actionQueues.json
-            fi
-        fi
-    fi
-
-    # Remove completed component installation from install action
-    cat ${installationWorkspace}/actionQueues.json | jq 'del(.action_queues.install[] | select(.name=="'${componentName}'"))' | tee ${installationWorkspace}/actionQueues.json.tmp.4
-    if [[ ! -s ${installationWorkspace}/actionQueues.json.tmp.4 ]]; then export rc=1; fi
-        cp ${installationWorkspace}/actionQueues.json ${installationWorkspace}/actionQueues.json.previous.4
-    if [[ -s ${installationWorkspace}/actionQueues.json.tmp.4 ]]; then
-        cp ${installationWorkspace}/actionQueues.json.tmp.4 ${installationWorkspace}/actionQueues.json
-    fi
-
 elif [[ ${action} == "upgrade"   ]]; then
 
     ## TODO
