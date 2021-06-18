@@ -1,5 +1,5 @@
 #!/bin/bash -x
-set -euo pipefail
+set -eu
 
 export rc=0
 
@@ -10,22 +10,6 @@ disableLinuxDesktop=$(cat ${installationWorkspace}/profile-config.json | jq -r '
 if [[ ${disableLinuxDesktop} == "true"   ]]; then
     systemctl set-default multi-user
     systemctl isolate multi-user.target
-fi
-
-# Check if handlebars utility is installed for {{ variable }} substitutions
-# Fyi - not using pure bash "mo" solution as exclusions were not working
-export NVM_DIR="$HOME/.nvm"
-if [ -f $NVM_DIR/nvm.sh ]; then
-    . "$NVM_DIR/nvm.sh" # This loads nvm
-    . "$NVM_DIR/bash_completion" # This loads nvm bash_completion
-fi
-
-handelbarsUtilityInstalled=$(which envhandlebars)
-
-if [[ -z ${handelbarsUtilityInstalled} ]]; then
-    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.3/install.sh | bash
-    nvm install node
-    npm i -g envhandlebars
 fi
 
 # Un/Installing Components
@@ -48,7 +32,7 @@ if [[ ${action} == "install"   ]]; then
 
     # Create namespace if it does not exist
     if [[ -z ${namespace} ]] && [[ ${namespace} != "kube-system" ]] && [[ ${namespace} != "default"   ]]; then
-        log_warn "Namespace name could not be established. Subsequent actions may fail if they have a dependency on this. Please validate the namespace entry is correct for \"${component}\" in metadata.json"
+        log_warn "Namespace name could not be established. Subsequent actions may fail if they have a dependency on this. Please validate the namespace entry is correct for \"${componentName}\" in metadata.json"
     fi
 
     # Create namespace if it does not exists
@@ -88,12 +72,14 @@ if [[ ${action} == "install"   ]]; then
     for script in ${componentPreInstallScripts}; do
         if [[ ! -f ${installComponentDirectory}/pre_install_scripts/${script} ]]; then
             log_error "Pre-install script ${installComponentDirectory}/pre_install_scripts/${script} does not exist. Check your spelling in the \"kxascode.json\" file and that it is checked in correctly into Git"
+            export error=true
         else
             log_info "Executing pre-install script ${installComponentDirectory}/pre_install_scripts/${script}"
             . ${installComponentDirectory}/pre_install_scripts/${script}
             rc=$?
             if [[ ${rc} -ne 0 ]]; then
                 log_error "Execution of pre install script \"${script}\" ended in a non zero return code ($rc)"
+                export error=true
             fi
         fi
     done
@@ -119,6 +105,7 @@ if [[ ${action} == "install"   ]]; then
             rc=$?
             if [[ ${rc} -ne 0 ]]; then
                 log_error "Execution of install script \"${script}\" ended in a non zero return code ($rc)"
+                export error=true
             fi
         done
 
@@ -145,11 +132,11 @@ if [[ ${action} == "install"   ]]; then
             fi
         fi
         # Get --set parameters from metadata.json
-        helm_set_key_value_params=$(echo ${helm_params} | jq -r '.set_key_values[] | "--set \(.)" ' | mo) # Mo adds mustache {{variables}} support to helm --set options
+        helm_set_key_value_params=$(echo ${helm_params} | jq -r '.set_key_values[]? | "--set \(.)" ' | mo) # Mo adds mustache {{variables}} support to helm --set options
         log_debug "${helm_set_key_value_params}"
 
         # Get --set-string parameters from metadata.json
-        helm_set_string_key_value_params=$(echo ${helm_params} | jq -r '.set_string_key_values[] | "--set-string \(.)" ' | mo) # Mo adds mustache {{variables}} support to helm --set-string options
+        helm_set_string_key_value_params=$(echo ${helm_params} | jq -r '.set_string_key_values[]? | "--set-string \(.)" ' | mo) # Mo adds mustache {{variables}} support to helm --set-string options
         log_debug "${helm_set_string_key_value_params}"
 
         helmRepositoryName=$(echo ${helm_params} | jq -r '.repository_name')
@@ -179,6 +166,7 @@ if [[ ${action} == "install"   ]]; then
         rc=$?
         if [[ ${rc} -ne 0 ]]; then
             log_error "Execution of Helm command \"${helmCommmand}\" ended in a non zero return code ($rc)"
+            export error=true
         fi
 
         ####################################################################################################################################################################
@@ -209,6 +197,7 @@ if [[ ${action} == "install"   ]]; then
                 argocd cert add-tls ${gitDomain} --from ${installationWorkspace}/kx-certs/ca.crt
             else
                 log_error "Could not upload KX.AS.CODE CA (${installationWorkspace}/kx-certs/ca.crt) to ArgoCD. It appears to be missing."
+                export error=true
             fi
         fi
 
@@ -251,6 +240,7 @@ if [[ ${action} == "install"   ]]; then
         rc=$?
         if [[ ${rc} -ne 0 ]]; then
             log_error "Execution of ArgoCD command ended in a non zero return code ($rc)"
+            export error=true
         fi
         for i in {1..10}; do
             response=$(argocd app list --output json | jq -r '.[] | select (.metadata.name=="'${componentName}'") | .metadata.name')
@@ -263,6 +253,7 @@ if [[ ${action} == "install"   ]]; then
 
     else
         log_error "Did not recognize installation type of \"${installationType}\". Valid values are \"helm\", \"argocd\" or \"script\""
+        export error=true
     fi
 
     ####################################################################################################################################################################
@@ -344,6 +335,7 @@ if [[ ${action} == "install"   ]]; then
     for script in ${componentPostInstallScripts}; do
         if [[ ! -f ${installComponentDirectory}/post_install_scripts/${script} ]]; then
             log_error "Post-install script ${installComponentDirectory}/post_install_scripts/${script} does not exist. Check your spelling in the \"kxascode.json\" file and that it is checked in correctly into Git"0
+            export error=true
         else
             echo "Executing post-install script ${installComponentDirectory}/post_install_scripts/${script}"
             log_info "Executing post-install script ${installComponentDirectory}/post_install_scripts/${script}"
@@ -351,6 +343,7 @@ if [[ ${action} == "install"   ]]; then
             rc=$?
             if [[ ${rc} -ne 0 ]]; then
                 log_error "Execution of post install script \"${script}\" ended in a non zero return code ($rc)"
+                export error=true
             fi
         fi
     done
@@ -398,15 +391,6 @@ if [[ ${action} == "install"   ]]; then
     fi
 
     browserOptions="" # placeholder
-
-    case "${apiDocsType}" in
-        swagger)
-            iconPath=/usr/share/kx.as.code/git/kx.as.code/base-vm/images/api_docs_icon.png
-            ;;
-        *)
-            iconPath=/usr/share/kx.as.code/git/kx.as.code/base-vm/images/api_docs_icon.png
-            ;;
-    esac
 
     shortcutText=$(cat ${componentMetadataJson} | jq -r '.shortcut_text')
     if [[ -z ${shortcutText} ]] || [[ ${shortcutText} == "null" ]]; then
@@ -573,6 +557,7 @@ elif [[ ${action} == "uninstall"   ]] || [[ ${action} == "purge"   ]]; then
 
     else
         log_error "Cannot uninstall \"${componentName}\" as installation type \"${installationType}\" is not recognized"
+        export error=true
     fi
 
     # Remove Vendor Docs Shortcut if it exists

@@ -93,6 +93,7 @@ if [[ ! -f ${installationWorkspace}/actionQueues.json ]]; then
           else .
           end
         ' | tee actionQueues_temp.json
+        sudo mv ${aqFiles[$i]} ${aqFiles[$i]}_processed
         done
     fi
 fi
@@ -109,6 +110,8 @@ export virtualizationType=$(cat ${installationWorkspace}/profile-config.json | j
 export nicList=$(nmcli device show | grep -E 'enp|ens' | grep 'GENERAL.DEVICE' | awk '{print $2}')
 export ipsToExclude="10.0.2.15"   # IP addresses not to configure with static IP. For example, default Virtualbox IP 10.0.2.15
 export nicExclusions=""
+export excludeNic=""
+export 
 for nic in ${nicList}; do
     for ipToExclude in ${ipsToExclude}; do
         ip=$(ip a s ${nic} | egrep -o 'inet [0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | cut -d' ' -f2)
@@ -225,7 +228,6 @@ if [[ ! -f /usr/share/kx.as.code/.config/network_status ]]; then
         sudo sed -i 's/^#no-hosts$/no-hosts/g' /etc/dnsmasq.conf
         echo "server=8.8.8.8" | sudo tee -a /etc/dnsmasq.conf
         echo "server=8.8.4.4" | sudo tee -a /etc/dnsmasq.conf
-        sudo systemctl restart dnsmasq
         # Configue dnsmasq - /lib/systemd/system/dnsmasq.service (bugfix so dnsmasq starts automatically)
         sudo sed -i 's/Wants=nss-lookup.target/Wants=network-online.target/' /lib/systemd/system/dnsmasq.service
         sudo sed -i 's/After=network.target/After=network-online.target/' /lib/systemd/system/dnsmasq.service
@@ -257,7 +259,6 @@ if [[ ! -f /usr/share/kx.as.code/.config/network_status ]]; then
         echo "address=/rabbitmq.${baseDomain}/${mainIpAddress}" | sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
         echo "address=/remote-desktop/${mainIpAddress}" | sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
         echo "address=/remote-desktop.${baseDomain}/${mainIpAddress}" | sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
-        sudo systemctl restart dnsmasq
     fi
 
     if [[ ${baseIpType} == "static"   ]]; then
@@ -314,6 +315,8 @@ if [[ ! -f /usr/share/kx.as.code/.config/network_status ]]; then
     if  [[ ${baseIpType} == "static"   ]]; then
         # Reboot machine to ensure all network changes are active
         sudo reboot
+    else
+        sudo systemctl restart dnsmasq
     fi
 
 fi
@@ -386,14 +389,6 @@ for componentName in ${defaultComponentsToInstall}; do
     rabbitmqadmin publish exchange=action_workflow routing_key=pending_queue payload=''${payload}''
 done
 
-# Update Guacamlo with Team Name
-if [[ -n ${environmentPrefix}   ]]; then
-    sudo sed -i 's/KX.AS.CODE/'${environmentPrefix}'/g' /var/lib/tomcat9/webapps/guacamole/translations/en.json
-fi
-
-# Restart Guacamole to ensure it picks up the correct VNC configuration
-sudo systemctl restart guacd
-
 # Set tries to 0. If an install failed and the retry flag is set to true for that component in metadata.json, attempts will be made to retrz up to 3 times
 retries=0
 
@@ -441,12 +436,13 @@ while :; do
                 sudo -H -i -u ${vmUser} sh -c "DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/${vmUserId}/bus notify-send -t 300000 \"KX.AS.CODE Notification\" \"Initialization started. Please be patient. This could take up to 30 minutes, depending on your system size and speed of internet connection\" --icon=dialog-warning"
             fi
             count=$((count + 1))
+            export error=""
             . ${autoSetupHome}/autoSetup.sh &> ${installationWorkspace}/${componentName}_${logTimestamp}.log
             logRc=$?
             log_info "Installation process for \"${componentName}\" returned with \$?=${logRc} and \$rc=$rc"
 
             # Move item from pending to completed or error queue
-            if [[ $logRc -eq 0 ]] && [[ $rc -eq 0 ]]; then
+            if [[ $logRc -eq 0 ]] && [[ $rc -eq 0 ]] && [[ "${error}" != "true" ]]; then
                 rabbitmqadmin get queue=wip_queue --format=pretty_json ackmode=ack_requeue_false | jq -r '.[].payload'
                 rabbitmqadmin publish exchange=action_workflow routing_key=completed_queue properties="{\"delivery_mode\": 2}" payload=''${payload}''
                 log_info "The installation of \"${componentName}\" completed succesfully"

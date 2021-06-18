@@ -14,6 +14,9 @@ slapd shared/organization string ${baseDomain}
 slapd slapd/purge_database boolean true
 slapd slapd/password_mismatch note" | sudo debconf-set-selections
 
+# Enable and start apache2 if down, to avoid upcoming install failures
+systemctl is-active --quiet apache2 || sudo systemctl enable apache2 && systemctl start apache2
+
 sudo DEBIAN_FRONTEND=noninteractive apt-get install -q -y slapd ldap-utils libnss-ldap ldapscripts
 
 # Update admin root password
@@ -30,90 +33,121 @@ sudo slapcat | grep dn
 # Set variable for base DN
 export ldapDn=$(sudo slapcat | grep dn | head -1 | cut -f2 -d' ')
 
+exists=""
+
 # Add "People" OU
-echo '''
-dn: ou=People,'${ldapDn}'
-objectClass: organizationalUnit
-ou: People
-''' | sudo tee /etc/ldap/users.ldif
-sudo ldapadd -D "cn=admin,${ldapDn}" -w "${vmPassword}" -H ldapi:/// -f /etc/ldap/users.ldif
+sudo ldapsearch -x -b "ou=People,${ldapDn}" || exists=false
+if [[ "${exists}" == "false" ]]; then
+    echo '''
+    dn: ou=People,'${ldapDn}'
+    objectClass: organizationalUnit
+    ou: People
+    ''' | sudo sed -e 's/^[ \t]*//' | tee /etc/ldap/users.ldif
+    sudo ldapadd -D "cn=admin,${ldapDn}" -w "${vmPassword}" -H ldapi:/// -f /etc/ldap/users.ldif
+    exists=""
+fi
 
 # Check Result
 sudo ldapsearch -x -b "${ldapDn}" ou
 
 # Add base OU node for groups
-echo '''
-dn: ou=Groups,ou=People,'${ldapDn}'
-objectClass: organizationalUnit
-objectClass: top
-ou: Groups
-''' | sudo tee /etc/ldap/base_groups_ou.ldif
-sudo ldapadd -D "cn=admin,${ldapDn}" -w "${vmPassword}" -H ldapi:/// -f /etc/ldap/base_groups_ou.ldif
+sudo ldapsearch -x -b "ou=Groups,ou=People,${ldapDn}" || exists=false
+if [[ "${exists}" == "false" ]]; then
+    echo '''
+    dn: ou=Groups,ou=People,'${ldapDn}'
+    objectClass: organizationalUnit
+    objectClass: top
+    ou: Groups
+    ''' | sudo sed -e 's/^[ \t]*//' | tee /etc/ldap/base_groups_ou.ldif
+    sudo ldapadd -D "cn=admin,${ldapDn}" -w "${vmPassword}" -H ldapi:/// -f /etc/ldap/base_groups_ou.ldif
+    exists=""
+fi
 
 # Add base OU node for users
-echo '''
-dn: ou=Users,ou=People,'${ldapDn}'
-objectClass: organizationalUnit
-objectClass: top
-ou: Users
-''' | sudo tee /etc/ldap/base_users_ou.ldif
-sudo ldapadd -D "cn=admin,${ldapDn}" -w "${vmPassword}" -H ldapi:/// -f /etc/ldap/base_users_ou.ldif
+sudo ldapsearch -x -b "ou=Users,ou=People,${ldapDn}" || exists=false
+if [[ "${exists}" == "false" ]]; then
+    echo '''
+    dn: ou=Users,ou=People,'${ldapDn}'
+    objectClass: organizationalUnit
+    objectClass: top
+    ou: Users
+    ''' | sudo sed -e 's/^[ \t]*//' | tee /etc/ldap/base_users_ou.ldif
+    sudo ldapadd -D "cn=admin,${ldapDn}" -w "${vmPassword}" -H ldapi:/// -f /etc/ldap/base_users_ou.ldif
+    exists=""
+fi
 
 # Add admin group
-echo '''
-dn: cn=admins,ou=Groups,ou=People,'${ldapDn}'
-objectClass: posixGroup
-cn: admins
-gidNumber: 10000
-''' | sudo tee /etc/ldap/admin_group.ldif
-sudo ldapadd -D "cn=admin,${ldapDn}" -w "${vmPassword}" -H ldapi:/// -f /etc/ldap/admin_group.ldif
+sudo ldapsearch -x -b "cn=admins,ou=Groups,ou=People,${ldapDn}" || exists=false
+if [[ "${exists}" == "false" ]]; then
+    echo '''
+    dn: cn=admins,ou=Groups,ou=People,'${ldapDn}'
+    objectClass: posixGroup
+    cn: admins
+    gidNumber: 10000
+    ''' | sed -e 's/^[ \t]*//' | sudo tee /etc/ldap/admin_group.ldif
+    sudo ldapadd -D "cn=admin,${ldapDn}" -w "${vmPassword}" -H ldapi:/// -f /etc/ldap/admin_group.ldif
+    exists=""
+fi
 
 # Add users group
-echo '''
-dn: cn=users,ou=Groups,ou=People,'${ldapDn}'
-objectClass: posixGroup
-cn: users
-gidNumber: 10001
-''' | sudo tee /etc/ldap/users_group.ldif
-sudo ldapadd -D "cn=admin,${ldapDn}" -w "${vmPassword}" -H ldapi:/// -f /etc/ldap/users_group.ldif
+sudo ldapsearch -x -b "cn=users,ou=Groups,ou=People,${ldapDn}" || exists=false
+if [[ "${exists}" == "false" ]]; then
+    echo '''
+    dn: cn=users,ou=Groups,ou=People,'${ldapDn}'
+    objectClass: posixGroup
+    cn: users
+    gidNumber: 10001
+    ''' | sudo sed -e 's/^[ \t]*//' | tee /etc/ldap/users_group.ldif
+    sudo ldapadd -D "cn=admin,${ldapDn}" -w "${vmPassword}" -H ldapi:/// -f /etc/ldap/users_group.ldif
+    exists=""
+fi
 
 # Check Result
 sudo ldapsearch -x -b "ou=People,${ldapDn}"
 
-# Add memberOf Overlay Module
-echo '''
-dn: cn=module{0},cn=config
-changetype: modify
-add: olcModuleLoad
-olcModuleLoad: memberof.la
-''' | sudo tee /etc/ldap/update-module.ldif
-sudo ldapadd -Y EXTERNAL -H ldapi:/// -f /etc/ldap/update-module.ldif
+sudo ldapsearch -Y EXTERNAL -H ldapi:/// -b cn=config | grep -i memberof.la || exists=false
+if [[ "${exists}" == "false" ]]; then
+    # Add memberOf Overlay Module
+    echo '''
+    dn: cn=module{0},cn=config
+    changetype: modify
+    add: olcModuleLoad
+    olcModuleLoad: memberof.la
+    ''' | sed -e 's/^[ \t]*//' | sudo tee /etc/ldap/update-module.ldif
+    sudo ldapadd -Y EXTERNAL -H ldapi:/// -f /etc/ldap/update-module.ldif
+    exists=""
+fi
 
-# Check module loaded correctly
-sudo ldapsearch -LLL -Y EXTERNAL -H ldapi:/// -b cn=config -LLL | grep -i module
+sudo ldapsearch -x -b "olcOverlay=memberof,olcDatabase={1}mdb,cn=config" || exists=false
+if [[ "${exists}" == "false" ]]; then
+    echo '''
+    dn: olcOverlay=memberof,olcDatabase={1}mdb,cn=config
+    objectClass: olcMemberOf
+    objectClass: olcOverlayConfig
+    objectClass: olcConfig
+    objectClass: top
+    olcOverlay: memberof
+    olcMemberOfRefInt: TRUE
+    olcMemberOfDangling: ignore
+    olcMemberOfGroupOC: groupOfNames
+    olcMemberOfMemberAD: member
+    olcMemberOfMemberOfAD: memberOf
+    ''' | sed -e 's/^[ \t]*//' | sudo tee /etc/ldap/add-memberof-overlay.ldif
+    sudo ldapadd -Y EXTERNAL -H ldapi:/// -f /etc/ldap/add-memberof-overlay.ldif
+    exists=""
+fi
 
-echo '''
-dn: olcOverlay=memberof,olcDatabase={1}mdb,cn=config
-objectClass: olcMemberOf
-objectClass: olcOverlayConfig
-objectClass: olcConfig
-objectClass: top
-olcOverlay: memberof
-olcMemberOfRefInt: TRUE
-olcMemberOfDangling: ignore
-olcMemberOfGroupOC: groupOfNames
-olcMemberOfMemberAD: member
-olcMemberOfMemberOfAD: memberOf
-''' | sudo tee /etc/ldap/add-memberof-overlay.ldif
-sudo ldapadd -Y EXTERNAL -H ldapi:/// -f /etc/ldap/add-memberof-overlay.ldif
-
-echo '''
-dn: cn=module{0},cn=config
-changetype: modify
-add: olcModuleLoad
-olcModuleLoad: refint.la
-''' | sudo tee /etc/ldap/add-refint.ldif
-sudo ldapadd -Y EXTERNAL -H ldapi:/// -f /etc/ldap/add-refint.ldif
+sudo ldapsearch -Y EXTERNAL -H ldapi:/// -b cn=config | grep -i refint.la || exists=false
+if [[ $? -ne 0 ]]; then
+    echo '''
+    dn: cn=module{0},cn=config
+    changetype: modify
+    add: olcModuleLoad
+    olcModuleLoad: refint.la
+    ''' | sudo tee /etc/ldap/add-refint.ldif
+    sudo ldapadd -Y EXTERNAL -H ldapi:/// -f /etc/ldap/add-refint.ldif
+    exists=""
+fi
 
 # Configure Client selections before install
 cat << EOF | sudo debconf-set-selections
@@ -168,4 +202,6 @@ tls_cacertfile /etc/ssl/certs/ca-certificates.crt
 ''' | sudo tee /etc/nslcd.conf
 
 # Ensure home directory is created on first login
-echo "session required      pam_mkhomedir.so   skel=${skelDirectory} umask=0002" | sudo tee -a /etc/pam.d/common-session
+if [[ -z $( grep "session required      pam_mkhomedir.so   skel=${skelDirectory} umask=0002" /etc/pam.d/common-session ) ]]; then
+    echo "session required      pam_mkhomedir.so   skel=${skelDirectory} umask=0002" | sudo tee -a /etc/pam.d/common-session
+fi

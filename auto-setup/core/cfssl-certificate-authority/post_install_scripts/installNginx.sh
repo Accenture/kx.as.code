@@ -28,7 +28,12 @@ server {
 ''' | sudo tee /etc/nginx/sites-available/rabbitmq.conf
 
 # Create shortcut to enable NGINX virtual host
-ln -s /etc/nginx/sites-available/rabbitmq.conf /etc/nginx/sites-enabled/rabbitmq.conf
+if [[ ! -f /etc/nginx/sites-enabled/rabbitmq.conf ]]; then
+  ln -s /etc/nginx/sites-available/rabbitmq.conf /etc/nginx/sites-enabled/rabbitmq.conf
+fi
+
+# Remove default virtual host using port 80
+sudo rm -f /etc/nginx/sites-enabled/default
 
 # Restart NGINX so new virtual host is loaded
 sudo systemctl restart nginx

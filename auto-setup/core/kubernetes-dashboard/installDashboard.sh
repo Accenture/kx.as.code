@@ -6,14 +6,12 @@ curl https://raw.githubusercontent.com/kubernetes/dashboard/v2.0.0/aio/deploy/re
 kubectl apply -f ${installationWorkspace}/dashboard.yaml -n ${namespace}
 
 # Create Service Token for Accessing Dashboard
-serviceAccountExists=$(kubectl get serviceaccount dashboard -o json | jq -r '.metadata.name')
-if [[ -z ${serviceAccountExists} ]]; then
+if [[ -z $(kubectl get serviceaccount dashboard -o json | jq -r '.metadata.name' || true) ]]; then
     kubectl create serviceaccount dashboard -n default
 fi
 
 # Create Cluster Role Binding
-clusterRoleBindingExists=$(kubectl get clusterrolebinding dashboard-admin -o json | jq -r '.metadata.name')
-if [[ -z ${clusterRoleBindingExists} ]]; then
+if [[ -z $(kubectl get clusterrolebinding dashboard-admin -o json | jq -r '.metadata.name' || true) ]]; then
     kubectl create clusterrolebinding dashboard-admin -n default --clusterrole=cluster-admin --serviceaccount=default:dashboard
 fi
 
@@ -22,8 +20,7 @@ kubectl delete secret kubernetes-dashboard-certs -n ${namespace}
 kubectl create secret generic kubernetes-dashboard-certs --from-file=${installationWorkspace}/kx-certs -n ${namespace}
 
 # Update Kubernetes Dashboard with new certificate
-disableSessionTimeout=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.disableSessionTimeout')
-if [[ ${disableSessionTimeout} == "true"   ]]; then
+if [[ "$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.disableSessionTimeout' || true)" == "true"   ]]; then
     sed -i '/^ *args:/,/^ *[^:]*:/s/^.*- --auto-generate-certificates/            - --tls-cert-file=\/tls.crt\n            - --tls-key-file=\/tls.key\n            - --token-ttl=0\n            #- --auto-generate-certificates/' ${installationWorkspace}/dashboard.yaml
 else
     sed -i '/^ *args:/,/^ *[^:]*:/s/^.*- --auto-generate-certificates/            - --tls-cert-file=\/tls.crt\n            - --tls-key-file=\/tls.key\n            #- --auto-generate-certificates/' ${installationWorkspace}/dashboard.yaml

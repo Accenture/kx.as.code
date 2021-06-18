@@ -173,11 +173,12 @@ xset s off
 xset s noblank
 xset -dpms
 
-#rm -f /home/${VM_USER}/.config/autostart-scripts/showWelcome.sh
+rm -f $HOME/.config/autostart-scripts/showWelcome.sh
 ''' | sudo tee /home/${VM_USER}/.config/autostart-scripts/showWelcome.sh
 
 sudo chmod 755  /home/${VM_USER}/.config/autostart-scripts/*.sh
 sudo chown ${VM_USER}:${VM_USER} /home/${VM_USER}/.config/autostart-scripts/*.sh
+sudo cp -f /home/${VM_USER}/.config/autostart-scripts/showWelcome.sh ${INSTALLATION_WORKSPACE}
 
 # Create shortcut directories
 shortcutsDirectory="/usr/share/kx.as.code/DevOps Tools"
