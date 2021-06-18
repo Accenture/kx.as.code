@@ -51,5 +51,5 @@ Categories=GNOME;GTK;Utility;TextEditor;Development;
 MimeType=text/plain;
 StartupWMClass=atom
 ''' | sudo tee /usr/share/applications/atom.desktop /home/$VM_USER/Desktop/atom.desktop
-chmod 755 /home/$VM_USER/Desktop/atom.desktop
-chown $VM_USER:$VM_USER /home/$VM_USER/Desktop/atom.desktop
+sudo chmod 755 /home/$VM_USER/Desktop/atom.desktop
+sudo chown $VM_USER:$VM_USER /home/$VM_USER/Desktop/atom.desktop
