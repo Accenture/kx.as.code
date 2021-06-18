@@ -37,3 +37,19 @@ sudo -H -i -u $VM_USER sh -c "echo '\"*\":\n
 
 # Configure Atom with kx.as.code project folder
 sudo -H -i -u $VM_USER sh -c "echo \"{\\\"version\\\":\\\"1\\\",\\\"windows\\\":[{\\\"projectRoots\\\":[\\\"${SHARED_GIT_REPOSITORIES}/kx.as.code\\\",\\\"${SHARED_GIT_REPOSITORIES}/kx.as.code_docs\\\",\\\"${SHARED_GIT_REPOSITORIES}/kx.as.code_techradar\\\"]}]}\" > /home/$VM_USER/.atom/storage/application.json"
+
+# Add updated icon to Desktop
+echo '''[Desktop Entry]
+Name=Atom
+Comment=A hackable text editor for the 21st Century.
+GenericName=Atom
+Exec=env ATOM_DISABLE_SHELLING_OUT_FOR_ENVIRONMENT=false /usr/bin/atom %F
+Icon=atom
+Type=Application
+StartupNotify=true
+Categories=GNOME;GTK;Utility;TextEditor;Development;
+MimeType=text/plain;
+StartupWMClass=atom
+''' | sudo tee /usr/share/applications/atom.desktop /home/$VM_USER/Desktop/atom.desktop
+chmod 755 /home/$VM_USER/Desktop/atom.desktop
+chown $VM_USER:$VM_USER /home/$VM_USER/Desktop/atom.desktop

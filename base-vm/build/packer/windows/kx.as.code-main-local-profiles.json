@@ -421,6 +421,7 @@
            "../../../scripts/main-node/profile.sh",
            "../../../scripts/main-node/look-and-feel.sh",
            "../../../scripts/main-node/rabbitmq.sh",
+           "../../../scripts/main-node/vscode.sh",
            "../../../scripts/main-node/atom.sh",
            "../../../scripts/main-node/update-skel.sh",
            "../../../scripts/main-node/cleanup.sh"
