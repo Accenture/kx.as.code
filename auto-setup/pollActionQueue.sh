@@ -111,7 +111,7 @@ export nicList=$(nmcli device show | grep -E 'enp|ens' | grep 'GENERAL.DEVICE' |
 export ipsToExclude="10.0.2.15"   # IP addresses not to configure with static IP. For example, default Virtualbox IP 10.0.2.15
 export nicExclusions=""
 export excludeNic=""
-export 
+export
 for nic in ${nicList}; do
     for ipToExclude in ${ipsToExclude}; do
         ip=$(ip a s ${nic} | egrep -o 'inet [0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | cut -d' ' -f2)
@@ -388,6 +388,7 @@ for componentName in ${defaultComponentsToInstall}; do
     payload=$(cat ${installationWorkspace}/actionQueues.json | jq -c '.action_queues.install[] | select(.name=="'${componentName}'") | {install_folder:.install_folder,"name":.name,"action":"install"}')
     rabbitmqadmin publish exchange=action_workflow routing_key=pending_queue payload=''${payload}''
 done
+sudo mv ${installationWorkspace}/actionQueues.json ${installationWorkspace}/actionQueues.json_processed
 
 # Set tries to 0. If an install failed and the retry flag is set to true for that component in metadata.json, attempts will be made to retrz up to 3 times
 retries=0
