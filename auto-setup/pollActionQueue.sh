@@ -432,8 +432,9 @@ done
 
 # Set tries to 0. If an install failed and the retry flag is set to true for that component in metadata.json, attempts will be made to retry up to 3 times
 retries=0
-logrc=0
-error=false
+logRc=0
+rc=0
+error="false"
 
 
 # Get total number of messages in pending_queue
