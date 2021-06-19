@@ -89,6 +89,7 @@ git clone --depth=1 https://github.com/kubernetes-sigs/sig-storage-local-static-
 cd sig-storage-local-static-provisioner
 
 # Replace placeholders with environment variables from metadata.json
+echo "PATH: $PATH"
 envhandlebars < ${installComponentDirectory}/values.yaml > ${installationWorkspace}/${componentName}_values.yaml
 
 # Generate install YAML file via Helm

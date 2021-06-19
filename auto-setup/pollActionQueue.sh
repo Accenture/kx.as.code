@@ -25,6 +25,12 @@ export vmUser=kx.hero
 export vmUserId=$(id -u ${vmUser})
 export vmPassword="$(cat ${sharedKxHome}/.config/.user.cred)"
 
+# Check if envhandlebars tool reachable
+envhandlebarsToolPath=$(which envhandlebars)
+ if [ -x "$envhandlebarsToolPath" ] ; then
+     echo "envhandlebars found on path $envhandlebarsToolPath"
+ fi
+
 # Check profile-config.json file is present before starting script
 wait-for-file() {
         timeout -s TERM 6000 bash -c \
@@ -382,6 +388,11 @@ for actionWorkflowBinding in ${actionWorkflows}; do
     fi
 done
 
+# Get first and last elements from Core install Queue
+lastCoreElementToInstall=$(cat ${installationWorkspace}/actionQueues.json | jq -r 'last(.action_queues.install[] | select(.install_folder=="core")) | .name')
+firstCoreElementToInstall=$(cat ${installationWorkspace}/actionQueues.json | jq -r 'first(.action_queues.install[] | select(.install_folder=="core")) | .name')
+count=0
+
 # Populate pending queue on first start with default core components
 defaultComponentsToInstall=$(cat ${installationWorkspace}/actionQueues.json | jq -r '.action_queues.install[].name')
 for componentName in ${defaultComponentsToInstall}; do
@@ -427,11 +438,10 @@ done
 # Set tries to 0. If an install failed and the retry flag is set to true for that component in metadata.json, attempts will be made to retrz up to 3 times
 retries=0
 
-# Get first and last elements from Core install Queue
-lastCoreElementToInstall=$(cat ${installationWorkspace}/actionQueues.json | jq -r 'last(.action_queues.install[] | select(.install_folder=="core")) | .name')
-firstCoreElementToInstall=$(cat ${installationWorkspace}/actionQueues.json | jq -r 'first(.action_queues.install[] | select(.install_folder=="core")) | .name')
-numCoreElementsToInstall=$(cat ${installationWorkspace}/actionQueues.json | jq -r '.action_queues.install[] | .name' | wc -l)
-count=0
+# Get total number of messages in pending_queue
+numTotalElementsToInstall=$(rabbitmqadmin list queues -f pretty_json | jq -r '.[] | select(.name=="pending_queue") | .messages')
+
+
 # Poll pending queue and trigger actions if message is present
 while :; do
     wipQueue=$(rabbitmqadmin list queues name messages --format raw_json | jq -r '.[] | select(.name=="wip_queue") | .messages')
@@ -481,7 +491,7 @@ while :; do
                 rabbitmqadmin get queue=wip_queue --format=pretty_json ackmode=ack_requeue_false | jq -r '.[].payload'
                 rabbitmqadmin publish exchange=action_workflow routing_key=completed_queue properties="{\"delivery_mode\": 2}" payload=''${payload}''
                 log_info "The installation of \"${componentName}\" completed succesfully"
-                sudo -H -i -u ${vmUser} sh -c "DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/${vmUserId}/bus notify-send -t 300000 \"KX.AS.CODE Notification\" \"${componentName} installed successfully [${count}/${numCoreElementsToInstall}]\" --icon=dialog-information"
+                sudo -H -i -u ${vmUser} sh -c "DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/${vmUserId}/bus notify-send -t 300000 \"KX.AS.CODE Notification\" \"${componentName} installed successfully [${count}/${numTotalElementsToInstall}]\" --icon=dialog-information"
                 if [[ ${componentName} == "${lastCoreElementToInstall}"   ]]; then
                     sudo -H -i -u ${vmUser} sh -c "DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/${vmUserId}/bus notify-send -t 300000 \"KX.AS.CODE Notification\" \"CONGRATULATIONS\! That concludes the core setup\! Your optional components will now be installed\" --icon=dialog-information"
                 fi
@@ -498,7 +508,7 @@ while :; do
                     rabbitmqadmin publish exchange=action_workflow routing_key=failed_queue properties="{\"delivery_mode\": 2}" payload=''${payload}''
                     retries=0
                     log_error "Previous attempt to install \"${componentName}\" did not complete succesfully. There will be no (further) retries"
-                    sudo -H -i -u ${vmUser} sh -c "DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/${vmUserId}/bus notify-send -t 300000 \"KX.AS.CODE Notification\" \"${componentName} installation failed\! [${count}/${numCoreElementsToInstall}]\" --icon=dialog-error"
+                    sudo -H -i -u ${vmUser} sh -c "DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/${vmUserId}/bus notify-send -t 300000 \"KX.AS.CODE Notification\" \"${componentName} installation failed\! [${count}/${numTotalElementsToInstall}]\" --icon=dialog-error"
                 fi
             fi
         fi

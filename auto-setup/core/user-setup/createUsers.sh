@@ -36,7 +36,7 @@ if [[ ${numUsersToCreate} -ne 0 ]]; then
                 generatedPassword=$(pwgen -1s 8)
                 echo "[ { \"user\": \"${userid}\", \"password\": \"${generatedPassword}\" } ]" | sudo tee ${sharedKxHome}/.temp.users.json
                 cat /usr/share/kx.as.code/.users.json /usr/share/kx.as.code/.temp.users.json | jq -s add | tee /usr/share/kx.as.code/.users.json
-                rm tee ${sharedKxHome}/.temp.users.json
+                rm -f ${sharedKxHome}/.temp.users.json
             else
                 generatedPassword=$(cat ${sharedKxHome}/.users.json | jq -r '.[] | select(.user=="'${userid}'") | .password')
             fi
