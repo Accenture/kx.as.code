@@ -111,7 +111,7 @@ if [[ ${numUsersToCreate} -ne 0 ]]; then
             # Test for user availability
             for i in {1..10}; do
                 echo "i: $i"
-                if [[ -n $(sudo -H -i -u ${userid} sh -c 'id' || true) ]]; then
+                if [[ -n $(sudo -H -i -u ${userid} bash -c 'id' || true) ]]; then
                     break
                 else
                     sleep 10
@@ -242,15 +242,15 @@ if [[ ${numUsersToCreate} -ne 0 ]]; then
             sudo rm -rf /home/${userid}/.pki
             mkdir -p /home/${userid}/.pki/nssdb/
             chown -R ${newGid}:${newGid} /home/${userid}/.pki
-            sudo -H -i -u ${userid} sh -c "certutil -N --empty-password -d sql:/home/${userid}/.pki/nssdb"
-            sudo -H -i -u ${userid} sh -c "/usr/local/bin/trustKXRootCAs.sh"
-            sudo -H -i -u ${userid} sh -c "certutil -L -d sql:/home/${userid}/.pki/nssdb"
+            sudo -H -i -u ${userid} bash -c "certutil -N --empty-password -d sql:/home/${userid}/.pki/nssdb"
+            sudo -H -i -u ${userid} bash -c "/usr/local/bin/trustKXRootCAs.sh"
+            sudo -H -i -u ${userid} bash -c "certutil -L -d sql:/home/${userid}/.pki/nssdb"
         fi
 
         # Create SSH key kx.hero user
         if sudo test ! -f /home/${userid}/.ssh/id_rsa; then
             sudo chmod 700 /home/${userid}/.ssh
-            sudo -H -i -u ${userid} sh -c "yes | ssh-keygen -f ssh-keygen -m PEM -t rsa -b 4096 -q -f /home/${userid}/.ssh/id_rsa -N ''"
+            sudo -H -i -u ${userid} bash -c "yes | ssh-keygen -f ssh-keygen -m PEM -t rsa -b 4096 -q -f /home/${userid}/.ssh/id_rsa -N ''"
         fi
 
         if sudo test ! -f /home/${userid}/.kube/config; then
@@ -260,8 +260,8 @@ if [[ ${numUsersToCreate} -ne 0 ]]; then
             sudo chown -R ${userid}:${userid} /home/${userid}/.kube
             sudo chmod 600 /home/${userid}/.kube/config
             # Enable Keycloak OIDC for new user
-            sudo -H -i -u ${userid} sh -c "${installationWorkspace}/client-oidc-setup.sh"
-            sudo -H -i -u ${userid} sh -c "kubectl config set-context --current --user=oidc"
+            sudo -H -i -u ${userid} bash -c "${installationWorkspace}/client-oidc-setup.sh"
+            sudo -H -i -u ${userid} bash -c "kubectl config set-context --current --user=oidc"
         fi
 
         # Add desktop customization script to new users autostart-scripts folder

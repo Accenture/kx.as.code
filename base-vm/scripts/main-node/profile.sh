@@ -109,9 +109,19 @@ if [ -d "$HOME/.nvm" ]; then
   [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
 fi
 ''' | sudo tee -a /home/${VM_USER}/.bashrc /home/${VM_USER}/.zshrc /root/.bashrc /root/.zshrc
+
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | sudo bash
 sudo bash -c "source /root/.nvm/nvm.sh && nvm install node"
 sudo bash -c "source /root/.nvm/nvm.sh && npm install -g npm@7.17.0"
 sudo bash -c "source /root/.nvm/nvm.sh && npm install -g envhandlebars"
 sudo cp -r /root/.nvm /home/${VM_USER}
 sudo chown -R ${VM_USER}:${VM_USER} /home/${VM_USER}
+
+echo '''# Check if envhandlebars tool reachable
+envhandlebarsToolPath=$(which envhandlebars || true)
+if [ -x "$envhandlebarsToolPath" ] ; then
+    echo "envhandlebars found on path \$envhandlebarsToolPath"
+else
+    echo "envhandlebars not found on path, adding it"
+    echo "export PATH=$(dirname $(find $HOME -type f -executable -name "envhandlebars"):$PATH)"
+fi''' | sudo tee -a /home/${VM_USER}/.bashrc /home/${VM_USER}/.zshrc /root/.bashrc /root/.zshrc
