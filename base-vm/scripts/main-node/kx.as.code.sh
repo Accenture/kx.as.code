@@ -100,7 +100,7 @@ Environment=KUBEDIR=${INSTALLATION_WORKSPACE}
 ExecStart=${SHARED_GIT_REPOSITORIES}/kx.as.code/auto-setup/pollActionQueue.sh
 TimeoutSec=infinity
 Restart=on-failure
-RestartSec=5s
+RestartSec=60s
 RemainAfterExit=no
 
 [Install]

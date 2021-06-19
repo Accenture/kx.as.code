@@ -1,14 +1,6 @@
 #!/bin/bash
 set -eu
 
-# Check if PID file already exists and ensure this script only runs once
-if [ ! -f /var/run/kxascode.pid ]; then
-    pgrep "pollActionQueue\.sh" | sudo tee /var/run/kxascode.pid
-else
-    echo "/var/run/kxascode.pid already exists. Script already running. If you are sure this is an error, remove the PID file and try again. Exiting"
-    exit
-fi
-
 # Define base variables
 export sharedKxHome=/usr/share/kx.as.code
 export installationWorkspace=${sharedKxHome}/workspace
