@@ -95,9 +95,10 @@ After=ntp.service
 
 [Service]
 User=0
+Type=forking
 Environment=VM_USER=${VM_USER}
 Environment=KUBEDIR=${INSTALLATION_WORKSPACE}
-ExecStart=${SHARED_GIT_REPOSITORIES}/kx.as.code/auto-setup/pollActionQueue.sh
+ExecStart=/bin/bash -x ${SHARED_GIT_REPOSITORIES}/kx.as.code/auto-setup/pollActionQueue.sh
 TimeoutSec=infinity
 Restart=on-failure
 RestartSec=60s
