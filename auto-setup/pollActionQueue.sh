@@ -435,26 +435,65 @@ for componentName in ${defaultComponentsToInstall}; do
 
 done
 
-# Set tries to 0. If an install failed and the retry flag is set to true for that component in metadata.json, attempts will be made to retrz up to 3 times
+# Set tries to 0. If an install failed and the retry flag is set to true for that component in metadata.json, attempts will be made to retry up to 3 times
 retries=0
+logrc=0
+error=false
+
 
 # Get total number of messages in pending_queue
-numTotalElementsToInstall=$(rabbitmqadmin list queues -f pretty_json | jq -r '.[] | select(.name=="pending_queue") | .messages')
-
+numTotalElementsToInstall=$(rabbitmqadmin list queues -f raw_json | jq -r '.[] | select(.name=="pending_queue") | .messages')
 
 # Poll pending queue and trigger actions if message is present
 while :; do
     wipQueue=$(rabbitmqadmin list queues name messages --format raw_json | jq -r '.[] | select(.name=="wip_queue") | .messages')
     failedQueue=$(rabbitmqadmin list queues name messages --format raw_json | jq -r '.[] | select(.name=="failed_queue") | .messages')
     retryQueue=$(rabbitmqadmin list queues name messages --format raw_json | jq -r '.[] | select(.name=="retry_queue") | .messages')
+
+    if [[ ${wipQueue} -ne 0 ]] || [[ ${failedQueue} -ne 0 ]]; then
+
+        if [[ ${failedQueue} -ne 0 ]]; then
+            # In case of system restart, log error message that there is an item on the failure queue
+            log_error "Failure queue populated. Either purge the queue to continue with the next item, or fix whatever is broken and retry. You will find logs in ${installationWorkspace}"
+        elif [[ ${wipQueue} -ne 0 ]]; then
+            # In case of system restart, read payload from WIP queue, rather than relying on already set variables
+            payload=$(rabbitmqadmin get queue=wip_queue --format=raw_json ackmode=ack_requeue_false | jq -c -r '.[].payload')
+            retries=$(echo ${payload} | jq -c '.retry')
+        fi
+
+        # Move item from pending to completed or error queue
+        if [[ $logRc -eq 0 ]] && [[ $rc -eq 0 ]] && [[ "${error}" != "true" ]]; then
+            rabbitmqadmin publish exchange=action_workflow routing_key=completed_queue properties="{\"delivery_mode\": 2}" payload=''${payload}''
+            log_info "The installation of \"${componentName}\" completed succesfully"
+            sudo -H -i -u ${vmUser} sh -c "DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/${vmUserId}/bus notify-send -t 300000 \"KX.AS.CODE Notification\" \"${componentName} installed successfully [${count}/${numTotalElementsToInstall}]\" --icon=dialog-information"
+            if [[ ${componentName} == "${lastCoreElementToInstall}"   ]]; then
+                sudo -H -i -u ${vmUser} sh -c "DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/${vmUserId}/bus notify-send -t 300000 \"KX.AS.CODE Notification\" \"CONGRATULATIONS\! That concludes the core setup\! Your optional components will now be installed\" --icon=dialog-information"
+            fi
+            retries=0
+        else
+            if [[ "${retryParameter}" != "false" ]] && [[ ${retries} -lt 3 ]]; then
+                sleep 10
+                ((retries = retries + 1))
+                payload=$(echo ${payload} | jq --arg retry $retries '.retry=$retry')
+                rabbitmqadmin publish exchange=action_workflow routing_key=retry_queue properties="{\"delivery_mode\": 2}" payload=''${payload}''
+                log_warning "Previous attempt to install \"${componentName}\" did not complete succesfully. Trying again (${retries} of 3)"
+            else
+                rabbitmqadmin publish exchange=action_workflow routing_key=failed_queue properties="{\"delivery_mode\": 2}" payload=''${payload}''
+                retries=0
+                log_error "Previous attempt to install \"${componentName}\" did not complete succesfully. There will be no (further) retries"
+                sudo -H -i -u ${vmUser} sh -c "DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/${vmUserId}/bus notify-send -t 300000 \"KX.AS.CODE Notification\" \"${componentName} installation failed\! [${count}/${numTotalElementsToInstall}]\" --icon=dialog-error"
+            fi
+        fi
+    fi
+
     # If there is something in the wip or failed queue, do not schedule an installation
     if [[ ${wipQueue} -eq 0 ]] && [[ ${failedQueue} -eq 0 ]]; then
         # If no errors or wip, check first if there are any installation items that need to be retried, after a failure was fixed
-        payload=$(rabbitmqadmin get queue=retry_queue --format=raw_json ackmode=ack_requeue_false | jq -r '.[].payload')
+        payload=$(rabbitmqadmin get queue=retry_queue --format=raw_json ackmode=ack_requeue_false | jq -c -r '.[].payload')
         echo "Payload for retry queue = \"${payload}\""
         # If there were no retry items, check if there is anything in the pending queue that needs to be installed
         if [ -z "${payload}" ]; then
-            payload=$(rabbitmqadmin get queue=pending_queue --format=raw_json ackmode=ack_requeue_false | jq -r '.[].payload')
+            payload=$(rabbitmqadmin get queue=pending_queue --format=raw_json ackmode=ack_requeue_false | jq -c -r '.[].payload')
             echo "Payload for pending queue = \"${payload}\""
         fi
         # Start the installation process if an item was found in the pending or retry queue
@@ -473,6 +512,11 @@ while :; do
             # Get retry parameter for component
             export retryParameter=$(cat ${componentMetadataJson} | jq -r '.retry?')
 
+            # Add retry parameter to Payload
+            echo ${payload}
+            payload=$(echo ${payload} | jq -c -r --arg retry 0 '. + {retry: $retry}')
+            echo ${payload}
+
             # Add item to wip queue to notify install is in progress
             rabbitmqadmin publish exchange=action_workflow routing_key=wip_queue properties="{\"delivery_mode\": 2}" payload=''${payload}''
 
@@ -485,32 +529,6 @@ while :; do
             . ${autoSetupHome}/autoSetup.sh &> ${installationWorkspace}/${componentName}_${logTimestamp}.log
             logRc=$?
             log_info "Installation process for \"${componentName}\" returned with \$?=${logRc} and \$rc=$rc"
-
-            # Move item from pending to completed or error queue
-            if [[ $logRc -eq 0 ]] && [[ $rc -eq 0 ]] && [[ "${error}" != "true" ]]; then
-                rabbitmqadmin get queue=wip_queue --format=pretty_json ackmode=ack_requeue_false | jq -r '.[].payload'
-                rabbitmqadmin publish exchange=action_workflow routing_key=completed_queue properties="{\"delivery_mode\": 2}" payload=''${payload}''
-                log_info "The installation of \"${componentName}\" completed succesfully"
-                sudo -H -i -u ${vmUser} sh -c "DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/${vmUserId}/bus notify-send -t 300000 \"KX.AS.CODE Notification\" \"${componentName} installed successfully [${count}/${numTotalElementsToInstall}]\" --icon=dialog-information"
-                if [[ ${componentName} == "${lastCoreElementToInstall}"   ]]; then
-                    sudo -H -i -u ${vmUser} sh -c "DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/${vmUserId}/bus notify-send -t 300000 \"KX.AS.CODE Notification\" \"CONGRATULATIONS\! That concludes the core setup\! Your optional components will now be installed\" --icon=dialog-information"
-                fi
-                retries=0
-            else
-                if [[ ${retryParameter} == "true"   ]] && [[ ${retries} -lt 3 ]]; then
-                    sleep 10
-                    rabbitmqadmin get queue=wip_queue --format=pretty_json ackmode=ack_requeue_false | jq -r '.[].payload'
-                    rabbitmqadmin publish exchange=action_workflow routing_key=retry_queue properties="{\"delivery_mode\": 2}" payload=''${payload}''
-                    ((retries = retries + 1))
-                    log_warning "Previous attempt to install \"${componentName}\" did not complete succesfully. Trying again (${retries} of 3)"
-                else
-                    rabbitmqadmin get queue=wip_queue --format=pretty_json ackmode=ack_requeue_false | jq -r '.[].payload'
-                    rabbitmqadmin publish exchange=action_workflow routing_key=failed_queue properties="{\"delivery_mode\": 2}" payload=''${payload}''
-                    retries=0
-                    log_error "Previous attempt to install \"${componentName}\" did not complete succesfully. There will be no (further) retries"
-                    sudo -H -i -u ${vmUser} sh -c "DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/${vmUserId}/bus notify-send -t 300000 \"KX.AS.CODE Notification\" \"${componentName} installation failed\! [${count}/${numTotalElementsToInstall}]\" --icon=dialog-error"
-                fi
-            fi
         fi
         sleep 5
     fi

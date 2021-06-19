@@ -84,30 +84,29 @@ fi
 sudo -H -i -u ${VM_USER} sh -c "mkdir -p /home/${VM_USER}/.config/Typora/"
 
 # Add Kubernetes Initialize Script to systemd
-sudo bash -c "cat <<EOF > /etc/systemd/system/k8s-initialize-cluster.service
+sudo bash -c "cat <<EOF > /etc/systemd/system/kxAsCodeQueuePoller.service
 [Unit]
-Description=Initialize K8s Cluster
+Description=KX.AS.CODE Queue Polling Service
 After=network.target
 After=systemd-user-sessions.service
 After=network-online.target
 After=vboxadd-service.service
 After=ntp.service
-After=dnsmasq
 
 [Service]
 User=0
 Environment=VM_USER=${VM_USER}
 Environment=KUBEDIR=${INSTALLATION_WORKSPACE}
-Type=forking
 ExecStart=${SHARED_GIT_REPOSITORIES}/kx.as.code/auto-setup/pollActionQueue.sh
 TimeoutSec=infinity
-Restart=no
+Restart=on-failure
+RestartSec=5s
 RemainAfterExit=no
 
 [Install]
 WantedBy=multi-user.target
 EOF"
-sudo systemctl enable k8s-initialize-cluster
+sudo systemctl enable kxAsCodeQueuePoller
 sudo systemctl daemon-reload
 
 sudo mkdir -p /home/${VM_USER}/.config/autostart-scripts

@@ -156,7 +156,7 @@ EOF'
 
 # Generate Heketi SSH Key if it does not already exist
 if sudo test ! -f /etc/heketi/heketi_key; then
-    yes | sudo -u heketi ssh-keygen -f ssh-keygen -m PEM -t rsa -b 4096 -q -f /etc/heketi/heketi_key -N ''
+    yes | sudo -u heketi ssh-keygen -f ssh-keygen -m PEM -t rsa -b 4096 -q -f /etc/heketi/heketi_key -N '' || true
     sudo chown -R heketi:heketi /etc/heketi
 fi
 
