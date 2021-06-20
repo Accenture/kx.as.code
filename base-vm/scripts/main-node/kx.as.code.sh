@@ -101,7 +101,7 @@ User=0
 Type=forking
 Environment=VM_USER=${VM_USER}
 Environment=KUBEDIR=${INSTALLATION_WORKSPACE}
-ExecStart=daemonize -p /run/kxascode.pid -o ${INSTALLATION_WORKSPACE}/kx.as.code_autoSetup.log -e ${INSTALLATION_WORKSPACE}/kx.as.code_autoSetup.err /bin/bash /usr/share/kx.as.code/git/kx.as.code/auto-setup/pollActionQueue.sh
+ExecStart=daemonize -p /run/kxascode.pid -a -o ${INSTALLATION_WORKSPACE}/kx.as.code_autoSetup.log -e ${INSTALLATION_WORKSPACE}/kx.as.code_autoSetup.err -l ${INSTALLATION_WORKSPACE}/kx.as.code_autoSetup.lock /bin/bash /usr/share/kx.as.code/git/kx.as.code/auto-setup/pollActionQueue.sh
 TimeoutSec=infinity
 Restart=on-failure
 RestartSec=60s

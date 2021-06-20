@@ -417,6 +417,7 @@ for componentName in ${defaultComponentsToInstall}; do
     # Remove component from installation array as added to processed array in actionQueue.json
     cat ${installationWorkspace}/actionQueues.json | jq 'del(.action_queues.install[] | select(.name=="'${componentName}'"))' | tee ${installationWorkspace}/actionQueues.json.tmp
     mv ${installationWorkspace}/actionQueues.json.tmp ${installationWorkspace}/actionQueues.json
+    sleep 1
 done
 
 # Set tries to 0. If an install failed and the retry flag is set to true for that component in metadata.json, attempts will be made to retry up to 3 times
