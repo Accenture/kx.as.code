@@ -421,11 +421,9 @@ function exit_handler ()
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 
     msgerr bold red "Exiting!"
-
-    #exit "$error_code"
-    msgerr white "Caught exception. Setting error state to true for further handling in KX.AS.CODE scripts"
-    error="true"
-    msgerr white "Error state: ${error} Error code: ${error_code}"
+    msgerr white "Caught exception. Exporting error state for further handling in KX.AS.CODE scripts"
+    echo "${payload}" | tee ${installationWorkspace}/current_payload.err
+    exit "$error_code"
 }
 
 trap_err_handler() {

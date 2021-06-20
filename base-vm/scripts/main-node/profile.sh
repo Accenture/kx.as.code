@@ -120,5 +120,5 @@ sudo chown -R ${VM_USER}:${VM_USER} /home/${VM_USER}
 echo '''# Check if envhandlebars tool reachable
 envhandlebarsToolPath=$(which envhandlebars || true)
 if [ -z "$envhandlebarsToolPath" ] ; then
-    export PATH=$(dirname $(find $HOME -type f -executable -name "envhandlebars"):$PATH)
+    export PATH=$(dirname $(find $HOME -type f -executable -name "envhandlebars")):$PATH
 fi''' | sudo tee -a /home/${VM_USER}/.bashrc /home/${VM_USER}/.zshrc /root/.bashrc /root/.zshrc

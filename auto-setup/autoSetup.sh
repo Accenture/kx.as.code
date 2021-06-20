@@ -1,5 +1,5 @@
-#!/bin/bash -x
-set -eu
+#!/bin/bash
+set -euo pipefail
 
 export rc=0
 
@@ -72,14 +72,12 @@ if [[ ${action} == "install"   ]]; then
     for script in ${componentPreInstallScripts}; do
         if [[ ! -f ${installComponentDirectory}/pre_install_scripts/${script} ]]; then
             log_error "Pre-install script ${installComponentDirectory}/pre_install_scripts/${script} does not exist. Check your spelling in the \"kxascode.json\" file and that it is checked in correctly into Git"
-            export error=true
         else
             log_info "Executing pre-install script ${installComponentDirectory}/pre_install_scripts/${script}"
             . ${installComponentDirectory}/pre_install_scripts/${script}
             rc=$?
             if [[ ${rc} -ne 0 ]]; then
                 log_error "Execution of pre install script \"${script}\" ended in a non zero return code ($rc)"
-                export error=true
             fi
         fi
     done
@@ -105,7 +103,6 @@ if [[ ${action} == "install"   ]]; then
             rc=$?
             if [[ ${rc} -ne 0 ]]; then
                 log_error "Execution of install script \"${script}\" ended in a non zero return code ($rc)"
-                export error=true
             fi
         done
 
@@ -165,8 +162,7 @@ if [[ ${action} == "install"   ]]; then
         ${installationWorkspace}/helm_${componentName}.sh
         rc=$?
         if [[ ${rc} -ne 0 ]]; then
-            log_error "Execution of Helm command \"${helmCommmand}\" ended in a non zero return code ($rc)"
-            export error=true
+            log_error "Execution of Helm command \"${helmCommmand}\" ended in a non zero return code ($rc)"   
         fi
 
         ####################################################################################################################################################################
@@ -197,7 +193,6 @@ if [[ ${action} == "install"   ]]; then
                 argocd cert add-tls ${gitDomain} --from ${installationWorkspace}/kx-certs/ca.crt
             else
                 log_error "Could not upload KX.AS.CODE CA (${installationWorkspace}/kx-certs/ca.crt) to ArgoCD. It appears to be missing."
-                export error=true
             fi
         fi
 
@@ -240,7 +235,6 @@ if [[ ${action} == "install"   ]]; then
         rc=$?
         if [[ ${rc} -ne 0 ]]; then
             log_error "Execution of ArgoCD command ended in a non zero return code ($rc)"
-            export error=true
         fi
         for i in {1..10}; do
             response=$(argocd app list --output json | jq -r '.[] | select (.metadata.name=="'${componentName}'") | .metadata.name')
@@ -253,7 +247,6 @@ if [[ ${action} == "install"   ]]; then
 
     else
         log_error "Did not recognize installation type of \"${installationType}\". Valid values are \"helm\", \"argocd\" or \"script\""
-        export error=true
     fi
 
     ####################################################################################################################################################################
@@ -334,8 +327,7 @@ if [[ ${action} == "install"   ]]; then
     # Loop round post-install scripts
     for script in ${componentPostInstallScripts}; do
         if [[ ! -f ${installComponentDirectory}/post_install_scripts/${script} ]]; then
-            log_error "Post-install script ${installComponentDirectory}/post_install_scripts/${script} does not exist. Check your spelling in the \"kxascode.json\" file and that it is checked in correctly into Git"0
-            export error=true
+            log_error "Post-install script ${installComponentDirectory}/post_install_scripts/${script} does not exist. Check your spelling in the \"kxascode.json\" file and that it is checked in correctly into Git"
         else
             echo "Executing post-install script ${installComponentDirectory}/post_install_scripts/${script}"
             log_info "Executing post-install script ${installComponentDirectory}/post_install_scripts/${script}"
@@ -343,7 +335,6 @@ if [[ ${action} == "install"   ]]; then
             rc=$?
             if [[ ${rc} -ne 0 ]]; then
                 log_error "Execution of post install script \"${script}\" ended in a non zero return code ($rc)"
-                export error=true
             fi
         fi
     done
@@ -523,7 +514,6 @@ elif [[ ${action} == "uninstall"   ]] || [[ ${action} == "purge"   ]]; then
 
     else
         log_error "Cannot uninstall \"${componentName}\" as installation type \"${installationType}\" is not recognized"
-        export error=true
     fi
 
     # Remove Vendor Docs Shortcut if it exists

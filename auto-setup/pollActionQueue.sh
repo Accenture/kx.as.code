@@ -1,5 +1,5 @@
 #!/bin/bash
-set -eu
+set -euo pipefail
 
 # Define base variables
 export sharedKxHome=/usr/share/kx.as.code
@@ -120,10 +120,9 @@ export nicList=$(nmcli device show | grep -E 'enp|ens' | grep 'GENERAL.DEVICE' |
 export ipsToExclude="10.0.2.15"   # IP addresses not to configure with static IP. For example, default Virtualbox IP 10.0.2.15
 export nicExclusions=""
 export excludeNic=""
-export
 for nic in ${nicList}; do
     for ipToExclude in ${ipsToExclude}; do
-        ip=$(ip a s ${nic} | egrep -o 'inet [0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | cut -d' ' -f2)
+        ip=$(ip a s ${nic} | egrep -o 'inet [0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | cut -d' ' -f2 || true)
         echo ${ip}
         if [[ ${ip} == "${ipToExclude}" ]]; then
             excludeNic="true"
@@ -424,9 +423,6 @@ done
 retries=0
 logRc=0
 rc=0
-error="false"
-
-
 
 # Get total number of messages in pending_queue
 sleep 5
@@ -437,6 +433,7 @@ while :; do
     wipQueue=$(rabbitmqadmin list queues name messages --format raw_json | jq -r '.[] | select(.name=="wip_queue") | .messages')
     failedQueue=$(rabbitmqadmin list queues name messages --format raw_json | jq -r '.[] | select(.name=="failed_queue") | .messages')
     retryQueue=$(rabbitmqadmin list queues name messages --format raw_json | jq -r '.[] | select(.name=="retry_queue") | .messages')
+    pendingQueue=$(rabbitmqadmin list queues name messages --format raw_json | jq -r '.[] | select(.name=="pending_queue") | .messages')
 
     if [[ ${wipQueue} -ne 0 ]] || [[ ${failedQueue} -ne 0 ]]; then
 
@@ -451,6 +448,8 @@ while :; do
             export action=$(echo ${payload} | jq -c -r '.action')
             export componentName=$(echo ${payload} | jq -c -r '.name')
             export componentInstallationFolder=$(echo ${payload} | jq -c -r '.install_folder')
+            export retriesParameter=$(cat ${autoSetupHome}/${componentInstallationFolder}/${componentName}/metadata.json | jq -r '.retry?')
+
         fi
 
         # Move item from pending to completed or error queue
@@ -485,16 +484,19 @@ while :; do
 
     # If there is something in the wip or failed queue, do not schedule an installation
     if [[ ${wipQueue} -eq 0 ]] && [[ ${failedQueue} -eq 0 ]]; then
-        # If no errors or wip, check first if there are any installation items that need to be retried, after a failure was fixed
-        payload=$(rabbitmqadmin get queue=retry_queue --format=raw_json ackmode=ack_requeue_false | jq -c -r '.[].payload')
-        echo "Payload for retry queue = \"${payload}\""
+        if [[ ${retryQueue} -ne 0 ]]; then
+            # If no errors or wip, check first if there are any installation items that need to be retried, after a failure was fixed
+            payload=$(rabbitmqadmin get queue=retry_queue --format=raw_json ackmode=ack_requeue_false | jq -c -r '.[].payload')
+            echo "Payload for retry queue = \"${payload}\""
+        elif [[ ${pendingQueue} -ne 0 ]]; then
         # If there were no retry items, check if there is anything in the pending queue that needs to be installed
-        if [ -z "${payload}" ]; then
             payload=$(rabbitmqadmin get queue=pending_queue --format=raw_json ackmode=ack_requeue_false | jq -c -r '.[].payload')
             echo "Payload for pending queue = \"${payload}\""
+        else
+            payload=""
         fi
         # Start the installation process if an item was found in the pending or retry queue
-        if [ ! -z "${payload}" ]; then
+        if [ -n "${payload}" ]; then
             # Define Variables for autoSetup.sh script
             export action=$(echo ${payload} | jq -r '.action')
             export componentName=$(echo ${payload} | jq -r '.name')
@@ -508,12 +510,6 @@ while :; do
 
             # Get retry parameter for component
             export retryParameter=$(cat ${componentMetadataJson} | jq -r '.retry?')
-
-            # Add retry parameter to Payload
-            #TODO: Should not be needed any more. Remove.
-            #echo ${payload}
-            #payload=$(echo ${payload} | jq -c -r --arg retry 0 '. + {retry: $retry}')
-            #echo ${payload}
 
             # Add item to wip queue to notify install is in progress
             rabbitmqadmin publish exchange=action_workflow routing_key=wip_queue properties="{\"delivery_mode\": 2}" payload=''${payload}''
