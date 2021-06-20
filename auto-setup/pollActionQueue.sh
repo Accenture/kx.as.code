@@ -28,7 +28,7 @@ if [ -x "$envhandlebarsToolPath" ] ; then
     echo "envhandlebars found on path $envhandlebarsToolPath"
 else
     echo "envhandlebars not found on path, adding it"
-    export PATH=$(dirname $(find $HOME -type f -executable -name "envhandlebars"):$PATH)
+    export PATH=$(dirname $(find $HOME -type f -executable -name "envhandlebars")):$PATH
 fi
 
 # Import error handler

@@ -45,6 +45,40 @@ if [[ ${numUsersToCreate} -ne 0 ]]; then
             echo "[ { \"user\": \"${userid}\", \"password\": \"${generatedPassword}\" } ]" | sudo tee ${sharedKxHome}/.users.json
         fi
 
+        # Create user's desktop folder
+        sudo mkdir -p /home/${userid}/Desktop
+
+        # Add desktop shortcuts for all users
+        if sudo test ! -e /home/${userid}/Desktop/"KX.AS.CODE Source"; then
+            sudo ln -s ${sharedGitHome}/kx.as.code /home/${userid}/Desktop/"KX.AS.CODE Source"
+        fi
+
+        # Add admin tools folder to desktop if user has admin role
+        if [[ "${userRole}" == "admin" ]]; then
+            if sudo test ! -e /home/${userid}/Desktop/"Admin Tools"; then
+                sudo ln -s "${adminShortcutsDirectory}" /home/${userid}/Desktop/
+            fi
+        fi
+
+        # Add DevOps tools folder to desktop
+        if sudo test ! -e /home/${userid}/Desktop/"DevOps Tools"; then
+            sudo ln -s "${shortcutsDirectory}" /home/${userid}/Desktop/
+        fi
+
+        # Add Vendor Docs folder to desktop
+        if sudo test ! -e /home/${userid}/Desktop/"Vendor Docs"; then
+            sudo ln -s "${vendorDocsDirectory}" /home/${userid}/Desktop/
+        fi
+
+        # Add API Docs folder to desktop
+        if sudo test ! -e /home/${userid}/Desktop/"API Docs"; then
+            sudo ln -s "${apiDocsDirectory}" /home/${userid}/Desktop/
+        fi
+
+        # Copy all file to user
+        sudo cp -rfT ${installationWorkspace}/skel /home/${userid}
+        sudo rm -rf /home/${userid}/.cache/sessions
+
         if ! id -u ${userid} > /dev/null 2>&1; then
 
             if [ ! -f /home/${userid}/.ssh/id_rsa ]; then
@@ -160,40 +194,6 @@ if [[ ${numUsersToCreate} -ne 0 ]]; then
             printf "${userid}        ALL=(ALL)       NOPASSWD: ALL\n" | sudo tee -a /etc/sudoers
 
         fi
-
-        # Create user's desktop folder
-        sudo mkdir -p /home/${userid}/Desktop
-
-        # Add desktop shortcuts for all users
-        if sudo test ! -e /home/${userid}/Desktop/"KX.AS.CODE Source"; then
-            sudo ln -s ${sharedGitHome}/kx.as.code /home/${userid}/Desktop/"KX.AS.CODE Source"
-        fi
-
-        # Add admin tools folder to desktop if user has admin role
-        if [[ "${userRole}" == "admin" ]]; then
-            if sudo test ! -e /home/${userid}/Desktop/"Admin Tools"; then
-                sudo ln -s "${adminShortcutsDirectory}" /home/${userid}/Desktop/
-            fi
-        fi
-
-        # Add DevOps tools folder to desktop
-        if sudo test ! -e /home/${userid}/Desktop/"DevOps Tools"; then
-            sudo ln -s "${shortcutsDirectory}" /home/${userid}/Desktop/
-        fi
-
-        # Add Vendor Docs folder to desktop
-        if sudo test ! -e /home/${userid}/Desktop/"Vendor Docs"; then
-            sudo ln -s "${vendorDocsDirectory}" /home/${userid}/Desktop/
-        fi
-
-        # Add API Docs folder to desktop
-        if sudo test ! -e /home/${userid}/Desktop/"API Docs"; then
-            sudo ln -s "${apiDocsDirectory}" /home/${userid}/Desktop/
-        fi
-
-        # Copy all file to user
-        sudo cp -rfT ${installationWorkspace}/skel /home/${userid}
-        sudo rm -rf /home/${userid}/.cache/sessions
 
         # Set default keyboard language as per users.json
         keyboardLanguages=""
