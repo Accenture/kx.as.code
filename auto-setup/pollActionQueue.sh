@@ -405,7 +405,7 @@ for componentName in ${defaultComponentsToInstall}; do
         arrayLength=0
     fi
     # Add component to state.processed array in actionQueue.json
-    cat ${installationWorkspace}/actionQueues.json | jq '.state.processed['${arrayLength}'] |= . + '"${componentJson}"'' | tee ${installationWorkspace}/actionQueues.json.tmp
+    cat ${installationWorkspace}/actionQueues.json | jq '.state.processed['${arrayLength}'] |= . + '"${payload}"'' | tee ${installationWorkspace}/actionQueues.json.tmp
     mv ${installationWorkspace}/actionQueues.json.tmp ${installationWorkspace}/actionQueues.json
     # Remove component from installation array as added to processed array in actionQueue.json
     cat ${installationWorkspace}/actionQueues.json | jq 'del(.action_queues.install[] | select(.name=="'${componentName}'"))' | tee ${installationWorkspace}/actionQueues.json.tmp
@@ -436,12 +436,10 @@ while :; do
         elif [[ ${wipQueue} -ne 0 ]]; then
             # In case of system restart, read payload from WIP queue, rather than relying on already set variables
             payload=$(rabbitmqadmin get queue=wip_queue --format=raw_json ackmode=ack_requeue_false | jq -c -r '.[].payload')
-            if [[ -z "$componentName" ]]; then
-                export retries=$(echo ${payload} | jq -c -r '.retries')
-                export action=$(echo ${payload} | jq -c -r '.action')
-                export componentName=$(echo ${payload} | jq -c -r '.name')
-                export componentInstallationFolder=$(echo ${payload} | jq -c -r '.install_folder')
-            fi
+            export retries=$(echo ${payload} | jq -c -r '.retries')
+            export action=$(echo ${payload} | jq -c -r '.action')
+            export componentName=$(echo ${payload} | jq -c -r '.name')
+            export componentInstallationFolder=$(echo ${payload} | jq -c -r '.install_folder')
         fi
 
         # Move item from pending to completed or error queue
@@ -459,6 +457,8 @@ while :; do
                 ((retries = ${retries} + 1))
                 payload=$(echo ${payload} | jq --arg retries ${retries} '.retries=$retries')
                 rabbitmqadmin publish exchange=action_workflow routing_key=retries_queue properties="{\"delivery_mode\": 2}" payload=''${payload}''
+                cat ${installationWorkspace}/actionQueues.json | jq '.state.processed[] | select(.name=="'${componentName}'")  += {install_folder:.install_folder,"name":.name,"action":"install","retries":"'${retries}'"}' | tee ${installationWorkspace}/actionQueues.json.tmp
+                mv ${installationWorkspace}/actionQueues.json.tmp ${installationWorkspace}/actionQueues.json
                 log_warning "Previous attempt to install \"${componentName}\" did not complete succesfully. Trying again (${retries} of 3)"
             else
                 rabbitmqadmin publish exchange=action_workflow routing_key=failed_queue properties="{\"delivery_mode\": 2}" payload=''${payload}''

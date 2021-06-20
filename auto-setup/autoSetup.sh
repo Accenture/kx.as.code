@@ -553,4 +553,3 @@ elif [[ ${action} == "uninstall"   ]] || [[ ${action} == "purge"   ]]; then
 
 fi # end of action actions condition
 
-cp ${installationWorkspace}/actionQueues.json ${installationWorkspace}/actionQueues.json.previous
