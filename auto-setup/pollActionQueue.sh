@@ -385,49 +385,29 @@ done
 
 # Get first and last elements from Core install Queue
 lastCoreElementToInstall=$(cat ${installationWorkspace}/actionQueues.json | jq -r 'last(.action_queues.install[] | select(.install_folder=="core")) | .name')
+if [[ "${lastCoreElementToInstall}" == "null" ]]; then
+    lastCoreElementToInstall=$(cat ${installationWorkspace}/actionQueues.json | jq -r 'last(.state.processed[] | select(.install_folder=="core")) | .name')
+fi
 firstCoreElementToInstall=$(cat ${installationWorkspace}/actionQueues.json | jq -r 'first(.action_queues.install[] | select(.install_folder=="core")) | .name')
+if [[ "${lastCoreElementToInstall}" == "null" ]]; then
+    firstCoreElementToInstall=$(cat ${installationWorkspace}/actionQueues.json | jq -r 'first(.state.processed[] | select(.install_folder=="core")) | .name')
+fi
 count=0
 
 # Populate pending queue on first start with default core components
 defaultComponentsToInstall=$(cat ${installationWorkspace}/actionQueues.json | jq -r '.action_queues.install[].name')
 for componentName in ${defaultComponentsToInstall}; do
-    payload=$(cat ${installationWorkspace}/actionQueues.json | jq -c '.action_queues.install[] | select(.name=="'${componentName}'") | {install_folder:.install_folder,"name":.name,"action":"install"}')
+    payload=$(cat ${installationWorkspace}/actionQueues.json | jq -c '.action_queues.install[] | select(.name=="'${componentName}'") | {install_folder:.install_folder,"name":.name,"action":"install","retries":"0"}')
     rabbitmqadmin publish exchange=action_workflow routing_key=pending_queue payload=''${payload}''
-
     # Get slot number to add installed app to JSON array
     arrayLength=$(cat ${installationWorkspace}/actionQueues.json | jq -r '.state.processed[].name' | wc -l)
     if [[ -z ${arrayLength} ]]; then
         arrayLength=0
     fi
-
-    # Add component json to "processed" node in actionQueue.json
-    componentInstalledExists=$(cat ${installationWorkspace}/actionQueues.json | jq '.state.processed[] | select(.name=="'${componentName}'")')
-    if [[ -z ${componentInstalledExists} ]]; then
-        componentJson=$(cat ${installationWorkspace}/metadata.json | jq '.metadata.available.applications[] | select(.name=="'${componentName}'")')
-        arrayLength=$(cat ${installationWorkspace}/actionQueues.json | jq -r '.state.processed[].name' | wc -l)
-        if [[ -z ${arrayLength} ]]; then
-            arrayLength=0
-        fi
-        if [[ ${componentJson} == "null" ]] || [[ -z ${componentJson} ]]; then
-            log_warn "ComponentJson is null for ${componentName}"
-        else
-            cat ${installationWorkspace}/actionQueues.json | jq '.state.processed['${arrayLength}'] |= . + '"${componentJson}"'' | tee ${installationWorkspace}/actionQueues.json.tmp.2
-            if [[ ! -s ${installationWorkspace}/actionQueues.json.tmp.2 ]]; then export rc=1; fi
-                cp ${installationWorkspace}/actionQueues.json ${installationWorkspace}/actionQueues.json.previous.2
-            if [[ -s ${installationWorkspace}/actionQueues.json.tmp.2 ]]; then
-                cp ${installationWorkspace}/actionQueues.json.tmp.2 ${installationWorkspace}/actionQueues.json
-            fi
-        fi
-    fi
-
-    # Remove component from installation queue as added to processed queue in actionQueue.json
-    cat ${installationWorkspace}/actionQueues.json | jq 'del(.action_queues.install[] | select(.name=="'${componentName}'"))' | tee ${installationWorkspace}/actionQueues.json.tmp.4
-    if [[ ! -s ${installationWorkspace}/actionQueues.json.tmp.4 ]]; then export rc=1; fi
-        cp ${installationWorkspace}/actionQueues.json ${installationWorkspace}/actionQueues.json.previous.4
-    if [[ -s ${installationWorkspace}/actionQueues.json.tmp.4 ]]; then
-        cp ${installationWorkspace}/actionQueues.json.tmp.4 ${installationWorkspace}/actionQueues.json
-    fi
-
+    # Add component to state.processed array in actionQueue.json
+    cat ${installationWorkspace}/actionQueues.json | jq '.state.processed['${arrayLength}'] |= . + '"${componentJson}"'' | tee ${installationWorkspace}/actionQueues.json
+    # Remove component from installation array as added to processed array in actionQueue.json
+    cat ${installationWorkspace}/actionQueues.json | jq 'del(.action_queues.install[] | select(.name=="'${componentName}'"))' | tee ${installationWorkspace}/actionQueues.json
 done
 
 # Set tries to 0. If an install failed and the retry flag is set to true for that component in metadata.json, attempts will be made to retry up to 3 times
@@ -454,7 +434,12 @@ while :; do
         elif [[ ${wipQueue} -ne 0 ]]; then
             # In case of system restart, read payload from WIP queue, rather than relying on already set variables
             payload=$(rabbitmqadmin get queue=wip_queue --format=raw_json ackmode=ack_requeue_false | jq -c -r '.[].payload')
-            retries=$(echo ${payload} | jq -c '.retry')
+            if [[ -z "$componentName" ]]; then
+                export retries=$(echo ${payload} | jq -c -r '.retries')
+                export action=$(echo ${payload} | jq -c -r '.action')
+                export componentName=$(echo ${payload} | jq -c -r '.name')
+                export componentInstallationFolder=$(echo ${payload} | jq -c -r '.install_folder')
+            fi
         fi
 
         # Move item from pending to completed or error queue
@@ -467,11 +452,11 @@ while :; do
             fi
             retries=0
         else
-            if [[ "${retryParameter}" != "false" ]] && [[ ${retries} -lt 3 ]]; then
+            if [[ "${retriesParameter}" != "false" ]] && [[ ${retries} -lt 3 ]]; then
                 sleep 10
-                ((retries = retries + 1))
-                payload=$(echo ${payload} | jq --arg retry $retries '.retry=$retry')
-                rabbitmqadmin publish exchange=action_workflow routing_key=retry_queue properties="{\"delivery_mode\": 2}" payload=''${payload}''
+                ((retries = ${retries} + 1))
+                payload=$(echo ${payload} | jq --arg retries ${retries} '.retries=$retries')
+                rabbitmqadmin publish exchange=action_workflow routing_key=retries_queue properties="{\"delivery_mode\": 2}" payload=''${payload}''
                 log_warning "Previous attempt to install \"${componentName}\" did not complete succesfully. Trying again (${retries} of 3)"
             else
                 rabbitmqadmin publish exchange=action_workflow routing_key=failed_queue properties="{\"delivery_mode\": 2}" payload=''${payload}''
@@ -509,9 +494,10 @@ while :; do
             export retryParameter=$(cat ${componentMetadataJson} | jq -r '.retry?')
 
             # Add retry parameter to Payload
-            echo ${payload}
-            payload=$(echo ${payload} | jq -c -r --arg retry 0 '. + {retry: $retry}')
-            echo ${payload}
+            #TODO: Should not be needed any more. Remove.
+            #echo ${payload}
+            #payload=$(echo ${payload} | jq -c -r --arg retry 0 '. + {retry: $retry}')
+            #echo ${payload}
 
             # Add item to wip queue to notify install is in progress
             rabbitmqadmin publish exchange=action_workflow routing_key=wip_queue properties="{\"delivery_mode\": 2}" payload=''${payload}''
