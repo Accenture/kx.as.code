@@ -83,6 +83,9 @@ fi
 # Configure Typora to show Welcome message after login
 sudo -H -i -u ${VM_USER} sh -c "mkdir -p /home/${VM_USER}/.config/Typora/"
 
+# Install daemonizer for starting KX.AS.CODE poller as brackground service
+sudo apt-get install -y daemonize
+
 # Add Kubernetes Initialize Script to systemd
 sudo bash -c "cat <<EOF > /etc/systemd/system/kxAsCodeQueuePoller.service
 [Unit]
@@ -98,7 +101,7 @@ User=0
 Type=forking
 Environment=VM_USER=${VM_USER}
 Environment=KUBEDIR=${INSTALLATION_WORKSPACE}
-ExecStart=/bin/bash -x ${SHARED_GIT_REPOSITORIES}/kx.as.code/auto-setup/pollActionQueue.sh
+ExecStart=daemonize -p /run/kxascode.pid -o /var/log/kx.as.code.log -e /var/log/kx.as.code.err /bin/bash /usr/share/kx.as.code/git/kx.as.code/auto-setup/pollActionQueue.sh
 TimeoutSec=infinity
 Restart=on-failure
 RestartSec=60s

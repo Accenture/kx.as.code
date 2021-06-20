@@ -16,6 +16,11 @@ export adminShortcutsDirectory="${sharedKxHome}/Admin Tools"
 export vmUser=kx.hero
 export vmUserId=$(id -u ${vmUser})
 export vmPassword="$(cat ${sharedKxHome}/.config/.user.cred)"
+export retries=""
+export action=""
+export componentName=""
+export componentInstallationFolder=""
+export payload=""
 
 # Check if envhandlebars tool reachable
 envhandlebarsToolPath=$(which envhandlebars || true)
@@ -25,6 +30,9 @@ else
     echo "envhandlebars not found on path, adding it"
     export PATH=$(dirname $(find $HOME -type f -executable -name "envhandlebars"):$PATH)
 fi
+
+# Import error handler
+source "${sharedGitHome}/kx.as.code/base-vm/dependencies/shell-core/base/trap.bash"
 
 # Check profile-config.json file is present before starting script
 wait-for-file() {
@@ -419,7 +427,9 @@ rc=0
 error="false"
 
 
+
 # Get total number of messages in pending_queue
+sleep 5
 numTotalElementsToInstall=$(rabbitmqadmin list queues -f raw_json | jq -r '.[] | select(.name=="pending_queue") | .messages')
 
 # Poll pending queue and trigger actions if message is present
@@ -436,6 +446,7 @@ while :; do
         elif [[ ${wipQueue} -ne 0 ]]; then
             # In case of system restart, read payload from WIP queue, rather than relying on already set variables
             payload=$(rabbitmqadmin get queue=wip_queue --format=raw_json ackmode=ack_requeue_false | jq -c -r '.[].payload')
+            echo "Payload: ${payload}"
             export retries=$(echo ${payload} | jq -c -r '.retries')
             export action=$(echo ${payload} | jq -c -r '.action')
             export componentName=$(echo ${payload} | jq -c -r '.name')
@@ -443,7 +454,7 @@ while :; do
         fi
 
         # Move item from pending to completed or error queue
-        if [[ $logRc -eq 0 ]] && [[ $rc -eq 0 ]] && [[ "${error}" != "true" ]]; then
+        if [[ ! -f ${installationWorkspace}/current_payload.err ]]; then
             rabbitmqadmin publish exchange=action_workflow routing_key=completed_queue properties="{\"delivery_mode\": 2}" payload=''${payload}''
             log_info "The installation of \"${componentName}\" completed succesfully"
             sudo -H -i -u ${vmUser} sh -c "DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/${vmUserId}/bus notify-send -t 300000 \"KX.AS.CODE Notification\" \"${componentName} installed successfully [${count}/${numTotalElementsToInstall}]\" --icon=dialog-information"
@@ -460,11 +471,14 @@ while :; do
                 cat ${installationWorkspace}/actionQueues.json | jq '.state.processed[] | select(.name=="'${componentName}'")  += {install_folder:.install_folder,"name":.name,"action":"install","retries":"'${retries}'"}' | tee ${installationWorkspace}/actionQueues.json.tmp
                 mv ${installationWorkspace}/actionQueues.json.tmp ${installationWorkspace}/actionQueues.json
                 log_warning "Previous attempt to install \"${componentName}\" did not complete succesfully. Trying again (${retries} of 3)"
+                sudo -H -i -u ${vmUser} sh -c "DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/${vmUserId}/bus notify-send -t 300000 \"KX.AS.CODE Notification\" \"${componentName} installation error. Will try three times maximum\! [${count}/${numTotalElementsToInstall}]\" --icon=dialog-warning"
+                rm -f ${installationWorkspace}/current_payload.err
             else
                 rabbitmqadmin publish exchange=action_workflow routing_key=failed_queue properties="{\"delivery_mode\": 2}" payload=''${payload}''
                 retries=0
                 log_error "Previous attempt to install \"${componentName}\" did not complete succesfully. There will be no (further) retries"
                 sudo -H -i -u ${vmUser} sh -c "DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/${vmUserId}/bus notify-send -t 300000 \"KX.AS.CODE Notification\" \"${componentName} installation failed\! [${count}/${numTotalElementsToInstall}]\" --icon=dialog-error"
+                rm -f ${installationWorkspace}/current_payload.err
             fi
         fi
     fi
