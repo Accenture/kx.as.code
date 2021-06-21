@@ -3,7 +3,7 @@ set -euo pipefail
 
 # Set variables
 export kcRealm=${baseDomain}
-export ldapDn=$(sudo slapcat | grep dn | head -1 | cut -f2 -d' ')
+export ldapDn=$(/usr/bin/sudo slapcat | grep dn | head -1 | cut -f2 -d' ')
 export kcInternalUrl=http://localhost:8080
 export kcBinDir=/opt/jboss/keycloak/bin/
 export kcAdmCli=/opt/jboss/keycloak/bin/kcadm.sh
@@ -31,7 +31,7 @@ export kcPod=$(kubectl get pods -l 'app.kubernetes.io/name=keycloak' -n ${namesp
 cp /root/.krew/bin/kubectl-krew /usr/local/bin
 
 # Install OIDC Login and KauthProxy
-sudo kubectl krew install auth-proxy oidc-login
+/usr/bin/sudo kubectl krew install auth-proxy oidc-login
 
 # Make plugins available to all
 cp /root/.krew/bin/kubectl-* /usr/local/bin
@@ -57,5 +57,5 @@ kubectl config set-credentials oidc \
 --exec-arg=--oidc-issuer-url=https://'${componentName}'.'${baseDomain}'/auth/realms/'${kcRealm}' \
 --exec-arg=--oidc-client-id=kubernetes \
 --exec-arg=--oidc-client-secret='${clientSecret}'
-''' | sudo tee ${installationWorkspace}/client-oidc-setup.sh
-sudo chmod 755 ${installationWorkspace}/client-oidc-setup.sh
+''' | /usr/bin/sudo tee ${installationWorkspace}/client-oidc-setup.sh
+/usr/bin/sudo chmod 755 ${installationWorkspace}/client-oidc-setup.sh

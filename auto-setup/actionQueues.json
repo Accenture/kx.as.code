@@ -75,7 +75,6 @@
         "upgrade": []
     },
     "state": {
-        "installed": [],
-        "uninstalled": []
+        "processed": []
     }
 }

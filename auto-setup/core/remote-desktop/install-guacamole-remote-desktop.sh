@@ -4,12 +4,12 @@ set -euo pipefail
 SHARED_GIT_REPOSITORIES=/usr/share/kx.as.code/git
 
 # Install & configure XRDP to ensure support for multiple users
-sudo apt install -y xrdp
-sudo sed -i '/^test -x \/etc\/X11\/Xsession && exec \/etc\/X11\/Xsession.*/i \unset DBUS_SESSION_BUS_ADDRESS' /etc/xrdp/startwm.sh
-sudo sed -i '/^test -x \/etc\/X11\/Xsession && exec \/etc\/X11\/Xsession.*/i \unset XDG_RUNTIME_DIR' /etc/xrdp/startwm.sh
+/usr/bin/sudo apt install -y xrdp
+/usr/bin/sudo sed -i '/^test -x \/etc\/X11\/Xsession && exec \/etc\/X11\/Xsession.*/i \unset DBUS_SESSION_BUS_ADDRESS' /etc/xrdp/startwm.sh
+/usr/bin/sudo sed -i '/^test -x \/etc\/X11\/Xsession && exec \/etc\/X11\/Xsession.*/i \unset XDG_RUNTIME_DIR' /etc/xrdp/startwm.sh
 
 # Install Guacamole dependencies
-sudo apt install -y build-essential libcairo2-dev libjpeg62-turbo-dev libpng-dev libtool-bin libossp-uuid-dev libvncserver-dev freerdp2-dev libssh2-1-dev libtelnet-dev libwebsockets-dev libpulse-dev libvorbis-dev libwebp-dev libssl-dev libpango1.0-dev libswscale-dev libavcodec-dev libavutil-dev libavformat-dev
+/usr/bin/sudo apt install -y build-essential libcairo2-dev libjpeg62-turbo-dev libpng-dev libtool-bin libossp-uuid-dev libvncserver-dev freerdp2-dev libssh2-1-dev libtelnet-dev libwebsockets-dev libpulse-dev libvorbis-dev libwebp-dev libssl-dev libpango1.0-dev libswscale-dev libavcodec-dev libavutil-dev libavformat-dev
 
 # Download, build, install and enable Guacamole
 guacamoleVersion=1.3.0
@@ -17,66 +17,66 @@ curl -L -o guacamole-server-${guacamoleVersion}.tar.gz https://apache.org/dyn/cl
 tar -xvf guacamole-server-${guacamoleVersion}.tar.gz
 cd guacamole-server-${guacamoleVersion}
 ./configure --with-init-dir=/etc/init.d --enable-allow-freerdp-snapshots
-sudo make
-sudo make install
-sudo ldconfig
-sudo systemctl daemon-reload
+/usr/bin/sudo make
+/usr/bin/sudo make install
+/usr/bin/sudo ldconfig
+/usr/bin/sudo systemctl daemon-reload
 
 ### Install Tomact and Configure Guacamole web app
-sudo apt install -y tomcat9 tomcat9-admin tomcat9-common tomcat9-user
+ /usr/bin/sudo apt install -y tomcat9 tomcat9-admin tomcat9-common tomcat9-user
 wget https://downloads.apache.org/guacamole/${guacamoleVersion}/binary/guacamole-${guacamoleVersion}.war
 
-sudo mv guacamole-${guacamoleVersion}.war /var/lib/tomcat9/webapps/guacamole.war
-sudo sed -i 's/8080/8098/g' /var/lib/tomcat9/conf/server.xml
-sudo systemctl restart tomcat9 guacd
-sudo mkdir -p /etc/guacamole/
+/usr/bin/sudo mv guacamole-${guacamoleVersion}.war /var/lib/tomcat9/webapps/guacamole.war
+/usr/bin/sudo sed -i 's/8080/8098/g' /var/lib/tomcat9/conf/server.xml
+/usr/bin/sudo systemctl restart tomcat9 guacd
+/usr/bin/sudo mkdir -p /etc/guacamole/
 
 # Download extensions
 export extensionsToDownload="jdbc ldap totp"
 for extension in ${extensionsToDownload}; do
     curl -o guacamole-auth-${extension}-${guacamoleVersion}.tar.gz -L "https://apache.org/dyn/closer.cgi?action=download&filename=guacamole/${guacamoleVersion}/binary/guacamole-auth-${extension}-${guacamoleVersion}.tar.gz"
     tar xvzf guacamole-auth-${extension}-${guacamoleVersion}.tar.gz
-    sudo mkdir -p /etc/guacamole/extensions
+    /usr/bin/sudo mkdir -p /etc/guacamole/extensions
     if [[ ${extension} == "jdbc" ]]; then
-        sudo mv guacamole-auth-${extension}-${guacamoleVersion}/postgresql/guacamole-auth-${extension}-postgresql-${guacamoleVersion}.jar /etc/guacamole/extensions
+        /usr/bin/sudo mv guacamole-auth-${extension}-${guacamoleVersion}/postgresql/guacamole-auth-${extension}-postgresql-${guacamoleVersion}.jar /etc/guacamole/extensions
     else
-        sudo mv guacamole-auth-${extension}-${guacamoleVersion}/guacamole-auth-${extension}-${guacamoleVersion}.jar /etc/guacamole/extensions
+        /usr/bin/sudo mv guacamole-auth-${extension}-${guacamoleVersion}/guacamole-auth-${extension}-${guacamoleVersion}.jar /etc/guacamole/extensions
     fi
 done
 
 # Download Postgresql JDBC driver
-sudo mkdir -p /etc/guacamole/lib
-sudo curl -o /etc/guacamole/lib/postgresql-42.2.19.jar -L https://jdbc.postgresql.org/download/postgresql-42.2.19.jar
+/usr/bin/sudo mkdir -p /etc/guacamole/lib
+/usr/bin/sudo curl -o /etc/guacamole/lib/postgresql-42.2.19.jar -L https://jdbc.postgresql.org/download/postgresql-42.2.19.jar
 
 # Install Postgresql
-sudo apt-get install -y postgresql postgresql-contrib
+/usr/bin/sudo apt-get install -y postgresql postgresql-contrib
 
 # Start Postgresql
-sudo pg_ctlcluster 11 main start
+/usr/bin/sudo pg_ctlcluster 11 main start
 
 # Test Postgresql
-sudo -u postgres psql -c "SELECT version();"
+/usr/bin/sudo -u postgres psql -c "SELECT version();"
 
 # Create Guacamole Database and User
-sudo su - postgres -c "createdb guacamole_db"
+/usr/bin/sudo su - postgres -c "createdb guacamole_db"
 
 # Change default guacadmin/guacadmin password
 guacAdminPassword=$(pwgen -1s 32)
-echo ${guacAdminPassword} | sudo tee ${installationWorkspace}/.guac
-sudo sed -i "s/-- 'guacadmin'/-- '${guacAdminPassword}'/g" guacamole-auth-jdbc-${guacamoleVersion}/postgresql/schema/002-create-admin-user.sql
-cat guacamole-auth-jdbc-${guacamoleVersion}/postgresql/schema/*.sql | sudo su - postgres -c "psql -d guacamole_db -f -"
+echo ${guacAdminPassword} | /usr/bin/sudo tee ${installationWorkspace}/.guac
+/usr/bin/sudo sed -i "s/-- 'guacadmin'/-- '${guacAdminPassword}'/g" guacamole-auth-jdbc-${guacamoleVersion}/postgresql/schema/002-create-admin-user.sql
+cat guacamole-auth-jdbc-${guacamoleVersion}/postgresql/schema/*.sql | /usr/bin/sudo su - postgres -c "psql -d guacamole_db -f -"
 
 # Create Guacamole database users
 guacUser=$(echo $vmUser | sed 's/\./_/g')
 guacPassword=$(pwgen -1s 8)
-sudo su - postgres -c "psql -d guacamole_db -c \"CREATE USER guacamole_user WITH PASSWORD '${guacPassword}';\""
-sudo su - postgres -c 'psql -d guacamole_db -c "GRANT SELECT,INSERT,UPDATE,DELETE ON ALL TABLES IN SCHEMA public TO guacamole_user;"'
-sudo su - postgres -c 'psql -d guacamole_db -c "GRANT SELECT,USAGE ON ALL SEQUENCES IN SCHEMA public TO guacamole_user;"'
-sudo su - postgres -c "psql -d guacamole_db -c \"CREATE USER ${guacUser} WITH PASSWORD '${vmPassword}';\""
-sudo su - postgres -c "psql -d guacamole_db -c \"GRANT SELECT,INSERT,UPDATE,DELETE ON ALL TABLES IN SCHEMA public TO ${guacUser};\""
-sudo su - postgres -c "psql -d guacamole_db -c \"GRANT SELECT,USAGE ON ALL SEQUENCES IN SCHEMA public TO ${guacUser};\""
+/usr/bin/sudo su - postgres -c "psql -d guacamole_db -c \"CREATE USER guacamole_user WITH PASSWORD '${guacPassword}';\""
+/usr/bin/sudo su - postgres -c 'psql -d guacamole_db -c "GRANT SELECT,INSERT,UPDATE,DELETE ON ALL TABLES IN SCHEMA public TO guacamole_user;"'
+/usr/bin/sudo su - postgres -c 'psql -d guacamole_db -c "GRANT SELECT,USAGE ON ALL SEQUENCES IN SCHEMA public TO guacamole_user;"'
+/usr/bin/sudo su - postgres -c "psql -d guacamole_db -c \"CREATE USER ${guacUser} WITH PASSWORD '${vmPassword}';\""
+/usr/bin/sudo su - postgres -c "psql -d guacamole_db -c \"GRANT SELECT,INSERT,UPDATE,DELETE ON ALL TABLES IN SCHEMA public TO ${guacUser};\""
+/usr/bin/sudo su - postgres -c "psql -d guacamole_db -c \"GRANT SELECT,USAGE ON ALL SEQUENCES IN SCHEMA public TO ${guacUser};\""
 
-export ldapDn=$(sudo slapcat | grep dn | head -1 | cut -f2 -d' ')
+export ldapDn=$(/usr/bin/sudo slapcat | grep dn | head -1 | cut -f2 -d' ')
 
 echo '''
 guacd-hostname: localhost
@@ -123,7 +123,7 @@ postgresql-user-password-history-size: 6
 # Auto create users in PGSQL that authenticated via LDAP
 postgresql-auto-create-accounts: true
 
-''' | sudo tee /etc/guacamole/guacamole.properties
+''' | /usr/bin/sudo tee /etc/guacamole/guacamole.properties
 
 md5Password=$(echo -n ${vmPassword} | openssl md5 | cut -f2 -d' ')
 vncPassword=$(pwgen -1s 8)
@@ -146,18 +146,18 @@ echo '''
     </authorize>
 
 </user-mapping>
-''' | sudo tee /etc/guacamole/user-mapping.xml
+''' | /usr/bin/sudo tee /etc/guacamole/user-mapping.xml
 
 # Install and Configure VNC Server
 
-sudo apt -y install tigervnc-standalone-server
+/usr/bin/sudo apt -y install tigervnc-standalone-server
 
-sudo mkdir -p /home/${vmUser}/.vnc
-echo ${vncPassword} | sudo bash -c "vncpasswd -f > /home/${vmUser}/.vnc/passwd"
-sudo chown -R ${vmUser}:${vmUser} /home/${vmUser}/.vnc
-sudo chmod 0600 /home/${vmUser}/.vnc/passwd
+/usr/bin/sudo mkdir -p /home/${vmUser}/.vnc
+echo ${vncPassword} | /usr/bin/sudo bash -c "vncpasswd -f > /home/${vmUser}/.vnc/passwd"
+/usr/bin/sudo chown -R ${vmUser}:${vmUser} /home/${vmUser}/.vnc
+/usr/bin/sudo chmod 0600 /home/${vmUser}/.vnc/passwd
 
-sudo -H -i -u ${vmUser} sh -c "vncserver"
+/usr/bin/sudo -H -i -u ${vmUser} sh -c "vncserver"
 
 vmUserId=$(id -g ${vmUser})
 vmUserGroupId=$(id -u ${vmUser})
@@ -184,18 +184,18 @@ ExecStop=/usr/bin/vncserver -kill :%i
 
 [Install]
 WantedBy=multi-user.target
-''' | sudo tee /etc/systemd/system/vncserver@.service
+''' | /usr/bin/sudo tee /etc/systemd/system/vncserver@.service
 
-sudo -H -i -u ${vmUser} sh -c "vncserver -kill :1"
-sudo systemctl start vncserver@1.service
-sudo systemctl enable vncserver@1.service
-sudo systemctl status vncserver@1.service
+/usr/bin/sudo -H -i -u ${vmUser} sh -c "vncserver -kill :1"
+/usr/bin/sudo systemctl start vncserver@1.service
+/usr/bin/sudo systemctl enable vncserver@1.service
+/usr/bin/sudo systemctl status vncserver@1.service
 
 # Install NGINX as reverse proxy
-sudo apt install -y nginx
+/usr/bin/sudo apt install -y nginx
 
 # Removed default service listening on port 80
-sudo rm -f /etc/nginx/sites-enabled/default
+/usr/bin/sudo rm -f /etc/nginx/sites-enabled/default
 
 # Add NGINX configuration for Guacamole
 echo '''
@@ -224,24 +224,24 @@ server {
     }
 
 }
-''' | sudo tee /etc/nginx/sites-available/guacamole.conf
+''' | /usr/bin/sudo tee /etc/nginx/sites-available/guacamole.conf
 
 # Create shortcut to enable NGINX virtual host
 ln -s /etc/nginx/sites-available/guacamole.conf /etc/nginx/sites-enabled/guacamole.conf
 
-sudo nginx -t
-sudo systemctl restart nginx
+/usr/bin/sudo nginx -t
+/usr/bin/sudo systemctl restart nginx
 
 # Customize Guacamole
-sudo sed -i 's/"Apache Guacamole"/"KX.AS.CODE"/g' /var/lib/tomcat9/webapps/guacamole/translations/en.json
-sudo cp -f ${SHARED_GIT_REPOSITORIES}/kx.as.code/base-vm/images/guacamole/* /var/lib/tomcat9/webapps/guacamole/images/
-sudo sed -i 's/^    width: 3em;/    width: 9em;/g' /var/lib/tomcat9/webapps/guacamole/guacamole.css
-sudo sed -i 's/^    height: 3em;/    height: 9em;/g' /var/lib/tomcat9/webapps/guacamole/guacamole.css
-sudo sed -i 's/^    background-size:         3em 3em;/    background-size:         9em 9em;/g' /var/lib/tomcat9/webapps/guacamole/guacamole.css
-sudo sed -i 's/^    -moz-background-size:    3em 3em;/    -moz-background-size:    9em 9em/g' /var/lib/tomcat9/webapps/guacamole/guacamole.css
-sudo sed -i 's/^    -webkit-background-size: 3em 3em;/    -webkit-background-size: 9em 9em;/g' /var/lib/tomcat9/webapps/guacamole/guacamole.css
-sudo sed -i 's/^    -khtml-background-size:  3em 3em;/    -khtml-background-size:  9em 9em;/g' /var/lib/tomcat9/webapps/guacamole/guacamole.css
-sudo sed -i 's/width:3em;height:3em;background-size:3em 3em;-moz-background-size:3em 3em;-webkit-background-size:3em 3em;-khtml-background-size:3em 3em;/width:9em;height:9em;background-size:9em 9em;-moz-background-size:9em 9em;-webkit-background-size:9em 9em;-khtml-background-size:9em 9em;/g' /var/lib/tomcat9//webapps/guacamole/guacamole.min.css
+/usr/bin/sudo sed -i 's/"Apache Guacamole"/"KX.AS.CODE"/g' /var/lib/tomcat9/webapps/guacamole/translations/en.json
+/usr/bin/sudo cp -f ${SHARED_GIT_REPOSITORIES}/kx.as.code/base-vm/images/guacamole/* /var/lib/tomcat9/webapps/guacamole/images/
+/usr/bin/sudo sed -i 's/^    width: 3em;/    width: 9em;/g' /var/lib/tomcat9/webapps/guacamole/guacamole.css
+/usr/bin/sudo sed -i 's/^    height: 3em;/    height: 9em;/g' /var/lib/tomcat9/webapps/guacamole/guacamole.css
+/usr/bin/sudo sed -i 's/^    background-size:         3em 3em;/    background-size:         9em 9em;/g' /var/lib/tomcat9/webapps/guacamole/guacamole.css
+/usr/bin/sudo sed -i 's/^    -moz-background-size:    3em 3em;/    -moz-background-size:    9em 9em/g' /var/lib/tomcat9/webapps/guacamole/guacamole.css
+/usr/bin/sudo sed -i 's/^    -webkit-background-size: 3em 3em;/    -webkit-background-size: 9em 9em;/g' /var/lib/tomcat9/webapps/guacamole/guacamole.css
+/usr/bin/sudo sed -i 's/^    -khtml-background-size:  3em 3em;/    -khtml-background-size:  9em 9em;/g' /var/lib/tomcat9/webapps/guacamole/guacamole.css
+/usr/bin/sudo sed -i 's/width:3em;height:3em;background-size:3em 3em;-moz-background-size:3em 3em;-webkit-background-size:3em 3em;-khtml-background-size:3em 3em;/width:9em;height:9em;background-size:9em 9em;-moz-background-size:9em 9em;-webkit-background-size:9em 9em;-khtml-background-size:9em 9em;/g' /var/lib/tomcat9//webapps/guacamole/guacamole.min.css
 
 # Ensure user has rights to start X11
 sed -i 's/allowed_users=console/allowed_users=anybody/g' /etc/X11/Xwrapper.config

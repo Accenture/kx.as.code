@@ -1,13 +1,5 @@
 #!/bin/bash
-set -eu
-
-# Check if PID file already exists and ensure this script only runs once
-if [ ! -f /var/run/kxascode.pid ]; then
-    pgrep "pollActionQueue\.sh" | sudo tee /var/run/kxascode.pid
-else
-    echo "/var/run/kxascode.pid already exists. Script already running. If you are sure this is an error, remove the PID file and try again. Exiting"
-    exit
-fi
+set -euo pipefail
 
 # Define base variables
 export sharedKxHome=/usr/share/kx.as.code
@@ -24,6 +16,23 @@ export adminShortcutsDirectory="${sharedKxHome}/Admin Tools"
 export vmUser=kx.hero
 export vmUserId=$(id -u ${vmUser})
 export vmPassword="$(cat ${sharedKxHome}/.config/.user.cred)"
+export retries=""
+export action=""
+export componentName=""
+export componentInstallationFolder=""
+export payload=""
+
+# Check if envhandlebars tool reachable
+nodeToolPath=$(which node || true)
+if [ -x "$nodeToolPath" ] ; then
+    echo "node found on path $nodeToolPath"
+else
+    echo "envhandlebars not found on path, adding it"
+    export PATH=$(dirname $(find $HOME -type f -executable -name "node")):$PATH
+fi
+
+# Import error handler
+source "${sharedGitHome}/kx.as.code/base-vm/dependencies/shell-core/base/trap.bash"
 
 # Check profile-config.json file is present before starting script
 wait-for-file() {
@@ -93,14 +102,14 @@ if [[ ! -f ${installationWorkspace}/actionQueues.json ]]; then
           else .
           end
         ' | tee actionQueues_temp.json
-        sudo mv ${aqFiles[$i]} ${aqFiles[$i]}_processed
+        /usr/bin/sudo mv ${aqFiles[$i]} ${aqFiles[$i]}_processed
         done
     fi
 fi
 
 # Copy last actionQueues_temp.json file over after loop
 if [[ -f ${installationWorkspace}/actionQueues_temp.json ]]; then
-    sudo mv ${installationWorkspace}/actionQueues_temp.json ${installationWorkspace}/actionQueues.json
+    /usr/bin/sudo mv ${installationWorkspace}/actionQueues_temp.json ${installationWorkspace}/actionQueues.json
 fi
 
 # Get configs from profile-config.json
@@ -111,10 +120,9 @@ export nicList=$(nmcli device show | grep -E 'enp|ens' | grep 'GENERAL.DEVICE' |
 export ipsToExclude="10.0.2.15"   # IP addresses not to configure with static IP. For example, default Virtualbox IP 10.0.2.15
 export nicExclusions=""
 export excludeNic=""
-export 
 for nic in ${nicList}; do
     for ipToExclude in ${ipsToExclude}; do
-        ip=$(ip a s ${nic} | egrep -o 'inet [0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | cut -d' ' -f2)
+        ip=$(ip a s ${nic} | egrep -o 'inet [0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | cut -d' ' -f2 || true)
         echo ${ip}
         if [[ ${ip} == "${ipToExclude}" ]]; then
             excludeNic="true"
@@ -214,57 +222,57 @@ if [[ ! -f /usr/share/kx.as.code/.config/network_status ]]; then
 
     if  [[ ${baseIpType} == "static"   ]] || [[ ${dnsResolution} == "hybrid"   ]]; then
         # Change DNS resolution to allow wildcards for resolving locally deployed K8s services
-        echo "DNSStubListener=no" | sudo tee -a /etc/systemd/resolved.conf
-        sudo systemctl restart systemd-resolved
+        echo "DNSStubListener=no" | /usr/bin/sudo tee -a /etc/systemd/resolved.conf
+        /usr/bin/sudo systemctl restart systemd-resolved
 
         # Configue dnsmasq - /etc/resolv.conf
-        sudo rm -f /etc/resolv.conf
-        sudo echo "nameserver ${mainIpAddress}" | sudo tee /etc/resolv.conf
-        sudo sed -i 's/^#no-resolv/no-resolv/' /etc/dnsmasq.conf
-        sudo sed -i 's/^#interface=/interface='${netDevice}'/' /etc/dnsmasq.conf
-        sudo sed -i 's/^#bind-interfaces/bind-interfaces/' /etc/dnsmasq.conf
-        sudo sed -i 's/^#listen-address=/listen-address=::1,127.0.0.1,'${mainIpAddress}'/' /etc/dnsmasq.conf
+        /usr/bin/sudo rm -f /etc/resolv.conf
+        /usr/bin/sudo echo "nameserver ${mainIpAddress}" | /usr/bin/sudo tee /etc/resolv.conf
+        /usr/bin/sudo sed -i 's/^#no-resolv/no-resolv/' /etc/dnsmasq.conf
+        /usr/bin/sudo sed -i 's/^#interface=/interface='${netDevice}'/' /etc/dnsmasq.conf
+        /usr/bin/sudo sed -i 's/^#bind-interfaces/bind-interfaces/' /etc/dnsmasq.conf
+        /usr/bin/sudo sed -i 's/^#listen-address=/listen-address=::1,127.0.0.1,'${mainIpAddress}'/' /etc/dnsmasq.conf
         # Ensure dnsmasq returns system IP and not IP of loop-back device 127.0.1.1
-        sudo sed -i 's/^#no-hosts$/no-hosts/g' /etc/dnsmasq.conf
-        echo "server=8.8.8.8" | sudo tee -a /etc/dnsmasq.conf
-        echo "server=8.8.4.4" | sudo tee -a /etc/dnsmasq.conf
+        /usr/bin/sudo sed -i 's/^#no-hosts$/no-hosts/g' /etc/dnsmasq.conf
+        echo "server=8.8.8.8" | /usr/bin/sudo tee -a /etc/dnsmasq.conf
+        echo "server=8.8.4.4" | /usr/bin/sudo tee -a /etc/dnsmasq.conf
         # Configue dnsmasq - /lib/systemd/system/dnsmasq.service (bugfix so dnsmasq starts automatically)
-        sudo sed -i 's/Wants=nss-lookup.target/Wants=network-online.target/' /lib/systemd/system/dnsmasq.service
-        sudo sed -i 's/After=network.target/After=network-online.target/' /lib/systemd/system/dnsmasq.service
+        /usr/bin/sudo sed -i 's/Wants=nss-lookup.target/Wants=network-online.target/' /lib/systemd/system/dnsmasq.service
+        /usr/bin/sudo sed -i 's/After=network.target/After=network-online.target/' /lib/systemd/system/dnsmasq.service
         # Prevent DHCLIENT updating static IP
         if [[ ${dnsResolution} == "hybrid"   ]]; then
-            echo "supersede domain-name-servers ${mainIpAddress};" | sudo tee -a /etc/dhcp/dhclient.conf
+            echo "supersede domain-name-servers ${mainIpAddress};" | /usr/bin/sudo tee -a /etc/dhcp/dhclient.conf
         else
-            echo "supersede domain-name-servers ${fixedNicConfigDns1}, ${fixedNicConfigDns2};" | sudo tee -a /etc/dhcp/dhclient.conf
+            echo "supersede domain-name-servers ${fixedNicConfigDns1}, ${fixedNicConfigDns2};" | /usr/bin/sudo tee -a /etc/dhcp/dhclient.conf
         fi
         echo '''
         #!/bin/sh
         make_resolv_conf(){
             :
         }
-        ''' | sed -e 's/^[ \t]*//' | sed 's/:/    :/g' | sudo tee /etc/dhcp/dhclient-enter-hooks.d/nodnsupdate
-        sudo chmod +x /etc/dhcp/dhclient-enter-hooks.d/nodnsupdate
+        ''' | sed -e 's/^[ \t]*//' | sed 's/:/    :/g' | /usr/bin/sudo tee /etc/dhcp/dhclient-enter-hooks.d/nodnsupdate
+        /usr/bin/sudo chmod +x /etc/dhcp/dhclient-enter-hooks.d/nodnsupdate
 
         # Update DNS Entry for hosts if ip type set to static
         hostname="$(hostname)"
-        echo "address=/${hostname}/${mainIpAddress}" | sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
-        echo "address=/${hostname}.${baseDomain}/${mainIpAddress}" | sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
-        echo "address=/ldap/${mainIpAddress}" | sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
-        echo "address=/ldap.${baseDomain}/${mainIpAddress}" | sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
-        echo "address=/pgadmin/${mainIpAddress}" | sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
-        echo "address=/pgadmin.${baseDomain}/${mainIpAddress}" | sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
-        echo "address=/ldapadmin/${mainIpAddress}" | sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
-        echo "address=/ldapadmin.${baseDomain}/${mainIpAddress}" | sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
-        echo "address=/rabbitmq/${mainIpAddress}" | sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
-        echo "address=/rabbitmq.${baseDomain}/${mainIpAddress}" | sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
-        echo "address=/remote-desktop/${mainIpAddress}" | sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
-        echo "address=/remote-desktop.${baseDomain}/${mainIpAddress}" | sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
+        echo "address=/${hostname}/${mainIpAddress}" | /usr/bin/sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
+        echo "address=/${hostname}.${baseDomain}/${mainIpAddress}" | /usr/bin/sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
+        echo "address=/ldap/${mainIpAddress}" | /usr/bin/sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
+        echo "address=/ldap.${baseDomain}/${mainIpAddress}" | /usr/bin/sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
+        echo "address=/pgadmin/${mainIpAddress}" | /usr/bin/sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
+        echo "address=/pgadmin.${baseDomain}/${mainIpAddress}" | /usr/bin/sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
+        echo "address=/ldapadmin/${mainIpAddress}" | /usr/bin/sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
+        echo "address=/ldapadmin.${baseDomain}/${mainIpAddress}" | /usr/bin/sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
+        echo "address=/rabbitmq/${mainIpAddress}" | /usr/bin/sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
+        echo "address=/rabbitmq.${baseDomain}/${mainIpAddress}" | /usr/bin/sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
+        echo "address=/remote-desktop/${mainIpAddress}" | /usr/bin/sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
+        echo "address=/remote-desktop.${baseDomain}/${mainIpAddress}" | /usr/bin/sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
     fi
 
     if [[ ${baseIpType} == "static"   ]]; then
         # Configure IF to be managed/confgured by network-manager
         rm -f /etc/NetworkManager/system-connections/*
-        sudo mv /etc/network/interfaces /etc/network/interfaces.unused
+        /usr/bin/sudo mv /etc/network/interfaces /etc/network/interfaces.unused
         nmcli con add con-name "${netDevice}" ifname ${netDevice} type ethernet ip4 ${mainIpAddress}/24 gw4 ${fixedNicConfigGateway}
         nmcli con mod "${netDevice}" ipv4.method "manual"
         nmcli con mod "${netDevice}" ipv4.dns "${fixedNicConfigDns1},${fixedNicConfigDns2}"
@@ -273,8 +281,8 @@ if [[ ! -f /usr/share/kx.as.code/.config/network_status ]]; then
     fi
 
     if  [[ ${baseIpType} == "static"   ]] || [[ ${dnsResolution} == "hybrid"   ]]; then
-        sudo systemctl enable --now dnsmasq.service
-        sudo systemctl enable --now systemd-networkd-wait-online.service
+        /usr/bin/sudo systemctl enable --now dnsmasq.service
+        /usr/bin/sudo systemctl enable --now systemd-networkd-wait-online.service
     fi
 
     # Setup proxy settings if they exist
@@ -286,7 +294,7 @@ if [[ ! -f /usr/share/kx.as.code/.config/network_status ]]; then
         echo '''
         [Service]
         Environment="HTTP_PROXY='${httpProxySettingBase}'/" "HTTPS_PROXY='${httpsProxySettingBase}'/" "NO_PROXY=localhost,127.0.0.1,.'${baseDomain}'"
-        ''' | sudo tee /etc/systemd/system/docker.service.d/http-proxy.conf
+        ''' | /usr/bin/sudo tee /etc/systemd/system/docker.service.d/http-proxy.conf
 
         systemctl daemon-reload
         systemctl restart docker
@@ -303,20 +311,20 @@ if [[ ! -f /usr/share/kx.as.code/.config/network_status ]]; then
         printf -v service '"'"'%s,'"'"' '${baseip}'.{1..253}
         export no_proxy="${lan%,},${service%,},${pool%,},127.0.0.1,.'${baseDomain}'";
         export NO_PROXY=$no_proxy
-        ''' | sudo tee -a /root/.bashrc /root/.zshrc /home/${vmUser}/.bashrc /home/${vmUser}/.zshrc
+        ''' | /usr/bin/sudo tee -a /root/.bashrc /root/.zshrc /home/${vmUser}/.bashrc /home/${vmUser}/.zshrc
 
     fi
 
     # Ensure the whole network setup does not execute again on next run after reboot
-    sudo mkdir -p /usr/share/kx.as.code/.config
-    echo "KX.AS.CODE network config done" | sudo tee /usr/share/kx.as.code/.config/network_status
+    /usr/bin/sudo mkdir -p /usr/share/kx.as.code/.config
+    echo "KX.AS.CODE network config done" | /usr/bin/sudo tee /usr/share/kx.as.code/.config/network_status
 
     # Reboot if static network settings to activate them
     if  [[ ${baseIpType} == "static"   ]]; then
         # Reboot machine to ensure all network changes are active
-        sudo reboot
+        /usr/bin/sudo reboot
     else
-        sudo systemctl restart dnsmasq
+        /usr/bin/sudo systemctl restart dnsmasq
     fi
 
 fi
@@ -347,7 +355,7 @@ XKBVARIANT=""
 XKBOPTIONS=""
 
 BACKSPACE=\"guess\"
-''' | sudo tee /etc/default/keyboard
+''' | /usr/bin/sudo tee /etc/default/keyboard
 
 # Wait for RabbitMQ web service to be reachable before continuing
 timeout -s TERM 600 bash -c 'while [[ "$(curl -s -o /dev/null -L -w ''%{http_code}'' http://127.0.0.1:15672/cli/rabbitmqadmin)" != "200" ]]; do \
@@ -382,90 +390,145 @@ for actionWorkflowBinding in ${actionWorkflows}; do
     fi
 done
 
+# Get first and last elements from Core install Queue
+lastCoreElementToInstall=$(cat ${installationWorkspace}/actionQueues.json | jq -r 'last(.action_queues.install[] | select(.install_folder=="core")) | .name')
+if [[ "${lastCoreElementToInstall}" == "null" ]]; then
+    lastCoreElementToInstall=$(cat ${installationWorkspace}/actionQueues.json | jq -r 'last(.state.processed[] | select(.install_folder=="core")) | .name')
+fi
+firstCoreElementToInstall=$(cat ${installationWorkspace}/actionQueues.json | jq -r 'first(.action_queues.install[] | select(.install_folder=="core")) | .name')
+if [[ "${lastCoreElementToInstall}" == "null" ]]; then
+    firstCoreElementToInstall=$(cat ${installationWorkspace}/actionQueues.json | jq -r 'first(.state.processed[] | select(.install_folder=="core")) | .name')
+fi
+count=0
+
 # Populate pending queue on first start with default core components
 defaultComponentsToInstall=$(cat ${installationWorkspace}/actionQueues.json | jq -r '.action_queues.install[].name')
 for componentName in ${defaultComponentsToInstall}; do
-    payload=$(cat ${installationWorkspace}/actionQueues.json | jq -c '.action_queues.install[] | select(.name=="'${componentName}'") | {install_folder:.install_folder,"name":.name,"action":"install"}')
+    payload=$(cat ${installationWorkspace}/actionQueues.json | jq -c '.action_queues.install[] | select(.name=="'${componentName}'") | {install_folder:.install_folder,"name":.name,"action":"install","retries":"0"}')
+    echo "Pending payload: ${payload}"
     rabbitmqadmin publish exchange=action_workflow routing_key=pending_queue payload=''${payload}''
+    # Get slot number to add installed app to JSON array
+    arrayLength=$(cat ${installationWorkspace}/actionQueues.json | jq -r '.state.processed[].name' | wc -l)
+    if [[ -z ${arrayLength} ]]; then
+        arrayLength=0
+    fi
+    # Add component to state.processed array in actionQueue.json
+    cat ${installationWorkspace}/actionQueues.json | jq '.state.processed['${arrayLength}'] |= . + '"${payload}"'' | tee ${installationWorkspace}/actionQueues.json.tmp
+    mv ${installationWorkspace}/actionQueues.json.tmp ${installationWorkspace}/actionQueues.json
+    # Remove component from installation array as added to processed array in actionQueue.json
+    cat ${installationWorkspace}/actionQueues.json | jq 'del(.action_queues.install[] | select(.name=="'${componentName}'"))' | tee ${installationWorkspace}/actionQueues.json.tmp
+    mv ${installationWorkspace}/actionQueues.json.tmp ${installationWorkspace}/actionQueues.json
+    sleep 1
 done
 
-# Set tries to 0. If an install failed and the retry flag is set to true for that component in metadata.json, attempts will be made to retrz up to 3 times
+# Set tries to 0. If an install failed and the retry flag is set to true for that component in metadata.json, attempts will be made to retry up to 3 times
 retries=0
+logRc=0
+rc=0
 
-# Get first and last elements from Core install Queue
-lastCoreElementToInstall=$(cat ${installationWorkspace}/actionQueues.json | jq -r 'last(.action_queues.install[] | select(.install_folder=="core")) | .name')
-firstCoreElementToInstall=$(cat ${installationWorkspace}/actionQueues.json | jq -r 'first(.action_queues.install[] | select(.install_folder=="core")) | .name')
-numCoreElementsToInstall=$(cat ${installationWorkspace}/actionQueues.json | jq -r '.action_queues.install[] | .name' | wc -l)
-count=0
+# Get total number of messages in pending_queue
+sleep 5
+numTotalElementsToInstall=$(rabbitmqadmin list queues -f raw_json | jq -r '.[] | select(.name=="pending_queue") | .messages')
+
 # Poll pending queue and trigger actions if message is present
 while :; do
     wipQueue=$(rabbitmqadmin list queues name messages --format raw_json | jq -r '.[] | select(.name=="wip_queue") | .messages')
     failedQueue=$(rabbitmqadmin list queues name messages --format raw_json | jq -r '.[] | select(.name=="failed_queue") | .messages')
     retryQueue=$(rabbitmqadmin list queues name messages --format raw_json | jq -r '.[] | select(.name=="retry_queue") | .messages')
-    # If there is something in the wip or failed queue, do not schedule an installation
-    if [[ ${wipQueue} -eq 0 ]] && [[ ${failedQueue} -eq 0 ]]; then
-        # If no errors or wip, check first if there are any installation items that need to be retried, after a failure was fixed
-        payload=$(rabbitmqadmin get queue=retry_queue --format=raw_json ackmode=ack_requeue_false | jq -r '.[].payload')
-        echo "Payload for retry queue = \"${payload}\""
-        # If there were no retry items, check if there is anything in the pending queue that needs to be installed
-        if [ -z "${payload}" ]; then
-            payload=$(rabbitmqadmin get queue=pending_queue --format=raw_json ackmode=ack_requeue_false | jq -r '.[].payload')
-            echo "Payload for pending queue = \"${payload}\""
-        fi
-        # Start the installation process if an item was found in the pending or retry queue
-        if [ ! -z "${payload}" ]; then
-            # Define Variables for autoSetup.sh script
-            export action=$(echo ${payload} | jq -r '.action')
-            export componentName=$(echo ${payload} | jq -r '.name')
-            export componentInstallationFolder=$(echo ${payload} | jq -r '.install_folder')
+    pendingQueue=$(rabbitmqadmin list queues name messages --format raw_json | jq -r '.[] | select(.name=="pending_queue") | .messages')
 
-            # Define component install directory
-            export installComponentDirectory=${autoSetupHome}/${componentInstallationFolder}/${componentName}
+    if [[ ${failedQueue} -eq 0 ]]; then
 
-            # Define location of metadata JSON file for component
-            export componentMetadataJson=${installComponentDirectory}/metadata.json
+        if [[ ${wipQueue} -ne 0 ]]; then
 
-            # Get retry parameter for component
-            export retryParameter=$(cat ${componentMetadataJson} | jq -r '.retry?')
-
-            # Add item to wip queue to notify install is in progress
-            rabbitmqadmin publish exchange=action_workflow routing_key=wip_queue properties="{\"delivery_mode\": 2}" payload=''${payload}''
-
-            # Launch autoSetup.sh
-            if [[ ${componentName} == "${firstCoreElementToInstall}"   ]]; then
-                sudo -H -i -u ${vmUser} sh -c "DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/${vmUserId}/bus notify-send -t 300000 \"KX.AS.CODE Notification\" \"Initialization started. Please be patient. This could take up to 30 minutes, depending on your system size and speed of internet connection\" --icon=dialog-warning"
-            fi
-            count=$((count + 1))
-            export error=""
-            . ${autoSetupHome}/autoSetup.sh &> ${installationWorkspace}/${componentName}_${logTimestamp}.log
-            logRc=$?
-            log_info "Installation process for \"${componentName}\" returned with \$?=${logRc} and \$rc=$rc"
+            # In case of system restart, read payload from WIP queue, rather than relying on already set variables
+            payload=$(rabbitmqadmin get queue=wip_queue --format=raw_json ackmode=ack_requeue_false | jq -c -r '.[].payload')
+            echo "WIP payload: ${payload}"
+            export retries=$(echo ${payload} | jq -c -r '.retries')
+            export action=$(echo ${payload} | jq -c -r '.action')
+            export componentName=$(echo ${payload} | jq -c -r '.name')
+            export componentInstallationFolder=$(echo ${payload} | jq -c -r '.install_folder')
+            export retriesParameter=$(cat ${autoSetupHome}/${componentInstallationFolder}/${componentName}/metadata.json | jq -r '.retry?')
 
             # Move item from pending to completed or error queue
-            if [[ $logRc -eq 0 ]] && [[ $rc -eq 0 ]] && [[ "${error}" != "true" ]]; then
-                rabbitmqadmin get queue=wip_queue --format=pretty_json ackmode=ack_requeue_false | jq -r '.[].payload'
+            if [[ ! -f ${installationWorkspace}/current_payload.err ]]; then
+                echo "Completed payload: ${payload}"
                 rabbitmqadmin publish exchange=action_workflow routing_key=completed_queue properties="{\"delivery_mode\": 2}" payload=''${payload}''
                 log_info "The installation of \"${componentName}\" completed succesfully"
-                sudo -H -i -u ${vmUser} sh -c "DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/${vmUserId}/bus notify-send -t 300000 \"KX.AS.CODE Notification\" \"${componentName} installed successfully [${count}/${numCoreElementsToInstall}]\" --icon=dialog-information"
-                if [[ ${componentName} == "${lastCoreElementToInstall}"   ]]; then
-                    sudo -H -i -u ${vmUser} sh -c "DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/${vmUserId}/bus notify-send -t 300000 \"KX.AS.CODE Notification\" \"CONGRATULATIONS\! That concludes the core setup\! Your optional components will now be installed\" --icon=dialog-information"
+                /usr/bin/sudo -H -i -u ${vmUser} bash -c "DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/${vmUserId}/bus notify-send -t 300000 \"KX.AS.CODE Notification\" \"${componentName} installed successfully [${count}/${numTotalElementsToInstall}]\" --icon=dialog-information"
+                if [[ "${componentName}" == "${lastCoreElementToInstall}" ]]; then
+                    /usr/bin/sudo -H -i -u ${vmUser} bash -c "DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/${vmUserId}/bus notify-send -t 300000 \"KX.AS.CODE Notification\" \"CONGRATULATIONS\! That concludes the core setup\! Your optional components will now be installed\" --icon=dialog-information"
+                    echo "${componentName} = ${lastCoreElementToInstall}"  
                 fi
                 retries=0
             else
-                if [[ ${retryParameter} == "true"   ]] && [[ ${retries} -lt 3 ]]; then
+                if [[ "${retriesParameter}" != "false" ]] && [[ ${retries} -lt 3 ]]; then
                     sleep 10
-                    rabbitmqadmin get queue=wip_queue --format=pretty_json ackmode=ack_requeue_false | jq -r '.[].payload'
+                    ((retries = ${retries} + 1))
+                    payload=$(echo ${payload} | jq --arg retries ${retries} -c -r '.retries=$retries')
+                    echo "Retry payload: ${payload}"
                     rabbitmqadmin publish exchange=action_workflow routing_key=retry_queue properties="{\"delivery_mode\": 2}" payload=''${payload}''
-                    ((retries = retries + 1))
-                    log_warning "Previous attempt to install \"${componentName}\" did not complete succesfully. Trying again (${retries} of 3)"
+                    cat ${installationWorkspace}/actionQueues.json | jq -c -r '(.state.processed[] | select(.name=="'${componentName}'").retries) = "'${retries}'"' | tee ${installationWorkspace}/actionQueues.json.tmp
+                    mv ${installationWorkspace}/actionQueues.json.tmp ${installationWorkspace}/actionQueues.json
+                    log_warn "Previous attempt to install \"${componentName}\" did not complete succesfully. Trying again (${retries} of 3)"
+                    /usr/bin/sudo -H -i -u ${vmUser} bash -c "DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/${vmUserId}/bus notify-send -t 300000 \"KX.AS.CODE Notification\" \"${componentName} installation error. Will try three times maximum\! [${count}/${numTotalElementsToInstall}]\" --icon=dialog-warning"
+                    rm -f ${installationWorkspace}/current_payload.err
                 else
-                    rabbitmqadmin get queue=wip_queue --format=pretty_json ackmode=ack_requeue_false | jq -r '.[].payload'
+                    payload=$(echo ${payload} | jq -c -r '(.retries)="0"' | jq -c -r '. += {"failed_retries":"'${retries}'"}')
+                    echo "Failed payload: ${payload}"
                     rabbitmqadmin publish exchange=action_workflow routing_key=failed_queue properties="{\"delivery_mode\": 2}" payload=''${payload}''
                     retries=0
                     log_error "Previous attempt to install \"${componentName}\" did not complete succesfully. There will be no (further) retries"
-                    sudo -H -i -u ${vmUser} sh -c "DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/${vmUserId}/bus notify-send -t 300000 \"KX.AS.CODE Notification\" \"${componentName} installation failed\! [${count}/${numCoreElementsToInstall}]\" --icon=dialog-error"
+                    /usr/bin/sudo -H -i -u ${vmUser} bash -c "DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/${vmUserId}/bus notify-send -t 300000 \"KX.AS.CODE Notification\" \"${componentName} installation failed\! [${count}/${numTotalElementsToInstall}]\" --icon=dialog-error"
+                    rm -f ${installationWorkspace}/current_payload.err
                 fi
             fi
+        fi
+
+        # If there is something in the wip or failed queue, do not schedule an installation
+        if [[ ${wipQueue} -eq 0 ]] && [[ ${failedQueue} -eq 0 ]]; then
+            if [[ ${retryQueue} -ne 0 ]]; then
+                # If no errors or wip, check first if there are any installation items that need to be retried, after a failure was fixed
+                payload=$(rabbitmqadmin get queue=retry_queue --format=raw_json ackmode=ack_requeue_false | jq -c -r '.[].payload')
+                echo "Payload for retry queue = \"${payload}\""
+            elif [[ ${pendingQueue} -ne 0 ]]; then
+            # If there were no retry items, check if there is anything in the pending queue that needs to be installed
+                payload=$(rabbitmqadmin get queue=pending_queue --format=raw_json ackmode=ack_requeue_false | jq -c -r '.[].payload')
+                echo "Payload for pending queue = \"${payload}\""
+            else
+                payload=""
+            fi
+            # Start the installation process if an item was found in the pending or retry queue
+            if [ -n "${payload}" ]; then
+                # Define Variables for autoSetup.sh script
+                export action=$(echo ${payload} | jq -r '.action')
+                export componentName=$(echo ${payload} | jq -r '.name')
+                export componentInstallationFolder=$(echo ${payload} | jq -r '.install_folder')
+
+                # Define component install directory
+                export installComponentDirectory=${autoSetupHome}/${componentInstallationFolder}/${componentName}
+
+                # Define location of metadata JSON file for component
+                export componentMetadataJson=${installComponentDirectory}/metadata.json
+
+                # Get retry parameter for component
+                export retryParameter=$(cat ${componentMetadataJson} | jq -r '.retry?')
+
+                # Add item to wip queue to notify install is in progress
+                rabbitmqadmin publish exchange=action_workflow routing_key=wip_queue properties="{\"delivery_mode\": 2}" payload=''${payload}''
+
+                # Launch autoSetup.sh
+                if [[ "${componentName}" == "${firstCoreElementToInstall}" ]]; then
+                    /usr/bin/sudo -H -i -u ${vmUser} bash -c "DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/${vmUserId}/bus notify-send -t 300000 \"KX.AS.CODE Notification\" \"Initialization started. Please be patient. This could take up to 30 minutes, depending on your system size and speed of internet connection\" --icon=dialog-warning"
+                    echo "${componentName} = ${firstCoreElementToInstall}"
+                fi
+                count=$((count + 1))
+                export error=""
+                . ${autoSetupHome}/autoSetup.sh &> ${installationWorkspace}/${componentName}_${logTimestamp}.log
+                logRc=$?
+                log_info "Installation process for \"${componentName}\" returned with \$?=${logRc} and \$rc=$rc"
+            fi
+            sleep 5
         fi
         sleep 5
     fi

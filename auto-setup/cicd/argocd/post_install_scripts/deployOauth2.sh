@@ -59,18 +59,18 @@ metadata:
 type: kubernetes.io/tls
 stringData:
   ca.crt: |-
-    $(sudo cat ${installationWorkspace}/kx-certs/ca.crt | sed '2,30s/^/    /')
+    $(/usr/bin/sudo cat ${installationWorkspace}/kx-certs/ca.crt | sed '2,30s/^/    /')
   tls.crt: |-
-    $(sudo cat ${installationWorkspace}/kx-certs/tls.crt | sed '2,30s/^/    /')
+    $(/usr/bin/sudo cat ${installationWorkspace}/kx-certs/tls.crt | sed '2,30s/^/    /')
   tls.key: |-
-    $(sudo cat ${installationWorkspace}/kx-certs/tls.key | sed '2,30s/^/    /')
-""" | sudo tee  ${installationWorkspace}/argocd-repo-server-tls.yaml
+    $(/usr/bin/sudo cat ${installationWorkspace}/kx-certs/tls.key | sed '2,30s/^/    /')
+""" | /usr/bin/sudo tee  ${installationWorkspace}/argocd-repo-server-tls.yaml
 kubectl apply -f ${installationWorkspace}/argocd-repo-server-tls.yaml
 
 # patch the argocd-secret with keycloak client id and add tls certs to avoid self signed certs trust issue in argocd
 export encodedClientID=$(echo -n "$clientSecret" | base64)
-export encodedTlsCrt=$(sudo cat $installationWorkspace/kx-certs/tls.crt | base64 | tr -d '\n\r')
-export encodedTlsKey=$(sudo cat $installationWorkspace/kx-certs/tls.key | base64 | tr -d '\n\r')
+export encodedTlsCrt=$(/usr/bin/sudo cat $installationWorkspace/kx-certs/tls.crt | base64 | tr -d '\n\r')
+export encodedTlsKey=$(/usr/bin/sudo cat $installationWorkspace/kx-certs/tls.key | base64 | tr -d '\n\r')
 kubectl patch secret argocd-secret -n argocd -p='{"data":{"oidc.keycloak.clientSecret": "'$encodedClientID'", "tls.crt": "'$encodedTlsCrt'", "tls.key": "'$encodedTlsKey'"}}'
 
 # apply sso configured configmap
@@ -95,7 +95,7 @@ data:
     clientId: argocd
     clientSecret: \$oidc.keycloak.clientSecret
     requestedScopes: ['openid', 'profile', 'email', 'argocd']
-""" | sudo tee ${installationWorkspace}/argocd-cm-patch.yaml
+""" | /usr/bin/sudo tee ${installationWorkspace}/argocd-cm-patch.yaml
 kubectl apply -f ${installationWorkspace}/argocd-cm-patch.yaml
 
 # apply rbac sso configured conifgmap
@@ -114,5 +114,5 @@ metadata:
 data:
   policy.csv: |
     g, admins, role:admin
-""" | sudo tee ${installationWorkspace}/argocd-rbac-cm-patch.yaml
+""" | /usr/bin/sudo tee ${installationWorkspace}/argocd-rbac-cm-patch.yaml
 kubectl apply -f ${installationWorkspace}/argocd-rbac-cm-patch.yaml

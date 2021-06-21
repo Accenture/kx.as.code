@@ -27,5 +27,5 @@ cd /usr/share/kx.as.code/git/kx.as.code_techradar/kubernetes
 cd -
 
 # Copy desktop icons to skel directory for future users
-sudo cp /home/${vmUser}/Desktop/KX.AS.CODE-Docs.desktop ${skelDirectory}/Desktop
-sudo cp /home/${vmUser}/Desktop/Tech-Radar.desktop ${skelDirectory}/Desktop
+/usr/bin/sudo cp /home/${vmUser}/Desktop/KX.AS.CODE-Docs.desktop ${skelDirectory}/Desktop
+/usr/bin/sudo cp /home/${vmUser}/Desktop/Tech-Radar.desktop ${skelDirectory}/Desktop

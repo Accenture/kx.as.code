@@ -4,11 +4,11 @@ set -euo pipefail
 # Download LDAP Account Manager
 lamVersion=7.4-1
 curl -o ldap-account-manager_${lamVersion}_all.deb -L http://prdownloads.sourceforge.net/lam/ldap-account-manager_${lamVersion}_all.deb\?download
-sudo apt-get install -y ./ldap-account-manager_${lamVersion}_all.deb
+/usr/bin/sudo apt-get install -y ./ldap-account-manager_${lamVersion}_all.deb
 apt-get --fix-broken install -y
 
 # Install PHP FPM
-sudo apt install -y nginx php-fpm
+/usr/bin/sudo apt install -y nginx php-fpm
 
 # Configure NGINX
 echo '''
@@ -27,7 +27,7 @@ server {
 
         include /etc/ldap-account-manager/nginx.conf;
 }
-''' | sudo tee /etc/nginx/sites-available/ldap-manager.conf
+''' | /usr/bin/sudo tee /etc/nginx/sites-available/ldap-manager.conf
 
 # Get PHP versions
 installedPhpVersion=$(php --version | head -n 1 | cut -d " " -f 2 | cut -c 1-3)
@@ -50,4 +50,4 @@ sed -i 's/^loginSearchSuffix: .*$/loginSearchSuffix: '${ldapDn}'/' /var/lib/ldap
 sed -i 's/^loginSearchDN: .*$/loginSearchDN: cn=admin,'${ldapDn}'/' /var/lib/ldap-account-manager/config/lam.conf
 
 # Reload NGINX
-sudo service nginx restart
+/usr/bin/sudo service nginx restart

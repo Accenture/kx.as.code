@@ -32,7 +32,7 @@ if [[ -z ${kxRobotAccount} ]]; then
     "name": "kx-cicd-user",
     "expires_at": -1,
     "description": "KX.AS.CODE CICD User"
-  }' | sudo tee /usr/share/kx.as.code/.config/.kx-harbor-robot.cred
+  }' | /usr/bin/sudo tee /usr/share/kx.as.code/.config/.kx-harbor-robot.cred
 else
     log_info "Harbor robot account already exists for KX.AS.CODE project. Skipping creation"
 fi
@@ -62,7 +62,7 @@ if [[ -z ${devopsRobotAccount} ]]; then
   "name": "devops-cicd-user",
   "expires_at": -1,
   "description": "DEVOPS CICD User"
-}' | sudo tee /usr/share/kx.as.code/.config/.devops-harbor-robot.cred
+}' | /usr/bin/sudo tee /usr/share/kx.as.code/.config/.devops-harbor-robot.cred
 else
     log_info "Harbor robot account already exists for DEVOPS project. Skipping creation"
 fi

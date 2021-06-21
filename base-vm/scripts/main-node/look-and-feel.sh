@@ -26,3 +26,11 @@ sudo cp -r ${INSTALLATION_WORKSPACE}/theme/sddm/chili-0.1.5 /usr/share/sddm/them
 sudo mv /usr/share/sddm/themes/chili-0.1.5 /usr/share/sddm/themes/chili
 sudo update-alternatives --install /usr/share/sddm/themes/debian-theme sddm-debian-theme /usr/share/sddm/themes/chili 50
 update-alternatives --query sddm-debian-theme
+
+# Install fonts for Powerlevel10k and general look and feel
+wget https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Regular.ttf
+wget https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Bold.ttf
+wget https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Italic.ttf
+wget https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Bold%20Italic.ttf
+sudo mv *.ttf /usr/share/fonts/truetype
+sudo fc-cache -vf /usr/share/fonts/
