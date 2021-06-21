@@ -117,8 +117,8 @@ sudo bash -c "source /root/.nvm/nvm.sh && npm install -g envhandlebars"
 sudo cp -r /root/.nvm /home/${VM_USER}
 sudo chown -R ${VM_USER}:${VM_USER} /home/${VM_USER}
 
-echo '''# Check if envhandlebars tool reachable
-envhandlebarsToolPath=$(which envhandlebars || true)
-if [ -z "$envhandlebarsToolPath" ] ; then
-    export PATH=$(dirname $(find $HOME -type f -executable -name "envhandlebars")):$PATH
+echo '''# Check if node tool reachable
+nodeToolPath=$(which node || true)
+if [ -z "$nodeToolPath" ] ; then
+    export PATH=$(dirname $(find $HOME -type f -executable -name "node")):$PATH
 fi''' | sudo tee -a /home/${VM_USER}/.bashrc /home/${VM_USER}/.zshrc /root/.bashrc /root/.zshrc

@@ -4,7 +4,7 @@ set -euo pipefail
 skelDirectory=/usr/share/kx.as.code/skel
 
 # Install NGINX
-sudo apt-get install -y nginx
+/usr/bin/sudo apt-get install -y nginx
 
 # Install NGINX virtual host for RabbitMQ
 echo '''
@@ -25,7 +25,7 @@ server {
                     proxy_pass http://127.0.0.1:15672;
         }
 }
-''' | sudo tee /etc/nginx/sites-available/rabbitmq.conf
+''' | /usr/bin/sudo tee /etc/nginx/sites-available/rabbitmq.conf
 
 # Create shortcut to enable NGINX virtual host
 if [[ ! -f /etc/nginx/sites-enabled/rabbitmq.conf ]]; then
@@ -33,10 +33,10 @@ if [[ ! -f /etc/nginx/sites-enabled/rabbitmq.conf ]]; then
 fi
 
 # Remove default virtual host using port 80
-sudo rm -f /etc/nginx/sites-enabled/default
+/usr/bin/sudo rm -f /etc/nginx/sites-enabled/default
 
 # Restart NGINX so new virtual host is loaded
-sudo systemctl restart nginx
+/usr/bin/sudo systemctl restart nginx
 
 # Overwrite existing non-SSL Desktop Shortcut
 echo '''
@@ -53,7 +53,7 @@ Type=Application
 Categories=Development
 MimeType=text/html;text/xml;application/xhtml_xml;image/webp;x-scheme-handler/http;x-scheme-handler/https;x-scheme-handler/ftp;
 Actions=new-window;new-private-window;
-''' | sudo tee "${adminShortcutsDirectory}/RabbitMQ.desktop"
+''' | /usr/bin/sudo tee "${adminShortcutsDirectory}/RabbitMQ.desktop"
 
 # Give *.desktop files execute permissions
-sudo chmod 755 "${adminShortcutsDirectory}/RabbitMQ.desktop"
+/usr/bin/sudo chmod 755 "${adminShortcutsDirectory}/RabbitMQ.desktop"

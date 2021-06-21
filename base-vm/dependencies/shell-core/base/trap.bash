@@ -422,7 +422,9 @@ function exit_handler ()
 
     msgerr bold red "Exiting!"
     msgerr white "Caught exception. Exporting error state for further handling in KX.AS.CODE scripts"
-    echo "${payload}" | tee ${installationWorkspace}/current_payload.err
+    if [[ -n ${payload} ]]; then
+        echo "${payload}" | tee ${installationWorkspace}/current_payload.err
+    fi
     exit "$error_code"
 }
 

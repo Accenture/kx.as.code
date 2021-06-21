@@ -7,7 +7,7 @@ if [[ -z ${grafanaApplicationId} ]]; then
     for i in {1..5}; do
         curl -s --request POST --header "PRIVATE-TOKEN: ${personalAccessToken}" \
             --data "name=Grafana&redirect_uri=https://${componentName}.${baseDomain}/login/gitlab&scopes=read_user" \
-            "${gitUrl}/api/v4/applications" | sudo tee ${installationWorkspace}/grafana_gitlab_integration.json
+            "${gitUrl}/api/v4/applications" | /usr/bin/sudo tee ${installationWorkspace}/grafana_gitlab_integration.json
         export grafanaApplicationId=$(curl -s --header "Private-Token: ${personalAccessToken}" ${gitUrl}/api/v4/applications | jq '.[] | select(.application_name=="Grafana") | .id')
         if [[ -n ${grafanaApplicationId} ]]; then break; else
             echo "Grafana application was not created in Gitlab. Trying again ($i of 5)"

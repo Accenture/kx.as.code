@@ -7,14 +7,14 @@ export glusterFsDiskSize=$(cat ${installationWorkspace}/profile-config.json | jq
 # Install NVME CLI if needed, for example, for AWS
 nvme_cli_needed=$(df -h | grep "nvme" || true)
 if [[ -n ${nvme_cli_needed} ]]; then
-    sudo apt install -y nvme-cli lvm2
+    /usr/bin/sudo apt install -y nvme-cli lvm2
 fi
 
 # Determine Drive C (GlusterFS) - Relevant for KX-Main only
 driveC=$(lsblk -o NAME,FSTYPE,SIZE -dsn -J | jq -r '.[] | .[] | select(.fstype==null) | select(.size=="'${glusterFsDiskSize}'G") | .name' || true)
 formatted=""
 if [[ ! -f /usr/share/kx.as.code/.config/driveC ]]; then
-    echo "${driveC}" | sudo tee /usr/share/kx.as.code/.config/driveC
+    echo "${driveC}" | /usr/bin/sudo tee /usr/share/kx.as.code/.config/driveC
     cat /usr/share/kx.as.code/.config/driveC
 else
     driveC=$(cat /usr/share/kx.as.code/.config/driveC)
@@ -22,28 +22,28 @@ else
 fi
 
 # Update Debian repositories as default is old
-wget -O - https://download.gluster.org/pub/gluster/glusterfs/8/rsa.pub | sudo apt-key add -
-echo deb [arch=amd64] https://download.gluster.org/pub/gluster/glusterfs/8/LATEST/Debian/buster/amd64/apt buster main | sudo tee /etc/apt/sources.list.d/gluster.list
-sudo apt update
-sudo apt install -y glusterfs-server
-sudo sudo systemctl enable --now glusterd
+wget -O - https://download.gluster.org/pub/gluster/glusterfs/8/rsa.pub | /usr/bin/sudo apt-key add -
+echo deb [arch=amd64] https://download.gluster.org/pub/gluster/glusterfs/8/LATEST/Debian/buster/amd64/apt buster main | /usr/bin/sudo tee /etc/apt/sources.list.d/gluster.list
+/usr/bin/sudo apt update
+/usr/bin/sudo apt install -y glusterfs-server
+/usr/bin/sudo /usr/bin/sudo systemctl enable --now glusterd
 
 # Install Heketi for automatically provisioning Kubernetes volumes
 #wget -O - $(curl https://api.github.com/repos/heketi/heketi/releases/latest | jq -r '.assets[] | select(.browser_download_url | contains("client") | not) | .browser_download_url | select(. | contains("'$(dpkg --print-architecture)'"))') \
-#| sudo tar xvzf - \
+#| /usr/bin/sudo tar xvzf - \
 # Hard coding Heketi version 10.2.0, as 10.3.0 breaks with Debian Buster due to outdated GLIBC.
 #TODO - Upgrade again once issue fixed - https://github.com/heketi/heketi/issues/1848
 heketiVersion=10.2.0
-wget -O - https://github.com/heketi/heketi/releases/download/v${heketiVersion}/heketi-v${heketiVersion}.linux.amd64.tar.gz | sudo tar xvzf - &&
-    sudo cp -f heketi/{heketi,heketi-cli} /usr/local/bin
+wget -O - https://github.com/heketi/heketi/releases/download/v${heketiVersion}/heketi-v${heketiVersion}.linux.amd64.tar.gz | /usr/bin/sudo tar xvzf - &&
+    /usr/bin/sudo cp -f heketi/{heketi,heketi-cli} /usr/local/bin
 
 # Add Heketi user and group
-sudo groupadd --system heketi || echo "Group heketi already exists"
-sudo useradd -s /usr/sbin/nologin --system -g heketi heketi || echo "User heketi already exists"
+/usr/bin/sudo groupadd --system heketi || echo "Group heketi already exists"
+/usr/bin/sudo useradd -s /usr/sbin/nologin --system -g heketi heketi || echo "User heketi already exists"
 
 # Make needed Heketi directories
-sudo mkdir -p /etc/heketi /var/log/heketi /var/lib/heketi
-sudo chown -R heketi:heketi /etc/heketi /var/log/heketi /var/lib/heketi
+/usr/bin/sudo mkdir -p /etc/heketi /var/log/heketi /var/lib/heketi
+/usr/bin/sudo chown -R heketi:heketi /etc/heketi /var/log/heketi /var/lib/heketi
 
 # Generate random passwords for Heketi
 if [ ! -f ${installationWorkspace}/heketi_creds.sh ]; then
@@ -56,7 +56,7 @@ else
 fi
 
 # Create base Heketi configuration file
-sudo bash -c 'cat <<EOF > /etc/heketi/heketi.json
+/usr/bin/sudo bash -c 'cat <<EOF > /etc/heketi/heketi.json
 {
   "_port_comment": "Heketi Server Port Number",
   "port": "8080",
@@ -155,26 +155,26 @@ EOF'
 # TODO - Update: ssh-keygen -m PEM -t rsa -b 4096 -q -f /etc/heketi/heketi_key -N ''
 
 # Generate Heketi SSH Key if it does not already exist
-if sudo test ! -f /etc/heketi/heketi_key; then
-    yes | sudo -u heketi ssh-keygen -f ssh-keygen -m PEM -t rsa -b 4096 -q -f /etc/heketi/heketi_key -N '' || true
-    sudo chown -R heketi:heketi /etc/heketi
+if /usr/bin/sudo test ! -f /etc/heketi/heketi_key; then
+    yes | /usr/bin/sudo -u heketi ssh-keygen -f ssh-keygen -m PEM -t rsa -b 4096 -q -f /etc/heketi/heketi_key -N '' || true
+    /usr/bin/sudo chown -R heketi:heketi /etc/heketi
 fi
 
 # Add Heketi to sudoers file if not there
-if [ -z "$(sudo grep "heketi" /etc/sudoers || true)" ]; then
-    sudo bash -c 'echo "heketi        ALL=(ALL)       NOPASSWD: ALL"' | sudo tee -a /etc/sudoers
+if [ -z "$(/usr/bin/sudo grep "heketi" /etc/sudoers || true)" ]; then
+    /usr/bin/sudo bash -c 'echo "heketi        ALL=(ALL)       NOPASSWD: ALL"' | /usr/bin/sudo tee -a /etc/sudoers
 fi
 
 # Add Heketi public key to authorized hosts
-if [ -z "$(sudo grep "heketi@kx-main" /root/.ssh/authorized_keys || true)" ]; then
-    sudo mkdir -p /root/.ssh
-    sudo chmod 700 /root/.ssh
-    sudo cat /etc/heketi/heketi_key.pub | sudo tee -a /root/.ssh/authorized_keys
-    sudo chmod 600 /root/.ssh/authorized_keys
+if [ -z "$(/usr/bin/sudo grep "heketi@kx-main" /root/.ssh/authorized_keys || true)" ]; then
+    /usr/bin/sudo mkdir -p /root/.ssh
+    /usr/bin/sudo chmod 700 /root/.ssh
+    /usr/bin/sudo cat /etc/heketi/heketi_key.pub | /usr/bin/sudo tee -a /root/.ssh/authorized_keys
+    /usr/bin/sudo chmod 600 /root/.ssh/authorized_keys
 fi
 
 # Create Heketi service
-sudo bash -c 'cat <<EOF > /etc/systemd/system/heketi.service
+/usr/bin/sudo bash -c 'cat <<EOF > /etc/systemd/system/heketi.service
 [Unit]
 Description=Heketi Server
 
@@ -192,15 +192,15 @@ StandardError=syslog
 WantedBy=multi-user.target
 EOF'
 
-sudo wget -O /etc/heketi/heketi.env https://raw.githubusercontent.com/heketi/heketi/master/extras/systemd/heketi.env
-sudo chown -R heketi:heketi /etc/heketi /var/lib/heketi /var/log/heketi
+/usr/bin/sudo wget -O /etc/heketi/heketi.env https://raw.githubusercontent.com/heketi/heketi/master/extras/systemd/heketi.env
+/usr/bin/sudo chown -R heketi:heketi /etc/heketi /var/lib/heketi /var/log/heketi
 
 # Enable and start Heketi service
-sudo systemctl daemon-reload
-sudo systemctl enable --now heketi
+/usr/bin/sudo systemctl daemon-reload
+/usr/bin/sudo systemctl enable --now heketi
 
 # Create Heketi topology configuration file with VirtualBox mounted dedicated 2nd drive /dev/${driveC}
-sudo bash -c 'cat <<EOF > /etc/heketi/topology.json
+/usr/bin/sudo bash -c 'cat <<EOF > /etc/heketi/topology.json
 
 {
   "clusters": [
@@ -269,12 +269,12 @@ if [ ! -f ${installationWorkspace}/heketi_creds.sh ]; then
     echo "export HEKETI_CLI_KEY=\"${adminPassword}\"" >> /home/${vmUser}/.bashrc
 
     # Add heketi cluster details to bashrc and zshrc for heketi-cli (root)
-    echo -e "\nexport HEKETI_CLI_SERVER=http://${mainIpAddress}:8080" | sudo tee -a /root/.zshrc
-    echo "export HEKETI_CLI_USER=admin" | sudo tee -a /root/.zshrc
-    echo "export HEKETI_CLI_KEY=\"${adminPassword}\"" | sudo tee -a /root/.zshrc
-    echo -e "\nexport HEKETI_CLI_SERVER=http://${mainIpAddress}:8080" | sudo tee -a /root/.bashrc
-    echo "export HEKETI_CLI_USER=admin" | sudo tee -a /root/.bashrc
-    echo "export HEKETI_CLI_KEY=\"${adminPassword}\"" | sudo tee -a /root/.bashrc
+    echo -e "\nexport HEKETI_CLI_SERVER=http://${mainIpAddress}:8080" | /usr/bin/sudo tee -a /root/.zshrc
+    echo "export HEKETI_CLI_USER=admin" | /usr/bin/sudo tee -a /root/.zshrc
+    echo "export HEKETI_CLI_KEY=\"${adminPassword}\"" | /usr/bin/sudo tee -a /root/.zshrc
+    echo -e "\nexport HEKETI_CLI_SERVER=http://${mainIpAddress}:8080" | /usr/bin/sudo tee -a /root/.bashrc
+    echo "export HEKETI_CLI_USER=admin" | /usr/bin/sudo tee -a /root/.bashrc
+    echo "export HEKETI_CLI_KEY=\"${adminPassword}\"" | /usr/bin/sudo tee -a /root/.bashrc
 
     # Create credential file in case this script needs to rerun
     echo '#!/bin/bash' > ${installationWorkspace}/heketi_creds.sh

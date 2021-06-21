@@ -3,7 +3,7 @@ set -euo pipefail
 
 # Set variables
 export kcRealm=${baseDomain}
-export ldapDn=$(sudo slapcat | grep dn | head -1 | cut -f2 -d' ')
+export ldapDn=$(/usr/bin/sudo slapcat | grep dn | head -1 | cut -f2 -d' ')
 export kcInternalUrl=http://localhost:8080
 export kcBinDir=/opt/jboss/keycloak/bin/
 export kcAdmCli=/opt/jboss/keycloak/bin/kcadm.sh
@@ -37,7 +37,7 @@ if [[ ! $(kubectl -n ${namespace} exec ${kcPod} --container ${kcContainer} -- ${
         ${kcAdmCli} create realms -s realm=${kcRealm} -s enabled=true -o
 else
     # Export current realm setup
-    kubectl -n ${namespace} exec ${kcPod} --container ${kcContainer} -- ${kcAdmCli} get realms | jq '.[] | select(.realm=="'${kcRealm}'")' | sudo tee ${installationWorkspace}/keycloak_realm_${kcRealm}.json
+    kubectl -n ${namespace} exec ${kcPod} --container ${kcContainer} -- ${kcAdmCli} get realms | jq '.[] | select(.realm=="'${kcRealm}'")' | /usr/bin/sudo tee ${installationWorkspace}/keycloak_realm_${kcRealm}.json
 fi
 
 # Create Admin User in KX.AS.CODE Realm

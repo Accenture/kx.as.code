@@ -7,9 +7,9 @@ kubectl get secret kx.as.code-wildcard-cert -n ${namespace} -o json | jq -r '.me
 
 # Check Self-Signed TLS certificate is valid
 certsCheckDir="${installationWorkspace}/certs-check-temp"
-sudo mkdir -p ${certsCheckDir}
-sudo chown -R ${vmUser}:${vmUser} ${certsCheckDir}
+/usr/bin/sudo mkdir -p ${certsCheckDir}
+/usr/bin/sudo chown -R ${vmUser}:${vmUser} ${certsCheckDir}
 kubectl get secret kx.as.code-wildcard-cert -n ${namespace} -o jsonpath="{.data.tls\.crt}" | base64 -d > ${certsCheckDir}/tls.crt
 kubectl get secret kx.as.code-wildcard-cert -n ${namespace} -o jsonpath="{.data.tls\.key}" | base64 -d > ${certsCheckDir}/tls.key
 kubectl get secret kx.as.code-wildcard-cert -n ${namespace} -o jsonpath="{.data.ca\.crt}" | base64 -d > ${certsCheckDir}/ca.crt
-sudo -H -i -u ${vmUser} sh -c "openssl x509 -in ${certsCheckDir}/tls.crt -text -noout"
+/usr/bin/sudo -H -i -u ${vmUser} bash -c "openssl x509 -in ${certsCheckDir}/tls.crt -text -noout"

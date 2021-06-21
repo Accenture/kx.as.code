@@ -44,7 +44,7 @@ chmod 755 /home/${vmUser}/Desktop/*.desktop
 chown ${vmUser}:${vmUser} /home/${vmUser}/Desktop/*.desktop
 
 # Copy IAM desktop icon to skel directory for future users
-sudo cp /home/${vmUser}/Desktop/Kubernetes-Dashboard-OIDC.desktop ${skelDirectory}/Desktop
+/usr/bin/sudo cp /home/${vmUser}/Desktop/Kubernetes-Dashboard-OIDC.desktop ${skelDirectory}/Desktop
 
 # Create Get Admin Token Script
 cat << EOF > /usr/share/kx.as.code/getK8sClusterAdminToken.sh
