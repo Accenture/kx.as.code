@@ -22,7 +22,7 @@ export installComponentDirectory=${autoSetupHome}/${componentInstallationFolder}
 export componentMetadataJson=${installComponentDirectory}/metadata.json
 
 # Retrieve namespace from component's metadata.json
-export namespace=$(cat ${componentMetadataJson} | jq -r '.namespace' | sed 's/_/-/g' | tr '[:upper:]' '[:lower:]') # Ensure DNS compatible name
+export namespace=$(cat ${componentMetadataJson} | jq -r '.namespace?' | sed 's/_/-/g' | tr '[:upper:]' '[:lower:]') # Ensure DNS compatible name
 
 # Get installation type (valid values are script, helm or argocd) and path to scripts
 export installationType=$(cat ${componentMetadataJson} | jq -r '.installation_type')

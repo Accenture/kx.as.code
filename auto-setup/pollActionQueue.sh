@@ -471,7 +471,7 @@ while :; do
                 payload=$(echo ${payload} | jq --arg retries ${retries} -c -r '.retries=$retries')
                 echo "Retry payload: ${payload}"
                 rabbitmqadmin publish exchange=action_workflow routing_key=retry_queue properties="{\"delivery_mode\": 2}" payload=''${payload}''
-                cat ${installationWorkspace}/actionQueues.json | jq -c -r '.state.processed[] | select(.name=="'${componentName}'")  += {install_folder:.install_folder,"name":.name,"action":"install","retries":"'${retries}'"}' | tee ${installationWorkspace}/actionQueues.json.tmp
+                cat ${installationWorkspace}/actionQueues.json | jq -c -r '(.state.processed[] | select(.name=="'${componentName}'").retries) = "'${retries}'"' | tee ${installationWorkspace}/actionQueues.json.tmp
                 mv ${installationWorkspace}/actionQueues.json.tmp ${installationWorkspace}/actionQueues.json
                 log_warning "Previous attempt to install \"${componentName}\" did not complete succesfully. Trying again (${retries} of 3)"
                 sudo -i -u ${vmUser} bash -c "DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/${vmUserId}/bus notify-send -t 300000 \"KX.AS.CODE Notification\" \"${componentName} installation error. Will try three times maximum\! [${count}/${numTotalElementsToInstall}]\" --icon=dialog-warning"
