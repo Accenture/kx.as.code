@@ -1,5 +1,5 @@
 #!/bin/bash
-set -euo pipefail
+set -euox pipefail
 
 # Define base variables
 export sharedKxHome=/usr/share/kx.as.code
@@ -405,6 +405,7 @@ count=0
 defaultComponentsToInstall=$(cat ${installationWorkspace}/actionQueues.json | jq -r '.action_queues.install[].name')
 for componentName in ${defaultComponentsToInstall}; do
     payload=$(cat ${installationWorkspace}/actionQueues.json | jq -c '.action_queues.install[] | select(.name=="'${componentName}'") | {install_folder:.install_folder,"name":.name,"action":"install","retries":"0"}')
+    echo "Pending payload: ${payload}"
     rabbitmqadmin publish exchange=action_workflow routing_key=pending_queue payload=''${payload}''
     # Get slot number to add installed app to JSON array
     arrayLength=$(cat ${installationWorkspace}/actionQueues.json | jq -r '.state.processed[].name' | wc -l)
@@ -444,7 +445,7 @@ while :; do
         elif [[ ${wipQueue} -ne 0 ]]; then
             # In case of system restart, read payload from WIP queue, rather than relying on already set variables
             payload=$(rabbitmqadmin get queue=wip_queue --format=raw_json ackmode=ack_requeue_false | jq -c -r '.[].payload')
-            echo "Payload: ${payload}"
+            echo "WIP payload: ${payload}"
             export retries=$(echo ${payload} | jq -c -r '.retries')
             export action=$(echo ${payload} | jq -c -r '.action')
             export componentName=$(echo ${payload} | jq -c -r '.name')
@@ -455,29 +456,32 @@ while :; do
 
         # Move item from pending to completed or error queue
         if [[ ! -f ${installationWorkspace}/current_payload.err ]]; then
+            echo "Completed payload: ${payload}"
             rabbitmqadmin publish exchange=action_workflow routing_key=completed_queue properties="{\"delivery_mode\": 2}" payload=''${payload}''
             log_info "The installation of \"${componentName}\" completed succesfully"
-            sudo -H -i -u ${vmUser} sh -c "DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/${vmUserId}/bus notify-send -t 300000 \"KX.AS.CODE Notification\" \"${componentName} installed successfully [${count}/${numTotalElementsToInstall}]\" --icon=dialog-information"
+            sudo -i -u ${vmUser} bash -c "DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/${vmUserId}/bus notify-send -t 300000 \"KX.AS.CODE Notification\" \"${componentName} installed successfully [${count}/${numTotalElementsToInstall}]\" --icon=dialog-information"
             if [[ ${componentName} == "${lastCoreElementToInstall}"   ]]; then
-                sudo -H -i -u ${vmUser} sh -c "DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/${vmUserId}/bus notify-send -t 300000 \"KX.AS.CODE Notification\" \"CONGRATULATIONS\! That concludes the core setup\! Your optional components will now be installed\" --icon=dialog-information"
+                sudo -i -u ${vmUser} bash -c "DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/${vmUserId}/bus notify-send -t 300000 \"KX.AS.CODE Notification\" \"CONGRATULATIONS\! That concludes the core setup\! Your optional components will now be installed\" --icon=dialog-information"
             fi
             retries=0
         else
             if [[ "${retriesParameter}" != "false" ]] && [[ ${retries} -lt 3 ]]; then
                 sleep 10
                 ((retries = ${retries} + 1))
-                payload=$(echo ${payload} | jq --arg retries ${retries} '.retries=$retries')
-                rabbitmqadmin publish exchange=action_workflow routing_key=retries_queue properties="{\"delivery_mode\": 2}" payload=''${payload}''
-                cat ${installationWorkspace}/actionQueues.json | jq '.state.processed[] | select(.name=="'${componentName}'")  += {install_folder:.install_folder,"name":.name,"action":"install","retries":"'${retries}'"}' | tee ${installationWorkspace}/actionQueues.json.tmp
+                payload=$(echo ${payload} | jq --arg retries ${retries} -c -r '.retries=$retries')
+                echo "Retry payload: ${payload}"
+                rabbitmqadmin publish exchange=action_workflow routing_key=retry_queue properties="{\"delivery_mode\": 2}" payload=''${payload}''
+                cat ${installationWorkspace}/actionQueues.json | jq -c -r '.state.processed[] | select(.name=="'${componentName}'")  += {install_folder:.install_folder,"name":.name,"action":"install","retries":"'${retries}'"}' | tee ${installationWorkspace}/actionQueues.json.tmp
                 mv ${installationWorkspace}/actionQueues.json.tmp ${installationWorkspace}/actionQueues.json
                 log_warning "Previous attempt to install \"${componentName}\" did not complete succesfully. Trying again (${retries} of 3)"
-                sudo -H -i -u ${vmUser} sh -c "DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/${vmUserId}/bus notify-send -t 300000 \"KX.AS.CODE Notification\" \"${componentName} installation error. Will try three times maximum\! [${count}/${numTotalElementsToInstall}]\" --icon=dialog-warning"
+                sudo -i -u ${vmUser} bash -c "DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/${vmUserId}/bus notify-send -t 300000 \"KX.AS.CODE Notification\" \"${componentName} installation error. Will try three times maximum\! [${count}/${numTotalElementsToInstall}]\" --icon=dialog-warning"
                 rm -f ${installationWorkspace}/current_payload.err
             else
+                echo "Failed payload: ${payload}"
                 rabbitmqadmin publish exchange=action_workflow routing_key=failed_queue properties="{\"delivery_mode\": 2}" payload=''${payload}''
                 retries=0
                 log_error "Previous attempt to install \"${componentName}\" did not complete succesfully. There will be no (further) retries"
-                sudo -H -i -u ${vmUser} sh -c "DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/${vmUserId}/bus notify-send -t 300000 \"KX.AS.CODE Notification\" \"${componentName} installation failed\! [${count}/${numTotalElementsToInstall}]\" --icon=dialog-error"
+                sudo -i -u ${vmUser} bash -c "DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/${vmUserId}/bus notify-send -t 300000 \"KX.AS.CODE Notification\" \"${componentName} installation failed\! [${count}/${numTotalElementsToInstall}]\" --icon=dialog-error"
                 rm -f ${installationWorkspace}/current_payload.err
             fi
         fi
@@ -517,7 +521,7 @@ while :; do
 
             # Launch autoSetup.sh
             if [[ ${componentName} == "${firstCoreElementToInstall}"   ]]; then
-                sudo -H -i -u ${vmUser} sh -c "DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/${vmUserId}/bus notify-send -t 300000 \"KX.AS.CODE Notification\" \"Initialization started. Please be patient. This could take up to 30 minutes, depending on your system size and speed of internet connection\" --icon=dialog-warning"
+                sudo -i -u ${vmUser} bash -c "DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/${vmUserId}/bus notify-send -t 300000 \"KX.AS.CODE Notification\" \"Initialization started. Please be patient. This could take up to 30 minutes, depending on your system size and speed of internet connection\" --icon=dialog-warning"
             fi
             count=$((count + 1))
             export error=""
