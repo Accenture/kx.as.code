@@ -1,19 +1,19 @@
 #! /bin/bash -eux
 #ToDo
 # creat role, Add user to role
-export componentName=grafana
-export baseDomain=kx-as-code.local
-export namespace=keycloak
+#export componentName=grafana
+#export baseDomain=kx-as-code.local
+#export namespace=keycloak
 #defining env variables
-export rediectUri="https://'${componentName}'.'${baseDomain}'/login/generic_oauth"
-export rootUri="https://'${componentName}'.'${baseDomain}'" 
-export baseUrl="/login/generic_oauth"
-export solution=grafana-test
+#export rediectUri="https://'${componentName}'.'${baseDomain}'/login/generic_oauth"
+#export rootUri="https://'${componentName}'.'${baseDomain}'" 
+#export baseUrl="/login/generic_oauth"
+#export solution=grafana-test
 export kcRealm=${baseDomain}
 export kcInternalUrl=http://localhost:8080
 export kcAdmCli=/opt/jboss/keycloak/bin/kcadm.sh
 export kcPod=$(kubectl get pods -l 'app.kubernetes.io/name=keycloak' -n keycloak --output=json | jq -r '.items[].metadata.name')
-export vmPassword=L3arnandshare
+#export vmPassword=L3arnandshare
 
 # Set credential token in new Realm
 kubectl -n keycloak exec ${kcPod} -- \
