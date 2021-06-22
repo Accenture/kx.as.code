@@ -1,5 +1,4 @@
 #!/bin/bash
-set -euo pipefail
 
 # Define ansi colours
 red="\033[31m"
