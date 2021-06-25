@@ -1,4 +1,5 @@
-#!/bin/bash -eux
+#!/bin/bash -x
+set -euo pipefail
 
 export sharedGitRepositories=/usr/share/kx.as.code/git
 
@@ -14,8 +15,7 @@ git config --global user.email "${vmUser}@${baseDomain}"
 # Add KX.AS.CODE Docs to new Gitlab project
 cp -r ${sharedGitRepositories}/kx.as.code_docs /var/tmp/
 rm -rf /var/tmp/kx.as.code_docs/.git
-for i in {1..5}
-do
+for i in {1..5}; do
     git clone https://"${vmUser}":"${vmPassword}"@${gitlabDomain}/kx.as.code/kx.as.code_docs.git ${installationWorkspace}/staging/kx.as.code_docs
     if [[ $? -eq 0 ]] || [[ $? -eq 128 ]]; then break; else sleep 5; fi
 done
@@ -29,10 +29,9 @@ git push
 # Add KX.AS.CODE TechRadar to new Gitlab project
 cp -r ${sharedGitRepositories}/kx.as.code_techradar /var/tmp
 rm -rf /var/tmp/kx.as.code_techradar/.git
-for i in {1..5}
-do
+for i in {1..5}; do
     git clone https://"${vmUser}":"${vmPassword}"@${gitlabDomain}/kx.as.code/kx.as.code_techradar.git ${installationWorkspace}/staging/kx.as.code_techradar
-     if [[ $? -eq 0 ]] || [[ $? -eq 128 ]]; then break; else sleep 5; fi
+    if [[ $? -eq 0 ]] || [[ $? -eq 128 ]]; then break; else sleep 5; fi
 done
 cp -rf /var/tmp/kx.as.code_techradar/. ${installationWorkspace}/staging/kx.as.code_techradar/
 chown -R ${vmUser}:${vmUser} ${installationWorkspace}/staging/kx.as.code_techradar
@@ -44,8 +43,7 @@ git push
 # Add KX.AS.CODE to new Gitlab project
 cp -r ${sharedGitRepositories}/kx.as.code /var/tmp
 rm -rf /var/tmp/kx.as.code/.git
-for i in {1..5}
-do
+for i in {1..5}; do
     git clone https://"${vmUser}":"${vmPassword}"@${gitlabDomain}/kx.as.code/kx.as.code.git ${installationWorkspace}/staging/kx.as.code
     if [[ $? -eq 0 ]] || [[ $? -eq 128 ]]; then break; else sleep 5; fi
 done
@@ -57,8 +55,7 @@ git commit -m 'Initial push of KX.AS.CODE source into Gitlab'
 git push
 
 # Push Grafana Image Renderer YAML files to new Gitlab project
-for i in {1..5}
-do
+for i in {1..5}; do
     git clone https://"${vmUser}":"${vmPassword}"@${gitlabDomain}/devops/grafana_image_renderer.git ${installationWorkspace}/staging/grafana-image-renderer
     if [[ $? -eq 0 ]] || [[ $? -eq 128 ]]; then break; else sleep 5; fi
 done
@@ -69,8 +66,7 @@ git commit -m 'Added Kubernetes deployment files for Grafana Image Renderer'
 git push
 
 # Push Nexus3 YAML files to new Gitlab project
-for i in {1..5}
-do
+for i in {1..5}; do
     git clone https://"${vmUser}":"${vmPassword}"@${gitlabDomain}/devops/nexus3.git ${installationWorkspace}/staging/nexus3
     if [[ $? -eq 0 ]] || [[ $? -eq 128 ]]; then break; else sleep 5; fi
 done
@@ -81,8 +77,7 @@ git commit -m 'Added Kubernetes deployment files for nexus3'
 git push
 
 # Push Jira YAML files to new Gitlab project
-for i in {1..5}
-do
+for i in {1..5}; do
     git clone https://"${vmUser}":"${vmPassword}"@${gitlabDomain}/devops/jira.git ${installationWorkspace}/staging/jira
     if [[ $? -eq 0 ]] || [[ $? -eq 128 ]]; then break; else sleep 5; fi
 done
@@ -93,8 +88,7 @@ git commit -m 'Added Kubernetes deployment files for Jira'
 git push
 
 # Push Confluence YAML files to new Gitlab project
-for i in {1..5}
-do
+for i in {1..5}; do
     git clone https://"${vmUser}":"${vmPassword}"@${gitlabDomain}/devops/confluence.git ${installationWorkspace}/staging/confluence
     if [[ $? -eq 0 ]] || [[ $? -eq 128 ]]; then break; else sleep 5; fi
 done

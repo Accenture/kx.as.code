@@ -1,4 +1,5 @@
-#!/bin/bash -eux
+#!/bin/bash -x
+set -euo pipefail
 
 # Create base directory for Gitlab Demo repositories
 mkdir -p ${installationWorkspace}/staging/
@@ -22,8 +23,7 @@ fi
 
 # Copy yaml files to new location and use "mo" to replace mustache {{variables}}
 applicationYamlFiles=$(find ${installComponentDirectory}/deployment_yaml -name "*.yaml")
-for applicationYamlFile in ${applicationYamlFiles}
-do
+for applicationYamlFile in ${applicationYamlFiles}; do
     cat ${applicationYamlFile} | mo | tee ${installationWorkspace}/staging/${componentName}/$(basename ${applicationYamlFile})
 done
 

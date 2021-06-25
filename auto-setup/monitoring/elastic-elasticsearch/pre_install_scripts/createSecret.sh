@@ -1,9 +1,10 @@
 #!/bin/bash -x
+set -euo pipefail
 
 # Create directory for storing generated certs
 export elasticStackCertsDir=${installationWorkspace}/elastic-stack-certs
-sudo mkdir -p ${elasticStackCertsDir}
-sudo chmod 777 ${elasticStackCertsDir}
+/usr/bin/sudo mkdir -p ${elasticStackCertsDir}
+/usr/bin/sudo chmod 777 ${elasticStackCertsDir}
 
 # Create certificate instances file for generating Elastic-Stack certs with elasticsearch-certutil
 echo """
@@ -45,7 +46,7 @@ instances:
       - elastic-packetbeat.${baseDomain}
       - elastic-packetbeat
       - elastic-packetbeat-packetbeat
-""" | sudo tee ${elasticStackCertsDir}/instance.yml
+""" | /usr/bin/sudo tee ${elasticStackCertsDir}/instance.yml
 
 # Create Elastic certificates with elasticsearch-certutil
 password=$(docker run --rm busybox /bin/sh -c "< /dev/urandom tr -cd '[:alnum:]' | head -c32")
@@ -55,7 +56,7 @@ docker run --rm -v ${elasticStackCertsDir}:/certs -i -w /app \
                 /usr/share/elasticsearch/bin/elasticsearch-certutil cert --keep-ca-key --pem --in /certs/instance.yml --out /certs/certs.zip"
 
 # Unzip certs
-sudo unzip ${elasticStackCertsDir}/certs.zip -d ${elasticStackCertsDir}
+/usr/bin/sudo unzip ${elasticStackCertsDir}/certs.zip -d ${elasticStackCertsDir}
 
 # Create certificate secrets
 kubectl -n ${namespace} create secret generic elastic-certificates \
@@ -76,8 +77,8 @@ kubectl -n ${namespace} create secret generic elastic-certificates \
     --from-file=${elasticStackCertsDir}/packetbeat/packetbeat.key
 
 # Create credentials secret
-kubectl get secret elastic-credentials --namespace ${namespace} || \
-kubectl create secret generic elastic-credentials \
-      --from-literal=username=elastic \
-      --from-literal=password=${vmPassword} \
-      --namespace ${namespace}
+kubectl get secret elastic-credentials --namespace ${namespace} ||
+    kubectl create secret generic elastic-credentials \
+        --from-literal=username=elastic \
+        --from-literal=password=${vmPassword} \
+        --namespace ${namespace}

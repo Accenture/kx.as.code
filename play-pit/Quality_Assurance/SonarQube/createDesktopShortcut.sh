@@ -1,5 +1,6 @@
-#!/bin/bash
-cat <<EOF > $HOME/Desktop/SonarQube.desktop
+#!/bin/bash -x
+set -euo pipefail
+cat << EOF > $HOME/Desktop/SonarQube.desktop
 [Desktop Entry]
 Version=1.0
 Name=SonarQube

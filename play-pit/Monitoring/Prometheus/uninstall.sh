@@ -1,14 +1,15 @@
-#!/bin/bash -eux
+#!/bin/bash -x
+set -euo pipefail
 
 # Uninstall Prometheus with Helm
 helm uninstall prometheus --namespace prometheus
 
 # Remove the Prometheus configurations
 kubectl delete --namespace prometheus \
-  -f persistentVolumeClaims.yaml \
-  -f persistentVolumes.yaml \
-  -f ingress.yaml \
-  --ignore-not-found
+    -f persistentVolumeClaims.yaml \
+    -f persistentVolumes.yaml \
+    -f ingress.yaml \
+    --ignore-not-found
 
 # Delete Kubernetes Namespace for Prometheus
 kubectl delete -f namespace.yaml --ignore-not-found

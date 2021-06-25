@@ -17,7 +17,7 @@
         <string>aws_associate_public_ip_address</string>
         <string>aws_security_group_id</string>
         <string>aws_ssh_interface</string>
-        <string>github_repo_url</string>
+        <string>git_source_url</string>
         <string>kx_version</string>
         <string>kx_worker_hostname</string>
         <string>aws_vpc_subnet_id</string>
@@ -50,9 +50,9 @@
     <hudson.model.ParametersDefinitionProperty>
       <parameterDefinitions>
         <hudson.model.StringParameterDefinition>
-          <name>git_repo_url</name>
-          <description>Source Github repository</description>
-          <defaultValue>{{git_repo_url}}</defaultValue>
+          <name>git_source_url</name>
+          <description>Source Git repository</description>
+          <defaultValue>{{git_source_url}}</defaultValue>
           <trim>false</trim>
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
@@ -177,8 +177,8 @@
       <configVersion>2</configVersion>
       <userRemoteConfigs>
         <hudson.plugins.git.UserRemoteConfig>
-          <url>{{git_repo_url}}</url>
-          <credentialsId>GITHUB_KX.AS.CODE</credentialsId>
+          <url>{{git_source_url}}</url>
+          <credentialsId>GIT_KX.AS.CODE_SOURCE</credentialsId>
         </hudson.plugins.git.UserRemoteConfig>
       </userRemoteConfigs>
       <branches>

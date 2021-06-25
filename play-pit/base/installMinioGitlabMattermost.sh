@@ -1,30 +1,31 @@
-#!/bin/bash -eux
+#!/bin/bash -x
+set -euo pipefail
 
 # This script installs MinIO, Gitlab-CE and Mattermost
 
 . /etc/environment
 export VM_USER=$VM_USER
 export VM_PASSWORD=$(cat /home/$VM_USER/.config/kx.as.code/.user.cred)
-export KUBEDIR=/home/$VM_USER/Kubernetes; cd $KUBEDIR
+export KUBEDIR=/home/$VM_USER/Kubernetes
+cd $KUBEDIR
 
 ### Install MinIO for Gitlab
 
 # Create namespace if it does not already exist
 if [ "$(kubectl get namespace minio-s3 --template={{.status.phase}})" != "Active" ]; then
-  # Create Kubernetes Namespace for MinIO
-  kubectl create namespace minio-s3
+    # Create Kubernetes Namespace for MinIO
+    kubectl create namespace minio-s3
 fi
 
 # Check if secret already exists in case of re-run of this script
-if [ -z $(kubectl get secrets -n minio-s3 --output=name --field-selector metadata.name=minio-accesskey-secret) ]
-then
-  # Create MinIO Access Key secret
-  export MINIOS3_ACCESS_KEY=$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${1:-32};echo;)
-  export MINIOS3_SECRET_KEY=$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${1:-32};echo;)
-  kubectl create secret generic minio-accesskey-secret \
-      --from-literal=accesskey=${MINIOS3_ACCESS_KEY} \
-      --from-literal=secretkey=${MINIOS3_SECRET_KEY} \
-      --namespace minio-s3
+if [ -z $(kubectl get secrets -n minio-s3 --output=name --field-selector metadata.name=minio-accesskey-secret) ]; then
+    # Create MinIO Access Key secret
+    export MINIOS3_ACCESS_KEY=$(pwgen -1s 32)
+    export MINIOS3_SECRET_KEY=$(pwgen -1s 32)
+    kubectl create secret generic minio-accesskey-secret \
+        --from-literal=accesskey=${MINIOS3_ACCESS_KEY} \
+        --from-literal=secretkey=${MINIOS3_SECRET_KEY} \
+        --namespace minio-s3
 fi
 
 # Add and update MinIO helm chart
@@ -49,16 +50,16 @@ sudo -u $VM_USER helm upgrade --install minios3 minio/minio \
 
 # Install the desktop shortcut
 /home/$VM_USER/Documents/git/kx.as.code_library/02_Kubernetes/00_Base/createDesktopShortcut.sh \
-  --name="MinIO S3" \
-  --url=https://s3.kx-as-code.local/minio/health/ready \
-  --icon=/home/$VM_USER/Documents/git/kx.as.code_library/02_Kubernetes/08_Storage/01_MinIO/minio.png
+    --name="MinIO S3" \
+    --url=https://s3.kx-as-code.local/minio/health/ready \
+    --icon=/home/$VM_USER/Documents/git/kx.as.code_library/02_Kubernetes/08_Storage/01_MinIO/minio.png
 
 ### Install Gitlab-CE
 
 # Create namesace if it does not already exist
 if [ "$(kubectl get namespace gitlab-ce --template={{.status.phase}})" != "Active" ]; then
-  # Create Kubernetes Namespace for Gitlab
-  kubectl create namespace gitlab-ce
+    # Create Kubernetes Namespace for Gitlab
+    kubectl create namespace gitlab-ce
 fi
 
 # Get NGINX Ingress Controller IP
@@ -68,11 +69,11 @@ MINIO_SECRET_KEY=$(kubectl get secret minio-accesskey-secret -n minio-s3 -o json
 
 # Install MinIO command line tool (mc) if not yet install
 if [ ! -f /usr/local/bin/mc ]; then
-  curl --output mc https://dl.min.io/client/mc/release/linux-amd64/mc
-# Give MC execute permissions
-  chmod +x mc
-  # Move to bin folder on path
-  sudo mv mc /usr/local/bin
+    curl --output mc https://dl.min.io/client/mc/release/linux-amd64/mc
+    # Give MC execute permissions
+    chmod +x mc
+    # Move to bin folder on path
+    sudo mv mc /usr/local/bin
 fi
 
 # Cretae the S3 Buckets needed for Gitlab in MinIO
@@ -114,79 +115,77 @@ helm repo add gitlab https://charts.gitlab.io/
 helm repo update
 
 # Add KX.AS.CODE CA cert to Gitlab-CE namespace (important for Gitlab to act as OIDC provider - including global.hosts.https=true + gitlab.webservice.ingress.tls.secretName parameters)
-kubectl get secret kx.as.code-wildcard-cert --namespace=gitlab-ce || \
-kubectl create secret generic kx.as.code-wildcard-cert \
---from-file=/home/$VM_USER/Kubernetes/kx-certs \
---namespace=gitlab-ce
+kubectl get secret kx.as.code-wildcard-cert --namespace=gitlab-ce ||
+    kubectl create secret generic kx.as.code-wildcard-cert \
+        --from-file=/home/$VM_USER/Kubernetes/kx-certs \
+        --namespace=gitlab-ce
 
 # Install Gitlab with Helm
 sudo -u $VM_USER helm upgrade --install gitlab-ce gitlab/gitlab \
-  --set global.hosts.domain=kx-as-code.local \
-  --set global.hosts.externalIP=$NGINX_INGRESS_IP \
-  --set externalUrl=https://gitlab.kx.as-code.local \
-  --set global.edition=ce \
-  --set prometheus.install=false \
-  --set global.smtp.enabled=false \
-  --set gitlab-runner.install=false \
-  --set global.ingress.enabled=false \
-  --set global.ingress.tls.enabled=true \
-  --set gitlab.webservice.ingress.tls.secretName=kx.as.code-wildcard-cert \
-  --set nginx-ingress.enabled=false \
-  --set global.certmanager.install=false \
-  --set certmanager.install=false \
-  --set global.ingress.configureCertmanager=false \
-  --set global.hosts.https=true \
-  --set global.minio.enabled=false \
-  --set registry.enabled=false \
-  --set global.appConfig.lfs.bucket=gitlab-lfs-storage \
-  --set global.appConfig.lfs.connection.secret=object-storage \
-  --set global.appConfig.lfs.connection.key=connection \
-  --set global.appConfig.artifacts.bucket=gitlab-artifacts-storage \
-  --set global.appConfig.artifacts.connection.secret=object-storage \
-  --set global.appConfig.artifacts.connection.key=connection \
-  --set global.appConfig.uploads.connection.secret=object-storage \
-  --set global.appConfig.uploads.bucket=gitlab-uploads-storage \
-  --set global.appConfig.uploads.connection.key=connection \
-  --set global.appConfig.packages.bucket=gitlab-packages-storage \
-  --set global.appConfig.packages.connection.secret=object-storage \
-  --set global.appConfig.packages.connection.key=connection \
-  --set global.appConfig.externalDiffs.bucket=gitlab-externaldiffs-storage \
-  --set global.appConfig.externalDiffs.connection.secret=object-storage \
-  --set global.appConfig.externalDiffs.connection.key=connection \
-  --set global.appConfig.pseudonymizer.bucket=gitlab-pseudonymizer-storage \
-  --set global.appConfig.pseudonymizer.connection.secret=object-storage \
-  --set global.appConfig.pseudonymizer.connection.key=connection \
-  --set redis.resources.requests.cpu=10m \
-  --set redis.resources.requests.memory=64Mi \
-  --set global.rails.bootsnap.enabled=false \
-  --set gitlab.webservice.minReplicas=1 \
-  --set gitlab.webservice.maxReplicas=1 \
-  --set gitlab.webservice.resources.limits.memory=1.5G \
-  --set gitlab.webservice.requests.cpu=100m \
-  --set gitlab.webservice.requests.memory=900M \
-  --set gitlab.workhorse.resources.limits.memory=100M \
-  --set gitlab.workhorse.requests.cpu=10m \
-  --set gitlab.workhorse.requests.memory=10M \
-  --set gitlab.sidekiq.minReplicas=1 \
-  --set gitlab.sidekiq.maxReplicas=1 \
-  --set gitlab.sidekiq.resources.limits.memory=1.5G \
-  --set gitlab.sidekiq.requests.cpu=50m \
-  --set gitlab.sidekiq.requests.memory=625M \
-  --set gitlab.gitlab-shell.minReplicas=1 \
-  --set gitlab.gitlab-shell.maxReplicas=1 \
-  --set task-runnerbackups.objectStorage.config.secret=s3cmd-config \
-  --set task-runnerbackups.objectStorage.config.key=config \
-  --set gitlab.gitaly.persistence.storageClass=gluster-heketi \
-  --set gitlab.gitaly.persistence.size=10Gi \
-  --set postgresql.persistence.storageClass=local-storage \
-  --set postgresql.persistence.size=5Gi \
-  --set redis.master.persistence.storageClass=local-storage \
-  --set redis.master.persistence.size=5Gi \
-  --namespace gitlab-ce
+    --set global.hosts.domain=kx-as-code.local \
+    --set global.hosts.externalIP=$NGINX_INGRESS_IP \
+    --set externalUrl=https://gitlab.kx.as-code.local \
+    --set global.edition=ce \
+    --set prometheus.install=false \
+    --set global.smtp.enabled=false \
+    --set gitlab-runner.install=false \
+    --set global.ingress.enabled=false \
+    --set global.ingress.tls.enabled=true \
+    --set gitlab.webservice.ingress.tls.secretName=kx.as.code-wildcard-cert \
+    --set nginx-ingress.enabled=false \
+    --set global.certmanager.install=false \
+    --set certmanager.install=false \
+    --set global.ingress.configureCertmanager=false \
+    --set global.hosts.https=true \
+    --set global.minio.enabled=false \
+    --set registry.enabled=false \
+    --set global.appConfig.lfs.bucket=gitlab-lfs-storage \
+    --set global.appConfig.lfs.connection.secret=object-storage \
+    --set global.appConfig.lfs.connection.key=connection \
+    --set global.appConfig.artifacts.bucket=gitlab-artifacts-storage \
+    --set global.appConfig.artifacts.connection.secret=object-storage \
+    --set global.appConfig.artifacts.connection.key=connection \
+    --set global.appConfig.uploads.connection.secret=object-storage \
+    --set global.appConfig.uploads.bucket=gitlab-uploads-storage \
+    --set global.appConfig.uploads.connection.key=connection \
+    --set global.appConfig.packages.bucket=gitlab-packages-storage \
+    --set global.appConfig.packages.connection.secret=object-storage \
+    --set global.appConfig.packages.connection.key=connection \
+    --set global.appConfig.externalDiffs.bucket=gitlab-externaldiffs-storage \
+    --set global.appConfig.externalDiffs.connection.secret=object-storage \
+    --set global.appConfig.externalDiffs.connection.key=connection \
+    --set global.appConfig.pseudonymizer.bucket=gitlab-pseudonymizer-storage \
+    --set global.appConfig.pseudonymizer.connection.secret=object-storage \
+    --set global.appConfig.pseudonymizer.connection.key=connection \
+    --set redis.resources.requests.cpu=10m \
+    --set redis.resources.requests.memory=64Mi \
+    --set global.rails.bootsnap.enabled=false \
+    --set gitlab.webservice.minReplicas=1 \
+    --set gitlab.webservice.maxReplicas=1 \
+    --set gitlab.webservice.resources.limits.memory=1.5G \
+    --set gitlab.webservice.requests.cpu=100m \
+    --set gitlab.webservice.requests.memory=900M \
+    --set gitlab.workhorse.resources.limits.memory=100M \
+    --set gitlab.workhorse.requests.cpu=10m \
+    --set gitlab.workhorse.requests.memory=10M \
+    --set gitlab.sidekiq.minReplicas=1 \
+    --set gitlab.sidekiq.maxReplicas=1 \
+    --set gitlab.sidekiq.resources.limits.memory=1.5G \
+    --set gitlab.sidekiq.requests.cpu=50m \
+    --set gitlab.sidekiq.requests.memory=625M \
+    --set gitlab.gitlab-shell.minReplicas=1 \
+    --set gitlab.gitlab-shell.maxReplicas=1 \
+    --set task-runnerbackups.objectStorage.config.secret=s3cmd-config \
+    --set task-runnerbackups.objectStorage.config.key=config \
+    --set gitlab.gitaly.persistence.storageClass=gluster-heketi \
+    --set gitlab.gitaly.persistence.size=10Gi \
+    --set postgresql.persistence.storageClass=local-storage \
+    --set postgresql.persistence.size=5Gi \
+    --set redis.master.persistence.storageClass=local-storage \
+    --set redis.master.persistence.size=5Gi \
+    --namespace gitlab-ce
 
-
-for i in {1..60}
-do
+for i in {1..60}; do
         TOTAL_GITLAB_PODS=$(kubectl get pods -n gitlab-ce | grep -v "STATUS" | wc -l)
         RUNNING_GITLAB_PODS=$(kubectl get pods -n gitlab-ce | grep -v "STATUS" | grep -i -E 'Running|Completed' | wc -l)
         echo "Waiting for all pods in Gitlab-CE namespace to have Running status - TOTAl: $TOTAL_GITLAB_PODS, RUNNING:  $RUNNING_GITLAB_PODS"
@@ -220,9 +219,9 @@ spec:
 
 # Install the desktop shortcut
 /home/$VM_USER/Documents/git/kx.as.code_library/02_Kubernetes/00_Base/createDesktopShortcut.sh \
-  --name="Gitlab CE" \
-  --url=https://gitlab.kx-as-code.local \
-  --icon=/home/$VM_USER/Documents/git/kx.as.code_library/02_Kubernetes/01_CICD/02_Gitlab/GitLab-CE/gitlab.png
+    --name="Gitlab CE" \
+    --url=https://gitlab.kx-as-code.local \
+    --icon=/home/$VM_USER/Documents/git/kx.as.code_library/02_Kubernetes/01_CICD/02_Gitlab/GitLab-CE/gitlab.png
 
 # Get Gitlab Personal Access Token
 INITIAL_GITLAB_ROOT_PASSWORD="$(kubectl get secret gitlab-ce-gitlab-initial-root-password -n gitlab-ce -o json | jq -r '.data.password' | base64 --decode)"
@@ -241,129 +240,145 @@ echo "*********** TWO: $CSRF_TOKEN"
 
 curl -s -L -b cookies.txt "${GITLAB_URL}/profile/personal_access_tokens" \
     --data-urlencode "authenticity_token=${CSRF_TOKEN}" \
-    --data 'personal_access_token[name]=golab-generated&personal_access_token[expires_at]=&personal_access_token[scopes][]=api' \
-    | grep "created-personal-access-token" | sed -n 's/.*value="\([^"]*\).*/\1/p' | tail -1 | tee /home/$VM_USER/.config/kx.as.code/.admin.gitlab.pat
+    --data 'personal_access_token[name]=golab-generated&personal_access_token[expires_at]=&personal_access_token[scopes][]=api' |
+      grep "created-personal-access-token" | sed -n 's/.*value="\([^"]*\).*/\1/p' | tail -1 | tee /home/$VM_USER/.config/kx.as.code/.admin.gitlab.pat
 
 chown $VM_USER:$VM_USER /home/$VM_USER/.config/kx.as.code/.admin.gitlab.pat
 
 PERSONAL_ACCESS_TOKEN=$(cat /home/$VM_USER/.config/kx.as.code/.admin.gitlab.pat)
 
 # Create kx.as.code group in Gitlab
-for i in {1..5}
-do
-  curl -s -XPOST --header "Private-Token: ${PERSONAL_ACCESS_TOKEN}" \
-    --data 'name=kx.as.code' \
-    --data 'path=kx.as.code' \
-    --data 'full_name=kx.as.code' \
-    --data 'full_path=kx.as.code' \
-    --data 'visibility=private' \
-    --data 'lfs_enabled=true' \
-    --data 'subgroup_creation_level=maintainer' \
-    --data 'project_creation_level=developer' \
-    https://gitlab.kx-as-code.local/api/v4/groups
+for i in {1..5}; do
+    curl -s -XPOST --header "Private-Token: ${PERSONAL_ACCESS_TOKEN}" \
+        --data 'name=kx.as.code' \
+        --data 'path=kx.as.code' \
+        --data 'full_name=kx.as.code' \
+        --data 'full_path=kx.as.code' \
+        --data 'visibility=private' \
+        --data 'lfs_enabled=true' \
+        --data 'subgroup_creation_level=maintainer' \
+        --data 'project_creation_level=developer' \
+        https://gitlab.kx-as-code.local/api/v4/groups
     CREATED_KX_GROUP_ID=$(curl -s --header "Private-Token: ${PERSONAL_ACCESS_TOKEN}" https://gitlab.kx-as-code.local/api/v4/groups | jq '.[] | select(.name=="kx.as.code") | .id')
-    if [[ ! -z ${CREATED_KX_GROUP_ID} ]]; then break; else echo "KX.AS.CODE Group not created. Trying again"; sleep 5; fi
+    if [[ -n ${CREATED_KX_GROUP_ID}   ]]; then break; else
+        echo "KX.AS.CODE Group not created. Trying again"
+                                                                                                              sleep 5
+    fi
 done
 
 # Create DevOps group in Gitlab
-for i in {1..5}
-do
-  curl -s -XPOST --header "Private-Token: ${PERSONAL_ACCESS_TOKEN}" \
-    --data 'name=devops' \
-    --data 'path=devops' \
-    --data 'full_name=DevOps' \
-    --data 'full_path=devops' \
-    --data 'visibility=private' \
-    --data 'lfs_enabled=true' \
-    --data 'subgroup_creation_level=maintainer' \
-    --data 'project_creation_level=developer' \
-    https://gitlab.kx-as-code.local/api/v4/groups
+for i in {1..5}; do
+    curl -s -XPOST --header "Private-Token: ${PERSONAL_ACCESS_TOKEN}" \
+        --data 'name=devops' \
+        --data 'path=devops' \
+        --data 'full_name=DevOps' \
+        --data 'full_path=devops' \
+        --data 'visibility=private' \
+        --data 'lfs_enabled=true' \
+        --data 'subgroup_creation_level=maintainer' \
+        --data 'project_creation_level=developer' \
+        https://gitlab.kx-as-code.local/api/v4/groups
     CREATED_DEVOPS_GROUP_ID=$(curl -s --header "Private-Token: ${PERSONAL_ACCESS_TOKEN}" https://gitlab.kx-as-code.local/api/v4/groups | jq '.[] | select(.name=="devops") | .id')
-    if [[ ! -z ${CREATED_DEVOPS_GROUP_ID} ]]; then break; else echo "DEVOPS Group not created. Trying again"; sleep 5; fi
+    if [[ -n ${CREATED_DEVOPS_GROUP_ID}   ]]; then break; else
+        echo "DEVOPS Group not created. Trying again"
+                                                                                                              sleep 5
+    fi
 done
 
 # Create KX.AS.CODE "Docs" project in Gitlab
-for i in {1..5}
-do
-  curl -s -XPOST --header "Private-Token: ${PERSONAL_ACCESS_TOKEN}" \
-    --data 'description=KX.AS.CODE Documentation Engine' \
-    --data 'name=kx.as.code_docs' \
-    --data 'namespace_id='${CREATED_KX_GROUP_ID}'' \
-    --data 'path=kx.as.code_docs' \
-    --data 'default_branch=master' \
-    --data 'visibility=private' \
-    --data 'container_registry_enabled=false' \
-    https://gitlab.kx-as-code.local/api/v4/projects
+for i in {1..5}; do
+    curl -s -XPOST --header "Private-Token: ${PERSONAL_ACCESS_TOKEN}" \
+        --data 'description=KX.AS.CODE Documentation Engine' \
+        --data 'name=kx.as.code_docs' \
+        --data 'namespace_id='${CREATED_KX_GROUP_ID}'' \
+        --data 'path=kx.as.code_docs' \
+        --data 'default_branch=master' \
+        --data 'visibility=private' \
+        --data 'container_registry_enabled=false' \
+        https://gitlab.kx-as-code.local/api/v4/projects
     CREATED_KX_PROJECT_ID=$(curl -s --header "Private-Token: ${PERSONAL_ACCESS_TOKEN}" https://gitlab.kx-as-code.local/api/v4/projects | jq '.[] | select(.name=="kx.as.code_docs") | .id')
-    if [[ ! -z "${CREATED_KX_PROJECT_ID}" ]]; then break; else echo "KX.AS.CODE_DOCS project not created. Trying again ($i of 5)"; sleep 5; fi
+    if [[ -n ${CREATED_KX_PROJECT_ID}     ]]; then break; else
+        echo "KX.AS.CODE_DOCS project not created. Trying again ($i of 5)"
+                                                                                                                                   sleep 5
+    fi
 done
 
 # Create KX.AS.CODE "TechRadar" project in Gitlab
-for i in {1..5}
-do
-  curl -s -XPOST --header "Private-Token: ${PERSONAL_ACCESS_TOKEN}" \
-    --data 'description=KX.AS.CODE Technology Radar' \
-    --data 'name=kx.as.code_techradar' \
-    --data 'namespace_id='${CREATED_KX_GROUP_ID}'' \
-    --data 'path=kx.as.code_techradar' \
-    --data 'default_branch=master' \
-    --data 'visibility=private' \
-    --data 'container_registry_enabled=false' \
-    https://gitlab.kx-as-code.local/api/v4/projects
+for i in {1..5}; do
+    curl -s -XPOST --header "Private-Token: ${PERSONAL_ACCESS_TOKEN}" \
+        --data 'description=KX.AS.CODE Technology Radar' \
+        --data 'name=kx.as.code_techradar' \
+        --data 'namespace_id='${CREATED_KX_GROUP_ID}'' \
+        --data 'path=kx.as.code_techradar' \
+        --data 'default_branch=master' \
+        --data 'visibility=private' \
+        --data 'container_registry_enabled=false' \
+        https://gitlab.kx-as-code.local/api/v4/projects
     CREATED_TECHRADAR_PROJECT_ID=$(curl -s --header "Private-Token: ${PERSONAL_ACCESS_TOKEN}" https://gitlab.kx-as-code.local/api/v4/projects | jq '.[] | select(.name=="kx.as.code_docs") | .id')
-    if [[ ! -z "${CREATED_TECHRADAR_PROJECT_ID}" ]]; then break; else echo "KX.AS.CODE_TECHRADAR project not created. Trying again ($i of 5)"; sleep 5; fi
+    if [[ -n ${CREATED_TECHRADAR_PROJECT_ID}     ]]; then break; else
+        echo "KX.AS.CODE_TECHRADAR project not created. Trying again ($i of 5)"
+                                                                                                                                               sleep 5
+    fi
 done
 
 # Create kx.hero user in Gitlab
-for i in {1..5}
-do
-  curl -s --header "Private-Token: ${PERSONAL_ACCESS_TOKEN}"  \
-  --data 'name=KX Hero' \
-  --data 'username='${VM_USER}'' \
-  --data 'password='${VM_PASSWORD}'' \
-  --data 'state=active' \
-  --data 'skip_confirmation=true' \
-  --data 'email='${VM_USER}'@kx-as-code.local' \
-  --data 'can_create_project=true' \
-  -XPOST https://gitlab.kx-as-code.local/api/v4/users
-  CREATED_KXHERO_USER_ID=$(curl -s --header "Private-Token: ${PERSONAL_ACCESS_TOKEN}" https://gitlab.kx-as-code.local/api/v4/users | jq '.[] | select(.username=="kx.hero") | .id')
-  if [[ ! -z "${CREATED_KXHERO_USER_ID}" ]]; then break; else echo "KX.HERO user was not created. Trying again ($i of 5)"; sleep 5; fi
+for i in {1..5}; do
+    curl -s --header "Private-Token: ${PERSONAL_ACCESS_TOKEN}" \
+        --data 'name=KX Hero' \
+        --data 'username='${VM_USER}'' \
+        --data 'password='${VM_PASSWORD}'' \
+        --data 'state=active' \
+        --data 'skip_confirmation=true' \
+        --data 'email='${VM_USER}'@kx-as-code.local' \
+        --data 'can_create_project=true' \
+        -XPOST https://gitlab.kx-as-code.local/api/v4/users
+    CREATED_KXHERO_USER_ID=$(curl -s --header "Private-Token: ${PERSONAL_ACCESS_TOKEN}" https://gitlab.kx-as-code.local/api/v4/users | jq '.[] | select(.username=="kx.hero") | .id')
+    if [[ -n ${CREATED_KXHERO_USER_ID}   ]]; then break; else
+        echo "KX.HERO user was not created. Trying again ($i of 5)"
+                                                                                                                           sleep 5
+    fi
 done
 
 export ROOT_USER_ID=$(curl -s --header "Private-Token: ${PERSONAL_ACCESS_TOKEN}" https://gitlab.kx-as-code.local/api/v4/users | jq -r '.[] | select (.username=="root") | .id')
 
 # Add new user as group admin to new KX.AS.CODE group
-for i in {1..5}
-do
-  curl -XPOST --header "Private-Token: ${PERSONAL_ACCESS_TOKEN}" \
-    --data 'id='${ROOT_USER_ID}'' \
-    --data 'user_id='${CREATED_KXHERO_USER_ID}'' \
-    --data 'access_level=50' \
-    https://gitlab.kx-as-code.local/api/v4/groups/${CREATED_KX_GROUP_ID}/members
+for i in {1..5}; do
+    curl -XPOST --header "Private-Token: ${PERSONAL_ACCESS_TOKEN}" \
+        --data 'id='${ROOT_USER_ID}'' \
+        --data 'user_id='${CREATED_KXHERO_USER_ID}'' \
+        --data 'access_level=50' \
+        https://gitlab.kx-as-code.local/api/v4/groups/${CREATED_KX_GROUP_ID}/members
     MAPPED_USER=$(curl -s --header "Private-Token: ${PERSONAL_ACCESS_TOKEN}" https://gitlab.kx-as-code.local/api/v4/groups/${CREATED_KX_GROUP_ID}/members | jq '.[] | select(.username=="kx.hero") | .id')
-    if [[ ! -z "${MAPPED_USER}" ]]; then break; else echo "KX.HERO user was not mapped to KX.AS.CODE group. Trying again ($i of 5)"; sleep 5; fi
+    if [[ -n ${MAPPED_USER}     ]]; then break; else
+        echo "KX.HERO user was not mapped to KX.AS.CODE group. Trying again ($i of 5)"
+                                                                                                                                     sleep 5
+    fi
 done
 
 # Add new user as group admin to new DEVOPS group
-for i in {1..5}
-do
-  curl -s -XPOST --header "Private-Token: ${PERSONAL_ACCESS_TOKEN}" \
-    --data 'id='${ROOT_USER_ID}'' \
-    --data 'user_id='${CREATED_KXHERO_USER_ID}'' \
-    --data 'access_level=50' \
-    https://gitlab.kx-as-code.local/api/v4/groups/${CREATED_DEVOPS_GROUP_ID}/members
+for i in {1..5}; do
+    curl -s -XPOST --header "Private-Token: ${PERSONAL_ACCESS_TOKEN}" \
+        --data 'id='${ROOT_USER_ID}'' \
+        --data 'user_id='${CREATED_KXHERO_USER_ID}'' \
+        --data 'access_level=50' \
+        https://gitlab.kx-as-code.local/api/v4/groups/${CREATED_DEVOPS_GROUP_ID}/members
     MAPPED_USER=$(curl -s --header "Private-Token: ${PERSONAL_ACCESS_TOKEN}" https://gitlab.kx-as-code.local/api/v4/groups/${CREATED_DEVOPS_GROUP_ID}/members | jq '.[] | select(.username=="kx.hero") | .id')
-    if [[ ! -z "${MAPPED_USER}" ]]; then break; else echo "KX.HERO user was not mapped to DEVOPS group. Trying again ($i of 5)"; sleep 5; fi
+    if [[ -n ${MAPPED_USER}     ]]; then break; else
+        echo "KX.HERO user was not mapped to DEVOPS group. Trying again ($i of 5)"
+                                                                                                                                 sleep 5
+    fi
 done
 
 # Create application to facilitate Gitlab as OAUTH provider for Mattermost
-for i in {1..5}
-do
-  curl -s --request POST --header "PRIVATE-TOKEN: ${PERSONAL_ACCESS_TOKEN}" \
-    --data "name=Mattermost&redirect_uri=https://mattermost.kx-as-code.local/login/gitlab/complete%0D%0Ahttps://mattermost.kx-as-code.local/signup/gitlab/complete&scopes=" \
-    "https://gitlab.kx-as-code.local/api/v4/applications" | sudo tee $KUBEDIR/mattermost_gitlab_integration.json
+for i in {1..5}; do
+    curl -s --request POST --header "PRIVATE-TOKEN: ${PERSONAL_ACCESS_TOKEN}" \
+        --data "name=Mattermost&redirect_uri=https://mattermost.kx-as-code.local/login/gitlab/complete%0D%0Ahttps://mattermost.kx-as-code.local/signup/gitlab/complete&scopes=" \
+        "https://gitlab.kx-as-code.local/api/v4/applications" | sudo tee $KUBEDIR/mattermost_gitlab_integration.json
     MATTERMOST_APPLICATION_ID=$(curl -s --header "Private-Token: ${PERSONAL_ACCESS_TOKEN}" https://gitlab.kx-as-code.local/api/v4/applications | jq '.[] | select(.application_name=="Mattermost") | .id')
-    if [[ ! -z ${MATTERMOST_APPLICATION_ID} ]]; then break; else echo "Mattermost application was not created in Gitlab. Trying again ($i of 5)"; sleep 5; fi
+    if [[ -n ${MATTERMOST_APPLICATION_ID}   ]]; then break; else
+        echo "Mattermost application was not created in Gitlab. Trying again ($i of 5)"
+                                                                                                                                                  sleep 5
+    fi
 done
 
 # Get configured groups, projects and users
@@ -552,16 +567,16 @@ extraInitContainers:
       - sh
       - \"-c\"
       - |
-        echo \"Connecting to Minio server: http://\$MINIO_ENDPOINT:\$MINIO_PORT\"
+      echo \"Connecting to Minio server: http://\$MINIO_ENDPOINT:\$MINIO_PORT\"
         mc config host add myminio http://\$MINIO_ENDPOINT:\$MINIO_PORT \$MINIO_ACCESS_KEY \$MINIO_SECRET_KEY
         /usr/bin/mc ls myminio
         echo \$?
         /usr/bin/mc ls myminio/\$MATTERMOST_BUCKET_NAME > /dev/null 2>&1
         if [ \$? -eq 1 ] ; then
-          echo \"Creating bucket '\$MATTERMOST_BUCKET_NAME'\"
+        echo \"Creating bucket '\$MATTERMOST_BUCKET_NAME'\"
           /usr/bin/mc mb myminio/\$MATTERMOST_BUCKET_NAME
         else
-          echo \"Bucket '\$MATTERMOST_BUCKET_NAME' already exists.\"
+        echo \"Bucket '\$MATTERMOST_BUCKET_NAME' already exists.\"
           exit 0
         fi
         """ | tee $KUBEDIR/matternmost-teamedition-values.yaml
@@ -573,9 +588,9 @@ helm upgrade --install mattermost -f $KUBEDIR/matternmost-teamedition-values.yam
 
 # Install the desktop shortcut
 /home/$VM_USER/Documents/git/kx.as.code_library/02_Kubernetes/00_Base/createDesktopShortcut.sh \
-  --name="Mattermost" \
-  --url=https://mattermost.kx-as-code.local \
-  --icon=/home/$VM_USER/Documents/git/kx.as.code_library/02_Kubernetes/04_Collaboration/04_Mattermost/mattermost.png
+    --name="Mattermost" \
+    --url=https://mattermost.kx-as-code.local \
+    --icon=/home/$VM_USER/Documents/git/kx.as.code_library/02_Kubernetes/04_Collaboration/04_Mattermost/mattermost.png
 
 # Configure Mattermost using CLI
 
@@ -590,7 +605,7 @@ MATTERMOST_LOGIN_TOKEN=$(curl -i -d '{"login_id":"admin@kx-as-code.local","passw
 
 # Create Security Notifications User
 curl --http1.1 -H 'Content-Type: application/json' -H 'Authorization: Bearer '${MATTERMOST_LOGIN_TOKEN}'' \
-  -X POST https://mattermost.kx-as-code.local/api/v4/users -d '{
+    -X POST https://mattermost.kx-as-code.local/api/v4/users -d '{
 "email": "security@kx-as-code.local",
 "username": "securty",
 "first_name": "Security",
@@ -599,7 +614,7 @@ curl --http1.1 -H 'Content-Type: application/json' -H 'Authorization: Bearer '${
 
 # Create CICD Notifications User
 curl --http1.1 -H 'Content-Type: application/json' -H 'Authorization: Bearer '${MATTERMOST_LOGIN_TOKEN}'' \
-  -X POST https://mattermost.kx-as-code.local/api/v4/users -d '{
+    -X POST https://mattermost.kx-as-code.local/api/v4/users -d '{
 "email": "cicd@kx-as-code.local",
 "username": "cicd",
 "first_name": "CICD",
@@ -608,7 +623,7 @@ curl --http1.1 -H 'Content-Type: application/json' -H 'Authorization: Bearer '${
 
 # Create Monitoring Notifications User
 curl --http1.1 -H 'Content-Type: application/json' -H 'Authorization: Bearer '${MATTERMOST_LOGIN_TOKEN}'' \
-  -X POST https://mattermost.kx-as-code.local/api/v4/users -d '{
+    -X POST https://mattermost.kx-as-code.local/api/v4/users -d '{
 "email": "monitoring@kx-as-code.local",
 "username": "monitoring",
 "first_name": "Monitoring",
@@ -617,7 +632,7 @@ curl --http1.1 -H 'Content-Type: application/json' -H 'Authorization: Bearer '${
 
 # Create KX.AS.CODE team
 curl --http1.1 -H 'Content-Type: application/json' -H 'Authorization: Bearer '${MATTERMOST_LOGIN_TOKEN}'' \
-  -X POST https://mattermost.kx-as-code.local/api/v4/teams -d '{
+    -X POST https://mattermost.kx-as-code.local/api/v4/teams -d '{
   "name": "kxascode",
   "display_name": "Team KX.AS.CODE",
   "type": "I"
@@ -627,13 +642,12 @@ curl --http1.1 -H 'Content-Type: application/json' -H 'Authorization: Bearer '${
 USERS_TO_MAP_KX_TEAM="admin securty cicd monitoring"
 # Get Mattermost Team id
 KX_TEAM_ID=$(curl -s -H 'Authorization: Bearer '${MATTERMOST_LOGIN_TOKEN}'' -X GET https://mattermost.kx-as-code.local/api/v4/teams/name/kxascode | jq -r '.id')
-for USER in ${USERS_TO_MAP_KX_TEAM}
-do
-  # Get user id
-  USER_ID=$(curl -s -H 'Authorization: Bearer '${MATTERMOST_LOGIN_TOKEN}'' -X GET https://mattermost.kx-as-code.local/api/v4/users/username/${USER} | jq -r '.id')
-  # Add user to KX.AS.CODE Team
-  curl --http1.1 -H 'Content-Type: application/json' -H 'Authorization: Bearer '${MATTERMOST_LOGIN_TOKEN}'' \
-    -X POST https://mattermost.kx-as-code.local/api/v4/teams/${KX_TEAM_ID}/members -d '{
+for USER in ${USERS_TO_MAP_KX_TEAM}; do
+    # Get user id
+    USER_ID=$(curl -s -H 'Authorization: Bearer '${MATTERMOST_LOGIN_TOKEN}'' -X GET https://mattermost.kx-as-code.local/api/v4/users/username/${USER} | jq -r '.id')
+    # Add user to KX.AS.CODE Team
+    curl --http1.1 -H 'Content-Type: application/json' -H 'Authorization: Bearer '${MATTERMOST_LOGIN_TOKEN}'' \
+        -X POST https://mattermost.kx-as-code.local/api/v4/teams/${KX_TEAM_ID}/members -d '{
   "team_id": "'${KX_TEAM_ID}'",
   "user_id": "'${USER_ID}'"
   }'
@@ -641,11 +655,10 @@ done
 
 # Add Channels
 CHANNELS_TO_CREATE="Security CICD Monitoring"
-for CHANNEL in ${CHANNELS_TO_CREATE}
-do
-  CHANNEL_LOWER_CASE=$(echo ${CHANNEL} | tr '[:upper:]' '[:lower:]')
-  curl --http1.1 -H 'Content-Type: application/json' -H 'Authorization: Bearer '${MATTERMOST_LOGIN_TOKEN}'' \
-    -X POST https://mattermost.kx-as-code.local/api/v4/channels -d '{
+for CHANNEL in ${CHANNELS_TO_CREATE}; do
+    CHANNEL_LOWER_CASE=$(echo ${CHANNEL} | tr '[:upper:]' '[:lower:]')
+    curl --http1.1 -H 'Content-Type: application/json' -H 'Authorization: Bearer '${MATTERMOST_LOGIN_TOKEN}'' \
+        -X POST https://mattermost.kx-as-code.local/api/v4/channels -d '{
     "team_id": "'${KX_TEAM_ID}'",
     "name": "'${CHANNEL_LOWER_CASE}'",
     "display_name": "'${CHANNEL}'",
@@ -657,24 +670,23 @@ done
 
 # Create Webhooks
 WEBHOOKS_TO_CREATE="Security CICD Monitoring"
-for WEBHOOK in ${WEBHOOKS_TO_CREATE}
-do
-  # Get associated channel ID to post to
-  CHANNEL_ID=$(curl -s -H 'Authorization: Bearer '${MATTERMOST_LOGIN_TOKEN}'' -X GET https://mattermost.kx-as-code.local/api/v4/teams/${KX_TEAM_ID}/channels/name/${WEBHOOK} | jq -r '.id')
+for WEBHOOK in ${WEBHOOKS_TO_CREATE}; do
+    # Get associated channel ID to post to
+    CHANNEL_ID=$(curl -s -H 'Authorization: Bearer '${MATTERMOST_LOGIN_TOKEN}'' -X GET https://mattermost.kx-as-code.local/api/v4/teams/${KX_TEAM_ID}/channels/name/${WEBHOOK} | jq -r '.id')
 
-  # Establish which icon to use when posting notifications
-  WEBHOOK_LOWER_CASE=$(echo ${WEBHOOK} | tr '[:upper:]' '[:lower:]')
-  if [[ "${WEBHOOK}" == "Security" ]]; then
-    ICON_URL="https://github.com/falcosecurity/falco/raw/master/brand/primary-logo.png"
-  elif [[ "${WEBHOOK}" == "CICD" ]]; then
-    ICON_URL="https://about.gitlab.com/images/press/logo/png/gitlab-logo-gray-stacked-rgb.png"
-  elif [[ "${WEBHOOK}" == "Monitoring" ]]; then
-    ICON_URL="https://branding.cncf.io/img/projects/prometheus/icon/color/prometheus-icon-color.png"
-  fi
+    # Establish which icon to use when posting notifications
+    WEBHOOK_LOWER_CASE=$(echo ${WEBHOOK} | tr '[:upper:]' '[:lower:]')
+    if [[ ${WEBHOOK} == "Security" ]]; then
+        ICON_URL="https://github.com/falcosecurity/falco/raw/master/brand/primary-logo.png"
+    elif [[ ${WEBHOOK} == "CICD" ]]; then
+        ICON_URL="https://about.gitlab.com/images/press/logo/png/gitlab-logo-gray-stacked-rgb.png"
+    elif [[ ${WEBHOOK} == "Monitoring" ]]; then
+        ICON_URL="https://branding.cncf.io/img/projects/prometheus/icon/color/prometheus-icon-color.png"
+    fi
 
-  # Create the webhook
-  curl --http1.1 -H 'Content-Type: application/json' -H 'Authorization: Bearer '${MATTERMOST_LOGIN_TOKEN}'' \
-      -X POST https://mattermost.kx-as-code.local/api/v4/hooks/incoming -d '{
+    # Create the webhook
+    curl --http1.1 -H 'Content-Type: application/json' -H 'Authorization: Bearer '${MATTERMOST_LOGIN_TOKEN}'' \
+        -X POST https://mattermost.kx-as-code.local/api/v4/hooks/incoming -d '{
       "channel_id": "'${CHANNEL_ID}'",
       "display_name": "'${WEBHOOK}'",
       "description": "Post '${WEBHOOK}' Notifications",

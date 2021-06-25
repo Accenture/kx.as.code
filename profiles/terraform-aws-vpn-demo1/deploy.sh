@@ -1,110 +1,107 @@
 #!/bin/bash -x
+set -euo pipefail
 
 # Check if JQ is installed and download if not
 if [[ -f ./jq ]]; then
-  jqBinary='./jq'
+    jqBinary='./jq'
 else
-  jqBinary='jq'
+    jqBinary='jq'
 fi
-jqVersion=$(${jqBinary} --version 2>/dev/null | grep -E "jq-([0-9]+)\.([0-9]+)")
+jqVersion=$(${jqBinary} --version 2> /dev/null | grep -E "jq-([0-9]+)\.([0-9]+)")
 if [[ -z ${jqVersion} ]]; then
-  curl -o jq https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64 -L
-  chmod 755 ./jq
-  jqBinary='./jq'
-  ${jqBinary} --version
+    curl -o jq https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64 -L
+    chmod 755 ./jq
+    jqBinary='./jq'
+    ${jqBinary} --version
 fi
 
 # Check if Terraform is installed and download if not
 if [[ -f ./terraform ]]; then
-  terraformBinary="./terraform"
+    terraformBinary="./terraform"
 else
-  terraformBinary="terraform"
+    terraformBinary="terraform"
 fi
-terraformVersion=$(${terraformBinary} -v | head -1 2>/dev/null | grep -E "Terraform v([0-9]+)\.([0-9]+)\.([0-9]+)")
+terraformVersion=$(${terraformBinary} -v | head -1 2> /dev/null | grep -E "Terraform v([0-9]+)\.([0-9]+)\.([0-9]+)")
 if [[ -z ${terraformVersion} ]]; then
-  curl -o terraform.zip https://releases.hashicorp.com/terraform/0.14.4/terraform_0.14.4_linux_amd64.zip -L
-  unzip terraform.zip
-  chmod 755 ./terraform
-  terraformBinary='./terraform'
-  ${terraformBinary} -v
+    curl -o terraform.zip https://releases.hashicorp.com/terraform/0.14.4/terraform_0.14.4_linux_amd64.zip -L
+    unzip terraform.zip
+    chmod 755 ./terraform
+    terraformBinary='./terraform'
+    ${terraformBinary} -v
 fi
 
 # Check if AWS-CLI is installed and download if not
 awsBinary="aws"
 if [[ -f ./aws/dist/aws ]]; then
-  awsBinary="./aws/dist/aws"
+    awsBinary="./aws/dist/aws"
 else
-  awsBinary="aws"
+    awsBinary="aws"
 fi
-awsVersion=$(${awsBinary} --version | head -1 2>/dev/null | grep -E "aws-cli\/([0-9]+)\.([0-9]+)\.([0-9]+)")
+awsVersion=$(${awsBinary} --version | head -1 2> /dev/null | grep -E "aws-cli\/([0-9]+)\.([0-9]+)\.([0-9]+)")
 if [[ -z ${terraformVersion} ]]; then
-  curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-  unzip awscliv2.zip
-  awsBinary=./aws/dist/aws
-  ${awsBinary} --version
+    curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+    unzip awscliv2.zip
+    awsBinary=./aws/dist/aws
+    ${awsBinary} --version
 fi
 
 . ./tf-init.sh
 
 # Only generate new SSH files if this is a new environment
 environmentUp=$(terraform output -json | jq -r '."kx_main_instance_ip_addr".value')
-if [[ -z ${environmentUp} ]] || [[ "${environmentUp}" == "null" ]]; then
-  # Generate new .ssh key files
-  ssh-keygen \
-      -m PEM \
-      -t rsa \
-      -b 2048 \
-      -C "kx.hero@kx-as-code.local" \
-      -f .ssh/id_rsa \
-      -N '' <<<y 2>&1 >/dev/null
+if [[ -z ${environmentUp} ]] || [[ ${environmentUp} == "null"   ]]; then
+    # Generate new .ssh key files
+    ssh-keygen \
+        -m PEM \
+        -t rsa \
+        -b 2048 \
+        -C "kx.hero@kx-as-code.local" \
+        -f .ssh/id_rsa \
+        -N '' <<< y 2>&1 > /dev/null
 fi
 
-  id_rsa=$(<.ssh/id_rsa)
-  id_rsa_pub=$(<.ssh/id_rsa.pub)
-  profile_config_json=$(<./profile-config.json)
+  id_rsa=$(< .ssh/id_rsa)
+  id_rsa_pub=$(< .ssh/id_rsa.pub)
+  profile_config_json=$(< ./profile-config.json)
 
   echo "********** DEBUG ************"
   echo $id_rsa
   echo $id_rsa_pub
 
-
 nodeTypes="main worker"
 
-for nodeType in ${nodeTypes}
-do
-  # Create Init TPL files with new SSH keys
-  template=$(<init-main.tpl_template)
-  echo "${template//---ID_RSA_PLACEHOLDER---/$id_rsa}" > init-${nodeType}.tpl
-  template=$(<init-main.tpl)
-  echo "${template//---ID_RSA_PUB_PLACEHOLDER---/$id_rsa_pub}" > init-${nodeType}.tpl
-  template=$(<init-main.tpl)
-  echo "${template//---PROFILE_CONFIG_JSON_PLACEHOLDER---/$profile_config_json}" > init-${nodeType}.tpl
+for nodeType in ${nodeTypes}; do
+    # Create Init TPL files with new SSH keys
+    template=$(< init-main.tpl_template)
+    echo "${template//---ID_RSA_PLACEHOLDER---/$id_rsa}" > init-${nodeType}.tpl
+    template=$(< init-main.tpl)
+    echo "${template//---ID_RSA_PUB_PLACEHOLDER---/$id_rsa_pub}" > init-${nodeType}.tpl
+    template=$(< init-main.tpl)
+    echo "${template//---PROFILE_CONFIG_JSON_PLACEHOLDER---/$profile_config_json}" > init-${nodeType}.tpl
 
+    if [ -f ./users.json ]; then
 
-if [ -f ./users.json ]; then
-
-echo """
+        echo """
 echo '''
 $(cat ./users.json)
 ''' | sudo tee /usr/share/kx.as.code/workspace/users.json
 """ | tee -a init-${nodeType}.tpl
 
-fi
+    fi
 
-aqJsonFiles=$(find . -name "aq*.json")
-echo $aqJsonFiles
+    aqJsonFiles=$(find . -name "aq*.json")
+    echo $aqJsonFiles
 
-for aqJsonFile in ${aqJsonFiles}
-do
-echo "$(basename $aqJsonFile)"
-echo """
+    for aqJsonFile in ${aqJsonFiles}; do
+        echo "$(basename $aqJsonFile)"
+        echo """
 echo '''
 $(cat ${aqJsonFile})
 ''' | sudo tee /usr/share/kx.as.code/workspace/$(basename $aqJsonFile)
 """ | tee -a init-${nodeType}.tpl
-done
+    done
 
-echo 'echo "A simple flag file to let the poller know provisioning can start" | tee /usr/share/kx.as.code/workspace/gogogo' | tee -a init-${nodeType}.tpl
+    echo 'echo "A simple flag file to let the poller know provisioning can start" | tee /usr/share/kx.as.code/workspace/gogogo' | tee -a init-${nodeType}.tpl
 
 done
 
@@ -124,15 +121,15 @@ aws ec2 export-client-vpn-client-configuration \
 
 # Add VPN AWS client certs to exported VPN config file
 if [[ -f ./temp.ovpn ]] && [[ -f ./.ovpn/cert ]] && [[ -f ./.ovpn/key ]]; then
-  cat ./temp.ovpn  | tee ./kx-as-code.ovpn
-  echo -e "\n"  | tee -a ./kx-as-code.ovpn
-  cat ./.ovpn/cert  | tee -a ./kx-as-code.ovpn
-  echo -e "\n"  | tee -a ./kx-as-code.ovpn
-  cat ./.ovpn/key | tee -a ./kx-as-code.ovpn
-  echo -e "\n"
+    cat ./temp.ovpn | tee ./kx-as-code.ovpn
+    echo -e "\n" | tee -a ./kx-as-code.ovpn
+    cat ./.ovpn/cert | tee -a ./kx-as-code.ovpn
+    echo -e "\n" | tee -a ./kx-as-code.ovpn
+    cat ./.ovpn/key | tee -a ./kx-as-code.ovpn
+    echo -e "\n"
 else
-  echo "One of ./temp.ovpn ./.ovpn/cert ./.ovpn/key is missing, so cannot generate OpenVPN client config file. Exiting."
-  exit
+    echo "One of ./temp.ovpn ./.ovpn/cert ./.ovpn/key is missing, so cannot generate OpenVPN client config file. Exiting."
+    exit
 fi
 
 # Start OpenVPN connection

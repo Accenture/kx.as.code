@@ -148,7 +148,7 @@
         "VM_USER={{user `vm_user`}}",
         "VM_PASSWORD={{user `vm_password`}}",
         "KX_HOME={{user `kx_home`}}",
-        "SKELDIR={{user `kx_home`}}/skel",
+        "SKELDIR={{user `kx_home`}}/workspace/skel",
         "SHARED_GIT_REPOSITORIES={{user `kx_home`}}/git",
         "INSTALLATION_WORKSPACE={{user `kx_home`}}/workspace"
       ],
@@ -180,18 +180,13 @@
     },
     {
       "type": "file",
-      "source": "../../../dependencies/plymouth_theme",
-      "destination": "{{user `kx_home`}}/workspace/plymouth_theme"
+      "source": "../../../dependencies/skel",
+      "destination": "{{user `kx_home`}}/workspace/skel"
     },
     {
       "type": "file",
-      "source": "../../../dependencies/user_profile",
-      "destination": "{{user `kx_home`}}/workspace/user_profile"
-    },
-    {
-      "type": "file",
-      "source": "../../../dependencies/lightdm_theme",
-      "destination": "{{user `kx_home`}}/workspace/lightdm_theme"
+      "source": "../../../dependencies/theme",
+      "destination": "{{user `kx_home`}}/workspace/theme"
     },
     {
       "type": "file",
@@ -211,7 +206,7 @@
         "VERSION={{user `version`}}",
         "COMPUTE_ENGINE_BUILD={{user `compute_engine_build`}}",
         "KX_HOME={{user `kx_home`}}",
-        "SKELDIR={{user `kx_home`}}/skel",
+        "SKELDIR={{user `kx_home`}}/workspace/skel",
         "SHARED_GIT_REPOSITORIES={{user `kx_home`}}/git",
         "INSTALLATION_WORKSPACE={{user `kx_home`}}/workspace"
       ],
@@ -232,30 +227,34 @@
         "BASE_IMAGE_SSH_USER={{user `base_image_ssh_user`}}",
         "VM_USER={{user `vm_user`}}",
         "VM_PASSWORD={{user `vm_password`}}",
-        "GIT_SOURCE_BRANCH={{user `git_source_branch`}}",
-        "GIT_DOCS_BRANCH={{user `git_docs_branch`}}",
-        "GIT_TECHRADAR_BRANCH={{user `git_techradar_branch`}}",
-        "GITHUB_USER={{user `github_user`}}",
-        "GITHUB_TOKEN={{user `github_token`}}",
+        "GIT_SOURCE_USER={{user `git_source_user`}}",
+        "GIT_SOURCE_TOKEN={{user `git_source_token`}}",
+        "GIT_DOCS_USER={{user `git_docs_user`}}",
+        "GIT_DOCS_TOKEN={{user `git_docs_token`}}",
+        "GIT_TECHRADAR_USER={{user `git_techradar_user`}}",
+        "GIT_TECHRADAR_TOKEN={{user `git_techradar_token`}}",
+        "GIT_SOURCE_URL={{user `git_source_url`}}",
+        "GIT_DOCS_URL={{user `git_docs_url`}}",
+        "GIT_TECHRADAR_URL={{user `git_techradar_url`}}",
         "GIT_SOURCE_BRANCH={{user `git_source_branch`}}",
         "GIT_DOCS_BRANCH={{user `git_docs_branch`}}",
         "GIT_TECHRADAR_BRANCH={{user `git_techradar_branch`}}",
         "VERSION={{user `version`}}",
         "KX_HOME={{user `kx_home`}}",
-        "SKELDIR={{user `kx_home`}}/skel",
+        "SKELDIR={{user `kx_home`}}/workspace/skel",
         "SHARED_GIT_REPOSITORIES={{user `kx_home`}}/git",
         "INSTALLATION_WORKSPACE={{user `kx_home`}}/workspace"
       ],
       "scripts": [
+        "../../../scripts/main-node/tools.sh",
         "../../../scripts/main-node/dns.sh",
-        "../../../scripts/main-node/look-and-feel.sh",
         "../../../scripts/main-node/kx.as.code.sh",
         "../../../scripts/main-node/profile.sh",
-        "../../../scripts/main-node/tools.sh",
+        "../../../scripts/main-node/look-and-feel.sh",
         "../../../scripts/main-node/rabbitmq.sh",
-        "../../../scripts/main-node/atom.sh",
         "../../../scripts/main-node/vscode.sh",
-        "../../../scripts/main-node/createskel.sh",
+        "../../../scripts/main-node/atom.sh",
+        "../../../scripts/main-node/update-skel.sh",
         "../../../scripts/main-node/cleanup.sh"
       ],
       "type": "shell",

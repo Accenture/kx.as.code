@@ -1,6 +1,6 @@
 {
     "name": "cfssl-certificate-authority",
-    "namespace": "kube-system",
+    "namespace": "",
     "installation_type": "script",
     "installation_group_folder": "core",
     "install_scripts": [

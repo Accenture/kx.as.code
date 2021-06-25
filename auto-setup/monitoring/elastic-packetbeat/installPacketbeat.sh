@@ -1,4 +1,5 @@
 #!/bin/bash -x
+set -euo pipefail
 
 # Replace variables
 envhandlebars < ${installComponentDirectory}/deployment_yaml/install.yaml > ${installationWorkspace}/${componentName}_install.yaml

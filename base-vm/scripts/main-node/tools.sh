@@ -1,4 +1,5 @@
-#!/bin/bash -eux
+#!/bin/bash -x
+set -euo pipefail
 
 sudo apt-get -y install \
     fonts-cantarell \
@@ -7,12 +8,14 @@ sudo apt-get -y install \
     fonts-noto-color-emoji \
     mesa-utils \
     software-properties-common \
-    nautilus \
     libnss3-tools \
     xdotool \
     tmux \
     libxss1 \
-    fonts-liberation
+    fonts-liberation \
+    conky-all \
+    bc \
+    dbus-x11
 
 # Install Google-Chrome
 wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
@@ -32,34 +35,9 @@ sudo apt-get -y update
 # install typora
 sudo apt-get -y install typora
 
-# Install Typora Gitlab Theme
-git clone https://github.com/elitistsnob/typora-gitlab-theme.git
-sudo mkdir -p /home/kx.hero/.config/Typora/themes/
-sudo mv typora-gitlab-theme/gitlab* /home/kx.hero/.config/Typora/themes/
-sudo chown -R $VM_USER:$VM_USER /home/$VM_USER/.config/Typora
-
 # Install Tilix
 sudo apt-get -y install tilix
 sudo ln -s /etc/profile.d/vte-2.91.sh /etc/profile.d/vte.sh
-sudo sed -i 's/Icon=.*/Icon=utilities-terminal/g' /usr/share/applications/com.gexperts.Tilix.desktop
-sudo bash -c "cat <<EOF > /home/$VM_USER/.config/tilix.dconf
-[/]
-quake-specific-monitor=0
-theme-variant='system'
-prompt-on-delete-profile=true
-
-[profiles]
-list=['2b7c4080-0ddd-46c5-8f23-563fd3ba789d']
-
-[profiles/2b7c4080-0ddd-46c5-8f23-563fd3ba789d]
-draw-margin=80
-visible-name='Default'
-cell-width-scale=1.0
-use-system-font=false
-font='MesloLGS NF 12'"
-
-sudo apt install -y dconf-cli
-sudo -H -i -u $VM_USER sh -c "dbus-launch dconf load /com/gexperts/Tilix/ < /home/$VM_USER/.config/tilix.dconf"
 
 # Install Tools to Generate Certificate Authority
 sudo curl -L https://github.com/cloudflare/cfssl/releases/download/v1.4.1/cfssl_1.4.1_linux_amd64 -o cfssl
@@ -69,13 +47,6 @@ sudo chmod +x cfssljson
 sudo curl -L https://github.com/cloudflare/cfssl/releases/download/v1.4.1/cfssl-certinfo_1.4.1_linux_amd64 -o cfssl-certinfo
 sudo chmod +x cfssl-certinfo
 sudo mv cfssl* /usr/local/bin
-
-# Register main node as Netdata Registry
-echo """
-[registry]
-    enabled = yes
-    registry to announce = http://kx-main:19999
-""" | sudo tee -a /etc/netdata/netdata.conf
 
 # Install Mustach Template Variable Replacement Tool
 curl -sSL https://git.io/get-mo -o mo
@@ -100,6 +71,10 @@ Type=Application
 Categories=Development;
 ''' | sudo tee /usr/share/applications/postman.desktop
 
-sudo cp /usr/share/applications/postman.desktop /home/$VM_USER/Desktop
-sudo chmod 755 /home/$VM_USER/Desktop/postman.desktop
-sudo chown $VM_USER:$VM_USER /home/$VM_USER/Desktop/postman.desktop
+# Install NoMachine
+wget https://download.nomachine.com/download/7.6/Linux/nomachine_7.6.2_4_amd64.deb
+sudo apt-get install -y ./nomachine_7.6.2_4_amd64.deb
+rm -f ./nomachine_7.6.2_4_amd64.deb
+
+# Enable Desktop Notifications with "notify-send" from bash scripts
+sudo apt-get install -y libnotify-bin

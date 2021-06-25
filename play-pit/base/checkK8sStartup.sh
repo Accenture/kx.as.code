@@ -1,10 +1,11 @@
-#!/bin/bash -eux
+#!/bin/bash -x
+set -euo pipefail
 
 # Test to see if the Kubernetes Cluster is up and notify when done
 wait-for-url() {
     echo "Testing $1"
     timeout -s TERM 600 bash -c \
-    'while [[ "$(curl -s -o /dev/null -L -w ''%{http_code}'' ${0})" != "200" ]];\
+        'while [[ "$(curl -s -o /dev/null -L -w ''%{http_code}'' ${0})" != "200" ]];\
     do echo "Waiting for ${0}" && sleep 5;\
     done' ${1}
     echo "OK!"

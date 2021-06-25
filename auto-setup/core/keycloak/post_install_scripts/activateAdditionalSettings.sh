@@ -1,4 +1,11 @@
-#!/bin/bash -eux
+#!/bin/bash -x
+set -euo pipefail
+
+# Ensure Kubernetes is available before proceeding to the next step
+timeout -s TERM 600 bash -c \
+    'while [[ "$(curl -s -k https://localhost:6443/livez)" != "ok" ]];\
+do sleep 5;\
+done'
 
 # Get Keycloak POD name for subsequent Keycloak CLI commands
 export kcPod=$(kubectl get pods -l 'app.kubernetes.io/name=keycloak' -n ${namespace} --output=json | jq -r '.items[].metadata.name')
@@ -13,6 +20,7 @@ export realmId=$(kubectl -n ${namespace} exec ${kcPod} --container ${kcContainer
 envhandlebars < ${installComponentDirectory}/realmUpdate.json > ${installationWorkspace}/realmUpdate.json
 
 # Import updated realm json
+# TODO: Figure out why this docker command no longer works
 docker run \
     -e KEYCLOAK_URL=https://${componentName}.${baseDomain}/auth \
     -e KEYCLOAK_USER=admin \
@@ -24,4 +32,4 @@ docker run \
     -e IMPORT_FORCE=false \
     -e KEYCLOAK_SSLVERIFY=false \
     -v ${installationWorkspace}/realmUpdate.json:/config/realmUpdate.json \
-    adorsys/keycloak-config-cli:latest
+    adorsys/keycloak-config-cli:latest || true

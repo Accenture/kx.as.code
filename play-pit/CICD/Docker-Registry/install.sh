@@ -1,4 +1,5 @@
-#!/bin/bash
+#!/bin/bash -x
+set -euo pipefail
 
 # WORK IN PROGRESS
 

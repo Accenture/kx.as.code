@@ -1,4 +1,5 @@
-#!/bin/bash -eux
+#!/bin/bash -x
+set -euo pipefail
 
 # Install htpasswd for bcrypt encoded password
 apt-get install -y apache2-utils

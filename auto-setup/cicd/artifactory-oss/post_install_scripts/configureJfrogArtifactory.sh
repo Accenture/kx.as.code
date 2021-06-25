@@ -1,4 +1,5 @@
-#!/bin/bash -eux
+#!/bin/bash -x
+set -euo pipefail
 
 echo """
 urlBase: https://${componentName}.${baseDomain}
@@ -15,7 +16,7 @@ localRepositories:
   devops:
     type: generic
     description: "DevOps repository for general artifacts"
-""" | sudo tee ${installationWorkspace}/artifactory-configuration.yml
+""" | /usr/bin/sudo tee ${installationWorkspace}/artifactory-configuration.yml
 
 # Configure JFrog Artifactory server
 curl -u admin:password -X PATCH "https://${componentName}.${baseDomain}/artifactory/api/system/configuration" -H "Content-Type: application/yaml" -T ${installationWorkspace}/artifactory-configuration.yml

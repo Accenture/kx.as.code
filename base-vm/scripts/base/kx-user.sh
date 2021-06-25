@@ -1,4 +1,5 @@
-#!/bin/bash -eux
+#!/bin/bash -x
+set -euo pipefail
 
 export KX_HOME=/usr/share/kx.as.code
 sudo mkdir -p $KX_HOME
@@ -27,7 +28,7 @@ sudo chown -R $VM_USER:$VM_USER /home/$VM_USER/.ssh
 
 # Create SSH key kx.hero user
 sudo chmod 700 /home/${VM_USER}/.ssh
-yes | sudo -u ${VM_USER} ssh-keygen -f ssh-keygen -m PEM -t rsa -b 4096 -q -f /home/${VM_USER}/.ssh/id_rsa -N ''
+echo yes | sudo -u ${VM_USER} ssh-keygen -f ssh-keygen -m PEM -t rsa -b 4096 -q -f /home/${VM_USER}/.ssh/id_rsa -N ''
 
 # Mark the vagrant box build time.
 date --utc | sudo tee /etc/vagrant_box_build_time

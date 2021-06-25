@@ -1,4 +1,5 @@
-#!/bin/bash -eux
+#!/bin/bash -x
+set -euo pipefail
 
 # Login to RocketChat to authenticate for API calls
 rocketChatAuthResponse=$(curl https://rocketchat.${baseDomain}/api/v1/login -d "user=admin&password=${vmPassword}")

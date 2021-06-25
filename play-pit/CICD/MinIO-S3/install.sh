@@ -1,14 +1,15 @@
-#!/bin/bash -eux
+#!/bin/bash -x
+set -euo pipefail
 
 # Create namespace if it does not already exist
 if [ "$(kubectl get namespace minio-s3 --template={{.status.phase}})" != "Active" ]; then
-  # Create Kubernetes Namespace for MinIO
-  kubectl create namespace minio-s3
+    # Create Kubernetes Namespace for MinIO
+    kubectl create namespace minio-s3
 fi
 
 # Set variables for both MinIO and Docker Registry
-export MINIOS3_ACCESS_KEY=$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${1:-32};echo;)
-export MINIOS3_SECRET_KEY=$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${1:-32};echo;)
+export MINIOS3_ACCESS_KEY=$(pwgen -1s 32)
+export MINIOS3_SECRET_KEY=$(pwgen -1s 32)
 
 # Create MinIO secrets
 kubectl create secret generic minio-accesskey-secret \
@@ -41,6 +42,6 @@ helm upgrade --install minios3 minio/minio \
 
 # Install the desktop shortcut
 /home/$VM_USER/Documents/git/kx.as.code_library/02_Kubernetes/00_Base/createDesktopShortcut.sh \
-  --name="MinIO S3" \
-  --url=https://s3.kx-as-code.local/minio/health/ready \
-  --icon=/home/$VM_USER/Documents/git/kx.as.code_library/02_Kubernetes/08_Storage/01_MinIO/minio.png
+    --name="MinIO S3" \
+    --url=https://s3.kx-as-code.local/minio/health/ready \
+    --icon=/home/$VM_USER/Documents/git/kx.as.code_library/02_Kubernetes/08_Storage/01_MinIO/minio.png

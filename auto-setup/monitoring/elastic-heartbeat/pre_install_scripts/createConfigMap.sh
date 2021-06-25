@@ -1,16 +1,16 @@
 #!/bin/bash -x
+set -euo pipefail
 
 # Get list of Ingress TLS URLs
 export ingressTlsUrls=$(kubectl get ingress --all-namespaces -o json | jq -r '"\(.items[].spec.tls[].hosts[])"' | sort | uniq)
-sudo rm -f ${installationWorkspace}/heartbeat-monitors.temp-config
+/usr/bin/sudo rm -f ${installationWorkspace}/heartbeat-monitors.temp-config
 
 # Generate HTTP monitors for Elastic Heartbeat
-for ingressTlsUrl in ${ingressTlsUrls}
-do
-serviceName=$(echo ${ingressTlsUrl} | sed 's/\.'${baseDomain}'//g')
-echo -e "${serviceName}\t${ingressTlsUrl}"
+for ingressTlsUrl in ${ingressTlsUrls}; do
+    serviceName=$(echo ${ingressTlsUrl} | sed 's/\.'${baseDomain}'//g')
+    echo -e "${serviceName}\t${ingressTlsUrl}"
 
-echo """
+    echo """
     - type: http
       id: ${serviceName}
       name: ${serviceName}
@@ -22,7 +22,7 @@ echo """
       ssl:
         certificate_authorities: ['/usr/share/heartbeat/config/kx-certs/kx_root_ca.pem', '/usr/share/heartbeat/config/kx-certs/kx_intermediate_ca.pem']
         supported_protocols: [\"TLSv1.0\", \"TLSv1.1\", \"TLSv1.2\"]
-""" | sed '/^$/d' | sudo tee -a ${installationWorkspace}/heartbeat-monitors.temp-config
+""" | sed '/^$/d' | /usr/bin/sudo tee -a ${installationWorkspace}/heartbeat-monitors.temp-config
 
 done
 
@@ -61,7 +61,7 @@ $(cat ${installationWorkspace}/heartbeat-monitors.temp-config | sed '/^$/d')
         key: /usr/share/heartbeat/config/certs/kibana.key
       username: \${ELASTIC_USERNAME}
       password: \${ELASTIC_PASSWORD}
-""" | sudo tee ${installationWorkspace}/elastic-heartbeat-configmap.yaml
+""" | /usr/bin/sudo tee ${installationWorkspace}/elastic-heartbeat-configmap.yaml
 
 cat ${installationWorkspace}/elastic-heartbeat-configmap.yaml
 

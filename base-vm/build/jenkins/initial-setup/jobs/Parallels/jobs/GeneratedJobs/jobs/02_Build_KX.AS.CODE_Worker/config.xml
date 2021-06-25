@@ -13,7 +13,7 @@
         <string>git_source_branch</string>
         <string>kx_vm_user</string>
         <string>kx_vm_password</string>
-        <string>git_repo_url</string>
+        <string>git_source_url</string>
         <string>vagrant_compute_engine_build</string>
         <string>kx_version</string>
         <string>kx_domain</string>
@@ -39,9 +39,9 @@
     <hudson.model.ParametersDefinitionProperty>
       <parameterDefinitions>
         <hudson.model.StringParameterDefinition>
-          <name>git_repo_url</name>
-          <description>Source Github repository</description>
-          <defaultValue>{{git_repo_url}}</defaultValue>
+          <name>git_source_url</name>
+          <description>Source Git repository</description>
+          <defaultValue>{{git_source_url}}</defaultValue>
           <trim>false</trim>
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
@@ -100,8 +100,8 @@
       <configVersion>2</configVersion>
       <userRemoteConfigs>
         <hudson.plugins.git.UserRemoteConfig>
-          <url>{{git_repo_url}}</url>
-          <credentialsId>GITHUB_KX.AS.CODE</credentialsId>
+          <url>{{git_source_url}}</url>
+          <credentialsId>GIT_KX.AS.CODE_SOURCE</credentialsId>
         </hudson.plugins.git.UserRemoteConfig>
       </userRemoteConfigs>
       <branches>

@@ -1,5 +1,5 @@
-#!/bin/bash -eux
-
+#!/bin/bash -x
+set -euo pipefail
 
 . ${installComponentDirectory}/helper_scripts/getLoginToken.sh
 

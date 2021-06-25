@@ -1,9 +1,11 @@
-#!/bin/bash -eux
+#!/bin/bash -x
+set -euo pipefail
 
 . /etc/environment
 export VM_USER=$VM_USER
 export VM_PASSWORD=$(cat /home/$VM_USER/.config/kx.as.code/.user.cred)
-export KUBEDIR=/home/$VM_USER/Kubernetes; cd $KUBEDIR
+export KUBEDIR=/home/$VM_USER/Kubernetes
+cd $KUBEDIR
 
 # Create Namespace
 kubectl create namespace sonarqube
@@ -17,47 +19,49 @@ helm repo update
 kubectl create secret generic kx-ca-certs --from-file=/home/kx.hero/Kubernetes/kx-certs/ca.crt --from-file=/home/kx.hero/Kubernetes/kx-certs/tls.crt -n sonarqube
 
 # Define Postgresql Password
-POSTGRESQL_PASSWORD=$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${1:-32};echo;)
+POSTGRESQL_PASSWORD=$(pwgen -1s 32)
 
 # Install Helm Chart
 helm upgrade --install sonarqube \
---set 'replicaCount=1' \
---set 'ingress.enabled=true' \
---set 'ingress.hosts[0].name=sonarqube.kx-as-code.local' \
---set 'ingress.tls[0].hosts[0]=sonarqube.kx-as-code.local' \
---set 'persistence.enabled=true' \
---set 'persistence.storageClass=local-storage' \
---set 'persistence.size=1Gi' \
---set 'postgresql.enabled=true' \
---set 'postgresql.postgresqlUsername=sonarqube' \
---set 'postgresql.postgresqlPassword='${POSTGRESQL_PASSWORD}'' \
---set 'postgresql.postgresqlDatabase=sonarqube' \
---set 'postgresql.service.port=5432' \
---set 'postgresql.global.persistence.storageClass=local-storage' \
---set 'postgresql.persistence.enabled=true' \
---set 'postgresql.persistence.storageClass=local-storage' \
---set 'postgresql.persistence.size=1Gi' \
---set 'caCerts.secret=kx-ca-certs' \
-oteemo/sonarqube \
--n sonarqube
+    --set 'replicaCount=1' \
+    --set 'ingress.enabled=true' \
+    --set 'ingress.hosts[0].name=sonarqube.kx-as-code.local' \
+    --set 'ingress.tls[0].hosts[0]=sonarqube.kx-as-code.local' \
+    --set 'persistence.enabled=true' \
+    --set 'persistence.storageClass=local-storage' \
+    --set 'persistence.size=1Gi' \
+    --set 'postgresql.enabled=true' \
+    --set 'postgresql.postgresqlUsername=sonarqube' \
+    --set 'postgresql.postgresqlPassword='${POSTGRESQL_PASSWORD}'' \
+    --set 'postgresql.postgresqlDatabase=sonarqube' \
+    --set 'postgresql.service.port=5432' \
+    --set 'postgresql.global.persistence.storageClass=local-storage' \
+    --set 'postgresql.persistence.enabled=true' \
+    --set 'postgresql.persistence.storageClass=local-storage' \
+    --set 'postgresql.persistence.size=1Gi' \
+    --set 'caCerts.secret=kx-ca-certs' \
+    oteemo/sonarqube \
+    -n sonarqube
 
 # Install the desktop shortcut
 /home/$VM_USER/Documents/git/kx.as.code_library/02_Kubernetes/00_Base/createDesktopShortcut.sh \
-  --name="SonarQube" \
-  --url=https://sonarqube.kx-as-code.local \
-  --icon=/home/$VM_USER/Documents/git/kx.as.code_library/02_Kubernetes/03_Test-Automation/02_SonarQube/sonarqube.png
+    --name="SonarQube" \
+    --url=https://sonarqube.kx-as-code.local \
+    --icon=/home/$VM_USER/Documents/git/kx.as.code_library/02_Kubernetes/03_Test-Automation/02_SonarQube/sonarqube.png
 
 # Enable Gitlab OAUTH
 
 # Create OAUTH application in Gitlab for SonarQube
 PERSONAL_ACCESS_TOKEN=$(cat /home/$VM_USER/.config/kx.as.code/.admin.gitlab.pat)
-for i in {1..5}
-do
-  curl -s --request POST --header "PRIVATE-TOKEN: ${PERSONAL_ACCESS_TOKEN}" \
-    --data "name=SonarQube&redirect_uri=https://sonarqube.kx-as-code.local/oauth2/callback/gitlab&scopes=read_user" \
-    "https://gitlab.kx-as-code.local/api/v4/applications" | sudo tee $KUBEDIR/sonarqube_gitlab_integration.json
+for i in {1..5}; do
+    curl -s --request POST --header "PRIVATE-TOKEN: ${PERSONAL_ACCESS_TOKEN}" \
+        --data "name=SonarQube&redirect_uri=https://sonarqube.kx-as-code.local/oauth2/callback/gitlab&scopes=read_user" \
+        "https://gitlab.kx-as-code.local/api/v4/applications" | sudo tee $KUBEDIR/sonarqube_gitlab_integration.json
     SONARQUBE_APPLICATION_ID=$(curl -s --header "Private-Token: ${PERSONAL_ACCESS_TOKEN}" https://gitlab.kx-as-code.local/api/v4/applications | jq '.[] | select(.application_name=="SonarQube") | .id')
-    if [[ ! -z ${SONARQUBE_APPLICATION_ID} ]]; then break; else echo "SonarQube application was not created in Gitlab. Trying again"; sleep 5; fi
+    if [[ -n ${SONARQUBE_APPLICATION_ID}   ]]; then break; else
+        echo "SonarQube application was not created in Gitlab. Trying again"
+        sleep 5
+    fi
 done
 
 GITLAB_INTEGRATION_SECRET=$(cat $KUBEDIR/sonarqube_gitlab_integration.json | jq -r '.secret')

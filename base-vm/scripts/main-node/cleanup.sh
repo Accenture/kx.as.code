@@ -1,4 +1,5 @@
-#!/bin/bash -eux
+#!/bin/bash -x
+set -euo pipefail
 
 # Remove SSH keys used to connect to Gitlab duing build process
 sudo rm -f /home/$VM_USER/.ssh/id_rsa*

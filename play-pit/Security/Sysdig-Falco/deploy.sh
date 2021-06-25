@@ -1,12 +1,13 @@
 #!/bin/bash -x
+set -euo pipefail
 
 # Download script included in falco-extras for creating custom rules file for helm upgrade
 if [ ! -d falco-extras ]; then
-  git clone https://github.com/draios/falco-extras
+    git clone https://github.com/draios/falco-extras
 else
-  cd falco-extras
-  git pull
-  cd -
+    cd falco-extras
+    git pull
+    cd -
 fi
 
 # Execute script for creatime sysdig-falco rules file for Helm

@@ -1,4 +1,5 @@
-#!/bin/bash -eux
+#!/bin/bash -x
+set -euo pipefail
 
 # Uninstall Tick-Stack with Helm
 helm uninstall influxdb --namespace tick-stack
@@ -13,10 +14,10 @@ rm -f ./password.txt
 
 # Remove the Tick-Stack configurations
 kubectl delete --namespace tick-stack \
-  -f persistentVolumeClaims.yaml \
-  -f persistentVolumes.yaml \
-  -f ingress.yaml \
-  --ignore-not-found
+    -f persistentVolumeClaims.yaml \
+    -f persistentVolumes.yaml \
+    -f ingress.yaml \
+    --ignore-not-found
 
 # Delete Kubernetes Namespace for Tick-Stack
 kubectl delete -f namespace.yaml --ignore-not-found

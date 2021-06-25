@@ -1,9 +1,10 @@
-#!/bin/bash -eux
+#!/bin/bash -x
+set -euo pipefail
 
 EXECUTION_START=$(date +"%s")
 
 /sbin/ntpdate pool.ntp.org
-TIMESTAMP=`date "+%Y-%m-%d_%H%M%S"`
+TIMESTAMP=$(date "+%Y-%m-%d_%H%M%S")
 
 # Add notification to desktop to notify that K8s intialization is in progress
 sudo -u $VM_USER DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus notify-send -t 300000 'KX.AS.CODE - K8s Intitializing' 'Kubernetes cluster intialization is in progress' --icon=dialog-warning
@@ -24,7 +25,7 @@ systemctl disable k8s-initialization.service
 rm -f /home/$VM_USER/Desktop/show-k8s-wip-md.desktop
 
 # Put Kubernetes Dashboard Icon on Desktop
-cat <<EOF > /home/$VM_USER/Desktop/Kubernetes-Dashboard.desktop
+cat << EOF > /home/$VM_USER/Desktop/Kubernetes-Dashboard.desktop
 [Desktop Entry]
 Version=1.0
 Name=Kubernetes Dashboard
@@ -41,7 +42,7 @@ Actions=new-window;new-private-window;
 EOF
 
 # Put Shortcut to get K8s Admin Token on Desktop
-cat <<EOF > /home/$VM_USER/Desktop/Get-Kubernetes-Token.desktop
+cat << EOF > /home/$VM_USER/Desktop/Get-Kubernetes-Token.desktop
 [Desktop Entry]
 Version=1.0
 Name=Get Kubernetes Token
@@ -63,7 +64,7 @@ chown $VM_USER:$VM_USER /home/$VM_USER/Desktop/*.desktop
 
 # Add check for every login telling user if K8s is ready or not
 sudo -H -i -u $VM_USER sh -c "mkdir -p /home/$VM_USER/.config/autostart"
-cat <<EOF > /home/$VM_USER/.config/autostart/check-k8s.desktop
+cat << EOF > /home/$VM_USER/.config/autostart/check-k8s.desktop
 [Desktop Entry]
 Type=Application
 Name=K8s-Startup-Status
@@ -73,11 +74,11 @@ chmod 755 /home/$VM_USER/.config/autostart/check-k8s.desktop
 chown $VM_USER:$VM_USER /home/$VM_USER/.config/autostart/check-k8s.desktop
 
 EXECUTION_END=$(date +"%s")
-TIME_DIFFERENCE=$(($EXECUTION_END-$EXECUTION_START))
-echo "It took $(($TIME_DIFFERENCE / 60)) minutes and $(($TIME_DIFFERENCE % 60)) seconds for Kubernetes to intialize."
+TIME_DIFFERENCE=$((EXECUTION_END - EXECUTION_START))
+echo "It took $((TIME_DIFFERENCE / 60)) minutes and $((TIME_DIFFERENCE % 60)) seconds for Kubernetes to intialize."
 
 # Add notification to desktop to notify that K8s intialization is completed
-sudo -u $VM_USER DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus notify-send -t 300000 "KX.AS.CODE Notification" "Kubernetes cluster intialization completed. K8s initialization took $(($TIME_DIFFERENCE / 60)) minutes and $(($TIME_DIFFERENCE % 60)) seconds" --icon=dialog-information
+sudo -u $VM_USER DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus notify-send -t 300000 "KX.AS.CODE Notification" "Kubernetes cluster intialization completed. K8s initialization took $((TIME_DIFFERENCE / 60)) minutes and $((TIME_DIFFERENCE % 60)) seconds"   --icon=dialog-information
 
 # Install DevOps Tools
 sudo -H -i -u $VM_USER sh -c "export VM_USER=$VM_USER; /home/$VM_USER/Documents/git/kx.as.code_library/02_Kubernetes/00_Base/installDevOpsImages.sh" > /home/$VM_USER/Kubernetes/k8sBase_$TIMESTAMP.log

@@ -46,7 +46,7 @@ pipeline {
         stage('Clone the repository'){
             steps {
                 script {
-                    checkout([$class: 'GitSCM', branches: [[name: "$git_source_branch"]], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'GITHUB_KX.AS.CODE', url: '${git_repo_url}']]])
+                    checkout([$class: 'GitSCM', branches: [[name: "$git_source_branch"]], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'GIT_KX.AS.CODE_SOURCE', url: '${git_source_url}']]])
                 }
             }
         }
@@ -54,7 +54,7 @@ pipeline {
         stage('Build the OVA/BOX'){
             steps {
                 script {
-                withCredentials([usernamePassword(credentialsId: 'GITHUB_KX.AS.CODE', passwordVariable: 'GITHUB_TOKEN', usernameVariable: 'GITHUB_USER')]) {
+                withCredentials([usernamePassword(credentialsId: 'GIT_KX.AS.CODE_SOURCE', passwordVariable: 'git_source_token', usernameVariable: 'git_source_user')]) {
                         def packerPath = tool "packer-${os}"
                         if ( "${os}" == "windows" ) {
                             packerPath = packerPath.replaceAll("\\\\","/")
@@ -71,9 +71,6 @@ pipeline {
                         -var "version=${kx_version}" \
                         -var "vm_user=${kx_vm_user}" \
                         -var "vm_password=${kx_vm_password}" \
-                        -var "github_user=${GITHUB_USER}" \
-                        -var "github_token=${GITHUB_TOKEN}" \
-                        -var "git_source_branch=${git_source_branch}" \
                         -var "base_image_ssh_user=${vagrant_ssh_username}" \
                         ./kx.as.code-worker-local-profiles.json
                         """
