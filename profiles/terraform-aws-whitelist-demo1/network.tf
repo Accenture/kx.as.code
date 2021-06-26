@@ -228,6 +228,8 @@ module "vpc" {
   enable_dns_support     = true
   one_nat_gateway_per_az = false
 
+  external_nat_ip_ids     = [ aws_eip.nat.0.id ]
+
   manage_default_network_acl = true
   default_network_acl_name   = "${local.prefix}-kx-as-code"
 
@@ -257,4 +259,134 @@ module "vpc" {
       protocol    = "tcp"
       cidr_blocks = cidr
   }]
+}
+
+resource "aws_eip" "nat" {
+  count = 1
+  vpc = true
+}
+
+resource "aws_route53_zone" "kx-as-code" {
+  name = "${local.prefix}.${local.kx_as_code_domain}"
+
+  vpc {
+    vpc_id = module.vpc.vpc_id
+  }
+}
+
+resource "aws_route53_record" "kx-main" {
+  zone_id = aws_route53_zone.kx-as-code.zone_id
+  name    = "kx-main.${local.prefix}.${local.kx_as_code_domain}"
+  type    = "A"
+  ttl     = 300
+  records  = [ aws_instance.kx_main.private_ip ]
+}
+
+resource "aws_route53_record" "kx-worker" {
+  zone_id = aws_route53_zone.kx-as-code.zone_id
+  name    = "kx-worker${count.index + 1}.${local.prefix}.${local.kx_as_code_domain}"
+  count   = local.worker_node_count
+  type    = "A"
+  ttl     = 300
+  records = [ element(aws_instance.kx_worker.*.private_ip, count.index) ]
+}
+
+resource "aws_route53_record" "wildcard" {
+  zone_id = aws_route53_zone.kx-as-code.zone_id
+  name    = "*.${local.prefix}.${local.kx_as_code_domain}"
+  type    = "A"
+  ttl     = 300
+  records  = [ aws_eip.nat.0.public_ip ]
+}
+
+resource "aws_security_group" "sg_alb_http_https" {
+  name        = "sg-alb-http-https"
+  description = "Allow HTTP and HTTPS inbound ALB traffic"
+  vpc_id      = module.vpc.vpc_id
+
+  ingress {
+    description      = "KX ALB 80"
+    from_port        = 80
+    to_port          = 80
+    protocol         = "tcp"
+    cidr_blocks      = [ "0.0.0.0/0" ]
+  }
+
+  ingress {
+    description      = "KX ALB 443"
+    from_port        = 443
+    to_port          = 443
+    protocol         = "tcp"
+    cidr_blocks      = [ "0.0.0.0/0" ]
+  }
+
+  egress {
+    from_port        = 0
+    to_port          = 0
+    protocol         = "-1"
+    cidr_blocks      = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
+  }
+
+  tags = {
+    Name = "allow_http_https"
+  }
+}
+
+module "alb" {
+  source  = "terraform-aws-modules/alb/aws"
+  version = "~> 6.0"
+
+  name = "kx-alb"
+
+  load_balancer_type = "network"
+
+  vpc_id             = module.vpc.vpc_id
+  subnets            = [local.private_subnet_cidr_one, local.private_subnet_cidr_two]
+  security_groups    = [ aws_security_group.sg_alb_http_https.id ]
+
+  access_logs = {
+    bucket = "kx-alb-logs"
+  }
+
+  target_groups = [
+    {
+      name_prefix      = "${local.prefix}"
+      backend_protocol = "TCP"
+      backend_port     = 80
+      target_type      = "instance"
+      targets = [
+        {
+          target_id = aws_instance.kx_main.id
+          port = 80
+        }
+      ]
+    },
+    {
+      name_prefix      = "${local.prefix}"
+      backend_protocol = "TCP"
+      backend_port     = 443
+      target_type      = "instance"
+      targets = [
+        {
+          target_id = aws_instance.kx_main.id
+          port = 443
+        }
+      ]
+    }
+  ]
+
+  http_tcp_listeners = [
+    {
+      port               = 80
+      protocol           = "TCP"
+      target_group_index = 0
+    },
+    {
+      port               = 443
+      protocol           = "TCP"
+      target_group_index = 0
+    }
+  ]
+
 }
