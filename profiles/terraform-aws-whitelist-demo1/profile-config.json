@@ -1,6 +1,6 @@
 {
-    "aws_access_key": "AKIAYNAHHFYOHES6IE42",
-    "aws_secret_access_key": "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",
+    "aws_access_key": "",
+    "aws_secret_access_key": "",
     "aws_region": "us-east-2",
     "aws_availability_zone": "us-east-2c",
     "kx_version": "0.6.7",

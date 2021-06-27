@@ -228,7 +228,7 @@ module "vpc" {
   enable_dns_support     = true
   one_nat_gateway_per_az = false
 
-  external_nat_ip_ids     = [ aws_eip.nat.0.id ]
+  #external_nat_ip_ids     = [ aws_eip.kx_alb.0.id ]
 
   manage_default_network_acl = true
   default_network_acl_name   = "${local.prefix}-kx-as-code"
@@ -261,12 +261,12 @@ module "vpc" {
   }]
 }
 
-resource "aws_eip" "nat" {
+resource "aws_eip" "kx_alb" {
   count = 1
   vpc = true
 }
 
-resource "aws_route53_zone" "kx-as-code" {
+resource "aws_route53_zone" "kx_as_code" {
   name = "${local.prefix}.${local.kx_as_code_domain}"
 
   vpc {
@@ -274,16 +274,16 @@ resource "aws_route53_zone" "kx-as-code" {
   }
 }
 
-resource "aws_route53_record" "kx-main" {
-  zone_id = aws_route53_zone.kx-as-code.zone_id
+resource "aws_route53_record" "kx_main" {
+  zone_id = aws_route53_zone.kx_as_code.zone_id
   name    = "kx-main.${local.prefix}.${local.kx_as_code_domain}"
   type    = "A"
   ttl     = 300
   records  = [ aws_instance.kx_main.private_ip ]
 }
 
-resource "aws_route53_record" "kx-worker" {
-  zone_id = aws_route53_zone.kx-as-code.zone_id
+resource "aws_route53_record" "kx_worker" {
+  zone_id = aws_route53_zone.kx_as_code.zone_id
   name    = "kx-worker${count.index + 1}.${local.prefix}.${local.kx_as_code_domain}"
   count   = local.worker_node_count
   type    = "A"
@@ -292,11 +292,11 @@ resource "aws_route53_record" "kx-worker" {
 }
 
 resource "aws_route53_record" "wildcard" {
-  zone_id = aws_route53_zone.kx-as-code.zone_id
+  zone_id = aws_route53_zone.kx_as_code.zone_id
   name    = "*.${local.prefix}.${local.kx_as_code_domain}"
   type    = "A"
   ttl     = 300
-  records  = [ aws_eip.nat.0.public_ip ]
+  records  = [ aws_eip.kx_alb.0.public_ip ]
 }
 
 resource "aws_security_group" "sg_alb_http_https" {
