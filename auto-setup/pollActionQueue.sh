@@ -286,7 +286,7 @@ if [[ ! -f /usr/share/kx.as.code/.config/network_status ]]; then
     fi
 
     # Setup proxy settings if they exist
-    if [[ -n ${httpProxySetting}   ]] || [[ -n ${httpsProxySetting}   ]]; then
+    if ( [[ -n ${httpProxySetting} ]] || [[ -n ${httpsProxySetting} ]] ) && ( [[ "${httpProxySetting}" != "null" ]] && [[ "${httpsProxySetting}" != "null" ]] ); then
 
         httpProxySettingBase=$(echo ${httpProxySetting} | sed 's/https:\/\///g' | sed 's/http:\/\///g')
         httpsProxySettingBase=$(echo ${httpsProxySetting} | sed 's/https:\/\///g' | sed 's/http:\/\///g')
