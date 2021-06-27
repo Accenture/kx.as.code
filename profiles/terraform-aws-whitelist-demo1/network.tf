@@ -1,7 +1,7 @@
 locals {
   network_acls_public_inbound = flatten([for i, cidr in local.remote_access_cidrs : [
     {
-      rule_number = "10${i + 2}"
+      rule_number = "10${i + 20}"
       rule_action = "allow"
       from_port   = 22
       to_port     = 22
@@ -9,11 +9,19 @@ locals {
       cidr_block  = cidr
     },
     {
-      rule_number = "12${i + 2}"
+      rule_number = "10${i + 30}"
       rule_action = "allow"
-      icmp_type   = 8
-      icmp_code   = 0
-      protocol    = "icmp"
+      from_port   = 80
+      to_port     = 80
+      protocol    = "tcp"
+      cidr_block  = cidr
+    },
+    {
+      rule_number = "10${i + 40}"
+      rule_action = "allow"
+      from_port   = 443
+      to_port     = 443
+      protocol    = "tcp"
       cidr_block  = cidr
     }]
   ])
@@ -35,41 +43,41 @@ locals {
       cidr_block  = module.vpc.private_subnets_cidr_blocks[1]
     },
     {
-      rule_number = 110
+      rule_number = 102
       rule_action = "allow"
-      icmp_type   = 0
-      icmp_code   = 0
-      protocol    = "icmp"
+      from_port   = 80
+      to_port     = 80
+      protocol    = "tcp"
       cidr_block  = module.vpc.private_subnets_cidr_blocks[0]
     },
     {
-      rule_number = 111
+      rule_number = 103
       rule_action = "allow"
-      icmp_type   = 0
-      icmp_code   = 0
-      protocol    = "icmp"
+      from_port   = 80
+      to_port     = 80
+      protocol    = "tcp"
       cidr_block  = module.vpc.private_subnets_cidr_blocks[1]
     },
     {
-      rule_number = 120
+      rule_number = 104
       rule_action = "allow"
-      icmp_type   = 8
-      icmp_code   = 0
-      protocol    = "icmp"
+      from_port   = 443
+      to_port     = 443
+      protocol    = "tcp"
       cidr_block  = module.vpc.private_subnets_cidr_blocks[0]
     },
     {
-      rule_number = 121
+      rule_number = 105
       rule_action = "allow"
-      icmp_type   = 8
-      icmp_code   = 0
-      protocol    = "icmp"
+      from_port   = 443
+      to_port     = 443
+      protocol    = "tcp"
       cidr_block  = module.vpc.private_subnets_cidr_blocks[1]
     },
     {
       rule_number = 900
       rule_action = "allow"
-      from_port   = 32768
+      from_port   = 1024
       to_port     = 65535
       protocol    = "tcp"
       cidr_block  = module.vpc.private_subnets_cidr_blocks[0]
@@ -77,7 +85,7 @@ locals {
     {
       rule_number = 901
       rule_action = "allow"
-      from_port   = 32768
+      from_port   = 1024
       to_port     = 65535
       protocol    = "tcp"
       cidr_block  = module.vpc.private_subnets_cidr_blocks[1]
@@ -85,7 +93,7 @@ locals {
   ]
   network_acls_public_outbound = flatten([for i, cidr in local.remote_access_cidrs : [
     {
-      rule_number = "10${i + 3}"
+      rule_number = "10${i + 10}"
       rule_action = "allow"
       from_port   = 22
       to_port     = 22
@@ -93,17 +101,25 @@ locals {
       cidr_block  = cidr
     },
     {
-      rule_number = "11${i + 2}"
+      rule_number = "10${i + 20}"
       rule_action = "allow"
-      icmp_type   = 0
-      icmp_code   = 0
-      protocol    = "icmp"
+      from_port   = 80
+      to_port     = 80
+      protocol    = "tcp"
+      cidr_block  = cidr
+    },
+    {
+      rule_number = "10${i + 30}"
+      rule_action = "allow"
+      from_port   = 443
+      to_port     = 443
+      protocol    = "tcp"
       cidr_block  = cidr
     },
     {
       rule_number = "90${i}"
       rule_action = "allow"
-      from_port   = 32768
+      from_port   = 1024
       to_port     = 65535
       protocol    = "tcp"
       cidr_block  = cidr
@@ -135,37 +151,53 @@ locals {
       cidr_block  = module.vpc.public_subnets_cidr_blocks[0]
     },
     {
-      rule_number = 110
+      rule_number = 103
       rule_action = "allow"
-      icmp_type   = 0
-      icmp_code   = 0
-      protocol    = "icmp"
+      from_port   = 80
+      to_port     = 80
+      protocol    = "tcp"
       cidr_block  = module.vpc.private_subnets_cidr_blocks[0]
     },
     {
-      rule_number = 111
+      rule_number = 104
       rule_action = "allow"
-      icmp_type   = 0
-      icmp_code   = 0
-      protocol    = "icmp"
+      from_port   = 80
+      to_port     = 80
+      protocol    = "tcp"
       cidr_block  = module.vpc.private_subnets_cidr_blocks[1]
     },
     {
-      rule_number = 120
+      rule_number = 105
       rule_action = "allow"
-      icmp_type   = 8
-      icmp_code   = 0
-      protocol    = "icmp"
+      from_port   = 80
+      to_port     = 80
+      protocol    = "tcp"
+      cidr_block  = module.vpc.public_subnets_cidr_blocks[0]
+    },
+    {
+      rule_number = 106
+      rule_action = "allow"
+      from_port   = 443
+      to_port     = 443
+      protocol    = "tcp"
       cidr_block  = module.vpc.private_subnets_cidr_blocks[0]
     },
     {
-      rule_number = 121
+      rule_number = 107
       rule_action = "allow"
-      icmp_type   = 8
-      icmp_code   = 0
-      protocol    = "icmp"
+      from_port   = 443
+      to_port     = 443
+      protocol    = "tcp"
       cidr_block  = module.vpc.private_subnets_cidr_blocks[1]
     },
+    {
+      rule_number = 108
+      rule_action = "allow"
+      from_port   = 443
+      to_port     = 443
+      protocol    = "tcp"
+      cidr_block  = module.vpc.public_subnets_cidr_blocks[0]
+    }
   ]
   network_acls_private_inbound = [
     {
@@ -177,11 +209,19 @@ locals {
       cidr_block  = module.vpc.public_subnets_cidr_blocks[0]
     },
     {
-      rule_number = 110
+      rule_number = 101
       rule_action = "allow"
-      icmp_type   = 8
-      icmp_code   = 0
-      protocol    = "icmp"
+      from_port   = 80
+      to_port     = 80
+      protocol    = "tcp"
+      cidr_block  = module.vpc.public_subnets_cidr_blocks[0]
+    },
+    {
+      rule_number = 102
+      rule_action = "allow"
+      from_port   = 443
+      to_port     = 443
+      protocol    = "tcp"
       cidr_block  = module.vpc.public_subnets_cidr_blocks[0]
     }
   ]
@@ -195,21 +235,29 @@ locals {
       cidr_block  = module.vpc.public_subnets_cidr_blocks[0]
     },
     {
-      rule_number = 110
+      rule_number = 101
       rule_action = "allow"
-      icmp_type   = 0
-      icmp_code   = 0
-      protocol    = "icmp"
-      cidr_block  = module.vpc.public_subnets_cidr_blocks[0]
-    },
-    {
-      rule_number = "900"
-      rule_action = "allow"
-      from_port   = 32768
-      to_port     = 65535
+      from_port   = 80
+      to_port     = 80
       protocol    = "tcp"
       cidr_block  = module.vpc.public_subnets_cidr_blocks[0]
     },
+    {
+      rule_number = 102
+      rule_action = "allow"
+      from_port   = 443
+      to_port     = 443
+      protocol    = "tcp"
+      cidr_block  = module.vpc.public_subnets_cidr_blocks[0]
+    },
+    {
+      rule_number = 900
+      rule_action = "allow"
+      from_port   = 1024
+      to_port     = 65535
+      protocol    = "tcp"
+      cidr_block  = module.vpc.public_subnets_cidr_blocks[0]
+    }
   ]
 }
 
@@ -227,8 +275,6 @@ module "vpc" {
   enable_dns_hostnames   = true
   enable_dns_support     = true
   one_nat_gateway_per_az = false
-
-  #external_nat_ip_ids     = [ aws_eip.kx_alb.0.id ]
 
   manage_default_network_acl = true
   default_network_acl_name   = "${local.prefix}-kx-as-code"
@@ -261,9 +307,109 @@ module "vpc" {
   }]
 }
 
-resource "aws_eip" "kx_alb" {
-  count = 1
-  vpc = true
+#resource "aws_kms_key" "kx_alb_logs_key" {
+#  description             = "This key is used to encrypt bucket objects"
+#  deletion_window_in_days = 10
+#}
+
+#resource "aws_s3_bucket" "kx_alb_logs" {
+#  bucket = "kx-alb-logs"
+#  acl    = "private"
+#  force_destroy = true
+
+#  server_side_encryption_configuration {
+#    rule {
+#      apply_server_side_encryption_by_default {
+#        kms_master_key_id = aws_kms_key.kx_alb_logs_key.arn
+#        sse_algorithm     = "aws:kms"
+#      }
+#    }
+#  }
+#}
+
+#data "aws_elb_service_account" "main" {}
+
+#resource "aws_s3_bucket_policy" "lb-bucket-policy" {
+#  bucket = "${aws_s3_bucket.kx_alb_logs.id}"
+#
+#  policy = <<POLICY
+#{
+#  "Id": "kxPolicy",
+#  "Version": "2012-10-17",
+#  "Statement": [
+#    {
+#      "Sid": "kxStmt",
+#      "Action": [
+#        "s3:PutObject"
+#      ],
+#      "Effect": "Allow",
+#      "Resource": "arn:aws:s3:::kx-alb-logs/http-lb/*",
+#      "Principal": {
+#        "AWS": [
+#           "${data.aws_elb_service_account.main.arn}"
+#        ]
+#      }
+#    }
+#  ]
+#}
+#POLICY
+#}
+
+module "alb" {
+  source  = "terraform-aws-modules/alb/aws"
+  version = "~> 6.0"
+
+  name = "kx-alb"
+
+  load_balancer_type = "network"
+
+  vpc_id  = module.vpc.vpc_id
+  subnets = [module.vpc.public_subnets.0]
+
+  #access_logs = {
+  #  bucket = "kx-alb-logs"
+  #}
+
+  target_groups = [
+    {
+      name_prefix      = "${local.prefix}"
+      backend_protocol = "TCP"
+      backend_port     = 80
+      target_type      = "instance"
+      targets = [
+        {
+          target_id = aws_instance.kx_main.id
+          port      = 80
+        }
+      ]
+    },
+    {
+      name_prefix      = "${local.prefix}"
+      backend_protocol = "TCP"
+      backend_port     = 443
+      target_type      = "instance"
+      targets = [
+        {
+          target_id = aws_instance.kx_main.id
+          port      = 443
+        }
+      ]
+    }
+  ]
+
+  http_tcp_listeners = [
+    {
+      port               = 80
+      protocol           = "TCP"
+      target_group_index = 0
+    },
+    {
+      port               = 443
+      protocol           = "TCP"
+      target_group_index = 1
+    }
+  ]
+
 }
 
 resource "aws_route53_zone" "kx_as_code" {
@@ -279,7 +425,7 @@ resource "aws_route53_record" "kx_main" {
   name    = "kx-main.${local.prefix}.${local.kx_as_code_domain}"
   type    = "A"
   ttl     = 300
-  records  = [ aws_instance.kx_main.private_ip ]
+  records = [aws_instance.kx_main.private_ip]
 }
 
 resource "aws_route53_record" "kx_worker" {
@@ -288,105 +434,13 @@ resource "aws_route53_record" "kx_worker" {
   count   = local.worker_node_count
   type    = "A"
   ttl     = 300
-  records = [ element(aws_instance.kx_worker.*.private_ip, count.index) ]
+  records = [element(aws_instance.kx_worker.*.private_ip, count.index)]
 }
 
 resource "aws_route53_record" "wildcard" {
   zone_id = aws_route53_zone.kx_as_code.zone_id
   name    = "*.${local.prefix}.${local.kx_as_code_domain}"
-  type    = "A"
+  type    = "CNAME"
   ttl     = 300
-  records  = [ aws_eip.kx_alb.0.public_ip ]
-}
-
-resource "aws_security_group" "sg_alb_http_https" {
-  name        = "sg-alb-http-https"
-  description = "Allow HTTP and HTTPS inbound ALB traffic"
-  vpc_id      = module.vpc.vpc_id
-
-  ingress {
-    description      = "KX ALB 80"
-    from_port        = 80
-    to_port          = 80
-    protocol         = "tcp"
-    cidr_blocks      = [ "0.0.0.0/0" ]
-  }
-
-  ingress {
-    description      = "KX ALB 443"
-    from_port        = 443
-    to_port          = 443
-    protocol         = "tcp"
-    cidr_blocks      = [ "0.0.0.0/0" ]
-  }
-
-  egress {
-    from_port        = 0
-    to_port          = 0
-    protocol         = "-1"
-    cidr_blocks      = ["0.0.0.0/0"]
-    ipv6_cidr_blocks = ["::/0"]
-  }
-
-  tags = {
-    Name = "allow_http_https"
-  }
-}
-
-module "alb" {
-  source  = "terraform-aws-modules/alb/aws"
-  version = "~> 6.0"
-
-  name = "kx-alb"
-
-  load_balancer_type = "network"
-
-  vpc_id             = module.vpc.vpc_id
-  subnets            = [local.private_subnet_cidr_one, local.private_subnet_cidr_two]
-  security_groups    = [ aws_security_group.sg_alb_http_https.id ]
-
-  access_logs = {
-    bucket = "kx-alb-logs"
-  }
-
-  target_groups = [
-    {
-      name_prefix      = "${local.prefix}"
-      backend_protocol = "TCP"
-      backend_port     = 80
-      target_type      = "instance"
-      targets = [
-        {
-          target_id = aws_instance.kx_main.id
-          port = 80
-        }
-      ]
-    },
-    {
-      name_prefix      = "${local.prefix}"
-      backend_protocol = "TCP"
-      backend_port     = 443
-      target_type      = "instance"
-      targets = [
-        {
-          target_id = aws_instance.kx_main.id
-          port = 443
-        }
-      ]
-    }
-  ]
-
-  http_tcp_listeners = [
-    {
-      port               = 80
-      protocol           = "TCP"
-      target_group_index = 0
-    },
-    {
-      port               = 443
-      protocol           = "TCP"
-      target_group_index = 0
-    }
-  ]
-
+  records = [module.alb.lb_dns_name]
 }
