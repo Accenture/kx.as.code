@@ -33,7 +33,7 @@ metadata:
     nginx.ingress.kubernetes.io/auth-signin: "https://$host/oauth2/start?rd=$escaped_request_uri"
     nginx.ingress.kubernetes.io/auth-response-headers: "X-Auth-Request-Email"
   name: '${componentName}'-iam-ingress
-  namespace: elastic-stacks
+  namespace: elastic-stack
 spec:
   tls:
   - hosts:
