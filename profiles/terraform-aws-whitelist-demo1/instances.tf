@@ -226,10 +226,12 @@ resource "aws_instance" "kx_main" {
   ami                    = local.main_node_ami_id
   key_name               = aws_key_pair.kx_ssh_key.key_name
   instance_type          = local.main_node_instance_type
-  vpc_security_group_ids = [module.vpc.default_security_group_id, aws_security_group.kx_main.id]
-  subnet_id              = module.vpc.private_subnets[0] # aws_subnet.private_one.id
-  source_dest_check      = false
   availability_zone      = local.aws_availability_zone
+
+  network_interface {
+    device_index         = 0
+    network_interface_id = aws_network_interface.kx_main.id
+  }
 
   ebs_block_device {
     device_name = "/dev/xvdb"

@@ -1,3 +1,9 @@
+resource "aws_network_interface" "kx_main" {
+  subnet_id       = module.vpc.private_subnets[0]
+  security_groups = [module.vpc.default_security_group_id, aws_security_group.kx_main.id]
+  source_dest_check      = false
+}
+
 module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
   version = "3.0.0"
@@ -10,12 +16,19 @@ module "vpc" {
   enable_nat_gateway     = true
   single_nat_gateway     = true
   enable_dns_hostnames   = true
-  enable_dns_support     = true
+  enable_dhcp_options    = true
   one_nat_gateway_per_az = false
+
+  enable_dns_support     = true
+  dhcp_options_domain_name_servers = [ aws_network_interface.kx_main.private_ip, "AmazonProvidedDNS", "8.8.8.8" ]
 
   manage_default_network_acl = true
   default_network_acl_name   = "${local.prefix}-kx-as-code"
 
+}
+
+resource "aws_vpc_dhcp_options" "dns_resolver" {
+  domain_name_servers = ["8.8.8.8", "8.8.4.4"]
 }
 
 module "alb" {
