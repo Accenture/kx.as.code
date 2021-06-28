@@ -28,7 +28,7 @@
                 "liveliness": {
                     "http_path": "/",
                     "http_auth_required": false,
-                    "expected_http_response_code": "200",
+                    "expected_http_response_code": "401",
                     "expected_http_response_string": "",
                     "expected_json_response": {
                         "json_path": "",
@@ -40,7 +40,7 @@
                 "readiness": {
                     "http_path": "/",
                     "http_auth_required": false,
-                    "expected_http_response_code": "200",
+                    "expected_http_response_code": "401",
                     "expected_http_response_string": "",
                     "expected_json_response": {
                         "json_path": "",
