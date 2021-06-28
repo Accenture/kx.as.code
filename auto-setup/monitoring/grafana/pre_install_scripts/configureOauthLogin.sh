@@ -31,7 +31,7 @@ export clientSecret=$(kubectl -n keycloak exec ${kcPod} -- \
 
 # create user group protocol mapper
 kubectl -n keycloak exec ${kcPod} --container ${kcContainer} -- \
-  ${kcAdmCli} create clients/${clientId}/protocol-mappers/models \
+  ${kcAdmCli} create clients/${clientID}/protocol-mappers/models \
   --realm ${kcRealm} \
   -s "name=groups" \
   -s "protocol=openid-connect" \
