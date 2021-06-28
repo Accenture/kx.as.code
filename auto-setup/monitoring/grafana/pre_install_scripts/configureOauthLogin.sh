@@ -8,7 +8,7 @@ kubectl -n keycloak exec ${kcPod} -- \
 clientID=$(kubectl -n keycloak exec ${kcPod}  -- \
   ${kcAdmCli} create clients --realm ${kcRealm} \
   -s "clientId=grafana" \
-  -s 'redirectUris=["https://grafana.demo1.kx-as-code.local/login/generic_oauth"]' \
+  -s 'redirectUris=["https://${componentName}. ${baseDomain}/login/generic_oauth"]' \
   -s "baseUrl=${baseUrl}" \
   -s "rootUrl=${rootUri}" \
   -s "publicClient=false" \
