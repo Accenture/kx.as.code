@@ -9,3 +9,6 @@ kubectl get secret kibana-encryption-key --namespace ${namespace} ||
     kubectl create secret generic kibana-encryption-key \
         --from-literal=encryptionkey=${encryptionKey} \
         --namespace ${namespace}
+
+# Generate Kibana basic authentication string
+export kibanaBaseAuth=$(echo -n "elastic:${vmPassword}" | base64)

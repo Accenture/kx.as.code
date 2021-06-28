@@ -51,9 +51,7 @@
     "shortcut_text": "Kibana",
     "shortcut_icon": "kibana.png",
     "pre_install_scripts": [
-        "generateEncryptionKey.sh"
-    ],
-    "post_install_scripts": [
+        "generateEncryptionKey.sh",
         "oauth2.sh"
     ]
 }

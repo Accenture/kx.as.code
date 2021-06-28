@@ -50,12 +50,12 @@ ingress:
     kubernetes.io/ingress.class: nginx
     nginx.ingress.kubernetes.io/proxy-ssl-verify: "false"
     nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
-    nginx.ingress.kubernetes.io/auth-url: "https://kubernetes-dashboard-iam.demo1.kx-as-code.local/oauth2/auth"
-    nginx.ingress.kubernetes.io/auth-signin: "https://kubernetes-dashboard-iam.demo1.kx-as-code.local/oauth2/start?rd=$escaped_request_uri"
-    nginx.ingress.kubernetes.io/auth-response-headers: "X-Auth-Request-Access-Token, Authorization"
+    nginx.ingress.kubernetes.io/auth-url: "https://elastic-kibana-iam.demo1.kx-as-code.local/oauth2/auth"
+    nginx.ingress.kubernetes.io/auth-signin: "https://elastic-kibana-iam.demo1.kx-as-code.local/oauth2/start?rd=$scheme://$host$escaped_request_uri"
+    nginx.ingress.kubernetes.io/auth-response-headers: "X-Auth-Request-Email"
     nginx.ingress.kubernetes.io/configuration-snippet: |
       proxy_set_header 'es-security-runas-user' $authHeader0;
-      proxy_set_header Authorization "Basic <your basic auth string>";
+      proxy_set_header Authorization "Basic {{kibanaBaseAuth}}";
   path: /
   hosts:
     - {{componentName}}.{{baseDomain}}
