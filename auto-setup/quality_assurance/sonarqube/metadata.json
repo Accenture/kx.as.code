@@ -28,7 +28,8 @@
             "postgresql.persistence.enabled=true",
             "postgresql.persistence.storageClass=local-storage",
             "postgresql.persistence.size=1Gi",
-            "caCerts.secret=kx-ca-certs"
+            "caCerts.secret=kx-ca-certs",
+            "plugins.install=[OpenID Connect Authentication for SonarQube]"
         ]
     },
     "categories": [
