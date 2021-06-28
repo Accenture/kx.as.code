@@ -1,4 +1,5 @@
-#!/bin/bash -eux
+#!/bin/bash -x
+set -euo pipefail
 
 # Create Selenium namespace
 kubectl create namespace selenium
@@ -17,6 +18,6 @@ helm upgrade --install selenium \
 
 # Install the desktop shortcut
 /home/$VM_USER/Documents/git/kx.as.code_library/02_Kubernetes/00_Base/createDesktopShortcut.sh \
-  --name="Selenium Hub" \
-  --url=https://selenium.kx-as-code.local \
-  --icon=/home/$VM_USER/Documents/git/kx.as.code_library/02_Kubernetes/03_Test-Automation/01_Selenium/selenium.png
+    --name="Selenium Hub" \
+    --url=https://selenium.kx-as-code.local \
+    --icon=/home/$VM_USER/Documents/git/kx.as.code_library/02_Kubernetes/03_Test-Automation/01_Selenium/selenium.png

@@ -1,10 +1,11 @@
 #!/bin/bash -x
+set -euo pipefail
 
-if [[ "${PACKER_BUILDER_TYPE}" =~ "vmware-iso" ]]; then
+if [[ ${PACKER_BUILDER_TYPE} =~ "vmware-iso"   ]]; then
     export OUTPUT_DIR="vmware-desktop"
-elif [[ "${PACKER_BUILDER_TYPE}" =~ "parallels" ]]; then
+elif [[ ${PACKER_BUILDER_TYPE} =~ "parallels"   ]]; then
     export OUTPUT_DIR="parallels"
-elif [[ "${PACKER_BUILDER_TYPE}" =~ "virtualbox" ]]; then
+elif [[ ${PACKER_BUILDER_TYPE} =~ "virtualbox"   ]]; then
     export OUTPUT_DIR="virtualbox"
 else
     echo "Packer build type ${PACKER_BUILDER_TYPE} not recognized. Exiting export-vmware-ova.sh script"

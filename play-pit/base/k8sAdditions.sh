@@ -1,4 +1,5 @@
-#!/bin/bash -eux
+#!/bin/bash -x
+set -euo pipefail
 
 . /etc/environment
 export VM_USER=$VM_USER
@@ -29,7 +30,7 @@ kubectl apply --validate=false -f https://github.com/jetstack/cert-manager/relea
 kubectl rollout status deployment cert-manager-webhook -n cert-manager || true
 
 # Create Cert Manager Self Signing Issuer
-cat <<EOF > $KUBEDIR/certificate-issuer.yaml
+cat << EOF > $KUBEDIR/certificate-issuer.yaml
 apiVersion: cert-manager.io/v1alpha2
 kind: Issuer
 metadata:
@@ -40,7 +41,7 @@ EOF
 kubectl apply -f $KUBEDIR/certificate-issuer.yaml || true
 
 # Make Kubernetes Dashboard Available via Domain Name "k8s-dashboard.kx-as-code.local"
-cat <<EOF > $KUBEDIR/dashboard-ingress.yaml
+cat << EOF > $KUBEDIR/dashboard-ingress.yaml
 apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
@@ -85,9 +86,9 @@ kubectl create secret generic kubernetes-dashboard-certs --from-file=$KUBEDIR/ce
 # Update Kubernetes Dashboard with new certificate
 disableSessionTimeout=$($KUBEDIR/vagrant.json | jq -r '.config.disableSessionTimeout')
 if [[ "disableSessionTimeout" == "true" ]]; then
-  sed -i '/^ *args:/,/^ *[^:]*:/s/^.*- --auto-generate-certificates/            - --tls-cert-file=\/tls.crt\n            - --tls-key-file=\/tls.key\n            - --token-ttl=0\n            #- --auto-generate-certificates/' $KUBEDIR/dashboard.yaml
+    sed -i '/^ *args:/,/^ *[^:]*:/s/^.*- --auto-generate-certificates/            - --tls-cert-file=\/tls.crt\n            - --tls-key-file=\/tls.key\n            - --token-ttl=0\n            #- --auto-generate-certificates/' $KUBEDIR/dashboard.yaml
 else
-  sed -i '/^ *args:/,/^ *[^:]*:/s/^.*- --auto-generate-certificates/            - --tls-cert-file=\/tls.crt\n            - --tls-key-file=\/tls.key\n            #- --auto-generate-certificates/' $KUBEDIR/dashboard.yaml
+    sed -i '/^ *args:/,/^ *[^:]*:/s/^.*- --auto-generate-certificates/            - --tls-cert-file=\/tls.crt\n            - --tls-key-file=\/tls.key\n            #- --auto-generate-certificates/' $KUBEDIR/dashboard.yaml
 fi
 kubectl apply -f $KUBEDIR/dashboard.yaml -n kubernetes-dashboard
 
@@ -108,15 +109,15 @@ sudo systemctl restart dnsmasq
 gui-status-output "# Waiting for K8s Dashboard"
 # Test to see if the Kubernetes Cluster is up and notify when done
 wait-for-url() {
-  timeout -s TERM 600 bash -c \
-  'while [[ "$(curl -s -o /dev/null -L -w ''%{http_code}'' ${0})" != "200" ]];\
+    timeout -s TERM 600 bash -c \
+        'while [[ "$(curl -s -o /dev/null -L -w ''%{http_code}'' ${0})" != "200" ]];\
   do sleep 5;\
   done' ${1}
 }
 wait-for-url https://k8s-dashboard.kx-as-code.local
 
 # Put Kubernetes Dashboard Icon on Desktop
-cat <<EOF > /home/$VM_USER/Desktop/Kubernetes-Dashboard.desktop
+cat << EOF > /home/$VM_USER/Desktop/Kubernetes-Dashboard.desktop
 [Desktop Entry]
 Version=1.0
 Name=Kubernetes Dashboard
@@ -133,7 +134,7 @@ Actions=new-window;new-private-window;
 EOF
 
 # Put Shortcut to get K8s Admin Token on Desktop
-cat <<EOF > /home/$VM_USER/Desktop/Get-Kubernetes-Token.desktop
+cat << EOF > /home/$VM_USER/Desktop/Get-Kubernetes-Token.desktop
 [Desktop Entry]
 Version=1.0
 Name=Get Kubernetes Token
@@ -155,7 +156,7 @@ chown $VM_USER:$VM_USER /home/$VM_USER/Desktop/*.desktop
 
 # Add check for every login telling user if K8s is ready or not
 sudo -H -i -u $VM_USER sh -c "mkdir -p /home/$VM_USER/.config/autostart"
-cat <<EOF > /home/$VM_USER/.config/autostart/check-k8s.desktop
+cat << EOF > /home/$VM_USER/.config/autostart/check-k8s.desktop
 [Desktop Entry]
 Type=Application
 Name=K8s-Startup-Status
@@ -165,22 +166,22 @@ chmod 755 /home/$VM_USER/.config/autostart/check-k8s.desktop
 chown $VM_USER:$VM_USER /home/$VM_USER/.config/autostart/check-k8s.desktop
 
 EXECUTION_END=$(date +"%s")
-TIME_DIFFERENCE=$(($EXECUTION_END-$EXECUTION_START))
+TIME_DIFFERENCE=$((EXECUTION_END - EXECUTION_START))
 
 # Add notification to desktop to notify that K8s intialization is completed
 export LOGGED_IN_USER=$(who | cut -d' ' -f1 | sort | uniq | grep $VM_USER)
 if [[ -z $LOGGED_IN_USER ]]; then
-   # If kx.hero user is not yet logged in, then add notification to be launched when user logs in
-   sudo -H -i -u $VM_USER sh -c "mkdir -p /home/$VM_USER/.config/autostart"
-   echo """
+    # If kx.hero user is not yet logged in, then add notification to be launched when user logs in
+    sudo -H -i -u $VM_USER sh -c "mkdir -p /home/$VM_USER/.config/autostart"
+    echo """
    [Desktop Entry]
    Type=Application
    Name=Show-K8s-Init-Progress
-   Exec=sudo -u $VM_USER bash -c \"DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus notify-send -t 300000 'KX.AS.CODE Notification' 'Base Kubernetes cluster intialization completed. K8s initialization took '$(($TIME_DIFFERENCE / 60))' minutes and '$(($TIME_DIFFERENCE % 60))' seconds' --icon=dialog-information && rm -f /home/$VM_USER/.config/autostart/notify-k8s-init-comnpleted.desktop\"
+   Exec=sudo -u $VM_USER bash -c \"DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus notify-send -t 300000 'KX.AS.CODE Notification' 'Base Kubernetes cluster intialization completed. K8s initialization took '$((TIME_DIFFERENCE / 60))' minutes and '$((TIME_DIFFERENCE % 60))' seconds' --icon=dialog-information && rm -f /home/$VM_USER/.config/autostart/notify-k8s-init-comnpleted.desktop\"
    """ | sudo -u $VM_USER tee /home/$VM_USER/.config/autostart/notify-k8s-init-comnpleted.desktop
 else
-   # Add notification to desktop to notify that K8s intialization has started
-   sudo -u $VM_USER DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus notify-send -t 300000 "KX.AS.CODE Notification" "Base Kubernetes cluster intialization completed. K8s initialization took $(($TIME_DIFFERENCE / 60)) minutes and $(($TIME_DIFFERENCE % 60)) seconds" --icon=dialog-information
+    # Add notification to desktop to notify that K8s intialization has started
+    sudo -u $VM_USER DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus notify-send -t 300000 "KX.AS.CODE Notification" "Base Kubernetes cluster intialization completed. K8s initialization took $((TIME_DIFFERENCE / 60)) minutes and $((TIME_DIFFERENCE % 60)) seconds"  --icon=dialog-information
 fi
 
 # Make Desktop Icons Available in Application Menu

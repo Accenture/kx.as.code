@@ -1,4 +1,5 @@
-#!/bin/bash
+#!/bin/bash -x
+set -euo pipefail
 
 . /etc/environment
 export VM_USER=$VM_USER

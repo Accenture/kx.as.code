@@ -1,9 +1,11 @@
-#!/bin/bash -eux
+#!/bin/bash -x
+set -euo pipefail
 
 . /etc/environment
 export VM_USER=$VM_USER
 export VM_PASSWORD=$(cat /home/$VM_USER/.config/kx.as.code/.user.cred)
-export KUBEDIR=/home/$VM_USER/Kubernetes; cd $KUBEDIR
+export KUBEDIR=/home/$VM_USER/Kubernetes
+cd $KUBEDIR
 
 ### Install Key Cloak IAM
 
@@ -15,7 +17,7 @@ helm repo add codecentric https://codecentric.github.io/helm-charts
 helm install keycloak codecentric/keycloak
 
 # Define Postgresql Password
-POSTGRESQL_PASSWORD=$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${1:-32};echo;)
+POSTGRESQL_PASSWORD=$(pwgen -1s 32)
 
 # Create Helm values file
 echo """

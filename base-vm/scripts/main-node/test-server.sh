@@ -1,4 +1,5 @@
-#!/bin/bash -eux
+#!/bin/bash -x
+set -euo pipefail
 
 # Install tools needed to execute ServerSpec Tests
 apt-get install -y ruby ruby-dev

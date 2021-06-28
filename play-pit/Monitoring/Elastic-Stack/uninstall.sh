@@ -1,4 +1,5 @@
-#!/bin/bash -eux
+#!/bin/bash -x
+set -euo pipefail
 
 # Uninstall Prometheus with Helm
 helm uninstall filebeat --namespace elastic-stack
@@ -8,9 +9,9 @@ helm uninstall elasticsearch --namespace elastic-stack
 
 # Remove the Prometheus configurations
 kubectl delete --namespace elastic-stack \
-  -f persistentVolumes.yaml \
-  -f ingress.yaml \
-  --ignore-not-found
+    -f persistentVolumes.yaml \
+    -f ingress.yaml \
+    --ignore-not-found
 
 # Delete Kubernetes Namespace for Prometheus
 kubectl delete -f namespace.yaml --ignore-not-found

@@ -1,9 +1,11 @@
-#!/bin/bash -eux
+#!/bin/bash -x
+set -euo pipefail
 
 . /etc/environment
 export VM_USER=$VM_USER
 export VM_PASSWORD=$(cat /home/$VM_USER/.config/kx.as.code/.user.cred)
-export KUBEDIR=/home/$VM_USER/Kubernetes; cd $KUBEDIR
+export KUBEDIR=/home/$VM_USER/Kubernetes
+cd $KUBEDIR
 
 # Create namespace
 kubectl create namespace artifactory -n artifactory
@@ -13,7 +15,7 @@ helm repo add center https://repo.chartcenter.io
 helm repo update
 
 # Create Postgresql password
-POSTGRESQL_PASSWORD=$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${1:-32};echo;)
+POSTGRESQL_PASSWORD=$(pwgen -1s 32)
 
 # Install Artifactory
 helm upgrade --install artifactory-oss \
@@ -34,9 +36,9 @@ helm upgrade --install artifactory-oss \
 
 # Install the desktop shortcut
 /home/$VM_USER/Documents/git/kx.as.code_library/02_Kubernetes/00_Base/createDesktopShortcut.sh \
-  --name="JFrog Artifactory" \
-  --url=https://artifactory.kx-as-code.local \
-  --icon=/home/$VM_USER/Documents/git/kx.as.code_library/02_Kubernetes/01_CICD/05_Artifactory/artifactory.png
+    --name="JFrog Artifactory" \
+    --url=https://artifactory.kx-as-code.local \
+    --icon=/home/$VM_USER/Documents/git/kx.as.code_library/02_Kubernetes/01_CICD/05_Artifactory/artifactory.png
 
 echo """
 urlBase: https://artifactory.kx-as-code.local

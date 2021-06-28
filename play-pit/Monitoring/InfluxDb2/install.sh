@@ -1,19 +1,20 @@
-#!/bin/bash -eux
+#!/bin/bash -x
+set -euo pipefail
 
 # Create the required diretories for the persistent volumes
 ./createVolumeDirectories.sh
 
 # Create namespace if it does not already exist
 if [ "$(kubectl get namespace influxdata --template={{.status.phase}})" != "Active" ]; then
-  # Create Kubernetes Namespace for InfluxDb2
-  kubectl create -f namespace.yaml
+    # Create Kubernetes Namespace for InfluxDb2
+    kubectl create -f namespace.yaml
 fi
 
 # Apply the InfluxDb2 configuration files
 kubectl create --dry-run=client -o yaml --namespace influxdata \
-  -f persistentVolumes.yaml \
-  -f persistentVolumeClaims.yaml \
-  -f ingress.yaml | kubectl apply -f -
+    -f persistentVolumes.yaml \
+    -f persistentVolumeClaims.yaml \
+    -f ingress.yaml | kubectl apply -f -
 
 # Update Helm Repositories
 helm repo add influxdata https://influxdata.github.io/helm-charts

@@ -1,5 +1,7 @@
-#!/bin/bash
-cat <<EOF > $HOME/Desktop/argoCD.desktop
+#!/bin/bash -x
+set -euo pipefail
+
+cat << EOF > $HOME/Desktop/argoCD.desktop
 [Desktop Entry]
 Version=1.0
 Name=argoCD

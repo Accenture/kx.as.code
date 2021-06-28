@@ -1,4 +1,5 @@
-#!/bin/bash -eux
+#!/bin/bash -x
+set -euo pipefail
 
 . /etc/environment
 export VM_USER=$VM_USER
@@ -50,7 +51,7 @@ curl https://raw.githubusercontent.com/google/metallb/v0.8.3/manifests/metallb.y
 kubectl apply -f $KUBEDIR/metallb.yaml
 
 # Create and Apply Metallb Configmap
-cat <<EOF > $KUBEDIR/metallb-configmap.yaml
+cat << EOF > $KUBEDIR/metallb-configmap.yaml
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -111,5 +112,5 @@ data:
 
 allowWorkloadsOnMaster=$(cat $KUBEDIR/vagrant.json | jq -r '.config.allowWorkloadsOnMaster')
 if [[ "allowWorkloadsOnMaster" == "true" ]]; then
-  kubectl taint nodes --all node-role.kubernetes.io/master-
+    kubectl taint nodes --all node-role.kubernetes.io/master-
 fi

@@ -1,4 +1,5 @@
-#!/bin/bash -eux
+#!/bin/bash -x
+set -euo pipefail
 
 # Create user (if not already present)
 if ! id -u vagrant > /dev/null 2>&1; then

@@ -1,4 +1,5 @@
-#!/bin/bash -eux
+#!/bin/bash -x
+set -euo pipefail
 
 echo """
 apiVersion: networking.k8s.io/v1beta1

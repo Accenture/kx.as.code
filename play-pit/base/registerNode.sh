@@ -1,8 +1,9 @@
-#!/bin/bash -eux
+#!/bin/bash -x
+set -euo pipefail
 
 . /etc/environment
 export VM_USER=$VM_USER
-TIMESTAMP=`date "+%Y-%m-%d_%H%M%S"`
+TIMESTAMP=$(date "+%Y-%m-%d_%H%M%S")
 
 KUBEDIR=/home/${VM_USER}/Kubernetes
 mkdir -p ${KUBEDIR}
@@ -24,7 +25,7 @@ sshpass -f /home/${VM_USER}/.config/kx.as.code/user.cred ssh-copy-id -o StrictHo
 ssh -o StrictHostKeyChecking=no $VM_USER@kx-main "echo \"address=/$(hostname)/${IP_ADDRESS}\" | sudo tee -a /etc/dnsmasq.d/kx-as-code.local.conf; sudo systemctl restart dnsmasq"
 
 # Add KX-Main key to worker
-ssh -o StrictHostKeyChecking=no $VM_USER@kx-main "cat /home/$VM_USER/.ssh/id_rsa.pub" >>/home/$VM_USER/.ssh/authorized_keys
+ssh -o StrictHostKeyChecking=no $VM_USER@kx-main "cat /home/$VM_USER/.ssh/id_rsa.pub" >> /home/$VM_USER/.ssh/authorized_keys
 sudo mkdir -p /root/.ssh
 sudo chmod 700 /root/.ssh
 sudo cp /home/$VM_USER/.ssh/authorized_keys /root/.ssh/

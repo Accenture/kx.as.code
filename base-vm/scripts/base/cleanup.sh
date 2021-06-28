@@ -1,4 +1,5 @@
-#!/bin/bash
+#!/bin/bash -x
+set -euo pipefail
 
 # To allow for autmated installs, we disable interactive configuration steps.
 export DEBIAN_FRONTEND=noninteractive
@@ -8,8 +9,8 @@ export DEBCONF_NONINTERACTIVE_SEEN=true
 sudo systemctl stop apt-daily.service apt-daily.timer
 
 # Cleanup unused packages.
-sudo apt-get --assume-yes autoremove; error
-sudo apt-get --assume-yes autoclean; error
+sudo apt-get --assume-yes autoremove
+sudo apt-get --assume-yes autoclean
 
 # Clear the random seed.
 sudo rm -f /var/lib/systemd/random-seed

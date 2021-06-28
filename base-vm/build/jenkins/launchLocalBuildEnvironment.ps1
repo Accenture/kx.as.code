@@ -136,7 +136,7 @@ if ( $override_action -eq "recreate" -Or $override_action -eq "destroy" -Or $ove
         if ( $override_action -eq "destroy" -Or $override_action -eq "fully-destroy" -Or $override_action -eq "uninstall" )
         {
             Write-Output "- [INFO] Deleting Jenkins image..." | Red
-            docker rmi "$( docker images $KX_JENKINS_IMAGE -q )"
+            docker rmi "$( docker images $kx_jenkins_image -q )"
             Write-Output "- [INFO] Docker image deleted" | Red
             Write-Output "- [INFO] Deleting jenkins_home directory..." | Red
             Remove-Item -Recurse -Force -Path ./jenkins_home
@@ -396,4 +396,4 @@ Get-ChildItem ".\jenkins_home\" -Filter credential_*.xml |
         }
 
 # Start Jenkins agent
-& $javaBinary -jar .\agent.jar -jnlpUrl $jenkinsUrl/computer/$AGENT_NAME/slave-agent.jnlp -workDir "$WORKING_DIRECTORY"
+& $javaBinary -jar .\agent.jar -jnlpUrl $jenkinsUrl/computer/$agent_name/slave-agent.jnlp -workDir "$WORKING_DIRECTORY"

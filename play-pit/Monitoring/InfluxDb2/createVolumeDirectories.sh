@@ -1,4 +1,5 @@
-#!/bin/bash -eux
+#!/bin/bash -x
+set -euo pipefail
 
 # Create directories
 mkdir -p $HOME/KX_Data/influxdata

@@ -1,4 +1,5 @@
-#!/bin/bash -eux
+#!/bin/bash -x
+set -euo pipefail
 
 ### Install HashiCorp Vault
 
@@ -48,8 +49,8 @@ storageClass: local-storage
 ''' | sudo tee $KUBEDIR/consul-values.yaml
 
 helm upgrade --install consul hashicorp/consul \
-  -f $KUBEDIR/consul-values.yaml \
-  -n vault
+    -f $KUBEDIR/consul-values.yaml \
+    -n vault
 
 # Create Helm values file for Vault
 echo '''
@@ -101,11 +102,11 @@ ui:
 ''' | sudo tee $KUBEDIR/vault-values.yaml
 
 helm upgrade --install vault hashicorp/vault \
-  -f $KUBEDIR/vault-values.yaml \
-  -n vault
+    -f $KUBEDIR/vault-values.yaml \
+    -n vault
 
 # Install the desktop shortcut for Vault
 /home/$VM_USER/Documents/git/kx.as.code_library/02_Kubernetes/00_Base/createDesktopShortcut.sh \
-  --name="Vault" \
-  --url=https://vault.kx-as-code.local \
-  --icon=/home/$VM_USER/Documents/git/kx.as.code_library/02_Kubernetes/05_DevSecOps/05_Vault/vault.png
+    --name="Vault" \
+    --url=https://vault.kx-as-code.local \
+    --icon=/home/$VM_USER/Documents/git/kx.as.code_library/02_Kubernetes/05_DevSecOps/05_Vault/vault.png

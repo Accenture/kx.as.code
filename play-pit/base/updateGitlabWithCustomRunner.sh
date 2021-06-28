@@ -1,9 +1,11 @@
-#!/bin/bash -eux
+#!/bin/bash -x
+set -euo pipefail
 
 . /etc/environment
 export VM_USER=$VM_USER
 export VM_PASSWORD=$(cat /home/$VM_USER/.config/kx.as.code/.user.cred)
-export KUBEDIR=/home/$VM_USER/Kubernetes; cd $KUBEDIR
+export KUBEDIR=/home/$VM_USER/Kubernetes
+cd $KUBEDIR
 
 ### Build Docker:Dind and Gitlab Runner images with KX.AS.CODE CA Certs
 
@@ -86,70 +88,70 @@ NGINX_INGRESS_IP=$(kubectl get svc nginx-ingress-ingress-nginx-controller -n kub
 
 # Update Gitlab with Custom Runner containing KX-AS-CODE CA certs and additional tools
 sudo -u $VM_USER helm upgrade --install gitlab-ce gitlab/gitlab \
-  --set global.hosts.domain=kx-as-code.local \
-  --set global.hosts.externalIP=$NGINX_INGRESS_IP \
-  --set externalUrl=https://gitlab.kx.as-code.local \
-  --set global.edition=ce \
-  --set prometheus.install=false \
-  --set global.smtp.enabled=false \
-  --set gitlab-runner.install=true \
-  --set gitlab-runner.image=registry.kx-as-code.local/devops/gitlab-runner:ubuntu-v13.3.1 \
-  --set gitlab-runner.securityContext.fsGroup=999 \
-  --set gitlab-runner.securityContext.runAsUser=999 \
-  --set gitlab-runner.runners.privileged=true \
-  --set gitlab-runner.certsSecretName=kx.as.code-wildcard-cert \
-  --set global.ingress.enabled=false \
-  --set global.ingress.tls.enabled=true \
-  --set gitlab.webservice.ingress.tls.secretName=kx.as.code-wildcard-cert \
-  --set nginx-ingress.enabled=false \
-  --set global.certmanager.install=false \
-  --set certmanager.install=false \
-  --set global.ingress.configureCertmanager=false \
-  --set global.hosts.https=true \
-  --set global.minio.enabled=false \
-  --set registry.enabled=false \
-  --set global.appConfig.lfs.bucket=gitlab-lfs-storage \
-  --set global.appConfig.lfs.connection.secret=object-storage \
-  --set global.appConfig.lfs.connection.key=connection \
-  --set global.appConfig.artifacts.bucket=gitlab-artifacts-storage \
-  --set global.appConfig.artifacts.connection.secret=object-storage \
-  --set global.appConfig.artifacts.connection.key=connection \
-  --set global.appConfig.uploads.connection.secret=object-storage \
-  --set global.appConfig.uploads.bucket=gitlab-uploads-storage \
-  --set global.appConfig.uploads.connection.key=connection \
-  --set global.appConfig.packages.bucket=gitlab-packages-storage \
-  --set global.appConfig.packages.connection.secret=object-storage \
-  --set global.appConfig.packages.connection.key=connection \
-  --set global.appConfig.externalDiffs.bucket=gitlab-externaldiffs-storage \
-  --set global.appConfig.externalDiffs.connection.secret=object-storage \
-  --set global.appConfig.externalDiffs.connection.key=connection \
-  --set global.appConfig.pseudonymizer.bucket=gitlab-pseudonymizer-storage \
-  --set global.appConfig.pseudonymizer.connection.secret=object-storage \
-  --set global.appConfig.pseudonymizer.connection.key=connection \
-  --set redis.resources.requests.cpu=10m \
-  --set redis.resources.requests.memory=64Mi \
-  --set global.rails.bootsnap.enabled=false \
-  --set gitlab.webservice.minReplicas=1 \
-  --set gitlab.webservice.maxReplicas=1 \
-  --set gitlab.webservice.resources.limits.memory=1.5G \
-  --set gitlab.webservice.requests.cpu=100m \
-  --set gitlab.webservice.requests.memory=900M \
-  --set gitlab.workhorse.resources.limits.memory=100M \
-  --set gitlab.workhorse.requests.cpu=10m \
-  --set gitlab.workhorse.requests.memory=10M \
-  --set gitlab.sidekiq.minReplicas=1 \
-  --set gitlab.sidekiq.maxReplicas=1 \
-  --set gitlab.sidekiq.resources.limits.memory=1.5G \
-  --set gitlab.sidekiq.requests.cpu=50m \
-  --set gitlab.sidekiq.requests.memory=625M \
-  --set gitlab.gitlab-shell.minReplicas=1 \
-  --set gitlab.gitlab-shell.maxReplicas=1 \
-  --set task-runnerbackups.objectStorage.config.secret=s3cmd-config \
-  --set task-runnerbackups.objectStorage.config.key=config \
-  --set gitlab.gitaly.persistence.storageClass=gluster-heketi \
-  --set gitlab.gitaly.persistence.size=10Gi \
-  --set postgresql.persistence.storageClass=local-storage \
-  --set postgresql.persistence.size=5Gi \
-  --set redis.master.persistence.storageClass=local-storage \
-  --set redis.master.persistence.size=5Gi \
-  --namespace gitlab-ce
+    --set global.hosts.domain=kx-as-code.local \
+    --set global.hosts.externalIP=$NGINX_INGRESS_IP \
+    --set externalUrl=https://gitlab.kx.as-code.local \
+    --set global.edition=ce \
+    --set prometheus.install=false \
+    --set global.smtp.enabled=false \
+    --set gitlab-runner.install=true \
+    --set gitlab-runner.image=registry.kx-as-code.local/devops/gitlab-runner:ubuntu-v13.3.1 \
+    --set gitlab-runner.securityContext.fsGroup=999 \
+    --set gitlab-runner.securityContext.runAsUser=999 \
+    --set gitlab-runner.runners.privileged=true \
+    --set gitlab-runner.certsSecretName=kx.as.code-wildcard-cert \
+    --set global.ingress.enabled=false \
+    --set global.ingress.tls.enabled=true \
+    --set gitlab.webservice.ingress.tls.secretName=kx.as.code-wildcard-cert \
+    --set nginx-ingress.enabled=false \
+    --set global.certmanager.install=false \
+    --set certmanager.install=false \
+    --set global.ingress.configureCertmanager=false \
+    --set global.hosts.https=true \
+    --set global.minio.enabled=false \
+    --set registry.enabled=false \
+    --set global.appConfig.lfs.bucket=gitlab-lfs-storage \
+    --set global.appConfig.lfs.connection.secret=object-storage \
+    --set global.appConfig.lfs.connection.key=connection \
+    --set global.appConfig.artifacts.bucket=gitlab-artifacts-storage \
+    --set global.appConfig.artifacts.connection.secret=object-storage \
+    --set global.appConfig.artifacts.connection.key=connection \
+    --set global.appConfig.uploads.connection.secret=object-storage \
+    --set global.appConfig.uploads.bucket=gitlab-uploads-storage \
+    --set global.appConfig.uploads.connection.key=connection \
+    --set global.appConfig.packages.bucket=gitlab-packages-storage \
+    --set global.appConfig.packages.connection.secret=object-storage \
+    --set global.appConfig.packages.connection.key=connection \
+    --set global.appConfig.externalDiffs.bucket=gitlab-externaldiffs-storage \
+    --set global.appConfig.externalDiffs.connection.secret=object-storage \
+    --set global.appConfig.externalDiffs.connection.key=connection \
+    --set global.appConfig.pseudonymizer.bucket=gitlab-pseudonymizer-storage \
+    --set global.appConfig.pseudonymizer.connection.secret=object-storage \
+    --set global.appConfig.pseudonymizer.connection.key=connection \
+    --set redis.resources.requests.cpu=10m \
+    --set redis.resources.requests.memory=64Mi \
+    --set global.rails.bootsnap.enabled=false \
+    --set gitlab.webservice.minReplicas=1 \
+    --set gitlab.webservice.maxReplicas=1 \
+    --set gitlab.webservice.resources.limits.memory=1.5G \
+    --set gitlab.webservice.requests.cpu=100m \
+    --set gitlab.webservice.requests.memory=900M \
+    --set gitlab.workhorse.resources.limits.memory=100M \
+    --set gitlab.workhorse.requests.cpu=10m \
+    --set gitlab.workhorse.requests.memory=10M \
+    --set gitlab.sidekiq.minReplicas=1 \
+    --set gitlab.sidekiq.maxReplicas=1 \
+    --set gitlab.sidekiq.resources.limits.memory=1.5G \
+    --set gitlab.sidekiq.requests.cpu=50m \
+    --set gitlab.sidekiq.requests.memory=625M \
+    --set gitlab.gitlab-shell.minReplicas=1 \
+    --set gitlab.gitlab-shell.maxReplicas=1 \
+    --set task-runnerbackups.objectStorage.config.secret=s3cmd-config \
+    --set task-runnerbackups.objectStorage.config.key=config \
+    --set gitlab.gitaly.persistence.storageClass=gluster-heketi \
+    --set gitlab.gitaly.persistence.size=10Gi \
+    --set postgresql.persistence.storageClass=local-storage \
+    --set postgresql.persistence.size=5Gi \
+    --set redis.master.persistence.storageClass=local-storage \
+    --set redis.master.persistence.size=5Gi \
+    --namespace gitlab-ce

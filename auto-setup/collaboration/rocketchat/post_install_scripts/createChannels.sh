@@ -1,11 +1,11 @@
-#!/bin/bash -eux
+#!/bin/bash -x
+set -euo pipefail
 
 # Replace commas with spaces for channelsToCreate variable from metadata.json
 export channelsToCreate=$(echo ${channelsToCreate} | sed 's/,/ /g')
 
 # Create channels
-for channel in ${channelsToCreate}
-do
+for channel in ${channelsToCreate}; do
     curl -H "X-Auth-Token: ${rocketChatAuthToken}" \
         -H "X-User-Id: ${rocketChatAuthUserId}" \
         -H "Content-type: application/json" \

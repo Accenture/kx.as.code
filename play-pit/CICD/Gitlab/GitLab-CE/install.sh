@@ -1,12 +1,13 @@
-#!/bin/bash -eux
+#!/bin/bash -x
+set -euo pipefail
 
 # Create the required diretories for the persistent volumes
 #./createVolumeDirectories.sh
 
 # Create namesace if it does not already exist
 if [ "$(kubectl get namespace gitlab-ce --template={{.status.phase}})" != "Active" ]; then
-  # Create Kubernetes Namespace for Gitlab
-  kubectl create namespace gitlab-ce
+    # Create Kubernetes Namespace for Gitlab
+    kubectl create namespace gitlab-ce
 fi
 
 # Apply the Gitlab configuration files
@@ -48,7 +49,6 @@ kubectl create secret generic registry-storage --dry-run=client -o yaml --from-f
 kubectl create secret generic object-storage --dry-run=client -o yaml --from-file=connection=rails.minio.yaml -n gitlab-ce | kubectl apply -f -
 kubectl create secret generic s3cmd-config --dry-run=client -o yaml --from-file=config=rails.minio.yaml -n gitlab-ce | kubectl apply -f -
 
-
 #echo -n 'Z64xynM9hmNWPRuVzfhy' > ./password.txt
 #kubectl create secret generic gitlab-email-secret --from-file=password=./password.txt -n gitlab-ce
 
@@ -75,38 +75,38 @@ redis:
 
 # Install Gitlab with Helm
 helm upgrade --install gitlab-ce gitlab/gitlab \
-  --set global.hosts.domain=kx-as-code.local \
-  --set global.hosts.externalIP=$NGINX_INGRESS_IP \
-  --set global.edition=ce \
-  --set global.prometheus.install=false \
-  --set global.gitlab-runner.install=true \
-  --set global.ingress.enabled=false \
-  --set nginx-ingress.enabled=false \
-  --set global.certmanager.install=false \
-  --set certmanager.install=false \
-  --set global.ingress.configureCertmanager=false \
-  --set global.hosts.https=false \
-  --set global.minio.enabled=false \
-  --set registry.storage.secret=registry-storage \
-  --set registry.storage.key=config \
-  --set global.registry.bucket=gitlab-registry-storage \
-  --set global.appConfig.lfs.bucket=gitlab-lfs-storage \
-  --set global.appConfig.lfs.connection.secret=object-storage \
-  --set global.appConfig.lfs.connection.key=connection \
-  --set global.appConfig.artifacts.bucket=gitlab-artifacts-storage \
-  --set global.appConfig.artifacts.connection.secret=object-storage \
-  --set global.appConfig.artifacts.connection.key=connection \
-  --set global.appConfig.uploads.connection.secret=object-storage \
-  --set global.appConfig.uploads.bucket=gitlab-uploads-storage \
-  --set global.appConfig.uploads.connection.key=connection \
-  --set global.appConfig.packages.bucket=gitlab-packages-storage \
-  --set global.appConfig.packages.connection.secret=object-storage \
-  --set global.appConfig.packages.connection.key=connection \
-  --set global.appConfig.externalDiffs.bucket=gitlab-externaldiffs-storage \
-  --set global.appConfig.externalDiffs.connection.secret=object-storage \
-  --set global.appConfig.externalDiffs.connection.key=connection \
-  --set global.appConfig.pseudonymizer.bucket=gitlab-pseudonymizer-storage \
-  --set global.appConfig.pseudonymizer.connection.secret=object-storage \
-  --set global.appConfig.pseudonymizer.connection.key=connection \
-  --namespace gitlab-ce \
-  -f gitbal-ce-storage.yaml
+    --set global.hosts.domain=kx-as-code.local \
+    --set global.hosts.externalIP=$NGINX_INGRESS_IP \
+    --set global.edition=ce \
+    --set global.prometheus.install=false \
+    --set global.gitlab-runner.install=true \
+    --set global.ingress.enabled=false \
+    --set nginx-ingress.enabled=false \
+    --set global.certmanager.install=false \
+    --set certmanager.install=false \
+    --set global.ingress.configureCertmanager=false \
+    --set global.hosts.https=false \
+    --set global.minio.enabled=false \
+    --set registry.storage.secret=registry-storage \
+    --set registry.storage.key=config \
+    --set global.registry.bucket=gitlab-registry-storage \
+    --set global.appConfig.lfs.bucket=gitlab-lfs-storage \
+    --set global.appConfig.lfs.connection.secret=object-storage \
+    --set global.appConfig.lfs.connection.key=connection \
+    --set global.appConfig.artifacts.bucket=gitlab-artifacts-storage \
+    --set global.appConfig.artifacts.connection.secret=object-storage \
+    --set global.appConfig.artifacts.connection.key=connection \
+    --set global.appConfig.uploads.connection.secret=object-storage \
+    --set global.appConfig.uploads.bucket=gitlab-uploads-storage \
+    --set global.appConfig.uploads.connection.key=connection \
+    --set global.appConfig.packages.bucket=gitlab-packages-storage \
+    --set global.appConfig.packages.connection.secret=object-storage \
+    --set global.appConfig.packages.connection.key=connection \
+    --set global.appConfig.externalDiffs.bucket=gitlab-externaldiffs-storage \
+    --set global.appConfig.externalDiffs.connection.secret=object-storage \
+    --set global.appConfig.externalDiffs.connection.key=connection \
+    --set global.appConfig.pseudonymizer.bucket=gitlab-pseudonymizer-storage \
+    --set global.appConfig.pseudonymizer.connection.secret=object-storage \
+    --set global.appConfig.pseudonymizer.connection.key=connection \
+    --namespace gitlab-ce \
+    -f gitbal-ce-storage.yaml

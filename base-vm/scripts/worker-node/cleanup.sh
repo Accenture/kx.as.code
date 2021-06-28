@@ -1,10 +1,10 @@
-#!/bin/bash -eux
+#!/bin/bash -x
+set -euo pipefail
 
 # Remove SSH keys used to connect to Gitlab duing build process
 sudo rm -f /home/$VM_USER/.ssh/id_rsa*
 
 # Remove files used during build
-
 
 # Mark the vagrant box build time.
 date --utc | sudo tee /etc/vagrant_box_build_time

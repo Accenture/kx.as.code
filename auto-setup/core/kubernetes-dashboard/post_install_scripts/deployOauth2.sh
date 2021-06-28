@@ -1,4 +1,5 @@
-#!/bin/bash -eux
+#!/bin/bash -x
+set -euo pipefail
 
 export kcRealm=${baseDomain}
 export kcInternalUrl=http://localhost:8080
@@ -7,13 +8,13 @@ export kcPod=$(kubectl get pods -l 'app.kubernetes.io/name=keycloak' -n keycloak
 
 # Set credential token in new Realm
 kubectl -n keycloak exec ${kcPod} -- \
-  ${kcAdmCli} config credentials --server ${kcInternalUrl}/auth --realm ${kcRealm} --user admin --password ${vmPassword} --client admin-cli
+    ${kcAdmCli} config credentials --server ${kcInternalUrl}/auth --realm ${kcRealm} --user admin --password ${vmPassword} --client admin-cli
 
 clientId=$(kubectl -n keycloak exec ${kcPod} -- \
-  ${kcAdmCli} get clients -r ${kcRealm} --fields id,clientId | jq -r '.[] | select(.clientId=="kubernetes") | .id')
+    ${kcAdmCli} get clients -r ${kcRealm} --fields id,clientId | jq -r '.[] | select(.clientId=="kubernetes") | .id')
 
 clientSecret=$(kubectl -n keycloak exec ${kcPod} -- \
-  ${kcAdmCli} get clients/${clientId}/client-secret | jq -r '.value')
+    ${kcAdmCli} get clients/${clientId}/client-secret | jq -r '.value')
 
 # Set variables for oauth-proxy
 cookieSecret=$(python -c 'import os,base64; print(base64.urlsafe_b64encode(os.urandom(16)).decode())')
@@ -133,8 +134,8 @@ spec:
     targetPort: 4180
   selector:
     k8s-app: oauth2-proxy
-''' | sudo tee ${installationWorkspace}/oauth2-proxy-deployment.yaml
-sudo kubectl apply -f ${installationWorkspace}/oauth2-proxy-deployment.yaml
+''' | /usr/bin/sudo tee ${installationWorkspace}/oauth2-proxy-deployment.yaml
+/usr/bin/sudo kubectl apply -f ${installationWorkspace}/oauth2-proxy-deployment.yaml
 
 # Create ClusterRole binding for Keycloak User Group
 echo '''
@@ -150,8 +151,8 @@ subjects:
 - apiGroup: rbac.authorization.k8s.io
   kind: Group
   name: /kcadmins
-''' | sudo tee ${installationWorkspace}/keycloak-admin-group-clusterbinding.yaml
-sudo kubectl apply -f ${installationWorkspace}/keycloak-admin-group-clusterbinding.yaml
+''' | /usr/bin/sudo tee ${installationWorkspace}/keycloak-admin-group-clusterbinding.yaml
+/usr/bin/sudo kubectl apply -f ${installationWorkspace}/keycloak-admin-group-clusterbinding.yaml
 
 # Create CA config map for connecting to Kubernetes Dashboard from Oauth2-Proxy
 echo """
@@ -162,7 +163,7 @@ metadata:
   namespace: kubernetes-dashboard
 data:
   ca.crt: |-
-    $(sudo cat ${installationWorkspace}/kx-certs/ca.crt | sed '2,30s/^/    /')
-""" | sudo tee  ${installationWorkspace}/kubernetes-dashboard-ca-configmap.yaml
+    $(/usr/bin/sudo cat ${installationWorkspace}/kx-certs/ca.crt | sed '2,30s/^/    /')
+""" | /usr/bin/sudo tee  ${installationWorkspace}/kubernetes-dashboard-ca-configmap.yaml
 
-sudo kubectl apply -f  ${installationWorkspace}/kubernetes-dashboard-ca-configmap.yaml
+/usr/bin/sudo kubectl apply -f  ${installationWorkspace}/kubernetes-dashboard-ca-configmap.yaml

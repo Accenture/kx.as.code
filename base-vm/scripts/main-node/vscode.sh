@@ -1,4 +1,5 @@
-#!/bin/bash -eux
+#!/bin/bash -x
+set -euo pipefail
 
 export SHARED_GIT_REPOSITORIES=${SHARED_GIT_REPOSITORIES}
 
@@ -12,14 +13,6 @@ sudo apt-get install -y code
 
 # Create the VSCode user config directory
 sudo mkdir -p /home/$VM_USER/.config/Code/User
-
-# Install fonts for VSCODE terminal
-wget https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Regular.ttf
-wget https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Bold.ttf
-wget https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Italic.ttf
-wget https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Bold%20Italic.ttf
-sudo mv *.ttf /usr/share/fonts/truetype
-sudo fc-cache -vf /usr/share/fonts/
 
 # Switch off telemetry consent
 sudo bash -c "cat <<EOF > /home/$VM_USER/.config/Code/User/settings.json
@@ -35,18 +28,18 @@ EOF"
 sudo mkdir -p /home/$VM_USER/.vscode/
 sudo bash -c "cat <<EOF > /home/$VM_USER/.vscode/KX.AS.CODE.code-workspace
 {
-	\"folders\": [
-		{
-			\"path\": \"${SHARED_GIT_REPOSITORIES}/kx.as.code\"
-		},
-		{
-			\"path\": \"${SHARED_GIT_REPOSITORIES}/kx.as.code_docs\"
-		},
-		{
-			\"path\": \"${SHARED_GIT_REPOSITORIES}/kx.as.code_techradar\"
-		}
-	],
-	\"settings\": {}
+  \"folders\": [
+    {
+      \"path\": \"${SHARED_GIT_REPOSITORIES}/kx.as.code\"
+    },
+    {
+      \"path\": \"${SHARED_GIT_REPOSITORIES}/kx.as.code_docs\"
+    },
+    {
+      \"path\": \"${SHARED_GIT_REPOSITORIES}/kx.as.code_techradar\"
+    }
+  ],
+  \"settings\": {}
 }
 EOF"
 

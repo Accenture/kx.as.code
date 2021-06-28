@@ -1,5 +1,8 @@
+#!/bin/bash -x
+set -euo pipefail
 
-#!/bin/bash -eu
+UPDATE=0
+DISABLE_IPV6=0
 
 # Mark the vagrant box build start time.
 date --utc | sudo tee /etc/vagrant_box_build_start_time

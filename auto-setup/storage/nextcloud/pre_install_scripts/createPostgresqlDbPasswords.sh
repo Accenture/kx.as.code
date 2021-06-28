@@ -1,4 +1,5 @@
-#!/bin/bash -eux
+#!/bin/bash -x
+set -euo pipefail
 
 # Create and export passwords variables for later mustache substitution
-export nextcloudPostgresqlPassword=$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${1:-12};echo;)
+export nextcloudPostgresqlPassword=$(pwgen -1s 12)
