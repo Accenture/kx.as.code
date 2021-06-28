@@ -14,7 +14,7 @@ kubectl -n keycloak exec ${kcPod} -- \
 clientID=$(kubectl -n keycloak exec ${kcPod}  -- \
   ${kcAdmCli} create clients --realm ${kcRealm} \
   -s clientId=${componentName} \
-  -s 'redirectUris=["https://'${componentName}'.'${baseDomain}'/login/generic_oauth"]'
+  -s 'redirectUris=["https://'${componentName}'.'${baseDomain}'/login/generic_oauth"]' \
   -s baseUrl="/login/generic_oauth" \
   -s rootUrl="https://'${componentName}'.'${baseDomain}'" \
   -s publicClient="false" \
