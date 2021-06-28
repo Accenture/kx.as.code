@@ -40,6 +40,36 @@ curl -u ${user}:${password} -X POST https://${componentName}.${baseDomain}/api/s
 curl -u ${user}:${password} -X POST https://${componentName}.${baseDomain}/api/settings/set \
     --data-urlencode 'key=sonar.auth.gitlab.enabled' \
     --data-urlencode 'value=true'
+    
+# Enable OpenID Connect users to login
+curl -u ${user}:${password} -X POST https://${componentName}.${baseDomain}/api/settings/set \
+    --data-urlencode 'key=sonar.auth.oidc.enabled' \
+    --data-urlencode 'value=true'
+    
+# Giving The issuer URI of an OpenID Connect provider.
+curl -u ${user}:${password} -X POST https://${componentName}.${baseDomain}/api/settings/set \
+    --data-urlencode 'key=sonar.auth.oidc.issuerUri' \
+    --data-urlencode 'value=https://keycloak.demo1.kx-as-code.local/auth/realms/demo1.kx-as-code.local'
+    
+# The ID of an OpenID Connect Client.    
+curl -u ${user}:${password} -X POST https://${componentName}.${baseDomain}/api/settings/set \
+    --data-urlencode 'key=sonar.auth.oidc.clientId.secured' \
+    --data-urlencode 'value=sonarqube'
+
+# This is only needed for an OpenID Connect client with access type "confidential"
+curl -u ${user}:${password} -X POST https://${componentName}.${baseDomain}/api/settings/set \
+    --data-urlencode 'key=sonar.auth.oidc.clientSecret.secured' \
+    --data-urlencode 'value='${clientSecret}''
+
+# Allow new users to authenticate. When set to 'false', only existing users will be able to authenticate to the server
+curl -u ${user}:${password} -X POST https://${componentName}.${baseDomain}/api/settings/set \
+    --data-urlencode 'key=sonar.auth.oidc.allowUsersToSignUp' \
+    --data-urlencode 'value=true'
+
+# For each of his Open ID Connect userinfo groups claim entries, the user will be associated to a group with the same name (if it exists) in SonarQube
+curl -u ${user}:${password} -X POST https://${componentName}.${baseDomain}/api/settings/set \
+    --data-urlencode 'key=sonar.auth.oidc.groupsSync' \
+    --data-urlencode 'value=true'
 
 # Switch off anonymous access
 curl -u ${user}:${password} -X POST https://${componentName}.${baseDomain}/api/settings/set \
