@@ -90,10 +90,6 @@ module "alb" {
 
 resource "aws_route53_zone" "kx_as_code" {
   name = "${local.prefix}.${local.kx_as_code_domain}"
-
-  vpc {
-    vpc_id = module.vpc.vpc_id
-  }
 }
 
 resource "aws_route53_record" "kx_bastion" {
