@@ -286,9 +286,9 @@ if [[ ${action} == "install"   ]]; then
                 http_code=$(curl -s -o /dev/null -L -w '%{http_code}' ${applicationUrl}${urlCheckPath} || true)
                 if [[ "${http_code}" == "${expectedHttpResponseCode}" ]]; then
                     echo "Application \"${componentName}\" is up. Received expected response [RC=${http_code}]"
-                    break 2
+                    break
                 fi
-                echo -e "${blue}- [INFO] Waiting for ${applicationUrl}${urlCheckPath} [Got RC=${http_code},Expected RC=${expectedHttpResponseCode}]${nc}"
+                echo -e "${blue}- [INFO] Waiting for ${applicationUrl}${urlCheckPath} [Got RC=${http_code}, Expected RC=${expectedHttpResponseCode}]${nc}"
                 sleep 30
             done
 
