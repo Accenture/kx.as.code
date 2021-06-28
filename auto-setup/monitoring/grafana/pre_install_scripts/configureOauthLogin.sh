@@ -1,4 +1,4 @@
-#! /bin/bash -eux
+#! /bin/bash
 
 # set credential token in new Realm
 kubectl -n keycloak exec ${kcPod} -- \
