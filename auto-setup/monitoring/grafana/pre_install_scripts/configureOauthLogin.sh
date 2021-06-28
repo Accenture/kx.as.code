@@ -1,5 +1,11 @@
 #! /bin/bash
 
+# set env. variables
+export kcRealm=${baseDomain}
+export kcInternalUrl=http://localhost:8080
+export kcAdmCli=/opt/jboss/keycloak/bin/kcadm.sh
+export kcPod=$(kubectl get pods -l 'app.kubernetes.io/name=keycloak' -n keycloak --output=json | jq -r '.items[].metadata.name')
+
 # set credential token in new Realm
 kubectl -n keycloak exec ${kcPod} -- \
   ${kcAdmCli} config credentials --server ${kcInternalUrl}/auth --realm ${kcRealm} --user admin --password ${vmPassword}
