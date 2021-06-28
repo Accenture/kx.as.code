@@ -29,6 +29,7 @@
             "postgresql.persistence.storageClass=local-storage",
             "postgresql.persistence.size=1Gi",
             "caCerts.secret=kx-ca-certs"
+            "plugins.install=[OpenID Connect Authentication for SonarQube]"
         ]
     },
     "categories": [
@@ -74,6 +75,7 @@
     "pre_install_scripts": [
         "createCaSecret.sh",
         "createPostgresPassword.sh",
+        "sonarOauth2.sh",
         "createOauthIntegration.sh"
     ],
     "post_install_scripts": [
