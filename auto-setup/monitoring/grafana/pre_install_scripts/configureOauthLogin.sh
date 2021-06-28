@@ -1,118 +1,55 @@
 #! /bin/bash -eux
-#ToDo
-# creat role, Add user to role
+
 export componentName=grafana
-export baseDomain=kx-as-code.local
-export namespace=keycloak
+export baseDomain=demo1.kx-as-code.local
+#export namespace=keycloak
 #defining env variables
-export rediectUri="https://'${componentName}'.'${baseDomain}'/login/generic_oauth"
-export rootUri="https://'${componentName}'.'${baseDomain}'" 
+export rediectUri="https://${componentName}.${baseDomain}/login/generic_oauth"
+export rootUri="https://${componentName}.${baseDomain}" 
 export baseUrl="/login/generic_oauth"
-#export solution=grafana-test
+export solution=grafana
 export kcRealm=${baseDomain}
 export kcInternalUrl=http://localhost:8080
 export kcAdmCli=/opt/jboss/keycloak/bin/kcadm.sh
 export kcPod=$(kubectl get pods -l 'app.kubernetes.io/name=keycloak' -n keycloak --output=json | jq -r '.items[].metadata.name')
-#export vmPassword=L3arnandshare
-
-# Set credential token in new Realm
+export vmPassword=L3arnandshare
+export kcContainer=keycloak
+ 
+#Set credential token in new Realm
 kubectl -n keycloak exec ${kcPod} -- \
   ${kcAdmCli} config credentials --server ${kcInternalUrl}/auth --realm ${kcRealm} --user admin --password ${vmPassword}
 
+
 # Create Client
-clientId=$(kubectl -n ${namespace} exec ${kcPod} --container ${kcContainer} -- \
+clientId=$(kubectl -n keycloak exec ${kcPod}  -- \
   ${kcAdmCli} create clients --realm ${kcRealm} \
-  -s clientId=${solution} \
-  -s redirectUris="${rediectUri}" \
-  -s baseUrl=${baseUrl} \
-  -s rootUrl=${rootUri} \
-  -s publicClient="false" \
-  -s protocol=openid-connect \
-  -s accessType=confidential \
-  -s enabled=true -i)
+  -s "clientId=${solution}" \
+  -s 'redirectUris=["https://grafana.demo1.kx-as-code.local/login/generic_oauth"]' \
+  -s "baseUrl=${baseUrl}" \
+  -s "rootUrl=${rootUri}" \
+  -s "publicClient=false" \
+  -s "protocol=openid-connect" \
+  -s "enabled=true" -i)
 
 ## export clientId
 export clientID=$(kubectl -n keycloak exec ${kcPod} -- \
-${kcAdmCli}  get clients --fields id,clientId | jq -r '.[] | select(.clientId=="grafana-test") | .id')
+${kcAdmCli}  get clients --fields id,clientId | jq -r '.[] | select(.clientId=="grafana") | .id')
 
 # export client secret
 export clientSecret=$(kubectl -n keycloak exec ${kcPod} -- \
   ${kcAdmCli} get clients/$clientID/client-secret | jq -r '.value')
 
+
 # Create protocol mapper
-kubectl -n ${namespace} exec ${kcPod} --container ${kcContainer} -- \
+kubectl -n keycloak exec ${kcPod} --container ${kcContainer} -- \
   ${kcAdmCli} create clients/${clientId}/protocol-mappers/models \
   --realm ${kcRealm} \
-  -s name=roles \
-  -s protocol=openid-connect \
-  -s protocolMapper=oidc-usermodel-client-role-mapper \
-  -s 'config."claim.name"=roles' \
-  -s clientID=$clientID \
-  -s 'config."multivalued"=true' \
-  -s 'config."jsonType.label"=String'
-
-
-kubectl -n keycloak exec ${kcPod} -- \
-${kcAdmCli} create client-scopes/$clientscopeID/protocol-mappers/models \
--s name=groups \
- -s protocol=openid-connect \
- -s protocolMapper=oidc-group-membership-mapper \
- -s 'config."claim.name"=groups' \
- -s 'config."access.token.claim"=true' \
- -s 'config."jsonType.label"=String'
-
-
-      kubectl -n keycloak exec keycloak-0 --container keycloak -- /opt/jboss/keycloak/bin/kcadm.sh create \ 
-      clients/149afab9-a332-4cae-8336-24aa9bf7ace7/protocol-mappers/models \
-      -r demo1.kx-as-code.local \
-      -s config.claim.name=roles \
-      -s config.multivalued=true \
-      -s protocol=openid-connect \
-      -s protocolMapper=oidc-usermodel-client-role-mapper \
-      -s name=roles \
-      -s clientID=149afab9-a332-4cae-8336-24aa9bf7ace7 \
-      -s config.jsonType.label=String
-# Set credential token in new Realm
-# kubectl -n keycloak exec ${kcPod} -- \
-#   ${kcAdmCli} config credentials --server ${kcInternalUrl}/auth --realm ${kcRealm} --user admin --password ${vmPassword}
-
-
-# ## create client scopes
-kubectl -n keycloak exec keycloak-0 --container keycloak -- \
--- /opt/jboss/keycloak/bin/kcadm.sh create -x client-scopes -s name=grafana -s protocol=openid-connect
-export clientscopeID=$(kubectl -n keycloak exec keycloak-0 -- /opt/jboss/keycloak/bin/kcadm.sh get -x client-scopes | jq -r '.[] | select(.name=="grafana") | .id')
-
-# ## client scope protocol mapper 
-kubectl -n keycloak exec keycloak-0 -- /opt/jboss/keycloak/bin/kcadm.sh create client-scopes/$clientscopeID/protocol-mappers/models \
--s name=groups \
-  -s protocol=openid-connect \
-  -s protocolMapper=oidc-group-membership-mapper \
+  -s "name=groups" \
+  -s "protocol=openid-connect" \
+  -s "protocolMapper=oidc-group-membership-mapper" \
   -s 'config."claim.name"=groups' \
   -s 'config."access.token.claim"=true' \
+  -s 'config."userinfo.token.claim"=true' \
+  -s 'config."id.token.claim"=true' \
+  -s 'config."full.path"=true' \
   -s 'config."jsonType.label"=String'
-
-# ## map the above client scope id to the client 
-kubectl -n keycloak exec keycloak-0 -- /opt/jboss/keycloak/bin/kcadm.sh update clients/$clientID/default-client-scopes/$clientscopeID
-
-
-# ## create client scopes
-# kubectl -n keycloak exec keycloak-0 --container keycloak -- \
-# ${kcAdmCli}  create -x client-scopes -s name=${componentName} -s protocol=openid-connect
-
-# ## export the client scope id
-# export clientscopeID=$(kubectl -n keycloak exec ${kcPod} -- \
-# ${kcAdmCli}  get -x client-scopes | jq -r '.[] | select(.name=="argocd") | .id')
-
-# ## client scope protocol mapper 
-# kubectl -n keycloak exec ${kcPod} -- \
-# ${kcAdmCli}  create client-scopes/$clientscopeID/protocol-mappers/models \
-# -s name=groups \
-#   -s protocol=openid-connect \
-#   -s protocolMapper=oidc-group-membership-mapper \
-#   -s 'config."claim.name"=groups' \
-#   -s 'config."access.token.claim"=true' \
-#   -s 'config."jsonType.label"=String'
-
-# ## map the above client scope id to the client 
-# kubectl -n keycloak exec ${kcPod} -- \
-# ${kcAdmCli}  update clients/$clientID/default-client-scopes/$clientscopeID
