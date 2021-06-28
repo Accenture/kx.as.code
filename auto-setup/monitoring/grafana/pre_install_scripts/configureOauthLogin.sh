@@ -13,7 +13,7 @@ export kcRealm=${baseDomain}
 export kcInternalUrl=http://localhost:8080
 export kcAdmCli=/opt/jboss/keycloak/bin/kcadm.sh
 export kcPod=$(kubectl get pods -l 'app.kubernetes.io/name=keycloak' -n keycloak --output=json | jq -r '.items[].metadata.name')
-export vmPassword=L3arnandshare
+#export vmPassword=L3arnandshare
 
 # Set credential token in new Realm
 kubectl -n keycloak exec ${kcPod} -- \
@@ -51,9 +51,48 @@ kubectl -n ${namespace} exec ${kcPod} --container ${kcContainer} -- \
   -s 'config."multivalued"=true' \
   -s 'config."jsonType.label"=String'
 
+
+kubectl -n keycloak exec ${kcPod} -- \
+${kcAdmCli} create client-scopes/$clientscopeID/protocol-mappers/models \
+-s name=groups \
+ -s protocol=openid-connect \
+ -s protocolMapper=oidc-group-membership-mapper \
+ -s 'config."claim.name"=groups' \
+ -s 'config."access.token.claim"=true' \
+ -s 'config."jsonType.label"=String'
+
+
+      kubectl -n keycloak exec keycloak-0 --container keycloak -- /opt/jboss/keycloak/bin/kcadm.sh create \ 
+      clients/149afab9-a332-4cae-8336-24aa9bf7ace7/protocol-mappers/models \
+      -r demo1.kx-as-code.local \
+      -s config.claim.name=roles \
+      -s config.multivalued=true \
+      -s protocol=openid-connect \
+      -s protocolMapper=oidc-usermodel-client-role-mapper \
+      -s name=roles \
+      -s clientID=149afab9-a332-4cae-8336-24aa9bf7ace7 \
+      -s config.jsonType.label=String
 # Set credential token in new Realm
 # kubectl -n keycloak exec ${kcPod} -- \
 #   ${kcAdmCli} config credentials --server ${kcInternalUrl}/auth --realm ${kcRealm} --user admin --password ${vmPassword}
+
+
+# ## create client scopes
+kubectl -n keycloak exec keycloak-0 --container keycloak -- \
+-- /opt/jboss/keycloak/bin/kcadm.sh create -x client-scopes -s name=grafana -s protocol=openid-connect
+export clientscopeID=$(kubectl -n keycloak exec keycloak-0 -- /opt/jboss/keycloak/bin/kcadm.sh get -x client-scopes | jq -r '.[] | select(.name=="grafana") | .id')
+
+# ## client scope protocol mapper 
+kubectl -n keycloak exec keycloak-0 -- /opt/jboss/keycloak/bin/kcadm.sh create client-scopes/$clientscopeID/protocol-mappers/models \
+-s name=groups \
+  -s protocol=openid-connect \
+  -s protocolMapper=oidc-group-membership-mapper \
+  -s 'config."claim.name"=groups' \
+  -s 'config."access.token.claim"=true' \
+  -s 'config."jsonType.label"=String'
+
+# ## map the above client scope id to the client 
+kubectl -n keycloak exec keycloak-0 -- /opt/jboss/keycloak/bin/kcadm.sh update clients/$clientID/default-client-scopes/$clientscopeID
 
 
 # ## create client scopes
