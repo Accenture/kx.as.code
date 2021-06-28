@@ -7,13 +7,13 @@ kubectl -n keycloak exec ${kcPod} -- \
 # create client
 clientID=$(kubectl -n keycloak exec ${kcPod}  -- \
   ${kcAdmCli} create clients --realm ${kcRealm} \
-  -s "clientId=grafana" \
-  -s 'redirectUris=["https://${componentName}. ${baseDomain}/login/generic_oauth"]' \
-  -s "baseUrl=${baseUrl}" \
-  -s "rootUrl=${rootUri}" \
-  -s "publicClient=false" \
-  -s "protocol=openid-connect" \
-  -s "enabled=true" -i)
+  -s clientId=${componentName} \
+  -s 'redirectUris=["https://'${componentName}'.'${baseDomain}'/login/generic_oauth"]'
+  -s baseUrl="/login/generic_oauth" \
+  -s rootUrl="https://'${componentName}'.'${baseDomain}'" \
+  -s publicClient="false" \
+  -s protocol="openid-connect" \
+  -s enabled=true -i)
 
 # export clientID
 export clientID=$(kubectl -n keycloak exec ${kcPod} -- \
