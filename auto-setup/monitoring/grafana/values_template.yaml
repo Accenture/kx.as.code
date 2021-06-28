@@ -21,22 +21,10 @@ grafana.ini:
   rendering:
     server_url: http://grafana-image-renderer-service.monitoring:8081/render
     callback_url: http://grafana.monitoring
-  # auth.gitlab:
-  #   enabled: true
-  #   allow_sign_up: true
-  #   client_id: {{grafanaGitIntegrationId}}
-  #   client_secret: {{grafanaGitIntegrationSecret}}
-  #   scopes: read_user
-  #   auth_url: {{gitUrl}}/oauth/authorize
-  #   token_url: {{gitUrl}}/oauth/token
-  #   api_url: {{gitUrl}}/api/v4
   auth.generic_oauth:
-    enabled: true
-    #disable_login_form: true      
+    enabled: true     
     client_id: grafana
-    #client_id: $clientID
-    client_secret: ec920e6b-3868-4af8-8efe-b4c118654853
-    #client_secret: $clientSecret
+    client_secret: $clientSecret
     auth_url: https://keycloak.demo1.kx-as-code.local/auth/realms/demo1.kx-as-code.local/protocol/openid-connect/auth
     token_url: https://keycloak.demo1.kx-as-code.local/auth/realms/demo1.kx-as-code.local/protocol/openid-connect/token
     api_url: https://keycloak.demo1.kx-as-code.local/auth/realms/demo1.kx-as-code.local/protocol/openid-connect/userinfo
@@ -45,10 +33,8 @@ grafana.ini:
     tls_skip_verify_insecure: true
     role_attribute_path: contains(groups[*], '/kcadmins') && 'Admin' || 'Viewer'
   server:
-    #root_url: https://{{componentName}}.{{baseDomain}}
-    #domain: {{componentName}}.{{baseDomain}}
-    root_url: https://grafana.demo1.kx-as-code.local
-    domain: grafana.demo1.kx-as-code.local
+    root_url: "https://{{componentName}}.{{baseDomain}}"
+    domain: "{{componentName}}.{{baseDomain}}"
   extraConfigmapMounts:
     - name: certs-configmap
       mountPath: /etc/grafana/ssl/
