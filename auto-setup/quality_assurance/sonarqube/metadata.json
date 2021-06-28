@@ -75,6 +75,7 @@
     "pre_install_scripts": [
         "createCaSecret.sh",
         "createPostgresPassword.sh",
+        "sonarOauth2.sh",
         "createOauthIntegration.sh"
     ],
     "post_install_scripts": [
