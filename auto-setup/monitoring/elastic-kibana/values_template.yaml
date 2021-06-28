@@ -36,6 +36,7 @@ kibanaConfig:
       username: ${ELASTIC_USERNAME}
       password: ${ELASTIC_PASSWORD}
       requestHeadersWhitelist: [ es-security-runas-user, authorization ]
+    xpack.monitoring.elasticsearch.requestHeadersWhitelist: [ es-security-runas-user, authorization ]
 resources:
   requests:
     cpu: "1000m"
@@ -52,8 +53,9 @@ ingress:
     nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
     nginx.ingress.kubernetes.io/auth-url: "https://elastic-kibana-iam.demo1.kx-as-code.local/oauth2/auth"
     nginx.ingress.kubernetes.io/auth-signin: "https://elastic-kibana-iam.demo1.kx-as-code.local/oauth2/start?rd=$scheme://$host$escaped_request_uri"
-    nginx.ingress.kubernetes.io/auth-response-headers: "X-Auth-Request-Email"
+    nginx.ingress.kubernetes.io/auth-response-headers: "X-Auth-Request-Email, Authorizations"
     nginx.ingress.kubernetes.io/configuration-snippet: |
+      auth_request_set $authHeader0 $upstream_http_x_auth_request_email;
       proxy_set_header 'es-security-runas-user' $authHeader0;
       proxy_set_header Authorization "Basic {{kibanaBaseAuth}}";
   path: /

@@ -87,14 +87,14 @@ spec:
           - --provider=oidc
           - --provider-display-name="'${baseDomain}'"
           - --client-id=kubernetes
-          - --set-xauthrequest=true
+          - --email-domain=*
+          - --http-address=0.0.0.0:4180
+          - --oidc-groups-claim=groups
           - --oidc-issuer-url=https://keycloak.'${baseDomain}'/auth/realms/'${baseDomain}'
           - --provider-ca-file=/etc/ssl/kx-ca-cert/ca.crt
           - --reverse-proxy=true
           - --set-authorization-header=true
-          - --http-address=0.0.0.0:4180
-          - --email-domain=*
-          - --oidc-groups-claim=groups
+          - --set-xauthrequest=true
           - --user-id-claim=sub
          env:
           - name: OAUTH2_PROXY_CLIENT_ID
