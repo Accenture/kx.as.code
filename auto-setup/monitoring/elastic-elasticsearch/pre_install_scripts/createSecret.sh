@@ -49,14 +49,18 @@ instances:
 """ | /usr/bin/sudo tee ${elasticStackCertsDir}/instance.yml
 
 # Create Elastic certificates with elasticsearch-certutil
-password=$(docker run --rm busybox /bin/sh -c "< /dev/urandom tr -cd '[:alnum:]' | head -c32")
-docker run --rm -v ${elasticStackCertsDir}:/certs -i -w /app \
+if [[ ! -f ${elasticStackCertsDir}/certs.zip ]]; then
+  docker run --rm -v ${elasticStackCertsDir}:/certs -i -w /app \
         docker.elastic.co/elasticsearch/elasticsearch:${elasticVersion} \
         /bin/sh -c " \
                 /usr/share/elasticsearch/bin/elasticsearch-certutil cert --keep-ca-key --pem --in /certs/instance.yml --out /certs/certs.zip"
+fi
 
 # Unzip certs
-/usr/bin/sudo unzip ${elasticStackCertsDir}/certs.zip -d ${elasticStackCertsDir}
+/usr/bin/sudo unzip -o ${elasticStackCertsDir}/certs.zip -d ${elasticStackCertsDir}
+
+# Cleanup in case secret exists
+kubectl -n ${namespace} delete secret elastic-certificates || true
 
 # Create certificate secrets
 kubectl -n ${namespace} create secret generic elastic-certificates \
