@@ -35,7 +35,7 @@ grafana.ini:
     #disable_login_form: true      
     client_id: grafana
     #client_id: $clientID
-    client_secret: 74b95572-aa89-4c21-a0e6-70040887fa2e
+    client_secret: ec920e6b-3868-4af8-8efe-b4c118654853
     #client_secret: $clientSecret
     auth_url: https://keycloak.demo1.kx-as-code.local/auth/realms/demo1.kx-as-code.local/protocol/openid-connect/auth
     token_url: https://keycloak.demo1.kx-as-code.local/auth/realms/demo1.kx-as-code.local/protocol/openid-connect/token
@@ -43,6 +43,7 @@ grafana.ini:
     scopes: openid email profile
     allow_sign_up: true
     tls_skip_verify_insecure: true
+    role_attribute_path: contains(groups[*], '/kcadmins') && 'Admin' || 'Viewer'
   server:
     #root_url: https://{{componentName}}.{{baseDomain}}
     #domain: {{componentName}}.{{baseDomain}}
@@ -52,5 +53,4 @@ grafana.ini:
     - name: certs-configmap
       mountPath: /etc/grafana/ssl/
       configMap: certs-configmap
-      readOnly: true
- 
+      readOnly: true 
