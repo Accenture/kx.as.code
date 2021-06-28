@@ -2,11 +2,11 @@
     "config": {
         "vm_properties": {
             "kx_version": "0.7.1",
-            "main_node_cpu_cores": 6,
-            "main_node_memory": 32768,
+            "main_node_cpu_cores": 8,
+            "main_node_memory": 9450,
             "worker_node_count": 2,
             "worker_node_cpu_cores": 4,
-            "worker_node_memory": 32768,
+            "worker_node_memory": 9450,
             "environment_prefix": "demo1",
             "3d_acceleration": "off",
             "kx_sync_folder_path": "./KX_Share",
