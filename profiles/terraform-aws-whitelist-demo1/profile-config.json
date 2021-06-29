@@ -5,11 +5,11 @@
     "aws_availability_zone": "us-east-2c",
     "kx_version": "0.6.7",
     "vm_properties": {
-        "main_node_ami_id": "ami-0b7e558edf6147122",
+        "main_node_ami_id": "ami-07b6b482527787e9f",
         "main_node_instance_type": "t3.xlarge",
         "worker_node_ami_id": "ami-0c95063f9e67a7aaf",
         "worker_node_instance_type": "t3.large",
-        "worker_node_count": 1,
+        "worker_node_count": 0,
         "bastion_node_instance_type": "t3.nano"
     },
     "config": {
@@ -29,6 +29,7 @@
         "environmentPrefix": "demo1",
         "glusterFsDiskSize": "200",
         "sslProvider": "letsencrypt",
+        "sslDomainAdminEmail": "admin@kx-as-code.io",
         "baseDomain": "kx-as-code.io",
         "baseUser": "kx.hero",
         "basePassword": "L3arnandshare",
