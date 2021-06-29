@@ -107,6 +107,7 @@ ColorScheme=Breeze Dark
 Name=Breeze Dark
 shadeSortColumn=true
 widgetStyle=Breeze
+BrowserApplication[$e]=!google-chrome
 
 [Icons]
 Theme=breeze-dark

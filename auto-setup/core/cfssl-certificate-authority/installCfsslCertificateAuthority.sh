@@ -7,8 +7,8 @@ export certificatesWorkspace=${installationWorkspace}/certificates
 if [ ! -f ${certificatesWorkspace}/kx_server.pem ]; then
 
     # Create Directories
-    sudo mkdir -p ${certificatesWorkspace}
-    sudo chown ${vmUser}:${vmUser} ${certificatesWorkspace}
+    /usr/bin/sudo mkdir -p ${certificatesWorkspace}
+    /usr/bin/sudo chown ${vmUser}:${vmUser} ${certificatesWorkspace}
     cd ${certificatesWorkspace}
 
     # Create Root CA Config File
@@ -78,15 +78,15 @@ EOF
     cfssl sign -ca ${certificatesWorkspace}/kx_root_ca.pem -ca-key ${certificatesWorkspace}/kx_root_ca-key.pem -config ${certificatesWorkspace}/root_to_intermediate_ca.json ${certificatesWorkspace}/kx_intermediate_ca.csr | cfssljson -bare kx_intermediate_ca
 
     # Install Root and Intermediate Root CA Certificates into System Trust Store
-    sudo mkdir -p /usr/share/ca-certificates/kubernetes
-    sudo cp ${certificatesWorkspace}/kx_root_ca.pem /usr/share/ca-certificates/kubernetes/kx-root-ca.crt
-    sudo cp ${certificatesWorkspace}/kx_intermediate_ca.pem /usr/share/ca-certificates/kubernetes/kx-intermediate-ca.crt
-    echo "kubernetes/kx-root-ca.crt" | sudo tee -a /etc/ca-certificates.conf
-    echo "kubernetes/kx-intermediate-ca.crt" | sudo tee -a /etc/ca-certificates.conf
-    sudo update-ca-certificates --fresh
+    /usr/bin/sudo mkdir -p /usr/share/ca-certificates/kubernetes
+    /usr/bin/sudo cp ${certificatesWorkspace}/kx_root_ca.pem /usr/share/ca-certificates/kubernetes/kx-root-ca.crt
+    /usr/bin/sudo cp ${certificatesWorkspace}/kx_intermediate_ca.pem /usr/share/ca-certificates/kubernetes/kx-intermediate-ca.crt
+    echo "kubernetes/kx-root-ca.crt" | /usr/bin/sudo tee -a /etc/ca-certificates.conf
+    echo "kubernetes/kx-intermediate-ca.crt" | /usr/bin/sudo tee -a /etc/ca-certificates.conf
+    /usr/bin/sudo update-ca-certificates --fresh
 
     # Ensure docker daemon picks up new CA certificates. Important for local docker registry interactions (avoid x509 error etc)
-    sudo systemctl restart docker
+    /usr/bin/sudo systemctl restart docker
 
     # Create Certificate Config for *.${baseDomain} CSR
     cat << EOF > ${certificatesWorkspace}/csr_kx_server.json
@@ -131,10 +131,10 @@ EOF
 
     # Prepare Certificates for Kubernetes Secrets Import
     mkdir -p ${installationWorkspace}/kx-certs
-    sudo cp ${certificatesWorkspace}/kx_intermediate_ca.pem ${installationWorkspace}/kx-certs/ca.crt
-    sudo cp ${certificatesWorkspace}/kx_server-key.pem ${installationWorkspace}/kx-certs/tls.key
-    sudo cp ${certificatesWorkspace}/kx_server.pem ${installationWorkspace}/kx-certs/tls.crt
-    sudo chown -R ${vmUser}:${vmUser} ${installationWorkspace}/kx-certs
+    /usr/bin/sudo cp ${certificatesWorkspace}/kx_intermediate_ca.pem ${installationWorkspace}/kx-certs/ca.crt
+    /usr/bin/sudo cp ${certificatesWorkspace}/kx_server-key.pem ${installationWorkspace}/kx-certs/tls.key
+    /usr/bin/sudo cp ${certificatesWorkspace}/kx_server.pem ${installationWorkspace}/kx-certs/tls.crt
+    /usr/bin/sudo chown -R ${vmUser}:${vmUser} ${installationWorkspace}/kx-certs
 
     # Import Certificates into Browser Certificate Repositories
     cat << EOF > ${installationWorkspace}/trustKXRootCAs.sh
@@ -170,15 +170,15 @@ do
     certutil -A -n "\${certname}" -t "TCu,Cu,Tu" -i \${certfile} -d sql:\${certdir}
 done
 EOF
-    sudo cp ${installationWorkspace}/trustKXRootCAs.sh /usr/local/bin
+    /usr/bin/sudo cp ${installationWorkspace}/trustKXRootCAs.sh /usr/local/bin
 
     # Add KX.AS.CODE Root CA cert to Chrome CA Store. Will be exeuted for Firefox after user login
-    sudo chmod +x /usr/local/bin/trustKXRootCAs.sh
-    sudo rm -rf /home/${vmUser}/.pki
+    /usr/bin/sudo chmod +x /usr/local/bin/trustKXRootCAs.sh
+    /usr/bin/sudo rm -rf /home/${vmUser}/.pki
     mkdir -p /home/${vmUser}/.pki/nssdb/
     chown -R ${vmUser}:${vmUser} /home/${vmUser}/.pki
-    sudo -H -i -u ${vmUser} sh -c "certutil -N --empty-password -d sql:/home/${vmUser}/.pki/nssdb"
-    sudo -H -i -u ${vmUser} sh -c "/usr/local/bin/trustKXRootCAs.sh"
-    sudo -H -i -u ${vmUser} sh -c "certutil -L -d sql:/home/${vmUser}/.pki/nssdb"
+    /usr/bin/sudo -H -i -u ${vmUser} sh -c "certutil -N --empty-password -d sql:/home/${vmUser}/.pki/nssdb"
+    /usr/bin/sudo -H -i -u ${vmUser} sh -c "/usr/local/bin/trustKXRootCAs.sh"
+    /usr/bin/sudo -H -i -u ${vmUser} sh -c "certutil -L -d sql:/home/${vmUser}/.pki/nssdb"
 
 fi

@@ -8,11 +8,11 @@ curl -O https://raw.githubusercontent.com/spinnaker/halyard/master/install/debia
 mkdir -p /opt/spinnaker
 chown ${vmUser}:${vmUser} /opt/spinnaker
 
-sudo mkdir -p /opt/spinnaker
-sudo chown kx.hero:kx.hero /opt/spinnaker
+/usr/bin/sudo mkdir -p /opt/spinnaker
+/usr/bin/sudo chown kx.hero:kx.hero /opt/spinnaker
 
 # Install Halyard
-sudo -u kx.hero bash ./InstallHalyard.sh
+/usr/bin/sudo -u kx.hero bash ./InstallHalyard.sh
 
 # Test Halyard is working
 hal -v

@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash
 set -euo pipefail
 
 export rc=0
@@ -12,22 +12,6 @@ if [[ ${disableLinuxDesktop} == "true"   ]]; then
     systemctl isolate multi-user.target
 fi
 
-# Check if handlebars utility is installed for {{ variable }} substitutions
-# Fyi - not using pure bash "mo" solution as exclusions were not working
-export NVM_DIR="$HOME/.nvm"
-if [ -f $NVM_DIR/nvm.sh ]; then
-    . "$NVM_DIR/nvm.sh" # This loads nvm
-    . "$NVM_DIR/bash_completion" # This loads nvm bash_completion
-fi
-
-handelbarsUtilityInstalled=$(which envhandlebars)
-
-if [[ -z ${handelbarsUtilityInstalled} ]]; then
-    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.3/install.sh | bash
-    nvm install node
-    npm i -g envhandlebars
-fi
-
 # Un/Installing Components
 log_info "-------- Component: ${componentName} Component Folder: ${componentInstallationFolder} Action: ${action}"
 
@@ -38,7 +22,7 @@ export installComponentDirectory=${autoSetupHome}/${componentInstallationFolder}
 export componentMetadataJson=${installComponentDirectory}/metadata.json
 
 # Retrieve namespace from component's metadata.json
-export namespace=$(cat ${componentMetadataJson} | jq -r '.namespace' | sed 's/_/-/g' | tr '[:upper:]' '[:lower:]') # Ensure DNS compatible name
+export namespace=$(cat ${componentMetadataJson} | jq -r '.namespace?' | sed 's/_/-/g' | tr '[:upper:]' '[:lower:]') # Ensure DNS compatible name
 
 # Get installation type (valid values are script, helm or argocd) and path to scripts
 export installationType=$(cat ${componentMetadataJson} | jq -r '.installation_type')
@@ -48,7 +32,7 @@ if [[ ${action} == "install"   ]]; then
 
     # Create namespace if it does not exist
     if [[ -z ${namespace} ]] && [[ ${namespace} != "kube-system" ]] && [[ ${namespace} != "default"   ]]; then
-        log_warn "Namespace name could not be established. Subsequent actions may fail if they have a dependency on this. Please validate the namespace entry is correct for \"${component}\" in metadata.json"
+        log_warn "Namespace name could not be established. Subsequent actions may fail if they have a dependency on this. Please validate the namespace entry is correct for \"${componentName}\" in metadata.json"
     fi
 
     # Create namespace if it does not exists
@@ -145,11 +129,11 @@ if [[ ${action} == "install"   ]]; then
             fi
         fi
         # Get --set parameters from metadata.json
-        helm_set_key_value_params=$(echo ${helm_params} | jq -r '.set_key_values[] | "--set \(.)" ' | mo) # Mo adds mustache {{variables}} support to helm --set options
+        helm_set_key_value_params=$(echo ${helm_params} | jq -r '.set_key_values[]? | "--set \(.)" ' | mo) # Mo adds mustache {{variables}} support to helm --set options
         log_debug "${helm_set_key_value_params}"
 
         # Get --set-string parameters from metadata.json
-        helm_set_string_key_value_params=$(echo ${helm_params} | jq -r '.set_string_key_values[] | "--set-string \(.)" ' | mo) # Mo adds mustache {{variables}} support to helm --set-string options
+        helm_set_string_key_value_params=$(echo ${helm_params} | jq -r '.set_string_key_values[]? | "--set-string \(.)" ' | mo) # Mo adds mustache {{variables}} support to helm --set-string options
         log_debug "${helm_set_string_key_value_params}"
 
         helmRepositoryName=$(echo ${helm_params} | jq -r '.repository_name')
@@ -178,7 +162,7 @@ if [[ ${action} == "install"   ]]; then
         ${installationWorkspace}/helm_${componentName}.sh
         rc=$?
         if [[ ${rc} -ne 0 ]]; then
-            log_error "Execution of Helm command \"${helmCommmand}\" ended in a non zero return code ($rc)"
+            log_error "Execution of Helm command \"${helmCommmand}\" ended in a non zero return code ($rc)"   
         fi
 
         ####################################################################################################################################################################
@@ -343,7 +327,7 @@ if [[ ${action} == "install"   ]]; then
     # Loop round post-install scripts
     for script in ${componentPostInstallScripts}; do
         if [[ ! -f ${installComponentDirectory}/post_install_scripts/${script} ]]; then
-            log_error "Post-install script ${installComponentDirectory}/post_install_scripts/${script} does not exist. Check your spelling in the \"kxascode.json\" file and that it is checked in correctly into Git"0
+            log_error "Post-install script ${installComponentDirectory}/post_install_scripts/${script} does not exist. Check your spelling in the \"kxascode.json\" file and that it is checked in correctly into Git"
         else
             echo "Executing post-install script ${installComponentDirectory}/post_install_scripts/${script}"
             log_info "Executing post-install script ${installComponentDirectory}/post_install_scripts/${script}"
@@ -398,15 +382,6 @@ if [[ ${action} == "install"   ]]; then
     fi
 
     browserOptions="" # placeholder
-
-    case "${apiDocsType}" in
-        swagger)
-            iconPath=/usr/share/kx.as.code/git/kx.as.code/base-vm/images/api_docs_icon.png
-            ;;
-        *)
-            iconPath=/usr/share/kx.as.code/git/kx.as.code/base-vm/images/api_docs_icon.png
-            ;;
-    esac
 
     shortcutText=$(cat ${componentMetadataJson} | jq -r '.shortcut_text')
     if [[ -z ${shortcutText} ]] || [[ ${shortcutText} == "null" ]]; then
@@ -509,40 +484,6 @@ if [[ ${action} == "install"   ]]; then
         chmod 755 "${vendorDocsDirectory}"/"${componentName}".desktop
     fi
 
-    # Get slot number to add installed app to JSON array
-    arrayLength=$(cat ${installationWorkspace}/actionQueues.json | jq -r '.state.installed[].name' | wc -l)
-    if [[ -z ${arrayLength} ]]; then
-        arrayLength=0
-    fi
-
-    # Add component json to "installed" node in metadata.json
-    componentInstalledExists=$(cat ${installationWorkspace}/actionQueues.json | jq '.state.installed[] | select(.name=="'${componentName}'")')
-    if [[ -z ${componentInstalledExists} ]]; then
-        componentJson=$(cat ${installationWorkspace}/metadata.json | jq '.metadata.available.applications[] | select(.name=="'${componentName}'")')
-        arrayLength=$(cat ${installationWorkspace}/actionQueues.json | jq -r '.state.installed[].name' | wc -l)
-        if [[ -z ${arrayLength} ]]; then
-            arrayLength=0
-        fi
-        if [[ ${componentJson} == "null" ]] || [[ -z ${componentJson} ]]; then
-            log_warn "ComponentJson is null for ${componentName}"
-        else
-            cat ${installationWorkspace}/actionQueues.json | jq '.state.installed['${arrayLength}'] |= . + '"${componentJson}"'' | tee ${installationWorkspace}/actionQueues.json.tmp.2
-            if [[ ! -s ${installationWorkspace}/actionQueues.json.tmp.2 ]]; then export rc=1; fi
-                cp ${installationWorkspace}/actionQueues.json ${installationWorkspace}/actionQueues.json.previous.2
-            if [[ -s ${installationWorkspace}/actionQueues.json.tmp.2 ]]; then
-                cp ${installationWorkspace}/actionQueues.json.tmp.2 ${installationWorkspace}/actionQueues.json
-            fi
-        fi
-    fi
-
-    # Remove completed component installation from install action
-    cat ${installationWorkspace}/actionQueues.json | jq 'del(.action_queues.install[] | select(.name=="'${componentName}'"))' | tee ${installationWorkspace}/actionQueues.json.tmp.4
-    if [[ ! -s ${installationWorkspace}/actionQueues.json.tmp.4 ]]; then export rc=1; fi
-        cp ${installationWorkspace}/actionQueues.json ${installationWorkspace}/actionQueues.json.previous.4
-    if [[ -s ${installationWorkspace}/actionQueues.json.tmp.4 ]]; then
-        cp ${installationWorkspace}/actionQueues.json.tmp.4 ${installationWorkspace}/actionQueues.json
-    fi
-
 elif [[ ${action} == "upgrade"   ]]; then
 
     ## TODO
@@ -602,4 +543,3 @@ elif [[ ${action} == "uninstall"   ]] || [[ ${action} == "purge"   ]]; then
 
 fi # end of action actions condition
 
-cp ${installationWorkspace}/actionQueues.json ${installationWorkspace}/actionQueues.json.previous

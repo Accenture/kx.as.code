@@ -1,6 +1,6 @@
 #!/bin/bash -eux
 
-sudo mkdir -p /home/${vmUser}/.config/Lens
+/usr/bin/sudo mkdir -p /home/${vmUser}/.config/Lens
 
 echo '''
 {
@@ -28,7 +28,7 @@ echo '''
 			"accessibleNamespaces": []
 		}
 	]
-}''' | sudo tee /home/${vmUser}/.config/Lens/lens-cluster-store.json
+}''' | /usr/bin/sudo tee /home/${vmUser}/.config/Lens/lens-cluster-store.json
 
 echo '''
 {
@@ -45,11 +45,11 @@ echo '''
 		}
 	},
 	"currentWorkspace": "default"
-}''' | sudo tee /home/${vmUser}/.config/Lens/lens-workspace-store.json
+}''' | /usr/bin/sudo tee /home/${vmUser}/.config/Lens/lens-workspace-store.json
 
-sudo chown -R ${vmUser}:${vmUser} /home/${vmUser}/.config/Lens
-sudo curl -L -o ${installationWorkspace}/Lens-${lensVersion}.amd64.deb https://github.com/lensapp/lens/releases/download/v${lensVersion}/Lens-${lensVersion}.amd64.deb
-sudo apt-get install -y ${installationWorkspace}/Lens-${lensVersion}.amd64.deb
+/usr/bin/sudo chown -R ${vmUser}:${vmUser} /home/${vmUser}/.config/Lens
+/usr/bin/sudo curl -L -o ${installationWorkspace}/Lens-${lensVersion}.amd64.deb https://github.com/lensapp/lens/releases/download/v${lensVersion}/Lens-${lensVersion}.amd64.deb
+/usr/bin/sudo apt-get install -y ${installationWorkspace}/Lens-${lensVersion}.amd64.deb
 
 echo '''[Desktop Entry]
 Categories=Network;
@@ -71,6 +71,6 @@ X-DBUS-ServiceName=
 X-DBUS-StartupType=
 X-KDE-SubstituteUID=false
 X-KDE-Username=
-''' | sudo tee /home/${vmUser}/Desktop/kontena-lens.desktop
-sudo chmod 755 /home/${vmUser}/Desktop/kontena-lens.desktop
-sudo chown ${vmUser}:${vmUser} /home/${vmUser}/Desktop/kontena-lens.desktop
+''' | /usr/bin/sudo tee /home/${vmUser}/Desktop/kontena-lens.desktop
+/usr/bin/sudo chmod 755 /home/${vmUser}/Desktop/kontena-lens.desktop
+/usr/bin/sudo chown ${vmUser}:${vmUser} /home/${vmUser}/Desktop/kontena-lens.desktop

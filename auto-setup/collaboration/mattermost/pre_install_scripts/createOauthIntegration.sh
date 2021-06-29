@@ -7,7 +7,7 @@ if [[ -z ${mattermostApplicationId} ]]; then
     for i in {1..5}; do
         curl -s --request POST --header "PRIVATE-TOKEN: ${personalAccessToken}" \
             --data "name=Mattermost&redirect_uri=https://${componentName}.${baseDomain}/login/gitlab/complete,https://${componentName}.${baseDomain}/signup/gitlab/complete&scopes=" \
-            "${gitUrl}/api/v4/applications" | sudo tee ${installationWorkspace}/mattermost_gitlab_integration.json
+            "${gitUrl}/api/v4/applications" | /usr/bin/sudo tee ${installationWorkspace}/mattermost_gitlab_integration.json
         export mattermostApplicationId=$(curl -s --header "Private-Token: ${personalAccessToken}" ${gitUrl}/api/v4/applications | jq '.[] | select(.application_name=="Mattermost") | .id')
         if [[ -n ${mattermostApplicationId} ]]; then break; else
             echo "Mattermost application was not created in Gitlab. Trying again ($i of 5)"

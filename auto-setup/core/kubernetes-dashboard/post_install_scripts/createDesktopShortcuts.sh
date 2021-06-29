@@ -12,7 +12,7 @@ Version=1.0
 Name=Kubernetes Dashboard IAM
 GenericName=Kubernetes Dashboard IAM
 Comment=Kubernetes Dashboard IAM
-Exec=/usr/bin/google-chrome-stable %U https://${componentName}-iam.${baseDomain} --use-gl=angle --password-store=basic ${browserOptions}
+Exec=/usr/bin/google-chrome-stable %U https://${componentName}-iam.${baseDomain} --use-gl=angle --password-store=basic
 StartupNotify=true
 Terminal=false
 Icon=${iconPath}
@@ -29,7 +29,7 @@ Version=1.0
 Name=Kubernetes Dashboard
 GenericName=Kubernetes Dashboard
 Comment=Kubernetes Dashboard
-Exec=/usr/bin/google-chrome-stable %U https://${componentName}.${baseDomain} --use-gl=angle --password-store=basic ${browserOptions}
+Exec=/usr/bin/google-chrome-stable %U https://${componentName}.${baseDomain} --use-gl=angle --password-store=basic
 StartupNotify=true
 Terminal=false
 Icon=${iconPath}
@@ -44,7 +44,7 @@ chmod 755 /home/${vmUser}/Desktop/*.desktop
 chown ${vmUser}:${vmUser} /home/${vmUser}/Desktop/*.desktop
 
 # Copy IAM desktop icon to skel directory for future users
-sudo cp /home/${vmUser}/Desktop/Kubernetes-Dashboard-OIDC.desktop ${skelDirectory}/Desktop
+/usr/bin/sudo cp /home/${vmUser}/Desktop/Kubernetes-Dashboard-OIDC.desktop ${skelDirectory}/Desktop
 
 # Create Get Admin Token Script
 cat << EOF > /usr/share/kx.as.code/getK8sClusterAdminToken.sh

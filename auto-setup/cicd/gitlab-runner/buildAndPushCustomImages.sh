@@ -22,7 +22,7 @@ mkdir -p /usr/local/share/ca-certificates
 COPY ./certificates/kx_intermediate_ca.pem /usr/local/share/ca-certificates/kx_intermediate_ca.crt
 COPY ./certificates/kx_root_ca.pem /usr/local/share/ca-certificates/kx_root_ca.crt
 RUN update-ca-certificates
-''' | sudo tee ${installationWorkspace}/Dockerfile.Docker-Dind
+''' | /usr/bin/sudo tee ${installationWorkspace}/Dockerfile.Docker-Dind
 docker build -f ${installationWorkspace}/Dockerfile.Docker-Dind -t ${harborDomain}/devops/docker:${gitlabDindImageVersion} .
 docker push ${harborDomain}/devops/docker:${gitlabDindImageVersion}
 
@@ -34,7 +34,7 @@ mkdir -p /usr/local/share/ca-certificates
 COPY ./certificates/kx_intermediate_ca.pem /usr/local/share/ca-certificates/kx_intermediate_ca.crt
 COPY ./certificates/kx_root_ca.pem /usr/local/share/ca-certificates/kx_root_ca.crt
 RUN update-ca-certificates
-''' | sudo tee ${installationWorkspace}/Dockerfile.Gitlab-Runner
+''' | /usr/bin/sudo tee ${installationWorkspace}/Dockerfile.Gitlab-Runner
 docker build -f ${installationWorkspace}/Dockerfile.Gitlab-Runner -t ${harborDomain}/devops/gitlab-runner:alpine-${gitabRunnerVersion} .
 docker push ${harborDomain}/devops/gitlab-runner:alpine-${gitabRunnerVersion}
 

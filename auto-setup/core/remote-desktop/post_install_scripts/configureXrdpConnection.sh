@@ -43,7 +43,7 @@ INSERT INTO public.guacamole_connection_parameter(
         connection_id, parameter_name, parameter_value)
         VALUES (1, 'password', '\${GUAC_PASSWORD}');
 
-""" | sudo su - postgres -c "psql -U postgres -d guacamole_db" -
+""" | /usr/bin/sudo su - postgres -c "psql -U postgres -d guacamole_db" -
 
 # Restart services
 systemctl restart tomcat9

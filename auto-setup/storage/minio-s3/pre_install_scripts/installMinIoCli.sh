@@ -7,5 +7,5 @@ if [ ! -f /usr/local/bin/mc ]; then
     # Give MC execute permissions
     chmod +x mc
     # Move to bin folder on path
-    sudo mv mc /usr/local/bin
+    /usr/bin/sudo mv mc /usr/local/bin
 fi

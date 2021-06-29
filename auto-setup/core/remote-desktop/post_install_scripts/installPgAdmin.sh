@@ -1,18 +1,18 @@
 #!/bin/bash -x
 set -euo pipefail
 
-export ldapDn=$(sudo slapcat | grep dn | head -1 | cut -f2 -d' ')
+export ldapDn=$(/usr/bin/sudo slapcat | grep dn | head -1 | cut -f2 -d' ')
 
 # Install Postgres Admin Tool
-sudo mkdir -p /var/lib/pgadmin4/sessions
-sudo mkdir /var/lib/pgadmin4/storage
-sudo mkdir /var/log/pgadmin4
-sudo mkdir /usr/pgadmin4
-sudo chown -R ${vmUSer}:${vmUSer} /var/lib/pgadmin4/
-sudo chown -R ${vmUSer}:${vmUSer} /var/log/pgadmin4/
+/usr/bin/sudo mkdir -p /var/lib/pgadmin4/sessions
+/usr/bin/sudo mkdir /var/lib/pgadmin4/storage
+/usr/bin/sudo mkdir /var/log/pgadmin4
+/usr/bin/sudo mkdir /usr/pgadmin4
+/usr/bin/sudo chown -R ${vmUser}:${vmUser} /var/lib/pgadmin4/
+/usr/bin/sudo chown -R ${vmUser}:${vmUser} /var/log/pgadmin4/
 cd /usr/pgadmin4
-sudo wget https://ftp.postgresql.org/pub/pgadmin/pgadmin4/v5.1/pip/pgadmin4-5.1-py3-none-any.whl
-sudo pip3 install virtualenv
+/usr/bin/sudo wget https://ftp.postgresql.org/pub/pgadmin/pgadmin4/v5.1/pip/pgadmin4-5.1-py3-none-any.whl
+/usr/bin/sudo pip3 install virtualenv
 virtualenv pgadmin-env
 source pgadmin-env/bin/activate
 pip3 install pgadmin4-5.1-py3-none-any.whl
@@ -36,21 +36,21 @@ LDAP_AUTO_CREATE_USER = True
 LDAP_ANONYMOUS_BIND = False
 LDAP_SEARCH_FILTER = '(objectclass=*)'
 LDAP_SEARCH_SCOPE = 'SUBTREE'
-""" | sudo tee /usr/pgadmin4/pgadmin-env/lib/python3.7/site-packages/pgadmin4/config_local.py
+""" | /usr/bin/sudo tee /usr/pgadmin4/pgadmin-env/lib/python3.7/site-packages/pgadmin4/config_local.py
 
 # Install dependencies
-sudo apt-get install -y libpq-dev
-sudo pip3 install psycopg2
+/usr/bin/sudo apt-get install -y libpq-dev
+/usr/bin/sudo pip3 install psycopg2
 
 # Install UWSGI
-sudo apt-get install -y uwsgi-core uwsgi-plugin-python3 build-essential python3 python3-dev libpcre3-dev libpcre3
+/usr/bin/sudo apt-get install -y uwsgi-core uwsgi-plugin-python3 build-essential python3 python3-dev libpcre3-dev libpcre3
 
 # Install Python Dependencies
-sudo -H pip3 install --upgrade cheroot flask flask_babelex flask_login flask_mail flask_paranoid flask_security email_validator flask_sqlalchemy simplejson python-dateutil flask_migrate psycopg2 sshtunnel ldap3 flask_gravatar sqlparse psutil flask_compress
+/usr/bin/sudo -H pip3 install --upgrade cheroot flask flask_babelex flask_login flask_mail flask_paranoid flask_security email_validator flask_sqlalchemy simplejson python-dateutil flask_migrate psycopg2 sshtunnel ldap3 flask_gravatar sqlparse psutil flask_compress
 
 # Correct permissions
-sudo chown -R www-data:www-data /var/lib/pgadmin4
-sudo chown -R www-data:www-data /var/log/pgadmin4
+/usr/bin/sudo chown -R www-data:www-data /var/lib/pgadmin4
+/usr/bin/sudo chown -R www-data:www-data /var/log/pgadmin4
 
 # Set default email and password to use and setup on first start of PGADMIN
 export PGADMIN_DEFAULT_EMAIL='admin@'${baseDomain}''
@@ -98,13 +98,13 @@ StandardError=syslog
 
 [Install]
 WantedBy=multi-user.target
-''' | sudo tee /etc/systemd/system/pgadmin4-on-uwsgi.service
+''' | /usr/bin/sudo tee /etc/systemd/system/pgadmin4-on-uwsgi.service
 
 # Enable service
-sudo systemctl enable pgadmin4-on-uwsgi.service
+/usr/bin/sudo systemctl enable pgadmin4-on-uwsgi.service
 
 # Alter default postgres admin password
-sudo su - postgres -c "psql -U postgres -c \"ALTER USER postgres PASSWORD '${vmPassword}';\""
+/usr/bin/sudo su - postgres -c "psql -U postgres -c \"ALTER USER postgres PASSWORD '${vmPassword}';\""
 
 # Create JSON containing postgresql server to connect to
 echo '''
@@ -128,7 +128,7 @@ echo '''
         }
     }
 }
-''' | sudo tee /usr/pgadmin4/pgadmin-env/lib/python3.7/site-packages/pgadmin4/servers.json
+''' | /usr/bin/sudo tee /usr/pgadmin4/pgadmin-env/lib/python3.7/site-packages/pgadmin4/servers.json
 
 # Import sevrer JSON into PGADMIN
 python3 /usr/pgadmin4/pgadmin-env/lib/python3.7/site-packages/pgadmin4/setup.py --load-servers "/usr/pgadmin4/pgadmin-env/lib/python3.7/site-packages/pgadmin4/servers.json" --user ${PGADMIN_DEFAULT_EMAIL}
@@ -153,10 +153,10 @@ server {
       uwsgi_pass unix:/tmp/pgadmin4.sock;
   }
 }
-''' | sudo tee /etc/nginx/sites-available/pgadmin.conf
+''' | /usr/bin/sudo tee /etc/nginx/sites-available/pgadmin.conf
 
 # Create shortcut to enable NGINX virtual host
 ln -s /etc/nginx/sites-available/pgadmin.conf /etc/nginx/sites-enabled/pgadmin.conf
 
 # Restart NGINX so new virtual host is loaded
-sudo systemctl restart nginx
+/usr/bin/sudo systemctl restart nginx

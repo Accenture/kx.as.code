@@ -87,6 +87,14 @@
                 },
                 {
                     "install_folder": "core",
+                    "name": "keycloak"
+                },
+                {
+                    "install_folder": "core",
+                    "name": "kontena-lens"
+                },
+                {
+                    "install_folder": "core",
                     "name": "kubernetes-base-services"
                 },
                 {
@@ -142,8 +150,16 @@
                     "name": "nginx-ingress-controller"
                 },
                 {
+                    "install_folder": "core",
+                    "name": "openldap"
+                },
+                {
                     "install_folder": "monitoring",
                     "name": "prometheus"
+                },
+                {
+                    "install_folder": "core",
+                    "name": "remote-desktop"
                 },
                 {
                     "install_folder": "collaboration",
@@ -160,6 +176,10 @@
                 {
                     "install_folder": "security",
                     "name": "sysdig-falco"
+                },
+                {
+                    "install_folder": "core",
+                    "name": "user-setup"
                 }
             ],
             "groups": [

@@ -95,3 +95,30 @@ MaximumUid=60000
 MinimumUid=1000
 HideUsers=vagrant
 ''' | sudo tee /etc/sddm.conf
+
+# Install Node Version Manager (NVM) and Node
+echo '''
+if [ -d "$HOME/.nvm" ]; then
+  # export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
+  export NVM_DIR="$HOME/.nvm"
+
+  # This loads nvm
+  [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+
+  # This loads nvm bash_completion
+  [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+fi
+''' | sudo tee -a /home/${VM_USER}/.bashrc /home/${VM_USER}/.zshrc /root/.bashrc /root/.zshrc
+
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | sudo bash
+sudo bash -c "source /root/.nvm/nvm.sh && nvm install node"
+sudo bash -c "source /root/.nvm/nvm.sh && npm install -g npm@7.17.0"
+sudo bash -c "source /root/.nvm/nvm.sh && npm install -g envhandlebars"
+sudo cp -r /root/.nvm /home/${VM_USER}
+sudo chown -R ${VM_USER}:${VM_USER} /home/${VM_USER}
+
+echo '''# Check if node tool reachable
+nodeToolPath=$(which node || true)
+if [ -z "$nodeToolPath" ] ; then
+    export PATH=$(dirname $(find $HOME -type f -executable -name "node")):$PATH
+fi''' | sudo tee -a /home/${VM_USER}/.bashrc /home/${VM_USER}/.zshrc /root/.bashrc /root/.zshrc
