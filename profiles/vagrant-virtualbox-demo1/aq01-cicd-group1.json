@@ -3,7 +3,11 @@
     "install": [
       {
         "install_folder": "cicd",
-        "name": "argocd"
+        "name": "gitlab-ce"
+      },
+      {
+        "install_folder": "cicd",
+        "name": "gitlab-runner"
       }
     ]
   }
