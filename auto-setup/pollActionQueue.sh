@@ -16,7 +16,7 @@ export adminShortcutsDirectory="${sharedKxHome}/Admin Tools"
 export vmUser=kx.hero
 export vmUserId=$(id -u ${vmUser})
 export vmPassword="$(cat ${sharedKxHome}/.config/.user.cred)"
-export retries=""
+export retries="0"
 export action=""
 export componentName=""
 export componentInstallationFolder=""
@@ -203,19 +203,19 @@ export s3ObjectStoreUrl="https://${s3ObjectStoreDomain}"
 # Establish common logging format
 export logTimestamp=$(date '+%Y-%m-%d')
 log_info() {
-    echo "$(date '+%Y-%m-%d_%H%M%S') [INFO] ${1}" | tee -a ${installationWorkspace}/${componentName}_${logTimestamp}.log
+    echo "$(date '+%Y-%m-%d_%H%M%S') [INFO] ${1}" | tee -a ${installationWorkspace}/${componentName}_${logTimestamp}.${retries}.log
 }
 
 log_warn() {
-    echo "$(date '+%Y-%m-%d_%H%M%S') [WARN] ${1}" | tee -a ${installationWorkspace}/${componentName}_${logTimestamp}.log
+    echo "$(date '+%Y-%m-%d_%H%M%S') [WARN] ${1}" | tee -a ${installationWorkspace}/${componentName}_${logTimestamp}.${retries}.log
 }
 
 log_error() {
-    echo "$(date '+%Y-%m-%d_%H%M%S') [ERROR] ${1}" | tee -a ${installationWorkspace}/${componentName}_${logTimestamp}.log
+    echo "$(date '+%Y-%m-%d_%H%M%S') [ERROR] ${1}" | tee -a ${installationWorkspace}/${componentName}_${logTimestamp}.${retries}.log
 }
 
 log_debug() {
-    echo "$(date '+%Y-%m-%d_%H%M%S') [DEBUG] ${1}" | tee -a ${installationWorkspace}/${componentName}_${logTimestamp}.log
+    echo "$(date '+%Y-%m-%d_%H%M%S') [DEBUG] ${1}" | tee -a ${installationWorkspace}/${componentName}_${logTimestamp}.${retries}.log
 }
 
 if [[ ! -f /usr/share/kx.as.code/.config/network_status ]]; then
