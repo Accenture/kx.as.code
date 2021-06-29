@@ -524,7 +524,7 @@ while :; do
                 fi
                 count=$((count + 1))
                 export error=""
-                . ${autoSetupHome}/autoSetup.sh &> ${installationWorkspace}/${componentName}_${logTimestamp}.log
+                . ${autoSetupHome}/autoSetup.sh &> ${installationWorkspace}/${componentName}_${logTimestamp}.${retries}.log
                 logRc=$?
                 log_info "Installation process for \"${componentName}\" returned with \$?=${logRc} and \$rc=$rc"
             fi
