@@ -9,6 +9,30 @@ resource "null_resource" "kx_bastion_ready" {
 
     inline = ["echo 'KX Bastion up and running'"]
   }
+
+  provisioner "file" {
+    source      = local_file.kx_ssh_key.filename
+    destination = "/home/ec2-user/.ssh/id_rsa"
+
+    connection {
+      type        = "ssh"
+      user        = "ec2-user"
+      private_key = file(local_file.kx_ssh_key.filename)
+      host        = aws_instance.kx_bastion.public_ip
+    }
+  }
+
+  provisioner "remote-exec" {
+    connection {
+      type        = "ssh"
+      user        = "ec2-user"
+      private_key = file(local_file.kx_ssh_key.filename)
+      host        = aws_instance.kx_bastion.public_ip
+    }
+
+    inline = ["chmod 400 /home/ec2-user/.ssh/id_rsa"]
+  }
+
 }
 
 resource "null_resource" "main_provisioner" {
