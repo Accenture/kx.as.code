@@ -1,0 +1,26 @@
+{
+  "action_queues": {
+    "install": [
+      {
+        "install_folder": "storage",
+        "name": "minio-s3"
+      },
+      {
+        "install_folder": "cicd",
+        "name": "gitlab-ce"
+      },
+      {
+        "install_folder": "collaboration",
+        "name": "mattermost"
+      },
+      {
+        "install_folder": "cicd",
+        "name": "gitlab-runner"
+      },
+      {
+        "install_folder": "cicd",
+        "name": "argocd"
+      }
+    ]
+  }
+}
