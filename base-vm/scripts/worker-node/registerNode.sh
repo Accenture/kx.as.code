@@ -285,7 +285,7 @@ sudo systemctl daemon-reload
 sudo systemctl restart kubelet
 
 # Setup proxy settings if they exist
-if [[ -n ${httpProxySetting} ]] || [[ -n ${httpsProxySetting} ]]; then
+if ( [[ -n ${httpProxySetting} ]] || [[ -n ${httpsProxySetting} ]] ) && ( [[ "${httpProxySetting}" != "null" ]] && [[ "${httpsProxySetting}" != "null" ]] ); then
     if [[ ${httpProxySetting} != "null" ]] || [[ ${httpsProxySetting} != "null"   ]]; then
 
         if [[ ${httpProxySetting} == "null" ]]; then

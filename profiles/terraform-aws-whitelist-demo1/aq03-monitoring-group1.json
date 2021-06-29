@@ -1,0 +1,10 @@
+{
+  "action_queues": {
+    "install": [
+      {
+        "install_folder": "monitoring",
+        "name": "elastic-elasticsearch"
+      }
+    ]
+  }
+}

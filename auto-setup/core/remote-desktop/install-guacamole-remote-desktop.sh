@@ -186,7 +186,7 @@ ExecStop=/usr/bin/vncserver -kill :%i
 WantedBy=multi-user.target
 ''' | /usr/bin/sudo tee /etc/systemd/system/vncserver@.service
 
-/usr/bin/sudo -H -i -u ${vmUser} sh -c "vncserver -kill :1"
+/usr/bin/sudo -H -i -u ${vmUser} bash -c "vncserver -kill :1 || true"
 /usr/bin/sudo systemctl start vncserver@1.service
 /usr/bin/sudo systemctl enable vncserver@1.service
 /usr/bin/sudo systemctl status vncserver@1.service
