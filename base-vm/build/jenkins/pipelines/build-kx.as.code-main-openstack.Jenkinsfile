@@ -65,7 +65,7 @@ pipeline {
                         sh """
                         cd base-vm/build/packer/${packerOsFolder}
                         ${packerPath}/packer build -force -only kx.as.code-main-openstack \
-                            -var "compute_engine_build=${kx_compute_engine_build}" \
+                            -var "compute_engine_build=${openstack_compute_engine_build}" \
                             -var "hostname=${kx_main_hostname}" \
                             -var "domain=${kx_domain}" \
                             -var "version=${kx_version}" \

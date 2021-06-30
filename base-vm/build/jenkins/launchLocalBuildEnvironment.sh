@@ -360,6 +360,18 @@ for initialSetupJobConfgXmlFile in ${initialSetupJobConfgXmlFiles}; do
 done
 IFS=${OLD_IFS}
 
+# Replace variables in main config xml file
+for i in {1..5}; do
+  echo "[INFO] Replacing placeholders with values in ${jenkins_home}/config.xml"
+  cat "${jenkins_home}/config.xml" | ./mo > "${jenkins_home}/config.xml_tmp"
+  if [ -s "${jenkins_home}/config.xml_tmp" ]; then
+      mv "${jenkins_home}/config.xml_tmp" "${jenkins_home}/config.xml"
+      break
+  else
+      echo -e "${red}- [ERROR] Target jenkins_home/config.xml file was empty after mustach replacement. Trying again${nc}"
+  fi
+done
+
 # Start Jenkins
 jenkinsContainer=$(docker ps -a -f "name=jenkins" -q)
 if [ -z ${jenkinsContainer} ]; then

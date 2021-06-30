@@ -64,7 +64,7 @@ pipeline {
                         cd base-vm/build/packer/${packerOsFolder}
                         echo "packerPath=${packerPath}/packer"
                         ${packerPath}/packer build -force -only kx.as.code-worker-openstack \
-                            -var "compute_engine_build=${kx_compute_engine_build}" \
+                            -var "compute_engine_build=${openstack_compute_engine_build}" \
                             -var "hostname=${kx_worker_hostname}" \
                             -var "domain=${kx_domain}" \
                             -var "version=${kx_version}" \
