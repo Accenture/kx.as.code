@@ -93,7 +93,7 @@
     </com.smartcodeltd.jenkinsci.plugins.buildmonitor.BuildMonitorView>
   </views>
   <primaryView>all</primaryView>
-  <slaveAgentPort>50000</slaveAgentPort>
+  <slaveAgentPort>{{jenkins_jnlp_port}}</slaveAgentPort>
   <label></label>
   <crumbIssuer class="hudson.security.csrf.DefaultCrumbIssuer">
     <excludeClientIPFromCrumb>false</excludeClientIPFromCrumb>
