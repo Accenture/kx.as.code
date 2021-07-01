@@ -1,45 +1,63 @@
 
 resource "null_resource" "main_provisioner" {
 
-  depends_on = [ openstack_compute_floatingip_associate_v2.kx-main-floating-ip-associate ]
+  depends_on = [
+    openstack_compute_floatingip_associate_v2.kx-main-floating-ip-associate
+  ]
 
   provisioner "file" {
-    source      = "profile-config.json"
+    source = "profile-config.json"
     destination = "/var/tmp/profile-config.json"
 
     connection {
-        type     = "ssh"
-        user     = "debian"
-        private_key = openstack_compute_keypair_v2.kx-keypair.private_key
-        host     = openstack_networking_floatingip_v2.kx-main-floating-ip.address
+      type = "ssh"
+      user = "debian"
+      private_key = openstack_compute_keypair_v2.kx-keypair.private_key
+      host = openstack_networking_floatingip_v2.kx-main-floating-ip.address
     }
 
   }
 
   provisioner "file" {
-    source      = "users.json"
+    source = "users.json"
     destination = "/var/tmp/users.json"
 
     connection {
-      type     = "ssh"
-      user     = "debian"
+      type = "ssh"
+      user = "debian"
       private_key = openstack_compute_keypair_v2.kx-keypair.private_key
-      host     = openstack_networking_floatingip_v2.kx-main-floating-ip.address
+      host = openstack_networking_floatingip_v2.kx-main-floating-ip.address
     }
 
   }
+}
+
+resource "null_resource" "kx_main_qa_provisioner" {
+
+  depends_on = [
+    openstack_compute_floatingip_associate_v2.kx-main-floating-ip-associate
+  ]
+
+  for_each = fileset(path.module, "aq*.json")
 
   provisioner "file" {
-    source      = "aq03-monitoring-group1.json"
-    destination = "/var/tmp/aq03-monitoring-group1.json"
+    source = each.value
+    destination = "/var/tmp/${each.value}"
 
     connection {
-        type     = "ssh"
-        user     = "debian"
-        private_key = openstack_compute_keypair_v2.kx-keypair.private_key
-        host     = openstack_networking_floatingip_v2.kx-main-floating-ip.address
+      type = "ssh"
+      user = "debian"
+      private_key = openstack_compute_keypair_v2.kx-keypair.private_key
+      host = openstack_networking_floatingip_v2.kx-main-floating-ip.address
     }
   }
+}
+
+resource "null_resource" "kx_main_final_provisioner" {
+
+  depends_on = [
+    openstack_compute_floatingip_associate_v2.kx-main-floating-ip-associate
+  ]
 
   provisioner "file" {
     source      = "hosts_file_entries.txt"
