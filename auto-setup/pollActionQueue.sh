@@ -220,25 +220,26 @@ log_debug() {
 
 if [[ ! -f /usr/share/kx.as.code/.config/network_status ]]; then
 
-    if  [[ ${baseIpType} == "static"   ]] || [[ ${dnsResolution} == "hybrid"   ]]; then
-        # Change DNS resolution to allow wildcards for resolving locally deployed K8s services
-        echo "DNSStubListener=no" | /usr/bin/sudo tee -a /etc/systemd/resolved.conf
-        /usr/bin/sudo systemctl restart systemd-resolved
+    # Change DNS resolution to allow wildcards for resolving locally deployed K8s services
+    echo "DNSStubListener=no" | /usr/bin/sudo tee -a /etc/systemd/resolved.conf
+    /usr/bin/sudo systemctl restart systemd-resolved
 
-        # Configue dnsmasq - /etc/resolv.conf
-        /usr/bin/sudo rm -f /etc/resolv.conf
-        /usr/bin/sudo echo "nameserver ${mainIpAddress}" | /usr/bin/sudo tee /etc/resolv.conf
-        /usr/bin/sudo sed -i 's/^#no-resolv/no-resolv/' /etc/dnsmasq.conf
-        /usr/bin/sudo sed -i 's/^#interface=/interface='${netDevice}'/' /etc/dnsmasq.conf
-        /usr/bin/sudo sed -i 's/^#bind-interfaces/bind-interfaces/' /etc/dnsmasq.conf
-        /usr/bin/sudo sed -i 's/^#listen-address=/listen-address=::1,127.0.0.1,'${mainIpAddress}'/' /etc/dnsmasq.conf
-        # Ensure dnsmasq returns system IP and not IP of loop-back device 127.0.1.1
-        /usr/bin/sudo sed -i 's/^#no-hosts$/no-hosts/g' /etc/dnsmasq.conf
-        echo "server=8.8.8.8" | /usr/bin/sudo tee -a /etc/dnsmasq.conf
-        echo "server=8.8.4.4" | /usr/bin/sudo tee -a /etc/dnsmasq.conf
-        # Configue dnsmasq - /lib/systemd/system/dnsmasq.service (bugfix so dnsmasq starts automatically)
-        /usr/bin/sudo sed -i 's/Wants=nss-lookup.target/Wants=network-online.target/' /lib/systemd/system/dnsmasq.service
-        /usr/bin/sudo sed -i 's/After=network.target/After=network-online.target/' /lib/systemd/system/dnsmasq.service
+    # Configue dnsmasq - /etc/resolv.conf
+    /usr/bin/sudo rm -f /etc/resolv.conf
+    /usr/bin/sudo echo "nameserver ${mainIpAddress}" | /usr/bin/sudo tee /etc/resolv.conf
+    /usr/bin/sudo sed -i 's/^#no-resolv/no-resolv/' /etc/dnsmasq.conf
+    /usr/bin/sudo sed -i 's/^#interface=/interface='${netDevice}'/' /etc/dnsmasq.conf
+    /usr/bin/sudo sed -i 's/^#bind-interfaces/bind-interfaces/' /etc/dnsmasq.conf
+    /usr/bin/sudo sed -i 's/^#listen-address=/listen-address=::1,127.0.0.1,'${mainIpAddress}'/' /etc/dnsmasq.conf
+    # Ensure dnsmasq returns system IP and not IP of loop-back device 127.0.1.1
+    /usr/bin/sudo sed -i 's/^#no-hosts$/no-hosts/g' /etc/dnsmasq.conf
+    echo "server=8.8.8.8" | /usr/bin/sudo tee -a /etc/dnsmasq.conf
+    echo "server=8.8.4.4" | /usr/bin/sudo tee -a /etc/dnsmasq.conf
+    # Configue dnsmasq - /lib/systemd/system/dnsmasq.service (bugfix so dnsmasq starts automatically)
+    /usr/bin/sudo sed -i 's/Wants=nss-lookup.target/Wants=network-online.target/' /lib/systemd/system/dnsmasq.service
+    /usr/bin/sudo sed -i 's/After=network.target/After=network-online.target/' /lib/systemd/system/dnsmasq.service
+
+    if  [[ ${baseIpType} == "static" ]] || [[ ${dnsResolution} == "hybrid" ]]; then
         # Prevent DHCLIENT updating static IP
         if [[ ${dnsResolution} == "hybrid"   ]]; then
             echo "supersede domain-name-servers ${mainIpAddress};" | /usr/bin/sudo tee -a /etc/dhcp/dhclient.conf
@@ -252,22 +253,22 @@ if [[ ! -f /usr/share/kx.as.code/.config/network_status ]]; then
         }
         ''' | sed -e 's/^[ \t]*//' | sed 's/:/    :/g' | /usr/bin/sudo tee /etc/dhcp/dhclient-enter-hooks.d/nodnsupdate
         /usr/bin/sudo chmod +x /etc/dhcp/dhclient-enter-hooks.d/nodnsupdate
-
-        # Update DNS Entry for hosts if ip type set to static
-        hostname="$(hostname)"
-        echo "address=/${hostname}/${mainIpAddress}" | /usr/bin/sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
-        echo "address=/${hostname}.${baseDomain}/${mainIpAddress}" | /usr/bin/sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
-        echo "address=/ldap/${mainIpAddress}" | /usr/bin/sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
-        echo "address=/ldap.${baseDomain}/${mainIpAddress}" | /usr/bin/sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
-        echo "address=/pgadmin/${mainIpAddress}" | /usr/bin/sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
-        echo "address=/pgadmin.${baseDomain}/${mainIpAddress}" | /usr/bin/sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
-        echo "address=/ldapadmin/${mainIpAddress}" | /usr/bin/sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
-        echo "address=/ldapadmin.${baseDomain}/${mainIpAddress}" | /usr/bin/sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
-        echo "address=/rabbitmq/${mainIpAddress}" | /usr/bin/sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
-        echo "address=/rabbitmq.${baseDomain}/${mainIpAddress}" | /usr/bin/sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
-        echo "address=/remote-desktop/${mainIpAddress}" | /usr/bin/sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
-        echo "address=/remote-desktop.${baseDomain}/${mainIpAddress}" | /usr/bin/sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
     fi
+
+    # Update DNS Entry for hosts if ip type set to static
+    hostname="$(hostname)"
+    echo "address=/${hostname}/${mainIpAddress}" | /usr/bin/sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
+    echo "address=/${hostname}.${baseDomain}/${mainIpAddress}" | /usr/bin/sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
+    echo "address=/ldap/${mainIpAddress}" | /usr/bin/sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
+    echo "address=/ldap.${baseDomain}/${mainIpAddress}" | /usr/bin/sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
+    echo "address=/pgadmin/${mainIpAddress}" | /usr/bin/sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
+    echo "address=/pgadmin.${baseDomain}/${mainIpAddress}" | /usr/bin/sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
+    echo "address=/ldapadmin/${mainIpAddress}" | /usr/bin/sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
+    echo "address=/ldapadmin.${baseDomain}/${mainIpAddress}" | /usr/bin/sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
+    echo "address=/rabbitmq/${mainIpAddress}" | /usr/bin/sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
+    echo "address=/rabbitmq.${baseDomain}/${mainIpAddress}" | /usr/bin/sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
+    echo "address=/remote-desktop/${mainIpAddress}" | /usr/bin/sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
+    echo "address=/remote-desktop.${baseDomain}/${mainIpAddress}" | /usr/bin/sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
 
     if [[ ${baseIpType} == "static"   ]]; then
         # Configure IF to be managed/confgured by network-manager
