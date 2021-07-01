@@ -104,7 +104,7 @@ resource "aws_instance" "kx_bastion" {
   }
 }
 
-resource "aws_security_group" "kx_main" {
+resource "aws_security_group" "kx_main_nodes" {
   name        = "kx_main"
   description = "Allow SSH and ICMP traffic for kx main"
   vpc_id      = module.vpc.vpc_id
@@ -152,66 +152,52 @@ resource "aws_security_group" "kx_main" {
   }
 
   ingress {
-    from_port   = 1024
+    from_port   = 4003
     to_port     = 65535
     protocol    = "tcp"
-    cidr_blocks = module.vpc.private_subnets_cidr_blocks
+    security_groups = [aws_security_group.kx_workers_nodes.id]
   }
 
   ingress {
-    from_port   = 1024
+    from_port   = 2382
+    to_port     = 4000
+    protocol    = "tcp"
+    security_groups = [aws_security_group.kx_workers_nodes.id]
+  }
+
+  ingress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    self = true
+  }
+
+  ingress {
+    from_port   = 1
     to_port     = 65535
-    protocol    = "udp"
-    cidr_blocks = module.vpc.private_subnets_cidr_blocks
+    protocol    = "UDP"
+    security_groups = [aws_security_group.kx_workers_nodes.id]
+  }
+
+  ingress {
+    from_port   = 1
+    to_port     = 2379
+    protocol    = "TCP"
+    security_groups = [aws_security_group.kx_workers_nodes.id]
+  }
+
+  ingress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "4"
+    security_groups = [aws_security_group.kx_workers_nodes.id]
   }
 
   egress {
     from_port   = 0
-    to_port     = 8
-    protocol    = "icmp"
-    cidr_blocks = module.vpc.public_subnets_cidr_blocks
-  }
-
-  egress {
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  egress {
-    from_port   = 443
-    to_port     = 443
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  egress {
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
-    cidr_blocks = module.vpc.public_subnets_cidr_blocks
-  }
-
-  egress {
-    from_port   = 32768
-    to_port     = 65535
-    protocol    = "tcp"
-    cidr_blocks = module.vpc.public_subnets_cidr_blocks
-  }
-
-  egress {
-    from_port   = 1024
-    to_port     = 65535
-    protocol    = "tcp"
-    cidr_blocks = module.vpc.private_subnets_cidr_blocks
-  }
-
-  egress {
-    from_port   = 1024
-    to_port     = 65535
-    protocol    = "udp"
-    cidr_blocks = module.vpc.private_subnets_cidr_blocks
+    to_port     = 0
+    protocol    = "-1"
+    self = true
   }
 
   tags = {
@@ -251,6 +237,38 @@ resource "aws_instance" "kx_main" {
   }
 }
 
+resource "aws_security_group" "kx_workers_nodes" {
+  name = "kx_worker_nodes"
+  description = "Allow all traffic between KX-Main and KX-Worker nodes"
+  vpc_id = module.vpc.vpc_id
+
+  ingress {
+    from_port = 0
+    to_port = 0
+    protocol = "-1"
+    self = true
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    self = true
+  }
+
+  tags = {
+    Name = "kx_worker"
+  }
+}
+
+resource "aws_security_group_rule" "kx_worker_kx_main" {
+  type      = "ingress"
+  from_port = 0
+  to_port = 0
+  protocol = "-1"
+  source_security_group_id = aws_security_group.kx_main_nodes.id
+  security_group_id = aws_security_group.kx_workers_nodes.id
+}
 
 resource "aws_instance" "kx_worker" {
   depends_on = [
@@ -260,7 +278,7 @@ resource "aws_instance" "kx_worker" {
   ami                    = local.worker_node_ami_id
   key_name               = aws_key_pair.kx_ssh_key.key_name
   instance_type          = local.worker_node_instance_type
-  vpc_security_group_ids = [module.vpc.default_security_group_id, aws_security_group.kx_main.id]
+  vpc_security_group_ids = [module.vpc.default_security_group_id, aws_security_group.kx_workers_nodes.id]
   subnet_id              = module.vpc.private_subnets[0] # aws_subnet.private_one.id
   source_dest_check      = false
   availability_zone      = local.aws_availability_zone

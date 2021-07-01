@@ -1,6 +1,6 @@
 resource "aws_network_interface" "kx_main" {
   subnet_id       = module.vpc.private_subnets[0]
-  security_groups = [module.vpc.default_security_group_id, aws_security_group.kx_main.id]
+  security_groups = [module.vpc.default_security_group_id, aws_security_group.kx_main_nodes.id]
   source_dest_check      = false
 }
 
