@@ -173,6 +173,7 @@ export metalLbIpRangeStart=$(cat ${installationWorkspace}/profile-config.json | 
 export metalLbIpRangeEnd=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.metalLbIpRange.ipRangeEnd')
 export sslProvider=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.sslProvider')
 export sslDomainAdminEmail=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.sslDomainAdminEmail')
+export letsEncryptEnvironment=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.letsEncryptEnvironment')
 # Get proxy settings
 export httpProxySetting=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.proxy_settings.http_proxy')
 export httpsProxySetting=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.proxy_settings.https_proxy')

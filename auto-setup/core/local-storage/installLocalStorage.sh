@@ -31,7 +31,6 @@ else
     formatted=true
 fi
 
-
 # Check logical partitions
 /usr/bin/sudo lvs
 /usr/bin/sudo df -hT
@@ -40,7 +39,16 @@ fi
 # Create full partition on /dev/${driveB}
 if [[ -z ${formatted} ]]; then
     echo 'type=83' | /usr/bin/sudo sfdisk /dev/${driveB}
-    driveB_Partition=$(lsblk -o NAME,FSTYPE,SIZE -J | jq -r '.[] | .[]  | select(.name=="'${driveB}'") | .children[].name')
+    for i in {1..5}; do
+      driveB_Partition=$(lsblk -o NAME,FSTYPE,SIZE -J | jq -r '.[] | .[]  | select(.name=="'${driveB}'") | .children[].name' || true)
+      if [[ -n ${driveB_Partition} ]]; then
+        log_info "Disk ${driveB} partitioned successfully -> ${driveB_Partition}"
+        break
+      else
+        log_warm "Disk partition could not be found on ${driveB} (attempt ${i}), trying again"
+        sleep 5
+      fi
+    done
     /usr/bin/sudo pvcreate /dev/${driveB_Partition}
     /usr/bin/sudo vgcreate k8s_local_vol_group /dev/${driveB_Partition}
 fi
