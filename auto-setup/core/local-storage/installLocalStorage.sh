@@ -45,7 +45,7 @@ if [[ -z ${formatted} ]]; then
         log_info "Disk ${driveB} partitioned successfully -> ${driveB_Partition}"
         break
       else
-        log_warm "Disk partition could not be found on ${driveB} (attempt ${i}), trying again"
+        log_warn "Disk partition could not be found on ${driveB} (attempt ${i}), trying again"
         sleep 5
       fi
     done
