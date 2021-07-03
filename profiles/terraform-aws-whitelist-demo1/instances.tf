@@ -96,7 +96,7 @@ resource "aws_instance" "kx_bastion" {
   vpc_security_group_ids = [module.vpc.default_security_group_id, aws_security_group.kx_bastion.id]
   subnet_id              = module.vpc.public_subnets[0] # aws_subnet.public.id
   source_dest_check      = false
-  availability_zone      = local.aws_availability_zone
+  availability_zone      = local.aws_availability_zone_one
 
   tags = {
     Name     = "KX.AS.CODE Bastion"
@@ -120,7 +120,7 @@ resource "aws_security_group" "kx_main_nodes" {
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
-    cidr_blocks = local.remote_access_cidrs
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   ingress {
@@ -212,7 +212,7 @@ resource "aws_instance" "kx_main" {
   ami                    = local.main_node_ami_id
   key_name               = aws_key_pair.kx_ssh_key.key_name
   instance_type          = local.main_node_instance_type
-  availability_zone      = local.aws_availability_zone
+  availability_zone      = local.aws_availability_zone_one
 
   network_interface {
     device_index         = 0
@@ -281,7 +281,7 @@ resource "aws_instance" "kx_worker" {
   vpc_security_group_ids = [module.vpc.default_security_group_id, aws_security_group.kx_workers_nodes.id]
   subnet_id              = module.vpc.private_subnets[0] # aws_subnet.private_one.id
   source_dest_check      = false
-  availability_zone      = local.aws_availability_zone
+  availability_zone      = local.aws_availability_zone_one
 
   ebs_block_device {
     device_name = "/dev/xvdb"

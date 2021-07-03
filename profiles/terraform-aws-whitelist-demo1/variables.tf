@@ -1,9 +1,10 @@
 locals {
   raw_data              = jsondecode(file("profile-config.json"))
-  aws_access_key        = local.raw_data.aws_access_key
-  aws_secret_access_key = local.raw_data.aws_secret_access_key
+  #aws_access_key        = local.raw_data.aws_access_key
+  #aws_secret_access_key = local.raw_data.aws_secret_access_key
   aws_region            = local.raw_data.aws_region
-  aws_availability_zone = local.raw_data.aws_availability_zone
+  aws_availability_zone_one = local.raw_data.aws_availability_zone_one
+  aws_availability_zone_two = local.raw_data.aws_availability_zone_two
 
   main_node_ami_id        = local.raw_data.vm_properties.main_node_ami_id
   main_node_instance_type = local.raw_data.vm_properties.main_node_instance_type
@@ -17,7 +18,8 @@ locals {
   vpc_cidr_block          = local.raw_data.config.vpc_cidr_block
   private_subnet_cidr_one = local.raw_data.config.private_subnet_cidr_one
   private_subnet_cidr_two = local.raw_data.config.private_subnet_cidr_two
-  public_subnet_cidr      = local.raw_data.config.public_subnet_cidr
+  public_subnet_cidr_one      = local.raw_data.config.public_subnet_cidr_one
+  public_subnet_cidr_two      = local.raw_data.config.public_subnet_cidr_two
   remote_access_cidrs     = local.raw_data.config.remote_access_cidrs
 
   kx_as_code_domain = local.raw_data.config.baseDomain

@@ -10,9 +10,9 @@ module "vpc" {
 
   name                   = "${local.prefix}-kx-as-code"
   cidr                   = local.vpc_cidr_block
-  azs                    = [local.aws_availability_zone] # data.aws_availability_zones.available.names
+  azs                    = [local.aws_availability_zone_one,local.aws_availability_zone_two]
   private_subnets        = [local.private_subnet_cidr_one, local.private_subnet_cidr_two]
-  public_subnets         = [local.public_subnet_cidr]
+  public_subnets         = [local.public_subnet_cidr_one,local.public_subnet_cidr_two]
   enable_nat_gateway     = true
   single_nat_gateway     = true
   enable_dns_hostnames   = true
@@ -31,74 +31,124 @@ resource "aws_vpc_dhcp_options" "dns_resolver" {
   domain_name_servers = ["8.8.8.8", "8.8.4.4"]
 }
 
-module "alb" {
-  source  = "terraform-aws-modules/alb/aws"
-  version = "~> 6.0"
+module "aws_logs" {
+  source            = "trussworks/logs/aws"
+  s3_bucket_name    = "kx-lb-logs-bucket"
+  default_allow     = false
+  allow_alb         = true
+  allow_nlb         = true
+  alb_logs_prefixes = [
+    "alb"
+  ]
+  nlb_logs_prefixes = [
+    "nlb"
+  ]
+}
 
-  name = "kx-alb"
-
+resource "aws_lb" "kx_network_nlb" {
+  name               = "kx-network-nlb"
+  internal           = false
   load_balancer_type = "network"
+  subnets            = [module.vpc.public_subnets.0,module.vpc.public_subnets.1]
 
-  vpc_id  = module.vpc.vpc_id
-  subnets = [module.vpc.public_subnets.0]
+  enable_deletion_protection = false
 
-  target_groups = [
-    {
-      name_prefix      = "${local.prefix}"
-      backend_protocol = "TCP"
-      backend_port     = 80
-      target_type      = "instance"
-      targets = [
-        {
-          target_id = aws_instance.kx_main.id
-          port      = 80
-        }
-      ]
-    },
-    {
-      name_prefix      = "${local.prefix}"
-      backend_protocol = "TCP"
-      backend_port     = 443
-      target_type      = "instance"
-      targets = [
-        {
-          target_id = aws_instance.kx_main.id
-          port      = 443
-        }
-      ]
-    },
-    {
-      name_prefix      = "${local.prefix}"
-      backend_protocol = "TCP_UDP"
-      backend_port     = 4000
-      target_type      = "instance"
-      targets = [
-        {
-          target_id = aws_instance.kx_main.id
-          port      = 4000
-        }
-      ]
-    }
-  ]
+  access_logs {
+    bucket  = module.aws_logs.aws_logs_bucket
+    prefix  = "nlb"
+    enabled = true
+  }
 
-  http_tcp_listeners = [
-    {
-      port               = 80
-      protocol           = "TCP"
-      target_group_index = 0
-    },
-    {
-      port               = 443
-      protocol           = "TCP"
-      target_group_index = 1
-    },
-    {
-      port               = 4000
-      protocol           = "TCP_UDP"
-      target_group_index = 2
-    }
-  ]
+  tags = {
+    Environment = "${local.prefix}-kx-as-code"
+  }
+}
 
+resource "aws_lb_target_group" "http" {
+  name     = "http"
+  port     = 80
+  protocol = "TCP"
+  vpc_id   = module.vpc.vpc_id
+  target_type = "instance"
+
+  health_check {
+    port     = 80
+    protocol = "TCP"
+  }
+}
+
+resource "aws_lb_target_group_attachment" "http" {
+  target_group_arn = aws_lb_target_group.http.arn
+  target_id = aws_instance.kx_main.id
+}
+
+resource "aws_lb_target_group" "https" {
+  name     = "https"
+  port     = 443
+  protocol = "TCP"
+  vpc_id   = module.vpc.vpc_id
+  target_type = "instance"
+
+  health_check {
+    port     = 443
+    protocol = "TCP"
+  }
+}
+
+resource "aws_lb_target_group_attachment" "https" {
+  target_group_arn = aws_lb_target_group.https.arn
+  target_id = aws_instance.kx_main.id
+}
+
+resource "aws_lb_target_group" "rdp" {
+  name     = "rdp-tcp"
+  port     = 4000
+  protocol = "TCP_UDP"
+  vpc_id   = module.vpc.vpc_id
+  target_type = "instance"
+
+  health_check {
+    port     = 4000
+    protocol = "TCP"
+  }
+}
+
+resource "aws_lb_target_group_attachment" "rdp" {
+  target_group_arn = aws_lb_target_group.rdp.arn
+  target_id = aws_instance.kx_main.id
+}
+
+resource "aws_lb_listener" "http" {
+  load_balancer_arn = aws_lb.kx_network_nlb.arn
+  port              = "80"
+  protocol          = "TCP"
+
+  default_action {
+    type = "forward"
+    target_group_arn = aws_lb_target_group.http.arn
+  }
+}
+
+resource "aws_lb_listener" "https" {
+  load_balancer_arn = aws_lb.kx_network_nlb.arn
+  port              = "443"
+  protocol          = "TCP"
+
+  default_action {
+    type = "forward"
+    target_group_arn = aws_lb_target_group.https.arn
+  }
+}
+
+resource "aws_lb_listener" "rdp" {
+  load_balancer_arn = aws_lb.kx_network_nlb.arn
+  port              = "4000"
+  protocol          = "TCP_UDP"
+
+  default_action {
+    type = "forward"
+    target_group_arn = aws_lb_target_group.rdp.arn
+  }
 }
 
 resource "aws_route53_zone" "kx_as_code" {
@@ -130,10 +180,18 @@ resource "aws_route53_record" "kx_worker" {
   records = [element(aws_instance.kx_worker.*.private_ip, count.index)]
 }
 
+resource "aws_route53_record" "rdp" {
+  zone_id = aws_route53_zone.kx_as_code.zone_id
+  name    = "rdp.${local.prefix}.${local.kx_as_code_domain}"
+  type    = "CNAME"
+  ttl     = 300
+  records = [aws_lb.kx_network_nlb.dns_name]
+}
+
 resource "aws_route53_record" "wildcard" {
   zone_id = aws_route53_zone.kx_as_code.zone_id
   name    = "*.${local.prefix}.${local.kx_as_code_domain}"
   type    = "CNAME"
   ttl     = 300
-  records = [module.alb.lb_dns_name]
+  records = [aws_lb.kx_network_nlb.dns_name]
 }

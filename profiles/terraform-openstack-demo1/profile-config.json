@@ -1,14 +1,18 @@
 {
     "config": {
         "vm_properties": {
-            "kx_version": "0.7.0",
+            "kx_version": "0.7.1",
             "main_node_cpu_cores": 4,
             "main_node_memory": 16384,
             "worker_node_count": 0,
             "worker_node_cpu_cores": 4,
             "worker_node_memory": 16384,
             "environment_prefix": "demo1",
-            "external_network_id": ""
+            "openstack": {
+                "kx_main_image_id": "ab64b90c-8d88-4130-a024-fa7c8975137f",
+                "kx_worker_image_id": "bb671ae9-2881-48d7-a438-2747028b01b9",
+                "external_network_id": "48af4f9c-b380-4451-a13b-ab609b672b95"
+            }
         },
         "allowWorkloadsOnMaster": true,
         "disableSessionTimeout": true,
