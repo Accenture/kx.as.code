@@ -110,7 +110,7 @@
     {
       "type": "openstack",
       "name": "{{user `vm_name`}}-openstack",
-      "identity_endpoint": "http://controller:5000/v3",
+      "identity_endpoint": "http://192.168.98.69/identity",
       "domain_name": "Default",
       "tenant_name": "admin",
       "username": "{{user `openstack_user`}}",
