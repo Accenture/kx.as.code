@@ -4,7 +4,7 @@
     "aws_availability_zone_two": "us-east-2b",
     "kx_version": "0.7.1",
     "vm_properties": {
-        "main_node_ami_id": "ami-01c4d0db4a91b3b63",
+        "main_node_ami_id": "ami-04ea4a69f5db8d9da",
         "main_node_instance_type": "t3.xlarge",
         "worker_node_ami_id": "ami-0c95063f9e67a7aaf",
         "worker_node_instance_type": "t3.large",
@@ -29,7 +29,8 @@
         "glusterFsDiskSize": "200",
         "sslProvider": "letsencrypt",
         "letsEncryptEnvironment": "staging",
-        "sslDomainAdminEmail": "admin@kx-as-code.io",
+        "sslDomainAdminEmail": "admin@demo1.kx-as-code.io",
+        "mxDnsRecord": "mail.demo1.kx-as-code.io",
         "baseDomain": "kx-as-code.io",
         "baseUser": "kx.hero",
         "basePassword": "L3arnandshare",
@@ -43,6 +44,6 @@
         "private_subnet_cidr_two": "10.0.5.0/24",
         "public_subnet_cidr_one": "10.0.3.0/24",
         "public_subnet_cidr_two": "10.0.4.0/24",
-        "remote_access_cidrs": ["84.178.212.143/32"]
+        "remote_access_cidrs": ["87.180.74.187/32"]
     }
 }

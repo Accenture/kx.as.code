@@ -171,6 +171,22 @@ resource "aws_route53_record" "kx_main" {
   records = [aws_instance.kx_main.private_ip]
 }
 
+resource "aws_route53_record" "kx_caa" {
+  zone_id = aws_route53_zone.kx_as_code.zone_id
+  name    = "${local.prefix}.${local.kx_as_code_domain}"
+  type    = "CAA"
+  ttl     = 300
+  records = ["0 issue \"letsencrypt.org\""]
+}
+
+resource "aws_route53_record" "kx_mx" {
+  zone_id = aws_route53_zone.kx_as_code.zone_id
+  name    = "${local.prefix}.${local.kx_as_code_domain}"
+  type    = "MX"
+  ttl     = 300
+  records = ["10 ${local.mx_dns_record}"]
+}
+
 resource "aws_route53_record" "kx_worker" {
   zone_id = aws_route53_zone.kx_as_code.zone_id
   name    = "kx-worker${count.index + 1}.${local.prefix}.${local.kx_as_code_domain}"

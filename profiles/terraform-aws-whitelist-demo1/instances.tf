@@ -117,6 +117,13 @@ resource "aws_security_group" "kx_main_nodes" {
   }
 
   ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["${aws_instance.kx_bastion.private_ip}/32"]
+  }
+
+  ingress {
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
