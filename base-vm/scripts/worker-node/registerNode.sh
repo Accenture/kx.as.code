@@ -17,7 +17,7 @@ done' ${1}
 wait-for-file ${installationWorkspace}/profile-config.json
 
 # Install nvme-cli if running on host with NVMe block devices (for example on AWS with EBS)
-sudo lsblk -i -o kname,mountpoint,fstype,size,maj:min,name,state,rm,rota,ro,type,label,model,serial
+/usr/bin/sudo lsblk -i -o kname,mountpoint,fstype,size,maj:min,name,state,rm,rota,ro,type,label,model,serial
 
 # Get number of local volumes to pre-provision
 export number1gbVolumes=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.local_volumes.one_gb')
@@ -32,49 +32,62 @@ export localKubeVolumesDiskSize=$(((number1gbVolumes * 1) + (number5gbVolumes * 
 # Install NVME CLI if needed, for example, for AWS
 nvme_cli_needed=$(df -h | grep "nvme")
 if [[ -n ${nvme_cli_needed} ]]; then
-    sudo apt install -y nvme-cli lvm2
+    /usr/bin/sudo apt install -y nvme-cli lvm2
 fi
 
 # Determine Drive B (Local K8s Volumes Storage)
-driveB=$(lsblk -o NAME,FSTYPE,SIZE -dsn -J | jq -r '.[] | .[] | select(.fstype==null) | select(.size=="'${localKubeVolumesDiskSize}'G") | .name')
-
-log_error "An available unpartitioned drive could not be found that matches the needed capacity of ${localKubeVolumesDiskSize}G. This is calculated from all required local volumes defined in profile-config.json + 1GB"
-
-echo "${driveB}" | sudo tee /usr/share/kx.as.code/.config/driveB
-cat /usr/share/kx.as.code/.config/driveB
+driveB=$(lsblk -o NAME,FSTYPE,SIZE -dsn -J | jq -r '.[] | .[] | select(.fstype==null) | select(.size=="'${localKubeVolumesDiskSize}'G") | .name' || true)
+formatted=""
+if [[ ! -f /usr/share/kx.as.code/.config/driveB ]]; then
+    echo "${driveB}" | /usr/bin/sudo tee /usr/share/kx.as.code/.config/driveB
+    cat /usr/share/kx.as.code/.config/driveB
+else
+    driveB=$(cat /usr/share/kx.as.code/.config/driveB)
+    formatted=true
+fi
 
 # Check logical partitions
-sudo lvs
-sudo df -hT
-sudo lsblk
+/usr/bin/sudo lvs
+/usr/bin/sudo df -hT
+/usr/bin/sudo lsblk
 
 # Create full partition on /dev/${driveB}
-echo 'type=83' | sudo sfdisk /dev/${driveB}
-
-# Get partition name
-driveB_Partition=$(lsblk -o NAME,FSTYPE,SIZE -J | jq -r '.[] | .[]  | select(.name=="'${driveB}'") | .children[].name')
-
-sudo pvcreate /dev/${driveB_Partition}
-sudo vgcreate k8s_local_vol_group /dev/${driveB_Partition}
+if [[ -z ${formatted} ]]; then
+    echo 'type=83' | /usr/bin/sudo sfdisk /dev/${driveB}
+    for i in {1..5}; do
+      driveB_Partition=$(lsblk -o NAME,FSTYPE,SIZE -J | jq -r '.[] | .[]  | select(.name=="'${driveB}'") | .children[].name' || true)
+      if [[ -n ${driveB_Partition} ]]; then
+        log_info "Disk ${driveB} partitioned successfully -> ${driveB_Partition}"
+        break
+      else
+        log_warn "Disk partition could not be found on ${driveB} (attempt ${i}), trying again"
+        sleep 5
+      fi
+    done
+    /usr/bin/sudo pvcreate /dev/${driveB_Partition}
+    /usr/bin/sudo vgcreate k8s_local_vol_group /dev/${driveB_Partition}
+fi
 
 BASE_K8S_LOCAL_VOLUMES_DIR=/mnt/k8s_local_volumes
 
 create_volumes() {
     if [[ ${2} -ne 0 ]]; then
         for i in $(eval echo "{1..$2}"); do
-            sudo lvcreate -L ${1} -n k8s_${1}_local_k8s_volume_${i} k8s_local_vol_group
-            sudo mkfs.xfs /dev/k8s_local_vol_group/k8s_${1}_local_k8s_volume_${i}
-            sudo mkdir -p ${BASE_K8S_LOCAL_VOLUMES_DIR}/k8s_${1}_local_k8s_volume_${i}
-            sudo mount /dev/k8s_local_vol_group/k8s_${1}_local_k8s_volume_${i} ${BASE_K8S_LOCAL_VOLUMES_DIR}/k8s_${1}_local_k8s_volume_${i}
-            # Don't add entry to /etc/fstab if the volumes was not created, possibly due to running out of diskspace
-            if [[ -L /dev/k8s_local_vol_group/k8s_${1}_local_k8s_volume_${i} ]] && [[ -e /dev/k8s_local_vol_group/k8s_${1}_local_k8s_volume_${i} ]]; then
-                entryAlreadyExists=$(cat /etc/fstab | grep "/dev/k8s_local_vol_group/k8s_${1}_local_k8s_volume_${i}")
-                # Don't add entry to /etc/fstab if it already exists
-                if [[ -z ${entryAlreadyExists} ]]; then
-                    sudo echo '/dev/k8s_local_vol_group/k8s_'${1}'_local_k8s_volume_'${i}' '${BASE_K8S_LOCAL_VOLUMES_DIR}'/k8s_'${1}'_local_k8s_volume_'${i}' xfs defaults 0 0' | sudo tee -a /etc/fstab
+            if [[ -z $(lsblk -J | jq -r ' .. .name? // empty | select(test("k8s_local_vol_group-k8s_'${1}'_local_k8s_volume_'${i}'"))' || true) ]]; then
+                /usr/bin/sudo lvcreate -L ${1} -n k8s_${1}_local_k8s_volume_${i} k8s_local_vol_group
+                /usr/bin/sudo mkfs.xfs /dev/k8s_local_vol_group/k8s_${1}_local_k8s_volume_${i}
+                /usr/bin/sudo mkdir -p ${BASE_K8S_LOCAL_VOLUMES_DIR}/k8s_${1}_local_k8s_volume_${i}
+                /usr/bin/sudo mount /dev/k8s_local_vol_group/k8s_${1}_local_k8s_volume_${i} ${BASE_K8S_LOCAL_VOLUMES_DIR}/k8s_${1}_local_k8s_volume_${i}
+                # Don't add entry to /etc/fstab if the volumes was not created, possibly due to running out of diskspace
+                if [[ -L /dev/k8s_local_vol_group/k8s_${1}_local_k8s_volume_${i} ]] && [[ -e /dev/k8s_local_vol_group/k8s_${1}_local_k8s_volume_${i} ]]; then
+                    entryAlreadyExists=$(cat /etc/fstab | grep "/dev/k8s_local_vol_group/k8s_${1}_local_k8s_volume_${i}" || true)
+                    # Don't add entry to /etc/fstab if it already exists
+                    if [[ -z ${entryAlreadyExists} ]]; then
+                        /usr/bin/sudo echo '/dev/k8s_local_vol_group/k8s_'${1}'_local_k8s_volume_'${i}' '${BASE_K8S_LOCAL_VOLUMES_DIR}'/k8s_'${1}'_local_k8s_volume_'${i}' xfs defaults 0 0' | /usr/bin/sudo tee -a /etc/fstab
+                    fi
+                else
+                    echo "/dev/k8s_local_vol_group/k8s_${1}_local_k8s_volume_${i} does not exist. Not adding to /etc/fstab. Possible reason is that there was not enough space left on the drive to create it"
                 fi
-            else
-                echo "/dev/k8s_local_vol_group/k8s_${1}_local_k8s_volume_${i} does not exist. Not adding to /etc/fstab. Possible reason is that there was not enough space left on the drive to create it"
             fi
         done
     fi
@@ -87,9 +100,9 @@ create_volumes "30G" ${number30gbVolumes}
 create_volumes "50G" ${number50gbVolumes}
 
 # Check logical partitions
-sudo lvs
-sudo df -hT
-sudo lsblk
+/usr/bin/sudo lvs
+/usr/bin/sudo df -hT
+/usr/bin/sudo lsblk
 
 cd ${installationWorkspace}
 
@@ -138,6 +151,13 @@ export httpProxySetting=$(cat ${installationWorkspace}/profile-config.json | jq 
 export httpsProxySetting=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.proxy_settings.https_proxy')
 export noProxySetting=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.proxy_settings.no_proxy')
 
+# Determine node role type (main or worker)
+if [[ $HOSTNAME =~ "kx-worker" ]]; then
+  nodeRole="kx-worker"
+elif [[ $HOSTNAME =~ "kx-main" ]]; then
+  nodeRole="kx-main"
+fi
+
 # Wait until the worker has the main node's IP file
 if [[ ${baseIpType} == "static"   ]]; then
     # Get fixed IPs if defined
@@ -154,7 +174,11 @@ if [[ ${baseIpType} == "static"   ]]; then
     export fixedNicConfigGateway=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.staticNetworkSetup.gateway')
     export fixedNicConfigDns1=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.staticNetworkSetup.dns1')
     export fixedNicConfigDns2=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.staticNetworkSetup.dns2')
+elif [[ -n $(dig kx-main1 +short) ]]; then
+  # Try DNS
+  export kxMainIp=$(dig kx-main1 +short)
 else
+    # If no static IP or DNS, wait for file containing KxMain IP
     timeout -s TERM 3000 bash -c 'while [ ! -f /var/tmp/kx.as.code_main-ip-address ];         do
     echo "Waiting for kx-main IP address" && sleep 5;         done'
     export kxMainIp=$(cat /var/tmp/kx.as.code_main-ip-address)
@@ -164,48 +188,48 @@ if [[ ! -f /usr/share/kx.as.code/.config/network_status ]]; then
 
     if [[ ${baseIpType} == "static"  ]] || [[ ${dnsResolution} == "hybrid"   ]]; then
         # Change DNS resolution to allow wildcards for resolving locally deployed K8s services
-        echo "DNSStubListener=no" | sudo tee -a /etc/systemd/resolved.conf
-        sudo systemctl restart systemd-resolved
-        sudo rm -f /etc/resolv.conf
-        sudo echo "nameserver ${kxMainIp}" | sudo tee /etc/resolv.conf
+        echo "DNSStubListener=no" | /usr/bin/sudo tee -a /etc/systemd/resolved.conf
+        /usr/bin/sudo systemctl restart systemd-resolved
+        /usr/bin/sudo rm -f /etc/resolv.conf
+        /usr/bin/sudo echo "nameserver ${kxMainIp}" | /usr/bin/sudo tee /etc/resolv.conf
 
         # Configue dnsmasq - /etc/resolv.conf
-        sudo sed -i 's/^#nameserver 127.0.0.1/nameserver '${kxMainIp}'/g' /etc/resolv.conf
+        /usr/bin/sudo sed -i 's/^#nameserver 127.0.0.1/nameserver '${kxMainIp}'/g' /etc/resolv.conf
 
         # Prevent DHCLIENT updating static IP
         if [[ ${dnsResolution} == "hybrid" ]]; then
-            echo "supersede domain-name-servers ${kxMainIp};" | sudo tee -a /etc/dhcp/dhclient.conf
+            echo "supersede domain-name-servers ${kxMainIp};" | /usr/bin/sudo tee -a /etc/dhcp/dhclient.conf
         else
-            echo "supersede domain-name-servers ${fixedNicConfigDns1}, ${fixedNicConfigDns2};" | sudo tee -a /etc/dhcp/dhclient.conf
+            echo "supersede domain-name-servers ${fixedNicConfigDns1}, ${fixedNicConfigDns2};" | /usr/bin/sudo tee -a /etc/dhcp/dhclient.conf
         fi
         echo '''
         #!/bin/sh
         make_resolv_conf(){
             :
         }
-        ''' | sed -e 's/^[ \t]*//' | sed 's/:/    :/g' | sudo tee /etc/dhcp/dhclient-enter-hooks.d/nodnsupdate
-        sudo chmod +x /etc/dhcp/dhclient-enter-hooks.d/nodnsupdate
+        ''' | sed -e 's/^[ \t]*//' | sed 's/:/    :/g' | /usr/bin/sudo tee /etc/dhcp/dhclient-enter-hooks.d/nodnsupdate
+        /usr/bin/sudo chmod +x /etc/dhcp/dhclient-enter-hooks.d/nodnsupdate
     fi
 
     if [[ ${baseIpType} == "static" ]]; then
         # Configure IF to be managed/confgured by network-manager
-        sudo rm -f /etc/NetworkManager/system-connections/*
-        sudo mv /etc/network/interfaces /etc/network/interfaces.unused
-        sudo nmcli con add con-name "${netDevice}" ifname ${netDevice} type ethernet ip4 ${kxWorkerIp}/24 gw4 ${fixedNicConfigGateway}
-        sudo nmcli con mod "${netDevice}" ipv4.method "manual"
-        sudo nmcli con mod "${netDevice}" ipv4.dns "${fixedNicConfigDns1},${fixedNicConfigDns2}"
-        sudo systemctl restart network-manager
-        sudo nmcli con up "${netDevice}"
+        /usr/bin/sudo rm -f /etc/NetworkManager/system-connections/*
+        /usr/bin/sudo mv /etc/network/interfaces /etc/network/interfaces.unused
+        /usr/bin/sudo nmcli con add con-name "${netDevice}" ifname ${netDevice} type ethernet ip4 ${kxWorkerIp}/24 gw4 ${fixedNicConfigGateway}
+        /usr/bin/sudo nmcli con mod "${netDevice}" ipv4.method "manual"
+        /usr/bin/sudo nmcli con mod "${netDevice}" ipv4.dns "${fixedNicConfigDns1},${fixedNicConfigDns2}"
+        /usr/bin/sudo systemctl restart network-manager
+        /usr/bin/sudo nmcli con up "${netDevice}"
     fi
 
     # Ensure the whole network setup does not execute again on next run after reboot
-    sudo mkdir -p /usr/share/kx.as.code/.config
-    echo "KX.AS.CODE network config done" | sudo tee /usr/share/kx.as.code/.config/network_status
+    /usr/bin/sudo mkdir -p /usr/share/kx.as.code/.config
+    echo "KX.AS.CODE network config done" | /usr/bin/sudo tee /usr/share/kx.as.code/.config/network_status
 
 fi
 
 if [[ -n ${kxMainIp} ]]; then
-    echo "${kxMainIp} kx-main kx-main.${baseDomain}" | sudo tee -a /etc/hosts
+    echo "${kxMainIp} kx-main kx-main.${baseDomain}" | /usr/bin/sudo tee -a /etc/hosts
 fi
 
 mkdir -p ${installationWorkspace}
@@ -216,17 +240,17 @@ if [[ ${virtualizationType} != "public-cloud"   ]] && [[ ${virtualizationType} !
     mkdir -p /home/${vmUser}/.ssh
     chown -R ${vmUser}:${vmUser} /home/${vmUser}/.ssh
     chmod 700 $installationWorkspace/.ssh
-    yes | sudo -u ${vmUser} ssh-keygen -f ssh-keygen -m PEM -t rsa -b 4096 -q -f /home/${vmUser}/.ssh/id_rsa -N ''
+    yes | /usr/bin/sudo -u "${vmUser}" ssh-keygen -f ssh-keygen -m PEM -t rsa -b 4096 -q -f /home/${vmUser}/.ssh/id_rsa -N ''
 fi
 
 # Add key to KX-Main host
-sudo -H -i -u ${vmUser} bash -c "sshpass -f ${kxHomeDir}/.config/.user.cred ssh-copy-id -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp}"
+/usr/bin/sudo -H -i -u "${vmUser}" bash -c "sshpass -f ${kxHomeDir}/.config/.user.cred ssh-copy-id -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp}"
 
 # Add KX-Main key to worker
-sudo -H -i -u ${vmUser} bash -c "ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} \"cat /home/${vmUser}/.ssh/id_rsa.pub\" | tee -a /home/${vmUser}/.ssh/authorized_keys"
-sudo mkdir -p /root/.ssh
-sudo chmod 700 /root/.ssh
-sudo cp /home/${vmUser}/.ssh/authorized_keys /root/.ssh/
+/usr/bin/sudo -H -i -u "${vmUser}" bash -c "ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} \"cat /home/${vmUser}/.ssh/id_rsa.pub\" | tee -a /home/${vmUser}/.ssh/authorized_keys"
+/usr/bin/sudo mkdir -p /root/.ssh
+/usr/bin/sudo chmod 700 /root/.ssh
+/usr/bin/sudo cp /home/${vmUser}/.ssh/authorized_keys /root/.ssh/
 
 # Copy KX.AS.CODE CA certificates from main node and restart docker
 export REMOTE_KX_MAIN_installationWorkspace=$installationWorkspace
@@ -237,22 +261,22 @@ CERTIFICATES="kx_root_ca.pem kx_intermediate_ca.pem"
 ## Wait for certificates to be available on KX-Main
 wait-for-certificate() {
     timeout -s TERM 3000 bash -c 'while [[ ! -f '${installationWorkspace}'/'${CERTIFICATE}' ]];         do
-    sudo -H -i -u '${vmUser}' bash -c "scp -o StrictHostKeyChecking=no '${vmUser}'@'${kxMainIp}':'${REMOTE_KX_MAIN_CERTSDIR}'/'${CERTIFICATE}' '${installationWorkspace}'";
+    /usr/bin/sudo -H -i -u '${vmUser}' bash -c "scp -o StrictHostKeyChecking=no '${vmUser}'@'${kxMainIp}':'${REMOTE_KX_MAIN_CERTSDIR}'/'${CERTIFICATE}' '${installationWorkspace}'";
     echo "Waiting for ${0}" && sleep 5;         done'
 }
 
-sudo mkdir -p /usr/share/ca-certificates/kubernetes
+/usr/bin/sudo mkdir -p /usr/share/ca-certificates/kubernetes
 for CERTIFICATE in ${CERTIFICATES}; do
     wait-for-certificate ${CERTIFICATE}
-    sudo cp ${installationWorkspace}/${CERTIFICATE} /usr/share/ca-certificates/kubernetes/
-    echo "kubernetes/${CERTIFICATE}" | sudo tee -a /etc/ca-certificates.conf
+    /usr/bin/sudo cp ${installationWorkspace}/${CERTIFICATE} /usr/share/ca-certificates/kubernetes/
+    echo "kubernetes/${CERTIFICATE}" | /usr/bin/sudo tee -a /etc/ca-certificates.conf
 done
 
 # Install Root and Intermediate Root CA Certificates into System Trust Store
-sudo update-ca-certificates --fresh
+/usr/bin/sudo update-ca-certificates --fresh
 
 # Restart Docker to pick up the new KX.AS.CODE CA certificates
-sudo systemctl restart docker
+/usr/bin/sudo systemctl restart docker
 
 # Wait until DNS resolution is back up before proceeding with Kubernetes node registration
 timeout -s TERM 3000 bash -c 'while [[ "$rc" != "0" ]]; do
@@ -264,25 +288,30 @@ timeout -s TERM 3000 bash -c \
     'while [[ "$(curl -k -s https://'${kxMainIp}':6443/livez)" != "ok" ]];\
 do echo "Waiting for https://'${kxMainIp}':6443/livez" && sleep 5;  done'
 
-# Kubernetes master is reachable, join the worker node to cluster
-sudo -H -i -u ${vmUser} bash -c "ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} 'kubeadm token create --print-join-command 2>/dev/null'" > ${installationWorkspace}/kubeJoin.sh
-sudo chmod 755 ${installationWorkspace}/kubeJoin.sh
+# Kubernetes master is reachable, join the node to cluster
+if [[ "${nodeRole}" == "kx-worker" ]]; then
+  /usr/bin/sudo -H -i -u "${vmUser}" bash -c "ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} 'kubeadm token create --print-join-command 2>/dev/null'" > ${installationWorkspace}/kubeJoin.sh
+elif [[ "${nodeRole}" == "kx-main" ]]; then
+  k8sCertKey=$(/usr/bin/sudo -H -i -u "${vmUser}" bash -c "ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} 'kubeadm init phase upload-certs --upload-certs | tail -1")
+  echo "$(/usr/bin/sudo -H -i -u "${vmUser}" bash -c "ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} 'kubeadm token create --print-join-command 2>/dev/null'") --control-plane --certificate-key ${k8sCertKey}" > ${installationWorkspace}/kubeJoin.sh
+fi
+/usr/bin/sudo chmod 755 ${installationWorkspace}/kubeJoin.sh
 
 # Keep trying to join Kubernetes cluster until successful
 timeout -s TERM 3000 bash -c 'while [[ ! -f /var/lib/kubelet/config.yaml ]]; do
-sudo '${installationWorkspace}'/kubeJoin.sh
-echo "Waiting for kx-worker to be connected successfully to main node" && sleep 15; done'
+/usr/bin/sudo '${installationWorkspace}'/kubeJoin.sh
+echo "Waiting for kx-worker/kx-main to be connected successfully to main node" && sleep 15; done'
 
 # Disable the Service After it Ran
-sudo systemctl disable k8s-register-node.service
+/usr/bin/sudo systemctl disable k8s-register-node.service
 
 # Fix reliance on non existent file: /run/systemd/resolve/resolv.conf
 export nodeIp=$(ip a s ${netDevice} | egrep -o 'inet [0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | cut -d' ' -f2)
-sudo sed -i '/^\[Service\]/a Environment="KUBELET_EXTRA_ARGS=--resolv-conf=\/etc\/resolv.conf --node-ip='${nodeIp}'"' /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+/usr/bin/sudo sed -i '/^\[Service\]/a Environment="KUBELET_EXTRA_ARGS=--resolv-conf=\/etc\/resolv.conf --node-ip='${nodeIp}'"' /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
 
 # Restart Kubelet
-sudo systemctl daemon-reload
-sudo systemctl restart kubelet
+/usr/bin/sudo systemctl daemon-reload
+/usr/bin/sudo systemctl restart kubelet
 
 # Setup proxy settings if they exist
 if ( [[ -n ${httpProxySetting} ]] || [[ -n ${httpsProxySetting} ]] ) && ( [[ "${httpProxySetting}" != "null" ]] && [[ "${httpsProxySetting}" != "null" ]] ); then
@@ -301,7 +330,7 @@ if ( [[ -n ${httpProxySetting} ]] || [[ -n ${httpsProxySetting} ]] ) && ( [[ "${
         echo '''
         [Service]
         Environment="HTTP_PROXY='${httpProxySettingBase}'/" "HTTPS_PROXY='${httpsProxySettingBase}'/" "NO_PROXY=localhost,127.0.0.1,.'${baseDomain}'"
-        ''' | sudo tee /etc/systemd/system/docker.service.d/http-proxy.conf
+        ''' | /usr/bin/sudo tee /etc/systemd/system/docker.service.d/http-proxy.conf
 
         systemctl daemon-reload
         systemctl restart docker
@@ -318,41 +347,43 @@ if ( [[ -n ${httpProxySetting} ]] || [[ -n ${httpsProxySetting} ]] ) && ( [[ "${
         printf -v service '"'"'%s,'"'"' '${baseip}'.{1..253}
         export no_proxy="${lan%,},${service%,},${pool%,},127.0.0.1,.'${baseDomain}'";
         export NO_PROXY=$no_proxy
-        ''' | sudo tee -a /root/.bashrc /root/.zshrc /home/$vmUser/.bashrc /home/$vmUser/.zshrc
+        ''' | /usr/bin/sudo tee -a /root/.bashrc /root/.zshrc /home/$vmUser/.bashrc /home/$vmUser/.zshrc
     fi
 fi
 
 # Create script to pull KX App Images from Main on second boot (after reboot in this script)
-set +o histexpand
-echo """
-#!/bin/bash -x
-set -euo pipefail
+if [[ "${nodeRole}" == "kx-worker" ]]; then
+  set +o histexpand
+  echo """
+  #!/bin/bash -x
+  set -euo pipefail
 
-. /etc/environment
-export vmUser=${vmUser}
+  . /etc/environment
+  export vmUser=${vmUser}
 
-echo \"Attempting to download KX Apps from KX-Main\"
-sudo -H -i -u ${vmUser} bash -c 'scp -o StrictHostKeyChecking=no '${vmUser}'@'${kxMainIp}':'${installationWorkspace}'/docker-kx-*.tar '${installationWorkspace}'';
+  echo \"Attempting to download KX Apps from KX-Main\"
+  /usr/bin/sudo -H -i -u "${vmUser}" bash -c 'scp -o StrictHostKeyChecking=no '${vmUser}'@'${kxMainIp}':'${installationWorkspace}'/docker-kx-*.tar '${installationWorkspace}'';
 
-if [ -f ${installationWorkspace}/docker-kx-docs.tar ]; then
-docker load -i ${installationWorkspace}/docker-kx-docs.tar
+  if [ -f ${installationWorkspace}/docker-kx-docs.tar ]; then
+  docker load -i ${installationWorkspace}/docker-kx-docs.tar
+  fi
+
+  if [ -f ${installationWorkspace}/docker-kx-techradar.tar ]; then
+  docker load -i ${installationWorkspace}/docker-kx-techradar.tar
+  fi
+
+  if [ -f ${installationWorkspace}/docker-kx-docs.tar ] && [ -f ${installationWorkspace}/docker-kx-techradar.tar ]; then
+  /usr/bin/sudo crontab -r
+  fi
+
+  """ | /usr/bin/sudo tee ${installationWorkspace}/scpKxTars.sh
+
+  /usr/bin/sudo chmod 755 ${installationWorkspace}/scpKxTars.sh
+  /usr/bin/sudo crontab -l | {
+      cat
+      echo "* * * * * ${installationWorkspace}/scpKxTars.sh"
+  } | /usr/bin/sudo crontab -
 fi
-
-if [ -f ${installationWorkspace}/docker-kx-techradar.tar ]; then
-docker load -i ${installationWorkspace}/docker-kx-techradar.tar
-fi
-
-if [ -f ${installationWorkspace}/docker-kx-docs.tar ] && [ -f ${installationWorkspace}/docker-kx-techradar.tar ]; then
-sudo crontab -r
-fi
-
-""" | sudo tee ${installationWorkspace}/scpKxTars.sh
-
-sudo chmod 755 ${installationWorkspace}/scpKxTars.sh
-sudo crontab -l | {
-    cat
-    echo "* * * * * ${installationWorkspace}/scpKxTars.sh"
-} | sudo crontab -
 
 # Set default keyboard language
 defaultUserKeyboardLanguage=$(jq -r '.config.defaultKeyboardLanguage' ${installationWorkspace}/profile-config.json)
@@ -381,15 +412,13 @@ XKBVARIANT=""
 XKBOPTIONS=""
 
 BACKSPACE=\"guess\"
-''' | sudo tee /etc/default/keyboard
+''' | /usr/bin/sudo tee /etc/default/keyboard
 
 # Enable LDAP on worker node
 export ldapDn="dc=kx-as-code,dc=local"
 
-sudo -H -i -u ${vmUser} bash -c "ssh -o StrictHostKeyChecking=no $vmUser@${kxMainIp} 'kubeadm token create --print-join-command 2>/dev/null'" > ${installationWorkspace}/kubeJoin.sh
-
 # Get LdapDN from main node and setup base variables
-ldapDnFull=$(sudo -H -i -u ${vmUser} bash -c "ssh -o StrictHostKeyChecking=no $vmUser@${kxMainIp} 'sudo slapcat | grep dn'")
+ldapDnFull=$(/usr/bin/sudo -H -i -u "${vmUser}" bash -c "ssh -o StrictHostKeyChecking=no $vmUser@${kxMainIp} '/usr/bin/sudo slapcat | grep dn'")
 ldapDnFirstPart=$(echo ${ldapDnFull} | head -1 | sed 's/dn: //g' | sed 's/dc=//g' | cut -f1 -d',')
 ldapDnSecondPart=$(echo ${ldapDnFull} | head -1 | sed 's/dn: //g' | sed 's/dc=//g' | cut -f2 -d',')
 
@@ -398,7 +427,7 @@ export ldapDn="dc=${ldapDnFirstPart},dc=${ldapDnSecondPart}"
 export ldapServer=ldap.${baseDomain}
 
 # Configure Client selections before install
-cat << EOF | sudo debconf-set-selections
+cat << EOF | /usr/bin/sudo debconf-set-selections
 libnss-ldap libnss-ldap/dblogin boolean false
 libnss-ldap shared/ldapns/base-dn   string  ${ldapDn}
 libnss-ldap libnss-ldap/binddn  string  cn=admin,${ldapDn}
@@ -410,17 +439,17 @@ libnss-ldap libnss-ldap/rootbinddn  string  cn=admin,${ldapDn}
 libnss-ldap shared/ldapns/ldap_version  select  3
 libnss-ldap libnss-ldap/nsswitch    note
 EOF
-sudo DEBIAN_FRONTEND=noninteractive apt-get install -q -y libnss-ldapd libpam-ldap
+/usr/bin/sudo DEBIAN_FRONTEND=noninteractive apt-get install -q -y libnss-ldapd libpam-ldap
 
 # Add LDAP client config
 echo "BASE    ${ldapDn}" | tee -a /etc/ldap/ldap.conf
 echo "URI     ldap://${ldapServer}" | tee -a /etc/ldap/ldap.conf
 
 # Add LDAP auth method to /etc/nsswitch.conf
-sudo sed -i '/^passwd:/s/$/ ldap/' /etc/nsswitch.conf
-sudo sed -i '/^group:/s/$/ ldap/' /etc/nsswitch.conf
-sudo sed -i '/^shadow:/s/$/ ldap/' /etc/nsswitch.conf
-sudo sed -i '/^gshadow:/s/$/ ldap/' /etc/nsswitch.conf
+/usr/bin/sudo sed -i '/^passwd:/s/$/ ldap/' /etc/nsswitch.conf
+/usr/bin/sudo sed -i '/^group:/s/$/ ldap/' /etc/nsswitch.conf
+/usr/bin/sudo sed -i '/^shadow:/s/$/ ldap/' /etc/nsswitch.conf
+/usr/bin/sudo sed -i '/^gshadow:/s/$/ ldap/' /etc/nsswitch.conf
 
 echo '''
 # nslcd configuration file. See nslcd.conf(5)
@@ -451,21 +480,21 @@ ssl off
 #tls_reqcert never
 tls_cacertfile /etc/ssl/certs/ca-certificates.crt
 
-''' | sudo tee /etc/nslcd.conf
+''' | /usr/bin/sudo tee /etc/nslcd.conf
 
 # Ensure home directory is created on first login
-echo "session required      pam_mkhomedir.so   skel=${kxHomeDir}/skel umask=0002" | sudo tee -a /etc/pam.d/common-session
+echo "session required      pam_mkhomedir.so   skel=${kxHomeDir}/skel umask=0002" | /usr/bin/sudo tee -a /etc/pam.d/common-session
 
 # Check if ldap users are returned with getent passwd
 getent passwd
 
 # Delete local user and replace with ldap user if added to LDAP correctly
-ldapUserExists=$(sudo ldapsearch -x -b "uid=${vmUser},ou=Users,ou=People,${ldapDn}" | grep numEntries)
+ldapUserExists=$(/usr/bin/sudo ldapsearch -x -b "uid=${vmUser},ou=Users,ou=People,${ldapDn}" | grep numEntries)
 if [[ -n ${ldapUserExists} ]]; then
-    sudo userdel ${vmUser}
+    /usr/bin/sudo userdel ${vmUser}
 fi
 
 # Reboot machine to ensure all network changes are active
 if [ "${baseIpType}" == "static" ]; then
-    sudo reboot
+    /usr/bin/sudo reboot
 fi
