@@ -57,10 +57,10 @@ if [[ -z ${formatted} ]]; then
     for i in {1..5}; do
       driveB_Partition=$(lsblk -o NAME,FSTYPE,SIZE -J | jq -r '.[] | .[]  | select(.name=="'${driveB}'") | .children[].name' || true)
       if [[ -n ${driveB_Partition} ]]; then
-        log_info "Disk ${driveB} partitioned successfully -> ${driveB_Partition}"
+        echo "Disk ${driveB} partitioned successfully -> ${driveB_Partition}"
         break
       else
-        log_warn "Disk partition could not be found on ${driveB} (attempt ${i}), trying again"
+        echo "Disk partition could not be found on ${driveB} (attempt ${i}), trying again"
         sleep 5
       fi
     done
@@ -110,9 +110,10 @@ cd ${installationWorkspace}
 export virtualizationType=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.virtualizationType')
 
 # Determine which NIC to bind to, to avoid binding to internal VirtualBox NAT NICs for example, where all hosts have the same IP - 10.0.2.15
-export nicList=$(nmcli device show | grep -E 'enp|ens' | grep 'GENERAL.DEVICE' | awk '{print $2}')
+export nicList=$(nmcli device show | grep -E 'enp|ens|eth' | grep 'GENERAL.DEVICE' | awk '{print $2}')
 export ipsToExclude="10.0.2.15"   # IP addresses not to configure with static IP. For example, default Virtualbox IP 10.0.2.15
 export nicExclusions=""
+export excludeNic="false"
 for nic in ${nicList}; do
     for ipToExclude in ${ipsToExclude}; do
         ip=$(ip a s ${nic} | egrep -o 'inet [0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | cut -d' ' -f2)
