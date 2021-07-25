@@ -8,7 +8,13 @@ if [[ ! ${kubeAdminStatus} ]]; then
     /usr/bin/sudo kubeadm config images pull
 
     # Initialization Kube Control Pane
-    /usr/bin/sudo kubeadm init --apiserver-advertise-address=${mainIpAddress} --pod-network-cidr=20.96.0.0/12
+    if [[ ${numKxMainNodes} -gt 1 ]]; then
+        log_info "main_node_count > 1 in profile-config.json. Enabling configs for multiple control planes"
+        /usr/bin/sudo kubeadm init --apiserver-advertise-address=${mainIpAddress} --pod-network-cidr=20.96.0.0/12 --upload-certs --control-plane-endpoint="api-internal.${baseDomain}:6443"
+    else
+        log_info "main_node_count = 1 in profile-config.json. Setting up Kubernetes with a single control plane "
+        /usr/bin/sudo kubeadm init --apiserver-advertise-address=${mainIpAddress} --pod-network-cidr=20.96.0.0/12
+    fi
 
     # Setup KX and root users as Kubernetes Admin
     mkdir -p /root/.kube
