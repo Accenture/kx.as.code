@@ -165,7 +165,7 @@ if [[ ${baseIpType} == "static"   ]]; then
     for fixIpHost in ${fixedIpHosts}; do
         fixIpHostVariableName=$(echo ${fixIpHost} | sed 's/-/__/g')
         export ${fixIpHostVariableName}_IpAddress="$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.staticNetworkSetup.baseFixedIpAddresses."'${fixIpHost}'"')"
-        if [[ ${fixIpHost} == "kx-main" ]]; then
+        if [[ ${fixIpHost} == "kx-main1" ]]; then
             export kxMainIp="$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.staticNetworkSetup.baseFixedIpAddresses."'${fixIpHost}'"')"
         elif [[ ${fixIpHost} == "$(hostname)" ]]; then
             export kxWorkerIp="$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.staticNetworkSetup.baseFixedIpAddresses."'${fixIpHost}'"')"
@@ -229,7 +229,7 @@ if [[ ! -f /usr/share/kx.as.code/.config/network_status ]]; then
 fi
 
 if [[ -n ${kxMainIp} ]]; then
-    echo "${kxMainIp} kx-main kx-main.${baseDomain}" | /usr/bin/sudo tee -a /etc/hosts
+    echo "${kxMainIp} kx-main1 kx-main1.${baseDomain}" | /usr/bin/sudo tee -a /etc/hosts
 fi
 
 mkdir -p ${installationWorkspace}
@@ -280,8 +280,8 @@ done
 
 # Wait until DNS resolution is back up before proceeding with Kubernetes node registration
 timeout -s TERM 3000 bash -c 'while [[ "$rc" != "0" ]]; do
-nslookup kx-main.'${baseDomain}'; rc=$?;
-echo "Waiting for kx-main DNS resolution to function" && sleep 5; done'
+nslookup kx-main1.'${baseDomain}'; rc=$?;
+echo "Waiting for kx-main1 DNS resolution to function" && sleep 5; done'
 
 # Wait for Kubernetes to be available
 timeout -s TERM 3000 bash -c \
