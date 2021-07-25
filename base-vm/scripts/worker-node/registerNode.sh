@@ -153,9 +153,9 @@ export httpsProxySetting=$(cat ${installationWorkspace}/profile-config.json | jq
 export noProxySetting=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.proxy_settings.no_proxy')
 
 # Determine node role type (main or worker)
-if [[ $HOSTNAME =~ "kx-worker" ]]; then
+if [[ "$(hostname)" =~ "kx-worker" ]]; then
   nodeRole="kx-worker"
-elif [[ $HOSTNAME =~ "kx-main" ]]; then
+elif [[ "$(hostname)" =~ "kx-main" ]]; then
   nodeRole="kx-main"
 fi
 
@@ -291,10 +291,10 @@ do echo "Waiting for https://'${kxMainIp}':6443/livez" && sleep 5;  done'
 
 # Kubernetes master is reachable, join the node to cluster
 if [[ "${nodeRole}" == "kx-worker" ]]; then
-  /usr/bin/sudo -H -i -u "${vmUser}" bash -c "ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} 'kubeadm token create --print-join-command 2>/dev/null'" > ${installationWorkspace}/kubeJoin.sh
+  /usr/bin/sudo -H -i -u "${vmUser}" bash -c "ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} 'sudo kubeadm token create --print-join-command 2>/dev/null'" > ${installationWorkspace}/kubeJoin.sh
 elif [[ "${nodeRole}" == "kx-main" ]]; then
-  k8sCertKey=$(/usr/bin/sudo -H -i -u "${vmUser}" bash -c "ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} 'kubeadm init phase upload-certs --upload-certs | tail -1")
-  echo "$(/usr/bin/sudo -H -i -u "${vmUser}" bash -c "ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} 'kubeadm token create --print-join-command 2>/dev/null'") --control-plane --certificate-key ${k8sCertKey}" > ${installationWorkspace}/kubeJoin.sh
+  k8sCertKey=$(/usr/bin/sudo -H -i -u "${vmUser}" bash -c "ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} 'sudo kubeadm init phase upload-certs --upload-certs | tail -1'")
+  echo "$(/usr/bin/sudo -H -i -u "${vmUser}" bash -c "ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} 'sudo kubeadm token create --print-join-command 2>/dev/null'") --control-plane --certificate-key ${k8sCertKey}" > ${installationWorkspace}/kubeJoin.sh
 fi
 /usr/bin/sudo chmod 755 ${installationWorkspace}/kubeJoin.sh
 
@@ -381,9 +381,8 @@ if [[ "${nodeRole}" == "kx-worker" ]]; then
 
   /usr/bin/sudo chmod 755 ${installationWorkspace}/scpKxTars.sh
   /usr/bin/sudo crontab -l | {
-      cat
       echo "* * * * * ${installationWorkspace}/scpKxTars.sh"
-  } | /usr/bin/sudo crontab -
+  } | /usr/bin/sudo crontab - || true
 fi
 
 # Set default keyboard language
@@ -452,6 +451,8 @@ echo "URI     ldap://${ldapServer}" | tee -a /etc/ldap/ldap.conf
 /usr/bin/sudo sed -i '/^shadow:/s/$/ ldap/' /etc/nsswitch.conf
 /usr/bin/sudo sed -i '/^gshadow:/s/$/ ldap/' /etc/nsswitch.conf
 
+export vmPassword="$(cat ${kxHomeDir}/.config/.user.cred)"
+
 echo '''
 # nslcd configuration file. See nslcd.conf(5)
 # for details.
@@ -490,7 +491,7 @@ echo "session required      pam_mkhomedir.so   skel=${kxHomeDir}/skel umask=0002
 getent passwd
 
 # Delete local user and replace with ldap user if added to LDAP correctly
-ldapUserExists=$(/usr/bin/sudo ldapsearch -x -b "uid=${vmUser},ou=Users,ou=People,${ldapDn}" | grep numEntries)
+ldapUserExists=$(/usr/bin/sudo ldapsearch -x -b "uid=${vmUser},ou=Users,ou=People,${ldapDn}" | grep numEntries || true)
 if [[ -n ${ldapUserExists} ]]; then
     /usr/bin/sudo userdel ${vmUser}
 fi
