@@ -30,7 +30,7 @@ export number50gbVolumes=$(cat ${installationWorkspace}/profile-config.json | jq
 export localKubeVolumesDiskSize=$(((number1gbVolumes * 1) + (number5gbVolumes * 5) + (number10gbVolumes * 10) + (number30gbVolumes * 30) + (number50gbVolumes * 50) + 1))
 
 # Install NVME CLI if needed, for example, for AWS
-nvme_cli_needed=$(df -h | grep "nvme")
+nvme_cli_needed=$(df -h | grep "nvme" || true)
 if [[ -n ${nvme_cli_needed} ]]; then
     /usr/bin/sudo apt install -y nvme-cli lvm2
 fi
