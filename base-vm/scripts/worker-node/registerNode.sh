@@ -322,8 +322,23 @@ elif [[ "${nodeRole}" == "kx-main" ]]; then
 
   k8sCertKey=$(/usr/bin/sudo -H -i -u "${vmUser}" bash -c "ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} 'sudo kubeadm init phase upload-certs --upload-certs | tail -1'")
   echo "$(/usr/bin/sudo -H -i -u "${vmUser}" bash -c "ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} 'sudo kubeadm token create --print-join-command 2>/dev/null'") --control-plane --apiserver-advertise-address ${nodeIp} --certificate-key ${k8sCertKey}" > ${installationWorkspace}/kubeJoin.sh
+
 fi
 /usr/bin/sudo chmod 755 ${installationWorkspace}/kubeJoin.sh
+
+if [[ "${nodeRole}" == "kx-main" ]]; then
+  /usr/bin/sudo sed -i '/^\[Service\]/a Environment="KUBELET_EXTRA_ARGS=--resolv-conf=\/etc\/resolv.conf --node-ip='${nodeIp}'"' /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+  # Restart Kubelet
+  /usr/bin/sudo systemctl daemon-reload
+  /usr/bin/sudo systemctl restart kubelet
+
+  # Setup KX and root users as Kubernetes Admin
+  mkdir -p /root/.kube
+  cp -f /etc/kubernetes/admin.conf /root/.kube/config
+  /usr/bin/sudo -H -i -u ${vmUser} sh -c "mkdir -p /home/${vmUser}/.kube"
+  /usr/bin/sudo cp -f /etc/kubernetes/admin.conf /home/${vmUser}/.kube/config
+  /usr/bin/sudo chown $(id -u ${vmUser}):$(id -g ${vmUser}) /home/${vmUser}/.kube/config
+fi
 
 # Keep trying to join Kubernetes cluster until successful
 timeout -s TERM 3000 bash -c 'while [[ ! -f /var/lib/kubelet/config.yaml ]]; do
