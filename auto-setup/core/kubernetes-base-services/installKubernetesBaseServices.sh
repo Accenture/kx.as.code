@@ -10,9 +10,23 @@ if [[ ! ${kubeAdminStatus} ]]; then
     # Initialization Kube Control Pane
     if [[ ${numKxMainNodes} -gt 1 ]]; then
         log_info "main_node_count > 1 in profile-config.json. Enabling configs for multiple control planes"
-        /usr/bin/sudo kubeadm init --apiserver-advertise-address=${mainIpAddress} --pod-network-cidr=20.96.0.0/12 --upload-certs --control-plane-endpoint="api-internal.${baseDomain}:6443"
+        log_info "Checking if api-internal.${baseDomain} is resolving correctly before proceeding with multi main node setup"
+        apiInternalResolvable="false"
+        for i in {1..100}; do
+          if [[ "${mainIpAddress}" == "$(dig api-internal.${baseDomain} +short | grep "${mainIpAddress}")" ]]; then
+            apiInternalResolvable="true"
+            break
+          else
+            sleep 15
+          fi
+        done
+        if [[ "${apiInternalResolvable}" == "false" ]]; then
+          log_error "api-internal.${baseDomain} is still not correctly resolvable after 100 tries. Giving up"
+          exit 1
+        fi
+        /usr/bin/sudo kubeadm init --apiserver-advertise-address=${mainIpAddress} --pod-network-cidr=20.96.0.0/12 --upload-certs --control-plane-endpoint=api-internal.${baseDomain}:6443
     else
-        log_info "main_node_count = 1 in profile-config.json. Setting up Kubernetes with a single control plane "
+        log_info "main_node_count = 1 in profile-config.json. Setting up Kubernetes with a single control plane"
         /usr/bin/sudo kubeadm init --apiserver-advertise-address=${mainIpAddress} --pod-network-cidr=20.96.0.0/12
     fi
 
