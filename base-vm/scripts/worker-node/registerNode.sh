@@ -327,6 +327,7 @@ fi
 /usr/bin/sudo chmod 755 ${installationWorkspace}/kubeJoin.sh
 
 if [[ "${nodeRole}" == "kx-main" ]]; then
+  # Fix reliance on non existent file: /run/systemd/resolve/resolv.conf
   /usr/bin/sudo sed -i '/^\[Service\]/a Environment="KUBELET_EXTRA_ARGS=--resolv-conf=\/etc\/resolv.conf --node-ip='${nodeIp}'"' /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
   # Restart Kubelet
   /usr/bin/sudo systemctl daemon-reload
@@ -347,14 +348,6 @@ echo "Waiting for kx-worker/kx-main to be connected successfully to main node" &
 
 # Disable the Service After it Ran
 /usr/bin/sudo systemctl disable k8s-register-node.service
-
-# Fix reliance on non existent file: /run/systemd/resolve/resolv.conf
-export nodeIp=$(ip a s ${netDevice} | egrep -o 'inet [0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | cut -d' ' -f2)
-/usr/bin/sudo sed -i '/^\[Service\]/a Environment="KUBELET_EXTRA_ARGS=--resolv-conf=\/etc\/resolv.conf --node-ip='${nodeIp}'"' /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
-
-# Restart Kubelet
-/usr/bin/sudo systemctl daemon-reload
-/usr/bin/sudo systemctl restart kubelet
 
 # Setup proxy settings if they exist
 if ( [[ -n ${httpProxySetting} ]] || [[ -n ${httpsProxySetting} ]] ) && ( [[ "${httpProxySetting}" != "null" ]] && [[ "${httpsProxySetting}" != "null" ]] ); then
