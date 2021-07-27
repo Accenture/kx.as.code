@@ -320,8 +320,8 @@ elif [[ "${nodeRole}" == "kx-main" ]]; then
 
   nodeIp=$(ifconfig ${netDevice} | awk '/inet / {print $2}')
 
-  k8sCertKey=$(/usr/bin/sudo -H -i -u "${vmUser}" bash -c "ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} 'sudo kubeadm init phase upload-certs --upload-certs | tail -1'")
-  echo "$(/usr/bin/sudo -H -i -u "${vmUser}" bash -c "ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} 'sudo kubeadm token create --print-join-command 2>/dev/null'") --control-plane --apiserver-advertise-address ${nodeIp} --certificate-key ${k8sCertKey}" > ${installationWorkspace}/kubeJoin.sh
+  echo "k8sCertKey=\$(/usr/bin/sudo -H -i -u ${vmUser} bash -c \"ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} 'sudo kubeadm init phase upload-certs --upload-certs | tail -1'\")" > ${installationWorkspace}/kubeJoin.sh
+  echo "$(/usr/bin/sudo -H -i -u ${vmUser} bash -c "ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} 'sudo kubeadm token create --print-join-command 2>/dev/null'") --control-plane --apiserver-advertise-address ${nodeIp} --certificate-key \${k8sCertKey}" >> ${installationWorkspace}/kubeJoin.sh
 
 fi
 /usr/bin/sudo chmod 755 ${installationWorkspace}/kubeJoin.sh
