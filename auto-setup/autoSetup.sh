@@ -334,10 +334,13 @@ if [[ ${action} == "install"   ]]; then
     letsencryptEnabled=$(cat ${componentMetadataJson} | jq '.letsencrypt?.enabled?')
     letsencryptIngressNames=$(cat ${componentMetadataJson} | jq -r '.letsencrypt?.ingress_names[]?')
 
+    log_debug "letsencryptEnabled: ${letsencryptEnabled}"
+    log_debug  "letsencryptIngressNames: ${letsencryptIngressNames}"
+
     # Override Ingress TLS settings if LetsEncrypt is set as issuer
     if [[ "${letsencryptEnabled}" != "false" ]] && [[ "${sslProvider}" == "letsencrypt" ]]; then
 
-      if [[ -z ${letsencryptIngressNames} ]] && [[ "${letsencryptIngressNames}" != "null" ]]; then
+      if [[ -n ${letsencryptIngressNames} ]] && [[ "${letsencryptIngressNames}" != "null" ]]; then
         log_info "Specific ingress name(s) specified in metadata.json for ${componentName} -> ${letsencryptIngressNames}"
       elif [[ "${namespace}" != "kube-system" ]]; then
           log_info "Specific ingress name not specified in metadata.json for ${componentName}. Will look up the ingress names in namespace ${namespace}"
