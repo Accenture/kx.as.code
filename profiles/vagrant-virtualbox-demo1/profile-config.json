@@ -10,7 +10,9 @@
             "worker_node_memory": 16384,
             "environment_prefix": "demo1",
             "3d_acceleration": "off",
-            "kx_sync_folder_path": "./KX_Share"
+            "kx_sync_folder_path": "./KX_Share",
+            "kx_main_box_location": "../../../01_Build_KX.AS.CODE_Main/base-vm/boxes/virtualbox-0.7.1/kx.as.code-main-demo-0.7.1.box",
+            "kx_worker_box_location": "../../../02_Build_KX.AS.CODE_Worker/base-vm/boxes/virtualbox-0.7.1/kx.as.code-worker-demo-0.7.1.box"
         },
         "allowWorkloadsOnMaster": true,
         "disableSessionTimeout": true,
