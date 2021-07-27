@@ -330,6 +330,29 @@ if [[ ${action} == "install"   ]]; then
     ##      P O S T    I N S T A L L    S T E P S
     ####################################################################################################################################################################
 
+    # LetsEncrypt
+    letsencryptEnabled=$(cat ${componentMetadataJson} | jq '.letsencrypt?.enabled?')
+    letsencryptIngressNames=$(cat ${componentMetadataJson} | jq -r '.letsencrypt?.ingress_names[]?')
+
+    # Override Ingress TLS settings if LetsEncrypt is set as issuer
+    if [[ "${letsencryptEnabled}" != "false" ]] && [[ "${sslProvider}" == "letsencrypt" ]]; then
+
+      if [[ -z ${letsencryptIngressNames} ]] && [[ "${letsencryptIngressNames}" != "null" ]]; then
+        log_info "Specific ingress name(s) specified in metadata.json for ${componentName} -> ${letsencryptIngressNames}"
+      elif [[ "${namespace}" != "kube-system" ]]; then
+          log_info "Specific ingress name not specified in metadata.json for ${componentName}. Will look up the ingress names in namespace ${namespace}"
+          letsencryptIngressNames=$(kubectl get ingress -n ${namespace} -o json | jq -r '.items[].metadata.name')
+      fi
+
+      for ingressName in ${letsencryptIngressNames}; do
+        log_info "Adding LetsEncrypt annotations to Ingress --> ${ingressName}"
+        kubectl patch ingress ${ingressName} --type='json' -p='[{"op": "add", "path": "/spec/tls/0/secretName", "value":"'${ingressName}'-tls"}]' -n ${namespace}
+        kubectl annotate ingress ${ingressName} kubernetes.io/ingress.class=nginx -n ${namespace} --overwrite=true
+        kubectl annotate ingress ${ingressName} cert-manager.io/cluster-issuer=letsencrypt-${letsEncryptEnvironment} -n ${namespace} --overwrite=true
+      done
+
+    fi
+
     componentPostInstallScripts=$(cat ${componentMetadataJson} | jq -r '.post_install_scripts[]?')
     # Loop round post-install scripts
     for script in ${componentPostInstallScripts}; do

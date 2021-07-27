@@ -386,38 +386,34 @@ if ( [[ -n ${httpProxySetting} ]] || [[ -n ${httpsProxySetting} ]] ) && ( [[ "${
     fi
 fi
 
-# Create script to pull KX App Images from Main on second boot (after reboot in this script)
-if [[ "${nodeRole}" == "kx-worker" ]]; then
-  set +o histexpand
-  echo """
-  #!/bin/bash -x
-  set -euo pipefail
+# Create script to pull KX App Images from Main1
+set +o histexpand
+echo """#!/bin/bash -x
+set -euo pipefail
 
-  . /etc/environment
-  export vmUser=${vmUser}
+. /etc/environment
+export vmUser=${vmUser}
 
-  echo \"Attempting to download KX Apps from KX-Main\"
-  /usr/bin/sudo -H -i -u "${vmUser}" bash -c 'scp -o StrictHostKeyChecking=no '${vmUser}'@'${kxMainIp}':'${installationWorkspace}'/docker-kx-*.tar '${installationWorkspace}'';
+echo \"Attempting to download KX Apps from KX-Main\"
+/usr/bin/sudo -H -i -u "${vmUser}" bash -c 'scp -o StrictHostKeyChecking=no '${vmUser}'@'${kxMainIp}':'${installationWorkspace}'/docker-kx-*.tar '${installationWorkspace}'';
 
-  if [ -f ${installationWorkspace}/docker-kx-docs.tar ]; then
+if [ -f ${installationWorkspace}/docker-kx-docs.tar ]; then
   docker load -i ${installationWorkspace}/docker-kx-docs.tar
-  fi
-
-  if [ -f ${installationWorkspace}/docker-kx-techradar.tar ]; then
-  docker load -i ${installationWorkspace}/docker-kx-techradar.tar
-  fi
-
-  if [ -f ${installationWorkspace}/docker-kx-docs.tar ] && [ -f ${installationWorkspace}/docker-kx-techradar.tar ]; then
-  /usr/bin/sudo crontab -r
-  fi
-
-  """ | /usr/bin/sudo tee ${installationWorkspace}/scpKxTars.sh
-
-  /usr/bin/sudo chmod 755 ${installationWorkspace}/scpKxTars.sh
-  /usr/bin/sudo crontab -l | {
-      echo "* * * * * ${installationWorkspace}/scpKxTars.sh"
-  } | /usr/bin/sudo crontab - || true
 fi
+
+if [ -f ${installationWorkspace}/docker-kx-techradar.tar ]; then
+  docker load -i ${installationWorkspace}/docker-kx-techradar.tar
+fi
+
+if [ -f ${installationWorkspace}/docker-kx-docs.tar ] && [ -f ${installationWorkspace}/docker-kx-techradar.tar ]; then
+  /usr/bin/sudo crontab -r
+fi
+""" | /usr/bin/sudo tee ${installationWorkspace}/scpKxTars.sh
+
+/usr/bin/sudo chmod 755 ${installationWorkspace}/scpKxTars.sh
+/usr/bin/sudo crontab -l | {
+    echo "* * * * * ${installationWorkspace}/scpKxTars.sh"
+} | /usr/bin/sudo crontab - || true
 
 # Set default keyboard language
 defaultUserKeyboardLanguage=$(jq -r '.config.defaultKeyboardLanguage' ${installationWorkspace}/profile-config.json)
