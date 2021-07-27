@@ -7,6 +7,32 @@ export kxHomeDir=/usr/share/kx.as.code
 export sharedGitRepositories=${kxHomeDir}/git
 export installationWorkspace=${kxHomeDir}/workspace
 
+# Determine which NIC to bind to, to avoid binding to internal VirtualBox NAT NICs for example, where all hosts have the same IP - 10.0.2.15
+export nicList=$(nmcli device show | grep -E 'enp|ens|eth0' | grep 'GENERAL.DEVICE' | awk '{print $2}')
+export ipsToExclude="10.0.2.15"   # IP addresses not to configure as listener. For example, default Virtualbox IP 10.0.2.15
+export nicExclusions=""
+export excludeNic=""
+for nic in ${nicList}; do
+    for ipToExclude in ${ipsToExclude}; do
+        ip=$(ip a s ${nic} | egrep -o 'inet [0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | cut -d' ' -f2 || true)
+        echo ${ip}
+        if [[ ${ip} == "${ipToExclude}" ]]; then
+            excludeNic="true"
+        fi
+    done
+    if [[ ${excludeNic} == "true" ]]; then
+        echo "Excluding NIC ${nic}"
+        nicExclusions="${nicExclusions} ${nic}"
+        excludeNic="false"
+    else
+        netDevice=${nic}
+    fi
+done
+echo "NIC exclusions: ${nicExclusions}"
+echo "NIC to use: ${netDevice}"
+
+export nodeIp=$(ifconfig ${netDevice} | awk '/inet / {print $2}')
+
 # Check profile-config.json file is present before executing script
 wait-for-file() {
     timeout -s TERM 6000 bash -c \
@@ -302,36 +328,8 @@ do echo "Waiting for https://'${kxMainIp}':6443/livez" && sleep 5;  done'
 if [[ "${nodeRole}" == "kx-worker" ]]; then
   /usr/bin/sudo -H -i -u "${vmUser}" bash -c "ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} 'sudo kubeadm token create --print-join-command 2>/dev/null'" > ${installationWorkspace}/kubeJoin.sh
 elif [[ "${nodeRole}" == "kx-main" ]]; then
-
-  # Determine which NIC to bind to, to avoid binding to internal VirtualBox NAT NICs for example, where all hosts have the same IP - 10.0.2.15
-  export nicList=$(nmcli device show | grep -E 'enp|ens|eth0' | grep 'GENERAL.DEVICE' | awk '{print $2}')
-  export ipsToExclude="10.0.2.15"   # IP addresses not to configure as listener. For example, default Virtualbox IP 10.0.2.15
-  export nicExclusions=""
-  export excludeNic=""
-  for nic in ${nicList}; do
-      for ipToExclude in ${ipsToExclude}; do
-          ip=$(ip a s ${nic} | egrep -o 'inet [0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | cut -d' ' -f2 || true)
-          echo ${ip}
-          if [[ ${ip} == "${ipToExclude}" ]]; then
-              excludeNic="true"
-          fi
-      done
-      if [[ ${excludeNic} == "true" ]]; then
-          echo "Excluding NIC ${nic}"
-          nicExclusions="${nicExclusions} ${nic}"
-          excludeNic="false"
-      else
-          netDevice=${nic}
-      fi
-  done
-  echo "NIC exclusions: ${nicExclusions}"
-  echo "NIC to use: ${netDevice}"
-
-  nodeIp=$(ifconfig ${netDevice} | awk '/inet / {print $2}')
-
   echo "k8sCertKey=\$(/usr/bin/sudo -H -i -u ${vmUser} bash -c \"ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} 'sudo kubeadm init phase upload-certs --upload-certs | tail -1'\")" > ${installationWorkspace}/kubeJoin.sh
   echo "$(/usr/bin/sudo -H -i -u ${vmUser} bash -c "ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} 'sudo kubeadm token create --print-join-command 2>/dev/null'") --control-plane --apiserver-advertise-address ${nodeIp} --certificate-key \${k8sCertKey}" >> ${installationWorkspace}/kubeJoin.sh
-
 fi
 /usr/bin/sudo chmod 755 ${installationWorkspace}/kubeJoin.sh
 
