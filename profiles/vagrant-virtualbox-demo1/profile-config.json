@@ -5,7 +5,7 @@
             "main_node_count": 1,
             "main_node_cpu_cores": 6,
             "main_node_memory": 32768,
-            "worker_node_count": 0,
+            "worker_node_count": 1,
             "worker_node_cpu_cores": 4,
             "worker_node_memory": 16384,
             "environment_prefix": "demo1",
