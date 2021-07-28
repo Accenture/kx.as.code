@@ -16,7 +16,7 @@ while [[ -z ${netDevice} ]]; do
   export excludeNic="false"
   for nic in ${nicList}; do
       for ipToExclude in ${ipsToExclude}; do
-          ip=$(ip a s ${nic} | egrep -o 'inet [0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | cut -d' ' -f2)
+          ip=$(ip a s ${nic} | egrep -o 'inet [0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | cut -d' ' -f2 || true)
           echo ${ip}
           if [[ ${ip} == "${ipToExclude}" ]]; then
               excludeNic="true"
@@ -258,7 +258,7 @@ if [[ ${virtualizationType} != "public-cloud"   ]] && [[ ${virtualizationType} !
     # Create RSA key for kx.hero user
     mkdir -p /home/${vmUser}/.ssh
     chown -R ${vmUser}:${vmUser} /home/${vmUser}/.ssh
-    chmod 700 $installationWorkspace/.ssh
+    chmod 700 /home/${vmUser}/.ssh
     yes | /usr/bin/sudo -u "${vmUser}" ssh-keygen -f ssh-keygen -m PEM -t rsa -b 4096 -q -f /home/${vmUser}/.ssh/id_rsa -N ''
 fi
 
@@ -266,9 +266,63 @@ fi
 /usr/bin/sudo -H -i -u "${vmUser}" bash -c "sshpass -f ${kxHomeDir}/.config/.user.cred ssh-copy-id -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp}"
 
 # Add server IP to Bind9 DNS service on KX-Main1 host
-/usr/bin/sudo -H -i -u "${vmUser}" bash -c "ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} \"sudo sed -i '/\*/ i ${hostname}    IN      A      ${nodeIp}' /etc/bind/db.${baseDomain}\""
+/usr/bin/sudo -H -i -u "${vmUser}" bash -c "ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} \"sudo sed -i '/\*/ i $(hostname)    IN      A      ${nodeIp}' /etc/bind/db.${baseDomain}\""
 if [[ "${nodeRole}" == "kx-main" ]]; then
   /usr/bin/sudo -H -i -u "${vmUser}" bash -c "ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} \"sudo sed -i '/\*/ i api-internal    IN      A      ${nodeIp}' /etc/bind/db.${baseDomain}\""
+  host=$(hostname); hostNum=${host: -1}
+  /usr/bin/sudo -H -i -u "${vmUser}" bash -c "ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} \"sudo sed -i '/IN  NS  ns1/ a \  IN  NS  ns${hostNum}.${baseDomain}.' /etc/bind/db.${baseDomain}\""
+  /usr/bin/sudo -H -i -u "${vmUser}" bash -c "ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} \"sudo sed -i '/\*/ i ns${hostNum}    IN      A      ${nodeIp}' /etc/bind/db.${baseDomain}\""
+fi
+# Restart Bind9 after updating it with new worker/main node
+/usr/bin/sudo -H -i -u "${vmUser}" bash -c "ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} \"sudo rndc reload\""
+
+# If KX-Main node, install Domain server to replicate zone from main1
+ # Install Bind9 for local DNS resolution
+if [[ "${nodeRole}" == "kx-main" ]]; then
+
+/usr/bin/sudo apt install -y bind9 bind9utils bind9-doc
+
+echo '''options {
+        directory "/var/cache/bind";
+
+        // If there is a firewall between you and nameservers you want
+        // to talk to, you may need to fix the firewall to allow multiple
+        // ports to talk.  See http://www.kb.cert.org/vuls/id/800113
+
+        // If your ISP provided one or more IP addresses for stable
+        // nameservers, you probably want to use them as forwarders.
+        // Uncomment the following block, and insert the addresses replacing
+        // the all-0s placeholder.
+
+        // forwarders {
+        //      0.0.0.0;
+        // };
+
+        //========================================================================
+        // If BIND logs error messages about the root key being expired,
+        // you will need to update your keys.  See https://www.isc.org/bind-keys
+        //========================================================================
+        dnssec-validation auto;
+
+        listen-on-v6 { any; };
+
+        version "not currently available";
+        recursion yes;
+        querylog yes;
+        allow-transfer { none; };
+
+};''' | /usr/bin/sudo tee /etc/bind/named.conf.options
+
+echo '''zone "'${baseDomain}'" {
+        type slave;
+        file "db.'${baseDomain}'";
+        allow-query { any; };
+        masters { '${kxMainIp}'; };
+};
+''' | tee -a /etc/bind/named.conf.local
+
+sudo systemctl restart bind9
+
 fi
 
 # Add KX-Main key to worker
@@ -334,7 +388,7 @@ timeout -s TERM 3000 bash -c 'while [[ ! -f /var/lib/kubelet/config.yaml ]]; do
 /usr/bin/sudo '${installationWorkspace}'/kubeJoin.sh
 echo "Waiting for kx-worker/kx-main to be connected successfully to main node" && sleep 15; done'
 
-# Disable the Service After it Ran
+# Disable the service after it ran
 /usr/bin/sudo systemctl disable k8s-register-node.service
 
 # Setup proxy settings if they exist
@@ -524,3 +578,7 @@ if [[ "${nodeRole}" == "kx-main" ]]; then
   /usr/bin/sudo chown $(id -u ${vmUser}):$(id -g ${vmUser}) /home/${vmUser}/.kube/config
 fi
 
+# Reboot machine to ensure all network changes are active
+if [ "${baseIpType}" == "static" ]; then
+    sudo reboot
+fi
