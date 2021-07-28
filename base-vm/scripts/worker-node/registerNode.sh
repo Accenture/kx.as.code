@@ -266,15 +266,15 @@ fi
 /usr/bin/sudo -H -i -u "${vmUser}" bash -c "sshpass -f ${kxHomeDir}/.config/.user.cred ssh-copy-id -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp}"
 
 # Add server IP to Bind9 DNS service on KX-Main1 host
-/usr/bin/sudo -H -i -u "${vmUser}" bash -c "ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} \"sudo sed -i '/\*/ i $(hostname)    IN      A      ${nodeIp}' /etc/bind/db.${baseDomain}\""
+/usr/bin/sudo -H -i -u "${vmUser}" bash -c "ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} \"/usr/bin/sudo sed -i '/\*/ i $(hostname)    IN      A      ${nodeIp}' /etc/bind/db.${baseDomain}\""
 if [[ "${nodeRole}" == "kx-main" ]]; then
-  /usr/bin/sudo -H -i -u "${vmUser}" bash -c "ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} \"sudo sed -i '/\*/ i api-internal    IN      A      ${nodeIp}' /etc/bind/db.${baseDomain}\""
+  /usr/bin/sudo -H -i -u "${vmUser}" bash -c "ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} \"/usr/bin/sudo sed -i '/\*/ i api-internal    IN      A      ${nodeIp}' /etc/bind/db.${baseDomain}\""
   host=$(hostname); hostNum=${host: -1}
-  /usr/bin/sudo -H -i -u "${vmUser}" bash -c "ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} \"sudo sed -i '/IN  NS  ns1/ a \  IN  NS  ns${hostNum}.${baseDomain}.' /etc/bind/db.${baseDomain}\""
-  /usr/bin/sudo -H -i -u "${vmUser}" bash -c "ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} \"sudo sed -i '/\*/ i ns${hostNum}    IN      A      ${nodeIp}' /etc/bind/db.${baseDomain}\""
+  /usr/bin/sudo -H -i -u "${vmUser}" bash -c "ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} \"/usr/bin/sudo sed -i '/IN  NS  ns1/ a \  IN  NS  ns${hostNum}.${baseDomain}.' /etc/bind/db.${baseDomain}\""
+  /usr/bin/sudo -H -i -u "${vmUser}" bash -c "ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} \"/usr/bin/sudo sed -i '/\*/ i ns${hostNum}    IN      A      ${nodeIp}' /etc/bind/db.${baseDomain}\""
 fi
 # Restart Bind9 after updating it with new worker/main node
-/usr/bin/sudo -H -i -u "${vmUser}" bash -c "ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} \"sudo rndc reload\""
+/usr/bin/sudo -H -i -u "${vmUser}" bash -c "ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} \"/usr/bin/sudo rndc reload\""
 
 # If KX-Main node, install Domain server to replicate zone from main1
  # Install Bind9 for local DNS resolution
@@ -322,6 +322,10 @@ echo '''zone "'${baseDomain}'" {
 ''' | tee -a /etc/bind/named.conf.local
 
 sudo systemctl restart bind9
+
+# Add new DNS server to resolv.conf on KX-Main1
+/usr/bin/sudo -H -i -u "${vmUser}" bash -c "ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} 'echo \"nameserver ${nodeIp}\" | /usr/bin/sudo tee -a /etc/resolv.conf'"
+echo "nameserver ${nodeIp}" | /usr/bin/sudo tee -a /etc/resolv.conf
 
 fi
 
