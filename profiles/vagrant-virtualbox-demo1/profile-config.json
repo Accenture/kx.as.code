@@ -41,7 +41,7 @@
         },
         "staticNetworkSetup": {
             "baseFixedIpAddresses": {
-                "kx-main": "10.100.76.200",
+                "kx-main1": "10.100.76.200",
                 "kx-worker1": "10.100.76.201",
                 "kx-worker2": "10.100.76.202",
                 "kx-worker3": "10.100.76.203",
