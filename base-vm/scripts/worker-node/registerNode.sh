@@ -7,26 +7,29 @@ export kxHomeDir=/usr/share/kx.as.code
 export sharedGitRepositories=${kxHomeDir}/git
 export installationWorkspace=${kxHomeDir}/workspace
 
-# Determine which NIC to bind to, to avoid binding to internal VirtualBox NAT NICs for example, where all hosts have the same IP - 10.0.2.15
-export nicList=$(nmcli device show | grep -E 'enp|ens|eth0' | grep 'GENERAL.DEVICE' | awk '{print $2}')
-export ipsToExclude="10.0.2.15"   # IP addresses not to configure as listener. For example, default Virtualbox IP 10.0.2.15
-export nicExclusions=""
-export excludeNic=""
-for nic in ${nicList}; do
-    for ipToExclude in ${ipsToExclude}; do
-        ip=$(ip a s ${nic} | egrep -o 'inet [0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | cut -d' ' -f2 || true)
-        echo ${ip}
-        if [[ ${ip} == "${ipToExclude}" ]]; then
-            excludeNic="true"
-        fi
-    done
-    if [[ ${excludeNic} == "true" ]]; then
-        echo "Excluding NIC ${nic}"
-        nicExclusions="${nicExclusions} ${nic}"
-        excludeNic="false"
-    else
-        netDevice=${nic}
-    fi
+export netDevice=""
+while [[ -z ${netDevice} ]]; do
+  # Determine which NIC to bind to, to avoid binding to internal VirtualBox NAT NICs for example, where all hosts have the same IP - 10.0.2.15
+  export nicList=$(nmcli device show | grep -E 'enp|ens|eth' | grep 'GENERAL.DEVICE' | awk '{print $2}')
+  export ipsToExclude="10.0.2.15"   # IP addresses not to configure with static IP. For example, default Virtualbox IP 10.0.2.15
+  export nicExclusions=""
+  export excludeNic="false"
+  for nic in ${nicList}; do
+      for ipToExclude in ${ipsToExclude}; do
+          ip=$(ip a s ${nic} | egrep -o 'inet [0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | cut -d' ' -f2)
+          echo ${ip}
+          if [[ ${ip} == "${ipToExclude}" ]]; then
+              excludeNic="true"
+          fi
+      done
+      if [[ ${excludeNic} == "true" ]]; then
+          echo "Excluding NIC ${nic}"
+          nicExclusions="${nicExclusions} ${nic}"
+          excludeNic="false"
+      else
+          netDevice=${nic}
+      fi
+  done
 done
 echo "NIC exclusions: ${nicExclusions}"
 echo "NIC to use: ${netDevice}"
@@ -143,31 +146,6 @@ cd ${installationWorkspace}
 
 # Get configs from profile-config.json
 export virtualizationType=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.virtualizationType')
-
-# Determine which NIC to bind to, to avoid binding to internal VirtualBox NAT NICs for example, where all hosts have the same IP - 10.0.2.15
-export nicList=$(nmcli device show | grep -E 'enp|ens|eth' | grep 'GENERAL.DEVICE' | awk '{print $2}')
-export ipsToExclude="10.0.2.15"   # IP addresses not to configure with static IP. For example, default Virtualbox IP 10.0.2.15
-export nicExclusions=""
-export excludeNic="false"
-for nic in ${nicList}; do
-    for ipToExclude in ${ipsToExclude}; do
-        ip=$(ip a s ${nic} | egrep -o 'inet [0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | cut -d' ' -f2)
-        echo ${ip}
-        if [[ ${ip} == "${ipToExclude}" ]]; then
-            excludeNic="true"
-        fi
-    done
-    if [[ ${excludeNic} == "true" ]]; then
-        echo "Excluding NIC ${nic}"
-        nicExclusions="${nicExclusions} ${nic}"
-        excludeNic="false"
-    else
-        netDevice=${nic}
-    fi
-done
-echo "NIC Exclusions: ${nicExclusions}"
-echo "NIC to use: ${netDevice}"
-
 export environmentPrefix=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.environmentPrefix')
 if [ -z ${environmentPrefix} ]; then
     export baseDomain="$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.baseDomain')"
@@ -248,7 +226,7 @@ if [[ ! -f /usr/share/kx.as.code/.config/network_status ]]; then
     fi
 
     if [[ ${baseIpType} == "static" ]]; then
-        # Configure IF to be managed/confgured by network-manager
+        # Configure IF to be managed/configured by network-manager
         /usr/bin/sudo rm -f /etc/NetworkManager/system-connections/*
         /usr/bin/sudo mv /etc/network/interfaces /etc/network/interfaces.unused
         /usr/bin/sudo nmcli con add con-name "${netDevice}" ifname ${netDevice} type ethernet ip4 ${kxWorkerIp}/24 gw4 ${fixedNicConfigGateway}
@@ -261,6 +239,11 @@ if [[ ! -f /usr/share/kx.as.code/.config/network_status ]]; then
     # Ensure the whole network setup does not execute again on next run after reboot
     /usr/bin/sudo mkdir -p /usr/share/kx.as.code/.config
     echo "KX.AS.CODE network config done" | /usr/bin/sudo tee /usr/share/kx.as.code/.config/network_status
+
+    # Reboot machine to ensure all network changes are active
+    if [ "${baseIpType}" == "static" ]; then
+        /usr/bin/sudo reboot
+    fi
 
 fi
 
@@ -281,6 +264,12 @@ fi
 
 # Add key to KX-Main host
 /usr/bin/sudo -H -i -u "${vmUser}" bash -c "sshpass -f ${kxHomeDir}/.config/.user.cred ssh-copy-id -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp}"
+
+# Add server IP to Bind9 DNS service on KX-Main1 host
+/usr/bin/sudo -H -i -u "${vmUser}" bash -c "ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} \"sudo sed -i '/\*/ i ${hostname}    IN      A      ${nodeIp}' /etc/bind/db.${baseDomain}\""
+if [[ "${nodeRole}" == "kx-main" ]]; then
+  /usr/bin/sudo -H -i -u "${vmUser}" bash -c "ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} \"sudo sed -i '/\*/ i api-internal    IN      A      ${nodeIp}' /etc/bind/db.${baseDomain}\""
+fi
 
 # Add KX-Main key to worker
 /usr/bin/sudo -H -i -u "${vmUser}" bash -c "ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} \"cat /home/${vmUser}/.ssh/id_rsa.pub\" | tee -a /home/${vmUser}/.ssh/authorized_keys"
@@ -535,7 +524,3 @@ if [[ "${nodeRole}" == "kx-main" ]]; then
   /usr/bin/sudo chown $(id -u ${vmUser}):$(id -g ${vmUser}) /home/${vmUser}/.kube/config
 fi
 
-# Reboot machine to ensure all network changes are active
-if [ "${baseIpType}" == "static" ]; then
-    /usr/bin/sudo reboot
-fi
