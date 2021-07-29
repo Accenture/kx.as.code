@@ -259,7 +259,11 @@ if [[ ${virtualizationType} != "public-cloud"   ]] && [[ ${virtualizationType} !
     mkdir -p /home/${vmUser}/.ssh
     chown -R ${vmUser}:${vmUser} /home/${vmUser}/.ssh
     chmod 700 /home/${vmUser}/.ssh
-    yes | /usr/bin/sudo -u "${vmUser}" ssh-keygen -f ssh-keygen -m PEM -t rsa -b 4096 -q -f /home/${vmUser}/.ssh/id_rsa -N ''
+    if [[ ! -f /home/${vmUser}/.ssh/id_rsa ]] || [[ ! -f /home/${vmUser}/.ssh/id_rsa.pub ]]; then
+      /usr/bin/sudo rm -f /home/${vmUser}/.ssh/id_rsa
+      /usr/bin/sudo rm -f /home/${vmUser}/.ssh/id_rsa.pub
+      yes | /usr/bin/sudo -u "${vmUser}" ssh-keygen -f ssh-keygen -m PEM -t rsa -b 4096 -q -f /home/${vmUser}/.ssh/id_rsa -N ''
+    fi
 fi
 
 # Add key to KX-Main host
