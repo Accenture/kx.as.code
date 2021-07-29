@@ -14,6 +14,11 @@
   align-items: flex-start;
 }
 
+#Home .ProfileCard:hover {
+  box-shadow: #191f29 0px 0px 20px 1px;
+  cursor: pointer;
+}
+
 #Home > .profile-cards > .ProfileCard > .info-column {
   height: 100%;
   display: flex;
