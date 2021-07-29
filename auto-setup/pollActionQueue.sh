@@ -361,7 +361,7 @@ api-internal      IN      A      '${mainIpAddress}'
     echo "KX.AS.CODE network config done" | /usr/bin/sudo tee /usr/share/kx.as.code/.config/network_status
 
     # Reboot if static network settings to activate them
-    if  [[ ${baseIpType} == "static"   ]]; then
+    if  [[ "${baseIpType}" == "static"   ]]; then
         # Reboot machine to ensure all network changes are active
         /usr/bin/sudo reboot
     else
