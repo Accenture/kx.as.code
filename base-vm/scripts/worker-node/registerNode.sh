@@ -315,11 +315,11 @@ echo '''options {
 
 echo '''zone "'${baseDomain}'" {
         type slave;
-        file "db.'${baseDomain}'";
+        file "/var/cache/bind/db.'${baseDomain}'";
         allow-query { any; };
         masters { '${kxMainIp}'; };
 };
-''' | tee -a /etc/bind/named.conf.local
+''' | sudo tee -a /etc/bind/named.conf.local
 
 sudo systemctl restart bind9
 
@@ -429,7 +429,7 @@ if ( [[ -n ${httpProxySetting} ]] || [[ -n ${httpsProxySetting} ]] ) && ( [[ "${
         printf -v service '"'"'%s,'"'"' '${baseip}'.{1..253}
         export no_proxy="${lan%,},${service%,},${pool%,},127.0.0.1,.'${baseDomain}'";
         export NO_PROXY=$no_proxy
-        ''' | /usr/bin/sudo tee -a /root/.bashrc /root/.zshrc /home/$vmUser/.bashrc /home/$vmUser/.zshrc
+        ''' | /usr/bin/sudo tee -a /root/.bashrc /root/.zshrc /home/${vmUser}/.bashrc /home/${vmUser}/.zshrc
     fi
 fi
 

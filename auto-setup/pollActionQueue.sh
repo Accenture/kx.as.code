@@ -147,7 +147,7 @@ if [[ ${baseIpType} == "static"   ]]; then
     for fixIpHost in ${fixedIpHosts}; do
         fixIpHostVariableName=$(echo ${fixIpHost} | sed 's/-/__/g')
         export ${fixIpHostVariableName}_IpAddress="$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.staticNetworkSetup.baseFixedIpAddresses."'${fixIpHost}'"')"
-        if [[ ${fixIpHost} == "kx-main" ]]; then
+        if [[ ${fixIpHost} == "kx-main1" ]]; then
             export mainIpAddress="$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.staticNetworkSetup.baseFixedIpAddresses."'${fixIpHost}'"')"
         fi
     done
@@ -231,7 +231,7 @@ if [[ ! -f /usr/share/kx.as.code/.config/network_status ]]; then
 
     # Configue dnsmasq - /etc/resolv.conf
     /usr/bin/sudo rm -f /etc/resolv.conf
-    /usr/bin/sudo echo "nameserver ${mainIpAddress}" | /usr/bin/sudo tee /etc/resolv.conf
+    echo "nameserver ${mainIpAddress}" | /usr/bin/sudo tee /etc/resolv.conf
 
     export private_subnet_cidr_one=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.private_subnet_cidr_one')
     export private_subnet_cidr_two=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.private_subnet_cidr_two')
