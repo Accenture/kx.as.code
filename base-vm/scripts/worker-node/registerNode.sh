@@ -276,6 +276,7 @@ if [[ "${nodeRole}" == "kx-main" ]]; then
   host=$(hostname); hostNum=${host: -1}
   /usr/bin/sudo -H -i -u "${vmUser}" bash -c "ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} \"/usr/bin/sudo sed -i '/IN  NS  ns1/ a \  IN  NS  ns${hostNum}.${baseDomain}.' /etc/bind/db.${baseDomain}\""
   /usr/bin/sudo -H -i -u "${vmUser}" bash -c "ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} \"/usr/bin/sudo sed -i '/\*/ i ns${hostNum}    IN      A      ${nodeIp}' /etc/bind/db.${baseDomain}\""
+  /usr/bin/sudo -H -i -u "${vmUser}" bash -c "ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} \"/usr/bin/sudo sed -i '/\*/ a \*    IN      A      ${nodeIp}' /etc/bind/db.${baseDomain}\""
 fi
 # Restart Bind9 after updating it with new worker/main node
 /usr/bin/sudo -H -i -u "${vmUser}" bash -c "ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} \"/usr/bin/sudo rndc reload\""
@@ -395,6 +396,12 @@ fi
 timeout -s TERM 3000 bash -c 'while [[ ! -f /var/lib/kubelet/config.yaml ]]; do
 /usr/bin/sudo '${installationWorkspace}'/kubeJoin.sh
 echo "Waiting for kx-worker/kx-main to be connected successfully to main node" && sleep 15; done'
+
+# Add label to kx-main node for NGINX Ingress Controller
+if [[ "${nodeRole}" == "kx-main" ]]; then
+  nodeName=$(hostname)
+  /usr/bin/sudo -H -i -u "${vmUser}" bash -c "ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} 'sudo /usr/bin/sudo kubectl label nodes ${nodeName} ingress-controller=true --overwrite=true'"
+fi
 
 # Disable the service after it ran
 /usr/bin/sudo systemctl disable k8s-register-node.service
