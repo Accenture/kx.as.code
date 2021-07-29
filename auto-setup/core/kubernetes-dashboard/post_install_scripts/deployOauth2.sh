@@ -10,8 +10,27 @@ export kcPod=$(kubectl get pods -l 'app.kubernetes.io/name=keycloak' -n keycloak
 kubectl -n keycloak exec ${kcPod} -- \
     ${kcAdmCli} config credentials --server ${kcInternalUrl}/auth --realm ${kcRealm} --user admin --password ${vmPassword} --client admin-cli
 
+# Create Client
+if [[ ! $(kubectl -n ${namespace} exec ${kcPod} --container ${kcContainer} -- ${kcAdmCli} get clients -r ${baseDomain} | jq -r '.[] | select(.clientId=="kubernetes-dashboard") | .clientId') ]]; then
+    clientId=$(kubectl -n ${namespace} exec ${kcPod} --container ${kcContainer} -- \
+        ${kcAdmCli} create clients --realm ${kcRealm} -s clientId=kubernetes-dashboard -s 'redirectUris=["http://localhost:8000","https://kubernetes-dashboard-iam.'${baseDomain}'/oauth2/callback"]' -s publicClient="false" -s enabled=true -i)
+fi
+
+# Create protocol mapper
+if [[ ! $(kubectl -n ${namespace} exec ${kcPod} --container ${kcContainer} -- ${kcAdmCli} get clients -r ${baseDomain} | jq '.[] | select(.clientId=="kubernetes-dashboard") | .protocolMappers[] | select(.protocolMapper=="oidc-group-membership-mapper") | .protocolMapper') ]]; then
+    kubectl -n ${namespace} exec ${kcPod} --container ${kcContainer} -- \
+        ${kcAdmCli} create clients/${clientId}/protocol-mappers/models \
+        --realm ${kcRealm} \
+        -s name=groups \
+        -s protocol=openid-connect \
+        -s protocolMapper=oidc-group-membership-mapper \
+        -s 'config."claim.name"=groups' \
+        -s 'config."access.token.claim"=true' \
+        -s 'config."jsonType.label"=String'
+fi
+
 clientId=$(kubectl -n keycloak exec ${kcPod} -- \
-    ${kcAdmCli} get clients -r ${kcRealm} --fields id,clientId | jq -r '.[] | select(.clientId=="kubernetes") | .id')
+    ${kcAdmCli} get clients -r ${kcRealm} --fields id,clientId | jq -r '.[] | select(.clientId=="kubernetes-dashboard") | .id')
 
 clientSecret=$(kubectl -n keycloak exec ${kcPod} -- \
     ${kcAdmCli} get clients/${clientId}/client-secret | jq -r '.value')
@@ -88,7 +107,8 @@ spec:
        - args:
           - --provider=oidc
           - --provider-display-name="'${baseDomain}'"
-          - --client-id=kubernetes
+          - --client-id=kubernetes-dashboard
+          - --client-secret='${clientSecret}'
           - --redirect-url=https://'${componentName}'-iam.'${baseDomain}'/oauth2/callback
           - --oidc-issuer-url=https://keycloak.'${baseDomain}'/auth/realms/'${baseDomain}'
           - --provider-ca-file=/etc/ssl/kx-ca-cert/ca.crt

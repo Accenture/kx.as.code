@@ -29,7 +29,6 @@
         "addNodeLabel.sh"
     ],
     "post_install_scripts": [
-        "configureWildcardDns.sh",
         "workaround.sh"
     ]
 }
