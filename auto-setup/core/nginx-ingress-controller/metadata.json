@@ -29,6 +29,7 @@
         "addNodeLabel.sh"
     ],
     "post_install_scripts": [
-        "workaround.sh"
+        "workaround.sh",
+        "adjustNumReplicas.sh"
     ]
 }
