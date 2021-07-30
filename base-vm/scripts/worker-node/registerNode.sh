@@ -271,7 +271,7 @@ available=false
 while [[ "${available}" == "false"  ]]; do
   echo "Still trying to reach KX-Main1 (${kxMainIp}) on SSH. Retrying..."
   nc -zw 2 ${kxMainIp} 22 && { available=true; } || { echo available=false ; }
-  sleep 1
+  sleep 15
 done
 
 # Add key to KX-Main host
