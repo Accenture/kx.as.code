@@ -400,7 +400,13 @@ echo "Waiting for kx-worker/kx-main to be connected successfully to main node" &
 # Add label to kx-main node for NGINX Ingress Controller
 if [[ "${nodeRole}" == "kx-main" ]]; then
   nodeName=$(hostname)
-  /usr/bin/sudo -H -i -u "${vmUser}" bash -c "ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} 'sudo /usr/bin/sudo kubectl label nodes ${nodeName} ingress-controller=true --overwrite=true'"
+  /usr/bin/sudo kubectl label nodes ${nodeName} ingress-controller=true --overwrite=true
+  # Add an NGINX controller to the newly provisioned KX-Main node if not already running
+  if [[ -z "$(/usr/bin/sudo kubectl -n nginx-ingress-controller get pod -o wide | grep $(hostname))" ]]; then
+    replicaCount=$(/usr/bin/sudo kubectl get deploy -n nginx-ingress-controller -o json | jq -r '.items[].spec.replicas')
+    /usr/bin/sudo kubectl -n nginx-ingress-controller scale --replicas=$((${replicaCount}+1)) deployment/nginx-ingress-controller-ingress-nginx-controller
+    /usr/bin/sudo kubectl -n nginx-ingress-controller get pod -o wide
+  fi
 fi
 
 # Disable the service after it ran
