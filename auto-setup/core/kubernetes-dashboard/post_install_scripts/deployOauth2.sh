@@ -5,20 +5,21 @@ export kcRealm=${baseDomain}
 export kcInternalUrl=http://localhost:8080
 export kcAdmCli=/opt/jboss/keycloak/bin/kcadm.sh
 export kcPod=$(kubectl get pods -l 'app.kubernetes.io/name=keycloak' -n keycloak --output=json | jq -r '.items[].metadata.name')
+export kcContainer="keycloak"
 
 # Set credential token in new Realm
 kubectl -n keycloak exec ${kcPod} -- \
     ${kcAdmCli} config credentials --server ${kcInternalUrl}/auth --realm ${kcRealm} --user admin --password ${vmPassword} --client admin-cli
 
 # Create Client
-if [[ ! $(kubectl -n ${namespace} exec ${kcPod} --container ${kcContainer} -- ${kcAdmCli} get clients -r ${baseDomain} | jq -r '.[] | select(.clientId=="kubernetes-dashboard") | .clientId') ]]; then
-    clientId=$(kubectl -n ${namespace} exec ${kcPod} --container ${kcContainer} -- \
+if [[ ! $(kubectl -n keycloak exec ${kcPod} --container ${kcContainer} -- ${kcAdmCli} get clients -r ${baseDomain} | jq -r '.[] | select(.clientId=="kubernetes-dashboard") | .clientId') ]]; then
+    clientId=$(kubectl -n keycloak exec ${kcPod} --container ${kcContainer} -- \
         ${kcAdmCli} create clients --realm ${kcRealm} -s clientId=kubernetes-dashboard -s 'redirectUris=["http://localhost:8000","https://kubernetes-dashboard-iam.'${baseDomain}'/oauth2/callback"]' -s publicClient="false" -s enabled=true -i)
 fi
 
 # Create protocol mapper
-if [[ ! $(kubectl -n ${namespace} exec ${kcPod} --container ${kcContainer} -- ${kcAdmCli} get clients -r ${baseDomain} | jq '.[] | select(.clientId=="kubernetes-dashboard") | .protocolMappers[] | select(.protocolMapper=="oidc-group-membership-mapper") | .protocolMapper') ]]; then
-    kubectl -n ${namespace} exec ${kcPod} --container ${kcContainer} -- \
+if [[ ! $(kubectl -n keycloak exec ${kcPod} --container ${kcContainer} -- ${kcAdmCli} get clients -r ${baseDomain} | jq '.[] | select(.clientId=="kubernetes-dashboard") | .protocolMappers[] | select(.protocolMapper=="oidc-group-membership-mapper") | .protocolMapper') ]]; then
+    kubectl -n keycloak exec ${kcPod} --container ${kcContainer} -- \
         ${kcAdmCli} create clients/${clientId}/protocol-mappers/models \
         --realm ${kcRealm} \
         -s name=groups \
@@ -34,6 +35,14 @@ clientId=$(kubectl -n keycloak exec ${kcPod} -- \
 
 clientSecret=$(kubectl -n keycloak exec ${kcPod} -- \
     ${kcAdmCli} get clients/${clientId}/client-secret | jq -r '.value')
+
+# If secret not available, generate a new one
+if [[ "${clientSecret}" == "null" ]]; then
+  kubectl -n keycloak exec ${kcPod} -- \
+      ${kcAdmCli} create clients/${clientId}/client-secret | jq -r '.value'
+  clientSecret=$(kubectl -n keycloak exec ${kcPod} -- \
+      ${kcAdmCli} get clients/${clientId}/client-secret | jq -r '.value')
+fi
 
 # Set variables for oauth-proxy
 cookieSecret=$(python -c 'import os,base64; print(base64.urlsafe_b64encode(os.urandom(16)).decode())')
