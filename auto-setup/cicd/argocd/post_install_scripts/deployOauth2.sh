@@ -4,31 +4,40 @@ export kcRealm=${baseDomain}
 export kcInternalUrl=http://localhost:8080
 export kcAdmCli=/opt/jboss/keycloak/bin/kcadm.sh
 export kcPod=$(kubectl get pods -l 'app.kubernetes.io/name=keycloak' -n keycloak --output=json | jq -r '.items[].metadata.name')
+export kcContainer="keycloak"
 
 # Set credential token in new Realm
-kubectl -n keycloak exec ${kcPod} -- \
+kubectl -n keycloak exec ${kcPod} --container ${kcContainer} -- \
     ${kcAdmCli} config credentials --server ${kcInternalUrl}/auth --realm ${kcRealm} --user admin --password ${vmPassword}
 
 ## create a clients
-kubectl -n keycloak exec ${kcPod} -- \
+kubectl -n keycloak exec ${kcPod} --container ${kcContainer} -- \
     ${kcAdmCli} create clients --realm ${kcRealm} -s clientId=${componentName} \
     -s 'redirectUris=["https://'${componentName}'.'${baseDomain}'/auth/callback"]' \
     -s publicClient="false" -s enabled=true -s rootUrl="https://'${componentName}'.'${baseDomain}'" -s baseUrl="/applications" -i
 
 ## export clientId
-export clientID=$(kubectl -n keycloak exec ${kcPod} -- \
+export clientID=$(kubectl -n keycloak exec ${kcPod} --container ${kcContainer} -- \
     ${kcAdmCli} get clients --fields id,clientId | jq -r '.[] | select(.clientId=="argocd") | .id')
 
-# export client secret
-export clientSecret=$(kubectl -n keycloak exec ${kcPod} -- \
-    ${kcAdmCli} get clients/$clientID/client-secret | jq -r '.value')
+# Get client secret
+clientSecret=$(kubectl -n keycloak exec ${kcPod} --container ${kcContainer} -- \
+    ${kcAdmCli} get clients/${clientId}/client-secret | jq -r '.value')
+
+# If secret not available, generate a new one
+if [[ "${clientSecret}" == "null" ]]; then
+  kubectl -n keycloak exec ${kcPod} -- \
+      ${kcAdmCli} create clients/${clientId}/client-secret | jq -r '.value'
+  clientSecret=$(kubectl -n keycloak exec ${kcPod} -- \
+      ${kcAdmCli} get clients/${clientId}/client-secret | jq -r '.value')
+fi
 
 ## create client scopes
-kubectl -n keycloak exec keycloak-0 --container keycloak -- \
+kubectl -n keycloak exec ${kcPod} --container ${kcContainer} -- \
     ${kcAdmCli} create -x client-scopes -s name=${componentName} -s protocol=openid-connect
 
 ## export the client scope id
-export clientscopeID=$(kubectl -n keycloak exec ${kcPod} -- \
+export clientscopeID=$(kubectl -n keycloak exec ${kcPod} --container ${kcContainer} -- \
     ${kcAdmCli} get -x client-scopes | jq -r '.[] | select(.name=="argocd") | .id')
 
 ## client scope protocol mapper
