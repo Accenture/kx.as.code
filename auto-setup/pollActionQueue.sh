@@ -291,7 +291,7 @@ api-internal      IN      A      '${mainIpAddress}'
 ''' | /usr/bin/sudo tee /etc/bind/db.${baseDomain}
 
 /usr/bin/sudo named-checkconf
-/usr/bin/sudo named-checkzone example.com /etc/bind/db.${baseDomain}
+/usr/bin/sudo named-checkzone ${baseDomain} /etc/bind/db.${baseDomain}
 
 #    # Configue dnsmasq - /lib/systemd/system/dnsmasq.service (bugfix so dnsmasq starts automatically)
 #    /usr/bin/sudo sed -i 's/Wants=nss-lookup.target/Wants=network-online.target/' /lib/systemd/system/dnsmasq.service
