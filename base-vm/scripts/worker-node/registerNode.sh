@@ -266,6 +266,14 @@ if [[ ${virtualizationType} != "public-cloud"   ]] && [[ ${virtualizationType} !
     fi
 fi
 
+# Wait for KX-Main to become available for executing SSH based commands
+available=false
+while [[ "${available}" == "false"  ]]; do
+  echo "Still trying to reach KX-Main1 (${kxMainIp}) on SSH. Retrying..."
+  nc -zw 2 ${kxMainIp} 22 && { available=true; } || { echo available=false ; }
+  sleep 1
+done
+
 # Add key to KX-Main host
 /usr/bin/sudo -H -i -u "${vmUser}" bash -c "sshpass -f ${kxHomeDir}/.config/.user.cred ssh-copy-id -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp}"
 
