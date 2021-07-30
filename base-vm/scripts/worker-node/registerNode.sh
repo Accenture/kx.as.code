@@ -273,7 +273,7 @@ fi
 /usr/bin/sudo -H -i -u "${vmUser}" bash -c "ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} \"/usr/bin/sudo sed -i '/\*/ i $(hostname)    IN      A      ${nodeIp}' /etc/bind/db.${baseDomain}\""
 if [[ "${nodeRole}" == "kx-main" ]]; then
   /usr/bin/sudo -H -i -u "${vmUser}" bash -c "ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} \"/usr/bin/sudo sed -i '/\*/ i api-internal    IN      A      ${nodeIp}' /etc/bind/db.${baseDomain}\""
-  host=$(hostname); hostNum=${host: -1}
+  host=$(hostname); export hostNum=${host: -1}
   /usr/bin/sudo -H -i -u "${vmUser}" bash -c "ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} \"/usr/bin/sudo sed -i '/IN  NS  ns1/ a \  IN  NS  ns${hostNum}.${baseDomain}.' /etc/bind/db.${baseDomain}\""
   /usr/bin/sudo -H -i -u "${vmUser}" bash -c "ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} \"/usr/bin/sudo sed -i '/\*/ i ns${hostNum}    IN      A      ${nodeIp}' /etc/bind/db.${baseDomain}\""
   /usr/bin/sudo -H -i -u "${vmUser}" bash -c "ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} \"/usr/bin/sudo sed -i '/\*/ a \*    IN      A      ${nodeIp}' /etc/bind/db.${baseDomain}\""
@@ -397,15 +397,25 @@ timeout -s TERM 3000 bash -c 'while [[ ! -f /var/lib/kubelet/config.yaml ]]; do
 /usr/bin/sudo '${installationWorkspace}'/kubeJoin.sh
 echo "Waiting for kx-worker/kx-main to be connected successfully to main node" && sleep 15; done'
 
+if [[ "${nodeRole}" == "kx-main" ]]; then
+  # Setup KX and root users as Kubernetes Admin
+  mkdir -p /root/.kube
+  cp -f /etc/kubernetes/admin.conf /root/.kube/config
+  /usr/bin/sudo -H -i -u ${vmUser} sh -c "mkdir -p /home/${vmUser}/.kube"
+  /usr/bin/sudo cp -f /etc/kubernetes/admin.conf /home/${vmUser}/.kube/config
+  /usr/bin/sudo chown $(id -u ${vmUser}):$(id -g ${vmUser}) /home/${vmUser}/.kube/config
+fi
+
 # Add label to kx-main node for NGINX Ingress Controller
 if [[ "${nodeRole}" == "kx-main" ]]; then
-  nodeName=$(hostname)
-  /usr/bin/sudo kubectl label nodes ${nodeName} ingress-controller=true --overwrite=true
+  /usr/bin/sudo kubectl label nodes $(hostname) ingress-controller=true --overwrite=true
   # Add an NGINX controller to the newly provisioned KX-Main node if not already running
   if [[ -z "$(/usr/bin/sudo kubectl -n nginx-ingress-controller get pod -o wide | grep $(hostname))" ]]; then
     replicaCount=$(/usr/bin/sudo kubectl get deploy -n nginx-ingress-controller -o json | jq -r '.items[].spec.replicas')
-    /usr/bin/sudo kubectl -n nginx-ingress-controller scale --replicas=$((${replicaCount}+1)) deployment/nginx-ingress-controller-ingress-nginx-controller
-    /usr/bin/sudo kubectl -n nginx-ingress-controller get pod -o wide
+    if [[ ${replicaCount} -lt ${hostNum} ]]; then
+      /usr/bin/sudo kubectl -n nginx-ingress-controller scale --replicas=${hostNum} deployment/nginx-ingress-controller-ingress-nginx-controller
+      /usr/bin/sudo kubectl -n nginx-ingress-controller get pod -o wide
+    fi
   fi
 fi
 
@@ -588,15 +598,6 @@ getent passwd
 ldapUserExists=$(/usr/bin/sudo ldapsearch -x -b "uid=${vmUser},ou=Users,ou=People,${ldapDn}" | grep numEntries || true)
 if [[ -n ${ldapUserExists} ]]; then
     /usr/bin/sudo userdel ${vmUser}
-fi
-
-if [[ "${nodeRole}" == "kx-main" ]]; then
-  # Setup KX and root users as Kubernetes Admin
-  mkdir -p /root/.kube
-  cp -f /etc/kubernetes/admin.conf /root/.kube/config
-  /usr/bin/sudo -H -i -u ${vmUser} sh -c "mkdir -p /home/${vmUser}/.kube"
-  /usr/bin/sudo cp -f /etc/kubernetes/admin.conf /home/${vmUser}/.kube/config
-  /usr/bin/sudo chown $(id -u ${vmUser}):$(id -g ${vmUser}) /home/${vmUser}/.kube/config
 fi
 
 # Reboot machine to ensure all network changes are active
