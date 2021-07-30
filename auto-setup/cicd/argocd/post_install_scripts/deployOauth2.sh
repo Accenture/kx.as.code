@@ -10,14 +10,14 @@ export kcContainer="keycloak"
 kubectl -n keycloak exec ${kcPod} --container ${kcContainer} -- \
     ${kcAdmCli} config credentials --server ${kcInternalUrl}/auth --realm ${kcRealm} --user admin --password ${vmPassword}
 
-## create a clients
+## Create client
 kubectl -n keycloak exec ${kcPod} --container ${kcContainer} -- \
     ${kcAdmCli} create clients --realm ${kcRealm} -s clientId=${componentName} \
     -s 'redirectUris=["https://'${componentName}'.'${baseDomain}'/auth/callback"]' \
     -s publicClient="false" -s enabled=true -s rootUrl="https://'${componentName}'.'${baseDomain}'" -s baseUrl="/applications" -i
 
 ## export clientId
-export clientID=$(kubectl -n keycloak exec ${kcPod} --container ${kcContainer} -- \
+export clientId=$(kubectl -n keycloak exec ${kcPod} --container ${kcContainer} -- \
     ${kcAdmCli} get clients --fields id,clientId | jq -r '.[] | select(.clientId=="argocd") | .id')
 
 # Get client secret
@@ -37,12 +37,12 @@ kubectl -n keycloak exec ${kcPod} --container ${kcContainer} -- \
     ${kcAdmCli} create -x client-scopes -s name=${componentName} -s protocol=openid-connect
 
 ## export the client scope id
-export clientscopeID=$(kubectl -n keycloak exec ${kcPod} --container ${kcContainer} -- \
+export clientscopeId=$(kubectl -n keycloak exec ${kcPod} --container ${kcContainer} -- \
     ${kcAdmCli} get -x client-scopes | jq -r '.[] | select(.name=="argocd") | .id')
 
 ## client scope protocol mapper
 kubectl -n keycloak exec ${kcPod} -- \
-    ${kcAdmCli} create client-scopes/$clientscopeID/protocol-mappers/models \
+    ${kcAdmCli} create client-scopes/$clientscopeId/protocol-mappers/models \
     -s name=groups \
     -s protocol=openid-connect \
     -s protocolMapper=oidc-group-membership-mapper \
@@ -52,7 +52,7 @@ kubectl -n keycloak exec ${kcPod} -- \
 
 ## map the above client scope id to the client
 kubectl -n keycloak exec ${kcPod} -- \
-    ${kcAdmCli} update clients/$clientID/default-client-scopes/$clientscopeID
+    ${kcAdmCli} update clients/$clientId/default-client-scopes/$clientscopeId
 
 ################### kubernetes manifests CRUD operations #####################################
 
@@ -77,10 +77,10 @@ stringData:
 kubectl apply -f ${installationWorkspace}/argocd-repo-server-tls.yaml
 
 # patch the argocd-secret with keycloak client id and add tls certs to avoid self signed certs trust issue in argocd
-export encodedClientID=$(echo -n "$clientSecret" | base64)
+export encodedClientId=$(echo -n "$clientSecret" | base64)
 export encodedTlsCrt=$(/usr/bin/sudo cat $installationWorkspace/kx-certs/tls.crt | base64 | tr -d '\n\r')
 export encodedTlsKey=$(/usr/bin/sudo cat $installationWorkspace/kx-certs/tls.key | base64 | tr -d '\n\r')
-kubectl patch secret argocd-secret -n argocd -p='{"data":{"oidc.keycloak.clientSecret": "'$encodedClientID'", "tls.crt": "'$encodedTlsCrt'", "tls.key": "'$encodedTlsKey'"}}'
+kubectl patch secret argocd-secret -n argocd -p='{"data":{"oidc.keycloak.clientSecret": "'$encodedClientId'", "tls.crt": "'$encodedTlsCrt'", "tls.key": "'$encodedTlsKey'"}}'
 
 # apply sso configured configmap
 echo """
