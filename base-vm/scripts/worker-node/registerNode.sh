@@ -185,9 +185,9 @@ if [[ ${baseIpType} == "static"   ]]; then
     export fixedNicConfigGateway=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.staticNetworkSetup.gateway')
     export fixedNicConfigDns1=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.staticNetworkSetup.dns1')
     export fixedNicConfigDns2=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.staticNetworkSetup.dns2')
-elif [[ -n $(dig kx-main1 +short) ]]; then
+elif [[ -n $(dig kx-main1.${baseDomain} +short) ]]; then
   # Try DNS
-  export kxMainIp=$(dig kx-main1 +short)
+  export kxMainIp=$(dig kx-main1.${baseDomain} +short)
 else
     # If no static IP or DNS, wait for file containing KxMain IP
     timeout -s TERM 3000 bash -c 'while [ ! -f /var/tmp/kx.as.code_main-ip-address ];         do
@@ -355,7 +355,7 @@ CERTIFICATES="kx_root_ca.pem kx_intermediate_ca.pem"
 ## Wait for certificates to be available on KX-Main
 wait-for-certificate() {
     while [[ ! -f ${installationWorkspace}/${CERTIFICATE} ]]; do
-      /usr/bin/sudo -H -i -u "${vmUser}" bash -c "scp -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp}:${REMOTE_KX_MAIN_CERTSDIR}/${CERTIFICATE} ${installationWorkspace}"
+      /usr/bin/sudo -H -i -u "${vmUser}" bash -c "scp -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp}:${REMOTE_KX_MAIN_CERTSDIR}/${CERTIFICATE} ${installationWorkspace} || true"
       echo "Waiting for ${0}"
       sleep 15
     done

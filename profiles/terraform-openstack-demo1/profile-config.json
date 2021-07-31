@@ -2,29 +2,30 @@
     "config": {
         "vm_properties": {
             "kx_version": "0.8.0",
-            "main_node_cpu_cores": 4,
-            "main_node_memory": 16384,
-            "worker_node_count": 0,
-            "worker_node_cpu_cores": 4,
-            "worker_node_memory": 16384,
+            "main_node_count": 3,
+            "main_node_cpu_cores": 2,
+            "main_node_memory": 8196,
+            "worker_node_count": 4,
+            "worker_node_cpu_cores": 2,
+            "worker_node_memory": 6144,
             "environment_prefix": "demo1",
             "openstack": {
-                "kx_main_image_id": "ab64b90c-8d88-4130-a024-fa7c8975137f",
-                "kx_worker_image_id": "bb671ae9-2881-48d7-a438-2747028b01b9",
+                "kx_main_image_id": "77e79cf6-0aa4-47f2-90ff-2d7ca13271b9",
+                "kx_worker_image_id": "55a48997-3210-410a-a41d-0177cfecc337",
                 "external_network_id": "48af4f9c-b380-4451-a13b-ab609b672b95"
             }
         },
-        "allowWorkloadsOnMaster": true,
+        "allowWorkloadsOnMaster": false,
         "disableSessionTimeout": true,
         "certificationMode": false,
         "disableLinuxDesktop": false,
         "defaultKeyboardLanguage": "de",
         "local_volumes": {
-            "one_gb": 20,
-            "five_gb": 15,
-            "ten_gb": 8,
-            "thirty_gb": 2,
-            "fifty_gb": 1
+            "one_gb": 5,
+            "five_gb": 5,
+            "ten_gb": 5,
+            "thirty_gb": 0,
+            "fifty_gb": 0
         },
         "virtualizationType": "private-cloud",
         "environmentPrefix": "demo1",

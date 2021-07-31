@@ -4,11 +4,12 @@
     "aws_availability_zone_two": "us-east-2b",
     "kx_version": "0.8.0",
     "vm_properties": {
-        "main_node_ami_id": "ami-04ea4a69f5db8d9da",
+        "main_node_ami_id": "ami-08ba7b2dc11fd3228",
         "main_node_instance_type": "t3.xlarge",
-        "worker_node_ami_id": "ami-0c95063f9e67a7aaf",
+        "main_node_count": 3,
+        "worker_node_ami_id": "ami-0cab523cbfe3a49fb",
         "worker_node_instance_type": "t3.large",
-        "worker_node_count": 0,
+        "worker_node_count": 4,
         "bastion_node_instance_type": "t3.nano"
     },
     "config": {
@@ -30,7 +31,7 @@
         "sslProvider": "letsencrypt",
         "letsEncryptEnvironment": "staging",
         "sslDomainAdminEmail": "admin@demo1.kx-as-code.io",
-        "mxDnsRecord": "mail.demo1.kx-as-code.io",
+        "mxDnsRecord": "mail.delamere.de",
         "baseDomain": "kx-as-code.io",
         "baseUser": "kx.hero",
         "basePassword": "L3arnandshare",
@@ -44,6 +45,6 @@
         "private_subnet_cidr_two": "10.0.5.0/24",
         "public_subnet_cidr_one": "10.0.3.0/24",
         "public_subnet_cidr_two": "10.0.4.0/24",
-        "remote_access_cidrs": ["87.180.74.187/32"]
+        "remote_access_cidrs": ["84.178.213.25/32"]
     }
 }

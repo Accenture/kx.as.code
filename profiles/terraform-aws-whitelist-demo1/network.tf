@@ -1,4 +1,4 @@
-resource "aws_network_interface" "kx_main" {
+resource "aws_network_interface" "kx_main_admin" {
   subnet_id       = module.vpc.private_subnets[0]
   security_groups = [module.vpc.default_security_group_id, aws_security_group.kx_main_nodes.id]
   source_dest_check      = false
@@ -20,7 +20,7 @@ module "vpc" {
   one_nat_gateway_per_az = false
 
   enable_dns_support     = true
-  dhcp_options_domain_name_servers = [ aws_network_interface.kx_main.private_ip, "AmazonProvidedDNS", "8.8.8.8" ]
+  dhcp_options_domain_name_servers = [ aws_network_interface.kx_main_admin.private_ip, "AmazonProvidedDNS", "8.8.8.8" ]
 
   manage_default_network_acl = true
   default_network_acl_name   = "${local.prefix}-kx-as-code"
@@ -31,33 +31,33 @@ resource "aws_vpc_dhcp_options" "dns_resolver" {
   domain_name_servers = ["8.8.8.8", "8.8.4.4"]
 }
 
-module "aws_logs" {
-  source            = "trussworks/logs/aws"
-  s3_bucket_name    = "kx-lb-logs-bucket"
-  default_allow     = false
-  allow_alb         = true
-  allow_nlb         = true
-  alb_logs_prefixes = [
-    "alb"
-  ]
-  nlb_logs_prefixes = [
-    "nlb"
-  ]
-}
+#module "aws_logs" {
+#  source            = "trussworks/logs/aws"
+#  s3_bucket_name    = "kx-lb-logs-bucket"
+#  default_allow     = false
+#  allow_alb         = true
+#  allow_nlb         = true
+#  alb_logs_prefixes = [
+#    "alb"
+#  ]
+#  nlb_logs_prefixes = [
+#    "nlb"
+#  ]
+#}
 
-resource "aws_lb" "kx_network_nlb" {
-  name               = "kx-network-nlb"
+resource "aws_lb" "kx_network_external_nlb" {
+  name               = "kx-network-external-nlb"
   internal           = false
   load_balancer_type = "network"
-  subnets            = [module.vpc.public_subnets.0,module.vpc.public_subnets.1]
+  subnets            = local.lb_public_subnets
 
   enable_deletion_protection = false
 
-  access_logs {
-    bucket  = module.aws_logs.aws_logs_bucket
-    prefix  = "nlb"
-    enabled = true
-  }
+  #access_logs {
+  #  bucket  = module.aws_logs.aws_logs_bucket
+  #  prefix  = "nlb"
+  #  enabled = true
+  #}
 
   tags = {
     Environment = "${local.prefix}-kx-as-code"
@@ -79,7 +79,37 @@ resource "aws_lb_target_group" "http" {
 
 resource "aws_lb_target_group_attachment" "http" {
   target_group_arn = aws_lb_target_group.http.arn
-  target_id = aws_instance.kx_main.id
+  target_id = aws_instance.kx_main_admin.id
+}
+
+resource "aws_alb_target_group_attachment" "http_additional" {
+  count = length(aws_instance.kx_main_additional)
+  target_group_arn = aws_lb_target_group.http.arn
+  target_id = aws_instance.kx_main_additional[count.index].id
+}
+
+resource "aws_lb_target_group" "api_external" {
+  name = "api-external"
+  port = 6443
+  protocol = "TCP"
+  vpc_id = module.vpc.vpc_id
+  target_type = "instance"
+
+  health_check {
+    port = 6443
+    protocol = "TCP"
+  }
+}
+
+resource "aws_lb_target_group_attachment" "api_external" {
+  target_group_arn = aws_lb_target_group.api_external.arn
+  target_id = aws_instance.kx_main_admin.id
+}
+
+resource "aws_lb_target_group_attachment" "api_external_additional" {
+  count = length(aws_instance.kx_main_additional)
+  target_group_arn = aws_lb_target_group.api_external.arn
+  target_id = aws_instance.kx_main_additional[count.index].id
 }
 
 resource "aws_lb_target_group" "https" {
@@ -97,7 +127,13 @@ resource "aws_lb_target_group" "https" {
 
 resource "aws_lb_target_group_attachment" "https" {
   target_group_arn = aws_lb_target_group.https.arn
-  target_id = aws_instance.kx_main.id
+  target_id = aws_instance.kx_main_admin.id
+}
+
+resource "aws_lb_target_group_attachment" "https_additional" {
+  count = length(aws_instance.kx_main_additional)
+  target_group_arn = aws_lb_target_group.https.arn
+  target_id = aws_instance.kx_main_additional[count.index].id
 }
 
 resource "aws_lb_target_group" "rdp" {
@@ -115,11 +151,11 @@ resource "aws_lb_target_group" "rdp" {
 
 resource "aws_lb_target_group_attachment" "rdp" {
   target_group_arn = aws_lb_target_group.rdp.arn
-  target_id = aws_instance.kx_main.id
+  target_id = aws_instance.kx_main_admin.id
 }
 
 resource "aws_lb_listener" "http" {
-  load_balancer_arn = aws_lb.kx_network_nlb.arn
+  load_balancer_arn = aws_lb.kx_network_external_nlb.arn
   port              = "80"
   protocol          = "TCP"
 
@@ -130,7 +166,7 @@ resource "aws_lb_listener" "http" {
 }
 
 resource "aws_lb_listener" "https" {
-  load_balancer_arn = aws_lb.kx_network_nlb.arn
+  load_balancer_arn = aws_lb.kx_network_external_nlb.arn
   port              = "443"
   protocol          = "TCP"
 
@@ -140,8 +176,19 @@ resource "aws_lb_listener" "https" {
   }
 }
 
+resource "aws_lb_listener" "api_external" {
+  load_balancer_arn = aws_lb.kx_network_external_nlb.arn
+  port              = "6443"
+  protocol          = "TCP"
+
+  default_action {
+    type = "forward"
+    target_group_arn = aws_lb_target_group.api_external.arn
+  }
+}
+
 resource "aws_lb_listener" "rdp" {
-  load_balancer_arn = aws_lb.kx_network_nlb.arn
+  load_balancer_arn = aws_lb.kx_network_external_nlb.arn
   port              = "4000"
   protocol          = "TCP_UDP"
 
@@ -163,12 +210,21 @@ resource "aws_route53_record" "kx_bastion" {
   records = [aws_instance.kx_bastion.public_ip]
 }
 
-resource "aws_route53_record" "kx_main" {
+resource "aws_route53_record" "kx_main_admin" {
   zone_id = aws_route53_zone.kx_as_code.zone_id
-  name    = "kx-main.${local.prefix}.${local.kx_as_code_domain}"
+  name    = "kx-main1.${local.prefix}.${local.kx_as_code_domain}"
   type    = "A"
   ttl     = 300
-  records = [aws_instance.kx_main.private_ip]
+  records = [aws_instance.kx_main_admin.private_ip]
+}
+
+resource "aws_route53_record" "kx_main_additional" {
+  zone_id = aws_route53_zone.kx_as_code.zone_id
+  name    = "kx-main${count.index + 2}.${local.prefix}.${local.kx_as_code_domain}"
+  count   = local.main_node_count - 1
+  type    = "A"
+  ttl     = 300
+  records = [element(aws_instance.kx_main_additional.*.private_ip, count.index)]
 }
 
 resource "aws_route53_record" "kx_caa" {
@@ -201,7 +257,42 @@ resource "aws_route53_record" "rdp" {
   name    = "rdp.${local.prefix}.${local.kx_as_code_domain}"
   type    = "CNAME"
   ttl     = 300
-  records = [aws_lb.kx_network_nlb.dns_name]
+  records = [aws_lb.kx_network_external_nlb.dns_name]
+}
+
+resource "aws_route53_health_check" "api_internal" {
+  fqdn              = "api-internal.${local.prefix}.${local.kx_as_code_domain}"
+  port              = 6443
+  type              = "TCP"
+  failure_threshold = "5"
+  request_interval  = "30"
+}
+
+resource "aws_route53_record" "k8s_api_internal_admin" {
+  zone_id = aws_route53_zone.kx_as_code.zone_id
+  name    = "api-internal.${local.prefix}.${local.kx_as_code_domain}"
+  type    = "A"
+  ttl     = 300
+  health_check_id = aws_route53_health_check.api_internal.id
+  multivalue_answer_routing_policy  = true
+  set_identifier = "1"
+  records = [
+    aws_instance.kx_main_admin.private_ip
+  ]
+}
+
+resource "aws_route53_record" "k8s_api_internal_additional" {
+  count = (local.main_node_count - 1) < 0 ? 0 : local.main_node_count - 1
+  zone_id = aws_route53_zone.kx_as_code.zone_id
+  name    = "api-internal.${local.prefix}.${local.kx_as_code_domain}"
+  type    = "A"
+  ttl     = 300
+  health_check_id = aws_route53_health_check.api_internal.id
+  multivalue_answer_routing_policy  = true
+  set_identifier = "${count.index + 2}"
+  records = [
+    aws_instance.kx_main_additional[count.index].private_ip
+  ]
 }
 
 resource "aws_route53_record" "wildcard" {
@@ -209,5 +300,5 @@ resource "aws_route53_record" "wildcard" {
   name    = "*.${local.prefix}.${local.kx_as_code_domain}"
   type    = "CNAME"
   ttl     = 300
-  records = [aws_lb.kx_network_nlb.dns_name]
+  records = [aws_lb.kx_network_external_nlb.dns_name]
 }

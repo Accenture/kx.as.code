@@ -7,6 +7,7 @@ locals {
 
   main_node_ami_id              = local.raw_data.vm_properties.main_node_ami_id
   main_node_instance_type       = local.raw_data.vm_properties.main_node_instance_type
+  main_node_count               = local.raw_data.vm_properties.main_node_count
 
   worker_node_ami_id            = local.raw_data.vm_properties.worker_node_ami_id
   worker_node_instance_type     = local.raw_data.vm_properties.worker_node_instance_type
@@ -20,6 +21,9 @@ locals {
   public_subnet_cidr_one        = local.raw_data.config.public_subnet_cidr_one
   public_subnet_cidr_two        = local.raw_data.config.public_subnet_cidr_two
   remote_access_cidrs           = local.raw_data.config.remote_access_cidrs
+
+  lb_public_subnets             = local.raw_data.vm_properties.main_node_count > 1 ? [module.vpc.public_subnets.0,module.vpc.public_subnets.1] : [module.vpc.public_subnets.0]
+#  lb_private_subnets            = local.raw_data.vm_properties.main_node_count > 1 ? [module.vpc.private_subnets.0,module.vpc.private_subnets.1] : [module.vpc.private_subnets.0]
 
   kx_as_code_domain             = local.raw_data.config.baseDomain
   prefix                        = local.raw_data.config.environmentPrefix

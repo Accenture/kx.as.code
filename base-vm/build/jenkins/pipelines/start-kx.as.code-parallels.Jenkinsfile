@@ -57,7 +57,7 @@ pipeline {
                         export kxMainBoxLocation=${kx_main_box_location}
                         export kxWorkerBoxLocation=${kx_worker_box_location}
                         cd profiles/vagrant-parallels-demo1
-                        vagrant up
+                        vagrant up --provider parallels
                         """
                     }
                 }
