@@ -375,6 +375,7 @@ done
 /usr/bin/sudo systemctl restart docker
 
 # Wait until DNS resolution is back up before proceeding with Kubernetes node registration
+rc=1
 while [[ "$rc" != "0" ]]; do
   nslookup kx-main1.'${baseDomain}'; rc=$?;
   echo "Waiting for kx-main1 DNS resolution to function"
