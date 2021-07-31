@@ -7,26 +7,29 @@ export kxHomeDir=/usr/share/kx.as.code
 export sharedGitRepositories=${kxHomeDir}/git
 export installationWorkspace=${kxHomeDir}/workspace
 
-# Determine which NIC to bind to, to avoid binding to internal VirtualBox NAT NICs for example, where all hosts have the same IP - 10.0.2.15
-export nicList=$(nmcli device show | grep -E 'enp|ens|eth0' | grep 'GENERAL.DEVICE' | awk '{print $2}')
-export ipsToExclude="10.0.2.15"   # IP addresses not to configure as listener. For example, default Virtualbox IP 10.0.2.15
-export nicExclusions=""
-export excludeNic=""
-for nic in ${nicList}; do
-    for ipToExclude in ${ipsToExclude}; do
-        ip=$(ip a s ${nic} | egrep -o 'inet [0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | cut -d' ' -f2 || true)
-        echo ${ip}
-        if [[ ${ip} == "${ipToExclude}" ]]; then
-            excludeNic="true"
-        fi
-    done
-    if [[ ${excludeNic} == "true" ]]; then
-        echo "Excluding NIC ${nic}"
-        nicExclusions="${nicExclusions} ${nic}"
-        excludeNic="false"
-    else
-        netDevice=${nic}
-    fi
+export netDevice=""
+while [[ -z ${netDevice} ]]; do
+  # Determine which NIC to bind to, to avoid binding to internal VirtualBox NAT NICs for example, where all hosts have the same IP - 10.0.2.15
+  export nicList=$(nmcli device show | grep -E 'enp|ens|eth' | grep 'GENERAL.DEVICE' | awk '{print $2}')
+  export ipsToExclude="10.0.2.15"   # IP addresses not to configure with static IP. For example, default Virtualbox IP 10.0.2.15
+  export nicExclusions=""
+  export excludeNic="false"
+  for nic in ${nicList}; do
+      for ipToExclude in ${ipsToExclude}; do
+          ip=$(ip a s ${nic} | egrep -o 'inet [0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | cut -d' ' -f2 || true)
+          echo ${ip}
+          if [[ ${ip} == "${ipToExclude}" ]]; then
+              excludeNic="true"
+          fi
+      done
+      if [[ ${excludeNic} == "true" ]]; then
+          echo "Excluding NIC ${nic}"
+          nicExclusions="${nicExclusions} ${nic}"
+          excludeNic="false"
+      else
+          netDevice=${nic}
+      fi
+  done
 done
 echo "NIC exclusions: ${nicExclusions}"
 echo "NIC to use: ${netDevice}"
@@ -34,13 +37,10 @@ echo "NIC to use: ${netDevice}"
 export nodeIp=$(ifconfig ${netDevice} | awk '/inet / {print $2}')
 
 # Check profile-config.json file is present before executing script
-wait-for-file() {
-    timeout -s TERM 6000 bash -c \
-        'while [[ ! -f ${0} ]];\
-    do echo "Waiting for ${0} file" && sleep 15;\
-done' ${1}
-}
-wait-for-file ${installationWorkspace}/profile-config.json
+while [[ ! -f ${installationWorkspace}/profile-config.json ]]; do
+  echo "Waiting for ${installationWorkspace}/profile-config.json file"
+  sleep 15
+done
 
 # Install nvme-cli if running on host with NVMe block devices (for example on AWS with EBS)
 /usr/bin/sudo lsblk -i -o kname,mountpoint,fstype,size,maj:min,name,state,rm,rota,ro,type,label,model,serial
@@ -143,31 +143,6 @@ cd ${installationWorkspace}
 
 # Get configs from profile-config.json
 export virtualizationType=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.virtualizationType')
-
-# Determine which NIC to bind to, to avoid binding to internal VirtualBox NAT NICs for example, where all hosts have the same IP - 10.0.2.15
-export nicList=$(nmcli device show | grep -E 'enp|ens|eth' | grep 'GENERAL.DEVICE' | awk '{print $2}')
-export ipsToExclude="10.0.2.15"   # IP addresses not to configure with static IP. For example, default Virtualbox IP 10.0.2.15
-export nicExclusions=""
-export excludeNic="false"
-for nic in ${nicList}; do
-    for ipToExclude in ${ipsToExclude}; do
-        ip=$(ip a s ${nic} | egrep -o 'inet [0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | cut -d' ' -f2)
-        echo ${ip}
-        if [[ ${ip} == "${ipToExclude}" ]]; then
-            excludeNic="true"
-        fi
-    done
-    if [[ ${excludeNic} == "true" ]]; then
-        echo "Excluding NIC ${nic}"
-        nicExclusions="${nicExclusions} ${nic}"
-        excludeNic="false"
-    else
-        netDevice=${nic}
-    fi
-done
-echo "NIC Exclusions: ${nicExclusions}"
-echo "NIC to use: ${netDevice}"
-
 export environmentPrefix=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.environmentPrefix')
 if [ -z ${environmentPrefix} ]; then
     export baseDomain="$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.baseDomain')"
@@ -248,7 +223,7 @@ if [[ ! -f /usr/share/kx.as.code/.config/network_status ]]; then
     fi
 
     if [[ ${baseIpType} == "static" ]]; then
-        # Configure IF to be managed/confgured by network-manager
+        # Configure IF to be managed/configured by network-manager
         /usr/bin/sudo rm -f /etc/NetworkManager/system-connections/*
         /usr/bin/sudo mv /etc/network/interfaces /etc/network/interfaces.unused
         /usr/bin/sudo nmcli con add con-name "${netDevice}" ifname ${netDevice} type ethernet ip4 ${kxWorkerIp}/24 gw4 ${fixedNicConfigGateway}
@@ -261,6 +236,11 @@ if [[ ! -f /usr/share/kx.as.code/.config/network_status ]]; then
     # Ensure the whole network setup does not execute again on next run after reboot
     /usr/bin/sudo mkdir -p /usr/share/kx.as.code/.config
     echo "KX.AS.CODE network config done" | /usr/bin/sudo tee /usr/share/kx.as.code/.config/network_status
+
+    # Reboot machine to ensure all network changes are active
+    if [ "${baseIpType}" == "static" ]; then
+        /usr/bin/sudo reboot
+    fi
 
 fi
 
@@ -275,12 +255,90 @@ if [[ ${virtualizationType} != "public-cloud"   ]] && [[ ${virtualizationType} !
     # Create RSA key for kx.hero user
     mkdir -p /home/${vmUser}/.ssh
     chown -R ${vmUser}:${vmUser} /home/${vmUser}/.ssh
-    chmod 700 $installationWorkspace/.ssh
-    yes | /usr/bin/sudo -u "${vmUser}" ssh-keygen -f ssh-keygen -m PEM -t rsa -b 4096 -q -f /home/${vmUser}/.ssh/id_rsa -N ''
+    chmod 700 /home/${vmUser}/.ssh
+    if [[ ! -f /home/${vmUser}/.ssh/id_rsa ]] || [[ ! -f /home/${vmUser}/.ssh/id_rsa.pub ]]; then
+      /usr/bin/sudo rm -f /home/${vmUser}/.ssh/id_rsa
+      /usr/bin/sudo rm -f /home/${vmUser}/.ssh/id_rsa.pub
+      yes | /usr/bin/sudo -u "${vmUser}" ssh-keygen -f ssh-keygen -m PEM -t rsa -b 4096 -q -f /home/${vmUser}/.ssh/id_rsa -N ''
+    fi
 fi
+
+# Wait for KX-Main to become available for executing SSH based commands
+available=false
+while [[ "${available}" == "false"  ]]; do
+  echo "Still trying to reach KX-Main1 (${kxMainIp}) on SSH. Retrying..."
+  nc -zw 2 ${kxMainIp} 22 && { available=true; } || { echo available=false ; }
+  sleep 15
+done
 
 # Add key to KX-Main host
 /usr/bin/sudo -H -i -u "${vmUser}" bash -c "sshpass -f ${kxHomeDir}/.config/.user.cred ssh-copy-id -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp}"
+
+# Add server IP to Bind9 DNS service on KX-Main1 host
+/usr/bin/sudo -H -i -u "${vmUser}" bash -c "ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} \"/usr/bin/sudo sed -i '/\*.*IN.*A.*${kxMainIp}/ i $(hostname)    IN      A      ${nodeIp}' /etc/bind/db.${baseDomain}\""
+if [[ "${nodeRole}" == "kx-main" ]]; then
+  /usr/bin/sudo -H -i -u "${vmUser}" bash -c "ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} \"/usr/bin/sudo sed -i '/\*.*IN.*A.*${kxMainIp}/ i api-internal    IN      A      ${nodeIp}' /etc/bind/db.${baseDomain}\""
+  host=$(hostname); export hostNum=${host: -1}
+  /usr/bin/sudo -H -i -u "${vmUser}" bash -c "ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} \"/usr/bin/sudo sed -i '/IN.*NS.*ns1/ a \  IN  NS  ns${hostNum}.${baseDomain}.' /etc/bind/db.${baseDomain}\""
+  /usr/bin/sudo -H -i -u "${vmUser}" bash -c "ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} \"/usr/bin/sudo sed -i '/\*.*IN.*A.*${kxMainIp}/ i ns${hostNum}    IN      A      ${nodeIp}' /etc/bind/db.${baseDomain}\""
+  /usr/bin/sudo -H -i -u "${vmUser}" bash -c "ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} \"echo '*    IN      A      ${nodeIp}' | sudo tee -a /etc/bind/db.${baseDomain}\""
+fi
+# Restart Bind9 after updating it with new worker/main node
+/usr/bin/sudo -H -i -u "${vmUser}" bash -c "ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} \"/usr/bin/sudo rndc reload\""
+
+# If KX-Main node, install Domain server to replicate zone from main1
+ # Install Bind9 for local DNS resolution
+if [[ "${nodeRole}" == "kx-main" ]]; then
+
+/usr/bin/sudo apt install -y bind9 bind9utils bind9-doc
+
+echo '''options {
+        directory "/var/cache/bind";
+
+        // If there is a firewall between you and nameservers you want
+        // to talk to, you may need to fix the firewall to allow multiple
+        // ports to talk.  See http://www.kb.cert.org/vuls/id/800113
+
+        // If your ISP provided one or more IP addresses for stable
+        // nameservers, you probably want to use them as forwarders.
+        // Uncomment the following block, and insert the addresses replacing
+        // the all-0s placeholder.
+
+        // forwarders {
+        //      0.0.0.0;
+        // };
+
+        //========================================================================
+        // If BIND logs error messages about the root key being expired,
+        // you will need to update your keys.  See https://www.isc.org/bind-keys
+        //========================================================================
+        dnssec-validation auto;
+
+        listen-on-v6 { any; };
+
+        version "not currently available";
+        recursion yes;
+        querylog yes;
+        allow-transfer { none; };
+
+};''' | /usr/bin/sudo tee /etc/bind/named.conf.options
+
+echo '''zone "'${baseDomain}'" {
+        type slave;
+        file "/var/cache/bind/db.'${baseDomain}'";
+        allow-query { any; };
+        masters { '${kxMainIp}'; };
+        allow-transfer { none; };
+};
+''' | sudo tee -a /etc/bind/named.conf.local
+
+sudo systemctl restart bind9
+
+# Add new DNS server to resolv.conf on KX-Main1
+/usr/bin/sudo -H -i -u "${vmUser}" bash -c "ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} 'echo \"nameserver ${nodeIp}\" | /usr/bin/sudo tee -a /etc/resolv.conf'"
+echo "nameserver ${nodeIp}" | /usr/bin/sudo tee -a /etc/resolv.conf
+
+fi
 
 # Add KX-Main key to worker
 /usr/bin/sudo -H -i -u "${vmUser}" bash -c "ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} \"cat /home/${vmUser}/.ssh/id_rsa.pub\" | tee -a /home/${vmUser}/.ssh/authorized_keys"
@@ -296,9 +354,11 @@ CERTIFICATES="kx_root_ca.pem kx_intermediate_ca.pem"
 
 ## Wait for certificates to be available on KX-Main
 wait-for-certificate() {
-    timeout -s TERM 3000 bash -c 'while [[ ! -f '${installationWorkspace}'/'${CERTIFICATE}' ]];         do
-    /usr/bin/sudo -H -i -u '${vmUser}' bash -c "scp -o StrictHostKeyChecking=no '${vmUser}'@'${kxMainIp}':'${REMOTE_KX_MAIN_CERTSDIR}'/'${CERTIFICATE}' '${installationWorkspace}'";
-    echo "Waiting for ${0}" && sleep 5;         done'
+    while [[ ! -f ${installationWorkspace}/${CERTIFICATE} ]]; do
+      /usr/bin/sudo -H -i -u "${vmUser}" bash -c "scp -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp}:${REMOTE_KX_MAIN_CERTSDIR}/${CERTIFICATE} ${installationWorkspace}"
+      echo "Waiting for ${0}"
+      sleep 15
+    done
 }
 
 /usr/bin/sudo mkdir -p /usr/share/ca-certificates/kubernetes
@@ -315,14 +375,18 @@ done
 /usr/bin/sudo systemctl restart docker
 
 # Wait until DNS resolution is back up before proceeding with Kubernetes node registration
-timeout -s TERM 3000 bash -c 'while [[ "$rc" != "0" ]]; do
-nslookup kx-main1.'${baseDomain}'; rc=$?;
-echo "Waiting for kx-main1 DNS resolution to function" && sleep 5; done'
+rc=1
+while [[ "$rc" != "0" ]]; do
+  nslookup kx-main1.${baseDomain}; rc=$?;
+  echo "Waiting for kx-main1 DNS resolution to function"
+  sleep 15
+done
 
 # Wait for Kubernetes to be available
-timeout -s TERM 3000 bash -c \
-    'while [[ "$(curl -k -s https://'${kxMainIp}':6443/livez)" != "ok" ]];\
-do echo "Waiting for https://'${kxMainIp}':6443/livez" && sleep 5;  done'
+while [[ "$(curl -k -s https://${kxMainIp}:6443/livez)" != "ok" ]]; do
+  echo "Waiting for https://${kxMainIp}:6443/livez"
+  sleep 15
+done
 
 # Kubernetes master is reachable, join the node to cluster
 if [[ "${nodeRole}" == "kx-worker" ]]; then
@@ -341,11 +405,35 @@ fi
 
 
 # Keep trying to join Kubernetes cluster until successful
-timeout -s TERM 3000 bash -c 'while [[ ! -f /var/lib/kubelet/config.yaml ]]; do
-/usr/bin/sudo '${installationWorkspace}'/kubeJoin.sh
-echo "Waiting for kx-worker/kx-main to be connected successfully to main node" && sleep 15; done'
+while [[ ! -f /var/lib/kubelet/config.yaml ]]; do
+  /usr/bin/sudo ${installationWorkspace}/kubeJoin.sh
+  echo "Waiting for kx-worker/kx-main to be connected successfully to main node"
+  sleep 30
+done
 
-# Disable the Service After it Ran
+if [[ "${nodeRole}" == "kx-main" ]]; then
+  # Setup KX and root users as Kubernetes Admin
+  mkdir -p /root/.kube
+  cp -f /etc/kubernetes/admin.conf /root/.kube/config
+  /usr/bin/sudo -H -i -u ${vmUser} sh -c "mkdir -p /home/${vmUser}/.kube"
+  /usr/bin/sudo cp -f /etc/kubernetes/admin.conf /home/${vmUser}/.kube/config
+  /usr/bin/sudo chown $(id -u ${vmUser}):$(id -g ${vmUser}) /home/${vmUser}/.kube/config
+fi
+
+# Add label to kx-main node for NGINX Ingress Controller
+if [[ "${nodeRole}" == "kx-main" ]]; then
+  /usr/bin/sudo kubectl label nodes $(hostname) ingress-controller=true --overwrite=true
+  # Add an NGINX controller to the newly provisioned KX-Main node if not already running
+  if [[ -z "$(/usr/bin/sudo kubectl -n nginx-ingress-controller get pod -o wide | grep $(hostname))" ]]; then
+    replicaCount=$(/usr/bin/sudo kubectl get deploy -n nginx-ingress-controller -o json | jq -r '.items[].spec.replicas')
+    if [[ ${replicaCount} -lt ${hostNum} ]]; then
+      /usr/bin/sudo kubectl -n nginx-ingress-controller scale --replicas=${hostNum} deployment/nginx-ingress-controller-ingress-nginx-controller
+      /usr/bin/sudo kubectl -n nginx-ingress-controller get pod -o wide
+    fi
+  fi
+fi
+
+# Disable the service after it ran
 /usr/bin/sudo systemctl disable k8s-register-node.service
 
 # Setup proxy settings if they exist
@@ -382,7 +470,7 @@ if ( [[ -n ${httpProxySetting} ]] || [[ -n ${httpsProxySetting} ]] ) && ( [[ "${
         printf -v service '"'"'%s,'"'"' '${baseip}'.{1..253}
         export no_proxy="${lan%,},${service%,},${pool%,},127.0.0.1,.'${baseDomain}'";
         export NO_PROXY=$no_proxy
-        ''' | /usr/bin/sudo tee -a /root/.bashrc /root/.zshrc /home/$vmUser/.bashrc /home/$vmUser/.zshrc
+        ''' | /usr/bin/sudo tee -a /root/.bashrc /root/.zshrc /home/${vmUser}/.bashrc /home/${vmUser}/.zshrc
     fi
 fi
 
@@ -526,16 +614,7 @@ if [[ -n ${ldapUserExists} ]]; then
     /usr/bin/sudo userdel ${vmUser}
 fi
 
-if [[ "${nodeRole}" == "kx-main" ]]; then
-  # Setup KX and root users as Kubernetes Admin
-  mkdir -p /root/.kube
-  cp -f /etc/kubernetes/admin.conf /root/.kube/config
-  /usr/bin/sudo -H -i -u ${vmUser} sh -c "mkdir -p /home/${vmUser}/.kube"
-  /usr/bin/sudo cp -f /etc/kubernetes/admin.conf /home/${vmUser}/.kube/config
-  /usr/bin/sudo chown $(id -u ${vmUser}):$(id -g ${vmUser}) /home/${vmUser}/.kube/config
-fi
-
 # Reboot machine to ensure all network changes are active
 if [ "${baseIpType}" == "static" ]; then
-    /usr/bin/sudo reboot
+    sudo reboot
 fi
