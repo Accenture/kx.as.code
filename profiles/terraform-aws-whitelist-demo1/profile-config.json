@@ -2,7 +2,7 @@
     "aws_region": "us-east-2",
     "aws_availability_zone_one": "us-east-2a",
     "aws_availability_zone_two": "us-east-2b",
-    "kx_version": "0.7.1",
+    "kx_version": "0.8.0",
     "vm_properties": {
         "main_node_ami_id": "ami-04ea4a69f5db8d9da",
         "main_node_instance_type": "t3.xlarge",
