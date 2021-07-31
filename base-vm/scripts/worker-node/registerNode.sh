@@ -355,7 +355,7 @@ CERTIFICATES="kx_root_ca.pem kx_intermediate_ca.pem"
 ## Wait for certificates to be available on KX-Main
 wait-for-certificate() {
     while [[ ! -f ${installationWorkspace}/${CERTIFICATE} ]]; do
-      /usr/bin/sudo -H -i -u "${vmUser}" bash -c "scp -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp}:${REMOTE_KX_MAIN_CERTSDIR}/${CERTIFICATE} ${installationWorkspace}"
+      /usr/bin/sudo -H -i -u "${vmUser}" bash -c "scp -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp}:${REMOTE_KX_MAIN_CERTSDIR}/${CERTIFICATE} ${installationWorkspace} || true"
       echo "Waiting for ${0}"
       sleep 15
     done
