@@ -1,12 +1,13 @@
 {
     "config": {
         "vm_properties": {
-            "kx_version": "0.7.1",
-            "main_node_cpu_cores": 4,
-            "main_node_memory": 16384,
-            "worker_node_count": 0,
-            "worker_node_cpu_cores": 4,
-            "worker_node_memory": 16384,
+            "kx_version": "0.8.0",
+            "main_node_count": 3,
+            "main_node_cpu_cores": 2,
+            "main_node_memory": 8196,
+            "worker_node_count": 4,
+            "worker_node_cpu_cores": 2,
+            "worker_node_memory": 8196,
             "environment_prefix": "demo1",
             "openstack": {
                 "kx_main_image_id": "ab64b90c-8d88-4130-a024-fa7c8975137f",
@@ -14,7 +15,7 @@
                 "external_network_id": "48af4f9c-b380-4451-a13b-ab609b672b95"
             }
         },
-        "allowWorkloadsOnMaster": true,
+        "allowWorkloadsOnMaster": false,
         "disableSessionTimeout": true,
         "certificationMode": false,
         "disableLinuxDesktop": false,
