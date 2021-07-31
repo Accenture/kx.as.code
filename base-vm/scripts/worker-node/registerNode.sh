@@ -377,14 +377,14 @@ done
 # Wait until DNS resolution is back up before proceeding with Kubernetes node registration
 rc=1
 while [[ "$rc" != "0" ]]; do
-  nslookup kx-main1.'${baseDomain}'; rc=$?;
+  nslookup kx-main1.${baseDomain}; rc=$?;
   echo "Waiting for kx-main1 DNS resolution to function"
   sleep 15
 done
 
 # Wait for Kubernetes to be available
-while [[ "$(curl -k -s https://'${kxMainIp}':6443/livez)" != "ok" ]]; do
-  echo "Waiting for https://'${kxMainIp}':6443/livez"
+while [[ "$(curl -k -s https://${kxMainIp}:6443/livez)" != "ok" ]]; do
+  echo "Waiting for https://${kxMainIp}:6443/livez"
   sleep 15
 done
 
