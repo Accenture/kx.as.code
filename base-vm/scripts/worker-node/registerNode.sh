@@ -37,13 +37,11 @@ echo "NIC to use: ${netDevice}"
 export nodeIp=$(ifconfig ${netDevice} | awk '/inet / {print $2}')
 
 # Check profile-config.json file is present before executing script
-wait-for-file() {
-    timeout -s TERM 6000 bash -c \
-        'while [[ ! -f ${0} ]];\
-    do echo "Waiting for ${0} file" && sleep 15;\
-done' ${1}
+while [[ ! -f ${installationWorkspace}/profile-config.json ]]; do
+  echo "Waiting for ${installationWorkspace}/profile-config.json file"
+  sleep 15
+done
 }
-wait-for-file ${installationWorkspace}/profile-config.json
 
 # Install nvme-cli if running on host with NVMe block devices (for example on AWS with EBS)
 /usr/bin/sudo lsblk -i -o kname,mountpoint,fstype,size,maj:min,name,state,rm,rota,ro,type,label,model,serial
@@ -278,13 +276,13 @@ done
 /usr/bin/sudo -H -i -u "${vmUser}" bash -c "sshpass -f ${kxHomeDir}/.config/.user.cred ssh-copy-id -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp}"
 
 # Add server IP to Bind9 DNS service on KX-Main1 host
-/usr/bin/sudo -H -i -u "${vmUser}" bash -c "ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} \"/usr/bin/sudo sed -i '/\*/ i $(hostname)    IN      A      ${nodeIp}' /etc/bind/db.${baseDomain}\""
+/usr/bin/sudo -H -i -u "${vmUser}" bash -c "ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} \"/usr/bin/sudo sed -i '/\*.*IN.*A.*${kxMainIp}/ i $(hostname)    IN      A      ${nodeIp}' /etc/bind/db.${baseDomain}\""
 if [[ "${nodeRole}" == "kx-main" ]]; then
-  /usr/bin/sudo -H -i -u "${vmUser}" bash -c "ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} \"/usr/bin/sudo sed -i '/\*/ i api-internal    IN      A      ${nodeIp}' /etc/bind/db.${baseDomain}\""
+  /usr/bin/sudo -H -i -u "${vmUser}" bash -c "ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} \"/usr/bin/sudo sed -i '/\*.*IN.*A.*${kxMainIp}/ i api-internal    IN      A      ${nodeIp}' /etc/bind/db.${baseDomain}\""
   host=$(hostname); export hostNum=${host: -1}
-  /usr/bin/sudo -H -i -u "${vmUser}" bash -c "ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} \"/usr/bin/sudo sed -i '/IN  NS  ns1/ a \  IN  NS  ns${hostNum}.${baseDomain}.' /etc/bind/db.${baseDomain}\""
-  /usr/bin/sudo -H -i -u "${vmUser}" bash -c "ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} \"/usr/bin/sudo sed -i '/\*/ i ns${hostNum}    IN      A      ${nodeIp}' /etc/bind/db.${baseDomain}\""
-  /usr/bin/sudo -H -i -u "${vmUser}" bash -c "ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} \"/usr/bin/sudo sed -i '/\*/ a \*    IN      A      ${nodeIp}' /etc/bind/db.${baseDomain}\""
+  /usr/bin/sudo -H -i -u "${vmUser}" bash -c "ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} \"/usr/bin/sudo sed -i '/IN.*NS.*ns1/ a \  IN  NS  ns${hostNum}.${baseDomain}.' /etc/bind/db.${baseDomain}\""
+  /usr/bin/sudo -H -i -u "${vmUser}" bash -c "ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} \"/usr/bin/sudo sed -i '/\*.*IN.*A.*${kxMainIp}/ i ns${hostNum}    IN      A      ${nodeIp}' /etc/bind/db.${baseDomain}\""
+  /usr/bin/sudo -H -i -u "${vmUser}" bash -c "ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} \"echo '*    IN      A      ${nodeIp}' | sudo tee -a /etc/bind/db.${baseDomain}\""
 fi
 # Restart Bind9 after updating it with new worker/main node
 /usr/bin/sudo -H -i -u "${vmUser}" bash -c "ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} \"/usr/bin/sudo rndc reload\""
@@ -331,6 +329,7 @@ echo '''zone "'${baseDomain}'" {
         file "/var/cache/bind/db.'${baseDomain}'";
         allow-query { any; };
         masters { '${kxMainIp}'; };
+        allow-transfer { none; };
 };
 ''' | sudo tee -a /etc/bind/named.conf.local
 
@@ -356,9 +355,11 @@ CERTIFICATES="kx_root_ca.pem kx_intermediate_ca.pem"
 
 ## Wait for certificates to be available on KX-Main
 wait-for-certificate() {
-    timeout -s TERM 3000 bash -c 'while [[ ! -f '${installationWorkspace}'/'${CERTIFICATE}' ]];         do
-    /usr/bin/sudo -H -i -u '${vmUser}' bash -c "scp -o StrictHostKeyChecking=no '${vmUser}'@'${kxMainIp}':'${REMOTE_KX_MAIN_CERTSDIR}'/'${CERTIFICATE}' '${installationWorkspace}'";
-    echo "Waiting for ${0}" && sleep 5;         done'
+    while [[ ! -f ${installationWorkspace}/${CERTIFICATE} ]]; do
+      /usr/bin/sudo -H -i -u "${vmUser}" bash -c "scp -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp}:${REMOTE_KX_MAIN_CERTSDIR}/${CERTIFICATE} ${installationWorkspace}"
+      echo "Waiting for ${0}"
+      sleep 15
+    done
 }
 
 /usr/bin/sudo mkdir -p /usr/share/ca-certificates/kubernetes
@@ -375,14 +376,17 @@ done
 /usr/bin/sudo systemctl restart docker
 
 # Wait until DNS resolution is back up before proceeding with Kubernetes node registration
-timeout -s TERM 3000 bash -c 'while [[ "$rc" != "0" ]]; do
-nslookup kx-main1.'${baseDomain}'; rc=$?;
-echo "Waiting for kx-main1 DNS resolution to function" && sleep 5; done'
+while [[ "$rc" != "0" ]]; do
+  nslookup kx-main1.'${baseDomain}'; rc=$?;
+  echo "Waiting for kx-main1 DNS resolution to function"
+  sleep 15
+done
 
 # Wait for Kubernetes to be available
-timeout -s TERM 3000 bash -c \
-    'while [[ "$(curl -k -s https://'${kxMainIp}':6443/livez)" != "ok" ]];\
-do echo "Waiting for https://'${kxMainIp}':6443/livez" && sleep 5;  done'
+while [[ "$(curl -k -s https://'${kxMainIp}':6443/livez)" != "ok" ]]; do
+  echo "Waiting for https://'${kxMainIp}':6443/livez"
+  sleep 15
+done
 
 # Kubernetes master is reachable, join the node to cluster
 if [[ "${nodeRole}" == "kx-worker" ]]; then
@@ -401,9 +405,11 @@ fi
 
 
 # Keep trying to join Kubernetes cluster until successful
-timeout -s TERM 3000 bash -c 'while [[ ! -f /var/lib/kubelet/config.yaml ]]; do
-/usr/bin/sudo '${installationWorkspace}'/kubeJoin.sh
-echo "Waiting for kx-worker/kx-main to be connected successfully to main node" && sleep 15; done'
+while [[ ! -f /var/lib/kubelet/config.yaml ]]; do
+  /usr/bin/sudo ${installationWorkspace}/kubeJoin.sh
+  echo "Waiting for kx-worker/kx-main to be connected successfully to main node"
+  sleep 30
+done
 
 if [[ "${nodeRole}" == "kx-main" ]]; then
   # Setup KX and root users as Kubernetes Admin
