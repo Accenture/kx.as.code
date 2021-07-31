@@ -41,7 +41,6 @@ while [[ ! -f ${installationWorkspace}/profile-config.json ]]; do
   echo "Waiting for ${installationWorkspace}/profile-config.json file"
   sleep 15
 done
-}
 
 # Install nvme-cli if running on host with NVMe block devices (for example on AWS with EBS)
 /usr/bin/sudo lsblk -i -o kname,mountpoint,fstype,size,maj:min,name,state,rm,rota,ro,type,label,model,serial
