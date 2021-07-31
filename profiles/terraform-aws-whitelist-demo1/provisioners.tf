@@ -35,7 +35,7 @@ resource "null_resource" "kx_bastion_ready" {
 
 }
 
-resource "null_resource" "main_provisioner" {
+resource "null_resource" "kx_main_admin_provisioner" {
 
   depends_on = [
     null_resource.kx_bastion_ready
@@ -46,13 +46,33 @@ resource "null_resource" "main_provisioner" {
       type        = "ssh"
       user        = "admin"
       private_key = file(local_file.kx_ssh_key.filename)
-      host        = aws_instance.kx_main.private_ip
+      host        = aws_instance.kx_main_admin.private_ip
 
       bastion_user = "ec2-user"
       bastion_host = aws_instance.kx_bastion.public_ip
     }
 
     inline = ["echo 'KX Main up and running'"]
+  }
+
+  provisioner "remote-exec" {
+    inline = [
+      "sudo sed -i 's/'$(hostname)'/kx-main1/g' /etc/hosts",
+      "sudo hostnamectl set-hostname kx-main1",
+      "echo \"${tls_private_key.kx_key.public_key_openssh}\" | sudo tee -a /home/kx.hero/.ssh/authorized_keys /home/admin/.ssh/authorized_keys",
+      "echo \"${tls_private_key.kx_key.private_key_pem}\" | sudo tee /home/kx.hero/.ssh/id_rsa /home/admin/.ssh/id_rsa",
+      "echo \"${tls_private_key.kx_key.public_key_openssh}\" | sudo tee /home/kx.hero/.ssh/id_rsa.pub /home/admin/.ssh/id_rsa.pub"
+    ]
+
+    connection {
+      type        = "ssh"
+      user        = "admin"
+      private_key = file(local_file.kx_ssh_key.filename)
+      host        = aws_instance.kx_main_admin.private_ip
+
+      bastion_user = "ec2-user"
+      bastion_host = aws_instance.kx_bastion.public_ip
+    }
   }
 
   provisioner "file" {
@@ -63,7 +83,7 @@ resource "null_resource" "main_provisioner" {
       type        = "ssh"
       user        = "admin"
       private_key = file(local_file.kx_ssh_key.filename)
-      host        = aws_instance.kx_main.private_ip
+      host        = aws_instance.kx_main_admin.private_ip
 
       bastion_user = "ec2-user"
       bastion_host = aws_instance.kx_bastion.public_ip
@@ -78,7 +98,7 @@ resource "null_resource" "main_provisioner" {
       type        = "ssh"
       user        = "admin"
       private_key = file(local_file.kx_ssh_key.filename)
-      host        = aws_instance.kx_main.private_ip
+      host        = aws_instance.kx_main_admin.private_ip
 
       bastion_user = "ec2-user"
       bastion_host = aws_instance.kx_bastion.public_ip
@@ -94,7 +114,7 @@ resource "null_resource" "main_provisioner" {
       type        = "ssh"
       user        = "admin"
       private_key = file(local_file.kx_ssh_key.filename)
-      host        = aws_instance.kx_main.private_ip
+      host        = aws_instance.kx_main_admin.private_ip
 
       bastion_user = "ec2-user"
       bastion_host = aws_instance.kx_bastion.public_ip
@@ -104,14 +124,14 @@ resource "null_resource" "main_provisioner" {
   provisioner "remote-exec" {
     inline = [
       "sudo mv /var/tmp/*.json /usr/share/kx.as.code/workspace/",
-      "echo \"$(date '+%Y-%m-%d_%H%M%S') | KX-Main VM created by Terraform\" | sudo tee /usr/share/kx.as.code/workspace/gogogo"
+      "echo \"$(date '+%Y-%m-%d_%H%M%S') | KX-Main Admin VM created by Terraform\" | sudo tee /usr/share/kx.as.code/workspace/gogogo"
 
     ]
     connection {
       type        = "ssh"
       user        = "admin"
       private_key = file(local_file.kx_ssh_key.filename)
-      host        = aws_instance.kx_main.private_ip
+      host        = aws_instance.kx_main_admin.private_ip
 
       bastion_user     = "ec2-user"
       bastion_host     = aws_instance.kx_bastion.public_ip
@@ -120,7 +140,7 @@ resource "null_resource" "main_provisioner" {
   }
 }
 
-resource "null_resource" "worker_provisioner" {
+resource "null_resource" "kx_worker_provisioner" {
 
   depends_on = [
     null_resource.kx_bastion_ready
@@ -142,6 +162,26 @@ resource "null_resource" "worker_provisioner" {
     inline = ["echo 'KX Worker ${count.index} up and running'"]
   }
 
+  provisioner "remote-exec" {
+    inline = [
+      "sudo sed -i 's/'$(hostname)'/kx-worker${count.index + 1}/g' /etc/hosts",
+      "sudo hostnamectl set-hostname kx-worker${count.index + 1}",
+      "echo \"${tls_private_key.kx_key.public_key_openssh}\" | sudo tee -a /home/kx.hero/.ssh/authorized_keys /home/admin/.ssh/authorized_keys",
+      "echo \"${tls_private_key.kx_key.private_key_pem}\" | sudo tee /home/kx.hero/.ssh/id_rsa /home/admin/.ssh/id_rsa",
+      "echo \"${tls_private_key.kx_key.public_key_openssh}\" | sudo tee /home/kx.hero/.ssh/id_rsa.pub /home/admin/.ssh/id_rsa.pub"
+    ]
+
+    connection {
+      type        = "ssh"
+      user        = "admin"
+      private_key = file(local_file.kx_ssh_key.filename)
+      host        = aws_instance.kx_worker[count.index].private_ip
+
+      bastion_user = "ec2-user"
+      bastion_host = aws_instance.kx_bastion.public_ip
+    }
+  }
+
   provisioner "file" {
     source      = "profile-config.json"
     destination = "/var/tmp/profile-config.json"
@@ -168,6 +208,82 @@ resource "null_resource" "worker_provisioner" {
       user        = "admin"
       private_key = file(local_file.kx_ssh_key.filename)
       host        = aws_instance.kx_worker[count.index].private_ip
+
+      bastion_user = "ec2-user"
+      bastion_host = aws_instance.kx_bastion.public_ip
+    }
+  }
+
+}
+
+resource "null_resource" "kx_main_additional" {
+
+  depends_on = [
+    null_resource.kx_bastion_ready
+  ]
+
+  count = (local.main_node_count - 1) < 0 ? 0 : local.main_node_count - 1
+
+  provisioner "remote-exec" {
+    connection {
+      type        = "ssh"
+      user        = "admin"
+      private_key = file(local_file.kx_ssh_key.filename)
+      host        = aws_instance.kx_main_additional[count.index].private_ip
+
+      bastion_user = "ec2-user"
+      bastion_host = aws_instance.kx_bastion.public_ip
+    }
+
+    inline = ["echo 'KX Main Additional ${count.index + 2} up and running'"]
+  }
+
+  provisioner "remote-exec" {
+      inline = [
+        "sudo sed -i 's/'$(hostname)'/kx-main${count.index + 2}/g' /etc/hosts",
+        "sudo hostnamectl set-hostname kx-main${count.index + 2}",
+        "echo \"${tls_private_key.kx_key.public_key_openssh}\" | sudo tee -a /home/kx.hero/.ssh/authorized_keys /home/admin/.ssh/authorized_keys",
+        "echo \"${tls_private_key.kx_key.private_key_pem}\" | sudo tee /home/kx.hero/.ssh/id_rsa /home/admin/.ssh/id_rsa",
+        "echo \"${tls_private_key.kx_key.public_key_openssh}\" | sudo tee /home/kx.hero/.ssh/id_rsa.pub /home/admin/.ssh/id_rsa.pub"
+      ]
+
+    connection {
+      type        = "ssh"
+      user        = "admin"
+      private_key = file(local_file.kx_ssh_key.filename)
+      host        = aws_instance.kx_main_additional[count.index].private_ip
+
+      bastion_user = "ec2-user"
+      bastion_host = aws_instance.kx_bastion.public_ip
+    }
+  }
+
+  provisioner "file" {
+    source      = "profile-config.json"
+    destination = "/var/tmp/profile-config.json"
+
+    connection {
+      type        = "ssh"
+      user        = "admin"
+      private_key = file(local_file.kx_ssh_key.filename)
+      host        = aws_instance.kx_main_additional[count.index].private_ip
+
+      bastion_user = "ec2-user"
+      bastion_host = aws_instance.kx_bastion.public_ip
+    }
+
+  }
+
+  provisioner "remote-exec" {
+    inline = [
+      "sudo mv /var/tmp/*.json /usr/share/kx.as.code/workspace/",
+      "echo \"$(date '+%Y-%m-%d_%H%M%S') | KX-Main Additional VM created by Terraform\" | sudo tee /usr/share/kx.as.code/workspace/gogogo"
+    ]
+    connection {
+      type        = "ssh"
+      user        = "admin"
+      private_key = file(local_file.kx_ssh_key.filename)
+      host        = aws_instance.kx_main_additional[count.index].private_ip
 
       bastion_user = "ec2-user"
       bastion_host = aws_instance.kx_bastion.public_ip

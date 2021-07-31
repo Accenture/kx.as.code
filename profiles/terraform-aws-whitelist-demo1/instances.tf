@@ -78,6 +78,20 @@ resource "aws_security_group" "kx_bastion" {
   }
 
   egress {
+    from_port   = 6443
+    to_port     = 6443
+    protocol    = "tcp"
+    cidr_blocks = module.vpc.private_subnets_cidr_blocks
+  }
+
+  egress {
+    from_port   = 6443
+    to_port     = 6443
+    protocol    = "tcp"
+    cidr_blocks = module.vpc.public_subnets_cidr_blocks
+  }
+
+  egress {
     from_port   = 32768
     to_port     = 65535
     protocol    = "tcp"
@@ -131,6 +145,13 @@ resource "aws_security_group" "kx_main_nodes" {
   }
 
   ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = [local.private_subnet_cidr_one, local.private_subnet_cidr_two,local.public_subnet_cidr_one,local.public_subnet_cidr_two,"${aws_instance.kx_bastion.private_ip}/32"]
+  }
+
+  ingress {
     from_port   = 443
     to_port     = 443
     protocol    = "tcp"
@@ -138,10 +159,38 @@ resource "aws_security_group" "kx_main_nodes" {
   }
 
   ingress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = [local.private_subnet_cidr_one, local.private_subnet_cidr_two,local.public_subnet_cidr_one,local.public_subnet_cidr_two,"${aws_instance.kx_bastion.private_ip}/32"]
+  }
+
+  ingress {
+    from_port   = 6443
+    to_port     = 6443
+    protocol    = "tcp"
+    cidr_blocks = local.remote_access_cidrs
+  }
+
+  ingress {
+    from_port   = 6443
+    to_port     = 6443
+    protocol    = "tcp"
+    cidr_blocks = [local.private_subnet_cidr_one, local.private_subnet_cidr_two,local.public_subnet_cidr_one,local.public_subnet_cidr_two,"${aws_instance.kx_bastion.private_ip}/32"]
+  }
+
+  ingress {
     from_port = 4000
     to_port = 4000
     protocol = "tcp"
     cidr_blocks = local.remote_access_cidrs
+  }
+
+  ingress {
+    from_port   = 4000
+    to_port     = 4000
+    protocol    = "tcp"
+    cidr_blocks = [local.private_subnet_cidr_one, local.private_subnet_cidr_two,local.public_subnet_cidr_one,local.public_subnet_cidr_two,"${aws_instance.kx_bastion.private_ip}/32"]
   }
 
   ingress {
@@ -212,7 +261,7 @@ resource "aws_security_group" "kx_main_nodes" {
   }
 }
 
-resource "aws_instance" "kx_main" {
+resource "aws_instance" "kx_main_admin" {
   depends_on = [
     module.vpc
   ]
@@ -223,7 +272,7 @@ resource "aws_instance" "kx_main" {
 
   network_interface {
     device_index         = 0
-    network_interface_id = aws_network_interface.kx_main.id
+    network_interface_id = aws_network_interface.kx_main_admin.id
   }
 
   ebs_block_device {
@@ -239,8 +288,31 @@ resource "aws_instance" "kx_main" {
   }
 
   tags = {
-    Name     = "KX.AS.CODE Main"
-    Hostname = "kx-main.${local.kx_as_code_domain}"
+    Name     = "KX.AS.CODE Main Admin 1"
+    Hostname = "kx-main1.${local.kx_as_code_domain}"
+  }
+}
+
+resource "aws_instance" "kx_main_additional" {
+  depends_on = [
+    module.vpc
+  ]
+  count                  = (local.main_node_count - 1) < 0 ? 0 : local.main_node_count - 1
+  ami                    = local.worker_node_ami_id
+  key_name               = aws_key_pair.kx_ssh_key.key_name
+  instance_type          = local.worker_node_instance_type
+  subnet_id              = module.vpc.private_subnets[1]
+  availability_zone      = local.aws_availability_zone_two
+
+  ebs_block_device {
+    device_name = "/dev/xvdb"
+    volume_type = "gp2"
+    volume_size = local.local_storage_volume_size
+  }
+
+  tags = {
+    Name     = "KX.AS.CODE Main Additional ${count.index + 2}"
+    Hostname = "kx-main${count.index + 2}.${local.kx_as_code_domain}"
   }
 }
 
@@ -286,7 +358,7 @@ resource "aws_instance" "kx_worker" {
   key_name               = aws_key_pair.kx_ssh_key.key_name
   instance_type          = local.worker_node_instance_type
   vpc_security_group_ids = [module.vpc.default_security_group_id, aws_security_group.kx_workers_nodes.id]
-  subnet_id              = module.vpc.private_subnets[0] # aws_subnet.private_one.id
+  subnet_id              = module.vpc.private_subnets[0]
   source_dest_check      = false
   availability_zone      = local.aws_availability_zone_one
 
