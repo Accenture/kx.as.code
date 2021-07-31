@@ -7,7 +7,7 @@
             "main_node_memory": 8196,
             "worker_node_count": 4,
             "worker_node_cpu_cores": 2,
-            "worker_node_memory": 8196,
+            "worker_node_memory": 6144,
             "environment_prefix": "demo1",
             "kx_sync_folder_path": "./KX_Share",
             "kx_main_box_location": "../../../01_Build_KX.AS.CODE_Main/base-vm/boxes/parallels-0.8.0/kx.as.code-main-demo-0.8.0.box",
