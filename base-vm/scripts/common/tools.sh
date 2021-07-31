@@ -30,7 +30,8 @@ sudo DEBIAN_FRONTEND=noninteractive apt-get -y install \
     cifs-utils \
     rsync \
     open-vm-tools \
-    lvm2
+    lvm2 \
+    netcat
 
 # Install Powerline Status
 sudo apt-get install -y python3-setuptools

@@ -185,9 +185,9 @@ if [[ ${baseIpType} == "static"   ]]; then
     export fixedNicConfigGateway=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.staticNetworkSetup.gateway')
     export fixedNicConfigDns1=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.staticNetworkSetup.dns1')
     export fixedNicConfigDns2=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.staticNetworkSetup.dns2')
-elif [[ -n $(dig kx-main1 +short) ]]; then
+elif [[ -n $(dig kx-main1.${baseDomain} +short) ]]; then
   # Try DNS
-  export kxMainIp=$(dig kx-main1 +short)
+  export kxMainIp=$(dig kx-main1.${baseDomain} +short)
 else
     # If no static IP or DNS, wait for file containing KxMain IP
     timeout -s TERM 3000 bash -c 'while [ ! -f /var/tmp/kx.as.code_main-ip-address ];         do
