@@ -79,7 +79,7 @@ pipeline {
                         -var "video_memory=128" \
                         -var "hostname=${kx_main_hostname}" \
                         -var "domain=${kx_domain}" \
-                        -var "version=${kx_version}" \
+                        -var "version=\${kx_version}" \
                         -var "vm_user=${kx_vm_user}" \
                         -var "vm_password=${kx_vm_password}" \
                         -var "git_source_url=${git_source_url}" \

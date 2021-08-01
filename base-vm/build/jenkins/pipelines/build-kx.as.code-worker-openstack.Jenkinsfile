@@ -76,7 +76,7 @@ pipeline {
                             -var "compute_engine_build=${openstack_compute_engine_build}" \
                             -var "hostname=${kx_worker_hostname}" \
                             -var "domain=${kx_domain}" \
-                            -var "version=${kx_version}" \
+                            -var "version=\${kx_version}" \
                             -var "vm_user=${kx_vm_user}" \
                             -var "vm_password=${kx_vm_password}" \
                             -var "base_image_ssh_user=${openstack_ssh_username}" \

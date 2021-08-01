@@ -82,7 +82,7 @@ pipeline {
                         -var "compute_engine_build=${aws_compute_engine_build}" \
                         -var "hostname=${kx_main_hostname}" \
                         -var "domain=${kx_domain}" \
-                        -var "version=${kx_version}" \
+                        -var "version=\${kx_version}" \
                         -var "vm_user=${kx_vm_user}" \
                         -var "vm_password=${kx_vm_password}" \
                         -var "instance_type=${aws_instance_type}" \
