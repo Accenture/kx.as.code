@@ -7,8 +7,38 @@ export kxHomeDir=/usr/share/kx.as.code
 export sharedGitRepositories=${kxHomeDir}/git
 export installationWorkspace=${kxHomeDir}/workspace
 
+# Get configs from profile-config.json
+export virtualizationType=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.virtualizationType')
+export environmentPrefix=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.environmentPrefix')
+if [ -z ${environmentPrefix} ]; then
+    export baseDomain="$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.baseDomain')"
+else
+    export baseDomain="${environmentPrefix}.$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.baseDomain')"
+fi
+export defaultKeyboardLanguage=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.defaultKeyboardLanguage')
+export baseUser=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.baseUser')
+export basePassword=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.basePassword')
+export baseIpType=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.baseIpType')
+export dnsResolution=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.dnsResolution')
+export baseIpRangeStart=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.baseIpRangeStart')
+export baseIpRangeEnd=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.baseIpRangeEnd')
+
+# Get proxy settings
+export httpProxySetting=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.proxy_settings.http_proxy')
+export httpsProxySetting=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.proxy_settings.https_proxy')
+export noProxySetting=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.proxy_settings.no_proxy')
+
+# Determine node role type (main or worker)
+if [[ "$(hostname)" =~ "kx-worker" ]]; then
+  nodeRole="kx-worker"
+elif [[ "$(hostname)" =~ "kx-main" ]]; then
+  nodeRole="kx-main"
+fi
+
 export netDevice=""
-while [[ -z ${netDevice} ]]; do
+export nodeIp=""
+
+while [[ -z ${netDevice} ]] && [[ -z ${nodeIp} ]]; do
   # Determine which NIC to bind to, to avoid binding to internal VirtualBox NAT NICs for example, where all hosts have the same IP - 10.0.2.15
   export nicList=$(nmcli device show | grep -E 'enp|ens|eth' | grep 'GENERAL.DEVICE' | awk '{print $2}')
   export ipsToExclude="10.0.2.15"   # IP addresses not to configure with static IP. For example, default Virtualbox IP 10.0.2.15
@@ -30,11 +60,15 @@ while [[ -z ${netDevice} ]]; do
           netDevice=${nic}
       fi
   done
+  echo "NIC exclusions: ${nicExclusions}"
+  echo "NIC to use: ${netDevice}"
+  if [[ "${baseIpType}" == "static" ]] &&  [[ ! -f /usr/share/kx.as.code/.config/network_status ]]; then
+    export nodeIp="ignore"
+  else
+    export nodeIp=$(ifconfig ${netDevice} | awk '/inet / {print $2}')
+  fi
 done
-echo "NIC exclusions: ${nicExclusions}"
-echo "NIC to use: ${netDevice}"
 
-export nodeIp=$(ifconfig ${netDevice} | awk '/inet / {print $2}')
 
 # Check profile-config.json file is present before executing script
 while [[ ! -f ${installationWorkspace}/profile-config.json ]]; do
@@ -140,34 +174,6 @@ create_volumes "50G" ${number50gbVolumes}
 /usr/bin/sudo lsblk
 
 cd ${installationWorkspace}
-
-# Get configs from profile-config.json
-export virtualizationType=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.virtualizationType')
-export environmentPrefix=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.environmentPrefix')
-if [ -z ${environmentPrefix} ]; then
-    export baseDomain="$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.baseDomain')"
-else
-    export baseDomain="${environmentPrefix}.$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.baseDomain')"
-fi
-export defaultKeyboardLanguage=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.defaultKeyboardLanguage')
-export baseUser=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.baseUser')
-export basePassword=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.basePassword')
-export baseIpType=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.baseIpType')
-export dnsResolution=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.dnsResolution')
-export baseIpRangeStart=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.baseIpRangeStart')
-export baseIpRangeEnd=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.baseIpRangeEnd')
-
-# Get proxy settings
-export httpProxySetting=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.proxy_settings.http_proxy')
-export httpsProxySetting=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.proxy_settings.https_proxy')
-export noProxySetting=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.proxy_settings.no_proxy')
-
-# Determine node role type (main or worker)
-if [[ "$(hostname)" =~ "kx-worker" ]]; then
-  nodeRole="kx-worker"
-elif [[ "$(hostname)" =~ "kx-main" ]]; then
-  nodeRole="kx-main"
-fi
 
 # Wait until the worker has the main node's IP file
 if [[ ${baseIpType} == "static"   ]]; then
