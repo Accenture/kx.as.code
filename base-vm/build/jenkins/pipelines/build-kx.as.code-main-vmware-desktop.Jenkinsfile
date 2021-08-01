@@ -63,7 +63,7 @@ pipeline {
                         }
                         sh """
                         cd base-vm/build/packer/${packerOsFolder}
-                        PACKER_LOG=1 ${packerPath}/packer build -force -only kx.as.code-main-vmware-desktop \
+                        ${packerPath}/packer build -force -only kx.as.code-main-vmware-desktop \
                         -var "compute_engine_build=${vagrant_compute_engine_build}" \
                         -var "memory=8192" \
                         -var "cpus=2" \
