@@ -13,14 +13,20 @@ else
   puts "Vagrant launched from other system, maybe WSL?"
 end
 
+# Read Profile Config file
 file = File.read('profile-config.json')
-profile_config = JSON.parse(file)
+profile_config_json = JSON.parse(file)
 
-profile_config_local_volumes=profile_config['config']['local_volumes']
+# Read version file
+file = File.read('../../version.json')
+kx_version_json = JSON.parse(file)
+puts "KX Version JSON #{kx_version_json}"
+
+profile_config_local_volumes=profile_config_json['config']['local_volumes']
 puts "Profile Config #{profile_config_local_volumes}"
 
 # Get needed capacity for GlusterFS volumes disk size
-GLUSTERFS_KUBE_VOLUMES_DISK_SIZE=profile_config['config']['glusterFsDiskSize']
+GLUSTERFS_KUBE_VOLUMES_DISK_SIZE=profile_config_json['config']['glusterFsDiskSize']
 
 # Calculate needed local disk capacity
 NUM_1GB_LOCAL_SIZE=profile_config_local_volumes['one_gb'].to_i * 1
@@ -36,33 +42,33 @@ puts "Local Disk Size: #{LOCAL_KUBE_VOLUMES_DISK_SIZE}GB"
 puts "GlusterFS Disk Size: #{GLUSTERFS_KUBE_VOLUMES_DISK_SIZE}GB"
 
 # Environment variables will override the profile-config.json file properties. This was added for the Jenkins jobs, so that they can override parameters
-ENVIRONMENT_PREFIX = ENV['environmentPrefix'] || profile_config['config']['vm_properties']['environment_prefix']
+ENVIRONMENT_PREFIX = ENV['environmentPrefix'] || profile_config_json['config']['vm_properties']['environment_prefix']
 puts "ENVIRONMENT_PREFIX: #{ENVIRONMENT_PREFIX}"
-MAIN_NODE_COUNT = ENV['mainNodeCount'] || profile_config['config']['vm_properties']['main_node_count']
+MAIN_NODE_COUNT = ENV['mainNodeCount'] || profile_config_json['config']['vm_properties']['main_node_count']
 puts "MAIN_NODE_COUNT: #{MAIN_NODE_COUNT}"
-MAIN_NODE_CPU_CORES = ENV['mainNodeCpuCores'] || profile_config['config']['vm_properties']['main_node_cpu_cores']
+MAIN_NODE_CPU_CORES = ENV['mainNodeCpuCores'] || profile_config_json['config']['vm_properties']['main_node_cpu_cores']
 puts "MAIN_NODE_CPU_CORES: #{MAIN_NODE_CPU_CORES}"
-MAIN_NODE_MEMORY = ENV['mainNodeMemory'] || profile_config['config']['vm_properties']['main_node_memory']
+MAIN_NODE_MEMORY = ENV['mainNodeMemory'] || profile_config_json['config']['vm_properties']['main_node_memory']
 puts "MAIN_NODE_MEMORY: #{MAIN_NODE_MEMORY}"
-WORKER_NODE_COUNT = ENV['workerNodeCount'] || profile_config['config']['vm_properties']['worker_node_count']
+WORKER_NODE_COUNT = ENV['workerNodeCount'] || profile_config_json['config']['vm_properties']['worker_node_count']
 puts "WORKER_NODE_COUNT: #{WORKER_NODE_COUNT}"
-WORKER_NODE_CPU_CORES = ENV['workerNodeCpuCores'] || profile_config['config']['vm_properties']['worker_node_cpu_cores']
+WORKER_NODE_CPU_CORES = ENV['workerNodeCpuCores'] || profile_config_json['config']['vm_properties']['worker_node_cpu_cores']
 puts "WORKER_NODE_CPU_CORES: #{WORKER_NODE_CPU_CORES}"
-WORKER_NODE_MEMORY = ENV['WorkerNodeMemory'] || profile_config['config']['vm_properties']['worker_node_memory']
+WORKER_NODE_MEMORY = ENV['WorkerNodeMemory'] || profile_config_json['config']['vm_properties']['worker_node_memory']
 puts "WORKER_NODE_MEMORY: #{WORKER_NODE_MEMORY}"
-THREE_D_ACCELERATION = ENV['threedAcceleration'] || profile_config['config']['vm_properties']['3d_acceleration']
+THREE_D_ACCELERATION = ENV['threedAcceleration'] || profile_config_json['config']['vm_properties']['3d_acceleration']
 puts "WORKER_NODE_MEMORY: #{THREE_D_ACCELERATION}"
-DOCKERHUB_USER = ENV['dockerHubUser'] || profile_config['config']['docker']['dockerhub_username']
+DOCKERHUB_USER = ENV['dockerHubUser'] || profile_config_json['config']['docker']['dockerhub_username']
 puts "DOCKERHUB_USER: #{DOCKERHUB_USER}"
-DOCKERHUB_EMAIL = ENV['dockerHubEmail'] || profile_config['config']['docker']['dockerhub_email']
+DOCKERHUB_EMAIL = ENV['dockerHubEmail'] || profile_config_json['config']['docker']['dockerhub_email']
 puts "DOCKERHUB_EMAIL: #{DOCKERHUB_EMAIL}"
-DOCKERHUB_PASSWORD = ENV['DockerHubPassword'] || profile_config['config']['docker']['dockerhub_password']
+DOCKERHUB_PASSWORD = ENV['DockerHubPassword'] || profile_config_json['config']['docker']['dockerhub_password']
 puts "DOCKERHUB_PASSWORD: #{DOCKERHUB_PASSWORD}"
-BOX_VERSION = ENV['boxVersion'] || profile_config['config']['vm_properties']['kx_version']
+BOX_VERSION = ENV['boxVersion'] || kx_version_json['version']
 puts "BOX_VERSION: #{BOX_VERSION}"
-KX_MAIN_BOX_LOCATION = ENV['kxMainBoxLocation'] || profile_config['config']['vm_properties']['kx_main_box_location']
+KX_MAIN_BOX_LOCATION = ENV['kxMainBoxLocation'] || profile_config_json['config']['vm_properties']['kx_main_box_location']
 puts "KX_MAIN_BOX_LOCATION: #{KX_MAIN_BOX_LOCATION}"
-KX_WORKER_BOX_LOCATION = ENV['kxWorkerBoxLocation'] || profile_config['config']['vm_properties']['kx_worker_box_location']
+KX_WORKER_BOX_LOCATION = ENV['kxWorkerBoxLocation'] || profile_config_json['config']['vm_properties']['kx_worker_box_location']
 puts "KX_WORKER_BOX_LOCATION: #{KX_WORKER_BOX_LOCATION}"
 
 if (MAIN_NODE_COUNT - 1) < 1

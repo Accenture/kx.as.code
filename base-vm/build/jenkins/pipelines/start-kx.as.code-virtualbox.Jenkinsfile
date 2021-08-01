@@ -54,8 +54,12 @@ pipeline {
                 script {
                     dir(shared_workspace) {
                         sh """
+                        export kx_version=\$(cat version.json | ../../../../jq -r '.version')
+                        echo \${kx_version}
                         export kxMainBoxLocation=${kx_main_box_location}
                         export kxWorkerBoxLocation=${kx_worker_box_location}
+                        echo \${kxMainBoxLocation}
+                        echo \${kxWorkerBoxLocation}
                         cd profiles/vagrant-virtualbox-demo1
                         vagrant up
                         VBoxManage list vms
