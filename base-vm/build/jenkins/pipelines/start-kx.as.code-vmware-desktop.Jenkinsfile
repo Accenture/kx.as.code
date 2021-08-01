@@ -62,6 +62,7 @@ pipeline {
                         sh """
                         if [[ ! -f ./jq* ]]; then
                             curl -o jq ${jqDownloadPath}
+                            chmod +x ./jq
                         fi
                         export kx_version=\$(cat version.json | ./jq -r '.version')
                         echo \${kx_version}
