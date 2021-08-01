@@ -423,13 +423,19 @@ fi
 # Add label to kx-main node for NGINX Ingress Controller
 if [[ "${nodeRole}" == "kx-main" ]]; then
   /usr/bin/sudo kubectl label nodes $(hostname) ingress-controller=true --overwrite=true
-  # Add an NGINX controller to the newly provisioned KX-Main node if not already running
-  if [[ -z "$(/usr/bin/sudo kubectl -n nginx-ingress-controller get pod -o wide | grep $(hostname))" ]]; then
-    replicaCount=$(/usr/bin/sudo kubectl get deploy -n nginx-ingress-controller -o json | jq -r '.items[].spec.replicas')
-    if [[ ${replicaCount} -lt ${hostNum} ]]; then
-      /usr/bin/sudo kubectl -n nginx-ingress-controller scale --replicas=${hostNum} deployment/nginx-ingress-controller-ingress-nginx-controller
-      /usr/bin/sudo kubectl -n nginx-ingress-controller get pod -o wide
+  # Check if NGINX ingress namespace exists yet before proceeding
+  if [[ -n $(kubectl get namespace -o json | jq -r '.items[].metadata | select(.name=="nginx-ingress-controller") | .name') ]]; then
+    echo "Namespace nginx-ingress-controller exists. Checking if additional replica needs to be added"
+    # Add an NGINX controller to the newly provisioned KX-Main node if not already running
+    if [[ -z "$(/usr/bin/sudo kubectl -n nginx-ingress-controller get pod -o wide | grep $(hostname))" ]]; then
+      replicaCount=$(/usr/bin/sudo kubectl get deploy -n nginx-ingress-controller -o json | jq -r '.items[].spec.replicas')
+      if [[ ${replicaCount} -lt ${hostNum} ]]; then
+        /usr/bin/sudo kubectl -n nginx-ingress-controller scale --replicas=${hostNum} deployment/nginx-ingress-controller-ingress-nginx-controller
+        /usr/bin/sudo kubectl -n nginx-ingress-controller get pod -o wide
+      fi
     fi
+  else
+    echo "Namespace nginx-ingress-controller does not yet exist. Not adding replica. The install process on KX-Main1 will take care of it"
   fi
 fi
 
