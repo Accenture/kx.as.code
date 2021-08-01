@@ -7,14 +7,17 @@ node('local') {
         echo "Running on Mac"
         packerOsFolder="darwin-linux"
         vmWareDiskUtilityPath="/System/Volumes/Data/Applications/VMware Fusion.app/Contents/Library/vmware-vdiskmanager"
+        jqDownloadPath="https://github.com/stedolan/jq/releases/download/jq-1.6/jq-osx-amd64"
     } else if ( os == "linux" ) {
         echo "Running on Linux"
         packerOsFolder="darwin-linux"
         vmWareDiskUtilityPath=""
+        jqDownloadPath="https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64"
     } else {
         echo "Running on Windows"
         os="windows"
         vmWareDiskUtilityPath="c:/Program Files (x86)/VMware/VMware Workstation/vmware-vdiskmanager.exe"
+        jqDownloadPath="https://github.com/stedolan/jq/releases/download/jq-1.6/jq-win64.exe"
         packerOsFolder="windows"
     }
 }
@@ -57,6 +60,9 @@ pipeline {
                 script {
                     dir(shared_workspace) {
                         sh """
+                        if [[ ! -f ./jq* ]]; then
+                            curl -o jq ${jqDownloadPath}
+                        fi
                         export kx_version=\$(cat version.json | ../../../../jq -r '.version')
                         echo \${kx_version}
                         export kxMainBoxLocation=${kx_main_box_location}
