@@ -59,6 +59,9 @@ pipeline {
                         sh """
                         export kxMainBoxLocation=${kx_main_box_location}
                         export kxWorkerBoxLocation=${kx_worker_box_location}
+                        if [[ -f kx.as.code_main-ip-address ]]; then
+                            rm -f kx.as.code_main-ip-address
+                        fi
                         cd profiles/vagrant-vmware-desktop-demo1
                         vagrant up
                         """
