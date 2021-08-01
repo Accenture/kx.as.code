@@ -7,17 +7,17 @@ node('local') {
         echo "Running on Mac"
         packerOsFolder="darwin-linux"
         vmWareDiskUtilityPath="/System/Volumes/Data/Applications/VMware Fusion.app/Contents/Library/vmware-vdiskmanager"
-        jqDownloadPath="https://github.com/stedolan/jq/releases/download/jq-1.6/jq-osx-amd64"
+        jqDownloadPath="${JQ_DARWIN_DOWNLOAD_URL}"
     } else if ( os == "linux" ) {
         echo "Running on Linux"
         packerOsFolder="darwin-linux"
         vmWareDiskUtilityPath=""
-        jqDownloadPath="https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64"
+        jqDownloadPath="${JQ_LINUX_DOWNLOAD_URL}"
     } else {
         echo "Running on Windows"
         os="windows"
         vmWareDiskUtilityPath="c:/Program Files (x86)/VMware/VMware Workstation/vmware-vdiskmanager.exe"
-        jqDownloadPath="https://github.com/stedolan/jq/releases/download/jq-1.6/jq-win64.exe"
+        jqDownloadPath="${JQ_WINDOWS_DOWNLOAD_URL}"
         packerOsFolder="windows"
     }
 }

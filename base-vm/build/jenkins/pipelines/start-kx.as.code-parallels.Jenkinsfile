@@ -6,12 +6,15 @@ node('local') {
     if ( os == "darwin" ) {
         echo "Running on Mac"
         packerOsFolder="darwin-linux"
+        jqDownloadPath="${JQ_DARWIN_DOWNLOAD_URL}"
     } else if ( os == "linux" ) {
         echo "Running on Linux"
         packerOsFolder="darwin-linux"
+        jqDownloadPath="${JQ_LINUX_DOWNLOAD_URL}"
     } else {
         echo "Running on Windows"
         os="windows"
+        jqDownloadPath="${JQ_WINDOWS_DOWNLOAD_URL}"
         packerOsFolder="windows"
     }
 }
@@ -54,7 +57,11 @@ pipeline {
                 script {
                     dir(shared_workspace) {
                         sh """
-                        export kx_version=\$(cat version.json | ../../../../jq -r '.version')
+                        if [[ ! -f ./jq* ]]; then
+                            curl -L -o jq ${jqDownloadPath}
+                            chmod +x ./jq
+                        fi
+                        export kx_version=\$(cat version.json | ./jq -r '.version')
                         echo \${kx_version}
                         export kxMainBoxLocation=${kx_main_box_location}
                         export kxWorkerBoxLocation=${kx_worker_box_location}
