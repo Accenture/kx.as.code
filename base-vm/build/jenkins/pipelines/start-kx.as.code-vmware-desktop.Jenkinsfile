@@ -67,7 +67,7 @@ pipeline {
                             rm -f kx.as.code_main-ip-address
                         fi
                         cd profiles/vagrant-vmware-desktop-demo1
-                        vagrant up
+                        vagrant up --provider vmware_desktop
                         """
                     }
                 }
