@@ -86,8 +86,9 @@ end
 WORKSPACE_HOME = File.dirname(File.expand_path('../../..', __FILE__))
 
 Vagrant.configure("2") do |config|
-    config.vm.define "kx.as.code-main" do |subconfig|
+    config.vm.define "kx.as.code-main1" do |subconfig|
         subconfig.vm.box = "kx.as.code-main-vmware-#{BOX_VERSION}"
+        subconfig.vm.hostname = "kx-main1"
         subconfig.vm.box_url = "file://#{WORKSPACE_HOME}/#{KX_MAIN_BOX_LOCATION}"
         subconfig.vm.provision "shell", inline: "hostname -I | awk {'print $1'} | tr -d ' \\t\\n\\r' | sudo tee /vagrant/kx.as.code_main-ip-address"
         subconfig.vm.provision "shell", inline: 'sudo cp /vagrant/aq*.json /usr/share/kx.as.code/workspace/'
