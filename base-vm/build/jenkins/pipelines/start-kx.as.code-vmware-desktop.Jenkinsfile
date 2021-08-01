@@ -61,7 +61,7 @@ pipeline {
                     dir(shared_workspace) {
                         sh """
                         if [[ ! -f ./jq* ]]; then
-                            curl -o jq ${jqDownloadPath}
+                            curl -L -o jq ${jqDownloadPath}
                             chmod +x ./jq
                         fi
                         export kx_version=\$(cat version.json | ./jq -r '.version')
