@@ -7,6 +7,12 @@ export kxHomeDir=/usr/share/kx.as.code
 export sharedGitRepositories=${kxHomeDir}/git
 export installationWorkspace=${kxHomeDir}/workspace
 
+# Check profile-config.json file is present before executing script
+while [[ ! -f ${installationWorkspace}/profile-config.json ]]; do
+  echo "Waiting for ${installationWorkspace}/profile-config.json file"
+  sleep 15
+done
+
 # Get configs from profile-config.json
 export virtualizationType=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.virtualizationType')
 export environmentPrefix=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.environmentPrefix')
@@ -67,13 +73,6 @@ while [[ -z ${netDevice} ]] && [[ -z ${nodeIp} ]]; do
   else
     export nodeIp=$(ifconfig ${netDevice} | awk '/inet / {print $2}')
   fi
-done
-
-
-# Check profile-config.json file is present before executing script
-while [[ ! -f ${installationWorkspace}/profile-config.json ]]; do
-  echo "Waiting for ${installationWorkspace}/profile-config.json file"
-  sleep 15
 done
 
 # Install nvme-cli if running on host with NVMe block devices (for example on AWS with EBS)
