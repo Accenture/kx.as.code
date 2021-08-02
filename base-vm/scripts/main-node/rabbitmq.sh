@@ -8,7 +8,7 @@ sudo echo """# Defaults to rabbit. This can be useful if you want to run more th
 # per machine - RABBITMQ_NODENAME should be unique per erlang-node-and-machine
 # combination. See the clustering on a single machine guide for details:
 # http://www.rabbitmq.com/clustering.html#single-machine
-NODENAME=localhost
+NODENAME=rabbit@localhost
 # By default RabbitMQ will bind to all interfaces, on IPv4 and IPv6 if
 # available. Set this if you only want to bind to one network interface or#
 # address family.
@@ -17,6 +17,15 @@ NODE_IP_ADDRESS=127.0.0.1
 #NODE_PORT=5672
 MNESIA_DIR=\$MNESIA_BASE/rabbitmq
 """ | sudo tee /etc/rabbitmq/rabbitmq-env.conf
+
+echo """[
+  {rabbit,
+    [
+      {queue_index_max_journal_entries, 1}
+    ]
+  }
+].
+""" | sudo tee /etc/rabbitmq/advanced.config
 
 sudo apt-get install curl gnupg debian-keyring debian-archive-keyring apt-transport-https -y
 
@@ -75,3 +84,7 @@ Actions=new-window;new-private-window;
 # Give *.desktop files execute permissions
 sudo chmod 755 "${adminShortcutsDirectory}/RabbitMQ.desktop"
 sudo chown ${vmUser}:${vmUser} "${adminShortcutsDirectory}/RabbitMQ.desktop"
+
+# Add bash auto-completion
+sudo rabbitmqadmin --bash-completion | sudo tee /etc/bash_completion.d/rabbitmqadmin
+echo "source /etc/bash_completion.d/rabbitmqadmin" | tee -a /home/${VM_USER}/.bashrc /home/${VM_USER}/.zshrc /root/.bashrc /root/.zshrc

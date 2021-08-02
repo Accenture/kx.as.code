@@ -445,7 +445,8 @@ defaultComponentsToInstall=$(cat ${installationWorkspace}/actionQueues.json | jq
 for componentName in ${defaultComponentsToInstall}; do
     payload=$(cat ${installationWorkspace}/actionQueues.json | jq -c '.action_queues.install[] | select(.name=="'${componentName}'") | {install_folder:.install_folder,"name":.name,"action":"install","retries":"0"}')
     echo "Pending payload: ${payload}"
-    rabbitmqadmin publish exchange=action_workflow routing_key=pending_queue payload=''${payload}''
+    rabbitmqadmin publish exchange=action_workflow routing_key=pending_queue properties="{\"delivery_mode\": 2}" payload=''${payload}''
+
     # Get slot number to add installed app to JSON array
     arrayLength=$(cat ${installationWorkspace}/actionQueues.json | jq -r '.state.processed[].name' | wc -l)
     if [[ -z ${arrayLength} ]]; then
