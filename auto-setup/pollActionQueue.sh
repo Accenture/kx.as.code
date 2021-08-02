@@ -293,10 +293,6 @@ api-internal      IN      A      '${mainIpAddress}'
 /usr/bin/sudo named-checkconf
 /usr/bin/sudo named-checkzone ${baseDomain} /etc/bind/db.${baseDomain}
 
-#    # Configue dnsmasq - /lib/systemd/system/dnsmasq.service (bugfix so dnsmasq starts automatically)
-#    /usr/bin/sudo sed -i 's/Wants=nss-lookup.target/Wants=network-online.target/' /lib/systemd/system/dnsmasq.service
-#    /usr/bin/sudo sed -i 's/After=network.target/After=network-online.target/' /lib/systemd/system/dnsmasq.service
-
     if  [[ ${baseIpType} == "static" ]] || [[ ${dnsResolution} == "hybrid" ]]; then
         # Prevent DHCLIENT updating static IP
         if [[ ${dnsResolution} == "hybrid"   ]]; then
@@ -326,7 +322,6 @@ api-internal      IN      A      '${mainIpAddress}'
 
     if  [[ ${baseIpType} == "static"   ]] || [[ ${dnsResolution} == "hybrid"   ]]; then
         /usr/bin/sudo systemctl enable --now bind9.service
-        #/usr/bin/sudo systemctl enable --now systemd-networkd-wait-online.service
     fi
 
     # Setup proxy settings if they exist
@@ -418,7 +413,7 @@ if [ -z "${exchangeExists}" ]; then
     rabbitmqadmin declare exchange name=action_workflow type=direct
 fi
 
-# Create RabbitMQ Queues if they does not exist
+# Create RabbitMQ Queues if they do not exist
 for actionWorkflowQueue in ${actionWorkflows}; do
     actionWorkflowQueueExists=$(rabbitmqadmin list queues --format=raw_json | jq -r '.[] | select(.name=="'${actionWorkflowQueue}'_queue")')
     if [ -z "${actionWorkflowQueueExists}" ]; then
@@ -426,7 +421,7 @@ for actionWorkflowQueue in ${actionWorkflows}; do
     fi
 done
 
-# Create RabbitMQ Bindings if they does not exist
+# Create RabbitMQ Bindings if they do not exist
 for actionWorkflowBinding in ${actionWorkflows}; do
     actionWorkflowBindingExists=$(rabbitmqadmin list bindings --format=raw_json | jq -r '.[] | select(.source=="action_workflow" and .destination=="'${actionWorkflowBinding}'_queue")')
     if [ -z "${actionWorkflowBindingExists}" ]; then
