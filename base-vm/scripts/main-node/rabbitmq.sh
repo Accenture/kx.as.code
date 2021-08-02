@@ -84,7 +84,3 @@ Actions=new-window;new-private-window;
 # Give *.desktop files execute permissions
 sudo chmod 755 "${adminShortcutsDirectory}/RabbitMQ.desktop"
 sudo chown ${vmUser}:${vmUser} "${adminShortcutsDirectory}/RabbitMQ.desktop"
-
-# Add bash auto-completion
-sudo rabbitmqadmin --bash-completion | sudo tee /etc/bash_completion.d/rabbitmqadmin
-echo "source /etc/bash_completion.d/rabbitmqadmin" | tee -a /home/${VM_USER}/.bashrc /home/${VM_USER}/.zshrc /root/.bashrc /root/.zshrc
