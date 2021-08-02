@@ -39,6 +39,7 @@ if [[ "$(hostname)" =~ "kx-worker" ]]; then
   nodeRole="kx-worker"
 elif [[ "$(hostname)" =~ "kx-main" ]]; then
   nodeRole="kx-main"
+  /usr/bin/sudo apt install -y bind9 bind9utils bind9-doc
 fi
 
 export netDevice=""
@@ -294,8 +295,6 @@ fi
 # If KX-Main node, install Domain server to replicate zone from main1
  # Install Bind9 for local DNS resolution
 if [[ "${nodeRole}" == "kx-main" ]]; then
-
-/usr/bin/sudo apt install -y bind9 bind9utils bind9-doc
 
 echo '''options {
         directory "/var/cache/bind";
