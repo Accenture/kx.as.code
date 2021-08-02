@@ -89,7 +89,7 @@ Vagrant.configure("2") do |config|
       s.inline = "echo -e \"DOCKERHUB_USER=#{DOCKERHUB_USER}\nDOCKERHUB_EMAIL=#{DOCKERHUB_EMAIL}\nDOCKERHUB_PASSWORD=#{DOCKERHUB_PASSWORD}\" | sudo tee /var/tmp/.textfile"
     end
     subconfig.vm.provider "parallels" do |v|
-      v.name = "kx.as.code-#{ENVIRONMENT_PREFIX}-main-#{BOX_VERSION}"
+      v.name = "kx.as.code-#{ENVIRONMENT_PREFIX}-main1-#{BOX_VERSION}"
       v.memory = MAIN_NODE_MEMORY
       v.cpus = MAIN_NODE_CPU_CORES
       v.customize ["set", :id, "--3d-accelerate", "highest"]
