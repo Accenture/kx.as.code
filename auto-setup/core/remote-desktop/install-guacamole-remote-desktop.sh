@@ -244,7 +244,7 @@ WantedBy=multi-user.target
 
 # Starting up VNC service for Remote Desktop
 for i in {1..5}; do
-  isActive=$(systemctl is-active vncserver@1.service)
+  isActive=$(/usr/bin/sudo systemctl is-active vncserver@1.service || true)
   if [[ "${isActive}" != "active" ]]; then
     log_info "VNC service is not running. Starting it up (attempt ${i} of 5)"
     /usr/bin/sudo systemctl start vncserver@1.service || true
