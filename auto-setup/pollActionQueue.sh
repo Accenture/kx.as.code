@@ -229,7 +229,7 @@ if [[ ! -f /usr/share/kx.as.code/.config/network_status ]]; then
     echo "DNSStubListener=no" | /usr/bin/sudo tee -a /etc/systemd/resolved.conf
     /usr/bin/sudo systemctl restart systemd-resolved
 
-    # Configue dnsmasq - /etc/resolv.conf
+    # Configue DNS - /etc/resolv.conf
     /usr/bin/sudo rm -f /etc/resolv.conf
     echo "nameserver ${mainIpAddress}" | /usr/bin/sudo tee /etc/resolv.conf
 
