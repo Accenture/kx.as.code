@@ -482,7 +482,7 @@ while :; do
     failedQueue=$(rabbitmqadmin list queues name messages --format raw_json | jq -r '.[] | select(.name=="failed_queue") | .messages')
     retryQueue=$(rabbitmqadmin list queues name messages --format raw_json | jq -r '.[] | select(.name=="retry_queue") | .messages')
     pendingQueue=$(rabbitmqadmin list queues name messages --format raw_json | jq -r '.[] | select(.name=="pending_queue") | .messages')
-    totalMessages=$(( ${pendingQueue} + ${completedQueue} + ${numWipQueue} + ${numFailedQueue} + ${numRetryQueue} ))
+    totalMessages=$(( ${pendingQueue} + ${completedQueue} + ${wipQueue} + ${failedQueue} + ${retryQueue} ))
 
     if [[ ${failedQueue} -eq 0 ]]; then
 
@@ -502,7 +502,7 @@ while :; do
                 echo "Completed payload: ${payload}"
                 rabbitmqadmin publish exchange=action_workflow routing_key=completed_queue properties="{\"delivery_mode\": 2}" payload=''${payload}''
                 log_info "The installation of \"${componentName}\" completed succesfully"
-                /usr/bin/sudo -H -i -u ${vmUser} bash -c "DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/${vmUserId}/bus notify-send -t 300000 \"KX.AS.CODE Notification\" \"${componentName} installed successfully [${completedQueue}/${totalMessages}]\" --icon=dialog-information"
+                /usr/bin/sudo -H -i -u ${vmUser} bash -c "DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/${vmUserId}/bus notify-send -t 300000 \"KX.AS.CODE Notification\" \"${componentName} installed successfully [$((${completedQueue} + 1))/${totalMessages}]\" --icon=dialog-information"
                 if [[ "${componentName}" == "${lastCoreElementToInstall}" ]]; then
                     /usr/bin/sudo -H -i -u ${vmUser} bash -c "DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/${vmUserId}/bus notify-send -t 300000 \"KX.AS.CODE Notification\" \"CONGRATULATIONS\! That concludes the core setup\! Your optional components will now be installed\" --icon=dialog-information"
                     echo "${componentName} = ${lastCoreElementToInstall}"  
