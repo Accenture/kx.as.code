@@ -34,7 +34,20 @@ wget https://downloads.apache.org/guacamole/${guacamoleVersion}/binary/guacamole
 # Download extensions
 export extensionsToDownload="jdbc ldap totp"
 for extension in ${extensionsToDownload}; do
-    curl -o guacamole-auth-${extension}-${guacamoleVersion}.tar.gz -L "https://apache.org/dyn/closer.cgi?action=download&filename=guacamole/${guacamoleVersion}/binary/guacamole-auth-${extension}-${guacamoleVersion}.tar.gz"
+  for i in {{1..5}}; do
+    curl -o guacamole-auth-${extension}-${guacamoleVersion}.tar.gz -L "https://apache.org/dyn/closer.cgi?action=download&filename=guacamole/${guacamoleVersion}/binary/guacamole-auth-${extension}-${guacamoleVersion}.tar.gz" || true
+    if [[ -f guacamole-auth-${extension}-${guacamoleVersion}.tar.gz ]]; then
+      # Check integrity of downloaded tar file before continuing
+      if [[ -n $(tar tzf guacamole-auth-${extension}-${guacamoleVersion}.tar.gz || true) ]]; then
+        log_info "Download of guacamole-auth-${extension}-${guacamoleVersion}.tar.gz succeeded after ${1} of 5 attempts"
+        break
+      else
+        /usr/bin/sudo rm -f guacamole-auth-${extension}-${guacamoleVersion}.tar.gz
+        log_info "Download attempt ${1} of 5 of guacamole-auth-${extension}-${guacamoleVersion}.tar.gz failed"
+      fi
+    fi
+    sleep 15
+    done
     tar xvzf guacamole-auth-${extension}-${guacamoleVersion}.tar.gz
     /usr/bin/sudo mkdir -p /etc/guacamole/extensions
     if [[ ${extension} == "jdbc" ]]; then
