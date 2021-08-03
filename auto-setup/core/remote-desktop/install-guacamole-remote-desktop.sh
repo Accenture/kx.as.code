@@ -252,6 +252,7 @@ for i in {1..5}; do
     log_info "VNC service up after attempt ${i} of 5"
     break
   fi
+  sleep 5
 done
 /usr/bin/sudo systemctl enable vncserver@1.service
 /usr/bin/sudo systemctl status vncserver@1.service
