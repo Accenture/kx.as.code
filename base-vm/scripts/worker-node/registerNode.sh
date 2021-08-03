@@ -210,7 +210,7 @@ if [[ ! -f /usr/share/kx.as.code/.config/network_status ]]; then
         /usr/bin/sudo rm -f /etc/resolv.conf
         /usr/bin/sudo echo "nameserver ${kxMainIp}" | /usr/bin/sudo tee /etc/resolv.conf
 
-        # Configue dnsmasq - /etc/resolv.conf
+        # Configue DNS - /etc/resolv.conf
         /usr/bin/sudo sed -i 's/^#nameserver 127.0.0.1/nameserver '${kxMainIp}'/g' /etc/resolv.conf
 
         # Prevent DHCLIENT updating static IP

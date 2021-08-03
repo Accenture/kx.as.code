@@ -224,9 +224,7 @@ Description=a wrapper to launch an X server for VNC
 After=syslog.target network.target
 After=systemd-user-sessions.service
 After=network-online.target
-After=vboxadd-service.service
 After=ntp.service
-After=dnsmasq
 
 [Service]
 Type=forking
@@ -243,7 +241,19 @@ WantedBy=multi-user.target
 ''' | /usr/bin/sudo tee /etc/systemd/system/vncserver@.service
 
 /usr/bin/sudo -H -i -u ${vmUser} bash -c "vncserver -kill :1 || true"
-/usr/bin/sudo systemctl start vncserver@1.service
+
+# Starting up VNC service for Remote Desktop
+for i in {1..5}; do
+  isActive=$(/usr/bin/sudo systemctl is-active vncserver@1.service || true)
+  if [[ "${isActive}" != "active" ]]; then
+    log_info "VNC service is not running. Starting it up (attempt ${i} of 5)"
+    /usr/bin/sudo systemctl start vncserver@1.service || true
+  else
+    log_info "VNC service up after attempt ${i} of 5"
+    break
+  fi
+  sleep 5
+done
 /usr/bin/sudo systemctl enable vncserver@1.service
 /usr/bin/sudo systemctl status vncserver@1.service
 
