@@ -39,11 +39,11 @@ for extension in ${extensionsToDownload}; do
     if [[ -f guacamole-auth-${extension}-${guacamoleVersion}.tar.gz ]]; then
       # Check integrity of downloaded tar file before continuing
       if [[ -n $(tar tzf guacamole-auth-${extension}-${guacamoleVersion}.tar.gz || true) ]]; then
-        log_info "Download of guacamole-auth-${extension}-${guacamoleVersion}.tar.gz succeeded after ${1} of 5 attempts"
+        log_info "Download of guacamole-auth-${extension}-${guacamoleVersion}.tar.gz succeeded after ${i} of 5 attempts"
         break
       else
         /usr/bin/sudo rm -f guacamole-auth-${extension}-${guacamoleVersion}.tar.gz
-        log_info "Download attempt ${1} of 5 of guacamole-auth-${extension}-${guacamoleVersion}.tar.gz failed"
+        log_info "Download attempt ${i} of 5 of guacamole-auth-${extension}-${guacamoleVersion}.tar.gz failed"
       fi
     fi
     sleep 15
