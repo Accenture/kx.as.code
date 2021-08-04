@@ -21,7 +21,16 @@ if [[ -n ${nvme_cli_needed} ]]; then
 fi
 
 # Determine Drive B (Local K8s Volumes Storage)
-driveB=$(lsblk -o NAME,FSTYPE,SIZE -dsn -J | jq -r '.[] | .[] | select(.fstype==null) | select(.size=="'${localKubeVolumesDiskSize}'G") | .name' || true)
+for i in {{1..30}}; do
+  driveB=$(lsblk -o NAME,FSTYPE,SIZE -dsn -J | jq -r '.[] | .[] | select(.fstype==null) | select(.size=="'${localKubeVolumesDiskSize}'G") | .name' || true)
+  if [[ -z ${driveB} ]]; then
+    echo "Drive for local volumes not yet available. Trying a maximum of 30 times. Attempt ${i}"
+    sleep 15
+  else
+    echo "Drive for local volumes now available after attempt ${i} of 30"
+    break
+  fi
+done
 formatted=""
 if [[ ! -f /usr/share/kx.as.code/.config/driveB ]]; then
     echo "${driveB}" | /usr/bin/sudo tee /usr/share/kx.as.code/.config/driveB
