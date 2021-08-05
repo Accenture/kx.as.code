@@ -8,6 +8,9 @@
         "management",
         "kubernetes"
     ],
+    "letsencrypt": {
+        "enabled": true
+    },
     "urls": [
         {
             "url": "https://{{componentName}}.{{baseDomain}}",

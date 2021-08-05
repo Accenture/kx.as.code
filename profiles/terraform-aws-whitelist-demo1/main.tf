@@ -13,7 +13,5 @@ terraform {
 }
 
 provider "aws" {
-  access_key = local.aws_access_key
-  secret_key = local.aws_secret_access_key
   region     = local.aws_region
 }

@@ -14,7 +14,7 @@
         <string>openstack_ssh_username</string>
         <string>kx_vm_user</string>
         <string>openstack_region</string>
-        <string>kx_version</string>
+        <string>kx_version_override</string>
         <string>base_image_ssh_user</string>
         <string>kx_worker_hostname</string>
         <string>openstack_networks</string>
@@ -58,7 +58,7 @@
           <trim>false</trim>
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
-          <name>kx_version</name>
+          <name>kx_version_override</name>
           <description>KX.AS.CODE Version</description>
           <defaultValue>{{kx_version}}</defaultValue>
           <trim>false</trim>

@@ -1,6 +1,9 @@
 #!/bin/bash -x
 set -euo pipefail
 
+# Add retry config for apt
+echo 'APT::Acquire::Retries "3";' | sudo tee /etc/apt/apt.conf.d/80-retries
+
 # Basic tools for all nodes - main and workers
 sudo DEBIAN_FRONTEND=noninteractive apt-get -y install \
     xfsprogs \
@@ -30,7 +33,8 @@ sudo DEBIAN_FRONTEND=noninteractive apt-get -y install \
     cifs-utils \
     rsync \
     open-vm-tools \
-    lvm2
+    lvm2 \
+    netcat
 
 # Install Powerline Status
 sudo apt-get install -y python3-setuptools

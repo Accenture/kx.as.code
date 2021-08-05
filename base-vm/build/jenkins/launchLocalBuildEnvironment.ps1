@@ -125,7 +125,7 @@ if ( $override_action -eq "recreate" -Or $override_action -eq "destroy" -Or $ove
     if (  $Input -eq "Y" ) {
         Write-Output "- [INFO] OK! Proceeding to ${override_action} the KX.AS.CODE Jenkins environment"
         Write-Output "- [INFO] Deleting Jenkins jobs..." | Red
-        Get-ChildItem ".\jenkins_home\jobs" -Recurse -Filter config.xml |
+        Get-ChildItem "$JENKINS_HOME\jobs" -Recurse -Filter config.xml |
         Foreach-Object {
             Remove-Item -Force -Path  $_.FullName
         }
@@ -245,19 +245,53 @@ else
 }
 
 # Determine absolute work and shared_workspace directory paths
-$firstTwoChars = $WORKING_DIRECTORY.Substring(0,2)
-$firstChar = $WORKING_DIRECTORY.Substring(0,1)
+$firstTwoChars = $JENKINS_HOME.Substring(0,2)
+$secondChar = $JENKINS_HOME.Substring(1,1)
+$firstChar = $JENKINS_HOME.Substring(0,1)
+Write-Output $firstTwoChars
+Write-Output $secondChar
+Write-Output $firstChar
 if ( $firstTwoChars -eq ".\" ) {
-    $WORKDIR_ABSOLUTE_PATH = $WORKING_DIRECTORY.Substring(2)
-    $WORKDIR_ABSOLUTE_PATH = "$PSScriptRoot\$WORKDIR_ABSOLUTE_PATH"
+    Write-Output "One"
+    $HOMEDIR_ABSOLUTE_PATH = $JENKINS_HOME.Substring(2)
+    $HOMEDIR_ABSOLUTE_PATH = "$PSScriptRoot\$HOMEDIR_ABSOLUTE_PATH"
 }
-elseif ( $firstChar -ne "\" )
+elseif ( $secondChar -eq ":" )
 {
-    $WORKDIR_ABSOLUTE_PATH = "$PSScriptRoot\$WORKING_DIRECTORY"
+    Write-Output "Three"
+    $HOMEDIR_ABSOLUTE_PATH = $JENKINS_HOME
 }
 else
 {
+    Write-Output "Two"
+    $HOMEDIR_ABSOLUTE_PATH = "$PSScriptRoot\$JENKINS_HOME"
+
+}
+$JENKINS_HOME = $HOMEDIR_ABSOLUTE_PATH -replace "/","\"
+
+
+# Determine absolute work and shared_workspace directory paths
+$firstTwoChars = $WORKING_DIRECTORY.Substring(0,2)
+$secondChar = $WORKING_DIRECTORY.Substring(1,1)
+$firstChar = $WORKING_DIRECTORY.Substring(0,1)
+Write-Output $firstTwoChars
+Write-Output $secondChar
+Write-Output $firstChar
+if ( $firstTwoChars -eq ".\" ) {
+    Write-Output "One"
+    $WORKDIR_ABSOLUTE_PATH = $WORKING_DIRECTORY.Substring(2)
+    $WORKDIR_ABSOLUTE_PATH = "$PSScriptRoot\$WORKDIR_ABSOLUTE_PATH"
+}
+elseif ( $secondChar -eq ":" )
+{
+    Write-Output "Three"
     $WORKDIR_ABSOLUTE_PATH = $WORKING_DIRECTORY
+}
+else
+{
+    Write-Output "Two"
+    $WORKDIR_ABSOLUTE_PATH = "$PSScriptRoot\$WORKING_DIRECTORY"
+
 }
 $WORKING_DIRECTORY = $WORKDIR_ABSOLUTE_PATH -replace "/","\"
 
@@ -282,9 +316,9 @@ if ( ! ( Test-Path -Path $vmware_workstation_shared_directory_path ) )
 
 
 # Replace mustache variables in job config.xml files
-New-Item -Path ".\jenkins_home\jobs" -Name "logfiles" -ItemType "directory"
-Copy-Item -Path ".\initial-setup\*" -Destination ".\jenkins_home\" -Recurse -Force
-Get-ChildItem ".\jenkins_home\jobs" -Recurse -Filter config.xml |
+New-Item -Path "$JENKINS_HOME\jobs" -Name "logfiles" -ItemType "directory"
+Copy-Item -Path ".\initial-setup\*" -Destination "$JENKINS_HOME\" -Recurse -Force
+Get-ChildItem "$JENKINS_HOME\jobs" -Recurse -Filter config.xml |
 Foreach-Object {
     Write-Output "Replacing parameters in job XML defintion file $(Write-Output $_.FullName)"
     $filename = $_.FullName
@@ -303,7 +337,7 @@ Foreach-Object {
 }
 
 # Replace mustache variables in local agent xml file
-$filename = ".\jenkins_home\nodes\local\config.xml"
+$filename = "$JENKINS_HOME\nodes\local\config.xml"
 $tempFilePath = "$filename.tmp"
 
 select-string -path $filename -pattern '(?<={{)(.*?)(?=}})' -allmatches  |
@@ -373,7 +407,7 @@ Invoke-WebRequest -Uri $jenkinsUrl/jnlpJars/jenkins-cli.jar -OutFile .\jenkins-c
 Invoke-WebRequest -Uri $jenkinsUrl/jnlpJars/agent.jar -OutFile .\agent.jar
 
 # Replace mustache variables in credential xml files
-Get-ChildItem ".\jenkins_home\" -Filter credential_*.xml |
+Get-ChildItem "$JENKINS_HOME\" -Filter credential_*.xml |
         Foreach-Object {
             Write-Output "Replacing parameters in credential XML defintion file $(Write-Output $_.FullName)"
             $filename = $_.FullName

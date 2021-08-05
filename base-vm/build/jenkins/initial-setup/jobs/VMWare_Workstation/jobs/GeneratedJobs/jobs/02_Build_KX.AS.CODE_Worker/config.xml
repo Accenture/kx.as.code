@@ -15,7 +15,7 @@
         <string>kx_vm_password</string>
         <string>git_source_url</string>
         <string>vagrant_compute_engine_build</string>
-        <string>kx_version</string>
+        <string>kx_version_override</string>
         <string>kx_domain</string>
         <string>kx_worker_hostname</string>
       </parameters>
@@ -51,7 +51,7 @@
           <trim>false</trim>
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
-          <name>kx_version</name>
+          <name>kx_version_override</name>
           <description>KX.AS.CODE Version</description>
           <defaultValue>{{kx_version}}</defaultValue>
           <trim>false</trim>

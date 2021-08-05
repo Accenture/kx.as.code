@@ -1,15 +1,15 @@
 {
-    "aws_access_key": "",
-    "aws_secret_access_key": "",
     "aws_region": "us-east-2",
-    "aws_availability_zone": "us-east-2c",
-    "kx_version": "0.6.7",
+    "aws_availability_zone_one": "us-east-2a",
+    "aws_availability_zone_two": "us-east-2b",
+    "kx_version": "0.8.0",
     "vm_properties": {
-        "main_node_ami_id": "ami-07b6b482527787e9f",
+        "main_node_ami_id": "ami-01f288cf55df167f4",
         "main_node_instance_type": "t3.xlarge",
-        "worker_node_ami_id": "ami-0c95063f9e67a7aaf",
+        "main_node_count": 3,
+        "worker_node_ami_id": "ami-0fb6171130567ae83",
         "worker_node_instance_type": "t3.large",
-        "worker_node_count": 0,
+        "worker_node_count": 4,
         "bastion_node_instance_type": "t3.nano"
     },
     "config": {
@@ -29,7 +29,9 @@
         "environmentPrefix": "demo1",
         "glusterFsDiskSize": "200",
         "sslProvider": "letsencrypt",
-        "sslDomainAdminEmail": "admin@kx-as-code.io",
+        "letsEncryptEnvironment": "prod",
+        "sslDomainAdminEmail": "admin@demo1.kx-as-code.io",
+        "mxDnsRecord": "mail.delamere.de",
         "baseDomain": "kx-as-code.io",
         "baseUser": "kx.hero",
         "basePassword": "L3arnandshare",
@@ -41,7 +43,8 @@
         "vpc_cidr_block": "10.0.0.0/16",
         "private_subnet_cidr_one": "10.0.76.0/24",
         "private_subnet_cidr_two": "10.0.5.0/24",
-        "public_subnet_cidr": "10.0.3.0/24",
-        "remote_access_cidrs": ["84.178.215.175/32"]
+        "public_subnet_cidr_one": "10.0.3.0/24",
+        "public_subnet_cidr_two": "10.0.4.0/24",
+        "remote_access_cidrs": ["84.178.213.25/32"]
     }
 }

@@ -50,8 +50,12 @@ output "glusterfs_storage_volume_size" {
  value = local.glusterfs_storage_volume_size
 }
 
-output "kx-main-floating-address" {
- value = openstack_compute_floatingip_associate_v2.kx-main-floating-ip-associate.*.floating_ip
+output "kx-main-admin-floating-address" {
+ value = openstack_compute_floatingip_associate_v2.kx-main-admin-floating-ip-associate.*.floating_ip
+}
+
+output "kx-main-additional-floating-address" {
+ value = openstack_compute_floatingip_associate_v2.kx-main-additional-floating-ip-associate.*.floating_ip
 }
 
 output "kx-worker-floating-address" {

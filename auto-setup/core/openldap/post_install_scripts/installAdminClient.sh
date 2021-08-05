@@ -39,7 +39,9 @@ if [[ ${configuredPhpVersion} != "${installedPhpVersion}"   ]]; then
 fi
 
 # Enable new Site
-ln -s /etc/nginx/sites-available/ldap-manager.conf /etc/nginx/sites-enabled/ldap-manager.conf
+if [[ ! -L /etc/nginx/sites-enabled/ldap-manager.conf ]]; then
+  ln -s /etc/nginx/sites-available/ldap-manager.conf /etc/nginx/sites-enabled/ldap-manager.conf
+fi
 
 # Modify ldap account manager config file to match KX.AS.CODE settings
 sed -i 's/^Admins: .*$/Admins: cn=admin,'${ldapDn}'/' /var/lib/ldap-account-manager/config/lam.conf

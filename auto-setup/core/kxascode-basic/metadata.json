@@ -4,6 +4,9 @@
     "installation_type": "script",
     "installation_group_folder": "core",
     "retry": "true",
+    "letsencrypt": {
+        "enabled": true
+    },
     "install_scripts": [
         "installKxAsCodeAppsWithoutTools.sh"
     ],

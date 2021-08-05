@@ -7,14 +7,17 @@ node('local') {
         echo "Running on Mac"
         packerOsFolder="darwin-linux"
         vmWareDiskUtilityPath="/System/Volumes/Data/Applications/VMware Fusion.app/Contents/Library/vmware-vdiskmanager"
+        jqDownloadPath="${JQ_DARWIN_DOWNLOAD_URL}"
     } else if ( os == "linux" ) {
         echo "Running on Linux"
         packerOsFolder="darwin-linux"
         vmWareDiskUtilityPath=""
+        jqDownloadPath="${JQ_LINUX_DOWNLOAD_URL}"
     } else {
         echo "Running on Windows"
         os="windows"
         vmWareDiskUtilityPath="c:/Program Files (x86)/VMware/VMware Workstation/vmware-vdiskmanager.exe"
+        jqDownloadPath="${JQ_WINDOWS_DOWNLOAD_URL}"
         packerOsFolder="windows"
     }
 }
@@ -57,10 +60,21 @@ pipeline {
                 script {
                     dir(shared_workspace) {
                         sh """
+                        if [[ ! -f ./jq* ]]; then
+                            curl -L -o jq ${jqDownloadPath}
+                            chmod +x ./jq
+                        fi
+                        export kx_version=\$(cat version.json | ./jq -r '.version')
+                        echo \${kx_version}
                         export kxMainBoxLocation=${kx_main_box_location}
                         export kxWorkerBoxLocation=${kx_worker_box_location}
+                        echo \${kxMainBoxLocation}
+                        echo \${kxWorkerBoxLocation}
+                        if [[ -f kx.as.code_main-ip-address ]]; then
+                            rm -f kx.as.code_main-ip-address
+                        fi
                         cd profiles/vagrant-vmware-desktop-demo1
-                        vagrant up
+                        vagrant up --provider vmware_desktop
                         """
                     }
                 }

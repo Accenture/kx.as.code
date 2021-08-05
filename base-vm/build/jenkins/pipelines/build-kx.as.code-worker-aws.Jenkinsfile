@@ -6,12 +6,15 @@ node('local') {
     if ( os == "darwin" ) {
         echo "Running on Mac"
         packerOsFolder="darwin-linux"
+        jqDownloadPath="${JQ_DARWIN_DOWNLOAD_URL}"
     } else if ( os == "linux" ) {
         echo "Running on Linux"
         packerOsFolder="darwin-linux"
+        jqDownloadPath="${JQ_LINUX_DOWNLOAD_URL}"
     } else {
         echo "Running on Windows"
         os="windows"
+        jqDownloadPath="${JQ_WINDOWS_DOWNLOAD_URL}"
         packerOsFolder="windows"
     }
 }
@@ -66,17 +69,23 @@ pipeline {
                             packerPath = packerPath.replaceAll("\\\\","/")
                         }
                         sh """
+                        if [[ ! -f ./jq* ]]; then
+                            curl -L -o jq ${jqDownloadPath}
+                            chmod +x ./jq
+                        fi
+                        export kx_version=\$(cat version.json | ./jq -r '.version')
+                        echo \${kx_version}
                         cd base-vm/build/packer/${packerOsFolder}
                         ${packerPath}/packer build -force -only kx.as.code-worker-aws-ami \
                         -var "compute_engine_build=${aws_compute_engine_build}" \
                         -var "hostname=${kx_worker_hostname}" \
                         -var "domain=${kx_domain}" \
-                        -var "version=${kx_version}" \
+                        -var "version=\${kx_version}" \
                         -var "vm_user=${kx_vm_user}" \
                         -var "vm_password=${kx_vm_password}" \
                         -var "instance_type=${aws_instance_type}" \
-                        -var "access_key=${AWS_ACCESS_KEY_ID}" \
-                        -var "secret_key=${AWS_SECRET_ACCESS_KEY}" \
+                        -var "access_key=${AWS_PACKER_ACCESS_KEY_ID}" \
+                        -var "secret_key=${AWS_PACKER_SECRET_ACCESS_KEY}" \
                         -var "source_ami=${aws_source_ami}" \
                         -var "ami_groups=${aws_ami_groups}" \
                         -var "vpc_region=${aws_vpc_region}" \

@@ -166,7 +166,7 @@ if [ -z "$(/usr/bin/sudo grep "heketi" /etc/sudoers || true)" ]; then
 fi
 
 # Add Heketi public key to authorized hosts
-if [ -z "$(/usr/bin/sudo grep "heketi@kx-main" /root/.ssh/authorized_keys || true)" ]; then
+if [ -z "$(/usr/bin/sudo grep "heketi@$(hostname)" /root/.ssh/authorized_keys || true)" ]; then
     /usr/bin/sudo mkdir -p /root/.ssh
     /usr/bin/sudo chmod 700 /root/.ssh
     /usr/bin/sudo cat /etc/heketi/heketi_key.pub | /usr/bin/sudo tee -a /root/.ssh/authorized_keys

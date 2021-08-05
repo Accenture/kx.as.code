@@ -6,10 +6,7 @@ kubeAdminStatus=$(kubectl cluster-info | grep "is running at" || true)
 if [[ ! ${kubeAdminStatus} ]]; then
     # Pull Kubernetes images
     /usr/bin/sudo kubeadm config images pull
-
-    # Initialization Kube Control Pane
-    /usr/bin/sudo kubeadm init --apiserver-advertise-address=${mainIpAddress} --pod-network-cidr=20.96.0.0/12
-
+    /usr/bin/sudo kubeadm init --apiserver-advertise-address=${mainIpAddress} --pod-network-cidr=20.96.0.0/12 --upload-certs --control-plane-endpoint=api-internal.${baseDomain}:6443
     # Setup KX and root users as Kubernetes Admin
     mkdir -p /root/.kube
     cp -f /etc/kubernetes/admin.conf /root/.kube/config
