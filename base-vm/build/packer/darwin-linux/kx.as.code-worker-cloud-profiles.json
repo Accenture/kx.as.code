@@ -27,7 +27,7 @@
           "delete_on_termination": true
         }
       ],
-      "ssh_username": "{{user `ssh_username`}}",
+      "ssh_username": "{{user `base_image_ssh_user`}}",
       "ssh_interface": "{{user `ssh_interface`}}",
       "ssh_port": 22,
       "ssh_timeout": "3600s",

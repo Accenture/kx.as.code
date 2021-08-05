@@ -27,8 +27,8 @@ base-vm/**/config.yaml
 /profiles/*/kx-as-code.ovpn
 /profiles/*/temp.ovpn
 /profiles/*/terraform
-/profiles/*/terraform.tfstate
-/profiles/*/terraform.tfstate.backup
+terraform.tfstate
+terraform.tfstate.backup
 /KX.AS.CODE.iml
 /workspace.code-workspace
 /.idea/

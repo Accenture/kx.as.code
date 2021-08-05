@@ -1,0 +1,47 @@
+{
+    "aws_access_key": "",
+    "aws_secret_access_key": "",
+    "aws_region": "us-east-2",
+    "aws_availability_zone": "us-east-2c",
+    "kx_version": "0.6.7",
+    "vm_properties": {
+        "main_node_ami_id": "ami-07b6b482527787e9f",
+        "main_node_instance_type": "t3.xlarge",
+        "worker_node_ami_id": "ami-0c95063f9e67a7aaf",
+        "worker_node_instance_type": "t3.large",
+        "worker_node_count": 0,
+        "bastion_node_instance_type": "t3.nano"
+    },
+    "config": {
+        "allowWorkloadsOnMaster": true,
+        "disableSessionTimeout": true,
+        "certificationMode": false,
+        "disableLinuxDesktop": false,
+        "defaultKeyboardLanguage": "de",
+        "local_volumes": {
+            "one_gb": 20,
+            "five_gb": 15,
+            "ten_gb": 10,
+            "thirty_gb": 2,
+            "fifty_gb": 1
+        },
+        "virtualizationType": "public-cloud",
+        "environmentPrefix": "demo1",
+        "glusterFsDiskSize": "200",
+        "sslProvider": "letsencrypt",
+        "sslDomainAdminEmail": "admin@kx-as-code.io",
+        "baseDomain": "kx-as-code.io",
+        "baseUser": "kx.hero",
+        "basePassword": "L3arnandshare",
+        "baseIpType": "dynamic",
+        "metalLbIpRange": {
+            "ipRangeStart": "10.0.76.200",
+            "ipRangeEnd": "10.0.76.250"
+        },
+        "vpc_cidr_block": "10.0.0.0/16",
+        "private_subnet_cidr_one": "10.0.76.0/24",
+        "private_subnet_cidr_two": "10.0.5.0/24",
+        "public_subnet_cidr": "10.0.3.0/24",
+        "remote_access_cidrs": ["84.178.215.175/32"]
+    }
+}

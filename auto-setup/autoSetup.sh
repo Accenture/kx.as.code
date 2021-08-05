@@ -282,8 +282,15 @@ if [[ ${action} == "install"   ]]; then
             expectedContentString=$(echo ${readinessCheckData} | jq -r '.expected_http_response_string')
             expectedJsonValue=$(echo ${readinessCheckData} | jq -r '.expected_json_response.json_value')
 
-            timeout -s TERM 300 bash -c 'while [[ "$(curl -s -o /dev/null -L -w ''%{http_code}'' '${applicationUrl}${urlCheckPath}')" != "'${expectedHttpResponseCode}'" ]]; do \
-            echo "Waiting for '${applicationUrl}${urlCheckPath}'"; sleep 5; done'
+            for i in {1..60}; do
+                http_code=$(curl -s -o /dev/null -L -w '%{http_code}' ${applicationUrl}${urlCheckPath} || true)
+                if [[ "${http_code}" == "${expectedHttpResponseCode}" ]]; then
+                    echo "Application \"${componentName}\" is up. Received expected response [RC=${http_code}]"
+                    break
+                fi
+                echo -e "${blue}- [INFO] Waiting for ${applicationUrl}${urlCheckPath} [Got RC=${http_code}, Expected RC=${expectedHttpResponseCode}]${nc}"
+                sleep 30
+            done
 
             finalReturnCode=$(curl -s -o /dev/null -L -w '%{http_code}' ${applicationUrl}${urlCheckPath})
             if [[ ${finalReturnCode} -ne ${expectedHttpResponseCode} ]]; then

@@ -1,15 +1,25 @@
 {
     "name": "cert-manager",
     "namespace": "cert-manager",
-    "installation_type": "script",
+    "installation_type": "helm",
     "installation_group_folder": "core",
     "retry": "true",
+    "helm_params": {
+        "repository_url": "https://charts.jetstack.io",
+        "repository_name": "jetstack/cert-manager",
+        "helm_version": "v1.4.0",
+        "set_key_values": [
+            "installCRDs=true"
+        ]
+    },
     "install_scripts": [
         "installCertManager.sh"
     ],
     "Description": "Cert Manager",
-    "shortcut_text": "Cert Manager Network",
+    "shortcut_text": "Cert Manager",
     "shortcut_icon": "cert-manager.png",
     "pre_install_scripts": [],
-    "post_install_scripts": []
+    "post_install_scripts": [
+        "installLetsEncryptIssuer.sh"
+    ]
 }

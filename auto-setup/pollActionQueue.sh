@@ -16,7 +16,7 @@ export adminShortcutsDirectory="${sharedKxHome}/Admin Tools"
 export vmUser=kx.hero
 export vmUserId=$(id -u ${vmUser})
 export vmPassword="$(cat ${sharedKxHome}/.config/.user.cred)"
-export retries=""
+export retries="0"
 export action=""
 export componentName=""
 export componentInstallationFolder=""
@@ -172,7 +172,7 @@ export baseIpRangeEnd=$(cat ${installationWorkspace}/profile-config.json | jq -r
 export metalLbIpRangeStart=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.metalLbIpRange.ipRangeStart')
 export metalLbIpRangeEnd=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.metalLbIpRange.ipRangeEnd')
 export sslProvider=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.sslProvider')
-
+export sslDomainAdminEmail=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.sslDomainAdminEmail')
 # Get proxy settings
 export httpProxySetting=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.proxy_settings.http_proxy')
 export httpsProxySetting=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.proxy_settings.https_proxy')
@@ -203,19 +203,19 @@ export s3ObjectStoreUrl="https://${s3ObjectStoreDomain}"
 # Establish common logging format
 export logTimestamp=$(date '+%Y-%m-%d')
 log_info() {
-    echo "$(date '+%Y-%m-%d_%H%M%S') [INFO] ${1}" | tee -a ${installationWorkspace}/${componentName}_${logTimestamp}.log
+    echo "$(date '+%Y-%m-%d_%H%M%S') [INFO] ${1}" | tee -a ${installationWorkspace}/${componentName}_${logTimestamp}.${retries}.log
 }
 
 log_warn() {
-    echo "$(date '+%Y-%m-%d_%H%M%S') [WARN] ${1}" | tee -a ${installationWorkspace}/${componentName}_${logTimestamp}.log
+    echo "$(date '+%Y-%m-%d_%H%M%S') [WARN] ${1}" | tee -a ${installationWorkspace}/${componentName}_${logTimestamp}.${retries}.log
 }
 
 log_error() {
-    echo "$(date '+%Y-%m-%d_%H%M%S') [ERROR] ${1}" | tee -a ${installationWorkspace}/${componentName}_${logTimestamp}.log
+    echo "$(date '+%Y-%m-%d_%H%M%S') [ERROR] ${1}" | tee -a ${installationWorkspace}/${componentName}_${logTimestamp}.${retries}.log
 }
 
 log_debug() {
-    echo "$(date '+%Y-%m-%d_%H%M%S') [DEBUG] ${1}" | tee -a ${installationWorkspace}/${componentName}_${logTimestamp}.log
+    echo "$(date '+%Y-%m-%d_%H%M%S') [DEBUG] ${1}" | tee -a ${installationWorkspace}/${componentName}_${logTimestamp}.${retries}.log
 }
 
 if [[ ! -f /usr/share/kx.as.code/.config/network_status ]]; then
@@ -286,7 +286,7 @@ if [[ ! -f /usr/share/kx.as.code/.config/network_status ]]; then
     fi
 
     # Setup proxy settings if they exist
-    if [[ -n ${httpProxySetting}   ]] || [[ -n ${httpsProxySetting}   ]]; then
+    if ( [[ -n ${httpProxySetting} ]] || [[ -n ${httpsProxySetting} ]] ) && ( [[ "${httpProxySetting}" != "null" ]] && [[ "${httpsProxySetting}" != "null" ]] ); then
 
         httpProxySettingBase=$(echo ${httpProxySetting} | sed 's/https:\/\///g' | sed 's/http:\/\///g')
         httpsProxySettingBase=$(echo ${httpsProxySetting} | sed 's/https:\/\///g' | sed 's/http:\/\///g')
@@ -524,7 +524,7 @@ while :; do
                 fi
                 count=$((count + 1))
                 export error=""
-                . ${autoSetupHome}/autoSetup.sh &> ${installationWorkspace}/${componentName}_${logTimestamp}.log
+                . ${autoSetupHome}/autoSetup.sh &> ${installationWorkspace}/${componentName}_${logTimestamp}.${retries}.log
                 logRc=$?
                 log_info "Installation process for \"${componentName}\" returned with \$?=${logRc} and \$rc=$rc"
             fi
