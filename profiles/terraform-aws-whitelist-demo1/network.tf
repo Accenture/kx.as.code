@@ -198,12 +198,12 @@ resource "aws_lb_listener" "rdp" {
   }
 }
 
-resource "aws_route53_zone" "kx_as_code" {
+data "aws_route53_zone" "kx_as_code" {
   name = "${local.prefix}.${local.kx_as_code_domain}"
 }
 
 resource "aws_route53_record" "kx_bastion" {
-  zone_id = aws_route53_zone.kx_as_code.zone_id
+  zone_id = data.aws_route53_zone.kx_as_code.zone_id
   name    = "kx-bastion.${local.prefix}.${local.kx_as_code_domain}"
   type    = "A"
   ttl     = 300
@@ -211,7 +211,7 @@ resource "aws_route53_record" "kx_bastion" {
 }
 
 resource "aws_route53_record" "kx_main_admin" {
-  zone_id = aws_route53_zone.kx_as_code.zone_id
+  zone_id = data.aws_route53_zone.kx_as_code.zone_id
   name    = "kx-main1.${local.prefix}.${local.kx_as_code_domain}"
   type    = "A"
   ttl     = 300
@@ -219,7 +219,7 @@ resource "aws_route53_record" "kx_main_admin" {
 }
 
 resource "aws_route53_record" "kx_main_additional" {
-  zone_id = aws_route53_zone.kx_as_code.zone_id
+  zone_id = data.aws_route53_zone.kx_as_code.zone_id
   name    = "kx-main${count.index + 2}.${local.prefix}.${local.kx_as_code_domain}"
   count   = local.main_node_count - 1
   type    = "A"
@@ -228,7 +228,7 @@ resource "aws_route53_record" "kx_main_additional" {
 }
 
 resource "aws_route53_record" "kx_caa" {
-  zone_id = aws_route53_zone.kx_as_code.zone_id
+  zone_id = data.aws_route53_zone.kx_as_code.zone_id
   name    = "${local.prefix}.${local.kx_as_code_domain}"
   type    = "CAA"
   ttl     = 300
@@ -236,7 +236,7 @@ resource "aws_route53_record" "kx_caa" {
 }
 
 resource "aws_route53_record" "kx_mx" {
-  zone_id = aws_route53_zone.kx_as_code.zone_id
+  zone_id = data.aws_route53_zone.kx_as_code.zone_id
   name    = "${local.prefix}.${local.kx_as_code_domain}"
   type    = "MX"
   ttl     = 300
@@ -244,7 +244,7 @@ resource "aws_route53_record" "kx_mx" {
 }
 
 resource "aws_route53_record" "kx_worker" {
-  zone_id = aws_route53_zone.kx_as_code.zone_id
+  zone_id = data.aws_route53_zone.kx_as_code.zone_id
   name    = "kx-worker${count.index + 1}.${local.prefix}.${local.kx_as_code_domain}"
   count   = local.worker_node_count
   type    = "A"
@@ -253,7 +253,7 @@ resource "aws_route53_record" "kx_worker" {
 }
 
 resource "aws_route53_record" "rdp" {
-  zone_id = aws_route53_zone.kx_as_code.zone_id
+  zone_id = data.aws_route53_zone.kx_as_code.zone_id
   name    = "rdp.${local.prefix}.${local.kx_as_code_domain}"
   type    = "CNAME"
   ttl     = 300
@@ -269,7 +269,7 @@ resource "aws_route53_health_check" "api_internal" {
 }
 
 resource "aws_route53_record" "k8s_api_internal_admin" {
-  zone_id = aws_route53_zone.kx_as_code.zone_id
+  zone_id = data.aws_route53_zone.kx_as_code.zone_id
   name    = "api-internal.${local.prefix}.${local.kx_as_code_domain}"
   type    = "A"
   ttl     = 300
@@ -283,7 +283,7 @@ resource "aws_route53_record" "k8s_api_internal_admin" {
 
 resource "aws_route53_record" "k8s_api_internal_additional" {
   count = (local.main_node_count - 1) < 0 ? 0 : local.main_node_count - 1
-  zone_id = aws_route53_zone.kx_as_code.zone_id
+  zone_id = data.aws_route53_zone.kx_as_code.zone_id
   name    = "api-internal.${local.prefix}.${local.kx_as_code_domain}"
   type    = "A"
   ttl     = 300
@@ -296,7 +296,7 @@ resource "aws_route53_record" "k8s_api_internal_additional" {
 }
 
 resource "aws_route53_record" "wildcard" {
-  zone_id = aws_route53_zone.kx_as_code.zone_id
+  zone_id = data.aws_route53_zone.kx_as_code.zone_id
   name    = "*.${local.prefix}.${local.kx_as_code_domain}"
   type    = "CNAME"
   ttl     = 300

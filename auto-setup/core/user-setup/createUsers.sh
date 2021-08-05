@@ -140,7 +140,7 @@ if [[ ${numUsersToCreate} -ne 0 ]]; then
 
             # Restart NSLCD and NSCD to make new users available for logging in
             /usr/bin/sudo systemctl restart nslcd.service
-            /usr/bin/sudo systemctl restart nscd.service
+            /usr/bin/sudo systemctl restart unscd.service
 
             # Test for user availability
             for i in {1..10}; do

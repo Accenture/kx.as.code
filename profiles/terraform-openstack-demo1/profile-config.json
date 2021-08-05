@@ -3,15 +3,15 @@
         "vm_properties": {
             "kx_version": "0.8.0",
             "main_node_count": 3,
-            "main_node_cpu_cores": 2,
+            "main_node_cpu_cores": 4,
             "main_node_memory": 8196,
             "worker_node_count": 4,
             "worker_node_cpu_cores": 2,
-            "worker_node_memory": 6144,
+            "worker_node_memory": 8196,
             "environment_prefix": "demo1",
             "openstack": {
-                "kx_main_image_id": "77e79cf6-0aa4-47f2-90ff-2d7ca13271b9",
-                "kx_worker_image_id": "55a48997-3210-410a-a41d-0177cfecc337",
+                "kx_main_image_id": "dcc11714-5d06-4fb1-80e8-69068a6995db",
+                "kx_worker_image_id": "31cbefee-33c6-45a5-bde1-ab5dab966368",
                 "external_network_id": "48af4f9c-b380-4451-a13b-ab609b672b95"
             }
         },

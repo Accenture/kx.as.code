@@ -4,10 +4,10 @@
     "aws_availability_zone_two": "us-east-2b",
     "kx_version": "0.8.0",
     "vm_properties": {
-        "main_node_ami_id": "ami-08ba7b2dc11fd3228",
+        "main_node_ami_id": "ami-01f288cf55df167f4",
         "main_node_instance_type": "t3.xlarge",
         "main_node_count": 3,
-        "worker_node_ami_id": "ami-0cab523cbfe3a49fb",
+        "worker_node_ami_id": "ami-0fb6171130567ae83",
         "worker_node_instance_type": "t3.large",
         "worker_node_count": 4,
         "bastion_node_instance_type": "t3.nano"
@@ -29,7 +29,7 @@
         "environmentPrefix": "demo1",
         "glusterFsDiskSize": "200",
         "sslProvider": "letsencrypt",
-        "letsEncryptEnvironment": "staging",
+        "letsEncryptEnvironment": "prod",
         "sslDomainAdminEmail": "admin@demo1.kx-as-code.io",
         "mxDnsRecord": "mail.delamere.de",
         "baseDomain": "kx-as-code.io",
