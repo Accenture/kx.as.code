@@ -12,12 +12,12 @@ fi
 
 # Determine Drive C (GlusterFS) - Relevant for KX-Main1 only
 for i in {{1..30}}; do
-  driveC=$(lsblk -o NAME,FSTYPE,SIZE -dsn -J | jq -r '.[] | .[] | select(.fstype==null) | select(.size=="'${glusterFsDiskSize}'G") | .name' || true)
+  driveC=$(lsblk -o NAME,FSTYPE,SIZE -dsn -J | jq -r '.[] | .[] | select(.fstype==null) | select(.size=="'$((${glusterFsDiskSize}+1))'G") | .name' || true)
   if [[ -z ${driveC} ]]; then
     log_info "Drive for glusterfs not yet available. Trying a maximum of 30 times. Attempt ${i}"
     sleep 15
   else
-    log_info "Drive for glusterfs now available after attempt ${i} of 30"
+    log_info "Drive for glusterfs (${driveC}) now available after attempt ${i} of 30"
     break
   fi
 done

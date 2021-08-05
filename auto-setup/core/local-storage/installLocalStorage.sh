@@ -27,7 +27,7 @@ for i in {{1..30}}; do
     log_info "Drive for local volumes not yet available. Trying a maximum of 30 times. Attempt ${i}"
     sleep 15
   else
-    log_info "Drive for local volumes now available after attempt ${i} of 30"
+    log_info "Drive for local volumes (${driveB}) now available after attempt ${i} of 30"
     break
   fi
 done
