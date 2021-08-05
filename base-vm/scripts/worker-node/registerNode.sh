@@ -101,7 +101,7 @@ for i in {{1..30}}; do
     echo "Drive for local volumes not yet available. Trying a maximum of 30 times. Attempt ${i}"
     sleep 15
   else
-    echo "Drive for local volumes now available after attempt ${i} of 30"
+    echo "Drive for local volumes (${driveB}) now available after attempt ${i} of 30"
     break
   fi
 done
