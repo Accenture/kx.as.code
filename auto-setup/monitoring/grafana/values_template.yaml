@@ -21,19 +21,22 @@ grafana.ini:
   rendering:
     server_url: http://grafana-image-renderer-service.monitoring:8081/render
     callback_url: http://grafana.monitoring
-  auth.gitlab:
-    enabled: true
+  auth.generic_oauth:
+    enabled: true     
+    client_id: grafana
+    client_secret: $clientSecret
+    auth_url: https://keycloak.${baseDomain}/auth/realms/${kcRealm}/protocol/openid-connect/auth
+    token_url: https://keycloak.${baseDomain}/auth/realms/${kcRealm}/protocol/openid-connect/token
+    api_url: https://keycloak.${baseDomain}/auth/realms/${kcRealm}/protocol/openid-connect/userinfo
+    scopes: openid email profile
     allow_sign_up: true
-    client_id: {{grafanaGitIntegrationId}}
-    client_secret: {{grafanaGitIntegrationSecret}}
-    scopes: read_user
-    auth_url: {{gitUrl}}/oauth/authorize
-    token_url: {{gitUrl}}/oauth/token
-    api_url: {{gitUrl}}/api/v4
+    tls_skip_verify_insecure: true
+    role_attribute_path: contains(groups[*], '/kcadmins') && 'Admin' || 'Viewer'
   server:
-    root_url: https://{{componentName}}.{{baseDomain}}
+    root_url: "https://{{componentName}}.{{baseDomain}}"
+    domain: "{{componentName}}.{{baseDomain}}"
   extraConfigmapMounts:
     - name: certs-configmap
       mountPath: /etc/grafana/ssl/
       configMap: certs-configmap
-      readOnly: true
+      readOnly: true 
