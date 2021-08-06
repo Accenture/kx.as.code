@@ -169,9 +169,9 @@ postgresql-auto-create-accounts: true
 
 # Check if MD5 password already exists
 if [ -f ${sharedKxHome}/.guacamole.json ]; then
-    if [ -z $(cat ${sharedKxHome}/.guacamole.json | jq -r '.[] | select(.user=="guacamole_user") | .user' || true) ]; then
+    if [ -z $(cat ${sharedKxHome}/.guacamole.json | jq -r '.[] | select(.user=="md5_user") | .user' || true) ]; then
         md5Password=$(echo -n ${vmPassword} | openssl md5 | cut -f2 -d' ')
-        echo "[ { \"user\": \"md5_user\", \"password\": \"${guacPassword}\" } ]" | /usr/bin/sudo tee ${sharedKxHome}/.temp.guacamole.json
+        echo "[ { \"user\": \"md5_user\", \"password\": \"${md5Password}\" } ]" | /usr/bin/sudo tee ${sharedKxHome}/.temp.guacamole.json
         cat /usr/share/kx.as.code/.guacamole.json /usr/share/kx.as.code/.temp.guacamole.json | jq -s add | tee /usr/share/kx.as.code/.guacamole.json
         rm -f ${sharedKxHome}/.temp.guacamole.json
     else
@@ -179,7 +179,7 @@ if [ -f ${sharedKxHome}/.guacamole.json ]; then
     fi
 else
     md5Password=$(echo -n ${vmPassword} | openssl md5 | cut -f2 -d' ')
-    echo "[ { \"user\": \"md5_user\", \"password\": \"${guacPassword}\" } ]" | /usr/bin/sudo tee ${sharedKxHome}/.guacamole.json
+    echo "[ { \"user\": \"md5_user\", \"password\": \"${md5Password}\" } ]" | /usr/bin/sudo tee ${sharedKxHome}/.guacamole.json
 fi
 
 # Check if VNC password already exists
