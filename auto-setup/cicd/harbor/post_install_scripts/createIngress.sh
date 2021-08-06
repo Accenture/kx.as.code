@@ -2,7 +2,7 @@
 
 echo '''
 ---
-apiVersion: extensions/v1beta1
+apiVersion: extensions/v1
 kind: Ingress
 metadata:
     name: harbor-harbor-ingress
@@ -60,7 +60,7 @@ spec:
       - '${componentName}'.'${baseDomain}'
       secretName: kx.as.code-wildcard-cert
 ---
-apiVersion: extensions/v1beta1
+apiVersion: extensions/v1
 kind: Ingress
 metadata:
     name: harbor-harbor-ingress-notary

@@ -223,6 +223,20 @@ log_debug() {
     echo "$(date '+%Y-%m-%d_%H%M%S') [DEBUG] ${1}" | tee -a ${installationWorkspace}/${componentName}_${logTimestamp}.${retries}.log
 }
 
+notify() {
+  openDisplays=$(w -oush | grep -Eo ' :[0-9]+' | uniq | cut -d \  -f 2)
+  messageTimeout=300000
+  messageTitle="KX.AS.CODE Notification"
+  message=${1}
+  messageType=${2}
+  for display in ${openDisplays}; do
+    displayUser=$(w -oush | grep -sw "${display}" | awk {'print $1'})
+    if [[ -f /run/user/$(id -u ${displayUser})/bus ]]; then
+        /usr/bin/sudo -H -i -u ${displayUser} bash -c 'DISPLAY='${display}' DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$(id -u '${displayUser}')/bus notify-send -t '${messageTimeout}' "'${messageTitle}'" "'${message}'" --icon='${messageType}''
+    fi
+  done
+}
+
 if [[ ! -f /usr/share/kx.as.code/.config/network_status ]]; then
 
     # Change DNS resolution to allow wildcards for resolving locally deployed K8s services
@@ -502,9 +516,9 @@ while :; do
                 echo "Completed payload: ${payload}"
                 rabbitmqadmin publish exchange=action_workflow routing_key=completed_queue properties="{\"delivery_mode\": 2}" payload=''${payload}''
                 log_info "The installation of \"${componentName}\" completed succesfully"
-                /usr/bin/sudo -H -i -u ${vmUser} bash -c "DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/${vmUserId}/bus notify-send -t 300000 \"KX.AS.CODE Notification\" \"${componentName} installed successfully [$((${completedQueue} + 1))/${totalMessages}]\" --icon=dialog-information"
+                notify "${componentName} installed successfully [$((${completedQueue} + 1))/${totalMessages}]" "dialog-information"
                 if [[ "${componentName}" == "${lastCoreElementToInstall}" ]]; then
-                    /usr/bin/sudo -H -i -u ${vmUser} bash -c "DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/${vmUserId}/bus notify-send -t 300000 \"KX.AS.CODE Notification\" \"CONGRATULATIONS\! That concludes the core setup\! Your optional components will now be installed\" --icon=dialog-information"
+                    notify "CONGRATULATIONS\! That concludes the core setup\! Your optional components will now be installed" "dialog-information"
                     echo "${componentName} = ${lastCoreElementToInstall}"  
                 fi
                 retries=0
@@ -518,7 +532,7 @@ while :; do
                     cat ${installationWorkspace}/actionQueues.json | jq -c -r '(.state.processed[] | select(.name=="'${componentName}'").retries) = "'${retries}'"' | tee ${installationWorkspace}/actionQueues.json.tmp
                     mv ${installationWorkspace}/actionQueues.json.tmp ${installationWorkspace}/actionQueues.json
                     log_warn "Previous attempt to install \"${componentName}\" did not complete succesfully. Trying again (${retries} of 3)"
-                    /usr/bin/sudo -H -i -u ${vmUser} bash -c "DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/${vmUserId}/bus notify-send -t 300000 \"KX.AS.CODE Notification\" \"${componentName} installation error. Will try three times maximum\! [$((${completedQueue} + 1))/${totalMessages}]\" --icon=dialog-warning"
+                    notify "${componentName} installation error. Will try three times maximum\! [$((${completedQueue} + 1))/${totalMessages}]" "dialog-warning"
                     rm -f ${installationWorkspace}/current_payload.err
                 else
                     payload=$(echo ${payload} | jq -c -r '(.retries)="0"' | jq -c -r '. += {"failed_retries":"'${retries}'"}')
@@ -526,7 +540,7 @@ while :; do
                     rabbitmqadmin publish exchange=action_workflow routing_key=failed_queue properties="{\"delivery_mode\": 2}" payload=''${payload}''
                     retries=0
                     log_error "Previous attempt to install \"${componentName}\" did not complete succesfully. There will be no (further) retries"
-                    /usr/bin/sudo -H -i -u ${vmUser} bash -c "DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/${vmUserId}/bus notify-send -t 300000 \"KX.AS.CODE Notification\" \"${componentName} installation failed\! [$((${completedQueue} + 1))/${totalMessages}]\" --icon=dialog-error"
+                    notify "${componentName} installation failed\! [$((${completedQueue} + 1))/${totalMessages}]" "dialog-error"
                     rm -f ${installationWorkspace}/current_payload.err
                 fi
             fi
@@ -566,7 +580,7 @@ while :; do
 
                 # Launch autoSetup.sh
                 if [[ "${componentName}" == "${firstCoreElementToInstall}" ]]; then
-                    /usr/bin/sudo -H -i -u ${vmUser} bash -c "DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/${vmUserId}/bus notify-send -t 300000 \"KX.AS.CODE Notification\" \"Initialization started. Please be patient. This could take up to 30 minutes, depending on your system size and speed of internet connection\" --icon=dialog-warning"
+                     notify "Initialization started. Please be patient. This could take up to 30 minutes, depending on your system size and speed of internet connection" "dialog-warning"
                     echo "${componentName} = ${firstCoreElementToInstall}"
                 fi
                 count=$((count + 1))

@@ -326,7 +326,7 @@ clusterId=$(heketi-cli cluster list | cut -f2 -d: | cut -f1 -d' ' | tr -d '\n')
 # Volume type of "none" is important, as kx.as.code will only have 1 storage (eg, 0 replicas) - provisioning would fail without this
 cat << EOF > ${installationWorkspace}/glusterfs-sc.yaml
 kind: StorageClass
-apiVersion: storage.k8s.io/v1beta1
+apiVersion: storage.k8s.io/v1
 metadata:
   name: gluster-heketi
 provisioner: kubernetes.io/glusterfs

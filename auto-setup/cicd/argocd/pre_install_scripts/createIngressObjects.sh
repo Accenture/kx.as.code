@@ -4,7 +4,7 @@ set -euo pipefail
 # The annotation for HTTP Version 1.0 below is a workaround for an issue described here: https://github.com/argoproj/argo-cd/issues/3896
 echo '''
 ---
-apiVersion: extensions/v1beta1
+apiVersion: extensions/v1
 kind: Ingress
 metadata:
   name: argocd-server-http-ingress
@@ -25,7 +25,7 @@ spec:
   - hosts:
     - '${componentName}'.'${baseDomain}'
 ---
-apiVersion: extensions/v1beta1
+apiVersion: extensions/v1
 kind: Ingress
 metadata:
   name: argocd-server-grpc-ingress

@@ -38,7 +38,7 @@ helm upgrade --install ${componentName} --namespace ${namespace} \
 
  # Install Ingress
 echo '''
-apiVersion: extensions/v1beta1
+apiVersion: extensions/v1
 kind: Ingress
 metadata:
    name: artifactory-oss-artifactory

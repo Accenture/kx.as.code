@@ -49,7 +49,7 @@ cookieSecret=$(python -c 'import os,base64; print(base64.urlsafe_b64encode(os.ur
 
 # Deploy oauth-proxy
 echo '''
-apiVersion: extensions/v1beta1
+apiVersion: extensions/v1
 kind: Ingress
 metadata:
   annotations:
@@ -77,7 +77,7 @@ spec:
           servicePort: 8443
         path: /
 ---
-apiVersion: networking.k8s.io/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: oauth2-proxy
