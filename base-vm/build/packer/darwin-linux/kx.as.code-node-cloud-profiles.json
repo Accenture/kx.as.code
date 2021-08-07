@@ -243,7 +243,7 @@
     "headless": "true",
     "ssh_fullname": "KX Hero",
     "update": "true",
-    "vm_name": "kx.as.code-worker",
+    "vm_name": "kx.as.code-node",
     "vm_suffix": "-demo"
   }
 }
