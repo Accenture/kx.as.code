@@ -295,6 +295,7 @@ killall conky || true && /usr/bin/conky
 sudo chmod 755 /usr/bin/conky-restart.sh
 
 # Build xeventbind for detecting resolution changes
+sudo apt-get install -y libx11-dev
 cd ${SHARED_GIT_REPOSITORIES}/kx.as.code/base-vm/dependencies/xeventbind
 sudo make
 sudo mv ./xeventbind /usr/bin
