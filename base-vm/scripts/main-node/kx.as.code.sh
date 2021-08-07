@@ -290,7 +290,7 @@ sudo chown -R ${VM_USER}:${VM_USER} /home/${VM_USER}
 
 # Ensure Conky is restarted if screen resolution changes
 echo """#!/bin/bash
-killall conky || true && /usr/bin/conky
+sudo killall conky || true && /usr/bin/conky
 """ | sudo tee /usr/bin/conky-restart.sh
 sudo chmod 755 /usr/bin/conky-restart.sh
 
