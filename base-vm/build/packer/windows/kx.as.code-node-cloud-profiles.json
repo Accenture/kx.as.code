@@ -8,7 +8,7 @@
   {
       "type": "amazon-ebs",
       "name": "{{user `vm_name`}}-aws-ami",
-      "ami_name": "{{user `vm_name`}}{{user `vm_suffix`}}-{{user `version`}}",
+      "ami_name": "{{user `vm_name`}}-{{user `version`}}",
       "ami_groups": "",
       "snapshot_groups": "",
       "instance_type": "{{user `instance_type`}}",

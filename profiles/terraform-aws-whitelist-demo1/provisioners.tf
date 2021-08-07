@@ -216,7 +216,7 @@ resource "null_resource" "kx_worker_provisioner" {
 
 }
 
-resource "null_resource" "kx_main_additional" {
+resource "null_resource" "kx_main_replica" {
 
   depends_on = [
     null_resource.kx_bastion_ready
@@ -229,13 +229,13 @@ resource "null_resource" "kx_main_additional" {
       type        = "ssh"
       user        = "admin"
       private_key = file(local_file.kx_ssh_key.filename)
-      host        = aws_instance.kx_main_additional[count.index].private_ip
+      host        = aws_instance.kx_main_replica[count.index].private_ip
 
       bastion_user = "ec2-user"
       bastion_host = aws_instance.kx_bastion.public_ip
     }
 
-    inline = ["echo 'KX Main Additional ${count.index + 2} up and running'"]
+    inline = ["echo 'KX Main Replica ${count.index + 2} up and running'"]
   }
 
   provisioner "remote-exec" {
@@ -251,7 +251,7 @@ resource "null_resource" "kx_main_additional" {
       type        = "ssh"
       user        = "admin"
       private_key = file(local_file.kx_ssh_key.filename)
-      host        = aws_instance.kx_main_additional[count.index].private_ip
+      host        = aws_instance.kx_main_replica[count.index].private_ip
 
       bastion_user = "ec2-user"
       bastion_host = aws_instance.kx_bastion.public_ip
@@ -266,7 +266,7 @@ resource "null_resource" "kx_main_additional" {
       type        = "ssh"
       user        = "admin"
       private_key = file(local_file.kx_ssh_key.filename)
-      host        = aws_instance.kx_main_additional[count.index].private_ip
+      host        = aws_instance.kx_main_replica[count.index].private_ip
 
       bastion_user = "ec2-user"
       bastion_host = aws_instance.kx_bastion.public_ip
@@ -277,13 +277,13 @@ resource "null_resource" "kx_main_additional" {
   provisioner "remote-exec" {
     inline = [
       "sudo mv /var/tmp/*.json /usr/share/kx.as.code/workspace/",
-      "echo \"$(date '+%Y-%m-%d_%H%M%S') | KX-Main Additional VM created by Terraform\" | sudo tee /usr/share/kx.as.code/workspace/gogogo"
+      "echo \"$(date '+%Y-%m-%d_%H%M%S') | KX-Main Replica VM created by Terraform\" | sudo tee /usr/share/kx.as.code/workspace/gogogo"
     ]
     connection {
       type        = "ssh"
       user        = "admin"
       private_key = file(local_file.kx_ssh_key.filename)
-      host        = aws_instance.kx_main_additional[count.index].private_ip
+      host        = aws_instance.kx_main_replica[count.index].private_ip
 
       bastion_user = "ec2-user"
       bastion_host = aws_instance.kx_bastion.public_ip

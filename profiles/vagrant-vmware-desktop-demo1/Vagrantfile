@@ -51,10 +51,14 @@ ENVIRONMENT_PREFIX = ENV['environmentPrefix'] || profile_config_json['config']['
 puts "ENVIRONMENT_PREFIX: #{ENVIRONMENT_PREFIX}"
 MAIN_NODE_COUNT = ENV['mainNodeCount'] || profile_config_json['config']['vm_properties']['main_node_count']
 puts "MAIN_NODE_COUNT: #{MAIN_NODE_COUNT}"
-MAIN_NODE_CPU_CORES = ENV['mainNodeCpuCores'] || profile_config_json['config']['vm_properties']['main_node_cpu_cores']
-puts "MAIN_NODE_CPU_CORES: #{MAIN_NODE_CPU_CORES}"
-MAIN_NODE_MEMORY = ENV['mainNodeMemory'] || profile_config_json['config']['vm_properties']['main_node_memory']
-puts "MAIN_NODE_MEMORY: #{MAIN_NODE_MEMORY}"
+ADMIN_MAIN_NODE_CPU_CORES = ENV['adminMainNodeCpuCores'] || profile_config_json['config']['vm_properties']['admin_main_node_cpu_cores']
+puts "ADMIN_MAIN_NODE_CPU_CORES: #{ADMIN_MAIN_NODE_CPU_CORES}"
+ADMIN_MAIN_NODE_MEMORY = ENV['adminMainNodeMemory'] || profile_config_json['config']['vm_properties']['admin_main_node_memory']
+puts "ADMIN_MAIN_NODE_MEMORY: #{ADMIN_MAIN_NODE_MEMORY}"
+REPLICA_MAIN_NODE_CPU_CORES = ENV['replicaMainNodeCpuCores'] || profile_config_json['config']['vm_properties']['replica_main_node_cpu_cores']
+puts "REPLICA_MAIN_NODE_CPU_CORES: #{REPLICA_MAIN_NODE_CPU_CORES}"
+REPLICA_MAIN_NODE_MEMORY = ENV['replicaMainNodeMemory'] || profile_config_json['config']['vm_properties']['replica_main_node_memory']
+puts "REPLICA_MAIN_NODE_MEMORY: #{REPLICA_MAIN_NODE_MEMORY}"
 WORKER_NODE_COUNT = ENV['workerNodeCount'] || profile_config_json['config']['vm_properties']['worker_node_count']
 puts "WORKER_NODE_COUNT: #{WORKER_NODE_COUNT}"
 WORKER_NODE_CPU_CORES = ENV['workerNodeCpuCores'] || profile_config_json['config']['vm_properties']['worker_node_cpu_cores']
@@ -75,11 +79,11 @@ KX_WORKER_BOX_LOCATION = ENV['kxWorkerBoxLocation'] || profile_config_json['conf
 puts "KX_WORKER_BOX_LOCATION: #{KX_WORKER_BOX_LOCATION}"
 
 if (MAIN_NODE_COUNT - 1) < 1
-  ADDITIONAL_MAIN_NODE_COUNT = 0
-  puts "ADDITIONAL_MAIN_NODE_COUNT < 1 -> #{ADDITIONAL_MAIN_NODE_COUNT} additional main nodes will be provisioned"
+  REPLICA_MAIN_NODE_COUNT = 0
+  puts "REPLICA_MAIN_NODE_COUNT < 1 -> #{REPLICA_MAIN_NODE_COUNT} replica main nodes will be provisioned"
 else
-  ADDITIONAL_MAIN_NODE_COUNT = MAIN_NODE_COUNT - 1
-  puts "ADDITIONAL_MAIN_NODE_COUNT > 1 -> #{ADDITIONAL_MAIN_NODE_COUNT} additional main nodes will be provisioned"
+  REPLICA_MAIN_NODE_COUNT = MAIN_NODE_COUNT - 1
+  puts "REPLICA_MAIN_NODE_COUNT > 1 -> #{REPLICA_MAIN_NODE_COUNT} replica main nodes will be provisioned"
 end
 
 # Path for current Jenkins solution
@@ -169,8 +173,8 @@ Vagrant.configure("2") do |config|
             v.gui = true
             v.whitelist_verified = true
             v.vmx['displayname'] = "kx.as.code-#{ENVIRONMENT_PREFIX}-main#{i}-#{BOX_VERSION}"
-            v.vmx["memsize"] = "#{WORKER_NODE_MEMORY}"
-            v.vmx["numvcpus"] = "#{WORKER_NODE_CPU_CORES}"
+            v.vmx["memsize"] = "#{REPLICA_MAIN_NODE_MEMORY}"
+            v.vmx["numvcpus"] = "#{REPLICA_MAIN_NODE_CPU_CORES}"
             v.vmx["mks.enable3d"] = "FALSE"
             v.vmx["ethernet0.pcislotnumber"] = "33"
             v.vmx["sound.startconnected"] = "FALSE"

@@ -54,11 +54,16 @@ pipeline {
             }
         }
 
-        stage('Build the QCOW2 image'){
+        stage('Build the AMI'){
             steps {
                 script {
                 withCredentials([usernamePassword(credentialsId: 'GIT_KX.AS.CODE_SOURCE', passwordVariable: 'git_source_token', usernameVariable: 'git_source_user')]) {
-                  withCredentials([usernamePassword(credentialsId: 'OPENSTACK_PACKER_CREDENTIAL', usernameVariable: 'OPENSTACK_USER', passwordVariable: 'OPENSTACK_PASSWORD')]) {
+                  withCredentials([[
+                    $class: 'AmazonWebServicesCredentialsBinding',
+                    credentialsId: "AWS_PACKER_ACCESS",
+                    accessKeyVariable: 'AWS_PACKER_ACCESS_KEY_ID',
+                    secretKeyVariable: 'AWS_PACKER_SECRET_ACCESS_KEY'
+                  ]]) {
                         def packerPath = tool "packer-${os}"
                         if ( "${os}" == "windows" ) {
                             packerPath = packerPath.replaceAll("\\\\","/")
@@ -71,24 +76,27 @@ pipeline {
                         export kx_version=\$(cat version.json | ./jq -r '.version')
                         echo \${kx_version}
                         cd base-vm/build/packer/${packerOsFolder}
-                        echo "packerPath=${packerPath}/packer"
-                        ${packerPath}/packer build -force -only kx.as.code-worker-openstack \
-                            -var "compute_engine_build=${openstack_compute_engine_build}" \
-                            -var "hostname=${kx_worker_hostname}" \
-                            -var "domain=${kx_domain}" \
-                            -var "version=\${kx_version}" \
-                            -var "vm_user=${kx_vm_user}" \
-                            -var "vm_password=${kx_vm_password}" \
-                            -var "base_image_ssh_user=${openstack_ssh_username}" \
-                            -var "openstack_user=${openstack_user}" \
-                            -var "openstack_password=${openstack_password}" \
-                            -var "openstack_region=${openstack_region}" \
-                            -var "openstack_networks=${openstack_networks}" \
-                            -var "openstack_floating_ip_network=${openstack_floating_ip_network}" \
-                            -var "openstack_source_image=${openstack_source_image}" \
-                            -var "openstack_flavor=${openstack_flavor}" \
-                            -var "openstack_security_groups=${openstack_security_groups}" \
-                            ./kx.as.code-worker-cloud-profiles.json
+                        ${packerPath}/packer build -force -only kx.as.code-node-aws-ami \
+                        -var "compute_engine_build=${aws_compute_engine_build}" \
+                        -var "hostname=${kx_node_hostname}" \
+                        -var "domain=${kx_domain}" \
+                        -var "version=\${kx_version}" \
+                        -var "vm_user=${kx_vm_user}" \
+                        -var "vm_password=${kx_vm_password}" \
+                        -var "instance_type=${aws_instance_type}" \
+                        -var "access_key=${AWS_PACKER_ACCESS_KEY_ID}" \
+                        -var "secret_key=${AWS_PACKER_SECRET_ACCESS_KEY}" \
+                        -var "source_ami=${aws_source_ami}" \
+                        -var "ami_groups=${aws_ami_groups}" \
+                        -var "vpc_region=${aws_vpc_region}" \
+                        -var "availability_zone=${aws_availability_zone}" \
+                        -var "vpc_id=${aws_vpc_id}" \
+                        -var "vpc_subnet_id=${aws_vpc_subnet_id}" \
+                        -var "associate_public_ip_address=${aws_associate_public_ip_address}" \
+                        -var "ssh_interface=${aws_ssh_interface}" \
+                        -var "base_image_ssh_user=${aws_ssh_username}" \
+                        -var "shutdown_behavior=${aws_shutdown_behavior}" \
+                        ./kx.as.code-node-cloud-profiles.json
                         """
                         }
                     }

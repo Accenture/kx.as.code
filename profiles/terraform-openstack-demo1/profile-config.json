@@ -1,17 +1,18 @@
 {
     "config": {
         "vm_properties": {
-            "kx_version": "0.8.0",
             "main_node_count": 3,
-            "main_node_cpu_cores": 4,
-            "main_node_memory": 8196,
+            "admin_main_node_cpu_cores": 4,
+            "admin_main_node_memory": 8196,
+            "replica_main_node_cpu_cores": 2,
+            "replica_main_node_memory": 8196,
             "worker_node_count": 4,
             "worker_node_cpu_cores": 2,
             "worker_node_memory": 8196,
             "environment_prefix": "demo1",
             "openstack": {
-                "kx_main_image_id": "9c7d7aeb-4e62-41b7-b18a-6f6fc5abdfc2",
-                "kx_worker_image_id": "ac856d74-cec3-4698-addd-667575c55a99",
+                "kx_main_image_id": "07ee8cad-d915-47ea-ace7-fec2786d0c2d",
+                "kx_supplemental_image_id": "ac856d74-cec3-4698-addd-667575c55a99",
                 "external_network_id": "48af4f9c-b380-4451-a13b-ab609b672b95"
             }
         },

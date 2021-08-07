@@ -287,3 +287,22 @@ sudo mkdir -p ${INSTALLATION_WORKSPACE}
 sudo chown ${VM_USER}:${VM_USER} ${INSTALLATION_WORKSPACE}
 sudo chmod 755 ${INSTALLATION_WORKSPACE}
 sudo chown -R ${VM_USER}:${VM_USER} /home/${VM_USER}
+
+# Ensure Conky is restarted if screen resolution changes
+echo """#!/bin/bash
+killall conky || true && /usr/bin/conky
+""" | sudo tee /usr/bin/conky-restart.sh
+sudo chmod 755 /usr/bin/conky-restart.sh
+
+# Build xeventbind for detecting resolution changes
+cd ${SHARED_GIT_REPOSITORIES}/kx.as.code/base-vm/dependencies/xeventbind
+make
+sudo mv ./xeventbind /usr/bin
+cd -
+
+echo """#!/bin/bash
+# Restart Conky whenever the screen resolution changes
+/usr/bin/xeventbind resolution /usr/bin/conky-restart.sh
+""" | sudo tee /home/${VM_USER}/.config/autostart-scripts
+sudo chmod 755 /home/${VM_USER}/.config/autostart-scripts
+sudo chown ${VM_USER}:${VM_USER}/.config/autostart-scripts

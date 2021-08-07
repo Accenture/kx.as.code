@@ -9,8 +9,8 @@
     {
       "type": "virtualbox-iso",
       "name": "{{user `vm_name`}}-virtualbox",
-      "vm_name": "{{user `vm_name`}}{{user `vm_suffix`}}-{{user `version`}}",
-      "output_directory": "../../../output-main{{user `vm_suffix`}}/virtualbox-{{user `version`}}",
+      "vm_name": "{{user `vm_name`}}-{{user `version`}}",
+      "output_directory": "../../../output-main/virtualbox-{{user `version`}}",
       "boot_wait": "10s",
       "format": "ova",
       "boot_command": [
@@ -75,8 +75,8 @@
   {
       "type": "vmware-iso",
       "name": "{{user `vm_name`}}-vmware-desktop",
-      "vm_name": "{{user `vm_name`}}{{user `vm_suffix`}}-{{user `version`}}",
-      "output_directory": "../../../output-main{{user `vm_suffix`}}/vmware-desktop-{{user `version`}}",
+      "vm_name": "{{user `vm_name`}}-{{user `version`}}",
+      "output_directory": "../../../output-main/vmware-desktop-{{user `version`}}",
       "boot_wait": "10s",
       "boot_command": [
         "<esc><wait>",
@@ -119,7 +119,7 @@
   {
     "type": "vsphere-iso",
     "name": "{{user `vm_name`}}-vmware-vsphere",
-    "vm_name": "{{user `vm_name`}}{{user `vm_suffix`}}-{{user `version`}}",
+    "vm_name": "{{user `vm_name`}}-{{user `version`}}",
     "boot_wait": "10s",
     "boot_order": "disk,cdrom",
     "boot_command": [
@@ -191,7 +191,7 @@
     ],
     "export": {
       "force": true,
-      "output_directory": "../../../output-main{{user `vm_suffix`}}/vmware-vsphere-{{user `version`}}"
+      "output_directory": "../../../output-main/vmware-vsphere-{{user `version`}}"
     }
   },
     {
@@ -204,7 +204,7 @@
       "password": "jp6z6B8539OrtnqvjRu58Bm2MylLwR7z",
       "region": "microstack",
       "ssh_username": "debian",
-      "image_name": "{{user `vm_name`}}{{user `vm_suffix`}}-{{user `version`}}",
+      "image_name": "{{user `vm_name`}}-{{user `version`}}",
       "source_image": "54f87748-dc85-4afd-be3c-789e12f87c89",
       "networks": "d3683c6d-e4f7-4b59-8321-6326ec13a8f4",
       "use_floating_ip": true,
@@ -220,7 +220,7 @@
   [
     {
       "type": "manifest",
-      "output": "{{user `vm_name`}}{{user `vm_suffix`}}-{{user `version`}}_manifest.json",
+      "output": "{{user `vm_name`}}-{{user `version`}}_manifest.json",
       "custom_data": {
           "version": "{{user `version`}}"
       }
@@ -229,8 +229,7 @@
       "type": "shell-local",
       "environment_vars": [
         "VM_VERSION={{user `version`}}",
-        "VM_NAME={{user `vm_name`}}",
-        "VM_SUFFIX={{user `vm_suffix`}}"
+        "VM_NAME={{user `vm_name`}}"
       ],
       "execute_command": ["powershell.exe", "{{.Vars}} {{.Script}}"],
       "env_var_format": "$env:%s=\"%s\"; ",
@@ -239,32 +238,31 @@
     },
     {
       "keep_input_artifact": true,
-      "output": "../../../boxes/{{.Provider}}-{{user `version`}}/{{user `vm_name`}}{{user `vm_suffix`}}-{{user `version`}}.box",
+      "output": "../../../boxes/{{.Provider}}-{{user `version`}}/{{user `vm_name`}}-{{user `version`}}.box",
       "type": "vagrant",
       "vagrantfile_template": "../../../boxes/kx.as.code-main-virtualbox.Vagrantfile",
       "only": ["{{user `vm_name`}}-virtualbox"],
       "include": [
           "../../../boxes/virtualbox-{{user `version`}}/info.json",
-          "{{user `vm_name`}}{{user `vm_suffix`}}-{{user `version`}}_manifest.json"
+          "{{user `vm_name`}}-{{user `version`}}_manifest.json"
       ]
     },
     {
       "keep_input_artifact": true,
-      "output": "../../../boxes/vmware-desktop-{{user `version`}}/{{user `vm_name`}}{{user `vm_suffix`}}-{{user `version`}}.box",
+      "output": "../../../boxes/vmware-desktop-{{user `version`}}/{{user `vm_name`}}-{{user `version`}}.box",
       "type": "vagrant",
       "vagrantfile_template": "../../../boxes/kx.as.code-main-vmware.Vagrantfile",
       "only": ["{{user `vm_name`}}-vmware-desktop"],
       "include": [
           "../../../boxes/vmware-desktop-{{user `version`}}/info.json",
-          "{{user `vm_name`}}{{user `vm_suffix`}}-{{user `version`}}_manifest.json"
+          "{{user `vm_name`}}-{{user `version`}}_manifest.json"
       ]
     },
     {
       "type": "shell-local",
       "environment_vars": [
         "VM_VERSION={{user `version`}}",
-        "VM_NAME={{user `vm_name`}}",
-        "VM_SUFFIX={{user `vm_suffix`}}"
+        "VM_NAME={{user `vm_name`}}"
       ],
       "execute_command": ["powershell.exe", "{{.Vars}} {{.Script}}"],
       "env_var_format": "$env:%s=\"%s\"; ",
@@ -275,8 +273,7 @@
     "type": "shell-local",
     "environment_vars": [
       "VM_VERSION={{user `version`}}",
-      "VM_NAME={{user `vm_name`}}",
-      "VM_SUFFIX={{user `vm_suffix`}}"
+      "VM_NAME={{user `vm_name`}}"
     ],
     "execute_command": ["powershell.exe", "{{.Vars}} {{.Script}}"],
     "env_var_format": "$env:%s=\"%s\"; ",
@@ -288,8 +285,7 @@
     "type": "shell-local",
     "environment_vars": [
       "VM_VERSION={{user `version`}}",
-      "VM_NAME={{user `vm_name`}}",
-      "VM_SUFFIX={{user `vm_suffix`}}"
+      "VM_NAME={{user `vm_name`}}"
     ],
     "execute_command": ["powershell.exe", "{{.Vars}} {{.Script}}"],
     "env_var_format": "$env:%s=\"%s\"; ",

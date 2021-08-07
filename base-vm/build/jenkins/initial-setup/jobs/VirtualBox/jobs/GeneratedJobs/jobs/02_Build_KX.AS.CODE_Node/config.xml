@@ -9,22 +9,15 @@
       </jobProperties>
       <triggers/>
       <parameters>
-        <string>openstack_flavor</string>
-        <string>openstack_security_groups</string>
-        <string>openstack_ssh_username</string>
-        <string>kx_vm_user</string>
-        <string>openstack_region</string>
-        <string>kx_version_override</string>
-        <string>base_image_ssh_user</string>
-        <string>kx_worker_hostname</string>
-        <string>openstack_networks</string>
-        <string>openstack_floating_ip_network</string>
-        <string>openstack_source_image</string>
-        <string>git_source_url</string>
+        <string>vagrant_ssh_username</string>
         <string>git_source_branch</string>
+        <string>kx_vm_user</string>
         <string>kx_vm_password</string>
-        <string>openstack_compute_engine_build</string>
+        <string>git_source_url</string>
+        <string>vagrant_compute_engine_build</string>
+        <string>kx_version_override</string>
         <string>kx_domain</string>
+        <string>kx_node_hostname</string>
       </parameters>
       <options>
         <string>skipDefaultCheckout</string>
@@ -53,7 +46,7 @@
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
           <name>git_source_branch</name>
-          <description>Source Git branch to build from and clone inside VM</description>
+          <description>Source Github branch to build from and clone inside VM</description>
           <defaultValue>{{git_source_branch}}</defaultValue>
           <trim>false</trim>
         </hudson.model.StringParameterDefinition>
@@ -76,15 +69,15 @@
           <trim>false</trim>
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
-          <name>openstack_compute_engine_build</name>
-          <description>Should be true for OpenStack</description>
-          <defaultValue>{{openstack_compute_engine_build}}</defaultValue>
+          <name>vagrant_compute_engine_build</name>
+          <description>Needs to be true for AWS to avoid &apos;grub&apos; changes</description>
+          <defaultValue>{{vagrant_compute_engine_build}}</defaultValue>
           <trim>false</trim>
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
-          <name>kx_worker_hostname</name>
+          <name>kx_node_hostname</name>
           <description>KX.AS.CODE worker node hostname</description>
-          <defaultValue>{{kx_worker_hostname}}</defaultValue>
+          <defaultValue>{{kx_node_hostname}}</defaultValue>
           <trim>false</trim>
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
@@ -94,45 +87,9 @@
           <trim>false</trim>
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
-          <name>openstack_ssh_username</name>
+          <name>vagrant_ssh_username</name>
           <description>SSH user used during packer build process</description>
-          <defaultValue>{{openstack_ssh_username}}</defaultValue>
-          <trim>false</trim>
-        </hudson.model.StringParameterDefinition>
-        <hudson.model.StringParameterDefinition>
-          <name>openstack_region</name>
-          <description>OpenStack Region</description>
-          <defaultValue>{{openstack_region}}</defaultValue>
-          <trim>false</trim>
-        </hudson.model.StringParameterDefinition>
-        <hudson.model.StringParameterDefinition>
-          <name>openstack_networks</name>
-          <description>OpenStack Network</description>
-          <defaultValue>{{openstack_networks}}</defaultValue>
-          <trim>false</trim>
-        </hudson.model.StringParameterDefinition>
-        <hudson.model.StringParameterDefinition>
-          <name>openstack_floating_ip_network</name>
-          <description>OpenStack Floating IP Network</description>
-          <defaultValue>{{openstack_floating_ip_network}}</defaultValue>
-          <trim>false</trim>
-        </hudson.model.StringParameterDefinition>
-        <hudson.model.StringParameterDefinition>
-          <name>openstack_source_image</name>
-          <description>OpenStack Source Image</description>
-          <defaultValue>{{openstack_source_image}}</defaultValue>
-          <trim>false</trim>
-        </hudson.model.StringParameterDefinition>
-        <hudson.model.StringParameterDefinition>
-          <name>openstack_flavor</name>
-          <description>OpenStack Flavor</description>
-          <defaultValue>{{openstack_flavor}}</defaultValue>
-          <trim>false</trim>
-        </hudson.model.StringParameterDefinition>
-        <hudson.model.StringParameterDefinition>
-          <name>openstack_security_groups</name>
-          <description>OpenStack Security Groups</description>
-          <defaultValue>{{openstack_security_groups}}</defaultValue>
+          <defaultValue>{{vagrant_ssh_username}}</defaultValue>
           <trim>false</trim>
         </hudson.model.StringParameterDefinition>
       </parameterDefinitions>
@@ -156,7 +113,7 @@
       <submoduleCfg class="list"/>
       <extensions/>
     </scm>
-    <scriptPath>base-vm/build/jenkins/pipelines/build-kx.as.code-worker-openstack.Jenkinsfile</scriptPath>
+    <scriptPath>base-vm/build/jenkins/pipelines/build-kx.as.code-worker-virtualbox.Jenkinsfile</scriptPath>
     <lightweight>true</lightweight>
   </definition>
   <triggers/>

@@ -1,17 +1,18 @@
 {
     "config": {
         "vm_properties": {
-            "kx_version": "0.8.0",
             "main_node_count": 3,
-            "main_node_cpu_cores": 2,
-            "main_node_memory": 8196,
+            "admin_main_node_cpu_cores": 2,
+            "admin_main_node_memory": 8196,
+            "replica_main_node_cpu_cores": 2,
+            "replica_main_node_memory": 6144,
             "worker_node_count": 4,
             "worker_node_cpu_cores": 2,
             "worker_node_memory": 8196,
             "environment_prefix": "demo1",
             "kx_sync_folder_path": "./KX_Share",
-            "kx_main_box_location": "../../../01_Build_KX.AS.CODE_Main/base-vm/boxes/vmware-desktop-0.8.0/kx.as.code-main-demo-0.8.0.box",
-            "kx_worker_box_location": "../../../02_Build_KX.AS.CODE_Worker/base-vm/boxes/vmware-desktop-0.8.0/kx.as.code-worker-demo-0.8.0.box"
+            "kx_main_box_location": "../../../01_Build_KX.AS.CODE_Main/base-vm/boxes/vmware-desktop-0.8.1/kx.as.code-main-0.8.1.box",
+            "kx_worker_box_location": "../../../02_Build_KX.AS.CODE_Node/base-vm/boxes/vmware-desktop-0.8.1/kx.as.code-node-0.8.1.box"
         },
         "allowWorkloadsOnMaster": false,
         "disableSessionTimeout": true,

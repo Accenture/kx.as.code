@@ -9,26 +9,15 @@
       </jobProperties>
       <triggers/>
       <parameters>
-        <string>aws_availability_zone</string>
-        <string>aws_ssh_username</string>
-        <string>aws_vpc_id</string>
-        <string>aws_shutdown_behavior</string>
+        <string>vagrant_ssh_username</string>
+        <string>git_source_branch</string>
         <string>kx_vm_user</string>
-        <string>aws_associate_public_ip_address</string>
-        <string>aws_security_group_id</string>
-        <string>aws_ssh_interface</string>
-        <string>git_source_url</string>
-        <string>kx_version_override</string>
-        <string>kx_worker_hostname</string>
-        <string>aws_vpc_subnet_id</string>
-        <string>github_source_branch</string>
-        <string>aws_ami_groups</string>
         <string>kx_vm_password</string>
-        <string>aws_compute_engine_build</string>
-        <string>aws_source_ami</string>
+        <string>git_source_url</string>
+        <string>vagrant_compute_engine_build</string>
+        <string>kx_version_override</string>
         <string>kx_domain</string>
-        <string>aws_vpc_region</string>
-        <string>aws_instance_type</string>
+        <string>kx_node_hostname</string>
       </parameters>
       <options>
         <string>skipDefaultCheckout</string>
@@ -80,15 +69,15 @@
           <trim>false</trim>
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
-          <name>aws_compute_engine_build</name>
-          <description>Needs to be true for AWS to avoid &apos;grub&apos; changes</description>
-          <defaultValue>{{aws_compute_engine_build}}</defaultValue>
+          <name>vagrant_compute_engine_build</name>
+          <description>Should be false for Vagrant targeted builds</description>
+          <defaultValue>{{vagrant_compute_engine_build}}</defaultValue>
           <trim>false</trim>
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
-          <name>kx_worker_hostname</name>
-          <description>KX.AS.CODE worker node hostname</description>
-          <defaultValue>{{kx_worker_hostname}}</defaultValue>
+          <name>kx_node_hostname</name>
+          <description>KX.AS.CODE main node hostname</description>
+          <defaultValue>{{kx_node_hostname}}</defaultValue>
           <trim>false</trim>
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
@@ -98,75 +87,9 @@
           <trim>false</trim>
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
-          <name>aws_ami_groups</name>
-          <description>AWS user group that can launch AMI</description>
-          <defaultValue>{{aws_ami_groups}}</defaultValue>
-          <trim>false</trim>
-        </hudson.model.StringParameterDefinition>
-        <hudson.model.StringParameterDefinition>
-          <name>aws_vpc_region</name>
-          <description>VPC region, eg. us-east-2</description>
-          <defaultValue>{{aws_vpc_region}}</defaultValue>
-          <trim>false</trim>
-        </hudson.model.StringParameterDefinition>
-        <hudson.model.StringParameterDefinition>
-          <name>aws_vpc_id</name>
-          <description>VPC Id</description>
-          <defaultValue>{{aws_vpc_id}}</defaultValue>
-          <trim>false</trim>
-        </hudson.model.StringParameterDefinition>
-        <hudson.model.StringParameterDefinition>
-          <name>aws_vpc_subnet_id</name>
-          <description>VPC Subnet Id</description>
-          <defaultValue>{{aws_vpc_subnet_id}}</defaultValue>
-          <trim>false</trim>
-        </hudson.model.StringParameterDefinition>
-        <hudson.model.StringParameterDefinition>
-          <name>aws_availability_zone</name>
-          <description>VPC Availability zone, eg. us-east-2c</description>
-          <defaultValue>{{aws_availability_zone}}</defaultValue>
-          <trim>false</trim>
-        </hudson.model.StringParameterDefinition>
-        <hudson.model.StringParameterDefinition>
-          <name>aws_associate_public_ip_address</name>
-          <description>Assign public IP. Should be true or false</description>
-          <defaultValue>{{aws_associate_public_ip_address}}</defaultValue>
-          <trim>false</trim>
-        </hudson.model.StringParameterDefinition>
-        <hudson.model.StringParameterDefinition>
-          <name>aws_source_ami</name>
-          <description>Source AMI set to Debian Buster 10.9</description>
-          <defaultValue>{{aws_source_ami}}</defaultValue>
-          <trim>false</trim>
-        </hudson.model.StringParameterDefinition>
-        <hudson.model.StringParameterDefinition>
-          <name>aws_security_group_id</name>
-          <description>VPC Security Group Id</description>
-          <defaultValue>{{aws_security_group_id}}</defaultValue>
-          <trim>false</trim>
-        </hudson.model.StringParameterDefinition>
-        <hudson.model.StringParameterDefinition>
-          <name>aws_instance_type</name>
-          <description>Instance type, eg t3.small</description>
-          <defaultValue>{{aws_instance_type}}</defaultValue>
-          <trim>false</trim>
-        </hudson.model.StringParameterDefinition>
-        <hudson.model.StringParameterDefinition>
-          <name>aws_shutdown_behavior</name>
-          <description>Stop or Terminate instance on failure</description>
-          <defaultValue>{{aws_shutdown_behavior}}</defaultValue>
-          <trim>false</trim>
-        </hudson.model.StringParameterDefinition>
-        <hudson.model.StringParameterDefinition>
-          <name>aws_ssh_username</name>
+          <name>vagrant_ssh_username</name>
           <description>SSH user used during packer build process</description>
-          <defaultValue>{{aws_ssh_username}}</defaultValue>
-          <trim>false</trim>
-        </hudson.model.StringParameterDefinition>
-        <hudson.model.StringParameterDefinition>
-          <name>aws_ssh_interface</name>
-          <description>Options are private_ip or public_ip</description>
-          <defaultValue>{{aws_ssh_interface}}</defaultValue>
+          <defaultValue>{{vagrant_ssh_username}}</defaultValue>
           <trim>false</trim>
         </hudson.model.StringParameterDefinition>
       </parameterDefinitions>
@@ -190,7 +113,7 @@
       <submoduleCfg class="list"/>
       <extensions/>
     </scm>
-    <scriptPath>base-vm/build/jenkins/pipelines/build-kx.as.code-worker-aws.Jenkinsfile</scriptPath>
+    <scriptPath>base-vm/build/jenkins/pipelines/build-kx.as.code-worker-vmware-desktop.Jenkinsfile</scriptPath>
     <lightweight>true</lightweight>
   </definition>
   <triggers/>

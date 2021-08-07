@@ -54,10 +54,11 @@ pipeline {
             }
         }
 
-        stage('Build the OVA/BOX'){
+        stage('Build the QCOW2 image'){
             steps {
                 script {
                 withCredentials([usernamePassword(credentialsId: 'GIT_KX.AS.CODE_SOURCE', passwordVariable: 'git_source_token', usernameVariable: 'git_source_user')]) {
+                  withCredentials([usernamePassword(credentialsId: 'OPENSTACK_PACKER_CREDENTIAL', usernameVariable: 'OPENSTACK_USER', passwordVariable: 'OPENSTACK_PASSWORD')]) {
                         def packerPath = tool "packer-${os}"
                         if ( "${os}" == "windows" ) {
                             packerPath = packerPath.replaceAll("\\\\","/")
@@ -70,19 +71,26 @@ pipeline {
                         export kx_version=\$(cat version.json | ./jq -r '.version')
                         echo \${kx_version}
                         cd base-vm/build/packer/${packerOsFolder}
-                        ${packerPath}/packer build -force -only kx.as.code-worker-vmware-desktop \
-                        -var "compute_engine_build=${vagrant_compute_engine_build}" \
-                        -var "memory=8192" \
-                        -var "cpus=2" \
-                        -var "video_memory=128" \
-                        -var "hostname=${kx_worker_hostname}" \
-                        -var "domain=${kx_domain}" \
-                        -var "version=\${kx_version}" \
-                        -var "vm_user=${kx_vm_user}" \
-                        -var "vm_password=${kx_vm_password}" \
-                        -var "base_image_ssh_user=${vagrant_ssh_username}" \
-                        ./kx.as.code-worker-local-profiles.json
+                        echo "packerPath=${packerPath}/packer"
+                        ${packerPath}/packer build -force -only kx.as.code-node-openstack \
+                            -var "compute_engine_build=${openstack_compute_engine_build}" \
+                            -var "hostname=${kx_node_hostname}" \
+                            -var "domain=${kx_domain}" \
+                            -var "version=\${kx_version}" \
+                            -var "vm_user=${kx_vm_user}" \
+                            -var "vm_password=${kx_vm_password}" \
+                            -var "base_image_ssh_user=${openstack_ssh_username}" \
+                            -var "openstack_user=${openstack_user}" \
+                            -var "openstack_password=${openstack_password}" \
+                            -var "openstack_region=${openstack_region}" \
+                            -var "openstack_networks=${openstack_networks}" \
+                            -var "openstack_floating_ip_network=${openstack_floating_ip_network}" \
+                            -var "openstack_source_image=${openstack_source_image}" \
+                            -var "openstack_flavor=${openstack_flavor}" \
+                            -var "openstack_security_groups=${openstack_security_groups}" \
+                            ./kx.as.code-node-cloud-profiles.json
                         """
+                        }
                     }
                 }
             }

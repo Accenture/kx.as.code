@@ -1,7 +1,14 @@
-resource "openstack_compute_flavor_v2" "kx-main-flavor" {
-  name  = "kx.main"
-  ram   = local.main_node_memory
-  vcpus = local.main_node_cpu_cores
+resource "openstack_compute_flavor_v2" "kx_main_admin_flavor" {
+  name  = "kx-main"
+  ram   = local.admin_main_node_memory
+  vcpus = local.admin_main_node_cpu_cores
+  disk  = "40"
+}
+
+resource "openstack_compute_flavor_v2" "kx_main_replica_flavor" {
+  name  = "kx-main"
+  ram   = local.replica_main_node_memory
+  vcpus = local.replica_main_node_cpu_cores
   disk  = "40"
 }
 

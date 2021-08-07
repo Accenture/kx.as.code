@@ -21,8 +21,8 @@ output "kx_main_admin_private_ip" {
   value = aws_instance.kx_main_admin.private_ip
 }
 
-output "kx_main_additional_nodes_private_ip" {
-  value = aws_instance.kx_main_additional.*.private_ip
+output "kx_main_replica_nodes_private_ip" {
+  value = aws_instance.kx_main_replica.*.private_ip
 }
 
 output "kx_worker_private_ip" {
