@@ -306,4 +306,4 @@ echo """#!/bin/bash
 /usr/bin/xeventbind resolution /usr/bin/conky-restart.sh
 """ | sudo tee /home/${VM_USER}/.config/autostart-scripts/xeventbind.sh
 sudo chmod 755 /home/${VM_USER}/.config/autostart-scripts/xeventbind.sh
-sudo chown ${VM_USER}:${VM_USER}/.config/autostart-scripts/xeventbind.sh
+sudo chown ${VM_USER}:${VM_USER} /home/${VM_USER}/.config/autostart-scripts/xeventbind.sh
