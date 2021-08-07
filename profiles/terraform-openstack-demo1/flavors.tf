@@ -12,7 +12,7 @@ resource "openstack_compute_flavor_v2" "kx_main_replica_flavor" {
   disk  = "40"
 }
 
-resource "openstack_compute_flavor_v2" "kx-worker-flavor" {
+resource "openstack_compute_flavor_v2" "kx_worker_flavor" {
   name  = "kx.worker"
   ram   = local.worker_node_memory
   vcpus = local.worker_node_cpu_cores

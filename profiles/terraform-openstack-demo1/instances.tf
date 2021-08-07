@@ -17,7 +17,7 @@ resource "openstack_compute_instance_v2" "kx_main_admin" {
   name      = "kx-main1"
   image_id  = local.kx_main_image_id
   region    = "RegionOne"
-  flavor_id = openstack_compute_flavor_v2.kx_main_admin_flavor
+  flavor_id = openstack_compute_flavor_v2.kx_main_admin_flavor.id
   key_pair  = openstack_compute_keypair_v2.kx_keypair.name
   security_groups = [ openstack_networking_secgroup_v2.kx_security_group.name ]
   user_data       = "#cloud-config\nhostname: kx-main1"
@@ -56,7 +56,7 @@ resource "openstack_compute_instance_v2" "kx_main_replica" {
   ]
   name = "kx-main${count.index + 2}"
   image_id = local.kx_supplemental_image_id
-  flavor_id = openstack_compute_flavor_v2.kx-worker-flavor.id
+  flavor_id = openstack_compute_flavor_v2.kx_main_replica_flavor.id
   key_pair = openstack_compute_keypair_v2.kx_keypair.name
   region = "RegionOne"
   security_groups = [ openstack_networking_secgroup_v2.kx_security_group.name ]
@@ -93,11 +93,11 @@ resource "openstack_compute_instance_v2" "kx_worker" {
     openstack_blockstorage_volume_v3.kx_worker_local_storage,
     openstack_networking_floatingip_v2.kx_worker_floating_ip,
     openstack_networking_secgroup_v2.kx_security_group,
-    openstack_compute_flavor_v2.kx-worker-flavor
+    openstack_compute_flavor_v2.kx_worker_flavor
   ]
   name      = "kx-worker${count.index + 1}"
   image_id  = local.kx_supplemental_image_id
-  flavor_id = openstack_compute_flavor_v2.kx-worker-flavor.id
+  flavor_id = openstack_compute_flavor_v2.kx_worker_flavor.id
   key_pair  = openstack_compute_keypair_v2.kx_keypair.name
   region = "RegionOne"
   security_groups = [ openstack_networking_secgroup_v2.kx_security_group.name ]
