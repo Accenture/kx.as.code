@@ -296,13 +296,13 @@ sudo chmod 755 /usr/bin/conky-restart.sh
 
 # Build xeventbind for detecting resolution changes
 cd ${SHARED_GIT_REPOSITORIES}/kx.as.code/base-vm/dependencies/xeventbind
-make
+sudo make
 sudo mv ./xeventbind /usr/bin
 cd -
 
 echo """#!/bin/bash
 # Restart Conky whenever the screen resolution changes
 /usr/bin/xeventbind resolution /usr/bin/conky-restart.sh
-""" | sudo tee /home/${VM_USER}/.config/autostart-scripts
-sudo chmod 755 /home/${VM_USER}/.config/autostart-scripts
-sudo chown ${VM_USER}:${VM_USER}/.config/autostart-scripts
+""" | sudo tee /home/${VM_USER}/.config/autostart-scripts/xeventbind.sh
+sudo chmod 755 /home/${VM_USER}/.config/autostart-scripts/xeventbind.sh
+sudo chown ${VM_USER}:${VM_USER}/.config/autostart-scripts/xeventbind.sh
