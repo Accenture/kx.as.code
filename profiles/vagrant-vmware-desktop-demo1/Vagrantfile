@@ -71,7 +71,7 @@ DOCKERHUB_EMAIL = ENV['dockerHubEmail'] || profile_config_json['config']['docker
 puts "DOCKERHUB_EMAIL: #{DOCKERHUB_EMAIL}"
 DOCKERHUB_PASSWORD = ENV['DockerHubPassword'] || profile_config_json['config']['docker']['dockerhub_password']
 puts "DOCKERHUB_PASSWORD: #{DOCKERHUB_PASSWORD}"
-BOX_VERSION = ENV['boxVersion'] || kx_version_json['kx-as-code']
+BOX_VERSION = ENV['boxVersion'] || kx_version_json['kxascode']
 puts "BOX_VERSION: #{BOX_VERSION}"
 KX_MAIN_BOX_LOCATION = ENV['kxMainBoxLocation'] || profile_config_json['config']['vm_properties']['kx_main_box_location']
 puts "KX_MAIN_BOX_LOCATION: #{KX_MAIN_BOX_LOCATION}"

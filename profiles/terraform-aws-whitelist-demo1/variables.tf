@@ -29,7 +29,7 @@ locals {
   kx_as_code_domain                   = local.raw_data.config.baseDomain
   prefix                              = local.raw_data.config.environmentPrefix
   mx_dns_record                       = local.raw_data.config.mxDnsRecord
-  kx_version                          = local.raw_version.kx-as-code
+  kx_version                          = local.raw_version.kxascode
   num_local_one_gb_volumes            = local.raw_data.config.local_volumes.one_gb
   num_local_five_gb_volumes           = local.raw_data.config.local_volumes.five_gb
   num_local_ten_gb_volumes            = local.raw_data.config.local_volumes.ten_gb

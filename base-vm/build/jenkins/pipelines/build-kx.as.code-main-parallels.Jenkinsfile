@@ -69,7 +69,7 @@ pipeline {
                             curl -L -o jq ${jqDownloadPath}
                             chmod +x ./jq
                         fi
-                        export kx_version=\$(cat versions.json | ./jq -r '.kx-as-code')
+                        export kx_version=\$(cat versions.json | ./jq -r '.kxascode')
                         export kube_version=\$(cat versions.json | ./jq -r '.kubernetes')
                         echo \${kx_version}
                         echo \${kube_version}
