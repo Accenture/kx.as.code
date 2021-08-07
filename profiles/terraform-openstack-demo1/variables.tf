@@ -3,8 +3,8 @@
 # Get veriables from JSON
 locals {
   raw_data = jsondecode(file("profile-config.json"))
-  raw_version = jsondecode(file("../../version.json"))
-  kx_version = local.raw_version.version
+  raw_version = jsondecode(file("../../versions.json"))
+  kx_version = local.raw_version.kx-as-code
   main_node_count = local.raw_data.config.vm_properties.main_node_count
   admin_main_node_cpu_cores = local.raw_data.config.vm_properties.admin_main_node_cpu_cores
   admin_main_node_memory = local.raw_data.config.vm_properties.admin_main_node_memory

@@ -75,14 +75,17 @@ pipeline {
                             curl -L -o jq ${jqDownloadPath}
                             chmod +x ./jq
                         fi
-                        export kx_version=\$(cat version.json | ./jq -r '.version')
+                        export kx_version=\$(cat versions.json | ./jq -r '.kx-as-code')
+                        export kube_version=\$(cat versions.json | ./jq -r '.kubernetes')
                         echo \${kx_version}
+                        echo \${kube_version}
                         cd base-vm/build/packer/${packerOsFolder}
                         ${packerPath}/packer build -force -only kx.as.code-main-aws-ami \
                         -var "compute_engine_build=${aws_compute_engine_build}" \
                         -var "hostname=${kx_main_hostname}" \
                         -var "domain=${kx_domain}" \
                         -var "version=\${kx_version}" \
+                        -var "kube_version=\${kube_version}" \
                         -var "vm_user=${kx_vm_user}" \
                         -var "vm_password=${kx_vm_password}" \
                         -var "instance_type=${aws_instance_type}" \

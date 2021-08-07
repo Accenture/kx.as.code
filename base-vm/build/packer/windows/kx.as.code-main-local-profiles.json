@@ -369,6 +369,7 @@
            "GITHUB_USER={{user `github_user`}}",
            "GITHUB_TOKEN={{user `github_token`}}",
            "VERSION={{user `version`}}",
+           "KUBELET_VERSION={{user `kubelet_version`}}",
            "COMPUTE_ENGINE_BUILD={{user `compute_engine_build`}}",
            "KX_HOME={{user `kx_home`}}",
            "SKELDIR={{user `kx_home`}}/workspace/skel",

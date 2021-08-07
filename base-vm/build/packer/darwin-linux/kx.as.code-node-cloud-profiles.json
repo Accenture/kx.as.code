@@ -220,6 +220,7 @@
         "VM_USER={{user `vm_user`}}",
         "VM_PASSWORD={{user `vm_password`}}",
         "VERSION={{user `version`}}",
+        "KUBELET_VERSION={{user `kubelet_version`}}",
         "KX_HOME={{user `kx_home`}}",
         "SKELDIR={{user `kx_home`}}/workspace/skel",
         "SHARED_GIT_REPOSITORIES={{user `kx_home`}}/git",

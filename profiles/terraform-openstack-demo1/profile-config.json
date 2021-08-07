@@ -11,7 +11,7 @@
             "worker_node_memory": 8196,
             "environment_prefix": "demo1",
             "openstack": {
-                "kx_main_image_id": "07ee8cad-d915-47ea-ace7-fec2786d0c2d",
+                "kx_main_image_id": "896dad98-4089-4409-a330-af8f7e5143ec",
                 "kx_node_image_id": "f284208e-3814-4884-8612-44a49219df71",
                 "external_network_id": "48af4f9c-b380-4451-a13b-ab609b672b95"
             }

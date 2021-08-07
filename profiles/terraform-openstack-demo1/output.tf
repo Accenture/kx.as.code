@@ -54,7 +54,7 @@ output "kx-main-admin-floating-address" {
  value = openstack_compute_floatingip_associate_v2.kx_main_admin_floating_ip_associate.*.floating_ip
 }
 
-output "kx-main-additional-floating-address" {
+output "kx-main-replica-floating-address" {
  value = openstack_compute_floatingip_associate_v2.kx_main_replica_floating_ip_associate.*.floating_ip
 }
 

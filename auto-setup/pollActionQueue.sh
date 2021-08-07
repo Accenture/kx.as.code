@@ -22,6 +22,11 @@ export componentName=""
 export componentInstallationFolder=""
 export payload=""
 
+# Copy versions from k.as.code GIT repo
+if [[ ! -f ${installationWorkspace}/versions.json ]]; then
+  cp ${sharedGitHome}/kx.as.code/versions.json ${installationWorkspace}
+fi
+
 # Check if envhandlebars tool reachable
 nodeToolPath=$(which node || true)
 if [ -x "$nodeToolPath" ] ; then

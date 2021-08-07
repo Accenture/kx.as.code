@@ -1,6 +1,6 @@
 locals {
   raw_data                            = jsondecode(file("profile-config.json"))
-  raw_version                         = jsondecode(file("../../version.json"))
+  raw_version                         = jsondecode(file("../../versions.json"))
 
   aws_region                          = local.raw_data.aws_region
   aws_availability_zone_one           = local.raw_data.aws_availability_zone_one
@@ -29,7 +29,7 @@ locals {
   kx_as_code_domain                   = local.raw_data.config.baseDomain
   prefix                              = local.raw_data.config.environmentPrefix
   mx_dns_record                       = local.raw_data.config.mxDnsRecord
-  kx_version                          = local.raw_version.version
+  kx_version                          = local.raw_version.kx-as-code
   num_local_one_gb_volumes            = local.raw_data.config.local_volumes.one_gb
   num_local_five_gb_volumes           = local.raw_data.config.local_volumes.five_gb
   num_local_ten_gb_volumes            = local.raw_data.config.local_volumes.ten_gb
