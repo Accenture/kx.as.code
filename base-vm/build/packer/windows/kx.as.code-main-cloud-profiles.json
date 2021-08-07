@@ -210,7 +210,7 @@
         "GIT_DOCS_BRANCH={{user `git_docs_branch`}}",
         "GIT_TECHRADAR_BRANCH={{user `git_techradar_branch`}}",
         "VERSION={{user `version`}}",
-        "KUBELET_VERSION={{user `kubelet_version`}}",
+        "KUBE_VERSION={{user `kube_version`}}",
         "COMPUTE_ENGINE_BUILD={{user `compute_engine_build`}}",
         "KX_HOME={{user `kx_home`}}",
         "SKELDIR={{user `kx_home`}}/workspace/skel",
