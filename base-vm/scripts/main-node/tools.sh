@@ -76,5 +76,12 @@ wget https://download.nomachine.com/download/7.6/Linux/nomachine_7.6.2_4_amd64.d
 sudo apt-get install -y ./nomachine_7.6.2_4_amd64.deb
 rm -f ./nomachine_7.6.2_4_amd64.deb
 
+# Ensure NoMachine uses dedicated virtual display
+sudo sed -E -i 's/#PhysicalDisplays(.*)/PhysicalDisplays 1005/g' /usr/NX/etc/node.cfg
+sudo sed -E -i 's/#DisplayBase(.*)/DisplayBase 1005/g' /usr/NX/etc/server.cfg
+sudo sed -E -i 's/#CreateDisplay(.*)/CreateDisplay 1/g' /usr/NX/etc/server.cfg
+sudo sed -E -i 's/#DisplayOwner(.*)/DisplayOwner '${VM_USER}'/g' /usr/NX/etc/server.cfg
+sudo sed -E -i 's/#DisplayGeometry(.*)/DisplayGeometry 1920x1200/g' /usr/NX/etc/server.cfg
+
 # Enable Desktop Notifications with "notify-send" from bash scripts
 sudo apt-get install -y libnotify-bin
