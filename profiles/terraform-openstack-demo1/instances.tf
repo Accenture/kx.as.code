@@ -55,7 +55,7 @@ resource "openstack_compute_instance_v2" "kx_main_replica" {
     openstack_compute_flavor_v2.kx_main_replica_flavor
   ]
   name = "kx-main${count.index + 2}"
-  image_id = local.kx_supplemental_image_id
+  image_id = local.kx_node_image_id
   flavor_id = openstack_compute_flavor_v2.kx_main_replica_flavor.id
   key_pair = openstack_compute_keypair_v2.kx_keypair.name
   region = "RegionOne"
@@ -69,7 +69,7 @@ resource "openstack_compute_instance_v2" "kx_main_replica" {
     destination_type = "volume"
     source_type = "image"
     volume_size = 40
-    uuid = local.kx_supplemental_image_id
+    uuid = local.kx_node_image_id
   }
 
   network {
@@ -96,7 +96,7 @@ resource "openstack_compute_instance_v2" "kx_worker" {
     openstack_compute_flavor_v2.kx_worker_flavor
   ]
   name      = "kx-worker${count.index + 1}"
-  image_id  = local.kx_supplemental_image_id
+  image_id  = local.kx_node_image_id
   flavor_id = openstack_compute_flavor_v2.kx_worker_flavor.id
   key_pair  = openstack_compute_keypair_v2.kx_keypair.name
   region = "RegionOne"
@@ -110,7 +110,7 @@ resource "openstack_compute_instance_v2" "kx_worker" {
     destination_type      = "volume"
     source_type           = "image"
     volume_size           = 40
-    uuid                  = local.kx_supplemental_image_id
+    uuid                  = local.kx_node_image_id
   }
 
   network {

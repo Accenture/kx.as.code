@@ -265,7 +265,7 @@ resource "aws_instance" "kx_main_admin" {
   depends_on = [
     module.vpc
   ]
-  ami                    = local.admin_main_node_ami_id
+  ami                    = local.kx_main_ami_id
   key_name               = aws_key_pair.kx_ssh_key.key_name
   instance_type          = local.admin_main_node_instance_type
   availability_zone      = local.aws_availability_zone_one
@@ -298,7 +298,7 @@ resource "aws_instance" "kx_main_replica" {
     module.vpc
   ]
   count                  = (local.main_node_count - 1) < 0 ? 0 : local.main_node_count - 1
-  ami                    = local.supplemental_node_ami_id
+  ami                    = local.kx_node_ami_id
   key_name               = aws_key_pair.kx_ssh_key.key_name
   instance_type          = local.replica_main_node_instance_type
   subnet_id              = module.vpc.private_subnets[1]
@@ -354,7 +354,7 @@ resource "aws_instance" "kx_worker" {
     module.vpc
   ]
   count                  = local.worker_node_count
-  ami                    = local.supplemental_node_ami_id
+  ami                    = local.kx_node_ami_id
   key_name               = aws_key_pair.kx_ssh_key.key_name
   instance_type          = local.worker_node_instance_type
   vpc_security_group_ids = [module.vpc.default_security_group_id, aws_security_group.kx_workers_nodes.id]

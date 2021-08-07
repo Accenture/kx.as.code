@@ -22,5 +22,5 @@ locals {
   glusterfs_storage_volume_size = local.raw_data.config.glusterFsDiskSize + 1
   external_network_id = local.raw_data.config.vm_properties.openstack.external_network_id
   kx_main_image_id = local.raw_data.config.vm_properties.openstack.kx_main_image_id
-  kx_supplemental_image_id = local.raw_data.config.vm_properties.openstack.kx_supplemental_image_id
+  kx_node_image_id = local.raw_data.config.vm_properties.openstack.kx_node_image_id
 }
