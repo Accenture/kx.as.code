@@ -87,7 +87,7 @@
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
           <name>kx_node_hostname</name>
-          <description>KX.AS.CODE worker node hostname</description>
+          <description>KX.AS.CODE node hostname</description>
           <defaultValue>{{kx_node_hostname}}</defaultValue>
           <trim>false</trim>
         </hudson.model.StringParameterDefinition>
@@ -190,7 +190,7 @@
       <submoduleCfg class="list"/>
       <extensions/>
     </scm>
-    <scriptPath>base-vm/build/jenkins/pipelines/build-kx.as.code-worker-aws.Jenkinsfile</scriptPath>
+    <scriptPath>base-vm/build/jenkins/pipelines/build-kx.as.code-node-aws.Jenkinsfile</scriptPath>
     <lightweight>true</lightweight>
   </definition>
   <triggers/>
