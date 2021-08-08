@@ -9,7 +9,7 @@
       "type": "virtualbox-iso",
       "name": "{{user `vm_name`}}-virtualbox",
       "vm_name": "{{user `vm_name`}}-{{user `version`}}",
-      "output_directory": "../../../output-worker/virtualbox-{{user `version`}}",
+      "output_directory": "../../../output-node/virtualbox-{{user `version`}}",
       "boot_wait": "10s",
       "format": "ova",
       "boot_command": [
@@ -73,7 +73,7 @@
       "type": "parallels-iso",
       "name": "{{user `vm_name`}}-parallels",
       "vm_name": "{{user `vm_name`}}-{{user `version`}}",
-      "output_directory": "../../../output-worker/parallels-{{user `version`}}",
+      "output_directory": "../../../output-node/parallels-{{user `version`}}",
       "boot_wait": "1s",
       "boot_command": "{{user `boot_command`}}{{.HTTPIP}}:{{.HTTPPort}}/{{user `preseed_path`}}<wait> , --- <enter>",
       "disk_size": "{{user `disk_size`}}",
@@ -112,7 +112,7 @@
     "type": "vmware-iso",
     "name": "{{user `vm_name`}}-vmware-desktop",
     "vm_name": "{{user `vm_name`}}-{{user `version`}}",
-    "output_directory": "../../../output-worker/vmware-desktop-{{user `version`}}",
+    "output_directory": "../../../output-node/vmware-desktop-{{user `version`}}",
     "boot_wait": "10s",
     "boot_command": [
       "<esc><wait>",
@@ -301,7 +301,7 @@
     },
     {
       "type": "file",
-      "source": "../../../scripts/worker-node",
+      "source": "../../../scripts/cluster-node",
       "destination": "{{user `kx_home`}}/workspace/scripts"
     },
     {
@@ -343,9 +343,9 @@
         "INSTALLATION_WORKSPACE={{user `kx_home`}}/workspace"
        ],
        "scripts": [
-         "../../../scripts/worker-node/tools.sh",
-         "../../../scripts/worker-node/k8s-base.sh",
-         "../../../scripts/worker-node/cleanup.sh"
+         "../../../scripts/cluster-node/tools.sh",
+         "../../../scripts/cluster-node/k8s-base.sh",
+         "../../../scripts/cluster-node/cleanup.sh"
        ],
        "type": "shell",
        "pause_before": "60s",

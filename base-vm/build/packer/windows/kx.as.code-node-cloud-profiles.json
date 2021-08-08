@@ -90,7 +90,7 @@
     },
     {
       "type": "file",
-      "source": "../../../scripts/worker-node",
+      "source": "../../../scripts/cluster-node",
       "destination": "{{user `kx_home`}}/workspace/scripts"
     },
     {
@@ -132,9 +132,9 @@
         "INSTALLATION_WORKSPACE={{user `kx_home`}}/workspace"
       ],
       "scripts": [
-        "../../../scripts/worker-node/tools.sh",
-        "../../../scripts/worker-node/k8s-base.sh",
-        "../../../scripts/worker-node/cleanup.sh"
+        "../../../scripts/cluster-node/tools.sh",
+        "../../../scripts/cluster-node/k8s-base.sh",
+        "../../../scripts/cluster-node/cleanup.sh"
       ],
       "type": "shell",
       "pause_before": "60s",

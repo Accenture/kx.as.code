@@ -10,7 +10,7 @@
       "type": "virtualbox-iso",
       "name": "{{user `vm_name`}}-virtualbox",
       "vm_name": "{{user `vm_name`}}-{{user `version`}}",
-      "output_directory": "../../../output-worker/virtualbox-{{user `version`}}",
+      "output_directory": "../../../output-node/virtualbox-{{user `version`}}",
       "boot_wait": "10s",
       "format": "ova",
       "boot_command": [
@@ -74,7 +74,7 @@
     "type": "vmware-iso",
     "name": "{{user `vm_name`}}-vmware-desktop",
     "vm_name": "{{user `vm_name`}}-{{user `version`}}",
-    "output_directory": "../../../output-worker/vmware-desktop-{{user `version`}}",
+    "output_directory": "../../../output-node/vmware-desktop-{{user `version`}}",
     "boot_wait": "10s",
     "boot_command": [
       "<esc><wait>",
@@ -184,7 +184,7 @@
     ],
     "export": {
       "force": true,
-      "output_directory": "../../../output-worker/vmware-vsphere-{{user `version`}}"
+      "output_directory": "../../../output-node/vmware-vsphere-{{user `version`}}"
     }
   },
     {
@@ -361,7 +361,7 @@
     },
     {
       "type": "file",
-      "source": "../../../scripts/worker-node",
+      "source": "../../../scripts/cluster-node",
       "destination": "{{user `kx_home`}}/workspace/scripts"
     },
     {
@@ -403,9 +403,9 @@
         "INSTALLATION_WORKSPACE={{user `kx_home`}}/workspace"
        ],
        "scripts": [
-         "../../../scripts/worker-node/tools.sh",
-         "../../../scripts/worker-node/k8s-base.sh",
-         "../../../scripts/worker-node/cleanup.sh"
+         "../../../scripts/cluster-node/tools.sh",
+         "../../../scripts/cluster-node/k8s-base.sh",
+         "../../../scripts/cluster-node/cleanup.sh"
        ],
        "type": "shell",
        "pause_before": "60s",
@@ -417,7 +417,7 @@
       "boot_command": "<esc><wait>install <wait> preseed/url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/{{user `preseed_path`}} <wait>debian-installer=en_US.UTF-8 <wait>auto <wait>locale=en_US.UTF-8 <wait>kbd-chooser/method=de <wait>keyboard-configuration/xkb-keymap=de <wait>netcfg/get_hostname={{ .Name }} <wait>netcfg/get_domain=vagrantup.com <wait>fb=false <wait>debconf/frontend=noninteractive <wait>console-setup/ask_detect=false <wait>console-keymaps-at/keymap=us <wait>grub-installer/bootdev=/dev/sda <wait><enter><wait>",
       "cpus": "2",
       "compute_engine_build": "false",
-      "hostname": "kx-worker",
+      "hostname": "kx-node",
       "kx_home": "/usr/share/kx.as.code",
       "domain": "kx-as-code.local",
       "disable_ipv6": "true",
