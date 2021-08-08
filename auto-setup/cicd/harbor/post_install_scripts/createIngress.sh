@@ -37,21 +37,21 @@ spec:
               name: harbor-harbor-core
               port:
                 number: 80
-          path: /api
+          path: /api/
           pathType: ImplementationSpecific
         - backend:
             service:
               name: harbor-harbor-core
               port:
                 number: 80
-          path: /service
+          path: /service/
           pathType: ImplementationSpecific
         - backend:
             service:
               name: harbor-harbor-core
               port:
                 number: 80
-          path: /v2
+          path: /v2/
           pathType: ImplementationSpecific
         - backend:
             service:
@@ -65,7 +65,7 @@ spec:
               name: harbor-harbor-core
               port:
                 number: 80
-          path: /c
+          path: /c/
           pathType: ImplementationSpecific
     tls:
     - hosts:
@@ -107,4 +107,6 @@ spec:
       - notary.'${baseDomain}'
       secretName: kx.as.code-wildcard-cert
 ---
-''' | kubectl -n ${namespace} apply -f -
+''' | sudo tee ${installationWorkspace}/${componentName}_ingress.yaml
+
+sudo kubectl -n ${namespace} apply -f ${installationWorkspace}/${componentName}_ingress.yaml
