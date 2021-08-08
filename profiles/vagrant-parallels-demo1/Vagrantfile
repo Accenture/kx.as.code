@@ -94,7 +94,7 @@ Vagrant.configure("2") do |config|
     end
     subconfig.vm.provider "parallels" do |v|
       v.name = "kx.as.code-#{ENVIRONMENT_PREFIX}-main1-#{BOX_VERSION}"
-      v.memory = ADMIN_MAIN_NODE_MEMORYMAIN_NODE_MEMORY
+      v.memory = ADMIN_MAIN_NODE_MEMORY
       v.cpus = ADMIN_MAIN_NODE_CPU_CORES
       v.customize ["set", :id, "--3d-accelerate", "highest"]
       v.customize ["set", :id, "--high-resolution", "on"]
