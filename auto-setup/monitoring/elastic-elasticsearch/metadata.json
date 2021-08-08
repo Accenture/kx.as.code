@@ -27,7 +27,13 @@
             "healthchecks": {
                 "liveliness": {
                     "http_path": "/",
-                    "http_auth_required": false,
+                    "http_auth_required": true,
+                    "http_auth_secret": {
+                        "secret_name": "elastic-credentials",
+                        "username_field": "username",
+                        "password_field": "password"
+
+                    },
                     "expected_http_response_code": "200",
                     "expected_http_response_string": "",
                     "expected_json_response": {
@@ -39,7 +45,13 @@
                 },
                 "readiness": {
                     "http_path": "/",
-                    "http_auth_required": false,
+                    "http_auth_required": true,
+                    "http_auth_secret": {
+                        "secret_name": "elastic-credentials",
+                        "username_field": "username",
+                        "password_field": "password"
+
+                    },
                     "expected_http_response_code": "200",
                     "expected_http_response_string": "",
                     "expected_json_response": {

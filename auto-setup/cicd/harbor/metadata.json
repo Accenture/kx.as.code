@@ -22,6 +22,7 @@
             "expose.ingress.hosts.core={{componentName}}.{{baseDomain}}",
             "expose.ingress.hosts.notary=notary.{{baseDomain}}",
             "expose.tls.enabled=true",
+            "expose.tls.certSource=secret",
             "expose.tls.caBundleSecretName=kx.as.code-wildcard-cert",
             "expose.tls.caSecretName=kx.as.code-wildcard-cert",
             "expose.tls.secretName=kx.as.code-wildcard-cert",

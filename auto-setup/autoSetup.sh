@@ -281,18 +281,29 @@ if [[ ${action} == "install"   ]]; then
             expectedHttpResponseCode=$(echo ${readinessCheckData} | jq -r '.expected_http_response_code')
             expectedContentString=$(echo ${readinessCheckData} | jq -r '.expected_http_response_string')
             expectedJsonValue=$(echo ${readinessCheckData} | jq -r '.expected_json_response.json_value')
+            curlAuthOption=""
+
+            # Set curl auth option, if http_auth_required=true in solution's metadata.json
+            if [[ "${authorizationRequired}" == "true" ]]; then
+                httpAuthSecretName=$(echo ${readinessCheckData} | jq -r '.http_auth_secret.secret_name?')
+                httpAuthUsernameField=$(echo ${readinessCheckData} | jq -r '.http_auth_secret.username_field?')
+                httpAuthUsername=$(kubectl get secret -n ${namespace} ${httpAuthSecretName} -o json | jq -r '.data.'${httpAuthUsernameField}'' | base64 --decode)
+                httpAuthPasswordField=$(echo ${readinessCheckData} | jq -r '.http_auth_secret.password_field?')
+                httpAuthPassword=$(kubectl get secret -n ${namespace} ${httpAuthSecretName} -o json | jq -r '.data.'${httpAuthPasswordField}'' | base64 --decode)
+                curlAuthOption="-u ${httpAuthUsername}:${httpAuthPassword}"
+            fi
 
             for i in {1..60}; do
-                http_code=$(curl -s -o /dev/null -L -w '%{http_code}' ${applicationUrl}${urlCheckPath} || true)
+                http_code=$(curl ${curlAuthOption} -s -o /dev/null -L -w '%{http_code}' ${applicationUrl}${urlCheckPath} || true)
                 if [[ "${http_code}" == "${expectedHttpResponseCode}" ]]; then
                     echo "Application \"${componentName}\" is up. Received expected response [RC=${http_code}]"
                     break
                 fi
-                echo -e "${blue}- [INFO] Waiting for ${applicationUrl}${urlCheckPath} [Got RC=${http_code}, Expected RC=${expectedHttpResponseCode}]${nc}"
+                log_info "Waiting for ${applicationUrl}${urlCheckPath} [Got RC=${http_code}, Expected RC=${expectedHttpResponseCode}]"
                 sleep 30
             done
 
-            finalReturnCode=$(curl -s -o /dev/null -L -w '%{http_code}' ${applicationUrl}${urlCheckPath})
+            finalReturnCode=$(curl ${curlAuthOption} -s -o /dev/null -L -w '%{http_code}' ${applicationUrl}${urlCheckPath})
             if [[ ${finalReturnCode} -ne ${expectedHttpResponseCode} ]]; then
                 log_warn "Final health check (60/60) of URL ${applicationUrl} failed. Expected RC ${expectedHttpResponseCode}, but got RC ${finalReturnCode} instead"
             fi
