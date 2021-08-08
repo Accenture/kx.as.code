@@ -45,9 +45,12 @@ spec:
   - host: ${componentName}.${baseDomain}
     http:
       paths:
-       - path: /
-         backend:
-           serviceName: kubernetes-dashboard
-           servicePort: 443
+      - backend:
+          service:
+            name: kubernetes-dashboard
+            port:
+              number: 443
+        path: /
+        pathType: Prefix
 EOF
 kubectl apply -f ${installationWorkspace}/dashboard-ingress.yaml -n ${namespace}
