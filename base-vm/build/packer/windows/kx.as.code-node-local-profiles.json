@@ -3,7 +3,6 @@
   "vm_password",
   "aws_secret_access_key"
   ],
-  ],
   "_comment": "Read README.md for details on executing the Packer builds.",
   "builders": [
     {

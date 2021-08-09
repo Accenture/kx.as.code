@@ -66,10 +66,10 @@ puts "KX_NODE_BOX_LOCATION: #{KX_NODE_BOX_LOCATION}"
 
 if (MAIN_NODE_COUNT - 1) < 1
   REPLICA_MAIN_NODE_COUNT = 0
-  puts "REPLICA_MAIN_NODE_COUNT < 1 -> #{REPLICA_MAIN_NODE_COUNT} additional main nodes will be provisioned"
+  puts "REPLICA_MAIN_NODE_COUNT < 1 -> #{REPLICA_MAIN_NODE_COUNT} replica main nodes will be provisioned"
 else
   REPLICA_MAIN_NODE_COUNT = MAIN_NODE_COUNT - 1
-  puts "REPLICA_MAIN_NODE_COUNT > 1 -> #{REPLICA_MAIN_NODE_COUNT} additional main nodes will be provisioned"
+  puts "REPLICA_MAIN_NODE_COUNT > 1 -> #{REPLICA_MAIN_NODE_COUNT} replica main nodes will be provisioned"
 end
 
 # Path for current Jenkins solution
