@@ -596,7 +596,7 @@ while :; do
                 export error=""
                 . ${autoSetupHome}/autoSetup.sh &> ${installationWorkspace}/${componentName}_${logTimestamp}.${retries}.log
                 logRc=$?
-                log_info "Installation process for \"${componentName}\" returned with \$?=${logRc} and \$rc=$rc"
+                log_info "Installation process for \"${componentName}\" returned with \$?=${logRc} and rc=$rc"
             fi
             sleep 5
         fi
