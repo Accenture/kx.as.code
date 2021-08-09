@@ -75,9 +75,9 @@ if [[ ${action} == "install"   ]]; then
         else
             log_info "Executing pre-install script ${installComponentDirectory}/pre_install_scripts/${script}"
             . ${installComponentDirectory}/pre_install_scripts/${script} || rc=$? && log_info "${installComponentDirectory}/pre_install_scripts/${script} returned with rc=$rc"
-            rc=$?
             if [[ ${rc} -ne 0 ]]; then
                 log_error "Execution of pre install script \"${script}\" ended in a non zero return code ($rc)"
+                return 1
             fi
         fi
     done
@@ -100,9 +100,9 @@ if [[ ${action} == "install"   ]]; then
         for script in ${scriptsToExecute}; do
             log_info "Excuting script \"${script}\" in directory ${installComponentDirectory}"
             . ${installComponentDirectory}/${script} || rc=$? && log_info "${installComponentDirectory}/${script} returned with rc=$rc"
-            rc=$?
             if [[ ${rc} -ne 0 ]]; then
                 log_error "Execution of install script \"${script}\" ended in a non zero return code ($rc)"
+                return 1
             fi
         done
 
@@ -162,6 +162,7 @@ if [[ ${action} == "install"   ]]; then
         ${installationWorkspace}/helm_${componentName}.sh || rc=$? && log_info "${installationWorkspace}/helm_${componentName}.sh returned with rc=$rc"
         if [[ ${rc} -ne 0 ]]; then
             log_error "Execution of Helm command \"${helmCommmand}\" ended in a non zero return code ($rc)"
+            return 1
         fi
 
         ####################################################################################################################################################################
@@ -230,10 +231,10 @@ if [[ ${action} == "install"   ]]; then
         # Add App to ArgoCD
         argoCdAppAddCommand="argocd app create $(echo ${componentName} | sed 's/_/-/g') --repo  ${argoCdRepositoryUrl} --path ${argoCdRepositoryPath}  --dest-server ${argoCdDestinationServer} --dest-namespace ${argoCdDestinationNameSpace} --sync-policy ${argoCdSyncPolicy} ${argoCdAutoPruneOption} ${argoCdSelfHealOption}"
         log_debug "ArgoCD command: ${argoCdAppAddCommand}"
-        ${argoCdAppAddCommand}
-        rc=$?
+        ${argoCdAppAddCommand} || rc=$? && log_info "ArgoCD command: ${argoCdAppAddCommand} returned with rc=$rc"
         if [[ ${rc} -ne 0 ]]; then
             log_error "Execution of ArgoCD command ended in a non zero return code ($rc)"
+            return 1
         fi
         for i in {1..10}; do
             response=$(argocd app list --output json | jq -r '.[] | select (.metadata.name=="'${componentName}'") | .metadata.name')
@@ -383,9 +384,9 @@ if [[ ${action} == "install"   ]]; then
             echo "Executing post-install script ${installComponentDirectory}/post_install_scripts/${script}"
             log_info "Executing post-install script ${installComponentDirectory}/post_install_scripts/${script}"
             . ${installComponentDirectory}/post_install_scripts/${script} || rc=$? && log_info "${installComponentDirectory}/post_install_scripts/${script} returned with rc=$rc"
-            rc=$?
             if [[ ${rc} -ne 0 ]]; then
                 log_error "Execution of post install script \"${script}\" ended in a non zero return code ($rc)"
+                return 1
             fi
         fi
     done
