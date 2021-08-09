@@ -56,7 +56,9 @@ resource "null_resource" "kx_main_qa_provisioner" {
 resource "null_resource" "kx_main_final_provisioner" {
 
   depends_on = [
-    openstack_compute_floatingip_associate_v2.kx_main_admin_floating_ip_associate
+    openstack_compute_floatingip_associate_v2.kx_main_admin_floating_ip_associate,
+    null_resource.main_admin_provisioner,
+    null_resource.kx_main_qa_provisioner
   ]
 
   provisioner "file" {
@@ -86,36 +88,48 @@ resource "null_resource" "kx_main_final_provisioner" {
   } 
 }
 
-resource "null_resource" "main_additional_provisioner" {
+resource "null_resource" "main_replica_provisioner" {
 
-  depends_on = [ openstack_compute_floatingip_associate_v2.kx_main_replica_floating_ip_associate ]
+  depends_on = [
+    openstack_compute_floatingip_associate_v2.kx_main_replica_floating_ip_associate
+  ]
 
   count = (local.main_node_count - 1) < 0 ? 0 : local.main_node_count - 1
 
   provisioner "file" {
-    source      = "profile-config.json"
+    source = "profile-config.json"
     destination = "/var/tmp/profile-config.json"
 
     connection {
-      type     = "ssh"
-      user     = "debian"
+      type = "ssh"
+      user = "debian"
       private_key = openstack_compute_keypair_v2.kx_keypair.private_key
-      host     = element(openstack_networking_floatingip_v2.kx_main_replica_floating_ip.*.address, count.index)
+      host = element(openstack_networking_floatingip_v2.kx_main_replica_floating_ip.*.address, count.index)
     }
 
   }
 
   provisioner "file" {
-    source      = "hosts_file_entries.txt"
+    source = "hosts_file_entries.txt"
     destination = "/var/tmp/hosts_file_entries.txt"
 
     connection {
-      type     = "ssh"
-      user     = "debian"
+      type = "ssh"
+      user = "debian"
       private_key = openstack_compute_keypair_v2.kx_keypair.private_key
-      host     = element(openstack_networking_floatingip_v2.kx_main_replica_floating_ip.*.address, count.index)
+      host = element(openstack_networking_floatingip_v2.kx_main_replica_floating_ip.*.address, count.index)
     }
   }
+}
+
+resource "null_resource" "main_replica_final_provisioner" {
+
+  depends_on = [
+    openstack_compute_floatingip_associate_v2.kx_main_replica_floating_ip_associate,
+    null_resource.main_replica_provisioner
+  ]
+
+  count = (local.main_node_count - 1) < 0 ? 0 : local.main_node_count - 1
 
   provisioner "remote-exec" {
     inline = [
@@ -137,34 +151,46 @@ resource "null_resource" "main_additional_provisioner" {
 
 resource "null_resource" "worker_provisioner" {
 
-  depends_on = [ openstack_compute_floatingip_associate_v2.kx_worker_floating_ip_associate ]
+  depends_on = [
+    openstack_compute_floatingip_associate_v2.kx_worker_floating_ip_associate
+  ]
 
   count = local.worker_node_count
 
   provisioner "file" {
-    source      = "profile-config.json"
+    source = "profile-config.json"
     destination = "/var/tmp/profile-config.json"
 
     connection {
-        type     = "ssh"
-        user     = "debian"
-        private_key = openstack_compute_keypair_v2.kx_keypair.private_key
-        host     = element(openstack_networking_floatingip_v2.kx_worker_floating_ip.*.address, count.index)
+      type = "ssh"
+      user = "debian"
+      private_key = openstack_compute_keypair_v2.kx_keypair.private_key
+      host = element(openstack_networking_floatingip_v2.kx_worker_floating_ip.*.address, count.index)
     }
 
   }
 
   provisioner "file" {
-    source      = "hosts_file_entries.txt"
+    source = "hosts_file_entries.txt"
     destination = "/var/tmp/hosts_file_entries.txt"
 
     connection {
-        type     = "ssh"
-        user     = "debian"
-        private_key = openstack_compute_keypair_v2.kx_keypair.private_key
-        host     = element(openstack_networking_floatingip_v2.kx_worker_floating_ip.*.address, count.index)
+      type = "ssh"
+      user = "debian"
+      private_key = openstack_compute_keypair_v2.kx_keypair.private_key
+      host = element(openstack_networking_floatingip_v2.kx_worker_floating_ip.*.address, count.index)
     }
   }
+}
+
+resource "null_resource" "worker_final_provisioner" {
+
+  depends_on = [
+    openstack_compute_floatingip_associate_v2.kx_worker_floating_ip_associate,
+    null_resource.worker_provisioner
+  ]
+
+  count = local.worker_node_count
 
   provisioner "remote-exec" {
     inline = [

@@ -39,7 +39,10 @@ else
     driveB=$(cat /usr/share/kx.as.code/.config/driveB)
     formatted=true
 fi
-
+if [[ -z ${driveB} ]]; then
+  log_error "Error finding mounted drive for setting up the K8s local storage service. Quitting script and sending task to failure queue"
+  return 1
+fi
 # Check logical partitions
 /usr/bin/sudo lvs
 /usr/bin/sudo df -hT

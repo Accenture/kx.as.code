@@ -29,7 +29,10 @@ else
     driveC=$(cat /usr/share/kx.as.code/.config/driveC)
     formatted=true
 fi
-
+if [[ -z ${driveC} ]]; then
+  log_error "Error finding mounted drive for setting up glusterfs. Quitting script and sending task to failure queue"
+  return 1
+fi
 # Update Debian repositories as default is old
 wget -O - https://download.gluster.org/pub/gluster/glusterfs/8/rsa.pub | /usr/bin/sudo apt-key add -
 echo deb [arch=amd64] https://download.gluster.org/pub/gluster/glusterfs/8/LATEST/Debian/buster/amd64/apt buster main | /usr/bin/sudo tee /etc/apt/sources.list.d/gluster.list
