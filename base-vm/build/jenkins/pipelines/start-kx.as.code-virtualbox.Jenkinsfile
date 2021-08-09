@@ -61,7 +61,7 @@ pipeline {
                             curl -L -o jq ${jqDownloadPath}
                             chmod +x ./jq
                         fi
-                        export kx_version=\$(cat version.json | ./jq -r '.kxascode')
+                        export kx_version=\$(cat versions.json | ./jq -r '.kxascode')
                         echo \${kx_version}
                         export kxMainBoxLocation=${kx_main_box_location}
                         export kxWorkerBoxLocation=${kx_worker_box_location}
