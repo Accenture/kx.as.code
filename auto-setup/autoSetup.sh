@@ -143,7 +143,7 @@ if [[ ${action} == "install"   ]]; then
             envhandlebars < ${installComponentDirectory}/values_template.yaml > ${installationWorkspace}/${componentName}_values.yaml
             valuesFileOption="-f ${installationWorkspace}/${componentName}_values.yaml"
         else
-            # Set to blank to avoid variable unound error
+            # Set to blank to avoid variable unbound error
             valuesFileOption=""
         fi
 
