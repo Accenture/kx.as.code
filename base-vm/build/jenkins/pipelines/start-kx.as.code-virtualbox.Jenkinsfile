@@ -64,9 +64,9 @@ pipeline {
                         export kx_version=\$(cat versions.json | ./jq -r '.kxascode')
                         echo \${kx_version}
                         export kxMainBoxLocation=${kx_main_box_location}
-                        export kxWorkerBoxLocation=${kx_worker_box_location}
+                        export kxNodeBoxLocation=${kx_node_box_location}
                         echo \${kxMainBoxLocation}
-                        echo \${kxWorkerBoxLocation}
+                        echo \${kxNodeBoxLocation}
                         cd profiles/vagrant-virtualbox-demo1
                         vagrant up
                         VBoxManage list vms
