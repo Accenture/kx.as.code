@@ -64,12 +64,12 @@ pipeline {
                             curl -L -o jq ${jqDownloadPath}
                             chmod +x ./jq
                         fi
-                        export kx_version=\$(cat version.json | ./jq -r '.version')
+                        export kx_version=\$(cat versions.json | ./jq -r '.kxascode')
                         echo \${kx_version}
                         export kxMainBoxLocation=${kx_main_box_location}
-                        export kxWorkerBoxLocation=${kx_worker_box_location}
+                        export kxNodeBoxLocation=${kx_node_box_location}
                         echo \${kxMainBoxLocation}
-                        echo \${kxWorkerBoxLocation}
+                        echo \${kxNodeBoxLocation}
                         if [[ -f kx.as.code_main-ip-address ]]; then
                             rm -f kx.as.code_main-ip-address
                         fi

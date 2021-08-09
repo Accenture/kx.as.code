@@ -8,7 +8,7 @@
   {
       "type": "amazon-ebs",
       "name": "{{user `vm_name`}}-aws-ami",
-      "ami_name": "{{user `vm_name`}}{{user `vm_suffix`}}-{{user `version`}}",
+      "ami_name": "{{user `vm_name`}}-{{user `version`}}",
       "ami_groups": "",
       "snapshot_groups": "",
       "instance_type": "{{user `instance_type`}}",
@@ -36,7 +36,7 @@
     {
       "type": "vsphere-iso",
       "name": "{{user `vm_name`}}-vmware-vsphere",
-      "vm_name": "{{user `vm_name`}}{{user `vm_suffix`}}-{{user `version`}}",
+      "vm_name": "{{user `vm_name`}}-{{user `version`}}",
       "boot_wait": "10s",
       "boot_order": "disk,cdrom",
       "boot_command": [
@@ -108,7 +108,7 @@
       ],
       "export": {
         "force": true,
-        "output_directory": "../../../output-main{{user `vm_suffix`}}/vmware-vsphere-{{user `version`}}"
+        "output_directory": "../../../output-main/vmware-vsphere-{{user `version`}}"
       }
     },
     {
@@ -121,7 +121,7 @@
         "password": "{{user `openstack_password`}}",
         "region": "{{user `openstack_region`}}",
         "ssh_username": "debian",
-        "image_name": "{{user `vm_name`}}{{user `vm_suffix`}}-{{user `version`}}",
+        "image_name": "{{user `vm_name`}}-{{user `version`}}",
         "source_image": "{{user `openstack_source_image`}}",
         "networks": "{{user `openstack_networks`}}",
         "use_floating_ip": true,
@@ -204,6 +204,7 @@
         "GITHUB_USER={{user `github_user`}}",
         "GITHUB_TOKEN={{user `github_token`}}",
         "VERSION={{user `version`}}",
+        "KUBE_VERSION={{user `kube_version`}}",
         "COMPUTE_ENGINE_BUILD={{user `compute_engine_build`}}",
         "KX_HOME={{user `kx_home`}}",
         "SKELDIR={{user `kx_home`}}/workspace/skel",
@@ -243,7 +244,8 @@
         "KX_HOME={{user `kx_home`}}",
         "SKELDIR={{user `kx_home`}}/workspace/skel",
         "SHARED_GIT_REPOSITORIES={{user `kx_home`}}/git",
-        "INSTALLATION_WORKSPACE={{user `kx_home`}}/workspace"
+        "INSTALLATION_WORKSPACE={{user `kx_home`}}/workspace",
+        "COMPUTE_ENGINE_BUILD={{user `compute_engine_build`}}"
       ],
       "scripts": [
         "../../../scripts/main-node/tools.sh",

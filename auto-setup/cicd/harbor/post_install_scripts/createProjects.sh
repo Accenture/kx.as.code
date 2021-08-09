@@ -2,8 +2,8 @@
 set -euo pipefail
 
 # Wait until API is available before continuing
-timeout -s TERM 600 bash -c 'while [[ "$(curl -s -o /dev/null -L -w ''%{http_code}'' https://'${componentName}'.'${baseDomain}'/api/v2.0/projects)" != "200" ]]; do \
-echo "Waiting for https://'${componentName}'.'${baseDomain}'/api/v2.0/projects"; sleep 5; done'
+timeout -s TERM 600 bash -c 'while [[ "$(curl -s -o /dev/null -L -w ''%{http_code}'' https://'${componentName}'.'${baseDomain}'/api/v2.0/ping)" != "200" ]]; do \
+echo "Waiting for https://'${componentName}'.'${baseDomain}'/api/v2.0/ping"; sleep 5; done'
 
 # Create public kx-as-code project in Habor via API
 export kxHarborProjectId=$(curl -s -u 'admin:'${vmPassword}'' -X GET https://${componentName}.${baseDomain}/api/v2.0/projects | jq -r '.[] | select(.name=="kx-as-code") | .project_id')
@@ -33,7 +33,7 @@ else
     log_info "Harbor Docker Registry KX-AS-CODE project already exists. Skipping creation"
 fi
 
-# Create public devops project in Habor via API
+# Create public devops project in Harbor via API
 export devopsHarborProjectId=$(curl -s -u 'admin:'${vmPassword}'' -X GET https://${componentName}.${baseDomain}/api/v2.0/projects | jq -r '.[] | select(.name=="devops") | .project_id')
 if [[ -z ${devopsHarborProjectId} ]]; then
     curl -u 'admin:'${vmPassword}'' -X POST "https://${componentName}.${baseDomain}/api/v2.0/projects" -H "accept: application/json" -H "Content-Type: application/json" -d'{

@@ -14,7 +14,7 @@ kubectl -n keycloak exec ${kcPod} --container ${kcContainer} -- \
 kubectl -n keycloak exec ${kcPod} --container ${kcContainer} -- \
     ${kcAdmCli} create clients --realm ${kcRealm} -s clientId=${componentName} \
     -s 'redirectUris=["https://'${componentName}'.'${baseDomain}'/auth/callback"]' \
-    -s publicClient="false" -s enabled=true -s rootUrl="https://'${componentName}'.'${baseDomain}'" -s baseUrl="/applications" -i
+    -s publicClient="false" -s enabled=true -s rootUrl="https://${componentName}.${baseDomain}" -s baseUrl="/applications" -i
 
 ## export clientId
 export clientId=$(kubectl -n keycloak exec ${kcPod} --container ${kcContainer} -- \

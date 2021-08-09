@@ -82,10 +82,10 @@ resource "aws_lb_target_group_attachment" "http" {
   target_id = aws_instance.kx_main_admin.id
 }
 
-resource "aws_alb_target_group_attachment" "http_additional" {
-  count = length(aws_instance.kx_main_additional)
+resource "aws_alb_target_group_attachment" "http_replica" {
+  count = length(aws_instance.kx_main_replica)
   target_group_arn = aws_lb_target_group.http.arn
-  target_id = aws_instance.kx_main_additional[count.index].id
+  target_id = aws_instance.kx_main_replica[count.index].id
 }
 
 resource "aws_lb_target_group" "api_external" {
@@ -106,10 +106,10 @@ resource "aws_lb_target_group_attachment" "api_external" {
   target_id = aws_instance.kx_main_admin.id
 }
 
-resource "aws_lb_target_group_attachment" "api_external_additional" {
-  count = length(aws_instance.kx_main_additional)
+resource "aws_lb_target_group_attachment" "api_external_replica" {
+  count = length(aws_instance.kx_main_replica)
   target_group_arn = aws_lb_target_group.api_external.arn
-  target_id = aws_instance.kx_main_additional[count.index].id
+  target_id = aws_instance.kx_main_replica[count.index].id
 }
 
 resource "aws_lb_target_group" "https" {
@@ -130,10 +130,10 @@ resource "aws_lb_target_group_attachment" "https" {
   target_id = aws_instance.kx_main_admin.id
 }
 
-resource "aws_lb_target_group_attachment" "https_additional" {
-  count = length(aws_instance.kx_main_additional)
+resource "aws_lb_target_group_attachment" "https_replica" {
+  count = length(aws_instance.kx_main_replica)
   target_group_arn = aws_lb_target_group.https.arn
-  target_id = aws_instance.kx_main_additional[count.index].id
+  target_id = aws_instance.kx_main_replica[count.index].id
 }
 
 resource "aws_lb_target_group" "rdp" {
@@ -218,13 +218,13 @@ resource "aws_route53_record" "kx_main_admin" {
   records = [aws_instance.kx_main_admin.private_ip]
 }
 
-resource "aws_route53_record" "kx_main_additional" {
+resource "aws_route53_record" "kx_main_replica" {
   zone_id = data.aws_route53_zone.kx_as_code.zone_id
   name    = "kx-main${count.index + 2}.${local.prefix}.${local.kx_as_code_domain}"
   count   = local.main_node_count - 1
   type    = "A"
   ttl     = 300
-  records = [element(aws_instance.kx_main_additional.*.private_ip, count.index)]
+  records = [element(aws_instance.kx_main_replica.*.private_ip, count.index)]
 }
 
 resource "aws_route53_record" "kx_caa" {
@@ -281,7 +281,7 @@ resource "aws_route53_record" "k8s_api_internal_admin" {
   ]
 }
 
-resource "aws_route53_record" "k8s_api_internal_additional" {
+resource "aws_route53_record" "k8s_api_internal_replica" {
   count = (local.main_node_count - 1) < 0 ? 0 : local.main_node_count - 1
   zone_id = data.aws_route53_zone.kx_as_code.zone_id
   name    = "api-internal.${local.prefix}.${local.kx_as_code_domain}"
@@ -291,7 +291,7 @@ resource "aws_route53_record" "k8s_api_internal_additional" {
   multivalue_answer_routing_policy  = true
   set_identifier = "${count.index + 2}"
   records = [
-    aws_instance.kx_main_additional[count.index].private_ip
+    aws_instance.kx_main_replica[count.index].private_ip
   ]
 }
 

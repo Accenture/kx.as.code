@@ -14,31 +14,31 @@ fi
 
 export PROVIDER=$(echo ${OUTPUT_DIR} | sed 's/-/_/g')
 
-export CHECKSUM=$(shasum -a 512 ..\/..\/..\/boxes\/${OUTPUT_DIR}-${VM_VERSION}\/${VM_NAME}${VM_SUFFIX}-${VM_VERSION}.box | awk '{ print $1 }')
+export CHECKSUM=$(shasum -a 512 ..\/..\/..\/boxes\/${OUTPUT_DIR}-${VM_VERSION}\/${VM_NAME}-${VM_VERSION}.box | awk '{ print $1 }')
 
 if [[ ! -d ../../../boxes/${OUTPUT_DIR}-${VM_VERSION} ]]; then
     mkdir -p ../../../boxes/${OUTPUT_DIR}-${VM_VERSION}
 fi
 
-if [[ -f ../../../boxes/${OUTPUT_DIR}-${VM_VERSION}/${VM_NAME}${VM_SUFFIX}-${VM_VERSION}_metadata.json ]]; then
-    mv ../../../boxes/${OUTPUT_DIR}-${VM_VERSION}/${VM_NAME}${VM_SUFFIX}-${VM_VERSION}_metadata.json ../../../boxes/${OUTPUT_DIR}-${VM_VERSION}/${VM_NAME}${VM_SUFFIX}-${VM_VERSION}_metadata.json.previous
+if [[ -f ../../../boxes/${OUTPUT_DIR}-${VM_VERSION}/${VM_NAME}-${VM_VERSION}_metadata.json ]]; then
+    mv ../../../boxes/${OUTPUT_DIR}-${VM_VERSION}/${VM_NAME}-${VM_VERSION}_metadata.json ../../../boxes/${OUTPUT_DIR}-${VM_VERSION}/${VM_NAME}-${VM_VERSION}_metadata.json.previous
 fi
 
-cp ../../../templates/metadata.template ../../../boxes/${OUTPUT_DIR}-${VM_VERSION}/${VM_NAME}${VM_SUFFIX}-${VM_VERSION}_metadata.json
+cp ../../../templates/metadata.template ../../../boxes/${OUTPUT_DIR}-${VM_VERSION}/${VM_NAME}-${VM_VERSION}_metadata.json
 
 # Check is running from Mac (Darwin) or Linux (including WSL and Windows Git Bash)
 if [[ "$(uname)" == "Darwin" ]]; then
-    sed -i '' "s/##NAME##/${PACKER_BUILD_NAME}/" ../../../boxes/${OUTPUT_DIR}-${VM_VERSION}/${VM_NAME}${VM_SUFFIX}-${VM_VERSION}_metadata.json
-    sed -i '' "s/##DESCRIPTION##/Accenture Interactive KX.AS.CODE DevOps VM - PLAY LEARN INNOVATE/" ../../../boxes/${OUTPUT_DIR}-${VM_VERSION}/${VM_NAME}${VM_SUFFIX}-${VM_VERSION}_metadata.json
-    sed -i '' "s/##VERSION##/${VM_VERSION}/" ../../../boxes/${OUTPUT_DIR}-${VM_VERSION}/${VM_NAME}${VM_SUFFIX}-${VM_VERSION}_metadata.json
-    sed -i '' "s/##PROVIDER##/${PROVIDER}/g" ../../../boxes/${OUTPUT_DIR}-${VM_VERSION}/${VM_NAME}${VM_SUFFIX}-${VM_VERSION}_metadata.json
-    sed -i '' "s/##URL##/..\/..\/..\/boxes\/${OUTPUT_DIR}-${VM_VERSION}\/${VM_NAME}${VM_SUFFIX}-${VM_VERSION}.box/" ../../../boxes/${OUTPUT_DIR}-${VM_VERSION}/${VM_NAME}${VM_SUFFIX}-${VM_VERSION}_metadata.json
-    sed -i '' "s/##CHECKSUM##/${CHECKSUM}/" ../../../boxes/${OUTPUT_DIR}-${VM_VERSION}/${VM_NAME}${VM_SUFFIX}-${VM_VERSION}_metadata.json
+    sed -i '' "s/##NAME##/${PACKER_BUILD_NAME}/" ../../../boxes/${OUTPUT_DIR}-${VM_VERSION}/${VM_NAME}-${VM_VERSION}_metadata.json
+    sed -i '' "s/##DESCRIPTION##/Accenture Interactive KX.AS.CODE DevOps VM - PLAY LEARN INNOVATE/" ../../../boxes/${OUTPUT_DIR}-${VM_VERSION}/${VM_NAME}-${VM_VERSION}_metadata.json
+    sed -i '' "s/##VERSION##/${VM_VERSION}/" ../../../boxes/${OUTPUT_DIR}-${VM_VERSION}/${VM_NAME}-${VM_VERSION}_metadata.json
+    sed -i '' "s/##PROVIDER##/${PROVIDER}/g" ../../../boxes/${OUTPUT_DIR}-${VM_VERSION}/${VM_NAME}-${VM_VERSION}_metadata.json
+    sed -i '' "s/##URL##/..\/..\/..\/boxes\/${OUTPUT_DIR}-${VM_VERSION}\/${VM_NAME}-${VM_VERSION}.box/" ../../../boxes/${OUTPUT_DIR}-${VM_VERSION}/${VM_NAME}-${VM_VERSION}_metadata.json
+    sed -i '' "s/##CHECKSUM##/${CHECKSUM}/" ../../../boxes/${OUTPUT_DIR}-${VM_VERSION}/${VM_NAME}-${VM_VERSION}_metadata.json
 else
-    sed -i "s/##NAME##/${PACKER_BUILD_NAME}/" ../../../boxes/${OUTPUT_DIR}-${VM_VERSION}/${VM_NAME}${VM_SUFFIX}-${VM_VERSION}_metadata.json
-    sed -i "s/##DESCRIPTION##/Accenture Interactive KX.AS.CODE DevOps VM - PLAY LEARN INNOVATE/" ../../../boxes/${OUTPUT_DIR}-${VM_VERSION}/${VM_NAME}${VM_SUFFIX}-${VM_VERSION}_metadata.json
-    sed -i "s/##VERSION##/${VM_VERSION}/" ../../../boxes/${OUTPUT_DIR}-${VM_VERSION}/${VM_NAME}${VM_SUFFIX}-${VM_VERSION}_metadata.json
-    sed -i "s/##PROVIDER##/${PROVIDER}/g" ../../../boxes/${OUTPUT_DIR}-${VM_VERSION}/${VM_NAME}${VM_SUFFIX}-${VM_VERSION}_metadata.json
-    sed -i "s/##URL##/..\/..\/..\/boxes\/${OUTPUT_DIR}-${VM_VERSION}\/${VM_NAME}${VM_SUFFIX}-${VM_VERSION}.box/" ../../../boxes/${OUTPUT_DIR}-${VM_VERSION}/${VM_NAME}${VM_SUFFIX}-${VM_VERSION}_metadata.json
-    sed -i "s/##CHECKSUM##/${CHECKSUM}/" ../../../boxes/${OUTPUT_DIR}-${VM_VERSION}/${VM_NAME}${VM_SUFFIX}-${VM_VERSION}_metadata.json
+    sed -i "s/##NAME##/${PACKER_BUILD_NAME}/" ../../../boxes/${OUTPUT_DIR}-${VM_VERSION}/${VM_NAME}-${VM_VERSION}_metadata.json
+    sed -i "s/##DESCRIPTION##/Accenture Interactive KX.AS.CODE DevOps VM - PLAY LEARN INNOVATE/" ../../../boxes/${OUTPUT_DIR}-${VM_VERSION}/${VM_NAME}-${VM_VERSION}_metadata.json
+    sed -i "s/##VERSION##/${VM_VERSION}/" ../../../boxes/${OUTPUT_DIR}-${VM_VERSION}/${VM_NAME}-${VM_VERSION}_metadata.json
+    sed -i "s/##PROVIDER##/${PROVIDER}/g" ../../../boxes/${OUTPUT_DIR}-${VM_VERSION}/${VM_NAME}-${VM_VERSION}_metadata.json
+    sed -i "s/##URL##/..\/..\/..\/boxes\/${OUTPUT_DIR}-${VM_VERSION}\/${VM_NAME}-${VM_VERSION}.box/" ../../../boxes/${OUTPUT_DIR}-${VM_VERSION}/${VM_NAME}-${VM_VERSION}_metadata.json
+    sed -i "s/##CHECKSUM##/${CHECKSUM}/" ../../../boxes/${OUTPUT_DIR}-${VM_VERSION}/${VM_NAME}-${VM_VERSION}_metadata.json
 fi

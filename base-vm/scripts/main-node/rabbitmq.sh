@@ -83,4 +83,4 @@ Actions=new-window;new-private-window;
 
 # Give *.desktop files execute permissions
 sudo chmod 755 "${adminShortcutsDirectory}/RabbitMQ.desktop"
-sudo chown ${vmUser}:${vmUser} "${adminShortcutsDirectory}/RabbitMQ.desktop"
+sudo chown ${VM_USER}:${VM_USER} "${adminShortcutsDirectory}/RabbitMQ.desktop"

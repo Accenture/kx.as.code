@@ -4,6 +4,14 @@
       {
         "install_folder": "cicd",
         "name": "argocd"
+      },
+      {
+        "install_folder": "monitoring",
+        "name": "grafana"
+      },
+      {
+        "install_folder": "cicd",
+        "name": "harbor"
       }
     ]
   }

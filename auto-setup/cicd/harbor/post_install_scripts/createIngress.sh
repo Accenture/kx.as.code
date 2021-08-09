@@ -2,7 +2,7 @@
 
 echo '''
 ---
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
     name: harbor-harbor-ingress
@@ -26,41 +26,53 @@ spec:
       http:
         paths:
         - backend:
-            serviceName: harbor-harbor-portal
-            servicePort: 80
+            service:
+              name: harbor-harbor-portal
+              port:
+                number: 80
           path: /
           pathType: ImplementationSpecific
         - backend:
-            serviceName: harbor-harbor-core
-            servicePort: 80
-          path: /api
+            service:
+              name: harbor-harbor-core
+              port:
+                number: 80
+          path: /api/
           pathType: ImplementationSpecific
         - backend:
-            serviceName: harbor-harbor-core
-            servicePort: 80
-          path: /service
+            service:
+              name: harbor-harbor-core
+              port:
+                number: 80
+          path: /service/
           pathType: ImplementationSpecific
         - backend:
-            serviceName: harbor-harbor-core
-            servicePort: 80
-          path: /v2
+            service:
+              name: harbor-harbor-core
+              port:
+                number: 80
+          path: /v2/
           pathType: ImplementationSpecific
         - backend:
-            serviceName: harbor-harbor-core
-            servicePort: 80
+            service:
+              name: harbor-harbor-core
+              port:
+                number: 80
           path: /chartrepo
           pathType: ImplementationSpecific
         - backend:
-            serviceName: harbor-harbor-core
-            servicePort: 80
-          path: /c
+            service:
+              name: harbor-harbor-core
+              port:
+                number: 80
+          path: /c/
           pathType: ImplementationSpecific
     tls:
     - hosts:
       - '${componentName}'.'${baseDomain}'
       secretName: kx.as.code-wildcard-cert
 ---
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
     name: harbor-harbor-ingress-notary
@@ -84,8 +96,10 @@ spec:
       http:
         paths:
         - backend:
-            serviceName: harbor-harbor-notary-server
-            servicePort: 4443
+            service:
+              name: harbor-harbor-notary-server
+              port:
+                number: 4443
           path: /
           pathType: ImplementationSpecific
     tls:
@@ -93,4 +107,6 @@ spec:
       - notary.'${baseDomain}'
       secretName: kx.as.code-wildcard-cert
 ---
-''' | kubectl -n ${namespace} apply -f -
+''' | sudo tee ${installationWorkspace}/${componentName}_ingress.yaml
+
+sudo kubectl -n ${namespace} apply -f ${installationWorkspace}/${componentName}_ingress.yaml

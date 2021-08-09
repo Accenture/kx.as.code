@@ -10,8 +10,17 @@ if [[ -n ${nvme_cli_needed} ]]; then
     /usr/bin/sudo apt install -y nvme-cli lvm2
 fi
 
-# Determine Drive C (GlusterFS) - Relevant for KX-Main only
-driveC=$(lsblk -o NAME,FSTYPE,SIZE -dsn -J | jq -r '.[] | .[] | select(.fstype==null) | select(.size=="'${glusterFsDiskSize}'G") | .name' || true)
+# Determine Drive C (GlusterFS) - Relevant for KX-Main1 only
+for i in {{1..30}}; do
+  driveC=$(lsblk -o NAME,FSTYPE,SIZE -dsn -J | jq -r '.[] | .[] | select(.fstype==null) | select(.size=="'$((${glusterFsDiskSize}+1))'G") | .name' || true)
+  if [[ -z ${driveC} ]]; then
+    log_info "Drive for glusterfs not yet available. Trying a maximum of 30 times. Attempt ${i}"
+    sleep 15
+  else
+    log_info "Drive for glusterfs (${driveC}) now available after attempt ${i} of 30"
+    break
+  fi
+done
 formatted=""
 if [[ ! -f /usr/share/kx.as.code/.config/driveC ]]; then
     echo "${driveC}" | /usr/bin/sudo tee /usr/share/kx.as.code/.config/driveC
@@ -317,7 +326,7 @@ clusterId=$(heketi-cli cluster list | cut -f2 -d: | cut -f1 -d' ' | tr -d '\n')
 # Volume type of "none" is important, as kx.as.code will only have 1 storage (eg, 0 replicas) - provisioning would fail without this
 cat << EOF > ${installationWorkspace}/glusterfs-sc.yaml
 kind: StorageClass
-apiVersion: storage.k8s.io/v1beta1
+apiVersion: storage.k8s.io/v1
 metadata:
   name: gluster-heketi
 provisioner: kubernetes.io/glusterfs

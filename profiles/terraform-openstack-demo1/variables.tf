@@ -3,11 +3,13 @@
 # Get veriables from JSON
 locals {
   raw_data = jsondecode(file("profile-config.json"))
-  raw_version = jsondecode(file("../../version.json"))
-  kx_version = local.raw_version.version
+  raw_version = jsondecode(file("../../versions.json"))
+  kx_version = local.raw_version.kxascode
   main_node_count = local.raw_data.config.vm_properties.main_node_count
-  main_node_cpu_cores = local.raw_data.config.vm_properties.main_node_cpu_cores
-  main_node_memory = local.raw_data.config.vm_properties.main_node_memory
+  admin_main_node_cpu_cores = local.raw_data.config.vm_properties.admin_main_node_cpu_cores
+  admin_main_node_memory = local.raw_data.config.vm_properties.admin_main_node_memory
+  replica_main_node_cpu_cores = local.raw_data.config.vm_properties.replica_main_node_cpu_cores
+  replica_main_node_memory = local.raw_data.config.vm_properties.replica_main_node_memory
   worker_node_count = local.raw_data.config.vm_properties.worker_node_count
   worker_node_cpu_cores = local.raw_data.config.vm_properties.worker_node_cpu_cores
   worker_node_memory = local.raw_data.config.vm_properties.worker_node_memory
@@ -20,5 +22,5 @@ locals {
   glusterfs_storage_volume_size = local.raw_data.config.glusterFsDiskSize + 1
   external_network_id = local.raw_data.config.vm_properties.openstack.external_network_id
   kx_main_image_id = local.raw_data.config.vm_properties.openstack.kx_main_image_id
-  kx_worker_image_id = local.raw_data.config.vm_properties.openstack.kx_worker_image_id
+  kx_node_image_id = local.raw_data.config.vm_properties.openstack.kx_node_image_id
 }
