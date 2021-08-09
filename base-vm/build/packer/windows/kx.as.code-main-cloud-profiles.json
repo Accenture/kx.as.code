@@ -250,7 +250,8 @@
         "KX_HOME={{user `kx_home`}}",
         "SKELDIR={{user `kx_home`}}/workspace/skel",
         "SHARED_GIT_REPOSITORIES={{user `kx_home`}}/git",
-        "INSTALLATION_WORKSPACE={{user `kx_home`}}/workspace"
+        "INSTALLATION_WORKSPACE={{user `kx_home`}}/workspace",
+        "COMPUTE_ENGINE_BUILD={{user `compute_engine_build`}}"
       ],
       "scripts": [
         "../../../scripts/main-node/tools.sh",
