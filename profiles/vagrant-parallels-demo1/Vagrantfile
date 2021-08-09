@@ -15,7 +15,7 @@ profile_config_local_volumes=profile_config_json['config']['local_volumes']
 puts "Profile Config #{profile_config_local_volumes}"
 
 # Get needed capacity for GlusterFS volumes disk size
-GLUSTERFS_KUBE_VOLUMES_DISK_SIZE=profile_config_json['config']['glusterFsDiskSize']
+GLUSTERFS_KUBE_VOLUMES_DISK_SIZE=profile_config_json['config']['glusterFsDiskSize'].to_i + 1
 
 # Calculate needed local disk capacity
 NUM_1GB_LOCAL_SIZE=profile_config_local_volumes['one_gb'].to_i * 1
