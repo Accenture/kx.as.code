@@ -594,6 +594,20 @@ while :; do
                 fi
                 count=$((count + 1))
                 export error=""
+                # Check if the Docker Hub Download Rate Limit is being reached which may lead to error and notify the user appropriately
+                dockerHubToken=$(curl "https://auth.docker.io/token?service=registry.docker.io&scope=repository:ratelimitpreview/test:pull" | jq -r .token)
+                dockerHubRateLimitResponse=$(curl --head -H "Authorization: Bearer ${dockerHubToken}" https://registry-1.docker.io/v2/ratelimitpreview/test/manifests/latest 2>&1 | grep -i RateLimit | cut -d' ' -f2 | cut -d';' -f1)
+                dockerHubAllowLimit=$(echo ${dockerHubRateLimitResponse} | head -1)
+                dockerHubRemainingLimit=$(echo ${dockerHubRateLimitResponse} | tail -1)
+                if [[ ${dockerHubRemainingLimit} -le 0 ]]; then
+                  log_error "Error\! You have 0 Docker Hub downloads remaining. You must wait until the next 6 hour period starts to try again"
+                  notify "Error\! You have 0 Docker Hub downloads remaining" "dialog-error"
+                elif [[ ${dockerHubRemainingLimit} -le 25 ]]; then
+                  log_warn "Warning\! You have less than 25 Docker Hub downloads remaining"
+                  notify "Warning\! You have less than 25 Docker Hub downloads remaining" "dialog-warning"
+                fi
+                log_info "As an anonymous user you have a rate limit of ${dockerHubAllowLimit} with ${dockerHubRemainingLimit} downloads remaining in the current 6 hour window"
+                # Launch the component installation process
                 . ${autoSetupHome}/autoSetup.sh &> ${installationWorkspace}/${componentName}_${logTimestamp}.${retries}.log
                 logRc=$?
                 log_info "Installation process for \"${componentName}\" returned with \$?=${logRc} and rc=$rc"
