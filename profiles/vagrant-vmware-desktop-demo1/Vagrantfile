@@ -65,11 +65,11 @@ WORKER_NODE_CPU_CORES = ENV['workerNodeCpuCores'] || profile_config_json['config
 puts "WORKER_NODE_CPU_CORES: #{WORKER_NODE_CPU_CORES}"
 WORKER_NODE_MEMORY = ENV['WorkerNodeMemory'] || profile_config_json['config']['vm_properties']['worker_node_memory']
 puts "WORKER_NODE_MEMORY: #{WORKER_NODE_MEMORY}"
-DOCKERHUB_USER = ENV['dockerHubUser'] || profile_config_json['config']['docker']['dockerhub_username']
+DOCKERHUB_USER = ENV['dockerHubUsername']
 puts "DOCKERHUB_USER: #{DOCKERHUB_USER}"
 DOCKERHUB_EMAIL = ENV['dockerHubEmail'] || profile_config_json['config']['docker']['dockerhub_email']
 puts "DOCKERHUB_EMAIL: #{DOCKERHUB_EMAIL}"
-DOCKERHUB_PASSWORD = ENV['DockerHubPassword'] || profile_config_json['config']['docker']['dockerhub_password']
+DOCKERHUB_PASSWORD = ENV['dockerHubPassword']
 puts "DOCKERHUB_PASSWORD: #{DOCKERHUB_PASSWORD}"
 BOX_VERSION = ENV['boxVersion'] || kx_version_json['kxascode']
 puts "BOX_VERSION: #{BOX_VERSION}"

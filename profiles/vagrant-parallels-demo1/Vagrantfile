@@ -51,11 +51,11 @@ WORKER_NODE_MEMORY = ENV['WorkerNodeMemory'] || profile_config_json['config']['v
 puts "WORKER_NODE_MEMORY: #{WORKER_NODE_MEMORY}"
 THREE_D_ACCELERATION = ENV['threedAcceleration'] || profile_config_json['config']['vm_properties']['3d_acceleration']
 puts "WORKER_NODE_MEMORY: #{THREE_D_ACCELERATION}"
-DOCKERHUB_USER = ENV['dockerHubUser'] || profile_config_json['config']['docker']['dockerhub_username']
+DOCKERHUB_USER = ENV['dockerHubUsername']
 puts "DOCKERHUB_USER: #{DOCKERHUB_USER}"
 DOCKERHUB_EMAIL = ENV['dockerHubEmail'] || profile_config_json['config']['docker']['dockerhub_email']
 puts "DOCKERHUB_EMAIL: #{DOCKERHUB_EMAIL}"
-DOCKERHUB_PASSWORD = ENV['DockerHubPassword'] || profile_config_json['config']['docker']['dockerhub_password']
+DOCKERHUB_PASSWORD = ENV['dockerHubPassword']
 puts "DOCKERHUB_PASSWORD: #{DOCKERHUB_PASSWORD}"
 BOX_VERSION = ENV['boxVersion'] || kx_version_json['kxascode']
 puts "BOX_VERSION: #{BOX_VERSION}"
