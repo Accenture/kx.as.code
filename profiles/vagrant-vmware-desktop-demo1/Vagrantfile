@@ -106,7 +106,7 @@ Vagrant.configure("2") do |config|
             trigger.run = { :inline => "bash -c 'rm -f kx.as.code_main-ip-address kx-main-local-k8s-storage.vmdk kx-main-glusterfs-k8s-storage.vmdk'" }
         end
         subconfig.vm.provision :shell do |s|
-          s.inline = "echo -e \"DOCKERHUB_USER=#{DOCKERHUB_USER}\nDOCKERHUB_EMAIL=#{DOCKERHUB_EMAIL}\nDOCKERHUB_PASSWORD=#{DOCKERHUB_PASSWORD}\" | sudo tee /var/tmp/.textfile"
+          s.inline = "echo -e '{ \"DOCKERHUB_USER\": \"#{DOCKERHUB_USER}\", \"DOCKERHUB_EMAIL\": \"#{DOCKERHUB_EMAIL}\", \"DOCKERHUB_PASSWORD\": \"#{DOCKERHUB_PASSWORD}\" }' | sudo tee /var/tmp/.tmp.json"
         end
         subconfig.vm.provider "vmware_desktop" do |v|
             kx_main_local_k8s_storage="#{current_dir}/kx-main-local-k8s-storage.vmdk"
