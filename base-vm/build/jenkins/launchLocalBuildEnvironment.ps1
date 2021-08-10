@@ -415,6 +415,7 @@ Get-ChildItem "$JENKINS_HOME\" -Filter credential_*.xml |
             {
                 $content = Get-Content -Path $filename -Raw
                 Write-Output $content | & $javaBinary -jar .\jenkins-cli.jar -s $jenkinsUrl create-credentials-by-xml system::system::jenkins _
+                Remove-Item -Force -Path $filename
             } catch {
                 Write-Output "Variable replacements for $filename failed. Please make sure the XML credential for $filename is valid" | Red
             }

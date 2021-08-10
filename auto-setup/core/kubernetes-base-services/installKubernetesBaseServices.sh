@@ -36,8 +36,7 @@ kubectl get cs
 kubectl get all --all-namespaces
 
 # Install Secret if Credentials Exist
-if [[ -f /var/tmp/.texfile ]]; then
-    . /var/tmp/.textfile
-    kubectl create secret docker-registry regcred --docker-server=https://index.docker.io/v1/ --docker-username=${DOCKERHUB_USER} --docker-password=${DOCKERHUB_PASSWORD} --docker-email=${DOCKERHUB_EMAIL}
-    rm -f /var/tmp/.texfile
+if [[ -n ${dockerHubUsername} ]] && [[ -n ${dockerHubPassword} ]] && [[ -n ${dockerHubEmail} ]]; then
+    kubectl create secret docker-registry regcred --docker-server=https://index.docker.io/v1/ --docker-username=${dockerHubUsername} --docker-password=${dockerHubPassword} --docker-email=${dockerHubEmail}
+    #rm -f /var/tmp/.tmp.json
 fi

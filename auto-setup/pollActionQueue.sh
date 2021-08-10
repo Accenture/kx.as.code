@@ -594,7 +594,19 @@ while :; do
                 fi
                 count=$((count + 1))
                 export error=""
+
                 # Check if the Docker Hub Download Rate Limit is being reached which may lead to error and notify the user appropriately
+                # User Dockerhub account if it exists
+                if [[ -f /var/tmp/.tmp.json ]]; then
+                  export dockerHubUsername=$(cat /var/tmp/.tmp.json | jq -r '.DOCKERHUB_USER')
+                  export dockerHubPassword=$(cat /var/tmp/.tmp.json | jq -r '.DOCKERHUB_PASSWORD')
+                  export dockerHubEmail=$(cat /var/tmp/.tmp.json | jq -r '.DOCKERHUB_EMAIL')
+                  if [[ -z ${dockerHubUsername} ]] && [[ -z ${dockerHubUsername} ]]; then
+                    curlAuthOption="--user '${dockerHubUsername}:${dockerHubPassword}'"
+                  else
+                    curlAuthOption=""
+                  fi
+                fi
                 dockerHubToken=$(curl "https://auth.docker.io/token?service=registry.docker.io&scope=repository:ratelimitpreview/test:pull" | jq -r .token)
                 dockerHubRateLimitResponse=$(curl --head -H "Authorization: Bearer ${dockerHubToken}" https://registry-1.docker.io/v2/ratelimitpreview/test/manifests/latest 2>&1 | grep -i RateLimit | cut -d' ' -f2 | cut -d';' -f1)
                 dockerHubAllowLimit=$(echo ${dockerHubRateLimitResponse} | awk 'print $1')
