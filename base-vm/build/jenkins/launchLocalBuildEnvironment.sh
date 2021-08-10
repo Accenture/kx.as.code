@@ -296,18 +296,33 @@ if [[ -z $(docker images ${kx_jenkins_image} -q) ]]; then
     fi
 fi
 
-    firstTwoChars=$(echo "${working_directory}" | head -c2)
-    firstChar=$(echo "${working_directory}" | head -c1)
-    if [[ ${firstTwoChars} == "./" ]]; then
-        # if workspace directory starts with ./, convert relative directory to absolute
-        workdir_absolute_path=$(pwd)/$(echo ${working_directory} | sed 's;\./;;g')
-elif     [[ ${firstChar} != "/" ]]; then
-        # If no ./ or / at beginning, assume relative working directory and convert to absolute
-        workdir_absolute_path="$(pwd)/${working_directory}"
+firstTwoChars=$(echo "${working_directory}" | head -c2)
+firstChar=$(echo "${working_directory}" | head -c1)
+if [[ ${firstTwoChars} == "./" ]]; then
+    # if workspace directory starts with ./, convert relative directory to absolute
+    workdir_absolute_path=$(pwd)/$(echo ${working_directory} | sed 's;\./;;g')
+elif [[ ${firstChar} == "/" ]]; then
+    # If / at start, assume provided directory is already absolute and use it
+    workdir_absolute_path=${working_directory}
 else
-        # If / at start, assume provided directory is already absolute and use it
-        workdir_absolute_path=${working_directory}
+    # If no ./ or / at beginning, assume relative working directory and convert to absolute
+    workdir_absolute_path="$(pwd)/${working_directory}"
 fi
+working_directory=${workdir_absolute_path}
+
+firstTwoChars=$(echo "${jenkins_home}" | head -c2)
+firstChar=$(echo "${jenkins_home}" | head -c1)
+if [[ ${firstTwoChars} == "./" ]]; then
+    # if workspace directory starts with ./, convert relative directory to absolute
+    jenkins_home_absolute_path=$(pwd)/$(echo ${jenkins_home} | sed 's;\./;;g')
+elif [[ ${firstChar} == "/" ]]; then
+    # If / at start, assume provided directory is already absolute and use it
+    jenkins_home_absolute_path=${jenkins_home}
+else
+    # If no ./ or / at beginning, assume relative working directory and convert to absolute
+    jenkins_home_absolute_path="$(pwd)/${jenkins_home}"
+fi
+jenkins_home=${jenkins_home_absolute_path}
 
 # Checking if Jenkins home already exists to avoid overwriting configurations and breaking something
 if [ ! -d "${jenkins_home}/jobs" ] || [[ ${override_action} == "recreate"   ]] || [[ ${override_action} == "destroy"   ]] || [[ ${override_action} == "fully-destroy"   ]]; then

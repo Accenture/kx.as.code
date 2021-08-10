@@ -21,7 +21,16 @@ if [[ -n ${nvme_cli_needed} ]]; then
 fi
 
 # Determine Drive B (Local K8s Volumes Storage)
-driveB=$(lsblk -o NAME,FSTYPE,SIZE -dsn -J | jq -r '.[] | .[] | select(.fstype==null) | select(.size=="'${localKubeVolumesDiskSize}'G") | .name' || true)
+for i in {{1..30}}; do
+  driveB=$(lsblk -o NAME,FSTYPE,SIZE -dsn -J | jq -r '.[] | .[] | select(.fstype==null) | select(.size=="'${localKubeVolumesDiskSize}'G") | .name' || true)
+  if [[ -z ${driveB} ]]; then
+    log_info "Drive for local volumes not yet available. Trying a maximum of 30 times. Attempt ${i}"
+    sleep 15
+  else
+    log_info "Drive for local volumes (${driveB}) now available after attempt ${i} of 30"
+    break
+  fi
+done
 formatted=""
 if [[ ! -f /usr/share/kx.as.code/.config/driveB ]]; then
     echo "${driveB}" | /usr/bin/sudo tee /usr/share/kx.as.code/.config/driveB
@@ -30,8 +39,10 @@ else
     driveB=$(cat /usr/share/kx.as.code/.config/driveB)
     formatted=true
 fi
-
-
+if [[ -z ${driveB} ]]; then
+  log_error "Error finding mounted drive for setting up the K8s local storage service. Quitting script and sending task to failure queue"
+  return 1
+fi
 # Check logical partitions
 /usr/bin/sudo lvs
 /usr/bin/sudo df -hT
@@ -40,7 +51,16 @@ fi
 # Create full partition on /dev/${driveB}
 if [[ -z ${formatted} ]]; then
     echo 'type=83' | /usr/bin/sudo sfdisk /dev/${driveB}
-    driveB_Partition=$(lsblk -o NAME,FSTYPE,SIZE -J | jq -r '.[] | .[]  | select(.name=="'${driveB}'") | .children[].name')
+    for i in {1..5}; do
+      driveB_Partition=$(lsblk -o NAME,FSTYPE,SIZE -J | jq -r '.[] | .[]  | select(.name=="'${driveB}'") | .children[].name' || true)
+      if [[ -n ${driveB_Partition} ]]; then
+        log_info "Disk ${driveB} partitioned successfully -> ${driveB_Partition}"
+        break
+      else
+        log_warn "Disk partition could not be found on ${driveB} (attempt ${i}), trying again"
+        sleep 5
+      fi
+    done
     /usr/bin/sudo pvcreate /dev/${driveB_Partition}
     /usr/bin/sudo vgcreate k8s_local_vol_group /dev/${driveB_Partition}
 fi
@@ -51,10 +71,19 @@ create_volumes() {
     if [[ ${2} -ne 0 ]]; then
         for i in $(eval echo "{1..$2}"); do
             if [[ -z $(lsblk -J | jq -r ' .. .name? // empty | select(test("k8s_local_vol_group-k8s_'${1}'_local_k8s_volume_'${i}'"))' || true) ]]; then
-                /usr/bin/sudo lvcreate -L ${1} -n k8s_${1}_local_k8s_volume_${i} k8s_local_vol_group
-                /usr/bin/sudo mkfs.xfs /dev/k8s_local_vol_group/k8s_${1}_local_k8s_volume_${i}
-                /usr/bin/sudo mkdir -p ${BASE_K8S_LOCAL_VOLUMES_DIR}/k8s_${1}_local_k8s_volume_${i}
-                /usr/bin/sudo mount /dev/k8s_local_vol_group/k8s_${1}_local_k8s_volume_${i} ${BASE_K8S_LOCAL_VOLUMES_DIR}/k8s_${1}_local_k8s_volume_${i}
+                for j in {1..5}; do
+                  # Added loop, as sometimes two tries are required
+                  /usr/bin/sudo lvcreate -L ${1} -n k8s_${1}_local_k8s_volume_${i} k8s_local_vol_group
+                  /usr/bin/sudo mkfs.xfs /dev/k8s_local_vol_group/k8s_${1}_local_k8s_volume_${i}
+                  /usr/bin/sudo mkdir -p ${BASE_K8S_LOCAL_VOLUMES_DIR}/k8s_${1}_local_k8s_volume_${i}
+                  errorOutput=$(/usr/bin/sudo mount /dev/k8s_local_vol_group/k8s_${1}_local_k8s_volume_${i} ${BASE_K8S_LOCAL_VOLUMES_DIR}/k8s_${1}_local_k8s_volume_${i} 2>&1 >/dev/null || true)
+                  if [[ -z "${errorOutput}" ]]; then
+                    log_info "Successfully mounted /dev/k8s_local_vol_group/k8s_${1}_local_k8s_volume_${i} to ${BASE_K8S_LOCAL_VOLUMES_DIR}/k8s_${1}_local_k8s_volume_${i}"
+                    break
+                  else
+                    log_error "Mount error after mount attempt ${j}!: ${errorOutput}"
+                  fi
+                done
                 # Don't add entry to /etc/fstab if the volumes was not created, possibly due to running out of diskspace
                 if [[ -L /dev/k8s_local_vol_group/k8s_${1}_local_k8s_volume_${i} ]] && [[ -e /dev/k8s_local_vol_group/k8s_${1}_local_k8s_volume_${i} ]]; then
                     entryAlreadyExists=$(cat /etc/fstab | grep "/dev/k8s_local_vol_group/k8s_${1}_local_k8s_volume_${i}" || true)

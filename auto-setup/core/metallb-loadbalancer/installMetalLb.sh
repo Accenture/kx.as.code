@@ -6,7 +6,7 @@ export metalLbIpRangeStart=$(cat ${installationWorkspace}/profile-config.json | 
 export metalLbIpRangeEnd=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.metalLbIpRange.ipRangeEnd')
 
 # Install Metallb LoadBalancer
-curl https://raw.githubusercontent.com/google/metallb/v0.9.3/manifests/metallb.yaml --output ${installationWorkspace}/metallb.yaml
+curl https://raw.githubusercontent.com/google/metallb/${metalLbVersion}/manifests/metallb.yaml --output ${installationWorkspace}/metallb.yaml
 kubectl apply -f ${installationWorkspace}/metallb.yaml
 
 # Create and Apply Metallb Configmap

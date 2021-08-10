@@ -34,7 +34,20 @@ wget https://downloads.apache.org/guacamole/${guacamoleVersion}/binary/guacamole
 # Download extensions
 export extensionsToDownload="jdbc ldap totp"
 for extension in ${extensionsToDownload}; do
-    curl -o guacamole-auth-${extension}-${guacamoleVersion}.tar.gz -L "https://apache.org/dyn/closer.cgi?action=download&filename=guacamole/${guacamoleVersion}/binary/guacamole-auth-${extension}-${guacamoleVersion}.tar.gz"
+  for i in {{1..5}}; do
+    curl -o guacamole-auth-${extension}-${guacamoleVersion}.tar.gz -L "https://apache.org/dyn/closer.cgi?action=download&filename=guacamole/${guacamoleVersion}/binary/guacamole-auth-${extension}-${guacamoleVersion}.tar.gz" || true
+    if [[ -f guacamole-auth-${extension}-${guacamoleVersion}.tar.gz ]]; then
+      # Check integrity of downloaded tar file before continuing
+      if [[ -n $(tar tzf guacamole-auth-${extension}-${guacamoleVersion}.tar.gz || true) ]]; then
+        log_info "Download of guacamole-auth-${extension}-${guacamoleVersion}.tar.gz succeeded after ${i} of 5 attempts"
+        break
+      else
+        /usr/bin/sudo rm -f guacamole-auth-${extension}-${guacamoleVersion}.tar.gz
+        log_info "Download attempt ${i} of 5 of guacamole-auth-${extension}-${guacamoleVersion}.tar.gz failed"
+      fi
+    fi
+    sleep 15
+    done
     tar xvzf guacamole-auth-${extension}-${guacamoleVersion}.tar.gz
     /usr/bin/sudo mkdir -p /etc/guacamole/extensions
     if [[ ${extension} == "jdbc" ]]; then
@@ -58,23 +71,52 @@ done
 /usr/bin/sudo -u postgres psql -c "SELECT version();"
 
 # Create Guacamole Database and User
-/usr/bin/sudo su - postgres -c "createdb guacamole_db"
+if [[ -z $(/usr/bin/sudo su - postgres -c "psql -lqt | cut -d \| -f 1" | grep guacamole_db) ]]; then
+  /usr/bin/sudo su - postgres -c "createdb guacamole_db"
+fi
 
 # Change default guacadmin/guacadmin password
-guacAdminPassword=$(pwgen -1s 32)
+echo "guacAdminPassword: $(cat ${sharedKxHome}/.guacamole.json | jq -r '.[] | select(.user=="guacadmin") | .user' || true)"
+if [ -f ${sharedKxHome}/.guacamole.json ]; then
+    if [ -z $(cat ${sharedKxHome}/.guacamole.json | jq -r '.[] | select(.user=="guacadmin") | .user' || true) ]; then
+        guacAdminPassword=$(pwgen -1s 32)
+        echo "[ { \"user\": \"guacadmin\", \"password\": \"${guacAdminPassword}\" } ]" | /usr/bin/sudo tee ${sharedKxHome}/.temp.guacamole.json
+        cat /usr/share/kx.as.code/.guacamole.json /usr/share/kx.as.code/.temp.guacamole.json | jq -s add | tee /usr/share/kx.as.code/.guacamole.json
+        rm -f ${sharedKxHome}/.temp.guacamole.json
+    else
+        guacAdminPassword=$(cat ${sharedKxHome}/.guacamole.json | jq -r '.[] | select(.user=="guacadmin") | .password')
+    fi
+else
+    guacAdminPassword=$(pwgen -1s 32)
+    echo "[ { \"user\": \"guacadmin\", \"password\": \"${guacAdminPassword}\" } ]" | /usr/bin/sudo tee ${sharedKxHome}/.guacamole.json
+fi
 echo ${guacAdminPassword} | /usr/bin/sudo tee ${installationWorkspace}/.guac
 /usr/bin/sudo sed -i "s/-- 'guacadmin'/-- '${guacAdminPassword}'/g" guacamole-auth-jdbc-${guacamoleVersion}/postgresql/schema/002-create-admin-user.sql
 cat guacamole-auth-jdbc-${guacamoleVersion}/postgresql/schema/*.sql | /usr/bin/sudo su - postgres -c "psql -d guacamole_db -f -"
 
 # Create Guacamole database users
 guacUser=$(echo $vmUser | sed 's/\./_/g')
-guacPassword=$(pwgen -1s 8)
-/usr/bin/sudo su - postgres -c "psql -d guacamole_db -c \"CREATE USER guacamole_user WITH PASSWORD '${guacPassword}';\""
-/usr/bin/sudo su - postgres -c 'psql -d guacamole_db -c "GRANT SELECT,INSERT,UPDATE,DELETE ON ALL TABLES IN SCHEMA public TO guacamole_user;"'
-/usr/bin/sudo su - postgres -c 'psql -d guacamole_db -c "GRANT SELECT,USAGE ON ALL SEQUENCES IN SCHEMA public TO guacamole_user;"'
-/usr/bin/sudo su - postgres -c "psql -d guacamole_db -c \"CREATE USER ${guacUser} WITH PASSWORD '${vmPassword}';\""
-/usr/bin/sudo su - postgres -c "psql -d guacamole_db -c \"GRANT SELECT,INSERT,UPDATE,DELETE ON ALL TABLES IN SCHEMA public TO ${guacUser};\""
-/usr/bin/sudo su - postgres -c "psql -d guacamole_db -c \"GRANT SELECT,USAGE ON ALL SEQUENCES IN SCHEMA public TO ${guacUser};\""
+if [ -f ${sharedKxHome}/.guacamole.json ]; then
+    if [ -z $(cat ${sharedKxHome}/.guacamole.json | jq -r '.[] | select(.user=="guacamole_user") | .user' || true) ]; then
+        guacPassword=$(pwgen -1s 8)
+        echo "[ { \"user\": \"guacamole_user\", \"password\": \"${guacPassword}\" } ]" | /usr/bin/sudo tee ${sharedKxHome}/.temp.guacamole.json
+        cat /usr/share/kx.as.code/.guacamole.json /usr/share/kx.as.code/.temp.guacamole.json | jq -s add | tee /usr/share/kx.as.code/.guacamole.json
+        rm -f ${sharedKxHome}/.temp.guacamole.json
+    else
+        guacPassword=$(cat ${sharedKxHome}/.guacamole.json | jq -r '.[] | select(.user=="guacamole_user") | .password')
+    fi
+else
+    guacPassword=$(pwgen -1s 8)
+    echo "[ { \"user\": \"guacamole_user\", \"password\": \"${guacPassword}\" } ]" | /usr/bin/sudo tee ${sharedKxHome}/.guacamole.json
+fi
+if [[ -z $(/usr/bin/sudo su - postgres -c "psql -t -c 'SELECT u.usename AS \"User Name\" FROM pg_catalog.pg_user u;'" | grep guacamole_user) ]]; then
+  /usr/bin/sudo su - postgres -c "psql -d guacamole_db -c \"CREATE USER guacamole_user WITH PASSWORD '${guacPassword}';\""
+  /usr/bin/sudo su - postgres -c 'psql -d guacamole_db -c "GRANT SELECT,INSERT,UPDATE,DELETE ON ALL TABLES IN SCHEMA public TO guacamole_user;"'
+  /usr/bin/sudo su - postgres -c 'psql -d guacamole_db -c "GRANT SELECT,USAGE ON ALL SEQUENCES IN SCHEMA public TO guacamole_user;"'
+  /usr/bin/sudo su - postgres -c "psql -d guacamole_db -c \"CREATE USER ${guacUser} WITH PASSWORD '${vmPassword}';\""
+  /usr/bin/sudo su - postgres -c "psql -d guacamole_db -c \"GRANT SELECT,INSERT,UPDATE,DELETE ON ALL TABLES IN SCHEMA public TO ${guacUser};\""
+  /usr/bin/sudo su - postgres -c "psql -d guacamole_db -c \"GRANT SELECT,USAGE ON ALL SEQUENCES IN SCHEMA public TO ${guacUser};\""
+fi
 
 export ldapDn=$(/usr/bin/sudo slapcat | grep dn | head -1 | cut -f2 -d' ')
 
@@ -125,8 +167,35 @@ postgresql-auto-create-accounts: true
 
 ''' | /usr/bin/sudo tee /etc/guacamole/guacamole.properties
 
-md5Password=$(echo -n ${vmPassword} | openssl md5 | cut -f2 -d' ')
-vncPassword=$(pwgen -1s 8)
+# Check if MD5 password already exists
+if [ -f ${sharedKxHome}/.guacamole.json ]; then
+    if [ -z $(cat ${sharedKxHome}/.guacamole.json | jq -r '.[] | select(.user=="md5_user") | .user' || true) ]; then
+        md5Password=$(echo -n ${vmPassword} | openssl md5 | cut -f2 -d' ')
+        echo "[ { \"user\": \"md5_user\", \"password\": \"${md5Password}\" } ]" | /usr/bin/sudo tee ${sharedKxHome}/.temp.guacamole.json
+        cat /usr/share/kx.as.code/.guacamole.json /usr/share/kx.as.code/.temp.guacamole.json | jq -s add | tee /usr/share/kx.as.code/.guacamole.json
+        rm -f ${sharedKxHome}/.temp.guacamole.json
+    else
+        md5Password=$(cat ${sharedKxHome}/.guacamole.json | jq -r '.[] | select(.user=="md5_user") | .password')
+    fi
+else
+    md5Password=$(echo -n ${vmPassword} | openssl md5 | cut -f2 -d' ')
+    echo "[ { \"user\": \"md5_user\", \"password\": \"${md5Password}\" } ]" | /usr/bin/sudo tee ${sharedKxHome}/.guacamole.json
+fi
+
+# Check if VNC password already exists
+if [ -f ${sharedKxHome}/.guacamole.json ]; then
+    if [ -z $(cat ${sharedKxHome}/.guacamole.json | jq -r '.[] | select(.user=="vnc_user") | .user' || true) ]; then
+        vncPassword=$(pwgen -1s 8)
+        echo "[ { \"user\": \"vnc_user\", \"password\": \"${vncPassword}\" } ]" | /usr/bin/sudo tee ${sharedKxHome}/.temp.guacamole.json
+        cat /usr/share/kx.as.code/.guacamole.json /usr/share/kx.as.code/.temp.guacamole.json | jq -s add | tee /usr/share/kx.as.code/.guacamole.json
+        rm -f ${sharedKxHome}/.temp.guacamole.json
+    else
+        vncPassword=$(cat ${sharedKxHome}/.guacamole.json | jq -r '.[] | select(.user=="vnc_user") | .password')
+    fi
+else
+    vncPassword=$(pwgen -1s 8)
+    echo "[ { \"user\": \"vnc_user\", \"password\": \"${vncPassword}\" } ]" | /usr/bin/sudo tee ${sharedKxHome}/.guacamole.json
+fi
 
 echo '''
 <user-mapping>
@@ -168,9 +237,7 @@ Description=a wrapper to launch an X server for VNC
 After=syslog.target network.target
 After=systemd-user-sessions.service
 After=network-online.target
-After=vboxadd-service.service
 After=ntp.service
-After=dnsmasq
 
 [Service]
 Type=forking
@@ -187,7 +254,19 @@ WantedBy=multi-user.target
 ''' | /usr/bin/sudo tee /etc/systemd/system/vncserver@.service
 
 /usr/bin/sudo -H -i -u ${vmUser} bash -c "vncserver -kill :1 || true"
-/usr/bin/sudo systemctl start vncserver@1.service
+
+# Starting up VNC service for Remote Desktop
+for i in {1..5}; do
+  isActive=$(/usr/bin/sudo systemctl is-active vncserver@1.service || true)
+  if [[ "${isActive}" != "active" ]]; then
+    log_info "VNC service is not running. Starting it up (attempt ${i} of 5)"
+    /usr/bin/sudo systemctl start vncserver@1.service || true
+  else
+    log_info "VNC service up after attempt ${i} of 5"
+    break
+  fi
+  sleep 5
+done
 /usr/bin/sudo systemctl enable vncserver@1.service
 /usr/bin/sudo systemctl status vncserver@1.service
 
@@ -227,7 +306,9 @@ server {
 ''' | /usr/bin/sudo tee /etc/nginx/sites-available/guacamole.conf
 
 # Create shortcut to enable NGINX virtual host
-ln -s /etc/nginx/sites-available/guacamole.conf /etc/nginx/sites-enabled/guacamole.conf
+if [[ ! -L /etc/nginx/sites-enabled/guacamole.conf ]]; then
+    ln -s /etc/nginx/sites-available/guacamole.conf /etc/nginx/sites-enabled/guacamole.conf
+fi
 
 /usr/bin/sudo nginx -t
 /usr/bin/sudo systemctl restart nginx
@@ -248,8 +329,14 @@ sed -i 's/allowed_users=console/allowed_users=anybody/g' /etc/X11/Xwrapper.confi
 
 # Temporary workaround to prevent later failures
 # TODO: Find a better solution in future. Check again whether Apache can be removed without breaking something
-sed -i 's/:80/:8081/g' /etc/apache2/sites-available/000-default.conf
-sed -i 's/Listen 80/Listen 8081/g' /etc/apache2/ports.conf
-sed -i 's/Listen 443/Listen 4481/g' /etc/apache2/ports.conf
+if [[ -z $(grep "8081" /etc/apache2/sites-available/000-default.conf) ]]; then
+    sed -i 's/:80/:8081/g' /etc/apache2/sites-available/000-default.conf
+fi
+if [[ -z $(grep "8081" /etc/apache2/ports.conf) ]]; then
+    sed -i 's/Listen 80/Listen 8081/g' /etc/apache2/ports.conf
+fi
+if [[ -z $(grep "4481" /etc/apache2/ports.conf) ]]; then
+    sed -i 's/Listen 443/Listen 4481/g' /etc/apache2/ports.conf
+fi
 systemctl restart apache2
 systemctl status apache2.service

@@ -16,7 +16,6 @@ if (${PACKER_BUILDER_TYPE} -eq "virtualbox-iso")
     $OUTPUT_DIR = "virtualbox"
 }
 
-$VM_SUFFIX = $env:VM_SUFFIX
 $VM_NAME = $env:VM_NAME
 $VM_VERSION = $env:VM_VERSION
 

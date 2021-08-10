@@ -22,6 +22,11 @@ export componentName=""
 export componentInstallationFolder=""
 export payload=""
 
+# Copy versions from k.as.code GIT repo
+if [[ ! -f ${installationWorkspace}/versions.json ]]; then
+  cp ${sharedGitHome}/kx.as.code/versions.json ${installationWorkspace}
+fi
+
 # Check if envhandlebars tool reachable
 nodeToolPath=$(which node || true)
 if [ -x "$nodeToolPath" ] ; then
@@ -116,7 +121,7 @@ fi
 export virtualizationType=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.virtualizationType')
 
 # Determine which NIC to bind to, to avoid binding to internal VirtualBox NAT NICs for example, where all hosts have the same IP - 10.0.2.15
-export nicList=$(nmcli device show | grep -E 'enp|ens' | grep 'GENERAL.DEVICE' | awk '{print $2}')
+export nicList=$(nmcli device show | grep -E 'enp|ens|eth0' | grep 'GENERAL.DEVICE' | awk '{print $2}')
 export ipsToExclude="10.0.2.15"   # IP addresses not to configure with static IP. For example, default Virtualbox IP 10.0.2.15
 export nicExclusions=""
 export excludeNic=""
@@ -147,7 +152,7 @@ if [[ ${baseIpType} == "static"   ]]; then
     for fixIpHost in ${fixedIpHosts}; do
         fixIpHostVariableName=$(echo ${fixIpHost} | sed 's/-/__/g')
         export ${fixIpHostVariableName}_IpAddress="$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.staticNetworkSetup.baseFixedIpAddresses."'${fixIpHost}'"')"
-        if [[ ${fixIpHost} == "kx-main" ]]; then
+        if [[ ${fixIpHost} == "kx-main1" ]]; then
             export mainIpAddress="$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.staticNetworkSetup.baseFixedIpAddresses."'${fixIpHost}'"')"
         fi
     done
@@ -164,6 +169,10 @@ if [ -z ${environmentPrefix} ]; then
 else
     export baseDomain="${environmentPrefix}.$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.baseDomain')"
 fi
+export numKxMainNodes=$(cat ${installationWorkspace}/profile-config.json | jq -r '.vm_properties.main_node_count')
+if [[ "${numKxMainNodes}" = "null" ]]; then
+    export numKxMainNodes="1"
+fi
 export defaultKeyboardLanguage=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.defaultKeyboardLanguage')
 export baseUser=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.baseUser')
 export basePassword=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.basePassword')
@@ -173,6 +182,7 @@ export metalLbIpRangeStart=$(cat ${installationWorkspace}/profile-config.json | 
 export metalLbIpRangeEnd=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.metalLbIpRange.ipRangeEnd')
 export sslProvider=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.sslProvider')
 export sslDomainAdminEmail=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.sslDomainAdminEmail')
+export letsEncryptEnvironment=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.letsEncryptEnvironment')
 # Get proxy settings
 export httpProxySetting=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.proxy_settings.http_proxy')
 export httpsProxySetting=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.proxy_settings.https_proxy')
@@ -218,27 +228,95 @@ log_debug() {
     echo "$(date '+%Y-%m-%d_%H%M%S') [DEBUG] ${1}" | tee -a ${installationWorkspace}/${componentName}_${logTimestamp}.${retries}.log
 }
 
+notify() {
+  openDisplays=$(w -oush | grep -Eo ' :[0-9]+' | sort -u -t\  -k1,1 | cut -d \  -f 2 || true)
+  log_info "Detected unique displays: ${openDisplays}"
+  messageTimeout=300000
+  messageTitle="KX.AS.CODE Notification"
+  message=${1}
+  messageType=${2}
+  for display in ${openDisplays}; do
+    displayUser=$(w -oush | grep -sw "${display}" | awk {'print $1'} | uniq)
+    echo "Sending notification to display ${display} for user ${displayUser}"
+    if [[ -S "/run/user/$(id -u ${displayUser})/bus" ]]; then
+        /usr/bin/sudo -H -i -u ${displayUser} bash -c "DISPLAY=\"${display}\" \
+        DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$(id -u ${displayUser})/bus \
+        notify-send -t \"${messageTimeout}\" \"${messageTitle}\" \"${message}\" --icon=\"${messageType}\""
+    fi
+  done
+}
+
 if [[ ! -f /usr/share/kx.as.code/.config/network_status ]]; then
 
-    if  [[ ${baseIpType} == "static"   ]] || [[ ${dnsResolution} == "hybrid"   ]]; then
-        # Change DNS resolution to allow wildcards for resolving locally deployed K8s services
-        echo "DNSStubListener=no" | /usr/bin/sudo tee -a /etc/systemd/resolved.conf
-        /usr/bin/sudo systemctl restart systemd-resolved
+    # Change DNS resolution to allow wildcards for resolving locally deployed K8s services
+    echo "DNSStubListener=no" | /usr/bin/sudo tee -a /etc/systemd/resolved.conf
+    /usr/bin/sudo systemctl restart systemd-resolved
 
-        # Configue dnsmasq - /etc/resolv.conf
-        /usr/bin/sudo rm -f /etc/resolv.conf
-        /usr/bin/sudo echo "nameserver ${mainIpAddress}" | /usr/bin/sudo tee /etc/resolv.conf
-        /usr/bin/sudo sed -i 's/^#no-resolv/no-resolv/' /etc/dnsmasq.conf
-        /usr/bin/sudo sed -i 's/^#interface=/interface='${netDevice}'/' /etc/dnsmasq.conf
-        /usr/bin/sudo sed -i 's/^#bind-interfaces/bind-interfaces/' /etc/dnsmasq.conf
-        /usr/bin/sudo sed -i 's/^#listen-address=/listen-address=::1,127.0.0.1,'${mainIpAddress}'/' /etc/dnsmasq.conf
-        # Ensure dnsmasq returns system IP and not IP of loop-back device 127.0.1.1
-        /usr/bin/sudo sed -i 's/^#no-hosts$/no-hosts/g' /etc/dnsmasq.conf
-        echo "server=8.8.8.8" | /usr/bin/sudo tee -a /etc/dnsmasq.conf
-        echo "server=8.8.4.4" | /usr/bin/sudo tee -a /etc/dnsmasq.conf
-        # Configue dnsmasq - /lib/systemd/system/dnsmasq.service (bugfix so dnsmasq starts automatically)
-        /usr/bin/sudo sed -i 's/Wants=nss-lookup.target/Wants=network-online.target/' /lib/systemd/system/dnsmasq.service
-        /usr/bin/sudo sed -i 's/After=network.target/After=network-online.target/' /lib/systemd/system/dnsmasq.service
+    # Configue DNS - /etc/resolv.conf
+    /usr/bin/sudo rm -f /etc/resolv.conf
+    echo "nameserver ${mainIpAddress}" | /usr/bin/sudo tee /etc/resolv.conf
+
+    export private_subnet_cidr_one=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.private_subnet_cidr_one')
+    export private_subnet_cidr_two=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.private_subnet_cidr_two')
+
+    if [[ "${private_subnet_cidr_one}" != "null" ]]; then
+      allowedIpRanges="${private_subnet_cidr_one}"
+      if [[ "${private_subnet_cidr_two}" != "null" ]]; then
+        allowedIpRanges="${allowedIpRanges}; ${private_subnet_cidr_two}"
+      fi
+    else
+      allowedIpRanges="$(echo ${mainIpAddress} | sed 's/\.[0-9]*$/.0/')/24"
+    fi
+
+echo '''//
+// Do any local configuration here
+//
+
+// Consider adding the 1918 zones here, if they are not used in your
+// organization
+//include "/etc/bind/zones.rfc1918";
+
+zone "'${baseDomain}'" {
+      type master;
+      file "/etc/bind/db.'${baseDomain}'";
+      allow-query { any; };
+      allow-transfer { '${allowedIpRanges}'; };
+};
+''' | /usr/bin/sudo tee /etc/bind/named.conf.local
+
+echo '''; BIND reverse data file for empty rfc1918 zone
+;
+; DO NOT EDIT THIS FILE - it is used for multiple zones.
+; Instead, copy it, edit named.conf, and use that copy.
+;
+$TTL    86400
+$ORIGIN '${baseDomain}'.
+
+@                 IN      SOA	   '${baseDomain}'.   root.'${baseDomain}'. (
+            1		; Serial
+      604800		; Refresh
+        86400		; Retry
+      2419200		; Expire
+        86400 )	; Negative Cache TTL
+;
+  IN  NS  ns1.'${baseDomain}'.
+
+@                 IN      A      '${mainIpAddress}'
+ns1               IN      A      '${mainIpAddress}'
+pgadmin           IN      A      '${mainIpAddress}'
+kx-main1          IN      A      '${mainIpAddress}'
+ldap              IN      A      '${mainIpAddress}'
+ldapadmin         IN      A      '${mainIpAddress}'
+rabbitmq          IN      A      '${mainIpAddress}'
+remote-desktop    IN      A      '${mainIpAddress}'
+api-internal      IN      A      '${mainIpAddress}'
+*                 IN      A      '${mainIpAddress}'
+''' | /usr/bin/sudo tee /etc/bind/db.${baseDomain}
+
+/usr/bin/sudo named-checkconf
+/usr/bin/sudo named-checkzone ${baseDomain} /etc/bind/db.${baseDomain}
+
+    if  [[ ${baseIpType} == "static" ]] || [[ ${dnsResolution} == "hybrid" ]]; then
         # Prevent DHCLIENT updating static IP
         if [[ ${dnsResolution} == "hybrid"   ]]; then
             echo "supersede domain-name-servers ${mainIpAddress};" | /usr/bin/sudo tee -a /etc/dhcp/dhclient.conf
@@ -252,21 +330,6 @@ if [[ ! -f /usr/share/kx.as.code/.config/network_status ]]; then
         }
         ''' | sed -e 's/^[ \t]*//' | sed 's/:/    :/g' | /usr/bin/sudo tee /etc/dhcp/dhclient-enter-hooks.d/nodnsupdate
         /usr/bin/sudo chmod +x /etc/dhcp/dhclient-enter-hooks.d/nodnsupdate
-
-        # Update DNS Entry for hosts if ip type set to static
-        hostname="$(hostname)"
-        echo "address=/${hostname}/${mainIpAddress}" | /usr/bin/sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
-        echo "address=/${hostname}.${baseDomain}/${mainIpAddress}" | /usr/bin/sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
-        echo "address=/ldap/${mainIpAddress}" | /usr/bin/sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
-        echo "address=/ldap.${baseDomain}/${mainIpAddress}" | /usr/bin/sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
-        echo "address=/pgadmin/${mainIpAddress}" | /usr/bin/sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
-        echo "address=/pgadmin.${baseDomain}/${mainIpAddress}" | /usr/bin/sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
-        echo "address=/ldapadmin/${mainIpAddress}" | /usr/bin/sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
-        echo "address=/ldapadmin.${baseDomain}/${mainIpAddress}" | /usr/bin/sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
-        echo "address=/rabbitmq/${mainIpAddress}" | /usr/bin/sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
-        echo "address=/rabbitmq.${baseDomain}/${mainIpAddress}" | /usr/bin/sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
-        echo "address=/remote-desktop/${mainIpAddress}" | /usr/bin/sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
-        echo "address=/remote-desktop.${baseDomain}/${mainIpAddress}" | /usr/bin/sudo tee -a /etc/dnsmasq.d/${baseDomain}.conf
     fi
 
     if [[ ${baseIpType} == "static"   ]]; then
@@ -281,8 +344,7 @@ if [[ ! -f /usr/share/kx.as.code/.config/network_status ]]; then
     fi
 
     if  [[ ${baseIpType} == "static"   ]] || [[ ${dnsResolution} == "hybrid"   ]]; then
-        /usr/bin/sudo systemctl enable --now dnsmasq.service
-        /usr/bin/sudo systemctl enable --now systemd-networkd-wait-online.service
+        /usr/bin/sudo systemctl enable --now bind9.service
     fi
 
     # Setup proxy settings if they exist
@@ -320,11 +382,11 @@ if [[ ! -f /usr/share/kx.as.code/.config/network_status ]]; then
     echo "KX.AS.CODE network config done" | /usr/bin/sudo tee /usr/share/kx.as.code/.config/network_status
 
     # Reboot if static network settings to activate them
-    if  [[ ${baseIpType} == "static"   ]]; then
+    if  [[ "${baseIpType}" == "static"   ]]; then
         # Reboot machine to ensure all network changes are active
         /usr/bin/sudo reboot
     else
-        /usr/bin/sudo systemctl restart dnsmasq
+        /usr/bin/sudo systemctl restart bind9
     fi
 
 fi
@@ -366,7 +428,12 @@ if [ ! -f /usr/local/bin/rabbitmqadmin ]; then
     wget http://127.0.0.1:15672/cli/rabbitmqadmin
     chmod +x rabbitmqadmin
     mv rabbitmqadmin /usr/local/bin/rabbitmqadmin
+    # Add bash auto-completion
+    rabbitmqadmin --bash-completion | sudo tee /etc/bash_completion.d/rabbitmqadmin
+    echo "source /etc/bash_completion.d/rabbitmqadmin" | sudo tee -a /home/${VM_USER}/.bashrc /home/${VM_USER}/.zshrc /root/.bashrc /root/.zshrc
 fi
+
+
 
 # Create RabbitMQ Exchange if it does not exist
 exchangeExists=$(rabbitmqadmin list exchanges --format=raw_json | jq -r '.[] | select(.name=="action_workflow")')
@@ -374,7 +441,7 @@ if [ -z "${exchangeExists}" ]; then
     rabbitmqadmin declare exchange name=action_workflow type=direct
 fi
 
-# Create RabbitMQ Queues if they does not exist
+# Create RabbitMQ Queues if they do not exist
 for actionWorkflowQueue in ${actionWorkflows}; do
     actionWorkflowQueueExists=$(rabbitmqadmin list queues --format=raw_json | jq -r '.[] | select(.name=="'${actionWorkflowQueue}'_queue")')
     if [ -z "${actionWorkflowQueueExists}" ]; then
@@ -382,7 +449,7 @@ for actionWorkflowQueue in ${actionWorkflows}; do
     fi
 done
 
-# Create RabbitMQ Bindings if they does not exist
+# Create RabbitMQ Bindings if they do not exist
 for actionWorkflowBinding in ${actionWorkflows}; do
     actionWorkflowBindingExists=$(rabbitmqadmin list bindings --format=raw_json | jq -r '.[] | select(.source=="action_workflow" and .destination=="'${actionWorkflowBinding}'_queue")')
     if [ -z "${actionWorkflowBindingExists}" ]; then
@@ -406,7 +473,8 @@ defaultComponentsToInstall=$(cat ${installationWorkspace}/actionQueues.json | jq
 for componentName in ${defaultComponentsToInstall}; do
     payload=$(cat ${installationWorkspace}/actionQueues.json | jq -c '.action_queues.install[] | select(.name=="'${componentName}'") | {install_folder:.install_folder,"name":.name,"action":"install","retries":"0"}')
     echo "Pending payload: ${payload}"
-    rabbitmqadmin publish exchange=action_workflow routing_key=pending_queue payload=''${payload}''
+    rabbitmqadmin publish exchange=action_workflow routing_key=pending_queue properties="{\"delivery_mode\": 2}" payload=''${payload}''
+
     # Get slot number to add installed app to JSON array
     arrayLength=$(cat ${installationWorkspace}/actionQueues.json | jq -r '.state.processed[].name' | wc -l)
     if [[ -z ${arrayLength} ]]; then
@@ -426,16 +494,18 @@ retries=0
 logRc=0
 rc=0
 
-# Get total number of messages in pending_queue
+# Get total number of messages
 sleep 5
-numTotalElementsToInstall=$(rabbitmqadmin list queues -f raw_json | jq -r '.[] | select(.name=="pending_queue") | .messages')
 
 # Poll pending queue and trigger actions if message is present
 while :; do
+
+    completedQueue=$(rabbitmqadmin list queues name messages --format raw_json | jq -r '.[] | select(.name=="completed_queue") | .messages')
     wipQueue=$(rabbitmqadmin list queues name messages --format raw_json | jq -r '.[] | select(.name=="wip_queue") | .messages')
     failedQueue=$(rabbitmqadmin list queues name messages --format raw_json | jq -r '.[] | select(.name=="failed_queue") | .messages')
     retryQueue=$(rabbitmqadmin list queues name messages --format raw_json | jq -r '.[] | select(.name=="retry_queue") | .messages')
     pendingQueue=$(rabbitmqadmin list queues name messages --format raw_json | jq -r '.[] | select(.name=="pending_queue") | .messages')
+    totalMessages=$(( ${pendingQueue} + ${completedQueue} + ${wipQueue} + ${failedQueue} + ${retryQueue} ))
 
     if [[ ${failedQueue} -eq 0 ]]; then
 
@@ -455,9 +525,9 @@ while :; do
                 echo "Completed payload: ${payload}"
                 rabbitmqadmin publish exchange=action_workflow routing_key=completed_queue properties="{\"delivery_mode\": 2}" payload=''${payload}''
                 log_info "The installation of \"${componentName}\" completed succesfully"
-                /usr/bin/sudo -H -i -u ${vmUser} bash -c "DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/${vmUserId}/bus notify-send -t 300000 \"KX.AS.CODE Notification\" \"${componentName} installed successfully [${count}/${numTotalElementsToInstall}]\" --icon=dialog-information"
+                notify "${componentName} installed successfully [$((${completedQueue} + 1))/${totalMessages}]" "dialog-information"
                 if [[ "${componentName}" == "${lastCoreElementToInstall}" ]]; then
-                    /usr/bin/sudo -H -i -u ${vmUser} bash -c "DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/${vmUserId}/bus notify-send -t 300000 \"KX.AS.CODE Notification\" \"CONGRATULATIONS\! That concludes the core setup\! Your optional components will now be installed\" --icon=dialog-information"
+                    notify "CONGRATULATIONS\! That concludes the core setup\! Your optional components will now be installed" "dialog-information"
                     echo "${componentName} = ${lastCoreElementToInstall}"  
                 fi
                 retries=0
@@ -471,7 +541,7 @@ while :; do
                     cat ${installationWorkspace}/actionQueues.json | jq -c -r '(.state.processed[] | select(.name=="'${componentName}'").retries) = "'${retries}'"' | tee ${installationWorkspace}/actionQueues.json.tmp
                     mv ${installationWorkspace}/actionQueues.json.tmp ${installationWorkspace}/actionQueues.json
                     log_warn "Previous attempt to install \"${componentName}\" did not complete succesfully. Trying again (${retries} of 3)"
-                    /usr/bin/sudo -H -i -u ${vmUser} bash -c "DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/${vmUserId}/bus notify-send -t 300000 \"KX.AS.CODE Notification\" \"${componentName} installation error. Will try three times maximum\! [${count}/${numTotalElementsToInstall}]\" --icon=dialog-warning"
+                    notify "${componentName} installation error. Will try three times maximum\! [$((${completedQueue} + 1))/${totalMessages}]" "dialog-warning"
                     rm -f ${installationWorkspace}/current_payload.err
                 else
                     payload=$(echo ${payload} | jq -c -r '(.retries)="0"' | jq -c -r '. += {"failed_retries":"'${retries}'"}')
@@ -479,7 +549,7 @@ while :; do
                     rabbitmqadmin publish exchange=action_workflow routing_key=failed_queue properties="{\"delivery_mode\": 2}" payload=''${payload}''
                     retries=0
                     log_error "Previous attempt to install \"${componentName}\" did not complete succesfully. There will be no (further) retries"
-                    /usr/bin/sudo -H -i -u ${vmUser} bash -c "DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/${vmUserId}/bus notify-send -t 300000 \"KX.AS.CODE Notification\" \"${componentName} installation failed\! [${count}/${numTotalElementsToInstall}]\" --icon=dialog-error"
+                    notify "${componentName} installation failed\! [$((${completedQueue} + 1))/${totalMessages}]" "dialog-error"
                     rm -f ${installationWorkspace}/current_payload.err
                 fi
             fi
@@ -519,14 +589,28 @@ while :; do
 
                 # Launch autoSetup.sh
                 if [[ "${componentName}" == "${firstCoreElementToInstall}" ]]; then
-                    /usr/bin/sudo -H -i -u ${vmUser} bash -c "DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/${vmUserId}/bus notify-send -t 300000 \"KX.AS.CODE Notification\" \"Initialization started. Please be patient. This could take up to 30 minutes, depending on your system size and speed of internet connection\" --icon=dialog-warning"
+                     notify "Initialization started. Please be patient. This could take up to 30 minutes, depending on your system size and speed of internet connection" "dialog-warning"
                     echo "${componentName} = ${firstCoreElementToInstall}"
                 fi
                 count=$((count + 1))
                 export error=""
+                # Check if the Docker Hub Download Rate Limit is being reached which may lead to error and notify the user appropriately
+                dockerHubToken=$(curl "https://auth.docker.io/token?service=registry.docker.io&scope=repository:ratelimitpreview/test:pull" | jq -r .token)
+                dockerHubRateLimitResponse=$(curl --head -H "Authorization: Bearer ${dockerHubToken}" https://registry-1.docker.io/v2/ratelimitpreview/test/manifests/latest 2>&1 | grep -i RateLimit | cut -d' ' -f2 | cut -d';' -f1)
+                dockerHubAllowLimit=$(echo ${dockerHubRateLimitResponse} | awk 'print $1')
+                dockerHubRemainingLimit=$(echo ${dockerHubRateLimitResponse} | awk 'print $2')
+                if [[ ${dockerHubRemainingLimit} -le 0 ]]; then
+                  log_error "Error\! You have 0 Docker Hub downloads remaining. You must wait until the next 6 hour period starts to try again"
+                  notify "Error\! You have 0 Docker Hub downloads remaining" "dialog-error"
+                elif [[ ${dockerHubRemainingLimit} -le 25 ]]; then
+                  log_warn "Warning\! You have less than 25 Docker Hub downloads remaining"
+                  notify "Warning\! You have less than 25 Docker Hub downloads remaining" "dialog-warning"
+                fi
+                log_info "As an anonymous user you have a rate limit of ${dockerHubAllowLimit} with ${dockerHubRemainingLimit} downloads remaining in the current 6 hour window"
+                # Launch the component installation process
                 . ${autoSetupHome}/autoSetup.sh &> ${installationWorkspace}/${componentName}_${logTimestamp}.${retries}.log
                 logRc=$?
-                log_info "Installation process for \"${componentName}\" returned with \$?=${logRc} and \$rc=$rc"
+                log_info "Installation process for \"${componentName}\" returned with \$?=${logRc} and rc=$rc"
             fi
             sleep 5
         fi

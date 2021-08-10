@@ -94,7 +94,7 @@
         "getMinIoAccessKey.sh",
         "createAdminCredentialsSecret.sh",
         "uploadCaConfigMap.sh",
-        "createOauthIntegration.sh",
+        "configureOauthLogin.sh",
         "getMattermostApplicationId.sh"
     ],
     "post_install_scripts": []

@@ -14,7 +14,8 @@
         <string>git_source_url</string>
         <string>shared_workspace</string>
         <string>kx_main_box_location</string>
-        <string>kx_worker_box_location</string>
+        <string>kx_node_box_location</string>
+        <string>dockerhub_email</string>
       </parameters>
       <options>
         <string>skipDefaultCheckout</string>
@@ -56,13 +57,19 @@
         <hudson.model.StringParameterDefinition>
           <name>kx_main_box_location</name>
           <description>Location of built Vagrant box for KX.AS.CODE Main Node</description>
-          <defaultValue>GeneratedJobs/01_Build_KX.AS.CODE_Main/base-vm/boxes/virtualbox-{{kx_version}}/kx.as.code-main-demo-{{kx_version}}.box</defaultValue>
+          <defaultValue>GeneratedJobs/01_Build_KX.AS.CODE_Main/base-vm/boxes/virtualbox-${kx_version}/kx.as.code-main-${kx_version}.box</defaultValue>
           <trim>false</trim>
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
-          <name>kx_worker_box_location</name>
-          <description>Location of built Vagrant box for KX.AS.CODE Worker Node</description>
-          <defaultValue>GeneratedJobs/02_Build_KX.AS.CODE_Worker/base-vm/boxes/virtualbox-{{kx_version}}/kx.as.code-worker-demo-{{kx_version}}.box</defaultValue>
+          <name>kx_node_box_location</name>
+          <description>Location of built Vagrant box for KX.AS.CODE Cluster Node</description>
+          <defaultValue>GeneratedJobs/02_Build_KX.AS.CODE_Node/base-vm/boxes/virtualbox-${kx_version}/kx.as.code-node-${kx_version}.box</defaultValue>
+          <trim>false</trim>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>dockerhub_email</name>
+          <description>DockerHub email address used when creating regcred in Kubernetes</description>
+          <defaultValue>{{dockerHubEmail}}</defaultValue>
           <trim>false</trim>
         </hudson.model.StringParameterDefinition>
       </parameterDefinitions>
