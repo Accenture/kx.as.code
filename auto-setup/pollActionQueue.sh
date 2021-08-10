@@ -601,24 +601,28 @@ while :; do
                   export dockerHubUsername=$(cat /var/tmp/.tmp.json | jq -r '.DOCKERHUB_USER')
                   export dockerHubPassword=$(cat /var/tmp/.tmp.json | jq -r '.DOCKERHUB_PASSWORD')
                   export dockerHubEmail=$(cat /var/tmp/.tmp.json | jq -r '.DOCKERHUB_EMAIL')
-                  if [[ -z ${dockerHubUsername} ]] && [[ -z ${dockerHubUsername} ]]; then
-                    curlAuthOption="--user '${dockerHubUsername}:${dockerHubPassword}'"
+                  export dockerAuthApiUrl="https://auth.docker.io/token?service=registry.docker.io&scope=repository:ratelimitpreview/test:pull"
+                  if [[ -n ${dockerHubUsername} ]] && [[ -n ${dockerHubPassword} ]]; then
+                    dockerHubToken=$(curl --user ''${dockerHubUsername}:${dockerHubPassword}'' "${dockerAuthApiUrl}" | jq -r .token)
                   else
-                    curlAuthOption=""
+                    dockerHubToken=$(curl "${dockerAuthApiUrl}" | jq -r .token)
                   fi
                 fi
-                dockerHubToken=$(curl "https://auth.docker.io/token?service=registry.docker.io&scope=repository:ratelimitpreview/test:pull" | jq -r .token)
-                dockerHubRateLimitResponse=$(curl --head -H "Authorization: Bearer ${dockerHubToken}" https://registry-1.docker.io/v2/ratelimitpreview/test/manifests/latest 2>&1 | grep -i RateLimit | cut -d' ' -f2 | cut -d';' -f1)
-                dockerHubAllowLimit=$(echo ${dockerHubRateLimitResponse} | awk 'print $1')
-                dockerHubRemainingLimit=$(echo ${dockerHubRateLimitResponse} | awk 'print $2')
-                if [[ ${dockerHubRemainingLimit} -le 0 ]]; then
-                  log_error "Error\! You have 0 Docker Hub downloads remaining. You must wait until the next 6 hour period starts to try again"
-                  notify "Error\! You have 0 Docker Hub downloads remaining" "dialog-error"
-                elif [[ ${dockerHubRemainingLimit} -le 25 ]]; then
-                  log_warn "Warning\! You have less than 25 Docker Hub downloads remaining"
-                  notify "Warning\! You have less than 25 Docker Hub downloads remaining" "dialog-warning"
+                curl --head -H "Authorization: Bearer ${dockerHubToken}" https://registry-1.docker.io/v2/ratelimitpreview/test/manifests/latest 2>&1 | sudo tee ${installationWorkspace}/rateLimitResponse.txt
+                dockerHubRateLimitResponse=$(cat ${installationWorkspace}/rateLimitResponse.txt | grep -i RateLimit | cut -d' ' -f2 | cut -d';' -f1 || true)
+                dockerHubAllowLimit=$(echo ${dockerHubRateLimitResponse} | awk {'print $1'})
+                dockerHubRemainingLimit=$(echo ${dockerHubRateLimitResponse} | awk {'print $2'})
+                if [[ -n ${dockerHubRemainingLimit} ]]; then
+                    dockerHubRateLimitTimePeriod=$(( $(cat ${installationWorkspace}/rateLimitResponse.txt | grep "ratelimit-remaining" | cut -d'=' -f2 | tr -d " \t\n\r") / 3600 ))
+                    if [[ ${dockerHubRemainingLimit} -le 0 ]]; then
+                        log_error "Error\! You have 0 Docker Hub downloads remaining. You must wait until the next ${dockerHubRateLimitTimePeriod} hour period starts to try again"
+                        notify "Error\! You have 0 Docker Hub downloads remaining" "dialog-error"
+                    elif [[ ${dockerHubRemainingLimit} -le 25 ]]; then
+                        log_warn "Warning\! You have less than 25 Docker Hub downloads remaining"
+                        notify "Warning\! You have less than 25 Docker Hub downloads remaining" "dialog-warning"
+                    fi
+                    log_info "As an anonymous user you have a rate limit of ${dockerHubAllowLimit} with ${dockerHubRemainingLimit} downloads remaining in the current ${dockerHubRateLimitTimePeriod} hour window"
                 fi
-                log_info "As an anonymous user you have a rate limit of ${dockerHubAllowLimit} with ${dockerHubRemainingLimit} downloads remaining in the current 6 hour window"
                 # Launch the component installation process
                 . ${autoSetupHome}/autoSetup.sh &> ${installationWorkspace}/${componentName}_${logTimestamp}.${retries}.log
                 logRc=$?
