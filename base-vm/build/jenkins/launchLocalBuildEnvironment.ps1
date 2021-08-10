@@ -33,6 +33,8 @@ if ( $args.count -gt 1 ) {
     Exit
 }
 
+Remove-Item -Force -Path 'jenkins.env.ps1'
+Remove-Item -Force -Path 'jenkins.env.docker-compose.ps1'
 Foreach ($line in (Get-Content -Path "jenkins.env" | Where-Object {$_ -notmatch '^#.*'} | Where-Object {$_ -notmatch '^$'}))
 {
     # Created for sourcing for this script
@@ -119,6 +121,46 @@ switch ( $args[0] )
     }
 }
 
+# Determine absolute work and shared_workspace directory paths
+$firstTwoChars = $JENKINS_HOME.Substring(0,2)
+$secondChar = $JENKINS_HOME.Substring(1,1)
+$firstChar = $JENKINS_HOME.Substring(0,1)
+if ( $firstTwoChars -eq ".\" ) {
+    $HOMEDIR_ABSOLUTE_PATH = $JENKINS_HOME.Substring(2)
+    $HOMEDIR_ABSOLUTE_PATH = "$PSScriptRoot\$HOMEDIR_ABSOLUTE_PATH"
+}
+elseif ( $secondChar -eq ":" )
+{
+    $HOMEDIR_ABSOLUTE_PATH = $JENKINS_HOME
+}
+else
+{
+    $HOMEDIR_ABSOLUTE_PATH = "$PSScriptRoot\$JENKINS_HOME"
+
+}
+$JENKINS_HOME = $HOMEDIR_ABSOLUTE_PATH -replace "/","\"
+
+
+# Determine absolute work and shared_workspace directory paths
+$firstTwoChars = $WORKING_DIRECTORY.Substring(0,2)
+$secondChar = $WORKING_DIRECTORY.Substring(1,1)
+$firstChar = $WORKING_DIRECTORY.Substring(0,1)
+if ( $firstTwoChars -eq ".\" ) {
+    $WORKDIR_ABSOLUTE_PATH = $WORKING_DIRECTORY.Substring(2)
+    $WORKDIR_ABSOLUTE_PATH = "$PSScriptRoot\$WORKDIR_ABSOLUTE_PATH"
+}
+elseif ( $secondChar -eq ":" )
+{
+    $WORKDIR_ABSOLUTE_PATH = $WORKING_DIRECTORY
+}
+else
+{
+    $WORKDIR_ABSOLUTE_PATH = "$PSScriptRoot\$WORKING_DIRECTORY"
+
+}
+$WORKING_DIRECTORY = $WORKDIR_ABSOLUTE_PATH -replace "/","\"
+
+
 if ( $override_action -eq "recreate" -Or $override_action -eq "destroy" -Or $override_action -eq "fully-destroy" -Or $override_action -eq "uninstall" ) {
     $Input = Read-Host -Prompt "$areYouSureQuestion [Y/N]"
     Write-Output $Input
@@ -139,12 +181,12 @@ if ( $override_action -eq "recreate" -Or $override_action -eq "destroy" -Or $ove
             docker rmi "$( docker images $kx_jenkins_image -q )"
             Write-Output "- [INFO] Docker image deleted" | Red
             Write-Output "- [INFO] Deleting jenkins_home directory..." | Red
-            Remove-Item -Recurse -Force -Path ./jenkins_home
+            Remove-Item -Recurse -Force -Path $JENKINS_HOME
             Write-Output "- [INFO] jenkins_home deleted" | Red
             if ($override_action -eq "fully-destroy")
             {
                 Write-Output "- [INFO] Deleting jenkins_remote directory..." | Red
-                Remove-Item -Path -Recursive -Force ./jenkins_remote
+                Remove-Item -Path -Recursive -Force $WORKING_DIRECTORY
                 Write-Output "- [INFO] jenkins_remote deleted" | Red
             }
             Write-Output "- [INFO] Deleting downloaded tools..." | Red
@@ -243,57 +285,6 @@ else
     Write-Output "Java binary: $javaBinary"
     & $javaBinary -version
 }
-
-# Determine absolute work and shared_workspace directory paths
-$firstTwoChars = $JENKINS_HOME.Substring(0,2)
-$secondChar = $JENKINS_HOME.Substring(1,1)
-$firstChar = $JENKINS_HOME.Substring(0,1)
-Write-Output $firstTwoChars
-Write-Output $secondChar
-Write-Output $firstChar
-if ( $firstTwoChars -eq ".\" ) {
-    Write-Output "One"
-    $HOMEDIR_ABSOLUTE_PATH = $JENKINS_HOME.Substring(2)
-    $HOMEDIR_ABSOLUTE_PATH = "$PSScriptRoot\$HOMEDIR_ABSOLUTE_PATH"
-}
-elseif ( $secondChar -eq ":" )
-{
-    Write-Output "Three"
-    $HOMEDIR_ABSOLUTE_PATH = $JENKINS_HOME
-}
-else
-{
-    Write-Output "Two"
-    $HOMEDIR_ABSOLUTE_PATH = "$PSScriptRoot\$JENKINS_HOME"
-
-}
-$JENKINS_HOME = $HOMEDIR_ABSOLUTE_PATH -replace "/","\"
-
-
-# Determine absolute work and shared_workspace directory paths
-$firstTwoChars = $WORKING_DIRECTORY.Substring(0,2)
-$secondChar = $WORKING_DIRECTORY.Substring(1,1)
-$firstChar = $WORKING_DIRECTORY.Substring(0,1)
-Write-Output $firstTwoChars
-Write-Output $secondChar
-Write-Output $firstChar
-if ( $firstTwoChars -eq ".\" ) {
-    Write-Output "One"
-    $WORKDIR_ABSOLUTE_PATH = $WORKING_DIRECTORY.Substring(2)
-    $WORKDIR_ABSOLUTE_PATH = "$PSScriptRoot\$WORKDIR_ABSOLUTE_PATH"
-}
-elseif ( $secondChar -eq ":" )
-{
-    Write-Output "Three"
-    $WORKDIR_ABSOLUTE_PATH = $WORKING_DIRECTORY
-}
-else
-{
-    Write-Output "Two"
-    $WORKDIR_ABSOLUTE_PATH = "$PSScriptRoot\$WORKING_DIRECTORY"
-
-}
-$WORKING_DIRECTORY = $WORKDIR_ABSOLUTE_PATH -replace "/","\"
 
 # Create shared directories for Vagrant and Terraform jobs
 $virtualbox_shared_directory_path = "$WORKING_DIRECTORY\workspace\VirtualBox\shared_workspace"
