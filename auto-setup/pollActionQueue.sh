@@ -597,8 +597,8 @@ while :; do
                 # Check if the Docker Hub Download Rate Limit is being reached which may lead to error and notify the user appropriately
                 dockerHubToken=$(curl "https://auth.docker.io/token?service=registry.docker.io&scope=repository:ratelimitpreview/test:pull" | jq -r .token)
                 dockerHubRateLimitResponse=$(curl --head -H "Authorization: Bearer ${dockerHubToken}" https://registry-1.docker.io/v2/ratelimitpreview/test/manifests/latest 2>&1 | grep -i RateLimit | cut -d' ' -f2 | cut -d';' -f1)
-                dockerHubAllowLimit=$(echo ${dockerHubRateLimitResponse} | head -1)
-                dockerHubRemainingLimit=$(echo ${dockerHubRateLimitResponse} | tail -1)
+                dockerHubAllowLimit=$(echo ${dockerHubRateLimitResponse} | awk 'print $1')
+                dockerHubRemainingLimit=$(echo ${dockerHubRateLimitResponse} | awk 'print $2')
                 if [[ ${dockerHubRemainingLimit} -le 0 ]]; then
                   log_error "Error\! You have 0 Docker Hub downloads remaining. You must wait until the next 6 hour period starts to try again"
                   notify "Error\! You have 0 Docker Hub downloads remaining" "dialog-error"
