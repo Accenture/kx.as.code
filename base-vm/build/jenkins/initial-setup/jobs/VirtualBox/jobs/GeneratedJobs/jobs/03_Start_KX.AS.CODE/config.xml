@@ -69,7 +69,7 @@
         <hudson.model.StringParameterDefinition>
           <name>dockerhub_email</name>
           <description>DockerHub email address used when creating regcred in Kubernetes</description>
-          <defaultValue>{{dockerHubEmail}}</defaultValue>
+          <defaultValue>{{dockerhub_email}}</defaultValue>
           <trim>false</trim>
         </hudson.model.StringParameterDefinition>
       </parameterDefinitions>
