@@ -6,12 +6,15 @@ node('local') {
     if ( os == "darwin" ) {
         echo "Running on Mac"
         packerOsFolder="darwin-linux"
+        jqDownloadPath="${JQ_DARWIN_DOWNLOAD_URL}"
     } else if ( os == "linux" ) {
         echo "Running on Linux"
         packerOsFolder="darwin-linux"
+        jqDownloadPath="${JQ_LINUX_DOWNLOAD_URL}"
     } else {
         echo "Running on Windows"
         os="windows"
+        jqDownloadPath="${JQ_WINDOWS_DOWNLOAD_URL}"
         packerOsFolder="windows"
     }
 }
@@ -62,6 +65,14 @@ pipeline {
                             packerPath = packerPath.replaceAll("\\\\","/")
                         }
                         sh """
+                        if [[ ! -f ./jq* ]]; then
+                            curl -L -o jq ${jqDownloadPath}
+                            chmod +x ./jq
+                        fi
+                        export kx_version=\$(cat versions.json | ./jq -r '.kxascode')
+                        export kube_version=\$(cat versions.json | ./jq -r '.kubernetes')
+                        echo \${kx_version}
+                        echo \${kube_version}
                         cd base-vm/build/packer/${packerOsFolder}
                         ${packerPath}/packer build -force -only kx.as.code-main-parallels \
                         -var "compute_engine_build=${vagrant_compute_engine_build}" \
@@ -70,7 +81,8 @@ pipeline {
                         -var "video_memory=128" \
                         -var "hostname=${kx_main_hostname}" \
                         -var "domain=${kx_domain}" \
-                        -var "version=${kx_version}" \
+                        -var "version=\${kx_version}" \
+                        -var "kube_version=\${kube_version}" \
                         -var "vm_user=${kx_vm_user}" \
                         -var "vm_password=${kx_vm_password}" \
                         -var "git_source_url=${git_source_url}" \

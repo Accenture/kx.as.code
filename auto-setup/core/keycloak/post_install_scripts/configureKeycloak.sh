@@ -158,21 +158,3 @@ if [[ ! $(kubectl -n ${namespace} exec ${kcPod} --container ${kcContainer} -- ${
         -s 'config.membership=["member"]'
 fi
 
-# Create Client
-if [[ ! $(kubectl -n ${namespace} exec ${kcPod} --container ${kcContainer} -- ${kcAdmCli} get clients -r demo1.kx-as-code.local | jq -r '.[] | select(.clientId=="kubernetes") | .clientId') ]]; then
-    clientId=$(kubectl -n ${namespace} exec ${kcPod} --container ${kcContainer} -- \
-        ${kcAdmCli} create clients --realm ${kcRealm} -s clientId=kubernetes -s 'redirectUris=["http://localhost:8000","https://kubernetes-dashboard-iam.'${baseDomain}'/oauth2/callback"]' -s publicClient="false" -s enabled=true -i)
-fi
-
-# Create protocol mapper
-if [[ ! $(kubectl -n ${namespace} exec ${kcPod} --container ${kcContainer} -- ${kcAdmCli} get clients -r demo1.kx-as-code.local | jq '.[] | select(.clientId=="kubernetes") | .protocolMappers[] | select(.protocolMapper=="oidc-group-membership-mapper") | .protocolMapper') ]]; then
-    kubectl -n ${namespace} exec ${kcPod} --container ${kcContainer} -- \
-        ${kcAdmCli} create clients/${clientId}/protocol-mappers/models \
-        --realm ${kcRealm} \
-        -s name=groups \
-        -s protocol=openid-connect \
-        -s protocolMapper=oidc-group-membership-mapper \
-        -s 'config."claim.name"=groups' \
-        -s 'config."access.token.claim"=true' \
-        -s 'config."jsonType.label"=String'
-fi

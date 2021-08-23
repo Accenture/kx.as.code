@@ -18,14 +18,20 @@ end
 
 puts "VMWARE_DISK_UTILITY: #{VMWARE_DISK_UTILITY}"
 
+# Read Profile Config file
 file = File.read('profile-config.json')
-profile_config = JSON.parse(file)
+profile_config_json = JSON.parse(file)
 
-profile_config_local_volumes=profile_config['config']['local_volumes']
+# Read version file
+file = File.read('../../versions.json')
+kx_version_json = JSON.parse(file)
+puts "KX Version JSON #{kx_version_json}"
+
+profile_config_local_volumes=profile_config_json['config']['local_volumes']
 puts "Profile Config #{profile_config_local_volumes}"
 
 # Get needed capacity for GlusterFS volumes disk size
-GLUSTERFS_KUBE_VOLUMES_DISK_SIZE=profile_config['config']['glusterFsDiskSize']
+GLUSTERFS_KUBE_VOLUMES_DISK_SIZE=profile_config_json['config']['glusterFsDiskSize'].to_i + 1
 
 # Calculate needed local disk capacity
 NUM_1GB_LOCAL_SIZE=profile_config_local_volumes['one_gb'].to_i * 1
@@ -41,48 +47,57 @@ puts "Local Disk Size: #{LOCAL_KUBE_VOLUMES_DISK_SIZE}GB"
 puts "GlusterFS Disk Size: #{GLUSTERFS_KUBE_VOLUMES_DISK_SIZE}GB"
 
 # Environment variables will override the profile-config.json file properties. This was added for the Jenkins jobs, so that they can override parameters
-ENVIRONMENT_PREFIX = ENV['environmentPrefix'] || profile_config['config']['vm_properties']['environment_prefix']
+ENVIRONMENT_PREFIX = ENV['environmentPrefix'] || profile_config_json['config']['vm_properties']['environment_prefix']
 puts "ENVIRONMENT_PREFIX: #{ENVIRONMENT_PREFIX}"
-MAIN_NODE_CPU_CORES = ENV['mainNodeCpuCores'] || profile_config['config']['vm_properties']['main_node_cpu_cores']
-puts "MAIN_NODE_CPU_CORES: #{MAIN_NODE_CPU_CORES}"
-MAIN_NODE_MEMORY = ENV['mainNodeMemory'] || profile_config['config']['vm_properties']['main_node_memory']
-puts "MAIN_NODE_MEMORY: #{MAIN_NODE_MEMORY}"
-WORKER_NODE_COUNT = ENV['workerNodeCount'] || profile_config['config']['vm_properties']['worker_node_count']
+MAIN_NODE_COUNT = ENV['mainNodeCount'] || profile_config_json['config']['vm_properties']['main_node_count']
+puts "MAIN_NODE_COUNT: #{MAIN_NODE_COUNT}"
+ADMIN_MAIN_NODE_CPU_CORES = ENV['adminMainNodeCpuCores'] || profile_config_json['config']['vm_properties']['admin_main_node_cpu_cores']
+puts "ADMIN_MAIN_NODE_CPU_CORES: #{ADMIN_MAIN_NODE_CPU_CORES}"
+ADMIN_MAIN_NODE_MEMORY = ENV['adminMainNodeMemory'] || profile_config_json['config']['vm_properties']['admin_main_node_memory']
+puts "ADMIN_MAIN_NODE_MEMORY: #{ADMIN_MAIN_NODE_MEMORY}"
+REPLICA_MAIN_NODE_CPU_CORES = ENV['replicaMainNodeCpuCores'] || profile_config_json['config']['vm_properties']['replica_main_node_cpu_cores']
+puts "REPLICA_MAIN_NODE_CPU_CORES: #{REPLICA_MAIN_NODE_CPU_CORES}"
+REPLICA_MAIN_NODE_MEMORY = ENV['replicaMainNodeMemory'] || profile_config_json['config']['vm_properties']['replica_main_node_memory']
+puts "REPLICA_MAIN_NODE_MEMORY: #{REPLICA_MAIN_NODE_MEMORY}"
+WORKER_NODE_COUNT = ENV['workerNodeCount'] || profile_config_json['config']['vm_properties']['worker_node_count']
 puts "WORKER_NODE_COUNT: #{WORKER_NODE_COUNT}"
-WORKER_NODE_CPU_CORES = ENV['workerNodeCpuCores'] || profile_config['config']['vm_properties']['worker_node_cpu_cores']
+WORKER_NODE_CPU_CORES = ENV['workerNodeCpuCores'] || profile_config_json['config']['vm_properties']['worker_node_cpu_cores']
 puts "WORKER_NODE_CPU_CORES: #{WORKER_NODE_CPU_CORES}"
-WORKER_NODE_MEMORY = ENV['WorkerNodeMemory'] || profile_config['config']['vm_properties']['worker_node_memory']
+WORKER_NODE_MEMORY = ENV['WorkerNodeMemory'] || profile_config_json['config']['vm_properties']['worker_node_memory']
 puts "WORKER_NODE_MEMORY: #{WORKER_NODE_MEMORY}"
-DOCKERHUB_USER = ENV['dockerHubUser'] || profile_config['config']['docker']['dockerhub_username']
+DOCKERHUB_USER = ENV['dockerHubUsername']
 puts "DOCKERHUB_USER: #{DOCKERHUB_USER}"
-DOCKERHUB_EMAIL = ENV['dockerHubEmail'] || profile_config['config']['docker']['dockerhub_email']
+DOCKERHUB_EMAIL = ENV['dockerHubEmail'] || profile_config_json['config']['docker']['dockerhub_email']
 puts "DOCKERHUB_EMAIL: #{DOCKERHUB_EMAIL}"
-DOCKERHUB_PASSWORD = ENV['DockerHubPassword'] || profile_config['config']['docker']['dockerhub_password']
+DOCKERHUB_PASSWORD = ENV['dockerHubPassword']
 puts "DOCKERHUB_PASSWORD: #{DOCKERHUB_PASSWORD}"
-BOX_VERSION = ENV['boxVersion'] || profile_config['config']['vm_properties']['kx_version']
+BOX_VERSION = ENV['boxVersion'] || kx_version_json['kxascode']
 puts "BOX_VERSION: #{BOX_VERSION}"
-KX_MAIN_BOX_LOCATION = ENV['kxMainBoxLocation'] || profile_config['config']['vm_properties']['kx_main_box_location']
+KX_MAIN_BOX_LOCATION = ENV['kxMainBoxLocation'] || profile_config_json['config']['vm_properties']['kx_main_box_location']
 puts "KX_MAIN_BOX_LOCATION: #{KX_MAIN_BOX_LOCATION}"
-KX_WORKER_BOX_LOCATION = ENV['kxWorkerBoxLocation'] || profile_config['config']['vm_properties']['kx_worker_box_location']
-puts "KX_WORKER_BOX_LOCATION: #{KX_WORKER_BOX_LOCATION}"
+KX_NODE_BOX_LOCATION = ENV['kxNodeBoxLocation'] || profile_config_json['config']['vm_properties']['kx_node_box_location']
+puts "KX_NODE_BOX_LOCATION: #{KX_NODE_BOX_LOCATION}"
+
+if (MAIN_NODE_COUNT - 1) < 1
+  REPLICA_MAIN_NODE_COUNT = 0
+  puts "REPLICA_MAIN_NODE_COUNT < 1 -> #{REPLICA_MAIN_NODE_COUNT} replica main nodes will be provisioned"
+else
+  REPLICA_MAIN_NODE_COUNT = MAIN_NODE_COUNT - 1
+  puts "REPLICA_MAIN_NODE_COUNT > 1 -> #{REPLICA_MAIN_NODE_COUNT} replica main nodes will be provisioned"
+end
 
 # Path for current Jenkins solution
 WORKSPACE_HOME = File.dirname(File.expand_path('../../..', __FILE__))
 
 Vagrant.configure("2") do |config|
-    config.vm.define "kx.as.code-main" do |subconfig|
+    config.vm.define "kx.as.code-main1" do |subconfig|
         subconfig.vm.box = "kx.as.code-main-vmware-#{BOX_VERSION}"
+        subconfig.vm.hostname = "kx-main1"
         subconfig.vm.box_url = "file://#{WORKSPACE_HOME}/#{KX_MAIN_BOX_LOCATION}"
-        subconfig.vm.provision "file", source: "profile-config.json", destination: "/var/tmp/profile-config.json"
-        subconfig.vm.provision "file", source: "users.json", destination: "/var/tmp/users.json"
-        Dir[File.dirname(__FILE__) + '/aq*.json'].each do |file|
-            file_name = File.basename(file)
-            subconfig.vm.provision "file", source: file_name, destination: "/var/tmp/" + file_name
-        end
         subconfig.vm.provision "shell", inline: "hostname -I | awk {'print $1'} | tr -d ' \\t\\n\\r' | sudo tee /vagrant/kx.as.code_main-ip-address"
-        subconfig.vm.provision "shell", inline: 'sudo mv /var/tmp/aq*.json /usr/share/kx.as.code/workspace/'
-        subconfig.vm.provision "shell", inline: 'sudo mv /var/tmp/users.json /usr/share/kx.as.code/workspace/'
-        subconfig.vm.provision "shell", inline: "sudo mv /var/tmp/profile-config.json /usr/share/kx.as.code/workspace/"
+        subconfig.vm.provision "shell", inline: 'sudo cp /vagrant/aq*.json /usr/share/kx.as.code/workspace/'
+        subconfig.vm.provision "shell", inline: 'sudo cp /vagrant/users.json /usr/share/kx.as.code/workspace/'
+        subconfig.vm.provision "shell", inline: "sudo cp /vagrant/profile-config.json /usr/share/kx.as.code/workspace/"
         subconfig.vm.provision "shell", inline: "cat /usr/share/kx.as.code/workspace/profile-config.json | jq '.'"
         subconfig.vm.provision "shell", inline: "cat /usr/share/kx.as.code/workspace/users.json | jq '.'"
         subconfig.vm.provision "shell", inline: 'echo -e "$(date "+%Y-%m-%d_%H%M%S") | KX-Main VM created by Vagrant" | sudo tee /usr/share/kx.as.code/workspace/gogogo'
@@ -91,7 +106,7 @@ Vagrant.configure("2") do |config|
             trigger.run = { :inline => "bash -c 'rm -f kx.as.code_main-ip-address kx-main-local-k8s-storage.vmdk kx-main-glusterfs-k8s-storage.vmdk'" }
         end
         subconfig.vm.provision :shell do |s|
-          s.inline = "echo -e \"DOCKERHUB_USER=#{DOCKERHUB_USER}\nDOCKERHUB_EMAIL=#{DOCKERHUB_EMAIL}\nDOCKERHUB_PASSWORD=#{DOCKERHUB_PASSWORD}\" | sudo tee /var/tmp/.textfile"
+          s.inline = "echo -e '{ \"DOCKERHUB_USER\": \"#{DOCKERHUB_USER}\", \"DOCKERHUB_EMAIL\": \"#{DOCKERHUB_EMAIL}\", \"DOCKERHUB_PASSWORD\": \"#{DOCKERHUB_PASSWORD}\" }' | sudo tee /var/tmp/.tmp.json"
         end
         subconfig.vm.provider "vmware_desktop" do |v|
             kx_main_local_k8s_storage="#{current_dir}/kx-main-local-k8s-storage.vmdk"
@@ -112,9 +127,9 @@ Vagrant.configure("2") do |config|
 
             v.gui = true
             v.whitelist_verified = true
-            v.vmx['displayname'] = "kx.as.code-#{ENVIRONMENT_PREFIX}-main-#{BOX_VERSION}"
-            v.vmx["memsize"] = "#{MAIN_NODE_MEMORY}"
-            v.vmx["numvcpus"] = "#{MAIN_NODE_CPU_CORES}"
+            v.vmx['displayname'] = "kx.as.code-#{ENVIRONMENT_PREFIX}-main1-#{BOX_VERSION}"
+            v.vmx["memsize"] = "#{ADMIN_MAIN_NODE_MEMORY}"
+            v.vmx["numvcpus"] = "#{ADMIN_MAIN_NODE_CPU_CORES}"
             v.vmx["mks.enable3d"] = "FALSE"
             v.vmx["ethernet0.pcislotnumber"] = "33"
             v.vmx["sound.startconnected"] = "FALSE"
@@ -129,14 +144,55 @@ Vagrant.configure("2") do |config|
         end
     end
 
+    (2..MAIN_NODE_COUNT).each do |i|
+      config.vm.define "kx.as.code-main#{i}" do |subconfig|
+        subconfig.vm.box = "kx.as.code-node"
+        subconfig.vm.hostname = "kx-main#{i}"
+        subconfig.vm.network :forwarded_port, guest: 22, host: 2222, id: "ssh", disabled: true
+        subconfig.vm.network :forwarded_port, guest: 22, host: "224#{i}", id: "ssh-kx-main#{i}", auto_correct: true
+        subconfig.vm.box_url = "file://#{WORKSPACE_HOME}/#{KX_NODE_BOX_LOCATION}"
+        subconfig.vm.provision "shell", inline: "while [ ! -f /vagrant/kx.as.code_main-ip-address ]; do echo \"Waiting for kx.as.code_main-ip-address\" && sleep 15; done; cp /vagrant/kx.as.code_main-ip-address /var/tmp/"
+        subconfig.vm.provision "shell", inline: "sudo cp /vagrant/profile-config.json /usr/share/kx.as.code/workspace/"
+        subconfig.vm.provision "shell", inline: "cat /usr/share/kx.as.code/workspace/profile-config.json | jq '.'"
+        subconfig.vm.provision "shell", inline: 'echo -e "$(date "+%Y-%m-%d_%H%M%S") | KX-Main VM created by Vagrant" | sudo tee /usr/share/kx.as.code/workspace/gogogo'
+        subconfig.trigger.after :destroy do |trigger|
+          trigger.warn = "Destroying VM's disks"
+              trigger.run = { :inline => "bash -c 'rm -f kx-main#{i}-local-k8s-storage.vmdk'" }
+          end
+          subconfig.vm.provider "vmware_desktop" do |v|
+
+            kx_main_local_k8s_storage="#{current_dir}/kx-main#{i}-local-k8s-storage.vmdk"
+            if Vagrant::Util::Platform.windows?
+                kx_main_local_k8s_storage = kx_main_local_k8s_storage.gsub(/\//, '\\')
+            end
+
+            if ARGV[0] == "up" && ! File.exist?(kx_main_local_k8s_storage)
+              `"#{VMWARE_DISK_UTILITY}" -c -s #{LOCAL_KUBE_VOLUMES_DISK_SIZE}GB -a lsilogic -t 0 #{kx_main_local_k8s_storage}`
+            end
+
+            v.gui = true
+            v.whitelist_verified = true
+            v.vmx['displayname'] = "kx.as.code-#{ENVIRONMENT_PREFIX}-main#{i}-#{BOX_VERSION}"
+            v.vmx["memsize"] = "#{REPLICA_MAIN_NODE_MEMORY}"
+            v.vmx["numvcpus"] = "#{REPLICA_MAIN_NODE_CPU_CORES}"
+            v.vmx["mks.enable3d"] = "FALSE"
+            v.vmx["ethernet0.pcislotnumber"] = "33"
+            v.vmx["sound.startconnected"] = "FALSE"
+            v.vmx["sound.present"] = "FALSE"
+            v.vmx['scsi0:1.filename'] = kx_main_local_k8s_storage
+            v.vmx['scsi0:1.present']  = 'TRUE'
+            v.vmx['scsi0:1.redo']     = ''
+        end
+      end
+    end
+
     (1..WORKER_NODE_COUNT).each do |i|
         config.vm.define "kx.as.code-worker#{i}" do |subconfig|
           subconfig.vm.box = "kx.as.code-worker-vmware-#{BOX_VERSION}"
-          subconfig.vm.box_url = "file://#{WORKSPACE_HOME}/#{KX_WORKER_BOX_LOCATION}"
+          subconfig.vm.box_url = "file://#{WORKSPACE_HOME}/#{KX_NODE_BOX_LOCATION}"
           subconfig.vm.hostname = "kx-worker#{i}"
-          subconfig.vm.provision "file", source: "kx.as.code_main-ip-address", destination: "/var/tmp/kx.as.code_main-ip-address"
-          subconfig.vm.provision "file", source: "./profile-config.json", destination: "/var/tmp/profile-config.json"
-          subconfig.vm.provision "shell", inline: "sudo mv /var/tmp/profile-config.json /usr/share/kx.as.code/workspace/"
+          subconfig.vm.provision "shell", inline: "while [ ! -f /vagrant/kx.as.code_main-ip-address ]; do echo \"Waiting for kx.as.code_main-ip-address\" && sleep 15; done; cp /vagrant/kx.as.code_main-ip-address /var/tmp/"
+          subconfig.vm.provision "shell", inline: "sudo cp /vagrant/profile-config.json /usr/share/kx.as.code/workspace/"
           subconfig.vm.provision "shell", inline: "cat /usr/share/kx.as.code/workspace/profile-config.json | jq '.'"
           subconfig.vm.provision "shell", inline: 'echo -e "$(date "+%Y-%m-%d_%H%M%S") | KX-Worker VM created by Vagrant" | sudo tee /usr/share/kx.as.code/workspace/gogogo'
           subconfig.trigger.after :destroy do |trigger|

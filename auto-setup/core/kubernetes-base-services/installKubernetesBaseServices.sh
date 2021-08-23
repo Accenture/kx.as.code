@@ -6,10 +6,7 @@ kubeAdminStatus=$(kubectl cluster-info | grep "is running at" || true)
 if [[ ! ${kubeAdminStatus} ]]; then
     # Pull Kubernetes images
     /usr/bin/sudo kubeadm config images pull
-
-    # Initialization Kube Control Pane
-    /usr/bin/sudo kubeadm init --apiserver-advertise-address=${mainIpAddress} --pod-network-cidr=20.96.0.0/12
-
+    /usr/bin/sudo kubeadm init --apiserver-advertise-address=${mainIpAddress} --pod-network-cidr=20.96.0.0/12 --upload-certs --control-plane-endpoint=api-internal.${baseDomain}:6443
     # Setup KX and root users as Kubernetes Admin
     mkdir -p /root/.kube
     cp -f /etc/kubernetes/admin.conf /root/.kube/config
@@ -39,8 +36,7 @@ kubectl get cs
 kubectl get all --all-namespaces
 
 # Install Secret if Credentials Exist
-if [[ -f /var/tmp/.texfile ]]; then
-    . /var/tmp/.textfile
-    kubectl create secret docker-registry regcred --docker-server=https://index.docker.io/v1/ --docker-username=${DOCKERHUB_USER} --docker-password=${DOCKERHUB_PASSWORD} --docker-email=${DOCKERHUB_EMAIL}
-    rm -f /var/tmp/.texfile
+if [[ -n ${dockerHubUsername} ]] && [[ -n ${dockerHubPassword} ]] && [[ -n ${dockerHubEmail} ]]; then
+    kubectl create secret docker-registry regcred --docker-server=https://index.docker.io/v1/ --docker-username=${dockerHubUsername} --docker-password=${dockerHubPassword} --docker-email=${dockerHubEmail}
+    #rm -f /var/tmp/.tmp.json
 fi

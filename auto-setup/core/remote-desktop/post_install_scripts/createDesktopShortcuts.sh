@@ -9,7 +9,7 @@ Version=1.0
 Name=Guacamole Remote Desktop
 GenericName=Guacamole Remote Desktop
 Comment=Guacamole Remote Desktop
-Exec=/usr/bin/google-chrome-stable %U https://remote-desktop.${baseDomain}:8043 --use-gl=angle --password-store=basic ${browserOptions}
+Exec=/usr/bin/google-chrome-stable %U https://remote-desktop.${baseDomain}:8043 --use-gl=angle --password-store=basic
 StartupNotify=true
 Terminal=false
 Icon=${iconPath}
@@ -27,7 +27,7 @@ Version=1.0
 Name=Postgresql Admin
 GenericName=Postgresql Admin
 Comment=Postgresql Admin
-Exec=/usr/bin/google-chrome-stable %U https://pgadmin.${baseDomain}:7043 --use-gl=angle --password-store=basic ${browserOptions}
+Exec=/usr/bin/google-chrome-stable %U https://pgadmin.${baseDomain}:7043 --use-gl=angle --password-store=basic
 StartupNotify=true
 Terminal=false
 Icon=${iconPath}

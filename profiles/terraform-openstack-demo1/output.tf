@@ -3,11 +3,11 @@ output "config_kx_version" {
 }
 
 output "config_main_node_cpu_cores" {
- value = local.main_node_cpu_cores
+ value = local.admin_main_node_cpu_cores
 }
 
 output "config_main_node_memory" {
- value = local.main_node_memory
+ value = local.admin_main_node_memory
 }
 
 output "config_worker_node_count" {
@@ -50,10 +50,14 @@ output "glusterfs_storage_volume_size" {
  value = local.glusterfs_storage_volume_size
 }
 
-output "kx-main-floating-address" {
- value = openstack_compute_floatingip_associate_v2.kx-main-floating-ip-associate.*.floating_ip
+output "kx-main-admin-floating-address" {
+ value = openstack_compute_floatingip_associate_v2.kx_main_admin_floating_ip_associate.*.floating_ip
+}
+
+output "kx-main-replica-floating-address" {
+ value = openstack_compute_floatingip_associate_v2.kx_main_replica_floating_ip_associate.*.floating_ip
 }
 
 output "kx-worker-floating-address" {
- value = openstack_compute_floatingip_associate_v2.kx-worker-floating-ip-associate.*.floating_ip
+ value = openstack_compute_floatingip_associate_v2.kx_worker_floating_ip_associate.*.floating_ip
 }

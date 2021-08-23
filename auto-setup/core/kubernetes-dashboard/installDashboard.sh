@@ -29,7 +29,7 @@ kubectl apply -f ${installationWorkspace}/dashboard.yaml -n ${namespace}
 
 # Make Kubernetes Dashboard Available via Domain Name "k8s-dashboard.kx-as-code.local"
 cat << EOF > ${installationWorkspace}/dashboard-ingress.yaml
-apiVersion: networking.k8s.io/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: kubernetes-dashboard-ingress
@@ -45,9 +45,12 @@ spec:
   - host: ${componentName}.${baseDomain}
     http:
       paths:
-       - path: /
-         backend:
-           serviceName: kubernetes-dashboard
-           servicePort: 443
+      - backend:
+          service:
+            name: kubernetes-dashboard
+            port:
+              number: 443
+        path: /
+        pathType: Prefix
 EOF
 kubectl apply -f ${installationWorkspace}/dashboard-ingress.yaml -n ${namespace}

@@ -19,7 +19,7 @@
         <string>aws_ssh_interface</string>
         <string>git_docs_branch</string>
         <string>git_techradar_branch</string>
-        <string>kx_version</string>
+        <string>kx_version_override</string>
         <string>kx_main_hostname</string>
         <string>aws_vpc_subnet_id</string>
         <string>git_source_branch</string>
@@ -90,7 +90,7 @@
           <trim>false</trim>
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
-          <name>kx_version</name>
+          <name>kx_version_override</name>
           <description>KX.AS.CODE Version</description>
           <defaultValue>{{kx_version}}</defaultValue>
           <trim>false</trim>

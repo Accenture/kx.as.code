@@ -33,6 +33,8 @@ if ( $args.count -gt 1 ) {
     Exit
 }
 
+Remove-Item -Force -Path 'jenkins.env.ps1'
+Remove-Item -Force -Path 'jenkins.env.docker-compose.ps1'
 Foreach ($line in (Get-Content -Path "jenkins.env" | Where-Object {$_ -notmatch '^#.*'} | Where-Object {$_ -notmatch '^$'}))
 {
     # Created for sourcing for this script
@@ -119,13 +121,53 @@ switch ( $args[0] )
     }
 }
 
+# Determine absolute work and shared_workspace directory paths
+$firstTwoChars = $JENKINS_HOME.Substring(0,2)
+$secondChar = $JENKINS_HOME.Substring(1,1)
+$firstChar = $JENKINS_HOME.Substring(0,1)
+if ( $firstTwoChars -eq ".\" ) {
+    $HOMEDIR_ABSOLUTE_PATH = $JENKINS_HOME.Substring(2)
+    $HOMEDIR_ABSOLUTE_PATH = "$PSScriptRoot\$HOMEDIR_ABSOLUTE_PATH"
+}
+elseif ( $secondChar -eq ":" )
+{
+    $HOMEDIR_ABSOLUTE_PATH = $JENKINS_HOME
+}
+else
+{
+    $HOMEDIR_ABSOLUTE_PATH = "$PSScriptRoot\$JENKINS_HOME"
+
+}
+$JENKINS_HOME = $HOMEDIR_ABSOLUTE_PATH -replace "/","\"
+
+
+# Determine absolute work and shared_workspace directory paths
+$firstTwoChars = $WORKING_DIRECTORY.Substring(0,2)
+$secondChar = $WORKING_DIRECTORY.Substring(1,1)
+$firstChar = $WORKING_DIRECTORY.Substring(0,1)
+if ( $firstTwoChars -eq ".\" ) {
+    $WORKDIR_ABSOLUTE_PATH = $WORKING_DIRECTORY.Substring(2)
+    $WORKDIR_ABSOLUTE_PATH = "$PSScriptRoot\$WORKDIR_ABSOLUTE_PATH"
+}
+elseif ( $secondChar -eq ":" )
+{
+    $WORKDIR_ABSOLUTE_PATH = $WORKING_DIRECTORY
+}
+else
+{
+    $WORKDIR_ABSOLUTE_PATH = "$PSScriptRoot\$WORKING_DIRECTORY"
+
+}
+$WORKING_DIRECTORY = $WORKDIR_ABSOLUTE_PATH -replace "/","\"
+
+
 if ( $override_action -eq "recreate" -Or $override_action -eq "destroy" -Or $override_action -eq "fully-destroy" -Or $override_action -eq "uninstall" ) {
     $Input = Read-Host -Prompt "$areYouSureQuestion [Y/N]"
     Write-Output $Input
     if (  $Input -eq "Y" ) {
         Write-Output "- [INFO] OK! Proceeding to ${override_action} the KX.AS.CODE Jenkins environment"
         Write-Output "- [INFO] Deleting Jenkins jobs..." | Red
-        Get-ChildItem ".\jenkins_home\jobs" -Recurse -Filter config.xml |
+        Get-ChildItem "$JENKINS_HOME\jobs" -Recurse -Filter config.xml |
         Foreach-Object {
             Remove-Item -Force -Path  $_.FullName
         }
@@ -139,12 +181,12 @@ if ( $override_action -eq "recreate" -Or $override_action -eq "destroy" -Or $ove
             docker rmi "$( docker images $kx_jenkins_image -q )"
             Write-Output "- [INFO] Docker image deleted" | Red
             Write-Output "- [INFO] Deleting jenkins_home directory..." | Red
-            Remove-Item -Recurse -Force -Path ./jenkins_home
+            Remove-Item -Recurse -Force -Path $JENKINS_HOME
             Write-Output "- [INFO] jenkins_home deleted" | Red
             if ($override_action -eq "fully-destroy")
             {
                 Write-Output "- [INFO] Deleting jenkins_remote directory..." | Red
-                Remove-Item -Path -Recursive -Force ./jenkins_remote
+                Remove-Item -Path -Recursive -Force $WORKING_DIRECTORY
                 Write-Output "- [INFO] jenkins_remote deleted" | Red
             }
             Write-Output "- [INFO] Deleting downloaded tools..." | Red
@@ -244,23 +286,6 @@ else
     & $javaBinary -version
 }
 
-# Determine absolute work and shared_workspace directory paths
-$firstTwoChars = $WORKING_DIRECTORY.Substring(0,2)
-$firstChar = $WORKING_DIRECTORY.Substring(0,1)
-if ( $firstTwoChars -eq ".\" ) {
-    $WORKDIR_ABSOLUTE_PATH = $WORKING_DIRECTORY.Substring(2)
-    $WORKDIR_ABSOLUTE_PATH = "$PSScriptRoot\$WORKDIR_ABSOLUTE_PATH"
-}
-elseif ( $firstChar -ne "\" )
-{
-    $WORKDIR_ABSOLUTE_PATH = "$PSScriptRoot\$WORKING_DIRECTORY"
-}
-else
-{
-    $WORKDIR_ABSOLUTE_PATH = $WORKING_DIRECTORY
-}
-$WORKING_DIRECTORY = $WORKDIR_ABSOLUTE_PATH -replace "/","\"
-
 # Create shared directories for Vagrant and Terraform jobs
 $virtualbox_shared_directory_path = "$WORKING_DIRECTORY\workspace\VirtualBox\shared_workspace"
 if ( ! ( Test-Path -Path $virtualbox_shared_directory_path ) )
@@ -282,9 +307,9 @@ if ( ! ( Test-Path -Path $vmware_workstation_shared_directory_path ) )
 
 
 # Replace mustache variables in job config.xml files
-New-Item -Path ".\jenkins_home\jobs" -Name "logfiles" -ItemType "directory"
-Copy-Item -Path ".\initial-setup\*" -Destination ".\jenkins_home\" -Recurse -Force
-Get-ChildItem ".\jenkins_home\jobs" -Recurse -Filter config.xml |
+New-Item -Path "$JENKINS_HOME\jobs" -Name "logfiles" -ItemType "directory"
+Copy-Item -Path ".\initial-setup\*" -Destination "$JENKINS_HOME\" -Recurse -Force
+Get-ChildItem "$JENKINS_HOME\jobs" -Recurse -Filter config.xml |
 Foreach-Object {
     Write-Output "Replacing parameters in job XML defintion file $(Write-Output $_.FullName)"
     $filename = $_.FullName
@@ -303,7 +328,7 @@ Foreach-Object {
 }
 
 # Replace mustache variables in local agent xml file
-$filename = ".\jenkins_home\nodes\local\config.xml"
+$filename = "$JENKINS_HOME\nodes\local\config.xml"
 $tempFilePath = "$filename.tmp"
 
 select-string -path $filename -pattern '(?<={{)(.*?)(?=}})' -allmatches  |
@@ -373,7 +398,7 @@ Invoke-WebRequest -Uri $jenkinsUrl/jnlpJars/jenkins-cli.jar -OutFile .\jenkins-c
 Invoke-WebRequest -Uri $jenkinsUrl/jnlpJars/agent.jar -OutFile .\agent.jar
 
 # Replace mustache variables in credential xml files
-Get-ChildItem ".\jenkins_home\" -Filter credential_*.xml |
+Get-ChildItem "$JENKINS_HOME\" -Filter credential_*.xml |
         Foreach-Object {
             Write-Output "Replacing parameters in credential XML defintion file $(Write-Output $_.FullName)"
             $filename = $_.FullName
@@ -390,6 +415,7 @@ Get-ChildItem ".\jenkins_home\" -Filter credential_*.xml |
             {
                 $content = Get-Content -Path $filename -Raw
                 Write-Output $content | & $javaBinary -jar .\jenkins-cli.jar -s $jenkinsUrl create-credentials-by-xml system::system::jenkins _
+                Remove-Item -Force -Path $filename
             } catch {
                 Write-Output "Variable replacements for $filename failed. Please make sure the XML credential for $filename is valid" | Red
             }

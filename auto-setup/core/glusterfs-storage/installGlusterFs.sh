@@ -10,8 +10,17 @@ if [[ -n ${nvme_cli_needed} ]]; then
     /usr/bin/sudo apt install -y nvme-cli lvm2
 fi
 
-# Determine Drive C (GlusterFS) - Relevant for KX-Main only
-driveC=$(lsblk -o NAME,FSTYPE,SIZE -dsn -J | jq -r '.[] | .[] | select(.fstype==null) | select(.size=="'${glusterFsDiskSize}'G") | .name' || true)
+# Determine Drive C (GlusterFS) - Relevant for KX-Main1 only
+for i in {{1..30}}; do
+  driveC=$(lsblk -o NAME,FSTYPE,SIZE -dsn -J | jq -r '.[] | .[] | select(.fstype==null) | select(.size=="'$((${glusterFsDiskSize}+1))'G") | .name' || true)
+  if [[ -z ${driveC} ]]; then
+    log_info "Drive for glusterfs not yet available. Trying a maximum of 30 times. Attempt ${i}"
+    sleep 15
+  else
+    log_info "Drive for glusterfs (${driveC}) now available after attempt ${i} of 30"
+    break
+  fi
+done
 formatted=""
 if [[ ! -f /usr/share/kx.as.code/.config/driveC ]]; then
     echo "${driveC}" | /usr/bin/sudo tee /usr/share/kx.as.code/.config/driveC
@@ -20,7 +29,10 @@ else
     driveC=$(cat /usr/share/kx.as.code/.config/driveC)
     formatted=true
 fi
-
+if [[ -z ${driveC} ]]; then
+  log_error "Error finding mounted drive for setting up glusterfs. Quitting script and sending task to failure queue"
+  return 1
+fi
 # Update Debian repositories as default is old
 wget -O - https://download.gluster.org/pub/gluster/glusterfs/8/rsa.pub | /usr/bin/sudo apt-key add -
 echo deb [arch=amd64] https://download.gluster.org/pub/gluster/glusterfs/8/LATEST/Debian/buster/amd64/apt buster main | /usr/bin/sudo tee /etc/apt/sources.list.d/gluster.list
@@ -166,7 +178,7 @@ if [ -z "$(/usr/bin/sudo grep "heketi" /etc/sudoers || true)" ]; then
 fi
 
 # Add Heketi public key to authorized hosts
-if [ -z "$(/usr/bin/sudo grep "heketi@kx-main" /root/.ssh/authorized_keys || true)" ]; then
+if [ -z "$(/usr/bin/sudo grep "heketi@$(hostname)" /root/.ssh/authorized_keys || true)" ]; then
     /usr/bin/sudo mkdir -p /root/.ssh
     /usr/bin/sudo chmod 700 /root/.ssh
     /usr/bin/sudo cat /etc/heketi/heketi_key.pub | /usr/bin/sudo tee -a /root/.ssh/authorized_keys
@@ -317,7 +329,7 @@ clusterId=$(heketi-cli cluster list | cut -f2 -d: | cut -f1 -d' ' | tr -d '\n')
 # Volume type of "none" is important, as kx.as.code will only have 1 storage (eg, 0 replicas) - provisioning would fail without this
 cat << EOF > ${installationWorkspace}/glusterfs-sc.yaml
 kind: StorageClass
-apiVersion: storage.k8s.io/v1beta1
+apiVersion: storage.k8s.io/v1
 metadata:
   name: gluster-heketi
 provisioner: kubernetes.io/glusterfs

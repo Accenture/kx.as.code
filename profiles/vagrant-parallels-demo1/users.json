@@ -6,14 +6,14 @@
                 "firstname": "Joe",
                 "surname": "Bloggs",
                 "email": "joe@kx-as-code.local",
-                "keyboard_language": "de",
+                "keyboard_language": "us",
                 "role": "admin"
             },
             {
                 "firstname": "Max",
                 "surname": "Mustermann",
                 "email": "max@kx-as-code.local",
-                "keyboard_language": "en",
+                "keyboard_language": "de",
                 "role": "user"
             }
         ]
