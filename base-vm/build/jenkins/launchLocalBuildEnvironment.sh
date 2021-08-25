@@ -296,18 +296,33 @@ if [[ -z $(docker images ${kx_jenkins_image} -q) ]]; then
     fi
 fi
 
-    firstTwoChars=$(echo "${working_directory}" | head -c2)
-    firstChar=$(echo "${working_directory}" | head -c1)
-    if [[ ${firstTwoChars} == "./" ]]; then
-        # if workspace directory starts with ./, convert relative directory to absolute
-        workdir_absolute_path=$(pwd)/$(echo ${working_directory} | sed 's;\./;;g')
-elif     [[ ${firstChar} != "/" ]]; then
-        # If no ./ or / at beginning, assume relative working directory and convert to absolute
-        workdir_absolute_path="$(pwd)/${working_directory}"
+firstTwoChars=$(echo "${working_directory}" | head -c2)
+firstChar=$(echo "${working_directory}" | head -c1)
+if [[ ${firstTwoChars} == "./" ]]; then
+    # if workspace directory starts with ./, convert relative directory to absolute
+    workdir_absolute_path=$(pwd)/$(echo ${working_directory} | sed 's;\./;;g')
+elif [[ ${firstChar} == "/" ]]; then
+    # If / at start, assume provided directory is already absolute and use it
+    workdir_absolute_path=${working_directory}
 else
-        # If / at start, assume provided directory is already absolute and use it
-        workdir_absolute_path=${working_directory}
+    # If no ./ or / at beginning, assume relative working directory and convert to absolute
+    workdir_absolute_path="$(pwd)/${working_directory}"
 fi
+working_directory=${workdir_absolute_path}
+
+firstTwoChars=$(echo "${jenkins_home}" | head -c2)
+firstChar=$(echo "${jenkins_home}" | head -c1)
+if [[ ${firstTwoChars} == "./" ]]; then
+    # if workspace directory starts with ./, convert relative directory to absolute
+    jenkins_home_absolute_path=$(pwd)/$(echo ${jenkins_home} | sed 's;\./;;g')
+elif [[ ${firstChar} == "/" ]]; then
+    # If / at start, assume provided directory is already absolute and use it
+    jenkins_home_absolute_path=${jenkins_home}
+else
+    # If no ./ or / at beginning, assume relative working directory and convert to absolute
+    jenkins_home_absolute_path="$(pwd)/${jenkins_home}"
+fi
+jenkins_home=${jenkins_home_absolute_path}
 
 # Checking if Jenkins home already exists to avoid overwriting configurations and breaking something
 if [ ! -d "${jenkins_home}/jobs" ] || [[ ${override_action} == "recreate"   ]] || [[ ${override_action} == "destroy"   ]] || [[ ${override_action} == "fully-destroy"   ]]; then
@@ -359,6 +374,18 @@ for initialSetupJobConfgXmlFile in ${initialSetupJobConfgXmlFiles}; do
     done
 done
 IFS=${OLD_IFS}
+
+# Replace variables in main config xml file
+for i in {1..5}; do
+  echo "[INFO] Replacing placeholders with values in ${jenkins_home}/config.xml"
+  cat "${jenkins_home}/config.xml" | ./mo > "${jenkins_home}/config.xml_tmp"
+  if [ -s "${jenkins_home}/config.xml_tmp" ]; then
+      mv "${jenkins_home}/config.xml_tmp" "${jenkins_home}/config.xml"
+      break
+  else
+      echo -e "${red}- [ERROR] Target jenkins_home/config.xml file was empty after mustach replacement. Trying again${nc}"
+  fi
+done
 
 # Start Jenkins
 jenkinsContainer=$(docker ps -a -f "name=jenkins" -q)

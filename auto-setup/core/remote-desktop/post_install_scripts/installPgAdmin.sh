@@ -5,9 +5,9 @@ export ldapDn=$(/usr/bin/sudo slapcat | grep dn | head -1 | cut -f2 -d' ')
 
 # Install Postgres Admin Tool
 /usr/bin/sudo mkdir -p /var/lib/pgadmin4/sessions
-/usr/bin/sudo mkdir /var/lib/pgadmin4/storage
-/usr/bin/sudo mkdir /var/log/pgadmin4
-/usr/bin/sudo mkdir /usr/pgadmin4
+/usr/bin/sudo mkdir -p /var/lib/pgadmin4/storage
+/usr/bin/sudo mkdir -p /var/log/pgadmin4
+/usr/bin/sudo mkdir -p /usr/pgadmin4
 /usr/bin/sudo chown -R ${vmUser}:${vmUser} /var/lib/pgadmin4/
 /usr/bin/sudo chown -R ${vmUser}:${vmUser} /var/log/pgadmin4/
 cd /usr/pgadmin4
@@ -156,7 +156,9 @@ server {
 ''' | /usr/bin/sudo tee /etc/nginx/sites-available/pgadmin.conf
 
 # Create shortcut to enable NGINX virtual host
-ln -s /etc/nginx/sites-available/pgadmin.conf /etc/nginx/sites-enabled/pgadmin.conf
+if [[ ! -L /etc/nginx/sites-enabled/pgadmin.conf ]]; then
+    ln -s /etc/nginx/sites-available/pgadmin.conf /etc/nginx/sites-enabled/pgadmin.conf
+fi
 
 # Restart NGINX so new virtual host is loaded
 /usr/bin/sudo systemctl restart nginx

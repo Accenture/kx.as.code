@@ -3,6 +3,9 @@
     "namespace": "metallb-system",
     "installation_type": "script",
     "installation_group_folder": "core",
+    "environment_variables": {
+        "metalLbVersion": "v0.10.2"
+    },
     "retry": "true",
     "install_scripts": [
         "installMetalLb.sh"

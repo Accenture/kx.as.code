@@ -6,12 +6,15 @@ node('local') {
     if ( os == "darwin" ) {
         echo "Running on Mac"
         packerOsFolder="darwin-linux"
+        jqDownloadPath="${JQ_DARWIN_DOWNLOAD_URL}"
     } else if ( os == "linux" ) {
         echo "Running on Linux"
         packerOsFolder="darwin-linux"
+        jqDownloadPath="${JQ_LINUX_DOWNLOAD_URL}"
     } else {
         echo "Running on Windows"
         os="windows"
+        jqDownloadPath="${JQ_WINDOWS_DOWNLOAD_URL}"
         packerOsFolder="windows"
     }
 }
@@ -53,13 +56,28 @@ pipeline {
             steps {
                 script {
                     dir(shared_workspace) {
-                        sh """
-                        export kxMainBoxLocation=${kx_main_box_location}
-                        export kxWorkerBoxLocation=${kx_worker_box_location}
-                        cd profiles/vagrant-virtualbox-demo1
-                        vagrant up
-                        VBoxManage list vms
-                        """
+                        withCredentials([usernamePassword(credentialsId: 'DOCKERHUB_ACCOUNT', passwordVariable: 'dockerHubPassword', usernameVariable: 'dockerHubUsername')]) {
+                            sh """
+                            if [[ ! -f ./jq* ]]; then
+                                curl -L -o jq ${jqDownloadPath}
+                                chmod +x ./jq
+                            fi
+                            export kx_version=\$(cat versions.json | ./jq -r '.kxascode')
+                            echo \${kx_version}
+                            export kxMainBoxLocation=${kx_main_box_location}
+                            export kxNodeBoxLocation=${kx_node_box_location}
+                            export dockerHubEmail=${dockerhub_email}
+                            echo \${kxMainBoxLocation}
+                            echo \${kxNodeBoxLocation}
+                            echo \${dockerHubEmail}
+                            cd profiles/vagrant-virtualbox-demo1
+                            if [[ -f kx.as.code_main-ip-address ]]; then
+                                rm -f kx.as.code_main-ip-address
+                            fi
+                            vagrant up --provider virtualbox
+                            VBoxManage list vms
+                            """
+                        }
                     }
                 }
             }

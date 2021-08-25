@@ -12,9 +12,9 @@ if ( $VM_NAME.Contains("main") )
     $KX_VM_TYPE = "main"
 }
 
-if ( $VM_NAME.Contains("worker") )
+if ( $VM_NAME.Contains("node") )
 {
-    $KX_VM_TYPE = "worker"
+    $KX_VM_TYPE = "node"
 }
 
 if (${PACKER_BUILDER_TYPE} -eq "vmware-iso")

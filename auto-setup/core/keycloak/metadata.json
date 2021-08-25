@@ -13,6 +13,9 @@
         "helm_version": "",
         "set_key_values": []
     },
+    "letsencrypt": {
+        "enabled": true
+    },
     "urls": [
         {
             "url": "https://{{componentName}}.{{baseDomain}}",

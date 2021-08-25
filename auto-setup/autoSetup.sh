@@ -74,10 +74,10 @@ if [[ ${action} == "install"   ]]; then
             log_error "Pre-install script ${installComponentDirectory}/pre_install_scripts/${script} does not exist. Check your spelling in the \"kxascode.json\" file and that it is checked in correctly into Git"
         else
             log_info "Executing pre-install script ${installComponentDirectory}/pre_install_scripts/${script}"
-            . ${installComponentDirectory}/pre_install_scripts/${script}
-            rc=$?
+            . ${installComponentDirectory}/pre_install_scripts/${script} || rc=$? && log_info "${installComponentDirectory}/pre_install_scripts/${script} returned with rc=$rc"
             if [[ ${rc} -ne 0 ]]; then
                 log_error "Execution of pre install script \"${script}\" ended in a non zero return code ($rc)"
+                return 1
             fi
         fi
     done
@@ -99,10 +99,10 @@ if [[ ${action} == "install"   ]]; then
         # Ex<ecute scripts
         for script in ${scriptsToExecute}; do
             log_info "Excuting script \"${script}\" in directory ${installComponentDirectory}"
-            . ${installComponentDirectory}/${script}
-            rc=$?
+            . ${installComponentDirectory}/${script} || rc=$? && log_info "${installComponentDirectory}/${script} returned with rc=$rc"
             if [[ ${rc} -ne 0 ]]; then
                 log_error "Execution of install script \"${script}\" ended in a non zero return code ($rc)"
+                return 1
             fi
         done
 
@@ -143,7 +143,7 @@ if [[ ${action} == "install"   ]]; then
             envhandlebars < ${installComponentDirectory}/values_template.yaml > ${installationWorkspace}/${componentName}_values.yaml
             valuesFileOption="-f ${installationWorkspace}/${componentName}_values.yaml"
         else
-            # Set to blank to avoid variable unound error
+            # Set to blank to avoid variable unbound error
             valuesFileOption=""
         fi
 
@@ -159,10 +159,10 @@ if [[ ${action} == "install"   ]]; then
         echo ${helmCommmand} | tee ${installationWorkspace}/helm_${componentName}.sh
         log_debug "Helm command: $(cat ${installationWorkspace}/helm_${componentName}.sh)"
         chmod 755 ${installationWorkspace}/helm_${componentName}.sh
-        ${installationWorkspace}/helm_${componentName}.sh
-        rc=$?
+        ${installationWorkspace}/helm_${componentName}.sh || rc=$? && log_info "${installationWorkspace}/helm_${componentName}.sh returned with rc=$rc"
         if [[ ${rc} -ne 0 ]]; then
-            log_error "Execution of Helm command \"${helmCommmand}\" ended in a non zero return code ($rc)"   
+            log_error "Execution of Helm command \"${helmCommmand}\" ended in a non zero return code ($rc)"
+            return 1
         fi
 
         ####################################################################################################################################################################
@@ -231,10 +231,10 @@ if [[ ${action} == "install"   ]]; then
         # Add App to ArgoCD
         argoCdAppAddCommand="argocd app create $(echo ${componentName} | sed 's/_/-/g') --repo  ${argoCdRepositoryUrl} --path ${argoCdRepositoryPath}  --dest-server ${argoCdDestinationServer} --dest-namespace ${argoCdDestinationNameSpace} --sync-policy ${argoCdSyncPolicy} ${argoCdAutoPruneOption} ${argoCdSelfHealOption}"
         log_debug "ArgoCD command: ${argoCdAppAddCommand}"
-        ${argoCdAppAddCommand}
-        rc=$?
+        ${argoCdAppAddCommand} || rc=$? && log_info "ArgoCD command: ${argoCdAppAddCommand} returned with rc=$rc"
         if [[ ${rc} -ne 0 ]]; then
             log_error "Execution of ArgoCD command ended in a non zero return code ($rc)"
+            return 1
         fi
         for i in {1..10}; do
             response=$(argocd app list --output json | jq -r '.[] | select (.metadata.name=="'${componentName}'") | .metadata.name')
@@ -260,15 +260,20 @@ if [[ ${action} == "install"   ]]; then
         for i in {1..60}; do
             # Added workaround for Gitlab-Runner, which is not expected to work until later
             # This is because at this stage the docker registry is not yet up to push the custom image
-            totalPods=$(kubectl get pods --namespace ${namespace} | grep -v "STATUS" | grep -v "gitlab-runner" | wc -l)
-            runningPods=$(kubectl get pods --namespace ${namespace} | grep -v "STATUS" | grep -v "gitlab-runner" | grep -i -E 'Running|Completed' | wc -l)
-            log_info "Waiting for all pods in ${namespace} namespace to have Running status - TOTAl: $totalPods, RUNNING:  $runningPods"
-            if [[ $totalPods -eq $runningPods ]]; then break; fi
-                sleep 10
+            totalPods=$(kubectl get pods --namespace ${namespace} | grep -v "STATUS" | grep -v "gitlab-runner" | wc -l || true)
+            runningPods=$(kubectl get pods --namespace ${namespace} | grep -v "STATUS" | grep -v "gitlab-runner" | grep -i -E 'Running|Completed' | wc -l || true)
+            log_info "Waiting for all pods in ${namespace} namespace to have Running status - CHECK: ${i}, TOTAl: ${totalPods}, RUNNING:  ${runningPods}"
+            if [[ ${totalPods} -eq ${runningPods} ]]; then
+              log_info "The number of running pods (${runningPods}) running in namespace ${namespace}, equals the number of total pods (${totalPods}) after ${i} checks, continuing..."
+              break
+            fi
+            sleep 15
         done
 
         if [[ $totalPods -ne $runningPods ]]; then
-            log_warn "Atfer 60 checks, the number of total pods in the ${namespace} namespace still does not equal the number of running pods"
+            log_warn "After 60 checks, the number of total pods (${totalPods}) in the ${namespace} namespace still does not equal the number of running pods (${runningPods})"
+            rc=1
+            return ${rc}
         fi
 
         # URL READINESS HEALTH CHECK
@@ -281,18 +286,29 @@ if [[ ${action} == "install"   ]]; then
             expectedHttpResponseCode=$(echo ${readinessCheckData} | jq -r '.expected_http_response_code')
             expectedContentString=$(echo ${readinessCheckData} | jq -r '.expected_http_response_string')
             expectedJsonValue=$(echo ${readinessCheckData} | jq -r '.expected_json_response.json_value')
+            curlAuthOption=""
+
+            # Set curl auth option, if http_auth_required=true in solution's metadata.json
+            if [[ "${authorizationRequired}" == "true" ]]; then
+                httpAuthSecretName=$(echo ${readinessCheckData} | jq -r '.http_auth_secret.secret_name?')
+                httpAuthUsernameField=$(echo ${readinessCheckData} | jq -r '.http_auth_secret.username_field?')
+                httpAuthUsername=$(kubectl get secret -n ${namespace} ${httpAuthSecretName} -o json | jq -r '.data.'${httpAuthUsernameField}'' | base64 --decode)
+                httpAuthPasswordField=$(echo ${readinessCheckData} | jq -r '.http_auth_secret.password_field?')
+                httpAuthPassword=$(kubectl get secret -n ${namespace} ${httpAuthSecretName} -o json | jq -r '.data.'${httpAuthPasswordField}'' | base64 --decode)
+                curlAuthOption="-u ${httpAuthUsername}:${httpAuthPassword}"
+            fi
 
             for i in {1..60}; do
-                http_code=$(curl -s -o /dev/null -L -w '%{http_code}' ${applicationUrl}${urlCheckPath} || true)
+                http_code=$(curl ${curlAuthOption} -s -o /dev/null -L -w '%{http_code}' ${applicationUrl}${urlCheckPath} || true)
                 if [[ "${http_code}" == "${expectedHttpResponseCode}" ]]; then
                     echo "Application \"${componentName}\" is up. Received expected response [RC=${http_code}]"
                     break
                 fi
-                echo -e "${blue}- [INFO] Waiting for ${applicationUrl}${urlCheckPath} [Got RC=${http_code}, Expected RC=${expectedHttpResponseCode}]${nc}"
+                log_info "Waiting for ${applicationUrl}${urlCheckPath} [Got RC=${http_code}, Expected RC=${expectedHttpResponseCode}]"
                 sleep 30
             done
 
-            finalReturnCode=$(curl -s -o /dev/null -L -w '%{http_code}' ${applicationUrl}${urlCheckPath})
+            finalReturnCode=$(curl ${curlAuthOption} -s -o /dev/null -L -w '%{http_code}' ${applicationUrl}${urlCheckPath})
             if [[ ${finalReturnCode} -ne ${expectedHttpResponseCode} ]]; then
                 log_warn "Final health check (60/60) of URL ${applicationUrl} failed. Expected RC ${expectedHttpResponseCode}, but got RC ${finalReturnCode} instead"
             fi
@@ -325,10 +341,39 @@ if [[ ${action} == "install"   ]]; then
     fi
 
     # SCRIPTED HEALTH CHECK
+    #TODO
 
     ####################################################################################################################################################################
     ##      P O S T    I N S T A L L    S T E P S
     ####################################################################################################################################################################
+
+    if [[ -n ${namespace} ]]; then
+      # LetsEncrypt
+      letsencryptEnabled=$(cat ${componentMetadataJson} | jq '.letsencrypt?.enabled?')
+      letsencryptIngressNames=$(cat ${componentMetadataJson} | jq -r '.letsencrypt?.ingress_names[]?')
+
+      log_debug "letsencryptEnabled: ${letsencryptEnabled}"
+      log_debug  "letsencryptIngressNames: ${letsencryptIngressNames}"
+
+      # Override Ingress TLS settings if LetsEncrypt is set as issuer
+      if [[ "${letsencryptEnabled}" != "false" ]] && [[ "${sslProvider}" == "letsencrypt" ]]; then
+
+        if [[ -n ${letsencryptIngressNames} ]] && [[ "${letsencryptIngressNames}" != "null" ]]; then
+          log_info "Specific ingress name(s) specified in metadata.json for ${componentName} -> ${letsencryptIngressNames}"
+        elif [[ "${namespace}" != "kube-system" ]]; then
+            log_info "Specific ingress name not specified in metadata.json for ${componentName}. Will look up the ingress names in namespace ${namespace}"
+            letsencryptIngressNames=$(kubectl get ingress -n ${namespace} -o json | jq -r '.items[].metadata.name')
+        fi
+
+        for ingressName in ${letsencryptIngressNames}; do
+          log_info "Adding LetsEncrypt annotations to Ingress --> ${ingressName}"
+          kubectl patch ingress ${ingressName} --type='json' -p='[{"op": "add", "path": "/spec/tls/0/secretName", "value":"'${ingressName}'-tls"}]' -n ${namespace}
+          kubectl annotate ingress ${ingressName} kubernetes.io/ingress.class=nginx -n ${namespace} --overwrite=true
+          kubectl annotate ingress ${ingressName} cert-manager.io/cluster-issuer=letsencrypt-${letsEncryptEnvironment} -n ${namespace} --overwrite=true
+        done
+
+      fi
+    fi
 
     componentPostInstallScripts=$(cat ${componentMetadataJson} | jq -r '.post_install_scripts[]?')
     # Loop round post-install scripts
@@ -338,10 +383,10 @@ if [[ ${action} == "install"   ]]; then
         else
             echo "Executing post-install script ${installComponentDirectory}/post_install_scripts/${script}"
             log_info "Executing post-install script ${installComponentDirectory}/post_install_scripts/${script}"
-            . ${installComponentDirectory}/post_install_scripts/${script}
-            rc=$?
+            . ${installComponentDirectory}/post_install_scripts/${script} || rc=$? && log_info "${installComponentDirectory}/post_install_scripts/${script} returned with rc=$rc"
             if [[ ${rc} -ne 0 ]]; then
                 log_error "Execution of post install script \"${script}\" ended in a non zero return code ($rc)"
+                return 1
             fi
         fi
     done

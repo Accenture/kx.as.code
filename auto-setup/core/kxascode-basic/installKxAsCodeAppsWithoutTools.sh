@@ -23,23 +23,6 @@ cd /usr/share/kx.as.code/git/kx.as.code_docs/kubernetes
 cd /usr/share/kx.as.code/git/kx.as.code_techradar/kubernetes
 . ./install.sh
 
-# Override Ingress TLS settings if LetsEncrypt is set as issuer
-if [[ "${sslProvider}" == "letsencrypt" ]]; then
-  # Add LetsEncrypt issuer for KX-Docs
-  kubectl patch ingress kx-docs-ingress --type='json' -p='[{"op": "add", "path": "/spec/tls/0/secretName", "value":"kx-docs-tls"}]' -n ${namespace}
-  kubectl annotate ingress kx-docs-ingress kubernetes.io/tls-acme=true -n ${namespace} --overwrite=true
-  kubectl annotate ingress kx-docs-ingress certmanager.k8s.io/acme-challenge-type=http01 -n ${namespace} --overwrite=true
-  kubectl annotate ingress kx-docs-ingress kubernetes.io/ingress.class=nginx -n ${namespace} --overwrite=true
-  kubectl annotate ingress kx-docs-ingress cert-manager.io/cluster-issuer=letsencrypt-staging -n ${namespace} --overwrite=true
-
-  # Add LetsEncrypt issuer for TechRadar
-  kubectl patch ingress tech-radar-ingress --type='json' -p='[{"op": "add", "path": "/spec/tls/0/secretName", "value":"tech-radar-tls"}]' -n ${namespace}
-  kubectl annotate ingress tech-radar-ingress kubernetes.io/tls-acme=true -n ${namespace} --overwrite=true
-  kubectl annotate ingress tech-radar-ingress certmanager.k8s.io/acme-challenge-type=http01 -n ${namespace} --overwrite=true
-  kubectl annotate ingress tech-radar-ingress kubernetes.io/ingress.class=nginx -n ${namespace} --overwrite=true
-  kubectl annotate ingress tech-radar-ingress cert-manager.io/cluster-issuer=letsencrypt-staging -n ${namespace} --overwrite=true
-fi
-
 # Return to previous directory
 cd -
 

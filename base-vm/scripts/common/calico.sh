@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # Install calicoctl
-curl -O -L  https://github.com/projectcalico/calicoctl/releases/download/v3.17.1/calicoctl
+curl -O -L  https://github.com/projectcalico/calicoctl/releases/download/v3.19.1/calicoctl
 sudo chmod +x calicoctl
 sudo mv calicoctl /usr/local/bin
 

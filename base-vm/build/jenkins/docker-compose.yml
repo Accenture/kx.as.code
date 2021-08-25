@@ -5,7 +5,7 @@ services:
     image: ${kx_jenkins_image}
     ports:
       - ${jenkins_server_port}:8080
-      - ${jenkins_jnlp_port}:50000
+      - ${jenkins_jnlp_port}:${jenkins_jnlp_port}
     container_name: jenkins
     volumes:
       - ${jenkins_home}:/var/jenkins_home

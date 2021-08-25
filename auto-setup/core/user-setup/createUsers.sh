@@ -140,7 +140,7 @@ if [[ ${numUsersToCreate} -ne 0 ]]; then
 
             # Restart NSLCD and NSCD to make new users available for logging in
             /usr/bin/sudo systemctl restart nslcd.service
-            /usr/bin/sudo systemctl restart nscd.service
+            /usr/bin/sudo systemctl restart unscd.service
 
             # Test for user availability
             for i in {1..10}; do
@@ -188,7 +188,7 @@ if [[ ${numUsersToCreate} -ne 0 ]]; then
             fi
 
             # Check user was added successfully
-            ldapsearch -H ldapi:/// -Y EXTERNAL -LLL -b "${ldapDn}" memberOf 2> /dev/null | grep memberOf
+            /usr/bin/sudo ldapsearch -H ldapi:/// -Y EXTERNAL -LLL -b "${ldapDn}" memberOf 2> /dev/null | grep memberOf
 
             # Give user root priviliges
             printf "${userid}        ALL=(ALL)       NOPASSWD: ALL\n" | /usr/bin/sudo tee -a /etc/sudoers
@@ -212,16 +212,17 @@ if [[ ${numUsersToCreate} -ne 0 ]]; then
 
         if /usr/bin/sudo test ! -f /home/${userid}/.config/autostart/keyboard-language.desktop; then
         echo """[Desktop Entry]
-    Type=Application
-    Name=SetKeyboardLanguage
-    Exec=setxkbmap ${keyboardLanguages} -option grp:alt_shift_toggle
-    """ | /usr/bin/sudo tee /home/${userid}/.config/autostart/keyboard-language.desktop
-    fi
+        Type=Application
+        Name=SetKeyboardLanguage
+        Exec=setxkbmap ${keyboardLanguages} -option grp:alt_shift_toggle
+        """ | sed -e 's/^[ \t]*//' | sed '/^$/d' | /usr/bin/sudo tee /home/${userid}/.config/autostart/keyboard-language.desktop
+        fi
 
         # Assign random avatar to user
         ls /usr/share/avatars/avatar_*.png | sort -R | tail -1 | while read file; do
-            if /usr/bin/sudo test ! -f /home/${userid}/.face.icon; then
+            if [[ -z $(diff ${installationWorkspace}/skel/.face.icon /home/${userid}/.face.icon) ]]; then
                 /usr/bin/sudo cp -f $file /home/${userid}/.face.icon
+                echo "Set face avatar to ${file}"
             fi
         done
 
@@ -285,7 +286,7 @@ if [[ ${numUsersToCreate} -ne 0 ]]; then
             /usr/bin/sudo kubectl create clusterrolebinding oidc-cluster-admin-${userid} --clusterrole=cluster-admin --user='https://keycloak.'${baseDomain}'/auth/realms/'${kcRealm}'#'${kcUserId}''
 
         # Create and configure XRDP connection in Guacamole database
-        if [[ -z "$(/usr/bin/sudo su - postgres -c 'psql -U postgres -d guacamole_db -c "select * FROM guacamole_entity WHERE name = '${userid}' AND guacamole_entity.type = 'USER';"')" ]]; then
+        if [[ -z $(/usr/bin/sudo su - postgres -c "psql -t -U postgres -d guacamole_db -c \"select name FROM guacamole_entity WHERE name = '${userid}' AND guacamole_entity.type = 'USER';\"") ]]; then
         echo """
     INSERT INTO guacamole_entity (name, type) VALUES ('${userid}', 'USER');
     INSERT INTO guacamole_user (entity_id, password_hash, password_salt, password_date)

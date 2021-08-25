@@ -13,9 +13,11 @@ cd ${certificatesWorkspace}
 apt-get update && /usr/bin/sudo apt-get install -y apt-transport-https
 curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | /usr/bin/sudo apt-key add -
 echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" | /usr/bin/sudo tee -a /etc/apt/sources.list.d/kubernetes.list
-apt-get update
-apt-get install -y kubelet kubeadm kubectl
-apt-mark hold kubelet kubeadm kubectl
+# Read Kubernetes version to be installed
+kubeVersion=$(cat ${installationWorkspace}/versions.json | jq -r '.kubernetes')
+/usr/bin/sudo apt-get update
+/usr/bin/sudo apt-get install -y kubelet=${kubeVersion} kubeadm=${kubeVersion} kubectl=${kubeVersion}
+/usr/bin/sudo apt-mark hold kubelet kubeadm kubectl
 
 # Install Helm 3
 curl -fsSL --output ${certificatesWorkspace}/get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3

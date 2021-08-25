@@ -3,6 +3,9 @@ set -euo pipefail
 
 # Create directory for storing generated certs
 export elasticStackCertsDir=${installationWorkspace}/elastic-stack-certs
+if [[ -d ${elasticStackCertsDir} ]]; then
+  /usr/bin/sudo rm -rf ${elasticStackCertsDir}
+fi
 /usr/bin/sudo mkdir -p ${elasticStackCertsDir}
 /usr/bin/sudo chmod 777 ${elasticStackCertsDir}
 
@@ -48,6 +51,10 @@ instances:
       - elastic-packetbeat-packetbeat
 """ | /usr/bin/sudo tee ${elasticStackCertsDir}/instance.yml
 
+if [[ -f ${elasticStackCertsDir}/certs.zip ]]; then
+  /usr/bin/sudo rm -f ${elasticStackCertsDir}/certs.zip
+fi
+
 # Create Elastic certificates with elasticsearch-certutil
 password=$(docker run --rm busybox /bin/sh -c "< /dev/urandom tr -cd '[:alnum:]' | head -c32")
 docker run --rm -v ${elasticStackCertsDir}:/certs -i -w /app \
@@ -57,6 +64,9 @@ docker run --rm -v ${elasticStackCertsDir}:/certs -i -w /app \
 
 # Unzip certs
 /usr/bin/sudo unzip ${elasticStackCertsDir}/certs.zip -d ${elasticStackCertsDir}
+
+# Delete certificates secret if it already exists
+kubectl delete secret -n ${namespace} elastic-certificates || log_info "elastic-certificates didn't exist in namespace ${namespace}, so nothing to delete"
 
 # Create certificate secrets
 kubectl -n ${namespace} create secret generic elastic-certificates \
