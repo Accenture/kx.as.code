@@ -1,16 +1,62 @@
-import React from "react";
-import { Box } from "@material-ui/core";
+import {React, Component} from "react";
+import { Box, Button } from "@material-ui/core"
 import { useTranslation } from 'react-i18next';
-const Dashboard = (props) => {
-    const { t } = useTranslation();
-    return (
-      <div>
-        <Box id="Home">
-          <h1>{t("HOME_TITLE")}</h1>
-          <p>{t("HOME_SUBTITLE")}</p>
-        </Box>
-        <pre>{t("CoreComponents")}</pre>
-      </div>
+import "../dashboard/Dashboard.scss"
+import "../applications/ApplicationCard"
+import ApplicationCard from "../applications/ApplicationCard";
+import * as API from './api';
+import URLSearchParams from 'url-search-params';
+
+
+export default class Dashboard extends Component {
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      a: "",
+      b: "",
+      result: ""
+    };
+  }
+
+  componentDidMount() { 
+    console.log(API);
+    API.subscribe(({result})=>{
+      this.setState({
+        result: result
+      })
+   });
+  }
+
+  handleChange(event) {
+    this.setState({
+      [event.target.name]: event.target.value}
     );
-};
-export default Dashboard;
+  }
+
+  handleSubmit(event) {
+    event.preventDefault();
+
+    const params = new URLSearchParams();
+    params.append('a', this.state.a);
+    params.append('b', this.state.b);
+
+    fetch(`${API.API_URL}/api/calc/sum`, { method: 'POST', body: params })
+    .then(res => res.json());
+  }
+
+  render() {
+    // const { t } = useTranslation();
+    return (
+      <Box id="Home">
+        <Box className="application-cards">
+          <ApplicationCard />
+          <ApplicationCard />
+          <ApplicationCard />
+          <ApplicationCard />
+
+        </Box>
+      </Box>
+    );
+  }
+}
