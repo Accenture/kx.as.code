@@ -139,6 +139,7 @@
         "createProjects.sh",
         "mapUsersToGroups.sh",
         "populateDemoProjects.sh",
-        "createGroupVariables.sh"
+        "createGroupVariables.sh",
+        "createOAuth.sh"
     ]
 }
