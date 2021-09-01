@@ -29,7 +29,7 @@ rabbitMQHandler((connection) => {
   })
 })
 
-app.use(bodyParser.urlencoded({ extended: true }))
+app.use(express.urlencoded({ extended: true }))
 app.use('/api', router)
 router.route('/calc/sum').post((req, res) => {
     rabbitMQHandler((connection) => {
@@ -40,7 +40,7 @@ router.route('/calc/sum').post((req, res) => {
         var ex = 'calc_sum'
         var msg = JSON.stringify({task: req.body });
 
-        channel.publish(ex, '', new Buffer(msg), {persistent: false})
+        channel.publish(ex, '', Buffer.from(msg), {persistent: false})
 
         channel.close(() => {connection.close()})
       })
