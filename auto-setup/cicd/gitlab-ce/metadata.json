@@ -130,7 +130,8 @@
     "pre_install_scripts": [
         "getVariables.sh",
         "createS3Buckets.sh",
-        "createSecrets.sh"
+        "createSecrets.sh",
+        "createOAuth.sh"
     ],
     "post_install_scripts": [
         "createLoginToken.sh",
@@ -139,7 +140,6 @@
         "createProjects.sh",
         "mapUsersToGroups.sh",
         "populateDemoProjects.sh",
-        "createGroupVariables.sh",
-        "createOAuth.sh"
+        "createGroupVariables.sh"
     ]
 }
