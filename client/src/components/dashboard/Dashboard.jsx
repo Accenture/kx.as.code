@@ -32,11 +32,11 @@ export default class Dashboard extends Component {
   }
   
   getItems = () => {
-    axios.get("http://localhost:15672/api/queues/%2f/pending_queue").then(response => {
+    axios.get("http://localhost:5000/queues/pending_queue").then(response => {
       this.setState({
         items: response
       })
-      console.log(this.state.items);
+      console.log("Items: ", this.state.items);
     }).catch(function (error){
       console.log(error);
     })
