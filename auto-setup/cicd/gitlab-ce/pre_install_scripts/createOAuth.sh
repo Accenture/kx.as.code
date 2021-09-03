@@ -81,5 +81,5 @@ args:
     identifier: '${clientId}'
     secret: '${clientSecret}'
     redirect_uri: 'https://gitlab.${baseDomain}/users/auth/openid_connect/callback'
-""" /usr/bin/sudo tee ${installationWorkspace}/gitlab-sso-providers.yaml
+""" | /usr/bin/sudo tee ${installationWorkspace}/gitlab-sso-providers.yaml
 kubectl create secret generic sso-provider --namespace=${componentName} --from-file=provider=${installationWorkspace}/gitlab-sso-providers.yaml
