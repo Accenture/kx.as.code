@@ -54,7 +54,7 @@ fi
 # kubectl delete pod -l  app=webservice -n gitlab-ce
 
 
-kubectl create ns ${componentName}
+#kubectl create ns ${componentName}
 
 echo """
 name: 'openid_connect'
