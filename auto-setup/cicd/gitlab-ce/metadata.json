@@ -83,8 +83,8 @@
             "redis.master.persistence.size=5Gi",
             "global.certificates.customCAs[0].secret=intermediate-ca",
             "global.certificates.customCAs[1].secret=root-ca",
-            "global.certificates.customCAs[2].secret=server-crt"
-
+            "global.certificates.customCAs[2].secret=server-crt",
+            "global.appConfig.omniauth.providers[0].secret=sso-provider"
         ]
     },
     "categories": [
