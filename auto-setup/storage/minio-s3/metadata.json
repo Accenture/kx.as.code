@@ -17,6 +17,7 @@
             "ingress.hosts[0]={{componentName}}.{{baseDomain}}",
             "ingress.tls[0].hosts[0]={{componentName}}.{{baseDomain}}",
             "ingress.annotations.\"nginx\\.ingress\\.kubernetes\\.io/proxy-body-size\"=\"1000m\"",
+            "ingress.annotations.\"kubernetes\\.io/ingress\\.class\"=\"nginx\"",
             "mode=standalone",
             "service.type=ClusterIP",
             "environment.MINIO_REGION=eu-central-1"

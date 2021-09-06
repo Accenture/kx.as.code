@@ -128,7 +128,6 @@ EOF
 
     # Generate Server Certificates
     cfssl gencert -ca kx_intermediate_ca.pem -ca-key kx_intermediate_ca-key.pem -config intermediate_to_client_cert.json csr_kx_server.json | cfssljson -bare kx_server
-
     # Prepare Certificates for Kubernetes Secrets Import
     mkdir -p ${installationWorkspace}/kx-certs
     /usr/bin/sudo cp ${certificatesWorkspace}/kx_intermediate_ca.pem ${installationWorkspace}/kx-certs/ca.crt

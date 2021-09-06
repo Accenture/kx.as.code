@@ -80,7 +80,12 @@
             "postgresql.persistence.storageClass=local-storage",
             "postgresql.persistence.size=5Gi",
             "redis.master.persistence.storageClass=local-storage",
-            "redis.master.persistence.size=5Gi"
+            "redis.master.persistence.size=5Gi",
+            "global.certificates.customCAs[0].secret=intermediate-ca",
+            "global.certificates.customCAs[1].secret=root-ca",
+            "global.certificates.customCAs[2].secret=server-crt",
+            "global.appConfig.omniauth.providers[0].secret=sso-provider",
+            "global.appConfig.omniauth.enabled=true"
         ]
     },
     "categories": [
@@ -126,7 +131,8 @@
     "pre_install_scripts": [
         "getVariables.sh",
         "createS3Buckets.sh",
-        "createSecrets.sh"
+        "createSecrets.sh",
+        "createOAuth.sh"
     ],
     "post_install_scripts": [
         "createLoginToken.sh",
