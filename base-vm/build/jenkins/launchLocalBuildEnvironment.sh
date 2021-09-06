@@ -170,7 +170,7 @@ if [[ -z ${dockerComposeBinary}   ]]; then
     curl -L -s -o ./docker-compose ${dockerComposeInstallerUrl}
     chmod 755 ./docker-compose
     if [[ $os == "windows" ]]; then
-        mv ./docker-compose ./docker-compose.exe
+        mv -f ./docker-compose ./docker-compose.exe
         dockerComposeBinary="./docker-compose.exe"
     else
         dockerComposeBinary="./docker-compose"
@@ -197,7 +197,7 @@ if [[ -z ${jqBinary}   ]]; then
     curl -L -s -o ./jq ${jqInstallerUrl}
     chmod 755 ./jq
     if [[ $os == "windows" ]]; then
-        mv ./jq ./jq.exe
+        mv -f ./jq ./jq.exe
         jqBinary="./jq.exe"
     else
         jqBinary="./jq"
@@ -366,7 +366,7 @@ for initialSetupJobConfgXmlFile in ${initialSetupJobConfgXmlFiles}; do
     for i in {1..5}; do
         cat "${initialSetupJobConfgXmlFile}" | ./mo > "${initialSetupJobConfgXmlFile}_tmp"
         if [ -s "${initialSetupJobConfgXmlFile}_tmp" ]; then
-            mv "${initialSetupJobConfgXmlFile}_tmp" "${initialSetupJobConfgXmlFile}"
+            mv -f "${initialSetupJobConfgXmlFile}_tmp" "${initialSetupJobConfgXmlFile}"
             break
         else
             echo -e "${red}- [ERROR] Target config.xml file was empty after mustach replacement. Trying again${nc}"
@@ -380,7 +380,7 @@ for i in {1..5}; do
   echo "[INFO] Replacing placeholders with values in ${jenkins_home}/config.xml"
   cat "${jenkins_home}/config.xml" | ./mo > "${jenkins_home}/config.xml_tmp"
   if [ -s "${jenkins_home}/config.xml_tmp" ]; then
-      mv "${jenkins_home}/config.xml_tmp" "${jenkins_home}/config.xml"
+      mv -f "${jenkins_home}/config.xml_tmp" "${jenkins_home}/config.xml"
       break
   else
       echo -e "${red}- [ERROR] Target jenkins_home/config.xml file was empty after mustach replacement. Trying again${nc}"
