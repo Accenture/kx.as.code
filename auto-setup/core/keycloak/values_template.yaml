@@ -23,7 +23,8 @@ podDisruptionBudget:
 ingress:
   enabled: true
   servicePort: http
-  annotations: {}
+  annotations: 
+    kubernetes.io/ingress.class: nginx
   labels: {}
   rules:
     -
