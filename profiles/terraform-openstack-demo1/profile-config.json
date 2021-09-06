@@ -16,7 +16,7 @@
                 "external_network_id": "48af4f9c-b380-4451-a13b-ab609b672b95"
             }
         },
-        "allowWorkloadsOnMaster": false,
+        "allowWorkloadsOnMaster": true,
         "disableSessionTimeout": true,
         "certificationMode": false,
         "disableLinuxDesktop": false,
