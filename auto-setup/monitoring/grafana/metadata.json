@@ -4,12 +4,12 @@
     "installation_type": "helm",
     "installation_group_folder": "monitoring",
     "environment_variables": {
-        "grafanaVersion": "7.5.4"
+        "grafanaVersion": "8.1.2"
     },
     "helm_params": {
-        "repository_url": "",
-        "repository_name": "stable/grafana",
-        "helm_version": "",
+        "repository_url": "https://grafana.github.io/helm-charts",
+        "repository_name": "grafana",
+        "helm_version": "6.16.4",
         "set_key_values": [
             "image.tag={{grafanaVersion}}",
             "ingress.enabled=true",
