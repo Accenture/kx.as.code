@@ -21,6 +21,9 @@ export action=""
 export componentName=""
 export componentInstallationFolder=""
 export payload=""
+export dockerHubUsername=""
+export dockerHubPassword=""
+export dockerHubEmail=""
 
 # Copy versions from k.as.code GIT repo
 if [[ ! -f ${installationWorkspace}/versions.json ]]; then
