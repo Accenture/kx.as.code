@@ -46,5 +46,10 @@
         "public_subnet_cidr_one": "10.0.3.0/24",
         "public_subnet_cidr_two": "10.0.4.0/24",
         "remote_access_cidrs": ["84.178.213.25/32"]
+    },
+    "docker": {
+        "dockerhub_username": "",
+        "dockerhub_email": "",
+        "dockerhub_password": ""
     }
 }

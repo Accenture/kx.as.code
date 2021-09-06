@@ -23,4 +23,7 @@ locals {
   external_network_id = local.raw_data.config.vm_properties.openstack.external_network_id
   kx_main_image_id = local.raw_data.config.vm_properties.openstack.kx_main_image_id
   kx_node_image_id = local.raw_data.config.vm_properties.openstack.kx_node_image_id
+  dockerhub_username = local.raw_data.config.docker.dockerhub_username
+  dockerhub_email = local.raw_data.config.docker.dockerhub_email
+  dockerhub_password = local.raw_data.config.docker.dockerhub_password
 }
