@@ -4,6 +4,7 @@ set -euo pipefail
 # Define base variables
 export sharedKxHome=/usr/share/kx.as.code
 export installationWorkspace=${sharedKxHome}/workspace
+export certificatesWorkspace=${installationWorkspace}/certificates
 export actionWorkflows="pending wip completed failed retry"
 export defaultDockerHubSecret="default/regcred"
 export sharedGitHome=${sharedKxHome}/git
