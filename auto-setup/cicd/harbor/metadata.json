@@ -19,6 +19,7 @@
             "persistence.persistentVolumeClaim.jobservice.storageClass=gluster-heketi",
             "persistence.persistentVolumeClaim.trivy.storageClass=gluster-heketi",
             "expose.type=ingress",
+            "expose.ingress.annotations.\"kubernetes\\.io/ingress\\.class\"=nginx",
             "externalURL=https://{{componentName}}.{{baseDomain}}",
             "expose.ingress.hosts.core={{componentName}}.{{baseDomain}}",
             "expose.ingress.hosts.notary=notary.{{baseDomain}}",

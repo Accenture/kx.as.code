@@ -8,11 +8,12 @@
     },
     "helm_params": {
         "repository_url": "https://grafana.github.io/helm-charts",
-        "repository_name": "grafana",
+        "repository_name": "grafana/grafana",
         "helm_version": "6.16.4",
         "set_key_values": [
             "image.tag={{grafanaVersion}}",
             "ingress.enabled=true",
+            "ingress.annotations.\"kubernetes\\.io/ingress\\.class\"=nginx",
             "ingress.hosts[0]={{componentName}}.{{baseDomain}}",
             "ingress.tls[0].hosts[0]={{componentName}}.{{baseDomain}}",
             "persistence.enabled=true",
