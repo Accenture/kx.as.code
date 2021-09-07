@@ -10,7 +10,7 @@
     "helm_params": {
         "repository_url": "https://helm.mattermost.com",
         "repository_name": "mattermost/mattermost-team-edition",
-        "helm_version": "",
+        "helm_version": "5.4.0",
         "set_key_values": []
     },
     "categories": [
