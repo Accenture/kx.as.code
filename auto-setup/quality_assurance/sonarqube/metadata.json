@@ -14,6 +14,7 @@
         "set_key_values": [
             "replicaCount=1",
             "ingress.enabled=true",
+            "ingress.annotations.\"kubernetes\\.io/ingress\\.class\"=nginx",
             "ingress.hosts[0].name={{componentName}}.{{baseDomain}}",
             "ingress.tls[0].hosts[0]={{componentName}}.{{baseDomain}}",
             "persistence.enabled=true",
