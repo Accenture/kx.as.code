@@ -83,6 +83,7 @@ pipeline {
                             -var "vm_user=${kx_vm_user}" \
                             -var "vm_password=${kx_vm_password}" \
                             -var "base_image_ssh_user=${openstack_ssh_username}" \
+                            -var "openstack_auth_url=${openstack_auth_url}" \
                             -var "openstack_user=${openstack_user}" \
                             -var "openstack_password=${openstack_password}" \
                             -var "openstack_region=${openstack_region}" \
