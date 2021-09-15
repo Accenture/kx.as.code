@@ -147,3 +147,7 @@ data:
     g, ArgoCDAdmins, role:admin
 """ | /usr/bin/sudo tee ${installationWorkspace}/argocd-rbac-cm-patch.yaml
 kubectl apply -f ${installationWorkspace}/argocd-rbac-cm-patch.yaml
+
+export argoServer=$(kubectl get pods -n argocd | grep argocd-server | awk ' { print $1 }')
+
+kubectl delete pod ${argoServer} -n ${componentName}
