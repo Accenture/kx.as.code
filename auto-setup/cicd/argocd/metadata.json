@@ -62,7 +62,8 @@
     "pre_install_scripts": [
         "installArgoCdCli.sh",
         "createArgoCdPassword.sh",
-        "createIngressObjects.sh"
+        "createIngressObjects.sh",
+        "deployOauth2.sh"
     ],
     "post_install_scripts": [
         "deployOauth2.sh"
