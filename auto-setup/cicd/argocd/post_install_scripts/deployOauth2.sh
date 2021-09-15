@@ -21,7 +21,7 @@ export clientId=$(kubectl -n keycloak exec ${kcPod} --container ${kcContainer} -
     ${kcAdmCli} get clients --fields id,clientId | jq -r '.[] | select(.clientId=="argocd") | .id')
 
 # Get client secret
-clientSecret=$(kubectl -n keycloak exec ${kcPod} --container ${kcContainer} -- \
+export clientSecret=$(kubectl -n keycloak exec ${kcPod} --container ${kcContainer} -- \
     ${kcAdmCli} get clients/${clientId}/client-secret | jq -r '.value')
 
 # If secret not available, generate a new one
@@ -31,28 +31,6 @@ if [[ "${clientSecret}" == "null" ]]; then
   clientSecret=$(kubectl -n keycloak exec ${kcPod} -- \
       ${kcAdmCli} get clients/${clientId}/client-secret | jq -r '.value')
 fi
-
-## create client scopes
-kubectl -n keycloak exec ${kcPod} --container ${kcContainer} -- \
-    ${kcAdmCli} create -x client-scopes -s name=${componentName} -s protocol=openid-connect
-
-## export the client scope id
-export clientscopeId=$(kubectl -n keycloak exec ${kcPod} --container ${kcContainer} -- \
-    ${kcAdmCli} get -x client-scopes | jq -r '.[] | select(.name=="argocd") | .id')
-
-## client scope protocol mapper
-kubectl -n keycloak exec ${kcPod} -- \
-    ${kcAdmCli} create client-scopes/$clientscopeId/protocol-mappers/models \
-    -s name=groups \
-    -s protocol=openid-connect \
-    -s protocolMapper=oidc-group-membership-mapper \
-    -s 'config."claim.name"=groups' \
-    -s 'config."access.token.claim"=true' \
-    -s 'config."jsonType.label"=String'
-
-## map the above client scope id to the client
-kubectl -n keycloak exec ${kcPod} -- \
-    ${kcAdmCli} update clients/$clientId/default-client-scopes/$clientscopeId
 
 ################### kubernetes manifests CRUD operations #####################################
 
@@ -97,13 +75,14 @@ metadata:
     app.kubernetes.io/part-of: argocd
 data:
   application.instanceLabelKey: argocd.argoproj.io/instance
+  kustomize.buildOptions: '--enable_alpha_plugins'
   url: https://${componentName}.${baseDomain}
   oidc.config: |-
     name: Keycloak
     issuer: https://keycloak.${baseDomain}/auth/realms/${kcRealm}
     clientId: argocd
     clientSecret: \$oidc.keycloak.clientSecret
-    requestedScopes: ['openid', 'profile', 'email', 'argocd']
+    requestedScopes: ['openid', 'profile', 'email', 'groups']
 """ | /usr/bin/sudo tee ${installationWorkspace}/argocd-cm-patch.yaml
 kubectl apply -f ${installationWorkspace}/argocd-cm-patch.yaml
 
@@ -122,6 +101,58 @@ metadata:
     app.kubernetes.io/part-of: argocd
 data:
   policy.csv: |
-    g, admins, role:admin
+    g, ArgoCDAdmins, role:admin
 """ | /usr/bin/sudo tee ${installationWorkspace}/argocd-rbac-cm-patch.yaml
 kubectl apply -f ${installationWorkspace}/argocd-rbac-cm-patch.yaml
+
+## Restart the Pod
+export argoServer=$(kubectl get pods -n argocd | grep argocd-server | awk ' { print $1 }')
+
+kubectl delete pod ${argoServer} -n ${componentName}
+
+
+## If keycloak client scopes are created prior to kubernetes CRUD operations the RBAC is not working properly e.g: an application created 
+## by admin user cannot be seen by the user logged in with keycloak sso, also sso users cannot create any applications in argocd after intial argocd creation.
+## To overcome this first client and secret will be created and then crud operations and finally keycloak client scopes are created.
+
+## create client scopes
+kubectl -n keycloak exec ${kcPod} --container ${kcContainer} -- \
+    ${kcAdmCli} create -x client-scopes -s name=groups -s protocol=openid-connect
+
+## export the client scope id
+export clientscopeId=$(kubectl -n keycloak exec ${kcPod} --container ${kcContainer} -- \
+    ${kcAdmCli} get -x client-scopes | jq -r '.[] | select(.name=="groups") | .id')
+
+## client scope protocol mapper
+kubectl -n keycloak exec ${kcPod} -- \
+    ${kcAdmCli} create client-scopes/$clientscopeId/protocol-mappers/models \
+    -s name=groups \
+    -s protocol=openid-connect \
+    -s protocolMapper=oidc-group-membership-mapper \
+    -s 'config."claim.name"=groups' \
+    -s 'config."access.token.claim"=true' \
+    -s 'config."id.token.claim"=true' \
+    -s 'config."userinfo.token.claim"=true' \
+    -s 'config."full.path"=false' \
+    -s 'config."jsonType.label"=String'
+
+## map the above client scope id to the client
+kubectl -n keycloak exec ${kcPod} -- \
+    ${kcAdmCli} update clients/$clientId/default-client-scopes/$clientscopeId
+
+## create a new group with name ArgoCDAdmins
+kubectl -n keycloak exec ${kcPod} -- \
+    ${kcAdmCli} create groups -r ${kcRealm} -b '{ "name": "ArgoCDAdmins" }'
+
+## export user Id
+export userId=$(kubectl -n keycloak exec ${kcPod} -- \
+    ${kcAdmCli} get users -r ${kcRealm} -q username=admin | jq -r '.[] |  .id')
+
+## export group Id
+export groupId=$(kubectl -n keycloak exec ${kcPod} -- \
+    ${kcAdmCli} get groups -r ${kcRealm} | jq -r '.[] | select(.name=="ArgoCDAdmins") | .id')
+
+## Add user admin to the ArgoCDAdmins group. If any new users are created then they should be added to ArgoCDAdmins group
+kubectl -n keycloak exec ${kcPod} -- \
+     ${kcAdmCli} update users/${userId}/groups/${groupId} -r ${kcRealm} -s realm=${kcRealm} \
+     -s userId=${userId} -s groupId=${groupId} -n
