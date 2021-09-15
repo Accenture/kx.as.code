@@ -6,6 +6,32 @@ export kcAdmCli=/opt/jboss/keycloak/bin/kcadm.sh
 export kcPod=$(kubectl get pods -l 'app.kubernetes.io/name=keycloak' -n keycloak --output=json | jq -r '.items[].metadata.name')
 export kcContainer="keycloak"
 
+# Set credential token in new Realm
+kubectl -n keycloak exec ${kcPod} --container ${kcContainer} -- \
+    ${kcAdmCli} config credentials --server ${kcInternalUrl}/auth --realm ${kcRealm} --user admin --password ${vmPassword}
+
+## Create client
+kubectl -n keycloak exec ${kcPod} --container ${kcContainer} -- \
+    ${kcAdmCli} create clients --realm ${kcRealm} -s clientId=${componentName} \
+    -s 'redirectUris=["https://'${componentName}'.'${baseDomain}'/auth/callback"]' \
+    -s publicClient="false" -s enabled=true -s rootUrl="https://${componentName}.${baseDomain}" -s baseUrl="/applications" -i
+
+## export clientId
+export clientId=$(kubectl -n keycloak exec ${kcPod} --container ${kcContainer} -- \
+    ${kcAdmCli} get clients --fields id,clientId | jq -r '.[] | select(.clientId=="argocd") | .id')
+
+# Get client secret
+export clientSecret=$(kubectl -n keycloak exec ${kcPod} --container ${kcContainer} -- \
+    ${kcAdmCli} get clients/${clientId}/client-secret | jq -r '.value')
+
+# If secret not available, generate a new one
+if [[ "${clientSecret}" == "null" ]]; then
+  kubectl -n keycloak exec ${kcPod} -- \
+      ${kcAdmCli} create clients/${clientId}/client-secret | jq -r '.value'
+  clientSecret=$(kubectl -n keycloak exec ${kcPod} -- \
+      ${kcAdmCli} get clients/${clientId}/client-secret | jq -r '.value')
+fi
+
 ################### kubernetes manifests CRUD operations #####################################
 
 # create secret as it is not installed by default and this secret is mounted into the pod
@@ -85,31 +111,7 @@ export argoServer=$(kubectl get pods -n argocd | grep argocd-server | awk ' { pr
 kubectl delete pod ${argoServer} -n ${componentName}
 
 
-# Set credential token in new Realm
-kubectl -n keycloak exec ${kcPod} --container ${kcContainer} -- \
-    ${kcAdmCli} config credentials --server ${kcInternalUrl}/auth --realm ${kcRealm} --user admin --password ${vmPassword}
 
-## Create client
-kubectl -n keycloak exec ${kcPod} --container ${kcContainer} -- \
-    ${kcAdmCli} create clients --realm ${kcRealm} -s clientId=${componentName} \
-    -s 'redirectUris=["https://'${componentName}'.'${baseDomain}'/auth/callback"]' \
-    -s publicClient="false" -s enabled=true -s rootUrl="https://${componentName}.${baseDomain}" -s baseUrl="/applications" -i
-
-## export clientId
-export clientId=$(kubectl -n keycloak exec ${kcPod} --container ${kcContainer} -- \
-    ${kcAdmCli} get clients --fields id,clientId | jq -r '.[] | select(.clientId=="argocd") | .id')
-
-# Get client secret
-export clientSecret=$(kubectl -n keycloak exec ${kcPod} --container ${kcContainer} -- \
-    ${kcAdmCli} get clients/${clientId}/client-secret | jq -r '.value')
-
-# If secret not available, generate a new one
-if [[ "${clientSecret}" == "null" ]]; then
-  kubectl -n keycloak exec ${kcPod} -- \
-      ${kcAdmCli} create clients/${clientId}/client-secret | jq -r '.value'
-  clientSecret=$(kubectl -n keycloak exec ${kcPod} -- \
-      ${kcAdmCli} get clients/${clientId}/client-secret | jq -r '.value')
-fi
 ## create client scopes
 kubectl -n keycloak exec ${kcPod} --container ${kcContainer} -- \
     ${kcAdmCli} create -x client-scopes -s name=groups -s protocol=openid-connect
