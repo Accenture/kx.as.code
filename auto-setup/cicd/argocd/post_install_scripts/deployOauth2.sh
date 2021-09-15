@@ -34,19 +34,19 @@ fi
 
 ## create client scopes
 kubectl -n keycloak exec ${kcPod} --container ${kcContainer} -- \
-    ${kcAdmCli} create -x client-scopes -s name=${componentName} -s protocol=openid-connect
+    ${kcAdmCli} create -x client-scopes -s name=groups -s protocol=openid-connect
 
 ## export the client scope id
 export clientscopeId=$(kubectl -n keycloak exec ${kcPod} --container ${kcContainer} -- \
-    ${kcAdmCli} get -x client-scopes | jq -r '.[] | select(.name=="argocd") | .id')
+    ${kcAdmCli} get -x client-scopes | jq -r '.[] | select(.name=="groups") | .id')
 
 ## client scope protocol mapper
 kubectl -n keycloak exec ${kcPod} -- \
     ${kcAdmCli} create client-scopes/$clientscopeId/protocol-mappers/models \
-    -s name=argocd \
+    -s name=groups \
     -s protocol=openid-connect \
     -s protocolMapper=oidc-group-membership-mapper \
-    -s 'config."claim.name"=argocd' \
+    -s 'config."claim.name"=groups' \
     -s 'config."access.token.claim"=true' \
     -s 'config."id.token.claim"=true' \
     -s 'config."userinfo.token.claim"=true' \
@@ -125,7 +125,7 @@ data:
     issuer: https://keycloak.${baseDomain}/auth/realms/${kcRealm}
     clientId: argocd
     clientSecret: \$oidc.keycloak.clientSecret
-    requestedScopes: ['openid', 'profile', 'email', 'argocd']
+    requestedScopes: ['openid', 'profile', 'email', 'groups']
 """ | /usr/bin/sudo tee ${installationWorkspace}/argocd-cm-patch.yaml
 kubectl apply -f ${installationWorkspace}/argocd-cm-patch.yaml
 
