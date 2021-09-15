@@ -43,16 +43,37 @@ export clientscopeId=$(kubectl -n keycloak exec ${kcPod} --container ${kcContain
 ## client scope protocol mapper
 kubectl -n keycloak exec ${kcPod} -- \
     ${kcAdmCli} create client-scopes/$clientscopeId/protocol-mappers/models \
-    -s name=groups \
+    -s name=argocd \
     -s protocol=openid-connect \
     -s protocolMapper=oidc-group-membership-mapper \
-    -s 'config."claim.name"=groups' \
+    -s 'config."claim.name"=argocd' \
     -s 'config."access.token.claim"=true' \
+    -s 'config."id.token.claim"=true' \
+    -s 'config."userinfo.token.claim"=true' \
+    -s 'config."full.path"=true' \
     -s 'config."jsonType.label"=String'
 
 ## map the above client scope id to the client
 kubectl -n keycloak exec ${kcPod} -- \
     ${kcAdmCli} update clients/$clientId/default-client-scopes/$clientscopeId
+
+## create a new group with name ArgoCDAdmins
+kubectl -n keycloak exec ${kcPod} -- \
+    ${kcAdmCli} create groups -r ${kcRealm} -b '{ "name": "ArgoCDAdmins" }'
+
+## export user Id
+export userId=$(kubectl -n keycloak exec ${kcPod} -- \
+    ${kcAdmCli} get users -r ${kcRealm} -q username=admin | jq -r '.[] |  .id')
+
+## export group Id
+export groupId=$(kubectl -n keycloak exec ${kcPod} -- \
+    ${kcAdmCli} get groups -r ${kcRealm} | jq -r '.[] | select(.name=="ArgoCDAdmins") | .id')
+
+## Add user admin to the ArgoCDAdmins group. If any new users are created then they should be added to ArgoCDAdmins group
+kubectl -n keycloak exec ${kcPod} -- \
+     ${kcAdmCli} update users/${userId}/groups/${groupId} -r ${kcRealm} -s realm=${kcRealm} \
+     -s userId=${userId} -s groupId=${groupId} -n
+
 
 ################### kubernetes manifests CRUD operations #####################################
 
@@ -97,6 +118,7 @@ metadata:
     app.kubernetes.io/part-of: argocd
 data:
   application.instanceLabelKey: argocd.argoproj.io/instance
+  kustomize.buildOptions: '--enable_alpha_plugins'
   url: https://${componentName}.${baseDomain}
   oidc.config: |-
     name: Keycloak
@@ -122,6 +144,6 @@ metadata:
     app.kubernetes.io/part-of: argocd
 data:
   policy.csv: |
-    g, admins, role:admin
+    g, ArgoCDAdmins, role:admin
 """ | /usr/bin/sudo tee ${installationWorkspace}/argocd-rbac-cm-patch.yaml
 kubectl apply -f ${installationWorkspace}/argocd-rbac-cm-patch.yaml
