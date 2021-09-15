@@ -111,6 +111,9 @@ export argoServer=$(kubectl get pods -n argocd | grep argocd-server | awk ' { pr
 kubectl delete pod ${argoServer} -n ${componentName}
 
 
+## If keycloak client scopes are created prior to kubernetes CRUD operations the RBAC is not working properly e.g: an application created 
+## by admin user cannot be seen by the user logged in with keycloak sso, also sso users cannot create any applications in argocd after intial argocd creation.
+## To overcome this first client and secret will be created and then crud operations and finally keycloak client scopes are created.
 
 ## create client scopes
 kubectl -n keycloak exec ${kcPod} --container ${kcContainer} -- \
