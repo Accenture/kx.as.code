@@ -94,7 +94,6 @@ pipeline {
                             -var "git_techradar_branch=${git_techradar_branch}" \
                             -var "git_techradar_user=${git_techradar_user}" \
                             -var "git_techradar_token=${git_techradar_token}" \
-                            -var "base_image_ssh_user=${vagrant_ssh_username}" \
                             -var "base_image_ssh_user=${openstack_ssh_username}" \
                             -var "openstack_auth_url=${openstack_auth_url}" \
                             -var "openstack_user=${openstack_user}" \
