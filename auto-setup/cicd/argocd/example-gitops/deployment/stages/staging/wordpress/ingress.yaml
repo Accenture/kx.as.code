@@ -1,0 +1,27 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: nginx
+  labels:
+    app.kubernetes.io/instance: wordpress
+  name: wordpress-staging
+spec:
+  rules:
+  - host: wordpress-staging.demo1.kx-as-code.local
+    http:
+      paths:
+      - backend:
+          service:
+            name: wordpress-staging
+            port:
+              number: 80
+        path: /
+        pathType: Prefix
+  tls:
+  - hosts:
+    - wordpress-staging.demo1.kx-as-code.local
+status:
+  loadBalancer:
+    ingress:
+    - ip: 10.10.76.100

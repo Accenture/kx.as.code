@@ -1,0 +1,29 @@
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: mysql
+spec:
+  destination:
+    namespace: staging
+    server: 'https://kubernetes.default.svc'
+  source:
+    path: deployment/stages/staging/mysql
+    repoURL: 'https://github.com/deadpoet6/demo.git'
+    targetRevision: HEAD
+  project: default
+---
+## wordpress
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: wordpress
+spec:
+  destination:
+    namespace: staging
+    server: 'https://kubernetes.default.svc'
+  source:
+    path: deployment/stages/staging/wordpress
+    repoURL: 'https://github.com/deadpoet6/demo.git'
+    targetRevision: HEAD
+  project: default
