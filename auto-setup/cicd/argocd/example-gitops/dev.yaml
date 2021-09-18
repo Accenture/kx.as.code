@@ -8,8 +8,8 @@ spec:
     namespace: dev
     server: 'https://kubernetes.default.svc'
   source:
-    path: deployment/stages/dev/mysql
-    repoURL: 'https://github.com/deadpoet6/demo.git'
+    path: auto-setup/cicd/argocd/example-gitops/deployment/stages/dev/mysql
+    repoURL: 'https://github.com/Accenture/kx.as.code.git'
     targetRevision: HEAD
   project: default
   syncPolicy:
@@ -30,8 +30,8 @@ spec:
     namespace: dev
     server: 'https://kubernetes.default.svc'
   source:
-    path: deployment/stages/dev/wordpress
-    repoURL: 'https://github.com/deadpoet6/demo.git'
+    path: auto-setup/cicd/argocd/example-gitops/deployment/stages/dev/wordpress
+    repoURL: 'https://github.com/Accenture/kx.as.code.git'
     targetRevision: HEAD
   project: default
   syncPolicy:

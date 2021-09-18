@@ -13,4 +13,9 @@
 ## Sops and Ksops
 * Secrets are also pushed to the github in this example but in an encrypted manner.
 * Mozilla sops is being used to encrypt the secrets
-* Argocd by default cannot decrypt the sops encrypted secrets, hence for decrypting purposes we have to use ksops. Finally copy/import the gpg key into the running `argocd-server-xxx` pod.
+* Argocd by default cannot decrypt the sops encrypted secrets, hence for decrypting purposes we have to use ksops. 
+* Finally copy/import the `gpg-demo.asc` gpg key into the running `argocd-server-xxx` pod with the command `kubectl cp gpg-demo.asc -n argocd argocd-repo-server-XXXXX:/home/argocd -c repo-server`
+* ssh into the pod and do a `gpg --import gpg-demo.asc`. This help ksops and Argocd to decrypt the secret
+
+## NOTE:
+In the dev.yaml file kx-as-code repo is referred to get the kustomize manifests. At this time it is a private repo which needs further adjustments in Argocd to read from a private repo i.e. you have to provide a secret or token to get the contents from the repo.
