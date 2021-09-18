@@ -2,6 +2,10 @@
 
 * This folder has complete code to quickly set up a gitops demo. To get this up and running execute the following command
 `kubectl apply -f dev.yaml`
+* To get a better understanding about the tools used check the references section below
+    - [kustomize] (https://kustomize.io/)
+    - [sops] (https://github.com/mozilla/sops)
+    - [ksops] (https://github.com/viaduct-ai/kustomize-sops)
 
 ## What is in this folder and how to read this?
 *  We are using kustomize here which is a package management solution for kubernetes. Kustomize separates the manifests in to 2 major folders. Go to deployment folder and check for following folders
