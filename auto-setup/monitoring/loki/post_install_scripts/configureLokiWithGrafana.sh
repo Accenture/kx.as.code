@@ -12,7 +12,7 @@ curl -X  POST -H "Accept: application/json" -H "Content-Type: application/json" 
   "typeLogoUrl":"public/app/plugins/datasource/loki/img/loki_icon.svg",
   "typeName":"Loki",
   "access":"proxy",
-  "url":"http://loki.loki-stack:3100",
+  "url":"http://loki.loki:3100",
   "password":"",
   "user":"",
   "database":"",
