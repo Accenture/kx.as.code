@@ -1,0 +1,65 @@
+{
+  "name": "loki",
+  "namespace": "loki-stack",
+  "installation_type": "helm",
+  "installation_group_folder": "monitoring",
+  "environment_variables": {
+      "lokiVersion": "2.2.0"
+  },
+  "helm_params": {
+      "repository_url": "https://grafana.github.io/helm-charts",
+      "repository_name": "grafana/loki-stack",
+      "helm_version": "",
+      "set_key_values": [
+        "promtail.enabled=true",
+        "grafana.enabled=false",
+        "prometheus.enabled=false",
+        "prometheus.alertmanager.persistentVolume.enabled=false",
+        "prometheus.server.persistentVolume.enabled=false"
+      ]
+  },
+  "categories": [
+      "monitoring",
+      "datastore"
+  ],
+  "urls": [
+      {
+          "url": "",
+          "healthchecks": {
+              "liveliness": {
+                  "http_path": "/",
+                  "http_auth_required": false,
+                  "expected_http_response_code": "",
+                  "expected_http_response_string": "",
+                  "expected_json_response": {
+                      "json_path": "",
+                      "json_value": ""
+                  },
+                  "health_shell_check_command": "",
+                  "expected_shell_check_command_response": ""
+              },
+              "readiness": {
+                  "http_path": "/",
+                  "http_auth_required": false,
+                  "expected_http_response_code": "",
+                  "expected_http_response_string": "",
+                  "expected_json_response": {
+                      "json_path": "",
+                      "json_value": ""
+                  },
+                  "health_shell_check_command": "",
+                  "expected_shell_check_command_response": ""
+              }
+          }
+      }
+  ],
+  "Description": "Loki Description",
+  "shortcut_text": "",
+  "shortcut_icon": "",
+  "pre_install_scripts": [
+    "getGrafanaAccessKey.sh"
+  ],
+  "post_install_scripts": [
+    "configureLokiWithGrafana.sh"
+  ]
+}
