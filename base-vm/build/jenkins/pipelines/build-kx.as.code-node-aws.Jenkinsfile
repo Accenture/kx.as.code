@@ -69,7 +69,7 @@ pipeline {
                             packerPath = packerPath.replaceAll("\\\\","/")
                         }
                         sh """
-                        if [[ ! -f ./jq* ]]; then
+                        if [ ! -f ./jq* ]; then
                             curl -L -o jq ${jqDownloadPath}
                             chmod +x ./jq
                         fi

@@ -61,7 +61,7 @@ pipeline {
                     dir(shared_workspace) {
                         withCredentials([usernamePassword(credentialsId: 'DOCKERHUB_ACCOUNT', passwordVariable: 'dockerHubPassword', usernameVariable: 'dockerHubUsername')]) {
                             sh """
-                            if [[ ! -f ./jq* ]]; then
+                            if [ ! -f ./jq* ]; then
                                 curl -L -o jq ${jqDownloadPath}
                                 chmod +x ./jq
                             fi
@@ -73,7 +73,7 @@ pipeline {
                             echo \${kxMainBoxLocation}
                             echo \${kxNodeBoxLocation}
                             echo \${dockerHubEmail}
-                            if [[ -f kx.as.code_main-ip-address ]]; then
+                            if [ -f kx.as.code_main-ip-address ]; then
                                 rm -f kx.as.code_main-ip-address
                             fi
                             cd profiles/vagrant-vmware-desktop-demo1

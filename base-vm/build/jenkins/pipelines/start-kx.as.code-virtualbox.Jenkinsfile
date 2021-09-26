@@ -58,7 +58,7 @@ pipeline {
                     dir(shared_workspace) {
                         withCredentials([usernamePassword(credentialsId: 'DOCKERHUB_ACCOUNT', passwordVariable: 'dockerHubPassword', usernameVariable: 'dockerHubUsername')]) {
                             sh """
-                            if [[ ! -f ./jq* ]]; then
+                            if [ ! -f ./jq* ]; then
                                 curl -L -o jq ${jqDownloadPath}
                                 chmod +x ./jq
                             fi
@@ -71,7 +71,7 @@ pipeline {
                             echo \${kxNodeBoxLocation}
                             echo \${dockerHubEmail}
                             cd profiles/vagrant-virtualbox-demo1
-                            if [[ -f kx.as.code_main-ip-address ]]; then
+                            if [ -f kx.as.code_main-ip-address ]; then
                                 rm -f kx.as.code_main-ip-address
                             fi
                             vagrant up --provider virtualbox
