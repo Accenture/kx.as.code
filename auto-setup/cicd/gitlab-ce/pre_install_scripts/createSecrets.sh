@@ -35,11 +35,11 @@ kubectl get secret kx.as.code-wildcard-cert --namespace=gitlab-ce ||
         --from-file=${installationWorkspace}/kx-certs \
         --namespace=${namespace}
 
-# create intermediate certificate secret for gitlab sso
-kubectl create secret generic intermediate-ca --from-file=intermediate.pem=${installationWorkspace}/kx_intermediate_ca.pem -n gitlab-ce
+# Create intermediate certificate secret for gitlab sso
+kubectl create secret generic intermediate-ca --from-file=intermediate.pem=${certificatesWorkspace}/kx_intermediate_ca.pem -n gitlab-ce
 
-# create root certificate secret for gitlab sso
-kubectl create secret generic root-ca --from-file=root.pem=${installationWorkspace}/kx_root_ca.pem -n gitlab-ce
+# Create root certificate secret for gitlab sso
+kubectl create secret generic root-ca --from-file=root.pem=${certificatesWorkspace}/kx_root_ca.pem -n gitlab-ce
 
-# create server certificate secret for gitlab sso
-kubectl create secret generic server-crt --from-file=server.pem=${installationWorkspace}/kx_server.pem -n gitlab-ce
+# Create server certificate secret for gitlab sso
+kubectl create secret generic server-crt --from-file=server.pem=${certificatesWorkspace}/kx_server.pem -n gitlab-ce

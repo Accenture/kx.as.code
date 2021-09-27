@@ -76,11 +76,11 @@ pipeline {
                         def terraformPath = tool "terraform-${os}"
                         cd profiles/terraform-aws-ip-vpn-demo1
 
-                        if [[ ! -f ./jq ]]; then
+                        if [ ! -f ./jq* ]; then
                             curl -o jq ${jqDownloadUrl}
                         fi
 
-                        if [[ "${terraform_action}" == "destroy" ]]; then
+                        if [ "${terraform_action}" == "destroy" ]; then
                             echo "${terraform_action}"
                         else
                             echo "${terraform_action}"

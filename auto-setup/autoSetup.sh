@@ -147,10 +147,18 @@ if [[ ${action} == "install"   ]]; then
             valuesFileOption=""
         fi
 
+        # Check if Helm chart version is specified, and if so, check if it is valid
         helmVersion=$(echo ${helm_params} | jq -r '.helm_version')
         if [[ -n ${helmVersion} ]] && [[ ${helmVersion} != "null" ]]; then
-            helmVersionOption="--version ${helmVersion}"
+            if [[ -n $(helm search repo ${helmRepositoryName} -o json | jq -r '.[] | select(.version=="'${helmVersion}'")') ]]; then
+                log_info "Specified Helm version ${helmVersion} exists in repository ${helmRepositoryName}. All good. Continuing to install this version"
+                helmVersionOption="--version ${helmVersion}"
+            else
+                log_warn "Specified Helm version ${helmVersion} not found for Helm repository ${helmRepositoryName}. Trying latest Helm chart"
+                helmVersionOption=""
+            fi
         else
+            log_info "Helm version not set for ${helmRepositoryName}. Trying latest Helm chart"
             helmVersionOption=""
         fi
 

@@ -7,15 +7,21 @@
         "cpu": "1000",
         "memory": "3000"
     },
+    "environment_variables": {
+        "imageTag": "9.1.0-community"
+    },
     "helm_params": {
-        "repository_url": "https://oteemo.github.io/charts/",
-        "repository_name": "oteemo/sonarqube",
-        "helm_version": "",
+        "repository_url": "https://SonarSource.github.io/helm-chart-sonarqube",
+        "repository_name": "sonarqube/sonarqube",
+        "helm_version": "1.1.8",
         "set_key_values": [
+            "image.tag={{imageTag}}",
             "replicaCount=1",
             "ingress.enabled=true",
             "ingress.hosts[0].name={{componentName}}.{{baseDomain}}",
+            "ingress.hosts[0].path=/",
             "ingress.tls[0].hosts[0]={{componentName}}.{{baseDomain}}",
+            "ingress.ingressClassName=nginx",
             "persistence.enabled=true",
             "persistence.storageClass=local-storage",
             "persistence.size=1Gi",

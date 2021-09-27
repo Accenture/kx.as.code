@@ -37,4 +37,8 @@ locals {
   num_local_fifty_gb_volumes          = local.raw_data.config.local_volumes.fifty_gb
   local_storage_volume_size           = local.raw_data.config.local_volumes.one_gb + (local.raw_data.config.local_volumes.five_gb * 5) + (local.raw_data.config.local_volumes.ten_gb * 10) + (local.raw_data.config.local_volumes.thirty_gb * 30) + (local.raw_data.config.local_volumes.fifty_gb * 50) + 1
   glusterfs_storage_volume_size       = local.raw_data.config.glusterFsDiskSize + 1
+
+  dockerhub_username                  = local.raw_data.config.docker.dockerhub_username
+  dockerhub_email                     = local.raw_data.config.docker.dockerhub_email
+  dockerhub_password                  = local.raw_data.config.docker.dockerhub_password
 }

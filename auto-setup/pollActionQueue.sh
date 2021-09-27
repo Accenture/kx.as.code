@@ -4,6 +4,7 @@ set -euo pipefail
 # Define base variables
 export sharedKxHome=/usr/share/kx.as.code
 export installationWorkspace=${sharedKxHome}/workspace
+export certificatesWorkspace=${installationWorkspace}/certificates
 export actionWorkflows="pending wip completed failed retry"
 export defaultDockerHubSecret="default/regcred"
 export sharedGitHome=${sharedKxHome}/git
@@ -21,6 +22,9 @@ export action=""
 export componentName=""
 export componentInstallationFolder=""
 export payload=""
+export dockerHubUsername=""
+export dockerHubPassword=""
+export dockerHubEmail=""
 
 # Copy versions from k.as.code GIT repo
 if [[ ! -f ${installationWorkspace}/versions.json ]]; then

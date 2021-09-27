@@ -110,7 +110,7 @@
     {
       "type": "openstack",
       "name": "{{user `vm_name`}}-openstack",
-      "identity_endpoint": "http://10.2.76.201:5000/v3",
+      "identity_endpoint": "{{user `openstack_auth_url`}}",
       "domain_name": "Default",
       "tenant_name": "admin",
       "username": "{{user `openstack_user`}}",
