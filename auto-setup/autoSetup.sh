@@ -602,4 +602,3 @@ elif [[ ${action} == "uninstall"   ]] || [[ ${action} == "purge"   ]]; then
     fi
 
 fi # end of action actions condition
-
