@@ -7,6 +7,9 @@
         "cpu": "250",
         "memory": "256"
     },
+    "environment_variables": {
+        "imageTag": "5.38.0"
+    },
     "helm_params": {
         "repository_url": "https://helm.mattermost.com",
         "repository_name": "mattermost/mattermost-team-edition",

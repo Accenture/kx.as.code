@@ -214,41 +214,14 @@ export defaultS3ObjectStorePath=$(cat ${installationWorkspace}/metadata.json | j
 export s3ObjectStoreDomain="$(cat ${autoSetupHome}/${defaultS3ObjectStorePath}/metadata.json | jq -r '.name').${baseDomain}"
 export s3ObjectStoreUrl="https://${s3ObjectStoreDomain}"
 
-# Establish common logging format
 export logTimestamp=$(date '+%Y-%m-%d')
-log_info() {
-    echo "$(date '+%Y-%m-%d_%H%M%S') [INFO] ${1}" | tee -a ${installationWorkspace}/${componentName}_${logTimestamp}.${retries}.log
-}
 
-log_warn() {
-    echo "$(date '+%Y-%m-%d_%H%M%S') [WARN] ${1}" | tee -a ${installationWorkspace}/${componentName}_${logTimestamp}.${retries}.log
-}
-
-log_error() {
-    echo "$(date '+%Y-%m-%d_%H%M%S') [ERROR] ${1}" | tee -a ${installationWorkspace}/${componentName}_${logTimestamp}.${retries}.log
-}
-
-log_debug() {
-    echo "$(date '+%Y-%m-%d_%H%M%S') [DEBUG] ${1}" | tee -a ${installationWorkspace}/${componentName}_${logTimestamp}.${retries}.log
-}
-
-notify() {
-  openDisplays=$(w -oush | grep -Eo ' :[0-9]+' | sort -u -t\  -k1,1 | cut -d \  -f 2 || true)
-  log_info "Detected unique displays: ${openDisplays}"
-  messageTimeout=300000
-  messageTitle="KX.AS.CODE Notification"
-  message=${1}
-  messageType=${2}
-  for display in ${openDisplays}; do
-    displayUser=$(w -oush | grep -sw "${display}" | awk {'print $1'} | uniq)
-    echo "Sending notification to display ${display} for user ${displayUser}"
-    if [[ -S "/run/user/$(id -u ${displayUser})/bus" ]]; then
-        /usr/bin/sudo -H -i -u ${displayUser} bash -c "DISPLAY=\"${display}\" \
-        DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$(id -u ${displayUser})/bus \
-        notify-send -t \"${messageTimeout}\" \"${messageTitle}\" \"${message}\" --icon=\"${messageType}\""
-    fi
-  done
-}
+# Load Central Functions
+for function in $(find ${autoSetupHome}/functions -name "*.sh")
+do
+  source ${function}
+  echo "Loaded function $(cat ${function} | grep '()' | sed 's/{//g')"
+done
 
 if [[ ! -f /usr/share/kx.as.code/.config/network_status ]]; then
 

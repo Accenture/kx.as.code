@@ -21,7 +21,6 @@
             "ingress.hosts[0].name={{componentName}}.{{baseDomain}}",
             "ingress.hosts[0].path=/",
             "ingress.tls[0].hosts[0]={{componentName}}.{{baseDomain}}",
-            "ingress.tls[0].hosts[0].path=/",
             "ingress.ingressClassName=nginx",
             "persistence.enabled=true",
             "persistence.storageClass=local-storage",
