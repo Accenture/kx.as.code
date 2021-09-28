@@ -1,613 +1,604 @@
 #!/bin/bash
 set -euo pipefail
 
-# Define base variables
-export sharedKxHome=/usr/share/kx.as.code
-export installationWorkspace=${sharedKxHome}/workspace
-export certificatesWorkspace=${installationWorkspace}/certificates
-export actionWorkflows="pending wip completed failed retry"
-export defaultDockerHubSecret="default/regcred"
-export sharedGitHome=${sharedKxHome}/git
-export autoSetupHome=${sharedGitHome}/kx.as.code/auto-setup
-export skelDirectory=${sharedKxHome}/skel
-export vendorDocsDirectory="${sharedKxHome}/Vendor Docs"
-export apiDocsDirectory="${sharedKxHome}/API Docs"
-export shortcutsDirectory="${sharedKxHome}/DevOps Tools"
-export adminShortcutsDirectory="${sharedKxHome}/Admin Tools"
-export vmUser=kx.hero
-export vmUserId=$(id -u ${vmUser})
-export vmPassword="$(cat ${sharedKxHome}/.config/.user.cred)"
-export retries="0"
-export action=""
-export componentName=""
-export componentInstallationFolder=""
-export payload=""
-export dockerHubUsername=""
-export dockerHubPassword=""
-export dockerHubEmail=""
+export rc=0
 
-# Copy versions from k.as.code GIT repo
-if [[ ! -f ${installationWorkspace}/versions.json ]]; then
-  cp ${sharedGitHome}/kx.as.code/versions.json ${installationWorkspace}
+mkdir -p ${installationWorkspace}
+
+# Switch off GUI if switch set to do so in KX.AS.CODE launcher
+disableLinuxDesktop=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.disableLinuxDesktop')
+if [[ ${disableLinuxDesktop} == "true"   ]]; then
+    systemctl set-default multi-user
+    systemctl isolate multi-user.target
 fi
 
-# Check if envhandlebars tool reachable
-nodeToolPath=$(which node || true)
-if [ -x "$nodeToolPath" ] ; then
-    echo "node found on path $nodeToolPath"
-else
-    echo "envhandlebars not found on path, adding it"
-    export PATH=$(dirname $(find $HOME -type f -executable -name "node")):$PATH
-fi
+# Un/Installing Components
+log_info "-------- Component: ${componentName} Component Folder: ${componentInstallationFolder} Action: ${action}"
 
-# Import error handler
-source "${sharedGitHome}/kx.as.code/base-vm/dependencies/shell-core/base/trap.bash"
+# Define component install directory
+export installComponentDirectory=${autoSetupHome}/${componentInstallationFolder}/${componentName}
 
-# Check profile-config.json file is present before starting script
-wait-for-file() {
-        timeout -s TERM 6000 bash -c \
-        'while [[ ! -f ${0} ]];\
-        do echo "Waiting for ${0} file" && sleep 15;\
-        done' ${1}
-}
-wait-for-file ${installationWorkspace}/profile-config.json
+# Define location of metadata JSON file for component
+export componentMetadataJson=${installComponentDirectory}/metadata.json
 
-cd ${installationWorkspace}
+# Retrieve namespace from component's metadata.json
+export namespace=$(cat ${componentMetadataJson} | jq -r '.namespace?' | sed 's/_/-/g' | tr '[:upper:]' '[:lower:]') # Ensure DNS compatible name
 
-# Copy metadata.json to installation workspace if it doesn't exist
-if [[ ! -f ${installationWorkspace}/metadata.json ]]; then
-    cp ${autoSetupHome}/metadata.json ${installationWorkspace}
-fi
+# Get installation type (valid values are script, helm or argocd) and path to scripts
+export installationType=$(cat ${componentMetadataJson} | jq -r '.installation_type')
 
-# Wait for last provisioning shell action to complete before proceeding to next steps
-# such as changing network settings and merging action files
-timeout -s TERM 6000 bash -c \
-    'while [[ ! -f '${installationWorkspace}'/gogogo ]];\
-do echo "Waiting for '${installationWorkspace}'/gogogo file" && sleep 15;\
-done'
+# Start the installation process for the pending or retry queues
+if [[ ${action} == "install"   ]]; then
 
-# Copy actionQueues.json to installation workspace if it doesn't exist
-# and merge with user aq* files if present
-if [[ ! -f ${installationWorkspace}/actionQueues.json ]]; then
+    # Create namespace if it does not exist
+    if [[ -z ${namespace} ]] && [[ ${namespace} != "kube-system" ]] && [[ ${namespace} != "default"   ]]; then
+        log_warn "Namespace name could not be established. Subsequent actions may fail if they have a dependency on this. Please validate the namespace entry is correct for \"${componentName}\" in metadata.json"
+    fi
 
-    cp ${autoSetupHome}/actionQueues.json ${installationWorkspace}/
-    export aqFiles=($(ls ${installationWorkspace}/aq* || true))
+    # Create namespace if it does not exists
+    if [[ -n ${namespace} ]]; then
+        if [[ "$(kubectl get namespace ${namespace} --template={{.status.phase}})" != "Active" ]] && [[ ${namespace} != "kube-system" ]] && [[ ${namespace} != "default" ]]; then
+            log_info "Namespace \"${namespace}\" does not exist. Creating"
+            kubectl create namespace ${namespace}
+        else
+            log_info "Namespace \"${namespace}\" already exists. Moving on"
+        fi
+    fi
 
-    # Merge json files if user uploaded aq* files present
-    if [[ -n ${aqFiles} ]]; then
-        # Loop around all user aq* files and merge them to one large json
-        for i in "${!aqFiles[@]}"; do
-            echo "$i: ${aqFiles[$i]}"
+    export applicationUrl=$(cat ${componentMetadataJson} | jq -r '.urls[0]?.url?')
+    export applicationDomain=$(echo $applicationUrl | sed 's/https:\/\///g')
 
-            if [[ -f ${installationWorkspace}/actionQueues_temp.json ]]; then
-                cp ${installationWorkspace}/actionQueues_temp.json ${installationWorkspace}/actionQueues.json
-            fi
+    # Export Git credential
+    if [[ -f /home/${vmUser}/.config/kx.as.code/.admin.gitlab.pat ]]; then
+        export personalAccessToken=$(cat /home/${vmUser}/.config/kx.as.code/.admin.gitlab.pat)
+    fi
 
-            # Credit to this great jq block goes to "peak" - https://stackoverflow.com/users/997358/peak
-            # https://stackoverflow.com/a/56659008
-            jq -n --slurpfile file1 actionQueues.json --slurpfile file2 ${aqFiles[$i]} '
-
-        # a and b are expected to be jq paths ending with a string
-        # emit the array of the intersection of key names
-        def common(a;b):
-          ((a|map(.[-1])) + (b|map(.[-1])))
-          | unique;
-
-        $file1[0] as $f1
-        | $file2[0] as $f2
-        | [$f1 | paths as $p | select(getpath($p) | type == "array") | $p] as $p1
-        | [$f2 | paths as $p | select(getpath($p) | type == "array") | $p] as $p2
-        | $f1+$f2
-        | if ($p1|length) > 0 and ($p2|length) > 0
-          then common($p1; $p2) as $both
-          | if ($both|length) > 0
-            then first( $p1[] | select(.[-1] == $both[0])) as $p1
-            |    first( $p2[] | select(.[-1] == $both[0])) as $p2
-            | ($f1 | getpath($p1)) as $a1
-            | ($f2 | getpath($p2)) as $a2
-            | setpath($p1; $a1 + $a2)
-            else .
-            end
-          else .
-          end
-        ' | tee actionQueues_temp.json
-        /usr/bin/sudo mv ${aqFiles[$i]} ${aqFiles[$i]}_processed
+    # Set application environment variables if set in metadata.json
+    export applicationEnvironmentVariables=$(cat ${componentMetadataJson} | jq -r '.environment_variables | to_entries|map("\(.key)=\(.value|tostring)")|.[] ')
+    if [[ -n ${applicationEnvironmentVariables} ]]; then
+        for environmentVariable in ${applicationEnvironmentVariables}; do
+            export ${environmentVariable}
         done
     fi
-fi
 
-# Copy last actionQueues_temp.json file over after loop
-if [[ -f ${installationWorkspace}/actionQueues_temp.json ]]; then
-    /usr/bin/sudo mv ${installationWorkspace}/actionQueues_temp.json ${installationWorkspace}/actionQueues.json
-fi
+    log_info "installationType: ${installationType}"
 
-# Get configs from profile-config.json
-export virtualizationType=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.virtualizationType')
+    ####################################################################################################################################################################
+    ##      P R E    I N S T A L L    S T E P S
+    ####################################################################################################################################################################
 
-# Determine which NIC to bind to, to avoid binding to internal VirtualBox NAT NICs for example, where all hosts have the same IP - 10.0.2.15
-export nicList=$(nmcli device show | grep -E 'enp|ens|eth0' | grep 'GENERAL.DEVICE' | awk '{print $2}')
-export ipsToExclude="10.0.2.15"   # IP addresses not to configure with static IP. For example, default Virtualbox IP 10.0.2.15
-export nicExclusions=""
-export excludeNic=""
-for nic in ${nicList}; do
-    for ipToExclude in ${ipsToExclude}; do
-        ip=$(ip a s ${nic} | egrep -o 'inet [0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | cut -d' ' -f2 || true)
-        echo ${ip}
-        if [[ ${ip} == "${ipToExclude}" ]]; then
-            excludeNic="true"
+    componentPreInstallScripts=$(cat ${componentMetadataJson} | jq -r '.pre_install_scripts[]?')
+    # Loop round pre-install scripts
+    for script in ${componentPreInstallScripts}; do
+        if [[ ! -f ${installComponentDirectory}/pre_install_scripts/${script} ]]; then
+            log_error "Pre-install script ${installComponentDirectory}/pre_install_scripts/${script} does not exist. Check your spelling in the \"kxascode.json\" file and that it is checked in correctly into Git"
+        else
+            log_info "Executing pre-install script ${installComponentDirectory}/pre_install_scripts/${script}"
+            . ${installComponentDirectory}/pre_install_scripts/${script} || rc=$? && log_info "${installComponentDirectory}/pre_install_scripts/${script} returned with rc=$rc"
+            if [[ ${rc} -ne 0 ]]; then
+                log_error "Execution of pre install script \"${script}\" ended in a non zero return code ($rc)"
+                return 1
+            fi
         fi
     done
-    if [[ ${excludeNic} == "true" ]]; then
-        echo "Excluding NIC ${nic}"
-        nicExclusions="${nicExclusions} ${nic}"
-        excludeNic="false"
-    else
-        netDevice=${nic}
-    fi
-done
-echo "NIC exclusions: ${nicExclusions}"
-echo "NIC to use: ${netDevice}"
 
-export baseIpType=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.baseIpType')
-export dnsResolution=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.dnsResolution')
-if [[ ${baseIpType} == "static"   ]]; then
-    # Get fixed IPs if defined
-    export fixedIpHosts=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.staticNetworkSetup.baseFixedIpAddresses | keys[]')
-    for fixIpHost in ${fixedIpHosts}; do
-        fixIpHostVariableName=$(echo ${fixIpHost} | sed 's/-/__/g')
-        export ${fixIpHostVariableName}_IpAddress="$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.staticNetworkSetup.baseFixedIpAddresses."'${fixIpHost}'"')"
-        if [[ ${fixIpHost} == "kx-main1" ]]; then
-            export mainIpAddress="$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.staticNetworkSetup.baseFixedIpAddresses."'${fixIpHost}'"')"
+    ####################################################################################################################################################################
+    ##      S C R I P T    I N S T A L L
+    ####################################################################################################################################################################
+
+    if [[ ${installationType} == "script" ]]; then
+        log_info "Established installation type is \"${installationType}\". Proceeding in that way"
+        # Get script list to execute
+        scriptsToExecute=$(cat ${componentMetadataJson} | jq -r '.install_scripts[]?')
+
+        # Warn if there are no scripts to execute for componentName
+        if [[ -z ${scriptsToExecute} ]]; then
+            log_warn "installationType for \"${componentName}\" was \"script\", but there was no scripts listed in the install_scripts[] array. Please check the file \"${componentMetadataJson}\" to make sure everything is correct"
         fi
-    done
-    export fixedNicConfigGateway=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.staticNetworkSetup.gateway')
-    export fixedNicConfigDns1=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.staticNetworkSetup.dns1')
-    export fixedNicConfigDns2=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.staticNetworkSetup.dns2')
-else
-    export mainIpAddress=$(ip a s ${netDevice} | egrep -o 'inet [0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | cut -d' ' -f2)
-fi
 
-export environmentPrefix=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.environmentPrefix')
-if [ -z ${environmentPrefix} ]; then
-    export baseDomain=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.baseDomain')
-else
-    export baseDomain="${environmentPrefix}.$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.baseDomain')"
-fi
-export numKxMainNodes=$(cat ${installationWorkspace}/profile-config.json | jq -r '.vm_properties.main_node_count')
-if [[ "${numKxMainNodes}" = "null" ]]; then
-    export numKxMainNodes="1"
-fi
-export defaultKeyboardLanguage=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.defaultKeyboardLanguage')
-export baseUser=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.baseUser')
-export basePassword=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.basePassword')
-export baseIpRangeStart=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.baseIpRangeStart')
-export baseIpRangeEnd=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.baseIpRangeEnd')
-export metalLbIpRangeStart=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.metalLbIpRange.ipRangeStart')
-export metalLbIpRangeEnd=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.metalLbIpRange.ipRangeEnd')
-export sslProvider=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.sslProvider')
-export sslDomainAdminEmail=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.sslDomainAdminEmail')
-export letsEncryptEnvironment=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.letsEncryptEnvironment')
-# Get proxy settings
-export httpProxySetting=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.proxy_settings.http_proxy')
-export httpsProxySetting=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.proxy_settings.https_proxy')
-export noProxySetting=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.proxy_settings.no_proxy')
+        # Ex<ecute scripts
+        for script in ${scriptsToExecute}; do
+            log_info "Excuting script \"${script}\" in directory ${installComponentDirectory}"
+            . ${installComponentDirectory}/${script} || rc=$? && log_info "${installComponentDirectory}/${script} returned with rc=$rc"
+            if [[ ${rc} -ne 0 ]]; then
+                log_error "Execution of install script \"${script}\" ended in a non zero return code ($rc)"
+                return 1
+            fi
+        done
 
-# Get default applications for certain services
-## Git
-export defaultGitPath=$(cat ${installationWorkspace}/metadata.json | jq -r '.metadata.defaultApplications.git')
-export gitDomain="$(cat ${autoSetupHome}/${defaultGitPath}/metadata.json | jq -r '.name' | sed 's/-ce//g').${baseDomain}"
-export gitUrl="https://${gitDomain}"
-## OAUTH
-export defaultOauthPath=$(cat ${installationWorkspace}/metadata.json | jq -r '.metadata.defaultApplications.oauth')
-export oauthDomain="$(cat ${autoSetupHome}/${defaultOauthPath}/metadata.json | jq -r '.name').${baseDomain}"
-export oauthUrl="https://${oauthDomain}"
-## ChatOps
-export defaultChatopsPath=$(cat ${installationWorkspace}/metadata.json | jq -r '.metadata.defaultApplications.chatops')
-export chatopsDomain="$(cat ${autoSetupHome}/${defaultChatopsPath}/metadata.json | jq -r '.name').${baseDomain}"
-export chatopsUrl="https://${chatopsDomain}"
-## Docker Registry
-export defaultDockerRegistryPath=$(cat ${installationWorkspace}/metadata.json | jq -r '.metadata.defaultApplications."docker-registry"')
-export dockerRegistryDomain="$(cat ${autoSetupHome}/${defaultDockerRegistryPath}/metadata.json | jq -r '.name').${baseDomain}"
-export dockerRegistryUrl="https://${dockerRegistryDomain}"
-## S3 Objhect Store
-export defaultS3ObjectStorePath=$(cat ${installationWorkspace}/metadata.json | jq -r '.metadata.defaultApplications."s3-object-store"')
-export s3ObjectStoreDomain="$(cat ${autoSetupHome}/${defaultS3ObjectStorePath}/metadata.json | jq -r '.name').${baseDomain}"
-export s3ObjectStoreUrl="https://${s3ObjectStoreDomain}"
+        ####################################################################################################################################################################
+        ##      H E L M    I N S T A L L   /   U P G R A D E
+        ####################################################################################################################################################################
+    elif [[ ${installationType} == "helm" ]]; then
+        log_debug "Established installation type is \"${installationType}\". Proceeding in that way"
+        # Get helm parameters
+        helm_params=$(cat ${componentMetadataJson} | jq -r '.'${installationType}'_params')
+        log_debug ${helm_params}
+        # Check if helm repository is custom or standard
+        helmRepositoryUrl=$(echo ${helm_params} | jq -r '.repository_url')
 
-export logTimestamp=$(date '+%Y-%m-%d')
+        # Check if helm repository is already added
+        if [[ -n ${helmRepositoryUrl} ]]; then
+            helmRepoNameToAdd=$(echo ${helm_params} | jq -r '.repository_name' | cut -f1 -d'/')
+            helmRepoExists=$(helm repo list -o json | jq '.[] | select(.name=="'${helmRepoNameToAdd}'")')
+            log_debug "helmRepoNameToAdd: ${helmRepoNameToAdd},  helmRepoExists: ${helmRepoExists}"
+            if [[ -z ${helmRepoExists} ]]; then
+                log_debug "helm repo add ${helmRepoNameToAdd} ${helmRepositoryUrl}"
+                helm repo add ${helmRepoNameToAdd} ${helmRepositoryUrl}
+                helm repo update
+            fi
+        fi
+        # Get --set parameters from metadata.json
+        helm_set_key_value_params=$(echo ${helm_params} | jq -r '.set_key_values[]? | "--set \(.)" ' | mo) # Mo adds mustache {{variables}} support to helm --set options
+        log_debug "${helm_set_key_value_params}"
 
-# Load Central Functions
-for function in $(find ${autoSetupHome}/functions -name "*.sh")
-do
-  source ${function}
-  echo "Loaded function $(cat ${function} | grep '()' | sed 's/{//g')"
-done
+        # Get --set-string parameters from metadata.json
+        helm_set_string_key_value_params=$(echo ${helm_params} | jq -r '.set_string_key_values[]? | "--set-string \(.)" ' | mo) # Mo adds mustache {{variables}} support to helm --set-string options
+        log_debug "${helm_set_string_key_value_params}"
 
-if [[ ! -f /usr/share/kx.as.code/.config/network_status ]]; then
+        helmRepositoryName=$(echo ${helm_params} | jq -r '.repository_name')
 
-    # Change DNS resolution to allow wildcards for resolving locally deployed K8s services
-    echo "DNSStubListener=no" | /usr/bin/sudo tee -a /etc/systemd/resolved.conf
-    /usr/bin/sudo systemctl restart systemd-resolved
-
-    # Configue DNS - /etc/resolv.conf
-    /usr/bin/sudo rm -f /etc/resolv.conf
-    echo "nameserver ${mainIpAddress}" | /usr/bin/sudo tee /etc/resolv.conf
-
-    export private_subnet_cidr_one=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.private_subnet_cidr_one')
-    export private_subnet_cidr_two=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.private_subnet_cidr_two')
-
-    if [[ "${private_subnet_cidr_one}" != "null" ]]; then
-      allowedIpRanges="${private_subnet_cidr_one}"
-      if [[ "${private_subnet_cidr_two}" != "null" ]]; then
-        allowedIpRanges="${allowedIpRanges}; ${private_subnet_cidr_two}"
-      fi
-    else
-      allowedIpRanges="$(echo ${mainIpAddress} | sed 's/\.[0-9]*$/.0/')/24"
-    fi
-
-echo '''//
-// Do any local configuration here
-//
-
-// Consider adding the 1918 zones here, if they are not used in your
-// organization
-//include "/etc/bind/zones.rfc1918";
-
-zone "'${baseDomain}'" {
-      type master;
-      file "/etc/bind/db.'${baseDomain}'";
-      allow-query { any; };
-      allow-transfer { '${allowedIpRanges}'; };
-};
-''' | /usr/bin/sudo tee /etc/bind/named.conf.local
-
-echo '''; BIND reverse data file for empty rfc1918 zone
-;
-; DO NOT EDIT THIS FILE - it is used for multiple zones.
-; Instead, copy it, edit named.conf, and use that copy.
-;
-$TTL    86400
-$ORIGIN '${baseDomain}'.
-
-@                 IN      SOA	   '${baseDomain}'.   root.'${baseDomain}'. (
-            1		; Serial
-      604800		; Refresh
-        86400		; Retry
-      2419200		; Expire
-        86400 )	; Negative Cache TTL
-;
-  IN  NS  ns1.'${baseDomain}'.
-
-@                 IN      A      '${mainIpAddress}'
-ns1               IN      A      '${mainIpAddress}'
-pgadmin           IN      A      '${mainIpAddress}'
-kx-main1          IN      A      '${mainIpAddress}'
-ldap              IN      A      '${mainIpAddress}'
-ldapadmin         IN      A      '${mainIpAddress}'
-rabbitmq          IN      A      '${mainIpAddress}'
-remote-desktop    IN      A      '${mainIpAddress}'
-api-internal      IN      A      '${mainIpAddress}'
-*                 IN      A      '${mainIpAddress}'
-''' | /usr/bin/sudo tee /etc/bind/db.${baseDomain}
-
-/usr/bin/sudo named-checkconf
-/usr/bin/sudo named-checkzone ${baseDomain} /etc/bind/db.${baseDomain}
-
-    if  [[ ${baseIpType} == "static" ]] || [[ ${dnsResolution} == "hybrid" ]]; then
-        # Prevent DHCLIENT updating static IP
-        if [[ ${dnsResolution} == "hybrid"   ]]; then
-            echo "supersede domain-name-servers ${mainIpAddress};" | /usr/bin/sudo tee -a /etc/dhcp/dhclient.conf
+        # Determine whether a values_template.yaml file exists for the solution and use it if so - and replace mustache variables such as url etc
+        if [[ -f ${installComponentDirectory}/values_template.yaml ]]; then
+            envhandlebars < ${installComponentDirectory}/values_template.yaml > ${installationWorkspace}/${componentName}_values.yaml
+            valuesFileOption="-f ${installationWorkspace}/${componentName}_values.yaml"
         else
-            echo "supersede domain-name-servers ${fixedNicConfigDns1}, ${fixedNicConfigDns2};" | /usr/bin/sudo tee -a /etc/dhcp/dhclient.conf
+            # Set to blank to avoid variable unbound error
+            valuesFileOption=""
         fi
-        echo '''
-        #!/bin/sh
-        make_resolv_conf(){
-            :
-        }
-        ''' | sed -e 's/^[ \t]*//' | sed 's/:/    :/g' | /usr/bin/sudo tee /etc/dhcp/dhclient-enter-hooks.d/nodnsupdate
-        /usr/bin/sudo chmod +x /etc/dhcp/dhclient-enter-hooks.d/nodnsupdate
-    fi
 
-    if [[ ${baseIpType} == "static"   ]]; then
-        # Configure IF to be managed/confgured by network-manager
-        rm -f /etc/NetworkManager/system-connections/*
-        /usr/bin/sudo mv /etc/network/interfaces /etc/network/interfaces.unused
-        nmcli con add con-name "${netDevice}" ifname ${netDevice} type ethernet ip4 ${mainIpAddress}/24 gw4 ${fixedNicConfigGateway}
-        nmcli con mod "${netDevice}" ipv4.method "manual"
-        nmcli con mod "${netDevice}" ipv4.dns "${fixedNicConfigDns1},${fixedNicConfigDns2}"
-        systemctl restart network-manager
-        nmcli con up "${netDevice}"
-    fi
-
-    if  [[ ${baseIpType} == "static"   ]] || [[ ${dnsResolution} == "hybrid"   ]]; then
-        /usr/bin/sudo systemctl enable --now bind9.service
-    fi
-
-    # Setup proxy settings if they exist
-    if ( [[ -n ${httpProxySetting} ]] || [[ -n ${httpsProxySetting} ]] ) && ( [[ "${httpProxySetting}" != "null" ]] && [[ "${httpsProxySetting}" != "null" ]] ); then
-
-        httpProxySettingBase=$(echo ${httpProxySetting} | sed 's/https:\/\///g' | sed 's/http:\/\///g')
-        httpsProxySettingBase=$(echo ${httpsProxySetting} | sed 's/https:\/\///g' | sed 's/http:\/\///g')
-
-        echo '''
-        [Service]
-        Environment="HTTP_PROXY='${httpProxySettingBase}'/" "HTTPS_PROXY='${httpsProxySettingBase}'/" "NO_PROXY=localhost,127.0.0.1,.'${baseDomain}'"
-        ''' | /usr/bin/sudo tee /etc/systemd/system/docker.service.d/http-proxy.conf
-
-        systemctl daemon-reload
-        systemctl restart docker
-
-        baseip=$(echo ${mainIpAddress} | cut -d'.' -f1-3)
-
-        echo '''
-        export http_proxy='${httpProxySetting}'
-        export HTTP_PROXY=$http_proxy
-        export https_proxy='${httpsProxySetting}'
-        export HTTPS_PROXY=$https_proxy
-        printf -v lan '"'"'%s,'"'"' '${mainIpAddress}'
-        printf -v pool '"'"'%s,'"'"' '${baseip}'.{1..253}
-        printf -v service '"'"'%s,'"'"' '${baseip}'.{1..253}
-        export no_proxy="${lan%,},${service%,},${pool%,},127.0.0.1,.'${baseDomain}'";
-        export NO_PROXY=$no_proxy
-        ''' | /usr/bin/sudo tee -a /root/.bashrc /root/.zshrc /home/${vmUser}/.bashrc /home/${vmUser}/.zshrc
-
-    fi
-
-    # Ensure the whole network setup does not execute again on next run after reboot
-    /usr/bin/sudo mkdir -p /usr/share/kx.as.code/.config
-    echo "KX.AS.CODE network config done" | /usr/bin/sudo tee /usr/share/kx.as.code/.config/network_status
-
-    # Reboot if static network settings to activate them
-    if  [[ "${baseIpType}" == "static"   ]]; then
-        # Reboot machine to ensure all network changes are active
-        /usr/bin/sudo reboot
-    else
-        /usr/bin/sudo systemctl restart bind9
-    fi
-
-fi
-
-# Set default keyboard language
-keyboardLanguages=""
-availableLanguages="us de gb fr it es"
-for language in ${availableLanguages}; do
-    if [[ -z ${keyboardLanguages} ]]; then
-        keyboardLanguages="${language}"
-    else
-        if [[ ${language} == "${defaultKeyboardLanguage}"   ]]; then
-            keyboardLanguages="${language},${keyboardLanguages}"
-        else
-            keyboardLanguages="${keyboardLanguages},${language}"
-        fi
-    fi
-done
-
-echo '''
-# KEYBOARD CONFIGURATION FILE
-
-# Consult the keyboard(5) manual page.
-
-XKBMODEL="pc105"
-XKBLAYOUT="'${keyboardLanguages}'"
-XKBVARIANT=""
-XKBOPTIONS=""
-
-BACKSPACE=\"guess\"
-''' | /usr/bin/sudo tee /etc/default/keyboard
-
-# Wait for RabbitMQ web service to be reachable before continuing
-timeout -s TERM 600 bash -c 'while [[ "$(curl -s -o /dev/null -L -w ''%{http_code}'' http://127.0.0.1:15672/cli/rabbitmqadmin)" != "200" ]]; do \
-            echo "Waiting for http://127.0.0.1:15672/cli/rabbitmqadmin"; sleep 5; done'
-
-# Check if rabbitmqadmin is installed
-if [ ! -f /usr/local/bin/rabbitmqadmin ]; then
-    wget http://127.0.0.1:15672/cli/rabbitmqadmin
-    chmod +x rabbitmqadmin
-    mv rabbitmqadmin /usr/local/bin/rabbitmqadmin
-    # Add bash auto-completion
-    rabbitmqadmin --bash-completion | sudo tee /etc/bash_completion.d/rabbitmqadmin
-    echo "source /etc/bash_completion.d/rabbitmqadmin" | sudo tee -a /home/${VM_USER}/.bashrc /home/${VM_USER}/.zshrc /root/.bashrc /root/.zshrc
-fi
-
-
-
-# Create RabbitMQ Exchange if it does not exist
-exchangeExists=$(rabbitmqadmin list exchanges --format=raw_json | jq -r '.[] | select(.name=="action_workflow")')
-if [ -z "${exchangeExists}" ]; then
-    rabbitmqadmin declare exchange name=action_workflow type=direct
-fi
-
-# Create RabbitMQ Queues if they do not exist
-for actionWorkflowQueue in ${actionWorkflows}; do
-    actionWorkflowQueueExists=$(rabbitmqadmin list queues --format=raw_json | jq -r '.[] | select(.name=="'${actionWorkflowQueue}'_queue")')
-    if [ -z "${actionWorkflowQueueExists}" ]; then
-        rabbitmqadmin declare queue name=${actionWorkflowQueue}_queue durable=true
-    fi
-done
-
-# Create RabbitMQ Bindings if they do not exist
-for actionWorkflowBinding in ${actionWorkflows}; do
-    actionWorkflowBindingExists=$(rabbitmqadmin list bindings --format=raw_json | jq -r '.[] | select(.source=="action_workflow" and .destination=="'${actionWorkflowBinding}'_queue")')
-    if [ -z "${actionWorkflowBindingExists}" ]; then
-        rabbitmqadmin declare binding source="action_workflow" destination_type="queue" destination="${actionWorkflowBinding}_queue" routing_key="${actionWorkflowBinding}_queue"
-    fi
-done
-
-# Get first and last elements from Core install Queue
-lastCoreElementToInstall=$(cat ${installationWorkspace}/actionQueues.json | jq -r 'last(.action_queues.install[] | select(.install_folder=="core")) | .name')
-if [[ "${lastCoreElementToInstall}" == "null" ]]; then
-    lastCoreElementToInstall=$(cat ${installationWorkspace}/actionQueues.json | jq -r 'last(.state.processed[] | select(.install_folder=="core")) | .name')
-fi
-firstCoreElementToInstall=$(cat ${installationWorkspace}/actionQueues.json | jq -r 'first(.action_queues.install[] | select(.install_folder=="core")) | .name')
-if [[ "${lastCoreElementToInstall}" == "null" ]]; then
-    firstCoreElementToInstall=$(cat ${installationWorkspace}/actionQueues.json | jq -r 'first(.state.processed[] | select(.install_folder=="core")) | .name')
-fi
-count=0
-
-# Populate pending queue on first start with default core components
-defaultComponentsToInstall=$(cat ${installationWorkspace}/actionQueues.json | jq -r '.action_queues.install[].name')
-for componentName in ${defaultComponentsToInstall}; do
-    payload=$(cat ${installationWorkspace}/actionQueues.json | jq -c '.action_queues.install[] | select(.name=="'${componentName}'") | {install_folder:.install_folder,"name":.name,"action":"install","retries":"0"}')
-    echo "Pending payload: ${payload}"
-    rabbitmqadmin publish exchange=action_workflow routing_key=pending_queue properties="{\"delivery_mode\": 2}" payload=''${payload}''
-
-    # Get slot number to add installed app to JSON array
-    arrayLength=$(cat ${installationWorkspace}/actionQueues.json | jq -r '.state.processed[].name' | wc -l)
-    if [[ -z ${arrayLength} ]]; then
-        arrayLength=0
-    fi
-    # Add component to state.processed array in actionQueue.json
-    cat ${installationWorkspace}/actionQueues.json | jq '.state.processed['${arrayLength}'] |= . + '"${payload}"'' | tee ${installationWorkspace}/actionQueues.json.tmp
-    mv ${installationWorkspace}/actionQueues.json.tmp ${installationWorkspace}/actionQueues.json
-    # Remove component from installation array as added to processed array in actionQueue.json
-    cat ${installationWorkspace}/actionQueues.json | jq 'del(.action_queues.install[] | select(.name=="'${componentName}'"))' | tee ${installationWorkspace}/actionQueues.json.tmp
-    mv ${installationWorkspace}/actionQueues.json.tmp ${installationWorkspace}/actionQueues.json
-    sleep 1
-done
-
-# Set tries to 0. If an install failed and the retry flag is set to true for that component in metadata.json, attempts will be made to retry up to 3 times
-retries=0
-logRc=0
-rc=0
-
-# Get total number of messages
-sleep 5
-
-# Poll pending queue and trigger actions if message is present
-while :; do
-
-    completedQueue=$(rabbitmqadmin list queues name messages --format raw_json | jq -r '.[] | select(.name=="completed_queue") | .messages')
-    wipQueue=$(rabbitmqadmin list queues name messages --format raw_json | jq -r '.[] | select(.name=="wip_queue") | .messages')
-    failedQueue=$(rabbitmqadmin list queues name messages --format raw_json | jq -r '.[] | select(.name=="failed_queue") | .messages')
-    retryQueue=$(rabbitmqadmin list queues name messages --format raw_json | jq -r '.[] | select(.name=="retry_queue") | .messages')
-    pendingQueue=$(rabbitmqadmin list queues name messages --format raw_json | jq -r '.[] | select(.name=="pending_queue") | .messages')
-    totalMessages=$(( ${pendingQueue} + ${completedQueue} + ${wipQueue} + ${failedQueue} + ${retryQueue} ))
-
-    if [[ ${failedQueue} -eq 0 ]]; then
-
-        if [[ ${wipQueue} -ne 0 ]]; then
-
-            # In case of system restart, read payload from WIP queue, rather than relying on already set variables
-            payload=$(rabbitmqadmin get queue=wip_queue --format=raw_json ackmode=ack_requeue_false | jq -c -r '.[].payload')
-            echo "WIP payload: ${payload}"
-            export retries=$(echo ${payload} | jq -c -r '.retries')
-            export action=$(echo ${payload} | jq -c -r '.action')
-            export componentName=$(echo ${payload} | jq -c -r '.name')
-            export componentInstallationFolder=$(echo ${payload} | jq -c -r '.install_folder')
-            export retriesParameter=$(cat ${autoSetupHome}/${componentInstallationFolder}/${componentName}/metadata.json | jq -r '.retry?')
-
-            # Move item from pending to completed or error queue
-            if [[ ! -f ${installationWorkspace}/current_payload.err ]]; then
-                echo "Completed payload: ${payload}"
-                rabbitmqadmin publish exchange=action_workflow routing_key=completed_queue properties="{\"delivery_mode\": 2}" payload=''${payload}''
-                log_info "The installation of \"${componentName}\" completed succesfully"
-                notify "${componentName} installed successfully [$((${completedQueue} + 1))/${totalMessages}]" "dialog-information"
-                if [[ "${componentName}" == "${lastCoreElementToInstall}" ]]; then
-                    notify "CONGRATULATIONS\! That concludes the core setup\! Your optional components will now be installed" "dialog-information"
-                    echo "${componentName} = ${lastCoreElementToInstall}"  
-                fi
-                retries=0
+        # Check if Helm chart version is specified, and if so, check if it is valid
+        helmVersion=$(echo ${helm_params} | jq -r '.helm_version')
+        if [[ -n ${helmVersion} ]] && [[ ${helmVersion} != "null" ]]; then
+            if [[ -n $(helm search repo ${helmRepositoryName} -o json | jq -r '.[] | select(.version=="'${helmVersion}'")') ]]; then
+                log_info "Specified Helm version ${helmVersion} exists in repository ${helmRepositoryName}. All good. Continuing to install this version"
+                helmVersionOption="--version ${helmVersion}"
             else
-                if [[ "${retriesParameter}" != "false" ]] && [[ ${retries} -lt 3 ]]; then
-                    sleep 10
-                    ((retries = ${retries} + 1))
-                    payload=$(echo ${payload} | jq --arg retries ${retries} -c -r '.retries=$retries')
-                    echo "Retry payload: ${payload}"
-                    rabbitmqadmin publish exchange=action_workflow routing_key=retry_queue properties="{\"delivery_mode\": 2}" payload=''${payload}''
-                    cat ${installationWorkspace}/actionQueues.json | jq -c -r '(.state.processed[] | select(.name=="'${componentName}'").retries) = "'${retries}'"' | tee ${installationWorkspace}/actionQueues.json.tmp
-                    mv ${installationWorkspace}/actionQueues.json.tmp ${installationWorkspace}/actionQueues.json
-                    log_warn "Previous attempt to install \"${componentName}\" did not complete succesfully. Trying again (${retries} of 3)"
-                    notify "${componentName} installation error. Will try three times maximum\! [$((${completedQueue} + 1))/${totalMessages}]" "dialog-warning"
-                    rm -f ${installationWorkspace}/current_payload.err
-                else
-                    payload=$(echo ${payload} | jq -c -r '(.retries)="0"' | jq -c -r '. += {"failed_retries":"'${retries}'"}')
-                    echo "Failed payload: ${payload}"
-                    rabbitmqadmin publish exchange=action_workflow routing_key=failed_queue properties="{\"delivery_mode\": 2}" payload=''${payload}''
-                    retries=0
-                    log_error "Previous attempt to install \"${componentName}\" did not complete succesfully. There will be no (further) retries"
-                    notify "${componentName} installation failed\! [$((${completedQueue} + 1))/${totalMessages}]" "dialog-error"
-                    rm -f ${installationWorkspace}/current_payload.err
-                fi
+                log_warn "Specified Helm version ${helmVersion} not found for Helm repository ${helmRepositoryName}. Trying latest Helm chart"
+                helmVersionOption=""
+            fi
+        else
+            log_info "Helm version not set for ${helmRepositoryName}. Trying latest Helm chart"
+            helmVersionOption=""
+        fi
+
+        # Execute installation via Helm
+        helmCommmand=$(echo -e "helm upgrade --install ${helmVersionOption} ${valuesFileOption} ${componentName} --namespace ${namespace} ${helm_set_string_key_value_params} ${helm_set_key_value_params} ${helmRepositoryName}")
+        echo ${helmCommmand} | tee ${installationWorkspace}/helm_${componentName}.sh
+        log_debug "Helm command: $(cat ${installationWorkspace}/helm_${componentName}.sh)"
+        chmod 755 ${installationWorkspace}/helm_${componentName}.sh
+        ${installationWorkspace}/helm_${componentName}.sh || rc=$? && log_info "${installationWorkspace}/helm_${componentName}.sh returned with rc=$rc"
+        if [[ ${rc} -ne 0 ]]; then
+            log_error "Execution of Helm command \"${helmCommmand}\" ended in a non zero return code ($rc)"
+            return 1
+        fi
+
+        ####################################################################################################################################################################
+        ##      A R G O    C D    I N S T A L L
+        ####################################################################################################################################################################
+    elif [[ ${installationType} == "argocd" ]] && [[ ${action}=="install" ]]; then
+
+        # No upgrade for ArgoCD based applications, as these should be updated via GitOps
+
+        log_info "Established installation type is \"${installationType}\". Proceeding in that way"
+        # Get argocd parameters
+        argocd_params=$(cat ${componentMetadataJson} | jq -r '.'${installationType}'_params')
+        log_info "argocd_params: ${argocd_params}"
+
+        # Login to ArgoCD
+        for i in {1..10}; do
+            argoCdResponse=$(argocd login grpc.argocd.${baseDomain} --username admin --password ${vmPassword} --insecure)
+            if [[ $argoCdResponse =~ "successfully" ]]; then
+                echo "Logged in OK. Exiting loop"
+                break
+            fi
+            sleep 15
+        done
+
+        # Upload KX.AS.CODE CA certificate to ArgoCD
+        if [[ -z $(argocd --insecure cert list | grep gitlab.kx-as-code.local) ]]; then
+            if [[ -f ${installationWorkspace}/kx-certs/ca.crt ]]; then
+                argocd cert add-tls ${gitDomain} --from ${installationWorkspace}/kx-certs/ca.crt
+            else
+                log_error "Could not upload KX.AS.CODE CA (${installationWorkspace}/kx-certs/ca.crt) to ArgoCD. It appears to be missing."
             fi
         fi
 
-        # If there is something in the wip or failed queue, do not schedule an installation
-        if [[ ${wipQueue} -eq 0 ]] && [[ ${failedQueue} -eq 0 ]]; then
-            if [[ ${retryQueue} -ne 0 ]]; then
-                # If no errors or wip, check first if there are any installation items that need to be retried, after a failure was fixed
-                payload=$(rabbitmqadmin get queue=retry_queue --format=raw_json ackmode=ack_requeue_false | jq -c -r '.[].payload')
-                echo "Payload for retry queue = \"${payload}\""
-            elif [[ ${pendingQueue} -ne 0 ]]; then
-            # If there were no retry items, check if there is anything in the pending queue that needs to be installed
-                payload=$(rabbitmqadmin get queue=pending_queue --format=raw_json ackmode=ack_requeue_false | jq -c -r '.[].payload')
-                echo "Payload for pending queue = \"${payload}\""
-            else
-                payload=""
+        # Get ArgoCD paramater array
+        argoCdParams=$(cat ${componentMetadataJson} | jq -r '.argocd_params')
+
+        # Get ArgoCd parameters
+        argoCdRepositoryUrl=$(echo ${argoCdParams} | jq -r '.repository' | mo) # mustache {{variable}} replacment with "mo"
+        argoCdRepositoryPath=$(echo ${argoCdParams} | jq -r '.path' | mo)
+        argoCdDestinationServer=$(echo ${argoCdParams} | jq -r '.dest_server' | mo)
+        argoCdDestinationNameSpace=$(echo ${argoCdParams} | jq -r '.dest_namespace' | mo)
+        argoCdSyncPolicy=$(echo ${argoCdParams} | jq -r '.sync_policy')
+        argoCdAutoPrune=$(echo ${argoCdParams} | jq -r '.auto_prune')
+        argoCdSelfHeal=$(echo ${argoCdParams} | jq -r '.self_heal')
+
+        # Login to ArgoCD
+        argoCdInstallScriptsHome="${autoSetupHome}/cicd/argocd"
+        . ${argoCdInstallScriptsHome}/helper_scripts/login.sh
+
+        # Add Git repository to ArgoCD if not already present
+        argoRepoExists=$(argocd repo list --output json | jq -r '.[] | select(.repo=="'${argoCdRepositoryUrl}'") | .repo')
+        if [[ -z ${argoRepoExists} ]]; then
+            argocd repo add --insecure-skip-server-verification ${argoCdRepositoryUrl} --username ${vmUser} --password ${vmPassword}
+        fi
+
+        # Check if auto-prune option should be added to deploy command
+        if [[ ${argoCdAutoPrune} == "true" ]]; then
+            argoCdAutoPruneOption="--auto-prune"
+        fi
+
+        # Check if self-heal option should be added to deploy command
+        if [[ ${argoCdAutoPrune} == "true" ]]; then
+            argoCdSelfHealOption="--self-heal"
+        fi
+
+        # Add App to ArgoCD
+        argoCdAppAddCommand="argocd app create $(echo ${componentName} | sed 's/_/-/g') --repo  ${argoCdRepositoryUrl} --path ${argoCdRepositoryPath}  --dest-server ${argoCdDestinationServer} --dest-namespace ${argoCdDestinationNameSpace} --sync-policy ${argoCdSyncPolicy} ${argoCdAutoPruneOption} ${argoCdSelfHealOption}"
+        log_debug "ArgoCD command: ${argoCdAppAddCommand}"
+        ${argoCdAppAddCommand} || rc=$? && log_info "ArgoCD command: ${argoCdAppAddCommand} returned with rc=$rc"
+        if [[ ${rc} -ne 0 ]]; then
+            log_error "Execution of ArgoCD command ended in a non zero return code ($rc)"
+            return 1
+        fi
+        for i in {1..10}; do
+            response=$(argocd app list --output json | jq -r '.[] | select (.metadata.name=="'${componentName}'") | .metadata.name')
+            if [[ -n $response ]]; then
+                echo "Added ${componentName} App to ArgoCD OK. Exiting loop"
+                break
+                sleep 5
             fi
-            # Start the installation process if an item was found in the pending or retry queue
-            if [ -n "${payload}" ]; then
-                # Define Variables for autoSetup.sh script
-                export action=$(echo ${payload} | jq -r '.action')
-                export componentName=$(echo ${payload} | jq -r '.name')
-                export componentInstallationFolder=$(echo ${payload} | jq -r '.install_folder')
+        done
 
-                # Define component install directory
-                export installComponentDirectory=${autoSetupHome}/${componentInstallationFolder}/${componentName}
+    else
+        log_error "Did not recognize installation type of \"${installationType}\". Valid values are \"helm\", \"argocd\" or \"script\""
+    fi
 
-                # Define location of metadata JSON file for component
-                export componentMetadataJson=${installComponentDirectory}/metadata.json
+    ####################################################################################################################################################################
+    ##      H E A L T H    C H E C K S
+    ####################################################################################################################################################################
 
-                # Get retry parameter for component
-                export retryParameter=$(cat ${componentMetadataJson} | jq -r '.retry?')
+    # PODS RUNNING CHECKS
+    if [[ ${componentInstallationFolder} != "core" ]]; then
+        # Excluding core_groups to avoid missing cross dependency issues between core services, for example,
+        # coredns waiting for calico network to be installed, preventing other service from being provisioned
+        for i in {1..60}; do
+            # Added workaround for Gitlab-Runner, which is not expected to work until later
+            # This is because at this stage the docker registry is not yet up to push the custom image
+            totalPods=$(kubectl get pods --namespace ${namespace} | grep -v "STATUS" | grep -v "gitlab-runner" | wc -l || true)
+            runningPods=$(kubectl get pods --namespace ${namespace} | grep -v "STATUS" | grep -v "gitlab-runner" | grep -i -E 'Running|Completed' | wc -l || true)
+            log_info "Waiting for all pods in ${namespace} namespace to have Running status - CHECK: ${i}, TOTAl: ${totalPods}, RUNNING:  ${runningPods}"
+            if [[ ${totalPods} -eq ${runningPods} ]]; then
+              log_info "The number of running pods (${runningPods}) running in namespace ${namespace}, equals the number of total pods (${totalPods}) after ${i} checks, continuing..."
+              break
+            fi
+            sleep 15
+        done
 
-                # Add item to wip queue to notify install is in progress
-                rabbitmqadmin publish exchange=action_workflow routing_key=wip_queue properties="{\"delivery_mode\": 2}" payload=''${payload}''
+        if [[ $totalPods -ne $runningPods ]]; then
+            log_warn "After 60 checks, the number of total pods (${totalPods}) in the ${namespace} namespace still does not equal the number of running pods (${runningPods})"
+            rc=1
+            return ${rc}
+        fi
 
-                # Launch autoSetup.sh
-                if [[ "${componentName}" == "${firstCoreElementToInstall}" ]]; then
-                     notify "Initialization started. Please be patient. This could take up to 30 minutes, depending on your system size and speed of internet connection" "dialog-warning"
-                    echo "${componentName} = ${firstCoreElementToInstall}"
+        # URL READINESS HEALTH CHECK
+        applicationUrls=$(cat ${componentMetadataJson} | jq -r '.urls[]?.url?' | mo)
+
+        for applicationUrl in ${applicationUrls}; do
+            readinessCheckData=$(cat ${componentMetadataJson} | jq -r '.urls[0]?.healthchecks?.readiness?')
+            urlCheckPath=$(echo ${readinessCheckData} | jq -r '.http_path')
+            authorizationRequired=$(echo ${readinessCheckData} | jq -r '.http_auth_required')
+            expectedHttpResponseCode=$(echo ${readinessCheckData} | jq -r '.expected_http_response_code')
+            expectedContentString=$(echo ${readinessCheckData} | jq -r '.expected_http_response_string')
+            expectedJsonValue=$(echo ${readinessCheckData} | jq -r '.expected_json_response.json_value')
+            curlAuthOption=""
+
+            # Set curl auth option, if http_auth_required=true in solution's metadata.json
+            if [[ "${authorizationRequired}" == "true" ]]; then
+                httpAuthSecretName=$(echo ${readinessCheckData} | jq -r '.http_auth_secret.secret_name?')
+                httpAuthUsernameField=$(echo ${readinessCheckData} | jq -r '.http_auth_secret.username_field?')
+                httpAuthUsername=$(kubectl get secret -n ${namespace} ${httpAuthSecretName} -o json | jq -r '.data.'${httpAuthUsernameField}'' | base64 --decode)
+                httpAuthPasswordField=$(echo ${readinessCheckData} | jq -r '.http_auth_secret.password_field?')
+                httpAuthPassword=$(kubectl get secret -n ${namespace} ${httpAuthSecretName} -o json | jq -r '.data.'${httpAuthPasswordField}'' | base64 --decode)
+                curlAuthOption="-u ${httpAuthUsername}:${httpAuthPassword}"
+            fi
+
+            for i in {1..60}; do
+                http_code=$(curl ${curlAuthOption} -s -o /dev/null -L -w '%{http_code}' ${applicationUrl}${urlCheckPath} || true)
+                if [[ "${http_code}" == "${expectedHttpResponseCode}" ]]; then
+                    echo "Application \"${componentName}\" is up. Received expected response [RC=${http_code}]"
+                    break
                 fi
-                count=$((count + 1))
-                export error=""
+                log_info "Waiting for ${applicationUrl}${urlCheckPath} [Got RC=${http_code}, Expected RC=${expectedHttpResponseCode}]"
+                sleep 30
+            done
 
-                # Check if the Docker Hub Download Rate Limit is being reached which may lead to error and notify the user appropriately
-                # User Dockerhub account if it exists
-                if [[ -f /var/tmp/.tmp.json ]]; then
-                  export dockerHubUsername=$(cat /var/tmp/.tmp.json | jq -r '.DOCKERHUB_USER')
-                  export dockerHubPassword=$(cat /var/tmp/.tmp.json | jq -r '.DOCKERHUB_PASSWORD')
-                  export dockerHubEmail=$(cat /var/tmp/.tmp.json | jq -r '.DOCKERHUB_EMAIL')
-                  export dockerAuthApiUrl="https://auth.docker.io/token?service=registry.docker.io&scope=repository:ratelimitpreview/test:pull"
-                  if [[ -n ${dockerHubUsername} ]] && [[ -n ${dockerHubPassword} ]]; then
-                    dockerHubToken=$(curl --user ''${dockerHubUsername}:${dockerHubPassword}'' "${dockerAuthApiUrl}" | jq -r .token)
-                  else
-                    dockerHubToken=$(curl "${dockerAuthApiUrl}" | jq -r .token)
-                  fi
-                fi
-                curl --head -H "Authorization: Bearer ${dockerHubToken}" https://registry-1.docker.io/v2/ratelimitpreview/test/manifests/latest 2>&1 | sudo tee ${installationWorkspace}/rateLimitResponse.txt
-                dockerHubRateLimitResponse=$(cat ${installationWorkspace}/rateLimitResponse.txt | grep -i RateLimit | cut -d' ' -f2 | cut -d';' -f1 || true)
-                dockerHubAllowLimit=$(echo ${dockerHubRateLimitResponse} | awk {'print $1'})
-                dockerHubRemainingLimit=$(echo ${dockerHubRateLimitResponse} | awk {'print $2'})
-                if [[ -n ${dockerHubRemainingLimit} ]]; then
-                    dockerHubRateLimitTimePeriod=$(( $(cat ${installationWorkspace}/rateLimitResponse.txt | grep "ratelimit-remaining" | cut -d'=' -f2 | tr -d " \t\n\r") / 3600 ))
-                    if [[ ${dockerHubRemainingLimit} -le 0 ]]; then
-                        log_error "Error\! You have 0 Docker Hub downloads remaining. You must wait until the next ${dockerHubRateLimitTimePeriod} hour period starts to try again"
-                        notify "Error\! You have 0 Docker Hub downloads remaining" "dialog-error"
-                    elif [[ ${dockerHubRemainingLimit} -le 25 ]]; then
-                        log_warn "Warning\! You have less than 25 Docker Hub downloads remaining"
-                        notify "Warning\! You have less than 25 Docker Hub downloads remaining" "dialog-warning"
+            finalReturnCode=$(curl ${curlAuthOption} -s -o /dev/null -L -w '%{http_code}' ${applicationUrl}${urlCheckPath})
+            if [[ ${finalReturnCode} -ne ${expectedHttpResponseCode} ]]; then
+                log_warn "Final health check (60/60) of URL ${applicationUrl} failed. Expected RC ${expectedHttpResponseCode}, but got RC ${finalReturnCode} instead"
+            fi
+
+            if [[ -n ${expectedContentString} ]]; then
+                for i in {1..5}; do
+                    returnedContent=$(curl -s -L ${applicationUrl}${urlCheckPath})
+                    if [[ ${expectedContentString} =~ ${returnedContent} ]]; then
+                        log_info "Expected content matched returned health check content, exiting loop"
+                        break
+                    else
+                        log_warn "Expected content did not match returned health check content, continuing to check (check ${i} of 5)"
                     fi
-                    log_info "As an anonymous user you have a rate limit of ${dockerHubAllowLimit} with ${dockerHubRemainingLimit} downloads remaining in the current ${dockerHubRateLimitTimePeriod} hour window"
-                fi
-                # Launch the component installation process
-                . ${autoSetupHome}/autoSetup.sh &> ${installationWorkspace}/${componentName}_${logTimestamp}.${retries}.log
-                logRc=$?
-                log_info "Installation process for \"${componentName}\" returned with \$?=${logRc} and rc=$rc"
+                done
             fi
-            sleep 5
-        fi
-        sleep 5
+
+            # If expected JSON response is not empty, then check it
+            if [[ -n ${expectedJsonValue} ]]; then
+                for i in {1..5}; do
+                    jsonPath=$(echo ${readinessCheckData} | jq -r '.expected_json_response.json_path')
+                    returnedContent=$(curl -s -L ${applicationUrl}${urlCheckPath})
+                    returnedJsonValue=$(echo ${returnedContent} | jq -r ''${jsonPath}'')
+                    if [[ ${expectedJsonValue} != "${returnedJsonValue}" ]]; then
+                        log_warn "Health check for ${applicationUrl}${urlCheckPath} failed. The returned JSON value \"${returnedJsonValue}\" did not match the expected JSON value \"${expectedJsonValue}\""
+                    fi
+                done
+            fi
+
+        done
     fi
-    sleep 5
-done
+
+    # SCRIPTED HEALTH CHECK
+    #TODO
+
+    ####################################################################################################################################################################
+    ##      P O S T    I N S T A L L    S T E P S
+    ####################################################################################################################################################################
+
+    if [[ -n ${namespace} ]]; then
+      # LetsEncrypt
+      letsencryptEnabled=$(cat ${componentMetadataJson} | jq '.letsencrypt?.enabled?')
+      letsencryptIngressNames=$(cat ${componentMetadataJson} | jq -r '.letsencrypt?.ingress_names[]?')
+
+      log_debug "letsencryptEnabled: ${letsencryptEnabled}"
+      log_debug  "letsencryptIngressNames: ${letsencryptIngressNames}"
+
+      # Override Ingress TLS settings if LetsEncrypt is set as issuer
+      if [[ "${letsencryptEnabled}" != "false" ]] && [[ "${sslProvider}" == "letsencrypt" ]]; then
+
+        if [[ -n ${letsencryptIngressNames} ]] && [[ "${letsencryptIngressNames}" != "null" ]]; then
+          log_info "Specific ingress name(s) specified in metadata.json for ${componentName} -> ${letsencryptIngressNames}"
+        elif [[ "${namespace}" != "kube-system" ]]; then
+            log_info "Specific ingress name not specified in metadata.json for ${componentName}. Will look up the ingress names in namespace ${namespace}"
+            letsencryptIngressNames=$(kubectl get ingress -n ${namespace} -o json | jq -r '.items[].metadata.name')
+        fi
+
+        for ingressName in ${letsencryptIngressNames}; do
+          log_info "Adding LetsEncrypt annotations to Ingress --> ${ingressName}"
+          kubectl patch ingress ${ingressName} --type='json' -p='[{"op": "add", "path": "/spec/tls/0/secretName", "value":"'${ingressName}'-tls"}]' -n ${namespace}
+          kubectl annotate ingress ${ingressName} kubernetes.io/ingress.class=nginx -n ${namespace} --overwrite=true
+          kubectl annotate ingress ${ingressName} cert-manager.io/cluster-issuer=letsencrypt-${letsEncryptEnvironment} -n ${namespace} --overwrite=true
+        done
+
+      fi
+    fi
+
+    componentPostInstallScripts=$(cat ${componentMetadataJson} | jq -r '.post_install_scripts[]?')
+    # Loop round post-install scripts
+    for script in ${componentPostInstallScripts}; do
+        if [[ ! -f ${installComponentDirectory}/post_install_scripts/${script} ]]; then
+            log_error "Post-install script ${installComponentDirectory}/post_install_scripts/${script} does not exist. Check your spelling in the \"kxascode.json\" file and that it is checked in correctly into Git"
+        else
+            echo "Executing post-install script ${installComponentDirectory}/post_install_scripts/${script}"
+            log_info "Executing post-install script ${installComponentDirectory}/post_install_scripts/${script}"
+            . ${installComponentDirectory}/post_install_scripts/${script} || rc=$? && log_info "${installComponentDirectory}/post_install_scripts/${script} returned with rc=$rc"
+            if [[ ${rc} -ne 0 ]]; then
+                log_error "Execution of post install script \"${script}\" ended in a non zero return code ($rc)"
+                return 1
+            fi
+        fi
+    done
+
+    ####################################################################################################################################################################
+    ##      I N S T A L L    D E S K T O P    S H O R T C U T S
+    ####################################################################################################################################################################
+
+    # if Primary URL[0] in URLs Array exists and Icon is defined, create Desktop Shortcut
+    applicationUrls=$(cat ${componentMetadataJson} | jq -r '.urls[]?.url?' | mo)
+    primaryUrl=$(echo ${applicationUrls} | cut -f1 -d' ')
+
+    if [[ -n ${primaryUrl} ]]; then
+
+        shortcutIcon=$(cat ${componentMetadataJson} | jq -r '.shortcut_icon')
+        shortcutText=$(cat ${componentMetadataJson} | jq -r '.shortcut_text')
+        iconPath=${installComponentDirectory}/${shortcutIcon}
+        browserOptions="" # placeholder
+
+        if [[ -n ${primaryUrl} ]] && [[ ${primaryUrl} != "null" ]] && [[ -f ${iconPath} ]] && [[ -n ${shortcutText} ]]; then
+
+            mkdir -p "${shortcutsDirectory}"
+            chown ${vmUser}:${vmUser} "${shortcutsDirectory}"
+
+            echo """
+            [Desktop Entry]
+            Version=1.0
+            Name=${shortcutText}
+            GenericName=${shortcutText}
+            Comment=${shortcutText}
+            Exec=/usr/bin/google-chrome-stable %U ${primaryUrl} --use-gl=angle --password-store=basic ${browserOptions}
+            StartupNotify=true
+            Terminal=false
+            Icon=${iconPath}
+            Type=Application
+            Categories=Development
+            MimeType=text/html;text/xml;application/xhtml_xml;image/webp;x-scheme-handler/http;x-scheme-handler/https;x-scheme-handler/ftp;
+            Actions=new-window;new-private-window;
+            """ | tee "${shortcutsDirectory}"/${componentName}.desktop
+            sed -i 's/^[ \t]*//g' "${shortcutsDirectory}"/${componentName}.desktop
+            chmod 755 "${shortcutsDirectory}"/${componentName}.desktop
+            chown ${vmUser}:${vmUser} "${shortcutsDirectory}"/${componentName}.desktop
+
+        fi
+    fi
+
+    browserOptions="" # placeholder
+
+    shortcutText=$(cat ${componentMetadataJson} | jq -r '.shortcut_text')
+    if [[ -z ${shortcutText} ]] || [[ ${shortcutText} == "null" ]]; then
+        shortcutText="$(tr '[:lower:]' '[:upper:]' <<< ${componentName:0:1})${componentName:1}"
+    fi
+
+    apiDocsUrl=$(cat ${componentMetadataJson} | jq -r '.api_docs_url' | mo)
+    if [[ -n ${apiDocsUrl} ]] && [[ ${apiDocsUrl} != "null" ]]; then
+        apiDocsDirectory="/usr/share/kx.as.code/API Docs"
+        mkdir -p "${apiDocsDirectory}"
+        chown ${vmUser}:${vmUser} "${apiDocsDirectory}"
+        echo """
+        [Desktop Entry]
+        Version=1.0
+        Name=${shortcutText}
+        GenericName=${shortcutText}
+        Comment=${shortcutText}
+        Exec=/usr/bin/google-chrome-stable %U ${apiDocsUrl} --use-gl=angle --password-store=basic ${browserOptions}
+        StartupNotify=true
+        Terminal=false
+        Icon=${iconPath}
+        Type=Application
+        Categories=Development
+        MimeType=text/html;text/xml;application/xhtml_xml;image/webp;x-scheme-handler/http;x-scheme-handler/https;x-scheme-handler/ftp;
+        Actions=new-window;new-private-window;
+        """ | tee "${apiDocsDirectory}"/"${componentName}".desktop
+        sed -i 's/^[ \t]*//g' "${apiDocsDirectory}"/"${componentName}".desktop
+        chmod 755 "${apiDocsDirectory}"/"${componentName}".desktop
+    fi
+
+    swaggerApiDocsUrl=$(cat ${componentMetadataJson} | jq -r '.swagger_docs_url' | mo)
+    if [[ -n ${swaggerApiDocsUrl} ]] && [[ ${swaggerApiDocsUrl} != "null" ]]; then
+        apiDocsDirectory="/usr/share/kx.as.code/API Docs"
+        mkdir -p "${apiDocsDirectory}"
+        chown ${vmUser}:${vmUser} "${apiDocsDirectory}"
+        echo """
+        [Desktop Entry]
+        Version=1.0
+        Name=${shortcutText} Swagger
+        GenericName=${shortcutText} Swagger
+        Comment=${shortcutText} Swagger
+        Exec=/usr/bin/google-chrome-stable %U ${swaggerApiDocsUrl} --use-gl=angle --password-store=basic ${browserOptions}
+        StartupNotify=true
+        Terminal=false
+        Icon=/usr/share/kx.as.code/git/kx.as.code/base-vm/images/swagger.png
+        Type=Application
+        Categories=Development
+        MimeType=text/html;text/xml;application/xhtml_xml;image/webp;x-scheme-handler/http;x-scheme-handler/https;x-scheme-handler/ftp;
+        Actions=new-window;new-private-window;
+        """ | tee "${apiDocsDirectory}"/"${componentName}"_Swagger.desktop
+        sed -i 's/^[ \t]*//g' "${apiDocsDirectory}"/"${componentName}"_Swagger.desktop
+        chmod 755 "${apiDocsDirectory}"/"${componentName}"_Swagger.desktop
+    fi
+
+    postmanApiDocsUrl=$(cat ${componentMetadataJson} | jq -r '.postman_docs_url' | mo)
+    if [[ -n ${postmanApiDocsUrl} ]] && [[ ${postmanApiDocsUrl} != "null" ]]; then
+        apiDocsDirectory="/usr/share/kx.as.code/API Docs"
+        mkdir -p "${apiDocsDirectory}"
+        chown ${vmUser}:${vmUser} "${apiDocsDirectory}"
+        echo """
+        [Desktop Entry]
+        Version=1.0
+        Name=${shortcutText} Postman
+        GenericName=${shortcutText} Postman
+        Comment=${shortcutText} Postman
+        Exec=/usr/bin/google-chrome-stable %U ${postmanApiDocsUrl} --use-gl=angle --password-store=basic ${browserOptions}
+        StartupNotify=true
+        Terminal=false
+        Icon=/usr/share/kx.as.code/git/kx.as.code/base-vm/images/postman.png
+        Type=Application
+        Categories=Development
+        MimeType=text/html;text/xml;application/xhtml_xml;image/webp;x-scheme-handler/http;x-scheme-handler/https;x-scheme-handler/ftp;
+        Actions=new-window;new-private-window;
+        """ | tee "${apiDocsDirectory}"/"${componentName}"_Postman.desktop
+        sed -i 's/^[ \t]*//g' "${apiDocsDirectory}"/"${componentName}"_Postman.desktop
+        chmod 755 "${apiDocsDirectory}"/"${componentName}"_Postman.desktop
+    fi
+
+    vendorDocsUrl=$(cat ${componentMetadataJson} | jq -r '.vendor_docs_url' | mo)
+    if [[ -n ${vendorDocsUrl} ]] && [[ ${vendorDocsUrl} != "null" ]]; then
+        vendorDocsDirectory="/usr/share/kx.as.code/Vendor Docs"
+        mkdir -p "${vendorDocsDirectory}"
+        chown ${vmUser}:${vmUser} "${vendorDocsDirectory}"
+        echo """
+        [Desktop Entry]
+        Version=1.0
+        Name=${shortcutText}
+        GenericName=${shortcutText}
+        Comment=${shortcutText}
+        Exec=/usr/bin/google-chrome-stable %U ${vendorDocsUrl} --use-gl=angle --password-store=basic ${browserOptions}
+        StartupNotify=true
+        Terminal=false
+        Icon=/usr/share/kx.as.code/git/kx.as.code/base-vm/images/vendor_docs_icon.png
+        Type=Application
+        Categories=Development
+        MimeType=text/html;text/xml;application/xhtml_xml;image/webp;x-scheme-handler/http;x-scheme-handler/https;x-scheme-handler/ftp;
+        Actions=new-window;new-private-window;
+        """ | tee "${vendorDocsDirectory}"/"${componentName}".desktop
+        sed -i 's/^[ \t]*//g' "${vendorDocsDirectory}"/"${componentName}".desktop
+        chmod 755 "${vendorDocsDirectory}"/"${componentName}".desktop
+    fi
+
+elif [[ ${action} == "upgrade"   ]]; then
+
+    ## TODO
+    echo "TODO: Upgrade"
+
+elif [[ ${action} == "uninstall"   ]] || [[ ${action} == "purge"   ]]; then
+
+    echo "Uninstall or purge action"
+
+    if [[ ${installationType} == "helm"   ]]; then
+
+        # Helm uninstall
+        helm delete ${componentName} --namespace ${namespace}
+
+    elif [[ ${installationType} == "argocd" ]]; then
+
+        # Login to ArgoCD
+        argoCdInstallScriptsHome="${autoSetupHome}/cicd/argocd"
+        . ${argoCdInstallScriptsHome}/helper_scripts/login.sh
+
+        # ArgoCD uninstall application
+        argocd app delete ${componentName} --cascade
+
+    elif [[ ${installationType} == "script" ]]; then
+
+        # Script uninstall
+        echo "Executing Scripted uninstall routine"
+
+    else
+        log_error "Cannot uninstall \"${componentName}\" as installation type \"${installationType}\" is not recognized"
+    fi
+
+    # Remove Vendor Docs Shortcut if it exists
+    if [ -f "${vendorDocsDirectory}"/"${componentName}".desktop ]; then
+        rm -f "${vendorDocsDirectory}"/"${componentName}".desktop
+    fi
+
+    # Remove API Docs Shortcut if it exists
+    if [ -f "${apiDocsDirectory}"/"${componentName}".desktop ]; then
+        rm -f "${apiDocsDirectory}"/"${componentName}".desktop
+    fi
+
+    # Remove Application Shortcut if it exists
+    if [ -f "${shortcutsDirectory}"/"${componentName}".desktop ]; then
+        rm -f "${shortcutsDirectory}"/"${componentName}".desktop ]
+    fi
+
+    # Remove Postman API Shortcut if it exists
+    if [ -f "${apiDocsDirectory}"/"${componentName}"_Postman.desktop ]; then
+        rm -f "${apiDocsDirectory}"/"${componentName}"_Postman.desktop
+    fi
+
+    # Remove Swagger API Shortcut if it exists
+    if [ -f "${apiDocsDirectory}"/"${componentName}"_Swagger.desktop ]; then
+        rm -f "${apiDocsDirectory}"/"${componentName}"_Swagger.desktop
+    fi
+
+fi # end of action actions condition
