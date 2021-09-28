@@ -1,6 +1,6 @@
 {
     "name": "mattermost",
-    "namespace": "gitlab-ce",
+    "namespace": "mattermost",
     "installation_type": "helm",
     "installation_group_folder": "collaboration",
     "minimum_resources": {
@@ -57,7 +57,6 @@
     "health_check_command": "",
     "expected_check_command_response": "",
     "pre_install_scripts": [
-        "createOauthIntegration.sh",
         "createSecret.sh",
         "createS3Bucket.sh"
     ],
