@@ -1,4 +1,9 @@
-persistence:
+image:
+  repository: mattermost/mattermost-team-edition
+  tag: {{imageTag}}
+  imagePullPolicy: IfNotPresent
+
+istence:
   data:
     enabled: true
     size: 1Gi
