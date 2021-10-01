@@ -15,6 +15,10 @@
             },
             {
                 "install_folder": "core",
+                "name": "gopass"
+            },
+            {
+                "install_folder": "core",
                 "name": "kubernetes-tools"
             },
             {

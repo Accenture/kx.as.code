@@ -1,0 +1,16 @@
+{
+    "name": "gopass",
+    "namespace": "",
+    "installation_type": "script",
+    "installation_group_folder": "core",
+    "install_scripts": [
+        "install-and-configure-gopass.sh"
+    ],
+    "Description": "Gopass CLI credential manager",
+    "shortcut_text": "GoPass UI",
+    "shortcut_icon": "gopass.png",
+    "pre_install_scripts": [],
+    "post_install_scripts": [
+        "createDesktopShortcuts.sh"
+    ]
+}
