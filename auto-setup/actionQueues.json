@@ -15,7 +15,7 @@
             },
             {
                 "install_folder": "core",
-                "name": "bitwarden"
+                "name": "gopass"
             },
             {
                 "install_folder": "core",
