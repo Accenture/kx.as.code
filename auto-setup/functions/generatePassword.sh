@@ -1,5 +1,5 @@
 function generatePassword() {
-  # Generate a password a store it in GoPass
+  # Generate a password and store it in GoPass
   passwordName=$(echo $1 | sed 's/ /-/g')
   chars='@#$%&_+='
   securePassword=$({ </dev/urandom LC_ALL=C grep -ao '[A-Za-z0-9]' \
