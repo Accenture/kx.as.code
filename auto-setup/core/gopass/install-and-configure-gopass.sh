@@ -11,9 +11,32 @@ gopassUiVersion="0.8.0"
 curl -L -o ${installationWorkspace}/gopass-ui_${gopassUiVersion}_amd64.deb https://github.com/codecentric/gopass-ui/releases/download/v${gopassUiVersion}/gopass-ui_${gopassUiVersion}_amd64.deb
 /usr/bin/sudo apt-get install -y ${installationWorkspace}/gopass-ui_${gopassUiVersion}_amd64.deb
 
+ # Install GNUPG2 and RNG-Tools
 /usr/bin/sudo apt-get install -y gnupg2 rng-tools
 
-#if [[ ! -f /home/${vmUser}/.gnupg/pubring.kbx ]]; then
+# Check if rng-tools service started correctly, and try to fix it if not and it's a known reason - ie. missing hardware RNG device
+rndServiceStatus=$(systemctl show -p SubState --value rng-tools.service)
+for i in {1..3}
+do
+    if [[ rndServiceStatus != "running" ]]; then
+        # Check if rng-tools service is complaining about missing "hardware RNG device"
+        rngErrorCount=$(sudo journalctl -u rng-tools.service -o json | jq '. | select(.SYSLOG_IDENTIFIER=="rng-tools") | select(.MESSAGE=="/etc/init.d/rng-tools: Cannot find a hardware RNG device to use.") | .MESSAGE' | wc -l)
+        if [[ ${rngErrorCount} -gt 0 ]]; then
+            # Fix error and restart service
+            log_warn "rng-tools service complaining about missing hardware RNG device. Will attempt a fix and restart service"
+            echo "HRNGDEVICE=/dev/urandom" | sudo tee -a /etc/default/rng-tools
+            sudo systemctl restart rng-tools.service
+            break
+        fi
+    else
+        log_info "rng-tools service came up successfully. Continuing with initializing gnupg and gopass"
+    fi
+    # Wait 5 seconds before trying again
+    sleep 5
+    rndServiceStatus=$(systemctl show -p SubState --value rng-tools.service)
+done
+
+if [[ ! -f /home/${vmUser}/.gnupg/pubring.kbx ]]; then
 
 runuser -l ${vmUser} -c "gpg2 --list-secret-keys"
 
@@ -101,4 +124,4 @@ su - ${vmUser} -c 'echo "'${vmPassword}'" | gopass insert '${baseDomain}'/'${vmU
 # Test password retrieval with GoPass
 runuser -u ${vmUser} -P -- gopass show ${baseDomain}/${vmUser}
 
-#fi
+fi
