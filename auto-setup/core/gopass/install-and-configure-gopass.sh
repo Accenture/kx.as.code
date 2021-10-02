@@ -87,25 +87,6 @@ gpg2 --batch -d ${installationWorkspace}/keydetails.asc
 rm ${installationWorkspace}/keydetails.asc
 """ | /usr/bin/sudo tee ${installationWorkspace}/initializeGpg.sh
 
-# Generate ${installationWorkspace}/setupGoPass.exp Expect script
-echo '''#!/usr/bin/expect
-
-# Setup GoPass
-spawn gopass --yes setup --create --storage fs --name "'${vmUser}'" --email "'${vmUser}@${baseDomain}'" --alias '${baseDomain}'
-expect *
-interact
-''' | /usr/bin/sudo tee ${installationWorkspace}/setupGoPass.exp
-
-# Generate ${installationWorkspace}/initializeGoPass.exp Expect script
-echo '''#!/usr/bin/expect
-
-# Initialize GoPass
-spawn gopass init --store '${baseDomain}' --storage fs --path /home/'${vmUser}'/.local/share/gopass/stores/'${baseDomain}' '${vmUser}'@'${baseDomain}'
-expect "*Please enter an email address for password store git config*"
-send "'${vmUser}'@'${baseDomain}'\r"
-interact
-''' | /usr/bin/sudo tee ${installationWorkspace}/initializeGoPass.exp
-
 # Initialize GPG
 log_info "Initializing GNUGPG"
 chmod 755 ${installationWorkspace}/initializeGpg.sh
@@ -113,15 +94,11 @@ chmod 755 ${installationWorkspace}/initializeGpg.sh
 
 # Setup GoPass
 log_info "Setting up GoPass"
-timeout 30 runuser -u ${vmUser} -P -- gopass --yes setup --create --storage fs --name "${vmUser}" --email "${vmUser}@${baseDomain}" --alias ${baseDomain}
-#su - ${vmUser} -c "expect ${installationWorkspace}/setupGoPass.exp"
-
-# Initialize GoPass
-#runuser -u ${vmUser} -P -- expect ${installationWorkspace}/initializeGoPass.exp
+runuser -u ${vmUser} -- gopass --yes setup --create --storage fs --name "${vmUser}" --email "${vmUser}@${baseDomain}" --alias ${baseDomain}
 
 # Insert first secret with GoPass -> KX.Hero Password
 log_info "Adding first password to GoPass for testing"
-runuser -u ${vmUser} -- echo "${vmPassword}" | gopass insert ${baseDomain}/${vmUser}
+echo "${vmPassword}" | runuser -u ${vmUser} -- gopass insert ${baseDomain}/${vmUser}
 
 # Test password retrieval with GoPass
 log_info "Retrieving first password to GoPass for testing"
