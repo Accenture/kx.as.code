@@ -15,7 +15,7 @@ resource "openstack_networking_subnet_v2" "kx_internal_network_subnet" {
 resource "openstack_networking_router_v2" "kx_router" {
   name                = "kx-router"
   admin_state_up      = true
-  external_network_id = "48af4f9c-b380-4451-a13b-ab609b672b95"
+  external_network_id = local.external_network_id
 }
 
 resource "openstack_networking_router_interface_v2" "kx_router_interface" {
