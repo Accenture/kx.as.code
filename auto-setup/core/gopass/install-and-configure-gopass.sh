@@ -12,7 +12,7 @@ curl -L -o ${installationWorkspace}/gopass-ui_${gopassUiVersion}_amd64.deb https
 /usr/bin/sudo apt-get install -y ${installationWorkspace}/gopass-ui_${gopassUiVersion}_amd64.deb
 
  # Install GNUPG2 and RNG-Tools
-/usr/bin/sudo apt-get install -y gnupg2 rng-tools
+/usr/bin/sudo apt-get install -y gnupg2 rng-tools expect xclip
 
 rndServiceStatus=$(systemctl show -p SubState --value rng-tools.service)
 for i in {1..3}
@@ -24,7 +24,7 @@ do
             # Fix error and restart servie
             log_warn "rng-tools service complaining about missing hardware RNG device. Will attempt a fix and restart service"
             echo "HRNGDEVICE=/dev/urandom" | sudo tee -a /etc/default/rng-tools
-            sudo systemctl restart rng-tools.service
+            /usr/bin/sudo systemctl restart rng-tools.service
             break
         fi
     else
@@ -37,7 +37,7 @@ done
 
 #if [[ ! -f /home/${vmUser}/.gnupg/pubring.kbx ]]; then
 
-runuser -l ${vmUser} -c "gpg2 --list-secret-keys"
+/usr/bin/sudo -H -i -u ${vmUser} gpg2 --list-secret-keys
 
 rm -rf /home/${vmUser}/.local/share/gopass && rm -rf /home/${vmUser}/.config/gopass && rm -rf /home/${vmUser}/.gnupg
 mkdir -m 0700 /home/${vmUser}/.gnupg
@@ -87,6 +87,21 @@ gpg2 --batch -d ${installationWorkspace}/keydetails.asc
 rm ${installationWorkspace}/keydetails.asc
 """ | /usr/bin/sudo tee ${installationWorkspace}/initializeGpg.sh
 
+# Generate ${installationWorkspace}/initializeGoPass.exp Expect script
+echo '''#!/usr/bin/expect
+# Initialize GoPass
+set timeout -1
+spawn gopass setup
+match_max 100000
+expect "*Please enter the number of a key*"
+send "0\r"
+expect "*Please enter an email address for password store git config*"
+send "'${vmUser}'@'${baseDomain}'\r"
+expect "*Do you want to add a git remote*"
+send "N\r"
+expect eof
+''' | /usr/bin/sudo tee ${installationWorkspace}/initializeGoPass.exp
+
 # Initialize GPG
 log_info "Initializing GNUGPG"
 chmod 755 ${installationWorkspace}/initializeGpg.sh
@@ -94,14 +109,15 @@ chmod 755 ${installationWorkspace}/initializeGpg.sh
 
 # Setup GoPass
 log_info "Setting up GoPass"
-runuser -u ${vmUser} -- gopass --yes setup --create --storage fs --name "${vmUser}" --email "${vmUser}@${baseDomain}" --alias ${baseDomain}
+/usr/bin/sudo -H -i -u ${vmUser} /usr/bin/expect ${installationWorkspace}/initializeGoPass.exp
 
 # Insert first secret with GoPass -> KX.Hero Password
 log_info "Adding first password to GoPass for testing"
-echo "${vmPassword}" | runuser -u ${vmUser} -- gopass insert ${baseDomain}/${vmUser}
+pushPassword "${vmUser}" "${vmPassword}"
 
 # Test password retrieval with GoPass
 log_info "Retrieving first password to GoPass for testing"
-runuser -u ${vmUser} -- gopass show ${baseDomain}/${vmUser}
+password=$(getPassword "${vmUser}")
+log_info "Retrieved password: ${password}"
 
 #fi
