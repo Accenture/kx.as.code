@@ -1,7 +1,7 @@
 #!/bin/bash -x
 set -euo pipefail
 
-# Instal GoPass
+# Install GoPass
 export gopassVersion="1.12.6"
 curl -L -o ${installationWorkspace}/gopass_${gopassVersion}_linux_amd64.deb https://github.com/gopasspw/gopass/releases/download/v${gopassVersion}/gopass_${gopassVersion}_linux_amd64.deb
 /usr/bin/sudo apt-get install -y ${installationWorkspace}/gopass_${gopassVersion}_linux_amd64.deb
