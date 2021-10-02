@@ -10,6 +10,7 @@ resource "openstack_networking_subnet_v2" "kx_internal_network_subnet" {
   cidr       = "10.20.76.0/24"
   ip_version  = 4
   enable_dhcp = true
+  dns_nameservers     = [ "8.8.8.8", "8.8.4.4" ]
 }
 
 resource "openstack_networking_router_v2" "kx_router" {
