@@ -19,7 +19,7 @@ echo '''
 				"clusterName": "kubernetes-admin@kubernetes"
 			},
 			"metadata": {
-				"version": "v1.21.1",
+				"version": "'${kubeVersion}'",
 				"prometheus": {
 					"autoDetected": true,
 					"success": false
@@ -48,7 +48,7 @@ echo '''
 }''' | /usr/bin/sudo tee /home/${vmUser}/.config/Lens/lens-workspace-store.json
 
 /usr/bin/sudo chown -R ${vmUser}:${vmUser} /home/${vmUser}/.config/Lens
-/usr/bin/sudo curl -L -o ${installationWorkspace}/Lens-${lensVersion}.amd64.deb https://github.com/lensapp/lens/releases/download/v${lensVersion}/Lens-${lensVersion}.amd64.deb
+/usr/bin/sudo curl -L -o ${installationWorkspace}/Lens-${lensVersion}.amd64.deb https://api.k8slens.dev/binaries/Lens-${lensVersion}.amd64.deb
 /usr/bin/sudo apt-get install -y ${installationWorkspace}/Lens-${lensVersion}.amd64.deb
 
 echo '''[Desktop Entry]

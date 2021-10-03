@@ -1,27 +1,27 @@
 {
     "config": {
         "vm_properties": {
-            "main_node_count": 2,
+            "main_node_count": 1,
             "admin_main_node_cpu_cores": 4,
             "admin_main_node_memory": 8196,
             "replica_main_node_cpu_cores": 2,
             "replica_main_node_memory": 8196,
-            "worker_node_count": 2,
+            "worker_node_count": 3,
             "worker_node_cpu_cores": 2,
             "worker_node_memory": 8196,
             "environment_prefix": "demo1",
             "openstack": {
                 "user_name":            "admin",
                 "tenant_name":          "admin",
-                "password":             "",
+                "password":             "vJ6JuTWiGIIbdqkmKQ8R",
                 "region":               "RegionOne",
                 "auth_url":             "http://192.200.76.201/identity",
-                "kx_main_image_id":     "4095569b-e083-4e0c-ba43-6bc6c4f6d390",
-                "kx_node_image_id":     "72ffc403-acd4-42e2-9c47-d2edfc78e522",
+                "kx_main_image_id":     "e9a6b418-40e9-47b2-8aa3-25df9f436f00",
+                "kx_node_image_id":     "f977f2fb-9fc2-4d51-b1f2-45e3252725c0",
                 "external_network_id":  "886269e5-9556-4387-8029-be4e5ceb4d4b"
             }
         },
-        "allowWorkloadsOnMaster": true,
+        "allowWorkloadsOnMaster": false,
         "disableSessionTimeout": true,
         "certificationMode": false,
         "disableLinuxDesktop": false,
