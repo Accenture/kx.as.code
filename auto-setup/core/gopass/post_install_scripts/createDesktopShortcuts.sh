@@ -6,7 +6,7 @@ shortcutText=$(cat ${componentMetadataJson} | jq -r '.shortcut_text')
 iconPath=${installComponentDirectory}/${shortcutIcon}
 
 # Put GoPass UI Icon on Desktop
-cat << EOF > "${adminShortcutsDirectory}"/GoPass.desktop
+cat << EOF > "${adminShortcutsDirectory}"/"${shortcutText}"
 [Desktop Entry]
 Version=1.0
 Name=${shortcutText}
@@ -22,6 +22,5 @@ Actions=new-window;new-private-window;
 EOF
 
 # Give *.desktop files execute permissions
-chmod 755 /home/${vmUser}/Desktop/*.desktop
-chown ${vmUser}:${vmUser} /home/${vmUser}/Desktop/*.desktop
-
+chmod 755 "${adminShortcutsDirectory}"/"${shortcutText}"
+chown ${vmUser}:${vmUser} "${adminShortcutsDirectory}"/"${shortcutText}"
