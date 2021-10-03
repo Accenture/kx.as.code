@@ -2,12 +2,10 @@
 set -euo pipefail
 
 # Install GoPass
-export gopassVersion="1.12.6"
 curl -L -o ${installationWorkspace}/gopass_${gopassVersion}_linux_amd64.deb https://github.com/gopasspw/gopass/releases/download/v${gopassVersion}/gopass_${gopassVersion}_linux_amd64.deb
 /usr/bin/sudo apt-get install -y ${installationWorkspace}/gopass_${gopassVersion}_linux_amd64.deb
 
 # Install GoPass UI
-gopassUiVersion="0.8.0"
 curl -L -o ${installationWorkspace}/gopass-ui_${gopassUiVersion}_amd64.deb https://github.com/codecentric/gopass-ui/releases/download/v${gopassUiVersion}/gopass-ui_${gopassUiVersion}_amd64.deb
 /usr/bin/sudo apt-get install -y ${installationWorkspace}/gopass-ui_${gopassUiVersion}_amd64.deb
 
@@ -35,7 +33,7 @@ do
     rndServiceStatus=$(systemctl show -p SubState --value rng-tools.service)
 done
 
-#if [[ ! -f /home/${vmUser}/.gnupg/pubring.kbx ]]; then
+if [[ ! -f /home/${vmUser}/.gnupg/pubring.kbx ]]; then
 
 /usr/bin/sudo -H -i -u ${vmUser} gpg2 --list-secret-keys
 
@@ -113,11 +111,11 @@ log_info "Setting up GoPass"
 
 # Insert first secret with GoPass -> KX.Hero Password
 log_info "Adding first password to GoPass for testing"
-pushPassword "${vmUser}" "${vmPassword}"
+pushPassword "${vmUser}-user" "${vmPassword}"
 
 # Test password retrieval with GoPass
 log_info "Retrieving first password to GoPass for testing"
-password=$(getPassword "${vmUser}")
+password=$(getPassword "${vmUser}-user")
 log_info "Retrieved password: ${password}"
 
-#fi
+fi

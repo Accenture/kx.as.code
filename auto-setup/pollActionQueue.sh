@@ -607,9 +607,8 @@ while :; do
                 # Ensure DNS is working before continuing to avoid downstream failures
                 rc=1
                 while [[ ${rc} -ne 0 ]]; do
-                    host -t A deb.debian.org
-                    rc=$?
-                    if [[ ${rc} -ne 0 ]]; then
+                    host -t A deb.debian.org && rc=$? || true
+                    if [[ $rc -ne 0 ]]; then
                       log_warn "DNS resolution currently not working. Waiting for DNS resolution to work again before continuing"
                       sleep 5
                     fi

@@ -1,4 +1,4 @@
-function generatePassword() {
+generatePassword() {
   # Generate a password and store it in GoPass
   chars='@#$%&_+='
   { </dev/urandom LC_ALL=C grep -ao '[A-Za-z0-9]' \

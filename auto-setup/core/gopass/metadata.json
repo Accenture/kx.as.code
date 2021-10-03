@@ -3,6 +3,10 @@
     "namespace": "",
     "installation_type": "script",
     "installation_group_folder": "core",
+    "environment_variables": {
+        "gopassVersion": "1.12.6",
+        "gopassUiVersion": "0.8.0"
+    },
     "install_scripts": [
         "install-and-configure-gopass.sh"
     ],

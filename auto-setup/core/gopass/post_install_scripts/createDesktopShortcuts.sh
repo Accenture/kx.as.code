@@ -22,6 +22,5 @@ Actions=new-window;new-private-window;
 EOF
 
 # Give *.desktop files execute permissions
-chmod 755 /home/${vmUser}/Desktop/"${shortcutText}"
-chown ${vmUser}:${vmUser} /home/${vmUser}/Desktop/"${shortcutText}"
-
+chmod 755 "${adminShortcutsDirectory}"/"${shortcutText}"
+chown ${vmUser}:${vmUser} "${adminShortcutsDirectory}"/"${shortcutText}"

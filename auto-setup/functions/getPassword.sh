@@ -1,4 +1,4 @@
-function getPassword() {
+getPassword() {
   # Retrieve the password from GoPass
   passwordName=$(echo ${1} | sed 's/ /-/g')
   /usr/bin/sudo -H -i -u ${vmUser} bash -c "gopass show --yes --password \"${baseDomain}/${passwordName}\""

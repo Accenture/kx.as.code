@@ -55,12 +55,12 @@ echo '''[Desktop Entry]
 Categories=Network;
 Comment[en_US]=Lens - The Kubernetes IDE
 Comment=Lens - The Kubernetes IDE
-Exec=/opt/Lens/kontena-lens %U
+Exec=/usr/bin/lens %U
 GenericName[en_US]=
 GenericName=
-Icon=kontena-lens
+Icon=lens
 MimeType=
-Name=Lens
+Name=Lens\nKubernetes IDE
 Path=
 StartupNotify=true
 StartupWMClass=Lens
