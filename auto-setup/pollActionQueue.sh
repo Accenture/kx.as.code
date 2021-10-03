@@ -480,6 +480,16 @@ sleep 5
 # Poll pending queue and trigger actions if message is present
 while :; do
 
+    # Ensure DNS is working before continuing to avoid downstream failures
+    rc=1
+    while [[ ${rc} -ne 0 ]]; do
+        host -t A deb.debian.org && rc=$? || true
+        if [[ $rc -ne 0 ]]; then
+          log_warn "DNS resolution currently not working. Waiting for DNS resolution to work again before continuing"
+          sleep 5
+        fi
+    done
+
     completedQueue=$(rabbitmqadmin list queues name messages --format raw_json | jq -r '.[] | select(.name=="completed_queue") | .messages')
     wipQueue=$(rabbitmqadmin list queues name messages --format raw_json | jq -r '.[] | select(.name=="wip_queue") | .messages')
     failedQueue=$(rabbitmqadmin list queues name messages --format raw_json | jq -r '.[] | select(.name=="failed_queue") | .messages')
@@ -603,16 +613,6 @@ while :; do
                     fi
                     log_info "As an anonymous user you have a rate limit of ${dockerHubAllowLimit} with ${dockerHubRemainingLimit} downloads remaining in the current ${dockerHubRateLimitTimePeriod} hour window"
                 fi
-
-                # Ensure DNS is working before continuing to avoid downstream failures
-                rc=1
-                while [[ ${rc} -ne 0 ]]; do
-                    host -t A deb.debian.org && rc=$? || true
-                    if [[ $rc -ne 0 ]]; then
-                      log_warn "DNS resolution currently not working. Waiting for DNS resolution to work again before continuing"
-                      sleep 5
-                    fi
-                done
 
                 # Launch the component installation process
                 . ${autoSetupHome}/autoSetup.sh &> ${installationWorkspace}/${componentName}_${logTimestamp}.${retries}.log
