@@ -600,6 +600,18 @@ while :; do
                     fi
                     log_info "As an anonymous user you have a rate limit of ${dockerHubAllowLimit} with ${dockerHubRemainingLimit} downloads remaining in the current ${dockerHubRateLimitTimePeriod} hour window"
                 fi
+
+                # Ensure DNS is working before continuing to avoid downstream failures
+                rc=1
+                while [[ ${rc} -ne 0 ]]; do
+                    host -t A deb.debian.org
+                    rc=$?
+                    if [[ ${rc} -ne 0 ]]; then
+                      log_warn "DNS resolution currently not working. Waiting for DNS resolution to work again before continuing"
+                      sleep 5
+                    fi
+                done
+
                 # Launch the component installation process
                 . ${autoSetupHome}/autoSetup.sh &> ${installationWorkspace}/${componentName}_${logTimestamp}.${retries}.log
                 logRc=$?

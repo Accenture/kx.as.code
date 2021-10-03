@@ -76,41 +76,30 @@ if [[ -z $(/usr/bin/sudo su - postgres -c "psql -lqt | cut -d \| -f 1" | grep gu
 fi
 
 # Change default guacadmin/guacadmin password
-echo "guacAdminPassword: $(cat ${sharedKxHome}/.guacamole.json | jq -r '.[] | select(.user=="guacadmin") | .user' || true)"
-if [ -f ${sharedKxHome}/.guacamole.json ]; then
-    if [ -z $(cat ${sharedKxHome}/.guacamole.json | jq -r '.[] | select(.user=="guacadmin") | .user' || true) ]; then
-        guacAdminPassword=$(pwgen -1s 32)
-        echo "[ { \"user\": \"guacadmin\", \"password\": \"${guacAdminPassword}\" } ]" | /usr/bin/sudo tee ${sharedKxHome}/.temp.guacamole.json
-        cat /usr/share/kx.as.code/.guacamole.json /usr/share/kx.as.code/.temp.guacamole.json | jq -s add | tee /usr/share/kx.as.code/.guacamole.json
-        rm -f ${sharedKxHome}/.temp.guacamole.json
-    else
-        guacAdminPassword=$(cat ${sharedKxHome}/.guacamole.json | jq -r '.[] | select(.user=="guacadmin") | .password')
-    fi
+if [[ -z $(getPassword "guacamole-admin") ]]; then
+  # Conditional statement in case this script is being rerun
+  guacAdminPassword=$(generatePassword)
+  pushPassword "guacamole-admin" "${guacAdminPassword}"
 else
-    guacAdminPassword=$(pwgen -1s 32)
-    echo "[ { \"user\": \"guacadmin\", \"password\": \"${guacAdminPassword}\" } ]" | /usr/bin/sudo tee ${sharedKxHome}/.guacamole.json
+  guacAdminPassword=$(getPassword "guacamole-admin")
 fi
-echo ${guacAdminPassword} | /usr/bin/sudo tee ${installationWorkspace}/.guac
+
 /usr/bin/sudo sed -i "s/-- 'guacadmin'/-- '${guacAdminPassword}'/g" guacamole-auth-jdbc-${guacamoleVersion}/postgresql/schema/002-create-admin-user.sql
 cat guacamole-auth-jdbc-${guacamoleVersion}/postgresql/schema/*.sql | /usr/bin/sudo su - postgres -c "psql -d guacamole_db -f -"
 
 # Create Guacamole database users
 guacUser=$(echo $vmUser | sed 's/\./_/g')
-if [ -f ${sharedKxHome}/.guacamole.json ]; then
-    if [ -z $(cat ${sharedKxHome}/.guacamole.json | jq -r '.[] | select(.user=="guacamole_user") | .user' || true) ]; then
-        guacPassword=$(pwgen -1s 8)
-        echo "[ { \"user\": \"guacamole_user\", \"password\": \"${guacPassword}\" } ]" | /usr/bin/sudo tee ${sharedKxHome}/.temp.guacamole.json
-        cat /usr/share/kx.as.code/.guacamole.json /usr/share/kx.as.code/.temp.guacamole.json | jq -s add | tee /usr/share/kx.as.code/.guacamole.json
-        rm -f ${sharedKxHome}/.temp.guacamole.json
-    else
-        guacPassword=$(cat ${sharedKxHome}/.guacamole.json | jq -r '.[] | select(.user=="guacamole_user") | .password')
-    fi
+
+if [[ -z $(getPassword "guacamole-user") ]]; then
+  # Conditional statement in case this script is being rerun
+  guacUserPassword=$(generatePassword)
+  pushPassword "guacamole-user" "${guacUserPassword}"
 else
-    guacPassword=$(pwgen -1s 8)
-    echo "[ { \"user\": \"guacamole_user\", \"password\": \"${guacPassword}\" } ]" | /usr/bin/sudo tee ${sharedKxHome}/.guacamole.json
+  guacUserPassword=$(getPassword "guacamole-user")
 fi
+
 if [[ -z $(/usr/bin/sudo su - postgres -c "psql -t -c 'SELECT u.usename AS \"User Name\" FROM pg_catalog.pg_user u;'" | grep guacamole_user) ]]; then
-  /usr/bin/sudo su - postgres -c "psql -d guacamole_db -c \"CREATE USER guacamole_user WITH PASSWORD '${guacPassword}';\""
+  /usr/bin/sudo su - postgres -c "psql -d guacamole_db -c \"CREATE USER guacamole_user WITH PASSWORD '${guacUserPassword}';\""
   /usr/bin/sudo su - postgres -c 'psql -d guacamole_db -c "GRANT SELECT,INSERT,UPDATE,DELETE ON ALL TABLES IN SCHEMA public TO guacamole_user;"'
   /usr/bin/sudo su - postgres -c 'psql -d guacamole_db -c "GRANT SELECT,USAGE ON ALL SEQUENCES IN SCHEMA public TO guacamole_user;"'
   /usr/bin/sudo su - postgres -c "psql -d guacamole_db -c \"CREATE USER ${guacUser} WITH PASSWORD '${vmPassword}';\""
@@ -149,7 +138,7 @@ postgresql-hostname: localhost
 postgresql-port: 5432
 postgresql-database: guacamole_db
 postgresql-username: guacamole_user
-postgresql-password: '${guacPassword}'
+postgresql-password: '${guacUserPassword}'
 postgresql-user-required: false
 
 # Password Policies
@@ -168,33 +157,21 @@ postgresql-auto-create-accounts: true
 ''' | /usr/bin/sudo tee /etc/guacamole/guacamole.properties
 
 # Check if MD5 password already exists
-if [ -f ${sharedKxHome}/.guacamole.json ]; then
-    if [ -z $(cat ${sharedKxHome}/.guacamole.json | jq -r '.[] | select(.user=="md5_user") | .user' || true) ]; then
-        md5Password=$(echo -n ${vmPassword} | openssl md5 | cut -f2 -d' ')
-        echo "[ { \"user\": \"md5_user\", \"password\": \"${md5Password}\" } ]" | /usr/bin/sudo tee ${sharedKxHome}/.temp.guacamole.json
-        cat /usr/share/kx.as.code/.guacamole.json /usr/share/kx.as.code/.temp.guacamole.json | jq -s add | tee /usr/share/kx.as.code/.guacamole.json
-        rm -f ${sharedKxHome}/.temp.guacamole.json
-    else
-        md5Password=$(cat ${sharedKxHome}/.guacamole.json | jq -r '.[] | select(.user=="md5_user") | .password')
-    fi
+if [[ -z $(getPassword "guacamole-md5") ]]; then
+  # Conditional statement in case this script is being rerun
+  md5Password=$(echo -n ${vmPassword} | openssl md5 | cut -f2 -d' ')
+  pushPassword "guacamole-md5" "${md5Password}"
 else
-    md5Password=$(echo -n ${vmPassword} | openssl md5 | cut -f2 -d' ')
-    echo "[ { \"user\": \"md5_user\", \"password\": \"${md5Password}\" } ]" | /usr/bin/sudo tee ${sharedKxHome}/.guacamole.json
+  md5Password=$(getPassword "guacamole-md5")
 fi
 
 # Check if VNC password already exists
-if [ -f ${sharedKxHome}/.guacamole.json ]; then
-    if [ -z $(cat ${sharedKxHome}/.guacamole.json | jq -r '.[] | select(.user=="vnc_user") | .user' || true) ]; then
-        vncPassword=$(pwgen -1s 8)
-        echo "[ { \"user\": \"vnc_user\", \"password\": \"${vncPassword}\" } ]" | /usr/bin/sudo tee ${sharedKxHome}/.temp.guacamole.json
-        cat /usr/share/kx.as.code/.guacamole.json /usr/share/kx.as.code/.temp.guacamole.json | jq -s add | tee /usr/share/kx.as.code/.guacamole.json
-        rm -f ${sharedKxHome}/.temp.guacamole.json
-    else
-        vncPassword=$(cat ${sharedKxHome}/.guacamole.json | jq -r '.[] | select(.user=="vnc_user") | .password')
-    fi
+if [[ -z $(getPassword "guacamole-vnc") ]]; then
+  # Conditional statement in case this script is being rerun
+  vncPassword=$(generatePassword)
+  pushPassword "guacamole-vnc" "${vncPassword}"
 else
-    vncPassword=$(pwgen -1s 8)
-    echo "[ { \"user\": \"vnc_user\", \"password\": \"${vncPassword}\" } ]" | /usr/bin/sudo tee ${sharedKxHome}/.guacamole.json
+  vncPassword=$(getPassword "guacamole-vnc")
 fi
 
 echo '''
