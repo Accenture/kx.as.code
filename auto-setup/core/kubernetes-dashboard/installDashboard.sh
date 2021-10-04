@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # Install Kubernetes Dashboard
-curl https://raw.githubusercontent.com/kubernetes/dashboard/v2.0.0/aio/deploy/recommended.yaml --output ${installationWorkspace}/dashboard.yaml
+curl https://raw.githubusercontent.com/kubernetes/dashboard/v${kubernetesDashboardVersion}/aio/deploy/recommended.yaml --output ${installationWorkspace}/dashboard.yaml
 kubectl apply -f ${installationWorkspace}/dashboard.yaml -n ${namespace}
 
 # Create Service Token for Accessing Dashboard
