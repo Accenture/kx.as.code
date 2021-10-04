@@ -48,7 +48,14 @@ echo '''
 }''' | /usr/bin/sudo tee /home/${vmUser}/.config/Lens/lens-workspace-store.json
 
 /usr/bin/sudo chown -R ${vmUser}:${vmUser} /home/${vmUser}/.config/Lens
-/usr/bin/sudo curl -L -o ${installationWorkspace}/Lens-${lensVersion}.amd64.deb https://api.k8slens.dev/binaries/Lens-${lensVersion}.amd64.deb
+
+/usr/bin/sudo curl -L --connect-timeout 5 \
+    --max-time 60 \
+    --retry 5 \
+    --retry-delay 5 \
+    --retry-max-time 60 \
+    -o ${installationWorkspace}/Lens-${lensVersion}.amd64.deb https://api.k8slens.dev/binaries/Lens-${lensVersion}.amd64.deb
+
 /usr/bin/sudo apt-get install -y ${installationWorkspace}/Lens-${lensVersion}.amd64.deb
 
 echo '''[Desktop Entry]

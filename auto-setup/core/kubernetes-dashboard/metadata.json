@@ -3,6 +3,9 @@
     "namespace": "kubernetes-dashboard",
     "installation_type": "script",
     "installation_group_folder": "core",
+    "environment_variables": {
+        "kubernetesDashboardVersion": "2.3.1"
+    },
     "retry": "true",
     "categories": [
         "management",

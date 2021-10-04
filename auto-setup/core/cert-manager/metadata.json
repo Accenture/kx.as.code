@@ -3,12 +3,16 @@
     "namespace": "cert-manager",
     "installation_type": "helm",
     "installation_group_folder": "core",
+    "environment_variables": {
+        "imageTag": "v1.5.4"
+    },
     "retry": "true",
     "helm_params": {
         "repository_url": "https://charts.jetstack.io",
         "repository_name": "jetstack/cert-manager",
-        "helm_version": "v1.4.0",
+        "helm_version": "v1.5.4",
         "set_key_values": [
+            "image.tag={{imageTag}}",
             "installCRDs=true"
         ]
     },

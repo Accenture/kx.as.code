@@ -1,3 +1,6 @@
+image:
+  tag: {{ imageTag }}
+
 extraEnv: |
     - name: PROXY_ADDRESS_FORWARDING
       value: "true"
