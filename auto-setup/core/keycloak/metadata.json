@@ -4,13 +4,14 @@
     "installation_type": "helm",
     "installation_group_folder": "core",
     "environment_variables": {
-        "kcContainer": "keycloak"
+        "kcContainer": "keycloak",
+        "imageTag": "15.0.2"
     },
     "retry": "true",
     "helm_params": {
         "repository_url": "https://codecentric.github.io/helm-charts",
         "repository_name": "codecentric/keycloak",
-        "helm_version": "",
+        "helm_version": "15.1.0",
         "set_key_values": []
     },
     "letsencrypt": {
