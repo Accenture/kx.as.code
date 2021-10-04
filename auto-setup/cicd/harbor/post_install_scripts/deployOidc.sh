@@ -1,74 +1,20 @@
 #!/bin/bash -eux
 
-# Settings on Keycloak for SSO
- 
-export kcRealm=${baseDomain}
-export kcInternalUrl=http://localhost:8080
-export kcContainer=keycloak
-export kcAdmCli=/opt/jboss/keycloak/bin/kcadm.sh
-export kcPod=$(kubectl get pods -l 'app.kubernetes.io/name=keycloak' -n keycloak --output=json | jq -r '.items[].metadata.name')
+# Create Keycloak Client - $1 = redirectUris, $2 = rootUrl
+export clientId=$(createKeycloakClient "https://${componentName}.${kcRealm}/c/oidc/callback" \
+  "https://${componentName}.${kcRealm}")
 
-# Set credential token in new Realm
-kubectl -n keycloak exec ${kcPod} -- \
-  ${kcAdmCli} config credentials --server ${kcInternalUrl}/auth --realm ${kcRealm} --user admin --password ${vmPassword}
+# Get Keycloak Client Secret
+export clientSecret=$(getKeycloakClientSecret "${clientId}")
 
-## export clientId
-export clientId=$(kubectl -n keycloak exec ${kcPod} --container ${kcContainer} -- \
-${kcAdmCli}  get clients --fields id,clientId | jq -r '.[] | select(.clientId=="'${componentName}'") | .id')
+# Create Keycloak Client Scopes
+protocol="openid-connect"
+export clientscopeId=$(createKeyCloakClientScope "${protocol}")
 
-if [[ -z ${clientId} ]]; then
-  ## create a clients
-  kubectl -n keycloak exec ${kcPod} --container ${kcContainer} -- \
-  ${kcAdmCli} create clients --realm ${kcRealm} -s clientId=${componentName} \
-  -s 'redirectUris=["https://'${componentName}'.'${kcRealm}'/c/oidc/callback"]' \
-  -s publicClient="false" -s enabled=true -s rootUrl="https://'${componentName}'.'${kcRealm}'" -s baseUrl="/applications" -i
-else
-  log_info "Keycloak client for ${componentName} already exists (${clientId}). Skipping it's creation"
-fi
+# Create Keycloak Protocol Mapper
+createKeycloakProtocolMapper "${clientId}" "${clientScopeId}"
 
-# export client secret
-export clientSecret=$(kubectl -n keycloak exec ${kcPod} --container ${kcContainer} -- \
-  ${kcAdmCli} get clients/$clientId/client-secret | jq -r '.value')
-
-# If secret not available, generate a new one
-if [[ "${clientSecret}" == "null" ]]; then
-  kubectl -n keycloak exec ${kcPod} --container ${kcContainer} -- \
-      ${kcAdmCli} create clients/${clientId}/client-secret | jq -r '.value'
-  clientSecret=$(kubectl -n keycloak exec ${kcPod} -- \
-      ${kcAdmCli} get clients/${clientId}/client-secret | jq -r '.value')
-fi
-
-## create client scopes
-kubectl -n keycloak exec ${kcPod} --container ${kcContainer} -- \
-${kcAdmCli}  create -x client-scopes -s name=${componentName} -s protocol=openid-connect
-
-## export the client scope id
-export clientscopeID=$(kubectl -n keycloak exec ${kcPod} -- \
-${kcAdmCli}  get -x client-scopes | jq -r '.[] | select(.name=="harbor") | .id')
-
-protocolMapper=$(kubectl -n keycloak exec ${kcPod} --container ${kcContainer} -- \
-  ${kcAdmCli} get clients/${clientId}/protocol-mappers/models \
-  --realm ${kcRealm})
-
-if [[ -z ${protocolMapper} ]]; then
-  ## client scope protocol mapper
-  kubectl -n keycloak exec ${kcPod} --container ${kcContainer} -- \
-  ${kcAdmCli}  create client-scopes/$clientscopeID/protocol-mappers/models \
-  -s name=groups \
-    -s protocol=openid-connect \
-    -s protocolMapper=oidc-group-membership-mapper \
-    -s 'config."claim.name"=groups' \
-    -s 'config."access.token.claim"=true' \
-    -s 'config."jsonType.label"=String'
-else
-  log_info "Keycloak protocol mapper for client ${clientId} already exists. Skipping it's creation"
-fi
-
-## map the above client scope id to the client
-kubectl -n keycloak exec ${kcPod} --container ${kcContainer} -- \
-${kcAdmCli}  update clients/$clientId/default-client-scopes/$clientscopeID
-
-###################################################OIDC Configuration Harbor#########################################################
+################################################### OIDC Configuration Harbor #########################################################
 
 harborOidcPingRes=""
 

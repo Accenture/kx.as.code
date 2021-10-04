@@ -1,36 +1,12 @@
 #!/bin/bash -x
 
-export kcRealm=${baseDomain}
-export kcInternalUrl=http://localhost:8080
-export kcAdmCli=/opt/jboss/keycloak/bin/kcadm.sh
-export kcPod=$(kubectl get pods -l 'app.kubernetes.io/name=keycloak' -n keycloak --output=json | jq -r '.items[].metadata.name')
-export kcContainer="keycloak"
-
-# Set credential token in new Realm
-kubectl -n keycloak exec ${kcPod} --container ${kcContainer} -- \
-    ${kcAdmCli} config credentials --server ${kcInternalUrl}/auth --realm ${kcRealm} --user admin --password ${vmPassword}
-
-## Create client
-kubectl -n keycloak exec ${kcPod} --container ${kcContainer} -- \
-    ${kcAdmCli} create clients --realm ${kcRealm} -s clientId=${componentName} \
-    -s 'redirectUris=["https://gitlab.'${baseDomain}'/users/auth/openid_connect/callback"]' \
-    -s publicClient="false" -s enabled=true -s rootUrl="https://gitlab.${baseDomain}" -s baseUrl="/" -i
-
-## export clientId
-export clientId=$(kubectl -n keycloak exec ${kcPod} --container ${kcContainer} -- \
-    ${kcAdmCli} get clients --fields id,clientId | jq -r '.[] | select(.clientId=="gitlab-ce") | .id')
+# Create client - $1 = redirectUris, $2 = rootUrl
+export clientId=$(createKeycloakClient "https://gitlab.${baseDomain}/users/auth/openid_connect/callback" \
+  "https://gitlab.${baseDomain}")
 
 # Get client secret
-export clientSecret=$(kubectl -n keycloak exec ${kcPod} --container ${kcContainer} -- \
-    ${kcAdmCli} get clients/${clientId}/client-secret | jq -r '.value')
+export clientSecret=$(getKeycloakClientSecret "${clientId}")
 
-# If secret not available, generate a new one
-if [[ "${clientSecret}" == "null" ]]; then
-  kubectl -n keycloak exec ${kcPod} -- \
-      ${kcAdmCli} create clients/${clientId}/client-secret | jq -r '.value'
-  clientSecret=$(kubectl -n keycloak exec ${kcPod} -- \
-      ${kcAdmCli} get clients/${clientId}/client-secret | jq -r '.value')
-fi
 
 ################### kubernetes manifests CRUD operations #####################################
 
