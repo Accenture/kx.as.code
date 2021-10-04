@@ -3,6 +3,9 @@
     "namespace": "",
     "installation_type": "script",
     "installation_group_folder": "core",
+    "environment_variables": {
+        "cfsslVersion": "1.6.1"
+    },
     "install_scripts": [
         "installCfsslCertificateAuthority.sh"
     ],
