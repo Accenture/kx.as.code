@@ -12,7 +12,6 @@ SHARED_GIT_REPOSITORIES=/usr/share/kx.as.code/git
 /usr/bin/sudo apt install -y build-essential libcairo2-dev libjpeg62-turbo-dev libpng-dev libtool-bin libossp-uuid-dev libvncserver-dev freerdp2-dev libssh2-1-dev libtelnet-dev libwebsockets-dev libpulse-dev libvorbis-dev libwebp-dev libssl-dev libpango1.0-dev libswscale-dev libavcodec-dev libavutil-dev libavformat-dev
 
 # Download, build, install and enable Guacamole
-guacamoleVersion=1.3.0
 curl -L -o guacamole-server-${guacamoleVersion}.tar.gz https://apache.org/dyn/closer.cgi\?action\=download\&filename\=guacamole/${guacamoleVersion}/source/guacamole-server-${guacamoleVersion}.tar.gz
 tar -xvf guacamole-server-${guacamoleVersion}.tar.gz
 cd guacamole-server-${guacamoleVersion}
@@ -59,7 +58,7 @@ done
 
 # Download Postgresql JDBC driver
 /usr/bin/sudo mkdir -p /etc/guacamole/lib
-/usr/bin/sudo curl -o /etc/guacamole/lib/postgresql-42.2.19.jar -L https://jdbc.postgresql.org/download/postgresql-42.2.19.jar
+/usr/bin/sudo curl -o /etc/guacamole/lib/postgresql-${postgresqlDriverVersion}.jar -L https://jdbc.postgresql.org/download/postgresql-${postgresqlDriverVersion}.jar
 
 # Install Postgresql
 /usr/bin/sudo apt-get install -y postgresql postgresql-contrib
