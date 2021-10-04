@@ -34,19 +34,16 @@ if [[ -z ${driveC} ]]; then
   return 1
 fi
 # Update Debian repositories as default is old
-wget -O - https://download.gluster.org/pub/gluster/glusterfs/8/rsa.pub | /usr/bin/sudo apt-key add -
-echo deb [arch=amd64] https://download.gluster.org/pub/gluster/glusterfs/8/LATEST/Debian/buster/amd64/apt buster main | /usr/bin/sudo tee /etc/apt/sources.list.d/gluster.list
+glusterfsMajorVersion=$(echo ${glusterfsVersion} | cut -f 1 -d'.')
+wget -O - https://download.gluster.org/pub/gluster/glusterfs/${glusterfsMajorVersion}/rsa.pub | /usr/bin/sudo apt-key add -
+echo deb [arch=amd64] https://download.gluster.org/pub/gluster/glusterfs/${glusterfsMajorVersion}/${glusterfsVersion}/Debian/buster/amd64/apt buster main | /usr/bin/sudo tee /etc/apt/sources.list.d/gluster.list
 /usr/bin/sudo apt update
 /usr/bin/sudo apt install -y glusterfs-server
 /usr/bin/sudo /usr/bin/sudo systemctl enable --now glusterd
 
 # Install Heketi for automatically provisioning Kubernetes volumes
-#wget -O - $(curl https://api.github.com/repos/heketi/heketi/releases/latest | jq -r '.assets[] | select(.browser_download_url | contains("client") | not) | .browser_download_url | select(. | contains("'$(dpkg --print-architecture)'"))') \
-#| /usr/bin/sudo tar xvzf - \
-# Hard coding Heketi version 10.2.0, as 10.3.0 breaks with Debian Buster due to outdated GLIBC.
-#TODO - Upgrade again once issue fixed - https://github.com/heketi/heketi/issues/1848
-heketiVersion=10.2.0
-wget -O - https://github.com/heketi/heketi/releases/download/v${heketiVersion}/heketi-v${heketiVersion}.linux.amd64.tar.gz | /usr/bin/sudo tar xvzf - &&
+heketiMajorVersion=$(echo ${heketiVersion} | cut -f 1 -d'.')
+wget -O - https://github.com/heketi/heketi/releases/download/v${heketiVersion}/heketi-v${heketiVersion}-release-${heketiMajorVersion}.linux.amd64.tar.gz | /usr/bin/sudo tar xvzf - &&
     /usr/bin/sudo cp -f heketi/{heketi,heketi-cli} /usr/local/bin
 
 # Add Heketi user and group
