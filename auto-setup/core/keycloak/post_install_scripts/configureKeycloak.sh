@@ -9,7 +9,7 @@ export kcBinDir=/opt/jboss/keycloak/bin/
 export kcAdmCli=/opt/jboss/keycloak/bin/kcadm.sh
 
 # Generate Keycloak Admin Password
-keycloakAdminPassword=$(managePassword "keycloak-admin-password")
+keycloakAdminPassword=$(managedPassword "keycloak-admin-password")
 
 # Ensure Kubernetes is available before proceeding to the next step
 timeout -s TERM 600 bash -c \
@@ -18,7 +18,7 @@ do sleep 5;\
 done'
 
 # Get Keycloak POD name for subsequent Keycloak CLI commands
-export kcPod=$(kubectl get pods -l 'app.kubernetes.io/name=keycloak' -n keycloak --output=json | jq -r '.items[].metadata.name')
+export kcPod=$(kubectl get pods -l 'app.kubernetes.io/name=keycloak' -n ${namespace} --output=json | jq -r '.items[].metadata.name')
 
 # Set Keycloak credential for upcoming API calls
 for i in {1..50}; do
