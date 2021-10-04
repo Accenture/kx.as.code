@@ -58,8 +58,8 @@ wget -O - https://github.com/heketi/heketi/releases/download/v${heketiVersion}/h
 /usr/bin/sudo chown -R heketi:heketi /etc/heketi /var/log/heketi /var/lib/heketi
 
 # Generate random passwords for Heketi via custom bash functions
-adminPassword$(managedPassword "heketi-admin-user")
-userPassword=$(managedPassword "heketi-user")
+adminPassword=$(managedPassword "heketi-admin-password")
+userPassword=$(managedPassword "heketi-user-password")
 
 # Create base Heketi configuration file
 /usr/bin/sudo bash -c 'cat <<EOF > /etc/heketi/heketi.json

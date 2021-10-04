@@ -5,7 +5,7 @@ managedPassword() {
     generatedPassword=$(generatePassword)
     pushPassword "$1" "${generatedPassword}"
   else
-    # Pull existing from GoPass password as it already exists
+    # Pull existing password from GoPass as it already exists
     generatedPassword=$(getPassword "$1")
   fi
   echo ${generatedPassword}

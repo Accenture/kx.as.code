@@ -23,7 +23,7 @@ cd guacamole-server-${guacamoleVersion}
 /usr/bin/sudo systemctl daemon-reload
 
 ### Install Tomact and Configure Guacamole web app
- /usr/bin/sudo apt install -y tomcat9 tomcat9-admin tomcat9-common tomcat9-user
+/usr/bin/sudo apt install -y tomcat9 tomcat9-admin tomcat9-common tomcat9-user
 wget https://downloads.apache.org/guacamole/${guacamoleVersion}/binary/guacamole-${guacamoleVersion}.war
 
 /usr/bin/sudo mv guacamole-${guacamoleVersion}.war /var/lib/tomcat9/webapps/guacamole.war
@@ -76,7 +76,7 @@ if [[ -z $(/usr/bin/sudo su - postgres -c "psql -lqt | cut -d \| -f 1" | grep gu
 fi
 
 # Generate random passwords for guacadmin via custom bash functions
-guacAdminPassword=$(managedPassword "guacamole-admin-user")
+guacAdminPassword=$(managedPassword "guacamole-admin-password")
 
 /usr/bin/sudo sed -i "s/-- 'guacadmin'/-- '${guacAdminPassword}'/g" guacamole-auth-jdbc-${guacamoleVersion}/postgresql/schema/002-create-admin-user.sql
 cat guacamole-auth-jdbc-${guacamoleVersion}/postgresql/schema/*.sql | /usr/bin/sudo su - postgres -c "psql -d guacamole_db -f -"
@@ -85,7 +85,7 @@ cat guacamole-auth-jdbc-${guacamoleVersion}/postgresql/schema/*.sql | /usr/bin/s
 guacUser=$(echo $vmUser | sed 's/\./_/g')
 
 # Generate random passwords for guacamole user via custom bash functions
-guacUserPassword=$(managedPassword "guacamole-user")
+guacUserPassword=$(managedPassword "guacamole-user-password")
 
 if [[ -z $(/usr/bin/sudo su - postgres -c "psql -t -c 'SELECT u.usename AS \"User Name\" FROM pg_catalog.pg_user u;'" | grep guacamole_user) ]]; then
   /usr/bin/sudo su - postgres -c "psql -d guacamole_db -c \"CREATE USER guacamole_user WITH PASSWORD '${guacUserPassword}';\""
