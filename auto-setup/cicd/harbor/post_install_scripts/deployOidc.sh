@@ -23,11 +23,11 @@ harborOidcPingRes=""
                              echo "Waiting for https://'${componentName}'.'${baseDomain}'/api/v2.0/ping"; sleep 5; done'
 
 # get the configuration
-export harborAuthMode=$(curl -u 'admin:'${vmPassword}'' -H "Content-Type: application/json" -X GET "https://${componentName}.${baseDomain}/api/v2.0/configurations" | jq -r '.auth_mode.value')
+export harborAuthMode=$(curl -u 'admin:'${harborAdminPassword}'' -H "Content-Type: application/json" -X GET "https://${componentName}.${baseDomain}/api/v2.0/configurations" | jq -r '.auth_mode.value')
 if [[ ${harborAuthMode} != "oidc_auth" ]];
 then
 # set the oidc configuration
-   export harborAuthModeResp=$(curl -u 'admin:'${vmPassword}'' -X PUT "https://${componentName}.${baseDomain}/api/v2.0/configurations" -H "accept: application/json" -H "Content-Type: application/json" -d '{
+   export harborAuthModeResp=$(curl -u 'admin:'${harborAdminPassword}'' -X PUT "https://${componentName}.${baseDomain}/api/v2.0/configurations" -H "accept: application/json" -H "Content-Type: application/json" -d '{
    "auth_mode": "oidc_auth",
    "oidc_name": "Keycloak Auth",
    "oidc_endpoint": "https://keycloak.'${baseDomain}'/auth/realms/'${kcRealm}'",
@@ -48,7 +48,7 @@ then
 fi
 
 # Test the oidc configuration
-export harborOidcPingRes=$(curl -u 'admin:'${vmPassword}'' -X POST "https://${componentName}.${baseDomain}/api/v2.0/system/oidc/ping" -H "accept: application/json" -H "Content-Type: application/json" -d '
+export harborOidcPingRes=$(curl -u 'admin:'${harborAdminPassword}'' -X POST "https://${componentName}.${baseDomain}/api/v2.0/system/oidc/ping" -H "accept: application/json" -H "Content-Type: application/json" -d '
 { "url":"https://keycloak.'${baseDomain}'/auth/realms/'${kcRealm}'",
   "verify_cert":false
 }' )

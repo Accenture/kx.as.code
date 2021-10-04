@@ -16,7 +16,7 @@
                 "password":             "vJ6JuTWiGIIbdqkmKQ8R",
                 "region":               "RegionOne",
                 "auth_url":             "http://192.200.76.201/identity",
-                "kx_main_image_id":     "e9a6b418-40e9-47b2-8aa3-25df9f436f00",
+                "kx_main_image_id":     "88e99bd0-72dd-478a-a15e-abd0c4a8173b",
                 "kx_node_image_id":     "f977f2fb-9fc2-4d51-b1f2-45e3252725c0",
                 "external_network_id":  "886269e5-9556-4387-8029-be4e5ceb4d4b"
             }
