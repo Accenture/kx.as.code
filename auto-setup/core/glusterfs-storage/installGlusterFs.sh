@@ -57,23 +57,9 @@ wget -O - https://github.com/heketi/heketi/releases/download/v${heketiVersion}/h
 /usr/bin/sudo mkdir -p /etc/heketi /var/log/heketi /var/lib/heketi
 /usr/bin/sudo chown -R heketi:heketi /etc/heketi /var/log/heketi /var/lib/heketi
 
-# Generate random passwords for Heketi or pull from GoPass if already existing
-
-if [[ -z $(getPassword "heketi-admin") ]]; then
-  # Conditional statement in case this script is being rerun
-  adminPassword=$(generatePassword)
-  pushPassword "heketi-admin" "${adminPassword}"
-else
-  adminPassword=$(getPassword "heketi-admin")
-fi
-
-if [[ -z $(getPassword "heketi-user") ]]; then
-  # Conditional statement in case this script is being rerun
-  userPassword=$(generatePassword)
-  pushPassword "heketi-user" "${userPassword}"
-else
-  userPassword=$(getPassword "heketi-user")
-fi
+# Generate random passwords for Heketi via custom bash functions
+adminPassword$(managedPassword "heketi-admin-user")
+userPassword=$(managedPassword "heketi-user")
 
 # Create base Heketi configuration file
 /usr/bin/sudo bash -c 'cat <<EOF > /etc/heketi/heketi.json

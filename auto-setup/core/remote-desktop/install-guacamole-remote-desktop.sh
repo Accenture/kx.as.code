@@ -75,14 +75,8 @@ if [[ -z $(/usr/bin/sudo su - postgres -c "psql -lqt | cut -d \| -f 1" | grep gu
   /usr/bin/sudo su - postgres -c "createdb guacamole_db"
 fi
 
-# Change default guacadmin/guacadmin password
-if [[ -z $(getPassword "guacamole-admin") ]]; then
-  # Conditional statement in case this script is being rerun
-  guacAdminPassword=$(generatePassword)
-  pushPassword "guacamole-admin" "${guacAdminPassword}"
-else
-  guacAdminPassword=$(getPassword "guacamole-admin")
-fi
+# Generate random passwords for guacadmin via custom bash functions
+guacAdminPassword=$(managedPassword "guacamole-admin-user")
 
 /usr/bin/sudo sed -i "s/-- 'guacadmin'/-- '${guacAdminPassword}'/g" guacamole-auth-jdbc-${guacamoleVersion}/postgresql/schema/002-create-admin-user.sql
 cat guacamole-auth-jdbc-${guacamoleVersion}/postgresql/schema/*.sql | /usr/bin/sudo su - postgres -c "psql -d guacamole_db -f -"
@@ -90,13 +84,8 @@ cat guacamole-auth-jdbc-${guacamoleVersion}/postgresql/schema/*.sql | /usr/bin/s
 # Create Guacamole database users
 guacUser=$(echo $vmUser | sed 's/\./_/g')
 
-if [[ -z $(getPassword "guacamole-user") ]]; then
-  # Conditional statement in case this script is being rerun
-  guacUserPassword=$(generatePassword)
-  pushPassword "guacamole-user" "${guacUserPassword}"
-else
-  guacUserPassword=$(getPassword "guacamole-user")
-fi
+# Generate random passwords for guacamole user via custom bash functions
+guacUserPassword=$(managedPassword "guacamole-user")
 
 if [[ -z $(/usr/bin/sudo su - postgres -c "psql -t -c 'SELECT u.usename AS \"User Name\" FROM pg_catalog.pg_user u;'" | grep guacamole_user) ]]; then
   /usr/bin/sudo su - postgres -c "psql -d guacamole_db -c \"CREATE USER guacamole_user WITH PASSWORD '${guacUserPassword}';\""
@@ -156,23 +145,11 @@ postgresql-auto-create-accounts: true
 
 ''' | /usr/bin/sudo tee /etc/guacamole/guacamole.properties
 
-# Check if MD5 password already exists
-if [[ -z $(getPassword "guacamole-md5") ]]; then
-  # Conditional statement in case this script is being rerun
-  md5Password=$(echo -n ${vmPassword} | openssl md5 | cut -f2 -d' ')
-  pushPassword "guacamole-md5" "${md5Password}"
-else
-  md5Password=$(getPassword "guacamole-md5")
-fi
+# Generate random passwords for guacamole user via custom bash functions
+md5Password=$(managedPassword "guacamole-md5-password")
 
-# Check if VNC password already exists
-if [[ -z $(getPassword "guacamole-vnc") ]]; then
-  # Conditional statement in case this script is being rerun
-  vncPassword=$(generatePassword)
-  pushPassword "guacamole-vnc" "${vncPassword}"
-else
-  vncPassword=$(getPassword "guacamole-vnc")
-fi
+# Generate random passwords for guacamole user via custom bash functions
+vncPassword=$(managedPassword "guacamole-vnc-password")
 
 echo '''
 <user-mapping>
