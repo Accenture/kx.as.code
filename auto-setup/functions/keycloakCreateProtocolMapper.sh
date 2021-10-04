@@ -10,6 +10,8 @@ createKeycloakProtocolMapper () {
         ${kcAdmCli} get clients/${1}/protocol-mappers/models \
         --realm ${kcRealm})
 
+    log_info "ProtocolMapper: ${protocolMapper}"
+
     if [[ -z ${protocolMapper} ]]; then
         # Create client scope protocol mapper
         kubectl -n ${kcNamespace} exec ${kcPod} --container ${kcContainer} -- \
@@ -24,12 +26,9 @@ createKeycloakProtocolMapper () {
                 -s 'config."id.token.claim"=true' \
                 -s 'config."full.path"=true' \
                 -s 'config."jsonType.label"=String'
+        
     else
         log_info "Keycloak protocol mapper for client ${1} already exists. Skipping it's creation"
     fi
-
-    # Map the above client scope id to the client
-    kubectl -n ${kcNamespace} exec ${kcPod} --container ${kcContainer} -- \
-        ${kcAdmCli}  update clients/${1}/default-client-scopes/${2}
 
 }

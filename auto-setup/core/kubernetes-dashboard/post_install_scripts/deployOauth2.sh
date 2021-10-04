@@ -8,8 +8,7 @@ export clientId=$(createKeycloakClient "https://${componentName}.${baseDomain}/l
 export clientSecret=$(getKeycloakClientSecret "${clientId}")
 
 # Create Keycloak Client Scopes
-protocol="openid-connect"
-export clientscopeId=$(createKeyCloakClientScope "${protocol}")
+export clientScopeId=$(createKeyCloakClientScope "${clientId}" "openid-connect" )
 
 # Create Keycloak Protocol Mapper
-createKeycloakProtocolMapper "${clientId}" "${clientScopeId}"
+createKeycloakProtocolMapper "${clientScopeId}"
