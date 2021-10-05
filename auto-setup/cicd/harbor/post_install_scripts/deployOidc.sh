@@ -2,7 +2,7 @@
 
 # Create Keycloak Client - $1 = redirectUris, $2 = rootUrl
 enableKeycloakSSOForSolution "https://${componentName}.${kcRealm}/c/oidc/callback" \
-  "https://${componentName}.${baseDomain}")
+  "https://${componentName}.${baseDomain}"
 
 ################################################### OIDC Configuration Harbor #########################################################
 
