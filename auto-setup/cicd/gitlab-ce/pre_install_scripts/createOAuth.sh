@@ -1,14 +1,15 @@
 #!/bin/bash -x
 
-# Create client - $1 = redirectUris, $2 = rootUrl
-export clientId=$(createKeycloakClient "https://gitlab.${baseDomain}/users/auth/openid_connect/callback" \
-  "https://gitlab.${baseDomain}")
+# Create Keycloak Client
+redirectUris="https://gitlab.${baseDomain}/users/auth/openid_connect/callback"
+rootUrl="https://gitlab.${baseDomain}"
+baseUrl="/"
+export clientId=$(createKeycloakClient "${redirectUris}" "${rootUrl}" "${baseUrl}")
 
-# Get client secret
+# Get Keycloak Client Secret
 export clientSecret=$(getKeycloakClientSecret "${clientId}")
 
-
-################### kubernetes manifests CRUD operations #####################################
+################### Kubernetes manifests CRUD operations #####################################
 
 echo '''
 {

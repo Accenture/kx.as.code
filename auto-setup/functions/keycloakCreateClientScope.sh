@@ -1,5 +1,9 @@
 createKeycloakClientScope() {
 
+    # Assign incoming parameters to variables
+    clientId=${1}
+    protocol=${2}
+
     # Source Keycloak Environment
     sourceKeycloakEnvironment
 
@@ -13,7 +17,7 @@ createKeycloakClientScope() {
     # If Keycloak client secret not available, add it
     if [[ "${clientScopeId}" == "null" ]] || [[ -z "${clientScopeId}" ]]; then
         kubectl -n ${kcNamespace} exec ${kcPod} --container ${kcContainer} -- \
-            ${kcAdmCli} create -x client-scopes -s name=${componentName} -s protocol=${2}
+            ${kcAdmCli} create -x client-scopes -s name=${componentName} -s protocol=${protocol}
         export clientScopeId=$(kubectl -n ${kcNamespace} exec ${kcPod} -- \
             ${kcAdmCli} get -x client-scopes | jq -r '.[] | select(.name=="'${componentName}'") | .id')
     else
@@ -22,7 +26,7 @@ createKeycloakClientScope() {
 
     # Map the above client scope id to the client
     kubectl -n ${kcNamespace} exec ${kcPod} --container ${kcContainer} -- \
-        ${kcAdmCli} update clients/${1}/default-client-scopes/${clientScopeId}
+        ${kcAdmCli} update clients/${clientId}/default-client-scopes/${clientScopeId}
 
     echo "${clientScopeId}"
 

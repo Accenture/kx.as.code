@@ -1,8 +1,12 @@
 #!/bin/bash -eux
 
-# Create Keycloak Client - $1 = redirectUris, $2 = rootUrl
-enableKeycloakSSOForSolution "https://${componentName}.${kcRealm}/c/oidc/callback" \
-  "https://${componentName}.${baseDomain}"
+# Integrate solution with Keycloak
+redirectUris="https://${componentName}.${kcRealm}/c/oidc/callback"
+rootUrl="https://${componentName}.${baseDomain}"
+baseUrl="/applications"
+protocol="openid-connect"
+fullPath="false"
+enableKeycloakSSOForSolution "${redirectUris}" "${rootUrl}" "${baseUrl}" "${protocol}" "${fullPath}"
 
 ################################################### OIDC Configuration Harbor #########################################################
 
