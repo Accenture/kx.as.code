@@ -3,6 +3,8 @@ set -euo pipefail
 
 . ${autoSetupHome}/cicd/gitlab-ce/helper_scripts/getGroupIds.sh
 
+export personalAccessToken=$(getPassword "gitlab-personal-access-token")
+
 # Create Grafana Image Renderer project in Gitlab
 export grafanaImageRendererProjectId=$(curl -s --header "Private-Token: ${personalAccessToken}" ${gitUrl}/api/v4/projects | jq '.[] | select(.name=="grafana_image_renderer") | .id')
 if [[ -z ${grafanaImageRendererProjectId} ]]; then

@@ -8,6 +8,9 @@ export kcInternalUrl=http://localhost:8080
 export kcBinDir=/opt/jboss/keycloak/bin/
 export kcAdmCli=/opt/jboss/keycloak/bin/kcadm.sh
 
+# Generate Keycloak Admin Password
+keycloakAdminPassword=$(managedPassword "keycloak-admin-password")
+
 # Ensure Kubernetes is available before proceeding to the next step
 timeout -s TERM 600 bash -c \
     'while [[ "$(curl -s -k https://localhost:6443/livez)" != "ok" ]];\
@@ -15,7 +18,7 @@ do sleep 5;\
 done'
 
 # Get Keycloak POD name for subsequent Keycloak CLI commands
-export kcPod=$(kubectl get pods -l 'app.kubernetes.io/name=keycloak' -n keycloak --output=json | jq -r '.items[].metadata.name')
+export kcPod=$(kubectl get pods -l 'app.kubernetes.io/name=keycloak' -n ${namespace} --output=json | jq -r '.items[].metadata.name')
 
 # Set Keycloak credential for upcoming API calls
 for i in {1..50}; do
@@ -23,7 +26,7 @@ for i in {1..50}; do
     containerReadyState=$(kubectl get pods -l 'app.kubernetes.io/name=keycloak' -n ${namespace} -o json | jq '.items[].status.containerStatuses[].ready' || true)
     if [[ ${containerReadyState} == "true" ]]; then
         kubectl -n ${namespace} exec ${kcPod} --container ${kcContainer} -- \
-            ${kcAdmCli} config credentials --server ${kcInternalUrl}/auth --realm master --user admin --password ${vmPassword} --client admin-cli
+            ${kcAdmCli} config credentials --server ${kcInternalUrl}/auth --realm master --user admin --password ${keycloakAdminPassword} --client admin-cli
         break
     else
         sleep 15
@@ -43,7 +46,7 @@ fi
 # Create Admin User in KX.AS.CODE Realm
 if [[ ! $(kubectl -n ${namespace} exec ${kcPod} --container ${kcContainer} -- ${kcAdmCli} get users -r ${kcRealm} | jq -r '.[] | select(.username=="admin") | .username') ]]; then
     kubectl -n ${namespace} exec ${kcPod} --container ${kcContainer} -- \
-        ${kcBinDir}/add-user-keycloak.sh -r ${kcRealm} -u admin -p ${vmPassword}
+        ${kcBinDir}/add-user-keycloak.sh -r ${kcRealm} -u admin -p ${keycloakAdminPassword}
 fi
 
 # Reload JBoss Instance
@@ -52,11 +55,11 @@ kubectl -n ${namespace} exec ${kcPod} --container ${kcContainer} -- \
 
 # Get credential token in new Realm
 kubectl -n ${namespace} exec ${kcPod} --container ${kcContainer} -- \
-    ${kcAdmCli} config credentials --server ${kcInternalUrl}/auth --realm ${kcRealm} --user admin --password ${vmPassword} --client admin-cli
+    ${kcAdmCli} config credentials --server ${kcInternalUrl}/auth --realm ${kcRealm} --user admin --password ${keycloakAdminPassword} --client admin-cli
 
 # Give new admin user a password
 kubectl -n ${namespace} exec ${kcPod} --container ${kcContainer} -- \
-    ${kcAdmCli} set-password --realm ${kcRealm} --username admin --new-password ${vmPassword}
+    ${kcAdmCli} set-password --realm ${kcRealm} --username admin --new-password ${keycloakAdminPassword}
 
 # Create Admins Group
 if [[ ! $(kubectl -n ${namespace} exec ${kcPod} --container ${kcContainer} -- ${kcAdmCli} get groups -r ${kcRealm} | jq -r '.[] | select(.name=="admins") | .name') ]]; then
@@ -94,7 +97,7 @@ done
 
 # Set CLI credentials for Realm
 kubectl -n ${namespace} exec ${kcPod} --container ${kcContainer} -- \
-    ${kcAdmCli} config credentials --server ${kcInternalUrl}/auth --realm ${kcRealm} --user admin --password ${vmPassword} --client admin-cli
+    ${kcAdmCli} config credentials --server ${kcInternalUrl}/auth --realm ${kcRealm} --user admin --password ${keycloakAdminPassword} --client admin-cli
 
 # Obtain Realm Id
 kcParentId=$(kubectl -n ${namespace} exec ${kcPod} --container ${kcContainer} -- \

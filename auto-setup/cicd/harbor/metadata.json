@@ -6,7 +6,7 @@
     "helm_params": {
         "repository_url": "https://helm.goharbor.io",
         "repository_name": "harbor/harbor",
-        "helm_version": "1.7.2",
+        "helm_version": "1.7.3",
         "set_key_values": [
             "persistence.enabled=true",
             "persistence.persistentVolumeClaim.registry.storageClass=local-storage",
@@ -29,7 +29,7 @@
             "expose.tls.caSecretName=kx.as.code-wildcard-cert",
             "expose.tls.secretName=kx.as.code-wildcard-cert",
             "expose.tls.notarySecretName=kx.as.code-wildcard-cert",
-            "harborAdminPassword=\"{{vmPassword}}\"",
+            "harborAdminPassword=\"{{harborAdminPassword}}\"",
             "expose.ingress.annotations.\"nginx\\.ingress\\.kubernetes\\.io/proxy-body-size\"=\"10000m\"",
             "imagePullSecrets[0].name={{defaultDockerHubSecret}}",
             "logLevel=debug"
@@ -77,7 +77,8 @@
     "api_docs_url": "https://goharbor.io/docs/2.1.0/build-customize-contribute/configure-swagger/",
     "vendor_docs_url": "https://goharbor.io/docs",
     "pre_install_scripts": [
-        "createSecret.sh"
+        "createSecret.sh",
+        "createHarborAdminPassword.sh"
     ],
     "post_install_scripts": [
         "createProjects.sh",

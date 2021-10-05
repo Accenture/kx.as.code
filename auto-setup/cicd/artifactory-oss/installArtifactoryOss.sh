@@ -8,20 +8,26 @@ set -euo pipefail
 # Clone JFrog Helm Charts
 git clone https://github.com/jfrog/charts.git
 
-# Update persistent storage sizes
+# Checkout commit associated with desired version (no tagging in JFrog's Github repository)
 cd charts/stable/artifactory
+git checkout ${chartGitCommitId}
+
+# Update persistent storage sizes
 sed -i 's/50Gi/5Gi/g' values.yaml
 sed -i 's/20Gi/5Gi/g' values.yaml
 sed -i 's/jfrog\/artifactory-pro/jfrog\/artifactory-oss/g' values.yaml
 sed -i -z 's/nginx:\n  enabled: true/nginx:\n  enabled: false/' values.yaml
 
+# Create Artifactory Admin and Postgresql Passwords
+export adminPassword=$(managedPassword "artifactory-admin-password")
+export postgresqlPassword=$(managedPassword "artifactory-postgresql-password")
+
 # Pull Postgres dependency
 helm dep update
-
-# Install Artifactory OSS
 helm upgrade --install ${componentName} --namespace ${namespace} \
+    --set global.versions.artifactory=${appVersion} \
     --set admin.username=admin \
-    --set admin.password=${vmPassword} \
+    --set admin.password="${adminPassword}" \
     --set persistence.size=5Gi \
     --set artifactory.nginx.enabled=false \
     --set artifactory.ingress.enabled=true \
@@ -30,7 +36,7 @@ helm upgrade --install ${componentName} --namespace ${namespace} \
     --set artifactory.persistence.size=5Gi \
     --set databaseUpgradeReady=yes \
     --set postgresql.enabled=true \
-    --set postgresql.postgresqlPassword=${postgresqlPassword} \
+    --set postgresql.postgresqlPassword="${postgresqlPassword}" \
     --set postgresql.global.persistence.storageClass=local-storage \
     --set postgresql.persistence.enabled=true \
     --set postgresql.persistence.storageClass=local-storage \

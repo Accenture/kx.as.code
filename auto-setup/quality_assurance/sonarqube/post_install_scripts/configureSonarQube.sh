@@ -47,8 +47,11 @@ curl -u ${user}:${password} -X POST https://${componentName}.${baseDomain}/api/s
     --data-urlencode 'key=sonar.forceAuthentication' \
     --data-urlencode 'value=true'
 
+# Create Sonarqube admin password
+export sonarqubeAdminPassword=$(managedPassword "sonarqube-admin-password")
+
 # Change admin password away from simple default admin:admin
 curl -u ${user}:${password} -X POST https://${componentName}.${baseDomain}/api/users/change_password \
     --data-urlencode 'login='${user}'' \
-    --data-urlencode 'password='${vmPassword}'' \
+    --data-urlencode 'password='${sonarqubeAdminPassword}'' \
     --data-urlencode 'previousPassword='${password}''

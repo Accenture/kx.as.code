@@ -6,9 +6,9 @@ timeout -s TERM 600 bash -c 'while [[ "$(curl -s -o /dev/null -L -w ''%{http_cod
 echo "Waiting for https://'${componentName}'.'${baseDomain}'/api/v2.0/ping"; sleep 5; done'
 
 # Create public kx-as-code project in Habor via API
-export kxHarborProjectId=$(curl -s -u 'admin:'${vmPassword}'' -X GET https://${componentName}.${baseDomain}/api/v2.0/projects | jq -r '.[] | select(.name=="kx-as-code") | .project_id')
+export kxHarborProjectId=$(curl -s -u 'admin:'${harborAdminPassword}'' -X GET https://${componentName}.${baseDomain}/api/v2.0/projects | jq -r '.[] | select(.name=="kx-as-code") | .project_id')
 if [[ -z ${kxHarborProjectId} ]]; then
-    curl -u 'admin:'${vmPassword}'' -X POST "https://${componentName}.${baseDomain}/api/v2.0/projects" -H "accept: application/json" -H "Content-Type: application/json" -d'{
+    curl -u 'admin:'${harborAdminPassword}'' -X POST "https://${componentName}.${baseDomain}/api/v2.0/projects" -H "accept: application/json" -H "Content-Type: application/json" -d'{
     "project_name": "kx-as-code",
     "cve_whitelist": {
       "items": [
@@ -34,9 +34,9 @@ else
 fi
 
 # Create public devops project in Harbor via API
-export devopsHarborProjectId=$(curl -s -u 'admin:'${vmPassword}'' -X GET https://${componentName}.${baseDomain}/api/v2.0/projects | jq -r '.[] | select(.name=="devops") | .project_id')
+export devopsHarborProjectId=$(curl -s -u 'admin:'${harborAdminPassword}'' -X GET https://${componentName}.${baseDomain}/api/v2.0/projects | jq -r '.[] | select(.name=="devops") | .project_id')
 if [[ -z ${devopsHarborProjectId} ]]; then
-    curl -u 'admin:'${vmPassword}'' -X POST "https://${componentName}.${baseDomain}/api/v2.0/projects" -H "accept: application/json" -H "Content-Type: application/json" -d'{
+    curl -u 'admin:'${harborAdminPassword}'' -X POST "https://${componentName}.${baseDomain}/api/v2.0/projects" -H "accept: application/json" -H "Content-Type: application/json" -d'{
     "project_name": "devops",
     "cve_whitelist": {
       "items": [
