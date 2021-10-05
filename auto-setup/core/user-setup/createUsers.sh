@@ -2,12 +2,6 @@
 set -euo pipefail
 
 export numUsersToCreate=$(jq -r '.config.additionalUsers[].firstname' ${installationWorkspace}/users.json | wc -l)
-export kcRealm=${baseDomain}
-export ldapDn=$(/usr/bin/sudo slapcat | grep dn | head -1 | cut -f2 -d' ')
-export kcInternalUrl=http://localhost:8080
-export kcBinDir=/opt/jboss/keycloak/bin/
-export kcAdmCli=/opt/jboss/keycloak/bin/kcadm.sh
-export kcPod=$(kubectl get pods -l 'app.kubernetes.io/name=keycloak' -n keycloak --output=json | jq -r '.items[].metadata.name')
 
 newGid=""
 
@@ -30,20 +24,8 @@ if [[ ${numUsersToCreate} -ne 0 ]]; then
 
         echo "${userid} ${firstname} ${surname} ${email}"
 
-        # Generate password
-        if [ -f ${sharedKxHome}/.users.json ]; then
-            if [ -z $(cat ${sharedKxHome}/.users.json | jq -r '.[] | select(.user=="'${userid}'") | .user' || true) ]; then
-                generatedPassword=$(pwgen -1s 8)
-                echo "[ { \"user\": \"${userid}\", \"password\": \"${generatedPassword}\" } ]" | /usr/bin/sudo tee ${sharedKxHome}/.temp.users.json
-                cat /usr/share/kx.as.code/.users.json /usr/share/kx.as.code/.temp.users.json | jq -s add | tee /usr/share/kx.as.code/.users.json
-                rm -f ${sharedKxHome}/.temp.users.json
-            else
-                generatedPassword=$(cat ${sharedKxHome}/.users.json | jq -r '.[] | select(.user=="'${userid}'") | .password')
-            fi
-        else
-            generatedPassword=$(pwgen -1s 8)
-            echo "[ { \"user\": \"${userid}\", \"password\": \"${generatedPassword}\" } ]" | /usr/bin/sudo tee ${sharedKxHome}/.users.json
-        fi
+        # Generate User Password
+        export generatedPassword=$(managedPassword "user-${userid}-password")
 
         # Create user's desktop folder
         /usr/bin/sudo mkdir -p /home/${userid}/Desktop
@@ -112,7 +94,7 @@ if [[ ${numUsersToCreate} -ne 0 ]]; then
       cn: '${userid}'
       gidNumber: '${newGid}'
       ''' | sed -e 's/^[ \t]*//' | sed '/^$/d' | /usr/bin/sudo tee /etc/ldap/users_group_${userid}.ldif
-            /usr/bin/sudo ldapadd -D "cn=admin,${ldapDn}" -w "${vmPassword}" -H ldapi:/// -f /etc/ldap/users_group_${userid}.ldif
+            /usr/bin/sudo ldapadd -D "cn=admin,${ldapDn}" -w "${ldapAdminPassword}" -H ldapi:/// -f /etc/ldap/users_group_${userid}.ldif
             fi
 
             # Add User to OpenLDAP
@@ -135,7 +117,7 @@ if [[ ${numUsersToCreate} -ne 0 ]]; then
       mail: '${email}'
       loginShell: /bin/zsh
       ''' | sed -e 's/^[ \t]*//' | sed '/^$/d' | /usr/bin/sudo tee /etc/ldap/new_user_${userid}.ldif
-            /usr/bin/sudo ldapadd -D "cn=admin,${ldapDn}" -w "${vmPassword}" -H ldapi:/// -f /etc/ldap/new_user_${userid}.ldif
+            /usr/bin/sudo ldapadd -D "cn=admin,${ldapDn}" -w "${ldapAdminPassword}" -H ldapi:/// -f /etc/ldap/new_user_${userid}.ldif
             fi
 
             # Restart NSLCD and NSCD to make new users available for logging in
@@ -173,7 +155,7 @@ if [[ ${numUsersToCreate} -ne 0 ]]; then
         cn: kcadmins
         member: uid='${userid}',ou=Users,ou=People,'${ldapDn}'
         ''' | sed -e 's/^[ \t]*//' | sed '/^$/d' | /usr/bin/sudo tee /etc/ldap/create-groupOfNames-group.ldif
-                /usr/bin/sudo ldapadd -D "cn=admin,${ldapDn}" -w "${vmPassword}" -H ldapi:/// -f /etc/ldap/create-groupOfNames-group.ldif
+                /usr/bin/sudo ldapadd -D "cn=admin,${ldapDn}" -w "${ldapAdminPassword}" -H ldapi:/// -f /etc/ldap/create-groupOfNames-group.ldif
             else
                 if ! /usr/bin/sudo ldapsearch -x -b "cn=kcadmins,ou=Groups,ou=People,${ldapDn}" '(&(objectClass=groupOfNames)(member=uid='${userid}',ou=Users,ou=People,'${ldapDn}'))' | grep -q ^dn:; then
                 # Add user to existing kcadmins group
@@ -183,7 +165,7 @@ if [[ ${numUsersToCreate} -ne 0 ]]; then
             add: memberOf
             memberOf: cn=kcadmins,ou=Groups,ou=People,'${ldapDn}'
             ''' | sed -e 's/^[ \t]*//' | sed '/^$/d' | /usr/bin/sudo tee /etc/ldap/add_user_${userid}_to_kcadmins.ldif
-                    /usr/bin/sudo ldapadd -D "cn=admin,${ldapDn}" -w "${vmPassword}" -H ldapi:/// -f /etc/ldap/add_user_${userid}_to_kcadmins.ldif
+                    /usr/bin/sudo ldapadd -D "cn=admin,${ldapDn}" -w "${ldapAdminPassword}" -H ldapi:/// -f /etc/ldap/add_user_${userid}_to_kcadmins.ldif
                 fi
             fi
 
@@ -273,12 +255,14 @@ if [[ ${numUsersToCreate} -ne 0 ]]; then
             /usr/bin/sudo chown -R ${userid}:${userid} /home/${userid}/.config/autostart-scripts
         fi
 
-        # Set credential token in new Realm
-        kubectl -n keycloak exec ${kcPod} -- \
-            ${kcAdmCli} config credentials --server ${kcInternalUrl}/auth --realm ${kcRealm} --user admin --password ${vmPassword} --client admin-cli
+        # Source Keycloak Environment
+        sourceKeycloakEnvironment
+
+        # Call function to login to Keycloak
+        keycloakLogin
 
         # Get Keycloak User Id
-        export kcUserId=$(kubectl -n keycloak exec ${kcPod} -- \
+        export kcUserId=$(kubectl -n keycloak exec ${kcPod} --container ${kcContainer} -- \
             ${kcAdmCli} get users -r ${kcRealm} -q username=${userid} | jq -r '.[].id')
 
         # Create K8s cluster role binding for OIDC user if it does not exist

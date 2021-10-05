@@ -1,6 +1,9 @@
 #!/bin/bash -x
 set -euo pipefail
 
+# Get Gitlab personal access token
+export personalAccessToken=$(getPassword "gitlab-personal-access-token")
+
 # Create KX.AS.CODE "Docs" project in Gitlab
 export kxDocsProjectId=$(curl -s --header "Private-Token: ${personalAccessToken}" https://gitlab.${baseDomain}/api/v4/projects | jq '.[] | select(.name=="kx.as.code_docs") | .id')
 if [[ -z ${kxDocsProjectId} ]]; then

@@ -103,6 +103,9 @@ kubectl -n ${namespace} exec ${kcPod} --container ${kcContainer} -- \
 kcParentId=$(kubectl -n ${namespace} exec ${kcPod} --container ${kcContainer} -- \
     ${kcAdmCli} get / --fields id --format csv --noquotes)
 
+# Get LDAP Admin Password
+export ldapAdminPassword=$(getPassword "openldap-admin-password")
+
 # Create LDAP User Federation
 if [[ ! $(kubectl -n ${namespace} exec ${kcPod} --container ${kcContainer} -- ${kcAdmCli} get components -r ${kcRealm} | jq -r '.[] | select(.providerId=="ldap") | .name') ]]; then
     ldapProviderId=$(kubectl -n ${namespace} exec ${kcPod} --container ${kcContainer} -- \
@@ -127,7 +130,7 @@ if [[ ! $(kubectl -n ${namespace} exec ${kcPod} --container ${kcContainer} -- ${
         -s 'config.usersDn=["ou=Users,ou=People,'${ldapDn}'"]' \
         -s 'config.authType=["simple"]' \
         -s 'config.bindDn=["cn=admin,'${ldapDn}'"]' \
-        -s 'config.bindCredential=["'${vmPassword}'"]' \
+        -s 'config.bindCredential=["'${ldapAdminPassword}'"]' \
         -s 'config.searchScope=["1"]' \
         -s 'config.useTruststoreSpi=["ldapsOnly"]' \
         -s 'config.connectionPooling=["true"]' \
