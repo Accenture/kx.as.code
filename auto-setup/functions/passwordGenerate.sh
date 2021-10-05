@@ -1,10 +1,4 @@
 generatePassword() {
-  # Generate a secure password
-  chars='#%-=.*&_'
-  { </dev/urandom LC_ALL=C grep -ao '[A-Za-z0-9]' \
-          | head -n$((RANDOM % 8 + 9))
-      echo ${chars:$((RANDOM % ${#chars})):1}   # Random special char.
-  } \
-      | shuf \
-      | tr -d '\n'
+  # Generate a secure password. Not using pwgen in order to specify specific special characters
+  echo {A..Z} {a..z} {0..9} {0..9} '# % * _ + - . ' | tr ' ' "\n" | shuf | xargs | tr -d ' ' | cut -b 1-32
 }
