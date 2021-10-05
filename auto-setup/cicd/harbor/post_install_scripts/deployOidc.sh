@@ -6,7 +6,8 @@ rootUrl="https://${componentName}.${baseDomain}"
 baseUrl="/applications"
 protocol="openid-connect"
 fullPath="false"
-enableKeycloakSSOForSolution "${redirectUris}" "${rootUrl}" "${baseUrl}" "${protocol}" "${fullPath}"
+scopes="${componentName}" # space separated if multiple scopes need to be created/associated with the client
+enableKeycloakSSOForSolution "${redirectUris}" "${rootUrl}" "${baseUrl}" "${protocol}" "${fullPath}" "${scopes}"
 
 ################################################### OIDC Configuration Harbor #########################################################
 

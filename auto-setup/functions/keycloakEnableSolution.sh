@@ -8,6 +8,7 @@ enableKeycloakSSOForSolution() {
     baseUrl=${3}
     protocol=${4}
     fullPath=${5}
+    scopes=${6:-ignore} # optional
 
     # Create Keycloak Client - $1 = redirectUris, $2 = rootUrl
     export clientId=$(createKeycloakClient "${redirectUris}" "${rootUrl}" "${baseUrl}")
@@ -16,7 +17,14 @@ enableKeycloakSSOForSolution() {
     export clientSecret=$(getKeycloakClientSecret "${clientId}")
 
     # Create Keycloak Client Scopes
-    export clientScopeId=$(createKeycloakClientScope "${clientId}" "${protocol}")
+    if [[ "${scopes}" != "ignore" ]]; then
+        for scope in ${scopes}
+        do
+            export clientScopeId=$(createKeycloakClientScope "${clientId}" "${protocol}" "${scope}")
+        done
+    else
+        log_info "Keycloak client scopes not requested. No additional ones will be defined for this client"
+    fi
 
     # Create Keycloak Protocol Mapper
     createKeycloakProtocolMapper "${clientId}" "${fullPath}" 

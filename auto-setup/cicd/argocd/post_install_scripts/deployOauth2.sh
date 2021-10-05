@@ -93,12 +93,12 @@ kubectl delete pod ${argoServer} -n ${componentName}
 
 # Create Keycloak Client Scopes (if not already existing)
 protocol="openid-connect"
-export clientScopeId=$(createKeycloakClientScope "${clientId}" "${protocol}")
+scope="groups"
+export clientScopeId=$(createKeycloakClientScope "${clientId}" "${protocol}" "${scope}")
 
 # Create Keycloak Protocol Mapper (if not already existing)
 fullPath="false"
 createKeycloakProtocolMapper "${clientId}" "${fullPath}" 
-
 
 # Create Keycloak Group (if not already existing)
 group="ArgoCDAdmins"

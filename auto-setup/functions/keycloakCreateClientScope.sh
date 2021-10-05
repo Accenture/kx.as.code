@@ -3,6 +3,7 @@ createKeycloakClientScope() {
     # Assign incoming parameters to variables
     clientId=${1}
     protocol=${2}
+    scope=${3}
 
     # Source Keycloak Environment
     sourceKeycloakEnvironment
@@ -12,16 +13,16 @@ createKeycloakClientScope() {
     
     # Export the client scope id
     export clientScopeId=$(kubectl -n ${kcNamespace} exec ${kcPod} --container ${kcContainer} -- \
-        ${kcAdmCli} get -x client-scopes | jq -r '.[] | select(.name=="'${componentName}'") | .id')
+        ${kcAdmCli} get -x client-scopes | jq -r '.[] | select(.name=="'${scope}'") | .id')
 
-    # If Keycloak client secret not available, add it
+    # If Keycloak client scope not available, add it
     if [[ "${clientScopeId}" == "null" ]] || [[ -z "${clientScopeId}" ]]; then
         kubectl -n ${kcNamespace} exec ${kcPod} --container ${kcContainer} -- \
-            ${kcAdmCli} create -x client-scopes -s name=${componentName} -s protocol=${protocol}
+            ${kcAdmCli} create -x client-scopes -s name=${scope} -s protocol=${protocol}
         export clientScopeId=$(kubectl -n ${kcNamespace} exec ${kcPod} -- \
-            ${kcAdmCli} get -x client-scopes | jq -r '.[] | select(.name=="'${componentName}'") | .id')
+            ${kcAdmCli} get -x client-scopes | jq -r '.[] | select(.name=="'${scope}'") | .id')
     else
-        >&2 log_info "Client Scope already exists for ${componentName} with id ${clientScopeId}. Skipping its creation"
+        >&2 log_info "Client Scope \"${scope}\" already exists for ${componentName} with id ${clientScopeId}. Skipping its creation"
     fi
 
     # Map the above client scope id to the client

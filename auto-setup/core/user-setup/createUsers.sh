@@ -2,6 +2,8 @@
 set -euo pipefail
 
 export numUsersToCreate=$(jq -r '.config.additionalUsers[].firstname' ${installationWorkspace}/users.json | wc -l)
+export ldapDn=$(/usr/bin/sudo slapcat | grep dn | head -1 | cut -f2 -d' ')
+export ldapAdminPassword=$(getPassword "openldap-admin-password")
 
 newGid=""
 
