@@ -3,11 +3,11 @@ enableKeycloakSSOForSolution() {
     # Function to take care of all the steps needed to create a Keycloak client for the solution
 
     # Assign incoming parameters to variables
-    export redirectUris=${1}
-    export rootUrl=${2}
-    export baseUrl=${3}
-    export protocol=${4}
-    export fullPath=${5}
+    redirectUris=${1}
+    rootUrl=${2}
+    baseUrl=${3}
+    protocol=${4}
+    fullPath=${5}
 
     # Create Keycloak Client - $1 = redirectUris, $2 = rootUrl
     export clientId=$(createKeycloakClient "${redirectUris}" "${rootUrl}" "${baseUrl}")
