@@ -9,9 +9,9 @@ enableKeycloakSSOForSolution() {
     export clientSecret=$(getKeycloakClientSecret "${clientId}")
 
     # Create Keycloak Client Scopes
-    export clientScopeId=$(createKeyCloakClientScope "${clientId}" "openid-connect" )
+    export clientScopeId=$(createKeycloakClientScope "${clientId}" "openid-connect" )
 
     # Create Keycloak Protocol Mapper
-    createKeycloakProtocolMapper "${clientScopeId}"
+    createKeycloakProtocolMapper "${clientId}"
 
 }
