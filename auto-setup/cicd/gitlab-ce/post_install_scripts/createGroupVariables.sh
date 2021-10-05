@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # Get Personal Access Token
-export personalAccessToken=$(cat /usr/share/kx.as.code/.config/.admin.gitlab.pat)
+export personalAccessToken=$(getPassword "gitlab-personal-access-token")
 
 # Get Group Id
 export kxascodeGroupId=$(curl -s --header "Private-Token: ${personalAccessToken}" https://gitlab.${baseDomain}/api/v4/groups | jq '.[] | select(.name=="kx.as.code") | .id')
