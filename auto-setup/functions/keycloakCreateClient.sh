@@ -15,7 +15,7 @@ createKeycloakClient() {
         kubectl -n ${kcNamespace} exec ${kcPod} --container ${kcContainer} -- \
         ${kcAdmCli} create clients --realm ${kcRealm} -s clientId=${componentName} \
         -s 'redirectUris=["'${1}'"]' \
-        -s publicClient="false" -s enabled=true -s rootUrl="${2}'.'${kcRealm}'" -s baseUrl="/applications" -i
+        -s publicClient="false" -s enabled=true -s rootUrl="${2}" -s baseUrl="/applications" -i
     else
         >&2 log_info "Keycloak client for ${componentName} already exists (${clientId}). Skipping its creation"
     fi
