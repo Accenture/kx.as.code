@@ -12,9 +12,9 @@ getKeycloakClientSecret() {
 
     # If Keycloak client secret not available, generate a new one
     if [[ "${clientSecret}" == "null" ]] || [[ -z "${clientSecret}" ]]; then
-        kubectl -n ${kcNamespace} exec ${kcPod} -- \
+        kubectl -n ${kcNamespace} exec ${kcPod} --container ${kcContainer} -- \
             ${kcAdmCli} create clients/${1}/client-secret | jq -r '.value'
-        export clientSecret=$(kubectl -n ${kcNamespace} exec ${kcPod} -- \
+        export clientSecret=$(kubectl -n ${kcNamespace} exec ${kcPod} --container ${kcContainer} -- \
             ${kcAdmCli} get clients/${1}/client-secret | jq -r '.value')
     else
         >&2 log_info "Client secret for \"${1}\" already exists with id ${clientSecret}. Skipping its creation"

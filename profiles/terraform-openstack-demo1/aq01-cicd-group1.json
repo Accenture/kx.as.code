@@ -24,10 +24,6 @@
       {
         "install_folder": "quality_assurance",
         "name": "sonarqube"
-      },
-      {
-        "install_folder": "collaboration",
-        "name": "mattermost"
       }
     ]
   }
