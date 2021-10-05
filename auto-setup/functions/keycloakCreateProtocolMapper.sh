@@ -1,7 +1,7 @@
 createKeycloakProtocolMapper () {
 
     # Source Keycloak Environment
-    sourceKeyCloakEnvironment
+    sourceKeycloakEnvironment
 
     # Call function to login to Keycloak
     keycloakLogin
@@ -12,7 +12,7 @@ createKeycloakProtocolMapper () {
 
     log_info "ProtocolMapper: ${protocolMapper}"
 
-    if [[ -z ${protocolMapper} ]]; then
+    if [[ "${protocolMapper}" == "null" ]] || [[ -z ${protocolMapper} ]]; then
         # Create client scope protocol mapper
         kubectl -n ${kcNamespace} exec ${kcPod} --container ${kcContainer} -- \
             ${kcAdmCli} create clients/${1}/protocol-mappers/models \
@@ -28,7 +28,7 @@ createKeycloakProtocolMapper () {
                 -s 'config."jsonType.label"=String'
         
     else
-        log_info "Keycloak protocol mapper for client ${1} already exists. Skipping it's creation"
+        >&2 log_info "Keycloak protocol mapper for client ${1} already exists. Skipping it's creation"
     fi
 
 }
