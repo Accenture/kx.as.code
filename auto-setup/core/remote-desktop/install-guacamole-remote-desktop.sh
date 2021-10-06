@@ -97,6 +97,9 @@ fi
 
 export ldapDn=$(/usr/bin/sudo slapcat | grep dn | head -1 | cut -f2 -d' ')
 
+# Generate LDAP Admin Password
+export ldapAdminPassword=$(getPassword "openldap-admin-password")
+
 echo '''
 guacd-hostname: localhost
 guacd-port: 4822
@@ -111,7 +114,7 @@ ldap-port: 389
 ldap-encryption-method: none
 ldap-max-search-results: 1000
 ldap-search-bind-dn: cn=admin,'${ldapDn}'
-ldap-search-bind-password: '${vmPassword}'
+ldap-search-bind-password: '${ldapAdminPassword}'
 ldap-user-base-dn: ou=Users,ou=People,'${ldapDn}'
 ldap-username-attribute: uid
 ldap-user-search-filter: (objectClass=*)

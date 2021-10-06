@@ -11,11 +11,11 @@ security:
 localRepositories:
   kx-as-code:
     type: maven
-    description: "KX.AS.CODE maven repository"
+    description: \"KX.AS.CODE maven repository\"
     repoLayout: maven-2-default
   devops:
     type: generic
-    description: "DevOps repository for general artifacts"
+    description: \"DevOps repository for general artifacts\"
 """ | /usr/bin/sudo tee ${installationWorkspace}/artifactory-configuration.yml
 
 # Configure JFrog Artifactory server

@@ -4,7 +4,6 @@ set -euo pipefail
 # Ensure time is accurate
 /usr/bin/sudo apt-get install -y ntpdate
 
-certificatesWorkspace=/usr/share/kx.as.code/Kubernetes
 /usr/bin/sudo mkdir -p ${certificatesWorkspace}
 /usr/bin/sudo chown $(id -u ${vmUser}):$(id -g ${vmUser}) ${certificatesWorkspace}
 cd ${certificatesWorkspace}
@@ -13,6 +12,7 @@ cd ${certificatesWorkspace}
 apt-get update && /usr/bin/sudo apt-get install -y apt-transport-https
 curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | /usr/bin/sudo apt-key add -
 echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" | /usr/bin/sudo tee -a /etc/apt/sources.list.d/kubernetes.list
+
 # Read Kubernetes version to be installed
 kubeVersion=$(cat ${installationWorkspace}/versions.json | jq -r '.kubernetes')
 /usr/bin/sudo apt-get update

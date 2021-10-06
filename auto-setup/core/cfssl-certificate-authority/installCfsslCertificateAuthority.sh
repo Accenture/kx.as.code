@@ -1,8 +1,6 @@
 #!/bin/bash -x
 set -euo pipefail
 
-export certificatesWorkspace=${installationWorkspace}/certificates
-
 # Install Tools to Generate Certificate Authority
 sudo curl -L https://github.com/cloudflare/cfssl/releases/download/v${cfsslVersion}/cfssl_${cfsslVersion}_linux_amd64 -o cfssl
 sudo chmod +x cfssl

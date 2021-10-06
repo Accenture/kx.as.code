@@ -6,6 +6,9 @@ set -euo pipefail
 . ${installComponentDirectory}/helper_scripts/getUserIds.sh
 . ${installComponentDirectory}/helper_scripts/getGroupIds.sh
 
+# Get Gitlab personal access token
+export personalAccessToken=$(getPassword "gitlab-personal-access-token")
+
 # Add new user as group admin to new KX.AS.CODE group
 mappedUser=$(curl -s --header "Private-Token: ${personalAccessToken}" https://gitlab.${baseDomain}/api/v4/groups/${kxascodeGroupId}/members | jq '.[] | select(.username=="'${vmUser}'") | .id')
 if [[ -z ${mappedUser} ]]; then

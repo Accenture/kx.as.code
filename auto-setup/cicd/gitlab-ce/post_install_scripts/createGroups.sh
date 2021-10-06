@@ -1,6 +1,9 @@
 #!/bin/bash -x
 set -euo pipefail
 
+# Get Gitlab personal access token
+export personalAccessToken=$(getPassword "gitlab-personal-access-token")
+
 # Create kx.as.code group in Gitlab
 export kxascodeGroupId=$(curl -s --header "Private-Token: ${personalAccessToken}" https://gitlab.${baseDomain}/api/v4/groups | jq '.[] | select(.name=="kx.as.code") | .id')
 if [[ -z ${kxascodeGroupId} ]]; then

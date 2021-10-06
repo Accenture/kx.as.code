@@ -3,12 +3,15 @@ set -euo pipefail
 
 export ldapServer=127.0.0.1
 
+# Generate LDAP Admin Password
+export ldapAdminPassword=$(managedPassword "openldap-admin-password")
+
 # Install OpenLDAP server and utilities
 echo -e " \
-slapd slapd/internal/generated_adminpw password ${vmPassword}
-slapd slapd/password2 password ${vmPassword}
-slapd slapd/internal/adminpw password ${vmPassword}
-slapd slapd/password1 password ${vmPassword}
+slapd slapd/internal/generated_adminpw password ${ldapAdminPassword}
+slapd slapd/password2 password ${ldapAdminPassword}
+slapd slapd/internal/adminpw password ${ldapAdminPassword}
+slapd slapd/password1 password ${ldapAdminPassword}
 slapd slapd/domain string ${baseDomain}
 slapd shared/organization string ${baseDomain}
 slapd slapd/purge_database boolean true
@@ -20,11 +23,11 @@ systemctl is-active --quiet apache2 || /usr/bin/sudo systemctl enable apache2 &&
 /usr/bin/sudo DEBIAN_FRONTEND=noninteractive apt-get install -q -y slapd ldap-utils libnss-ldap ldapscripts
 
 # Update admin root password
-vmPassword_HASH=$(/usr/bin/sudo slappasswd -s ${vmPassword})
+password_HASH=$(/usr/bin/sudo slappasswd -s ${ldapAdminPassword})
 /usr/bin/sudo ldapmodify -Y EXTERNAL -H ldapi:/// << E0F
 dn: olcDatabase={1}mdb,cn=config
 replace: olcRootPW
-olcRootPW: ${vmPassword_HASH}
+olcRootPW: ${password_HASH}
 E0F
 
 # Show base dn after base install of OpenLDAP
@@ -43,7 +46,7 @@ if [[ "${exists}" == "false" ]]; then
     objectClass: organizationalUnit
     ou: People
     ''' | /usr/bin/sudo sed -e 's/^[ \t]*//' | tee /etc/ldap/users.ldif
-    /usr/bin/sudo ldapadd -D "cn=admin,${ldapDn}" -w "${vmPassword}" -H ldapi:/// -f /etc/ldap/users.ldif
+    /usr/bin/sudo ldapadd -D "cn=admin,${ldapDn}" -w "${ldapAdminPassword}" -H ldapi:/// -f /etc/ldap/users.ldif
     exists=""
 fi
 
@@ -59,7 +62,7 @@ if [[ "${exists}" == "false" ]]; then
     objectClass: top
     ou: Groups
     ''' | /usr/bin/sudo sed -e 's/^[ \t]*//' | tee /etc/ldap/base_groups_ou.ldif
-    /usr/bin/sudo ldapadd -D "cn=admin,${ldapDn}" -w "${vmPassword}" -H ldapi:/// -f /etc/ldap/base_groups_ou.ldif
+    /usr/bin/sudo ldapadd -D "cn=admin,${ldapDn}" -w "${ldapAdminPassword}" -H ldapi:/// -f /etc/ldap/base_groups_ou.ldif
     exists=""
 fi
 
@@ -72,7 +75,7 @@ if [[ "${exists}" == "false" ]]; then
     objectClass: top
     ou: Users
     ''' | /usr/bin/sudo sed -e 's/^[ \t]*//' | tee /etc/ldap/base_users_ou.ldif
-    /usr/bin/sudo ldapadd -D "cn=admin,${ldapDn}" -w "${vmPassword}" -H ldapi:/// -f /etc/ldap/base_users_ou.ldif
+    /usr/bin/sudo ldapadd -D "cn=admin,${ldapDn}" -w "${ldapAdminPassword}" -H ldapi:/// -f /etc/ldap/base_users_ou.ldif
     exists=""
 fi
 
@@ -85,7 +88,7 @@ if [[ "${exists}" == "false" ]]; then
     cn: admins
     gidNumber: 10000
     ''' | /usr/bin/sudo sed -e 's/^[ \t]*//' | /usr/bin/sudo tee /etc/ldap/admin_group.ldif
-    /usr/bin/sudo ldapadd -D "cn=admin,${ldapDn}" -w "${vmPassword}" -H ldapi:/// -f /etc/ldap/admin_group.ldif
+    /usr/bin/sudo ldapadd -D "cn=admin,${ldapDn}" -w "${ldapAdminPassword}" -H ldapi:/// -f /etc/ldap/admin_group.ldif
     exists=""
 fi
 
@@ -98,7 +101,7 @@ if [[ "${exists}" == "false" ]]; then
     cn: users
     gidNumber: 10001
     ''' | /usr/bin/sudo sed -e 's/^[ \t]*//' | tee /etc/ldap/users_group.ldif
-    /usr/bin/sudo ldapadd -D "cn=admin,${ldapDn}" -w "${vmPassword}" -H ldapi:/// -f /etc/ldap/users_group.ldif
+    /usr/bin/sudo ldapadd -D "cn=admin,${ldapDn}" -w "${ldapAdminPassword}" -H ldapi:/// -f /etc/ldap/users_group.ldif
     exists=""
 fi
 
@@ -189,7 +192,7 @@ base ou=People,'${ldapDn}'
 
 # The DN to bind with for normal lookups.
 binddn cn=admin,'${ldapDn}'
-bindpw '${vmPassword}'
+bindpw '${ldapAdminPassword}'
 
 # The DN used for password modifications by root.
 rootpwmoddn cn=admin,'${ldapDn}'

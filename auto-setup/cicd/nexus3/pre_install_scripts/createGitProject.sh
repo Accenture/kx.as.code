@@ -3,6 +3,9 @@ set -euo pipefail
 
 . ${autoSetupHome}/cicd/gitlab-ce/helper_scripts/getGroupIds.sh
 
+# Get personal access token
+export personalAccessToken=$(getPassword "gitlab-personal-access-token")
+
 # Create Nexus3 project in Gitlab
 export nexus3ProjectId=$(curl -s --header "Private-Token: ${personalAccessToken}" ${gitUrl}/api/v4/projects | jq '.[] | select(.name=="nexus3") | .id')
 if [[ -z ${nexus3ProjectId} ]]; then

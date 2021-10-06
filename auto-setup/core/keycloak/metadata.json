@@ -52,6 +52,7 @@
     "shortcut_text": "Keycloak IAM",
     "shortcut_icon": "keycloak.png",
     "pre_install_scripts": [
+        "createKeycloakAdminPassword.sh",
         "createConfigMap.sh"
     ],
     "post_install_scripts": [
