@@ -1,0 +1,39 @@
+## This file is taken from here https://github.com/viaduct-ai/kustomize-sops#argo-cd-helm-chart-with-custom-tooling
+## This installs ksops and kustomize into the argocd pod so that 
+# Enable Kustomize Alpha Plugins via Argo CD ConfigMap, required for ksops
+server:
+  config:
+    kustomize.buildOptions: "--enable-alpha-plugins"
+
+repoServer:
+  # Set the XDG_CONFIG_HOME env variable to allow kustomize to detect the plugin
+  env:
+  - name: XDG_CONFIG_HOME
+    value: /.config
+
+  # Use init containers to configure custom tooling
+  # https://argoproj.github.io/argo-cd/operator-manual/custom_tools/
+  volumes:
+  - name: custom-tools
+    emptyDir: {}
+
+  initContainers:
+  - name: install-ksops
+    image: viaductoss/ksops:v3.0.1
+    command: ["/bin/sh", "-c"]
+    args:
+      - echo "Installing KSOPS...";
+        mv ksops /custom-tools/;
+        mv $GOPATH/bin/kustomize /custom-tools/;
+        echo "Done.";
+    volumeMounts:
+      - mountPath: /custom-tools
+        name: custom-tools
+  volumeMounts:
+  - mountPath: /usr/local/bin/kustomize
+    name: custom-tools
+    subPath: kustomize
+    # Verify this matches a XDG_CONFIG_HOME=/.config env variable
+  - mountPath: /.config/kustomize/plugin/viaduct.ai/v1/ksops/ksops
+    name: custom-tools
+    subPath: ksops

@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wordpress
+spec:
+  template:
+    spec:
+      initContainers:
+      - name: init-command
+        image: debian
+        command: ["/bin/sh"]
+        args: ["-c", "echo $(WORDPRESS_SERVICE); echo mysql-dev"]
+      containers:
+      - name: wordpress
+        env:
+        - name: WORDPRESS_DB_HOST
+          value: mysql-dev
+        - name: WORDPRESS_DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-pass
+              key: password

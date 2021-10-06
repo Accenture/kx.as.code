@@ -52,7 +52,6 @@ metadata:
     app.kubernetes.io/part-of: argocd
 data:
   application.instanceLabelKey: argocd.argoproj.io/instance
-  kustomize.buildOptions: '--enable_alpha_plugins'
   url: https://${componentName}.${baseDomain}
   oidc.config: |-
     name: Keycloak
