@@ -2,6 +2,10 @@
   "action_queues": {
     "install": [
       {
+        "install_folder": "storage",
+        "name": "minio-s3"
+      },
+      {
         "install_folder": "cicd",
         "name": "argocd"
       },
@@ -12,6 +16,14 @@
       {
         "install_folder": "cicd",
         "name": "harbor"
+      },
+      {
+        "install_folder": "cicd",
+        "name": "gitlab-ce"
+      },
+      {
+        "install_folder": "quality_assurance",
+        "name": "sonarqube"
       }
     ]
   }

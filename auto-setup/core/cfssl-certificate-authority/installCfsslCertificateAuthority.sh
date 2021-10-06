@@ -1,7 +1,14 @@
 #!/bin/bash -x
 set -euo pipefail
 
-export certificatesWorkspace=${installationWorkspace}/certificates
+# Install Tools to Generate Certificate Authority
+sudo curl -L https://github.com/cloudflare/cfssl/releases/download/v${cfsslVersion}/cfssl_${cfsslVersion}_linux_amd64 -o cfssl
+sudo chmod +x cfssl
+sudo curl -L https://github.com/cloudflare/cfssl/releases/download/v${cfsslVersion}/cfssljson_${cfsslVersion}_linux_amd64 -o cfssljson
+sudo chmod +x cfssljson
+sudo curl -L https://github.com/cloudflare/cfssl/releases/download/v${cfsslVersion}/cfssl-certinfo_${cfsslVersion}_linux_amd64 -o cfssl-certinfo
+sudo chmod +x cfssl-certinfo
+sudo mv cfssl* /usr/local/bin
 
 # Only run this script automatically on first login
 if [ ! -f ${certificatesWorkspace}/kx_server.pem ]; then

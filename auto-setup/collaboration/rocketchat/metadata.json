@@ -4,6 +4,7 @@
     "installation_type": "helm",
     "installation_group_folder": "collaboration",
     "environment_variables": {
+        "imageTag": "3.14.5",
         "organizationType": "community",
         "organizationName": "KX.AS.CODE ChatOps",
         "channelsToCreate": "General,Security,Monitoring,CICD"
@@ -13,9 +14,9 @@
         "memory": "256"
     },
     "helm_params": {
-        "repository_url": "",
+        "repository_url": "https://rocketchat.github.io/helm-charts",
         "repository_name": "stable/rocketchat",
-        "helm_version": "",
+        "helm_version": "3.1.0",
         "set_key_values": []
     },
     "categories": [
@@ -61,7 +62,8 @@
     "health_check_command": "",
     "expected_check_command_response": "",
     "pre_install_scripts": [
-        "createMongoDbPasswords.sh"
+        "createMongoDbPasswords.sh",
+        "createRocketChatAdminPassword.sh"
     ],
     "post_install_scripts": [
         "loginToRocketChat.sh",

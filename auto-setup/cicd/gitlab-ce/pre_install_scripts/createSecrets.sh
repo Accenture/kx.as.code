@@ -23,23 +23,29 @@ kubectl get secret generic s3cmd-config -n ${namespace} ||
         --from-file=config=${installationWorkspace}/rails.minio.yaml \
         -n ${namespace} | kubectl apply -f -
 
+# Generate personal access token
+export gitlabRootPassword=$(managedPassword "gitlab-root-password")
+
 # Set initial root password
 kubectl get secret gitlab-ce-gitlab-initial-root-password -n ${namespace} ||
     kubectl create secret generic gitlab-ce-gitlab-initial-root-password \
-        --from-literal=password=${vmPassword} \
+        --from-literal=password=${gitlabRootPassword} \
         -n ${namespace}
 
 # Add KX.AS.CODE CA cert to Gitlab-CE namespace (important for Gitlab to act as OIDC provider - including global.hosts.https=true + gitlab.webservice.ingress.tls.secretName parameters)
-kubectl get secret kx.as.code-wildcard-cert --namespace=gitlab-ce ||
+kubectl get secret kx.as.code-wildcard-cert --namespace=${namespace} ||
     kubectl create secret generic kx.as.code-wildcard-cert \
         --from-file=${installationWorkspace}/kx-certs \
         --namespace=${namespace}
 
-# create intermediate certificate secret for gitlab sso
-kubectl create secret generic intermediate-ca --from-file=intermediate.pem=${installationWorkspace}/kx_intermediate_ca.pem -n gitlab-ce
+# Create intermediate certificate secret for gitlab sso
+kubectl get secret intermediate-ca --namespace=${namespace} || \
+    kubectl create secret generic intermediate-ca --from-file=intermediate.pem=${certificatesWorkspace}/kx_intermediate_ca.pem -n ${namespace}
 
-# create root certificate secret for gitlab sso
-kubectl create secret generic root-ca --from-file=root.pem=${installationWorkspace}/kx_root_ca.pem -n gitlab-ce
+# Create root certificate secret for gitlab sso
+kubectl get secret root-ca --namespace=${namespace} || \
+    kubectl create secret generic root-ca --from-file=root.pem=${certificatesWorkspace}/kx_root_ca.pem -n ${namespace}
 
-# create server certificate secret for gitlab sso
-kubectl create secret generic server-crt --from-file=server.pem=${installationWorkspace}/kx_server.pem -n gitlab-ce
+# Create server certificate secret for gitlab sso
+kubectl get secret server-crt --namespace=${namespace} || \
+    kubectl create secret generic server-crt --from-file=server.pem=${certificatesWorkspace}/kx_server.pem -n ${namespace}

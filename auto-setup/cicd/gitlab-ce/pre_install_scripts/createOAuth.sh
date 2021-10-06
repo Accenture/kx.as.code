@@ -1,38 +1,15 @@
 #!/bin/bash -x
 
-export kcRealm=${baseDomain}
-export kcInternalUrl=http://localhost:8080
-export kcAdmCli=/opt/jboss/keycloak/bin/kcadm.sh
-export kcPod=$(kubectl get pods -l 'app.kubernetes.io/name=keycloak' -n keycloak --output=json | jq -r '.items[].metadata.name')
-export kcContainer="keycloak"
+# Create Keycloak Client
+redirectUris="https://gitlab.${baseDomain}/users/auth/openid_connect/callback"
+rootUrl="https://gitlab.${baseDomain}"
+baseUrl="/"
+export clientId=$(createKeycloakClient "${redirectUris}" "${rootUrl}" "${baseUrl}")
 
-# Set credential token in new Realm
-kubectl -n keycloak exec ${kcPod} --container ${kcContainer} -- \
-    ${kcAdmCli} config credentials --server ${kcInternalUrl}/auth --realm ${kcRealm} --user admin --password ${vmPassword}
+# Get Keycloak Client Secret
+export clientSecret=$(getKeycloakClientSecret "${clientId}")
 
-## Create client
-kubectl -n keycloak exec ${kcPod} --container ${kcContainer} -- \
-    ${kcAdmCli} create clients --realm ${kcRealm} -s clientId=${componentName} \
-    -s 'redirectUris=["https://gitlab.'${baseDomain}'/users/auth/openid_connect/callback"]' \
-    -s publicClient="false" -s enabled=true -s rootUrl="https://gitlab.${baseDomain}" -s baseUrl="/" -i
-
-## export clientId
-export clientId=$(kubectl -n keycloak exec ${kcPod} --container ${kcContainer} -- \
-    ${kcAdmCli} get clients --fields id,clientId | jq -r '.[] | select(.clientId=="gitlab-ce") | .id')
-
-# Get client secret
-export clientSecret=$(kubectl -n keycloak exec ${kcPod} --container ${kcContainer} -- \
-    ${kcAdmCli} get clients/${clientId}/client-secret | jq -r '.value')
-
-# If secret not available, generate a new one
-if [[ "${clientSecret}" == "null" ]]; then
-  kubectl -n keycloak exec ${kcPod} -- \
-      ${kcAdmCli} create clients/${clientId}/client-secret | jq -r '.value'
-  clientSecret=$(kubectl -n keycloak exec ${kcPod} -- \
-      ${kcAdmCli} get clients/${clientId}/client-secret | jq -r '.value')
-fi
-
-################### kubernetes manifests CRUD operations #####################################
+################### Kubernetes manifests CRUD operations #####################################
 
 echo '''
 {
@@ -58,4 +35,7 @@ echo '''
   }
 }
 ''' | /usr/bin/sudo tee ${installationWorkspace}/gitlab-sso-providers.yaml
-kubectl create secret generic sso-provider --namespace=${componentName} --from-file=provider=${installationWorkspace}/gitlab-sso-providers.yaml
+
+# Check if SSO provider already exists, else create it
+kubectl get secret sso-provider --namespace=${namespace} || \
+  kubectl create secret generic sso-provider --namespace=${namespace} --from-file=provider=${installationWorkspace}/gitlab-sso-providers.yaml

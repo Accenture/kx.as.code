@@ -3,7 +3,7 @@ set -euo pipefail
 
 # Put Guacamole Remote Desktop Icon on Desktop
 iconPath=${installComponentDirectory}/guacamole.png
-cat << EOF > "${adminShortcutsDirectory}/Guacamole-Remote-Desktop.desktop"
+cat << EOF > "${adminShortcutsDirectory}/Guacamole-Remote-Desktop"
 [Desktop Entry]
 Version=1.0
 Name=Guacamole Remote Desktop
@@ -21,7 +21,7 @@ EOF
 
 # Put PGADMIN Icon on Desktop
 iconPath=${installComponentDirectory}/postgresql.png
-cat << EOF > "${adminShortcutsDirectory}/Postgresql-Admin.desktop"
+cat << EOF > "${adminShortcutsDirectory}/Postgresql-Admin"
 [Desktop Entry]
 Version=1.0
 Name=Postgresql Admin
@@ -38,4 +38,5 @@ Actions=new-window;new-private-window;
 EOF
 
 # Give *.desktop files execute permissions
-chmod 755 "${adminShortcutsDirectory}"/*.desktop
+chmod 755 "${adminShortcutsDirectory}/Guacamole-Remote-Desktop"
+chmod 755 "${adminShortcutsDirectory}/Postgresql-Admin"

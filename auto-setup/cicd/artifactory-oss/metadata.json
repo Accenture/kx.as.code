@@ -3,6 +3,10 @@
     "namespace": "artifactory",
     "installation_type": "script",
     "installation_group_folder": "cicd",
+    "environment_variables": {
+        "appVersion": "7.27.3",
+        "chartGitCommitId": "2ce06f3ba208fefad136d43c171050328aa93e23"
+    },
     "categories": [
         "artifact-repository",
         "docker-registry"

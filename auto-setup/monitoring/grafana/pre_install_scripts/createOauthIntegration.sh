@@ -1,6 +1,10 @@
 #!/bin/bash -x
 set -euo pipefail
 
+####################################################################
+# This script has been replaced by Keycloak and is no longer in use
+####################################################################
+
 # Create application to facilitate Gitlab as OAUTH provider for Grafana
 export grafanaApplicationId=$(curl -s --header "Private-Token: ${personalAccessToken}" ${gitUrl}/api/v4/applications | jq '.[] | select(.application_name=="Grafana") | .id')
 if [[ -z ${grafanaApplicationId} ]]; then

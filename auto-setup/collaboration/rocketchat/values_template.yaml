@@ -4,7 +4,7 @@
 
 image:
   repository: docker.io/rocketchat/rocket.chat
-  tag: 3.9.0
+  tag: {{ imageTag }}
   pullPolicy: IfNotPresent
 
 ## Host for the application
@@ -28,7 +28,7 @@ extraEnv:   |
    - name: ADMIN_USERNAME
      value: 'admin'
    - name: ADMIN_PASS
-     value: '{{ vmPassword }}'
+     value: '{{ rocketchatAdminPassword }}'
    - name: ADMIN_EMAIL
      value: 'kx.hero@{{ baseDomain }}'
    - name: OVERWRITE_SETTING_Organization_Type

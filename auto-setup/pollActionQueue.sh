@@ -4,6 +4,7 @@ set -euo pipefail
 # Define base variables
 export sharedKxHome=/usr/share/kx.as.code
 export installationWorkspace=${sharedKxHome}/workspace
+export certificatesWorkspace=${installationWorkspace}/certificates
 export actionWorkflows="pending wip completed failed retry"
 export defaultDockerHubSecret="default/regcred"
 export sharedGitHome=${sharedKxHome}/git
@@ -21,11 +22,17 @@ export action=""
 export componentName=""
 export componentInstallationFolder=""
 export payload=""
+export dockerHubUsername=""
+export dockerHubPassword=""
+export dockerHubEmail=""
 
 # Copy versions from k.as.code GIT repo
 if [[ ! -f ${installationWorkspace}/versions.json ]]; then
   cp ${sharedGitHome}/kx.as.code/versions.json ${installationWorkspace}
 fi
+
+export kxVersion=$(cat ${installationWorkspace}/versions.json| jq -r '.kxascode')
+export kubeVersion=$(cat ${installationWorkspace}/versions.json| jq -r '.kubernetes' | cut -d'-' -f1)
 
 # Check if envhandlebars tool reachable
 nodeToolPath=$(which node || true)
@@ -210,41 +217,14 @@ export defaultS3ObjectStorePath=$(cat ${installationWorkspace}/metadata.json | j
 export s3ObjectStoreDomain="$(cat ${autoSetupHome}/${defaultS3ObjectStorePath}/metadata.json | jq -r '.name').${baseDomain}"
 export s3ObjectStoreUrl="https://${s3ObjectStoreDomain}"
 
-# Establish common logging format
 export logTimestamp=$(date '+%Y-%m-%d')
-log_info() {
-    echo "$(date '+%Y-%m-%d_%H%M%S') [INFO] ${1}" | tee -a ${installationWorkspace}/${componentName}_${logTimestamp}.${retries}.log
-}
 
-log_warn() {
-    echo "$(date '+%Y-%m-%d_%H%M%S') [WARN] ${1}" | tee -a ${installationWorkspace}/${componentName}_${logTimestamp}.${retries}.log
-}
-
-log_error() {
-    echo "$(date '+%Y-%m-%d_%H%M%S') [ERROR] ${1}" | tee -a ${installationWorkspace}/${componentName}_${logTimestamp}.${retries}.log
-}
-
-log_debug() {
-    echo "$(date '+%Y-%m-%d_%H%M%S') [DEBUG] ${1}" | tee -a ${installationWorkspace}/${componentName}_${logTimestamp}.${retries}.log
-}
-
-notify() {
-  openDisplays=$(w -oush | grep -Eo ' :[0-9]+' | sort -u -t\  -k1,1 | cut -d \  -f 2 || true)
-  log_info "Detected unique displays: ${openDisplays}"
-  messageTimeout=300000
-  messageTitle="KX.AS.CODE Notification"
-  message=${1}
-  messageType=${2}
-  for display in ${openDisplays}; do
-    displayUser=$(w -oush | grep -sw "${display}" | awk {'print $1'} | uniq)
-    echo "Sending notification to display ${display} for user ${displayUser}"
-    if [[ -S "/run/user/$(id -u ${displayUser})/bus" ]]; then
-        /usr/bin/sudo -H -i -u ${displayUser} bash -c "DISPLAY=\"${display}\" \
-        DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$(id -u ${displayUser})/bus \
-        notify-send -t \"${messageTimeout}\" \"${messageTitle}\" \"${message}\" --icon=\"${messageType}\""
-    fi
-  done
-}
+# Load Central Functions
+for function in $(find ${autoSetupHome}/functions -name "*.sh")
+do
+  source ${function}
+  echo "Loaded function $(cat ${function} | grep '()' | sed 's/{//g')"
+done
 
 if [[ ! -f /usr/share/kx.as.code/.config/network_status ]]; then
 
@@ -500,6 +480,16 @@ sleep 5
 # Poll pending queue and trigger actions if message is present
 while :; do
 
+    # Ensure DNS is working before continuing to avoid downstream failures
+    rc=1
+    while [[ ${rc} -ne 0 ]]; do
+        host -t A deb.debian.org && rc=$? || true
+        if [[ $rc -ne 0 ]]; then
+          log_warn "DNS resolution currently not working. Waiting for DNS resolution to work again before continuing"
+          sleep 5
+        fi
+    done
+
     completedQueue=$(rabbitmqadmin list queues name messages --format raw_json | jq -r '.[] | select(.name=="completed_queue") | .messages')
     wipQueue=$(rabbitmqadmin list queues name messages --format raw_json | jq -r '.[] | select(.name=="wip_queue") | .messages')
     failedQueue=$(rabbitmqadmin list queues name messages --format raw_json | jq -r '.[] | select(.name=="failed_queue") | .messages')
@@ -623,6 +613,7 @@ while :; do
                     fi
                     log_info "As an anonymous user you have a rate limit of ${dockerHubAllowLimit} with ${dockerHubRemainingLimit} downloads remaining in the current ${dockerHubRateLimitTimePeriod} hour window"
                 fi
+
                 # Launch the component installation process
                 . ${autoSetupHome}/autoSetup.sh &> ${installationWorkspace}/${componentName}_${logTimestamp}.${retries}.log
                 logRc=$?

@@ -1,19 +1,24 @@
 {
     "config": {
         "vm_properties": {
-            "main_node_count": 3,
+            "main_node_count": 1,
             "admin_main_node_cpu_cores": 4,
             "admin_main_node_memory": 8196,
             "replica_main_node_cpu_cores": 2,
             "replica_main_node_memory": 8196,
-            "worker_node_count": 4,
+            "worker_node_count": 3,
             "worker_node_cpu_cores": 2,
             "worker_node_memory": 8196,
             "environment_prefix": "demo1",
             "openstack": {
-                "kx_main_image_id": "7a3bfbb4-2ce0-4476-99b3-7af02c0e818b",
-                "kx_node_image_id": "81b1107b-bfb8-4994-82dd-a81a79ed33b0",
-                "external_network_id": "48af4f9c-b380-4451-a13b-ab609b672b95"
+                "user_name":            "admin",
+                "tenant_name":          "admin",
+                "password":             "vJ6JuTWiGIIbdqkmKQ8R",
+                "region":               "RegionOne",
+                "auth_url":             "http://192.200.76.201/identity",
+                "kx_main_image_id":     "88e99bd0-72dd-478a-a15e-abd0c4a8173b",
+                "kx_node_image_id":     "f977f2fb-9fc2-4d51-b1f2-45e3252725c0",
+                "external_network_id":  "886269e5-9556-4387-8029-be4e5ceb4d4b"
             }
         },
         "allowWorkloadsOnMaster": false,

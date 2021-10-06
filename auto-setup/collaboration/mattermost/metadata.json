@@ -1,16 +1,19 @@
 {
     "name": "mattermost",
-    "namespace": "gitlab-ce",
+    "namespace": "mattermost",
     "installation_type": "helm",
     "installation_group_folder": "collaboration",
     "minimum_resources": {
         "cpu": "250",
         "memory": "256"
     },
+    "environment_variables": {
+        "imageTag": "5.38.0"
+    },
     "helm_params": {
         "repository_url": "https://helm.mattermost.com",
         "repository_name": "mattermost/mattermost-team-edition",
-        "helm_version": "",
+        "helm_version": "5.4.0",
         "set_key_values": []
     },
     "categories": [
@@ -57,7 +60,6 @@
     "health_check_command": "",
     "expected_check_command_response": "",
     "pre_install_scripts": [
-        "createOauthIntegration.sh",
         "createSecret.sh",
         "createS3Bucket.sh"
     ],

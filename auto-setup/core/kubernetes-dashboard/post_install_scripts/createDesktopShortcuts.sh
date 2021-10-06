@@ -48,7 +48,7 @@ chown ${vmUser}:${vmUser} /home/${vmUser}/Desktop/*.desktop
 
 # Create Get Admin Token Script
 cat << EOF > /usr/share/kx.as.code/getK8sClusterAdminToken.sh
-#!/bin/bash -x
+#!/bin/bash
 set -euo pipefail
 
 # Get token for logging onto K8s dashboard

@@ -3,6 +3,9 @@
     "namespace": "argocd",
     "installation_type": "helm",
     "installation_group_folder": "cicd",
+    "environment_variables": {
+        "imageTag": "v2.1.2"
+    },
     "minimum_resources": {
         "cpu": "1000",
         "memory": "3000"
@@ -10,8 +13,9 @@
     "helm_params": {
         "repository_url": "https://argoproj.github.io/argo-helm",
         "repository_name": "argo/argo-cd",
-        "helm_version": "",
+        "helm_version": "3.22.1",
         "set_key_values": [
+            "global.image.tag={{imageTag}}",
             "installCRDs=false",
             "configs.secret.argocdServerAdminPassword='{{argoCdAdminPassword}}'",
             "controller.clusterAdminAccess.enabled=true",

@@ -9,6 +9,7 @@
       </jobProperties>
       <triggers/>
       <parameters>
+        <string>openstack_auth_url</string>
         <string>openstack_flavor</string>
         <string>openstack_security_groups</string>
         <string>openstack_ssh_username</string>
@@ -119,6 +120,12 @@
           <name>kx_domain</name>
           <description>KX.AS.CODE local domain</description>
           <defaultValue>{{kx_domain}}</defaultValue>
+          <trim>false</trim>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>openstack_auth_url</name>
+          <description>OpenStack Authorization Endpoint</description>
+          <defaultValue>{{openstack_auth_url}}</defaultValue>
           <trim>false</trim>
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>

@@ -1,6 +1,10 @@
 #!/bin/bash -x
 set -euo pipefail
 
+### DEPRECATED IN FAVOR OF KEYCLOAK
+
+# TODO - Implement Keycloak integration
+
 # Create application to facilitate Gitlab as OAUTH provider for Mattermost
 export mattermostApplicationId=$(curl -s --header "Private-Token: ${personalAccessToken}" ${gitUrl}/api/v4/applications | jq '.[] | select(.application_name=="Mattermost") | .id')
 if [[ -z ${mattermostApplicationId} ]]; then

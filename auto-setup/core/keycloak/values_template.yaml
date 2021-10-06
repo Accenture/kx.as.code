@@ -1,10 +1,13 @@
+image:
+  tag: {{ imageTag }}
+
 extraEnv: |
     - name: PROXY_ADDRESS_FORWARDING
       value: "true"
     - name: KEYCLOAK_USER
       value: "admin"
     - name: KEYCLOAK_PASSWORD
-      value: "{{vmPassword}}"
+      value: "{{keycloakAdminPassword}}"
     - name: X509_CA_BUNDLE
       value: "/tmp/certs/*.crt"
 

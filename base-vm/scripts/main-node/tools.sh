@@ -39,15 +39,6 @@ sudo apt-get -y install typora
 sudo apt-get -y install tilix
 sudo ln -s /etc/profile.d/vte-2.91.sh /etc/profile.d/vte.sh
 
-# Install Tools to Generate Certificate Authority
-sudo curl -L https://github.com/cloudflare/cfssl/releases/download/v1.4.1/cfssl_1.4.1_linux_amd64 -o cfssl
-sudo chmod +x cfssl
-sudo curl -L https://github.com/cloudflare/cfssl/releases/download/v1.4.1/cfssljson_1.4.1_linux_amd64 -o cfssljson
-sudo chmod +x cfssljson
-sudo curl -L https://github.com/cloudflare/cfssl/releases/download/v1.4.1/cfssl-certinfo_1.4.1_linux_amd64 -o cfssl-certinfo
-sudo chmod +x cfssl-certinfo
-sudo mv cfssl* /usr/local/bin
-
 # Install Mustach Template Variable Replacement Tool
 curl -sSL https://git.io/get-mo -o mo
 sudo mv mo /usr/local/bin

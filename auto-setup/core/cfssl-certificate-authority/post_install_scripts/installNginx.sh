@@ -53,7 +53,7 @@ Type=Application
 Categories=Development
 MimeType=text/html;text/xml;application/xhtml_xml;image/webp;x-scheme-handler/http;x-scheme-handler/https;x-scheme-handler/ftp;
 Actions=new-window;new-private-window;
-''' | /usr/bin/sudo tee "${adminShortcutsDirectory}/RabbitMQ.desktop"
+''' | /usr/bin/sudo tee "${adminShortcutsDirectory}/RabbitMQ"
 
 # Give *.desktop files execute permissions
-/usr/bin/sudo chmod 755 "${adminShortcutsDirectory}/RabbitMQ.desktop"
+/usr/bin/sudo chmod 755 "${adminShortcutsDirectory}/RabbitMQ"

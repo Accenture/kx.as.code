@@ -19,7 +19,7 @@ echo '''
 				"clusterName": "kubernetes-admin@kubernetes"
 			},
 			"metadata": {
-				"version": "v1.21.1",
+				"version": "'${kubeVersion}'",
 				"prometheus": {
 					"autoDetected": true,
 					"success": false
@@ -48,19 +48,26 @@ echo '''
 }''' | /usr/bin/sudo tee /home/${vmUser}/.config/Lens/lens-workspace-store.json
 
 /usr/bin/sudo chown -R ${vmUser}:${vmUser} /home/${vmUser}/.config/Lens
-/usr/bin/sudo curl -L -o ${installationWorkspace}/Lens-${lensVersion}.amd64.deb https://github.com/lensapp/lens/releases/download/v${lensVersion}/Lens-${lensVersion}.amd64.deb
+
+/usr/bin/sudo curl -L --connect-timeout 5 \
+    --max-time 60 \
+    --retry 5 \
+    --retry-delay 5 \
+    --retry-max-time 60 \
+    -o ${installationWorkspace}/Lens-${lensVersion}.amd64.deb https://api.k8slens.dev/binaries/Lens-${lensVersion}.amd64.deb
+
 /usr/bin/sudo apt-get install -y ${installationWorkspace}/Lens-${lensVersion}.amd64.deb
 
 echo '''[Desktop Entry]
 Categories=Network;
 Comment[en_US]=Lens - The Kubernetes IDE
 Comment=Lens - The Kubernetes IDE
-Exec=/opt/Lens/kontena-lens %U
+Exec=/usr/bin/lens %U
 GenericName[en_US]=
 GenericName=
-Icon=kontena-lens
+Icon=lens
 MimeType=
-Name=Lens
+Name=Lens\nKubernetes IDE
 Path=
 StartupNotify=true
 StartupWMClass=Lens
