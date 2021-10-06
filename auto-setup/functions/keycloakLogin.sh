@@ -1,7 +1,7 @@
 keycloakLogin () {
 
     # Source Keycloak Environment
-    sourceKeyCloakEnvironment
+    sourceKeycloakEnvironment
 
     # Login to Keycloak
     export keycloakAdminPassword=$(getPassword "keycloak-admin-password")

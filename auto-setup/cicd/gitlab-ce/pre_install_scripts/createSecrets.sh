@@ -23,10 +23,13 @@ kubectl get secret generic s3cmd-config -n ${namespace} ||
         --from-file=config=${installationWorkspace}/rails.minio.yaml \
         -n ${namespace} | kubectl apply -f -
 
+# Generate personal access token
+export gitlabRootPassword=$(managedPassword "gitlab-root-password")
+
 # Set initial root password
 kubectl get secret gitlab-ce-gitlab-initial-root-password -n ${namespace} ||
     kubectl create secret generic gitlab-ce-gitlab-initial-root-password \
-        --from-literal=password=${vmPassword} \
+        --from-literal=password=${gitlabRootPassword} \
         -n ${namespace}
 
 # Add KX.AS.CODE CA cert to Gitlab-CE namespace (important for Gitlab to act as OIDC provider - including global.hosts.https=true + gitlab.webservice.ingress.tls.secretName parameters)

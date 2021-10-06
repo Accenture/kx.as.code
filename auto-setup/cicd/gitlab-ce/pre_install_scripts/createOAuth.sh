@@ -1,14 +1,15 @@
 #!/bin/bash -x
 
-# Create client - $1 = redirectUris, $2 = rootUrl
-export clientId=$(createKeycloakClient "https://gitlab.${baseDomain}/users/auth/openid_connect/callback" \
-  "https://gitlab.${baseDomain}")
+# Create Keycloak Client
+redirectUris="https://gitlab.${baseDomain}/users/auth/openid_connect/callback"
+rootUrl="https://gitlab.${baseDomain}"
+baseUrl="/"
+export clientId=$(createKeycloakClient "${redirectUris}" "${rootUrl}" "${baseUrl}")
 
-# Get client secret
+# Get Keycloak Client Secret
 export clientSecret=$(getKeycloakClientSecret "${clientId}")
 
-
-################### kubernetes manifests CRUD operations #####################################
+################### Kubernetes manifests CRUD operations #####################################
 
 echo '''
 {
@@ -34,4 +35,7 @@ echo '''
   }
 }
 ''' | /usr/bin/sudo tee ${installationWorkspace}/gitlab-sso-providers.yaml
-kubectl create secret generic sso-provider --namespace=${componentName} --from-file=provider=${installationWorkspace}/gitlab-sso-providers.yaml
+
+# Check if SSO provider already exists, else create it
+kubectl get secret sso-provider --namespace=${namespace} || \
+  kubectl create secret generic sso-provider --namespace=${namespace} --from-file=provider=${installationWorkspace}/gitlab-sso-providers.yaml

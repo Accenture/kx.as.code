@@ -1,18 +1,13 @@
 #!/bin/bash -eux
 
-# Create Keycloak Client - $1 = redirectUris, $2 = rootUrl
-export clientId=$(createKeycloakClient "https://${componentName}.${kcRealm}/c/oidc/callback" \
-  "https://${componentName}.${kcRealm}")
-
-# Get Keycloak Client Secret
-export clientSecret=$(getKeycloakClientSecret "${clientId}")
-
-# Create Keycloak Client Scopes
+# Integrate solution with Keycloak
+redirectUris="https://${componentName}.${kcRealm}/c/oidc/callback"
+rootUrl="https://${componentName}.${baseDomain}"
+baseUrl="/applications"
 protocol="openid-connect"
-export clientscopeId=$(createKeyCloakClientScope "${protocol}")
-
-# Create Keycloak Protocol Mapper
-createKeycloakProtocolMapper "${clientId}" "${clientScopeId}"
+fullPath="false"
+scopes="${componentName}" # space separated if multiple scopes need to be created/associated with the client
+enableKeycloakSSOForSolution "${redirectUris}" "${rootUrl}" "${baseUrl}" "${protocol}" "${fullPath}" "${scopes}"
 
 ################################################### OIDC Configuration Harbor #########################################################
 

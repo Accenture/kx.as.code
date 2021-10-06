@@ -1,21 +1,26 @@
 createKeycloakProtocolMapper () {
 
+    # Assign incoming parameters to variables
+    clientId=${1}
+    fullPath=${2}
+
     # Source Keycloak Environment
-    sourceKeyCloakEnvironment
+    sourceKeycloakEnvironment
 
     # Call function to login to Keycloak
     keycloakLogin
 
+    # Get protocol mapper to see if it already exists for the client
     protocolMapper=$(kubectl -n ${kcNamespace} exec ${kcPod} --container ${kcContainer} -- \
-        ${kcAdmCli} get clients/${1}/protocol-mappers/models \
+        ${kcAdmCli} get clients/${clientId}/protocol-mappers/models \
         --realm ${kcRealm})
 
     log_info "ProtocolMapper: ${protocolMapper}"
 
-    if [[ -z ${protocolMapper} ]]; then
+    if [[ "${protocolMapper}" == "null" ]] || [[ -z $(${protocolMapper} | tr -d "[]") ]]; then
         # Create client scope protocol mapper
         kubectl -n ${kcNamespace} exec ${kcPod} --container ${kcContainer} -- \
-            ${kcAdmCli} create clients/${1}/protocol-mappers/models \
+            ${kcAdmCli} create clients/${clientId}/protocol-mappers/models \
                 --realm ${kcRealm} \
                 -s "name=groups" \
                 -s "protocol=openid-connect" \
@@ -24,11 +29,11 @@ createKeycloakProtocolMapper () {
                 -s 'config."access.token.claim"=true' \
                 -s 'config."userinfo.token.claim"=true' \
                 -s 'config."id.token.claim"=true' \
-                -s 'config."full.path"=true' \
+                -s 'config."full.path"='${fullPath}'' \
                 -s 'config."jsonType.label"=String'
         
     else
-        log_info "Keycloak protocol mapper for client ${1} already exists. Skipping it's creation"
+        >&2 log_info "Keycloak protocol mapper \"${protocolMapper}\" for client \"${clientId}\" already exists. Skipping it's creation"
     fi
 
 }

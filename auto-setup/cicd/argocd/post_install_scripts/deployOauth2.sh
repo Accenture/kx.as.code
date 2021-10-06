@@ -1,8 +1,10 @@
 #!/bin/bash -x
 
-# Create Keycloak Client - $1 = redirectUris, $2 = rootUrl
-export clientId=$(createKeycloakClient "https://${componentName}.${baseDomain}/auth/callback" \
-  "https://${componentName}.${baseDomain}")
+# Create Keycloak Client
+redirectUris="https://${componentName}.${baseDomain}/auth/callback"
+rootUrl="https://${componentName}.${baseDomain}"
+baseUrl="/applications"
+export clientId=$(createKeycloakClient "${redirectUris}" "${rootUrl}" "${baseUrl}")
 
 # Get Keycloak Client Secret
 export clientSecret=$(getKeycloakClientSecret "${clientId}")
@@ -50,7 +52,6 @@ metadata:
     app.kubernetes.io/part-of: argocd
 data:
   application.instanceLabelKey: argocd.argoproj.io/instance
-  kustomize.buildOptions: '--enable_alpha_plugins'
   url: https://${componentName}.${baseDomain}
   oidc.config: |-
     name: Keycloak
@@ -90,16 +91,21 @@ kubectl delete pod ${argoServer} -n ${componentName}
 ## To overcome this first client and secret will be created and then crud operations and finally keycloak client scopes are created.
 
 # Create Keycloak Client Scopes (if not already existing)
-export clientScopeId=$(createKeyCloakClientScope "openid-connect")
+protocol="openid-connect"
+scope="groups"
+export clientScopeId=$(createKeycloakClientScope "${clientId}" "${protocol}" "${scope}")
 
 # Create Keycloak Protocol Mapper (if not already existing)
-createKeycloakProtocolMapper "${clientId}" "${clientScopeId}"
+fullPath="false"
+createKeycloakProtocolMapper "${clientId}" "${fullPath}" 
 
 # Create Keycloak Group (if not already existing)
-export groupId=$(createKeycloakGroup "ArgoCDAdmins")
+group="ArgoCDAdmins"
+export groupId=$(createKeycloakGroup "${group}")
 
 # Export Keycloak User Id (if not already existing)
-export userId=$(createKeycloakUser "admin")
+user="admin"
+export userId=$(createKeycloakUser "${user}")
 
 # Add user admin to the ArgoCDAdmins group. If any new users are created then they should be added to ArgoCDAdmins group
 groupMappingId=$(mapKeycloakUserToGroup "${userId}" "${groupId}")
