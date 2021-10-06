@@ -1,97 +1,81 @@
-!["kx.as.code_logo"](kxascode_logo_black_small.png "kx.as.code_logo")
+<img src="kxascode_logo_black_small.png" alt="kx.as.code_logo" width="200" height="200" align="right"/>
 
-# Welcome
+# Welcome!
 
-Welcome to the Zero2Hero KX.AS.CODE workstation. This virtual workstation was created with two primary goals.
+Welcome to the KX.AS.CODE learning workstation. This virtual workstation was created with two primary goals in mind.
 
 *   Play, learn, experiment, fail, learn, succeed :muscle: :trophy:
-*   Share knowledge within the chapter
+*   Share knowledge a code!
 
 
 As well as learning and sharing knowledge, there are several more use cases for this KX workstation. Here just a few more:
 
-*   Use it for demoing new technologies/tools to clients
+*   Use it for demoing new technologies/tools
 *   Keep your physical workstation clean whilst experimenting
-*   React faster to a client request for a new tool
 *   Have fun playing around with new technologies
-*   Use it as an accompaniment to official trainings and certifications
-*   Experimenting and innovating!
+*   Use it as an accompaniment to trainings and certifications
+*   Experimenting and innovating
+
+## What is the KX.AS.CODE Workstation?
+
+It can be considered as a local cloud like Kubernetes environment with a lot of things you would expect to see when managing a Kubernetes cluster in the cloud, including an ingress controller, storage cluster, DNS, a certificate authority... and the best bit, you just have to fill out a couple of config files and vagrant up/terraform apply, and you are on your way!
+
+## What makes this different to other solutions?
+
+As this we originally envisaged this as a DevOps training/enablement environment, we didn't just want to deploy a bunch of empty tools, but to make it feel like a live project environment, with repositories and docker images already populated, and some processes in place, to demonstrate for example, topics such as container runtime security or GitOps.
+This depends on what you choose to install, as the solution is flexible - you can choose up frontin a JSON file, which tools should be installed once the base systen is up.
+
+## Where can I deploy KX.AS.CODE?
+KX.AS.CODE can be deployed locally or in the cloud, be it a private or public cloud. The most tested solutions are currently OpenStack and VirtualBox. Here a full list of solutions we have run KX.AS.COEE on.
+
+1. VMWare Workstation/Fusion (MacOSX, Linux and Windows)
+2. VirtualBox (MacOSX, Linux and Windows)
+3. Parallels (MacOSX)
+4. AWS
+5. OpenStack
+6. VMWare VSphere (needs updating)
+
+## What type of deployments does KX.AS.CODE support?
+Depending on how big your laptop, desktop or server is, you can either deploy KX.AS.CODE in standalone mode, which means that everything happens in the one VM, or you can enable to have multiple worker and main nodes provisioned.  
+
+It is possble through configuration, if physical resources are low, to have an additional worker node, and still have workloads started on the Kubernetes master.
+
+## What is the minimal specification?
+Whilst we have run it on some laptops with just 8GB ram, you will not have a good experience with this setup, even in standlone mode. The absolute minimum is a laptop/desktop/server with 12GB ram (allocating 8GB to KX.AS.CODE), although to have a good experience, it is recommended the host has at least 16GB ram, so that 12GB can be allocated to KX.AS.CODE.  
+
+After that, the more the merrier! 32GB upwards things are starting to look good. The less memory and CPU cores you have, the less solutions/tools you can provision on your Kubernetes cluster.
+If you are deploying to the public cloud, then your possibilities are endless, and you can depoy the entire stack - currently around 30 DevOps tools and more to come!
+
+## Sounds good! Where can I get the images?
+Currently we do not have a public repository for the images needed for each virtualization solution. However, we have made it very easy to build your own. We have provided detailed instructions, but in short, you just need to fill out an environment file, run the Jenkins launch script, which creates your build environment, and finally, depending on the underlying solution, you can run the deploy jobs.
+
+Only the VMs for the local virtualization environments (VMWare, VirtualBox, Paralles) can be deployed via Jenkins at the moment. The private and public clouds need some command line love, but it's as easy as changing into the directory and execuitng `terraform appy`.
+
+## Where is the solution now?
+
+I guess we will never be "finished". DevOps is a fast paced world with lots of great tools coming out all the time.
+
+
 
 ## Contributing
 For more details on how you can contribute to the project, checkout the [CONTRIBUTE.md](CONTRIBUTE.md) file
 
-## KX links
-Here you can find all the links related KXAS project:
-
-- [Gitlab](https://dev.ares.accenture.com/gitlab/kx.as.code/kx.as.code)
-- [Blog](https://blog.accenture.com/kx-as-code/)
-
-Here the [link](https://blog.accenture.com/kx-as-code/2020/05/05/v2-1-2/) to the full release note on our blog.
-
-
-For previous releases, you can visit the following [page](https://blog.accenture.com/kx-as-code/category/releases/).
 
 ## Screenshots
 
-!["logon"](Logon.png "logon")
+!["logon"](screenshots/1.png "logon")
 
-!["Desktop"](Desktop.png "Desktop")
-
-## Usage
-Currently the DevOps world is headed in two directions for running application and DevOps services -> Docker and Kubernetes.
-For an in-depth guide on each one, see the following documentation:
-
-- [Kubernetes](https://kubernetes.io/de/docs/)
-- [Docker](https://docs.docker.com/)
-
-### Starting the KX.AS.CODE VM
-
-`IMPORTANT NOTE`
-If you save all your data in the virtual machine, you will lose all data next time you want to renew the VM to get the latest version!
-It is therefore recommended to mount a data directory on your host machine/laptop into the VM.
-If you call the share "KX_Share" it will be mounted automatically.
-
-As it is mostly automated, the only action remaining for VirtualBox is to open the shared folder settings of the downloaded virtual machine (.OVA) and correct the local host folder location.
+!["Desktop"](screenshots/2.png "Desktop")
 
 
-### Docker
-Docker is already started by default, nevertheless, here the commands to start and stop docker services in the KX.AS.CODE virtual machine.
 
-##### Starting Docker
-```bash
-$ sudo systemctl start docker
-```
 
-##### Stopping Docker
-```bash
-$ sudo systemctl stop docker
-```
 
-You can test the installation by running the following command:
-```bash
-$ docker run hello-world
-```
 
-### Kubernetes
 
-Kubernetes is automatically started with the virtual machine.
-To access it, simply click on the "Kubernetes Dashboard" icon on the desktop.
 
-### Accessing the Kubernetes Dashboard
+I hope you enjoy the workstation!
 
-To access the Kubernetes Dashboard, you will need to generate a token.
-
-For your convenience, there is an icon already on the desktop that you only need to double click. Once done, copy the token and use it to login to Kubernetes.
-
-### Command to see all objects in cluster
-
-If you want to use the command line, just open up a terminal window and execute commands via kubectl.
-For example, here a command to view all objects in Kubernetes across all namespaces.
-
-```bash
-# To see all objects:
-$ kubectl get all --all-namespaces
-```
-
-Enjoy Contributing!
-Your KX.AS.CODE Team :smiley:
+Patrick Delamere  
+Accenture Interactive ASGR DevOps Lead  
+[kx.as.code@accenture.com](mailto:kx.as.code@accenture.com)
