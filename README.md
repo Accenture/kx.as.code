@@ -1,4 +1,4 @@
-<img src="kxascode_logo_black_small.png" alt="kx.as.code_logo" width="200" height="200" align="right"/>
+<img src="docs/images/kxascode_logo_black_small.png" alt="kx.as.code_logo" width="200" height="200" align="right"/>
 
 # Welcome!
 
@@ -20,9 +20,16 @@ As well as learning and sharing knowledge, there are several more use cases for 
 
 It can be considered as a local cloud like Kubernetes environment with a lot of things you would expect to see when managing a Kubernetes cluster in the cloud, including an ingress controller, storage cluster, DNS, a certificate authority... and the best bit, you just have to fill out a couple of config files and vagrant up/terraform apply, and you are on your way!
 
-## What makes this different to other solutions?
+![](docs/images/whatsinthebox.png)
 
+## Why did we create this workstation?
+Many reasons! For our own learning and fun, for enabling others to enjoy and get into DevOps, to give something back to the community, because we and everyone else in DevOps, benefit hugely from the wonderful OpenSource tools that are out there!
+
+Additionally, the machines we use at work or have siting at home are getting more powerful all the time, and not everyone has access to a cloud account, so lets use that power we have at home or at work to do more!
+
+## What makes this different to other solutions?
 As this we originally envisaged this as a DevOps training/enablement environment, we didn't just want to deploy a bunch of empty tools, but to make it feel like a live project environment, with repositories and docker images already populated, and some processes in place, to demonstrate for example, topics such as container runtime security or GitOps.
+
 This depends on what you choose to install, as the solution is flexible - you can choose up frontin a JSON file, which tools should be installed once the base systen is up.
 
 ## Where can I deploy KX.AS.CODE?
@@ -49,16 +56,16 @@ If you are deploying to the public cloud, then your possibilities are endless, a
 ## Sounds good! Where can I get the images?
 Currently we do not have a public repository for the images needed for each virtualization solution. However, we have made it very easy to build your own. We have provided detailed instructions, but in short, you just need to fill out an environment file, run the Jenkins launch script, which creates your build environment, and finally, depending on the underlying solution, you can run the deploy jobs.
 
-Only the VMs for the local virtualization environments (VMWare, VirtualBox, Paralles) can be deployed via Jenkins at the moment. The private and public clouds need some command line love, but it's as easy as changing into the directory and execuitng `terraform appy`.
+Only the VMs for the local virtualization environments (VMWare, VirtualBox, Paralles) can be deployed via Jenkins at the moment. The private and public cloud deployments need some command line love, but it's as easy as changing into the directory and execuitng `terraform apply`.
 
 ## Where is the solution now?
 
-I guess we will never be "finished". DevOps is a fast paced world with lots of great tools coming out all the time.
-
+I guess it will never be "finished". DevOps is a fast paced world with lots of great tools coming out all the time. KX.AS.CODE was created and continued to be worked on as a side project by some very passionate and dedicted DevOps Engineers in Accenture Interactive ASGR, who have not lost their appetite for learning and trying new tools, so expect more releases to come in future! :partying_face:
 
 
 ## Contributing
-For more details on how you can contribute to the project, checkout the [CONTRIBUTE.md](CONTRIBUTE.md) file
+We are happy to receive contributions, ideas and dare I say it, bug fixes or suggestions on how to do things better! We never stop learning! :nerd_face:
+For more details on how you can contribute to the project, checkout the [CONTRIBUTE.md](docs/contribute.md) file
 
 
 ## Screenshots
@@ -67,9 +74,15 @@ For more details on how you can contribute to the project, checkout the [CONTRIB
 
 !["Desktop"](screenshots/2.png "Desktop")
 
+!["Lens"](screenshots/3.png "Lens")
 
+!["GoPass"](screenshots/4.png "GoPass")
 
+!["Tools"](screenshots/5.png "Tools")
 
+!["Documentation"](screenshots/6.png "Documentation")
+
+!["Users"](screenshots/7.png "Users")
 
 
 
