@@ -10,7 +10,7 @@ Welcome to the KX.AS.CODE learning workstation. This virtual workstation was cre
 
 As well as learning and sharing knowledge, there are several more use cases for this KX workstation. Here just a few more:
 
-*   Use it for demoing new technologies/tools
+*   Use it for demoing new technologies/tools/processes
 *   Keep your physical workstation clean whilst experimenting
 *   Have fun playing around with new technologies
 *   Use it as an accompaniment to trainings and certifications
