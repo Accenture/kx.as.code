@@ -40,6 +40,8 @@ Until that is ready, there is also the possibility to add items to the installat
 |           ![selenium](images/selenium.png)Selenium           | Quality Assurance | E2E Browser Test Automation                | rabbitmqadmin publish  exchange=action_workflow routing_key=pending_queue  payload='{"install_folder":"quality_assurance","name":"selenium","action":"install","retries":"0"}' |
 |         ![sonarqube](images/sonarqube.png)SonarQube          | Quality Assurance | Code Quality                               | rabbitmqadmin publish  exchange=action_workflow routing_key=pending_queue  payload='{"install_folder":"quality_assurance","name":"sonarqube","action":"install","retries":"0"}' |
 |     ![sysdig-falco](images/sysdig-falco.png)Sysdig Falco     | Security          | Container Runtime Security                 | rabbitmqadmin publish  exchange=action_workflow routing_key=pending_queue  payload='{"install_folder":"security","name":"sysdig-falco","action":"install","retries":"0"}' |
+|     ![grafana-loki](images/loki.png)loki                     | Monitoring        | Datastore and logging                      | rabbitmqadmin publish  exchange=action_workflow routing_key=pending_queue  payload='{"install_folder":"monitoring","name":"loki","action":"install","retries":"0"}'}' |
+
 
 
 
