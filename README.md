@@ -63,7 +63,8 @@ Only the VMs for the local virtualization environments (VMWare, VirtualBox, Para
 I guess it will never be "finished". DevOps is a fast paced world with lots of great tools coming out all the time. KX.AS.CODE was created and continues to be worked on as a side project by some very passionate and dedicated DevOps Engineers at Accenture Interactive ASGR, who have not lost their appetite for learning and trying new tools, so expect more releases to come in future! :partying_face:
 
 ## Contributing
-We are happy to receive contributions, ideas and dare I say it, bug fixes or suggestions on how to do things better! We never stop learning! :nerd_face:
+We are happy to receive contributions, ideas and dare I say it, bug fixes or suggestions on how to do things better! We never stop learning! :nerd_face:  
+
 For more details on how you can contribute to the project, checkout the [CONTRIBUTE.md](docs/contribute.md) file
 
 ## Screenshots
