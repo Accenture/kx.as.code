@@ -62,7 +62,8 @@
     "health_check_command": "",
     "expected_check_command_response": "",
     "pre_install_scripts": [
-        "createMongoDbPasswords.sh"
+        "createMongoDbPasswords.sh",
+        "createRocketChatAdminPassword.sh"
     ],
     "post_install_scripts": [
         "loginToRocketChat.sh",

@@ -8,9 +8,9 @@ timeout -s TERM 600 bash -c 'while [[ "$(curl -s -o /dev/null -L -w ''%{http_cod
 . ${installComponentDirectory}/helper_scripts/getProjectIds.sh
 
 # Create robot account for KX.AS.CODE project
-export kxRobotAccount=$(curl -u 'admin:'${vmPassword}'' -X GET https://${componentName}.${baseDomain}/api/v2.0/projects/${kxHarborProjectId}/robots | jq -r '.[] | select(.name=="robot$kx-cicd-user") | .name')
+export kxRobotAccount=$(curl -u 'admin:'${harborAdminPassword}'' -X GET https://${componentName}.${baseDomain}/api/v2.0/projects/${kxHarborProjectId}/robots | jq -r '.[] | select(.name=="robot$kx-cicd-user") | .name')
 if [[ -z ${kxRobotAccount} ]]; then
-    curl -s -u 'admin:'${vmPassword}'' -X POST "https://${componentName}.${baseDomain}/api/v2.0/projects/${kxHarborProjectId}/robots" -H "accept: application/json" -H "Content-Type: application/json" -d'{
+    curl -s -u 'admin:'${harborAdminPassword}'' -X POST "https://${componentName}.${baseDomain}/api/v2.0/projects/${kxHarborProjectId}/robots" -H "accept: application/json" -H "Content-Type: application/json" -d'{
     "access": [
       {
         "action": "push",
@@ -38,9 +38,9 @@ else
 fi
 
 # Create robot account for DEVOPS project
-export devopsRobotAccount=$(curl -u 'admin:'${vmPassword}'' -X GET https://${componentName}.${baseDomain}/api/v2.0/projects/${devopsHarborProjectId}/robots | jq -r '.[] | select(.name=="robot$devops-cicd-user") | .name')
+export devopsRobotAccount=$(curl -u 'admin:'${harborAdminPassword}'' -X GET https://${componentName}.${baseDomain}/api/v2.0/projects/${devopsHarborProjectId}/robots | jq -r '.[] | select(.name=="robot$devops-cicd-user") | .name')
 if [[ -z ${devopsRobotAccount} ]]; then
-    curl -s -u 'admin:'${vmPassword}'' -X POST "https://${componentName}.${baseDomain}/api/v2.0/projects/${devopsHarborProjectId}/robots" -H "accept: application/json" -H "Content-Type: application/json" -d'{
+    curl -s -u 'admin:'${harborAdminPassword}'' -X POST "https://${componentName}.${baseDomain}/api/v2.0/projects/${devopsHarborProjectId}/robots" -H "accept: application/json" -H "Content-Type: application/json" -d'{
   "access": [
     {
       "action": "push",
@@ -68,5 +68,5 @@ else
 fi
 
 # Get created robots
-log_debug $(curl -u 'admin:'${vmPassword}'' -X GET https://${componentName}.${baseDomain}/api/v2.0/projects/${kxHarborProjectId}/robots)
-log_debug $(curl -u 'admin:'${vmPassword}'' -X GET https://${componentName}.${baseDomain}/api/v2.0/projects/${devopsHarborProjectId}/robots)
+log_debug $(curl -u 'admin:'${harborAdminPassword}'' -X GET https://${componentName}.${baseDomain}/api/v2.0/projects/${kxHarborProjectId}/robots)
+log_debug $(curl -u 'admin:'${harborAdminPassword}'' -X GET https://${componentName}.${baseDomain}/api/v2.0/projects/${devopsHarborProjectId}/robots)

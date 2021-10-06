@@ -86,9 +86,12 @@ kubectl -n ${namespace} create secret generic elastic-certificates \
     --from-file=${elasticStackCertsDir}/packetbeat/packetbeat.crt \
     --from-file=${elasticStackCertsDir}/packetbeat/packetbeat.key
 
+# Create ElasticSearch "elastic" admin password
+export elasticAdminPassword=$(managedPassword "elastic-admin-password")
+
 # Create credentials secret
 kubectl get secret elastic-credentials --namespace ${namespace} ||
     kubectl create secret generic elastic-credentials \
         --from-literal=username=elastic \
-        --from-literal=password=${vmPassword} \
+        --from-literal=password=${elasticAdminPassword} \
         --namespace ${namespace}

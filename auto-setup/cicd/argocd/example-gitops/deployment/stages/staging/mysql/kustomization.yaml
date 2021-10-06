@@ -1,0 +1,10 @@
+---
+bases:
+  - ../../../base/mysql/
+
+resources:
+- service.yaml
+#- secret.yaml
+
+generators:
+- secret-generator.yaml

@@ -7,6 +7,7 @@ if [[ -n ${postgresqlPasswordExists}   ]]; then
     export postgresqlPassword=$(echo ${postgresqlPasswordExists} | base64 --decode)
     log_info "SonarQube postgresql password already exists. Using that one"
 else
-    export postgresqlPassword=$(pwgen -1s 32)
+    # Create SonarQube Postgresql password
+    export postgresqlPassword=$(managedPassword "sonarqube-postgresql-password")
     log_info "SonarQube postgresql password does not exist. Creating a new one"
 fi

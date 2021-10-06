@@ -38,7 +38,7 @@ cp /root/.krew/bin/kubectl-* /usr/local/bin
 
 # Get credential token in new Realm
 kubectl -n ${namespace} exec ${kcPod} --container ${kcContainer} -- \
-    ${kcAdmCli} config credentials --server ${kcInternalUrl}/auth --realm ${kcRealm} --user admin --password ${vmPassword} --client admin-cli
+    ${kcAdmCli} config credentials --server ${kcInternalUrl}/auth --realm ${kcRealm} --user admin --password ${keycloakAdminPassword} --client admin-cli
 
 clientId=$(kubectl -n ${namespace} exec ${kcPod} --container ${kcContainer} -- \
     ${kcAdmCli} get clients -r ${kcRealm} --fields id,clientId | jq -r '.[] | select(.clientId=="kubernetes") | .id')

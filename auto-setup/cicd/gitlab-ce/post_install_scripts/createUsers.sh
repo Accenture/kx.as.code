@@ -1,6 +1,9 @@
 #!/bin/bash -x
 set -euo pipefail
 
+# Get Gitlab personal access token
+export personalAccessToken=$(getPassword "gitlab-personal-access-token")
+
 # Create kx.hero user in Gitlab
 export kxHeroUserId=$(curl -s --header "Private-Token: ${personalAccessToken}" https://gitlab.${baseDomain}/api/v4/users | jq '.[] | select(.username=="'${vmUser}'") | .id')
 if [[ -z ${kxHeroUserId} ]]; then
