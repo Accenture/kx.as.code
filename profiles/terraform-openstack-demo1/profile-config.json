@@ -1,22 +1,27 @@
 {
     "config": {
         "vm_properties": {
-            "main_node_count": 2,
+            "main_node_count": 1,
             "admin_main_node_cpu_cores": 4,
             "admin_main_node_memory": 8196,
             "replica_main_node_cpu_cores": 2,
             "replica_main_node_memory": 8196,
-            "worker_node_count": 2,
+            "worker_node_count": 3,
             "worker_node_cpu_cores": 2,
             "worker_node_memory": 8196,
             "environment_prefix": "demo1",
             "openstack": {
-                "kx_main_image_id": "e7dd36f1-a45e-4601-9e84-ad35978b8d41",
-                "kx_node_image_id": "bafbe85b-d1b5-483e-9186-d80733127e68",
-                "external_network_id": "48af4f9c-b380-4451-a13b-ab609b672b95"
+                "user_name":            "admin",
+                "tenant_name":          "admin",
+                "password":             "vJ6JuTWiGIIbdqkmKQ8R",
+                "region":               "RegionOne",
+                "auth_url":             "http://192.200.76.201/identity",
+                "kx_main_image_id":     "e9a6b418-40e9-47b2-8aa3-25df9f436f00",
+                "kx_node_image_id":     "f977f2fb-9fc2-4d51-b1f2-45e3252725c0",
+                "external_network_id":  "886269e5-9556-4387-8029-be4e5ceb4d4b"
             }
         },
-        "allowWorkloadsOnMaster": true,
+        "allowWorkloadsOnMaster": false,
         "disableSessionTimeout": true,
         "certificationMode": false,
         "disableLinuxDesktop": false,

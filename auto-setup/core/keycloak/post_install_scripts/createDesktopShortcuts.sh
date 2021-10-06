@@ -28,9 +28,9 @@ if [[ -n ${primaryUrl}   ]]; then
         Categories=Development
         MimeType=text/html;text/xml;application/xhtml_xml;image/webp;x-scheme-handler/http;x-scheme-handler/https;x-scheme-handler/ftp;
         Actions=new-window;new-private-window;
-        """ | tee "${adminShortcutsDirectory}"/${componentName}.desktop
-        sed -i 's/^[ \t]*//g' "${adminShortcutsDirectory}"/${componentName}.desktop
-        chmod 755 "${adminShortcutsDirectory}"/${componentName}.desktop
+        """ | tee "${adminShortcutsDirectory}"/"${shortcutText}"
+        sed -i 's/^[ \t]*//g' "${adminShortcutsDirectory}"/"${shortcutText}"
+        chmod 755 "${adminShortcutsDirectory}"/"${shortcutText}"
 
     fi
 fi

@@ -3,6 +3,9 @@
     "namespace": "kube-system",
     "installation_type": "script",
     "installation_group_folder": "core",
+    "environment_variables": {
+        "metricsServerVersion": "v0.5.1"
+    },
     "retry": "true",
     "install_scripts": [
         "installMetricsServer.sh"

@@ -74,13 +74,13 @@ Comment=RabbitMQ Action Queues
 Exec=/usr/bin/google-chrome-stable %U http://localhost:15672/ --use-gl=angle --password-store=basic
 StartupNotify=true
 Terminal=false
-Icon=${SHARED_GIT_REPOSITORIES}/kx.as.code/base-vm/images/rabbitmq.png
+Icon=/usr/share/kx.as.code/git/kx.as.code/base-vm/images/rabbitmq.png
 Type=Application
 Categories=Development
 MimeType=text/html;text/xml;application/xhtml_xml;image/webp;x-scheme-handler/http;x-scheme-handler/https;x-scheme-handler/ftp;
 Actions=new-window;new-private-window;
-''' | sudo tee "${adminShortcutsDirectory}/RabbitMQ.desktop"
+''' | sudo tee "${adminShortcutsDirectory}/RabbitMQ"
 
 # Give *.desktop files execute permissions
-sudo chmod 755 "${adminShortcutsDirectory}/RabbitMQ.desktop"
-sudo chown ${VM_USER}:${VM_USER} "${adminShortcutsDirectory}/RabbitMQ.desktop"
+sudo chmod 755 "${adminShortcutsDirectory}/RabbitMQ"
+sudo chown ${VM_USER}:${VM_USER} "${adminShortcutsDirectory}/RabbitMQ"

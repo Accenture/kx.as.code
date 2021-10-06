@@ -1,0 +1,16 @@
+{
+    "name": "bitwarden",
+    "namespace": "",
+    "installation_type": "script",
+    "installation_group_folder": "core",
+    "install_scripts": [
+        "install-and-configure-bitwarden.sh"
+    ],
+    "Description": "Bitwarden credential manager",
+    "shortcut_text": "Bitwarden",
+    "shortcut_icon": "bitwarden.png",
+    "pre_install_scripts": [],
+    "post_install_scripts": [
+        "createDesktopShortcuts.sh"
+    ]
+}

@@ -12,7 +12,6 @@ SHARED_GIT_REPOSITORIES=/usr/share/kx.as.code/git
 /usr/bin/sudo apt install -y build-essential libcairo2-dev libjpeg62-turbo-dev libpng-dev libtool-bin libossp-uuid-dev libvncserver-dev freerdp2-dev libssh2-1-dev libtelnet-dev libwebsockets-dev libpulse-dev libvorbis-dev libwebp-dev libssl-dev libpango1.0-dev libswscale-dev libavcodec-dev libavutil-dev libavformat-dev
 
 # Download, build, install and enable Guacamole
-guacamoleVersion=1.3.0
 curl -L -o guacamole-server-${guacamoleVersion}.tar.gz https://apache.org/dyn/closer.cgi\?action\=download\&filename\=guacamole/${guacamoleVersion}/source/guacamole-server-${guacamoleVersion}.tar.gz
 tar -xvf guacamole-server-${guacamoleVersion}.tar.gz
 cd guacamole-server-${guacamoleVersion}
@@ -23,7 +22,7 @@ cd guacamole-server-${guacamoleVersion}
 /usr/bin/sudo systemctl daemon-reload
 
 ### Install Tomact and Configure Guacamole web app
- /usr/bin/sudo apt install -y tomcat9 tomcat9-admin tomcat9-common tomcat9-user
+/usr/bin/sudo apt install -y tomcat9 tomcat9-admin tomcat9-common tomcat9-user
 wget https://downloads.apache.org/guacamole/${guacamoleVersion}/binary/guacamole-${guacamoleVersion}.war
 
 /usr/bin/sudo mv guacamole-${guacamoleVersion}.war /var/lib/tomcat9/webapps/guacamole.war
@@ -59,7 +58,7 @@ done
 
 # Download Postgresql JDBC driver
 /usr/bin/sudo mkdir -p /etc/guacamole/lib
-/usr/bin/sudo curl -o /etc/guacamole/lib/postgresql-42.2.19.jar -L https://jdbc.postgresql.org/download/postgresql-42.2.19.jar
+/usr/bin/sudo curl -o /etc/guacamole/lib/postgresql-${postgresqlDriverVersion}.jar -L https://jdbc.postgresql.org/download/postgresql-${postgresqlDriverVersion}.jar
 
 # Install Postgresql
 /usr/bin/sudo apt-get install -y postgresql postgresql-contrib
@@ -75,42 +74,20 @@ if [[ -z $(/usr/bin/sudo su - postgres -c "psql -lqt | cut -d \| -f 1" | grep gu
   /usr/bin/sudo su - postgres -c "createdb guacamole_db"
 fi
 
-# Change default guacadmin/guacadmin password
-echo "guacAdminPassword: $(cat ${sharedKxHome}/.guacamole.json | jq -r '.[] | select(.user=="guacadmin") | .user' || true)"
-if [ -f ${sharedKxHome}/.guacamole.json ]; then
-    if [ -z $(cat ${sharedKxHome}/.guacamole.json | jq -r '.[] | select(.user=="guacadmin") | .user' || true) ]; then
-        guacAdminPassword=$(pwgen -1s 32)
-        echo "[ { \"user\": \"guacadmin\", \"password\": \"${guacAdminPassword}\" } ]" | /usr/bin/sudo tee ${sharedKxHome}/.temp.guacamole.json
-        cat /usr/share/kx.as.code/.guacamole.json /usr/share/kx.as.code/.temp.guacamole.json | jq -s add | tee /usr/share/kx.as.code/.guacamole.json
-        rm -f ${sharedKxHome}/.temp.guacamole.json
-    else
-        guacAdminPassword=$(cat ${sharedKxHome}/.guacamole.json | jq -r '.[] | select(.user=="guacadmin") | .password')
-    fi
-else
-    guacAdminPassword=$(pwgen -1s 32)
-    echo "[ { \"user\": \"guacadmin\", \"password\": \"${guacAdminPassword}\" } ]" | /usr/bin/sudo tee ${sharedKxHome}/.guacamole.json
-fi
-echo ${guacAdminPassword} | /usr/bin/sudo tee ${installationWorkspace}/.guac
+# Generate random passwords for guacadmin via custom bash functions
+guacAdminPassword=$(managedPassword "guacamole-admin-password")
+
 /usr/bin/sudo sed -i "s/-- 'guacadmin'/-- '${guacAdminPassword}'/g" guacamole-auth-jdbc-${guacamoleVersion}/postgresql/schema/002-create-admin-user.sql
 cat guacamole-auth-jdbc-${guacamoleVersion}/postgresql/schema/*.sql | /usr/bin/sudo su - postgres -c "psql -d guacamole_db -f -"
 
 # Create Guacamole database users
 guacUser=$(echo $vmUser | sed 's/\./_/g')
-if [ -f ${sharedKxHome}/.guacamole.json ]; then
-    if [ -z $(cat ${sharedKxHome}/.guacamole.json | jq -r '.[] | select(.user=="guacamole_user") | .user' || true) ]; then
-        guacPassword=$(pwgen -1s 8)
-        echo "[ { \"user\": \"guacamole_user\", \"password\": \"${guacPassword}\" } ]" | /usr/bin/sudo tee ${sharedKxHome}/.temp.guacamole.json
-        cat /usr/share/kx.as.code/.guacamole.json /usr/share/kx.as.code/.temp.guacamole.json | jq -s add | tee /usr/share/kx.as.code/.guacamole.json
-        rm -f ${sharedKxHome}/.temp.guacamole.json
-    else
-        guacPassword=$(cat ${sharedKxHome}/.guacamole.json | jq -r '.[] | select(.user=="guacamole_user") | .password')
-    fi
-else
-    guacPassword=$(pwgen -1s 8)
-    echo "[ { \"user\": \"guacamole_user\", \"password\": \"${guacPassword}\" } ]" | /usr/bin/sudo tee ${sharedKxHome}/.guacamole.json
-fi
+
+# Generate random passwords for guacamole user via custom bash functions
+guacUserPassword=$(managedPassword "guacamole-user-password")
+
 if [[ -z $(/usr/bin/sudo su - postgres -c "psql -t -c 'SELECT u.usename AS \"User Name\" FROM pg_catalog.pg_user u;'" | grep guacamole_user) ]]; then
-  /usr/bin/sudo su - postgres -c "psql -d guacamole_db -c \"CREATE USER guacamole_user WITH PASSWORD '${guacPassword}';\""
+  /usr/bin/sudo su - postgres -c "psql -d guacamole_db -c \"CREATE USER guacamole_user WITH PASSWORD '${guacUserPassword}';\""
   /usr/bin/sudo su - postgres -c 'psql -d guacamole_db -c "GRANT SELECT,INSERT,UPDATE,DELETE ON ALL TABLES IN SCHEMA public TO guacamole_user;"'
   /usr/bin/sudo su - postgres -c 'psql -d guacamole_db -c "GRANT SELECT,USAGE ON ALL SEQUENCES IN SCHEMA public TO guacamole_user;"'
   /usr/bin/sudo su - postgres -c "psql -d guacamole_db -c \"CREATE USER ${guacUser} WITH PASSWORD '${vmPassword}';\""
@@ -149,7 +126,7 @@ postgresql-hostname: localhost
 postgresql-port: 5432
 postgresql-database: guacamole_db
 postgresql-username: guacamole_user
-postgresql-password: '${guacPassword}'
+postgresql-password: '${guacUserPassword}'
 postgresql-user-required: false
 
 # Password Policies
@@ -167,35 +144,11 @@ postgresql-auto-create-accounts: true
 
 ''' | /usr/bin/sudo tee /etc/guacamole/guacamole.properties
 
-# Check if MD5 password already exists
-if [ -f ${sharedKxHome}/.guacamole.json ]; then
-    if [ -z $(cat ${sharedKxHome}/.guacamole.json | jq -r '.[] | select(.user=="md5_user") | .user' || true) ]; then
-        md5Password=$(echo -n ${vmPassword} | openssl md5 | cut -f2 -d' ')
-        echo "[ { \"user\": \"md5_user\", \"password\": \"${md5Password}\" } ]" | /usr/bin/sudo tee ${sharedKxHome}/.temp.guacamole.json
-        cat /usr/share/kx.as.code/.guacamole.json /usr/share/kx.as.code/.temp.guacamole.json | jq -s add | tee /usr/share/kx.as.code/.guacamole.json
-        rm -f ${sharedKxHome}/.temp.guacamole.json
-    else
-        md5Password=$(cat ${sharedKxHome}/.guacamole.json | jq -r '.[] | select(.user=="md5_user") | .password')
-    fi
-else
-    md5Password=$(echo -n ${vmPassword} | openssl md5 | cut -f2 -d' ')
-    echo "[ { \"user\": \"md5_user\", \"password\": \"${md5Password}\" } ]" | /usr/bin/sudo tee ${sharedKxHome}/.guacamole.json
-fi
+# Generate random passwords for guacamole user via custom bash functions
+md5Password=$(managedPassword "guacamole-md5-password")
 
-# Check if VNC password already exists
-if [ -f ${sharedKxHome}/.guacamole.json ]; then
-    if [ -z $(cat ${sharedKxHome}/.guacamole.json | jq -r '.[] | select(.user=="vnc_user") | .user' || true) ]; then
-        vncPassword=$(pwgen -1s 8)
-        echo "[ { \"user\": \"vnc_user\", \"password\": \"${vncPassword}\" } ]" | /usr/bin/sudo tee ${sharedKxHome}/.temp.guacamole.json
-        cat /usr/share/kx.as.code/.guacamole.json /usr/share/kx.as.code/.temp.guacamole.json | jq -s add | tee /usr/share/kx.as.code/.guacamole.json
-        rm -f ${sharedKxHome}/.temp.guacamole.json
-    else
-        vncPassword=$(cat ${sharedKxHome}/.guacamole.json | jq -r '.[] | select(.user=="vnc_user") | .password')
-    fi
-else
-    vncPassword=$(pwgen -1s 8)
-    echo "[ { \"user\": \"vnc_user\", \"password\": \"${vncPassword}\" } ]" | /usr/bin/sudo tee ${sharedKxHome}/.guacamole.json
-fi
+# Generate random passwords for guacamole user via custom bash functions
+vncPassword=$(managedPassword "guacamole-vnc-password")
 
 echo '''
 <user-mapping>

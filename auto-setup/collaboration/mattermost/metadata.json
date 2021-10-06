@@ -59,10 +59,7 @@
     "vendor_docs_url": "https://docs.mattermost.com/",
     "health_check_command": "",
     "expected_check_command_response": "",
-    "pre_install_scripts": [
-        "createSecret.sh",
-        "createS3Bucket.sh"
-    ],
+    "pre_install_scripts": [],
     "post_install_scripts": [
         "createInitialAdminUser.sh",
         "createNotificationUsers.sh",

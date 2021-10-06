@@ -3,6 +3,10 @@
     "namespace": "kube-system",
     "installation_type": "script",
     "installation_group_folder": "core",
+    "environment_variables": {
+        "glusterfsVersion": "8.6",
+        "heketiVersion": "10.4.0"
+    },
     "install_scripts": [
         "installGlusterFs.sh"
     ],

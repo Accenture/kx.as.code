@@ -3,12 +3,16 @@
     "namespace": "nginx-ingress-controller",
     "installation_type": "helm",
     "installation_group_folder": "core",
+    "environment_variables": {
+        "nginxControllerVersion": "v1.0.2"
+    },
     "retry": "true",
     "helm_params": {
         "repository_url": "https://kubernetes.github.io/ingress-nginx",
         "repository_name": "ingress-nginx/ingress-nginx",
-        "helm_version": "",
+        "helm_version": "4.0.3",
         "set_key_values": [
+            "controller.image.tag={{nginxControllerVersion}}",
             "rbac.create=true",
             "controller.extraArgs.default-ssl-certificate={{namespace}}/kx.as.code-wildcard-cert",
             "controller.extraArgs.enable-ssl-passthrough=",

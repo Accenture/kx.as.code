@@ -433,10 +433,10 @@ if [[ ${action} == "install"   ]]; then
             Categories=Development
             MimeType=text/html;text/xml;application/xhtml_xml;image/webp;x-scheme-handler/http;x-scheme-handler/https;x-scheme-handler/ftp;
             Actions=new-window;new-private-window;
-            """ | tee "${shortcutsDirectory}"/${componentName}.desktop
-            sed -i 's/^[ \t]*//g' "${shortcutsDirectory}"/${componentName}.desktop
-            chmod 755 "${shortcutsDirectory}"/${componentName}.desktop
-            chown ${vmUser}:${vmUser} "${shortcutsDirectory}"/${componentName}.desktop
+            """ | tee "${shortcutsDirectory}"/"${shortcutText}"
+            sed -i 's/^[ \t]*//g' "${shortcutsDirectory}"/"${shortcutText}"
+            chmod 755 "${shortcutsDirectory}"/"${shortcutText}"
+            chown ${vmUser}:${vmUser} "${shortcutsDirectory}"/"${shortcutText}"
 
         fi
     fi
@@ -467,9 +467,9 @@ if [[ ${action} == "install"   ]]; then
         Categories=Development
         MimeType=text/html;text/xml;application/xhtml_xml;image/webp;x-scheme-handler/http;x-scheme-handler/https;x-scheme-handler/ftp;
         Actions=new-window;new-private-window;
-        """ | tee "${apiDocsDirectory}"/"${componentName}".desktop
-        sed -i 's/^[ \t]*//g' "${apiDocsDirectory}"/"${componentName}".desktop
-        chmod 755 "${apiDocsDirectory}"/"${componentName}".desktop
+        """ | tee "${apiDocsDirectory}"/"${shortcutText}"
+        sed -i 's/^[ \t]*//g' "${apiDocsDirectory}"/"${shortcutText}"
+        chmod 755 "${apiDocsDirectory}"/"${shortcutText}"
     fi
 
     swaggerApiDocsUrl=$(cat ${componentMetadataJson} | jq -r '.swagger_docs_url' | mo)
@@ -491,9 +491,9 @@ if [[ ${action} == "install"   ]]; then
         Categories=Development
         MimeType=text/html;text/xml;application/xhtml_xml;image/webp;x-scheme-handler/http;x-scheme-handler/https;x-scheme-handler/ftp;
         Actions=new-window;new-private-window;
-        """ | tee "${apiDocsDirectory}"/"${componentName}"_Swagger.desktop
-        sed -i 's/^[ \t]*//g' "${apiDocsDirectory}"/"${componentName}"_Swagger.desktop
-        chmod 755 "${apiDocsDirectory}"/"${componentName}"_Swagger.desktop
+        """ | tee "${apiDocsDirectory}"/"${shortcutText} Swagger"
+        sed -i 's/^[ \t]*//g' "${apiDocsDirectory}"/"${shortcutText} Swagger"
+        chmod 755 "${apiDocsDirectory}"/"${shortcutText} Swagger"
     fi
 
     postmanApiDocsUrl=$(cat ${componentMetadataJson} | jq -r '.postman_docs_url' | mo)
@@ -515,9 +515,9 @@ if [[ ${action} == "install"   ]]; then
         Categories=Development
         MimeType=text/html;text/xml;application/xhtml_xml;image/webp;x-scheme-handler/http;x-scheme-handler/https;x-scheme-handler/ftp;
         Actions=new-window;new-private-window;
-        """ | tee "${apiDocsDirectory}"/"${componentName}"_Postman.desktop
-        sed -i 's/^[ \t]*//g' "${apiDocsDirectory}"/"${componentName}"_Postman.desktop
-        chmod 755 "${apiDocsDirectory}"/"${componentName}"_Postman.desktop
+        """ | tee "${apiDocsDirectory}"/"${shortcutText} Postman"
+        sed -i 's/^[ \t]*//g' "${apiDocsDirectory}"/"${shortcutText} Postman"
+        chmod 755 "${apiDocsDirectory}"/"${shortcutText} Postman"
     fi
 
     vendorDocsUrl=$(cat ${componentMetadataJson} | jq -r '.vendor_docs_url' | mo)
@@ -539,9 +539,9 @@ if [[ ${action} == "install"   ]]; then
         Categories=Development
         MimeType=text/html;text/xml;application/xhtml_xml;image/webp;x-scheme-handler/http;x-scheme-handler/https;x-scheme-handler/ftp;
         Actions=new-window;new-private-window;
-        """ | tee "${vendorDocsDirectory}"/"${componentName}".desktop
-        sed -i 's/^[ \t]*//g' "${vendorDocsDirectory}"/"${componentName}".desktop
-        chmod 755 "${vendorDocsDirectory}"/"${componentName}".desktop
+        """ | tee "${vendorDocsDirectory}"/"${shortcutText}"
+        sed -i 's/^[ \t]*//g' "${vendorDocsDirectory}"/"${shortcutText}"
+        chmod 755 "${vendorDocsDirectory}"/"${shortcutText}"
     fi
 
 elif [[ ${action} == "upgrade"   ]]; then
@@ -577,28 +577,28 @@ elif [[ ${action} == "uninstall"   ]] || [[ ${action} == "purge"   ]]; then
     fi
 
     # Remove Vendor Docs Shortcut if it exists
-    if [ -f "${vendorDocsDirectory}"/"${componentName}".desktop ]; then
-        rm -f "${vendorDocsDirectory}"/"${componentName}".desktop
+    if [ -f "${vendorDocsDirectory}"/"${shortcutText}" ]; then
+        rm -f "${vendorDocsDirectory}"/"${shortcutText}"
     fi
 
     # Remove API Docs Shortcut if it exists
-    if [ -f "${apiDocsDirectory}"/"${componentName}".desktop ]; then
-        rm -f "${apiDocsDirectory}"/"${componentName}".desktop
+    if [ -f "${apiDocsDirectory}"/"${shortcutText}" ]; then
+        rm -f "${apiDocsDirectory}"/"${shortcutText}"
     fi
 
     # Remove Application Shortcut if it exists
-    if [ -f "${shortcutsDirectory}"/"${componentName}".desktop ]; then
-        rm -f "${shortcutsDirectory}"/"${componentName}".desktop ]
+    if [ -f "${shortcutsDirectory}"/"${shortcutText}" ]; then
+        rm -f "${shortcutsDirectory}"/"${shortcutText}" ]
     fi
 
     # Remove Postman API Shortcut if it exists
-    if [ -f "${apiDocsDirectory}"/"${componentName}"_Postman.desktop ]; then
-        rm -f "${apiDocsDirectory}"/"${componentName}"_Postman.desktop
+    if [ -f "${apiDocsDirectory}"/"${shortcutText}"_Postman ]; then
+        rm -f "${apiDocsDirectory}"/"${shortcutText}"_Postman
     fi
 
     # Remove Swagger API Shortcut if it exists
-    if [ -f "${apiDocsDirectory}"/"${componentName}"_Swagger.desktop ]; then
-        rm -f "${apiDocsDirectory}"/"${componentName}"_Swagger.desktop
+    if [ -f "${apiDocsDirectory}"/"${shortcutText}"_Swagger ]; then
+        rm -f "${apiDocsDirectory}"/"${shortcutText}"_Swagger
     fi
 
 fi # end of action actions condition

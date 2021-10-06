@@ -3,6 +3,10 @@
         "install": [
             {
                 "install_folder": "core",
+                "name": "gopass"
+            },
+            {
+                "install_folder": "core",
                 "name": "cfssl-certificate-authority"
             },
             {
