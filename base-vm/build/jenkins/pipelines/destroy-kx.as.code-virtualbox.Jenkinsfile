@@ -43,7 +43,7 @@ pipeline {
                 script {
                     dir(shared_workspace) {
                         sh """
-                        cd profiles/vagrant-virtualbox-demo1
+                        cd profiles/vagrant-virtualbox
                         VBoxManage list vms
                         vagrant halt
                         vagrant destroy -f

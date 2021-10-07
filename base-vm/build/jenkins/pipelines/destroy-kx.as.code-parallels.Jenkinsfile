@@ -43,7 +43,7 @@ pipeline {
                 script {
                     dir(shared_workspace) {
                         sh """
-                        cd profiles/vagrant-parallels-demo1
+                        cd profiles/vagrant-parallels
                         vagrant halt
                         vagrant destroy -f
                         """

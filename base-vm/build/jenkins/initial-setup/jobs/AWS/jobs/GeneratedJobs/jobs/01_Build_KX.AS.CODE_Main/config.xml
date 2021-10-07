@@ -33,6 +33,7 @@
         <string>kx_domain</string>
         <string>aws_vpc_region</string>
         <string>aws_instance_type</string>
+        <string>shared_workspace</string>
       </parameters>
       <options>
         <string>skipDefaultCheckout</string>

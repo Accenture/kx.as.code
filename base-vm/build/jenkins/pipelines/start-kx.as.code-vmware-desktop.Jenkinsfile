@@ -44,17 +44,6 @@ pipeline {
     }
 
     stages {
-
-        stage('Clone the repository'){
-            steps {
-                script {
-                    dir(shared_workspace) {
-                        checkout([$class: 'GitSCM', branches: [[name: "$git_source_branch"]], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'GIT_KX.AS.CODE_SOURCE', url: '${git_source_url}']]])
-                    }
-                }
-            }
-        }
-
         stage('Execute Vagrant Action'){
             steps {
                 script {
@@ -76,7 +65,7 @@ pipeline {
                             if [ -f kx.as.code_main-ip-address ]; then
                                 rm -f kx.as.code_main-ip-address
                             fi
-                            cd profiles/vagrant-vmware-desktop-demo1
+                            cd profiles/vagrant-vmware-desktop
                             vagrant up --provider vmware_desktop
                             """
                         }

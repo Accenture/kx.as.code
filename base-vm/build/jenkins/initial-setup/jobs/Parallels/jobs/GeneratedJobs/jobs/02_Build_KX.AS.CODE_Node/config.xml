@@ -18,6 +18,7 @@
         <string>kx_version_override</string>
         <string>kx_domain</string>
         <string>kx_node_hostname</string>
+        <string>shared_workspace</string>
       </parameters>
       <options>
         <string>skipDefaultCheckout</string>
@@ -90,6 +91,12 @@
           <name>vagrant_ssh_username</name>
           <description>SSH user used during packer build process</description>
           <defaultValue>{{vagrant_ssh_username}}</defaultValue>
+          <trim>false</trim>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>shared_workspace</name>
+          <description>Shared workspace for the KX.AS.CODE jobs</description>
+          <defaultValue>{{shared_workspace_directory_path}}</defaultValue>
           <trim>false</trim>
         </hudson.model.StringParameterDefinition>
       </parameterDefinitions>

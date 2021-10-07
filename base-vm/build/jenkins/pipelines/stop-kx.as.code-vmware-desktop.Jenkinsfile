@@ -46,7 +46,7 @@ pipeline {
                 script {
                     dir(shared_workspace) {
                         sh """
-                        cd profiles/vagrant-vmware-desktop-demo1
+                        cd profiles/vagrant-vmware-desktop
                         vagrant halt
                         """
                     }

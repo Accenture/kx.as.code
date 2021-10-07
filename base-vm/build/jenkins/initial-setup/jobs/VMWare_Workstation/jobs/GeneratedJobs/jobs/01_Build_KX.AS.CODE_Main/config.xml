@@ -11,6 +11,7 @@
       <parameters>
         <string>vagrant_ssh_username</string>
         <string>git_source_branch</string>
+        <string>shared_workspace</string>
         <string>kx_vm_user</string>
         <string>kx_vm_password</string>
         <string>git_source_url</string>
@@ -76,6 +77,12 @@
           <name>git_techradar_branch</name>
           <description>TechRadar Github branch to clone</description>
           <defaultValue>{{git_techradar_branch}}</defaultValue>
+          <trim>false</trim>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>shared_workspace</name>
+          <description>Shared workspace for the KX.AS.CODE jobs</description>
+          <defaultValue>{{shared_workspace_directory_path}}</defaultValue>
           <trim>false</trim>
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
