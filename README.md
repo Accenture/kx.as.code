@@ -30,10 +30,8 @@ Additionally, the machines we use at work or have sitting at home are getting mo
 ## What makes this different to other solutions?
 As this we originally envisaged this as a DevOps training/enablement environment, we didn't just want to deploy a bunch of empty tools, but to make it feel like a live project environment, with repositories and docker images already populated, and some processes in place, to demonstrate for example, topics such as container runtime security or GitOps.
 
-This depends on what you choose to install, as the solution is flexible - you can choose up front in a JSON file, which tools should be installed once the base system is up.
-
 ## Where can I deploy KX.AS.CODE?
-KX.AS.CODE can be deployed locally or in the cloud, be it a private or public cloud. The most tested solutions are currently OpenStack and VirtualBox. Here a full list of solutions we have run KX.AS.COEE on.
+KX.AS.CODE can be deployed locally or in the cloud, be it a private or public cloud. The most tested solutions are currently OpenStack and VirtualBox. Here a full list of solutions we have run KX.AS.CODE on.
 
 1. VMWare Workstation/Fusion (MacOSX, Linux and Windows)
 2. VirtualBox (MacOSX, Linux and Windows)
