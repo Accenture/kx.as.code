@@ -70,7 +70,7 @@ pipeline {
                             echo \${kxMainBoxLocation}
                             echo \${kxNodeBoxLocation}
                             echo \${dockerHubEmail}
-                            cd profiles/vagrant-virtualbox-demo1
+                            cd profiles/vagrant-virtualbox-example
                             if [ -f kx.as.code_main-ip-address ]; then
                                 rm -f kx.as.code_main-ip-address
                             fi
