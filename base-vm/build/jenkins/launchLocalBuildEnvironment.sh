@@ -337,29 +337,13 @@ if [ ! -d "${jenkins_home}/jobs" ] || [[ ${override_action} == "recreate"   ]] |
 fi
 
 # Create shared directories for Vagrant and Terraform jobs
-#export virtualbox_shared_directory_path="${workdir_absolute_path}/workspace/VirtualBox/shared_workspace"
-exort shared_workspace="${workdir_absolute_path}/workspace/shared_workspace"
-#export virtualbox_shared_directory_path=${shared_workspace}
-#export parallels_shared_directory_path=${shared_workspace}
-#export vmware_workstation_shared_directory_path=${shared_workspace}
+export shared_workspace_base_directory_path="${workdir_absolute_path}/workspace/shared_workspace"
+export shared_workspace_directory_path="${shared_workspace_base_directory_path}/kx.as.code"
 
-if [[ -L ${shared_workspace}/ ]] && [[ -e ${shared_workspace}/ ]]; then
-  ln -s ../../../../kx.as.code ${shared_workspace}/
+if [[ ! -L ${shared_workspace_directory_path} ]] && [[ ! -e ${shared_workspace_directory_path} ]]; then
+  mkdir -p ${shared_workspace_base_directory_path}
+  ln -s ../../../../../../../kx.as.code ${shared_workspace_base_directory_path}
 fi
-
-#if [[ ! -d ${virtualbox_shared_directory_path}   ]]; then
-#    mkdir -p "${virtualbox_shared_directory_path}"
-#fi
-
-#export parallels_shared_directory_path="${workdir_absolute_path}/workspace/shared_workspace"
-#if [[ ! -d ${parallels_shared_directory_path}   ]]; then
-#    mkdir -p "${parallels_shared_directory_path}"
-#fi
-
-#export vmware_workstation_shared_directory_path="${workdir_absolute_path}/workspace/shared_workspace"
-#if [[ ! -d ${vmware_workstation_shared_directory_path}   ]]; then
-#    mkdir -p "${vmware_workstation_shared_directory_path}"
-#fi
 
 # Replace variable placeholders in Jenkins jobs
 OLD_IFS=${IFS}

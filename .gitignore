@@ -54,3 +54,7 @@ amazon-corretto*
 /base-vm/build/jenkins/jenkins.env.docker-compose.ps1
 /base-vm/build/jenkins/docker-compose.exe
 /profiles/aws-demo1/aws/
+/base-vm/build/jenkins/jenkins.iml
+/jq
+**/info.json
+**/kx.as.code-*_metadata.json

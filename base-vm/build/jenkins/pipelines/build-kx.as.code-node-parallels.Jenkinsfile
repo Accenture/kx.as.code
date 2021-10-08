@@ -21,7 +21,12 @@ node('local') {
 
 pipeline {
 
-    agent { label "local" }
+    agent {
+        node {
+            label "local"
+            customWorkspace "${shared_workspace}"
+        }
+    }
 
     options {
         ansiColor('xterm')
@@ -48,37 +53,35 @@ pipeline {
         stage('Build the OVA/BOX'){
             steps {
                 script {
-                    dir(shared_workspace) {
-                        withCredentials([usernamePassword(credentialsId: 'GIT_KX.AS.CODE_SOURCE', passwordVariable: 'git_source_token', usernameVariable: 'git_source_user')]) {
-                            def packerPath = tool "packer-${os}"
-                            if ( "${os}" == "windows" ) {
-                                packerPath = packerPath.replaceAll("\\\\","/")
-                            }
-                            sh """
-                            if [ ! -f ./jq* ]; then
-                                curl -L -o jq ${jqDownloadPath}
-                                chmod +x ./jq
-                            fi
-                            export kx_version=\$(cat versions.json | ./jq -r '.kxascode')
-                            export kube_version=\$(cat versions.json | ./jq -r '.kubernetes')
-                            echo \${kx_version}
-                            echo \${kube_version}
-                            cd base-vm/build/packer/${packerOsFolder}
-                            ${packerPath}/packer build -force -only kx.as.code-node-parallels \
-                            -var "compute_engine_build=${vagrant_compute_engine_build}" \
-                            -var "memory=8192" \
-                            -var "cpus=2" \
-                            -var "video_memory=128" \
-                            -var "hostname=${kx_node_hostname}" \
-                            -var "domain=${kx_domain}" \
-                            -var "version=\${kx_version}" \
-                            -var "kube_version=\${kube_version}" \
-                            -var "vm_user=${kx_vm_user}" \
-                            -var "vm_password=${kx_vm_password}" \
-                            -var "base_image_ssh_user=${vagrant_ssh_username}" \
-                            ./kx.as.code-node-local-profiles.json
-                            """
+                    withCredentials([usernamePassword(credentialsId: 'GIT_KX.AS.CODE_SOURCE', passwordVariable: 'git_source_token', usernameVariable: 'git_source_user')]) {
+                        def packerPath = tool "packer-${os}"
+                        if ( "${os}" == "windows" ) {
+                            packerPath = packerPath.replaceAll("\\\\","/")
                         }
+                        sh """
+                        if [ ! -f ./jq* ]; then
+                            curl -L -o jq ${jqDownloadPath}
+                            chmod +x ./jq
+                        fi
+                        export kx_version=\$(cat versions.json | ./jq -r '.kxascode')
+                        export kube_version=\$(cat versions.json | ./jq -r '.kubernetes')
+                        echo \${kx_version}
+                        echo \${kube_version}
+                        cd base-vm/build/packer/${packerOsFolder}
+                        ${packerPath}/packer build -force -only kx.as.code-node-parallels \
+                        -var "compute_engine_build=${vagrant_compute_engine_build}" \
+                        -var "memory=8192" \
+                        -var "cpus=2" \
+                        -var "video_memory=128" \
+                        -var "hostname=${kx_node_hostname}" \
+                        -var "domain=${kx_domain}" \
+                        -var "version=\${kx_version}" \
+                        -var "kube_version=\${kube_version}" \
+                        -var "vm_user=${kx_vm_user}" \
+                        -var "vm_password=${kx_vm_password}" \
+                        -var "base_image_ssh_user=${vagrant_ssh_username}" \
+                        ./kx.as.code-node-local-profiles.json
+                        """
                     }
                 }
             }

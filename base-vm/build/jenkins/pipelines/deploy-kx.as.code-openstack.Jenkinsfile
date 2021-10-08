@@ -21,7 +21,12 @@ node('local') {
 
 pipeline {
 
-    agent { label "local" }
+    agent {
+        node {
+            label "local"
+            customWorkspace "${shared_workspace}"
+        }
+    }
 
     options {
         ansiColor('xterm')

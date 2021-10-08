@@ -286,25 +286,12 @@ else
     & $javaBinary -version
 }
 
-# Create shared directories for Vagrant and Terraform jobs
-$virtualbox_shared_directory_path = "$WORKING_DIRECTORY\workspace\VirtualBox\shared_workspace"
-if ( ! ( Test-Path -Path $virtualbox_shared_directory_path ) )
+# Create shared workspace directory for Vagrant and Terraform jobs
+$shared_directory_path = "$WORKING_DIRECTORY\workspace\shared_workspace"
+if ( ! ( Test-Path -Path $shared_directory_path\kx.as.code ) )
 {
-    New-Item -ItemType "directory" -Path $virtualbox_shared_directory_path
+    New-Item -Path $shared_directory_path -ItemType SymbolicLink -Value ..\..\..\..\kx.as.code
 }
-
-$paralells_shared_directory_path = "$WORKING_DIRECTORY\workspace\Paralells\shared_workspace"
-if ( ! ( Test-Path -Path $paralells_shared_directory_path ) )
-{
-    New-Item -ItemType "directory" -Path $paralells_shared_directory_path
-}
-
-$vmware_workstation_shared_directory_path = "$WORKING_DIRECTORY\workspace\VMWare_Workstation\shared_workspace"
-if ( ! ( Test-Path -Path $vmware_workstation_shared_directory_path ) )
-{
-    New-Item -ItemType "directory" -Path $vmware_workstation_shared_directory_path
-}
-
 
 # Replace mustache variables in job config.xml files
 New-Item -Path "$JENKINS_HOME\jobs" -Name "logfiles" -ItemType "directory"

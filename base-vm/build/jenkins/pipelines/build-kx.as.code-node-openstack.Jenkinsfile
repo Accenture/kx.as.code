@@ -21,7 +21,12 @@ node('local') {
 
 pipeline {
 
-    agent { label "local" }
+    agent {
+        node {
+            label "local"
+            customWorkspace "${shared_workspace}"
+        }
+    }
 
     options {
         ansiColor('xterm')
@@ -48,9 +53,8 @@ pipeline {
         stage('Build the QCOW2 image'){
             steps {
                 script {
-                withCredentials([usernamePassword(credentialsId: 'GIT_KX.AS.CODE_SOURCE', passwordVariable: 'git_source_token', usernameVariable: 'git_source_user')]) {
-                withCredentials([usernamePassword(credentialsId: 'OPENSTACK_PACKER_CREDENTIAL', usernameVariable: 'OPENSTACK_USER', passwordVariable: 'OPENSTACK_PASSWORD')]) {
-                    dir(shared_workspace) {
+                    withCredentials([usernamePassword(credentialsId: 'GIT_KX.AS.CODE_SOURCE', passwordVariable: 'git_source_token', usernameVariable: 'git_source_user')]) {
+                    withCredentials([usernamePassword(credentialsId: 'OPENSTACK_PACKER_CREDENTIAL', usernameVariable: 'OPENSTACK_USER', passwordVariable: 'OPENSTACK_PASSWORD')]) {
                         def packerPath = tool "packer-${os}"
                         if ( "${os}" == "windows" ) {
                             packerPath = packerPath.replaceAll("\\\\","/")
@@ -86,9 +90,8 @@ pipeline {
                             -var "openstack_security_groups=${openstack_security_groups}" \
                             ./kx.as.code-node-cloud-profiles.json
                         """
-                       }
-
                     }}
+
                 }
             }
         }

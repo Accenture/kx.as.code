@@ -70,9 +70,9 @@ DOCKERHUB_PASSWORD = ENV['dockerHubPassword']
 puts "DOCKERHUB_PASSWORD: #{DOCKERHUB_PASSWORD}"
 BOX_VERSION = ENV['boxVersion'] || kx_version_json['kxascode']
 puts "BOX_VERSION: #{BOX_VERSION}"
-KX_MAIN_BOX_LOCATION = ENV['kxMainBoxLocation'] || profile_config_json['config']['vm_properties']['kx_main_box_location']
+KX_MAIN_BOX_LOCATION = ENV['kxMainBoxLocation'] || "base-vm/boxes/virtualbox-#{BOX_VERSION}/kx.as.code-main-#{BOX_VERSION}.box"
 puts "KX_MAIN_BOX_LOCATION: #{KX_MAIN_BOX_LOCATION}"
-KX_NODE_BOX_LOCATION = ENV['kxNodeBoxLocation'] || profile_config_json['config']['vm_properties']['kx_node_box_location']
+KX_NODE_BOX_LOCATION = ENV['kxNodeBoxLocation'] || "base-vm/boxes/virtualbox-#{BOX_VERSION}/kx.as.code-node-#{BOX_VERSION}.box"
 puts "KX_NODE_BOX_LOCATION: #{KX_NODE_BOX_LOCATION}"
 
 if (MAIN_NODE_COUNT - 1) < 1
@@ -84,7 +84,7 @@ else
 end
 
 # Path for current Jenkins solution
-WORKSPACE_HOME = File.dirname(File.expand_path('../../..', __FILE__))
+WORKSPACE_HOME = File.dirname(File.expand_path('../..', __FILE__))
 
 Vagrant.configure("2") do |config|
   config.vm.define "kx.as.code-main1", primary: true do |subconfig|
