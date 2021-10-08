@@ -21,6 +21,7 @@
         <string>git_source_url</string>
         <string>openstack_auth_url</string>
         <string>openstack_external_network_id</string>
+        <string>shared_workspace</string>
       </parameters>
       <options>
         <string>skipDefaultCheckout</string>
@@ -117,6 +118,12 @@
           <name>openstack_identity_api_version</name>
           <description>OpenStack Identity API Version</description>
           <defaultValue>3</defaultValue>
+          <trim>false</trim>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>shared_workspace</name>
+          <description>Shared workspace for the KX.AS.CODE jobs</description>
+          <defaultValue>{{shared_workspace_directory_path}}</defaultValue>
           <trim>false</trim>
         </hudson.model.StringParameterDefinition>
       </parameterDefinitions>

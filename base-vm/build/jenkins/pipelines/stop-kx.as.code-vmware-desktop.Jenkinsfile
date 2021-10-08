@@ -21,7 +21,12 @@ node('local') {
 
 pipeline {
 
-    agent { label "local" }
+    agent {
+        node {
+            label "local"
+            customWorkspace "${shared_workspace}"
+        }
+    }
 
     options {
         ansiColor('xterm')
@@ -44,12 +49,10 @@ pipeline {
         stage('Execute Vagrant Action'){
             steps {
                 script {
-                    dir(shared_workspace) {
-                        sh """
-                        cd profiles/vagrant-vmware-desktop-demo1
-                        vagrant halt
-                        """
-                    }
+                    sh """
+                    cd profiles/vagrant-vmware-desktop
+                    vagrant halt
+                    """
                 }
             }
         }

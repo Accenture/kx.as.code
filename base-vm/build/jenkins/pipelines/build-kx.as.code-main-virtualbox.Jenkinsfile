@@ -20,7 +20,12 @@ node('local') {
 }
 pipeline {
 
-    agent { label "local" }
+    agent {
+        node {
+            label "local"
+            customWorkspace "${shared_workspace}"
+        }
+    }
 
     options {
         ansiColor('xterm')
@@ -44,22 +49,13 @@ pipeline {
     }
 
     stages {
-
-        stage('Clone the repository'){
-            steps {
-                script {
-                    checkout([$class: 'GitSCM', branches: [[name: "$git_source_branch"]], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'GIT_KX.AS.CODE_SOURCE', url: '${git_source_url}']]])
-                }
-            }
-        }
-
         stage('Build the OVA/BOX'){
             steps {
                 script {
-                withCredentials([usernamePassword(credentialsId: 'GIT_KX.AS.CODE_SOURCE', passwordVariable: 'git_source_token', usernameVariable: 'git_source_user')]) {
-                withCredentials([usernamePassword(credentialsId: 'GIT_KX.AS.CODE_DOCS', passwordVariable: 'git_docs_token', usernameVariable: 'git_docs_user')]) {
-                withCredentials([usernamePassword(credentialsId: 'GIT_KX.AS.CODE_TECHRADAR', passwordVariable: 'git_techradar_token', usernameVariable: 'git_techradar_user')]) {
-                         def packerPath = tool "packer-${os}"
+                    withCredentials([usernamePassword(credentialsId: 'GIT_KX.AS.CODE_SOURCE', passwordVariable: 'git_source_token', usernameVariable: 'git_source_user')]) {
+                    withCredentials([usernamePassword(credentialsId: 'GIT_KX.AS.CODE_DOCS', passwordVariable: 'git_docs_token', usernameVariable: 'git_docs_user')]) {
+                    withCredentials([usernamePassword(credentialsId: 'GIT_KX.AS.CODE_TECHRADAR', passwordVariable: 'git_techradar_token', usernameVariable: 'git_techradar_user')]) {
+                        def packerPath = tool "packer-${os}"
                         if ( "${os}" == "windows" ) {
                             packerPath = packerPath.replaceAll("\\\\","/")
                         }

@@ -21,7 +21,12 @@ node('local') {
 
 pipeline {
 
-    agent { label "local" }
+    agent {
+        node {
+            label "local"
+            customWorkspace "${shared_workspace}"
+        }
+    }
 
     options {
         ansiColor('xterm')
@@ -45,24 +50,7 @@ pipeline {
     }
 
     stages {
-
-        stage('Clone the repository'){
-            when {
-                allOf {
-                  expression{terraform_action == 'plan'}
-                }
-            }
-            steps {
-                script {
-                    checkout([$class: 'GitSCM', branches: [[name: "$git_source_branch"]], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'GIT_KX.AS.CODE_SOURCE', url: '${git_source_url}']]])
-                }
-            }
-        }
-
         stage('Execute Terraform Action'){
-            environment {
-               ....
-            }
             steps {
                 script {
                   withCredentials([[
@@ -74,7 +62,7 @@ pipeline {
                         sh """
                         env
                         def terraformPath = tool "terraform-${os}"
-                        cd profiles/terraform-aws-ip-whitelisting-demo1
+                        cd profiles/terraform-aws
 
                         if [ ! -f ./jq* ]; then
                             curl -o jq ${jqDownloadUrl}

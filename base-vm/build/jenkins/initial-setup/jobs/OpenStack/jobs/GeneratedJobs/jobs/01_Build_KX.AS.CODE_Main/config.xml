@@ -30,6 +30,7 @@
         <string>git_techradar_url</string>
         <string>openstack_compute_engine_build</string>
         <string>kx_domain</string>
+        <string>shared_workspace</string>
       </parameters>
       <options>
         <string>skipDefaultCheckout</string>
@@ -168,6 +169,12 @@
           <name>openstack_security_groups</name>
           <description>OpenStack Security Groups</description>
           <defaultValue>{{openstack_security_groups}}</defaultValue>
+          <trim>false</trim>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>shared_workspace</name>
+          <description>Shared workspace for the KX.AS.CODE jobs</description>
+          <defaultValue>{{shared_workspace_directory_path}}</defaultValue>
           <trim>false</trim>
         </hudson.model.StringParameterDefinition>
       </parameterDefinitions>

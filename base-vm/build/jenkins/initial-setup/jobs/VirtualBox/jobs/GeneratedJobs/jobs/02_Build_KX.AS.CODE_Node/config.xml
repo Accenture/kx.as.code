@@ -14,6 +14,7 @@
         <string>kx_vm_user</string>
         <string>kx_vm_password</string>
         <string>git_source_url</string>
+        <string>shared_workspace</string>
         <string>vagrant_compute_engine_build</string>
         <string>kx_version_override</string>
         <string>kx_domain</string>
@@ -48,6 +49,12 @@
           <name>git_source_branch</name>
           <description>Source Github branch to build from and clone inside VM</description>
           <defaultValue>{{git_source_branch}}</defaultValue>
+          <trim>false</trim>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>shared_workspace</name>
+          <description>Shared workspace for the KX.AS.CODE jobs</description>
+          <defaultValue>{{shared_workspace_directory_path}}</defaultValue>
           <trim>false</trim>
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>

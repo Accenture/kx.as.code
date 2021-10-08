@@ -22,7 +22,7 @@
       <submoduleCfg class="list"/>
       <extensions/>
     </scm>
-    <scriptPath>base-vm/build/jenkins/pipelines/deploy-kx.as.code-aws-ip-whitelisting.Jenkinsfile</scriptPath>
+    <scriptPath>base-vm/build/jenkins/pipelines/deploy-kx.as.code-aws.Jenkinsfile</scriptPath>
     <lightweight>true</lightweight>
   </definition>
   <triggers/>

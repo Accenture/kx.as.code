@@ -47,7 +47,7 @@ puts "Local Disk Size: #{LOCAL_KUBE_VOLUMES_DISK_SIZE}GB"
 puts "GlusterFS Disk Size: #{GLUSTERFS_KUBE_VOLUMES_DISK_SIZE}GB"
 
 # Environment variables will override the profile-config.json file properties. This was added for the Jenkins jobs, so that they can override parameters
-ENVIRONMENT_PREFIX = ENV['environmentPrefix'] || profile_config_json['config']['vm_properties']['environment_prefix']
+ENVIRONMENT_PREFIX = ENV['environmentPrefix'] || profile_config_json['config']['environment_prefix']
 puts "ENVIRONMENT_PREFIX: #{ENVIRONMENT_PREFIX}"
 MAIN_NODE_COUNT = ENV['mainNodeCount'] || profile_config_json['config']['vm_properties']['main_node_count']
 puts "MAIN_NODE_COUNT: #{MAIN_NODE_COUNT}"
@@ -73,9 +73,9 @@ DOCKERHUB_PASSWORD = ENV['dockerHubPassword']
 puts "DOCKERHUB_PASSWORD: #{DOCKERHUB_PASSWORD}"
 BOX_VERSION = ENV['boxVersion'] || kx_version_json['kxascode']
 puts "BOX_VERSION: #{BOX_VERSION}"
-KX_MAIN_BOX_LOCATION = ENV['kxMainBoxLocation'] || profile_config_json['config']['vm_properties']['kx_main_box_location']
+KX_MAIN_BOX_LOCATION = ENV['kxMainBoxLocation'] || "base-vm/boxes/vmware-desktop-#{BOX_VERSION}/kx.as.code-main-#{BOX_VERSION}.box"
 puts "KX_MAIN_BOX_LOCATION: #{KX_MAIN_BOX_LOCATION}"
-KX_NODE_BOX_LOCATION = ENV['kxNodeBoxLocation'] || profile_config_json['config']['vm_properties']['kx_node_box_location']
+KX_NODE_BOX_LOCATION = ENV['kxNodeBoxLocation'] || "base-vm/boxes/vmware-desktop-#{BOX_VERSION}/kx.as.code-node-#{BOX_VERSION}.box"
 puts "KX_NODE_BOX_LOCATION: #{KX_NODE_BOX_LOCATION}"
 
 if (MAIN_NODE_COUNT - 1) < 1
@@ -87,7 +87,7 @@ else
 end
 
 # Path for current Jenkins solution
-WORKSPACE_HOME = File.dirname(File.expand_path('../../..', __FILE__))
+WORKSPACE_HOME = File.dirname(File.expand_path('../..', __FILE__))
 
 Vagrant.configure("2") do |config|
     config.vm.define "kx.as.code-main1" do |subconfig|
