@@ -112,6 +112,7 @@ if [[ ${override_action} == "recreate"   ]] || [[ ${override_action} == "destroy
             echo -e "${red}- [INFO] jenkins_home deleted${nc}"
             if [[ ${override_action} == "fully-destroy" ]]; then
                 echo -e "${red}- [INFO] Deleting jenkins_remote directory...${nc}"
+                rm -f ./jenkins_remote/workspace/shared_workspace/kx.as.code || true
                 rm -rf ./jenkins_remote || true
                 echo -e "${red}- [INFO] jenkins_remote deleted${nc}"
             fi
