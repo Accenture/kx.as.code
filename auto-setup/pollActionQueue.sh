@@ -1,16 +1,17 @@
 #!/bin/bash
 set -euo pipefail
 
+# Get global base variables from globalVariables.json
+source /usr/share/kx.as.code/git/kx.as.code/auto-setup/functions/getGlobalVariables.sh # source function
+getGlobalVariables # execute function
+
 # Load Central Functions
-functionsLocation="/usr/share/kx.as.code/git/kx.as.code/auto-setup/functions"
+functionsLocation="${autoSetupHome}/functions"
 for function in $(find ${functionsLocation} -name "*.sh")
 do
   source ${function}
   echo "Loaded function $(cat ${function} | grep '()' | sed 's/{//g')"
 done
-
-# Get global base variables from globalVariables.json
-getGlobalVariables
 
 # Declare variables to avoid ubound errors
 export retries="0"
@@ -57,6 +58,9 @@ getNetworkConfiguration
 
 # Source profile-config.json set for this KX.AS.CODE installation
 getProfileConfiguration
+
+# Configure network, as well as Bind9 and HTTP(S) Proxy settings
+configureNetwork
 
 # Configure Keyboard language and layout settings
 configureKeyboardSettings
