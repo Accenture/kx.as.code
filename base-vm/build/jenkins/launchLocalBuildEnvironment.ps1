@@ -287,10 +287,14 @@ else
 }
 
 # Create shared workspace directory for Vagrant and Terraform jobs
-$shared_directory_path = "$WORKING_DIRECTORY\workspace\shared_workspace"
-if ( ! ( Test-Path -Path $shared_directory_path\kx.as.code ) )
+$shared_workspace_base_directory_path = "$WORKING_DIRECTORY\workspace\shared_workspace"
+$shared_workspace_directory_path = "$shared_workspace_base_directory_path\kx.as.code"
+$git_root_path = git rev-parse --show-toplevel
+
+if ( ! ( Test-Path -Path $shared_workspace_directory_path ) )
 {
-    New-Item -Path $shared_directory_path -ItemType SymbolicLink -Value ..\..\..\..\kx.as.code
+    New-Item -Path "$shared_workspace_base_directory_path" -ItemType "directory" -ea 0
+    powershell.exe -NoProfile -ExecutionPolicy Unrestricted -Command "& {Start-Process PowerShell -ArgumentList '-NoProfile -ExecutionPolicy Unrestricted -Command New-Item -Path $shared_workspace_directory_path -ItemType SymbolicLink -Value $git_root_path;pause' -Verb RunAs}";
 }
 
 # Replace mustache variables in job config.xml files

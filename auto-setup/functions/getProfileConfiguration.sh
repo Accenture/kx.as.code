@@ -2,16 +2,39 @@ getProfileConfiguration() {
 
   # Get configs from profile-config.json
   export virtualizationType=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.virtualizationType')
+  export baseIpType=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.baseIpType')
+  export dnsResolution=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.dnsResolution')
+
+  if [[ ${baseIpType} == "static"   ]]; then
+      # Get fixed IPs if defined
+      export fixedIpHosts=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.staticNetworkSetup.baseFixedIpAddresses | keys[]')
+      for fixIpHost in ${fixedIpHosts}; do
+          fixIpHostVariableName=$(echo ${fixIpHost} | sed 's/-/__/g')
+          export ${fixIpHostVariableName}_IpAddress="$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.staticNetworkSetup.baseFixedIpAddresses."'${fixIpHost}'"')"
+          if [[ ${fixIpHost} == "kx-main1" ]]; then
+              export mainIpAddress="$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.staticNetworkSetup.baseFixedIpAddresses."'${fixIpHost}'"')"
+          fi
+      done
+      export fixedNicConfigGateway=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.staticNetworkSetup.gateway')
+      export fixedNicConfigDns1=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.staticNetworkSetup.dns1')
+      export fixedNicConfigDns2=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.staticNetworkSetup.dns2')
+  else
+      export mainIpAddress=$(ip a s ${netDevice} | egrep -o 'inet [0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | cut -d' ' -f2)
+  fi
+
   export environmentPrefix=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.environmentPrefix')
+
   if [ -z ${environmentPrefix} ]; then
       export baseDomain=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.baseDomain')
   else
       export baseDomain="${environmentPrefix}.$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.baseDomain')"
   fi
+
   export numKxMainNodes=$(cat ${installationWorkspace}/profile-config.json | jq -r '.vm_properties.main_node_count')
   if [[ "${numKxMainNodes}" = "null" ]]; then
       export numKxMainNodes="1"
   fi
+
   export defaultKeyboardLanguage=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.defaultKeyboardLanguage')
   export baseUser=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.baseUser')
   export basePassword=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.basePassword')
