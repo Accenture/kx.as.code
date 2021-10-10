@@ -1,4 +1,4 @@
-autoSetupScriptInstall() {
+autoSetupHelmInstall() {
   log_debug "Established installation type is \"${installationType}\". Proceeding in that way"
   # Get helm parameters
   helm_params=$(cat ${componentMetadataJson} | jq -r '.'${installationType}'_params')

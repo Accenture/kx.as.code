@@ -1,5 +1,4 @@
 autoSetupScriptInstall() {
-
   log_info "Established installation type is \"${installationType}\". Proceeding in that way"
     # Get script list to execute
     scriptsToExecute=$(cat ${componentMetadataJson} | jq -r '.install_scripts[]?')
