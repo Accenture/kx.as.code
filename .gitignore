@@ -44,8 +44,8 @@ amazon-corretto*
 /base-vm/build/jenkins/docker-compose
 /base-vm/build/jenkins/jenkins.env
 /base-vm/build/jenkins/mo
-/base-vm/build/jenkins/jenkins_home/
-/base-vm/build/jenkins/jenkins_remote/
+/base-vm/build/jenkins/jenkins_home
+/base-vm/build/jenkins/jenkins_remote
 /base-vm/build/jenkins/jenkins-cli.jar
 /base-vm/build/jenkins/jq
 /base-vm/build/jenkins/jenkins.env.ps1
@@ -58,4 +58,4 @@ amazon-corretto*
 /jq
 **/info.json
 **/kx.as.code-*_metadata.json
-jenkins_remote/workspace/shared_workspace/kx.as.code
+/base-vm/build/jenkins/jenkins_remote/workspace/shared_workspace/kx.as.code
