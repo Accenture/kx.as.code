@@ -1,16 +1,17 @@
 #!/bin/bash
 set -euo pipefail
 
+# Get global base variables from globalVariables.json
+. functions/getGlobalVariables.sh # source function
+getGlobalVariables # execute function
+
 # Load Central Functions
-functionsLocation="/usr/share/kx.as.code/git/kx.as.code/auto-setup/functions"
+functionsLocation="${autoSetupHome}/functions"
 for function in $(find ${functionsLocation} -name "*.sh")
 do
   source ${function}
   echo "Loaded function $(cat ${function} | grep '()' | sed 's/{//g')"
 done
-
-# Get global base variables from globalVariables.json
-getGlobalVariables
 
 # Declare variables to avoid ubound errors
 export retries="0"
