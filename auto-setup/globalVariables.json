@@ -1,0 +1,17 @@
+{
+  "sharedKxHome": "/usr/share/kx.as.code",
+  "installationWorkspace": "${sharedKxHome}/workspace",
+  "certificatesWorkspace": "${installationWorkspace}/certificates",
+  "actionWorkflows": "pending wip completed failed retry",
+  "defaultDockerHubSecret": "default/regcred",
+  "sharedGitHome": "${sharedKxHome}/git",
+  "autoSetupHome": "${sharedGitHome}/kx.as.code/auto-setup",
+  "skelDirectory": "${sharedKxHome}/skel",
+  "vendorDocsDirectory": "${sharedKxHome}/Vendor Docs",
+  "apiDocsDirectory": "${sharedKxHome}/API Docs",
+  "shortcutsDirectory": "${sharedKxHome}/DevOps Tools",
+  "adminShortcutsDirectory": "${sharedKxHome}/Admin Tools",
+  "vmUser": "kx.hero",
+  "vmUserId": "$(id -u ${vmUser})",
+  "vmPassword": "$(cat ${sharedKxHome}/.config/.user.cred)"
+}

@@ -26,6 +26,26 @@ cd /usr/share/kx.as.code/git/kx.as.code_techradar/kubernetes
 # Return to previous directory
 cd -
 
+# Install the desktop shortcut for KX.AS.CODE Docs
+shortcutsDirectory=
+primaryUrl="https://docs.${baseDomain}"
+shortcutIcon="${sharedGitHome}/kx.as.code_techradar/kubernetes/books.png"
+shortcutText="KX.AS.CODE Docs"
+iconPath="/home/${vmUser}/Desktop"
+browserOptions=""
+createDesktopIcon "${shortcutsDirectory}" "${primaryUrl}" "${shortcutIcon}" "${shortcutText}" "${iconPath}" "${browserOptions}"
+
+# Install the desktop shortcut for TechRadar
+shortcutsDirectory=
+primaryUrl="https://techradar.${baseDomain}"
+shortcutIcon="/usr/share/kx.as.code/git/kx.as.code_techradar/kubernetes/techradar.png"
+shortcutText="Tech Radar"
+iconPath="/home/${vmUser}/Desktop"
+browserOptions=""
+createDesktopIcon "${shortcutsDirectory}" "${primaryUrl}" "${shortcutIcon}" "${shortcutText}" "${iconPath}" "${browserOptions}"
+
+
+
 # Copy desktop icons to skel directory for future users
 /usr/bin/sudo cp /home/${vmUser}/Desktop/KX.AS.CODE-Docs.desktop ${skelDirectory}/Desktop
 /usr/bin/sudo cp /home/${vmUser}/Desktop/Tech-Radar.desktop ${skelDirectory}/Desktop
