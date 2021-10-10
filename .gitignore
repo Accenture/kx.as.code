@@ -59,3 +59,5 @@ amazon-corretto*
 **/info.json
 **/kx.as.code-*_metadata.json
 /base-vm/build/jenkins/jenkins_remote/workspace/shared_workspace/kx.as.code
+**/shared_workspace
+**/ssh_key
