@@ -234,7 +234,8 @@ while :; do
                 checkDockerHubRateLimit
 
                 # Launch the component installation process
-                . ${autoSetupHome}/autoSetup.sh &> ${installationWorkspace}/${componentName}_${logTimestamp}.${retries}.log
+                logFilename=$(setLogFilename)
+                . ${autoSetupHome}/autoSetup.sh &> ${logFilename}
                 logRc=$?
                 log_info "Installation process for \"${componentName}\" returned with \$?=${logRc} and rc=$rc"
             fi

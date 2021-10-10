@@ -88,7 +88,6 @@ if [[ ${action} == "install"   ]]; then
     applicationUrls=$(cat ${componentMetadataJson} | jq -r '.urls[]?.url?' | mo)
     primaryUrl=$(echo ${applicationUrls} | cut -f1 -d' ')
     browserOptions=""
-    iconPath=${installComponentDirectory}/${shortcutIcon}
     shortcutText=$(cat ${componentMetadataJson} | jq -r '.shortcut_text')
     if [[ -z ${shortcutText} ]] || [[ ${shortcutText} == "null" ]]; then
         shortcutText="$(tr '[:lower:]' '[:upper:]' <<< ${componentName:0:1})${componentName:1}"
@@ -98,35 +97,37 @@ if [[ ${action} == "install"   ]]; then
     if [[ -n ${primaryUrl} ]]; then
         if [[ -n ${primaryUrl} ]] && [[ ${primaryUrl} != "null" ]] && [[ -f ${iconPath} ]] && [[ -n ${shortcutText} ]]; then
           shortcutIcon=$(cat ${componentMetadataJson} | jq -r '.shortcut_icon')
-          createDesktopIcon "${shortcutsDirectory}" "${primaryUrl}" "${shortcutIcon}" "${shortcutText}" "${iconPath}" "${browserOptions}"
+          iconPath=${installComponentDirectory}/${shortcutIcon}
+          createDesktopIcon "${shortcutsDirectory}" "${primaryUrl}" "${shortcutText}" "${iconPath}" "${browserOptions}"
         fi
     fi
 
     vendorDocsUrl=$(cat ${componentMetadataJson} | jq -r '.vendor_docs_url' | mo)
     if [[ -n ${vendorDocsUrl} ]] && [[ ${vendorDocsUrl} != "null" ]]; then
-      shortcutIcon=${sharedGitHome}/kx.as.code/base-vm/images/vendor_docs_icon.png
-      createDesktopIcon "${apiDocsDirectory}" "${vendorDocsUrl}" "${shortcutIcon}" "${shortcutText}" "${iconPath}" "${browserOptions}"
+      iconPath=${sharedGitHome}/kx.as.code/base-vm/images/vendor_docs_icon.png
+      createDesktopIcon "${apiDocsDirectory}" "${vendorDocsUrl}" "${shortcutText}" "${iconPath}" "${browserOptions}"
     fi
 
     # Create desktop icon to launch tool's documentation with Chrome
     apiDocsUrl=$(cat ${componentMetadataJson} | jq -r '.api_docs_url' | mo)
     if [[ -n ${apiDocsUrl} ]] && [[ ${apiDocsUrl} != "null" ]]; then
       shortcutIcon=$(cat ${componentMetadataJson} | jq -r '.shortcut_icon')
-      createDesktopIcon "${apiDocsDirectory}" "${apiDocsUrl}" "${shortcutIcon}" "${shortcutText}" "${iconPath}" "${browserOptions}"
+      iconPath=${installComponentDirectory}/${shortcutIcon}
+      createDesktopIcon "${apiDocsDirectory}" "${apiDocsUrl}"  "${shortcutText}" "${iconPath}" "${browserOptions}"
     fi
 
     # Create desktop icon to launch tool's Swagger site with Chrome
     swaggerApiDocsUrl=$(cat ${componentMetadataJson} | jq -r '.swagger_docs_url' | mo)
     if [[ -n ${swaggerApiDocsUrl} ]] && [[ ${swaggerApiDocsUrl} != "null" ]]; then
-      shortcutIcon=${sharedGitHome}/kx.as.code/base-vm/images/swagger.png
-      createDesktopIcon "${apiDocsDirectory}" "${swaggerApiDocsUrl}" "${shortcutIcon}" "${shortcutText} Swagger" "${iconPath}" "${browserOptions}"
+      iconPath=${sharedGitHome}/kx.as.code/base-vm/images/swagger.png
+      createDesktopIcon "${apiDocsDirectory}" "${swaggerApiDocsUrl}" "${shortcutText} Swagger" "${iconPath}" "${browserOptions}"
     fi
 
     # Create desktop icon to launch tool's Postman site with Chrome
     postmanApiDocsUrl=$(cat ${componentMetadataJson} | jq -r '.postman_docs_url' | mo)
     if [[ -n ${postmanApiDocsUrl} ]] && [[ ${postmanApiDocsUrl} != "null" ]]; then
-      shortcutIcon=${sharedGitHome}/kx.as.code/base-vm/images/postman.png
-      createDesktopIcon "${apiDocsDirectory}" "${postmanApiDocsUrl}" "${shortcutIcon}" "${shortcutText} Postman" "${iconPath}" "${browserOptions}"
+      iconPath=${sharedGitHome}/kx.as.code/base-vm/images/postman.png
+      createDesktopIcon "${apiDocsDirectory}" "${postmanApiDocsUrl}" "${shortcutText} Postman" "${iconPath}" "${browserOptions}"
     fi
 
 elif [[ ${action} == "upgrade"   ]]; then
