@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # Get global base variables from globalVariables.json
-. functions/getGlobalVariables.sh # source function
+source /usr/share/kx.as.code/git/kx.as.code/auto-setup/functions/getGlobalVariables.sh # source function
 getGlobalVariables # execute function
 
 # Load Central Functions
