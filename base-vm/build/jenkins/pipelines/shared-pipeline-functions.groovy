@@ -23,7 +23,7 @@ def setBuildEnvironment() {
             } else {
                 println("Kube version has not changed since the last build - v${kube_version}")
             }
-            gitDiff = sh (script: "git log ${oldGitShortCommitId}..${gitShortCommitId} --oneline --graph --decorate --no-merges --pretty='format:%C(auto)%h %ar  %C(Cyan)%s%C(reset) %cn'", returnStdout: true).trim()
+            gitDiff = sh (script: "git log ${oldGitShortCommitId}..${gitShortCommitId} --oneline --graph --decorate --no-merges --stat --pretty='format:%C(auto)%<(15,trunc)%h %<(15,trunc)%ar %<(20,trunc)%cn  %C(Cyan)%<(100,trunc)%s%C(reset)'", returnStdout: true).trim()
             currentBuild.description = gitDiff
         } else {
             currentBuild.displayName = "#${currentBuild.number}_v${kx_version}_v${kube_version}_${gitShortCommitId}"
