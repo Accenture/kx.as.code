@@ -3,6 +3,7 @@ def setBuildEnvironment() {
     if [ ! -f ./jq* ]; then
         curl -L -o jq ${jqDownloadPath}
         chmod +x ./jq
+        pwd; ls -l
     fi
     """
     kx_version = sh (script: "cat versions.json | ./jq -r '.kxascode'", returnStdout: true).trim()

@@ -22,6 +22,7 @@ node('local') {
         packerOsFolder="windows"
     }
 }
+
 pipeline {
 
     agent {
