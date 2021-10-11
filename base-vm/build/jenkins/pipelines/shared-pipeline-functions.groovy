@@ -10,23 +10,23 @@ def setBuildEnvironment() {
     gitShortCommitId = sh (script: "git rev-parse --short HEAD", returnStdout: true).trim()
     try {
         if ( currentBuild.number > 1 ) {
-            currentBuild.displayName = "#${currentBuild.number}-v${kx_version}-v${kube_version}-${gitShortCommitId}"
+            currentBuild.displayName = "#${currentBuild.number}_v${kx_version}_v${kube_version}_${gitShortCommitId}"
             println(currentBuild.displayName)
             def lastSuccessBuildName = Jenkins.instance.getItemByFullName(env.JOB_NAME).lastSuccessfulBuild.displayName
             println(lastSuccessBuildName)
-            def (oldBuildNumber, oldKxVersion, oldKubeVersion, oldGitShortCommitId) = lastSuccessBuildName.split('-')
+            def (oldBuildNumber, oldKxVersion, oldKubeVersion, oldGitShortCommitId) = lastSuccessBuildName.split('_')
             println(oldBuildNumber)
             println(oldKxVersion)
-            if ( oldKxVersion != kx_version ) {
-                println("KX.AS.CODE version has changed since the last build, ${oldKxVersion} --> ${kx_version}")
+            if ( oldKxVersion != "v${kx_version}" ) {
+                println("KX.AS.CODE version has changed since the last build, ${oldKxVersion} --> v${kx_version}")
             } else {
-                println("KX.AS.CODE version has not changed since the last build - ${kx_version}")
+                println("KX.AS.CODE version has not changed since the last build - v${kx_version}")
             }
             println(oldKubeVersion)
-            if (oldKubeVersion !=  kube_version) {
-                println("Kube version has changed since the last build, ${oldKubeVersion} --> ${kube_version}")
+            if (oldKubeVersion !=  "v${kube_version}") {
+                println("Kube version has changed since the last build, ${oldKubeVersion} --> v${kube_version}")
             } else {
-                println("Kube version has not changed since the last build - ${kube_version}")
+                println("Kube version has not changed since the last build - v${kube_version}")
             }
             println(oldGitShortCommitId)
             sh "git diff ${oldGitShortCommitId}..${gitShortCommitId}"
@@ -35,7 +35,7 @@ def setBuildEnvironment() {
         }
     } catch(Exception e) {
         println("Exception: ${e}")
-        throw e
+        //throw e
     }
 }
 
