@@ -1,3 +1,6 @@
+def kx_version
+def kube_version
+
 node('local') {
     os = sh (
         script: 'uname -s',
@@ -49,6 +52,11 @@ pipeline {
     }
 
     stages {
+        stage('Set Build Environment') {
+                    def rootDir = pwd()
+                    def functions = load "${rootDir}/shared-pipeline-functions.groovy"
+                    script.setBuildEnvironment()
+        }
         stage('Build the QCOW2 image'){
             steps {
                 script {
@@ -61,14 +69,6 @@ pipeline {
                             packerPath = packerPath.replaceAll("\\\\","/")
                         }
                         sh """
-                        if [ ! -f ./jq* ]; then
-                            curl -L -o jq ${jqDownloadPath}
-                            chmod +x ./jq
-                        fi
-                        export kx_version=\$(cat versions.json | ./jq -r '.kxascode')
-                        export kube_version=\$(cat versions.json | ./jq -r '.kubernetes')
-                        echo \${kx_version}
-                        echo \${kube_version}
                         cd base-vm/build/packer/${packerOsFolder}
                         ${packerPath}/packer build -force -only kx.as.code-main-openstack \
                             -var "compute_engine_build=${openstack_compute_engine_build}" \
