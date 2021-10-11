@@ -58,8 +58,7 @@ pipeline {
           steps {
             script {
                 functions = load "base-vm/build/jenkins/pipelines/shared-pipeline-functions.groovy"
-                println(functions)
-                functions.setBuildEnvironment()
+                (kx_version, kube_version) = functions.setBuildEnvironment()
             }
           }
         }

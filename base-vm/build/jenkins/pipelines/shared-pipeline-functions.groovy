@@ -43,6 +43,7 @@ def setBuildEnvironment() {
         // Do not fail the build because there was an error setting the build name
         println("Exception: ${e}")
     }
+    return [ "${kx_version}", "${kube_version}" ]
 }
 
 return this
