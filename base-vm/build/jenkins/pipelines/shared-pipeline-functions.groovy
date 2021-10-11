@@ -9,7 +9,7 @@ def setBuildEnvironment() {
     kube_version = sh (script: "cat versions.json | ./jq -r '.kubernetes'", returnStdout: true).trim()
     gitShortCommitId = sh (script: "git rev-parse --short HEAD", returnStdout: true).trim()
     try {
-        if ( currentBuild.displayName > 1 ) {
+        if ( currentBuild.number > 1 ) {
             currentBuild.displayName = "#${currentBuild.number}-v${kx_version}-v${kube_version}-${gitShortCommitId}"
             println(currentBuild.displayName)
             def lastSuccessBuildName = Jenkins.instance.getItem(env.JOB_NAME).lastSuccessfulBuild.displayName
