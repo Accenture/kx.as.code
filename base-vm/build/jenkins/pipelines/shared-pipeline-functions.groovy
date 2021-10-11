@@ -12,7 +12,7 @@ def setBuildEnvironment() {
         if ( currentBuild.number > 1 ) {
             currentBuild.displayName = "#${currentBuild.number}-v${kx_version}-v${kube_version}-${gitShortCommitId}"
             println(currentBuild.displayName)
-            def lastSuccessBuildName = Jenkins.instance.getItem(env.JOB_NAME).lastSuccessfulBuild.displayName
+            def lastSuccessBuildName = Jenkins.instance.getItemByFullName(env.JOB_NAME).lastSuccessfulBuild.displayName
             println(lastSuccessBuildName)
             def (oldBuildNumber, oldKxVersion, oldKubeVersion, oldGitShortCommitId) = lastSuccessBuildName.split('-')
             println(oldBuildNumber)
