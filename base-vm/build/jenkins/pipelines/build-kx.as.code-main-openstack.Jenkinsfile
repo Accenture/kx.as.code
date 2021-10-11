@@ -55,8 +55,7 @@ pipeline {
         stage('Set Build Environment') {
           steps {
             script {
-                def rootDir = pwd()
-                def functions = load "${rootDir}/shared-pipeline-functions.groovy"
+                def functions = load "base-vm/build/jenkins/pipelines/shared-pipeline-functions.groovy"
                 functions.setBuildEnvironment()
             }
           }
