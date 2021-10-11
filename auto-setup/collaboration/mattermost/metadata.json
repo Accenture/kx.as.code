@@ -59,7 +59,9 @@
     "vendor_docs_url": "https://docs.mattermost.com/",
     "health_check_command": "",
     "expected_check_command_response": "",
-    "pre_install_scripts": [],
+    "pre_install_scripts": [
+        "createOidcConfig.sh"
+    ],
     "post_install_scripts": [
         "createInitialAdminUser.sh",
         "createNotificationUsers.sh",
