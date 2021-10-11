@@ -43,7 +43,9 @@ def setBuildEnvironment() {
         // Do not fail the build because there was an error setting the build name
         println("Exception: ${e}")
     }
-    return [ "${kx_version}", "${kube_version}" ]
+    println ("KX.AS.CODE Version to be returned: ${kx_version}")
+    println ("Kubernetes Version to be returned: ${kube_version}")
+    return [ kx_version, kube_version ]
 }
 
 return this
