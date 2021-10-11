@@ -21,7 +21,12 @@ node('local') {
 
 pipeline {
 
-    agent { label "local" }
+    agent {
+        node {
+            label "local"
+            customWorkspace "${shared_workspace}"
+        }
+    }
 
     options {
         ansiColor('xterm')
@@ -45,20 +50,6 @@ pipeline {
     }
 
     stages {
-
-        stage('Clone the repository'){
-            when {
-                allOf {
-                  expression{terraform_action == 'plan'}
-                }
-            }
-            steps {
-                script {
-                    checkout([$class: 'GitSCM', branches: [[name: "$git_source_branch"]], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'GIT_KX.AS.CODE_SOURCE', url: '${git_source_url}']]])
-                }
-            }
-        }
-
         stage('Execute Terraform Action'){
             environment {
                 OS_EXTERNAL_NETWORK_ID = "${openstack_external_network_id}"
@@ -78,7 +69,7 @@ pipeline {
                         env
                         def terraformPath = tool "terraform-${os}"
                         unset OS_SERVICE_TOKEN
-                        cd profiles/terraform-openstack-demo1
+                        cd profiles/terraform-openstack
                         pip3 install python-openstackclient
                         if [[ ! -f ./jq ]]; then
                             curl -o jq ${jqDownloadUrl}

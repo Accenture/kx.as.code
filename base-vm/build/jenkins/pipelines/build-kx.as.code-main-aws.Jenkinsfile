@@ -21,7 +21,12 @@ node('local') {
 
 pipeline {
 
-    agent { label "local" }
+    agent {
+        node {
+            label "local"
+            customWorkspace "${shared_workspace}"
+        }
+    }
 
     options {
         ansiColor('xterm')
@@ -45,15 +50,6 @@ pipeline {
     }
 
     stages {
-
-        stage('Clone the repository'){
-            steps {
-                script {
-                    checkout([$class: 'GitSCM', branches: [[name: "$git_source_branch"]], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'GIT_KX.AS.CODE_SOURCE', url: '${git_source_url}']]])
-                }
-            }
-        }
-
         stage('Build the AMI'){
             steps {
                 script {
@@ -116,7 +112,6 @@ pipeline {
                         ./kx.as.code-main-cloud-profiles.json
                         """
                     }}}}
-                }
             }
         }
     }

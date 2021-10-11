@@ -50,20 +50,20 @@
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
           <name>shared_workspace</name>
-          <description>Shared workspace for the KX.AS.CODE start/stop/destroy jobs</description>
-          <defaultValue>{{virtualbox_shared_directory_path}}</defaultValue>
+          <description>Shared workspace for the KX.AS.CODE jobs</description>
+          <defaultValue>{{shared_workspace_directory_path}}</defaultValue>
           <trim>false</trim>
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
           <name>kx_main_box_location</name>
           <description>Location of built Vagrant box for KX.AS.CODE Main Node</description>
-          <defaultValue>GeneratedJobs/01_Build_KX.AS.CODE_Main/base-vm/boxes/virtualbox-${kx_version}/kx.as.code-main-${kx_version}.box</defaultValue>
+          <defaultValue>base-vm/boxes/virtualbox-${kx_version}/kx.as.code-main-${kx_version}.box</defaultValue>
           <trim>false</trim>
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
           <name>kx_node_box_location</name>
           <description>Location of built Vagrant box for KX.AS.CODE Cluster Node</description>
-          <defaultValue>GeneratedJobs/02_Build_KX.AS.CODE_Node/base-vm/boxes/virtualbox-${kx_version}/kx.as.code-node-${kx_version}.box</defaultValue>
+          <defaultValue>base-vm/boxes/virtualbox-${kx_version}/kx.as.code-node-${kx_version}.box</defaultValue>
           <trim>false</trim>
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>

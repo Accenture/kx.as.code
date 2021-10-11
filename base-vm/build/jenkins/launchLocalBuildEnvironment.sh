@@ -112,6 +112,7 @@ if [[ ${override_action} == "recreate"   ]] || [[ ${override_action} == "destroy
             echo -e "${red}- [INFO] jenkins_home deleted${nc}"
             if [[ ${override_action} == "fully-destroy" ]]; then
                 echo -e "${red}- [INFO] Deleting jenkins_remote directory...${nc}"
+                rm -f ./jenkins_remote/workspace/shared_workspace/kx.as.code || true
                 rm -rf ./jenkins_remote || true
                 echo -e "${red}- [INFO] jenkins_remote deleted${nc}"
             fi
@@ -337,19 +338,12 @@ if [ ! -d "${jenkins_home}/jobs" ] || [[ ${override_action} == "recreate"   ]] |
 fi
 
 # Create shared directories for Vagrant and Terraform jobs
-export virtualbox_shared_directory_path="${workdir_absolute_path}/workspace/VirtualBox/shared_workspace"
-if [[ ! -d ${virtualbox_shared_directory_path}   ]]; then
-    mkdir -p "${virtualbox_shared_directory_path}"
-fi
+export shared_workspace_base_directory_path="${workdir_absolute_path}/workspace/shared_workspace"
+export shared_workspace_directory_path="${shared_workspace_base_directory_path}/kx.as.code"
 
-export parallels_shared_directory_path="${workdir_absolute_path}/workspace/Parallels/shared_workspace"
-if [[ ! -d ${parallels_shared_directory_path}   ]]; then
-    mkdir -p "${parallels_shared_directory_path}"
-fi
-
-export vmware_workstation_shared_directory_path="${workdir_absolute_path}/workspace/VMWare_Workstation/shared_workspace"
-if [[ ! -d ${vmware_workstation_shared_directory_path}   ]]; then
-    mkdir -p "${vmware_workstation_shared_directory_path}"
+if [[ ! -L ${shared_workspace_directory_path} ]] && [[ ! -e ${shared_workspace_directory_path} ]]; then
+  mkdir -p ${shared_workspace_base_directory_path}
+  ln -s ../../../../../../../kx.as.code ${shared_workspace_base_directory_path}
 fi
 
 # Replace variable placeholders in Jenkins jobs

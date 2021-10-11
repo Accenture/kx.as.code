@@ -1,21 +1,18 @@
 {
     "config": {
         "vm_properties": {
-            "main_node_count": 1,
+            "main_node_count": 3,
             "admin_main_node_cpu_cores": 2,
             "admin_main_node_memory": 8196,
             "replica_main_node_cpu_cores": 2,
-            "replica_main_node_memory": 8196,
-            "worker_node_count": 0,
+            "replica_main_node_memory": 6144,
+            "worker_node_count": 4,
             "worker_node_cpu_cores": 2,
-            "worker_node_memory": 8196,
+            "worker_node_memory": 6144,
             "environment_prefix": "demo1",
-            "3d_acceleration": "off",
-            "kx_sync_folder_path": "./KX_Share",
-            "kx_main_box_location": "../../../01_Build_KX.AS.CODE_Main/base-vm/boxes/virtualbox-0.8.1/kx.as.code-main-0.8.1.box",
-            "kx_worker_box_location": "../../../02_Build_KX.AS.CODE_Node/base-vm/boxes/virtualbox-0.8.1/kx.as.code-node-0.8.1.box"
+            "kx_sync_folder_path": "./KX_Share"
         },
-        "allowWorkloadsOnMaster": true,
+        "allowWorkloadsOnMaster": false,
         "disableSessionTimeout": true,
         "certificationMode": false,
         "disableLinuxDesktop": false,
@@ -34,25 +31,11 @@
         "baseDomain": "kx-as-code.local",
         "baseUser": "kx.hero",
         "basePassword": "L3arnandshare",
-        "baseIpType": "static",
-        "dnsResolution": "static",
+        "baseIpType": "dynamic",
+        "dnsResolution": "hybrid",
         "metalLbIpRange": {
             "ipRangeStart": "10.10.76.100",
             "ipRangeEnd": "10.10.76.150"
-        },
-        "staticNetworkSetup": {
-            "baseFixedIpAddresses": {
-                "kx-main1": "10.100.76.200",
-                "kx-main2": "10.100.76.201",
-                "kx-main3": "10.100.76.202",
-                "kx-worker1": "10.100.76.203",
-                "kx-worker2": "10.100.76.204",
-                "kx-worker3": "10.100.76.205",
-                "kx-worker4": "10.100.76.206"
-            },
-            "gateway": "10.100.76.2",
-            "dns1": "10.100.76.200",
-            "dns2": "8.8.8.8"
         },
         "docker": {
             "dockerhub_username": "",
