@@ -38,3 +38,5 @@ def setBuildEnvironment() {
         throw e
     }
 }
+
+return this

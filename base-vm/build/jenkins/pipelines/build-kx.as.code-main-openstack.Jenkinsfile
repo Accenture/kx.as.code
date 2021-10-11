@@ -1,5 +1,6 @@
 def kx_version
 def kube_version
+def functions
 
 node('local') {
     os = sh (
@@ -55,7 +56,8 @@ pipeline {
         stage('Set Build Environment') {
           steps {
             script {
-                def functions = load "base-vm/build/jenkins/pipelines/shared-pipeline-functions.groovy"
+                functions = load "base-vm/build/jenkins/pipelines/shared-pipeline-functions.groovy"
+                println(functions)
                 functions.setBuildEnvironment()
             }
           }
