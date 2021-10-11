@@ -36,8 +36,8 @@ def setBuildEnvironment() {
             currentBuild.displayName = "#${currentBuild.number}-v${kx_version}-v${kube_version}-${gitShortCommitId}"
         }
     } catch(Exception e) {
+        // Do not fail the build because there was an error setting the build name
         println("Exception: ${e}")
-        throw e
     }
 }
 
