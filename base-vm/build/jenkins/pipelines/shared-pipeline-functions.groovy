@@ -29,7 +29,9 @@ def setBuildEnvironment() {
                 println("Kube version has not changed since the last build - v${kube_version}")
             }
             println(oldGitShortCommitId)
-            sh "git diff ${oldGitShortCommitId}..${gitShortCommitId}"
+            //sh "git diff ${oldGitShortCommitId}..${gitShortCommitId}"
+            gitDiff = sh (script: "git diff ${oldGitShortCommitId}..${gitShortCommitId}", returnStdout: true).trim()
+            currentBuild.description = gitDiff
         } else {
             currentBuild.displayName = "#${currentBuild.number}-v${kx_version}-v${kube_version}-${gitShortCommitId}"
         }
