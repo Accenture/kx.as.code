@@ -12,9 +12,9 @@ def setBuildEnvironment() {
         if ( currentBuild.number > 1 ) {
             currentBuild.displayName = "#${currentBuild.number}_v${kx_version}_v${kube_version}_${gitShortCommitId}"
             println(currentBuild.displayName)
-            def lastSuccessBuildName = Jenkins.instance.getItemByFullName(env.JOB_NAME).lastSuccessfulBuild.displayName
+            def lastCompletedBuildName = Jenkins.instance.getItemByFullName(env.JOB_NAME).lastCompletedBuild.displayName
             println(lastSuccessBuildName)
-            def (oldBuildNumber, oldKxVersion, oldKubeVersion, oldGitShortCommitId) = lastSuccessBuildName.split('_')
+            def (oldBuildNumber, oldKxVersion, oldKubeVersion, oldGitShortCommitId) = lastCompletedBuildName.split('_')
             println(oldBuildNumber)
             println(oldKxVersion)
             if ( oldKxVersion != "v${kx_version}" ) {
@@ -30,7 +30,7 @@ def setBuildEnvironment() {
             }
             println(oldGitShortCommitId)
             //sh "git diff ${oldGitShortCommitId}..${gitShortCommitId}"
-            gitDiff = sh (script: "git diff ${oldGitShortCommitId}..${gitShortCommitId}", returnStdout: true).trim()
+            gitDiff = sh (script: "git log ${oldGitShortCommitId}..${gitShortCommitId} --oneline --graph --decorate --no-merges", returnStdout: true).trim()
             currentBuild.description = gitDiff
         } else {
             currentBuild.displayName = "#${currentBuild.number}-v${kx_version}-v${kube_version}-${gitShortCommitId}"
