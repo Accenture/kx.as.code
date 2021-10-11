@@ -3,9 +3,9 @@ def setBuildEnvironment() {
     if [ ! -f ./jq* ]; then
         curl -L -o jq ${jqDownloadPath}
         chmod +x ./jq
-        pwd; ls -l
     fi
     """
+    sh "pwd; ls -l"
     kx_version = sh (script: "cat versions.json | ./jq -r '.kxascode'", returnStdout: true).trim()
     kube_version = sh (script: "cat versions.json | ./jq -r '.kubernetes'", returnStdout: true).trim()
     gitShortCommitId = sh (script: "git rev-parse --short HEAD", returnStdout: true).trim()
@@ -14,7 +14,7 @@ def setBuildEnvironment() {
             currentBuild.displayName = "#${currentBuild.number}_v${kx_version}_v${kube_version}_${gitShortCommitId}"
             println(currentBuild.displayName)
             def lastCompletedBuildName = Jenkins.instance.getItemByFullName(env.JOB_NAME).lastCompletedBuild.displayName
-            println(lastSuccessBuildName)
+            println(lastCompletedBuildName)
             def (oldBuildNumber, oldKxVersion, oldKubeVersion, oldGitShortCommitId) = lastCompletedBuildName.split('_')
             println(oldBuildNumber)
             println(oldKxVersion)
