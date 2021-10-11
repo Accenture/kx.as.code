@@ -37,7 +37,7 @@ def setBuildEnvironment() {
             gitDiff = sh (script: "git log ${oldGitShortCommitId}..${gitShortCommitId} --oneline --graph --decorate --no-merges", returnStdout: true).trim()
             currentBuild.description = gitDiff
         } else {
-            currentBuild.displayName = "#${currentBuild.number}-v${kx_version}-v${kube_version}-${gitShortCommitId}"
+            currentBuild.displayName = "#${currentBuild.number}_v${kx_version}_v${kube_version}_${gitShortCommitId}"
         }
     } catch(Exception e) {
         // Do not fail the build because there was an error setting the build name
