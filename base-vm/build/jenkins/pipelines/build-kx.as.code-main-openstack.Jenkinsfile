@@ -55,7 +55,7 @@ pipeline {
         stage('Set Build Environment') {
                     def rootDir = pwd()
                     def functions = load "${rootDir}/shared-pipeline-functions.groovy"
-                    script.setBuildEnvironment()
+                    functions.setBuildEnvironment()
         }
         stage('Build the QCOW2 image'){
             steps {
