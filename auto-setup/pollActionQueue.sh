@@ -59,6 +59,9 @@ getNetworkConfiguration
 # Source profile-config.json set for this KX.AS.CODE installation
 getProfileConfiguration
 
+# Configure network, as well as Bind9 and HTTP(S) Proxy settings
+configureNetwork
+
 # Configure Keyboard language and layout settings
 configureKeyboardSettings
 
@@ -231,7 +234,8 @@ while :; do
                 checkDockerHubRateLimit
 
                 # Launch the component installation process
-                . ${autoSetupHome}/autoSetup.sh &> ${installationWorkspace}/${componentName}_${logTimestamp}.${retries}.log
+                logFilename=$(setLogFilename)
+                . ${autoSetupHome}/autoSetup.sh &> ${logFilename}
                 logRc=$?
                 log_info "Installation process for \"${componentName}\" returned with \$?=${logRc} and rc=$rc"
             fi

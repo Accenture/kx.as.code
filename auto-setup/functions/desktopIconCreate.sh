@@ -2,10 +2,9 @@ createDesktopIcon() {
 
   shortcutsDirectory="${1}"
   urlToOpen=${2}
-  shortcutIcon="${3}"
-  shortcutText="${4}"
-  iconPath="${5}"
-  browserOptions="${6}"
+  shortcutText="${3}"
+  iconPath="${4}"
+  browserOptions="${5}"
 
   mkdir -p "${shortcutsDirectory}"
   chown ${vmUser}:${vmUser} "${shortcutsDirectory}"
@@ -29,13 +28,12 @@ createDesktopIcon() {
   chmod 755 "${shortcutsDirectory}"/"${shortcutText}"
   chown ${vmUser}:${vmUser} "${shortcutsDirectory}"/"${shortcutText}"
 
-
   # Ensure shortcut is available in application menu
-  sudo cp /home/$vmUser/Desktop/$FILENAME /usr/share/applications
+  #sudo cp /home/$vmUser/Desktop/$FILENAME /usr/share/applications
 
   # Ensure shortcut has correct permissions
-  chmod 755 /home/$VM_USER/Desktop/$FILENAME
-  chown $VM_USER:$VM_USER /home/$VM_USER/Desktop/$FILENAME
-  dbus-launch gio set /home/$VM_USER/Desktop/$FILENAME "metadata::trusted" true || true
+  #chmod 755 /home/$vmUser/Desktop/$FILENAME
+  #chown $vmUser:$vmUser /home/$vmUser/Desktop/$FILENAME
+  #dbus-launch gio set /home/$vmUser/Desktop/$FILENAME "metadata::trusted" true || true
 
 }
