@@ -37,7 +37,7 @@ def setBuildEnvironment() {
         }
     } catch(Exception e) {
         println("Exception: ${e}")
-        //throw e
+        throw e
     }
 }
 
