@@ -49,6 +49,15 @@ pipeline {
     }
 
     stages {
+        stage('Set Build Environment') {
+          steps {
+            script {
+                functions = load "base-vm/build/jenkins/pipelines/shared-pipeline-functions.groovy"
+                println(functions)
+                (kx_version, kube_version) = functions.setBuildEnvironment()
+            }
+          }
+        }
         stage('Execute Vagrant Action'){
             steps {
                 script {
@@ -57,6 +66,9 @@ pipeline {
                         if [ ! -f ./jq* ]; then
                             curl -L -o jq ${jqDownloadPath}
                             chmod +x ./jq
+                        fi
+                        if [ -z \$(vagrant plugin list | grep "vagrant-vmware-desktop" ) ]; then
+                            vagrant plugin install vagrant-vmware-desktop
                         fi
                         export kx_version=\$(cat versions.json | ./jq -r '.kxascode')
                         echo \${kx_version}

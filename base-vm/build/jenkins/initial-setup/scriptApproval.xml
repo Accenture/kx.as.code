@@ -2,7 +2,7 @@
 <scriptApproval plugin="script-security@1.77">
   <approvedScriptHashes/>
   <approvedSignatures>
-    <string>method hudson.model.ItemGroup getItem java.lang.String</string>
+    <string>method jenkins.model.Jenkins getItemByFullName java.lang.String</string>
     <string>staticMethod jenkins.model.Jenkins getInstance</string>
   </approvedSignatures>
   <aclApprovedSignatures/>

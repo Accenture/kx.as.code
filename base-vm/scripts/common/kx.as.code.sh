@@ -15,7 +15,9 @@ else
     # Customize boot splash screen
     sudo apt-get install -y plymouth-themes
     sudo cp -iRv ${INSTALLATION_WORKSPACE}/theme/plymouth/kx.as.code /usr/share/plymouth/themes/
-    sudo plymouth-set-default-theme -R kx.as.code
+    echo "DEBUG: Calling sudo plymouth-set-default-theme -R kx.as.code"
+    #sudo plymouth-set-default-theme -R kx.as.code
+    echo "DEBUG: Completed sudo plymouth-set-default-theme -R kx.as.code"
 fi
 
 cat /etc/default/grub

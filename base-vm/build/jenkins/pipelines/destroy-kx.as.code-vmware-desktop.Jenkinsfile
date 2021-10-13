@@ -46,11 +46,23 @@ pipeline {
     }
 
     stages {
+        stage('Set Build Environment') {
+          steps {
+            script {
+                functions = load "base-vm/build/jenkins/pipelines/shared-pipeline-functions.groovy"
+                println(functions)
+                (kx_version, kube_version) = functions.setBuildEnvironment()
+            }
+          }
+        }
         stage('Execute Vagrant Action'){
             steps {
                 script {
                     sh """
                     cd profiles/vagrant-vmware-desktop
+                    if [ -z \$(vagrant plugin list | grep "vagrant-vmware-desktop" ) ]; then
+                        vagrant plugin install vagrant-vmware-desktop
+                    fi
                     vagrant halt
                     vagrant destroy -f
                     """
