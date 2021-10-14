@@ -17,7 +17,7 @@
   <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
   <triggers/>
   <concurrentBuild>false</concurrentBuild>
-  <customWorkspace>{{shared_workspace_directory_path}}/kx.as.code</customWorkspace>
+  <customWorkspace>{{shared_workspace_directory_path}}</customWorkspace>
   <builders>
     <javaposse.jobdsl.plugin.ExecuteDslScripts plugin="job-dsl@1.77">
       <targets>base-vm/build/jenkins/job_dsl/start_kx_as_code_parallels.groovy</targets>
