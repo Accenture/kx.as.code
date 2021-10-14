@@ -422,7 +422,7 @@ fi
 
 
 # Keep trying to join Kubernetes cluster until successful
-while [[ ! -f /var/lib/kubelet/c  onfig.yaml ]]; do
+while [[ ! -f /var/lib/kubelet/config.yaml ]]; do
   /usr/bin/sudo ${installationWorkspace}/kubeJoin.sh
   echo "Waiting for kx-worker/kx-main to be connected successfully to main node"
   sleep 30
