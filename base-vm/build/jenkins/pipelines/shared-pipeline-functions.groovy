@@ -55,10 +55,10 @@ def setBuildEnvironment() {
                     """, returnStdout: true).trim()
             } else {
                 println("Getting Git-Log on ${os}")
-                gitDiff = sh(script: '''    
-                         parsed_git_source_url=\\$(echo ${git_source_url} | sed 's/\\\\.git//g')
-                         git log ${oldGitShortCommitId}..${gitShortCommitId} --oneline --no-merges --stat --pretty='format:<a style="color: #ff8c00" href="${parsed_git_source_url}/commit/%h">%h%<(15,trunc)</a> ### %<(15,trunc)%ar ### %<(20,trunc)%cn ### <span style="color: green"> %<(100,trunc)%s </span>' | sed 's/<br>/\\\\&lt\\\\;br\\\\&gt\\\\;/g' | sed 's/<p>/\\\\&lt\\\\;p\\\\&gt\\\\;/g' | rev | sed -e ':b; /###/! s/^\\\\([^|]*\\\\)*\\\\-/\\\\1§/; tb;' | rev | sed 's/§/<span style="color: red">-<\\\\/span>/g' | rev | sed -e ':b; /###/! s/^\\\\([^|]*\\\\)*+/\\\\1§/; tb;' | rev | sed 's/\\$/<br>/g' | sed 's/§/<span style="color: green">-<\\\\/span>/g' | sed 's/###/|/g'
-                    ''', returnStdout: true).trim()
+                gitDiff = sh(script: """   
+                         parsed_git_source_url=\$(echo ${git_source_url} | sed 's/\\.git//g')
+                         git log ${oldGitShortCommitId}..${gitShortCommitId} --oneline --no-merges --stat --pretty='format:<a style=\"color: #ff8c00\" href=\"${git_source_url}/commit/%h\">%h%<(15,trunc)</a> ### %<(15,trunc)%ar ### %<(20,trunc)%cn ### <span style=\"color: green\"> %<(100,trunc)%s </span>' | sed 's/<br>/\\&lt\\;br\\&gt\\;/g' | sed 's/<p>/\\&lt\\;p\\&gt\\;/g' | rev | sed -e ':b; /###/! s/^\\([^|]*\\)*\\-/\\1§/; tb;' | rev | sed 's/§/<span style=\"color: red\">-<\\/span>/g' | rev | sed -e ':b; /###/! s/^\\([^|]*\\)*+/\\1§/; tb;' | rev | sed 's/\$/<br>/g' | sed 's/§/<span style=\"color: green\">-<\\/span>/g' | sed 's/###/|/g'
+                    """, returnStdout: true).trim()
             }
             header = '<!DOCTYPE html PUBLIC"-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/></head><div style="font-family:monospace,Courier;font-size:12px">'
             footer = "</div></html>"
