@@ -11,7 +11,7 @@ function Red
 
 function Orange
 {
-    process { Write-Host $_ -ForegroundColor Orange }
+    process { Write-Host $_ -ForegroundColor DarkYellow }
 }
 
 function Blue
@@ -294,12 +294,43 @@ if ( ! $javaBinary ) {
 # Create shared workspace directory for Vagrant and Terraform jobs
 $shared_workspace_base_directory_path = "$WORKING_DIRECTORY\workspace\shared_workspace"
 $shared_workspace_directory_path = "$shared_workspace_base_directory_path\kx.as.code"
-$git_root_path = git rev-parse --show-toplevel
+$git_root_path = $( & git rev-parse --show-toplevel )
+
+if ( ( Test-Path $shared_workspace_directory_path -PathType Container ) ) {
+    if ( ! (Get-Item "$shared_workspace_directory_path").LinkType -eq "SymbolicLink" ) {
+    Write-Output "Seems there is a kx.as.code directory where a symbolic link was expected (under $shared_workspace_base_directory_path). Try deleting it and re-running this script" | Red
+    exit
+    }
+}
 
 if ( ! ( Test-Path -Path $shared_workspace_directory_path ) )
 {
+    $adminUserRole = ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")
+    Write-Output "Is admin? --> $adminUserRole"
+    if ( -not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator") ) {
+        Write-Output "In a moment you will be asked to approve a task that requires administrative privileges" | Orange
+        Write-Output "The task is to create a symbolic link in the shared workspace to the Git repository for the Jenkins jobs to use" | Orange
+        Write-Output "The impact of not approving this, is that the Jenkins jobs will not work, as they will not have access to the KX.AS.CODE Git repository" | Orange
+        Write-Output "--> Hit <enter> to continue or <ctrl-c> to cancel and exit this script" | Orange
+        pause
+    }
+    Write-Output "Creating workspace path"
     New-Item -Path "$shared_workspace_base_directory_path" -ItemType "directory" -ea 0
-    powershell.exe -NoProfile -ExecutionPolicy Unrestricted -Command "& {Start-Process PowerShell -ArgumentList '-NoProfile -ExecutionPolicy Unrestricted -Command New-Item -Path $shared_workspace_directory_path -ItemType SymbolicLink -Value $git_root_path;pause' -Verb RunAs}";
+    powershell.exe -NoProfile -ExecutionPolicy Unrestricted -Command "& {Start-Process PowerShell -ArgumentList '-NoProfile -ExecutionPolicy Unrestricted -Command New-Item -Path $shared_workspace_directory_path -ItemType SymbolicLink -Value $git_root_path' -Verb RunAs}";
+    for ($counter = 1; $counter -le 6; $counter++ ) {
+        # Checking that the Symbolic link was created
+        if ( -not ( & dir $shared_workspace_base_directory_path -force | ?{$_.LinkType} | select FullName,LinkType,Target ) ) {
+            Write-Output "The kx.as.code symbolic link under $shared_workspace_base_directory_path does not exist. Will check 5 times -> [Check #$counter]" | Orange
+            if ( ( Test-Path $shared_workspace_directory_path -PathType Container ) ) {
+                Write-Output "Seems there is a kx.as.code directory where a symbolic link was expected. Try deleting it and re-running this script"
+                exit
+            }
+        } else {
+            Write-Output "Found the kx.as.code symbolic link under $shared_workspace_base_directory_path. Continuing..." | Green
+            break
+        }
+        Start-Sleep -Seconds 1
+    }
 }
 
 # Replace mustache variables in job config.xml files
