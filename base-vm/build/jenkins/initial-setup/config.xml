@@ -110,7 +110,7 @@
           <default>
             <comparator class="hudson.util.CaseInsensitiveComparator" reference="../../../../../../views/com.smartcodeltd.jenkinsci.plugins.buildmonitor.BuildMonitorView/jobNames/comparator"/>
           </default>
-          <int>3</int>
+          <int>8</int>
           <string>BLUE</string>
           <string>\033[34m</string>
           <string>GREEN</string>
