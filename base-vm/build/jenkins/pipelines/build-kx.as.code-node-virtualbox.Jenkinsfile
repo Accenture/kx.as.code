@@ -49,8 +49,8 @@ pipeline {
                     -var "video_memory=128" \
                     -var "hostname=${kx_node_hostname}" \
                     -var "domain=${kx_domain}" \
-                    -var "version=\${kx_version}" \
-                    -var "kube_version=\${kube_version}" \
+                    -var "version=${kx_version}" \
+                    -var "kube_version=${kube_version}" \
                     -var "vm_user=${kx_vm_user}" \
                     -var "vm_password=${kx_vm_password}" \
                     -var "base_image_ssh_user=${vagrant_ssh_username}" \
