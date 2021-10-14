@@ -1,10 +1,34 @@
 def setBuildEnvironment() {
+
+    os = sh (
+        script: 'uname -s',
+        returnStdout: true
+    ).toLowerCase().trim()
+    if ( os == "darwin" ) {
+        echo "Running on Mac"
+        packerOsFolder="darwin-linux"
+        jqDownloadPath="${JQ_DARWIN_DOWNLOAD_URL}"
+        vmWareDiskUtilityPath="/System/Volumes/Data/Applications/VMware Fusion.app/Contents/Library/vmware-vdiskmanager"
+    } else if ( os == "linux" ) {
+        echo "Running on Linux"
+        packerOsFolder="darwin-linux"
+        jqDownloadPath="${JQ_LINUX_DOWNLOAD_URL}"
+        vmWareDiskUtilityPath=""
+    } else {
+        echo "Running on Windows"
+        os="windows"
+        packerOsFolder="windows"
+        jqDownloadPath="${JQ_WINDOWS_DOWNLOAD_URL}"
+        vmWareDiskUtilityPath="c:/Program Files (x86)/VMware/VMware Workstation/vmware-vdiskmanager.exe"
+    }
+
     sh """
     if [ ! -f ./jq* ]; then
         curl -L -o jq ${jqDownloadPath}
         chmod +x ./jq
     fi
     """
+
     kx_version = sh (script: "cat versions.json | ./jq -r '.kxascode'", returnStdout: true).trim()
     kube_version = sh (script: "cat versions.json | ./jq -r '.kubernetes'", returnStdout: true).trim()
     gitShortCommitId = sh (script: "git rev-parse --short HEAD", returnStdout: true).trim()

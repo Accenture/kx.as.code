@@ -1,21 +1,12 @@
+def functions
+def kx_version
+def kube_version
+
 node('local') {
-    os = sh (
-        script: 'uname -s',
-        returnStdout: true
-    ).toLowerCase().trim()
-    if ( os == "darwin" ) {
-        echo "Running on Mac"
-        packerOsFolder="darwin-linux"
-        jqDownloadUrl="${JQ_DARWIN_DOWNLOAD_URL}"
-    } else if ( os == "linux" ) {
-        echo "Running on Linux"
-        packerOsFolder="darwin-linux"
-        jqDownloadUrl="${JQ_LINUX_DOWNLOAD_URL}"
-    } else {
-        echo "Running on Windows"
-        os="windows"
-        packerOsFolder="windows"
-        jqDownloadUrl="${JQ_WINDOWS_DOWNLOAD_URL}"
+    dir(shared_workspace) {
+        functions = load "base-vm/build/jenkins/pipelines/shared-pipeline-functions.groovy"
+        println(functions)
+        (kx_version, kube_version) = functions.setBuildEnvironment()
     }
 }
 
@@ -24,7 +15,7 @@ pipeline {
     agent {
         node {
             label "local"
-            customWorkspace "${shared_workspace}"
+            customWorkspace shared_workspace
         }
     }
 
@@ -71,9 +62,6 @@ pipeline {
                         unset OS_SERVICE_TOKEN
                         cd profiles/terraform-openstack
                         pip3 install python-openstackclient
-                        if [[ ! -f ./jq ]]; then
-                            curl -o jq ${jqDownloadUrl}
-                        fi
                         openstack image list -f json
                         if [[ -z "${OS_KX_MAIN_IMAGE_ID}" ]]; then
                             export TF_VAR_KX_MAIN_IMAGE_ID=\$(openstack image list -f json | jq -r '.[] | select(.Name=="kx.as.code-worker-demo-0.6.7") | .ID')

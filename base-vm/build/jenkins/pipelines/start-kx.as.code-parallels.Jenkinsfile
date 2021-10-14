@@ -1,21 +1,12 @@
+def functions
+def kx_version
+def kube_version
+
 node('local') {
-    os = sh (
-        script: 'uname -s',
-        returnStdout: true
-    ).toLowerCase().trim()
-    if ( os == "darwin" ) {
-        echo "Running on Mac"
-        packerOsFolder="darwin-linux"
-        jqDownloadPath="${JQ_DARWIN_DOWNLOAD_URL}"
-    } else if ( os == "linux" ) {
-        echo "Running on Linux"
-        packerOsFolder="darwin-linux"
-        jqDownloadPath="${JQ_LINUX_DOWNLOAD_URL}"
-    } else {
-        echo "Running on Windows"
-        os="windows"
-        jqDownloadPath="${JQ_WINDOWS_DOWNLOAD_URL}"
-        packerOsFolder="windows"
+    dir(shared_workspace) {
+        functions = load "base-vm/build/jenkins/pipelines/shared-pipeline-functions.groovy"
+        println(functions)
+        (kx_version, kube_version) = functions.setBuildEnvironment()
     }
 }
 
@@ -24,7 +15,7 @@ pipeline {
     agent {
         node {
             label "local"
-            customWorkspace "${shared_workspace}"
+            customWorkspace shared_workspace
         }
     }
 
@@ -51,12 +42,6 @@ pipeline {
                 script {
                     withCredentials([usernamePassword(credentialsId: 'DOCKERHUB_ACCOUNT', passwordVariable: 'dockerHubPassword', usernameVariable: 'dockerHubUsername')]) {
                         sh """
-                        if [ ! -f ./jq* ]; then
-                            curl -L -o jq ${jqDownloadPath}
-                            chmod +x ./jq
-                        fi
-                        export kx_version=\$(cat versions.json | ./jq -r '.kxascode')
-                        echo \${kx_version}
                         export kxMainBoxLocation=${kx_main_box_location}
                         export kxNodeBoxLocation=${kx_node_box_location}
                         export dockerHubEmail=${dockerhub_email}

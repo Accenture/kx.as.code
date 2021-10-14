@@ -1,18 +1,12 @@
+def functions
+def kx_version
+def kube_version
+
 node('local') {
-    os = sh (
-        script: 'uname -s',
-        returnStdout: true
-    ).toLowerCase().trim()
-    if ( os == "darwin" ) {
-        echo "Running on Mac"
-        packerOsFolder="darwin-linux"
-    } else if ( os == "linux" ) {
-        echo "Running on Linux"
-        packerOsFolder="darwin-linux"
-    } else {
-        echo "Running on Windows"
-        os="windows"
-        packerOsFolder="windows"
+    dir(shared_workspace) {
+        functions = load "base-vm/build/jenkins/pipelines/shared-pipeline-functions.groovy"
+        println(functions)
+        (kx_version, kube_version) = functions.setBuildEnvironment()
     }
 }
 
@@ -21,7 +15,7 @@ pipeline {
     agent {
         node {
             label "local"
-            customWorkspace "${shared_workspace}"
+            customWorkspace shared_workspace
         }
     }
 

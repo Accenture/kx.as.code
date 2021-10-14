@@ -1,25 +1,12 @@
+def functions
 def kx_version
 def kube_version
-def functions
 
 node('local') {
-    os = sh (
-        script: 'uname -s',
-        returnStdout: true
-    ).toLowerCase().trim()
-    if ( os == "darwin" ) {
-        echo "Running on Mac"
-        packerOsFolder="darwin-linux"
-        jqDownloadPath="${JQ_DARWIN_DOWNLOAD_URL}"
-    } else if ( os == "linux" ) {
-        echo "Running on Linux"
-        packerOsFolder="darwin-linux"
-        jqDownloadPath="${JQ_LINUX_DOWNLOAD_URL}"
-    } else {
-        echo "Running on Windows"
-        os="windows"
-        jqDownloadPath="${JQ_WINDOWS_DOWNLOAD_URL}"
-        packerOsFolder="windows"
+    dir(shared_workspace) {
+        functions = load "base-vm/build/jenkins/pipelines/shared-pipeline-functions.groovy"
+        println(functions)
+        (kx_version, kube_version) = functions.setBuildEnvironment()
     }
 }
 
@@ -28,7 +15,7 @@ pipeline {
     agent {
         node {
             label "local"
-            customWorkspace "${shared_workspace}"
+            customWorkspace shared_workspace
         }
     }
 
@@ -54,15 +41,6 @@ pipeline {
     }
 
     stages {
-        stage('Set Build Environment') {
-          steps {
-            script {
-                functions = load "base-vm/build/jenkins/pipelines/shared-pipeline-functions.groovy"
-                println(functions)
-                (kx_version, kube_version) = functions.setBuildEnvironment()
-            }
-          }
-        }
         stage('Build the QCOW2 image'){
             steps {
                 script {
@@ -80,8 +58,8 @@ pipeline {
                             -var "compute_engine_build=${openstack_compute_engine_build}" \
                             -var "hostname=${kx_main_hostname}" \
                             -var "domain=${kx_domain}" \
-                            -var "version=\${kx_version}" \
-                            -var "kube_version=\${kube_version}" \
+                            -var "version=${kx_version}" \
+                            -var "kube_version=${kube_version}" \
                             -var "vm_user=${kx_vm_user}" \
                             -var "vm_password=${kx_vm_password}" \
                             -var "git_source_url=${git_source_url}" \
