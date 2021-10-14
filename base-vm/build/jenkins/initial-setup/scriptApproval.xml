@@ -2,6 +2,7 @@
 <scriptApproval plugin="script-security@1.77">
   <approvedScriptHashes/>
   <approvedSignatures>
+    <string>method hudson.model.Job getLastCompletedBuild</string>
     <string>method jenkins.model.Jenkins getItemByFullName java.lang.String</string>
     <string>staticMethod jenkins.model.Jenkins getInstance</string>
   </approvedSignatures>

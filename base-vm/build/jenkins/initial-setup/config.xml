@@ -14,6 +14,9 @@
   <projectNamingStrategy class="jenkins.model.ProjectNamingStrategy$DefaultProjectNamingStrategy"/>
   <workspaceDir>${JENKINS_HOME}/workspace/${ITEM_FULL_NAME}</workspaceDir>
   <buildsDir>${ITEM_ROOTDIR}/builds</buildsDir>
+  <markupFormatter class="hudson.markup.RawHtmlMarkupFormatter" plugin="antisamy-markup-formatter@2.1">
+    <disableSyntaxHighlighting>false</disableSyntaxHighlighting>
+  </markupFormatter>
   <jdks/>
   <viewsTabBar class="hudson.views.DefaultViewsTabBar"/>
   <myViewsTabBar class="hudson.views.DefaultMyViewsTabBar"/>
@@ -108,12 +111,22 @@
             <comparator class="hudson.util.CaseInsensitiveComparator" reference="../../../../../../views/com.smartcodeltd.jenkinsci.plugins.buildmonitor.BuildMonitorView/jobNames/comparator"/>
           </default>
           <int>3</int>
+          <string>BLUE</string>
+          <string>\033[34m</string>
+          <string>GREEN</string>
+          <string>\033[32m</string>
           <string>JQ_DARWIN_DOWNLOAD_URL</string>
           <string>https://github.com/stedolan/jq/releases/download/jq-1.6/jq-osx-amd64</string>
           <string>JQ_LINUX_DOWNLOAD_URL</string>
           <string>https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64</string>
           <string>JQ_WINDOWS_DOWNLOAD_URL</string>
           <string>https://github.com/stedolan/jq/releases/download/jq-1.6/jq-win64.exe</string>
+          <string>NC</string>
+          <string>\033[0m</string>
+          <string>ORANGE</string>
+          <string>\033[33m</string>
+          <string>RED</string>
+          <string>\033[31m</string>
         </tree-map>
       </envVars>
     </hudson.slaves.EnvironmentVariablesNodeProperty>
