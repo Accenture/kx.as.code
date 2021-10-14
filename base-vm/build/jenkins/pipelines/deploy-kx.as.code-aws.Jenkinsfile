@@ -22,7 +22,7 @@ pipeline {
     options {
         ansiColor('xterm')
         skipDefaultCheckout()
-        buildDiscarder(logRotator(numToKeepStr: '5', artifactNumToKeepStr: '5'))
+        buildDiscarder(logRotator(numToKeepStr: '10', artifactNumToKeepStr: '10'))
         timestamps()
         disableConcurrentBuilds()
         timeout(time: 3, unit: 'HOURS')
@@ -30,14 +30,6 @@ pipeline {
 
     tools {
         'terraform' "terraform-${os}"
-    }
-
-    environment {
-        RED="\033[31m"
-        GREEN="\033[32m"
-        ORANGE="\033[33m"
-        BLUE="\033[34m"
-        NC="\033[0m" // No Color
     }
 
     stages {
