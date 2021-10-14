@@ -38,11 +38,7 @@ pipeline {
                             curl -L -o jq ${jqDownloadPath}
                             chmod +x ./jq
                         fi
-                        export kxMainBoxLocation=${kx_main_box_location}
-                        export kxNodeBoxLocation=${kx_node_box_location}
                         export dockerHubEmail=${dockerhub_email}
-                        echo \${kxMainBoxLocation}
-                        echo \${kxNodeBoxLocation}
                         echo \${dockerHubEmail}
                         cd profiles/vagrant-virtualbox
                         if [ -f kx.as.code_main-ip-address ]; then

@@ -34,11 +34,7 @@ pipeline {
                 script {
                     withCredentials([usernamePassword(credentialsId: 'DOCKERHUB_ACCOUNT', passwordVariable: 'dockerHubPassword', usernameVariable: 'dockerHubUsername')]) {
                         sh """
-                        export kxMainBoxLocation=${kx_main_box_location}
-                        export kxNodeBoxLocation=${kx_node_box_location}
                         export dockerHubEmail=${dockerhub_email}
-                        echo \${kxMainBoxLocation}
-                        echo \${kxNodeBoxLocation}
                         echo \${dockerHubEmail}
                         cd profiles/vagrant-parallels
                         if [ -f kx.as.code_main-ip-address ]; then
