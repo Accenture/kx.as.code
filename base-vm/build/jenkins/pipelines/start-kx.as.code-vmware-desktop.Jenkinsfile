@@ -43,15 +43,9 @@ pipeline {
                 script {
                     withCredentials([usernamePassword(credentialsId: 'DOCKERHUB_ACCOUNT', passwordVariable: 'dockerHubPassword', usernameVariable: 'dockerHubUsername')]) {
                         sh """
-                        if [ -z \$(vagrant plugin list | grep "vagrant-vmware-desktop" ) ]; then
+                        if [ -z '\$(vagrant plugin list --machine-readable | grep "vagrant-vmware-desktop")' ]; then
                             vagrant plugin install vagrant-vmware-desktop
                         fi
-                        export kxMainBoxLocation=${kx_main_box_location}
-                        export kxNodeBoxLocation=${kx_node_box_location}
-                        export dockerHubEmail=${dockerhub_email}
-                        echo \${kxMainBoxLocation}
-                        echo \${kxNodeBoxLocation}
-                        echo \${dockerHubEmail}
                         if [ -f kx.as.code_main-ip-address ]; then
                             rm -f kx.as.code_main-ip-address
                         fi
