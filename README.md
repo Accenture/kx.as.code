@@ -1,5 +1,4 @@
-<img src="docs/images/kxascode_logo_black_small.png" alt="kx.as.code_logo" width="200" height="200" align="right"/>
-
+[![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
 # Welcome!
 
 Welcome to the KX.AS.CODE learning workstation. This virtual workstation was created with two primary goals in mind.
@@ -63,7 +62,7 @@ I guess it will never be "finished". DevOps is a fast paced world with lots of g
 ## Contributing
 We are happy to receive contributions, ideas and dare I say it, bug fixes or suggestions on how to do things better! We never stop learning! :nerd_face:
 
-For more details on how you can contribute to the project, checkout the [CONTRIBUTE.md](docs/contribute.md) file
+For more details on how you can contribute to the project, checkout the [CONTRIBUTE.md](docs/Development/Contribution-Guidelines.md) file
 
 ## Screenshots
 
