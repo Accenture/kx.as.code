@@ -75,4 +75,50 @@ def setBuildEnvironment() {
     return [ kx_version, kube_version ]
 }
 
+def getVagrantCacheChecksum() {
+    sh """
+        if [ -f "$HOME"/]; then
+        
+        fi
+    """
+}
+
+def addVagrantBox(provider,kx_version) {
+    sh """
+        vagrant box list -i
+        box="base-vm/boxes/${provider}-${kx_version}/kx.as.code-node-${kx_version}.box"
+        metadata="base-vm/boxes/${provider}-${kx_version}/kx.as.code-node-${kx_version}_metadata.json"
+        #vagrant box add \${box} --provider ${provider} --name kx.as.code-node
+        vagrant box add kx.as.code-node-${provider} \${metadata} --force
+
+        vagrant box list -i
+        box="base-vm/boxes/${provider}-${kx_version}/kx.as.code-main-${kx_version}.box"
+        metadata="base-vm/boxes/${provider}-${kx_version}/kx.as.code-main-${kx_version}_metadata.json"
+        #vagrant box add \${box}  --provider ${provider} --name kx.as.code-main
+        vagrant box add kx.as.code-main-${provider} \${metadata} --force
+    """
+}
+def getVagrantLatestBuildChecksum() {
+    sh """
+        if [ -f  ]; then
+        
+        fi
+    """
+}
+def checkVagrantBoxCache() {
+    sh """
+        if [  ]; then
+            shasum -a 512
+        fi
+    """
+}
+
+def deleteBoxFromVagrantBoxCache() {
+    sh """
+        if [ -f  ]; then
+        
+        fi
+    """
+}
+
 return this

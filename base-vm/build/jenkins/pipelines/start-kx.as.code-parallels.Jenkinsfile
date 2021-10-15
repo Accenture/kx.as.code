@@ -29,7 +29,14 @@ pipeline {
     }
 
     stages {
-        stage('Execute Vagrant Action'){
+        stage("Prepare Vagrant") {
+            steps {
+                script {
+                    functions.addVagrantBox("parallels", kx_version)
+                }
+            }
+        }
+        stage('Execute Vagrant Action') {
             steps {
                 script {
                     withCredentials([usernamePassword(credentialsId: 'DOCKERHUB_ACCOUNT', passwordVariable: 'dockerHubPassword', usernameVariable: 'dockerHubUsername')]) {
