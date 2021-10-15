@@ -49,13 +49,13 @@ def setBuildEnvironment() {
             }
             if ( os == "windows" ) {
                 println("Getting Git-Log on ${os}")
-                gitDiff = sh(script: """  
+                gitDiff = sh(script: """
                          parsed_git_source_url=\$(echo ${git_source_url} | sed 's/\\.git//g')
                          git log ${oldGitShortCommitId}..${gitShortCommitId} --oneline --no-merges --stat --pretty='format:<a style=\"color: #ff8c00\" href=\"'\${parsed_git_source_url}'/commit/%h\">%h%<(15,trunc)</a> ### %<(15,trunc)%ar ### %<(20,trunc)%cn ### <span style=\"color: green\"> %<(100,trunc)%s </span>' | sed 's/<br>/\\&lt\\;br\\&gt\\;/g' | sed 's/<p>/\\&lt\\;p\\&gt\\;/g' | sed 's/§/<span style=\"color: red\">-<\\/span>/g' | sed 's/\$/<br>/g' | sed 's/§/<span style=\"color: green\">-<\\/span>/g' | sed 's/###/|/g'
                     """, returnStdout: true).trim()
             } else {
                 println("Getting Git-Log on ${os}")
-                gitDiff = sh(script: """   
+                gitDiff = sh(script: """
                          parsed_git_source_url=\$(echo ${git_source_url} | sed 's/\\.git//g')
                          git log ${oldGitShortCommitId}..${gitShortCommitId} --oneline --no-merges --stat --pretty='format:<a style=\"color: #ff8c00\" href=\"${git_source_url}/commit/%h\">%h%<(15,trunc)</a> ### %<(15,trunc)%ar ### %<(20,trunc)%cn ### <span style=\"color: green\"> %<(100,trunc)%s </span>' | sed 's/<br>/\\&lt\\;br\\&gt\\;/g' | sed 's/<p>/\\&lt\\;p\\&gt\\;/g' | rev | sed -e ':b; /###/! s/^\\([^|]*\\)*\\-/\\1§/; tb;' | rev | sed 's/§/<span style=\"color: red\">-<\\/span>/g' | rev | sed -e ':b; /###/! s/^\\([^|]*\\)*+/\\1§/; tb;' | rev | sed 's/\$/<br>/g' | sed 's/§/<span style=\"color: green\">-<\\/span>/g' | sed 's/###/|/g'
                     """, returnStdout: true).trim()
@@ -75,49 +75,46 @@ def setBuildEnvironment() {
     return [ kx_version, kube_version ]
 }
 
-def getVagrantCacheChecksum() {
-    sh """
-        if [ -f "$HOME"/]; then
-        
-        fi
-    """
-}
-
 def addVagrantBox(provider,kx_version) {
     sh """
-        vagrant box list -i
-        box="base-vm/boxes/${provider}-${kx_version}/kx.as.code-node-${kx_version}.box"
-        metadata="base-vm/boxes/${provider}-${kx_version}/kx.as.code-node-${kx_version}_metadata.json"
-        #vagrant box add \${box} --provider ${provider} --name kx.as.code-node
-        vagrant box add kx.as.code-node-${provider} \${metadata} --force
+        # Get the number of main and worker nodes, to determine if it's needed to import the kx-node or not
+        if [ ! -f profiles/vagrant-${provider}/profile-config.json ]; then
+            echo "profiles/vagrant-${provider}/profile-config.json missing. Cannot continue with the deployment."
+            exit 1
+        else
+            mainNodesNum=\$(cat profiles/vagrant-${provider}/profile-config.json | jq '.config.vm_properties.main_node_count')
+            workerNodesNum=\$(cat profiles/vagrant-${provider}/profile-config.json | jq '.config.vm_properties.worker_node_count')
+        fi
 
-        vagrant box list -i
-        box="base-vm/boxes/${provider}-${kx_version}/kx.as.code-main-${kx_version}.box"
-        metadata="base-vm/boxes/${provider}-${kx_version}/kx.as.code-main-${kx_version}_metadata.json"
-        #vagrant box add \${box}  --provider ${provider} --name kx.as.code-main
-        vagrant box add kx.as.code-main-${provider} \${metadata} --force
-    """
-}
-def getVagrantLatestBuildChecksum() {
-    sh """
-        if [ -f  ]; then
-        
+        # Import kx-node if profile-config.json is >0 for kx-main or kx-worker nodes
+        if [ \${mainNodesNum} -gt 1 ] || [ \${workerNodesNum} -gt 0 ]; then
+            if [ -f base-vm/boxes/${provider}-${kx_version}/kx.as.code-node-${kx_version}_metadata.json ]; then
+                echo "${BLUE}Adding Vagrant box kx.as.code-node-${kx_version}, before starting up the environment${NC}"
+                metadata="base-vm/boxes/${provider}-${kx_version}/kx.as.code-node-${kx_version}_metadata.json"
+                vagrant box add kx.as.code-node \${metadata} --force
+            else
+                echo "${RED}You must build the kx-main box first, before starting up the KX.AS.CODE environment${NC}"
+                exit 1
+            fi
         fi
-    """
-}
-def checkVagrantBoxCache() {
-    sh """
-        if [  ]; then
-            shasum -a 512
-        fi
-    """
-}
 
-def deleteBoxFromVagrantBoxCache() {
-    sh """
-        if [ -f  ]; then
-        
+        # Exit job execution if # of desired main nodes is less than 1
+        if [ \${mainNodesNum} -lt 1 ]; then
+            echo "${RED}You must have at least 1 KX-Main node defined in profile-config.json. KX.AS.CODE cannot start with 0 main nodes${NC}"
+            cho "${RED}The number of main nodes for ${provider} are defined in \"profiles/vagrant-${provider}/profile-config.json\"${NC}"
+            exit 1
+        else
+            if [ -f base-vm/boxes/${provider}-${kx_version}/kx.as.code-main-${kx_version}_metadata.json ]; then
+                echo "${BLUE}Adding Vagrant box kx.as.code-main-${kx_version}, before starting up the environment${NC}"
+                metadata="base-vm/boxes/${provider}-${kx_version}/kx.as.code-main-${kx_version}_metadata.json"
+                vagrant box add kx.as.code-main \${metadata} --force
+            else
+                echo "${RED}You must build the kx-main Vagrant box first, before starting up the KX.AS.CODE environment${NC}"
+                exit 1
+            fi
         fi
+        echo "${GREEN}Vagrat boxes imported successfully. Proceeding to start KX.AS.CODE environment...${NC}"
+        vagrant box list -i
     """
 }
 
