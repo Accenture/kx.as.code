@@ -91,7 +91,8 @@ WORKSPACE_HOME = File.dirname(File.expand_path('../..', __FILE__))
 
 Vagrant.configure("2") do |config|
     config.vm.define "kx.as.code-main1" do |subconfig|
-        subconfig.vm.box = "kx.as.code-main-vmware-#{BOX_VERSION}"
+        subconfig.vm.box = "kx.as.code-main"
+        subconfig.vm.box_version = "#{BOX_VERSION}"
         subconfig.vm.hostname = "kx-main1"
         subconfig.vm.box_url = "file://#{WORKSPACE_HOME}/#{KX_MAIN_BOX_LOCATION}"
         subconfig.vm.provision "shell", inline: "hostname -I | awk {'print $1'} | tr -d ' \\t\\n\\r' | sudo tee /vagrant/kx.as.code_main-ip-address"
@@ -147,6 +148,7 @@ Vagrant.configure("2") do |config|
     (2..MAIN_NODE_COUNT).each do |i|
       config.vm.define "kx.as.code-main#{i}" do |subconfig|
         subconfig.vm.box = "kx.as.code-node"
+        subconfig.vm.box_version = "#{BOX_VERSION}"
         subconfig.vm.hostname = "kx-main#{i}"
         subconfig.vm.network :forwarded_port, guest: 22, host: 2222, id: "ssh", disabled: true
         subconfig.vm.network :forwarded_port, guest: 22, host: "224#{i}", id: "ssh-kx-main#{i}", auto_correct: true
@@ -188,7 +190,8 @@ Vagrant.configure("2") do |config|
 
     (1..WORKER_NODE_COUNT).each do |i|
         config.vm.define "kx.as.code-worker#{i}" do |subconfig|
-          subconfig.vm.box = "kx.as.code-worker-vmware-#{BOX_VERSION}"
+          subconfig.vm.box = "kx.as.code-node"
+          subconfig.vm.box_version = "#{BOX_VERSION}"
           subconfig.vm.box_url = "file://#{WORKSPACE_HOME}/#{KX_NODE_BOX_LOCATION}"
           subconfig.vm.hostname = "kx-worker#{i}"
           subconfig.vm.provision "shell", inline: "while [ ! -f /vagrant/kx.as.code_main-ip-address ]; do echo \"Waiting for kx.as.code_main-ip-address\" && sleep 15; done; cp /vagrant/kx.as.code_main-ip-address /var/tmp/"
@@ -222,11 +225,7 @@ Vagrant.configure("2") do |config|
             v.vmx['scsi0:1.filename'] = kx_worker_local_k8s_storage
             v.vmx['scsi0:1.present']  = 'TRUE'
             v.vmx['scsi0:1.redo']     = ''
-
           end
         end
     end
 end
-
-
-

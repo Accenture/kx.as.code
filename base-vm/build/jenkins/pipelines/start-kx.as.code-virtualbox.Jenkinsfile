@@ -29,21 +29,24 @@ pipeline {
     }
 
     stages {
-        stage('Execute Vagrant Action'){
+        stage("Prepare Vagrant") {
+            steps {
+                script {
+                    functions.addVagrantBox("virtualbox", kx_version)
+                }
+            }
+        }
+        stage('Execute Vagrant Action') {
             steps {
                 script {
                     withCredentials([usernamePassword(credentialsId: 'DOCKERHUB_ACCOUNT', passwordVariable: 'dockerHubPassword', usernameVariable: 'dockerHubUsername')]) {
-                        sh """
-                        if [ ! -f ./jq* ]; then
-                            curl -L -o jq ${jqDownloadPath}
-                            chmod +x ./jq
-                        fi
+                        environmentPrefix = functions.setEnvironmentPrefix("vagrant-virtualbox")
+                        sh """{ set +x; } 2>/dev/null
                         export dockerHubEmail=${dockerhub_email}
                         echo \${dockerHubEmail}
+                        export environmentPrefix=${environmentPrefix}
+                        echo "Environment prefix will be: \${environmentPrefix}"
                         cd profiles/vagrant-virtualbox
-                        if [ -f kx.as.code_main-ip-address ]; then
-                            rm -f kx.as.code_main-ip-address
-                        fi
                         vagrant up --provider virtualbox
                         VBoxManage list vms
                         """

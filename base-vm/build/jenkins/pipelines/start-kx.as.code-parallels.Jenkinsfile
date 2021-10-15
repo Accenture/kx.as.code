@@ -40,13 +40,13 @@ pipeline {
             steps {
                 script {
                     withCredentials([usernamePassword(credentialsId: 'DOCKERHUB_ACCOUNT', passwordVariable: 'dockerHubPassword', usernameVariable: 'dockerHubUsername')]) {
-                        sh """
+                        environmentPrefix = functions.setEnvironmentPrefix("vagrant-parallels")
+                        sh """{ set +x; } 2>/dev/null
                         export dockerHubEmail=${dockerhub_email}
                         echo \${dockerHubEmail}
+                        export environmentPrefix=${environmentPrefix}
+                        echo "Environment prefix will be: \${environmentPrefix}"
                         cd profiles/vagrant-parallels
-                        if [ -f kx.as.code_main-ip-address ]; then
-                            rm -f kx.as.code_main-ip-address
-                        fi
                         vagrant up --provider parallels
                         """
                     }

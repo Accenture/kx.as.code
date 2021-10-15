@@ -29,26 +29,26 @@ pipeline {
     }
 
     stages {
-        stage('Set Build Environment') {
-          steps {
-            script {
-                functions = load "base-vm/build/jenkins/pipelines/shared-pipeline-functions.groovy"
-                println(functions)
-                (kx_version, kube_version) = functions.setBuildEnvironment()
+        stage("Prepare Vagrant") {
+            steps {
+                script {
+                    functions.addVagrantBox("vmware-desktop", kx_version)
+                }
             }
-          }
         }
-        stage('Execute Vagrant Action'){
+        stage('Execute Vagrant Action') {
             steps {
                 script {
                     withCredentials([usernamePassword(credentialsId: 'DOCKERHUB_ACCOUNT', passwordVariable: 'dockerHubPassword', usernameVariable: 'dockerHubUsername')]) {
+                        environmentPrefix = functions.setEnvironmentPrefix("vagrant-vmware-desktop")
                         sh """
                         if [ -z '\$(vagrant plugin list --machine-readable | grep "vagrant-vmware-desktop")' ]; then
                             vagrant plugin install vagrant-vmware-desktop
                         fi
-                        if [ -f kx.as.code_main-ip-address ]; then
-                            rm -f kx.as.code_main-ip-address
-                        fi
+                        export dockerHubEmail=${dockerhub_email}
+                        echo \${dockerHubEmail}
+                        export environmentPrefix=${environmentPrefix}
+                        echo "Environment prefix will be: \${environmentPrefix}"
                         cd profiles/vagrant-vmware-desktop
                         vagrant up --provider vmware_desktop
                         """

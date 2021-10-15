@@ -78,7 +78,7 @@ WORKSPACE_HOME = File.dirname(File.expand_path('../..', __FILE__))
 Vagrant.configure("2") do |config|
   config.vm.define "kx.as.code-main1", primary: true do |subconfig|
     subconfig.vm.box = "kx.as.code-main"
-        subconfig.vm.box_version = "#{BOX_VERSION}"
+    subconfig.vm.box_version = "#{BOX_VERSION}"
     subconfig.vm.hostname = "kx-main1"
     subconfig.vm.network :forwarded_port, guest: 22, host: 2222, id: "ssh", disabled: true
     subconfig.vm.network :forwarded_port, guest: 22, host: 2230, id: "ssh-kx-main", auto_correct: true
@@ -97,7 +97,7 @@ Vagrant.configure("2") do |config|
       v.name = "kx.as.code-#{ENVIRONMENT_PREFIX}-main1-#{BOX_VERSION}"
       v.memory = ADMIN_MAIN_NODE_MEMORY
       v.cpus = ADMIN_MAIN_NODE_CPU_CORES
-      v.customize ["set", :id, "--3d-accelerate", "highest"]
+      v.customize ["set", :id, "--3d-accelerate", "off"]
       v.customize ["set", :id, "--high-resolution", "on"]
       v.customize ["set", :id, "--device-add", "hdd", "--size", LOCAL_KUBE_VOLUMES_DISK_SIZE.to_i * 1024]
       v.customize ["set", :id, "--device-add", "hdd", "--size", GLUSTERFS_KUBE_VOLUMES_DISK_SIZE.to_i * 1024]

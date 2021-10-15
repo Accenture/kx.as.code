@@ -49,13 +49,13 @@ def setBuildEnvironment() {
             }
             if ( os == "windows" ) {
                 println("Getting Git-Log on ${os}")
-                gitDiff = sh(script: """
+                gitDiff = sh(script: """{ set +x; } 2>/dev/null
                          parsed_git_source_url=\$(echo ${git_source_url} | sed 's/\\.git//g')
                          git log ${oldGitShortCommitId}..${gitShortCommitId} --oneline --no-merges --stat --pretty='format:<a style=\"color: #ff8c00\" href=\"'\${parsed_git_source_url}'/commit/%h\">%h%<(15,trunc)</a> ### %<(15,trunc)%ar ### %<(20,trunc)%cn ### <span style=\"color: green\"> %<(100,trunc)%s </span>' | sed 's/<br>/\\&lt\\;br\\&gt\\;/g' | sed 's/<p>/\\&lt\\;p\\&gt\\;/g' | sed 's/§/<span style=\"color: red\">-<\\/span>/g' | sed 's/\$/<br>/g' | sed 's/§/<span style=\"color: green\">-<\\/span>/g' | sed 's/###/|/g'
                     """, returnStdout: true).trim()
             } else {
                 println("Getting Git-Log on ${os}")
-                gitDiff = sh(script: """
+                gitDiff = sh(script: """{ set +x; } 2>/dev/null
                          parsed_git_source_url=\$(echo ${git_source_url} | sed 's/\\.git//g')
                          git log ${oldGitShortCommitId}..${gitShortCommitId} --oneline --no-merges --stat --pretty='format:<a style=\"color: #ff8c00\" href=\"${git_source_url}/commit/%h\">%h%<(15,trunc)</a> ### %<(15,trunc)%ar ### %<(20,trunc)%cn ### <span style=\"color: green\"> %<(100,trunc)%s </span>' | sed 's/<br>/\\&lt\\;br\\&gt\\;/g' | sed 's/<p>/\\&lt\\;p\\&gt\\;/g' | rev | sed -e ':b; /###/! s/^\\([^|]*\\)*\\-/\\1§/; tb;' | rev | sed 's/§/<span style=\"color: red\">-<\\/span>/g' | rev | sed -e ':b; /###/! s/^\\([^|]*\\)*+/\\1§/; tb;' | rev | sed 's/\$/<br>/g' | sed 's/§/<span style=\"color: green\">-<\\/span>/g' | sed 's/###/|/g'
                     """, returnStdout: true).trim()
@@ -76,7 +76,7 @@ def setBuildEnvironment() {
 }
 
 def addVagrantBox(provider,kx_version) {
-    sh """
+    sh """{ set +x; } 2>/dev/null
         # Get the number of main and worker nodes, to determine if it's needed to import the kx-node or not
         if [ ! -f profiles/vagrant-${provider}/profile-config.json ]; then
             echo "profiles/vagrant-${provider}/profile-config.json missing. Cannot continue with the deployment."
@@ -116,6 +116,30 @@ def addVagrantBox(provider,kx_version) {
         echo "${GREEN}Vagrat boxes imported successfully. Proceeding to start KX.AS.CODE environment...${NC}"
         vagrant box list -i
     """
+}
+
+def setEnvironmentPrefix(profile) {
+
+    def environmentPrefix = sh (script: """{ set +x; } 2>/dev/null
+        cd profiles/${profile}
+        if [ -z \$(vagrant status --machine-readable | grep ",state," | grep -v "not_created") ]; then
+            # Cleanup old kx.as.code_main-ip-address file
+            if [ -f kx.as.code_main-ip-address ]; then
+                rm -f kx.as.code_main-ip-address
+            fi
+            profileEnvPrefix=\$(cat profile-config.json | jq -r '.config.environmentPrefix')
+            if [ -z \$profileEnvPrefix ] || [ -n \$(cat ../.environment_prefix_names | grep "\$profileEnvPrefix") ]; then
+                # No machines running and previous name also came from random name list. Will set a new name for new environment
+                export environmentPrefix=\$(cat ../.environment_prefix_names | sort -R | tail -1)
+                cat profile-config.json | jq -r '.config.environmentPrefix="'\${environmentPrefix}'"' | tee profile-config.json >/dev/null
+            else
+                # Get environment prefix from profile-config.json
+                export environmentPrefix=\$(cat profile-config.json | jq -r '.config.environmentPrefix')
+            fi
+        fi
+        echo \${environmentPrefix}
+    """, returnStdout: true).trim()
+    return environmentPrefix
 }
 
 return this
