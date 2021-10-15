@@ -12,7 +12,7 @@ docker save -o "${installationWorkspace}"/docker-kx-techradar.tar "${dockerRegis
 chmod 644 "${installationWorkspace}"/docker-kx-techradar.tar
 
 # Install DevOps Tech Radar Image
-cd "${sharedGitHome}"/git/kx.as.code_techradar/kubernetes
+cd "${sharedGitHome}"/kx.as.code_techradar/kubernetes
 source ./install.sh
 
 # Return to previous directory
