@@ -28,12 +28,4 @@ createDesktopIcon() {
   chmod 755 "${shortcutsDirectory}"/"${shortcutText}"
   chown ${vmUser}:${vmUser} "${shortcutsDirectory}"/"${shortcutText}"
 
-  # Ensure shortcut is available in application menu
-  #sudo cp /home/$vmUser/Desktop/$FILENAME /usr/share/applications
-
-  # Ensure shortcut has correct permissions
-  #chmod 755 /home/$vmUser/Desktop/$FILENAME
-  #chown $vmUser:$vmUser /home/$vmUser/Desktop/$FILENAME
-  #dbus-launch gio set /home/$vmUser/Desktop/$FILENAME "metadata::trusted" true || true
-
 }

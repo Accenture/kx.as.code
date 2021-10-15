@@ -1,30 +1,29 @@
 #!/bin/bash -x
 set -euo pipefail
 
-# Build KX.AS.CODE "TechRadar" Image
-cd /usr/share/kx.as.code/git/kx.as.code_techradar
+# Build KX.AS.CODE "Docs" Image
+cd ${sharedGitHome}/kx.as.code_docs
 . ./build.sh
 
 # Save builds as tar files
-rm -f /var/tmp/docker-kx-*.tar
-docker save -o ${installationWorkspace}/docker-kx-techradar.tar ${dockerRegistryDomain}/kx-as-code/techradar:latest
-chmod 644 ${installationWorkspace}/docker-kx-*.tar
+rm -f ${installationWorkspace}/docker-kx-docs.tar
+docker save -o ${installationWorkspace}/docker-kx-docs.tar ${dockerRegistryDomain}/kx-as-code/docs:latest
+chmod 644 ${installationWorkspace}/docker-kx-docs.tar
 
-# Install DevOps Tech Radar Image
-cd /usr/share/kx.as.code/git/kx.as.code_techradar/kubernetes
+# Install KX.AS.CODE Docs Image
+cd ${sharedGitHome}/kx.as.code_docs/kubernetes
 . ./install.sh
 
 # Return to previous directory
 cd -
 
-# Install the desktop shortcut for TechRadar
-shortcutsDirectory=
-primaryUrl="https://techradar.${baseDomain}"
-shortcutIcon="${sharedGitHome}/kx.as.code_techradar/kubernetes/techradar.png"
-shortcutText="Tech Radar"
-iconPath="/home/${vmUser}/Desktop"
+# Install the desktop shortcut for KX.AS.CODE Docs
+shortcutsDirectory="/home/${vmUser}/Desktop"
+primaryUrl="https://docs.${baseDomain}"
+shortcutText="KX.AS.CODE Docs"
+iconPath="${sharedGitHome}/kx.as.code_docs/kubernetes/books.png"
 browserOptions=""
-createDesktopIcon "${shortcutsDirectory}" "${primaryUrl}" "${shortcutIcon}" "${shortcutText}" "${iconPath}" "${browserOptions}"
+createDesktopIcon "${shortcutsDirectory}" "${primaryUrl}" "${shortcutText}" "${iconPath}" "${browserOptions}"
 
 # Copy desktop icons to skel directory for future users
-/usr/bin/sudo cp /home/${vmUser}/Desktop/Tech-Radar.desktop ${skelDirectory}/Desktop
+/usr/bin/sudo cp /home/${vmUser}/Desktop/KX.AS.CODE-Docs.desktop ${skelDirectory}/Desktop
