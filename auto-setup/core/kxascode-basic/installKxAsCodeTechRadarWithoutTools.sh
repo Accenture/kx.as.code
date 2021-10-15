@@ -26,4 +26,4 @@ browserOptions=""
 createDesktopIcon "${shortcutsDirectory}" "${primaryUrl}" "${shortcutText}" "${iconPath}" "${browserOptions}"
 
 # Copy desktop icons to skel directory for future users
-/usr/bin/sudo cp /home/${vmUser}/Desktop/Tech-Radar.desktop ${skelDirectory}/Desktop
+/usr/bin/sudo cp /home/${vmUser}/Desktop/"${shortcutText}".desktop ${skelDirectory}/Desktop
