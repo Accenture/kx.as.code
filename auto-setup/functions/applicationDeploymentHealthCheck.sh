@@ -63,4 +63,3 @@ applicationDeploymentHealthCheck () {
 
   done
 }
-

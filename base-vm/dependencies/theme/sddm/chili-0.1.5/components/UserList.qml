@@ -44,7 +44,7 @@ ListView {
     preferredHighlightEnd: preferredHighlightBegin
 
     delegate: UserDelegate {
-        
+
         avatarPath: model.icon || ""
         usernameFontSize : rootFontSize
         usernameFontColor: rootFontColor

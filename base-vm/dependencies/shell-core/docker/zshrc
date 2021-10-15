@@ -20,4 +20,3 @@ alias l="ls -lah"
 alias la="ls -la"
 
 export SG_DEBUG=1
-

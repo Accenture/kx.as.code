@@ -29,7 +29,7 @@ SG_IS_GLOBAL=0
 _sg_auto_update() {
     (($#<1)) && msgerr bold red "_sg_auto_update expects at least 1 argument..." && return 1
     INST_DIR="$1"
-    [[ ! -d "$INST_DIR" ]] && msgerr bold red "The folder '$INST_DIR' does not exist, so it cannot be updated..." && return 1  
+    [[ ! -d "$INST_DIR" ]] && msgerr bold red "The folder '$INST_DIR' does not exist, so it cannot be updated..." && return 1
     cd "$INST_DIR"
     _debug green " (+) Updating existing installation at '$INST_DIR'"
 
@@ -79,12 +79,12 @@ _sg_install_local() {
     fi
     _debug yellow "     -> Creating folder '$INST_DIR' ..."
     mkdir -p "$INST_DIR" &> /dev/null
-    
+
     _debug yellow "     -> Copying all files from '$SG_DIR' to '$INST_DIR' ..."
     cp -Rf "${SG_DIR}/." "$INST_DIR"
 
     _debug yellow "     -> Adjusting permissions for '$INST_DIR' and files/folders within it..."
-    # chmod 755 "$INST_DIR" "$INST_DIR"/*.sh 
+    # chmod 755 "$INST_DIR" "$INST_DIR"/*.sh
     # chmod -R 755 "$INST_DIR"/{base,lib}
     chmod 755 "$INST_DIR"
     chmod -R 777 "$INST_DIR"/logs
@@ -108,12 +108,12 @@ _sg_install_global() {
     fi
     _debug yellow "     -> Creating folder '$INST_DIR' ..."
     sudo mkdir -p "$INST_DIR" &> /dev/null
-    
+
     _debug yellow "     -> Copying all files from '$SG_DIR' to '$INST_DIR' ..."
     sudo cp -Rf "${SG_DIR}/." "$INST_DIR"
 
     _debug yellow "     -> Adjusting permissions for '$INST_DIR' and files/folders within it..."
-    # sudo chmod 755 "$INST_DIR" "$INST_DIR"/*.sh 
+    # sudo chmod 755 "$INST_DIR" "$INST_DIR"/*.sh
     # sudo chmod -R 755 "$INST_DIR"/{base,lib}
     sudo chmod 755 "$INST_DIR"
     sudo chmod -R 777 "$INST_DIR"/logs
@@ -212,7 +212,7 @@ _sg_compile() {
         echo "$sg_copyright"
         echo
     } > "$out_file"
-    
+
     (($use_file==1)) && msg green " -> Compiled ShellCore into file '$out_file'" || { cat "$out_file"; rm -f "$out_file"; }
 
     return 0
@@ -242,7 +242,7 @@ _help() {
                      "\t   which means: \n" \
                      "\t   \n" \
                      "\t       'If the current user has no permissions to update this install, nor sudo,  \n" \
-                     "\t        then install or update the local user's Shell Core installation.'\n" 
+                     "\t        then install or update the local user's Shell Core installation.'\n"
     msg cyan "-------------------------------------------------------------------\n"
 
 }
@@ -306,4 +306,3 @@ case "$1" in
         exit 99
         ;;
 esac
-

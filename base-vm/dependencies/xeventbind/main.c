@@ -65,7 +65,7 @@ void parse_args(int argc, char** argv, struct arguments *args) {
             found = 1;
             args->event_type = mapping[i].event;
             break;
-        } 
+        }
     }
     if (!found)
         print_usage(argv[0]);
@@ -103,6 +103,5 @@ int main(int argc, char **argv) {
 
     xeb_add_callback(args.event_type, handle_callback, &args);
 
-    return xeb_loop() ? EXIT_FAILURE : EXIT_SUCCESS;    
+    return xeb_loop() ? EXIT_FAILURE : EXIT_SUCCESS;
 }
-

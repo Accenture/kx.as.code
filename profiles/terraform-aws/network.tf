@@ -1,7 +1,7 @@
 resource "aws_network_interface" "kx_main_admin" {
-  subnet_id       = module.vpc.private_subnets[0]
-  security_groups = [module.vpc.default_security_group_id, aws_security_group.kx_main_nodes.id]
-  source_dest_check      = false
+  subnet_id         = module.vpc.private_subnets[0]
+  security_groups   = [module.vpc.default_security_group_id, aws_security_group.kx_main_nodes.id]
+  source_dest_check = false
 }
 
 module "vpc" {
@@ -10,17 +10,17 @@ module "vpc" {
 
   name                   = "${local.prefix}-kx-as-code"
   cidr                   = local.vpc_cidr_block
-  azs                    = [local.aws_availability_zone_one,local.aws_availability_zone_two]
+  azs                    = [local.aws_availability_zone_one, local.aws_availability_zone_two]
   private_subnets        = [local.private_subnet_cidr_one, local.private_subnet_cidr_two]
-  public_subnets         = [local.public_subnet_cidr_one,local.public_subnet_cidr_two]
+  public_subnets         = [local.public_subnet_cidr_one, local.public_subnet_cidr_two]
   enable_nat_gateway     = true
   single_nat_gateway     = true
   enable_dns_hostnames   = true
   enable_dhcp_options    = true
   one_nat_gateway_per_az = false
 
-  enable_dns_support     = true
-  dhcp_options_domain_name_servers = [ aws_network_interface.kx_main_admin.private_ip, "AmazonProvidedDNS", "8.8.8.8" ]
+  enable_dns_support               = true
+  dhcp_options_domain_name_servers = [aws_network_interface.kx_main_admin.private_ip, "AmazonProvidedDNS", "8.8.8.8"]
 
   manage_default_network_acl = true
   default_network_acl_name   = "${local.prefix}-kx-as-code"
@@ -65,10 +65,10 @@ resource "aws_lb" "kx_network_external_nlb" {
 }
 
 resource "aws_lb_target_group" "http" {
-  name     = "http"
-  port     = 80
-  protocol = "TCP"
-  vpc_id   = module.vpc.vpc_id
+  name        = "http"
+  port        = 80
+  protocol    = "TCP"
+  vpc_id      = module.vpc.vpc_id
   target_type = "instance"
 
   health_check {
@@ -79,44 +79,44 @@ resource "aws_lb_target_group" "http" {
 
 resource "aws_lb_target_group_attachment" "http" {
   target_group_arn = aws_lb_target_group.http.arn
-  target_id = aws_instance.kx_main_admin.id
+  target_id        = aws_instance.kx_main_admin.id
 }
 
 resource "aws_alb_target_group_attachment" "http_replica" {
-  count = length(aws_instance.kx_main_replica)
+  count            = length(aws_instance.kx_main_replica)
   target_group_arn = aws_lb_target_group.http.arn
-  target_id = aws_instance.kx_main_replica[count.index].id
+  target_id        = aws_instance.kx_main_replica[count.index].id
 }
 
 resource "aws_lb_target_group" "api_external" {
-  name = "api-external"
-  port = 6443
-  protocol = "TCP"
-  vpc_id = module.vpc.vpc_id
+  name        = "api-external"
+  port        = 6443
+  protocol    = "TCP"
+  vpc_id      = module.vpc.vpc_id
   target_type = "instance"
 
   health_check {
-    port = 6443
+    port     = 6443
     protocol = "TCP"
   }
 }
 
 resource "aws_lb_target_group_attachment" "api_external" {
   target_group_arn = aws_lb_target_group.api_external.arn
-  target_id = aws_instance.kx_main_admin.id
+  target_id        = aws_instance.kx_main_admin.id
 }
 
 resource "aws_lb_target_group_attachment" "api_external_replica" {
-  count = length(aws_instance.kx_main_replica)
+  count            = length(aws_instance.kx_main_replica)
   target_group_arn = aws_lb_target_group.api_external.arn
-  target_id = aws_instance.kx_main_replica[count.index].id
+  target_id        = aws_instance.kx_main_replica[count.index].id
 }
 
 resource "aws_lb_target_group" "https" {
-  name     = "https"
-  port     = 443
-  protocol = "TCP"
-  vpc_id   = module.vpc.vpc_id
+  name        = "https"
+  port        = 443
+  protocol    = "TCP"
+  vpc_id      = module.vpc.vpc_id
   target_type = "instance"
 
   health_check {
@@ -127,20 +127,20 @@ resource "aws_lb_target_group" "https" {
 
 resource "aws_lb_target_group_attachment" "https" {
   target_group_arn = aws_lb_target_group.https.arn
-  target_id = aws_instance.kx_main_admin.id
+  target_id        = aws_instance.kx_main_admin.id
 }
 
 resource "aws_lb_target_group_attachment" "https_replica" {
-  count = length(aws_instance.kx_main_replica)
+  count            = length(aws_instance.kx_main_replica)
   target_group_arn = aws_lb_target_group.https.arn
-  target_id = aws_instance.kx_main_replica[count.index].id
+  target_id        = aws_instance.kx_main_replica[count.index].id
 }
 
 resource "aws_lb_target_group" "rdp" {
-  name     = "rdp-tcp"
-  port     = 4000
-  protocol = "TCP_UDP"
-  vpc_id   = module.vpc.vpc_id
+  name        = "rdp-tcp"
+  port        = 4000
+  protocol    = "TCP_UDP"
+  vpc_id      = module.vpc.vpc_id
   target_type = "instance"
 
   health_check {
@@ -151,7 +151,7 @@ resource "aws_lb_target_group" "rdp" {
 
 resource "aws_lb_target_group_attachment" "rdp" {
   target_group_arn = aws_lb_target_group.rdp.arn
-  target_id = aws_instance.kx_main_admin.id
+  target_id        = aws_instance.kx_main_admin.id
 }
 
 resource "aws_lb_listener" "http" {
@@ -160,7 +160,7 @@ resource "aws_lb_listener" "http" {
   protocol          = "TCP"
 
   default_action {
-    type = "forward"
+    type             = "forward"
     target_group_arn = aws_lb_target_group.http.arn
   }
 }
@@ -171,7 +171,7 @@ resource "aws_lb_listener" "https" {
   protocol          = "TCP"
 
   default_action {
-    type = "forward"
+    type             = "forward"
     target_group_arn = aws_lb_target_group.https.arn
   }
 }
@@ -182,7 +182,7 @@ resource "aws_lb_listener" "api_external" {
   protocol          = "TCP"
 
   default_action {
-    type = "forward"
+    type             = "forward"
     target_group_arn = aws_lb_target_group.api_external.arn
   }
 }
@@ -193,7 +193,7 @@ resource "aws_lb_listener" "rdp" {
   protocol          = "TCP_UDP"
 
   default_action {
-    type = "forward"
+    type             = "forward"
     target_group_arn = aws_lb_target_group.rdp.arn
   }
 }
@@ -269,27 +269,27 @@ resource "aws_route53_health_check" "api_internal" {
 }
 
 resource "aws_route53_record" "k8s_api_internal_admin" {
-  zone_id = data.aws_route53_zone.kx_as_code.zone_id
-  name    = "api-internal.${local.prefix}.${local.kx_as_code_domain}"
-  type    = "A"
-  ttl     = 300
-  health_check_id = aws_route53_health_check.api_internal.id
-  multivalue_answer_routing_policy  = true
-  set_identifier = "1"
+  zone_id                          = data.aws_route53_zone.kx_as_code.zone_id
+  name                             = "api-internal.${local.prefix}.${local.kx_as_code_domain}"
+  type                             = "A"
+  ttl                              = 300
+  health_check_id                  = aws_route53_health_check.api_internal.id
+  multivalue_answer_routing_policy = true
+  set_identifier                   = "1"
   records = [
     aws_instance.kx_main_admin.private_ip
   ]
 }
 
 resource "aws_route53_record" "k8s_api_internal_replica" {
-  count = (local.main_node_count - 1) < 0 ? 0 : local.main_node_count - 1
-  zone_id = data.aws_route53_zone.kx_as_code.zone_id
-  name    = "api-internal.${local.prefix}.${local.kx_as_code_domain}"
-  type    = "A"
-  ttl     = 300
-  health_check_id = aws_route53_health_check.api_internal.id
-  multivalue_answer_routing_policy  = true
-  set_identifier = "${count.index + 2}"
+  count                            = (local.main_node_count - 1) < 0 ? 0 : local.main_node_count - 1
+  zone_id                          = data.aws_route53_zone.kx_as_code.zone_id
+  name                             = "api-internal.${local.prefix}.${local.kx_as_code_domain}"
+  type                             = "A"
+  ttl                              = 300
+  health_check_id                  = aws_route53_health_check.api_internal.id
+  multivalue_answer_routing_policy = true
+  set_identifier                   = count.index + 2
   records = [
     aws_instance.kx_main_replica[count.index].private_ip
   ]

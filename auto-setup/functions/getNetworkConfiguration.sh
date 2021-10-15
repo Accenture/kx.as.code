@@ -25,5 +25,3 @@ getNetworkConfiguration() {
   echo "NIC to use: ${netDevice}"
 
 }
-
-

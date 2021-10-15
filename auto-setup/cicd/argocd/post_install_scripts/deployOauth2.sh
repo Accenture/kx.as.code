@@ -86,7 +86,7 @@ export argoServer=$(kubectl get pods -n argocd | grep argocd-server | awk ' { pr
 
 kubectl delete pod ${argoServer} -n ${componentName}
 
-## If keycloak client scopes are created prior to kubernetes CRUD operations the RBAC is not working properly e.g: an application created 
+## If keycloak client scopes are created prior to kubernetes CRUD operations the RBAC is not working properly e.g: an application created
 ## by admin user cannot be seen by the user logged in with keycloak sso, also sso users cannot create any applications in argocd after intial argocd creation.
 ## To overcome this first client and secret will be created and then crud operations and finally keycloak client scopes are created.
 
@@ -97,7 +97,7 @@ export clientScopeId=$(createKeycloakClientScope "${clientId}" "${protocol}" "${
 
 # Create Keycloak Protocol Mapper (if not already existing)
 fullPath="false"
-createKeycloakProtocolMapper "${clientId}" "${fullPath}" 
+createKeycloakProtocolMapper "${clientId}" "${fullPath}"
 
 # Create Keycloak Group (if not already existing)
 group="ArgoCDAdmins"
@@ -109,4 +109,3 @@ export userId=$(createKeycloakUser "${user}")
 
 # Add user admin to the ArgoCDAdmins group. If any new users are created then they should be added to ArgoCDAdmins group
 groupMappingId=$(mapKeycloakUserToGroup "${userId}" "${groupId}")
-

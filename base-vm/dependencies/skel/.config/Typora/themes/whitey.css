@@ -57,8 +57,8 @@ h3 {
 	margin-top: 3em;
 }
 
-h1, 
-h2, 
+h1,
+h2,
 h3{
 	text-align: center;
 }
@@ -202,7 +202,7 @@ table tbody+tbody {
 	background: #f8f8f8;
 	border: 0px;
 	color: #999;
-	
+
 	width: 100vw;
 	max-width: calc(100% + 60px);
 	margin-left: -30px;
@@ -257,7 +257,7 @@ table tbody+tbody {
     box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
 }
 
-.cm-s-typora-default .cm-header, 
+.cm-s-typora-default .cm-header,
 .cm-s-typora-default .cm-property,
 .CodeMirror.cm-s-typora-default div.CodeMirror-cursor {
 	color: #428bca;
@@ -267,8 +267,8 @@ table tbody+tbody {
 	color: #777777;
 }
 
-.typora-node .file-list-item-parent-loc, 
-.typora-node .file-list-item-time, 
+.typora-node .file-list-item-parent-loc,
+.typora-node .file-list-item-time,
 .typora-node .file-list-item-summary {
 	font-family: arial, sans-serif;
 }

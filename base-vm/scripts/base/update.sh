@@ -48,4 +48,3 @@ echo "GSSAPIAuthentication no" | sudo tee -a /etc/ssh/sshd_config
 
 echo "====> Shutting down the SSHD service and rebooting..."
 sudo systemctl stop sshd.service
-

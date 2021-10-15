@@ -31,7 +31,7 @@
 # =========================================================================================================
 #
 # Usage (from within an application already using ShellCore):
-#     
+#
 #     source "${SG_DIR}/base/trap.bash"
 #
 # If you need to temporarily disable the error handling:
@@ -118,7 +118,7 @@ sg_load_lib trap_helper colors logging
 # source "${__TRAP_DIR}/colors.sh"
 
 _trap_debug () {
-    local dbg_msg="[DEBUG trap.bash]${RESET} $@" 
+    local dbg_msg="[DEBUG trap.bash]${RESET} $@"
     (($enable_trap_debug==0)) || { (($trap_debug_stderr==0)) && msg ts yellow "$dbg_msg" || msgerr ts yellow "$dbg_msg"; }
 }
 
@@ -224,11 +224,11 @@ function exit_handler ()
     # Disable exit on non-zero, and raising errors for unset variables
     # to ensure the error handler doesn't get disrupted
     set +eu
-    
+
     #
     # LOCAL VARIABLES:
     # ------------------------------------------------------------------
-    #    
+    #
     local i=0
     local regex=''
     local mem=''
@@ -277,7 +277,7 @@ function exit_handler ()
         ####
         # This 'if' block parses the standard bash error output format from the stderr log, which looks like this:
         #   ./run.sh: line 192: unexpected error removing comments
-        ### 
+        ###
         # Exploding stderr on :
         mem="$IFS"
         local shrunk_stderr=$( echo "$stderr" | sed -E 's/\: /\:/g' )
@@ -326,14 +326,14 @@ function exit_handler ()
         # The error line was found on the log
         # (e.g. type 'ff' without quotes wherever)
         # --------------------------------------------------------------
-    
+
         local row="${BASH_REMATCH[1]}"
         lineno="${BASH_REMATCH[2]}"
 
         msgerr white "FILE:\t\t${error_file}"
         msgerr white "${row^^}:\t\t${lineno}\n"
 
-        msgerr white "ERROR CODE:\t${error_code}"             
+        msgerr white "ERROR CODE:\t${error_code}"
         msgerr yellow "ERROR MESSAGE:\n"
         msgerr white "\t$error_message\n"
 
@@ -345,7 +345,7 @@ function exit_handler ()
             # The file was found on the log but not the error line
             # (could not reproduce this case so far)
             # ------------------------------------------------------
-        
+
             msgerr white "FILE:\t\t$error_file"
             msgerr white "ROW:\t\tunknown\n"
 
@@ -432,7 +432,7 @@ trap_err_handler() {
     local _ret="$?"
     (($_ret==0)) && return
     _handle_ignore_err || return
-    
+
     _TRAP_LAST_LINE="$1"
     _TRAP_LAST_CALLER="$2"
     _TRAP_ERR_CALL=1

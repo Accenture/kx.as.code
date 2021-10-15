@@ -1,7 +1,7 @@
 
     ######################
     # Conky settings -
-    # 
+    #
     ######################
     update_interval 2
     total_run_times 0
@@ -33,7 +33,7 @@
     own_window_argb_visual yes
     own_window_argb_value 120
     own_window_hints undecorated,below,sticky,skip_taskbar,skip_pager
-    # Set gaps below 
+    # Set gaps below
     alignment top_right
     gap_x 20
     gap_y 20

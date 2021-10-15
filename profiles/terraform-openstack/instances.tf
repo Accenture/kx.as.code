@@ -4,7 +4,7 @@ resource "openstack_compute_keypair_v2" "kx_keypair" {
 
 # Create KX-Main Admin server
 resource "openstack_compute_instance_v2" "kx_main_admin" {
-  depends_on = [ 
+  depends_on = [
     openstack_compute_keypair_v2.kx_keypair,
     openstack_networking_network_v2.kx_internal_network,
     openstack_networking_subnet_v2.kx_internal_network_subnet,
@@ -85,7 +85,7 @@ resource "openstack_compute_instance_v2" "kx_main_replica" {
 
 # Create KX-Worker server
 resource "openstack_compute_instance_v2" "kx_worker" {
-  depends_on = [ 
+  depends_on = [
     openstack_compute_keypair_v2.kx_keypair,
     openstack_networking_network_v2.kx_internal_network,
     openstack_networking_subnet_v2.kx_internal_network_subnet,
@@ -123,5 +123,3 @@ resource "openstack_compute_instance_v2" "kx_worker" {
   }
 
 }
-
-

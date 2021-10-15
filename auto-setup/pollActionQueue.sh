@@ -162,7 +162,7 @@ while :; do
                 notify "${componentName} installed successfully [$((${completedQueue} + 1))/${totalMessages}]" "dialog-information"
                 if [[ "${componentName}" == "${lastCoreElementToInstall}" ]]; then
                     notify "CONGRATULATIONS\! That concludes the core setup\! Your optional components will now be installed" "dialog-information"
-                    echo "${componentName} = ${lastCoreElementToInstall}"  
+                    echo "${componentName} = ${lastCoreElementToInstall}"
                 fi
                 retries=0
             else
