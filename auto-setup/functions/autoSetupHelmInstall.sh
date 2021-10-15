@@ -62,4 +62,3 @@ autoSetupHelmInstall() {
     return 1
   fi
 }
-

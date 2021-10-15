@@ -99,7 +99,7 @@ LoginFormLayout {
                 }
             }
         }
-        
+
         Image {
             id: loginButton
 
@@ -123,7 +123,7 @@ LoginFormLayout {
                 to: 0.75
                 duration: 100
             }
-            
+
             PropertyAnimation {
                 id: hideLoginButton
                 target: loginButton
@@ -132,7 +132,7 @@ LoginFormLayout {
                 duration: 80
             }
         }
-        
+
     }
 
 }

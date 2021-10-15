@@ -49,7 +49,7 @@ mkfifo "$_sg_log_pipe"
 exec 4>&2 2> "$_sg_log_pipe"
 
 
-log() { 
+log() {
     >&4 msgts "$@";
 }
 error() { log "ERROR: $@"; }
@@ -57,4 +57,3 @@ error() { log "ERROR: $@"; }
 fatal() { error "$@"; return 1; }
 
 exit_fatal() { error "$@"; exit 1; }
-

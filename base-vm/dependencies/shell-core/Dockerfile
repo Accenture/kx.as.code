@@ -30,4 +30,3 @@ RUN adduser --gecos "" --disabled-password testuser
 
 WORKDIR /root/sgshell
 ENTRYPOINT [ "bash" ]
-

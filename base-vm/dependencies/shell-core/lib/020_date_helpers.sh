@@ -11,7 +11,7 @@
 #############################################################
 #
 # Various Bash Helper Functions for working with dates
-# and times, including conversion to and from 
+# and times, including conversion to and from
 # seconds / UNIX epoch time.
 #
 # Included:
@@ -38,7 +38,7 @@ SG_LIB_LOADED[datehelpers]=1 # Mark this library script as loaded successfully
 
 
 ######
-# Very simple alias function which simply calls 'date' with the timezone env var TZ 
+# Very simple alias function which simply calls 'date' with the timezone env var TZ
 # locked to 'UTC', and a date formatting string to generate an RFC 3399 / ISO 8601
 # standard format date/time.
 # Example output:
@@ -69,7 +69,7 @@ export ISO_FMTSTR="%Y-%m-%dT%H:%M:%S"
 # date-to-seconds [date_time]
 # Convert a date/time string into UNIX time (epoch seconds)
 # (alias 'date-to-unix')
-# 
+#
 # for most reliable conversion, pass date/time in ISO format:
 #       2020-02-28T20:08:09   (%Y-%m-%dT%H:%M:%S)
 # e.g.
@@ -196,15 +196,15 @@ _human_scale() {
 #   human-seconds 90500   # output: 1 day(s) + 1 hour(s) + 8 minute(s)
 #
 # Limit the maximum scale (mins, hours, days, etc.):
-# 
+#
 #   human-seconds 50000000 yr    # 1 years(s) + 7 month(s) + 17 day(s)
 #   human-seconds 50000000 mon   # 20 month(s) + 18 day(s) + 16 hour(s)
 #   human-seconds 50000000 wk    # 82 week(s) + 4 day(s) + 16 hour(s)
 #   human-seconds 90500 hours    # 25 hour(s) and 8 minute(s)
 #   human-seconds 90500 m        # 1508 minute(s) and 20 second(s)
 #
-# NOTE: max_scale supports most unit variations, e.g. m/min/minutes/mins, 
-#       h/hrs/HOURS, M/mo/mons/months, w/wks/week/WEEKS/W, y/yrs/yea/year/Y/YRS 
+# NOTE: max_scale supports most unit variations, e.g. m/min/minutes/mins,
+#       h/hrs/HOURS, M/mo/mons/months, w/wks/week/WEEKS/W, y/yrs/yea/year/Y/YRS
 #       and others similar variations.
 #
 human-seconds() {

@@ -25,7 +25,7 @@ resource "openstack_networking_router_interface_v2" "kx_router_interface" {
 }
 
 resource "openstack_networking_floatingip_v2" "kx_main_admin_floating_ip" {
-  depends_on = [ 
+  depends_on = [
     openstack_networking_network_v2.kx_internal_network
   ]
   pool = "public"
@@ -66,4 +66,3 @@ resource "openstack_compute_floatingip_associate_v2" "kx_worker_floating_ip_asso
   floating_ip = element(openstack_networking_floatingip_v2.kx_worker_floating_ip.*.address, count.index)
   instance_id = element(openstack_compute_instance_v2.kx_worker.*.id, count.index)
 }
-

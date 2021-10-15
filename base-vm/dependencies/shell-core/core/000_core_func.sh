@@ -12,10 +12,10 @@
 # This file contains essential functions, which are not only
 # helpers for use by dependent shellscript projects, but
 # also essential for many parts of ShellCore itself, such as
-# initialization or installation of ShellCore. 
+# initialization or installation of ShellCore.
 #
 # Functions:
-# 
+#
 # has_command  has_binary  ident_shell  sudo
 #
 #############################################################
@@ -57,11 +57,11 @@ ident_shell() {
     #     { [[ $(ident_shell) == "zsh" ]] && echo "Running in zsh"; } || \
     #     { [[ $(ident_shell) == "bash" ]] && echo "Running in bash"; } || \
     #     echo "Unsupported Shell!" && exit 1
-    #     
+    #
     #     # Using the CURRENT_SHELL var
     #     ident_shell >/dev/null
-    #     if [[ "$CURRENT_SHELL" == "bash" ]]; then 
-    #       echo "Running in bash"; 
+    #     if [[ "$CURRENT_SHELL" == "bash" ]]; then
+    #       echo "Running in bash";
     #     fi;
     #
     ####
@@ -82,7 +82,7 @@ if ! has_command msg; then msg() { echo "$@"; }; fi
 if ! has_command msgerr; then msgerr() { >&2 echo "$@"; }; fi
 
 # This is an alias function to intercept commands such as 'sudo apt install' and avoid silent failure
-# on systems that don't have sudo - especially if it's being ran as root. Some systems don't have sudo, 
+# on systems that don't have sudo - especially if it's being ran as root. Some systems don't have sudo,
 # but if this script is being ran as root anyway, then we can just bypass sudo anyway and run the raw command.
 #
 # If we are in-fact a normal user, then check if sudo is installed - alert the user if it's not.
@@ -103,4 +103,3 @@ sudo() {
   # If we got to this point, then the user is already root, so just drop the 'sudo' and run it raw.
   /usr/bin/env "${@:1}"
 }
-

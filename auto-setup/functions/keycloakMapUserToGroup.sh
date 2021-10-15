@@ -17,7 +17,7 @@ mapKeycloakUserToGroup () {
     # Retrieve user group mappings and check if group mapping already exists
     groupMappingId=$(kubectl -n ${kcNamespace} exec ${kcPod} --container ${kcContainer} -- \
          ${kcAdmCli} get users/${userId}/groups -r ${kcRealm} | jq -r '.[] | select(.name=="'${group}'") | .id')
-    
+
     if [[ "${groupMappingId}" == "null" ]] || [[ -z "${groupMappingId}" ]]; then
         # Group mapping did not exist. Map user to group
         kubectl -n ${kcNamespace} exec ${kcPod} --container ${kcContainer} -- \
@@ -26,5 +26,5 @@ mapKeycloakUserToGroup () {
     else
         >&2 log_info "User ${userId} already mapped to group ${groupId}. Skipping"
     fi
-    
+
 }

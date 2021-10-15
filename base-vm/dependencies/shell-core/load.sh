@@ -10,7 +10,7 @@
 #                                                           #
 #############################################################
 
- 
+
 ######
 # Directory where the script is located, so we can source files regardless of where PWD is
 ######
@@ -29,4 +29,3 @@ else
 fi
 
 sg_load_lib "${SG_LOAD_LIBS[@]}"
-

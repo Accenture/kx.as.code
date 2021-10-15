@@ -21,11 +21,11 @@ sg_load_lib trap_helper # Check whether 'trap_helper' already been sourced, othe
 
 #####
 #
-# Due to the fact that BSD utilities can sometimes suck, 
+# Due to the fact that BSD utilities can sometimes suck,
 # this is a sanity checker, which makes sure we have access
 # to the GNU toolset if we're not on a Linux system.
 #
-# Usage: 
+# Usage:
 # from a function:
 #    gnusafe || return 1
 # from a script (that isn't sourced):
@@ -66,12 +66,12 @@ function gnusafe () {
         shopt -s expand_aliases
     else
         >&2 echo -e "${RED}
-    We can't figure out what shell you're running as neither BASH_VERSION 
-    nor ZSH_VERSION are set. This is important as we need to figure out 
+    We can't figure out what shell you're running as neither BASH_VERSION
+    nor ZSH_VERSION are set. This is important as we need to figure out
     which grep/sed/awk that we should use, and alias appropriately.
 
-    Different shells have different ways of enabling alias's in scripts 
-    such as this, but since you don't seem to be using zsh or bash, we 
+    Different shells have different ways of enabling alias's in scripts
+    such as this, but since you don't seem to be using zsh or bash, we
     can't continue...${RESET}
         "
         return 3
@@ -86,7 +86,7 @@ function gnusafe () {
             alias grep="ggrep"
             alias egrep="ggrep -E"
         fi
-        # echo " - Checking for gsed"	
+        # echo " - Checking for gsed"
         if [[ $(command -v gsed) ]]; then
             HAS_GSED=1
             # msg pos " + found GNU alternative 'gsed'. setting alias"
@@ -98,18 +98,18 @@ function gnusafe () {
             alias awk=gawk
         fi
         if [[ $HAS_GGREP -eq 0 || $HAS_GSED -eq 0 || $HAS_GAWK -eq 0 ]]; then
-            >&2 echo -e "${RED} 
+            >&2 echo -e "${RED}
     --- ERROR: Non-Linux detected. Missing GNU sed, awk or grep ---
     The program could not find ggrep, gawk, or gsed as a fallback.
     Due to differences between BSD and GNU Utils the program will now exit
     Please install GNU grep and GNU sed, and make sure they work
     On BSD systems, including OSX, they should be available as 'ggrep' and 'gsed'
-    
+
     For OSX, you can install ggrep/gsed/gawk via brew:
         brew install gnu-sed
         brew install grep
         brew install gawk
-    
+
     If you are certain that both 'sed' and 'grep' are the GNU versions,
     you can bypass this and use the default grep/sed with FORCE_UNIX=1${RESET}
             "

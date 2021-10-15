@@ -163,4 +163,3 @@ if [[ ! $(kubectl -n ${namespace} exec ${kcPod} --container ${kcContainer} -- ${
         -s 'config.preserve=["true"]' \
         -s 'config.membership=["member"]'
 fi
-

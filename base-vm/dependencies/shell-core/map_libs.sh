@@ -31,8 +31,8 @@ fi
 
 
 # Small shim in-case logging isn't loaded yet.
-if ! has_command _debug; then 
-    _debug() { ((SG_DEBUG<1)) && return; echo "$@"; } 
+if ! has_command _debug; then
+    _debug() { ((SG_DEBUG<1)) && return; echo "$@"; }
 fi
 
 
@@ -56,7 +56,7 @@ if [ -z ${SG_LIBS[@]+x} ]; then
 
     # We don't quote the keys - while bash ignores quotes, zsh treats them literally and would
     # require that the keys are accessed with the same quote style as they were set.
-    SG_LIBS=( 
+    SG_LIBS=(
         [colors]="${SG_DIR}/base/colors.sh" [identify]="${SG_DIR}/base/identify.sh"
         [logging]="${SG_DIR}/core/010_logging.sh" [permission]="${SG_DIR}/base/permission.sh"
         [traplib]="${SG_DIR}/base/trap.bash"
@@ -98,6 +98,3 @@ sg_load_lib logging
 #
 #   # Ensure any libraries you plan to use are loaded. If they were already sourced, then they won't be loaded again.
 #   sg_load_lib colors permission gnusafe
-
-
-
