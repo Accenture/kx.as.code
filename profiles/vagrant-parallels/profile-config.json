@@ -1,51 +1,50 @@
 {
-    "config": {
-        "vm_properties": {
-            "main_node_count": 1,
-            "admin_main_node_cpu_cores": 4,
-            "admin_main_node_memory": 8196,
-            "replica_main_node_cpu_cores": 2,
-            "replica_main_node_memory": 6144,
-            "worker_node_count": 0,
-            "worker_node_cpu_cores": 2,
-            "worker_node_memory": 6144,
-            "environment_prefix": "demo1",
-            "kx_sync_folder_path": "./KX_Share"
-        },
-        "allowWorkloadsOnMaster": true,
-        "disableSessionTimeout": true,
-        "certificationMode": false,
-        "disableLinuxDesktop": false,
-        "defaultKeyboardLanguage": "de",
-        "local_volumes": {
-            "one_gb": 10,
-            "five_gb": 10,
-            "ten_gb": 10,
-            "thirty_gb": 0,
-            "fifty_gb": 0
-        },
-        "virtualizationType": "local",
-        "environmentPrefix": "demo1",
-        "glusterFsDiskSize": "200",
-        "sslProvider": "self-signed",
-        "baseDomain": "kx-as-code.local",
-        "baseUser": "kx.hero",
-        "basePassword": "L3arnandshare",
-        "baseIpType": "dynamic",
-        "dnsResolution": "hybrid",
-        "metalLbIpRange": {
-            "ipRangeStart": "10.10.76.100",
-            "ipRangeEnd": "10.10.76.150"
-        },
-        "docker": {
-            "dockerhub_username": "",
-            "dockerhub_email": "",
-            "dockerhub_password": ""
-        },
-        "proxy_settings": {
-            "http_proxy": "",
-            "https_proxy": "",
-            "no_proxy": ""
-        }
+  "config": {
+    "vm_properties": {
+      "main_node_count": 1,
+      "admin_main_node_cpu_cores": 4,
+      "admin_main_node_memory": 8196,
+      "replica_main_node_cpu_cores": 2,
+      "replica_main_node_memory": 6144,
+      "worker_node_count": 0,
+      "worker_node_cpu_cores": 2,
+      "worker_node_memory": 6144,
+      "3d_acceleration": "off"
+    },
+    "allowWorkloadsOnMaster": true,
+    "disableSessionTimeout": true,
+    "certificationMode": false,
+    "disableLinuxDesktop": false,
+    "defaultKeyboardLanguage": "de",
+    "local_volumes": {
+      "one_gb": 10,
+      "five_gb": 10,
+      "ten_gb": 10,
+      "thirty_gb": 0,
+      "fifty_gb": 0
+    },
+    "virtualizationType": "local",
+    "environmentPrefix": "",
+    "glusterFsDiskSize": "200",
+    "sslProvider": "self-signed",
+    "baseDomain": "kx-as-code.local",
+    "baseUser": "kx.hero",
+    "basePassword": "L3arnandshare",
+    "baseIpType": "dynamic",
+    "dnsResolution": "hybrid",
+    "metalLbIpRange": {
+      "ipRangeStart": "10.10.76.100",
+      "ipRangeEnd": "10.10.76.150"
+    },
+    "docker": {
+      "dockerhub_username": "",
+      "dockerhub_email": "",
+      "dockerhub_password": ""
+    },
+    "proxy_settings": {
+      "http_proxy": "",
+      "https_proxy": "",
+      "no_proxy": ""
     }
+  }
 }
