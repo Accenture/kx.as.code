@@ -1,0 +1,122 @@
+[
+    {
+        "payload_bytes": 95,
+        "redelivered": true,
+        "exchange": "action_workflow",
+        "routing_key": "completed_queue",
+        "message_count": 9,
+        "properties": {
+            "delivery_mode": 2
+        },
+        "payload": "{\"install_folder\":\"core\",\"name\":\"cfssl-certificate-authority\",\"action\":\"install\",\"retries\":\"0\"}",
+        "payload_encoding": "string"
+    },
+    {
+        "payload_bytes": 76,
+        "redelivered": true,
+        "exchange": "action_workflow",
+        "routing_key": "completed_queue",
+        "message_count": 8,
+        "properties": {
+            "delivery_mode": 2
+        },
+        "payload": "{\"install_folder\":\"core\",\"name\":\"openldap\",\"action\":\"install\",\"retries\":\"0\"}",
+        "payload_encoding": "string"
+    },
+    {
+        "payload_bytes": 82,
+        "redelivered": true,
+        "exchange": "action_workflow",
+        "routing_key": "completed_queue",
+        "message_count": 7,
+        "properties": {
+            "delivery_mode": 2
+        },
+        "payload": "{\"install_folder\":\"core\",\"name\":\"remote-desktop\",\"action\":\"install\",\"retries\":\"1\"}",
+        "payload_encoding": "string"
+    },
+    {
+        "payload_bytes": 84,
+        "redelivered": true,
+        "exchange": "action_workflow",
+        "routing_key": "completed_queue",
+        "message_count": 6,
+        "properties": {
+            "delivery_mode": 2
+        },
+        "payload": "{\"install_folder\":\"core\",\"name\":\"kubernetes-tools\",\"action\":\"install\",\"retries\":\"1\"}",
+        "payload_encoding": "string"
+    },
+    {
+        "payload_bytes": 92,
+        "redelivered": true,
+        "exchange": "action_workflow",
+        "routing_key": "completed_queue",
+        "message_count": 5,
+        "properties": {
+            "delivery_mode": 2
+        },
+        "payload": "{\"install_folder\":\"core\",\"name\":\"kubernetes-base-services\",\"action\":\"install\",\"retries\":\"0\"}",
+        "payload_encoding": "string"
+    },
+    {
+        "payload_bytes": 80,
+        "redelivered": true,
+        "exchange": "action_workflow",
+        "routing_key": "completed_queue",
+        "message_count": 4,
+        "properties": {
+            "delivery_mode": 2
+        },
+        "payload": "{\"install_folder\":\"core\",\"name\":\"kontena-lens\",\"action\":\"install\",\"retries\":\"0\"}",
+        "payload_encoding": "string"
+    },
+    {
+        "payload_bytes": 82,
+        "redelivered": true,
+        "exchange": "action_workflow",
+        "routing_key": "completed_queue",
+        "message_count": 3,
+        "properties": {
+            "delivery_mode": 2
+        },
+        "payload": "{\"install_folder\":\"core\",\"name\":\"calico-network\",\"action\":\"install\",\"retries\":\"0\"}",
+        "payload_encoding": "string"
+    },
+    {
+        "payload_bytes": 88,
+        "redelivered": true,
+        "exchange": "action_workflow",
+        "routing_key": "completed_queue",
+        "message_count": 2,
+        "properties": {
+            "delivery_mode": 2
+        },
+        "payload": "{\"install_folder\":\"core\",\"name\":\"metallb-loadbalancer\",\"action\":\"install\",\"retries\":\"0\"}",
+        "payload_encoding": "string"
+    },
+    {
+        "payload_bytes": 80,
+        "redelivered": true,
+        "exchange": "action_workflow",
+        "routing_key": "completed_queue",
+        "message_count": 1,
+        "properties": {
+            "delivery_mode": 2
+        },
+        "payload": "{\"install_folder\":\"core\",\"name\":\"cert-manager\",\"action\":\"install\",\"retries\":\"0\"}",
+        "payload_encoding": "string"
+    },
+    {
+        "payload_bytes": 81,
+        "redelivered": true,
+        "exchange": "action_workflow",
+        "routing_key": "completed_queue",
+        "message_count": 0,
+        "properties": {
+            "delivery_mode": 2
+        },
+        "payload": "{\"install_folder\":\"core\",\"name\":\"local-storage\",\"action\":\"install\",\"retries\":\"0\"}",
+        "payload_encoding": "string"
+    }
+]

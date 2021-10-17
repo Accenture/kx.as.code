@@ -14,21 +14,12 @@ export default class Dashboard extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      // a: "",
-      // b: "",
-      // result: ""
       items: []
     };
   }
 
   componentDidMount() {
     this.getItems();
-    // console.log(API);
-    // API.subscribe(({ result }) => {
-    //   this.setState({
-    //     result: result
-    //   })
-    // });
   }
   
   getItems = () => {
@@ -49,44 +40,9 @@ export default class Dashboard extends Component {
     );
   }
 
-  handleSubmit(event) {
-    /*
-    event.preventDefault();
-
-    const params = new URLSearchParams();
-    params.append('a', this.state.a);
-    params.append('b', this.state.b);
-
-    fetch(`${API.API_URL}/api/calc/sum`, { method: 'POST', body: params })
-      .then(res => res.json());
-    */
-  }
-
   render() {
-    // const { t } = useTranslation();
-    // const result = this.state.result ? (
-    //   <label>
-    //     Result:
-    //     <input type="text" value={this.state.result} name='b' readOnly />
-    //   </label>
-    // ) : ''
+   
      return (
-    //   <div>
-    //     <div>
-    //       <form onSubmit={this.handleSubmit}>
-    //         <label>
-    //           A:
-    //           <input type="text" name='a' onChange={this.handleChange} />
-    //         </label>
-    //         <label>
-    //           B:
-    //           <input type="text" name='b' onChange={this.handleChange} />
-    //         </label>
-    //         {result}
-    //         <br />
-    //         <input type="submit" value="Add" />
-    //       </form>
-    //     </div>
         <Box id="Home">
           <Box className="application-cards">
             <ApplicationCard />
@@ -96,7 +52,6 @@ export default class Dashboard extends Component {
 
           </Box>
         </Box>
-      // </div>
     );
   }
 }

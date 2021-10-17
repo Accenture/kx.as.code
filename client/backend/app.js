@@ -1,6 +1,6 @@
 var express = require('express') 
 var bodyParser = require('body-parser')
-var rabbitMQHandler = require('./connection')
+var rabbitMQHandler = require('connection.js')
 
 var app = express()
 var router = express.Router()
