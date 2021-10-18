@@ -19,13 +19,19 @@ export default class Dashboard extends Component {
   }
 
   componentDidMount() {
-    this.getItems();
+    this.getData();
   }
   
-  getItems = () => {
+  itemList() {
+    return this.state.items.map(item => {
+      return <ApplicationCard item={item}/>
+    })
+  }
+
+  getData = () => {
     axios.get("http://localhost:5000/queues/pending_queue").then(response => {
       this.setState({
-        items: response
+        items: response.data
       })
       console.log("Items: ", this.state.items);
     }).catch(function (error){
@@ -45,11 +51,7 @@ export default class Dashboard extends Component {
      return (
         <Box id="Home">
           <Box className="application-cards">
-            <ApplicationCard />
-            <ApplicationCard />
-            <ApplicationCard />
-            <ApplicationCard />
-
+            {this.itemList()}
           </Box>
         </Box>
     );

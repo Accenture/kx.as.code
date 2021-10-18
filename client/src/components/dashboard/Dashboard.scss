@@ -19,11 +19,12 @@
   }
   
   #Home > .application-cards {
-    margin-top: 40px;
     display: flex;
     flex-direction: row;
     justify-content: center;
     align-items: flex-start;
     flex-wrap: wrap;
+    overflow-y: scroll;
+    height: 100vh;
   }
   
