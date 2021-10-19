@@ -8,11 +8,13 @@
   flex-direction: row;
   justify-content: flex-start;
   align-items: center;
+  position: fixed;
 }
 
 #TopPanel>#avatar {
   width: 81px;
   text-align: center;
+  z-index: 10;
 }
 
 #TopPanel>#avatar>a>img {
