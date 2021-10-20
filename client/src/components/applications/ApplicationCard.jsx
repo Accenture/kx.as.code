@@ -1,37 +1,36 @@
 import React, { Component } from "react";
 import "../applications/ApplicationCard.scss";
-import { Box, Button } from "@material-ui/core";
+import { Box, Button, Grid } from "@material-ui/core";
 
 
 class ApplicationCard extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      payload_data: {},
-      queue_name: ""
+      payloadData: {},
+      queueName: "",
+      appName: ""
     }
   }
 
-  componentDidMount(){
+  componentWillMount(){
     this.setState({
-      payload_data: JSON.parse(this.props.item.payload),
-      queue_name: this.props.item.routing_key.replace("_"," ").replace(/\b\w/g, l => l.toUpperCase())
+      payloadData: JSON.parse(this.props.item.payload),
+      queueName: this.props.item.routing_key.replace("_"," ").replace(/\b\w/g, l => l.toUpperCase()),
+      appName: this.props.item
     })
   }
 
   render() {
     return (
-      <Box className="AppCard">
-        <Box className="info-column" >
-          <span>Installation Status: {this.state.queue_name}</span>
-          <span>{this.state.payload_data.name}</span>
-          <span>Install Folder: {this.state.payload_data.install_folder}</span>
-          <span>Retries: {this.state.payload_data.retries}</span>
-        </Box>
-        <Box className="action-column">
-
-        </Box>
-      </Box>
+      <Grid item xs={6} className="application-card-wrapper">
+        <div className="application-card-info">
+          <div>Installation Status: {this.state.queueName}</div>
+          <div>{this.state.payloadData.name.replaceAll("-"," ").replace(/\b\w/g, l => l.toUpperCase())}</div>
+          <div>Install Folder: {this.state.payloadData.install_folder}</div>
+          <div>Retries: {this.state.payloadData.retries}</div>
+        </div>
+      </Grid>
     );
   }
 }

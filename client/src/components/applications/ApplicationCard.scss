@@ -102,4 +102,20 @@
     width: 18px;
     height: 30px;
   }
-  
+
+
+  // new csss
+
+  .application-card-wrapper{
+    box-sizing: border-box;
+    border: 1px solid #283040;
+    background-color: #283040;
+    border-radius: 4px;
+    height: 173px;
+    box-shadow: 0 5px 10px -10px rgba(0, 0, 0, 0.5);
+    padding: 20px;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    margin: 10px;
+  }

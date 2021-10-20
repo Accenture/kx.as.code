@@ -1,5 +1,5 @@
 import { React, Component } from "react";
-import { Box, Button } from "@material-ui/core"
+import { Box, Button, Grid } from "@material-ui/core"
 import { useTranslation } from 'react-i18next';
 import "../dashboard/Dashboard.scss"
 import "../applications/ApplicationCard"
@@ -26,53 +26,68 @@ export default class Dashboard extends Component {
     this.getData("pending_queue");
     this.getData("failed_queue");
   }
-  
+
   itemList(queue_name) {
-    if(queue_name == "pending_queue"){
-      return this.state.pendingData.map(item => {
-        return <ApplicationCard item={item}/>
-      })
+    var data = "";
+    switch (queue_name) {
+      case "pending_queue":
+        data = this.state.pendingData
+        break;
+      case "failed_queue":
+        data = this.state.failedData
+        break;
+      case "completed_queue":
+        data = this.state.completedData
+        break;
+      case "wip_queue":
+        data = this.state.wipData
+        break;
+      case "retry_queue":
+        data = this.state.completedData
+        break;
+      default:
+        console.log("Queue not found -> ", queue_name);
+        break;
     }
-    else if(queue_name == "failed_queue"){
-      return this.state.failedData.map(item => {
-        return <ApplicationCard item={item}/>
-      })
-    }
+    return data.map(item => {
+      return <ApplicationCard item={item} />
+    })
   }
 
-  getData = (queue_name) => {
-    
-      axios.get("http://localhost:5000/queues/" + queue_name).then(response => {
 
-        if(queue_name == "pending_queue"){
-          this.setState({
-            pendingData: response.data
-          })
-        }
-        else if(queue_name == "failed_queue"){
-          this.setState({
-            failedData: response.data
-          })
-        }
-        else if(queue_name == "completed_queue"){
-          this.setState({
-            completedData: response.data
-          })
-        }
-        else if(queue_name == "retry_queue"){
-          this.setState({
-            retryData: response.data
-          })
-        }
-        else if(queue_name == "wip_queue"){
-          this.setState({
-            wipData: response.data
-          })
-        }
-      }).catch(function (error){
-        console.log(error);
-      })
-    
+  getData = (queue_name) => {
+
+    axios.get("http://localhost:5000/queues/" + queue_name).then(response => {
+      console.log("ResponseData: ", response.data)
+      if (queue_name == "pending_queue") {
+        this.setState({
+          pendingData: response.data
+        })
+      }
+      else if (queue_name == "failed_queue") {
+        this.setState({
+          failedData: response.data
+        })
+      }
+      else if (queue_name == "completed_queue") {
+        this.setState({
+          completedData: response.data
+        })
+      }
+      else if (queue_name == "retry_queue") {
+        this.setState({
+          retryData: response.data
+        })
+      }
+      else if (queue_name == "wip_queue") {
+        this.setState({
+          wipData: response.data
+        })
+      }
+    }).catch(function (error) {
+      console.log(error);
+    })
+
   }
 
   handleChange(event) {
@@ -83,17 +98,25 @@ export default class Dashboard extends Component {
   }
 
   render() {
-   
-     return (
-        <Box id="Home">
-          <Box className="application-cards">
-            {this.itemList("pending_queue")}
-            {this.itemList("failed_queue")}
-            {this.itemList("completed_queue")}
-            {this.itemList("retry_queue")}
-            {this.itemList("wip_queue")}
-          </Box>
-        </Box>
+
+    return (
+      <div id="dashboard-content">
+        <Grid container spacing={16}>
+          <Grid item xs={8} className="application-cards-container-left" style={{backgroundColor: "blue"}}>
+            Hello Grid Left
+            <Grid container spacing={8}>
+              {this.itemList("pending_queue")}
+              {this.itemList("failed_queue")}
+              {this.itemList("completed_queue")}
+              {this.itemList("retry_queue")}
+              {this.itemList("wip_queue")}
+            </Grid>
+          </Grid>
+          <Grid item xs={4} className="application-cards-container-right" style={{backgroundColor: "orange"}}>
+            Hello Grid right
+          </Grid>
+        </Grid>
+      </div>
     );
   }
 }

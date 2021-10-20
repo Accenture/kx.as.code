@@ -7,7 +7,7 @@ import avatarIcon from "../../media/images/common/KX-AS-CODE-Avatar.png";
 const TopPanel = () => {
   const history = useHistory();
   return (
-    <Box id="TopPanel">
+    <div id="TopPanel">
       <Box id="avatar">
         <Link onClick={() => history.push("/")}>
           <img src={String(avatarIcon)} alt="profile" />
@@ -16,7 +16,7 @@ const TopPanel = () => {
       <Box>
         <h1>KX.AS.CODE</h1>
       </Box>
-    </Box>
+    </div>
   );
 };
 
