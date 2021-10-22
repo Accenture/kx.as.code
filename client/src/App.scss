@@ -1,29 +1,52 @@
 @import "variables.scss";
 
 #App{
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: flex-start;
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  grid-template-rows: 50px 1fr 50px;
+  grid-template-areas:
+    "sidenav header"
+    "sidenav main"
+    "sidenav footer";
+  height: 100vh;
 }
 
-#main, #main-container {
-  height: 100%;
-  bottom: 0px;
-}
-
-#main-container{
+.application-card-wrapper{
+  border: 1px solid #283040;
+  background-color: #283040;
+  border-radius: 4px;
+  height: 173px;
+  box-shadow: 0 5px 10px -10px rgba(0, 0, 0, 0.5);
+  padding: 20px;
   display: flex;
   flex-direction: row;
-  justify-content: flex-start;
   align-items: flex-start;
 }
 
-#content {
-  width: 100%;
-  overflow: hidden;
+#header {
+  grid-area: header;
+  background-color: #648ca6;
 }
 
-.application-card-container{
-  
+#sidenav {
+  grid-area: sidenav;
+  background-color: #394263;
+}
+
+#main-content {
+  grid-area: main;
+  background-color: #8fd4d9;
+}
+
+.footer {
+  grid-area: footer;
+  background-color: #648ca6;
+}
+
+.header, .footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  background-color: #648ca6;
 }

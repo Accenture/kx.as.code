@@ -101,21 +101,17 @@ export default class Dashboard extends Component {
 
     return (
       <div id="dashboard-content">
-        <Grid container spacing={16}>
-          <Grid item xs={8} className="application-cards-container-left" style={{backgroundColor: "blue"}}>
-            Hello Grid Left
-            <Grid container spacing={8}>
+
+          <Grid container className="application-cards-container-left" style={{backgroundColor: "blue"}}>            
               {this.itemList("pending_queue")}
               {this.itemList("failed_queue")}
               {this.itemList("completed_queue")}
               {this.itemList("retry_queue")}
               {this.itemList("wip_queue")}
-            </Grid>
           </Grid>
-          <Grid item xs={4} className="application-cards-container-right" style={{backgroundColor: "orange"}}>
+          <div style={{backgroundColor: "orange"}}>
             Hello Grid right
-          </Grid>
-        </Grid>
+          </div>
       </div>
     );
   }

@@ -7,18 +7,18 @@ import { Box, Link } from "@material-ui/core";
 const preventDefault = (event) => event.preventDefault();
 
 const LeftPanel = () => (
-  <Box id="LeftPanel">
-    <Box id="left-nav-1" className="left-nav">
+  <aside id="sidenav">
+    <div id="left-nav-1" className="left-nav">
       <Link href="#" onClick={preventDefault}>
         <InboxIcon />
       </Link>
-    </Box>
-    <Box id="left-nav-2" className="left-nav">
+    </div>
+    <div id="left-nav-2" className="left-nav">
       <Link href="#" onClick={preventDefault}>
         <DraftsIcon />
       </Link>
-    </Box>
-  </Box>
+    </div>
+  </aside>
 );
 
 export default LeftPanel;

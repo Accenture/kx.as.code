@@ -13,22 +13,20 @@ class App extends Component {
     return (
       <Suspense fallback="loading">
 
-      <div id="App">
-        {/* Top panel */}
-        <div id="TopPanel-wrapper">
-          <HashRouter>
-            <TopPanel />
-          </HashRouter>
-        </div>
-        {/* Main section - below top panel */}
-        <div id="main">
-          <div id="main-container">
-            {/* Left panel */}
-            <div id="LeftPanel-wrapper">
-              <LeftPanel />
+        <div id="App">
+          <div id="sidenav">
+            <HashRouter>
+              <TopPanel />
+            </HashRouter>
+          </div>
+          <LeftPanel />
+
+
+          <div id="">
+            <div>
+              
             </div>
-            {/* Content */}
-            <div id="content" >
+            <div id="main-content-2" >
               <HashRouter>
                 <div>
                   <Route path="/" exact={true} component={Dashboard} />
@@ -37,12 +35,11 @@ class App extends Component {
             </div>
           </div>
         </div>
-      </div>
-          
-      
 
 
-        
+
+
+
       </Suspense>
     );
   }
