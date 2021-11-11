@@ -28,7 +28,7 @@ class ApplicationCard extends Component {
         <Box className="info-column" >
           <span>Installation Status: {this.state.queueName}</span>
           <span>{this.state.payloadData.name.replaceAll("-", " ").replace(/\b\w/g, l => l.toUpperCase())}</span>
-          <span>Install Folder: {this.state.payloadData.install_folder}</span>
+          <span>Catergory: {this.state.payloadData.install_folder}</span>
           <span>Retries: {this.state.payloadData.retries}</span>
         </Box>
       </Box>

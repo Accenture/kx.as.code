@@ -1,13 +1,12 @@
 .ProfileCard {
   box-sizing: border-box;
-  border: 1px solid #283040;
-  background-color: #283040;
+  border: 1px solid #424c5e;
+  background-color: #424c5e;
   border-radius: 4px;
   height: 173px;
-  width: 678px;
+  width: 85%;
   margin: 20px;
   padding: 20px;
-  display: flex;
   flex-direction: row;
   justify-content: space-between;
   align-items: flex-start;
@@ -19,12 +18,14 @@
 }
 
 .profile-cards {
-  margin-top: 40px;
-  display: flex;
   flex-direction: row;
   justify-content: center;
   align-items: flex-start;
   flex-wrap: wrap;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  height: 85vh;
+  background-color: #263041;
 }
 
 .profile-cards > .ProfileCard > .info-column {

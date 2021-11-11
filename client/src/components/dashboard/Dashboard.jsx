@@ -105,66 +105,20 @@ export default class Dashboard extends Component {
   render() {
 
     return (
-      <Grid container spacing={8}>
-        <Grid item xs={8} className="profile-cards" style={{width:"100%"}}>
-          <Accordion>
-            <AccordionSummary
-              expandIcon={<ExpandMoreIcon />}
-            >
-              Pending Queue
-            </AccordionSummary>
-            <AccordionDetails>
-              {this.itemList("pending_queue")}
-            </AccordionDetails>
-          </Accordion>
-          <Accordion>
-            <AccordionSummary
-              expandIcon={<ExpandMoreIcon />}
-              aria-controls="panel1a-content"
-              id="panel1a-header"
-            >
-              <Typography>Failed Queue</Typography>
-            </AccordionSummary>
-            <AccordionDetails>
-              {this.itemList("failed_queue")}
-            </AccordionDetails>
-          </Accordion>
-          <Accordion>
-            <AccordionSummary
-              expandIcon={<ExpandMoreIcon />}
-              aria-controls="panel1a-content"
-              id="panel1a-header"
-            >
-              <Typography>Completed Queue</Typography>
-            </AccordionSummary>
-            <AccordionDetails>
-              {this.state.completedData !== 'undefined' && this.state.completedData.length > 0 ? this.itemList("completed_queue") : "Empty Queue"}
-            </AccordionDetails>
-          </Accordion>
-          <Accordion>
-            <AccordionSummary
-              expandIcon={<ExpandMoreIcon />}
-              aria-controls="panel1a-content"
-              id="panel1a-header"
-            >
-              <Typography>Retry Queue</Typography>
-            </AccordionSummary>
-            <AccordionDetails>
-              {this.itemList("retry_queue")}
-            </AccordionDetails>
-          </Accordion>
-          <Accordion>
-            <AccordionSummary
-              expandIcon={<ExpandMoreIcon />}
-              aria-controls="panel1a-content"
-              id="panel1a-header"
-            >
-              <Typography>WIP Queue</Typography>
-            </AccordionSummary>
-            <AccordionDetails>
-              {this.itemList("wip_queue")}
-            </AccordionDetails>
-          </Accordion>
+      <Grid id="main-content-dashboard" container spacing={8}>
+        <Grid item xs={4} className="profile-cards" style={{ width: "100%" }}>
+
+          Pending Queue
+
+          {this.itemList("pending_queue")}
+          Failed Queue
+          {this.itemList("failed_queue")}
+          Completed Queue
+          {this.state.completedData !== 'undefined' && this.state.completedData.length > 0 ? this.itemList("completed_queue") : "Empty Queue"}
+          Retry Queue
+          {this.itemList("retry_queue")}
+          WIP Queue
+          {this.itemList("wip_queue")}
         </Grid>
       </Grid>
     );
