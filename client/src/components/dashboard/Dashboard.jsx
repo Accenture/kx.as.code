@@ -108,15 +108,15 @@ export default class Dashboard extends Component {
       <Grid id="main-content-dashboard" container spacing={8}>
         <Grid item xs={4} className="profile-cards" style={{ width: "100%" }}>
           Pending Queue
-          {this.state.completedData !== 'undefined' && this.state.completedData.length > 0 ? this.itemList("pending_queue") : "Empty Queue"}
+          {this.state.pendingData !== 'undefined' && this.state.pendingData.length > 0 ? this.itemList("pending_queue") : "Empty Queue"}
           Failed Queue
-          {this.state.completedData !== 'undefined' && this.state.completedData.length > 0 ? this.itemList("failed_queue") : "Empty Queue"}
+          {this.state.failedData !== 'undefined' && this.state.failedData.length > 0 ? this.itemList("failed_queue") : "Empty Queue"}
           Completed Queue
           {this.state.completedData !== 'undefined' && this.state.completedData.length > 0 ? this.itemList("completed_queue") : "Empty Queue"}
           Retry Queue
-          {this.state.completedData !== 'undefined' && this.state.completedData.length > 0 ? this.itemList("retry_queue") : "Empty Queue"}
+          {this.state.retryData !== 'undefined' && this.state.retryData.length > 0 ? this.itemList("retry_queue") : "Empty Queue"}
           WIP Queue
-          {this.state.completedData !== 'undefined' && this.state.completedData.length > 0 ? this.itemList("wip_queue") : "Empty Queue"}
+          {this.state.wipData !== 'undefined' && this.state.wipData.length > 0 ? this.itemList("wip_queue") : "Empty Queue"}
 
         </Grid>
       </Grid>
