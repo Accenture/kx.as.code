@@ -14,7 +14,11 @@ app.route('/queues/:queue_name').get((req, res) => {
 
     var url = "http://test:test@localhost:15672/api/queues/%2F/" + req.params.queue_name + "/get";   
     
+<<<<<<< HEAD
     var dataString = '{"vhost":"/","name":"' + req.params.queue_name + '","truncate":"50000","ackmode":"ack_requeue_true","encoding":"auto","count":"100"}';
+=======
+    var dataString = '{"vhost":"/","name":"' + req.params.queue_name + '","truncate":"50000","ackmode":"ack_requeue_true","encoding":"auto","count":"10"}';
+>>>>>>> feature/rabbitmq-client-poc
 
     let options = {
         url: url,

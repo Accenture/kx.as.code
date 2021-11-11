@@ -7,16 +7,16 @@ import avatarIcon from "../../media/images/common/KX-AS-CODE-Avatar.png";
 const TopPanel = () => {
   const history = useHistory();
   return (
-    <Box id="TopPanel">
-      <Box id="avatar">
+    <header>
+      <div>
         <Link onClick={() => history.push("/")}>
-          <img src={String(avatarIcon)} alt="profile" />
+          {/* <img src={String(avatarIcon)} alt="profile" /> */}
         </Link>
-      </Box>
-      <Box>
+      </div>
+      <div>
         <h1>KX.AS.CODE</h1>
-      </Box>
-    </Box>
+      </div>
+    </header>
   );
 };
 

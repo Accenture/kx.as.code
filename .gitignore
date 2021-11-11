@@ -1,3 +1,4 @@
+/client/node_modules
 packer_cache/
 packerlog.txt
 iso/*.iso

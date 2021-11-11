@@ -2,6 +2,7 @@ import { React, Component } from "react";
 import { Box, Button, Grid } from "@material-ui/core"
 import { useTranslation } from 'react-i18next';
 import "../dashboard/Dashboard.scss"
+<<<<<<< HEAD
 import ApplicationCard from "../ApplicationCard";
 // import * as API from './api';
 // import URLSearchParams from 'url-search-params';
@@ -12,6 +13,13 @@ import AccordionDetails from '@mui/material/AccordionDetails';
 import Typography from '@mui/material/Typography';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { width } from "@mui/system";
+=======
+import "../applications/ApplicationCard"
+import ApplicationCard from "../applications/ApplicationCard";
+// import * as API from './api';
+import URLSearchParams from 'url-search-params';
+import axios from "axios";
+>>>>>>> feature/rabbitmq-client-poc
 
 
 export default class Dashboard extends Component {
@@ -105,6 +113,7 @@ export default class Dashboard extends Component {
   render() {
 
     return (
+<<<<<<< HEAD
       <Grid id="main-content-dashboard" container spacing={8}>
         <Grid item xs={4} className="profile-cards" style={{ width: "100%" }}>
 
@@ -121,6 +130,21 @@ export default class Dashboard extends Component {
           {this.itemList("wip_queue")}
         </Grid>
       </Grid>
+=======
+      <div id="dashboard-content">
+
+          <Grid container className="application-cards-container-left" style={{backgroundColor: "blue"}}>            
+              {this.itemList("pending_queue")}
+              {this.itemList("failed_queue")}
+              {this.itemList("completed_queue")}
+              {this.itemList("retry_queue")}
+              {this.itemList("wip_queue")}
+          </Grid>
+          <div style={{backgroundColor: "orange"}}>
+            Hello Grid right
+          </div>
+      </div>
+>>>>>>> feature/rabbitmq-client-poc
     );
   }
 }
