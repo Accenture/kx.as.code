@@ -76,7 +76,7 @@ def setBuildEnvironment() {
 }
 
 def addVagrantBox(provider,kx_version) {
-    sh """{ set +x; } 2>/dev/null
+    sh """
         # Get the number of main and worker nodes, to determine if it's needed to import the kx-node or not
         if [ ! -f profiles/vagrant-${provider}/profile-config.json ]; then
             echo "profiles/vagrant-${provider}/profile-config.json missing. Cannot continue with the deployment."
@@ -120,7 +120,12 @@ def addVagrantBox(provider,kx_version) {
 
 def setEnvironmentPrefix(profile) {
 
-    def environmentPrefix = sh (script: """{ set +x; } 2>/dev/null
+    def environmentPrefix = sh (script: """
+        if [ "${os}" == "darwin" ]; then
+            export shuffleCommand="sort -R"
+        else
+            export shuffleCommand="shuf"
+        fi
         cd profiles/${profile}
         if [ -z \$(vagrant status --machine-readable | grep ",state," | grep -v "not_created") ]; then
             # Cleanup old kx.as.code_main-ip-address file
@@ -130,7 +135,7 @@ def setEnvironmentPrefix(profile) {
             profileEnvPrefix=\$(cat profile-config.json | jq -r '.config.environmentPrefix')
             if [ -z \$profileEnvPrefix ] || [ -n \$(cat ../.environment_prefix_names | grep "\$profileEnvPrefix") ]; then
                 # No machines running and previous name also came from random name list. Will set a new name for new environment
-                export environmentPrefix=\$(cat ../.environment_prefix_names | sort -R | tail -1)
+                export environmentPrefix=\$(cat ../.environment_prefix_names | \${shuffleCommand} | tail -1)
                 cat profile-config.json | jq -r '.config.environmentPrefix="'\${environmentPrefix}'"' | tee profile-config.json >/dev/null
             else
                 # Get environment prefix from profile-config.json

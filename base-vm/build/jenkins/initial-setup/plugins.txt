@@ -21,7 +21,7 @@ credentials:2.6.1
 display-url-api:2.3.5
 durable-task:1.39
 echarts-api:5.2.1-2
-email-ext:2.83
+email-ext:2.84
 font-awesome-api:5.15.4-1
 git-client:3.10.0
 git-server:1.10
@@ -78,6 +78,7 @@ terraform:1.0.10
 timestamper:1.13
 token-macro:266.v44a80cf277fd
 trilead-api:1.0.13
+uno-choice:2.5.6
 variant:1.4
 windows-slaves:1.8
 workflow-aggregator:2.6
@@ -92,3 +93,9 @@ workflow-scm-step:2.13
 workflow-step-api:2.24
 workflow-support:3.8
 ws-cleanup:0.39
+jquery:1.12.4-1
+extended-choice-parameter:0.82
+parameterized-trigger:2.41
+theme-manager:0.6
+material-theme:0.4.1
+simple-theme-plugin:0.7

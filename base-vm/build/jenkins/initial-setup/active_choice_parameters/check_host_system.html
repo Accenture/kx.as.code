@@ -1,3 +1,20 @@
+import java.lang.management.*
+
+mb = 1024*1024;
+gb = mb*1024;
+
+def os = ManagementFactory.operatingSystemMXBean;
+long freePhysicalMemorySize = os.getFreePhysicalMemorySize() / mb;
+long totalPhysicalMemorySize = os.getTotalPhysicalMemorySize() / mb;
+
+int totalSystemCores = Runtime.getRuntime().availableProcessors();
+
+File f = new File("/");
+def currentSystemDisk = f.getAbsolutePath();
+long totalSystemDisk = f.getTotalSpace() / gb;
+long freeSystemDisk = f.getFreeSpace() / gb;
+long usableSystemDisk = f.getUsableSpace() / gb;
+
 def localVolumeParameterElements = LOCAL_STORAGE_OPTIONS.split(';')
 
 int number1GbVolumes = localVolumeParameterElements[0].toInteger()
@@ -6,8 +23,8 @@ int number10GbVolumes = localVolumeParameterElements[2].toInteger()
 int number30GbVolumes = localVolumeParameterElements[3].toInteger()
 int number50GbVolumes = localVolumeParameterElements[4].toInteger()
 
-int totalLocalDiskSpace = LOCAL_SLAVE_TOTAL_DISK_SPACE.toInteger()
-int remainingDiskSpace = LOCAL_SLAVE_REMAINING_DISK_SPACE.toInteger()
+int totalLocalDiskSpace = totalSystemDisk.toInteger()
+int remainingDiskSpace = freeSystemDisk.toInteger()
 int totalLocalStorageRequired
 
 if ( ALLOW_WORKLOADS_ON_KUBERNETES_MASTER == "true" ) {
@@ -20,23 +37,23 @@ int overallStorageRequired = totalLocalStorageRequired + NETWORK_STORAGE_OPTIONS
 int overallStorageNeededPercentage = (overallStorageRequired / remainingDiskSpace) * 100
 int overallRemainingPercentage = 100 - overallStorageNeededPercentage
 
-int slaveTotalMemory = LOCAL_SLAVE_TOTAL_MEM.toInteger()
-int slaveFreeMemory = LOCAL_SLAVE_FREE_MEM.toInteger()
+int slaveTotalMemory = totalPhysicalMemorySize.toInteger()
+int slaveFreeMemory = freePhysicalMemorySize.toInteger()
 
 int usedMemory = slaveTotalMemory - slaveFreeMemory
 int usedMemoryPercentage = ( usedMemory / slaveTotalMemory ) * 100
 int freeMemoryPercentage = ( slaveFreeMemory / slaveTotalMemory ) * 100
 
-int totalNeededMainNodeMemory = (KX_MAIN_ADMIN_MEMORY.toInteger()/1024) * NUMBER_OF_KX_MAIN_NODES.toInteger()
+int totalNeededMainNodeMemory = (KX_MAIN_ADMIN_MEMORY.toInteger()) * NUMBER_OF_KX_MAIN_NODES.toInteger()
 int totalNeededMainNodeCpuCores = KX_MAIN_ADMIN_CPU_CORES.toInteger() * NUMBER_OF_KX_MAIN_NODES.toInteger()
 
-int totalNeededWorkerNodeMemory = (KX_WORKER_NODES_MEMORY.toInteger()/1024) * NUMBER_OF_KX_WORKER_NODES.toInteger()
+int totalNeededWorkerNodeMemory = (KX_WORKER_NODES_MEMORY.toInteger()) * NUMBER_OF_KX_WORKER_NODES.toInteger()
 int totalNeededWorkerNodeCpuCores = KX_WORKER_NODES_CPU_CORES.toInteger() * NUMBER_OF_KX_WORKER_NODES.toInteger()
 
 int overallTotalNeededMemory = totalNeededMainNodeMemory + totalNeededWorkerNodeMemory
 int overallTotalNeededCpuCores = totalNeededMainNodeCpuCores  + totalNeededWorkerNodeCpuCores
 
-int overallUsedCpuCoresPercentage = (overallTotalNeededCpuCores/ 32) * 100
+int overallUsedCpuCoresPercentage = (overallTotalNeededCpuCores / totalSystemCores.toInteger()) * 100
 int overallUsedMemoryPercentage = (overallTotalNeededMemory / slaveTotalMemory) * 100
 
 int overallRemainingCpuCoresPercentage = 100 - overallUsedCpuCoresPercentage
@@ -109,9 +126,9 @@ test 1 2 3
                     <tspan x="50%" text-anchor="middle" class="donut-percent" style="fill: ${memoryPieColor};">${overallUsedMemoryPercentage}%</tspan>
                 </text>
                 <text y="60%" transform="translate(0, 2)">
-                    <tspan x="50%" text-anchor="middle" class="donut-data">${overallTotalNeededMemory} GB Memory</tspan>
+                    <tspan x="50%" text-anchor="middle" class="donut-data">${overallTotalNeededMemory/1024} GB Memory</tspan>
                 </text>
-            </g>
+            </g>++
         </svg>
     </div>
 
@@ -134,6 +151,15 @@ test 1 2 3
     </div>
 </div>
 </body>
+
+freePhysicalMemorySize: ${freePhysicalMemorySize}<br>
+totalPhysicalMemorySize: ${totalPhysicalMemorySize}<br>
+totalSystemCores: ${totalSystemCores}<br>
+currentSystemDisk: ${currentSystemDisk}<br>
+totalSystemDisk: ${totalSystemDisk}<br>
+freeSystemDisk: ${freeSystemDisk}<br>
+usableSystemDisk: ${usableSystemDisk}<br>
+
 </html>
 """
 

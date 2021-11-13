@@ -120,44 +120,21 @@ if ( $args[0] ) {
     }
 }
 
-# Determine absolute work and shared_workspace directory paths
-$firstTwoChars = $JENKINS_HOME.Substring(0,2)
-$secondChar = $JENKINS_HOME.Substring(1,1)
-$firstChar = $JENKINS_HOME.Substring(0,1)
-if ( $firstTwoChars -eq ".\" ) {
-    $HOMEDIR_ABSOLUTE_PATH = $JENKINS_HOME.Substring(2)
-    $HOMEDIR_ABSOLUTE_PATH = "$PSScriptRoot\$HOMEDIR_ABSOLUTE_PATH"
-}
-elseif ( $secondChar -eq ":" )
-{
-    $HOMEDIR_ABSOLUTE_PATH = $JENKINS_HOME
-}
-else
-{
-    $HOMEDIR_ABSOLUTE_PATH = "$PSScriptRoot\$JENKINS_HOME"
 
-}
+# Determine absolute work and shared_workspace directory paths
+$HOMEDIR_ABSOLUTE_PATH = "$PSScriptRoot\$JENKINS_HOME"
 $JENKINS_HOME = $HOMEDIR_ABSOLUTE_PATH -replace "/","\"
+Write-Output "- [INFO] JENKINS_HOME: $JENKINS_HOME"
+
+if ( ! ( Test-Path -Path $JENKINS_HOME ) ) {
+    New-Item -Path "$JENKINS_HOME" -ItemType "directory" -ea 0
+}
 
 
 # Determine absolute work and shared_workspace directory paths
-$firstTwoChars = $WORKING_DIRECTORY.Substring(0,2)
-$secondChar = $WORKING_DIRECTORY.Substring(1,1)
-$firstChar = $WORKING_DIRECTORY.Substring(0,1)
-if ( $firstTwoChars -eq ".\" ) {
-    $WORKDIR_ABSOLUTE_PATH = $WORKING_DIRECTORY.Substring(2)
-    $WORKDIR_ABSOLUTE_PATH = "$PSScriptRoot\$WORKDIR_ABSOLUTE_PATH"
-}
-elseif ( $secondChar -eq ":" )
-{
-    $WORKDIR_ABSOLUTE_PATH = $WORKING_DIRECTORY
-}
-else
-{
-    $WORKDIR_ABSOLUTE_PATH = "$PSScriptRoot\$WORKING_DIRECTORY"
-
-}
-$WORKING_DIRECTORY = $WORKDIR_ABSOLUTE_PATH -replace "/","\"
+$SHARED_WORKSPACE_DIR_ABSOLUTE_PATH = "$PSScriptRoot\jenkins_shared_workspace"
+$JENKINS_SHARED_WORKSPACE = $SHARED_WORKSPACE_DIR_ABSOLUTE_PATH -replace "/","\"
+Write-Output "- [INFO] JENKINS_SHARED_WORKSPACE: $JENKINS_SHARED_WORKSPACE"
 
 
 if ( $override_action -eq "recreate" -Or $override_action -eq "destroy" -Or $override_action -eq "fully-destroy" -Or $override_action -eq "uninstall" ) {
@@ -171,29 +148,21 @@ if ( $override_action -eq "recreate" -Or $override_action -eq "destroy" -Or $ove
             Remove-Item -Force -Path  $_.FullName
         }
         Write-Output "- [INFO] Jenkins jobs deleted" | Red
-        Write-Output "- [INFO] Deleting Docker container..." | Red
-        docker rm -f jenkins
-        Write-Output "- [INFO] Docker container deleted" | Red
         if ( $override_action -eq "destroy" -Or $override_action -eq "fully-destroy" -Or $override_action -eq "uninstall" )
         {
-            Write-Output "- [INFO] Deleting Jenkins image..." | Red
-            docker rmi "$( docker images $kx_jenkins_image -q )"
-            Write-Output "- [INFO] Docker image deleted" | Red
             Write-Output "- [INFO] Deleting jenkins_home directory..." | Red
             Remove-Item -Recurse -Force -Path $JENKINS_HOME
             Write-Output "- [INFO] jenkins_home deleted" | Red
             if ($override_action -eq "fully-destroy")
             {
-                Write-Output "- [INFO] Deleting jenkins_remote directory..." | Red
-                Remove-Item -Path -Recursive -Force $WORKING_DIRECTORY
-                Write-Output "- [INFO] jenkins_remote deleted" | Red
+                Write-Output "- [INFO] Deleting shared_workspace directory..." | Red
+                Remove-Item -Path -Recursive -Force $JENKINS_SHARED_WORKSPACE
+                Write-Output "- [INFO] shared_workspace deleted" | Red
             }
             Write-Output "- [INFO] Deleting downloaded tools..." | Red
             Remove-Item -Force -Path ./jq.exe
             Remove-Item -Force -Recurse -Path ./java
-            Remove-Item -Force -Path ./agent.jar
             Remove-Item -Force -Path ./jenkins-cli.jar
-            Remove-Item -Force -Path ./docker-compose.exe
             Write-Output "- [INFO] Downloaded tools deleted" | Red
         }
         if ( $override_action -eq "uninstall" )
@@ -210,19 +179,19 @@ if ( $override_action -eq "recreate" -Or $override_action -eq "destroy" -Or $ove
 $composeDownloadVersion = "1.29.2"
 $javaDownloadVersion = "11.0.3.7.1"
 $jqDownloadVersion = "1.6"
+$jenkinsDownloadVersion = "2.303.2"
 
 # Determine OS this script is running on and set appropriate download links and commands
 Write-Output "- [INFO] Script running on Windows. Setting appropriate download links" | Blue
-$dockerComposeInstallerUrl = "https://github.com/docker/compose/releases/download/" + $composeDownloadVersion + "/docker-compose-Windows-x86_64.exe"
 $javaInstallerUrl = "https://d3pxv6yz143wms.cloudfront.net/" + $javaDownloadVersion + "/amazon-corretto-" + $javaDownloadVersion + "-windows-x64.zip"
 $jqInstallerUrl = "https://github.com/stedolan/jq/releases/download/jq-" + $jqDownloadVersion + "/jq-win64.exe"
+$jenkinsWarFileUrl = "https://get.jenkins.io/war-stable/" + $jenkinsDownloadVersion + "/jenkins.war"
 $os = "windows"
 
-Write-Output "- [INFO] Set docker-compose download link to: " + $dockerComposeInstallerUrl
 Write-Output "- [INFO] Set java download link to: " + $javaInstallerUrl
 Write-Output "- [INFO] Set jq download link to: " + $jqInstallerUrl
+Write-Output "- [INFO] Set Jenkins download link to: " + $jenkinsWarFileUrl
 
-$minimalComposeVersion = "1.25.0"
 $minimalJqVersion = "1.5"
 
 function Download-Tool {
@@ -262,10 +231,7 @@ function Check-Tool
     return $binary
 }
 
-$dockerComposeBinary = (Check-Tool docker-compose.exe $minimalComposeVersion $dockerComposeInstallerUrl)[1]
 $jqBinary = (Check-Tool jq.exe $minimalJqVersion $jqInstallerUrl)[1]
-
-Write-Output "dockerComposeBinary: $dockerComposeBinary"
 Write-Output "jqBinary: $jqBinary"
 
 $javaBinary = Get-ChildItem .\java -recurse -include "java.exe"
@@ -292,7 +258,7 @@ if ( ! $javaBinary ) {
 }
 
 # Create shared workspace directory for Vagrant and Terraform jobs
-$shared_workspace_base_directory_path = "$WORKING_DIRECTORY\workspace\shared_workspace"
+$shared_workspace_base_directory_path = $JENKINS_SHARED_WORKSPACE
 $shared_workspace_directory_path = "$shared_workspace_base_directory_path\kx.as.code"
 $git_root_path = $( & git rev-parse --show-toplevel )
 
@@ -333,6 +299,48 @@ if ( ! ( Test-Path -Path $shared_workspace_directory_path ) )
     }
 }
 
+# Download and update Jenkins WAR file with needed plugins
+if (!(test-path .\jenkins.war)) {
+    # Download Jenkins WAR file
+    Write-Output "Downloading Jenkins WAR file..." | Blue
+    Invoke-WebRequest $jenkinsWarFileUrl -OutFile jenkins.war
+
+    # Install Jenkins Plugins
+    $jenkinsPluginManagerVersion = "2.11.1"
+    Write-Output "Downloading Jenkins Plugin Manager..." | Blue
+    Invoke-WebRequest -Uri https://github.com/jenkinsci/plugin-installation-manager-tool/releases/download/$jenkinsPluginManagerVersion/jenkins-plugin-manager-$jenkinsPluginManagerVersion.jar -OutFile .\jenkins-plugin-manager.jar
+    Start-Process -FilePath $javaBinary -Wait -NoNewWindow -ArgumentList "-jar", "./jenkins-plugin-manager.jar", "--war", "./jenkins.war", "--plugin-download-directory", "$JENKINS_HOME/plugins", "--plugin-file", "./initial-setup/plugins.txt", "--plugins delivery-pipeline-plugin:1.3.2", "deployit-plugin"
+
+    # Bypass Jenkins setup wizard
+    echo "$jenkinsDownloadVersion" > $JENKINS_HOME\jenkins.install.UpgradeWizard.state
+    echo "$jenkinsDownloadVersion" > $JENKINS_HOME\jenkins.install.InstallUtil.lastExecVersion
+}
+
+# Generate KX.AS.CODE start job --> merge active choice parameters into start dsl job template
+$start_job_file = "initial-setup\jobs\VMWare_Workstation\jobs\03_Start_KX.AS.CODE\config.xml"
+$start_job_template_file = "initial-setup\jobs\VMWare_Workstation\jobs\03_Start_KX.AS.CODE\config.xml_template"
+Copy-Item $start_job_template_file $start_job_file
+Write-Output $start_job_file
+$jobContent = Get-Content $start_job_file -Encoding Default -Raw
+Write-Content "Test 1"
+Get-Content $start_job_file -Encoding UTF8 | Select-String '(?<=@\{)(.+)(?=\})' | ForEach-Object {
+    $filename = Write-Output $_.Matches[0].Groups[1].Value
+    Write-Output "initial-setup/active_choice_parameters/$filename"
+    dir "initial-setup/active_choice_parameters/$filename"
+    $groovyContent = (Get-Content initial-setup/active_choice_parameters/$filename -Encoding Default -Raw).replace('&&','&amp;&amp;').replace('&quot;','&amp;quot;').replace("`'",'&apos;').replace('"','&quot;').replace('<','&lt;').replace('>','&gt;')
+    #Write-Output "Content: " + $groovyContent
+    $placeholderToReplace = '@{' + $_.Matches[0].Groups[1].Value + '}'
+    $jobContent = $jobContent.replace($placeholderToReplace, $groovyContent)
+    Write-Output "################################################"
+    #Write-Output "################################################" + $jobContent
+    Write-Output "################################################"
+    Write-Output "$placeholderToReplace"
+}
+#Write-Output "Merged Content: " + $jobContent
+Write-Output $jobContent | Out-File $start_job_file -Encoding Default
+
+#exit
+
 # Replace mustache variables in job config.xml files
 New-Item -Path "$JENKINS_HOME\jobs" -Name "logfiles" -ItemType "directory"
 Copy-Item -Path ".\initial-setup\*" -Destination "$JENKINS_HOME\" -Recurse -Force
@@ -354,141 +362,15 @@ Foreach-Object {
 
 }
 
-# Replace mustache variables in local agent xml file
-$filename = "$JENKINS_HOME\nodes\local\config.xml"
-$tempFilePath = "$filename.tmp"
+# Set jenkins_home and start Jenkins
+[Environment]::SetEnvironmentVariable("JENKINS_HOME", "${PWD}\jenkins_home")
+Start-Process -FilePath $javaBinary -ArgumentList "-jar", ".\jenkins.war", "--httpListenAddress=$jenkins_listen_address", "--httpPort=$jenkins_server_port"
 
-select-string -path $filename -pattern '(?<={{)(.*?)(?=}})' -allmatches  |
-        foreach-object {$_.matches} |
-        foreach-object {$_.groups[1].value} |
-        Select-Object -Unique |
-        ForEach-Object {
-            try
-            {
-                Write-Output "Variable '$( (Get-Variable -Name "$( $_ )").Name )' has a value of $( (Get-Variable -Name "$( $_ )").Value )"
-                (Get-Content -path $filename -Raw) -replace "{{$((Get-Variable -Name "$($_)").Name)}}","$((Get-Variable -Name "$($_)").Value)" | Set-Content -Path $tempFilePath
-            } catch {
-                Write-Output "Variable $_ could not be found. Check your jenkins.env file"
-            }
-            Move-Item -Path $tempFilePath -Destination $filename -Force
-        }
+$jenkinsUrl = "http://localhost:$jenkins_server_port"
 
-# Check if in a Docker-Machine environment
-if (Get-Command docker-machine.exe -ErrorAction SilentlyContinue)
-{
-    Write-Output "- [INFO] Running on a computer using Docker-Machine. Setting up the environment appropriately" | Blue
-    docker-machine.exe -v
-    $dockerMachineStatus = $( & docker-machine.exe status )
-    if ( $dockerMachineStatus -ne "Running" ) {
-        Write-Output "- [ERROR] Docker-Machine not running. Please start your Docker-Machine environment and try again" | Red
-        Exit
-    } else {
-        Write-Output "- [INFO] Docker-Machine is running OK. Proceeding with Jenkins environment setup for KX.AS.CODE" | Blue
-        $jenkinsUrl = "http://192.168.99.100:8080"
-    }
-} else {
-    $jenkinsUrl = "http://127.0.0.1:8080"
-}
-
-# Check Docker type in order to ensure the correct mount-point
-$dockerKernelVersion = $( & docker info --format '{{json .}}' | jq -r '.KernelVersion' )
-$dockerOperatingSystem = $( & docker info --format '{{json .}}' | jq -r '.OperatingSystem' )
-
-Write-Output $WORKING_DIRECTORY
+Write-Output $JENKINS_SHARED_WORKSPACE
 Write-Output $JENKINS_HOME
-Write-Output $dockerKernelVersion
-Write-Output $dockerOperatingSystem
 Write-Output $PSScriptRoot
-
-if ( $dockerKernelVersion -like "*microsoft-standard-WSL2*" -And $dockerOperatingSystem -eq "Docker Desktop" ) {
-  # Checking if jenkins_home and jenkins_remote are set correction to work with WSL2/Docker-Desktop
-  Write-Output "- [INFO] Seems you are running on a Docker-Desktop/WSL2 combination. Checking Jenkins Docker volume setup" | Orange
-  if ( $WORKING_DIRECTORY.StartsWith("/mnt" ) ) {
-        Write-Output "Jenkins WORKING_DIRECTORY starts with /mnt. Seems to be compatible with Docker-Desktop/WSL2. Lets try..."
-  } else {
-        Write-Output "Jenkins WORKING_DIRECTORY does not start with /mnt which is not compatible with Docker-Desktop/WSL2. Will try to correct..." | Orange
-        # Determine absolute work and shared_workspace directory paths
-        $firstTwoChars = $WORKING_DIRECTORY.Substring(0,2)
-        $secondChar = $WORKING_DIRECTORY.Substring(1,1)
-        $firstChar = $WORKING_DIRECTORY.Substring(0,1)
-        if ( $firstTwoChars -eq ".\" ) {
-            $DOCKER_VOL_WORKDIR_ABSOLUTE_PATH = $WORKING_DIRECTORY.Substring(2)
-            $DOCKER_VOL_WORKDIR_ABSOLUTE_PATH = "$PSScriptRoot\$DOCKER_VOL_WORKDIR_ABSOLUTE_PATH"
-        }
-        elseif ( $secondChar -eq ":" )
-        {
-            $DOCKER_VOL_WORKDIR_ABSOLUTE_PATH = $WORKING_DIRECTORY
-        }
-        else
-        {
-            $DOCKER_VOL_WORKDIR_ABSOLUTE_PATH = "$PSScriptRoot\$WORKING_DIRECTORY"
-
-        }
-        $DOCKER_VOL_WORKING_DIRECTORY = $DOCKER_VOL_WORKDIR_ABSOLUTE_PATH -replace "\\","/"
-        $DOCKER_VOL_WORKING_DIRECTORY = $DOCKER_VOL_WORKING_DIRECTORY.substring(0,1).tolower() + $DOCKER_VOL_WORKING_DIRECTORY.substring(1)
-        $DOCKER_VOL_WORKING_DIRECTORY = $DOCKER_VOL_WORKING_DIRECTORY -replace ":",""
-        $DOCKER_VOL_WORKING_DIRECTORY = "/mnt/" + $DOCKER_VOL_WORKING_DIRECTORY
-        Write-Output "DOCKER_VOL_WORKING_DIRECTORY: " + $DOCKER_VOL_WORKING_DIRECTORY
-  }
-
-  if ( $JENKINS_HOME.StartsWith("/mnt") ) {
-        Write-Output "JENKINS_HOME starts with /mnt. Seems to be compatible with Docker-Desktop/WSL2. Lets try..."
-  } else {
-        Write-Output "JENKINS_HOME does not start with /mnt which is not compatible with Docker-Desktop/WSL2. Will try to correct..." | Orange
-        # Determine absolute work and shared_workspace directory paths
-        $firstTwoChars = $JENKINS_HOME.Substring(0,2)
-        $secondChar = $JENKINS_HOME.Substring(1,1)
-        $firstChar = $JENKINS_HOME.Substring(0,1)
-        if ( $firstTwoChars -eq ".\" ) {
-            $DOCKER_VOL_HOMEDIR_ABSOLUTE_PATH = $JENKINS_HOME.Substring(2)
-            $DOCKER_VOL_HOMEDIR_ABSOLUTE_PATH = "$PSScriptRoot\$DOCKER_VOL_HOMEDIR_ABSOLUTE_PATH"
-        }
-        elseif ( $secondChar -eq ":" )
-        {
-            $DOCKER_VOL_HOMEDIR_ABSOLUTE_PATH = $JENKINS_HOME
-        }
-        else
-        {
-            $DOCKER_VOL_HOMEDIR_ABSOLUTE_PATH = "$PSScriptRoot\$JENKINS_HOME"
-
-        }
-        $DOCKER_VOL_JENKINS_HOME = $DOCKER_VOL_HOMEDIR_ABSOLUTE_PATH -replace "\\","/"
-        $DOCKER_VOL_JENKINS_HOME = $DOCKER_VOL_JENKINS_HOME.substring(0,1).tolower() + $DOCKER_VOL_JENKINS_HOME.substring(1)
-        $DOCKER_VOL_JENKINS_HOME = $DOCKER_VOL_JENKINS_HOME -replace ":",""
-        $DOCKER_VOL_JENKINS_HOME = "/mnt/" + $DOCKER_VOL_JENKINS_HOME
-        Write-Output "DOCKER_VOL_JENKINS_HOME: " + $DOCKER_VOL_JENKINS_HOME
-  }
-}
-
-Remove-Item -Force -Path 'jenkins.env.docker-compose.ps1'
-Foreach ($line in (Get-Content -Path "jenkins.env" | Where-Object {$_ -notmatch '^#.*'} | Where-Object {$_ -notmatch '^$'}))
-{
-    # Created for using with Docker-Compose
-    if ( $line.StartsWith("jenkins_home") -Or $line.StartsWith("working_directory") ) {
-        $lineArray=$line.split("=").Trim()
-        if ( $line.StartsWith("jenkins_home") ) {
-            $line = $lineArray[0] + "=`"$DOCKER_VOL_JENKINS_HOME`""
-        } else {
-            $line = $lineArray[0] + "=`"$DOCKER_VOL_WORKING_DIRECTORY`""
-        }
-    }
-    $line -replace '^', '$env:' | Add-Content -Path 'jenkins.env.docker-compose.ps1'
-}
-
-# Check if Docker Jenkins container already exists
-if ( $( & docker ps --filter=ancestor=$kx_jenkins_image -q ) ) {
-    Write-Output "Jenkins already running. Restarting it in order to pick up changes" | Green
-    $dockerJenkinsContainer = $( $( & docker ps --filter=ancestor=$kx_jenkins_image -q ) )
-    docker restart $dockerJenkinsContainer
-} elseif ( $( & docker ps -a --filter=ancestor=$kx_jenkins_image -q ) ) {
-    Write-Output "Jenkins container exists but not running. Starting it up"
-    $dockerJenkinsContainer = $( & docker ps -a --filter=ancestor=$kx_jenkins_image -q )
-    docker start $dockerJenkinsContainer
-} else {
-    Write-Output "Jenkins not yet running and no container exists yet. Starting fresh with Docker-Compose.exe"
-    . ./jenkins.env.docker-compose.ps1
-    & ${dockerComposeBinary} --env-file ./jenkins.env.docker-compose.ps1 up -d
-}
 
 # Check Jenkins URL is reachable for downloading jenkins-cli.jar
 try
@@ -507,12 +389,11 @@ do
         Write-Output "$jenkinsUrl/view/Status/ [RC=$rc]"
     }
     if($webRequest -ne "200"){
-        Start-Sleep -Seconds 30
+        Start-Sleep -Seconds 15
     }
 }while($webRequest -ne "200")
 
 Invoke-WebRequest -Uri $jenkinsUrl/jnlpJars/jenkins-cli.jar -OutFile .\jenkins-cli.jar
-Invoke-WebRequest -Uri $jenkinsUrl/jnlpJars/agent.jar -OutFile .\agent.jar
 
 # Replace mustache variables in credential xml files
 Get-ChildItem "$JENKINS_HOME\" -Filter credential_*.xml |
@@ -539,6 +420,3 @@ Get-ChildItem "$JENKINS_HOME\" -Filter credential_*.xml |
             }
         }
 
-# Start Jenkins agent
-echo -e "- [INFO] Connecting the local agent to Jenkins..." | Blue
-& $javaBinary -jar .\agent.jar -jnlpUrl $jenkinsUrl/computer/$agent_name/slave-agent.jnlp -workDir "$WORKING_DIRECTORY"

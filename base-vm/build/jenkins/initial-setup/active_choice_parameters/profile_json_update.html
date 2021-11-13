@@ -1,5 +1,3 @@
-package active_choice_parameters
-
 import groovy.json.JsonSlurper
 import groovy.json.JsonBuilder
 
@@ -7,7 +5,7 @@ def jsonFilePath = PROFILE
 
 def inputFile = new File(jsonFilePath)
 def parsedJson = new JsonSlurper().parse(inputFile)
-println new JsonBuilder(parsedJson).toPrettyString()
+//println new JsonBuilder(parsedJson).toPrettyString()
 
 def generalParameterElements = GENERAL_PARAMETERS.split(';')
 def BASE_DOMAIN = generalParameterElements[0]

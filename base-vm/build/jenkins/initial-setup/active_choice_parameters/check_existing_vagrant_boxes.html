@@ -1,5 +1,75 @@
-def existingBoxes='vagrant box list'.execute().text
+println("PROFILE" + PROFILE)
+String[] splitPath
+splitPath = PROFILE.split('/')
+println("splitPath:" + splitPath)
+def profileName = splitPath[3].replace('vagrant-','')
+println("profileName: " + profileName)
+
+def existingBoxes='vagrant box list'.execute().text;
+def boxes = new String(existingBoxes).split( '\n' )
+println("existingBoxes" + existingBoxes)
+
+println("[0]: " + boxes[0])
+println("[1]: " + boxes[1])
+
+def boxesList = []
+for(box in boxes){
+    boxItem = box.split(" ")
+    boxName = boxItem[0]
+    boxProvider = boxItem[1]
+    boxVersion = boxItem[2]
+        if(boxProvider.trim().replaceAll("[(),]","").replaceAll("_","-") == profileName) {
+            println(boxName.trim() + " " + boxProvider.trim().replaceAll("[(),]","").replaceAll("_","-") + " " + boxVersion.trim().replaceAll("[()]",""))
+        }
+}
+println("All boxes: " + boxesList)
+println("0: " + boxesList[0])
+println("1: " + boxesList[1])
+
+String underlyingOS
+def OS = System.getProperty("os.name", "generic").toLowerCase(Locale.ENGLISH);
+if ((OS.indexOf("mac") >= 0) || (OS.indexOf("darwin") >= 0)) {
+underlyingOS = "darwin"
+} else if (OS.indexOf("win") >= 0) {
+underlyingOS = "windows"
+} else if (OS.indexOf("nux") >= 0) {
+underlyingOS = "linux"
+} else {
+underlyingOS = "other"
+}
+println("underlyingOS: " + underlyingOS)
+
+def result
+switch (profileName) {
+    case ~/parallels/:
+        result="parallels";
+        break;
+    case ~/vmware-desktop/:
+        result="vmware-desktop";
+        break;
+    case ~/virtualbox/:
+        result="virtualbox";
+        break;
+}
+println("result: " + result)
 
 return """
+<head>
+    <script>
+        function getAvailableBoxes() {
+            console.log("DEBUG: getAvailableBoxes()");
+            var boxesList = "${boxesList}";
+            console.log("Boxes List: " + boxesList)
+        }
+    </script>
+</head>
+<body>
 var: ${existingBoxes}<br>
+list: ${boxesList}<br>
+Existing boxes for: ${PROFILE}<br>
+Name: ${profileName}<br>
+Result: ${result}<br>
+OS: ${underlyingOS}
+<style scoped="scoped" onload="getAvailableBoxes();">   </style>
+</body>
 """

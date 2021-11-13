@@ -1,10 +1,61 @@
 <?xml version='1.1' encoding='UTF-8'?>
-<scriptApproval plugin="script-security@1.77">
-  <approvedScriptHashes/>
+<scriptApproval plugin="script-security@1.78">
+  <approvedScriptHashes>
+    <string>017d0db438428731cd600b6ebda805065433520f</string>
+    <string>1632358ce44058786ca06418e2f7705d29fe3170</string>
+    <string>277b28b15f1c0f43deea8d4c9aa7ca9db5b8a80c</string>
+    <string>371cd117be235a32718d755e7c87a4c1ee0cfa80</string>
+    <string>380ca8a40293a90b74691dd5201c017e9e2ef76b</string>
+    <string>389fd5ac2f2a0ab6e9f4c4259f94b4dd716efea1</string>
+    <string>3a8048c4be4a1c680ed292c020afc9be1e038b35</string>
+    <string>3b64a70a5e87e0e3fe2787da11daae0ac732dcf5</string>
+    <string>3d50d25d881fa114b1bfb1477508244b28598b86</string>
+    <string>44a0c87af72be4eb1a6680fa8307e19c78680336</string>
+    <string>450a643cb02c587177fbd368cd3bafc890e7e79c</string>
+    <string>4fbd881501bbf05017ce3c6d4f1ac97ac724ee29</string>
+    <string>57107daad23b4238855a2a92681bca7d0f0520d7</string>
+    <string>572e025c9e3307b960c2b47031a9e8a262d5bf55</string>
+    <string>6010a6c46a0d1129f887c8dd1f835782e5405b7a</string>
+    <string>69fb7518ecf50c5ba0c44bc148791ba4c8b68e4c</string>
+    <string>6d600be11d8b8f9e51e362d07f477233eae44039</string>
+    <string>6fcbd087272b05554cf66cfee5ac7b2ec4d86dff</string>
+    <string>73991d586b3450ab2f21bd4c6cace77e7190927a</string>
+    <string>7bad1a8f01140e2604a1d8e57eac546006ae1685</string>
+    <string>7ce53bc0bf0d51cdfb9a7da29458301bc1cf87ce</string>
+    <string>7f8c0713b628cbe9f91d76d94ac7749e8aa80fe5</string>
+    <string>823a1ea45d12271791442e4f9724b8b09d15dae6</string>
+    <string>82e0d4a5d8f5fa323de6025d9feb64b618827d1e</string>
+    <string>850f02d7828d58f8789781db2beec50bb26b3863</string>
+    <string>85a3a451cc36aa7ba547aa654aeefce06d61967a</string>
+    <string>88f01e682d38f7ac52a2a6834d35b92853d47588</string>
+    <string>8df9e8b5fa3d1b2fe563ad28b2ebf762fd477aec</string>
+    <string>8e183f566d2bb9d25f2cafdf85779f9dfd011c0c</string>
+    <string>908b9f714b8d5b3c45760d32de5a815cced98185</string>
+    <string>98cc1a86abf37c452391d9fe1f6c3b8e438e0175</string>
+    <string>a358cbed664d645a8addd690d801b088c449182e</string>
+    <string>aa0ec625ca9b48c605e6a1698e1b3b9781446efa</string>
+    <string>acf3dc02c5c03f4f7c3dc3c7b20df997eea463b7</string>
+    <string>b726f1089e0fe2ff78689d22c6a774956df212bc</string>
+    <string>b94646b6195b5a25fed6babe22b08961f8c5d33e</string>
+    <string>bf217e2bf191182cc2a5962624e50eaba442177d</string>
+    <string>c1e09fcf06aba33bb9a80d00315f5564cbbd80ba</string>
+    <string>c98ae3f0a2a6f3da301c6c841bbfc89b72b76de0</string>
+    <string>d19ee2180fe9a5f2547afd58b40964e5d719962d</string>
+    <string>d3372515b35dd275f5e2620de16b87a340172a91</string>
+    <string>ddde576575a2655591992aca184301f218d088ab</string>
+    <string>e5a54f973107f707455709e308ef802867692497</string>
+    <string>e5c5c569a54edebb61dfb6daae858645d87ee308</string>
+    <string>e62bfad89f3eeef629657c1fbbd43079d881fac5</string>
+    <string>e648f1236376fbe2d8c1630031e8fd8940babba9</string>
+    <string>ecc64ddd420c2f101a7c21c04687145276e57e2f</string>
+    <string>f049c01823d65af544b04cf0786891ba67d01a1f</string>
+    <string>f25bc920a6ffe9ca00b6ca341f720ad9a13b5839</string>
+    <string>f348aa99741de7ddc04dc47a0e2fbf54015da1dc</string>
+    <string>f8ee07f4523c6e8d068ce3d66db15321046bec59</string>
+  </approvedScriptHashes>
   <approvedSignatures>
-    <string>method hudson.model.Job getLastCompletedBuild</string>
-    <string>method jenkins.model.Jenkins getItemByFullName java.lang.String</string>
-    <string>staticMethod jenkins.model.Jenkins getInstance</string>
+    <string>staticMethod org.codehaus.groovy.runtime.DefaultGroovyMethods execute java.lang.String</string>
+    <string>staticMethod org.codehaus.groovy.runtime.ProcessGroovyMethods getText java.lang.Process</string>
   </approvedSignatures>
   <aclApprovedSignatures/>
   <approvedClasspathEntries/>

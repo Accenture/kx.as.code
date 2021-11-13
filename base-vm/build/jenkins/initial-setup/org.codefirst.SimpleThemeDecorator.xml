@@ -22,5 +22,8 @@
     <org.jenkinsci.plugins.simpletheme.CssUrlThemeElement>
       <url>/userContent/layout/theme-deep-purple.css</url>
     </org.jenkinsci.plugins.simpletheme.CssUrlThemeElement>
+    <org.jenkinsci.plugins.simpletheme.CssUrlThemeElement>
+      <url>/userContent/layout/jenkins-colour-weather-icons.css</url>
+    </org.jenkinsci.plugins.simpletheme.CssUrlThemeElement>
   </elements>
 </org.codefirst.SimpleThemeDecorator>

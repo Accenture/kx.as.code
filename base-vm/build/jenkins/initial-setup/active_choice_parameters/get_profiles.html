@@ -1,21 +1,35 @@
 profile_paths= []
-new File('jenkins_remote/workspace/shared_workspace/kx.as.code/profiles/').eachDirMatch( ~/.*vagrant.*/ ) {profile_paths<< it.path }
+new File('jenkins_shared_workspace/kx.as.code/profiles/').eachDirMatch( ~/.*vagrant.*/ ) {profile_paths<< it.path }
+
+String underlyingOS
+println profile_paths
+
+def OS = System.getProperty("os.name", "generic").toLowerCase(Locale.ENGLISH);
+if ((OS.indexOf("mac") >= 0) || (OS.indexOf("darwin") >= 0)) {
+    underlyingOS = "darwin"
+} else if (OS.indexOf("win") >= 0) {
+    underlyingOS = "windows"
+    profile_paths.removeAll { it.toLowerCase().endsWith('parallels') }
+} else if (OS.indexOf("nux") >= 0) {
+    underlyingOS = "linux"
+} else {
+    underlyingOS = "other"
+}
+
 profile_paths.sort()
-profile_paths= profile_paths.join(",")
+profile_paths = profile_paths.join(",")
 profile_paths = profile_paths.replaceAll("\\\\", "/")
-def profiles = profile_paths
 
 return """
 <head>
     <script>
 
-
-
         function populate_profile_option_list() {
-            var profiles = "${profiles}".split(',');
-            for (var i = 0; i < profiles.length; i++) {
-                profileName = profiles[i].split("/").pop();
+            var profiles = "${profile_paths}".split(',');
+            for ( var i = 0; i < profiles.length; i++ ) {
+                var profileName = profiles[i].split("/").pop();
                 profileName = profileName.replace("vagrant-", "");
+                console.log("Adding profile to options: " + profileName + i);
                 document.getElementById("profiles").options[i] = new Option(profileName, profileName);
                 update_selected_value();
             }
@@ -24,12 +38,11 @@ return """
         function update_selected_value() {
             var selectedOptionNumber = document.getElementById("profiles").selectedIndex;
             var profilePaths = "${profile_paths}".split(',');
-            // profileName = profilePaths[selectedOptionNumber].split("/").pop();
-            profilePath = profilePaths[selectedOptionNumber] + '/profile-config.json'
+            var profilePath = profilePaths[selectedOptionNumber] + '/profile-config.json'
             console.log("profileName: " + profilePath)
             document.getElementById("selected-profile-path").value = profilePath;
             document.getElementById("selected-profile-path").setAttribute("selected-profile-path", profilePath) ;
-            parentId = document.getElementById("selected-profile-path").parentNode.id;
+            var parentId = document.getElementById("selected-profile-path").parentNode.id;
             console.log(parentId);
             jQuery('#' + parentId).trigger('change');
         }
