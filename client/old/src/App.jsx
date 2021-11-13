@@ -53,7 +53,7 @@ class App extends Component {
         </Box>
         {/* Main section - below top panel */}
         <Box id="main" flex="1">
-          <Box id="main-container">
+          <Box id="main-container" >
             {/* Left panel */}
             <Box id="LeftPanel-wrapper">
               <LeftPanel />

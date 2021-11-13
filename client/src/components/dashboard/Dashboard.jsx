@@ -23,13 +23,18 @@ export default class Dashboard extends Component {
       completedData: [],
       failedData: [],
       retryData: [],
-      wipData: []
+      wipData: [],
+      queueDataAll: []
     };
   }
 
   componentDidMount() {
     this.getData("pending_queue");
     this.getData("failed_queue");
+  }
+
+  addQueueNameProperty(queueData, queueName) {
+
   }
 
   itemList(queue_name) {
@@ -48,7 +53,7 @@ export default class Dashboard extends Component {
         data = this.state.wipData
         break;
       case "retry_queue":
-        data = this.state.completedData
+        data = this.state.retryData
         break;
       default:
         console.log("Queue not found -> ", queue_name);
@@ -64,34 +69,48 @@ export default class Dashboard extends Component {
 
     axios.get("http://localhost:5000/queues/" + queue_name).then(response => {
       console.log("ResponseData: ", response.data)
-      if (queue_name == "pending_queue") {
-        this.setState({
-          pendingData: response.data
-        })
-      }
-      else if (queue_name == "failed_queue") {
-        this.setState({
-          failedData: response.data
-        })
-      }
-      else if (queue_name == "completed_queue") {
-        this.setState({
-          completedData: response.data
-        })
-      }
-      else if (queue_name == "retry_queue") {
-        this.setState({
-          retryData: response.data
-        })
-      }
-      else if (queue_name == "wip_queue") {
-        this.setState({
-          wipData: response.data
-        })
-      }
+
+      this.setState({
+        pendingData: response.data,
+      })
+      console.log("Queue Data All: ", this.state.queueDataAll)
+
     }).catch(function (error) {
       console.log(error);
     })
+
+    // axios.get("http://localhost:5000/queues/" + queue_name).then(response => {
+    //   console.log("ResponseData: ", response.data)
+    //   if (queue_name == "pending_queue") {
+    //     this.setState({
+    //       pendingData: response.data,
+    //       queueDataAll: JSON.parse(this.props.item.payload)
+    //     })
+    //     console.log("Queue Data All: ", this.state.queueDataAll)
+    //   }
+    //   else if (queue_name == "failed_queue") {
+    //     this.setState({
+    //       failedData: response.data
+    //     })
+    //   }
+    //   else if (queue_name == "completed_queue") {
+    //     this.setState({
+    //       completedData: response.data
+    //     })
+    //   }
+    //   else if (queue_name == "retry_queue") {
+    //     this.setState({
+    //       retryData: response.data
+    //     })
+    //   }
+    //   else if (queue_name == "wip_queue") {
+    //     this.setState({
+    //       wipData: response.data
+    //     })
+    //   }
+    // }).catch(function (error) {
+    //   console.log(error);
+    // })
 
   }
 
@@ -105,20 +124,38 @@ export default class Dashboard extends Component {
   render() {
 
     return (
-      <Grid id="main-content-dashboard" container spacing={8}>
-        <Grid item xs={4} className="profile-cards" style={{ width: "100%" }}>
-          Pending Queue
-          {this.state.pendingData !== 'undefined' && this.state.pendingData.length > 0 ? this.itemList("pending_queue") : "Empty Queue"}
-          Failed Queue
-          {this.state.failedData !== 'undefined' && this.state.failedData.length > 0 ? this.itemList("failed_queue") : "Empty Queue"}
-          Completed Queue
-          {this.state.completedData !== 'undefined' && this.state.completedData.length > 0 ? this.itemList("completed_queue") : "Empty Queue"}
-          Retry Queue
-          {this.state.retryData !== 'undefined' && this.state.retryData.length > 0 ? this.itemList("retry_queue") : "Empty Queue"}
-          WIP Queue
-          {this.state.wipData !== 'undefined' && this.state.wipData.length > 0 ? this.itemList("wip_queue") : "Empty Queue"}
-
+      <Grid id="main-content-dashboard" container spacing={4}>
+        <Grid item xs={12}>
+          <h3>KS.AS Code Dashboard</h3>
         </Grid>
+        <Grid item xs={5} >
+          <div className="profile-cards" style={{ width: "100%" }}>
+            Pending Queue
+            {this.state.pendingData !== 'undefined' && this.state.pendingData.length > 0 ? this.itemList("pending_queue") : "Empty Queue"}
+            Failed Queue
+            {this.state.failedData !== 'undefined' && this.state.failedData.length > 0 ? this.itemList("failed_queue") : "Empty Queue"}
+            Completed Queue
+            {this.state.completedData !== 'undefined' && this.state.completedData.length > 0 ? this.itemList("completed_queue") : "Empty Queue"}
+            Retry Queue
+            {this.state.retryData !== 'undefined' && this.state.retryData.length > 0 ? this.itemList("retry_queue") : "Empty Queue"}
+            WIP Queue
+            {this.state.wipData !== 'undefined' && this.state.wipData.length > 0 ? this.itemList("wip_queue") : "Empty Queue"}
+          </div>
+        </Grid>
+
+        <Grid item xs={7} >
+          <Grid item xs={12} >
+            <div className="profile-cards" style={{ height: "39vh", marginBottom: "20px" }}>
+              Top
+            </div>
+          </Grid>
+          <Grid item xs={12} >
+            <div className="profile-cards" style={{ height: "50px" }}>
+              Down
+            </div>
+          </Grid>
+        </Grid>
+
       </Grid>
     );
   }

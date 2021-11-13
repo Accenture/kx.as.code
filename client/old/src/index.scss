@@ -151,23 +151,3 @@ button, #root .MuiButton-root {
   animation-duration: 10ms;
   -webkit-tap-highlight-color: transparent;
 }
-
-/* width */
-.profile-cards::-webkit-scrollbar {
-  width: 10px;
-}
-
-/* Track */
-.profile-cards::-webkit-scrollbar-track {
-  background: #424c5e; 
-}
- 
-/* Handle */
-.profile-cards::-webkit-scrollbar-thumb {
-  background: red; 
-}
-
-/* Handle on hover */
-.profile-cards::-webkit-scrollbar-thumb:hover {
-  background: #555; 
-}
