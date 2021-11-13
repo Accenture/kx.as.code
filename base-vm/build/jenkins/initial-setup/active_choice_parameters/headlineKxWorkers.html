@@ -1,0 +1,6 @@
+def extendedDescription = &quot;KX-Worker nodes are optional. On a local machine with lower amount of resources (equal to or below 16GB ram), a singe node standalone KX.AS.CODE deployment is advisable. In this case, just set the number of KX-Workers to 0. The &apos;allow workloads on master&apos; toggle must be set to on in this case, else it will not be possible to deploy any workloads beyond the core tools and services. For VM hosts with higher available resources &gt;16GB ram, feel free to install a full blown cluster and add some worker nodes!&quot;
+
+return &quot;&quot;&quot;
+&lt;h2&gt;KX-Worker Parameters&lt;/h2&gt;
+&lt;span class=&quot;description-paragraph-span&quot;&gt;&lt;p&gt;${extendedDescription }&lt;/p&gt;&lt;/span&gt;
+&quot;&quot;&quot;

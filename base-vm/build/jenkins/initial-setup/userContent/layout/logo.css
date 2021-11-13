@@ -1,0 +1,16 @@
+.logo img {
+  content:url("http://localhost:8080/userContent/layout/logo.png");
+}
+#jenkins-name-icon {
+  display: none;
+}
+.logo:after {
+  content: "Jenkins-4-KX.AS.CODE";
+  font-weight: bold;
+  font-size: 20px;
+  font-family:"Arial";
+  margin-left: 20px;
+  margin-right: 12px;
+  color: White;
+  line-height: 40px;
+}

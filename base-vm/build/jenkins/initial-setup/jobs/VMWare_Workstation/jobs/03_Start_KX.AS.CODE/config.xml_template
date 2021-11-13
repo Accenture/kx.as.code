@@ -1,0 +1,424 @@
+<?xml version='1.1' encoding='UTF-8'?>
+<project>
+  <actions/>
+  <description></description>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <hudson.model.ParametersDefinitionProperty>
+      <parameterDefinitions>
+        <org.biouno.unochoice.DynamicReferenceParameter plugin="uno-choice@2.5.6">
+          <name>Header</name>
+          <randomName>choice-parameter-178291677290751</randomName>
+          <visibleItemCount>1</visibleItemCount>
+          <script class="org.biouno.unochoice.model.GroovyScript">
+            <secureScript plugin="script-security@1.78">
+              <script>@{header.html}</script>
+              <sandbox>false</sandbox>
+            </secureScript>
+            <secureFallbackScript plugin="script-security@1.78">
+              <script></script>
+              <sandbox>false</sandbox>
+            </secureFallbackScript>
+          </script>
+          <projectName>03_Start_KX.AS.CODE</projectName>
+          <projectFullName>VMWare_Workstation/03_Start_KX.AS.CODE</projectFullName>
+          <parameters class="linked-hash-map"/>
+          <referencedParameters></referencedParameters>
+          <choiceType>ET_FORMATTED_HIDDEN_HTML</choiceType>
+          <omitValueField>false</omitValueField>
+        </org.biouno.unochoice.DynamicReferenceParameter>
+        <org.biouno.unochoice.DynamicReferenceParameter plugin="uno-choice@2.5.6">
+          <name>PROFILE</name>
+          <randomName>choice-parameter-412395023709084</randomName>
+          <visibleItemCount>1</visibleItemCount>
+          <script class="org.biouno.unochoice.model.GroovyScript">
+            <secureScript plugin="script-security@1.78">
+              <script>@{get_profiles.html}</script>
+              <sandbox>false</sandbox>
+            </secureScript>
+            <secureFallbackScript plugin="script-security@1.78">
+              <script></script>
+              <sandbox>false</sandbox>
+            </secureFallbackScript>
+          </script>
+          <projectName>03_Start_KX.AS.CODE</projectName>
+          <projectFullName>VMWare_Workstation/03_Start_KX.AS.CODE</projectFullName>
+          <parameters class="linked-hash-map"/>
+          <referencedParameters></referencedParameters>
+          <choiceType>ET_FORMATTED_HTML</choiceType>
+          <omitValueField>false</omitValueField>
+        </org.biouno.unochoice.DynamicReferenceParameter>
+        <org.biouno.unochoice.DynamicReferenceParameter plugin="uno-choice@2.5.6">
+          <name>CHECK_FOR_EXISTING_BOXES</name>
+          <randomName>choice-parameter-697940248323696</randomName>
+          <visibleItemCount>1</visibleItemCount>
+          <script class="org.biouno.unochoice.model.GroovyScript">
+            <secureScript plugin="script-security@1.78">
+              <script>@{check_existing_vagrant_boxes.html}</script>
+              <sandbox>true</sandbox>
+            </secureScript>
+            <secureFallbackScript plugin="script-security@1.78">
+              <script></script>
+              <sandbox>false</sandbox>
+            </secureFallbackScript>
+          </script>
+          <projectName>03_Start_KX.AS.CODE</projectName>
+          <projectFullName>VMWare_Workstation/03_Start_KX.AS.CODE</projectFullName>
+          <parameters class="linked-hash-map"/>
+          <referencedParameters></referencedParameters>
+          <choiceType>ET_FORMATTED_HTML</choiceType>
+          <omitValueField>false</omitValueField>
+        </org.biouno.unochoice.DynamicReferenceParameter>
+        <org.biouno.unochoice.DynamicReferenceParameter plugin="uno-choice@2.5.6">
+          <name>GENERAL_PARAMETERS</name>
+          <randomName>choice-parameter-100850523030854</randomName>
+          <visibleItemCount>1</visibleItemCount>
+          <script class="org.biouno.unochoice.model.GroovyScript">
+            <secureScript plugin="script-security@1.78">
+              <script>@{config_general_parameters.html}</script>
+              <sandbox>false</sandbox>
+            </secureScript>
+            <secureFallbackScript plugin="script-security@1.78">
+              <script></script>
+              <sandbox>false</sandbox>
+            </secureFallbackScript>
+          </script>
+          <projectName>03_Start_KX.AS.CODE</projectName>
+          <projectFullName>VMWare_Workstation/03_Start_KX.AS.CODE</projectFullName>
+          <parameters class="linked-hash-map"/>
+          <referencedParameters>PROFILE</referencedParameters>
+          <choiceType>ET_FORMATTED_HTML</choiceType>
+          <omitValueField>false</omitValueField>
+        </org.biouno.unochoice.DynamicReferenceParameter>
+        <org.biouno.unochoice.DynamicReferenceParameter plugin="uno-choice@2.5.6">
+          <name>KX_MAIN_VM_HEADLINE</name>
+          <randomName>choice-parameter-17383888424897</randomName>
+          <visibleItemCount>1</visibleItemCount>
+          <script class="org.biouno.unochoice.model.GroovyScript">
+            <secureScript plugin="script-security@1.78">
+              <script>@{headlineKxMain.html}</script>
+              <sandbox>false</sandbox>
+            </secureScript>
+            <secureFallbackScript plugin="script-security@1.78">
+              <script></script>
+              <sandbox>false</sandbox>
+            </secureFallbackScript>
+          </script>
+          <projectName>03_Start_KX.AS.CODE</projectName>
+          <projectFullName>VMWare_Workstation/03_Start_KX.AS.CODE</projectFullName>
+          <parameters class="linked-hash-map"/>
+          <referencedParameters>PROFILE</referencedParameters>
+          <choiceType>ET_FORMATTED_HTML</choiceType>
+          <omitValueField>false</omitValueField>
+        </org.biouno.unochoice.DynamicReferenceParameter>
+        <org.biouno.unochoice.DynamicReferenceParameter plugin="uno-choice@2.5.6">
+          <name>ALLOW_WORKLOADS_ON_KUBERNETES_MASTER</name>
+          <randomName>choice-parameter-118579672304757</randomName>
+          <visibleItemCount>1</visibleItemCount>
+          <script class="org.biouno.unochoice.model.GroovyScript">
+            <secureScript plugin="script-security@1.78">
+              <script>@{config_allowWorkloadsOnMaster.html}</script>
+              <sandbox>false</sandbox>
+            </secureScript>
+            <secureFallbackScript plugin="script-security@1.78">
+              <script>return &quot;&quot;&quot;
+
+                &quot;&quot;&quot;</script>
+              <sandbox>false</sandbox>
+            </secureFallbackScript>
+          </script>
+          <projectName>03_Start_KX.AS.CODE</projectName>
+          <projectFullName>VMWare_Workstation/03_Start_KX.AS.CODE</projectFullName>
+          <parameters class="linked-hash-map"/>
+          <referencedParameters>PROFILE</referencedParameters>
+          <choiceType>ET_FORMATTED_HTML</choiceType>
+          <omitValueField>false</omitValueField>
+        </org.biouno.unochoice.DynamicReferenceParameter>
+        <org.biouno.unochoice.DynamicReferenceParameter plugin="uno-choice@2.5.6">
+          <name>NUMBER_OF_KX_MAIN_NODES</name>
+          <randomName>choice-parameter-118579681414714</randomName>
+          <visibleItemCount>1</visibleItemCount>
+          <script class="org.biouno.unochoice.model.GroovyScript">
+            <secureScript plugin="script-security@1.78">
+              <script>@{config_vm_properties_main_node_count.html}</script>
+              <sandbox>false</sandbox>
+            </secureScript>
+            <secureFallbackScript plugin="script-security@1.78">
+              <script></script>
+              <sandbox>false</sandbox>
+            </secureFallbackScript>
+          </script>
+          <projectName>03_Start_KX.AS.CODE</projectName>
+          <projectFullName>VMWare_Workstation/03_Start_KX.AS.CODE</projectFullName>
+          <parameters class="linked-hash-map"/>
+          <referencedParameters>PROFILE</referencedParameters>
+          <choiceType>ET_FORMATTED_HTML</choiceType>
+          <omitValueField>false</omitValueField>
+        </org.biouno.unochoice.DynamicReferenceParameter>
+        <org.biouno.unochoice.DynamicReferenceParameter plugin="uno-choice@2.5.6">
+          <name>KX_MAIN_ADMIN_CPU_CORES</name>
+          <randomName>choice-parameter-16871874555827</randomName>
+          <visibleItemCount>1</visibleItemCount>
+          <script class="org.biouno.unochoice.model.GroovyScript">
+            <secureScript plugin="script-security@1.78">
+              <script>@{config_vm_properties_main_admin_node_cpu_cores.html}</script>
+              <sandbox>false</sandbox>
+            </secureScript>
+            <secureFallbackScript plugin="script-security@1.78">
+              <script></script>
+              <sandbox>false</sandbox>
+            </secureFallbackScript>
+          </script>
+          <projectName>03_Start_KX.AS.CODE</projectName>
+          <projectFullName>VMWare_Workstation/03_Start_KX.AS.CODE</projectFullName>
+          <parameters class="linked-hash-map"/>
+          <referencedParameters>PROFILE</referencedParameters>
+          <choiceType>ET_FORMATTED_HTML</choiceType>
+          <omitValueField>false</omitValueField>
+        </org.biouno.unochoice.DynamicReferenceParameter>
+        <org.biouno.unochoice.DynamicReferenceParameter plugin="uno-choice@2.5.6">
+          <name>KX_MAIN_ADMIN_MEMORY</name>
+          <randomName>choice-parameter-86095986903158</randomName>
+          <visibleItemCount>1</visibleItemCount>
+          <script class="org.biouno.unochoice.model.GroovyScript">
+            <secureScript plugin="script-security@1.78">
+              <script>@{config_vm_properties_main_admin_node_memory.html}</script>
+              <sandbox>false</sandbox>
+            </secureScript>
+            <secureFallbackScript plugin="script-security@1.78">
+              <script></script>
+              <sandbox>false</sandbox>
+            </secureFallbackScript>
+          </script>
+          <projectName>03_Start_KX.AS.CODE</projectName>
+          <projectFullName>VMWare_Workstation/03_Start_KX.AS.CODE</projectFullName>
+          <parameters class="linked-hash-map"/>
+          <referencedParameters>PROFILE</referencedParameters>
+          <choiceType>ET_FORMATTED_HTML</choiceType>
+          <omitValueField>false</omitValueField>
+        </org.biouno.unochoice.DynamicReferenceParameter>
+        <org.biouno.unochoice.DynamicReferenceParameter plugin="uno-choice@2.5.6">
+          <name>KX_WORKERS_VM_HEADLINE</name>
+          <randomName>choice-parameter-191340721703028</randomName>
+          <visibleItemCount>1</visibleItemCount>
+          <script class="org.biouno.unochoice.model.GroovyScript">
+            <secureScript plugin="script-security@1.78">
+              <script>@{headlineKxWorkers.html}</script>
+              <sandbox>false</sandbox>
+            </secureScript>
+            <secureFallbackScript plugin="script-security@1.78">
+              <script></script>
+              <sandbox>false</sandbox>
+            </secureFallbackScript>
+          </script>
+          <projectName>03_Start_KX.AS.CODE</projectName>
+          <projectFullName>VMWare_Workstation/03_Start_KX.AS.CODE</projectFullName>
+          <parameters class="linked-hash-map"/>
+          <referencedParameters>PROFILE</referencedParameters>
+          <choiceType>ET_FORMATTED_HTML</choiceType>
+          <omitValueField>false</omitValueField>
+        </org.biouno.unochoice.DynamicReferenceParameter>
+        <org.biouno.unochoice.DynamicReferenceParameter plugin="uno-choice@2.5.6">
+          <name>NUMBER_OF_KX_WORKER_NODES</name>
+          <randomName>choice-parameter-191340747404049</randomName>
+          <visibleItemCount>1</visibleItemCount>
+          <script class="org.biouno.unochoice.model.GroovyScript">
+            <secureScript plugin="script-security@1.78">
+              <script>@{config_vm_properties_worker_node_count.html}</script>
+              <sandbox>false</sandbox>
+            </secureScript>
+            <secureFallbackScript plugin="script-security@1.78">
+              <script></script>
+              <sandbox>false</sandbox>
+            </secureFallbackScript>
+          </script>
+          <projectName>03_Start_KX.AS.CODE</projectName>
+          <projectFullName>VMWare_Workstation/03_Start_KX.AS.CODE</projectFullName>
+          <parameters class="linked-hash-map"/>
+          <referencedParameters>PROFILE</referencedParameters>
+          <choiceType>ET_FORMATTED_HTML</choiceType>
+          <omitValueField>false</omitValueField>
+        </org.biouno.unochoice.DynamicReferenceParameter>
+        <org.biouno.unochoice.DynamicReferenceParameter plugin="uno-choice@2.5.6">
+          <name>KX_WORKER_NODES_CPU_CORES</name>
+          <randomName>choice-parameter-191340751264691</randomName>
+          <visibleItemCount>1</visibleItemCount>
+          <script class="org.biouno.unochoice.model.GroovyScript">
+            <secureScript plugin="script-security@1.78">
+              <script>@{config_vm_properties_worker_node_cpu_cores.html}</script>
+              <sandbox>false</sandbox>
+            </secureScript>
+            <secureFallbackScript plugin="script-security@1.78">
+              <script></script>
+              <sandbox>false</sandbox>
+            </secureFallbackScript>
+          </script>
+          <projectName>03_Start_KX.AS.CODE</projectName>
+          <projectFullName>VMWare_Workstation/03_Start_KX.AS.CODE</projectFullName>
+          <parameters class="linked-hash-map"/>
+          <referencedParameters>PROFILE</referencedParameters>
+          <choiceType>ET_FORMATTED_HTML</choiceType>
+          <omitValueField>false</omitValueField>
+        </org.biouno.unochoice.DynamicReferenceParameter>
+        <org.biouno.unochoice.DynamicReferenceParameter plugin="uno-choice@2.5.6">
+          <name>KX_WORKER_NODES_MEMORY</name>
+          <randomName>choice-parameter-191340755049857</randomName>
+          <visibleItemCount>1</visibleItemCount>
+          <script class="org.biouno.unochoice.model.GroovyScript">
+            <secureScript plugin="script-security@1.78">
+              <script>@{config_vm_properties_worker_node_memory.html}</script>
+              <sandbox>false</sandbox>
+            </secureScript>
+            <secureFallbackScript plugin="script-security@1.78">
+              <script></script>
+              <sandbox>false</sandbox>
+            </secureFallbackScript>
+          </script>
+          <projectName>03_Start_KX.AS.CODE</projectName>
+          <projectFullName>VMWare_Workstation/03_Start_KX.AS.CODE</projectFullName>
+          <parameters class="linked-hash-map"/>
+          <referencedParameters>PROFILE</referencedParameters>
+          <choiceType>ET_FORMATTED_HTML</choiceType>
+          <omitValueField>false</omitValueField>
+        </org.biouno.unochoice.DynamicReferenceParameter>
+        <org.biouno.unochoice.DynamicReferenceParameter plugin="uno-choice@2.5.6">
+          <name>STORAGE_PARAMETERS</name>
+          <randomName>choice-parameter-249885383324784</randomName>
+          <visibleItemCount>1</visibleItemCount>
+          <script class="org.biouno.unochoice.model.GroovyScript">
+            <secureScript plugin="script-security@1.78">
+              <script>@{headlineKxWorkers.html}</script>
+              <sandbox>false</sandbox>
+            </secureScript>
+            <secureFallbackScript plugin="script-security@1.78">
+              <script></script>
+              <sandbox>false</sandbox>
+            </secureFallbackScript>
+          </script>
+          <projectName>03_Start_KX.AS.CODE</projectName>
+          <projectFullName>VMWare_Workstation/03_Start_KX.AS.CODE</projectFullName>
+          <parameters class="linked-hash-map"/>
+          <referencedParameters>PROFILE</referencedParameters>
+          <choiceType>ET_FORMATTED_HTML</choiceType>
+          <omitValueField>false</omitValueField>
+        </org.biouno.unochoice.DynamicReferenceParameter>
+        <org.biouno.unochoice.DynamicReferenceParameter plugin="uno-choice@2.5.6">
+          <name>NETWORK_STORAGE_OPTIONS</name>
+          <randomName>choice-parameter-249885386909880</randomName>
+          <visibleItemCount>1</visibleItemCount>
+          <script class="org.biouno.unochoice.model.GroovyScript">
+            <secureScript plugin="script-security@1.78">
+              <script>@{config_network_storage.html}</script>
+              <sandbox>false</sandbox>
+            </secureScript>
+            <secureFallbackScript plugin="script-security@1.78">
+              <script></script>
+              <sandbox>false</sandbox>
+            </secureFallbackScript>
+          </script>
+          <projectName>03_Start_KX.AS.CODE</projectName>
+          <projectFullName>VMWare_Workstation/03_Start_KX.AS.CODE</projectFullName>
+          <parameters class="linked-hash-map"/>
+          <referencedParameters>PROFILE</referencedParameters>
+          <choiceType>ET_FORMATTED_HTML</choiceType>
+          <omitValueField>false</omitValueField>
+        </org.biouno.unochoice.DynamicReferenceParameter>
+        <org.biouno.unochoice.DynamicReferenceParameter plugin="uno-choice@2.5.6">
+          <name>LOCAL_STORAGE_OPTIONS</name>
+          <randomName>choice-parameter-249885390242006</randomName>
+          <visibleItemCount>1</visibleItemCount>
+          <script class="org.biouno.unochoice.model.GroovyScript">
+            <secureScript plugin="script-security@1.78">
+              <script>@{config_local_storage_volumes.html}</script>
+              <sandbox>false</sandbox>
+            </secureScript>
+            <secureFallbackScript plugin="script-security@1.78">
+              <script></script>
+              <sandbox>false</sandbox>
+            </secureFallbackScript>
+          </script>
+          <projectName>03_Start_KX.AS.CODE</projectName>
+          <projectFullName>VMWare_Workstation/03_Start_KX.AS.CODE</projectFullName>
+          <parameters class="linked-hash-map"/>
+          <referencedParameters>PROFILE</referencedParameters>
+          <choiceType>ET_FORMATTED_HTML</choiceType>
+          <omitValueField>false</omitValueField>
+        </org.biouno.unochoice.DynamicReferenceParameter>
+        <org.biouno.unochoice.DynamicReferenceParameter plugin="uno-choice@2.5.6">
+          <name>CHECK_HOST_SYSTEM</name>
+          <randomName>choice-parameter-334047709761248</randomName>
+          <visibleItemCount>1</visibleItemCount>
+          <script class="org.biouno.unochoice.model.GroovyScript">
+            <secureScript plugin="script-security@1.78">
+              <script>@{check_host_system.html}</script>
+              <sandbox>false</sandbox>
+            </secureScript>
+            <secureFallbackScript plugin="script-security@1.78">
+              <script></script>
+              <sandbox>false</sandbox>
+            </secureFallbackScript>
+          </script>
+          <projectName>03_Start_KX.AS.CODE</projectName>
+          <projectFullName>VMWare_Workstation/03_Start_KX.AS.CODE</projectFullName>
+          <parameters class="linked-hash-map"/>
+          <referencedParameters>PROFILE, ALLOW_WORKLOADS_ON_KUBERNETES_MASTER, KX_MAIN_ADMIN_MEMORY, KX_MAIN_ADMIN_CPU_CORES, NUMBER_OF_KX_MAIN_NODES, KX_WORKER_NODES_MEMORY, KX_WORKER_NODES_CPU_CORES, NUMBER_OF_KX_WORKER_NODES, NETWORK_STORAGE_OPTIONS, LOCAL_STORAGE_OPTIONS</referencedParameters>
+          <choiceType>ET_FORMATTED_HTML</choiceType>
+          <omitValueField>false</omitValueField>
+        </org.biouno.unochoice.DynamicReferenceParameter>
+        <org.biouno.unochoice.DynamicReferenceParameter plugin="uno-choice@2.5.6">
+          <name>PROFILE_CONFIG_JSON_UPDATE</name>
+          <description>Updates the profile config JSON file with selections made here</description>
+          <randomName>choice-parameter-17383899378151</randomName>
+          <visibleItemCount>1</visibleItemCount>
+          <script class="org.biouno.unochoice.model.GroovyScript">
+            <secureScript plugin="script-security@1.78">
+              <script>@{profile_json_update.html}</script>
+              <sandbox>false</sandbox>
+            </secureScript>
+            <secureFallbackScript plugin="script-security@1.78">
+              <script></script>
+              <sandbox>false</sandbox>
+            </secureFallbackScript>
+          </script>
+          <projectName>03_Start_KX.AS.CODE</projectName>
+          <projectFullName>VMWare_Workstation/03_Start_KX.AS.CODE</projectFullName>
+          <parameters class="linked-hash-map"/>
+          <referencedParameters>PROFILE, KX_MAIN_ADMIN_MEMORY, KX_MAIN_ADMIN_CPU_CORES, ALLOW_WORKLOADS_ON_KUBERNETES_MASTER, GENERAL_PARAMETERS, NUMBER_OF_KX_MAIN_NODES, NETWORK_STORAGE_OPTIONS, LOCAL_STORAGE_OPTIONS</referencedParameters>
+          <choiceType>ET_FORMATTED_HTML</choiceType>
+          <omitValueField>false</omitValueField>
+        </org.biouno.unochoice.DynamicReferenceParameter>
+      </parameterDefinitions>
+    </hudson.model.ParametersDefinitionProperty>
+    <com.sonyericsson.rebuild.RebuildSettings plugin="rebuild@1.32">
+      <autoRebuild>false</autoRebuild>
+      <rebuildDisabled>false</rebuildDisabled>
+    </com.sonyericsson.rebuild.RebuildSettings>
+  </properties>
+  <scm class="hudson.scm.NullSCM"/>
+  <assignedNode>local</assignedNode>
+  <canRoam>false</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers/>
+  <concurrentBuild>false</concurrentBuild>
+  <customWorkspace>{{shared_workspace_directory_path}}</customWorkspace>
+  <builders>
+    <javaposse.jobdsl.plugin.ExecuteDslScripts plugin="job-dsl@1.77">
+      <targets>base-vm\build\jenkins\job_dsl/start_kx_as_code_vmware_desktop.groovy</targets>
+      <usingScriptText>false</usingScriptText>
+      <sandbox>false</sandbox>
+      <ignoreExisting>false</ignoreExisting>
+      <ignoreMissingFiles>false</ignoreMissingFiles>
+      <failOnMissingPlugin>false</failOnMissingPlugin>
+      <failOnSeedCollision>false</failOnSeedCollision>
+      <unstableOnDeprecation>false</unstableOnDeprecation>
+      <removedJobAction>IGNORE</removedJobAction>
+      <removedViewAction>IGNORE</removedViewAction>
+      <removedConfigFilesAction>IGNORE</removedConfigFilesAction>
+      <lookupStrategy>JENKINS_ROOT</lookupStrategy>
+    </javaposse.jobdsl.plugin.ExecuteDslScripts>
+  </builders>
+  <publishers/>
+  <buildWrappers/>
+</project>

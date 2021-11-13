@@ -1,0 +1,5 @@
+def existingBoxes='vagrant box list'.execute().text
+
+return """
+var: ${existingBoxes}<br>
+"""

@@ -1,0 +1,22 @@
+import groovy.json.JsonSlurper
+
+def jsonFilePath = PROFILE
+def inputFile = new File(jsonFilePath)
+def parsedJson = new JsonSlurper().parse(inputFile)
+
+def allowWorkloadsOnMaster = parsedJson.config.allowWorkloadsOnMaster
+
+def infoText = "Determines the number of KX-Main nodes that will be provisioned in the cluster"
+
+return """
+<body>
+<div class="wrapper">
+    <span class="span-toggle-text">Allow Workloads on<br>Kubernetes Master</span><label for="workloads_on_master_checkbox" class="checkbox-switch" >
+    <input type="checkbox" onclick="checkAddress(this)" id="workloads_on_master_checkbox" name="value" value="${allowWorkloadsOnMaster}" checked="${allowWorkloadsOnMaster}">
+    <span class="checkbox-slider round"></span>
+</label><span class="info-span"><img src="/userContent/icons/information-variant.svg" class="info-icon" alt="${infoText}"></span>
+</div>
+</body>
+<style scoped="scoped" onload="checkAddress(${allowWorkloadsOnMaster});">   </style>
+</body>
+"""
