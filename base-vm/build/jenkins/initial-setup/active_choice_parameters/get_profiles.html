@@ -115,8 +115,10 @@ return """
                 console.log("Box Main Name: " + boxKxMain.name);
                 console.log("Box Main Provider: " + boxKxMain.provider);
                 console.log("Box Main Version: " + boxKxMain.version);
+                document.getElementById("kx-main-version").innerHTML = boxKxMain.version;
             } catch(e){
-                console.log("Lookup failed. Msin Box does not exist")
+                console.log("Lookup failed. Main Box does not exist")
+                document.getElementById("kx-main-version").innerHTML = "<i>There is currently no kx-main box available for " + selectedProfile + "</i>";
             }
 
             // Get kx-node version
@@ -127,8 +129,10 @@ return """
                 console.log("Box Node Name: " + boxKxNode.name);
                 console.log("Box Node Provider: " + boxKxNode.provider);
                 console.log("Box Node Version: " + boxKxNode.version);
+                document.getElementById("kx-node-version").innerHTML = boxKxNode.version;
             } catch(e){
                 console.log("Lookup failed. Node Box does not exist")
+                document.getElementById("kx-node-version").innerHTML = "<i>There is currently no kx-node box available for " + selectedProfile + "</i>";
             }
         }
 
@@ -140,8 +144,14 @@ return """
 
             if ( githubKxVersion !== localKxVersion ) {
                 console.log("KX Version mismatch. Your code is out of date");
+                document.getElementById("version-check-message").innerHTML = "<i>Your local checked out code does not match the version on GitHub MAIN</i>";
+                document.getElementById("main-version-status-svg").src = "/userContent/icons/alert-outline.svg"
+                document.getElementById("main-version-status-svg").class = "checklist-status-icon svg-orange-red"
             } else {
                 console.log("KX Version is the same. Your code is up to date");
+                document.getElementById("version-check-message").innerHTML = "<i>Congratulations, you already have the latest KX.AS.CODE source on your machine</i>";
+                document.getElementById("node-version-status-svg").src = "/userContent/icons/checkbox-marked-circle-outline.svg"
+                document.getElementById("node-version-status-svg").class = "checklist-status-icon svg-bright-green"
             }
 
         }
@@ -158,6 +168,7 @@ return """
             -webkit-appearance: none;
             appearance: none;
             padding-left: 10px;
+            cursor: pointer;
             border: none;
             width: 200px;
             height: 40px;
@@ -192,6 +203,11 @@ return """
             box-shadow: none;
         }
 
+        .checklist-status-icon {
+            width: 20px;
+            height: 20px;
+        }
+
     </style>
 </head>
 <body>
@@ -201,15 +217,16 @@ return """
 <input type="hidden" id="selected-profile-path" name="value" value="">
 <style scoped="scoped" onload="populate_profile_option_list();">   </style>
 
-let: ${existingBoxes}<br>
-list: ${boxesList}<br>
-OS: ${underlyingOS}<br>
-github: ${githubVersionJson}<br>
+<h2>Pre-requisite Checks</h2>
 
-githubKxVersion: ${githubKxVersion}<br>
-githubKubeVersion: ${githubKubeVersion}<br>
-localKxVersion: ${localKxVersion}<br>
-localKubeVersion: ${localKubeVersion}<br>
+<h3>KX.AS.CODE Versions</h3>
+Current KX.AS.CODE version on GitHub MAIN branch: ${githubKxVersion}<br>
+Checked out version in your local system: ${localKxVersion}<br>
+<div><span></span><span id="version-check-message"></span></div>
+
+<h3>KX.AS.CODE Vagrant Boxes</h3>
+<div><img src='' id='main-version-status-svg' class='checklist-status-icon' alt='main-version-status-svg' /><span>KX-Main Box Version: </span><span id="kx-main-version"></span></div>
+<div><img src='' id='node-version-status-svg' class='checklist-status-icon' alt='node-version-status-svg' /><span>KX-Node Box Version: </span><span id="kx-node-version"></span></div>
 
 </body>
 """

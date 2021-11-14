@@ -1,24 +1,40 @@
 import groovy.json.JsonSlurper
 
+println("Testing allowWorkloadsOnMaster 1")
+def allowWorkloadsOnMaster
+def opacity
+def cursor
+def cssClass
+
 if ( STANDALONE_MODE != "true" ) {
-def jsonFilePath = PROFILE
-def inputFile = new File(jsonFilePath)
-def parsedJson = new JsonSlurper().parse(inputFile)
-def allowWorkloadsOnMaster = parsedJson.config.allowWorkloadsOnMaster
+    println("IF -> STANDALONE_MODE: ${STANDALONE_MODE}")
+    def jsonFilePath = PROFILE
+    def inputFile = new File(jsonFilePath)
+    def parsedJson = new JsonSlurper().parse(inputFile)
+    allowWorkloadsOnMaster = parsedJson.config.allowWorkloadsOnMaster
+    opacity = "0.7"
+    cursor = "pointer"
+    cssClass = "checkbox-slider round"
 } else {
-def allowWorkloadsOnMaster = true
+    println("ELSE -> STANDALONE_MODE: ${STANDALONE_MODE}")
+    allowWorkloadsOnMaster = true
+    opacity = "0.1"
+    cursor = "not-allowed"
+    cssClass = "checkbox-slider-checked-disabled round"
 }
+
+println("Testing allowWorkloadsOnMaster 2")
 
 def infoText = "Determines the number of KX-Main nodes that will be provisioned in the cluster"
 
 return """
 <body>
 <div class="wrapper">
-    <span class="span-toggle-text">Allow Workloads on<br>Kubernetes Master</span><label for="workloads_on_master_checkbox" class="checkbox-switch" >
-    <input type="checkbox" onclick="updateCheckbox(this, 'workloads_on_master_checkbox')" id="workloads_on_master_checkbox" name="value" value="${allowWorkloadsOnMaster}" checked="${allowWorkloadsOnMaster}">
-    <span class="checkbox-slider round"></span>
+    <span class="span-toggle-text">Allow Workloads on Kubernetes Master</span><label for="workloads_on_master_checkbox" class="checkbox-switch">
+    <input type="checkbox" onclick="if ('${STANDALONE_MODE}' !== 'true'){ updateCheckbox(this, 'workloads_on_master_checkbox', ${STANDALONE_MODE})}" id="workloads_on_master_checkbox" name="value" value="${allowWorkloadsOnMaster}" checked="${allowWorkloadsOnMaster}">
+    <span class="${cssClass}" style="opacity: ${opacity}; cursor: ${cursor}"></span>
 </label><span class="info-span"><img src="/userContent/icons/information-variant.svg" class="info-icon" alt="${infoText}"></span>
 </div>
-<style scoped="scoped" onload="updateCheckbox(${allowWorkloadsOnMaster}, 'workloads_on_master_checkbox');">   </style>
+<style scoped="scoped" onload="updateCheckbox({${allowWorkloadsOnMaster}, 'workloads_on_master_checkbox', ${STANDALONE_MODE});">   </style>
 </body>
 """

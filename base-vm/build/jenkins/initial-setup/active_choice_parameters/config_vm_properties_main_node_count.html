@@ -5,26 +5,33 @@ int max
 int step
 int startValue
 def main_node_count
+def buttonColor
 
 if ( STANDALONE_MODE != "true" ) {
 
-def jsonFilePath = PROFILE
-def inputFile = new File(jsonFilePath)
-def parsedJson = new JsonSlurper().parse(inputFile)
+    def jsonFilePath = PROFILE
+    def inputFile = new File(jsonFilePath)
+    def parsedJson = new JsonSlurper().parse(inputFile)
 
-main_node_count = parsedJson.config.vm_properties.main_node_count
+    main_node_count = parsedJson.config.vm_properties.main_node_count
 
-min = 1
-max = 16
-step = 1
-startValue = main_node_count.toInteger()
+    min = 1
+    max = 16
+    step = 1
+    startValue = main_node_count.toInteger()
+
+    opacity = "0.7"
+    cursor = "pointer"
 
 } else {
 
-min = 1
-max = 1
-step = 1
-startValue = 1
+    min = 1
+    max = 1
+    step = 1
+    startValue = 1
+
+    opacity = "0.1"
+    cursor = "not-allowed"
 
 }
 
@@ -47,12 +54,12 @@ return """
 <div class="outerWrapper">
     <div class="wrapper"><span><img src="${paramIcon}" class="param-icon svg-purple" alt="#" /></span>
         <span id="${counterElementValueId}" class="counter-element-value">${startValue} ${rangeUnit}</span>
-        <span class="button-range-span"><button type="button" class="button-left"
+        <span class="button-range-span"><button type="button" class="button-left" style="opacity: ${opacity}; cursor: ${cursor}"
                                                 onclick="subtract_one(&quot;${counterElementPreviousValueId}&quot;, &quot;${counterHiddenValueId}&quot;, &quot;${counterElementValueId}&quot;, &quot;${warningIconElementId}&quot;, &quot;${minWarning}&quot;, &quot;${valueDisplayConversion}&quot;, &quot;${rangeUnit}&quot;, &quot;${step}&quot;, &quot;${min}&quot;);"><img src="/userContent/icons/chevron-down.svg" alt="minus" class="image-plus-minus svg-white"/></button></span>
         <span class="divider-span"></span>
         <span class="button-range-span">
                 <span class="divider-span"></span>
-                <button type="button" class="button-right"
+                <button type="button" class="button-right" style="opacity: ${opacity}; cursor: ${cursor}"
                         onclick="add_one(&quot;${counterElementPreviousValueId}&quot;, &quot;${counterHiddenValueId}&quot;, &quot;${counterElementValueId}&quot;, &quot;${warningIconElementId}&quot;, &quot;${minWarning}&quot;, &quot;${valueDisplayConversion}&quot;, &quot;${rangeUnit}&quot;, &quot;${step}&quot;, &quot;${max}&quot;);"><img src="/userContent/icons/chevron-up.svg" alt="plus" class="image-plus-minus svg-white"/></button></span>
         <span class="info-span"><img src="/userContent/icons/information-variant.svg" class="info-icon"></span>
         <span id="${warningIconElementId}" data-text="${warningText}" class="warning-span tooltip"><img src="/userContent/icons/triangle-exclamation-solid.svg" class="warn-image svg-orange-red" alt="#" /></span>
