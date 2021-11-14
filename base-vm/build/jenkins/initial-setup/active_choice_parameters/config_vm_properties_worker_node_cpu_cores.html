@@ -1,5 +1,7 @@
 import groovy.json.JsonSlurper
 
+if ( STANDALONE_MODE != "true" ) {
+
 def jsonFilePath = PROFILE
 def inputFile = new File(jsonFilePath)
 def parsedJson = new JsonSlurper().parse(inputFile)
@@ -52,3 +54,5 @@ return """
 <input type="hidden" id="${sliderElementPreviousValueId}" name="${sliderElementPreviousValueId}" value="" >
 </body>
 """
+
+}

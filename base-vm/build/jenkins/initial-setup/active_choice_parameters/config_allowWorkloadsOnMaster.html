@@ -1,10 +1,13 @@
 import groovy.json.JsonSlurper
 
+if ( STANDALONE_MODE != "true" ) {
 def jsonFilePath = PROFILE
 def inputFile = new File(jsonFilePath)
 def parsedJson = new JsonSlurper().parse(inputFile)
-
 def allowWorkloadsOnMaster = parsedJson.config.allowWorkloadsOnMaster
+} else {
+def allowWorkloadsOnMaster = true
+}
 
 def infoText = "Determines the number of KX-Main nodes that will be provisioned in the cluster"
 
@@ -16,7 +19,6 @@ return """
     <span class="checkbox-slider round"></span>
 </label><span class="info-span"><img src="/userContent/icons/information-variant.svg" class="info-icon" alt="${infoText}"></span>
 </div>
-</body>
 <style scoped="scoped" onload="updateCheckbox(${allowWorkloadsOnMaster}, 'workloads_on_master_checkbox');">   </style>
 </body>
 """

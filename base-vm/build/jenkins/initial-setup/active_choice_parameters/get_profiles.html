@@ -1,215 +1,215 @@
-    import groovy.json.JsonSlurper
+import groovy.json.JsonSlurper
 
-    def githubVersionJson = new JsonSlurper().parse('https://raw.githubusercontent.com/patdel76/kx/main/versions.json'.toURL())
-    def githubKxVersion = githubVersionJson.kxascode
-    def githubKubeVersion = githubVersionJson.kubernetes
+def githubVersionJson = new JsonSlurper().parse('https://raw.githubusercontent.com/patdel76/kx/main/versions.json'.toURL())
+def githubKxVersion = githubVersionJson.kxascode
+def githubKubeVersion = githubVersionJson.kubernetes
 
-    def localVersionFile = 'jenkins_shared_workspace/kx.as.code/versions.json'
-    def localVersionJson = new File(localVersionFile)
-    def parsedLocalVersionJson = new JsonSlurper().parse(localVersionJson)
+def localVersionFile = 'jenkins_shared_workspace/kx.as.code/versions.json'
+def localVersionJson = new File(localVersionFile)
+def parsedLocalVersionJson = new JsonSlurper().parse(localVersionJson)
 
-    def localKxVersion = parsedLocalVersionJson.kxascode
-    def localKubeVersion = parsedLocalVersionJson.kubernetes
+def localKxVersion = parsedLocalVersionJson.kxascode
+def localKubeVersion = parsedLocalVersionJson.kubernetes
 
-    profile_paths= []
-    new File('jenkins_shared_workspace/kx.as.code/profiles/').eachDirMatch( ~/.*vagrant.*/ ) {profile_paths<< it.path }
+profile_paths= []
+new File('jenkins_shared_workspace/kx.as.code/profiles/').eachDirMatch( ~/.*vagrant.*/ ) {profile_paths<< it.path }
 
-    String underlyingOS
-    println profile_paths
+String underlyingOS
+println profile_paths
 
-    def OS = System.getProperty("os.name", "generic").toLowerCase(Locale.ENGLISH);
-    if ((OS.indexOf("mac") >= 0) || (OS.indexOf("darwin") >= 0)) {
-    underlyingOS = "darwin"
-    } else if (OS.indexOf("win") >= 0) {
-    underlyingOS = "windows"
-    profile_paths.removeAll { it.toLowerCase().endsWith('parallels') }
-    } else if (OS.indexOf("nux") >= 0) {
-    underlyingOS = "linux"
-    } else {
-    underlyingOS = "other"
-    }
+def OS = System.getProperty("os.name", "generic").toLowerCase(Locale.ENGLISH);
+if ((OS.indexOf("mac") >= 0) || (OS.indexOf("darwin") >= 0)) {
+underlyingOS = "darwin"
+} else if (OS.indexOf("win") >= 0) {
+underlyingOS = "windows"
+profile_paths.removeAll { it.toLowerCase().endsWith('parallels') }
+} else if (OS.indexOf("nux") >= 0) {
+underlyingOS = "linux"
+} else {
+underlyingOS = "other"
+}
 
-    profile_paths.sort()
-    profile_paths = profile_paths.join(",")
-    profile_paths = profile_paths.replaceAll("\\\\", "/")
+profile_paths.sort()
+profile_paths = profile_paths.join(",")
+profile_paths = profile_paths.replaceAll("\\\\", "/")
 
-    //println("PROFILE" + PROFILE)
-    //String[] splitPath
-    //splitPath = PROFILE.split('/')
-    //println("splitPath:" + splitPath)
-    //def profileName = splitPath[3].replace('vagrant-','')
-    //println("profileName: " + profileName)
+//println("PROFILE" + PROFILE)
+//String[] splitPath
+//splitPath = PROFILE.split('/')
+//println("splitPath:" + splitPath)
+//def profileName = splitPath[3].replace('vagrant-','')
+//println("profileName: " + profileName)
 
-    def existingBoxes='vagrant box list'.execute().text
-    def boxes = new String(existingBoxes).split( '\n' )
-    println("existingBoxes" + existingBoxes)
+def existingBoxes='vagrant box list'.execute().text
+def boxes = new String(existingBoxes).split( '\n' )
+println("existingBoxes" + existingBoxes)
 
-    println("[0]: " + boxes[0])
-    println("[1]: " + boxes[1])
+println("[0]: " + boxes[0])
+println("[1]: " + boxes[1])
 
-    def boxesList = []
-    for(box in boxes){
-    boxItem = box.split(" ")
-    boxName = boxItem[0]
-    boxProvider = boxItem[1]
-    boxVersion = boxItem[2]
-    //  if(boxProvider.trim().replaceAll("[(),]","").replaceAll("_","-") == profileName) {
-    println(boxName.trim() + " " + boxProvider.trim().replaceAll("[(),]","").replaceAll("_","-") + " " + boxVersion.trim().replaceAll("[()]",""))
-    boxesList.add(boxName.trim() + " " + boxProvider.trim().replaceAll("[(),]","").replaceAll("_","-") + " " + boxVersion.trim().replaceAll("[()]",""))
-    //  }
-    }
-    println("All boxes: " + boxesList)
-    println("0: " + boxesList[0])
-    println("1: " + boxesList[1])
+def boxesList = []
+for(box in boxes){
+boxItem = box.split(" ")
+boxName = boxItem[0]
+boxProvider = boxItem[1]
+boxVersion = boxItem[2]
+//  if(boxProvider.trim().replaceAll("[(),]","").replaceAll("_","-") == profileName) {
+println(boxName.trim() + " " + boxProvider.trim().replaceAll("[(),]","").replaceAll("_","-") + " " + boxVersion.trim().replaceAll("[()]",""))
+boxesList.add(boxName.trim() + " " + boxProvider.trim().replaceAll("[(),]","").replaceAll("_","-") + " " + boxVersion.trim().replaceAll("[()]",""))
+//  }
+}
+println("All boxes: " + boxesList)
+println("0: " + boxesList[0])
+println("1: " + boxesList[1])
 
 
-    return """
-    <head>
-        <script>
+return """
+<head>
+    <script>
 
-            function populate_profile_option_list() {
-                let profiles = "${profile_paths}".split(',');
-                for ( let i = 0; i < profiles.length; i++ ) {
-                    let profileName = profiles[i].split("/").pop();
-                    profileName = profileName.replace("vagrant-", "");
-                    console.log("Adding profile to options: " + profileName + i);
-                    document.getElementById("profiles").options[i] = new Option(profileName, profileName);
-                    update_selected_value();
-                }
+        function populate_profile_option_list() {
+            let profiles = "${profile_paths}".split(',');
+            for ( let i = 0; i < profiles.length; i++ ) {
+                let profileName = profiles[i].split("/").pop();
+                profileName = profileName.replace("vagrant-", "");
+                console.log("Adding profile to options: " + profileName + i);
+                document.getElementById("profiles").options[i] = new Option(profileName, profileName);
+                update_selected_value();
+            }
+        }
+
+        function update_selected_value() {
+            let selectedOptionNumber = document.getElementById("profiles").selectedIndex;
+            let profilePaths = "${profile_paths}".split(',');
+            let profilePath = profilePaths[selectedOptionNumber] + '/profile-config.json'
+            console.log("profileName: " + profilePath)
+            document.getElementById("selected-profile-path").value = profilePath;
+            document.getElementById("selected-profile-path").setAttribute("selected-profile-path", profilePath) ;
+            let parentId = document.getElementById("selected-profile-path").parentNode.id;
+            console.log(parentId);
+            jQuery('#' + parentId).trigger('change');
+            getAvailableBoxes();
+            compareVersions();
+        }
+
+        function getAvailableBoxes() {
+            console.log("DEBUG: getAvailableBoxes()");
+            let groovyUnformatedBoxesList = "${boxesList}".trim().slice(1,-1).split(',');
+            console.log("Boxes List: " + groovyUnformatedBoxesList);
+            console.log("Box 0: " + groovyUnformatedBoxesList[0]);
+            console.log("Box 1: " + groovyUnformatedBoxesList[1]);
+            let boxesList = [];
+            for (const box of groovyUnformatedBoxesList){
+                console.log("Split box list row: " + box);
+                let [boxName, boxProvider, boxVersion] = box.trim().split(' ');
+                console.log("Split row: " + boxName + "," + boxProvider + "," + boxVersion);
+                boxesList.push({ "name": boxName, "provider": boxProvider, "version": boxVersion });
+            }
+            console.table(boxesList);
+            let selectedProfile = document.getElementById("profiles").value
+            // Get kx-main version
+            try {
+                console.log("Selected profile: " + selectedProfile);
+                let boxKxMain = boxesList.find(boxKxMain => boxKxMain.provider === selectedProfile && boxKxMain.name === "kx.as.code-main");
+                console.log("Found Main Boxes: " + boxKxMain);
+                console.log("Box Main Name: " + boxKxMain.name);
+                console.log("Box Main Provider: " + boxKxMain.provider);
+                console.log("Box Main Version: " + boxKxMain.version);
+            } catch(e){
+                console.log("Lookup failed. Msin Box does not exist")
             }
 
-            function update_selected_value() {
-                let selectedOptionNumber = document.getElementById("profiles").selectedIndex;
-                let profilePaths = "${profile_paths}".split(',');
-                let profilePath = profilePaths[selectedOptionNumber] + '/profile-config.json'
-                console.log("profileName: " + profilePath)
-                document.getElementById("selected-profile-path").value = profilePath;
-                document.getElementById("selected-profile-path").setAttribute("selected-profile-path", profilePath) ;
-                let parentId = document.getElementById("selected-profile-path").parentNode.id;
-                console.log(parentId);
-                jQuery('#' + parentId).trigger('change');
-                getAvailableBoxes();
-                compareVersions();
+            // Get kx-node version
+            try {
+                console.log("Selected profile: " + selectedProfile);
+                let boxKxNode = boxesList.find(boxKxNode => boxKxNode.provider === selectedProfile && boxKxNode.name === "kx.as.code-node");
+                console.log("Found Node Boxes: " + boxKxNode);
+                console.log("Box Node Name: " + boxKxNode.name);
+                console.log("Box Node Provider: " + boxKxNode.provider);
+                console.log("Box Node Version: " + boxKxNode.version);
+            } catch(e){
+                console.log("Lookup failed. Node Box does not exist")
+            }
+        }
+
+        function compareVersions() {
+            let githubKxVersion = "${githubKxVersion}";
+            let githubKubeVersion = "${githubKubeVersion}";
+            let localKxVersion = "${localKxVersion}";
+            let localKubeVersion = "${localKubeVersion}";
+
+            if ( githubKxVersion !== localKxVersion ) {
+                console.log("KX Version mismatch. Your code is out of date");
+            } else {
+                console.log("KX Version is the same. Your code is up to date");
             }
 
-            function getAvailableBoxes() {
-                console.log("DEBUG: getAvailableBoxes()");
-                let groovyUnformatedBoxesList = "${boxesList}".trim().slice(1,-1).split(',');
-                console.log("Boxes List: " + groovyUnformatedBoxesList);
-                console.log("Box 0: " + groovyUnformatedBoxesList[0]);
-                console.log("Box 1: " + groovyUnformatedBoxesList[1]);
-                let boxesList = [];
-                for (const box of groovyUnformatedBoxesList){
-                    console.log("Split box list row: " + box);
-                    let [boxName, boxProvider, boxVersion] = box.trim().split(' ');
-                    console.log("Split row: " + boxName + "," + boxProvider + "," + boxVersion);
-                    boxesList.push({ "name": boxName, "provider": boxProvider, "version": boxVersion });
-                }
-                console.table(boxesList);
-                let selectedProfile = document.getElementById("profiles").value
-                // Get kx-main version
-                try {
-                    console.log("Selected profile: " + selectedProfile);
-                    let boxKxMain = boxesList.find(boxKxMain => boxKxMain.provider === selectedProfile && boxKxMain.name === "kx.as.code-main");
-                    console.log("Found Main Boxes: " + boxKxMain);
-                    console.log("Box Main Name: " + boxKxMain.name);
-                    console.log("Box Main Provider: " + boxKxMain.provider);
-                    console.log("Box Main Version: " + boxKxMain.version);
-                } catch(e){
-                    console.log("Lookup failed. Msin Box does not exist")
-                }
+        }
 
-                // Get kx-node version
-                try {
-                    console.log("Selected profile: " + selectedProfile);
-                    let boxKxNode = boxesList.find(boxKxNode => boxKxNode.provider === selectedProfile && boxKxNode.name === "kx.as.code-node");
-                    console.log("Found Node Boxes: " + boxKxNode);
-                    console.log("Box Node Name: " + boxKxNode.name);
-                    console.log("Box Node Provider: " + boxKxNode.provider);
-                    console.log("Box Node Version: " + boxKxNode.version);
-                } catch(e){
-                    console.log("Lookup failed. Node Box does not exist")
-                }
-            }
+    </script>
+    <style>
 
-            function compareVersions() {
-                let githubKxVersion = "${githubKxVersion}";
-                let githubKubeVersion = "${githubKubeVersion}";
-                let localKxVersion = "${localKxVersion}";
-                let localKubeVersion = "${localKubeVersion}";
+        .capitalize {
+            text-transform: capitalize;
+        }
 
-                if ( githubKxVersion !== localKxVersion ) {
-                    console.log("KX Version mismatch. Your code is out of date");
-                } else {
-                    console.log("KX Version is the same. Your code is up to date");
-                }
+        .profiles-select {
+            -moz-appearance: none;
+            -webkit-appearance: none;
+            appearance: none;
+            padding-left: 10px;
+            border: none;
+            width: 200px;
+            height: 40px;
+            border-top-right-radius: 5px;
+            border-bottom-right-radius: 5px;
+            background-image: url("/userContent/icons/chevron-down.svg");
+            background-repeat: no-repeat;
+            background-position: right;
+            background-color: #efefef;
+            outline: none;
+            border: none;
+            box-shadow: none;
+        }
 
-            }
+        select {
+            height: 20px;
+            -webkit-border-radius: 0;
+            border: 0;
+            outline: 1px solid #ccc;
+            outline-offset: -1px;
+        }
 
-        </script>
-        <style>
+        .profiles-select select {
+            outline: none;
+            border: none;
+            box-shadow: none;
+        }
 
-            .capitalize {
-                text-transform: capitalize;
-            }
+        .profiles-select:focus {
+            outline: none;
+            border: none;
+            box-shadow: none;
+        }
 
-            .profiles-select {
-                -moz-appearance: none;
-                -webkit-appearance: none;
-                appearance: none;
-                padding-left: 10px;
-                border: none;
-                width: 200px;
-                height: 40px;
-                border-top-right-radius: 5px;
-                border-bottom-right-radius: 5px;
-                background-image: url("/userContent/icons/chevron-down.svg");
-                background-repeat: no-repeat;
-                background-position: right;
-                background-color: #efefef;
-                outline: none;
-                border: none;
-                box-shadow: none;
-            }
+    </style>
+</head>
+<body>
+<br>
+<h2>Profiles</h2>
+<label for="profiles" class="input-box-label">Profiles</label><select id="profiles" class="profiles-select capitalize" onchange="update_selected_value();"></select></label>
+<input type="hidden" id="selected-profile-path" name="value" value="">
+<style scoped="scoped" onload="populate_profile_option_list();">   </style>
 
-            select {
-                height: 20px;
-                -webkit-border-radius: 0;
-                border: 0;
-                outline: 1px solid #ccc;
-                outline-offset: -1px;
-            }
+let: ${existingBoxes}<br>
+list: ${boxesList}<br>
+OS: ${underlyingOS}<br>
+github: ${githubVersionJson}<br>
 
-            .profiles-select select {
-                outline: none;
-                border: none;
-                box-shadow: none;
-            }
+githubKxVersion: ${githubKxVersion}<br>
+githubKubeVersion: ${githubKubeVersion}<br>
+localKxVersion: ${localKxVersion}<br>
+localKubeVersion: ${localKubeVersion}<br>
 
-            .profiles-select:focus {
-                outline: none;
-                border: none;
-                box-shadow: none;
-            }
-
-        </style>
-    </head>
-    <body>
-    <br>
-    <h2>Profiles</h2>
-    <label for="profiles" class="input-box-label">Profiles</label><select id="profiles" class="profiles-select capitalize" onchange="update_selected_value();"></select></label>
-    <input type="hidden" id="selected-profile-path" name="value" value="">
-    <style scoped="scoped" onload="populate_profile_option_list();">   </style>
-
-    let: ${existingBoxes}<br>
-    list: ${boxesList}<br>
-    OS: ${underlyingOS}<br>
-    github: ${githubVersionJson}<br>
-
-    githubKxVersion: ${githubKxVersion}<br>
-    githubKubeVersion: ${githubKubeVersion}<br>
-    localKxVersion: ${localKxVersion}<br>
-    localKubeVersion: ${localKubeVersion}<br>
-
-    </body>
-    """
+</body>
+"""

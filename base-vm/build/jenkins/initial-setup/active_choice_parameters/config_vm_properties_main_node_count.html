@@ -1,15 +1,33 @@
 import groovy.json.JsonSlurper
 
+int min
+int max
+int step
+int startValue
+def main_node_count
+
+if ( STANDALONE_MODE != "true" ) {
+
 def jsonFilePath = PROFILE
 def inputFile = new File(jsonFilePath)
 def parsedJson = new JsonSlurper().parse(inputFile)
 
-def main_node_count = parsedJson.config.vm_properties.main_node_count
+main_node_count = parsedJson.config.vm_properties.main_node_count
 
-int min = 1
-int max = 16
-int step = 1
-int startValue = main_node_count.toInteger()
+min = 1
+max = 16
+step = 1
+startValue = main_node_count.toInteger()
+
+} else {
+
+min = 1
+max = 1
+step = 1
+startValue = 1
+
+}
+
 int minWarning = 0 // Set to 0 to disable the minimum warning
 int valueDisplayConversion = 1 // Set to 1 for no conversion (eg. from MB to GB)
 def rangeUnit = "#"
@@ -30,13 +48,13 @@ return """
     <div class="wrapper"><span><img src="${paramIcon}" class="param-icon svg-purple" alt="#" /></span>
         <span id="${counterElementValueId}" class="counter-element-value">${startValue} ${rangeUnit}</span>
         <span class="button-range-span"><button type="button" class="button-left"
-            onclick="subtract_one(&quot;${counterElementPreviousValueId}&quot;, &quot;${counterHiddenValueId}&quot;, &quot;${counterElementValueId}&quot;, &quot;${warningIconElementId}&quot;, &quot;${minWarning}&quot;, &quot;${valueDisplayConversion}&quot;, &quot;${rangeUnit}&quot;, &quot;${step}&quot;, &quot;${min}&quot;);"><img src="/userContent/icons/chevron-down.svg" alt="minus" class="image-plus-minus svg-white"/></button></span>
+                                                onclick="subtract_one(&quot;${counterElementPreviousValueId}&quot;, &quot;${counterHiddenValueId}&quot;, &quot;${counterElementValueId}&quot;, &quot;${warningIconElementId}&quot;, &quot;${minWarning}&quot;, &quot;${valueDisplayConversion}&quot;, &quot;${rangeUnit}&quot;, &quot;${step}&quot;, &quot;${min}&quot;);"><img src="/userContent/icons/chevron-down.svg" alt="minus" class="image-plus-minus svg-white"/></button></span>
         <span class="divider-span"></span>
-            <span class="button-range-span">
+        <span class="button-range-span">
                 <span class="divider-span"></span>
                 <button type="button" class="button-right"
-            onclick="add_one(&quot;${counterElementPreviousValueId}&quot;, &quot;${counterHiddenValueId}&quot;, &quot;${counterElementValueId}&quot;, &quot;${warningIconElementId}&quot;, &quot;${minWarning}&quot;, &quot;${valueDisplayConversion}&quot;, &quot;${rangeUnit}&quot;, &quot;${step}&quot;, &quot;${max}&quot;);"><img src="/userContent/icons/chevron-up.svg" alt="plus" class="image-plus-minus svg-white"/></button></span>
-            <span class="info-span"><img src="/userContent/icons/information-variant.svg" class="info-icon"></span>
+                        onclick="add_one(&quot;${counterElementPreviousValueId}&quot;, &quot;${counterHiddenValueId}&quot;, &quot;${counterElementValueId}&quot;, &quot;${warningIconElementId}&quot;, &quot;${minWarning}&quot;, &quot;${valueDisplayConversion}&quot;, &quot;${rangeUnit}&quot;, &quot;${step}&quot;, &quot;${max}&quot;);"><img src="/userContent/icons/chevron-up.svg" alt="plus" class="image-plus-minus svg-white"/></button></span>
+        <span class="info-span"><img src="/userContent/icons/information-variant.svg" class="info-icon"></span>
         <span id="${warningIconElementId}" data-text="${warningText}" class="warning-span tooltip"><img src="/userContent/icons/triangle-exclamation-solid.svg" class="warn-image svg-orange-red" alt="#" /></span>
     </div>
 </div>
