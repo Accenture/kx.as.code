@@ -1,0 +1,21 @@
+import groovy.json.JsonSlurper
+
+def jsonFilePath = PROFILE
+def inputFile = new File(jsonFilePath)
+def parsedJson = new JsonSlurper().parse(inputFile)
+
+def standaloneMode = parsedJson.config.standaloneMode
+def infoText = "Determines whether to run with a single main node or node. This will automatically set KX-Workers to zero, Kx-Main to 1, and ensure allow-workloads on master is set to 1"
+
+return """
+<body>
+<div class="wrapper">
+    <span class="span-toggle-text">Enable Standalone<br>Mode</span><label for="standalone_mode_checkbox" class="checkbox-switch" >
+    <input type="checkbox" onclick="updateCheckbox(this, 'standalone_mode_checkbox')" id="standalone_mode_checkbox" name="value" value="${standaloneMode}" checked="${standaloneMode}">
+    <span class="checkbox-slider round"></span>
+</label><span class="info-span"><img src="/userContent/icons/information-variant.svg" class="info-icon" alt="${infoText}"></span>
+</div>
+</body>
+<style scoped="scoped" onload="updateCheckbox(${standaloneMode}, 'standalone_mode_checkbox');">   </style>
+</body>
+"""

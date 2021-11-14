@@ -11,6 +11,7 @@
             "worker_node_memory": 8196,
             "3d_acceleration": "off"
         },
+        "standaloneMode": true,
         "allowWorkloadsOnMaster": true,
         "disableSessionTimeout": true,
         "certificationMode": false,

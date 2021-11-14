@@ -23,6 +23,7 @@
       "thirty_gb": 0,
       "fifty_gb": 0
     },
+    "standaloneMode": true,
     "virtualizationType": "local",
     "environmentPrefix": "",
     "glusterFsDiskSize": "200",

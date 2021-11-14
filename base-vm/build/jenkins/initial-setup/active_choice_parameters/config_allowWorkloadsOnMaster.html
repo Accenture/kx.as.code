@@ -12,11 +12,11 @@ return """
 <body>
 <div class="wrapper">
     <span class="span-toggle-text">Allow Workloads on<br>Kubernetes Master</span><label for="workloads_on_master_checkbox" class="checkbox-switch" >
-    <input type="checkbox" onclick="checkAddress(this)" id="workloads_on_master_checkbox" name="value" value="${allowWorkloadsOnMaster}" checked="${allowWorkloadsOnMaster}">
+    <input type="checkbox" onclick="updateCheckbox(this, 'workloads_on_master_checkbox')" id="workloads_on_master_checkbox" name="value" value="${allowWorkloadsOnMaster}" checked="${allowWorkloadsOnMaster}">
     <span class="checkbox-slider round"></span>
 </label><span class="info-span"><img src="/userContent/icons/information-variant.svg" class="info-icon" alt="${infoText}"></span>
 </div>
 </body>
-<style scoped="scoped" onload="checkAddress(${allowWorkloadsOnMaster});">   </style>
+<style scoped="scoped" onload="updateCheckbox(${allowWorkloadsOnMaster}, 'workloads_on_master_checkbox');">   </style>
 </body>
 """

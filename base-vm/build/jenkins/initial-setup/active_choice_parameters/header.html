@@ -585,28 +585,28 @@ return """
 
         function updateConcatenatedReturnVariable() {
 
-            var baseDomain = document.getElementById("base-domain");
+            let baseDomain = document.getElementById("base-domain");
             if (baseDomain.value.length === 0) {
                 baseDomainValue = baseDomain.placeholder.trim();
             } else {
                 baseDomainValue = baseDomain.value.trim();
             }
 
-            var username = document.getElementById("username");
+            let username = document.getElementById("username");
             if (username.value.length === 0) {
                 usernameValue = username.placeholder.trim();
             } else {
                 usernameValue = username.value.trim();
             }
 
-            var teamName = document.getElementById("team-name");
+            let teamName = document.getElementById("team-name");
             if (teamName.value.length === 0) {
                 teamNameValue = teamName.placeholder.trim();
             } else {
                 teamNameValue = teamName.value.trim();
             }
 
-            var password = document.getElementById("password");
+            let password = document.getElementById("password");
             if (password.value.length === 0) {
                 passwordValue = password.placeholder.trim();
             } else {
@@ -617,31 +617,31 @@ return """
             console.log(document.getElementById("concatenated-general-params").value);
         }
 
-        function checkAddress(checkbox)
+        function updateCheckbox(checkbox, checkboxElementId)
         {
             if (checkbox.checked)
             {
-                document.getElementById("workloads_on_master_checkbox").value = true;
-                document.getElementById("workloads_on_master_checkbox").checked = true;
-                var workloads_on_master_checkbox = document.getElementById("workloads_on_master_checkbox").value;
-                console.log(workloads_on_master_checkbox);
+                document.getElementById(checkboxElementId).value = true;
+                document.getElementById(checkboxElementId).checked = true;
+                let checkbox = document.getElementById(checkboxElementId).value;
+                console.log(checkbox);
             } else {
-                document.getElementById("workloads_on_master_checkbox").value = false;
-                document.getElementById("workloads_on_master_checkbox").checked = false;
-                var workloads_on_master_checkbox = document.getElementById("workloads_on_master_checkbox").value;
-                console.log(workloads_on_master_checkbox);
+                document.getElementById(checkboxElementId).value = false;
+                document.getElementById(checkboxElementId).checked = false;
+                let checkbox = document.getElementById(checkboxElementId).value;
+                console.log(checkbox);
             }
         }
 
         function show_value(x, previousElementId, elementId, valueElementId, warningElementId, minWarning, valueDisplayConversion, rangeUnit) {
-            var previous_x = document.getElementById(previousElementId).value;
+            let previous_x = document.getElementById(previousElementId).value;
             console.log(valueElementId + " minWarning: " + minWarning + " x: " + x);
             if ( x != previous_x) {
-                var x_float = parseFloat(x).toFixed(2);
+                let x_float = parseFloat(x).toFixed(2);
                 document.getElementById(valueElementId).innerHTML = (x_float / valueDisplayConversion) + " " + rangeUnit;
                 document.getElementById(elementId).value = x;
                 document.getElementById(elementId).setAttribute(elementId, x);
-                var parentId = document.getElementById(elementId).parentNode.parentNode.parentNode.parentNode.parentNode.id;
+                let parentId = document.getElementById(elementId).parentNode.parentNode.parentNode.parentNode.parentNode.id;
                 if ( parentId == '' ) {
                     parentId = document.getElementById(elementId).parentNode.id;
                 }
@@ -659,7 +659,7 @@ return """
         }
 
         function update_display_value(x, valueElementId, valueDisplayConversion, rangeUnit) {
-            var x_float = parseFloat(x).toFixed(2);
+            let x_float = parseFloat(x).toFixed(2);
             document.getElementById(valueElementId).innerHTML = (x_float / valueDisplayConversion) + " " + rangeUnit;
         }
 
@@ -668,7 +668,7 @@ return """
             console.log("elementid: " + elementId);
             console.log("elementid value: " + document.getElementById(elementId).value);
             console.log("step: " + parseInt(step));
-            var count = parseInt(document.getElementById(elementId).value) + parseInt(step);
+            let count = parseInt(document.getElementById(elementId).value) + parseInt(step);
             console.log("count: " + count)
             if (count <= max) {
                 show_value(count, previousElementId, elementId, valueElementId, warningElementId, minWarning, valueDisplayConversion, rangeUnit);
@@ -677,7 +677,7 @@ return """
 
         function subtract_one(previousElementId, elementId, valueElementId, warningElementId, minWarning, valueDisplayConversion, rangeUnit, step, min) {
             console.log("minWarning: " + minWarning)
-            var count = parseInt(document.getElementById(elementId).value) - parseInt(step);
+            let count = parseInt(document.getElementById(elementId).value) - parseInt(step);
             console.log("count: " + count)
             if (count >= min) {
                 show_value(count, previousElementId, elementId, valueElementId, warningElementId, minWarning, valueDisplayConversion, rangeUnit);
@@ -685,12 +685,12 @@ return """
         }
 
         function updateConcatenatedLocalStorageReturnVariable() {
-            var counterHiddenValueIdOneGb = document.getElementById("counter_value_local_volume_count_1_gb").value;
-            var counterHiddenValueIdFiveGb = document.getElementById("counter_value_local_volume_count_5_gb").value;
-            var counterHiddenValueIdTenGb = document.getElementById("counter_value_local_volume_count_10_gb").value;
-            var counterHiddenValueIdThirtyGb = document.getElementById("counter_value_local_volume_count_30_gb").value;
-            var counterHiddenValueIdFiftyGb = document.getElementById("counter_value_local_volume_count_50_gb").value;
-            var concatenatedLocalVolumeParams = counterHiddenValueIdOneGb + ";" + counterHiddenValueIdFiveGb + ";" + counterHiddenValueIdTenGb + ";" + counterHiddenValueIdThirtyGb + ";" + counterHiddenValueIdFiftyGb;
+            let counterHiddenValueIdOneGb = document.getElementById("counter_value_local_volume_count_1_gb").value;
+            let counterHiddenValueIdFiveGb = document.getElementById("counter_value_local_volume_count_5_gb").value;
+            let counterHiddenValueIdTenGb = document.getElementById("counter_value_local_volume_count_10_gb").value;
+            let counterHiddenValueIdThirtyGb = document.getElementById("counter_value_local_volume_count_30_gb").value;
+            let counterHiddenValueIdFiftyGb = document.getElementById("counter_value_local_volume_count_50_gb").value;
+            let concatenatedLocalVolumeParams = counterHiddenValueIdOneGb + ";" + counterHiddenValueIdFiveGb + ";" + counterHiddenValueIdTenGb + ";" + counterHiddenValueIdThirtyGb + ";" + counterHiddenValueIdFiftyGb;
             console.log(concatenatedLocalVolumeParams);
             document.getElementById("concatenated-local-volume-params").value = concatenatedLocalVolumeParams;
             document.getElementById("concatenated-local-volume-params").setAttribute("concatenated-local-volume-params", concatenatedLocalVolumeParams);
