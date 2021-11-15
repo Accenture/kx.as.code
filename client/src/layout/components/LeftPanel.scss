@@ -4,16 +4,30 @@
 #LeftPanel{
   display: flex;
   flex-direction: column;
-  align-items: center;
   justify-content: flex-start;
+  padding-left: 20px;
+  width: 140px;
+  background-color: $navbg;
+  height: 90vh;
+  padding-top: 2vh;
 }
 
-#LeftPanel-wrapper, #LeftPanel {
-  width: 81px;
-  background-color: $navbg;
-  height: 100%
+#LeftPanel a {
+  color: white;
+  text-decoration: none;
 }
+
+.icon-label-left-panel-container{
+  margin-top: auto;
+  margin-bottom: auto;
+  display: inline-flex;
+}
+
 
 .left-nav {
   margin-bottom: 20px;
+}
+
+.left-panel-label{
+  margin-left: 10px;
 }

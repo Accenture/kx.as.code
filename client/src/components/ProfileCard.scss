@@ -1,7 +1,9 @@
+@import "../variables.scss";
+
 .ProfileCard {
   box-sizing: border-box;
-  border: 1px solid #424c5e;
-  background-color: #424c5e;
+  // border: 1px solid #222845;
+  background-color: rgba(255, 255, 255, 0.137);
   border-radius: 4px;
   height: 173px;
   width: 90%;
@@ -24,8 +26,8 @@
   flex-wrap: wrap;
   overflow-y: scroll;
   overflow-x: hidden;
-  height: 78vh;
-  background-color: #263041;
+  height: 86vh;
+  background-color: $cardbg;
 }
 
 .profile-cards > .ProfileCard > .info-column {

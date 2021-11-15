@@ -125,9 +125,6 @@ export default class Dashboard extends Component {
 
     return (
       <Grid id="main-content-dashboard" container spacing={4}>
-        <Grid item xs={12}>
-          <h3>KS.AS Code Dashboard</h3>
-        </Grid>
         <Grid item xs={5} >
           <div className="profile-cards" style={{ width: "100%" }}>
             Pending Queue
@@ -146,12 +143,12 @@ export default class Dashboard extends Component {
         <Grid item xs={7} >
           <Grid item xs={12} >
             <div className="profile-cards" style={{ height: "39vh", marginBottom: "20px" }}>
-              Top
+              
             </div>
           </Grid>
           <Grid item xs={12} >
             <div className="profile-cards" style={{ height: "50px" }}>
-              Down
+              
             </div>
           </Grid>
         </Grid>

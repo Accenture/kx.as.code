@@ -55,9 +55,8 @@ class App extends Component {
         <Box id="main" flex="1">
           <Box id="main-container" >
             {/* Left panel */}
-            <Box id="LeftPanel-wrapper">
               <LeftPanel />
-            </Box>
+       
             {/* Content */}
             <Box id="content" >
               <HashRouter>
