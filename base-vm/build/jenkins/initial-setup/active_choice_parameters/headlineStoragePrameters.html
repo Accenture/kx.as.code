@@ -1,6 +1,7 @@
-def extendedDescription = &quot;There are two types of storage provisioned into KX.AS.CODE. One is a slower network storage based on GlusterFS and the second is local storage. Both are made available internally to the Kubernetes cluster via storage classes. There are advantages and disadvantages of each. Glusterfs is slower, but ensures the workload remains portable. Local storage is faster, but means a workload is tied to a host. The faster local storage is recommended for database servers.&quot;
+def extendedDescription = "There are two types of storage provisioned into KX.AS.CODE. One is a slower network storage based on GlusterFS and the second is local storage. Both are made available internally to the Kubernetes cluster via storage classes. There are advantages and disadvantages of each. Glusterfs is slower, but ensures the workload remains portable. Local storage is faster, but means a workload is tied to a host. The faster local storage is recommended for database servers."
 
-return &quot;&quot;&quot;
-&lt;h2&gt;Storage Parameters&lt;/h2&gt;
-&lt;span class=&quot;description-paragraph-span&quot;&gt;&lt;p&gt;${extendedDescription }&lt;/p&gt;&lt;/span&gt;
-&quot;&quot;&quot;
+return """
+<div class="divider-parameter-span"></div>
+<h2>Storage Parameters</h2>
+<span class="description-paragraph-span"><p>${extendedDescription}</p></span>
+"""

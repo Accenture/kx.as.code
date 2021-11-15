@@ -8,6 +8,8 @@ def standaloneMode = parsedJson.config.standaloneMode
 def infoText = "Determines whether to run with a single main node or node. This will automatically set KX-Workers to zero, Kx-Main to 1, and ensure allow-workloads on master is set to 1"
 
 return """
+<div class="divider-parameter-span"></div>
+<h2>Standalone versus Cluster Mode</h2>
 <body>
 <div class="wrapper">
     <span class="span-toggle-text">Enable Standalone Mode</span><label for="standalone_mode_checkbox" class="checkbox-switch" >
