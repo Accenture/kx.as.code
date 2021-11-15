@@ -678,28 +678,33 @@ return """
         {
             console.log("standaloneMode: " + standaloneMode);
             if (standaloneMode === true) {
+                console.log("DEBUG 4");
                 checkbox.checked = true;
-                console.log("checkbox.checked var: " + checkbox);
+                console.log(checkboxElementId + " - checkbox.checked var: " + checkbox);
             }
 
             if (checkbox.checked)
             {
+                console.log("DEBUG 5");
                 document.getElementById(checkboxElementId).value = true;
                 document.getElementById(checkboxElementId).checked = true;
                 let checkbox = document.getElementById(checkboxElementId).value;
-                console.log("checkbox: " + checkbox);
+                console.log(checkboxElementId + " - checkbox: " + checkbox);
             } else {
+                console.log("DEBUG 6");
                 document.getElementById(checkboxElementId).value = false;
                 document.getElementById(checkboxElementId).checked = false;
                 let checkbox = document.getElementById(checkboxElementId).value;
-                console.log("checkbox: " + checkbox);
+                console.log(checkboxElementId + " - checkbox: " + checkbox);
             }
         }
 
         function show_value(x, previousElementId, elementId, valueElementId, warningElementId, minWarning, valueDisplayConversion, rangeUnit) {
+            console.log("DEBUG 11");
             let previous_x = document.getElementById(previousElementId).value;
             console.log(valueElementId + " minWarning: " + minWarning + " x: " + x);
             if ( x != previous_x) {
+                console.log("DEBUG 10");
                 let x_float = parseFloat(x).toFixed(2);
                 document.getElementById(valueElementId).innerHTML = (x_float / valueDisplayConversion) + " " + rangeUnit;
                 document.getElementById(elementId).value = x;
@@ -712,21 +717,25 @@ return """
                 jQuery('#' + parentId).trigger('change');
                 console.log("x: " + x + " minimum warning value: " + minWarning + " Id: " + warningElementId);
                 if (parseInt(x) < parseInt(minWarning)) {
+                    console.log("DEBUG 1");
                     document.getElementById(warningElementId).style.visibility = "visible";
                 } else {
+                    console.log("DEBUG 2");
                     document.getElementById(warningElementId).style.visibility = "hidden";
                 }
-
+                console.log("DEBUG 3");
                 document.getElementById(previousElementId).value = x;
             }
         }
 
         function update_display_value(x, valueElementId, valueDisplayConversion, rangeUnit) {
+            console.log("DEBUG 7");
             let x_float = parseFloat(x).toFixed(2);
             document.getElementById(valueElementId).innerHTML = (x_float / valueDisplayConversion) + " " + rangeUnit;
         }
 
         function add_one(previousElementId, elementId, valueElementId, warningElementId, minWarning, valueDisplayConversion, rangeUnit, step, max) {
+            console.log("DEBUG 8");
             console.log("minWarning: " + minWarning);
             console.log("elementid: " + elementId);
             console.log("elementid value: " + document.getElementById(elementId).value);
@@ -739,6 +748,7 @@ return """
         }
 
         function subtract_one(previousElementId, elementId, valueElementId, warningElementId, minWarning, valueDisplayConversion, rangeUnit, step, min) {
+            console.log("DEBUG 9");
             console.log("minWarning: " + minWarning)
             let count = parseInt(document.getElementById(elementId).value) - parseInt(step);
             console.log("count: " + count)

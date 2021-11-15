@@ -1,16 +1,3 @@
-import groovy.json.JsonSlurper
-
-def githubVersionJson = new JsonSlurper().parse('https://raw.githubusercontent.com/patdel76/kx/main/versions.json'.toURL())
-def githubKxVersion = githubVersionJson.kxascode
-def githubKubeVersion = githubVersionJson.kubernetes
-
-def localVersionFile = 'jenkins_shared_workspace/kx.as.code/versions.json'
-def localVersionJson = new File(localVersionFile)
-def parsedLocalVersionJson = new JsonSlurper().parse(localVersionJson)
-
-def localKxVersion = parsedLocalVersionJson.kxascode
-def localKubeVersion = parsedLocalVersionJson.kubernetes
-
 profile_paths= []
 new File('jenkins_shared_workspace/kx.as.code/profiles/').eachDirMatch( ~/.*vagrant.*/ ) {profile_paths<< it.path }
 
@@ -19,49 +6,19 @@ println profile_paths
 
 def OS = System.getProperty("os.name", "generic").toLowerCase(Locale.ENGLISH);
 if ((OS.indexOf("mac") >= 0) || (OS.indexOf("darwin") >= 0)) {
-underlyingOS = "darwin"
+    underlyingOS = "darwin"
 } else if (OS.indexOf("win") >= 0) {
-underlyingOS = "windows"
+    underlyingOS = "windows"
 profile_paths.removeAll { it.toLowerCase().endsWith('parallels') }
 } else if (OS.indexOf("nux") >= 0) {
-underlyingOS = "linux"
+    underlyingOS = "linux"
 } else {
-underlyingOS = "other"
+    underlyingOS = "other"
 }
 
 profile_paths.sort()
 profile_paths = profile_paths.join(",")
 profile_paths = profile_paths.replaceAll("\\\\", "/")
-
-//println("PROFILE" + PROFILE)
-//String[] splitPath
-//splitPath = PROFILE.split('/')
-//println("splitPath:" + splitPath)
-//def profileName = splitPath[3].replace('vagrant-','')
-//println("profileName: " + profileName)
-
-def existingBoxes='vagrant box list'.execute().text
-def boxes = new String(existingBoxes).split( '\n' )
-println("existingBoxes" + existingBoxes)
-
-println("[0]: " + boxes[0])
-println("[1]: " + boxes[1])
-
-def boxesList = []
-for(box in boxes){
-boxItem = box.split(" ")
-boxName = boxItem[0]
-boxProvider = boxItem[1]
-boxVersion = boxItem[2]
-//  if(boxProvider.trim().replaceAll("[(),]","").replaceAll("_","-") == profileName) {
-println(boxName.trim() + " " + boxProvider.trim().replaceAll("[(),]","").replaceAll("_","-") + " " + boxVersion.trim().replaceAll("[()]",""))
-boxesList.add(boxName.trim() + " " + boxProvider.trim().replaceAll("[(),]","").replaceAll("_","-") + " " + boxVersion.trim().replaceAll("[()]",""))
-//  }
-}
-println("All boxes: " + boxesList)
-println("0: " + boxesList[0])
-println("1: " + boxesList[1])
-
 
 return """
 <head>
@@ -88,72 +45,6 @@ return """
             let parentId = document.getElementById("selected-profile-path").parentNode.id;
             console.log(parentId);
             jQuery('#' + parentId).trigger('change');
-            getAvailableBoxes();
-            compareVersions();
-        }
-
-        function getAvailableBoxes() {
-            console.log("DEBUG: getAvailableBoxes()");
-            let groovyUnformatedBoxesList = "${boxesList}".trim().slice(1,-1).split(',');
-            console.log("Boxes List: " + groovyUnformatedBoxesList);
-            console.log("Box 0: " + groovyUnformatedBoxesList[0]);
-            console.log("Box 1: " + groovyUnformatedBoxesList[1]);
-            let boxesList = [];
-            for (const box of groovyUnformatedBoxesList){
-                console.log("Split box list row: " + box);
-                let [boxName, boxProvider, boxVersion] = box.trim().split(' ');
-                console.log("Split row: " + boxName + "," + boxProvider + "," + boxVersion);
-                boxesList.push({ "name": boxName, "provider": boxProvider, "version": boxVersion });
-            }
-            console.table(boxesList);
-            let selectedProfile = document.getElementById("profiles").value
-            // Get kx-main version
-            try {
-                console.log("Selected profile: " + selectedProfile);
-                let boxKxMain = boxesList.find(boxKxMain => boxKxMain.provider === selectedProfile && boxKxMain.name === "kx.as.code-main");
-                console.log("Found Main Boxes: " + boxKxMain);
-                console.log("Box Main Name: " + boxKxMain.name);
-                console.log("Box Main Provider: " + boxKxMain.provider);
-                console.log("Box Main Version: " + boxKxMain.version);
-                document.getElementById("kx-main-version").innerHTML = boxKxMain.version;
-            } catch(e){
-                console.log("Lookup failed. Main Box does not exist")
-                document.getElementById("kx-main-version").innerHTML = "<i>There is currently no kx-main box available for " + selectedProfile + "</i>";
-            }
-
-            // Get kx-node version
-            try {
-                console.log("Selected profile: " + selectedProfile);
-                let boxKxNode = boxesList.find(boxKxNode => boxKxNode.provider === selectedProfile && boxKxNode.name === "kx.as.code-node");
-                console.log("Found Node Boxes: " + boxKxNode);
-                console.log("Box Node Name: " + boxKxNode.name);
-                console.log("Box Node Provider: " + boxKxNode.provider);
-                console.log("Box Node Version: " + boxKxNode.version);
-                document.getElementById("kx-node-version").innerHTML = boxKxNode.version;
-            } catch(e){
-                console.log("Lookup failed. Node Box does not exist")
-                document.getElementById("kx-node-version").innerHTML = "<i>There is currently no kx-node box available for " + selectedProfile + "</i>";
-            }
-        }
-
-        function compareVersions() {
-            let githubKxVersion = "${githubKxVersion}";
-            let githubKubeVersion = "${githubKubeVersion}";
-            let localKxVersion = "${localKxVersion}";
-            let localKubeVersion = "${localKubeVersion}";
-
-            if ( githubKxVersion !== localKxVersion ) {
-                console.log("KX Version mismatch. Your code is out of date");
-                document.getElementById("version-check-message").innerHTML = "<i>Your local checked out code does not match the version on GitHub MAIN</i>";
-                document.getElementById("main-version-status-svg").src = "/userContent/icons/alert-outline.svg"
-                document.getElementById("main-version-status-svg").class = "checklist-status-icon svg-orange-red"
-            } else {
-                console.log("KX Version is the same. Your code is up to date");
-                document.getElementById("version-check-message").innerHTML = "<i>Congratulations, you already have the latest KX.AS.CODE source on your machine</i>";
-                document.getElementById("node-version-status-svg").src = "/userContent/icons/checkbox-marked-circle-outline.svg"
-                document.getElementById("node-version-status-svg").class = "checklist-status-icon svg-bright-green"
-            }
-
         }
 
     </script>
@@ -203,11 +94,6 @@ return """
             box-shadow: none;
         }
 
-        .checklist-status-icon {
-            width: 20px;
-            height: 20px;
-        }
-
     </style>
 </head>
 <body>
@@ -216,17 +102,5 @@ return """
 <label for="profiles" class="input-box-label">Profiles</label><select id="profiles" class="profiles-select capitalize" onchange="update_selected_value();"></select></label>
 <input type="hidden" id="selected-profile-path" name="value" value="">
 <style scoped="scoped" onload="populate_profile_option_list();">   </style>
-
-<h2>Pre-requisite Checks</h2>
-
-<h3>KX.AS.CODE Versions</h3>
-Current KX.AS.CODE version on GitHub MAIN branch: ${githubKxVersion}<br>
-Checked out version in your local system: ${localKxVersion}<br>
-<div><span></span><span id="version-check-message"></span></div>
-
-<h3>KX.AS.CODE Vagrant Boxes</h3>
-<div><img src='' id='main-version-status-svg' class='checklist-status-icon' alt='main-version-status-svg' /><span>KX-Main Box Version: </span><span id="kx-main-version"></span></div>
-<div><img src='' id='node-version-status-svg' class='checklist-status-icon' alt='node-version-status-svg' /><span>KX-Node Box Version: </span><span id="kx-node-version"></span></div>
-
 </body>
 """
