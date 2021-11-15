@@ -1,16 +1,3 @@
-import groovy.json.JsonSlurper
-
-def githubVersionJson = new JsonSlurper().parse('https://raw.githubusercontent.com/patdel76/kx/main/versions.json'.toURL())
-def githubKxVersion = githubVersionJson.kxascode
-def githubKubeVersion = githubVersionJson.kubernetes
-
-def localVersionFile = 'jenkins_shared_workspace/kx.as.code/versions.json'
-def localVersionJson = new File(localVersionFile)
-def parsedLocalVersionJson = new JsonSlurper().parse(localVersionJson)
-
-def localKxVersion = parsedLocalVersionJson.kxascode
-def localKubeVersion = parsedLocalVersionJson.kubernetes
-
 profile_paths= []
 new File('jenkins_shared_workspace/kx.as.code/profiles/').eachDirMatch( ~/.*vagrant.*/ ) {profile_paths<< it.path }
 
@@ -18,83 +5,20 @@ String underlyingOS
 println profile_paths
 
 def OS = System.getProperty("os.name", "generic").toLowerCase(Locale.ENGLISH);
-def virtualBoxPath
-def vmWareWorkstationPath
-def vmWareVagrantWorkstationPlugin = "vagrant-vmware-desktop"
-def parallelsPath
-def parallelsVagrantPlugin = "vagrant-parallels"
-
 if ((OS.indexOf("mac") >= 0) || (OS.indexOf("darwin") >= 0)) {
     underlyingOS = "darwin"
-    virtualBoxPath = "/Applications/VirtualBox.app/Contents/MacOS/VirtualBox"
-    vmWareWorkstationPath = "/Applications/VMware Fusion.app/Contents/MacOS/VMware Fusion"
-    parallelsPath = "/Applications/Parallels Desktop.app/Contents/MacOS/prl_client_app"
 } else if (OS.indexOf("win") >= 0) {
     underlyingOS = "windows"
-    virtualBoxPath = "C:/Program Files/Oracle/VirtualBox/VirtualBox.exe"
-    vmWareWorkstationPath = "C:/Program Files (x86)/VMware/VMware Workstation/vmware.exe"
-    profile_paths.removeAll { it.toLowerCase().endsWith('parallels') }
+profile_paths.removeAll { it.toLowerCase().endsWith('parallels') }
 } else if (OS.indexOf("nux") >= 0) {
     underlyingOS = "linux"
-    virtualBoxPath = "/usr/bin/VirtualBox"
-    vmWareWorkstationPath = "/usr/bin/vmware"
 } else {
     underlyingOS = "other"
 }
 
-def parallelsExecutableExists = ""
-if ( underlyingOS == "darwin" ) {
-    File parallelsExecutable = new File(parallelsPath)
-    parallelsExecutableExists = parallelsExecutable.exists()
-}
-
-File vboxExecutable = new File(virtualBoxPath)
-def vboxExecutableExists = vboxExecutable.exists()
-
-File vmWareExecutable = new File(vmWareWorkstationPath)
-def vmwareExecutableExists = vmWareExecutable.exists()
-
 profile_paths.sort()
 profile_paths = profile_paths.join(",")
 profile_paths = profile_paths.replaceAll("\\\\", "/")
-
-def vagrantPluginList = 'vagrant plugin list'.execute().text
-vagrantPluginList = new String(vagrantPluginList).split( '\n' )
-def vagrantPluginName
-def vagrantPluginVersion
-def vagrantVmwarePluginInstalled
-def vagrantParallelsPluginInstalled
-for (vagrantPlugin in vagrantPluginList) {
-    vagrantPluginSplit = vagrantPlugin.split(" ")
-    vagrantPluginName = vagrantPluginSplit[0]
-    vagrantPluginVersion = vagrantPluginSplit[1]
-    if ( vagrantPluginName == "vagrant-vmware-desktop" ) {
-        vagrantVmwarePluginInstalled = true
-    } else if ( vagrantPluginName == "parallels" ) {
-        vagrantParallelsPluginInstalled = true
-    }
-}
-
-def existingBoxes = 'vagrant box list'.execute().text
-def boxes = new String(existingBoxes).split( '\n' )
-println("existingBoxes" + existingBoxes)
-
-println("[0]: " + boxes[0])
-println("[1]: " + boxes[1])
-
-def boxesList = []
-for (box in boxes) {
-    boxItem = box.split(" ")
-    boxName = boxItem[0]
-    boxProvider = boxItem[1]
-    boxVersion = boxItem[2]
-    println(boxName.trim() + " " + boxProvider.trim().replaceAll("[(),]","").replaceAll("_","-") + " " + boxVersion.trim().replaceAll("[()]",""))
-    boxesList.add(boxName.trim() + " " + boxProvider.trim().replaceAll("[(),]","").replaceAll("_","-") + " " + boxVersion.trim().replaceAll("[()]",""))
-}
-println("All boxes: " + boxesList)
-println("0: " + boxesList[0])
-println("1: " + boxesList[1])
-
 
 return """
 <head>
@@ -121,118 +45,6 @@ return """
             let parentId = document.getElementById("selected-profile-path").parentNode.id;
             console.log(parentId);
             jQuery('#' + parentId).trigger('change');
-            getAvailableBoxes();
-            compareVersions();
-            checkVagrantPreRequisites();
-        }
-
-        function getAvailableBoxes() {
-            console.log("DEBUG: getAvailableBoxes()");
-            let groovyUnformatedBoxesList = "${boxesList}".trim().slice(1,-1).split(',');
-            console.log("Boxes List: " + groovyUnformatedBoxesList);
-            console.log("Box 0: " + groovyUnformatedBoxesList[0]);
-            console.log("Box 1: " + groovyUnformatedBoxesList[1]);
-            let boxesList = [];
-            for (const box of groovyUnformatedBoxesList){
-                console.log("Split box list row: " + box);
-                let [boxName, boxProvider, boxVersion] = box.trim().split(' ');
-                console.log("Split row: " + boxName + "," + boxProvider + "," + boxVersion);
-                boxesList.push({ "name": boxName, "provider": boxProvider, "version": boxVersion });
-            }
-            console.table(boxesList);
-            let selectedProfile = document.getElementById("profiles").value
-            // Get kx-main version
-            try {
-                console.log("Selected profile: " + selectedProfile);
-                let boxKxMain = boxesList.find(boxKxMain => boxKxMain.provider === selectedProfile && boxKxMain.name === "kx.as.code-main");
-                console.log("Found Main Boxes: " + boxKxMain);
-                console.log("Box Main Name: " + boxKxMain.name);
-                console.log("Box Main Provider: " + boxKxMain.provider);
-                console.log("Box Main Version: " + boxKxMain.version);
-                document.getElementById("kx-main-version").innerHTML = "v" + boxKxMain.version;
-                document.getElementById("main-version-status-svg").src = "/userContent/icons/checkbox-marked-circle-outline.svg";
-                document.getElementById("main-version-status-svg").className = "checklist-status-icon svg-bright-green";
-            } catch(e){
-                console.log("Lookup failed. Main Box does not exist")
-                document.getElementById("kx-main-version").innerHTML = "<i>There is currently no kx-main box available for " + selectedProfile + "</i>";
-                document.getElementById("main-version-status-svg").src = "/userContent/icons/alert-outline.svg";
-                document.getElementById("main-version-status-svg").className = "checklist-status-icon svg-orange-red";
-            }
-
-            // Get kx-node version
-            try {
-                console.log("Selected profile: " + selectedProfile);
-                let boxKxNode = boxesList.find(boxKxNode => boxKxNode.provider === selectedProfile && boxKxNode.name === "kx.as.code-node");
-                console.log("Found Node Boxes: " + boxKxNode);
-                console.log("Box Node Name: " + boxKxNode.name);
-                console.log("Box Node Provider: " + boxKxNode.provider);
-                console.log("Box Node Version: " + boxKxNode.version);
-                document.getElementById("kx-node-version").innerHTML = "v" + boxKxNode.version;
-                document.getElementById("node-version-status-svg").src = "/userContent/icons/checkbox-marked-circle-outline.svg";
-                document.getElementById("node-version-status-svg").className = "checklist-status-icon svg-bright-green";
-            } catch(e){
-                console.log("Lookup failed. Node Box does not exist")
-                document.getElementById("kx-node-version").innerHTML = "<i>There is currently no kx-node box available for " + selectedProfile + "</i>";
-                document.getElementById("node-version-status-svg").src = "/userContent/icons/alert-outline.svg";
-                document.getElementById("node-version-status-svg").className = "checklist-status-icon svg-orange-red";
-            }
-        }
-
-        function compareVersions() {
-            let githubKxVersion = "${githubKxVersion}";
-            let githubKubeVersion = "${githubKubeVersion}";
-            let localKxVersion = "${localKxVersion}";
-            let localKubeVersion = "${localKubeVersion}";
-
-            if (githubKxVersion !== localKxVersion) {
-                console.log("KX Version mismatch. Your code is out of date");
-                document.getElementById("version-check-message").innerHTML = "Your local checked out code (v" + localKxVersion + ") does not match the version on GitHub MAIN (v" + githubKxVersion + ")";
-                document.getElementById("version-check-svg").src = "/userContent/icons/alert-outline.svg";
-                document.getElementById("version-check-svg").className = "checklist-status-icon svg-orange-red";
-            } else {
-                console.log("KX Version is the same. Your code is up to date");
-                document.getElementById("version-check-message").innerHTML = "The latest KX.AS.CODE source (v" + localKxVersion + ") is present on your machine";
-                document.getElementById("version-check-svg").src = "/userContent/icons/checkbox-marked-circle-outline.svg";
-                document.getElementById("version-check-svg").className = "checklist-status-icon svg-bright-green";
-            }
-        }
-
-        function checkVagrantPreRequisites() {
-            console.log("DEBUG: Inside checkVagrantPreRequisites");
-            let selectedProfile = document.getElementById("profiles").value;
-            let virtualizationExecutableExists = "";
-            let vagrantPluginInstalled = "";
-
-            if ( selectedProfile === "virtualbox" ) {
-                virtualizationExecutableExists = "${vboxExecutableExists}";
-                vagrantPluginInstalled = "true";
-            } else if ( selectedProfile === "vmware-desktop" ) {
-                virtualizationExecutableExists = "${vmwareExecutableExists}";
-                vagrantPluginInstalled = "${vagrantVmwarePluginInstalled}";
-            } else if ( selectedProfile === "parallels" ) {
-                virtualizationExecutableExists = "${parallelsExecutableExists}";
-                vagrantPluginInstalled = "${vagrantParallelsPluginInstalled}";
-            }
-
-            if ( virtualizationExecutableExists === "true" ) {
-                document.getElementById("virtualization-svg").className = "checklist-status-icon svg-bright-green";
-                document.getElementById("virtualization-svg").src = "/userContent/icons/checkbox-marked-circle-outline.svg";
-                document.getElementById("virtualization-text").innerHTML = selectedProfile + " is installed";
-            } else {
-                document.getElementById("virtualization-svg").className = "checklist-status-icon svg-orange-red";
-                document.getElementById("virtualization-svg").src = "/userContent/icons/alert-outline.svg";
-                document.getElementById("virtualization-text").innerHTML = selectedProfile + " could not be found";
-            }
-
-            if ( vagrantPluginInstalled  === "true" ) {
-                document.getElementById("vagrant-plugin-svg").className = "checklist-status-icon svg-bright-green";
-                document.getElementById("vagrant-plugin-svg").src = "/userContent/icons/checkbox-marked-circle-outline.svg";
-                document.getElementById("vagrant-plugin-text").innerHTML = "The required Vagrant plugin is installed";
-            } else {
-                document.getElementById("vagrant-plugin-svg").className = "checklist-status-icon svg-orange-red";
-                document.getElementById("vagrant-plugin-svg").src = "/userContent/icons/alert-outline.svg";
-                document.getElementById("vagrant-plugin-text").innerHTML = "The required Vagrant plugin could not be located";
-            }
         }
 
     </script>
@@ -282,11 +94,6 @@ return """
             box-shadow: none;
         }
 
-        .checklist-status-icon {
-            width: 25px;
-            height: 25px;
-        }
-
     </style>
 </head>
 <body>
@@ -295,18 +102,5 @@ return """
 <label for="profiles" class="input-box-label">Profiles</label><select id="profiles" class="profiles-select capitalize" onchange="update_selected_value();"></select></label>
 <input type="hidden" id="selected-profile-path" name="value" value="">
 <style scoped="scoped" onload="populate_profile_option_list();">   </style>
-
-<div class="divider-parameter-span"></div>
-<h2>Pre-requisite Checks</h2>
-<h4>Virtualization Pre-Requisites</h4><h4>KX.AS.CODE Vagrant Boxes</h4>
-<div><span class="checklist-span"><img src='' id='virtualization-svg' class='' alt='virtualization-svg' /></span><span class="checklist-span"></span><span id="virtualization-text" class="checklist-span" style="width: 200px;"></span><span class="checklist-span"><img src='' id='main-version-status-svg' class='' alt='main-version-status-svg' /></span><span class="checklist-span">KX-Main Box Version: </span><span id="kx-main-version" class="checklist-span"></span></div>
-<div><span class="checklist-span"><img src='' id='vagrant-plugin-svg' class='' alt='vagrant-plugin-svg' /></span><span class="checklist-span"></span><span id="vagrant-plugin-text" class="checklist-span" style="width: 200px;"></span><span class="checklist-span"><img src='' id='node-version-status-svg' class='' alt='node-version-status-svg' /></span><span class="checklist-span">KX-Node Box Version: </span><span id="kx-node-version" class="checklist-span"></span></div>
-<br>
-<h4>KX.AS.CODE Versions</h4>
-<div><span class="checklist-span"><img src='' id='version-check-svg' class='' alt='version-check-svg' /></span><span class="checklist-span" id="version-check-message"></span></div>
-<br>
-
-<div></div>
-<div></div>
 </body>
 """

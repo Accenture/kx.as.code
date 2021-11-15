@@ -5,7 +5,7 @@ def jsonFilePath = PROFILE
 
 def inputFile = new File(jsonFilePath)
 def parsedJson = new JsonSlurper().parse(inputFile)
-println new JsonBuilder(parsedJson).toPrettyString()
+//println new JsonBuilder(parsedJson).toPrettyString()
 
 println("GENERAL_PARAMETERS: ${GENERAL_PARAMETERS}")
 println("PROFILE: ${PROFILE}")
