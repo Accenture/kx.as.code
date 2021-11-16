@@ -1,4 +1,6 @@
 {
+  "title": "QA Group 1",
+  "description": "QA group comprising of SonarQube and Selenium",
   "action_queues": {
     "install": [
       {

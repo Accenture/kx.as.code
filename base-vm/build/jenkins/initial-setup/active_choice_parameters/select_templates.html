@@ -1,0 +1,23 @@
+import groovy.json.JsonSlurper
+
+template_paths= []
+new File('jenkins_shared_workspace/kx.as.code/templates/').eachFileMatch( ~/^aq.*.json$/ ) {template_paths<< it.path }
+
+println(template_paths)
+
+def jsonFilePath = template_paths[0]
+
+def inputFile = new File(jsonFilePath)
+def parsedJson = new JsonSlurper().parse(inputFile)
+
+println(parsedJson.title)
+println(parsedJson.description)
+println(parsedJson.action_queues.install)
+
+return """
+<body>
+    ${parsedJson.title}
+    ${parsedJson.description}
+    ${parsedJson.action_queues.install}
+</body>
+"""

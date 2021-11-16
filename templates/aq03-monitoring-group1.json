@@ -1,4 +1,6 @@
 {
+  "title": "Elastic-Stack",
+  "description": "Monitoring group with the Elastic-Stack",
   "action_queues": {
     "install": [
       {
