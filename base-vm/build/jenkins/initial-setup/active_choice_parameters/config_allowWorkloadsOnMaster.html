@@ -1,5 +1,7 @@
 import groovy.json.JsonSlurper
 
+if ( PREREQUISITES_CHECK != "failed" ) {
+
 println("Testing allowWorkloadsOnMaster 1")
 def allowWorkloadsOnMaster
 def opacity
@@ -29,12 +31,16 @@ def infoText = "Determines the number of KX-Main nodes that will be provisioned 
 
 return """
 <body>
+<div class="outerWrapper" id="workloads-on-master-div" style="display: block">
 <div class="wrapper">
     <span class="span-toggle-text">Allow Workloads on Kubernetes Master</span><label for="workloads_on_master_checkbox" class="checkbox-switch">
-    <input type="checkbox" onclick="if ('${STANDALONE_MODE}' !== 'true'){ updateCheckbox(this, 'workloads_on_master_checkbox', ${STANDALONE_MODE})}" id="workloads_on_master_checkbox" name="value" value="${allowWorkloadsOnMaster}" checked="${allowWorkloadsOnMaster}">
+    <input type="checkbox" onclick="if (${STANDALONE_MODE} !== true){ updateCheckbox(this, 'workloads_on_master_checkbox', ${STANDALONE_MODE})}" id="workloads_on_master_checkbox" name="value" value="${allowWorkloadsOnMaster}" checked="${allowWorkloadsOnMaster}">
     <span class="${cssClass}" style="opacity: ${opacity}; cursor: ${cursor}"></span>
 </label><span class="info-span"><img src="/userContent/icons/information-variant.svg" class="info-icon" alt="${infoText}"></span>
 </div>
-<style scoped="scoped" onload="updateCheckbox({${allowWorkloadsOnMaster}, 'workloads_on_master_checkbox', ${STANDALONE_MODE});">   </style>
+</div>
+<style scoped="scoped" onload="updateCheckbox(${allowWorkloadsOnMaster}, 'workloads_on_master_checkbox', ${STANDALONE_MODE});">   </style>
 </body>
 """
+
+}

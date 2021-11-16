@@ -1,6 +1,6 @@
 import groovy.json.JsonSlurper
 
-if ( STANDALONE_MODE != "true" ) {
+if ( STANDALONE_MODE != "true" && PREREQUISITES_CHECK != "failed" ) {
 
 def jsonFilePath = PROFILE
 def inputFile = new File(jsonFilePath)
@@ -28,7 +28,7 @@ def warningIconElementId = "${sliderElementRangeId}_warning_icon"
 
 return """
 <body>
-<div class="outerWrapper">
+<div class="outerWrapper" id="worker-memory-div" style="display: block">
     <div class="wrapper"><span><img src="${paramIcon}" class="param-icon svg-purple" alt="cpu" /></span>
 
         <span id="${sliderElementValueId}" class="slider-element-value">${startValue} ${rangeUnit}</span>

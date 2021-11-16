@@ -1,133 +1,135 @@
 import groovy.json.JsonSlurper
 import groovy.json.JsonBuilder
 
-def jsonFilePath = PROFILE
+if ( PREREQUISITES_CHECK != "failed" ) {
 
-def inputFile = new File(jsonFilePath)
-def parsedJson = new JsonSlurper().parse(inputFile)
-//println new JsonBuilder(parsedJson).toPrettyString()
+    def jsonFilePath = PROFILE
 
-println("GENERAL_PARAMETERS: ${GENERAL_PARAMETERS}")
-println("PROFILE: ${PROFILE}")
-println("STANDALONE_MODE: ${STANDALONE_MODE}")
-println("KX_MAIN_ADMIN_MEMORY: ${KX_MAIN_ADMIN_MEMORY}")
-println("KX_MAIN_ADMIN_CPU_CORES: ${KX_MAIN_ADMIN_CPU_CORES}")
-println("ALLOW_WORKLOADS_ON_KUBERNETES_MASTER: ${ALLOW_WORKLOADS_ON_KUBERNETES_MASTER}")
-println("GENERAL_PARAMETERS: ${GENERAL_PARAMETERS}")
-println("NUMBER_OF_KX_MAIN_NODES: ${NUMBER_OF_KX_MAIN_NODES}")
-println("NETWORK_STORAGE_OPTIONS: ${NETWORK_STORAGE_OPTIONS}")
-println("LOCAL_STORAGE_OPTIONS: ${LOCAL_STORAGE_OPTIONS}")
+    def inputFile = new File(jsonFilePath)
+    def parsedJson = new JsonSlurper().parse(inputFile)
+    //println new JsonBuilder(parsedJson).toPrettyString()
 
-if ( GENERAL_PARAMETERS != "" ) {
-    def generalParameterElements = GENERAL_PARAMETERS.split(';')
-    def BASE_DOMAIN = generalParameterElements[0]
-    def BASE_USER = generalParameterElements[1]
-    def ENVIRONMENT_PREFIX = generalParameterElements[2]
-    def BASE_PASSWORD = generalParameterElements[3]
-}
+    println("GENERAL_PARAMETERS: ${GENERAL_PARAMETERS}")
+    println("PROFILE: ${PROFILE}")
+    println("STANDALONE_MODE: ${STANDALONE_MODE}")
+    println("KX_MAIN_ADMIN_MEMORY: ${KX_MAIN_ADMIN_MEMORY}")
+    println("KX_MAIN_ADMIN_CPU_CORES: ${KX_MAIN_ADMIN_CPU_CORES}")
+    println("ALLOW_WORKLOADS_ON_KUBERNETES_MASTER: ${ALLOW_WORKLOADS_ON_KUBERNETES_MASTER}")
+    println("GENERAL_PARAMETERS: ${GENERAL_PARAMETERS}")
+    println("NUMBER_OF_KX_MAIN_NODES: ${NUMBER_OF_KX_MAIN_NODES}")
+    println("NETWORK_STORAGE_OPTIONS: ${NETWORK_STORAGE_OPTIONS}")
+    println("LOCAL_STORAGE_OPTIONS: ${LOCAL_STORAGE_OPTIONS}")
 
-def localVolumeParameterElements = LOCAL_STORAGE_OPTIONS.split(';')
-println(localVolumeParameterElements)
-
-def OLD_KX_MAIN_ADMIN_CPU_CORES = parsedJson.config.vm_properties.main_admin_node_cpu_cores
-if ( OLD_KX_MAIN_ADMIN_CPU_CORES != KX_MAIN_ADMIN_CPU_CORES && KX_MAIN_ADMIN_CPU_CORES != "") {
-    parsedJson.config.vm_properties.main_admin_node_cpu_cores = KX_MAIN_ADMIN_CPU_CORES
-}
-
-def OLD_KX_MAIN_ADMIN_MEMORY = parsedJson.config.vm_properties.main_admin_node_memory
-if ( OLD_KX_MAIN_ADMIN_MEMORY != KX_MAIN_ADMIN_MEMORY && KX_MAIN_ADMIN_MEMORY != "") {
-    parsedJson.config.vm_properties.main_admin_node_memory = KX_MAIN_ADMIN_MEMORY
-}
-
-println("ALLOW_WORKLOADS_ON_KUBERNETES_MASTER: ${ALLOW_WORKLOADS_ON_KUBERNETES_MASTER}")
-def OLD_ALLOW_WORKLOADS_ON_KUBERNETES_MASTER = parsedJson.config.allowWorkloadsOnMaster
-if ( OLD_ALLOW_WORKLOADS_ON_KUBERNETES_MASTER != ALLOW_WORKLOADS_ON_KUBERNETES_MASTER && ALLOW_WORKLOADS_ON_KUBERNETES_MASTER != null) {
-    if (ALLOW_WORKLOADS_ON_KUBERNETES_MASTER == "") {
-        parsedJson.config.allowWorkloadsOnMaster = false
-    } else {
-        parsedJson.config.allowWorkloadsOnMaster = true
+    if (GENERAL_PARAMETERS != "") {
+        def generalParameterElements = GENERAL_PARAMETERS.split(';')
+        def BASE_DOMAIN = generalParameterElements[0]
+        def BASE_USER = generalParameterElements[1]
+        def ENVIRONMENT_PREFIX = generalParameterElements[2]
+        def BASE_PASSWORD = generalParameterElements[3]
     }
-}
 
-println("STANDALONE_MODE: ${STANDALONE_MODE}")
-def OLD_STANDALONE_MODE = parsedJson.config.standaloneMode
-if ( OLD_STANDALONE_MODE != STANDALONE_MODE && STANDALONE_MODE != null) {
-    if (STANDALONE_MODE == "") {
-        parsedJson.config.standaloneMode = false
-    } else {
-        parsedJson.config.standaloneMode = true
+    def localVolumeParameterElements = LOCAL_STORAGE_OPTIONS.split(';')
+    println(localVolumeParameterElements)
+
+    def OLD_KX_MAIN_ADMIN_CPU_CORES = parsedJson.config.vm_properties.main_admin_node_cpu_cores
+    if (OLD_KX_MAIN_ADMIN_CPU_CORES != KX_MAIN_ADMIN_CPU_CORES && KX_MAIN_ADMIN_CPU_CORES != "") {
+        parsedJson.config.vm_properties.main_admin_node_cpu_cores = KX_MAIN_ADMIN_CPU_CORES
     }
-}
 
-if (binding.hasVariable('BASE_DOMAIN')) {
-    def OLD_BASE_DOMAIN = parsedJson.config.baseDomain
-    if (OLD_BASE_DOMAIN != BASE_DOMAIN && BASE_DOMAIN != "") {
-        parsedJson.config.baseDomain = BASE_DOMAIN
+    def OLD_KX_MAIN_ADMIN_MEMORY = parsedJson.config.vm_properties.main_admin_node_memory
+    if (OLD_KX_MAIN_ADMIN_MEMORY != KX_MAIN_ADMIN_MEMORY && KX_MAIN_ADMIN_MEMORY != "") {
+        parsedJson.config.vm_properties.main_admin_node_memory = KX_MAIN_ADMIN_MEMORY
     }
-}
 
-if (binding.hasVariable('ENVIRONMENT_PREFIX')) {
-    def OLD_ENVIRONMENT_PREFIX = parsedJson.config.environmentPrefix
-    if (OLD_ENVIRONMENT_PREFIX != ENVIRONMENT_PREFIX && ENVIRONMENT_PREFIX != "") {
-        parsedJson.config.environmentPrefix = ENVIRONMENT_PREFIX
+    println("ALLOW_WORKLOADS_ON_KUBERNETES_MASTER: ${ALLOW_WORKLOADS_ON_KUBERNETES_MASTER}")
+    def OLD_ALLOW_WORKLOADS_ON_KUBERNETES_MASTER = parsedJson.config.allowWorkloadsOnMaster
+    if (OLD_ALLOW_WORKLOADS_ON_KUBERNETES_MASTER != ALLOW_WORKLOADS_ON_KUBERNETES_MASTER && ALLOW_WORKLOADS_ON_KUBERNETES_MASTER != null) {
+        if (ALLOW_WORKLOADS_ON_KUBERNETES_MASTER == "") {
+            parsedJson.config.allowWorkloadsOnMaster = false
+        } else {
+            parsedJson.config.allowWorkloadsOnMaster = true
+        }
     }
-}
 
-if (binding.hasVariable('BASE_USER')) {
-    def OLD_BASE_USER = parsedJson.config.baseUser
-    if (OLD_BASE_USER != BASE_USER && BASE_USER != "") {
-        parsedJson.config.baseUser = BASE_USER
+    println("STANDALONE_MODE: ${STANDALONE_MODE}")
+    def OLD_STANDALONE_MODE = parsedJson.config.standaloneMode
+    if (OLD_STANDALONE_MODE != STANDALONE_MODE && STANDALONE_MODE != null) {
+        if (STANDALONE_MODE == "") {
+            parsedJson.config.standaloneMode = false
+        } else {
+            parsedJson.config.standaloneMode = true
+        }
     }
-}
 
-if (binding.hasVariable('BASE_PASSWORD')) {
-    def OLD_BASE_PASSWORD = parsedJson.config.basePassword
-    if (OLD_BASE_PASSWORD != BASE_PASSWORD && BASE_PASSWORD != "") {
-        parsedJson.config.basePassword = BASE_PASSWORD
+    if (binding.hasVariable('BASE_DOMAIN')) {
+        def OLD_BASE_DOMAIN = parsedJson.config.baseDomain
+        if (OLD_BASE_DOMAIN != BASE_DOMAIN && BASE_DOMAIN != "") {
+            parsedJson.config.baseDomain = BASE_DOMAIN
+        }
     }
-}
 
-def local_storage_num_one_gb = parsedJson.config.local_volumes.one_gb
-int number1GbVolumes = localVolumeParameterElements[0].toInteger()
-if ( local_storage_num_one_gb.toInteger() != number1GbVolumes && number1GbVolumes != "") {
-    parsedJson.config.local_volumes.one_gb = number1GbVolumes
-}
+    if (binding.hasVariable('ENVIRONMENT_PREFIX')) {
+        def OLD_ENVIRONMENT_PREFIX = parsedJson.config.environmentPrefix
+        if (OLD_ENVIRONMENT_PREFIX != ENVIRONMENT_PREFIX && ENVIRONMENT_PREFIX != "") {
+            parsedJson.config.environmentPrefix = ENVIRONMENT_PREFIX
+        }
+    }
 
-def local_storage_num_five_gb = parsedJson.config.local_volumes.five_gb
-int number5GbVolumes = localVolumeParameterElements[1].toInteger()
-if ( local_storage_num_five_gb.toInteger() != number5GbVolumes && number5GbVolumes != "") {
-    parsedJson.config.local_volumes.five_gb = number1GbVolumes
-}
+    if (binding.hasVariable('BASE_USER')) {
+        def OLD_BASE_USER = parsedJson.config.baseUser
+        if (OLD_BASE_USER != BASE_USER && BASE_USER != "") {
+            parsedJson.config.baseUser = BASE_USER
+        }
+    }
 
-def local_storage_num_ten_gb = parsedJson.config.local_volumes.ten_gb
-int number10GbVolumes = localVolumeParameterElements[2].toInteger()
-if ( local_storage_num_ten_gb.toInteger() != number10GbVolumes && number10GbVolumes != "") {
-    parsedJson.config.local_volumes.ten_gb = number10GbVolumes
-}
+    if (binding.hasVariable('BASE_PASSWORD')) {
+        def OLD_BASE_PASSWORD = parsedJson.config.basePassword
+        if (OLD_BASE_PASSWORD != BASE_PASSWORD && BASE_PASSWORD != "") {
+            parsedJson.config.basePassword = BASE_PASSWORD
+        }
+    }
 
-def local_storage_num_thirty_gb = parsedJson.config.local_volumes.thirty_gb
-int number30GbVolumes = localVolumeParameterElements[3].toInteger()
-if ( local_storage_num_thirty_gb.toInteger() != number30GbVolumes && number30GbVolumes != "") {
-    parsedJson.config.local_volumes.thirty_gb = number30GbVolumes
-}
+    def local_storage_num_one_gb = parsedJson.config.local_volumes.one_gb
+    int number1GbVolumes = localVolumeParameterElements[0].toInteger()
+    if (local_storage_num_one_gb.toInteger() != number1GbVolumes && number1GbVolumes != "") {
+        parsedJson.config.local_volumes.one_gb = number1GbVolumes
+    }
 
-def local_storage_num_fifty_gb = parsedJson.config.local_volumes.fifty_gb
-int number50GbVolumes = localVolumeParameterElements[4].toInteger()
-if ( local_storage_num_fifty_gb.toInteger() != number50GbVolumes && number50GbVolumes != "") {
-    parsedJson.config.local_volumes.fifty_gb = number50GbVolumes
-}
+    def local_storage_num_five_gb = parsedJson.config.local_volumes.five_gb
+    int number5GbVolumes = localVolumeParameterElements[1].toInteger()
+    if (local_storage_num_five_gb.toInteger() != number5GbVolumes && number5GbVolumes != "") {
+        parsedJson.config.local_volumes.five_gb = number1GbVolumes
+    }
 
-def OLD_NETWORK_STORAGE_OPTIONS = parsedJson.config.glusterFsDiskSize
-if ( OLD_NETWORK_STORAGE_OPTIONS != NETWORK_STORAGE_OPTIONS && NETWORK_STORAGE_OPTIONS != "") {
-    parsedJson.config.baseUser = NETWORK_STORAGE_OPTIONS
-}
+    def local_storage_num_ten_gb = parsedJson.config.local_volumes.ten_gb
+    int number10GbVolumes = localVolumeParameterElements[2].toInteger()
+    if (local_storage_num_ten_gb.toInteger() != number10GbVolumes && number10GbVolumes != "") {
+        parsedJson.config.local_volumes.ten_gb = number10GbVolumes
+    }
 
-def updatedJson = new JsonBuilder(parsedJson).toPrettyString()
-new File(jsonFilePath).write(new JsonBuilder(parsedJson).toPrettyString())
+    def local_storage_num_thirty_gb = parsedJson.config.local_volumes.thirty_gb
+    int number30GbVolumes = localVolumeParameterElements[3].toInteger()
+    if (local_storage_num_thirty_gb.toInteger() != number30GbVolumes && number30GbVolumes != "") {
+        parsedJson.config.local_volumes.thirty_gb = number30GbVolumes
+    }
 
-println("Bottom of update JSON groovy")
+    def local_storage_num_fifty_gb = parsedJson.config.local_volumes.fifty_gb
+    int number50GbVolumes = localVolumeParameterElements[4].toInteger()
+    if (local_storage_num_fifty_gb.toInteger() != number50GbVolumes && number50GbVolumes != "") {
+        parsedJson.config.local_volumes.fifty_gb = number50GbVolumes
+    }
 
-return """
+    def OLD_NETWORK_STORAGE_OPTIONS = parsedJson.config.glusterFsDiskSize
+    if (OLD_NETWORK_STORAGE_OPTIONS != NETWORK_STORAGE_OPTIONS && NETWORK_STORAGE_OPTIONS != "") {
+        parsedJson.config.baseUser = NETWORK_STORAGE_OPTIONS
+    }
+
+    def updatedJson = new JsonBuilder(parsedJson).toPrettyString()
+    new File(jsonFilePath).write(new JsonBuilder(parsedJson).toPrettyString())
+
+    println("Bottom of update JSON groovy")
+
+    return """
 <body>
 ${jsonFilePath}
 Updates for JSON:
@@ -140,3 +142,5 @@ BASE_DOMAIN: ${BASE_DOMAIN}, ENVIRONMENT_PREFIX: ${ENVIRONMENT_PREFIX}, BASE_USE
 </p>
 </body>
 """
+
+}

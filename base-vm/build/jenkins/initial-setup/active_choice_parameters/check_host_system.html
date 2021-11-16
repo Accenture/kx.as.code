@@ -1,5 +1,7 @@
 import java.lang.management.*
 
+if ( PREREQUISITES_CHECK != "failed" ) {
+
 mb = 1024*1024;
 gb = mb*1024;
 
@@ -93,62 +95,65 @@ diskPieColor = normalPieColour
 
 return """
 <body>
-<div class="wrapper" style="width: 800px;">
-    <div class="svg-item">
 
-        <svg width="200px" height="200px" viewBox="0 0 40 40" class="donut">
-            CPU
-            <circle class="donut-hole" cx="20" cy="20" r="15.91549430918954" fill="#fff"></circle>
-            <circle class="donut-ring" cx="20" cy="20" r="15.91549430918954" fill="transparent" stroke-width="3.5"></circle>
-            <circle style="stroke: ${cpuPieColor};" class="donut-segment donut-segment-cpu" cx="20" cy="20" r="15.91549430918954" fill="transparent" stroke-width="3.5" stroke-dasharray="${overallUsedCpuCoresPercentage} ${overallRemainingCpuCoresPercentage}" stroke-dashoffset="25"></circle>
-            <g class="donut-text donut-text-cpu">
+    <div id="system-check-div" style="display: flex;">
+        
+        <div class="wrapper" style="width: 800px;">
+            <div class="svg-item">
+                <svg width="200px" height="200px" viewBox="0 0 40 40" class="donut">
+                    CPU
+                    <circle class="donut-hole" cx="20" cy="20" r="15.91549430918954" fill="#fff"></circle>
+                    <circle class="donut-ring" cx="20" cy="20" r="15.91549430918954" fill="transparent" stroke-width="3.5"></circle>
+                    <circle style="stroke: ${cpuPieColor};" class="donut-segment donut-segment-cpu" cx="20" cy="20" r="15.91549430918954" fill="transparent" stroke-width="3.5" stroke-dasharray="${overallUsedCpuCoresPercentage} ${overallRemainingCpuCoresPercentage}" stroke-dashoffset="25"></circle>
+                    <g class="donut-text donut-text-cpu">
 
-                <text y="50%" transform="translate(0, 2)">
-                    <tspan x="50%" text-anchor="middle" class="donut-percent" style="fill: ${cpuPieColor};">${overallUsedCpuCoresPercentage}%</tspan>
-                </text>
-                <text y="60%" transform="translate(0, 2)">
-                    <tspan x="50%" text-anchor="middle" class="donut-data">${overallTotalNeededCpuCores} CPU Cores</tspan>
-                </text>
-            </g>
-        </svg>
+                        <text y="50%" transform="translate(0, 2)">
+                            <tspan x="50%" text-anchor="middle" class="donut-percent" style="fill: ${cpuPieColor};">${overallUsedCpuCoresPercentage}%</tspan>
+                        </text>
+                        <text y="60%" transform="translate(0, 2)">
+                            <tspan x="50%" text-anchor="middle" class="donut-data">${overallTotalNeededCpuCores} CPU Cores</tspan>
+                        </text>
+                    </g>
+                </svg>
+            </div>
+
+            <div class="svg-item">
+                <svg width="200px" height="200px" viewBox="0 0 40 40" class="donut">
+                    Memory
+                    <circle class="donut-hole" cx="20" cy="20" r="15.91549430918954" fill="#fff"></circle>
+                    <circle class="donut-ring" cx="20" cy="20" r="15.91549430918954" fill="transparent" stroke-width="3.5"></circle>
+                    <circle style="stroke: ${memoryPieColor};" class="donut-segment donut-segment-memory" cx="20" cy="20" r="15.91549430918954" fill="transparent" stroke-width="3.5" stroke-dasharray="${overallUsedMemoryPercentage} ${overallRemainingMemoryPercentage}" stroke-dashoffset="25"></circle>
+                    <g class="donut-text donut-text-memory">
+
+                        <text y="50%" transform="translate(0, 2)">
+                            <tspan x="50%" text-anchor="middle" class="donut-percent" style="fill: ${memoryPieColor};">${overallUsedMemoryPercentage}%</tspan>
+                        </text>
+                        <text y="60%" transform="translate(0, 2)">
+                            <tspan x="50%" text-anchor="middle" class="donut-data">${overallTotalNeededMemory/1024} GB Memory</tspan>
+                        </text>
+                    </g>++
+                </svg>
+            </div>
+
+            <div class="svg-item">
+                <svg width="200px" height="200px" viewBox="0 0 40 40" class="donut">
+                    Disk Space
+                    <circle class="donut-hole" cx="20" cy="20" r="15.91549430918954" fill="#fff"></circle>
+                    <circle class="donut-ring" cx="20" cy="20" r="15.91549430918954" fill="transparent" stroke-width="3.5"></circle>
+                    <circle style="stroke: ${diskPieColor};" class="donut-segment donut-segment-disk" cx="20" cy="20" r="15.91549430918954" fill="transparent" stroke-width="3.5" stroke-dasharray="${overallStorageNeededPercentage} ${overallRemainingPercentage}" stroke-dashoffset="25"></circle>
+                    <g class="donut-text donut-text-disk">
+
+                        <text y="50%" transform="translate(0, 2)">
+                            <tspan x="50%" text-anchor="middle" class="donut-percent" style="fill: ${diskPieColor};">${overallStorageNeededPercentage}%</tspan>
+                        </text>
+                        <text y="60%" transform="translate(0, 2)">
+                            <tspan x="50%" text-anchor="middle" class="donut-data">${overallStorageRequired} GB Disk Space</tspan>
+                        </text>
+                    </g>
+                </svg>
+            </div>
+        </div>
     </div>
-
-    <div class="svg-item">
-        <svg width="200px" height="200px" viewBox="0 0 40 40" class="donut">
-            Memory
-            <circle class="donut-hole" cx="20" cy="20" r="15.91549430918954" fill="#fff"></circle>
-            <circle class="donut-ring" cx="20" cy="20" r="15.91549430918954" fill="transparent" stroke-width="3.5"></circle>
-            <circle style="stroke: ${memoryPieColor};" class="donut-segment donut-segment-memory" cx="20" cy="20" r="15.91549430918954" fill="transparent" stroke-width="3.5" stroke-dasharray="${overallUsedMemoryPercentage} ${overallRemainingMemoryPercentage}" stroke-dashoffset="25"></circle>
-            <g class="donut-text donut-text-memory">
-
-                <text y="50%" transform="translate(0, 2)">
-                    <tspan x="50%" text-anchor="middle" class="donut-percent" style="fill: ${memoryPieColor};">${overallUsedMemoryPercentage}%</tspan>
-                </text>
-                <text y="60%" transform="translate(0, 2)">
-                    <tspan x="50%" text-anchor="middle" class="donut-data">${overallTotalNeededMemory/1024} GB Memory</tspan>
-                </text>
-            </g>++
-        </svg>
-    </div>
-
-    <div class="svg-item">
-        <svg width="200px" height="200px" viewBox="0 0 40 40" class="donut">
-            Disk Space
-            <circle class="donut-hole" cx="20" cy="20" r="15.91549430918954" fill="#fff"></circle>
-            <circle class="donut-ring" cx="20" cy="20" r="15.91549430918954" fill="transparent" stroke-width="3.5"></circle>
-            <circle style="stroke: ${diskPieColor};" class="donut-segment donut-segment-disk" cx="20" cy="20" r="15.91549430918954" fill="transparent" stroke-width="3.5" stroke-dasharray="${overallStorageNeededPercentage} ${overallRemainingPercentage}" stroke-dashoffset="25"></circle>
-            <g class="donut-text donut-text-disk">
-
-                <text y="50%" transform="translate(0, 2)">
-                    <tspan x="50%" text-anchor="middle" class="donut-percent" style="fill: ${diskPieColor};">${overallStorageNeededPercentage}%</tspan>
-                </text>
-                <text y="60%" transform="translate(0, 2)">
-                    <tspan x="50%" text-anchor="middle" class="donut-data">${overallStorageRequired} GB Disk Space</tspan>
-                </text>
-            </g>
-        </svg>
-    </div>
-</div>
 </body>
 
 freePhysicalMemorySize: ${freePhysicalMemorySize}<br>
@@ -161,3 +166,5 @@ usableSystemDisk: ${usableSystemDisk}<br>
 
 </html>
 """
+
+}

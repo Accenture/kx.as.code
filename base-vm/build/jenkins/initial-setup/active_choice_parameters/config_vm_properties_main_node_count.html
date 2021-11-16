@@ -1,5 +1,7 @@
 import groovy.json.JsonSlurper
 
+if ( PREREQUISITES_CHECK != "failed" ) {
+
 int min
 int max
 int step
@@ -7,7 +9,7 @@ int startValue
 def main_node_count
 def buttonColor
 
-if ( STANDALONE_MODE != "true" ) {
+if ( STANDALONE_MODE != true ) {
 
     def jsonFilePath = PROFILE
     def inputFile = new File(jsonFilePath)
@@ -51,7 +53,7 @@ def warningIconElementId = "${counterHiddenValueId}_warning_icon"
 
 return """
 <body>
-<div class="outerWrapper">
+<div class="outerWrapper" id="main-node-count-div" style="display: block;">
     <div class="wrapper"><span><img src="${paramIcon}" class="param-icon svg-purple" alt="#" /></span>
         <span id="${counterElementValueId}" class="counter-element-value">${startValue} ${rangeUnit}</span>
         <span class="button-range-span"><button type="button" class="button-left" style="opacity: ${opacity}; cursor: ${cursor}"
@@ -70,3 +72,5 @@ return """
 <input type="hidden" id="${counterElementPreviousValueId}" name="${counterElementPreviousValueId}" value="">
 </body>
 """
+
+}

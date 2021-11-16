@@ -126,12 +126,12 @@ return """
 
         function getAvailableBoxes() {
             console.log("DEBUG: getAvailableBoxes()");
-            let groovyUnformatedBoxesList = "${boxesList}".trim().slice(1,-1).split(',');
-            console.log("Boxes List: " + groovyUnformatedBoxesList);
-            console.log("Box 0: " + groovyUnformatedBoxesList[0]);
-            console.log("Box 1: " + groovyUnformatedBoxesList[1]);
+            let groovyUnformattedBoxesList = "${boxesList}".trim().slice(1,-1).split(',');
+            console.log("Boxes List: " + groovyUnformattedBoxesList);
+            console.log("Box 0: " + groovyUnformattedBoxesList[0]);
+            console.log("Box 1: " + groovyUnformattedBoxesList[1]);
             let boxesList = [];
-            for (const box of groovyUnformatedBoxesList){
+            for (const box of groovyUnformattedBoxesList){
                 console.log("Split box list row: " + box);
                 let [boxName, boxProvider, boxVersion] = box.trim().split(' ');
                 console.log("Split row: " + boxName + "," + boxProvider + "," + boxVersion);
@@ -234,6 +234,7 @@ return """
         }
 
         function updateProfileSelection() {
+            let selectedProfile = document.getElementById("profiles").value
             // Set profile selection automatically if any of them meet all the pre-requisites
             let parallelsExecutableExists = "${parallelsExecutableExists}";
             let vboxExecutableExists = "${vboxExecutableExists}";
@@ -244,42 +245,98 @@ return """
             let virtualBoxMainExists = "${virtualBoxMainExists}";
             let virtualBoxNodeExists = "${virtualBoxNodeExists}";
             let vmWareMainExists = "${vmWareMainExists}";
-            //let vmWareNodeExists = "${vmWareNodeExists}";
-            let vmWareNodeExists = "";
+            let vmWareNodeExists = "${vmWareNodeExists}";
+            //let vmWareNodeExists = "";
             let parallelsMainExists = "${parallelsMainExists}";
             let parallelsNodeExists = "${parallelsNodeExists}";
 
+            console.log("DEBUG: Selected profile: " + selectedProfile);
+
             let defaultProfile = "";
             let prerequisitesCheckResult = "";
-            if ( vboxExecutableExists === "true" && vboxVagrantPluginInstalled === "true" && virtualBoxMainExists === "true" && virtualBoxNodeExists === "true") {
-                defaultProfile = "virtualbox";
-                prerequisitesCheckResult = "full";
-            } else if ( vmwareExecutableExists === "true" && vmwareVagrantPluginInstalled === "true" && vmWareMainExists === "true" && vmWareNodeExists === "true" ) {
-                defaultProfile = "vmware-desktop";
-                prerequisitesCheckResult = "full";
-            } else if ( parallelsExecutableExists === "true" && parallelsPluginInstalled === "true" && parallelsMainExists === "true" && parallelsNodeExists === "true" ) {
-                defaultProfile = "parallels";
-                prerequisitesCheckResult = "full";
-            } else if ( vboxExecutableExists === "true" && vboxVagrantPluginInstalled === "true" && virtualBoxMainExists === "true") {
-                defaultProfile = "virtualbox";
-                prerequisitesCheckResult = "standalone";
-            } else if ( vmwareExecutableExists === "true" && vmwareVagrantPluginInstalled === "true" && vmWareMainExists === "true") {
-                defaultProfile = "vmware-desktop";
-                prerequisitesCheckResult = "standalone";
-            } else if ( parallelsExecutableExists === "true" && parallelsPluginInstalled === "true" && parallelsMainExists === "true") {
-                defaultProfile = "parallels";
-                prerequisitesCheckResult = "standalone";
-            }
-            if ( prerequisitesCheckResult === "") { prerequisitesCheckResult = "failed"; }
+            let selectedProfileCheckResult = "";
 
-            if (localStorage.getItem('hasCodeRunBefore') === null) {
+            if (sessionStorage.getItem('hasCodeRunBefore') === null) {
+                if ( vboxExecutableExists === "true" && vboxVagrantPluginInstalled === "true" && virtualBoxMainExists === "true" && virtualBoxNodeExists === "true") {
+                    console.log("DEBUG --> 1");
+                    defaultProfile = "virtualbox";
+                    if (selectedProfile === "virtualbox") { selectedProfileCheckResult = "full"; }
+                    prerequisitesCheckResult = "full";
+                } else if ( vmwareExecutableExists === "true" && vmwareVagrantPluginInstalled === "true" && vmWareMainExists === "true" && vmWareNodeExists === "true" ) {
+                    console.log("DEBUG --> 2");
+                    defaultProfile = "vmware-desktop";
+                    prerequisitesCheckResult = "full";
+                } else if ( parallelsExecutableExists === "true" && parallelsPluginInstalled === "true" && parallelsMainExists === "true" && parallelsNodeExists === "true" ) {
+                    console.log("DEBUG --> 3");
+                    defaultProfile = "parallels";
+                    prerequisitesCheckResult = "full";
+                } else if ( vboxExecutableExists === "true" && vboxVagrantPluginInstalled === "true" && virtualBoxMainExists === "true" ) {
+                    console.log("DEBUG --> 4");
+                    defaultProfile = "virtualbox";
+                    prerequisitesCheckResult = "standalone";
+                } else if ( vmwareExecutableExists === "true" && vmwareVagrantPluginInstalled === "true" && vmWareMainExists === "true" ) {
+                    console.log("DEBUG --> 5");
+                    defaultProfile = "vmware-desktop";
+                    prerequisitesCheckResult = "standalone";
+                } else if ( parallelsExecutableExists === "true" && parallelsPluginInstalled === "true" && parallelsMainExists === "true" ) {
+                    console.log("DEBUG --> 6");
+                    defaultProfile = "parallels";
+                    prerequisitesCheckResult = "standalone";
+                } else {
+                    console.log("DEBUG: Inside else DEFAULT block");
+                    prerequisitesCheckResult = "failed";
+                }
+
                 console.log("default profile will be set to " + defaultProfile);
                 document.getElementById("profiles").value = defaultProfile;
-                localStorage.hasCodeRunBefore = true
+
+                // Pre-requisite value must be either "full", "standalone" or "failed"
+                document.getElementById("system-prerequisites-check").value = prerequisitesCheckResult;
+                sessionStorage.hasCodeRunBefore = true;
+
+                if ( prerequisitesCheckResult === "failed" ) {
+                    hideParameterDivs();
+                } else {
+                    showParameterDivs();
+                }
+
             }
 
-            // Pre-requisite value must be either "all", "standalone" or "failed"
-            document.getElementById("system-prerequisites-check").value = prerequisitesCheckResult;
+            if (sessionStorage.getItem('hasCodeRunBefore') !== null) {
+                if ( selectedProfile === "virtualbox" && vboxExecutableExists === "true" && vboxVagrantPluginInstalled === "true" && virtualBoxMainExists === "true" && virtualBoxNodeExists === "true") {
+                    console.log("DEBUG --> 1");
+                    selectedProfileCheckResult = "full";
+                } else if ( selectedProfile === "vmware-desktop" && vmwareExecutableExists === "true" && vmwareVagrantPluginInstalled === "true" && vmWareMainExists === "true" && vmWareNodeExists === "true" ) {
+                    console.log("DEBUG --> 2");
+                    selectedProfileCheckResult = "full";
+                } else if ( selectedProfile === "parallels" && parallelsExecutableExists === "true" && parallelsPluginInstalled === "true" && parallelsMainExists === "true" && parallelsNodeExists === "true" ) {
+                    console.log("DEBUG --> 3");
+                    selectedProfileCheckResult = "full";
+                } else if ( selectedProfile === "virtualbox" && vboxExecutableExists === "true" && vboxVagrantPluginInstalled === "true" && virtualBoxMainExists === "true" ) {
+                    console.log("DEBUG --> 4");
+                    selectedProfileCheckResult = "standalone"
+                } else if ( selectedProfile === "vmware-desktop" && vmwareExecutableExists === "true" && vmwareVagrantPluginInstalled === "true" && vmWareMainExists === "true" ) {
+                    console.log("DEBUG --> 5");
+                    selectedProfileCheckResult = "standalone";
+                } else if ( selectedProfile === "parallels" && parallelsExecutableExists === "true" && parallelsPluginInstalled === "true" && parallelsMainExists === "true" ) {
+                    console.log("DEBUG --> 6");
+                    selectedProfileCheckResult = "standalone";
+                } else {
+                    console.log("DEBUG: Inside else SELECTED block");
+                    selectedProfileCheckResult = "failed";
+                }
+
+                // Pre-requisite value must be either "full", "standalone" or "failed"
+                document.getElementById("system-prerequisites-check").value = selectedProfileCheckResult;
+                console.log("selected profile prerequisite check result: " + selectedProfileCheckResult);
+
+                if ( selectedProfileCheckResult === "failed" ) {
+                    hideParameterDivs();
+                } else {
+                    showParameterDivs();
+                }
+
+            }
 
         }
 

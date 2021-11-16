@@ -1,5 +1,7 @@
 import groovy.json.JsonSlurper
 
+if ( PREREQUISITES_CHECK != "failed" ) {
+
 def jsonFilePath = PROFILE
 def inputFile = new File(jsonFilePath)
 def parsedJson = new JsonSlurper().parse(inputFile)
@@ -93,6 +95,8 @@ def warningIconElementIdFiftyGb = "${counterHiddenValueIdFiftyGb}_warning_icon"
 
 return """
 <body>
+<div id="local-storage-div" style="display: block;">
+
 <div class="wrapper"><span><img src="${paramIcon}" class="param-icon svg-purple" alt="#" /></span><h4>Local Storage Profile Parameters</h4></div>
 <p></p>
 
@@ -258,8 +262,8 @@ return """
 
 <input type="hidden" id="concatenated-local-volume-params" name="value" value="" >
 
-
+</div>
 </body>
 """
 
-
+}

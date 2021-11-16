@@ -307,7 +307,8 @@ return """
 
         .checkbox-slider-checked-disabled {
             position: absolute;
-            cursor: pointer;
+            cursor: not-allowed;
+            pointer-events: none;
             top: 0;
             left: 0;
             right: 0;
@@ -315,10 +316,13 @@ return """
             background-color: #7500c0;
             -webkit-transition: .4s;
             transition: .4s;
+            opacity: 0.1;
         }
 
         .checkbox-slider-checked-disabled:before {
             position: absolute;
+            cursor: not-allowed;
+            pointer-events: none;
             content: "";
             height: 22px;
             width: 22px;
@@ -331,7 +335,7 @@ return """
 
         input:checked + .checkbox-slider-checked-disabled {
             background-color: #7500c0 !important;
-            opacity: 0.7;
+            opacity: 0.1;
         }
 
         input:focus + .checkbox-slider-checked-disabled {
@@ -640,7 +644,7 @@ return """
         function changeBuildButton() {
             const checkElement = async selector => {
                 while ( document.querySelector(selector) === null) {
-                    await new Promise( resolve =>  requestAnimationFrame(resolve) )
+                    await new Promise( resolve =>  requestAnimationFrame(resolve) );
                 }
                 return document.querySelector(selector);
             };
@@ -687,82 +691,69 @@ return """
 
         function updateCheckbox(checkbox, checkboxElementId, standaloneMode)
         {
-            console.log("standaloneMode: " + standaloneMode);
-            if (standaloneMode === true) {
-                console.log("DEBUG 4");
-                checkbox.checked = true;
-                console.log(checkboxElementId + " - checkbox.checked var: " + checkbox);
+            console.log("checkbox: " + checkbox, ", checkboxElementId: " + checkboxElementId, ", standaloneMode: " + standaloneMode);
+            console.log("document.getElementById(system-prerequisites-check).value: *" + document.getElementById("system-prerequisites-check").value + "*");
+
+            if (document.getElementById("system-prerequisites-check").value === "standalone") {
+                console.log("DEBUG: Inside checkbox set to standalone");
+                document.getElementById('standalone_mode_checkbox').className="checkbox-slider-checked-disabled round";
+                document.getElementById('standalone_mode_span').className="checkbox-slider-checked-disabled round";
+            } else if (document.getElementById("system-prerequisites-check").value === "full") {
+                console.log("DEBUG: Inside checkbox set to full");
+                document.getElementById('standalone_mode_checkbox').className="checkbox-slider round";
+                document.getElementById('standalone_mode_span').className="checkbox-slider round";
             }
 
-            if (checkbox.checked)
+            console.log("before checkbox.checked if statement: " + checkbox);
+
+            if (checkbox === true)
             {
-                console.log("DEBUG 5");
                 document.getElementById(checkboxElementId).value = true;
                 document.getElementById(checkboxElementId).checked = true;
                 let checkbox = document.getElementById(checkboxElementId).value;
-                console.log(checkboxElementId + " - checkbox: " + checkbox);
             } else {
-                console.log("DEBUG 6");
                 document.getElementById(checkboxElementId).value = false;
                 document.getElementById(checkboxElementId).checked = false;
                 let checkbox = document.getElementById(checkboxElementId).value;
-                console.log(checkboxElementId + " - checkbox: " + checkbox);
             }
         }
 
         function show_value(x, previousElementId, elementId, valueElementId, warningElementId, minWarning, valueDisplayConversion, rangeUnit) {
-            console.log("DEBUG 11");
             let previous_x = document.getElementById(previousElementId).value;
-            console.log(valueElementId + " minWarning: " + minWarning + " x: " + x);
-            if ( x != previous_x) {
-                console.log("DEBUG 10");
+            if ( x !== previous_x) {
                 let x_float = parseFloat(x).toFixed(2);
                 document.getElementById(valueElementId).innerHTML = (x_float / valueDisplayConversion) + " " + rangeUnit;
                 document.getElementById(elementId).value = x;
                 document.getElementById(elementId).setAttribute(elementId, x);
                 let parentId = document.getElementById(elementId).parentNode.parentNode.parentNode.parentNode.parentNode.id;
-                if ( parentId == '' ) {
+                if ( parentId === '' ) {
                     parentId = document.getElementById(elementId).parentNode.id;
                 }
                 console.log("parentId: " + parentId);
                 jQuery('#' + parentId).trigger('change');
-                console.log("x: " + x + " minimum warning value: " + minWarning + " Id: " + warningElementId);
                 if (parseInt(x) < parseInt(minWarning)) {
-                    console.log("DEBUG 1");
                     document.getElementById(warningElementId).style.visibility = "visible";
                 } else {
-                    console.log("DEBUG 2");
                     document.getElementById(warningElementId).style.visibility = "hidden";
                 }
-                console.log("DEBUG 3");
                 document.getElementById(previousElementId).value = x;
             }
         }
 
         function update_display_value(x, valueElementId, valueDisplayConversion, rangeUnit) {
-            console.log("DEBUG 7");
             let x_float = parseFloat(x).toFixed(2);
             document.getElementById(valueElementId).innerHTML = (x_float / valueDisplayConversion) + " " + rangeUnit;
         }
 
         function add_one(previousElementId, elementId, valueElementId, warningElementId, minWarning, valueDisplayConversion, rangeUnit, step, max) {
-            console.log("DEBUG 8");
-            console.log("minWarning: " + minWarning);
-            console.log("elementid: " + elementId);
-            console.log("elementid value: " + document.getElementById(elementId).value);
-            console.log("step: " + parseInt(step));
             let count = parseInt(document.getElementById(elementId).value) + parseInt(step);
-            console.log("count: " + count)
             if (count <= max) {
                 show_value(count, previousElementId, elementId, valueElementId, warningElementId, minWarning, valueDisplayConversion, rangeUnit);
             }
         }
 
         function subtract_one(previousElementId, elementId, valueElementId, warningElementId, minWarning, valueDisplayConversion, rangeUnit, step, min) {
-            console.log("DEBUG 9");
-            console.log("minWarning: " + minWarning)
             let count = parseInt(document.getElementById(elementId).value) - parseInt(step);
-            console.log("count: " + count)
             if (count >= min) {
                 show_value(count, previousElementId, elementId, valueElementId, warningElementId, minWarning, valueDisplayConversion, rangeUnit);
             }
@@ -775,12 +766,49 @@ return """
             let counterHiddenValueIdThirtyGb = document.getElementById("counter_value_local_volume_count_30_gb").value;
             let counterHiddenValueIdFiftyGb = document.getElementById("counter_value_local_volume_count_50_gb").value;
             let concatenatedLocalVolumeParams = counterHiddenValueIdOneGb + ";" + counterHiddenValueIdFiveGb + ";" + counterHiddenValueIdTenGb + ";" + counterHiddenValueIdThirtyGb + ";" + counterHiddenValueIdFiftyGb;
-            console.log(concatenatedLocalVolumeParams);
             document.getElementById("concatenated-local-volume-params").value = concatenatedLocalVolumeParams;
             document.getElementById("concatenated-local-volume-params").setAttribute("concatenated-local-volume-params", concatenatedLocalVolumeParams);
             parentId = document.getElementById('concatenated-local-volume-params').parentNode.id;
             console.log(parentId);
             jQuery('#' + parentId).trigger('change');
+        }
+
+        function hideParameterDivs() {
+            document.getElementById("standalone-toggle-div").style.display = "none";
+            document.getElementById("worker-cpu-count-div").style.display = "none";
+            document.getElementById("worker-node-count-div").style.display = "none";
+            document.getElementById("main-node-count-div").style.display = "none";
+            document.getElementById("local-storage-div").style.display = "none";
+            document.getElementById("main-memory-div").style.display = "none";
+            document.getElementById("general-parameters-div").style.display = "none";
+            document.getElementById("workloads-on-master-div").style.display = "none";
+            document.getElementById("main-cpu-count-div").style.display = "none";
+            document.getElementById("worker-memory-div").style.display = "none";
+            document.getElementById("network-storage-div").style.display = "none";
+            document.getElementById("headline-main-div").style.display = "none";
+            document.getElementById("headline-workers-div").style.display = "none";
+            document.getElementById("headline-storage-div").style.display = "none";
+            document.getElementById("system-check-div").style.display = "none";
+
+        }
+
+        function showParameterDivs() {
+            document.getElementById("standalone-toggle-div").style.display = "block";
+            document.getElementById("worker-cpu-count-div").style.display = "block";
+            document.getElementById("worker-node-count-div").style.display = "block";
+            document.getElementById("main-node-count-div").style.display = "block";
+            document.getElementById("local-storage-div").style.display = "block";
+            document.getElementById("main-memory-div").style.display = "block";
+            document.getElementById("general-parameters-div").style.display = "block";
+            document.getElementById("workloads-on-master-div").style.display = "block";
+            document.getElementById("main-cpu-count-div").style.display = "block";
+            document.getElementById("worker-memory-div").style.display = "block";
+            document.getElementById("network-storage-div").style.display = "block";
+            document.getElementById("headline-main-div").style.display = "block";
+            document.getElementById("headline-workers-div").style.display = "block";
+            document.getElementById("headline-storage-div").style.display = "block";
+            document.getElementById("system-check-div").style.display = "flex";
+
         }
 
     </script>

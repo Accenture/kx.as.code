@@ -1,5 +1,7 @@
 import groovy.json.JsonSlurper
 
+if ( PREREQUISITES_CHECK != "failed" ) {
+
 def jsonFilePath = PROFILE
 def inputFile = new File(jsonFilePath)
 def parsedJson = new JsonSlurper().parse(inputFile)
@@ -29,7 +31,7 @@ def warningIconElementId = "${sliderElementRangeId}_warning_icon"
 
 return """
 <body>
-<div class="outerWrapper">
+<div class="outerWrapper" id="main-cpu-count-div" style="display: block">
     <div class="wrapper"><span><img src="${paramIcon}" class="param-icon svg-purple" alt="cpu" /></span>
 
         <span id="${sliderElementValueId}" class="slider-element-value">${startValue} ${rangeUnit}</span>
@@ -55,3 +57,5 @@ return """
 <input type="hidden" id="${sliderElementPreviousValueId}" name="${sliderElementPreviousValueId}" value="" >
 </body>
 """
+
+}
