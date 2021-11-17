@@ -43,7 +43,7 @@
         }
     ],
     "Description": "Artifactory Description",
-    "shortcut_text": "Artifactory OSS",
+    "shortcut_text": "Artifactory",
     "shortcut_icon": "artifactory.png",
     "api_docs_type": "web",
     "api_docs_url": "https://www.jfrog.com/confluence/display/JFROG/Artifactory+REST+API",
