@@ -65,7 +65,7 @@ for (int i = 0; i < template_paths.size(); i++) {
         } catch(e) {
             println e
         }
-        templateComponentsArray.add( '[' + '"template_id":' + template_id + ',' + '"shortcutText":' + '"' + shortcutText + '",' + '"shortcutIcon":' + '"' + "/userContent/icons/${shortcutIcon}" + '",' + '"description":' + '"' + description + '",' + '"category":' + '"' + category + '",' + '"component":' + '"' + component + '"]' )
+        templateComponentsArray.add( '[' + '"template_id":' + template_id + ',' + '"shortcutText":' + '"' + shortcutText + '",' + '"shortcutIcon":' + '"' + "${shortcutIcon}" + '",' + '"description":' + '"' + description + '",' + '"category":' + '"' + category + '",' + '"component":' + '"' + component + '"]' )
     }
 }
 
@@ -98,7 +98,7 @@ return """
             console.table(templateComponentsArray);
             let componentsArray = JSON.parse(templateComponentsArray);
             console.table(componentsArray);
-
+            let shortcutIcon
             try {
                 let componentArray = componentsArray.findAll(templateComponent => templateComponent.template_id === templateId);
                 console.log("returned array size: " + componentArray.size());
@@ -108,14 +108,34 @@ return """
                     console.log("Found template components - description [" + i + "]: " + componentArray[i].description);
                     console.log("Found template components - shortcutIcon [" + i + "]: " + componentArray[i].shortcutIcon);
                     console.log("Found template components - component [" + i + "]: " + componentArray[i].component);
-                    let iDiv = document.createElement('div');
-                    iDiv.id = componentArray[i].component;
-                    iDiv.className = 'component-item';
-                    let componentItemInnerHTML = componentArray[i].shortcutText +
-                        '<img src="' + componentArray[i].shortcutIcon + '" height="75">';
-                    console.log(componentItemInnerHTML);
-                    iDiv.innerHTML = componentItemInnerHTML;
-                    document.getElementById('components-list').appendChild(iDiv);
+
+                    if ( componentArray[i].shortcutText !== "null" && componentArray[i].shortcutIcon !== "null" ) {
+                        let iDiv = document.createElement('div');
+                        iDiv.id = componentArray[i].component;
+                        iDiv.className = 'component-item';
+
+                        if (componentArray[i].shortcutIcon === "null") {
+                            shortcutIcon = 'application-cog-outline.svg';
+                        } else {
+                            shortcutIcon = componentArray[i].shortcutIcon;
+                        }
+
+                        let componentItemInnerHTML = '<div class="component-outer-div">' +
+                                '<div class="component-image-div">' +
+                                    '<img src="/userContent/icons/' + shortcutIcon + '" width="60">' +
+                                '</div>' +
+                                '<div class="component-outer-text-div">' +
+                                    '<div class="component-category-div">' + componentArray[i].category + '</div>' +
+                                    '<div class="component-title-div">' + componentArray[i].shortcutText + '</div>' +
+                                '</div>' +
+                            '</div>' +
+                            '<div>' +
+                            '   <span class="component-description-span">' + componentArray[i].description +'</span>' +
+                            '</div>';
+                        console.log(componentItemInnerHTML);
+                        iDiv.innerHTML = componentItemInnerHTML;
+                        document.getElementById('components-list').appendChild(iDiv);
+                    }
                 }
             } catch(e){
                 console.log("Lookup failed" + e)
@@ -149,18 +169,19 @@ return """
 
     </script>
     <style>
-        .component-container {
-            display: flex; /* or inline-flex */
-            flex-wrap: wrap;
-            flex-flow: row wrap;
-            max-width: 800px;
-            gap: 10px;
-            gap: 10px 20px; /* row-gap column gap */
-            row-gap: 10px;
-            column-gap: 20px;
-            justify-content: center;
-            align-items: center;   /* <---- NEW    */
 
+        .component-container {
+            display: flex;
+            padding: 10px;
+            align-items: stretch;
+            justify-content : flex-start;
+            flex-wrap: wrap;
+            flex-direction: row;
+            max-width: 850px;
+            gap: 10px 10px;
+            row-gap: 10px;
+            column-gap: 10px;
+            background: rgba(117,0,192,0.05);
             display: -webkit-box;
             display: -moz-box;
             display: -ms-flexbox;
@@ -168,11 +189,48 @@ return """
         }
 
         .component-item {
-            display: flex;
+            display: block;
+            padding: 20px;
             align-items: center;
-            width: 100px;  /* Or whatever */
-            height: 100px; /* Or whatever */
-            margin: auto;  /* Magic! */
+            background: #FFFFFF;
+            width: 200px;
+            height: 200px;
+        }
+
+        .component-outer-div {
+            display:inline-block;
+        }
+
+        .component-image-div {
+            padding: 5px;
+            padding-top: 10px;
+            width: 40%;
+            float: left;
+        }
+
+        .component-outer-text-div {
+            padding: 5px;
+            text-transform: capitalize;
+            width:60%;
+            height: 100px;
+            float: right;
+        }
+
+        .component-category-div {
+            padding-left: 15px;
+            padding-top: 10px;
+            color: #7500c0;
+        }
+
+        .component-title-div {
+            padding-left: 15px;
+        }
+
+        .component-description-span {
+            padding-left: 5px;
+            width:100%;
+            box-decoration-break: clone;
+            -webkit-box-decoration-break: clone;
         }
 
     </style>
