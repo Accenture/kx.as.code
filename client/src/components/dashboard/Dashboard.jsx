@@ -3,6 +3,7 @@ import { Box, Button, Grid } from "@material-ui/core"
 import { useTranslation } from 'react-i18next';
 import "../dashboard/Dashboard.scss"
 import ApplicationCard from "../ApplicationCard";
+import ApplicationTable from "../application/ApplicationTable";
 // import * as API from './api';
 // import URLSearchParams from 'url-search-params';
 import axios from "axios";
@@ -12,6 +13,7 @@ import AccordionDetails from '@mui/material/AccordionDetails';
 import Typography from '@mui/material/Typography';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { width } from "@mui/system";
+import Apps from "../application/Apps"
 
 
 export default class Dashboard extends Component {
@@ -124,8 +126,13 @@ export default class Dashboard extends Component {
   render() {
 
     return (
-      <Grid id="main-content-dashboard" container spacing={4}>
-        <Grid item xs={5} >
+      <div id="grid grid-cols-2">
+
+        <Apps className="" apps={this.state.pendingData}/>
+
+        {/* <ApplicationTable/> */}
+
+        {/* <Grid item xs={5} >
           <div className="profile-cards" style={{ width: "100%" }}>
             Pending Queue
             {this.state.pendingData !== 'undefined' && this.state.pendingData.length > 0 ? this.itemList("pending_queue") : "Empty Queue"}
@@ -138,22 +145,13 @@ export default class Dashboard extends Component {
             WIP Queue
             {this.state.wipData !== 'undefined' && this.state.wipData.length > 0 ? this.itemList("wip_queue") : "Empty Queue"}
           </div>
-        </Grid>
+        </Grid> */}
 
-        <Grid item xs={7} >
-          <Grid item xs={12} >
-            <div className="profile-cards" style={{ height: "39vh", marginBottom: "20px" }}>
-              
-            </div>
-          </Grid>
-          <Grid item xs={12} >
-            <div className="profile-cards" style={{ height: "50px" }}>
-              
-            </div>
-          </Grid>
-        </Grid>
+        <div className="" style={{backgroundColor:"black", height:"300px"}}>
+          
+        </div>
 
-      </Grid>
+      </div>
     );
   }
 }

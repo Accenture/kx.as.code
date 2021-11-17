@@ -22,7 +22,7 @@
 #content {
   width: 100%;
   overflow: hidden;
-  margin-right: 20px;
+  margin-right: 26px;
 }
 
 /* width */
@@ -43,4 +43,32 @@
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
   background:rgba(255, 255, 255, 0.219);
+}
+
+
+
+.app-table td, th {
+
+  text-align: left;
+  padding: 8px;
+}
+
+.app-table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.app-table-container{
+  background-color: $cardbg;
+}
+
+.table-header-container{
+  margin-bottom: 10px;
+}
+
+.card-title{
+  margin-bottom: 30px;
+}
+
+#standard-search {
 }

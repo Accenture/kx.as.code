@@ -2,7 +2,7 @@ import { hot } from "react-hot-loader";
 import React, { Component } from "react";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { faChevronRight,faSpinner, faInfoCircle, faBars } from "@fortawesome/free-solid-svg-icons";
-import { Box } from "@material-ui/core";
+// import { Box } from "@material-ui/core";
 import intl from "react-intl-universal";
 import IntlPolyfill from "intl";
 import "./App.scss";

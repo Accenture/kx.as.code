@@ -15,6 +15,7 @@
     "@material-ui/icons": "^4.11.2",
     "@mui/icons-material": "^5.1.0",
     "@mui/material": "^5.1.0",
+    "@mui/x-data-grid": "^4.0.2",
     "axios": "^0.21.4",
     "concurrently": "^6.3.0",
     "i18next": "^20.3.2",
@@ -27,6 +28,7 @@
     "react-i18next": "^11.11.0",
     "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.3",
+    "tailwindcss": "^2.2.19",
     "web-vitals": "^1.1.2"
   },
   "scripts": {
