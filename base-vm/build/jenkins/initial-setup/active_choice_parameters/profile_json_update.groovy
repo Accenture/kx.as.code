@@ -1,8 +1,12 @@
 import groovy.json.JsonSlurper
 import groovy.json.JsonBuilder
 
-if ( PREREQUISITES_CHECK != "failed" ) {
+def BASE_DOMAIN
+def BASE_USER
+def ENVIRONMENT_PREFIX
+def BASE_PASSWORD
 
+try {
     def jsonFilePath = PROFILE
 
     def inputFile = new File(jsonFilePath)
@@ -22,10 +26,10 @@ if ( PREREQUISITES_CHECK != "failed" ) {
 
     if (GENERAL_PARAMETERS != "") {
         def generalParameterElements = GENERAL_PARAMETERS.split(';')
-        def BASE_DOMAIN = generalParameterElements[0]
-        def BASE_USER = generalParameterElements[1]
-        def ENVIRONMENT_PREFIX = generalParameterElements[2]
-        def BASE_PASSWORD = generalParameterElements[3]
+        BASE_DOMAIN = generalParameterElements[0]
+        BASE_USER = generalParameterElements[1]
+        ENVIRONMENT_PREFIX = generalParameterElements[2]
+        BASE_PASSWORD = generalParameterElements[3]
     }
 
     def localVolumeParameterElements = LOCAL_STORAGE_OPTIONS.split(';')
@@ -128,19 +132,20 @@ if ( PREREQUISITES_CHECK != "failed" ) {
     new File(jsonFilePath).write(new JsonBuilder(parsedJson).toPrettyString())
 
     println("Bottom of update JSON groovy")
+} catch(e) {
+    println "Something went wrong in the GROOVY block (profile_json_update): ${e}"
+}
 
-    return """
-<body>
-${jsonFilePath}
-Updates for JSON:
-KX_MAIN_ADMIN_MEMORY: ${KX_MAIN_ADMIN_MEMORY} (Previous: ${OLD_KX_MAIN_ADMIN_MEMORY})
-KX_MAIN_ADMIN_CPU_CORES: ${KX_MAIN_ADMIN_CPU_CORES} (Previous: ${OLD_KX_MAIN_ADMIN_CPU_CORES})
-Parsed JSON: ${parsedJson}
-Updated JSON: ${updatedJson}
-<p>
-BASE_DOMAIN: ${BASE_DOMAIN}, ENVIRONMENT_PREFIX: ${ENVIRONMENT_PREFIX}, BASE_USER: ${BASE_USER}, BASE_PASSWORD: ${BASE_PASSWORD}
-</p>
-</body>
-"""
-
+try {
+    // language=HTML
+    def HTML = """
+    <body>
+    <p>
+    BASE_DOMAIN: ${BASE_DOMAIN}, ENVIRONMENT_PREFIX: ${ENVIRONMENT_PREFIX}, BASE_USER: ${BASE_USER}, BASE_PASSWORD: ${BASE_PASSWORD}
+    </p>
+    </body>
+    """
+    return HTML
+} catch (e) {
+    println "Something went wrong in the HTML return block (profile_json_update): ${e}"
 }
