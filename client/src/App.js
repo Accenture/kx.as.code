@@ -2,41 +2,43 @@ import React, { Suspense, Component } from 'react';
 import "./App.scss";
 import Dashboard from './components/dashboard/Dashboard';
 import { HashRouter, Route } from "react-router-dom";
-import { Box } from "@material-ui/core";
+// import { Box } from "@material-ui/core";
 
 import TopPanel from "./layout/components/TopPanel";
 import LeftPanel from "./layout/components/LeftPanel";
+import ApplicationView from './components/application/ApplicationView';
+import SettingsView from './components/settings/SettingsView';
 
 class App extends Component {
   render() {
     return (
       <Suspense fallback="loading">
 
-      <Box id="App">
+      <div id="App">
         {/* Top panel */}
-        <Box id="TopPanel-wrapper">
+        <div id="TopPanel-wrapper">
           <HashRouter>
             <TopPanel />
           </HashRouter>
-        </Box>
+        </div>
         {/* Main section - below top panel */}
-        <Box id="main" flex="1">
-          <Box id="main-container">
+        <div id="main" flex="1">
+          <div id="main-container">
             {/* Left panel */}
-            <Box id="LeftPanel-wrapper">
+            <div id="LeftPanel-wrapper">
               <LeftPanel />
-            </Box>
+            </div>
             {/* Content */}
-            <Box id="content" >
+            <div id="content" >
               <HashRouter>
-                <div>
                   <Route path="/" exact={true} component={Dashboard} />
-                </div>
+                  <Route path="/apps" component={ApplicationView} />
+                  <Route path="/settings" component={SettingsView} />
               </HashRouter>
-            </Box>
-          </Box>
-        </Box>
-      </Box>
+            </div>
+          </div>
+        </div>
+      </div>
           
       
 
