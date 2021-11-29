@@ -13,7 +13,7 @@ const preventDefault = (event) => event.preventDefault();
 const LeftPanel = () => (
   <Box id="LeftPanel">
     <Box id="left-nav-1" className="left-nav">
-      <Link href="/dashboard" onClick={preventDefault}>
+      <Link href="/dashboard">
         <div className="icon-label-left-panel-container">
           <AssessmentIcon />
           <span className="left-panel-label">Dashboard</span>
@@ -21,7 +21,7 @@ const LeftPanel = () => (
       </Link>
     </Box>
     <Box id="left-nav-2" className="left-nav">
-      <Link href="/apps" onClick={preventDefault}>
+      <Link href="/apps" >
         <div className="icon-label-left-panel-container">
           <AppsIcon />
           <span className="left-panel-label" >Applications</span>
@@ -29,7 +29,7 @@ const LeftPanel = () => (
       </Link>
     </Box>
     <Box id="left-nav-2" className="left-nav">
-      <Link href="/settings" onClick={preventDefault}>
+      <Link href="/settings">
         <div className="icon-label-left-panel-container">
           <SettingsApplicationsIcon />
           <span className="left-panel-label">Settings</span>
