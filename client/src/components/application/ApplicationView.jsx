@@ -12,11 +12,18 @@ export default class ApplicationView extends Component {
     };
   }
 
-  componentDidUpdate() {
+  componentDidMount() {
     this.setState({
       queueData: this.props.queueData,
       isLoading: this.props.isLoading
     })
+    console.log("QueData Breakpoint-2: ", this.state.queueData)
+  }
+
+  static getDerivedStateFromProps(nextProps, prevState){
+    return {
+      queueData: nextProps.queueData
+    };
   }
 
   drawApplicationCards() {
@@ -32,9 +39,10 @@ export default class ApplicationView extends Component {
 
 
   itemList() {
-    this.state.queueData.map(app => {
-      return <ApplicationCard app={app} />
-    })
+    console.log("QueData Breakpoint-1: ", this.state.queueData)
+    // this.state.queueData.map(app => {
+    //   return <ApplicationCard app={app} />
+    // })
   }
 
   render() {
