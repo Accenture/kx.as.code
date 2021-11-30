@@ -1,6 +1,8 @@
 import { React, Component } from "react";
 import ApplicationCard from "../ApplicationCard";
+import axios from "axios";
 
+const queueList = ['pending_queue', 'failed_queue', 'completed_queue', 'retry_queue', 'wip_queue'];
 
 export default class ApplicationView extends Component {
 
@@ -8,41 +10,84 @@ export default class ApplicationView extends Component {
     super(props);
     this.state = {
       queueData: [],
-      isLoading: true
+      queueList: queueList,
+      isLoading: true,
+      intervallId: null
     };
   }
 
   componentDidMount() {
+    this.fetchQueueDataAndExtractApplicationMetadata();
     this.setState({
-      queueData: this.props.queueData,
-      isLoading: this.props.isLoading
-    })
-    console.log("QueData Breakpoint-2: ", this.state.queueData)
+      isLoading: false
+    });
+    //var intervallId = setInterval(this.fetchQueueDataAndExtractApplicationMetadata, 10000)
+    //this.setState({ intervallId: intervallId });
   }
 
-  static getDerivedStateFromProps(nextProps, prevState){
-    return {
-      queueData: nextProps.queueData
-    };
+  componentWillUnmount() {
+    clearInterval(this.state.intervallId);
   }
+
+  // static getDerivedStateFromProps(nextProps, prevState) {
+  //   return {
+  //     queueData: nextProps.queueData
+  //   };
+  // }
 
   drawApplicationCards() {
-    if (!this.state.isLoading) {
-      return <div className="--profile-cards">
-        {this.state.queueData !== 'undefined' ? this.itemList() : "Empty Queue"}
-      </div>
+    return this.state.queueData.map(app => {
+      return <ApplicationCard app={app} />
+    })
+  }
+
+  appList() {
+    if (this.state.isLoading == false) {
+      console.log("length-2:", this.state.queueData.length)
+      this.state.queueData.forEach(app => {
+        console.log("debug-3 QData: ", app.appName)
+        return <div>{app.appName}</div>
+      });
     }
     else {
       return <div>Loading...</div>
     }
   }
 
+  async f_setAppMetaData(message, queue) {
+    var app = {
+      queueName: queue,
+      appName: JSON.parse(message.payload).name,
+      category: JSON.parse(message.payload).install_folder,
+      retries: JSON.parse(message.payload).retries
+    }
+    return app;
+  }
 
-  itemList() {
-    console.log("QueData Breakpoint-1: ", this.state.queueData)
-    // this.state.queueData.map(app => {
-    //   return <ApplicationCard app={app} />
-    // })
+  async s_function(message, queue) {
+    const app = await this.f_setAppMetaData(message, queue);
+    const queueDataTmp = this.state.queueData
+    queueDataTmp.push(app);
+    this.setState({
+      queueData: queueDataTmp
+    })
+  }
+
+  fetchQueueDataAndExtractApplicationMetadata() {
+    this.state.queueList.forEach(queue => this.fetchData(queue));
+    console.log("debug-qData: ", this.state.queueData)
+    this.setState({
+      isLoading: false
+    })
+  }
+
+  fetchData(queue) {
+    console.log("debug-qList elem: ", queue)
+    axios.get("http://localhost:5000/queues/" + queue).then(response => {
+      response.data.forEach(message => {
+        this.s_function(message, queue)
+      });
+    });
   }
 
   render() {
@@ -50,10 +95,9 @@ export default class ApplicationView extends Component {
     return (
       <div>
         {/* <ApplicationTable/> */}
-
-        {this.drawApplicationCards()}
-
-        ApplicationView Component
+        <div className="">
+          {this.drawApplicationCards()}
+        </div>
       </div>
     );
   }
