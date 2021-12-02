@@ -55,3 +55,4 @@ amazon-corretto*
 /base-vm/build/jenkins/docker-compose.exe
 /profiles/aws-demo1/aws/
 /client/node_modules
+/node_modules
