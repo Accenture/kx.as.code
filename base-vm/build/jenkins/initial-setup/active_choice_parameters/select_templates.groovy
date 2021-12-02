@@ -22,13 +22,14 @@ def template_name
 def template_description
 def template_path
 
+def extendedDescription = "Here you can select an application group from a list of available templates. An application group is a set of applications that are commonly deployed together, and in many cases they will also be integrated within KX.AS.CODE."
+
 try {
     template_paths = []
     new File('jenkins_shared_workspace/kx.as.code/templates/').eachFileMatch(~/^aq.*.json$/) { template_paths << it.path }
 
     template_paths_csv = template_paths.join(",")
     template_paths_csv = template_paths_csv.replaceAll("\\\\", "/")
-    //println(template_paths_csv)
 
     for (int i = 0; i < template_paths.size(); i++) {
 
@@ -87,7 +88,7 @@ try {
                 let definitionsArray = JSON.parse(templateDefinitionsArray);
                 console.table(definitionsArray);
                 let templateId;
-    
+
                 try {
                     let selectedTemplate = document.getElementById("templates").value;
                     if ( selectedTemplate !== "-- Select Template --" ) {
@@ -102,30 +103,30 @@ try {
                 } catch(e){
                     console.log("Lookup failed");
                 }
-    
+
                 return definitionsArray;
-    
+
             }
-    
+
             function getTemplateComponents(templateId) {
                 let templateComponentsArray = [];
                 let componentsArray = [];
                 let componentItemInnerHTML
                 document.getElementById('components-list').innerHTML = "";
                 console.log("Inside getTemplateComponents(" + templateId + ")");
-    
+
                 if ( templateId === -1  || templateId === null || templateId === '' ) {
-    
+
                     let shortcutIconPlaceholder = 'application-cog-outline.svg';
                     let categoryPlaceholder = 'Optional';
                     let shortcutTextPlaceholder = 'Templates';
                     let descriptionPlaceholder = 'Select from a pre-defined list of integrated application groups';
-    
+
                     iDiv = document.createElement('div');
                     iDiv.id = "placeholder-template";
                     iDiv.className = 'component-item';
-    
-                    let componentItemInnerHTML = '<div class="component-outer-div">' +
+
+                    componentItemInnerHTML = '<div class="component-outer-div">' +
                         '<div class="component-image-div">' +
                         '<img src="/userContent/icons/' + shortcutIconPlaceholder + '" width="60">' +
                         '</div>' +
@@ -137,13 +138,13 @@ try {
                         '<div>' +
                         '   <span class="component-description-span">' + descriptionPlaceholder + '</span>' +
                         '</div>';
-    
+
                     console.log(componentItemInnerHTML);
                     iDiv.innerHTML = componentItemInnerHTML;
                     document.getElementById('components-list').appendChild(iDiv);
-    
+
                 } else {
-    
+
                     templateComponentsArray = '${templateComponentsArray}'.replaceAll('[', '{').replaceAll(']', '}').replaceAll('{{', '[{').replaceAll('}}', '}]');
                     console.table(templateComponentsArray);
                     componentsArray = JSON.parse(templateComponentsArray);
@@ -158,20 +159,20 @@ try {
                             console.log("Found template components - description [" + i + "]: " + componentArray[i].description);
                             console.log("Found template components - shortcutIcon [" + i + "]: " + componentArray[i].shortcutIcon);
                             console.log("Found template components - component [" + i + "]: " + componentArray[i].component);
-    
+
                             iDiv = document.createElement('div');
                             iDiv.id = componentArray[i].component;
                             iDiv.className = 'component-item';
-    
+
                             if (componentArray[i].shortcutText !== "null" && componentArray[i].shortcutIcon !== "null") {
-    
+
                                 if (componentArray[i].shortcutIcon === "null") {
                                     shortcutIcon = 'application-cog-outline.svg';
                                 } else {
                                     shortcutIcon = componentArray[i].shortcutIcon;
                                 }
-    
-                                let componentItemInnerHTML = '<div class="component-outer-div">' +
+
+                                componentItemInnerHTML = '<div class="component-outer-div">' +
                                     '<div class="component-image-div">' +
                                     '<img src="/userContent/icons/' + shortcutIcon + '" width="60">' +
                                     '</div>' +
@@ -192,9 +193,9 @@ try {
                         console.log("Lookup failed" + e)
                     }
                 }
-    
+
             }
-    
+
             function populate_template_option_list() {
                 console.log("populate_template_option_list()");
                 let templates = getTemplates();
@@ -206,17 +207,17 @@ try {
                     document.getElementById("templates").options[i+1] = new Option(templateName, templateName);
                 }
             }
-    
+
             function hideDiv() {
                 document.getElementById("templates-div").style.display = "none";
             }
         </script>
         <style>
-    
+
             .capitalize {
                 text-transform: capitalize;
             }
-    
+
             .templates-select {
                 -moz-appearance: none;
                 -webkit-appearance: none;
@@ -236,7 +237,7 @@ try {
                 border: none;
                 box-shadow: none;
             }
-    
+
             select {
                 height: 20px;
                 -webkit-border-radius: 0;
@@ -244,19 +245,19 @@ try {
                 outline: 1px solid #ccc;
                 outline-offset: -1px;
             }
-    
+
             .templates-select select {
                 outline: none;
                 border: none;
                 box-shadow: none;
             }
-    
+
             .templates-select:focus {
                 outline: none;
                 border: none;
                 box-shadow: none;
             }
-    
+
             .component-container {
                 display: flex;
                 padding: 10px;
@@ -264,7 +265,7 @@ try {
                 justify-content : flex-start;
                 flex-wrap: wrap;
                 flex-direction: row;
-                max-width: 850px;
+                max-width: 870px;
                 gap: 10px 10px;
                 row-gap: 10px;
                 column-gap: 10px;
@@ -273,8 +274,28 @@ try {
                 display: -moz-box;
                 display: -ms-flexbox;
                 display: -webkit-flex;
+                max-height: 320px;
+                overflow-y: auto;
+                scrollbar-gutter: both-edges;
+                scrollbar-width: thin;
             }
-    
+
+            .component-container::-webkit-scrollbar {
+                width: 16px;
+            }
+             
+            .component-container::-webkit-scrollbar-track {
+                background-color: #efefef;
+                border-radius: 0px;
+            }
+             
+            .component-container::-webkit-scrollbar-thumb {
+                border: 5px solid transparent;
+                border-radius: 100px;
+                background-color: #e5c4ff;
+                background-clip: content-box;
+            }
+
             .component-item {
                 display: block;
                 padding: 20px;
@@ -283,18 +304,18 @@ try {
                 width: 200px;
                 height: 200px;
             }
-    
+
             .component-outer-div {
                 display:inline-block;
             }
-    
+
             .component-image-div {
                 padding: 5px;
                 padding-top: 10px;
                 width: 40%;
                 float: left;
             }
-    
+
             .component-outer-text-div {
                 padding: 5px;
                 text-transform: capitalize;
@@ -302,32 +323,34 @@ try {
                 height: 100px;
                 float: right;
             }
-    
+
             .component-category-div {
                 text-transform: capitalize;
                 padding-left: 15px;
                 padding-top: 10px;
                 color: #7500c0;
             }
-    
+
             .component-title-div {
                 padding-left: 15px;
             }
-    
+
             .component-description-span {
                 padding-left: 5px;
                 width:100%;
                 box-decoration-break: clone;
                 -webkit-box-decoration-break: clone;
             }
-    
+
         </style>
     </head>
     <body>
-    <div id="templates-div" style="display: inline-block;">
+    <div id="templates-div" style="display: none;">
+        <h2>Application Groups</h2>
+        <div><span class="description-paragraph-span"><p>${extendedDescription}</p></span></div>
         <label for="templates" class="input-box-label">Templates</label><select id="templates" class="templates-select capitalize" onchange="getTemplates();"></select></label>
         <style scoped="scoped" onload="populate_template_option_list(); getTemplateComponents(-1);">   </style>
-        <div class="component-container" id="components-list">
+        <div class="component-container" id="components-list"   >
         </div>
     </div>
     </body>

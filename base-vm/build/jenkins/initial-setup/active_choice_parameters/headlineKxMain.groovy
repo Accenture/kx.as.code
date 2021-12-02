@@ -9,8 +9,7 @@ try {
 try {
     // language=HTML
     def HTML = """
-    <div class="divider-parameter-span"></div>
-    <div id="headline-main-div" style="display: block;">
+    <div id="headline-main-div" style="display: none;">
     <h2>KX-Main Parameters</h2>
     <span class="description-paragraph-span"><p>${extendedDescription }</p></span>
     </div>
@@ -19,4 +18,3 @@ try {
 } catch (e) {
     println "Something went wrong in the HTML return block (headlineKxMain): ${e}"
 }
-

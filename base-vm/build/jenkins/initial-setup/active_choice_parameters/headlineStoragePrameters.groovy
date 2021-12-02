@@ -9,8 +9,7 @@ try {
 try {
     // language=HTML
     def HTML = """
-    <div class="divider-parameter-span"></div>
-    <div id="headline-storage-div" style="display: block;">
+    <div id="headline-storage-div" style="display: none;">
     <h2>Storage Parameters</h2>
     <span class="description-paragraph-span"><p>${extendedDescription}</p></span>
     </div>

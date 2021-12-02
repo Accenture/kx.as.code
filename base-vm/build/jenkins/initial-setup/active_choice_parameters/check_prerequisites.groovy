@@ -213,34 +213,37 @@ try {
 try {
     // language=HTML
     def HTML = """
-    <head>
       <script>
-    
+
           function getAvailableBoxes() {
+
               console.log("DEBUG: getAvailableBoxes()");
-              let selectedProfile = document.getElementById("profiles").value
+              let boxMainVersion;
+              let boxNodeVersion;
+              let selectedProfile = document.getElementById("profiles").value;
+              
               try {
                   console.log("Selected profile: " + selectedProfile);
-                  let boxMainVersion;
-                  let boxNodeVersion;
                   switch (selectedProfile) {
                       case "virtualbox":
-                          boxMainVersion="${virtualboxMainVersion}";
-                          boxNodeVersion="${virtualboxNodeVersion}";
+                          boxMainVersion = "${virtualboxMainVersion}";
+                          boxNodeVersion = "${virtualboxNodeVersion}";
                           break;
                       case "vmware-desktop":
-                          boxMainVersion="${vmwareMainVersion}";
-                          boxNodeVersion="${vmwareNodeVersion}";
-                          break;    
+                          boxMainVersion = "${vmwareMainVersion}";
+                          boxNodeVersion = "${vmwareNodeVersion}";
+                          break;
                       case "parallels":
-                          boxMainVersion="${parallelsMainVersion}";
-                          boxNodeVersion="${parallelsNodeVersion}";
+                          boxMainVersion = "${parallelsMainVersion}";
+                          boxNodeVersion = "${parallelsNodeVersion}";
                           break;
                       default:
                           console.log("Weird, box type not known. Normally the box type is either VirtualBox, VMWare or Parallels");
                   }
-                  console.log('boxMainVersion' + boxMainVersion);
+                  
+                  console.log('boxMainVersion: ' + boxMainVersion);
                   console.log('boxNodeVersion: ' + boxNodeVersion);
+                  
                   if ( boxMainVersion !== "null" ) {
                     document.getElementById("kx-main-version").innerHTML = "v" + boxMainVersion;
                     document.getElementById("main-version-status-svg").src = "/userContent/icons/checkbox-marked-circle-outline.svg";
@@ -250,8 +253,8 @@ try {
                     document.getElementById("main-version-status-svg").src = "/userContent/icons/alert-outline.svg";
                     document.getElementById("main-version-status-svg").className = "checklist-status-icon svg-orange-red";
                   }
-                  
-                  if ( boxMainVersion !== "null" ) {
+
+                  if ( boxNodeVersion !== "null" ) {
                       document.getElementById("kx-node-version").innerHTML = "v" + boxNodeVersion;
                       document.getElementById("node-version-status-svg").src = "/userContent/icons/checkbox-marked-circle-outline.svg";
                       document.getElementById("node-version-status-svg").className = "checklist-status-icon svg-bright-green";
@@ -259,19 +262,21 @@ try {
                       document.getElementById("kx-node-version").innerHTML = "<i>Not found</i>";
                       document.getElementById("node-version-status-svg").src = "/userContent/icons/alert-outline.svg";
                       document.getElementById("node-version-status-svg").className = "checklist-status-icon svg-orange-red";
+                      document.getElementById('standalone-mode-toggle').value = "true";
+                      document.getElementById('workloads_on_master_checkbox').value = "true";
                   }
-                  
-              } catch(e){
+
+              } catch(e) {
                     console.log("Error getting box versions: " + e);
               }
           }
-    
+
           function compareVersions() {
               let githubKxVersion = "${githubKxVersion}";
               let githubKubeVersion = "${githubKubeVersion}";
               let localKxVersion = "${localKxVersion}";
               let localKubeVersion = "${localKubeVersion}";
-    
+
               if (githubKxVersion !== localKxVersion) {
                   console.log("KX Version mismatch. Your code is out of date");
                   document.getElementById("version-check-message").innerHTML = "Your local checked out code (v" + localKxVersion + ") does not match the version on GitHub MAIN (v" + githubKxVersion + ")";
@@ -284,13 +289,13 @@ try {
                   document.getElementById("version-check-svg").className = "checklist-status-icon svg-bright-green";
               }
           }
-    
+
           function checkVagrantPreRequisites() {
               console.log("DEBUG: Inside checkVagrantPreRequisites");
               let selectedProfile = document.getElementById("profiles").value;
               let virtualizationExecutableExists = "";
               let vagrantPluginInstalled = "";
-    
+
               if ( selectedProfile === "virtualbox" ) {
                   virtualizationExecutableExists = "${vboxExecutableExists}";
                   vagrantPluginInstalled = "true";
@@ -301,7 +306,7 @@ try {
                   virtualizationExecutableExists = "${parallelsExecutableExists}";
                   vagrantPluginInstalled = "${vagrantParallelsPluginInstalled}";
               }
-    
+
               if ( virtualizationExecutableExists === "true" ) {
                   document.getElementById("virtualization-svg").className = "checklist-status-icon svg-bright-green";
                   document.getElementById("virtualization-svg").src = "/userContent/icons/checkbox-marked-circle-outline.svg";
@@ -311,7 +316,7 @@ try {
                   document.getElementById("virtualization-svg").src = "/userContent/icons/alert-outline.svg";
                   document.getElementById("virtualization-text").innerHTML = selectedProfile + " could not be found";
               }
-    
+
               if ( vagrantPluginInstalled  === "true" ) {
                   document.getElementById("vagrant-plugin-svg").className = "checklist-status-icon svg-bright-green";
                   document.getElementById("vagrant-plugin-svg").src = "/userContent/icons/checkbox-marked-circle-outline.svg";
@@ -322,10 +327,9 @@ try {
                   document.getElementById("vagrant-plugin-text").innerHTML = "The required Vagrant plugin could not be located";
               }
           }
-    
+
           function updateProfileSelection() {
               let selectedProfile = document.getElementById("profiles").value;
-              // Set profile selection automatically if any of them meet all the pre-requisites
               let parallelsExecutableExists = "${parallelsExecutableExists}";
               let vboxExecutableExists = "${vboxExecutableExists}";
               let vmwareExecutableExists = "${vmwareExecutableExists}";
@@ -338,15 +342,15 @@ try {
               let vmwareNodeExists = "${vmwareNodeExists}";
               let parallelsMainExists = "${parallelsMainExists}";
               let parallelsNodeExists = "${parallelsNodeExists}";
-    
+
               console.log("DEBUG: Selected profile: " + selectedProfile);
-    
+
               let defaultProfile = "";
               let prerequisitesCheckResult = "";
               let selectedProfileCheckResult = "";
-    
+
               if (sessionStorage.getItem('hasCodeRunBefore') === null) {
-                  if ( vboxExecutableExists === "true" && vboxVagrantPluginInstalled === "true" && virtualBoxMainExists === "true" && virtualBoxNodeExists === "true") {
+                  if ( vboxExecutableExists === "true" && vboxVagrantPluginInstalled === "true" && virtualboxMainExists === "true" && virtualboxNodeExists === "true") {
                       defaultProfile = "virtualbox";
                       if (selectedProfile === "virtualbox") { selectedProfileCheckResult = "full"; }
                       prerequisitesCheckResult = "full";
@@ -356,7 +360,7 @@ try {
                   } else if ( parallelsExecutableExists === "true" && parallelsPluginInstalled === "true" && parallelsMainExists === "true" && parallelsNodeExists === "true" ) {
                       defaultProfile = "parallels";
                       prerequisitesCheckResult = "full";
-                  } else if ( vboxExecutableExists === "true" && vboxVagrantPluginInstalled === "true" && virtualBoxMainExists === "true" ) {
+                  } else if ( vboxExecutableExists === "true" && vboxVagrantPluginInstalled === "true" && virtualboxMainExists === "true" ) {
                       defaultProfile = "virtualbox";
                       prerequisitesCheckResult = "standalone";
                   } else if ( vmwareExecutableExists === "true" && vmwareVagrantPluginInstalled === "true" && vmwareMainExists === "true" ) {
@@ -369,30 +373,23 @@ try {
                       console.log("DEBUG: Inside else DEFAULT block");
                       prerequisitesCheckResult = "failed";
                   }
-    
+
                   console.log("default profile will be set to " + defaultProfile);
                   document.getElementById("profiles").value = defaultProfile;
-    
+
                   // Pre-requisite value must be either "full", "standalone" or "failed"
                   document.getElementById("system-prerequisites-check").value = prerequisitesCheckResult;
                   sessionStorage.hasCodeRunBefore = true;
-    
-                  if ( prerequisitesCheckResult === "failed" ) {
-                      hideParameterDivs();
-                  } else {
-                      showParameterDivs();
-                  }
-    
               }
-    
+
               if (sessionStorage.getItem('hasCodeRunBefore') !== null) {
-                  if ( selectedProfile === "virtualbox" && vboxExecutableExists === "true" && vboxVagrantPluginInstalled === "true" && virtualBoxMainExists === "true" && virtualBoxNodeExists === "true") {
+                  if ( selectedProfile === "virtualbox" && vboxExecutableExists === "true" && vboxVagrantPluginInstalled === "true" && virtualboxMainExists === "true" && virtualboxNodeExists === "true") {
                       selectedProfileCheckResult = "full";
                   } else if ( selectedProfile === "vmware-desktop" && vmwareExecutableExists === "true" && vmwareVagrantPluginInstalled === "true" && vmwareMainExists === "true" && vmwareNodeExists === "true" ) {
                       selectedProfileCheckResult = "full";
                   } else if ( selectedProfile === "parallels" && parallelsExecutableExists === "true" && parallelsPluginInstalled === "true" && parallelsMainExists === "true" && parallelsNodeExists === "true" ) {
                       selectedProfileCheckResult = "full";
-                  } else if ( selectedProfile === "virtualbox" && vboxExecutableExists === "true" && vboxVagrantPluginInstalled === "true" && virtualBoxMainExists === "true" ) {
+                  } else if ( selectedProfile === "virtualbox" && vboxExecutableExists === "true" && vboxVagrantPluginInstalled === "true" && virtualboxMainExists === "true" ) {
                       selectedProfileCheckResult = "standalone"
                   } else if ( selectedProfile === "vmware-desktop" && vmwareExecutableExists === "true" && vmwareVagrantPluginInstalled === "true" && vmwareMainExists === "true" ) {
                       selectedProfileCheckResult = "standalone";
@@ -402,47 +399,37 @@ try {
                       console.log("DEBUG: Inside else SELECTED block");
                       selectedProfileCheckResult = "failed";
                   }
-    
+
                   // Pre-requisite value must be either "full", "standalone" or "failed"
                   document.getElementById("system-prerequisites-check").value = selectedProfileCheckResult;
                   console.log("selected profile prerequisite check result: " + selectedProfileCheckResult);
-    
-                  if ( selectedProfileCheckResult === "failed" ) {
-                      hideParameterDivs();
-                  } else {
-                      showParameterDivs();
-                  }
-    
+
               }
-    
+
           }
-    
+
       </script>
-    
+
       <style>
-    
+
           .checklist-status-icon {
               width: 25px;
               height: 25px;
           }
-    
+
       </style>
-    </head>
     <body>
-    <div id="prerequisites-div" style="display: block;">
-    TEST 1 2 3 4 5
-    <div class="divider-parameter-span"></div>
-    <h2>Pre-requisite Checks</h2>
-    <h4>Virtualization Pre-Requisites</h4>
-    <div><span class="checklist-span"><img src="" id="virtualization-svg" class="" alt="virtualization-svg" /></span><span id="virtualization-text" class="checklist-span" style="width: 300px;display:inline-block;"></span><span class="checklist-span"><img src="" id="main-version-status-svg" class="" alt="main-version-status-svg" /></span><span class="checklist-span">KX-Main Box Version: </span><span id="kx-main-version" class="checklist-span"></span></div>
-    <div><span class="checklist-span"><img src="" id="vagrant-plugin-svg" class="" alt="vagrant-plugin-svg" /></span><span id="vagrant-plugin-text" class="checklist-span" style="width: 300px;display:inline-block;"></span><span class="checklist-span"><img src="" id="node-version-status-svg" class="" alt="node-version-status-svg" /></span><span class="checklist-span">KX-Node Box Version: </span><span id="kx-node-version" class="checklist-span"></span></div>
-    <br>
-    <h4>KX.AS.CODE Source</h4>
-    <div><span class="checklist-span"><img src="" id="version-check-svg" class="" alt="version-check-svg" /></span><span class="checklist-span" id="version-check-message"></span></div>
-    <br>
-    <style scoped="scoped" onload="getAvailableBoxes(); compareVersions(); checkVagrantPreRequisites(); updateProfileSelection();">   </style>
-    <input type="hidden" id="system-prerequisites-check" name="value" value="">
-    </div>
+        <div id="prerequisites-div" style="display: none;">
+            <h2>Pre-requisite Checks</h2>
+            <h4>Virtualization Pre-Requisites</h4>
+            <div><span class="checklist-span"><img src="" id="virtualization-svg" class="" alt="virtualization-svg" /></span><span id="virtualization-text" class="checklist-span" style="width: 300px;display:inline-block;"></span><span class="checklist-span"><img src="" id="main-version-status-svg" class="" alt="main-version-status-svg" /></span><span class="checklist-span">KX-Main Box Version: </span><span id="kx-main-version" class="checklist-span"></span></div>
+            <div><span class="checklist-span"><img src="" id="vagrant-plugin-svg" class="" alt="vagrant-plugin-svg" /></span><span id="vagrant-plugin-text" class="checklist-span" style="width: 300px;display:inline-block;"></span><span class="checklist-span"><img src="" id="node-version-status-svg" class="" alt="node-version-status-svg" /></span><span class="checklist-span">KX-Node Box Version: </span><span id="kx-node-version" class="checklist-span"></span></div>
+            <br>
+            <h4>KX.AS.CODE Source</h4>
+            <div><span class="checklist-span"><img src="" id="version-check-svg" class="" alt="version-check-svg" /></span><span class="checklist-span" id="version-check-message"></span></div>
+            <br>
+            <style scoped="scoped" onload="getAvailableBoxes(); compareVersions(); checkVagrantPreRequisites(); updateProfileSelection(); change_panel_selection('config-panel-profile-selection');">   </style>
+        </div>
     </body>
     """
     return HTML

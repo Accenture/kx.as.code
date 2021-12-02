@@ -1,4 +1,5 @@
 import java.lang.management.*
+import groovy.json.JsonSlurper
 
 long freePhysicalMemorySize
 long totalPhysicalMemorySize
@@ -7,6 +8,14 @@ def currentSystemDisk
 long totalSystemDisk
 long freeSystemDisk
 long usableSystemDisk
+
+int networkStorageSize
+int kxMainMemory
+int kxMainNumber
+int kxMainCpuCores
+int kxWorkerMemory
+int kxWorkerNumber
+int kxWorkerCpuCores
 
 def normalPieColour = "#9f4dd3"
 def warningPieColour = "#FF6200"
@@ -26,7 +35,16 @@ int overallUsedMemoryPercentage
 int overallRemainingCpuCoresPercentage
 int overallRemainingMemoryPercentage
 
+def parsedJson
+def jsonFilePath = PROFILE
+def inputFile = new File(jsonFilePath)
+
+def ALLOW_WORKLOADS_ON_KUBERNETES_MASTER
+
 try {
+
+    parsedJson = new JsonSlurper().parse(inputFile)
+
     mb = 1024 * 1024;
     gb = mb * 1024;
 
@@ -42,14 +60,27 @@ try {
     freeSystemDisk = f.getFreeSpace() / gb;
     usableSystemDisk = f.getUsableSpace() / gb;
 
-    def localVolumeParameterElements = LOCAL_STORAGE_OPTIONS.split(';')
-    println("localVolumeParameterElements: ${localVolumeParameterElements}")
+    int number1GbVolumes
+    int number5GbVolumes
+    int number10GbVolumes
+    int number30GbVolumes
+    int number50GbVolumes
 
-    int number1GbVolumes = localVolumeParameterElements[0].toInteger()
-    int number5GbVolumes = localVolumeParameterElements[1].toInteger()
-    int number10GbVolumes = localVolumeParameterElements[2].toInteger()
-    int number30GbVolumes = localVolumeParameterElements[3].toInteger()
-    int number50GbVolumes = localVolumeParameterElements[4].toInteger()
+    if ( LOCAL_STORAGE_OPTIONS ) {
+        def localVolumeParameterElements = LOCAL_STORAGE_OPTIONS.split(';')
+        println("localVolumeParameterElements: ${localVolumeParameterElements}")
+        number1GbVolumes = localVolumeParameterElements[0].toInteger()
+        number5GbVolumes = localVolumeParameterElements[1].toInteger()
+        number10GbVolumes = localVolumeParameterElements[2].toInteger()
+        number30GbVolumes = localVolumeParameterElements[3].toInteger()
+        number50GbVolumes = localVolumeParameterElements[4].toInteger()
+    } else {
+        number1GbVolumes = parsedJson.config.local_volumes.one_gb
+        number5GbVolumes = parsedJson.config.local_volumes.five_gb
+        number10GbVolumes = parsedJson.config.local_volumes.ten_gb
+        number30GbVolumes = parsedJson.config.local_volumes.thirty_gb
+        number50GbVolumes = parsedJson.config.local_volumes.fifty_gb
+    }
 
     println("number1GbVolumes ${number1GbVolumes}")
     println("number5GbVolumes ${number5GbVolumes}")
@@ -57,31 +88,18 @@ try {
     println("number30GbVolumes ${number30GbVolumes}")
     println("number50GbVolumes ${number50GbVolumes}")
 
-    NUMBER_OF_KX_WORKER_NODES = NUMBER_OF_KX_WORKER_NODES ?: "0"
-    KX_WORKER_NODES_MEMORY = KX_WORKER_NODES_MEMORY ?: "0"
-    KX_WORKER_NODES_CPU_CORES = KX_WORKER_NODES_CPU_CORES ?: "0"
-
-    println("NUMBER_OF_KX_MAIN_NODES: ${NUMBER_OF_KX_MAIN_NODES}")
-    println("NUMBER_OF_KX_WORKER_NODES: ${NUMBER_OF_KX_WORKER_NODES}")
-    println("KX_WORKER_NODES_MEMORY: ${KX_WORKER_NODES_MEMORY}")
-    println("KX_WORKER_NODES_CPU_CORES: ${KX_WORKER_NODES_CPU_CORES}")
-
     int totalLocalDiskSpace = totalSystemDisk.toInteger()
     int remainingDiskSpace = freeSystemDisk.toInteger()
     int totalLocalStorageRequired
 
     println("DEBUG --> 1")
 
-    if (ALLOW_WORKLOADS_ON_KUBERNETES_MASTER == "true") {
-        println("DEBUG --> 1.4.1")
-        totalLocalStorageRequired = (number1GbVolumes + (number5GbVolumes * 5) + (number10GbVolumes * 10) + (number30GbVolumes * 30) + (number50GbVolumes * 50)) * (NUMBER_OF_KX_MAIN_NODES.toInteger() + NUMBER_OF_KX_WORKER_NODES.toInteger())
+    if ( NETWORK_STORAGE_OPTIONS ) {
+        networkStorageSize = NETWORK_STORAGE_OPTIONS.toInteger()
     } else {
-        println("DEBUG --> 1.4.2")
-        totalLocalStorageRequired = (number1GbVolumes + (number5GbVolumes * 5) + (number10GbVolumes * 10) + (number30GbVolumes * 30) + (number50GbVolumes * 50)) * NUMBER_OF_KX_WORKER_NODES.toInteger()
+        networkStorageSize = parsedJson.config.glusterFsDiskSize
     }
-    println("DEBUG --> 1.5")
-    overallStorageRequired = totalLocalStorageRequired + NETWORK_STORAGE_OPTIONS.toInteger()
-
+    overallStorageRequired = totalLocalStorageRequired + networkStorageSize
 
     overallStorageNeededPercentage = (overallStorageRequired / remainingDiskSpace) * 100
     overallRemainingPercentage = 100 - overallStorageNeededPercentage
@@ -93,11 +111,74 @@ try {
     int usedMemoryPercentage = (usedMemory / slaveTotalMemory) * 100
     int freeMemoryPercentage = (slaveFreeMemory / slaveTotalMemory) * 100
 
-    int totalNeededMainNodeMemory = (KX_MAIN_ADMIN_MEMORY.toInteger()) * NUMBER_OF_KX_MAIN_NODES.toInteger()
-    int totalNeededMainNodeCpuCores = KX_MAIN_ADMIN_CPU_CORES.toInteger() * NUMBER_OF_KX_MAIN_NODES.toInteger()
+    if ( KX_MAIN_ADMIN_MEMORY ) {
+        kxMainMemory = KX_MAIN_ADMIN_MEMORY.toInteger()
+    } else {
+        kxMainMemory = parsedJson.config.vm_properties.main_admin_node_memory
+    }
 
-    int totalNeededWorkerNodeMemory = (KX_WORKER_NODES_MEMORY.toInteger()) * NUMBER_OF_KX_WORKER_NODES.toInteger()
-    int totalNeededWorkerNodeCpuCores = KX_WORKER_NODES_CPU_CORES.toInteger() * NUMBER_OF_KX_WORKER_NODES.toInteger()
+    if ( NUMBER_OF_KX_MAIN_NODES ) {
+        kxMainNumber = NUMBER_OF_KX_MAIN_NODES.toInteger()
+    } else {
+        kxMainNumber = parsedJson.config.vm_properties.main_node_count
+    }
+
+    if ( KX_MAIN_ADMIN_CPU_CORES ) {
+        kxMainCpuCores = KX_MAIN_ADMIN_CPU_CORES.toInteger()
+    } else {
+        kxMainCpuCores = parsedJson.config.vm_properties.main_admin_node_cpu_cores
+    }
+
+    int totalNeededMainNodeMemory = kxMainMemory * kxMainNumber
+    int totalNeededMainNodeCpuCores = kxMainCpuCores * kxMainNumber
+
+    if ( KX_WORKER_NODES_MEMORY ) {
+        kxWorkerMemory = KX_MAIN_ADMIN_MEMORY.toInteger()
+    } else {
+        kxWorkerMemory = parsedJson.config.vm_properties.worker_node_memory
+    }
+
+    if ( NUMBER_OF_KX_WORKER_NODES ) {
+        kxWorkerNumber = NUMBER_OF_KX_MAIN_NODES.toInteger()
+    } else {
+        kxWorkerNumber = parsedJson.config.vm_properties.worker_node_count
+    }
+
+    if ( KX_WORKER_NODES_CPU_CORES ) {
+        kxWorkerCpuCores = KX_MAIN_ADMIN_CPU_CORES.toInteger()
+    } else {
+        kxWorkerCpuCores = parsedJson.config.vm_properties.worker_node_cpu_cores
+    }
+
+    if (STANDALONE_MODE) {
+        def triggers = STANDALONE_MODE.split(',')
+        STANDALONE_MODE = triggers[0]
+        ALLOW_WORKLOADS_ON_KUBERNETES_MASTER = triggers[1]
+    } else {
+        STANDALONE_MODE = parsedJson.config.standaloneMode
+        ALLOW_WORKLOADS_ON_KUBERNETES_MASTER = parsedJson.config.allowWorkloadsOnMaster
+    }
+
+    if (ALLOW_WORKLOADS_ON_KUBERNETES_MASTER == "true") {
+        println("DEBUG --> 1.4.1")
+        totalLocalStorageRequired = (number1GbVolumes + (number5GbVolumes * 5) + (number10GbVolumes * 10) + (number30GbVolumes * 30) + (number50GbVolumes * 50)) * (kxMainNumber + kxWorkerNumber)
+    } else {
+        println("DEBUG --> 1.4.2")
+        totalLocalStorageRequired = (number1GbVolumes + (number5GbVolumes * 5) + (number10GbVolumes * 10) + (number30GbVolumes * 30) + (number50GbVolumes * 50)) * kxWorkerNumber
+    }
+    println("DEBUG --> 1.5")
+
+    NUMBER_OF_KX_WORKER_NODES = NUMBER_OF_KX_WORKER_NODES ?: "0"
+    KX_WORKER_NODES_MEMORY = KX_WORKER_NODES_MEMORY ?: "0"
+    KX_WORKER_NODES_CPU_CORES = KX_WORKER_NODES_CPU_CORES ?: "0"
+
+    println("NUMBER_OF_KX_MAIN_NODES: ${NUMBER_OF_KX_MAIN_NODES}")
+    println("NUMBER_OF_KX_WORKER_NODES: ${NUMBER_OF_KX_WORKER_NODES}")
+    println("KX_WORKER_NODES_MEMORY: ${KX_WORKER_NODES_MEMORY}")
+    println("KX_WORKER_NODES_CPU_CORES: ${KX_WORKER_NODES_CPU_CORES}")
+
+    int totalNeededWorkerNodeMemory = kxWorkerMemory * kxWorkerNumber
+    int totalNeededWorkerNodeCpuCores = kxWorkerCpuCores * kxWorkerNumber
 
     println("DEBUG --> 3")
 
@@ -142,9 +223,7 @@ try {
     // language=HTML
     def HTML = """
     <body>
-    
-        <div id="system-check-div" style="display: flex;">
-            
+        <div id="system-check-div" style="display: none;">
             <div class="wrapper" style="width: 800px;">
                 <div class="svg-item">
                     <svg width="200px" height="200px" viewBox="0 0 40 40" class="donut">
@@ -153,7 +232,7 @@ try {
                         <circle class="donut-ring" cx="20" cy="20" r="15.91549430918954" fill="transparent" stroke-width="3.5"></circle>
                         <circle style="stroke: ${cpuPieColor};" class="donut-segment donut-segment-cpu" cx="20" cy="20" r="15.91549430918954" fill="transparent" stroke-width="3.5" stroke-dasharray="${overallUsedCpuCoresPercentage} ${overallRemainingCpuCoresPercentage}" stroke-dashoffset="25"></circle>
                         <g class="donut-text donut-text-cpu">
-    
+
                             <text y="50%" transform="translate(0, 2)">
                                 <tspan x="50%" text-anchor="middle" class="donut-percent" style="fill: ${cpuPieColor};">${overallUsedCpuCoresPercentage}%</tspan>
                             </text>
@@ -163,7 +242,7 @@ try {
                         </g>
                     </svg>
                 </div>
-    
+
                 <div class="svg-item">
                     <svg width="200px" height="200px" viewBox="0 0 40 40" class="donut">
                         Memory
@@ -171,7 +250,7 @@ try {
                         <circle class="donut-ring" cx="20" cy="20" r="15.91549430918954" fill="transparent" stroke-width="3.5"></circle>
                         <circle style="stroke: ${memoryPieColor};" class="donut-segment donut-segment-memory" cx="20" cy="20" r="15.91549430918954" fill="transparent" stroke-width="3.5" stroke-dasharray="${overallUsedMemoryPercentage} ${overallRemainingMemoryPercentage}" stroke-dashoffset="25"></circle>
                         <g class="donut-text donut-text-memory">
-    
+
                             <text y="50%" transform="translate(0, 2)">
                                 <tspan x="50%" text-anchor="middle" class="donut-percent" style="fill: ${memoryPieColor};">${overallUsedMemoryPercentage}%</tspan>
                             </text>
@@ -181,7 +260,7 @@ try {
                         </g>++
                     </svg>
                 </div>
-    
+
                 <div class="svg-item">
                     <svg width="200px" height="200px" viewBox="0 0 40 40" class="donut">
                         Disk Space
@@ -189,7 +268,7 @@ try {
                         <circle class="donut-ring" cx="20" cy="20" r="15.91549430918954" fill="transparent" stroke-width="3.5"></circle>
                         <circle style="stroke: ${diskPieColor};" class="donut-segment donut-segment-disk" cx="20" cy="20" r="15.91549430918954" fill="transparent" stroke-width="3.5" stroke-dasharray="${overallStorageNeededPercentage} ${overallRemainingPercentage}" stroke-dashoffset="25"></circle>
                         <g class="donut-text donut-text-disk">
-    
+
                             <text y="50%" transform="translate(0, 2)">
                                 <tspan x="50%" text-anchor="middle" class="donut-percent" style="fill: ${diskPieColor};">${overallStorageNeededPercentage}%</tspan>
                             </text>
@@ -202,16 +281,6 @@ try {
             </div>
         </div>
     </body>
-    
-    freePhysicalMemorySize: ${freePhysicalMemorySize}<br>
-    totalPhysicalMemorySize: ${totalPhysicalMemorySize}<br>
-    totalSystemCores: ${totalSystemCores}<br>
-    currentSystemDisk: ${currentSystemDisk}<br>
-    totalSystemDisk: ${totalSystemDisk}<br>
-    freeSystemDisk: ${freeSystemDisk}<br>
-    usableSystemDisk: ${usableSystemDisk}<br>
-    
-    </html>
     """
     return HTML
 } catch (e) {

@@ -100,14 +100,14 @@ try {
     // language=HTML
     def HTML = """
     <body>
-    <div id="local-storage-div" style="display: block;">
-    
+    <div id="local-storage-div" style="display: none;">
+
     <div class="wrapper"><span><img src="${paramIcon}" class="param-icon svg-purple" alt="#" /></span><h4>Local Storage Profile Parameters</h4></div>
     <p></p>
-    
+
     <!-- --->
     <div class="outerWrapper">
-        <div class="wrapper">
+        <div class="storage-wrapper">
             <span class="rounded-number-span">1 GB</span>
             <span class="indented-bullet-span"><img src="${bulletIcon}" class="param-icon svg-purple" alt="bullet" /></span>
             <span id="${counterElementValueIdOneGb}" class="counter-local-storage-value">${startValueOneGb} ${rangeUnit}</span>
@@ -135,11 +135,11 @@ try {
     <input type="hidden" id="${counterElementPreviousValueIdOneGb}" name="${counterElementPreviousValueIdOneGb}" value="">
     <style scoped="scoped" onload="show_value(&quot;${startValueOneGb}&quot;, &quot;${counterElementPreviousValueIdOneGb}&quot;, &quot;${counterHiddenValueIdOneGb}&quot;, &quot;${counterElementValueIdOneGb}&quot;, &quot;${warningIconElementIdOneGb}&quot;, &quot;${minWarningOneGb}&quot;, &quot;${valueDisplayConversion}&quot;, &quot;${rangeUnit}&quot;); updateConcatenatedLocalStorageReturnVariable();">   </style>
     <!-- --->
-    
-    
+
+
     <!-- --->
     <div class="outerWrapper">
-        <div class="wrapper">
+        <div class="storage-wrapper">
             <span class="rounded-number-span">5 GB</span>
             <span class="indented-bullet-span"><img src="${bulletIcon}" class="param-icon svg-purple" alt="bullet" /></span>
             <span id="${counterElementValueIdFiveGb}" class="counter-local-storage-value">${startValueFiveGb} ${rangeUnit}</span>
@@ -167,11 +167,11 @@ try {
     <input type="hidden" id="${counterElementPreviousValueIdFiveGb}" name="${counterElementPreviousValueIdFiveGb}" value="">
     <style scoped="scoped" onload="show_value(&quot;${startValueFiveGb}&quot;, &quot;${counterElementPreviousValueIdFiveGb}&quot;, &quot;${counterHiddenValueIdFiveGb}&quot;, &quot;${counterElementValueIdFiveGb}&quot;, &quot;${warningIconElementIdFiveGb}&quot;, &quot;${minWarningFiveGb}&quot;, &quot;${valueDisplayConversion}&quot;, &quot;${rangeUnit}&quot;); updateConcatenatedLocalStorageReturnVariable();">   </style>
     <!-- --->
-    
-    
+
+
     <!-- --->
     <div class="outerWrapper">
-        <div class="wrapper">
+        <div class="storage-wrapper">
             <span class="rounded-number-span">10 GB</span>
             <span class="indented-bullet-span"><img src="${bulletIcon}" class="param-icon svg-purple" alt="bullet" /></span>
             <span id="${counterElementValueIdTenGb}" class="counter-local-storage-value">${startValueTenGb} ${rangeUnit}</span>
@@ -198,13 +198,13 @@ try {
     <input type="hidden" id="${counterHiddenValueIdTenGb}" name="${counterHiddenValueIdTenGb}" value="${startValueTenGb}">
     <input type="hidden" id="${counterElementPreviousValueIdTenGb}" name="${counterElementPreviousValueIdTenGb}" value="">
     <style scoped="scoped" onload="show_value(&quot;${startValueTenGb}&quot;, &quot;${counterElementPreviousValueIdTenGb}&quot;, &quot;${counterHiddenValueIdTenGb}&quot;, &quot;${counterElementValueIdTenGb}&quot;, &quot;${warningIconElementIdTenGb}&quot;, &quot;${minWarningTenGb}&quot;, &quot;${valueDisplayConversion}&quot;, &quot;${rangeUnit}&quot;); updateConcatenatedLocalStorageReturnVariable();">   </style>
-    
+
     <!-- --->
-    
-    
+
+
     <!-- --->
     <div class="outerWrapper">
-        <div class="wrapper">
+        <div class="storage-wrapper">
             <span class="rounded-number-span">30 GB</span>
             <span class="indented-bullet-span"><img src="${bulletIcon}" class="param-icon svg-purple" alt="bullet" /></span>
             <span id="${counterElementValueIdThirtyGb}" class="counter-local-storage-value">${startValueThirtyGb} ${rangeUnit}</span>
@@ -232,11 +232,11 @@ try {
     <input type="hidden" id="${counterElementPreviousValueIdThirtyGb}" name="${counterElementPreviousValueIdThirtyGb}" value="">
     <style scoped="scoped" onload="show_value(&quot;${startValueThirtyGb}&quot;, &quot;${counterElementPreviousValueIdThirtyGb}&quot;, &quot;${counterHiddenValueIdThirtyGb}&quot;, &quot;${counterElementValueIdThirtyGb}&quot;, &quot;${warningIconElementIdThirtyGb}&quot;, &quot;${minWarningThirtyGb}&quot;, &quot;${valueDisplayConversion}&quot;, &quot;${rangeUnit}&quot;); updateConcatenatedLocalStorageReturnVariable();">   </style>
     <!-- --->
-    
-    
+
+
     <!-- --->
     <div class="outerWrapper">
-        <div class="wrapper">
+        <div class="storage-wrapper">
             <span class="rounded-number-span">50 GB</span>
             <span class="indented-bullet-span"><img src="${bulletIcon}" class="param-icon svg-purple" alt="bullet" /></span>
             <span id="${counterElementValueIdFiftyGb}" class="counter-local-storage-value">${startValueFiftyGb} ${rangeUnit}</span>
@@ -264,9 +264,9 @@ try {
     <input type="hidden" id="${counterElementPreviousValueIdFiftyGb}" name="${counterElementPreviousValueIdFiftyGb}" value="">
     <style scoped="scoped" onload="show_value(&quot;${startValueFiftyGb}&quot;, &quot;${counterElementPreviousValueIdFiftyGb}&quot;, &quot;${counterHiddenValueIdFiftyGb}&quot;, &quot;${counterElementValueIdFiftyGb}&quot;, &quot;${warningIconElementIdFiftyGb}&quot;, &quot;${minWarningFiftyGb}&quot;, &quot;${valueDisplayConversion}&quot;, &quot;${rangeUnit}&quot;); updateConcatenatedLocalStorageReturnVariable();">   </style>
     <!-- --->
-    
+
     <input type="hidden" id="concatenated-local-volume-params" name="value" value="" >
-    
+
     </div>
     </body>
     """

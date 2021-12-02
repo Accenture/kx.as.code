@@ -37,9 +37,9 @@ if ( STANDALONE_MODE != "true" ) {
         // language=HTML
         def HTML = """
         <body>
-        <div class="outerWrapper" id="worker-cpu-count-div" style="display: block;">
+        <div class="outerWrapper" id="worker-cpu-count-div" style="display: none;">
             <div class="wrapper"><span><img src="${paramIcon}" class="param-icon svg-purple" alt="cpu" /></span>
-        
+
                 <span id="${sliderElementValueId}" class="slider-element-value">${startValue} ${rangeUnit}</span>
                 <div id="container"><span class="button-range-span"><button type="button" class="button-left"
                                                                             onclick="subtract_one(&quot;${sliderElementPreviousValueId}&quot;, &quot;${sliderElementRangeId}&quot;, &quot;${sliderElementValueId}&quot;, &quot;${warningIconElementId}&quot;, &quot;${minWarning}&quot;, &quot;${valueDisplayConversion}&quot;, &quot;${rangeUnit}&quot;, &quot;${step}&quot;, &quot;${min}&quot;);"><img src="/userContent/icons/minus.svg" alt="minus" class="image-plus-minus svg-white"/></button></span> <span class="input-range-span">
@@ -55,7 +55,7 @@ if ( STANDALONE_MODE != "true" ) {
                     <span class="button-range-span"><button type="button" class="button-right"
                                                             onclick="add_one(&quot;${sliderElementPreviousValueId}&quot;, &quot;${sliderElementRangeId}&quot;, &quot;${sliderElementValueId}&quot;, &quot;${warningIconElementId}&quot;, &quot;${minWarning}&quot;, &quot;${valueDisplayConversion}&quot;, &quot;${rangeUnit}&quot;, &quot;${step}&quot;, &quot;${max}&quot;);"><img src="/userContent/icons/plus.svg" alt="plus" class="image-plus-minus svg-white"/></button></span>
                     <span class="info-span"><img src="/userContent/icons/information-variant.svg" class="info-icon" alt="${infoText}"></span><span id="${warningIconElementId}" data-text="${warningText}" class="warning-span tooltip"><img src="/userContent/icons/triangle-exclamation-solid.svg" class="warn-image svg-orange-red" alt="cpu" /></span>
-        
+
                 </div>
             </div>
         </div>

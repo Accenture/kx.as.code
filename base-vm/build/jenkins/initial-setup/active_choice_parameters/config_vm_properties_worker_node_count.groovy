@@ -36,7 +36,7 @@ if ( STANDALONE_MODE != "true" ) {
         // language=HTML
         def HTML = """
         <body>
-        <div class="outerWrapper" id="worker-node-count-div" style="display: block">
+        <div class="outerWrapper" id="worker-node-count-div" style="display: none">
             <div class="wrapper"><span><img src="${paramIcon}" class="param-icon svg-purple" alt="#" /></span>
                 <span id="${counterElementValueId}" class="counter-element-value">${startValue} ${rangeUnit}</span>
                 <span class="button-range-span"><button type="button" class="button-left"

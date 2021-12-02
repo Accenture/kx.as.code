@@ -9,12 +9,12 @@ try {
 try {
     // language=HTML
     def HTML = """
-    <div class="divider-parameter-span"></div>
-    <h2>System Check</h2>
-    <span class="description-paragraph-span"><p>${extendedDescription}</p></span>
+    <div id="header-system-check-div" style="display: none;">
+        <h2>System Check</h2>
+        <span class="description-paragraph-span"><p>${extendedDescription}</p></span>
+    </div>
     """
     return HTML
 } catch (e) {
     println "Something went wrong in the HTML return block (headlineSystemCheck): ${e}"
 }
-

@@ -1,5 +1,10 @@
+def extendedDescription
+def profile_paths = []
+
 try {
-    profile_paths = []
+
+    extendedDescription = "Welcome to KX.AS.CODE. In this panel you can select the profile. A check is made on the system to see if the necessary virtualization software and associated Vagrant plugins are installed, s well as availability of built Vagrant boxes. An attempt is made to automatically select the profile based on discovered pre-requisites."
+
     new File('jenkins_shared_workspace/kx.as.code/profiles/').eachDirMatch(~/.*vagrant.*/) { profile_paths << it.path }
 
     String underlyingOS
@@ -16,22 +21,25 @@ try {
     } else {
         underlyingOS = "other"
     }
+    println("After OS and before sort()")
 
     profile_paths.sort()
     profile_paths = profile_paths.join(",")
     profile_paths = profile_paths.replaceAll("\\\\", "/")
+    println(profile_paths)
+    println("End of get_profiles.groovy GROOVY code")
 } catch(e) {
-    println "Something went wrong in the GROOVY block (get_profiles): ${e}"
+    println("Something went wrong in the GROOVY block (get_profiles): ${e}")
 }
 
 try {
     // language=HTML
     def HTML = """
-    <head>
         <script>
-    
+
             function populate_profile_option_list() {
                 let profiles = "${profile_paths}".split(',');
+                console.log("js profiles array: " + profiles)
                 for ( let i = 0; i < profiles.length; i++ ) {
                     let profileName = profiles[i].split("/").pop();
                     profileName = profileName.replace("vagrant-", "");
@@ -40,7 +48,7 @@ try {
                     update_selected_value();
                 }
             }
-    
+
             function update_selected_value() {
                 let selectedOptionNumber = document.getElementById("profiles").selectedIndex;
                 let profilePaths = "${profile_paths}".split(',');
@@ -52,14 +60,14 @@ try {
                 console.log(parentId);
                 jQuery('#' + parentId).trigger('change');
             }
-    
+
         </script>
         <style>
-    
+
             .capitalize {
                 text-transform: capitalize;
             }
-    
+
             .profiles-select {
                 -moz-appearance: none;
                 -webkit-appearance: none;
@@ -79,7 +87,7 @@ try {
                 border: none;
                 box-shadow: none;
             }
-    
+
             select {
                 height: 20px;
                 -webkit-border-radius: 0;
@@ -87,30 +95,33 @@ try {
                 outline: 1px solid #ccc;
                 outline-offset: -1px;
             }
-    
+
             .profiles-select select {
-                         outline: none;
-                         border: none;
-                         box-shadow: none;
-                     }
-    
+                 outline: none;
+                 border: none;
+                 box-shadow: none;
+             }
+
             .profiles-select:focus {
                 outline: none;
                 border: none;
                 box-shadow: none;
             }
-    
+
         </style>
-    </head>
     <body>
-    <br>
-    <h2>Profiles</h2>
-    <label for="profiles" class="input-box-label">Profiles</label><select id="profiles" class="profiles-select capitalize" onchange="update_selected_value();"></select></label>
-    <input type="hidden" id="selected-profile-path" name="value" value="">
-    <style scoped="scoped" onload="populate_profile_option_list();">   </style>
+        <div id="select-profile-div" style="display: none;">
+            <h2>Profiles</h2>
+            <label for="profiles" class="input-box-label" style="margin: 0px;">Profiles</label>
+                <select id="profiles" class="profiles-select capitalize" style="margin: 0px;" value="Virtualbox" onchange="update_selected_value();">
+                </select>
+            </label>
+        </div>
+        <input type="hidden" id="selected-profile-path" name="value" value="">
+        <style scoped="scoped" onload="populate_profile_option_list();">   </style>
     </body>
     """
     return HTML
 } catch (e) {
-    println "Something went wrong in the HTML return block (get_profiles): ${e}"
+    println("Something went wrong in the HTML return block (get_profiles): ${e}")
 }
