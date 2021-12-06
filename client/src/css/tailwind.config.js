@@ -16,7 +16,9 @@ module.exports = {
         gray: colors.blueGray,
         'light-blue': colors.sky,
         red: colors.rose,
-        'primary': '#460073'
+        'primary': '#460073',
+        'secondary': '#7500c0',
+        'drei': "rgb(0, 0, 0, 0.2)"
       },
       outline: {
         blue: '2px solid rgba(0, 112, 244, 0.5)',
