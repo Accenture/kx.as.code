@@ -35,7 +35,14 @@ function Header({
 
           {/* Header: Right side */}
           <div className="flex items-center">
-            
+
+            <SearchModal />
+            <Notifications />
+            <Help />
+            {/*  Divider */}
+            <hr className="w-px h-6 bg-gray-200 mx-3" />
+            <UserMenu />
+
           </div>
 
         </div>
