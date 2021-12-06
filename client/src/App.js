@@ -1,20 +1,15 @@
 import React, { useEffect } from 'react';
+import Dashboard from './components/Dashboard';
 import {
   Switch,
   Route,
   useLocation
 } from 'react-router-dom';
-
-import './css/style.scss';
-
 import { focusHandling } from 'cruip-js-toolkit';
-import './charts/ChartjsConfig';
 
-// Import pages
-import Dashboard from './pages/Dashboard';
+import "./css/style.scss"
 
 function App() {
-
   const location = useLocation();
 
   useEffect(() => {
