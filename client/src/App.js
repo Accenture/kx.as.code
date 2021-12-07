@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Switch,
   Route,
@@ -12,8 +12,15 @@ import './charts/ChartjsConfig';
 
 // Import pages
 import Dashboard from './pages/Dashboard';
+import Applications from "./pages/Applications";
+
+import Sidebar from './partials/Sidebar';
+import Header from './partials/Header';
+import Settings from './pages/Settings';
+
 
 function App() {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const location = useLocation();
 
@@ -26,11 +33,41 @@ function App() {
 
   return (
     <>
-      <Switch>
-        <Route exact path="/">
-          <Dashboard />
-        </Route>
-      </Switch>
+      <div className="flex h-screen overflow-hidden">
+
+        {/* Sidebar */}
+        <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+
+        {/* Content area */}
+        <div className="relative flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
+
+          {/*  Site header */}
+          <Header sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+
+          <main>
+            
+              <Switch>
+                <Route exact path="/dashboard">
+                  <Dashboard />
+                </Route>
+                <Route exact path="/applications">
+                  <Applications />
+                </Route>
+                <Route exact path="/applications">
+                  <Settings />
+                </Route>
+              </Switch>
+
+          </main>
+
+        </div>
+      </div>
+
+
+
+
+
+
     </>
   );
 }

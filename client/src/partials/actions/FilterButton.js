@@ -59,37 +59,37 @@ function FilterButton() {
             <li className="py-1 px-3">
               <label className="flex items-center">
                 <input type="checkbox" className="form-checkbox" />
-                <span className="text-sm font-medium ml-2">Direct VS Indirect</span>
+                <span className="text-sm font-medium ml-2">Lorem</span>
               </label>
             </li>
             <li className="py-1 px-3">
               <label className="flex items-center">
                 <input type="checkbox" className="form-checkbox" />
-                <span className="text-sm font-medium ml-2">Real Time Value</span>
+                <span className="text-sm font-medium ml-2">Ipsum</span>
               </label>
             </li>
             <li className="py-1 px-3">
               <label className="flex items-center">
                 <input type="checkbox" className="form-checkbox" />
-                <span className="text-sm font-medium ml-2">Top Channels</span>
+                <span className="text-sm font-medium ml-2">Dolor</span>
               </label>
             </li>
             <li className="py-1 px-3">
               <label className="flex items-center">
                 <input type="checkbox" className="form-checkbox" />
-                <span className="text-sm font-medium ml-2">Sales VS Refunds</span>
+                <span className="text-sm font-medium ml-2">Sid</span>
               </label>
             </li>
             <li className="py-1 px-3">
               <label className="flex items-center">
                 <input type="checkbox" className="form-checkbox" />
-                <span className="text-sm font-medium ml-2">Last Order</span>
+                <span className="text-sm font-medium ml-2">Amet Lorem</span>
               </label>
             </li>
             <li className="py-1 px-3">
               <label className="flex items-center">
                 <input type="checkbox" className="form-checkbox" />
-                <span className="text-sm font-medium ml-2">Total Spent</span>
+                <span className="text-sm font-medium ml-2">Consetetur</span>
               </label>
             </li>
           </ul>
