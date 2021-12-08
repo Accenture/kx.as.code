@@ -65,17 +65,9 @@ function App() {
                   <Settings />
                 </Route>
               </Switch>
-
           </main>
-
         </div>
       </div>
-
-
-
-
-
-
     </>
   );
 }

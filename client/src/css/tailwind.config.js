@@ -30,7 +30,13 @@ module.exports = {
         "statusGray": "#96968c",
 
         //ACN Colors
-        "accentPurple5": "#e6dcff"
+        "corePurple3": "#460073",
+        "accentPurple1": "#b455aa",
+        "accentPurple1dark": "#8c3083",
+        "accentPurple3": "#be82ff",
+        "accentPurple4": "#dcafff",
+        "accentPurple5": "#e6dcff",
+        "blueGreen": "#05f0a5"
 
       },
       outline: {
