@@ -2,7 +2,7 @@ import { hot } from "react-hot-loader";
 import React, { Component } from "react";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { faChevronRight,faSpinner, faInfoCircle, faBars } from "@fortawesome/free-solid-svg-icons";
-import { Box } from "@material-ui/core";
+// import { Box } from "@material-ui/core";
 import intl from "react-intl-universal";
 import IntlPolyfill from "intl";
 import "./App.scss";
@@ -53,11 +53,10 @@ class App extends Component {
         </Box>
         {/* Main section - below top panel */}
         <Box id="main" flex="1">
-          <Box id="main-container">
+          <Box id="main-container" >
             {/* Left panel */}
-            <Box id="LeftPanel-wrapper">
               <LeftPanel />
-            </Box>
+       
             {/* Content */}
             <Box id="content" >
               <HashRouter>
