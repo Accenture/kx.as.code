@@ -81,7 +81,7 @@
     "@typescript-eslint/parser": "^4.0.1",
     "babel-loader": "^8.2.2",
     "css-loader": "^4.2.1",
-    "electron": "10.1.5",
+    "electron": "11.5.0",
     "eslint": "^7.6.0",
     "eslint-plugin-import": "^2.20.0",
     "eslint-plugin-react": "^7.21.5",
