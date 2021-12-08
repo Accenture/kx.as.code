@@ -2,7 +2,7 @@ import React from 'react';
 
 function WelcomeBanner() {
   return (
-    <div className="relative bg-gradient-to-r from-vier to-fuenf p-4 sm:p-6 rounded-lg overflow-hidden mb-8">
+    <div className="relative bg-gradient-to-r from-vier via-statusGreen to-fuenf p-4 sm:p-6 rounded-lg overflow-hidden mb-8">
 
       {/* Background illustration */}
       

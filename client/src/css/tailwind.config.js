@@ -20,7 +20,15 @@ module.exports = {
         'secondary': '#7500c0',
         'drei': "rgb(0, 0, 0, 0.2)",
         'vier': "#dcafff",
-        "fuenf": "#e6dcff"
+        "fuenf": "#e6dcff",
+
+        //Status Color
+        "statusGreen": "#05f0a5",
+        "statusOrange": "#ff7800",
+        "statusRed": "#ff3246",
+        "statusYellow": "#ffeb32",
+        "statusGray": "#96968c",
+
       },
       outline: {
         blue: '2px solid rgba(0, 112, 244, 0.5)',

@@ -17,6 +17,8 @@ import Applications from "./pages/Applications";
 import Sidebar from './partials/Sidebar';
 import Header from './partials/Header';
 import Settings from './pages/Settings';
+import BasicBreadcrumbs from './partials/BasicBreadcrumbs';
+import ExampleApp1 from './partials/ExampleApp1';
 
 
 function App() {
@@ -33,7 +35,7 @@ function App() {
 
   return (
     <>
-      <div className="flex h-screen overflow-hidden">
+      <div className="flex h-screen overflow-hidden bg-gray-800">
 
         {/* Sidebar */}
         <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
@@ -45,7 +47,7 @@ function App() {
           <Header sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
 
           <main>
-            
+              <BasicBreadcrumbs/>
               <Switch>
                 <Route exact path="/dashboard">
                   <Dashboard />
@@ -53,7 +55,13 @@ function App() {
                 <Route exact path="/applications">
                   <Applications />
                 </Route>
-                <Route exact path="/applications">
+                <Route exact path="/applications/example-app-1">
+                  <ExampleApp1 />
+                </Route>
+                <Route exact path="/applications/example-app-1">
+                  <ExampleApp1 />
+                </Route>
+                <Route exact path="/settings">
                   <Settings />
                 </Route>
               </Switch>
