@@ -29,10 +29,10 @@ export default function StatusTag(props) {
             return "Installed"
         }
         else if(installStatus == "pending_queue"){
-            return "Installing"
+            return "Install Pending"
         }
         else if(installStatus == "failed_queue"){
-            return "Installation Failed"
+            return "Failed"
         }
         else if(installStatus == "vip_queue"){
             return "VIP"

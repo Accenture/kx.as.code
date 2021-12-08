@@ -85,9 +85,8 @@ function DashboardCard05() {
   return (
     <div className="flex flex-col col-span-full sm:col-span-6 bg-white shadow-lg rounded-lg">
       <header className="px-5 py-4 border-b border-gray-100 flex items-center">
-        <h2 className="font-semibold text-gray-800">Real Time Value</h2>
-        <Info className="ml-2" containerClassName="min-w-44">
-          <div className="text-sm text-center">Built with <a className="underline" href="https://www.chartjs.org/" target="_blank" rel="noreferrer">Chart.js</a></div>
+        <h2 className="font-semibold text-gray-800">Lorem Ipsum</h2>
+        <Info className="ml-2" containerClassName="min-w-44">Lorem Ipsum
         </Info>
       </header>
       {/* Chart built with Chart.js 3 */}
