@@ -7,12 +7,12 @@ import StatusTag from '../StatusTag';
 function ApplicationCard(props) {
 
   return (
-    <div className="flex flex-col col-span-full sm:col-span-6 xl:col-span-4 bg-white shadow-lg rounded-xl border border-gray-200">
+    <div className="flex flex-col col-span-full sm:col-span-6 xl:col-span-4 bg-gradient-to-r from-gray-700  to-gray-600 rounded-lg cursor-pointer">
       <div className="p-6">
         <header className="flex justify-between items-start mb-2">
           {/* Icon */}
            <div className="flex content-start">
-           <div className="bg-gray-800 rounded-full h-8 w-8" alt="Icon 02"></div>
+           <div className="bg-gray-500 rounded-full h-12 w-12" alt="Icon 02"></div>
            <StatusTag installStatus={props.app.queueName}/>
             </div>
           {/* Menu button */}
@@ -33,7 +33,7 @@ function ApplicationCard(props) {
           </li>
         </EditMenu>
       </header>
-      <h2 className="text-lg font-semibold text-gray-800 mb-2">{props.app.appName} ({props.app.category}) </h2>
+      <h2 className="text-lg text-white mb-2">{props.app.appName} ({props.app.category}) </h2>
       <div className="text-xs font-semibold text-gray-400 uppercase mb-1">
 
       </div>

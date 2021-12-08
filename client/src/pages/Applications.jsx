@@ -79,10 +79,10 @@ export default class Applications extends Component {
     render() {
 
         return (
-            <div className="px-4 sm:px-6 lg:px-8 py-8 w-full max-w-9xl mx-auto">
+            <div className="px-4 sm:px-6 lg:px-24 py-8 w-full max-w-9xl mx-auto">
                 {/* Applications Header */}
                 <div className="text-white text-xl font-bold py-5 italic">MY APPLICATIONS</div>
-                <div className="grid grid-cols-12 gap-6" >
+                <div className="grid grid-cols-12 gap-8" >
                     {this.drawApplicationCards()}
                 </div>
             </div>

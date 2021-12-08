@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { Apps32, Dashboard32, Settings32 } from '@carbon/icons-react';
 
+import SidebarLinkGroup from './SidebarLinkGroup';
+
 function Sidebar({
   sidebarOpen,
   setSidebarOpen
@@ -94,7 +96,7 @@ function Sidebar({
               <li className={`hover:bg-drei px-6 py-2 last:mb-0 ${pathname.includes('/dashboard') ? 'pl-7 bg-gray-800 hover:bg-gray-800' : 'bg-transparent hover:bg-drei'}`}>
                 <NavLink exact to="/dashboard" className={`block text-gray-200 truncate transition duration-150`}>
                   <div className="flex items-center">
-                    <Dashboard32 className="p-1"/>
+                    <Dashboard32 className="p-1 flex-shrink-0"/>
                     <span className="text-sm font-medium ml-3 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">Dashboard</span>
                   </div>
                 </NavLink>
@@ -103,7 +105,7 @@ function Sidebar({
               <li className={`hover:bg-drei px-6 py-2 last:mb-0 ${pathname.includes('applications') ? 'pl-7 bg-gray-800 hover:bg-gray-800' : 'bg-transparent hover:bg-drei'}`}>
                 <NavLink exact to="/applications" className={`block text-gray-200 hover:text-white truncate transition duration-150 ${pathname === '/application' && 'hover:text-gray-200'}`}>
                   <div className="flex items-center">
-                    <Apps32 className="p-1"/>
+                    <Apps32 className="p-1 flex-shrink-0"/>
                     <span className="text-sm font-medium ml-3 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">Applications</span>
                   </div>
                 </NavLink>
@@ -112,7 +114,7 @@ function Sidebar({
               <li className={`hover:bg-drei px-6 py-2 last:mb-0 ${pathname.includes('/settings') ? 'pl-7 bg-gray-800 hover:bg-gray-800' : 'bg-transparent hover:bg-drei'}`}>
                 <NavLink exact to="/settings" className={`block text-gray-200 hover:text-white truncate transition duration-150 ${pathname === '/' && 'hover:text-gray-200'}`}>
                   <div className="flex items-center">
-                    <Settings32 className="p-1"/>
+                    <Settings32 className="p-1 flex-shrink-0"/>
                     <span className="text-sm font-medium ml-3 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">Settings</span>
                   </div>
                 </NavLink>
@@ -122,7 +124,7 @@ function Sidebar({
         </div>
 
         {/* Expand / collapse button */}
-        <div className="pt-3 hidden lg:inline-flex 2xl:hidden justify-end mt-auto">
+        <div className="py-8 hidden lg:inline-flex 2xl:hidden justify-center mt-auto">
           <div className="px-3 py-2">
             <button onClick={() => setSidebarExpanded(!sidebarExpanded)}>
               <span className="sr-only">Expand / collapse sidebar</span>
