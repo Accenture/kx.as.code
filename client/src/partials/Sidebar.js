@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { Apps32, Dashboard32, Settings32 } from '@carbon/icons-react';
 
-import SidebarLinkGroup from './SidebarLinkGroup';
+import kxIcon from "../media/svg/kx-icon-bw-3.svg"
 
 function Sidebar({
   sidebarOpen,
@@ -76,11 +76,12 @@ function Sidebar({
             </svg>
           </button>
           {/* Logo */}
-          <NavLink exact to="/" className="flex pl-4">
-            <svg width="32" height="32" viewBox="0 0 32 32">
+          <NavLink exact to="/" className="flex pl-3">
+            {/* <svg width="32" height="32" viewBox="0 0 32 32">
 
               <rect fill="white" width="32" height="32" rx="16" />
-            </svg>
+            </svg> */}
+            <img src={kxIcon} height="40px" width="40px"></img>
           </NavLink>
           <div className="pl-4 text-white flex my-auto lg:hidden lg:sidebar-expanded:block 2xl:block font-extrabold md:text-xl md:text-md">KX.AS CODE</div>
         </div>

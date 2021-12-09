@@ -10,7 +10,7 @@ function handleClick(event) {
 
 export default function BasicBreadcrumbs() {
   return (
-    <div className="p-4 bg-gray-800 text-white" role="presentation" onClick={handleClick}>
+    <div className="p-4 bg-gray-800 text-white border-b-2 border-gray-600" role="presentation" onClick={handleClick}>
       <Breadcrumbs color="inherit" aria-label="breadcrumb">
         <Link color="inherit" className="text-white" underline="hover" href="/">
           Home
