@@ -9,6 +9,7 @@
   },
   "license": "MIT",
   "dependencies": {
+    /*
     "@emotion/react": "^11.5.0",
     "@emotion/styled": "^11.3.0",
     "@material-ui/core": "^4.11.4",
@@ -30,6 +31,7 @@
     "react-scripts": "4.0.3",
     "tailwindcss": "^2.2.19",
     "web-vitals": "^1.1.2"
+    */
   },
   "scripts": {
     "start": "concurrently \"react-scripts start\" \"cd backend && nodemon proxy.js\"",
