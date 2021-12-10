@@ -5,9 +5,10 @@ import { TrashCan32 } from '@carbon/icons-react';
 import StatusTag from '../StatusTag';
 
 function ApplicationCard(props) {
+  const appId = props.app.appName.replaceAll(" ", "-").replace(/\b\w/g, l => l.toLowerCase());
 
   return (
-    <div className="flex flex-col col-span-full sm:col-span-6 xl:col-span-4 bg-gradient-to-r from-gray-700  to-gray-600 rounded-lg cursor-pointer">
+    <Link className="flex flex-col col-span-full sm:col-span-6 xl:col-span-4 bg-gradient-to-r from-gray-700  to-gray-600 rounded-lg">
       <div className="p-6">
         <header className="flex justify-between items-start mb-2">
           {/* Icon */}
@@ -33,7 +34,9 @@ function ApplicationCard(props) {
           </li>
         </EditMenu>
       </header>
-      <h2 className="text-lg text-white mb-2">{props.app.appName} ({props.app.category}) </h2>
+      <Link to={'/apps/' + appId}>
+      <h2 className="hover:underline hover:cursor-pointer text-lg text-white mb-2">{props.app.appName} ({props.app.category}) </h2>
+      </Link>
       <div className="text-xs font-semibold text-gray-400 uppercase mb-1">
 
       </div>
@@ -42,7 +45,7 @@ function ApplicationCard(props) {
   <div className="flex-grow">
 
   </div>
-    </div >
+    </Link>
   );
 }
 

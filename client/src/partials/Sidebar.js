@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { Apps32, Dashboard32, Settings32 } from '@carbon/icons-react';
 
-import kxIcon from "../media/svg/kx-icon-bw-3.svg"
+import kxIcon from "../media/svg/kx-icon-bw-7.svg"
 
 function Sidebar({
   sidebarOpen,
@@ -81,7 +81,7 @@ function Sidebar({
 
               <rect fill="white" width="32" height="32" rx="16" />
             </svg> */}
-            <img src={kxIcon} height="40px" width="40px"></img>
+            <img src={kxIcon} height="40px" width="40px" alt="KX AS Code Logo"></img>
           </NavLink>
           <div className="pl-4 text-white flex my-auto lg:hidden lg:sidebar-expanded:block 2xl:block font-extrabold md:text-xl md:text-md">KX.AS CODE</div>
         </div>
@@ -94,7 +94,7 @@ function Sidebar({
             </h3>
             <ul className="mt-3">
               {/* Dashboard */}
-              <li className={`hover:bg-drei px-6 py-2 last:mb-0 ${pathname.includes('/dashboard') ? 'pl-7 bg-gray-800 hover:bg-gray-800' : 'bg-transparent hover:bg-drei'}`}>
+              <li className={`hover:bg-darker px-6 py-2 last:mb-0 ${pathname.includes('/dashboard') ? 'pl-7 bg-ghBlack hover:bg-ghBlack' : 'bg-transparent hover:bg-darker'}`}>
                 <NavLink exact to="/dashboard" className={`block text-gray-200 truncate transition duration-150`}>
                   <div className="flex items-center">
                     <Dashboard32 className="p-1 flex-shrink-0"/>
@@ -103,8 +103,8 @@ function Sidebar({
                 </NavLink>
               </li>
               {/* Applications */}
-              <li className={`hover:bg-drei px-6 py-2 last:mb-0 ${pathname.includes('applications') ? 'pl-7 bg-gray-800 hover:bg-gray-800' : 'bg-transparent hover:bg-drei'}`}>
-                <NavLink exact to="/applications" className={`block text-gray-200 hover:text-white truncate transition duration-150 ${pathname === '/application' && 'hover:text-gray-200'}`}>
+              <li className={`hover:bg-darker px-6 py-2 last:mb-0 ${pathname.includes('apps') ? 'pl-7 bg-ghBlack hover:bg-ghBlack' : 'bg-transparent hover:bg-darker'}`}>
+                <NavLink exact to="/apps" className={`block text-gray-200 hover:text-white truncate transition duration-150 ${pathname === '/application' && 'hover:text-gray-200'}`}>
                   <div className="flex items-center">
                     <Apps32 className="p-1 flex-shrink-0"/>
                     <span className="text-sm font-medium ml-3 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">Applications</span>
@@ -112,7 +112,7 @@ function Sidebar({
                 </NavLink>
               </li>
               {/* Settings */}
-              <li className={`hover:bg-drei px-6 py-2 last:mb-0 ${pathname.includes('/settings') ? 'pl-7 bg-gray-800 hover:bg-gray-800' : 'bg-transparent hover:bg-drei'}`}>
+              <li className={`hover:bg-darker px-6 py-2 last:mb-0 ${pathname.includes('/settings') ? 'pl-7 bg-ghBlack hover:bg-ghBlack' : 'bg-transparent hover:bg-darker'}`}>
                 <NavLink exact to="/settings" className={`block text-gray-200 hover:text-white truncate transition duration-150 ${pathname === '/' && 'hover:text-gray-200'}`}>
                   <div className="flex items-center">
                     <Settings32 className="p-1 flex-shrink-0"/>

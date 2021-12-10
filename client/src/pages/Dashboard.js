@@ -18,9 +18,6 @@ function Dashboard() {
       {/* Applications Header */}
       <div className="text-white text-xl font-bold py-5 italic">MY DASHBOARD</div>
 
-      {/* Welcome banner */}
-      < WelcomeBanner />
-
       {/* Dashboard actions */}
       < div className="sm:flex sm:justify-end sm:items-center mb-8" >
 

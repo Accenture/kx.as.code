@@ -21,6 +21,9 @@ module.exports = {
         'drei': "rgb(0, 0, 0, 0.2)",
         'vier': "#dcafff",
         "fuenf": "#e6dcff",
+        "darker": "#2c3847",
+        "ghBlack": "#0d1117",
+        "ghBlack2": "#161b22",
 
         //Status Color
         "statusGreen": "#05f0a5",

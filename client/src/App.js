@@ -19,6 +19,8 @@ import Header from './partials/Header';
 import Settings from './pages/Settings';
 import BasicBreadcrumbs from './partials/BasicBreadcrumbs';
 import ExampleApp1 from './partials/ExampleApp1';
+import AppDetails from "./pages/AppDetails"
+import Home2 from './pages/Home';
 
 
 function App() {
@@ -35,7 +37,7 @@ function App() {
 
   return (
     <>
-      <div className="flex h-screen overflow-hidden bg-gray-800">
+      <div className="flex h-screen overflow-hidden bg-ghBlack">
 
         {/* Sidebar */}
         <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
@@ -49,21 +51,24 @@ function App() {
           <main>
               <BasicBreadcrumbs/>
               <Switch>
+                <Route exact path="/" component={Home2}/>
+
                 <Route exact path="/dashboard">
                   <Dashboard />
                 </Route>
-                <Route exact path="/applications">
+                <Route exact path="/apps">
                   <Applications />
                 </Route>
-                <Route exact path="/applications/example-app-1">
+                <Route exact path="/apps/example-app-1">
                   <ExampleApp1 />
                 </Route>
-                <Route exact path="/applications/example-app-1">
+                <Route exact path="/apps/example-app-1">
                   <ExampleApp1 />
                 </Route>
                 <Route exact path="/settings">
                   <Settings />
                 </Route>
+                <Route path="/apps/:appId" component={AppDetails} />
               </Switch>
           </main>
         </div>

@@ -3,26 +3,21 @@ import Typography from '@material-ui/core/Typography'
 import Breadcrumbs from "@material-ui/core/Breadcrumbs"
 import Link from "@material-ui/core/Link"
 
-function handleClick(event) {
-  event.preventDefault();
-  console.info('You clicked a breadcrumb.');
-}
-
 export default function BasicBreadcrumbs() {
   return (
-    <div className="p-4 bg-gray-800 text-white border-b-2 border-gray-600" role="presentation" onClick={handleClick}>
+    <div className="p-4 bg-ghBlack text-white border-b border-gray-700" role="presentation">
       <Breadcrumbs color="inherit" aria-label="breadcrumb">
         <Link color="inherit" className="text-white" underline="hover" href="/">
           Home
         </Link>
-        <Link
+        <Link 
+        color="inherit"
           underline="hover"
-          color="white"
-          href="/getting-started/installation/"
+          href="/apps"
         >
           Applications
         </Link>
-        <Typography color="inherit">App-1</Typography>
+        <Typography color="inherit">{window.location.pathname.split('/')}</Typography>
       </Breadcrumbs>
     </div>
   );

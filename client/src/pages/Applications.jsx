@@ -28,10 +28,8 @@ export default class Applications extends Component {
     }
 
     appList() {
-        if (this.state.isLoading == false) {
-            console.log("length-2:", this.state.queueData.length)
+        if (this.state.isLoading === false) {
             this.state.queueData.forEach(app => {
-                console.log("debug-3 QData: ", app.appName)
                 return <div>{app.appName}</div>
             });
         }
@@ -62,14 +60,12 @@ export default class Applications extends Component {
 
     fetchQueueDataAndExtractApplicationMetadata() {
         this.state.queueList.forEach(queue => this.fetchData(queue));
-        console.log("debug-qData: ", this.state.queueData)
         this.setState({
             isLoading: false
         })
     }
 
     fetchData(queue) {
-        console.log("debug-qList elem: ", queue)
         axios.get("http://localhost:5000/queues/" + queue).then(response => {
             response.data.forEach(message => {
                 this.s_function(message, queue)
