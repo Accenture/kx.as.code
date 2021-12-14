@@ -37,7 +37,7 @@ function App() {
 
   return (
     <>
-      <div className="flex h-screen overflow-hidden bg-ghBlack">
+      <div className="flex h-screen overflow-hidden bg-ghBlack2">
 
         {/* Sidebar */}
         <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
@@ -52,7 +52,6 @@ function App() {
               <BasicBreadcrumbs/>
               <Switch>
                 <Route exact path="/" component={Home2}/>
-
                 <Route exact path="/dashboard">
                   <Dashboard />
                 </Route>
@@ -65,10 +64,8 @@ function App() {
                 <Route exact path="/apps/example-app-1">
                   <ExampleApp1 />
                 </Route>
-                <Route exact path="/settings">
-                  <Settings />
-                </Route>
-                <Route path="/apps/:appId" component={AppDetails} />
+                <Route exact path="/settings" render={props => <Settings {...props}/>} />
+                <Route path="/apps/:app" render={props => <AppDetails {...props}/>} />
               </Switch>
           </main>
         </div>

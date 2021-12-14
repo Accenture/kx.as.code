@@ -29,12 +29,6 @@ export default class ApplicationView extends Component {
     clearInterval(this.state.intervallId);
   }
 
-  // static getDerivedStateFromProps(nextProps, prevState) {
-  //   return {
-  //     queueData: nextProps.queueData
-  //   };
-  // }
-
   drawApplicationCards() {
     return this.state.queueData.map(app => {
       return <ApplicationCard app={app} />
@@ -43,9 +37,7 @@ export default class ApplicationView extends Component {
 
   appList() {
     if (this.state.isLoading == false) {
-      console.log("length-2:", this.state.queueData.length)
       this.state.queueData.forEach(app => {
-        console.log("debug-3 QData: ", app.appName)
         return <div>{app.appName}</div>
       });
     }
@@ -75,14 +67,12 @@ export default class ApplicationView extends Component {
 
   fetchQueueDataAndExtractApplicationMetadata() {
     this.state.queueList.forEach(queue => this.fetchData(queue));
-    console.log("debug-qData: ", this.state.queueData)
     this.setState({
       isLoading: false
     })
   }
 
   fetchData(queue) {
-    console.log("debug-qList elem: ", queue)
     axios.get("http://localhost:5000/queues/" + queue).then(response => {
       response.data.forEach(message => {
         this.s_function(message, queue)
@@ -94,7 +84,6 @@ export default class ApplicationView extends Component {
 
     return (
       <div>
-        {/* <ApplicationTable/> */}
         <div className="">
           {this.drawApplicationCards()}
         </div>

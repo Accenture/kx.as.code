@@ -8,7 +8,7 @@ function ApplicationCard(props) {
   const appId = props.app.appName.replaceAll(" ", "-").replace(/\b\w/g, l => l.toLowerCase());
 
   return (
-    <Link className="flex flex-col col-span-full sm:col-span-6 xl:col-span-4 bg-gradient-to-r from-gray-700  to-gray-600 rounded-lg">
+    <div className="flex flex-col col-span-full sm:col-span-6 xl:col-span-4 bg-gradient-to-r from-gray-700  to-gray-600 rounded-lg">
       <div className="p-6">
         <header className="flex justify-between items-start mb-2">
           {/* Icon */}
@@ -45,7 +45,7 @@ function ApplicationCard(props) {
   <div className="flex-grow">
 
   </div>
-    </Link>
+    </div>
   );
 }
 

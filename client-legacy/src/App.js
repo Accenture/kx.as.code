@@ -8,7 +8,6 @@ import TopPanel from "./layout/components/TopPanel";
 import LeftPanel from "./layout/components/LeftPanel";
 import ApplicationView from './components/application/ApplicationView';
 import SettingsView from './components/settings/SettingsView';
-import axios from "axios";
 
 
 class App extends Component {

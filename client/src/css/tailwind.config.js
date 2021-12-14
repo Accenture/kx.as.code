@@ -40,7 +40,8 @@ module.exports = {
         "accentPurple4": "#dcafff",
         "accentPurple5": "#e6dcff",
         "blueGreen": "#05f0a5", 
-        "acnPink": "#ff50a0"
+        "acnPink": "#ff50a0",
+        "acnRed": "#ff3246"
 
       },
       outline: {
