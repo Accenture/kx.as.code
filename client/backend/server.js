@@ -3,7 +3,10 @@ const request = require('request');
 const app = express();
 const mongoose = require("mongoose")
 
-mongoose.connect("mongodb://localhost/subscribers", {useNewUrlParser: true })
+// mongoose.connect("mongodb://localhost/subscribers", {useNewUrlParser: true })
+// const db = mongoose.connection
+// db.on("error", (error) => console.error(error))
+// db.once("error", (error) => console.error(error))
 
 const PORT = process.env.PORT || 5000;
 
@@ -36,3 +39,4 @@ app.route('/api/queues/:queue_name').get((req, res) => {
 });
 
 app.listen(PORT, () => console.log(`listening on ${PORT}`));
+

@@ -19,6 +19,13 @@ export default class Applications extends Component {
         this.setState({
             isLoading: false
         });
+        const intervalId = setInterval(() => {
+            this.fetchQueueDataAndExtractApplicationMetadata();
+          }, 1000);
+    }
+
+    componentWillUnmount(){
+        clearInterval(intervalId)
     }
 
     drawApplicationCards() {
@@ -66,7 +73,7 @@ export default class Applications extends Component {
     }
 
     fetchData(queue) {
-        axios.get("http://localhost:5000/queues/" + queue).then(response => {
+        axios.get("http://localhost:5000/api/queues/" + queue).then(response => {
             response.data.forEach(message => {
                 this.s_function(message, queue)
             });

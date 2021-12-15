@@ -35,7 +35,7 @@
     "web-vitals": "^1.1.2"
   },
   "scripts": {
-    "start": "concurrently \"TAILWIND_MODE=watch craco start\" \"cd backend && nodemon app.js\"",
+    "start": "concurrently \"TAILWIND_MODE=watch craco start\" \"cd backend && nodemon server.js\"",
     "build": "craco build",
     "test": "craco test",
     "eject": "react-scripts eject"
