@@ -39,7 +39,7 @@ function UserMenu() {
         onClick={() => setDropdownOpen(!dropdownOpen)}
         aria-expanded={dropdownOpen}
       >
-        <div className="w-8 h-8 rounded-full bg-gray-300"></div>
+        <div className="w-8 h-8 rounded-full bg-gray-500"></div>
         <div className="flex items-center truncate">
           <span className="truncate ml-2 text-sm font-medium group-hover:text-gray-300 text-white">John</span>
         </div>

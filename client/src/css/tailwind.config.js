@@ -24,6 +24,7 @@ module.exports = {
         "darker": "#2c3847",
         "ghBlack": "#0d1117",
         "ghBlack2": "#161b22",
+        "ghBlack3": "#1e242c",
 
         //Status Color
         "statusGreen": "#05f0a5",

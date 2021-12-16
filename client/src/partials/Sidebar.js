@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
-import { Apps32, Dashboard32, Settings32, SettingsCheck32 } from '@carbon/icons-react';
+import { Apps32, Dashboard32, Settings32 } from '@carbon/icons-react';
 
 import kxIcon from "../media/svg/red-icon.svg"
 
@@ -111,7 +111,7 @@ function Sidebar({
               <li className={`px-3 py-1 last:mb-0`}>
                 <NavLink exact to="/settings" className={`p-1 rounded-md block text-white truncate ${pathname.includes("/settings") ? 'rounded-md bg-red-800' : "bg-ghBlack hover:bg-darker/50" }`}>
                   <div className="flex items-center">
-                    <SettingsCheck32 className="p-1 flex-shrink-0"/>
+                    <Settings32 className="p-1 flex-shrink-0"/>
                     <span className="text-sm font-medium ml-3 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">Settings</span>
                   </div>
                 </NavLink>
