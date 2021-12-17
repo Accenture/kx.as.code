@@ -1,9 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react';
 import Transition from '../../utils/Transition.js';
+import {Filter20} from "@carbon/icons-react"
 
-function FilterButton() {
+function FilterButton(props) {
 
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [activeOptionsCount, setActiveOptionsCount] = useState(3);
 
   const trigger = useRef(null);
   const dropdown = useRef(null);
@@ -32,20 +34,20 @@ function FilterButton() {
     <div className="relative inline-flex">
       <button
         ref={trigger}
-        className="btn bg-white border-gray-200 hover:border-gray-300 text-gray-500 hover:text-gray-600"
+        className="text-white bg-kxBlue hover:bg-kxBlue2 border-0 px-3 h-12 btn text-md rounded-md"
         aria-haspopup="true"
         onClick={() => setDropdownOpen(!dropdownOpen)}
         aria-expanded={dropdownOpen}
       >
-        <span className="sr-only">Filter</span><wbr />
-        <svg className="w-4 h-4 fill-current" viewBox="0 0 16 16">
-          <path d="M9 15H7a1 1 0 010-2h2a1 1 0 010 2zM11 11H5a1 1 0 010-2h6a1 1 0 010 2zM13 7H3a1 1 0 010-2h10a1 1 0 010 2zM15 3H1a1 1 0 010-2h14a1 1 0 010 2z" />
-        </svg>
+        <div id="optionCount" className='h-6 w-6 text-black bg-white rounded-md mr-2 leading-6 text-center'>
+         {activeOptionsCount}
+        </div>
+        <Filter20/>
       </button>
       <Transition
         show={dropdownOpen}
         tag="div"
-        className="origin-top-right z-10 absolute top-full left-0 right-auto md:left-auto md:right-0 min-w-56 bg-white border border-gray-200 pt-1.5 rounded shadow-lg overflow-hidden mt-1"
+        className="origin-top-right z-10 absolute top-full left-0 right-auto md:left-auto md:right-0 min-w-56 bg-ghBlack3 border-gray-200 pt-1.5 rounded shadow-lg overflow-hidden mt-1"
         enter="transition ease-out duration-200 transform"
         enterStart="opacity-0 -translate-y-2"
         enterEnd="opacity-100 translate-y-0"
@@ -54,55 +56,39 @@ function FilterButton() {
         leaveEnd="opacity-0"
       >
         <div ref={dropdown}>
-          <div className="text-xs font-semibold text-gray-400 uppercase pt-1.5 pb-2 px-4">Filters</div>
-          <ul className="mb-4">
+          <div className="p-3 pb-1 px-5 text-xs font-semibold text-gray-400 uppercase">Filter</div>
+          <ul className="mx-3 mb-4 text-white">
             <li className="py-1 px-3">
               <label className="flex items-center">
-                <input type="checkbox" className="form-checkbox" />
-                <span className="text-sm font-medium ml-2">Lorem</span>
+                <input id="checkCompleted" defaultChecked={true} 
+                onClick={ e => { props.filterHandler(e.target.id )}} 
+                type="checkbox" 
+                className="form-checkbox"
+                onChange={e => {e.target.checked ? setActiveOptionsCount(activeOptionsCount => activeOptionsCount + 1): setActiveOptionsCount(activeOptionsCount => activeOptionsCount - 1)}}/>
+                <span className="text-sm font-medium ml-2">Completed</span>
               </label>
             </li>
             <li className="py-1 px-3">
               <label className="flex items-center">
-                <input type="checkbox" className="form-checkbox" />
-                <span className="text-sm font-medium ml-2">Ipsum</span>
+              <input id="checkFailed" defaultChecked={true} 
+              onClick={ e => { props.filterHandler(e.target.id )}} 
+              type="checkbox" 
+              className="form-checkbox" 
+              onChange={e => {e.target.checked ? setActiveOptionsCount(activeOptionsCount => activeOptionsCount + 1): setActiveOptionsCount(activeOptionsCount => activeOptionsCount - 1)}} />
+                <span className="text-sm font-medium ml-2">Failed</span>
               </label>
             </li>
             <li className="py-1 px-3">
               <label className="flex items-center">
-                <input type="checkbox" className="form-checkbox" />
-                <span className="text-sm font-medium ml-2">Dolor</span>
-              </label>
-            </li>
-            <li className="py-1 px-3">
-              <label className="flex items-center">
-                <input type="checkbox" className="form-checkbox" />
-                <span className="text-sm font-medium ml-2">Sid</span>
-              </label>
-            </li>
-            <li className="py-1 px-3">
-              <label className="flex items-center">
-                <input type="checkbox" className="form-checkbox" />
-                <span className="text-sm font-medium ml-2">Amet Lorem</span>
-              </label>
-            </li>
-            <li className="py-1 px-3">
-              <label className="flex items-center">
-                <input type="checkbox" className="form-checkbox" />
-                <span className="text-sm font-medium ml-2">Consetetur</span>
+              <input id="checkPending" defaultChecked={true} 
+              onClick={ e => { props.filterHandler(e.target.id )}} 
+              type="checkbox" 
+              className="form-checkbox" 
+              onChange={e => {e.target.checked ? setActiveOptionsCount(activeOptionsCount => activeOptionsCount + 1): setActiveOptionsCount(activeOptionsCount => activeOptionsCount - 1)}} />
+                <span className="text-sm font-medium ml-2">Pending</span>
               </label>
             </li>
           </ul>
-          <div className="py-2 px-3 border-t border-gray-200 bg-gray-50">
-            <ul className="flex items-center justify-between">
-              <li>
-                <button className="btn-xs bg-white border-gray-200 hover:border-gray-300 text-gray-500 hover:text-gray-600">Clear</button>
-              </li>
-              <li>
-                <button className="btn-xs bg-indigo-500 hover:bg-indigo-600 text-white" onClick={() => setDropdownOpen(false)} onBlur={() => setDropdownOpen(false)}>Apply</button>
-              </li>
-            </ul>
-          </div>
         </div>
       </Transition>
     </div>

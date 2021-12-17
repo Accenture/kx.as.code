@@ -1,6 +1,8 @@
 import { React, Component } from "react";
 import ApplicationCard from "../partials/applications/ApplicationCard.jsx";
 import axios from "axios";
+import FilterButton from "../partials/actions/FilterButton"
+import { Search24 } from "@carbon/icons-react";
 
 const queueList = ['pending_queue', 'failed_queue', 'completed_queue', 'retry_queue', 'wip_queue'];
 
@@ -12,10 +14,14 @@ export default class Applications extends Component {
         this.state = {
             queueData: [],
             queueList: queueList,
-            intervalId: null, 
-            searchTerm: "", 
-            searchResultsCount: 0
+            intervalId: null,
+            searchTerm: "",
+            searchResultsCount: 0,
+            isCompleted: true,
+            isFailed: true,
+            isPending: true
         };
+        this.filterHandler = this.filterHandler.bind(this)
     }
 
     componentDidMount() {
@@ -25,25 +31,47 @@ export default class Applications extends Component {
         });
     }
 
-    componentWillUnmount(){
+    componentWillUnmount() {
         // clearInterval(this.state.intervalId)
+    }
+
+    filterHandler(filterId) {
+        if (filterId == "checkCompleted") {
+            this.setState({ isCompleted: !this.state.isCompleted })
+        }
+        else if (filterId == "checkFailed") {
+            this.setState({ isFailed: !this.state.isFailed })
+        }
+        else if (filterId == "checkPending") {
+            this.setState({ isPending: !this.state.isPending })
+        }
     }
 
     drawApplicationCards() {
         let countFiltered = this.state.queueData.filter((val) => {
-            if(this.state.searchTerm == ""){
+            if (this.state.searchTerm == "") {
                 return val
             }
-            else if(val.appName.toLowerCase().includes(this.state.searchTerm.toLowerCase())){
+            else if (val.appName.toLowerCase().includes(this.state.searchTerm.toLowerCase())) {
                 return val
             }
         }).length
-        
+
         return this.state.queueData.filter((val) => {
-            if(this.state.searchTerm == ""){
+            if (this.state.searchTerm == "") {
                 return val
             }
-            else if(val.appName.toLowerCase().includes(this.state.searchTerm.toLowerCase())){
+            else if (val.appName.toLowerCase().includes(this.state.searchTerm.toLowerCase())) {
+                return val
+            }
+        }).filter((val) => {
+            if (this.state.isCompleted && val.queueName == "completed_queue") {
+                return val
+            }
+            else if (this.state.isFailed && val.queueName == "failed_queue") {
+                return val
+            }
+            else if (this.state.isPending && val.queueName == "pending_queue") {
                 return val
             }
         }).map((app, i) => {
@@ -109,7 +137,7 @@ export default class Applications extends Component {
 
                     {/* Right: Actions */}
                     < div className="grid grid-flow-col sm:auto-cols-max justify-start sm:justify-start gap-2" >
-                       
+
                         {/* Add view button */}
                         {/* < button className="btn px-4 bg-gray-500 hover:bg-gray-600 text-white" >
                             <svg className="w-4 h-4 fill-current opacity-50 flex-shrink-0" viewBox="0 0 16 16">
@@ -117,7 +145,16 @@ export default class Applications extends Component {
                             </svg>
                             <span className="hidden xs:block ml-2">Add Application</span>
                         </ button> */}
-                        <input onChange={e => {this.setState({ searchTerm: e.target.value}); console.log(this.state.searchTerm)}} type="text" className="text-white bg-ghBlack3 text-md border-2 border-ghBlack3 h-12 w-80 p-4 px-3 rounded-md focus:border-2 focus:border-acnRed" placeholder="Search Applications..."/>
+                        <div className="relative flex w-full flex-wrap items-stretch mb-3">
+                            <span className="z-10 h-full leading-snug font-normal absolute text-center text-blueGray-300 absolute bg-transparent rounded text-base items-center justify-center w-8 pl-3 py-3">
+                                <Search24 />
+                            </span>
+                            <input onChange={e => { this.setState({ searchTerm: e.target.value }); console.log(this.state.searchTerm) }} type="text" placeholder="Search Applications..." className="px-3 py-3 placeholder-blueGray-300 text-blueGray-600 relative bg-white bg-white rounded-md text-md border-0 shadow outline-none focus:outline-none focus:ring w-full pl-10" />
+                        </div>
+                        <FilterButton filterHandler={this.filterHandler}
+                            isCompleted={this.state.isCompleted}
+                            isFailed={this.state.isFailed}
+                            isPending={this.state.isPending} />
                     </div >
 
                 </div >

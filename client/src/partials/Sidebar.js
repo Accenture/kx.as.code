@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { Apps32, Dashboard32, Settings32 } from '@carbon/icons-react';
 
-import kxIcon from "../media/svg/red-icon.svg"
+import kxIcon from "../media/svg/icon-blau.svg"
 
 function Sidebar({
   sidebarOpen,
@@ -77,7 +77,7 @@ function Sidebar({
           </button>
           {/* Logo */}
           <NavLink exact to="/" className="flex pl-3">
-            <img src={kxIcon} height="40px" width="40px" alt="KX AS Code Logo"></img>
+            <img src={kxIcon} height="50px" width="50px" alt="KX AS Code Logo"></img>
           </NavLink>
           <div className="pl-4 text-white flex my-auto lg:hidden lg:sidebar-expanded:block 2xl:block font-extrabold md:text-xl md:text-md">KX.AS CODE</div>
         </div>
@@ -91,7 +91,7 @@ function Sidebar({
             <ul className="mt-3">
               {/* Dashboard */}
               <li className={`px-3 py-1 last:mb-0`}>
-                <NavLink exact to="/dashboard" className={`p-1 rounded-md block text-white truncate ${pathname.includes("/dashboard") ? 'rounded-md bg-red-800' : "bg-ghBlack hover:bg-darker/50" }`}>
+                <NavLink exact to="/dashboard" className={`p-1 rounded-md block text-white truncate ${pathname.includes("/dashboard") ? 'rounded-md bg-kxBlue' : "bg-ghBlack hover:bg-darker/50" }`}>
                   <div className="flex items-center">
                     <Dashboard32 className="p-1 flex-shrink-0"/>
                     <span className="text-sm font-medium ml-3 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">Dashboard</span>
@@ -100,7 +100,7 @@ function Sidebar({
               </li>
               {/* Applications */}
               <li className={`px-3 py-1 last:mb-0`}>
-                <NavLink exact to="/apps" className={`p-1 rounded-md block text-white truncate ${pathname.includes("/apps") ? 'rounded-md bg-red-800' : "bg-ghBlack hover:bg-darker/50" }`}>
+                <NavLink exact to="/apps" className={`p-1 rounded-md block text-white truncate ${pathname.includes("/apps") ? 'rounded-md bg-kxBlue' : "bg-ghBlack hover:bg-darker/50" }`}>
                   <div className="flex items-center">
                     <Apps32 className="p-1 flex-shrink-0"/>
                     <span className="text-sm font-medium ml-3 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">Applications</span>
@@ -109,7 +109,7 @@ function Sidebar({
               </li>
               {/* Settings */}
               <li className={`px-3 py-1 last:mb-0`}>
-                <NavLink exact to="/settings" className={`p-1 rounded-md block text-white truncate ${pathname.includes("/settings") ? 'rounded-md bg-red-800' : "bg-ghBlack hover:bg-darker/50" }`}>
+                <NavLink exact to="/settings" className={`p-1 rounded-md block text-white truncate ${pathname.includes("/settings") ? 'rounded-md bg-kxBlue' : "bg-ghBlack hover:bg-darker/50" }`}>
                   <div className="flex items-center">
                     <Settings32 className="p-1 flex-shrink-0"/>
                     <span className="text-sm font-medium ml-3 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">Settings</span>

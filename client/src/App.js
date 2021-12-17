@@ -48,7 +48,7 @@ function App() {
           {/*  Site header */}
           <Header sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
 
-          <main>
+          <main className='pb-20'>
               <BasicBreadcrumbs/>
               <Switch>
                 <Route exact path="/" component={Home2}/>

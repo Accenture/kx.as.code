@@ -24,7 +24,11 @@ module.exports = {
         "darker": "#2c3847",
         "ghBlack": "#0d1117",
         "ghBlack2": "#161b22",
-        "ghBlack3": "#1e242c",
+        "ghBlack3": "#1f262e",
+        "ghBlack4": "#2f3640",
+        "kxBlue": "#5a86ff",
+        "kxBlue2": "#3253ad",
+        
 
         //Status Color
         "statusGreen": "#05f0a5",
@@ -42,11 +46,12 @@ module.exports = {
         "accentPurple5": "#e6dcff",
         "blueGreen": "#05f0a5", 
         "acnPink": "#ff50a0",
-        "acnRed": "#ff3246"
+        "acnRed": "#ff3246",
+        "acnRed2": "#cc2131"
 
       },
       outline: {
-        blue: '2px solid rgba(0, 112, 244, 0.5)',
+        blue: 'rgb(90, 134, 255)',
       },
       fontFamily: {
         inter: ['Inter', 'sans-serif'],
