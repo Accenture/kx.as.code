@@ -922,7 +922,9 @@ try {
                         "headline-storage-div",
                         "templates-div",
                         "header-system-check-div",
-                        "system-check-div"
+                        "system-check-div",
+                        "review-and-launch-div"
+                        
                     ];
                     console.log(configDivs);
                     configDivs.forEach(function(item) {
@@ -1020,7 +1022,7 @@ try {
                                 updateNavigationFooter("config-panel-template-selection", "config-panel-kx-summary-start");
                                 break;
                             case "config-panel-kx-summary-start":
-                                moveDivToConfigPanel("kx-summary-start");
+                                moveDivToConfigPanel("review-and-launch-div");
                                 updateNavigationFooter("config-panel-system-check", "");
                                 break;
                         }
@@ -1072,7 +1074,7 @@ try {
                     console.log("(6) Div " + configDiv + " is present " + divConfigNumber + " times");
                     
                     let displayType;
-                    if ( configDiv === "system-check-div" ) {
+                    if ( configDiv === "system-check-div" || configDiv === "review-and-launch-div" ) {
                         displayType = "flex";
                     } else {
                         displayType = "block";

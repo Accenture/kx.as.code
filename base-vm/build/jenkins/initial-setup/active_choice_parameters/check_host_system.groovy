@@ -1,6 +1,14 @@
 import java.lang.management.*
 import groovy.json.JsonSlurper
 
+def extendedDescription
+
+try {
+    extendedDescription = "The charts below show how the selections you made above fit in line with the resources available on your system. If any of the charts are red, you should look to make corrections above. For the storage parameters, this is not critical, as the volumes are thinly provisioned anyway, so an overallocation is not a problem, as long as you don't intend to use the full space."
+} catch(e) {
+    println "Something went wrong in the GROOVY block (headlineSystemCheck): ${e}"
+}
+
 long freePhysicalMemorySize
 long totalPhysicalMemorySize
 int totalSystemCores
@@ -40,6 +48,10 @@ def jsonFilePath = PROFILE
 def inputFile = new File(jsonFilePath)
 
 def ALLOW_WORKLOADS_ON_KUBERNETES_MASTER
+
+def STORAGE_PARAMETERS_ARRAY = STORAGE_PARAMETERS.split(',')
+def LOCAL_STORAGE_OPTIONS = STORAGE_PARAMETERS_ARRAY[0]
+def NETWORK_STORAGE_OPTIONS = STORAGE_PARAMETERS_ARRAY[1]
 
 try {
 
@@ -223,7 +235,13 @@ try {
     // language=HTML
     def HTML = """
     <body>
-        <div id="system-check-div" style="display: none;">
+     
+        <div id="header-system-check-div" style="display: none;">
+            <h2>System Check</h2>
+            <span class="description-paragraph-span"><p>${extendedDescription}</p></span>
+        </div>
+
+        <div id="system-check-div" style="width: 800px; display: none;">        
             <div class="wrapper" style="width: 800px;">
                 <div class="svg-item">
                     <svg width="200px" height="200px" viewBox="0 0 40 40" class="donut">
