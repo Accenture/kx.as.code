@@ -2,10 +2,10 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import EditMenu from '../EditMenu';
 import { TrashCan32, Restart32 } from '@carbon/icons-react';
-import StatusTag from '../StatusTag';
 
-function ApplicationCard(props) {
-  const appId = props.app.appName.replaceAll(" ", "-").replace(/\b\w/g, l => l.toLowerCase());
+
+function TemplateCard(props) {
+  const appId = ("Lorem Ipsum").replaceAll(" ", "-").replace(/\b\w/g, l => l.toLowerCase());
 
   return (
     <div className="flex flex-col col-span-full sm:col-span-6 xl:col-span-4 bg-ghBlack3 shadow-lg rounded-lg">
@@ -14,7 +14,7 @@ function ApplicationCard(props) {
           {/* Icon */}
           <div className="flex content-start">
             <div className="bg-ghBlack rounded-full h-12 w-12" alt="Icon 02"></div>
-            <StatusTag installStatus={props.app.queueName} />
+
           </div>
           {/* Menu button */}
           <EditMenu className="relative inline-flex">
@@ -45,10 +45,16 @@ function ApplicationCard(props) {
           </EditMenu>
         </header>
         <Link to={'/apps/' + appId}>
-          <h2 className="hover:underline hover:cursor-pointer text-lg text-white mb-2">{props.app.appName} ({props.app.category}) </h2>
+          <h2 className="hover:underline hover:cursor-pointer text-lg text-white mb-2">Lorem Ipsum</h2>
         </Link>
         <div className="text-xs font-semibold text-gray-400 uppercase mb-1">
-
+            <h2 className="hover:underline hover:cursor-pointer text-lg text-white mb-2">Lorem Ipsum</h2>
+        </div>
+        <div className="text-xs font-semibold text-gray-400 uppercase mb-1">
+            <h2 className="hover:underline hover:cursor-pointer text-lg text-white mb-2">Lorem Ipsum</h2>
+        </div>
+        <div className="text-xs font-semibold text-gray-400 uppercase mb-1">
+            <h2 className="hover:underline hover:cursor-pointer text-lg text-white mb-2">Lorem Ipsum</h2>
         </div>
       </div>
 
@@ -59,4 +65,4 @@ function ApplicationCard(props) {
   );
 }
 
-export default ApplicationCard;
+export default TemplateCard;

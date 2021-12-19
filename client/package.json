@@ -19,7 +19,6 @@
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
     "material-ui-breadcrumbs": "^0.1.6",
-    "mongoose": "^6.1.2",
     "nodemon": "^2.0.13",
     "postcss": "^8.3.11",
     "react": "^17.0.2",
@@ -35,7 +34,7 @@
     "web-vitals": "^1.1.2"
   },
   "scripts": {
-    "start": "concurrently \"TAILWIND_MODE=watch craco start\" \"cd backend && nodemon server.js\"",
+    "start": "concurrently \"cd scripts && ./dataRefreshAppsAndTemplates.sh\" \"TAILWIND_MODE=watch craco start\" \"cd backend && nodemon server.js\"",
     "build": "craco build",
     "test": "craco test",
     "eject": "react-scripts eject"

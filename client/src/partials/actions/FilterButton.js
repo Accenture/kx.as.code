@@ -47,7 +47,7 @@ function FilterButton(props) {
       <Transition
         show={dropdownOpen}
         tag="div"
-        className="origin-top-right z-10 absolute top-full left-0 right-auto md:left-auto md:right-0 min-w-56 bg-ghBlack3 border-gray-200 pt-1.5 rounded shadow-lg overflow-hidden mt-1"
+        className="origin-top-right z-10 absolute top-full left-0 right-auto md:left-auto md:left-0 min-w-56 bg-kxBlue2 pt-1.5 rounded-md shadow-lg overflow-hidden mt-0"
         enter="transition ease-out duration-200 transform"
         enterStart="opacity-0 -translate-y-2"
         enterEnd="opacity-100 translate-y-0"
@@ -56,14 +56,14 @@ function FilterButton(props) {
         leaveEnd="opacity-0"
       >
         <div ref={dropdown}>
-          <div className="p-3 pb-1 px-5 text-xs font-semibold text-gray-400 uppercase">Filter</div>
+          <div className="p-3 pb-1 px-5 text-xs font-semibold text-gray-300 uppercase">Filter</div>
           <ul className="mx-3 mb-4 text-white">
             <li className="py-1 px-3">
               <label className="flex items-center">
                 <input id="checkCompleted" defaultChecked={true} 
                 onClick={ e => { props.filterHandler(e.target.id )}} 
                 type="checkbox" 
-                className="form-checkbox"
+                className="form-checkbox text-ghBlack"
                 onChange={e => {e.target.checked ? setActiveOptionsCount(activeOptionsCount => activeOptionsCount + 1): setActiveOptionsCount(activeOptionsCount => activeOptionsCount - 1)}}/>
                 <span className="text-sm font-medium ml-2">Completed</span>
               </label>
@@ -73,7 +73,7 @@ function FilterButton(props) {
               <input id="checkFailed" defaultChecked={true} 
               onClick={ e => { props.filterHandler(e.target.id )}} 
               type="checkbox" 
-              className="form-checkbox" 
+              className="form-checkbox text-ghBlack" 
               onChange={e => {e.target.checked ? setActiveOptionsCount(activeOptionsCount => activeOptionsCount + 1): setActiveOptionsCount(activeOptionsCount => activeOptionsCount - 1)}} />
                 <span className="text-sm font-medium ml-2">Failed</span>
               </label>
@@ -83,7 +83,7 @@ function FilterButton(props) {
               <input id="checkPending" defaultChecked={true} 
               onClick={ e => { props.filterHandler(e.target.id )}} 
               type="checkbox" 
-              className="form-checkbox" 
+              className="form-checkbox text-ghBlack" 
               onChange={e => {e.target.checked ? setActiveOptionsCount(activeOptionsCount => activeOptionsCount + 1): setActiveOptionsCount(activeOptionsCount => activeOptionsCount - 1)}} />
                 <span className="text-sm font-medium ml-2">Pending</span>
               </label>

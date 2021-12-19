@@ -2,7 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { Apps32, Dashboard32, Settings32 } from '@carbon/icons-react';
 
-import kxIcon from "../media/svg/icon-blau.svg"
+import kxIcon from "../media/svg/icon-blau-2.svg"
+import templatesIcon from "../media/svg/side-icon.svg"
 
 function Sidebar({
   sidebarOpen,
@@ -104,6 +105,15 @@ function Sidebar({
                   <div className="flex items-center">
                     <Apps32 className="p-1 flex-shrink-0"/>
                     <span className="text-sm font-medium ml-3 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">Applications</span>
+                  </div>
+                </NavLink>
+              </li>
+              {/* Templates */}
+              <li className={`px-3 py-1 last:mb-0`}>
+                <NavLink exact to="/templates" className={`p-1 rounded-md block text-white truncate ${pathname.includes("/templates") ? 'rounded-md bg-kxBlue' : "bg-ghBlack hover:bg-darker/50" }`}>
+                  <div className="flex items-center">
+                  <img src={templatesIcon} height="33px" width="33px" alt="KX AS Code Logo"></img>
+                    <span className="text-sm font-medium ml-3 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">Templates</span>
                   </div>
                 </NavLink>
               </li>

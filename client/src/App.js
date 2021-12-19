@@ -21,6 +21,7 @@ import BasicBreadcrumbs from './partials/BasicBreadcrumbs';
 import ExampleApp1 from './partials/ExampleApp1';
 import AppDetails from "./pages/AppDetails"
 import Home2 from './pages/Home';
+import Templates from './pages/Templates';
 
 
 function App() {
@@ -64,6 +65,7 @@ function App() {
                 <Route exact path="/apps/example-app-1">
                   <ExampleApp1 />
                 </Route>
+                <Route exact path="/templates" render={props => <Templates {...props}/>} />
                 <Route exact path="/settings" render={props => <Settings {...props}/>} />
                 <Route path="/apps/:app" render={props => <AppDetails {...props}/>} />
               </Switch>

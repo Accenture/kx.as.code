@@ -29,7 +29,7 @@
 .btn,
 .btn-sm,
 .btn-xs {
-    @apply font-medium text-sm inline-flex items-center justify-center border border-transparent rounded leading-5 shadow-sm transition duration-150 ease-in-out;
+    @apply font-medium text-sm inline-flex items-center justify-center border-none rounded-md leading-5;
 }
 
 .btn {

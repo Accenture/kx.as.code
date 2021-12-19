@@ -132,8 +132,8 @@ export default class Applications extends Component {
                 {/* Applications Header */}
                 <div className="text-white text-xl font-bold py-5 italic">MY APPLICATIONS</div>
 
-                {/* Dashboard actions */}
-                < div className="sm:flex sm:items-center mb-8" >
+                {/* Applications actions */}
+                <div className="sm:flex sm:items-center mb-8">
 
                     {/* Right: Actions */}
                     < div className="grid grid-flow-col sm:auto-cols-max justify-start sm:justify-start gap-2" >
