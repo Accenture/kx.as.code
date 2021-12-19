@@ -8,7 +8,7 @@ function ApplicationCard(props) {
   const appId = props.app.appName.replaceAll(" ", "-").replace(/\b\w/g, l => l.toLowerCase());
 
   return (
-    <div className="flex flex-col col-span-full sm:col-span-6 xl:col-span-4 bg-ghBlack3 shadow-lg rounded-lg">
+    <div className="flex flex-col col-span-full sm:col-span-6 xl:col-span-4 bg-inv2 shadow-lg rounded">
       <div className="p-6">
         <header className="flex justify-between items-start mb-2">
           {/* Icon */}

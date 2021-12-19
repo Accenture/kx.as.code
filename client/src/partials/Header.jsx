@@ -9,7 +9,7 @@ function Header({
   setSidebarOpen
 }) {
   return (
-    <header className="sticky top-0 bg-ghBlack2 z-30">
+    <header className="top-0 bg-inv3 z-30">
       <div className="px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 -mb-px">
 

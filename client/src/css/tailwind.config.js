@@ -47,7 +47,11 @@ module.exports = {
         "blueGreen": "#05f0a5", 
         "acnPink": "#ff50a0",
         "acnRed": "#ff3246",
-        "acnRed2": "#cc2131"
+        "acnRed2": "#cc2131",
+
+        "inv1":"#222938",
+        "inv2":"#293040",
+        "inv3":"#263041",
 
       },
       outline: {

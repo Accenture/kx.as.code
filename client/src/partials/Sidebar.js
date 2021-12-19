@@ -92,7 +92,7 @@ function Sidebar({
             <ul className="mt-3">
               {/* Dashboard */}
               <li className={`px-3 py-1 last:mb-0`}>
-                <NavLink exact to="/dashboard" className={`p-1 rounded-md block text-white truncate ${pathname.includes("/dashboard") ? 'rounded-md bg-kxBlue' : "bg-ghBlack hover:bg-darker/50" }`}>
+                <NavLink exact to="/dashboard" className={`p-1 rounded block text-white truncate ${pathname.includes("/dashboard") ? 'rounded bg-kxBlue' : "bg-ghBlack hover:bg-darker/50" }`}>
                   <div className="flex items-center">
                     <Dashboard32 className="p-1 flex-shrink-0"/>
                     <span className="text-sm font-medium ml-3 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">Dashboard</span>
@@ -101,7 +101,7 @@ function Sidebar({
               </li>
               {/* Applications */}
               <li className={`px-3 py-1 last:mb-0`}>
-                <NavLink exact to="/apps" className={`p-1 rounded-md block text-white truncate ${pathname.includes("/apps") ? 'rounded-md bg-kxBlue' : "bg-ghBlack hover:bg-darker/50" }`}>
+                <NavLink exact to="/apps" className={`p-1 rounded block text-white truncate ${pathname.includes("/apps") ? 'rounded bg-kxBlue' : "bg-ghBlack hover:bg-darker/50" }`}>
                   <div className="flex items-center">
                     <Apps32 className="p-1 flex-shrink-0"/>
                     <span className="text-sm font-medium ml-3 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">Applications</span>
@@ -110,16 +110,16 @@ function Sidebar({
               </li>
               {/* Templates */}
               <li className={`px-3 py-1 last:mb-0`}>
-                <NavLink exact to="/templates" className={`p-1 rounded-md block text-white truncate ${pathname.includes("/templates") ? 'rounded-md bg-kxBlue' : "bg-ghBlack hover:bg-darker/50" }`}>
+                <NavLink exact to="/app-groups" className={`p-1 rounded block text-white truncate ${pathname.includes("/app-groups") ? 'rounded bg-kxBlue' : "bg-ghBlack hover:bg-darker/50" }`}>
                   <div className="flex items-center">
                   <img src={templatesIcon} height="33px" width="33px" alt="KX AS Code Logo"></img>
-                    <span className="text-sm font-medium ml-3 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">Templates</span>
+                    <span className="text-sm font-medium ml-3 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">App Groups</span>
                   </div>
                 </NavLink>
               </li>
               {/* Settings */}
               <li className={`px-3 py-1 last:mb-0`}>
-                <NavLink exact to="/settings" className={`p-1 rounded-md block text-white truncate ${pathname.includes("/settings") ? 'rounded-md bg-kxBlue' : "bg-ghBlack hover:bg-darker/50" }`}>
+                <NavLink exact to="/settings" className={`p-1 rounded block text-white truncate ${pathname.includes("/settings") ? 'rounded bg-kxBlue' : "bg-ghBlack hover:bg-darker/50" }`}>
                   <div className="flex items-center">
                     <Settings32 className="p-1 flex-shrink-0"/>
                     <span className="text-sm font-medium ml-3 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">Settings</span>

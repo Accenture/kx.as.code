@@ -13,7 +13,7 @@ const BasicBreadcrumbs = (props) => {
   const pathnames = pathname.split("/").filter(x => x);
 
   return (
-    <div className="p-4 bg-ghBlack2 text-white border-b border-gray-700" role="presentation">
+    <div className="z-20 sticky top-0 p-4 bg-inv2 text-white border-b-2 border-gray-700" role="presentation">
       <Breadcrumbs color="inherit" aria-label="breadcrumb">
         {pathnames.length > 0 ? (
           <Link className="hover:text-underline hover:cursor-pointer" color="inherit" onClick={() => history.push("/")}>Home</Link>

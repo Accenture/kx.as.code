@@ -46,7 +46,7 @@ export default function StatusTag(props) {
     }
 
     return (
-        <div className={ "text-white bg-opacity-70 rounded-md p-1 px-3 text-xs flex m-auto ml-2 " + getTagBgColor(props.installStatus) } >
+        <div className={ "text-white bg-opacity-70 rounded p-1 px-3 text-xs flex m-auto ml-2 " + getTagBgColor(props.installStatus) } >
             {getTagContent(props.installStatus)}
         </div>
     )
