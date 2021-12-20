@@ -9,7 +9,7 @@ createDesktopIcon() {
   browserOptions="${5}"
 
   mkdir -p "${targetDirectory}"
-  chown "${vmUser}":"${vmUser}" "${directory}"
+  chown "${vmUser}":"${vmUser}" "${targetDirectory}"
 
   echo """
   [Desktop Entry]
