@@ -39,7 +39,7 @@ function FilterButton(props) {
         onClick={() => setDropdownOpen(!dropdownOpen)}
         aria-expanded={dropdownOpen}
       >
-        <div id="optionCount" className='h-6 w-6 text-black bg-white rounded mr-2 leading-6 text-center'>
+        <div id="optionCount" className='h-6 w-6 bg-ghBlack2 rounded mr-2 leading-6 text-center'>
          {activeOptionsCount}
         </div>
         <Filter20/>

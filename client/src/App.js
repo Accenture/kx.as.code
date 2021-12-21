@@ -38,7 +38,7 @@ function App() {
 
   return (
     <>
-      <div className="flex h-screen overflow-hidden bg-inv1">
+      <div className="flex h-screen overflow-hidden bg-inv1 text-white">
 
         {/* Sidebar */}
         <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />

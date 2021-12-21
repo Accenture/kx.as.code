@@ -6,6 +6,7 @@ export default function AppDetails() {
 
 
     const [data, setData] = useState([]);
+    
     // TODO fetching from entdoint
     const getData = () => {
         fetch('/data/metadata.json',{

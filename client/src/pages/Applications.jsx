@@ -48,6 +48,7 @@ export default class Applications extends Component {
     }
 
     drawApplicationCards() {
+        console.log("draw app cards func")
         let countFiltered = this.state.queueData.filter((val) => {
             if (this.state.searchTerm == "") {
                 return val
@@ -143,11 +144,11 @@ export default class Applications extends Component {
 
                         <div className="flex w-full flex-wrap items-stretch mb-3">
                             <span className="h-full leading-snug font-normal text-center text-blueGray-300 absolute bg-transparent rounded text-base items-center justify-center w-8 pl-3 py-3">
-                                <Search24 className="text-ghBlack2" />
+                                <Search24 className="text-gray-400" />
                             </span>
                             <input onChange={e => { this.setState({ searchTerm: e.target.value }); console.log(this.state.searchTerm) }}
                                 type="text" placeholder="Search Applications..."
-                                className="px-3 py-3 placeholder-blueGray-300 text-blueGray-600 rounded text-md border-0 shadow outline-none focus:outline-none focus:ring w-full pl-10" />
+                                className="bg-ghBlack2 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 rounded text-md border-0 shadow outline-none focus:outline-none focus:ring w-full pl-10" />
                         </div>
                         <FilterButton filterHandler={this.filterHandler}
                             isCompleted={this.state.isCompleted}
@@ -158,6 +159,7 @@ export default class Applications extends Component {
                 <div className="grid grid-cols-12 gap-8" >
                     {this.drawApplicationCards()}
                 </div>
+
             </div>
         );
     }

@@ -5,7 +5,7 @@ import { TrashCan32, Restart32 } from '@carbon/icons-react';
 
 
 function ApplicationGroupCard(props) {
-  const appId = ("Lorem Ipsum").replaceAll(" ", "-").replace(/\b\w/g, l => l.toLowerCase());
+  const appGroupBreadcrumb = props.appGroup.name.replaceAll(" ", "-").replace(/\b\w/g, l => l.toLowerCase())
 
   return (
     <div className="flex flex-col col-span-full sm:col-span-6 xl:col-span-4 bg-inv2 shadow-lg rounded">
@@ -44,22 +44,14 @@ function ApplicationGroupCard(props) {
             </li>
           </EditMenu>
         </header>
-        <Link to={'/apps/' + appId}>
-          <h2 className="hover:underline hover:cursor-pointer text-lg text-white mb-2">Lorem Ipsum</h2>
+
+        <Link to={'/app-groups/' + appGroupBreadcrumb}>
+          <h2 className="hover:underline hover:cursor-pointer text-lg text-white mb-2">{props.appGroup.name}</h2>
         </Link>
-        <div className="text-xs font-semibold text-gray-400 uppercase mb-1">
-            <h2 className="hover:underline hover:cursor-pointer text-lg text-white mb-2">Lorem Ipsum</h2>
-        </div>
-        <div className="text-xs font-semibold text-gray-400 uppercase mb-1">
-            <h2 className="hover:underline hover:cursor-pointer text-lg text-white mb-2">Lorem Ipsum</h2>
-        </div>
-        <div className="text-xs font-semibold text-gray-400 uppercase mb-1">
-            <h2 className="hover:underline hover:cursor-pointer text-lg text-white mb-2">Lorem Ipsum</h2>
-        </div>
       </div>
 
       <div className="flex-grow">
-
+    
       </div>
     </div>
   );

@@ -2,11 +2,45 @@ import { React, Component } from "react";
 import ApplicationGroupCard from "../partials/applicationGroups/ApplicationGroupCard";
 import { Search24, Add24 } from "@carbon/icons-react";
 import FilterButton from "../partials/actions/FilterButton";
+import Modal from "../partials/applicationGroups/Modal";
+
+const applicationGroupJson = require('../../src/data/application-groups.json');
 
 export default class ApplicationGroups extends Component {
 
-    drawTemplateCards() {
+    constructor(props) {
+        super(props)
+        this.state = {
+            applicationGroupsData: [], 
+            showModal: false
+        }
+        this.modalHandler = this.modalHandler.bind(this)
+    }
 
+    componentDidMount() {
+        this.fetchApplicationGroupsData();
+        this.setState({
+            applicationGroupsData: applicationGroupJson
+        })
+    }
+
+    modalHandler(boolean) {
+        this.setState({
+            showModal: boolean
+        })
+        console.log("modalHandler clicked! + state: " , this.state.showModal)
+    }
+
+    drawApplicationGroupCards(){
+        return applicationGroupJson.map((appGroup, i) => {
+            return <ApplicationGroupCard appGroup={appGroup} key={i} />
+        })
+    }
+
+    fetchApplicationGroupsData() {
+        this.setState({
+
+        })
     }
 
     render() {
@@ -29,9 +63,9 @@ export default class ApplicationGroups extends Component {
 
                         <div className="flex w-full flex-wrap items-stretch mb-3">
                             <span className="h-full leading-snug font-normal text-center text-blueGray-300 absolute bg-transparent rounded text-base items-center justify-center w-8 pl-3 py-3">
-                                <Search24 className="text-ghBlack2" />
+                                <Search24 className="text-gray-400" />
                             </span>
-                            <input type="text" placeholder="Search App Groups..." className="px-3 py-3 placeholder-blueGray-300 text-blueGray-600 rounded text-md border-0 shadow outline-none focus:outline-none focus:ring w-full pl-10" />
+                            <input type="text" placeholder="Search App Groups..." className="bg-ghBlack2 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 rounded text-md border-0 shadow outline-none focus:outline-none focus:ring w-full pl-10" />
                         </div>
                         <FilterButton />
 
@@ -40,7 +74,8 @@ export default class ApplicationGroups extends Component {
                     {/* Right: Actions */}
                     <div className="grid grid-flow-col sm:auto-cols-max justify-end sm:justify-end gap-2" >
                         {/* Add Template button */}
-                        < button className="btn h-12 px-4 bg-kxBlue hover:bg-kxBlue2 text-white rounded" >
+                        < button onClick={this.modalHandler} className="btn h-12 px-4 bg-kxBlue hover:bg-kxBlue2 text-white rounded" 
+                        >
                             <Add24 />
                             <span className="hidden xs:block">Add Application Group</span>
                         </ button>
@@ -48,17 +83,11 @@ export default class ApplicationGroups extends Component {
                 </div >
 
                 <div className="grid grid-cols-12 gap-8" >
-                    {this.drawTemplateCards()}
-                    <ApplicationGroupCard />
-                    <ApplicationGroupCard />
-                    <ApplicationGroupCard />
-                    <ApplicationGroupCard />
-                    <ApplicationGroupCard />
-                    <ApplicationGroupCard />
-                    <ApplicationGroupCard />
-                    <ApplicationGroupCard />
-                    <ApplicationGroupCard />
+                    {this.drawApplicationGroupCards()}
                 </div>
+
+                <Modal showModal={this.state.showModal}
+                modalHandler={this.modalHandler}/>
 
             </div>
         )
