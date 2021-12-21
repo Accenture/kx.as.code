@@ -32,6 +32,7 @@ export default class ApplicationGroups extends Component {
     }
 
     drawApplicationGroupCards(){
+        console.log(applicationGroupJson)
         return applicationGroupJson.map((appGroup, i) => {
             return <ApplicationGroupCard appGroup={appGroup} key={i} />
         })
@@ -55,7 +56,7 @@ export default class ApplicationGroups extends Component {
                     <div className="border-b-2 border-gray-700"></div>
                 </div>
 
-                {/* Template actions */}
+                {/* Application Groups actions */}
                 <div className="sm:flex sm:justify-between mb-8">
 
                     {/* Left: Actions */}

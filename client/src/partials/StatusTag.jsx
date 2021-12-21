@@ -5,16 +5,16 @@ export default function StatusTag(props) {
 
     function getTagBgColor(installStatus){
         if(installStatus === "completed_queue"){
-            return "bg-statusGreen"
+            return "bg-statusNewGreen"
         }
         else if(installStatus === "pending_queue"){
-            return "bg-statusOrange"
+            return "bg-statusNewOrange"
         }
         else if(installStatus === "failed_queue"){
-            return "bg-statusRed"
+            return "bg-statusNewRed"
         }
         else if(installStatus === "vip_queue"){
-            return "bg-statusYellow"
+            return "bg-statusNewYellow"
         }
         else if(installStatus === "retry_queue"){
             return "bg-statusGray"
@@ -26,19 +26,19 @@ export default function StatusTag(props) {
 
     function getTagContent(installStatus){
         if(installStatus === "completed_queue"){
-            return "Installed"
+            return "INSTALLED"
         }
         else if(installStatus === "pending_queue"){
-            return "Install Pending"
+            return "PENDING"
         }
         else if(installStatus === "failed_queue"){
-            return "Failed"
+            return "FAILED"
         }
         else if(installStatus === "vip_queue"){
             return "VIP"
         }
         else if(installStatus === "retry_queue"){
-            return "Reinstalling"
+            return "REINSTALLING"
         }
         else{
             console.error("Unknown Installation Status (Install Status Tag)")

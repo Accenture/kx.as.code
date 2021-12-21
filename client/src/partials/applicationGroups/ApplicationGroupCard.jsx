@@ -6,6 +6,7 @@ import { TrashCan32, Restart32 } from '@carbon/icons-react';
 
 function ApplicationGroupCard(props) {
   const appGroupBreadcrumb = props.appGroup.name.replaceAll(" ", "-").replace(/\b\w/g, l => l.toLowerCase())
+  const appGroupCategory = props.appGroup.group_category.toUpperCase().replaceAll("_", " ")
 
   return (
     <div className="flex flex-col col-span-full sm:col-span-6 xl:col-span-4 bg-inv2 shadow-lg rounded">
@@ -14,7 +15,7 @@ function ApplicationGroupCard(props) {
           {/* Icon */}
           <div className="flex content-start">
             <div className="bg-ghBlack rounded-full h-12 w-12" alt="Icon 02"></div>
-
+              <div className="bg-white bg-opacity-30 rounded p-1 px-3 text-xs flex m-auto ml-2">{appGroupCategory}</div>
           </div>
           {/* Menu button */}
           <EditMenu className="relative inline-flex">
@@ -48,6 +49,7 @@ function ApplicationGroupCard(props) {
         <Link to={'/app-groups/' + appGroupBreadcrumb}>
           <h2 className="hover:underline hover:cursor-pointer text-lg text-white mb-2">{props.appGroup.name}</h2>
         </Link>
+        <div>{props.appGroup.description}</div>
       </div>
 
       <div className="flex-grow">

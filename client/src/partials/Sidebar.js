@@ -108,7 +108,7 @@ function Sidebar({
                   </div>
                 </NavLink>
               </li>
-              {/* Templates */}
+              {/* Application Groups */}
               <li className={`px-3 py-1 last:mb-0`}>
                 <NavLink exact to="/app-groups" className={`p-1 rounded block text-white truncate ${pathname.includes("/app-groups") ? 'rounded bg-kxBlue' : "bg-ghBlack hover:bg-darker/50" }`}>
                   <div className="flex items-center">

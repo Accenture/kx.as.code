@@ -53,6 +53,11 @@ module.exports = {
         "inv2":"#293040",
         "inv3":"#263041",
 
+        "statusNewGreen": "#90BE6D",
+        "statusNewYellow": "#F9C74F",
+        "statusNewOrange": "#F8961E",
+        "statusNewRed": "#F94144"
+
       },
       outline: {
         blue: 'rgb(90, 134, 255)',
