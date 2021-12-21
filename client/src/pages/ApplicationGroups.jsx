@@ -11,8 +11,9 @@ export default class ApplicationGroups extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            applicationGroupsData: [], 
-            showModal: false
+            applicationGroupsData: [],
+            showModal: false,
+            searchTerm: ""
         }
         this.modalHandler = this.modalHandler.bind(this)
     }
@@ -28,12 +29,17 @@ export default class ApplicationGroups extends Component {
         this.setState({
             showModal: boolean
         })
-        console.log("modalHandler clicked! + state: " , this.state.showModal)
     }
 
-    drawApplicationGroupCards(){
-        console.log(applicationGroupJson)
-        return applicationGroupJson.map((appGroup, i) => {
+    drawApplicationGroupCards() {
+        return applicationGroupJson.filter((val) => {
+            if (this.state.searchTerm == "") {
+                return val
+            }
+            else if (val.name.toLowerCase().includes(this.state.searchTerm.toLowerCase().trim())) {
+                return val
+            }
+        }).map((appGroup, i) => {
             return <ApplicationGroupCard appGroup={appGroup} key={i} />
         })
     }
@@ -66,16 +72,19 @@ export default class ApplicationGroups extends Component {
                             <span className="h-full leading-snug font-normal text-center text-blueGray-300 absolute bg-transparent rounded text-base items-center justify-center w-8 pl-3 py-3">
                                 <Search24 className="text-gray-400" />
                             </span>
-                            <input type="text" placeholder="Search App Groups..." className="bg-ghBlack2 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 rounded text-md border-0 shadow outline-none focus:outline-none focus:ring w-full pl-10" />
+                            <input type="text"
+                                placeholder="Search Application Groups..."
+                                className="bg-ghBlack2 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 rounded text-md border-0 shadow outline-none focus:outline-none focus:ring min-w-80 pl-10"
+                                onChange={e => { this.setState({ searchTerm: e.target.value }); console.log(this.state.searchTerm) }} />
                         </div>
-                        <FilterButton />
+                        {/* <FilterButton /> */}
 
 
                     </div >
                     {/* Right: Actions */}
                     <div className="grid grid-flow-col sm:auto-cols-max justify-end sm:justify-end gap-2" >
                         {/* Add Template button */}
-                        < button onClick={this.modalHandler} className="btn h-12 px-4 bg-kxBlue hover:bg-kxBlue2 text-white rounded" 
+                        < button onClick={this.modalHandler} className="btn h-12 px-4 bg-kxBlue hover:bg-kxBlue2 text-white rounded"
                         >
                             <Add24 />
                             <span className="hidden xs:block">Add Application Group</span>
@@ -88,7 +97,7 @@ export default class ApplicationGroups extends Component {
                 </div>
 
                 <Modal showModal={this.state.showModal}
-                modalHandler={this.modalHandler}/>
+                    modalHandler={this.modalHandler} />
 
             </div>
         )
