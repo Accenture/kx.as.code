@@ -87,7 +87,7 @@ export default class ApplicationGroups extends Component {
                         < button onClick={this.modalHandler} className="btn h-12 px-4 bg-kxBlue hover:bg-kxBlue2 text-white rounded"
                         >
                             <Add24 />
-                            <span className="hidden xs:block">Add Application Group</span>
+                            <span className="hidden xs:block capitalize">Add Application Group</span>
                         </ button>
                     </div>
                 </div >

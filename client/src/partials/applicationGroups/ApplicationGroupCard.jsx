@@ -17,7 +17,6 @@ function ApplicationGroupCard(props) {
           {/* Icon */}
           <div className="flex content-start">
             <div className="bg-ghBlack rounded-full h-12 w-12" alt="Icon 02"></div>
-            <div className="bg-white bg-opacity-30 rounded p-1 px-3 text-xs flex m-auto ml-2">{appGroupCategory}</div>
           </div>
           {/* Menu button */}
           <EditMenu className="relative inline-flex">
@@ -48,9 +47,13 @@ function ApplicationGroupCard(props) {
           </EditMenu>
 
         </header>
-        <Link to={'/app-groups/' + appGroupBreadcrumb}>
-          <h2 className="hover:underline hover:cursor-pointer text-lg text-white mb-2">{props.appGroup.name}</h2>
-        </Link>
+
+        <div className="font-semibold text-gray-400">{appGroupCategory}</div>
+        <div className="inline-flex m-auto">
+          <Link to={'/app-groups/' + appGroupBreadcrumb}>
+            <h2 className="hover:underline hover:cursor-pointer text-lg text-white">{props.appGroup.name}</h2>
+          </Link>
+        </div>
 
         {/* Main Card Content */}
         <div className="">{props.appGroup.description}</div>

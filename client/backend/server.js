@@ -1,8 +1,9 @@
 const express = require('express');
 const request = require('request');
 const app = express();
-const mongoose = require("mongoose")
+// const mongoose = require("mongoose")
 
+// MongoDB
 // mongoose.connect("mongodb://localhost/subscribers", {useNewUrlParser: true })
 // const db = mongoose.connection
 // db.on("error", (error) => console.error(error))
