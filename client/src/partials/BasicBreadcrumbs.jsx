@@ -25,7 +25,7 @@ const BasicBreadcrumbs = (props) => {
           const isLast = index === pathnames.length - 1;
           var name = name.replace(/\b\w/g, l => l.toUpperCase())
           return isLast ? (
-            <Typography key={name}>{ name.replace(/\b\w/g, l => l.toUpperCase()) }</Typography>
+            <Typography className="font-semibold" key={name}>{ name.replace(/\b\w/g, l => l.toUpperCase()) }</Typography>
           ) : (
             <Link color="inherit" className="hover:cursor-pointer text-white" key={name} onClick={() => history.push(routeTo)}>
               {name}
