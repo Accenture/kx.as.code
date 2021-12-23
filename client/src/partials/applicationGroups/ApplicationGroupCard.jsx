@@ -19,15 +19,11 @@ function ApplicationGroupCard(props) {
 
   useEffect(() => {
     transformAppGroupComponents(props.appGroup.components)
+    console.log("useEffect called.")
     return () => {
       
     }
   }, [])
-
-  // props.appGroup.components.map((component) => {
-  //   setAppGroupComponents((prev) => [...prev, component])
-  //   console.log(appGroupComponents)
-  // })
 
   const drawApplicationGroupCardComponentsTags = (appGroupComponentTags) => {
     return appGroupComponentTags.map((appGroupComponent, i) => {
@@ -74,7 +70,7 @@ function ApplicationGroupCard(props) {
           </header>
 
           <div className="">
-            <Link to={'/app-groups/' + appGroupBreadcrumb}>
+            <Link to={'/application-groups/' + appGroupBreadcrumb}>
               <h2 className="hover:underline hover:cursor-pointer text-2xl text-white">{props.appGroup.name}</h2>
             </Link>
           </div>

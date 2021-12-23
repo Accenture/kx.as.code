@@ -110,7 +110,7 @@ function Sidebar({
               </li>
               {/* Application Groups */}
               <li className={`px-3 py-1 last:mb-0`}>
-                <NavLink exact to="/app-groups" className={`p-1 rounded block text-white truncate ${pathname.includes("/app-groups") ? 'rounded bg-kxBlue' : "bg-ghBlack hover:bg-darker/50" }`}>
+                <NavLink exact to="/application-groups" className={`p-1 rounded block text-white truncate ${pathname.includes("/application-groups") ? 'rounded bg-kxBlue' : "bg-ghBlack hover:bg-darker/50" }`}>
                   <div className="flex items-center">
                   <img src={templatesIcon} height="33px" width="33px" alt="KX AS Code Logo"></img>
                     <span className="text-sm font-medium ml-3 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">App Groups</span>

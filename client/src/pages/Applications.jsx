@@ -141,14 +141,15 @@ export default class Applications extends Component {
                     {/* Left: Actions */}
                     < div className="grid grid-flow-col sm:auto-cols-max justify-start sm:justify-start gap-2" >
 
-                        <div className="flex w-full flex-wrap items-stretch mb-3">
-                            <span className="h-full leading-snug font-normal text-center text-blueGray-300 absolute bg-transparent rounded text-base items-center justify-center w-8 pl-3 py-3">
-                                <Search24 className="text-gray-400" />
-                            </span>
-                            <input onChange={e => { this.setState({ searchTerm: e.target.value }); console.log(this.state.searchTerm) }}
-                                type="text" 
+                        {/* Search Input Field */}
+                        <div className="group relative mb-3">
+                            <svg width="20" height="20" fill="currentColor" className="absolute left-3 top-1/2 -mt-2.5 text-gray-500 pointer-events-none group-focus-within:text-kxBlue" aria-hidden="true">
+                                <path fillRule="evenodd" clipRule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" />
+                            </svg>
+                            <input type="text"
                                 placeholder="Search Applications..."
-                                className="bg-ghBlack2 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 rounded text-md border-0 shadow outline-none focus:outline-none focus:ring min-w-80 pl-10" />
+                                className="focus:ring-2 focus:ring-kxBlue focus:outline-none bg-ghBlack2 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 rounded text-md border-0 shadow outline-none focus:outline-none focus:ring min-w-80 pl-10"
+                                onChange={e => { this.setState({ searchTerm: e.target.value }); console.log(this.state.searchTerm) }} />
                         </div>
                         <FilterButton filterHandler={this.filterHandler}
                             isCompleted={this.state.isCompleted}

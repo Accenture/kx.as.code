@@ -65,7 +65,7 @@ function App() {
                 <Route exact path="/apps/example-app-1">
                   <ExampleApp1 />
                 </Route>
-                <Route exact path="/app-groups" render={props => <ApplicationGroups {...props}/>} />
+                <Route exact path="/application-groups" render={props => <ApplicationGroups {...props}/>} />
                 <Route exact path="/settings" render={props => <Settings {...props}/>} />
                 <Route path="/apps/:app" render={props => <AppDetails {...props}/>} />
               </Switch>
