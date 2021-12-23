@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, Component } from 'react';
 import { Link } from 'react-router-dom';
 import EditMenu from '../EditMenu';
 import { TrashCan32, Restart32 } from '@carbon/icons-react';
@@ -9,6 +9,20 @@ function ApplicationGroupCard(props) {
   const appGroupCategory = props.appGroup.group_category.toUpperCase().replaceAll("_", " ")
 
   const [appGroupComponents, setAppGroupComponents] = useState([])
+
+  const transformAppGroupComponents = (components) => {
+    components.map((component, i) => {
+      let transFormedComponent = component.replaceAll("-", " ").replaceAll("_", " ").replace(/\b\w/g, l => l.toUpperCase())
+      setAppGroupComponents(components => [...components, transFormedComponent])
+    })
+  }
+
+  useEffect(() => {
+    transformAppGroupComponents(props.appGroup.components)
+    return () => {
+      
+    }
+  }, [])
 
   // props.appGroup.components.map((component) => {
   //   setAppGroupComponents((prev) => [...prev, component])
@@ -71,7 +85,7 @@ function ApplicationGroupCard(props) {
 
           <div className="float-left">
             <ul className='float-left'>
-              {drawApplicationGroupCardComponentsTags(props.appGroup.components)}
+              {drawApplicationGroupCardComponentsTags(appGroupComponents)}
             </ul>
           </div>
         </div>
@@ -80,9 +94,9 @@ function ApplicationGroupCard(props) {
 
         <div className="w-full flex justify-center">
           <button disabled className="btn rounded bg-kxBlue hover:bg-kxBlue2 p-2 px-6 absolute bottom-0 mb-8 ">
-            <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" fill="none" viewBox="0 0 24 24">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
             </svg>
             INSTALLING
           </button>
