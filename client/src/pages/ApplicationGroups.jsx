@@ -68,13 +68,14 @@ export default class ApplicationGroups extends Component {
                     {/* Left: Actions */}
                     < div className="grid grid-flow-col sm:auto-cols-max justify-start sm:justify-start gap-2" >
 
-                        <div className="flex w-full flex-wrap items-stretch mb-3">
-                            <span className="h-full leading-snug font-normal text-center text-blueGray-300 absolute bg-transparent rounded text-base items-center justify-center w-8 pl-3 py-3">
-                                <Search24 className="text-gray-400" />
-                            </span>
+                        <div className="group relative mb-3">
+
+                            <svg width="20" height="20" fill="currentColor" class="absolute left-3 top-1/2 -mt-2.5 text-gray-500 pointer-events-none group-focus-within:text-kxBlue" aria-hidden="true">
+                                <path fill-rule="evenodd" clip-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" />
+                            </svg>
                             <input type="text"
                                 placeholder="Search Application Groups..."
-                                className="bg-ghBlack2 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 rounded text-md border-0 shadow outline-none focus:outline-none focus:ring min-w-80 pl-10"
+                                className="focus:ring-2 focus:ring-kxBlue focus:outline-none bg-ghBlack2 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 rounded text-md border-0 shadow outline-none focus:outline-none focus:ring min-w-80 pl-10"
                                 onChange={e => { this.setState({ searchTerm: e.target.value }); console.log(this.state.searchTerm) }} />
                         </div>
                         {/* <FilterButton /> */}
@@ -87,7 +88,7 @@ export default class ApplicationGroups extends Component {
                         < button onClick={this.modalHandler} className="btn h-12 px-4 bg-kxBlue hover:bg-kxBlue2 text-white rounded"
                         >
                             <Add24 />
-                            <span className="hidden xs:block capitalize">Add Application Group</span>
+                            <span className="hidden xs:block capitalize">ADD APPLICATION GROUP</span>
                         </ button>
                     </div>
                 </div >

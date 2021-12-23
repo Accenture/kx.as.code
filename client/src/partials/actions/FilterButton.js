@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import Transition from '../../utils/Transition.js';
-import {Filter20} from "@carbon/icons-react"
+import {Filter20, ChevronSortDown32} from "@carbon/icons-react"
 
 function FilterButton(props) {
 
@@ -42,7 +42,8 @@ function FilterButton(props) {
         <div id="optionCount" className='h-6 w-6 bg-ghBlack2 rounded mr-2 leading-6 text-center'>
          {activeOptionsCount}
         </div>
-        <Filter20/>
+        <Filter20 />
+        <ChevronSortDown32 className='mb-3'/>
       </button>
       <Transition
         show={dropdownOpen}
