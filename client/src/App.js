@@ -56,9 +56,8 @@ function App() {
                 <Route exact path="/dashboard">
                   <Dashboard />
                 </Route>
-                <Route exact path="/apps">
-                  <Applications />
-                </Route>
+                <Route exact path="/application-groups" render={props => <Applications {...props}/>} />
+
                 <Route exact path="/apps/example-app-1">
                   <ExampleApp1 />
                 </Route>

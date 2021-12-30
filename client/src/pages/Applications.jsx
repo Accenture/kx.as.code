@@ -2,7 +2,6 @@ import { React, Component } from "react";
 import ApplicationCard from "../partials/applications/ApplicationCard.jsx";
 import axios from "axios";
 import FilterButton from "../partials/actions/FilterButton"
-import { Search24 } from "@carbon/icons-react";
 
 const queueList = ['pending_queue', 'failed_queue', 'completed_queue', 'retry_queue', 'wip_queue'];
 
@@ -25,7 +24,7 @@ export default class Applications extends Component {
     }
 
     componentDidMount() {
-        this.fetchQueueDataAndExtractApplicationMetadata();
+        this.fetchQueueDataAndExtractApplicationMetadata()
         this.setState({
             isLoading: false
         });
@@ -125,6 +124,7 @@ export default class Applications extends Component {
             });
         });
     }
+
     render() {
 
         return (
