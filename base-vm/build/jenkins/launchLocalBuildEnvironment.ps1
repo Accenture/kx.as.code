@@ -304,21 +304,35 @@ if (!(test-path .\jenkins.war)) {
     # Download Jenkins WAR file
     Write-Output "Downloading Jenkins WAR file..." | Blue
     Invoke-WebRequest $jenkinsWarFileUrl -OutFile jenkins.war
+}
 
+# Check if plugin manager already downloaded or not
+if (!(test-path .\jenkins-plugin-manager.jar)) {
     # Install Jenkins Plugins
     $jenkinsPluginManagerVersion = "2.11.1"
     Write-Output "Downloading Jenkins Plugin Manager..." | Blue
     Invoke-WebRequest -Uri https://github.com/jenkinsci/plugin-installation-manager-tool/releases/download/$jenkinsPluginManagerVersion/jenkins-plugin-manager-$jenkinsPluginManagerVersion.jar -OutFile .\jenkins-plugin-manager.jar
-    Start-Process -FilePath $javaBinary -Wait -NoNewWindow -ArgumentList "-jar", "./jenkins-plugin-manager.jar", "--war", "./jenkins.war", "--plugin-download-directory", "$JENKINS_HOME/plugins", "--plugin-file", "./initial-setup/plugins.txt", "--plugins delivery-pipeline-plugin:1.3.2", "deployit-plugin"
+}
 
-    # Bypass Jenkins setup wizard
+# Download plugins if not yet installed
+if (!(Test-Path -Path $JENKINS_HOME\plugins\*)) {
+    Start-Process -FilePath $javaBinary -Wait -NoNewWindow -ArgumentList "-jar", "./jenkins-plugin-manager.jar", "--war", "./jenkins.war", "--plugin-download-directory", "$JENKINS_HOME/plugins", "--plugin-file", "./initial-setup/plugins.txt", "--plugins delivery-pipeline-plugin:1.3.2", "deployit-plugin"
+}
+
+# Bypass Jenkins setup wizard
+if (!(test-path $JENKINS_HOME\jenkins.install.UpgradeWizard.state)) {
     echo "$jenkinsDownloadVersion" > $JENKINS_HOME\jenkins.install.UpgradeWizard.state
+}
+
+# Bypass Jenkins setup wizard
+if (!(test-path $JENKINS_HOME\jenkins.install.InstallUtil.lastExecVersion)) {
     echo "$jenkinsDownloadVersion" > $JENKINS_HOME\jenkins.install.InstallUtil.lastExecVersion
 }
 
 # Generate KX.AS.CODE start job --> merge active choice parameters into start dsl job template
-$start_job_file = "initial-setup\jobs\VMWare_Workstation\jobs\03_Start_KX.AS.CODE\config.xml"
-$start_job_template_file = "initial-setup\jobs\VMWare_Workstation\jobs\03_Start_KX.AS.CODE\config.xml_template"
+$start_job_file = "initial-setup\jobs\KX.AS.CODE_Launcher\config.xml"
+$start_job_template_file = "initial-setup\jobs\KX.AS.CODE_Launcher\config.xml_template"
+
 Copy-Item $start_job_template_file $start_job_file
 Write-Output $start_job_file
 $jobContent = Get-Content $start_job_file -Encoding Default -Raw
@@ -363,7 +377,10 @@ Foreach-Object {
 }
 
 # Set jenkins_home and start Jenkins
+# Start manually for debugging with Start-Process -FilePath .\java\jdk11.0.3_7\bin\java.exe -ArgumentList "-jar", ".\jenkins.war", "--httpListenAddress=127.0.0.1", "--httpPort=8081"
 [Environment]::SetEnvironmentVariable("JENKINS_HOME", "${PWD}\jenkins_home")
+# TODO - Test Git paths on line below. Currently hardcoded for debugging
+$env:Path += ";C:/Program Files/Git/bin;C:/Program Files/Git/usr/bin;C:/Git/kx.as.code_test"
 Start-Process -FilePath $javaBinary -ArgumentList "-jar", ".\jenkins.war", "--httpListenAddress=$jenkins_listen_address", "--httpPort=$jenkins_server_port"
 
 $jenkinsUrl = "http://localhost:$jenkins_server_port"

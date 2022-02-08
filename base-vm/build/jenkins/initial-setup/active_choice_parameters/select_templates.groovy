@@ -73,7 +73,7 @@ try {
 
     //println(templateComponentsArray)
 } catch(e) {
-    println "Something went wrong in the GROOVY block (select_templates): ${e}"
+    println "Something went wrong in the GROOVY block (select_templates.groovy): ${e}"
 }
 
 try {
@@ -357,5 +357,5 @@ try {
     """
     return HTML
 } catch (e) {
-    println "Something went wrong in the HTML return block (select_templates): ${e}"
+    println "Something went wrong in the HTML return block (select_templates.groovy): ${e}"
 }

@@ -1,13 +1,6 @@
 import groovy.json.JsonSlurper
 
 def extendedDescription
-
-try {
-    extendedDescription = "There are two types of storage provisioned into KX.AS.CODE. One is a slower network storage based on GlusterFS and the second is local storage. Both are made available internally to the Kubernetes cluster via storage classes. There are advantages and disadvantages of each. Glusterfs is slower, but ensures the workload remains portable. Local storage is faster, but means a workload is tied to a host. The faster local storage is recommended for database servers."
-} catch(e) {
-    println "Something went wrong in the GROOVY block (headlineStoragePrameters): ${e}"
-}
-
 def network_storage
 def localStorageNumOneGb
 def localStorageNumFiveGb
@@ -16,6 +9,8 @@ def localStorageNumThirtyGb
 def localStorageNumFiftyGb
 
 try {
+    extendedDescription = "There are two types of storage provisioned into KX.AS.CODE. One is a slower network storage based on GlusterFS and the second is local storage. Both are made available internally to the Kubernetes cluster via storage classes. There are advantages and disadvantages of each. Glusterfs is slower, but ensures the workload remains portable. Local storage is faster, but means a workload is tied to a host. The faster local storage is recommended for database servers."
+
     def jsonFilePath = PROFILE
     def inputFile = new File(jsonFilePath)
     def parsedJson = new JsonSlurper().parse(inputFile)
@@ -27,7 +22,7 @@ try {
     localStorageNumThirtyGb = parsedJson.config.local_volumes.thirty_gb
     localStorageNumFiftyGb = parsedJson.config.local_volumes.fifty_gb
 } catch(e) {
-    println "Something went wrong in the GROOVY block (storage_parameters): ${e}"
+    println "Something went wrong in the GROOVY block (storage_parameters.groovy): ${e}"
 }
 
 int networkStorageMin = 20
@@ -129,13 +124,13 @@ try {
             <span class="indented-bullet-span"><img src="/userContent/icons/chevron-right.svg" class="param-icon svg-purple" alt="bullet" /></span>
             <span id="counter_value_local_volume_count_1_gb" class="counter-local-storage-value">${startValueOneGb} ${localStorageRangeUnit}</span>
             <span class="button-range-span"><button type="button" class="button-left"
-            onclick="subtract_one(&quot;counter_value_local_volume_count_1_gb_value_previous&quot;, &quot;counter_value_local_volume_count_1_gb&quot;, &quot;counter_value_local_volume_count_1_gb&quot;, &quot;counter_value_local_volume_count_1_gb_warning_icon&quot;, &quot;${minWarningOneGb}&quot;, &quot;${localStorageDisplayConversion}&quot;, &quot;${localStorageRangeUnit}&quot;, &quot;${localStorageStep}&quot;, &quot;${minOneGb}&quot;); updateConcatenatedLocalStorageReturnVariable();">
+            onclick="subtract_one(&quot;counter_value_local_volume_count_1_gb_value_previous&quot;, &quot;counter_value_local_volume_count_1_gb&quot;, &quot;counter_value_local_volume_count_1_gb&quot;, &quot;counter_value_local_volume_count_1_gb_warning_icon&quot;, &quot;${minWarningOneGb}&quot;, &quot;${localStorageDisplayConversion}&quot;, &quot;${localStorageRangeUnit}&quot;, &quot;${localStorageStep}&quot;, &quot;${minOneGb}&quot;);">
                 <img src="/userContent/icons/chevron-down.svg" alt="minus" class="image-plus-minus svg-white"/></button></span>
             <span class="divider-span"></span>
             <span class="button-range-span">
                 <span class="divider-span"></span>
                 <button type="button" class="button-right"
-                    onclick="add_one(&quot;counter_value_local_volume_count_1_gb_value_previous&quot;, &quot;counter_value_local_volume_count_1_gb&quot;, &quot;counter_value_local_volume_count_1_gb&quot;, &quot;counter_value_local_volume_count_1_gb_warning_icon&quot;, &quot;${minWarningOneGb}&quot;, &quot;${localStorageDisplayConversion}&quot;, &quot;${localStorageRangeUnit}&quot;, &quot;${localStorageStep}&quot;, &quot;${maxOneGb}&quot;); updateConcatenatedLocalStorageReturnVariable();">
+                    onclick="add_one(&quot;counter_value_local_volume_count_1_gb_value_previous&quot;, &quot;counter_value_local_volume_count_1_gb&quot;, &quot;counter_value_local_volume_count_1_gb&quot;, &quot;counter_value_local_volume_count_1_gb_warning_icon&quot;, &quot;${minWarningOneGb}&quot;, &quot;${localStorageDisplayConversion}&quot;, &quot;${localStorageRangeUnit}&quot;, &quot;${localStorageStep}&quot;, &quot;${maxOneGb}&quot;);">
                     <img src="/userContent/icons/chevron-up.svg" alt="plus" class="image-plus-minus svg-white"/>
                 </button>
             </span>
@@ -150,7 +145,7 @@ try {
     </div>
     <input type="hidden" id="counter_value_local_volume_count_1_gb" name="counter_value_local_volume_count_1_gb" value="${startValueOneGb}">
     <input type="hidden" id="counter_value_local_volume_count_1_gb_value_previous" name="counter_value_local_volume_count_1_gb_value_previous" value="">
-    <style scoped="scoped" onload="show_value(&quot;${startValueOneGb}&quot;, &quot;counter_value_local_volume_count_1_gb_value_previous&quot;, &quot;counter_value_local_volume_count_1_gb&quot;, &quot;counter_value_local_volume_count_1_gb&quot;, &quot;counter_value_local_volume_count_1_gb_warning_icon&quot;, &quot;${minWarningOneGb}&quot;, &quot;${localStorageDisplayConversion}&quot;, &quot;${localStorageRangeUnit}&quot;); updateConcatenatedLocalStorageReturnVariable();">   </style>
+    <style scoped="scoped" onload="show_value(&quot;${startValueOneGb}&quot;, &quot;counter_value_local_volume_count_1_gb_value_previous&quot;, &quot;counter_value_local_volume_count_1_gb&quot;, &quot;counter_value_local_volume_count_1_gb&quot;, &quot;counter_value_local_volume_count_1_gb_warning_icon&quot;, &quot;${minWarningOneGb}&quot;, &quot;${localStorageDisplayConversion}&quot;, &quot;${localStorageRangeUnit}&quot;);">   </style>
     <!-- --->
 
 
@@ -161,13 +156,13 @@ try {
             <span class="indented-bullet-span"><img src="/userContent/icons/chevron-right.svg" class="param-icon svg-purple" alt="bullet" /></span>
             <span id="counter_value_local_volume_count_5_gb" class="counter-local-storage-value">${startValueFiveGb} ${localStorageRangeUnit}</span>
             <span class="button-range-span"><button type="button" class="button-left"
-                                                    onclick="subtract_one(&quot;counter_value_local_volume_count_5_gb_value_previous&quot;, &quot;counter_value_local_volume_count_5_gb&quot;, &quot;counter_value_local_volume_count_5_gb&quot;, &quot;counter_value_local_volume_count_5_gb_warning_icon&quot;, &quot;${minWarningFiveGb}&quot;, &quot;${localStorageDisplayConversion}&quot;, &quot;${localStorageRangeUnit}&quot;, &quot;${localStorageStep}&quot;, &quot;${minFiveGb}&quot;); updateConcatenatedLocalStorageReturnVariable();">
+                                                    onclick="subtract_one(&quot;counter_value_local_volume_count_5_gb_value_previous&quot;, &quot;counter_value_local_volume_count_5_gb&quot;, &quot;counter_value_local_volume_count_5_gb&quot;, &quot;counter_value_local_volume_count_5_gb_warning_icon&quot;, &quot;${minWarningFiveGb}&quot;, &quot;${localStorageDisplayConversion}&quot;, &quot;${localStorageRangeUnit}&quot;, &quot;${localStorageStep}&quot;, &quot;${minFiveGb}&quot;);">
                 <img src="/userContent/icons/chevron-down.svg" alt="minus" class="image-plus-minus svg-white"/></button></span>
             <span class="divider-span"></span>
             <span class="button-range-span">
                 <span class="divider-span"></span>
                 <button type="button" class="button-right"
-                        onclick="add_one(&quot;counter_value_local_volume_count_5_gb_value_previous&quot;, &quot;counter_value_local_volume_count_5_gb&quot;, &quot;counter_value_local_volume_count_5_gb&quot;, &quot;counter_value_local_volume_count_5_gb_warning_icon&quot;, &quot;${minWarningFiveGb}&quot;, &quot;${localStorageDisplayConversion}&quot;, &quot;${localStorageRangeUnit}&quot;, &quot;${localStorageStep}&quot;, &quot;${maxFiveGb}&quot;); updateConcatenatedLocalStorageReturnVariable();">
+                        onclick="add_one(&quot;counter_value_local_volume_count_5_gb_value_previous&quot;, &quot;counter_value_local_volume_count_5_gb&quot;, &quot;counter_value_local_volume_count_5_gb&quot;, &quot;counter_value_local_volume_count_5_gb_warning_icon&quot;, &quot;${minWarningFiveGb}&quot;, &quot;${localStorageDisplayConversion}&quot;, &quot;${localStorageRangeUnit}&quot;, &quot;${localStorageStep}&quot;, &quot;${maxFiveGb}&quot;);">
                     <img src="/userContent/icons/chevron-up.svg" alt="plus" class="image-plus-minus svg-white"/>
                 </button>
             </span>
@@ -182,7 +177,7 @@ try {
     </div>
     <input type="hidden" id="counter_value_local_volume_count_5_gb" name="counter_value_local_volume_count_5_gb" value="${startValueFiveGb}">
     <input type="hidden" id="counter_value_local_volume_count_5_gb_value_previous" name="counter_value_local_volume_count_5_gb_value_previous" value="">
-    <style scoped="scoped" onload="show_value(&quot;${startValueFiveGb}&quot;, &quot;counter_value_local_volume_count_5_gb_value_previous&quot;, &quot;counter_value_local_volume_count_5_gb&quot;, &quot;counter_value_local_volume_count_5_gb&quot;, &quot;counter_value_local_volume_count_5_gb_warning_icon&quot;, &quot;${minWarningFiveGb}&quot;, &quot;${localStorageDisplayConversion}&quot;, &quot;${localStorageRangeUnit}&quot;); updateConcatenatedLocalStorageReturnVariable();">   </style>
+    <style scoped="scoped" onload="show_value(&quot;${startValueFiveGb}&quot;, &quot;counter_value_local_volume_count_5_gb_value_previous&quot;, &quot;counter_value_local_volume_count_5_gb&quot;, &quot;counter_value_local_volume_count_5_gb&quot;, &quot;counter_value_local_volume_count_5_gb_warning_icon&quot;, &quot;${minWarningFiveGb}&quot;, &quot;${localStorageDisplayConversion}&quot;, &quot;${localStorageRangeUnit}&quot;);">   </style>
     <!-- --->
 
 
@@ -193,13 +188,13 @@ try {
             <span class="indented-bullet-span"><img src="/userContent/icons/chevron-right.svg" class="param-icon svg-purple" alt="bullet" /></span>
             <span id="counter_value_local_volume_count_10_gb" class="counter-local-storage-value">${startValueTenGb} ${localStorageRangeUnit}</span>
             <span class="button-range-span"><button type="button" class="button-left"
-                                                    onclick="subtract_one(&quot;counter_value_local_volume_count_10_gb_value_previous&quot;, &quot;counter_value_local_volume_count_10_gb&quot;, &quot;counter_value_local_volume_count_10_gb&quot;, &quot;counter_value_local_volume_count_10_gb_warning_icon&quot;, &quot;${minWarningTenGb}&quot;, &quot;${localStorageDisplayConversion}&quot;, &quot;${localStorageRangeUnit}&quot;, &quot;${localStorageStep}&quot;, &quot;${minTenGb}&quot;); updateConcatenatedLocalStorageReturnVariable();">
+                                                    onclick="subtract_one(&quot;counter_value_local_volume_count_10_gb_value_previous&quot;, &quot;counter_value_local_volume_count_10_gb&quot;, &quot;counter_value_local_volume_count_10_gb&quot;, &quot;counter_value_local_volume_count_10_gb_warning_icon&quot;, &quot;${minWarningTenGb}&quot;, &quot;${localStorageDisplayConversion}&quot;, &quot;${localStorageRangeUnit}&quot;, &quot;${localStorageStep}&quot;, &quot;${minTenGb}&quot;);">
                 <img src="/userContent/icons/chevron-down.svg" alt="minus" class="image-plus-minus svg-white"/></button></span>
             <span class="divider-span"></span>
             <span class="button-range-span">
                 <span class="divider-span"></span>
                 <button type="button" class="button-right"
-                        onclick="add_one(&quot;counter_value_local_volume_count_10_gb_value_previous&quot;, &quot;counter_value_local_volume_count_10_gb&quot;, &quot;counter_value_local_volume_count_10_gb&quot;, &quot;counter_value_local_volume_count_10_gb_warning_icon&quot;, &quot;${minWarningTenGb}&quot;, &quot;${localStorageDisplayConversion}&quot;, &quot;${localStorageRangeUnit}&quot;, &quot;${localStorageStep}&quot;, &quot;${maxTenGb}&quot;); updateConcatenatedLocalStorageReturnVariable();">
+                        onclick="add_one(&quot;counter_value_local_volume_count_10_gb_value_previous&quot;, &quot;counter_value_local_volume_count_10_gb&quot;, &quot;counter_value_local_volume_count_10_gb&quot;, &quot;counter_value_local_volume_count_10_gb_warning_icon&quot;, &quot;${minWarningTenGb}&quot;, &quot;${localStorageDisplayConversion}&quot;, &quot;${localStorageRangeUnit}&quot;, &quot;${localStorageStep}&quot;, &quot;${maxTenGb}&quot;);">
                     <img src="/userContent/icons/chevron-up.svg" alt="plus" class="image-plus-minus svg-white"/>
                 </button>
             </span>
@@ -214,7 +209,7 @@ try {
     </div>
     <input type="hidden" id="counter_value_local_volume_count_10_gb" name="counter_value_local_volume_count_10_gb" value="${startValueTenGb}">
     <input type="hidden" id="counter_value_local_volume_count_10_gb_value_previous" name="counter_value_local_volume_count_10_gb_value_previous" value="">
-    <style scoped="scoped" onload="show_value(&quot;${startValueTenGb}&quot;, &quot;counter_value_local_volume_count_10_gb_value_previous&quot;, &quot;counter_value_local_volume_count_10_gb&quot;, &quot;counter_value_local_volume_count_10_gb&quot;, &quot;counter_value_local_volume_count_10_gb_warning_icon&quot;, &quot;${minWarningTenGb}&quot;, &quot;${localStorageDisplayConversion}&quot;, &quot;${localStorageRangeUnit}&quot;); updateConcatenatedLocalStorageReturnVariable();">   </style>
+    <style scoped="scoped" onload="show_value(&quot;${startValueTenGb}&quot;, &quot;counter_value_local_volume_count_10_gb_value_previous&quot;, &quot;counter_value_local_volume_count_10_gb&quot;, &quot;counter_value_local_volume_count_10_gb&quot;, &quot;counter_value_local_volume_count_10_gb_warning_icon&quot;, &quot;${minWarningTenGb}&quot;, &quot;${localStorageDisplayConversion}&quot;, &quot;${localStorageRangeUnit}&quot;);">   </style>
 
     <!-- --->
 
@@ -226,13 +221,13 @@ try {
             <span class="indented-bullet-span"><img src="/userContent/icons/chevron-right.svg" class="param-icon svg-purple" alt="bullet" /></span>
             <span id="counter_value_local_volume_count_30_gb" class="counter-local-storage-value">${startValueThirtyGb} ${localStorageRangeUnit}</span>
             <span class="button-range-span"><button type="button" class="button-left"
-                                                    onclick="subtract_one(&quot;counter_value_local_volume_count_30_gb_value_previous&quot;, &quot;counter_value_local_volume_count_30_gb&quot;, &quot;counter_value_local_volume_count_30_gb&quot;, &quot;counter_value_local_volume_count_30_gb_warning_icon&quot;, &quot;${minWarningThirtyGb}&quot;, &quot;${localStorageDisplayConversion}&quot;, &quot;${localStorageRangeUnit}&quot;, &quot;${localStorageStep}&quot;, &quot;${minThirtyGb}&quot;); updateConcatenatedLocalStorageReturnVariable();">
+                                                    onclick="subtract_one(&quot;counter_value_local_volume_count_30_gb_value_previous&quot;, &quot;counter_value_local_volume_count_30_gb&quot;, &quot;counter_value_local_volume_count_30_gb&quot;, &quot;counter_value_local_volume_count_30_gb_warning_icon&quot;, &quot;${minWarningThirtyGb}&quot;, &quot;${localStorageDisplayConversion}&quot;, &quot;${localStorageRangeUnit}&quot;, &quot;${localStorageStep}&quot;, &quot;${minThirtyGb}&quot;);">
                 <img src="/userContent/icons/chevron-down.svg" alt="minus" class="image-plus-minus svg-white"/></button></span>
             <span class="divider-span"></span>
             <span class="button-range-span">
                 <span class="divider-span"></span>
                 <button type="button" class="button-right"
-                        onclick="add_one(&quot;counter_value_local_volume_count_30_gb_value_previous&quot;, &quot;counter_value_local_volume_count_30_gb&quot;, &quot;counter_value_local_volume_count_30_gb&quot;, &quot;counter_value_local_volume_count_30_gb_warning_icon&quot;, &quot;${minWarningThirtyGb}&quot;, &quot;${localStorageDisplayConversion}&quot;, &quot;${localStorageRangeUnit}&quot;, &quot;${localStorageStep}&quot;, &quot;${maxThirtyGb}&quot;); updateConcatenatedLocalStorageReturnVariable();">
+                        onclick="add_one(&quot;counter_value_local_volume_count_30_gb_value_previous&quot;, &quot;counter_value_local_volume_count_30_gb&quot;, &quot;counter_value_local_volume_count_30_gb&quot;, &quot;counter_value_local_volume_count_30_gb_warning_icon&quot;, &quot;${minWarningThirtyGb}&quot;, &quot;${localStorageDisplayConversion}&quot;, &quot;${localStorageRangeUnit}&quot;, &quot;${localStorageStep}&quot;, &quot;${maxThirtyGb}&quot;);">
                     <img src="/userContent/icons/chevron-up.svg" alt="plus" class="image-plus-minus svg-white"/>
                 </button>
             </span>
@@ -247,7 +242,7 @@ try {
     </div>
     <input type="hidden" id="counter_value_local_volume_count_30_gb" name="counter_value_local_volume_count_30_gb" value="${startValueThirtyGb}">
     <input type="hidden" id="counter_value_local_volume_count_30_gb_value_previous" name="counter_value_local_volume_count_30_gb_value_previous" value="">
-    <style scoped="scoped" onload="show_value(&quot;${startValueThirtyGb}&quot;, &quot;counter_value_local_volume_count_30_gb_value_previous&quot;, &quot;counter_value_local_volume_count_30_gb&quot;, &quot;counter_value_local_volume_count_30_gb&quot;, &quot;counter_value_local_volume_count_30_gb_warning_icon&quot;, &quot;${minWarningThirtyGb}&quot;, &quot;${localStorageDisplayConversion}&quot;, &quot;${localStorageRangeUnit}&quot;); updateConcatenatedLocalStorageReturnVariable();">   </style>
+    <style scoped="scoped" onload="show_value(&quot;${startValueThirtyGb}&quot;, &quot;counter_value_local_volume_count_30_gb_value_previous&quot;, &quot;counter_value_local_volume_count_30_gb&quot;, &quot;counter_value_local_volume_count_30_gb&quot;, &quot;counter_value_local_volume_count_30_gb_warning_icon&quot;, &quot;${minWarningThirtyGb}&quot;, &quot;${localStorageDisplayConversion}&quot;, &quot;${localStorageRangeUnit}&quot;);">   </style>
     <!-- --->
 
 
@@ -258,13 +253,13 @@ try {
             <span class="indented-bullet-span"><img src="/userContent/icons/chevron-right.svg" class="param-icon svg-purple" alt="bullet" /></span>
             <span id="counter_value_local_volume_count_50_gb" class="counter-local-storage-value">${startValueFiftyGb} ${localStorageRangeUnit}</span>
             <span class="button-range-span"><button type="button" class="button-left"
-                                                    onclick="subtract_one(&quot;counter_value_local_volume_count_50_gb_value_previous&quot;, &quot;counter_value_local_volume_count_50_gb&quot;, &quot;counter_value_local_volume_count_50_gb&quot;, &quot;counter_value_local_volume_count_50_gb_warning_icon&quot;, &quot;${minWarningFiftyGb}&quot;, &quot;${localStorageDisplayConversion}&quot;, &quot;${localStorageRangeUnit}&quot;, &quot;${localStorageStep}&quot;, &quot;${minFiftyGb}&quot;); updateConcatenatedLocalStorageReturnVariable();">
+                                                    onclick="subtract_one(&quot;counter_value_local_volume_count_50_gb_value_previous&quot;, &quot;counter_value_local_volume_count_50_gb&quot;, &quot;counter_value_local_volume_count_50_gb&quot;, &quot;counter_value_local_volume_count_50_gb_warning_icon&quot;, &quot;${minWarningFiftyGb}&quot;, &quot;${localStorageDisplayConversion}&quot;, &quot;${localStorageRangeUnit}&quot;, &quot;${localStorageStep}&quot;, &quot;${minFiftyGb}&quot;);">
                 <img src="/userContent/icons/chevron-down.svg" alt="minus" class="image-plus-minus svg-white"/></button></span>
             <span class="divider-span"></span>
             <span class="button-range-span">
                 <span class="divider-span"></span>
                 <button type="button" class="button-right"
-                        onclick="add_one(&quot;counter_value_local_volume_count_50_gb_value_previous&quot;, &quot;counter_value_local_volume_count_50_gb&quot;, &quot;counter_value_local_volume_count_50_gb&quot;, &quot;counter_value_local_volume_count_50_gb_warning_icon&quot;, &quot;${minWarningFiftyGb}&quot;, &quot;${localStorageDisplayConversion}&quot;, &quot;${localStorageRangeUnit}&quot;, &quot;${localStorageStep}&quot;, &quot;${maxFiftyGb}&quot;); updateConcatenatedLocalStorageReturnVariable();">
+                        onclick="add_one(&quot;counter_value_local_volume_count_50_gb_value_previous&quot;, &quot;counter_value_local_volume_count_50_gb&quot;, &quot;counter_value_local_volume_count_50_gb&quot;, &quot;counter_value_local_volume_count_50_gb_warning_icon&quot;, &quot;${minWarningFiftyGb}&quot;, &quot;${localStorageDisplayConversion}&quot;, &quot;${localStorageRangeUnit}&quot;, &quot;${localStorageStep}&quot;, &quot;${maxFiftyGb}&quot;);">
                     <img src="/userContent/icons/chevron-up.svg" alt="plus" class="image-plus-minus svg-white"/>
                 </button>
             </span>
@@ -279,15 +274,15 @@ try {
     </div>
     <input type="hidden" id="counter_value_local_volume_count_50_gb" name="counter_value_local_volume_count_50_gb" value="${startValueFiftyGb}">
     <input type="hidden" id="counter_value_local_volume_count_50_gb_value_previous" name="counter_value_local_volume_count_50_gb_value_previous" value="">
-    <style scoped="scoped" onload="show_value(&quot;${startValueFiftyGb}&quot;, &quot;counter_value_local_volume_count_50_gb_value_previous&quot;, &quot;counter_value_local_volume_count_50_gb&quot;, &quot;counter_value_local_volume_count_50_gb&quot;, &quot;counter_value_local_volume_count_50_gb_warning_icon&quot;, &quot;${minWarningFiftyGb}&quot;, &quot;${localStorageDisplayConversion}&quot;, &quot;${localStorageRangeUnit}&quot;); updateConcatenatedLocalStorageReturnVariable();">   </style>
+    <style scoped="scoped" onload="show_value(&quot;${startValueFiftyGb}&quot;, &quot;counter_value_local_volume_count_50_gb_value_previous&quot;, &quot;counter_value_local_volume_count_50_gb&quot;, &quot;counter_value_local_volume_count_50_gb&quot;, &quot;counter_value_local_volume_count_50_gb_warning_icon&quot;, &quot;${minWarningFiftyGb}&quot;, &quot;${localStorageDisplayConversion}&quot;, &quot;${localStorageRangeUnit}&quot;);">   </style>
     <!-- --->
 
-    <input type="hidden" id="concatenated-local-volume-params" name="value" value="" >
+    <input type="hidden" id="concatenated-storage-params" name="value" value="" >
 
     </div>
 
     """
     return HTML
 } catch (e) {
-    println "Something went wrong in the HTML return block (storage_parameters): ${e}"
+    println "Something went wrong in the HTML return block (storage_parameters.groovy): ${e}"
 }
