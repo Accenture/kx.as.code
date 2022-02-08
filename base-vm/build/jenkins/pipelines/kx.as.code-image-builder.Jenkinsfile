@@ -45,7 +45,7 @@ pipeline {
                         }
                         sh """
                         cd base-vm/build/packer/${packerOsFolder}
-                        ${packerPath}/packer build -force -only kx.as.code-main-virtualbox \
+                        ${packerPath}/packer build -force -only ${node_type}-${profile} \
                         -var "compute_engine_build=${vagrant_compute_engine_build}" \
                         -var "memory=8192" \
                         -var "cpus=2" \
