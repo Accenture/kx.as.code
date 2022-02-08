@@ -27,7 +27,9 @@ function ApplicationGroupCard(props) {
 
   const drawApplicationGroupCardComponentsTags = (appGroupComponentTags) => {
     return appGroupComponentTags.map((appGroupComponent, i) => {
-      return <li key={i} className='rounded bg-gray-500 text-sm mr-1.5 mb-2 px-1.5  w-auto inline-block'>{appGroupComponent}</li>
+      return <li key={i} className='rounded bg-gray-500 text-sm mr-1.5 mb-2 px-1.5  w-auto inline-block'>
+        {appGroupComponent}
+        </li>
     })
   }
 
