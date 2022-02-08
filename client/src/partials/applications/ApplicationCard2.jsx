@@ -4,10 +4,25 @@ import EditMenu from '../EditMenu';
 import { TrashCan32, Restart32 } from '@carbon/icons-react';
 import StatusTag from '../StatusTag';
 import StatusPoint from '../StatusPoint';
+import { useState, useEffect } from 'react';
 
-function ApplicationCard(props) {
-  const appId = props.app.appName.replaceAll(" ", "-").replace(/\b\w/g, l => l.toLowerCase());
+function ApplicationCard2(props) {
 
+  const [appId, setAppId] = useState("");
+
+  const setUpAppId = () => {
+    const slug = props.app.name && props.app.name.replaceAll(" ", "-").replace(/\b\w/g, l => l.toLowerCase())
+    setAppId(slug)
+  }
+
+  useEffect(() => {
+
+    setUpAppId();  
+    return () => {
+
+    };
+  }, []);
+  
   return (
     <div className="flex flex-col col-span-full sm:col-span-6 xl:col-span-4 bg-inv2 shadow-lg rounded"
       loading="lazy">
@@ -48,12 +63,13 @@ function ApplicationCard(props) {
         </header>
         <Link to={'/apps/' + appId}>
           <h2 className="hover:underline hover:cursor-pointer text-lg text-white mb-2 flex items-center">
-            <StatusPoint installStatus={props.app.queueName} />
-            {props.app.appName} ({props.app.category}) </h2>
+            <StatusPoint installStatus={"pending_queue"} />
+            {props.app.name} ({props.app.installation_group_folder}) </h2>
         </Link>
         <div className="text-xs font-semibold text-gray-400 uppercase mb-1">
 
         </div>
+        <div>{props.Description}</div>
       </div>
 
       <div className="flex-grow">
@@ -63,4 +79,4 @@ function ApplicationCard(props) {
   );
 }
 
-export default ApplicationCard;
+export default ApplicationCard2;

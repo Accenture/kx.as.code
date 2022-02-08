@@ -123,6 +123,9 @@ export default class Applications extends Component {
                 this.s_function(message, queue)
             });
         });
+        axios.get("http://localhost:5000/api/applications").then( response => {
+            console.log("DATA APPS: ", response)
+        })
     }
 
     render() {
