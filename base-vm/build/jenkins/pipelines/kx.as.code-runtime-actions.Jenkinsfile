@@ -1,0 +1,61 @@
+def functions
+def kx_version
+def kube_version
+
+node('master') {
+    dir(shared_workspace) {
+        echo shared_workspace
+        functions = load "${shared_workspace}/base-vm/build/jenkins/pipelines/shared-pipeline-functions.groovy"
+        println(functions)
+        (kx_version, kube_version) = functions.setBuildEnvironment()
+    }
+}
+
+pipeline {
+
+    agent {
+        node {
+            label "master"
+            customWorkspace shared_workspace
+        }
+    }
+
+    parameters {
+        string(name: 'git_source_branch', defaultValue: '', description: '')
+        string(name: 'git_source_url', defaultValue: '', description: '')
+        string(name: 'shared_workspace', defaultValue: '', description: '')
+        string(name: 'kx_main_box_location', defaultValue: '', description: '')
+        string(name: 'kx_node_box_location', defaultValue: '', description: '')
+        string(name: 'dockerhub_email', defaultValue: '', description: '')
+        string(name: 'profile', defaultValue: '', description: '')
+        string(name: 'profile_path', defaultValue: '', description: '')
+        string(name: 'vagrant_action', defaultValue: '', description: '')
+    }
+
+    options {
+        ansiColor('xterm')
+        skipDefaultCheckout()
+        buildDiscarder(logRotator(numToKeepStr: '10', artifactNumToKeepStr: '10'))
+        timestamps()
+        disableConcurrentBuilds()
+        timeout(time: 3, unit: 'HOURS')
+    }
+
+    stages {
+        stage('Execute Vagrant Action'){
+            steps {
+                script {
+                    sh """
+                    pwd
+                    cd profiles/vagrant-$profile
+                    VBoxManage list vms
+                    #vagrant halt
+                    #vagrant destroy -f
+                    #VBoxManage list vms
+                    echo "Profile path: $profile_path"
+                    """
+                }
+            }
+        }
+    }
+}

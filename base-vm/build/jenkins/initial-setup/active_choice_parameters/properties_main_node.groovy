@@ -3,6 +3,8 @@ import groovy.json.JsonSlurper
 def extendedDescription
 def parsedJson
 
+def STANDALONE_MODE
+
 int mainNodeCountMinWarning = 0 // Set to 0 to disable the minimum warning
 int mainNodeValueDisplayConversion = 1 // Set to 1 for no conversion (eg. from MB to GB)
 def mainNodeCountRangeUnit = "#"
@@ -23,7 +25,16 @@ try {
     def inputFile = new File(jsonFilePath)
     parsedJson = new JsonSlurper().parse(inputFile)
 } catch(e) {
-    println "Something went wrong in the GROOVY block (config_vm_properties_main_node_count): ${e}"
+    println("Something went wrong in the GROOVY block (properties_main_node.groovy): ${e}")
+}
+
+try {
+    if (GENERAL_PARAMETERS) {
+        generalParameterElements = GENERAL_PARAMETERS.split(';')
+        STANDALONE_MODE = generalParameterElements[4]
+    }
+} catch(e) {
+    println("Something went wrong in the GROOVY block (properties_main_node.groovy): ${e}")
 }
 
 try {
@@ -35,6 +46,7 @@ try {
         mainNodeCountMax = 16
         mainNodeCountStep = 1
         mainNodeCountStartValue = main_node_count.toInteger()
+        println("properties_main_node.groovy -> mainNodeCountStartValue: ${mainNodeCountStartValue} (Standalone Mode: FALSE)")
 
         mainNodeCountOpacity = "0.7"
         mainNodeCountCursor = "pointer"
@@ -45,14 +57,14 @@ try {
         mainNodeCountMax = 1
         mainNodeCountStep = 1
         mainNodeCountStartValue = 1
-
+        println("properties_main_node.groovy -> mainNodeCountStartValue: ${mainNodeCountStartValue} (Standalone Mode: TRUE)")
         mainNodeCountOpacity = "0.1"
         mainNodeCountCursor = "not-allowed"
 
     }
 
 } catch(e) {
-    println "Something went wrong in the GROOVY block (config_vm_properties_main_node_count): ${e}"
+    println("Something went wrong in the GROOVY block (properties_main_node.groovy): ${e}")
 }
 
 def main_admin_node_cpu_cores
@@ -62,7 +74,7 @@ try {
     println("Profile: " + PROFILE)
     println("CPU Cores read: " + main_admin_node_cpu_cores)
 } catch(e) {
-    println "Something went wrong in the GROOVY block (config_vm_properties_main_admin_node_cpu_cores): ${e}"
+    println("Something went wrong in the GROOVY block (properties_main_node.groovy): ${e}")
 }
 
 int mainNodeCpuCoresMin = 1
@@ -79,7 +91,7 @@ def mainNodeCpuCoresParamShortTitle = "CPU Cores"
 try {
     extendedDescription = "KX-Main nodes provide two core functions - Kubernetes master services as well as the desktop environment for easy access to deployed tools and documentation. Only the first KX-Main node hosts both the desktop environment, and the Kubernetes Master services. Subsequent KX-Main nodes host the Kubernetes Master services only. In a physical environment with 16GB ram or less, it is recommended to leave at least 4-6GB ram to the host operating system, leaving 10-12GB that can be allocated to KX-Main. In this scenario, it is recommended to set KX-Worker nodes to zero, and run the whole KX.AS.CODE setup in standalone mode."
 } catch(e) {
-    println "Something went wrong in the GROOVY block (headlineKxMain): ${e}"
+    println("Something went wrong in the GROOVY block (properties_main_node.groovy): ${e}")
 }
 
 def main_admin_node_memory
@@ -87,7 +99,7 @@ def main_admin_node_memory
 try {
     main_admin_node_memory = parsedJson.config.vm_properties.main_admin_node_memory
 } catch(e) {
-    println "Something went wrong in the GROOVY block (config_vm_properties_main_admin_node_memory): ${e}"
+    println("Something went wrong in the GROOVY block (properties_main_node.groovy): ${e}")
 }
 
 int mainNodeMemoryMin = 4096
@@ -125,7 +137,7 @@ try {
         </div>
     </div>
     <style scoped="scoped" onload="show_value(&quot;${mainNodeCountStartValue}&quot;, &quot;counter_value_main_node_count_previous_value&quot;, &quot;counter_value_main_node_count&quot;, &quot;counter_value_main_node_count_value&quot;, &quot;counter_value_main_node_count_warning_icon&quot;, &quot;${mainNodeCountMinWarning}&quot;, &quot;${mainNodeValueDisplayConversion}&quot;, &quot;${mainNodeCountRangeUnit}&quot;);">   </style>
-    <input type="hidden" id="counter_value_main_node_count" name="value" value="${mainNodeCountStartValue}">
+    <input type="hidden" id="counter_value_main_node_count" name="counter_value_main_node_count" value="${mainNodeCountStartValue}">
     <input type="hidden" id="counter_value_main_node_count_previous_value" name="counter_value_main_node_count_previous_value" value="">
 
 
@@ -139,7 +151,7 @@ try {
                    max="${mainNodeCpuCoresMax}"
                    step="${mainNodeCpuCoresStep}"
                    value="${mainNodeCpuCoresStartValue}"
-                   name="value"
+                   name="slider_value_main_admin_node_cpu_cores"
                    class="slider"
                    id="slider_value_main_admin_node_cpu_cores"  onchange="show_value(this.value, &quot;slider_value_main_admin_node_cpu_cores_previous_value&quot;, &quot;slider_value_main_admin_node_cpu_cores&quot;, &quot;slider_value_main_admin_node_cpu_cores_value&quot;, &quot;slider_value_main_admin_node_cpu_cores_warning_icon&quot;, &quot;${mainNodeCpuCoresMinWarning}&quot;, &quot;${cpuCoresValueDisplayConversion}&quot;, &quot;${cpuCoresRangeUnit}&quot;);"
                    onmouseleave="show_value(this.value, &quot;slider_value_main_admin_node_cpu_cores_previous_value&quot;, &quot;slider_value_main_admin_node_cpu_cores&quot;, &quot;slider_value_main_admin_node_cpu_cores_value&quot;, &quot;slider_value_main_admin_node_cpu_cores_warning_icon&quot;, &quot;${mainNodeCpuCoresMinWarning}&quot;, &quot;${cpuCoresValueDisplayConversion}&quot;, &quot;${cpuCoresRangeUnit}&quot;);" onmousemove="update_display_value(this.value, &quot;slider_value_main_admin_node_cpu_cores_value&quot;, &quot;${cpuCoresValueDisplayConversion}&quot;, &quot;${cpuCoresRangeUnit}&quot;);">
@@ -165,7 +177,7 @@ try {
                    max="${mainNodeMemoryMax}"
                    step="${mainNodeMemoryStep}"
                    value="${mainNodeMemoryStartValue}"
-                   name="value"
+                   name="slider_value_main_admin_node_memory"
                    class="slider"
                    id="slider_value_main_admin_node_memory"  onchange="show_value(this.value, &quot;slider_value_main_admin_node_memory_previous_value&quot;, &quot;slider_value_main_admin_node_memory&quot;, &quot;slider_value_main_admin_node_memory_value&quot;, &quot;slider_value_main_admin_node_memory_warning_icon&quot;, &quot;${mainNodeMemoryMinWarning}&quot;, &quot;${memoryValueDisplayConversion}&quot;, &quot;${memoryRangeUnit}&quot;);"
                    onmouseleave="show_value(this.value, &quot;slider_value_main_admin_node_memory_previous_value&quot;, &quot;slider_value_main_admin_node_memory&quot;, &quot;slider_value_main_admin_node_memory_value&quot;, &quot;slider_value_main_admin_node_memory_warning_icon&quot;, &quot;${mainNodeMemoryMinWarning}&quot;, &quot;${memoryValueDisplayConversion}&quot;, &quot;${memoryRangeUnit}&quot;);" onmousemove="update_display_value(this.value, &quot;slider_value_main_admin_node_memory_value&quot;, &quot;${memoryValueDisplayConversion}&quot;, &quot;${memoryRangeUnit}&quot;);">
@@ -179,9 +191,10 @@ try {
     </div>
     <style scoped="scoped" onload="show_value(&quot;${mainNodeMemoryStartValue}&quot;, &quot;slider_value_main_admin_node_memory_previous_value&quot;, &quot;slider_value_main_admin_node_memory&quot;, &quot;slider_value_main_admin_node_memory_value&quot;, &quot;slider_value_main_admin_node_memory_warning_icon&quot;, &quot;${mainNodeMemoryMinWarning}&quot;, &quot;${memoryValueDisplayConversion}&quot;, &quot;${memoryRangeUnit}&quot;);">   </style>
     <input type="hidden" id="slider_value_main_admin_node_memory_previous_value" name="slider_value_main_admin_node_memory_previous_value" value="" >
+    <input type="hidden" id="concatenated_value_main_node_config" name="value" value="" >
     
     """
     return HTML
 } catch (e) {
-    println "Something went wrong in the HTML return block (headlineKxMain): ${e}"
+    println("Something went wrong in the HTML return block (properties_main_node.groovy): ${e}")
 }

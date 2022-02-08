@@ -11,8 +11,11 @@ try {
                 display: flex;
                 align-items: center;
                 vertical-align: middle;
-                padding-left: 10px;
-                margin: 10px;
+                padding-left: 0px;
+                margin-left: 0px;
+                margin-right: 10px;
+                margin-bottom: 10px;
+                margin-right: 10px;
             }
             
             .storage-wrapper {
@@ -715,6 +718,17 @@ try {
                 text-align: center;
             }            
             
+            .config-tab-disabled {
+                display: inline-block;
+                height: 100%;
+                width: 100%;
+                background-color: rgba(187, 187, 187, 0.5);
+                vertical-align: middle;
+                text-align: center;
+                opacity: 0.5;
+                cursor: not-allowed;
+            }  
+            
             .svg-purple {
                 filter: invert(10%) sepia(88%) saturate(6128%) hue-rotate(277deg) brightness(90%) contrast(106%);
                 opacity: 0.6;
@@ -752,9 +766,9 @@ try {
                 });
             }
 
-            function updateConcatenatedReturnVariable() {
+            function updateConcatenatedGeneralParamsReturnVariable() {
 
-                let baseDomain = document.getElementById("base-domain");
+                let baseDomain = document.getElementById("general-param-base-domain");
                 let baseDomainValue;
                 if (baseDomain.value.length === 0) {
                     baseDomainValue = baseDomain.placeholder.trim();
@@ -762,7 +776,7 @@ try {
                     baseDomainValue = baseDomain.value.trim();
                 }
 
-                let username = document.getElementById("username");
+                let username = document.getElementById("general-param-username");
                 let usernameValue;
                 if (username.value.length === 0) {
                     usernameValue = username.placeholder.trim();
@@ -770,7 +784,7 @@ try {
                     usernameValue = username.value.trim();
                 }
 
-                let teamName = document.getElementById("team-name");
+                let teamName = document.getElementById("general-param-team-name");
                 let teamNameValue;
                 if (teamName.value.length === 0) {
                     teamNameValue = teamName.placeholder.trim();
@@ -778,7 +792,7 @@ try {
                     teamNameValue = teamName.value.trim();
                 }
 
-                let password = document.getElementById("password");
+                let password = document.getElementById("general-param-password");
                 let passwordValue;
                 if (password.value.length === 0) {
                     passwordValue = password.placeholder.trim();
@@ -786,12 +800,16 @@ try {
                     passwordValue = password.value.trim();
                 }
 
+                let standaloneModeCheckedStatus = document.getElementById("general-param-standalone-mode-toggle").checked              
+                let workloadsOnMasterCheckedStatus = document.getElementById("general-param-workloads-on-master-toggle").checked
+ 
                 let parentId = document.getElementById("concatenated-general-params").parentNode.id;
                 jQuery('#' + parentId).trigger('change');
                 
-                document.getElementById("concatenated-general-params").value = baseDomainValue + ";" + teamNameValue + ";" + usernameValue + ";" + passwordValue;
+                document.getElementById("concatenated-general-params").value = baseDomainValue + ";" + teamNameValue + ";" + usernameValue + ";" + passwordValue + ";" + standaloneModeCheckedStatus + ";" + workloadsOnMasterCheckedStatus;
                 console.log(document.getElementById("concatenated-general-params").value);
-                change_panel_selection("config-panel-general-params");
+                //#TODO - Placeholder to check if issue after commenting out line below 
+                //change_panel_selection("config-panel-general-params");
             }
 
             function updateCheckbox(checkboxElementId)
@@ -809,7 +827,7 @@ try {
                 waitForElement('system-prerequisites-check',function(){
                     console.log("document.getElementById(system-prerequisites-check).value: *" + document.getElementById("system-prerequisites-check").value + "*");
                 });                
-                
+               
                 if ( document.getElementById(checkboxElementId).checked === true ) {
                     console.log("DEBUG (1) updateCheckbox() - false: " + document.getElementById(checkboxElementId).checked);
                     document.getElementById(checkboxElementId).checked = true;
@@ -826,19 +844,19 @@ try {
                 
                 if (document.getElementById("system-prerequisites-check").value === "standalone" || document.getElementById("system-prerequisites-check").value === "failed") {
                     console.log('DEBUG: Inside checkbox set to standalone');
-                    document.getElementById('standalone-mode-toggle').checked = true;
-                    document.getElementById('workloads-on-master-toggle').checked = true;
-                    document.getElementById('standalone-mode-toggle').className = "checkbox-slider-checked-disabled round";
-                    document.getElementById('standalone-mode-toggle-span').className = "checkbox-slider-checked-disabled round";
-                    document.getElementById('workloads-on-master-toggle').className = "checkbox-slider-checked-disabled round";
-                    document.getElementById('workloads-on-master-toggle-span').className = "checkbox-slider-checked-disabled round";
-                    document.getElementById('workloads-on-master-toggle-name-value').value = true;  
+                    document.getElementById('general-param-standalone-mode-toggle').checked = true;
+                    document.getElementById('general-param-workloads-on-master-toggle').checked = true;
+                    document.getElementById('general-param-standalone-mode-toggle').className = "checkbox-slider-checked-disabled round";
+                    document.getElementById('general-param-standalone-mode-toggle-span').className = "checkbox-slider-checked-disabled round";
+                    document.getElementById('general-param-workloads-on-master-toggle').className = "checkbox-slider-checked-disabled round";
+                    document.getElementById('general-param-workloads-on-master-toggle-span').className = "checkbox-slider-checked-disabled round";
+                    document.getElementById('general-param-workloads-on-master-toggle-name-value').value = true;  
                 } else if (document.getElementById("system-prerequisites-check").value === "full") {
                     console.log("DEBUG: Inside checkbox set to full");
-                    document.getElementById('standalone-mode-toggle').className = "checkbox-slider round";
-                    document.getElementById('standalone-mode-toggle-span').className = "checkbox-slider round";
-                    document.getElementById('workloads-on-master-toggle').className = "checkbox-slider round";
-                    document.getElementById('workloads-on-master-toggle-span').className = "checkbox-slider round";
+                    document.getElementById('general-param-standalone-mode-toggle').className = "checkbox-slider round";
+                    document.getElementById('general-param-standalone-mode-toggle-span').className = "checkbox-slider round";
+                    document.getElementById('general-param-workloads-on-master-toggle').className = "checkbox-slider round";
+                    document.getElementById('general-param-workloads-on-master-toggle-span').className = "checkbox-slider round";
                 }
                 
                 let parentId = document.getElementById(checkboxElementId + '-name-value').parentNode.id;
@@ -866,6 +884,17 @@ try {
                         document.getElementById(warningElementId).style.visibility = "hidden";
                     }
                     document.getElementById(previousElementId).value = x;
+                    if ( elementId.includes("main_admin_node") || elementId.includes("main_node") ) { 
+                        updateConcatenatedNodeReturnVariable("concatenated_value_main_node_config");
+                    } else if ( elementId.includes("worker_node") ){
+                        updateConcatenatedNodeReturnVariable("concatenated_value_worker_node_config");
+                    } else if ( elementId.includes("local_volume_count") || elementId.includes("network_storage") ) {
+                        updateConcatenatedStorageReturnVariable();
+                    } else if ( elementId.includes("general-param") ) {
+                        updateConcatenatedGeneralParamsReturnVariable();
+                    } else {
+                        console.log("Not calling updateConcatenated*ReturnVariable() for " + elementId);
+                    }
                 }
             }
 
@@ -888,255 +917,404 @@ try {
                 }
             }
 
-            function updateConcatenatedLocalStorageReturnVariable() {
+            function updateConcatenatedNodeReturnVariable(hiddenValueElementId) {
+                let nodeCount
+                let cpuCores
+                let memory
+                console.log("Updating concatenated value for " + hiddenValueElementId);
+                if ( hiddenValueElementId === "concatenated_value_main_node_config") {
+                    console.log("Getting values for concatenated_value_main_node_config");
+                    nodeCount = document.getElementById("counter_value_main_node_count").value;
+                    cpuCores = document.getElementById("slider_value_main_admin_node_cpu_cores").value;
+                    memory = document.getElementById("slider_value_main_admin_node_memory").value;
+                    console.log("Received following values for main node: " + nodeCount + "; " + cpuCores + "; " + memory);
+                } else if ( hiddenValueElementId === "concatenated_value_worker_node_config") {
+                    console.log("Getting values for concatenated_value_worker_node_config");
+                    nodeCount = document.getElementById("counter_value_worker_node_count").value;
+                    cpuCores = document.getElementById("slider_value_worker_node_cpu_cores").value;
+                    memory = document.getElementById("slider_value_worker_node_memory").value;
+                    console.log("Received following values for worker node: " + nodeCount + "; " + cpuCores + "; " + memory);
+                } else {
+                    console.log(hiddenValueElementId + "not found -> updateConcatenatedNodeReturnVariable()");
+                }
+                let concatenatedValue = nodeCount + ";" + cpuCores + ";" + memory;
+                console.log("Updating hidden value id " + hiddenValueElementId + " with " + concatenatedValue);
+                document.getElementById(hiddenValueElementId).value = concatenatedValue;
+            }
+            
+            function updateConcatenatedStorageReturnVariable() {
                 let counterHiddenValueIdOneGb = document.getElementById("counter_value_local_volume_count_1_gb").value;
                 let counterHiddenValueIdFiveGb = document.getElementById("counter_value_local_volume_count_5_gb").value;
                 let counterHiddenValueIdTenGb = document.getElementById("counter_value_local_volume_count_10_gb").value;
                 let counterHiddenValueIdThirtyGb = document.getElementById("counter_value_local_volume_count_30_gb").value;
                 let counterHiddenValueIdFiftyGb = document.getElementById("counter_value_local_volume_count_50_gb").value;
-                let concatenatedLocalVolumeParams = counterHiddenValueIdOneGb + ";" + counterHiddenValueIdFiveGb + ";" + counterHiddenValueIdTenGb + ";" + counterHiddenValueIdThirtyGb + ";" + counterHiddenValueIdFiftyGb;
-                document.getElementById("concatenated-local-volume-params").value = concatenatedLocalVolumeParams;
-                document.getElementById("concatenated-local-volume-params").setAttribute("concatenated-local-volume-params", concatenatedLocalVolumeParams);
-                let parentId = document.getElementById('concatenated-local-volume-params').parentNode.id;
+                let networkStorageValueGb = document.getElementById("slider_value_network_storage").value;
+                let concatenatedLocalVolumeParams = counterHiddenValueIdOneGb + ";" + counterHiddenValueIdFiveGb + ";" + counterHiddenValueIdTenGb + ";" + counterHiddenValueIdThirtyGb + ";" + counterHiddenValueIdFiftyGb + ";" + networkStorageValueGb;
+                document.getElementById("concatenated-storage-params").value = concatenatedLocalVolumeParams;
+                document.getElementById("concatenated-storage-params").setAttribute("concatenated-storage-params", concatenatedLocalVolumeParams);
+                let parentId = document.getElementById('concatenated-storage-params').parentNode.id;
                 console.log(parentId);
                 jQuery('#' + parentId).trigger('change');
             }
+            
+            function updateAllConcatenatedVariables() {
+                updateConcatenatedGeneralParamsReturnVariable();
+                updateConcatenatedNodeReturnVariable("concatenated_value_main_node_config");
+                updateConcatenatedNodeReturnVariable("concatenated_value_worker_node_config");
+                updateConcatenatedStorageReturnVariable();   
+            }
 
-            function hideParameterDivs() {
-                    let configDivs = [
-                        "select-profile-div",
-                        "prerequisites-div",
-                        "standalone-toggle-div",
-                        "worker-cpu-count-div",
-                        "worker-node-count-div",
-                        "main-node-count-div",
-                        "local-storage-div",
-                        "main-memory-div",
-                        "general-parameters-div",
-                        "workloads-on-master-div",
-                        "main-cpu-count-div",
-                        "worker-memory-div",
-                        "network-storage-div",
-                        "headline-main-div",
-                        "headline-workers-div",
-                        "headline-storage-div",
-                        "templates-div",
-                        "header-system-check-div",
-                        "system-check-div",
-                        "review-and-launch-div"
+            async function getBuildJobListForProfile(job, nodeType) {
+                let styleColor;
+                getAllJenkinsBuilds(job).then(data => {
+                    console.log("nodeType: " + nodeType);
+                    console.log(data);
+                    const kxBuilds = (() => {
+                      const builds = filterBuilds(data);
+                      console.log(data);
+                      console.log("above: data");
+                      console.log(builds);
+                      console.log("above: builds");
+                      const filteredBuilds = filterDataByVmType(builds, document.getElementById("profiles").value);
+                      console.log(filteredBuilds);
+                      console.log("above: filteredBuilds");
+                      console.log(filteredBuilds);
+                      if ( nodeType === "kx-launch" ) {
+                          console.log("Inside const definition kx-launch");  
+                          console.log(filteredBuilds);
+                          return filteredBuilds;
+                      } else {
+                          console.log("Inside const definition not equal to kx-launch");
+                          return filterDataByNodeType(filteredBuilds, nodeType);
+                      }
+                    })();
+                    console.log(nodeType + ' kxBuilds.length: ' + kxBuilds.length);
+                    console.log(kxBuilds);
+                    if ( kxBuilds.length > 0 ) {
+                        console.log('Found ' + nodeType + ' builds for profile');
+                        console.log(kxBuilds[0].estimatedDuration);
+                        console.log(kxBuilds[0].id);
+                        console.log(kxBuilds[0].node_type);
+                        console.log(kxBuilds[0].number);
+                        console.log(kxBuilds[0].result);
+                        console.log(kxBuilds[0].timestamp);
+                        console.log(kxBuilds[0].url);
+                        console.log(kxBuilds[0].vm_type);
+                        if (kxBuilds[0].timestamp !== null) {
+                            document.getElementById(nodeType + "-build-timestamp").innerText = new Date(kxBuilds[0].timestamp).toLocaleDateString() + " " + new Date(kxBuilds[0].timestamp).toLocaleTimeString();
+                        }
+                        if (kxBuilds[0].result !== null) {
+                            if ( kxBuilds[0].result === "ABORTED" ) {
+                                styleColor = '#FF6200';
+                            } else if ( kxBuilds[0].result === "FAILURE" ) {
+                                styleColor = 'red';
+                            } else if ( kxBuilds[0].result === "SUCCESS" ) {
+                                styleColor = '#34eb89';
+                            } else {
+                                styleColor = 'black';
+                            }
+                            document.getElementById(nodeType + "-build-result").innerText = kxBuilds[0].result;
+                            document.getElementById(nodeType + "-build-result").style.color = styleColor;
+                            document.getElementById(nodeType + "-build-number-link").innerHTML = "<a href='" + kxBuilds[0].url + "' target='_blank' rel='noopener noreferrer' style='font-weight: normal;'># " + kxBuilds[0].number + "</a>";
+                        } else {
+                            document.getElementById(nodeType + "-build-result").innerText = "in progress";
+                            document.getElementById(nodeType + "-build-result").style.color = styleColor;
+                            document.getElementById(nodeType + "-build-number-link").innerHTML = "<a href='" + kxBuilds[0].url + "' target='_blank' rel='noopener noreferrer' style='font-weight: normal;'># " + kxBuilds[0].number + "</a>";
+                        }
+                    } else {
+                        console.log('Did not find ' + nodeType + ' builds for profile');
+                        document.getElementById(nodeType + "-build-timestamp").innerText = "not run yet";
+                        document.getElementById(nodeType + "-build-result").innerText = "n/a";
+                        document.getElementById(nodeType + "-build-number-link").innerText = "-";
+                        document.getElementById(nodeType + "-build-result").style.color = 'black';
+                    }
+                })
+           }            
+            
+            function filterBuilds(data) {
+                let tmp = [];
+                let nodeType;
+                console.log("Inside filterBuilds");
+                const builds = data.builds; 
+                console.log(data);
+                console.log(builds);
+                builds.map((e) => {
+                    let obj = {}
+                    obj["estimatedDuration"] = e.estimatedDuration
+                    obj["id"] = e.id
+                    obj["number"] = e.number
+                    obj["result"] = e.result
+                    obj["timestamp"] = e.timestamp
+                    obj["url"] = e.url
+                
+                    e.actions[0].parameters.filter((e) => {
                         
-                    ];
-                    console.log(configDivs);
-                    configDivs.forEach(function(item) {
-                        try {
-                            console.log("Hiding div: " + item);
-                            document.getElementById(item).style.display = "none";
-                        } catch(e) {
-                            console.log("Error hiding div: " + e);
+                        if (e.value === "kx-main") {
+                            nodeType = "kx-main";
+                        } else if (e.value === "kx-node") {
+                            nodeType = "kx-node";
+                        }
+                        
+                        if (e.value === "virtualbox") {
+                            obj["vm_type"] = "virtualbox"
+                            if (nodeType === "kx-main") {
+                                obj["node_type"] = "kx-main"
+                            } else if (nodeType === "kx-node") {
+                                obj["node_type"] = "kx-node"
+                            }
+                            tmp.push(obj)
+                            // return obj
+                        }
+                        else if(e.value === "parallels"){
+                            obj["vm_type"] = "parallels"
+                            if (nodeType === "kx-main") {
+                                obj["node_type"] = "kx-main"
+                            } else if (nodeType === "kx-node") {
+                                obj["node_type"] = "kx-node"
+                            }
+                            tmp.push(obj)
+                            // return obj
+                        }
+                        else if(e.value === "vmware-desktop"){
+                            obj["vm_type"] = "vmware-desktop"
+                            if (nodeType === "kx-main") {
+                                obj["node_type"] = "kx-main"
+                            } else if (nodeType ==="kx-node") {
+                                obj["node_type"] = "kx-node"
+                            }
+                            tmp.push(obj)
+                            // return obj
                         }
                     })
-
+                })
+                console.log(tmp);
+                console.log("above tmp");
+                return tmp
             }
-  
-            function change_panel_selection(config_panel) {
-                
-               console.log("Selected config-panel: " + config_panel);
-               
-               waitForElement(config_panel,function(){
-                    console.log("config-panel content: " + document.getElementById(config_panel));
-                });
-                              
-               waitForElement('config-placeholder',function(){
-                    console.log("config-placeholder children: " + document.getElementById('config-placeholder').checked);
-                });
-               
-               let configPanelDivsInPlaceholderDiv = document.getElementById('config-placeholder').children;
-                
-               for (let i = 0; i < configPanelDivsInPlaceholderDiv.length; i++) {
-                   if ( configPanelDivsInPlaceholderDiv[i].style.display !== "none" ) {
-                        console.log("Visible Divs in Config Placeholder: " + configPanelDivsInPlaceholderDiv[i].id);
-                   }
-               }
-                              
-               const configPanels = [ 
-                   "config-panel-profile-selection",
-                   "config-panel-general-params",
-                   "config-panel-kx-main-config",
-                   "config-panel-kx-worker-config",
-                   "config-panel-storage-config",
-                   "config-panel-template-selection",
-                   "config-panel-system-check",
-                   "config-panel-kx-summary-start"
-               ];
-                
-                let configPanelIcon
-                console.log(configPanels);
-                
-                configPanels.forEach(function(item) {
-                    configPanelIcon = item + "-icon";
-                    if ( item === config_panel ) {
-                        console.log("Item selected: " + item + ", item icon: " + configPanelIcon);
-                        hideParameterDivs();
-                        document.getElementById(item).className = "config-tab-selected";
-                        document.getElementById(configPanelIcon).className = "config-panel-icon svg-purple";
-                        switch (item) {
-                            case "config-panel-profile-selection":
-                                console.log("Inside switch-case for select-profile-div");
-                                moveDivToConfigPanel("select-profile-div");
-                                moveDivToConfigPanel("prerequisites-div");
-                                updateNavigationFooter("", "config-panel-general-params");
-                                break;
-                            case "config-panel-general-params":
-                                moveDivToConfigPanel("general-parameters-div");
-                                moveDivToConfigPanel("standalone-toggle-div");
-                                moveDivToConfigPanel("workloads-on-master-div");
-                                updateNavigationFooter("config-panel-profile-selection", "config-panel-kx-main-config");
-                                break;
-                            case "config-panel-kx-main-config":
-                                moveDivToConfigPanel("headline-main-div");
-                                moveDivToConfigPanel("main-node-count-div");
-                                moveDivToConfigPanel("main-cpu-count-div");
-                                moveDivToConfigPanel("main-memory-div");
-                                updateNavigationFooter("config-panel-general-params", "config-panel-kx-worker-config");
-                                break;
-                            case "config-panel-kx-worker-config":
-                                moveDivToConfigPanel("headline-workers-div");
-                                moveDivToConfigPanel("worker-node-count-div");
-                                moveDivToConfigPanel("worker-cpu-count-div");
-                                moveDivToConfigPanel("worker-memory-div");
-                                updateNavigationFooter("config-panel-kx-main-config", "config-panel-storage-config");
-                                break;
-                            case "config-panel-storage-config":
-                                moveDivToConfigPanel("headline-storage-div");
-                                moveDivToConfigPanel("network-storage-div");
-                                moveDivToConfigPanel("local-storage-div");
-                                updateNavigationFooter("config-panel-kx-worker-config", "config-panel-template-selection");
-                                break;
-                            case "config-panel-template-selection":
-                                moveDivToConfigPanel("templates-div");
-                                updateNavigationFooter("config-panel-storage-config", "config-panel-system-check");
-                                break;
-                            case "config-panel-system-check":
-                                moveDivToConfigPanel("header-system-check-div");
-                                moveDivToConfigPanel("system-check-div");
-                                updateNavigationFooter("config-panel-template-selection", "config-panel-kx-summary-start");
-                                break;
-                            case "config-panel-kx-summary-start":
-                                moveDivToConfigPanel("review-and-launch-div");
-                                updateNavigationFooter("config-panel-system-check", "");
-                                break;
-                        }
-                        
-                    } else {
-                        console.log("Item not selected: " + item + ", item icon: " + configPanelIcon);
-                        document.getElementById(item).className = "config-tab";
-                        document.getElementById(configPanelIcon).className = "config-panel-icon svg-white";
-                    }  
+
+            function filterDataByVmType(jsonData, v) {
+                return jsonData.filter((e) => {
+                    if(e.vm_type === v){
+                        return e
+                    }
+                })
+            }
+                    
+            function filterDataByNodeType(jsonData, v) {
+                return jsonData.filter((e) => {
+                    if(e.node_type === v){
+                        return e
+                    }
                 })
             }
             
-            function removeAllChildNodes(parent) {
-                while (parent.firstChild) {
-                    parent.removeChild(parent.firstChild);
-                }
-            }
-
-            function moveDivToConfigPanel(configDiv) {
-                try {
-                    let currentParent = document.getElementById(configDiv).parentNode.id;
-                    console.log("(1) Current parent for " + configDiv + " is " + currentParent);
-                    let divConfigPanelParent = document.getElementById("config-placeholder");
-                    let divConfigPanelChild = document.getElementById(configDiv);
-                    console.log("Child div: " + divConfigPanelChild.id);
-                    let divChildConfigs = document.querySelectorAll('[id=' + configDiv + ']');
-                    console.log("(2) Div " + configDiv + " is present " + divChildConfigs.length + " times");
-                    if ( divChildConfigs.length <= 1 && currentParent !== "config-placeholder" ) {
-                        console.log("(3) Parent div: " + divConfigPanelParent);
-                        divConfigPanelParent.appendChild(divConfigPanelChild);
-                    } else if ( divChildConfigs.length > 1) {
-                        console.log("Inside divChildConfigs loop");
-                        divChildConfigs.forEach(function(item) {
-                            console.log("Item parent node: " + item.parentNode.id);
-                            if ( item.parentNode.id === 'config-placeholder' ) {
-                                divConfigPanelParent.removeChild(item);
-                            };
-                        });
-                        console.log("3.5");
-                        console.log("(4) Parent div: " + divConfigPanelParent);
-                        currentParent = document.getElementById(configDiv).parentNode.id;
-                        console.log("(5) Current parent for " + configDiv + " is " + currentParent);
-                        divConfigPanelChild = document.getElementById(configDiv);
-                        divConfigPanelParent.appendChild(divConfigPanelChild);
-                        console.log(document.querySelectorAll('[id=' + configDiv + ']'));            
+            function filterDataByResult(jsonData) {
+                return jsonData.filter((e) => {
+                    if(e.result === null){
+                        return e
                     }
+                })
+            }
+            
+            async function stopTriggeredBuild(job, nodeType) {
+                //let job = 'KX.AS.CODE_Image_Builder';    // For debuging only
+                //let nodeType = 'kx-main';    // For debuging only
+                let jenkinsCrumb = getCrumb();
+                getAllJenkinsBuilds(job).then(data => {
+                    const builds = filterBuilds(data);
+                    const filteredBuilds = filterDataByVmType(builds, document.getElementById("profiles").value);
                     
-                    let divConfigNumber = document.querySelectorAll('[id=' + configDiv + ']').length;
-                    console.log("(6) Div " + configDiv + " is present " + divConfigNumber + " times");
+                    const runningBuilds = (() => {
+                      if ( nodeType === null ) {
+                          console.log('nodeType = null. Filtering running jobs from all builds')
+                          return filterDataByResult(filteredBuilds);
+                      } else {
+                          console.log('nodeType = ' + nodeType + '. Filtering running jobs from ' + job + ' builds')
+                         const kxBuilds = filterDataByNodeType(filteredBuilds, nodeType);
+                         return filterDataByResult(kxBuilds);
+
+                      }
+                    })();
                     
-                    let displayType;
-                    if ( configDiv === "system-check-div" || configDiv === "review-and-launch-div" ) {
-                        displayType = "flex";
+                    console.log('runningBuilds.length: ' + runningBuilds.length);
+                    if ( runningBuilds.length > 0 ) {
+                        console.log(runningBuilds[0].url);
+                        let urlToFetch = runningBuilds[0].url + 'stop';
+                        console.log(urlToFetch);
+                        let response = fetch(urlToFetch, {method:'POST', 
+                        headers: {
+                           'Authorization': 'Basic ' + btoa('admin:admin'),
+                           'Jenkins-Crumb': jenkinsCrumb.value
+                        }}).then(data => { console.log(data) })
+                        let responseText = response.text();
+                        console.log(responseText);
+                    }
+                })
+           }
+           
+           async function showConsoleLog(job, nodeType) {
+               //let nodeType = 'kx-main';    // For debuging only
+               //let job = 'KX.AS.CODE_Image_Builder';     // For debuging only
+               let jenkinsCrumb = getCrumb();
+               let consoleLogDiv;
+               if ( nodeType === 'kx-main' ) {
+                    consoleLogDiv = document.getElementById('kxMainBuildConsoleLog');
+                } else if (nodeType === 'kx-node') {
+                    consoleLogDiv = document.getElementById('kxNodeBuildConsoleLog');
+                } else if (nodeType === 'kx-launch') {
+                    consoleLogDiv = document.getElementById('kxLaunchBuildConsoleLog');
+                }
+                consoleLogDiv.innerHTML = "";
+                getAllJenkinsBuilds(job).then(data => {
+                    console.log("nodeType: " + nodeType);
+                    console.log(data);
+                    const kxBuilds = (() => {
+                      const builds = filterBuilds(data);
+                      console.log(data);
+                      console.log("above: data");
+                      console.log(builds);
+                      console.log("above: builds");
+                      const filteredBuilds = filterDataByVmType(builds, document.getElementById("profiles").value);
+                      console.log(filteredBuilds);
+                      console.log("above: filteredBuilds");
+                      console.log(filteredBuilds);
+                      if ( nodeType === "kx-launch" ) {
+                          console.log("Inside const definition kx-launch");  
+                          console.log(filteredBuilds);
+                          return filteredBuilds;
+                      } else {
+                          console.log("Inside const definition not equal to kx-launch");
+                          return filterDataByNodeType(filteredBuilds, nodeType);
+                      }
+                    })();
+                    //const kxBuilds = filterDataByNodeType(filteredBuilds, nodeType);
+                    console.log('kxBuilds.length: ' + kxBuilds.length);
+                    if ( kxBuilds.length > 0 ) {
+                        console.log(kxBuilds[0].url);
+                        let urlToFetch = kxBuilds[0].url + 'consoleText';
+                        console.log(urlToFetch);
+                        fetch(urlToFetch, {method:'GET', 
+                        headers: {
+                           'Authorization': 'Basic ' + btoa('admin:admin'),
+                           'Jenkins-Crumb': jenkinsCrumb.value
+                        }}).then(data => {
+                            data.text().then( consoleLog => { console.log(consoleLog) 
+                                console.log('consoleLog: ');
+                                console.log(consoleLog);
+                                let consoleLine;
+                                let lines = consoleLog.split(/[\\r\\n]+/);
+                                console.log(lines);
+                                let linesToReturn = 18;
+                                let n;
+                                if (lines.length > linesToReturn) {
+                                    n = lines.length - linesToReturn;
+                                } else {
+                                    n = lines.length;
+                                }
+                                for (let line = n; line < lines.length; line++) {
+                                  consoleLine = lines[line] + '<br>';
+                                  consoleLine = consoleLine.replace(/FAILURE/g, '<span style="color: #fc5d4c">FAILURE</span>')
+                                  consoleLine = consoleLine.replace(/ERROR/g, '<span style="color: #fc5d4c">ERROR</span>')
+                                  consoleLogDiv.innerHTML += consoleLine;
+                                  console.log(consoleLine);
+                                }
+                            });
+                        })
                     } else {
-                        displayType = "block";
+                        consoleLogDiv.innerHTML += "<i>No " + nodeType + " build has been run yet for " + document.getElementById("profiles").value + "</i>";
                     }
-                    divConfigPanelChild.style.display = displayType;
-                } catch(e) {
-                   console.log("Error in moveDivToConfigPanel(configDiv) function: " + e);
-                }
+                })
+           }
+           
+           async function openFullConsoleLog(job, nodeType) {
+               getAllJenkinsBuilds(job).then(data => {
+                    const builds = filterBuilds(data);
+                    const filteredBuilds = filterDataByVmType(builds, document.getElementById("profiles").value);
+                    console.log('filteredBuilds: ');
+                    console.log(filteredBuilds);
+                    const kxBuilds = (() => {
+                      const builds = filterBuilds(data);
+                      console.log(data);
+                      console.log("above: data");
+                      console.log(builds);
+                      console.log("above: builds");
+                      const filteredBuilds = filterDataByVmType(builds, document.getElementById("profiles").value);
+                      console.log(filteredBuilds);
+                      console.log("above: filteredBuilds");
+                      console.log(filteredBuilds);
+                      if ( nodeType === "kx-launch" ) {
+                          console.log("Inside const definition kx-launch");  
+                          console.log(filteredBuilds);
+                          return filteredBuilds;
+                      } else {
+                          console.log("Inside const definition not equal to kx-launch");
+                          return filterDataByNodeType(filteredBuilds, nodeType);
+                      }
+                    })();
+                    console.log('kxBuilds.length: ' + kxBuilds.length);
+                    if ( kxBuilds.length > 0 ) {
+                        let urlToOpen = kxBuilds[0].url + 'consoleText';
+                        console.log(urlToOpen);
+                        window.open(urlToOpen, '_blank').focus();
+                    }
+               })
+           }
+           
+           function formatSeconds(seconds)
+           {
+                let numDays = Math.floor((seconds % 31536000) / 86400); 
+                let numHours = Math.floor(((seconds % 31536000) % 86400) / 3600);
+                let numMinutes = Math.floor((((seconds % 31536000) % 86400) % 3600) / 60);
+                let numSeconds = Math.floor((((seconds % 31536000) % 86400) % 3600) % 60);
+                return numDays + " days " + numHours + " hours " + numMinutes + " minutes " + numSeconds + " seconds";
+           }
+                      
+            function getCrumb() {
+                const xhr = new XMLHttpRequest(),
+                method = "GET",
+                url = "http://localhost:8081/crumbIssuer/api/json";
+            
+                xhr.open(method, url, true);
+                xhr.onreadystatechange = function () {
+                  // In local files, status is 0 upon success in Mozilla Firefox
+                  if(xhr.readyState === XMLHttpRequest.DONE) {
+                    let status = xhr.status;
+                    if (status === 0 || (status >= 200 && status < 400)) {
+                      // The request has been completed successfully
+                      console.log(xhr.responseText);
+                      let crumb = JSON.parse(xhr.responseText).crumb;
+                      console.log(crumb);
+                    } else {
+                      // Oh no! There has been an error with the request!
+                    }
+                  }
+                };
+                xhr.send();
+                return crumb;
             }
             
-            function updateNavigationFooter(previous, next) {
+            async function getAllJenkinsBuilds(job) {
+                let jenkinsCrumb = getCrumb();
+                console.log("Jenkins Crumb received = " + jenkinsCrumb.value);
+                let fetchUrl = 'http://localhost:8081/job/Actions/job/' + job + '/api/json?tree=builds[number,status,timestamp,id,result,url,estimatedDuration,actions[parameters[name,value]]]'
+                let response = await fetch(fetchUrl, {method:'GET', 
+                headers: {
+                   'Authorization': 'Basic ' + btoa('admin:admin'),
+                   'Jenkins-Crumb': jenkinsCrumb.value
+                }});
                 
-                console.log("Inside updateNavigationFooter(previous, next). Received params: " + previous + ", " + next);
-                let chevronsToShow;
+                if (!response.ok) {
+                    const message = 'An error has occurred fetching JSON from Jenkins: ' + response.status;
+                    throw new Error(message);
+                }
 
-                document.getElementById('config-panel-footer-left-nav-div').setAttribute( "onClick", "change_panel_selection('" + previous +"')" );
-                document.getElementById('config-panel-footer-right-nav-div').setAttribute( "onClick", "change_panel_selection('" + next + "')" );
-                                    
-                if ( previous === '') {
-                    chevronsToShow = "right-only";
-                    console.log("Inside right-only");
-                } else if ( next === '') {
-                    chevronsToShow = "left-only";
-                    console.log("Inside left-only");
-                }  else {
-                    chevronsToShow = "both";
-                    console.log("Inside both");
-                }
-                          
-                if ( chevronsToShow === "both" ) {
-                    document.getElementById("config-panel-footer-left-nav-div").style.display = "block";
-                    document.getElementById("config-panel-footer-right-nav-div").style.display = "block";
-                    document.getElementById("config-navigator-footer").style.justifyContent = "space-between";
-                } else if ( chevronsToShow === "left-only" ) {
-                    document.getElementById("config-panel-footer-left-nav-div").style.display = "block";
-                    document.getElementById("config-panel-footer-right-nav-div").style.display = "none";
-                    document.getElementById("config-navigator-footer").style.justifyContent = "flex-start";
-                } else { 
-                    document.getElementById("config-panel-footer-left-nav-div").style.display = "none";
-                    document.getElementById("config-panel-footer-right-nav-div").style.display = "block";
-                    document.getElementById("config-navigator-footer").style.justifyContent = "flex-end";
-                }
-                               
-
+                return response.json();
             }
+ 
+            getAllJenkinsBuilds().catch(error => {
+                error.message;
+            });
             
-            function waitForElement(elementId, callBack){
-              window.setTimeout(function(){
-                let element = document.getElementById(elementId);
-                if(element){
-                  callBack(elementId, element);
-                }else{
-                  waitForElement(elementId, callBack);
-                }
-              },500)
-            }
-            
-            function loadFirstConfigPanel() {
-                waitForElement('select-profile-div',function(){
-                    change_panel_selection('config-panel-profile-selection');
-                });
-            }
             
         </script>
     </head>
@@ -1146,5 +1324,5 @@ try {
     """
     return HTML
 } catch (e) {
-    println "Something went wrong in the HTML return block (header): ${e}"
+    println "Something went wrong in the HTML return block (header.groovy): ${e}"
 }

@@ -3,6 +3,8 @@ import groovy.json.JsonSlurper
 def extendedDescription
 def parsedJson
 
+def STANDALONE_MODE
+
 int workerNodeCountMinWarning = 0 // Set to 0 to disable the minimum warning
 int workerNodeValueDisplayConversion = 1 // Set to 1 for no conversion (eg. from MB to GB)
 def workerNodeCountRangeUnit = "#"
@@ -23,7 +25,16 @@ try {
     def inputFile = new File(jsonFilePath)
     parsedJson = new JsonSlurper().parse(inputFile)
 } catch(e) {
-    println "Something went wrong in the GROOVY block (config_vm_properties_worker_node_count): ${e}"
+    println "Something went wrong in the GROOVY block (properties_worker_node.groovy): ${e}"
+}
+
+try {
+    if (GENERAL_PARAMETERS) {
+        generalParameterElements = GENERAL_PARAMETERS.split(';')
+        STANDALONE_MODE = generalParameterElements[4]
+    }
+} catch(e) {
+    println("Something went wrong in the GROOVY block (properties_worker_node.groovy): ${e}")
 }
 
 try {
@@ -35,6 +46,7 @@ try {
         workerNodeCountMax = 16
         workerNodeCountStep = 1
         workerNodeCountStartValue = worker_node_count.toInteger()
+        println("properties_worker_node.groovy -> workerNodeCountStartValue: ${workerNodeCountStartValue} (Standalone Mode: FALSE)")
 
         workerNodeCountOpacity = "0.7"
         workerNodeCountCursor = "pointer"
@@ -45,14 +57,14 @@ try {
         workerNodeCountMax = 1
         workerNodeCountStep = 1
         workerNodeCountStartValue = 1
-
+        println("properties_worker_node.groovy -> workerNodeCountStartValue: ${workerNodeCountStartValue} (Standalone Mode: TRUE)")
         workerNodeCountOpacity = "0.1"
         workerNodeCountCursor = "not-allowed"
 
     }
 
 } catch(e) {
-    println "Something went wrong in the GROOVY block (config_vm_properties_worker_node_count): ${e}"
+    println "Something went wrong in the GROOVY block (properties_worker_node.groovy): ${e}"
 }
 
 def worker_node_cpu_cores
@@ -62,7 +74,7 @@ try {
     println("Profile: " + PROFILE)
     println("CPU Cores read: " + worker_node_cpu_cores)
 } catch(e) {
-    println "Something went wrong in the GROOVY block (config_vm_properties_worker_node_cpu_cores): ${e}"
+    println "Something went wrong in the GROOVY block (properties_worker_node.groovy): ${e}"
 }
 
 int workerNodeCpuCoresMin = 1
@@ -79,7 +91,7 @@ def workerNodeCpuCoresParamShortTitle = "CPU Cores"
 try {
     extendedDescription = "KX-Worker nodes are optional. On a local machine with lower amount of resources (equal to or below 16GB ram), a singe node standalone KX.AS.CODE deployment is advisable. In this case, just set the number of KX-Workers to 0. The 'allow workloads on master' toggle must be set to on in this case, else it will not be possible to deploy any workloads beyond the core tools and services. For VM hosts with higher available resources >16GB ram, feel free to install a full blown cluster and add some worker nodes!"
 } catch(e) {
-    println "Something went wrong in the GROOVY block (headlineKxMain): ${e}"
+    println "Something went wrong in the GROOVY block (properties_worker_node.groovy): ${e}"
 }
 
 def worker_node_memory
@@ -87,7 +99,7 @@ def worker_node_memory
 try {
     worker_node_memory = parsedJson.config.vm_properties.worker_node_memory
 } catch(e) {
-    println "Something went wrong in the GROOVY block (config_vm_properties_worker_node_memory): ${e}"
+    println "Something went wrong in the GROOVY block (properties_worker_node.groovy): ${e}"
 }
 
 int workerNodeMemoryMin = 4096
@@ -125,7 +137,7 @@ try {
         </div>
     </div>
     <style scoped="scoped" onload="show_value(&quot;${workerNodeCountStartValue}&quot;, &quot;counter_value_worker_node_count_previous_value&quot;, &quot;counter_value_worker_node_count&quot;, &quot;counter_value_worker_node_count_value&quot;, &quot;counter_value_worker_node_count_warning_icon&quot;, &quot;${workerNodeCountMinWarning}&quot;, &quot;${workerNodeValueDisplayConversion}&quot;, &quot;${workerNodeCountRangeUnit}&quot;);">   </style>
-    <input type="hidden" id="counter_value_worker_node_count" name="value" value="${workerNodeCountStartValue}">
+    <input type="hidden" id="counter_value_worker_node_count" name="counter_value_worker_node_count" value="${workerNodeCountStartValue}">
     <input type="hidden" id="counter_value_worker_node_count_previous_value" name="counter_value_worker_node_count_previous_value" value="">
 
 
@@ -139,7 +151,7 @@ try {
                    max="${workerNodeCpuCoresMax}"
                    step="${workerNodeCpuCoresStep}"
                    value="${workerNodeCpuCoresStartValue}"
-                   name="value"
+                   name="slider_value_worker_node_cpu_cores"
                    class="slider"
                    id="slider_value_worker_node_cpu_cores"  onchange="show_value(this.value, &quot;slider_value_worker_node_cpu_cores_previous_value&quot;, &quot;slider_value_worker_node_cpu_cores&quot;, &quot;slider_value_worker_node_cpu_cores_value&quot;, &quot;slider_value_worker_node_cpu_cores_warning_icon&quot;, &quot;${workerNodeCpuCoresMinWarning}&quot;, &quot;${cpuCoresValueDisplayConversion}&quot;, &quot;${cpuCoresRangeUnit}&quot;);"
                    onmouseleave="show_value(this.value, &quot;slider_value_worker_node_cpu_cores_previous_value&quot;, &quot;slider_value_worker_node_cpu_cores&quot;, &quot;slider_value_worker_node_cpu_cores_value&quot;, &quot;slider_value_worker_node_cpu_cores_warning_icon&quot;, &quot;${workerNodeCpuCoresMinWarning}&quot;, &quot;${cpuCoresValueDisplayConversion}&quot;, &quot;${cpuCoresRangeUnit}&quot;);" onmousemove="update_display_value(this.value, &quot;slider_value_worker_node_cpu_cores_value&quot;, &quot;${cpuCoresValueDisplayConversion}&quot;, &quot;${cpuCoresRangeUnit}&quot;);">
@@ -165,7 +177,7 @@ try {
                    max="${workerNodeMemoryMax}"
                    step="${workerNodeMemoryStep}"
                    value="${workerNodeMemoryStartValue}"
-                   name="value"
+                   name="slider_value_worker_node_memory"
                    class="slider"
                    id="slider_value_worker_node_memory"  onchange="show_value(this.value, &quot;slider_value_worker_node_memory_previous_value&quot;, &quot;slider_value_worker_node_memory&quot;, &quot;slider_value_worker_node_memory_value&quot;, &quot;slider_value_worker_node_memory_warning_icon&quot;, &quot;${workerNodeMemoryMinWarning}&quot;, &quot;${memoryValueDisplayConversion}&quot;, &quot;${memoryRangeUnit}&quot;);"
                    onmouseleave="show_value(this.value, &quot;slider_value_worker_node_memory_previous_value&quot;, &quot;slider_value_worker_node_memory&quot;, &quot;slider_value_worker_node_memory_value&quot;, &quot;slider_value_worker_node_memory_warning_icon&quot;, &quot;${workerNodeMemoryMinWarning}&quot;, &quot;${memoryValueDisplayConversion}&quot;, &quot;${memoryRangeUnit}&quot;);" onmousemove="update_display_value(this.value, &quot;slider_value_worker_node_memory_value&quot;, &quot;${memoryValueDisplayConversion}&quot;, &quot;${memoryRangeUnit}&quot;);">
@@ -179,9 +191,10 @@ try {
     </div>
     <style scoped="scoped" onload="show_value(&quot;${workerNodeMemoryStartValue}&quot;, &quot;slider_value_worker_node_memory_previous_value&quot;, &quot;slider_value_worker_node_memory&quot;, &quot;slider_value_worker_node_memory_value&quot;, &quot;slider_value_worker_node_memory_warning_icon&quot;, &quot;${workerNodeMemoryMinWarning}&quot;, &quot;${memoryValueDisplayConversion}&quot;, &quot;${memoryRangeUnit}&quot;);">   </style>
     <input type="hidden" id="slider_value_worker_node_memory_previous_value" name="slider_value_worker_node_memory_previous_value" value="" >
+    <input type="hidden" id="concatenated_value_worker_node_config" name="value" value="" >
     
     """
     return HTML
 } catch (e) {
-    println "Something went wrong in the HTML return block (headlineKxMain): ${e}"
+    println "Something went wrong in the HTML return block (properties_worker_node.groovy): ${e}"
 }

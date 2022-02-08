@@ -6,7 +6,7 @@ def extendedDescription
 try {
     extendedDescription = "The charts below show how the selections you made above fit in line with the resources available on your system. If any of the charts are red, you should look to make corrections above. For the storage parameters, this is not critical, as the volumes are thinly provisioned anyway, so an overallocation is not a problem, as long as you don't intend to use the full space."
 } catch(e) {
-    println "Something went wrong in the GROOVY block (headlineSystemCheck): ${e}"
+    println "Something went wrong in the GROOVY block (check_host_system.groovy): ${e}"
 }
 
 long freePhysicalMemorySize
@@ -17,7 +17,6 @@ long totalSystemDisk
 long freeSystemDisk
 long usableSystemDisk
 
-int networkStorageSize
 int kxMainMemory
 int kxMainNumber
 int kxMainCpuCores
@@ -49,10 +48,6 @@ def inputFile = new File(jsonFilePath)
 
 def ALLOW_WORKLOADS_ON_KUBERNETES_MASTER
 
-def STORAGE_PARAMETERS_ARRAY = STORAGE_PARAMETERS.split(',')
-def LOCAL_STORAGE_OPTIONS = STORAGE_PARAMETERS_ARRAY[0]
-def NETWORK_STORAGE_OPTIONS = STORAGE_PARAMETERS_ARRAY[1]
-
 try {
 
     parsedJson = new JsonSlurper().parse(inputFile)
@@ -77,21 +72,24 @@ try {
     int number10GbVolumes
     int number30GbVolumes
     int number50GbVolumes
+    int networkStorageVolume
 
-    if ( LOCAL_STORAGE_OPTIONS ) {
-        def localVolumeParameterElements = LOCAL_STORAGE_OPTIONS.split(';')
-        println("localVolumeParameterElements: ${localVolumeParameterElements}")
-        number1GbVolumes = localVolumeParameterElements[0].toInteger()
-        number5GbVolumes = localVolumeParameterElements[1].toInteger()
-        number10GbVolumes = localVolumeParameterElements[2].toInteger()
-        number30GbVolumes = localVolumeParameterElements[3].toInteger()
-        number50GbVolumes = localVolumeParameterElements[4].toInteger()
+    if ( STORAGE_PARAMETERS ) {
+        def storageParameterElements = STORAGE_PARAMETERS.split(';')
+        println("storageParameterElements: ${storageParameterElements} (check_host_system.groovy)")
+        number1GbVolumes = storageParameterElements[0].toInteger()
+        number5GbVolumes = storageParameterElements[1].toInteger()
+        number10GbVolumes = storageParameterElements[2].toInteger()
+        number30GbVolumes = storageParameterElements[3].toInteger()
+        number50GbVolumes = storageParameterElements[4].toInteger()
+        networkStorageVolume = storageParameterElements[5].toInteger()
     } else {
         number1GbVolumes = parsedJson.config.local_volumes.one_gb
         number5GbVolumes = parsedJson.config.local_volumes.five_gb
         number10GbVolumes = parsedJson.config.local_volumes.ten_gb
         number30GbVolumes = parsedJson.config.local_volumes.thirty_gb
         number50GbVolumes = parsedJson.config.local_volumes.fifty_gb
+        networkStorageVolume = parsedJson.config.glusterFsDiskSize
     }
 
     println("number1GbVolumes ${number1GbVolumes}")
@@ -99,29 +97,67 @@ try {
     println("number10GbVolumes ${number10GbVolumes}")
     println("number30GbVolumes ${number30GbVolumes}")
     println("number50GbVolumes ${number50GbVolumes}")
+    println("networkStorageVolume ${networkStorageVolume}")
 
     int totalLocalDiskSpace = totalSystemDisk.toInteger()
     int remainingDiskSpace = freeSystemDisk.toInteger()
     int totalLocalStorageRequired
 
-    println("DEBUG --> 1")
+    println("DEBUG --> 1 (check_host_system.groovy)")
 
-    if ( NETWORK_STORAGE_OPTIONS ) {
-        networkStorageSize = NETWORK_STORAGE_OPTIONS.toInteger()
+    if ( GENERAL_PARAMETERS ) {
+        generalParameterElements = GENERAL_PARAMETERS.split(';')
+        BASE_DOMAIN = generalParameterElements[0]
+        ENVIRONMENT_PREFIX = generalParameterElements[1]
+        BASE_USER = generalParameterElements[2]
+        BASE_PASSWORD = generalParameterElements[3]
+        STANDALONE_MODE = generalParameterElements[4]
+        ALLOW_WORKLOADS_ON_KUBERNETES_MASTER = generalParameterElements[5]
     } else {
-        networkStorageSize = parsedJson.config.glusterFsDiskSize
+        BASE_DOMAIN = parsedJson.config.baseDomain
+        ENVIRONMENT_PREFIX = parsedJson.config.environmentPrefix
+        BASE_USER = parsedJson.config.baseUser
+        BASE_PASSWORD = parsedJson.config.basePassword
+        STANDALONE_MODE = parsedJson.config.standaloneMode
+        ALLOW_WORKLOADS_ON_KUBERNETES_MASTER = parsedJson.config.allowWorkloadsOnMaster
     }
-    overallStorageRequired = totalLocalStorageRequired + networkStorageSize
+
+    if (ALLOW_WORKLOADS_ON_KUBERNETES_MASTER == "true") {
+        println("DEBUG --> 1.4.1 (check_host_system.groovy)")
+        totalLocalStorageRequired = (number1GbVolumes + (number5GbVolumes * 5) + (number10GbVolumes * 10) + (number30GbVolumes * 30) + (number50GbVolumes * 50)) * (kxMainNumber + kxWorkerNumber)
+    } else {
+        println("DEBUG --> 1.4.2 (check_host_system.groovy)")
+        totalLocalStorageRequired = (number1GbVolumes + (number5GbVolumes * 5) + (number10GbVolumes * 10) + (number30GbVolumes * 30) + (number50GbVolumes * 50)) * kxWorkerNumber
+    }
+    println("DEBUG --> 1.5 (check_host_system.groovy)")
+
+    overallStorageRequired = totalLocalStorageRequired + networkStorageVolume
 
     overallStorageNeededPercentage = (overallStorageRequired / remainingDiskSpace) * 100
     overallRemainingPercentage = 100 - overallStorageNeededPercentage
 
     int slaveTotalMemory = totalPhysicalMemorySize.toInteger()
     int slaveFreeMemory = freePhysicalMemorySize.toInteger()
-    println("DEBUG --> 2")
+    println("DEBUG --> 2 (check_host_system.groovy)")
     int usedMemory = slaveTotalMemory - slaveFreeMemory
-    int usedMemoryPercentage = (usedMemory / slaveTotalMemory) * 100
-    int freeMemoryPercentage = (slaveFreeMemory / slaveTotalMemory) * 100
+    //int usedMemoryPercentage = (usedMemory / slaveTotalMemory) * 100
+    //int freeMemoryPercentage = (slaveFreeMemory / slaveTotalMemory) * 100
+
+    println("KX_MAIN_NODES_CONFIG: ${KX_MAIN_NODES_CONFIG} (check_host_system.groovy)")
+    if ( KX_MAIN_NODES_CONFIG ) {
+        kxMainNodesConfigArray = KX_MAIN_NODES_CONFIG.split(';')
+        NUMBER_OF_KX_MAIN_NODES = kxMainNodesConfigArray[0]
+        KX_MAIN_ADMIN_CPU_CORES = kxMainNodesConfigArray[1]
+        KX_MAIN_ADMIN_MEMORY = kxMainNodesConfigArray[2]
+    }
+
+    println("KX_WORKER_NODES_CONFIG: ${KX_WORKER_NODES_CONFIG} (check_host_system.groovy)")
+    if ( KX_WORKER_NODES_CONFIG ) {
+        kxWorkerNodesConfigArray = KX_WORKER_NODES_CONFIG.split(';')
+        NUMBER_OF_KX_WORKER_NODES = kxWorkerNodesConfigArray[0]
+        KX_WORKER_NODES_CPU_CORES = kxWorkerNodesConfigArray[1]
+        KX_WORKER_NODES_MEMORY = kxWorkerNodesConfigArray[2]
+    }
 
     if ( KX_MAIN_ADMIN_MEMORY ) {
         kxMainMemory = KX_MAIN_ADMIN_MEMORY.toInteger()
@@ -162,37 +198,19 @@ try {
         kxWorkerCpuCores = parsedJson.config.vm_properties.worker_node_cpu_cores
     }
 
-    if (STANDALONE_MODE) {
-        def triggers = STANDALONE_MODE.split(',')
-        STANDALONE_MODE = triggers[0]
-        ALLOW_WORKLOADS_ON_KUBERNETES_MASTER = triggers[1]
-    } else {
-        STANDALONE_MODE = parsedJson.config.standaloneMode
-        ALLOW_WORKLOADS_ON_KUBERNETES_MASTER = parsedJson.config.allowWorkloadsOnMaster
-    }
-
-    if (ALLOW_WORKLOADS_ON_KUBERNETES_MASTER == "true") {
-        println("DEBUG --> 1.4.1")
-        totalLocalStorageRequired = (number1GbVolumes + (number5GbVolumes * 5) + (number10GbVolumes * 10) + (number30GbVolumes * 30) + (number50GbVolumes * 50)) * (kxMainNumber + kxWorkerNumber)
-    } else {
-        println("DEBUG --> 1.4.2")
-        totalLocalStorageRequired = (number1GbVolumes + (number5GbVolumes * 5) + (number10GbVolumes * 10) + (number30GbVolumes * 30) + (number50GbVolumes * 50)) * kxWorkerNumber
-    }
-    println("DEBUG --> 1.5")
-
     NUMBER_OF_KX_WORKER_NODES = NUMBER_OF_KX_WORKER_NODES ?: "0"
     KX_WORKER_NODES_MEMORY = KX_WORKER_NODES_MEMORY ?: "0"
     KX_WORKER_NODES_CPU_CORES = KX_WORKER_NODES_CPU_CORES ?: "0"
 
-    println("NUMBER_OF_KX_MAIN_NODES: ${NUMBER_OF_KX_MAIN_NODES}")
-    println("NUMBER_OF_KX_WORKER_NODES: ${NUMBER_OF_KX_WORKER_NODES}")
-    println("KX_WORKER_NODES_MEMORY: ${KX_WORKER_NODES_MEMORY}")
-    println("KX_WORKER_NODES_CPU_CORES: ${KX_WORKER_NODES_CPU_CORES}")
+    println("NUMBER_OF_KX_MAIN_NODES (check_host_system.groovy): ${NUMBER_OF_KX_MAIN_NODES}")
+    println("NUMBER_OF_KX_WORKER_NODES (check_host_system.groovy): ${NUMBER_OF_KX_WORKER_NODES}")
+    println("KX_WORKER_NODES_MEMORY (check_host_system.groovy): ${KX_WORKER_NODES_MEMORY}")
+    println("KX_WORKER_NODES_CPU_CORES (check_host_system.groovy): ${KX_WORKER_NODES_CPU_CORES}")
 
     int totalNeededWorkerNodeMemory = kxWorkerMemory * kxWorkerNumber
     int totalNeededWorkerNodeCpuCores = kxWorkerCpuCores * kxWorkerNumber
 
-    println("DEBUG --> 3")
+    println("DEBUG --> 3 (check_host_system.groovy)")
 
     overallTotalNeededMemory = totalNeededMainNodeMemory + totalNeededWorkerNodeMemory
     overallTotalNeededCpuCores = totalNeededMainNodeCpuCores + totalNeededWorkerNodeCpuCores
@@ -228,7 +246,7 @@ try {
     }
 
 } catch(e) {
-    println "Something went wrong in the GROOVY block (check_host_system): ${e}"
+    println "Something went wrong in the GROOVY block (check_host_system.groovy): ${e}"
 }
 
 try {
@@ -302,5 +320,5 @@ try {
     """
     return HTML
 } catch (e) {
-    println "Something went wrong in the HTML return block (check_host_system): ${e}"
+    println "Something went wrong in the HTML return block (check_host_system.groovy): ${e}"
 }
