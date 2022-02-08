@@ -19,6 +19,26 @@ pipeline {
         }
     }
 
+    parameters {
+        string(name: 'vagrant_ssh_username', defaultValue: '', description: '')
+        string(name: 'git_source_branch', defaultValue: '', description: '')
+        string(name: 'kx_vm_user', defaultValue: '', description: '')
+        string(name: 'kx_vm_password', defaultValue: '', description: '')
+        string(name: 'git_source_url', defaultValue: '', description: '')
+        string(name: 'git_repo_url', defaultValue: '', description: '')
+        string(name: 'git_techradar_url', defaultValue: '', description: '')
+        string(name: 'vagrant_compute_engine_build', defaultValue: '', description: '')
+        string(name: 'git_docs_branch', defaultValue: '', description: '')
+        string(name: 'git_techradar_branch', defaultValue: '', description: '')
+        string(name: 'kx_version_override', defaultValue: '', description: '')
+        string(name: 'kx_domain', defaultValue: '', description: '')
+        string(name: 'kx_main_hostname', defaultValue: '', description: '')
+        string(name: 'shared_workspace', defaultValue: '', description: '')
+        string(name: 'profile', defaultValue: '', description: '')
+        string(name: 'profile_path', defaultValue: '', description: '')
+        string(name: 'node_type', defaultValue: '', description: '')
+    }
+
     options {
         ansiColor('xterm')
         skipDefaultCheckout()

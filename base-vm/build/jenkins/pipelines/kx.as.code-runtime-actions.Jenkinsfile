@@ -20,6 +20,18 @@ pipeline {
         }
     }
 
+    parameters {
+        string(name: 'git_source_branch', defaultValue: '', description: '')
+        string(name: 'git_source_url', defaultValue: '', description: '')
+        string(name: 'shared_workspace', defaultValue: '', description: '')
+        string(name: 'kx_main_box_location', defaultValue: '', description: '')
+        string(name: 'kx_node_box_location', defaultValue: '', description: '')
+        string(name: 'dockerhub_email', defaultValue: '', description: '')
+        string(name: 'profile', defaultValue: '', description: '')
+        string(name: 'profile_path', defaultValue: '', description: '')
+        string(name: 'vagrant_action', defaultValue: '', description: '')
+    }
+
     options {
         ansiColor('xterm')
         skipDefaultCheckout()
