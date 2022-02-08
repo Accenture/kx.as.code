@@ -25,7 +25,7 @@ pipeline {
         string(name: 'kx_vm_user', defaultValue: '', description: '')
         string(name: 'kx_vm_password', defaultValue: '', description: '')
         string(name: 'git_source_url', defaultValue: '', description: '')
-        string(name: 'git_repo_url', defaultValue: '', description: '')
+        string(name: 'git_docs_url', defaultValue: '', description: '')
         string(name: 'git_techradar_url', defaultValue: '', description: '')
         string(name: 'vagrant_compute_engine_build', defaultValue: '', description: '')
         string(name: 'git_docs_branch', defaultValue: '', description: '')
