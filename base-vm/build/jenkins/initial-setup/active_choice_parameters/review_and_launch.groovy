@@ -11,10 +11,10 @@ try {
     // language=HTML
     def HTML = """
     <head>
-        <script> 
+        <script>
         </script>
         <style>
-        
+
             .table {
                 display:table;
             }
@@ -32,7 +32,7 @@ try {
             .cell {
                 display:table-cell;
             }
-            
+
             .cell-label {
                 background-color: #0a53be;
                 color: white;
@@ -45,7 +45,7 @@ try {
                 padding-top: 5px;
                 padding-bottom: 5px;
             }
-            
+
             .cell-value {
                 background-color: white;
                 width: 140px;
@@ -60,21 +60,21 @@ try {
                 border-bottom-right-radius: 5px;
                 border-top-right-radius: 5px;
             }
-        
+
             .flex-wrapper {
                 flex-flow: row wrap;
                 justify-content: space-between;
                 flex-wrap: wrap;
                 /*background-color: green;*/
             }
-            
+
             .flex-item {
                 display: block;
                 width: 46%;
                 /*background-color: orange;*/
                 height: 160px;
             }
-            
+
         .launch-action-text-label {
             width: 160px;
             height: 30px;
@@ -86,10 +86,10 @@ try {
             display: inline-block;
             vertical-align: middle;
         }
-            
+
         </style>
         <script>
-        
+
         function populateReviewTable() {
             console.log("Inside populateReviewTable()");
             document.getElementById("summary-profile-value").innerText = document.getElementById("profiles").value;
@@ -104,31 +104,23 @@ try {
             document.getElementById("summary-worker-nodes-cpu-cores-value").innerText = document.getElementById("slider_value_worker_node_cpu_cores_value").innerText;
             document.getElementById("summary-worker-nodes-memory-value").innerText = document.getElementById("slider_value_worker_node_memory_value").innerText;
         }
-        
+
         async function performRuntimeAction(vagrantAction) {
-            console.log("vagrant action: " + vagrantAction);    
-            
+            console.log("vagrant action: " + vagrantAction);
+
             let jenkinsCrumb = getCrumb();
             console.log("Jenkins Crumb received = " + jenkinsCrumb.value);
-            
+
             let formData = new FormData();
-            formData.append('vagrant_ssh_username', 'vagrant');
-            formData.append('git_source_branch', 'feature/jenkins-workspace-restructure');
-            formData.append('shared_workspace', 'C:/Git/kx.as.code_test/base-vm/build/jenkins/jenkins_shared_workspace/kx.as.code');
-            formData.append('kx_vm_user', document.getElementById('general-param-username').value);
-            formData.append('kx_vm_password', document.getElementById('general-param-password').value);
-            formData.append('git_source_url', 'https://github.com/Accenture/kx.as.code.git');
-            formData.append('git_docs_url', 'https://github.com/Accenture/kx.as.code-docs.git');
-            formData.append('git_techradar_url', 'https://github.com/Accenture/kx.as.code-techradar.git');
-            formData.append('vagrant_compute_engine_build', 'false');
-            formData.append('git_docs_branch', 'main');
-            formData.append('git_techradar_branch', 'main');
+
+            formData.append('kx_main_box_location', '');
+            formData.append('kx_node_box_location', '');
             formData.append('kx_version_override', '');
-            formData.append('kx_domain', document.getElementById('general-param-base-domain').value);
+            formData.append('dockerhub_email', '');
             formData.append('profile', document.getElementById('profiles').value);
             formData.append('profile_path', document.getElementById('selected-profile-path').value);
             formData.append('vagrant_action', vagrantAction);
-              
+
             const config = {
                 method: 'POST',
                 headers: {
@@ -137,12 +129,12 @@ try {
                 },
                 body: formData
             }
-                
+
             let response = await fetch('http://localhost:8081/job/Actions/job/KX.AS.CODE_Runtime_Actions/buildWithParameters', config);
             let data = await response.text();
             console.log(data);
         }
-        
+
         </script>
     </head>
     <body>
@@ -181,7 +173,7 @@ try {
                     <div class="cell cell-label">Number of KX-Main Nodes</div>
                     <div class="cell cell-value" id="summary-main-nodes-number-value">3</div>
                 </div>
-                <div class="row">   
+                <div class="row">
                     <div class="cell cell-label">Total KX-Main CPU Cores Required</div>
                     <div class="cell cell-value" id="summary-main-nodes-cpu-cores-value">8</div>
                 </div>
@@ -189,10 +181,10 @@ try {
                     <div class="cell cell-label">Total KX-Main Memory Required</div>
                     <div class="cell cell-value" id="summary-main-nodes-memory-value">16GB</div>
                 </div>
-            </div>    
-        </div>  
+            </div>
+        </div>
         <div class="flex-item">
-            <div class="table">      
+            <div class="table">
                 <div class="row">
                     <div class="cell cell-label">Number of KX-Worker Nodes</div>
                     <div class="cell cell-value" id="summary-worker-nodes-number-value">4</div>
@@ -209,7 +201,7 @@ try {
         </div>
     </div>
     </body>
-    
+
         <div id="profile-launch-div" style="display: none;">
             <h2>Image Launch for Profile</h2>
             <div style="vertical-align: middle; display: inline-block;">
@@ -230,9 +222,9 @@ try {
         <!--<style scoped="scoped" onload="getLaunchJobListForProfile('kx-main'); getLaunchJobListForProfile('kx-node');">   </style>-->
         <!--<style scoped="scoped" onload="getLaunchJobListForProfile(); getLaunchJobListForProfile();">   </style>-->
     </div>
-    
+
     <style scoped="scoped" onload="populateReviewTable(); getBuildJobListForProfile('KX.AS.CODE_Runtime_Actions', 'kx-launch');">   </style>
-    
+
     """
     return HTML
 } catch (e) {
