@@ -58,7 +58,7 @@ pipeline {
                     else
                         export additional_options=""
                     fi
-                    vagrant ${vagrant_action} --no-tty ${additional_options}
+                    vagrant ${vagrant_action} --no-tty \${additional_options}
                     VBoxManage list vms
                     """
                 }
