@@ -71,9 +71,21 @@
           <default>
             <comparator class="hudson.util.CaseInsensitiveComparator" reference="../../../../../../views/com.smartcodeltd.jenkinsci.plugins.buildmonitor.BuildMonitorView/jobNames/comparator"/>
           </default>
-          <int>8</int>
+          <int>16</int>
           <string>BLUE</string>
           <string>\033[34m</string>
+          <string>git_docs_branch</string>
+          <string>{{git_docs_branch}}</string>
+          <string>git_docs_url</string>
+          <string>{{git_docs_url}}</string>
+          <string>git_source_branch</string>
+          <string>{{git_source_branch}}</string>
+          <string>git_source_url</string>
+          <string>{{git_source_url}}</string>
+          <string>git_techradar_branch</string>
+          <string>{{git_techradar_branch}}</string>
+          <string>git_techradar_url</string>
+          <string>{{git_techradar_url}}</string>
           <string>GREEN</string>
           <string>\033[32m</string>
           <string>JQ_DARWIN_DOWNLOAD_URL</string>
@@ -88,6 +100,10 @@
           <string>\033[33m</string>
           <string>RED</string>
           <string>\033[31m</string>
+          <string>shared_workspace</string>
+          <string>{{shared_workspace_directory_path}}</string>
+          <string>vagrant_ssh_username</string>
+          <string>{{vagrant_ssh_username}}</string>
         </tree-map>
       </envVars>
     </hudson.slaves.EnvironmentVariablesNodeProperty>

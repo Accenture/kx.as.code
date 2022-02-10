@@ -9,9 +9,6 @@
       </jobProperties>
       <triggers/>
         <parameters>
-            <string>git_source_branch</string>
-            <string>git_source_url</string>
-            <string>shared_workspace</string>
             <string>kx_main_box_location</string>
             <string>kx_node_box_location</string>
             <string>dockerhub_email</string>
@@ -44,24 +41,6 @@
     </com.sonyericsson.rebuild.RebuildSettings>
       <hudson.model.ParametersDefinitionProperty>
           <parameterDefinitions>
-              <hudson.model.StringParameterDefinition>
-                  <name>git_source_url</name>
-                  <description>Source Git repository</description>
-                  <defaultValue>{{git_source_url}}</defaultValue>
-                  <trim>false</trim>
-              </hudson.model.StringParameterDefinition>
-              <hudson.model.StringParameterDefinition>
-                  <name>git_source_branch</name>
-                  <description>Source Github branch to deploy from and clone inside VM</description>
-                  <defaultValue>{{git_source_branch}}</defaultValue>
-                  <trim>false</trim>
-              </hudson.model.StringParameterDefinition>
-              <hudson.model.StringParameterDefinition>
-                  <name>shared_workspace</name>
-                  <description>Shared workspace for the KX.AS.CODE jobs</description>
-                  <defaultValue>{{shared_workspace_directory_path}}</defaultValue>
-                  <trim>false</trim>
-              </hudson.model.StringParameterDefinition>
               <hudson.model.StringParameterDefinition>
                   <name>kx_main_box_location</name>
                   <description>Location of built Vagrant box for KX.AS.CODE Main Node</description>

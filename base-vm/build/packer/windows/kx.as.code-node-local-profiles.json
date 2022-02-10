@@ -8,7 +8,7 @@
     {
       "type": "virtualbox-iso",
       "name": "{{user `vm_name`}}-virtualbox",
-      "vm_name": "{{user `vm_name`}}-{{user `version`}}",
+      "vm_name": "{{user `vm_name`}}-{{user `version`}}-packer-build",
       "output_directory": "../../../output-node/virtualbox-{{user `version`}}",
       "boot_wait": "10s",
       "format": "ova",
@@ -72,7 +72,7 @@
   {
     "type": "vmware-iso",
     "name": "{{user `vm_name`}}-vmware-desktop",
-    "vm_name": "{{user `vm_name`}}-{{user `version`}}",
+    "vm_name": "{{user `vm_name`}}-{{user `version`}}-packer-build",
     "output_directory": "../../../output-node/vmware-desktop-{{user `version`}}",
     "boot_wait": "10s",
     "boot_command": [

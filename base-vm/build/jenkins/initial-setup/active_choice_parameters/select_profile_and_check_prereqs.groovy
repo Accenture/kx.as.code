@@ -252,26 +252,18 @@ try {
             async function triggerBuild(nodeType) {
                 let jenkinsCrumb = getCrumb();
                 console.log("Jenkins Crumb received = " + jenkinsCrumb.value);
-                
+
                 let formData = new FormData();
-                formData.append('vagrant_ssh_username', 'vagrant');
-                formData.append('git_source_branch', 'feature/jenkins-workspace-restructure');
-                formData.append('shared_workspace', 'C:/Git/kx.as.code_test/base-vm/build/jenkins/jenkins_shared_workspace/kx.as.code');
                 formData.append('kx_vm_user', document.getElementById('general-param-username').value);
                 formData.append('kx_vm_password', document.getElementById('general-param-password').value);
-                formData.append('git_source_url', 'https://github.com/Accenture/kx.as.code.git');
-                formData.append('git_docs_url', 'https://github.com/Accenture/kx.as.code-docs.git');
-                formData.append('git_techradar_url', 'https://github.com/Accenture/kx.as.code-techradar.git');
                 formData.append('vagrant_compute_engine_build', 'false');
-                formData.append('git_docs_branch', 'main');
-                formData.append('git_techradar_branch', 'main');
                 formData.append('kx_version_override', '');
                 formData.append('kx_domain', document.getElementById('general-param-base-domain').value);
                 formData.append('kx_main_hostname', nodeType);
                 formData.append('profile', document.getElementById('profiles').value);
                 formData.append('profile_path', document.getElementById('selected-profile-path').value);
                 formData.append('node_type', nodeType);
-                  
+
                 const config = {
                     method: 'POST',
                     headers: {
@@ -280,12 +272,12 @@ try {
                     },
                     body: formData
                 }
-                    
+
                 let response = await fetch('http://localhost:8081/job/Actions/job/KX.AS.CODE_Image_Builder/buildWithParameters', config);
                 let data = await response.text();
                 console.log(data);
             }
-            
+
             function populate_profile_option_list() {
                 let profiles = "${profile_paths}".split(',');
                 console.log("js profiles array: " + profiles)
@@ -309,14 +301,14 @@ try {
                 console.log(parentId);
                 jQuery('#' + parentId).trigger('change');
             }
-                     
+
           function getAvailableBoxes() {
 
               console.log("DEBUG: getAvailableBoxes()");
               let boxMainVersion;
               let boxNodeVersion;
               let selectedProfile = document.getElementById("profiles").value;
-              
+
               try {
                   console.log("Selected profile: " + selectedProfile);
                   switch (selectedProfile) {
@@ -335,10 +327,10 @@ try {
                       default:
                           console.log("Weird, box type not known. Normally the box type is either VirtualBox, VMWare or Parallels");
                   }
-                  
+
                   console.log('boxMainVersion: ' + boxMainVersion);
                   console.log('boxNodeVersion: ' + boxNodeVersion);
-                  
+
                   if ( boxMainVersion !== "null" ) {
                     document.getElementById("kx-main-version").innerHTML = "v" + boxMainVersion;
                     document.getElementById("main-version-status-svg").src = "/userContent/icons/checkbox-marked-circle-outline.svg";
@@ -550,7 +542,7 @@ try {
                 border: none;
                 box-shadow: none;
             }
-            
+
           .checklist-status-icon {
               width: 25px;
               height: 25px;
@@ -560,7 +552,7 @@ try {
             position: relative;
             display: inline-block;
         }
-        
+
         .console-log .consolelogtext {
             width: 800px;
             height: 450px;
@@ -577,16 +569,16 @@ try {
             left: -800px;
             z-index: 10;
         }
-        
+
         .console-log:hover .consolelogtext {
             visibility: visible;
         }
- 
+
          .console-log-span {
             width: 50px;
             margin-right: 15px;
         }
-        
+
         .build-number-span {
             width: 40px;
             text-align: center;
@@ -594,7 +586,7 @@ try {
             display: inline-block;
             margin-right: 20px;
         }
-   
+
         .build-action-icon {
             width: 30px;
             height: 30px;
@@ -609,7 +601,7 @@ try {
         .build-action-icon:hover {
             opacity: 50%;
         }
-        
+
         .build-action-text-label {
             width: 200px;
             height: 30px;
@@ -621,7 +613,7 @@ try {
             display: inline-block;
             vertical-align: middle;
         }
-        
+
         .build-action-text-value {
             width: 150px;
             height: 30px;
@@ -633,11 +625,11 @@ try {
             display: inline-block;
             vertical-align: middle;
         }
-        
+
         .build-action-text-value-result {
             width: 100px;
         }
-        
+
         .span-rounded-border {
             border: 1px solid black;
             border-radius: 5px;
@@ -646,10 +638,10 @@ try {
             padding: 1px;
             vertical-align: middle;
         }
-                            
+
       </style>
     <body>
-    
+
         <div id="select-profile-div" style="display: none;">
             <h2>Profiles</h2>
             <label for="profiles" class="input-box-label" style="margin: 0px;">Profiles</label>
@@ -659,7 +651,7 @@ try {
         </div>
         <input type="hidden" id="selected-profile-path" name="value" value="">
         <style scoped="scoped" onload="populate_profile_option_list();">   </style>
-    
+
         <div id="prerequisites-div" style="display: none;">
             <h2>Pre-requisite Checks</h2>
             <h4>Virtualization Pre-Requisites</h4>
@@ -672,7 +664,7 @@ try {
             <style scoped="scoped" onload="getAvailableBoxes(); compareVersions(); checkVagrantPreRequisites(); updateProfileSelection(); change_panel_selection('config-panel-profile-selection');">   </style>
             <input type="hidden" id="system-prerequisites-check" name="system-prerequisites-check" value="">
         </div>
-        
+
         <div id="profile-builds-div" style="display: none;">
             <h2>Image Builds for Profile</h2>
             <div>
@@ -688,7 +680,7 @@ try {
                     <div class="console-log"><span class="console-log-span"><img src="/userContent/icons/text-box-outline.svg" onMouseover='showConsoleLog("KX.AS.CODE_Image_Builder", "kx-main");' onclick='openFullConsoleLog("KX.AS.CODE_Image_Builder", "kx-main");' class="build-action-icon" alt="View Build Log" title="Click to open full log in new tab"><span class="consolelogtext" id='kxMainBuildConsoleLog'></span></span></div>
                 </span>
             </div>
-            
+
             <div>
                 <span>
                     <span class="build-action-text-label">Last KX-Node Build Date: </span><span id="kx-node-build-timestamp" class="build-action-text-value"></span>
