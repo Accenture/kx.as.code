@@ -21,8 +21,8 @@ pipeline {
     }
 
     parameters {
-        string(name: 'kx_main_box_location', defaultValue: '', description: '')
-        string(name: 'kx_node_box_location', defaultValue: '', description: '')
+        string(name: 'kx_main_version', defaultValue: '', description: '')
+        string(name: 'kx_node_version', defaultValue: '', description: '')
         string(name: 'dockerhub_email', defaultValue: '', description: '')
         string(name: 'profile', defaultValue: '', description: '')
         string(name: 'profile_path', defaultValue: '', description: '')
@@ -43,6 +43,8 @@ pipeline {
             steps {
                 script {
                     sh """
+                    export mainBoxVersion=${kx_main_version}
+                    export nodeBoxVersion=${kx_node_version}
                     echo "Profile path: ${profile_path}"
                     echo "Vagrant action: ${vagrant_action}"
                     echo "Current directory \$(pwd)"

@@ -113,8 +113,8 @@ try {
 
             let formData = new FormData();
 
-            formData.append('kx_main_box_location', '');
-            formData.append('kx_node_box_location', '');
+            formData.append('kx_main_version', document.getElementById("kx-main-version").innerHTML);
+            formData.append('kx_node_version', document.getElementById("kx-node-version").innerHTML);
             formData.append('kx_version_override', '');
             formData.append('dockerhub_email', '');
             formData.append('profile', document.getElementById('profiles').value);

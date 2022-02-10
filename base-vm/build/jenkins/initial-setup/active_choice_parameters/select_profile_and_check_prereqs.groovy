@@ -332,7 +332,7 @@ try {
                   console.log('boxNodeVersion: ' + boxNodeVersion);
 
                   if ( boxMainVersion !== "null" ) {
-                    document.getElementById("kx-main-version").innerHTML = "v" + boxMainVersion;
+                    document.getElementById("kx-main-version").innerHTML = boxMainVersion;
                     document.getElementById("main-version-status-svg").src = "/userContent/icons/checkbox-marked-circle-outline.svg";
                     document.getElementById("main-version-status-svg").className = "checklist-status-icon svg-bright-green";
                   } else {
@@ -342,7 +342,7 @@ try {
                   }
 
                   if ( boxNodeVersion !== "null" ) {
-                      document.getElementById("kx-node-version").innerHTML = "v" + boxNodeVersion;
+                      document.getElementById("kx-node-version").innerHTML = boxNodeVersion;
                       document.getElementById("node-version-status-svg").src = "/userContent/icons/checkbox-marked-circle-outline.svg";
                       document.getElementById("node-version-status-svg").className = "checklist-status-icon svg-bright-green";
                   } else {
@@ -655,8 +655,8 @@ try {
         <div id="prerequisites-div" style="display: none;">
             <h2>Pre-requisite Checks</h2>
             <h4>Virtualization Pre-Requisites</h4>
-            <div><span class="checklist-span"><img src="" id="virtualization-svg" class="" alt="virtualization-svg" /></span><span id="virtualization-text" class="checklist-span" style="width: 300px;display:inline-block;"></span><span class="checklist-span"><img src="" id="main-version-status-svg" class="" alt="main-version-status-svg" /></span><span class="checklist-span">KX-Main Box Version: </span><span id="kx-main-version" class="checklist-span"></span></div>
-            <div><span class="checklist-span"><img src="" id="vagrant-plugin-svg" class="" alt="vagrant-plugin-svg" /></span><span id="vagrant-plugin-text" class="checklist-span" style="width: 300px;display:inline-block;"></span><span class="checklist-span"><img src="" id="node-version-status-svg" class="" alt="node-version-status-svg" /></span><span class="checklist-span">KX-Node Box Version: </span><span id="kx-node-version" class="checklist-span"></span></div>
+            <div><span class="checklist-span"><img src="" id="virtualization-svg" class="" alt="virtualization-svg" /></span><span id="virtualization-text" class="checklist-span" style="width: 300px;display:inline-block;"></span><span class="checklist-span"><img src="" id="main-version-status-svg" class="" alt="main-version-status-svg" /></span><span class="checklist-span">KX-Main Box Version: v</span><span id="kx-main-version" class="checklist-span"></span></div>
+            <div><span class="checklist-span"><img src="" id="vagrant-plugin-svg" class="" alt="vagrant-plugin-svg" /></span><span id="vagrant-plugin-text" class="checklist-span" style="width: 300px;display:inline-block;"></span><span class="checklist-span"><img src="" id="node-version-status-svg" class="" alt="node-version-status-svg" /></span><span class="checklist-span">KX-Node Box Version: v</span><span id="kx-node-version" class="checklist-span"></span></div>
             <br>
             <h4>KX.AS.CODE Source</h4>
             <div><span class="checklist-span"><img src="" id="version-check-svg" class="" alt="version-check-svg" /></span><span class="checklist-span" id="version-check-message"></span></div>
