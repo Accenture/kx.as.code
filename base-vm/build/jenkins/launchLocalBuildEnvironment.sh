@@ -303,7 +303,7 @@ fi
 #export shared_workspace_directory_path="${shared_workspace_base_directory_path}/kx.as.code"
 # Create shared workspace directory for Vagrant and Terraform jobs
 shared_workspace_base_directory_path="$(pwd)/jenkins_shared_workspace"
-shared_workspace_directory_path="${shared_workspace_base_directory_path}/kx.as.code"
+export shared_workspace_directory_path="${shared_workspace_base_directory_path}/kx.as.code"
 git_root_path=$(git rev-parse --show-toplevel)
 
 if [[ ! -L ${shared_workspace_directory_path} ]] && [[ ! -e ${shared_workspace_directory_path} ]]; then
@@ -451,4 +451,3 @@ if [[ ${error} == "true"  ]]; then
 fi
 
 echo -e "${green}- [INFO] Congratulations! Jenkins for KX.AS.CODE is successfully configured and running. Access Jenkins via the following URL: ${jenkins_url}${nc}"
-

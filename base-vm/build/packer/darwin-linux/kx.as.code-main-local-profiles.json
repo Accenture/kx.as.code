@@ -414,7 +414,7 @@
       "video_memory": "128",
       "virtualbox_guest_os_type": "Debian_64",
       "base_image_ssh_user": "vagrant",
-      "vm_name": "kx.as.code-main",
+      "vm_name": "kx-main-packer-build",
       "vm_suffix": "-demo",
       "vmware_guest_os_type": "ubuntu64Guest"
   }

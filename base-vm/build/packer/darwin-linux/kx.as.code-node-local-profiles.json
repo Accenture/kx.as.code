@@ -389,7 +389,7 @@
       "video_memory": "128",
       "virtualbox_guest_os_type": "Debian_64",
       "base_image_ssh_user": "vagrant",
-      "vm_name": "kx.as.code-node",
+      "vm_name": "kx-node-packer-build",
       "vm_suffix": "-demo",
       "vmware_guest_os_type": "ubuntu64Guest",
       "ip_address":"10.100.76.100",
