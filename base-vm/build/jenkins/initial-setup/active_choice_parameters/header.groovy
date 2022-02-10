@@ -1254,7 +1254,7 @@ try {
                     })();
                     console.log('kxBuilds.length: ' + kxBuilds.length);
                     if ( kxBuilds.length > 0 ) {
-                        let urlToOpen = kxBuilds[0].url + 'consoleText';
+                        let urlToOpen = kxBuilds[0].url + 'console';
                         console.log(urlToOpen);
                         window.open(urlToOpen, '_blank').focus();
                     }
