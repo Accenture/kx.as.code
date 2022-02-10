@@ -35,14 +35,14 @@ ENVIRONMENT_PREFIX = ENV['environmentPrefix'] || profile_config_json['config']['
 puts "ENVIRONMENT_PREFIX: #{ENVIRONMENT_PREFIX}"
 MAIN_NODE_COUNT = ENV['mainNodeCount'] || profile_config_json['config']['vm_properties']['main_node_count']
 puts "MAIN_NODE_COUNT: #{MAIN_NODE_COUNT}"
-ADMIN_MAIN_NODE_CPU_CORES = ENV['adminMainNodeCpuCores'] || profile_config_json['config']['vm_properties']['admin_main_node_cpu_cores']
-puts "ADMIN_MAIN_NODE_CPU_CORES: #{ADMIN_MAIN_NODE_CPU_CORES}"
-ADMIN_MAIN_NODE_MEMORY = ENV['adminMainNodeMemory'] || profile_config_json['config']['vm_properties']['admin_main_node_memory']
-puts "ADMIN_MAIN_NODE_MEMORY: #{ADMIN_MAIN_NODE_MEMORY}"
-REPLICA_MAIN_NODE_CPU_CORES = ENV['replicaMainNodeCpuCores'] || profile_config_json['config']['vm_properties']['replica_main_node_cpu_cores']
-puts "REPLICA_MAIN_NODE_CPU_CORES: #{REPLICA_MAIN_NODE_CPU_CORES}"
-REPLICA_MAIN_NODE_MEMORY = ENV['replicaMainNodeMemory'] || profile_config_json['config']['vm_properties']['replica_main_node_memory']
-puts "REPLICA_MAIN_NODE_MEMORY: #{REPLICA_MAIN_NODE_MEMORY}"
+MAIN_ADMIN_NODE_CPU_CORES = ENV['adminMainNodeCpuCores'] || profile_config_json['config']['vm_properties']['main_admin_node_cpu_cores']
+puts "MAIN_ADMIN_NODE_CPU_CORES: #{MAIN_ADMIN_NODE_CPU_CORES}"
+MAIN_ADMIN_NODE_MEMORY = ENV['adminMainNodeMemory'] || profile_config_json['config']['vm_properties']['main_admin_node_memory']
+puts "MAIN_ADMIN_NODE_MEMORY: #{MAIN_ADMIN_NODE_MEMORY}"
+MAIN_REPLICA_NODE_CPU_CORES = ENV['replicaMainNodeCpuCores'] || profile_config_json['config']['vm_properties']['main_replica_node_cpu_cores']
+puts "MAIN_REPLICA_NODE_CPU_CORES: #{MAIN_REPLICA_NODE_CPU_CORES}"
+MAIN_REPLICA_NODE_MEMORY = ENV['replicaMainNodeMemory'] || profile_config_json['config']['vm_properties']['main_replica_node_memory']
+puts "MAIN_REPLICA_NODE_MEMORY: #{MAIN_REPLICA_NODE_MEMORY}"
 WORKER_NODE_COUNT = ENV['workerNodeCount'] || profile_config_json['config']['vm_properties']['worker_node_count']
 puts "WORKER_NODE_COUNT: #{WORKER_NODE_COUNT}"
 WORKER_NODE_CPU_CORES = ENV['workerNodeCpuCores'] || profile_config_json['config']['vm_properties']['worker_node_cpu_cores']
@@ -67,11 +67,11 @@ KX_NODE_BOX_LOCATION = ENV['kxNodeBoxLocation'] || "../../base-vm/boxes/virtualb
 puts "KX_NODE_BOX_LOCATION: #{KX_NODE_BOX_LOCATION}"
 
 if (MAIN_NODE_COUNT - 1) < 1
-  REPLICA_MAIN_NODE_COUNT = 0
-  puts "REPLICA_MAIN_NODE_COUNT < 1 -> #{REPLICA_MAIN_NODE_COUNT} replica main nodes will be provisioned"
+  MAIN_REPLICA_NODE_COUNT = 0
+  puts "MAIN_REPLICA_NODE_COUNT < 1 -> #{MAIN_REPLICA_NODE_COUNT} replica main nodes will be provisioned"
 else
-  REPLICA_MAIN_NODE_COUNT = MAIN_NODE_COUNT - 1
-  puts "REPLICA_MAIN_NODE_COUNT > 1 -> #{REPLICA_MAIN_NODE_COUNT} replica main nodes will be provisioned"
+  MAIN_REPLICA_NODE_COUNT = MAIN_NODE_COUNT - 1
+  puts "MAIN_REPLICA_NODE_COUNT > 1 -> #{MAIN_REPLICA_NODE_COUNT} replica main nodes will be provisioned"
 end
 
 # Path for current Jenkins solution
@@ -97,8 +97,8 @@ Vagrant.configure("2") do |config|
     end
     subconfig.vm.provider "parallels" do |v|
       v.name = "kx.as.code-#{ENVIRONMENT_PREFIX}-main1-#{MAIN_BOX_VERSION}"
-      v.memory = ADMIN_MAIN_NODE_MEMORY
-      v.cpus = ADMIN_MAIN_NODE_CPU_CORES
+      v.memory = MAIN_ADMIN_NODE_MEMORY
+      v.cpus = MAIN_ADMIN_NODE_CPU_CORES
       v.customize ["set", :id, "--3d-accelerate", "off"]
       v.customize ["set", :id, "--high-resolution", "on"]
       v.customize ["set", :id, "--device-add", "hdd", "--size", LOCAL_KUBE_VOLUMES_DISK_SIZE.to_i * 1024]
@@ -124,8 +124,8 @@ Vagrant.configure("2") do |config|
         end
       subconfig.vm.provider "parallels" do |v|
         v.name = "kx.as.code-#{ENVIRONMENT_PREFIX}-main#{i}-#{NODE_BOX_VERSION}"
-        v.memory = REPLICA_MAIN_NODE_MEMORY
-        v.cpus = REPLICA_MAIN_NODE_CPU_CORES
+        v.memory = MAIN_REPLICA_NODE_MEMORY
+        v.cpus = MAIN_REPLICA_NODE_CPU_CORES
         v.customize ["set", :id, "--3d-accelerate", "highest"]
         v.customize ["set", :id, "--high-resolution", "on"]
         v.customize ["set", :id, "--device-add", "hdd", "--size", LOCAL_KUBE_VOLUMES_DISK_SIZE.to_i * 1024]
