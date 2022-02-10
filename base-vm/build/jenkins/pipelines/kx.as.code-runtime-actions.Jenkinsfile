@@ -43,13 +43,13 @@ pipeline {
             steps {
                 script {
                     sh """
-                    pwd
-                    cd profiles/vagrant-$profile
+                    echo "Profile path: ${profile_path}"
+                    echo "Vagrant action: ${vagrant_action}"
+                    echo "Current directory $(pwd)
+                    cd profiles/vagrant-${profile}
                     VBoxManage list vms
-                    #vagrant halt
-                    #vagrant destroy -f
-                    #VBoxManage list vms
-                    echo "Profile path: $profile_path"
+                    vagrant ${vagrant_action}
+                    VBoxManage list vms
                     """
                 }
             }
