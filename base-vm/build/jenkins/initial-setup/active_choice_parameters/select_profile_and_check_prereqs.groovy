@@ -157,7 +157,7 @@ try {
             vagrantPluginVersion = vagrantPluginSplit[1]
             if (vagrantPluginName == "vagrant-vmware-desktop") {
                 vagrantVmwarePluginInstalled = true
-            } else if (vagrantPluginName == "parallels") {
+            } else if (vagrantPluginName == "vagrant-parallels") {
                 vagrantParallelsPluginInstalled = true
             }
         }
