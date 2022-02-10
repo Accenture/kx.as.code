@@ -1,50 +1,50 @@
 {
     "config": {
-        "vm_properties": {
-            "main_node_count": 3,
-            "admin_main_node_cpu_cores": 2,
-            "admin_main_node_memory": 8196,
-            "replica_main_node_cpu_cores": 2,
-            "replica_main_node_memory": 6144,
-            "worker_node_count": 4,
-            "worker_node_cpu_cores": 2,
-            "worker_node_memory": 8196
-        },
-        "standaloneMode": true,
-        "allowWorkloadsOnMaster": false,
-        "disableSessionTimeout": true,
-        "certificationMode": false,
-        "disableLinuxDesktop": false,
-        "defaultKeyboardLanguage": "de",
-        "local_volumes": {
-            "one_gb": 10,
-            "five_gb": 10,
-            "ten_gb": 10,
-            "thirty_gb": 0,
-            "fifty_gb": 0
-        },
-        "virtualizationType": "local",
-        "environmentPrefix": "",
-        "glusterFsDiskSize": "200",
-        "sslProvider": "self-signed",
+        "allowWorkloadsOnMaster": "true",
         "baseDomain": "kx-as-code.local",
-        "baseUser": "kx.hero",
-        "basePassword": "L3arnandshare",
         "baseIpType": "dynamic",
+        "basePassword": "L3arnandshare",
+        "baseUser": "kx.hero",
+        "certificationMode": false,
+        "defaultKeyboardLanguage": "de",
+        "disableLinuxDesktop": false,
+        "disableSessionTimeout": true,
         "dnsResolution": "hybrid",
-        "metalLbIpRange": {
-            "ipRangeStart": "10.10.76.100",
-            "ipRangeEnd": "10.10.76.150"
-        },
         "docker": {
-            "dockerhub_username": "",
             "dockerhub_email": "",
-            "dockerhub_password": ""
+            "dockerhub_password": "",
+            "dockerhub_username": ""
+        },
+        "environmentPrefix": "demo1",
+        "glusterFsDiskSize": 200,
+        "local_volumes": {
+            "fifty_gb": 0,
+            "five_gb": 10,
+            "one_gb": 10,
+            "ten_gb": 10,
+            "thirty_gb": 0
+        },
+        "metalLbIpRange": {
+            "ipRangeEnd": "10.10.76.150",
+            "ipRangeStart": "10.10.76.100"
         },
         "proxy_settings": {
-          "http_proxy": "",
-          "https_proxy": "",
-          "no_proxy": ""
+            "http_proxy": "",
+            "https_proxy": "",
+            "no_proxy": ""
+        },
+        "sslProvider": "self-signed",
+        "standaloneMode": "true",
+        "virtualizationType": "local",
+        "vm_properties": {
+            "main_admin_node_cpu_cores": 4,
+            "main_admin_node_memory": 12228,
+            "main_node_count": 4,
+            "main_replica_node_cpu_cores": 2,
+            "main_replica_node_memory": 8196,
+            "worker_node_count": 0,
+            "worker_node_cpu_cores": 2,
+            "worker_node_memory": 8192
         }
     }
 }

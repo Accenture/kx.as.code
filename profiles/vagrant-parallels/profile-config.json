@@ -2,10 +2,10 @@
   "config": {
     "vm_properties": {
       "main_node_count": 1,
-      "admin_main_node_cpu_cores": 4,
-      "admin_main_node_memory": 8196,
-      "replica_main_node_cpu_cores": 2,
-      "replica_main_node_memory": 6144,
+      "main_admin_node_cpu_cores": 4,
+      "main_admin_node_memory": 12228,
+      "main_replica_node_cpu_cores": 2,
+      "main_replica_node_memory": 8196,
       "worker_node_count": 0,
       "worker_node_cpu_cores": 2,
       "worker_node_memory": 6144,
@@ -25,7 +25,7 @@
     },
     "standaloneMode": true,
     "virtualizationType": "local",
-    "environmentPrefix": "",
+    "environmentPrefix": "demo1",
     "glusterFsDiskSize": "200",
     "sslProvider": "self-signed",
     "baseDomain": "kx-as-code.local",
