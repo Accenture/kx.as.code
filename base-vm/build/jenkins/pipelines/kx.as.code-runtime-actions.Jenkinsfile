@@ -53,7 +53,7 @@ pipeline {
                     echo "Current directory \$(pwd)"
                     cd profiles/vagrant-${profile}
                     VBoxManage list vms
-                    vagrant ${vagrant_action}
+                    vagrant ${vagrant_action} --provider ${profile}
                     VBoxManage list vms
                     """
                 }
