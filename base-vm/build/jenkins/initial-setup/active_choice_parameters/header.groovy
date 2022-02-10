@@ -1040,12 +1040,13 @@ try {
                 console.log(builds);
                 builds.map((e) => {
                     let obj = {}
-                    obj["estimatedDuration"] = e.estimatedDuration
-                    obj["id"] = e.id
-                    obj["number"] = e.number
-                    obj["result"] = e.result
-                    obj["timestamp"] = e.timestamp
-                    obj["url"] = e.url
+                    obj["estimatedDuration"] = e.estimatedDuration ? e.estimatedDuration : -1
+                    obj["id"] = e.id ? e.id : -1
+                    obj["number"] = e.number ? e.number : -1
+                    obj["result"] = e.result ? e.result : '-'
+                    obj["timestamp"] = e.timestamp ? e.timestamp : -1
+                    obj["url"] = e.url ? e.url: '-'
+                    obj["displayName"] = e.displayName ? e.displayName : '-'
                 
                     e.actions[0].parameters.filter((e) => {
                         
