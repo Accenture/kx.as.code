@@ -53,7 +53,12 @@ pipeline {
                     echo "Current directory \$(pwd)"
                     cd profiles/vagrant-${profile}
                     VBoxManage list vms
-                    vagrant ${vagrant_action} --provider ${profile}
+                    if [ "${vagrant_action}" == "destroy" ]; then
+                        export additional_options="--force"
+                    else
+                        export additional_options=""
+                    fi
+                    vagrant ${vagrant_action} --no-tty ${additional_options}
                     VBoxManage list vms
                     """
                 }
