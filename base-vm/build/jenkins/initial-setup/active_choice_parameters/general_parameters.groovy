@@ -96,8 +96,8 @@ try {
                 <div class="tooltip-info"><span class="info-span"><img src="/userContent/icons/information-variant.svg" class="info-icon" alt="info"><span class="tooltiptext">${infoTextBasePassword}</span></span></div>
             </span>
         </div>
-    </div>  
-    
+    </div>
+
     <div id="standalone-toggle-div" style="display: none;">
         <h2>Standalone or Cluster Mode</h2>
         <p>
