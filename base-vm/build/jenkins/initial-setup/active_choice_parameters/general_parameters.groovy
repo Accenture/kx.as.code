@@ -75,24 +75,24 @@ try {
         <div class="input-box-div">
             <span class="input-box-span">
                 <label for="general-param-base-domain" class="input-box-label">Base Domain</label>
-                <input class="input-box" id="general-param-base-domain" type="text" placeholder="${config_baseDomain}" onchange="updateConcatenatedGeneralParamsReturnVariable();">
+                <input class="input-box" id="general-param-base-domain" type="text" placeholder="${config_baseDomain}" value="${config_baseDomain}" onchange="updateConcatenatedGeneralParamsReturnVariable();">
                 <div class="tooltip-info"><span class="info-span"><img src="/userContent/icons/information-variant.svg" class="info-icon" alt="info"><span class="tooltiptext">${infoTextBaseDomain}</span></span></div>
             </span>
             <span class="input-box-span">
                 <label for="general-param-username" class="input-box-label">Username</label>
-                <input class="input-box" id="general-param-username" type="text" placeholder="${config_baseUser}" onchange="updateConcatenatedGeneralParamsReturnVariable();">
+                <input class="input-box" id="general-param-username" type="text" placeholder="${config_baseUser}" value="${config_baseUser}" onchange="updateConcatenatedGeneralParamsReturnVariable();">
                 <div class="tooltip-info"><span class="info-span"><img src="/userContent/icons/information-variant.svg" class="info-icon" alt="info"><span class="tooltiptext">${infoTextBaseUser}</span></span></div>
             </span>
         </div>
         <div class="input-box-div">
             <span class="input-box-span">
                 <label for="general-param-team-name" class="input-box-label">Team Name</label>
-                <input class="input-box" id="general-param-team-name" type="text" placeholder="${config_environmentPrefix}" onchange="updateConcatenatedGeneralParamsReturnVariable();">
+                <input class="input-box" id="general-param-team-name" type="text" placeholder="${config_environmentPrefix}" value="${config_environmentPrefix}" onchange="updateConcatenatedGeneralParamsReturnVariable();">
                 <div class="tooltip-info"><span class="info-span"><img src="/userContent/icons/information-variant.svg" class="info-icon" alt="info"><span class="tooltiptext">${infoTextEnvironmentPrefix}</span></span></div>
             </span>
             <span class="input-box-span">
                 <label for="general-param-password" class="input-box-label">Password</label>
-                <input class="input-box" id="general-param-password" type="password" placeholder="${config_basePassword}" onchange="updateConcatenatedGeneralParamsReturnVariable();">
+                <input class="input-box" id="general-param-password" type="password" placeholder="${config_basePassword}" value="${config_basePassword}" onchange="updateConcatenatedGeneralParamsReturnVariable();">
                 <div class="tooltip-info"><span class="info-span"><img src="/userContent/icons/information-variant.svg" class="info-icon" alt="info"><span class="tooltiptext">${infoTextBasePassword}</span></span></div>
             </span>
         </div>
