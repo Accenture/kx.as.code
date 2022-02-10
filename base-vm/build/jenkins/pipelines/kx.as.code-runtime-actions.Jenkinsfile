@@ -45,7 +45,7 @@ pipeline {
                     sh """
                     echo "Profile path: ${profile_path}"
                     echo "Vagrant action: ${vagrant_action}"
-                    echo "Current directory \$(pwd)
+                    echo "Current directory \$(pwd)"
                     cd profiles/vagrant-${profile}
                     VBoxManage list vms
                     vagrant ${vagrant_action}
