@@ -23,7 +23,6 @@ pipeline {
     parameters {
         string(name: 'kx_main_version', defaultValue: '', description: '')
         string(name: 'kx_node_version', defaultValue: '', description: '')
-        string(name: 'environment_prefix', defaultValue: '', description: '')
         string(name: 'dockerhub_email', defaultValue: '', description: '')
         string(name: 'profile', defaultValue: '', description: '')
         string(name: 'profile_path', defaultValue: '', description: '')

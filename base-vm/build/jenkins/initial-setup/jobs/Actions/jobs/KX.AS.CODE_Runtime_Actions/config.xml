@@ -9,6 +9,9 @@
       </jobProperties>
       <triggers/>
         <parameters>
+            <string>kx_main_version</string>
+            <string>kx_node_version</string>
+            <string>kx_version_override</string>
             <string>kx_main_box_location</string>
             <string>kx_node_box_location</string>
             <string>dockerhub_email</string>
@@ -42,6 +45,24 @@
       <hudson.model.ParametersDefinitionProperty>
           <parameterDefinitions>
               <hudson.model.StringParameterDefinition>
+                  <name>kx_main_version</name>
+                  <description>KX.AS.CODE Main Node Version</description>
+                  <defaultValue></defaultValue>
+                  <trim>false</trim>
+              </hudson.model.StringParameterDefinition>
+              <hudson.model.StringParameterDefinition>
+                  <name>kx_node_version</name>
+                  <description>KX.AS.CODE Cluster Node Version</description>
+                  <defaultValue></defaultValue>
+                  <trim>false</trim>
+              </hudson.model.StringParameterDefinition>
+              <hudson.model.StringParameterDefinition>
+                  <name>kx_version_override</name>
+                  <description>May be removed in future</description>
+                  <defaultValue></defaultValue>
+                  <trim>false</trim>
+              </hudson.model.StringParameterDefinition>
+              <hudson.model.StringParameterDefinition>
                   <name>kx_main_box_location</name>
                   <description>Location of built Vagrant box for KX.AS.CODE Main Node</description>
                   <defaultValue>base-vm/boxes/virtualbox-${kx_version}/kx.as.code-main-${kx_version}.box</defaultValue>
@@ -61,14 +82,20 @@
               </hudson.model.StringParameterDefinition>
               <hudson.model.StringParameterDefinition>
                   <name>profile</name>
+                  <description>The profile to launch, eg Parallels, VirtualBox or VMWare</description>
+                  <defaultValue></defaultValue>
                   <trim>false</trim>
               </hudson.model.StringParameterDefinition>
               <hudson.model.StringParameterDefinition>
                   <name>profile_path</name>
+                  <description>The path to the profile JSON</description>
+                  <defaultValue></defaultValue>
                   <trim>false</trim>
               </hudson.model.StringParameterDefinition>
               <hudson.model.StringParameterDefinition>
                   <name>vagrant_action</name>
+                  <description>The Vagrant action to execute, eg. up, halt, or destroy</description>
+                  <defaultValue></defaultValue>
                   <trim>false</trim>
               </hudson.model.StringParameterDefinition>
           </parameterDefinitions>
