@@ -1,5 +1,6 @@
 import groovy.json.JsonSlurper
 import groovy.json.JsonBuilder
+import java.nio.file.Files
 
 def BASE_DOMAIN
 def BASE_USER
@@ -21,6 +22,69 @@ def updatedJson
 def parsedJson
 def jsonFilePath = PROFILE
 def inputFile = new File(jsonFilePath)
+def profileParentPath = inputFile.getParentFile().getName()
+
+def templateName
+def parsedTemplateJson
+def jsonInputFile
+
+def template_paths = []
+def selectedTemplates = []
+def destinationFile
+def alreadyExistingTemplateFilesInProfile = []
+def fileToDelete
+
+new File('jenkins_shared_workspace/kx.as.code/templates/').eachFileMatch(~/^aq.*.json$/) { template_paths << it.path }
+selectedTemplates = TEMPLATE_SELECTOR.split(';');
+println("TEMPLATE_SELECTOR: ${TEMPLATE_SELECTOR}")
+println("template_paths: ${template_paths}")
+
+try {
+    if ( USER_PROVISIONING ) {
+        def userJsonFilePath = "jenkins_shared_workspace/kx.as.code/profiles/${profileParentPath}/users.json"
+        def parsedUserJson = new JsonSlurper().parseText(USER_PROVISIONING)
+        new File(userJsonFilePath).write(new JsonBuilder(parsedUserJson).toPrettyString())
+    }
+} catch (e) {
+    println("Something went wrong in the groovy user provisioning block (profile_json_update.groovy): ${e}")
+}
+
+try {
+    println("Before file search")
+    def targetProfilePath="jenkins_shared_workspace/kx.as.code/profiles/${profileParentPath}"
+    new File(targetProfilePath).eachFileMatch(~/^aq.*.json$/) { alreadyExistingTemplateFilesInProfile << it.path }
+    alreadyExistingTemplateFilesInProfile.eachWithIndex { profileTemplateJson, i ->
+            println("Found ${profileTemplateJson} already in profiles directory")
+        if ( profileTemplateJson.contains("custom")) {
+            println("${profileTemplateJson} contains the word \"custom\". Not deleting")
+        } else {
+            println("Deleting standard template ${profileTemplateJson}")
+            fileToDelete = new File(profileTemplateJson)
+            fileToDelete.delete()
+        }
+    }
+    println("After file search")
+
+    template_paths.eachWithIndex { file, i ->
+        println("Processing file ${i} - ${file}")
+        jsonInputFile = new File(file)
+        parsedTemplateJson = new JsonSlurper().parse(jsonInputFile)
+        templateName = parsedTemplateJson.title
+        println("Parsed json and received title: ${templateName}")
+        selectedTemplates.eachWithIndex { selectedTemplate, j ->
+            if (selectedTemplate == templateName) {
+                println("${templateName} is selected. Adding components to list")
+                destinationFile = new File("${targetProfilePath}/${jsonInputFile.getName()}")
+                println("Copying ${jsonInputFile.toPath()} to ${destinationFile.toPath()}")
+                Files.copy(jsonInputFile.toPath(), destinationFile.toPath())
+            } else {
+                println("${templateName} not selected. Ignoring")
+            }
+        }
+    }
+} catch (e) {
+    println("Something went wrong in the groovy template block (profile_json_update.groovy): ${e}")
+}
 
 try {
 
@@ -34,12 +98,12 @@ try {
         BASE_PASSWORD = generalParameterElements[3]
         STANDALONE_MODE = generalParameterElements[4]
         ALLOW_WORKLOADS_ON_KUBERNETES_MASTER = generalParameterElements[5]
-        println("Retrievd BASE_DOMAIN: ${BASE_DOMAIN} (profile_json_update.groovy)")
-        println("Retrievd ENVIRONMENT_PREFIX: ${ENVIRONMENT_PREFIX} (profile_json_update.groovy)")
-        println("Retrievd BASE_USER: ${BASE_USER} (profile_json_update.groovy)")
-        println("Retrievd BASE_PASSWORD: ${BASE_PASSWORD} (profile_json_update.groovy)")
-        println("Retrievd STANDALONE_MODE: ${STANDALONE_MODE} (profile_json_update.groovy)")
-        println("Retrievd ALLOW_WORKLOADS_ON_KUBERNETES_MASTER: ${ALLOW_WORKLOADS_ON_KUBERNETES_MASTER} (profile_json_update.groovy)")
+        println("Retrieved BASE_DOMAIN: ${BASE_DOMAIN} (profile_json_update.groovy)")
+        println("Retrieved ENVIRONMENT_PREFIX: ${ENVIRONMENT_PREFIX} (profile_json_update.groovy)")
+        println("Retrieved BASE_USER: ${BASE_USER} (profile_json_update.groovy)")
+        println("Retrieved BASE_PASSWORD: ${BASE_PASSWORD} (profile_json_update.groovy)")
+        println("Retrieved STANDALONE_MODE: ${STANDALONE_MODE} (profile_json_update.groovy)")
+        println("Retrieved ALLOW_WORKLOADS_ON_KUBERNETES_MASTER: ${ALLOW_WORKLOADS_ON_KUBERNETES_MASTER} (profile_json_update.groovy)")
     }
 
     if ( KX_MAIN_NODES_CONFIG ) {
@@ -218,11 +282,6 @@ try {
     // language=HTML
     def HTML = """
     <body>
-    <p>
-    BASE_DOMAIN: ${BASE_DOMAIN}, ENVIRONMENT_PREFIX: ${ENVIRONMENT_PREFIX}, BASE_USER: ${BASE_USER}, BASE_PASSWORD: ${BASE_PASSWORD}
-    <br>
-    ${updatedJson}
-    </p>
     </body>
     """
     return HTML

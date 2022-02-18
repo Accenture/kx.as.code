@@ -4,7 +4,7 @@ import groovy.json.JsonSlurper
 def extendedDescription
 
 try {
-    extendedDescription = "The charts below show how the selections you made above fit in line with the resources available on your system. If any of the charts are red, you should look to make corrections above. For the storage parameters, this is not critical, as the volumes are thinly provisioned anyway, so an overallocation is not a problem, as long as you don't intend to use the full space."
+    extendedDescription = "The charts below show how the selections you made above fit in line with the resources available on your system. If any of the charts are red, you should look to make corrections in the previous tabs. For the storage parameters, this is not critical, as the volumes are thinly provisioned anyway, so an overallocation is not a problem, as long as you don't intend to use the full space."
 } catch(e) {
     println "Something went wrong in the GROOVY block (check_host_system.groovy): ${e}"
 }

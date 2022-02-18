@@ -5,6 +5,7 @@ try {
     <script>
         function hideParameterDivs() {
             let configDivs = [
+                "headline-select-profile-div",
                 "select-profile-div",
                 "prerequisites-div",
                 "profile-builds-div",
@@ -23,10 +24,8 @@ try {
                 "headline-workers-div",
                 "headline-storage-div",
                 "templates-div",
-                "header-system-check-div",
-                "system-check-div",
-                "review-and-launch-div",
-                "profile-launch-div"
+                "user-provisioning-div",
+                "review-and-launch-div"
             ];
             console.log(configDivs);
             configDivs.forEach(function(item) {
@@ -68,10 +67,9 @@ try {
                    "config-panel-profile-selection",
                    "config-panel-general-params",
                    "config-panel-kx-main-config",
-                   "config-panel-kx-worker-config",
                    "config-panel-storage-config",
                    "config-panel-template-selection",
-                   "config-panel-system-check",
+                   "config-panel-user-provisioning",
                    "config-panel-kx-summary-start"
                ];
                 
@@ -88,6 +86,7 @@ try {
                         switch (item) {
                             case "config-panel-profile-selection":
                                 console.log("Inside switch-case for select-profile-div");
+                                moveDivToConfigPanel("headline-select-profile-div");
                                 moveDivToConfigPanel("select-profile-div");
                                 moveDivToConfigPanel("prerequisites-div");
                                 moveDivToConfigPanel("profile-builds-div");
@@ -104,34 +103,29 @@ try {
                                 moveDivToConfigPanel("main-node-count-div");
                                 moveDivToConfigPanel("main-cpu-count-div");
                                 moveDivToConfigPanel("main-memory-div");
-                                updateNavigationFooter("config-panel-general-params", "config-panel-kx-worker-config");
-                                break;
-                            case "config-panel-kx-worker-config":
                                 moveDivToConfigPanel("headline-workers-div");
                                 moveDivToConfigPanel("worker-node-count-div");
                                 moveDivToConfigPanel("worker-cpu-count-div");
                                 moveDivToConfigPanel("worker-memory-div");
-                                updateNavigationFooter("config-panel-kx-main-config", "config-panel-storage-config");
+                                updateNavigationFooter("config-panel-general-params", "config-panel-storage-config");
                                 break;
                             case "config-panel-storage-config":
                                 moveDivToConfigPanel("headline-storage-div");
                                 moveDivToConfigPanel("network-storage-div");
                                 moveDivToConfigPanel("local-storage-div");
-                                updateNavigationFooter("config-panel-kx-worker-config", "config-panel-template-selection");
+                                updateNavigationFooter("config-panel-kx-main-config", "config-panel-template-selection");
                                 break;
                             case "config-panel-template-selection":
                                 moveDivToConfigPanel("templates-div");
-                                updateNavigationFooter("config-panel-storage-config", "config-panel-system-check");
+                                updateNavigationFooter("config-panel-storage-config", "config-panel-user-provisioning");
                                 break;
-                            case "config-panel-system-check":
-                                moveDivToConfigPanel("header-system-check-div");
-                                moveDivToConfigPanel("system-check-div");
+                            case "config-panel-user-provisioning":
+                                moveDivToConfigPanel("user-provisioning-div");
                                 updateNavigationFooter("config-panel-template-selection", "config-panel-kx-summary-start");
                                 break;
                             case "config-panel-kx-summary-start":
                                 moveDivToConfigPanel("review-and-launch-div");
-                                moveDivToConfigPanel("profile-launch-div");
-                                updateNavigationFooter("config-panel-system-check", "");
+                                updateNavigationFooter("config-panel-user-provisioning", "");
                                 break;
                         }
                     } else {
@@ -172,7 +166,6 @@ try {
                                 divConfigPanelParent.removeChild(item);
                             };
                         });
-                        console.log("3.5");
                         console.log("(4) Parent div: " + divConfigPanelParent);
                         currentParent = document.getElementById(configDiv).parentNode.id;
                         console.log("(5) Current parent for " + configDiv + " is " + currentParent);
@@ -259,11 +252,10 @@ try {
                     <div class="config-tab-selected" id="config-panel-profile-selection" onclick="change_panel_selection(this.id);"><img src="/userContent/icons/format-list-checks.svg" id="config-panel-profile-selection-icon" class="config-panel-icon svg-purple" alt="Profile Selection"></div>
                     <div class="config-tab" id="config-panel-general-params" onclick="change_panel_selection(this.id);"><img src="/userContent/icons/form-textbox.svg" id="config-panel-general-params-icon" class="config-panel-icon svg-white" alt="General Parameters"></div>
                     <div class="config-tab" id="config-panel-kx-main-config" onclick="change_panel_selection(this.id);"><img src="/userContent/icons/memory.svg" id="config-panel-kx-main-config-icon" class="config-panel-icon svg-white" alt="KX-Main Node Configuration"></div>
-                    <div class="config-tab" id="config-panel-kx-worker-config" onclick="change_panel_selection(this.id);"><img src="/userContent/icons/memory.svg" id="config-panel-kx-worker-config-icon" class="config-panel-icon svg-white" alt="KX-Worker Node Configuration"></div>
                     <div class="config-tab" id="config-panel-storage-config" onclick="change_panel_selection(this.id);"><img src="/userContent/icons/harddisk.svg" id="config-panel-storage-config-icon" class="config-panel-icon svg-white" alt="Storage Configuration"></div>
                     <div class="config-tab" id="config-panel-template-selection" onclick="change_panel_selection(this.id);"><img src="/userContent/icons/apps.svg" id="config-panel-template-selection-icon" class="config-panel-icon svg-white" alt="Application Template Group Selection"></div>
-                    <div class="config-tab" id="config-panel-system-check" onclick="change_panel_selection(this.id);"><img src="/userContent/icons/chart-areaspline.svg" id="config-panel-system-check-icon" class="config-panel-icon svg-white" alt="System Resources Check"></div>
-                    <div class="config-tab" id="config-panel-kx-summary-start" onclick="change_panel_selection(this.id);"><img src="/userContent/icons/play-outline.svg" id="config-panel-kx-summary-start-icon" class="config-panel-icon svg-white" alt="Deployment"></div>
+                    <div class="config-tab" id="config-panel-user-provisioning" onclick="change_panel_selection(this.id);"><img src="/userContent/icons/account-multiple.svg" id="config-panel-user-provisioning-icon" class="config-panel-icon svg-white" alt="User Provisioning"></div>
+                    <div class="config-tab" id="config-panel-kx-summary-start" onclick="change_panel_selection(this.id);"><img src="/userContent/icons/clipboard-text-play-outline.svg" id="config-panel-kx-summary-start-icon" class="config-panel-icon svg-white" alt="Deployment"></div>
                 </div>
                 <div id="config-placeholder" class="config-placeholder"></div>
                 <div id="config-navigator-footer" class="config-selector-footer">

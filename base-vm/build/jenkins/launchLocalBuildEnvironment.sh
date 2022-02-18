@@ -1,7 +1,7 @@
-#!/bin/bash -x
+#!/bin/bash
 
 # Cleanup for debugging
-ps -ef | grep jenkins.war | grep -v grep | awk {'print $2'} | xargs kill -9 && rm -rf ./jenkins_home
+ps -ef | grep jenkins.war | grep -v grep | awk {'print $2'} | xargs kill -9 #&& rm -rf ./jenkins_home
 
 # Define ansi colours
 red="\033[31m"
@@ -265,7 +265,7 @@ cat ${start_job_file}
 cp ${start_job_file} ${start_job_backup_file}
 
 # Download and update Jenkins WAR file with needed plugins
-jenkinsDownloadVersion="2.319.2"
+jenkinsDownloadVersion="2.319.3"
 jenkinsWarFileUrl="https://get.jenkins.io/war-stable/${jenkinsDownloadVersion}/jenkins.war"
 if [ ! -f ./jenkins.war ]; then
     # Download Jenkins WAR file
@@ -276,16 +276,20 @@ fi
 # Check if plugin manager already downloaded or not
 if [ ! -f ./jenkins-plugin-manager.jar ]; then
     # Install Jenkins Plugins
-    jenkinsPluginManagerVersion="2.11.1"
+    jenkinsPluginManagerVersion="2.12.3"
     echo "Downloading Jenkins Plugin Manager..."
+    echo "curl -L -o ./jenkins-plugin-manager.jar https://github.com/jenkinsci/plugin-installation-manager-tool/releases/download/${jenkinsPluginManagerVersion}/jenkins-plugin-manager-${jenkinsPluginManagerVersion}.jar"
     curl -L -o ./jenkins-plugin-manager.jar https://github.com/jenkinsci/plugin-installation-manager-tool/releases/download/${jenkinsPluginManagerVersion}/jenkins-plugin-manager-${jenkinsPluginManagerVersion}.jar
 fi
 
 # Download plugins if not yet installed
 mkdir -p ${jenkins_home}/plugins
 availablePlugins=$(ls ${jenkins_home}/plugins)
-if [ -z ${availablePlugins} ]; then
-    ${javaBinary} -jar ./jenkins-plugin-manager.jar --war ./jenkins.war --plugin-download-directory ${jenkins_home}/plugins --plugin-file ./initial-setup/plugins.txt --plugins delivery-pipeline-plugin:1.3.2 deployit-plugin
+if [ -z "${availablePlugins}" ]; then
+    #jenkinsDeliveryPipelinePluginVersion="1.4.2"
+    #echo "${javaBinary} -jar ./jenkins-plugin-manager.jar --war ./jenkins.war --plugin-download-directory ${jenkins_home}/plugins --plugin-file ./initial-setup/plugins.txt --plugins delivery-pipeline-plugin:${jenkinsDeliveryPipelinePluginVersion} deployit-plugin"
+    echo "${javaBinary} -jar ./jenkins-plugin-manager.jar --war ./jenkins.war --plugin-download-directory ${jenkins_home}/plugins --plugin-file ./initial-setup/plugins.txt"
+    ${javaBinary} -jar ./jenkins-plugin-manager.jar --war ./jenkins.war --plugin-download-directory ${jenkins_home}/plugins --plugin-file ./initial-setup/plugins.txt
 fi
 
 # Bypass Jenkins setup wizard
@@ -360,7 +364,8 @@ done
 # Start manually for debugging with Start-Process -FilePath .\java\jdk11.0.3_7\bin\java.exe -ArgumentList "-jar", ".\jenkins.war", "--httpListenAddress=127.0.0.1", "--httpPort=8081"
 export JENKINS_HOME="$(pwd)/jenkins_home"
 # TODO - Test Git paths on line below. Currently hardcoded for debugging
-screen -S jenkins -d -m ${javaBinary} -jar ./jenkins.war --httpListenAddress=${jenkins_listen_address} --httpPort=${jenkins_server_port} >./jenkinsLog_$(date '+%Y%m%d_%H%M%S').txt 2>&1
+screen -wipe
+screen -L -Logfile ./jenkinsLog_$(date '+%Y%m%d_%H%M%S').txt -S jenkins -d -m ${javaBinary} -jar ./jenkins.war --httpListenAddress=${jenkins_listen_address} --httpPort=${jenkins_server_port}
 
 jenkins_url="http://${jenkins_listen_address}:${jenkins_server_port}"
 

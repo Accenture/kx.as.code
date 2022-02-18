@@ -133,49 +133,6 @@
           <omitValueField>false</omitValueField>
         </org.biouno.unochoice.DynamicReferenceParameter>
         <org.biouno.unochoice.DynamicReferenceParameter plugin="uno-choice@2.5.7">
-          <name>CHECK_HOST_SYSTEM</name>
-          <randomName>choice-parameter-334047709761248</randomName>
-          <visibleItemCount>1</visibleItemCount>
-          <script class="org.biouno.unochoice.model.GroovyScript">
-            <secureScript plugin="script-security@1.78">
-              <script>@{check_host_system.groovy}</script>
-              <sandbox>false</sandbox>
-            </secureScript>
-            <secureFallbackScript plugin="script-security@1.78">
-              <script></script>
-              <sandbox>false</sandbox>
-            </secureFallbackScript>
-          </script>
-          <projectName>KX.AS.CODE_Launcher</projectName>
-          <projectFullName>KX.AS.CODE_Launcher</projectFullName>
-          <parameters class="linked-hash-map"/>
-          <referencedParameters>PROFILE, GENERAL_PARAMETERS, KX_MAIN_NODES_CONFIG, KX_WORKER_NODES_CONFIG, STORAGE_PARAMETERS</referencedParameters>
-          <choiceType>ET_FORMATTED_HTML</choiceType>
-          <omitValueField>false</omitValueField>
-        </org.biouno.unochoice.DynamicReferenceParameter>
-        <org.biouno.unochoice.DynamicReferenceParameter plugin="uno-choice@2.5.7">
-          <name>PROFILE_CONFIG_JSON_UPDATE</name>
-          <description>Updates the profile config JSON file with selections made here</description>
-          <randomName>choice-parameter-17383899378151</randomName>
-          <visibleItemCount>1</visibleItemCount>
-          <script class="org.biouno.unochoice.model.GroovyScript">
-            <secureScript plugin="script-security@1.78">
-              <script>@{profile_json_update.groovy}</script>
-              <sandbox>false</sandbox>
-            </secureScript>
-            <secureFallbackScript plugin="script-security@1.78">
-              <script></script>
-              <sandbox>false</sandbox>
-            </secureFallbackScript>
-          </script>
-          <projectName>KX.AS.CODE_Launcher</projectName>
-          <projectFullName>KX.AS.CODE_Launcher</projectFullName>
-          <parameters class="linked-hash-map"/>
-          <referencedParameters>PROFILE, GENERAL_PARAMETERS, KX_MAIN_NODES_CONFIG, KX_WORKER_NODES_CONFIG, STORAGE_PARAMETERS</referencedParameters>
-          <choiceType>ET_FORMATTED_HTML</choiceType>
-          <omitValueField>false</omitValueField>
-        </org.biouno.unochoice.DynamicReferenceParameter>
-        <org.biouno.unochoice.DynamicReferenceParameter plugin="uno-choice@2.5.7">
           <name>TEMPLATE_SELECTOR</name>
           <randomName>choice-parameter-289437698944100</randomName>
           <visibleItemCount>1</visibleItemCount>
@@ -197,12 +154,33 @@
           <omitValueField>false</omitValueField>
         </org.biouno.unochoice.DynamicReferenceParameter>
         <org.biouno.unochoice.DynamicReferenceParameter plugin="uno-choice@2.5.7">
+          <name>USER_PROVISIONING</name>
+          <randomName>choice-parameter-12643302043893</randomName>
+          <visibleItemCount>1</visibleItemCount>
+          <script class="org.biouno.unochoice.model.GroovyScript">
+            <secureScript plugin="script-security@1131.v8b_b_5eda_c328e">
+              <script>@{user_provioning.groovy}</script>
+              <sandbox>false</sandbox>
+            </secureScript>
+            <secureFallbackScript plugin="script-security@1131.v8b_b_5eda_c328e">
+              <script></script>
+              <sandbox>false</sandbox>
+            </secureFallbackScript>
+          </script>
+          <projectName>KX.AS.CODE_Launcher</projectName>
+          <projectFullName>KX.AS.CODE_Launcher</projectFullName>
+          <parameters class="linked-hash-map"/>
+          <referencedParameters></referencedParameters>
+          <choiceType>ET_FORMATTED_HTML</choiceType>
+          <omitValueField>false</omitValueField>
+        </org.biouno.unochoice.DynamicReferenceParameter>
+        <org.biouno.unochoice.DynamicReferenceParameter plugin="uno-choice@2.5.7">
           <name>REVIEW_AND_LAUNCH</name>
           <randomName>choice-parameter-289423783368416</randomName>
           <visibleItemCount>1</visibleItemCount>
           <script class="org.biouno.unochoice.model.GroovyScript">
             <secureScript plugin="script-security@1.78">
-              <script>@{review_and_launch.groovy}</script>
+              <script>@{config_review_and_launch.groovy}</script>
               <sandbox>false</sandbox>
             </secureScript>
             <secureFallbackScript plugin="script-security@1.78">
@@ -238,6 +216,28 @@
           <choiceType>ET_FORMATTED_HTML</choiceType>
           <omitValueField>false</omitValueField>
         </org.biouno.unochoice.DynamicReferenceParameter>
+        <org.biouno.unochoice.DynamicReferenceParameter plugin="uno-choice@2.5.7">
+          <name>PROFILE_CONFIG_JSON_UPDATE</name>
+          <description></description>
+          <randomName>choice-parameter-17383899378151</randomName>
+          <visibleItemCount>1</visibleItemCount>
+          <script class="org.biouno.unochoice.model.GroovyScript">
+            <secureScript plugin="script-security@1.78">
+              <script>@{profile_json_update.groovy}</script>
+              <sandbox>false</sandbox>
+            </secureScript>
+            <secureFallbackScript plugin="script-security@1.78">
+              <script></script>
+              <sandbox>false</sandbox>
+            </secureFallbackScript>
+          </script>
+          <projectName>KX.AS.CODE_Launcher</projectName>
+          <projectFullName>KX.AS.CODE_Launcher</projectFullName>
+          <parameters class="linked-hash-map"/>
+          <referencedParameters>PROFILE, GENERAL_PARAMETERS, KX_MAIN_NODES_CONFIG, KX_WORKER_NODES_CONFIG, STORAGE_PARAMETERS, TEMPLATE_SELECTOR, USER_PROVISIONING</referencedParameters>
+          <choiceType>ET_FORMATTED_HTML</choiceType>
+          <omitValueField>false</omitValueField>
+    </org.biouno.unochoice.DynamicReferenceParameter>
       </parameterDefinitions>
     </hudson.model.ParametersDefinitionProperty>
     <com.sonyericsson.rebuild.RebuildSettings plugin="rebuild@1.33">

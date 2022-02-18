@@ -42,7 +42,7 @@ try {
 
         worker_node_count = parsedJson.config.vm_properties.worker_node_count
 
-        workerNodeCountMin = 1
+        workerNodeCountMin = 0
         workerNodeCountMax = 16
         workerNodeCountStep = 1
         workerNodeCountStartValue = worker_node_count.toInteger()
@@ -53,8 +53,8 @@ try {
 
     } else {
 
-        workerNodeCountMin = 1
-        workerNodeCountMax = 1
+        workerNodeCountMin = 0
+        workerNodeCountMax = 0
         workerNodeCountStep = 1
         workerNodeCountStartValue = 1
         println("properties_worker_node.groovy -> workerNodeCountStartValue: ${workerNodeCountStartValue} (Standalone Mode: TRUE)")
@@ -89,7 +89,7 @@ def workerNodeCpuCoresInfoText = "Determines the amount of CPU cores that will b
 def workerNodeCpuCoresParamShortTitle = "CPU Cores"
 
 try {
-    extendedDescription = "KX-Worker nodes are optional. On a local machine with lower amount of resources (equal to or below 16GB ram), a singe node standalone KX.AS.CODE deployment is advisable. In this case, just set the number of KX-Workers to 0. The 'allow workloads on master' toggle must be set to on in this case, else it will not be possible to deploy any workloads beyond the core tools and services. For VM hosts with higher available resources >16GB ram, feel free to install a full blown cluster and add some worker nodes!"
+    extendedDescription = "KX-Worker nodes are optional. On a local machine with lower amount of resources (equal to or below 16GB ram), a singe node standalone KX.AS.CODE deployment is advisable. In this case, just set the number of KX-Workers to 0. The 'allow workloads on master' toggle must be set to on in this case, else it will not be possible to deploy any workloads beyond the core tools and services."
 } catch(e) {
     println "Something went wrong in the GROOVY block (properties_worker_node.groovy): ${e}"
 }
@@ -167,7 +167,7 @@ try {
     <input type="hidden" id="slider_value_worker_node_cpu_cores_previous_value" name="slider_value_worker_node_cpu_cores_previous_value" value="" >
     
     
-        <div class="outerWrapper" id="worker-memory-div" style="display: none">
+    <div class="outerWrapper" id="worker-memory-div" style="display: none">
         <div class="wrapper"><span><img src="/userContent/icons/memory-solid.svg" class="param-icon svg-purple" alt="cpu" /></span>
 
             <span id="slider_value_worker_node_memory_value" class="slider-element-value">${workerNodeMemoryStartValue} ${memoryRangeUnit}</span>

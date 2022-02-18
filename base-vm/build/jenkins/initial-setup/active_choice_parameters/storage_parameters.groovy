@@ -9,7 +9,7 @@ def localStorageNumThirtyGb
 def localStorageNumFiftyGb
 
 try {
-    extendedDescription = "There are two types of storage provisioned into KX.AS.CODE. One is a slower network storage based on GlusterFS and the second is local storage. Both are made available internally to the Kubernetes cluster via storage classes. There are advantages and disadvantages of each. Glusterfs is slower, but ensures the workload remains portable. Local storage is faster, but means a workload is tied to a host. The faster local storage is recommended for database servers."
+    extendedDescription = "There are two types of storage provisioned into KX.AS.CODE. One is a slower network storage based on GlusterFS and the second is local storage. Both are made available internally to the Kubernetes cluster via storage classes. There are advantages and disadvantages of each. Glusterfs is slower, but ensures the workload remains portable. Local storage is faster, but means a workload is tied to a host. The faster local storage is recommended for backend database services."
 
     def jsonFilePath = PROFILE
     def inputFile = new File(jsonFilePath)
@@ -83,11 +83,12 @@ try {
     // language=HTML
     def HTML = """
         <div id="headline-storage-div" style="display: none;">
-        <h2>Storage Parameters</h2>
+        <h1>Storage Parameters</h1>
         <span class="description-paragraph-span"><p>${extendedDescription}</p></span>
         </div>
     
-        <div class="outerWrapper" id="network-storage-div" style="display: none;">
+        <div id="network-storage-div" style="display: none;">
+        <h2>Network Storage</h2>
         <div class="wrapper"><span><img src="/userContent/icons/server-network.svg" class="param-icon svg-purple" alt="cpu" /></span>
 
             <span id="slider_value_network_storage_value" class="slider-element-value">${networkStorageStartValue} ${networkStorageRangeUnit}</span>
@@ -108,17 +109,18 @@ try {
 
             </div>
         </div>
+        <br>
     </div>
     <style scoped="scoped" onload="show_value(&quot;${networkStorageStartValue}&quot;, &quot;slider_value_network_storage_previous_value&quot;, &quot;slider_value_network_storage&quot;, &quot;slider_value_network_storage_value&quot;, &quot;slider_value_network_storage_warning_icon&quot;, &quot;${networkStorageMinWarning}&quot;, &quot;${networkStorageValueDisplayConversion}&quot;, &quot;${networkStorageRangeUnit}&quot;);">   </style>
     <input type="hidden" id="slider_value_network_storage_previous_value" name="slider_value_network_storage_previous_value" value="" >
     
-        <div id="local-storage-div" style="display: none;">
-
+    <div id="local-storage-div" style="display: none;">
+    <h2>Local Storage Volumes</h2>
     <div class="wrapper"><span><img src="/userContent/icons/harddisk.svg" class="param-icon svg-purple" alt="#" /></span><h4>Local Storage Profile Parameters</h4></div>
     <p></p>
 
     <!-- --->
-    <div class="outerWrapper">
+    <div>
         <div class="storage-wrapper">
             <span class="rounded-number-span">1 GB</span>
             <span class="indented-bullet-span"><img src="/userContent/icons/chevron-right.svg" class="param-icon svg-purple" alt="bullet" /></span>
@@ -150,7 +152,7 @@ try {
 
 
     <!-- --->
-    <div class="outerWrapper">
+    <div>
         <div class="storage-wrapper">
             <span class="rounded-number-span">5 GB</span>
             <span class="indented-bullet-span"><img src="/userContent/icons/chevron-right.svg" class="param-icon svg-purple" alt="bullet" /></span>
@@ -182,7 +184,7 @@ try {
 
 
     <!-- --->
-    <div class="outerWrapper">
+    <div>
         <div class="storage-wrapper">
             <span class="rounded-number-span">10 GB</span>
             <span class="indented-bullet-span"><img src="/userContent/icons/chevron-right.svg" class="param-icon svg-purple" alt="bullet" /></span>
@@ -215,7 +217,7 @@ try {
 
 
     <!-- --->
-    <div class="outerWrapper">
+    <div>
         <div class="storage-wrapper">
             <span class="rounded-number-span">30 GB</span>
             <span class="indented-bullet-span"><img src="/userContent/icons/chevron-right.svg" class="param-icon svg-purple" alt="bullet" /></span>
@@ -247,7 +249,7 @@ try {
 
 
     <!-- --->
-    <div class="outerWrapper">
+    <div>
         <div class="storage-wrapper">
             <span class="rounded-number-span">50 GB</span>
             <span class="indented-bullet-span"><img src="/userContent/icons/chevron-right.svg" class="param-icon svg-purple" alt="bullet" /></span>
@@ -277,9 +279,9 @@ try {
     <style scoped="scoped" onload="show_value(&quot;${startValueFiftyGb}&quot;, &quot;counter_value_local_volume_count_50_gb_value_previous&quot;, &quot;counter_value_local_volume_count_50_gb&quot;, &quot;counter_value_local_volume_count_50_gb&quot;, &quot;counter_value_local_volume_count_50_gb_warning_icon&quot;, &quot;${minWarningFiftyGb}&quot;, &quot;${localStorageDisplayConversion}&quot;, &quot;${localStorageRangeUnit}&quot;);">   </style>
     <!-- --->
 
-    <input type="hidden" id="concatenated-storage-params" name="value" value="" >
-
     </div>
+    
+    <input type="hidden" id="concatenated-storage-params" name="value" value="" >
 
     """
     return HTML

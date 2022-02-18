@@ -89,7 +89,7 @@ def mainNodeCpuCoresInfoText = "Determines the amount of CPU cores that will be 
 def mainNodeCpuCoresParamShortTitle = "CPU Cores"
 
 try {
-    extendedDescription = "KX-Main nodes provide two core functions - Kubernetes master services as well as the desktop environment for easy access to deployed tools and documentation. Only the first KX-Main node hosts both the desktop environment, and the Kubernetes Master services. Subsequent KX-Main nodes host the Kubernetes Master services only. In a physical environment with 16GB ram or less, it is recommended to leave at least 4-6GB ram to the host operating system, leaving 10-12GB that can be allocated to KX-Main. In this scenario, it is recommended to set KX-Worker nodes to zero, and run the whole KX.AS.CODE setup in standalone mode."
+    extendedDescription = "KX-Main nodes provide two core functions - Kubernetes master services as well as the desktop environment for easy access to deployed tools and documentation. Only the first KX-Main node hosts both the desktop environment, and the Kubernetes Master services. Subsequent KX-Main nodes host the Kubernetes Master services only."
 } catch(e) {
     println("Something went wrong in the GROOVY block (properties_main_node.groovy): ${e}")
 }
@@ -118,10 +118,11 @@ try {
     // language=HTML
     def HTML = """
     <div id="headline-main-div" style="display: none;">
+    <h1>Environment Resource Configuration</h1>
+    <p>Here you can define how many physical resources you wish to allocate to the KX.AS.CODE virtual machines.</p>
     <h2>KX-Main Parameters</h2>
     <span class="description-paragraph-span"><p>${extendedDescription }</p></span>
     </div>
-    
     <div class="outerWrapper" id="main-node-count-div" style="display: none;">
         <div class="wrapper"><span><img src="/userContent/icons/pound.svg" class="param-icon svg-purple" alt="#" /></span>
             <span id="counter_value_main_node_count_value" class="counter-element-value">${mainNodeCountStartValue} ${mainNodeCountRangeUnit}</span>
@@ -179,7 +180,7 @@ try {
                    value="${mainNodeMemoryStartValue}"
                    name="slider_value_main_admin_node_memory"
                    class="slider"
-                   id="slider_value_main_admin_node_memory"  onchange="show_value(this.value, &quot;slider_value_main_admin_node_memory_previous_value&quot;, &quot;slider_value_main_admin_node_memory&quot;, &quot;slider_value_main_admin_node_memory_value&quot;, &quot;slider_value_main_admin_node_memory_warning_icon&quot;, &quot;${mainNodeMemoryMinWarning}&quot;, &quot;${memoryValueDisplayConversion}&quot;, &quot;${memoryRangeUnit}&quot;);"
+                   id="slider_value_main_admin_node_memory" onchange="show_value(this.value, &quot;slider_value_main_admin_node_memory_previous_value&quot;, &quot;slider_value_main_admin_node_memory&quot;, &quot;slider_value_main_admin_node_memory_value&quot;, &quot;slider_value_main_admin_node_memory_warning_icon&quot;, &quot;${mainNodeMemoryMinWarning}&quot;, &quot;${memoryValueDisplayConversion}&quot;, &quot;${memoryRangeUnit}&quot;);"
                    onmouseleave="show_value(this.value, &quot;slider_value_main_admin_node_memory_previous_value&quot;, &quot;slider_value_main_admin_node_memory&quot;, &quot;slider_value_main_admin_node_memory_value&quot;, &quot;slider_value_main_admin_node_memory_warning_icon&quot;, &quot;${mainNodeMemoryMinWarning}&quot;, &quot;${memoryValueDisplayConversion}&quot;, &quot;${memoryRangeUnit}&quot;);" onmousemove="update_display_value(this.value, &quot;slider_value_main_admin_node_memory_value&quot;, &quot;${memoryValueDisplayConversion}&quot;, &quot;${memoryRangeUnit}&quot;);">
               </span>
                 <span class="button-range-span"><button type="button" class="button-right"

@@ -508,6 +508,7 @@ try {
                 -webkit-appearance: none;
                 appearance: none;
                 padding-left: 10px;
+                margin: -4px;
                 cursor: pointer;
                 border: none;
                 width: 200px;
@@ -641,11 +642,14 @@ try {
 
       </style>
     <body>
-
+        <div id="headline-select-profile-div" style="display: none;">
+        <h1>Select Profile & Check Pre-Requisites</h1>
+        <span class="description-paragraph-span"><p>${extendedDescription }</p></span>
+        </div>
         <div id="select-profile-div" style="display: none;">
-            <h2>Profiles</h2>
+            <br>
             <label for="profiles" class="input-box-label" style="margin: 0px;">Profiles</label>
-            <select id="profiles" class="profiles-select capitalize" style="margin: 0px;" value="Virtualbox" onchange="update_selected_value(); getAvailableBoxes(); compareVersions(); checkVagrantPreRequisites(); updateProfileSelection();">
+            <select id="profiles" class="profiles-select capitalize" value="Virtualbox" onchange="update_selected_value(); getAvailableBoxes(); compareVersions(); checkVagrantPreRequisites(); updateProfileSelection();">
             </select>
             </label>
         </div>
@@ -653,49 +657,60 @@ try {
         <style scoped="scoped" onload="populate_profile_option_list();">   </style>
 
         <div id="prerequisites-div" style="display: none;">
+            <br>
             <h2>Pre-requisite Checks</h2>
-            <h4>Virtualization Pre-Requisites</h4>
-            <div><span class="checklist-span"><img src="" id="virtualization-svg" class="" alt="virtualization-svg" /></span><span id="virtualization-text" class="checklist-span" style="width: 300px;display:inline-block;"></span><span class="checklist-span"><img src="" id="main-version-status-svg" class="" alt="main-version-status-svg" /></span><span class="checklist-span">KX-Main Box Version: v</span><span id="kx-main-version" class="checklist-span"></span></div>
-            <div><span class="checklist-span"><img src="" id="vagrant-plugin-svg" class="" alt="vagrant-plugin-svg" /></span><span id="vagrant-plugin-text" class="checklist-span" style="width: 300px;display:inline-block;"></span><span class="checklist-span"><img src="" id="node-version-status-svg" class="" alt="node-version-status-svg" /></span><span class="checklist-span">KX-Node Box Version: v</span><span id="kx-node-version" class="checklist-span"></span></div>
-            <br>
-            <h4>KX.AS.CODE Source</h4>
-            <div><span class="checklist-span"><img src="" id="version-check-svg" class="" alt="version-check-svg" /></span><span class="checklist-span" id="version-check-message"></span></div>
-            <br>
+            <div span style="width: 1100px; height: 100px; display: flex;">
+            <span style="width: 680px; height: 100px; display: inline-block;">          
+                <span style="height: 33px;"><h4>Virtualization Pre-Requisites</h4></span>
+                <div><span class="checklist-span"><img src="" id="virtualization-svg" class="" style="height: 33px;" alt="virtualization-svg" /></span><span id="virtualization-text" class="checklist-span" style="width: 300px;display:inline-block;"></span><span class="checklist-span"><img src="" id="main-version-status-svg" class="" alt="main-version-status-svg" /></span><span>KX-Main Box Version: v</span><span id="kx-main-version" class="checklist-span"></span></div>
+                <div><span class="checklist-span"><img src="" id="vagrant-plugin-svg" class="" style="height: 33px;" alt="vagrant-plugin-svg" /></span><span id="vagrant-plugin-text" class="checklist-span" style="width: 300px;display:inline-block;"></span><span class="checklist-span"><img src="" id="node-version-status-svg" class="" alt="node-version-status-svg" /></span><span>KX-Node Box Version: v</span><span id="kx-node-version" class="checklist-span"></span></div>
+            </span>
+            <span style="width: 400px; height: 100px; display: inline-block;">   
+                <span style="height: 33px;"><h4>KX.AS.CODE Source</h4></span>
+                <div><span class="checklist-span" style="width: 35px; height: 66px; display: inline-block; vertical-align: top;"><img src="" id="version-check-svg" class="" alt="version-check-svg" /></span><span class="checklist-span" style="width: 350px; height: 66px; display: inline-block; vertical-align: top;" id="version-check-message"></span></div>
+            </span>
+            </div>
+
             <style scoped="scoped" onload="getAvailableBoxes(); compareVersions(); checkVagrantPreRequisites(); updateProfileSelection(); change_panel_selection('config-panel-profile-selection');">   </style>
             <input type="hidden" id="system-prerequisites-check" name="system-prerequisites-check" value="">
         </div>
 
         <div id="profile-builds-div" style="display: none;">
-            <h2>Image Builds for Profile</h2>
-            <div>
-                <span>
-                    <span class="build-action-text-label">Last KX-Main Build Date: </span><span id="kx-main-build-timestamp" class="build-action-text-value"></span>
-                    <span class="build-action-text-label">Last KX-Main Build Status: </span><span id="kx-main-build-result" class="build-action-text-value build-action-text-value-result"></span>
-                    <span class="build-number-span" id="kx-main-build-number-link"></span>
-                </span>
-                <span class='span-rounded-border'>
-                    <img src='/userContent/icons/play.svg' class="build-action-icon" title="Start Build" alt="Start Build" onclick='triggerBuild("kx-main");' />|
-                    <img src='/userContent/icons/cancel.svg' class="build-action-icon" title="Cancel Build" alt="Cancel Build" onclick='stopTriggeredBuild("KX.AS.CODE_Image_Builder", "kx-main");' />|
-                    <img src='/userContent/icons/refresh.svg' class="build-action-icon" title="Refresh Data" alt="Refresh Data" onclick='getBuildJobListForProfile("KX.AS.CODE_Image_Builder", "kx-main");' />|
-                    <div class="console-log"><span class="console-log-span"><img src="/userContent/icons/text-box-outline.svg" onMouseover='showConsoleLog("KX.AS.CODE_Image_Builder", "kx-main");' onclick='openFullConsoleLog("KX.AS.CODE_Image_Builder", "kx-main");' class="build-action-icon" alt="View Build Log" title="Click to open full log in new tab"><span class="consolelogtext" id='kxMainBuildConsoleLog'></span></span></div>
-                </span>
+            <br><br>
+            
+            <div class="div-border-text-inline">
+                <h2 class="h2-header-in-line"><span class="span-h2-header-in-line">🚧 Build VM images</</span></h2>
+                <div class="div-inner-h2-header-in-line-wrapper">
+                <span class="description-paragraph-span"><p>Below you can see the last executed builds for each image tpe if there were any. If none, then click the play button for each type of node.</p></span>
+                <div>
+                    <span>
+                        <span class="build-action-text-label">Last KX-Main Build Date: </span><span id="kx-main-build-timestamp" class="build-action-text-value"></span>
+                        <span class="build-action-text-label">Last KX-Main Build Status: </span><span id="kx-main-build-result" class="build-action-text-value build-action-text-value-result"></span>
+                        <span class="build-number-span" id="kx-main-build-number-link"></span>
+                    </span>
+                    <span class='span-rounded-border'>
+                        <img src='/userContent/icons/play.svg' class="build-action-icon" title="Start Build" alt="Start Build" onclick='triggerBuild("kx-main");' />|
+                        <img src='/userContent/icons/cancel.svg' class="build-action-icon" title="Cancel Build" alt="Cancel Build" onclick='stopTriggeredBuild("KX.AS.CODE_Image_Builder", "kx-main");' />|
+                        <img src='/userContent/icons/refresh.svg' class="build-action-icon" title="Refresh Data" alt="Refresh Data" onclick='getBuildJobListForProfile("KX.AS.CODE_Image_Builder", "kx-main");' />|
+                        <div class="console-log"><span class="console-log-span"><img src="/userContent/icons/text-box-outline.svg" onMouseover='showConsoleLog("KX.AS.CODE_Image_Builder", "kx-main");' onclick='openFullConsoleLog("KX.AS.CODE_Image_Builder", "kx-main");' class="build-action-icon" alt="View Build Log" title="Click to open full log in new tab"><span class="consolelogtext" id='kxMainBuildConsoleLog'></span></span></div>
+                    </span>
+                </div>
+                <div>
+                    <span>
+                        <span class="build-action-text-label">Last KX-Node Build Date: </span><span id="kx-node-build-timestamp" class="build-action-text-value"></span>
+                        <span class="build-action-text-label">Last KX-Node Build Status: </span><span id="kx-node-build-result" class="build-action-text-value build-action-text-value-result"></span>
+                        <span class="build-number-span" id="kx-node-build-number-link"></span>
+                    </span>
+                    <span class='span-rounded-border'>
+                        <img src='/userContent/icons/play.svg' class="build-action-icon" title="Start Build" alt="Start Build" onclick='triggerBuild("kx-node");' />|
+                        <img src='/userContent/icons/cancel.svg' class="build-action-icon" title="Cancel Build" alt="Cancel Build" onclick='stopTriggeredBuild("KX.AS.CODE_Image_Builder", "kx-node");' />|
+                        <img src='/userContent/icons/refresh.svg' class="build-action-icon" title="Refresh Data" alt="Refresh Data" onclick='getBuildJobListForProfile("KX.AS.CODE_Image_Builder", "kx-node");' />|
+                        <div class="console-log"><span class="console-log-span"><img src="/userContent/icons/text-box-outline.svg" onMouseover='showConsoleLog("KX.AS.CODE_Image_Builder", "kx-node");' onclick='openFullConsoleLog("KX.AS.CODE_Image_Builder", "kx-node");' class="build-action-icon" alt="View Build Log" title="Click to open full log in new tab"><span class="consolelogtext" id='kxNodeBuildConsoleLog'></span></span></div>
+                    </span>
+                </div>
+                <!--<style scoped="scoped" onload="getBuildJobListForProfile('kx-main'); getBuildJobListForProfile('kx-node');">   </style>-->
+                <style scoped='scoped' onload='getBuildJobListForProfile("KX.AS.CODE_Image_Builder", "kx-main"); getBuildJobListForProfile("KX.AS.CODE_Image_Builder", "kx-node");'>   </style>
             </div>
-
-            <div>
-                <span>
-                    <span class="build-action-text-label">Last KX-Node Build Date: </span><span id="kx-node-build-timestamp" class="build-action-text-value"></span>
-                    <span class="build-action-text-label">Last KX-Node Build Status: </span><span id="kx-node-build-result" class="build-action-text-value build-action-text-value-result"></span>
-                    <span class="build-number-span" id="kx-node-build-number-link"></span>
-                </span>
-                <span class='span-rounded-border'>
-                    <img src='/userContent/icons/play.svg' class="build-action-icon" title="Start Build" alt="Start Build" onclick='triggerBuild("kx-node");' />|
-                    <img src='/userContent/icons/cancel.svg' class="build-action-icon" title="Cancel Build" alt="Cancel Build" onclick='stopTriggeredBuild("KX.AS.CODE_Image_Builder", "kx-node");' />|
-                    <img src='/userContent/icons/refresh.svg' class="build-action-icon" title="Refresh Data" alt="Refresh Data" onclick='getBuildJobListForProfile("KX.AS.CODE_Image_Builder", "kx-node");' />|
-                    <div class="console-log"><span class="console-log-span"><img src="/userContent/icons/text-box-outline.svg" onMouseover='showConsoleLog("KX.AS.CODE_Image_Builder", "kx-node");' onclick='openFullConsoleLog("KX.AS.CODE_Image_Builder", "kx-node");' class="build-action-icon" alt="View Build Log" title="Click to open full log in new tab"><span class="consolelogtext" id='kxNodeBuildConsoleLog'></span></span></div>
-                </span>
-            </div>
-            <!--<style scoped="scoped" onload="getBuildJobListForProfile('kx-main'); getBuildJobListForProfile('kx-node');">   </style>-->
-            <style scoped='scoped' onload='getBuildJobListForProfile("KX.AS.CODE_Image_Builder", "kx-main"); getBuildJobListForProfile("KX.AS.CODE_Image_Builder", "kx-node");'>   </style>
         </div>
     </body>
     """

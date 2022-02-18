@@ -31,7 +31,7 @@ try {
     config_baseUser = parsedJson.config.baseUser
     config_basePassword = parsedJson.config.basePassword
 
-    generalParamsExtendedDescription = "KX-Worker nodes are optional. On a local machine with lower amount of resources (equal to or below 16GB ram), a singe node standalone KX.AS.CODE deployment is advisable. In this case, just set the number of KX-Workers to 0. The 'allow workloads on master' toggle must be set to on in this case, else it will not be possible to deploy any workloads beyond the core tools and services. For VM hosts with higher available resources >16GB ram, feel free to install a full blown cluster and add some worker nodes!"
+    generalParamsExtendedDescription = "In this panel you set the parameters that define how the internal DNS of KX.AS.CODE will be configured. Each new service that is provisioned in KX.AS.CODE will have the fully qualified domain name (FQDN) of &lt;service_name&gt;.&lt;team_name&gt;.&lt;base_domain&gt;. The username and password fields determine the base admin user password. It is possible to add additional users. In the last section, you determine if running in standalone or cluster mode. Standalone mode starts up one main node only. This is recommended for any physical environment with less than 16G ram. If enable worker nodes,then you can also choose to have workloads running on both main and worker nodes, or only on worker nodes."
 
 } catch(e) {
     println("Something went wrong in the GROOVY block (general_parameters.groovy): ${e}")
@@ -70,8 +70,9 @@ try {
     // language=HTML
     def HTML = """
     <div id="general-parameters-div" style="display: none;">
-        <h2>General Profile Parameters</h2>
+        <h1>General Parameters and Mode Selection</h1>
         <span class="description-paragraph-span"><p>${generalParamsExtendedDescription}</p></span>
+        <h2>General Profile Parameters</h2>
         <div class="input-box-div">
             <span class="input-box-span">
                 <label for="general-param-base-domain" class="input-box-label">Base Domain</label>
@@ -99,13 +100,14 @@ try {
     </div>
 
     <div id="standalone-toggle-div" style="display: none;">
+    <br><br>
         <h2>Standalone or Cluster Mode</h2>
         <p>
         ${standaloneModeExtendedDescription}
         </p>
         <div class="wrapper">
             <span class="span-toggle-text">Enable Standalone Mode</span><label for="general-param-standalone-mode-toggle" class="checkbox-switch">
-            <input type="checkbox" onclick="updateCheckbox(this.id); updateConcatenatedGeneralParamsReturnVariable();" id="general-param-standalone-mode-toggle" value="" checked=>
+            <input type="checkbox" onclick="updateCheckbox(this.id); updateConcatenatedGeneralParamsReturnVariable();" id="general-param-standalone-mode-toggle" value="" checked="">
             <span id="general-param-standalone-mode-toggle-span" class=""></span>
         </label><span class="info-span"><img src="/userContent/icons/information-variant.svg" class="info-icon" alt="${infoTextStandaloneMode}"></span>
         </div>
