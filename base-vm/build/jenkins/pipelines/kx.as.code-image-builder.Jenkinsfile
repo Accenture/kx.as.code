@@ -81,7 +81,7 @@ pipeline {
                         -var "git_techradar_user=${git_techradar_user}" \
                         -var "git_techradar_token=${git_techradar_token}" \
                         -var "base_image_ssh_user=${vagrant_ssh_username}" \
-                        ./kx.as.code-main-local-profiles.json
+                        ./${node_type}-local-profiles.json
                         """
                     }}}
                 }
