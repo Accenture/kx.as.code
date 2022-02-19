@@ -55,13 +55,13 @@ pipeline {
                         VBoxManage list vms
                         if [ "${vagrant_action}" == "destroy" ]; then
                             vagrant destroy --force --no-tty
-                        else if [ "${vagrant_action}" == "up" ]; then
+                        elif [ "${vagrant_action}" == "up" ]; then
                             vagrant up --no-tty
-                            for i in $(seq 1 \$(($num_kx_main_nodes - 1)));
+                            for i in \$(seq 1 \$(($num_kx_main_nodes - 1)));
                             do
                                 vagrant up --no-tty kx-main\${i}
                             done
-                            for i in \$(seq 1 $num_kx_worker_nodes);
+                            for i in \$(seq 1 ${num_kx_worker_nodes});
                             do
                                 vagrant up --no-tty kx-worker\${i}
                             done
