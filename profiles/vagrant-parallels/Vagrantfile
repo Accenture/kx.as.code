@@ -31,7 +31,7 @@ puts "Local Disk Size: #{LOCAL_KUBE_VOLUMES_DISK_SIZE}GB"
 puts "GlusterFS Disk Size: #{GLUSTERFS_KUBE_VOLUMES_DISK_SIZE}GB"
 
 # Environment variables will override the profile-config.json file properties. This was added for the Jenkins jobs, so that they can override parameters
-ENVIRONMENT_PREFIX = ENV['environmentPrefix'] || profile_config_json['config']['vm_properties']['environment_prefix']
+ENVIRONMENT_PREFIX = ENV['environmentPrefix'] || profile_config_json['config']['environmentPrefix']
 puts "ENVIRONMENT_PREFIX: #{ENVIRONMENT_PREFIX}"
 MAIN_NODE_COUNT = ENV['mainNodeCount'] || profile_config_json['config']['vm_properties']['main_node_count']
 puts "MAIN_NODE_COUNT: #{MAIN_NODE_COUNT}"
