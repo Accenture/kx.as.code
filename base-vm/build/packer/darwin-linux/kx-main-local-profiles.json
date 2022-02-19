@@ -241,7 +241,7 @@
     "only_on": ["darwin","linux"],
     "script": "../../../scripts/post-processing/create-metadata-json.sh"
   }
-],
+  ],
   "provisioners": [
     {
       "environment_vars": [
@@ -391,13 +391,13 @@
       "headless": "true",
       "http_proxy": "{{env `http_proxy`}}",
       "https_proxy": "{{env `https_proxy`}}",
-      "iso_checksum": "24fee00ed402c4a82cfec535870ab2359ec12a7dd4eed89c98fd582bc7cf3b25",
+      "iso_checksum": "8488abc1361590ee7a3c9b00ec059b29dfb1da40f8ba4adf293c7a30fa943eb2",
       "iso_checksum_type": "sha256",
       "iso_path": "iso",
-      "iso_url": "https://cdimage.debian.org/mirror/cdimage/archive/10.10.0/amd64/iso-cd/debian-10.10.0-amd64-xfce-CD-1.iso",
-      "iso_file": "debian-10.10.0-amd64-xfce-CD-1.iso",
-      "guest_additions_url": "https://download.virtualbox.org/virtualbox/6.1.26/VBoxGuestAdditions_6.1.26.iso",
-      "guest_additions_checksum": "22d02ec417cd7723d7269dbdaa71c48815f580c0ca7a0606c42bd623f84873d7",
+      "iso_url": "https://cdimage.debian.org/mirror/cdimage/archive/11.1.0/amd64/iso-cd/debian-11.1.0-amd64-netinst.iso",
+      "iso_file": "iso-cd/debian-11.1.0-amd64-netinst.iso",
+      "guest_additions_url": "https://download.virtualbox.org/virtualbox/6.1.32/VBoxGuestAdditions_6.1.32.iso",
+      "guest_additions_checksum": "3ab8d64c209d89ffc48e71df68ac0da2cf76074579ffaf2dba008ddbef44129c",
       "no_proxy": "{{env `no_proxy`}}",
       "parallels_tools_mode": "upload",
       "parallels_tools_guest_path": "/var/tmp/prl-tools-lin.iso",
@@ -408,14 +408,13 @@
       "http_bind_address": "0.0.0.0",
       "http_port_min": "8090",
       "http_port_max": "8099",
-      "shutdown_command": "echo 'vagrant' | sudo -Srm -rf shutdown -P now",
+      "shutdown_command": "echo 'vagrant' | sudo -S shutdown -P now",
       "ssh_fullname": "KX Hero",
       "update": "true",
       "video_memory": "128",
       "virtualbox_guest_os_type": "Debian_64",
       "base_image_ssh_user": "vagrant",
       "vm_name": "kx-main",
-      "vm_suffix": "-demo",
       "vmware_guest_os_type": "ubuntu64Guest"
   }
 }
