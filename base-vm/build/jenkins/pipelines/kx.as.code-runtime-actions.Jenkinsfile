@@ -23,6 +23,8 @@ pipeline {
     parameters {
         string(name: 'kx_main_version', defaultValue: '', description: '')
         string(name: 'kx_node_version', defaultValue: '', description: '')
+        string(name: 'num_kx_main_nodes', defaultValue: '', description: '')
+        string(name: 'num_kx_worker_nodes', defaultValue: '', description: '')
         string(name: 'dockerhub_email', defaultValue: '', description: '')
         string(name: 'profile', defaultValue: '', description: '')
         string(name: 'profile_path', defaultValue: '', description: '')
@@ -52,11 +54,20 @@ pipeline {
                         cd profiles/vagrant-${profile}
                         VBoxManage list vms
                         if [ "${vagrant_action}" == "destroy" ]; then
-                            export additional_options="--force"
+                            vagrant destroy --force --no-tty
+                        else if [ "${vagrant_action}" == "up" ]; then
+                            vagrant up --no-tty
+                            for i in $(seq 1 $(($num_kx_main_nodes - 1)));
+                            do
+                                vagrant up --no-tty kx-main${i}
+                            done
+                            for i in $(seq 1 $num_kx_worker_nodes);
+                            do
+                                vagrant up --no-tty kx-worker${i}
+                            done
                         else
-                            export additional_options=""
+                            vagrant ${vagrant_action} --no-tty
                         fi
-                        vagrant ${vagrant_action} --no-tty \${additional_options}
                         VBoxManage list vms
                         """
                     }

@@ -11,6 +11,8 @@
         <parameters>
             <string>kx_main_version</string>
             <string>kx_node_version</string>
+            <string>num_kx_main_nodes</string>
+            <string>num_kx_worker_nodes</string>
             <string>kx_version_override</string>
             <string>kx_main_box_location</string>
             <string>kx_node_box_location</string>
@@ -53,6 +55,18 @@
               <hudson.model.StringParameterDefinition>
                   <name>kx_node_version</name>
                   <description>KX.AS.CODE Cluster Node Version</description>
+                  <defaultValue></defaultValue>
+                  <trim>false</trim>
+              </hudson.model.StringParameterDefinition>
+              <hudson.model.StringParameterDefinition>
+                  <name>num_kx_main_nodes</name>
+                  <description>Number of KX-Main nodes to provision</description>
+                  <defaultValue></defaultValue>
+                  <trim>false</trim>
+              </hudson.model.StringParameterDefinition>
+              <hudson.model.StringParameterDefinition>
+                  <name>num_kx_worker_nodes</name>
+                  <description>Number of KX-Worker nodes to provision</description>
                   <defaultValue></defaultValue>
                   <trim>false</trim>
               </hudson.model.StringParameterDefinition>
