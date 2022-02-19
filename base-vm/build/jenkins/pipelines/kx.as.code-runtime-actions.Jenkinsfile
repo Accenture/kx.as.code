@@ -45,10 +45,8 @@ pipeline {
                     sh """
                     export mainBoxVersion=${kx_main_version}
                     export nodeBoxVersion=${kx_node_version}
-                    export environmentPrefix=${environment_prefix}
                     echo "Profile path: ${profile_path}"
                     echo "Vagrant action: ${vagrant_action}"
-                    echo "Environment prefix: ${environment_prefix}"
                     echo "Current directory \$(pwd)"
                     cd profiles/vagrant-${profile}
                     VBoxManage list vms
