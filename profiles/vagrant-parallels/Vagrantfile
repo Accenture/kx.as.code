@@ -61,9 +61,9 @@ MAIN_BOX_VERSION = ENV['mainBoxVersion'] || kx_version_json['kxascode']
 puts "MAIN_BOX_VERSION: #{MAIN_BOX_VERSION}"
 NODE_BOX_VERSION = ENV['nodeBoxVersion'] || kx_version_json['kxascode']
 puts "NODE_BOX_VERSION: #{NODE_BOX_VERSION}"
-KX_MAIN_BOX_LOCATION = ENV['kxMainBoxLocation'] || "../../base-vm/boxes/virtualbox-#{MAIN_BOX_VERSION}/kx-main-#{MAIN_BOX_VERSION}.box"
+KX_MAIN_BOX_LOCATION = ENV['kxMainBoxLocation'] || "base-vm/boxes/parallels-#{MAIN_BOX_VERSION}/kx-main-#{MAIN_BOX_VERSION}.box"
 puts "KX_MAIN_BOX_LOCATION: #{KX_MAIN_BOX_LOCATION}"
-KX_NODE_BOX_LOCATION = ENV['kxNodeBoxLocation'] || "../../base-vm/boxes/virtualbox-#{NODE_BOX_VERSION}/kx-node-#{NODE_BOX_VERSION}.box"
+KX_NODE_BOX_LOCATION = ENV['kxNodeBoxLocation'] || "base-vm/boxes/parallels-#{NODE_BOX_VERSION}/kx-node-#{NODE_BOX_VERSION}.box"
 puts "KX_NODE_BOX_LOCATION: #{KX_NODE_BOX_LOCATION}"
 
 if (MAIN_NODE_COUNT - 1) < 1
