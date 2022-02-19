@@ -80,7 +80,6 @@ WORKSPACE_HOME = File.dirname(File.expand_path('../..', __FILE__))
 Vagrant.configure("2") do |config|
   config.vm.define "kx-main1", primary: true do |subconfig|
     subconfig.vm.box = "kx-main"
-    subconfig.vm.box_version = "#{MAIN_BOX_VERSION}"
     subconfig.vm.hostname = "kx-main1"
     subconfig.vm.network :forwarded_port, guest: 22, host: 2222, id: "ssh", disabled: true
     subconfig.vm.network :forwarded_port, guest: 22, host: 2230, id: "ssh-kx-main", auto_correct: true
@@ -109,7 +108,6 @@ Vagrant.configure("2") do |config|
     (2..MAIN_NODE_COUNT).each do |i|
       config.vm.define "kx-main#{i}" do |subconfig|
         subconfig.vm.box = "kx-node"
-        subconfig.vm.box_version = "#{NODE_BOX_VERSION}"
         subconfig.vm.hostname = "kx-main#{i}"
         subconfig.vm.network :forwarded_port, guest: 22, host: 2222, id: "ssh", disabled: true
         subconfig.vm.network :forwarded_port, guest: 22, host: "224#{i}", id: "ssh-kx-main#{i}", auto_correct: true
@@ -136,7 +134,6 @@ Vagrant.configure("2") do |config|
   (1..WORKER_NODE_COUNT).each do |i|
     config.vm.define "kx-worker#{i}" do |subconfig|
       subconfig.vm.box = "kx-node"
-      subconfig.vm.box_version = "#{NODE_BOX_VERSION}"
       subconfig.vm.hostname = "kx-worker#{i}"
       subconfig.vm.network :forwarded_port, guest: 22, host: 2222, id: "ssh", disabled: true
       subconfig.vm.network :forwarded_port, guest: 22, host: "223#{i}", id: "ssh-kx-worker#{i}", auto_correct: true
