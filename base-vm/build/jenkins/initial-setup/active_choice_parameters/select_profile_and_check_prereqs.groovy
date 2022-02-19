@@ -107,167 +107,135 @@ try {
     def systemCheckJsonFilePath = 'jenkins_shared_workspace/kx.as.code/system-check.json'
     def systemCheckJsonFile = new File(systemCheckJsonFilePath)
 
-    // TODO - changed to (!) for debugging only
-    if (! systemCheckJsonFile.exists()) {
-
-        def parsedJson = new JsonSlurper().parse(systemCheckJsonFile)
-        println("parsedJson.boxes:" + parsedJson.boxes)
-        println("parsedJson.system:" + parsedJson.system)
-
-        parallelsExecutableExists = parsedJson.system.parallelsExecutable
-        vboxExecutableExists = parsedJson.system.vboxExecutable
-        vmwareExecutableExists = parsedJson.system.vmwareExecutable
-
-        vagrantVmwarePluginInstalled = parsedJson.system.vagrantVmwarePluginInstalled
-        vagrantParallelsPluginInstalled = parsedJson.system.vagrantParallelsPluginInstalled
-
-        virtualboxMainExists = parsedJson.boxes.virtualboxMainExists
-        virtualboxMainVersion = parsedJson.boxes.virtualboxMainVersion
-        virtualboxNodeExists = parsedJson.boxes.virtualboxNodeExists
-        virtualboxNodeVersion = parsedJson.boxes.virtualboxNodeVersion
-        vmwareMainExists = parsedJson.boxes.vmwareMainExists
-        vmwareMainVersion = parsedJson.boxes.vmwareMainVersion
-        vmwareNodeExists = parsedJson.boxes.vmwareNodeExists
-        vmwareNodeVersion = parsedJson.boxes.vmwareNodeVersion
-        parallelsMainExists = parsedJson.boxes.parallelsMainExists
-        parallelsMainVersion = parsedJson.boxes.parallelsMainVersion
-        parallelsNodeExists = parsedJson.boxes.parallelsNodeExists
-        parallelsNodeVersion = parsedJson.boxes.parallelsNodeVersion
-
+    parallelsExecutableExists = ""
+    if (underlyingOS == "darwin") {
+        File parallelsExecutable = new File(parallelsPath)
+        parallelsExecutableExists = parallelsExecutable.exists()
     } else {
+        parallelsExecutableExists = false
+    }
 
-        parallelsExecutableExists = ""
-        if (underlyingOS == "darwin") {
-            File parallelsExecutable = new File(parallelsPath)
-            parallelsExecutableExists = parallelsExecutable.exists()
-        } else {
-            parallelsExecutableExists = false
+    File vboxExecutable = new File(virtualboxPath)
+    vboxExecutableExists = vboxExecutable.exists()
+
+    File vmwareExecutable = new File(vmwareWorkstationPath)
+    vmwareExecutableExists = vmwareExecutable.exists()
+
+    vagrantPluginList = 'vagrant plugin list'.execute().text
+    vagrantPluginList = new String(vagrantPluginList).split('\n')
+
+    for (vagrantPlugin in vagrantPluginList) {
+        vagrantPluginSplit = vagrantPlugin.split(" ")
+        vagrantPluginName = vagrantPluginSplit[0]
+        vagrantPluginVersion = vagrantPluginSplit[1]
+        if (vagrantPluginName == "vagrant-vmware-desktop") {
+            vagrantVmwarePluginInstalled = true
+        } else if (vagrantPluginName == "vagrant-parallels") {
+            vagrantParallelsPluginInstalled = true
         }
+    }
 
-        File vboxExecutable = new File(virtualboxPath)
-        vboxExecutableExists = vboxExecutable.exists()
+    def builder = new JsonBuilder()
+    def jsonSlurper = new JsonSlurper()
 
-        File vmwareExecutable = new File(vmwareWorkstationPath)
-        vmwareExecutableExists = vmwareExecutable.exists()
+    def vagrantJson = jsonSlurper.parseText('{ "system": { "vagrantVmwarePluginInstalled": "' + vagrantVmwarePluginInstalled + '", "vagrantParallelsPluginInstalled": "' + vagrantParallelsPluginInstalled + '", "parallelsExecutable": "' + parallelsExecutableExists + '", "vboxExecutable": "' + vboxExecutableExists + '", "vmwareExecutable": "' + vmwareExecutableExists + '"}}')
 
-        vagrantPluginList = 'vagrant plugin list'.execute().text
-        vagrantPluginList = new String(vagrantPluginList).split('\n')
+    println("vagrant: ${vagrantJson}")
 
-        for (vagrantPlugin in vagrantPluginList) {
-            vagrantPluginSplit = vagrantPlugin.split(" ")
-            vagrantPluginName = vagrantPluginSplit[0]
-            vagrantPluginVersion = vagrantPluginSplit[1]
-            if (vagrantPluginName == "vagrant-vmware-desktop") {
-                vagrantVmwarePluginInstalled = true
-            } else if (vagrantPluginName == "vagrant-parallels") {
-                vagrantParallelsPluginInstalled = true
-            }
-        }
+    new File("jenkins_shared_workspace/kx.as.code/base-vm/boxes/").eachDir {boxDirectories << it.name }
+    println(boxDirectories)
+    println("box 0: ${boxDirectories[0]}")
+    println("box 1: ${boxDirectories[1]}")
+    println("box 3: ${boxDirectories[3]}")
+    println(boxDirectories[0].substring(0,boxDirectories[0].lastIndexOf("-")))
+    println(boxDirectories[3].substring(0,boxDirectories[3].lastIndexOf("-")))
 
-        def builder = new JsonBuilder()
-        def jsonSlurper = new JsonSlurper()
+    println(boxDirectories[3].substring(0,boxDirectories[3].lastIndexOf("-")).length())
 
-        def vagrantJson = jsonSlurper.parseText('{ "system": { "vagrantVmwarePluginInstalled": "' + vagrantVmwarePluginInstalled + '", "vagrantParallelsPluginInstalled": "' + vagrantParallelsPluginInstalled + '", "parallelsExecutable": "' + parallelsExecutableExists + '", "vboxExecutable": "' + vboxExecutableExists + '", "vmwareExecutable": "' + vmwareExecutableExists + '"}}')
+    boxDirectories[3].substring(0,boxDirectories[3].lastIndexOf("-")).length()
+    boxDirectories[0].length()
 
-        println("vagrant: ${vagrantJson}")
+    println("*1*")
+    println(boxDirectories[3].lastIndexOf("-").toString().length())
+    println("*2*")
 
-        new File("jenkins_shared_workspace/kx.as.code/base-vm/boxes/").eachDir {boxDirectories << it.name }
-        println(boxDirectories)
-        println("box 0: ${boxDirectories[0]}")
-        println("box 1: ${boxDirectories[1]}")
-        println("box 3: ${boxDirectories[3]}")
-        println(boxDirectories[0].substring(0,boxDirectories[0].lastIndexOf("-")))
-        println(boxDirectories[3].substring(0,boxDirectories[3].lastIndexOf("-")))
+    println(boxDirectories[2].substring(0,boxDirectories[2].lastIndexOf("-")))
+    println(boxDirectories[2].substring(boxDirectories[2].substring(0,boxDirectories[2].lastIndexOf("-")).length()+1,boxDirectories[2].length()))
 
-        println(boxDirectories[3].substring(0,boxDirectories[3].lastIndexOf("-")).length())
+    def boxDirectoryList = []
+    def provider
+    def version
+    boxDirectories.eachWithIndex { boxDirectory, i ->
+        println boxDirectory
+        println i
+        boxProvider = boxDirectories[i].substring(0,boxDirectories[i].lastIndexOf("-"))
+        boxVersion = boxDirectories[i].substring(boxDirectories[i].substring(0,boxDirectories[i].lastIndexOf("-")).length()+1,boxDirectories[i].length())
+        println("provider: ${boxProvider}, version: ${boxVersion}")
 
-        boxDirectories[3].substring(0,boxDirectories[3].lastIndexOf("-")).length()
-        boxDirectories[0].length()
+        new File("jenkins_shared_workspace/kx.as.code/base-vm/boxes/${boxDirectory}/").eachFile {boxDirectoryList << it.name }
+        boxDirectoryList.eachWithIndex { box, j ->
+            if (box.endsWith('.box')) {
+                boxName = box.substring(0,box.lastIndexOf("-"))
+                println("provider: ${boxProvider}, box: ${boxName}, version: ${boxVersion}")
+                if(boxName == "kx-main" || boxName == "kx-node") {
+                    boxesList.add('"' + boxName + " " + boxProvider + " " + boxVersion + '"')
+                    if (boxName == "kx-main" && boxProvider == "virtualbox") {
+                        virtualboxMainExists = "true"
+                        virtualboxMainVersion = boxVersion
+                    }
+                    if (boxName == "kx-node" && boxProvider == "virtualbox") {
+                        virtualboxNodeExists = "true"
+                        virtualboxNodeVersion = boxVersion
+                    }
+                    if (boxName == "kx-main" && boxProvider == "vmware-desktop") {
+                        vmwareMainExists = "true"
+                        vmwareMainVersion = boxVersion
 
-        println("*1*")
-        println(boxDirectories[3].lastIndexOf("-").toString().length())
-        println("*2*")
+                    }
+                    if (boxName == "kx-node" && boxProvider == "vmware-desktop") {
+                        vmwareNodeExists = "true"
+                        vmwareNodeVersion = boxVersion
 
-        println(boxDirectories[2].substring(0,boxDirectories[2].lastIndexOf("-")))
-        println(boxDirectories[2].substring(boxDirectories[2].substring(0,boxDirectories[2].lastIndexOf("-")).length()+1,boxDirectories[2].length()))
+                    }
+                    if (boxName == "kx-main" && boxProvider == "parallels") {
+                        parallelsMainExists = "true"
+                        parallelsMainVersion = boxVersion
 
-        def boxDirectoryList = []
-        def provider
-        def version
-        boxDirectories.eachWithIndex { boxDirectory, i ->
-            println boxDirectory
-            println i
-            boxProvider = boxDirectories[i].substring(0,boxDirectories[i].lastIndexOf("-"))
-            boxVersion = boxDirectories[i].substring(boxDirectories[i].substring(0,boxDirectories[i].lastIndexOf("-")).length()+1,boxDirectories[i].length())
-            println("provider: ${boxProvider}, version: ${boxVersion}")
-
-            new File("jenkins_shared_workspace/kx.as.code/base-vm/boxes/${boxDirectory}/").eachFile {boxDirectoryList << it.name }
-            boxDirectoryList.eachWithIndex { box, j ->
-                if (box.endsWith('.box')) {
-                    boxName = box.substring(0,box.lastIndexOf("-"))
-                    println("provider: ${boxProvider}, box: ${boxName}, version: ${boxVersion}")
-                    if(boxName == "kx-main" || boxName == "kx-node") {
-                        boxesList.add('"' + boxName + " " + boxProvider + " " + boxVersion + '"')
-                        if (boxName == "kx-main" && boxProvider == "virtualbox") {
-                            virtualboxMainExists = "true"
-                            virtualboxMainVersion = boxVersion
-                        }
-                        if (boxName == "kx-node" && boxProvider == "virtualbox") {
-                            virtualboxNodeExists = "true"
-                            virtualboxNodeVersion = boxVersion
-                        }
-                        if (boxName == "kx-main" && boxProvider == "vmware-desktop") {
-                            vmwareMainExists = "true"
-                            vmwareMainVersion = boxVersion
-
-                        }
-                        if (boxName == "kx-node" && boxProvider == "vmware-desktop") {
-                            vmwareNodeExists = "true"
-                            vmwareNodeVersion = boxVersion
-
-                        }
-                        if (boxName == "kx-main" && boxProvider == "parallels") {
-                            parallelsMainExists = "true"
-                            parallelsMainVersion = boxVersion
-
-                        }
-                        if (boxName == "kx-node" && boxProvider == "parallels") {
-                            parallelsNodeExists = "true"
-                            parallelsNodeVersion = boxVersion
-                        }
+                    }
+                    if (boxName == "kx-node" && boxProvider == "parallels") {
+                        parallelsNodeExists = "true"
+                        parallelsNodeVersion = boxVersion
                     }
                 }
             }
         }
-        println(boxesList)
-        println("All boxes: " + boxesList)
-        println("0: " + boxesList[0])
-        println("1: " + boxesList[1])
+    }
+    println(boxesList)
+    println("All boxes: " + boxesList)
+    println("0: " + boxesList[0])
+    println("1: " + boxesList[1])
 
-        def boxesJson = jsonSlurper.parseText('{ "boxes": { "virtualboxMainExists": "' + virtualboxMainExists + '", "virtualboxMainVersion": "' + virtualboxMainVersion + '", "virtualboxNodeExists": "' + virtualboxNodeExists + '", "virtualboxNodeVersion": "' + virtualboxNodeVersion + '", "vmwareMainExists": "' + vmwareMainExists + '", "vmwareMainVersion": "' + vmwareMainVersion + '", "vmwareNodeExists": "' + vmwareNodeExists + '", "vmwareNodeVersion": "' + vmwareNodeVersion + '", "parallelsMainExists": "' + parallelsMainExists + '", "parallelsMainVersion": "' + parallelsMainVersion + '", "parallelsNodeExists": "' + parallelsNodeExists + '", "parallelsNodeVersion": "' + parallelsNodeVersion + '"}}')
+    def boxesJson = jsonSlurper.parseText('{ "boxes": { "virtualboxMainExists": "' + virtualboxMainExists + '", "virtualboxMainVersion": "' + virtualboxMainVersion + '", "virtualboxNodeExists": "' + virtualboxNodeExists + '", "virtualboxNodeVersion": "' + virtualboxNodeVersion + '", "vmwareMainExists": "' + vmwareMainExists + '", "vmwareMainVersion": "' + vmwareMainVersion + '", "vmwareNodeExists": "' + vmwareNodeExists + '", "vmwareNodeVersion": "' + vmwareNodeVersion + '", "parallelsMainExists": "' + parallelsMainExists + '", "parallelsMainVersion": "' + parallelsMainVersion + '", "parallelsNodeExists": "' + parallelsNodeExists + '", "parallelsNodeVersion": "' + parallelsNodeVersion + '"}}')
 
-        println(boxesJson)
+    println(boxesJson)
 
-        try {
-            builder boxesJson
-            builder vagrantJson
+    try {
+        builder boxesJson
+        builder vagrantJson
 
-            def mergedJson = boxesJson + vagrantJson
+        def mergedJson = boxesJson + vagrantJson
 
-            builder mergedJson
+        builder mergedJson
 
-            println builder.toPrettyString()
+        println builder.toPrettyString()
 
-            new File(systemCheckJsonFilePath).write(builder.toPrettyString())
-        } catch (e) {
-            println("Error creating and writing system check JSON file: " + e)
-        }
-
-        println("existingBoxes" + existingBoxes)
-
+        new File(systemCheckJsonFilePath).write(builder.toPrettyString())
+    } catch (e) {
+        println("Error creating and writing system check JSON file: " + e)
     }
 
-    println("Check prerequisites - EOF")
+    println("existingBoxes" + existingBoxes)
+    println("Check prerequisites - END")
 
 } catch(e) {
     println "Something went wrong in the GROOVY block (select_profile_and_check_prereqs.groovy): ${e}"
@@ -689,12 +657,12 @@ try {
             <br>
             <h2>Pre-requisite Checks</h2>
             <div span style="width: 1100px; height: 100px; display: flex;">
-            <span style="width: 680px; height: 100px; display: inline-block;">          
+            <span style="width: 680px; height: 100px; display: inline-block;">
                 <span style="height: 33px;"><h4>Virtualization Pre-Requisites</h4></span>
                 <div><span class="checklist-span"><img src="" id="virtualization-svg" class="" style="height: 33px;" alt="virtualization-svg" /></span><span id="virtualization-text" class="checklist-span" style="width: 300px;display:inline-block;"></span><span class="checklist-span"><img src="" id="main-version-status-svg" class="" alt="main-version-status-svg" /></span><span>KX-Main Box Version: v</span><span id="kx-main-version" class="checklist-span"></span></div>
                 <div><span class="checklist-span"><img src="" id="vagrant-plugin-svg" class="" style="height: 33px;" alt="vagrant-plugin-svg" /></span><span id="vagrant-plugin-text" class="checklist-span" style="width: 300px;display:inline-block;"></span><span class="checklist-span"><img src="" id="node-version-status-svg" class="" alt="node-version-status-svg" /></span><span>KX-Node Box Version: v</span><span id="kx-node-version" class="checklist-span"></span></div>
             </span>
-            <span style="width: 400px; height: 100px; display: inline-block;">   
+            <span style="width: 400px; height: 100px; display: inline-block;">
                 <span style="height: 33px;"><h4>KX.AS.CODE Source</h4></span>
                 <div><span class="checklist-span" style="width: 35px; height: 66px; display: inline-block; vertical-align: top;"><img src="" id="version-check-svg" class="" alt="version-check-svg" /></span><span class="checklist-span" style="width: 350px; height: 66px; display: inline-block; vertical-align: top;" id="version-check-message"></span></div>
             </span>
@@ -706,7 +674,7 @@ try {
 
         <div id="profile-builds-div" style="display: none;">
             <br><br>
-            
+
             <div class="div-border-text-inline">
                 <h2 class="h2-header-in-line"><span class="span-h2-header-in-line">🚧 Build VM images</</span></h2>
                 <div class="div-inner-h2-header-in-line-wrapper">
