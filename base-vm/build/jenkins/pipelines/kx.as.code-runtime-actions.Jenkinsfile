@@ -42,22 +42,24 @@ pipeline {
         stage('Execute Vagrant Action'){
             steps {
                 script {
-                    sh """
-                    export mainBoxVersion=${kx_main_version}
-                    export nodeBoxVersion=${kx_node_version}
-                    echo "Profile path: ${profile_path}"
-                    echo "Vagrant action: ${vagrant_action}"
-                    echo "Current directory \$(pwd)"
-                    cd profiles/vagrant-${profile}
-                    VBoxManage list vms
-                    if [ "${vagrant_action}" == "destroy" ]; then
-                        export additional_options="--force"
-                    else
-                        export additional_options=""
-                    fi
-                    vagrant ${vagrant_action} --no-tty \${additional_options}
-                    VBoxManage list vms
-                    """
+                    dir(shared_workspace) {
+                        sh """
+                        export mainBoxVersion=${kx_main_version}
+                        export nodeBoxVersion=${kx_node_version}
+                        echo "Profile path: ${profile_path}"
+                        echo "Vagrant action: ${vagrant_action}"
+                        echo "Current directory \$(pwd)"
+                        cd profiles/vagrant-${profile}
+                        VBoxManage list vms
+                        if [ "${vagrant_action}" == "destroy" ]; then
+                            export additional_options="--force"
+                        else
+                            export additional_options=""
+                        fi
+                        vagrant ${vagrant_action} --no-tty \${additional_options}
+                        VBoxManage list vms
+                        """
+                    }
                 }
             }
         }
