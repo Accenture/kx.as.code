@@ -28,23 +28,24 @@ def parallelsMainVersion
 def parallelsNodeExists
 def parallelsNodeVersion
 def extendedDescription
-def profile_paths = []
+def profilePaths = []
+def boxDirectories = []
 
 try {
 
     extendedDescription = "Welcome to KX.AS.CODE. In this panel you can select the profile. A check is made on the system to see if the necessary virtualization software and associated Vagrant plugins are installed, s well as availability of built Vagrant boxes. An attempt is made to automatically select the profile based on discovered pre-requisites."
 
-    new File('jenkins_shared_workspace/kx.as.code/profiles/').eachDirMatch(~/.*vagrant.*/) { profile_paths << it.path }
+    new File('jenkins_shared_workspace/kx.as.code/profiles/').eachDirMatch(~/.*vagrant.*/) { profilePaths << it.path }
 
     String underlyingOS
-    println profile_paths
+    println profilePaths
 
     def OS = System.getProperty("os.name", "generic").toLowerCase(Locale.ENGLISH);
     if ((OS.indexOf("mac") >= 0) || (OS.indexOf("darwin") >= 0)) {
         underlyingOS = "darwin"
     } else if (OS.indexOf("win") >= 0) {
         underlyingOS = "windows"
-        profile_paths.removeAll { it.toLowerCase().endsWith('parallels') }
+        profilePaths.removeAll { it.toLowerCase().endsWith('parallels') }
     } else if (OS.indexOf("nux") >= 0) {
         underlyingOS = "linux"
     } else {
@@ -52,10 +53,10 @@ try {
     }
     println("After OS and before sort()")
 
-    profile_paths.sort()
-    profile_paths = profile_paths.join(",")
-    profile_paths = profile_paths.replaceAll("\\\\", "/")
-    println(profile_paths)
+    profilePaths.sort()
+    profilePaths = profilePaths.join(",")
+    profilePaths = profilePaths.replaceAll("\\\\", "/")
+    println(profilePaths)
     println("End of get_profiles.groovy GROOVY code")
 } catch(e) {
     println("Something went wrong in the GROOVY block (select_profile_and_check_prereqs.groovy): ${e}")
@@ -106,7 +107,8 @@ try {
     def systemCheckJsonFilePath = 'jenkins_shared_workspace/kx.as.code/system-check.json'
     def systemCheckJsonFile = new File(systemCheckJsonFilePath)
 
-    if (systemCheckJsonFile.exists()) {
+    // TODO - changed to (!) for debugging only
+    if (! systemCheckJsonFile.exists()) {
 
         def parsedJson = new JsonSlurper().parse(systemCheckJsonFile)
         println("parsedJson.boxes:" + parsedJson.boxes)
@@ -169,48 +171,75 @@ try {
 
         println("vagrant: ${vagrantJson}")
 
-        def existingBoxes = 'vagrant box list'.execute().text
-        def boxes = new String(existingBoxes).split('\n')
-        println("existingBoxes" + existingBoxes)
+        new File("jenkins_shared_workspace/kx.as.code/base-vm/boxes/").eachDir {boxDirectories << it.name }
+        println(boxDirectories)
+        println("box 0: ${boxDirectories[0]}")
+        println("box 1: ${boxDirectories[1]}")
+        println("box 3: ${boxDirectories[3]}")
+        println(boxDirectories[0].substring(0,boxDirectories[0].lastIndexOf("-")))
+        println(boxDirectories[3].substring(0,boxDirectories[3].lastIndexOf("-")))
 
-        println("[0]: " + boxes[0])
-        println("[1]: " + boxes[1])
+        println(boxDirectories[3].substring(0,boxDirectories[3].lastIndexOf("-")).length())
 
-        for (box in boxes) {
-            boxItem = box.split(" ")
-            boxName = boxItem[0].trim()
-            boxProvider = boxItem[1].trim().replaceAll("[(),]", "").replaceAll("_", "-")
-            boxVersion = boxItem[2].trim().replaceAll("[()]", "")
-            println(boxName + " " + boxProvider + " " + boxVersion)
-            boxesList.add('"' + boxName + " " + boxProvider + " " + boxVersion + '"')
-            if (boxName == "kx.as.code-main" && boxProvider == "virtualbox") {
-                virtualboxMainExists = "true"
-                virtualboxMainVersion = boxVersion
-            }
-            if (boxName == "kx.as.code-node" && boxProvider == "virtualbox") {
-                virtualboxNodeExists = "true"
-                virtualboxNodeVersion = boxVersion
-            }
-            if (boxName == "kx.as.code-main" && boxProvider == "vmware-desktop") {
-                vmwareMainExists = "true"
-                vmwareMainVersion = boxVersion
+        boxDirectories[3].substring(0,boxDirectories[3].lastIndexOf("-")).length()
+        boxDirectories[0].length()
 
-            }
-            if (boxName == "kx.as.code-node" && boxProvider == "vmware-desktop") {
-                vmwareNodeExists = "true"
-                vmwareNodeVersion = boxVersion
+        println("*1*")
+        println(boxDirectories[3].lastIndexOf("-").toString().length())
+        println("*2*")
 
-            }
-            if (boxName == "kx.as.code-main" && boxProvider == "parallels") {
-                parallelsMainExists = "true"
-                parallelsMainVersion = boxVersion
+        println(boxDirectories[2].substring(0,boxDirectories[2].lastIndexOf("-")))
+        println(boxDirectories[2].substring(boxDirectories[2].substring(0,boxDirectories[2].lastIndexOf("-")).length()+1,boxDirectories[2].length()))
 
-            }
-            if (boxName == "kx.as.code-node" && boxProvider == "parallels") {
-                parallelsNodeExists = "true"
-                parallelsNodeVersion = boxVersion
+        def boxDirectoryList = []
+        def provider
+        def version
+        boxDirectories.eachWithIndex { boxDirectory, i ->
+            println boxDirectory
+            println i
+            boxProvider = boxDirectories[i].substring(0,boxDirectories[i].lastIndexOf("-"))
+            boxVersion = boxDirectories[i].substring(boxDirectories[i].substring(0,boxDirectories[i].lastIndexOf("-")).length()+1,boxDirectories[i].length())
+            println("provider: ${boxProvider}, version: ${boxVersion}")
+
+            new File("jenkins_shared_workspace/kx.as.code/base-vm/boxes/${boxDirectory}/").eachFile {boxDirectoryList << it.name }
+            boxDirectoryList.eachWithIndex { box, j ->
+                if (box.endsWith('.box')) {
+                    boxName = box.substring(0,box.lastIndexOf("-"))
+                    println("provider: ${boxProvider}, box: ${boxName}, version: ${boxVersion}")
+                    if(boxName == "kx-main" || boxName == "kx-node") {
+                        boxesList.add('"' + boxName + " " + boxProvider + " " + boxVersion + '"')
+                        if (boxName == "kx-main" && boxProvider == "virtualbox") {
+                            virtualboxMainExists = "true"
+                            virtualboxMainVersion = boxVersion
+                        }
+                        if (boxName == "kx-node" && boxProvider == "virtualbox") {
+                            virtualboxNodeExists = "true"
+                            virtualboxNodeVersion = boxVersion
+                        }
+                        if (boxName == "kx-main" && boxProvider == "vmware-desktop") {
+                            vmwareMainExists = "true"
+                            vmwareMainVersion = boxVersion
+
+                        }
+                        if (boxName == "kx-node" && boxProvider == "vmware-desktop") {
+                            vmwareNodeExists = "true"
+                            vmwareNodeVersion = boxVersion
+
+                        }
+                        if (boxName == "kx-main" && boxProvider == "parallels") {
+                            parallelsMainExists = "true"
+                            parallelsMainVersion = boxVersion
+
+                        }
+                        if (boxName == "kx-node" && boxProvider == "parallels") {
+                            parallelsNodeExists = "true"
+                            parallelsNodeVersion = boxVersion
+                        }
+                    }
+                }
             }
         }
+        println(boxesList)
         println("All boxes: " + boxesList)
         println("0: " + boxesList[0])
         println("1: " + boxesList[1])
@@ -279,7 +308,7 @@ try {
             }
 
             function populate_profile_option_list() {
-                let profiles = "${profile_paths}".split(',');
+                let profiles = "${profilePaths}".split(',');
                 console.log("js profiles array: " + profiles)
                 for ( let i = 0; i < profiles.length; i++ ) {
                     let profileName = profiles[i].split("/").pop();
@@ -292,7 +321,7 @@ try {
 
             function update_selected_value() {
                 let selectedOptionNumber = document.getElementById("profiles").selectedIndex;
-                let profilePaths = "${profile_paths}".split(',');
+                let profilePaths = "${profilePaths}".split(',');
                 let profilePath = profilePaths[selectedOptionNumber] + '/profile-config.json'
                 console.log("profileName: " + profilePath)
                 document.getElementById("selected-profile-path").value = profilePath;
