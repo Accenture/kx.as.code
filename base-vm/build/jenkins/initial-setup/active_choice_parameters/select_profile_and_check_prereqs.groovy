@@ -248,13 +248,14 @@ try {
 
             async function triggerBuild(nodeType) {
                 let jenkinsCrumb = getCrumb();
+                let localKxVersion = "${localKxVersion}";
                 console.log("Jenkins Crumb received = " + jenkinsCrumb.value);
 
                 let formData = new FormData();
                 formData.append('kx_vm_user', document.getElementById('general-param-username').value);
                 formData.append('kx_vm_password', document.getElementById('general-param-password').value);
                 formData.append('vagrant_compute_engine_build', 'false');
-                formData.append('kx_version_override', '');
+                formData.append('kx_version', localKxVersion);
                 formData.append('kx_domain', document.getElementById('general-param-base-domain').value);
                 formData.append('kx_main_hostname', nodeType);
                 formData.append('profile', document.getElementById('profiles').value);
@@ -602,19 +603,18 @@ try {
 
         .build-action-text-label {
             width: 200px;
-            height: 30px;
             border: none;
             color: #404c50;
             padding: 2px 2px;
             text-decoration: none;
+            font-weight: bold;
             margin: 2px 2px;
             display: inline-block;
             vertical-align: middle;
         }
 
         .build-action-text-value {
-            width: 150px;
-            height: 30px;
+            width: 140px;
             border: none;
             color: #404c50;
             padding: 2px 2px;
@@ -626,6 +626,8 @@ try {
 
         .build-action-text-value-result {
             width: 100px;
+            display: inline-block;
+            padding: 2px 2px 2px 2px;
         }
 
         .span-rounded-border {
@@ -636,7 +638,30 @@ try {
             padding: 1px;
             vertical-align: middle;
         }
+        
+        .build-result {
+            color: white;
+            text-align: center;
+            border-radius: 15px;
+            padding: 5px 10px 5px 10px;
+        }
+ 
+        .build-result-neutral {
+            background: slategrey;        
+        }
+        
+        .build-result-success {
+            background: green;
+        }
+        
+        .build-result-failure {
+            background: red;
+        }
 
+        .build-result-aborted {
+            background: black;
+        }
+        
       </style>
     <body>
         <div id="headline-select-profile-div" style="display: none;">
@@ -679,10 +704,12 @@ try {
                 <h2 class="h2-header-in-line"><span class="span-h2-header-in-line">🚧 Build VM images</</span></h2>
                 <div class="div-inner-h2-header-in-line-wrapper">
                 <span class="description-paragraph-span"><p>Below you can see the last executed builds for each image tpe if there were any. If none, then click the play button for each type of node.</p></span>
-                <div>
-                    <span>
-                        <span class="build-action-text-label">Last KX-Main Build Date: </span><span id="kx-main-build-timestamp" class="build-action-text-value"></span>
-                        <span class="build-action-text-label">Last KX-Main Build Status: </span><span id="kx-main-build-result" class="build-action-text-value build-action-text-value-result"></span>
+                <div style="width: 100%;">
+                    <span style="width: 940px;">
+                        <span class="build-action-text-label" style="width: 150px">KX-Main Build Date: </span><span id="kx-main-build-timestamp" class="build-action-text-value"></span>
+                        <span class="build-action-text-label" style="width: 100px;">Build Status: </span><span id="kx-main-build-result" class="build-action-text-value build-action-text-value-result"></span>
+                        <span class="build-action-text-label" style="width: 100px; margin-left: 5px;">Build Version: </span><span id="kx-main-build-kx-version" style="width: 50px;" class="build-action-text-value build-action-text-value-result"></span>
+                        <span class="build-action-text-label" style="width: 100px;">Kube Version: </span><span id="kx-main-build-kube-version" style="width: 100px;" class="build-action-text-value build-action-text-value-result"></span>
                         <span class="build-number-span" id="kx-main-build-number-link"></span>
                     </span>
                     <span class='span-rounded-border'>
@@ -692,11 +719,12 @@ try {
                         <div class="console-log"><span class="console-log-span"><img src="/userContent/icons/text-box-outline.svg" onMouseover='showConsoleLog("KX.AS.CODE_Image_Builder", "kx-main");' onclick='openFullConsoleLog("KX.AS.CODE_Image_Builder", "kx-main");' class="build-action-icon" alt="View Build Log" title="Click to open full log in new tab"><span class="consolelogtext" id='kxMainBuildConsoleLog'></span></span></div>
                     </span>
                 </div>
-                <div>
-                    <span>
-                        <span class="build-action-text-label">Last KX-Node Build Date: </span><span id="kx-node-build-timestamp" class="build-action-text-value"></span>
-                        <span class="build-action-text-label">Last KX-Node Build Status: </span><span id="kx-node-build-result" class="build-action-text-value build-action-text-value-result"></span>
-                        <span class="build-number-span" id="kx-node-build-number-link"></span>
+                <div style="width: 100%;">
+                    <span style="width: 940px;">
+                        <span class="build-action-text-label" style="width: 150px">KX-Node Build Date: </span><span id="kx-node-build-timestamp" class="build-action-text-value"></span>
+                        <span class="build-action-text-label" style="width: 100px;">Build Status: </span><span id="kx-node-build-result" class="build-action-text-value build-action-text-value-result"></span>
+                        <span class="build-action-text-label" style="width: 100px; margin-left: 5px;">Build Version: </span><span id="kx-node-build-kx-version" style="width: 50px;" class="build-action-text-value build-action-text-value-result"></span>
+                        <span class="build-action-text-label" style="width: 100px;">Kube Version: </span><span id="kx-node-build-kube-version" style="width: 100px;" class="build-action-text-value build-action-text-value-result"></span>                        <span class="build-number-span" id="kx-node-build-number-link"></span>
                     </span>
                     <span class='span-rounded-border'>
                         <img src='/userContent/icons/play.svg' class="build-action-icon" title="Start Build" alt="Start Build" onclick='triggerBuild("kx-node");' />|

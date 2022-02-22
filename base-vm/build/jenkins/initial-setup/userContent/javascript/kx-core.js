@@ -211,6 +211,7 @@ function updateAllConcatenatedVariables() {
 
 async function getBuildJobListForProfile(job, nodeType) {
     let styleColor;
+
     getAllJenkinsBuilds(job).then(data => {
         console.log("nodeType: " + nodeType);
         console.log(data);
@@ -245,25 +246,44 @@ async function getBuildJobListForProfile(job, nodeType) {
             console.log(kxBuilds[0].timestamp);
             console.log(kxBuilds[0].url);
             console.log(kxBuilds[0].vm_type);
+
+            getExtendedJobDetails(kxBuilds[0].url).then( text => {
+                console.log("DISPLAY_NAME: ", JSON.parse(text).displayName);
+                const splitDisplayName = JSON.parse(text).displayName.split('_');
+                //const buildNumber = splitDisplayName[0];
+                const kxVersion = splitDisplayName[1];
+                const kubeVersion = splitDisplayName[2];
+                //const profile = splitDisplayName[3];
+                const nodeTypeVagrantAction = splitDisplayName[4];
+                //const gitCommitId = splitDisplayName[5];
+                if (nodeTypeVagrantAction === "kx-main" || nodeTypeVagrantAction === "kx-node") {
+                    document.getElementById(nodeTypeVagrantAction + '-build-kx-version').innerText = kxVersion;
+                    document.getElementById(nodeTypeVagrantAction + '-build-kube-version').innerText = kubeVersion;
+                } else if (nodeTypeVagrantAction === "up" || nodeTypeVagrantAction === "destroy" || nodeTypeVagrantAction === "halt") {
+                    document.getElementById('kx-launch-last-action').innerText = nodeTypeVagrantAction;
+                }
+            })
+
             if (kxBuilds[0].timestamp !== null) {
                 document.getElementById(nodeType + "-build-timestamp").innerText = new Date(kxBuilds[0].timestamp).toLocaleDateString() + " " + new Date(kxBuilds[0].timestamp).toLocaleTimeString();
             }
-            if (kxBuilds[0].result !== null) {
+            if (kxBuilds[0].result !== null && kxBuilds[0].result !== '-') {
                 if (kxBuilds[0].result === "ABORTED") {
-                    styleColor = '#FF6200';
+                    styleClass = 'build-result build-result-aborted';
                 } else if (kxBuilds[0].result === "FAILURE") {
-                    styleColor = 'red';
+                    styleClass = 'build-result build-result-failure';
                 } else if (kxBuilds[0].result === "SUCCESS") {
-                    styleColor = '#34eb89';
+                    styleClass = 'build-result build-result-success';
                 } else {
-                    styleColor = 'black';
+                    styleClass = 'build-result build-result-neutral';
                 }
-                document.getElementById(nodeType + "-build-result").innerText = kxBuilds[0].result;
-                document.getElementById(nodeType + "-build-result").style.color = styleColor;
+                document.getElementById(nodeType + "-build-result").innerHTML = '<span className="build-action-text-value build-action-text-value-result"style="width: 70px;">' + kxBuilds[0].result + '</span>';
+                document.getElementById(nodeType + "-build-result").className = styleClass;
                 document.getElementById(nodeType + "-build-number-link").innerHTML = "<a href='" + kxBuilds[0].url + "' target='_blank' rel='noopener noreferrer' style='font-weight: normal;'># " + kxBuilds[0].number + "</a>";
             } else {
-                document.getElementById(nodeType + "-build-result").innerText = "in progress";
-                document.getElementById(nodeType + "-build-result").style.color = styleColor;
+                document.getElementById(nodeType + "-build-result").className = "";
+                //let inProgressSpinnerHtml = '<div class="sk-flow"><div class="sk-flow-dot"></div><div class="sk-flow-dot"></div><div class="sk-flow-dot"></div></div>';
+                document.getElementById(nodeType + "-build-result").innerHTML = "<div class='dot-flashing' style='margin-right: 15px; margin-left: 15px; justify-content: center;'></div>";
                 document.getElementById(nodeType + "-build-number-link").innerHTML = "<a href='" + kxBuilds[0].url + "' target='_blank' rel='noopener noreferrer' style='font-weight: normal;'># " + kxBuilds[0].number + "</a>";
             }
         } else {
@@ -275,6 +295,33 @@ async function getBuildJobListForProfile(job, nodeType) {
         }
     })
 }
+
+async function getExtendedJobDetails(url) {
+    let jenkinsCrumb = getCrumb();
+    //let url = 'http://localhost:8081/job/Actions/job/KX.AS.CODE_Runtime_Actions/42/api/json';
+    let urlToFetch = url + '/api/json';
+    console.log(urlToFetch);
+    let responseData = await fetch(urlToFetch, {
+        method: 'GET',
+        headers: {
+            'Authorization': 'Basic ' + btoa('admin:admin'),
+            'Jenkins-Crumb': jenkinsCrumb.value
+        }
+    }).then(data => {
+        //console.log(data);
+        let responseText = data.text().then(function (text) {
+            //console.log(responseText);
+            return text;
+        });
+        return responseText;
+    });
+    //console.log(responseData);
+    //console.log(JSON.parse(responseData));
+    let jobDisplayName = JSON.parse(responseData);
+    //console.log(jobDisplayName.displayName);
+    return responseData;
+}
+
 
 function filterBuilds(data) {
     let tmp = [];

@@ -48,6 +48,9 @@ def inputFile = new File(jsonFilePath)
 
 def ALLOW_WORKLOADS_ON_KUBERNETES_MASTER
 
+def kxMainRunningVms
+def kxWorkerRunningVms
+
 try {
 
     parsedJson = new JsonSlurper().parse(inputFile)
@@ -256,6 +259,30 @@ try {
 
     println("DEBUG --> 4 (config_review_and_launch.groovy)")
 
+    // Check running VMs
+    def runningVirtualMachines
+    def runningVirtualMachinesList = []
+
+    if ( PROFILE.contains("vmware-desktop")) {
+
+        runningVirtualMachines = 'vmrun list'.execute().text
+        runningVirtualMachinesList = new String(vagrantPluginList).split('\n')
+
+    } else if ( PROFILE.contains("parallels") ) {
+        runningVirtualMachines = 'prlctl list'.execute().text
+        println(runningVirtualMachines)
+        virtualMachinesList = new String(runningVirtualMachines).split('\n')
+        runningVirtualMachinesList = virtualMachinesList.findAll { it.contains('running') }
+        kxMainRunningVms = runningVirtualMachinesList.findAll { it.contains('kx.as.code-demo1-main') }
+        kxWorkerRunningVms = runningVirtualMachinesList.findAll { it.contains('kx.as.code-demo1-worker') }
+        println("kxMainRunningVms.size(): ", kxMainRunningVms.size())
+        println("kxWorkerRunningVms.size()", kxWorkerRunningVms.size())
+    } else if ( PROFILE.contains("virtualbox")) {
+
+        runningVirtualMachines = 'vboxmanage list vms'.execute().text
+        runningVirtualMachinesList = new String(vagrantPluginList).split('\n')
+    }
+
 } catch(e) {
     println "Something went wrong in the GROOVY block (config_review_and_launch.groovy): ${e}"
 }
@@ -334,8 +361,8 @@ try {
             }
        
             .launch-action-text-label {
-                width: 160px;
-                height: 30px;
+                width: 100px;
+                font-weight: bold;
                 border: none;
                 color: #404c50;
                 padding: 2px 2px;
@@ -448,8 +475,10 @@ try {
                 <h2 class="h2-header-in-line"><span class="span-h2-header-in-line">🚀 Launch KX.AS.CODE environment</span></h2>
                 <div class="div-inner-h2-header-in-line-wrapper">
                     <span style="vertical-align: middle; display: inline-block;">
-                        <span class="launch-action-text-label">Last KX Launch Date: </span><span id="kx-launch-build-timestamp" class="build-action-text-value"></span>
-                        <span class="launch-action-text-label">Last KX Launch Status: </span><span id="kx-launch-build-result" class="build-action-text-value build-action-text-value-result"></span>
+                        <span class="launch-action-text-label" style="width: 50px;">Date: </span><span id="kx-launch-build-timestamp" class="build-action-text-value"></span>
+                        <span class="launch-action-text-label" style="width: 70px; ">Status: </span><span id="kx-launch-build-result" style="width: 100px; margin-right: 30px; display: inline-flex;"></span>
+                        <span class="launch-action-text-label" style="width: 100px;">Last Action: </span><span id="kx-launch-last-action" class="build-action-text-value" style="width: 50px;"></span>
+                        <span class="launch-action-text-label" style="width: 100px;">Running VMs: </span><span id="kx-launch-running-vms" class="build-action-text-value build-action-text-value-result" style="width: 150px;">Main: ${kxMainRunningVms.size()} Workers: ${kxWorkerRunningVms.size()}</span>
                         <span class="build-number-span" id="kx-launch-build-number-link"></span>
                     </span>
                     <span class='span-rounded-border'>

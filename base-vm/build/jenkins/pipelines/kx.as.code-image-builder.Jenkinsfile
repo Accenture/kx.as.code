@@ -6,7 +6,8 @@ node('master') {
     dir(shared_workspace) {
         functions = load "base-vm/build/jenkins/pipelines/shared-pipeline-functions.groovy"
         println(functions)
-        (kx_version, kube_version) = functions.setBuildEnvironment()
+        def vagrant_action = ''
+        (kx_version, kube_version) = functions.setBuildEnvironment(profile,node_type,vagrant_action)
     }
 }
 
@@ -23,7 +24,7 @@ pipeline {
         string(name: 'kx_vm_user', defaultValue: '', description: '')
         string(name: 'kx_vm_password', defaultValue: '', description: '')
         string(name: 'vagrant_compute_engine_build', defaultValue: '', description: '')
-        string(name: 'kx_version_override', defaultValue: '', description: '')
+        string(name: 'kx_version', defaultValue: '', description: '')
         string(name: 'kx_domain', defaultValue: '', description: '')
         string(name: 'kx_main_hostname', defaultValue: '', description: '')
         string(name: 'profile', defaultValue: '', description: '')

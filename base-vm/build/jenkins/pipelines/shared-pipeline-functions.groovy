@@ -1,4 +1,4 @@
-def setBuildEnvironment() {
+def setBuildEnvironment(profile,node_type,vagrant_action) {
 
     os = sh (
         script: 'uname -s',
@@ -34,7 +34,13 @@ def setBuildEnvironment() {
     gitShortCommitId = sh (script: "git rev-parse --short HEAD", returnStdout: true).trim()
     try {
         if ( currentBuild.number > 1 ) {
-            currentBuild.displayName = "#${currentBuild.number}_v${kx_version}_v${kube_version}_${gitShortCommitId}"
+            if ( node_type != '' ) {
+                currentBuild.displayName = "#${currentBuild.number}_v${kx_version}_v${kube_version}_${profile}_${node_type}_${gitShortCommitId}"
+            } else if ( vagrant_action != '' ){
+                currentBuild.displayName = "#${currentBuild.number}_v${kx_version}_v${kube_version}_${profile}_${vagrant_action}_${gitShortCommitId}"
+            } else {
+                currentBuild.displayName = "#${currentBuild.number}_v${kx_version}_v${kube_version}_${gitShortCommitId}"
+            }
             def lastCompletedBuildName = Jenkins.instance.getItemByFullName(env.JOB_NAME).lastCompletedBuild.displayName
             def (oldBuildNumber, oldKxVersion, oldKubeVersion, oldGitShortCommitId) = lastCompletedBuildName.split('_')
             if ( oldKxVersion != "v${kx_version}" ) {

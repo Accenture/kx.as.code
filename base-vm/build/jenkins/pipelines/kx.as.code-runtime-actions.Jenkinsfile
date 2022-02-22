@@ -7,7 +7,8 @@ node('master') {
         echo shared_workspace
         functions = load "${shared_workspace}/base-vm/build/jenkins/pipelines/shared-pipeline-functions.groovy"
         println(functions)
-        (kx_version, kube_version) = functions.setBuildEnvironment()
+        def node_type = ''
+        (kx_version, kube_version) = functions.setBuildEnvironment(profile,node_type,vagrant_action)
     }
 }
 
@@ -46,29 +47,47 @@ pipeline {
                 script {
                     dir(shared_workspace) {
                         sh """
+                        #!/bin/bash
+                        set -x
                         export mainBoxVersion=${kx_main_version}
                         export nodeBoxVersion=${kx_node_version}
+                        export num_kx_main_nodes=${num_kx_main_nodes}
+                        export num_kx_worker_nodes=${num_kx_worker_nodes}
                         echo "Profile path: ${profile_path}"
                         echo "Vagrant action: ${vagrant_action}"
                         echo "Current directory \$(pwd)"
                         cd profiles/vagrant-${profile}
-                        VBoxManage list vms
+                        vagrant global-status --prune
                         if [ "${vagrant_action}" == "destroy" ]; then
                             vagrant destroy --force --no-tty
                         elif [ "${vagrant_action}" == "up" ]; then
                             vagrant up --no-tty
-                            for i in \$(seq 1 \$(($num_kx_main_nodes - 1)));
-                            do
-                                vagrant up --no-tty kx-main\${i}
-                            done
-                            for i in \$(seq 1 ${num_kx_worker_nodes});
-                            do
-                                vagrant up --no-tty kx-worker\${i}
-                            done
+                            if [[ 2 -gt 1 ]]; then
+                                i=2
+                                while [ \$i -le \${num_kx_main_nodes} ];
+                                do
+                                    vagrant up --no-tty kx-main\$i
+                                    let i=\$i+1
+                                done
+                            fi
+                            if [[ 2 -gt 0 ]]; then
+                                i=1
+                                while [ \$i -le \${num_kx_worker_nodes} ];
+                                do
+                                    vagrant up --no-tty kx-worker\$i
+                                    let i=\$i+1
+                                done
+                            fi
                         else
                             vagrant ${vagrant_action} --no-tty
                         fi
-                        VBoxManage list vms
+                        if [ "${profile}" == "virtualbox"]; then
+                            VBoxManage list vms
+                        elif [ "${profile}" == "parallels"]; then
+                            prlctl list
+                        elif [ "${profile}" == "vmware-desktop"]; then
+                            vmrun list
+                        fi
                         """
                     }
                 }

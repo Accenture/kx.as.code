@@ -241,7 +241,8 @@ try {
             }
             
             function loadFirstConfigPanel() {
-                waitForElement('select-profile-div',function(){
+                waitForElement('profile-builds-div',function(){
+                    document.getElementById("config-placeholder").removeChild(document.getElementById("grid-spinner"));
                     change_panel_selection('config-panel-profile-selection');
                 });
             }
@@ -257,7 +258,21 @@ try {
                     <div class="config-tab" id="config-panel-user-provisioning" onclick="change_panel_selection(this.id);"><img src="/userContent/icons/account-multiple.svg" id="config-panel-user-provisioning-icon" class="config-panel-icon svg-white" alt="User Provisioning"></div>
                     <div class="config-tab" id="config-panel-kx-summary-start" onclick="change_panel_selection(this.id);"><img src="/userContent/icons/clipboard-text-play-outline.svg" id="config-panel-kx-summary-start-icon" class="config-panel-icon svg-white" alt="Deployment"></div>
                 </div>
-                <div id="config-placeholder" class="config-placeholder"></div>
+                <div id="config-placeholder" class="config-placeholder">
+                    <div id="grid-spinner" class="grid-spinner-wrapper">
+                        <div class="sk-grid">
+                          <div class="sk-grid-cube"></div>
+                          <div class="sk-grid-cube"></div>
+                          <div class="sk-grid-cube"></div>
+                          <div class="sk-grid-cube"></div>
+                          <div class="sk-grid-cube"></div>
+                          <div class="sk-grid-cube"></div>
+                          <div class="sk-grid-cube"></div>
+                          <div class="sk-grid-cube"></div>
+                          <div class="sk-grid-cube"></div>
+                        </div>
+                    </div>
+                </div>
                 <div id="config-navigator-footer" class="config-selector-footer">
                     <div class="config-tab-footer-icons" id="config-panel-footer-left-nav-div" onclick="" style="display: block"><img src="/userContent/icons/chevron-left.svg" id="config-panel-left-nav-icon" class="config-tab-footer-icons svg-white" alt="navigate previous"></div>
                     <div class="config-tab-footer-icons" id="config-panel-footer-right-nav-div" onclick="" style="display: block"><img src="/userContent/icons/chevron-right.svg" id="config-panel-right-nav-icon" class="config-tab-footer-icons svg-white" alt="navigate next"></div>
