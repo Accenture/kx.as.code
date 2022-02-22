@@ -96,7 +96,11 @@ fi
 
 # Determine Drive B (Local K8s Volumes Storage)
 for i in {{1..30}}; do
-  driveB=$(lsblk -o NAME,FSTYPE,SIZE -dsn -J | jq -r '.[] | .[] | select(.fstype==null) | select(.size=="'${localKubeVolumesDiskSize}'G") | .name' || true)
+  if [[ -f /usr/share/kx.as.code/.config/driveB ]]; then
+    driveB=$(cat /usr/share/kx.as.code/.config/driveB)
+  else
+    driveB=$(lsblk -o NAME,FSTYPE,SIZE -dsn -J | jq -r '.[] | .[] | select(.fstype==null) | select(.size=="'${localKubeVolumesDiskSize}'G") | .name' || true)
+  fi
   if [[ -z ${driveB} ]]; then
     echo "Drive for local volumes not yet available. Trying a maximum of 30 times. Attempt ${i}"
     sleep 15

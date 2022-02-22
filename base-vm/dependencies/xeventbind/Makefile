@@ -8,7 +8,7 @@ OBJ=main.o xeb_handler.o
 all: xeventbind
 
 xeventbind: $(OBJ)
-	$(CC) -o $@ $^ $(LIBS) $(CFLAGS)	
+	$(CC) -o $@ $^ $(LIBS) $(CFLAGS)
 
 %.o: %.c
 	$(CC) -c -o $@ $< $(CLAGS)

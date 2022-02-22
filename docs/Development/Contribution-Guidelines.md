@@ -1,5 +1,3 @@
-!["kx.as.code_logo"](kxascode_logo_black_small.png "kx.as.code_logo")
-
 # Contribute
 
 ## Welcome

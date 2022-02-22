@@ -35,7 +35,7 @@ typedef int(*xeb_callback)(xeb_event_type event, void* data);
 
 /**
  * \brief Starts the event loop and blocks the thread until xeb_stop is called
- * @return 0 on sucess, -1 on error 
+ * @return 0 on sucess, -1 on error
  */
 int xeb_loop(void);
 

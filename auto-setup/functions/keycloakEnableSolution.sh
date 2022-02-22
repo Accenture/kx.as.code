@@ -27,6 +27,6 @@ enableKeycloakSSOForSolution() {
     fi
 
     # Create Keycloak Protocol Mapper
-    createKeycloakProtocolMapper "${clientId}" "${fullPath}" 
+    createKeycloakProtocolMapper "${clientId}" "${fullPath}"
 
 }

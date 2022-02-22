@@ -1,4 +1,6 @@
 {
+  "title": "Cloud Services Stack",
+  "description": "Currently just Nextcloud",
   "action_queues": {
     "install": [
       {

@@ -1,0 +1,141 @@
+<?xml version='1.1' encoding='UTF-8'?>
+<flow-definition plugin="workflow-job@2.42">
+  <actions>
+    <org.jenkinsci.plugins.pipeline.modeldefinition.actions.DeclarativeJobAction plugin="pipeline-model-definition@1.9.2"/>
+    <org.jenkinsci.plugins.pipeline.modeldefinition.actions.DeclarativeJobPropertyTrackerAction plugin="pipeline-model-definition@1.9.2">
+      <jobProperties>
+        <string>org.jenkinsci.plugins.workflow.job.properties.DisableConcurrentBuildsJobProperty</string>
+        <string>jenkins.model.BuildDiscarderProperty</string>
+      </jobProperties>
+      <triggers/>
+        <parameters>
+            <string>kx_main_version</string>
+            <string>kx_node_version</string>
+            <string>num_kx_main_nodes</string>
+            <string>num_kx_worker_nodes</string>
+            <string>kx_version_override</string>
+            <string>kx_main_box_location</string>
+            <string>kx_node_box_location</string>
+            <string>dockerhub_email</string>
+            <string>profile</string>
+            <string>profile_path</string>
+            <string>vagrant_action</string>
+        </parameters>
+      <options>
+        <string>skipDefaultCheckout</string>
+      </options>
+    </org.jenkinsci.plugins.pipeline.modeldefinition.actions.DeclarativeJobPropertyTrackerAction>
+  </actions>
+  <description></description>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <jenkins.model.BuildDiscarderProperty>
+      <strategy class="hudson.tasks.LogRotator">
+        <daysToKeep>-1</daysToKeep>
+        <numToKeep>10</numToKeep>
+        <artifactDaysToKeep>-1</artifactDaysToKeep>
+        <artifactNumToKeep>10</artifactNumToKeep>
+      </strategy>
+    </jenkins.model.BuildDiscarderProperty>
+    <org.jenkinsci.plugins.workflow.job.properties.DisableConcurrentBuildsJobProperty>
+      <abortPrevious>false</abortPrevious>
+    </org.jenkinsci.plugins.workflow.job.properties.DisableConcurrentBuildsJobProperty>
+    <com.sonyericsson.rebuild.RebuildSettings plugin="rebuild@1.32">
+      <autoRebuild>false</autoRebuild>
+      <rebuildDisabled>false</rebuildDisabled>
+    </com.sonyericsson.rebuild.RebuildSettings>
+      <hudson.model.ParametersDefinitionProperty>
+          <parameterDefinitions>
+              <hudson.model.StringParameterDefinition>
+                  <name>kx_main_version</name>
+                  <description>KX.AS.CODE Main Node Version</description>
+                  <defaultValue></defaultValue>
+                  <trim>false</trim>
+              </hudson.model.StringParameterDefinition>
+              <hudson.model.StringParameterDefinition>
+                  <name>kx_node_version</name>
+                  <description>KX.AS.CODE Cluster Node Version</description>
+                  <defaultValue></defaultValue>
+                  <trim>false</trim>
+              </hudson.model.StringParameterDefinition>
+              <hudson.model.StringParameterDefinition>
+                  <name>num_kx_main_nodes</name>
+                  <description>Number of KX-Main nodes to provision</description>
+                  <defaultValue></defaultValue>
+                  <trim>false</trim>
+              </hudson.model.StringParameterDefinition>
+              <hudson.model.StringParameterDefinition>
+                  <name>num_kx_worker_nodes</name>
+                  <description>Number of KX-Worker nodes to provision</description>
+                  <defaultValue></defaultValue>
+                  <trim>false</trim>
+              </hudson.model.StringParameterDefinition>
+              <hudson.model.StringParameterDefinition>
+                  <name>kx_version_override</name>
+                  <description>May be removed in future</description>
+                  <defaultValue></defaultValue>
+                  <trim>false</trim>
+              </hudson.model.StringParameterDefinition>
+              <hudson.model.StringParameterDefinition>
+                  <name>kx_main_box_location</name>
+                  <description>Location of built Vagrant box for KX.AS.CODE Main Node</description>
+                  <defaultValue>base-vm/boxes/virtualbox-${kx_version}/kx.as.code-main-${kx_version}.box</defaultValue>
+                  <trim>false</trim>
+              </hudson.model.StringParameterDefinition>
+              <hudson.model.StringParameterDefinition>
+                  <name>kx_node_box_location</name>
+                  <description>Location of built Vagrant box for KX.AS.CODE Cluster Node</description>
+                  <defaultValue>base-vm/boxes/virtualbox-${kx_version}/kx.as.code-node-${kx_version}.box</defaultValue>
+                  <trim>false</trim>
+              </hudson.model.StringParameterDefinition>
+              <hudson.model.StringParameterDefinition>
+                  <name>dockerhub_email</name>
+                  <description>DockerHub email address used when creating regcred in Kubernetes</description>
+                  <defaultValue>{{dockerhub_email}}</defaultValue>
+                  <trim>false</trim>
+              </hudson.model.StringParameterDefinition>
+              <hudson.model.StringParameterDefinition>
+                  <name>profile</name>
+                  <description>The profile to launch, eg Parallels, VirtualBox or VMWare</description>
+                  <defaultValue></defaultValue>
+                  <trim>false</trim>
+              </hudson.model.StringParameterDefinition>
+              <hudson.model.StringParameterDefinition>
+                  <name>profile_path</name>
+                  <description>The path to the profile JSON</description>
+                  <defaultValue></defaultValue>
+                  <trim>false</trim>
+              </hudson.model.StringParameterDefinition>
+              <hudson.model.StringParameterDefinition>
+                  <name>vagrant_action</name>
+                  <description>The Vagrant action to execute, eg. up, halt, or destroy</description>
+                  <defaultValue></defaultValue>
+                  <trim>false</trim>
+              </hudson.model.StringParameterDefinition>
+          </parameterDefinitions>
+      </hudson.model.ParametersDefinitionProperty>
+  </properties>
+    <definition class="org.jenkinsci.plugins.workflow.cps.CpsScmFlowDefinition" plugin="workflow-cps@2633.v6baeedc13805">
+        <scm class="hudson.plugins.git.GitSCM" plugin="git@4.10.0">
+            <configVersion>2</configVersion>
+            <userRemoteConfigs>
+                <hudson.plugins.git.UserRemoteConfig>
+                    <url>{{git_source_url}}</url>
+                    <credentialsId>GIT_KX.AS.CODE_SOURCE</credentialsId>
+                </hudson.plugins.git.UserRemoteConfig>
+            </userRemoteConfigs>
+            <branches>
+                <hudson.plugins.git.BranchSpec>
+                    <name>{{git_source_branch}}</name>
+                </hudson.plugins.git.BranchSpec>
+            </branches>
+            <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
+            <submoduleCfg class="list"/>
+            <extensions/>
+        </scm>
+        <scriptPath>base-vm/build/jenkins/pipelines/kx.as.code-runtime-actions.Jenkinsfile</scriptPath>
+        <lightweight>true</lightweight>
+    </definition>
+    <triggers/>
+    <disabled>false</disabled>
+</flow-definition>

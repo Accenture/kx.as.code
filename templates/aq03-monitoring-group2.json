@@ -1,4 +1,6 @@
 {
+  "title": "Prometheus/Grafana Stack",
+  "description": "Monitoring group with the Prometheus/Grafana stack",
   "action_queues": {
     "install": [
       {

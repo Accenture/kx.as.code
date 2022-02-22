@@ -1,4 +1,6 @@
 {
+  "title": "CICD Group 1",
+  "description": "CICD Group 1 for sites with a larger physical resources",
   "action_queues": {
     "install": [
       {
@@ -28,14 +30,6 @@
       {
         "install_folder": "cicd",
         "name": "artifactory-oss"
-      },
-      {
-        "install_folder": "kx_as_code",
-        "name": "kx.as.code_docs"
-      },
-      {
-        "install_folder": "kx_as_code",
-        "name": "kx.as.code_techradar"
       }
     ]
   }

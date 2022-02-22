@@ -1,4 +1,6 @@
 {
+  "title": "Security",
+  "description": "Mix of security scanning and runtime services",
   "action_queues": {
     "install": [
       {

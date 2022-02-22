@@ -1,4 +1,6 @@
 {
+  "title": "CICD Group 2",
+  "description": "CICD Group 1 for sites with a lower physical resources",
   "action_queues": {
     "install": [
       {

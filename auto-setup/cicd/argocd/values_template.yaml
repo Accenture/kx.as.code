@@ -1,5 +1,5 @@
 ## This file is taken from here https://github.com/viaduct-ai/kustomize-sops#argo-cd-helm-chart-with-custom-tooling
-## This installs ksops and kustomize into the argocd pod so that 
+## This installs ksops and kustomize into the argocd pod so that
 # Enable Kustomize Alpha Plugins via Argo CD ConfigMap, required for ksops
 server:
   config:

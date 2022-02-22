@@ -15,7 +15,7 @@
 #
 # Several helpers were refactored out of this file into
 #   core/000_core_func.sh
-# Including: 
+# Including:
 #   len has_command has_binary ident_shell sudo
 #
 # -----------------------------------------------------------
@@ -56,7 +56,7 @@ remove_shebangs() { sed -E "s;^#!/usr/bin.*$;;" "$@" | sed -E "s;^#!/bin.*$;;"; 
 # Returns 0 (true) if element exists in given array, or 1 if it doesn't.
 #
 # Example:
-# 
+#
 #     a=(hello world)
 #     if containsElement "hello" "${a[@]}"; then
 #         echo "The array 'a' contains 'hello'"
@@ -90,7 +90,7 @@ containsElement () {
 #       invert - Flip the return codes - return 1 for yes, 0 for no. Bash will then assume no == true, yes == false
 #
 # Example:
-# 
+#
 #     if yesno "Do you want to open this? (y/n) > "; then
 #         echo "user said yes"
 #     else
@@ -187,7 +187,7 @@ pkg_not_found() {
 # Split argument 1 by argument 2, then output the elements separated by newline, allowing you to split a string
 # into an array
 #
-# For associative arrays (AKA dictionaries / hashes), see split_assoc in 015_bash_helpers.bash 
+# For associative arrays (AKA dictionaries / hashes), see split_assoc in 015_bash_helpers.bash
 # (split_assoc is only compatible with bash)
 #
 # Usage:
@@ -228,14 +228,14 @@ split_by() {
 
 
 
-# Split argument 1 into an associative array (AKA dictionary / hash), separating each pair by arg 2, 
+# Split argument 1 into an associative array (AKA dictionary / hash), separating each pair by arg 2,
 # and the key/value by arg 3.
-# You must source the file location which is outputted to stdout, as bash does not support exporting 
+# You must source the file location which is outputted to stdout, as bash does not support exporting
 # associative arrays. The sourced file will add the associative array 'assoc_result' to your shell.
-# 
+#
 # Usage:
-#   NOTE: Due to limitations in both bash and zsh, associative arrays cannot be exported. 
-#   As a workaround, the associative array is serialized into a temporary file, and the tempfile location 
+#   NOTE: Due to limitations in both bash and zsh, associative arrays cannot be exported.
+#   As a workaround, the associative array is serialized into a temporary file, and the tempfile location
 #   is printed from the function.
 #   You can then source this to load the associative array into your current function, or globally.
 #
@@ -286,7 +286,7 @@ split_assoc() {
             fatal "Function 'split_assoc' is only compatible with bash or zsh. Detected shell: $(ident_shell)"
             return 1
         fi
-        
+
 
     done
     # Serialize the associative array to the temporary file, then print the temp file location to stdout.
@@ -327,5 +327,3 @@ else
     msgerr bold red "WARNING: Could not identify your shell. Attempting to export with plain export..."
     export sudo containsElement yesno pkg_not_found split_by split_assoc rm-extension get-extension >/dev/null
 fi
-
-

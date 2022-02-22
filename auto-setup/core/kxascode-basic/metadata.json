@@ -8,7 +8,8 @@
         "enabled": true
     },
     "install_scripts": [
-        "installKxAsCodeAppsWithoutTools.sh"
+        "installKxAsCodeDocsWithoutTools.sh",
+        "installKxAsCodeTechRadarWithoutTools.sh"
     ],
     "Description": "KX.AS.CODE Basic Install without ArgoCD, Gitlab and Harbor",
     "shortcut_text": "KX.AS.CODE Base Apps",

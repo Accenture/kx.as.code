@@ -42,7 +42,7 @@ Item {
 
     UserList {
         id: userListView
-        
+
         visible: showUserList && y > 0
         anchors {
             bottom: parent.verticalCenter
@@ -82,7 +82,7 @@ Item {
                     OpacityAnimator {
                         duration: 100
                     }
-                }            
+                }
             }
 
         }
