@@ -64,3 +64,8 @@ amazon-corretto*
 /profiles/terraform-openstack/hosts_file_entries.txt
 /base-vm/build/jenkins/jenkins.war
 /base-vm/build/jenkins/jenkins-plugin-manager.jar
+jenkins_remote/workspace/shared_workspace/kx.as.code
+/client/node_modules
+/node_modules
+/client/package-lock.json
+

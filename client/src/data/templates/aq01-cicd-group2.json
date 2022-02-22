@@ -1,0 +1,22 @@
+{
+  "action_queues": {
+    "install": [
+      {
+        "install_folder": "cicd",
+        "name": "gitea"
+      },
+      {
+        "install_folder": "cicd",
+        "name": "jenkins"
+      },
+      {
+        "install_folder": "collaboration",
+        "name": "rocketchat"
+      },
+      {
+        "install_folder": "cicd",
+        "name": "nexus3"
+      }
+    ]
+  }
+}
