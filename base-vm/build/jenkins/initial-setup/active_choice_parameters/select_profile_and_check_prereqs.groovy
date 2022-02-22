@@ -144,23 +144,6 @@ try {
 
     new File("jenkins_shared_workspace/kx.as.code/base-vm/boxes/").eachDir {boxDirectories << it.name }
     println(boxDirectories)
-    println("box 0: ${boxDirectories[0]}")
-    println("box 1: ${boxDirectories[1]}")
-    println("box 3: ${boxDirectories[3]}")
-    println(boxDirectories[0].substring(0,boxDirectories[0].lastIndexOf("-")))
-    println(boxDirectories[3].substring(0,boxDirectories[3].lastIndexOf("-")))
-
-    println(boxDirectories[3].substring(0,boxDirectories[3].lastIndexOf("-")).length())
-
-    boxDirectories[3].substring(0,boxDirectories[3].lastIndexOf("-")).length()
-    boxDirectories[0].length()
-
-    println("*1*")
-    println(boxDirectories[3].lastIndexOf("-").toString().length())
-    println("*2*")
-
-    println(boxDirectories[2].substring(0,boxDirectories[2].lastIndexOf("-")))
-    println(boxDirectories[2].substring(boxDirectories[2].substring(0,boxDirectories[2].lastIndexOf("-")).length()+1,boxDirectories[2].length()))
 
     def boxDirectoryList = []
     def provider
