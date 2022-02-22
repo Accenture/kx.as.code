@@ -53,7 +53,7 @@ if [[ ! -f ${sharedKxHome}/.config/network_status ]]; then
     fi
 
     if  [[ ${baseIpType} == "static"   ]] || [[ ${dnsResolution} == "hybrid"   ]]; then
-        /usr/bin/sudo systemctl enable --now bind9.service
+        /usr/bin/sudo systemctl enable --now named
     fi
 
     # Setup proxy settings if they exist
