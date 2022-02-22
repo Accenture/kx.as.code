@@ -496,5 +496,5 @@ try {
     """
     return HTML
 } catch (e) {
-    println "Something went wrong in the HTML return block (check_host_system.groovy): ${e}"
+    println "Something went wrong in the HTML return block (config_review_and_launch.groovy): ${e}"
 }

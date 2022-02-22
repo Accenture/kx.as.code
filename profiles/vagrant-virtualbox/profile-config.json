@@ -53,7 +53,7 @@
         "vm_properties": {
             "3d_acceleration": "off",
             "main_admin_node_cpu_cores": 4,
-            "main_admin_node_memory": 12228,
+            "main_admin_node_memory": 12288,
             "main_node_count": 1,
             "main_replica_node_cpu_cores": 2,
             "main_replica_node_memory": 8196,
