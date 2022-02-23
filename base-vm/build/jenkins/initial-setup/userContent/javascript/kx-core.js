@@ -1,3 +1,76 @@
+async function triggerBuild(nodeType) {
+    let jenkinsCrumb = getCrumb();
+    let localKxVersion = getLocalKxVersion();
+    console.log("Jenkins Crumb received = " + jenkinsCrumb.value);
+
+    let formData = new FormData();
+    formData.append('kx_vm_user', document.getElementById('general-param-username').value);
+    formData.append('kx_vm_password', document.getElementById('general-param-password').value);
+    formData.append('vagrant_compute_engine_build', 'false');
+    formData.append('kx_version', localKxVersion);
+    formData.append('kx_domain', document.getElementById('general-param-base-domain').value);
+    formData.append('kx_main_hostname', nodeType);
+    formData.append('profile', document.getElementById('profiles').value);
+    formData.append('profile_path', document.getElementById('selected-profile-path').value);
+    formData.append('node_type', nodeType);
+
+    const config = {
+        method: 'POST',
+        headers: {
+            'Authorization': 'Basic ' + btoa('admin:admin'),
+            'Jenkins-Crumb': jenkinsCrumb.value
+        },
+        body: formData
+    }
+
+    let response = await fetch('http://localhost:8081/job/Actions/job/KX.AS.CODE_Image_Builder/buildWithParameters', config);
+    let data = await response.text();
+    console.log(data);
+}
+
+function populate_profile_option_list() {
+    let profiles = getProfilePaths().split(',');
+    console.log("js profiles array: " + profiles)
+    for ( let i = 0; i < profiles.length; i++ ) {
+        let profileName = profiles[i].split("/").pop();
+        profileName = profileName.replace("vagrant-", "");
+        console.log("Adding profile to options: " + profileName + i);
+        document.getElementById("profiles").options[i] = new Option(profileName, profileName);
+        update_selected_value();
+    }
+}
+
+function update_selected_value() {
+    let selectedOptionNumber = document.getElementById("profiles").selectedIndex;
+    let profilePaths = getProfilePaths().split(',');
+    let profilePath = profilePaths[selectedOptionNumber] + '/profile-config.json'
+    console.log("profileName: " + profilePath)
+    document.getElementById("selected-profile-path").value = profilePath;
+    document.getElementById("selected-profile-path").setAttribute("selected-profile-path", profilePath) ;
+    let parentId = document.getElementById("selected-profile-path").parentNode.id;
+    console.log(parentId);
+    jQuery('#' + parentId).trigger('change');
+}
+
+function compareVersions() {
+    let githubKxVersion = getGithubKxVersion();
+    let githubKubeVersion = getGithubKubeVersion();
+    let localKxVersion = getLocalKxVersion();
+    let localKubeVersion = getLocalKubeVersion();
+
+    if (githubKxVersion !== localKxVersion) {
+        console.log("KX Version mismatch. Your code is out of date");
+        document.getElementById("version-check-message").innerHTML = "Your local checked out code (v" + localKxVersion + ") does not match the version on GitHub MAIN (v" + githubKxVersion + ")";
+        document.getElementById("version-check-svg").src = "/userContent/icons/alert-outline.svg";
+        document.getElementById("version-check-svg").className = "checklist-status-icon svg-orange-red";
+    } else {
+        console.log("KX Version is the same. Your code is up to date");
+        document.getElementById("version-check-message").innerHTML = "The latest KX.AS.CODE source (v" + localKxVersion + ") is present on your machine";
+        document.getElementById("version-check-svg").src = "/userContent/icons/checkbox-marked-circle-outline.svg";
+        document.getElementById("version-check-svg").className = "checklist-status-icon svg-bright-green";
+    }
+}
+
 function changeBuildButton() {
     const checkElement = async selector => {
         while (document.querySelector(selector) === null) {

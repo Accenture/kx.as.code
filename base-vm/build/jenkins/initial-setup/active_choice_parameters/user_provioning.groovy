@@ -6,22 +6,22 @@ try {
     def HTML = """
     <head>
         <style>
-        
+
         .user-table {
             display:table;
             width: 1100px;
         }
-        
+
         .user-header {
             display:table-header-group;
             font-weight:bold;
             line-height: 40px;
         }
-        
+
         .user-rowGroup {
             display:table-row-group;
         }
-        
+
         .user-row {
             display:table-row;
             line-height: 40px;
@@ -30,8 +30,8 @@ try {
         .user-row-added {
             display:table-row;
             line-height: 40px;
-        }    
-           
+        }
+
         .user-cell {
             display:table-cell;
             width:180px;
@@ -40,22 +40,22 @@ try {
         .user-cell-email {
             width:250px;
         }
-        
+
         .user-image-cell {
             display:table-cell;
             width:60px;
             cursor: pointer;
         }
-                 
+
         .user-input-box {
             width: 170px;
             padding: 10px 0 10px 5px;
         }
-        
+
         .user-input-box-email {
             width: 245px;
         }
-        
+
         .user-table-container {
             max-width: 1250px;
             display: -webkit-box;
@@ -67,26 +67,26 @@ try {
             scrollbar-gutter: both-edges;
             scrollbar-width: thin;
         }
-    
+
         .user-table-container::-webkit-scrollbar {
             width: 16px;
         }
-         
+
         .user-table-container::-webkit-scrollbar-track {
             background-color: #efefef;
             border-radius: 0px;
         }
-         
+
         .user-table-container::-webkit-scrollbar-thumb {
             border: 5px solid transparent;
             border-radius: 100px;
             background-color: #e5c4ff;
             background-clip: content-box;
         }
-            
+
         </style>
         <script>
-        
+
         function addUserToTable() {
 
             console.log("Entered addUserToTable()");
@@ -96,13 +96,13 @@ try {
             userEmail = userEmail.replaceAll(/\\s/g, "");
             let userKeyboard = document.getElementById("user-details-keyboard").value;
             let userRole = document.getElementById("user-details-role").value;
-          
+
             let tableRowHtml = '<div class="user-cell" id="firstname_' + userEmail + '">' + userFirstName + '</div>' +
                 '<div class="user-cell" id="surname_' + userEmail + '">' + userSurname + '</div>' +
                 '<div class="user-cell user-cell-email" id="email_' + userEmail + '">' + userEmail + '</div>' +
                 '<div class="user-cell" id="keyboard_' + userEmail + '">' + userKeyboard + '</div>' +
                 '<div class="user-cell" id="role_' + userEmail + '">' + userRole + '</div>' +
-                '<div class="user-image-cell"><img src="/userContent/icons/delete.svg" title="remove user" alt="remove user" onclick="removeUserFromTable(&apos;' + userEmail + '&apos;);"></div>';
+                '<div class="user-image-cell"><img src="/userContent/icons/delete.svg" title="remove user" alt="remove user" onclick="removeUserFromTable(&quot;' + userEmail + '&quot;);"></div>';
              console.log(tableRowHtml);
              let userTableDiv = document.createElement('div');
              userTableDiv.className = 'user-row-added';
@@ -110,15 +110,15 @@ try {
              userTableDiv.innerHTML = tableRowHtml;
              document.getElementById('user-row-group').appendChild(userTableDiv);
              buildUserJsonFromDivTable()
-             
+
         }
-        
+
         function removeUserFromTable(userTableRowDivToRemove) {
             let userRowToDeleteElement = document.getElementById(userTableRowDivToRemove);
             userRowToDeleteElement.remove();
             buildUserJsonFromDivTable()
         }
-        
+
         function getTableRows() {
             let divRowList = [];
             let everyChild = document.querySelectorAll(".user-row-added");
@@ -131,7 +131,7 @@ try {
             console.log(divRowList);
             return divRowList;
         }
-        
+
         function buildUserJsonFromDivTable() {
             let userTableRows = getTableRows();
             let userJsonNodes = [];
@@ -160,14 +160,14 @@ try {
             document.getElementById('concatenated-user-provisioning-list').value = allUsersJson;
             let parentId = document.getElementById("concatenated-user-provisioning-list").parentNode.id;
             jQuery('#' + parentId).trigger('change');
-            
+
         }
-        
+
         </script>
     </head>
     <body>
         <div id="user-provisioning-div" style="display: none;">
-    
+
         <h1>User Provisioning</h1>
         <div><span class="description-paragraph-span"><p>Here you can determine additional users to provision in the KX.AS.CODE environment. This is optional. If you do not specify additional users, then only the base user will be available for logging into the desktop and all provisioned tools. This is most likely sufficient if you are planning to run a local setup only.</p></span></div>
         <br><br>
@@ -198,17 +198,17 @@ try {
                         <input class="input-box user-input-box" id="user-details-firstname" type="text"  value="">
                     </span>
                 </div>
-                <div class="user-cell">            
+                <div class="user-cell">
                     <span class="input-box-span">
                         <input class="input-box user-input-box" id="user-details-surname" type="text"  value="">
                     </span>
                 </div>
-                <div class="user-cell user-cell-email">            
+                <div class="user-cell user-cell-email">
                     <span class="input-box-span">
                         <input class="input-box user-input-box user-input-box-email" id="user-details-email" type="text"  value="">
                     </span>
                 </div>
-                <div class="user-cell">            
+                <div class="user-cell">
                     <span class="input-box-span">
                         <select id="user-details-keyboard" class="templates-select user-input-box">
                             <option value="en_US">English (US)</option>
@@ -219,7 +219,7 @@ try {
                         </select>
                     </span>
                 </div>
-                <div class="user-cell">            
+                <div class="user-cell">
                     <span class="input-box-span">
                         <select id="user-details-role" class="templates-select user-input-box">
                             <option value="admin">Admin</option>
@@ -227,13 +227,13 @@ try {
                         </select>
                     </span>
                 </div>
-                <div class="user-image-cell">            
+                <div class="user-image-cell">
                    <img src="/userContent/icons/account-plus.svg" title='add user' alt="add user" onclick='addUserToTable();'>
                 </div>
                 </div>
             </div>
         </div>
-            
+
         <br><br>
         <div class="user-table-container" id="div-user-table-container">
         <div class="user-table">

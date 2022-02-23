@@ -155,7 +155,7 @@
         </org.biouno.unochoice.DynamicReferenceParameter>
         <org.biouno.unochoice.DynamicReferenceParameter plugin="uno-choice@2.5.7">
           <name>USER_PROVISIONING</name>
-          <description>Updates the profile config JSON file with selections made here</description>
+          <description></description>
           <randomName>choice-parameter-12643302043893</randomName>
           <visibleItemCount>1</visibleItemCount>
           <script class="org.biouno.unochoice.model.GroovyScript">
@@ -192,13 +192,13 @@
           <projectName>KX.AS.CODE_Launcher</projectName>
           <projectFullName>KX.AS.CODE_Launcher</projectFullName>
           <parameters class="linked-hash-map"/>
-          <referencedParameters></referencedParameters>
+          <referencedParameters>PROFILE, GENERAL_PARAMETERS, KX_MAIN_NODES_CONFIG, KX_WORKER_NODES_CONFIG, STORAGE_PARAMETERS</referencedParameters>
           <choiceType>ET_FORMATTED_HTML</choiceType>
           <omitValueField>false</omitValueField>
         </org.biouno.unochoice.DynamicReferenceParameter>
         <org.biouno.unochoice.DynamicReferenceParameter plugin="uno-choice@2.5.7">
           <name>PROFILE_CONFIG_JSON_UPDATE</name>
-          <description>Updates the profile config JSON file with selections made here</description>
+          <description></description>
           <randomName>choice-parameter-17383899378151</randomName>
           <visibleItemCount>1</visibleItemCount>
           <script class="org.biouno.unochoice.model.GroovyScript">
@@ -214,8 +214,7 @@
           <projectName>KX.AS.CODE_Launcher</projectName>
           <projectFullName>KX.AS.CODE_Launcher</projectFullName>
           <parameters class="linked-hash-map"/>
-          <referencedParameters>PROFILE, GENERAL_PARAMETERS, KX_MAIN_NODES_CONFIG, KX_WORKER_NODES_CONFIG, STORAGE_PARAMETERS,
-            TOR, USER_PROVISIONING</referencedParameters>
+          <referencedParameters>PROFILE, GENERAL_PARAMETERS, KX_MAIN_NODES_CONFIG, KX_WORKER_NODES_CONFIG, STORAGE_PARAMETERS, TEMPLATE_SELECTOR, USER_PROVISIONING</referencedParameters>
           <choiceType>ET_FORMATTED_HTML</choiceType>
           <omitValueField>true</omitValueField>
         </org.biouno.unochoice.DynamicReferenceParameter>
