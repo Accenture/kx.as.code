@@ -65,7 +65,7 @@ try {
 try {
     println("Entered check prerequisites - BEGINNING")
 
-    //TODO - changes this away from hardcoded user URL - current entry for debugging only
+    //TODO - change this away from hardcoded user URL - current entry for debugging only
     def githubVersionJson = new JsonSlurper().parse('https://raw.githubusercontent.com/patdel76/kx/main/versions.json'.toURL())
     githubKxVersion = githubVersionJson.kxascode
     githubKubeVersion = githubVersionJson.kubernetes
@@ -217,79 +217,45 @@ try {
         println("Error creating and writing system check JSON file: " + e)
     }
 
-    println("existingBoxes" + existingBoxes)
+    //println("existingBoxes" + existingBoxes)
     println("Check prerequisites - END")
 
 } catch(e) {
     println "Something went wrong in the GROOVY block (select_profile_and_check_prereqs.groovy): ${e}"
 }
 
+
 try {
     // language=HTML
     def HTML = """
       <script>
-
-            async function triggerBuild(nodeType) {
-                let jenkinsCrumb = getCrumb();
+            function getLocalKxVersion() {
                 let localKxVersion = "${localKxVersion}";
-                console.log("Jenkins Crumb received = " + jenkinsCrumb.value);
-
-                let formData = new FormData();
-                formData.append('kx_vm_user', document.getElementById('general-param-username').value);
-                formData.append('kx_vm_password', document.getElementById('general-param-password').value);
-                formData.append('vagrant_compute_engine_build', 'false');
-                formData.append('kx_version', localKxVersion);
-                formData.append('kx_domain', document.getElementById('general-param-base-domain').value);
-                formData.append('kx_main_hostname', nodeType);
-                formData.append('profile', document.getElementById('profiles').value);
-                formData.append('profile_path', document.getElementById('selected-profile-path').value);
-                formData.append('node_type', nodeType);
-
-                const config = {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': 'Basic ' + btoa('admin:admin'),
-                        'Jenkins-Crumb': jenkinsCrumb.value
-                    },
-                    body: formData
-                }
-
-                let response = await fetch('http://localhost:8081/job/Actions/job/KX.AS.CODE_Image_Builder/buildWithParameters', config);
-                let data = await response.text();
-                console.log(data);
+                return localKxVersion;
             }
 
-            function populate_profile_option_list() {
-                let profiles = "${profilePaths}".split(',');
-                console.log("js profiles array: " + profiles)
-                for ( let i = 0; i < profiles.length; i++ ) {
-                    let profileName = profiles[i].split("/").pop();
-                    profileName = profileName.replace("vagrant-", "");
-                    console.log("Adding profile to options: " + profileName + i);
-                    document.getElementById("profiles").options[i] = new Option(profileName, profileName);
-                    update_selected_value();
-                }
+            function getGithubKxVersion() {
+                let githubKxVersion = "${githubKxVersion}";
             }
 
-            function update_selected_value() {
-                let selectedOptionNumber = document.getElementById("profiles").selectedIndex;
-                let profilePaths = "${profilePaths}".split(',');
-                let profilePath = profilePaths[selectedOptionNumber] + '/profile-config.json'
-                console.log("profileName: " + profilePath)
-                document.getElementById("selected-profile-path").value = profilePath;
-                document.getElementById("selected-profile-path").setAttribute("selected-profile-path", profilePath) ;
-                let parentId = document.getElementById("selected-profile-path").parentNode.id;
-                console.log(parentId);
-                jQuery('#' + parentId).trigger('change');
+            function getLocalKubeVersion() {
+                let localKubeVersion = "${localKubeVersion}";
+            }
+
+            function getGithubKubeVersion() {
+                 let githubKubeVersion = "${githubKubeVersion}";
+            }
+
+            function getProfilePaths() {
+                let profilePaths = "${profilePaths}";
+                return profilePaths;
             }
 
           function getAvailableBoxes() {
-
               console.log("DEBUG: getAvailableBoxes()");
               let boxMainVersion;
               let boxNodeVersion;
               let selectedProfile = document.getElementById("profiles").value;
-
               try {
                   console.log("Selected profile: " + selectedProfile);
                   switch (selectedProfile) {
@@ -308,10 +274,8 @@ try {
                       default:
                           console.log("Weird, box type not known. Normally the box type is either VirtualBox, VMWare or Parallels");
                   }
-
                   console.log('boxMainVersion: ' + boxMainVersion);
                   console.log('boxNodeVersion: ' + boxNodeVersion);
-
                   if ( boxMainVersion !== "null" ) {
                     document.getElementById("kx-main-version").innerHTML = boxMainVersion;
                     document.getElementById("main-version-status-svg").src = "/userContent/icons/checkbox-marked-circle-outline.svg";
@@ -336,25 +300,6 @@ try {
 
               } catch(e) {
                     console.log("Error getting box versions: " + e);
-              }
-          }
-
-          function compareVersions() {
-              let githubKxVersion = "${githubKxVersion}";
-              let githubKubeVersion = "${githubKubeVersion}";
-              let localKxVersion = "${localKxVersion}";
-              let localKubeVersion = "${localKubeVersion}";
-
-              if (githubKxVersion !== localKxVersion) {
-                  console.log("KX Version mismatch. Your code is out of date");
-                  document.getElementById("version-check-message").innerHTML = "Your local checked out code (v" + localKxVersion + ") does not match the version on GitHub MAIN (v" + githubKxVersion + ")";
-                  document.getElementById("version-check-svg").src = "/userContent/icons/alert-outline.svg";
-                  document.getElementById("version-check-svg").className = "checklist-status-icon svg-orange-red";
-              } else {
-                  console.log("KX Version is the same. Your code is up to date");
-                  document.getElementById("version-check-message").innerHTML = "The latest KX.AS.CODE source (v" + localKxVersion + ") is present on your machine";
-                  document.getElementById("version-check-svg").src = "/userContent/icons/checkbox-marked-circle-outline.svg";
-                  document.getElementById("version-check-svg").className = "checklist-status-icon svg-bright-green";
               }
           }
 
@@ -410,13 +355,10 @@ try {
               let vmwareNodeExists = "${vmwareNodeExists}";
               let parallelsMainExists = "${parallelsMainExists}";
               let parallelsNodeExists = "${parallelsNodeExists}";
-
               console.log("DEBUG: Selected profile: " + selectedProfile);
-
               let defaultProfile = "";
               let prerequisitesCheckResult = "";
               let selectedProfileCheckResult = "";
-
               if (sessionStorage.getItem('hasCodeRunBefore') === null) {
                   if ( vboxExecutableExists === "true" && vboxVagrantPluginInstalled === "true" && virtualboxMainExists === "true" && virtualboxNodeExists === "true") {
                       defaultProfile = "virtualbox";
@@ -449,7 +391,6 @@ try {
                   document.getElementById("system-prerequisites-check").value = prerequisitesCheckResult;
                   sessionStorage.hasCodeRunBefore = true;
               }
-
               if (sessionStorage.getItem('hasCodeRunBefore') !== null) {
                   if ( selectedProfile === "virtualbox" && vboxExecutableExists === "true" && vboxVagrantPluginInstalled === "true" && virtualboxMainExists === "true" && virtualboxNodeExists === "true") {
                       selectedProfileCheckResult = "full";
@@ -475,181 +416,11 @@ try {
               }
               change_panel_selection('config-panel-profile-selection');
           }
-
       </script>
-
-      <style>
-
-            .capitalize {
-                text-transform: capitalize;
-            }
-
-            .profiles-select {
-                -moz-appearance: none;
-                -webkit-appearance: none;
-                appearance: none;
-                padding-left: 10px;
-                margin: -4px;
-                cursor: pointer;
-                border: none;
-                width: 200px;
-                height: 40px;
-                border-top-right-radius: 5px;
-                border-bottom-right-radius: 5px;
-                background-image: url("/userContent/icons/chevron-down.svg");
-                background-repeat: no-repeat;
-                background-position: right;
-                background-color: #efefef;
-                outline: none;
-                border: none;
-                box-shadow: none;
-            }
-
-            select {
-                height: 20px;
-                -webkit-border-radius: 0;
-                border: 0;
-                outline: 1px solid #ccc;
-                outline-offset: -1px;
-            }
-
-            .profiles-select select {
-                 outline: none;
-                 border: none;
-                 box-shadow: none;
-             }
-
-            .profiles-select:focus {
-                outline: none;
-                border: none;
-                box-shadow: none;
-            }
-
-          .checklist-status-icon {
-              width: 25px;
-              height: 25px;
-          }
-
-        .console-log {
-            position: relative;
-            display: inline-block;
-        }
-
-        .console-log .consolelogtext {
-            width: 800px;
-            height: 450px;
-            background-color: #404c50;
-            color: #ffffff;
-            text-align: left;
-            padding: 5px 5px;
-            border-top-right-radius: 10px;
-            border-top-left-radius: 10px;
-            border-bottom-left-radius: 10px;
-            visibility: hidden;
-            position: absolute;
-            top: -445px;
-            left: -800px;
-            z-index: 10;
-        }
-
-        .console-log:hover .consolelogtext {
-            visibility: visible;
-        }
-
-         .console-log-span {
-            width: 50px;
-            margin-right: 15px;
-        }
-
-        .build-number-span {
-            width: 40px;
-            text-align: center;
-            vertical-align: middle;
-            display: inline-block;
-            margin-right: 20px;
-        }
-
-        .build-action-icon {
-            width: 30px;
-            height: 30px;
-            border: none;
-            color: #404c50;
-            padding: 2px 2px;
-            text-decoration: none;
-            margin: 2px 2px;
-            cursor: pointer;
-        }
-
-        .build-action-icon:hover {
-            opacity: 50%;
-        }
-
-        .build-action-text-label {
-            width: 200px;
-            border: none;
-            color: #404c50;
-            padding: 2px 2px;
-            text-decoration: none;
-            font-weight: bold;
-            margin: 2px 2px;
-            display: inline-block;
-            vertical-align: middle;
-        }
-
-        .build-action-text-value {
-            width: 140px;
-            border: none;
-            color: #404c50;
-            padding: 2px 2px;
-            text-decoration: none;
-            margin: 2px 2px;
-            display: inline-block;
-            vertical-align: middle;
-        }
-
-        .build-action-text-value-result {
-            width: 100px;
-            display: inline-block;
-            padding: 2px 2px 2px 2px;
-        }
-
-        .span-rounded-border {
-            border: 1px solid black;
-            border-radius: 5px;
-            display: inline-block;
-            margin: 2px;
-            padding: 1px;
-            vertical-align: middle;
-        }
-        
-        .build-result {
-            color: white;
-            text-align: center;
-            border-radius: 15px;
-            padding: 5px 10px 5px 10px;
-        }
- 
-        .build-result-neutral {
-            background: slategrey;        
-        }
-        
-        .build-result-success {
-            background: green;
-        }
-        
-        .build-result-failure {
-            background: red;
-        }
-
-        .build-result-aborted {
-            background: black;
-        }
-        
-      </style>
     <body>
         <div id="headline-select-profile-div" style="display: none;">
-        <h1>Select Profile & Check Pre-Requisites</h1>
-        <span class="description-paragraph-span"><p>${extendedDescription }</p></span>
+        <h1>Select Profile &amp; Check Pre-Requisites</h1>
+        <span class="description-paragraph-span"><p>${extendedDescription}</p></span>
         </div>
         <div id="select-profile-div" style="display: none;">
             <br>

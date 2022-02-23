@@ -296,7 +296,7 @@ try {
             .table {
                 display:table;
             }
-            
+
             .header {
                 display:table-header-group;
                 font-weight:bold;
@@ -309,7 +309,7 @@ try {
             .row {
                 margin: 5px;
             }
-            
+
             .cell {
                 display:table-cell;
             }
@@ -359,7 +359,7 @@ try {
             .flex-item {
                 display: block;
             }
-       
+
             .launch-action-text-label {
                 width: 100px;
                 font-weight: bold;
@@ -376,10 +376,10 @@ try {
 
     <body>
       <div id="review-and-launch-div" class="flex-wrapper" style="display: none;">
-        <h1>Review and Launch</h1>  
+        <h1>Review &amp; Launch</h1>
 
         <span class="description-paragraph-span"><p>${extendedDescription}</p></span>
-      
+
             <div class="wrapper" style="width: 100%;">
                 <div class="svg-item">
                     <svg width="250px" height="250px" viewBox="0 0 40 40" class="donut">
