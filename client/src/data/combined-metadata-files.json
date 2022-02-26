@@ -13,10 +13,7 @@
       "auto_prune": true,
       "self_heal": true
     },
-    "categories": [
-      "collaboration",
-      "agile-management"
-    ],
+    "categories": ["collaboration", "agile-management"],
     "urls": [
       {
         "url": "https://{{componentName}}.{{baseDomain}}",
@@ -51,10 +48,7 @@
     "Description": "Atlassian Jira Description",
     "shortcut_text": "Atlassian Jira",
     "shortcut_icon": "jira.png",
-    "pre_install_scripts": [
-      "createGitProject.sh",
-      "populateGitProject.sh"
-    ],
+    "pre_install_scripts": ["createGitProject.sh", "populateGitProject.sh"],
     "post_install_scripts": []
   },
   {
@@ -71,10 +65,7 @@
       "auto_prune": true,
       "self_heal": true
     },
-    "categories": [
-      "collaboration",
-      "wiki"
-    ],
+    "categories": ["collaboration", "wiki"],
     "urls": [
       {
         "url": "https://{{componentName}}.{{baseDomain}}",
@@ -109,10 +100,7 @@
     "Description": "Atlassian Confluence Description",
     "shortcut_text": "Atlassian Confluence",
     "shortcut_icon": "confluence.png",
-    "pre_install_scripts": [
-      "createGitProject.sh",
-      "populateGitProject.sh"
-    ],
+    "pre_install_scripts": ["createGitProject.sh", "populateGitProject.sh"],
     "post_install_scripts": []
   },
   {
@@ -133,10 +121,7 @@
       "helm_version": "5.4.0",
       "set_key_values": []
     },
-    "categories": [
-      "chatops",
-      "collaboration"
-    ],
+    "categories": ["chatops", "collaboration"],
     "urls": [
       {
         "url": "https://{{componentName}}.{{baseDomain}}",
@@ -176,10 +161,7 @@
     "vendor_docs_url": "https://docs.mattermost.com/",
     "health_check_command": "",
     "expected_check_command_response": "",
-    "pre_install_scripts": [
-      "createSecret.sh",
-      "createS3Bucket.sh"
-    ],
+    "pre_install_scripts": ["createSecret.sh", "createS3Bucket.sh"],
     "post_install_scripts": [
       "createInitialAdminUser.sh",
       "createNotificationUsers.sh",
@@ -210,10 +192,7 @@
       "helm_version": "3.1.0",
       "set_key_values": []
     },
-    "categories": [
-      "chatops",
-      "collaboration"
-    ],
+    "categories": ["chatops", "collaboration"],
     "urls": [
       {
         "url": "https://{{componentName}}.{{baseDomain}}",
@@ -256,70 +235,9 @@
       "createMongoDbPasswords.sh",
       "createRocketChatAdminPassword.sh"
     ],
-    "post_install_scripts": [
-      "loginToRocketChat.sh",
-      "createChannels.sh"
-    ]
+    "post_install_scripts": ["loginToRocketChat.sh", "createChannels.sh"]
   },
-  {
-    "name": "kx.as.code_docs",
-    "namespace": "devops",
-    "installation_type": "argocd",
-    "installation_group_folder": "kx_as_code",
-    "retry": "true",
-    "argocd_params": {
-      "repository": "{{gitUrl}}/kx.as.code/kx.as.code_docs.git",
-      "path": "kubernetes",
-      "dest_server": "https://kubernetes.default.svc",
-      "dest_namespace": "devops",
-      "sync_policy": "automated",
-      "auto_prune": true,
-      "self_heal": true
-    },
-    "categories": [
-      "kx.as.code"
-    ],
-    "urls": [
-      {
-        "url": "https://docs.{{baseDomain}}",
-        "healthchecks": {
-          "liveliness": {
-            "http_path": "/",
-            "http_auth_required": false,
-            "expected_http_response_code": "200",
-            "expected_http_response_string": "",
-            "expected_json_response": {
-              "json_path": "",
-              "json_value": ""
-            },
-            "health_shell_check_command": "",
-            "expected_shell_check_command_response": ""
-          },
-          "readiness": {
-            "http_path": "/",
-            "http_auth_required": false,
-            "expected_http_response_code": "200",
-            "expected_http_response_string": "",
-            "expected_json_response": {
-              "json_path": "",
-              "json_value": ""
-            },
-            "health_shell_check_command": "",
-            "expected_shell_check_command_response": ""
-          }
-        }
-      }
-    ],
-    "Description": "KX.AS.CODE Docs Description",
-    "shortcut_text": "KX.AS.CODE Docs",
-    "shortcut_icon": "books.png",
-    "pre_install_scripts": [
-      "createGitProject.sh",
-      "populateGitProject.sh",
-      "buildAndPushDockerImage.sh"
-    ],
-    "post_install_scripts": []
-  },
+
   {
     "name": "kx.as.code_techradar",
     "namespace": "devops",
@@ -335,9 +253,7 @@
       "auto_prune": true,
       "self_heal": true
     },
-    "categories": [
-      "kx.as.code"
-    ],
+    "categories": ["kx.as.code"],
     "urls": [
       {
         "url": "https://techradar.{{baseDomain}}",
@@ -387,16 +303,12 @@
     "environment_variables": {
       "cfsslVersion": "1.6.1"
     },
-    "install_scripts": [
-      "installCfsslCertificateAuthority.sh"
-    ],
+    "install_scripts": ["installCfsslCertificateAuthority.sh"],
     "Description": "CFSSL Certificate Authority",
     "shortcut_text": "CFSSL-CA",
     "shortcut_icon": "cloudflare.png",
     "pre_install_scripts": [],
-    "post_install_scripts": [
-      "installNginx.sh"
-    ]
+    "post_install_scripts": ["installNginx.sh"]
   },
   {
     "name": "nginx-ingress-controller",
@@ -428,14 +340,8 @@
     "Description": "NGINX Ingress Controller",
     "shortcut_text": "NGINX Ingress Controller",
     "shortcut_icon": "nginx.png",
-    "pre_install_scripts": [
-      "createWildcardCertSecret.sh",
-      "addNodeLabel.sh"
-    ],
-    "post_install_scripts": [
-      "workaround.sh",
-      "adjustNumReplicas.sh"
-    ]
+    "pre_install_scripts": ["createWildcardCertSecret.sh", "addNodeLabel.sh"],
+    "post_install_scripts": ["workaround.sh", "adjustNumReplicas.sh"]
   },
   {
     "name": "konetena-lens",
@@ -445,9 +351,7 @@
     "environment_variables": {
       "lensVersion": "5.2.5-latest.20211001.2"
     },
-    "install_scripts": [
-      "installKontenaLens.sh"
-    ],
+    "install_scripts": ["installKontenaLens.sh"],
     "Description": "Kubernetes Admin Client",
     "shortcut_text": "Kontena Lens",
     "shortcut_icon": "",
@@ -463,9 +367,7 @@
       "metricsServerVersion": "v0.5.1"
     },
     "retry": "true",
-    "install_scripts": [
-      "installMetricsServer.sh"
-    ],
+    "install_scripts": ["installMetricsServer.sh"],
     "Description": "Metrics Server",
     "shortcut_text": "Metrics Server",
     "shortcut_icon": "kubernetes.png",
@@ -481,9 +383,7 @@
       "glusterfsVersion": "8.6",
       "heketiVersion": "10.4.0"
     },
-    "install_scripts": [
-      "installGlusterFs.sh"
-    ],
+    "install_scripts": ["installGlusterFs.sh"],
     "Description": "GlusterFS Network Storage (slow)",
     "shortcut_text": "GlusterFS",
     "shortcut_icon": "glusterfs.png",
@@ -499,10 +399,7 @@
       "kubernetesDashboardVersion": "2.3.1"
     },
     "retry": "true",
-    "categories": [
-      "management",
-      "kubernetes"
-    ],
+    "categories": ["management", "kubernetes"],
     "letsencrypt": {
       "enabled": true
     },
@@ -538,9 +435,7 @@
     "Description": "Kubernetes Dashboard Description",
     "shortcut_text": "Kubernetes Dashboard",
     "shortcut_icon": "kubernetes.png",
-    "install_scripts": [
-      "installDashboard.sh"
-    ],
+    "install_scripts": ["installDashboard.sh"],
     "pre_install_scripts": [],
     "post_install_scripts": [
       "checkK8sHealthAfterReboot.sh",
@@ -561,21 +456,14 @@
       "repository_url": "https://charts.jetstack.io",
       "repository_name": "jetstack/cert-manager",
       "helm_version": "v1.5.4",
-      "set_key_values": [
-        "image.tag={{imageTag}}",
-        "installCRDs=true"
-      ]
+      "set_key_values": ["image.tag={{imageTag}}", "installCRDs=true"]
     },
-    "install_scripts": [
-      "installCertManager.sh"
-    ],
+    "install_scripts": ["installCertManager.sh"],
     "Description": "Cert Manager",
     "shortcut_text": "Cert Manager",
     "shortcut_icon": "cert-manager.png",
     "pre_install_scripts": [],
-    "post_install_scripts": [
-      "installLetsEncryptIssuer.sh"
-    ]
+    "post_install_scripts": ["installLetsEncryptIssuer.sh"]
   },
   {
     "name": "metallb-loadbalancer",
@@ -586,12 +474,8 @@
       "metalLbVersion": "v0.10.2"
     },
     "retry": "true",
-    "install_scripts": [
-      "installMetalLb.sh"
-    ],
-    "pre_install_scripts": [
-      "createMemberListSecret.sh"
-    ],
+    "install_scripts": ["installMetalLb.sh"],
+    "pre_install_scripts": ["createMemberListSecret.sh"],
     "Description": "MetalLB Load Balancer",
     "shortcut_text": "MetalLB Load Balancer",
     "shortcut_icon": "metallb.png",
@@ -602,9 +486,7 @@
     "namespace": "",
     "installation_type": "script",
     "installation_group_folder": "core",
-    "install_scripts": [
-      "createUsers.sh"
-    ],
+    "install_scripts": ["createUsers.sh"],
     "Description": "Create additional users",
     "shortcut_text": "Create Users",
     "shortcut_icon": "",
@@ -617,9 +499,7 @@
     "installation_type": "script",
     "installation_group_folder": "core",
     "retry": "true",
-    "install_scripts": [
-      "installKubernetesTools.sh"
-    ],
+    "install_scripts": ["installKubernetesTools.sh"],
     "Description": "Kubernetes Tools",
     "shortcut_text": "Kubernetes Tools",
     "shortcut_icon": "kubernetes.png",
@@ -637,9 +517,7 @@
       "storageClassName": "local-storage",
       "fsType": "xfs"
     },
-    "install_scripts": [
-      "installLocalStorage.sh"
-    ],
+    "install_scripts": ["installLocalStorage.sh"],
     "Description": "Local Storage (fast)",
     "shortcut_text": "Local Storage",
     "shortcut_icon": "local-storage.png",
@@ -651,9 +529,7 @@
     "namespace": "kube-system",
     "installation_type": "script",
     "installation_group_folder": "core",
-    "install_scripts": [
-      "installKubernetesBaseServices.sh"
-    ],
+    "install_scripts": ["installKubernetesBaseServices.sh"],
     "Description": "Kubernetes Base Services",
     "shortcut_text": "Kubernetes Base Services",
     "shortcut_icon": "kubernetes.png",
@@ -673,9 +549,7 @@
       "calicoCtlVersion": "v3.19.1"
     },
     "retry": "true",
-    "install_scripts": [
-      "installCalicoNetwork.sh"
-    ],
+    "install_scripts": ["installCalicoNetwork.sh"],
     "Description": "Calico Network",
     "shortcut_text": "Calico Network",
     "shortcut_icon": "calico.png",
@@ -691,9 +565,7 @@
     "letsencrypt": {
       "enabled": true
     },
-    "install_scripts": [
-      "installKxAsCodeAppsWithoutTools.sh"
-    ],
+    "install_scripts": ["installKxAsCodeAppsWithoutTools.sh"],
     "Description": "KX.AS.CODE Basic Install without ArgoCD, Gitlab and Harbor",
     "shortcut_text": "KX.AS.CODE Base Apps",
     "shortcut_icon": "kxascode.png",
@@ -705,9 +577,7 @@
     "namespace": "",
     "installation_type": "script",
     "installation_group_folder": "core",
-    "install_scripts": [
-      "install-and-configure-openldap.sh"
-    ],
+    "install_scripts": ["install-and-configure-openldap.sh"],
     "Description": "",
     "shortcut_text": "",
     "shortcut_icon": "",
@@ -793,9 +663,7 @@
       "guacamoleVersion": "1.3.0",
       "postgresqlDriverVersion": "42.2.19"
     },
-    "install_scripts": [
-      "install-guacamole-remote-desktop.sh"
-    ],
+    "install_scripts": ["install-guacamole-remote-desktop.sh"],
     "Description": "Guacamole Remote Desktop",
     "shortcut_text": "Guacamole Remote Desktop",
     "shortcut_icon": "",
@@ -815,16 +683,12 @@
       "gopassVersion": "1.12.6",
       "gopassUiVersion": "0.8.0"
     },
-    "install_scripts": [
-      "install-and-configure-gopass.sh"
-    ],
+    "install_scripts": ["install-and-configure-gopass.sh"],
     "Description": "Gopass CLI credential manager",
     "shortcut_text": "GoPass UI",
     "shortcut_icon": "gopass.png",
     "pre_install_scripts": [],
-    "post_install_scripts": [
-      "createDesktopShortcuts.sh"
-    ]
+    "post_install_scripts": ["createDesktopShortcuts.sh"]
   },
   {
     "name": "sysdig-falco",
@@ -841,10 +705,7 @@
       "helm_version": "",
       "set_key_values": []
     },
-    "categories": [
-      "security",
-      "credential-store"
-    ],
+    "categories": ["security", "credential-store"],
     "urls": [
       {
         "url": "",
@@ -879,9 +740,7 @@
     "Description": "Container Runtime Security",
     "shortcut_text": "Sysdig Falco",
     "shortcut_icon": "sysdig-falco.png",
-    "pre_install_scripts": [
-      "getMattermostIntegrationId.sh"
-    ],
+    "pre_install_scripts": ["getMattermostIntegrationId.sh"],
     "post_install_scripts": []
   },
   {
@@ -899,10 +758,7 @@
       "helm_version": "",
       "set_key_values": []
     },
-    "categories": [
-      "security",
-      "credential-store"
-    ],
+    "categories": ["security", "credential-store"],
     "urls": [
       {
         "url": "",
@@ -937,9 +793,7 @@
     "Description": "Container Runtime Security",
     "shortcut_text": "Sysdig Falco",
     "shortcut_icon": "sysdig-falco.png",
-    "pre_install_scripts": [
-      "getMattermostIntegrationId.sh"
-    ],
+    "pre_install_scripts": ["getMattermostIntegrationId.sh"],
     "post_install_scripts": []
   },
   {
@@ -947,16 +801,12 @@
     "namespace": "",
     "installation_type": "script",
     "installation_group_folder": "core",
-    "install_scripts": [
-      "install-and-configure-bitwarden.sh"
-    ],
+    "install_scripts": ["install-and-configure-bitwarden.sh"],
     "Description": "Bitwarden credential manager",
     "shortcut_text": "Bitwarden",
     "shortcut_icon": "bitwarden.png",
     "pre_install_scripts": [],
-    "post_install_scripts": [
-      "createDesktopShortcuts.sh"
-    ]
+    "post_install_scripts": ["createDesktopShortcuts.sh"]
   },
   {
     "name": "sysdig-falco",
@@ -973,10 +823,7 @@
       "helm_version": "",
       "set_key_values": []
     },
-    "categories": [
-      "security",
-      "credential-store"
-    ],
+    "categories": ["security", "credential-store"],
     "urls": [
       {
         "url": "",
@@ -1011,9 +858,7 @@
     "Description": "Container Runtime Security",
     "shortcut_text": "Sysdig Falco",
     "shortcut_icon": "sysdig-falco.png",
-    "pre_install_scripts": [
-      "getMattermostIntegrationId.sh"
-    ],
+    "pre_install_scripts": ["getMattermostIntegrationId.sh"],
     "post_install_scripts": []
   },
   {
@@ -1027,10 +872,7 @@
       "helm_version": "",
       "set_key_values": []
     },
-    "categories": [
-      "security",
-      "credential-store"
-    ],
+    "categories": ["security", "credential-store"],
     "urls": [
       {
         "url": "https://{{componentName}}.{{baseDomain}}",
@@ -1290,10 +1132,7 @@
             "name": "KX.AS.CODE",
             "group_category": "kxascode",
             "description": "KX.AS.CODE Docs and TechRadar applications",
-            "components": [
-              "kx_as_code_docs",
-              "kx_as_code_techradar"
-            ]
+            "components": ["kx_as_code_docs", "kx_as_code_techradar"]
           },
           {
             "name": "Prometheus, Grafana & ELK",
@@ -1335,29 +1174,19 @@
             "name": "Quality Assurance",
             "group_category": "quality_assurance",
             "description": "Quality assurance, including browser test automation and code quality checks",
-            "components": [
-              "sonarqube",
-              "selenium"
-            ]
+            "components": ["sonarqube", "selenium"]
           },
           {
             "name": "Security",
             "group_category": "security",
             "description": "Centralized secrets management and Kubernetes runtime security",
-            "components": [
-              "sysdig_falco",
-              "consul",
-              "vault"
-            ]
+            "components": ["sysdig_falco", "consul", "vault"]
           },
           {
             "name": "Collaboration",
             "group_category": "collaboration",
             "description": "Collaboration with Atalassina tools. Note, these are not OpenSource",
-            "components": [
-              "jira",
-              "confluence"
-            ]
+            "components": ["jira", "confluence"]
           }
         ],
         "super_groups": [
@@ -1427,10 +1256,7 @@
         "service.type=ClusterIP"
       ]
     },
-    "categories": [
-      "storage",
-      "cloud"
-    ],
+    "categories": ["storage", "cloud"],
     "urls": [
       {
         "url": "https://{{componentName}}.{{baseDomain}}",
@@ -1468,9 +1294,7 @@
     "api_docs_type": "web",
     "api_docs_url": "https://docs.nextcloud.com/server/18/developer_manual/client_apis/index.html",
     "vendor_docs_url": "https://docs.nextcloud.com/",
-    "pre_install_scripts": [
-      "createPostgresqlDbPasswords.sh"
-    ],
+    "pre_install_scripts": ["createPostgresqlDbPasswords.sh"],
     "post_install_scripts": []
   },
   {
@@ -1498,9 +1322,7 @@
         "environment.MINIO_REGION=eu-central-1"
       ]
     },
-    "categories": [
-      "s3-storage"
-    ],
+    "categories": ["s3-storage"],
     "urls": [
       {
         "url": "https://{{componentName}}.{{baseDomain}}",
@@ -1538,10 +1360,7 @@
     "api_docs_type": "web",
     "api_docs_url": "https://docs.min.io/docs/minio-client-complete-guide.html",
     "vendor_docs_url": "https://docs.min.io",
-    "pre_install_scripts": [
-      "createSecrets.sh",
-      "installMinIoCli.sh"
-    ],
+    "pre_install_scripts": ["createSecrets.sh", "installMinIoCli.sh"],
     "post_install_scripts": []
   },
   {
@@ -1558,10 +1377,7 @@
       "auto_prune": true,
       "self_heal": true
     },
-    "categories": [
-      "artifact-repository",
-      "docker-registry"
-    ],
+    "categories": ["artifact-repository", "docker-registry"],
     "urls": [
       {
         "url": "https://{{componentName}}.{{baseDomain}}",
@@ -1599,10 +1415,7 @@
     "swagger_docs_url": "https://{{componentName}}.{{baseDomain}}/#admin/system/api",
     "api_docs_url": "https://help.sonatype.com/repomanager3/rest-and-integration-api",
     "vendor_docs_url": "https://help.sonatype.com/repomanager3",
-    "pre_install_scripts": [
-      "createGitProject.sh",
-      "populateGitProject.sh"
-    ],
+    "pre_install_scripts": ["createGitProject.sh", "populateGitProject.sh"],
     "post_install_scripts": []
   },
   {
@@ -1642,10 +1455,7 @@
         "logLevel=debug"
       ]
     },
-    "categories": [
-      "docker-registry",
-      "helm-repository"
-    ],
+    "categories": ["docker-registry", "helm-repository"],
     "urls": [
       {
         "url": "https://{{componentName}}.{{baseDomain}}",
@@ -1683,10 +1493,7 @@
     "swagger_docs_url": "https://{{componentName}}.{{baseDomain}}/devcenter-api-2.0",
     "api_docs_url": "https://goharbor.io/docs/2.1.0/build-customize-contribute/configure-swagger/",
     "vendor_docs_url": "https://goharbor.io/docs",
-    "pre_install_scripts": [
-      "createSecret.sh",
-      "createHarborAdminPassword.sh"
-    ],
+    "pre_install_scripts": ["createSecret.sh", "createHarborAdminPassword.sh"],
     "post_install_scripts": [
       "createProjects.sh",
       "createRobotAccounts.sh",
@@ -1719,9 +1526,7 @@
         "server.extraArgs[0]=--insecure"
       ]
     },
-    "categories": [
-      "gitops"
-    ],
+    "categories": ["gitops"],
     "urls": [
       {
         "url": "https://{{componentName}}.{{baseDomain}}",
@@ -1764,9 +1569,7 @@
       "createArgoCdPassword.sh",
       "createIngressObjects.sh"
     ],
-    "post_install_scripts": [
-      "deployOauth2.sh"
-    ]
+    "post_install_scripts": ["deployOauth2.sh"]
   },
   {
     "name": "teamcity",
@@ -1785,9 +1588,7 @@
       "auto_prune": true,
       "self_heal": true
     },
-    "categories": [
-      "cicd"
-    ],
+    "categories": ["cicd"],
     "urls": [
       {
         "url": "https://{{componentName}}.{{baseDomain}}",
@@ -1838,10 +1639,7 @@
       "appVersion": "7.27.3",
       "chartGitCommitId": "2ce06f3ba208fefad136d43c171050328aa93e23"
     },
-    "categories": [
-      "artifact-repository",
-      "docker-registry"
-    ],
+    "categories": ["artifact-repository", "docker-registry"],
     "urls": [
       {
         "url": "https://{{componentName}}.{{baseDomain}}",
@@ -1879,12 +1677,8 @@
     "api_docs_type": "web",
     "api_docs_url": "https://www.jfrog.com/confluence/display/JFROG/Artifactory+REST+API",
     "vendor_docs_url": "https://www.jfrog.com/confluence/display/JFROG/JFrog+Artifactory",
-    "install_scripts": [
-      "installArtifactoryOss.sh"
-    ],
-    "pre_install_scripts": [
-      "createPostgresPassword.sh"
-    ],
+    "install_scripts": ["installArtifactoryOss.sh"],
+    "pre_install_scripts": ["createPostgresPassword.sh"],
     "post_install_scripts": [
       "configureJfrogArtifactory.sh",
       "changeAdminPassword.sh"
@@ -1909,10 +1703,7 @@
         "ingress.tls[0].hosts[0]={{componentName}}.{{baseDomain}}"
       ]
     },
-    "categories": [
-      "git-repository",
-      "oauth-provider"
-    ],
+    "categories": ["git-repository", "oauth-provider"],
     "urls": [
       {
         "url": "https://{{componentName}}.{{baseDomain}}",
@@ -1950,9 +1741,7 @@
     "swagger_docs_url": "https://{{componentName}}.{{baseDomain}}/devcenter-api-2.0",
     "api_docs_url": "https://docs.gitea.io/en-us/api-usage/",
     "vendor_docs_url": "https://docs.gitea.io/",
-    "pre_install_scripts": [
-      "createPostgresPassword.sh"
-    ],
+    "pre_install_scripts": ["createPostgresPassword.sh"],
     "post_install_scripts": []
   },
   {
@@ -1966,10 +1755,7 @@
       "helm_version": "",
       "set_key_values": []
     },
-    "categories": [
-      "service-discovery",
-      "service-mesh"
-    ],
+    "categories": ["service-discovery", "service-mesh"],
     "urls": [
       {
         "url": "https://{{componentName}}.{{baseDomain}}",
@@ -2007,9 +1793,7 @@
     "api_docs_type": "web",
     "api_docs_url": "",
     "vendor_docs_url": "",
-    "pre_install_scripts": [
-      "configureIngress.sh"
-    ],
+    "pre_install_scripts": ["configureIngress.sh"],
     "post_install_scripts": []
   },
   {
@@ -2102,11 +1886,7 @@
         "global.appConfig.omniauth.enabled=true"
       ]
     },
-    "categories": [
-      "git-repository",
-      "docker-registry",
-      "cicd"
-    ],
+    "categories": ["git-repository", "docker-registry", "cicd"],
     "urls": [
       {
         "url": "https://gitlab.{{baseDomain}}",
@@ -2168,9 +1948,7 @@
       "repository_name": "jenkins/jenkins",
       "set_key_values": []
     },
-    "categories": [
-      "cicd"
-    ],
+    "categories": ["cicd"],
     "urls": [
       {
         "url": "https://{{componentName}}.{{baseDomain}}",
@@ -2207,9 +1985,7 @@
     "shortcut_icon": "jenkins.png",
     "api_docs_url": "https://www.jenkins.io/doc/book/using/remote-access-api/",
     "vendor_docs_url": "https://www.jenkins.io/doc/",
-    "pre_install_scripts": [
-      "createSecret.sh"
-    ],
+    "pre_install_scripts": ["createSecret.sh"],
     "post_install_scripts": []
   },
   {
@@ -2217,16 +1993,12 @@
     "namespace": "gitlab-ce",
     "installation_type": "script",
     "installation_group_folder": "cicd",
-    "install_scripts": [
-      "buildAndPushCustomImages.sh"
-    ],
+    "install_scripts": ["buildAndPushCustomImages.sh"],
     "environment_variables": {
       "gitlabDindImageVersion": "19.03.13-dind",
       "gitabRunnerVersion": "v13.4.1"
     },
-    "categories": [
-      "cicd"
-    ],
+    "categories": ["cicd"],
     "Description": "Customized Gitlab Runner for Gitlab-CE",
     "pre_install_scripts": [],
     "post_install_scripts": []
@@ -2245,10 +2017,7 @@
       "helm_version": "",
       "set_key_values": []
     },
-    "categories": [
-      "monitoring",
-      "log-harvester"
-    ],
+    "categories": ["monitoring", "log-harvester"],
     "urls": [
       {
         "url": "",
@@ -2306,10 +2075,7 @@
         "prometheus.server.persistentVolume.enabled=false"
       ]
     },
-    "categories": [
-      "monitoring",
-      "datastore"
-    ],
+    "categories": ["monitoring", "datastore"],
     "urls": [
       {
         "url": "",
@@ -2344,12 +2110,8 @@
     "Description": "Loki Description",
     "shortcut_text": "",
     "shortcut_icon": "",
-    "pre_install_scripts": [
-      "getGrafanaAccessKey.sh"
-    ],
-    "post_install_scripts": [
-      "configureLokiWithGrafana.sh"
-    ]
+    "pre_install_scripts": ["getGrafanaAccessKey.sh"],
+    "post_install_scripts": ["configureLokiWithGrafana.sh"]
   },
   {
     "name": "elastic-heartbeat",
@@ -2359,19 +2121,12 @@
     "environment_variables": {
       "elasticVersion": "7.12.0"
     },
-    "categories": [
-      "monitoring"
-    ],
+    "categories": ["monitoring"],
     "Description": "Heartbeat Description",
     "shortcut_text": "",
     "shortcut_icon": "",
-    "install_scripts": [
-      "installHeartbeat.sh"
-    ],
-    "pre_install_scripts": [
-      "createKxCertsSecret.sh",
-      "createConfigMap.sh"
-    ],
+    "install_scripts": ["installHeartbeat.sh"],
+    "pre_install_scripts": ["createKxCertsSecret.sh", "createConfigMap.sh"],
     "post_install_scripts": []
   },
   {
@@ -2392,11 +2147,7 @@
         "volumeClaimTemplate.resources.requests.storage=1Gi"
       ]
     },
-    "categories": [
-      "monitoring",
-      "datastore",
-      "search-engine"
-    ],
+    "categories": ["monitoring", "datastore", "search-engine"],
     "urls": [
       {
         "url": "https://{{componentName}}.{{baseDomain}}",
@@ -2441,9 +2192,7 @@
     "Description": "Elasticsearch Description",
     "shortcut_text": "Elasticsearch",
     "shortcut_icon": "elasticsearch.png",
-    "pre_install_scripts": [
-      "createSecret.sh"
-    ],
+    "pre_install_scripts": ["createSecret.sh"],
     "post_install_scripts": []
   },
   {
@@ -2498,10 +2247,7 @@
         "plugins[1]=grafana-piechart-panel"
       ]
     },
-    "categories": [
-      "visualization",
-      "monitoring"
-    ],
+    "categories": ["visualization", "monitoring"],
     "urls": [
       {
         "url": "https://{{componentName}}.{{baseDomain}}",
@@ -2562,10 +2308,7 @@
       "helm_version": "",
       "set_key_values": []
     },
-    "categories": [
-      "monitoring",
-      "metrics"
-    ],
+    "categories": ["monitoring", "metrics"],
     "urls": [
       {
         "url": "",
@@ -2611,15 +2354,11 @@
     "environment_variables": {
       "elasticVersion": "7.12.0"
     },
-    "categories": [
-      "monitoring"
-    ],
+    "categories": ["monitoring"],
     "Description": "Packetbeat Description",
     "shortcut_text": "",
     "shortcut_icon": "",
-    "install_scripts": [
-      "installPacketbeat.sh"
-    ],
+    "install_scripts": ["installPacketbeat.sh"],
     "pre_install_scripts": [],
     "post_install_scripts": []
   },
@@ -2640,10 +2379,7 @@
       "auto_prune": true,
       "self_heal": true
     },
-    "categories": [
-      "visualization",
-      "monitoring"
-    ],
+    "categories": ["visualization", "monitoring"],
     "urls": [
       {
         "url": "",
@@ -2678,10 +2414,7 @@
     "Description": "Grafana Image Renderer Description",
     "shortcut_text": "",
     "shortcut_icon": "",
-    "pre_install_scripts": [
-      "createGitProject.sh",
-      "populateGitProject.sh"
-    ],
+    "pre_install_scripts": ["createGitProject.sh", "populateGitProject.sh"],
     "post_install_scripts": []
   },
   {
@@ -2706,9 +2439,7 @@
         "server.ingress.tls[0].hosts[0]={{componentName}}.{{baseDomain}}"
       ]
     },
-    "categories": [
-      "monitoring"
-    ],
+    "categories": ["monitoring"],
     "urls": [
       {
         "url": "https://{{componentName}}.{{baseDomain}}",
@@ -2745,9 +2476,7 @@
     "shortcut_icon": "prometheus.png",
     "api_docs_url": "https://prometheus.io/docs/prometheus/latest/querying/api/",
     "vendor_docs_url": "https://prometheus.io/docs",
-    "pre_install_scripts": [
-      "getMattermostIntegrationId.sh"
-    ],
+    "pre_install_scripts": ["getMattermostIntegrationId.sh"],
     "post_install_scripts": []
   },
   {
@@ -2764,10 +2493,7 @@
       "helm_version": "",
       "set_key_values": []
     },
-    "categories": [
-      "monitoring",
-      "visualization"
-    ],
+    "categories": ["monitoring", "visualization"],
     "urls": [
       {
         "url": "https://{{componentName}}.{{baseDomain}}",
@@ -2802,9 +2528,7 @@
     "Description": "Elastic-Stack Description",
     "shortcut_text": "Kibana",
     "shortcut_icon": "kibana.png",
-    "pre_install_scripts": [
-      "generateEncryptionKey.sh"
-    ],
+    "pre_install_scripts": ["generateEncryptionKey.sh"],
     "post_install_scripts": []
   },
   {
@@ -2826,10 +2550,7 @@
         "ingress.annotations.\"nginx\\.ingress\\.kubernetes\\.io/proxy-body-size\"=\"100m\""
       ]
     },
-    "categories": [
-      "monitoring",
-      "cicd"
-    ],
+    "categories": ["monitoring", "cicd"],
     "urls": [
       {
         "url": "https://{{componentName}}.{{baseDomain}}",
@@ -2878,15 +2599,11 @@
     "environment_variables": {
       "elasticVersion": "7.12.0"
     },
-    "categories": [
-      "monitoring"
-    ],
+    "categories": ["monitoring"],
     "Description": "auditbeat Description",
     "shortcut_text": "",
     "shortcut_icon": "",
-    "install_scripts": [
-      "installAuditbeat.sh"
-    ],
+    "install_scripts": ["installAuditbeat.sh"],
     "pre_install_scripts": [],
     "post_install_scripts": []
   },
@@ -2909,9 +2626,7 @@
         "hub.ingress.tls[0].hosts[0]={{componentName}}.{{baseDomain}}"
       ]
     },
-    "categories": [
-      "test-automation"
-    ],
+    "categories": ["test-automation"],
     "urls": [
       {
         "url": "https://{{componentName}}.{{baseDomain}}",
@@ -2988,9 +2703,7 @@
         "caCerts.secret=kx-ca-certs"
       ]
     },
-    "categories": [
-      "code-quality"
-    ],
+    "categories": ["code-quality"],
     "urls": [
       {
         "url": "https://{{componentName}}.{{baseDomain}}",
