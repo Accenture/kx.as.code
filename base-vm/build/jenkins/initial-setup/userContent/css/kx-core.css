@@ -964,3 +964,168 @@ input:checked + .checkbox-slider:before {
         background-color: rgba(152, 128, 255, 0.2);
     }
 }
+
+.capitalize {
+    text-transform: capitalize;
+}
+
+.profiles-select {
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    appearance: none;
+    padding-left: 10px;
+    margin: -4px;
+    cursor: pointer;
+    border: none;
+    width: 200px;
+    height: 40px;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+    background-image: url("/userContent/icons/chevron-down.svg");
+    background-repeat: no-repeat;
+    background-position: right;
+    background-color: #efefef;
+    outline: none;
+    border: none;
+    box-shadow: none;
+}
+
+select {
+    height: 20px;
+    -webkit-border-radius: 0;
+    border: 0;
+    outline: 1px solid #ccc;
+    outline-offset: -1px;
+}
+
+.profiles-select select {
+    outline: none;
+    border: none;
+    box-shadow: none;
+}
+
+.profiles-select:focus {
+    outline: none;
+    border: none;
+    box-shadow: none;
+}
+
+.checklist-status-icon {
+    width: 25px;
+    height: 25px;
+}
+
+.console-log {
+    position: relative;
+    display: inline-block;
+}
+
+.console-log .consolelogtext {
+    width: 800px;
+    height: 450px;
+    background-color: #404c50;
+    color: #ffffff;
+    text-align: left;
+    padding: 5px 5px;
+    border-top-right-radius: 10px;
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+    visibility: hidden;
+    position: absolute;
+    top: -445px;
+    left: -800px;
+    z-index: 10;
+}
+
+.console-log:hover .consolelogtext {
+    visibility: visible;
+}
+
+.console-log-span {
+    width: 50px;
+    margin-right: 15px;
+}
+
+.build-number-span {
+    width: 40px;
+    text-align: center;
+    vertical-align: middle;
+    display: inline-block;
+    margin-right: 20px;
+}
+
+.build-action-icon {
+    width: 30px;
+    height: 30px;
+    border: none;
+    color: #404c50;
+    padding: 2px 2px;
+    text-decoration: none;
+    margin: 2px 2px;
+    cursor: pointer;
+}
+
+.build-action-icon:hover {
+    opacity: 50%;
+}
+
+.build-action-text-label {
+    width: 200px;
+    border: none;
+    color: #404c50;
+    padding: 2px 2px;
+    text-decoration: none;
+    font-weight: bold;
+    margin: 2px 2px;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.build-action-text-value {
+    width: 140px;
+    border: none;
+    color: #404c50;
+    padding: 2px 2px;
+    text-decoration: none;
+    margin: 2px 2px;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.build-action-text-value-result {
+    width: 100px;
+    display: inline-block;
+    padding: 2px 2px 2px 2px;
+}
+
+.span-rounded-border {
+    border: 1px solid black;
+    border-radius: 5px;
+    display: inline-block;
+    margin: 2px;
+    padding: 1px;
+    vertical-align: middle;
+}
+
+.build-result {
+    color: white;
+    text-align: center;
+    border-radius: 15px;
+    padding: 5px 10px 5px 10px;
+}
+
+.build-result-neutral {
+    background: slategrey;
+}
+
+.build-result-success {
+    background: green;
+}
+
+.build-result-failure {
+    background: red;
+}
+
+.build-result-aborted {
+    background: black;
+}
