@@ -18,32 +18,44 @@ export const Applications2 = () => {
     }
 
     const drawApplicationCards = () => {
-        let countFiltered = applicationData.filter((val) => {
+        // let countFiltered = applicationData.filter((val) => {
 
-            if (val.name !== undefined) {
-                if (searchTerm == "") {
-                    return val
-                }
-                else if (val.name.toLowerCase().includes(searchTerm.toLowerCase())) {
-                    return val
-                }
-            }
+        //     if (val.name !== undefined) {
+        //         if (searchTerm == "") {
+        //             return val
+        //         }
+        //         else if (val.name.toLowerCase().includes(searchTerm.toLowerCase())) {
+        //             return val
+        //         }
+        //     }
 
-        }).length
+        // }).length
 
-        return applicationData.filter((val) => {
+        // return applicationData.filter((val) => {
 
+        //     if (searchTerm == "") {
+        //         return val
+        //     }
+        //     if (val.name !== undefined && val.name !== null) {
+
+        //         if (val.toLowerCase().includes(searchTerm.toLowerCase())) {
+        //             return val
+        //         }
+        //     }
+        // }).filter((val) => {
+        //     return val
+        // }).map((app, i) => {
+        //     return <ApplicationCard2 app={app} key={i} />
+        // })
+
+
+         return applicationData.filter((val) => {
             if (searchTerm == "") {
                 return val
             }
-            if (val.name !== undefined && val.name !== null) {
-                console.log("val-debug", val)
-                if (val.toLowerCase().includes(searchTerm.toLowerCase())) {
-                    return val
-                }
+            else if (val.name.toLowerCase().includes(searchTerm.toLowerCase().trim())) {
+                return val
             }
-        }).filter((val) => {
-            return val
         }).map((app, i) => {
             return <ApplicationCard2 app={app} key={i} />
         })
@@ -61,7 +73,7 @@ export const Applications2 = () => {
         {/* Applications Header */}
         <div className="text-white pb-10">
             <div className="text-xl font-bold italic text-gray-500">APPLICATIONS</div>
-            <div className="pt-4 pb-6">What Applications you want to install into your KX.AS Code environemnt?</div>
+            <div className="pt-4 pb-6">Which Applications you want to install into your KX.AS Code environemnt?</div>
             <div className="border-b-2 border-gray-700"></div>
         </div>
 

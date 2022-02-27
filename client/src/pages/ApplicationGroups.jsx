@@ -58,7 +58,7 @@ export default class ApplicationGroups extends Component {
                 {/* Application Groups Header */}
                 <div className="text-white pb-10">
                     <div className="text-xl font-bold italic text-gray-500">APPLICATION GROUPS</div>
-                    <div className="pt-4 pb-6">What Application Groups you want to install into your KX.AS Code environemnt?</div>
+                    <div className="pt-4 pb-6">Which Application Groups you want to install into your KX.AS Code environemnt?</div>
                     <div className="border-b-2 border-gray-700"></div>
                 </div>
 
