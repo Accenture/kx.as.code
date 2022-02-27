@@ -22,6 +22,7 @@ function ApplicationCard2(props) {
 
   useEffect(() => {
     console.log("App: ", props.app);
+    setUpAppId();
     setAppName(
       props.app.name
         .replaceAll("-", " ")
@@ -38,7 +39,10 @@ function ApplicationCard2(props) {
           key={i}
           className="rounded bg-gray-500 text-sm mr-1.5 mb-2 px-1.5  w-auto inline-block"
         >
-          {appTag}
+          {appTag
+            .replaceAll("-", " ")
+            .replaceAll("_", " ")
+            .replace(/\b\w/g, (l) => l.toUpperCase())}
         </li>
       );
     });
@@ -80,23 +84,30 @@ function ApplicationCard2(props) {
                 <span className="flex my-auto">Reinstall</span>
               </Link>
             </li>
-            <li>
-              <Link
-                className="font-medium text-sm text-red-500 hover:text-red-600 flex py-1 px-3"
-                to="#0"
-              >
-                <div className="flex items-start">
-                  <TrashCan32 className="p-1 flex my-auto" />
-                </div>
-                <span className="flex my-auto">Delete</span>
-              </Link>
-            </li>
+
+            {props.app.installation_group_folder != "core" && (
+              <li>
+                <Link
+                  className="font-medium text-sm text-red-500 hover:text-red-600 flex py-1 px-3"
+                  to="#0"
+                >
+                  <div className="flex items-start">
+                    <TrashCan32 className="p-1 flex my-auto" />
+                  </div>
+                  <span className="flex my-auto">Delete</span>
+                </Link>
+              </li>
+            )}
           </EditMenu>
         </header>
         <Link to={"/apps/" + appId}>
-          <h2 className="hover:underline hover:cursor-pointer text-lg text-white mb-2 flex items-center">
+          {/* Category name */}
+          <div className="text-white bg-ghBlack2 rounded p-0 px-1.5 uppercase w-fit inline-block my-2">
+            {props.app.installation_group_folder}
+          </div>
+          <h2 className="hover:underline hover:cursor-pointer text-2xl text-white mb-2 flex items-center">
             <StatusPoint installStatus={"pending_queue"} />
-            {appName} ({props.app.installation_group_folder}){" "}
+            {appName}
           </h2>
         </Link>
         <div className="text-xs font-semibold text-gray-400 uppercase mb-1"></div>
