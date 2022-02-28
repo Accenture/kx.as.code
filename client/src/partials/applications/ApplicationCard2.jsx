@@ -21,7 +21,6 @@ function ApplicationCard2(props) {
   };
 
   useEffect(() => {
-    console.log("App: ", props.app);
     setUpAppId();
     setAppName(
       props.app.name
@@ -108,6 +107,7 @@ function ApplicationCard2(props) {
           <h2 className="hover:underline hover:cursor-pointer text-2xl text-white mb-2 flex items-center">
             <StatusPoint installStatus={"pending_queue"} />
             {appName}
+            {"QN: " + props.getAppQueueData(props.app.name)}
           </h2>
         </Link>
         <div className="text-xs font-semibold text-gray-400 uppercase mb-1"></div>

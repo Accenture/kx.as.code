@@ -19,6 +19,7 @@
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
     "material-ui-breadcrumbs": "^0.1.6",
+    "monk": "^7.3.4",
     "nodemon": "^2.0.13",
     "postcss": "^8.3.11",
     "react": "^17.0.2",
