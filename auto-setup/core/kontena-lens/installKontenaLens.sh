@@ -54,7 +54,8 @@ echo '''
     --retry 5 \
     --retry-delay 5 \
     --retry-max-time 60 \
-    -o ${installationWorkspace}/Lens-${lensVersion}.amd64.deb https://api.k8slens.dev/binaries/Lens-${lensVersion}.amd64.deb
+    -o ${installationWorkspace}/Lens-${lensVersion}.amd64.deb https://lens-binaries.s3-eu-west-1.amazonaws.com/ide/Lens-${lensVersion}.amd64.deb
+
 
 /usr/bin/sudo apt-get install -y ${installationWorkspace}/Lens-${lensVersion}.amd64.deb
 
