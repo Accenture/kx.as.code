@@ -25,25 +25,25 @@ if [[ ${action} == "install"   ]]; then
     ####################################################################################################################################################################
     ##      P R E    I N S T A L L    S T E P S
     ####################################################################################################################################################################
-    autoSetupPreInstallSteps
+    autoSetupPreInstallSteps 2>&1 | tee -a ${logFilename}
 
     ####################################################################################################################################################################
     ##      S C R I P T    I N S T A L L
     ####################################################################################################################################################################
     if [[ ${installationType} == "script" ]]; then
-      autoSetupScriptInstall
+      autoSetupScriptInstall 2>&1 | tee -a ${logFilename}
 
     ####################################################################################################################################################################
     ##      H E L M    I N S T A L L   /   U P G R A D E
     ####################################################################################################################################################################
     elif [[ ${installationType} == "helm" ]]; then
-      autoSetupHelmInstall
+      autoSetupHelmInstall 2>&1 | tee -a ${logFilename}
 
     ####################################################################################################################################################################
     ##      A R G O    C D    I N S T A L L
     ####################################################################################################################################################################
     elif [[ ${installationType} == "argocd" ]] && [[ ${action}=="install" ]]; then
-      autoSetupArgoCdInstall
+      autoSetupArgoCdInstall 2>&1 | tee -a ${logFilename}
 
     else
         log_error "Did not recognize installation type of \"${installationType}\". Valid values are \"helm\", \"argocd\" or \"script\""
@@ -59,10 +59,10 @@ if [[ ${action} == "install"   ]]; then
 
       # Excluding core_groups to avoid missing cross dependency issues between core services, for example,
       # coredns waiting for calico network to be installed, preventing other service from being provisioned
-      checkRunningKubernetesPods
+      checkRunningKubernetesPods 2>&1 | tee -a ${logFilename}
 
       # Check if URL health checks defined in metadata.json return result as expected/described in metadata.json file
-      applicationDeploymentHealthCheck
+      applicationDeploymentHealthCheck 2>&1 | tee -a ${logFilename}
 
     fi
 
@@ -75,10 +75,10 @@ if [[ ${action} == "install"   ]]; then
 
     # If LetsEncrypt is not disabled in metadata.json for application in question and sslType set to letsencrypt,
     # then inject LetsEncrypt annotations into the applications ingress resources
-    postInstallStepLetsEncrypt
+    postInstallStepLetsEncrypt 2>&1 | tee -a ${logFilename}
 
     # Execute scripts defined in metadata.json, listed post_install_scripts section
-    executePostInstallScripts
+    executePostInstallScripts 2>&1 | tee -a ${logFilename}
 
     ####################################################################################################################################################################
     ##      I N S T A L L    D E S K T O P    S H O R T C U T S
