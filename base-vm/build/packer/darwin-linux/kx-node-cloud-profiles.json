@@ -151,7 +151,9 @@
       "scripts": [
         "../../../scripts/base/directories.sh",
         "../../../scripts/base/kx-user.sh",
-        "../../../scripts/base/update.sh"
+        "../../../scripts/base/update.sh",
+        "../../../scripts/base/locale.sh"
+
       ],
       "type": "shell",
       "start_retry_timeout": "15m",
@@ -222,6 +224,7 @@
         "VM_PASSWORD={{user `vm_password`}}",
         "VERSION={{user `version`}}",
         "KUBE_VERSION={{user `kube_version`}}",
+        "COMPUTE_ENGINE_BUILD={{user `compute_engine_build`}}",
         "KX_HOME={{user `kx_home`}}",
         "SKELDIR={{user `kx_home`}}/workspace/skel",
         "SHARED_GIT_REPOSITORIES={{user `kx_home`}}/git",

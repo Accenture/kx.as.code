@@ -1,9 +1,9 @@
 populateActionQueue() {
 
-    export aqFiles=($(ls ${installationWorkspace}/aq*.json || true))
+    export aqFiles=$(ls ${installationWorkspace}/aq*.json || echo "no_aq_files")
 
     # Merge json files if user uploaded aq* files present
-    if [[ -n ${aqFiles} ]]; then
+    if [[ "${aqFiles}" != "no_aq_files" ]]; then
         # Loop around all user aq* files and merge them to one large json
         for i in "${!aqFiles[@]}"; do
             echo "$i: ${aqFiles[$i]}"
