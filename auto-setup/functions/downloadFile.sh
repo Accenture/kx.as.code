@@ -20,10 +20,10 @@ downloadFile() {
       -o "${outputFilename}" \
       "${url}"
 
-      checkResult=$(echo "${checksum}" "${installationWorkspace}/${outputFilename}" | sha256sum -c --quiet && echo "OK" || echo "NOK")
+      checkResult=$(echo "${checksum}" "${outputFilename}" | sha256sum -c --quiet && echo "OK" || echo "NOK")
       echo "${checkResult}"
       if [[ "${checkResult}" == "OK" ]]; then
-        echo "Checksum of downloaded file ${filename} OK"
+        echo "Checksum of downloaded file ${outputFilename} OK"
         break
       fi
       sleep 15

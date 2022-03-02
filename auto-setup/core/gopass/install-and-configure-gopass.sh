@@ -3,8 +3,8 @@ set -euo pipefail
 
 # Download & Install GoPass
 downloadFile "https://github.com/gopasspw/gopass/releases/download/v${gopassVersion}/gopass_${gopassVersion}_linux_amd64.deb" \
-  "${installationWorkspace}/${gopassChecksum}" \
-  "gopass_${gopassVersion}_linux_amd64.deb"
+  "${gopassChecksum}" \
+  "${installationWorkspace}/gopass_${gopassVersion}_linux_amd64.deb"
 
 /usr/bin/sudo apt-get install -y ${installationWorkspace}/gopass_${gopassVersion}_linux_amd64.deb
 

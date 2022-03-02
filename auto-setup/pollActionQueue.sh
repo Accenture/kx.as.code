@@ -235,7 +235,7 @@ while :; do
 
                 # Launch the component installation process
                 logFilename=$(setLogFilename)
-                . ${autoSetupHome}/autoSetup.sh &> ${logFilename}
+                . ${autoSetupHome}/autoSetup.sh 2>&1 ${logFilename}
                 logRc=$?
                 log_info "Installation process for \"${componentName}\" returned with \$?=${logRc} and rc=$rc"
             fi
