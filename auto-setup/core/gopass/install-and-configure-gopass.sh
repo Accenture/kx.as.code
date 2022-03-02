@@ -1,12 +1,18 @@
 #!/bin/bash -x
 set -euo pipefail
 
-# Install GoPass
-curl -L -o ${installationWorkspace}/gopass_${gopassVersion}_linux_amd64.deb https://github.com/gopasspw/gopass/releases/download/v${gopassVersion}/gopass_${gopassVersion}_linux_amd64.deb
+# Download & Install GoPass
+downloadFile "https://github.com/gopasspw/gopass/releases/download/v${gopassVersion}/gopass_${gopassVersion}_linux_amd64.deb" \
+  "${installationWorkspace}/${gopassChecksum}" \
+  "gopass_${gopassVersion}_linux_amd64.deb"
+
 /usr/bin/sudo apt-get install -y ${installationWorkspace}/gopass_${gopassVersion}_linux_amd64.deb
 
-# Install GoPass UI
-curl -L -o ${installationWorkspace}/gopass-ui_${gopassUiVersion}_amd64.deb https://github.com/codecentric/gopass-ui/releases/download/v${gopassUiVersion}/gopass-ui_${gopassUiVersion}_amd64.deb
+# Download & Install GoPass UI
+downloadFile "https://github.com/codecentric/gopass-ui/releases/download/v${gopassUiVersion}/gopass-ui_${gopassUiVersion}_amd64.deb" \
+  "${gopassUiChecksum}" \
+  "${installationWorkspace}/gopass-ui_${gopassUiVersion}_amd64.deb"
+
 /usr/bin/sudo apt-get install -y ${installationWorkspace}/gopass-ui_${gopassUiVersion}_amd64.deb
 
  # Install GNUPG2 and RNG-Tools

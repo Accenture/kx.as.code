@@ -1,4 +1,5 @@
-#!/bin/bash -eux
+#!/bin/bash -x
+set -euo pipefail
 
 /usr/bin/sudo mkdir -p /home/${vmUser}/.config/Lens
 
@@ -49,13 +50,10 @@ echo '''
 
 /usr/bin/sudo chown -R ${vmUser}:${vmUser} /home/${vmUser}/.config/Lens
 
-/usr/bin/sudo curl -L --connect-timeout 5 \
-    --max-time 60 \
-    --retry 5 \
-    --retry-delay 5 \
-    --retry-max-time 60 \
-    -o ${installationWorkspace}/Lens-${lensVersion}.amd64.deb https://lens-binaries.s3-eu-west-1.amazonaws.com/ide/Lens-${lensVersion}.amd64.deb
-
+# Download & Install GoPass
+downloadFile "https://lens-binaries.s3-eu-west-1.amazonaws.com/ide/Lens-${lensVersion}.amd64.deb" \
+  "${lensChecksum}" \
+  "${installationWorkspace}/Lens-${lensVersion}.amd64.deb"
 
 /usr/bin/sudo apt-get install -y ${installationWorkspace}/Lens-${lensVersion}.amd64.deb
 
