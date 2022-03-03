@@ -12,7 +12,10 @@ SHARED_GIT_REPOSITORIES=/usr/share/kx.as.code/git
 /usr/bin/sudo apt install -y build-essential libcairo2-dev libjpeg62-turbo-dev libpng-dev libtool-bin libossp-uuid-dev libvncserver-dev freerdp2-dev libssh2-1-dev libtelnet-dev libwebsockets-dev libpulse-dev libvorbis-dev libwebp-dev libssl-dev libpango1.0-dev libswscale-dev libavcodec-dev libavutil-dev libavformat-dev
 
 # Download, build, install and enable Guacamole
-curl -L -o guacamole-server-${guacamoleVersion}.tar.gz https://apache.org/dyn/closer.cgi\?action\=download\&filename\=guacamole/${guacamoleVersion}/source/guacamole-server-${guacamoleVersion}.tar.gz
+downloadFile "https://apache.org/dyn/closer.cgi\?action\=download\&filename\=guacamole/${guacamoleVersion}/source/guacamole-server-${guacamoleVersion}.tar.gz" \
+  "${guacamoleChecksum}" \
+  "${installationWorkspace}/guacamole-server-${guacamoleVersion}.tar.gz"
+
 tar -xvf guacamole-server-${guacamoleVersion}.tar.gz
 cd guacamole-server-${guacamoleVersion}
 ./configure --with-init-dir=/etc/init.d --enable-allow-freerdp-snapshots

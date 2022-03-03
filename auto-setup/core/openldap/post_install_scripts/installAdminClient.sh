@@ -2,8 +2,10 @@
 set -euo pipefail
 
 # Download LDAP Account Manager
-lamVersion=7.4-1
-curl -o ldap-account-manager_${lamVersion}_all.deb -L http://prdownloads.sourceforge.net/lam/ldap-account-manager_${lamVersion}_all.deb\?download
+downloadFile "https://prdownloads.sourceforge.net/lam/ldap-account-manager_${lamVersion}_all.deb\?download" \
+  "${lamChecksum}" \
+  "${installationWorkspace}/ldap-account-manager_${lamVersion}_all.deb"
+
 /usr/bin/sudo apt-get install -y ./ldap-account-manager_${lamVersion}_all.deb
 apt-get --fix-broken install -y
 
