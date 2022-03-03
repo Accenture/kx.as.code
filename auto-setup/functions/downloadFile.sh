@@ -10,6 +10,7 @@ downloadFile() {
     outputFilename="${3}"
   fi
 
+  log_info "Downloading ${outputFilename} from ${url}"
   # Download file with subsequent checksum validation
   for i in {1..15}
   do
@@ -20,17 +21,18 @@ downloadFile() {
       -o "${outputFilename}" \
       "${url}"
 
-      checkResult=$(echo "${checksum}" "${outputFilename}" | sha256sum -c --quiet && echo "OK" || echo "NOK")
-      echo "${checkResult}"
-      if [[ "${checkResult}" == "OK" ]]; then
-        echo "Checksum of downloaded file ${outputFilename} OK"
-        break
-      fi
-      sleep 15
-    done
+    checkResult=$(echo "${checksum}" "${outputFilename}" | sha256sum -c --quiet && echo "OK" || echo "NOK")
+    echo "${checkResult}"
+    if [[ "${checkResult}" == "OK" ]]; then
+      log_info "Checksum of downloaded file ${outputFilename} OK"
+      break
+    fi
+    sleep 15
+  done
 
     # Finally return with an error return code if download not OK [NOK]
     if [[ "${checkResult}" == "NOK" ]]; then
+      log_error "Checksum of downloaded file ${outputFilename} NOK"
       exit 1
     fi
 }
