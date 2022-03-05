@@ -2,10 +2,15 @@
 set -euo pipefail
 
 # Set default email and password to use and setup on first start of PGADMIN
-export PGADMIN_DEFAULT_EMAIL='admin@'${baseDomain}''
-export PGADMIN_DEFAULT_PASSWORD=''${vmPassword}''
+export PGADMIN_DEFAULT_EMAIL=admin@${baseDomain}
+export PGADMIN_DEFAULT_PASSWORD=${vmPassword}
 export PGADMIN_SETUP_EMAIL=${PGADMIN_DEFAULT_EMAIL}
 export PGADMIN_SETUP_PASSWORD=${PGADMIN_DEFAULT_PASSWORD}
+
+log_debug "Set PGADMIN_DEFAULT_EMAIL to ${PGADMIN_DEFAULT_EMAIL}"
+log_debug "Set PGADMIN_DEFAULT_PASSWORD to ${PGADMIN_DEFAULT_PASSWORD}"
+log_debug "Set PGADMIN_SETUP_EMAIL to ${PGADMIN_DEFAULT_EMAIL}"
+log_debug "Set PGADMIN_SETUP_PASSWORD to ${PGADMIN_SETUP_PASSWORD}"
 
 # Install the public key for the repository (if not done previously):
 /usr/bin/sudo curl https://www.pgadmin.org/static/packages_pgadmin_org.pub | /usr/bin/sudo  apt-key add
@@ -22,7 +27,8 @@ export PGADMIN_SETUP_PASSWORD=${PGADMIN_DEFAULT_PASSWORD}
 # Install for web mode only:
 /usr/bin/sudo apt install -y pgadmin4-web
 
-/usr/bin/sudo bash -c 'yes | . /usr/pgadmin4/bin/setup-web.sh --yes'
+# Initial setup of padmin web based administration application
+timeout -s TERM 60 bash -c "/usr/bin/sudo bash -c \". /usr/pgadmin4/bin/setup-web.sh --yes\""
 
 # Add PGADMIN config to NGINX
 echo '''
