@@ -8,7 +8,6 @@ import "./charts/ChartjsConfig";
 
 // Import pages
 import Dashboard from "./pages/Dashboard";
-import Applications from "./pages/Applications";
 
 import Sidebar from "./partials/Sidebar";
 import Header from "./partials/Header";

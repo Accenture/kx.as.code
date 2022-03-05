@@ -19,86 +19,15 @@ export const Applications2 = () => {
   ];
 
   const fetchData = () => {
-    axios.get("http://localhost:5000/api/applications").then((response) => {
-      setApplicationData(response.data);
-    });
-  };
-
-  const f_setAppMetaData = async (message, queue) => {
-    var app = {
-      queueName: queue,
-      appName: JSON.parse(message.payload).name,
-      category: JSON.parse(message.payload).install_folder.replace(
-        /\b\w/g,
-        (l) => l.toUpperCase()
-      ),
-      retries: JSON.parse(message.payload).retries,
-    };
-    return app;
-  };
-
-  const s_function = async (message, queue) => {
-    const app = await f_setAppMetaData(message, queue);
-    const queueDataTmp = queueData;
-    queueDataTmp.push(app);
-    setQueueData(queueDataTmp);
-  };
-
-  const fetchQueueDataAndExtractApplicationMetadata = () => {
-    queueList.forEach((queue) => fetchQueueData(queue));
-  };
-
-  const fetchQueueData = (queue) => {
-    axios.get("http://localhost:5000/api/queues/" + queue).then((response) => {
-      console.log("QD: ", response.data);
-      response.data.forEach((message) => {
-        s_function(message, queue);
-      });
-    });
-  };
-
-  const getAppQueueData = (appName) => {
-    return queueData.filter((val) => {
-      if (val.payloard == appName) {
-        console.log("qname: ", val.queueName);
-        return val.queueName;
-      } else {
-        console.log("nope");
-      }
-    });
+    axios
+      .get("http://localhost:5001/api/applications")
+      .then((response) => {
+        setApplicationData(response.data);
+      })
+      .then(() => {});
   };
 
   const drawApplicationCards = () => {
-    // let countFiltered = applicationData.filter((val) => {
-
-    //     if (val.name !== undefined) {
-    //         if (searchTerm == "") {
-    //             return val
-    //         }
-    //         else if (val.name.toLowerCase().includes(searchTerm.toLowerCase())) {
-    //             return val
-    //         }
-    //     }
-
-    // }).length
-
-    // return applicationData.filter((val) => {
-
-    //     if (searchTerm == "") {
-    //         return val
-    //     }
-    //     if (val.name !== undefined && val.name !== null) {
-
-    //         if (val.toLowerCase().includes(searchTerm.toLowerCase())) {
-    //             return val
-    //         }
-    //     }
-    // }).filter((val) => {
-    //     return val
-    // }).map((app, i) => {
-    //     return <ApplicationCard2 app={app} key={i} />
-    // })
-
     return applicationData
       .filter((val) => {
         if (searchTerm == "") {
@@ -110,18 +39,27 @@ export const Applications2 = () => {
         }
       })
       .map((app, i) => {
-        return (
-          <ApplicationCard2
-            app={app}
-            key={i}
-            getAppQueueData={getAppQueueData}
-          />
-        );
+        return <ApplicationCard2 app={app} key={i} queueData={queueData} />;
       });
   };
 
+  const fetchQueueData2 = () => {
+    queueList.map((queue) => {
+      axios
+        .get("http://localhost:5001/api/queues/" + queue)
+        .then((response) => {
+          response.data.map((app) => {
+            queueData.push(app);
+          });
+        })
+        .then(() => {
+          setQueueData(queueData);
+        });
+    });
+  };
+
   useEffect(() => {
-    fetchQueueDataAndExtractApplicationMetadata();
+    fetchQueueData2();
     fetchData();
     return () => {};
   }, []);

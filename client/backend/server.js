@@ -10,7 +10,7 @@ const app = express();
 // db.on("error", (error) => console.error(error))
 // db.once("error", (error) => console.error(error))
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5001;
 const dataPath = "../src/data/combined-metadata-files.json";
 
 app.use((req, res, next) => {
