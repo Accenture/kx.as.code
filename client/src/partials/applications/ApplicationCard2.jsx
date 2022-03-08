@@ -31,6 +31,21 @@ function ApplicationCard2(props) {
     return queueName;
   };
 
+  const getTransformedName = () => {
+    return props.app.name
+      .replaceAll("-", " ")
+      .replaceAll("_", " ")
+      .replace(/\b\w/g, (l) => l.toUpperCase());
+  };
+
+  const getSlug = () => {
+    return (
+      props.app.name &&
+      props.app.name
+        .replaceAll(" ", "-")
+        .replace(/\b\w/g, (l) => l.toLowerCase())
+    );
+  };
   useEffect(() => {
     setUp();
     var queueObj = getAppQueueData(props.app.name)[0];
@@ -105,14 +120,14 @@ function ApplicationCard2(props) {
             </EditMenu>
           )}
         </header>
-        <Link to={"/apps/" + appId}>
+        <Link to={"/apps/" + getSlug()}>
           {/* Category name */}
           <div className="text-white bg-ghBlack2 rounded p-0 px-1.5 uppercase w-fit inline-block my-2">
             {props.app.installation_group_folder}
           </div>
           <h2 className="hover:underline hover:cursor-pointer text-2xl text-white mb-2 flex items-center">
             {queueStatus != "" && <StatusPoint installStatus={queueStatus} />}
-            {props.app.name}
+            {getTransformedName()}
           </h2>
         </Link>
         <div className="text-xs font-semibold text-gray-400 uppercase mb-1"></div>
