@@ -1,5 +1,6 @@
 import React from "react";
 import { useState, useEffect } from "react";
+import { RiWindowLine } from "react-icons/ri";
 
 // import img from "../../media/png/appImgs/jenkins.png";
 
@@ -39,7 +40,7 @@ export default function AppLogo(props) {
       {image ? (
         <img src={image} alt="" height="50px" width="50px" />
       ) : (
-        <div className="h-[50px] w-[50px] border-gray-500 border-8"></div>
+        <RiWindowLine className="text-5xl opacity-40" />
       )}
     </>
   );

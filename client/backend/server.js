@@ -53,4 +53,18 @@ app.get("/api/applications", (req, res) => {
   });
 });
 
+app.get("/api/applications/:app_name", (req, res) => {
+  fs.readFile(dataPath, "utf8", (err, data) => {
+    if (err) {
+      throw err;
+    }
+    var fil = JSON.parse(data).filter((app) => {
+      if (app.name === req.params.app_name) {
+        return app;
+      }
+    });
+    res.send(fil);
+  });
+});
+
 app.listen(PORT, () => console.log(`listening on ${PORT}`));

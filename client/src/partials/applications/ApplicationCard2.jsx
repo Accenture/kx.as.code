@@ -32,6 +32,7 @@ function ApplicationCard2(props) {
   };
 
   useEffect(() => {
+    setUp();
     var queueObj = getAppQueueData(props.app.name)[0];
     if (queueObj != undefined && queueObj != null) {
       setQueueStatus(queueObj.routing_key);
@@ -76,29 +77,31 @@ function ApplicationCard2(props) {
           {/* Menu button */}
           {props.app.installation_group_folder != "core" && (
             <EditMenu className="relative inline-flex">
-              <li>
-                <Link
-                  className="font-medium text-sm text-white hover:text-gray-500 flex py-1 px-3"
-                  to="#0"
-                >
-                  <div className="flex items-start">
-                    <Restart32 className="p-1 flex my-auto" />
-                  </div>
-                  <span className="flex my-auto">Reinstall</span>
-                </Link>
-              </li>
-
-              <li>
-                <Link
-                  className="font-medium text-sm text-red-500 hover:text-red-600 flex py-1 px-3"
-                  to="#0"
-                >
-                  <div className="flex items-start">
-                    <TrashCan32 className="p-1 flex my-auto" />
-                  </div>
-                  <span className="flex my-auto">Delete</span>
-                </Link>
-              </li>
+              {props.app.installation_group_folder === "completed_queue" ? (
+                <li>
+                  <Link
+                    className="font-medium text-sm text-red-500 hover:text-red-600 flex py-1 px-3"
+                    to="#0"
+                  >
+                    <div className="flex items-start">
+                      <TrashCan32 className="p-1 flex my-auto" />
+                    </div>
+                    <span className="flex my-auto">Uninstall</span>
+                  </Link>
+                </li>
+              ) : (
+                <li>
+                  <Link
+                    className="font-medium text-sm text-white hover:text-gray-500 flex py-1 px-3"
+                    to="#0"
+                  >
+                    <div className="flex items-start">
+                      <Restart32 className="p-1 flex my-auto" />
+                    </div>
+                    <span className="flex my-auto">Install</span>
+                  </Link>
+                </li>
+              )}
             </EditMenu>
           )}
         </header>
@@ -109,7 +112,7 @@ function ApplicationCard2(props) {
           </div>
           <h2 className="hover:underline hover:cursor-pointer text-2xl text-white mb-2 flex items-center">
             {queueStatus != "" && <StatusPoint installStatus={queueStatus} />}
-            {appName}
+            {props.app.name}
           </h2>
         </Link>
         <div className="text-xs font-semibold text-gray-400 uppercase mb-1"></div>
