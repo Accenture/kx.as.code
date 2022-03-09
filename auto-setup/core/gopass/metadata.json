@@ -5,7 +5,9 @@
     "installation_group_folder": "core",
     "environment_variables": {
         "gopassVersion": "1.12.6",
-        "gopassUiVersion": "0.8.0"
+        "gopassChecksum": "287e7dc89c924a12c9d197790e21ec13bbfd122d790de3d5d42d16789ac68468",
+        "gopassUiVersion": "0.8.0",
+        "gopassUiChecksum": "64255b6e829e5432f387327857fbaa3609a537d151eafb1b8c36f7ffed51b115"
     },
     "install_scripts": [
         "install-and-configure-gopass.sh"

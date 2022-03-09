@@ -44,15 +44,30 @@ sudo chmod 755 ${INSTALLATION_WORKSPACE}/scripts/registerNode.sh
 sudo chown ${VM_USER}:${VM_USER} ${INSTALLATION_WORKSPACE}/scripts/registerNode.sh
 sudo cp ${INSTALLATION_WORKSPACE}/scripts/registerNode.sh ${KUBEDIR}
 
+# Only wait for virtualbox service if KX.AS.CODE running on VirtualBox
+export afterServiceList=""
+if [[ "${PACKER_BUILDER_TYPE}" =~ "virtualbox" ]]; then
+  export afterServiceList="After=vboxadd-service.service"
+fi
+
+# Wait until cloud-init service completes before running node registration script
+#if [[ "${COMPUTE_ENGINE_BUILD}" == "true"   ]]; then
+#  if [[ -z ${afterServiceList} ]]; then
+#    export afterServiceList="After=cloud-init.service"
+#  else
+#    export afterServiceList="${afterServiceList}"$'\n'"After=cloud-init.service"
+#  fi
+#fi
+
 # Add Kubernetes Join Script to systemd
 sudo bash -c "cat <<EOF > /etc/systemd/system/k8s-register-node.service
 [Unit]
-Description=K8s Cluster Join Service
+Description=KX.AS.CODE K8s Cluster Join Service
 After=network.target
 After=systemd-user-sessions.service
 After=network-online.target
-After=vboxadd-service.service
 After=ntp.service
+${afterServiceList}
 
 [Service]
 User=0

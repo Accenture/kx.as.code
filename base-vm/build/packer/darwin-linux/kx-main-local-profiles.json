@@ -259,7 +259,8 @@
         "../../../scripts/base/directories.sh",
         "../../../scripts/base/vagrant-user.sh",
         "../../../scripts/base/kx-user.sh",
-        "../../../scripts/base/update.sh"
+        "../../../scripts/base/update.sh",
+        "../../../scripts/base/locale.sh"
       ],
       "type": "shell",
       "start_retry_timeout": "15m",

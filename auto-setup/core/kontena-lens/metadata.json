@@ -4,7 +4,8 @@
     "installation_type": "script",
     "installation_group_folder": "core",
     "environment_variables": {
-        "lensVersion": "5.2.5-latest.20211001.2"
+        "lensVersion": "5.4.0-latest.20220301.1",
+        "lensChecksum": "36487e4cf685ee28d0c4db8a577dabfff673a59e5f5d38965a2178624480145b"
     },
     "install_scripts": [
         "installKontenaLens.sh"
