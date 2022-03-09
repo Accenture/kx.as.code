@@ -2,7 +2,7 @@
   "sharedKxHome": "/usr/share/kx.as.code",
   "installationWorkspace": "${sharedKxHome}/workspace",
   "certificatesWorkspace": "${installationWorkspace}/certificates",
-  "actionWorkflows": "pending wip completed failed retry",
+  "actionWorkflows": "pending wip completed failed retry notification",
   "defaultDockerHubSecret": "default/regcred",
   "sharedGitHome": "${sharedKxHome}/git",
   "autoSetupHome": "${sharedGitHome}/kx.as.code/auto-setup",

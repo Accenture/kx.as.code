@@ -158,11 +158,11 @@ while :; do
             if [[ ! -f ${installationWorkspace}/current_payload.err ]]; then
                 echo "Completed payload: ${payload}"
                 rabbitmqadmin publish exchange=action_workflow routing_key=completed_queue properties="{\"delivery_mode\": 2}" payload=''${payload}''
-                log_info "The installation of \"${componentName}\" completed succesfully"
-                notify "${componentName} installed successfully [$((${completedQueue} + 1))/${totalMessages}]" "dialog-information"
+                message="${componentName} installed successfully [$((${completedQueue} + 1))/${totalMessages}]"
+                notifyAllChannels "${message}" "info" "success"
                 if [[ "${componentName}" == "${lastCoreElementToInstall}" ]]; then
-                    notify "CONGRATULATIONS\! That concludes the core setup\! Your optional components will now be installed" "dialog-information"
-                    echo "${componentName} = ${lastCoreElementToInstall}"
+                    message="CONGRATULATIONS\! That concludes the core setup\! Your optional components will now be installed"
+                    notifyAllChannels "${message}" "info" "all_core_completed_successfully"
                 fi
                 retries=0
             else
@@ -170,20 +170,21 @@ while :; do
                     sleep 10
                     ((retries = ${retries} + 1))
                     payload=$(echo ${payload} | jq --arg retries ${retries} -c -r '.retries=$retries')
-                    echo "Retry payload: ${payload}"
+                    log_info "Retry payload: ${payload}"
                     rabbitmqadmin publish exchange=action_workflow routing_key=retry_queue properties="{\"delivery_mode\": 2}" payload=''${payload}''
                     cat ${installationWorkspace}/actionQueues.json | jq -c -r '(.state.processed[] | select(.name=="'${componentName}'").retries) = "'${retries}'"' | tee ${installationWorkspace}/actionQueues.json.tmp
                     mv ${installationWorkspace}/actionQueues.json.tmp ${installationWorkspace}/actionQueues.json
-                    log_warn "Previous attempt to install \"${componentName}\" did not complete succesfully. Trying again (${retries} of 3)"
-                    notify "${componentName} installation error. Will try three times maximum\! [$((${completedQueue} + 1))/${totalMessages}]" "dialog-warning"
+                    message="${componentName} installation error after retry #${retries}. Will retry three times maximum\! [$((${completedQueue} + 1))/${totalMessages}]"
+                    notifyAllChannels "${message}" "warn" "failed"
+
                     rm -f ${installationWorkspace}/current_payload.err
                 else
                     payload=$(echo ${payload} | jq -c -r '(.retries)="0"' | jq -c -r '. += {"failed_retries":"'${retries}'"}')
-                    echo "Failed payload: ${payload}"
+                    log_error "Failed payload: ${payload}"
                     rabbitmqadmin publish exchange=action_workflow routing_key=failed_queue properties="{\"delivery_mode\": 2}" payload=''${payload}''
                     retries=0
-                    log_error "Previous attempt to install \"${componentName}\" did not complete succesfully. There will be no (further) retries"
-                    notify "${componentName} installation failed\! [$((${completedQueue} + 1))/${totalMessages}]" "dialog-error"
+                    message="${componentName} installation failed after ${retries} retries\! [$((${completedQueue} + 1))/${totalMessages}]"
+                    notifyAllChannels "${message}" "error" "failed"
                     rm -f ${installationWorkspace}/current_payload.err
                 fi
             fi
@@ -220,6 +221,8 @@ while :; do
 
                 # Add item to wip queue to notify install is in progress
                 rabbitmqadmin publish exchange=action_workflow routing_key=wip_queue properties="{\"delivery_mode\": 2}" payload=''${payload}''
+                message="${componentName} installation started [$((${completedQueue} + 1))/${totalMessages}]"
+                notifyAllChannels "${message}" "info" "started"
 
                 # Launch autoSetup.sh
                 if [[ "${componentName}" == "${firstCoreElementToInstall}" ]]; then
