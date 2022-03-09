@@ -12,7 +12,11 @@ SHARED_GIT_REPOSITORIES=/usr/share/kx.as.code/git
 /usr/bin/sudo apt install -y build-essential libcairo2-dev libjpeg62-turbo-dev libpng-dev libtool-bin libossp-uuid-dev libvncserver-dev freerdp2-dev libssh2-1-dev libtelnet-dev libwebsockets-dev libpulse-dev libvorbis-dev libwebp-dev libssl-dev libpango1.0-dev libswscale-dev libavcodec-dev libavutil-dev libavformat-dev
 
 # Download, build, install and enable Guacamole
-curl -L -o guacamole-server-${guacamoleVersion}.tar.gz https://apache.org/dyn/closer.cgi\?action\=download\&filename\=guacamole/${guacamoleVersion}/source/guacamole-server-${guacamoleVersion}.tar.gz
+#https://apache.org/dyn/closer.cgi?action=download&filename=guacamole/1.3.0/source/guacamole-server-1.3.0.tar.gz
+downloadFile "https://apache.org/dyn/closer.cgi?action=download&filename=guacamole/${guacamoleVersion}/source/guacamole-server-${guacamoleVersion}.tar.gz" \
+  "${guacamoleChecksum}" \
+  "${installationWorkspace}/guacamole-server-${guacamoleVersion}.tar.gz" && log_info "Return code received after downloading guacamole-server-${guacamoleVersion}.tar.gz is $?"
+
 tar -xvf guacamole-server-${guacamoleVersion}.tar.gz
 cd guacamole-server-${guacamoleVersion}
 ./configure --with-init-dir=/etc/init.d --enable-allow-freerdp-snapshots
@@ -285,14 +289,16 @@ sed -i 's/allowed_users=console/allowed_users=anybody/g' /etc/X11/Xwrapper.confi
 
 # Temporary workaround to prevent later failures
 # TODO: Find a better solution in future. Check again whether Apache can be removed without breaking something
-if [[ -z $(grep "8081" /etc/apache2/sites-available/000-default.conf) ]]; then
-    sed -i 's/:80/:8081/g' /etc/apache2/sites-available/000-default.conf
+if [[ -f /etc/apache2/ports.conf ]]; then
+  if [[ -z $(grep "8081" /etc/apache2/sites-available/000-default.conf) ]]; then
+      sed -i 's/:80/:8081/g' /etc/apache2/sites-available/000-default.conf
+  fi
+  if [[ -z $(grep "8081" /etc/apache2/ports.conf) ]]; then
+      sed -i 's/Listen 80/Listen 8081/g' /etc/apache2/ports.conf
+  fi
+  if [[ -z $(grep "4481" /etc/apache2/ports.conf) ]]; then
+      sed -i 's/Listen 443/Listen 4481/g' /etc/apache2/ports.conf
+  fi
+  systemctl restart apache2
+  systemctl status apache2.service
 fi
-if [[ -z $(grep "8081" /etc/apache2/ports.conf) ]]; then
-    sed -i 's/Listen 80/Listen 8081/g' /etc/apache2/ports.conf
-fi
-if [[ -z $(grep "4481" /etc/apache2/ports.conf) ]]; then
-    sed -i 's/Listen 443/Listen 4481/g' /etc/apache2/ports.conf
-fi
-systemctl restart apache2
-systemctl status apache2.service

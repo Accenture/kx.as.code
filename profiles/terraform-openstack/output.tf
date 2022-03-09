@@ -61,3 +61,7 @@ output "kx-main-replica-floating-address" {
 output "kx-worker-floating-address" {
  value = openstack_compute_floatingip_associate_v2.kx_worker_floating_ip_associate.*.floating_ip
 }
+
+output "key_pair_reformatted" {
+ value = local.key_pair_reformatted
+}
