@@ -10,4 +10,4 @@
 *Solution 2:*
 - Execute `pollActionQueue.sh`
   - ```$ /usr/share/kx.as.code/git/kx.as.code/auto-setup/pollActionQueue.sh```
-  - *Note:* Run as sudo user inside KX.AS Code VM.
+  - *Note:* Run as sudo user inside KX.AS Code VM. May need to disconnect from VPN. 
