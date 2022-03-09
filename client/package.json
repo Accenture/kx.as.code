@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@carbon/icons-react": "^10.44.0",
+    "@cloudamqp/amqp-client": "^2.0.3",
     "@craco/craco": "^6.4.0",
     "@emotion/react": "^11.8.1",
     "@emotion/styled": "^11.8.1",
