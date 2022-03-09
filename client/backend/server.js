@@ -43,6 +43,35 @@ app.route("/api/queues/:queue_name").get((req, res) => {
   });
 });
 
+//move queue endpoint
+app.route("/api/move/:from_queue/:to_queue").get((req, res) => {
+  var url =
+    "http://test:test@localhost:15672/api/parameters/shovel/%2F/Move%20from%20" +
+    req.params.from_queue;
+
+  var dataString =
+    '{"component":"shovel","vhost":"/","name":"Move from "' +
+    req.params.from_queue +
+    ',"value":{"src-uri":"amqp:///%2F","src-queue":"' +
+    req.params.from_queue +
+    '","src-protocol":"amqp091","src-prefetch-count":1000,"src-delete-after":"queue-length","dest-protocol":"amqp091","dest-uri":"amqp:///%2F","dest-add-forward-headers":false,"ack-mode":"on-confirm","dest-queue":"' +
+    req.params.to_queue +
+    '","src-consumer-args":{}}}';
+
+  let options = {
+    url: url,
+    method: "PUT",
+    body: dataString,
+  };
+
+  request(options, (error, response, body) => {
+    if (error || response.statusCode !== 200) {
+      return res.status(500).json({ type: "error", message: error.message });
+    }
+    res.json(JSON.parse(body));
+  });
+});
+
 app.get("/api/applications", (req, res) => {
   fs.readFile(dataPath, "utf8", (err, data) => {
     if (err) {

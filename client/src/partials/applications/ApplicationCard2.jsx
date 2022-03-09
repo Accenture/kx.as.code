@@ -8,6 +8,8 @@ import { useState, useEffect } from "react";
 import AppLogo from "./AppLogo";
 
 function ApplicationCard2(props) {
+  const { history } = props;
+
   const [appId, setAppId] = useState("");
   const [appName, setAppName] = useState("");
   const [queueStatus, setQueueStatus] = useState("");
@@ -132,6 +134,9 @@ function ApplicationCard2(props) {
         </Link>
         <div className="text-xs font-semibold text-gray-400 uppercase mb-1"></div>
         <div className="pb-5">{props.app.Description}</div>
+        <div className="pb-3 mb-3 border-b-2 border-gray-600">
+          <button className="bg-kxBlue p-3 rounded">Install</button>
+        </div>
         <div className="float-left">
           <ul className="float-left">
             {props.app.categories && drawAppTags(props.app.categories)}
