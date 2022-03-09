@@ -161,7 +161,7 @@ while :; do
                 message="${componentName} installed successfully [$((${completedQueue} + 1))/${totalMessages}]"
                 notifyAllChannels "${message}" "info" "success"
                 if [[ "${componentName}" == "${lastCoreElementToInstall}" ]]; then
-                    message="CONGRATULATIONS\! That concludes the core setup\! Your optional components will now be installed"
+                    message="CONGRATULATIONS\! That concludes the core setup\\\! Your optional components will now be installed"
                     notifyAllChannels "${message}" "info" "all_core_completed_successfully"
                 fi
                 retries=0
@@ -174,7 +174,7 @@ while :; do
                     rabbitmqadmin publish exchange=action_workflow routing_key=retry_queue properties="{\"delivery_mode\": 2}" payload=''${payload}''
                     cat ${installationWorkspace}/actionQueues.json | jq -c -r '(.state.processed[] | select(.name=="'${componentName}'").retries) = "'${retries}'"' | tee ${installationWorkspace}/actionQueues.json.tmp
                     mv ${installationWorkspace}/actionQueues.json.tmp ${installationWorkspace}/actionQueues.json
-                    message="${componentName} installation error after retry #${retries}. Will retry three times maximum\! [$((${completedQueue} + 1))/${totalMessages}]"
+                    message="${componentName} installation error after retry #${retries}. Will retry three times maximum\\\! [$((${completedQueue} + 1))/${totalMessages}]"
                     notifyAllChannels "${message}" "warn" "failed"
 
                     rm -f ${installationWorkspace}/current_payload.err
@@ -183,7 +183,7 @@ while :; do
                     log_error "Failed payload: ${payload}"
                     rabbitmqadmin publish exchange=action_workflow routing_key=failed_queue properties="{\"delivery_mode\": 2}" payload=''${payload}''
                     retries=0
-                    message="${componentName} installation failed after ${retries} retries\! [$((${completedQueue} + 1))/${totalMessages}]"
+                    message="${componentName} installation failed after ${retries} retries\\\! [$((${completedQueue} + 1))/${totalMessages}]"
                     notifyAllChannels "${message}" "error" "failed"
                     rm -f ${installationWorkspace}/current_payload.err
                 fi

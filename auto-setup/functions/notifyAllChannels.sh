@@ -27,7 +27,9 @@ notifyAllChannels() {
       log_info "${message}"
     fi
 
+  log_debug notify "${message}" "${dialog_type}"
   notify "${message}" "${dialog_type}"
+  log_debug addToNotificationQueue "${message}" "${log_level}" "${action_status}"
   addToNotificationQueue "${message}" "${log_level}" "${action_status}"
 
 }
