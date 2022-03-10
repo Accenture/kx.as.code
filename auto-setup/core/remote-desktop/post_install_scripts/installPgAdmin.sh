@@ -28,7 +28,7 @@ log_debug "Set PGADMIN_SETUP_PASSWORD to ${PGADMIN_SETUP_PASSWORD}"
 /usr/bin/sudo apt install -y pgadmin4-web
 
 # Initial setup of padmin web based administration application
-timeout -s TERM 60 bash -c "/usr/bin/sudo bash -c \". /usr/pgadmin4/bin/setup-web.sh --yes\""
+timeout -s TERM 300 /usr/bin/sudo bash -c "export PGADMIN_SETUP_EMAIL=${PGADMIN_DEFAULT_EMAIL}; export PGADMIN_SETUP_PASSWORD=${PGADMIN_DEFAULT_PASSWORD}; echo \"PGADMIN_SETUP_EMAIL=\${PGADMIN_SETUP_EMAIL}, PGADMIN_SETUP_PASSWORD=\${PGADMIN_SETUP_PASSWORD}\" && . /usr/pgadmin4/bin/setup-web.sh --yes"
 
 # Add PGADMIN config to NGINX
 echo '''
@@ -45,7 +45,14 @@ server {
         access_log  /var/log/nginx/pgadmin_access.log;
         error_log  /var/log/nginx/pgadmin_error.log;
 
-        include /etc/ldap-account-manager/nginx.conf;
+        location / {
+            proxy_pass http://127.0.0.1:8081/pgadmin4/;
+        }
+
+        location /pgadmin4 {
+        proxy_pass http://127.0.0.1:8081/pgadmin4/;
+        }
+
 }
 ''' | /usr/bin/sudo tee /etc/nginx/sites-available/pgadmin.conf
 
