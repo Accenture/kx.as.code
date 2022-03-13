@@ -29,8 +29,8 @@ log_debug "Set PGADMIN_SETUP_PASSWORD to ${PGADMIN_SETUP_PASSWORD}"
 # Install for web mode only:
 /usr/bin/sudo apt install -y pgadmin4-web
 
-# Initial setup of pgsadmin web based administration application
-. /usr/pgadmin4/bin/setup-web.sh --yes
+# Initial setup of pgadmin web based administration application
+timeout -s TERM 300 /usr/pgadmin4/bin/setup-web.sh --yes
 
 # Temporary workaround to prevent later failures
 # TODO: Find a better solution in future. Check again whether Apache can be removed without breaking something
