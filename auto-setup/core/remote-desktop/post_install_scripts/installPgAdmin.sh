@@ -29,7 +29,7 @@ log_debug "Set PGADMIN_SETUP_PASSWORD to ${PGADMIN_SETUP_PASSWORD}"
 # Install for web mode only:
 /usr/bin/sudo apt install -y pgadmin4-web
 
-# Initial setup of pgsadmin web based administration application
+# Initial setup of pgadmin web based administration application
 . /usr/pgadmin4/bin/setup-web.sh --yes
 
 # Temporary workaround to prevent later failures
