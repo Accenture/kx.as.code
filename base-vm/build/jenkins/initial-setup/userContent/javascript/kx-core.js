@@ -1,5 +1,5 @@
 async function triggerBuild(nodeType) {
-    let jenkinsCrumb = getCrumb();
+    let jenkinsCrumb = getCrumb().value;
     let localKxVersion = getLocalKxVersion();
     console.log("Jenkins Crumb received = " + jenkinsCrumb.value);
 
@@ -370,7 +370,7 @@ async function getBuildJobListForProfile(job, nodeType) {
 }
 
 async function getExtendedJobDetails(url) {
-    let jenkinsCrumb = getCrumb();
+    let jenkinsCrumb = getCrumb().value;
     //let url = 'http://localhost:8081/job/Actions/job/KX.AS.CODE_Runtime_Actions/42/api/json';
     let urlToFetch = url + '/api/json';
     console.log(urlToFetch);
@@ -483,7 +483,7 @@ function filterDataByResult(jsonData) {
 async function stopTriggeredBuild(job, nodeType) {
     //let job = 'KX.AS.CODE_Image_Builder';    // For debuging only
     //let nodeType = 'kx-main';    // For debuging only
-    let jenkinsCrumb = getCrumb();
+    let jenkinsCrumb = getCrumb().value;
     getAllJenkinsBuilds(job).then(data => {
         const builds = filterBuilds(data);
         const filteredBuilds = filterDataByVmType(builds, document.getElementById("profiles").value);
@@ -523,7 +523,7 @@ async function stopTriggeredBuild(job, nodeType) {
 async function showConsoleLog(job, nodeType) {
     //let nodeType = 'kx-main';    // For debuging only
     //let job = 'KX.AS.CODE_Image_Builder';     // For debuging only
-    let jenkinsCrumb = getCrumb();
+    let jenkinsCrumb = getCrumb().value;
     let consoleLogDiv;
     if (nodeType === 'kx-main') {
         consoleLogDiv = document.getElementById('kxMainBuildConsoleLog');
@@ -664,7 +664,7 @@ function getCrumb() {
 }
 
 async function getAllJenkinsBuilds(job) {
-    let jenkinsCrumb = getCrumb();
+    let jenkinsCrumb = getCrumb().value;
     console.log("Jenkins Crumb received = " + jenkinsCrumb.value);
     let fetchUrl = 'http://localhost:8081/job/Actions/job/' + job + '/api/json?tree=builds[number,status,timestamp,id,result,url,estimatedDuration,actions[parameters[name,value]]]'
     let response = await fetch(fetchUrl, {
@@ -709,7 +709,7 @@ function populateReviewTable() {
 async function performRuntimeAction(vagrantAction) {
     console.log("vagrant action: " + vagrantAction);
 
-    let jenkinsCrumb = getCrumb();
+    let jenkinsCrumb = getCrumb().value;
     console.log("Jenkins Crumb received = " + jenkinsCrumb.value);
 
     let formData = new FormData();
