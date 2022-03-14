@@ -2,7 +2,6 @@ const express = require("express");
 const request = require("request");
 const fs = require("fs");
 const app = express();
-const { AMQPClient } = require("@cloudamqp/amqp-client");
 
 const PORT = process.env.PORT || 5001;
 const dataPath = "../src/data/combined-metadata-files.json";
@@ -12,29 +11,8 @@ app.use((req, res, next) => {
   next();
 });
 
-async function run() {
-  try {
-    console.log("msg triggered");
-    const amqp = new AMQPClient("amqp://test:test@localhost:15672");
-    const conn = await amqp.connect();
-    const ch = await conn.channel();
-    const q = await ch.queue("pending_queue");
-    const consumer = await q.subscribe({ noAck: true }, async (msg) => {
-      console.log(msg.bodyToString());
-      await consumer.cancel();
-    });
-    await q.publish("Hello World msg", { deliveryMode: 2 });
-    await consumer.wait(); // will block until consumer is canceled or throw an error if server closed channel/connection
-    await conn.close();
-  } catch (e) {
-    console.error("ERROR", e);
-    e.connection.close();
-    setTimeout(run, 1000); // will try to reconnect in 1s
-  }
-}
-
 app.route("/api/msg").get((req, res) => {
-  run();
+  // run();
 });
 
 app.route("/api/queues/:queue_name").get((req, res) => {
