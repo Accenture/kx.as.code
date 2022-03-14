@@ -1,1 +1,0 @@
-cp -r ../../templates ../src/data/templates

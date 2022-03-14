@@ -1,38 +1,55 @@
-import React,{useState,useEffect} from 'react';
-import NotFound from '../partials/NotFound'
-import metadata from "../data/metadata.json"
+import React, { useState, useEffect } from "react";
+// import NotFound from "../partials/NotFound";
+import axios from "axios";
+import AppLogo from "../partials/applications/AppLogo";
 
-export default function AppDetails() {
+export default function AppDetails(props) {
+  const [appData, setAppData] = useState([]);
 
+  const {
+    location: { pathname },
+  } = props;
+  const pathnames = pathname.split("/").filter((x) => x);
 
-    const [data, setData] = useState([]);
-    
-    // TODO fetching from entdoint
-    const getData = () => {
-        fetch('/data/metadata.json',{
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            }})
-            .then(function (response) {
-                console.log(response)
-                return response.json();
-            })
-            .then(function (myJson) {
-                console.log(myJson);
-                setData(myJson)
-            });
-    }
-    useEffect(() => {
-        setData(metadata)
-        console.log("metadata: ", metadata)
-    }, [])
-    return (
-        <div className="px-4 sm:px-6 lg:px-24 py-8 w-full max-w-9xl mx-auto text-white">
-            App Details Page
+  const fetchAppData = () => {
+    const slug = pathnames[pathnames.length - 1];
+    console.log("path: ", slug);
+    axios
+      .get("http://localhost:5001/api/applications/" + slug)
+      .then((response) => {
+        console.log("appDetails: ", response.data[0]);
+        setAppData(response.data[0]);
+      });
+  };
 
-            <NotFound />
+  useEffect(() => {
+    fetchAppData();
+  }, []);
+  return (
+    <div className="p-4">
+      {/* Header */}
+      <div className="grid grid-cols-12 border-b border-gray-500 py-5">
+        <div className="col-span-10">
+          <div className="text-white bg-ghBlack2 rounded p-0 px-1.5 uppercase w-fit inline-block my-2 text-base">
+            {appData.installation_group_folder}
+          </div>
+          <div className="flex items-center">
+            <div className="mr-4">
+              <AppLogo appName={appData.name} />
+            </div>
+            <div className="">
+              <div className="text-3xl capitalize">{appData.name} </div>
+              <div>{appData.Description}</div>
+            </div>
+          </div>
         </div>
-    )
-
+        {/* right section header */}
+        <div className="col-span-2"></div>
+      </div>
+    </div>
+    // <div className="px-4 sm:px-6 lg:px-24 py-8 w-full max-w-9xl mx-auto text-white">
+    //   App Details Page
+    //   <NotFound />
+    // </div>
+  );
 }

@@ -8,7 +8,6 @@ import "./charts/ChartjsConfig";
 
 // Import pages
 import Dashboard from "./pages/Dashboard";
-import Applications from "./pages/Applications";
 
 import Sidebar from "./partials/Sidebar";
 import Header from "./partials/Header";
@@ -52,12 +51,6 @@ function App() {
               </Route>
               <Route exact path="/apps">
                 <Applications2 />
-              </Route>
-              <Route exact path="/apps/example-app-1">
-                <ExampleApp1 />
-              </Route>
-              <Route exact path="/apps/example-app-1">
-                <ExampleApp1 />
               </Route>
               <Route
                 exact
