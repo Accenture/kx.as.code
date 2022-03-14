@@ -68,3 +68,7 @@ jenkins_remote/workspace/shared_workspace/kx.as.code
 /client/node_modules
 /node_modules
 /client/package-lock.json
+/base-vm/build/jenkins/initial-setup/jobs/KX.AS.CODE_Launcher/config.xml
+/base-vm/build/jenkins/initial-setup/jobs/KX.AS.CODE_Launcher/config.xml.backup
+/base-vm/build/jenkins/initial-setup/jobs/KX.AS.CODE_Launcher/config.xml_backup
+/system-check.json
