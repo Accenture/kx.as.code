@@ -12,17 +12,15 @@ export kcAdmCli=/opt/jboss/keycloak/bin/kcadm.sh
 keycloakAdminPassword=$(managedPassword "keycloak-admin-password")
 
 # Ensure Kubernetes is available before proceeding to the next step
-timeout -s TERM 600 bash -c \
-    'while [[ "$(curl -s -k https://localhost:6443/livez)" != "ok" ]];\
-do sleep 5;\
-done'
+# shellcheck disable=SC2016
+timeout -s TERM 600 bash -c 'while [[ "$(curl -s -k https://localhost:6443/livez)" != "ok" ]]; do sleep 5; done'
 
 # Get Keycloak POD name for subsequent Keycloak CLI commands
 export kcPod=$(kubectl get pods -l 'app.kubernetes.io/name=keycloak' -n ${namespace} --output=json | jq -r '.items[].metadata.name')
 
 # Set Keycloak credential for upcoming API calls
 for i in {1..50}; do
-    # Check if Keyclock is ready to receive requests, else wait and try again
+    # Check if Keycloak is ready to receive requests, else wait and try again
     containerReadyState=$(kubectl get pods -l 'app.kubernetes.io/name=keycloak' -n ${namespace} -o json | jq '.items[].status.containerStatuses[].ready' || true)
     if [[ ${containerReadyState} == "true" ]]; then
         kubectl -n ${namespace} exec ${kcPod} --container ${kcContainer} -- \
