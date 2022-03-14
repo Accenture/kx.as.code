@@ -2,36 +2,17 @@ const express = require("express");
 const request = require("request");
 const fs = require("fs");
 const app = express();
-const { AMQPClient } = require("@cloudamqp/amqp-client");
 
 const PORT = process.env.PORT || 5001;
 const dataPath = "../src/data/combined-metadata-files.json";
 
-async function run() {
-  try {
-    const amqp = new AMQPClient("amqp://test:test@localhost:15672");
-    const conn = await amqp.connect();
-    const ch = await conn.channel();
-    const q = await ch.queue();
-    const consumer = await q.subscribe({ noAck: true }, async (msg) => {
-      console.log(msg.bodyToString());
-      await consumer.cancel();
-    });
-    await q.publish("Hello World", { deliveryMode: 2 });
-    await consumer.wait(); // will block until consumer is canceled or throw an error if server closed channel/connection
-    await conn.close();
-  } catch (e) {
-    console.error("ERROR", e);
-    e.connection.close();
-    setTimeout(run, 1000); // will try to reconnect in 1s
-  }
-}
-
-run();
-
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "*");
   next();
+});
+
+app.route("/api/msg").get((req, res) => {
+  // run();
 });
 
 app.route("/api/queues/:queue_name").get((req, res) => {
@@ -102,7 +83,6 @@ app.get("/api/applications", (req, res) => {
 });
 
 app.get("/api/applications/:app_name", (req, res) => {
-  console.log("get app triggered.");
   fs.readFile(dataPath, "utf8", (err, data) => {
     if (err) {
       throw err;
