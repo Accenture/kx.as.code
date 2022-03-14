@@ -83,7 +83,6 @@ app.get("/api/applications", (req, res) => {
 });
 
 app.get("/api/applications/:app_name", (req, res) => {
-  console.log("get app triggered.");
   fs.readFile(dataPath, "utf8", (err, data) => {
     if (err) {
       throw err;
