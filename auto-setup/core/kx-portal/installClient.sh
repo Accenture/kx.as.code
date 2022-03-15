@@ -37,6 +37,16 @@ createDesktopIcon "${shortcutsDirectory}" "${primaryUrl}" "${shortcutText}" "${i
 # Copy desktop icons to skel directory for future users
 /usr/bin/sudo cp /home/"${vmUser}"/Desktop/"${shortcutText}" "${skelDirectory}"/Desktop
 
-# Correct node cache permissions and restart service
+# Create new RabbitMQ user and assign permissions
+/usr/bin/sudo rabbitmqctl add_user "${vmUser}" "${vmPassword}"
+/usr/bin/sudo rabbitmqctl set_user_tags "${vmUser}" administrator
+/usr/bin/sudorabbitmqctl set_permissions -p / "${vmUser}" ".*" ".*" ".*"
+
+# Create TEMPORARY new RabbitMQ user and assign permissions # TODO - Remove once frontend username/password is parameterized
+/usr/bin/sudo rabbitmqctl add_user "test" "test"
+/usr/bin/sudo rabbitmqctl set_user_tags "test" administrator
+/usr/bin/sudorabbitmqctl set_permissions -p / "test" ".*" ".*" ".*"
+
+# Correct node cache directory permissions and restart service
 /usr/bin/sudo chmod 777 ${sharedGitHome}/kx.as.code/client/node_modules
 /usr/bin/sudo systemctl restart kx.as.code-portal.service
