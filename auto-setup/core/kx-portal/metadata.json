@@ -1,6 +1,6 @@
 {
     "name": "portal",
-    "namespace": "devops",
+    "namespace": "",
     "installation_type": "script",
     "installation_group_folder": "core",
     "retry": "true",
@@ -9,7 +9,7 @@
     },
     "urls": [
         {
-            "url": "https://{{componentName}}.{{baseDomain}}",
+            "url": "https://portal.{{baseDomain}}",
             "healthchecks": {
                 "liveliness": {
                     "http_path": "/",

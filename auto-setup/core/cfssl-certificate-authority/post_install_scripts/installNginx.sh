@@ -32,12 +32,6 @@ if [[ ! -f /etc/nginx/sites-enabled/rabbitmq.conf ]]; then
   ln -s /etc/nginx/sites-available/rabbitmq.conf /etc/nginx/sites-enabled/rabbitmq.conf
 fi
 
-# Remove default virtual host using port 80
-/usr/bin/sudo rm -f /etc/nginx/sites-enabled/default
-
-# Restart NGINX so new virtual host is loaded
-/usr/bin/sudo systemctl restart nginx
-
 # Overwrite existing non-SSL Desktop Shortcut
 echo '''
 [Desktop Entry]
@@ -57,3 +51,41 @@ Actions=new-window;new-private-window;
 
 # Give *.desktop files execute permissions
 /usr/bin/sudo chmod 755 "${adminShortcutsDirectory}/RabbitMQ"
+
+# Install the desktop shortcut for KX.AS.CODE Portal
+shortcutsDirectory="/home/${vmUser}/Desktop"
+primaryUrl="https://portal.${baseDomain}:4435"
+shortcutText="KX.AS.CODE Portal"
+iconPath="${sharedGitHome}/kx.as.code/docs/images/kxascode_logo_white_small.png"
+browserOptions=""
+createDesktopIcon "${shortcutsDirectory}" "${primaryUrl}" "${shortcutText}" "${iconPath}" "${browserOptions}"
+
+# Copy desktop icons to skel directory for future users
+/usr/bin/sudo cp /home/"${vmUser}"/Desktop/"${shortcutText}" "${skelDirectory}"/Desktop
+
+# Install NGINX virtual host for KX-Portal
+echo '''
+server {
+        listen 8045;
+        listen [::]:8045;
+        server_name portal.'${baseDomain}'
+
+        listen [::]:4435 ssl ipv6only=on;
+        listen 4435 ssl;
+        ssl_certificate '${installationWorkspace}'/kx-certs/tls.crt;
+        ssl_certificate_key '${installationWorkspace}'/kx-certs/tls.key;
+
+        access_log  /var/log/nginx/kxportal_access.log;
+        error_log  /var/log/nginx/kxportal_error.log;
+
+        location / {
+            proxy_pass http://127.0.0.1:3000;
+        }
+}
+''' | /usr/bin/sudo tee /etc/nginx/sites-available/kx-portal.conf
+
+# Remove default virtual host using port 80
+/usr/bin/sudo rm -f /etc/nginx/sites-enabled/default
+
+# Restart NGINX so new virtual host is loaded
+/usr/bin/sudo systemctl restart nginx
