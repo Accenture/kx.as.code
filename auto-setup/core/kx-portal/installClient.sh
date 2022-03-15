@@ -8,6 +8,10 @@ set -euo pipefail
 cd ${sharedGitHome}/kx.as.code/client
 npm install --legacy-peer-deps
 
+# Setup logging directory
+/usr/bin/sudo mkdir ${installationWorkspace}/kx-portal-logs
+/usr/bin/sudo chown www-data:www-data ${installationWorkspace}/kx-portal-logs
+
 echo """
 [Unit]
 Description=Start the KX.AS.CODE Portal
@@ -20,6 +24,8 @@ Type=simple
 User=www-data
 Restart=on-failure
 WorkingDirectory=${sharedGitHome}/kx.as.code/client
+StandardOutput=append:${installationWorkspace}/kx-portal-logs/kx-portal.log
+StandardError=append:${installationWorkspace}/kx-portal-logs/kx-portal.err
 ExecStart=npm start
 
 [Install]

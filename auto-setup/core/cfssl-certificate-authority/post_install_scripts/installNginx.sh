@@ -84,6 +84,11 @@ server {
 }
 ''' | /usr/bin/sudo tee /etc/nginx/sites-available/kx-portal.conf
 
+# Create shortcut to enable NGINX virtual host
+if [[ ! -f /etc/nginx/sites-enabled/kx-portal.conf ]]; then
+  ln -s /etc/nginx/sites-available/kx-portal.conf /etc/nginx/sites-enabled/kx-portal.conf
+fi
+
 # Remove default virtual host using port 80
 /usr/bin/sudo rm -f /etc/nginx/sites-enabled/default
 
