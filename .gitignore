@@ -69,3 +69,4 @@ jenkins_remote/workspace/shared_workspace/kx.as.code
 /node_modules
 /client/package-lock.json
 /base-vm/build/jenkins/jenkinsLog*
+/system-check.json
