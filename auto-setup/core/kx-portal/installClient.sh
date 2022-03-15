@@ -46,12 +46,12 @@ createDesktopIcon "${shortcutsDirectory}" "${primaryUrl}" "${shortcutText}" "${i
 # Create new RabbitMQ user and assign permissions
 /usr/bin/sudo rabbitmqctl add_user "${vmUser}" "${vmPassword}"
 /usr/bin/sudo rabbitmqctl set_user_tags "${vmUser}" administrator
-/usr/bin/sudorabbitmqctl set_permissions -p / "${vmUser}" ".*" ".*" ".*"
+/usr/bin/sudo rabbitmqctl set_permissions -p / "${vmUser}" ".*" ".*" ".*"
 
 # Create TEMPORARY new RabbitMQ user and assign permissions # TODO - Remove once frontend username/password is parameterized
 /usr/bin/sudo rabbitmqctl add_user "test" "test"
 /usr/bin/sudo rabbitmqctl set_user_tags "test" administrator
-/usr/bin/sudorabbitmqctl set_permissions -p / "test" ".*" ".*" ".*"
+/usr/bin/sudo rabbitmqctl set_permissions -p / "test" ".*" ".*" ".*"
 
 # Correct node cache directory permissions and restart service
 /usr/bin/sudo chmod 777 ${sharedGitHome}/kx.as.code/client/node_modules
