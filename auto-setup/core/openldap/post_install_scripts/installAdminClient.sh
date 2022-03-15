@@ -9,6 +9,9 @@ downloadFile "https://prdownloads.sourceforge.net/lam/ldap-account-manager_${lam
 /usr/bin/sudo apt-get install -y ./ldap-account-manager_${lamVersion}_all.deb
 apt-get --fix-broken install -y
 
+# Wait for LDAP Account Manager config file to become available
+waitForFile /var/lib/ldap-account-manager/config/lam.conf
+
 # Install PHP FPM
 /usr/bin/sudo apt install -y nginx php-fpm
 
