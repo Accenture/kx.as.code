@@ -31,3 +31,6 @@ plan
 /deploy/aws/.ssh/id_rsa
 /deploy/aws/.ssh/id_rsa.pub
 agent.jar
+build/jenkins/initial-setup/jobs/KX.AS.CODE_Launcher/config.xml
+build/jenkins/jenkinsLog_*
+build/jenkins/.jenkins-plugin-manager.jar

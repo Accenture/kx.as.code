@@ -38,32 +38,32 @@ try {
             })
 
         }
-  
+
             function change_panel_selection(config_panel) {
-                
+
                if ( document.getElementById('system-prerequisites-check').value === "failed" ) {
                    config_panel = "config-panel-profile-selection";
                }
-                   
+
                console.log("Selected config-panel: " + config_panel);
-               
+
                waitForElement(config_panel,function(){
                     console.log("config-panel content: " + document.getElementById(config_panel));
                 });
-                              
+
                waitForElement('config-placeholder',function(){
                     console.log("config-placeholder children: " + document.getElementById('config-placeholder').checked);
                 });
-               
+
                let configPanelDivsInPlaceholderDiv = document.getElementById('config-placeholder').children;
-                
+
                for (let i = 0; i < configPanelDivsInPlaceholderDiv.length; i++) {
                    if ( configPanelDivsInPlaceholderDiv[i].style.display !== "none" ) {
                         console.log("Visible Divs in Config Placeholder: " + configPanelDivsInPlaceholderDiv[i].id);
                    }
                }
-                              
-               const configPanels = [ 
+
+               const configPanels = [
                    "config-panel-profile-selection",
                    "config-panel-general-params",
                    "config-panel-kx-main-config",
@@ -72,10 +72,10 @@ try {
                    "config-panel-user-provisioning",
                    "config-panel-kx-summary-start"
                ];
-                
+
                 let configPanelIcon
                 console.log(configPanels);
-                
+
                 configPanels.forEach(function(item) {
                     configPanelIcon = item + "-icon";
                     if ( item === config_panel ) {
@@ -136,10 +136,10 @@ try {
                             document.getElementById(item).className = "config-tab";
                         }
                         document.getElementById(configPanelIcon).className = "config-panel-icon svg-white";
-                    }  
+                    }
                 })
             }
-            
+
             function removeAllChildNodes(parent) {
                 while (parent.firstChild) {
                     parent.removeChild(parent.firstChild);
@@ -171,12 +171,12 @@ try {
                         console.log("(5) Current parent for " + configDiv + " is " + currentParent);
                         divConfigPanelChild = document.getElementById(configDiv);
                         divConfigPanelParent.appendChild(divConfigPanelChild);
-                        console.log(document.querySelectorAll('[id=' + configDiv + ']'));            
+                        console.log(document.querySelectorAll('[id=' + configDiv + ']'));
                     }
-                    
+
                     let divConfigNumber = document.querySelectorAll('[id=' + configDiv + ']').length;
                     console.log("(6) Div " + configDiv + " is present " + divConfigNumber + " times");
-                    
+
                     let displayType;
                     if ( configDiv === "system-check-div" || configDiv === "review-and-launch-div" ) {
                         displayType = "flex";
@@ -192,15 +192,15 @@ try {
                    console.log("Error in moveDivToConfigPanel(configDiv) function: " + e);
                 }
             }
-            
+
             function updateNavigationFooter(previous, next) {
-                
+
                 console.log("Inside updateNavigationFooter(previous, next). Received params: " + previous + ", " + next);
                 let chevronsToShow;
 
                 document.getElementById('config-panel-footer-left-nav-div').setAttribute( "onClick", "change_panel_selection('" + previous +"')" );
                 document.getElementById('config-panel-footer-right-nav-div').setAttribute( "onClick", "change_panel_selection('" + next + "')" );
-                                    
+
                 if ( previous === '') {
                     chevronsToShow = "right-only";
                     console.log("Inside right-only");
@@ -211,7 +211,7 @@ try {
                     chevronsToShow = "both";
                     console.log("Inside both");
                 }
-                          
+
                 if ( chevronsToShow === "both" ) {
                     document.getElementById("config-panel-footer-left-nav-div").style.display = "block";
                     document.getElementById("config-panel-footer-right-nav-div").style.display = "block";
@@ -220,26 +220,15 @@ try {
                     document.getElementById("config-panel-footer-left-nav-div").style.display = "block";
                     document.getElementById("config-panel-footer-right-nav-div").style.display = "none";
                     document.getElementById("config-navigator-footer").style.justifyContent = "flex-start";
-                } else { 
+                } else {
                     document.getElementById("config-panel-footer-left-nav-div").style.display = "none";
                     document.getElementById("config-panel-footer-right-nav-div").style.display = "block";
                     document.getElementById("config-navigator-footer").style.justifyContent = "flex-end";
                 }
-                               
+
 
             }
-            
-            function waitForElement(elementId, callBack){
-              window.setTimeout(function(){
-                let element = document.getElementById(elementId);
-                if(element){
-                  callBack(elementId, element);
-                }else{
-                  waitForElement(elementId, callBack);
-                }
-              },500)
-            }
-            
+
             function loadFirstConfigPanel() {
                 waitForElement('profile-builds-div',function(){
                     document.getElementById("config-placeholder").removeChild(document.getElementById("grid-spinner"));

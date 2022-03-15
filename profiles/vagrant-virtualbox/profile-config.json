@@ -16,7 +16,7 @@
             "dockerhub_username": ""
         },
         "environmentPrefix": "demo1",
-        "glusterFsDiskSize": 71,
+        "glusterFsDiskSize": 200,
         "local_volumes": {
             "fifty_gb": 0,
             "five_gb": 10,

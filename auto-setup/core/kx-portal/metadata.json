@@ -1,0 +1,47 @@
+{
+    "name": "portal",
+    "namespace": "",
+    "installation_type": "script",
+    "installation_group_folder": "core",
+    "retry": "true",
+    "letsencrypt": {
+        "enabled": true
+    },
+    "urls": [
+        {
+            "url": "https://portal.{{baseDomain}}",
+            "healthchecks": {
+                "liveliness": {
+                    "http_path": "/",
+                    "http_auth_required": false,
+                    "expected_http_response_code": "200",
+                    "expected_http_response_string": "",
+                    "expected_json_response": {
+                        "json_path": "",
+                        "json_value": ""
+                    },
+                    "health_shell_check_command": "",
+                    "expected_shell_check_command_response": ""
+                },
+                "readiness": {
+                    "http_path": "/",
+                    "http_auth_required": false,
+                    "expected_http_response_code": "200",
+                    "expected_http_response_string": "",
+                    "expected_json_response": {
+                        "json_path": "",
+                        "json_value": ""
+                    }
+                }
+            }
+        }
+    ],
+    "install_scripts": [
+        "installClient.sh"
+    ],
+    "Description": "KX.AS.CODE Management and Status Portal",
+    "shortcut_text": "KX.AS.CODE Portal",
+    "shortcut_icon": "kxascode.png",
+    "pre_install_scripts": [],
+    "post_install_scripts": []
+}
