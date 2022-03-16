@@ -8,6 +8,9 @@ mkdir -p ${installationWorkspace}
 # Switch off GUI if switch set to do so in KX.AS.CODE profile-config.json
 disableLinuxDesktop
 
+# Install envhandlebars needed to do moustache variable replacements
+installEnvhandlebars
+
 # Un/Installing Components
 log_info "-------- Component: ${componentName} Component Folder: ${componentInstallationFolder} Action: ${action}"
 
@@ -98,7 +101,7 @@ if [[ ${action} == "install"   ]]; then
         if [[ -n ${primaryUrl} ]] && [[ ${primaryUrl} != "null" ]] && [[ -f ${iconPath} ]] && [[ -n ${shortcutText} ]]; then
           shortcutIcon=$(cat ${componentMetadataJson} | jq -r '.shortcut_icon')
           iconPath=${installComponentDirectory}/${shortcutIcon}
-          createDesktopIcon "${shortcutsDirectory}" "${primaryUrl}" "${shortcutText}" "${iconPath}" "${browserOptions}"
+          createDesktopIcon "${devopsShortcutsDirectory}" "${primaryUrl}" "${shortcutText}" "${iconPath}" "${browserOptions}"
         fi
     fi
 

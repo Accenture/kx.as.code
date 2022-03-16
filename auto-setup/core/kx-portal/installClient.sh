@@ -8,6 +8,10 @@ set -euo pipefail
 cd ${sharedGitHome}/kx.as.code/client
 npm install --legacy-peer-deps
 
+# Setup logging directory
+/usr/bin/sudo mkdir ${installationWorkspace}/kx-portal-logs
+/usr/bin/sudo chown www-data:www-data ${installationWorkspace}/kx-portal-logs
+
 echo """
 [Unit]
 Description=Start the KX.AS.CODE Portal
@@ -20,6 +24,8 @@ Type=simple
 User=www-data
 Restart=on-failure
 WorkingDirectory=${sharedGitHome}/kx.as.code/client
+StandardOutput=append:${installationWorkspace}/kx-portal-logs/kx-portal.log
+StandardError=append:${installationWorkspace}/kx-portal-logs/kx-portal.err
 ExecStart=npm start
 
 [Install]
@@ -40,12 +46,12 @@ createDesktopIcon "${shortcutsDirectory}" "${primaryUrl}" "${shortcutText}" "${i
 # Create new RabbitMQ user and assign permissions
 /usr/bin/sudo rabbitmqctl add_user "${vmUser}" "${vmPassword}"
 /usr/bin/sudo rabbitmqctl set_user_tags "${vmUser}" administrator
-/usr/bin/sudorabbitmqctl set_permissions -p / "${vmUser}" ".*" ".*" ".*"
+/usr/bin/sudo rabbitmqctl set_permissions -p / "${vmUser}" ".*" ".*" ".*"
 
 # Create TEMPORARY new RabbitMQ user and assign permissions # TODO - Remove once frontend username/password is parameterized
 /usr/bin/sudo rabbitmqctl add_user "test" "test"
 /usr/bin/sudo rabbitmqctl set_user_tags "test" administrator
-/usr/bin/sudorabbitmqctl set_permissions -p / "test" ".*" ".*" ".*"
+/usr/bin/sudo rabbitmqctl set_permissions -p / "test" ".*" ".*" ".*"
 
 # Correct node cache directory permissions and restart service
 /usr/bin/sudo chmod 777 ${sharedGitHome}/kx.as.code/client/node_modules
