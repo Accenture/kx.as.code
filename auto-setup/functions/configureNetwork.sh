@@ -25,7 +25,7 @@ if [[ ! -f ${sharedKxHome}/.config/network_status ]]; then
     # Call to function that configures Bind9 DNS server
     configureBindDns
 
-    if  [[ ${baseIpType} == "static" ]] || [[ ${dnsResolution} == "hybrid" ]]; then
+    if  [[ "${baseIpType}" == "static" ]] || [[ "${dnsResolution}" == "hybrid" ]]; then
         # Prevent DHCLIENT updating static IP
         if [[ ${dnsResolution} == "hybrid"   ]]; then
             echo "supersede domain-name-servers ${mainIpAddress};" | /usr/bin/sudo tee -a /etc/dhcp/dhclient.conf
@@ -41,18 +41,20 @@ if [[ ! -f ${sharedKxHome}/.config/network_status ]]; then
         /usr/bin/sudo chmod +x /etc/dhcp/dhclient-enter-hooks.d/nodnsupdate
     fi
 
-    if [[ ${baseIpType} == "static"   ]]; then
-        # Configure IF to be managed/confgured by network-manager
+    if [[ "${baseIpType}" == "static"   ]]; then
+        # Configure IF to be managed/configured by network-manager
         rm -f /etc/NetworkManager/system-connections/*
-        /usr/bin/sudo mv /etc/network/interfaces /etc/network/interfaces.unused
+        if [ -f /etc/network/interfaces ]; then
+          /usr/bin/sudo mv /etc/network/interfaces /etc/network/interfaces.unused
+        fi
         nmcli con add con-name "${netDevice}" ifname ${netDevice} type ethernet ip4 ${mainIpAddress}/24 gw4 ${fixedNicConfigGateway}
         nmcli con mod "${netDevice}" ipv4.method "manual"
         nmcli con mod "${netDevice}" ipv4.dns "${fixedNicConfigDns1},${fixedNicConfigDns2}"
-        systemctl restart network-manager
+        systemctl restart networking.service
         nmcli con up "${netDevice}"
     fi
 
-    if  [[ ${baseIpType} == "static"   ]] || [[ ${dnsResolution} == "hybrid"   ]]; then
+    if  [[ "${baseIpType}" == "static"   ]] || [[ "${dnsResolution}" == "hybrid"   ]]; then
         /usr/bin/sudo systemctl enable --now named
     fi
 
