@@ -101,7 +101,7 @@ if [[ ${action} == "install"   ]]; then
         if [[ -n ${primaryUrl} ]] && [[ ${primaryUrl} != "null" ]] && [[ -f ${iconPath} ]] && [[ -n ${shortcutText} ]]; then
           shortcutIcon=$(cat ${componentMetadataJson} | jq -r '.shortcut_icon')
           iconPath=${installComponentDirectory}/${shortcutIcon}
-          createDesktopIcon "${shortcutsDirectory}" "${primaryUrl}" "${shortcutText}" "${iconPath}" "${browserOptions}"
+          createDesktopIcon "${devopsShortcutsDirectory}" "${primaryUrl}" "${shortcutText}" "${iconPath}" "${browserOptions}"
         fi
     fi
 
