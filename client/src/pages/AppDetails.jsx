@@ -35,7 +35,7 @@ export default function AppDetails(props) {
           </div>
           <div className="flex items-center">
             <div className="mr-4">
-              <AppLogo appName={appData.name} />
+              <AppLogo height={"50px"} width={"50px"} appName={appData.name} />
             </div>
             <div className="">
               <div className="text-3xl capitalize">{appData.name} </div>
