@@ -27,7 +27,17 @@ function App() {
 
   const location = useLocation();
 
-  const notify = () => toast.info("Message Notification!");
+  const notify = () =>
+    toast.info("Message Notification!", {
+      position: "top-right",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "dark",
+    });
 
   useEffect(() => {
     notify();
