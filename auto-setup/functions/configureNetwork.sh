@@ -50,7 +50,9 @@ if [[ ! -f ${sharedKxHome}/.config/network_status ]]; then
         nmcli con add con-name "${netDevice}" ifname ${netDevice} type ethernet ip4 ${mainIpAddress}/24 gw4 ${fixedNicConfigGateway}
         nmcli con mod "${netDevice}" ipv4.method "manual"
         nmcli con mod "${netDevice}" ipv4.dns "${fixedNicConfigDns1},${fixedNicConfigDns2}"
-        systemctl restart networking.service
+        nmcli -g name,type connection  show  --active
+        nmcli con mod "Wired connection 1" ipv4.ignore-auto-dns yes
+        /usr/bin/sudo systemctl restart NetworkManager.service
         nmcli con up "${netDevice}"
     fi
 
