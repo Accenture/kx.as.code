@@ -12,9 +12,9 @@ NODENAME=rabbit@localhost
 # By default RabbitMQ will bind to all interfaces, on IPv4 and IPv6 if
 # available. Set this if you only want to bind to one network interface or#
 # address family.
-NODE_IP_ADDRESS=127.0.0.1
+NODE_IP_ADDRESS=0.0.0.0
 # Defaults to 5672.
-#NODE_PORT=5672
+NODE_PORT=5672
 MNESIA_DIR=\$MNESIA_BASE/rabbitmq
 """ | sudo tee /etc/rabbitmq/rabbitmq-env.conf
 
