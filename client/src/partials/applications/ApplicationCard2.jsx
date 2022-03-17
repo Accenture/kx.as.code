@@ -48,6 +48,12 @@ function ApplicationCard2(props) {
         .replaceAll(" ", "-")
         .replace(/\b\w/g, (l) => l.toLowerCase());
     setAppId(slug);
+
+    const queueObj = getAppQueueData(props.app.name)[0];
+
+    if (queueObj != undefined && queueObj != null) {
+      setQueueStatus(queueObj.routing_key);
+    }
   };
 
   const getAppQueueData = (appName) => {
@@ -77,10 +83,7 @@ function ApplicationCard2(props) {
   };
   useEffect(() => {
     setUp();
-    var queueObj = getAppQueueData(props.app.name)[0];
-    if (queueObj != undefined && queueObj != null) {
-      setQueueStatus(queueObj.routing_key);
-    }
+
     setAppName(
       props.app.name
         .replaceAll("-", " ")
@@ -88,7 +91,7 @@ function ApplicationCard2(props) {
         .replace(/\b\w/g, (l) => l.toUpperCase())
     );
     return () => {};
-  }, [queueStatus]);
+  }, []);
 
   const drawAppTags = (appTags) => {
     return appTags.map((appTag, i) => {

@@ -9,6 +9,7 @@ export const Applications2 = () => {
   const [applicationData, setApplicationData] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [queueData, setQueueData] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   const queueList = [
     "pending_queue",
@@ -19,12 +20,15 @@ export const Applications2 = () => {
   ];
 
   const fetchData = () => {
+    setIsLoading(true);
     axios
       .get("http://localhost:5001/api/applications")
       .then((response) => {
         setApplicationData(response.data);
       })
-      .then(() => {});
+      .then(() => {
+        fetchQueueData2();
+      });
   };
 
   const drawApplicationCards = () => {
@@ -39,29 +43,37 @@ export const Applications2 = () => {
         }
       })
       .map((app, i) => {
+        console.log("queue data app: ", queueData);
         return <ApplicationCard2 app={app} key={i} queueData={queueData} />;
       });
   };
 
   const fetchQueueData2 = () => {
-    queueList.map((queue) => {
-      axios
+    const requests = queueList.map((queue) => {
+      return axios
         .get("http://localhost:5001/api/queues/" + queue)
         .then((response) => {
           response.data.map((app) => {
             queueData.push(app);
           });
-        })
-        .then(() => {
-          setQueueData(queueData);
         });
+    });
+
+    Promise.all(requests).then(() => {
+      setQueueData(queueData);
+      setIsLoading(false);
     });
   };
 
   useEffect(() => {
-    fetchQueueData2();
+    const id = setInterval(() => {
+      // fetchData();
+    }, 3000);
+
     fetchData();
-    return () => {};
+    return () => {
+      clearInterval(id);
+    };
   }, []);
 
   return (
@@ -112,7 +124,9 @@ export const Applications2 = () => {
                             isPending={this.state.isPending} /> */}
         </div>
       </div>
-      <div className="grid grid-cols-12 gap-8">{drawApplicationCards()}</div>
+      <div className="grid grid-cols-12 gap-8">
+        {!isLoading && drawApplicationCards()}
+      </div>
     </div>
   );
 };
