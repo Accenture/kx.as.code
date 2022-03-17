@@ -1,18 +1,43 @@
 const express = require("express");
 const request = require("request");
 const fs = require("fs");
+const amqp = require("amqplib");
+
 const app = express();
 
 const PORT = process.env.PORT || 5001;
 const dataPath = "../src/data/combined-metadata-files.json";
 
+app.route("/api/msg").post((req, res) => {
+  amqp.connect("amqp://localhost", (err, conn) => {
+    conn.createChannel((err, ch) => {
+      const q = "tmp_queue";
+
+      ch.assertQueue(q, { durable: false });
+
+      setTimeout(() => {
+        const msg_obj = { personId: 1, field1: "lorem", field2: "ipsum" };
+
+        const msg = JSON.stringify(msg_obj);
+
+        ch.sendToQueue(q, Buffer.from(msg));
+
+        console.log(` [X] Send ${msg}`);
+      }, 6000);
+    });
+
+    // The connection will close in 10 seconds
+    setTimeout(() => {
+      conn.close();
+    }, 10000);
+  });
+
+  res.send("The POST request is being processed!");
+});
+
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "*");
   next();
-});
-
-app.route("/api/msg").get((req, res) => {
-  // run();
 });
 
 app.route("/api/queues/:queue_name").get((req, res) => {
