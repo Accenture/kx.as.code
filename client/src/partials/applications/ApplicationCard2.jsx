@@ -6,6 +6,7 @@ import StatusTag from "../StatusTag";
 import StatusPoint from "../StatusPoint";
 import { useState, useEffect } from "react";
 import AppLogo from "./AppLogo";
+import { toast } from "react-toastify";
 
 function ApplicationCard2(props) {
   const { history } = props;
@@ -13,6 +14,32 @@ function ApplicationCard2(props) {
   const [appId, setAppId] = useState("");
   const [appName, setAppName] = useState("");
   const [queueStatus, setQueueStatus] = useState("");
+
+  const NotificationMessage = ({ closeToast, toastProps }) => (
+    <div className="flex items-center">
+      <AppLogo height={"40px"} width={"40px"} appName={props.app.name} />
+      <div className="ml-2"> Installation started for {appName}.</div>
+    </div>
+  );
+
+  const notify = () => {
+    const notificationMessage2 = "Installation started for " + appName + ".";
+
+    toast.info(<NotificationMessage />, {
+      position: "top-right",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "dark",
+    });
+  };
+
+  const applicationInstallHandler = () => {
+    notify();
+  };
 
   const setUp = () => {
     const slug =
@@ -88,7 +115,7 @@ function ApplicationCard2(props) {
         <header className="flex justify-between items-start mb-2">
           {/* Icon */}
           <div className="flex content-start">
-            <AppLogo appName={props.app.name} />
+            <AppLogo height={"50px"} width={"50px"} appName={props.app.name} />
             {/* <StatusTag installStatus={props.app.queueName} /> */}
           </div>
           {/* Menu button */}
@@ -135,7 +162,40 @@ function ApplicationCard2(props) {
         <div className="text-xs font-semibold text-gray-400 uppercase mb-1"></div>
         <div className="pb-5">{props.app.Description}</div>
         <div className="pb-3 mb-3 border-b-2 border-gray-600">
-          <button className="bg-kxBlue p-3 rounded">Install</button>
+          {queueStatus === "pending_queue" ? (
+            <button
+              className="bg-kxBlue/50 p-3 px-5 rounded items-center flex"
+              disabled
+            >
+              <svg
+                className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                ></circle>
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                ></path>
+              </svg>
+              Installing...
+            </button>
+          ) : (
+            <button
+              onClick={applicationInstallHandler}
+              className="bg-kxBlue p-3 px-5 rounded items-center flex"
+            >
+              Install
+            </button>
+          )}
         </div>
         <div className="float-left">
           <ul className="float-left">

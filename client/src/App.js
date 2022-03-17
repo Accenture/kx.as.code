@@ -27,23 +27,7 @@ function App() {
 
   const location = useLocation();
 
-  const notify = () =>
-    toast.info("Message Notification!", {
-      position: "top-right",
-      autoClose: 5000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "dark",
-    });
-
   useEffect(() => {
-    notify();
-    notify();
-    notify();
-
     document.querySelector("html").style.scrollBehavior = "auto";
     window.scroll({ top: 0 });
     document.querySelector("html").style.scrollBehavior = "";

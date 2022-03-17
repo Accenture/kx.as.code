@@ -9,6 +9,8 @@ export default function AppLogo(props) {
   const imageName = props.appName;
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [height, setHeight] = useState("10px");
+  const [width, setWidth] = useState("10px");
 
   //   const loadImage = (imageName) => {
   //     import(`../../media/png/appImgs/${imageName}.png`)
@@ -18,7 +20,13 @@ export default function AppLogo(props) {
   //       .catch(() => ({ default: () => <div>Not found</div> }));
   //   };
 
+  const setImageSize = () => {
+    setHeight(props.height);
+    setWidth(props.width);
+  };
+
   useEffect(() => {
+    setImageSize();
     const fetchImage = async () => {
       try {
         const response = await import(
@@ -38,7 +46,7 @@ export default function AppLogo(props) {
   return (
     <>
       {image ? (
-        <img src={image} alt="" height="50px" width="50px" />
+        <img src={image} alt="" height={height} width={width} />
       ) : (
         <RiWindowLine className="text-5xl opacity-40" />
       )}
