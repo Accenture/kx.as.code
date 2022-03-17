@@ -1,7 +1,8 @@
 createKubernetesNamespace() {
 
+  if [[ -n $(which kubectl || true) ]]; then
     if [[ -z ${namespace} ]] && [[ ${namespace} != "kube-system" ]] && [[ ${namespace} != "default"   ]]; then
-        log_warn "Namespace name could not be established. Subsequent actions may fail if they have a dependency on this. Please validate the namespace entry is correct for \"${componentName}\" in metadata.json"
+        log_info "System namespace or namespace defined for \"${componentName}\" in metadata.json. Not creating namespace. Most likely intentional and not an issue"
     fi
     if [[ -n ${namespace} ]]; then
         if [[ "$(kubectl get namespace ${namespace} --template={{.status.phase}})" != "Active" ]] && [[ ${namespace} != "kube-system" ]] && [[ ${namespace} != "default" ]]; then
@@ -11,4 +12,7 @@ createKubernetesNamespace() {
             log_info "Namespace \"${namespace}\" already exists. Moving on"
         fi
     fi
+  else
+    log_debug "Kubectl not yet installed. Skipping namespace creation"
+  fi
 }

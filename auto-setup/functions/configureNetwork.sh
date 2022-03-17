@@ -102,23 +102,23 @@ if [[ ! -f ${sharedKxHome}/.config/network_status ]]; then
     else
         /usr/bin/sudo systemctl restart bind9
     fi
-else
-  nicFilesToUpdate=$(sudo find /etc/NetworkManager/system-connections  -type f -name "Wired connection*" -exec grep -HL 'ignore-auto-dns' '{}' ';')
-  IFS_OLD=$IFS
-  IFS=$'\n'
-  if [[ -n ${nicFilesToUpdate} ]]; then
-    for nicFileToUpdate in ${nicFilesToUpdate}
-    do
-        nicToUpdate=$(basename --suffix=".nmconnection" "${nicFileToUpdate}")
-        log_info "Updating NIC \"${nicToUpdate}\" with \"ipv4.ignore-auto-dns yes\""
-        /usr/bin/sudo nmcli con mod "${nicToUpdate}" ipv4.ignore-auto-dns yes
-    done
-    IFS=$IFS_OLD
-    /usr/bin/sudo nmcli -g name,type connection show --active
-    /usr/bin/sudo systemctl restart NetworkManager.service
-  else
-    log_info "All good. No NICs to update with \"ipv4.ignore-auto-dns yes\""
-  fi
 fi
 
+# Final check on interfaces that need to be updated with "ipv4.ignore-auto-dns yes"
+nicsToUpdate=$(/usr/bin/sudo nmcli -g name,type connection show --active | grep "Wired connection" | cut -f 1 -d ':')
+OLD_IFS=$IFS
+IFS=$'\n'
+if [[ -n ${nicsToUpdate} ]]; then
+  for nicToUpdate in ${nicsToUpdate}
+  do
+      log_info "Updating NIC \"${nicToUpdate}\" with \"ipv4.ignore-auto-dns yes\""
+      /usr/bin/sudo nmcli con mod "${nicToUpdate}" ipv4.ignore-auto-dns yes
+      /usr/bin/sudo nmcli con mod "${nicToUpdate}" ipv4.dns "${fixedNicConfigDns1},${fixedNicConfigDns2}"
+  done
+  /usr/bin/sudo nmcli -g name,type connection show --active
+  /usr/bin/sudo systemctl restart NetworkManager.service
+else
+  log_info "All good. No NICs to update with \"ipv4.ignore-auto-dns yes\""
+fi
+IFS=$OLD_IFS
 }
