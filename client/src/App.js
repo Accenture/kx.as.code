@@ -18,6 +18,8 @@ import AppDetails from "./pages/AppDetails";
 import Home2 from "./pages/Home";
 import ApplicationGroups from "./pages/ApplicationGroups";
 import { Applications2 } from "./pages/Applications2";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -41,7 +43,17 @@ function App() {
         <div className="relative flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
           {/*  Site header */}
           <Header sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
-
+          <ToastContainer
+            position="bottom-right"
+            autoClose={5000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+          />
           <main className="pb-20">
             <BasicBreadcrumbs />
             <Switch>
