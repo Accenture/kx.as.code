@@ -103,6 +103,7 @@ Vagrant.configure("2") do |config|
     subconfig.vm.network :forwarded_port, guest: 22, host: 2222, id: "ssh", disabled: true
     subconfig.vm.network :forwarded_port, guest: 22, host: 2230, id: "ssh-kx-main", auto_correct: true
     subconfig.vm.network :forwarded_port, guest_ip: "#{NAT_MAIN_GUEST_IP_ADDRESS}", guest: 5672, host_ip: "127.0.0.1", host: 5672, id: "rabbitmq"
+    subconfig.vm.network :forwarded_port, guest_ip: "#{NAT_MAIN_GUEST_IP_ADDRESS}", guest: 3000, host_ip: "127.0.0.1", host: 3000, id: "kx-portal", auto_correct: true
     subconfig.vm.network :forwarded_port, guest_ip: "#{NAT_MAIN_GUEST_IP_ADDRESS}", guest: 443, host_ip: "127.0.0.1", host: 443, id: "k8s-ingress", auto_correct: true
     subconfig.vm.box_url = "file://#{WORKSPACE_HOME}/#{KX_MAIN_BOX_LOCATION}"
     subconfig.vm.provision "shell", inline: "hostname -I | awk {'print $1'} | tr -d ' \\t\\n\\r' | sudo tee /vagrant/kx.as.code_main-ip-address"
