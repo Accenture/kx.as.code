@@ -7,6 +7,7 @@ import StatusPoint from "../StatusPoint";
 import { useState, useEffect } from "react";
 import AppLogo from "./AppLogo";
 import { toast } from "react-toastify";
+import LinearProgress from "@mui/material/LinearProgress";
 
 function ApplicationCard2(props) {
   const { history } = props;
@@ -164,7 +165,8 @@ function ApplicationCard2(props) {
         </Link>
         <div className="text-xs font-semibold text-gray-400 uppercase mb-1"></div>
         <div className="pb-5">{props.app.Description}</div>
-        <div className="pb-3 mb-3 border-b-2 border-gray-600">
+
+        <div className="">
           {queueStatus === "pending_queue" ? (
             <button
               className="bg-kxBlue/50 p-3 px-5 rounded items-center flex"
@@ -200,6 +202,15 @@ function ApplicationCard2(props) {
             </button>
           )}
         </div>
+        {/* Seperator */}
+
+        {queueStatus === "pending_queue" ? (
+          <div className="py-3">
+            <LinearProgress />
+          </div>
+        ) : (
+          <div className="pb-3 mb-3 border-b-3 border-gray-500 w-full"></div>
+        )}
         <div className="float-left">
           <ul className="float-left">
             {props.app.categories && drawAppTags(props.app.categories)}
