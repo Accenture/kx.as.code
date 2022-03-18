@@ -25,7 +25,7 @@ if [[ ! -f ${sharedKxHome}/.config/network_status ]]; then
     # Call to function that configures Bind9 DNS server
     configureBindDns
 
-    if  [[ ${baseIpType} == "static" ]] || [[ ${dnsResolution} == "hybrid" ]]; then
+    if  [[ "${baseIpType}" == "static" ]] || [[ "${dnsResolution}" == "hybrid" ]]; then
         # Prevent DHCLIENT updating static IP
         if [[ ${dnsResolution} == "hybrid"   ]]; then
             echo "supersede domain-name-servers ${mainIpAddress};" | /usr/bin/sudo tee -a /etc/dhcp/dhclient.conf
@@ -41,18 +41,23 @@ if [[ ! -f ${sharedKxHome}/.config/network_status ]]; then
         /usr/bin/sudo chmod +x /etc/dhcp/dhclient-enter-hooks.d/nodnsupdate
     fi
 
-    if [[ ${baseIpType} == "static"   ]]; then
-        # Configure IF to be managed/confgured by network-manager
+    if [[ "${baseIpType}" == "static"   ]]; then
+        # Configure IF to be managed/configured by network-manager
         rm -f /etc/NetworkManager/system-connections/*
-        /usr/bin/sudo mv /etc/network/interfaces /etc/network/interfaces.unused
-        nmcli con add con-name "${netDevice}" ifname ${netDevice} type ethernet ip4 ${mainIpAddress}/24 gw4 ${fixedNicConfigGateway}
-        nmcli con mod "${netDevice}" ipv4.method "manual"
-        nmcli con mod "${netDevice}" ipv4.dns "${fixedNicConfigDns1},${fixedNicConfigDns2}"
-        systemctl restart network-manager
-        nmcli con up "${netDevice}"
+        if [ -f /etc/network/interfaces ]; then
+          /usr/bin/sudo mv /etc/network/interfaces /etc/network/interfaces.unused
+        fi
+        /usr/bin/sudo nmcli con add con-name "${netDevice}" ifname ${netDevice} type ethernet ip4 ${mainIpAddress}/24 gw4 ${fixedNicConfigGateway}
+        /usr/bin/sudo nmcli con mod "${netDevice}" ipv4.method "manual"
+        /usr/bin/sudo nmcli con mod "${netDevice}" ipv4.dns "${fixedNicConfigDns1},${fixedNicConfigDns2}"
+        /usr/bin/sudo nmcli -g name,type connection show --active
+        nicToIgnoreDns=$(/usr/bin/sudo nmcli -g name,type connection show --active | grep "Wired connection" | cut -f 1 -d ':')
+        /usr/bin/sudo nmcli con mod "${nicToIgnoreDns}" ipv4.ignore-auto-dns yes
+        /usr/bin/sudo systemctl restart NetworkManager.service
+        /usr/bin/sudo nmcli con up "${netDevice}"
     fi
 
-    if  [[ ${baseIpType} == "static"   ]] || [[ ${dnsResolution} == "hybrid"   ]]; then
+    if  [[ "${baseIpType}" == "static"   ]] || [[ "${dnsResolution}" == "hybrid"   ]]; then
         /usr/bin/sudo systemctl enable --now named
     fi
 
@@ -97,7 +102,23 @@ if [[ ! -f ${sharedKxHome}/.config/network_status ]]; then
     else
         /usr/bin/sudo systemctl restart bind9
     fi
-
 fi
 
+# Final check on interfaces that need to be updated with "ipv4.ignore-auto-dns yes"
+nicsToUpdate=$(/usr/bin/sudo nmcli -g name,type connection show --active | grep "Wired connection" | cut -f 1 -d ':')
+OLD_IFS=$IFS
+IFS=$'\n'
+if [[ -n ${nicsToUpdate} ]]; then
+  for nicToUpdate in ${nicsToUpdate}
+  do
+      log_info "Updating NIC \"${nicToUpdate}\" with \"ipv4.ignore-auto-dns yes\""
+      /usr/bin/sudo nmcli con mod "${nicToUpdate}" ipv4.ignore-auto-dns yes
+      /usr/bin/sudo nmcli con mod "${nicToUpdate}" ipv4.dns "${fixedNicConfigDns1},${fixedNicConfigDns2}"
+  done
+  /usr/bin/sudo nmcli -g name,type connection show --active
+  /usr/bin/sudo systemctl restart NetworkManager.service
+else
+  log_info "All good. No NICs to update with \"ipv4.ignore-auto-dns yes\""
+fi
+IFS=$OLD_IFS
 }

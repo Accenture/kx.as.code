@@ -6,8 +6,23 @@ downloadFile "https://prdownloads.sourceforge.net/lam/ldap-account-manager_${lam
   "${lamChecksum}" \
   "${installationWorkspace}/ldap-account-manager_${lamVersion}_all.deb" && echo "Return code from file download is $?"
 
-/usr/bin/sudo apt-get install -y ./ldap-account-manager_${lamVersion}_all.deb
-apt-get --fix-broken install -y
+# Install LDAP Account Manager
+/usr/bin/sudo apt-get install -y ${installationWorkspace}/ldap-account-manager_${lamVersion}_all.deb
+/usr/bin/sudo apt-get --fix-broken install -y
+
+# Wait for LDAP Account Manager config file to become available. Retry install if not present.
+for i in {1..5}
+do
+  if [ ! -f /var/lib/ldap-account-manager/config/lam.conf ]; then
+    # Retry install
+    log_warn "LAM install not successful. Trying again (${i} of 5)"
+    /usr/bin/sudo apt-get install -y ${installationWorkspace}/ldap-account-manager_${lamVersion}_all.deb
+    /usr/bin/sudo apt-get --fix-broken install -y
+  else
+    log_info "LAM installed successfully"
+    break
+  fi
+done
 
 # Install PHP FPM
 /usr/bin/sudo apt install -y nginx php-fpm
@@ -59,6 +74,6 @@ if [ -f /var/lib/ldap-account-manager/config/lam.conf ]; then
 
 else
   # Catching install error and setting RC=1 in order to send failed installation to RabbitMQ error queue
-  log_error "/var/lib/ldap-account-manager/config/lam.conf not found. Seems like the installation of the LDAP account manager was not successfull. Exiting."
+  log_error "/var/lib/ldap-account-manager/config/lam.conf not found. Seems like the installation of the LDAP account manager was not successful. Exiting."
   exit 1
 fi

@@ -253,13 +253,13 @@ try {
     // language=HTML
     def HTML = """
     <body>
-     
+
         <div id="header-system-check-div" style="display: none;">
             <h2>System Check</h2>
             <span class="description-paragraph-span"><p>${extendedDescription}</p></span>
         </div>
 
-        <div id="system-check-div" style="width: 800px; display: none;">        
+        <div id="system-check-div" style="width: 800px; display: none;">
             <div class="wrapper" style="width: 800px;">
                 <div class="svg-item">
                     <svg width="200px" height="200px" viewBox="0 0 40 40" class="donut">
