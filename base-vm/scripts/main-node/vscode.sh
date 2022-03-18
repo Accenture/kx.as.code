@@ -31,12 +31,6 @@ sudo bash -c "cat <<EOF > /home/$VM_USER/.vscode/KX.AS.CODE.code-workspace
   \"folders\": [
     {
       \"path\": \"${SHARED_GIT_REPOSITORIES}/kx.as.code\"
-    },
-    {
-      \"path\": \"${SHARED_GIT_REPOSITORIES}/kx.as.code_docs\"
-    },
-    {
-      \"path\": \"${SHARED_GIT_REPOSITORIES}/kx.as.code_techradar\"
     }
   ],
   \"settings\": {}

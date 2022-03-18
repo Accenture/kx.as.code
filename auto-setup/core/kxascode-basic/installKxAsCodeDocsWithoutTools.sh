@@ -3,8 +3,8 @@
 set -euo pipefail
 
 # Build KX.AS.CODE "Docs" Image
-cd "${sharedGitHome}"/kx.as.code_docs
-source ./build.sh
+cd "${sharedGitHome}"/kx.as.code/docs
+mkdocs build --clean
 
 # Save builds as tar files
 rm -f "${installationWorkspace}"/docker-kx-docs.tar
@@ -12,7 +12,7 @@ docker save -o "${installationWorkspace}"/docker-kx-docs.tar "${dockerRegistryDo
 chmod 644 "${installationWorkspace}"/docker-kx-docs.tar
 
 # Install KX.AS.CODE Docs Image
-cd "${sharedGitHome}"/kx.as.code_docs/kubernetes
+cd "${sharedGitHome}"/kx.as.code/docs/kubernetes
 source ./install.sh
 
 # Return to previous directory

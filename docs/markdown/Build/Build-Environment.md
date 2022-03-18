@@ -4,7 +4,7 @@
 
 ## Prerequisites
 
-In order to build KX.AS.CODE, you will need the following pre-requisites
+!!! note "In order to build KX.AS.CODE, you will need the following pre-requisites"
 
 - HashiCorp Packer - https://www.packer.io/downloads
 - Your chosen virtualization solution:
@@ -14,11 +14,11 @@ In order to build KX.AS.CODE, you will need the following pre-requisites
 
 
 
-Apart from Virtualbox, all of the above will need to be licensed.
+!!! tip "Apart from Virtualbox, all of the above will need to be licensed."
 
 #### VirtualBox Guest Additions
 
-For VirtualBox you will need to ensure you have the matching guest additions version in the worker and master node json files:
+!!! warning "For VirtualBox you will need to ensure you have the matching guest additions version in the worker and master node json files:"
 
 ```json
 {
@@ -32,7 +32,7 @@ To get the checksum, just visit the link https://download.virtualbox.org/virtual
 - base-vm\kx.as.code-main.json
 - base-vm\kx.as.code-worker.json
 
-You do not need to download the ISO files for the operating system or for the guest additions, as Packer will do this automatically.
+!!! danger "You do not need to download the ISO files for the operating system or for the guest additions, as Packer will do this automatically."
 
 ### Debian ISO
 

@@ -4,6 +4,7 @@ iso/*.iso
 *.box
 base-vm/*output*/**
 *~
+/docs/site/
 variables.json
 *.log
 .DS_Store

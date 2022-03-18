@@ -36,7 +36,7 @@ sudo -H -i -u $VM_USER sh -c "echo '\"*\":\n
     showOnStartup: false' > /home/$VM_USER/.atom/config.cson"
 
 # Configure Atom with kx.as.code project folder
-sudo -H -i -u $VM_USER sh -c "echo \"{\\\"version\\\":\\\"1\\\",\\\"windows\\\":[{\\\"projectRoots\\\":[\\\"${SHARED_GIT_REPOSITORIES}/kx.as.code\\\",\\\"${SHARED_GIT_REPOSITORIES}/kx.as.code_docs\\\",\\\"${SHARED_GIT_REPOSITORIES}/kx.as.code_techradar\\\"]}]}\" > /home/$VM_USER/.atom/storage/application.json"
+sudo -H -i -u $VM_USER sh -c "echo \"{\\\"version\\\":\\\"1\\\",\\\"windows\\\":[{\\\"projectRoots\\\":[\\\"${SHARED_GIT_REPOSITORIES}/kx.as.code\\\"]}]}\" > /home/$VM_USER/.atom/storage/application.json"
 
 # Add updated icon to Desktop
 echo '''[Desktop Entry]
