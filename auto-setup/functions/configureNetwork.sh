@@ -105,7 +105,7 @@ if [[ ! -f ${sharedKxHome}/.config/network_status ]]; then
 fi
 
 # Final check on interfaces that need to be updated with "ipv4.ignore-auto-dns yes"
-nicsToUpdate=$(/usr/bin/sudo nmcli -g name,type connection show --active | grep "Wired connection" | cut -f 1 -d ':')
+nicsToUpdate=$(/usr/bin/sudo nmcli -g name,type connection show --active | grep "Wired connection" | cut -f 1 -d ':' || true)
 OLD_IFS=$IFS
 IFS=$'\n'
 if [[ -n ${nicsToUpdate} ]]; then
