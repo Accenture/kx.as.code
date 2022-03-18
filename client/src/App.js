@@ -18,7 +18,6 @@ import AppDetails from "./pages/AppDetails";
 import Home2 from "./pages/Home";
 import ApplicationGroups from "./pages/ApplicationGroups";
 import { Applications2 } from "./pages/Applications2";
-import BasicAlerts from "./partials/BasicAlerts";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
