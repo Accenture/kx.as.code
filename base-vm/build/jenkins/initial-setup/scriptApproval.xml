@@ -1,5 +1,5 @@
 <?xml version='1.1' encoding='UTF-8'?>
-<scriptApproval plugin="script-security@1.78">
+<scriptApproval plugin="script-security@1131.v8b_b_5eda_c328e">
   <approvedScriptHashes>
     <string>0090d328110c53d007f71c344487be2661c87a1e</string>
     <string>0091f4513d687fc707e79c194de9eb1ba0ccc3ab</string>
@@ -52,6 +52,7 @@
     <string>23ace2f267443e749675addb05d14399b760f3c1</string>
     <string>247f1310aedfc33978e1890ebf78574cbb196548</string>
     <string>251674dedca3770037bae1be84c74a930b0b5ad3</string>
+    <string>2702d7e263b78ad474f50f3f763db339d8080978</string>
     <string>27751353c46ed0dbca62d0211d065e9b78e8da83</string>
     <string>277b28b15f1c0f43deea8d4c9aa7ca9db5b8a80c</string>
     <string>2a4a459504295bb3d962313569c13c0e0a3bfa3d</string>
@@ -73,6 +74,7 @@
     <string>3202b2f33a79d9056c974bfd543e0bdac2c7cc51</string>
     <string>3298bc7fe43a5858864cde0fd8847ae7bd8bac80</string>
     <string>33eb98e636ce01397ad4de6b3baa0ed61bdb8e6a</string>
+    <string>357162fb35e1c69319f76342e9671686fbac7e00</string>
     <string>35bdd07485751218bdb0b5eb9b20c909635293af</string>
     <string>36307632d47ec8f6fbd3ea9cb0875af6a4184ee1</string>
     <string>364127f084be15b93cca548b14ef7db7d0d8200a</string>
@@ -98,6 +100,7 @@
     <string>42ac2e1cae5802105be125432f6ee552eaa9a454</string>
     <string>42d8de0e779a1f5701c65734edee2bf565698c57</string>
     <string>439b8b08dbc571d604fbf4ef5b1c8c68eaafb98c</string>
+    <string>43b494a3ee418fedaef851752108d93b4d94db89</string>
     <string>440a35a571198e1780b5811b9f558e0548de37e6</string>
     <string>4459b0e2e74870e0638c2bd2bd34c237c790841e</string>
     <string>44a0c87af72be4eb1a6680fa8307e19c78680336</string>
@@ -156,6 +159,7 @@
     <string>643ceabea947ded172737648b0963a83295b1f26</string>
     <string>6464a2e3984c255f1f910e6d1970852f22c20a42</string>
     <string>64d22979ed73f34db57d774ac7781ebbc0b4a872</string>
+    <string>663854a320f6f7dc2e879fb2b1b3a26ebee4d55d</string>
     <string>66ac1c9a60463d696dea365592363677ccb62355</string>
     <string>67dc9caca5f5675414cc58b9470e0aebd1cafe0a</string>
     <string>69228fa0301e13f922662c138fcdfdd6bfb91660</string>
@@ -176,6 +180,7 @@
     <string>71394bcb72c94a7b5348e8e16b6d391cf64f0c54</string>
     <string>715b03903041d77950149354c9e0ed1f825ecb75</string>
     <string>73991d586b3450ab2f21bd4c6cace77e7190927a</string>
+    <string>73e0e9f1db810d6b2877f6cbbeae5061708e3048</string>
     <string>74514ea925fd2c5ccbd3066a87129ba799155800</string>
     <string>75df379b3bb7081051024451a1a4ed1b4c6e182a</string>
     <string>76b383a7095fd3eb646847b94fb28fcbaa275b84</string>
@@ -195,6 +200,7 @@
     <string>82acaa7d3a4d94f38f85e8897504f9915b9413fb</string>
     <string>82e0d4a5d8f5fa323de6025d9feb64b618827d1e</string>
     <string>82e7f15de1cc31b828e691f4ab880ead403e75ef</string>
+    <string>83c837631b96ad999d508131ca4c958fa645195f</string>
     <string>846a4fe7be1f42515ed05be0b42c3987a0dbc161</string>
     <string>84cd2cefcd97385ffd1c5a3f0236ce099678c1b5</string>
     <string>84fe5600d6692abdb76b51c8022241dfd59706c0</string>
@@ -202,6 +208,7 @@
     <string>858c80136117df22904b6f72a9d361b861953f6f</string>
     <string>85a3a451cc36aa7ba547aa654aeefce06d61967a</string>
     <string>85a97e54ea6504deb3ecb700a4951774606bf1cb</string>
+    <string>87118a3b17b4f0b28b9487d2a7cbdc8533186783</string>
     <string>884acb445086e415879d9c02f79f41aab05cd33c</string>
     <string>88f01e682d38f7ac52a2a6834d35b92853d47588</string>
     <string>8a1a86f993664adb77d212a97480e961b9773aed</string>
@@ -283,6 +290,7 @@
     <string>c78307d37f90b0a51b655cb29fa6e3806d9b40b4</string>
     <string>c8f280206479f381602b91f592d9e4db073113be</string>
     <string>c98ae3f0a2a6f3da301c6c841bbfc89b72b76de0</string>
+    <string>caf44335b8edb598c89b21690f7b3b5117b9b2dc</string>
     <string>cc622ffd41fd412520c5ea72df899ccf2bfeb0fd</string>
     <string>ccf096adfcf702920c0a6222fd636e8bd49bedf1</string>
     <string>ccfc8d6ec6fc9fffe3d5129fd74596e3465027b1</string>
@@ -304,6 +312,7 @@
     <string>d8e4a29c2189b37865d82f01cd37a80912f78c9e</string>
     <string>d9324482354a792dfc7dc1c16f8489adb29fe056</string>
     <string>da41056ca661a7f8731878fc5d27f9dd1c0a9993</string>
+    <string>daca30650ef78cabed5138955b93e6a5c51c564c</string>
     <string>db8e8348e9ceccb507cf13f46aa0a6d22100ba39</string>
     <string>dc6e2de19d11ae5048ab3959d944e2fa88944cc7</string>
     <string>dc89182edb097c40e479b3c7bd631b5ba6d50d68</string>
@@ -324,9 +333,11 @@
     <string>e62bfad89f3eeef629657c1fbbd43079d881fac5</string>
     <string>e648f1236376fbe2d8c1630031e8fd8940babba9</string>
     <string>e7ac9cdde2833caafef2ee3b51ee5dbb3854c140</string>
+    <string>e8c1240fa4497f9789d03da81e8e0ecf05958321</string>
     <string>e8fe1c793bdf16381df68fc7e17a93cfe7cac415</string>
     <string>e9550a200423e977e0ca76d29afeafd34912b49a</string>
     <string>eb63e832af6cedd47ea15a860fb96e2e991f128f</string>
+    <string>ebf9914c6c0a3f52604518e95083d70276a1ccb0</string>
     <string>ec88a93c86cb35139791a219b907ce4fc344e54f</string>
     <string>ec9830dda440015a2184453a96cba60e25a79579</string>
     <string>ecc64ddd420c2f101a7c21c04687145276e57e2f</string>
@@ -354,6 +365,8 @@
     <string>ffea0e23957643e2d72ee4716523c4bd9d9149a7</string>
   </approvedScriptHashes>
   <approvedSignatures>
+    <string>method hudson.model.Job getLastCompletedBuild</string>
+    <string>method jenkins.model.Jenkins getItemByFullName java.lang.String</string>
     <string>staticMethod jenkins.model.Jenkins getInstance</string>
     <string>staticMethod org.codehaus.groovy.runtime.DefaultGroovyMethods execute java.lang.String</string>
     <string>staticMethod org.codehaus.groovy.runtime.ProcessGroovyMethods getText java.lang.Process</string>

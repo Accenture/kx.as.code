@@ -174,7 +174,7 @@ while :; do
                     rabbitmqadmin publish exchange=action_workflow routing_key=retry_queue properties="{\"delivery_mode\": 2}" payload=''${payload}''
                     cat ${installationWorkspace}/actionQueues.json | jq -c -r '(.state.processed[] | select(.name=="'${componentName}'").retries) = "'${retries}'"' | tee ${installationWorkspace}/actionQueues.json.tmp
                     mv ${installationWorkspace}/actionQueues.json.tmp ${installationWorkspace}/actionQueues.json
-                    message="${componentName} installation error after retry #${retries}. Will retry three times maximum\\\! [$((${completedQueue} + 1))/${totalMessages}]"
+                    message="${componentName} installation error after try #${retries}. Will retry three times maximum\\\! [$((${completedQueue} + 1))/${totalMessages}]"
                     notifyAllChannels "${message}" "warn" "failed"
 
                     rm -f ${installationWorkspace}/current_payload.err

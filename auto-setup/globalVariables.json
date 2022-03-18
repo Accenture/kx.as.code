@@ -10,6 +10,7 @@
   "vendorDocsDirectory": "${sharedKxHome}/Vendor Docs",
   "apiDocsDirectory": "${sharedKxHome}/API Docs",
   "shortcutsDirectory": "${sharedKxHome}/DevOps Tools",
+  "devopsShortcutsDirectory": "${sharedKxHome}/DevOps Tools",
   "adminShortcutsDirectory": "${sharedKxHome}/Admin Tools",
   "vmUser": "kx.hero",
   "vmUserId": "$(id -u ${vmUser})",

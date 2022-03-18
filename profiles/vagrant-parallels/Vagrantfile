@@ -82,8 +82,10 @@ Vagrant.configure("2") do |config|
     subconfig.vm.box = "kx-main"
     subconfig.vm.box_version = "#{MAIN_BOX_VERSION}"
     subconfig.vm.hostname = "kx-main1"
-    subconfig.vm.network :forwarded_port, guest: 22, host: 2222, id: "ssh", disabled: true
-    subconfig.vm.network :forwarded_port, guest: 22, host: 2230, id: "ssh-kx-main", auto_correct: true
+    subconfig.vm.network :forwarded_port, guest_ip: "0.0.0.0", guest: 22, host_ip: "127.0.0.1", host: 2222, id: "ssh", disabled: true
+    subconfig.vm.network :forwarded_port, guest_ip: "0.0.0.0", guest: 22, host_ip: "127.0.0.1", host: 2230, id: "ssh-kx-main", auto_correct: true
+    subconfig.vm.network :forwarded_port, guest_ip: "0.0.0.0", guest: 5672, host_ip: "127.0.0.1", host: 5672, id: "rabbitmq"
+    subconfig.vm.network :forwarded_port, guest_ip: "0.0.0.0", guest: 443, host_ip: "127.0.0.1", host: 443, id: "k8s-ingress", auto_correct: true
     subconfig.vm.box_url = "file://#{WORKSPACE_HOME}/#{KX_MAIN_BOX_LOCATION}"
     subconfig.vm.provision "shell", inline: "hostname -I | awk {'print $1'} | tr -d ' \\t\\n\\r' | sudo tee /vagrant/kx.as.code_main-ip-address"
     subconfig.vm.provision "shell", inline: 'if [ -f /vagrant/aq*.json ]; then sudo cp /vagrant/aq*.json /usr/share/kx.as.code/workspace/; fi'
