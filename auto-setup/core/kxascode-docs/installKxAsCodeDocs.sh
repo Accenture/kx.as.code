@@ -4,7 +4,12 @@ set -euo pipefail
 
 # Build KX.AS.CODE "Docs" Image
 cd "${sharedGitHome}"/kx.as.code/docs
-mkdocs build --clean
+
+# Install Python Dependencies
+pip3 install -r requirements.txt
+
+# Generate the documentation ith mkdocs
+/usr/local/bin/mkdocs build --clean
 
 # Save builds as tar files
 rm -f "${installationWorkspace}"/docker-kx-docs.tar
