@@ -7,10 +7,6 @@
             },
             {
                 "install_folder": "core",
-                "name": "kxascode-docs"
-            },
-            {
-                "install_folder": "core",
                 "name": "gopass"
             },
             {
@@ -60,6 +56,10 @@
             {
                 "install_folder": "core",
                 "name": "nginx-ingress-controller"
+            },
+            {
+                "install_folder": "core",
+                "name": "kxascode-docs"
             },
             {
                 "install_folder": "core",
