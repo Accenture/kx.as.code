@@ -44,6 +44,7 @@ export const Applications2 = () => {
       })
       .map((app, i) => {
         console.log("queue data app: ", queueData);
+        console.log("app Data: ", app);
         return <ApplicationCard2 app={app} key={i} queueData={queueData} />;
       });
   };
@@ -67,7 +68,7 @@ export const Applications2 = () => {
 
   useEffect(() => {
     const id = setInterval(() => {
-      // fetchData();
+      fetchData();
     }, 3000);
 
     fetchData();
@@ -124,9 +125,7 @@ export const Applications2 = () => {
                             isPending={this.state.isPending} /> */}
         </div>
       </div>
-      <div className="grid grid-cols-12 gap-8">
-        {!isLoading && drawApplicationCards()}
-      </div>
+      <div className="grid grid-cols-12 gap-8">{drawApplicationCards()}</div>
     </div>
   );
 };

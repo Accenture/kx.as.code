@@ -119,6 +119,7 @@ function ApplicationCard2(props) {
         <header className="flex justify-between items-start mb-2">
           {/* Icon */}
           <div className="flex content-start">
+            {console.log("APPNAME in card: ", props.app.name)}
             <AppLogo height={"50px"} width={"50px"} appName={props.app.name} />
             {/* <StatusTag installStatus={props.app.queueName} /> */}
           </div>
@@ -209,7 +210,7 @@ function ApplicationCard2(props) {
             <LinearProgress />
           </div>
         ) : (
-          <div className="pb-3 mb-3 border-b-3 border-gray-500 w-full"></div>
+          <div className="pb-3 mb-3 border-b-4 border-gray-500 w-full"></div>
         )}
         <div className="float-left">
           <ul className="float-left">
