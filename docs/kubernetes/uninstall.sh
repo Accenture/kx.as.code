@@ -5,6 +5,6 @@ kubectl delete \
   -f deployment.yaml \
   -f ingress.yaml \
   -f service.yaml \
-  -n devops
+  -n ${namespace}
 
 rm -f /home/${vmUser}/Desktop'/KX.AS.CODE Docs'
