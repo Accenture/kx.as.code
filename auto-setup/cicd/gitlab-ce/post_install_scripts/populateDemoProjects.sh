@@ -49,7 +49,7 @@ populateGitlabProject() {
 
 }
 
-populateGitlabProject "kx.as.code" "kx.as.code" "${sharedGitRepositories}/${gitlabRepoName}"
+populateGitlabProject "kx.as.code" "kx.as.code" "${sharedGitRepositories}/kx.as.code"
 populateGitlabProject "devops" "grafana-image-renderer" "${autoSetupHome}/monitoring/grafana-image-renderer/deployment_yaml"
 populateGitlabProject "devops" "nexus3" "${autoSetupHome}/cicd/nexus3/deployment_yaml"
 populateGitlabProject "devops" "jira" "${autoSetupHome}/collaboration/jira/deployment_yaml"
