@@ -11,78 +11,33 @@ export kxascodeGroupId=$(curl -s --header "Private-Token: ${personalAccessToken}
 export kxRobotUser=$(cat /home/${vmUser}/.config/kx.as.code/.kx-harbor-robot.cred | jq -r '.name' | sed 's/\$/\$\$/g')
 export kxRobotToken=$(cat /home/${vmUser}/.config/kx.as.code/.kx-harbor-robot.cred | jq -r '.token')
 
-# Create variable "GIT_USER" in KX.AS.Code group
-groupVariableExists=$(curl --header "PRIVATE-TOKEN: ${personalAccessToken}" "https://gitlab.${baseDomain}/api/v4/groups/${kxascodeGroupId}/variables/GIT_USER" | jq -r '.key')
-if [[ ${groupVariableExists} == "null"   ]]; then
-    for i in {1..5}; do
-        curl --request POST --header "PRIVATE-TOKEN: ${personalAccessToken}" "https://gitlab.${baseDomain}/api/v4/groups/${kxascodeGroupId}/variables" --form "key=GIT_USER" --form "value=${vmUser}"
-        groupVariableExists=$(curl --header "PRIVATE-TOKEN: ${personalAccessToken}" "https://gitlab.${baseDomain}/api/v4/groups/${kxascodeGroupId}/variables/GIT_USER" | jq -r '.key')
-        if [[ ${groupVariableExists} != "null"   ]]; then break; else
-            echo 'KX.AS.CODE Group Variable "GIT_USER" not created. Trying again'
-            sleep 5
-        fi
+# Create variable in KX.AS.Code group
+createGitlabVariable() {
 
-    done
-else
-    log_info 'KX.AS.CODE group variable "GIT_USER" already exists in Gitlab. Skipping creation'
-fi
+  gitlabVariableKey=$1
+  gitlabVariableValue=$2
+  gitlabGroupId=$2
 
-# Create variable "PERSONAL_ACCESS_TOKEN" in KX.AS.Code group
-groupVariableExists=$(curl --header "PRIVATE-TOKEN: ${personalAccessToken}" "https://gitlab.${baseDomain}/api/v4/groups/${kxascodeGroupId}/variables/PERSONAL_ACCESS_TOKEN" | jq -r '.key')
-if [[ ${groupVariableExists} == "null"   ]]; then
-    for i in {1..5}; do
-        curl --request POST --header "PRIVATE-TOKEN: ${personalAccessToken}" "https://gitlab.${baseDomain}/api/v4/groups/${kxascodeGroupId}/variables" --form "key=PERSONAL_ACCESS_TOKEN" --form "value=${personalAccessToken}"
-        groupVariableExists=$(curl --header "PRIVATE-TOKEN: ${personalAccessToken}" "https://gitlab.${baseDomain}/api/v4/groups/${kxascodeGroupId}/variables/PERSONAL_ACCESS_TOKEN" | jq -r '.key')
-        if [[ ${groupVariableExists} != "null"   ]]; then break; else
-            echo 'KX.AS.CODE Group Variable "PERSONAL_ACCESS_TOKEN" not created. Trying again'
-            sleep 5
-        fi
-    done
-else
-    log_info 'KX.AS.CODE group variable "PERSONAL_ACCESS_TOKEN" already exists in Gitlab. Skipping creation'
-fi
+  groupVariableExists=$(curl --header "PRIVATE-TOKEN: ${personalAccessToken}" "https://gitlab.${baseDomain}/api/v4/groups/${gitlabGroupId}/variables/${gitlabVariableKey}" | jq -r '.key')
+  if [[ ${groupVariableExists} == "null"   ]]; then
+      for i in {1..5}; do
+          curl --request POST --header "PRIVATE-TOKEN: ${personalAccessToken}" "https://gitlab.${baseDomain}/api/v4/groups/${gitlabGroupId}/variables" --form "key=${gitlabVariableKey}" --form "value=${gitlabVariableValue}"
+          groupVariableExists=$(curl --header "PRIVATE-TOKEN: ${personalAccessToken}" "https://gitlab.${baseDomain}/api/v4/groups/${gitlabGroupId}/variables/${gitlabVariableKey}" | jq -r '.key')
+          if [[ ${groupVariableExists} != "null"   ]]; then break; else
+              log_warn "Gitlab Group Variable \"${gitlabVariableName}\" not created. Trying again"
+              sleep 5
+          fi
 
-# Create variable "DOCKER_REGISTRY_DOMAIN" in KX.AS.Code group
-groupVariableExists=$(curl --header "PRIVATE-TOKEN: ${personalAccessToken}" "https://gitlab.${baseDomain}/api/v4/groups/${kxascodeGroupId}/variables/DOCKER_REGISTRY_DOMAIN" | jq -r '.key')
-if [[ ${groupVariableExists} == "null"   ]]; then
-    for i in {1..5}; do
-        curl --request POST --header "PRIVATE-TOKEN: ${personalAccessToken}" "https://gitlab.${baseDomain}/api/v4/groups/${kxascodeGroupId}/variables" --form "key=DOCKER_REGISTRY_DOMAIN" --form "value=${dockerRegistryDomain}"
-        groupVariableExists=$(curl --header "PRIVATE-TOKEN: ${personalAccessToken}" "https://gitlab.${baseDomain}/api/v4/groups/${kxascodeGroupId}/variables/DOCKER_REGISTRY_DOMAIN" | jq -r '.key')
-        if [[ ${groupVariableExists} != "null"   ]]; then break; else
-            echo 'KX.AS.CODE Group Variable "DOCKER_REGISTRY_DOMAIN" not created. Trying again'
-            sleep 5
-        fi
-    done
-else
-    log_info 'KX.AS.CODE group variable "DOCKER_REGISTRY_DOMAIN" already exists in Gitlab. Skipping creation'
-fi
+      done
+  else
+      log_info "KX.AS.CODE group variable \"${gitlabVariableName}\" already exists in Gitlab. Skipping creation"
+  fi
+}
 
-# Create variable "BASE_DOMAIN" in KX.AS.Code group
-groupVariableExists=$(curl --header "PRIVATE-TOKEN: ${personalAccessToken}" "https://gitlab.${baseDomain}/api/v4/groups/${kxascodeGroupId}/variables/BASE_DOMAIN" | jq -r '.key')
-if [[ ${groupVariableExists} == "null"   ]]; then
-    for i in {1..5}; do
-        curl --request POST --header "PRIVATE-TOKEN: ${personalAccessToken}" "https://gitlab.${baseDomain}/api/v4/groups/${kxascodeGroupId}/variables" --form "key=BASE_DOMAIN" --form "value=${baseDomain}"
-        groupVariableExists=$(curl --header "PRIVATE-TOKEN: ${personalAccessToken}" "https://gitlab.${baseDomain}/api/v4/groups/${kxascodeGroupId}/variables/BASE_DOMAIN" | jq -r '.key')
-        if [[ ${groupVariableExists} != "null"   ]]; then break; else
-            echo 'KX.AS.CODE Group Variable "BASE_DOMAIN" not created. Trying again'
-            sleep 5
-        fi
-    done
-else
-    log_info 'KX.AS.CODE group variable "BASE_DOMAIN" already exists in Gitlab. Skipping creation'
-fi
-
-# Create variable "GIT_DOMAIN" in KX.AS.Code group
-groupVariableExists=$(curl --header "PRIVATE-TOKEN: ${personalAccessToken}" "https://gitlab.${baseDomain}/api/v4/groups/${kxascodeGroupId}/variables/GIT_DOMAIN" | jq -r '.key')
-if [[ ${groupVariableExists} == "null"   ]]; then
-    for i in {1..5}; do
-        curl --request POST --header "PRIVATE-TOKEN: ${personalAccessToken}" "https://gitlab.${baseDomain}/api/v4/groups/${kxascodeGroupId}/variables" --form "key=GIT_DOMAIN" --form "value=${gitDomain}"
-        groupVariableExists=$(curl --header "PRIVATE-TOKEN: ${personalAccessToken}" "https://gitlab.${baseDomain}/api/v4/groups/${kxascodeGroupId}/variables/GIT_DOMAIN" | jq -r '.key')
-        if [[ ${groupVariableExists} != "null"   ]]; then break; else
-            echo 'KX.AS.CODE Group Variable "GIT_DOMAIN" not created. Trying again'
-            sleep 5
-        fi
-    done
-else
-    log_info 'KX.AS.CODE group variable "GIT_DOMAIN" already exists in Gitlab. Skipping creation'
-fi
+createGitlabVariable "GIT_USER" "${vmUser}" "${kxascodeGroupId}"
+createGitlabVariable "PERSONAL_ACCESS_TOKEN" "${personalAccessToken}" "${kxascodeGroupId}"
+createGitlabVariable "DOCKER_REGISTRY_DOMAIN" "${dockerRegistryDomain}" "${kxascodeGroupId}"
+createGitlabVariable "BASE_DOMAIN" "${baseDomain}" "${kxascodeGroupId}"
+createGitlabVariable "GIT_DOMAIN" "${gitDomain}" "${kxascodeGroupId}"
+createGitlabVariable "HARBOR_ROBOT_KX_USER" "${kxRobotUser}" "${kxascodeGroupId}"
+createGitlabVariable "HARBOR_ROBOT_KX_TOKEN" "${kxRobotToken}" "${kxascodeGroupId}"

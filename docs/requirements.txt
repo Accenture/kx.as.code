@@ -1,0 +1,6 @@
+mkdocs
+mkdocs-material-extensions
+mkdocs-material
+markdown>=3.2
+pygments
+mkdocs-awesome-pages-plugin

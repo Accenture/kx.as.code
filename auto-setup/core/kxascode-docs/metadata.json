@@ -1,0 +1,18 @@
+{
+    "name": "kxascode-docs",
+    "namespace": "devops",
+    "installation_type": "script",
+    "installation_group_folder": "core",
+    "retry": "true",
+    "letsencrypt": {
+        "enabled": true
+    },
+    "install_scripts": [
+        "installKxAsCodeDocs.sh"
+    ],
+    "Description": "KX.AS.CODE Documentation generated with MKDOCS",
+    "shortcut_text": "KX.AS.CODE Docs",
+    "shortcut_icon": "books.png",
+    "pre_install_scripts": [],
+    "post_install_scripts": []
+}

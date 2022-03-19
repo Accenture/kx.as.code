@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+ name: kx-docs
+ namespace: devops
+ labels:
+  app: kx-docs
+spec:
+ replicas: 1
+ selector:
+  matchLabels:
+   app: kx-docs
+ template:
+  metadata:
+   labels:
+    app: kx-docs
+  spec:
+   containers:
+   - name: kx-docs
+     image: {{dockerRegistryDomain}}/kx-as-code/docs:latest
+     imagePullPolicy: "IfNotPresent"
+     env:
+     - name: NGINX_HOST
+       value: "docs.{{baseDomain}}"
+     - name: NGINX_PORT
+       value: "80"
+     ports:
+     - containerPort: 80

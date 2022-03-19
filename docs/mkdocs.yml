@@ -1,0 +1,43 @@
+site_name: 'KX.AS.CODE Docs'
+repo_url: 'https://github.com/Accenture/kx.as.code'
+repo_name: 'Github'
+site_description: 'KX.AS.CODE Documentation'
+site_author: 'Patrick Delamere'
+
+docs_dir: docs
+
+theme:
+    logo: images/accenture.png
+    favicon: images/favicon.png
+    name: material
+    palette:
+        accent: pink
+    font:
+        text: "arial, sans-serif"
+        code: monospace
+    features:
+        - navigation.indexes
+        - navigation.sections
+        - navigation.top
+        - navigation.tracking
+        - navigation.expand
+        - search.highlight
+        - search.share
+        - search.suggest
+
+markdown_extensions:
+    - admonition
+    - def_list
+    - attr_list
+    - pymdownx.tilde
+    - pymdownx.details
+    - pymdownx.superfences
+    - pymdownx.magiclink
+    - toc:
+        permalink: true
+    - codehilite:
+        guess_lang: false
+
+plugins:
+    - search:
+        lang: en

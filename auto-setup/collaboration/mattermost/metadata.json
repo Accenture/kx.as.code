@@ -8,7 +8,7 @@
         "memory": "256"
     },
     "environment_variables": {
-        "imageTag": "  6.4.2@sha256:4e76b95177a17125e35b0ee2c843baff6656b8b9fc045507d08f810dca9765e5"
+        "imageTag": "6.4.2@sha256:4e76b95177a17125e35b0ee2c843baff6656b8b9fc045507d08f810dca9765e5"
     },
     "helm_params": {
         "repository_url": "https://helm.mattermost.com",
