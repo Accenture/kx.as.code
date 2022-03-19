@@ -524,11 +524,7 @@ if [ -f ${installationWorkspace}/docker-kx-docs.tar ]; then
   docker load -i ${installationWorkspace}/docker-kx-docs.tar
 fi
 
-if [ -f ${installationWorkspace}/docker-kx-techradar.tar ]; then
-  docker load -i ${installationWorkspace}/docker-kx-techradar.tar
-fi
-
-if [ -f ${installationWorkspace}/docker-kx-docs.tar ] && [ -f ${installationWorkspace}/docker-kx-techradar.tar ]; then
+if [ -f ${installationWorkspace}/docker-kx-docs.tar ]; then
   /usr/bin/sudo crontab -r
 fi
 """ | /usr/bin/sudo tee ${installationWorkspace}/scpKxTars.sh
