@@ -151,7 +151,7 @@ These scripts run before the main installation process. The usually define pre-r
     "pre_install_scripts": [
         "createGitProject.sh",
         "populateGitProject.sh"
-    ],
+    ]
 }
 ```
 
