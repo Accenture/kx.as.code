@@ -11,6 +11,9 @@ pip3 install -r requirements.txt
 # Generate the documentation ith mkdocs
 /usr/local/bin/mkdocs build --clean
 
+# Build KX.AS.CODE Docs Docker Image
+docker build -t ${dockerRegistryDomain}/kx-as-code/docs:latest .
+
 # Save builds as tar files
 rm -f "${installationWorkspace}"/docker-kx-docs.tar
 docker save -o "${installationWorkspace}"/docker-kx-docs.tar "${dockerRegistryDomain}"/kx-as-code/docs:latest
@@ -27,7 +30,7 @@ cd -
 shortcutsDirectory="/home/${vmUser}/Desktop"
 primaryUrl="https://docs.${baseDomain}"
 shortcutText="KX.AS.CODE Docs"
-iconPath="${sharedGitHome}/kx.as.code_docs/kubernetes/books.png"
+iconPath="${installComponentDirectory}/$(cat ${componentMetadataJson} | jq -r '.shortcut_icon')"
 browserOptions=""
 createDesktopIcon "${shortcutsDirectory}" "${primaryUrl}" "${shortcutText}" "${iconPath}" "${browserOptions}"
 

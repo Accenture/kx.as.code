@@ -36,7 +36,7 @@ WantedBy=multi-user.target
 shortcutsDirectory="/home/${vmUser}/Desktop"
 primaryUrl="http://localhost:3000"
 shortcutText="KX.AS.CODE Portal"
-iconPath="${sharedGitHome}/kx.as.code/docs/docs/images/kxascode_logo_white_small.png"
+iconPath="${installComponentDirectory}/$(cat ${componentMetadataJson} | jq -r '.shortcut_icon')"
 browserOptions=""
 createDesktopIcon "${shortcutsDirectory}" "${primaryUrl}" "${shortcutText}" "${iconPath}" "${browserOptions}"
 
