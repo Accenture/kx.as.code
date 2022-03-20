@@ -1,8 +1,8 @@
 {
     "metadata": {
         "defaultApplications": {
-            "git": "cicd/gitlab-ce",
-            "oauth": "cicd/gitlab-ce",
+            "git": "cicd/gitlab",
+            "oauth": "cicd/gitlab",
             "chatops": "collaboration/mattermost",
             "docker-registry": "cicd/harbor",
             "s3-object-store": "storage/minio-s3"
@@ -55,7 +55,7 @@
                 },
                 {
                     "install_folder": "cicd",
-                    "name": "gitlab-ce"
+                    "name": "gitlab"
                 },
                 {
                     "install_folder": "cicd",

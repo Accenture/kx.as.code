@@ -95,7 +95,7 @@
     ],
     "urls": [
         {
-            "url": "https://gitlab.{{baseDomain}}",
+            "url": "https://{{componentName}}.{{baseDomain}}",
             "healthchecks": {
                 "liveliness": {
                     "http_path": "/-/readiness",
@@ -122,11 +122,11 @@
             }
         }
     ],
-    "Description": "Gitlab CE Git Repository and CICD",
-    "shortcut_text": "Gitlab CE",
+    "Description": "Gitlab Git Repository and CICD",
+    "shortcut_text": "Gitlab",
     "shortcut_icon": "gitlab.png",
     "api_docs_type": "help",
-    "api_docs_url": "https://gitlab.{{baseDomain}}/help/api/api_resources.md",
+    "api_docs_url": "https://{{componentName}}.{{baseDomain}}/help/api/api_resources.md",
     "vendor_docs_url": "https://docs.gitlab.com/ce/",
     "pre_install_scripts": [
         "getVariables.sh",
