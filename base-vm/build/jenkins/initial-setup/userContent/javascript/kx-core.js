@@ -131,6 +131,17 @@ function updateConcatenatedGeneralParamsReturnVariable() {
     //change_panel_selection("config-panel-general-params");
 }
 
+function waitForElement(elementId, callBack){
+    window.setTimeout(function(){
+        let element = document.getElementById(elementId);
+        if(element){
+            callBack(elementId, element);
+        }else{
+            waitForElement(elementId, callBack);
+        }
+    },500)
+}
+
 function updateCheckbox(checkboxElementId) {
     console.log("Processing updateCheckbox(checkboxElementId) for " + checkboxElementId);
     waitForElement(checkboxElementId, function () {

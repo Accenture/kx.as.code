@@ -35,7 +35,11 @@ try {
 
     extendedDescription = "Welcome to KX.AS.CODE. In this panel you can select the profile. A check is made on the system to see if the necessary virtualization software and associated Vagrant plugins are installed, s well as availability of built Vagrant boxes. An attempt is made to automatically select the profile based on discovered pre-requisites."
 
-    new File('jenkins_shared_workspace/kx.as.code/profiles/').eachDirMatch(~/.*vagrant.*/) { profilePaths << it.path }
+    def currentDir = new File(".").getAbsolutePath().replaceAll("\\\\", "/")
+    currentDir = currentDir.substring(0, currentDir.length() - 1)
+    println("PROFILE UPDATE CURRENT DIR: ${currentDir}")
+
+    new File("${currentDir}/jenkins_shared_workspace/kx.as.code/profiles/").eachDirMatch(~/.*vagrant.*/) { profilePaths << it.path }
 
     String underlyingOS
     println profilePaths
@@ -70,7 +74,7 @@ try {
     githubKxVersion = githubVersionJson.kxascode
     githubKubeVersion = githubVersionJson.kubernetes
 
-    def localVersionFile = 'jenkins_shared_workspace/kx.as.code/versions.json'
+    def localVersionFile = "${currentDir}/jenkins_shared_workspace/kx.as.code/versions.json"
     def localVersionJson = new File(localVersionFile)
     def parsedLocalVersionJson = new JsonSlurper().parse(localVersionJson)
 
@@ -104,7 +108,7 @@ try {
     }
 
     println("Check prerequisites - After OS check")
-    def systemCheckJsonFilePath = 'jenkins_shared_workspace/kx.as.code/system-check.json'
+    def systemCheckJsonFilePath = "${currentDir}/jenkins_shared_workspace/kx.as.code/system-check.json"
     def systemCheckJsonFile = new File(systemCheckJsonFilePath)
 
     parallelsExecutableExists = ""
@@ -142,7 +146,7 @@ try {
 
     println("vagrant: ${vagrantJson}")
 
-    new File("jenkins_shared_workspace/kx.as.code/base-vm/boxes/").eachDir {boxDirectories << it.name }
+    new File("${currentDir}/jenkins_shared_workspace/kx.as.code/base-vm/boxes/").eachDir {boxDirectories << it.name }
     println(boxDirectories)
 
     def boxDirectoryList = []
@@ -155,7 +159,7 @@ try {
         boxVersion = boxDirectories[i].substring(boxDirectories[i].substring(0,boxDirectories[i].lastIndexOf("-")).length()+1,boxDirectories[i].length())
         println("provider: ${boxProvider}, version: ${boxVersion}")
 
-        new File("jenkins_shared_workspace/kx.as.code/base-vm/boxes/${boxDirectory}/").eachFile {boxDirectoryList << it.name }
+        new File("${currentDir}/jenkins_shared_workspace/kx.as.code/base-vm/boxes/${boxDirectory}/").eachFile {boxDirectoryList << it.name }
         boxDirectoryList.eachWithIndex { box, j ->
             if (box.endsWith('.box')) {
                 boxName = box.substring(0,box.lastIndexOf("-"))
