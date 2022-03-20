@@ -75,7 +75,7 @@ pipeline {
                             -var "base_image_ssh_user=${vagrant_ssh_username}" \
                             ./${node_type}-local-profiles.json
                             """
-                        }}}
+                        }
                     }
                 }
             }
