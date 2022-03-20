@@ -46,7 +46,7 @@ ingress:
 externalDB:
   enabled: true
   existingUser: gitlab
-  existingSecret: "gitlab-ce-postgresql-password"
+  existingSecret: "gitlab-postgresql-password"
 
 mysql:
   enabled: false
@@ -56,12 +56,12 @@ extraEnvVars:
   - name: POSTGRES_PASSWORD_GITLAB
     valueFrom:
       secretKeyRef:
-        name: gitlab-ce-postgresql-password
+        name: gitlab-postgresql-password
         key: postgresql-password
   - name: POSTGRES_USER_GITLAB
     value: gitlab
   - name: POSTGRES_HOST_GITLAB
-    value: gitlab-ce-postgresql.gitlab-ce
+    value: gitlab-postgresql.gitlab
   - name: POSTGRES_PORT_GITLAB
     value: "5432"
   - name: POSTGRES_DB_NAME_MATTERMOST
@@ -100,12 +100,12 @@ extraInitContainers:
       - name: POSTGRES_PASSWORD_GITLAB
         valueFrom:
           secretKeyRef:
-            name: gitlab-ce-postgresql-password
+            name: gitlab-postgresql-password
             key: postgresql-password
       - name: POSTGRES_USER_GITLAB
         value: gitlab
       - name: POSTGRES_HOST_GITLAB
-        value: gitlab-ce-postgresql.gitlab-ce
+        value: gitlab-postgresql.gitlab
       - name: POSTGRES_PORT_GITLAB
         value: "5432"
       - name: POSTGRES_DB_NAME_MATTERMOST

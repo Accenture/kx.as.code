@@ -1,7 +1,7 @@
 #!/bin/bash -x
 set -euo pipefail
 
-. ${autoSetupHome}/cicd/gitlab-ce/helper_scripts/getGroupIds.sh
+. ${autoSetupHome}/cicd/gitlab/helper_scripts/getGroupIds.sh
 
 # Create Confluence project in Gitlab
 export confluenceProjectId=$(curl -s --header "Private-Token: ${personalAccessToken}" ${gitUrl}/api/v4/projects | jq '.[] | select(.name=="confluence") | .id')
