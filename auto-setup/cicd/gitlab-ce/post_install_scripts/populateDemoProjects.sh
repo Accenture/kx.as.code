@@ -19,18 +19,21 @@ populateGitlabProject() {
   sourceCodeLocation=$3
 
   # Add project to Gitlab
-  cp -rf ${sourceCodeLocation} /var/tmp
+  mkdir -p /var/tmp/${gitlabRepoName}
+  cp -rf ${sourceCodeLocation}/* /var/tmp/${gitlabRepoName}/
   rm -rf /var/tmp/${gitlabRepoName}/.git
 
+  numFilesInRepoDir=0
   gitStatusRc=0
   if [[ -d ${installationWorkspace}/staging/${gitlabRepoName} ]]; then
     cd ${installationWorkspace}/staging/${gitlabRepoName}
     gitStatusRc=$(git status --short --branch --untracked-files=no >/dev/null && echo $? || echo $?)
     echo "Received RC=${gitStatusRc}"
     cd -
+    numFilesInRepoDir=$(ls -A ${installationWorkspace}/staging/${gitlabRepoName} | grep -v ".git" | wc -l)
   fi
 
-  if [[ ${gitStatusRc} -ne 0 ]]; then
+  if [[ ${gitStatusRc} -ne 0 ]] || [[ ${numFilesInRepoDir} -eq 0 ]]; then
     rm -rf ${installationWorkspace}/staging/${gitlabRepoName}
   fi
 
