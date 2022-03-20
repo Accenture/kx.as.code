@@ -18,7 +18,7 @@ async function triggerBuild(nodeType) {
         method: 'POST',
         headers: {
             'Authorization': 'Basic ' + btoa('admin:admin'),
-            'Jenkins-Crumb': jenkinsCrumb.value
+            'Jenkins-Crumb': jenkinsCrumb
         },
         body: formData
     }
@@ -295,9 +295,10 @@ function updateAllConcatenatedVariables() {
 
 async function getBuildJobListForProfile(job, nodeType) {
     let styleColor;
-
+    console.log("DEBUG getBuildJobListForProfile: " + job + " | " + nodeType);
     getAllJenkinsBuilds(job).then(data => {
-        console.log("nodeType: " + nodeType);
+        console.log("DEBUG nodeType: " + nodeType);
+        console.log("DEBUG job: " + job);
         console.log(data);
         const kxBuilds = (() => {
             const builds = filterBuilds(data);
@@ -389,7 +390,7 @@ async function getExtendedJobDetails(url) {
         method: 'GET',
         headers: {
             'Authorization': 'Basic ' + btoa('admin:admin'),
-            'Jenkins-Crumb': jenkinsCrumb.value
+            'Jenkins-Crumb': jenkinsCrumb
         }
     }).then(data => {
         //console.log(data);
@@ -410,21 +411,30 @@ async function getExtendedJobDetails(url) {
 function filterBuilds(data) {
     let tmp = [];
     let nodeType;
+    let paramArrayLocation
     console.log("Inside filterBuilds");
     const builds = data.builds;
     console.log(data);
     console.log(builds);
     builds.map((e) => {
-        let obj = {}
-        obj["estimatedDuration"] = e.estimatedDuration ? e.estimatedDuration : -1
-        obj["id"] = e.id ? e.id : -1
-        obj["number"] = e.number ? e.number : -1
-        obj["result"] = e.result ? e.result : '-'
-        obj["timestamp"] = e.timestamp ? e.timestamp : -1
-        obj["url"] = e.url ? e.url : '-'
-        obj["displayName"] = e.displayName ? e.displayName : '-'
+        let obj = {};
+        obj["estimatedDuration"] = e.estimatedDuration ? e.estimatedDuration : -1;
+        obj["id"] = e.id ? e.id : -1;
+        obj["number"] = e.number ? e.number : -1;
+        obj["result"] = e.result ? e.result : '-';
+        obj["timestamp"] = e.timestamp ? e.timestamp : -1;
+        obj["url"] = e.url ? e.url : '-';
 
-        e.actions[0].parameters.filter((e) => {
+        if (e.actions[0]._class === 'hudson.model.ParametersAction') {
+            paramArrayLocation = 0;
+        } else if (e.actions[1]._class === 'hudson.model.ParametersAction') {
+            paramArrayLocation = 1;
+        }
+
+        console.log("paramArrayLocation: " + paramArrayLocation);
+        console.log(e.actions[paramArrayLocation]);
+        console.log(e.actions[paramArrayLocation]._class);
+        e.actions[paramArrayLocation].parameters.filter((e) => {
 
             if (e.value === "kx-main") {
                 nodeType = "kx-main";
@@ -520,7 +530,7 @@ async function stopTriggeredBuild(job, nodeType) {
                 method: 'POST',
                 headers: {
                     'Authorization': 'Basic ' + btoa('admin:admin'),
-                    'Jenkins-Crumb': jenkinsCrumb.value
+                    'Jenkins-Crumb': jenkinsCrumb
                 }
             }).then(data => {
                 console.log(data)
@@ -576,7 +586,7 @@ async function showConsoleLog(job, nodeType) {
                 method: 'GET',
                 headers: {
                     'Authorization': 'Basic ' + btoa('admin:admin'),
-                    'Jenkins-Crumb': jenkinsCrumb.value
+                    'Jenkins-Crumb': jenkinsCrumb
                 }
             }).then(data => {
                 data.text().then(consoleLog => {
@@ -675,14 +685,15 @@ function getCrumb() {
 }
 
 async function getAllJenkinsBuilds(job) {
+    console.log("DEBUG getAllJenkinsBuilds(job): " + job);
     let jenkinsCrumb = getCrumb().value;
-    console.log("Jenkins Crumb received = " + jenkinsCrumb.value);
+    console.log("Jenkins Crumb received = " + jenkinsCrumb);
     let fetchUrl = 'http://localhost:8081/job/Actions/job/' + job + '/api/json?tree=builds[number,status,timestamp,id,result,url,estimatedDuration,actions[parameters[name,value]]]'
     let response = await fetch(fetchUrl, {
         method: 'GET',
         headers: {
             'Authorization': 'Basic ' + btoa('admin:admin'),
-            'Jenkins-Crumb': jenkinsCrumb.value
+            'Jenkins-Crumb': jenkinsCrumb
         }
     });
 
@@ -721,7 +732,7 @@ async function performRuntimeAction(vagrantAction) {
     console.log("vagrant action: " + vagrantAction);
 
     let jenkinsCrumb = getCrumb().value;
-    console.log("Jenkins Crumb received = " + jenkinsCrumb.value);
+    console.log("Jenkins Crumb received = " + jenkinsCrumb);
 
     let formData = new FormData();
     formData.append('kx_main_version', document.getElementById("kx-main-version").innerText);
@@ -738,7 +749,7 @@ async function performRuntimeAction(vagrantAction) {
         method: 'POST',
         headers: {
             'Authorization': 'Basic ' + btoa('admin:admin'),
-            'Jenkins-Crumb': jenkinsCrumb.value
+            'Jenkins-Crumb': jenkinsCrumb
         },
         body: formData
     }
