@@ -34,14 +34,18 @@ def destinationFile
 def alreadyExistingTemplateFilesInProfile = []
 def fileToDelete
 
-new File('jenkins_shared_workspace/kx.as.code/templates/').eachFileMatch(~/^aq.*.json$/) { template_paths << it.path }
+def currentDir = new File(".").getAbsolutePath().replaceAll("\\\\", "/")
+currentDir = currentDir.substring(0, currentDir.length() - 1)
+println("PROFILE UPDATE CURRENT DIR: ${currentDir}")
+
+new File("${currentDir}/jenkins_shared_workspace/kx.as.code/templates/").eachFileMatch(~/^aq.*.json$/) { template_paths << it.path }
 selectedTemplates = TEMPLATE_SELECTOR.split(';');
 println("TEMPLATE_SELECTOR: ${TEMPLATE_SELECTOR}")
 println("template_paths: ${template_paths}")
 
 try {
     if ( USER_PROVISIONING ) {
-        def userJsonFilePath = "jenkins_shared_workspace/kx.as.code/profiles/${profileParentPath}/users.json"
+        def userJsonFilePath = "${currentDir}/jenkins_shared_workspace/kx.as.code/profiles/${profileParentPath}/users.json"
         def parsedUserJson = new JsonSlurper().parseText(USER_PROVISIONING)
         new File(userJsonFilePath).write(new JsonBuilder(parsedUserJson).toPrettyString())
     }
@@ -51,7 +55,7 @@ try {
 
 try {
     println("Before file search")
-    def targetProfilePath="jenkins_shared_workspace/kx.as.code/profiles/${profileParentPath}"
+    def targetProfilePath="${currentDir}/jenkins_shared_workspace/kx.as.code/profiles/${profileParentPath}"
     new File(targetProfilePath).eachFileMatch(~/^aq.*.json$/) { alreadyExistingTemplateFilesInProfile << it.path }
     alreadyExistingTemplateFilesInProfile.eachWithIndex { profileTemplateJson, i ->
             println("Found ${profileTemplateJson} already in profiles directory")

@@ -53,6 +53,28 @@ def kxWorkerRunningVms
 
 try {
 
+    def OS = System.getProperty("os.name", "generic").toLowerCase(Locale.ENGLISH);
+    def virtualboxCliPath
+    def vmwareCliPath
+    def parallelsCliPath
+
+    if ((OS.indexOf("mac") >= 0) || (OS.indexOf("darwin") >= 0)) {
+        underlyingOS = "darwin"
+        virtualboxCliPath = "/Applications/VirtualBox.app/Contents/MacOS/VBoxManage"
+        vmwareCliPath = "/Applications/VMware Fusion.app/Contents/Public/vmrun"
+        parallelsCliPath = "/Applications/Parallels Desktop.app/Contents/MacOS/prlctl"
+    } else if (OS.indexOf("win") >= 0) {
+        underlyingOS = "windows"
+        virtualboxCliPath = "C:/Program Files/Oracle/VirtualBox/VBoxManage.exe"
+        vmwareCliPath = "C:/Program Files (x86)/VMware/VMware Workstation/vmrun.exe"
+    } else if (OS.indexOf("nux") >= 0) {
+        underlyingOS = "linux"
+        virtualboxCliPath = "/usr/bin/vboxmanage"
+        vmwareCliPath = "/usr/bin/vmrun"
+    } else {
+        underlyingOS = "other"
+    }
+
     parsedJson = new JsonSlurper().parse(inputFile)
 
     mb = 1024 * 1024;
@@ -264,23 +286,29 @@ try {
     def runningVirtualMachinesList = []
 
     if ( PROFILE.contains("vmware-desktop")) {
-
-        runningVirtualMachines = 'vmrun list'.execute().text
-        runningVirtualMachinesList = new String(vagrantPluginList).split('\n')
-
+        runningVirtualMachines = "${vmwareCliPath} list".execute().text
+        println("Running VMWare VMs: ${runningVirtualMachines}")
+        runningVirtualMachinesList = new String(runningVirtualMachines).split('\n')
+        println("runningVirtualMachinesList - vmware: ${runningVirtualMachinesList}")
+        kxMainRunningVms = runningVirtualMachinesList.findAll { it.contains('kx.as.code-demo1-main') }
+        kxWorkerRunningVms = runningVirtualMachinesList.findAll { it.contains('kx.as.code-demo1-worker') }
     } else if ( PROFILE.contains("parallels") ) {
-        runningVirtualMachines = 'prlctl list'.execute().text
-        println(runningVirtualMachines)
+        runningVirtualMachines = "${parallelsCliPath} list".execute().text
+        println("Running Parallels VMs: ${runningVirtualMachines}")
         virtualMachinesList = new String(runningVirtualMachines).split('\n')
+        println("runningVirtualMachinesList - parallels: ${runningVirtualMachinesList}")
         runningVirtualMachinesList = virtualMachinesList.findAll { it.contains('running') }
         kxMainRunningVms = runningVirtualMachinesList.findAll { it.contains('kx.as.code-demo1-main') }
         kxWorkerRunningVms = runningVirtualMachinesList.findAll { it.contains('kx.as.code-demo1-worker') }
-        println("kxMainRunningVms.size(): ", kxMainRunningVms.size())
-        println("kxWorkerRunningVms.size()", kxWorkerRunningVms.size())
+        println("kxMainRunningVms.size(): ${kxMainRunningVms.size()}")
+        println("kxWorkerRunningVms.size(): ${kxWorkerRunningVms.size()}")
     } else if ( PROFILE.contains("virtualbox")) {
-
-        runningVirtualMachines = 'vboxmanage list vms'.execute().text
-        runningVirtualMachinesList = new String(vagrantPluginList).split('\n')
+        runningVirtualMachines = "${virtualboxCliPath} list vms".execute().text
+        println("Running VirtualBox VMs: ${runningVirtualMachines}")
+        runningVirtualMachinesList = new String(runningVirtualMachines).split('\n')
+        println("runningVirtualMachinesList - virtualbox: ${runningVirtualMachinesList}")
+        kxMainRunningVms = runningVirtualMachinesList.findAll { it.contains('kx.as.code-demo1-main') }
+        kxWorkerRunningVms = runningVirtualMachinesList.findAll { it.contains('kx.as.code-demo1-worker') }
     }
 
 } catch(e) {
