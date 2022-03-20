@@ -9,7 +9,7 @@
       },
       {
         "install_folder": "cicd",
-        "name": "gitlab-ce"
+        "name": "gitlab"
       },
       {
         "install_folder": "collaboration",
