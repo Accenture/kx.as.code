@@ -61,8 +61,8 @@ try {
     if ((OS.indexOf("mac") >= 0) || (OS.indexOf("darwin") >= 0)) {
         underlyingOS = "darwin"
         virtualboxCliPath = "/Applications/VirtualBox.app/Contents/MacOS/VBoxManage"
-        vmwareCliPath = "/Applications/VMware Fusion.app/Contents/Public/vmrun"
-        parallelsCliPath = "/Applications/Parallels Desktop.app/Contents/MacOS/prlctl"
+        vmwareCliPath = "/Applications/VMware\ Fusion.app/Contents/Public/vmrun"
+        parallelsCliPath = "/Applications/Parallels\ Desktop.app/Contents/MacOS/prlctl"
     } else if (OS.indexOf("win") >= 0) {
         underlyingOS = "windows"
         virtualboxCliPath = "C:/Program Files/Oracle/VirtualBox/VBoxManage.exe"
@@ -300,8 +300,8 @@ try {
         runningVirtualMachinesList = virtualMachinesList.findAll { it.contains('running') }
         kxMainRunningVms = runningVirtualMachinesList.findAll { it.contains('kx.as.code-demo1-main') }
         kxWorkerRunningVms = runningVirtualMachinesList.findAll { it.contains('kx.as.code-demo1-worker') }
-        println("kxMainRunningVms.size(): ${kxMainRunningVms.size()}")
-        println("kxWorkerRunningVms.size(): ${kxWorkerRunningVms.size()}")
+        //println("kxMainRunningVms.size(): ${kxMainRunningVms.size()}")
+        //println("kxWorkerRunningVms.size(): ${kxWorkerRunningVms.size()}")
     } else if ( PROFILE.contains("virtualbox")) {
         runningVirtualMachines = "${virtualboxCliPath} list vms".execute().text
         println("Running VirtualBox VMs: ${runningVirtualMachines}")

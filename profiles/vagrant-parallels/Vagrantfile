@@ -80,6 +80,7 @@ rescue
   NAT_MAIN_GUEST_IP_ADDRESS = "0.0.0.0"
 end
 puts "NAT_MAIN_GUEST_IP_ADDRESS: #{NAT_MAIN_GUEST_IP_ADDRESS}"
+
 # Path for current Jenkins solution
 WORKSPACE_HOME = File.dirname(File.expand_path('../..', __FILE__))
 
