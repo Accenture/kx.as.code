@@ -3,7 +3,7 @@ image:
   tag: {{imageTag}}
   imagePullPolicy: IfNotPresent
 
-istence:
+persistence:
   data:
     enabled: true
     size: 1Gi

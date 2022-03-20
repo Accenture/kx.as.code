@@ -1,8 +1,8 @@
 #!/bin/bash -x
 
 # Create Keycloak Client
-redirectUris="https://gitlab.${baseDomain}/users/auth/openid_connect/callback"
-rootUrl="https://gitlab.${baseDomain}"
+redirectUris="https://${componentName}.${baseDomain}/users/auth/openid_connect/callback"
+rootUrl="https://${componentName}.${baseDomain}"
 baseUrl="/"
 export clientId=$(createKeycloakClient "${redirectUris}" "${rootUrl}" "${baseUrl}")
 
@@ -28,9 +28,9 @@ echo '''
       "attributes": {  "nickname":  "preferred_username"  }
     },
     "client_options": {
-      "identifier": "gitlab-ce",
+      "identifier": "'${componentName}'",
       "secret": "'${clientSecret}'",
-      "redirect_uri": "https://gitlab.'${baseDomain}'/users/auth/openid_connect/callback"
+      "redirect_uri": "https://'${componentName}'.'${baseDomain}'/users/auth/openid_connect/callback"
     }
   }
 }

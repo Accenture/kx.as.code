@@ -10,15 +10,15 @@ set -euo pipefail
 export personalAccessToken=$(getPassword "gitlab-personal-access-token")
 
 # Add new user as group admin to new KX.AS.CODE group
-mappedUser=$(curl -s --header "Private-Token: ${personalAccessToken}" https://gitlab.${baseDomain}/api/v4/groups/${kxascodeGroupId}/members | jq '.[] | select(.username=="'${vmUser}'") | .id')
+mappedUser=$(curl -s --header "Private-Token: ${personalAccessToken}" https://${componentName}.${baseDomain}/api/v4/groups/${kxascodeGroupId}/members | jq '.[] | select(.username=="'${vmUser}'") | .id')
 if [[ -z ${mappedUser} ]]; then
     for i in {1..5}; do
         curl -XPOST --header "Private-Token: ${personalAccessToken}" \
             --data 'id='${rootUserId}'' \
             --data 'user_id='${kxheroUserId}'' \
             --data 'access_level=50' \
-            https://gitlab.${baseDomain}/api/v4/groups/${kxascodeGroupId}/members
-        mappedUser=$(curl -s --header "Private-Token: ${personalAccessToken}" https://gitlab.${baseDomain}/api/v4/groups/${kxascodeGroupId}/members | jq '.[] | select(.username=="'${vmUser}'") | .id')
+            https://${componentName}.${baseDomain}/api/v4/groups/${kxascodeGroupId}/members
+        mappedUser=$(curl -s --header "Private-Token: ${personalAccessToken}" https://${componentName}.${baseDomain}/api/v4/groups/${kxascodeGroupId}/members | jq '.[] | select(.username=="'${vmUser}'") | .id')
         if [[ -n ${mappedUser}   ]]; then break; else
             log_warn "${vmUser} user was not mapped to KX.AS.CODE group. Trying again ($i of 5)"
             sleep 5
@@ -29,15 +29,15 @@ else
 fi
 
 # Add new user as group admin to new DEVOPS group
-mappedUser=$(curl -s --header "Private-Token: ${personalAccessToken}" https://gitlab.${baseDomain}/api/v4/groups/${devopsGroupId}/members | jq '.[] | select(.username=="'${vmUser}'") | .id')
+mappedUser=$(curl -s --header "Private-Token: ${personalAccessToken}" https://${componentName}.${baseDomain}/api/v4/groups/${devopsGroupId}/members | jq '.[] | select(.username=="'${vmUser}'") | .id')
 if [[ -z ${mappedUser} ]]; then
     for i in {1..5}; do
         curl -s -XPOST --header "Private-Token: ${personalAccessToken}" \
             --data 'id='${rootUserId}'' \
             --data 'user_id='${kxheroUserId}'' \
             --data 'access_level=50' \
-            https://gitlab.${baseDomain}/api/v4/groups/${devopsGroupId}/members
-        mappedUser=$(curl -s --header "Private-Token: ${personalAccessToken}" https://gitlab.${baseDomain}/api/v4/groups/${devopsGroupId}/members | jq '.[] | select(.username=="'${vmUser}'") | .id')
+            https://${componentName}.${baseDomain}/api/v4/groups/${devopsGroupId}/members
+        mappedUser=$(curl -s --header "Private-Token: ${personalAccessToken}" https://${componentName}.${baseDomain}/api/v4/groups/${devopsGroupId}/members | jq '.[] | select(.username=="'${vmUser}'") | .id')
         if [[ -n ${mappedUser}   ]]; then break; else
             log_warn "${vmUser} user was not mapped to DEVOPS group. Trying again ($i of 5)"
             sleep 5

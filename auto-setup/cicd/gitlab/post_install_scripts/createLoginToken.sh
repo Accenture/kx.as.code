@@ -6,7 +6,7 @@ if [[ -z $(getPassword "gitlab-personal-access-token") ]]; then
     # Set Gitlab admin user
     export adminUser="root"
 
-    # Get Gitlab-CE task-runner pod name
+    # Get Gitlab task-runner pod name
     export podName=$(kubectl get pods -n ${namespace} -l app=toolbox -o=custom-columns=:metadata.name --no-headers)
 
     # Generate personal access token

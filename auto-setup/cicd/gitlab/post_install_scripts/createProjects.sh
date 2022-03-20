@@ -4,16 +4,14 @@ set -euo pipefail
 # Get Gitlab personal access token
 export personalAccessToken=$(getPassword "gitlab-personal-access-token")
 
-# Get Gitlab Group IDs
-export kxascodeGroupId=$(curl -s --header "Private-Token: ${personalAccessToken}" https://gitlab.${baseDomain}/api/v4/groups | jq '.[] | select(.name=="kx.as.code") | .id')
-export devopsGroupId=$(curl -s --header "Private-Token: ${personalAccessToken}" https://gitlab.${baseDomain}/api/v4/groups | jq '.[] | select(.name=="devops") | .id')
-
 createGitlabProject() {
 
   gitlabProjectName=$1
-  gitlabGroupId=$2
+  gitlabGroupName=$2
+  gitlabGroupId=$(curl -s --header "Private-Token: ${personalAccessToken}" https://${componentName}.${baseDomain}/api/v4/groups/${gitlabGroupName} | jq '.id')
+
   # Create project in Gitlab
-  export kxascodeProjectId=$(curl -s --header "Private-Token: ${personalAccessToken}" https://gitlab.${baseDomain}/api/v4/projects | jq '.[] | select(.name=="'${gitlabProjectName}'") | .id')
+  export kxascodeProjectId=$(curl -s --header "Private-Token: ${personalAccessToken}" https://${componentName}.${baseDomain}/api/v4/projects/${gitlabGroupName}%2F${gitlabProjectName} | jq '.id')
   if [[ -z ${kxascodeProjectId} ]]; then
       for i in {1..5}; do
           curl -s -XPOST --header "Private-Token: ${personalAccessToken}" \
@@ -25,8 +23,8 @@ createGitlabProject() {
               --data 'visibility=internal' \
               --data 'container_registry_enabled=false' \
               --data 'auto_devops_enabled=false' \
-              https://gitlab.${baseDomain}/api/v4/projects
-          export kxascodeProjectId=$(curl -s --header "Private-Token: ${personalAccessToken}" https://gitlab.${baseDomain}/api/v4/projects | jq '.[] | select(.name=="'${gitlabProjectName}'") | .id')
+              https://${componentName}.${baseDomain}/api/v4/projects
+          export kxascodeProjectId=$(curl -s --header "Private-Token: ${personalAccessToken}" https://${componentName}.${baseDomain}/api/v4/projects | jq '.[] | select(.name=="'${gitlabProjectName}'") | .id')
           if [[ -n ${kxascodeProjectId} ]]; then break; else
               log_warn "Gitlab project \"${gitlabProjectName}\" not created. Trying again ($i of 5)"
               sleep 5
@@ -38,8 +36,9 @@ createGitlabProject() {
 
 }
 
-createGitlabProject "kx.as.code" "${kxascodeGroupId}"
-createGitlabProject "grafana-image-renderer" "${devopsGroupId}"
-createGitlabProject "nexus3" "${devopsGroupId}"
-createGitlabProject "jira" "${devopsGroupId}"
-createGitlabProject "confluence" "${devopsGroupId}"
+# function-call projectName groupName
+createGitlabProject "kx.as.code" "kx.as.code"
+createGitlabProject "grafana-image-renderer" "devops"
+createGitlabProject "nexus3" "devops"
+createGitlabProject "jira" "devops"
+createGitlabProject "confluence" "devops"

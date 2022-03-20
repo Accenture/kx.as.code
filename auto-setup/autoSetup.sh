@@ -1,5 +1,5 @@
 #!/bin/bash
-set -euo pipefail
+set -euox pipefail
 
 export rc=0
 
@@ -98,9 +98,9 @@ if [[ ${action} == "install"   ]]; then
 
     # Create primary desktop icon to launch tool's site with Chrome
     if [[ -n ${primaryUrl} ]]; then
+        shaortcutIcon=$(cat ${componentMetadataJson} | jq -r '.shortcut_icon')
+        iconPath=${installComponentDirectory}/${shortcutIcon}
         if [[ -n ${primaryUrl} ]] && [[ ${primaryUrl} != "null" ]] && [[ -f ${iconPath} ]] && [[ -n ${shortcutText} ]]; then
-          shortcutIcon=$(cat ${componentMetadataJson} | jq -r '.shortcut_icon')
-          iconPath=${installComponentDirectory}/${shortcutIcon}
           createDesktopIcon "${devopsShortcutsDirectory}" "${primaryUrl}" "${shortcutText}" "${iconPath}" "${browserOptions}"
         fi
     fi
