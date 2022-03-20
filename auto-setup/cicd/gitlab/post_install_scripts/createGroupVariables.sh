@@ -15,11 +15,11 @@ createGitlabVariable() {
   gitlabVariableValue=$2
   gitlabGroupName=$3
 
-  groupVariableExists=$(curl --header "PRIVATE-TOKEN: ${personalAccessToken}" "https://gitlab.${baseDomain}/api/v4/groups/${gitlabGroupName}/variables/${gitlabVariableKey}" | jq -r '.key')
+  groupVariableExists=$(curl --header "PRIVATE-TOKEN: ${personalAccessToken}" "https://${componentName}.${baseDomain}/api/v4/groups/${gitlabGroupName}/variables/${gitlabVariableKey}" | jq -r '.key')
   if [[ ${groupVariableExists} == "null"   ]]; then
       for i in {1..5}; do
-          curl --request POST --header "PRIVATE-TOKEN: ${personalAccessToken}" "https://gitlab.${baseDomain}/api/v4/groups/${gitlabGroupName}/variables" --form "key=${gitlabVariableKey}" --form "value=${gitlabVariableValue}"
-          groupVariableExists=$(curl --header "PRIVATE-TOKEN: ${personalAccessToken}" "https://gitlab.${baseDomain}/api/v4/groups/${gitlabGroupName}/variables/${gitlabVariableKey}" | jq -r '.key')
+          curl --request POST --header "PRIVATE-TOKEN: ${personalAccessToken}" "https://${componentName}.${baseDomain}/api/v4/groups/${gitlabGroupName}/variables" --form "key=${gitlabVariableKey}" --form "value=${gitlabVariableValue}"
+          groupVariableExists=$(curl --header "PRIVATE-TOKEN: ${personalAccessToken}" "https://${componentName}.${baseDomain}/api/v4/groups/${gitlabGroupName}/variables/${gitlabVariableKey}" | jq -r '.key')
           if [[ ${groupVariableExists} != "null"   ]]; then break; else
               log_warn "Gitlab Group Variable \"${gitlabVariableKey}\" not created. Trying again"
               sleep 5

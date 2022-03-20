@@ -8,10 +8,10 @@ createGitlabProject() {
 
   gitlabProjectName=$1
   gitlabGroupName=$2
-  gitlabGroupId=$(curl -s --header "Private-Token: ${personalAccessToken}" https://gitlab.${baseDomain}/api/v4/groups/${gitlabGroupName} | jq '.id')
+  gitlabGroupId=$(curl -s --header "Private-Token: ${personalAccessToken}" https://${componentName}.${baseDomain}/api/v4/groups/${gitlabGroupName} | jq '.id')
 
   # Create project in Gitlab
-  export kxascodeProjectId=$(curl -s --header "Private-Token: ${personalAccessToken}" https://gitlab.${baseDomain}/api/v4/projects/${gitlabGroupName}%2F${gitlabProjectName} | jq '.id')
+  export kxascodeProjectId=$(curl -s --header "Private-Token: ${personalAccessToken}" https://${componentName}.${baseDomain}/api/v4/projects/${gitlabGroupName}%2F${gitlabProjectName} | jq '.id')
   if [[ -z ${kxascodeProjectId} ]]; then
       for i in {1..5}; do
           curl -s -XPOST --header "Private-Token: ${personalAccessToken}" \
@@ -23,8 +23,8 @@ createGitlabProject() {
               --data 'visibility=internal' \
               --data 'container_registry_enabled=false' \
               --data 'auto_devops_enabled=false' \
-              https://gitlab.${baseDomain}/api/v4/projects
-          export kxascodeProjectId=$(curl -s --header "Private-Token: ${personalAccessToken}" https://gitlab.${baseDomain}/api/v4/projects | jq '.[] | select(.name=="'${gitlabProjectName}'") | .id')
+              https://${componentName}.${baseDomain}/api/v4/projects
+          export kxascodeProjectId=$(curl -s --header "Private-Token: ${personalAccessToken}" https://${componentName}.${baseDomain}/api/v4/projects | jq '.[] | select(.name=="'${gitlabProjectName}'") | .id')
           if [[ -n ${kxascodeProjectId} ]]; then break; else
               log_warn "Gitlab project \"${gitlabProjectName}\" not created. Trying again ($i of 5)"
               sleep 5

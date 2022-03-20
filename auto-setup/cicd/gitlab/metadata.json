@@ -1,6 +1,6 @@
 {
-    "name": "gitlab-ce",
-    "namespace": "gitlab-ce",
+    "name": "gitlab",
+    "namespace": "gitlab",
     "installation_type": "helm",
     "installation_group_folder": "cicd",
     "minimum_resources": {
@@ -18,7 +18,7 @@
         "set_key_values": [
             "global.hosts.domain={{baseDomain}}",
             "global.hosts.externalIP={{nginxIngressIp}}",
-            "externalUrl=https://gitlab.{{baseDomain}}",
+            "externalUrl=https://{{componentName}}.{{baseDomain}}",
             "global.edition=ce",
             "prometheus.install=false",
             "global.smtp.enabled=false",

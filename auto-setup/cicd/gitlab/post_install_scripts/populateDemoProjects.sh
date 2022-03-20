@@ -6,7 +6,7 @@ export sharedGitRepositories=/usr/share/kx.as.code/git
 # Create base directory for Gitlab Demo repositories
 mkdir -p ${installationWorkspace}/staging/
 
-gitlabDomain="gitlab.${baseDomain}"
+gitlabDomain="${componentName}.${baseDomain}"
 
 # Set Git committer details
 git config --global user.name "${vmUser}"
