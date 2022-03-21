@@ -1,7 +1,7 @@
 #!/bin/bash -eux
 
 # Integrate solution with Keycloak
-redirectUris="https://${componentName}.${kcRealm}/c/oidc/callback"
+redirectUris="https://${componentName}.${baseDomain}/c/oidc/callback"
 rootUrl="https://${componentName}.${baseDomain}"
 baseUrl="/applications"
 protocol="openid-connect"
@@ -25,7 +25,7 @@ then
    export harborAuthModeResp=$(curl -u 'admin:'${harborAdminPassword}'' -X PUT "https://${componentName}.${baseDomain}/api/v2.0/configurations" -H "accept: application/json" -H "Content-Type: application/json" -d '{
    "auth_mode": "oidc_auth",
    "oidc_name": "Keycloak Auth",
-   "oidc_endpoint": "https://keycloak.'${baseDomain}'/auth/realms/'${kcRealm}'",
+   "oidc_endpoint": "https://keycloak.'${baseDomain}'/auth/realms/'${baseDomain}'",
    "oidc_client_id": "'${componentName}'",
    "oidc_client_secret": "'${clientSecret}'",
    "oidc_scope": "openid,profile,email,offline_access",
@@ -44,7 +44,7 @@ fi
 
 # Test the oidc configuration
 export harborOidcPingRes=$(curl -u 'admin:'${harborAdminPassword}'' -X POST "https://${componentName}.${baseDomain}/api/v2.0/system/oidc/ping" -H "accept: application/json" -H "Content-Type: application/json" -d '
-{ "url":"https://keycloak.'${baseDomain}'/auth/realms/'${kcRealm}'",
+{ "url":"https://keycloak.'${baseDomain}'/auth/realms/'${baseDomain}'",
   "verify_cert":false
 }' )
 if [[ ${harborOidcPingRes} -eq 200 ]] ||  [[ ${harborOidcPingRes} = '' ]];

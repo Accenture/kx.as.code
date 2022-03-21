@@ -189,7 +189,7 @@
                     "description": "Full enterprise like features covering the entire CICD stack",
                     "components": [
                         "minio_s3",
-                        "gitlab_ce",
+                        "gitlab",
                         "artifactory",
                         "mattermost",
                         "harbor",
