@@ -31,7 +31,7 @@ createKeycloakProtocolMapper () {
                 -s 'config."id.token.claim"=true' \
                 -s 'config."full.path"='${fullPath}'' \
                 -s 'config."jsonType.label"=String'
-        
+
     else
         >&2 log_info "Keycloak protocol mapper \"${protocolMapper}\" for client \"${clientId}\" already exists. Skipping it's creation"
     fi

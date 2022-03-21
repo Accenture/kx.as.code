@@ -37,7 +37,7 @@ falco:
     enabled: true
   programOutput:
     enabled: true
-    program: "jq '{text: .output}' | curl -H 'Content-Type: application/json' -d @- -X POST http://mattermost-team-edition.gitlab-ce:8065/hooks/{{securityWebhookId}}"
+    program: "jq '{text: .output}' | curl -H 'Content-Type: application/json' -d @- -X POST http://mattermost-team-edition.mattermost:8065/hooks/{{securityWebhookId}}"
 
 customRules:
   kx-as-code-rules.yaml: |-
@@ -165,7 +165,7 @@ customRules:
         '"curl --fail --max-time 10 --insecure http://localhost:80/help"',
         '"script-login -d /bin/log-dovecot-imap-auth.sh"',
         '"dovecot -c \/etc\/dovecot\/dovecot.conf -F"',
-        '"curl -H Content-Type: application/json -d @- -X POST http://mattermost-team-edition.gitlab-ce:8065/hooks/{{securityWebhookId}}"'
+        '"curl -H Content-Type: application/json -d @- -X POST http://mattermost-team-edition.mattermost:8065/hooks/{{securityWebhookId}}"'
       ]
 
     - list: known_shell_spawn_cmdlines

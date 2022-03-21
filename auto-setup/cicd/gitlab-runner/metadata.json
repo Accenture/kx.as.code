@@ -1,6 +1,6 @@
 {
     "name": "gitlab-runner",
-    "namespace": "gitlab-ce",
+    "namespace": "gitlab",
     "installation_type": "script",
     "installation_group_folder": "cicd",
     "install_scripts": [
@@ -13,7 +13,7 @@
     "categories": [
         "cicd"
     ],
-    "Description": "Customized Gitlab Runner for Gitlab-CE",
+    "Description": "Customized Gitlab Runner for Gitlab",
     "pre_install_scripts": [],
     "post_install_scripts": []
 }

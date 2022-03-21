@@ -31,18 +31,18 @@ puts "Local Disk Size: #{LOCAL_KUBE_VOLUMES_DISK_SIZE}GB"
 puts "GlusterFS Disk Size: #{GLUSTERFS_KUBE_VOLUMES_DISK_SIZE}GB"
 
 # Environment variables will override the profile-config.json file properties. This was added for the Jenkins jobs, so that they can override parameters
-ENVIRONMENT_PREFIX = ENV['environmentPrefix'] || profile_config_json['config']['vm_properties']['environment_prefix']
+ENVIRONMENT_PREFIX = ENV['environmentPrefix'] || profile_config_json['config']['environmentPrefix']
 puts "ENVIRONMENT_PREFIX: #{ENVIRONMENT_PREFIX}"
 MAIN_NODE_COUNT = ENV['mainNodeCount'] || profile_config_json['config']['vm_properties']['main_node_count']
 puts "MAIN_NODE_COUNT: #{MAIN_NODE_COUNT}"
-ADMIN_MAIN_NODE_CPU_CORES = ENV['adminMainNodeCpuCores'] || profile_config_json['config']['vm_properties']['admin_main_node_cpu_cores']
-puts "ADMIN_MAIN_NODE_CPU_CORES: #{ADMIN_MAIN_NODE_CPU_CORES}"
-ADMIN_MAIN_NODE_MEMORY = ENV['adminMainNodeMemory'] || profile_config_json['config']['vm_properties']['admin_main_node_memory']
-puts "ADMIN_MAIN_NODE_MEMORY: #{ADMIN_MAIN_NODE_MEMORY}"
-REPLICA_MAIN_NODE_CPU_CORES = ENV['replicaMainNodeCpuCores'] || profile_config_json['config']['vm_properties']['replica_main_node_cpu_cores']
-puts "REPLICA_MAIN_NODE_CPU_CORES: #{REPLICA_MAIN_NODE_CPU_CORES}"
-REPLICA_MAIN_NODE_MEMORY = ENV['replicaMainNodeMemory'] || profile_config_json['config']['vm_properties']['replica_main_node_memory']
-puts "REPLICA_MAIN_NODE_MEMORY: #{REPLICA_MAIN_NODE_MEMORY}"
+MAIN_ADMIN_NODE_CPU_CORES = ENV['adminMainNodeCpuCores'] || profile_config_json['config']['vm_properties']['main_admin_node_cpu_cores']
+puts "MAIN_ADMIN_NODE_CPU_CORES: #{MAIN_ADMIN_NODE_CPU_CORES}"
+MAIN_ADMIN_NODE_MEMORY = ENV['adminMainNodeMemory'] || profile_config_json['config']['vm_properties']['main_admin_node_memory']
+puts "MAIN_ADMIN_NODE_MEMORY: #{MAIN_ADMIN_NODE_MEMORY}"
+MAIN_REPLICA_NODE_CPU_CORES = ENV['replicaMainNodeCpuCores'] || profile_config_json['config']['vm_properties']['main_replica_node_cpu_cores']
+puts "MAIN_REPLICA_NODE_CPU_CORES: #{MAIN_REPLICA_NODE_CPU_CORES}"
+MAIN_REPLICA_NODE_MEMORY = ENV['replicaMainNodeMemory'] || profile_config_json['config']['vm_properties']['main_replica_node_memory']
+puts "MAIN_REPLICA_NODE_MEMORY: #{MAIN_REPLICA_NODE_MEMORY}"
 WORKER_NODE_COUNT = ENV['workerNodeCount'] || profile_config_json['config']['vm_properties']['worker_node_count']
 puts "WORKER_NODE_COUNT: #{WORKER_NODE_COUNT}"
 WORKER_NODE_CPU_CORES = ENV['workerNodeCpuCores'] || profile_config_json['config']['vm_properties']['worker_node_cpu_cores']
@@ -57,33 +57,47 @@ DOCKERHUB_EMAIL = ENV['dockerHubEmail'] || profile_config_json['config']['docker
 puts "DOCKERHUB_EMAIL: #{DOCKERHUB_EMAIL}"
 DOCKERHUB_PASSWORD = ENV['dockerHubPassword']
 puts "DOCKERHUB_PASSWORD: #{DOCKERHUB_PASSWORD}"
-BOX_VERSION = ENV['boxVersion'] || kx_version_json['kxascode']
-puts "BOX_VERSION: #{BOX_VERSION}"
-KX_MAIN_BOX_LOCATION = ENV['kxMainBoxLocation'] || "base-vm/boxes/parallels-#{BOX_VERSION}/kx.as.code-main-#{BOX_VERSION}.box"
+MAIN_BOX_VERSION = ENV['mainBoxVersion'] || kx_version_json['kxascode']
+puts "MAIN_BOX_VERSION: #{MAIN_BOX_VERSION}"
+NODE_BOX_VERSION = ENV['nodeBoxVersion'] || kx_version_json['kxascode']
+puts "NODE_BOX_VERSION: #{NODE_BOX_VERSION}"
+KX_MAIN_BOX_LOCATION = ENV['kxMainBoxLocation'] || "base-vm/boxes/parallels-#{MAIN_BOX_VERSION}/kx-main-#{MAIN_BOX_VERSION}.box"
 puts "KX_MAIN_BOX_LOCATION: #{KX_MAIN_BOX_LOCATION}"
-KX_NODE_BOX_LOCATION = ENV['kxNodeBoxLocation'] || "base-vm/boxes/parallels-#{BOX_VERSION}/kx.as.code-node-#{BOX_VERSION}.box"
+KX_NODE_BOX_LOCATION = ENV['kxNodeBoxLocation'] || "base-vm/boxes/parallels-#{NODE_BOX_VERSION}/kx-node-#{NODE_BOX_VERSION}.box"
 puts "KX_NODE_BOX_LOCATION: #{KX_NODE_BOX_LOCATION}"
 
 if (MAIN_NODE_COUNT - 1) < 1
-  REPLICA_MAIN_NODE_COUNT = 0
-  puts "REPLICA_MAIN_NODE_COUNT < 1 -> #{REPLICA_MAIN_NODE_COUNT} replica main nodes will be provisioned"
+  MAIN_REPLICA_NODE_COUNT = 0
+  puts "MAIN_REPLICA_NODE_COUNT < 1 -> #{MAIN_REPLICA_NODE_COUNT} replica main nodes will be provisioned"
 else
-  REPLICA_MAIN_NODE_COUNT = MAIN_NODE_COUNT - 1
-  puts "REPLICA_MAIN_NODE_COUNT > 1 -> #{REPLICA_MAIN_NODE_COUNT} replica main nodes will be provisioned"
+  MAIN_REPLICA_NODE_COUNT = MAIN_NODE_COUNT - 1
+  puts "MAIN_REPLICA_NODE_COUNT > 1 -> #{MAIN_REPLICA_NODE_COUNT} replica main nodes will be provisioned"
 end
+
+begin
+  NAT_MAIN_GUEST_IP_ADDRESS = profile_config_json['config']['staticNetworkSetup']['baseFixedIpAddresses']['kx-main1']
+rescue
+  NAT_MAIN_GUEST_IP_ADDRESS = "0.0.0.0"
+end
+puts "NAT_MAIN_GUEST_IP_ADDRESS: #{NAT_MAIN_GUEST_IP_ADDRESS}"
 
 # Path for current Jenkins solution
 WORKSPACE_HOME = File.dirname(File.expand_path('../..', __FILE__))
 
 Vagrant.configure("2") do |config|
-  config.vm.define "kx.as.code-main1", primary: true do |subconfig|
-    subconfig.vm.box = "kx.as.code-main"
+  config.vm.define "kx-main1", primary: true do |subconfig|
+    subconfig.vm.box = "kx-main"
+    subconfig.vm.box_version = "#{MAIN_BOX_VERSION}"
     subconfig.vm.hostname = "kx-main1"
     subconfig.vm.network :forwarded_port, guest: 22, host: 2222, id: "ssh", disabled: true
     subconfig.vm.network :forwarded_port, guest: 22, host: 2230, id: "ssh-kx-main", auto_correct: true
+    subconfig.vm.network :forwarded_port, guest_ip: "#{NAT_MAIN_GUEST_IP_ADDRESS}", guest: 5672, host_ip: "127.0.0.1", host: 5672, id: "rabbitmq"
+    subconfig.vm.network :forwarded_port, guest_ip: "#{NAT_MAIN_GUEST_IP_ADDRESS}", guest: 3000, host_ip: "127.0.0.1", host: 3000, id: "kx-portal", auto_correct: true
+    subconfig.vm.network :forwarded_port, guest_ip: "#{NAT_MAIN_GUEST_IP_ADDRESS}", guest: 5001, host_ip: "127.0.0.1", host: 5001, id: "kx-portal-backend"
+    subconfig.vm.network :forwarded_port, guest_ip: "#{NAT_MAIN_GUEST_IP_ADDRESS}", guest: 443, host_ip: "127.0.0.1", host: 443, id: "k8s-ingress", auto_correct: true
     subconfig.vm.box_url = "file://#{WORKSPACE_HOME}/#{KX_MAIN_BOX_LOCATION}"
     subconfig.vm.provision "shell", inline: "hostname -I | awk {'print $1'} | tr -d ' \\t\\n\\r' | sudo tee /vagrant/kx.as.code_main-ip-address"
-    subconfig.vm.provision "shell", inline: 'sudo cp /vagrant/aq*.json /usr/share/kx.as.code/workspace/'
+    subconfig.vm.provision "shell", inline: 'if [ -f /vagrant/aq*.json ]; then sudo cp /vagrant/aq*.json /usr/share/kx.as.code/workspace/; fi'
     subconfig.vm.provision "shell", inline: 'sudo cp /vagrant/users.json /usr/share/kx.as.code/workspace/'
     subconfig.vm.provision "shell", inline: "sudo cp /vagrant/profile-config.json /usr/share/kx.as.code/workspace/"
     subconfig.vm.provision "shell", inline: "cat /usr/share/kx.as.code/workspace/profile-config.json | jq '.'"
@@ -93,10 +107,10 @@ Vagrant.configure("2") do |config|
       s.inline = "echo -e '{ \"DOCKERHUB_USER\": \"#{DOCKERHUB_USER}\", \"DOCKERHUB_EMAIL\": \"#{DOCKERHUB_EMAIL}\", \"DOCKERHUB_PASSWORD\": \"#{DOCKERHUB_PASSWORD}\" }' | sudo tee /var/tmp/.tmp.json"
     end
     subconfig.vm.provider "parallels" do |v|
-      v.name = "kx.as.code-#{ENVIRONMENT_PREFIX}-main1-#{BOX_VERSION}"
-      v.memory = ADMIN_MAIN_NODE_MEMORY
-      v.cpus = ADMIN_MAIN_NODE_CPU_CORES
-      v.customize ["set", :id, "--3d-accelerate", "highest"]
+      v.name = "kx.as.code-#{ENVIRONMENT_PREFIX}-main1-#{MAIN_BOX_VERSION}"
+      v.memory = MAIN_ADMIN_NODE_MEMORY
+      v.cpus = MAIN_ADMIN_NODE_CPU_CORES
+      v.customize ["set", :id, "--3d-accelerate", "off"]
       v.customize ["set", :id, "--high-resolution", "on"]
       v.customize ["set", :id, "--device-add", "hdd", "--size", LOCAL_KUBE_VOLUMES_DISK_SIZE.to_i * 1024]
       v.customize ["set", :id, "--device-add", "hdd", "--size", GLUSTERFS_KUBE_VOLUMES_DISK_SIZE.to_i * 1024]
@@ -104,8 +118,9 @@ Vagrant.configure("2") do |config|
   end
 
     (2..MAIN_NODE_COUNT).each do |i|
-      config.vm.define "kx.as.code-main#{i}" do |subconfig|
-        subconfig.vm.box = "kx.as.code-node"
+      config.vm.define "kx-main#{i}", primary: false, autostart: false do |subconfig|
+        subconfig.vm.box = "kx-node"
+        subconfig.vm.box_version = "#{NODE_BOX_VERSION}"
         subconfig.vm.hostname = "kx-main#{i}"
         subconfig.vm.network :forwarded_port, guest: 22, host: 2222, id: "ssh", disabled: true
         subconfig.vm.network :forwarded_port, guest: 22, host: "224#{i}", id: "ssh-kx-main#{i}", auto_correct: true
@@ -119,9 +134,9 @@ Vagrant.configure("2") do |config|
           trigger.run = { :inline => "bash -c 'rm -f kx-main#{i}-local-k8s-storage.vdi'" }
         end
       subconfig.vm.provider "parallels" do |v|
-        v.name = "kx.as.code-#{ENVIRONMENT_PREFIX}-main#{i}-#{BOX_VERSION}"
-        v.memory = REPLICA_MAIN_NODE_MEMORY
-        v.cpus = REPLICA_MAIN_NODE_CPU_CORES
+        v.name = "kx.as.code-#{ENVIRONMENT_PREFIX}-main#{i}-#{NODE_BOX_VERSION}"
+        v.memory = MAIN_REPLICA_NODE_MEMORY
+        v.cpus = MAIN_REPLICA_NODE_CPU_CORES
         v.customize ["set", :id, "--3d-accelerate", "highest"]
         v.customize ["set", :id, "--high-resolution", "on"]
         v.customize ["set", :id, "--device-add", "hdd", "--size", LOCAL_KUBE_VOLUMES_DISK_SIZE.to_i * 1024]
@@ -130,8 +145,9 @@ Vagrant.configure("2") do |config|
     end
 
   (1..WORKER_NODE_COUNT).each do |i|
-    config.vm.define "kx.as.code-worker#{i}" do |subconfig|
-      subconfig.vm.box = "kx.as.code-worker"
+    config.vm.define "kx-worker#{i}", primary: false, autostart: false do |subconfig|
+      subconfig.vm.box = "kx-node"
+      subconfig.vm.box_version = "#{NODE_BOX_VERSION}"
       subconfig.vm.hostname = "kx-worker#{i}"
       subconfig.vm.network :forwarded_port, guest: 22, host: 2222, id: "ssh", disabled: true
       subconfig.vm.network :forwarded_port, guest: 22, host: "223#{i}", id: "ssh-kx-worker#{i}", auto_correct: true
@@ -141,7 +157,7 @@ Vagrant.configure("2") do |config|
       subconfig.vm.provision "shell", inline: "cat /usr/share/kx.as.code/workspace/profile-config.json | jq '.'"
       subconfig.vm.provision "shell", inline: 'echo -e "$(date "+%Y-%m-%d_%H%M%S") | KX-Worker VM created by Vagrant" | sudo tee /usr/share/kx.as.code/workspace/gogogo'
       subconfig.vm.provider "parallels" do |v|
-        v.name = "kx.as.code-#{ENVIRONMENT_PREFIX}-worker#{i}-#{BOX_VERSION}"
+        v.name = "kx.as.code-#{ENVIRONMENT_PREFIX}-worker#{i}-#{NODE_BOX_VERSION}"
         v.memory = WORKER_NODE_MEMORY
         v.cpus = WORKER_NODE_CPU_CORES
         v.customize ["set", :id, "--3d-accelerate", "highest"]
@@ -151,4 +167,3 @@ Vagrant.configure("2") do |config|
     end
   end
 end
-

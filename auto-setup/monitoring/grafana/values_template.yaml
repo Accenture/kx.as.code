@@ -39,4 +39,4 @@ grafana.ini:
     - name: certs-configmap
       mountPath: /etc/grafana/ssl/
       configMap: certs-configmap
-      readOnly: true 
+      readOnly: true

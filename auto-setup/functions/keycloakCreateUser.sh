@@ -8,7 +8,7 @@ createKeycloakUser() {
 
     # Call function to login to Keycloak
     keycloakLogin
-    
+
     # Get Keycloak UserId
     export userId=$(kubectl -n ${kcNamespace} exec ${kcPod} --container ${kcContainer} -- \
         ${kcAdmCli} get users -r ${kcRealm} -q username=${username} | jq -r '.[] | select(.username=="'${username}'") | .id')

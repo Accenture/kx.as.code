@@ -22,7 +22,7 @@ sg_load_lib colors # Check whether 'colors' has already been sourced, otherwise 
 
 #####
 # Check if there are directory permissions issues affecting access to a file.
-# Based on the StackOverflow answer https://unix.stackexchange.com/a/82349 and modified by Someguy123 into a function 
+# Based on the StackOverflow answer https://unix.stackexchange.com/a/82349 and modified by Someguy123 into a function
 # with return codes and zsh compatibility.
 #
 # If there's a problem, it prints a red message to stderr specifying the first directory in the path which is non-executable.
@@ -67,4 +67,3 @@ can_read() {
 can_write() {
     path_permission "$1" && [ -w "$1" ] && return 0 || return 1
 }
-

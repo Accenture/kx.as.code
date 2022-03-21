@@ -10,7 +10,7 @@
     "helm_params": {
         "repository_url": "https://kubernetes.github.io/ingress-nginx",
         "repository_name": "ingress-nginx/ingress-nginx",
-        "helm_version": "4.0.3",
+        "helm_version": "4.0.13",
         "set_key_values": [
             "controller.image.tag={{nginxControllerVersion}}",
             "rbac.create=true",

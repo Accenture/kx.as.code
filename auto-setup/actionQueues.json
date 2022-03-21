@@ -3,6 +3,10 @@
         "install": [
             {
                 "install_folder": "core",
+                "name": "kx-portal"
+            },
+            {
+                "install_folder": "core",
                 "name": "gopass"
             },
             {
@@ -55,7 +59,7 @@
             },
             {
                 "install_folder": "core",
-                "name": "kxascode-basic"
+                "name": "kxascode-docs"
             },
             {
                 "install_folder": "core",

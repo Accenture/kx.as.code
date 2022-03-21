@@ -1,7 +1,7 @@
 #!/bin/bash -x
 set -euo pipefail
 
-. ${autoSetupHome}/cicd/gitlab-ce/helper_scripts/getGroupIds.sh
+. ${autoSetupHome}/cicd/gitlab/helper_scripts/getGroupIds.sh
 
 # Get personal access token
 export personalAccessToken=$(getPassword "gitlab-personal-access-token")

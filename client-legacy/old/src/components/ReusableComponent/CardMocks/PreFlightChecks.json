@@ -1,0 +1,10 @@
+{
+    "SoftwareDependencies": {
+        "VirtualBox": "True",
+        "Vagrant": "True"
+    },
+    "OtherDependencies": {
+        "Internet Connectivity": "True",
+        "Access to KX.AS.CODE image": "True"
+    }
+}

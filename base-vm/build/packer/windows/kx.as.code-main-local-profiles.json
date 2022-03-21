@@ -9,7 +9,7 @@
     {
       "type": "virtualbox-iso",
       "name": "{{user `vm_name`}}-virtualbox",
-      "vm_name": "{{user `vm_name`}}-{{user `version`}}",
+      "vm_name": "{{user `vm_name`}}-{{user `version`}}-packer-build",
       "output_directory": "../../../output-main/virtualbox-{{user `version`}}",
       "boot_wait": "10s",
       "format": "ova",
@@ -75,7 +75,7 @@
   {
       "type": "vmware-iso",
       "name": "{{user `vm_name`}}-vmware-desktop",
-      "vm_name": "{{user `vm_name`}}-{{user `version`}}",
+      "vm_name": "{{user `vm_name`}}-{{user `version`}}-packer-build",
       "output_directory": "../../../output-main/vmware-desktop-{{user `version`}}",
       "boot_wait": "10s",
       "boot_command": [
@@ -420,7 +420,6 @@
            "../../../scripts/main-node/look-and-feel.sh",
            "../../../scripts/main-node/rabbitmq.sh",
            "../../../scripts/main-node/vscode.sh",
-           "../../../scripts/main-node/atom.sh",
            "../../../scripts/main-node/update-skel.sh",
            "../../../scripts/main-node/cleanup.sh"
        ],
@@ -454,7 +453,7 @@
       "video_memory": "128",
       "virtualbox_guest_os_type": "Debian_64",
       "base_image_ssh_user": "vagrant",
-      "vm_name": "kx.as.code-main",
+      "vm_name": "kx-main",
       "vm_suffix": "-demo",
       "vmware_guest_os_type": "ubuntu64Guest"
   }

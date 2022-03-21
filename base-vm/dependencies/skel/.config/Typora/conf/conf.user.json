@@ -25,4 +25,3 @@
   "maxFetchCountOnFileList": 500,
   "flags": [] // default [], append Chrome launch flags, e.g: [["disable-gpu"], ["host-rules", "MAP * 127.0.0.1"]]
 }
-

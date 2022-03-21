@@ -14,7 +14,7 @@ sudo cp ${INSTALLATION_WORKSPACE}/theme/backgrounds/* /usr/share/backgrounds/
 sudo rm -rf /usr/share/wallpapers/*
 
 # Change SDDM Login Screen
-sudo apt-get install -y qt5-default
+sudo apt-get install -y qtbase5-dev qtchooser qt5-qmake qtbase5-dev-tools
 sudo apt install -y \
     qml-module-qtquick-controls \
     qml-module-qtquick-extras \

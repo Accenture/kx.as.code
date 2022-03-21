@@ -1,0 +1,5 @@
+<?xml version='1.1' encoding='UTF-8'?>
+<io.jenkins.plugins.thememanager.ThemeManagerPageDecorator plugin="theme-manager@0.6">
+  <theme class="io.jenkins.plugins.thememanager.none.NoOpThemeManagerFactory"/>
+  <disableUserThemes>true</disableUserThemes>
+</io.jenkins.plugins.thememanager.ThemeManagerPageDecorator>

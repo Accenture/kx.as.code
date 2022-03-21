@@ -25,8 +25,8 @@ export BOLD RED GREEN YELLOW BLUE MAGENTA CYAN WHITE RESET
 len() { wc -c <<< "${@:1}"; }
 
 cleanup() {
-    if ! [ -z ${clonedir+x} ] && [[ $(len "$clonedir") -gt 5 ]]; then 
-        echo "Removing temporary clone folder '$clonedir'..." && rm -rf "$clonedir"; 
+    if ! [ -z ${clonedir+x} ] && [[ $(len "$clonedir") -gt 5 ]]; then
+        echo "Removing temporary clone folder '$clonedir'..." && rm -rf "$clonedir";
     fi
 }
 
@@ -40,7 +40,7 @@ sudo() {
     fi
     /usr/bin/env sudo "${@:1}"
   else
-    /usr/bin/env "${@:1}" # The user is already root, so just drop the 'sudo' and run it raw.    
+    /usr/bin/env "${@:1}" # The user is already root, so just drop the 'sudo' and run it raw.
   fi
 }
 

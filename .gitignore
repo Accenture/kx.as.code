@@ -4,6 +4,7 @@ iso/*.iso
 *.box
 base-vm/*output*/**
 *~
+/docs/site/
 variables.json
 *.log
 .DS_Store
@@ -44,8 +45,8 @@ amazon-corretto*
 /base-vm/build/jenkins/docker-compose
 /base-vm/build/jenkins/jenkins.env
 /base-vm/build/jenkins/mo
-/base-vm/build/jenkins/jenkins_home/
-/base-vm/build/jenkins/jenkins_remote/
+/base-vm/build/jenkins/jenkins_home
+/base-vm/build/jenkins/jenkins_remote
 /base-vm/build/jenkins/jenkins-cli.jar
 /base-vm/build/jenkins/jq
 /base-vm/build/jenkins/jenkins.env.ps1
@@ -58,4 +59,16 @@ amazon-corretto*
 /jq
 **/info.json
 **/kx.as.code-*_metadata.json
+/base-vm/build/jenkins/jenkins_remote/workspace/shared_workspace/kx.as.code
+**/shared_workspace
+**/ssh_key
+/profiles/terraform-openstack/hosts_file_entries.txt
+/base-vm/build/jenkins/jenkins.war
+/base-vm/build/jenkins/jenkins-plugin-manager.jar
 jenkins_remote/workspace/shared_workspace/kx.as.code
+/client/node_modules
+**/node_modules
+/client/package-lock.json
+/base-vm/build/jenkins/jenkinsLog*
+/system-check.json
+/base-vm/build/jenkins/jenkins_shared_workspace/*

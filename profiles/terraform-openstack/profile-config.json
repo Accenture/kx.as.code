@@ -3,12 +3,12 @@
         "vm_properties": {
             "main_node_count": 1,
             "admin_main_node_cpu_cores": 4,
-            "admin_main_node_memory": 8196,
+            "admin_main_node_memory": 16384,
             "replica_main_node_cpu_cores": 2,
-            "replica_main_node_memory": 8196,
-            "worker_node_count": 3,
-            "worker_node_cpu_cores": 2,
-            "worker_node_memory": 8196,
+            "replica_main_node_memory": 8192,
+            "worker_node_count": 2,
+            "worker_node_cpu_cores": 4,
+            "worker_node_memory": 8192,
             "environment_prefix": "demo1",
             "openstack": {
                 "user_name":            "admin",
@@ -16,12 +16,12 @@
                 "password":             "vJ6JuTWiGIIbdqkmKQ8R",
                 "region":               "RegionOne",
                 "auth_url":             "http://192.200.76.201/identity",
-                "kx_main_image_id":     "88e99bd0-72dd-478a-a15e-abd0c4a8173b",
-                "kx_node_image_id":     "f977f2fb-9fc2-4d51-b1f2-45e3252725c0",
-                "external_network_id":  "886269e5-9556-4387-8029-be4e5ceb4d4b"
+                "kx_main_image_id":     "66b3d176-aa34-49bf-8d27-a1973c893e05",
+                "kx_node_image_id":     "ca0f5673-e905-44d7-86aa-23478f758235",
+                "external_network_id":  "4de90ec4-ed5c-4907-8e2b-7b21049be93c"
             }
         },
-        "allowWorkloadsOnMaster": false,
+        "allowWorkloadsOnMaster": true,
         "disableSessionTimeout": true,
         "certificationMode": false,
         "disableLinuxDesktop": false,

@@ -10,7 +10,7 @@ createKeycloakClientScope() {
 
     # Call function to login to Keycloak
     keycloakLogin
-    
+
     # Export the client scope id
     export clientScopeId=$(kubectl -n ${kcNamespace} exec ${kcPod} --container ${kcContainer} -- \
         ${kcAdmCli} get -x client-scopes | jq -r '.[] | select(.name=="'${scope}'") | .id')

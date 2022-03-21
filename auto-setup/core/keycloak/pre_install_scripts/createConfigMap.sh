@@ -11,6 +11,6 @@ metadata:
 data:
   ca.crt: |-
     $(/usr/bin/sudo cat /etc/ldap/sasl2/ca.crt | sed '2,30s/^/    /')
-""" | /usr/bin/sudo tee ${installationWorkspace}/keycload-ca-configmap.yaml
+""" | /usr/bin/sudo tee ${installationWorkspace}/keycloak-ca-configmap.yaml
 
-/usr/bin/sudo kubectl apply -f ${installationWorkspace}/keycload-ca-configmap.yaml
+/usr/bin/sudo kubectl apply -f ${installationWorkspace}/keycloak-ca-configmap.yaml

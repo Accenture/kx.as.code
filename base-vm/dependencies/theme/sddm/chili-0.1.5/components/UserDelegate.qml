@@ -34,11 +34,11 @@ Item {
     property string iconSource
     property int usernameFontSize
     property string usernameFontColor
-    
+
     property real faceSize
-    
+
     readonly property var m: model
-    
+
     signal clicked()
 
     opacity: isCurrent ? 1.0 : 0.3

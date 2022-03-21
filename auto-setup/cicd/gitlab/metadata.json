@@ -1,0 +1,146 @@
+{
+    "name": "gitlab",
+    "namespace": "gitlab",
+    "installation_type": "helm",
+    "installation_group_folder": "cicd",
+    "minimum_resources": {
+        "cpu": "1000",
+        "memory": "3000"
+    },
+    "environment_variables": {
+        "gitabRunnerVersion": "v13.4.1",
+        "s3BucketsToCreate": "gitlab-artifacts-storage;gitlab-backup-storage;gitlab-lfs-storage;gitlab-packages-storage;gitlab-registry-storage;gitlab-uploads-storage;runner-cache"
+    },
+    "helm_params": {
+        "repository_url": "https://charts.gitlab.io/",
+        "repository_name": "gitlab/gitlab",
+        "helm_version": "",
+        "set_key_values": [
+            "global.hosts.domain={{baseDomain}}",
+            "global.hosts.externalIP={{nginxIngressIp}}",
+            "externalUrl=https://{{componentName}}.{{baseDomain}}",
+            "global.edition=ce",
+            "prometheus.install=false",
+            "global.smtp.enabled=false",
+            "gitlab-runner.install=true",
+            "gitlab-runner.image={{dockerRegistryDomain}}/devops/gitlab-runner:alpine-{{gitabRunnerVersion}}",
+            "gitlab-runner.runners.privileged=true",
+            "gitlab-runner.certsSecretName=kx.as.code-wildcard-cert",
+            "global.ingress.class=nginx",
+            "global.ingress.enabled=true",
+            "global.ingress.tls.enabled=true",
+            "gitlab.webservice.ingress.tls.secretName=kx.as.code-wildcard-cert",
+            "nginx-ingress.enabled=false",
+            "global.certmanager.install=false",
+            "certmanager.install=false",
+            "global.ingress.configureCertmanager=false",
+            "global.hosts.https=true",
+            "global.minio.enabled=false",
+            "registry.enabled=false",
+            "global.appConfig.lfs.bucket=gitlab-lfs-storage",
+            "global.appConfig.lfs.connection.secret=object-storage",
+            "global.appConfig.lfs.connection.key=connection",
+            "global.appConfig.artifacts.bucket=gitlab-artifacts-storage",
+            "global.appConfig.artifacts.connection.secret=object-storage",
+            "global.appConfig.artifacts.connection.key=connection",
+            "global.appConfig.uploads.connection.secret=object-storage",
+            "global.appConfig.uploads.bucket=gitlab-uploads-storage",
+            "global.appConfig.uploads.connection.key=connection",
+            "global.appConfig.packages.bucket=gitlab-packages-storage",
+            "global.appConfig.packages.connection.secret=object-storage",
+            "global.appConfig.packages.connection.key=connection",
+            "global.appConfig.externalDiffs.bucket=gitlab-externaldiffs-storage",
+            "global.appConfig.externalDiffs.connection.secret=object-storage",
+            "global.appConfig.externalDiffs.connection.key=connection",
+            "global.appConfig.pseudonymizer.bucket=gitlab-pseudonymizer-storage",
+            "global.appConfig.pseudonymizer.connection.secret=object-storage",
+            "global.appConfig.pseudonymizer.connection.key=connection",
+            "redis.resources.requests.cpu=10m",
+            "redis.resources.requests.memory=64Mi",
+            "global.rails.bootsnap.enabled=false",
+            "gitlab.webservice.minReplicas=1",
+            "gitlab.webservice.maxReplicas=1",
+            "gitlab.webservice.resources.limits.memory=3G",
+            "gitlab.webservice.requests.cpu=100m",
+            "gitlab.webservice.requests.memory=900M",
+            "gitlab.workhorse.resources.limits.memory=100M",
+            "gitlab.workhorse.requests.cpu=10m",
+            "gitlab.workhorse.requests.memory=10M",
+            "gitlab.sidekiq.minReplicas=1",
+            "gitlab.sidekiq.maxReplicas=1",
+            "gitlab.sidekiq.resources.limits.memory=3G",
+            "gitlab.sidekiq.requests.cpu=50m",
+            "gitlab.sidekiq.requests.memory=625M",
+            "gitlab.gitlab-shell.minReplicas=1",
+            "gitlab.gitlab-shell.maxReplicas=1",
+            "gitlab.toolbox.backups.objectStorage.config.secret=s3cmd-config",
+            "gitlab.toolbox.backups.objectStorage.config.key=config",
+            "gitlab.gitaly.persistence.storageClass=gluster-heketi",
+            "gitlab.gitaly.persistence.size=10Gi",
+            "postgresql.persistence.storageClass=local-storage",
+            "postgresql.persistence.size=5Gi",
+            "redis.master.persistence.storageClass=local-storage",
+            "redis.master.persistence.size=5Gi",
+            "global.certificates.customCAs[0].secret=intermediate-ca",
+            "global.certificates.customCAs[1].secret=root-ca",
+            "global.certificates.customCAs[2].secret=server-crt",
+            "global.appConfig.omniauth.providers[0].secret=sso-provider",
+            "global.appConfig.omniauth.enabled=true"
+        ]
+    },
+    "categories": [
+        "git-repository",
+        "docker-registry",
+        "cicd"
+    ],
+    "urls": [
+        {
+            "url": "https://{{componentName}}.{{baseDomain}}",
+            "healthchecks": {
+                "liveliness": {
+                    "http_path": "/-/readiness",
+                    "http_auth_required": false,
+                    "expected_http_response_code": "200",
+                    "expected_http_response_string": "",
+                    "expected_json_response": {
+                        "json_path": ".status",
+                        "json_value": "ok"
+                    },
+                    "health_shell_check_command": "",
+                    "expected_shell_check_command_response": ""
+                },
+                "readiness": {
+                    "http_path": "/-/readiness",
+                    "http_auth_required": false,
+                    "expected_http_response_code": "200",
+                    "expected_http_response_string": "",
+                    "expected_json_response": {
+                        "json_path": ".status",
+                        "json_value": "ok"
+                    }
+                }
+            }
+        }
+    ],
+    "Description": "Gitlab Git Repository and CICD",
+    "shortcut_text": "Gitlab",
+    "shortcut_icon": "gitlab.png",
+    "api_docs_type": "help",
+    "api_docs_url": "https://{{componentName}}.{{baseDomain}}/help/api/api_resources.md",
+    "vendor_docs_url": "https://docs.gitlab.com/ce/",
+    "pre_install_scripts": [
+        "getVariables.sh",
+        "createS3Buckets.sh",
+        "createSecrets.sh",
+        "createOAuth.sh"
+    ],
+    "post_install_scripts": [
+        "createLoginToken.sh",
+        "createUsers.sh",
+        "createGroups.sh",
+        "createProjects.sh",
+        "mapUsersToGroups.sh",
+        "populateDemoProjects.sh",
+        "createGroupVariables.sh"
+    ]
+}

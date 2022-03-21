@@ -96,7 +96,11 @@ fi
 
 # Determine Drive B (Local K8s Volumes Storage)
 for i in {{1..30}}; do
-  driveB=$(lsblk -o NAME,FSTYPE,SIZE -dsn -J | jq -r '.[] | .[] | select(.fstype==null) | select(.size=="'${localKubeVolumesDiskSize}'G") | .name' || true)
+  if [[ -f /usr/share/kx.as.code/.config/driveB ]]; then
+    driveB=$(cat /usr/share/kx.as.code/.config/driveB)
+  else
+    driveB=$(lsblk -o NAME,FSTYPE,SIZE -dsn -J | jq -r '.[] | .[] | select(.fstype==null) | select(.size=="'${localKubeVolumesDiskSize}'G") | .name' || true)
+  fi
   if [[ -z ${driveB} ]]; then
     echo "Drive for local volumes not yet available. Trying a maximum of 30 times. Attempt ${i}"
     sleep 15
@@ -275,18 +279,30 @@ if [[ ${virtualizationType} != "public-cloud"   ]] && [[ ${virtualizationType} !
       /usr/bin/sudo rm -f /home/${vmUser}/.ssh/id_rsa.pub
       yes | /usr/bin/sudo -u "${vmUser}" ssh-keygen -f ssh-keygen -m PEM -t rsa -b 4096 -q -f /home/${vmUser}/.ssh/id_rsa -N ''
     fi
+else
+  # Ensure final module ran
+  cloud-init modules --mode=final
+  # Wait for cloud-init scripts to complete
+  cloud-init status --wait || echo "Cloud-init status errored. Probably not running in a cloud environment"
 fi
 
 # Wait for KX-Main to become available for executing SSH based commands
 available=false
 while [[ "${available}" == "false"  ]]; do
   echo "Still trying to reach KX-Main1 (${kxMainIp}) on SSH. Retrying..."
-  nc -zw 2 ${kxMainIp} 22 && { available=true; } || { echo available=false ; }
+  nc -zw 2 ${kxMainIp} 22 && { available=true; } || { available=false ; }
   sleep 15
 done
 
 # Add key to KX-Main host
 /usr/bin/sudo -H -i -u "${vmUser}" bash -c "sshpass -f ${kxHomeDir}/.config/.user.cred ssh-copy-id -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp}"
+
+fileExists=""
+while [[ "${fileExists}" != "true"  ]]; do
+  fileExists=$(/usr/bin/sudo -H -i -u "${vmUser}" bash -c "ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} \"test -e /etc/bind/db.${baseDomain}\" && { echo \"true\"; } || { echo echo \"false\"; }")
+  sleep 15
+done
+
 
 # Add server IP to Bind9 DNS service on KX-Main1 host
 /usr/bin/sudo -H -i -u "${vmUser}" bash -c "ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} \"/usr/bin/sudo sed -i '/\*.*IN.*A.*${kxMainIp}/ i $(hostname)    IN      A      ${nodeIp}' /etc/bind/db.${baseDomain}\""
@@ -508,11 +524,7 @@ if [ -f ${installationWorkspace}/docker-kx-docs.tar ]; then
   docker load -i ${installationWorkspace}/docker-kx-docs.tar
 fi
 
-if [ -f ${installationWorkspace}/docker-kx-techradar.tar ]; then
-  docker load -i ${installationWorkspace}/docker-kx-techradar.tar
-fi
-
-if [ -f ${installationWorkspace}/docker-kx-docs.tar ] && [ -f ${installationWorkspace}/docker-kx-techradar.tar ]; then
+if [ -f ${installationWorkspace}/docker-kx-docs.tar ]; then
   /usr/bin/sudo crontab -r
 fi
 """ | /usr/bin/sudo tee ${installationWorkspace}/scpKxTars.sh

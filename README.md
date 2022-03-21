@@ -1,5 +1,4 @@
-<img src="docs/images/kxascode_logo_black_small.png" alt="kx.as.code_logo" width="200" height="200" align="right"/>
-
+[![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
 # Welcome!
 
 Welcome to the KX.AS.CODE learning workstation. This virtual workstation was created with two primary goals in mind.
@@ -20,7 +19,7 @@ As well as learning and sharing knowledge, there are several more use cases for 
 
 It can be considered as a local cloud like Kubernetes environment with a lot of things you would expect to see when managing a Kubernetes cluster in the cloud, including an ingress controller, storage cluster, DNS, a certificate authority... and the best bit, you just have to fill out a couple of config files and vagrant up/terraform apply, and you are on your way!
 
-![whatsinthebox](docs/images/whatsinthebox.png)
+![whatsinthebox](docs/docs/images/whatsinthebox.png)
 
 ## Why did we create this workstation?
 Many reasons! For our own learning and fun, for enabling others to enjoy and get into DevOps, as well as to give something back to the community, because we and everyone else in DevOps, benefit hugely from the wonderful OpenSource tools that are out there!
@@ -41,12 +40,12 @@ KX.AS.CODE can be deployed locally or in the cloud, be it a private or public cl
 6. VMWare VSphere (needs updating)
 
 ## What type of deployments does KX.AS.CODE support?
-Depending on how big your laptop, desktop or server is, you can either deploy KX.AS.CODE in standalone mode, which means that everything happens in the one VM, or you can enable to have multiple worker and main nodes provisioned.  
+Depending on how big your laptop, desktop or server is, you can either deploy KX.AS.CODE in standalone mode, which means that everything happens in the one VM, or you can enable to have multiple worker and main nodes provisioned.
 
 It is possible through configuration, if physical resources are low, to have an additional worker node, and still have workloads started on the Kubernetes master.
 
 ## What is the minimal specification?
-Whilst we have run it on some laptops with just 8GB ram, you will not have a good experience with this setup, even in standalone mode. The absolute minimum is a laptop/desktop/server with 12GB ram (allocating 8GB to KX.AS.CODE), although to have a good experience, it is recommended the host has at least 16GB ram, so that 12GB can be allocated to KX.AS.CODE.  
+Whilst we have run it on some laptops with just 8GB ram, you will not have a good experience with this setup, even in standalone mode. The absolute minimum is a laptop/desktop/server with 12GB ram (allocating 8GB to KX.AS.CODE), although to have a good experience, it is recommended the host has at least 16GB ram, so that 12GB can be allocated to KX.AS.CODE.
 
 After that, the more the merrier! 32GB upwards things are starting to look good. The less memory and CPU cores you have, the less solutions/tools you can provision on your Kubernetes cluster.
 If you are deploying to the public cloud, then your possibilities are endless, and you can deploy the entire stack - currently around 30 DevOps tools and more to come!
@@ -61,9 +60,9 @@ Only the VMs for the local virtualization environments (VMWare, VirtualBox, Para
 I guess it will never be "finished". DevOps is a fast paced world with lots of great tools coming out all the time. KX.AS.CODE was created and continues to be worked on as a side project by some very passionate and dedicated DevOps Engineers at Accenture Interactive ASGR, who have not lost their appetite for learning and trying new tools, so expect more releases to come in future! :partying_face:
 
 ## Contributing
-We are happy to receive contributions, ideas and dare I say it, bug fixes or suggestions on how to do things better! We never stop learning! :nerd_face:  
+We are happy to receive contributions, ideas and dare I say it, bug fixes or suggestions on how to do things better! We never stop learning! :nerd_face:
 
-For more details on how you can contribute to the project, checkout the [CONTRIBUTE.md](docs/contribute.md) file
+For more details on how you can contribute to the project, checkout the [CONTRIBUTE.md](docs/Development/Contribution-Guidelines.md) file
 
 ## Screenshots
 
@@ -86,6 +85,6 @@ For more details on how you can contribute to the project, checkout the [CONTRIB
 
 I hope you enjoy the workstation!
 
-Patrick Delamere  
-Accenture Interactive ASGR DevOps Lead  
+Patrick Delamere
+Accenture Interactive ASGR DevOps Lead
 [kx.as.code@accenture.com](mailto:kx.as.code@accenture.com)

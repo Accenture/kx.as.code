@@ -733,7 +733,7 @@ footer {
     color: white;
 }
 
-.modal-footer .btn-default, 
+.modal-footer .btn-default,
 .modal-footer .btn-primary,
 .modal-footer .btn-default:not(:hover) {
     border: 1px solid;

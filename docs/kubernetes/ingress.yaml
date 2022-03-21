@@ -1,0 +1,19 @@
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: kx-docs-ingress
+  namespace: devops
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+spec:
+  tls:
+    - hosts:
+        - docs.{{baseDomain}}
+  rules:
+  - host: docs.{{baseDomain}}
+    http:
+      paths:
+       - path: /
+         backend:
+           serviceName: kx-docs-service
+           servicePort: 80

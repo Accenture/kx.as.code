@@ -15,14 +15,14 @@
 # It's recommended to use the function 'add_on_exit' if you're adding standard "cleanup on exit"
 # hooks, as it detects the shell and uses the appropriate exit hook for the detected shell.
 #
-# The function 'trap_add' allows you to append to a trap instead of overwriting it, and is 
-# compatible with both bash and zsh. 
+# The function 'trap_add' allows you to append to a trap instead of overwriting it, and is
+# compatible with both bash and zsh.
 #
 # The function 'get_trap_cmd' is primarily just a helper function for 'trap_add', but can
 # be used on it's own, to read the code that would be ran for a specific trap signal on
 # both bash and zsh.
 #
-# However, if used within zsh, you cannot view or append to the 'EXIT' trap, as 'EXIT' traps 
+# However, if used within zsh, you cannot view or append to the 'EXIT' trap, as 'EXIT' traps
 # are function local with zsh.
 #
 # -----------------------------------------------------------
@@ -57,12 +57,12 @@ extract_trap_cmd() { (($#>2)) && printf '%s\n' "$3" || echo; }
 get_trap_cmd() {
     local trap_cmd="$1" trap_res list_traps
 
-    if [[ "$SG_SHELL" == "bash" ]]; then 
+    if [[ "$SG_SHELL" == "bash" ]]; then
         # For bash, we can directly query the trap signal using trap -p
         eval "extract_trap_cmd $(trap -p "$1")"
     elif [[ "$SG_SHELL" == "zsh" ]]; then
         # With zsh, we need to call 'trap', then scan it's output for the specific signal we're looking for
-        trap | IFS= read -rd '' list_traps     
+        trap | IFS= read -rd '' list_traps
         trap_res=$(egrep ".* $trap_cmd\$" <<< "$list_traps")
         # Then extract just the command portion from the 'trap' output line.
         eval "extract_trap_cmd $trap_res"
@@ -83,7 +83,7 @@ get_trap_cmd() {
 #
 # Usage:
 #    trap_add 'echo "in trap DEBUG and INT"' DEBUG INT
-# 
+#
 # Source: https://stackoverflow.com/a/7287873/
 #
 trap_add() {
@@ -114,7 +114,7 @@ trap_prepend() {
     done
 }
 
-if [[ "$SG_SHELL" == "bash" ]]; then 
+if [[ "$SG_SHELL" == "bash" ]]; then
     declare -f -t trap_add
     declare -f -t trap_prepend
 fi
@@ -164,7 +164,7 @@ add_zshexit() {
 add_on_exit() {
     (($#<1)) && >&2 fatal "error: add_on_exit expects at least one argument (the code to run on script exit)"
     local exit_cmd=$1
-    if [[ "$SG_SHELL" == "bash" ]]; then 
+    if [[ "$SG_SHELL" == "bash" ]]; then
         _debug "[add_on_exit] Detected shell BASH - appending to EXIT trap"
         trap_add "$exit_cmd" EXIT
     elif [[ "$SG_SHELL" == "zsh" ]]; then

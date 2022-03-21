@@ -1,0 +1,18 @@
+{
+    "name": "portal",
+    "namespace": "",
+    "installation_type": "script",
+    "installation_group_folder": "core",
+    "retry": "true",
+    "letsencrypt": {
+        "enabled": true
+    },
+    "install_scripts": [
+        "installClient.sh"
+    ],
+    "Description": "KX.AS.CODE Management and Status Portal",
+    "shortcut_text": "KX.AS.CODE Portal",
+    "shortcut_icon": "kxascode.png",
+    "pre_install_scripts": [],
+    "post_install_scripts": []
+}

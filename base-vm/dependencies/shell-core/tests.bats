@@ -128,13 +128,13 @@ example_test_func() { echo "hello world"; }
 @test "test split_assoc returns 1 with error if not enough args [2 args]" {
     run split_assoc 'hello=world;testing=orange' ";"
     [ "$status" -eq 1 ]
-    [ "$output" = "Error: split_assoc requires exactly 3 arguments" ]    
+    [ "$output" = "Error: split_assoc requires exactly 3 arguments" ]
 }
 
 @test "test split_assoc returns 1 with error if not enough args [4 args]" {
     run split_assoc 'hello=world;testing=orange' ";" "," "/"
     [ "$status" -eq 1 ]
-    [ "$output" = "Error: split_assoc requires exactly 3 arguments" ]    
+    [ "$output" = "Error: split_assoc requires exactly 3 arguments" ]
 }
 
 ### helpers.containsElement
@@ -156,7 +156,7 @@ test_array=(hello world example)
 _tst_get_trap() { get_trap_cmd "$1" | tr -s '\n'; }
 
 @test "test trap_add+get_trap_cmd by adding a USR1 trap with trap_add and confirm exists with get_trap_cmd " {
-    
+
     trap_add "echo 'hello bats test'" USR1
     [ "$?" -eq 0 ]
     # res=$(get_trap_cmd USR1 | tr -d '\n')

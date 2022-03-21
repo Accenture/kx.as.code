@@ -12,14 +12,14 @@ A library of shell functions designed to ease the development of shell scripts w
     - `sudo` - Wrapper function designed to prevent issues on systems which don't have `sudo` installed
  - GnuSafe (`lib/000_gnusafe.sh`) - A function to ensure calls to `sed`, `awk` and `grep` are always the GNU
    versions, rather than BSD - preventing strange issues on non-Linux systems.
-   It detects whether or not the running system is Linux or a BSD, if the system is a BSD, it will attempt to alias `sed` / `awk` and `grep` to gsed/gawk/ggrep. If the GNU versions are missing, it will display a warning 
+   It detects whether or not the running system is Linux or a BSD, if the system is a BSD, it will attempt to alias `sed` / `awk` and `grep` to gsed/gawk/ggrep. If the GNU versions are missing, it will display a warning
    letting the user know they need to install certain GNU utils.
  - Error handling helpers
     - `base/trap.bash` is a painless plug-n-play error handler specifically for Bash scripts, which offers
       pretty printed tracebacks, stderr tracking, and attempts to identify the line of code causing the issue
       in a readable way to assist with fixing bugs.
-    - `lib/000_trap_helper.sh` is a set of functions designed to make handling shell script errors easier, 
-      some of which work on both bash and zsh. 
+    - `lib/000_trap_helper.sh` is a set of functions designed to make handling shell script errors easier,
+      some of which work on both bash and zsh.
         - `get_trap_cmd` - shows the code currently tied to a given signal (e.g. `INT` `USR1` or `EXIT`)
         - `trap_add` - appends to / creates a trap signal, allowing you to easily add multiple functions to
           bash/zsh traps, instead of just overwriting the trap.
@@ -34,27 +34,27 @@ A library of shell functions designed to ease the development of shell scripts w
       e.g. `msgts hello world` would print `[2019-11-25 22:47:38 GMT] hello world`
  - General helper functions (`lib/010_helpers.sh`)
     - `containsElement` - returns 0 (true) if `$1` exists in the array `$2`
-      
+
       e.g. `x=(hello world); if containsElement "hello" "${x[@]}"; then echo 'hello is in x'; fi` would print
       `hello is in x`
     - `yesno` - (bash only) yes/no prompts made as simple as an `if` statement (or `||` / `&&`).
-      
+
       `yesno "Are you sure? (y/n) > " && echo "You said yes" || echo "You said no"`
-    - `pkg_not_found` - Check if the command `$1` is available. If not, install `$2` via apt 
+    - `pkg_not_found` - Check if the command `$1` is available. If not, install `$2` via apt
       (can override package install command via PKG_MGR_INSTALL)
-      
+
       Example - If `lz4` doesn't exist, install package `liblz4-tool`: `pkg_not_found lz4 liblz4-tool`
-    
+
     - `split_by` - Split a string `$1` into an array by the character `$2`
-      
+
       `x=($(split_by "hello-world-abc" "-")); echo "${x[0]}";` would print `hello`
-    
+
     - `split_assoc` - Split a string into an associative array (key value pairs). Due to limitations with
-      exporting associative arrays in both zsh/bash, you must source the temporary file which the 
+      exporting associative arrays in both zsh/bash, you must source the temporary file which the
       function prints to load the array.
 
       `source $(split_assoc "hello:world,lorem:ipsum" "," ":"); echo "${assoc_result[hello]}"` would print `world`.
-    
+
 
 
 # Usage
@@ -84,7 +84,7 @@ _sc_fail() { >&2 echo "Failed to load or install Privex ShellCore..." && exit 1;
     source "/usr/local/share/pv-shcore/load.sh" || _sc_fail
 
 # Optionally, you may wish to run `autoupdate_shellcore` after loading it. This will quietly update ShellCore to
-# the latest version. 
+# the latest version.
 # To avoid auto-updates causing slow load times, by default they'll only be triggered at most once per week.
 # You can also use `update_shellcore` from within your script to force a ShellCore update.
 autoupdate_shellcore
@@ -123,7 +123,7 @@ To run the tests, you first need to [install BATS](https://github.com/bats-core/
 The simplest way to run the tests is to just execute `tests.bats` - as it has the appropriate shebang and should be executable.
 
 ```bash
-$ ./tests.bats           
+$ ./tests.bats
  ✓ test has_binary returns zero with existant binary (ls)
  ✓ test has_binary returns non-zero with non-existant binary (thisbinaryshouldnotexit)
  ✓ test has_binary returns non-zero for existing function but non-existant binary (example_test_func)
@@ -140,7 +140,7 @@ You can also run the tests via the `bats` program itself. This gives you more cu
 with the `-t` flag (often required for compatibility with automated testing systems like Travis).
 
 ```bash
-$ bats -t tests.bats                           
+$ bats -t tests.bats
   1..19
   ok 1 test has_binary returns zero with existant binary (ls)
   ok 2 test has_binary returns non-zero with non-existant binary (thisbinaryshouldnotexit)
@@ -182,4 +182,3 @@ Copyright (C) 2019    Privex Inc. (https://www.privex.io)
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 ```
-

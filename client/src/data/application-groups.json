@@ -1,0 +1,103 @@
+[
+    {
+        "name": "Heavy weight",
+        "group_category": "cicd",
+        "description": "Full enterprise like features covering the entire CICD stack.",
+        "components": [
+            "minio_s3",
+            "gitlab_ce",
+            "artifactory",
+            "mattermost",
+            "harbor",
+            "argocd",
+            "gitlab_runner"
+        ]
+    },
+    {
+        "name": "Light weight",
+        "group_category": "cicd",
+        "description": "Good CICD featureset, light on needed resources.",
+        "components": [
+            "gitea",
+            "nexus3",
+            "jenkins",
+            "rocketchat",
+            "docker-registry",
+            "flux",
+            "gitlab_runner"
+        ]
+    },
+    {
+        "name": "KX.AS.CODE",
+        "group_category": "kxascode",
+        "description": "KX.AS.CODE Docs and TechRadar applications.",
+        "components": [
+            "kx_as_code_docs",
+            "kx_as_code_techradar"
+        ]
+    },
+    {
+        "name": "Prometheus, Grafana & ELK",
+        "group_category": "monitoring",
+        "description": "Kubernetes monitoring, alerting, log aggregation and visualization.",
+        "components": [
+            "prometheus",
+            "grafana",
+            "grafana-image-renderer",
+            "elastic-elasticsearch-oss",
+            "elastic-kibana-oss",
+            "elastic-filebeat-oss"
+        ]
+    },
+    {
+        "name": "Tick Stack & ELK",
+        "group_category": "monitoring",
+        "description": "Kubernetes monitoring with the Tick Stack.",
+        "components": [
+            "tickstack",
+            "grafana",
+            "grafana-image-renderer",
+            "elastic-elasticsearch-oss",
+            "elastic-kibana-oss",
+            "elastic-filebeat-oss"
+        ]
+    },
+    {
+        "name": "Elastic Stack Only",
+        "group_category": "monitoring",
+        "description": "Kubernetes monitoring with the Tick Stack.",
+        "components": [
+            "elastic-elasticsearch-oss",
+            "elastic-kibana-oss",
+            "elastic-filebeat-oss"
+        ]
+    },
+    {
+        "name": "Quality Assurance",
+        "group_category": "quality_assurance",
+        "description": "Quality assurance, including browser test automation and code quality checks.",
+        "components": [
+            "sonarqube",
+            "selenium"
+        ]
+    },
+    {
+        "name": "Security",
+        "group_category": "security",
+        "description": "Centralized secrets management and Kubernetes runtime security.",
+        "components": [
+            "sysdig_falco",
+            "consul",
+            "vault"
+        ]
+    },
+    {
+        "name": "Collaboration",
+        "group_category": "collaboration",
+        "description": "Collaboration with Atalassina tools. Note, these are not OpenSource.",
+        "components": [
+            "jira",
+            "confluence"
+        ]
+    }
+]

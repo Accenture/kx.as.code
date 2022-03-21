@@ -31,4 +31,7 @@ locals {
   dockerhub_username = local.raw_data.config.docker.dockerhub_username
   dockerhub_email = local.raw_data.config.docker.dockerhub_email
   dockerhub_password = local.raw_data.config.docker.dockerhub_password
+  baseUser = local.raw_data.config.baseUser
+  baseDomain = local.raw_data.config.baseDomain
+  environmentPrefix = local.raw_data.config.environmentPrefix
 }

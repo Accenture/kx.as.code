@@ -76,9 +76,9 @@ resource "null_resource" "kx_main_final_provisioner" {
   provisioner "remote-exec" {
     inline = [
         "sudo mv /var/tmp/*.json /usr/share/kx.as.code/workspace/",
-        "echo -e '{ \"DOCKERHUB_USER\": \"${local.dockerhub_username}\", \"DOCKERHUB_EMAIL\": \"${local.dockerhub_email}\", \"DOCKERHUB_PASSWORD\": \"${local.dockerhub_password}\" }' | sudo tee /var/tmp/.tmp.json",
+        "echo '{ \"DOCKERHUB_USER\": \"${local.dockerhub_username}\", \"DOCKERHUB_EMAIL\": \"${local.dockerhub_email}\", \"DOCKERHUB_PASSWORD\": \"${local.dockerhub_password}\" }' | sudo tee /var/tmp/.tmp.json",
         "echo \"$(date '+%Y-%m-%d_%H%M%S') | KX-Main VM created by Terraform\" | sudo tee /usr/share/kx.as.code/workspace/gogogo"
-        
+
     ]
     connection {
         type     = "ssh"
@@ -86,7 +86,7 @@ resource "null_resource" "kx_main_final_provisioner" {
         private_key = openstack_compute_keypair_v2.kx_keypair.private_key
         host     = openstack_networking_floatingip_v2.kx_main_admin_floating_ip.address
     }
-  } 
+  }
 }
 
 resource "null_resource" "main_replica_provisioner" {

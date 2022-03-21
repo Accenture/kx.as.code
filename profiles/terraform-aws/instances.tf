@@ -148,7 +148,7 @@ resource "aws_security_group" "kx_main_nodes" {
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
-    cidr_blocks = [local.private_subnet_cidr_one, local.private_subnet_cidr_two,local.public_subnet_cidr_one,local.public_subnet_cidr_two,"${aws_instance.kx_bastion.private_ip}/32"]
+    cidr_blocks = [local.private_subnet_cidr_one, local.private_subnet_cidr_two, local.public_subnet_cidr_one, local.public_subnet_cidr_two, "${aws_instance.kx_bastion.private_ip}/32"]
   }
 
   ingress {
@@ -162,7 +162,7 @@ resource "aws_security_group" "kx_main_nodes" {
     from_port   = 443
     to_port     = 443
     protocol    = "tcp"
-    cidr_blocks = [local.private_subnet_cidr_one, local.private_subnet_cidr_two,local.public_subnet_cidr_one,local.public_subnet_cidr_two,"${aws_instance.kx_bastion.private_ip}/32"]
+    cidr_blocks = [local.private_subnet_cidr_one, local.private_subnet_cidr_two, local.public_subnet_cidr_one, local.public_subnet_cidr_two, "${aws_instance.kx_bastion.private_ip}/32"]
   }
 
   ingress {
@@ -176,13 +176,13 @@ resource "aws_security_group" "kx_main_nodes" {
     from_port   = 6443
     to_port     = 6443
     protocol    = "tcp"
-    cidr_blocks = [local.private_subnet_cidr_one, local.private_subnet_cidr_two,local.public_subnet_cidr_one,local.public_subnet_cidr_two,"${aws_instance.kx_bastion.private_ip}/32"]
+    cidr_blocks = [local.private_subnet_cidr_one, local.private_subnet_cidr_two, local.public_subnet_cidr_one, local.public_subnet_cidr_two, "${aws_instance.kx_bastion.private_ip}/32"]
   }
 
   ingress {
-    from_port = 4000
-    to_port = 4000
-    protocol = "tcp"
+    from_port   = 4000
+    to_port     = 4000
+    protocol    = "tcp"
     cidr_blocks = local.remote_access_cidrs
   }
 
@@ -190,7 +190,7 @@ resource "aws_security_group" "kx_main_nodes" {
     from_port   = 4000
     to_port     = 4000
     protocol    = "tcp"
-    cidr_blocks = [local.private_subnet_cidr_one, local.private_subnet_cidr_two,local.public_subnet_cidr_one,local.public_subnet_cidr_two,"${aws_instance.kx_bastion.private_ip}/32"]
+    cidr_blocks = [local.private_subnet_cidr_one, local.private_subnet_cidr_two, local.public_subnet_cidr_one, local.public_subnet_cidr_two, "${aws_instance.kx_bastion.private_ip}/32"]
   }
 
   ingress {
@@ -208,52 +208,52 @@ resource "aws_security_group" "kx_main_nodes" {
   }
 
   ingress {
-    from_port   = 4003
-    to_port     = 65535
-    protocol    = "tcp"
+    from_port       = 4003
+    to_port         = 65535
+    protocol        = "tcp"
     security_groups = [aws_security_group.kx_workers_nodes.id]
   }
 
   ingress {
-    from_port   = 2382
-    to_port     = 4000
-    protocol    = "tcp"
+    from_port       = 2382
+    to_port         = 4000
+    protocol        = "tcp"
     security_groups = [aws_security_group.kx_workers_nodes.id]
   }
 
   ingress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    self = true
+    from_port = 0
+    to_port   = 0
+    protocol  = "-1"
+    self      = true
   }
 
   ingress {
-    from_port   = 1
-    to_port     = 65535
-    protocol    = "UDP"
+    from_port       = 1
+    to_port         = 65535
+    protocol        = "UDP"
     security_groups = [aws_security_group.kx_workers_nodes.id]
   }
 
   ingress {
-    from_port   = 1
-    to_port     = 2379
-    protocol    = "TCP"
+    from_port       = 1
+    to_port         = 2379
+    protocol        = "TCP"
     security_groups = [aws_security_group.kx_workers_nodes.id]
   }
 
   ingress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "4"
+    from_port       = 0
+    to_port         = 0
+    protocol        = "4"
     security_groups = [aws_security_group.kx_workers_nodes.id]
   }
 
   egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    self = true
+    from_port = 0
+    to_port   = 0
+    protocol  = "-1"
+    self      = true
   }
 
   tags = {
@@ -265,10 +265,10 @@ resource "aws_instance" "kx_main_admin" {
   depends_on = [
     module.vpc
   ]
-  ami                    = local.kx_main_ami_id
-  key_name               = aws_key_pair.kx_ssh_key.key_name
-  instance_type          = local.admin_main_node_instance_type
-  availability_zone      = local.aws_availability_zone_one
+  ami               = local.kx_main_ami_id
+  key_name          = aws_key_pair.kx_ssh_key.key_name
+  instance_type     = local.admin_main_node_instance_type
+  availability_zone = local.aws_availability_zone_one
 
   network_interface {
     device_index         = 0
@@ -297,12 +297,12 @@ resource "aws_instance" "kx_main_replica" {
   depends_on = [
     module.vpc
   ]
-  count                  = (local.main_node_count - 1) < 0 ? 0 : local.main_node_count - 1
-  ami                    = local.kx_node_ami_id
-  key_name               = aws_key_pair.kx_ssh_key.key_name
-  instance_type          = local.replica_main_node_instance_type
-  subnet_id              = module.vpc.private_subnets[1]
-  availability_zone      = local.aws_availability_zone_two
+  count             = (local.main_node_count - 1) < 0 ? 0 : local.main_node_count - 1
+  ami               = local.kx_node_ami_id
+  key_name          = aws_key_pair.kx_ssh_key.key_name
+  instance_type     = local.replica_main_node_instance_type
+  subnet_id         = module.vpc.private_subnets[1]
+  availability_zone = local.aws_availability_zone_two
 
   ebs_block_device {
     device_name = "/dev/xvdb"
@@ -317,22 +317,22 @@ resource "aws_instance" "kx_main_replica" {
 }
 
 resource "aws_security_group" "kx_workers_nodes" {
-  name = "kx_worker_nodes"
+  name        = "kx_worker_nodes"
   description = "Allow all traffic between KX-Main and KX-Worker nodes"
-  vpc_id = module.vpc.vpc_id
+  vpc_id      = module.vpc.vpc_id
 
   ingress {
     from_port = 0
-    to_port = 0
-    protocol = "-1"
-    self = true
+    to_port   = 0
+    protocol  = "-1"
+    self      = true
   }
 
   egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    self = true
+    from_port = 0
+    to_port   = 0
+    protocol  = "-1"
+    self      = true
   }
 
   tags = {
@@ -341,12 +341,12 @@ resource "aws_security_group" "kx_workers_nodes" {
 }
 
 resource "aws_security_group_rule" "kx_worker_kx_main" {
-  type      = "ingress"
-  from_port = 0
-  to_port = 0
-  protocol = "-1"
+  type                     = "ingress"
+  from_port                = 0
+  to_port                  = 0
+  protocol                 = "-1"
   source_security_group_id = aws_security_group.kx_main_nodes.id
-  security_group_id = aws_security_group.kx_workers_nodes.id
+  security_group_id        = aws_security_group.kx_workers_nodes.id
 }
 
 resource "aws_instance" "kx_worker" {

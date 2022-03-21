@@ -49,7 +49,7 @@ last_update_shellcore
 update_shellcore() { bash "${SG_DIR}/run.sh" update; }
 autoupdate_shellcore() {
     last_update_shellcore
-    local _unix_now=$(date +'%s') 
+    local _unix_now=$(date +'%s')
     local unix_now=$(($_unix_now)) next_update=$((SG_LAST_UPDATE+SG_UPDATE_SECS))
     local last_rel=$((unix_now-SG_LAST_UPDATE))
     if (($next_update<$unix_now)); then
@@ -110,4 +110,3 @@ clean_env_prefix() {
 }
 
 add_on_exit "cleanup_env"
-
