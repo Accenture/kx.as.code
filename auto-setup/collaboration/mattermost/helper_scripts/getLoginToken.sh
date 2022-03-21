@@ -1,5 +1,11 @@
-#!/bin/bash -x
-set -euo pipefail
+#!/bin/bash
+set -euox pipefail
+
+# Get Admin Password
+mattermostAdminPassword=$(managedPassword "mattermost-admin-password")
+
+# Get Mattermost Password
+export generatedAdminPassword=$(managedPassword "mattermost-admin-password")
 
 # Get Login Token
-export mattermostLoginToken=$(curl -i -d '{"login_id":"admin@'${baseDomain}'","password":"'${vmPassword}'"}' ${applicationUrl}/api/v4/users/login | grep 'token' | sed 's/token: //g')
+export mattermostLoginToken=$(curl -i -d '{"login_id":"admin@'${baseDomain}'","password":"'${mattermostAdminPassword}'"}' ${applicationUrl}/api/v4/users/login | grep 'token' | sed 's/token: //g')

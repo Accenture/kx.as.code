@@ -17,7 +17,7 @@ createKeycloakProtocolMapper () {
 
     log_info "ProtocolMapper: ${protocolMapper}"
 
-    if [[ "${protocolMapper}" == "null" ]] || [[ -z $(${protocolMapper} | tr -d "[]") ]]; then
+    if [[ "${protocolMapper}" == "null" ]] || [[ -z $(echo ${protocolMapper} | tr -d "[]") ]]; then
         # Create client scope protocol mapper
         kubectl -n ${kcNamespace} exec ${kcPod} --container ${kcContainer} -- \
             ${kcAdmCli} create clients/${clientId}/protocol-mappers/models \

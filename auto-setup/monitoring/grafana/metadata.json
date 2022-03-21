@@ -45,7 +45,7 @@
             "notifiers.\"notifiers\\.yaml\".notifiers[0].name=slack-notifier",
             "notifiers.\"notifiers\\.yaml\".notifiers[0].type=slack",
             "notifiers.\"notifiers\\.yaml\".notifiers[0].uid=slack",
-            "notifiers.\"notifiers\\.yaml\".notifiers[0].settings.url=http://mattermost-team-edition.gitlab-ce:8065/hooks/{{monitoringWebhookId}}",
+            "notifiers.\"notifiers\\.yaml\".notifiers[0].settings.url=http://mattermost-team-edition.mattermost:8065/hooks/{{monitoringWebhookId}}",
             "plugins[0]=grafana-image-renderer",
             "plugins[1]=grafana-piechart-panel"
         ]
