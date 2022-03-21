@@ -84,7 +84,7 @@ kubectl apply -f ${installationWorkspace}/argocd-rbac-cm-patch.yaml
 ## Restart the Pod
 export argoServer=$(kubectl get pods -n argocd | grep argocd-server | awk ' { print $1 }')
 
-kubectl delete pod ${argoServer} -n ${componentName}
+kubectl delete pod ${argoServer} -n ${namespace}
 
 ## If keycloak client scopes are created prior to kubernetes CRUD operations the RBAC is not working properly e.g: an application created
 ## by admin user cannot be seen by the user logged in with keycloak sso, also sso users cannot create any applications in argocd after intial argocd creation.

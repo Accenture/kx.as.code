@@ -15,7 +15,7 @@
                 },
                 {
                     "install_folder": "cicd",
-                    "name": "artifactory-oss"
+                    "name": "artifactory"
                 },
                 {
                     "install_folder": "core",

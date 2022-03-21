@@ -29,7 +29,7 @@
       },
       {
         "install_folder": "cicd",
-        "name": "artifactory-oss"
+        "name": "artifactory"
       }
     ]
   }

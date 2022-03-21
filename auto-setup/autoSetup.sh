@@ -81,8 +81,12 @@ if [[ ${action} == "install"   ]]; then
     postInstallStepLetsEncrypt 2>> ${logFilename}
 
     # Execute scripts defined in metadata.json, listed post_install_scripts section
-    executePostInstallScripts 2>> ${logFilename}
-
+    executePostInstallScripts 2>> ${logFilename} || rc=$? && log_info "Execution of executePostInstallScripts() returned with rc=$rc"
+    if [[ ${rc} -ne 0 ]]; then
+      log_error "Execution of executePostInstallScripts() returned with a non zero return code ($rc)"
+      return 1
+    fi
+     
     ####################################################################################################################################################################
     ##      I N S T A L L    D E S K T O P    S H O R T C U T S
     ####################################################################################################################################################################
@@ -98,7 +102,7 @@ if [[ ${action} == "install"   ]]; then
 
     # Create primary desktop icon to launch tool's site with Chrome
     if [[ -n ${primaryUrl} ]]; then
-        shaortcutIcon=$(cat ${componentMetadataJson} | jq -r '.shortcut_icon')
+        shortcutIcon=$(cat ${componentMetadataJson} | jq -r '.shortcut_icon')
         iconPath=${installComponentDirectory}/${shortcutIcon}
         if [[ -n ${primaryUrl} ]] && [[ ${primaryUrl} != "null" ]] && [[ -f ${iconPath} ]] && [[ -n ${shortcutText} ]]; then
           createDesktopIcon "${devopsShortcutsDirectory}" "${primaryUrl}" "${shortcutText}" "${iconPath}" "${browserOptions}"

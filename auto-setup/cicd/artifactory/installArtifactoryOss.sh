@@ -44,7 +44,7 @@ helm upgrade --install ${componentName} --namespace ${namespace} \
 
  # Install Ingress
 echo '''
-apiVersion: extensions/v1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
    name: artifactory-oss-artifactory
@@ -53,21 +53,25 @@ metadata:
      meta.helm.sh/release-name: artifactory-oss
      meta.helm.sh/release-namespace: artifactory
 spec:
-   backend:
-     serviceName: artifactory-oss-artifactory
-     servicePort: 8082
-   rules:
-   - host: '${componentName}'.'${baseDomain}'
-     http:
-       paths:
-       - backend:
-           serviceName: artifactory-oss-artifactory
-           servicePort: 8082
-         path: /
-         pathType: ImplementationSpecific
-       - backend:
-           serviceName: artifactory-oss-artifactory
-           servicePort: 8081
-         path: /artifactory
-         pathType: ImplementationSpecific
+  tls:
+    - hosts:
+        - '${componentName}'.'${baseDomain}'
+  rules:
+    - host: '${componentName}'.'${baseDomain}'
+      http:
+        paths:
+          - path: /
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: artifactory-oss
+                port:
+                  number: 8082
+          - path: /artifactory
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: artifactory-oss
+                port:
+                  number: 8081
 ''' | kubectl apply -n ${namespace} -f -

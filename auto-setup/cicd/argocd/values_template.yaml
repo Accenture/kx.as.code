@@ -19,7 +19,7 @@ repoServer:
 
   initContainers:
   - name: install-ksops
-    image: viaductoss/ksops:v3.0.1
+    image: viaductoss/ksops:v3.0.2
     command: ["/bin/sh", "-c"]
     args:
       - echo "Installing KSOPS...";
