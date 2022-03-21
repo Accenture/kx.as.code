@@ -18,7 +18,6 @@ if [[ -z ${mattermostLoginToken} ]]; then
 
     # Give user administrative priviliges
     kubectl -n ${namespace} exec ${mattermostPod} -c mattermost-team-edition -- bin/mmctl --local permissions role assign system_manager admin
-
 else
     log_info "Mattermost admin user already exists. Skipping creation"
 fi
