@@ -9,6 +9,10 @@
       },
       {
         "install_folder": "cicd",
+        "name": "gitlab-runner"
+      },
+      {
+        "install_folder": "cicd",
         "name": "gitlab"
       },
       {
@@ -18,10 +22,6 @@
       {
         "install_folder": "cicd",
         "name": "harbor"
-      },
-      {
-        "install_folder": "cicd",
-        "name": "gitlab-runner"
       },
       {
         "install_folder": "cicd",

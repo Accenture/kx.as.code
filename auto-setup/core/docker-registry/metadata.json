@@ -1,21 +1,12 @@
 {
     "name": "docker-registry",
     "namespace": "docker-registry",
-    "installation_type": "helm",
+    "installation_type": "script",
     "installation_group_folder": "core",
     "environment_variables": {
         "imageTag": "2.7.1"
     },
     "retry": "true",
-    "helm_params": {
-        "repository_url": "https://helm.twun.io",
-        "repository_name": "twuni/docker-registry",
-        "helm_version": "v1.5.4",
-        "set_key_values": [
-            "image.tag={{imageTag}}",
-            "installCRDs=true"
-        ]
-    },
     "urls": [
         {
             "url": "https://{{componentName}}.{{baseDomain}}",
@@ -26,8 +17,8 @@
                     "expected_http_response_code": "200",
                     "expected_http_response_string": "",
                     "expected_json_response": {
-                        "json_path": ".status",
-                        "json_value": "ok"
+                        "json_path": "",
+                        "json_value": ""
                     },
                     "health_shell_check_command": "",
                     "expected_shell_check_command_response": ""
@@ -38,17 +29,22 @@
                     "expected_http_response_code": "200",
                     "expected_http_response_string": "",
                     "expected_json_response": {
-                        "json_path": ".status",
-                        "json_value": "ok"
+                        "json_path": "",
+                        "json_value": ""
                     }
                 }
             }
         }
     ],
-    "install_scripts": [],
+    "install_scripts": [
+        "install-docker-registry.sh"
+    ],
     "Description": "Docker Registry",
     "shortcut_text": "Docker Registry",
     "shortcut_icon": "docker-registry.png",
-    "pre_install_scripts": [],
+    "pre_install_scripts": [
+        "createTlsCertsSecret.sh",
+        "createHtpasswdSecret.sh"
+    ],
     "post_install_scripts": []
 }

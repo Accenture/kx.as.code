@@ -4,7 +4,7 @@
     "installation_type": "script",
     "installation_group_folder": "cicd",
     "install_scripts": [
-        "buildAndPushCustomImages.sh"
+        "buildAndPushCustomImagesToCoreRegistry.sh"
     ],
     "environment_variables": {
         "gitlabDindImageVersion": "19.03.13-dind",

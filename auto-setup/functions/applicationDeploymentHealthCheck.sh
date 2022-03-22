@@ -12,6 +12,11 @@ applicationDeploymentHealthCheck () {
       expectedJsonValue=$(echo ${readinessCheckData} | jq -r '.expected_json_response.json_value')
       curlAuthOption=""
 
+      # Set default if not defined in metadata.json
+      if [[ -z ${expectedHttpResponseCode} ]]; then
+        expectedHttpResponseCode="200" 
+      fi
+
       # Set curl auth option, if http_auth_required=true in solution's metadata.json
       if [[ "${authorizationRequired}" == "true" ]]; then
           httpAuthSecretName=$(echo ${readinessCheckData} | jq -r '.http_auth_secret.secret_name?')
