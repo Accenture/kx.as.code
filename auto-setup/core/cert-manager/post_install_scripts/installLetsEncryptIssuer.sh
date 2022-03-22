@@ -1,5 +1,5 @@
-#!/bin/bash -x
-set -euo pipefail
+#!/bin/bash
+set -euox pipefail
 
 if [[ "${sslProvider}" == "letsencrypt" ]]; then
 
