@@ -4,7 +4,7 @@ const EXCHANGE_TYPE = "direct";
 const EXCHANGE_NAME = "main";
 const KEY = "myKey";
 const number = "5";
-connection = rabbit.connect("amqp://localhost");
+connection = rabbit.connect("amqp://test:test@localhost");
 connection.then(async (conn) => {
   const channel = await conn.createChannel();
   await channel.assertExchange(EXCHANGE_NAME, EXCHANGE_TYPE);

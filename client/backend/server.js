@@ -4,40 +4,47 @@ const fs = require("fs");
 const amqp = require("amqplib");
 
 const app = express();
+const bodyParser = require("body-parser");
+app.use(bodyParser.json());
 
 const PORT = process.env.PORT || 5001;
 const dataPath = "../src/data/combined-metadata-files.json";
 
-app.route("/api/msg").post((req, res) => {
-  amqp.connect("amqp://localhost", (err, conn) => {
-    conn.createChannel((err, ch) => {
-      const q = "tmp_queue";
+app.route("/api/add/application/:queue_name").post((req, res) => {
+  connection = amqp.connect("amqp://test:test@localhost");
+  console.log("install app req.body: ", req.body);
 
-      ch.assertQueue(q, { durable: false });
-
-      setTimeout(() => {
-        const msg_obj = { personId: 1, field1: "lorem", field2: "ipsum" };
-
-        const msg = JSON.stringify(msg_obj);
-
-        ch.sendToQueue(q, Buffer.from(msg));
-
-        console.log(` [X] Send ${msg}`);
-      }, 6000);
-    });
-
-    // The connection will close in 10 seconds
-    setTimeout(() => {
-      conn.close();
-    }, 10000);
+  connection.then(async (conn) => {
+    const channel = await conn.createChannel();
+    await channel.assertExchange("action_workflow", "direct");
+    await channel.assertQueue(req.params.queue_name);
+    channel.bindQueue(
+      req.params.queue_name,
+      "action_workflow",
+      req.params.queue_name
+    );
+    channel.sendToQueue(
+      req.params.queue_name,
+      Buffer.from(JSON.stringify(req.body))
+    );
   });
 
   res.send("The POST request is being processed!");
 });
 
 app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Credentials", "true");
+  res.setHeader("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT");
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    "Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers"
+  );
   next();
+  bodyParser.json();
+  bodyParser.urlencoded({
+    extended: true,
+  });
 });
 
 app.route("/api/queues/:queue_name").get((req, res) => {

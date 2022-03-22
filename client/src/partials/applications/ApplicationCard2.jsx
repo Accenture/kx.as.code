@@ -8,6 +8,7 @@ import { useState, useEffect } from "react";
 import AppLogo from "./AppLogo";
 import { toast } from "react-toastify";
 import LinearProgress from "@mui/material/LinearProgress";
+import axios from "axios";
 
 function ApplicationCard2(props) {
   const { history } = props;
@@ -15,6 +16,14 @@ function ApplicationCard2(props) {
   const [appId, setAppId] = useState("");
   const [appName, setAppName] = useState("");
   const [queueStatus, setQueueStatus] = useState("");
+  const [applicationPayload, setApplicationPayload] = useState({});
+
+  var defaultPayload = {
+    install_folder: "undefined",
+    name: "undefined",
+    action: "undefined",
+    retries: "0",
+  };
 
   const NotificationMessage = ({ closeToast, toastProps }) => (
     <div className="flex items-center">
@@ -38,8 +47,44 @@ function ApplicationCard2(props) {
     });
   };
 
+  const getApplicationPayloadByName = () => {
+    axios
+      .get("http://localhost:5001/api/applications")
+      .then((response) => {
+        console.log("res data: ", response.data);
+
+        var filterObj = response.data.filter((obj) => {
+          return obj.name === props.app.name;
+        });
+        console.log("filterObj: ", filterObj[0]);
+        // return filterObj[0];
+      })
+      .then((res) => {
+        setApplicationPayload(res[0]);
+      });
+  };
+
   const applicationInstallHandler = () => {
     notify();
+
+    console.log("debug payload: ", applicationPayload);
+    var payloadObj = {
+      install_folder: "",
+      name: "",
+      action: "install",
+      retries: "0",
+    };
+
+    const applicationPayload = payloadObj;
+    console.log("payload-1: ", applicationPayload);
+    axios
+      .post(
+        "http://localhost:5001/api/add/application/pending_queue",
+        applicationPayload
+      )
+      .catch((error) => {
+        console.error("There was an error!", error);
+      });
   };
 
   const setUp = () => {
@@ -119,7 +164,6 @@ function ApplicationCard2(props) {
         <header className="flex justify-between items-start mb-2">
           {/* Icon */}
           <div className="flex content-start">
-            {console.log("APPNAME in card: ", props.app.name)}
             <AppLogo height={"50px"} width={"50px"} appName={props.app.name} />
             {/* <StatusTag installStatus={props.app.queueName} /> */}
           </div>

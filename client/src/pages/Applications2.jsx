@@ -43,8 +43,6 @@ export const Applications2 = () => {
         }
       })
       .map((app, i) => {
-        console.log("queue data app: ", queueData);
-        console.log("app Data: ", app);
         return <ApplicationCard2 app={app} key={i} queueData={queueData} />;
       });
   };
@@ -69,7 +67,7 @@ export const Applications2 = () => {
   useEffect(() => {
     const id = setInterval(() => {
       fetchData();
-    }, 3000);
+    }, 20000);
 
     fetchData();
     return () => {
