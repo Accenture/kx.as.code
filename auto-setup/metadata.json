@@ -262,7 +262,7 @@
                     "description": "Quality assurance, including browser test automation and code quality checks",
                     "components": [
                         "sonarqube",
-                        "selenium"
+                        "selenium4"
                     ]
                 },
                 {
