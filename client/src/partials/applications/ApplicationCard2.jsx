@@ -16,7 +16,7 @@ function ApplicationCard2(props) {
   const [appId, setAppId] = useState("");
   const [appName, setAppName] = useState("");
   const [queueStatus, setQueueStatus] = useState("");
-  const [applicationPayload, setApplicationPayload] = useState({});
+  const [applicationData, setApplicationData] = useState({});
 
   var defaultPayload = {
     install_folder: "undefined",
@@ -47,44 +47,37 @@ function ApplicationCard2(props) {
     });
   };
 
-  const getApplicationPayloadByName = () => {
-    axios
-      .get("http://localhost:5001/api/applications")
-      .then((response) => {
-        console.log("res data: ", response.data);
-
-        var filterObj = response.data.filter((obj) => {
-          return obj.name === props.app.name;
-        });
-        console.log("filterObj: ", filterObj[0]);
-        // return filterObj[0];
-      })
-      .then((res) => {
-        setApplicationPayload(res[0]);
-      });
+  const getApplicationDataByName = async () => {
+    try {
+      const respoonseData = await axios.get(
+        "http://localhost:5001/api/applications/" + props.app.name
+      );
+      return respoonseData.data;
+    } catch (error) {
+      console.log("Error: ", error);
+    }
   };
 
-  const applicationInstallHandler = () => {
+  const applicationInstallHandler = async () => {
     notify();
+    getApplicationDataByName().then((appData) => {
+      var payloadObj = {
+        install_folder: appData.installation_group_folder,
+        name: appData.name,
+        action: "install",
+        retries: "0",
+      };
+      const applicationPayload = payloadObj;
 
-    console.log("debug payload: ", applicationPayload);
-    var payloadObj = {
-      install_folder: "",
-      name: "",
-      action: "install",
-      retries: "0",
-    };
-
-    const applicationPayload = payloadObj;
-    console.log("payload-1: ", applicationPayload);
-    axios
-      .post(
-        "http://localhost:5001/api/add/application/pending_queue",
-        applicationPayload
-      )
-      .catch((error) => {
-        console.error("There was an error!", error);
-      });
+      axios
+        .post(
+          "http://localhost:5001/api/add/application/pending_queue",
+          applicationPayload
+        )
+        .catch((error) => {
+          console.error("There was an error!", error);
+        });
+    });
   };
 
   const setUp = () => {
