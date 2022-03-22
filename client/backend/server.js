@@ -124,7 +124,7 @@ app.get("/api/applications/:app_name", (req, res) => {
         return app;
       }
     });
-    res.send(fil);
+    res.send(fil[0]);
   });
 });
 

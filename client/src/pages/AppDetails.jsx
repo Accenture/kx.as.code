@@ -17,8 +17,8 @@ export default function AppDetails(props) {
     axios
       .get("http://localhost:5001/api/applications/" + slug)
       .then((response) => {
-        console.log("appDetails: ", response.data[0]);
-        setAppData(response.data[0]);
+        console.log("appDetails: ", response.data);
+        setAppData(response.data);
       });
   };
 
