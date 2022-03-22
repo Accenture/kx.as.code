@@ -5,12 +5,15 @@
     "installation_group_folder": "security",
     "environment_variables": {
         "logLevel": "debug",
-        "priority": "notice"
+        "priority": "notice",
+        "appVersion": "0.31.1",
+        "falcoSideKickVersion": "2.24.0",
+        "falcosidekickUiVersion": "v1.1.0"
     },
     "helm_params": {
         "repository_url": "https://falcosecurity.github.io/charts",
         "repository_name": "falcosecurity/falco",
-        "helm_version": "",
+        "helm_version": "1.17.4",
         "set_key_values": []
     },
     "categories": [
@@ -19,12 +22,12 @@
     ],
     "urls": [
         {
-            "url": "",
+            "url": "https://{{componentName}}.{{baseDomain}}/ui",
             "healthchecks": {
                 "liveliness": {
                     "http_path": "/",
                     "http_auth_required": false,
-                    "expected_http_response_code": "",
+                    "expected_http_response_code": "200",
                     "expected_http_response_string": "",
                     "expected_json_response": {
                         "json_path": "",
@@ -36,7 +39,7 @@
                 "readiness": {
                     "http_path": "/",
                     "http_auth_required": false,
-                    "expected_http_response_code": "",
+                    "expected_http_response_code": "200",
                     "expected_http_response_string": "",
                     "expected_json_response": {
                         "json_path": "",
@@ -51,8 +54,6 @@
     "Description": "Container Runtime Security",
     "shortcut_text": "Sysdig Falco",
     "shortcut_icon": "sysdig-falco.png",
-    "pre_install_scripts": [
-        "getMattermostIntegrationId.sh"
-    ],
+    "pre_install_scripts": [],
     "post_install_scripts": []
 }

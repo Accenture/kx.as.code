@@ -1,29 +1,20 @@
 {
-    "name": "elastic-filebeat",
-    "namespace": "elastic-stack",
-    "installation_type": "helm",
-    "installation_group_folder": "monitoring",
+    "name": "docker-registry",
+    "namespace": "docker-registry",
+    "installation_type": "script",
+    "installation_group_folder": "core",
     "environment_variables": {
-        "elasticVersion": "8.1.0"
+        "imageTag": "2.7.1"
     },
-    "helm_params": {
-        "repository_url": "https://helm.elastic.co",
-        "repository_name": "elastic/filebeat",
-        "helm_version": "",
-        "set_key_values": []
-    },
-    "categories": [
-        "monitoring",
-        "log-harvester"
-    ],
+    "retry": "true",
     "urls": [
         {
-            "url": "",
+            "url": "https://{{componentName}}.{{baseDomain}}",
             "healthchecks": {
                 "liveliness": {
                     "http_path": "/",
                     "http_auth_required": false,
-                    "expected_http_response_code": "",
+                    "expected_http_response_code": "200",
                     "expected_http_response_string": "",
                     "expected_json_response": {
                         "json_path": "",
@@ -35,21 +26,25 @@
                 "readiness": {
                     "http_path": "/",
                     "http_auth_required": false,
-                    "expected_http_response_code": "",
+                    "expected_http_response_code": "200",
                     "expected_http_response_string": "",
                     "expected_json_response": {
                         "json_path": "",
                         "json_value": ""
-                    },
-                    "health_shell_check_command": "",
-                    "expected_shell_check_command_response": ""
+                    }
                 }
             }
         }
     ],
-    "Description": "Filebeat Description",
-    "shortcut_text": "",
-    "shortcut_icon": "",
-    "pre_install_scripts": [],
+    "install_scripts": [
+        "install-docker-registry.sh"
+    ],
+    "Description": "Docker Registry",
+    "shortcut_text": "Docker Registry",
+    "shortcut_icon": "docker-registry.png",
+    "pre_install_scripts": [
+        "createTlsCertsSecret.sh",
+        "createHtpasswdSecret.sh"
+    ],
     "post_install_scripts": []
 }

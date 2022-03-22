@@ -3,19 +3,31 @@
     "namespace": "monitoring",
     "installation_type": "helm",
     "installation_group_folder": "monitoring",
+    "environment_variables": {
+        "prometheusImageTag": "v2.31.1",
+        "alertManagerImageTag": "v0.23.0",
+        "nodeExporterImageTag": "v1.3.0",
+        "pushGatewayImageTag": "v1.4.2"
+    },
     "helm_params": {
-        "repository_url": "",
-        "repository_name": "stable/prometheus",
-        "helm_version": "",
+        "repository_url": "https://prometheus-community.github.io/helm-charts",
+        "repository_name": "prometheus-community/prometheus",
+        "helm_version": "15.5.3",
         "set_key_values": [
+            "prometheus.image.tag={{prometheusImageTag}}",
+            "nodeExporter.image.tag={{nodeExporterImageTag}}",
+            "pushgateway.image.tag={{pushGatewayImageTag}}",
+            "alertmanager.image.tag={{alertManagerImageTag}}",
             "alertmanager.persistentVolume.enabled=true",
             "alertmanager.persistentVolume.storageClass=gluster-heketi",
             "alertmanager.ingress.enabled=true",
+            "alertmanager.ingress.annotations.\"kubernetes\\.io/ingress\\.class\"=nginx",
             "alertmanager.ingress.hosts[0]=alertmanager.{{baseDomain}}",
             "alertmanager.ingress.tls[0].hosts[0]=alertmanager.{{baseDomain}}",
             "server.persistentVolume.enabled=true",
             "server.persistentVolume.storageClass=local-storage",
             "server.ingress.enabled=true",
+            "server.ingress.annotations.\"kubernetes\\.io/ingress\\.class\"=nginx",
             "server.ingress.hosts[0]={{componentName}}.{{baseDomain}}",
             "server.ingress.tls[0].hosts[0]={{componentName}}.{{baseDomain}}"
         ]

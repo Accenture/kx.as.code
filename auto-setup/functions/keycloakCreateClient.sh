@@ -13,7 +13,7 @@ createKeycloakClient() {
 
     # Export ClientId
     export clientId=$(kubectl -n ${kcNamespace} exec ${kcPod} --container ${kcContainer} -- \
-    ${kcAdmCli}  get clients --fields id,clientId | jq -r '.[] | select(.clientId=="'${componentName}'") | .id')
+    ${kcAdmCli} get clients --fields id,clientId | jq -r '.[] | select(.clientId=="'${componentName}'") | .id')
 
     if [[ "${clientId}" == "null" ]] || [[ -z ${clientId} ]]; then
         # Create client in Keycloak if it does not already exist

@@ -12,11 +12,12 @@ pip3 install -r requirements.txt
 /usr/local/bin/mkdocs build --clean
 
 # Build KX.AS.CODE Docs Docker Image
-docker build -t ${dockerRegistryDomain}/kx-as-code/docs:latest .
+docker build -t docker-registry.${baseDomain}/kx-as-code/docs:latest .
 
 # Save builds as tar files
 rm -f "${installationWorkspace}"/docker-kx-docs.tar
-docker save -o "${installationWorkspace}"/docker-kx-docs.tar "${dockerRegistryDomain}"/kx-as-code/docs:latest
+docker save -o "${installationWorkspace}"/docker-kx-docs.tar docker-registry."${baseDomain}"/kx-as-code/docs:latest
+pushDockerImageToCoreRegistry "kx-as-code/docs:latest"
 chmod 644 "${installationWorkspace}"/docker-kx-docs.tar
 
 # Install KX.AS.CODE Docs Image

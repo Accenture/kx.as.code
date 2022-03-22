@@ -1,6 +1,6 @@
 {
-    "name": "selenium",
-    "namespace": "selenium",
+    "name": "selenium3",
+    "namespace": "selenium3",
     "installation_type": "helm",
     "installation_group_folder": "test_automation",
     "helm_params": {
@@ -51,8 +51,8 @@
             }
         }
     ],
-    "Description": "Selenium Hub Description",
-    "shortcut_text": "Selenium Hub",
+    "Description": "Selenium Hub 3 Description",
+    "shortcut_text": "Selenium Hub 3",
     "shortcut_icon": "selenium.png",
     "pre_install_scripts": [],
     "post_install_scripts": []

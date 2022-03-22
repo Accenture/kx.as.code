@@ -23,7 +23,7 @@
             "prometheus.install=false",
             "global.smtp.enabled=false",
             "gitlab-runner.install=true",
-            "gitlab-runner.image={{dockerRegistryDomain}}/devops/gitlab-runner:alpine-{{gitabRunnerVersion}}",
+            "gitlab-runner.image=docker-registry.{{baseDomain}}/devops/gitlab-runner:alpine-{{gitabRunnerVersion}}",
             "gitlab-runner.runners.privileged=true",
             "gitlab-runner.certsSecretName=kx.as.code-wildcard-cert",
             "global.ingress.class=nginx",

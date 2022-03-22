@@ -17,7 +17,7 @@ spec:
   spec:
    containers:
    - name: kx-docs
-     image: {{dockerRegistryDomain}}/kx-as-code/docs:latest
+     image: docker-registry.{{baseDomain}}/kx-as-code/docs:latest
      imagePullPolicy: "IfNotPresent"
      env:
      - name: NGINX_HOST
