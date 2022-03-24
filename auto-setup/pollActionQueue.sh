@@ -45,13 +45,6 @@ fi
 # such as changing network settings and merging action files
 waitForFile ${installationWorkspace}/gogogo
 
-# Copy actionQueues.json to installation workspace if it doesn't exist
-# and merge with user aq* files if present
-if [[ ! -f ${installationWorkspace}/actionQueues.json ]]; then
-  cp ${autoSetupHome}/actionQueues.json ${installationWorkspace}/
-  populateActionQueue
-fi
-
 # Get network configuration - specifically which NIC to use or exclude
 getNetworkConfiguration
 
@@ -80,38 +73,6 @@ createRabbitMQQueues
 # Create RabbitMQ Bindings if they do not exist
 createRabbitMQWorkflowBindings
 
-# Get first and last elements from Core install Queue
-lastCoreElementToInstall=$(cat ${installationWorkspace}/actionQueues.json | jq -r 'last(.action_queues.install[] | select(.install_folder=="core")) | .name')
-if [[ "${lastCoreElementToInstall}" == "null" ]]; then
-    lastCoreElementToInstall=$(cat ${installationWorkspace}/actionQueues.json | jq -r 'last(.state.processed[] | select(.install_folder=="core")) | .name')
-fi
-firstCoreElementToInstall=$(cat ${installationWorkspace}/actionQueues.json | jq -r 'first(.action_queues.install[] | select(.install_folder=="core")) | .name')
-if [[ "${lastCoreElementToInstall}" == "null" ]]; then
-    firstCoreElementToInstall=$(cat ${installationWorkspace}/actionQueues.json | jq -r 'first(.state.processed[] | select(.install_folder=="core")) | .name')
-fi
-count=0
-
-# Populate pending queue on first start with default core components
-defaultComponentsToInstall=$(cat ${installationWorkspace}/actionQueues.json | jq -r '.action_queues.install[].name')
-for componentName in ${defaultComponentsToInstall}; do
-    payload=$(cat ${installationWorkspace}/actionQueues.json | jq -c '.action_queues.install[] | select(.name=="'${componentName}'") | {install_folder:.install_folder,"name":.name,"action":"install","retries":"0"}')
-    echo "Pending payload: ${payload}"
-    rabbitmqadmin publish exchange=action_workflow routing_key=pending_queue properties="{\"delivery_mode\": 2}" payload=''${payload}''
-
-    # Get slot number to add installed app to JSON array
-    arrayLength=$(cat ${installationWorkspace}/actionQueues.json | jq -r '.state.processed[].name' | wc -l)
-    if [[ -z ${arrayLength} ]]; then
-        arrayLength=0
-    fi
-    # Add component to state.processed array in actionQueue.json
-    cat ${installationWorkspace}/actionQueues.json | jq '.state.processed['${arrayLength}'] |= . + '"${payload}"'' | tee ${installationWorkspace}/actionQueues.json.tmp
-    mv ${installationWorkspace}/actionQueues.json.tmp ${installationWorkspace}/actionQueues.json
-    # Remove component from installation array as added to processed array in actionQueue.json
-    cat ${installationWorkspace}/actionQueues.json | jq 'del(.action_queues.install[] | select(.name=="'${componentName}'"))' | tee ${installationWorkspace}/actionQueues.json.tmp
-    mv ${installationWorkspace}/actionQueues.json.tmp ${installationWorkspace}/actionQueues.json
-    sleep 1
-done
-
 # Set tries to 0. If an install failed and the retry flag is set to true for that component in metadata.json, attempts will be made to retry up to 3 times
 retries=0
 logRc=0
@@ -122,6 +83,23 @@ sleep 5
 
 # Poll pending queue and trigger actions if message is present
 while :; do
+
+    # Check if any actionQueue templates have been added and need processing
+    if [[ -n $(ls ${installationWorkspace}/aq*.json 2>/dev/null || true) ]]; then
+        populateActionQueuesJson
+        populateActionQueuesRabbitMq
+    fi
+
+    # Get first and last elements from Core install Queue
+    lastCoreElementToInstall=$(cat ${installationWorkspace}/actionQueues.json | jq -r 'last(.action_queues.install[] | select(.install_folder=="core")) | .name')
+    if [[ "${lastCoreElementToInstall}" == "null" ]]; then
+        lastCoreElementToInstall=$(cat ${installationWorkspace}/actionQueues.json | jq -r 'last(.state.processed[] | select(.install_folder=="core")) | .name')
+    fi
+    firstCoreElementToInstall=$(cat ${installationWorkspace}/actionQueues.json | jq -r 'first(.action_queues.install[] | select(.install_folder=="core")) | .name')
+    if [[ "${lastCoreElementToInstall}" == "null" ]]; then
+        firstCoreElementToInstall=$(cat ${installationWorkspace}/actionQueues.json | jq -r 'first(.state.processed[] | select(.install_folder=="core")) | .name')
+    fi
+    count=0
 
     # Ensure DNS is working before continuing to avoid downstream failures
     rc=1

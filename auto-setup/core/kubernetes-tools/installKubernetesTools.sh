@@ -19,6 +19,14 @@ kubeVersion=$(cat ${installationWorkspace}/versions.json | jq -r '.kubernetes')
 /usr/bin/sudo apt-get install -y kubelet=${kubeVersion} kubeadm=${kubeVersion} kubectl=${kubeVersion}
 /usr/bin/sudo apt-mark hold kubelet kubeadm kubectl
 
+# Install Kubernetes YAML validation tool
+downloadFile "https://github.com/instrumenta/kubeval/releases/download/${kubevalVersion}/kubeval-linux-amd64.tar.gz" \
+  "${kubevalChecksum}" \
+  "${installationWorkspace}/kubeval-linux-amd64.tar.gz"
+
+tar xf ${installationWorkspace}/kubeval-linux-amd64.tar.gz -C ${installationWorkspace}
+/usr/bin/sudo cp -f ${installationWorkspace}/kubeval /usr/local/bin
+
 # Install Helm 3
 curl -fsSL --output ${certificatesWorkspace}/get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
 chmod 700 ${certificatesWorkspace}/get_helm.sh

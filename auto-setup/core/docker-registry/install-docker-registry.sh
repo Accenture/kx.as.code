@@ -118,10 +118,10 @@ metadata:
     app: docker-registry
     release: docker-registry
   annotations:
-    kubernetes.io/ingress.class: nginx
-    nginx.ingress.kubernetes.io/secure-backends: "true"
-    nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
-    nginx.ingress.kubernetes.io/proxy-body-size: "0"
+    kubernetes.io/ingress.class: \"nginx\"
+    nginx.ingress.kubernetes.io/secure-backends: \"true\"
+    nginx.ingress.kubernetes.io/backend-protocol: \"HTTPS\"
+    nginx.ingress.kubernetes.io/proxy-body-size: \"0\"
 spec:
   tls:
     - hosts:
@@ -141,8 +141,8 @@ spec:
 
 # Apply Kubernetes resources
 kubectl apply \
-    -f ${installationWorkspace}/docker-registry-pvc.yaml
-    -f ${installationWorkspace}/docker-registry-deploy.yaml
-    -f ${installationWorkspace}/docker-registry-service.yaml
-    -f ${installationWorkspace}/docker-registry-ingress.yaml
+    -f ${installationWorkspace}/docker-registry-pvc.yaml \
+    -f ${installationWorkspace}/docker-registry-deploy.yaml \
+    -f ${installationWorkspace}/docker-registry-service.yaml \
+    -f ${installationWorkspace}/docker-registry-ingress.yaml \
     -n ${namespace}

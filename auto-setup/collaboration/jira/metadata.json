@@ -1,17 +1,11 @@
 {
     "name": "jira",
     "namespace": "atlassian",
-    "installation_type": "argocd",
+    "installation_type": "script",
     "installation_group_folder": "collaboration",
-    "argocd_params": {
-        "repository": "{{gitUrl}}/devops/jira.git",
-        "path": ".",
-        "dest_server": "https://kubernetes.default.svc",
-        "dest_namespace": "{{namespace}}",
-        "sync_policy": "automated",
-        "auto_prune": true,
-        "self_heal": true
-    },
+    "install_scripts": [
+        "installJira.sh"
+    ],
     "categories": [
         "collaboration",
         "agile-management"
