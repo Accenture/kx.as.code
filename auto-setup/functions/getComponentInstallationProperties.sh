@@ -17,11 +17,16 @@ getComponentInstallationProperties() {
   export applicationDomain=$(echo ${applicationUrl} | sed 's/https:\/\///g')
 
   # Set application environment variables if set in metadata.json
-  export applicationEnvironmentVariables=$(cat ${componentMetadataJson} | jq -r '.environment_variables | to_entries|map("\(.key)=\(.value|tostring)")|.[] ')
-  if [[ -n ${applicationEnvironmentVariables} ]]; then
-      for environmentVariable in ${applicationEnvironmentVariables}; do
-          export ${environmentVariable}
-      done
+  if [[ "$(cat ${componentMetadataJson} | jq -r '.environment_variables')" != "null" ]]; then
+    log_info "Processing environment variables for component ${componentName}"
+    export applicationEnvironmentVariables=$(cat ${componentMetadataJson} | jq -r '.environment_variables | to_entries|map("\(.key)=\(.value|tostring)")|.[] ')
+    if [[ -n ${applicationEnvironmentVariables} ]]; then
+        for environmentVariable in ${applicationEnvironmentVariables}; do
+            export ${environmentVariable}
+        done
+    fi
+  else
+    log_info "No environment variables defined for ${componentName}"
   fi
 
 }

@@ -3,6 +3,10 @@
     "namespace": "kube-system",
     "installation_type": "script",
     "installation_group_folder": "core",
+    "environment_variables": {
+        "kubevalVersion": "v0.16.1",
+        "kubevalChecksum": "2d6f9bda1423b93787fa05d9e8dfce2fc1190fefbcd9d0936b9635f3f78ba790"
+    },
     "retry": "true",
     "install_scripts": [
         "installKubernetesTools.sh"

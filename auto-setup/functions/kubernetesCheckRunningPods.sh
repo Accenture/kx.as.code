@@ -1,6 +1,6 @@
 checkRunningKubernetesPods() {
 
-  for i in {1..60}; do
+  for i in {1..100}; do
     # Added workaround for Gitlab-Runner, which is not expected to work until later
     # This is because at this stage the docker registry is not yet up to push the custom image
     totalPods=$(kubectl get pods --namespace ${namespace} | grep -v "STATUS" | grep -v "gitlab-runner" | wc -l || true)
