@@ -88,10 +88,18 @@ function ApplicationCard2(props) {
         .replace(/\b\w/g, (l) => l.toLowerCase());
     setAppId(slug);
 
+    //todo rewrite
     const queueObj = getAppQueueData(props.app.name)[0];
 
-    if (queueObj != undefined && queueObj != null) {
-      setQueueStatus(queueObj.routing_key);
+    if (
+      getAppQueueData(props.app.name)[0] != undefined &&
+      getAppQueueData(props.app.name)[0] != null
+    ) {
+      console.log(
+        "debug-routing-queue: ",
+        getAppQueueData(props.app.name)[0].routing_key
+      );
+      setQueueStatus(getAppQueueData(props.app.name)[0].routing_key);
     }
   };
 
@@ -205,7 +213,7 @@ function ApplicationCard2(props) {
         <div className="pb-5">{props.app.Description}</div>
 
         <div className="">
-          {queueStatus === "pending_queue" ? (
+          {queueStatus === "pending_queue" && (
             <button
               className="bg-kxBlue/50 p-3 px-5 rounded items-center flex"
               disabled
@@ -231,7 +239,8 @@ function ApplicationCard2(props) {
               </svg>
               Installing...
             </button>
-          ) : (
+          )}
+          {"" && (
             <button
               onClick={applicationInstallHandler}
               className="bg-kxBlue p-3 px-5 rounded items-center flex"
