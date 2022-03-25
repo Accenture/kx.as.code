@@ -1,14 +1,5 @@
-#!/bin/bash -x
-set -euo pipefail
-
-# Get Harbor parameters
-export harborScriptDirectory="${autoSetupHome}/${defaultDockerRegistryPath}"
-
-# Get KX Robot Credentials
-. ${harborScriptDirectory}/helper_scripts/getDevOpsRobotCredentials.sh
-
-# Login to Docker
-echo  "${devopsRobotToken}" | docker login ${dockerRegistryDomain} -u ${devopsRobotUser} --password-stdin
+#!/bin/bash
+set -euox pipefail
 
 # Build Docker image
 cd ${installationWorkspace}
@@ -23,5 +14,8 @@ RUN echo \"kxascode/kx-root-ca.crt\" | tee -a /etc/ca-certificates.conf \
  && update-ca-certificates --fresh
 USER grafana
 """ | tee ${installationWorkspace}/Dockerfile.Grafana
-docker build -f ${installationWorkspace}/Dockerfile.Grafana -t ${dockerRegistryDomain}/devops/grafana:${grafanaVersion} .
-docker push ${dockerRegistryDomain}/devops/grafana:${grafanaVersion}
+docker build -f ${installationWorkspace}/Dockerfile.Grafana -t docker-registry.${baseDomain}/devops/grafana:${grafanaVersion} .
+pushDockerImageToCoreRegistry "devops/grafana:${grafanaVersion}"
+
+# Add regcred secret to Gitlab namespace
+createK8sCredentialSecretForCoreRegistry
