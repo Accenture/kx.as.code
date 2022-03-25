@@ -4,8 +4,6 @@ populateGitlabProject() {
   gitlabRepoName=$2
   sourceCodeLocation=$3
 
-  export sharedGitRepositories=/usr/share/kx.as.code/git
-
   # Create base directory for Gitlab Demo repositories
   mkdir -p ${installationWorkspace}/staging/
 
@@ -22,7 +20,7 @@ populateGitlabProject() {
 
   numFilesInRepoDir=0
   gitStatusRc=0
-  if [[ -d ${installationWorkspace}/staging/${gitlabRepoName} ]]; then
+  if [[ -d ${installationWorkspace}/staging/${gitlabRepoName}/.git ]]; then
     cd ${installationWorkspace}/staging/${gitlabRepoName}
     gitStatusRc=$(git status --short --branch --untracked-files=no >/dev/null && echo $? || echo $?)
     echo "Received RC=${gitStatusRc}"
@@ -36,7 +34,7 @@ populateGitlabProject() {
 
   if [[ ! -d ${installationWorkspace}/staging/${gitlabRepoName} ]]; then
     for i in {1..5}; do
-        git clone https://"${vmUser}":"${vmPassword}"@${gitlabDomain}/${gitlabProjectName}/${gitlabRepoName}.git ${installationWorkspace}/staging/${gitlabRepoName}
+        git clone https://"${vmUser}":"${vmPassword}"@gitlab.${baseDomain}/${gitlabProjectName}/${gitlabRepoName}.git ${installationWorkspace}/staging/${gitlabRepoName}
         if [[ $? -eq 0 ]] || [[ $? -eq 128 ]]; then break; else sleep 5; fi
     done
     cp -rf /var/tmp/${gitlabRepoName}/. ${installationWorkspace}/staging/${gitlabRepoName}/

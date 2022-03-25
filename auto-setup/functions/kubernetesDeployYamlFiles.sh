@@ -2,6 +2,9 @@ deployYamlFilesToKubernetes() {
 
     log_debug "Entered function deployYamlFilesToKubernetes()"
 
+    # Create regcred for pulling images from private registry
+    createK8sCredentialSecretForCoreRegistry()
+
     if [[ -d ${installComponentDirectory}/deployment_yaml ]]; then
 
         shopt -s globstar nullglob
