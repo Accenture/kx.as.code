@@ -2,14 +2,14 @@ autoSetupHelmInstall() {
   log_debug "Established installation type is \"${installationType}\". Proceeding in that way"
   # Get helm parameters
   helm_params=$(cat ${componentMetadataJson} | jq -r '.'${installationType}'_params')
-  log_debug ${helm_params}
+  echo ${helm_params}
   # Check if helm repository is custom or standard
   helmRepositoryUrl=$(echo ${helm_params} | jq -r '.repository_url')
 
   # Check if helm repository is already added
   if [[ -n ${helmRepositoryUrl} ]]; then
     helmRepoNameToAdd=$(echo ${helm_params} | jq -r '.repository_name' | cut -f1 -d'/')
-    helmRepoExists=$(helm repo list -o json | jq '.[] | select(.name=="'${helmRepoNameToAdd}'")')
+    helmRepoExists=$(helm repo list -o json | jq -r '.[] | select(.name=="'${helmRepoNameToAdd}'")')
     log_debug "helmRepoNameToAdd: ${helmRepoNameToAdd},  helmRepoExists: ${helmRepoExists}"
     if [[ -z ${helmRepoExists} ]]; then
       log_debug "helm repo add ${helmRepoNameToAdd} ${helmRepositoryUrl}"

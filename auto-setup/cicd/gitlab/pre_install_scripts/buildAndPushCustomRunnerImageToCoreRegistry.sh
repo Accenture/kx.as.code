@@ -1,5 +1,5 @@
-#!/bin/bash -x
-set -euo pipefail
+#!/bin/bash
+set -euox pipefail
 
 # Change into workspace so it finds the CA certificates
 cd ${installationWorkspace}
@@ -35,3 +35,6 @@ if [[ ${gitlabRunnerPodStatus} == "ImagePullBackOff"   ]]; then
     log_info 'Deleted gitlab runner pod with status "ImagePullBackOff"'
     kubectl delete pod ${gitlabRunnerPodName} -n ${namespace}
 fi
+
+# Add regcred secret to Gitlab namespace
+createK8sCredentialSecretForCoreRegistry

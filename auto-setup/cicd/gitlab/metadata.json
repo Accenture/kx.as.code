@@ -129,6 +129,7 @@
     "api_docs_url": "https://{{componentName}}.{{baseDomain}}/help/api/api_resources.md",
     "vendor_docs_url": "https://docs.gitlab.com/ce/",
     "pre_install_scripts": [
+        "buildAndPushCustomRunnerImageToCoreRegistry.sh",
         "getVariables.sh",
         "createS3Buckets.sh",
         "createSecrets.sh",
