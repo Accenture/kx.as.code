@@ -16,7 +16,9 @@ app.route("/api/add/application/:queue_name").post((req, res) => {
 
   connection.then(async (conn) => {
     const channel = await conn.createChannel();
-    await channel.assertExchange("action_workflow", "direct");
+    await channel.assertExchange("action_workflow", "direct", {
+      durable: true,
+    });
     await channel.assertQueue(req.params.queue_name);
     channel.bindQueue(
       req.params.queue_name,

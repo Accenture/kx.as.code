@@ -52,9 +52,12 @@ export const Applications2 = () => {
       return axios
         .get("http://localhost:5001/api/queues/" + queue)
         .then((response) => {
-          response.data.map((app) => {
-            queueData.push(app);
-          });
+          // response.data.map((app) => {
+          //   queueData.push(app);
+          // });
+        })
+        .then(() => {
+          console.log("debug-all data: ", queueData);
         });
     });
 
