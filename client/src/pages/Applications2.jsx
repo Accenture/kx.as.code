@@ -21,14 +21,9 @@ export const Applications2 = () => {
 
   const fetchData = () => {
     setIsLoading(true);
-    axios
-      .get("http://localhost:5001/api/applications")
-      .then((response) => {
-        setApplicationData(response.data);
-      })
-      .then(() => {
-        fetchQueueData2();
-      });
+    axios.get("http://localhost:5001/api/applications").then((response) => {
+      setApplicationData(response.data);
+    });
   };
 
   const drawApplicationCards = () => {
@@ -47,36 +42,42 @@ export const Applications2 = () => {
       });
   };
 
-  const fetchQueueData2 = () => {
+  const fetchQueueData = () => {
     const requests = queueList.map((queue) => {
       return axios
         .get("http://localhost:5001/api/queues/" + queue)
         .then((response) => {
-          // response.data.map((app) => {
-          //   queueData.push(app);
-          // });
+          // console.log("debug-response: ", response);
+          response.data.map((app) => {
+            queueData.push(app);
+          });
         })
         .then(() => {
-          console.log("debug-all data: ", queueData);
+          // console.log("debug-all data: ", queueData);
         });
     });
 
-    Promise.all(requests).then(() => {
-      setQueueData(queueData);
-      setIsLoading(false);
-    });
+    Promise.all(requests)
+      .then(() => {
+        setQueueData(queueData);
+        setIsLoading(false);
+      })
+      .then(() => {
+        // console.log("queueData-22: ", queueData);
+      });
   };
 
   useEffect(() => {
-    const id = setInterval(() => {
-      fetchData();
-    }, 20000);
+    // const id = setInterval(() => {
+    //   fetchData();
+    // }, 20000);
 
     fetchData();
+    fetchQueueData();
     return () => {
-      clearInterval(id);
+      // clearInterval(id);
     };
-  }, []);
+  }, [queueData]);
 
   return (
     <div className="px-6 sm:px-6 lg:px-24 py-8 w-full max-w-9xl mx-auto">
