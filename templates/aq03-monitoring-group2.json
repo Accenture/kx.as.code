@@ -13,10 +13,6 @@
       },
       {
         "install_folder": "monitoring",
-        "name": "grafana-image-renderer"
-      },
-      {
-        "install_folder": "monitoring",
         "name": "graphite"
       }
     ]
