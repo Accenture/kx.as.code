@@ -243,11 +243,17 @@ if [[ ! -f /usr/share/kx.as.code/.config/network_status ]]; then
     if [[ ${baseIpType} == "static" ]]; then
         # Configure IF to be managed/configured by network-manager
         /usr/bin/sudo rm -f /etc/NetworkManager/system-connections/*
-        /usr/bin/sudo mv /etc/network/interfaces /etc/network/interfaces.unused
+        if [[ -f /etc/network/interfaces ]]; then
+          /usr/bin/sudo mv /etc/network/interfaces /etc/network/interfaces.unused
+        fi
         /usr/bin/sudo nmcli con add con-name "${netDevice}" ifname ${netDevice} type ethernet ip4 ${kxWorkerIp}/24 gw4 ${fixedNicConfigGateway}
         /usr/bin/sudo nmcli con mod "${netDevice}" ipv4.method "manual"
         /usr/bin/sudo nmcli con mod "${netDevice}" ipv4.dns "${fixedNicConfigDns1},${fixedNicConfigDns2}"
-        /usr/bin/sudo systemctl restart network-manager
+        /usr/bin/sudo nmcli -g name,type connection show --active
+        nicToIgnoreDns=$(/usr/bin/sudo nmcli -g name,type connection show --active | grep "Wired connection" | cut -f 1 -d ':')
+        /usr/bin/sudo nmcli con mod "${nicToIgnoreDns}" ipv4.ignore-auto-dns yes
+        /usr/bin/sudo systemctl restart NetworkManager
+        /usr/bin/sudo systemctl restart systemd-networkd.service
         /usr/bin/sudo nmcli con up "${netDevice}"
     fi
 

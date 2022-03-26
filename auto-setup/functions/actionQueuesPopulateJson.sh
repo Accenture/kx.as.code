@@ -3,6 +3,11 @@ populateActionQueuesJson() {
     shopt -s globstar nullglob
     export aqFiles=( ${installationWorkspace}/aq*.json )
 
+    # Copy actionQueues.json to workspace if not yet initialized
+    if [[ ! -f ${installationWorkspace}/actionQueuesInitialized.flag ]]; then
+      cp -f ${autoSetupHome}/actionQueues.json ${installationWorkspace}/actionQueues.json
+    fi
+
     # Merge json files if user uploaded aq* files present
     if [[ -n ${aqFiles[@]} ]]; then
     
@@ -83,5 +88,6 @@ populateActionQueuesJson() {
     if [[ -f ${installationWorkspace}/actionQueues_temp.json ]]; then
         /usr/bin/sudo mv ${installationWorkspace}/actionQueues_temp.json ${installationWorkspace}/actionQueues.json
     fi
+    /usr/bin/sudo touch ${installationWorkspace}/actionQueuesInitialized.flag
 
 }
