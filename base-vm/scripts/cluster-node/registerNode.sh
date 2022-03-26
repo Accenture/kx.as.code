@@ -250,11 +250,20 @@ if [[ ! -f /usr/share/kx.as.code/.config/network_status ]]; then
         /usr/bin/sudo nmcli con mod "${netDevice}" ipv4.method "manual"
         /usr/bin/sudo nmcli con mod "${netDevice}" ipv4.dns "${fixedNicConfigDns1},${fixedNicConfigDns2}"
         /usr/bin/sudo nmcli -g name,type connection show --active
-        nicToIgnoreDns=$(/usr/bin/sudo nmcli -g name,type connection show --active | grep "Wired connection" | cut -f 1 -d ':')
-        /usr/bin/sudo nmcli con mod "${nicToIgnoreDns}" ipv4.ignore-auto-dns yes
+        /usr/bin/sudo nmcli con up "${netDevice}"
+
+        for nic in ${nicExclusions}; do
+          existingNicIpAddress=$(ip address show ${nic} | egrep -o 'inet [0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | cut -d' ' -f2)
+          existingNicGateway=$(ip route | grep ${nic} | awk '/default/ { print $3 }')
+          /usr/bin/sudo nmcli con add con-name "${nic}" ifname ${nic} type ethernet ip4 ${existingNicIpAddress}/24 gw4 ${existingNicGateway}
+          /usr/bin/sudo nmcli con mod "${nic}" ipv4.method "manual"
+          /usr/bin/sudo nmcli con mod "${nic}" ipv4.dns "${fixedNicConfigDns1},${fixedNicConfigDns2}"
+          /usr/bin/sudo nmcli -g name,type connection show --active
+          /usr/bin/sudo nmcli con up "${nic}"
+        done
+
         /usr/bin/sudo systemctl restart NetworkManager
         /usr/bin/sudo systemctl restart systemd-networkd.service
-        /usr/bin/sudo nmcli con up "${netDevice}"
     fi
 
     # Ensure the whole network setup does not execute again on next run after reboot
