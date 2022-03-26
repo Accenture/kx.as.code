@@ -241,17 +241,21 @@ if [[ ! -f /usr/share/kx.as.code/.config/network_status ]]; then
     fi
 
     if [[ ${baseIpType} == "static" ]]; then
+
         # Configure IF to be managed/configured by network-manager
         /usr/bin/sudo rm -f /etc/NetworkManager/system-connections/*
         if [[ -f /etc/network/interfaces ]]; then
           /usr/bin/sudo mv /etc/network/interfaces /etc/network/interfaces.unused
         fi
+
+        # Setup second NIC (in case of VirtualBox where first NIC is NAT interface)
         /usr/bin/sudo nmcli con add con-name "${netDevice}" ifname ${netDevice} type ethernet ip4 ${kxWorkerIp}/24 gw4 ${fixedNicConfigGateway}
         /usr/bin/sudo nmcli con mod "${netDevice}" ipv4.method "manual"
         /usr/bin/sudo nmcli con mod "${netDevice}" ipv4.dns "${fixedNicConfigDns1},${fixedNicConfigDns2}"
         /usr/bin/sudo nmcli -g name,type connection show --active
         /usr/bin/sudo nmcli con up "${netDevice}"
 
+        # Change the dynamic NIC (NAT NIC in case of VirtualBox) to a fixed one, with alternative DNS resolution settings
         for nic in ${nicExclusions}; do
           existingNicIpAddress=$(ip address show ${nic} | egrep -o 'inet [0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | cut -d' ' -f2)
           existingNicGateway=$(ip route | grep ${nic} | awk '/default/ { print $3 }')
@@ -262,8 +266,10 @@ if [[ ! -f /usr/share/kx.as.code/.config/network_status ]]; then
           /usr/bin/sudo nmcli con up "${nic}"
         done
 
+        # Restart network service to apply all settings
         /usr/bin/sudo systemctl restart NetworkManager
         /usr/bin/sudo systemctl restart systemd-networkd.service
+
     fi
 
     # Ensure the whole network setup does not execute again on next run after reboot
