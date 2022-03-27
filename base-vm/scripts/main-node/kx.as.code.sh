@@ -182,7 +182,7 @@ Comment=KX.AS.CODE Readme
 Exec=/usr/bin/typora ${SHARED_GIT_REPOSITORIES}/kx.as.code/README.md
 StartupNotify=true
 Terminal=false
-Icon=${SHARED_GIT_REPOSITORIES}/kx.as.code/docs/docs/images/kx-logo-inv.png
+Icon=${SHARED_GIT_REPOSITORIES}/kx.as.code/docs/docs/images/kx-logo-w.png
 Type=Application
 Categories=Development
 EOF"
@@ -197,7 +197,7 @@ Comment=KX.AS.CODE Contribute
 Exec=/usr/bin/typora ${SHARED_GIT_REPOSITORIES}/docs/Development/Contribution-Guidelines.md
 StartupNotify=true
 Terminal=false
-Icon=${SHARED_GIT_REPOSITORIES}/kx.as.code/docs/docs/images/kx-logo-inv.png
+Icon=${SHARED_GIT_REPOSITORIES}/kx.as.code/docs/docs/images/kx-logo-w.png
 Type=Application
 Categories=Development
 EOF"
