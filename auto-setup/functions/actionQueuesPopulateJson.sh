@@ -89,5 +89,6 @@ populateActionQueuesJson() {
         /usr/bin/sudo mv ${installationWorkspace}/actionQueues_temp.json ${installationWorkspace}/actionQueues.json
     fi
     /usr/bin/sudo touch ${installationWorkspace}/actionQueuesInitialized.flag
+    shopt -u globstar nullglob
 
 }
