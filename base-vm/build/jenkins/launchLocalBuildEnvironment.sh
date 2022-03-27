@@ -223,6 +223,9 @@ if [[ ${firstTwoChars} == "./" ]]; then
 elif [[ ${firstChar} == "/" ]]; then
     # If / at start, assume provided directory is already absolute and use it
     jenkins_home_absolute_path=${jenkins_home}
+elif [[ ${firstTwoChars} == ".\\" ]]; then
+    # if workspace directory starts with .\, convert relative directory to absolute
+    jenkins_home_absolute_path=$(pwd)/$(echo ${jenkins_home} | sed 's/\.//g')
 else
     # If no ./ or / at beginning, assume relative working directory and convert to absolute
     jenkins_home_absolute_path="$(pwd)/${jenkins_home}"
