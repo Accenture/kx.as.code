@@ -4,6 +4,9 @@ set -euo pipefail
 # Ensure time is accurate
 sudo apt-get install -y ntpdate
 
+# Install Netplan for later NIC configuration on first start
+sudo apt-get install -y netplan.io
+
 KUBEDIR=${INSTALLATION_WORKSPACE}
 sudo mkdir -p ${KUBEDIR}
 sudo chown ${VM_USER}:${VM_USER} ${KUBEDIR}
