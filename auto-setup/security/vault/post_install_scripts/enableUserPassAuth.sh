@@ -7,3 +7,6 @@ userPassAuthEnabled=$(kubectl exec -ti -n ${namespace} vault-0 -- vault auth lis
 if [[ -z ${userPassAuthEnabled} ]]; then
     kubectl exec -ti -n ${namespace} vault-0 -- vault auth enable userpass
 fi
+
+# Store intial root password in GoPass
+pushPassword "vault-initial-root-token" "${initialRootToken}"
