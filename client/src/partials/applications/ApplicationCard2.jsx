@@ -9,6 +9,7 @@ import AppLogo from "./AppLogo";
 import { toast } from "react-toastify";
 import LinearProgress from "@mui/material/LinearProgress";
 import axios from "axios";
+import { AiOutlineWarning } from "react-icons/ai";
 
 function ApplicationCard2(props) {
   const { history } = props;
@@ -17,7 +18,7 @@ function ApplicationCard2(props) {
   const [appName, setAppName] = useState("");
   const [allQueueStatus, setAllQueueStatus] = useState([]);
   const [applicationData, setApplicationData] = useState({});
-  const [appQueue, setAppQueue] = useState("");
+  const [appQueue, setAppQueue] = useState("pending_queue");
 
   var defaultPayload = {
     install_folder: "undefined",
@@ -75,6 +76,10 @@ function ApplicationCard2(props) {
           "http://localhost:5001/api/add/application/pending_queue",
           applicationPayload
         )
+        .then(() => {
+          // setAppQueue("pending_queue");
+          // props.fetchQueueData();
+        })
         .catch((error) => {
           console.error("There was an error!", error);
         });
@@ -157,7 +162,7 @@ function ApplicationCard2(props) {
   };
 
   const fetchAppQueueData33 = async () => {
-    const queue = await props.queueData.filter(function (obj) {
+    return await props.queueData.filter(function (obj) {
       if (JSON.parse(obj.payload).name === props.app.name) {
         setAppQueue(obj.routing_key);
         console.log("in GetQueue queue Name: ", obj.routing_key);
@@ -179,7 +184,7 @@ function ApplicationCard2(props) {
         .replace(/\b\w/g, (l) => l.toUpperCase())
     );
     return () => {};
-  }, []);
+  }, [appQueue]);
 
   const drawAppTags = (appTags) => {
     return appTags.map((appTag, i) => {
@@ -286,12 +291,24 @@ function ApplicationCard2(props) {
           )}
           {appQueue != "pending_queue" &&
             (appQueue != "completed_queue" ? (
-              <button
-                onClick={applicationInstallHandler}
-                className="bg-kxBlue p-3 px-5 rounded items-center flex"
-              >
-                Install
-              </button>
+              <div className="">
+                <button
+                  onClick={applicationInstallHandler}
+                  className="bg-kxBlue p-3 px-5 rounded items-center flex"
+                >
+                  Install
+                </button>
+
+                {/* Warning Info Installation Failed Component */}
+                {appQueue === "failed_queue" && (
+                  <div className="p-2 mt-4 rounded-md text-red-500 flex item-center border border-red-500">
+                    <AiOutlineWarning className="mt-auto mb-auto table text-2xl mr-2" />
+                    <div>
+                      ERROR: An error occured when trying to install {appName}.
+                    </div>
+                  </div>
+                )}
+              </div>
             ) : (
               <button
                 onClick={applicationInstallHandler}
