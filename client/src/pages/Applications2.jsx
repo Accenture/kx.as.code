@@ -45,12 +45,26 @@ export const Applications2 = () => {
         }
       })
       .sort(function (a, b) {
-        if (a.firstname < b.firstname) {
-          return -1;
+        const nameA = a.name.toUpperCase();
+        const nameB = b.name.toUpperCase();
+
+        if (sortSelect === "asc") {
+          if (nameA < nameB) {
+            return -1;
+          }
+          if (nameA > nameB) {
+            return 1;
+          }
+        } else {
+          if (nameB < nameA) {
+            return -1;
+          }
+          if (nameB > nameA) {
+            return 1;
+          }
         }
-        if (a.firstname > b.firstname) {
-          return 1;
-        }
+
+        // names must be equal
         return 0;
       })
       .map((app, i) => {
@@ -158,7 +172,6 @@ export const Applications2 = () => {
             <option value="asc">Sort by name A-Z</option>
             <option value="desc">Sort by name Z-A</option>
           </select>
-          {"sort: " + sortSelect}
         </div>
       </div>
 
