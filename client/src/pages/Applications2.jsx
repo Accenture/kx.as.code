@@ -1,6 +1,11 @@
 import { React, Component } from "react";
 import ApplicationCard2 from "../partials/applications/ApplicationCard2.jsx";
 import axios from "axios";
+import Box from "@mui/material/Box";
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
+import FormControl from "@mui/material/FormControl";
+import Select from "@mui/material/Select";
 // import FilterButton from "../partials/actions/FilterButton"
 
 import { useState, useEffect } from "react";
@@ -10,6 +15,8 @@ export const Applications2 = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [queueData, setQueueData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+
+  const [sortSelect, setSortSelect] = useState("asc");
 
   const queueList = [
     "pending_queue",
@@ -37,12 +44,22 @@ export const Applications2 = () => {
           return val;
         }
       })
+      .sort(function (a, b) {
+        if (a.firstname < b.firstname) {
+          return -1;
+        }
+        if (a.firstname > b.firstname) {
+          return 1;
+        }
+        return 0;
+      })
       .map((app, i) => {
         return <ApplicationCard2 app={app} key={i} queueData={queueData} />;
       });
   };
 
   const fetchQueueData = () => {
+    console.log("ping");
     const requests = queueList.map((queue) => {
       return axios
         .get("http://localhost:5001/api/queues/" + queue)
@@ -94,9 +111,9 @@ export const Applications2 = () => {
       </div>
 
       {/* Applications actions */}
-      <div className="sm:flex sm:items-center mb-8">
+      <div className="flex justify-between mb-8">
         {/* Left: Actions */}
-        <div className="grid grid-flow-col sm:auto-cols-max justify-start sm:justify-start gap-2">
+        <div className="">
           {/* Search Input Field */}
           <div className="group relative mb-3">
             <svg
@@ -121,12 +138,30 @@ export const Applications2 = () => {
               }}
             />
           </div>
+
           {/* <FilterButton filterHandler={this.filterHandler}
                             isCompleted={this.state.isCompleted}
                             isFailed={this.state.isFailed}
                             isPending={this.state.isPending} /> */}
         </div>
+
+        {/* Right: Actions */}
+        <div className="">
+          <select
+            onChange={(e) => {
+              setSortSelect(e.target.value);
+            }}
+            name="sort-select"
+            id="sort-select"
+            className="bg-ghBlack2 py-3 border-none rounded-md cursor-pointer"
+          >
+            <option value="asc">Sort by name A-Z</option>
+            <option value="desc">Sort by name Z-A</option>
+          </select>
+          {"sort: " + sortSelect}
+        </div>
       </div>
+
       <div className="grid grid-cols-12 gap-8">{drawApplicationCards()}</div>
     </div>
   );
