@@ -197,7 +197,7 @@ if [[ ${baseIpType} == "static"   ]]; then
         if [[ ${fixIpHost} == "kx-main1" ]]; then
             export kxMainIp="$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.staticNetworkSetup.baseFixedIpAddresses."'${fixIpHost}'"')"
         elif [[ ${fixIpHost} == "$(hostname)" ]]; then
-            export kxWorkerIp="$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.staticNetworkSetup.baseFixedIpAddresses."'${fixIpHost}'"')"
+            export kxNodeIp="$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.staticNetworkSetup.baseFixedIpAddresses."'${fixIpHost}'"')"
         fi
     done
     export fixedNicConfigGateway=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.staticNetworkSetup.gateway')
@@ -241,14 +241,61 @@ if [[ ! -f /usr/share/kx.as.code/.config/network_status ]]; then
     fi
 
     if [[ ${baseIpType} == "static" ]]; then
+
         # Configure IF to be managed/configured by network-manager
         /usr/bin/sudo rm -f /etc/NetworkManager/system-connections/*
-        /usr/bin/sudo mv /etc/network/interfaces /etc/network/interfaces.unused
-        /usr/bin/sudo nmcli con add con-name "${netDevice}" ifname ${netDevice} type ethernet ip4 ${kxWorkerIp}/24 gw4 ${fixedNicConfigGateway}
-        /usr/bin/sudo nmcli con mod "${netDevice}" ipv4.method "manual"
-        /usr/bin/sudo nmcli con mod "${netDevice}" ipv4.dns "${fixedNicConfigDns1},${fixedNicConfigDns2}"
-        /usr/bin/sudo systemctl restart network-manager
-        /usr/bin/sudo nmcli con up "${netDevice}"
+        if [[ -f /etc/network/interfaces ]]; then
+          /usr/bin/sudo mv /etc/network/interfaces /etc/network/interfaces.unused
+        fi
+
+        existingNicIpAddress=$(ip address show ${nic} | egrep -o 'inet [0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | cut -d' ' -f2)
+        existingNicGateway=$(ip route | grep ${nic} | awk '/default/ { print $3 }')
+        existingNicMac=$(cat /sys/class/net/${nic}/address)
+        fixedNicMac=$(cat /sys/class/net/${netDevice}/address)
+        nicExclusions=$(echo -n "${nicExclusions//[[:space:]]/}")
+
+echo """network:
+  version: 2
+  renderer: NetworkManager
+  ethernets:""" | /usr/bin/sudo tee /etc/netplan/kx-netplan.yaml
+
+if [[ -n ${nicExclusions} ]]; then
+existingNicIpAddress=$(ip address show ${nic} | egrep -o 'inet [0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | cut -d' ' -f2)
+existingNicGateway=$(ip route | grep ${nic} | awk '/default/ { print $3 }')
+existingNicMac=$(cat /sys/class/net/${nic}/address)
+nicExclusions=$(echo -n "${nicExclusions//[[:space:]]/}")
+echo """      ${nicExclusions}:
+          match:
+              macaddress: "${existingNicMac}"
+          dhcp4: no
+          addresses:
+              - ${existingNicIpAddress}/24
+          gateway4: ${existingNicGateway}
+          nameservers:
+              addresses: [${fixedNicConfigDns1}, ${fixedNicConfigDns2}]""" | /usr/bin/sudo tee -a /etc/netplan/kx-netplan.yaml
+fi
+
+if [[ -n ${netDevice} ]]; then
+fixedNicMac=$(cat /sys/class/net/${netDevice}/address)
+echo """      ${netDevice}:
+          match:
+              macaddress: "${fixedNicMac}"
+          dhcp4: no
+          addresses:
+              - ${kxNodeIp}/24
+          gateway4: ${fixedNicConfigGateway}
+          nameservers:
+              addresses: [${fixedNicConfigDns1}, ${fixedNicConfigDns2}]
+""" | /usr/bin/sudo tee -a /etc/netplan/kx-netplan.yaml
+fi
+
+        /usr/bin/sudo netplan try
+        /usr/bin/sudo netplan -d apply
+
+        # Restart network service to activate the settings
+        /usr/bin/sudo systemctl restart NetworkManager
+        /usr/bin/sudo systemctl restart systemd-networkd.service
+
     fi
 
     # Ensure the whole network setup does not execute again on next run after reboot
@@ -493,14 +540,14 @@ if ( [[ -n ${httpProxySetting} ]] || [[ -n ${httpsProxySetting} ]] ) && ( [[ "${
         systemctl daemon-reload
         systemctl restart docker
 
-        baseip=$(echo ${kxWorkerIp} | cut -d'.' -f1-3)
+        baseip=$(echo ${kxNodeIp} | cut -d'.' -f1-3)
 
         echo '''
         export http_proxy='${httpProxySetting}'
         export HTTP_PROXY=$http_proxy
         export https_proxy='${httpsProxySetting}'
         export HTTPS_PROXY=$https_proxy
-        printf -v lan '"'"'%s,'"'"' '${kxWorkerIp}'
+        printf -v lan '"'"'%s,'"'"' '${kxNodeIp}'
         printf -v pool '"'"'%s,'"'"' '${baseip}'.{1..253}
         printf -v service '"'"'%s,'"'"' '${baseip}'.{1..253}
         export no_proxy="${lan%,},${service%,},${pool%,},127.0.0.1,.'${baseDomain}'";

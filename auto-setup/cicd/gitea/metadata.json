@@ -3,19 +3,14 @@
     "namespace": "gitea",
     "installation_type": "helm",
     "installation_group_folder": "cicd",
+    "environment_variables": {
+        "imageTag": "1.16.5"
+    },
     "helm_params": {
         "repository_url": "https://dl.gitea.io/charts/",
         "repository_name": "gitea-charts/gitea",
-        "set_key_values": [
-            "postgresql.global.postgresql.postgresqlDatabase=gitea",
-            "postgresql.global.postgresql.postgresqlUsername=gitea",
-            "postgresql.global.postgresql.postgresqlPassword={{postgresqlPassword}}",
-            "postgresql.global.postgresql.servicePort=5432",
-            "postgresql.persistence.size=1Gi",
-            "ingress.enabled=true",
-            "ingress.hosts[0]={{componentName}}.{{baseDomain}}",
-            "ingress.tls[0].hosts[0]={{componentName}}.{{baseDomain}}"
-        ]
+        "helm_version": "5.0.4",
+        "set_key_values": []
     },
     "categories": [
         "git-repository",
@@ -59,7 +54,7 @@
     "api_docs_url": "https://docs.gitea.io/en-us/api-usage/",
     "vendor_docs_url": "https://docs.gitea.io/",
     "pre_install_scripts": [
-        "createPostgresPassword.sh"
+        "createPasswords.sh"
     ],
     "post_install_scripts": []
 }

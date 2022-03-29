@@ -28,13 +28,5 @@ RUN update-ca-certificates
 docker build -f ${installationWorkspace}/Dockerfile.Gitlab-Runner -t docker-registry.${baseDomain}/devops/gitlab-runner:alpine-${gitabRunnerVersion} .
 pushDockerImageToCoreRegistry "devops/gitlab-runner:alpine-${gitabRunnerVersion}"
 
-# Get status of gitlab runner and kill if image-pullback error, as it may have timed out, preventing the new images built here from taking effect
-gitlabRunnerPodName=$(kubectl get pods --selector=app=${namespace}-gitlab-runner -n ${namespace} -o jsonpath="{.items[0].metadata.name}")
-gitlabRunnerPodStatus=$(kubectl get pod ${gitlabRunnerPodName} -n ${namespace} -o json | jq -r '.status.initContainerStatuses[0].state.waiting.reason')
-if [[ ${gitlabRunnerPodStatus} == "ImagePullBackOff"   ]]; then
-    log_info 'Deleted gitlab runner pod with status "ImagePullBackOff"'
-    kubectl delete pod ${gitlabRunnerPodName} -n ${namespace}
-fi
-
 # Add regcred secret to Gitlab namespace
 createK8sCredentialSecretForCoreRegistry

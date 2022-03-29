@@ -1,12 +1,16 @@
 {
     "name": "consul",
-    "namespace": "vault",
+    "namespace": "consul",
     "installation_type": "helm",
     "installation_group_folder": "cicd",
+    "environment_variables": {
+        "consulVersion": "1.11.3",
+        "consulK8sVersion": "0.41.1"
+    },
     "helm_params": {
         "repository_url": "https://helm.releases.hashicorp.com",
         "repository_name": "hashicorp/consul",
-        "helm_version": "",
+        "helm_version": "0.41.1",
         "set_key_values": []
     },
     "categories": [
@@ -51,7 +55,7 @@
     "api_docs_url": "",
     "vendor_docs_url": "",
     "pre_install_scripts": [
-        "configureIngress.sh"
+        "setDatacenterVariable.sh"
     ],
     "post_install_scripts": []
 }

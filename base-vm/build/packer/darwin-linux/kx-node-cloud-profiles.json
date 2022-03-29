@@ -208,7 +208,6 @@
         "../../../scripts/common/motd.sh",
         "../../../scripts/common/kx.as.code.sh",
         "../../../scripts/common/tools.sh",
-        "../../../scripts/common/powerline.sh",
         "../../../scripts/common/docker.sh",
         "../../../scripts/common/calico.sh"
       ],

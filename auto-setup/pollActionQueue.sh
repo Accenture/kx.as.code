@@ -73,6 +73,10 @@ createRabbitMQQueues
 # Create RabbitMQ Bindings if they do not exist
 createRabbitMQWorkflowBindings
 
+# Initial actionQueues population
+populateActionQueuesJson
+populateActionQueuesRabbitMq
+
 # Set tries to 0. If an install failed and the retry flag is set to true for that component in metadata.json, attempts will be made to retry up to 3 times
 retries=0
 logRc=0

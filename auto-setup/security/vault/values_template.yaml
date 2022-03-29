@@ -27,7 +27,7 @@ global:
 injector:
   # True if you want to enable vault agent injection.
   # @default: global.enabled
-  enabled: "-"
+  enabled: true
 
   replicas: 1
 
@@ -269,7 +269,7 @@ injector:
 server:
   # If true, or "-" with global.enabled true, Vault server will be installed.
   # See vault.mode in _helpers.tpl for implementation details.
-  enabled: "-"
+  enabled: true
 
   # [Enterprise Only] This value refers to a Kubernetes secret that you have
   # created that contains your enterprise license. If you are not using an
@@ -322,12 +322,12 @@ server:
     enabled: true
     labels: {}
       # traffic: external
-    annotations:
-       |
-       kubernetes.io/ingress.class: nginx
+    #annotations:
+    #   |
+    #   kubernetes.io/ingress.class: nginx
     # Optionally use ingressClassName instead of deprecated annotation.
     # See: https://kubernetes.io/docs/concepts/services-networking/ingress/#deprecated-annotation
-    ingressClassName: ""
+    ingressClassName: "nginx"
 
     # As of Kubernetes 1.19, all Ingress Paths must have a pathType configured. The default value below should be sufficient in most cases.
     # See: https://kubernetes.io/docs/concepts/services-networking/ingress/#path-types for other possible values.
@@ -348,8 +348,8 @@ server:
     #       port:
     #         number: use-annotation
     tls:
-        hosts:
-          - {{componentName}}.{{baseDomain}}
+      - hosts:
+        - {{componentName}}.{{baseDomain}}
 
   # OpenShift only - create a route to expose the service
   # By default the created route will be of type passthrough
@@ -497,8 +497,8 @@ server:
       requiredDuringSchedulingIgnoredDuringExecution:
         - labelSelector:
             matchLabels:
-              app.kubernetes.io/name: {{ template "vault.name" . }}
-              app.kubernetes.io/instance: "{{ .Release.Name }}"
+              app.kubernetes.io/name: \{{ template "vault.name" . }}
+              app.kubernetes.io/instance: "\{{ .Release.Name }}"
               component: server
           topologyKey: kubernetes.io/hostname
 

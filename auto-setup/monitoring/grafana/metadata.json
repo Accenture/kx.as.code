@@ -1,6 +1,6 @@
 {
     "name": "grafana",
-    "namespace": "monitoring",
+    "namespace": "grafana",
     "installation_type": "helm",
     "installation_group_folder": "monitoring",
     "environment_variables": {

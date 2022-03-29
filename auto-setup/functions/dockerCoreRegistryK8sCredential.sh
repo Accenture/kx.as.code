@@ -4,8 +4,8 @@ createK8sCredentialSecretForCoreRegistry() {
     loginToCoreRegistry
     
     # Create regred in namespace
-    if [[ -f /root/.docker/config.json ]]
-    kubectl get secret generic regcred -n ${namespace} ||
+    if [[ -f /root/.docker/config.json ]]; then
+    kubectl get secret regcred -n ${namespace} ||
       kubectl create secret generic regcred \
           --from-file=.dockerconfigjson=/root/.docker/config.json \
           --type=kubernetes.io/dockerconfigjson \

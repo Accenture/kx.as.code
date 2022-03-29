@@ -6,7 +6,7 @@
     "environment_variables": {
       "vaultVersion": "1.9.3",
       "vaultK8sVersion": "0.14.2"
-  },
+    },
     "helm_params": {
       "repository_url": "https://helm.releases.hashicorp.com",
       "repository_name": "hashicorp/vault",

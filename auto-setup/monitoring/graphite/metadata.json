@@ -1,21 +1,16 @@
 {
     "name": "graphite",
-    "namespace": "monitoring",
+    "namespace": "graphite",
     "installation_type": "helm",
     "installation_group_folder": "monitoring",
+    "environment_variables": {
+        "imageTag": "1.1.7-6"
+    },
     "helm_params": {
         "repository_url": "https://kiwigrid.github.io",
         "repository_name": "kiwigrid/graphite",
-        "helm_version": "",
-        "set_key_values": [
-            "persistence.enabled=true",
-            "persistence.storageClass=local-storage",
-            "persistence.size=1Gi",
-            "ingress.enabled=true",
-            "ingress.hosts[0]={{componentName}}.{{baseDomain}}",
-            "ingress.tls[0].hosts[0]={{componentName}}.{{baseDomain}}",
-            "ingress.annotations.\"nginx\\.ingress\\.kubernetes\\.io/proxy-body-size\"=\"100m\""
-        ]
+        "helm_version": "0.7.2",
+        "set_key_values": []
     },
     "categories": [
         "monitoring",

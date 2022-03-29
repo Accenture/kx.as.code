@@ -9,10 +9,6 @@
       },
       {
         "install_folder": "cicd",
-        "name": "gitlab-runner"
-      },
-      {
-        "install_folder": "cicd",
         "name": "gitlab"
       },
       {
