@@ -23,7 +23,7 @@ kubectl get secret generic s3cmd-config -n ${namespace} ||
         --from-file=config=${installationWorkspace}/rails.minio.yaml \
         -n ${namespace} | kubectl apply -f -
 
-# Generate personal access token
+# Generate initial root password
 export gitlabRootPassword=$(managedPassword "gitlab-root-password")
 
 # Set initial root password

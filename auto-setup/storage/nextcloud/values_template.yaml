@@ -263,7 +263,7 @@ postgresql:
   postgresqlDatabase: nextcloud
   persistence:
     enabled: true
-    storageClass: "local-strorage"
+    storageClass: "local-storage"
 
 ##
 ## Redis chart configuration

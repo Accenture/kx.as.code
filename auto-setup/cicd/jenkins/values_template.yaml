@@ -19,8 +19,9 @@ controller:
   # Used for label app.kubernetes.io/component
   componentName: "jenkins-controller"
   image: "jenkins/jenkins"
-  tag: "lts"
-  imagePullPolicy: "IfNotPresent"
+  tag: "{{imageTag}}"
+  tagLabel: jdk11
+  imagePullPolicy: "Always"
   imagePullSecretName:
   # Optionally configure lifetime for controller-container
   lifecycle:
@@ -30,7 +31,7 @@ controller:
   #      - "uname"
   #      - "-a"
   disableRememberMe: false
-  numExecutors: 2
+  numExecutors: 0
   # configures the executor mode of the Jenkins node. Possible values are: NORMAL or EXCLUSIVE
   executorMode: "NORMAL"
   # This is ignored if enableRawHtmlMarkupFormatter is true
@@ -44,8 +45,8 @@ controller:
   # When enabling LDAP or another non-Jenkins identity source, the built-in admin account will no longer exist.
   # If you disable the non-Jenkins identity store and instead use the Jenkins internal one,
   # you should revert controller.adminUser to your preferred admin user:
-  #adminUser: "admin"
-  #adminPassword:
+  adminUser: "admin"
+  # adminPassword: <defaults to random>
   admin:
     existingSecret: "jenkins-admin-secret"
     userKey: jenkins-admin-user
@@ -58,6 +59,9 @@ controller:
   jenkinsRef: "/usr/share/jenkins/ref"
   # Path to the jenkins war file which is used by jenkins-plugin-cli.
   jenkinsWar: "/usr/share/jenkins/jenkins.war"
+  # Overrides the default arguments passed to the war
+  # overrideArgs:
+  #   - --httpPort=8080
   resources:
     requests:
       cpu: "50m"
@@ -65,6 +69,14 @@ controller:
     limits:
       cpu: "2000m"
       memory: "4096Mi"
+  # Overrides the init container default values
+  # initContainerResources:
+  #   requests:
+  #     cpu: "50m"
+  #     memory: "256Mi"
+  #   limits:
+  #     cpu: "2000m"
+  #     memory: "4096Mi"
   # Environment variables that get added to the init container (useful for e.g. http_proxy)
   # initContainerEnv:
   #   - name: http_proxy
@@ -75,11 +87,17 @@ controller:
   # Set min/max heap here if needed with:
   # javaOpts: "-Xms512m -Xmx512m"
   # jenkinsOpts: ""
+  # If you are using the ingress definitions provided by this chart via the `controller.ingress` block the configured hostname will be the ingress hostname starting with `https://` or `http://` depending on the `tls` configuration.
+  # The Protocol can be overwritten by specifying `controller.jenkinsUrlProtocol`.
+  # jenkinsUrlProtocol: "https"
+  # If you are not using the provided ingress you can specify `controller.jenkinsUrl` to change the url definition.
   # jenkinsUrl: ""
   # If you set this prefix and use ingress controller then you might want to set the ingress path below
   # jenkinsUriPrefix: "/jenkins"
-  # Enable pod security context (must be `true` if runAsUser or fsGroup are set)
+  # Enable pod security context (must be `true` if podSecurityContextOverride, runAsUser or fsGroup are set)
   usePodSecurityContext: true
+  # Note that `runAsUser`, `fsGroup`, and `securityContextCapabilities` are
+  # being deprecated and replaced by `podSecurityContextOverride`.
   # Set runAsUser to 1000 to let Jenkins run as non-root user 'jenkins' which exists in 'jenkins/jenkins' docker image.
   # When setting runAsUser to a different value than 0 also set fsGroup to the same value:
   runAsUser: 1000
@@ -88,11 +106,30 @@ controller:
   securityContextCapabilities: {}
   #  drop:
   #    - NET_RAW
+  # Completely overwrites the contents of the `securityContext`, ignoring the
+  # values provided for the deprecated fields: `runAsUser`, `fsGroup`, and
+  # `securityContextCapabilities`.  In the case of mounting an ext4 filesystem,
+  # it might be desirable to use `supplementalGroups` instead of `fsGroup` in
+  # the `securityContext` block: https://github.com/kubernetes/kubernetes/issues/67014#issuecomment-589915496
+  # podSecurityContextOverride:
+  #   runAsUser: 1000
+  #   runAsNonRoot: true
+  #   supplementalGroups: [1000]
+  #   # capabilities: {}
+  # Container securityContext
+  containerSecurityContext:
+    runAsUser: 1000
+    runAsGroup: 1000
+    readOnlyRootFilesystem: true
+    allowPrivilegeEscalation: false
   servicePort: 8080
   targetPort: 8080
   # For minikube, set this to NodePort, elsewhere use LoadBalancer
   # Use ClusterIP if your setup includes ingress controller
   serviceType: ClusterIP
+  # Use Local to preserve the client source IP and avoids a second hop for LoadBalancer and Nodeport type services,
+  # but risks potentially imbalanced traffic spreading.
+  serviceExternalTrafficPolicy:
   # Jenkins controller service annotations
   serviceAnnotations: {}
   # Jenkins controller custom labels
@@ -106,7 +143,7 @@ controller:
   podLabels: {}
   # Used to create Ingress record (should used with ServiceType: ClusterIP)
   # nodePort: <to set explicitly, choose port between 30000-32767
-  # Enable Kubernetes Liveness and Readiness Probes
+  # Enable Kubernetes Startup, Liveness and Readiness Probes
   # if Startup Probe is supported, enable it too
   # ~ 2 minutes to allow Jenkins to restart when upgrading plugins. Set ReadinessTimeout to be shorter than LivenessTimeout.
   healthProbes: true
@@ -125,6 +162,9 @@ controller:
         port: http
       periodSeconds: 10
       timeoutSeconds: 5
+      # If Startup Probe is not supported on your Kubernetes cluster, you might want to use "initialDelaySeconds" instead.
+      # It delays the initial liveness probe while Jenkins is starting
+      # initialDelaySeconds: 60
     readinessProbe:
       failureThreshold: 3
       httpGet:
@@ -132,8 +172,27 @@ controller:
         port: http
       periodSeconds: 10
       timeoutSeconds: 5
+      # If Startup Probe is not supported on your Kubernetes cluster, you might want to use "initialDelaySeconds" instead.
+      # It delays the initial readyness probe while Jenkins is starting
+      # initialDelaySeconds: 60
+
+  # PodDisruptionBudget config
+  podDisruptionBudget:
+    enabled: false
+    # For Kubernetes v1.5+, use 'policy/v1beta1'
+    # For Kubernetes v1.21+, use 'policy/v1'
+    apiVersion: "policy/v1beta1"
+    annotations: {}
+    labels: {}
+    # maxUnavailable: "0"
+
+  agentListenerEnabled: true
   agentListenerPort: 50000
   agentListenerHostPort:
+  agentListenerNodePort:
+  agentListenerExternalTrafficPolicy:
+  agentListenerLoadBalancerSourceRanges:
+  - 0.0.0.0/0
   disabledAgentProtocols:
     - JNLP-connect
     - JNLP2-connect
@@ -179,19 +238,124 @@ controller:
 
   # List of plugins to be install during Jenkins controller start
   installPlugins:
-    - kubernetes:1.27.6
-    - workflow-aggregator:2.6
-    - git:4.4.5
-    - configuration-as-code:1.46
-    - prometheus:2.0.8
-    - credentials-binding:1.24
-    - gitlab-plugin:1.5.13
-    - gitlab-oauth:1.10
-    - gitea:1.2.1
-    - blueocean:1.24.3
-    - gerrit-verify-status-reporter:0.0.3
-    - mattermost:3.1.1
-    - rocketchatnotifier:1.4.9
+    - ssh-credentials:1.19
+    - theme-manager:0.6
+    - pipeline-model-extensions:2.2064.v5eef7d0982b_e
+    - pipeline-milestone-step:100.v60a_03cd446e1
+    - jackson2-api:2.13.2-260.v43d711474c77
+    - javax-mail-api:1.6.2-5
+    - build-monitor-plugin:1.13+build.202203221632
+    - credentials-binding:1.27.1
+    - handlebars:3.0.8
+    - plugin-util-api:2.15.0
+    - aws-credentials:191.vcb_f183ce58b_9
+    - scm-api:595.vd5a_df5eb_0e39
+    - deployit-plugin:22.0.0
+    - jsch:0.1.55.2
+    - delivery-pipeline-plugin:1.4.2
+    - jdk-tool:1.5
+    - ssh-slaves:1.806.v2253cedd3295
+    - material-theme:0.4.1
+    - font-awesome-api:6.0.0-1
+    - token-macro:285.vff7645a_56ff0
+    - workflow-job:1174.vdcb_d054cf74a_
+    - sshd:3.1.0
+    - run-condition:1.5
+    - mailer:408.vd726a_1130320
+    - workflow-cps:2683.vd0a_8f6a_1c263
+    - javax-activation-api:1.2.0-2
+    - kubernetes-credentials:0.9.0
+    - workflow-multibranch:711.vdfef37cda_816
+    - snakeyaml-api:1.29.1
+    - workflow-cps-global-lib:564.ve62a_4eb_b_e039
+    - resource-disposer:0.18
+    - authentication-tokens:1.4
+    - ansicolor:1.0.1
+    - simple-theme-plugin:103.va_161d09c38c7
+    - script-security:1145.vb_cf6cf6ed960
+    - credentials:1087.v16065d268466
+    - kubernetes-client-api:5.12.1-187.v577c3e368fb_6
+    - caffeine-api:2.9.2-29.v717aac953ff3
+    - workflow-durable-task-step:1128.v8c259d125340
+    - workflow-step-api:622.vb_8e7c15b_c95a_
+    - build-name-setter:2.2.0
+    - windows-slaves:1.8
+    - extended-choice-parameter:346.vd87693c5a_86c
+    - timestamper:1.17
+    - workflow-scm-step:2.13
+    - github-api:1.301-378.v9807bd746da5
+    - ace-editor:1.1
+    - parameterized-trigger:2.44
+    - jquery:1.12.4-1
+    - aws-java-sdk-ec2:1.12.163-315.v2b_716ec8e4df
+    - durable-task:495.v29cd95ec10f2
+    - strict-crumb-issuer:2.1.0
+    - rebuild:1.33
+    - packer:1.5
+    - bouncycastle-api:2.25
+    - branch-api:2.1044.v2c007e51b_87f
+    - workflow-basic-steps:941.vdfe1b_a_132c64
+    - ws-cleanup:0.41
+    - plain-credentials:1.8
+    - email-ext:2.87
+    - jjwt-api:0.11.2-9.c8b45b8bb173
+    - popper-api:1.16.1-2
+    - pipeline-stage-view:2.23
+    - jaxb:2.3.0.1
+    - trilead-api:1.0.13
+    - github-branch-source:1598.v91207e9f9b_4a_
+    - popper2-api:2.11.4-1
+    - kubernetes:3568.vde94f6b_41b_c8
+    - git-client:3.11.0
+    - aws-java-sdk-minimal:1.12.163-315.v2b_716ec8e4df
+    - configuration-as-code:1414.v878271fc496f
+    - conditional-buildstep:1.4.2
+    - bootstrap4-api:4.6.0-3
+    - javadoc:217.v905b_86277a_2a_
+    - pipeline-model-api:2.2064.v5eef7d0982b_e
+    - structs:308.v852b473a2b8c
+    - job-dsl:1.78.3
+    - pipeline-build-step:2.16
+    - git-server:1.10
+    - workflow-api:1143.v2d42f1e9dea_5
+    - variant:1.4
+    - junit:1.56
+    - uno-choice:2.6.1
+    - github:1.34.3
+    - pipeline-stage-tags-metadata:2.2064.v5eef7d0982b_e
+    - pipeline-graph-analysis:188.v3a01e7973f2c
+    - maven-plugin:3.18
+    - cloudbees-folder:6.714.v79e858ef76a_2
+    - pipeline-stage-step:291.vf0a8a7aeeb50
+    - terraform:1.0.10
+    - display-url-api:2.3.6
+    - echarts-api:5.3.0-2
+    - momentjs:1.1.1
+    - jquery3-api:3.6.0-2
+    - antisamy-markup-formatter:2.7
+    - build-timeout:1.20
+    - matrix-project:758.v7a_ea_491852f3
+    - workflow-aggregator:2.7
+    - pipeline-input-step:446.vf27b_0b_83500e
+    - apache-httpcomponents-client-4-api:4.5.13-1.0
+    - git:4.11.0
+    - metrics:4.1.6.1
+    - matrix-auth:3.1
+    - bootstrap5-api:5.1.3-6
+    - pipeline-model-definition:2.2064.v5eef7d0982b_e
+    - okhttp-api:4.9.3-105.vb96869f8ac3a
+    - pipeline-rest-api:2.23
+    - checks-api:1.7.2
+    - pipeline-github-lib:36.v4c01db_ca_ed16
+    - command-launcher:1.6
+    - lockable-resources:2.14
+    - workflow-support:815.vd60466279fc8
+
+  # Set to false to download the minimum required version of all dependencies.
+  installLatestPlugins: true
+
+  # Set to true to download latest dependencies of any plugin that is requested to have the latest version.
+  installLatestSpecifiedPlugins: false
 
   # List of plugins to install in addition to those listed in controller.installPlugins
   additionalPlugins: []
@@ -218,6 +382,36 @@ controller:
   initScripts: []
   #  - |
   #    print 'adding global pipeline libraries, register properties, bootstrap jobs...'
+
+  # 'name' is a name of an existing secret in same namespace as jenkins,
+  # 'keyName' is the name of one of the keys inside current secret.
+  # the 'name' and 'keyName' are concatenated with a '-' in between, so for example:
+  # an existing secret "secret-credentials" and a key inside it named "github-password" should be used in Jcasc as ${secret-credentials-github-password}
+  # 'name' and 'keyName' must be lowercase RFC 1123 label must consist of lower case alphanumeric characters or '-',
+  # and must start and end with an alphanumeric character (e.g. 'my-name',  or '123-abc')
+  additionalExistingSecrets: []
+  #  - name: secret-name-1
+  #    keyName: username
+  #  - name: secret-name-1
+  #    keyName: password
+
+  additionalSecrets: []
+  #  - name: nameOfSecret
+  #    value: secretText
+
+  # Generate SecretClaim resources in order to create Kubernetes secrets from HashiCorp Vault using kube-vault-controller.
+  # 'name' is name of the secret that will be created in Kubernetes. The Jenkins fullname is prepended to this value.
+  # 'path' is the fully qualified path to the secret in Vault
+  # 'type' is an optional Kubernetes secret type. Defaults to 'Opaque'
+  # 'renew' is an optional secret renewal time in seconds
+  secretClaims: []
+  # - name: secretName        # required
+  #   path: testPath          # required
+  #   type: kubernetes.io/tls # optional
+  #   renew: 60               # optional
+
+  # Name of default cloud configuration.
+  cloudName: "kubernetes"
 
   # Below is the implementation of Jenkins Configuration as Code.  Add a key under configScripts for each configuration area,
   # where each corresponds to a plugin or section of the UI.  Each key (prior to | character) is just a label, and can be any value.
@@ -259,7 +453,7 @@ controller:
       # jcasc changes will cause a reboot and will only be applied at the subsequent start-up.  Auto-reload uses the
       # http://<jenkins_url>/reload-configuration-as-code endpoint to reapply config when changes to the configScripts are detected.
       enabled: true
-      image: kiwigrid/k8s-sidecar:0.1.275
+      image: kiwigrid/k8s-sidecar:1.15.0
       imagePullPolicy: IfNotPresent
       resources: {}
         #   limits:
@@ -285,6 +479,9 @@ controller:
       # Otherwise the namespace in which the sidecar is running will be used.
       # It's also possible to specify ALL to search in all namespaces:
       # searchNamespace:
+      containerSecurityContext:
+        readOnlyRootFilesystem: true
+        allowPrivilegeEscalation: false
 
     # Allows you to inject additional/other sidecars
     other: []
@@ -312,6 +509,9 @@ controller:
 
   terminationGracePeriodSeconds:
 
+  terminationMessagePath:
+  terminationMessagePolicy:
+
   tolerations: []
 
   affinity: {}
@@ -322,6 +522,10 @@ controller:
   podAnnotations: {}
   # Add StatefulSet annotations
   statefulSetAnnotations: {}
+
+  # StatefulSet updateStrategy
+  # ref: https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#update-strategies
+  updateStrategy: {}
 
   ingress:
     enabled: true
@@ -336,18 +540,22 @@ controller:
     #     # Don't use string here, use only integer value!
     #     servicePort: 8080
     # For Kubernetes v1.14+, use 'networking.k8s.io/v1beta1'
-    apiVersion: "networking.k8s.io/v1beta1"
+    # For Kubernetes v1.19+, use 'networking.k8s.io/v1'
+    apiVersion: "extensions/v1beta1"
     labels: {}
-    annotations:
-     kubernetes.io/ingress.class: nginx
-     #kubernetes.io/tls-acme: "true"
+    annotations: {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+    # For Kubernetes >= 1.18 you should specify the ingress-controller via the field ingressClassName
+    # See https://kubernetes.io/blog/2020/04/02/improvements-to-the-ingress-api-in-kubernetes-1.18/#specifying-the-class-of-an-ingress
+    ingressClassName: nginx
     # Set this path to jenkinsUriPrefix above or use annotations to rewrite path
     # path: "/jenkins"
     # configures the hostname e.g. jenkins.example.com
     hostName: {{ componentName }}.{{ baseDomain }}
     tls:
-       - hosts:
-         - {{ componentName }}.{{ baseDomain }}
+    - hosts:
+        - {{ componentName }}.{{ baseDomain }}
 
   # often you want to have your controller all locked down and private
   # but you still want to get webhooks from your SCM
@@ -359,11 +567,15 @@ controller:
     # ex /github-webhook
     paths: []
     # For Kubernetes v1.14+, use 'networking.k8s.io/v1beta1'
+    # For Kubernetes v1.19+, use 'networking.k8s.io/v1'
     apiVersion: "extensions/v1beta1"
     labels: {}
     annotations: {}
     # kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
+    # For Kubernetes >= 1.18 you should specify the ingress-controller via the field ingressClassName
+    # See https://kubernetes.io/blog/2020/04/02/improvements-to-the-ingress-api-in-kubernetes-1.18/#specifying-the-class-of-an-ingress
+    # ingressClassName: nginx
     # configures the hostname e.g. jenkins-external.example.com
     hostName:
     tls:
@@ -482,10 +694,12 @@ agent:
   jenkinsTunnel:
   kubernetesConnectTimeout: 5
   kubernetesReadTimeout: 15
+  maxRequestsPerHostStr: "32"
   namespace:
   image: "jenkins/inbound-agent"
-  tag: "4.6-1"
-  workingDir: "/home/jenkins"
+  tag: "4.11.2-4"
+  workingDir: "/home/jenkins/agent"
+  nodeUsageMode: "NORMAL"
   customJenkinsLabels: []
   # name of the secret to be used for image pulling
   imagePullSecretName:
@@ -506,6 +720,10 @@ agent:
   # Controls how agent pods are retained after the Jenkins build completes
   # Possible values: Always, Never, OnFailure
   podRetention: "Never"
+  # Disable if you do not want the Yaml the agent pod template to show up
+  # in the job Console Output. This can be helpful for either security reasons
+  # or simply to clean up the output to make it easier to read.
+  showRawYaml: true
   # You can define the volumes that you want to mount for this container
   # Allowed types are: ConfigMap, EmptyDir, HostPath, Nfs, PVC, Secret
   # Configure the attributes as they appear in the corresponding Java class for that type
@@ -533,7 +751,33 @@ agent:
   #   defaultMode: "600"
   #   mountPath: /var/myapp/mysecret
   #   secretName: mysecret
-  # Pod-wide ennvironment, these vars are visible to any container in the agent pod
+  # Pod-wide environment, these vars are visible to any container in the agent pod
+
+  # You can define the workspaceVolume that you want to mount for this container
+  # Allowed types are: DynamicPVC, EmptyDir, HostPath, Nfs, PVC
+  # Configure the attributes as they appear in the corresponding Java class for that type
+  # https://github.com/jenkinsci/kubernetes-plugin/tree/master/src/main/java/org/csanchez/jenkins/plugins/kubernetes/volumes/workspace
+  workspaceVolume: {}
+  ## DynamicPVC example
+  # type: DynamicPVC
+  # configMapName: myconfigmap
+  ## EmptyDir example
+  # type: EmptyDir
+  # memory: false
+  ## HostPath example
+  # type: HostPath
+  # hostPath: /var/lib/containers
+  ## NFS example
+  # type: Nfs
+  # readOnly: false
+  # serverAddress: "192.0.2.0"
+  # serverPath: /var/lib/containers
+  ## PVC example
+  # type: PVC
+  # claimName: mypvc
+  # readOnly: false
+  #
+  # Pod-wide environment, these vars are visible to any container in the agent pod
   envVars: []
   # - name: PATH
   #   value: /usr/local/bin
@@ -633,8 +877,9 @@ persistence:
   ##
   storageClass: gluster-heketi
   annotations: {}
+  labels: {}
   accessMode: "ReadWriteOnce"
-  size: "1Gi"
+  size: "8Gi"
   volumes:
   #  - name: nothing
   #    emptyDir: {}
@@ -670,6 +915,8 @@ serviceAccount:
   # The name of the service account is autogenerated by default
   name:
   annotations: {}
+  imagePullSecretName:
+
 
 serviceAccountAgent:
   # Specifies whether a ServiceAccount should be created
@@ -678,6 +925,7 @@ serviceAccountAgent:
   # If not set and create is true, a name is generated using the fullname template
   name:
   annotations: {}
+  imagePullSecretName:
 
 ## Backup cronjob configuration
 ## Ref: https://github.com/maorfr/kube-tasks
@@ -691,7 +939,10 @@ backup:
   # Ref: https://crontab.guru/
   schedule: "0 2 * * *"
   labels: {}
-  annotations: {}
+  serviceAccount:
+    create: true
+    name:
+    annotations: {}
     # Example for authorization to AWS S3 using kube2iam or IRSA
     # Can also be done using environment variables
     # iam.amazonaws.com/role: "jenkins"
@@ -732,6 +983,8 @@ backup:
   # Additional support can added. Visit this repository for details
   # Ref: https://github.com/maorfr/skbn
   destination: "s3://jenkins-data/backup"
+  # By enabling only the jenkins_home/jobs folder gets backed up, not the whole jenkins instance
+  onlyJobs: false
   # Enable backup pod security context (must be `true` if runAsUser or fsGroup are set)
   usePodSecurityContext: true
   # When setting runAsUser to a different value than 0 also set fsGroup to the same value:
@@ -741,3 +994,10 @@ backup:
   #  drop:
   #    - NET_RAW
 checkDeprecation: true
+
+awsSecurityGroupPolicies:
+  enabled: false
+  policies:
+    - name: ""
+      securityGroupIds: []
+      podSelector: {}

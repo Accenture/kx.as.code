@@ -3,9 +3,13 @@
     "namespace": "jenkins",
     "installation_type": "helm",
     "installation_group_folder": "cicd",
+    "environment_variables": {
+        "imageTag": "2.332.1-jdk11"
+    },
     "helm_params": {
         "repository_url": "https://charts.jenkins.io",
         "repository_name": "jenkins/jenkins",
+        "helm_version": "3.11.8",
         "set_key_values": []
     },
     "categories": [
