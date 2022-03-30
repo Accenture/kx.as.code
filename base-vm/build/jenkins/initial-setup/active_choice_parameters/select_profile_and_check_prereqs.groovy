@@ -30,12 +30,13 @@ def parallelsNodeVersion
 def extendedDescription
 def profilePaths = []
 def boxDirectories = []
+def currentDir
 
 try {
 
     extendedDescription = "Welcome to KX.AS.CODE. In this panel you can select the profile. A check is made on the system to see if the necessary virtualization software and associated Vagrant plugins are installed, s well as availability of built Vagrant boxes. An attempt is made to automatically select the profile based on discovered pre-requisites."
 
-    def currentDir = new File(".").getAbsolutePath().replaceAll("\\\\", "/")
+    currentDir = new File(".").getAbsolutePath().replaceAll("\\\\", "/")
     currentDir = currentDir.substring(0, currentDir.length() - 1)
     println("PROFILE UPDATE CURRENT DIR: ${currentDir}")
 
