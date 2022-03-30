@@ -27,26 +27,31 @@ function ApplicationCard2(props) {
     retries: "0",
   };
 
-  const NotificationMessage = ({ closeToast, toastProps }) => (
+  const NotificationMessage = (notificationProps) => (
     <div className="flex items-center">
       <AppLogo height={"40px"} width={"40px"} appName={props.app.name} />
-      <div className="ml-2"> Installation started for {appName}.</div>
+      <div className="ml-2">{notificationProps.notificationMessage}</div>
     </div>
   );
 
-  const notify = () => {
-    const notificationMessage2 = "Installation started for " + appName + ".";
+  const notify = (action) => {
+    const notificationMessage = `${
+      action === "install" ? "Installation" : "Uninstallation"
+    } started for ${appName}.`;
 
-    toast.info(<NotificationMessage />, {
-      position: "top-right",
-      autoClose: 5000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "dark",
-    });
+    toast.info(
+      <NotificationMessage notificationMessage={notificationMessage} />,
+      {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      }
+    );
   };
 
   const getApplicationDataByName = async () => {
@@ -61,12 +66,38 @@ function ApplicationCard2(props) {
   };
 
   const applicationInstallHandler = async () => {
-    notify();
+    notify("install");
     getApplicationDataByName().then((appData) => {
       var payloadObj = {
         install_folder: appData.installation_group_folder,
         name: appData.name,
         action: "install",
+        retries: "0",
+      };
+      const applicationPayload = payloadObj;
+
+      axios
+        .post(
+          "http://localhost:5001/api/add/application/pending_queue",
+          applicationPayload
+        )
+        .then(() => {
+          // setAppQueue("pending_queue");
+          // props.fetchQueueData();
+        })
+        .catch((error) => {
+          console.error("There was an error!", error);
+        });
+    });
+  };
+
+  const applicationUninstallHandler = async () => {
+    notify("uninstall");
+    getApplicationDataByName().then((appData) => {
+      var payloadObj = {
+        install_folder: appData.installation_group_folder,
+        name: appData.name,
+        action: "uninstall",
         retries: "0",
       };
       const applicationPayload = payloadObj;
@@ -311,7 +342,7 @@ function ApplicationCard2(props) {
               </div>
             ) : (
               <button
-                onClick={applicationInstallHandler}
+                onClick={applicationUninstallHandler}
                 className="bg-red-500 p-3 px-5 rounded items-center flex"
               >
                 Uninstall
@@ -319,14 +350,8 @@ function ApplicationCard2(props) {
             ))}
         </div>
         {/* Seperator */}
+        <div className="pb-3 mb-3 border-b-2 border-gray-600 w-full"></div>
 
-        {appQueue === "pending_queue" ? (
-          <div className="py-3">
-            <LinearProgress />
-          </div>
-        ) : (
-          <div className="pb-3 mb-3 border-b-4 border-gray-500 w-full"></div>
-        )}
         <div className="float-left">
           <ul className="float-left">
             {props.app.categories && drawAppTags(props.app.categories)}
