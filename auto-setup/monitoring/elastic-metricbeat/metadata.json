@@ -4,12 +4,12 @@
     "installation_type": "helm",
     "installation_group_folder": "monitoring",
     "environment_variables": {
-        "elasticVersion": "8.1.0"
+        "elasticVersion": "7.17.1"
     },
     "helm_params": {
         "repository_url": "https://helm.elastic.co",
         "repository_name": "elastic/metricbeat",
-        "helm_version": "",
+        "helm_version": "7.17.1",
         "set_key_values": []
     },
     "categories": [

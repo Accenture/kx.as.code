@@ -23,6 +23,7 @@ kibanaConfig:
   kibana.yml: |
     server:
       name: {{ componentName }}
+      publicBaseUrl: {{ componentName }}.{{ baseDomain }}
       ssl:
         enabled: true
         key: /usr/share/kibana/config/certs/kibana.key
@@ -46,15 +47,18 @@ protocol: https
 ingress:
   enabled: true
   annotations:
-    kubernetes.io/ingress.class: nginx
     nginx.ingress.kubernetes.io/proxy-ssl-verify: "false"
     nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
-  path: /
+  className: "nginx"
+  pathtype: ImplementationSpecific
   hosts:
-    - {{componentName}}.{{baseDomain}}
+    - host: {{componentName}}.{{baseDomain}}
+      paths:
+        - path: /
   tls:
     - hosts:
         - {{componentName}}.{{baseDomain}}
+
 secretMounts:
   - name: elastic-certificates
     secretName: elastic-certificates
