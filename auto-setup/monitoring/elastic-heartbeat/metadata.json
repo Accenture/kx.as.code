@@ -4,7 +4,7 @@
     "installation_type": "script",
     "installation_group_folder": "monitoring",
     "environment_variables": {
-        "elasticVersion": "8.1.0"
+        "elasticVersion": "7.17.1"
     },
     "categories": [
         "monitoring"
