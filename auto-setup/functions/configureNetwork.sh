@@ -41,21 +41,64 @@ if [[ ! -f ${sharedKxHome}/.config/network_status ]]; then
         /usr/bin/sudo chmod +x /etc/dhcp/dhclient-enter-hooks.d/nodnsupdate
     fi
 
-    if [[ "${baseIpType}" == "static" ]]; then
+    if [[ ${baseIpType} == "static" ]]; then
+
         # Configure IF to be managed/configured by network-manager
-        rm -f /etc/NetworkManager/system-connections/*
-        if [ -f /etc/network/interfaces ]; then
+        /usr/bin/sudo rm -f /etc/NetworkManager/system-connections/*
+        if [[ -f /etc/network/interfaces ]]; then
           /usr/bin/sudo mv /etc/network/interfaces /etc/network/interfaces.unused
         fi
-        /usr/bin/sudo nmcli con add con-name "${netDevice}" ifname ${netDevice} type ethernet ip4 ${mainIpAddress}/24 gw4 ${fixedNicConfigGateway}
-        /usr/bin/sudo nmcli con mod "${netDevice}" ipv4.method "manual"
-        /usr/bin/sudo nmcli con mod "${netDevice}" ipv4.dns "${fixedNicConfigDns1},${fixedNicConfigDns2}"
-        /usr/bin/sudo nmcli -g name,type connection show --active
-        nicToIgnoreDns=$(/usr/bin/sudo nmcli -g name,type connection show --active | grep "Wired connection" | cut -f 1 -d ':')
-        /usr/bin/sudo nmcli con mod "${nicToIgnoreDns}" ipv4.ignore-auto-dns yes
-        /usr/bin/sudo systemctl restart NetworkManager.service
+
+        existingNicIpAddress=$(ip address show ${nic} | egrep -o 'inet [0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | cut -d' ' -f2)
+        existingNicGateway=$(ip route | grep ${nic} | awk '/default/ { print $3 }')
+        existingNicMac=$(cat /sys/class/net/${nic}/address)
+        fixedNicMac=$(cat /sys/class/net/${netDevice}/address)
+        nicExclusions=$(echo -n "${nicExclusions//[[:space:]]/}")
+
+echo """network:
+  version: 2
+  renderer: NetworkManager
+  ethernets:""" | /usr/bin/sudo tee /etc/netplan/kx-netplan.yaml
+
+if [[ -n ${nicExclusions} ]]; then
+  for nic in ${nicExclusions}; do
+    existingNicIpAddress=$(ip address show ${nic} | egrep -o 'inet [0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | cut -d' ' -f2)
+    existingNicGateway=$(ip route | grep ${nic} | awk '/default/ { print $3 }')
+    existingNicMac=$(cat /sys/class/net/${nic}/address)
+    nicExclusions=$(echo -n "${nicExclusions//[[:space:]]/}")
+echo """      ${nic}:
+          match:
+              macaddress: "${existingNicMac}"
+          dhcp4: no
+          addresses:
+              - ${existingNicIpAddress}/24
+          gateway4: ${existingNicGateway}
+          nameservers:
+              addresses: [${fixedNicConfigDns1}, ${fixedNicConfigDns2}]""" | /usr/bin/sudo tee -a /etc/netplan/kx-netplan.yaml
+  done
+fi
+
+if [[ -n ${netDevice} ]]; then
+fixedNicMac=$(cat /sys/class/net/${netDevice}/address)
+echo """      ${netDevice}:
+          match:
+              macaddress: "${fixedNicMac}"
+          dhcp4: no
+          addresses:
+              - ${kxNodeIp}/24
+          gateway4: ${fixedNicConfigGateway}
+          nameservers:
+              addresses: [${fixedNicConfigDns1}, ${fixedNicConfigDns2}]
+""" | /usr/bin/sudo tee -a /etc/netplan/kx-netplan.yaml
+fi
+
+        /usr/bin/sudo netplan try
+        /usr/bin/sudo netplan -d apply
+
+        # Restart network service to activate the settings
+        /usr/bin/sudo systemctl restart NetworkManager
         /usr/bin/sudo systemctl restart systemd-networkd.service
-        /usr/bin/sudo nmcli con up "${netDevice}"
+
     fi
 
     if  [[ "${baseIpType}" == "static" ]] || [[ "${dnsResolution}" == "hybrid"   ]]; then

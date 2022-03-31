@@ -12,7 +12,7 @@
     ],
     "Description": "KX.AS.CODE Documentation generated with MKDOCS",
     "shortcut_text": "KX.AS.CODE Docs",
-    "shortcut_icon": "books.png",
+    "shortcut_icon": "kx-docs.png",
     "pre_install_scripts": [],
     "post_install_scripts": []
 }
