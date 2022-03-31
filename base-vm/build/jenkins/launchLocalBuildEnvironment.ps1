@@ -386,11 +386,14 @@ Foreach-Object {
 $env:Path += ";C:/Program Files/Git/bin;C:/Program Files/Git/usr/bin;C:/Git/kx.as.code_test"
 Start-Process -FilePath $javaBinary -ArgumentList "-jar", ".\jenkins.war", "--httpListenAddress=$jenkins_listen_address", "--httpPort=$jenkins_server_port"
 
-$jenkinsUrl = "http://localhost:$jenkins_server_port"
+$jenkinsConfigUrl = Get-Content -Path "jenkins.model.JenkinsLocationConfiguration.xml"
+$jenkinsUrl = $jenkinsConfigUrl.
+Write-Output "jenkinsUrl: `"$jenkinsUrl"`"
+Write-Output "Discovered java binary: `"$javaBinary`""
 
-Write-Output $JENKINS_SHARED_WORKSPACE
-Write-Output $JENKINS_HOME
-Write-Output $PSScriptRoot
+Write-Output "JENKINS_SHARED_WORKSPACE: `"$JENKINS_SHARED_WORKSPACE"`"
+Write-Output "JENKINS_HOME: `"$JENKINS_HOME"`"
+Write-Output "PSScriptRoot: `"$PSScriptRoot"`"
 
 # Check Jenkins URL is reachable for downloading jenkins-cli.jar
 try
@@ -439,4 +442,3 @@ Get-ChildItem "$JENKINS_HOME\" -Filter credential_*.xml |
                 Write-Output "$javaBinary -jar .\jenkins-cli.jar -s $jenkinsUrl create-credentials-by-xml system::system::jenkins _" | Red
             }
         }
-
