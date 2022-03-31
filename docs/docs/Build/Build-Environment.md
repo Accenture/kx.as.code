@@ -86,7 +86,7 @@ Here description for each parameter:
 
 
 
-Start a shell session. This can be Powershell or WSL and enter trhe following command:
+Start a shell session. This can be Powershell or WSL and enter the following command:
 
 The `node type` must be either "main" or "worker", whilst the virtualization solution must be one of "vmwarer-desktop", "vmware-vsphere", "virtualbox" or parallels.
 
