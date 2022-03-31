@@ -66,8 +66,12 @@ conky.config = {
 
 conky.text = [[
 ${goto 6}${voffset 100}${image /usr/share/logos/kxascode_white_logo_conky.png -s 200x109}
-${color grey}Uptime:$color $uptime
-${color grey}RAM Usage:$color $mem/$memmax - $memperc% ${membar 4}
-${color grey}CPU Usage:$color $cpu% ${cpubar 4}
-${color grey}Processes:$color $processes  ${color grey}Running:$color $running_processes
+${color white}KX-Version:$color ${exec cat /usr/share/kx.as.code/git/kx.as.code/versions.json | jq -r '.kxascode'}
+${color white}Kube-Version:$color ${exec cat /usr/share/kx.as.code/git/kx.as.code/versions.json | jq -r '.kubernetes'}
+$hr
+${color white}Uptime:$color $uptime
+${color white}RAM Usage:$color $mem/$memmax - $memperc% ${membar 4}
+${color white}CPU Usage:$color $cpu% ${cpubar 4}
+${color white}Processes:$color $processes  ${color white}Running:$color $running_processes
 ]]
+
