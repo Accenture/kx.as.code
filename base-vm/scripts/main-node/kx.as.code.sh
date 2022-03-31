@@ -143,7 +143,7 @@ sudo chown ${VM_USER}:${VM_USER} /home/${VM_USER}/.config/autostart-scripts/*.sh
 sudo cp -f /home/${VM_USER}/.config/autostart-scripts/showWelcome.sh ${INSTALLATION_WORKSPACE}
 
 # Create shortcut directories
-shortcutsDirectory="/usr/share/kx.as.code/DevOps Tools"
+shortcutsDirectory="/usr/share/kx.as.code/Applications"
 sudo mkdir -p "${shortcutsDirectory}"
 sudo chmod a+rwx "${shortcutsDirectory}"
 sudo ln -s "${shortcutsDirectory}" /home/${VM_USER}/Desktop/
