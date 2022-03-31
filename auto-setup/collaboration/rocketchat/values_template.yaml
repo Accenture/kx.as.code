@@ -1,55 +1,62 @@
 ## Rocket Chat image version
 ## ref: https://hub.docker.com/r/rocketchat/rocket.chat/tags
 ##
-
 image:
-  repository: docker.io/rocketchat/rocket.chat
+  ## NOTE: for microsservices, those two itens get ignored, 
+  ## for now. 
+  repository: registry.rocket.chat/rocketchat/rocket.chat
   tag: {{ imageTag }}
   pullPolicy: IfNotPresent
 
+imagePullSecrets: []
+
 ## Host for the application
-##
-host: {{ componentName }}.{{ baseDomain }}
+## set it to a domain pointing to your loadbalancer
+# host:
 
 replicaCount: 1
 minAvailable: 1
 
-#smtp:
-#  enabled: false
-#  username: chat@example.com
-#  password: **********
-#  host: mail.example.com
-#  port: 587
+smtp:
+  enabled: false
+  username:
+  password:
+  host:
+  port: 587
 
 # Extra env vars for Rocket.Chat:
 extraEnv:   |
    - name: ROOT_URL
      value: 'https://{{ componentName }}.{{ baseDomain }}/'
    - name: ADMIN_USERNAME
-     value: 'admin'
+     value: '{{ vmUser}}'
    - name: ADMIN_PASS
      value: '{{ rocketchatAdminPassword }}'
    - name: ADMIN_EMAIL
-     value: 'kx.hero@{{ baseDomain }}'
+     value: '{{ vmUser}}@{{ baseDomain }}'
    - name: OVERWRITE_SETTING_Organization_Type
      value: '{{ organizationType }}'
    - name: OVERWRITE_SETTING_Organization_Name
      value: '{{ organizationName }}'
    - name: OVERWRITE_SETTING_Show_Setup_Wizard
      value: 'completed'
-
-# Not needed
   # - name: MONGO_OPTIONS
   #   value: '{"ssl": "true"}'
   # - name: MONGO_OPLOG_URL
   #   value: mongodb://oploguser:password@rocket-1:27017/local&replicaSet=rs0
+
+## Specifies a Registration Token (obtainable at https://cloud.rocket.chat)
+#registrationToken: ""
+
+## Specifies an Enterprise License
+# license: ""
 
 ## Pod anti-affinity can prevent the scheduler from placing RocketChat replicas on the same node.
 ## The default value "soft" means that the scheduler should *prefer* to not schedule two replica pods onto the same node but no guarantee is provided.
 ## The value "hard" means that the scheduler is *required* to not schedule two replica pods onto the same node.
 ## The value "" will disable pod anti-affinity so that no anti-affinity rules will be configured.
 ##
-podAntiAffinity: ""
+podAntiAffinity: ''
 
 ## If anti-affinity is enabled sets the topologyKey to use for anti-affinity.
 ## This can be changed to, for example, failure-domain.beta.kubernetes.io/zone
@@ -70,9 +77,12 @@ affinity: {}
 #         - e2e-az1
 #         - e2e-az2
 
+## Use an existing secret file with the MongoDB Url and OplogUrl
+existingMongodbSecret: ''
+
 ## MongoDB URL if using an externally provisioned MongoDB
-externalMongodbUrl:  # mongodb://user:password@localhost:27017/rocketchat
-externalMongodbOplogUrl:  # mongodb://user:password@localhost:27017/local?replicaSet=rs0&authSource=admin
+externalMongodbUrl: # mongodb://user:password@localhost:27017/rocketchat
+externalMongodbOplogUrl: # mongodb://user:password@localhost:27017/local?replicaSet=rs0&authSource=admin
 
 ##
 ## MongoDB chart configuration
@@ -82,21 +92,22 @@ mongodb:
   ## Enable or disable MongoDB dependency completely.
   enabled: true
 
-  mongodbRootPassword: {{ mongodbRootPassword }}
-
-  mongodbUsername: rocketchat
-  mongodbPassword: {{ mongodbUserPassword }}
-  mongodbDatabase: rocketchat
-
-  replicaSet:
-    enabled: true
-    replicas:
-      secondary: 0
-      arbiter: 0
+  auth:
+    rootPassword: {{ mongodbRootPassword }}
+    username: rocketchat
+    password: {{ mongodbUserPassword }}
+    database: rocketchat
+  
+  architecture: replicaset
+  replicaCount: 1
+  arbiter:
+    enabled: false
     pdb:
-      minAvailable:
-        secondary: 0
-        arbiter: 0
+      minAvailable: 0
+  pdb:
+    minAvailable: 0
+
+    # key:
 
   persistence:
     enabled: true
@@ -107,15 +118,18 @@ mongodb:
     ##   set, choosing the default provisioner.  (gp2 on AWS, standard on
     ##   GKE, AWS & OpenStack)
     ##
-    storageClass: local-storage
+    storageClass: "local-storage"
     accessMode: ReadWriteOnce
-    size: 1Gi
+    size: 8Gi
+  
+  volumePermissions: {enabled: true}
 
 ## Enable persistence using Persistent Volume Claims
 ## ref: http://kubernetes.io/docs/user-guide/persistent-volumes/
 ##
 persistence:
   enabled: true
+  # existingClaim: existingClaimName
   ## rocketchat data Persistent Volume Storage Class
   ## If defined, storageClassName: <storageClass>
   ## If set to "-", storageClassName: "", which disables dynamic provisioning
@@ -125,7 +139,7 @@ persistence:
   ##
   storageClass: "gluster-heketi"
   accessMode: ReadWriteOnce
-  size: 1Gi
+  size: 8Gi
 
 ## Configure resource requests and limits
 ## ref: http://kubernetes.io/docs/user-guide/compute-resources/
@@ -153,11 +167,13 @@ serviceAccount:
 ###
 ingress:
   enabled: true
-  annotations:
-     kubernetes.io/ingress.class: "nginx"
+  pathType: Prefix
+  ingressClassName: "nginx"
+  annotations: {}
+    # kubernetes.io/ingress.class: "nginx"
   path: /
   tls:
-      - hosts:
+    - hosts:
         - {{ componentName }}.{{ baseDomain }}
 
 service:
@@ -176,14 +192,23 @@ service:
 
   port: 80
 
+## Optional custom labels for the deployment resource.
+deploymentLabels: {}
+
 ## Optional Pod Labels.
 podLabels: {}
 
-# Optional Pod Annotations.
-#podAnnotations:
-#   prometheus.io/port: "9458"
-#   prometheus.io/path: "/metrics"
-#   prometheus.io/scrape: "true"
+## Optional Pod Annotations.
+podAnnotations:
+  {}
+  # prometheus.io/port: "9458"
+  # prometheus.io/path: "/metrics"
+  # prometheus.io/scrape: "true"
+
+## Optional Prometheus scraping Settings
+prometheusScraping:
+  enabled: false
+  port: 9458
 
 ## Liveness and readiness probe values
 ## Ref: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#container-probes
@@ -203,3 +228,39 @@ readinessProbe:
   timeoutSeconds: 5
   failureThreshold: 3
   successThreshold: 1
+
+podDisruptionBudget: 
+  enabled: true
+
+# # # # # # # # # # # # # # # # #
+#   M I C R O S E R V I C E S   #
+#  Only available to E.E users  #
+# # # # # # # # # # # # # # # # #
+
+## Deploy as microservices?
+# Monolithic architecture, by default
+microservices: 
+  enabled: false
+
+  ## Parameters for each deployment: 
+  presence: 
+    replicas: 1
+  ddpStreamer:
+    replicas: 1 
+  streamHub: 
+    replicas: 1
+  accounts: 
+    replicas: 1
+  authorization:
+    replicas: 1 
+  nats: 
+    replicas: 1 
+
+  ## Parameters for each Kubernetes service
+  # NOTE: reserved for future usage still
+  presenceService: 
+  ddpStreamerService: 
+  natsService: 
+  streamHubService: 
+  accountsService: 
+  authorizationService: 

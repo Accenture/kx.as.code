@@ -54,6 +54,7 @@ if [[ ! -f ${sharedKxHome}/.config/network_status ]]; then
         nicToIgnoreDns=$(/usr/bin/sudo nmcli -g name,type connection show --active | grep "Wired connection" | cut -f 1 -d ':')
         /usr/bin/sudo nmcli con mod "${nicToIgnoreDns}" ipv4.ignore-auto-dns yes
         /usr/bin/sudo systemctl restart NetworkManager.service
+        /usr/bin/sudo systemctl restart systemd-networkd.service
         /usr/bin/sudo nmcli con up "${netDevice}"
     fi
 

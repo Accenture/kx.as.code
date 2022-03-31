@@ -1,20 +1,14 @@
 {
     "name": "teamcity",
     "namespace": "teamcity",
-    "installation_type": "argocd",
+    "installation_type": "script",
     "installation_group_folder": "cicd",
     "environment_variables": {
-        "teamcityVersion": "2020.2"
+        "teamcityVersion": "2021.2.3"
     },
-    "argocd_params": {
-        "repository": "{{gitUrl}}/devops/teamcity.git",
-        "path": ".",
-        "dest_server": "https://kubernetes.default.svc",
-        "dest_namespace": "teamcity",
-        "sync_policy": "automated",
-        "auto_prune": true,
-        "self_heal": true
-    },
+    "install_scripts": [
+        "installTeamCity.sh"
+    ],
     "categories": [
         "cicd"
     ],

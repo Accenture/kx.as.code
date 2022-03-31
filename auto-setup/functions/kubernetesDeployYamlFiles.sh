@@ -2,6 +2,9 @@ deployYamlFilesToKubernetes() {
 
     log_debug "Entered function deployYamlFilesToKubernetes()"
 
+    # Create regcred for pulling images from private registry
+    createK8sCredentialSecretForCoreRegistry
+
     if [[ -d ${installComponentDirectory}/deployment_yaml ]]; then
 
         shopt -s globstar nullglob
@@ -27,7 +30,7 @@ deployYamlFilesToKubernetes() {
         else
             log_warn "No YAML files found in ${installationWorkspace}/deployment_yaml. Nothing to apply"
         fi
-
+        shopt -u globstar nullglob
     else
         log_warn "${installationWorkspace}/deployment_yaml not found. Nothing to deploy."
     fi

@@ -1,0 +1,21 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: grafana-image-renderer-ingress
+  namespace: {{namespace}}
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - grafana-image-renderer.{{baseDomain}}
+  rules:
+  - host: grafana-image-renderer.{{baseDomain}}
+    http:
+      paths:
+       - path: /
+         pathType: ImplementationSpecific
+         backend:
+           service:
+             name: grafana-image-renderer-service
+             port:
+               number: 8081

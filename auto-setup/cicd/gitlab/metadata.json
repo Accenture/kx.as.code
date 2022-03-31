@@ -9,7 +9,8 @@
     },
     "environment_variables": {
         "gitabRunnerVersion": "v13.4.1",
-        "s3BucketsToCreate": "gitlab-artifacts-storage;gitlab-backup-storage;gitlab-lfs-storage;gitlab-packages-storage;gitlab-registry-storage;gitlab-uploads-storage;runner-cache"
+        "s3BucketsToCreate": "gitlab-artifacts-storage;gitlab-backup-storage;gitlab-lfs-storage;gitlab-packages-storage;gitlab-registry-storage;gitlab-uploads-storage;runner-cache",
+        "gitlabDindImageVersion": "19.03.13-dind"
     },
     "helm_params": {
         "repository_url": "https://charts.gitlab.io/",
@@ -18,6 +19,7 @@
         "set_key_values": [
             "global.hosts.domain={{baseDomain}}",
             "global.hosts.externalIP={{nginxIngressIp}}",
+            "global.image.imagePullSecrets[0]=regcred",
             "externalUrl=https://{{componentName}}.{{baseDomain}}",
             "global.edition=ce",
             "prometheus.install=false",
@@ -25,6 +27,7 @@
             "gitlab-runner.install=true",
             "gitlab-runner.image=docker-registry.{{baseDomain}}/devops/gitlab-runner:alpine-{{gitabRunnerVersion}}",
             "gitlab-runner.runners.privileged=true",
+            "gitlab-runner.runners.imagePullSecrets[0]=gitlab-runner-image-pull-secret",
             "gitlab-runner.certsSecretName=kx.as.code-wildcard-cert",
             "global.ingress.class=nginx",
             "global.ingress.enabled=true",
@@ -129,6 +132,7 @@
     "api_docs_url": "https://{{componentName}}.{{baseDomain}}/help/api/api_resources.md",
     "vendor_docs_url": "https://docs.gitlab.com/ce/",
     "pre_install_scripts": [
+        "buildAndPushCustomRunnerImageToCoreRegistry.sh",
         "getVariables.sh",
         "createS3Buckets.sh",
         "createSecrets.sh",

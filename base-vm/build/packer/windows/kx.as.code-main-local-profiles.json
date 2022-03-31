@@ -47,7 +47,6 @@
       "vboxmanage_post": [
           ["setextradata", "{{.Name}}", "CustomVideoMode1", "1920x1200x32"],
           ["modifyvm", "{{.Name}}", "--nic1", "natnetwork","--natnetwork1","kxascode"]
-
       ],
       "guest_os_type": "{{user `virtualbox_guest_os_type`}}",
       "http_directory": "http",
@@ -68,7 +67,7 @@
       "post_shutdown_delay": "30s",
       "guest_additions_url": "{{user `guest_additions_url`}}",
       "guest_additions_sha256": "{{user `guest_additions_checksum`}}",
-      "guest_additions_path": "/home/vagrant/VBoxGuestAdditions_{{.Version}}.iso",
+      "guest_additions_path": "/home/{{user `base_image_ssh_user`}}/VBoxGuestAdditions_{{.Version}}.iso",
       "guest_additions_mode": "upload",
       "virtualbox_version_file": "VBoxVersion.txt"
   },
@@ -96,8 +95,8 @@
         "grub-installer/bootdev=/dev/sda <wait>",
         "<enter><wait>"
       ],
-      "disk_size": "{{user `disk_size`}}",
       "network": "nat",
+      "disk_size": "{{user `disk_size`}}",
       "vmx_data": {
         "numvcpus": "{{user `cpus`}}",
         "memsize": "{{user `memory`}}",
@@ -114,6 +113,7 @@
       "ssh_password": "vagrant",
       "ssh_port": 22,
       "ssh_timeout": "3600s",
+      "ssh_wait_timeout": "10000s",
       "shutdown_command": "{{user `shutdown_command`}}"
   },
   {
@@ -125,7 +125,7 @@
     "boot_command": [
       "<esc><wait>",
       "install <wait>",
-      " preseed/url=http://{{user `builder_ip`}}:{{ .HTTPPort }}/{{user `preseed_path`}} <wait>",
+      " preseed/url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/{{user `preseed_path`}} <wait>",
       "debian-installer=en_US.UTF-8 <wait>",
       "auto <wait>",
       "locale=en_US.UTF-8 <wait>",
@@ -165,7 +165,8 @@
         "network": "{{user `vsphere_network`}}",
         "network_card": "vmxnet3"
       }
-    ],    "datastore": "{{user `vsphere_datastore`}}",
+    ],
+    "datastore": "{{user `vsphere_datastore`}}",
     "folder": "{{user `vsphere_folder`}}",
     "CPUs": "{{user `vsphere_cpu`}}",
     "RAM": "{{user `vsphere_memory`}}",
@@ -193,28 +194,7 @@
       "force": true,
       "output_directory": "../../../output-main/vmware-vsphere-{{user `version`}}"
     }
-  },
-    {
-      "type": "openstack",
-      "name": "{{user `vm_name`}}-openstack",
-      "identity_endpoint": "http://10.2.76.201:5000/v3",
-      "domain_name": "Default",
-      "tenant_name": "admin",
-      "username": "admin",
-      "password": "jp6z6B8539OrtnqvjRu58Bm2MylLwR7z",
-      "region": "microstack",
-      "ssh_username": "debian",
-      "image_name": "{{user `vm_name`}}-{{user `version`}}",
-      "source_image": "54f87748-dc85-4afd-be3c-789e12f87c89",
-      "networks": "d3683c6d-e4f7-4b59-8321-6326ec13a8f4",
-      "use_floating_ip": true,
-      "floating_ip_pool": "public",
-      "floating_ip_network": "a5f6d6c9-6327-4377-826a-26b3606d87c6",
-      "flavor": "m1.medium",
-      "availability_zone": "nova",
-      "ssh_timeout": "10000s",
-      "insecure": "true"
-    }
+  }
   ],
   "post-processors":
   [
@@ -273,7 +253,8 @@
     "type": "shell-local",
     "environment_vars": [
       "VM_VERSION={{user `version`}}",
-      "VM_NAME={{user `vm_name`}}"
+      "VM_NAME={{user `vm_name`}}",
+      "PROVIDER={{.Provider}}"
     ],
     "execute_command": ["powershell.exe", "{{.Vars}} {{.Script}}"],
     "env_var_format": "$env:%s=\"%s\"; ",
@@ -285,12 +266,16 @@
     "type": "shell-local",
     "environment_vars": [
       "VM_VERSION={{user `version`}}",
-      "VM_NAME={{user `vm_name`}}"
+      "VM_NAME={{user `vm_name`}}",
+      "PROVIDER={{.Provider}}"
     ],
     "execute_command": ["powershell.exe", "{{.Vars}} {{.Script}}"],
     "env_var_format": "$env:%s=\"%s\"; ",
     "only_on": ["windows"],
-    "script": "../../../scripts/post-processing/create-metadata-json.ps1"
+    "scripts": [
+      "../../../scripts/post-processing/create-metadata-json.ps1",
+      "../../../scripts/post-processing/add-vagrant-box.ps1"
+    ]
   }
 ],
   "provisioners": [
@@ -323,12 +308,12 @@
     },
     {
       "script": "../../../scripts/base/vmware.sh",
-      "only": ["{{user `vm_name`}}-vmware-vsphere"],
+      "only": ["{{user `vm_name`}}-vmware-desktop"],
       "type": "shell"
     },
     {
       "script": "../../../scripts/base/vmware.sh",
-      "only": ["{{user `vm_name`}}-vmware-desktop"],
+      "only": ["{{user `vm_name`}}-vmware-vsphere"],
       "type": "shell"
     },
     {
@@ -364,8 +349,6 @@
            "VM_USER={{user `vm_user`}}",
            "VM_PASSWORD={{user `vm_password`}}",
            "GIT_SOURCE_BRANCH={{user `git_source_branch`}}",
-           "GIT_DOCS_BRANCH={{user `git_docs_branch`}}",
-           "GIT_TECHRADAR_BRANCH={{user `git_techradar_branch`}}",
            "GITHUB_USER={{user `github_user`}}",
            "GITHUB_TOKEN={{user `github_token`}}",
            "VERSION={{user `version`}}",
@@ -395,16 +378,8 @@
            "VM_PASSWORD={{user `vm_password`}}",
            "GIT_SOURCE_USER={{user `git_source_user`}}",
            "GIT_SOURCE_TOKEN={{user `git_source_token`}}",
-           "GIT_DOCS_USER={{user `git_docs_user`}}",
-           "GIT_DOCS_TOKEN={{user `git_docs_token`}}",
-           "GIT_TECHRADAR_USER={{user `git_techradar_user`}}",
-           "GIT_TECHRADAR_TOKEN={{user `git_techradar_token`}}",
            "GIT_SOURCE_URL={{user `git_source_url`}}",
-           "GIT_DOCS_URL={{user `git_docs_url`}}",
-           "GIT_TECHRADAR_URL={{user `git_techradar_url`}}",
            "GIT_SOURCE_BRANCH={{user `git_source_branch`}}",
-           "GIT_DOCS_BRANCH={{user `git_docs_branch`}}",
-           "GIT_TECHRADAR_BRANCH={{user `git_techradar_branch`}}",
            "VERSION={{user `version`}}",
            "KX_HOME={{user `kx_home`}}",
            "SKELDIR={{user `kx_home`}}/workspace/skel",
@@ -438,13 +413,13 @@
       "headless": "true",
       "http_proxy": "{{env `http_proxy`}}",
       "https_proxy": "{{env `https_proxy`}}",
-      "iso_checksum": "24fee00ed402c4a82cfec535870ab2359ec12a7dd4eed89c98fd582bc7cf3b25",
+      "iso_checksum": "8488abc1361590ee7a3c9b00ec059b29dfb1da40f8ba4adf293c7a30fa943eb2",
       "iso_checksum_type": "sha256",
       "iso_path": "iso",
-      "iso_url": "https://cdimage.debian.org/mirror/cdimage/archive/10.10.0/amd64/iso-cd/debian-10.10.0-amd64-xfce-CD-1.iso",
-      "iso_file": "debian-10.10.0-amd64-xfce-CD-1.iso",
-      "guest_additions_url": "https://download.virtualbox.org/virtualbox/6.1.26/VBoxGuestAdditions_6.1.26.iso",
-      "guest_additions_checksum": "22d02ec417cd7723d7269dbdaa71c48815f580c0ca7a0606c42bd623f84873d7",
+      "iso_url": "https://cdimage.debian.org/mirror/cdimage/archive/11.1.0/amd64/iso-cd/debian-11.1.0-amd64-netinst.iso",
+      "iso_file": "debian-11.1.0-amd64-netinst.iso",
+      "guest_additions_url": "https://download.virtualbox.org/virtualbox/6.1.32/VBoxGuestAdditions_6.1.32.iso",
+      "guest_additions_checksum": "3ab8d64c209d89ffc48e71df68ac0da2cf76074579ffaf2dba008ddbef44129c",
       "no_proxy": "{{env `no_proxy`}}",
       "preseed_path": "preseed.cfg",
       "shutdown_command": "echo 'vagrant' | sudo -Srm -rf shutdown -P now",

@@ -1,11 +1,8 @@
-#!/bin/bash -x
-set -euo pipefail
+#!/bin/bash
+set -euox pipefail
 
 # Create directory for storing generated certs
 export elasticStackCertsDir=${installationWorkspace}/elastic-stack-certs
-if [[ -d ${elasticStackCertsDir} ]]; then
-  /usr/bin/sudo rm -rf ${elasticStackCertsDir}
-fi
 /usr/bin/sudo mkdir -p ${elasticStackCertsDir}
 /usr/bin/sudo chmod 777 ${elasticStackCertsDir}
 
@@ -51,16 +48,36 @@ instances:
       - elastic-packetbeat-packetbeat
 """ | /usr/bin/sudo tee ${elasticStackCertsDir}/instance.yml
 
-if [[ -f ${elasticStackCertsDir}/certs.zip ]]; then
-  /usr/bin/sudo rm -f ${elasticStackCertsDir}/certs.zip
+# Remove old certificates to enable generation of new ones
+/usr/bin/sudo rm -rf \
+    ${elasticStackCertsDir}/auditbeat \
+    ${elasticStackCertsDir}/elasticsearch \
+    ${elasticStackCertsDir}/heartbeat \
+    ${elasticStackCertsDir}/kibana \
+    ${elasticStackCertsDir}/packetbeat \
+    ${elasticStackCertsDir}/certs.zip \
+    ${elasticStackCertsDir}/filebeat \
+    ${elasticStackCertsDir}/metricbeat
+
+# Create ElasticSearch "elastic" CA password
+export elasticCaPassword=$(managedPassword "elastic-ca-password")
+
+if [[ ! -f ${elasticStackCertsDir}/ca.zip ]]; then
+  # Create Elastic CA with elasticsearch-certutil if it does not already exist
+  docker run --rm -v ${elasticStackCertsDir}:/certs -i -w /app \
+          docker.elastic.co/elasticsearch/elasticsearch:${elasticVersion} \
+          /bin/sh -c " \
+                  /usr/share/elasticsearch/bin/elasticsearch-certutil ca --pass ''${elasticCaPassword}'' --out /certs/ca.zip --pem --verbose"
+  
+  # Unzip CA certs
+  /usr/bin/sudo unzip ${elasticStackCertsDir}/ca.zip -d ${elasticStackCertsDir}
 fi
 
 # Create Elastic certificates with elasticsearch-certutil
-password=$(docker run --rm busybox /bin/sh -c "< /dev/urandom tr -cd '[:alnum:]' | head -c32")
 docker run --rm -v ${elasticStackCertsDir}:/certs -i -w /app \
         docker.elastic.co/elasticsearch/elasticsearch:${elasticVersion} \
         /bin/sh -c " \
-                /usr/share/elasticsearch/bin/elasticsearch-certutil cert --keep-ca-key --pem --in /certs/instance.yml --out /certs/certs.zip"
+                /usr/share/elasticsearch/bin/elasticsearch-certutil cert --ca-pass ''${elasticCaPassword}'' --ca-cert /certs/ca/ca.crt --ca-key /certs/ca/ca.key --pem --in /certs/instance.yml --out /certs/certs.zip --verbose"
 
 # Unzip certs
 /usr/bin/sudo unzip ${elasticStackCertsDir}/certs.zip -d ${elasticStackCertsDir}

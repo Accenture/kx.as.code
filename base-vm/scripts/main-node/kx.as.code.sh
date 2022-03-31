@@ -60,10 +60,10 @@ User=0
 Type=forking
 Environment=VM_USER=${VM_USER}
 Environment=KUBEDIR=${INSTALLATION_WORKSPACE}
-ExecStart=daemonize -p /run/kxascode.pid -a -o ${INSTALLATION_WORKSPACE}/kx.as.code_autoSetup.log -e ${INSTALLATION_WORKSPACE}/kx.as.code_autoSetup.err -l ${INSTALLATION_WORKSPACE}/kx.as.code_autoSetup.lock /bin/bash /usr/share/kx.as.code/git/kx.as.code/auto-setup/pollActionQueue.sh
+ExecStart=daemonize -p /run/kxascode.pid -a -o ${INSTALLATION_WORKSPACE}/kx.as.code_autoSetup.log -e ${INSTALLATION_WORKSPACE}/kx.as.code_autoSetup.err -l ${INSTALLATION_WORKSPACE}/kx.as.code_autoSetup.lock /bin/bash -x /usr/share/kx.as.code/git/kx.as.code/auto-setup/pollActionQueue.sh
 TimeoutSec=infinity
-Restart=on-failure
-RestartSec=60s
+Restart=always
+RestartSec=5s
 RemainAfterExit=no
 
 [Install]
@@ -182,7 +182,7 @@ Comment=KX.AS.CODE Readme
 Exec=/usr/bin/typora ${SHARED_GIT_REPOSITORIES}/kx.as.code/README.md
 StartupNotify=true
 Terminal=false
-Icon=${SHARED_GIT_REPOSITORIES}/kx.as.code/docs/docs/images/kxascode_logo_white_small.png
+Icon=${SHARED_GIT_REPOSITORIES}/kx.as.code/docs/docs/images/kx-logo-w.png
 Type=Application
 Categories=Development
 EOF"
@@ -197,7 +197,7 @@ Comment=KX.AS.CODE Contribute
 Exec=/usr/bin/typora ${SHARED_GIT_REPOSITORIES}/docs/Development/Contribution-Guidelines.md
 StartupNotify=true
 Terminal=false
-Icon=${SHARED_GIT_REPOSITORIES}/kx.as.code/docs/docs/images/kxascode_logo_white_small.png
+Icon=${SHARED_GIT_REPOSITORIES}/kx.as.code/docs/docs/images/kx-logo-w.png
 Type=Application
 Categories=Development
 EOF"

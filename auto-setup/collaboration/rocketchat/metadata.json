@@ -4,7 +4,7 @@
     "installation_type": "helm",
     "installation_group_folder": "collaboration",
     "environment_variables": {
-        "imageTag": "3.14.5",
+        "imageTag": "4.5.4",
         "organizationType": "community",
         "organizationName": "KX.AS.CODE ChatOps",
         "channelsToCreate": "General,Security,Monitoring,CICD"
@@ -15,8 +15,8 @@
     },
     "helm_params": {
         "repository_url": "https://rocketchat.github.io/helm-charts",
-        "repository_name": "stable/rocketchat",
-        "helm_version": "3.1.0",
+        "repository_name": "rocketchat/rocketchat",
+        "helm_version": "4.5.4",
         "set_key_values": []
     },
     "categories": [

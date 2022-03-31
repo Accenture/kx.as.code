@@ -1,6 +1,6 @@
 {
     "name": "prometheus",
-    "namespace": "monitoring",
+    "namespace": "prometheus",
     "installation_type": "helm",
     "installation_group_folder": "monitoring",
     "environment_variables": {

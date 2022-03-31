@@ -1,6 +1,6 @@
 {
     "name": "grafana",
-    "namespace": "monitoring",
+    "namespace": "grafana",
     "installation_type": "helm",
     "installation_group_folder": "monitoring",
     "environment_variables": {
@@ -13,7 +13,7 @@
         "set_key_values": [
             "image.tag={{grafanaVersion}}",
             "ingress.enabled=true",
-            "ingress.annotations.\"kubernetes\\.io/ingress\\.class\"=nginx",
+            "ingress.ingressClassName=nginx",
             "ingress.hosts[0]={{componentName}}.{{baseDomain}}",
             "ingress.tls[0].hosts[0]={{componentName}}.{{baseDomain}}",
             "persistence.enabled=true",
@@ -24,12 +24,12 @@
             "admin.existingSecret=grafana-admin-credentials",
             "datasources.\"datasources\\.yaml\".datasources[0].name=Prometheus",
             "datasources.\"datasources\\.yaml\".datasources[0].type=prometheus",
-            "datasources.\"datasources\\.yaml\".datasources[0].url=http://prometheus-server.monitoring:80",
+            "datasources.\"datasources\\.yaml\".datasources[0].url=http://prometheus-server.prometheus:80",
             "datasources.\"datasources\\.yaml\".datasources[0].access=proxy",
             "datasources.\"datasources\\.yaml\".datasources[0].isDefault=true",
             "datasources.\"datasources\\.yaml\".datasources[1].name=Graphite",
             "datasources.\"datasources\\.yaml\".datasources[1].type=graphite",
-            "datasources.\"datasources\\.yaml\".datasources[1].url=http://graphite:8080",
+            "datasources.\"datasources\\.yaml\".datasources[1].url=http://graphite.graphite:8080",
             "datasources.\"datasources\\.yaml\".datasources[1].access=proxy",
             "datasources.\"datasources\\.yaml\".datasources[1].isDefault=false",
             "dashboardProviders.\"dashboardproviders\\.yaml\".apiVersion=1",
@@ -92,6 +92,9 @@
     "api_docs_url": "https://grafana.com/docs/grafana/latest/http_api/curl-examples/?src=grafana_gettingstarted",
     "vendor_docs_url": "https://grafana.com/docs/",
     "pre_install_scripts": [
+        "createGitProject.sh",
+        "populateGitProject.sh",
+        "installGrafanaImageRenderer.sh",
         "getMinIoAccessKey.sh",
         "createAdminCredentialsSecret.sh",
         "uploadCaConfigMap.sh",

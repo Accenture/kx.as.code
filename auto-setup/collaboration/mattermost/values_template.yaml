@@ -36,8 +36,7 @@ ingress:
   hosts:
     - {{componentName}}.{{baseDomain}}
   tls:
-    - secretName: kx.as.code-wildcard-cert
-      hosts:
+    - hosts:
         - {{componentName}}.{{baseDomain}}
 
 externalDB:

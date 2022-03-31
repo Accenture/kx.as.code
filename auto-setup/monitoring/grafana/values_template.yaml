@@ -19,7 +19,7 @@ grafana.ini:
     access_key: {{minioAccessKey}}
     secret_key: {{minioSecretKey}}
   rendering:
-    server_url: http://grafana-image-renderer-service.monitoring:8081/render
+    server_url: http://grafana-image-renderer-service.{{namespace}}:8081/render
     callback_url: http://grafana.monitoring
   auth.generic_oauth:
     enabled: true
