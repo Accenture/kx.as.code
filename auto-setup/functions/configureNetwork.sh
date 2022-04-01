@@ -85,7 +85,7 @@ echo """      ${netDevice}:
               macaddress: "${fixedNicMac}"
           dhcp4: no
           addresses:
-              - ${kxNodeIp}/24
+              - ${kxMainIp}/24
           gateway4: ${fixedNicConfigGateway}
           nameservers:
               addresses: [${fixedNicConfigDns1}, ${fixedNicConfigDns2}]
