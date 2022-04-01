@@ -56,7 +56,7 @@ Actions=new-window;new-private-window;
 shortcutsDirectory="/home/${vmUser}/Desktop"
 primaryUrl="https://portal.${baseDomain}:4435"
 shortcutText="KX.AS.CODE Portal"
-iconPath="${sharedGitHome}/kx.as.code/auto-setup/core/kx-portal/kxascode.png"
+iconPath="${sharedGitHome}/kx.as.code/auto-setup/core/kx-portal/kx-logo-blue.png"
 browserOptions=""
 createDesktopIcon "${shortcutsDirectory}" "${primaryUrl}" "${shortcutText}" "${iconPath}" "${browserOptions}"
 

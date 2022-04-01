@@ -260,11 +260,12 @@ echo """network:
   ethernets:""" | /usr/bin/sudo tee /etc/netplan/kx-netplan.yaml
 
 if [[ -n ${nicExclusions} ]]; then
-existingNicIpAddress=$(ip address show ${nic} | egrep -o 'inet [0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | cut -d' ' -f2)
-existingNicGateway=$(ip route | grep ${nic} | awk '/default/ { print $3 }')
-existingNicMac=$(cat /sys/class/net/${nic}/address)
-nicExclusions=$(echo -n "${nicExclusions//[[:space:]]/}")
-echo """      ${nicExclusions}:
+  for nic in ${nicExclusions}; do
+    existingNicIpAddress=$(ip address show ${nic} | egrep -o 'inet [0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | cut -d' ' -f2)
+    existingNicGateway=$(ip route | grep ${nic} | awk '/default/ { print $3 }')
+    existingNicMac=$(cat /sys/class/net/${nic}/address)
+    nicExclusions=$(echo -n "${nicExclusions//[[:space:]]/}")
+echo """      ${nic}:
           match:
               macaddress: "${existingNicMac}"
           dhcp4: no
@@ -273,6 +274,7 @@ echo """      ${nicExclusions}:
           gateway4: ${existingNicGateway}
           nameservers:
               addresses: [${fixedNicConfigDns1}, ${fixedNicConfigDns2}]""" | /usr/bin/sudo tee -a /etc/netplan/kx-netplan.yaml
+  done
 fi
 
 if [[ -n ${netDevice} ]]; then

@@ -112,7 +112,7 @@ if [[ ${action} == "install"   ]]; then
     vendorDocsUrl=$(cat ${componentMetadataJson} | jq -r '.vendor_docs_url' | mo)
     if [[ -n ${vendorDocsUrl} ]] && [[ ${vendorDocsUrl} != "null" ]]; then
       iconPath=${sharedGitHome}/kx.as.code/base-vm/images/vendor_docs_icon.png
-      createDesktopIcon "${apiDocsDirectory}" "${vendorDocsUrl}" "${shortcutText}" "${iconPath}" "${browserOptions}"
+      createDesktopIcon "${vendorDocsDirectory}" "${vendorDocsUrl}" "${shortcutText}" "${iconPath}" "${browserOptions}"
     fi
 
     # Create desktop icon to launch tool's documentation with Chrome
