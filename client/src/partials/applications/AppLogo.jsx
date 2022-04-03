@@ -32,6 +32,7 @@ export default function AppLogo(props) {
         const response = await import(
           `../../media/png/appImgs/${imageName}.png`
         );
+        console.log("response img: ", response.default);
         setImage(response.default);
       } catch (err) {
         setError(err);
@@ -46,7 +47,7 @@ export default function AppLogo(props) {
   return (
     <>
       {image ? (
-        <img src={image} alt="" height={height} width={width} />
+        <img src={image} alt={props.appName} height={height} width={width} />
       ) : (
         <RiWindowLine className="text-5xl opacity-40" />
       )}

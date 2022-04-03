@@ -9,7 +9,7 @@ export default function StatusPoint(props) {
       return "bg-statusNewOrange";
     } else if (installStatus === "failed_queue") {
       return "bg-statusNewRed";
-    } else if (installStatus === "vip_queue") {
+    } else if (installStatus === "wip_queue") {
       return "bg-statusNewYellow";
     } else if (installStatus === "retry_queue") {
       return "bg-statusGray";
@@ -25,7 +25,7 @@ export default function StatusPoint(props) {
       return "Installing";
     } else if (installStatus === "failed_queue") {
       return "Installation failed";
-    } else if (installStatus === "vip_queue") {
+    } else if (installStatus === "wip_queue") {
       return "VIP";
     } else if (installStatus === "retry_queue") {
       return "tbd";

@@ -8,6 +8,7 @@ import { useState, useEffect } from "react";
 import AppLogo from "./AppLogo";
 import { toast } from "react-toastify";
 import LinearProgress from "@mui/material/LinearProgress";
+import axios from "axios";
 
 function ApplicationCard2(props) {
   const { history } = props;
@@ -15,6 +16,14 @@ function ApplicationCard2(props) {
   const [appId, setAppId] = useState("");
   const [appName, setAppName] = useState("");
   const [queueStatus, setQueueStatus] = useState("");
+  const [applicationData, setApplicationData] = useState({});
+
+  var defaultPayload = {
+    install_folder: "undefined",
+    name: "undefined",
+    action: "undefined",
+    retries: "0",
+  };
 
   const NotificationMessage = ({ closeToast, toastProps }) => (
     <div className="flex items-center">
@@ -38,8 +47,37 @@ function ApplicationCard2(props) {
     });
   };
 
-  const applicationInstallHandler = () => {
+  const getApplicationDataByName = async () => {
+    try {
+      const respoonseData = await axios.get(
+        "http://localhost:5001/api/applications/" + props.app.name
+      );
+      return respoonseData.data;
+    } catch (error) {
+      console.log("Error: ", error);
+    }
+  };
+
+  const applicationInstallHandler = async () => {
     notify();
+    getApplicationDataByName().then((appData) => {
+      var payloadObj = {
+        install_folder: appData.installation_group_folder,
+        name: appData.name,
+        action: "install",
+        retries: "0",
+      };
+      const applicationPayload = payloadObj;
+
+      axios
+        .post(
+          "http://localhost:5001/api/add/application/pending_queue",
+          applicationPayload
+        )
+        .catch((error) => {
+          console.error("There was an error!", error);
+        });
+    });
   };
 
   const setUp = () => {
@@ -50,10 +88,18 @@ function ApplicationCard2(props) {
         .replace(/\b\w/g, (l) => l.toLowerCase());
     setAppId(slug);
 
+    //todo rewrite
     const queueObj = getAppQueueData(props.app.name)[0];
 
-    if (queueObj != undefined && queueObj != null) {
-      setQueueStatus(queueObj.routing_key);
+    if (
+      getAppQueueData(props.app.name)[0] != undefined &&
+      getAppQueueData(props.app.name)[0] != null
+    ) {
+      console.log(
+        "debug-routing-queue: ",
+        getAppQueueData(props.app.name)[0].routing_key
+      );
+      setQueueStatus(getAppQueueData(props.app.name)[0].routing_key);
     }
   };
 
@@ -167,7 +213,7 @@ function ApplicationCard2(props) {
         <div className="pb-5">{props.app.Description}</div>
 
         <div className="">
-          {queueStatus === "pending_queue" ? (
+          {queueStatus === "pending_queue" && (
             <button
               className="bg-kxBlue/50 p-3 px-5 rounded items-center flex"
               disabled
@@ -193,7 +239,8 @@ function ApplicationCard2(props) {
               </svg>
               Installing...
             </button>
-          ) : (
+          )}
+          {"" && (
             <button
               onClick={applicationInstallHandler}
               className="bg-kxBlue p-3 px-5 rounded items-center flex"
@@ -209,7 +256,7 @@ function ApplicationCard2(props) {
             <LinearProgress />
           </div>
         ) : (
-          <div className="pb-3 mb-3 border-b-3 border-gray-500 w-full"></div>
+          <div className="pb-3 mb-3 border-b-4 border-gray-500 w-full"></div>
         )}
         <div className="float-left">
           <ul className="float-left">
