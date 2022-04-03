@@ -18,7 +18,7 @@ deployYamlFilesToKubernetes() {
                 log_info "Procssing yaml file #${i} --> ${yamlFiles[$i]}"
                 yamlFilename="${componentName}_$(basename ${yamlFiles[$i]})"
                 envhandlebars <${yamlFiles[$i]} >${installationWorkspace}/${yamlFilename}
-                kubeval ${installationWorkspace}/${yamlFilename} || rc=$? && log_info "kubeval returned with rc=$rc"
+                kubeval ${installationWorkspace}/${yamlFilename} --schema-location https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master --strict || rc=$? && log_info "kubeval returned with rc=$rc"
                 if [[ ${rc} -eq 0 ]]; then
                     log_info "YAML validation ok for ${yamlFilename}. Continuing to apply."
                     kubectl apply -f ${installationWorkspace}/${yamlFilename} -n ${namespace}

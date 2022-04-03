@@ -157,7 +157,7 @@ gitea:
   admin:
     #existingSecret: gitea-admin-secret
     username: gitea_admin
-    password: {{giteaAdminPassword}}
+    password: "{{giteaAdminPassword}}"
     email: "gitea@{{baseDomain}}"
 
   metrics:
