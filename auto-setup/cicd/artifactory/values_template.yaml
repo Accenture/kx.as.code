@@ -20,7 +20,7 @@ artifactory:
       # tag:
     admin:
       username: admin
-      password: {{adminPassword}}
+      password: "{{adminPassword}}"
 
     persistence:
       storageClassName: local-storage
@@ -82,7 +82,7 @@ artifactory:
   ## ref: https://github.com/bitnami/charts/blob/master/bitnami/postgresql/README.md
   postgresql:
     enabled: true
-    postgresqlPassword: {{postgresqlPassword}}
+    postgresqlPassword: "{{postgresqlPassword}}"
     global.persistence.storageClass: local-storage
     persistence:
       enabled: true

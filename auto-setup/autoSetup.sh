@@ -21,32 +21,52 @@ getComponentInstallationProperties
 if [[ ${action} == "install"   ]]; then
 
     # Create namespace if it does not exist
-    createKubernetesNamespace
+    createKubernetesNamespace || rc=$? && log_info "Execution of createKubernetesNamespace() returned with rc=$rc"
+    if [[ ${rc} -ne 0 ]]; then
+      log_error "Execution of createKubernetesNamespace() returned with a non zero return code ($rc)"
+      return $rc
+    fi
 
     log_info "installationType: ${installationType}"
 
     ####################################################################################################################################################################
     ##      P R E    I N S T A L L    S T E P S
     ####################################################################################################################################################################
-    autoSetupPreInstallSteps 2>> ${logFilename}
+    autoSetupPreInstallSteps 2>> ${logFilename} || rc=$? && log_info "Execution of autoSetupPreInstallSteps() returned with rc=$rc"
+    if [[ ${rc} -ne 0 ]]; then
+      log_error "Execution of autoSetupPreInstallSteps() returned with a non zero return code ($rc)"
+      return $rc
+    fi
 
     ####################################################################################################################################################################
     ##      S C R I P T    I N S T A L L
     ####################################################################################################################################################################
     if [[ ${installationType} == "script" ]]; then
-      autoSetupScriptInstall 2>> ${logFilename}
+      autoSetupScriptInstall 2>> ${logFilename} || rc=$? && log_info "Execution of autoSetupScriptInstall() returned with rc=$rc"
+    if [[ ${rc} -ne 0 ]]; then
+      log_error "Execution of autoSetupScriptInstall() returned with a non zero return code ($rc)"
+      return $rc
+    fi
 
     ####################################################################################################################################################################
     ##      H E L M    I N S T A L L   /   U P G R A D E
     ####################################################################################################################################################################
     elif [[ ${installationType} == "helm" ]]; then
-      autoSetupHelmInstall 2>> ${logFilename}
+      autoSetupHelmInstall 2>> ${logFilename} || rc=$? && log_info "Execution of autoSetupHelmInstall() returned with rc=$rc"
+    if [[ ${rc} -ne 0 ]]; then
+      log_error "Execution of autoSetupHelmInstall() returned with a non zero return code ($rc)"
+      return $rc
+    fi
 
     ####################################################################################################################################################################
     ##      A R G O    C D    I N S T A L L
     ####################################################################################################################################################################
     elif [[ ${installationType} == "argocd" ]] && [[ ${action}=="install" ]]; then
-      autoSetupArgoCdInstall 2>> ${logFilename}
+      autoSetupArgoCdInstall 2>> ${logFilename} || rc=$? && log_info "Execution of autoSetupArgoCdInstall() returned with rc=$rc"
+    if [[ ${rc} -ne 0 ]]; then
+      log_error "Execution of autoSetupArgoCdInstall() returned with a non zero return code ($rc)"
+      return $rc
+    fi
 
     else
         log_error "Did not recognize installation type of \"${installationType}\". Valid values are \"helm\", \"argocd\" or \"script\""
@@ -62,10 +82,18 @@ if [[ ${action} == "install"   ]]; then
 
       # Excluding core_groups to avoid missing cross dependency issues between core services, for example,
       # coredns waiting for calico network to be installed, preventing other service from being provisioned
-      checkRunningKubernetesPods 2>> ${logFilename}
+      checkRunningKubernetesPods 2>> ${logFilename} || rc=$? && log_info "Execution of checkRunningKubernetesPods() returned with rc=$rc"
+    if [[ ${rc} -ne 0 ]]; then
+      log_error "Execution of checkRunningKubernetesPods() returned with a non zero return code ($rc)"
+      return $rc
+    fi
 
       # Check if URL health checks defined in metadata.json return result as expected/described in metadata.json file
-      applicationDeploymentHealthCheck 2>> ${logFilename}
+      applicationDeploymentHealthCheck 2>> ${logFilename} || rc=$? && log_info "Execution of applicationDeploymentHealthCheck() returned with rc=$rc"
+    if [[ ${rc} -ne 0 ]]; then
+      log_error "Execution of applicationDeploymentHealthCheck() returned with a non zero return code ($rc)"
+      return $rc
+    fi
 
     fi
 
@@ -78,13 +106,17 @@ if [[ ${action} == "install"   ]]; then
 
     # If LetsEncrypt is not disabled in metadata.json for application in question and sslType set to letsencrypt,
     # then inject LetsEncrypt annotations into the applications ingress resources
-    postInstallStepLetsEncrypt 2>> ${logFilename}
+    postInstallStepLetsEncrypt 2>> ${logFilename} || rc=$? && log_info "Execution of postInstallStepLetsEncrypt() returned with rc=$rc"
+    if [[ ${rc} -ne 0 ]]; then
+      log_error "Execution of postInstallStepLetsEncrypt() returned with a non zero return code ($rc)"
+      return $rc
+    fi
 
     # Execute scripts defined in metadata.json, listed post_install_scripts section
     executePostInstallScripts 2>> ${logFilename} || rc=$? && log_info "Execution of executePostInstallScripts() returned with rc=$rc"
     if [[ ${rc} -ne 0 ]]; then
       log_error "Execution of executePostInstallScripts() returned with a non zero return code ($rc)"
-      return 1
+      return $rc
     fi
      
     ####################################################################################################################################################################
