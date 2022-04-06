@@ -53,5 +53,7 @@
     "pre_install_scripts": [
         "getAuthToken.sh"
     ],
-    "post_install_scripts": []
+    "post_install_scripts": [
+        "modifyConfiguration.sh"
+    ]
 }
