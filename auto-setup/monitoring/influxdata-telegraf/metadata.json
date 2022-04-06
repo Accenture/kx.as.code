@@ -13,8 +13,8 @@
         "set_key_values": []
     },
     "categories": [
-        "time-series",
-        "database"
+        "data-collection",
+        "agent"
     ],
     "urls": [
         {
@@ -47,11 +47,11 @@
             }
         }
     ],
-    "Description": "InfluxDB Description",
-    "shortcut_text": "InfluxDB2",
-    "shortcut_icon": "influxdb.png",
+    "Description": "Influxdata Telegraf Description",
+    "shortcut_text": "Influxdata Telegraf",
+    "shortcut_icon": "",
     "pre_install_scripts": [
-        "createAuthSecret.sh"
+        "getAuthToken.sh"
     ],
     "post_install_scripts": []
 }

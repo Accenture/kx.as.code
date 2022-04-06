@@ -2,7 +2,7 @@
 
 # Clone the project
 /usr/bin/sudo rm -rf ${installationWorkspace}/docker-selenium
-git clone -b ${gitTag} --single-branch https://github.com/seleniumhq/docker-selenium.git ${installationWorkspace}/docker-selenium
+git clone --depth 1 --branch ${gitTag} --single-branch https://github.com/seleniumhq/docker-selenium.git ${installationWorkspace}/docker-selenium
 
 # Determine whether a values_template.yaml file exists for the solution and use it if so - and replace mustache variables such as url etc
 if [[ -f ${installComponentDirectory}/values_template.yaml ]]; then
