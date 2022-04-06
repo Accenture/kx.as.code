@@ -23,12 +23,14 @@ args: []
 # be added to the environment (must be manually created)
 # This can be useful for auth tokens, etc.
 
-# envFromSecret: "telegraf-tokens"
+#envFromSecret: "telegraf-tokens"
 
 
 env:
   - name: HOSTNAME
     value: "telegraf-polling-service"
+  - name: INFLUX_TOKEN
+    value: "{{influxdb2AdminToken}}"
 
 # An older "volumeMounts" key was previously added which will likely
 # NOT WORK as you expect. Please use this newer configuration.
@@ -152,10 +154,13 @@ config:
             problem: 2
             critical: 3
   outputs:
-    - influxdb:
+    - influxdb_v2:
         urls:
-          - "http://influxdb2.influxdata:8086"
-        database: "telegraf"
+          - "http://influxdata-influxdb2.influxdata"
+        bucket: "telegraf"
+        token: "$INFLUX_TOKEN"
+        organization: "{{baseDomainWithHyphens}}"
+
   inputs:
     - statsd:
         service_address: ":8125"

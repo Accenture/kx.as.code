@@ -85,8 +85,8 @@ env: {}
 ## Defaults indicated below
 ##
 adminUser:
-  organization: "influxdata"
-  bucket: "default"
+  organization: "{{baseDomainWithHyphens}}"
+  bucket: "telegraf"
   user: "admin"
   retention_policy: "0s"
   ## Leave empty to generate a random password and token.

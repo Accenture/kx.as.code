@@ -30,6 +30,9 @@ getProfileConfiguration() {
       export baseDomain="${environmentPrefix}.$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.baseDomain')"
   fi
 
+  # For use in tools that require and organization name, where "." cause an error
+  export baseDomainWithHyphens=$(echo ${baseDomain} | sed 's/\./-/g')
+
   export numKxMainNodes=$(cat ${installationWorkspace}/profile-config.json | jq -r '.vm_properties.main_node_count')
   if [[ "${numKxMainNodes}" = "null" ]]; then
       export numKxMainNodes="1"

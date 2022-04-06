@@ -1,20 +1,20 @@
 {
-    "name": "influxdb2",
+    "name": "telegraf-ds",
     "namespace": "influxdata",
     "installation_type": "helm",
     "installation_group_folder": "monitoring",
     "environment_variables": {
-        "imageTag": "2.1.1-alpine"
+        "imageTag": "1.10.0-alpine"
     },
     "helm_params": {
         "repository_url": "https://helm.influxdata.com/",
-        "repository_name": "influxdata/influxdb2",
-        "helm_version": "2.0.11",
+        "repository_name": "influxdata/telegraf-ds",
+        "helm_version": "1.8.1",
         "set_key_values": []
     },
     "categories": [
-        "time-series",
-        "database"
+        "data-collection",
+        "agent"
     ],
     "urls": [
         {
@@ -47,11 +47,11 @@
             }
         }
     ],
-    "Description": "InfluxDB2 Description",
-    "shortcut_text": "InfluxDB2",
-    "shortcut_icon": "influxdb2.png",
+    "Description": "Influxdata Telegraf Description",
+    "shortcut_text": "Influxdata Telegraf",
+    "shortcut_icon": "",
     "pre_install_scripts": [
-        "createAuthSecret.sh"
+        "getAuthToken.sh"
     ],
     "post_install_scripts": []
 }
