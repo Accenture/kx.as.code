@@ -68,8 +68,20 @@ export const Applications2 = () => {
         return 0;
       })
       .map((app, i) => {
-        return <ApplicationCard2 app={app} key={i} queueData={queueData} />;
+        return (
+          <ApplicationCard2
+            app={app}
+            key={i}
+            queueData={queueData}
+            fetchApplicationAndQueueData={fetchApplicationAndQueueData}
+          />
+        );
       });
+  };
+
+  const fetchApplicationAndQueueData = () => {
+    fetchQueueData();
+    fetchData();
   };
 
   const fetchQueueData = () => {
@@ -108,7 +120,7 @@ export const Applications2 = () => {
     return () => {
       // clearInterval(id);
     };
-  }, [queueData]);
+  }, [queueData, applicationData]);
 
   return (
     <div className="px-6 sm:px-6 lg:px-24 py-8 w-full max-w-9xl mx-auto">

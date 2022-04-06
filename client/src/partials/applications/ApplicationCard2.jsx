@@ -84,6 +84,7 @@ function ApplicationCard2(props) {
         .then(() => {
           // setAppQueue("pending_queue");
           // props.fetchQueueData();
+          props.fetchApplicationAndQueueData();
         })
         .catch((error) => {
           console.error("There was an error!", error);
@@ -110,6 +111,7 @@ function ApplicationCard2(props) {
         .then(() => {
           // setAppQueue("pending_queue");
           // props.fetchQueueData();
+          props.fetchApplicationAndQueueData();
         })
         .catch((error) => {
           console.error("There was an error!", error);
