@@ -12,7 +12,7 @@
     ],
     "Description": "KX.AS.CODE Management and Status Portal",
     "shortcut_text": "KX.AS.CODE Portal",
-    "shortcut_icon": "kx-logo-w.png",
+    "shortcut_icon": "kx-logo-blue.png",
     "pre_install_scripts": [],
     "post_install_scripts": []
 }

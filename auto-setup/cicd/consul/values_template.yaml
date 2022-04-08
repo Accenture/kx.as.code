@@ -519,7 +519,7 @@ server:
   # The number of server agents to run. This determines the fault tolerance of
   # the cluster. Please see the deployment table (https://consul.io/docs/internals/consensus#deployment-table)
   # for more information.
-  replicas: 3
+  replicas: 1
 
   # The number of servers that are expected to be running.
   # It defaults to server.replicas.
@@ -529,7 +529,7 @@ server:
   # were joined into the same datacenter and each cluster ran a certain number
   # of servers.
   # @type: int
-  bootstrapExpect: null
+  bootstrapExpect: 1
 
   # A secret containing a certificate & key for the server agents to use
   # for TLS communication within the Consul cluster. Cert needs to be provided with

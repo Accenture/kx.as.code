@@ -23,7 +23,7 @@ kibanaConfig:
   kibana.yml: |
     server:
       name: {{ componentName }}
-      publicBaseUrl: {{ componentName }}.{{ baseDomain }}
+      publicBaseUrl: https://{{ componentName }}.{{ baseDomain }}
       ssl:
         enabled: true
         key: /usr/share/kibana/config/certs/kibana.key

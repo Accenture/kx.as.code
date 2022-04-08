@@ -28,7 +28,7 @@ fi
 sudo mkdir -p ${SHARED_GIT_REPOSITORIES}
 
 # Clone KX.AS.CODE GIT repository into VM
-sudo git clone --branch ${gitSourceBranch} ${gitSourceCloneUrl} ${SHARED_GIT_REPOSITORIES}/kx.as.code
+sudo git clone --depth 1 --branch ${gitSourceBranch} ${gitSourceCloneUrl} ${SHARED_GIT_REPOSITORIES}/kx.as.code
 sudo chown -R ${VM_USER}:${VM_USER} ${SHARED_GIT_REPOSITORIES}
 sudo ln -s ${SHARED_GIT_REPOSITORIES}/kx.as.code /home/${VM_USER}/Desktop/"KX.AS.CODE Source"
 
@@ -143,7 +143,7 @@ sudo chown ${VM_USER}:${VM_USER} /home/${VM_USER}/.config/autostart-scripts/*.sh
 sudo cp -f /home/${VM_USER}/.config/autostart-scripts/showWelcome.sh ${INSTALLATION_WORKSPACE}
 
 # Create shortcut directories
-shortcutsDirectory="/usr/share/kx.as.code/DevOps Tools"
+shortcutsDirectory="/usr/share/kx.as.code/Applications"
 sudo mkdir -p "${shortcutsDirectory}"
 sudo chmod a+rwx "${shortcutsDirectory}"
 sudo ln -s "${shortcutsDirectory}" /home/${VM_USER}/Desktop/
@@ -182,7 +182,7 @@ Comment=KX.AS.CODE Readme
 Exec=/usr/bin/typora ${SHARED_GIT_REPOSITORIES}/kx.as.code/README.md
 StartupNotify=true
 Terminal=false
-Icon=${SHARED_GIT_REPOSITORIES}/kx.as.code/docs/docs/images/kx-logo-w.png
+Icon=${SHARED_GIT_REPOSITORIES}/kx.as.code/base-vm/images/kx-readme.png
 Type=Application
 Categories=Development
 EOF"
@@ -197,7 +197,7 @@ Comment=KX.AS.CODE Contribute
 Exec=/usr/bin/typora ${SHARED_GIT_REPOSITORIES}/docs/Development/Contribution-Guidelines.md
 StartupNotify=true
 Terminal=false
-Icon=${SHARED_GIT_REPOSITORIES}/kx.as.code/docs/docs/images/kx-logo-w.png
+Icon=${SHARED_GIT_REPOSITORIES}/kx.as.code/base-vm/images/kx-contribute.png
 Type=Application
 Categories=Development
 EOF"

@@ -1,21 +1,16 @@
-#!/bin/bash -x
-set -euo pipefail
+#!/bin/bash
+set -euox pipefail
 
-vaultUnsealStatus=$(kubectl exec -ti -n ${namespace} vault-0 -- vault status -format=json | jq -r '.sealed')
-if [[ ${vaultUnsealStatus} == "true"   ]]; then
-    unsealKeys=$(kubectl get secret vault-unseal-keys -n ${namespace} -o json | jq -r '.data."unseal-keys"' | base64 --decode)
+vaultSealStatus=$(kubectl exec -n ${namespace} vault-0 -- vault status -format=json | jq -r '.sealed')
+if [[ "${vaultSealStatus}" == "true"   ]]; then
+    unsealKeys=$(echo -e $(kubectl get secret vault-unseal-keys -n ${namespace} -o json | jq -r '.data."unseal-keys"' | base64 --decode))
     for unsealKey in ${unsealKeys}; do
-        for i in {1..5}; do
-            error="false"
-            echo ${unsealKey} > unsealKey
-            cat -v unsealKey
-            kubectl exec -ti -n ${namespace} vault-0 -- vault operator unseal "${unsealKey}" || error="true"
-            if [[ ${error} == "false"   ]]; then
-                break
-            else
-                echo "Unsealing failed. Trying again"
-                sleep 5
-            fi
-        done
+        vaultSealStatus=$(kubectl exec -n ${namespace} vault-0 -- vault status -format=json | jq -r '.sealed')
+        if [[ "${vaultSealStatus}" == "false" ]]; then
+            break
+        else
+            kubectl exec -n ${namespace} vault-0 -- vault operator unseal "${unsealKey}" || true
+            sleep 5
+        fi
     done
 fi

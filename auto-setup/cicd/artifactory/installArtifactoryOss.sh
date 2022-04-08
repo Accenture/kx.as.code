@@ -1,5 +1,5 @@
-#!/bin/bash -x
-set -euo pipefail
+#!/bin/bash
+set -euox pipefail
 
 #### Using script approach rather than direct Helm install,
 #### as standard Helm install was not working. Persistence
@@ -10,7 +10,7 @@ git clone https://github.com/jfrog/charts.git
 
 # Checkout commit associated with desired version (no tagging in JFrog's Github repository)
 cd charts/stable/artifactory
-git checkout ${chartGitCommitId}
+git checkout --depth 1 ${chartGitCommitId}
 
 # Update persistent storage sizes
 sed -i 's/50Gi/5Gi/g' values.yaml
@@ -40,7 +40,7 @@ helm upgrade --install ${componentName} --namespace ${namespace} \
     --set postgresql.global.persistence.storageClass=local-storage \
     --set postgresql.persistence.enabled=true \
     --set postgresql.persistence.storageClass=local-storage \
-    --set postgresql.persistence.size=5Gi .
+    --set postgresql.persistence.size=5Gi
 
  # Install Ingress
 echo '''

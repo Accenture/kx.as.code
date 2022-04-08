@@ -40,3 +40,6 @@ sudo DEBIAN_FRONTEND=noninteractive apt-get -y install \
 # Install Powerline Status
 sudo apt-get install -y python3-setuptools
 sudo pip3 install powerline-status
+
+# Install Netplan for later NIC configuration on first start
+sudo apt-get install -y netplan.io
