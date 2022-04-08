@@ -32,7 +32,7 @@ export default function AppLogo(props) {
         const response = await import(
           `../../media/png/appImgs/${imageName}.png`
         );
-        console.log("response img: ", response.default);
+        // console.log("response img: ", response.default);
         setImage(response.default);
       } catch (err) {
         setError(err);

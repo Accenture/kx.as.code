@@ -9,14 +9,16 @@ import AppLogo from "./AppLogo";
 import { toast } from "react-toastify";
 import LinearProgress from "@mui/material/LinearProgress";
 import axios from "axios";
+import { AiOutlineWarning } from "react-icons/ai";
 
 function ApplicationCard2(props) {
   const { history } = props;
 
   const [appId, setAppId] = useState("");
   const [appName, setAppName] = useState("");
-  const [queueStatus, setQueueStatus] = useState("");
+  const [allQueueStatus, setAllQueueStatus] = useState([]);
   const [applicationData, setApplicationData] = useState({});
+  const [appQueue, setAppQueue] = useState("pending_queue");
 
   var defaultPayload = {
     install_folder: "undefined",
@@ -25,26 +27,31 @@ function ApplicationCard2(props) {
     retries: "0",
   };
 
-  const NotificationMessage = ({ closeToast, toastProps }) => (
+  const NotificationMessage = (notificationProps) => (
     <div className="flex items-center">
       <AppLogo height={"40px"} width={"40px"} appName={props.app.name} />
-      <div className="ml-2"> Installation started for {appName}.</div>
+      <div className="ml-2">{notificationProps.notificationMessage}</div>
     </div>
   );
 
-  const notify = () => {
-    const notificationMessage2 = "Installation started for " + appName + ".";
+  const notify = (action) => {
+    const notificationMessage = `${
+      action === "install" ? "Installation" : "Uninstallation"
+    } started for ${appName}.`;
 
-    toast.info(<NotificationMessage />, {
-      position: "top-right",
-      autoClose: 5000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "dark",
-    });
+    toast.info(
+      <NotificationMessage notificationMessage={notificationMessage} />,
+      {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      }
+    );
   };
 
   const getApplicationDataByName = async () => {
@@ -59,7 +66,7 @@ function ApplicationCard2(props) {
   };
 
   const applicationInstallHandler = async () => {
-    notify();
+    notify("install");
     getApplicationDataByName().then((appData) => {
       var payloadObj = {
         install_folder: appData.installation_group_folder,
@@ -74,6 +81,38 @@ function ApplicationCard2(props) {
           "http://localhost:5001/api/add/application/pending_queue",
           applicationPayload
         )
+        .then(() => {
+          // setAppQueue("pending_queue");
+          // props.fetchQueueData();
+          props.fetchApplicationAndQueueData();
+        })
+        .catch((error) => {
+          console.error("There was an error!", error);
+        });
+    });
+  };
+
+  const applicationUninstallHandler = async () => {
+    notify("uninstall");
+    getApplicationDataByName().then((appData) => {
+      var payloadObj = {
+        install_folder: appData.installation_group_folder,
+        name: appData.name,
+        action: "uninstall",
+        retries: "0",
+      };
+      const applicationPayload = payloadObj;
+
+      axios
+        .post(
+          "http://localhost:5001/api/add/application/pending_queue",
+          applicationPayload
+        )
+        .then(() => {
+          // setAppQueue("pending_queue");
+          // props.fetchQueueData();
+          props.fetchApplicationAndQueueData();
+        })
         .catch((error) => {
           console.error("There was an error!", error);
         });
@@ -81,6 +120,15 @@ function ApplicationCard2(props) {
   };
 
   const setUp = () => {
+    // getQueueByAppName2();
+
+    // setAppQueueData(getAppQueueData(props.app.name));
+    // console.log("appQueue setUp: ", appQueue);
+
+    // getQueueByAppName(props.app.name)[0] &&
+    //   getQueueByAppName(props.app.name)[0].routing_key &&
+    //   setAppQueue(getQueueByAppName(props.app.name));
+
     const slug =
       props.app.name &&
       props.app.name
@@ -89,28 +137,45 @@ function ApplicationCard2(props) {
     setAppId(slug);
 
     //todo rewrite
-    const queueObj = getAppQueueData(props.app.name)[0];
+    // const queueObj = getAppQueueData(props.app.name)[0];
 
-    if (
-      getAppQueueData(props.app.name)[0] != undefined &&
-      getAppQueueData(props.app.name)[0] != null
-    ) {
-      console.log(
-        "debug-routing-queue: ",
-        getAppQueueData(props.app.name)[0].routing_key
-      );
-      setQueueStatus(getAppQueueData(props.app.name)[0].routing_key);
-    }
+    // if (appQueueData != undefined && appQueueData != null) {
+    //   console.log("debug-routing-queue: ", appQueueData);
+    //   setAllQueueStatus(getAppQueueData(props.app.name));
+    // }
   };
 
-  const getAppQueueData = (appName) => {
-    var queueName = props.queueData.filter(function (obj) {
-      if (JSON.parse(obj.payload).name === appName) {
-        return obj;
+  const getQueueByAppName2 = () => {
+    props.queueData.filter(function (obj) {
+      if (JSON.parse(obj.payload).name === props.app.name) {
+        setAppQueue(JSON.parse(obj.payload).name);
+        console.log("in GetQueue queue Name: ", obj.routing_key);
+        return obj.routing_key;
       } else {
       }
     });
-    return queueName;
+
+    // .then(() => {
+    //   if (res !== undefined) {
+    //     // setAppQueue(res);
+    //   }
+    // });
+  };
+
+  const getQueueByAppName = () => {
+    return props.queueData.filter(function (obj) {
+      // console.log("in GetQueue app Name-1: ", obj);
+
+      if (JSON.parse(obj.payload).name === props.app.name) {
+        console.log("in GetQueue queue Name: ", obj.routing_key);
+        return obj.routing_key;
+      } else {
+      }
+    });
+    // .then((obj) => {
+    //   console.log("queue name: ", obj[0].routing_key);
+    //   return obj[0].routing_key;
+    // });
   };
 
   const getTransformedName = () => {
@@ -128,8 +193,22 @@ function ApplicationCard2(props) {
         .replace(/\b\w/g, (l) => l.toLowerCase())
     );
   };
+
+  const fetchAppQueueData33 = async () => {
+    return await props.queueData.filter(function (obj) {
+      if (JSON.parse(obj.payload).name === props.app.name) {
+        setAppQueue(obj.routing_key);
+        console.log("in GetQueue queue Name: ", obj.routing_key);
+        return obj.routing_key;
+      } else {
+      }
+    });
+  };
+
   useEffect(() => {
     setUp();
+
+    fetchAppQueueData33().catch("Error: ", console.error);
 
     setAppName(
       props.app.name
@@ -138,7 +217,7 @@ function ApplicationCard2(props) {
         .replace(/\b\w/g, (l) => l.toUpperCase())
     );
     return () => {};
-  }, []);
+  }, [appQueue]);
 
   const drawAppTags = (appTags) => {
     return appTags.map((appTag, i) => {
@@ -205,7 +284,9 @@ function ApplicationCard2(props) {
             {props.app.installation_group_folder}
           </div>
           <h2 className="hover:underline hover:cursor-pointer text-2xl text-white mb-2 flex items-center">
-            {queueStatus != "" && <StatusPoint installStatus={queueStatus} />}
+            {allQueueStatus != "" && (
+              <StatusPoint installStatus={allQueueStatus} />
+            )}
             {getTransformedName()}
           </h2>
         </Link>
@@ -213,7 +294,8 @@ function ApplicationCard2(props) {
         <div className="pb-5">{props.app.Description}</div>
 
         <div className="">
-          {queueStatus === "pending_queue" && (
+          {console.log("in render queue: ", appQueue)}
+          {appQueue === "pending_queue" && (
             <button
               className="bg-kxBlue/50 p-3 px-5 rounded items-center flex"
               disabled
@@ -240,24 +322,38 @@ function ApplicationCard2(props) {
               Installing...
             </button>
           )}
-          {"" && (
-            <button
-              onClick={applicationInstallHandler}
-              className="bg-kxBlue p-3 px-5 rounded items-center flex"
-            >
-              Install
-            </button>
-          )}
+          {appQueue != "pending_queue" &&
+            (appQueue != "completed_queue" ? (
+              <div className="">
+                <button
+                  onClick={applicationInstallHandler}
+                  className="bg-kxBlue p-3 px-5 rounded items-center flex"
+                >
+                  Install
+                </button>
+
+                {/* Warning Info Installation Failed Component */}
+                {appQueue === "failed_queue" && (
+                  <div className="p-2 mt-4 rounded-md text-red-500 flex item-center border border-red-500">
+                    <AiOutlineWarning className="mt-auto mb-auto table text-2xl mr-2" />
+                    <div>
+                      ERROR: An error occured when trying to install {appName}.
+                    </div>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <button
+                onClick={applicationUninstallHandler}
+                className="bg-red-500 p-3 px-5 rounded items-center flex"
+              >
+                Uninstall
+              </button>
+            ))}
         </div>
         {/* Seperator */}
+        <div className="pb-3 mb-3 border-b-2 border-gray-600 w-full"></div>
 
-        {queueStatus === "pending_queue" ? (
-          <div className="py-3">
-            <LinearProgress />
-          </div>
-        ) : (
-          <div className="pb-3 mb-3 border-b-4 border-gray-500 w-full"></div>
-        )}
         <div className="float-left">
           <ul className="float-left">
             {props.app.categories && drawAppTags(props.app.categories)}

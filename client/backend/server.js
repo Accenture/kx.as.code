@@ -34,6 +34,42 @@ app.route("/api/add/application/:queue_name").post((req, res) => {
   res.send("The POST request is being processed!");
 });
 
+app.route("/api/consume/:queue_name").get((req, res) => {
+  connection = amqp.connect("amqp://test:test@localhost");
+
+  connection.then(async (conn) => {
+    const channel = await conn.createChannel();
+    await channel.assertExchange("action_workflow", "direct", {
+      durable: true,
+    });
+    await channel.assertQueue(req.params.queue_name);
+    channel.bindQueue(
+      req.params.queue_name,
+      "action_workflow",
+      req.params.queue_name
+    );
+    // channel.consume(req.params.queue_name, (msg) => {
+    //   console.log(msg.content.toString());
+    //   channel.ack(msg);
+    // });
+
+    try {
+      let data = await channel.get(req.params.queue_name); // get one msg at a time
+      if (data) {
+        data.content ? eval("(" + data.content.toString() + ")()") : "";
+        channel.ack(data);
+      } else {
+        //console.log("Empty Queue")
+      }
+    } catch (error) {
+      //console.log("Error while consuming from rabbitmq queue", error)
+      return Promise.reject(error);
+    }
+  });
+
+  res.send("The POST request is being processed!");
+});
+
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Credentials", "true");

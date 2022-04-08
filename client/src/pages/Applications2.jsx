@@ -1,6 +1,11 @@
 import { React, Component } from "react";
 import ApplicationCard2 from "../partials/applications/ApplicationCard2.jsx";
 import axios from "axios";
+import Box from "@mui/material/Box";
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
+import FormControl from "@mui/material/FormControl";
+import Select from "@mui/material/Select";
 // import FilterButton from "../partials/actions/FilterButton"
 
 import { useState, useEffect } from "react";
@@ -10,6 +15,8 @@ export const Applications2 = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [queueData, setQueueData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+
+  const [sortSelect, setSortSelect] = useState("asc");
 
   const queueList = [
     "pending_queue",
@@ -21,14 +28,9 @@ export const Applications2 = () => {
 
   const fetchData = () => {
     setIsLoading(true);
-    axios
-      .get("http://localhost:5001/api/applications")
-      .then((response) => {
-        setApplicationData(response.data);
-      })
-      .then(() => {
-        fetchQueueData2();
-      });
+    axios.get("http://localhost:5001/api/applications").then((response) => {
+      setApplicationData(response.data);
+    });
   };
 
   const drawApplicationCards = () => {
@@ -42,41 +44,83 @@ export const Applications2 = () => {
           return val;
         }
       })
+      .sort(function (a, b) {
+        const nameA = a.name.toUpperCase();
+        const nameB = b.name.toUpperCase();
+
+        if (sortSelect === "asc") {
+          if (nameA < nameB) {
+            return -1;
+          }
+          if (nameA > nameB) {
+            return 1;
+          }
+        } else {
+          if (nameB < nameA) {
+            return -1;
+          }
+          if (nameB > nameA) {
+            return 1;
+          }
+        }
+
+        // names must be equal
+        return 0;
+      })
       .map((app, i) => {
-        return <ApplicationCard2 app={app} key={i} queueData={queueData} />;
+        return (
+          <ApplicationCard2
+            app={app}
+            key={i}
+            queueData={queueData}
+            fetchApplicationAndQueueData={fetchApplicationAndQueueData}
+          />
+        );
       });
   };
 
-  const fetchQueueData2 = () => {
+  const fetchApplicationAndQueueData = () => {
+    fetchQueueData();
+    fetchData();
+  };
+
+  const fetchQueueData = () => {
+    console.log("ping");
     const requests = queueList.map((queue) => {
       return axios
         .get("http://localhost:5001/api/queues/" + queue)
         .then((response) => {
-          // response.data.map((app) => {
-          //   queueData.push(app);
-          // });
+          // console.log("debug-response: ", response);
+          response.data.map((app) => {
+            queueData.push(app);
+          });
         })
         .then(() => {
-          console.log("debug-all data: ", queueData);
+          // console.log("debug-all data: ", queueData);
         });
     });
 
-    Promise.all(requests).then(() => {
-      setQueueData(queueData);
-      setIsLoading(false);
-    });
+    Promise.all(requests)
+      .then(() => {
+        setQueueData(queueData);
+        setIsLoading(false);
+      })
+      .then(() => {
+        // console.log("queueData-22: ", queueData);
+      });
   };
 
   useEffect(() => {
-    const id = setInterval(() => {
-      fetchData();
-    }, 20000);
+    // const id = setInterval(() => {
+    //   fetchData();
+    // }, 20000);
 
     fetchData();
+    fetchQueueData();
     return () => {
-      clearInterval(id);
+      // clearInterval(id);
     };
-  }, []);
+  }, [queueData, applicationData]);
 
   return (
     <div className="px-6 sm:px-6 lg:px-24 py-8 w-full max-w-9xl mx-auto">
@@ -93,9 +137,9 @@ export const Applications2 = () => {
       </div>
 
       {/* Applications actions */}
-      <div className="sm:flex sm:items-center mb-8">
+      <div className="flex justify-between mb-8">
         {/* Left: Actions */}
-        <div className="grid grid-flow-col sm:auto-cols-max justify-start sm:justify-start gap-2">
+        <div className="">
           {/* Search Input Field */}
           <div className="group relative mb-3">
             <svg
@@ -120,12 +164,29 @@ export const Applications2 = () => {
               }}
             />
           </div>
+
           {/* <FilterButton filterHandler={this.filterHandler}
                             isCompleted={this.state.isCompleted}
                             isFailed={this.state.isFailed}
                             isPending={this.state.isPending} /> */}
         </div>
+
+        {/* Right: Actions */}
+        <div className="">
+          <select
+            onChange={(e) => {
+              setSortSelect(e.target.value);
+            }}
+            name="sort-select"
+            id="sort-select"
+            className="bg-ghBlack2 py-3 border-none rounded-md cursor-pointer"
+          >
+            <option value="asc">Sort by name A-Z</option>
+            <option value="desc">Sort by name Z-A</option>
+          </select>
+        </div>
       </div>
+
       <div className="grid grid-cols-12 gap-8">{drawApplicationCards()}</div>
     </div>
   );
