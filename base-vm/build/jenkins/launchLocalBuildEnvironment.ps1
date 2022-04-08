@@ -179,7 +179,7 @@ if ( $override_action -eq "recreate" -Or $override_action -eq "destroy" -Or $ove
 $composeDownloadVersion = "1.29.2"
 $javaDownloadVersion = "11.0.3.7.1"
 $jqDownloadVersion = "1.6"
-$jenkinsDownloadVersion = "2.303.2"
+$jenkinsDownloadVersion = "2.332.2"
 
 # Determine OS this script is running on and set appropriate download links and commands
 Write-Output "- [INFO] Script running on Windows. Setting appropriate download links" | Blue
@@ -316,7 +316,10 @@ if (!(test-path .\jenkins-plugin-manager.jar)) {
 
 # Download plugins if not yet installed
 if (!(Test-Path -Path $JENKINS_HOME\plugins\*)) {
+    Write-Output "Downloading Jenkins plugins..." | Blue
     Start-Process -FilePath $javaBinary -Wait -NoNewWindow -ArgumentList "-jar", "./jenkins-plugin-manager.jar", "--war", "./jenkins.war", "--plugin-download-directory", "$JENKINS_HOME/plugins", "--plugin-file", "./initial-setup/plugins.txt", "--plugins delivery-pipeline-plugin:1.3.2", "deployit-plugin"
+} else {
+    Write-Output "Jenkins plugins already downloaded" | Green
 }
 
 # Bypass Jenkins setup wizard
@@ -383,11 +386,14 @@ Foreach-Object {
 $env:Path += ";C:/Program Files/Git/bin;C:/Program Files/Git/usr/bin;C:/Git/kx.as.code_test"
 Start-Process -FilePath $javaBinary -ArgumentList "-jar", ".\jenkins.war", "--httpListenAddress=$jenkins_listen_address", "--httpPort=$jenkins_server_port"
 
-$jenkinsUrl = "http://localhost:$jenkins_server_port"
+$jenkinsConfigUrl = Get-Content -Path "jenkins.model.JenkinsLocationConfiguration.xml"
+$jenkinsUrl = $jenkinsConfigUrl
+Write-Output "jenkinsUrl: `"$jenkinsUrl"`"
+Write-Output "Discovered java binary: `"$javaBinary`""
 
-Write-Output $JENKINS_SHARED_WORKSPACE
-Write-Output $JENKINS_HOME
-Write-Output $PSScriptRoot
+Write-Output "JENKINS_SHARED_WORKSPACE: `"$JENKINS_SHARED_WORKSPACE"`"
+Write-Output "JENKINS_HOME: `"$JENKINS_HOME"`"
+Write-Output "PSScriptRoot: `"$PSScriptRoot"`"
 
 # Check Jenkins URL is reachable for downloading jenkins-cli.jar
 try
@@ -436,4 +442,3 @@ Get-ChildItem "$JENKINS_HOME\" -Filter credential_*.xml |
                 Write-Output "$javaBinary -jar .\jenkins-cli.jar -s $jenkinsUrl create-credentials-by-xml system::system::jenkins _" | Red
             }
         }
-

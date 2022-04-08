@@ -82,7 +82,7 @@ try {
                         console.log("Item selected: " + item + ", item icon: " + configPanelIcon);
                         hideParameterDivs();
                         document.getElementById(item).className = "config-tab-selected";
-                        document.getElementById(configPanelIcon).className = "config-panel-icon svg-purple";
+                        document.getElementById(configPanelIcon).className = "config-panel-icon svg-blue";
                         switch (item) {
                             case "config-panel-profile-selection":
                                 console.log("Inside switch-case for select-profile-div");
@@ -239,7 +239,7 @@ try {
         <div class="config-outer-wrapper">
             <div class="config-inner-panel">
                 <div id="config-navigator" class="config-selector-panel">
-                    <div class="config-tab-selected" id="config-panel-profile-selection" onclick="change_panel_selection(this.id);"><img src="/userContent/icons/format-list-checks.svg" id="config-panel-profile-selection-icon" class="config-panel-icon svg-purple" alt="Profile Selection"></div>
+                    <div class="config-tab-selected" id="config-panel-profile-selection" onclick="change_panel_selection(this.id);"><img src="/userContent/icons/format-list-checks.svg" id="config-panel-profile-selection-icon" class="config-panel-icon svg-blue" alt="Profile Selection"></div>
                     <div class="config-tab" id="config-panel-general-params" onclick="change_panel_selection(this.id);"><img src="/userContent/icons/form-textbox.svg" id="config-panel-general-params-icon" class="config-panel-icon svg-white" alt="General Parameters"></div>
                     <div class="config-tab" id="config-panel-kx-main-config" onclick="change_panel_selection(this.id);"><img src="/userContent/icons/memory.svg" id="config-panel-kx-main-config-icon" class="config-panel-icon svg-white" alt="KX-Main Node Configuration"></div>
                     <div class="config-tab" id="config-panel-storage-config" onclick="change_panel_selection(this.id);"><img src="/userContent/icons/harddisk.svg" id="config-panel-storage-config-icon" class="config-panel-icon svg-white" alt="Storage Configuration"></div>

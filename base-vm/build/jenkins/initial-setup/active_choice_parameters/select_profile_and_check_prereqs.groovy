@@ -30,12 +30,13 @@ def parallelsNodeVersion
 def extendedDescription
 def profilePaths = []
 def boxDirectories = []
+def currentDir
 
 try {
 
     extendedDescription = "Welcome to KX.AS.CODE. In this panel you can select the profile. A check is made on the system to see if the necessary virtualization software and associated Vagrant plugins are installed, s well as availability of built Vagrant boxes. An attempt is made to automatically select the profile based on discovered pre-requisites."
 
-    def currentDir = new File(".").getAbsolutePath().replaceAll("\\\\", "/")
+    currentDir = new File(".").getAbsolutePath().replaceAll("\\\\", "/")
     currentDir = currentDir.substring(0, currentDir.length() - 1)
     println("PROFILE UPDATE CURRENT DIR: ${currentDir}")
 
@@ -121,7 +122,7 @@ try {
 
     File vboxExecutable = new File(virtualboxPath)
     vboxExecutableExists = vboxExecutable.exists()
-
+    println("vboxExecutableExists: ${vboxExecutableExists}")
     File vmwareExecutable = new File(vmwareWorkstationPath)
     vmwareExecutableExists = vmwareExecutable.exists()
 
@@ -312,7 +313,7 @@ try {
               let selectedProfile = document.getElementById("profiles").value;
               let virtualizationExecutableExists = "";
               let vagrantPluginInstalled = "";
-
+              console.log("VirtualBox exists: ${vboxExecutableExists}");
               if ( selectedProfile === "virtualbox" ) {
                   virtualizationExecutableExists = "${vboxExecutableExists}";
                   vagrantPluginInstalled = "true";
@@ -465,9 +466,9 @@ try {
                 <div style="width: 100%;">
                     <span style="width: 940px;">
                         <span class="build-action-text-label" style="width: 150px">KX-Main Build Date: </span><span id="kx-main-build-timestamp" class="build-action-text-value"></span>
-                        <span class="build-action-text-label" style="width: 100px;">Build Status: </span><span id="kx-main-build-result" class="build-action-text-value build-action-text-value-result"></span>
-                        <span class="build-action-text-label" style="width: 100px; margin-left: 5px;">Build Version: </span><span id="kx-main-build-kx-version" style="width: 50px;" class="build-action-text-value build-action-text-value-result"></span>
-                        <span class="build-action-text-label" style="width: 100px;">Kube Version: </span><span id="kx-main-build-kube-version" style="width: 100px;" class="build-action-text-value build-action-text-value-result"></span>
+                        <span class="build-action-text-label" style="width: 100px;">Build Status: </span><span id="kx-main-build-result" class="build-action-text-value build-action-text-value-result" style="width: 100px; margin-right: 5px; display: inline-flex;"></span>
+                        <span class="build-action-text-label" style="width: 110px;">Build Version: </span><span id="kx-main-build-kx-version" style="width: 50px;" class="build-action-text-value build-action-text-value-result"></span>
+                        <span class="build-action-text-label" style="width: 110px;">Kube Version: </span><span id="kx-main-build-kube-version" style="width: 80px;" class="build-action-text-value build-action-text-value-result"></span>
                         <span class="build-number-span" id="kx-main-build-number-link"></span>
                     </span>
                     <span class='span-rounded-border'>
@@ -477,12 +478,12 @@ try {
                         <div class="console-log"><span class="console-log-span"><img src="/userContent/icons/text-box-outline.svg" onMouseover='showConsoleLog("KX.AS.CODE_Image_Builder", "kx-main");' onclick='openFullConsoleLog("KX.AS.CODE_Image_Builder", "kx-main");' class="build-action-icon" alt="View Build Log" title="Click to open full log in new tab"><span class="consolelogtext" id='kxMainBuildConsoleLog'></span></span></div>
                     </span>
                 </div>
-                <div style="width: 100%;">
-                    <span style="width: 940px;">
+                    <div style="width: 100%;">
+                        <span style="width: 940px;">
                         <span class="build-action-text-label" style="width: 150px">KX-Node Build Date: </span><span id="kx-node-build-timestamp" class="build-action-text-value"></span>
-                        <span class="build-action-text-label" style="width: 100px;">Build Status: </span><span id="kx-node-build-result" class="build-action-text-value build-action-text-value-result"></span>
-                        <span class="build-action-text-label" style="width: 100px; margin-left: 5px;">Build Version: </span><span id="kx-node-build-kx-version" style="width: 50px;" class="build-action-text-value build-action-text-value-result"></span>
-                        <span class="build-action-text-label" style="width: 100px;">Kube Version: </span><span id="kx-node-build-kube-version" style="width: 100px;" class="build-action-text-value build-action-text-value-result"></span>                        <span class="build-number-span" id="kx-node-build-number-link"></span>
+                        <span class="build-action-text-label" style="width: 100px;">Build Status: </span><span id="kx-node-build-result" class="build-action-text-value build-action-text-value-result" style="width: 100px; margin-right: 5px; display: inline-flex;"></span>
+                        <span class="build-action-text-label" style="width: 110px;">Build Version: </span><span id="kx-node-build-kx-version" style="width: 50px;" class="build-action-text-value build-action-text-value-result"></span>
+                        <span class="build-action-text-label" style="width: 110px;">Kube Version: </span><span id="kx-node-build-kube-version" style="width: 80px;" class="build-action-text-value build-action-text-value-result"></span>                        <span class="build-number-span" id="kx-node-build-number-link"></span>
                     </span>
                     <span class='span-rounded-border'>
                         <img src='/userContent/icons/play.svg' class="build-action-icon" title="Start Build" alt="Start Build" onclick='triggerBuild("kx-node");' />|

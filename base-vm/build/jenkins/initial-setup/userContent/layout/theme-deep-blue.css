@@ -3,8 +3,11 @@
 
 :root {
     /* Dynamic theme colors */
-    --material-primary: #7500c0;
-    --material-secondary: #a100ff;
+    --material-primary: #425DA1;
+    --material-secondary: #5E7CBD;
+    --dark-grey: #95A3B8;
+    --light-grey: #E3E9F1;
+    --very-light-grey: #F1F5F9;
 
     /* Font */
     --font-family-sans: Roboto !important;
