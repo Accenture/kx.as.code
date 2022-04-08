@@ -121,7 +121,7 @@ try {
 
     File vboxExecutable = new File(virtualboxPath)
     vboxExecutableExists = vboxExecutable.exists()
-
+    println("vboxExecutableExists: ${vboxExecutableExists}")
     File vmwareExecutable = new File(vmwareWorkstationPath)
     vmwareExecutableExists = vmwareExecutable.exists()
 
@@ -312,7 +312,7 @@ try {
               let selectedProfile = document.getElementById("profiles").value;
               let virtualizationExecutableExists = "";
               let vagrantPluginInstalled = "";
-
+              console.log("VirtualBox exists: ${vboxExecutableExists}");
               if ( selectedProfile === "virtualbox" ) {
                   virtualizationExecutableExists = "${vboxExecutableExists}";
                   vagrantPluginInstalled = "true";
