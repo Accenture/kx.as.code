@@ -20,7 +20,7 @@
 }</text>
     </org.jenkinsci.plugins.simpletheme.CssTextThemeElement>
     <org.jenkinsci.plugins.simpletheme.CssUrlThemeElement>
-      <url>/userContent/layout/theme-deep-purple.css</url>
+      <url>/userContent/layout/theme-deep-blue.css</url>
     </org.jenkinsci.plugins.simpletheme.CssUrlThemeElement>
     <org.jenkinsci.plugins.simpletheme.CssUrlThemeElement>
       <url>/userContent/layout/jenkins-colour-weather-icons.css</url>

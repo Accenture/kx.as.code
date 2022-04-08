@@ -23,7 +23,7 @@ async function triggerBuild(nodeType) {
         body: formData
     }
 
-    let response = await fetch('http://localhost:8081/job/Actions/job/KX.AS.CODE_Image_Builder/buildWithParameters', config);
+    let response = await fetch('/job/Actions/job/KX.AS.CODE_Image_Builder/buildWithParameters', config);
     let data = await response.text();
     console.log(data);
 }
@@ -383,7 +383,7 @@ async function getBuildJobListForProfile(job, nodeType) {
 
 async function getExtendedJobDetails(url) {
     let jenkinsCrumb = getCrumb().value;
-    //let url = 'http://localhost:8081/job/Actions/job/KX.AS.CODE_Runtime_Actions/42/api/json';
+    //let url = '/job/Actions/job/KX.AS.CODE_Runtime_Actions/42/api/json';
     let urlToFetch = url + '/api/json';
     console.log(urlToFetch);
     let responseData = await fetch(urlToFetch, {
@@ -663,7 +663,7 @@ function formatSeconds(seconds) {
 function getCrumb() {
     const xhr = new XMLHttpRequest(),
         method = "GET",
-        url = "http://localhost:8081/crumbIssuer/api/json";
+        url = "/crumbIssuer/api/json";
 
     xhr.open(method, url, true);
     xhr.onreadystatechange = function () {
@@ -688,7 +688,7 @@ async function getAllJenkinsBuilds(job) {
     console.log("DEBUG getAllJenkinsBuilds(job): " + job);
     let jenkinsCrumb = getCrumb().value;
     console.log("Jenkins Crumb received = " + jenkinsCrumb);
-    let fetchUrl = 'http://localhost:8081/job/Actions/job/' + job + '/api/json?tree=builds[number,status,timestamp,id,result,url,estimatedDuration,actions[parameters[name,value]]]'
+    let fetchUrl = '/job/Actions/job/' + job + '/api/json?tree=builds[number,status,timestamp,id,result,url,estimatedDuration,actions[parameters[name,value]]]'
     let response = await fetch(fetchUrl, {
         method: 'GET',
         headers: {
@@ -754,7 +754,7 @@ async function performRuntimeAction(vagrantAction) {
         body: formData
     }
 
-    let response = await fetch('http://localhost:8081/job/Actions/job/KX.AS.CODE_Runtime_Actions/buildWithParameters', config);
+    let response = await fetch('/job/Actions/job/KX.AS.CODE_Runtime_Actions/buildWithParameters', config);
     let data = await response.text();
     console.log(data);
 }

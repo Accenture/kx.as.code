@@ -61,8 +61,8 @@ try {
     if ((OS.indexOf("mac") >= 0) || (OS.indexOf("darwin") >= 0)) {
         underlyingOS = "darwin"
         virtualboxCliPath = "/Applications/VirtualBox.app/Contents/MacOS/VBoxManage"
-        vmwareCliPath = "/Applications/VMware\ Fusion.app/Contents/Public/vmrun"
-        parallelsCliPath = "/Applications/Parallels\ Desktop.app/Contents/MacOS/prlctl"
+        vmwareCliPath = "/Applications/VMware\\ Fusion.app/Contents/Public/vmrun"
+        parallelsCliPath = "/Applications/Parallels\\ Desktop.app/Contents/MacOS/prlctl"
     } else if (OS.indexOf("win") >= 0) {
         underlyingOS = "windows"
         virtualboxCliPath = "C:/Program Files/Oracle/VirtualBox/VBoxManage.exe"
