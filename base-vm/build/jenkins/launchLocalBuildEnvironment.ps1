@@ -387,7 +387,7 @@ $env:Path += ";C:/Program Files/Git/bin;C:/Program Files/Git/usr/bin;C:/Git/kx.a
 Start-Process -FilePath $javaBinary -ArgumentList "-jar", ".\jenkins.war", "--httpListenAddress=$jenkins_listen_address", "--httpPort=$jenkins_server_port"
 
 $jenkinsConfigUrl = Get-Content -Path "jenkins.model.JenkinsLocationConfiguration.xml"
-$jenkinsUrl = $jenkinsConfigUrl.
+$jenkinsUrl = $jenkinsConfigUrl
 Write-Output "jenkinsUrl: `"$jenkinsUrl"`"
 Write-Output "Discovered java binary: `"$javaBinary`""
 
