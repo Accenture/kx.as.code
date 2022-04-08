@@ -268,7 +268,7 @@ cat ${start_job_file}
 cp ${start_job_file} ${start_job_backup_file}
 
 # Download and update Jenkins WAR file with needed plugins
-jenkinsDownloadVersion="2.319.3"
+jenkinsDownloadVersion="2.332.2"
 jenkinsWarFileUrl="https://get.jenkins.io/war-stable/${jenkinsDownloadVersion}/jenkins.war"
 if [ ! -f ./jenkins.war ]; then
     # Download Jenkins WAR file
@@ -458,4 +458,4 @@ if [[ ${error} == "true"  ]]; then
     exit 1
 fi
 
-echo -e "${green}- [INFO] Congratulations! Jenkins for KX.AS.CODE is successfully configured and running. Access Jenkins via the following URL: ${jenkins_url}${nc}"
+echo -e "${green}- [INFO] Congratulations! Jenkins for KX.AS.CODE is successfully configured and running. Access Jenkins via the following URL: ${jenkins_url}/job/KX.AS.CODE_Launcher/build?delay=0sec${nc}"
