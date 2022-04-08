@@ -58,7 +58,7 @@
     border-radius: 20px;
     border: none;
     height: 40px;
-    background: #dcafff;
+    background: #3C4559;
     cursor: pointer;
     opacity: 1.0;
 }
@@ -67,13 +67,13 @@
     width: 40px;
     border-radius: 20px;
     height: 40px;
-    background: #dcafff;
+    background: #3C4559;
     cursor: pointer;
     opacity: 1.0;
 }
 
 .button-left {
-    background-color: #7500c0;
+    background-color: #222938;
     cursor: pointer;
     opacity: 0.7;
     height: 30px;
@@ -95,7 +95,7 @@
 }
 
 .button-right {
-    background-color: #7500c0;
+    background-color: #222938;
     cursor: pointer;
     opacity: 0.7;
     height: 30px;
@@ -120,8 +120,8 @@
     filter: brightness(0) invert(1);
 }
 
-.svg-purple {
-    filter: invert(10%) sepia(88%) saturate(6128%) hue-rotate(277deg) brightness(90%) contrast(106%);
+.svg-blue {
+    filter: invert(14%) sepia(10%) saturate(1940%) hue-rotate(184deg) brightness(94%) contrast(86%);
     opacity: 0.7;
 }
 
@@ -273,7 +273,7 @@
     display: inline-block;
     width: 8em;
     color: white;
-    background: #7500c0;
+    background: #222938;
     opacity: 0.7;
     padding: 10px 0 10px 5px;
     margin-bottom: 10px;
@@ -318,7 +318,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: #7500c0;
+    background-color: #222938;
     -webkit-transition: .4s;
     transition: .4s;
     opacity: 0.1;
@@ -339,12 +339,12 @@
 }
 
 input:checked + .checkbox-slider-checked-disabled {
-    background-color: #7500c0 !important;
+    background-color: #222938 !important;
     opacity: 0.1;
 }
 
 input:focus + .checkbox-slider-checked-disabled {
-    box-shadow: 0 0 1px #7500c0;
+    box-shadow: 0 0 1px #222938;
 }
 
 input:checked + .checkbox-slider-checked-disabled:before {
@@ -386,12 +386,12 @@ input:checked + .checkbox-slider-checked-disabled:before {
 }
 
 input:checked + .checkbox-slider {
-    background-color: #7500c0 !important;
+    background-color: #222938 !important;
     opacity: 0.7;
 }
 
 input:focus + .checkbox-slider {
-    box-shadow: 0 0 1px #7500c0;
+    box-shadow: 0 0 1px #222938;
 }
 
 input:checked + .checkbox-slider:before {
@@ -617,29 +617,29 @@ input:checked + .checkbox-slider:before {
     fill: #FF6200;
 }
 .donut-text-cpu {
-    fill: #9f4dd3;
+    fill: #344155;
 }
 
 .donut-text-memory {
-    fill: #9f4dd3;
+    fill: #344155;
 }
 
 .donut-text-disk {
-    fill: #9f4dd3;
+    fill: #344155;
 }
 
 .donut-segment-cpu {
-    stroke: #9f4dd3;
+    stroke: #344155;
     animation: donut1 0.5s;
 }
 
 .donut-segment-memory {
-    stroke: #9f4dd3;
+    stroke: #344155;
     animation: donut2 0.5s;
 }
 
 .donut-segment-disk {
-    stroke: #9f4dd3;
+    stroke: #344155;
     animation: donut3 0.5s;
 }
 
@@ -721,7 +721,7 @@ input:checked + .checkbox-slider:before {
     cursor: not-allowed;
 }
 
-.svg-purple {
+.svg-blue {
     filter: invert(10%) sepia(88%) saturate(6128%) hue-rotate(277deg) brightness(90%) contrast(106%);
     opacity: 0.6;
 }
@@ -782,7 +782,7 @@ input:checked + .checkbox-slider:before {
 /* Config */
 :root {
     --sk-size: 150px;
-    --sk-color: #9f4dd3;
+    --sk-color: #344155;
 }
 
 /*  Flow
@@ -928,7 +928,7 @@ input:checked + .checkbox-slider:before {
     height: 10px;
     border-radius: 5px;
     background-color: #9880ff;
-    color: #9880ff;
+    color: #96A3B8;
     -webkit-animation: dot-flashing 1s infinite alternate;
     animation: dot-flashing 1s infinite alternate;
     -webkit-animation-delay: 0s;
@@ -939,7 +939,7 @@ input:checked + .checkbox-slider:before {
     width: 10px;
     height: 10px;
     border-radius: 5px;
-    background-color: #9880ff;
+    background-color: #96A3B8;
     color: #9880ff;
     -webkit-animation: dot-flashing 1s infinite alternate;
     animation: dot-flashing 1s infinite alternate;

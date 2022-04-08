@@ -124,7 +124,7 @@ try {
     <span class="description-paragraph-span"><p>${extendedDescription }</p></span>
     </div>
     <div class="outerWrapper" id="main-node-count-div" style="display: none;">
-        <div class="wrapper"><span><img src="/userContent/icons/pound.svg" class="param-icon svg-purple" alt="#" /></span>
+        <div class="wrapper"><span><img src="/userContent/icons/pound.svg" class="param-icon svg-blue" alt="#" /></span>
             <span id="counter_value_main_node_count_value" class="counter-element-value">${mainNodeCountStartValue} ${mainNodeCountRangeUnit}</span>
             <span class="button-range-span"><button type="button" class="button-left" style="opacity: ${mainNodeCountOpacity}; cursor: ${mainNodeCountCursor}"
                                                     onclick="subtract_one(&quot;counter_value_main_node_count_previous_value&quot;, &quot;counter_value_main_node_count&quot;, &quot;counter_value_main_node_count_value&quot;, &quot;counter_value_main_node_count_warning_icon&quot;, &quot;${mainNodeCountMinWarning}&quot;, &quot;${mainNodeValueDisplayConversion}&quot;, &quot;${mainNodeCountRangeUnit}&quot;, &quot;${mainNodeCountStep}&quot;, &quot;${mainNodeCountMin}&quot;);"><img src="/userContent/icons/chevron-down.svg" alt="minus" class="image-plus-minus svg-white"/></button></span>
@@ -143,7 +143,7 @@ try {
 
 
     <div class="outerWrapper" id="main-cpu-count-div" style="display: none">
-        <div class="wrapper"><span><img src="/userContent/icons/memory.svg" class="param-icon svg-purple" alt="cpu" /></span>
+        <div class="wrapper"><span><img src="/userContent/icons/memory.svg" class="param-icon svg-blue" alt="cpu" /></span>
 
             <span id="slider_value_main_admin_node_cpu_cores_value" class="slider-element-value">${mainNodeCpuCoresStartValue} ${cpuCoresRangeUnit}</span>
             <div id="container"><span class="button-range-span"><button type="button" class="button-left"
@@ -166,10 +166,10 @@ try {
     </div>
     <style scoped="scoped" onload="show_value(&quot;${mainNodeCpuCoresStartValue}&quot;, &quot;slider_value_main_admin_node_cpu_cores_previous_value&quot;, &quot;slider_value_main_admin_node_cpu_cores&quot;, &quot;slider_value_main_admin_node_cpu_cores_value&quot;, &quot;slider_value_main_admin_node_cpu_cores_warning_icon&quot;, &quot;${mainNodeCpuCoresMinWarning}&quot;, &quot;${cpuCoresValueDisplayConversion}&quot;, &quot;${cpuCoresRangeUnit}&quot;);">   </style>
     <input type="hidden" id="slider_value_main_admin_node_cpu_cores_previous_value" name="slider_value_main_admin_node_cpu_cores_previous_value" value="" >
-    
-    
+
+
         <div class="outerWrapper" id="main-memory-div" style="display: none">
-        <div class="wrapper"><span><img src="/userContent/icons/memory-solid.svg" class="param-icon svg-purple" alt="cpu" /></span>
+        <div class="wrapper"><span><img src="/userContent/icons/memory-solid.svg" class="param-icon svg-blue" alt="cpu" /></span>
 
             <span id="slider_value_main_admin_node_memory_value" class="slider-element-value">${mainNodeMemoryStartValue} ${memoryRangeUnit}</span>
             <div id="container"><span class="button-range-span"><button type="button" class="button-left"
@@ -193,7 +193,7 @@ try {
     <style scoped="scoped" onload="show_value(&quot;${mainNodeMemoryStartValue}&quot;, &quot;slider_value_main_admin_node_memory_previous_value&quot;, &quot;slider_value_main_admin_node_memory&quot;, &quot;slider_value_main_admin_node_memory_value&quot;, &quot;slider_value_main_admin_node_memory_warning_icon&quot;, &quot;${mainNodeMemoryMinWarning}&quot;, &quot;${memoryValueDisplayConversion}&quot;, &quot;${memoryRangeUnit}&quot;);">   </style>
     <input type="hidden" id="slider_value_main_admin_node_memory_previous_value" name="slider_value_main_admin_node_memory_previous_value" value="" >
     <input type="hidden" id="concatenated_value_main_node_config" name="value" value="" >
-    
+
     """
     return HTML
 } catch (e) {

@@ -86,10 +86,10 @@ try {
         <h1>Storage Parameters</h1>
         <span class="description-paragraph-span"><p>${extendedDescription}</p></span>
         </div>
-    
+
         <div id="network-storage-div" style="display: none;">
         <h2>Network Storage</h2>
-        <div class="wrapper"><span><img src="/userContent/icons/server-network.svg" class="param-icon svg-purple" alt="cpu" /></span>
+        <div class="wrapper"><span><img src="/userContent/icons/server-network.svg" class="param-icon svg-blue" alt="cpu" /></span>
 
             <span id="slider_value_network_storage_value" class="slider-element-value">${networkStorageStartValue} ${networkStorageRangeUnit}</span>
             <div id="container"><span class="button-range-span"><button type="button" class="button-left"
@@ -113,17 +113,17 @@ try {
     </div>
     <style scoped="scoped" onload="show_value(&quot;${networkStorageStartValue}&quot;, &quot;slider_value_network_storage_previous_value&quot;, &quot;slider_value_network_storage&quot;, &quot;slider_value_network_storage_value&quot;, &quot;slider_value_network_storage_warning_icon&quot;, &quot;${networkStorageMinWarning}&quot;, &quot;${networkStorageValueDisplayConversion}&quot;, &quot;${networkStorageRangeUnit}&quot;);">   </style>
     <input type="hidden" id="slider_value_network_storage_previous_value" name="slider_value_network_storage_previous_value" value="" >
-    
+
     <div id="local-storage-div" style="display: none;">
     <h2>Local Storage Volumes</h2>
-    <div class="wrapper"><span><img src="/userContent/icons/harddisk.svg" class="param-icon svg-purple" alt="#" /></span><h4>Local Storage Profile Parameters</h4></div>
+    <div class="wrapper"><span><img src="/userContent/icons/harddisk.svg" class="param-icon svg-blue" alt="#" /></span><h4>Local Storage Profile Parameters</h4></div>
     <p></p>
 
     <!-- --->
     <div>
         <div class="storage-wrapper">
             <span class="rounded-number-span">1 GB</span>
-            <span class="indented-bullet-span"><img src="/userContent/icons/chevron-right.svg" class="param-icon svg-purple" alt="bullet" /></span>
+            <span class="indented-bullet-span"><img src="/userContent/icons/chevron-right.svg" class="param-icon svg-blue" alt="bullet" /></span>
             <span id="counter_value_local_volume_count_1_gb" class="counter-local-storage-value">${startValueOneGb} ${localStorageRangeUnit}</span>
             <span class="button-range-span"><button type="button" class="button-left"
             onclick="subtract_one(&quot;counter_value_local_volume_count_1_gb_value_previous&quot;, &quot;counter_value_local_volume_count_1_gb&quot;, &quot;counter_value_local_volume_count_1_gb&quot;, &quot;counter_value_local_volume_count_1_gb_warning_icon&quot;, &quot;${minWarningOneGb}&quot;, &quot;${localStorageDisplayConversion}&quot;, &quot;${localStorageRangeUnit}&quot;, &quot;${localStorageStep}&quot;, &quot;${minOneGb}&quot;);">
@@ -155,7 +155,7 @@ try {
     <div>
         <div class="storage-wrapper">
             <span class="rounded-number-span">5 GB</span>
-            <span class="indented-bullet-span"><img src="/userContent/icons/chevron-right.svg" class="param-icon svg-purple" alt="bullet" /></span>
+            <span class="indented-bullet-span"><img src="/userContent/icons/chevron-right.svg" class="param-icon svg-blue" alt="bullet" /></span>
             <span id="counter_value_local_volume_count_5_gb" class="counter-local-storage-value">${startValueFiveGb} ${localStorageRangeUnit}</span>
             <span class="button-range-span"><button type="button" class="button-left"
                                                     onclick="subtract_one(&quot;counter_value_local_volume_count_5_gb_value_previous&quot;, &quot;counter_value_local_volume_count_5_gb&quot;, &quot;counter_value_local_volume_count_5_gb&quot;, &quot;counter_value_local_volume_count_5_gb_warning_icon&quot;, &quot;${minWarningFiveGb}&quot;, &quot;${localStorageDisplayConversion}&quot;, &quot;${localStorageRangeUnit}&quot;, &quot;${localStorageStep}&quot;, &quot;${minFiveGb}&quot;);">
@@ -187,7 +187,7 @@ try {
     <div>
         <div class="storage-wrapper">
             <span class="rounded-number-span">10 GB</span>
-            <span class="indented-bullet-span"><img src="/userContent/icons/chevron-right.svg" class="param-icon svg-purple" alt="bullet" /></span>
+            <span class="indented-bullet-span"><img src="/userContent/icons/chevron-right.svg" class="param-icon svg-blue" alt="bullet" /></span>
             <span id="counter_value_local_volume_count_10_gb" class="counter-local-storage-value">${startValueTenGb} ${localStorageRangeUnit}</span>
             <span class="button-range-span"><button type="button" class="button-left"
                                                     onclick="subtract_one(&quot;counter_value_local_volume_count_10_gb_value_previous&quot;, &quot;counter_value_local_volume_count_10_gb&quot;, &quot;counter_value_local_volume_count_10_gb&quot;, &quot;counter_value_local_volume_count_10_gb_warning_icon&quot;, &quot;${minWarningTenGb}&quot;, &quot;${localStorageDisplayConversion}&quot;, &quot;${localStorageRangeUnit}&quot;, &quot;${localStorageStep}&quot;, &quot;${minTenGb}&quot;);">
@@ -220,7 +220,7 @@ try {
     <div>
         <div class="storage-wrapper">
             <span class="rounded-number-span">30 GB</span>
-            <span class="indented-bullet-span"><img src="/userContent/icons/chevron-right.svg" class="param-icon svg-purple" alt="bullet" /></span>
+            <span class="indented-bullet-span"><img src="/userContent/icons/chevron-right.svg" class="param-icon svg-blue" alt="bullet" /></span>
             <span id="counter_value_local_volume_count_30_gb" class="counter-local-storage-value">${startValueThirtyGb} ${localStorageRangeUnit}</span>
             <span class="button-range-span"><button type="button" class="button-left"
                                                     onclick="subtract_one(&quot;counter_value_local_volume_count_30_gb_value_previous&quot;, &quot;counter_value_local_volume_count_30_gb&quot;, &quot;counter_value_local_volume_count_30_gb&quot;, &quot;counter_value_local_volume_count_30_gb_warning_icon&quot;, &quot;${minWarningThirtyGb}&quot;, &quot;${localStorageDisplayConversion}&quot;, &quot;${localStorageRangeUnit}&quot;, &quot;${localStorageStep}&quot;, &quot;${minThirtyGb}&quot;);">
@@ -252,7 +252,7 @@ try {
     <div>
         <div class="storage-wrapper">
             <span class="rounded-number-span">50 GB</span>
-            <span class="indented-bullet-span"><img src="/userContent/icons/chevron-right.svg" class="param-icon svg-purple" alt="bullet" /></span>
+            <span class="indented-bullet-span"><img src="/userContent/icons/chevron-right.svg" class="param-icon svg-blue" alt="bullet" /></span>
             <span id="counter_value_local_volume_count_50_gb" class="counter-local-storage-value">${startValueFiftyGb} ${localStorageRangeUnit}</span>
             <span class="button-range-span"><button type="button" class="button-left"
                                                     onclick="subtract_one(&quot;counter_value_local_volume_count_50_gb_value_previous&quot;, &quot;counter_value_local_volume_count_50_gb&quot;, &quot;counter_value_local_volume_count_50_gb&quot;, &quot;counter_value_local_volume_count_50_gb_warning_icon&quot;, &quot;${minWarningFiftyGb}&quot;, &quot;${localStorageDisplayConversion}&quot;, &quot;${localStorageRangeUnit}&quot;, &quot;${localStorageStep}&quot;, &quot;${minFiftyGb}&quot;);">
@@ -280,7 +280,7 @@ try {
     <!-- --->
 
     </div>
-    
+
     <input type="hidden" id="concatenated-storage-params" name="value" value="" >
 
     """
