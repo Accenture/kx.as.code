@@ -424,7 +424,7 @@ try {
       </script>
     <body>
         <div id="headline-select-profile-div" style="display: none;">
-        <h1>Select Profile &amp; Check Pre-Requisites</h1>
+        <h1>Select Profile & Check Pre-Requisites</h1>
         <span class="description-paragraph-span"><p>${extendedDescription}</p></span>
         </div>
         <div id="select-profile-div" style="display: none;">
@@ -460,9 +460,10 @@ try {
             <br><br>
 
             <div class="div-border-text-inline">
-                <h2 class="h2-header-in-line"><span class="span-h2-header-in-line">🚧 Build VM images</</span></h2>
+                <h2 class="h2-header-in-line"><span class="span-h2-header-in-line">🚧 Build VM images</span></h2>
                 <div class="div-inner-h2-header-in-line-wrapper">
-                <span class="description-paragraph-span"><p>Below you can see the last executed builds for each image tpe if there were any. If none, then click the play button for each type of node.</p></span>
+                    <span class="description-paragraph-span"><p>Below you can see the last executed builds for each image tpe if there were any. If none, then click the play button for each type of node.</p></span>
+                </div>
                 <div style="width: 100%;">
                     <span style="width: 940px;">
                         <span class="build-action-text-label" style="width: 150px">KX-Main Build Date: </span><span id="kx-main-build-timestamp" class="build-action-text-value"></span>
