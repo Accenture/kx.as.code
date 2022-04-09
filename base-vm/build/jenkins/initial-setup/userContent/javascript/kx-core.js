@@ -619,19 +619,26 @@ async function showConsoleLog(job, nodeType) {
                     let consoleLine;
                     let lines = consoleLog.split(/[\r\n]+/);
                     console.log(lines);
-                    let linesToReturn = 18;
+                    let linesToReturn = 100;
                     let n;
                     if (lines.length > linesToReturn) {
                         n = lines.length - linesToReturn;
                     } else {
                         n = lines.length;
                     }
+                    let counter = 0;
                     for (let line = n; line < lines.length; line++) {
-                        consoleLine = lines[line] + '<br>';
-                        consoleLine = consoleLine.replace(/FAILURE/g, '<span style="color: #fc5d4c">FAILURE</span>')
-                        consoleLine = consoleLine.replace(/ERROR/g, '<span style="color: #fc5d4c">ERROR</span>')
-                        consoleLogDiv.innerHTML += consoleLine;
-                        console.log(consoleLine);
+                        console.log("Jenkins Console Log Line: " + lines[line] + " | " + lines[line].includes('[Pipeline]'))
+                        if ( ! lines[line].includes('[Pipeline]') && counter <= 18) {
+                            consoleLine = lines[line] + '<br>';
+                            consoleLine = consoleLine.replace(/FAILURE/g, '<span style="color: #fc5d4c">FAILURE</span>')
+                            consoleLine = consoleLine.replace(/ERROR/g, '<span style="color: #fc5d4c">ERROR</span>')
+                            consoleLogDiv.innerHTML += consoleLine;
+                            console.log(consoleLine);
+                            counter++;
+                        } else {
+                            console.log("Skipping line: " + lines[line]);
+                        }
                     }
                 });
             })
