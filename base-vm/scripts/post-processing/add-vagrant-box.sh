@@ -18,4 +18,4 @@ if [ ! -z ${LOGNAME} ]; then
 fi
 
 # Add box to local Vagrant box library
-vagrant box add kxascode/${PACKER_BUILD_NAME} ../../../boxes/${OUTPUT_DIR}-${VM_VERSION}/${VM_NAME}-${VM_VERSION}_metadata.json --force
+vagrant box add ../../../boxes/${OUTPUT_DIR}-${VM_VERSION}/${VM_NAME}-${VM_VERSION}_metadata.json --force
