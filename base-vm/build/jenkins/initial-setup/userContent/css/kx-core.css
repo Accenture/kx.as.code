@@ -1,3 +1,17 @@
+.jenkins-form-label {
+    display: flex;
+    align-items: center;
+    font-weight: bold;
+    font-weight: var(--form-label-font-weight);
+    margin-top: 0;
+    margin-bottom: 0.75rem;
+    -webkit-padding-start: 0;
+    padding-inline-start: 0;
+    -webkit-padding-end: 0;
+    padding-inline-end: 0;
+    display: none;
+}
+
 .wrapper {
     display: flex;
     align-items: center;

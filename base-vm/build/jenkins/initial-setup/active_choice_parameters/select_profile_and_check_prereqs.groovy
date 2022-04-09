@@ -443,8 +443,8 @@ try {
             <div span style="width: 1100px; height: 100px; display: flex;">
             <span style="width: 680px; height: 100px; display: inline-block;">
                 <span style="height: 33px;"><h4>Virtualization Pre-Requisites</h4></span>
-                <div><span class="checklist-span"><img src="" id="virtualization-svg" class="" style="height: 33px;" alt="virtualization-svg" /></span><span id="virtualization-text" class="checklist-span" style="width: 300px;display:inline-block;"></span><span class="checklist-span"><img src="" id="main-version-status-svg" class="" alt="main-version-status-svg" /></span><span>KX-Main Box Version: v</span><span id="kx-main-version" class="checklist-span"></span></div>
-                <div><span class="checklist-span"><img src="" id="vagrant-plugin-svg" class="" style="height: 33px;" alt="vagrant-plugin-svg" /></span><span id="vagrant-plugin-text" class="checklist-span" style="width: 300px;display:inline-block;"></span><span class="checklist-span"><img src="" id="node-version-status-svg" class="" alt="node-version-status-svg" /></span><span>KX-Node Box Version: v</span><span id="kx-node-version" class="checklist-span"></span></div>
+                <div><span class="checklist-span"><img src="" id="virtualization-svg" class="" style="height: 33px;" alt="virtualization-svg" /></span><span id="virtualization-text" class="checklist-span" style="width: 300px;display:inline-block;"></span><span class="checklist-span"><img src="" id="main-version-status-svg" class="" alt="main-version-status-svg" /></span><span>KX-Main Box Version: </span><span id="kx-main-version" class="checklist-span"></span></div>
+                <div><span class="checklist-span"><img src="" id="vagrant-plugin-svg" class="" style="height: 33px;" alt="vagrant-plugin-svg" /></span><span id="vagrant-plugin-text" class="checklist-span" style="width: 300px;display:inline-block;"></span><span class="checklist-span"><img src="" id="node-version-status-svg" class="" alt="node-version-status-svg" /></span><span>KX-Node Box Version: </span><span id="kx-node-version" class="checklist-span"></span></div>
             </span>
             <span style="width: 400px; height: 100px; display: inline-block;">
                 <span style="height: 33px;"><h4>KX.AS.CODE Source</h4></span>
@@ -460,9 +460,10 @@ try {
             <br><br>
 
             <div class="div-border-text-inline">
-                <h2 class="h2-header-in-line"><span class="span-h2-header-in-line">🚧 Build VM images</</span></h2>
+                <h2 class="h2-header-in-line"><span class="span-h2-header-in-line">🚧 Build VM images</span></h2>
                 <div class="div-inner-h2-header-in-line-wrapper">
-                <span class="description-paragraph-span"><p>Below you can see the last executed builds for each image tpe if there were any. If none, then click the play button for each type of node.</p></span>
+                    <span class="description-paragraph-span"><p>Below you can see the last executed builds for each image tpe if there were any. If none, then click the play button for each type of node.</p></span>
+                </div>
                 <div style="width: 100%;">
                     <span style="width: 940px;">
                         <span class="build-action-text-label" style="width: 150px">KX-Main Build Date: </span><span id="kx-main-build-timestamp" class="build-action-text-value"></span>

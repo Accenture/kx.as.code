@@ -20,7 +20,7 @@ cp ../../../templates/info.template ../../../boxes/${OUTPUT_DIR}-${VM_VERSION}/i
 
 # Check is running from Mac (Darwin) or Linux (including WSL and Windows Git Bash)
 if [[ "$(uname)" == "Darwin" ]]; then
-    sed -i '' "s/##USERNAME##/Accenture Interactive/" ../../../boxes/${OUTPUT_DIR}-${VM_VERSION}/info.json
+    sed -i '' "s/##USERNAME##/KX.AS.CODE/" ../../../boxes/${OUTPUT_DIR}-${VM_VERSION}/info.json
 else
-    sed -i "s/##USERNAME##/Accenture Interactive/" ../../../boxes/${OUTPUT_DIR}-${VM_VERSION}/info.json
+    sed -i "s/##USERNAME##/KX.AS.CODE/" ../../../boxes/${OUTPUT_DIR}-${VM_VERSION}/info.json
 fi
