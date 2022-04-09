@@ -1,4 +1,4 @@
-# KX.AS.CODE Installation and Setup Guide
+# Jenkins Setup Guide
 
 ## Preinstall Steps
 

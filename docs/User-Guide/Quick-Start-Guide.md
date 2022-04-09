@@ -4,7 +4,7 @@ The easiest way to configure and start KX.AS.CODE is via the Jenkins based confi
 
 That said, editing the JSON directly is also not so difficult, but comes without the additional help and validations.
 
-As this is a quick guide, we will concentrate on the Jenkins approach here, and cover the manual start-up and more advanced options in another guide.
+As this is a quick start guide, we will concentrate on the Jenkins approach here, and cover the manual start-up and more advanced options in another guide.
 
 !!! note "For your convenience, pre-built KX.AS.CODE images have been uploaded to the Vagrant Cloud. You can find them under the following links:"
     - KX-Main - https://app.vagrantup.com/kxascode/boxes/kx-main

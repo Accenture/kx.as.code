@@ -1,3 +1,5 @@
+tidyUpInterface()
+
 async function triggerBuild(nodeType) {
     let jenkinsCrumb = getCrumb().value;
     let localKxVersion = getLocalKxVersion();
@@ -29,6 +31,7 @@ async function triggerBuild(nodeType) {
 }
 
 function populate_profile_option_list() {
+    tidyUpInterface()
     let profiles = getProfilePaths().split(',');
     console.log("js profiles array: " + profiles)
     for ( let i = 0; i < profiles.length; i++ ) {
@@ -69,6 +72,26 @@ function compareVersions() {
         document.getElementById("version-check-svg").src = "/userContent/icons/checkbox-marked-circle-outline.svg";
         document.getElementById("version-check-svg").className = "checklist-status-icon svg-bright-green";
     }
+}
+
+function tidyUpInterface() {
+
+    let mainElementDiv = document.getElementById("main-panel")
+    mainElementDiv.childNodes.forEach(c=>{
+        console.log("Main Panel Tag Name: " + c.tagName);
+        if(c.tagName  === 'P'){
+            console.log(c);
+            mainElementDiv.removeChild(c);
+        }
+        if(c.tagName  === 'H1'){
+            console.log(c);
+            mainElementDiv.removeChild(c);
+        }
+    })
+
+    let folderElements = document.getElementsByClassName("icon-folder");
+    folderElements[0].className = "icon-folder icon-md";
+
 }
 
 function changeBuildButton() {
