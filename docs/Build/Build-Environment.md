@@ -1,6 +1,6 @@
-# Build
+# Building KX.AS.CODE
 
-
+As the images are currently not available on Vagrant
 
 ## Prerequisites
 

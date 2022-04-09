@@ -1,13 +1,13 @@
-site_name: 'KX.AS.CODE Docs'
+site_name: 'KX.AS.CODE'
 repo_url: 'https://github.com/Accenture/kx.as.code'
 repo_name: 'Github'
-site_description: 'KX.AS.CODE Documentation'
+site_description: 'KX.AS.CODE'
 site_author: 'Patrick Delamere'
 
 docs_dir: docs
 
 theme:
-    logo: images/accenture.png
+    logo: images/kxascode_white_logo.png
     favicon: images/favicon.png
     name: material
     palette:
