@@ -42,8 +42,8 @@ if ( Test-Path -Path "..\..\..\boxes\${OUTPUT_DIR}-${VM_VERSION}\${VM_NAME}-${VM
 
 Copy-Item -Force "..\..\..\templates\metadata.template" -Destination "..\..\..\boxes\${OUTPUT_DIR}-${VM_VERSION}\${VM_NAME}-${VM_VERSION}_metadata.json"
 
-(Get-Content ..\..\..\boxes\${OUTPUT_DIR}-${VM_VERSION}\${VM_NAME}-${VM_VERSION}_metadata.json).replace("##NAME##", "${VM_NAME}") | Set-Content ..\..\..\boxes\${OUTPUT_DIR}-${VM_VERSION}\${VM_NAME}-${VM_VERSION}_metadata.json
-(Get-Content ..\..\..\boxes\${OUTPUT_DIR}-${VM_VERSION}\${VM_NAME}-${VM_VERSION}_metadata.json).replace("##DESCRIPTION##", "Accenture Interactive KX.AS.CODE DevOps VM - PLAY LEARN INNOVATE") | Set-Content ..\..\..\boxes\${OUTPUT_DIR}-${VM_VERSION}\${VM_NAME}-${VM_VERSION}_metadata.json
+(Get-Content ..\..\..\boxes\${OUTPUT_DIR}-${VM_VERSION}\${VM_NAME}-${VM_VERSION}_metadata.json).replace("##NAME##", "kxascode/${VM_NAME}") | Set-Content ..\..\..\boxes\${OUTPUT_DIR}-${VM_VERSION}\${VM_NAME}-${VM_VERSION}_metadata.json
+(Get-Content ..\..\..\boxes\${OUTPUT_DIR}-${VM_VERSION}\${VM_NAME}-${VM_VERSION}_metadata.json).replace("##DESCRIPTION##", "KX.AS.CODE VM - PLAY LEARN INNOVATE") | Set-Content ..\..\..\boxes\${OUTPUT_DIR}-${VM_VERSION}\${VM_NAME}-${VM_VERSION}_metadata.json
 (Get-Content ..\..\..\boxes\${OUTPUT_DIR}-${VM_VERSION}\${VM_NAME}-${VM_VERSION}_metadata.json).replace("##VERSION##", "${VM_VERSION}") | Set-Content ..\..\..\boxes\${OUTPUT_DIR}-${VM_VERSION}\${VM_NAME}-${VM_VERSION}_metadata.json
 (Get-Content ..\..\..\boxes\${OUTPUT_DIR}-${VM_VERSION}\${VM_NAME}-${VM_VERSION}_metadata.json).replace("##PROVIDER##", "${PROVIDER}") | Set-Content ..\..\..\boxes\${OUTPUT_DIR}-${VM_VERSION}\${VM_NAME}-${VM_VERSION}_metadata.json
 (Get-Content ..\..\..\boxes\${OUTPUT_DIR}-${VM_VERSION}\${VM_NAME}-${VM_VERSION}_metadata.json).replace("##URL##", "../../../boxes/${OUTPUT_DIR}-${VM_VERSION}/${VM_NAME}-${VM_VERSION}.box") | Set-Content ..\..\..\boxes\${OUTPUT_DIR}-${VM_VERSION}\${VM_NAME}-${VM_VERSION}_metadata.json

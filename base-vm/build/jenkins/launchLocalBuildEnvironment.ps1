@@ -386,8 +386,7 @@ Foreach-Object {
 $env:Path += ";C:/Program Files/Git/bin;C:/Program Files/Git/usr/bin;C:/Git/kx.as.code_test"
 Start-Process -FilePath $javaBinary -ArgumentList "-jar", ".\jenkins.war", "--httpListenAddress=$jenkins_listen_address", "--httpPort=$jenkins_server_port"
 
-$jenkinsConfigUrl = Get-Content -Path "jenkins.model.JenkinsLocationConfiguration.xml"
-$jenkinsUrl = $jenkinsConfigUrl
+$jenkinsUrl = "http://${jenkins_listen_address}:${jenkins_server_port}"
 Write-Output "jenkinsUrl: `"$jenkinsUrl"`"
 Write-Output "Discovered java binary: `"$javaBinary`""
 
@@ -442,3 +441,6 @@ Get-ChildItem "$JENKINS_HOME\" -Filter credential_*.xml |
                 Write-Output "$javaBinary -jar .\jenkins-cli.jar -s $jenkinsUrl create-credentials-by-xml system::system::jenkins _" | Red
             }
         }
+
+Write-Output "- [INFO] Congratulations! Jenkins for KX.AS.CODE is successfully configured and running. Access Jenkins via the following URL: " | Green
+Write-Output "- ${jenkinsUrl}/job/KX.AS.CODE_Launcher/build?delay=0sec" | Blue

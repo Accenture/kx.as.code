@@ -424,7 +424,7 @@ try {
       </script>
     <body>
         <div id="headline-select-profile-div" style="display: none;">
-        <h1>Select Profile & Check Pre-Requisites</h1>
+        <h1>Select Profile &amp; Check Pre-Requisites</h1>
         <span class="description-paragraph-span"><p>${extendedDescription}</p></span>
         </div>
         <div id="select-profile-div" style="display: none;">
@@ -443,8 +443,8 @@ try {
             <div span style="width: 1100px; height: 100px; display: flex;">
             <span style="width: 680px; height: 100px; display: inline-block;">
                 <span style="height: 33px;"><h4>Virtualization Pre-Requisites</h4></span>
-                <div><span class="checklist-span"><img src="" id="virtualization-svg" class="" style="height: 33px;" alt="virtualization-svg" /></span><span id="virtualization-text" class="checklist-span" style="width: 300px;display:inline-block;"></span><span class="checklist-span"><img src="" id="main-version-status-svg" class="" alt="main-version-status-svg" /></span><span>KX-Main Box Version: v</span><span id="kx-main-version" class="checklist-span"></span></div>
-                <div><span class="checklist-span"><img src="" id="vagrant-plugin-svg" class="" style="height: 33px;" alt="vagrant-plugin-svg" /></span><span id="vagrant-plugin-text" class="checklist-span" style="width: 300px;display:inline-block;"></span><span class="checklist-span"><img src="" id="node-version-status-svg" class="" alt="node-version-status-svg" /></span><span>KX-Node Box Version: v</span><span id="kx-node-version" class="checklist-span"></span></div>
+                <div><span class="checklist-span"><img src="" id="virtualization-svg" class="" style="height: 33px;" alt="virtualization-svg" /></span><span id="virtualization-text" class="checklist-span" style="width: 300px;display:inline-block;"></span><span class="checklist-span"><img src="" id="main-version-status-svg" class="" alt="main-version-status-svg" /></span><span>KX-Main Box Version: </span><span id="kx-main-version" class="checklist-span"></span></div>
+                <div><span class="checklist-span"><img src="" id="vagrant-plugin-svg" class="" style="height: 33px;" alt="vagrant-plugin-svg" /></span><span id="vagrant-plugin-text" class="checklist-span" style="width: 300px;display:inline-block;"></span><span class="checklist-span"><img src="" id="node-version-status-svg" class="" alt="node-version-status-svg" /></span><span>KX-Node Box Version: </span><span id="kx-node-version" class="checklist-span"></span></div>
             </span>
             <span style="width: 400px; height: 100px; display: inline-block;">
                 <span style="height: 33px;"><h4>KX.AS.CODE Source</h4></span>
