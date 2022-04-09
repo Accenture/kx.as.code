@@ -1,3 +1,5 @@
+folderButtonSizeWorkaround()
+
 async function triggerBuild(nodeType) {
     let jenkinsCrumb = getCrumb().value;
     let localKxVersion = getLocalKxVersion();
@@ -69,6 +71,11 @@ function compareVersions() {
         document.getElementById("version-check-svg").src = "/userContent/icons/checkbox-marked-circle-outline.svg";
         document.getElementById("version-check-svg").className = "checklist-status-icon svg-bright-green";
     }
+}
+
+function folderButtonSizeWorkaround() {
+    let folderElements = document.getElementsByClassName("icon-folder icon-xlg");
+    folderElements[0].className = "icon-folder icon-md";
 }
 
 function changeBuildButton() {
