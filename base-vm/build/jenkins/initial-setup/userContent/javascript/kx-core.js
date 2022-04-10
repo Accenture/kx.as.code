@@ -389,8 +389,9 @@ async function getBuildJobListForProfile(job, nodeType) {
                 document.getElementById(nodeType + "-build-result").className = styleClass;
                 document.getElementById(nodeType + "-build-number-link").innerHTML = "<a href='" + kxBuilds[0].url + "' target='_blank' rel='noopener noreferrer' style='font-weight: normal;'># " + kxBuilds[0].number + "</a>";
             } else {
-                document.getElementById(nodeType + "-build-result").className = styleClass;
-                document.getElementById(nodeType + "-build-result").innerHTML = "<div class='dot-flashing' style='margin-right: 15px; margin-left: 15px; justify-content: center;'></div>";
+                document.getElementById(nodeType + "-build-result").className = "";
+                document.getElementById(nodeType + "-build-result").style.justifyContent = "center";
+                document.getElementById(nodeType + "-build-result").innerHTML = "<div class='dot-flashing' style='background-color: white; margin-right: 15px; margin-left: 15px;'></div>";
                 document.getElementById(nodeType + "-build-number-link").innerHTML = "<a href='" + kxBuilds[0].url + "' target='_blank' rel='noopener noreferrer' style='font-weight: normal;'># " + kxBuilds[0].number + "</a>";
             }
         } else {

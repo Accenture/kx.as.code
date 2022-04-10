@@ -922,10 +922,11 @@ input:checked + .checkbox-slider:before {
  */
 .dot-flashing {
     position: relative;
+    justify-content: center;
     width: 10px;
     height: 10px;
     border-radius: 5px;
-    background-color: #425DA1;
+    background-color: white;
     color: #425DA1;
     -webkit-animation: dot-flashing 1s infinite linear alternate;
     animation: dot-flashing 1s infinite linear alternate;
@@ -936,6 +937,7 @@ input:checked + .checkbox-slider:before {
     content: "";
     display: inline-block;
     position: absolute;
+    background-color: white;
     top: 0;
 }
 .dot-flashing::before {
@@ -943,7 +945,7 @@ input:checked + .checkbox-slider:before {
     width: 10px;
     height: 10px;
     border-radius: 5px;
-    background-color: #425DA1;
+    background-color: white;
     color: #b3bed9;
     -webkit-animation: dot-flashing 1s infinite alternate;
     animation: dot-flashing 1s infinite alternate;
@@ -955,7 +957,7 @@ input:checked + .checkbox-slider:before {
     width: 10px;
     height: 10px;
     border-radius: 5px;
-    background-color: #b3bed9;
+    background-color: white;
     color: #425DA1;
     -webkit-animation: dot-flashing 1s infinite alternate;
     animation: dot-flashing 1s infinite alternate;
