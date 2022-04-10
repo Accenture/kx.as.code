@@ -332,11 +332,11 @@ try {
               if ( virtualizationExecutableExists === "true" ) {
                   document.getElementById("virtualization-svg").className = "checklist-status-icon svg-bright-green";
                   document.getElementById("virtualization-svg").src = "/userContent/icons/checkbox-marked-circle-outline.svg";
-                  document.getElementById("virtualization-text").innerHTML = selectedProfile + " is installed";
+                  document.getElementById("virtualization-text").innerHTML = selectedProfile.charAt(0).toUpperCase() + selectedProfile.slice(1) + " is installed";
               } else {
                   document.getElementById("virtualization-svg").className = "checklist-status-icon svg-orange-red";
                   document.getElementById("virtualization-svg").src = "/userContent/icons/alert-outline.svg";
-                  document.getElementById("virtualization-text").innerHTML = selectedProfile + " could not be found";
+                  document.getElementById("virtualization-text").innerHTML = selectedProfile.charAt(0).toUpperCase() + selectedProfile.slice(1) + " could not be found";
               }
 
               if ( vagrantPluginInstalled  === "true" ) {
