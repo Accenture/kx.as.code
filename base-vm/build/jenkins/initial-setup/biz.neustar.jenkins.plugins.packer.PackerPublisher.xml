@@ -7,9 +7,9 @@
       <properties>
         <hudson.tools.InstallSourceProperty>
           <installers>
-            <biz.neustar.jenkins.plugins.packer.PackerInstaller>
-              <id>1.7.2-linux-amd64</id>
-            </biz.neustar.jenkins.plugins.packer.PackerInstaller>
+            <hudson.tools.ZipExtractionInstaller>
+              <url>https://releases.hashicorp.com/packer/1.8.0/packer_1.8.0_linux_amd64.zip</url>
+            </hudson.tools.ZipExtractionInstaller>
           </installers>
         </hudson.tools.InstallSourceProperty>
       </properties>
@@ -24,9 +24,9 @@
       <properties>
         <hudson.tools.InstallSourceProperty>
           <installers>
-            <biz.neustar.jenkins.plugins.packer.PackerInstaller>
-              <id>1.7.2-darwin-amd64</id>
-            </biz.neustar.jenkins.plugins.packer.PackerInstaller>
+            <hudson.tools.ZipExtractionInstaller>
+              <url>https://releases.hashicorp.com/packer/1.8.0/packer_1.8.0_darwin_amd64.zip</url>
+            </hudson.tools.ZipExtractionInstaller>
           </installers>
         </hudson.tools.InstallSourceProperty>
       </properties>
@@ -41,9 +41,9 @@
       <properties>
         <hudson.tools.InstallSourceProperty>
           <installers>
-            <biz.neustar.jenkins.plugins.packer.PackerInstaller>
-              <id>1.7.2-windows-amd64</id>
-            </biz.neustar.jenkins.plugins.packer.PackerInstaller>
+            <hudson.tools.ZipExtractionInstaller>
+              <url>https://releases.hashicorp.com/packer/1.8.0/packer_1.8.0_windows_amd64.zip</url>
+            </hudson.tools.ZipExtractionInstaller>
           </installers>
         </hudson.tools.InstallSourceProperty>
       </properties>

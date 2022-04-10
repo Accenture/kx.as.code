@@ -143,7 +143,7 @@
 }
 
 .svg-blue {
-    filter: invert(14%) sepia(10%) saturate(1940%) hue-rotate(184deg) brightness(94%) contrast(86%);
+    filter: invert(35%) sepia(51%) saturate(619%) hue-rotate(185deg) brightness(90%) contrast(93%);
     opacity: 0.7;
 }
 
@@ -743,11 +743,6 @@ input:checked + .checkbox-slider:before {
     cursor: not-allowed;
 }
 
-.svg-blue {
-    filter: invert(10%) sepia(88%) saturate(6128%) hue-rotate(277deg) brightness(90%) contrast(106%);
-    opacity: 0.6;
-}
-
 .config-panel-icon {
     width: 40px;
     height: 100%;
@@ -930,8 +925,8 @@ input:checked + .checkbox-slider:before {
     width: 10px;
     height: 10px;
     border-radius: 5px;
-    background-color: #9880ff;
-    color: #9880ff;
+    background-color: #425DA1;
+    color: #425DA1;
     -webkit-animation: dot-flashing 1s infinite linear alternate;
     animation: dot-flashing 1s infinite linear alternate;
     -webkit-animation-delay: 0.5s;
@@ -948,8 +943,8 @@ input:checked + .checkbox-slider:before {
     width: 10px;
     height: 10px;
     border-radius: 5px;
-    background-color: #9880ff;
-    color: #96A3B8;
+    background-color: #425DA1;
+    color: #b3bed9;
     -webkit-animation: dot-flashing 1s infinite alternate;
     animation: dot-flashing 1s infinite alternate;
     -webkit-animation-delay: 0s;
@@ -960,8 +955,8 @@ input:checked + .checkbox-slider:before {
     width: 10px;
     height: 10px;
     border-radius: 5px;
-    background-color: #96A3B8;
-    color: #9880ff;
+    background-color: #b3bed9;
+    color: #425DA1;
     -webkit-animation: dot-flashing 1s infinite alternate;
     animation: dot-flashing 1s infinite alternate;
     -webkit-animation-delay: 1s;
@@ -970,7 +965,7 @@ input:checked + .checkbox-slider:before {
 
 @-webkit-keyframes dot-flashing {
     0% {
-        background-color: #9880ff;
+        background-color: #425DA1;
     }
     50%, 100% {
         background-color: rgba(152, 128, 255, 0.2);
@@ -979,7 +974,7 @@ input:checked + .checkbox-slider:before {
 
 @keyframes dot-flashing {
     0% {
-        background-color: #9880ff;
+        background-color: #425DA1;
     }
     50%, 100% {
         background-color: rgba(152, 128, 255, 0.2);
@@ -1130,23 +1125,28 @@ select {
 
 .build-result {
     color: white;
+    justify-content: center;
     text-align: center;
     border-radius: 15px;
     padding: 5px 10px 5px 10px;
 }
 
 .build-result-neutral {
-    background: slategrey;
+    background: #b7bfc7;
+    color: black;
 }
 
 .build-result-success {
     background: green;
+    color: white;
 }
 
 .build-result-failure {
     background: red;
+    color: white;
 }
 
 .build-result-aborted {
     background: black;
+    color: white;
 }

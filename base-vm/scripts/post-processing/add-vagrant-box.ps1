@@ -21,4 +21,4 @@ if (${PACKER_BUILDER_TYPE} -eq "virtualbox-iso")
 $VM_NAME = $env:VM_NAME
 $VM_VERSION = $env:VM_VERSION
 
-vagrant box add kxascode/${PACKER_BUILD_NAME} "..\..\..\boxes\${OUTPUT_DIR}-${VM_VERSION}\${VM_NAME}-${VM_VERSION}_metadata.json" --force
+vagrant box add "..\..\..\boxes\${OUTPUT_DIR}-${VM_VERSION}\${VM_NAME}-${VM_VERSION}_metadata.json" --force

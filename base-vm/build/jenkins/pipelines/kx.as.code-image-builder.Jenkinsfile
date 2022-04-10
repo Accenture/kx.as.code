@@ -2,7 +2,7 @@ def functions
 def kx_version
 def kube_version
 
-node('master') {
+node('built-in') {
     dir(shared_workspace) {
         functions = load "base-vm/build/jenkins/pipelines/shared-pipeline-functions.groovy"
         println(functions)
@@ -15,7 +15,7 @@ pipeline {
 
     agent {
         node {
-            label "master"
+            label "built-in"
             customWorkspace shared_workspace
         }
     }
