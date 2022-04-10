@@ -667,14 +667,14 @@ input:checked + .checkbox-slider:before {
 
 .config-outer-wrapper {
     background-color: rgba(187, 187, 187, 1.0);
-    height: 760px;
+    height: 820px;
     width: 1200px;
     padding: 5px;
 }
 
 .config-inner-panel {
     background-color: #ffffff;
-    height: 750px;
+    height: 810px;
     width: 1190px;
 }
 
@@ -756,7 +756,7 @@ input:checked + .checkbox-slider:before {
 
 .config-placeholder {
     padding: 20px;
-    height: 655px;
+    height: 715px;
 }
 
 .h2-header-in-line {
@@ -908,7 +908,7 @@ input:checked + .checkbox-slider:before {
 
 .grid-spinner-wrapper {
     width: 1100px;
-    height: 600px;
+    height: 660px;
     justify-content: center;
     opacity: 0.7;
     align-items: center;
@@ -1039,7 +1039,7 @@ select {
 }
 
 .console-log .consolelogtext {
-    width: 800px;
+    width: 900px;
     height: 450px;
     background-color: #404c50;
     color: #ffffff;

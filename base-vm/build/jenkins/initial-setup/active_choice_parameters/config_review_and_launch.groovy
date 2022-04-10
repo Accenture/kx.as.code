@@ -413,8 +413,8 @@ try {
       <div id="review-and-launch-div" class="flex-wrapper" style="display: none;">
         <h1>Review &amp; Launch</h1>
 
-        <span class="description-paragraph-span"><p>${extendedDescription}</p></span>
-
+        <span class="description-paragraph-span" style="height: 90px;"><p>${extendedDescription}</p></span>
+        <br><br>
             <div class="wrapper" style="width: 100%;">
                 <div class="svg-item">
                     <svg width="250px" height="250px" viewBox="0 0 40 40" class="donut">
@@ -470,7 +470,8 @@ try {
                     </svg>
                 </div>
             </div>
-        <div style="width: 100%; display: flex; justify-content: space-evenly;">
+            <br><br>
+        <div style="width: 100%; height: 140px; display: flex; justify-content: space-evenly;">
             <div class="flex-item">
                 <div class="table">
                     <div class="row">
@@ -505,7 +506,7 @@ try {
             </div>
          </div>
 
-        <br>
+        <br><br><br>
             <div class="div-border-text-inline">
                 <h2 class="h2-header-in-line"><span class="span-h2-header-in-line">🚀 Launch KX.AS.CODE environment</span></h2>
                 <div class="div-inner-h2-header-in-line-wrapper">

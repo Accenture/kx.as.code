@@ -1,5 +1,7 @@
 def setBuildEnvironment(profile,node_type,vagrant_action) {
 
+    println("setBuildEnvironment() -> Received parameters: profile: ${profile}, node_type: ${node_type}, vagrant_action: ${vagrant_action}")
+
     os = sh (
         script: 'uname -s',
         returnStdout: true
