@@ -364,6 +364,7 @@ async function getBuildJobListForProfile(job, nodeType) {
                 //const profile = splitDisplayName[3];
                 const nodeTypeVagrantAction = splitDisplayName[4];
                 //const gitCommitId = splitDisplayName[5];
+                console.log("nodeTypeVagrantAction: " + nodeTypeVagrantAction);
                 if (nodeTypeVagrantAction === "kx-main" || nodeTypeVagrantAction === "kx-node") {
                     document.getElementById(nodeTypeVagrantAction + '-build-kx-version').innerText = kxVersion;
                     document.getElementById(nodeTypeVagrantAction + '-build-kube-version').innerText = kubeVersion;
@@ -389,8 +390,9 @@ async function getBuildJobListForProfile(job, nodeType) {
                 document.getElementById(nodeType + "-build-result").className = styleClass;
                 document.getElementById(nodeType + "-build-number-link").innerHTML = "<a href='" + kxBuilds[0].url + "' target='_blank' rel='noopener noreferrer' style='font-weight: normal;'># " + kxBuilds[0].number + "</a>";
             } else {
-                document.getElementById(nodeType + "-build-result").className = styleClass;
-                document.getElementById(nodeType + "-build-result").innerHTML = "<div class='dot-flashing' style='margin-right: 15px; margin-left: 15px; justify-content: center;'></div>";
+                document.getElementById(nodeType + "-build-result").className = "";
+                document.getElementById(nodeType + "-build-result").style.justifyContent = "center";
+                document.getElementById(nodeType + "-build-result").innerHTML = "<div class='dot-flashing' style='background-color: white; margin-right: 15px; margin-left: 15px;'></div>";
                 document.getElementById(nodeType + "-build-number-link").innerHTML = "<a href='" + kxBuilds[0].url + "' target='_blank' rel='noopener noreferrer' style='font-weight: normal;'># " + kxBuilds[0].number + "</a>";
             }
         } else {
@@ -772,7 +774,7 @@ function populateReviewTable() {
 }
 
 async function performRuntimeAction(vagrantAction) {
-    console.log("vagrant action: " + vagrantAction);
+    console.log("performRuntimeAction(vagrantAction): " + vagrantAction);
 
     let jenkinsCrumb = getCrumb().value;
     console.log("Jenkins Crumb received = " + jenkinsCrumb);
@@ -782,7 +784,6 @@ async function performRuntimeAction(vagrantAction) {
     formData.append('kx_node_version', document.getElementById("kx-node-version").innerText);
     formData.append('num_kx_main_nodes', document.getElementById('counter_value_main_node_count_value').innerText);
     formData.append('num_kx_worker_nodes', document.getElementById('counter_value_worker_node_count_value').innerText);
-    formData.append('kx_version_override', '');
     formData.append('dockerhub_email', '');
     formData.append('profile', document.getElementById('profiles').value);
     formData.append('profile_path', document.getElementById('selected-profile-path').value);
@@ -806,7 +807,8 @@ function updateProfileAndPrereqsCheckTab() {
     getBuildJobListForProfile("KX.AS.CODE_Image_Builder", "kx-main");
     getBuildJobListForProfile("KX.AS.CODE_Image_Builder", "kx-node");
     update_selected_value();
-    getAvailableBoxes();
+    getAvailableLocalBoxes();
+    getAvailableCloudBoxes()
     compareVersions();
     checkVagrantPreRequisites();
     updateProfileSelection();

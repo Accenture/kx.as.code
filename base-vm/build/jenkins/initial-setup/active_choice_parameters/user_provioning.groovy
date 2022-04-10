@@ -101,7 +101,7 @@ try {
                 '<div class="user-cell" id="surname_' + userEmail + '">' + userSurname + '</div>' +
                 '<div class="user-cell user-cell-email" id="email_' + userEmail + '">' + userEmail + '</div>' +
                 '<div class="user-cell" id="keyboard_' + userEmail + '">' + userKeyboard + '</div>' +
-                '<div class="user-cell" id="role_' + userEmail + '">' + userRole + '</div>' +
+                '<div class="user-cell" id="role_' + userEmail + '">' + userRole.charAt(0).toUpperCase() + userRole.slice(1) + '</div>' +
                 '<div class="user-image-cell"><img src="/userContent/icons/delete.svg" title="remove user" alt="remove user" onclick="removeUserFromTable(&quot;' + userEmail + '&quot;);"></div>';
              console.log(tableRowHtml);
              let userTableDiv = document.createElement('div');
