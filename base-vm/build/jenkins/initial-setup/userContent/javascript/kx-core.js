@@ -389,17 +389,19 @@ async function getBuildJobListForProfile(job, nodeType) {
                 document.getElementById(nodeType + "-build-result").className = styleClass;
                 document.getElementById(nodeType + "-build-number-link").innerHTML = "<a href='" + kxBuilds[0].url + "' target='_blank' rel='noopener noreferrer' style='font-weight: normal;'># " + kxBuilds[0].number + "</a>";
             } else {
-                document.getElementById(nodeType + "-build-result").className = "";
-                //let inProgressSpinnerHtml = '<div class="sk-flow"><div class="sk-flow-dot"></div><div class="sk-flow-dot"></div><div class="sk-flow-dot"></div></div>';
+                document.getElementById(nodeType + "-build-result").className = styleClass;
                 document.getElementById(nodeType + "-build-result").innerHTML = "<div class='dot-flashing' style='margin-right: 15px; margin-left: 15px; justify-content: center;'></div>";
                 document.getElementById(nodeType + "-build-number-link").innerHTML = "<a href='" + kxBuilds[0].url + "' target='_blank' rel='noopener noreferrer' style='font-weight: normal;'># " + kxBuilds[0].number + "</a>";
             }
         } else {
             console.log('Did not find ' + nodeType + ' builds for profile');
+            styleClass = 'build-result build-result-neutral';
+            document.getElementById(nodeType + "-build-result").className = styleClass;
             document.getElementById(nodeType + "-build-timestamp").innerText = "not run yet";
             document.getElementById(nodeType + "-build-result").innerText = "n/a";
             document.getElementById(nodeType + "-build-number-link").innerText = "-";
-            document.getElementById(nodeType + "-build-result").style.color = 'black';
+            document.getElementById(nodeType + '-build-kx-version').innerText = "-";
+            document.getElementById(nodeType + '-build-kube-version').innerText = "-";
         }
     })
 }
@@ -629,7 +631,7 @@ async function showConsoleLog(job, nodeType) {
                     let counter = 0;
                     for (let line = n; line < lines.length; line++) {
                         console.log("Jenkins Console Log Line: " + lines[line] + " | " + lines[line].includes('[Pipeline]'))
-                        if ( ! lines[line].includes('[Pipeline]') && counter <= 18) {
+                        if ( ! lines[line].includes('[Pipeline]') && counter <= 10) {
                             consoleLine = lines[line] + '<br>';
                             consoleLine = consoleLine.replace(/FAILURE/g, '<span style="color: #fc5d4c">FAILURE</span>')
                             consoleLine = consoleLine.replace(/ERROR/g, '<span style="color: #fc5d4c">ERROR</span>')
@@ -787,4 +789,14 @@ async function performRuntimeAction(vagrantAction) {
     let response = await fetch('/job/Actions/job/KX.AS.CODE_Runtime_Actions/buildWithParameters', config);
     let data = await response.text();
     console.log(data);
+}
+
+function updateProfileAndPrereqsCheckTab() {
+    getBuildJobListForProfile("KX.AS.CODE_Image_Builder", "kx-main");
+    getBuildJobListForProfile("KX.AS.CODE_Image_Builder", "kx-node");
+    update_selected_value();
+    getAvailableBoxes();
+    compareVersions();
+    checkVagrantPreRequisites();
+    updateProfileSelection();
 }

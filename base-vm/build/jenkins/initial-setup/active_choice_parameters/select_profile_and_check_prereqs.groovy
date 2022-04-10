@@ -430,7 +430,7 @@ try {
         <div id="select-profile-div" style="display: none;">
             <br>
             <label for="profiles" class="input-box-label" style="margin: 0px;">Profiles</label>
-            <select id="profiles" class="profiles-select capitalize" value="Virtualbox" onchange="update_selected_value(); getAvailableBoxes(); compareVersions(); checkVagrantPreRequisites(); updateProfileSelection();">
+            <select id="profiles" class="profiles-select capitalize" value="Virtualbox" onchange="updateProfileAndPrereqsCheckTab();">
             </select>
             </label>
         </div>
