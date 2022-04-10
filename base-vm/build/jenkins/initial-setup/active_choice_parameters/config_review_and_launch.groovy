@@ -62,7 +62,7 @@ try {
         underlyingOS = "darwin"
         virtualboxCliPath = "/Applications/VirtualBox.app/Contents/MacOS/VBoxManage"
         vmwareCliPath = "/Applications/VMware\\ Fusion.app/Contents/Public/vmrun"
-        parallelsCliPath = "/Applications/Parallels\\ Desktop.app/Contents/MacOS/prlctl"
+        parallelsCliPath = "/Applications/Parallels Desktop.app/Contents/MacOS/prlctl"
     } else if (OS.indexOf("win") >= 0) {
         underlyingOS = "windows"
         virtualboxCliPath = "C:/Program Files/Oracle/VirtualBox/VBoxManage.exe"
@@ -153,6 +153,10 @@ try {
         NUMBER_OF_KX_MAIN_NODES = kxMainNodesConfigArray[0]
         KX_MAIN_ADMIN_CPU_CORES = kxMainNodesConfigArray[1]
         KX_MAIN_ADMIN_MEMORY = kxMainNodesConfigArray[2]
+    } else {
+        NUMBER_OF_KX_MAIN_NODES = parsedJson.config.main_node_count
+        KX_MAIN_ADMIN_CPU_CORES = parsedJson.config.main_admin_node_cpu_cores
+        KX_MAIN_ADMIN_MEMORY = parsedJson.config.main_admin_node_memory
     }
 
     println("KX_WORKER_NODES_CONFIG: ${KX_WORKER_NODES_CONFIG} (config_review_and_launch.groovy)")
@@ -161,6 +165,10 @@ try {
         NUMBER_OF_KX_WORKER_NODES = kxWorkerNodesConfigArray[0]
         KX_WORKER_NODES_CPU_CORES = kxWorkerNodesConfigArray[1]
         KX_WORKER_NODES_MEMORY = kxWorkerNodesConfigArray[2]
+    } else {
+        NUMBER_OF_KX_WORKER_NODES = parsedJson.config.worker_node_count
+        KX_WORKER_NODES_CPU_CORES = parsedJson.config.worker_node_cpu_cores
+        KX_WORKER_NODES_MEMORY = parsedJson.config.worker_node_memory
     }
 
     if ( NUMBER_OF_KX_MAIN_NODES ) {
@@ -293,15 +301,14 @@ try {
         kxMainRunningVms = runningVirtualMachinesList.findAll { it.contains('kx.as.code-demo1-main') }
         kxWorkerRunningVms = runningVirtualMachinesList.findAll { it.contains('kx.as.code-demo1-worker') }
     } else if ( PROFILE.contains("parallels") ) {
-        runningVirtualMachines = "${parallelsCliPath} list".execute().text
-        println("Running Parallels VMs: ${runningVirtualMachines}")
-        virtualMachinesList = new String(runningVirtualMachines).split('\n')
+        Process runningVirtualMachinesProcess = ["${parallelsCliPath}", "list"].execute()
+        virtualMachinesList = new String(runningVirtualMachinesProcess.text).split('\n')
         println("runningVirtualMachinesList - parallels: ${runningVirtualMachinesList}")
         runningVirtualMachinesList = virtualMachinesList.findAll { it.contains('running') }
         kxMainRunningVms = runningVirtualMachinesList.findAll { it.contains('kx.as.code-demo1-main') }
         kxWorkerRunningVms = runningVirtualMachinesList.findAll { it.contains('kx.as.code-demo1-worker') }
-        //println("kxMainRunningVms.size(): ${kxMainRunningVms.size()}")
-        //println("kxWorkerRunningVms.size(): ${kxWorkerRunningVms.size()}")
+        println("kxMainRunningVms.size(): ${kxMainRunningVms.size()}")
+        println("kxWorkerRunningVms.size(): ${kxWorkerRunningVms.size()}")
     } else if ( PROFILE.contains("virtualbox")) {
         runningVirtualMachines = "${virtualboxCliPath} list vms".execute().text
         println("Running VirtualBox VMs: ${runningVirtualMachines}")
