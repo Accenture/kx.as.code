@@ -74,6 +74,7 @@ try {
     def githubVersionJson = new JsonSlurper().parse('https://raw.githubusercontent.com/patdel76/kx/main/versions.json'.toURL())
     githubKxVersion = githubVersionJson.kxascode
     githubKubeVersion = githubVersionJson.kubernetes
+    println("githubKxVersion: ${githubKxVersion}, githubKubeVersion: ${githubKubeVersion}")
 
     def localVersionFile = "${currentDir}/jenkins_shared_workspace/kx.as.code/versions.json"
     def localVersionJson = new File(localVersionFile)
@@ -241,14 +242,17 @@ try {
 
             function getGithubKxVersion() {
                 let githubKxVersion = "${githubKxVersion}";
+                return githubKxVersion;
             }
 
             function getLocalKubeVersion() {
                 let localKubeVersion = "${localKubeVersion}";
+                return localKubeVersion;
             }
 
             function getGithubKubeVersion() {
                  let githubKubeVersion = "${githubKubeVersion}";
+                 return githubKubeVersion;
             }
 
             function getProfilePaths() {
