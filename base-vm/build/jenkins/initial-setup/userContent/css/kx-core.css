@@ -1126,6 +1126,7 @@ select {
 .build-result {
     color: white;
     justify-content: center;
+    text-align: center;
     border-radius: 15px;
     padding: 5px 10px 5px 10px;
 }
@@ -1133,23 +1134,19 @@ select {
 .build-result-neutral {
     background: #b7bfc7;
     color: black;
-    justify-content: center;
 }
 
 .build-result-success {
     background: green;
     color: white;
-    justify-content: center;
 }
 
 .build-result-failure {
     background: red;
     color: white;
-    justify-content: center;
 }
 
 .build-result-aborted {
     background: black;
     color: white;
-    justify-content: center;
 }
