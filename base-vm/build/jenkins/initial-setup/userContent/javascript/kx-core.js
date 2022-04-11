@@ -780,8 +780,8 @@ async function performRuntimeAction(vagrantAction) {
     console.log("Jenkins Crumb received = " + jenkinsCrumb);
 
     let formData = new FormData();
-    formData.append('kx_main_version', document.getElementById("kx-main-version").innerText);
-    formData.append('kx_node_version', document.getElementById("kx-node-version").innerText);
+    formData.append('kx_main_version', document.getElementById("kx-main-vagrant-cloud-box-version").innerText);
+    formData.append('kx_node_version', document.getElementById("kx-node-vagrant-cloud-box-version").innerText);
     formData.append('num_kx_main_nodes', document.getElementById('counter_value_main_node_count_value').innerText);
     formData.append('num_kx_worker_nodes', document.getElementById('counter_value_worker_node_count_value').innerText);
     formData.append('dockerhub_email', '');
