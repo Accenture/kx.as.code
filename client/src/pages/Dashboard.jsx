@@ -7,16 +7,6 @@ export default function Dashboard() {
       <div className="text-white text-xl font-bold py-5 italic">
         MY DASHBOARD
       </div>
-
-      <div className="bg-gray-100 h-14 w-14"></div>
-      <div className="bg-gray-200 h-14 w-14"></div>
-      <div className="bg-gray-300 h-14 w-14"></div>
-      <div className="bg-gray-400 h-14 w-14"></div>
-      <div className="bg-gray-500 h-14 w-14"></div>
-      <div className="bg-gray-600 h-14 w-14"></div>
-      <div className="bg-gray-700 h-14 w-14"></div>
-      <div className="bg-gray-800 h-14 w-14"></div>
-      <div className="bg-gray-900 h-14 w-14"></div>
     </div>
   );
 }
