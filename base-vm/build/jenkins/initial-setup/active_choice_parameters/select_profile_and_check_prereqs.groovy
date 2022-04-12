@@ -568,7 +568,7 @@ try {
             <br>
 
             <div class="div-border-text-inline">
-                <h2 class="h2-header-in-line"><span class="span-h2-header-in-line">🚧 Build VM images</span></h2>
+                <h2 class="h2-header-in-line"><span class="span-h2-header-in-line"><img class="svg-blue" src="/userContent/icons/robot-industrial-outline.svg" height="25" width="25">&nbsp;Builder Config Panel</span></h2>
                 <div class="div-inner-h2-header-in-line-wrapper">
                     <span class="description-paragraph-span"><p>Below you can see the last executed builds for each image tpe if there were any. If none, then click the play button for each type of node.</p></span>
                 </div>
@@ -576,7 +576,7 @@ try {
                     <span style="width: 940px;">
                         <span class="build-action-text-label" style="width: 150px">KX-Main Build Date: </span><span id="kx-main-build-timestamp" class="build-action-text-value"></span>
                         <span class="build-action-text-label" style="width: 100px;">Build Status: </span><span id="kx-main-build-result" class="build-action-text-value build-action-text-value-result" style="width: 100px; margin-right: 5px; display: inline-flex;"></span>
-                        <span class="build-action-text-label" style="width: 110px;">Build Version: </span><span id="kx-main-build-kx-version" style="width: 50px;" class="build-action-text-value build-action-text-value-result"></span>
+                        <span class="build-action-text-label" style="width: 110px; margin-left: 30px;">Build Version: </span><span id="kx-main-build-kx-version" style="width: 100px;" class="build-action-text-value build-action-text-value-result"></span>
                         <span class="build-action-text-label" style="width: 110px;">Kube Version: </span><span id="kx-main-build-kube-version" style="width: 80px;" class="build-action-text-value build-action-text-value-result"></span>
                         <span class="build-number-span" id="kx-main-build-number-link"></span>
                     </span>
@@ -591,8 +591,9 @@ try {
                         <span style="width: 940px;">
                         <span class="build-action-text-label" style="width: 150px">KX-Node Build Date: </span><span id="kx-node-build-timestamp" class="build-action-text-value"></span>
                         <span class="build-action-text-label" style="width: 100px;">Build Status: </span><span id="kx-node-build-result" class="build-action-text-value build-action-text-value-result" style="width: 100px; margin-right: 5px; display: inline-flex;"></span>
-                        <span class="build-action-text-label" style="width: 110px;">Build Version: </span><span id="kx-node-build-kx-version" style="width: 50px;" class="build-action-text-value build-action-text-value-result"></span>
-                        <span class="build-action-text-label" style="width: 110px;">Kube Version: </span><span id="kx-node-build-kube-version" style="width: 80px;" class="build-action-text-value build-action-text-value-result"></span>                        <span class="build-number-span" id="kx-node-build-number-link"></span>
+                        <span class="build-action-text-label" style="width: 110px; margin-left: 30px;">Build Version: </span><span id="kx-node-build-kx-version" style="width: 100px;" class="build-action-text-value build-action-text-value-result"></span>
+                        <span class="build-action-text-label" style="width: 110px;">Kube Version: </span><span id="kx-node-build-kube-version" style="width: 80px;" class="build-action-text-value build-action-text-value-result"></span>
+                        <span class="build-number-span" id="kx-node-build-number-link"></span>
                     </span>
                     <span class='span-rounded-border'>
                         <img src='/userContent/icons/play.svg' class="build-action-icon" title="Start Build" alt="Start Build" onclick='triggerBuild("kx-node");' />|

@@ -179,7 +179,7 @@ try {
 
                     let displayType;
                     if ( configDiv === "system-check-div" || configDiv === "review-and-launch-div" ) {
-                        displayType = "flex";
+                        displayType = "block";
                         if ( configDiv === "review-and-launch-div" ) {
                             console.log("ConfigDiv = review-and-launch-div. Populating review table");
                             populateReviewTable();
