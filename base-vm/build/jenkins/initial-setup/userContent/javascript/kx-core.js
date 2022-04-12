@@ -89,6 +89,11 @@ function tidyUpInterface() {
         }
     })
 
+    let parameterLabelElements = document.getElementsByClassName("jenkins-form-label");
+    for (let i = 0; i < parameterLabelElements.length; i++) {
+        parameterLabelElements[i].style.display = "none"
+    }
+
     let folderElements = document.getElementsByClassName("icon-folder");
     folderElements[0].className = "icon-folder icon-md";
 
@@ -765,7 +770,7 @@ function populateReviewTable() {
     let numWorkerNodes = parseInt(document.getElementById("counter_value_worker_node_count_value").innerText);
     document.getElementById("summary-worker-nodes-number-value").innerText = numWorkerNodes;
     if (document.getElementById("concatenated-templates-list").value === "") {
-        document.getElementById("list-templates-to-install").innerHTML = "<i>No templates selected</i>"
+        document.getElementById("list-templates-to-install").innerHTML = "<i>None</i>"
     } else {
         let templatesList = document.getElementById("concatenated-templates-list").value;
         templatesList = templatesList.replaceAll(';', ', ');
