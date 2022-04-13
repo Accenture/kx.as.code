@@ -10,7 +10,7 @@ node('built-in') {
         functions = load "base-vm/build/jenkins/job_definitions/shared_functions/shared-pipeline-functions.groovy"
         println(functions)
         def node_type = ''
-        (kx_version, kube_version) = functions.setBuildEnvironment(profile,node_type,vagrant_action)
+        (kx_version, kube_version, virtualboxCliPath, vmwareCliPath, parallelsCliPath) = functions.setBuildEnvironment(profile,node_type,vagrant_action)
     }
 }
 
