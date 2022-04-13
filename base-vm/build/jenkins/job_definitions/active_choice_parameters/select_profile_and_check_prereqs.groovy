@@ -484,7 +484,7 @@
               let parallelsMainExists = "${parallelsMainExists}";
               let parallelsNodeExists = "${parallelsNodeExists}";
               console.log("DEBUG: Selected profile: " + selectedProfile);
-              let defaultProfile = "";
+              let defaultProfile = selectedProfile;
               let prerequisitesCheckResult = "";
               let selectedProfileCheckResult = "";
               if (sessionStorage.getItem('hasCodeRunBefore') === null) {
@@ -503,13 +503,15 @@
                       prerequisitesCheckResult = "failed";
                   }
 
-                  console.log("default profile will be set to " + defaultProfile);
-                  document.getElementById("profiles").value = defaultProfile;
-
                   // Pre-requisite value must be either "full", "standalone" or "failed"
                   document.getElementById("system-prerequisites-check").value = prerequisitesCheckResult;
                   sessionStorage.hasCodeRunBefore = true;
               }
+              
+              console.log("default profile will be set to " + defaultProfile);
+              document.getElementById("profiles").value = defaultProfile;
+                  
+                  
               if (sessionStorage.getItem('hasCodeRunBefore') !== null) {
                   if ( selectedProfile === "virtualbox" && vboxExecutableExists === "true" && vboxVagrantPluginInstalled === "true" ) {
                       selectedProfileCheckResult = "full";
