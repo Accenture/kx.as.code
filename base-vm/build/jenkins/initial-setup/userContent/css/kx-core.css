@@ -1,3 +1,33 @@
+:root {
+    --kx-material-primary: 66, 93, 161;
+    --kx-material-primary-rgba-10: rgba(var(--kx-material-primary), .1);
+    --kx-material-primary-rgba-20: rgba(var(--kx-material-primary), .2);
+    --kx-material-primary-rgba-50: rgba(var(--kx-material-primary), .5);
+    --kx-material-primary-rgba-70: rgba(var(--kx-material-primary), .7);
+    --kx-material-primary-rgba-100: rgba(var(--kx-material-primary), 1);
+    --kx-material-secondary: rgba(94, 124, 189, 1);
+    --kx-dark-grey: 158, 158, 158;
+    --kx-dark-grey-rgba-10: rgba(var(--kx-dark-grey), .1);
+    --kx-dark-grey-rgba-20: rgba(var(--kx-dark-grey), .2);
+    --kx-dark-grey-rgba-50: rgba(var(--kx-dark-grey), .5);
+    --kx-dark-grey-rgba-70: rgba(var(--kx-dark-grey), .7);
+    --kx-dark-grey-rgba-100: rgba(var(--kx-dark-grey), 1);
+    --kx-light-grey: rgba(227, 233, 241, 1);
+    --kx-very-light-grey: rgba(241, 245, 249, 1);
+    --kx-very-dark-grey: 64, 76, 80;
+    --kx-very-dark-grey-70: rgba(var(--kx-very-dark-grey), .7);
+    --kx-very-dark-grey-100: rgba(var(--kx-very-dark-grey), 1);
+    --kx-success-green-100: rgba(69, 181, 110, 1);
+    --kx-success-green-70: rgba(69, 181, 110, .7);
+    --kx-warning-orange-100: rgba(235, 168, 52, 1);
+    --kx-warning-orange-70: rgba(235, 168, 52, .7);
+    --kx-error-red-100: rgba(217, 56, 86, 1);
+    --kx-error-red-70: rgba(217, 56, 86, .7);
+    --kx-green-svg-filter: brightness(0) saturate(100%) invert(57%) sepia(16%) saturate(1410%) hue-rotate(89deg) brightness(103%) contrast(89%);
+    --kx-blue-svg-filter: brightness(0) saturate(100%) invert(36%) sepia(9%) saturate(3354%) hue-rotate(185deg) brightness(94%) contrast(88%);
+    --kx-orange-red-svg-filter: brightness(0) saturate(100%) invert(58%) sepia(53%) saturate(4445%) hue-rotate(339deg) brightness(102%) contrast(101%);
+}
+
 .jenkins-form-label {
     align-items: center;
     font-weight: bold;
@@ -61,7 +91,7 @@
     height: 30px;
     vertical-align: middle;
     position: relative !important;
-    background: #d3d3d3;
+    background: var(--kx-dark-grey-rgba-20);
     outline: none;
     opacity: 1;
     -webkit-transition: .2s;
@@ -79,7 +109,7 @@
     border-radius: 20px;
     border: none;
     height: 40px;
-    background: #3C4559;
+    background: var(--kx-dark-grey-rgba-70);
     cursor: pointer;
     opacity: 1.0;
 }
@@ -88,15 +118,15 @@
     width: 40px;
     border-radius: 20px;
     height: 40px;
-    background: #3C4559;
+    background: var(--kx-dark-grey-rgba-70);
     cursor: pointer;
     opacity: 1.0;
 }
 
 .button-left {
-    background-color: rgba(187, 187, 187, 1.0);
+    background-color: var(--kx-dark-grey-rgba-70);
     cursor: pointer;
-    opacity: 0.7;
+    opacity: 1.0;
     height: 30px;
     border-top-right-radius: 0px;
     border-bottom-right-radius: 0px;
@@ -116,9 +146,9 @@
 }
 
 .button-right {
-    background-color: rgba(187, 187, 187, 1.0);
+    background-color: var(--kx-dark-grey-rgba-70);
     cursor: pointer;
-    opacity: 0.7;
+    opacity: 1.0;
     height: 30px;
     border-top-right-radius: 15px;
     border-bottom-right-radius: 15px;
@@ -142,18 +172,19 @@
 }
 
 .svg-blue {
-    filter: invert(36%) sepia(6%) saturate(5160%) hue-rotate(186deg) brightness(92%) contrast(85%);
-    opacity: 1.0;
+    filter: var(--kx-blue-svg-filter);
+    opacity: 0.7;
 }
 
 .svg-bright-green {
-    filter: invert(63%) sepia(6%) saturate(3019%) hue-rotate(70deg) brightness(82%) contrast(120%);
+    filter: var(--kx-green-svg-filter);
     width: 20px;
 }
 
 .svg-orange-red {
-    filter: invert(49%) sepia(60%) saturate(1660%) hue-rotate(338deg) brightness(100%) contrast(102%);
+    filter: var(--kx-orange-red-svg-filter);
     width: 20px;
+    opacity: 0.8;
 }
 
 .setting-name {
@@ -249,7 +280,7 @@
     width:200px;
     padding:10px;
     border-radius:10px;
-    background:#404c50;;
+    background:var(--kx-dark-grey-rgba-100);;
     color: #fff;
     text-align:center;
     opacity:0;
@@ -263,8 +294,8 @@
     margin-left: -5px;
     top: 50%;
     transform: translateY(-50%);
-    border: 10px solid #404c50;
-    border-color: transparent #404c50 transparent transparent;
+    border: 10px solid var(--kx-very-dark-grey);
+    border-color: transparent var(--kx-very-dark-grey) transparent transparent;
     display: none;
 }
 
@@ -281,7 +312,7 @@
     padding: 10px 0 10px 15px;
     font-family: arial;
     font-weight: 400;
-    background: #efefef;
+    background: var(--kx-very-light-grey);
     border: 0;
     border-left: 0;
     border-top-right-radius: 5px;
@@ -309,8 +340,8 @@
     display: inline-block;
     width: 8em;
     color: white;
-    background: rgba(187, 187, 187, 1.0);
-    opacity: 0.7;
+    background: var(--kx-material-primary-rgba-70);
+    opacity: 1;
     padding: 10px 0 10px 5px;
     margin-bottom: 10px;
     border: 0;
@@ -345,7 +376,6 @@
     height: 0;
 }
 
-
 .checkbox-slider-checked-disabled {
     position: absolute;
     cursor: not-allowed;
@@ -354,7 +384,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(187, 187, 187, 1.0);
+    background-color: var(--kx-dark-grey-rgba-70);
     -webkit-transition: .4s;
     transition: .4s;
     opacity: 0.1;
@@ -375,12 +405,11 @@
 }
 
 input:checked + .checkbox-slider-checked-disabled {
-    background-color: rgba(187, 187, 187, 1.0) !important;
-    opacity: 0.1;
+    background-color: var(--kx-dark-grey-rgba-10) !important;
 }
 
 input:focus + .checkbox-slider-checked-disabled {
-    box-shadow: 0 0 1px rgba(187, 187, 187, 1.0);
+    box-shadow: 0 0 1px var(--kx-dark-grey-rgba-10);
 }
 
 input:checked + .checkbox-slider-checked-disabled:before {
@@ -422,12 +451,11 @@ input:checked + .checkbox-slider-checked-disabled:before {
 }
 
 input:checked + .checkbox-slider {
-    background-color: rgba(187, 187, 187, 1.0) !important;
-    opacity: 0.7;
+    background-color: var(--kx-material-primary-rgba-70) !important;
 }
 
 input:focus + .checkbox-slider {
-    box-shadow: 0 0 1px rgba(187, 187, 187, 1.0);
+    box-shadow: 0 0 1px var(--kx-material-primary-rgba-70);
 }
 
 input:checked + .checkbox-slider:before {
@@ -481,7 +509,7 @@ input:checked + .checkbox-slider:before {
 
 .tooltip-info .tooltiptext {
     width: 200px;
-    background-color: #404c50;
+    background-color: var(--kx-very-dark-grey);
     color: #ffffff;
     text-align: left;
     padding: 5px 5px;
@@ -515,7 +543,7 @@ input:checked + .checkbox-slider:before {
 .rounded-number-span {
     border-radius: 5px;
     width: 60px;
-    background: #404c50;
+    background: var(--kx-very-dark-grey-100);
     font-size: 14px;
     font-family: Courier;
     font-weight: 400;
@@ -680,7 +708,7 @@ input:checked + .checkbox-slider:before {
 }
 
 .config-outer-wrapper {
-    background-color: rgba(187, 187, 187, 1.0);
+    background-color: var(--kx-dark-grey-rgba-70);
     height: 820px;
     width: 1300px;
     padding: 5px;
@@ -703,8 +731,8 @@ input:checked + .checkbox-slider:before {
 .config-selector-footer {
     display: flex;
     width: 1290px;
-    height: 40px;
-    background-color: rgba(187, 187, 187, 1.0);
+    height: 35px;
+    background-color: var(--kx-dark-grey-rgba-70);
     vertical-align: bottom;
     justify-content: space-between;
 }
@@ -713,7 +741,7 @@ input:checked + .checkbox-slider:before {
     display: inline-block;
     height: 100%;
     width: 100%;
-    background-color: rgba(187, 187, 187, 1.0);
+    background-color: var(--kx-dark-grey-rgba-70);
     vertical-align: middle;
     text-align: center;
     opacity: 1.0;
@@ -721,7 +749,7 @@ input:checked + .checkbox-slider:before {
 }
 
 .config-tab:hover {
-    background-color: rgba(187, 187, 187, 0.5);
+    background-color: var(--kx-dark-grey-rgba-50)
 }
 
 .config-tab-footer-icons {
@@ -732,14 +760,14 @@ input:checked + .checkbox-slider:before {
 }
 
 .config-tab-footer-icons:hover {
-    background-color: rgba(187, 187, 187, 0.5);
+    background-color: var(--kx-dark-grey-rgba-50)
 }
 
 .config-tab-selected {
     display: inline-block;
     height: 100%;
     width: 100%;
-    color: rgba(220, 175, 255, 1);
+    color: var(--kx-material-primary-rgba-100);
     background-color: #ffffff;
     border: 1px;
     vertical-align: middle;
@@ -750,7 +778,7 @@ input:checked + .checkbox-slider:before {
     display: inline-block;
     height: 100%;
     width: 100%;
-    background-color: rgba(187, 187, 187, 0.5);
+    background-color: var(--kx-dark-grey-rgba-50);
     vertical-align: middle;
     text-align: center;
     opacity: 0.5;
@@ -775,7 +803,7 @@ input:checked + .checkbox-slider:before {
 
 .h2-header-in-line {
     width: 100%;
-    color: #425DA1;
+    color: var(--kx-material-primary-rgba-100);
     line-height: 0.1em;
     margin: -12px 0 20px;
     padding-left: 20px;
@@ -813,7 +841,7 @@ input:checked + .checkbox-slider:before {
 /* Config */
 :root {
     --sk-size: 150px;
-    --sk-color: #344155;
+    --sk-color: var(--kx-material-primary-rgba-50);
 }
 
 /*  Flow
@@ -899,7 +927,7 @@ input:checked + .checkbox-slider:before {
 .sk-grid-cube {
     width: 33.33%;
     height: 33.33%;
-    background-color: var(--sk-color);
+    background-color: var(--kx-material-primary-rgba-70);
     float: left;
     animation: sk-grid 1.3s infinite ease-in-out;
 }
@@ -925,7 +953,7 @@ input:checked + .checkbox-slider:before {
     width: 1300px;
     height: 660px;
     justify-content: center;
-    opacity: 0.7;
+    opacity: 0.8;
     align-items: center;
     display: flex;
 }
@@ -942,7 +970,7 @@ input:checked + .checkbox-slider:before {
     height: 10px;
     border-radius: 5px;
     background-color: white;
-    color: #425DA1;
+    color: var(--kx-material-primary-rgba-100);
     -webkit-animation: dot-flashing 1s infinite linear alternate;
     animation: dot-flashing 1s infinite linear alternate;
     -webkit-animation-delay: 0.5s;
@@ -973,7 +1001,7 @@ input:checked + .checkbox-slider:before {
     height: 10px;
     border-radius: 5px;
     background-color: white;
-    color: #425DA1;
+    color: var(--kx-material-primary-rgba-100);
     -webkit-animation: dot-flashing 1s infinite alternate;
     animation: dot-flashing 1s infinite alternate;
     -webkit-animation-delay: 1s;
@@ -982,19 +1010,19 @@ input:checked + .checkbox-slider:before {
 
 @-webkit-keyframes dot-flashing {
     0% {
-        background-color: #425DA1;
+        background-color: var(--kx-material-primary-rgba-100);
     }
     50%, 100% {
-        background-color: rgba(152, 128, 255, 0.2);
+        background-color: var(--kx-material-primary-rgba-20);
     }
 }
 
 @keyframes dot-flashing {
     0% {
-        background-color: #425DA1;
+        background-color: var(--kx-material-primary-rgba-100);
     }
     50%, 100% {
-        background-color: rgba(152, 128, 255, 0.2);
+        background-color: var(--kx-material-primary-rgba-20);
     }
 }
 
@@ -1017,7 +1045,7 @@ input:checked + .checkbox-slider:before {
     background-image: url("/userContent/icons/chevron-down.svg");
     background-repeat: no-repeat;
     background-position: right;
-    background-color: #efefef;
+    background-color: var(--kx-very-light-grey);
     outline: none;
     border: none;
     box-shadow: none;
@@ -1056,7 +1084,7 @@ select {
 .console-log .consolelogtext {
     width: 1000px;
     height: 450px;
-    background-color: #404c50;
+    background-color: var(--kx-very-dark-grey-100);
     color: #ffffff;
     text-align: left;
     padding: 5px 5px;
@@ -1091,7 +1119,7 @@ select {
     width: 30px;
     height: 30px;
     border: none;
-    color: #404c50;
+    color: var(--kx-very-dark-grey-100);
     padding: 2px 2px;
     text-decoration: none;
     margin: 2px 2px;
@@ -1105,7 +1133,7 @@ select {
 .build-action-text-label {
     width: 200px;
     border: none;
-    color: #404c50;
+    color: var(--kx-very-dark-grey-100);
     padding-top: 2px;
     padding-right: 2px;
     padding-bottom: 2px;
@@ -1120,7 +1148,7 @@ select {
 .build-action-text-value {
     width: 140px;
     border: none;
-    color: #404c50;
+    color: var(--kx-very-dark-grey-100);
     padding: 2px 2px;
     text-decoration: none;
     margin: 2px 2px;
@@ -1152,22 +1180,22 @@ select {
 }
 
 .build-result-neutral {
-    background: #b7bfc7;
-    color: black;
+    background: var(--kx-dark-grey-rgba-70);
+    color: white;
 }
 
 .build-result-success {
-    background: green;
+    background: var(--kx-success-green-100);
     color: white;
 }
 
 .build-result-failure {
-    background: red;
+    background: var(--kx-error-red-100);
     color: white;
 }
 
 .build-result-aborted {
-    background: black;
+    background: var(--kx-very-dark-grey-100);
     color: white;
 }
 

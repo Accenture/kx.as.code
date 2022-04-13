@@ -25,13 +25,17 @@ int kxWorkerMemory
 int kxWorkerNumber
 int kxWorkerCpuCores
 
-def normalPieColour = "#45b56e"
-def warningPieColour = "#eba834"
-def alertPieColour = "#d93856"
+def normalPieColour = "var(--kx-success-green-70)"
+def warningPieColour = "var(--kx-warning-orange-70)"
+def alertPieColour = "var(--kx-error-red-70)"
 
-def cpuPieColor
-def memoryPieColor
-def diskPieColor
+def normalPieTextColour = "var(--kx-success-green-100)"
+def warningPieTextColour = "var(--kx-warning-orange-100)"
+def alertPieTextColour = "var(--kx-error-red-100)"
+
+def cpuPieColour
+def memoryPieColour
+def diskPieColour
 
 int overallStorageRequired
 int overallStorageNeededPercentage
@@ -213,8 +217,6 @@ try {
     int slaveFreeMemory = freePhysicalMemorySize.toInteger()
     println("DEBUG --> 2 (config_review_and_launch.groovy)")
     int usedMemory = slaveTotalMemory - slaveFreeMemory
-    //int usedMemoryPercentage = (usedMemory / slaveTotalMemory) * 100
-    //int freeMemoryPercentage = (slaveFreeMemory / slaveTotalMemory) * 100
 
     if ( KX_MAIN_ADMIN_MEMORY ) {
         kxMainMemory = KX_MAIN_ADMIN_MEMORY.toInteger()
@@ -267,27 +269,36 @@ try {
     overallRemainingMemoryPercentage = 100 - overallUsedMemoryPercentage
 
     if (overallUsedCpuCoresPercentage >= 90 && overallUsedCpuCoresPercentage < 100) {
-        cpuPieColor = warningPieColour
+        cpuPieColour = warningPieColour
+        cpuPieTextColour = warningPieTextColour
     } else if (overallUsedCpuCoresPercentage >= 100) {
-        cpuPieColor = alertPieColour
+        cpuPieColour = alertPieColour
+        cpuPieTextColour = alertPieTextColour
     } else {
-        cpuPieColor = normalPieColour
+        cpuPieColour = normalPieColour
+        cpuPieTextColour = normalPieTextColour
     }
 
     if (overallUsedMemoryPercentage >= 90 && overallUsedMemoryPercentage < 100) {
-        memoryPieColor = warningPieColour
+        memoryPieColour = warningPieColour
+        memoryPieTextColour = warningPieTextColour
     } else if (overallUsedMemoryPercentage >= 100) {
-        memoryPieColor = alertPieColour
+        memoryPieColour = alertPieColour
+        memoryPieTextColour = alertPieTextColour
     } else {
-        memoryPieColor = normalPieColour
+        memoryPieColour = normalPieColour
+        memoryPieTextColour = normalPieTextColour
     }
 
     if (overallStorageNeededPercentage >= 90 && overallStorageNeededPercentage < 100) {
-        diskPieColor = warningPieColour
+        diskPieColour = warningPieColour
+        diskPieTextColour = warningPieTextColour
     } else if (overallStorageNeededPercentage >= 100) {
-        diskPieColor = alertPieColour
+        diskPieColour = alertPieColour
+        diskPieTextColour = alertPieTextColour
     } else {
-        diskPieColor = normalPieColour
+        diskPieColour = normalPieColour
+        diskPieTextColour = normalPieTextColour
     }
 
     println("DEBUG --> 4 (config_review_and_launch.groovy)")
@@ -424,13 +435,13 @@ try {
                     <svg width="250px" height="250px" viewBox="0 0 40 40" class="donut">
                         <circle class="donut-hole" cx="20" cy="20" r="15.91549430918954" fill="#fff"></circle>
                         <circle class="donut-ring" cx="20" cy="20" r="15.91549430918954" fill="transparent" stroke-width="3.5"></circle>
-                        <circle style="stroke: ${cpuPieColor}; opacity: 70%;" class="donut-segment donut-segment-cpu" cx="20" cy="20" r="15.91549430918954" fill="transparent" stroke-width="3.5" stroke-dasharray="${overallUsedCpuCoresPercentage} ${overallRemainingCpuCoresPercentage}" stroke-dashoffset="25"></circle>
+                        <circle style="stroke: ${cpuPieColour};" class="donut-segment donut-segment-cpu" cx="20" cy="20" r="15.91549430918954" fill="transparent" stroke-width="3.5" stroke-dasharray="${overallUsedCpuCoresPercentage} ${overallRemainingCpuCoresPercentage}" stroke-dashoffset="25"></circle>
                         <g class="donut-text donut-text-cpu">
                             <text y="27%" transform="translate(0, 2)">
                                 <tspan x="50%" text-anchor="middle" class="donut-data pie-label">Processor</tspan>
                             </text>
                             <text y="50%" transform="translate(0, 2)">
-                                <tspan x="50%" text-anchor="middle" class="donut-percent" style="fill: ${cpuPieColor};">${overallUsedCpuCoresPercentage}%</tspan>
+                                <tspan x="50%" text-anchor="middle" class="donut-percent" style="fill: ${cpuPieTextColour};">${overallUsedCpuCoresPercentage}%</tspan>
                             </text>
                             <text y="63%" transform="translate(0, 2)">
                                 <tspan x="50%" text-anchor="middle" class="donut-data">${overallTotalNeededCpuCores} / ${totalSystemCores} Cores</tspan>
@@ -444,13 +455,13 @@ try {
                     <svg width="250px" height="250px" viewBox="0 0 40 40" class="donut">
                         <circle class="donut-hole" cx="20" cy="20" r="15.91549430918954" fill="#fff"></circle>
                         <circle class="donut-ring" cx="20" cy="20" r="15.91549430918954" fill="transparent" stroke-width="3.5"></circle>
-                        <circle style="stroke: ${memoryPieColor}; opacity: 70%;" class="donut-segment donut-segment-memory" cx="20" cy="20" r="15.91549430918954" fill="transparent" stroke-width="3.5" stroke-dasharray="${overallUsedMemoryPercentage} ${overallRemainingMemoryPercentage}" stroke-dashoffset="25"></circle>
+                        <circle style="stroke: ${memoryPieColour};" class="donut-segment donut-segment-memory" cx="20" cy="20" r="15.91549430918954" fill="transparent" stroke-width="3.5" stroke-dasharray="${overallUsedMemoryPercentage} ${overallRemainingMemoryPercentage}" stroke-dashoffset="25"></circle>
                         <g class="donut-text donut-text-memory">
                             <text y="27%" transform="translate(0, 2)">
                                 <tspan x="50%" text-anchor="middle" class="donut-data pie-label">Memory</tspan>
                             </text>
                             <text y="50%" transform="translate(0, 2)">
-                                <tspan x="50%" text-anchor="middle" class="donut-percent" style="fill: ${memoryPieColor};">${overallUsedMemoryPercentage}%</tspan>
+                                <tspan x="50%" text-anchor="middle" class="donut-percent" style="fill: ${memoryPieTextColour};">${overallUsedMemoryPercentage}%</tspan>
                             </text>
                             <text y="63%" transform="translate(0, 2)">
                                 <tspan x="50%" text-anchor="middle" class="donut-data">${(overallTotalNeededMemory.toInteger() / 1024).toInteger()} / ${(totalPhysicalMemorySize / 1024).toInteger()} GB</tspan>
@@ -463,13 +474,13 @@ try {
                     <svg width="250px" height="250px" viewBox="0 0 40 40" class="donut">
                         <circle class="donut-hole" cx="20" cy="20" r="15.91549430918954" fill="#fff"></circle>
                         <circle class="donut-ring" cx="20" cy="20" r="15.91549430918954" fill="transparent" stroke-width="3.5"></circle>
-                        <circle style="stroke: ${diskPieColor}; opacity: 70%;" class="donut-segment donut-segment-disk" cx="20" cy="20" r="15.91549430918954" fill="transparent" stroke-width="3.5" stroke-dasharray="${overallStorageNeededPercentage} ${overallRemainingPercentage}" stroke-dashoffset="25"></circle>
+                        <circle style="stroke: ${diskPieColour};" class="donut-segment donut-segment-disk" cx="20" cy="20" r="15.91549430918954" fill="transparent" stroke-width="3.5" stroke-dasharray="${overallStorageNeededPercentage} ${overallRemainingPercentage}" stroke-dashoffset="25"></circle>
                         <g class="donut-text donut-text-disk">
                             <text y="27%" transform="translate(0, 2)">
                                 <tspan x="50%" text-anchor="middle" class="donut-data pie-label">Disk</tspan>
                             </text>
                             <text y="50%" transform="translate(0, 2)">
-                                <tspan x="50%" text-anchor="middle" class="donut-percent" style="fill: ${diskPieColor};">${overallStorageNeededPercentage}%</tspan>
+                                <tspan x="50%" text-anchor="middle" class="donut-percent" style="fill: ${diskPieTextColour};">${overallStorageNeededPercentage}%</tspan>
                             </text>
                             <text y="63%" transform="translate(0, 2)">
                                 <tspan x="50%" text-anchor="middle" class="donut-data">${overallStorageRequired} / ${remainingDiskSpace} GB</tspan>
@@ -522,7 +533,7 @@ try {
                 <div class="div-inner-h2-header-in-line-wrapper">
                     <span style="vertical-align: middle; display: inline-block;">
                         <span class="launch-action-text-label" style="width: 50px;">Date: </span><span id="kx-launch-build-timestamp" class="build-action-text-value"></span>
-                        <span class="launch-action-text-label" style="width: 70px; ">Status: </span><span id="kx-launch-build-result" style="width: 80px; margin-right: 20px; display: inline-flex;"></span>
+                        <span class="launch-action-text-label" style="width: 70px; ">Status: </span><span id="kx-launch-build-result" style="width: 80px; margin-right: 20px;"></span>
                         <span class="launch-action-text-label" style="width: 100px;">Last Action: </span><span id="kx-launch-last-action" class="build-action-text-value" style="width: 50px;"></span>
                         <span class="launch-action-text-label" style="width: 100px;">KX-Version:</span><span id="kx-launch-build-kx-version" class="build-action-text-value build-action-text-value-result" style="width: 80px;"></span>
                         <span class="launch-action-text-label" style="width: 115px;">Kube-Version:</span><span id="kx-launch-build-kube-version" class="build-action-text-value build-action-text-value-result" style="width: 80px;"></span>
