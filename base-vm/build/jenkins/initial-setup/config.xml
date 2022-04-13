@@ -102,5 +102,5 @@
     </hudson.slaves.EnvironmentVariablesNodeProperty>
   </globalNodeProperties>
   <noUsageStatistics>true</noUsageStatistics>
-  <nodeRenameMigrationNeeded>true</nodeRenameMigrationNeeded>
+  <nodeRenameMigrationNeeded>false</nodeRenameMigrationNeeded>
 </hudson>
