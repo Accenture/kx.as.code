@@ -332,32 +332,6 @@ if (!(test-path $JENKINS_HOME\jenkins.install.InstallUtil.lastExecVersion)) {
     echo "$jenkinsDownloadVersion" > $JENKINS_HOME\jenkins.install.InstallUtil.lastExecVersion
 }
 
-# Generate KX.AS.CODE start job --> merge active choice parameters into start dsl job template
-$start_job_file = "initial-setup\jobs\KX.AS.CODE_Launcher\config.xml"
-$start_job_template_file = "initial-setup\jobs\KX.AS.CODE_Launcher\config.xml_template"
-
-Copy-Item $start_job_template_file $start_job_file
-Write-Output $start_job_file
-$jobContent = Get-Content $start_job_file -Encoding Default -Raw
-Write-Content "Test 1"
-Get-Content $start_job_file -Encoding UTF8 | Select-String '(?<=@\{)(.+)(?=\})' | ForEach-Object {
-    $filename = Write-Output $_.Matches[0].Groups[1].Value
-    Write-Output "initial-setup/active_choice_parameters/$filename"
-    dir "initial-setup/active_choice_parameters/$filename"
-    $groovyContent = (Get-Content initial-setup/active_choice_parameters/$filename -Encoding Default -Raw).replace('&&','&amp;&amp;').replace('&quot;','&amp;quot;').replace("`'",'&apos;').replace('"','&quot;').replace('<','&lt;').replace('>','&gt;')
-    #Write-Output "Content: " + $groovyContent
-    $placeholderToReplace = '@{' + $_.Matches[0].Groups[1].Value + '}'
-    $jobContent = $jobContent.replace($placeholderToReplace, $groovyContent)
-    Write-Output "################################################"
-    #Write-Output "################################################" + $jobContent
-    Write-Output "################################################"
-    Write-Output "$placeholderToReplace"
-}
-#Write-Output "Merged Content: " + $jobContent
-Write-Output $jobContent | Out-File $start_job_file -Encoding Default
-
-#exit
-
 # Replace mustache variables in job config.xml files
 New-Item -Path "$JENKINS_HOME\jobs" -Name "logfiles" -ItemType "directory"
 Copy-Item -Path ".\initial-setup\*" -Destination "$JENKINS_HOME\" -Recurse -Force

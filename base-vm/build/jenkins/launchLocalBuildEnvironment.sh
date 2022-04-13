@@ -236,37 +236,6 @@ echo "Setting jenkins_home to ${jenkins_home_absolute_path}"
 # Copy Initial Setuop files to Jenkins Home
 cp -rf ./initial-setup/ ./jenkins_home
 
-# Generate KX.AS.CODE start job --> merge active choice parameters into start dsl job template
-start_job_file="initial-setup/jobs/KX.AS.CODE_Launcher/config.xml"
-start_job_template_file="initial-setup/jobs/KX.AS.CODE_Launcher/config.xml_template"
-start_job_backup_file="initial-setup/jobs/KX.AS.CODE_Launcher/config.xml_backup"
-
-# Get active choice parameter files
-activeChoiceParameterFiles=$(ls initial-setup/active_choice_parameters/*.groovy | xargs basename)
-cp -f ${start_job_template_file} ${start_job_file}
-for activeChoiceParameterFile in ${activeChoiceParameterFiles}; do
-  echo "Processing Active Choice Parameter file.... ${activeChoiceParameterFile}"
-  echo "@{${activeChoiceParameterFile}}"
-  activeChoiceParameterFileContent=$(cat initial-setup/active_choice_parameters/${activeChoiceParameterFile})
-  IFS_OLD=$IFS
-  IFS=§
-  escapedContent=$(echo "${activeChoiceParameterFileContent}" | sed 's@\\@####@g' | sed '$!s@$@\\@g' | sed 's@%@°°°°@g' | sed 's@\&\&@\&amp;\&amp;@g' | sed 's@&quot;@\&amp;quot;@g' | sed "s@\'@\&apos;@g" | sed 's@\"@\&quot;@g' | sed 's@<@\&lt;@g' | sed 's@>@\&gt;@g' | sed 's/&/\\&/g')
-  #echo ${escapedContent}
-  if [[ "$(uname)" == "Darwin" ]]; then
-    sed -E -i '' "s%@{${activeChoiceParameterFile}}%${escapedContent}%" ${start_job_file}
-    #sed "s%@{${activeChoiceParameterFile}}%${escapedContent}%" ${start_job_file}
-    #doubleEscaped=$(echo ${escapedContent} | sed 's/&/\\&/g')
-  else
-    sed -E -i '' 's%@{'${activeChoiceParameterFile}'}%'${doubleEscaped}'%' ${start_job_file}
-  fi
-  IFS=$IFS_OLD
-done
-sed -E -i '' 's@°°°°@%@g' ${start_job_file}
-sed -E -i '' 's/\\&/\&/g' ${start_job_file}
-sed -E -i '' 's@####@\\@g' ${start_job_file}
-cat ${start_job_file}
-cp ${start_job_file} ${start_job_backup_file}
-
 # Download and update Jenkins WAR file with needed plugins
 jenkinsDownloadVersion="2.332.2"
 jenkinsWarFileUrl="https://get.jenkins.io/war-stable/${jenkinsDownloadVersion}/jenkins.war"
@@ -339,7 +308,6 @@ for initialSetupJobConfgXmlFile in ${initialSetupJobConfgXmlFiles}; do
           echo ${!placeholder}
           echo ${initialSetupJobConfgXmlFile}_tmp
           sed -E -i '' "s|{{${placeholder}}}|${!placeholder}|g" ${initialSetupJobConfgXmlFile}_tmp
-          #cat "${initialSetupJobConfgXmlFile}" | ./mo > "${initialSetupJobConfgXmlFile}_tmp"
         done
         if [ -s "${initialSetupJobConfgXmlFile}_tmp" ]; then
             mv "${initialSetupJobConfgXmlFile}_tmp" "${initialSetupJobConfgXmlFile}"
