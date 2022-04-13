@@ -21,6 +21,7 @@ def setBuildEnvironment(profile,node_type,vagrant_action) {
         vmWareDiskUtilityPath=""
         virtualboxCliPath = "/usr/bin/vboxmanage"
         vmwareCliPath = "/usr/bin/vmrun"
+        parallelsCliPath = ""
     } else {
         echo "Running on Windows"
         os="windows"
@@ -29,6 +30,7 @@ def setBuildEnvironment(profile,node_type,vagrant_action) {
         vmWareDiskUtilityPath="c:/Program Files (x86)/VMware/VMware Workstation/vmware-vdiskmanager.exe"
         virtualboxCliPath = "C:/Program Files/Oracle/VirtualBox/VBoxManage.exe"
         vmwareCliPath = "C:/Program Files (x86)/VMware/VMware Workstation/vmrun.exe"
+        parallelsCliPath = ""
     }
 
     sh """
@@ -87,7 +89,7 @@ def setBuildEnvironment(profile,node_type,vagrant_action) {
         // Do not fail the build because there was an error setting the build name
         println("Exception: ${e}")
     }
-    return [ kx_version, kube_version ]
+    return [ kx_version, kube_version, virtualboxCliPath, vmwareCliPath, parallelsCliPath ]
 }
 
 def addVagrantBox(provider,kx_version) {
