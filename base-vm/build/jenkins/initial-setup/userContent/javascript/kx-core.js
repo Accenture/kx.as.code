@@ -651,9 +651,9 @@ async function showConsoleLog(job, nodeType) {
                         console.log("Jenkins Console Log Line: " + lines[line] + " | " + lines[line].includes('[Pipeline]'))
                         if ( ! lines[line].includes('[Pipeline]') ) {
                             consoleLine = lines[line] + '<br>';
-                            consoleLine = consoleLine.replace(/FAILURE/g, '<span style="color: red">FAILURE</span>')
-                            consoleLine = consoleLine.replace(/ERROR/g, '<span style="color: red">ERROR</span>')
-                            consoleLine = consoleLine.replace(/SUCCESS/g, '<span style="color: green">SUCCESS</span>')
+                            consoleLine = consoleLine.replace(/FAILURE/g, '<span style="color: var(--kx-error-red-100)">FAILURE</span>')
+                            consoleLine = consoleLine.replace(/ERROR/g, '<span style="color: var(--kx-error-red-100)">ERROR</span>')
+                            consoleLine = consoleLine.replace(/SUCCESS/g, '<span style="color: var(--kx-success-green-100)">SUCCESS</span>')
                             consoleLogDiv.innerHTML += consoleLine;
                             console.log(consoleLine);
                         } else {
