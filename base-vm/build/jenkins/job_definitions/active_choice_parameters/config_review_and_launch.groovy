@@ -550,7 +550,7 @@ try {
             </div>
          </div>
     </div>
-    <style scoped="scoped" onload="populateReviewTable(); getBuildJobListForProfile('KX.AS.CODE_Runtime_Actions', 'kx-launch'); alreadyRunningVmsWarning();">   </style>
+    <style scoped="scoped" onload="populateReviewTable(); getBuildJobListForProfile('KX.AS.CODE_Runtime_Actions', 'kx-launch');">   </style>
     </body>
     """
     return HTML

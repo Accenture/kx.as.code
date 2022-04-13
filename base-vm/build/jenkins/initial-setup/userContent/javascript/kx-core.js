@@ -49,7 +49,7 @@ function update_selected_value() {
     let profilePath = profilePaths[selectedOptionNumber] + '/profile-config.json'
     console.log("profileName: " + profilePath)
     document.getElementById("selected-profile-path").value = profilePath;
-    document.getElementById("selected-profile-path").setAttribute("selected-profile-path", profilePath) ;
+    document.getElementById("selected-profile-path").setAttribute("selected-profile-path", profilePath);
     let parentId = document.getElementById("selected-profile-path").parentNode.id;
     console.log(parentId);
     jQuery('#' + parentId).trigger('change');
@@ -393,7 +393,7 @@ async function getBuildJobListForProfile(job, nodeType) {
                 } else {
                     styleClass = 'build-result build-result-neutral';
                 }
-                document.getElementById(nodeType + "-build-result").innerHTML = '<span className="build-action-text-value build-action-text-value-result"style="width: 70px;">' + kxBuilds[0].result + '</span>';
+                document.getElementById(nodeType + "-build-result").innerHTML = '<span className="build-action-text-value build-action-text-value-result" style="width: 70px;">' + kxBuilds[0].result + '</span>';
                 document.getElementById(nodeType + "-build-result").className = styleClass;
                 document.getElementById(nodeType + "-build-number-link").innerHTML = "<a href='" + kxBuilds[0].url + "' target='_blank' rel='noopener noreferrer' style='font-weight: normal;'># " + kxBuilds[0].number + "</a>";
             } else {
@@ -405,9 +405,9 @@ async function getBuildJobListForProfile(job, nodeType) {
         } else {
             console.log('Did not find ' + nodeType + ' builds for profile');
             styleClass = 'build-result build-result-neutral';
+            document.getElementById(nodeType + "-build-result").innerText = 'n/a';
             document.getElementById(nodeType + "-build-result").className = styleClass;
             document.getElementById(nodeType + "-build-timestamp").innerText = "not run yet";
-            document.getElementById(nodeType + "-build-result").innerText = "n/a";
             document.getElementById(nodeType + "-build-number-link").innerText = "-";
             document.getElementById(nodeType + '-build-kx-version').innerText = "-";
             document.getElementById(nodeType + '-build-kube-version').innerText = "-";
@@ -737,6 +737,7 @@ function getCrumb() {
 }
 
 async function getAllJenkinsBuilds(job) {
+    console.log((new Error()).stack);
     console.log("DEBUG getAllJenkinsBuilds(job): " + job);
     let jenkinsCrumb = getCrumb().value;
     console.log("Jenkins Crumb received = " + jenkinsCrumb);
@@ -813,7 +814,7 @@ async function performRuntimeAction(vagrantAction) {
 function updateProfileAndPrereqsCheckTab() {
     getBuildJobListForProfile("KX.AS.CODE_Image_Builder", "kx-main");
     getBuildJobListForProfile("KX.AS.CODE_Image_Builder", "kx-node");
-    update_selected_value();
+    //update_selected_value();
     getAvailableLocalBoxes();
     getAvailableCloudBoxes()
     compareVersions();
