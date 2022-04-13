@@ -16,6 +16,7 @@ def currentSystemDisk
 long totalSystemDisk
 long freeSystemDisk
 long usableSystemDisk
+int remainingDiskSpace
 
 int kxMainMemory
 int kxMainNumber
@@ -24,13 +25,17 @@ int kxWorkerMemory
 int kxWorkerNumber
 int kxWorkerCpuCores
 
-def normalPieColour = "#9f4dd3"
-def warningPieColour = "#FF6200"
-def alertPieColour = "#f44336"
+def normalPieColour = "var(--kx-success-green-70)"
+def warningPieColour = "var(--kx-warning-orange-70)"
+def alertPieColour = "var(--kx-error-red-70)"
 
-def cpuPieColor
-def memoryPieColor
-def diskPieColor
+def normalPieTextColour = "var(--kx-success-green-100)"
+def warningPieTextColour = "var(--kx-warning-orange-100)"
+def alertPieTextColour = "var(--kx-error-red-100)"
+
+def cpuPieColour
+def memoryPieColour
+def diskPieColour
 
 int overallStorageRequired
 int overallStorageNeededPercentage
@@ -50,6 +55,8 @@ def ALLOW_WORKLOADS_ON_KUBERNETES_MASTER
 
 def kxMainRunningVms
 def kxWorkerRunningVms
+def numKxMainRunningVms
+def numKxWorkerRunningVms
 
 try {
 
@@ -125,7 +132,7 @@ try {
     println("networkStorageVolume ${networkStorageVolume}")
 
     int totalLocalDiskSpace = totalSystemDisk.toInteger()
-    int remainingDiskSpace = freeSystemDisk.toInteger()
+    remainingDiskSpace = freeSystemDisk.toInteger()
     int totalLocalVolumesStorageRequired
 
     println("DEBUG --> 1 (config_review_and_launch.groovy)")
@@ -210,8 +217,6 @@ try {
     int slaveFreeMemory = freePhysicalMemorySize.toInteger()
     println("DEBUG --> 2 (config_review_and_launch.groovy)")
     int usedMemory = slaveTotalMemory - slaveFreeMemory
-    //int usedMemoryPercentage = (usedMemory / slaveTotalMemory) * 100
-    //int freeMemoryPercentage = (slaveFreeMemory / slaveTotalMemory) * 100
 
     if ( KX_MAIN_ADMIN_MEMORY ) {
         kxMainMemory = KX_MAIN_ADMIN_MEMORY.toInteger()
@@ -264,27 +269,36 @@ try {
     overallRemainingMemoryPercentage = 100 - overallUsedMemoryPercentage
 
     if (overallUsedCpuCoresPercentage >= 90 && overallUsedCpuCoresPercentage < 100) {
-        cpuPieColor = warningPieColour
+        cpuPieColour = warningPieColour
+        cpuPieTextColour = warningPieTextColour
     } else if (overallUsedCpuCoresPercentage >= 100) {
-        cpuPieColor = alertPieColour
+        cpuPieColour = alertPieColour
+        cpuPieTextColour = alertPieTextColour
     } else {
-        cpuPieColor = normalPieColour
+        cpuPieColour = normalPieColour
+        cpuPieTextColour = normalPieTextColour
     }
 
     if (overallUsedMemoryPercentage >= 90 && overallUsedMemoryPercentage < 100) {
-        memoryPieColor = warningPieColour
+        memoryPieColour = warningPieColour
+        memoryPieTextColour = warningPieTextColour
     } else if (overallUsedMemoryPercentage >= 100) {
-        memoryPieColor = alertPieColour
+        memoryPieColour = alertPieColour
+        memoryPieTextColour = alertPieTextColour
     } else {
-        memoryPieColor = normalPieColour
+        memoryPieColour = normalPieColour
+        memoryPieTextColour = normalPieTextColour
     }
 
     if (overallStorageNeededPercentage >= 90 && overallStorageNeededPercentage < 100) {
-        diskPieColor = warningPieColour
+        diskPieColour = warningPieColour
+        diskPieTextColour = warningPieTextColour
     } else if (overallStorageNeededPercentage >= 100) {
-        diskPieColor = alertPieColour
+        diskPieColour = alertPieColour
+        diskPieTextColour = alertPieTextColour
     } else {
-        diskPieColor = normalPieColour
+        diskPieColour = normalPieColour
+        diskPieTextColour = normalPieTextColour
     }
 
     println("DEBUG --> 4 (config_review_and_launch.groovy)")
@@ -316,6 +330,8 @@ try {
         println("runningVirtualMachinesList - virtualbox: ${runningVirtualMachinesList}")
         kxMainRunningVms = runningVirtualMachinesList.findAll { it.contains('kx.as.code-demo1-main') }
         kxWorkerRunningVms = runningVirtualMachinesList.findAll { it.contains('kx.as.code-demo1-worker') }
+        numKxMainRunningVms = kxMainRunningVms.size();
+        numKxWorkerRunningVms = kxWorkerRunningVms.size();
     }
 
 } catch(e) {
@@ -351,12 +367,12 @@ try {
 
             .cell-label {
                 vertical-align: top;
-                font-weight: bold;
+                font-weight: normal;
                 border-bottom-left-radius: 5px;
                 border-top-left-radius: 5px;
                 width: 270px;
                 height: 15px;
-                padding-left: 15px;
+                padding-left: 5px;
                 padding-top: 2px;
                 padding-bottom: 2px;
             }
@@ -408,27 +424,47 @@ try {
             }
 
         </style>
-
     <body>
-      <div id="review-and-launch-div" class="flex-wrapper" style="display: none;">
-        <h1>Review &amp; Launch</h1>
-
-        <span class="description-paragraph-span" style="height: 90px;"><p>${extendedDescription}</p></span>
+      <div id="review-and-launch-div" style="display: none;">
+        <div style="display: inline-flex; vertical-align: middle; flex-wrap: nowrap;"><span><h1>Review &amp; Launch</h1></span><span id="kx-launch-running-vms" onLoad='if (${kxMainRunningVms.size()} > 0) { document.getElementById(this.id).style.display = "inline-block" } else { document.getElementById(this.id).style.display = "none" }' data-text="KX.AS.CODE is already running! Main nodes: ${kxMainRunningVms.size()} Workers nodes: ${kxWorkerRunningVms.size()}" class="warning-span-large tooltip"><img src="/userContent/icons/triangle-exclamation-solid.svg" class="warn-image-large svg-orange-red" alt="already_running_warning" /></span></div>
+        <div class="flex-wrapper" style="display: flex;">
+        <span class="description-paragraph-span" style="height: 70px;"><p>${extendedDescription}</p></span>
         <br><br>
             <div class="wrapper" style="width: 100%;">
                 <div class="svg-item">
                     <svg width="250px" height="250px" viewBox="0 0 40 40" class="donut">
-                        CPU
                         <circle class="donut-hole" cx="20" cy="20" r="15.91549430918954" fill="#fff"></circle>
                         <circle class="donut-ring" cx="20" cy="20" r="15.91549430918954" fill="transparent" stroke-width="3.5"></circle>
-                        <circle style="stroke: ${cpuPieColor};" class="donut-segment donut-segment-cpu" cx="20" cy="20" r="15.91549430918954" fill="transparent" stroke-width="3.5" stroke-dasharray="${overallUsedCpuCoresPercentage} ${overallRemainingCpuCoresPercentage}" stroke-dashoffset="25"></circle>
+                        <circle style="stroke: ${cpuPieColour};" class="donut-segment donut-segment-cpu" cx="20" cy="20" r="15.91549430918954" fill="transparent" stroke-width="3.5" stroke-dasharray="${overallUsedCpuCoresPercentage} ${overallRemainingCpuCoresPercentage}" stroke-dashoffset="25"></circle>
                         <g class="donut-text donut-text-cpu">
-
-                            <text y="50%" transform="translate(0, 2)">
-                                <tspan x="50%" text-anchor="middle" class="donut-percent" style="fill: ${cpuPieColor};">${overallUsedCpuCoresPercentage}%</tspan>
+                            <text y="27%" transform="translate(0, 2)">
+                                <tspan x="50%" text-anchor="middle" class="donut-data pie-label">Processor</tspan>
                             </text>
-                            <text y="60%" transform="translate(0, 2)">
-                                <tspan x="50%" text-anchor="middle" class="donut-data">${overallTotalNeededCpuCores} CPU Cores</tspan>
+                            <text y="50%" transform="translate(0, 2)">
+                                <tspan x="50%" text-anchor="middle" class="donut-percent" style="fill: ${cpuPieTextColour};">${overallUsedCpuCoresPercentage}%</tspan>
+                            </text>
+                            <text y="63%" transform="translate(0, 2)">
+                                <tspan x="50%" text-anchor="middle" class="donut-data">${overallTotalNeededCpuCores} / ${totalSystemCores} Cores</tspan>
+                            </text>
+                        </g>
+                    </svg>
+                </div>
+
+                <div class="svg-item">
+                    
+                    <svg width="250px" height="250px" viewBox="0 0 40 40" class="donut">
+                        <circle class="donut-hole" cx="20" cy="20" r="15.91549430918954" fill="#fff"></circle>
+                        <circle class="donut-ring" cx="20" cy="20" r="15.91549430918954" fill="transparent" stroke-width="3.5"></circle>
+                        <circle style="stroke: ${memoryPieColour};" class="donut-segment donut-segment-memory" cx="20" cy="20" r="15.91549430918954" fill="transparent" stroke-width="3.5" stroke-dasharray="${overallUsedMemoryPercentage} ${overallRemainingMemoryPercentage}" stroke-dashoffset="25"></circle>
+                        <g class="donut-text donut-text-memory">
+                            <text y="27%" transform="translate(0, 2)">
+                                <tspan x="50%" text-anchor="middle" class="donut-data pie-label">Memory</tspan>
+                            </text>
+                            <text y="50%" transform="translate(0, 2)">
+                                <tspan x="50%" text-anchor="middle" class="donut-percent" style="fill: ${memoryPieTextColour};">${overallUsedMemoryPercentage}%</tspan>
+                            </text>
+                            <text y="63%" transform="translate(0, 2)">
+                                <tspan x="50%" text-anchor="middle" class="donut-data">${(overallTotalNeededMemory.toInteger() / 1024).toInteger()} / ${(totalPhysicalMemorySize / 1024).toInteger()} GB</tspan>
                             </text>
                         </g>
                     </svg>
@@ -436,42 +472,25 @@ try {
 
                 <div class="svg-item">
                     <svg width="250px" height="250px" viewBox="0 0 40 40" class="donut">
-                        Memory
                         <circle class="donut-hole" cx="20" cy="20" r="15.91549430918954" fill="#fff"></circle>
                         <circle class="donut-ring" cx="20" cy="20" r="15.91549430918954" fill="transparent" stroke-width="3.5"></circle>
-                        <circle style="stroke: ${memoryPieColor};" class="donut-segment donut-segment-memory" cx="20" cy="20" r="15.91549430918954" fill="transparent" stroke-width="3.5" stroke-dasharray="${overallUsedMemoryPercentage} ${overallRemainingMemoryPercentage}" stroke-dashoffset="25"></circle>
-                        <g class="donut-text donut-text-memory">
-
-                            <text y="50%" transform="translate(0, 2)">
-                                <tspan x="50%" text-anchor="middle" class="donut-percent" style="fill: ${memoryPieColor};">${overallUsedMemoryPercentage}%</tspan>
-                            </text>
-                            <text y="60%" transform="translate(0, 2)">
-                                <tspan x="50%" text-anchor="middle" class="donut-data">${overallTotalNeededMemory / 1024} GB Memory</tspan>
-                            </text>
-                        </g>++
-                    </svg>
-                </div>
-
-                <div class="svg-item">
-                    <svg width="250px" height="250px" viewBox="0 0 40 40" class="donut">
-                        Disk Space
-                        <circle class="donut-hole" cx="20" cy="20" r="15.91549430918954" fill="#fff"></circle>
-                        <circle class="donut-ring" cx="20" cy="20" r="15.91549430918954" fill="transparent" stroke-width="3.5"></circle>
-                        <circle style="stroke: ${diskPieColor};" class="donut-segment donut-segment-disk" cx="20" cy="20" r="15.91549430918954" fill="transparent" stroke-width="3.5" stroke-dasharray="${overallStorageNeededPercentage} ${overallRemainingPercentage}" stroke-dashoffset="25"></circle>
+                        <circle style="stroke: ${diskPieColour};" class="donut-segment donut-segment-disk" cx="20" cy="20" r="15.91549430918954" fill="transparent" stroke-width="3.5" stroke-dasharray="${overallStorageNeededPercentage} ${overallRemainingPercentage}" stroke-dashoffset="25"></circle>
                         <g class="donut-text donut-text-disk">
-
-                            <text y="50%" transform="translate(0, 2)">
-                                <tspan x="50%" text-anchor="middle" class="donut-percent" style="fill: ${diskPieColor};">${overallStorageNeededPercentage}%</tspan>
+                            <text y="27%" transform="translate(0, 2)">
+                                <tspan x="50%" text-anchor="middle" class="donut-data pie-label">Disk</tspan>
                             </text>
-                            <text y="60%" transform="translate(0, 2)">
-                                <tspan x="50%" text-anchor="middle" class="donut-data">${overallStorageRequired} GB Disk Space</tspan>
+                            <text y="50%" transform="translate(0, 2)">
+                                <tspan x="50%" text-anchor="middle" class="donut-percent" style="fill: ${diskPieTextColour};">${overallStorageNeededPercentage}%</tspan>
+                            </text>
+                            <text y="63%" transform="translate(0, 2)">
+                                <tspan x="50%" text-anchor="middle" class="donut-data">${overallStorageRequired} / ${remainingDiskSpace} GB</tspan>
                             </text>
                         </g>
                     </svg>
                 </div>
             </div>
             <br><br>
-        <div style="width: 100%; height: 140px; display: flex; justify-content: space-evenly;">
+        <div style="width: 100%; height: 120px; display: flex; justify-content: space-evenly;">
             <div class="flex-item">
                 <div class="table">
                     <div class="row">
@@ -499,22 +518,25 @@ try {
                         <div class="cell cell-value" id="summary-worker-nodes-number-value"></div>
                     </div>
                      <div class="row">
-                        <div class="cell cell-label">Selected Templates to Install</div>
+                        <div class="cell cell-label">Selected Install Groups</div>
                         <div class="cell cell-value" id="list-templates-to-install"></div>
                     </div>
                 </div>
             </div>
          </div>
 
-        <br><br><br>
             <div class="div-border-text-inline">
-                <h2 class="h2-header-in-line"><span class="span-h2-header-in-line">🚀 Launch KX.AS.CODE environment</span></h2>
+                <h2 class="h2-header-in-line"><span class="span-h2-header-in-line"><img class="svg-blue" src="/userContent/icons/rocket-launch-outline.svg" height="25" width="25">&nbsp;Launcher Config Panel</span></h2>
+                <div class="div-inner-h2-header-in-line-wrapper">
+                    <span class="description-paragraph-span"><p>Below you can see the last executed builds for each image tpe if there were any. If none, then click the play button for each type of node.</p></span>
+                </div>
                 <div class="div-inner-h2-header-in-line-wrapper">
                     <span style="vertical-align: middle; display: inline-block;">
                         <span class="launch-action-text-label" style="width: 50px;">Date: </span><span id="kx-launch-build-timestamp" class="build-action-text-value"></span>
-                        <span class="launch-action-text-label" style="width: 70px; ">Status: </span><span id="kx-launch-build-result" style="width: 100px; margin-right: 30px; display: inline-flex;"></span>
+                        <span class="launch-action-text-label" style="width: 70px; ">Status: </span><span id="kx-launch-build-result" style="width: 80px; margin-right: 20px;"></span>
                         <span class="launch-action-text-label" style="width: 100px;">Last Action: </span><span id="kx-launch-last-action" class="build-action-text-value" style="width: 50px;"></span>
-                        <span class="launch-action-text-label" style="width: 100px;">Running VMs: </span><span id="kx-launch-running-vms" class="build-action-text-value build-action-text-value-result" style="width: 150px;">Main: ${kxMainRunningVms.size()} Workers: ${kxWorkerRunningVms.size()}</span>
+                        <span class="launch-action-text-label" style="width: 100px;">KX-Version:</span><span id="kx-launch-build-kx-version" class="build-action-text-value build-action-text-value-result" style="width: 80px;"></span>
+                        <span class="launch-action-text-label" style="width: 115px;">Kube-Version:</span><span id="kx-launch-build-kube-version" class="build-action-text-value build-action-text-value-result" style="width: 80px;"></span>
                         <span class="build-number-span" id="kx-launch-build-number-link"></span>
                     </span>
                     <span class='span-rounded-border'>
@@ -526,6 +548,7 @@ try {
                     </span>
                 </div>
             </div>
+         </div>
     </div>
     <style scoped="scoped" onload="populateReviewTable(); getBuildJobListForProfile('KX.AS.CODE_Runtime_Actions', 'kx-launch');">   </style>
     </body>
@@ -534,3 +557,4 @@ try {
 } catch (e) {
     println "Something went wrong in the HTML return block (config_review_and_launch.groovy): ${e}"
 }
+

@@ -133,9 +133,10 @@
             <submoduleCfg class="list"/>
             <extensions/>
         </scm>
-        <scriptPath>base-vm/build/jenkins/pipelines/kx.as.code-runtime-actions.Jenkinsfile</scriptPath>
+        <scriptPath>base-vm/build/jenkins/job_definitions/declarative_pipelines/kx.as.code-runtime-actions.Jenkinsfile</scriptPath>
         <lightweight>true</lightweight>
     </definition>
     <triggers/>
+    <concurrentBuild>false</concurrentBuild>
     <disabled>false</disabled>
 </flow-definition>

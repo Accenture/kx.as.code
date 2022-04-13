@@ -49,7 +49,7 @@ function update_selected_value() {
     let profilePath = profilePaths[selectedOptionNumber] + '/profile-config.json'
     console.log("profileName: " + profilePath)
     document.getElementById("selected-profile-path").value = profilePath;
-    document.getElementById("selected-profile-path").setAttribute("selected-profile-path", profilePath) ;
+    document.getElementById("selected-profile-path").setAttribute("selected-profile-path", profilePath);
     let parentId = document.getElementById("selected-profile-path").parentNode.id;
     console.log(parentId);
     jQuery('#' + parentId).trigger('change');
@@ -88,6 +88,11 @@ function tidyUpInterface() {
             mainElementDiv.removeChild(c);
         }
     })
+
+    let parameterLabelElements = document.getElementsByClassName("jenkins-form-label");
+    for (let i = 0; i < parameterLabelElements.length; i++) {
+        parameterLabelElements[i].style.display = "none"
+    }
 
     let folderElements = document.getElementsByClassName("icon-folder");
     folderElements[0].className = "icon-folder icon-md";
@@ -370,6 +375,8 @@ async function getBuildJobListForProfile(job, nodeType) {
                     document.getElementById(nodeTypeVagrantAction + '-build-kube-version').innerText = kubeVersion;
                 } else if (nodeTypeVagrantAction === "up" || nodeTypeVagrantAction === "destroy" || nodeTypeVagrantAction === "halt") {
                     document.getElementById('kx-launch-last-action').innerText = nodeTypeVagrantAction;
+                    document.getElementById('kx-launch-build-kx-version').innerText = kxVersion;
+                    document.getElementById('kx-launch-build-kube-version').innerText = kubeVersion;
                 }
             })
 
@@ -386,7 +393,7 @@ async function getBuildJobListForProfile(job, nodeType) {
                 } else {
                     styleClass = 'build-result build-result-neutral';
                 }
-                document.getElementById(nodeType + "-build-result").innerHTML = '<span className="build-action-text-value build-action-text-value-result"style="width: 70px;">' + kxBuilds[0].result + '</span>';
+                document.getElementById(nodeType + "-build-result").innerHTML = '<span className="build-action-text-value build-action-text-value-result" style="width: 70px;">' + kxBuilds[0].result + '</span>';
                 document.getElementById(nodeType + "-build-result").className = styleClass;
                 document.getElementById(nodeType + "-build-number-link").innerHTML = "<a href='" + kxBuilds[0].url + "' target='_blank' rel='noopener noreferrer' style='font-weight: normal;'># " + kxBuilds[0].number + "</a>";
             } else {
@@ -398,9 +405,9 @@ async function getBuildJobListForProfile(job, nodeType) {
         } else {
             console.log('Did not find ' + nodeType + ' builds for profile');
             styleClass = 'build-result build-result-neutral';
+            document.getElementById(nodeType + "-build-result").innerText = 'n/a';
             document.getElementById(nodeType + "-build-result").className = styleClass;
             document.getElementById(nodeType + "-build-timestamp").innerText = "not run yet";
-            document.getElementById(nodeType + "-build-result").innerText = "n/a";
             document.getElementById(nodeType + "-build-number-link").innerText = "-";
             document.getElementById(nodeType + '-build-kx-version').innerText = "-";
             document.getElementById(nodeType + '-build-kube-version').innerText = "-";
@@ -646,9 +653,9 @@ async function showConsoleLog(job, nodeType) {
                         console.log("Jenkins Console Log Line: " + lines[line] + " | " + lines[line].includes('[Pipeline]'))
                         if ( ! lines[line].includes('[Pipeline]') ) {
                             consoleLine = lines[line] + '<br>';
-                            consoleLine = consoleLine.replace(/FAILURE/g, '<span style="color: red">FAILURE</span>')
-                            consoleLine = consoleLine.replace(/ERROR/g, '<span style="color: red">ERROR</span>')
-                            consoleLine = consoleLine.replace(/SUCCESS/g, '<span style="color: green">SUCCESS</span>')
+                            consoleLine = consoleLine.replace(/FAILURE/g, '<span style="color: var(--kx-error-red-100)">FAILURE</span>')
+                            consoleLine = consoleLine.replace(/ERROR/g, '<span style="color: var(--kx-error-red-100)">ERROR</span>')
+                            consoleLine = consoleLine.replace(/SUCCESS/g, '<span style="color: var(--kx-success-green-100)">SUCCESS</span>')
                             consoleLogDiv.innerHTML += consoleLine;
                             console.log(consoleLine);
                         } else {
@@ -730,6 +737,7 @@ function getCrumb() {
 }
 
 async function getAllJenkinsBuilds(job) {
+    console.log((new Error()).stack);
     console.log("DEBUG getAllJenkinsBuilds(job): " + job);
     let jenkinsCrumb = getCrumb().value;
     console.log("Jenkins Crumb received = " + jenkinsCrumb);
@@ -765,7 +773,7 @@ function populateReviewTable() {
     let numWorkerNodes = parseInt(document.getElementById("counter_value_worker_node_count_value").innerText);
     document.getElementById("summary-worker-nodes-number-value").innerText = numWorkerNodes;
     if (document.getElementById("concatenated-templates-list").value === "") {
-        document.getElementById("list-templates-to-install").innerHTML = "<i>No templates selected</i>"
+        document.getElementById("list-templates-to-install").innerHTML = "<i>None</i>"
     } else {
         let templatesList = document.getElementById("concatenated-templates-list").value;
         templatesList = templatesList.replaceAll(';', ', ');
@@ -780,8 +788,8 @@ async function performRuntimeAction(vagrantAction) {
     console.log("Jenkins Crumb received = " + jenkinsCrumb);
 
     let formData = new FormData();
-    formData.append('kx_main_version', document.getElementById("kx-main-version").innerText);
-    formData.append('kx_node_version', document.getElementById("kx-node-version").innerText);
+    formData.append('kx_main_version', document.getElementById("kx-main-vagrant-cloud-box-version").innerText);
+    formData.append('kx_node_version', document.getElementById("kx-node-vagrant-cloud-box-version").innerText);
     formData.append('num_kx_main_nodes', document.getElementById('counter_value_main_node_count_value').innerText);
     formData.append('num_kx_worker_nodes', document.getElementById('counter_value_worker_node_count_value').innerText);
     formData.append('dockerhub_email', '');
@@ -806,7 +814,7 @@ async function performRuntimeAction(vagrantAction) {
 function updateProfileAndPrereqsCheckTab() {
     getBuildJobListForProfile("KX.AS.CODE_Image_Builder", "kx-main");
     getBuildJobListForProfile("KX.AS.CODE_Image_Builder", "kx-node");
-    update_selected_value();
+    //update_selected_value();
     getAvailableLocalBoxes();
     getAvailableCloudBoxes()
     compareVersions();

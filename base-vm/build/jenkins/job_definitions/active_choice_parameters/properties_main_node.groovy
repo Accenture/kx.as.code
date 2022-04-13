@@ -48,7 +48,7 @@ try {
         mainNodeCountStartValue = main_node_count.toInteger()
         println("properties_main_node.groovy -> mainNodeCountStartValue: ${mainNodeCountStartValue} (Standalone Mode: FALSE)")
 
-        mainNodeCountOpacity = "0.7"
+        mainNodeCountOpacity = "1.0"
         mainNodeCountCursor = "pointer"
 
     } else {
@@ -120,7 +120,7 @@ try {
     <div id="headline-main-div" style="display: none;">
     <h1>Environment Resource Configuration</h1>
     <p>Here you can define how many physical resources you wish to allocate to the KX.AS.CODE virtual machines.</p>
-    <h2>KX-Main Parameters</h2>
+    <h2 style="margin-top: 30px;">KX-Main Parameters</h2>
     <span class="description-paragraph-span"><p>${extendedDescription }</p></span>
     </div>
     <div class="outerWrapper" id="main-node-count-div" style="display: none;">

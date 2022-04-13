@@ -73,6 +73,7 @@ try {
         <h1>General Parameters and Mode Selection</h1>
         <span class="description-paragraph-span"><p>${generalParamsExtendedDescription}</p></span>
         <h2>General Profile Parameters</h2>
+        <p style="margin-bottom: 20px">Changing the general parameters is optional. If you enter a base domain name, make sure it is a valid FQDN according to RFC1035</p>
         <div class="input-box-div">
             <span class="input-box-span">
                 <label for="general-param-base-domain" class="input-box-label">Base Domain</label>

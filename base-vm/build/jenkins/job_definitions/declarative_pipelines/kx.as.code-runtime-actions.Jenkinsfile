@@ -1,14 +1,16 @@
 def functions
 def kx_version
 def kube_version
+def virtualboxCliPath
+def vmwareCliPath
+def parallelsCliPath
 
 node('built-in') {
     dir(shared_workspace) {
-        echo shared_workspace
-        functions = load "${shared_workspace}/base-vm/build/jenkins/pipelines/shared-pipeline-functions.groovy"
+        functions = load "base-vm/build/jenkins/job_definitions/shared_functions/shared-pipeline-functions.groovy"
         println(functions)
         def node_type = ''
-        (kx_version, kube_version) = functions.setBuildEnvironment(profile,node_type,vagrant_action)
+        ( kx_version, kube_version, virtualboxCliPath, vmwareCliPath, parallelsCliPath ) = functions.setBuildEnvironment( profile,node_type, vagrant_action )
     }
 }
 
@@ -82,11 +84,11 @@ pipeline {
                             vagrant ${vagrant_action} --no-tty
                         fi
                         if [ "${profile}" == "virtualbox" ]; then
-                            VBoxManage list vms
+                            \"${virtualboxCliPath}\" list vms
                         elif [ "${profile}" == "parallels" ]; then
-                            prlctl list
+                            \"${parallelsCliPath}\" list
                         elif [ "${profile}" == "vmware-desktop" ]; then
-                            vmrun list
+                            \"${vmwareCliPath}\" list
                         fi
                         """
                     }
