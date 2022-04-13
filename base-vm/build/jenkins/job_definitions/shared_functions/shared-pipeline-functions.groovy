@@ -27,7 +27,7 @@ def setBuildEnvironment(profile,node_type,vagrant_action) {
         os="windows"
         packerOsFolder="windows"
         jqDownloadPath="${JQ_WINDOWS_DOWNLOAD_URL}"
-        vmWareDiskUtilityPath="c:/Program Files (x86)/VMware/VMware Workstation/vmware-vdiskmanager.exe"
+        vmWareDiskUtilityPath="C:/Program Files (x86)/VMware/VMware Workstation/vmware-vdiskmanager.exe"
         virtualboxCliPath = "C:/Program Files/Oracle/VirtualBox/VBoxManage.exe"
         vmwareCliPath = "C:/Program Files (x86)/VMware/VMware Workstation/vmrun.exe"
         parallelsCliPath = ""
