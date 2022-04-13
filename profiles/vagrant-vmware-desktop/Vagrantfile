@@ -115,7 +115,7 @@ WORKSPACE_HOME = File.dirname(File.expand_path('../..', __FILE__))
 Vagrant.configure("2") do |config|
     config.vm.define "kx-main1", primary: true do |subconfig|
         subconfig.vm.box = "kxascode/kx-main"
-        if File.exist?("#{WORKSPACE_HOME}/#{KX_MAIN_BOX_LOCATION}")
+        if !File.exist?("#{WORKSPACE_HOME}/#{KX_MAIN_BOX_LOCATION}")
             subconfig.vm.box_version = "#{MAIN_BOX_VERSION}"
         end
         subconfig.vm.hostname = "kx-main1"
@@ -179,7 +179,7 @@ Vagrant.configure("2") do |config|
     (2..MAIN_NODE_COUNT).each do |i|
       config.vm.define "kx-main#{i}", primary: false, autostart: false do |subconfig|
         subconfig.vm.box = "kxascode/kx-node"
-        if File.exist?("#{WORKSPACE_HOME}/#{KX_NODE_BOX_LOCATION}")
+        if !File.exist?("#{WORKSPACE_HOME}/#{KX_NODE_BOX_LOCATION}")
             subconfig.vm.box_version = "#{NODE_BOX_VERSION}"
         end
         subconfig.vm.hostname = "kx-main#{i}"
@@ -225,7 +225,7 @@ Vagrant.configure("2") do |config|
         config.vm.define "kx-worker#{i}" do |subconfig|
           subconfig.vm.box = "kx-node"
           subconfig.vm.box = "kxascode/kx-node"
-          if File.exist?("#{WORKSPACE_HOME}/#{KX_NODE_BOX_LOCATION}")
+          if !File.exist?("#{WORKSPACE_HOME}/#{KX_NODE_BOX_LOCATION}")
               subconfig.vm.box_version = "#{NODE_BOX_VERSION}"
           end
           subconfig.vm.hostname = "kx-worker#{i}"
