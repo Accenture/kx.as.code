@@ -1,6 +1,9 @@
 def functions
 def kx_version
 def kube_version
+def virtualboxCliPath
+def vmwareCliPath
+def parallelsCliPath
 
 node('built-in') {
     dir(shared_workspace) {
