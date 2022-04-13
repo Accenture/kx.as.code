@@ -4,7 +4,7 @@ def kube_version
 
 node('built-in') {
     dir(shared_workspace) {
-        functions = load "base-vm/build/jenkins/pipelines/shared-pipeline-functions.groovy"
+        functions = load "base-vm/build/jenkins/job_definitions/shared_functions/shared-pipeline-functions.groovy"
         println(functions)
         def vagrant_action = ''
         (kx_version, kube_version) = functions.setBuildEnvironment(profile,node_type,vagrant_action)

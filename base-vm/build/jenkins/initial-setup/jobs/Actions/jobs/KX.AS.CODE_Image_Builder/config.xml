@@ -120,7 +120,7 @@
       <submoduleCfg class="list"/>
       <extensions/>
     </scm>
-    <scriptPath>base-vm/build/jenkins/pipelines/kx.as.code-image-builder.Jenkinsfile</scriptPath>
+    <scriptPath>base-vm/build/jenkins/job_definitions/declarative_pipelines/kx.as.code-image-builder.Jenkinsfile</scriptPath>
     <lightweight>true</lightweight>
   </definition>
   <triggers/>
