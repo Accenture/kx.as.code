@@ -1,306 +1,306 @@
-import groovy.json.JsonSlurper
-import groovy.json.JsonBuilder
+    import groovy.json.JsonSlurper
+    import groovy.json.JsonBuilder
 
-import javax.swing.text.html.HTML
+    import javax.swing.text.html.HTML
 
-def githubKxVersion
-def githubKubeVersion
-def localKxVersion
-def localKubeVersion
-def vagrantPluginName
-def vagrantPluginVersion
-def vagrantVmwarePluginInstalled
-def vagrantParallelsPluginInstalled
-def parallelsExecutableExists
-def vboxExecutableExists
-def vmwareExecutableExists
-def boxesList = []
-def virtualboxMainExists
-def virtuallocalVagrantBoxMainVersion
-def virtualboxNodeExists
-def virtuallocalVagrantBoxNodeVersion
-def vmwareMainExists
-def vmwareMainVersion
-def vmwareNodeExists
-def vmwareNodeVersion
-def parallelsMainExists
-def parallelsMainVersion
-def parallelsNodeExists
-def parallelsNodeVersion
-def extendedDescription
-def profilePaths = []
-def boxDirectories = []
-def currentDir
-def virtualboxKxMainVagrantCloudVersion
-def virtualboxKxNodeVagrantCloudVersion
-def vmwareDesktopKxMainVagrantCloudVersion
-def vmwareDesktopKxNodeVagrantCloudVersion
-def parallelsKxMainVagrantCloudVersion
-def parallelsKxNodeVagrantCloudVersion
+    def githubKxVersion
+    def githubKubeVersion
+    def localKxVersion
+    def localKubeVersion
+    def vagrantPluginName
+    def vagrantPluginVersion
+    def vagrantVmwarePluginInstalled
+    def vagrantParallelsPluginInstalled
+    def parallelsExecutableExists
+    def vboxExecutableExists
+    def vmwareExecutableExists
+    def boxesList = []
+    def virtualboxMainExists
+    def virtuallocalVagrantBoxMainVersion
+    def virtualboxNodeExists
+    def virtuallocalVagrantBoxNodeVersion
+    def vmwareMainExists
+    def vmwareMainVersion
+    def vmwareNodeExists
+    def vmwareNodeVersion
+    def parallelsMainExists
+    def parallelsMainVersion
+    def parallelsNodeExists
+    def parallelsNodeVersion
+    def extendedDescription
+    def profilePaths = []
+    def boxDirectories = []
+    def currentDir
+    def virtualboxKxMainVagrantCloudVersion
+    def virtualboxKxNodeVagrantCloudVersion
+    def vmwareDesktopKxMainVagrantCloudVersion
+    def vmwareDesktopKxNodeVagrantCloudVersion
+    def parallelsKxMainVagrantCloudVersion
+    def parallelsKxNodeVagrantCloudVersion
 
-try {
+    try {
 
-    extendedDescription = "Welcome to KX.AS.CODE. In this panel you can select the profile. A check is made on the system to see if the necessary virtualization software and associated Vagrant plugins are installed, s well as availability of built Vagrant boxes. An attempt is made to automatically select the profile based on discovered pre-requisites."
+        extendedDescription = "Welcome to KX.AS.CODE. In this panel you can select the profile. A check is made on the system to see if the necessary virtualization software and associated Vagrant plugins are installed, s well as availability of built Vagrant boxes. An attempt is made to automatically select the profile based on discovered pre-requisites."
 
-    currentDir = new File(".").getAbsolutePath().replaceAll("\\\\", "/")
-    currentDir = currentDir.substring(0, currentDir.length() - 1)
-    println("PROFILE UPDATE CURRENT DIR: ${currentDir}")
+        currentDir = new File(".").getAbsolutePath().replaceAll("\\\\", "/")
+        currentDir = currentDir.substring(0, currentDir.length() - 1)
+        println("PROFILE UPDATE CURRENT DIR: ${currentDir}")
 
-    new File("${currentDir}/jenkins_shared_workspace/kx.as.code/profiles/").eachDirMatch(~/.*vagrant.*/) { profilePaths << it.path }
+        new File("${currentDir}/jenkins_shared_workspace/kx.as.code/profiles/").eachDirMatch(~/.*vagrant.*/) { profilePaths << it.path }
 
-    String underlyingOS
-    println profilePaths
+        String underlyingOS
+        println profilePaths
 
-    def OS = System.getProperty("os.name", "generic").toLowerCase(Locale.ENGLISH);
-    if ((OS.indexOf("mac") >= 0) || (OS.indexOf("darwin") >= 0)) {
-        underlyingOS = "darwin"
-    } else if (OS.indexOf("win") >= 0) {
-        underlyingOS = "windows"
-        profilePaths.removeAll { it.toLowerCase().endsWith('parallels') }
-    } else if (OS.indexOf("nux") >= 0) {
-        underlyingOS = "linux"
-    } else {
-        underlyingOS = "other"
-    }
-    println("After OS and before sort()")
-
-    profilePaths.sort()
-    profilePaths = profilePaths.join(",")
-    profilePaths = profilePaths.replaceAll("\\\\", "/")
-    println(profilePaths)
-    println("End of get_profiles.groovy GROOVY code")
-} catch(e) {
-    println("Something went wrong in the GROOVY block (select_profile_and_check_prereqs.groovy): ${e}")
-}
-
-try {
-
-    Process vagrantCloudAvailableKxBoxVersions = [ "vagrant", "cloud", "search", "kxascode", "--sort-by", "updated", "--provider", "virtualbox", "--json" ].execute()
-    def parsedVagrantCloudBoxesJson = new JsonSlurper().parseText(vagrantCloudAvailableKxBoxVersions.text)
-    println(parsedVagrantCloudBoxesJson)
-
-    def virtualboxKxMainVagrantCloudVersions = parsedVagrantCloudBoxesJson.findAll{it.providers == "virtualbox" && it.name == "kxascode/kx-main"}
-    def virtualboxKxNodeVagrantCloudVersions = parsedVagrantCloudBoxesJson.findAll{it.providers == "virtualbox" && it.name == "kxascode/kx-node"}
-
-    def vmwareDesktopKxMainVagrantCloudVersions = parsedVagrantCloudBoxesJson.findAll{it.providers == "vmware_desktop" && it.name == "kxascode/kx-main"}
-    def vmwareDesktopKxNodeVagrantCloudVersions = parsedVagrantCloudBoxesJson.findAll{it.providers == "vmware_desktop" && it.name == "kxascode/kx-node"}
-
-    def parallelsKxMainVagrantCloudVersions = parsedVagrantCloudBoxesJson.findAll{it.providers == "parallels" && it.name == "kxascode/kx-main"}
-    def parallelsKxNodeVagrantCloudVersions = parsedVagrantCloudBoxesJson.findAll{it.providers == "parallels" && it.name == "kxascode/kx-node"}
-
-    if (virtualboxKxMainVagrantCloudVersions) {
-        println("virtualboxKxMainVagrantCloudVersion: ${virtualboxKxMainVagrantCloudVersions[0].version}")
-        virtualboxKxMainVagrantCloudVersion = virtualboxKxMainVagrantCloudVersions[0].version
-    } else {
-        virtualboxKxMainVagrantCloudVersion = "-"
-    }
-
-    if (virtualboxKxNodeVagrantCloudVersions) {
-        println("virtualboxKxNodeVagrantCloudVersion: ${virtualboxKxNodeVagrantCloudVersions[0].version}")
-        virtualboxKxNodeVagrantCloudVersion = virtualboxKxNodeVagrantCloudVersions[0].version
-    } else {
-        virtualboxKxNodeVagrantCloudVersion = "-"
-    }
-
-    if (vmwareDesktopKxMainVagrantCloudVersions) {
-        println("vmwareDesktopKxMainVagrantCloudVersion: ${vmwareDesktopKxMainVagrantCloudVersions[0].version}")
-        vmwareDesktopKxMainVagrantCloudVersion = vmwareDesktopKxMainVagrantCloudVersions[0].version
-    } else {
-        vmwareDesktopKxMainVagrantCloudVersion = "-"
-    }
-
-    if (vmwareDesktopKxNodeVagrantCloudVersions) {
-        println("vmwareDesktopKxNodeVagrantCloudVersion: ${vmwareDesktopKxNodeVagrantCloudVersions[0].version}")
-        vmwareDesktopKxNodeVagrantCloudVersion = vmwareDesktopKxNodeVagrantCloudVersions[0].version
-    } else {
-        vmwareDesktopKxNodeVagrantCloudVersion = "-"
-    }
-
-    if (parallelsKxMainVagrantCloudVersions) {
-        println("parallelsKxMainVagrantCloudVersion: ${parallelsKxMainVagrantCloudVersions[0].version}")
-        parallelsKxMainVagrantCloudVersion = parallelsKxMainVagrantCloudVersions[0].version
-    } else {
-        parallelsKxMainVagrantCloudVersion = "-"
-    }
-
-    if (parallelsKxNodeVagrantCloudVersions) {
-        println("parallelsKxNodeVagrantCloudVersion: ${parallelsKxNodeVagrantCloudVersions[0].version}")
-        parallelsKxNodeVagrantCloudVersion = parallelsKxNodeVagrantCloudVersions[0].version
-    } else {
-        parallelsKxNodeVagrantCloudVersion = "-"
-    }
-
-} catch(e) {
-    println("Something went wrong in the GROOVY block -> getting vagrant cloud boxes (select_profile_and_check_prereqs.groovy): ${e}")
-}
-
-try {
-    println("Entered check prerequisites - BEGINNING")
-
-    //TODO - change this away from hardcoded user URL - current entry for debugging only
-    def githubVersionJson = new JsonSlurper().parse('https://raw.githubusercontent.com/patdel76/kx/main/versions.json'.toURL())
-    githubKxVersion = githubVersionJson.kxascode
-    githubKubeVersion = githubVersionJson.kubernetes
-    println("githubKxVersion: ${githubKxVersion}, githubKubeVersion: ${githubKubeVersion}")
-
-    def localVersionFile = "${currentDir}/jenkins_shared_workspace/kx.as.code/versions.json"
-    def localVersionJson = new File(localVersionFile)
-    def parsedLocalVersionJson = new JsonSlurper().parse(localVersionJson)
-
-    localKxVersion = parsedLocalVersionJson.kxascode
-    localKubeVersion = parsedLocalVersionJson.kubernetes
-
-    println("Check prerequisites - Before OS check")
-
-    def OS = System.getProperty("os.name", "generic").toLowerCase(Locale.ENGLISH);
-    def virtualboxPath
-    def vmwareWorkstationPath
-    def vmwareVagrantWorkstationPlugin = "vagrant-vmware-desktop"
-    def parallelsPath
-    def parallelsVagrantPlugin = "vagrant-parallels"
-
-    if ((OS.indexOf("mac") >= 0) || (OS.indexOf("darwin") >= 0)) {
-        underlyingOS = "darwin"
-        virtualboxPath = "/Applications/VirtualBox.app/Contents/MacOS/VirtualBox"
-        vmwareWorkstationPath = "/Applications/VMware Fusion.app/Contents/MacOS/VMware Fusion"
-        parallelsPath = "/Applications/Parallels Desktop.app/Contents/MacOS/prl_client_app"
-    } else if (OS.indexOf("win") >= 0) {
-        underlyingOS = "windows"
-        virtualboxPath = "C:/Program Files/Oracle/VirtualBox/VirtualBox.exe"
-        vmwareWorkstationPath = "C:/Program Files (x86)/VMware/VMware Workstation/vmware.exe"
-    } else if (OS.indexOf("nux") >= 0) {
-        underlyingOS = "linux"
-        virtualboxPath = "/usr/bin/VirtualBox"
-        vmwareWorkstationPath = "/usr/bin/vmware"
-    } else {
-        underlyingOS = "other"
-    }
-
-    println("Check prerequisites - After OS check")
-    def systemCheckJsonFilePath = "${currentDir}/jenkins_shared_workspace/kx.as.code/system-check.json"
-    def systemCheckJsonFile = new File(systemCheckJsonFilePath)
-
-    parallelsExecutableExists = ""
-    if (underlyingOS == "darwin") {
-        File parallelsExecutable = new File(parallelsPath)
-        parallelsExecutableExists = parallelsExecutable.exists()
-    } else {
-        parallelsExecutableExists = false
-    }
-
-    File vboxExecutable = new File(virtualboxPath)
-    vboxExecutableExists = vboxExecutable.exists()
-    println("vboxExecutableExists: ${vboxExecutableExists}")
-    File vmwareExecutable = new File(vmwareWorkstationPath)
-    vmwareExecutableExists = vmwareExecutable.exists()
-
-    vagrantPluginList = 'vagrant plugin list'.execute().text
-    vagrantPluginList = new String(vagrantPluginList).split('\n')
-
-    for (vagrantPlugin in vagrantPluginList) {
-        vagrantPluginSplit = vagrantPlugin.split(" ")
-        vagrantPluginName = vagrantPluginSplit[0]
-        vagrantPluginVersion = vagrantPluginSplit[1]
-        if (vagrantPluginName == "vagrant-vmware-desktop") {
-            vagrantVmwarePluginInstalled = true
-        } else if (vagrantPluginName == "vagrant-parallels") {
-            vagrantParallelsPluginInstalled = true
+        def OS = System.getProperty("os.name", "generic").toLowerCase(Locale.ENGLISH);
+        if ((OS.indexOf("mac") >= 0) || (OS.indexOf("darwin") >= 0)) {
+            underlyingOS = "darwin"
+        } else if (OS.indexOf("win") >= 0) {
+            underlyingOS = "windows"
+            profilePaths.removeAll { it.toLowerCase().endsWith('parallels') }
+        } else if (OS.indexOf("nux") >= 0) {
+            underlyingOS = "linux"
+        } else {
+            underlyingOS = "other"
         }
+        println("After OS and before sort()")
+
+        profilePaths.sort()
+        profilePaths = profilePaths.join(",")
+        profilePaths = profilePaths.replaceAll("\\\\", "/")
+        println(profilePaths)
+        println("End of get_profiles.groovy GROOVY code")
+    } catch (e) {
+        println("Something went wrong in the GROOVY block (select_profile_and_check_prereqs.groovy): ${e}")
     }
 
-    def builder = new JsonBuilder()
-    def jsonSlurper = new JsonSlurper()
+    try {
 
-    def vagrantJson = jsonSlurper.parseText('{ "system": { "vagrantVmwarePluginInstalled": "' + vagrantVmwarePluginInstalled + '", "vagrantParallelsPluginInstalled": "' + vagrantParallelsPluginInstalled + '", "parallelsExecutable": "' + parallelsExecutableExists + '", "vboxExecutable": "' + vboxExecutableExists + '", "vmwareExecutable": "' + vmwareExecutableExists + '"}}')
+        Process vagrantCloudAvailableKxBoxVersions = ["vagrant", "cloud", "search", "kxascode", "--sort-by", "updated", "--provider", "virtualbox", "--json"].execute()
+        def parsedVagrantCloudBoxesJson = new JsonSlurper().parseText(vagrantCloudAvailableKxBoxVersions.text)
+        println(parsedVagrantCloudBoxesJson)
 
-    println("vagrant: ${vagrantJson}")
+        def virtualboxKxMainVagrantCloudVersions = parsedVagrantCloudBoxesJson.findAll { it.providers == "virtualbox" && it.name == "kxascode/kx-main" }
+        def virtualboxKxNodeVagrantCloudVersions = parsedVagrantCloudBoxesJson.findAll { it.providers == "virtualbox" && it.name == "kxascode/kx-node" }
 
-    new File("${currentDir}/jenkins_shared_workspace/kx.as.code/base-vm/boxes/").eachDir {boxDirectories << it.name }
-    println(boxDirectories)
+        def vmwareDesktopKxMainVagrantCloudVersions = parsedVagrantCloudBoxesJson.findAll { it.providers == "vmware_desktop" && it.name == "kxascode/kx-main" }
+        def vmwareDesktopKxNodeVagrantCloudVersions = parsedVagrantCloudBoxesJson.findAll { it.providers == "vmware_desktop" && it.name == "kxascode/kx-node" }
 
-    def boxDirectoryList = []
-    def provider
-    def version
-    boxDirectories.eachWithIndex { boxDirectory, i ->
-        println boxDirectory
-        println i
-        boxProvider = boxDirectories[i].substring(0,boxDirectories[i].lastIndexOf("-"))
-        boxVersion = boxDirectories[i].substring(boxDirectories[i].substring(0,boxDirectories[i].lastIndexOf("-")).length()+1,boxDirectories[i].length())
-        println("provider: ${boxProvider}, version: ${boxVersion}")
+        def parallelsKxMainVagrantCloudVersions = parsedVagrantCloudBoxesJson.findAll { it.providers == "parallels" && it.name == "kxascode/kx-main" }
+        def parallelsKxNodeVagrantCloudVersions = parsedVagrantCloudBoxesJson.findAll { it.providers == "parallels" && it.name == "kxascode/kx-node" }
 
-        new File("${currentDir}/jenkins_shared_workspace/kx.as.code/base-vm/boxes/${boxDirectory}/").eachFile {boxDirectoryList << it.name }
-        boxDirectoryList.eachWithIndex { box, j ->
-            if (box.endsWith('.box')) {
-                boxName = box.substring(0,box.lastIndexOf("-"))
-                println("provider: ${boxProvider}, box: ${boxName}, version: ${boxVersion}")
-                if(boxName == "kx-main" || boxName == "kx-node") {
-                    boxesList.add('"' + boxName + " " + boxProvider + " " + boxVersion + '"')
-                    if (boxName == "kx-main" && boxProvider == "virtualbox") {
-                        virtualboxMainExists = "true"
-                        virtuallocalVagrantBoxMainVersion = boxVersion
-                    }
-                    if (boxName == "kx-node" && boxProvider == "virtualbox") {
-                        virtualboxNodeExists = "true"
-                        virtuallocalVagrantBoxNodeVersion = boxVersion
-                    }
-                    if (boxName == "kx-main" && boxProvider == "vmware-desktop") {
-                        vmwareMainExists = "true"
-                        vmwareMainVersion = boxVersion
+        if (virtualboxKxMainVagrantCloudVersions) {
+            println("virtualboxKxMainVagrantCloudVersion: ${virtualboxKxMainVagrantCloudVersions[0].version}")
+            virtualboxKxMainVagrantCloudVersion = virtualboxKxMainVagrantCloudVersions[0].version
+        } else {
+            virtualboxKxMainVagrantCloudVersion = "-"
+        }
 
-                    }
-                    if (boxName == "kx-node" && boxProvider == "vmware-desktop") {
-                        vmwareNodeExists = "true"
-                        vmwareNodeVersion = boxVersion
+        if (virtualboxKxNodeVagrantCloudVersions) {
+            println("virtualboxKxNodeVagrantCloudVersion: ${virtualboxKxNodeVagrantCloudVersions[0].version}")
+            virtualboxKxNodeVagrantCloudVersion = virtualboxKxNodeVagrantCloudVersions[0].version
+        } else {
+            virtualboxKxNodeVagrantCloudVersion = "-"
+        }
 
-                    }
-                    if (boxName == "kx-main" && boxProvider == "parallels") {
-                        parallelsMainExists = "true"
-                        parallelsMainVersion = boxVersion
+        if (vmwareDesktopKxMainVagrantCloudVersions) {
+            println("vmwareDesktopKxMainVagrantCloudVersion: ${vmwareDesktopKxMainVagrantCloudVersions[0].version}")
+            vmwareDesktopKxMainVagrantCloudVersion = vmwareDesktopKxMainVagrantCloudVersions[0].version
+        } else {
+            vmwareDesktopKxMainVagrantCloudVersion = "-"
+        }
 
-                    }
-                    if (boxName == "kx-node" && boxProvider == "parallels") {
-                        parallelsNodeExists = "true"
-                        parallelsNodeVersion = boxVersion
+        if (vmwareDesktopKxNodeVagrantCloudVersions) {
+            println("vmwareDesktopKxNodeVagrantCloudVersion: ${vmwareDesktopKxNodeVagrantCloudVersions[0].version}")
+            vmwareDesktopKxNodeVagrantCloudVersion = vmwareDesktopKxNodeVagrantCloudVersions[0].version
+        } else {
+            vmwareDesktopKxNodeVagrantCloudVersion = "-"
+        }
+
+        if (parallelsKxMainVagrantCloudVersions) {
+            println("parallelsKxMainVagrantCloudVersion: ${parallelsKxMainVagrantCloudVersions[0].version}")
+            parallelsKxMainVagrantCloudVersion = parallelsKxMainVagrantCloudVersions[0].version
+        } else {
+            parallelsKxMainVagrantCloudVersion = "-"
+        }
+
+        if (parallelsKxNodeVagrantCloudVersions) {
+            println("parallelsKxNodeVagrantCloudVersion: ${parallelsKxNodeVagrantCloudVersions[0].version}")
+            parallelsKxNodeVagrantCloudVersion = parallelsKxNodeVagrantCloudVersions[0].version
+        } else {
+            parallelsKxNodeVagrantCloudVersion = "-"
+        }
+
+    } catch (e) {
+        println("Something went wrong in the GROOVY block -> getting vagrant cloud boxes (select_profile_and_check_prereqs.groovy): ${e}")
+    }
+
+    try {
+        println("Entered check prerequisites - BEGINNING")
+
+        //TODO - change this away from hardcoded user URL - current entry for debugging only
+        def githubVersionJson = new JsonSlurper().parse('https://raw.githubusercontent.com/patdel76/kx/main/versions.json'.toURL())
+        githubKxVersion = githubVersionJson.kxascode
+        githubKubeVersion = githubVersionJson.kubernetes
+        println("githubKxVersion: ${githubKxVersion}, githubKubeVersion: ${githubKubeVersion}")
+
+        def localVersionFile = "${currentDir}/jenkins_shared_workspace/kx.as.code/versions.json"
+        def localVersionJson = new File(localVersionFile)
+        def parsedLocalVersionJson = new JsonSlurper().parse(localVersionJson)
+
+        localKxVersion = parsedLocalVersionJson.kxascode
+        localKubeVersion = parsedLocalVersionJson.kubernetes
+
+        println("Check prerequisites - Before OS check")
+
+        def OS = System.getProperty("os.name", "generic").toLowerCase(Locale.ENGLISH);
+        def virtualboxPath
+        def vmwareWorkstationPath
+        def vmwareVagrantWorkstationPlugin = "vagrant-vmware-desktop"
+        def parallelsPath
+        def parallelsVagrantPlugin = "vagrant-parallels"
+
+        if ((OS.indexOf("mac") >= 0) || (OS.indexOf("darwin") >= 0)) {
+            underlyingOS = "darwin"
+            virtualboxPath = "/Applications/VirtualBox.app/Contents/MacOS/VirtualBox"
+            vmwareWorkstationPath = "/Applications/VMware Fusion.app/Contents/MacOS/VMware Fusion"
+            parallelsPath = "/Applications/Parallels Desktop.app/Contents/MacOS/prl_client_app"
+        } else if (OS.indexOf("win") >= 0) {
+            underlyingOS = "windows"
+            virtualboxPath = "C:/Program Files/Oracle/VirtualBox/VirtualBox.exe"
+            vmwareWorkstationPath = "C:/Program Files (x86)/VMware/VMware Workstation/vmware.exe"
+        } else if (OS.indexOf("nux") >= 0) {
+            underlyingOS = "linux"
+            virtualboxPath = "/usr/bin/VirtualBox"
+            vmwareWorkstationPath = "/usr/bin/vmware"
+        } else {
+            underlyingOS = "other"
+        }
+
+        println("Check prerequisites - After OS check")
+        def systemCheckJsonFilePath = "${currentDir}/jenkins_shared_workspace/kx.as.code/system-check.json"
+        def systemCheckJsonFile = new File(systemCheckJsonFilePath)
+
+        parallelsExecutableExists = ""
+        if (underlyingOS == "darwin") {
+            File parallelsExecutable = new File(parallelsPath)
+            parallelsExecutableExists = parallelsExecutable.exists()
+        } else {
+            parallelsExecutableExists = false
+        }
+
+        File vboxExecutable = new File(virtualboxPath)
+        vboxExecutableExists = vboxExecutable.exists()
+        println("vboxExecutableExists: ${vboxExecutableExists}")
+        File vmwareExecutable = new File(vmwareWorkstationPath)
+        vmwareExecutableExists = vmwareExecutable.exists()
+
+        vagrantPluginList = 'vagrant plugin list'.execute().text
+        vagrantPluginList = new String(vagrantPluginList).split('\n')
+
+        for (vagrantPlugin in vagrantPluginList) {
+            vagrantPluginSplit = vagrantPlugin.split(" ")
+            vagrantPluginName = vagrantPluginSplit[0]
+            vagrantPluginVersion = vagrantPluginSplit[1]
+            if (vagrantPluginName == "vagrant-vmware-desktop") {
+                vagrantVmwarePluginInstalled = true
+            } else if (vagrantPluginName == "vagrant-parallels") {
+                vagrantParallelsPluginInstalled = true
+            }
+        }
+
+        def builder = new JsonBuilder()
+        def jsonSlurper = new JsonSlurper()
+
+        def vagrantJson = jsonSlurper.parseText('{ "system": { "vagrantVmwarePluginInstalled": "' + vagrantVmwarePluginInstalled + '", "vagrantParallelsPluginInstalled": "' + vagrantParallelsPluginInstalled + '", "parallelsExecutable": "' + parallelsExecutableExists + '", "vboxExecutable": "' + vboxExecutableExists + '", "vmwareExecutable": "' + vmwareExecutableExists + '"}}')
+
+        println("vagrant: ${vagrantJson}")
+
+        new File("${currentDir}/jenkins_shared_workspace/kx.as.code/base-vm/boxes/").eachDir { boxDirectories << it.name }
+        println(boxDirectories)
+
+        def boxDirectoryList = []
+        def provider
+        def version
+        boxDirectories.eachWithIndex { boxDirectory, i ->
+            println boxDirectory
+            println i
+            boxProvider = boxDirectories[i].substring(0, boxDirectories[i].lastIndexOf("-"))
+            boxVersion = boxDirectories[i].substring(boxDirectories[i].substring(0, boxDirectories[i].lastIndexOf("-")).length() + 1, boxDirectories[i].length())
+            println("provider: ${boxProvider}, version: ${boxVersion}")
+
+            new File("${currentDir}/jenkins_shared_workspace/kx.as.code/base-vm/boxes/${boxDirectory}/").eachFile { boxDirectoryList << it.name }
+            boxDirectoryList.eachWithIndex { box, j ->
+                if (box.endsWith('.box')) {
+                    boxName = box.substring(0, box.lastIndexOf("-"))
+                    println("provider: ${boxProvider}, box: ${boxName}, version: ${boxVersion}")
+                    if (boxName == "kx-main" || boxName == "kx-node") {
+                        boxesList.add('"' + boxName + " " + boxProvider + " " + boxVersion + '"')
+                        if (boxName == "kx-main" && boxProvider == "virtualbox") {
+                            virtualboxMainExists = "true"
+                            virtuallocalVagrantBoxMainVersion = boxVersion
+                        }
+                        if (boxName == "kx-node" && boxProvider == "virtualbox") {
+                            virtualboxNodeExists = "true"
+                            virtuallocalVagrantBoxNodeVersion = boxVersion
+                        }
+                        if (boxName == "kx-main" && boxProvider == "vmware-desktop") {
+                            vmwareMainExists = "true"
+                            vmwareMainVersion = boxVersion
+
+                        }
+                        if (boxName == "kx-node" && boxProvider == "vmware-desktop") {
+                            vmwareNodeExists = "true"
+                            vmwareNodeVersion = boxVersion
+
+                        }
+                        if (boxName == "kx-main" && boxProvider == "parallels") {
+                            parallelsMainExists = "true"
+                            parallelsMainVersion = boxVersion
+
+                        }
+                        if (boxName == "kx-node" && boxProvider == "parallels") {
+                            parallelsNodeExists = "true"
+                            parallelsNodeVersion = boxVersion
+                        }
                     }
                 }
             }
         }
+        println(boxesList)
+        println("All boxes: " + boxesList)
+        println("0: " + boxesList[0])
+        println("1: " + boxesList[1])
+
+        def boxesJson = jsonSlurper.parseText('{ "boxes": { "virtualboxMainExists": "' + virtualboxMainExists + '", "virtuallocalVagrantBoxMainVersion": "' + virtuallocalVagrantBoxMainVersion + '", "virtualboxNodeExists": "' + virtualboxNodeExists + '", "virtuallocalVagrantBoxNodeVersion": "' + virtuallocalVagrantBoxNodeVersion + '", "vmwareMainExists": "' + vmwareMainExists + '", "vmwareMainVersion": "' + vmwareMainVersion + '", "vmwareNodeExists": "' + vmwareNodeExists + '", "vmwareNodeVersion": "' + vmwareNodeVersion + '", "parallelsMainExists": "' + parallelsMainExists + '", "parallelsMainVersion": "' + parallelsMainVersion + '", "parallelsNodeExists": "' + parallelsNodeExists + '", "parallelsNodeVersion": "' + parallelsNodeVersion + '"}}')
+
+        println(boxesJson)
+
+        try {
+            builder boxesJson
+            builder vagrantJson
+
+            def mergedJson = boxesJson + vagrantJson
+
+            builder mergedJson
+
+            println builder.toPrettyString()
+
+            new File(systemCheckJsonFilePath).write(builder.toPrettyString())
+        } catch (e) {
+            println("Error creating and writing system check JSON file: " + e)
+        }
+
+        //println("existingBoxes" + existingBoxes)
+        println("Check prerequisites - END")
+
+    } catch (e) {
+        println "Something went wrong in the GROOVY block (select_profile_and_check_prereqs.groovy): ${e}"
     }
-    println(boxesList)
-    println("All boxes: " + boxesList)
-    println("0: " + boxesList[0])
-    println("1: " + boxesList[1])
 
-    def boxesJson = jsonSlurper.parseText('{ "boxes": { "virtualboxMainExists": "' + virtualboxMainExists + '", "virtuallocalVagrantBoxMainVersion": "' + virtuallocalVagrantBoxMainVersion + '", "virtualboxNodeExists": "' + virtualboxNodeExists + '", "virtuallocalVagrantBoxNodeVersion": "' + virtuallocalVagrantBoxNodeVersion + '", "vmwareMainExists": "' + vmwareMainExists + '", "vmwareMainVersion": "' + vmwareMainVersion + '", "vmwareNodeExists": "' + vmwareNodeExists + '", "vmwareNodeVersion": "' + vmwareNodeVersion + '", "parallelsMainExists": "' + parallelsMainExists + '", "parallelsMainVersion": "' + parallelsMainVersion + '", "parallelsNodeExists": "' + parallelsNodeExists + '", "parallelsNodeVersion": "' + parallelsNodeVersion + '"}}')
-
-    println(boxesJson)
 
     try {
-        builder boxesJson
-        builder vagrantJson
-
-        def mergedJson = boxesJson + vagrantJson
-
-        builder mergedJson
-
-        println builder.toPrettyString()
-
-        new File(systemCheckJsonFilePath).write(builder.toPrettyString())
-    } catch (e) {
-        println("Error creating and writing system check JSON file: " + e)
-    }
-
-    //println("existingBoxes" + existingBoxes)
-    println("Check prerequisites - END")
-
-} catch(e) {
-    println "Something went wrong in the GROOVY block (select_profile_and_check_prereqs.groovy): ${e}"
-}
-
-
-try {
-    // language=HTML
-    def HTML = """
+        // language=HTML
+        def HTML = """
       <script>
             function getLocalKxVersion() {
                 let localKxVersion = "${localKxVersion}";
@@ -608,7 +608,7 @@ try {
         </div>
     </body>
     """
-    return HTML
-} catch (e) {
-    println "Something went wrong in the HTML return block (select_profile_and_check_prereqs.groovy): ${e}"
-}
+        return HTML
+    } catch (e) {
+        println "Something went wrong in the HTML return block (select_profile_and_check_prereqs.groovy): ${e}"
+    }

@@ -524,8 +524,8 @@ try {
                         <span class="launch-action-text-label" style="width: 50px;">Date: </span><span id="kx-launch-build-timestamp" class="build-action-text-value"></span>
                         <span class="launch-action-text-label" style="width: 70px; ">Status: </span><span id="kx-launch-build-result" style="width: 80px; margin-right: 20px; display: inline-flex;"></span>
                         <span class="launch-action-text-label" style="width: 100px;">Last Action: </span><span id="kx-launch-last-action" class="build-action-text-value" style="width: 50px;"></span>
-                        <span class="launch-action-text-label" style="width: 100px;">KX-Version:</span><span id="kx-launch-build-kx-version" class="build-action-text-value build-action-text-value-result" style="width: 80px;">}</span>
-                        <span class="launch-action-text-label" style="width: 115px;">Kube-Version:</span><span id="kx-launch-build-kube-version" class="build-action-text-value build-action-text-value-result" style="width: 80px;">}</span>
+                        <span class="launch-action-text-label" style="width: 100px;">KX-Version:</span><span id="kx-launch-build-kx-version" class="build-action-text-value build-action-text-value-result" style="width: 80px;"></span>
+                        <span class="launch-action-text-label" style="width: 115px;">Kube-Version:</span><span id="kx-launch-build-kube-version" class="build-action-text-value build-action-text-value-result" style="width: 80px;"></span>
                         <span class="build-number-span" id="kx-launch-build-number-link"></span>
                     </span>
                     <span class='span-rounded-border'>
