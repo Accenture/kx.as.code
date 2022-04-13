@@ -375,6 +375,8 @@ async function getBuildJobListForProfile(job, nodeType) {
                     document.getElementById(nodeTypeVagrantAction + '-build-kube-version').innerText = kubeVersion;
                 } else if (nodeTypeVagrantAction === "up" || nodeTypeVagrantAction === "destroy" || nodeTypeVagrantAction === "halt") {
                     document.getElementById('kx-launch-last-action').innerText = nodeTypeVagrantAction;
+                    document.getElementById('kx-launch-build-kx-version').innerText = kxVersion;
+                    document.getElementById('kx-launch-build-kube-version').innerText = kubeVersion;
                 }
             })
 
