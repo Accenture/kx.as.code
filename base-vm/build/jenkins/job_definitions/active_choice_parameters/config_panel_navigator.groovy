@@ -124,6 +124,8 @@ try {
                                 updateNavigationFooter("config-panel-template-selection", "config-panel-kx-summary-start");
                                 break;
                             case "config-panel-kx-summary-start":
+                                populateReviewTable(); 
+                                getBuildJobListForProfile('KX.AS.CODE_Runtime_Actions', 'kx-launch');
                                 moveDivToConfigPanel("review-and-launch-div");
                                 updateNavigationFooter("config-panel-user-provisioning", "");
                                 break;
@@ -231,7 +233,8 @@ try {
 
             function loadFirstConfigPanel() {
                 waitForElement('profile-builds-div',function(){
-                    document.getElementById("config-placeholder").removeChild(document.getElementById("grid-spinner"));
+                    //document.getElementById("config-placeholder").removeChild(document.getElementById("grid-spinner"));
+                    document.getElementById("grid-spinner").style.display = "none";
                     change_panel_selection('config-panel-profile-selection');
                 });
             }
