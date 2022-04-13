@@ -124,5 +124,6 @@
     <lightweight>true</lightweight>
   </definition>
   <triggers/>
+  <concurrentBuild>false</concurrentBuild>
   <disabled>false</disabled>
 </flow-definition>

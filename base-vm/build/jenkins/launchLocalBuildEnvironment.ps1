@@ -337,7 +337,7 @@ New-Item -Path "$JENKINS_HOME\jobs" -Name "logfiles" -ItemType "directory"
 Copy-Item -Path ".\initial-setup\*" -Destination "$JENKINS_HOME\" -Recurse -Force
 Get-ChildItem "$JENKINS_HOME\jobs" -Recurse -Filter config.xml |
 Foreach-Object {
-    Write-Output "Replacing parameters in job XML defintion file $(Write-Output $_.FullName)"
+    Write-Output "Replacing parameters in job XML definition file $(Write-Output $_.FullName)"
     $filename = $_.FullName
     $tempFilePath = "$filename.tmp"
     select-string -path $_.FullName -pattern '(?<={{)(.*?)(?=}})' -allmatches  |
@@ -348,10 +348,23 @@ Foreach-Object {
                 (Get-Content -path $filename -Raw) -replace "{{$((Get-Variable -Name "$($_)").Name)}}","$((Get-Variable -Name "$($_)").Value)" | Set-Content -Path $tempFilePath
                 Move-Item -Path $tempFilePath -Destination $filename -Force
             }
-            (Get-Content -path $filename -Raw) -replace "base-vm/build/jenkins/","base-vm\build\jenkins\" | Set-Content -Path $tempFilePath
             Move-Item -Path $tempFilePath -Destination $filename -Force
 
 }
+
+# Replace mustache variables in main Jenkins config.xml file
+$filename = "$JENKINS_HOME\config.xml"
+Write-Output "Replacing parameters in Jenkins main XML configuration file $(Write-Output $filename)"
+$tempFilePath = "$filename.tmp"
+select-string -path $filename -pattern '(?<={{)(.*?)(?=}})' -allmatches  |
+    foreach-object {$_.matches} |
+        foreach-object {$_.groups[1].value} |
+            Select-Object -Unique |
+            ForEach-Object {
+                (Get-Content -path $filename -Raw) -replace "{{$((Get-Variable -Name "$($_)").Name)}}","$((Get-Variable -Name "$($_)").Value)" | Set-Content -Path $tempFilePath
+                Move-Item -Path $tempFilePath -Destination $filename -Force
+            }
+            Move-Item -Path $tempFilePath -Destination $filename -Force
 
 # Set jenkins_home and start Jenkins
 # Start manually for debugging with Start-Process -FilePath .\java\jdk11.0.3_7\bin\java.exe -ArgumentList "-jar", ".\jenkins.war", "--httpListenAddress=127.0.0.1", "--httpPort=8081"

@@ -274,9 +274,6 @@ if [ ! -f ${jenkins_home}/jenkins.install.InstallUtil.lastExecVersion ]; then
     echo "${jenkinsDownloadVersion}" > ${jenkins_home}/jenkins.install.InstallUtil.lastExecVersion
 fi
 
-# Create shared directories for Vagrant and Terraform jobs
-#export shared_workspace_base_directory_path="${workdir_absolute_path}/workspace/shared_workspace"
-#export shared_workspace_directory_path="${shared_workspace_base_directory_path}/kx.as.code"
 # Create shared workspace directory for Vagrant and Terraform jobs
 shared_workspace_base_directory_path="$(pwd)/jenkins_shared_workspace"
 export shared_workspace_directory_path="${shared_workspace_base_directory_path}/kx.as.code"
