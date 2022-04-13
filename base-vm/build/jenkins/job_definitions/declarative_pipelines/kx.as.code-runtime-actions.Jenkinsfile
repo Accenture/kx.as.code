@@ -10,7 +10,7 @@ node('built-in') {
         functions = load "base-vm/build/jenkins/job_definitions/shared_functions/shared-pipeline-functions.groovy"
         println(functions)
         def node_type = ''
-        (kx_version, kube_version, virtualboxCliPath, vmwareCliPath, parallelsCliPath) = functions.setBuildEnvironment(profile,node_type,vagrant_action)
+        ( kx_version, kube_version, virtualboxCliPath, vmwareCliPath, parallelsCliPath ) = functions.setBuildEnvironment( profile,node_type, vagrant_action )
     }
 }
 
@@ -84,11 +84,11 @@ pipeline {
                             vagrant ${vagrant_action} --no-tty
                         fi
                         if [ "${profile}" == "virtualbox" ]; then
-                            ${virtualboxCliPath} list vms
+                            \"${virtualboxCliPath}\" list vms
                         elif [ "${profile}" == "parallels" ]; then
-                            ${parallelsCliPath} list
+                            \"${parallelsCliPath}\" list
                         elif [ "${profile}" == "vmware-desktop" ]; then
-                            ${vmwareCliPath} list
+                            \"${vmwareCliPath}\" list
                         fi
                         """
                     }
