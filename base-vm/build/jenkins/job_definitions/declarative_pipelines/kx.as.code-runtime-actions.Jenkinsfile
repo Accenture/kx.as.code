@@ -81,11 +81,11 @@ pipeline {
                             vagrant ${vagrant_action} --no-tty
                         fi
                         if [ "${profile}" == "virtualbox" ]; then
-                            VBoxManage list vms
+                            ${virtualboxCliPath} list vms
                         elif [ "${profile}" == "parallels" ]; then
-                            prlctl list
+                            ${parallelsCliPath} list
                         elif [ "${profile}" == "vmware-desktop" ]; then
-                            vmrun list
+                            ${vmwareCliPath} list
                         fi
                         """
                     }
