@@ -48,7 +48,7 @@ try {
         workerNodeCountStartValue = worker_node_count.toInteger()
         println("properties_worker_node.groovy -> workerNodeCountStartValue: ${workerNodeCountStartValue} (Standalone Mode: FALSE)")
 
-        workerNodeCountOpacity = "0.7"
+        workerNodeCountOpacity = "1.0"
         workerNodeCountCursor = "pointer"
 
     } else {
@@ -118,7 +118,7 @@ try {
     // language=HTML
     def HTML = """
     <div id="headline-workers-div" style="display: none;">
-    <h2>KX-Worker Parameters</h2>
+    <h2 style="margin-top: 40px;">KX-Worker Parameters</h2>
     <span class="description-paragraph-span"><p>${extendedDescription }</p></span>
     </div>
 
