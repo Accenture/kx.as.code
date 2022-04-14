@@ -577,7 +577,7 @@
                 <div style="width: 100%;">
                     <span style="width: 940px;">
                         <span class="build-action-text-label" style="width: 150px">KX-Main Build Date: </span><span id="kx-main-build-timestamp" class="build-action-text-value"></span>
-                        <span class="build-action-text-label" style="width: 100px;">Build Status: </span><span id="kx-main-build-result" class="build-action-text-value build-action-text-value-result" style="width: 100px; margin-right: 20px; display: inline-block; line-height: normal;"></span>
+                        <span class="build-action-text-label" style="width: 100px;">Build Status: </span><span id="kx-main-build-result" class="build-action-text-value build-action-text-value-result" style="width: 100px; margin-right: 20px; display: inline-table; line-height: normal;"></span>
                         <span class="build-action-text-label" style="width: 110px; margin-left: 30px;">Build Version: </span><span id="kx-main-build-kx-version" style="width: 100px;" class="build-action-text-value build-action-text-value-result"></span>
                         <span class="build-action-text-label" style="width: 110px;">Kube Version: </span><span id="kx-main-build-kube-version" style="width: 80px;" class="build-action-text-value build-action-text-value-result"></span>
                         <span class="build-number-span" style="margin-right: 25px;" id="kx-main-build-number-link"></span>
@@ -592,7 +592,7 @@
                     <div style="width: 100%;">
                         <span style="width: 940px;">
                         <span class="build-action-text-label" style="width: 150px">KX-Node Build Date: </span><span id="kx-node-build-timestamp" class="build-action-text-value"></span>
-                        <span class="build-action-text-label" style="width: 100px;">Build Status: </span><span id="kx-node-build-result" class="build-action-text-value build-action-text-value-result" style="width: 100px; margin-right: 20px; display: inline-block; line-height: normal;"></span>
+                        <span class="build-action-text-label" style="width: 100px;">Build Status: </span><span id="kx-node-build-result" class="build-action-text-value build-action-text-value-result" style="width: 100px; margin-right: 20px; display: inline-table; line-height: normal;"></span>
                         <span class="build-action-text-label" style="width: 110px; margin-left: 30px;">Build Version: </span><span id="kx-node-build-kx-version" style="width: 100px;" class="build-action-text-value build-action-text-value-result"></span>
                         <span class="build-action-text-label" style="width: 110px;">Kube Version: </span><span id="kx-node-build-kube-version" style="width: 80px;" class="build-action-text-value build-action-text-value-result"></span>
                         <span class="build-number-span" style="margin-right: 25px;" id="kx-node-build-number-link"></span>
