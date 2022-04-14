@@ -424,9 +424,10 @@ try {
             }
 
         </style>
+
     <body>
       <div id="review-and-launch-div" style="display: none;">
-        <div style="display: inline-flex; vertical-align: middle; flex-wrap: nowrap;"><span><h1>Review &amp; Launch</h1></span><span id="kx-launch-running-vms" onLoad='if (${kxMainRunningVms.size()} > 0) { document.getElementById(this.id).style.display = "inline-block" } else { document.getElementById(this.id).style.display = "none" }' data-text="KX.AS.CODE is already running! Main nodes: ${kxMainRunningVms.size()} Workers nodes: ${kxWorkerRunningVms.size()}" class="warning-span-large tooltip"><img src="/userContent/icons/triangle-exclamation-solid.svg" class="warn-image-large svg-orange-red" alt="already_running_warning" /></span></div>
+        <div style="display: inline-flex; vertical-align: middle; flex-wrap: nowrap;"><span><h1>Review &amp; Launch</h1></span><span id="kx-launch-running-vms" data-text="KX.AS.CODE is already running! Main nodes: ${kxMainRunningVms.size()} Workers nodes: ${kxWorkerRunningVms.size()}" class="warning-span-large tooltip"><img src="/userContent/icons/triangle-exclamation-solid.svg" class="warn-image-large svg-orange-red" alt="already_running_warning" /></span></div>
         <div class="flex-wrapper" style="display: flex;">
         <span class="description-paragraph-span" style="height: 70px;"><p>${extendedDescription}</p></span>
         <br><br>
@@ -533,7 +534,7 @@ try {
                 <div class="div-inner-h2-header-in-line-wrapper">
                     <span style="vertical-align: middle; display: inline-block;">
                         <span class="launch-action-text-label" style="width: 50px;">Date: </span><span id="kx-launch-build-timestamp" class="build-action-text-value"></span>
-                        <span class="launch-action-text-label" style="width: 70px; ">Status: </span><span id="kx-launch-build-result" style="width: 80px; margin-right: 20px;"></span>
+                        <span class="launch-action-text-label" style="width: 70px; ">Status: </span><span id="kx-launch-build-result" style="width: 80px; margin-right: 20px; display: inline-table;"></span>
                         <span class="launch-action-text-label" style="width: 100px;">Last Action: </span><span id="kx-launch-last-action" class="build-action-text-value" style="width: 50px;"></span>
                         <span class="launch-action-text-label" style="width: 100px;">KX-Version:</span><span id="kx-launch-build-kx-version" class="build-action-text-value build-action-text-value-result" style="width: 80px;"></span>
                         <span class="launch-action-text-label" style="width: 115px;">Kube-Version:</span><span id="kx-launch-build-kube-version" class="build-action-text-value build-action-text-value-result" style="width: 80px;"></span>
@@ -550,7 +551,7 @@ try {
             </div>
          </div>
     </div>
-    <style scoped="scoped" onload="populateReviewTable(); getBuildJobListForProfile('KX.AS.CODE_Runtime_Actions', 'kx-launch');">   </style>
+    <style scoped="scoped" onload="populateReviewTable(); getBuildJobListForProfile('KX.AS.CODE_Runtime_Actions', 'kx-launch'); displayOrHideKxAlreadyRunningWarning(${kxMainRunningVms.size()});">   </style>
     </body>
     """
     return HTML

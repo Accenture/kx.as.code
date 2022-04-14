@@ -821,3 +821,12 @@ function updateProfileAndPrereqsCheckTab() {
     checkVagrantPreRequisites();
     updateProfileSelection();
 }
+
+function displayOrHideKxAlreadyRunningWarning(mainNodes) {
+    console.log("displayOrHideKxAlreadyRunningWarning(" + mainNodes + ")");
+    if (mainNodes > 0 ) {
+        document.getElementById("kx-launch-running-vms").style.display = "inline-block";
+    } else {
+        document.getElementById("kx-launch-running-vms").style.display = "none";
+    }
+}
