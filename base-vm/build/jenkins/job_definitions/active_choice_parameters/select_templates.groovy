@@ -366,7 +366,7 @@
                     gap: 10px 10px;
                     row-gap: 10px;
                     column-gap: 10px;
-                    background: var(--kx-material-primary-rgba-10);
+                    background: var(--kx-material-primary-10);
                     display: -webkit-box;
                     display: -moz-box;
                     display: -ms-flexbox;
@@ -389,7 +389,7 @@
                 .component-container::-webkit-scrollbar-thumb {
                     border: 5px solid transparent;
                     border-radius: 100px;
-                    background-color: var(--kx-material-primary-rgba-50);
+                    background-color: var(--kx-material-primary-50);
                     background-clip: content-box;
                     opacity: 0.1;
                 }
@@ -426,7 +426,7 @@
                     text-transform: capitalize;
                     padding-left: 15px;
                     padding-top: 10px;
-                    color: var(--kx-material-primary-rgba-100);
+                    color: var(--kx-material-primary-100);
                 }
     
                 .component-title-div {
@@ -444,7 +444,7 @@
                     display: inline-block;
                     width: 40px;
                     color: white;
-                    background: var(--kx-material-primary-rgba-100);
+                    background: var(--kx-material-primary-100);
                     opacity: 0.7;
                     padding: 10px 0 10px 5px;
                     border: 0;
