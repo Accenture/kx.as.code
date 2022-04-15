@@ -54,21 +54,7 @@ try {
 }
 
 try {
-    println("Before file search")
-    def targetProfilePath="${currentDir}/jenkins_shared_workspace/kx.as.code/profiles/${profileParentPath}"
-    new File(targetProfilePath).eachFileMatch(~/^aq.*.json$/) { alreadyExistingTemplateFilesInProfile << it.path }
-    alreadyExistingTemplateFilesInProfile.eachWithIndex { profileTemplateJson, i ->
-            println("Found ${profileTemplateJson} already in profiles directory")
-        if ( profileTemplateJson.contains("custom")) {
-            println("${profileTemplateJson} contains the word \"custom\". Not deleting")
-        } else {
-            println("Deleting standard template ${profileTemplateJson}")
-            fileToDelete = new File(profileTemplateJson)
-            fileToDelete.delete()
-        }
-    }
     println("After file search")
-
     template_paths.eachWithIndex { file, i ->
         println("Processing file ${i} - ${file}")
         jsonInputFile = new File(file)
