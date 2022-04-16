@@ -46,8 +46,6 @@ try {
         workerNodeCountMax = 16
         workerNodeCountStep = 1
         workerNodeCountStartValue = worker_node_count.toInteger()
-        println("properties_worker_node.groovy -> workerNodeCountStartValue: ${workerNodeCountStartValue} (Standalone Mode: FALSE)")
-
         workerNodeCountOpacity = "1.0"
         workerNodeCountCursor = "pointer"
 
@@ -57,7 +55,6 @@ try {
         workerNodeCountMax = 0
         workerNodeCountStep = 1
         workerNodeCountStartValue = 1
-        println("properties_worker_node.groovy -> workerNodeCountStartValue: ${workerNodeCountStartValue} (Standalone Mode: TRUE)")
         workerNodeCountOpacity = "0.1"
         workerNodeCountCursor = "not-allowed"
 
@@ -71,8 +68,6 @@ def worker_node_cpu_cores
 
 try {
     worker_node_cpu_cores = parsedJson.config.vm_properties.worker_node_cpu_cores
-    println("Profile: " + PROFILE)
-    println("CPU Cores read: " + worker_node_cpu_cores)
 } catch(e) {
     println "Something went wrong in the GROOVY block (properties_worker_node.groovy): ${e}"
 }
