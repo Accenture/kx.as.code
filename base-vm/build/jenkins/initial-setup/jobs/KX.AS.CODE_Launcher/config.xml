@@ -184,7 +184,7 @@
           <projectName>KX.AS.CODE_Launcher</projectName>
           <projectFullName>KX.AS.CODE_Launcher</projectFullName>
           <parameters class="linked-hash-map"/>
-          <referencedParameters></referencedParameters>
+          <referencedParameters>PROFILE</referencedParameters>
           <choiceType>ET_FORMATTED_HTML</choiceType>
           <omitValueField>false</omitValueField>
         </org.biouno.unochoice.DynamicReferenceParameter>
@@ -210,7 +210,7 @@
           <projectName>KX.AS.CODE_Launcher</projectName>
           <projectFullName>KX.AS.CODE_Launcher</projectFullName>
           <parameters class="linked-hash-map"/>
-          <referencedParameters></referencedParameters>
+          <referencedParameters>PROFILE</referencedParameters>
           <choiceType>ET_FORMATTED_HTML</choiceType>
           <omitValueField>true</omitValueField>
         </org.biouno.unochoice.DynamicReferenceParameter>

@@ -46,8 +46,6 @@ try {
         mainNodeCountMax = 16
         mainNodeCountStep = 1
         mainNodeCountStartValue = main_node_count.toInteger()
-        println("properties_main_node.groovy -> mainNodeCountStartValue: ${mainNodeCountStartValue} (Standalone Mode: FALSE)")
-
         mainNodeCountOpacity = "1.0"
         mainNodeCountCursor = "pointer"
 
@@ -57,7 +55,6 @@ try {
         mainNodeCountMax = 1
         mainNodeCountStep = 1
         mainNodeCountStartValue = 1
-        println("properties_main_node.groovy -> mainNodeCountStartValue: ${mainNodeCountStartValue} (Standalone Mode: TRUE)")
         mainNodeCountOpacity = "0.1"
         mainNodeCountCursor = "not-allowed"
 
@@ -71,8 +68,6 @@ def main_admin_node_cpu_cores
 
 try {
     main_admin_node_cpu_cores = parsedJson.config.vm_properties.main_admin_node_cpu_cores
-    println("Profile: " + PROFILE)
-    println("CPU Cores read: " + main_admin_node_cpu_cores)
 } catch(e) {
     println("Something went wrong in the GROOVY block (properties_main_node.groovy): ${e}")
 }

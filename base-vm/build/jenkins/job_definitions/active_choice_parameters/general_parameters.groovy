@@ -10,8 +10,6 @@ def config_baseUser
 def config_basePassword
 def generalParamsExtendedDescription
 
-println("DEBUG Missing Var: ${PROFILE}")
-
 try {
     def jsonFilePath = PROFILE
     def inputFile = new File(jsonFilePath)
@@ -40,27 +38,6 @@ try {
 def infoTextStandaloneMode
 def infoTextWorkloadOnMaster
 def standaloneModeExtendedDescription
-
-
-/*println("PREREQUISITES_CHECK: *${PREREQUISITES_CHECK}*")
-
-if (PREREQUISITES_CHECK != "failed") {
-    try {
-        if (PREREQUISITES_CHECK == "standalone") {
-            standaloneMode = true
-            cssClass = "checkbox-slider-checked-disabled round"
-            println("Inside standalone = true...")
-        } else {
-            println("Inside standalone = false...")
-            standaloneMode = parsedJson.config.standaloneMode
-            allowWorkloadsOnMaster = parsedJson.config.allowWorkloadsOnMaster
-            cssClass = "checkbox-slider round"
-        }
-
-    } catch (e) {
-        println("Something went wrong in the GROOVY block (general_parameters.groovy): ${e}")
-    }
-*/
 
 infoTextStandaloneMode = "Determines whether to run with a single main node or node. This will automatically set KX-Workers to zero, Kx-Main to 1, and ensure allow-workloads on master is set to 1"
 infoTextWorkloadOnMaster = "Determines the number of KX-Main nodes that will be provisioned in the cluster"
