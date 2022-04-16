@@ -287,12 +287,10 @@ try {
         kxMainRunningVms = runningVirtualMachinesList.findAll { it.contains('kx.as.code-demo1-main') }
         kxWorkerRunningVms = runningVirtualMachinesList.findAll { it.contains('kx.as.code-demo1-worker') }
     } else if ( PROFILE.contains("virtualbox")) {
-        runningVirtualMachines = "${virtualboxCliPath} list vms".execute().text
+        runningVirtualMachines = "${virtualboxCliPath} list runningvms".execute().text
         runningVirtualMachinesList = new String(runningVirtualMachines).split('\n')
         kxMainRunningVms = runningVirtualMachinesList.findAll { it.contains('kx.as.code-demo1-main') }
         kxWorkerRunningVms = runningVirtualMachinesList.findAll { it.contains('kx.as.code-demo1-worker') }
-        numKxMainRunningVms = kxMainRunningVms.size();
-        numKxWorkerRunningVms = kxWorkerRunningVms.size();
     }
 
 } catch(e) {

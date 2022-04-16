@@ -35,13 +35,9 @@ try {
     println("Something went wrong in the GROOVY block (general_parameters.groovy): ${e}")
 }
 
-def infoTextStandaloneMode
-def infoTextWorkloadOnMaster
-def standaloneModeExtendedDescription
-
-infoTextStandaloneMode = "Determines whether to run with a single main node or node. This will automatically set KX-Workers to zero, Kx-Main to 1, and ensure allow-workloads on master is set to 1"
-infoTextWorkloadOnMaster = "Determines the number of KX-Main nodes that will be provisioned in the cluster"
-standaloneModeExtendedDescription = "If you set standalone mode to true, then the number of main nodes is automatically set to 1, and worked nodes set to 0 and disabled completely. If you have only build the main Vagrant box so far, then standalone mode will be enabled automatically"
+def infoTextStandaloneMode = "Determines whether to run with a single main node or node. This will automatically set KX-Workers to zero, Kx-Main to 1, and ensure allow-workloads on master is set to 1"
+def infoTextWorkloadOnMaster = "Determines the number of KX-Main nodes that will be provisioned in the cluster"
+def standaloneModeExtendedDescription = "If you set standalone mode to true, then the number of main nodes is automatically set to 1, and worked nodes set to 0 and disabled completely. If you have only build the main Vagrant box so far, then standalone mode will be enabled automatically"
 
 try {
     // language=HTML
@@ -87,7 +83,12 @@ try {
             <span class="span-toggle-text">Enable Standalone Mode</span><label for="general-param-standalone-mode-toggle" class="checkbox-switch">
             <input type="checkbox" onclick="updateCheckbox(this.id); updateConcatenatedGeneralParamsReturnVariable();" id="general-param-standalone-mode-toggle" value="" checked="">
             <span id="general-param-standalone-mode-toggle-span" class=""></span>
-        </label><span class="info-span"><img src="/userContent/icons/information-variant.svg" class="info-icon" alt="${infoTextStandaloneMode}"></span>
+            </label>
+            <div class="input-box-div">
+                <span class="input-box-span">
+                    <img src="/userContent/icons/information-variant.svg" class="info-icon" alt="${infoTextStandaloneMode}">
+                </span>
+            </div>
         </div>
         <style scoped="scoped" onload="updateCheckbox('general-param-standalone-mode-toggle');">   </style>
     </div>
