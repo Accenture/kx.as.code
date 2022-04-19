@@ -9,7 +9,7 @@ def localStorageNumThirtyGb
 def localStorageNumFiftyGb
 
 try {
-    extendedDescription = "This tab defines the amount of storage allocated to KX.AS.CODE. Each type os stoage has it's own \"storage-class\" in Kubernetes. The idea here is to make the environment as prod-cloud-like as possible - provisioning storage automatically with storage-clases, rather than messing around with make-shift local directories and provisioning PVs/PVCs manually"
+    extendedDescription = "This tab defines the amount of storage allocated to KX.AS.CODE. There are two types - (1) fast local, but not portable storage, eg. tied to a host, and (2) slower, but portable network storage. Each type of storage has it's own \"storage-class\" in Kubernetes."
 
     def jsonFilePath = PROFILE
     def inputFile = new File(jsonFilePath)
@@ -125,7 +125,7 @@ try {
 
     <div id="local-storage-div" style="display: none;">
     <h2>Local Storage Volumes</h2>
-    <p>The numbers below state the number of volumes of a given size will be "pre-provisioned" for consumption by Kubernetes workloads. The advantage is their improved performance over network storage. The disadvantage is that they tie a workload to a node where the local storage is located. For clustered services, such as databases, it is recommended not to use shared volumes, but for each node in the cluster to have its own volumes and the application handles the replication</p>
+    <p>The numbers below state the number of volumes of a given size will be "pre-provisioned" for consumption by Kubernetes workloads. For clustered services, such as databases, it is recommended not to use shared volumes, but for each node in the cluster to have its own volumes and the application handles the replication</p>
     <div class="wrapper"><span><img src="/userContent/icons/harddisk.svg" class="param-icon svg-blue" alt="#" /></span><h4>Local Storage Profile Parameters</h4></div>
     <p></p>
 

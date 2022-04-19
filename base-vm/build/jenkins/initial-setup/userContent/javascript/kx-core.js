@@ -1207,11 +1207,23 @@ function hideParameterDivs() {
 
     configDivs.forEach(function(item) {
         try {
-            document.getElementById(item).style.display = "none";
+            for (let i = 0; i < 5; i++) {
+                document.getElementById(item).style.display = "none";
+                if ( document.getElementById(item).style.display === "none") {
+                    break;
+                }
+                sleep(1);
+            }
         } catch (e) {
             console.log(e);
         }
     })
+}
+
+function sleep(seconds){
+    var waitUntil = new Date().getTime() + seconds*1000;
+    while(new Date().getTime() < waitUntil)
+        true;
 }
 
 function change_panel_selection(config_panel) {
@@ -1685,14 +1697,21 @@ function calculateHeatmapScalePosition() {
 
     console.log("totalAvailableMemory: " + totalAvailableMemory + " totalAvailableCpuCores: " + totalAvailableCpuCores );
 
-    let cpuScore = ( totalAvailableCpuCores / cpuCoresHeatScaleMax );
-    let memoryScore = ( totalAvailableMemory / memoryHeatScaleMax );
-
-    let heatScaleDivWidth = document.getElementById("experience-heat-bar").offsetWidth;
-    if (heatScaleDivWidth === 0) {
-        heatScaleDivWidth = 800;
+    let cpuScore;
+    if ( totalAvailableCpuCores >= cpuCoresHeatScaleMax ) {
+        cpuScore = 1;
+    } else {
+        cpuScore = ( totalAvailableCpuCores / cpuCoresHeatScaleMax );
     }
-    console.log("heatScaleDivWidth: " + heatScaleDivWidth);
+
+    let memoryScore;
+    if ( totalAvailableMemory >= memoryHeatScaleMax ) {
+        memoryScore = 1;
+    } else {
+        memoryScore = (totalAvailableMemory / memoryHeatScaleMax);
+    }
+
+    let heatScaleDivWidth = 770;
 
     let heatmapScalePosition;
     if ( totalAvailableCpuCores < cpuCoresHeatScaleMin || totalAvailableMemory < memoryHeatScaleMin ) {
@@ -1702,22 +1721,28 @@ function calculateHeatmapScalePosition() {
     }
 
     let heatmapScalePositionPercentage = ( heatmapScalePosition / heatScaleDivWidth ) * 100;
+    console.log("heatmapScalePositionPercentage: " + heatmapScalePositionPercentage);
 
     switch (true) {
-        case (heatmapScalePositionPercentage < 5):
+        case (heatmapScalePositionPercentage <= 5):
             document.getElementById("experience-meter-emoji-icon").src="/userContent/icons/emoji_robot1.png";
+            document.getElementById("triangle-heat-highlight").style.filter = "brightness(0) saturate(100%) invert(70%) sepia(1%) saturate(0%) hue-rotate(157deg) brightness(90%) contrast(93%)";
             break;
-        case (heatmapScalePositionPercentage < 25):
+        case (heatmapScalePositionPercentage <= 25):
             document.getElementById("experience-meter-emoji-icon").src="/userContent/icons/emoji_robot2.png";
+            document.getElementById("triangle-heat-highlight").style.filter = "brightness(0) saturate(100%) invert(61%) sepia(98%) saturate(337%) hue-rotate(357deg) brightness(95%) contrast(94%)";
             break;
-        case (heatmapScalePositionPercentage < 50):
+        case (heatmapScalePositionPercentage <= 50):
             document.getElementById("experience-meter-emoji-icon").src="/userContent/icons/emoji_robot3.png";
+            document.getElementById("triangle-heat-highlight").style.filter = "invert(63%) sepia(79%) saturate(418%) hue-rotate(357deg) brightness(97%) contrast(89%)";
             break;
-        case (heatmapScalePositionPercentage < 75):
+        case (heatmapScalePositionPercentage <= 75):
             document.getElementById("experience-meter-emoji-icon").src="/userContent/icons/emoji_robot4.png";
+            document.getElementById("triangle-heat-highlight").style.filter = "brightness(0) saturate(100%) invert(31%) sepia(89%) saturate(2356%) hue-rotate(329deg) brightness(89%) contrast(91%)";
             break;
-        case (heatmapScalePositionPercentage < 100):
+        case (heatmapScalePositionPercentage <= 100):
             document.getElementById("experience-meter-emoji-icon").src="/userContent/icons/emoji_robot5.png";
+            document.getElementById("triangle-heat-highlight").style.filter = "invert(29%) sepia(99%) saturate(2353%) hue-rotate(330deg) brightness(90%) contrast(88%)";
             break;
         default:
             break;
@@ -1725,5 +1750,9 @@ function calculateHeatmapScalePosition() {
 
     document.getElementById("experience-marker").style.left = heatmapScalePosition + "px";
     console.log("Setting heatmapScalePosition to " + heatmapScalePosition);
+
+    let resoureSettingsInnerHtml = '<span class="experience-meter-title">Current Selection</span><span class="experience-meter-label">CPU</span><span class="experience-meter-value">' + totalAvailableCpuCores + ' vCores</span class="experience-meter-label"><span class="experience-meter-label">Memory</span><span class="experience-meter-value">' + ( totalAvailableMemory / 1024 )+ 'GB</span>'
+    document.getElementById("current-resource-settings-div").innerHTML = resoureSettingsInnerHtml;
+    document.getElementById("current-resource-settings-span").style.left = ( heatmapScalePosition - 94 ) + "px";
 
 }
