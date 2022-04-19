@@ -1602,7 +1602,7 @@ select, option {
     display: inline-block;
     vertical-align: middle;
     border-radius: 15px;
-    background-image: linear-gradient(to right,rgba(158, 158, 158, .7), rgba(235, 168, 52, .7), rgba(217, 56, 86, .7), rgba(217, 56, 86, 1));
+    background-image: linear-gradient(to right,rgba(158, 158, 158, .7) 0%, rgba(235, 168, 52, .7) 25%, rgba(235, 168, 52, 1) 50%, rgba(217, 56, 86, .7) 75%, rgba(217, 56, 86, 1) 100%);
 }
 
 .experience-heat-bar-div {

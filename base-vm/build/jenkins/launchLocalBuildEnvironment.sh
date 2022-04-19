@@ -91,6 +91,7 @@ if [[ ${override_action} == "stop"   ]]; then
     echo -e "- [INFO] Jenkins Agent killed"
     echo -e "- [INFO] Stopping the Docker container..."
     # TODO - Stop Jenkins WAR file process
+    screen -wipe
     echo -e "- [INFO] Stopped the Jenkins container"
     exit 0
 fi
