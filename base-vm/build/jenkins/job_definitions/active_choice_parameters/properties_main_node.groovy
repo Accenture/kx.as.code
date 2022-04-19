@@ -114,13 +114,13 @@ try {
     def HTML = """
     <div id="headline-main-div" style="display: none;">
         <h1>Resource Configuration</h1>
-        <p>Here you can define how many physical resources you wish to allocate to the KX.AS.CODE virtual machines.</p>
+        <p>Here you can define how many physical resources you wish to allocate to the KX.AS.CODE virtual machines. The "experience meter" is a rough indication only. 16GB and 4 CPU cores gives you a comfortable performance. After that, the more resources you allocate, the more applications you can install</p>
         <div class="experience-heat-bar-div">
             <span class="experience-heat-bar-title">Experience Meter</span>
             <span id="experience-heat-bar" class="experience-heat-bar">
                 <span class="calculated-experience-marker" id="experience-marker"></span>
                 <span>
-                    <div class="experience-meter-tooltip-info" style="left: 0px;">
+                    <div class="experience-meter-tooltip-info" style="left: -4px;">
                         <span class="info-span">
                             <img src="/userContent/icons/triangle-small-down.svg" class="experience-meter-marker-icon svg-blue" alt="" />
                             <span class="experience-meter-tooltip-text">
@@ -134,7 +134,7 @@ try {
                         <span class="info-span">
                             <img src="/userContent/icons/triangle-small-down.svg" class="experience-meter-marker-icon svg-blue" alt="" />
                             <span class="experience-meter-tooltip-text">
-                                <div><span class="experience-meter-title">Install Multiple Application</span><span class="experience-meter-label">CPU</span><span class="experience-meter-value">2 vCores</span class="experience-meter-label"><span class="experience-meter-label">Memory</span><span class="experience-meter-value">16GB</span></div>
+                                <div><span class="experience-meter-title">Install Multiple Application</span><span class="experience-meter-label">CPU</span><span class="experience-meter-value">4 vCores</span class="experience-meter-label"><span class="experience-meter-label">Memory</span><span class="experience-meter-value">16GB</span></div>
                             </span>
                         </span>
                     </div>
@@ -154,17 +154,26 @@ try {
                         <span class="info-span">
                             <img src="/userContent/icons/triangle-small-down.svg" class="experience-meter-marker-icon svg-blue" alt="" />
                             <span class="experience-meter-tooltip-text">
-                                <div><span class="experience-meter-title">Install One of Each Group Type</span><span class="experience-meter-label">CPU</span><span class="experience-meter-value">16 vCores</span class="experience-meter-label"><span class="experience-meter-label">Memory</span><span class="experience-meter-value">64GB</span></div>
+                                <div><span class="experience-meter-title">Install One of Each Group Type</span><span class="experience-meter-label">CPU</span><span class="experience-meter-value">16 vCores</span class="experience-meter-label"><span class="experience-meter-label">Memory</span><span class="experience-meter-value">48GB</span></div>
                             </span>
                         </span>
                     </div>
                 </span>
                 <span>
-                    <div class="experience-meter-tooltip-info" style="left: 690px;">
+                    <div class="experience-meter-tooltip-info" style="left: 680px;">
                         <span class="info-span">
                             <img src="/userContent/icons/triangle-small-down.svg" class="experience-meter-marker-icon svg-blue" alt="" />
                             <span class="experience-meter-tooltip-text">
-                                <div><span class="experience-meter-title">Install ALL Application Groups</span><span class="experience-meter-label">CPU</span><span class="experience-meter-value">24 vCores</span class="experience-meter-label"><span class="experience-meter-label">Memory</span><span class="experience-meter-value">128GB</span></div>
+                                <div><span class="experience-meter-title">Install ALL Application Groups</span><span class="experience-meter-label">CPU</span><span class="experience-meter-value">20 vCores</span class="experience-meter-label"><span class="experience-meter-label">Memory</span><span class="experience-meter-value">64GB</span></div>
+                            </span>
+                        </span>
+                    </div>
+                    <div class="experience-meter-tooltip-info">
+                        <span class="info-span" id="current-resource-settings-span" style="position: relative;">
+                            <img src="/userContent/icons/triangle.svg" class="experience-meter-marker-icon svg-blue" style="width: 20px; height: 20px; top: 1px" alt="current-resource-settings" />
+                            <img src="/userContent/icons/triangle.svg" id="triangle-heat-highlight" class="experience-meter-marker-icon" style="width: 13px; height: 13px; top: 2.5px; left: 3.5px; position: relative" />
+                            <span class="experience-meter-tooltip-text">
+                                <div id="current-resource-settings-div"></div>
                             </span>
                         </span>
                     </div>

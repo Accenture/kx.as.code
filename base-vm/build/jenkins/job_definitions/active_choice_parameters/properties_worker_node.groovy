@@ -84,7 +84,7 @@ def workerNodeCpuCoresInfoText = "Determines the amount of CPU cores that will b
 def workerNodeCpuCoresParamShortTitle = "CPU Cores"
 
 try {
-    extendedDescription = "KX-Worker nodes are optional. On a local machine with lower amount of resources (equal to or below 16GB ram), a singe node standalone KX.AS.CODE deployment is advisable. In this case, just set the number of KX-Workers to 0. The 'allow workloads on master' toggle must be set to on in this case, else it will not be possible to deploy any workloads beyond the core tools and services."
+    extendedDescription = "KX-Worker nodes are optional. On a physical machine with resources equal to or below 16GB ram, a single node standalone KX.AS.CODE deployment is advisable. The 'allow workloads on master' toggle must be set to on in this case, else it will not be possible to deploy any workloads beyond the core tools and services."
 } catch(e) {
     println "Something went wrong in the GROOVY block (properties_worker_node.groovy): ${e}"
 }
