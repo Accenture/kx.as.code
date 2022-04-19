@@ -365,6 +365,7 @@ function show_value(x, previousElementId, elementId, valueElementId, warningElem
 
         }
     }
+    calculateHeatmapScalePosition();
 }
 
 function update_display_value(x, valueElementId, valueDisplayConversion, rangeUnit) {
@@ -374,6 +375,8 @@ function update_display_value(x, valueElementId, valueDisplayConversion, rangeUn
 
 function add_one(previousElementId, elementId, valueElementId, warningElementId, minWarning, valueDisplayConversion, rangeUnit, step, max) {
     let count = parseInt(document.getElementById(elementId).value) + parseInt(step);
+    console.log('let count = parseInt(document.getElementById("'  + elementId + '").value) + parseInt(' + step + ');');
+    console.log('( ' + count + ' <= ' + max + ' )');
     if (count <= max) {
         show_value(count, previousElementId, elementId, valueElementId, warningElementId, minWarning, valueDisplayConversion, rangeUnit);
     }
@@ -1651,5 +1654,76 @@ function buildUserJsonFromDivTable() {
     document.getElementById('concatenated-user-provisioning-list').value = allUsersJson;
     let parentId = document.getElementById("concatenated-user-provisioning-list").parentNode.id;
     jQuery('#' + parentId).trigger('change');
+
+}
+
+function calculateHeatmapScalePosition() {
+
+    let mainNodeCount = document.getElementById("counter_value_main_node_count").value;
+    let mainNodecpuCores = document.getElementById("slider_value_main_admin_node_cpu_cores").value;
+    let mainNodememory = document.getElementById("slider_value_main_admin_node_memory").value;
+    let workerNodeCount = document.getElementById("counter_value_worker_node_count").value;
+    let workerNodeCpuCores = document.getElementById("slider_value_worker_node_cpu_cores").value;
+    let workerNodeMemory = document.getElementById("slider_value_worker_node_memory").value;
+    let workloadsOnMasterCheckedStatus = document.getElementById("general-param-workloads-on-master-toggle").checked;
+
+    let totalAvailableMemory;
+    let totalAvailableCpuCores;
+
+    let cpuCoresHeatScaleMax = 20;
+    let memoryHeatScaleMax = 64 * 1024;
+    let cpuCoresHeatScaleMin = 2;
+    let memoryHeatScaleMin = 6 * 1024;
+
+    if ( workloadsOnMasterCheckedStatus ) {
+        totalAvailableCpuCores = ( mainNodeCount * mainNodecpuCores ) + ( workerNodeCount * workerNodeCpuCores );
+        totalAvailableMemory = ( mainNodeCount * mainNodememory ) + ( workerNodeCount * workerNodeMemory );
+    } else {
+        totalAvailableCpuCores = workerNodeCount * workerNodeCpuCores;
+        totalAvailableMemory = workerNodeCount * workerNodeMemory;
+    }
+
+    console.log("totalAvailableMemory: " + totalAvailableMemory + " totalAvailableCpuCores: " + totalAvailableCpuCores );
+
+    let cpuScore = ( totalAvailableCpuCores / cpuCoresHeatScaleMax );
+    let memoryScore = ( totalAvailableMemory / memoryHeatScaleMax );
+
+    let heatScaleDivWidth = document.getElementById("experience-heat-bar").offsetWidth;
+    if (heatScaleDivWidth === 0) {
+        heatScaleDivWidth = 800;
+    }
+    console.log("heatScaleDivWidth: " + heatScaleDivWidth);
+
+    let heatmapScalePosition;
+    if ( totalAvailableCpuCores < cpuCoresHeatScaleMin || totalAvailableMemory < memoryHeatScaleMin ) {
+        heatmapScalePosition = 10;
+    } else {
+        heatmapScalePosition = heatScaleDivWidth * ( ( cpuScore + memoryScore ) / 2 );
+    }
+
+    let heatmapScalePositionPercentage = ( heatmapScalePosition / heatScaleDivWidth ) * 100;
+
+    switch (true) {
+        case (heatmapScalePositionPercentage < 5):
+            document.getElementById("experience-meter-emoji-icon").src="/userContent/icons/emoji_robot1.png";
+            break;
+        case (heatmapScalePositionPercentage < 25):
+            document.getElementById("experience-meter-emoji-icon").src="/userContent/icons/emoji_robot2.png";
+            break;
+        case (heatmapScalePositionPercentage < 50):
+            document.getElementById("experience-meter-emoji-icon").src="/userContent/icons/emoji_robot3.png";
+            break;
+        case (heatmapScalePositionPercentage < 75):
+            document.getElementById("experience-meter-emoji-icon").src="/userContent/icons/emoji_robot4.png";
+            break;
+        case (heatmapScalePositionPercentage < 100):
+            document.getElementById("experience-meter-emoji-icon").src="/userContent/icons/emoji_robot5.png";
+            break;
+        default:
+            break;
+    }
+
+    document.getElementById("experience-marker").style.left = heatmapScalePosition + "px";
+    console.log("Setting heatmapScalePosition to " + heatmapScalePosition);
 
 }

@@ -98,7 +98,7 @@ try {
 }
 
 int workerNodeMemoryMin = 4096
-int workerNodeMemoryMax = 32384
+int workerNodeMemoryMax = 32768
 int workerNodeMemoryStep = 1024
 int workerNodeMemoryStartValue = worker_node_memory.toInteger()
 int workerNodeMemoryMinWarning = 8192
@@ -113,7 +113,7 @@ try {
     // language=HTML
     def HTML = """
     <div id="headline-workers-div" style="display: none;">
-    <h2 style="margin-top: 40px;">KX-Worker Parameters</h2>
+    <h2 style="margin-top: 20px;">KX-Worker Parameters</h2>
     <span class="description-paragraph-span"><p>${extendedDescription }</p></span>
     </div>
 
@@ -127,8 +127,15 @@ try {
                     <span class="divider-span"></span>
                     <button type="button" class="button-right" style="opacity: ${workerNodeCountOpacity}; cursor: ${workerNodeCountCursor}"
                             onclick="add_one(&quot;counter_value_worker_node_count_previous_value&quot;, &quot;counter_value_worker_node_count&quot;, &quot;counter_value_worker_node_count_value&quot;, &quot;counter_value_worker_node_count_warning_icon&quot;, &quot;${workerNodeCountMinWarning}&quot;, &quot;${workerNodeValueDisplayConversion}&quot;, &quot;${workerNodeCountRangeUnit}&quot;, &quot;${workerNodeCountStep}&quot;, &quot;${workerNodeCountMax}&quot;);"><img src="/userContent/icons/chevron-up.svg" alt="plus" class="image-plus-minus svg-white"/></button></span>
-            <span class="info-span"><img src="/userContent/icons/information-variant.svg" class="info-icon"></span>
-            <span id="counter_value_worker_node_count_warning_icon" data-text="${workerNodeCountWarningText}" class="warning-span tooltip"><img src="/userContent/icons/triangle-exclamation-solid.svg" class="warn-image svg-orange-red" alt="#" /></span>
+            <div class="tooltip-info">
+                <span class="info-span">
+                    <img src="/userContent/icons/information-variant.svg" class="info-icon" alt="info">
+                    <span class="tooltiptext">${workerNodeInfoText}</span>
+                </span>
+            </div>
+            <span id="counter_value_worker_node_count_warning_icon" data-text="${workerNodeCountWarningText}" class="warning-span tooltip">
+                <img src="/userContent/icons/triangle-exclamation-solid.svg" class="warn-image svg-orange-red" alt="warning" />
+            </span>  
         </div>
     </div>
     <style scoped="scoped" onload="show_value(&quot;${workerNodeCountStartValue}&quot;, &quot;counter_value_worker_node_count_previous_value&quot;, &quot;counter_value_worker_node_count&quot;, &quot;counter_value_worker_node_count_value&quot;, &quot;counter_value_worker_node_count_warning_icon&quot;, &quot;${workerNodeCountMinWarning}&quot;, &quot;${workerNodeValueDisplayConversion}&quot;, &quot;${workerNodeCountRangeUnit}&quot;);">   </style>
@@ -153,8 +160,15 @@ try {
               </span>
                 <span class="button-range-span"><button type="button" class="button-right"
                 onclick="add_one(&quot;slider_value_worker_node_cpu_cores_previous_value&quot;, &quot;slider_value_worker_node_cpu_cores&quot;, &quot;slider_value_worker_node_cpu_cores_value&quot;, &quot;slider_value_worker_node_cpu_cores_warning_icon&quot;, &quot;${workerNodeCpuCoresMinWarning}&quot;, &quot;${cpuCoresValueDisplayConversion}&quot;, &quot;${cpuCoresRangeUnit}&quot;, &quot;${workerNodeCpuCoresStep}&quot;, &quot;${workerNodeCpuCoresMax}&quot;);"><img src="/userContent/icons/plus.svg" alt="plus" class="image-plus-minus svg-white"/></button></span>
-                <span class="info-span"><img src="/userContent/icons/information-variant.svg" class="info-icon" alt="${workerNodeCpuCoresInfoText}"></span><span id="slider_value_worker_node_cpu_cores_warning_icon" data-text="${workerNodeCpuCoresWarningText}" class="warning-span tooltip"><img src="/userContent/icons/triangle-exclamation-solid.svg" class="warn-image svg-orange-red" alt="cpu" /></span>
-
+                <div class="tooltip-info">
+                    <span class="info-span">
+                        <img src="/userContent/icons/information-variant.svg" class="info-icon" alt="info">
+                    </span>
+                    <span class="tooltiptext">${workerNodeCpuCoresInfoText}</span>
+                </div>  
+                <span id="slider_value_worker_node_cpu_cores_warning_icon" data-text="${workerNodeCpuCoresWarningText}" class="warning-span tooltip">
+                    <img src="/userContent/icons/triangle-exclamation-solid.svg" class="warn-image svg-orange-red" alt="warning" />
+                </span>
             </div>
         </div>
     </div>
@@ -179,12 +193,20 @@ try {
               </span>
                 <span class="button-range-span"><button type="button" class="button-right"
                 onclick="add_one(&quot;slider_value_worker_node_memory_previous_value&quot;, &quot;slider_value_worker_node_memory&quot;, &quot;slider_value_worker_node_memory_value&quot;, &quot;slider_value_worker_node_memory_warning_icon&quot;, &quot;${workerNodeMemoryMinWarning}&quot;, &quot;${memoryValueDisplayConversion}&quot;, &quot;${memoryRangeUnit}&quot;, &quot;${workerNodeMemoryStep}&quot;, &quot;${workerNodeMemoryMax}&quot;);"><img src="/userContent/icons/plus.svg" alt="plus" class="image-plus-minus svg-white"/></button></span>
-                <span class="info-span"><img src="/userContent/icons/information-variant.svg" class="info-icon" alt="${workerNodeMemoryInfoText}"></span><span id="slider_value_worker_node_memory_warning_icon" data-text="${workerNodeMemoryWarningText}" class="warning-span tooltip"><img src="/userContent/icons/triangle-exclamation-solid.svg" class="warn-image svg-orange-red" alt="cpu" /></span>
-
+                <div class="tooltip-info">
+                    <span class="info-span">
+                        <img src="/userContent/icons/information-variant.svg" class="info-icon" alt="info">
+                    </span>
+                    <span class="tooltiptext">${workerNodeMemoryInfoText}</span>
+                </div>  
+                <span id="slider_value_worker_node_memory_warning_icon" data-text="${workerNodeMemoryWarningText}" class="warning-span tooltip">
+                    <img src="/userContent/icons/triangle-exclamation-solid.svg" class="warn-image svg-orange-red" alt="warning" />
+                </span>
             </div>
         </div>
     </div>
     <style scoped="scoped" onload="show_value(&quot;${workerNodeMemoryStartValue}&quot;, &quot;slider_value_worker_node_memory_previous_value&quot;, &quot;slider_value_worker_node_memory&quot;, &quot;slider_value_worker_node_memory_value&quot;, &quot;slider_value_worker_node_memory_warning_icon&quot;, &quot;${workerNodeMemoryMinWarning}&quot;, &quot;${memoryValueDisplayConversion}&quot;, &quot;${memoryRangeUnit}&quot;);">   </style>
+    <style scoped="scoped" onload="calculateHeatmapScalePosition()">   </style>
     <input type="hidden" id="slider_value_worker_node_memory_previous_value" name="slider_value_worker_node_memory_previous_value" value="" >
     <input type="hidden" id="concatenated_value_worker_node_config" name="value" value="" >
 
