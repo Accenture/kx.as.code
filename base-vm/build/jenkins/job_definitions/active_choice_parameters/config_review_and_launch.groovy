@@ -6,7 +6,7 @@ def extendedDescription
 try {
     extendedDescription = "The charts below show how the selections you made fit with the physical resources available. If any of the charts are red, you should look to make corrections. For the storage parameters, as the volumes are thinly provisioned, an overallocation is not a problem, as long as you don't intend to use the full space."
 } catch(e) {
-    println "Something went wrong in the GROOVY block (config_review_and_launch.groovy): ${e}"
+    println("Something went wrong in the GROOVY block (config_review_and_launch.groovy): ${e}")
 }
 
 long freePhysicalMemorySize
@@ -108,7 +108,6 @@ try {
 
     if ( STORAGE_PARAMETERS ) {
         def storageParameterElements = STORAGE_PARAMETERS.split(';')
-        println("storageParameterElements: ${storageParameterElements} (config_review_and_launch.groovy)")
         number1GbVolumes = storageParameterElements[0].toInteger()
         number5GbVolumes = storageParameterElements[1].toInteger()
         number10GbVolumes = storageParameterElements[2].toInteger()
@@ -124,18 +123,9 @@ try {
         networkStorageVolume = parsedJson.config.glusterFsDiskSize.toInteger()
     }
 
-    println("number1GbVolumes ${number1GbVolumes}")
-    println("number5GbVolumes ${number5GbVolumes}")
-    println("number10GbVolumes ${number10GbVolumes}")
-    println("number30GbVolumes ${number30GbVolumes}")
-    println("number50GbVolumes ${number50GbVolumes}")
-    println("networkStorageVolume ${networkStorageVolume}")
-
     int totalLocalDiskSpace = totalSystemDisk.toInteger()
     remainingDiskSpace = freeSystemDisk.toInteger()
     int totalLocalVolumesStorageRequired
-
-    println("DEBUG --> 1 (config_review_and_launch.groovy)")
 
     if ( GENERAL_PARAMETERS ) {
         generalParameterElements = GENERAL_PARAMETERS.split(';')
@@ -154,7 +144,6 @@ try {
         ALLOW_WORKLOADS_ON_KUBERNETES_MASTER = parsedJson.config.allowWorkloadsOnMaster
     }
 
-    println("KX_MAIN_NODES_CONFIG: ${KX_MAIN_NODES_CONFIG} (config_review_and_launch.groovy)")
     if ( KX_MAIN_NODES_CONFIG ) {
         kxMainNodesConfigArray = KX_MAIN_NODES_CONFIG.split(';')
         NUMBER_OF_KX_MAIN_NODES = kxMainNodesConfigArray[0]
@@ -166,7 +155,6 @@ try {
         KX_MAIN_ADMIN_MEMORY = parsedJson.config.main_admin_node_memory
     }
 
-    println("KX_WORKER_NODES_CONFIG: ${KX_WORKER_NODES_CONFIG} (config_review_and_launch.groovy)")
     if ( KX_WORKER_NODES_CONFIG ) {
         kxWorkerNodesConfigArray = KX_WORKER_NODES_CONFIG.split(';')
         NUMBER_OF_KX_WORKER_NODES = kxWorkerNodesConfigArray[0]
@@ -191,31 +179,20 @@ try {
     }
 
     if (ALLOW_WORKLOADS_ON_KUBERNETES_MASTER == "true") {
-        println("DEBUG --> 1.4.1 (config_review_and_launch.groovy)")
         totalLocalVolumesStorageRequired = (number1GbVolumes + (number5GbVolumes * 5) + (number10GbVolumes * 10) + (number30GbVolumes * 30) + (number50GbVolumes * 50)) * (kxMainNumber + kxWorkerNumber)
-        println("(${number1GbVolumes} + (${number5GbVolumes} * 5) + (${number10GbVolumes} * 10) + (${number30GbVolumes} * 30) + (${number50GbVolumes} * 50)) * (${kxMainNumber} + ${kxWorkerNumber})")
-        println("Total local storage required: ${totalLocalVolumesStorageRequired}")
     } else {
-        println("DEBUG --> 1.4.2 (config_review_and_launch.groovy)")
         totalLocalVolumesStorageRequired = (number1GbVolumes + (number5GbVolumes * 5) + (number10GbVolumes * 10) + (number30GbVolumes * 30) + (number50GbVolumes * 50)) * kxWorkerNumber
-        println("Total local storage required: ${totalLocalVolumesStorageRequired}")
     }
-    println("DEBUG --> 1.5 (config_review_and_launch.groovy)")
 
     def baseSystemHddSize = 40
     def totalBaseSystemHddSize = baseSystemHddSize * (kxMainNumber + kxWorkerNumber)
-    println("def totalBaseSystemHddSize = ${baseSystemHddSize} * (${kxMainNumber} + ${kxWorkerNumber})")
-    println("totalBaseSystemHddSize: ${totalBaseSystemHddSize}")
     overallStorageRequired = totalBaseSystemHddSize + totalLocalVolumesStorageRequired + networkStorageVolume
-    println("overallStorageRequired = ${totalBaseSystemHddSize} + ${totalLocalVolumesStorageRequired} + ${networkStorageVolume}")
-    println("overallStorageRequired: ${overallStorageRequired}")
 
     overallStorageNeededPercentage = (overallStorageRequired / remainingDiskSpace) * 100
     overallRemainingPercentage = 100 - overallStorageNeededPercentage
 
     int slaveTotalMemory = totalPhysicalMemorySize.toInteger()
     int slaveFreeMemory = freePhysicalMemorySize.toInteger()
-    println("DEBUG --> 2 (config_review_and_launch.groovy)")
     int usedMemory = slaveTotalMemory - slaveFreeMemory
 
     if ( KX_MAIN_ADMIN_MEMORY ) {
@@ -249,15 +226,8 @@ try {
     KX_WORKER_NODES_MEMORY = KX_WORKER_NODES_MEMORY ?: "0"
     KX_WORKER_NODES_CPU_CORES = KX_WORKER_NODES_CPU_CORES ?: "0"
 
-    println("NUMBER_OF_KX_MAIN_NODES (config_review_and_launch.groovy): ${NUMBER_OF_KX_MAIN_NODES}")
-    println("NUMBER_OF_KX_WORKER_NODES (config_review_and_launch.groovy): ${NUMBER_OF_KX_WORKER_NODES}")
-    println("KX_WORKER_NODES_MEMORY (config_review_and_launch.groovy): ${KX_WORKER_NODES_MEMORY}")
-    println("KX_WORKER_NODES_CPU_CORES (config_review_and_launch.groovy): ${KX_WORKER_NODES_CPU_CORES}")
-
     int totalNeededWorkerNodeMemory = kxWorkerMemory * kxWorkerNumber
     int totalNeededWorkerNodeCpuCores = kxWorkerCpuCores * kxWorkerNumber
-
-    println("DEBUG --> 3 (config_review_and_launch.groovy)")
 
     overallTotalNeededMemory = totalNeededMainNodeMemory + totalNeededWorkerNodeMemory
     overallTotalNeededCpuCores = totalNeededMainNodeCpuCores + totalNeededWorkerNodeCpuCores
@@ -301,37 +271,26 @@ try {
         diskPieTextColour = normalPieTextColour
     }
 
-    println("DEBUG --> 4 (config_review_and_launch.groovy)")
-
     // Check running VMs
     def runningVirtualMachines
     def runningVirtualMachinesList = []
 
     if ( PROFILE.contains("vmware-desktop")) {
         runningVirtualMachines = "${vmwareCliPath} list".execute().text
-        println("Running VMWare VMs: ${runningVirtualMachines}")
         runningVirtualMachinesList = new String(runningVirtualMachines).split('\n')
-        println("runningVirtualMachinesList - vmware: ${runningVirtualMachinesList}")
         kxMainRunningVms = runningVirtualMachinesList.findAll { it.contains('kx.as.code-demo1-main') }
         kxWorkerRunningVms = runningVirtualMachinesList.findAll { it.contains('kx.as.code-demo1-worker') }
     } else if ( PROFILE.contains("parallels") ) {
         Process runningVirtualMachinesProcess = ["${parallelsCliPath}", "list"].execute()
         virtualMachinesList = new String(runningVirtualMachinesProcess.text).split('\n')
-        println("runningVirtualMachinesList - parallels: ${runningVirtualMachinesList}")
         runningVirtualMachinesList = virtualMachinesList.findAll { it.contains('running') }
         kxMainRunningVms = runningVirtualMachinesList.findAll { it.contains('kx.as.code-demo1-main') }
         kxWorkerRunningVms = runningVirtualMachinesList.findAll { it.contains('kx.as.code-demo1-worker') }
-        println("kxMainRunningVms.size(): ${kxMainRunningVms.size()}")
-        println("kxWorkerRunningVms.size(): ${kxWorkerRunningVms.size()}")
     } else if ( PROFILE.contains("virtualbox")) {
-        runningVirtualMachines = "${virtualboxCliPath} list vms".execute().text
-        println("Running VirtualBox VMs: ${runningVirtualMachines}")
+        runningVirtualMachines = "${virtualboxCliPath} list runningvms".execute().text
         runningVirtualMachinesList = new String(runningVirtualMachines).split('\n')
-        println("runningVirtualMachinesList - virtualbox: ${runningVirtualMachinesList}")
         kxMainRunningVms = runningVirtualMachinesList.findAll { it.contains('kx.as.code-demo1-main') }
         kxWorkerRunningVms = runningVirtualMachinesList.findAll { it.contains('kx.as.code-demo1-worker') }
-        numKxMainRunningVms = kxMainRunningVms.size();
-        numKxWorkerRunningVms = kxWorkerRunningVms.size();
     }
 
 } catch(e) {
@@ -341,90 +300,6 @@ try {
 try {
     // language=HTML
     def HTML = """
-
-        <style>
-
-            .table {
-                display:table;
-            }
-
-            .header {
-                display:table-header-group;
-                font-weight:bold;
-            }
-
-            .rowGroup {
-                display:table-row-group;
-            }
-
-            .row {
-                margin: 5px;
-            }
-
-            .cell {
-                display:table-cell;
-            }
-
-            .cell-label {
-                vertical-align: top;
-                font-weight: normal;
-                border-bottom-left-radius: 5px;
-                border-top-left-radius: 5px;
-                width: 270px;
-                height: 15px;
-                padding-left: 5px;
-                padding-top: 2px;
-                padding-bottom: 2px;
-            }
-
-            .cell-value {
-                background-color: white;
-                width: 150px;
-                height: 15px;
-                padding-right: 15px;
-                padding-top: 2px;
-                padding-bottom: 2px;
-                text-align: right;
-                vertical-align: top;
-                border-spacing: 15px;
-            }
-
-            .cell-templates-value {
-                background-color: white;
-                width: 600px;
-                height: 15px;
-                padding-right: 15px;
-                padding-top: 2px;
-                padding-bottom: 2px;
-                text-align: left;
-                vertical-align: middle;
-                border-spacing: 15px;
-            }
-
-            .flex-wrapper {
-                flex-flow: row wrap;
-                justify-content: space-between;
-                flex-wrap: wrap;
-            }
-
-            .flex-item {
-                display: block;
-            }
-
-            .launch-action-text-label {
-                width: 100px;
-                font-weight: bold;
-                border: none;
-                color: #404c50;
-                padding: 2px 2px;
-                text-decoration: none;
-                margin: 2px 2px;
-                display: inline-block;
-                vertical-align: middle;
-            }
-
-        </style>
-
     <body>
       <div id="review-and-launch-div" style="display: none;">
         <div style="display: inline-flex; vertical-align: middle; flex-wrap: nowrap;"><span><h1>Review &amp; Launch</h1></span><span id="kx-launch-running-vms" data-text="KX.AS.CODE is already running! Main nodes: ${kxMainRunningVms.size()} Workers nodes: ${kxWorkerRunningVms.size()}" class="warning-span-large tooltip"><img src="/userContent/icons/triangle-exclamation-solid.svg" class="warn-image-large svg-orange-red" alt="already_running_warning" /></span></div>

@@ -23,6 +23,7 @@ def parsedJson
 def jsonFilePath = PROFILE
 def inputFile = new File(jsonFilePath)
 def profileParentPath = inputFile.getParentFile().getName()
+def profileName = inputFile.getName()
 
 def templateName
 def parsedTemplateJson
@@ -36,12 +37,9 @@ def fileToDelete
 
 def currentDir = new File(".").getAbsolutePath().replaceAll("\\\\", "/")
 currentDir = currentDir.substring(0, currentDir.length() - 1)
-println("PROFILE UPDATE CURRENT DIR: ${currentDir}")
 
 new File("${currentDir}/jenkins_shared_workspace/kx.as.code/templates/").eachFileMatch(~/^aq.*.json$/) { template_paths << it.path }
 selectedTemplates = TEMPLATE_SELECTOR.split(';');
-println("TEMPLATE_SELECTOR: ${TEMPLATE_SELECTOR}")
-println("template_paths: ${template_paths}")
 
 try {
     if ( USER_PROVISIONING ) {
@@ -54,21 +52,14 @@ try {
 }
 
 try {
-    println("After file search")
     template_paths.eachWithIndex { file, i ->
-        println("Processing file ${i} - ${file}")
         jsonInputFile = new File(file)
         parsedTemplateJson = new JsonSlurper().parse(jsonInputFile)
         templateName = parsedTemplateJson.title
-        println("Parsed json and received title: ${templateName}")
         selectedTemplates.eachWithIndex { selectedTemplate, j ->
             if (selectedTemplate == templateName) {
-                println("${templateName} is selected. Adding components to list")
-                destinationFile = new File("${targetProfilePath}/${jsonInputFile.getName()}")
-                println("Copying ${jsonInputFile.toPath()} to ${destinationFile.toPath()}")
+                destinationFile = new File("${currentDir}/jenkins_shared_workspace/kx.as.code/profiles/${profileParentPath}/${jsonInputFile.getName()}")
                 Files.copy(jsonInputFile.toPath(), destinationFile.toPath())
-            } else {
-                println("${templateName} not selected. Ignoring")
             }
         }
     }
@@ -88,12 +79,6 @@ try {
         BASE_PASSWORD = generalParameterElements[3]
         STANDALONE_MODE = generalParameterElements[4]
         ALLOW_WORKLOADS_ON_KUBERNETES_MASTER = generalParameterElements[5]
-        println("Retrieved BASE_DOMAIN: ${BASE_DOMAIN} (profile_json_update.groovy)")
-        println("Retrieved ENVIRONMENT_PREFIX: ${ENVIRONMENT_PREFIX} (profile_json_update.groovy)")
-        println("Retrieved BASE_USER: ${BASE_USER} (profile_json_update.groovy)")
-        println("Retrieved BASE_PASSWORD: ${BASE_PASSWORD} (profile_json_update.groovy)")
-        println("Retrieved STANDALONE_MODE: ${STANDALONE_MODE} (profile_json_update.groovy)")
-        println("Retrieved ALLOW_WORKLOADS_ON_KUBERNETES_MASTER: ${ALLOW_WORKLOADS_ON_KUBERNETES_MASTER} (profile_json_update.groovy)")
     }
 
     if ( KX_MAIN_NODES_CONFIG ) {
@@ -117,13 +102,11 @@ try {
 
     def OLD_NUMBER_OF_KX_MAIN_NODES = parsedJson.config.vm_properties.main_node_count
     if (OLD_NUMBER_OF_KX_MAIN_NODES != NUMBER_OF_KX_MAIN_NODES && NUMBER_OF_KX_MAIN_NODES != "" && NUMBER_OF_KX_MAIN_NODES) {
-        println("Updating NUMBER_OF_KX_MAIN_NODES to " + NUMBER_OF_KX_MAIN_NODES)
         parsedJson.config.vm_properties.main_node_count = NUMBER_OF_KX_MAIN_NODES.toInteger()
     }
 
     def OLD_KX_MAIN_ADMIN_CPU_CORES = parsedJson.config.vm_properties.main_admin_node_cpu_cores
     if (OLD_KX_MAIN_ADMIN_CPU_CORES != KX_MAIN_ADMIN_CPU_CORES && KX_MAIN_ADMIN_CPU_CORES != "" && KX_MAIN_ADMIN_CPU_CORES) {
-        println("Updating KX_MAIN_ADMIN_CPU_CORES to " + KX_MAIN_ADMIN_CPU_CORES)
         parsedJson.config.vm_properties.main_admin_node_cpu_cores = KX_MAIN_ADMIN_CPU_CORES.toInteger()
     }
 
@@ -134,72 +117,55 @@ try {
     
     def OLD_NUMBER_OF_KX_WORKER_NODES = parsedJson.config.vm_properties.worker_node_count
     if (OLD_NUMBER_OF_KX_WORKER_NODES != NUMBER_OF_KX_WORKER_NODES && NUMBER_OF_KX_WORKER_NODES != "" && NUMBER_OF_KX_WORKER_NODES) {
-        println("Updating NUMBER_OF_KX_WORKER_NODES to " + NUMBER_OF_KX_WORKER_NODES)
         parsedJson.config.vm_properties.worker_node_count = NUMBER_OF_KX_WORKER_NODES.toInteger()
     }
 
     def OLD_KX_WORKER_NODES_CPU_CORES = parsedJson.config.vm_properties.worker_node_cpu_cores
     if (OLD_KX_WORKER_NODES_CPU_CORES != KX_WORKER_NODES_CPU_CORES && KX_WORKER_NODES_CPU_CORES != "" && KX_WORKER_NODES_CPU_CORES) {
-        println("Updating KX_WORKER_NODES_CPU_CORES to " + KX_WORKER_NODES_CPU_CORES)
         parsedJson.config.vm_properties.worker_node_cpu_cores = KX_WORKER_NODES_CPU_CORES.toInteger()
     }
 
     def OLD_KX_WORKER_NODES_MEMORY = parsedJson.config.vm_properties.worker_node_memory
     if (OLD_KX_WORKER_NODES_MEMORY != KX_WORKER_NODES_MEMORY && KX_WORKER_NODES_MEMORY != "" && KX_WORKER_NODES_MEMORY) {
-        println("Updating KX_WORKER_NODES_MEMORY to " + KX_WORKER_NODES_MEMORY)
         parsedJson.config.vm_properties.worker_node_memory = KX_WORKER_NODES_MEMORY.toInteger()
     }
 
     if (BASE_DOMAIN) {
         def OLD_BASE_DOMAIN = parsedJson.config.baseDomain
         if (OLD_BASE_DOMAIN != BASE_DOMAIN && BASE_DOMAIN != "") {
-            println("Updating BASE_DOMAIN to " + BASE_DOMAIN)
             parsedJson.config.baseDomain = BASE_DOMAIN
         }
     } else {
-        println("BASE_DOMAIN not changed. Skipping JSON update for this property")
         BASE_DOMAIN = parsedJson.config.baseDomain
     }
 
     if (ENVIRONMENT_PREFIX) {
-        println("Updating ENVIRONMENT_PREFIX to " + ENVIRONMENT_PREFIX)
         parsedJson.config.environmentPrefix = ENVIRONMENT_PREFIX
     } else {
-        println("ENVIRONMENT_PREFIX not changed. Skipping JSON update for this property")
         ENVIRONMENT_PREFIX = parsedJson.config.environmentPrefix
     }
 
     if (BASE_USER) {
-        println("Updating BASE_USER to " + BASE_USER)
         parsedJson.config.baseUser = "${BASE_USER}"
-        println("BASE_USER JSON after update: ${parsedJson.config.baseUser}")
     } else {
-        println("BASE_USER not changed. Skipping JSON update for this property")
         BASE_USER = parsedJson.config.baseUser
     }
 
     if (BASE_PASSWORD) {
-        println("Updating BASE_PASSWORD to " + BASE_PASSWORD)
         parsedJson.config.basePassword = "${BASE_PASSWORD}"
-        println("BASE_PASSWORD JSON after update: ${parsedJson.config.basePassword}")
     } else {
-        println("BASE_PASSWORD not changed. Skipping JSON update for this property")
         BASE_PASSWORD = parsedJson.config.basePassword
     }
 
     if (STANDALONE_MODE) {
-        println("Updating STANDALONE_MODE to " + STANDALONE_MODE)
         parsedJson.config.standaloneMode = STANDALONE_MODE
     } else {
-        println("STANDALONE_MODE not changed. Skipping JSON update for this property")
         STANDALONE_MODE = parsedJson.config.standaloneMode
     }
 
     if (ALLOW_WORKLOADS_ON_KUBERNETES_MASTER) {
-        println("Updating ALLOW_WORKLOADS_ON_KUBERNETES_MASTER to " + ALLOW_WORKLOADS_ON_KUBERNETES_MASTER)
         parsedJson.config.allowWorkloadsOnMaster = ALLOW_WORKLOADS_ON_KUBERNETES_MASTER
     } else {
-        println("ALLOW_WORKLOADS_ON_KUBERNETES_MASTER not changed. Skipping JSON update for this property")
         ALLOW_WORKLOADS_ON_KUBERNETES_MASTER = parsedJson.config.allowWorkloadsOnMaster
     }
 
@@ -239,31 +205,10 @@ try {
         parsedJson.config.glusterFsDiskSize = NETWORK_STORAGE_OPTIONS
     }
 
-    println("DEBUG 1: BASE_USER (${BASE_USER}) JSON after update: ${parsedJson.config.baseUser}")
-    println("DEBUG 1: BASE_PASSWORD (${BASE_PASSWORD}) JSON after update: ${parsedJson.config.basePassword}")
-
     updatedJson = new JsonBuilder(parsedJson).toPrettyString()
 
-    println("DEBUG 2: BASE_USER (${BASE_USER}) JSON after update: ${parsedJson.config.baseUser}")
-    println("DEBUG 2: BASE_PASSWORD (${BASE_PASSWORD}) JSON after update: ${parsedJson.config.basePassword}")
-
     new File(jsonFilePath).write(new JsonBuilder(parsedJson).toPrettyString())
-    println(updatedJson)
-    println("GENERAL_PARAMETERS: ${GENERAL_PARAMETERS}")
-    println("BASE_DOMAIN: ${BASE_DOMAIN}")
-    println("ENVIRONMENT_PREFIX: ${ENVIRONMENT_PREFIX}")
-    println("BASE_USER: ${BASE_USER}")
-    println("BASE_PASSWORD: ${BASE_PASSWORD}")
-    println("PROFILE: ${PROFILE}")
-    println("STANDALONE_MODE: ${STANDALONE_MODE}")
-    println("KX_MAIN_ADMIN_MEMORY: ${KX_MAIN_ADMIN_MEMORY}")
-    println("KX_MAIN_ADMIN_CPU_CORES: ${KX_MAIN_ADMIN_CPU_CORES}")
-    println("ALLOW_WORKLOADS_ON_KUBERNETES_MASTER: ${ALLOW_WORKLOADS_ON_KUBERNETES_MASTER}")
-    println("NUMBER_OF_KX_MAIN_NODES: ${NUMBER_OF_KX_MAIN_NODES}")
-    println("NETWORK_STORAGE_OPTIONS: ${NETWORK_STORAGE_OPTIONS}")
-    println("STORAGE_PARAMETERS: ${STORAGE_PARAMETERS}")
 
-    println("Bottom of update JSON groovy")
 } catch(e) {
     println("Something went wrong in the GROOVY block (profile_json_update.groovy): ${e}")
 }

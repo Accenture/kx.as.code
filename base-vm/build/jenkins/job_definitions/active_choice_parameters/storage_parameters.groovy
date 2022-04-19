@@ -9,7 +9,7 @@ def localStorageNumThirtyGb
 def localStorageNumFiftyGb
 
 try {
-    extendedDescription = "There are two types of storage provisioned into KX.AS.CODE. One is a slower network storage based on GlusterFS and the second is local storage. Both are made available internally to the Kubernetes cluster via storage classes. There are advantages and disadvantages of each. Glusterfs is slower, but ensures the workload remains portable. Local storage is faster, but means a workload is tied to a host. The faster local storage is recommended for backend database services."
+    extendedDescription = "This tab defines the amount of storage allocated to KX.AS.CODE. There are two types - (1) fast local, but not portable storage, eg. tied to a host, and (2) slower, but portable network storage. Each type of storage has it's own \"storage-class\" in Kubernetes."
 
     def jsonFilePath = PROFILE
     def inputFile = new File(jsonFilePath)
@@ -67,17 +67,17 @@ def localStorageStep = 1
 def localStorageRangeUnit = " Volumes"
 def localStorageParamShortTitle = "# of volumes"
 
-def infoTextOneGb = "Determines the number of 1GB volumes that will be available for allocating to workloads"
-def infoTextFiveGb = "Determines the number of 5GB volumes that will be available for allocating to workloads"
-def infoTextTenGb = "Determines the number of 10GB volumes that will be available for allocating to workloads"
-def infoTextThirtyGb = "Determines the number of 30GB volumes that will be available for allocating to workloads"
-def infoTextFiftyGb = "Determines the number of 50GB volumes that will be available for allocating to workloads"
+def infoTextOneGb = "Determines the number of 1GB local volumes that will be available for allocating to workloads"
+def infoTextFiveGb = "Determines the number of 5GB local volumes that will be available for allocating to workloads"
+def infoTextTenGb = "Determines the number of 10GB local volumes that will be available for allocating to workloads"
+def infoTextThirtyGb = "Determines the number of 30GB local volumes that will be available for allocating to workloads"
+def infoTextFiftyGb = "Determines the number of 50GB local volumes that will be available for allocating to workloads"
 
-def warningTextOneGb = "Determines the number of 1GB volumes that will be available for allocating to workloads"
-def warningTextFiveGb = "Determines the number of 5GB volumes that will be available for allocating to workloads"
-def warningTextTenGb = "Determines the number of 10GB volumes that will be available for allocating to workloads"
-def warningTextThirtyGb = "Determines the number of 30GB volumes that will be available for allocating to workloads"
-def warningTextFiftyGb = "Determines the number of 50GB volumes that will be available for allocating to workloads"
+def warningTextOneGb = "Determines the number of 1GB local volumes that will be available for allocating to workloads"
+def warningTextFiveGb = "Determines the number of 5GB local volumes that will be available for allocating to workloads"
+def warningTextTenGb = "Determines the number of 10GB local volumes that will be available for allocating to workloads"
+def warningTextThirtyGb = "Determines the number of 30GB local volumes that will be available for allocating to workloads"
+def warningTextFiftyGb = "Determines the number of 50GB local volumes that will be available for allocating to workloads"
 
 try {
     // language=HTML
@@ -89,11 +89,12 @@ try {
 
         <div id="network-storage-div" style="display: none;">
         <h2>Network Storage</h2>
+        <p>This will provision network storage with the set amount. The storage volume will be provisioned as a dedicated virtual drive in the virtual machine. The storage is slower than local storage and should not be used for database workloads, such as ElasticSearch or Postgresql etc</p>
         <div class="wrapper"><span><img src="/userContent/icons/server-network.svg" class="param-icon svg-blue" alt="cpu" /></span>
 
             <span id="slider_value_network_storage_value" class="slider-element-value">${networkStorageStartValue} ${networkStorageRangeUnit}</span>
             <div id="container"><span class="button-range-span"><button type="button" class="button-left"
-                                                                        onclick="subtract_one(&quot;slider_value_network_storage_previous_value&quot;, &quot;slider_value_network_storage&quot;, &quot;slider_value_network_storage_value&quot;, &quot;slider_value_network_storage_warning_icon&quot;, &quot;${networkStorageMinWarning}&quot;, &quot;${networkStorageValueDisplayConversion}&quot;, &quot;${networkStorageRangeUnit}&quot;, &quot;${networkStorageStep}&quot;, &quot;${networkStorageMin}&quot;);"><img src="/userContent/icons/minus.svg" alt="minus" class="image-plus-minus svg-white"/></button></span> <span class="input-range-span">
+                onclick="subtract_one(&quot;slider_value_network_storage_previous_value&quot;, &quot;slider_value_network_storage&quot;, &quot;slider_value_network_storage_value&quot;, &quot;slider_value_network_storage_warning_icon&quot;, &quot;${networkStorageMinWarning}&quot;, &quot;${networkStorageValueDisplayConversion}&quot;, &quot;${networkStorageRangeUnit}&quot;, &quot;${networkStorageStep}&quot;, &quot;${networkStorageMin}&quot;);"><img src="/userContent/icons/minus.svg" alt="minus" class="image-plus-minus svg-white"/></button></span> <span class="input-range-span">
             <input type="range" min="${networkStorageMin}"
                    max="${networkStorageMax}"
                    step="${networkStorageStep}"
@@ -104,9 +105,17 @@ try {
                    onmouseleave="show_value(this.value, &quot;slider_value_network_storage_previous_value&quot;, &quot;slider_value_network_storage&quot;, &quot;slider_value_network_storage_value&quot;, &quot;slider_value_network_storage_warning_icon&quot;, &quot;${networkStorageMinWarning}&quot;, &quot;${networkStorageValueDisplayConversion}&quot;, &quot;${networkStorageRangeUnit}&quot;);" onmousemove="update_display_value(this.value, &quot;slider_value_network_storage_value&quot;, &quot;${networkStorageValueDisplayConversion}&quot;, &quot;${networkStorageRangeUnit}&quot;);">
               </span>
                 <span class="button-range-span"><button type="button" class="button-right"
-                                                        onclick="add_one(&quot;slider_value_network_storage_previous_value&quot;, &quot;slider_value_network_storage&quot;, &quot;slider_value_network_storage_value&quot;, &quot;slider_value_network_storage_warning_icon&quot;, &quot;${networkStorageMinWarning}&quot;, &quot;${networkStorageValueDisplayConversion}&quot;, &quot;${networkStorageRangeUnit}&quot;, &quot;${networkStorageStep}&quot;, &quot;${networkStorageMax}&quot;);"><img src="/userContent/icons/plus.svg" alt="plus" class="image-plus-minus svg-white"/></button></span>
-                <span class="info-span"><img src="/userContent/icons/information-variant.svg" class="info-icon" alt="${networkStorageInfoText}"></span><span id="slider_value_network_storage_warning_icon" data-text="${networkStorageWarningText}" class="warning-span tooltip"><img src="/userContent/icons/triangle-exclamation-solid.svg" class="warn-image svg-orange-red" alt="cpu" /></span>
-
+                    onclick="add_one(&quot;slider_value_network_storage_previous_value&quot;, &quot;slider_value_network_storage&quot;, &quot;slider_value_network_storage_value&quot;, &quot;slider_value_network_storage_warning_icon&quot;, &quot;${networkStorageMinWarning}&quot;, &quot;${networkStorageValueDisplayConversion}&quot;, &quot;${networkStorageRangeUnit}&quot;, &quot;${networkStorageStep}&quot;, &quot;${networkStorageMax}&quot;);"><img src="/userContent/icons/plus.svg" alt="plus" class="image-plus-minus svg-white"/></button>
+                </span>
+                <div class="tooltip-info">
+                    <span class="info-span">
+                        <img src="/userContent/icons/information-variant.svg" class="info-icon" alt="info">
+                        <span class="tooltiptext">${networkStorageInfoText}</span>
+                    </span>
+                </div>
+                <span id="slider_value_network_storage_warning_icon" data-text="${networkStorageWarningText}" class="warning-span tooltip">
+                    <img src="/userContent/icons/triangle-exclamation-solid.svg" class="warn-image svg-orange-red" alt="#" />
+                </span>
             </div>
         </div>
         <br>
@@ -116,6 +125,7 @@ try {
 
     <div id="local-storage-div" style="display: none;">
     <h2>Local Storage Volumes</h2>
+    <p>The numbers below state the number of volumes of a given size will be "pre-provisioned" for consumption by Kubernetes workloads. For clustered services, such as databases, it is recommended not to use shared volumes, but for each node in the cluster to have its own volumes and the application handles the replication</p>
     <div class="wrapper"><span><img src="/userContent/icons/harddisk.svg" class="param-icon svg-blue" alt="#" /></span><h4>Local Storage Profile Parameters</h4></div>
     <p></p>
 
@@ -136,13 +146,15 @@ try {
                     <img src="/userContent/icons/chevron-up.svg" alt="plus" class="image-plus-minus svg-white"/>
                 </button>
             </span>
-            <div class="tooltip-info"><span class="info-span">
-                <img src="/userContent/icons/information-variant.svg" class="info-icon" alt="info">
-                <span class="tooltiptext">${infoTextOneGb}</span>
-            </span>
+            <div class="tooltip-info">
+                <span class="info-span">
+                    <img src="/userContent/icons/information-variant.svg" class="info-icon" alt="info">
+                    <span class="tooltiptext">${infoTextOneGb}</span>
+                </span>
             </div>
             <span id="counter_value_local_volume_count_1_gb_warning_icon" data-text="${warningTextOneGb}" class="warning-span tooltip">
-                <img src="/userContent/icons/triangle-exclamation-solid.svg" class="warn-image svg-orange-red" alt="#" /></span>
+                <img src="/userContent/icons/triangle-exclamation-solid.svg" class="warn-image svg-orange-red" alt="#" />
+            </span>
         </div>
     </div>
     <input type="hidden" id="counter_value_local_volume_count_1_gb" name="counter_value_local_volume_count_1_gb" value="${startValueOneGb}">

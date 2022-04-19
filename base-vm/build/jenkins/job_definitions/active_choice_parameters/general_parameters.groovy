@@ -10,8 +10,6 @@ def config_baseUser
 def config_basePassword
 def generalParamsExtendedDescription
 
-println("DEBUG Missing Var: ${PROFILE}")
-
 try {
     def jsonFilePath = PROFILE
     def inputFile = new File(jsonFilePath)
@@ -37,34 +35,9 @@ try {
     println("Something went wrong in the GROOVY block (general_parameters.groovy): ${e}")
 }
 
-def infoTextStandaloneMode
-def infoTextWorkloadOnMaster
-def standaloneModeExtendedDescription
-
-
-/*println("PREREQUISITES_CHECK: *${PREREQUISITES_CHECK}*")
-
-if (PREREQUISITES_CHECK != "failed") {
-    try {
-        if (PREREQUISITES_CHECK == "standalone") {
-            standaloneMode = true
-            cssClass = "checkbox-slider-checked-disabled round"
-            println("Inside standalone = true...")
-        } else {
-            println("Inside standalone = false...")
-            standaloneMode = parsedJson.config.standaloneMode
-            allowWorkloadsOnMaster = parsedJson.config.allowWorkloadsOnMaster
-            cssClass = "checkbox-slider round"
-        }
-
-    } catch (e) {
-        println("Something went wrong in the GROOVY block (general_parameters.groovy): ${e}")
-    }
-*/
-
-infoTextStandaloneMode = "Determines whether to run with a single main node or node. This will automatically set KX-Workers to zero, Kx-Main to 1, and ensure allow-workloads on master is set to 1"
-infoTextWorkloadOnMaster = "Determines the number of KX-Main nodes that will be provisioned in the cluster"
-standaloneModeExtendedDescription = "If you set standalone mode to true, then the number of main nodes is automatically set to 1, and worked nodes set to 0 and disabled completely. If you have only build the main Vagrant box so far, then standalone mode will be enabled automatically"
+def infoTextStandaloneMode = "Determines whether to run with a single main node or with additional worker nodes. This will automatically set KX-Workers to zero, Kx-Main to 1, and ensures \"Allow Workloads on Kubernetes Master\" is set to true"
+def infoTextWorkloadOnMaster = "Determines whether workloads will be permitted on master nodes or not. Only set this to false if you start KX.AS.CODE with worker nodes"
+def standaloneModeExtendedDescription = "If you set standalone mode to true, then the number of main nodes is automatically set to 1, and worked nodes set to 0 and disabled completely. If you have only build the main Vagrant box so far, then standalone mode will be enabled automatically"
 
 try {
     // language=HTML
@@ -109,20 +82,20 @@ try {
         <div class="wrapper">
             <span class="span-toggle-text">Enable Standalone Mode</span><label for="general-param-standalone-mode-toggle" class="checkbox-switch">
             <input type="checkbox" onclick="updateCheckbox(this.id); updateConcatenatedGeneralParamsReturnVariable();" id="general-param-standalone-mode-toggle" value="" checked="">
-            <span id="general-param-standalone-mode-toggle-span" class=""></span>
-        </label><span class="info-span"><img src="/userContent/icons/information-variant.svg" class="info-icon" alt="${infoTextStandaloneMode}"></span>
-        </div>
-        <style scoped="scoped" onload="updateCheckbox('general-param-standalone-mode-toggle');">   </style>
+            <span id="general-param-standalone-mode-toggle-span" class=""></span></label>
+            <span class="tooltip-info"><span class="info-span"><img src="/userContent/icons/information-variant.svg" class="info-icon" alt="info"><span class="tooltiptext">${infoTextStandaloneMode}</span></span></span>
+            <style scoped="scoped" onload="updateCheckbox('general-param-standalone-mode-toggle');">   </style>
+         </div>
     </div>
 
     <div class="outerWrapper" id="workloads-on-master-div" style="display: none">
         <div class="wrapper">
             <span class="span-toggle-text">Allow Workloads on Kubernetes Master</span><label for="general-param-workloads-on-master-toggle" class="checkbox-switch">
             <input type="checkbox" onclick="updateCheckbox(this.id); updateConcatenatedGeneralParamsReturnVariable();" id="general-param-workloads-on-master-toggle" value="" checked="">
-            <span id="general-param-workloads-on-master-toggle-span" class=""></span>
-        </label><span class="info-span"><img src="/userContent/icons/information-variant.svg" class="info-icon" alt="${infoTextWorkloadOnMaster}"></span>
+            <span id="general-param-workloads-on-master-toggle-span" class=""></span></label>
+            <span class="tooltip-info"><span class="info-span"><img src="/userContent/icons/information-variant.svg" class="info-icon" alt="info"><span class="tooltiptext">${infoTextWorkloadOnMaster}</span></span></span>
+            <style scoped="scoped" onload="updateCheckbox('general-param-workloads-on-master-toggle');">   </style>
         </div>
-        <style scoped="scoped" onload="updateCheckbox('general-param-workloads-on-master-toggle');">   </style>
     </div>
 
     <input type="hidden" id="general-param-standalone-mode-toggle-name-value" name="general-param-standalone-mode-toggle-name-value" value="">
