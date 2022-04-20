@@ -21,7 +21,8 @@ function Blue
 
 $ErrorActionPreference = "SilentlyContinue"
 
-cd base-vm\build\jenkins
+$baseJenkinsAbsolutePath = "$PSScriptRoot/base-vm/build/jenkins"
+cd $baseJenkinsAbsolutePath
 
 # Settings that will be used for provisioning Jenkins, including credentials etc
 if ( ! ( Test-Path -Path ".\jenkins.env" ) )
@@ -124,7 +125,7 @@ if ( $args[0] ) {
 
 
 # Determine absolute work and shared_workspace directory paths
-$HOMEDIR_ABSOLUTE_PATH = "$PSScriptRoot\$JENKINS_HOME"
+$HOMEDIR_ABSOLUTE_PATH = "$baseJenkinsAbsolutePath\$JENKINS_HOME"
 $JENKINS_HOME = $HOMEDIR_ABSOLUTE_PATH -replace "/","\"
 Write-Output "- [INFO] JENKINS_HOME: $JENKINS_HOME"
 
@@ -134,7 +135,7 @@ if ( ! ( Test-Path -Path $JENKINS_HOME ) ) {
 
 
 # Determine absolute work and shared_workspace directory paths
-$SHARED_WORKSPACE_DIR_ABSOLUTE_PATH = "$PSScriptRoot\jenkins_shared_workspace"
+$SHARED_WORKSPACE_DIR_ABSOLUTE_PATH = "$baseJenkinsAbsolutePath\jenkins_shared_workspace"
 $JENKINS_SHARED_WORKSPACE = $SHARED_WORKSPACE_DIR_ABSOLUTE_PATH -replace "/","\"
 Write-Output "- [INFO] JENKINS_SHARED_WORKSPACE: $JENKINS_SHARED_WORKSPACE"
 
@@ -382,6 +383,7 @@ Write-Output "Discovered java binary: `"$javaBinary`""
 Write-Output "JENKINS_SHARED_WORKSPACE: `"$JENKINS_SHARED_WORKSPACE"`"
 Write-Output "JENKINS_HOME: `"$JENKINS_HOME"`"
 Write-Output "PSScriptRoot: `"$PSScriptRoot"`"
+Write-Output "baseJenkinsAbsolutePath: $baseJenkinsAbsolutePath"
 
 # Check Jenkins URL is reachable for downloading jenkins-cli.jar
 try
