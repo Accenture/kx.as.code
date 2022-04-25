@@ -15,6 +15,7 @@ export const Applications2 = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [queueData, setQueueData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isMqConnected, setIsMqConnected] = useState(false);
 
   const [sortSelect, setSortSelect] = useState("asc");
 
@@ -74,6 +75,7 @@ export const Applications2 = () => {
             key={i}
             queueData={queueData}
             fetchApplicationAndQueueData={fetchApplicationAndQueueData}
+            isMqConnected={isMqConnected}
           />
         );
       });
@@ -120,7 +122,7 @@ export const Applications2 = () => {
     return () => {
       // clearInterval(id);
     };
-  }, [queueData, applicationData]);
+  }, []);
 
   return (
     <div className="px-6 sm:px-6 lg:px-24 py-8 w-full max-w-9xl mx-auto">

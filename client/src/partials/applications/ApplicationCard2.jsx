@@ -18,7 +18,7 @@ function ApplicationCard2(props) {
   const [appName, setAppName] = useState("");
   const [allQueueStatus, setAllQueueStatus] = useState([]);
   const [applicationData, setApplicationData] = useState({});
-  const [appQueue, setAppQueue] = useState("pending_queue");
+  const [appQueue, setAppQueue] = useState("undefined");
 
   var defaultPayload = {
     install_folder: "undefined",
@@ -235,6 +235,10 @@ function ApplicationCard2(props) {
     });
   };
 
+  const UninstallButton = () => {
+    return "HELO";
+  };
+
   return (
     <div
       className="flex flex-col col-span-full sm:col-span-6 xl:col-span-4 bg-inv2 shadow-lg rounded"
@@ -322,8 +326,14 @@ function ApplicationCard2(props) {
               Installing...
             </button>
           )}
+          {!props.isMqConnected && (
+            <div className="text-red-500 border-red-500 rounded-md border p-2 flex">
+              <AiOutlineWarning className="mt-auto mb-auto table text-2xl mr-2" />
+              Installation Status not available.
+            </div>
+          )}
           {appQueue != "pending_queue" &&
-            (appQueue != "completed_queue" ? (
+            (appQueue != "completed_queue" && props.isMqConnected ? (
               <div className="">
                 <button
                   onClick={applicationInstallHandler}
@@ -343,12 +353,7 @@ function ApplicationCard2(props) {
                 )}
               </div>
             ) : (
-              <button
-                onClick={applicationUninstallHandler}
-                className="bg-red-500 p-3 px-5 rounded items-center flex"
-              >
-                Uninstall
-              </button>
+              ""
             ))}
         </div>
         {/* Seperator */}
