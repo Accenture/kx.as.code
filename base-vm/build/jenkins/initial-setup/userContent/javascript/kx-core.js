@@ -140,6 +140,7 @@ async function triggerBuild(nodeType) {
     }
     let response = await fetch('/job/Actions/job/KX.AS.CODE_Image_Builder/buildWithParameters', config);
     let data = await response.text();
+    refreshGetBuildJobList("KX.AS.CODE_Image_Builder", nodeType)
 }
 
 function populate_profile_option_list() {
@@ -436,64 +437,51 @@ function updateAllConcatenatedVariables() {
     updateConcatenatedStorageReturnVariable();
 }
 
+async function refreshGetBuildJobList(job, nodeType, timeout=3000) {
+    // Rerun getBuildJobListForProfile if still in progress
+    var buildStatus = getBuildJobListForProfile(job, nodeType);
+    while (buildStatus !== 'DONE') {
+        // wait for 3s
+        await new Promise(r => setTimeout(r, timeout))
+        buildStatus = getBuildJobListForProfile(job, nodeType);
+    }
+}
+
 async function getBuildJobListForProfile(job, nodeType) {
     let styleColor;
-
+    var buildStatus = 'IN PROGRESS';
     getAllJenkinsBuilds(job).then(data => {
-
-
-
         const kxBuilds = (() => {
             const builds = filterBuilds(data);
-
-
-
-
+            // Return builds according to profile selection
             const filteredBuilds = filterDataByVmType(builds, document.getElementById("profiles").value);
-
-
-
             if (nodeType === "kx-launch") {
-
-
                 return filteredBuilds;
             } else {
-
                 return filterDataByNodeType(filteredBuilds, nodeType);
             }
         })();
 
-
         if (kxBuilds.length > 0) {
+                    getExtendedJobDetails(kxBuilds[0].url).then( text => {
 
+                        const splitDisplayName = JSON.parse(text).displayName.split('_');
+                        //const buildNumber = splitDisplayName[0];
+                        const kxVersion = splitDisplayName[1];
+                        const kubeVersion = splitDisplayName[2];
+                        //const profile = splitDisplayName[3];
+                        const nodeTypeVagrantAction = splitDisplayName[4];
+                        //const gitCommitId = splitDisplayName[5];
 
-
-
-
-
-
-
-
-
-            getExtendedJobDetails(kxBuilds[0].url).then( text => {
-
-                const splitDisplayName = JSON.parse(text).displayName.split('_');
-                //const buildNumber = splitDisplayName[0];
-                const kxVersion = splitDisplayName[1];
-                const kubeVersion = splitDisplayName[2];
-                //const profile = splitDisplayName[3];
-                const nodeTypeVagrantAction = splitDisplayName[4];
-                //const gitCommitId = splitDisplayName[5];
-
-                if (nodeTypeVagrantAction === "kx-main" || nodeTypeVagrantAction === "kx-node") {
-                    document.getElementById(nodeTypeVagrantAction + '-build-kx-version').innerText = kxVersion;
-                    document.getElementById(nodeTypeVagrantAction + '-build-kube-version').innerText = kubeVersion;
-                } else if (nodeTypeVagrantAction === "up" || nodeTypeVagrantAction === "destroy" || nodeTypeVagrantAction === "halt") {
-                    document.getElementById('kx-launch-last-action').innerText = nodeTypeVagrantAction;
-                    document.getElementById('kx-launch-build-kx-version').innerText = kxVersion;
-                    document.getElementById('kx-launch-build-kube-version').innerText = kubeVersion;
-                }
-            })
+                        if (nodeTypeVagrantAction === "kx-main" || nodeTypeVagrantAction === "kx-node") {
+                            document.getElementById(nodeTypeVagrantAction + '-build-kx-version').innerText = kxVersion;
+                            document.getElementById(nodeTypeVagrantAction + '-build-kube-version').innerText = kubeVersion;
+                        } else if (nodeTypeVagrantAction === "up" || nodeTypeVagrantAction === "destroy" || nodeTypeVagrantAction === "halt") {
+                            document.getElementById('kx-launch-last-action').innerText = nodeTypeVagrantAction;
+                            document.getElementById('kx-launch-build-kx-version').innerText = kxVersion;
+                            document.getElementById('kx-launch-build-kube-version').innerText = kubeVersion;
+                        }
+                    })
 
             if (kxBuilds[0].timestamp !== null) {
                 document.getElementById(nodeType + "-build-timestamp").innerText = new Date(kxBuilds[0].timestamp).toLocaleDateString() + " " + new Date(kxBuilds[0].timestamp).toLocaleTimeString();
@@ -511,14 +499,15 @@ async function getBuildJobListForProfile(job, nodeType) {
                 document.getElementById(nodeType + "-build-result").innerHTML = '<span className="build-action-text-value build-action-text-value-result" style="width: 70px;">' + kxBuilds[0].result + '</span>';
                 document.getElementById(nodeType + "-build-result").className = styleClass;
                 document.getElementById(nodeType + "-build-number-link").innerHTML = "<a href='" + kxBuilds[0].url + "' target='_blank' rel='noopener noreferrer' style='font-weight: normal;'># " + kxBuilds[0].number + "</a>";
-            } else {
+                buildStatus = 'DONE';
+            }
+            else {
                 document.getElementById(nodeType + "-build-result").className = "";
                 document.getElementById(nodeType + "-build-result").style.justifyContent = "center";
                 document.getElementById(nodeType + "-build-result").innerHTML = "<div class='dot-flashing' style='background-color: white; margin-right: 15px; margin-left: 15px;'></div>";
                 document.getElementById(nodeType + "-build-number-link").innerHTML = "<a href='" + kxBuilds[0].url + "' target='_blank' rel='noopener noreferrer' style='font-weight: normal;'># " + kxBuilds[0].number + "</a>";
             }
         } else {
-
             styleClass = 'build-result build-result-neutral';
             document.getElementById(nodeType + "-build-result").innerText = 'n/a';
             document.getElementById(nodeType + "-build-result").className = styleClass;
@@ -526,8 +515,10 @@ async function getBuildJobListForProfile(job, nodeType) {
             document.getElementById(nodeType + "-build-number-link").innerText = "-";
             document.getElementById(nodeType + '-build-kx-version').innerText = "-";
             document.getElementById(nodeType + '-build-kube-version').innerText = "-";
+            buildStatus = "NOT RUN";
         }
     })
+    return buildStatus;
 }
 
 async function getExtendedJobDetails(url) {
@@ -670,7 +661,6 @@ async function stopTriggeredBuild(job, nodeType) {
             }
         })();
 
-
         if (runningBuilds.length > 0) {
 
             let urlToFetch = runningBuilds[0].url + 'stop';
@@ -687,12 +677,13 @@ async function stopTriggeredBuild(job, nodeType) {
             let responseText = response.text();
 
         }
+        refreshGetBuildJobList(job, nodeType)
     })
 }
 
 async function showConsoleLog(job, nodeType) {
-    //let nodeType = 'kx-main';    // For debuging only
-    //let job = 'KX.AS.CODE_Image_Builder';     // For debuging only
+    //let nodeType = 'kx-main';    // For debugging only
+    //let job = 'KX.AS.CODE_Image_Builder';     // For debugging only
     let jenkinsCrumb = getCrumb().value;
     let consoleLogDiv;
     if (nodeType === 'kx-main') {
@@ -912,6 +903,7 @@ async function performRuntimeAction(vagrantAction) {
     }
     let response = await fetch('/job/Actions/job/KX.AS.CODE_Runtime_Actions/buildWithParameters', config);
     let data = await response.text();
+    refreshGetBuildJobList("KX.AS.CODE_Runtime_Actions", "kx-launch");
 }
 
 function updateProfileAndPrereqsCheckTab() {
@@ -1751,8 +1743,8 @@ function calculateHeatmapScalePosition() {
     document.getElementById("experience-marker").style.left = heatmapScalePosition + "px";
     console.log("Setting heatmapScalePosition to " + heatmapScalePosition);
 
-    let resoureSettingsInnerHtml = '<span class="experience-meter-title">Current Selection</span><span class="experience-meter-label">CPU</span><span class="experience-meter-value">' + totalAvailableCpuCores + ' vCores</span class="experience-meter-label"><span class="experience-meter-label">Memory</span><span class="experience-meter-value">' + ( totalAvailableMemory / 1024 )+ 'GB</span>'
-    document.getElementById("current-resource-settings-div").innerHTML = resoureSettingsInnerHtml;
+    let resourceSettingsInnerHtml = '<span class="experience-meter-title">Current Selection</span><span class="experience-meter-label">CPU</span><span class="experience-meter-value">' + totalAvailableCpuCores + ' vCores</span class="experience-meter-label"><span class="experience-meter-label">Memory</span><span class="experience-meter-value">' + ( totalAvailableMemory / 1024 )+ 'GB</span>'
+    document.getElementById("current-resource-settings-div").innerHTML = resourceSettingsInnerHtml;
     document.getElementById("current-resource-settings-span").style.left = ( heatmapScalePosition - 94 ) + "px";
 
 }
