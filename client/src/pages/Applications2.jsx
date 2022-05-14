@@ -15,6 +15,7 @@ export const Applications2 = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [queueData, setQueueData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [appsSearchResultCount, setAppsSearchResultCount] = useState(0);
   const [isMqConnected, setIsMqConnected] = useState(false);
 
   const [sortSelect, setSortSelect] = useState("asc");
@@ -35,7 +36,7 @@ export const Applications2 = () => {
   };
 
   const drawApplicationCards = () => {
-    return applicationData
+    var apps = applicationData
       .filter((val) => {
         if (searchTerm == "") {
           return val;
@@ -64,8 +65,6 @@ export const Applications2 = () => {
             return 1;
           }
         }
-
-        // names must be equal
         return 0;
       })
       .map((app, i) => {
@@ -79,6 +78,10 @@ export const Applications2 = () => {
           />
         );
       });
+    var appsCount = apps.length;
+    localStorage.setItem("appsCount", appsCount);
+    console.log("test apps length: ", appsCount);
+    return apps;
   };
 
   const fetchApplicationAndQueueData = () => {
@@ -113,9 +116,21 @@ export const Applications2 = () => {
   };
 
   useEffect(() => {
+    setAppsSearchResultCount(applicationData.length);
+
     // const id = setInterval(() => {
     //   fetchData();
     // }, 20000);
+
+    setIsMqConnected(
+      axios
+        .get("http://localhost:15672", {
+          validateStatus: () => true,
+        })
+        .then(() => {
+          console.log("isMQ status: ", isMqConnected);
+        })
+    );
 
     fetchData();
     fetchQueueData();
@@ -166,6 +181,16 @@ export const Applications2 = () => {
               }}
             />
           </div>
+
+          {searchTerm != "" ? (
+            <div className="text-lg text-gray-500 pt-3">
+              {localStorage.getItem("appsCount")} results for "{searchTerm}"
+            </div>
+          ) : (
+            <div className="text-lg text-gray-500 pt-3">
+              {localStorage.getItem("appsCount")} Applications
+            </div>
+          )}
 
           {/* <FilterButton filterHandler={this.filterHandler}
                             isCompleted={this.state.isCompleted}
