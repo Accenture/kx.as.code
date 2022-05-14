@@ -115,6 +115,12 @@ export const Applications2 = () => {
       });
   };
 
+  const checkMqConnection = () => {
+    axios.get("http://localhost:5001/api/checkRmqConn").then((response) => {
+      setIsMqConnected(response.data);
+    });
+  };
+
   useEffect(() => {
     setAppsSearchResultCount(applicationData.length);
 
@@ -122,15 +128,7 @@ export const Applications2 = () => {
     //   fetchData();
     // }, 20000);
 
-    setIsMqConnected(
-      axios
-        .get("http://localhost:15672", {
-          validateStatus: () => true,
-        })
-        .then(() => {
-          console.log("isMQ status: ", isMqConnected);
-        })
-    );
+    checkMqConnection();
 
     fetchData();
     fetchQueueData();

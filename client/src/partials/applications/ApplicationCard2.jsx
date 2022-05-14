@@ -236,7 +236,7 @@ function ApplicationCard2(props) {
   };
 
   const UninstallButton = () => {
-    return "HELO";
+    return "uninstall button";
   };
 
   return (
@@ -298,7 +298,7 @@ function ApplicationCard2(props) {
         <div className="pb-5">{props.app.Description}</div>
 
         <div className="">
-          {console.log("in render queue: ", appQueue)}
+          {/* {console.log("in render queue: ", appQueue)} */}
           {appQueue === "pending_queue" && (
             <button
               className="bg-kxBlue/50 p-3 px-5 rounded items-center flex"
@@ -328,8 +328,9 @@ function ApplicationCard2(props) {
           )}
           {!props.isMqConnected && (
             <div className="text-red-500 border-red-500 rounded-md border p-2 flex">
-              <AiOutlineWarning className="mt-auto mb-auto table text-2xl mr-2" />
-              Installation Status not available.
+              <AiOutlineWarning className="mt-auto mb-auto table text-4xl mr-2" />
+              Installation Status not available. Please check conneciton to
+              RabbitMQ service.
             </div>
           )}
           {appQueue != "pending_queue" &&
