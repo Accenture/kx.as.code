@@ -16,7 +16,7 @@ export const Applications2 = () => {
   const [queueData, setQueueData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [appsSearchResultCount, setAppsSearchResultCount] = useState(0);
-  const [isMqConnected, setIsMqConnected] = useState(false);
+  const [isMqConnected, setIsMqConnected] = useState(true);
 
   const [sortSelect, setSortSelect] = useState("asc");
 
@@ -27,6 +27,19 @@ export const Applications2 = () => {
     "retry_queue",
     "wip_queue",
   ];
+
+  const getQueNameNew = (appName) => {
+    let queueList = [];
+    queueData.map((obj) => {
+      if (JSON.parse(obj.payload).name === appName) {
+        console.log("in GetQueue queue Name: ", obj.routing_key);
+        queueList.push(obj.routing_key);
+        console.log("list: ", queueList);
+      } else {
+      }
+    });
+    return queueList;
+  };
 
   const fetchData = () => {
     setIsLoading(true);
@@ -75,6 +88,7 @@ export const Applications2 = () => {
             queueData={queueData}
             fetchApplicationAndQueueData={fetchApplicationAndQueueData}
             isMqConnected={isMqConnected}
+            getQueNameNew={getQueNameNew}
           />
         );
       });
@@ -111,7 +125,7 @@ export const Applications2 = () => {
         setIsLoading(false);
       })
       .then(() => {
-        // console.log("queueData-22: ", queueData);
+        console.log("QueueData after fetch: ", queueData);
       });
   };
 

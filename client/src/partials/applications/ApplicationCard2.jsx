@@ -19,6 +19,9 @@ function ApplicationCard2(props) {
   const [allQueueStatus, setAllQueueStatus] = useState([]);
   const [applicationData, setApplicationData] = useState({});
   const [appQueue, setAppQueue] = useState("undefined");
+  const [isIstalled, setIsInstalled] = useState(false);
+  const [isFailed, setIsFailed] = useState(false);
+  const [isPending, setIsPending] = useState(false);
 
   var defaultPayload = {
     install_folder: "undefined",
@@ -120,14 +123,19 @@ function ApplicationCard2(props) {
   };
 
   const setUp = () => {
-    // getQueueByAppName2();
+    if (props.getQueNameNew(props.app.name) != undefined) {
+      props.getQueNameNew(props.app.name).map((status) => {
+        if (status === "completed_queue") {
+          setIsInstalled(true);
+        } else if (status === "failed_queue") {
+          setIsFailed(true);
+        } else if (status === "pending_queue") {
+          setIsPending(true);
+        }
+      });
+    }
 
-    // setAppQueueData(getAppQueueData(props.app.name));
-    // console.log("appQueue setUp: ", appQueue);
-
-    // getQueueByAppName(props.app.name)[0] &&
-    //   getQueueByAppName(props.app.name)[0].routing_key &&
-    //   setAppQueue(getQueueByAppName(props.app.name));
+    console.log("status setUp: ", isIstalled);
 
     const slug =
       props.app.name &&
@@ -135,14 +143,6 @@ function ApplicationCard2(props) {
         .replaceAll(" ", "-")
         .replace(/\b\w/g, (l) => l.toLowerCase());
     setAppId(slug);
-
-    //todo rewrite
-    // const queueObj = getAppQueueData(props.app.name)[0];
-
-    // if (appQueueData != undefined && appQueueData != null) {
-    //   console.log("debug-routing-queue: ", appQueueData);
-    //   setAllQueueStatus(getAppQueueData(props.app.name));
-    // }
   };
 
   const getQueueByAppName2 = () => {
@@ -206,6 +206,10 @@ function ApplicationCard2(props) {
   };
 
   useEffect(() => {
+    // print queue/ instalation status by setAppName
+    console.log("App Name: ", props.app.name);
+    console.log("Installation Status: ", props.getQueNameNew(props.app.name));
+
     setUp();
 
     fetchAppQueueData33().catch("Error: ", console.error);
