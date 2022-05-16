@@ -200,7 +200,7 @@ export const Applications2 = () => {
             </div>
           ) : (
             <div className="text-lg text-gray-500 pt-3">
-              {localStorage.getItem("appsCount")} Applications
+              {localStorage.getItem("appsCount")} available Applications
             </div>
           )}
 

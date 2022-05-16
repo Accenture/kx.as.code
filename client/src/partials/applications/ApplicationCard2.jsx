@@ -40,7 +40,7 @@ function ApplicationCard2(props) {
   const notify = (action) => {
     const notificationMessage = `${
       action === "install" ? "Installation" : "Uninstallation"
-    } started for ${appName}.`;
+    } Action added to Queue for ${appName}.`;
 
     toast.info(
       <NotificationMessage notificationMessage={notificationMessage} />,
