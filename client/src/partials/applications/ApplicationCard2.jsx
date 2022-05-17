@@ -10,6 +10,7 @@ import { toast } from "react-toastify";
 import LinearProgress from "@mui/material/LinearProgress";
 import axios from "axios";
 import { AiOutlineWarning } from "react-icons/ai";
+import ApplicationStatusActionButton from "./ApplicationStatusActionButton";
 
 function ApplicationCard2(props) {
   const { history } = props;
@@ -19,7 +20,7 @@ function ApplicationCard2(props) {
   const [allQueueStatus, setAllQueueStatus] = useState([]);
   const [applicationData, setApplicationData] = useState({});
   const [appQueue, setAppQueue] = useState("undefined");
-  const [isIstalled, setIsInstalled] = useState(false);
+  const [isInstalled, setIsInstalled] = useState(false);
   const [isFailed, setIsFailed] = useState(false);
   const [isPending, setIsPending] = useState(false);
 
@@ -135,7 +136,7 @@ function ApplicationCard2(props) {
       });
     }
 
-    console.log("status setUp: ", isIstalled);
+    console.log("status setUp: ", isInstalled);
 
     const slug =
       props.app.name &&
@@ -286,6 +287,11 @@ function ApplicationCard2(props) {
             </EditMenu>
           )}
         </header>
+        <div>
+          {props.getQueNameNew(props.app.name).map((q) => {
+            return <div>{q}</div>;
+          })}
+        </div>
         <Link to={"/apps/" + getSlug()}>
           {/* Category name */}
           <div className="text-white bg-ghBlack2 rounded p-0 px-1.5 uppercase w-fit inline-block my-2">
@@ -360,6 +366,13 @@ function ApplicationCard2(props) {
             ) : (
               ""
             ))}
+
+          <ApplicationStatusActionButton
+            isMqConnected={props.isMqConnected}
+            isFailed={isFailed}
+            isPending={isPending}
+            isInstalled={isInstalled}
+          />
         </div>
         {/* Seperator */}
         <div className="pb-3 mb-3 border-b-2 border-gray-600 w-full"></div>
