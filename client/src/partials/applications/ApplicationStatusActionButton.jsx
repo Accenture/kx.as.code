@@ -2,12 +2,16 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { ImCross } from "react-icons/im";
 import { FaArrowAltCircleDown } from "react-icons/fa";
+import { AiOutlineWarning } from "react-icons/ai";
 
 import { useState, useEffect } from "react";
 
 export default function ApplicationStatusActionButton(props) {
   const getActionButton = () => {
-    if (props.getQueNameNew(props.appName) != undefined) {
+    if (
+      props.getQueNameNew(props.appName) != undefined &&
+      props.isMqConnected
+    ) {
       if (props.getQueNameNew(props.appName).includes("pending_queue")) {
         return (
           <button
@@ -38,7 +42,8 @@ export default function ApplicationStatusActionButton(props) {
         );
       } else if (
         props.getQueNameNew(props.appName).includes("completed_queue") &&
-        !props.getQueNameNew(props.appName).includes("pending_queue")
+        !props.getQueNameNew(props.appName).includes("pending_queue") &&
+        props.category != "core"
       ) {
         return (
           <button
@@ -53,7 +58,8 @@ export default function ApplicationStatusActionButton(props) {
         );
       } else if (
         !props.getQueNameNew(props.appName).includes("completed_queue") &&
-        !props.getQueNameNew(props.appName).includes("pending_queue")
+        !props.getQueNameNew(props.appName).includes("pending_queue") &&
+        props.category != "core"
       ) {
         return (
           <button
@@ -70,6 +76,14 @@ export default function ApplicationStatusActionButton(props) {
           </button>
         );
       }
+    } else {
+      return (
+        <div className="text-red-500 border-red-500 rounded-md border p-2 flex">
+          <AiOutlineWarning className="mt-auto mb-auto table text-4xl mr-2" />
+          Installation Status not available. Please check conneciton to RabbitMQ
+          service.
+        </div>
+      );
     }
   };
 
@@ -80,11 +94,12 @@ export default function ApplicationStatusActionButton(props) {
   return (
     <>
       <div className="flex justify-center">{getActionButton()}</div>
-      <div>
+
+      {/* <div>
         {props.getQueNameNew(props.appName).map((q) => {
           return <div>{q}</div>;
         })}
-      </div>
+      </div> */}
     </>
   );
 }

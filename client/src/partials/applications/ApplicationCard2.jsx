@@ -9,7 +9,6 @@ import AppLogo from "./AppLogo";
 import { toast } from "react-toastify";
 import LinearProgress from "@mui/material/LinearProgress";
 import axios from "axios";
-import { AiOutlineWarning } from "react-icons/ai";
 import ApplicationStatusActionButton from "./ApplicationStatusActionButton";
 
 function ApplicationCard2(props) {
@@ -315,13 +314,13 @@ function ApplicationCard2(props) {
               Installing...
             </button>
           )} */}
-          {!props.isMqConnected && (
+          {/* {!props.isMqConnected && (
             <div className="text-red-500 border-red-500 rounded-md border p-2 flex">
               <AiOutlineWarning className="mt-auto mb-auto table text-4xl mr-2" />
               Installation Status not available. Please check conneciton to
               RabbitMQ service.
             </div>
-          )}
+          )} */}
           {/* 
           {appQueue != "pending_queue" &&
             (appQueue != "completed_queue" && props.isMqConnected ? (
@@ -351,6 +350,7 @@ function ApplicationCard2(props) {
             isMqConnected={props.isMqConnected}
             getQueNameNew={props.getQueNameNew}
             appName={props.app.name}
+            category={props.app.installation_group_folder}
             applicationInstallHandler={applicationInstallHandler}
           />
         </div>
