@@ -20,9 +20,6 @@ function ApplicationCard2(props) {
   const [allQueueStatus, setAllQueueStatus] = useState([]);
   const [applicationData, setApplicationData] = useState({});
   const [appQueue, setAppQueue] = useState("undefined");
-  const [isInstalled, setIsInstalled] = useState(false);
-  const [isFailed, setIsFailed] = useState(false);
-  const [isPending, setIsPending] = useState(false);
 
   var defaultPayload = {
     install_folder: "undefined",
@@ -124,20 +121,6 @@ function ApplicationCard2(props) {
   };
 
   const setUp = () => {
-    if (props.getQueNameNew(props.app.name) != undefined) {
-      props.getQueNameNew(props.app.name).map((status) => {
-        if (status === "completed_queue") {
-          setIsInstalled(true);
-        } else if (status === "failed_queue") {
-          setIsFailed(true);
-        } else if (status === "pending_queue") {
-          setIsPending(true);
-        }
-      });
-    }
-
-    console.log("status setUp: ", isInstalled);
-
     const slug =
       props.app.name &&
       props.app.name
@@ -287,11 +270,7 @@ function ApplicationCard2(props) {
             </EditMenu>
           )}
         </header>
-        <div>
-          {props.getQueNameNew(props.app.name).map((q) => {
-            return <div>{q}</div>;
-          })}
-        </div>
+
         <Link to={"/apps/" + getSlug()}>
           {/* Category name */}
           <div className="text-white bg-ghBlack2 rounded p-0 px-1.5 uppercase w-fit inline-block my-2">
@@ -369,9 +348,8 @@ function ApplicationCard2(props) {
 
           <ApplicationStatusActionButton
             isMqConnected={props.isMqConnected}
-            isFailed={isFailed}
-            isPending={isPending}
-            isInstalled={isInstalled}
+            getQueNameNew={props.getQueNameNew}
+            appName={props.app.name}
           />
         </div>
         {/* Seperator */}
