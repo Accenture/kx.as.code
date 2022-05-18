@@ -15,6 +15,8 @@ export const Applications2 = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [queueData, setQueueData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [appsSearchResultCount, setAppsSearchResultCount] = useState(0);
+  const [isMqConnected, setIsMqConnected] = useState(true);
 
   const [sortSelect, setSortSelect] = useState("asc");
 
@@ -26,6 +28,19 @@ export const Applications2 = () => {
     "wip_queue",
   ];
 
+  const getQueNameNew = (appName) => {
+    let queueList = [];
+    queueData.map((obj) => {
+      if (JSON.parse(obj.payload).name === appName) {
+        console.log("in GetQueue queue Name: ", obj.routing_key);
+        queueList.push(obj.routing_key);
+        console.log("list: ", queueList);
+      } else {
+      }
+    });
+    return queueList;
+  };
+
   const fetchData = () => {
     setIsLoading(true);
     axios.get("http://localhost:5001/api/applications").then((response) => {
@@ -34,7 +49,7 @@ export const Applications2 = () => {
   };
 
   const drawApplicationCards = () => {
-    return applicationData
+    var apps = applicationData
       .filter((val) => {
         if (searchTerm == "") {
           return val;
@@ -63,8 +78,6 @@ export const Applications2 = () => {
             return 1;
           }
         }
-
-        // names must be equal
         return 0;
       })
       .map((app, i) => {
@@ -74,9 +87,15 @@ export const Applications2 = () => {
             key={i}
             queueData={queueData}
             fetchApplicationAndQueueData={fetchApplicationAndQueueData}
+            isMqConnected={isMqConnected}
+            getQueNameNew={getQueNameNew}
           />
         );
       });
+    var appsCount = apps.length;
+    localStorage.setItem("appsCount", appsCount);
+    console.log("test apps length: ", appsCount);
+    return apps;
   };
 
   const fetchApplicationAndQueueData = () => {
@@ -106,21 +125,31 @@ export const Applications2 = () => {
         setIsLoading(false);
       })
       .then(() => {
-        // console.log("queueData-22: ", queueData);
+        console.log("QueueData after fetch: ", queueData);
       });
   };
 
+  const checkMqConnection = () => {
+    axios.get("http://localhost:5001/api/checkRmqConn").then((response) => {
+      setIsMqConnected(response.data);
+    });
+  };
+
   useEffect(() => {
+    setAppsSearchResultCount(applicationData.length);
+
     // const id = setInterval(() => {
     //   fetchData();
     // }, 20000);
+
+    checkMqConnection();
 
     fetchData();
     fetchQueueData();
     return () => {
       // clearInterval(id);
     };
-  }, [queueData, applicationData]);
+  }, []);
 
   return (
     <div className="px-6 sm:px-6 lg:px-24 py-8 w-full max-w-9xl mx-auto">
@@ -164,6 +193,16 @@ export const Applications2 = () => {
               }}
             />
           </div>
+
+          {searchTerm != "" ? (
+            <div className="text-lg text-gray-400 pt-3">
+              {localStorage.getItem("appsCount")} results for "{searchTerm}"
+            </div>
+          ) : (
+            <div className="text-lg text-gray-400 pt-3">
+              {localStorage.getItem("appsCount")} available Applications
+            </div>
+          )}
 
           {/* <FilterButton filterHandler={this.filterHandler}
                             isCompleted={this.state.isCompleted}

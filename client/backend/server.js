@@ -85,6 +85,18 @@ app.use((req, res, next) => {
   });
 });
 
+app.route("/api/checkRmqConn").get((req, res) => {
+  console.log("checkRmqConn triggered.");
+  try {
+    request("http://localhost:15672", function (err, response, body) {
+      console.log("BODY CONN REQ", res.statusCode);
+      res.send(response?.statusCode);
+    });
+  } catch (err) {
+    res.send(err);
+  }
+});
+
 app.route("/api/queues/:queue_name").get((req, res) => {
   console.log("get q triggered.");
   var url =

@@ -9,7 +9,7 @@ import AppLogo from "./AppLogo";
 import { toast } from "react-toastify";
 import LinearProgress from "@mui/material/LinearProgress";
 import axios from "axios";
-import { AiOutlineWarning } from "react-icons/ai";
+import ApplicationStatusActionButton from "./ApplicationStatusActionButton";
 
 function ApplicationCard2(props) {
   const { history } = props;
@@ -18,7 +18,7 @@ function ApplicationCard2(props) {
   const [appName, setAppName] = useState("");
   const [allQueueStatus, setAllQueueStatus] = useState([]);
   const [applicationData, setApplicationData] = useState({});
-  const [appQueue, setAppQueue] = useState("pending_queue");
+  const [appQueue, setAppQueue] = useState("undefined");
 
   var defaultPayload = {
     install_folder: "undefined",
@@ -37,7 +37,7 @@ function ApplicationCard2(props) {
   const notify = (action) => {
     const notificationMessage = `${
       action === "install" ? "Installation" : "Uninstallation"
-    } started for ${appName}.`;
+    } Action added to Queue for ${appName}.`;
 
     toast.info(
       <NotificationMessage notificationMessage={notificationMessage} />,
@@ -120,29 +120,12 @@ function ApplicationCard2(props) {
   };
 
   const setUp = () => {
-    // getQueueByAppName2();
-
-    // setAppQueueData(getAppQueueData(props.app.name));
-    // console.log("appQueue setUp: ", appQueue);
-
-    // getQueueByAppName(props.app.name)[0] &&
-    //   getQueueByAppName(props.app.name)[0].routing_key &&
-    //   setAppQueue(getQueueByAppName(props.app.name));
-
     const slug =
       props.app.name &&
       props.app.name
         .replaceAll(" ", "-")
         .replace(/\b\w/g, (l) => l.toLowerCase());
     setAppId(slug);
-
-    //todo rewrite
-    // const queueObj = getAppQueueData(props.app.name)[0];
-
-    // if (appQueueData != undefined && appQueueData != null) {
-    //   console.log("debug-routing-queue: ", appQueueData);
-    //   setAllQueueStatus(getAppQueueData(props.app.name));
-    // }
   };
 
   const getQueueByAppName2 = () => {
@@ -206,6 +189,10 @@ function ApplicationCard2(props) {
   };
 
   useEffect(() => {
+    // print queue/ instalation status by setAppName
+    console.log("App Name: ", props.app.name);
+    console.log("Installation Status: ", props.getQueNameNew(props.app.name));
+
     setUp();
 
     fetchAppQueueData33().catch("Error: ", console.error);
@@ -233,6 +220,10 @@ function ApplicationCard2(props) {
         </li>
       );
     });
+  };
+
+  const UninstallButton = () => {
+    return "uninstall button";
   };
 
   return (
@@ -278,6 +269,7 @@ function ApplicationCard2(props) {
             </EditMenu>
           )}
         </header>
+
         <Link to={"/apps/" + getSlug()}>
           {/* Category name */}
           <div className="text-white bg-ghBlack2 rounded p-0 px-1.5 uppercase w-fit inline-block my-2">
@@ -294,8 +286,8 @@ function ApplicationCard2(props) {
         <div className="pb-5">{props.app.Description}</div>
 
         <div className="">
-          {console.log("in render queue: ", appQueue)}
-          {appQueue === "pending_queue" && (
+          {/* {console.log("in render queue: ", appQueue)} */}
+          {/* {appQueue === "pending_queue" && (
             <button
               className="bg-kxBlue/50 p-3 px-5 rounded items-center flex"
               disabled
@@ -321,9 +313,17 @@ function ApplicationCard2(props) {
               </svg>
               Installing...
             </button>
-          )}
+          )} */}
+          {/* {!props.isMqConnected && (
+            <div className="text-red-500 border-red-500 rounded-md border p-2 flex">
+              <AiOutlineWarning className="mt-auto mb-auto table text-4xl mr-2" />
+              Installation Status not available. Please check conneciton to
+              RabbitMQ service.
+            </div>
+          )} */}
+          {/* 
           {appQueue != "pending_queue" &&
-            (appQueue != "completed_queue" ? (
+            (appQueue != "completed_queue" && props.isMqConnected ? (
               <div className="">
                 <button
                   onClick={applicationInstallHandler}
@@ -332,7 +332,6 @@ function ApplicationCard2(props) {
                   Install
                 </button>
 
-                {/* Warning Info Installation Failed Component */}
                 {appQueue === "failed_queue" && (
                   <div className="p-2 mt-4 rounded-md text-red-500 flex item-center border border-red-500">
                     <AiOutlineWarning className="mt-auto mb-auto table text-2xl mr-2" />
@@ -343,13 +342,17 @@ function ApplicationCard2(props) {
                 )}
               </div>
             ) : (
-              <button
-                onClick={applicationUninstallHandler}
-                className="bg-red-500 p-3 px-5 rounded items-center flex"
-              >
-                Uninstall
-              </button>
+              ""
             ))}
+          */}
+
+          <ApplicationStatusActionButton
+            isMqConnected={props.isMqConnected}
+            getQueNameNew={props.getQueNameNew}
+            appName={props.app.name}
+            category={props.app.installation_group_folder}
+            applicationInstallHandler={applicationInstallHandler}
+          />
         </div>
         {/* Seperator */}
         <div className="pb-3 mb-3 border-b-2 border-gray-600 w-full"></div>
