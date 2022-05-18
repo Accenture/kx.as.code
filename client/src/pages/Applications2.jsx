@@ -195,11 +195,11 @@ export const Applications2 = () => {
           </div>
 
           {searchTerm != "" ? (
-            <div className="text-lg text-gray-500 pt-3">
+            <div className="text-lg text-gray-400 pt-3">
               {localStorage.getItem("appsCount")} results for "{searchTerm}"
             </div>
           ) : (
-            <div className="text-lg text-gray-500 pt-3">
+            <div className="text-lg text-gray-400 pt-3">
               {localStorage.getItem("appsCount")} available Applications
             </div>
           )}

@@ -351,6 +351,7 @@ function ApplicationCard2(props) {
             isMqConnected={props.isMqConnected}
             getQueNameNew={props.getQueNameNew}
             appName={props.app.name}
+            applicationInstallHandler={applicationInstallHandler}
           />
         </div>
         {/* Seperator */}

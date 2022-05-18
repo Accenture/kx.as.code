@@ -1,6 +1,8 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { ImCross } from "react-icons/im";
+import { FaArrowAltCircleDown } from "react-icons/fa";
+
 import { useState, useEffect } from "react";
 
 export default function ApplicationStatusActionButton(props) {
@@ -9,7 +11,7 @@ export default function ApplicationStatusActionButton(props) {
       if (props.getQueNameNew(props.appName).includes("pending_queue")) {
         return (
           <button
-            className="bg-none p-2 px-5 rounded items-center flex"
+            className="bg-gray-600 p-2 px-5 rounded items-center flex"
             disabled
           >
             <svg
@@ -31,7 +33,7 @@ export default function ApplicationStatusActionButton(props) {
                 d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
               ></path>
             </svg>
-            <span className="text-gray-300">Processing...</span>
+            <span className="text-white">Processing...</span>
           </button>
         );
       } else if (
@@ -44,9 +46,27 @@ export default function ApplicationStatusActionButton(props) {
             to="#0"
           >
             <div className="flex items-start">
-              <ImCross className="mr-2 flex my-auto" />
+              <ImCross className="p-0.5 flex my-auto" />
             </div>
             <span className="flex my-auto">Uninstall</span>
+          </button>
+        );
+      } else if (
+        !props.getQueNameNew(props.appName).includes("completed_queue") &&
+        !props.getQueNameNew(props.appName).includes("pending_queue")
+      ) {
+        return (
+          <button
+            className="bg-kxBlue p-2 px-5 rounded items-center flex"
+            to="#0"
+            onClick={() => {
+              props.applicationInstallHandler();
+            }}
+          >
+            <div className="flex items-start">
+              <FaArrowAltCircleDown className="mr-2 flex my-auto text-white" />
+            </div>
+            <span className="flex my-auto">Install</span>
           </button>
         );
       }
