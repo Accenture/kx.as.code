@@ -288,7 +288,7 @@ function ApplicationCard2(props) {
 
         <div className="">
           {/* {console.log("in render queue: ", appQueue)} */}
-          {appQueue === "pending_queue" && (
+          {/* {appQueue === "pending_queue" && (
             <button
               className="bg-kxBlue/50 p-3 px-5 rounded items-center flex"
               disabled
@@ -314,7 +314,7 @@ function ApplicationCard2(props) {
               </svg>
               Installing...
             </button>
-          )}
+          )} */}
           {!props.isMqConnected && (
             <div className="text-red-500 border-red-500 rounded-md border p-2 flex">
               <AiOutlineWarning className="mt-auto mb-auto table text-4xl mr-2" />
@@ -322,6 +322,7 @@ function ApplicationCard2(props) {
               RabbitMQ service.
             </div>
           )}
+          {/* 
           {appQueue != "pending_queue" &&
             (appQueue != "completed_queue" && props.isMqConnected ? (
               <div className="">
@@ -332,7 +333,6 @@ function ApplicationCard2(props) {
                   Install
                 </button>
 
-                {/* Warning Info Installation Failed Component */}
                 {appQueue === "failed_queue" && (
                   <div className="p-2 mt-4 rounded-md text-red-500 flex item-center border border-red-500">
                     <AiOutlineWarning className="mt-auto mb-auto table text-2xl mr-2" />
@@ -345,6 +345,7 @@ function ApplicationCard2(props) {
             ) : (
               ""
             ))}
+          */}
 
           <ApplicationStatusActionButton
             isMqConnected={props.isMqConnected}
