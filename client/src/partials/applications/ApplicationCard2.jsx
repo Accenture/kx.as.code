@@ -235,38 +235,40 @@ function ApplicationCard2(props) {
           }`}
           loading="lazy"
         >
-          <div className="grid grid-cols-12 p-4 pb-0 items-center">
-            <div className="mx-3 flex col-span-6">
-              {/* Icon */}
-              <div className="">
-                <AppLogo width={"50px"} appName={props.app.name} />
-                {/* <StatusTag installStatus={props.app.queueName} /> */}
-              </div>
+          <Link to={"/apps/" + getSlug()}>
+            <div className="grid grid-cols-12 p-4 pb-0 items-center">
               <div className="mx-3 flex col-span-6">
-                <Link to={"/apps/" + getSlug()}>
-                  {/* Category name */}
-                  <div className="text-white bg-ghBlack2 rounded p-0 px-1.5 uppercase w-fit inline-block my-1">
-                    {props.app.installation_group_folder}
+                {/* Icon */}
+                <div className="">
+                  <AppLogo width={"50px"} appName={props.app.name} />
+                  {/* <StatusTag installStatus={props.app.queueName} /> */}
+                </div>
+                <div className="mx-3 flex col-span-6">
+                  <div>
+                    {/* Category name */}
+                    <div className="text-white bg-ghBlack2 rounded p-0 px-1.5 uppercase w-fit inline-block my-1">
+                      {props.app.installation_group_folder}
+                    </div>
+                    <h2 className="hover:underline hover:cursor-pointer text-lg text-white mb-2 flex items-center">
+                      {allQueueStatus != "" && (
+                        <StatusPoint installStatus={allQueueStatus} />
+                      )}
+                      {getTransformedName()}
+                    </h2>
                   </div>
-                  <h2 className="hover:underline hover:cursor-pointer text-lg text-white mb-2 flex items-center">
-                    {allQueueStatus != "" && (
-                      <StatusPoint installStatus={allQueueStatus} />
-                    )}
-                    {getTransformedName()}
-                  </h2>
-                </Link>
+                </div>
+              </div>
+              <div className="flex col-span-6 justify-end">
+                <ApplicationStatusActionButton
+                  isMqConnected={props.isMqConnected}
+                  getQueNameNew={props.getQueNameNew}
+                  appName={props.app.name}
+                  category={props.app.installation_group_folder}
+                  applicationInstallHandler={applicationInstallHandler}
+                />
               </div>
             </div>
-            <div className="flex col-span-6 justify-end">
-              <ApplicationStatusActionButton
-                isMqConnected={props.isMqConnected}
-                getQueNameNew={props.getQueNameNew}
-                appName={props.app.name}
-                category={props.app.installation_group_folder}
-                applicationInstallHandler={applicationInstallHandler}
-              />
-            </div>
-          </div>
+          </Link>
 
           <div className="px-4 pb-3">
             <ul className="float-left">
