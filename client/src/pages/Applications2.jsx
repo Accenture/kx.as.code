@@ -1,12 +1,8 @@
 import { React, Component } from "react";
 import ApplicationCard2 from "../partials/applications/ApplicationCard2.jsx";
 import axios from "axios";
-import Box from "@mui/material/Box";
-import InputLabel from "@mui/material/InputLabel";
-import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
-import Select from "@mui/material/Select";
-// import FilterButton from "../partials/actions/FilterButton"
+import { FaThList } from "react-icons/fa";
+import { BsGrid3X3GapFill } from "react-icons/bs";
 
 import { useState, useEffect } from "react";
 
@@ -17,7 +13,7 @@ export const Applications2 = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [appsSearchResultCount, setAppsSearchResultCount] = useState(0);
   const [isMqConnected, setIsMqConnected] = useState(true);
-
+  const [isListLayout, setIsListLayout] = useState(true);
   const [sortSelect, setSortSelect] = useState("asc");
 
   const queueList = [
@@ -28,13 +24,20 @@ export const Applications2 = () => {
     "wip_queue",
   ];
 
+  const toggleListLayout = (b) => {
+    setIsListLayout(b);
+    localStorage.setItem("isListLayout", b);
+    console.log("isListLayout: ", b);
+    console.log("isListLayout-local: ", localStorage.getItem("isListLayout"));
+  };
+
   const getQueNameNew = (appName) => {
     let queueList = [];
     queueData.map((obj) => {
       if (JSON.parse(obj.payload).name === appName) {
-        console.log("in GetQueue queue Name: ", obj.routing_key);
+        // console.log("in GetQueue queue Name: ", obj.routing_key);
         queueList.push(obj.routing_key);
-        console.log("list: ", queueList);
+        // console.log("list: ", queueList);
       } else {
       }
     });
@@ -89,12 +92,12 @@ export const Applications2 = () => {
             fetchApplicationAndQueueData={fetchApplicationAndQueueData}
             isMqConnected={isMqConnected}
             getQueNameNew={getQueNameNew}
+            isListLayout={isListLayout}
           />
         );
       });
     var appsCount = apps.length;
     localStorage.setItem("appsCount", appsCount);
-    console.log("test apps length: ", appsCount);
     return apps;
   };
 
@@ -125,7 +128,7 @@ export const Applications2 = () => {
         setIsLoading(false);
       })
       .then(() => {
-        console.log("QueueData after fetch: ", queueData);
+        // console.log("QueueData after fetch: ", queueData);
       });
   };
 
@@ -137,6 +140,7 @@ export const Applications2 = () => {
 
   useEffect(() => {
     setAppsSearchResultCount(applicationData.length);
+    setIsListLayout(localStorage.getItem("isListLayout"));
 
     // const id = setInterval(() => {
     //   fetchData();
@@ -166,7 +170,7 @@ export const Applications2 = () => {
       </div>
 
       {/* Applications actions */}
-      <div className="flex justify-between mb-8">
+      <div className="flex justify-between mb-4">
         {/* Left: Actions */}
         <div className="">
           {/* Search Input Field */}
@@ -194,16 +198,6 @@ export const Applications2 = () => {
             />
           </div>
 
-          {searchTerm != "" ? (
-            <div className="text-lg text-gray-400 pt-3">
-              {localStorage.getItem("appsCount")} results for "{searchTerm}"
-            </div>
-          ) : (
-            <div className="text-lg text-gray-400 pt-3">
-              {localStorage.getItem("appsCount")} available Applications
-            </div>
-          )}
-
           {/* <FilterButton filterHandler={this.filterHandler}
                             isCompleted={this.state.isCompleted}
                             isFailed={this.state.isFailed}
@@ -225,8 +219,42 @@ export const Applications2 = () => {
           </select>
         </div>
       </div>
+      {/* Results count and galery action buttons */}
+      <div className="flex justify-between items-center">
+        {/* left */}
+        <div className="">
+          {searchTerm != "" ? (
+            <div className="text-lg text-gray-400 mb-4">
+              {localStorage.getItem("appsCount")} results for "{searchTerm}"
+            </div>
+          ) : (
+            <div className="text-lg text-gray-400 mb-4">
+              {localStorage.getItem("appsCount")} available Applications
+            </div>
+          )}
+        </div>
+        {/* right */}
+        <div className="mb-4 text-3xl">
+          <button
+            className={`mr-2 ${isListLayout ? "text-kxBlue" : "text-gray-500"}`}
+            onClick={() => {
+              toggleListLayout(true);
+            }}
+          >
+            <FaThList />
+          </button>
+          <button
+            className={`${!isListLayout ? "text-kxBlue" : "text-gray-500"}`}
+            onClick={() => {
+              toggleListLayout(false);
+            }}
+          >
+            <BsGrid3X3GapFill />
+          </button>
+        </div>
+      </div>
 
-      <div className="grid grid-cols-12 gap-8">{drawApplicationCards()}</div>
+      <div className="grid grid-cols-12 gap-6">{drawApplicationCards()}</div>
     </div>
   );
 };

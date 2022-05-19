@@ -15,7 +15,7 @@ export default function ApplicationStatusActionButton(props) {
       if (props.getQueNameNew(props.appName).includes("pending_queue")) {
         return (
           <button
-            className="bg-gray-600 p-2 px-5 rounded items-center flex"
+            className="bg-gray-600 p-2 px-5 rounded items-center flex h-10"
             disabled
           >
             <svg
@@ -47,7 +47,7 @@ export default function ApplicationStatusActionButton(props) {
       ) {
         return (
           <button
-            className="bg-red-500 p-2 px-5 rounded items-center flex"
+            className="bg-red-500 p-2 px-5 rounded items-center flex h-10"
             to="#0"
           >
             <div className="flex items-start">
@@ -63,7 +63,7 @@ export default function ApplicationStatusActionButton(props) {
       ) {
         return (
           <button
-            className="bg-kxBlue p-2 px-5 rounded items-center flex"
+            className="bg-kxBlue p-2 px-5 rounded items-center flex h-10"
             to="#0"
             onClick={() => {
               props.applicationInstallHandler();
