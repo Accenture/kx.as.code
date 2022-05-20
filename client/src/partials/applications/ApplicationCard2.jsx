@@ -245,8 +245,8 @@ function ApplicationCard2(props) {
             }`}
             loading="lazy"
           >
-            <div className="grid grid-cols-12 p-4 pb-0 items-center">
-              <div className="flex col-span-10 hover:bg-gray-700 bg-inv2 shadow-lg rounded p-4">
+            <div className="grid grid-cols-12 pt-2 px-0 items-center">
+              <div className="flex col-span-10 hover:bg-gray-700 bg-inv2 rounded p-4">
                 <Link
                   to={"/apps/" + getSlug()}
                   className="mx-3 flex col-span-6"

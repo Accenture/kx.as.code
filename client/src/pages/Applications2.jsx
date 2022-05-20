@@ -107,6 +107,7 @@ export const Applications2 = () => {
     fetchData();
   };
 
+  // TODO get status by app name -> Return e.g. completed, pending, none
   const getInstallationStatusByAppName = () => {};
 
   const fetchQueueData = () => {
@@ -257,7 +258,7 @@ export const Applications2 = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-12 gap-3">{drawApplicationCards()}</div>
+      <div className="grid grid-cols-12 gap-2">{drawApplicationCards()}</div>
     </div>
   );
 };

@@ -89,7 +89,7 @@ export default function ApplicationStatusActionButton(props) {
 
   useEffect(() => {
     return () => {
-      props.refreshActionButton.current = getActionButton;
+      // props.refreshActionButton.current = getActionButton;
     };
   }, []);
 
