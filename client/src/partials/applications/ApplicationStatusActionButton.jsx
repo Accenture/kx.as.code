@@ -9,13 +9,13 @@ import { useState, useEffect } from "react";
 export default function ApplicationStatusActionButton(props) {
   const getActionButton = () => {
     if (
-      props.getQueNameNew(props.appName) != undefined &&
+      props.getQueueStatusList(props.appName) != undefined &&
       props.isMqConnected
     ) {
-      if (props.getQueNameNew(props.appName).includes("pending_queue")) {
+      if (props.getQueueStatusList(props.appName).includes("pending_queue")) {
         return (
           <button
-            className="bg-gray-600 p-2 px-5 rounded items-center flex h-10"
+            className="bg-gray-600 p-2 px-5 rounded items-center flex h-full w-full justify-center"
             disabled
           >
             <svg
@@ -41,13 +41,13 @@ export default function ApplicationStatusActionButton(props) {
           </button>
         );
       } else if (
-        props.getQueNameNew(props.appName).includes("completed_queue") &&
-        !props.getQueNameNew(props.appName).includes("pending_queue") &&
+        props.getQueueStatusList(props.appName).includes("completed_queue") &&
+        !props.getQueueStatusList(props.appName).includes("pending_queue") &&
         props.category != "core"
       ) {
         return (
           <button
-            className="bg-red-500 p-2 px-5 rounded items-center flex h-10"
+            className="bg-red-500 p-2 px-5 rounded items-center flex h-full w-full justify-center"
             to="#0"
           >
             <div className="flex items-start">
@@ -57,13 +57,13 @@ export default function ApplicationStatusActionButton(props) {
           </button>
         );
       } else if (
-        !props.getQueNameNew(props.appName).includes("completed_queue") &&
-        !props.getQueNameNew(props.appName).includes("pending_queue") &&
+        !props.getQueueStatusList(props.appName).includes("completed_queue") &&
+        !props.getQueueStatusList(props.appName).includes("pending_queue") &&
         props.category != "core"
       ) {
         return (
           <button
-            className="bg-kxBlue p-2 px-5 rounded items-center flex h-10"
+            className="bg-kxBlue p-2 px-5 rounded items-center flex h-full w-full justify-center"
             to="#0"
             onClick={() => {
               props.applicationInstallHandler();
@@ -88,12 +88,14 @@ export default function ApplicationStatusActionButton(props) {
   };
 
   useEffect(() => {
-    return () => {};
+    return () => {
+      props.refreshActionButton.current = getActionButton;
+    };
   }, []);
 
   return (
     <>
-      <div className="flex justify-center">{getActionButton()}</div>
+      <div className="flex justify-center w-full">{getActionButton()}</div>
 
       {/* <div>
         {props.getQueNameNew(props.appName).map((q) => {

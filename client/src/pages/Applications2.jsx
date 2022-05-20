@@ -31,7 +31,8 @@ export const Applications2 = () => {
     console.log("isListLayout-local: ", localStorage.getItem("isListLayout"));
   };
 
-  const getQueNameNew = (appName) => {
+  const getQueueStatusList = (appName) => {
+    // fetchQueueData();
     let queueList = [];
     queueData.map((obj) => {
       if (JSON.parse(obj.payload).name === appName) {
@@ -91,7 +92,7 @@ export const Applications2 = () => {
             queueData={queueData}
             fetchApplicationAndQueueData={fetchApplicationAndQueueData}
             isMqConnected={isMqConnected}
-            getQueNameNew={getQueNameNew}
+            getQueueStatusList={getQueueStatusList}
             isListLayout={isListLayout}
           />
         );
@@ -105,6 +106,8 @@ export const Applications2 = () => {
     fetchQueueData();
     fetchData();
   };
+
+  const getInstallationStatusByAppName = () => {};
 
   const fetchQueueData = () => {
     console.log("ping");
@@ -254,7 +257,7 @@ export const Applications2 = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-12 gap-6">{drawApplicationCards()}</div>
+      <div className="grid grid-cols-12 gap-3">{drawApplicationCards()}</div>
     </div>
   );
 };
