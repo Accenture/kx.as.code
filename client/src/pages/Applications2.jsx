@@ -111,7 +111,6 @@ export const Applications2 = () => {
   const getInstallationStatusByAppName = () => {};
 
   const fetchQueueData = () => {
-    console.log("ping");
     const requests = queueList.map((queue) => {
       return axios
         .get("http://localhost:5001/api/queues/" + queue)
@@ -119,6 +118,7 @@ export const Applications2 = () => {
           // console.log("debug-response: ", response);
           response.data.map((app) => {
             queueData.push(app);
+            // console.log("Queue Data debug: ", queueData);
           });
         })
         .then(() => {

@@ -29,7 +29,6 @@ export default function AppLogo(props) {
     setImageSize();
     const fetchImage = async () => {
       try {
-        console.log("ImageName: ", imageName);
         const response = await import(
           `../../media/png/appImgs/${imageName}.png`
         );
