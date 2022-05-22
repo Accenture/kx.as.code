@@ -238,7 +238,7 @@ function ApplicationCard2(props) {
       {props.isListLayout ? (
         <>
           <div
-            className={`cursor-pointer flex flex-col col-span-full rounded ${
+            className={`cursor-auto flex flex-col col-span-full rounded ${
               props.isListLayout
                 ? "col-span-full"
                 : "sm:col-span-6 xl:col-span-4"
