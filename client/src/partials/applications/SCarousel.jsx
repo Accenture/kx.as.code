@@ -13,7 +13,7 @@ export default function SCarousel(props) {
         return (
           <div key={i} className="rounded">
             <img alt="" src={sc} className="rounded-xl" />
-            <p className="legend">{props.imageName}</p>
+            {/* <p className="legend">{props.imageName}</p> */}
           </div>
         );
       })}

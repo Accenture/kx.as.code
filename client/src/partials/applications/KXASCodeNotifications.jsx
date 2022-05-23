@@ -10,7 +10,25 @@ export default function KXASCodeNotifications() {
 
   useEffect(() => {
     fetchQueueData();
+    const interval = setInterval(() => {
+      console.log("This will run 3 every second!");
+      notify("install");
+    }, 3000);
+    return () => clearInterval(interval);
   }, []);
+
+  const getNotificationMessageList = () => {
+    let notificytionList = [];
+    queueData.map((obj) => {
+      if (JSON.parse(obj.payload).name === "") {
+        // console.log("in GetQueue queue Name: ", obj.routing_key);
+        notificytionList.push(obj.routing_key);
+        // console.log("list: ", queueList);
+      } else {
+      }
+    });
+    return queueList;
+  };
 
   const fetchQueueData = () => {
     const requests = queueList.map((queue) => {
