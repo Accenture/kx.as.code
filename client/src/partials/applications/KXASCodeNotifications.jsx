@@ -5,53 +5,56 @@ import axios from "axios";
 
 export default function KXASCodeNotifications() {
   const [queueData, setQueueData] = useState([]);
+  // const [notificationData, setNotificationData] = useState([]);
 
   const queueList = ["notification_queue"];
 
   useEffect(() => {
-    fetchQueueData();
     const interval = setInterval(() => {
-      console.log("This will run 3 every second!");
-      notify("install");
+      fetchQueueDataAndNotify();
     }, 3000);
     return () => clearInterval(interval);
   }, []);
 
-  const getNotificationMessageList = () => {
-    let notificytionList = [];
-    queueData.map((obj) => {
-      if (JSON.parse(obj.payload).name === "") {
-        // console.log("in GetQueue queue Name: ", obj.routing_key);
-        notificytionList.push(obj.routing_key);
-        // console.log("list: ", queueList);
-      } else {
-      }
-    });
-    return queueList;
-  };
+  // const getNotificationMessageList = () => {
+  //   console.log("fetchedData-debug-33: ", queueData);
+  //   queueData
+  //     .map((obj) => {
+  //       let message = JSON.parse(obj.payload).message;
+  //       notificationData.push(message);
+  //     })
+  //     .then(() => {
+  //       setNotificationData(notificationData);
+  //     });
+  // };
 
-  const fetchQueueData = () => {
+  const fetchQueueDataAndNotify = () => {
     const requests = queueList.map((queue) => {
-      axios
+      return axios
         .get("http://localhost:5001/api/queues/" + queue)
         .then((response) => {
-          // console.log("debug-response: ", response);
-          response.data.map((notificaiton) => {
-            queueData.push(notificaiton);
-          });
+          console.log(
+            "payload debug: ",
+            JSON.parse(response.data[0].payload).message
+          );
+          // console.log(
+          //   "payload type: ",
+          //   typeof JSON.parse(response.data[0].payload).message
+          // );
+          notify(JSON.parse(response.data[0].payload).message);
         })
         .then(() => {
-          console.log("debug notificaitons data: ", queueData);
+          axios.get("http://localhost:5001/api/consume/notification_queue");
         });
     });
 
     Promise.all(requests)
       .then(() => {
-        setQueueData(queueData);
+        // setQueueData(queueData);
+        // console.log("queue data messages: ", queueData);
+        // notify(JSON.parse(queueData[0].payload).message);
       })
-      .then(() => {
-        // console.log("QueueData after fetch: ", queueData);
-      });
+      .then(() => {});
   };
 
   const NotificationMessage = (notificationProps) => (
@@ -64,11 +67,11 @@ export default function KXASCodeNotifications() {
     </div>
   );
 
-  const notify = (action) => {
+  const notify = (message) => {
     // const notificationMessage = `${
     //   action === "install" ? "Installation" : "Uninstallation"
     // } Action added to Queue for ${appName}.`;
-    const notificationMessage = "Notificaiton";
+    const notificationMessage = message;
 
     toast.info(
       <NotificationMessage notificationMessage={notificationMessage} />,
