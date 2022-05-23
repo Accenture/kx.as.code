@@ -43,8 +43,11 @@ export default function KXASCodeNotifications() {
           // );
 
           try {
-            if (response.data >= 1) {
-              notify(JSON.parse(response.data[0].payload).message);
+            if (response.data.length >= 1) {
+              let message = JSON.parse(response.data[0].payload).message;
+              let logLevel = JSON.parse(response.data[0].payload).log_level;
+
+              notify(message, logLevel);
             }
           } catch (err) {
             axios.get("http://localhost:5001/api/consume/notification_queue");
@@ -75,25 +78,81 @@ export default function KXASCodeNotifications() {
     </div>
   );
 
-  const notify = (message) => {
+  const notify = (message, logLevel) => {
     // const notificationMessage = `${
     //   action === "install" ? "Installation" : "Uninstallation"
     // } Action added to Queue for ${appName}.`;
     const notificationMessage = message;
 
-    toast.info(
-      <NotificationMessage notificationMessage={notificationMessage} />,
-      {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "dark",
-      }
-    );
+    if (logLevel === "info") {
+      toast.info(
+        <NotificationMessage
+          notificationMessage={notificationMessage}
+          logLevel={logLevel}
+        />,
+        {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+        }
+      );
+    } else if (logLevel === "success") {
+      toast.success(
+        <NotificationMessage
+          notificationMessage={notificationMessage}
+          logLevel={logLevel}
+        />,
+        {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+        }
+      );
+    } else if (logLevel === "error") {
+      toast.error(
+        <NotificationMessage
+          notificationMessage={notificationMessage}
+          logLevel={logLevel}
+        />,
+        {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+        }
+      );
+    } else if (logLevel === "warn") {
+      toast.warn(
+        <NotificationMessage
+          notificationMessage={notificationMessage}
+          logLevel={logLevel}
+        />,
+        {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+        }
+      );
+    }
   };
 
   return <></>;
