@@ -33,15 +33,23 @@ export default function KXASCodeNotifications() {
       return axios
         .get("http://localhost:5001/api/queues/" + queue)
         .then((response) => {
-          console.log(
-            "payload debug: ",
-            JSON.parse(response.data[0].payload).message
-          );
+          // console.log(
+          //   "payload debug: ",
+          //   JSON.parse(response.data[0].payload).message
+          // );
           // console.log(
           //   "payload type: ",
           //   typeof JSON.parse(response.data[0].payload).message
           // );
-          notify(JSON.parse(response.data[0].payload).message);
+
+          try {
+            if (response.data >= 1) {
+              notify(JSON.parse(response.data[0].payload).message);
+            }
+          } catch (err) {
+            axios.get("http://localhost:5001/api/consume/notification_queue");
+            console.log("Error: ", err);
+          }
         })
         .then(() => {
           axios.get("http://localhost:5001/api/consume/notification_queue");
