@@ -20,6 +20,7 @@ import ApplicationGroups from "./pages/ApplicationGroups";
 import { Applications2 } from "./pages/Applications2";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import KXASCodeNotifications from "./partials/applications/KXASCodeNotifications";
 
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -35,6 +36,7 @@ function App() {
 
   return (
     <>
+      <KXASCodeNotifications />
       <div className="flex h-screen overflow-hidden bg-inv1 text-white text-sm">
         {/* Sidebar */}
         <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
