@@ -20,6 +20,7 @@ After=network.target
 
 [Service]
 Environment=NODE_PORT=3000
+Environment=NODE_OPTIONS=--openssl-legacy-provider
 Type=simple
 User=www-data
 Restart=on-failure

@@ -6,7 +6,7 @@
     "environment_variables": {
         "localProvisionerVersion": "2.4.0",
         "hostDirectory": "/mnt/k8s_local_volumes",
-        "storageClassName": "local-storage",
+        "storageClassName": "local-storage-sc",
         "fsType": "xfs"
     },
     "install_scripts": [

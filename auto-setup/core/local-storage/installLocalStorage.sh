@@ -133,7 +133,7 @@ echo '''
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
-  name: local-storage
+  name: local-storage-sc
 provisioner: kubernetes.io/no-provisioner
 volumeBindingMode: WaitForFirstConsumer
 # Supported policies: Delete, Retain
@@ -141,4 +141,4 @@ reclaimPolicy: Delete
 ''' | kubectl apply -f -
 
 # Make local storage class default
-kubectl patch storageclass local-storage -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
+kubectl patch storageclass local-storage-sc -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'

@@ -113,7 +113,7 @@ networkHost: "0.0.0.0"
 
 volumeClaimTemplate:
   accessModes: ["ReadWriteOnce"]
-  storageClassName: "local-storage"
+  storageClassName: "local-storage-sc"
   resources:
     requests:
       storage: 5Gi

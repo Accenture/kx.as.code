@@ -30,6 +30,8 @@ autoSetupHelmInstall() {
   # Determine whether a values_template.yaml file exists for the solution and use it if so - and replace mustache variables such as url etc
   if [[ -f ${installComponentDirectory}/values_template.yaml ]]; then
     envhandlebars <${installComponentDirectory}/values_template.yaml >${installationWorkspace}/${componentName}_values.yaml
+    # Force storage to local-storage if glusterfs not installed
+    updateStorageClassIfNeeded "${installationWorkspace}/${componentName}_values.yaml"
     valuesFileOption="-f ${installationWorkspace}/${componentName}_values.yaml"
   else
     # Set to blank to avoid variable unbound error
@@ -56,6 +58,7 @@ autoSetupHelmInstall() {
   echo ${helmCommmand} | tee ${installationWorkspace}/helm_${componentName}.sh
   log_debug "Helm command: $(cat ${installationWorkspace}/helm_${componentName}.sh)"
   chmod 755 ${installationWorkspace}/helm_${componentName}.sh
+  updateStorageClassIfNeeded "${installationWorkspace}/helm_${componentName}.sh"
   ${installationWorkspace}/helm_${componentName}.sh || rc=$? && log_info "${installationWorkspace}/helm_${componentName}.sh returned with rc=$rc"
   if [[ ${rc} -ne 0 ]]; then
     log_error "Execution of Helm command \"${helmCommmand}\" ended in a non zero return code ($rc)"

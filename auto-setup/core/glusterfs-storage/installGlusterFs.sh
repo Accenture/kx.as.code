@@ -322,7 +322,7 @@ cat << EOF > ${installationWorkspace}/glusterfs-sc.yaml
 kind: StorageClass
 apiVersion: storage.k8s.io/v1
 metadata:
-  name: gluster-heketi
+  name: gluster-heketi-sc
 provisioner: kubernetes.io/glusterfs
 reclaimPolicy: Retain
 volumeBindingMode: Immediate
@@ -338,4 +338,4 @@ EOF
 kubectl apply -f ${installationWorkspace}/glusterfs-sc.yaml
 
 # Make gluster-heketi storage class Kubernetes NOT default (switched default to local storage)
-kubectl patch storageclass gluster-heketi -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"false"}}}'
+kubectl patch storageclass gluster-heketi-sc -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"false"}}}'
