@@ -4,7 +4,7 @@ populateActionQueuesJson() {
     export aqFiles=( ${installationWorkspace}/aq*.json )
 
     # Copy actionQueues.json to workspace if not yet initialized
-    if [[ ! -f ${installationWorkspace}/actionQueuesInitialized.flag ]]; then
+    if [[ ! -f ${installationWorkspace}/actionQueuesInitialized.flag ]] && [[ ! -f ${installationWorkspace}/actionQueues.json ]]; then
       cp -f ${autoSetupHome}/actionQueues.json ${installationWorkspace}/actionQueues.json
     fi
 
