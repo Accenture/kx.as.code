@@ -7,11 +7,11 @@ persistence:
   data:
     enabled: true
     size: 1Gi
-    storageClass: gluster-heketi
+    storageClass: gluster-heketi-sc
   plugins:
     enabled: true
     size: 0.5Gi
-    storageClass: gluster-heketi
+    storageClass: gluster-heketi-sc
 
 config:
   MM_PLUGINSETTINGS_CLIENTDIRECTORY: "./client/plugins"
@@ -59,7 +59,7 @@ mysql:
     enabled: true
     accessMode: ReadWriteOnce
     size: 1Gi
-    storageClass: local-storage
+    storageClass: local-storage-sc
   
 
 ## Additional env vars
