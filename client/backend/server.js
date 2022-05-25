@@ -11,7 +11,7 @@ const PORT = process.env.PORT || 5001;
 const dataPath = "../src/data/combined-metadata-files.json";
 
 app.route("/api/add/application/:queue_name").post((req, res) => {
-  connection = amqp.connect("amqp://test:test@localhost");
+  connection = amqp.connect("amqp://test:test@127.0.0.1");
   console.log("install app req.body: ", req.body);
 
   connection.then(async (conn) => {
@@ -52,7 +52,7 @@ app.use((req, res, next) => {
 app.route("/api/checkRmqConn").get((req, res) => {
   console.log("checkRmqConn triggered.");
   try {
-    request("http://localhost:15672", function (err, response, body) {
+    request("http://127.0.0.1:15672", function (err, response, body) {
       console.log("BODY CONN REQ", res.statusCode);
       res.send(response?.statusCode);
     });
@@ -64,7 +64,7 @@ app.route("/api/checkRmqConn").get((req, res) => {
 app.route("/api/queues/:queue_name").get((req, res) => {
   console.log("get q triggered.");
   var url =
-    "http://test:test@localhost:15672/api/queues/%2F/" +
+    "http://test:test@127.0.0.1:15672/api/queues/%2F/" +
     req.params.queue_name +
     "/get";
 
@@ -91,7 +91,7 @@ app.route("/api/queues/:queue_name").get((req, res) => {
 app.route("/api/move/:from_queue/:to_queue").get((req, res) => {
   console.log("move triggered.");
   var url =
-    "http://test:test@localhost:15672/api/parameters/shovel/%2F/Move%20from%20" +
+    "http://test:test@127.0.0.1:15672/api/parameters/shovel/%2F/Move%20from%20" +
     req.params.from_queue;
 
   var dataString =
@@ -143,7 +143,7 @@ app.get("/api/applications/:app_name", (req, res) => {
 });
 
 app.route("/api/consume/:queue_name").get((req, res) => {
-  connection = amqp.connect("amqp://test:test@localhost");
+  connection = amqp.connect("amqp://test:test@127.0.0.1");
 
   connection.then(async (conn) => {
     const channel = await conn.createChannel();
