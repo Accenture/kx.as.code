@@ -3,11 +3,12 @@ import ApplicationCard2 from "../partials/applications/ApplicationCard2.jsx";
 import axios from "axios";
 import { FaThList } from "react-icons/fa";
 import { BsGrid3X3GapFill } from "react-icons/bs";
-
+import MultipleSelectCheckmarks from "../partials/MultipleSelectCheckmarks";
 import { useState, useEffect } from "react";
 
 export const Applications2 = () => {
   const [applicationData, setApplicationData] = useState([]);
+  const [newAppList, setNewAppList] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [queueData, setQueueData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -15,6 +16,9 @@ export const Applications2 = () => {
   const [isMqConnected, setIsMqConnected] = useState(true);
   const [isListLayout, setIsListLayout] = useState(true);
   const [sortSelect, setSortSelect] = useState("asc");
+  const [filterStatusList, setFilterStatusList] = useState([
+    ["pending_queue", "completed_queue", "failed_queue"],
+  ]);
 
   const queueList = [
     "pending_queue",
@@ -23,6 +27,17 @@ export const Applications2 = () => {
     "retry_queue",
     "wip_queue",
   ];
+
+  const getQueueStatusByAppName = async (appName) => {
+    return await queueData.filter(function (obj) {
+      if (JSON.parse(obj.payload).name === appName) {
+        // setAppQueue(obj.routing_key);
+        console.log("get status debug: ", obj.routing_key);
+        return obj.routing_key;
+      } else {
+      }
+    });
+  };
 
   const toggleListLayout = (b) => {
     setIsListLayout(b);
@@ -53,6 +68,7 @@ export const Applications2 = () => {
   };
 
   const drawApplicationCards = () => {
+    console.log("new App List in draw: ", newAppList);
     var apps = applicationData
       .filter((val) => {
         if (searchTerm == "") {
@@ -84,6 +100,13 @@ export const Applications2 = () => {
         }
         return 0;
       })
+      // .filter((val) => {
+      //   console.log("val name: ", val.name);
+      //   if (filterStatusList.includes(getQueueStatusByAppName(val.name))) {
+      //     console.log("val: ", val.name);
+      //     return val;
+      //   }
+      // })
       .map((app, i) => {
         return (
           <ApplicationCard2
@@ -142,6 +165,20 @@ export const Applications2 = () => {
     });
   };
 
+  const addStatusToAppData = () => {
+    let l = [];
+    var promises = applicationData.map((app) => {
+      // console.log("app: ", app);
+      app["status"] = getQueueStatusList(app.name);
+      console.log("l in map: ", l);
+      return l.push(app);
+    });
+    Promise.all(promises).then(() => {
+      // console.log("new app list: ", newAppList);
+      setNewAppList(l);
+    });
+  };
+
   useEffect(() => {
     setAppsSearchResultCount(applicationData.length);
     setIsListLayout(localStorage.getItem("isListLayout"));
@@ -152,8 +189,14 @@ export const Applications2 = () => {
 
     checkMqConnection();
 
-    fetchData();
-    fetchQueueData();
+    try {
+      fetchApplicationAndQueueData();
+    } catch (err) {
+      console.log(err);
+    } finally {
+      // addStatusToAppData();
+    }
+
     return () => {
       // clearInterval(id);
     };
@@ -174,38 +217,41 @@ export const Applications2 = () => {
       </div>
 
       {/* Applications actions */}
-      <div className="flex justify-between mb-4">
+      <div className="flex mb-4 justify-between">
         {/* Left: Actions */}
-        <div className="">
-          {/* Search Input Field */}
-          <div className="group relative mb-3">
-            <svg
-              width="20"
-              height="20"
-              fill="currentColor"
-              className="absolute left-3 top-1/2 -mt-2.5 text-gray-500 pointer-events-none group-focus-within:text-kxBlue"
-              aria-hidden="true"
-            >
-              <path
-                fillRule="evenodd"
-                clipRule="evenodd"
-                d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+        <div className="flex">
+          <div className="flex ">
+            {/* Search Input Field */}
+            <div className="group relative mb-3">
+              <svg
+                width="20"
+                height="20"
+                fill="currentColor"
+                className="absolute left-3 top-1/2 -mt-2.5 text-gray-500 pointer-events-none group-focus-within:text-kxBlue"
+                aria-hidden="true"
+              >
+                <path
+                  fillRule="evenodd"
+                  clipRule="evenodd"
+                  d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+                />
+              </svg>
+              <input
+                type="text"
+                placeholder="Search Applications..."
+                className="h-[56px] focus:ring-2 focus:ring-kxBlue focus:outline-none bg-ghBlack2 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 rounded text-md border-0 shadow outline-none focus:outline-none focus:ring min-w-80 pl-10"
+                onChange={(e) => {
+                  setSearchTerm(e.target.value);
+                }}
               />
-            </svg>
-            <input
-              type="text"
-              placeholder="Search Applications..."
-              className="focus:ring-2 focus:ring-kxBlue focus:outline-none bg-ghBlack2 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 rounded text-md border-0 shadow outline-none focus:outline-none focus:ring min-w-80 pl-10"
-              onChange={(e) => {
-                setSearchTerm(e.target.value);
-              }}
-            />
-          </div>
+            </div>
 
-          {/* <FilterButton filterHandler={this.filterHandler}
+            {/* <FilterButton filterHandler={this.filterHandler}
                             isCompleted={this.state.isCompleted}
                             isFailed={this.state.isFailed}
                             isPending={this.state.isPending} /> */}
+          </div>
+          <MultipleSelectCheckmarks />
         </div>
 
         {/* Right: Actions */}
@@ -216,7 +262,7 @@ export const Applications2 = () => {
             }}
             name="sort-select"
             id="sort-select"
-            className="bg-ghBlack2 py-3 border-none rounded-md cursor-pointer"
+            className="h-[56px] bg-ghBlack2 py-3 border-none rounded-md cursor-pointer"
           >
             <option value="asc">Sort by name A-Z</option>
             <option value="desc">Sort by name Z-A</option>
