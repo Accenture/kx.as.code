@@ -44,29 +44,6 @@ curl -sSL https://git.io/get-mo -o mo
 sudo mv mo /usr/local/bin
 chmod 755 /usr/local/bin/mo
 
-# Install Postman
-wget https://dl.pstmn.io/download/latest/linux64 -O postman.tar.gz
-sudo tar -xzf postman.tar.gz -C /usr/local
-rm postman.tar.gz
-sudo ln -s /usr/local/Postman/Postman /usr/bin/postman
-
-# Create Shortcut for Postman
-echo '''
-[Desktop Entry]
-Encoding=UTF-8
-Name=Postman
-Exec=postman
-Icon=/usr/local/Postman/app/resources/app/assets/icon.png
-Terminal=false
-Type=Application
-Categories=Development;
-''' | sudo tee /usr/share/applications/postman.desktop
-
-# Install NoMachine
-wget https://download.nomachine.com/download/7.6/Linux/nomachine_7.6.2_4_amd64.deb
-sudo apt-get install -y ./nomachine_7.6.2_4_amd64.deb
-rm -f ./nomachine_7.6.2_4_amd64.deb
-
 if [[ ${COMPUTE_ENGINE_BUILD} == "true"   ]]; then
   # Ensure NoMachine starts dedicated virtual display if private or public cloud
   sudo sed -E -i 's/#PhysicalDisplays(.*)/PhysicalDisplays 1005/g' /usr/NX/etc/node.cfg
@@ -78,3 +55,49 @@ fi
 
 # Enable Desktop Notifications with "notify-send" from bash scripts
 sudo apt-get install -y libnotify-bin
+
+# Create Kubernetes logging and custom scripts directory
+sudo mkdir -p ${INSTALLATION_WORKSPACE}
+sudo chown ${VM_USER}:${VM_USER} ${INSTALLATION_WORKSPACE}
+sudo chmod 755 ${INSTALLATION_WORKSPACE}
+sudo chown -R ${VM_USER}:${VM_USER} /home/${VM_USER}
+
+# Install Node Version Manager (NVM) and Node
+echo '''
+if [ -d "$HOME/.nvm" ]; then
+  # export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
+  export NVM_DIR="$HOME/.nvm"
+
+  # This loads nvm
+  [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+
+  # This loads nvm bash_completion
+  [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+fi
+''' | sudo tee -a /home/${VM_USER}/.bashrc /home/${VM_USER}/.zshrc /root/.bashrc /root/.zshrc
+
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | sudo bash
+sudo bash -c "source /root/.nvm/nvm.sh && nvm install node"
+sudo bash -c "source /root/.nvm/nvm.sh && npm install -g npm@7.17.0"
+sudo bash -c "source /root/.nvm/nvm.sh && npm install -g envhandlebars"
+sudo cp -r /root/.nvm /home/${VM_USER}
+sudo chown -R ${VM_USER}:${VM_USER} /home/${VM_USER}
+
+echo '''# Check if node tool reachable
+nodeToolPath=$(which node || true)
+if [ -z "$nodeToolPath" ] ; then
+    export PATH=$(dirname $(find $HOME -type f -executable -name "node")):$PATH
+fi''' | sudo tee -a /home/${VM_USER}/.bashrc /home/${VM_USER}/.zshrc /root/.bashrc /root/.zshrc
+
+# Compiling OpenLens for later installation when KX.AS.CODE comes up
+cd  ${INSTALLATION_WORKSPACE}
+git clone https://github.com/lensapp/lens.git
+cd lens
+sudo nvm install lts/fermium
+sudo nvm use lts/fermium
+sudo npm install --global yarn
+git checkout v5.5.1
+make build || true # Do not fail KX.AS.CODE image build on error
+debOpenLensInstaller=$(find ${INSTALLATION_WORKSPACE}/lens/dist -name "OpenLens-*.deb")
+mv ${debOpenLensInstaller} ${INSTALLATION_WORKSPACE}
+
