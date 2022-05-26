@@ -12,7 +12,7 @@ export default function KXASCodeNotifications() {
   useEffect(() => {
     const interval = setInterval(() => {
       fetchQueueDataAndNotify();
-    }, 3000);
+    }, 5000);
     return () => clearInterval(interval);
   }, []);
 
