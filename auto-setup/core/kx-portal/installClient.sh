@@ -27,7 +27,7 @@ Restart=on-failure
 WorkingDirectory=${sharedGitHome}/kx.as.code/client
 StandardOutput=append:${installationWorkspace}/kx-portal-logs/kx-portal.log
 StandardError=append:${installationWorkspace}/kx-portal-logs/kx-portal.err
-ExecStart=npm start
+ExecStart=npm run start:prod
 
 [Install]
 WantedBy=multi-user.target
