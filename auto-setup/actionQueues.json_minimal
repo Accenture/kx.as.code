@@ -1,0 +1,56 @@
+{
+    "action_queues": {
+        "install": [
+            {
+                "install_folder": "core",
+                "name": "gopass"
+            },
+            {
+                "install_folder": "core",
+                "name": "cfssl-certificate-authority"
+            },
+            {
+                "install_folder": "core",
+                "name": "openldap"
+            },
+            {
+                "install_folder": "core",
+                "name": "kubernetes-tools"
+            },
+            {
+                "install_folder": "core",
+                "name": "kubernetes-base-services"
+            },
+            {
+                "install_folder": "core",
+                "name": "kontena-lens"
+            },
+            {
+                "install_folder": "core",
+                "name": "calico-network"
+            },
+            {
+                "install_folder": "core",
+                "name": "metallb-loadbalancer"
+            },
+            {
+                "install_folder": "core",
+                "name": "local-storage"
+            },
+            {
+                "install_folder": "core",
+                "name": "nginx-ingress-controller"
+            },
+            {
+                "install_folder": "core",
+                "name": "docker-registry"
+            }
+        ],
+        "uninstall": [],
+        "purge": [],
+        "upgrade": []
+    },
+    "state": {
+        "processed": []
+    }
+}
