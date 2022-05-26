@@ -6,11 +6,17 @@ set -euo pipefail
 
 # Install NPM dependencies
 cd ${sharedGitHome}/kx.as.code/client
+nvm install lts/gallium
+nvm use lts/gallium
 npm install --legacy-peer-deps
 
 # Setup logging directory
 /usr/bin/sudo mkdir ${installationWorkspace}/kx-portal-logs
 /usr/bin/sudo chown www-data:www-data ${installationWorkspace}/kx-portal-logs
+
+# Create .forever directory
+/usr/bin/sudo mkdir -p /var/www/.forever
+/usr/bin/sudo chown www-data:www-data /var/www/.forever
 
 echo """
 [Unit]
@@ -20,7 +26,6 @@ After=network.target
 
 [Service]
 Environment=NODE_PORT=3000
-Environment=NODE_OPTIONS=--openssl-legacy-provider
 Type=simple
 User=www-data
 Restart=on-failure
