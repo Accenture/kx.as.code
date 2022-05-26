@@ -463,25 +463,25 @@ async function getBuildJobListForProfile(job, nodeType) {
         })();
 
         if (kxBuilds.length > 0) {
-                    getExtendedJobDetails(kxBuilds[0].url).then( text => {
+            getExtendedJobDetails(kxBuilds[0].url).then( text => {
 
-                        const splitDisplayName = JSON.parse(text).displayName.split('_');
-                        //const buildNumber = splitDisplayName[0];
-                        const kxVersion = splitDisplayName[1];
-                        const kubeVersion = splitDisplayName[2];
-                        //const profile = splitDisplayName[3];
-                        const nodeTypeVagrantAction = splitDisplayName[4];
-                        //const gitCommitId = splitDisplayName[5];
+                const splitDisplayName = JSON.parse(text).displayName.split('_');
+                //const buildNumber = splitDisplayName[0];
+                const kxVersion = splitDisplayName[1];
+                const kubeVersion = splitDisplayName[2];
+                //const profile = splitDisplayName[3];
+                const nodeTypeVagrantAction = splitDisplayName[4];
+                //const gitCommitId = splitDisplayName[5];
 
-                        if (nodeTypeVagrantAction === "kx-main" || nodeTypeVagrantAction === "kx-node") {
-                            document.getElementById(nodeTypeVagrantAction + '-build-kx-version').innerText = kxVersion;
-                            document.getElementById(nodeTypeVagrantAction + '-build-kube-version').innerText = kubeVersion;
-                        } else if (nodeTypeVagrantAction === "up" || nodeTypeVagrantAction === "destroy" || nodeTypeVagrantAction === "halt") {
-                            document.getElementById('kx-launch-last-action').innerText = nodeTypeVagrantAction;
-                            document.getElementById('kx-launch-build-kx-version').innerText = kxVersion;
-                            document.getElementById('kx-launch-build-kube-version').innerText = kubeVersion;
-                        }
-                    })
+                if (nodeTypeVagrantAction === "kx-main" || nodeTypeVagrantAction === "kx-node") {
+                    document.getElementById(nodeTypeVagrantAction + '-build-kx-version').innerText = kxVersion;
+                    document.getElementById(nodeTypeVagrantAction + '-build-kube-version').innerText = kubeVersion;
+                } else if (nodeTypeVagrantAction === "up" || nodeTypeVagrantAction === "destroy" || nodeTypeVagrantAction === "halt") {
+                    document.getElementById('kx-launch-last-action').innerText = nodeTypeVagrantAction;
+                    document.getElementById('kx-launch-build-kx-version').innerText = kxVersion;
+                    document.getElementById('kx-launch-build-kube-version').innerText = kubeVersion;
+                }
+            })
 
             if (kxBuilds[0].timestamp !== null) {
                 document.getElementById(nodeType + "-build-timestamp").innerText = new Date(kxBuilds[0].timestamp).toLocaleDateString() + " " + new Date(kxBuilds[0].timestamp).toLocaleTimeString();
@@ -878,7 +878,9 @@ function populateReviewTable() {
         document.getElementById("list-templates-to-install").innerHTML = "<i>None</i>"
     } else {
         let templatesList = document.getElementById("concatenated-templates-list").value;
-        document.getElementById("list-templates-to-install").innerText = templatesList;
+        let templatesListArray = templatesList.split(',');
+        document.getElementById("list-templates-to-install").innerText = templatesListArray.length + " templates";
+        document.getElementById("list-templates-tooltip-text").innerText = templatesListArray;
     }
 }
 
