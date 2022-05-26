@@ -6,23 +6,27 @@ getKeycloakClientSecret() {
     # Source Keycloak Environment
     sourceKeycloakEnvironment
 
-    # Call function to login to Keycloak
-    keycloakLogin
+    if [[ -n "${kcPod}" ]]; then
 
-    # Attempt to get Keycloak client secret in case it already exists
-    export clientSecret=$(kubectl -n ${kcNamespace} exec ${kcPod} --container ${kcContainer} -- \
-    ${kcAdmCli} get clients/${clientId}/client-secret | jq -r '.value')
+      # Call function to login to Keycloak
+      keycloakLogin
 
-    # If Keycloak client secret not available, generate a new one
-    if [[ "${clientSecret}" == "null" ]] || [[ -z "${clientSecret}" ]]; then
-        kubectl -n ${kcNamespace} exec ${kcPod} --container ${kcContainer} -- \
-            ${kcAdmCli} create clients/${clientId}/client-secret | jq -r '.value'
-        export clientSecret=$(kubectl -n ${kcNamespace} exec ${kcPod} --container ${kcContainer} -- \
-            ${kcAdmCli} get clients/${clientId}/client-secret | jq -r '.value')
-    else
-        >&2 log_info "Client secret for \"${clientId}\" already exists with id ${clientSecret}. Skipping its creation"
-    fi
+      # Attempt to get Keycloak client secret in case it already exists
+      export clientSecret=$(kubectl -n ${kcNamespace} exec ${kcPod} --container ${kcContainer} -- \
+      ${kcAdmCli} get clients/${clientId}/client-secret | jq -r '.value')
 
-    echo "${clientSecret}"
+      # If Keycloak client secret not available, generate a new one
+      if [[ "${clientSecret}" == "null" ]] || [[ -z "${clientSecret}" ]]; then
+          kubectl -n ${kcNamespace} exec ${kcPod} --container ${kcContainer} -- \
+              ${kcAdmCli} create clients/${clientId}/client-secret | jq -r '.value'
+          export clientSecret=$(kubectl -n ${kcNamespace} exec ${kcPod} --container ${kcContainer} -- \
+              ${kcAdmCli} get clients/${clientId}/client-secret | jq -r '.value')
+      else
+          >&2 log_info "Client secret for \"${clientId}\" already exists with id ${clientSecret}. Skipping its creation"
+      fi
+
+      echo "${clientSecret}"
+
+  fi
 
 }
