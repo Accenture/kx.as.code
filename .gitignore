@@ -74,3 +74,4 @@ jenkins_remote/workspace/shared_workspace/kx.as.code
 /base-vm/build/jenkins/jenkins_shared_workspace/*
 base-vm/boxes/virtualbox-0.8.4/kx-main-0.8.4_metadata.json
 base-vm/build/jenkins/initial-setup/jobs/KX.AS.CODE_Launcher/config.xml_backup
+/lib/
