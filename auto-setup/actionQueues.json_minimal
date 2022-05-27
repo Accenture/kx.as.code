@@ -11,10 +11,6 @@
             },
             {
                 "install_folder": "core",
-                "name": "openldap"
-            },
-            {
-                "install_folder": "core",
                 "name": "kubernetes-tools"
             },
             {
