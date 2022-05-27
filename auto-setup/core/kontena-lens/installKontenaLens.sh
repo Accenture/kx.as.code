@@ -59,15 +59,20 @@ echo '''
 #  "${installationWorkspace}/Lens-${lensVersion}.amd64.deb"
 
 # Compiling Lens from source which takes a while, but it's needed to avoid the forced login to Lens
-cd ${installationWorkspace}
-git clone https://github.com/lensapp/lens.git
-cd lens
-nvm install lts/fermium
-nvm use lts/fermium
-npm install --global yarn
-git checkout v5.5.1 && make build
-debLensInstaller=$(find /usr/share/kx.as.code/workspace/lens/dist -name "OpenLens-5.5.1-latest*.deb")
-/usr/bin/sudo apt-get install -y ${installationWorkspace}/Lens-${lensVersion}.amd64.deb
+#cd ${installationWorkspace}
+#git clone https://github.com/lensapp/lens.git
+#cd lens
+#nvm install lts/fermium
+#nvm use lts/fermium
+#npm install --global yarn
+#git checkout v5.5.1 && make build
+#debLensInstaller=$(find /usr/share/kx.as.code/workspace/lens/dist -name "OpenLens-5.5.1-latest*.deb")
+#/usr/bin/sudo apt-get install -y ${installationWorkspace}/Lens-${lensVersion}.amd64.deb
+
+##############################################################################
+## Compilation of OpenLens moved to base image build, as it takes a long time
+## --> base-vm/scripts/main-node/tools.sh
+##############################################################################
 
 echo '''[Desktop Entry]
 Categories=Network;

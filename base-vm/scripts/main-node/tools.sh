@@ -60,6 +60,7 @@ sudo apt-get install -y libnotify-bin
 sudo mkdir -p ${INSTALLATION_WORKSPACE}
 sudo chown ${VM_USER}:${VM_USER} ${INSTALLATION_WORKSPACE}
 sudo chmod 755 ${INSTALLATION_WORKSPACE}
+sudo mkdir -p /home/${VM_USER}
 sudo chown -R ${VM_USER}:${VM_USER} /home/${VM_USER}
 
 # Install Node Version Manager (NVM) and Node
@@ -74,30 +75,46 @@ if [ -d "$HOME/.nvm" ]; then
   # This loads nvm bash_completion
   [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
 fi
-''' | sudo tee -a /home/${VM_USER}/.bashrc /home/${VM_USER}/.zshrc /root/.bashrc /root/.zshrc
+''' | sudo tee -a /home/${VM_USER}/.bashrc /home/${VM_USER}/.zshrc /root/.bashrc /root/.zshrc /home/${BASE_IMAGE_SSH_USER}/.bashrc
 
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | sudo bash
-sudo bash -c "source /root/.nvm/nvm.sh && nvm install node"
-sudo bash -c "source /root/.nvm/nvm.sh && npm install -g npm@7.17.0"
-sudo bash -c "source /root/.nvm/nvm.sh && npm install -g envhandlebars"
-sudo cp -r /root/.nvm /home/${VM_USER}
-sudo chown -R ${VM_USER}:${VM_USER} /home/${VM_USER}
+sudo curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | sudo bash
 
 echo '''# Check if node tool reachable
 nodeToolPath=$(which node || true)
 if [ -z "$nodeToolPath" ] ; then
     export PATH=$(dirname $(find $HOME -type f -executable -name "node")):$PATH
-fi''' | sudo tee -a /home/${VM_USER}/.bashrc /home/${VM_USER}/.zshrc /root/.bashrc /root/.zshrc
+fi''' | sudo tee -a /home/${VM_USER}/.bashrc /home/${VM_USER}/.zshrc /root/.bashrc /root/.zshrc /home/${BASE_IMAGE_SSH_USER}/.bashrc
+
+sudo cp -r /root/.nvm /home/${BASE_IMAGE_SSH_USER}
+
+sudo chown -R ${BASE_IMAGE_SSH_USER}:${BASE_IMAGE_SSH_USER} /home/${BASE_IMAGE_SSH_USER}
+
+sudo mkdir -p /usr/local/lib/node_modules
+sudo chmod 777 /usr/local/lib/node_modules
+sudo tee "prefix=/usr/local/lib/node_modules" /home/${VM_USER}/.npmrc /root/.npmrc /home/${BASE_IMAGE_SSH_USER}/.npmrc
+sudo tee -a "NPM_PACKAGES=/usr/local/lib/node_modules" /home/${VM_USER}/.bashrc /home/${VM_USER}/.zshrc /root/.bashrc /root/.zshrc /home/${BASE_IMAGE_SSH_USER}/.bashrc
+sudo tee -a "NODE_PATH=$NPM_PACKAGES/lib/node_modules:$NODE_PATH" /home/${VM_USER}/.bashrc /home/${VM_USER}/.zshrc /root/.bashrc /root/.zshrc /home/${BASE_IMAGE_SSH_USER}/.bashrc
 
 # Compiling OpenLens for later installation when KX.AS.CODE comes up
-cd  ${INSTALLATION_WORKSPACE}
-git clone https://github.com/lensapp/lens.git
-cd lens
-sudo nvm install lts/fermium
-sudo nvm use lts/fermium
-sudo npm install --global yarn
-git checkout v5.5.1
+cd ${INSTALLATION_WORKSPACE}
+sudo chmod 777 ${INSTALLATION_WORKSPACE}
+export lensVersion="v5.5.1"
+git clone --branch ${lensVersion} https://github.com/lensapp/lens.git
+cd ${INSTALLATION_WORKSPACE}/lens
+
+sudo bash -c "source /root/.nvm/nvm.sh \
+&& nvm install --global lts/fermium \
+&& nvm use lts/fermium \
+&& npm install --global yarn"
+
+source /home/${BASE_IMAGE_SSH_USER}/.nvm/nvm.sh
 make build || true # Do not fail KX.AS.CODE image build on error
 debOpenLensInstaller=$(find ${INSTALLATION_WORKSPACE}/lens/dist -name "OpenLens-*.deb")
 mv ${debOpenLensInstaller} ${INSTALLATION_WORKSPACE}
 
+# Install NPM package "enhandlebars"
+sudo bash -c "source /root/.nvm/nvm.sh \
+&& npm install --global envhandlebars"
+
+sudo cp -rf /root/.nvm /home/${VM_USER}
+sudo chown -R ${VM_USER}:${VM_USER} /home/${VM_USER}
