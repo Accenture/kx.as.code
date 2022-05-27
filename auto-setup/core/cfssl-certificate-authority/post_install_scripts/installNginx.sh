@@ -52,14 +52,6 @@ Actions=new-window;new-private-window;
 # Give *.desktop files execute permissions
 /usr/bin/sudo chmod 755 "${adminShortcutsDirectory}/RabbitMQ"
 
-# Install the desktop shortcut for KX.AS.CODE Portal
-shortcutsDirectory="/home/${vmUser}/Desktop"
-primaryUrl="https://portal.${baseDomain}:4435"
-shortcutText="KX.AS.CODE Portal"
-iconPath="${sharedGitHome}/kx.as.code/auto-setup/core/kx-portal/kx-logo-blue.png"
-browserOptions=""
-createDesktopIcon "${shortcutsDirectory}" "${primaryUrl}" "${shortcutText}" "${iconPath}" "${browserOptions}"
-
 # Copy desktop icons to skel directory for future users
 /usr/bin/sudo cp /home/"${vmUser}"/Desktop/"${shortcutText}" "${skelDirectory}"/Desktop
 
