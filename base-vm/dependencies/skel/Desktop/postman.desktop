@@ -1,9 +1,0 @@
-
-[Desktop Entry]
-Encoding=UTF-8
-Name=Postman
-Exec=postman
-Icon=/usr/local/Postman/app/resources/app/assets/icon.png
-Terminal=false
-Type=Application
-Categories=Development;

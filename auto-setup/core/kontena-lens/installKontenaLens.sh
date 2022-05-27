@@ -74,6 +74,9 @@ echo '''
 ## --> base-vm/scripts/main-node/tools.sh
 ##############################################################################
 
+debOpenLensInstaller=$(find ${INSTALLATION_WORKSPACE} -name "OpenLens-*.deb")
+sudo apt-get install -y "${debOpenLensInstaller}"
+
 echo '''[Desktop Entry]
 Categories=Network;
 Comment[en_US]=OpenLens - The Kubernetes IDE
