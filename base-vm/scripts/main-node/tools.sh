@@ -89,11 +89,11 @@ sudo cp -r /root/.nvm /home/${BASE_IMAGE_SSH_USER}
 
 sudo chown -R ${BASE_IMAGE_SSH_USER}:${BASE_IMAGE_SSH_USER} /home/${BASE_IMAGE_SSH_USER}
 
-sudo mkdir -p /usr/local/lib/node_modules
-sudo chmod 777 /usr/local/lib/node_modules
-sudo tee "prefix=/usr/local/lib/node_modules" /home/${VM_USER}/.npmrc /root/.npmrc /home/${BASE_IMAGE_SSH_USER}/.npmrc
-sudo tee -a "NPM_PACKAGES=/usr/local/lib/node_modules" /home/${VM_USER}/.bashrc /home/${VM_USER}/.zshrc /root/.bashrc /root/.zshrc /home/${BASE_IMAGE_SSH_USER}/.bashrc
-sudo tee -a "NODE_PATH=$NPM_PACKAGES/lib/node_modules:$NODE_PATH" /home/${VM_USER}/.bashrc /home/${VM_USER}/.zshrc /root/.bashrc /root/.zshrc /home/${BASE_IMAGE_SSH_USER}/.bashrc
+#sudo mkdir -p /usr/local/lib/node_modules
+#sudo chmod 777 /usr/local/lib/node_modules
+#echo "NPM_PACKAGES=/usr/local/lib/node_modules" | sudo tee -a /home/${VM_USER}/.bashrc /home/${VM_USER}/.zshrc /root/.bashrc /root/.zshrc /home/${BASE_IMAGE_SSH_USER}/.bashrc
+#echo "NODE_PATH=\$NPM_PACKAGES/lib/node_modules" | sudo tee -a /home/${VM_USER}/.bashrc /home/${VM_USER}/.zshrc /root/.bashrc /root/.zshrc /home/${BASE_IMAGE_SSH_USER}/.bashrc
+#echo "PATH=\$NODE_PATH:\$PATH" | sudo tee -a /home/${VM_USER}/.bashrc /home/${VM_USER}/.zshrc /root/.bashrc /root/.zshrc /home/${BASE_IMAGE_SSH_USER}/.bashrc
 
 # Compiling OpenLens for later installation when KX.AS.CODE comes up
 cd ${INSTALLATION_WORKSPACE}
@@ -102,18 +102,22 @@ export lensVersion="v5.5.1"
 git clone --branch ${lensVersion} https://github.com/lensapp/lens.git
 cd ${INSTALLATION_WORKSPACE}/lens
 
-sudo bash -c "source /root/.nvm/nvm.sh \
-&& nvm install --global lts/fermium \
-&& nvm use lts/fermium \
-&& npm install --global yarn"
-
+# Instal node dependencies
 source /home/${BASE_IMAGE_SSH_USER}/.nvm/nvm.sh
+nvm install lts/fermium
+nvm use --delete-prefix lts/fermium
+npm install --global yarn
+
+# Build OpenLens
 make build || true # Do not fail KX.AS.CODE image build on error
 debOpenLensInstaller=$(find ${INSTALLATION_WORKSPACE}/lens/dist -name "OpenLens-*.deb")
 mv ${debOpenLensInstaller} ${INSTALLATION_WORKSPACE}
+sudo rm -rf ${INSTALLATION_WORKSPACE}/lens
 
 # Install NPM package "enhandlebars"
 sudo bash -c "source /root/.nvm/nvm.sh \
+&& nvm install lts/fermium \
+&& nvm use --delete-prefix lts/fermium \
 && npm install --global envhandlebars"
 
 sudo cp -rf /root/.nvm /home/${VM_USER}
