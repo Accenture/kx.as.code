@@ -1,0 +1,15 @@
+{
+    "name": "open-lens",
+    "namespace": "",
+    "installation_type": "script",
+    "installation_group_folder": "core",
+    "environment_variables": {},
+    "install_scripts": [
+        "installOpenLens.sh"
+    ],
+    "Description": "Kubernetes Admin Client",
+    "shortcut_text": "Kubernetes OpenLens",
+    "shortcut_icon": "",
+    "pre_install_scripts": [],
+    "post_install_scripts": []
+}

@@ -15,7 +15,8 @@ sudo apt-get -y install \
     fonts-liberation \
     conky-all \
     bc \
-    dbus-x11
+    dbus-x11 \
+    pwgen
 
 # Install Google-Chrome
 wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
@@ -112,9 +113,8 @@ npm install --global yarn
 make build || true # Do not fail KX.AS.CODE image build on error
 debOpenLensInstaller=$(find ${INSTALLATION_WORKSPACE}/lens/dist -name "OpenLens-*.deb")
 mv ${debOpenLensInstaller} ${INSTALLATION_WORKSPACE}
-sudo rm -rf ${INSTALLATION_WORKSPACE}/lens
 
-# Install NPM package "enhandlebars"
+# Install NPM package "envhandlebars"
 sudo bash -c "source /root/.nvm/nvm.sh \
 && nvm install lts/fermium \
 && nvm use --delete-prefix lts/fermium \
@@ -122,3 +122,6 @@ sudo bash -c "source /root/.nvm/nvm.sh \
 
 sudo cp -rf /root/.nvm /home/${VM_USER}
 sudo chown -R ${VM_USER}:${VM_USER} /home/${VM_USER}
+
+# Tidy up
+sudo rm -rf ${INSTALLATION_WORKSPACE}/lens
