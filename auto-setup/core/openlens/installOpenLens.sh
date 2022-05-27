@@ -74,7 +74,7 @@ echo '''
 ## --> base-vm/scripts/main-node/tools.sh
 ##############################################################################
 
-debOpenLensInstaller=$(find ${INSTALLATION_WORKSPACE} -name "OpenLens-*.deb")
+debOpenLensInstaller=$(find ${installationWorkspace} -name "OpenLens-*.deb")
 sudo apt-get install -y "${debOpenLensInstaller}"
 
 echo '''[Desktop Entry]
