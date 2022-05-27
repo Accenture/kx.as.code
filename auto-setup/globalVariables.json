@@ -14,5 +14,6 @@
   "adminShortcutsDirectory": "${sharedKxHome}/Admin Tools",
   "vmUser": "kx.hero",
   "vmUserId": "$(id -u ${vmUser})",
-  "vmPassword": "$(cat ${sharedKxHome}/.config/.user.cred)"
+  "vmPassword": "$(cat ${sharedKxHome}/.config/.user.cred)",
+  "globalNodeModulesPath": "/usr/local/lib/node_modules"
 }
