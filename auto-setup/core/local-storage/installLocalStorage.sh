@@ -73,7 +73,7 @@ create_volumes() {
             if [[ -z $(lsblk -J | jq -r ' .. .name? // empty | select(test("k8s_local_vol_group-k8s_'${1}'_local_k8s_volume_'${i}'"))' || true) ]]; then
                 for j in {1..5}; do
                   # Added loop, as sometimes two tries are required
-                  /usr/bin/sudo lvcreate -L ${1} -n k8s_${1}_local_k8s_volume_${i} k8s_local_vol_group
+                  /usr/bin/sudo lvcreate -L $(( ${1} * 1024))M -n k8s_${1}_local_k8s_volume_${i} k8s_local_vol_group
                   /usr/bin/sudo mkfs.xfs /dev/k8s_local_vol_group/k8s_${1}_local_k8s_volume_${i}
                   /usr/bin/sudo mkdir -p ${BASE_K8S_LOCAL_VOLUMES_DIR}/k8s_${1}_local_k8s_volume_${i}
                   errorOutput=$(/usr/bin/sudo mount /dev/k8s_local_vol_group/k8s_${1}_local_k8s_volume_${i} ${BASE_K8S_LOCAL_VOLUMES_DIR}/k8s_${1}_local_k8s_volume_${i} 2>&1 >/dev/null || true)
@@ -99,11 +99,11 @@ create_volumes() {
     fi
 }
 
-create_volumes "1G" ${number1gbVolumes}
-create_volumes "5G" ${number5gbVolumes}
-create_volumes "10G" ${number10gbVolumes}
-create_volumes "30G" ${number30gbVolumes}
-create_volumes "50G" ${number50gbVolumes}
+create_volumes "1" ${number1gbVolumes}
+create_volumes "5" ${number5gbVolumes}
+create_volumes "10" ${number10gbVolumes}
+create_volumes "30" ${number30gbVolumes}
+create_volumes "50" ${number50gbVolumes}
 
 # Check logical partitions
 /usr/bin/sudo lvs
