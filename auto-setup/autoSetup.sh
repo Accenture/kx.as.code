@@ -31,9 +31,7 @@ if [[ ${action} == "install"   ]]; then
     log_info "installationType: ${installationType}"
 
     # Check if GlusterFS is installed for upcoming action
-    if [[ ${componentInstallationFolder} != "core" ]]; then
-      checkGlusterFsServiceInstalled
-    fi
+    checkGlusterFsServiceInstalled
 
     ####################################################################################################################################################################
     ##      P R E    I N S T A L L    S T E P S
