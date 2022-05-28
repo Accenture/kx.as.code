@@ -72,6 +72,38 @@ export const Applications2 = () => {
     });
   };
 
+  const getInstallationStatusObject = (appName) => {
+    let obj = {
+      isInstalled: false,
+      isFailed: false,
+      isInstalling: false,
+      isUninstalling: false,
+      isPending: false,
+    };
+
+    let queueStatusList = getQueueStatusList(appName);
+
+    if (queueStatusList.includes("completed_queue")) {
+      obj.isInstalled = true;
+    } else {
+      obj.isInstalled = false;
+    }
+
+    if (queueStatusList.includes("failed_queue")) {
+      obj.isFailed = true;
+    } else {
+      obj.isFailed = false;
+    }
+
+    if (queueStatusList.includes("pending_queue")) {
+      obj.isPending = true;
+    } else {
+      obj.isPending = false;
+    }
+
+    return obj;
+  };
+
   const drawApplicationCards = () => {
     var apps = applicationData
       .filter((app) => {
@@ -86,12 +118,7 @@ export const Applications2 = () => {
       })
       .map((app) => ({
         ...app,
-        installation_status: {
-          isIstalled: false,
-          isFailed: false,
-          isInstalling: false,
-          isUninstalling: false,
-        },
+        installation_status: getInstallationStatusObject(app.name),
       }))
       .filter((app) => {
         console.log("APP DEBUG: ", app);
