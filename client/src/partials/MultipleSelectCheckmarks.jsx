@@ -19,25 +19,54 @@ const MenuProps = {
   },
 };
 
-const statusList = ["Installed", "Pending", "Not Installed", "Failed"];
+const statusList = ["failed_queue", "completed_queue", "pending_queue"];
 const darkTheme = createTheme({
   palette: {
     mode: "dark",
   },
 });
 
-export default function MultipleSelectCheckmarks() {
-  const [status, setStatus] = React.useState([]);
+export default function MultipleSelectCheckmarks(props) {
+  // const [status, setStatus] = React.useState([]);
+
+  const [selectValueList, setSelectValueList] = React.useState([]);
+
+  const getSelectStatusListItem = (string) => {
+    if (string === "completed_queue") {
+      return "Installed";
+    } else if (string === "pending_queue") {
+      return "Pending";
+    } else if (string === "failed_queue") {
+      return "Failed";
+    }
+  };
+
+  const getSelectValueList = (list) => {
+    let valueList = [];
+    list.map((elem) => {
+      if (elem === "completed_queue") {
+        valueList.push("Installed");
+      } else if (elem === "pending_queue") {
+        valueList.push("Pending");
+      } else if (elem === "failed_queue") {
+        valueList.push("Failed");
+      }
+    });
+    return valueList;
+  };
 
   const handleChange = (event) => {
     const {
       target: { value },
     } = event;
-    setStatus(
-      // On autofill we get a stringified value.
+    // setStatus(
+    //   // On autofill we get a stringified value.
+    //   typeof value === "string" ? value.split(",") : value
+    // );
+    props.setFilterStatusList(
       typeof value === "string" ? value.split(",") : value
     );
-    console.log("status: ", status);
+    // console.log("status: ", props.filterStatusList);
   };
 
   return (
@@ -51,7 +80,7 @@ export default function MultipleSelectCheckmarks() {
             labelId="demo-multiple-checkbox-label"
             id="demo-multiple-checkbox"
             multiple
-            value={status}
+            value={props.filterStatusList}
             onChange={handleChange}
             input={<OutlinedInput label="Installation Status" />}
             renderValue={(selected) => selected.join(", ")}
@@ -59,8 +88,8 @@ export default function MultipleSelectCheckmarks() {
           >
             {statusList.map((s) => (
               <MenuItem key={s} value={s}>
-                <Checkbox checked={status.indexOf(s) > -1} />
-                <ListItemText primary={s} />
+                <Checkbox checked={props.filterStatusList.indexOf(s) > -1} />
+                <ListItemText primary={getSelectStatusListItem(s)} />
               </MenuItem>
             ))}
           </Select>
