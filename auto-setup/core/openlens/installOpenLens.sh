@@ -5,34 +5,6 @@ set -euo pipefail
 
 runningKubeVersion=$(kubectl version -o json | jq -r '.serverVersion | .gitVersion')
 
-echo '''
-{
-	"__internal__": {
-		"migrations": {
-			"version": "'${lensVersion}'"
-		}
-	},
-	"clusters": [
-		{
-			"id": "1374438c-6a87-4cc7-8675-1fd3ecb4829f",
-			"contextName": "kubernetes-admin@kubernetes",
-			"kubeConfigPath": "/home/'${vmUser}'/.kube/config",
-			"workspace": "default",
-			"preferences": {
-				"clusterName": "kubernetes-admin@kubernetes"
-			},
-			"metadata": {
-				"version": "'${runningKubeVersion}'",
-				"prometheus": {
-					"autoDetected": true,
-					"success": false
-				}
-			},
-			"accessibleNamespaces": []
-		}
-	]
-}''' | /usr/bin/sudo tee /home/${vmUser}/.config/OpenLens/lens-cluster-store.json
-
 /usr/bin/sudo chown -R ${vmUser}:${vmUser} /home/${vmUser}/.config/OpenLens
 
 # NO LONGER INSTALLING THE STANDARD PACKAGE WHICH NOW ENFORCES LOGIN TO A LENS-ID
