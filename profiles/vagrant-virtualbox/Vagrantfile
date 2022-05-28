@@ -22,24 +22,29 @@ file = File.read('../../versions.json')
 kx_version_json = JSON.parse(file)
 puts "KX Version JSON #{kx_version_json}"
 
+STANDALONE_MODE = ENV['standaloneMode'] || profile_config_json['config']['standaloneMode']
+puts "STANDALONE_MODE: #{STANDALONE_MODE}"
+
 profile_config_local_volumes=profile_config_json['config']['local_volumes']
 puts "Profile Config #{profile_config_local_volumes}"
 
-# Get needed capacity for GlusterFS volumes disk size
-GLUSTERFS_KUBE_VOLUMES_DISK_SIZE=profile_config_json['config']['glusterFsDiskSize'].to_i + 1
+if STANDALONE_MODE != "true"
+    # Get needed capacity for GlusterFS volumes disk size
+    GLUSTERFS_KUBE_VOLUMES_DISK_SIZE=profile_config_json['config']['glusterFsDiskSize'].to_i + 1
+    puts "GlusterFS Disk Size: #{GLUSTERFS_KUBE_VOLUMES_DISK_SIZE}GB"
+end
 
 # Calculate needed local disk capacity
-NUM_1GB_LOCAL_SIZE=profile_config_local_volumes['one_gb'].to_i * 1
-NUM_5GB_LOCAL_SIZE=profile_config_local_volumes['five_gb'].to_i * 5
-NUM_10GB_LOCAL_SIZE=profile_config_local_volumes['ten_gb'].to_i * 10
-NUM_30GB_LOCAL_SIZE=profile_config_local_volumes['thirty_gb'].to_i * 30
-NUM_50GB_LOCAL_SIZE=profile_config_local_volumes['fifty_gb'].to_i * 50
+# Adding 2% and 4% respectively to cover space lost when creating PVs with Sig
+NUM_1GB_LOCAL_SIZE=((profile_config_local_volumes['one_gb'].to_f * 1) * 1.04).round
+NUM_5GB_LOCAL_SIZE=((profile_config_local_volumes['five_gb'].to_f * 5) * 1.02).round
+NUM_10GB_LOCAL_SIZE=((profile_config_local_volumes['ten_gb'].to_f * 10) * 1.02).round
+NUM_30GB_LOCAL_SIZE=((profile_config_local_volumes['thirty_gb'].to_f * 30) * 1.02).round
+NUM_50GB_LOCAL_SIZE=((profile_config_local_volumes['fifty_gb'].to_f * 50) * 1.02).round
 
 # Calculate disk size needs for requested local volumes configured in profile-config.json
 LOCAL_KUBE_VOLUMES_DISK_SIZE=NUM_1GB_LOCAL_SIZE+NUM_5GB_LOCAL_SIZE+NUM_10GB_LOCAL_SIZE+NUM_30GB_LOCAL_SIZE+NUM_50GB_LOCAL_SIZE+1
-
 puts "Local Disk Size: #{LOCAL_KUBE_VOLUMES_DISK_SIZE}GB"
-puts "GlusterFS Disk Size: #{GLUSTERFS_KUBE_VOLUMES_DISK_SIZE}GB"
 
 # Environment variables will override the profile-config.json file properties. This was added for the Jenkins jobs, so that they can override parameters
 ENVIRONMENT_PREFIX = ENV['environmentPrefix'] || profile_config_json['config']['environmentPrefix']
@@ -158,22 +163,24 @@ Vagrant.configure("2") do |config|
         ]
       end
 
-      kx_main_glusterfs_k8s_storage="#{current_dir}/kx-main1-glusterfs-k8s-storage.vdi"
-      if ARGV[0] == "up" && ! File.exist?(kx_main_glusterfs_k8s_storage)
-            v.customize [
-              'createhd',
-              '--filename', kx_main_glusterfs_k8s_storage,
-              '--format', 'VDI',
-               '--size', GLUSTERFS_KUBE_VOLUMES_DISK_SIZE.to_i * 1024
-            ]
+      if STANDALONE_MODE != "true"
+          kx_main_glusterfs_k8s_storage="#{current_dir}/kx-main1-glusterfs-k8s-storage.vdi"
+          if ARGV[0] == "up" && ! File.exist?(kx_main_glusterfs_k8s_storage)
+                v.customize [
+                  'createhd',
+                  '--filename', kx_main_glusterfs_k8s_storage,
+                  '--format', 'VDI',
+                   '--size', GLUSTERFS_KUBE_VOLUMES_DISK_SIZE.to_i * 1024
+                ]
 
-            v.customize [
-              'storageattach', :id,
-              '--storagectl', 'SATA Controller',
-              '--port', 2, '--device', 0,
-              '--type', 'hdd', '--medium',
-              kx_main_glusterfs_k8s_storage
-            ]
+                v.customize [
+                  'storageattach', :id,
+                  '--storagectl', 'SATA Controller',
+                  '--port', 2, '--device', 0,
+                  '--type', 'hdd', '--medium',
+                  kx_main_glusterfs_k8s_storage
+                ]
+          end
       end
 
       v.name = "kx.as.code-#{ENVIRONMENT_PREFIX}-main1-#{MAIN_BOX_VERSION}"
