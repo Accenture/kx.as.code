@@ -84,7 +84,17 @@ export const Applications2 = () => {
           return app;
         }
       })
+      .map((app) => ({
+        ...app,
+        installation_status: {
+          isIstalled: false,
+          isFailed: false,
+          isInstalling: false,
+          isUninstalling: false,
+        },
+      }))
       .filter((app) => {
+        console.log("APP DEBUG: ", app);
         let count = 0;
         let intersect = filterStatusList.filter((value) =>
           getQueueStatusList(app.name).includes(value)
