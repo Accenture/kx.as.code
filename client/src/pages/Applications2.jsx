@@ -17,8 +17,12 @@ export const Applications2 = () => {
   const [isListLayout, setIsListLayout] = useState(true);
   const [sortSelect, setSortSelect] = useState("asc");
   const [filterStatusList, setFilterStatusList] = useState([
-    ["pending_queue", "completed_queue", "failed_queue"],
+    "failed_queue",
+    "completed_queue",
+    "pending_queue",
   ]);
+
+  // const filterStatusList = ["failed_queue", "completed_queue"];
 
   const queueList = [
     "pending_queue",
@@ -57,6 +61,7 @@ export const Applications2 = () => {
       } else {
       }
     });
+    // console.log("Debug getQueSTatusList: ", queueList);
     return queueList;
   };
 
@@ -67,22 +72,91 @@ export const Applications2 = () => {
     });
   };
 
+  const getInstallationStatusObject = (appName) => {
+    let obj = {
+      isInstalled: false,
+      isFailed: false,
+      isInstalling: false,
+      isUninstalling: false,
+      isPending: false,
+    };
+
+    let queueStatusList = getQueueStatusList(appName);
+
+    if (queueStatusList.includes("completed_queue")) {
+      obj.isInstalled = true;
+    } else {
+      obj.isInstalled = false;
+    }
+
+    if (queueStatusList.includes("failed_queue")) {
+      obj.isFailed = true;
+    } else {
+      obj.isFailed = false;
+    }
+
+    if (queueStatusList.includes("pending_queue")) {
+      obj.isPending = true;
+    } else {
+      obj.isPending = false;
+    }
+
+    return obj;
+  };
+
   const drawApplicationCards = () => {
-    console.log("new App List in draw: ", newAppList);
     var apps = applicationData
-      .filter((val) => {
+      .filter((app) => {
         if (searchTerm == "") {
-          return val;
+          // console.log("VAL TEST: ", app);
+          return app;
         } else if (
-          val.name.toLowerCase().includes(searchTerm.toLowerCase().trim())
+          app.name.toLowerCase().includes(searchTerm.toLowerCase().trim())
         ) {
-          return val;
+          return app;
         }
       })
+      .map((app) => ({
+        ...app,
+        installation_status: getInstallationStatusObject(app.name),
+      }))
+      .filter((app) => {
+        console.log("APP DEBUG: ", app);
+        let count = 0;
+        let intersect = filterStatusList.filter((value) =>
+          getQueueStatusList(app.name).includes(value)
+        );
+        filterStatusList.map((status) => {
+          if (intersect.includes(status)) {
+            count++;
+          }
+        });
+        if (count > 0) {
+          return app;
+        } else if (
+          !getQueueStatusList(app.name).includes("completed_queue") &&
+          !filterStatusList.includes("completed_queue")
+        ) {
+          return app;
+        }
+      })
+      // .filter((app) => {
+      //   console.log("List1: ", getQueueStatusList(app.name));
+      //   console.log("List2: ", filterStatusList);
+
+      //   let intersect = filterStatusList.filter((value) =>
+      //     getQueueStatusList(app.name).includes(value)
+      //   );
+
+      //   filterStatusList.map((status) => {
+      //     if (intersect.includes(status)) {
+      //       return app;
+      //     }
+      //   });
+      // })
       .sort(function (a, b) {
         const nameA = a.name.toUpperCase();
         const nameB = b.name.toUpperCase();
-
         if (sortSelect === "asc") {
           if (nameA < nameB) {
             return -1;
@@ -100,12 +174,22 @@ export const Applications2 = () => {
         }
         return 0;
       })
-      // .filter((val) => {
-      //   console.log("val name: ", val.name);
-      //   if (filterStatusList.includes(getQueueStatusByAppName(val.name))) {
-      //     console.log("val: ", val.name);
-      //     return val;
-      //   }
+      // .filter((app) => {
+      //   // console.log("val name: ", app.name);
+      //   console.log("App debug in filter: ", app);
+      //   return filterStatusList.map((statusA) => {
+      //     let appQueueList = getQueueStatusList(app.name);
+
+      //     console.log("Check app status: ", appQueueList);
+      //     console.log("Check status: ", statusA);
+
+      //     if (appQueueList.includes(statusA)) {
+      //       console.error("includes");
+      //       return app;
+      //     } else {
+      //       console.error("includes not ");
+      //     }
+      //   });
       // })
       .map((app, i) => {
         return (
@@ -200,7 +284,7 @@ export const Applications2 = () => {
     return () => {
       // clearInterval(id);
     };
-  }, []);
+  }, [filterStatusList]);
 
   return (
     <div className="px-6 sm:px-6 lg:px-24 py-8 w-full max-w-9xl mx-auto">
@@ -251,7 +335,10 @@ export const Applications2 = () => {
                             isFailed={this.state.isFailed}
                             isPending={this.state.isPending} /> */}
           </div>
-          <MultipleSelectCheckmarks />
+          <MultipleSelectCheckmarks
+            setFilterStatusList={setFilterStatusList}
+            filterStatusList={filterStatusList}
+          />
         </div>
 
         {/* Right: Actions */}
