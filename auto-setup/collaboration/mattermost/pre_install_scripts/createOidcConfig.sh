@@ -13,5 +13,5 @@ else
     # Since Keycloak is not installed, remove Keycloak settings before proceeding with Helm install, which
     # would fail otherwise
     log_info "Keycloak not installed. Removing Keycloak configuration from Mattermost, else Helm install will fail"
-    /usr/bin/sudo sed -i '/MM_GITLABSETTINGS/d' ${installComponentDirectory}/mattermost_values.yaml
+    /usr/bin/sudo sed -i '/MM_GITLABSETTINGS/d' ${installComponentDirectory}/values_template.yaml
 fi

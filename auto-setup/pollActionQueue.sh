@@ -22,6 +22,7 @@ export dockerHubUsername=""
 export dockerHubPassword=""
 export dockerHubEmail=""
 export forceStorageClassToLocal="false"
+export kcPod=""
 
 # Get and export versions - currently versions for Kubernetes and KX.AS.CODE
 getVersions
