@@ -118,7 +118,7 @@ mongodb:
     ##   set, choosing the default provisioner.  (gp2 on AWS, standard on
     ##   GKE, AWS & OpenStack)
     ##
-    storageClass: "local-storage"
+    storageClass: "local-storage-sc"
     accessMode: ReadWriteOnce
     size: 8Gi
   
@@ -137,7 +137,7 @@ persistence:
   ##   set, choosing the default provisioner.  (gp2 on AWS, standard on
   ##   GKE, AWS & OpenStack)
   ##
-  storageClass: "gluster-heketi"
+  storageClass: "gluster-heketi-sc"
   accessMode: ReadWriteOnce
   size: 8Gi
 

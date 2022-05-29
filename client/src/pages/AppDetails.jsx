@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 // import NotFound from "../partials/NotFound";
 import axios from "axios";
 import AppLogo from "../partials/applications/AppLogo";
+import ScreenshotCarroussel from "../partials/applications/ScreenshotCarroussel";
 
 export default function AppDetails(props) {
   const [appData, setAppData] = useState([]);
@@ -46,7 +47,11 @@ export default function AppDetails(props) {
         {/* right section header */}
         <div className="col-span-2"></div>
       </div>
+
+      <h2 className="mt-5 text-2xl">Screenshots</h2>
+      <ScreenshotCarroussel appName={appData.name} />
     </div>
+
     // <div className="px-4 sm:px-6 lg:px-24 py-8 w-full max-w-9xl mx-auto text-white">
     //   App Details Page
     //   <NotFound />

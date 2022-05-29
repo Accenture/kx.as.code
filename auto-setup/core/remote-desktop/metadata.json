@@ -6,9 +6,12 @@
     "environment_variables": {
         "guacamoleVersion": "1.3.0",
         "guacamoleChecksum": "bc5511c7170841f90d437b5a07b7ec2f5bfd061f2a5bfc4e4d0fc4d7b303fb4c",
+        "nomachineVersion": "7.6.2_4",
+        "nomachineChecksum": "94b9d0cdfc91bece6962a2ed39e9b736c3abe9d44b5fd8db59c0aec10b7539d7",
         "postgresqlDriverVersion": "42.2.19"
     },
     "install_scripts": [
+        "install-nomachine.sh",
         "install-guacamole-remote-desktop.sh"
     ],
     "Description": "Guacamole Remote Desktop",

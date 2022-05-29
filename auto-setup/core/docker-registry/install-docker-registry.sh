@@ -15,7 +15,7 @@ spec:
   resources:
     requests:
       storage: 10Gi
-  storageClassName: gluster-heketi
+  storageClassName: gluster-heketi-sc
 """ | /usr/bin/sudo tee ${installationWorkspace}/docker-registry-pvc.yaml
 
 
@@ -138,6 +138,9 @@ spec:
                 port:
                   number: 5000
 """ | /usr/bin/sudo tee ${installationWorkspace}/docker-registry-ingress.yaml
+
+# Update storage class if GlusterFs not installed
+updateStorageClassIfNeeded "${installationWorkspace}/docker-registry-pvc.yaml"
 
 # Apply Kubernetes resources
 kubectl apply \

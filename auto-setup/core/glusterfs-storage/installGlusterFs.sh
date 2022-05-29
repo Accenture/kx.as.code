@@ -10,29 +10,36 @@ if [[ -n ${nvme_cli_needed} ]]; then
     /usr/bin/sudo apt install -y nvme-cli lvm2
 fi
 
-# Determine Drive C (GlusterFS) - Relevant for KX-Main1 only
-for i in {{1..30}}; do
-  driveC=$(lsblk -o NAME,FSTYPE,SIZE -dsn -J | jq -r '.[] | .[] | select(.fstype==null) | select(.size=="'$((${glusterFsDiskSize}+1))'G") | .name' || true)
-  if [[ -z ${driveC} ]]; then
-    log_info "Drive for glusterfs not yet available. Trying a maximum of 30 times. Attempt ${i}"
-    sleep 15
+partitionC1Exists=$(lsblk -o NAME,FSTYPE,SIZE -J | jq -r '.blockdevices[] | select(.name=="sdc") | .children[] | select(.name=="sdc1") | .name')
+
+if [[ "${partitionC1Exists}" != "sdc1" ]]; then
+
+  # Determine Drive C (GlusterFS) - Relevant for KX-Main1 only
+  for i in {{1..30}}; do
+    driveC=$(lsblk -o NAME,FSTYPE,SIZE -dsn -J | jq -r '.[] | .[] | select(.fstype==null) | select(.size=="'$((${glusterFsDiskSize}+1))'G") | .name' || true)
+    if [[ -z ${driveC} ]]; then
+      log_info "Drive for glusterfs not yet available. Trying a maximum of 30 times. Attempt ${i}"
+      sleep 15
+    else
+      log_info "Drive for glusterfs (${driveC}) now available after attempt ${i} of 30"
+      break
+    fi
+  done
+  formatted=""
+  if [[ ! -f /usr/share/kx.as.code/.config/driveC ]]; then
+      echo "${driveC}" | /usr/bin/sudo tee /usr/share/kx.as.code/.config/driveC
+      cat /usr/share/kx.as.code/.config/driveC
   else
-    log_info "Drive for glusterfs (${driveC}) now available after attempt ${i} of 30"
-    break
+      driveC=$(cat /usr/share/kx.as.code/.config/driveC)
+      formatted=true
   fi
-done
-formatted=""
-if [[ ! -f /usr/share/kx.as.code/.config/driveC ]]; then
-    echo "${driveC}" | /usr/bin/sudo tee /usr/share/kx.as.code/.config/driveC
-    cat /usr/share/kx.as.code/.config/driveC
-else
-    driveC=$(cat /usr/share/kx.as.code/.config/driveC)
-    formatted=true
+  if [[ -z ${driveC} ]]; then
+    log_error "Error finding mounted drive for setting up glusterfs. Quitting script and sending task to failure queue"
+    return 1
+  fi
+
 fi
-if [[ -z ${driveC} ]]; then
-  log_error "Error finding mounted drive for setting up glusterfs. Quitting script and sending task to failure queue"
-  return 1
-fi
+
 # Update Debian repositories as default is old
 glusterfsMajorVersion=$(echo ${glusterfsVersion} | cut -f 1 -d'.')
 wget -O - https://download.gluster.org/pub/gluster/glusterfs/${glusterfsMajorVersion}/rsa.pub | /usr/bin/sudo apt-key add -
@@ -322,7 +329,7 @@ cat << EOF > ${installationWorkspace}/glusterfs-sc.yaml
 kind: StorageClass
 apiVersion: storage.k8s.io/v1
 metadata:
-  name: gluster-heketi
+  name: gluster-heketi-sc
 provisioner: kubernetes.io/glusterfs
 reclaimPolicy: Retain
 volumeBindingMode: Immediate
@@ -338,4 +345,4 @@ EOF
 kubectl apply -f ${installationWorkspace}/glusterfs-sc.yaml
 
 # Make gluster-heketi storage class Kubernetes NOT default (switched default to local storage)
-kubectl patch storageclass gluster-heketi -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"false"}}}'
+kubectl patch storageclass gluster-heketi-sc -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"false"}}}'

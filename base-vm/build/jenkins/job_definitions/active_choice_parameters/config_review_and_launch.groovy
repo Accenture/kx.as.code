@@ -395,8 +395,13 @@ try {
                     </div>
                      <div class="row">
                         <div class="cell cell-label">Selected Install Groups</div>
-                        <div class="cell cell-value" id="list-templates-to-install"></div>
-                    </div>
+                        <div class="cell cell-value">
+                            <div class="tooltip-info">
+                                <div id="list-templates-to-install">0 templates</div>
+                                <span id="list-templates-tooltip-text" class="tooltiptext"></span>
+                            </div>
+                        </div>
+                    </div>                   
                 </div>
             </div>
          </div>
@@ -409,7 +414,7 @@ try {
                 <div class="div-inner-h2-header-in-line-wrapper">
                     <span style="vertical-align: middle; display: inline-block;">
                         <span class="launch-action-text-label" style="width: 50px;">Date: </span><span id="kx-launch-build-timestamp" class="build-action-text-value"></span>
-                        <span class="launch-action-text-label" style="width: 70px; ">Status: </span><span id="kx-launch-build-result" style="width: 80px; margin-right: 20px; display: inline-table;"></span>
+                        <span class="launch-action-text-label" style="width: 70px; ">Status: </span><span id="kx-launch-build-result" style="width: 100px; margin-right: 20px; display: inline-flex;"></span>
                         <span class="launch-action-text-label" style="width: 100px;">Last Action: </span><span id="kx-launch-last-action" class="build-action-text-value" style="width: 50px;"></span>
                         <span class="launch-action-text-label" style="width: 100px;">KX-Version:</span><span id="kx-launch-build-kx-version" class="build-action-text-value build-action-text-value-result" style="width: 80px;"></span>
                         <span class="launch-action-text-label" style="width: 115px;">Kube-Version:</span><span id="kx-launch-build-kube-version" class="build-action-text-value build-action-text-value-result" style="width: 80px;"></span>
@@ -419,7 +424,6 @@ try {
                         <img src='/userContent/icons/play.svg' class="build-action-icon" title="Start Environment" alt="Start Environment" onclick='performRuntimeAction("up");' />|
                         <img src='/userContent/icons/stop.svg' class="build-action-icon" title="Stop Environment" alt="Stop Environment" onclick='performRuntimeAction("halt");' />|
                         <img src='/userContent/icons/cancel.svg' class="build-action-icon" title="Delete Environment" alt="Delete Environment" onclick='performRuntimeAction("destroy");' />|
-                        <img src='/userContent/icons/refresh.svg' class="build-action-icon" title="Refresh Data" alt="Refresh Data" onclick='getBuildJobListForProfile("KX.AS.CODE_Runtime_Actions", "kx-launch");' />|
                         <div class="console-log"><span class="console-log-span"><img src="/userContent/icons/text-box-outline.svg" onMouseover='showConsoleLog("KX.AS.CODE_Runtime_Actions", "kx-launch");' onclick='openFullConsoleLog("KX.AS.CODE_Runtime_Actions", "kx-launch");' class="build-action-icon" alt="View Build Log" title="Click to open full log in new tab"><span class="consolelogtext" id='kxLaunchBuildConsoleLog'></span></span></div>
                     </span>
                 </div>

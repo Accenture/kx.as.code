@@ -10,7 +10,8 @@ autoSetupScriptInstall() {
 
     # Execute scripts
     for script in ${scriptsToExecute}; do
-        log_info "Excuting script \"${script}\" in directory ${installComponentDirectory}"
+        log_info "Executing script \"${script}\" in directory ${installComponentDirectory}"
+        updateStorageClassIfNeeded "${installComponentDirectory}/${script}"
         . ${installComponentDirectory}/${script} || rc=$? && log_info "${installComponentDirectory}/${script} returned with rc=$rc"
         if [[ ${rc} -ne 0 ]]; then
             log_error "Execution of install script \"${script}\" ended in a non zero return code ($rc)"

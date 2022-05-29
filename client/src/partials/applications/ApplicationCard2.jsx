@@ -4,12 +4,12 @@ import EditMenu from "../EditMenu";
 import { TrashCan32, Restart32 } from "@carbon/icons-react";
 import StatusTag from "../StatusTag";
 import StatusPoint from "../StatusPoint";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import AppLogo from "./AppLogo";
 import { toast } from "react-toastify";
 import LinearProgress from "@mui/material/LinearProgress";
 import axios from "axios";
-import { AiOutlineWarning } from "react-icons/ai";
+import ApplicationStatusActionButton from "./ApplicationStatusActionButton";
 
 function ApplicationCard2(props) {
   const { history } = props;
@@ -18,7 +18,9 @@ function ApplicationCard2(props) {
   const [appName, setAppName] = useState("");
   const [allQueueStatus, setAllQueueStatus] = useState([]);
   const [applicationData, setApplicationData] = useState({});
-  const [appQueue, setAppQueue] = useState("pending_queue");
+  const [appQueue, setAppQueue] = useState("undefined");
+
+  const refreshActionButton = useRef(null);
 
   var defaultPayload = {
     install_folder: "undefined",
@@ -37,7 +39,7 @@ function ApplicationCard2(props) {
   const notify = (action) => {
     const notificationMessage = `${
       action === "install" ? "Installation" : "Uninstallation"
-    } started for ${appName}.`;
+    } Action added to Queue for ${appName}.`;
 
     toast.info(
       <NotificationMessage notificationMessage={notificationMessage} />,
@@ -86,6 +88,11 @@ function ApplicationCard2(props) {
           // props.fetchQueueData();
           props.fetchApplicationAndQueueData();
         })
+        .then(() => {
+          setTimeout(() => {
+            refreshActionButton.current();
+          }, 2000);
+        })
         .catch((error) => {
           console.error("There was an error!", error);
         });
@@ -120,29 +127,12 @@ function ApplicationCard2(props) {
   };
 
   const setUp = () => {
-    // getQueueByAppName2();
-
-    // setAppQueueData(getAppQueueData(props.app.name));
-    // console.log("appQueue setUp: ", appQueue);
-
-    // getQueueByAppName(props.app.name)[0] &&
-    //   getQueueByAppName(props.app.name)[0].routing_key &&
-    //   setAppQueue(getQueueByAppName(props.app.name));
-
     const slug =
       props.app.name &&
       props.app.name
         .replaceAll(" ", "-")
         .replace(/\b\w/g, (l) => l.toLowerCase());
     setAppId(slug);
-
-    //todo rewrite
-    // const queueObj = getAppQueueData(props.app.name)[0];
-
-    // if (appQueueData != undefined && appQueueData != null) {
-    //   console.log("debug-routing-queue: ", appQueueData);
-    //   setAllQueueStatus(getAppQueueData(props.app.name));
-    // }
   };
 
   const getQueueByAppName2 = () => {
@@ -198,7 +188,7 @@ function ApplicationCard2(props) {
     return await props.queueData.filter(function (obj) {
       if (JSON.parse(obj.payload).name === props.app.name) {
         setAppQueue(obj.routing_key);
-        console.log("in GetQueue queue Name: ", obj.routing_key);
+        // console.log("in GetQueue queue Name: ", obj.routing_key);
         return obj.routing_key;
       } else {
       }
@@ -206,6 +196,10 @@ function ApplicationCard2(props) {
   };
 
   useEffect(() => {
+    // print queue/ instalation status by setAppName
+    // console.log("App Name: ", props.app.name);
+    // console.log("Installation Status: ", props.getQueNameNew(props.app.name));
+
     setUp();
 
     fetchAppQueueData33().catch("Error: ", console.error);
@@ -235,67 +229,135 @@ function ApplicationCard2(props) {
     });
   };
 
-  return (
-    <div
-      className="flex flex-col col-span-full sm:col-span-6 xl:col-span-4 bg-inv2 shadow-lg rounded"
-      loading="lazy"
-    >
-      <div className="p-6">
-        <header className="flex justify-between items-start mb-2">
-          {/* Icon */}
-          <div className="flex content-start">
-            <AppLogo height={"50px"} width={"50px"} appName={props.app.name} />
-            {/* <StatusTag installStatus={props.app.queueName} /> */}
-          </div>
-          {/* Menu button */}
-          {props.app.installation_group_folder != "core" && (
-            <EditMenu className="relative inline-flex">
-              {props.app.installation_group_folder === "completed_queue" ? (
-                <li>
-                  <Link
-                    className="font-medium text-sm text-red-500 hover:text-red-600 flex py-1 px-3"
-                    to="#0"
-                  >
-                    <div className="flex items-start">
-                      <TrashCan32 className="p-1 flex my-auto" />
-                    </div>
-                    <span className="flex my-auto">Uninstall</span>
-                  </Link>
-                </li>
-              ) : (
-                <li>
-                  <Link
-                    className="font-medium text-sm text-white hover:text-gray-500 flex py-1 px-3"
-                    to="#0"
-                  >
-                    <div className="flex items-start">
-                      <Restart32 className="p-1 flex my-auto" />
-                    </div>
-                    <span className="flex my-auto">Install</span>
-                  </Link>
-                </li>
-              )}
-            </EditMenu>
-          )}
-        </header>
-        <Link to={"/apps/" + getSlug()}>
-          {/* Category name */}
-          <div className="text-white bg-ghBlack2 rounded p-0 px-1.5 uppercase w-fit inline-block my-2">
-            {props.app.installation_group_folder}
-          </div>
-          <h2 className="hover:underline hover:cursor-pointer text-2xl text-white mb-2 flex items-center">
-            {allQueueStatus != "" && (
-              <StatusPoint installStatus={allQueueStatus} />
-            )}
-            {getTransformedName()}
-          </h2>
-        </Link>
-        <div className="text-xs font-semibold text-gray-400 uppercase mb-1"></div>
-        <div className="pb-5">{props.app.Description}</div>
+  const UninstallButton = () => {
+    return "uninstall button";
+  };
 
-        <div className="">
-          {console.log("in render queue: ", appQueue)}
-          {appQueue === "pending_queue" && (
+  return (
+    <>
+      {props.isListLayout ? (
+        <>
+          <div
+            className={`cursor-auto flex flex-col col-span-full rounded ${
+              props.isListLayout
+                ? "col-span-full"
+                : "sm:col-span-6 xl:col-span-4"
+            }`}
+            loading="lazy"
+          >
+            <div className="grid grid-cols-12 pt-2 px-0 items-center">
+              <div className="flex col-span-10 hover:bg-gray-700 bg-inv2 rounded p-4">
+                <Link
+                  to={"/apps/" + getSlug()}
+                  className="mx-3 flex col-span-6"
+                >
+                  {/* Icon */}
+                  <div className="">
+                    <AppLogo width={"50px"} appName={props.app.name} />
+                    {/* <StatusTag installStatus={props.app.queueName} /> */}
+                  </div>
+                  <div className="mx-3 flex col-span-6">
+                    <div>
+                      {/* Category name */}
+                      <div className="text-white bg-ghBlack2 rounded p-0 px-1.5 uppercase w-fit inline-block my-1">
+                        {props.app.installation_group_folder}
+                      </div>
+                      <h2 className="hover:underline hover:cursor-pointer text-lg text-white mb-2 flex items-center">
+                        {allQueueStatus != "" && (
+                          <StatusPoint installStatus={allQueueStatus} />
+                        )}
+                        {getTransformedName()}
+                      </h2>
+                    </div>
+                  </div>
+                </Link>
+                <div className="px-4 pb-3">
+                  <ul className="float-left">
+                    {props.app.categories && drawAppTags(props.app.categories)}
+                  </ul>
+                </div>
+              </div>
+              <div className="flex col-span-2 ml-2 h-full w-full">
+                <ApplicationStatusActionButton
+                  isMqConnected={props.isMqConnected}
+                  getQueueStatusList={props.getQueueStatusList}
+                  appName={props.app.name}
+                  category={props.app.installation_group_folder}
+                  applicationInstallHandler={applicationInstallHandler}
+                  refreshActionButton={refreshActionButton}
+                />
+              </div>
+            </div>
+          </div>
+        </>
+      ) : (
+        <div
+          className={`flex flex-col col-span-full bg-inv2 shadow-lg rounded ${
+            props.isListLayout ? "col-span-full" : "sm:col-span-6 xl:col-span-4"
+          }`}
+          loading="lazy"
+        >
+          <div className="p-6">
+            <header className="flex justify-between items-start mb-2">
+              {/* Icon */}
+              <div className="flex content-start">
+                <AppLogo
+                  height={"50px"}
+                  width={"50px"}
+                  appName={props.app.name}
+                />
+                {/* <StatusTag installStatus={props.app.queueName} /> */}
+              </div>
+              {/* Menu button */}
+              {props.app.installation_group_folder != "core" && (
+                <EditMenu className="relative inline-flex">
+                  {props.app.installation_group_folder === "completed_queue" ? (
+                    <li>
+                      <Link
+                        className="font-medium text-sm text-red-500 hover:text-red-600 flex py-1 px-3"
+                        to="#0"
+                      >
+                        <div className="flex items-start">
+                          <TrashCan32 className="p-1 flex my-auto" />
+                        </div>
+                        <span className="flex my-auto">Uninstall</span>
+                      </Link>
+                    </li>
+                  ) : (
+                    <li>
+                      <Link
+                        className="font-medium text-sm text-white hover:text-gray-500 flex py-1 px-3"
+                        to="#0"
+                      >
+                        <div className="flex items-start">
+                          <Restart32 className="p-1 flex my-auto" />
+                        </div>
+                        <span className="flex my-auto">Install</span>
+                      </Link>
+                    </li>
+                  )}
+                </EditMenu>
+              )}
+            </header>
+
+            <Link to={"/apps/" + getSlug()}>
+              {/* Category name */}
+              <div className="text-white bg-ghBlack2 rounded p-0 px-1.5 uppercase w-fit inline-block my-2">
+                {props.app.installation_group_folder}
+              </div>
+              <h2 className="hover:underline hover:cursor-pointer text-2xl text-white mb-2 flex items-center">
+                {allQueueStatus != "" && (
+                  <StatusPoint installStatus={allQueueStatus} />
+                )}
+                {getTransformedName()}
+              </h2>
+            </Link>
+            <div className="text-xs font-semibold text-gray-400 uppercase mb-1"></div>
+            <div className="pb-5">{props.app.Description}</div>
+
+            <div className="">
+              {/* {console.log("in render queue: ", appQueue)} */}
+              {/* {appQueue === "pending_queue" && (
             <button
               className="bg-kxBlue/50 p-3 px-5 rounded items-center flex"
               disabled
@@ -321,9 +383,17 @@ function ApplicationCard2(props) {
               </svg>
               Installing...
             </button>
-          )}
+          )} */}
+              {/* {!props.isMqConnected && (
+            <div className="text-red-500 border-red-500 rounded-md border p-2 flex">
+              <AiOutlineWarning className="mt-auto mb-auto table text-4xl mr-2" />
+              Installation Status not available. Please check conneciton to
+              RabbitMQ service.
+            </div>
+          )} */}
+              {/* 
           {appQueue != "pending_queue" &&
-            (appQueue != "completed_queue" ? (
+            (appQueue != "completed_queue" && props.isMqConnected ? (
               <div className="">
                 <button
                   onClick={applicationInstallHandler}
@@ -332,7 +402,6 @@ function ApplicationCard2(props) {
                   Install
                 </button>
 
-                {/* Warning Info Installation Failed Component */}
                 {appQueue === "failed_queue" && (
                   <div className="p-2 mt-4 rounded-md text-red-500 flex item-center border border-red-500">
                     <AiOutlineWarning className="mt-auto mb-auto table text-2xl mr-2" />
@@ -343,26 +412,32 @@ function ApplicationCard2(props) {
                 )}
               </div>
             ) : (
-              <button
-                onClick={applicationUninstallHandler}
-                className="bg-red-500 p-3 px-5 rounded items-center flex"
-              >
-                Uninstall
-              </button>
+              ""
             ))}
-        </div>
-        {/* Seperator */}
-        <div className="pb-3 mb-3 border-b-2 border-gray-600 w-full"></div>
+          */}
 
-        <div className="float-left">
-          <ul className="float-left">
-            {props.app.categories && drawAppTags(props.app.categories)}
-          </ul>
-        </div>
-      </div>
+              <ApplicationStatusActionButton
+                isMqConnected={props.isMqConnected}
+                getQueueStatusList={props.getQueueStatusList}
+                appName={props.app.name}
+                category={props.app.installation_group_folder}
+                applicationInstallHandler={applicationInstallHandler}
+              />
+            </div>
+            {/* Seperator */}
+            <div className="pb-3 mb-3 border-b-2 border-gray-600 w-full"></div>
 
-      <div className="flex-grow"></div>
-    </div>
+            <div className="float-left">
+              <ul className="float-left">
+                {props.app.categories && drawAppTags(props.app.categories)}
+              </ul>
+            </div>
+          </div>
+
+          <div className="flex-grow"></div>
+        </div>
+      )}
+    </>
   );
 }
 

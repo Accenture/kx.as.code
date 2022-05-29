@@ -23,7 +23,7 @@ artifactory:
       password: "{{adminPassword}}"
 
     persistence:
-      storageClassName: local-storage
+      storageClassName: local-storage-sc
       size: 5Gi
     ## Uncomment the following resources definitions or pass them from command line
     ## to control the cpu and memory resources allocated by the Kubernetes cluster
@@ -83,10 +83,10 @@ artifactory:
   postgresql:
     enabled: true
     postgresqlPassword: "{{postgresqlPassword}}"
-    global.persistence.storageClass: local-storage
+    global.persistence.storageClass: local-storage-sc
     persistence:
       enabled: true
-      storageClass: local-storage
+      storageClass: local-storage-sc
       size: 5Gi
     ## This key is required for upgrades to protect old PostgreSQL chart's breaking changes.
     databaseUpgradeReady: "yes"

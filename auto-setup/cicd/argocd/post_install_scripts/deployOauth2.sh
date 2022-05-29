@@ -31,6 +31,8 @@ stringData:
 """ | /usr/bin/sudo tee  ${installationWorkspace}/argocd-repo-server-tls.yaml
 kubectl apply -f ${installationWorkspace}/argocd-repo-server-tls.yaml
 
+if [[ -n ${clientId} ]] && [[ -n ${clientSecret} ]]; then
+
 # patch the argocd-secret with keycloak client id and add tls certs to avoid self signed certs trust issue in argocd
 export encodedClientId=$(echo -n "$clientSecret" | base64)
 export encodedTlsCrt=$(/usr/bin/sudo cat $installationWorkspace/kx-certs/tls.crt | base64 | tr -d '\n\r')
@@ -109,3 +111,5 @@ export userId=$(createKeycloakUser "${user}")
 
 # Add user admin to the ArgoCDAdmins group. If any new users are created then they should be added to ArgoCDAdmins group
 groupMappingId=$(mapKeycloakUserToGroup "${userId}" "${groupId}")
+
+fi

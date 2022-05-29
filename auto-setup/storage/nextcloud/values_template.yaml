@@ -263,7 +263,7 @@ postgresql:
   postgresqlDatabase: nextcloud
   persistence:
     enabled: true
-    storageClass: "local-storage"
+    storageClass: "local-storage-sc"
 
 ##
 ## Redis chart configuration
@@ -339,7 +339,7 @@ persistence:
   ##   set, choosing the default provisioner.  (gp2 on AWS, standard on
   ##   GKE, AWS & OpenStack)
   ##
-   storageClass: "gluster-heketi"
+   storageClass: "gluster-heketi-sc"
 
   ## A manually managed Persistent Volume and Claim
   ## Requires persistence.enabled: true
@@ -355,7 +355,7 @@ persistence:
     enabled: false
     subPath:
     annotations:
-     storageClass: "local-storage"
+     storageClass: "local-storage-sc"
     # existingClaim:
     accessMode: ReadWriteOnce
     size: 10Gi

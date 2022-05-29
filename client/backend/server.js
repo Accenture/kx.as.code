@@ -11,7 +11,7 @@ const PORT = process.env.PORT || 5001;
 const dataPath = "../src/data/combined-metadata-files.json";
 
 app.route("/api/add/application/:queue_name").post((req, res) => {
-  connection = amqp.connect("amqp://test:test@localhost");
+  connection = amqp.connect("amqp://test:test@127.0.0.1");
   console.log("install app req.body: ", req.body);
 
   connection.then(async (conn) => {
@@ -34,42 +34,6 @@ app.route("/api/add/application/:queue_name").post((req, res) => {
   res.send("The POST request is being processed!");
 });
 
-app.route("/api/consume/:queue_name").get((req, res) => {
-  connection = amqp.connect("amqp://test:test@localhost");
-
-  connection.then(async (conn) => {
-    const channel = await conn.createChannel();
-    await channel.assertExchange("action_workflow", "direct", {
-      durable: true,
-    });
-    await channel.assertQueue(req.params.queue_name);
-    channel.bindQueue(
-      req.params.queue_name,
-      "action_workflow",
-      req.params.queue_name
-    );
-    // channel.consume(req.params.queue_name, (msg) => {
-    //   console.log(msg.content.toString());
-    //   channel.ack(msg);
-    // });
-
-    try {
-      let data = await channel.get(req.params.queue_name); // get one msg at a time
-      if (data) {
-        data.content ? eval("(" + data.content.toString() + ")()") : "";
-        channel.ack(data);
-      } else {
-        //console.log("Empty Queue")
-      }
-    } catch (error) {
-      //console.log("Error while consuming from rabbitmq queue", error)
-      return Promise.reject(error);
-    }
-  });
-
-  res.send("The POST request is being processed!");
-});
-
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Credentials", "true");
@@ -85,10 +49,22 @@ app.use((req, res, next) => {
   });
 });
 
+app.route("/api/checkRmqConn").get((req, res) => {
+  console.log("checkRmqConn triggered.");
+  try {
+    request("http://127.0.0.1:15672", function (err, response, body) {
+      console.log("BODY CONN REQ", res.statusCode);
+      res.send(response?.statusCode);
+    });
+  } catch (err) {
+    res.send(err);
+  }
+});
+
 app.route("/api/queues/:queue_name").get((req, res) => {
   console.log("get q triggered.");
   var url =
-    "http://test:test@localhost:15672/api/queues/%2F/" +
+    "http://test:test@127.0.0.1:15672/api/queues/%2F/" +
     req.params.queue_name +
     "/get";
 
@@ -115,7 +91,7 @@ app.route("/api/queues/:queue_name").get((req, res) => {
 app.route("/api/move/:from_queue/:to_queue").get((req, res) => {
   console.log("move triggered.");
   var url =
-    "http://test:test@localhost:15672/api/parameters/shovel/%2F/Move%20from%20" +
+    "http://test:test@127.0.0.1:15672/api/parameters/shovel/%2F/Move%20from%20" +
     req.params.from_queue;
 
   var dataString =
@@ -164,6 +140,42 @@ app.get("/api/applications/:app_name", (req, res) => {
     });
     res.send(fil[0]);
   });
+});
+
+app.route("/api/consume/:queue_name").get((req, res) => {
+  connection = amqp.connect("amqp://test:test@127.0.0.1");
+
+  connection.then(async (conn) => {
+    const channel = await conn.createChannel();
+    await channel.assertExchange("action_workflow", "direct", {
+      durable: true,
+    });
+    await channel.assertQueue(req.params.queue_name);
+    channel.bindQueue(
+      req.params.queue_name,
+      "action_workflow",
+      req.params.queue_name
+    );
+    // channel.consume(req.params.queue_name, (msg) => {
+    //   console.log(msg.content.toString());
+    //   channel.ack(msg);
+    // });
+
+    try {
+      let data = await channel.get(req.params.queue_name); // get one msg at a time
+      if (data) {
+        data.content ? eval("(" + data.content.toString() + ")()") : "";
+        channel.ack(data);
+      } else {
+        //console.log("Empty Queue")
+      }
+    } catch (error) {
+      //console.log("Error while consuming from rabbitmq queue", error)
+      return Promise.reject(error);
+    }
+  });
+
+  res.send("The POST request is being processed!");
 });
 
 app.listen(PORT, () => console.log(`listening on ${PORT}`));

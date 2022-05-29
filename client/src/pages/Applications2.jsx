@@ -1,22 +1,28 @@
 import { React, Component } from "react";
 import ApplicationCard2 from "../partials/applications/ApplicationCard2.jsx";
 import axios from "axios";
-import Box from "@mui/material/Box";
-import InputLabel from "@mui/material/InputLabel";
-import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
-import Select from "@mui/material/Select";
-// import FilterButton from "../partials/actions/FilterButton"
-
+import { FaThList } from "react-icons/fa";
+import { BsGrid3X3GapFill } from "react-icons/bs";
+import MultipleSelectCheckmarks from "../partials/MultipleSelectCheckmarks";
 import { useState, useEffect } from "react";
 
 export const Applications2 = () => {
   const [applicationData, setApplicationData] = useState([]);
+  const [newAppList, setNewAppList] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [queueData, setQueueData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-
+  const [appsSearchResultCount, setAppsSearchResultCount] = useState(0);
+  const [isMqConnected, setIsMqConnected] = useState(true);
+  const [isListLayout, setIsListLayout] = useState(true);
   const [sortSelect, setSortSelect] = useState("asc");
+  const [filterStatusList, setFilterStatusList] = useState([
+    "failed_queue",
+    "completed_queue",
+    "pending_queue",
+  ]);
+
+  // const filterStatusList = ["failed_queue", "completed_queue"];
 
   const queueList = [
     "pending_queue",
@@ -26,6 +32,39 @@ export const Applications2 = () => {
     "wip_queue",
   ];
 
+  const getQueueStatusByAppName = async (appName) => {
+    return await queueData.filter(function (obj) {
+      if (JSON.parse(obj.payload).name === appName) {
+        // setAppQueue(obj.routing_key);
+        console.log("get status debug: ", obj.routing_key);
+        return obj.routing_key;
+      } else {
+      }
+    });
+  };
+
+  const toggleListLayout = (b) => {
+    setIsListLayout(b);
+    localStorage.setItem("isListLayout", b);
+    console.log("isListLayout: ", b);
+    console.log("isListLayout-local: ", localStorage.getItem("isListLayout"));
+  };
+
+  const getQueueStatusList = (appName) => {
+    // fetchQueueData();
+    let queueList = [];
+    queueData.map((obj) => {
+      if (JSON.parse(obj.payload).name === appName) {
+        // console.log("in GetQueue queue Name: ", obj.routing_key);
+        queueList.push(obj.routing_key);
+        // console.log("list: ", queueList);
+      } else {
+      }
+    });
+    // console.log("Debug getQueSTatusList: ", queueList);
+    return queueList;
+  };
+
   const fetchData = () => {
     setIsLoading(true);
     axios.get("http://localhost:5001/api/applications").then((response) => {
@@ -33,21 +72,91 @@ export const Applications2 = () => {
     });
   };
 
+  const getInstallationStatusObject = (appName) => {
+    let obj = {
+      isInstalled: false,
+      isFailed: false,
+      isInstalling: false,
+      isUninstalling: false,
+      isPending: false,
+    };
+
+    let queueStatusList = getQueueStatusList(appName);
+
+    if (queueStatusList.includes("completed_queue")) {
+      obj.isInstalled = true;
+    } else {
+      obj.isInstalled = false;
+    }
+
+    if (queueStatusList.includes("failed_queue")) {
+      obj.isFailed = true;
+    } else {
+      obj.isFailed = false;
+    }
+
+    if (queueStatusList.includes("pending_queue")) {
+      obj.isPending = true;
+    } else {
+      obj.isPending = false;
+    }
+
+    return obj;
+  };
+
   const drawApplicationCards = () => {
-    return applicationData
-      .filter((val) => {
+    var apps = applicationData
+      .filter((app) => {
         if (searchTerm == "") {
-          return val;
+          // console.log("VAL TEST: ", app);
+          return app;
         } else if (
-          val.name.toLowerCase().includes(searchTerm.toLowerCase().trim())
+          app.name.toLowerCase().includes(searchTerm.toLowerCase().trim())
         ) {
-          return val;
+          return app;
         }
       })
+      .map((app) => ({
+        ...app,
+        installation_status: getInstallationStatusObject(app.name),
+      }))
+      .filter((app) => {
+        console.log("APP DEBUG: ", app);
+        let count = 0;
+        let intersect = filterStatusList.filter((value) =>
+          getQueueStatusList(app.name).includes(value)
+        );
+        filterStatusList.map((status) => {
+          if (intersect.includes(status)) {
+            count++;
+          }
+        });
+        if (count > 0) {
+          return app;
+        } else if (
+          !getQueueStatusList(app.name).includes("completed_queue") &&
+          !filterStatusList.includes("completed_queue")
+        ) {
+          return app;
+        }
+      })
+      // .filter((app) => {
+      //   console.log("List1: ", getQueueStatusList(app.name));
+      //   console.log("List2: ", filterStatusList);
+
+      //   let intersect = filterStatusList.filter((value) =>
+      //     getQueueStatusList(app.name).includes(value)
+      //   );
+
+      //   filterStatusList.map((status) => {
+      //     if (intersect.includes(status)) {
+      //       return app;
+      //     }
+      //   });
+      // })
       .sort(function (a, b) {
         const nameA = a.name.toUpperCase();
         const nameB = b.name.toUpperCase();
-
         if (sortSelect === "asc") {
           if (nameA < nameB) {
             return -1;
@@ -63,10 +172,25 @@ export const Applications2 = () => {
             return 1;
           }
         }
-
-        // names must be equal
         return 0;
       })
+      // .filter((app) => {
+      //   // console.log("val name: ", app.name);
+      //   console.log("App debug in filter: ", app);
+      //   return filterStatusList.map((statusA) => {
+      //     let appQueueList = getQueueStatusList(app.name);
+
+      //     console.log("Check app status: ", appQueueList);
+      //     console.log("Check status: ", statusA);
+
+      //     if (appQueueList.includes(statusA)) {
+      //       console.error("includes");
+      //       return app;
+      //     } else {
+      //       console.error("includes not ");
+      //     }
+      //   });
+      // })
       .map((app, i) => {
         return (
           <ApplicationCard2
@@ -74,9 +198,15 @@ export const Applications2 = () => {
             key={i}
             queueData={queueData}
             fetchApplicationAndQueueData={fetchApplicationAndQueueData}
+            isMqConnected={isMqConnected}
+            getQueueStatusList={getQueueStatusList}
+            isListLayout={isListLayout}
           />
         );
       });
+    var appsCount = apps.length;
+    localStorage.setItem("appsCount", appsCount);
+    return apps;
   };
 
   const fetchApplicationAndQueueData = () => {
@@ -84,8 +214,10 @@ export const Applications2 = () => {
     fetchData();
   };
 
+  // TODO get status by app name -> Return e.g. completed, pending, none
+  const getInstallationStatusByAppName = () => {};
+
   const fetchQueueData = () => {
-    console.log("ping");
     const requests = queueList.map((queue) => {
       return axios
         .get("http://localhost:5001/api/queues/" + queue)
@@ -93,6 +225,7 @@ export const Applications2 = () => {
           // console.log("debug-response: ", response);
           response.data.map((app) => {
             queueData.push(app);
+            // console.log("Queue Data debug: ", queueData);
           });
         })
         .then(() => {
@@ -106,21 +239,52 @@ export const Applications2 = () => {
         setIsLoading(false);
       })
       .then(() => {
-        // console.log("queueData-22: ", queueData);
+        // console.log("QueueData after fetch: ", queueData);
       });
   };
 
+  const checkMqConnection = () => {
+    axios.get("http://localhost:5001/api/checkRmqConn").then((response) => {
+      setIsMqConnected(response.data);
+    });
+  };
+
+  const addStatusToAppData = () => {
+    let l = [];
+    var promises = applicationData.map((app) => {
+      // console.log("app: ", app);
+      app["status"] = getQueueStatusList(app.name);
+      console.log("l in map: ", l);
+      return l.push(app);
+    });
+    Promise.all(promises).then(() => {
+      // console.log("new app list: ", newAppList);
+      setNewAppList(l);
+    });
+  };
+
   useEffect(() => {
+    setAppsSearchResultCount(applicationData.length);
+    setIsListLayout(localStorage.getItem("isListLayout"));
+
     // const id = setInterval(() => {
     //   fetchData();
     // }, 20000);
 
-    fetchData();
-    fetchQueueData();
+    checkMqConnection();
+
+    try {
+      fetchApplicationAndQueueData();
+    } catch (err) {
+      console.log(err);
+    } finally {
+      // addStatusToAppData();
+    }
+
     return () => {
       // clearInterval(id);
     };
-  }, [queueData, applicationData]);
+  }, [filterStatusList]);
 
   return (
     <div className="px-6 sm:px-6 lg:px-24 py-8 w-full max-w-9xl mx-auto">
@@ -137,38 +301,44 @@ export const Applications2 = () => {
       </div>
 
       {/* Applications actions */}
-      <div className="flex justify-between mb-8">
+      <div className="flex mb-4 justify-between">
         {/* Left: Actions */}
-        <div className="">
-          {/* Search Input Field */}
-          <div className="group relative mb-3">
-            <svg
-              width="20"
-              height="20"
-              fill="currentColor"
-              className="absolute left-3 top-1/2 -mt-2.5 text-gray-500 pointer-events-none group-focus-within:text-kxBlue"
-              aria-hidden="true"
-            >
-              <path
-                fillRule="evenodd"
-                clipRule="evenodd"
-                d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+        <div className="flex">
+          <div className="flex ">
+            {/* Search Input Field */}
+            <div className="group relative mb-3">
+              <svg
+                width="20"
+                height="20"
+                fill="currentColor"
+                className="absolute left-3 top-1/2 -mt-2.5 text-gray-500 pointer-events-none group-focus-within:text-kxBlue"
+                aria-hidden="true"
+              >
+                <path
+                  fillRule="evenodd"
+                  clipRule="evenodd"
+                  d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+                />
+              </svg>
+              <input
+                type="text"
+                placeholder="Search Applications..."
+                className="h-[56px] focus:ring-2 focus:ring-kxBlue focus:outline-none bg-ghBlack2 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 rounded text-md border-0 shadow outline-none focus:outline-none focus:ring min-w-80 pl-10"
+                onChange={(e) => {
+                  setSearchTerm(e.target.value);
+                }}
               />
-            </svg>
-            <input
-              type="text"
-              placeholder="Search Applications..."
-              className="focus:ring-2 focus:ring-kxBlue focus:outline-none bg-ghBlack2 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 rounded text-md border-0 shadow outline-none focus:outline-none focus:ring min-w-80 pl-10"
-              onChange={(e) => {
-                setSearchTerm(e.target.value);
-              }}
-            />
-          </div>
+            </div>
 
-          {/* <FilterButton filterHandler={this.filterHandler}
+            {/* <FilterButton filterHandler={this.filterHandler}
                             isCompleted={this.state.isCompleted}
                             isFailed={this.state.isFailed}
                             isPending={this.state.isPending} /> */}
+          </div>
+          <MultipleSelectCheckmarks
+            setFilterStatusList={setFilterStatusList}
+            filterStatusList={filterStatusList}
+          />
         </div>
 
         {/* Right: Actions */}
@@ -179,15 +349,49 @@ export const Applications2 = () => {
             }}
             name="sort-select"
             id="sort-select"
-            className="bg-ghBlack2 py-3 border-none rounded-md cursor-pointer"
+            className="h-[56px] bg-ghBlack2 py-3 border-none rounded-md cursor-pointer"
           >
             <option value="asc">Sort by name A-Z</option>
             <option value="desc">Sort by name Z-A</option>
           </select>
         </div>
       </div>
+      {/* Results count and galery action buttons */}
+      <div className="flex justify-between items-center">
+        {/* left */}
+        <div className="">
+          {searchTerm != "" ? (
+            <div className="text-lg text-gray-400 mb-4">
+              {localStorage.getItem("appsCount")} results for "{searchTerm}"
+            </div>
+          ) : (
+            <div className="text-lg text-gray-400 mb-4">
+              {localStorage.getItem("appsCount")} available Applications
+            </div>
+          )}
+        </div>
+        {/* right */}
+        <div className="mb-4 text-3xl">
+          <button
+            className={`mr-2 ${isListLayout ? "text-kxBlue" : "text-gray-500"}`}
+            onClick={() => {
+              toggleListLayout(true);
+            }}
+          >
+            <FaThList />
+          </button>
+          <button
+            className={`${!isListLayout ? "text-kxBlue" : "text-gray-500"}`}
+            onClick={() => {
+              toggleListLayout(false);
+            }}
+          >
+            <BsGrid3X3GapFill />
+          </button>
+        </div>
+      </div>
 
-      <div className="grid grid-cols-12 gap-8">{drawApplicationCards()}</div>
+      <div className="grid grid-cols-12 gap-2">{drawApplicationCards()}</div>
     </div>
   );
 };

@@ -11,6 +11,8 @@ export clientSecret=$(getKeycloakClientSecret "${clientId}")
 
 ################### Kubernetes manifests CRUD operations #####################################
 
+if [[ -n ${clientId} ]] && [[ -n ${clientSecret} ]]; then
+
 echo '''
 {
   "name": "openid_connect",
@@ -36,6 +38,13 @@ echo '''
 }
 ''' | /usr/bin/sudo tee ${installationWorkspace}/gitlab-sso-providers.yaml
 
-# Check if SSO provider already exists, else create it
-kubectl get secret sso-provider --namespace=${namespace} || \
-  kubectl create secret generic sso-provider --namespace=${namespace} --from-file=provider=${installationWorkspace}/gitlab-sso-providers.yaml
+  # Check if SSO provider already exists, else create it
+  kubectl get secret sso-provider --namespace=${namespace} || \
+    kubectl create secret generic sso-provider --namespace=${namespace} --from-file=provider=${installationWorkspace}/gitlab-sso-providers.yaml
+else
+    # Since Keycloak is not installed, remove Keycloak settings before proceeding with Helm install, which
+    # would fail otherwise
+    log_info "Keycloak not installed. Removing Keycloak SSO configuration from Gitlab, else Helm install will fail"
+    /usr/bin/sudo sed -i '/global.appConfig.omniauth/d' ${installComponentDirectory}/metadata.json
+    /usr/bin/sudo sed -i 's#\"global\.certificates\.customCAs\[2\]\.secret=server-crt\"\,#"global.certificates.customCAs[2].secret=server-crt"#g' ${installComponentDirectory}/metadata.json
+fi

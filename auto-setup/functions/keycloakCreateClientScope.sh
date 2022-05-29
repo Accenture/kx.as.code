@@ -8,27 +8,31 @@ createKeycloakClientScope() {
     # Source Keycloak Environment
     sourceKeycloakEnvironment
 
-    # Call function to login to Keycloak
-    keycloakLogin
+    if [[ -n "${kcPod}" ]]; then
 
-    # Export the client scope id
-    export clientScopeId=$(kubectl -n ${kcNamespace} exec ${kcPod} --container ${kcContainer} -- \
-        ${kcAdmCli} get -x client-scopes | jq -r '.[] | select(.name=="'${scope}'") | .id')
+      # Call function to login to Keycloak
+      keycloakLogin
 
-    # If Keycloak client scope not available, add it
-    if [[ "${clientScopeId}" == "null" ]] || [[ -z "${clientScopeId}" ]]; then
-        kubectl -n ${kcNamespace} exec ${kcPod} --container ${kcContainer} -- \
-            ${kcAdmCli} create -x client-scopes -s name=${scope} -s protocol=${protocol}
-        export clientScopeId=$(kubectl -n ${kcNamespace} exec ${kcPod} -- \
-            ${kcAdmCli} get -x client-scopes | jq -r '.[] | select(.name=="'${scope}'") | .id')
-    else
-        >&2 log_info "Client Scope \"${scope}\" already exists for ${componentName} with id ${clientScopeId}. Skipping its creation"
-    fi
+      # Export the client scope id
+      export clientScopeId=$(kubectl -n ${kcNamespace} exec ${kcPod} --container ${kcContainer} -- \
+          ${kcAdmCli} get -x client-scopes | jq -r '.[] | select(.name=="'${scope}'") | .id')
 
-    # Map the above client scope id to the client
-    kubectl -n ${kcNamespace} exec ${kcPod} --container ${kcContainer} -- \
-        ${kcAdmCli} update clients/${clientId}/default-client-scopes/${clientScopeId}
+      # If Keycloak client scope not available, add it
+      if [[ "${clientScopeId}" == "null" ]] || [[ -z "${clientScopeId}" ]]; then
+          kubectl -n ${kcNamespace} exec ${kcPod} --container ${kcContainer} -- \
+              ${kcAdmCli} create -x client-scopes -s name=${scope} -s protocol=${protocol}
+          export clientScopeId=$(kubectl -n ${kcNamespace} exec ${kcPod} -- \
+              ${kcAdmCli} get -x client-scopes | jq -r '.[] | select(.name=="'${scope}'") | .id')
+      else
+          >&2 log_info "Client Scope \"${scope}\" already exists for ${componentName} with id ${clientScopeId}. Skipping its creation"
+      fi
 
-    echo "${clientScopeId}"
+      # Map the above client scope id to the client
+      kubectl -n ${kcNamespace} exec ${kcPod} --container ${kcContainer} -- \
+          ${kcAdmCli} update clients/${clientId}/default-client-scopes/${clientScopeId}
+
+      echo "${clientScopeId}"
+
+  fi
 
 }

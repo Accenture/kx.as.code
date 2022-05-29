@@ -586,7 +586,7 @@ server:
     mountPath: "/vault/data"
     # Name of the storage class to use.  If null it will use the
     # configured default Storage Class.
-    storageClass: gluster-heketi
+    storageClass: gluster-heketi-sc
     # Access Mode of the storage device being used for the PVC
     accessMode: ReadWriteOnce
     # Annotations to apply to the PVC
@@ -605,7 +605,7 @@ server:
     mountPath: "/vault/audit"
     # Name of the storage class to use.  If null it will use the
     # configured default Storage Class.
-    storageClass: gluster-heketi
+    storageClass: gluster-heketi-sc
     # Access Mode of the storage device being used for the PVC
     accessMode: ReadWriteOnce
     # Annotations to apply to the PVC

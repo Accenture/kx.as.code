@@ -1,0 +1,18 @@
+{
+    "name": "atom",
+    "namespace": "",
+    "installation_type": "script",
+    "installation_group_folder": "core",
+    "environment_variables": {
+        "atomVersion": "v1.60.0",
+        "atomChecksum": "5c7c0259062b9d4911d2537bfceaff5316f9de111698840a90d7cd497df891a6"
+    },
+    "install_scripts": [
+        "installAtom.sh"
+    ],
+    "Description": "atom",
+    "shortcut_text": "atom",
+    "shortcut_icon": "",
+    "pre_install_scripts": [],
+    "post_install_scripts": []
+}

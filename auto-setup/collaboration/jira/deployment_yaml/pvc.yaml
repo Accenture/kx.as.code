@@ -4,7 +4,7 @@ metadata:
   name: jira-software-pvclaim
   namespace: {{namespace}}
 spec:
-  storageClassName: gluster-heketi
+  storageClassName: gluster-heketi-sc
   accessModes:
     - ReadWriteOnce
   resources:

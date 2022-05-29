@@ -256,7 +256,7 @@ postgresql:
   global:
     postgresql:
       postgresqlDatabase: gitea
-      postgresqlUsername: {{postgresqlPassword}}
+      postgresqlUsername: '{{postgresqlPassword}}'
       postgresqlPassword: gitea
       servicePort: 5432
   persistence:
