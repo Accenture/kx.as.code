@@ -5,6 +5,7 @@ import { FaThList } from "react-icons/fa";
 import { BsGrid3X3GapFill } from "react-icons/bs";
 import MultipleSelectCheckmarks from "../partials/MultipleSelectCheckmarks";
 import { useState, useEffect } from "react";
+import _ from "lodash";
 
 export const Applications2 = () => {
   const [applicationData, setApplicationData] = useState([]);
@@ -21,6 +22,23 @@ export const Applications2 = () => {
     "completed_queue",
     "pending_queue",
   ]);
+
+  const [filterObj, setFilterObj] = useState({
+    isInstalled: false,
+    isFailed: false,
+    isInstalling: false,
+    isUninstalling: false,
+    isPending: false,
+  });
+
+  const [filterInstallationStatusList, setFilterInstallationStatusList] =
+    useState([
+      "isInstalled",
+      "isFailed",
+      "isInstalling",
+      "isUninstalling",
+      "isPending",
+    ]);
 
   // const filterStatusList = ["failed_queue", "completed_queue"];
 
@@ -71,6 +89,25 @@ export const Applications2 = () => {
       setApplicationData(response.data);
     });
   };
+  const getInstallationFilterStatusObject = (appName) => {
+    let obj = {
+      isInstalled: false,
+      isFailed: false,
+      isInstalling: false,
+      isUninstalling: false,
+      isPending: false,
+    };
+
+    if (filterInstallationStatusList.includes("isCompleted")) {
+      obj.isCompleted = true;
+    } else if (filterInstallationStatusList.includes("isPending")) {
+      obj.isPending = true;
+    } else if (filterInstallationStatusList.includes("isFailed")) {
+      obj.isFailed = true;
+    }
+
+    return obj;
+  };
 
   const getInstallationStatusObject = (appName) => {
     let obj = {
@@ -101,6 +138,14 @@ export const Applications2 = () => {
       obj.isPending = false;
     }
 
+    // if (filterInstallationStatusList.includes("isCompleted")) {
+    //   obj.isCompleted = true;
+    // } else if (filterInstallationStatusList.includes("isPending")) {
+    //   obj.isPending = true;
+    // } else if (filterInstallationStatusList.includes("isFailed")) {
+    //   obj.isFailed = true;
+    // }
+
     return obj;
   };
 
@@ -121,25 +166,37 @@ export const Applications2 = () => {
         installation_status: getInstallationStatusObject(app.name),
       }))
       .filter((app) => {
-        console.log("APP DEBUG: ", app);
-        let count = 0;
-        let intersect = filterStatusList.filter((value) =>
-          getQueueStatusList(app.name).includes(value)
-        );
-        filterStatusList.map((status) => {
-          if (intersect.includes(status)) {
-            count++;
-          }
-        });
-        if (count > 0) {
+        // console.log("OBJ-app: ", app.installation_status);
+        // console.log("OBJ-filter: ", filterObj);
+
+        if (_.isEqual(app.installation_status, filterObj)) {
+          console.log("same");
+
           return app;
-        } else if (
-          !getQueueStatusList(app.name).includes("completed_queue") &&
-          !filterStatusList.includes("completed_queue")
-        ) {
-          return app;
+        } else {
+          console.log("not same");
         }
       })
+      // .filter((app) => {
+      //   console.log("APP DEBUG: ", app);
+      //   let count = 0;
+      //   let intersect = filterStatusList.filter((value) =>
+      //     getQueueStatusList(app.name).includes(value)
+      //   );
+      //   filterStatusList.map((status) => {
+      //     if (intersect.includes(status)) {
+      //       count++;
+      //     }
+      //   });
+      //   if (count > 0) {
+      //     return app;
+      //   } else if (
+      //     !getQueueStatusList(app.name).includes("completed_queue") &&
+      //     !filterStatusList.includes("completed_queue")
+      //   ) {
+      //     return app;
+      //   }
+      // })
       // .filter((app) => {
       //   console.log("List1: ", getQueueStatusList(app.name));
       //   console.log("List2: ", filterStatusList);
@@ -192,6 +249,7 @@ export const Applications2 = () => {
       //   });
       // })
       .map((app, i) => {
+        // console.log("APP status debug: ", app.installation_status);
         return (
           <ApplicationCard2
             app={app}
@@ -338,6 +396,10 @@ export const Applications2 = () => {
           <MultipleSelectCheckmarks
             setFilterStatusList={setFilterStatusList}
             filterStatusList={filterStatusList}
+            filterInstallationStatusList={filterInstallationStatusList}
+            setFilterInstallationStatusList={setFilterInstallationStatusList}
+            setFilterObj={setFilterObj}
+            drawApplicationCards={drawApplicationCards}
           />
         </div>
 
