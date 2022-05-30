@@ -24,11 +24,11 @@ export const Applications2 = () => {
   ]);
 
   const [filterObj, setFilterObj] = useState({
-    isInstalled: false,
-    isFailed: false,
-    isInstalling: false,
-    isUninstalling: false,
-    isPending: false,
+    // isInstalled: false,
+    // isFailed: false,
+    // isInstalling: false,
+    // isUninstalling: false,
+    // isPending: false,
   });
 
   const [filterInstallationStatusList, setFilterInstallationStatusList] =
@@ -138,15 +138,29 @@ export const Applications2 = () => {
       obj.isPending = false;
     }
 
-    // if (filterInstallationStatusList.includes("isCompleted")) {
-    //   obj.isCompleted = true;
-    // } else if (filterInstallationStatusList.includes("isPending")) {
-    //   obj.isPending = true;
-    // } else if (filterInstallationStatusList.includes("isFailed")) {
-    //   obj.isFailed = true;
-    // }
-
     return obj;
+  };
+
+  const syncFilter = () => {
+    let obj = {
+      isInstalled: false,
+      isFailed: false,
+      isInstalling: false,
+      isUninstalling: false,
+      isPending: false,
+    };
+    try {
+      if (filterInstallationStatusList.includes("isInstalled")) {
+        obj.isInstalled = true;
+      } else if (filterInstallationStatusList.includes("IsPending")) {
+        obj.isPending = true;
+      } else if (filterInstallationStatusList.includes("IsFailed")) {
+        obj.isFailed = true;
+      }
+    } catch (err) {
+    } finally {
+      setFilterObj(obj);
+    }
   };
 
   const drawApplicationCards = () => {
@@ -166,15 +180,12 @@ export const Applications2 = () => {
         installation_status: getInstallationStatusObject(app.name),
       }))
       .filter((app) => {
-        // console.log("OBJ-app: ", app.installation_status);
-        // console.log("OBJ-filter: ", filterObj);
+        console.log("OBJ-app: ", app.installation_status);
+        console.log("OBJ-filter: ", filterObj);
 
         if (_.isEqual(app.installation_status, filterObj)) {
-          console.log("same");
-
           return app;
         } else {
-          console.log("not same");
         }
       })
       // .filter((app) => {
@@ -400,6 +411,7 @@ export const Applications2 = () => {
             setFilterInstallationStatusList={setFilterInstallationStatusList}
             setFilterObj={setFilterObj}
             drawApplicationCards={drawApplicationCards}
+            syncFilter={syncFilter}
           />
         </div>
 

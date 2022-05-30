@@ -34,76 +34,38 @@ const darkTheme = createTheme({
 });
 
 export default function MultipleSelectCheckmarks(props) {
-  // const [status, setStatus] = React.useState([]);
-
-  const [selectValueList, setSelectValueList] = React.useState([]);
-
-  const [filterObj, setFilterObj] = React.useState({
-    isInstalled: false,
-    isFailed: false,
-    isInstalling: false,
-    isUninstalling: false,
-    isPending: false,
-  });
-
-  const getSelectStatusListItem = (string) => {
-    if (string === "completed_queue") {
-      return "Installed";
-    } else if (string === "pending_queue") {
-      return "Pending";
-    } else if (string === "failed_queue") {
-      return "Failed";
-    }
-  };
-
-  const getSelectValueList = (list) => {
-    let valueList = [];
-    list.map((elem) => {
-      if (elem === "isInstalled") {
-        valueList.push("Installed");
-      } else if (elem === "pending_queue") {
-        valueList.push("Pending");
-      } else if (elem === "failed_queue") {
-        valueList.push("Failed");
-      }
-    });
-    return valueList;
-  };
-
-  const setUpFilterObjAndSetFilterObj = (list) => {
-    if (list.includes("isInstalled")) {
-      filterObj.isCompleted = true;
-    } else if (list.includes("isPending")) {
-      filterObj.isPending = true;
-    } else if (list.includes("isFailed")) {
-      filterObj.isFailed = true;
-    }
-
-    // props.setFilterInstallationStatusList(filterObj);
-  };
-
   const handleChange = (event) => {
     const {
       target: { value },
     } = event;
 
-    // console.log("VALUE: ", value);
-    // setStatus(
-    //   // On autofill we get a stringified value.
-    //   typeof value === "string" ? value.split(",") : value
-    // );
-    // props.setFilterStatusList(
-    //   typeof value === "string" ? value.split(",") : value
-    // );
-    // props.setFilterInstallationStatusObj();
-    // console.log("status: ", props.filterStatusList);
-
-    props.setFilterInstallationStatusList(
-      // On autofill we get a stringified value.
-      typeof value === "string" ? value.split(",") : value
-    );
-
-    // setUpFilterObjAndSetFilterObj(statusList);
+    try {
+      props.setFilterInstallationStatusList(
+        // On autofill we get a stringified value.
+        typeof value === "string" ? value.split(",") : value
+      );
+    } catch (err) {
+    } finally {
+      let obj = {
+        isInstalled: false,
+        isFailed: false,
+        isInstalling: false,
+        isUninstalling: false,
+        isPending: false,
+      };
+      try {
+        if (props.filterInstallationStatusList.includes("isInstalled")) {
+          obj.isInstalled = true;
+        } else if (props.filterInstallationStatusList.includes("IsPending")) {
+          obj.isPending = true;
+        } else if (props.filterInstallationStatusList.includes("IsFailed")) {
+          obj.isFailed = true;
+        }
+      } catch (err) {
+      } finally {
+        props.setFilterObj(obj);
+      }
+    }
   };
 
   return (
@@ -113,29 +75,6 @@ export default function MultipleSelectCheckmarks(props) {
           <InputLabel id="demo-multiple-checkbox-label">
             Installation Status
           </InputLabel>
-          {/* 
-          <Select
-            labelId="demo-multiple-checkbox-label"
-            id="demo-multiple-checkbox"
-            multiple
-            value={Object.keys(props.filterInstallationStatusObj)} //-> Hier die keys umwandeln
-            onChange={handleChange}
-            input={<OutlinedInput label="Installation Status" />}
-            renderValue={(selected) => selected.join(", ")}
-            MenuProps={MenuProps}
-          >
-            {Object.keys(props.filterInstallationStatusObj).map((s) => (
-              <MenuItem key={s} value={s}>
-                <Checkbox checked={props.filterStatusList.indexOf(s) > -1} />
-                <ListItemText primary={s} />
-                <ListItemText
-                  primary={Object.keys(props.filterInstallationStatusObj)}
-                />
-              </MenuItem>
-            ))}
-          </Select>
-          */}
-
           <Select
             labelId="demo-multiple-checkbox-label"
             id="demo-multiple-checkbox"
