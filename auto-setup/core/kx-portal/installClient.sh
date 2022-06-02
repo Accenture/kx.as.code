@@ -4,12 +4,6 @@ set -euo pipefail
 # Install NGINX
 /usr/bin/sudo apt-get install -y nginx
 
-# Install NPM dependencies
-cd ${sharedGitHome}/kx.as.code/client
-nvm install lts/gallium
-nvm use lts/gallium
-npm install --legacy-peer-deps
-
 # Setup logging directory
 /usr/bin/sudo mkdir ${installationWorkspace}/kx-portal-logs
 /usr/bin/sudo chown www-data:www-data ${installationWorkspace}/kx-portal-logs
