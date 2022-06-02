@@ -116,8 +116,8 @@ mv ${debOpenLensInstaller} ${INSTALLATION_WORKSPACE}
 
 # Install NPM package "envhandlebars"
 sudo bash -c "source /root/.nvm/nvm.sh \
-&& nvm install lts/fermium \
-&& nvm use --delete-prefix lts/fermium \
+&& nvm install lts/gallium \
+&& nvm use --delete-prefix lts/gallium \
 && npm install --global envhandlebars"
 
 sudo cp -rf /root/.nvm /home/${VM_USER}
