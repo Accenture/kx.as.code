@@ -27,7 +27,6 @@ export default function AppLogo(props) {
         const response = await import(`../../media/svg/no_image_app.svg`);
         setImage(response.default);
       } finally {
-        setLoading(false);
       }
     };
 
