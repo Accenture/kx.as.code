@@ -35,8 +35,9 @@ export const Applications2 = () => {
   const [isMqConnected, setIsMqConnected] = useState(true);
   const [isListLayout, setIsListLayout] = useState(true);
   const [sortSelect, setSortSelect] = useState("asc");
+  const [resultsPerPage, setResultsPerPage] = useState(10);
   let [page, setPage] = useState(1);
-  const PER_PAGE = 10;
+  const PER_PAGE = resultsPerPage;
   let _DATA = usePagination(
     filterAppsBySearchTermAndInstallationStatus(applicationData, searchTerm),
     PER_PAGE
@@ -451,18 +452,39 @@ export const Applications2 = () => {
         </div>
 
         {/* Right: Actions */}
-        <div className="">
-          <select
-            onChange={(e) => {
-              setSortSelect(e.target.value);
-            }}
-            name="sort-select"
-            id="sort-select"
-            className="h-[56px] bg-ghBlack2 py-3 border-none rounded-md cursor-pointer"
-          >
-            <option value="asc">Sort by name A-Z</option>
-            <option value="desc">Sort by name Z-A</option>
-          </select>
+        <div className="flex">
+          <div className="mr-5">
+            <span>Results per page: </span>
+            <select
+              onChange={(e) => {
+                setResultsPerPage(e.target.value);
+              }}
+              name="results-per-page-select"
+              id="results-per-page-select"
+              className="h-[56px] bg-ghBlack2 py-3 border-none rounded-md cursor-pointer"
+            >
+              <option value="10">10</option>
+              <option value="20">20</option>
+              <option value="30">30</option>
+              <option value="40">40</option>
+              <option value="50">50</option>
+            </select>
+          </div>
+
+          <div>
+            <span>Sort by: </span>
+            <select
+              onChange={(e) => {
+                setSortSelect(e.target.value);
+              }}
+              name="sort-select"
+              id="sort-select"
+              className="h-[56px] bg-ghBlack2 py-3 border-none rounded-md cursor-pointer"
+            >
+              <option value="asc">Name A-Z</option>
+              <option value="desc">Name Z-A</option>
+            </select>
+          </div>
         </div>
       </div>
       {/* Results count and galery action buttons */}
