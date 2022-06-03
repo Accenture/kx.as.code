@@ -9,6 +9,22 @@ import _ from "lodash";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import { PaginatedItems } from "../partials/PaginatedItems";
 import PaginationRounded from "../partials/PaginationRounded.jsx";
+import usePagination from "../utils/Pagination";
+
+const filterAppsBySearchTermAndInstallationStatus = (data, searchTerm) => {
+  var filteredData = data.filter((app) => {
+    if (searchTerm == "") {
+      // console.log("VAL TEST: ", app);
+      return app;
+    } else if (
+      app.name.toLowerCase().includes(searchTerm.toLowerCase().trim())
+    ) {
+      return app;
+    }
+  });
+
+  return filteredData;
+};
 
 export const Applications2 = () => {
   const [applicationData, setApplicationData] = useState([]);
@@ -20,11 +36,27 @@ export const Applications2 = () => {
   const [isMqConnected, setIsMqConnected] = useState(true);
   const [isListLayout, setIsListLayout] = useState(true);
   const [sortSelect, setSortSelect] = useState("asc");
+  let [page, setPage] = useState(1);
+  const PER_PAGE = 10;
+  let _DATA = usePagination(
+    filterAppsBySearchTermAndInstallationStatus(applicationData, searchTerm),
+    PER_PAGE
+  );
+  const count = Math.ceil(
+    filterAppsBySearchTermAndInstallationStatus(applicationData, searchTerm)
+      .length / PER_PAGE
+  );
+
   const [filterStatusList, setFilterStatusList] = useState([
     "failed_queue",
     "completed_queue",
     "pending_queue",
   ]);
+
+  const setPageAndJumpData = (e, p) => {
+    setPage(p);
+    _DATA.jump(p);
+  };
 
   const darkTheme = createTheme({
     palette: {
@@ -173,17 +205,8 @@ export const Applications2 = () => {
   };
 
   const drawApplicationCards = () => {
-    var apps = applicationData
-      .filter((app) => {
-        if (searchTerm == "") {
-          // console.log("VAL TEST: ", app);
-          return app;
-        } else if (
-          app.name.toLowerCase().includes(searchTerm.toLowerCase().trim())
-        ) {
-          return app;
-        }
-      })
+    var apps = _DATA
+      .currentData()
       .map((app) => ({
         ...app,
         installation_status: getInstallationStatusObject(app.name),
@@ -282,7 +305,10 @@ export const Applications2 = () => {
           />
         );
       });
-    var appsCount = apps.length;
+    var appsCount = filterAppsBySearchTermAndInstallationStatus(
+      applicationData,
+      searchTerm
+    ).length;
     localStorage.setItem("appsCount", appsCount);
     return apps;
   };
@@ -475,12 +501,29 @@ export const Applications2 = () => {
         </div>
       </div>
 
+      {/* Pagination Top */}
+      <div className="flex justify-center pb-10">
+        <ThemeProvider theme={darkTheme}>
+          <PaginationRounded
+            setPageAndJumpData={setPageAndJumpData}
+            page={page}
+            PER_PAGE={PER_PAGE}
+            count={count}
+          />
+        </ThemeProvider>
+      </div>
+
       <div className="grid grid-cols-12 gap-2">{drawApplicationCards()}</div>
 
       {/* Pagination */}
       <div className="flex justify-center pt-10">
         <ThemeProvider theme={darkTheme}>
-          <PaginationRounded />
+          <PaginationRounded
+            setPageAndJumpData={setPageAndJumpData}
+            page={page}
+            PER_PAGE={PER_PAGE}
+            count={count}
+          />
         </ThemeProvider>
       </div>
     </div>
