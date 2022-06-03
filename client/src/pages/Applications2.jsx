@@ -37,14 +37,14 @@ export const Applications2 = () => {
   const [sortSelect, setSortSelect] = useState("asc");
   const [resultsPerPage, setResultsPerPage] = useState(10);
   let [page, setPage] = useState(1);
-  const PER_PAGE = resultsPerPage;
+  // const PER_PAGE = resultsPerPage;
   let _DATA = usePagination(
     filterAppsBySearchTermAndInstallationStatus(applicationData, searchTerm),
-    PER_PAGE
+    resultsPerPage
   );
   const count = Math.ceil(
     filterAppsBySearchTermAndInstallationStatus(applicationData, searchTerm)
-      .length / PER_PAGE
+      .length / resultsPerPage
   );
 
   const [filterStatusList, setFilterStatusList] = useState([
@@ -431,6 +431,7 @@ export const Applications2 = () => {
                 className="h-[56px] focus:ring-2 focus:ring-kxBlue focus:outline-none bg-ghBlack2 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 rounded text-md border-0 shadow outline-none focus:outline-none focus:ring min-w-80 pl-10"
                 onChange={(e) => {
                   setSearchTerm(e.target.value);
+                  _DATA.jump(1); // reset page to 1
                 }}
               />
             </div>
@@ -458,6 +459,7 @@ export const Applications2 = () => {
             <select
               onChange={(e) => {
                 setResultsPerPage(e.target.value);
+                _DATA.jump(1); // reset page to 1
               }}
               name="results-per-page-select"
               id="results-per-page-select"
@@ -528,7 +530,7 @@ export const Applications2 = () => {
           <PaginationRounded
             setPageAndJumpData={setPageAndJumpData}
             page={page}
-            PER_PAGE={PER_PAGE}
+            PER_PAGE={resultsPerPage}
             count={count}
           />
         </ThemeProvider>
@@ -557,7 +559,7 @@ export const Applications2 = () => {
           <PaginationRounded
             setPageAndJumpData={setPageAndJumpData}
             page={page}
-            PER_PAGE={PER_PAGE}
+            PER_PAGE={resultsPerPage}
             count={count}
           />
         </ThemeProvider>
