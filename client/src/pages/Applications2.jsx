@@ -6,6 +6,9 @@ import { BsGrid3X3GapFill } from "react-icons/bs";
 import MultipleSelectCheckmarks from "../partials/MultipleSelectCheckmarks";
 import { useState, useEffect } from "react";
 import _ from "lodash";
+import { ThemeProvider, createTheme } from "@mui/material/styles";
+import { PaginatedItems } from "../partials/PaginatedItems";
+import PaginationRounded from "../partials/PaginationRounded.jsx";
 
 export const Applications2 = () => {
   const [applicationData, setApplicationData] = useState([]);
@@ -22,6 +25,12 @@ export const Applications2 = () => {
     "completed_queue",
     "pending_queue",
   ]);
+
+  const darkTheme = createTheme({
+    palette: {
+      mode: "dark",
+    },
+  });
 
   const [filterObj, setFilterObj] = useState({
     // isInstalled: false,
@@ -179,15 +188,15 @@ export const Applications2 = () => {
         ...app,
         installation_status: getInstallationStatusObject(app.name),
       }))
-      .filter((app) => {
-        console.log("OBJ-app: ", app.installation_status);
-        console.log("OBJ-filter: ", filterObj);
+      // .filter((app) => {
+      //   console.log("OBJ-app: ", app.installation_status);
+      //   console.log("OBJ-filter: ", filterObj);
 
-        if (_.isEqual(app.installation_status, filterObj)) {
-          return app;
-        } else {
-        }
-      })
+      //   if (_.isEqual(app.installation_status, filterObj)) {
+      //     return app;
+      //   } else {
+      //   }
+      // })
       // .filter((app) => {
       //   console.log("APP DEBUG: ", app);
       //   let count = 0;
@@ -353,7 +362,7 @@ export const Applications2 = () => {
     return () => {
       // clearInterval(id);
     };
-  }, [filterStatusList]);
+  }, []);
 
   return (
     <div className="px-6 sm:px-6 lg:px-24 py-8 w-full max-w-9xl mx-auto">
@@ -366,6 +375,7 @@ export const Applications2 = () => {
           Which Applications you want to install into your KX.AS Code
           environemnt?
         </div>
+
         <div className="border-b-2 border-gray-700"></div>
       </div>
 
@@ -466,6 +476,13 @@ export const Applications2 = () => {
       </div>
 
       <div className="grid grid-cols-12 gap-2">{drawApplicationCards()}</div>
+
+      {/* Pagination */}
+      <div className="flex justify-center pt-10">
+        <ThemeProvider theme={darkTheme}>
+          <PaginationRounded />
+        </ThemeProvider>
+      </div>
     </div>
   );
 };

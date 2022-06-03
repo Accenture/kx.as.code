@@ -9,9 +9,20 @@ app.use(bodyParser.json());
 
 const PORT = process.env.PORT || 5001;
 const dataPath = "../src/data/combined-metadata-files.json";
+const rabbitMqUsername = "guest";
+const rabbitMqPassword = "guest";
+const rabbitMqHost = "127.0.0.1";
 
 app.route("/api/add/application/:queue_name").post((req, res) => {
-  connection = amqp.connect("amqp://test:test@127.0.0.1");
+  connection = amqp.connect(
+    "amqp://" +
+      rabbitMqUsername +
+      ":" +
+      rabbitMqPassword +
+      rabbitMqUsername +
+      "@" +
+      rabbitMqHost
+  );
   console.log("install app req.body: ", req.body);
 
   connection.then(async (conn) => {
@@ -52,46 +63,70 @@ app.use((req, res, next) => {
 app.route("/api/checkRmqConn").get((req, res) => {
   console.log("checkRmqConn triggered.");
   try {
-    request("http://127.0.0.1:15672", function (err, response, body) {
-      console.log("BODY CONN REQ", res.statusCode);
-      res.send(response?.statusCode);
-    });
+    request(
+      "http://" + rabbitMqHost + ":15672",
+      function (err, response, body) {
+        console.log("BODY CONN REQ", res.statusCode);
+        res.send(response?.statusCode);
+      }
+    );
   } catch (err) {
     res.send(err);
   }
 });
 
 app.route("/api/queues/:queue_name").get((req, res) => {
-  console.log("get q triggered.");
-  var url =
-    "http://test:test@127.0.0.1:15672/api/queues/%2F/" +
-    req.params.queue_name +
-    "/get";
+  try {
+    console.log("get q triggered.");
+    var url =
+      "http://" +
+      rabbitMqUsername +
+      ":" +
+      rabbitMqPassword +
+      "@" +
+      rabbitMqHost +
+      ":15672/api/queues/%2F/" +
+      req.params.queue_name +
+      "/get";
 
-  var dataString =
-    '{"vhost":"/","name":"' +
-    req.params.queue_name +
-    '","truncate":"50000","ackmode":"ack_requeue_true","encoding":"auto","count":"100"}';
+    console.log("url: ", url);
 
-  let options = {
-    url: url,
-    method: "POST",
-    body: dataString,
-  };
+    var dataString =
+      '{"vhost":"/","name":"' +
+      req.params.queue_name +
+      '","truncate":"50000","ackmode":"ack_requeue_true","encoding":"auto","count":"100"}';
 
-  request(options, (error, response, body) => {
-    if (error || response.statusCode !== 200) {
-      return res.status(500).json({ type: "error", message: error.message });
-    }
-    res.json(JSON.parse(body));
-  });
+    let options = {
+      url: url,
+      method: "POST",
+      body: dataString,
+    };
+
+    request(options, (error, response, body) => {
+      if (error || response.statusCode !== 200) {
+        console.log(error.message);
+
+        return res.status(500).json({ type: "error", message: error.message });
+      }
+      res.json(JSON.parse(body));
+    });
+  } catch (error) {
+    console.log(error);
+  }
 });
 
 //move queue endpoint
 app.route("/api/move/:from_queue/:to_queue").get((req, res) => {
   console.log("move triggered.");
   var url =
-    "http://test:test@127.0.0.1:15672/api/parameters/shovel/%2F/Move%20from%20" +
+    "http://" +
+    rabbitMqUsername +
+    ":" +
+    rabbitMqPassword +
+    rabbitMqUsername +
+    "@" +
+    rabbitMqHost +
+    ":15672/api/parameters/shovel/%2F/Move%20from%20" +
     req.params.from_queue;
 
   var dataString =
@@ -143,7 +178,15 @@ app.get("/api/applications/:app_name", (req, res) => {
 });
 
 app.route("/api/consume/:queue_name").get((req, res) => {
-  connection = amqp.connect("amqp://test:test@127.0.0.1");
+  connection = amqp.connect(
+    "amqp://" +
+      rabbitMqUsername +
+      ":" +
+      rabbitMqPassword +
+      rabbitMqUsername +
+      "@" +
+      rabbitMqHost
+  );
 
   connection.then(async (conn) => {
     const channel = await conn.createChannel();

@@ -279,7 +279,8 @@ function ApplicationCard2(props) {
               </div>
               <div className="flex col-span-2 ml-2 h-full w-full">
                 <ApplicationStatusActionButton
-                  isMqConnected={props.isMqConnected}
+                  // isMqConnected={props.isMqConnected}
+                  isMqConnected={true}
                   getQueueStatusList={props.getQueueStatusList}
                   appName={props.app.name}
                   category={props.app.installation_group_folder}
