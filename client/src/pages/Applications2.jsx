@@ -1,4 +1,4 @@
-import { React, Component } from "react";
+import { React } from "react";
 import ApplicationCard2 from "../partials/applications/ApplicationCard2.jsx";
 import axios from "axios";
 import { FaThList } from "react-icons/fa";
@@ -7,14 +7,12 @@ import MultipleSelectCheckmarks from "../partials/MultipleSelectCheckmarks";
 import { useState, useEffect } from "react";
 import _ from "lodash";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
-import { PaginatedItems } from "../partials/PaginatedItems";
 import PaginationRounded from "../partials/PaginationRounded.jsx";
 import usePagination from "../utils/Pagination";
 
 const filterAppsBySearchTermAndInstallationStatus = (data, searchTerm) => {
   var filteredData = data.filter((app) => {
     if (searchTerm == "") {
-      // console.log("VAL TEST: ", app);
       return app;
     } else if (
       app.name.toLowerCase().includes(searchTerm.toLowerCase().trim())
@@ -515,7 +513,7 @@ export const Applications2 = () => {
 
       <div className="grid grid-cols-12 gap-2">{drawApplicationCards()}</div>
 
-      {/* Pagination */}
+      {/* Pagination bottom */}
       <div className="flex justify-center pt-10">
         <ThemeProvider theme={darkTheme}>
           <PaginationRounded
