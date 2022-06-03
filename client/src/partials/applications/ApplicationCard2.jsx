@@ -246,28 +246,30 @@ function ApplicationCard2(props) {
             loading="lazy"
           >
             <div className="grid grid-cols-12 pt-2 px-0 items-center">
-              <div className="flex col-span-10 hover:bg-gray-700 bg-inv2 rounded p-4">
+              <div className="flex col-span-10 hover:bg-gray-700 bg-inv2 rounded p-4 items-center">
                 <Link
                   to={"/apps/" + getSlug()}
                   className="mx-3 flex col-span-6"
                 >
-                  {/* Icon */}
-                  <div className="">
-                    <AppLogo width={"50px"} appName={props.app.name} />
-                    {/* <StatusTag installStatus={props.app.queueName} /> */}
-                  </div>
-                  <div className="mx-3 flex col-span-6">
-                    <div>
-                      {/* Category name */}
-                      <div className="text-white bg-ghBlack2 rounded p-0 px-1.5 uppercase w-fit inline-block my-1">
-                        {props.app.installation_group_folder}
+                  <div className="flex items-center">
+                    {/* Icon */}
+                    <div className="">
+                      <AppLogo width={"50px"} appName={props.app.name} />
+                      {/* <StatusTag installStatus={props.app.queueName} /> */}
+                    </div>
+                    <div className="mx-3 flex col-span-6">
+                      <div>
+                        {/* Category name */}
+                        <div className="text-white bg-ghBlack2 rounded p-0 px-1.5 uppercase w-fit inline-block my-1">
+                          {props.app.installation_group_folder}
+                        </div>
+                        <h2 className="hover:underline hover:cursor-pointer text-lg text-white mb-2 flex items-center">
+                          {allQueueStatus != "" && (
+                            <StatusPoint installStatus={allQueueStatus} />
+                          )}
+                          {getTransformedName()}
+                        </h2>
                       </div>
-                      <h2 className="hover:underline hover:cursor-pointer text-lg text-white mb-2 flex items-center">
-                        {allQueueStatus != "" && (
-                          <StatusPoint installStatus={allQueueStatus} />
-                        )}
-                        {getTransformedName()}
-                      </h2>
                     </div>
                   </div>
                 </Link>
