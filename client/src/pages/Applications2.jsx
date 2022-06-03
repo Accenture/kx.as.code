@@ -9,6 +9,7 @@ import _ from "lodash";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import PaginationRounded from "../partials/PaginationRounded.jsx";
 import usePagination from "../utils/Pagination";
+import noResultsFace from "../media/svg/no_results_face.svg";
 
 const filterAppsBySearchTermAndInstallationStatus = (data, searchTerm) => {
   var filteredData = data.filter((app) => {
@@ -511,6 +512,21 @@ export const Applications2 = () => {
         </ThemeProvider>
       </div>
 
+      {localStorage.getItem("appsCount") <= 0 && (
+        <div className="">
+          <div className="flex justify-center">
+            <img
+              src={noResultsFace}
+              height="100px"
+              width="100px"
+              alt="No results"
+            ></img>
+          </div>
+          <div className="flex justify-center text-lg mt-3 text-gray-500">
+            No results.
+          </div>
+        </div>
+      )}
       <div className="grid grid-cols-12 gap-2">{drawApplicationCards()}</div>
 
       {/* Pagination bottom */}
