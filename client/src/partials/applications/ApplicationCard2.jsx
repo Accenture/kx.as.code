@@ -238,48 +238,49 @@ function ApplicationCard2(props) {
       {props.isListLayout ? (
         <>
           <div
-            className={`cursor-auto flex flex-col col-span-full rounded ${
-              props.isListLayout
-                ? "col-span-full"
-                : "sm:col-span-6 xl:col-span-4"
-            }`}
+            className={`cursor-auto flex flex-col col-span-full rounded`}
             loading="lazy"
           >
-            <div className="grid grid-cols-12 pt-2 px-0 items-center">
-              <div className="flex col-span-10 hover:bg-gray-700 bg-inv2 rounded p-4 items-center">
-                <Link
-                  to={"/apps/" + getSlug()}
-                  className="mx-3 flex col-span-6"
-                >
-                  <div className="flex items-center">
-                    {/* Icon */}
-                    <div className="">
-                      <AppLogo width={"50px"} appName={props.app.name} />
-                      {/* <StatusTag installStatus={props.app.queueName} /> */}
-                    </div>
-                    <div className="mx-3 flex col-span-6">
-                      <div>
-                        {/* Category name */}
-                        <div className="text-white bg-ghBlack2 rounded p-0 px-1.5 uppercase w-fit inline-block my-1">
-                          {props.app.installation_group_folder}
+            <div className="grid grid-cols-12 hover:bg-gray-700 bg-inv2 rounded items-center px-5 py-2">
+              <div className="flex col-span-10 items-center">
+                <div className="grid grid-cols-12 w-full items-center">
+                  <div className="flex col-span-4 w-full">
+                    <Link
+                      to={"/apps/" + getSlug()}
+                      className="mx-3 flex col-span-6"
+                    >
+                      <div className="flex items-center">
+                        {/* Icon */}
+                        <div className="">
+                          <AppLogo width={"50px"} appName={props.app.name} />
+                          {/* <StatusTag installStatus={props.app.queueName} /> */}
                         </div>
-                        <h2 className="hover:underline hover:cursor-pointer text-lg text-white mb-2 flex items-center">
-                          {allQueueStatus != "" && (
-                            <StatusPoint installStatus={allQueueStatus} />
-                          )}
-                          {getTransformedName()}
-                        </h2>
+                        <div className="mx-3 flex col-span-6">
+                          <div>
+                            {/* Category name */}
+                            <div className="text-white bg-ghBlack2 rounded p-0 px-1.5 uppercase w-fit inline-block my-1">
+                              {props.app.installation_group_folder}
+                            </div>
+                            <h2 className="hover:underline hover:cursor-pointer text-lg text-white mb-2 flex items-center">
+                              {allQueueStatus != "" && (
+                                <StatusPoint installStatus={allQueueStatus} />
+                              )}
+                              {getTransformedName()}
+                            </h2>
+                          </div>
+                        </div>
                       </div>
-                    </div>
+                    </Link>
                   </div>
-                </Link>
-                <div className="px-4 pb-3">
-                  <ul className="float-left">
-                    {props.app.categories && drawAppTags(props.app.categories)}
-                  </ul>
+                  <div className="flex col-span-8 w-full">
+                    <ul className="float-left">
+                      {props.app.categories &&
+                        drawAppTags(props.app.categories)}
+                    </ul>
+                  </div>
                 </div>
               </div>
-              <div className="flex col-span-2 ml-2 h-full w-full">
+              <div className="flex col-span-2 w-full justify-end">
                 <ApplicationStatusActionButton
                   // isMqConnected={props.isMqConnected}
                   isMqConnected={true}
@@ -359,66 +360,6 @@ function ApplicationCard2(props) {
             <div className="pb-5">{props.app.Description}</div>
 
             <div className="">
-              {/* {console.log("in render queue: ", appQueue)} */}
-              {/* {appQueue === "pending_queue" && (
-            <button
-              className="bg-kxBlue/50 p-3 px-5 rounded items-center flex"
-              disabled
-            >
-              <svg
-                className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
-                fill="none"
-                viewBox="0 0 24 24"
-              >
-                <circle
-                  className="opacity-25"
-                  cx="12"
-                  cy="12"
-                  r="10"
-                  stroke="currentColor"
-                  strokeWidth="4"
-                ></circle>
-                <path
-                  className="opacity-75"
-                  fill="currentColor"
-                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                ></path>
-              </svg>
-              Installing...
-            </button>
-          )} */}
-              {/* {!props.isMqConnected && (
-            <div className="text-red-500 border-red-500 rounded-md border p-2 flex">
-              <AiOutlineWarning className="mt-auto mb-auto table text-4xl mr-2" />
-              Installation Status not available. Please check conneciton to
-              RabbitMQ service.
-            </div>
-          )} */}
-              {/* 
-          {appQueue != "pending_queue" &&
-            (appQueue != "completed_queue" && props.isMqConnected ? (
-              <div className="">
-                <button
-                  onClick={applicationInstallHandler}
-                  className="bg-kxBlue p-3 px-5 rounded items-center flex"
-                >
-                  Install
-                </button>
-
-                {appQueue === "failed_queue" && (
-                  <div className="p-2 mt-4 rounded-md text-red-500 flex item-center border border-red-500">
-                    <AiOutlineWarning className="mt-auto mb-auto table text-2xl mr-2" />
-                    <div>
-                      ERROR: An error occured when trying to install {appName}.
-                    </div>
-                  </div>
-                )}
-              </div>
-            ) : (
-              ""
-            ))}
-          */}
-
               <ApplicationStatusActionButton
                 isMqConnected={props.isMqConnected}
                 getQueueStatusList={props.getQueueStatusList}
