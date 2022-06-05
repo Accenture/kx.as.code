@@ -6,10 +6,11 @@ import { BsGrid3X3GapFill } from "react-icons/bs";
 import MultipleSelectCheckmarks from "../partials/MultipleSelectCheckmarks";
 import { useState, useEffect } from "react";
 import _ from "lodash";
-import { ThemeProvider, createTheme } from "@mui/material/styles";
+
 import PaginationRounded from "../partials/PaginationRounded.jsx";
 import usePagination from "../utils/Pagination";
 import noResultsFace from "../media/svg/no_results_face.svg";
+import FilterSelectedOptions from "../partials/FilterSelectedOptions";
 
 const filterAppsBySearchTermAndInstallationStatus = (data, searchTerm) => {
   var filteredData = data.filter((app) => {
@@ -36,6 +37,7 @@ export const Applications2 = () => {
   const [isListLayout, setIsListLayout] = useState(true);
   const [sortSelect, setSortSelect] = useState("asc");
   const [resultsPerPage, setResultsPerPage] = useState(10);
+  const [categoriesFilterTags, setCategoriesFilterTags] = useState([]);
   let [page, setPage] = useState(1);
   // const PER_PAGE = resultsPerPage;
   let _DATA = usePagination(
@@ -57,12 +59,6 @@ export const Applications2 = () => {
     setPage(p);
     _DATA.jump(p);
   };
-
-  const darkTheme = createTheme({
-    palette: {
-      mode: "dark",
-    },
-  });
 
   const [filterObj, setFilterObj] = useState({
     // isInstalled: false,
@@ -406,7 +402,7 @@ export const Applications2 = () => {
       </div>
 
       {/* Applications actions */}
-      <div className="flex mb-4 justify-between">
+      <div className="flex mb-2 justify-between">
         {/* Left: Actions */}
         <div className="flex">
           <div className="flex ">
@@ -428,7 +424,7 @@ export const Applications2 = () => {
               <input
                 type="text"
                 placeholder="Search Applications..."
-                className="h-[56px] focus:ring-2 focus:ring-kxBlue focus:outline-none bg-ghBlack2 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 rounded text-md border-0 shadow outline-none focus:outline-none focus:ring min-w-80 pl-10"
+                className="h-[56px] focus:ring-2 focus:ring-kxBlue bg-ghBlack2 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 rounded text-md border-0 shadow outline-none focus:outline-none w-[240px] pl-10"
                 onChange={(e) => {
                   setSearchTerm(e.target.value);
                   _DATA.jump(1); // reset page to 1
@@ -455,7 +451,7 @@ export const Applications2 = () => {
         {/* Right: Actions */}
         <div className="flex">
           <div className="mr-5">
-            <span>Results per page: </span>
+            <span>Results per Page: </span>
             <select
               onChange={(e) => {
                 setResultsPerPage(e.target.value);
@@ -489,6 +485,11 @@ export const Applications2 = () => {
           </div>
         </div>
       </div>
+
+      <div className="mb-2">
+        <FilterSelectedOptions applicationData={applicationData} />
+      </div>
+
       {/* Results count and galery action buttons */}
       <div className="flex justify-between items-center">
         {/* left */}
@@ -526,14 +527,12 @@ export const Applications2 = () => {
 
       {/* Pagination Top */}
       <div className="flex justify-center pb-10">
-        <ThemeProvider theme={darkTheme}>
-          <PaginationRounded
-            setPageAndJumpData={setPageAndJumpData}
-            page={page}
-            PER_PAGE={resultsPerPage}
-            count={count}
-          />
-        </ThemeProvider>
+        <PaginationRounded
+          setPageAndJumpData={setPageAndJumpData}
+          page={page}
+          PER_PAGE={resultsPerPage}
+          count={count}
+        />
       </div>
 
       {localStorage.getItem("appsCount") <= 0 && (
@@ -555,14 +554,12 @@ export const Applications2 = () => {
 
       {/* Pagination bottom */}
       <div className="flex justify-center pt-10">
-        <ThemeProvider theme={darkTheme}>
-          <PaginationRounded
-            setPageAndJumpData={setPageAndJumpData}
-            page={page}
-            PER_PAGE={resultsPerPage}
-            count={count}
-          />
-        </ThemeProvider>
+        <PaginationRounded
+          setPageAndJumpData={setPageAndJumpData}
+          page={page}
+          PER_PAGE={resultsPerPage}
+          count={count}
+        />
       </div>
     </div>
   );
