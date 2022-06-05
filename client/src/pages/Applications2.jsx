@@ -11,6 +11,10 @@ import PaginationRounded from "../partials/PaginationRounded.jsx";
 import usePagination from "../utils/Pagination";
 import noResultsFace from "../media/svg/no_results_face.svg";
 import FilterSelectedOptions from "../partials/FilterSelectedOptions";
+import Button from "@mui/material/Button";
+import AddIcon from "@mui/icons-material/Add";
+import RemoveIcon from "@mui/icons-material/Remove";
+import { display } from "@mui/system";
 
 const filterAppsBySearchTermAndInstallationStatus = (data, searchTerm) => {
   var filteredData = data.filter((app) => {
@@ -35,9 +39,12 @@ export const Applications2 = () => {
   const [appsSearchResultCount, setAppsSearchResultCount] = useState(0);
   const [isMqConnected, setIsMqConnected] = useState(true);
   const [isListLayout, setIsListLayout] = useState(true);
+  const [isShowMoreFilters, setIsShowMoreFilters] = useState(false);
+
   const [sortSelect, setSortSelect] = useState("asc");
   const [resultsPerPage, setResultsPerPage] = useState(10);
   const [filterTags, setFilterTags] = useState([]);
+
   let [page, setPage] = useState(1);
   // const PER_PAGE = resultsPerPage;
   let _DATA = usePagination(
@@ -280,6 +287,8 @@ export const Applications2 = () => {
             filterTags.map((tag) => {
               if (tag.name === cat) {
                 return app;
+              } else {
+                return "";
               }
             });
           });
@@ -419,7 +428,7 @@ export const Applications2 = () => {
       {/* Applications actions */}
       <div className="flex mb-2 justify-between">
         {/* Left: Actions */}
-        <div className="flex">
+        <div className="flex items-center">
           <div className="flex ">
             {/* Search Input Field */}
             <div className="group relative mb-3">
@@ -452,15 +461,24 @@ export const Applications2 = () => {
                             isFailed={this.state.isFailed}
                             isPending={this.state.isPending} /> */}
           </div>
-          <MultipleSelectCheckmarks
-            setFilterStatusList={setFilterStatusList}
-            filterStatusList={filterStatusList}
-            filterInstallationStatusList={filterInstallationStatusList}
-            setFilterInstallationStatusList={setFilterInstallationStatusList}
-            setFilterObj={setFilterObj}
-            drawApplicationCards={drawApplicationCards}
-            syncFilter={syncFilter}
-          />
+
+          <div className="h-11 ml-3">
+            <Button
+              variant="outlined"
+              size="small"
+              className="h-8"
+              onClick={(e) => {
+                setIsShowMoreFilters(!isShowMoreFilters);
+              }}
+            >
+              {isShowMoreFilters ? (
+                <RemoveIcon fontSize="small" />
+              ) : (
+                <AddIcon fontSize="small" />
+              )}
+              {isShowMoreFilters ? "Hide" : "Show"} More filters
+            </Button>
+          </div>
         </div>
 
         {/* Right: Actions */}
@@ -501,11 +519,24 @@ export const Applications2 = () => {
         </div>
       </div>
 
-      <div className="mb-2">
-        <FilterSelectedOptions
-          applicationData={applicationData}
-          setCategoriesFilterTags={setCategoriesFilterTags}
-        />
+      {/* More Filters section */}
+      <div className={` ${isShowMoreFilters ? "" : "hidden"} `}>
+        <div className="flex mb-2">
+          <FilterSelectedOptions
+            applicationData={applicationData}
+            setCategoriesFilterTags={setCategoriesFilterTags}
+          />
+
+          <MultipleSelectCheckmarks
+            setFilterStatusList={setFilterStatusList}
+            filterStatusList={filterStatusList}
+            filterInstallationStatusList={filterInstallationStatusList}
+            setFilterInstallationStatusList={setFilterInstallationStatusList}
+            setFilterObj={setFilterObj}
+            drawApplicationCards={drawApplicationCards}
+            syncFilter={syncFilter}
+          />
+        </div>
       </div>
 
       {/* Results count and galery action buttons */}
