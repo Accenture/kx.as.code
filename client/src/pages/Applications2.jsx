@@ -211,29 +211,6 @@ export const Applications2 = () => {
         ...app,
         installation_status: getInstallationStatusObject(app.name),
       }))
-      .filter((app) => {
-        try {
-          if (app.categories && filterTags.length > 0) {
-            filterTags.map((tag) => {
-              let count = 0;
-
-              app.categories.map((cat) => {
-                if (filterTags.includes(cat)) {
-                  count++;
-                }
-              });
-
-              if (count > 0) {
-                return app;
-              }
-            });
-          } else if (filterTags.length == 0) {
-            return app;
-          }
-        } catch (error) {
-          console.log(error);
-        }
-      })
       // .filter((app) => {
       //   console.log("OBJ-app: ", app.installation_status);
       //   console.log("OBJ-filter: ", filterObj);
@@ -296,6 +273,17 @@ export const Applications2 = () => {
           }
         }
         return 0;
+      })
+      .filter((app) => {
+        if (app.hasOwnProperty("categories") && !filterTags.length == 0) {
+          return app.categories.map((cat) => {
+            filterTags.map((tag) => {
+              if (tag.name === cat) {
+                return app;
+              }
+            });
+          });
+        }
       })
       // .filter((app) => {
       //   // console.log("val name: ", app.name);
