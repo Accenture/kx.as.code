@@ -64,6 +64,10 @@ export default function Tags(props) {
         options={getAllCategoriesObj()}
         getOptionLabel={(option) => option.name}
         // defaultValue={[categories[13]]}
+        onChange={(event, value) => {
+          props.setCategoriesFilterTags(value);
+          console.log(value);
+        }}
         filterSelectedOptions
         renderInput={(params) => (
           <TextField

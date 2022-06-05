@@ -37,7 +37,7 @@ export const Applications2 = () => {
   const [isListLayout, setIsListLayout] = useState(true);
   const [sortSelect, setSortSelect] = useState("asc");
   const [resultsPerPage, setResultsPerPage] = useState(10);
-  const [categoriesFilterTags, setCategoriesFilterTags] = useState([]);
+  const [filterTags, setFilterTags] = useState([]);
   let [page, setPage] = useState(1);
   // const PER_PAGE = resultsPerPage;
   let _DATA = usePagination(
@@ -86,6 +86,10 @@ export const Applications2 = () => {
     "retry_queue",
     "wip_queue",
   ];
+
+  const setCategoriesFilterTags = (tagsList) => {
+    setFilterTags(tagsList);
+  };
 
   const getQueueStatusByAppName = async (appName) => {
     return await queueData.filter(function (obj) {
@@ -207,6 +211,29 @@ export const Applications2 = () => {
         ...app,
         installation_status: getInstallationStatusObject(app.name),
       }))
+      .filter((app) => {
+        try {
+          if (app.categories && filterTags.length > 0) {
+            filterTags.map((tag) => {
+              let count = 0;
+
+              app.categories.map((cat) => {
+                if (filterTags.includes(cat)) {
+                  count++;
+                }
+              });
+
+              if (count > 0) {
+                return app;
+              }
+            });
+          } else if (filterTags.length == 0) {
+            return app;
+          }
+        } catch (error) {
+          console.log(error);
+        }
+      })
       // .filter((app) => {
       //   console.log("OBJ-app: ", app.installation_status);
       //   console.log("OBJ-filter: ", filterObj);
@@ -487,7 +514,10 @@ export const Applications2 = () => {
       </div>
 
       <div className="mb-2">
-        <FilterSelectedOptions applicationData={applicationData} />
+        <FilterSelectedOptions
+          applicationData={applicationData}
+          setCategoriesFilterTags={setCategoriesFilterTags}
+        />
       </div>
 
       {/* Results count and galery action buttons */}
