@@ -16,16 +16,36 @@ import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import { display } from "@mui/system";
 
-const filterAppsBySearchTermAndInstallationStatus = (data, searchTerm) => {
-  var filteredData = data.filter((app) => {
-    if (searchTerm == "") {
-      return app;
-    } else if (
-      app.name.toLowerCase().includes(searchTerm.toLowerCase().trim())
-    ) {
-      return app;
-    }
-  });
+const filterAppsBySearchTermAndInstallationStatus = (
+  data,
+  searchTerm,
+  filterTags
+) => {
+  var filteredData = data
+    .filter((app) => {
+      if (searchTerm == "") {
+        return app;
+      } else if (
+        app.name.toLowerCase().includes(searchTerm.toLowerCase().trim())
+      ) {
+        return app;
+      }
+    })
+    .filter((app) => {
+      if (filterTags) {
+        if (app.hasOwnProperty("categories") && !filterTags.length == 0) {
+          return app.categories.map((cat) => {
+            filterTags.map((tag) => {
+              if (tag.name === cat) {
+                return app;
+              } else {
+                return "";
+              }
+            });
+          });
+        }
+      }
+    });
 
   return filteredData;
 };
@@ -48,12 +68,19 @@ export const Applications2 = () => {
   let [page, setPage] = useState(1);
   // const PER_PAGE = resultsPerPage;
   let _DATA = usePagination(
-    filterAppsBySearchTermAndInstallationStatus(applicationData, searchTerm),
+    filterAppsBySearchTermAndInstallationStatus(
+      applicationData,
+      searchTerm,
+      filterTags
+    ),
     resultsPerPage
   );
   const count = Math.ceil(
-    filterAppsBySearchTermAndInstallationStatus(applicationData, searchTerm)
-      .length / resultsPerPage
+    filterAppsBySearchTermAndInstallationStatus(
+      applicationData,
+      searchTerm,
+      filterTags
+    ).length / resultsPerPage
   );
 
   const [filterStatusList, setFilterStatusList] = useState([
@@ -280,19 +307,6 @@ export const Applications2 = () => {
           }
         }
         return 0;
-      })
-      .filter((app) => {
-        if (app.hasOwnProperty("categories") && !filterTags.length == 0) {
-          return app.categories.map((cat) => {
-            filterTags.map((tag) => {
-              if (tag.name === cat) {
-                return app;
-              } else {
-                return "";
-              }
-            });
-          });
-        }
       })
       // .filter((app) => {
       //   // console.log("val name: ", app.name);
