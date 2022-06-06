@@ -16,6 +16,15 @@ import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import { display } from "@mui/system";
 import { list } from "postcss";
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
+import FormControl from "@mui/material/FormControl";
+import Select from "@mui/material/Select";
+import Box from "@mui/material/Box";
+import DeleteIcon from "@mui/icons-material/Delete";
+import { IconButton } from "@material-ui/core";
+import { FormatListBulleted } from "@mui/icons-material";
+import AppsIcon from "@mui/icons-material/Apps";
 
 const getArrayOfObjArray = (objArray) => {
   let list = [];
@@ -472,7 +481,7 @@ export const Applications = (props) => {
       </div>
 
       {/* Filter Section */}
-      <div className="bg-inv3 px-5 py-8 my-5 rounded">
+      <div className="bg-inv3 px-5 py-8 my-5 rounded border border-gray-600">
         {/* Applications actions */}
         <div className="flex justify-between">
           {/* Left: Actions */}
@@ -532,37 +541,52 @@ export const Applications = (props) => {
           {/* Right: Actions */}
           <div className="flex">
             <div className="mr-5">
-              <span>Results per Page: </span>
-              <select
-                onChange={(e) => {
-                  setResultsPerPage(e.target.value);
-                  _DATA.jump(1); // reset page to 1
-                }}
-                name="results-per-page-select"
-                id="results-per-page-select"
-                className="h-[56px] bg-ghBlack2 py-3 border-none rounded-md cursor-pointer"
-              >
-                <option value="10">10</option>
-                <option value="20">20</option>
-                <option value="30">30</option>
-                <option value="40">40</option>
-                <option value="50">50</option>
-              </select>
+              <Box sx={{ minWidth: 120 }}>
+                <FormControl sx={{ minWidth: 120 }}>
+                  <InputLabel id="demo-simple-select-label">
+                    Results per Page
+                  </InputLabel>
+                  <Select
+                    labelId="results-per-page-select"
+                    id="results-per-page-select"
+                    value={resultsPerPage}
+                    label="Results per Page"
+                    onChange={(e) => {
+                      setResultsPerPage(e.target.value);
+                      _DATA.jump(1); // reset page to 1
+                    }}
+                  >
+                    <MenuItem value={10}>10</MenuItem>
+                    <MenuItem value={20}>20</MenuItem>
+                    <MenuItem value={30}>30</MenuItem>
+                    <MenuItem value={40}>40</MenuItem>
+                    <MenuItem value={50}>50</MenuItem>
+                  </Select>
+                </FormControl>
+              </Box>
             </div>
 
             <div>
-              <span>Sort by: </span>
-              <select
-                onChange={(e) => {
-                  setSortSelect(e.target.value);
-                }}
-                name="sort-select"
-                id="sort-select"
-                className="h-[56px] bg-ghBlack2 py-3 border-none rounded-md cursor-pointer"
-              >
-                <option value="asc">Name A-Z</option>
-                <option value="desc">Name Z-A</option>
-              </select>
+              <Box sx={{ minWidth: 120 }}>
+                <FormControl sx={{ minWidth: 120 }}>
+                  <InputLabel id="demo-simple-select-label">
+                    Sort by Name
+                  </InputLabel>
+                  <Select
+                    labelId="sort-select"
+                    id="sort-select"
+                    value={sortSelect}
+                    label="Sort by Name"
+                    onChange={(e) => {
+                      setSortSelect(e.target.value);
+                      _DATA.jump(1); // reset page to 1
+                    }}
+                  >
+                    <MenuItem value={"asc"}>A-Z</MenuItem>
+                    <MenuItem value={"desc"}>Z-A</MenuItem>
+                  </Select>
+                </FormControl>
+              </Box>
             </div>
           </div>
         </div>
@@ -593,33 +617,58 @@ export const Applications = (props) => {
         {/* left */}
         <div className="">
           {searchTerm != "" ? (
-            <div className="text-lg text-gray-400 mb-4">
+            <div className="text-md text-gray-400 mb-4">
               {localStorage.getItem("appsCount")} results for "{searchTerm}"
             </div>
           ) : (
-            <div className="text-lg text-gray-400 mb-4">
+            <div className="text-md text-gray-400 mb-4">
               {localStorage.getItem("appsCount")} available Applications
             </div>
           )}
         </div>
         {/* right */}
         <div className="mb-4 text-3xl">
-          <button
-            className={`mr-2 ${isListLayout ? "text-kxBlue" : "text-gray-500"}`}
-            onClick={() => {
-              toggleListLayout(true);
-            }}
-          >
-            <FaThList />
-          </button>
-          <button
-            className={`${!isListLayout ? "text-kxBlue" : "text-gray-500"}`}
-            onClick={() => {
-              toggleListLayout(false);
-            }}
-          >
-            <BsGrid3X3GapFill />
-          </button>
+          {isListLayout ? (
+            <div>
+              <IconButton
+                aria-label="list"
+                color="primary"
+                onClick={() => {
+                  toggleListLayout(true);
+                }}
+              >
+                <FormatListBulleted />
+              </IconButton>
+              <IconButton
+                aria-label="galery"
+                onClick={() => {
+                  toggleListLayout(false);
+                }}
+              >
+                <AppsIcon />
+              </IconButton>
+            </div>
+          ) : (
+            <div>
+              <IconButton
+                aria-label="list"
+                onClick={() => {
+                  toggleListLayout(true);
+                }}
+              >
+                <FormatListBulleted />
+              </IconButton>
+              <IconButton
+                aria-label="galery"
+                color="primary"
+                onClick={() => {
+                  toggleListLayout(false);
+                }}
+              >
+                <AppsIcon />
+              </IconButton>
+            </div>
+          )}
         </div>
       </div>
 
