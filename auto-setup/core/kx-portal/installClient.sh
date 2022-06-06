@@ -4,15 +4,28 @@ set -euo pipefail
 # Install NGINX
 /usr/bin/sudo apt-get install -y nginx
 
-# Install NPM dependencies
-cd ${sharedGitHome}/kx.as.code/client
-nvm install lts/gallium
-nvm use lts/gallium
-npm install --legacy-peer-deps
-
 # Setup logging directory
-/usr/bin/sudo mkdir ${installationWorkspace}/kx-portal-logs
-/usr/bin/sudo chown www-data:www-data ${installationWorkspace}/kx-portal-logs
+/usr/bin/sudo mkdir ${installationWorkspace}/kx-portal
+/usr/bin/sudo chown www-data:www-data ${installationWorkspace}/kx-portal
+
+
+echo '''#!/bin/bash
+cd '${sharedGitHome}'/kx.as.code/client
+export NODE_PORT=3000
+export NVM_DIR=/usr/local/nvm
+export NPM_PACKAGES='${installationWorkspace}'/kx-portal/npm
+export NPM_CONFIG_PREFIX=${NPM_PACKAGES}
+export HOME=${NPM_PACKAGES}
+sudo mkdir -p ${NPM_PACKAGES}
+sudo chmod 777 ${NPM_PACKAGES}
+npm config set prefix ${NPM_PACKAGES}
+export PATH="${PATH}:${NPM_PACKAGES}/bin"
+source /opt/nvm/nvm.sh
+nvm use lts/gallium
+npm install -g
+npm run start:prod
+''' | sudo tee ${installationWorkspace}/kx-portal/kxPortalStart.sh
+chmod 755 ${installationWorkspace}/kx-portal/kxPortalStart.sh
 
 # Create .forever directory
 /usr/bin/sudo mkdir -p /var/www/.forever
@@ -25,14 +38,13 @@ Documentation=https://portal.${baseDomain}
 After=network.target
 
 [Service]
-Environment=NODE_PORT=3000
 Type=simple
 User=www-data
-Restart=on-failure
+Restart=always
 WorkingDirectory=${sharedGitHome}/kx.as.code/client
-StandardOutput=append:${installationWorkspace}/kx-portal-logs/kx-portal.log
-StandardError=append:${installationWorkspace}/kx-portal-logs/kx-portal.err
-ExecStart=npm run start:prod
+StandardOutput=append:${installationWorkspace}/kx-portal/kx-portal.log
+StandardError=append:${installationWorkspace}/kx-portal/kx-portal.err
+ExecStart=${installationWorkspace}/kx-portal/kxPortalStart.sh
 
 [Install]
 WantedBy=multi-user.target
