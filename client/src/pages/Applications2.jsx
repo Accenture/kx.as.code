@@ -15,7 +15,6 @@ import Button from "@mui/material/Button";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import { display } from "@mui/system";
-import { list } from "postcss";
 
 const filterAppsBySearchTermAndInstallationStatus = (
   data,
@@ -239,44 +238,13 @@ export const Applications2 = () => {
     }
   };
 
-  const getArrayOfObjArray = (objArray) => {
-    let list = [];
-    objArray.map((obj) => {
-      list.push(obj.name);
-    });
-    return list;
-  };
-
   const drawApplicationCards = () => {
-    var apps = applicationData
+    var apps = _DATA
+      .currentData()
       .map((app) => ({
         ...app,
         installation_status: getInstallationStatusObject(app.name),
       }))
-      .filter((app) => {
-        console.log("filtertags: ", filterTags);
-        let intersect = [];
-        if (app.categories) {
-          intersect = getArrayOfObjArray(filterTags).filter((value) =>
-            app.categories.includes(value)
-          );
-        }
-        if (filterTags.length == 0) {
-          return app;
-        } else if (intersect.length > 0) {
-          return app;
-        }
-      })
-      .filter((app) => {
-        if (searchTerm == "") {
-          return app;
-        } else if (
-          app.name.toLowerCase().includes(searchTerm.toLowerCase().trim())
-        ) {
-          return app;
-        }
-      })
-
       // .filter((app) => {
       //   console.log("OBJ-app: ", app.installation_status);
       //   console.log("OBJ-filter: ", filterObj);
