@@ -6,30 +6,35 @@ set -euo pipefail
 
 # Setup logging directory
 /usr/bin/sudo mkdir ${installationWorkspace}/kx-portal
-/usr/bin/sudo chown www-data:www-data ${installationWorkspace}/kx-portal
+/usr/bin/sudo chown -R ${vmUser}:${vmUser} ${installationWorkspace}/kx-portal
 
+# Download NodeJS
+downloadFile "https://nodejs.org/dist/${nodejsVersion}/node-${nodejsVersion}-linux-x64.tar.xz" \
+  "${nodejsChecksum}" \
+  "${installationWorkspace}/node-${nodejsVersion}-linux-x64.tar.xz" && log_info "Return code received after downloading node-${nodejsVersion}-linux-x64.tar.xz is $?"
 
+# Unpack downloaded NodeJS package
+export NPM_ROOT=${installationWorkspace}/kx-portal/npm
+tar -xJvf ${installationWorkspace}/node-${nodejsVersion}-linux-x64.tar.xz -C ${NPM_ROOT}
+
+# Create KX-Portal start script
 echo '''#!/bin/bash
 cd '${sharedGitHome}'/kx.as.code/client
 export NODE_PORT=3000
-export NVM_DIR=/usr/local/nvm
-export NPM_PACKAGES='${installationWorkspace}'/kx-portal/npm
-export NPM_CONFIG_PREFIX=${NPM_PACKAGES}
-export HOME=${NPM_PACKAGES}
-sudo mkdir -p ${NPM_PACKAGES}
-sudo chmod 777 ${NPM_PACKAGES}
-npm config set prefix ${NPM_PACKAGES}
-export PATH="${PATH}:${NPM_PACKAGES}/bin"
-source /opt/nvm/nvm.sh
-nvm use lts/gallium
-npm install -g
+export NPM_ROOT='${NPM_ROOT}'
+export NPM_CONFIG_PREFIX=${NPM_ROOT}
+export HOME=${NPM_ROOT}
+sudo mkdir -p ${NPM_ROOT}
+sudo chown -R '${vmUser}' ${NPM_ROOT}
+
+export PATH="${PATH}:${NPM_ROOT}/node-'${nodejsVersion}'-linux-x64/bin"
+
+npm config set prefix ${NPM_ROOT}
+sudo chown -R kx.hero $(npm config get prefix)/{lib/node_modules,bin,share}
+npm install --location=global
 npm run start:prod
 ''' | sudo tee ${installationWorkspace}/kx-portal/kxPortalStart.sh
 chmod 755 ${installationWorkspace}/kx-portal/kxPortalStart.sh
-
-# Create .forever directory
-/usr/bin/sudo mkdir -p /var/www/.forever
-/usr/bin/sudo chown www-data:www-data /var/www/.forever
 
 echo """
 [Unit]
@@ -39,7 +44,7 @@ After=network.target
 
 [Service]
 Type=simple
-User=www-data
+User=kx.hero
 Restart=always
 WorkingDirectory=${sharedGitHome}/kx.as.code/client
 StandardOutput=append:${installationWorkspace}/kx-portal/kx-portal.log
