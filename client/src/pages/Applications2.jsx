@@ -17,38 +17,55 @@ import RemoveIcon from "@mui/icons-material/Remove";
 import { display } from "@mui/system";
 import { list } from "postcss";
 
+const getArrayOfObjArray = (objArray) => {
+  let list = [];
+  if (Array.isArray(objArray)) {
+    objArray.map((obj) => {
+      list.push(obj.name);
+    });
+  }
+  return list;
+};
+
 const filterAppsBySearchTermAndInstallationStatus = (
   data,
   searchTerm,
   filterTags
 ) => {
-  var filteredData = data
-    .filter((app) => {
-      if (searchTerm == "") {
-        return app;
-      } else if (
-        app.name.toLowerCase().includes(searchTerm.toLowerCase().trim())
-      ) {
-        return app;
-      }
-    })
-    .filter((app) => {
-      if (filterTags) {
-        if (app.hasOwnProperty("categories") && !filterTags.length == 0) {
-          return app.categories.map((cat) => {
-            filterTags.map((tag) => {
-              if (tag.name === cat) {
-                return app;
-              } else {
-                return "";
-              }
-            });
-          });
+  try {
+    var filteredData = data
+      .filter((app) => {
+        console.log("filte rtags: ", filterTags);
+        let intersect = [];
+        if (app.categories) {
+          intersect = getArrayOfObjArray(filterTags).filter((value) =>
+            app.categories.includes(value)
+          );
         }
-      }
-    });
-
-  return filteredData;
+        if (Array.isArray(filterTags)) {
+          if (filterTags.length == 0) {
+            return app;
+          } else if (intersect.length > 0) {
+            return app;
+          }
+        }
+      })
+      .filter((app) => {
+        if (searchTerm == "") {
+          return app;
+        } else if (
+          app.name.toLowerCase().includes(searchTerm.toLowerCase().trim())
+        ) {
+          return app;
+        }
+      });
+  } catch (error) {
+    console.log(error);
+  } finally {
+    console.log("len filtered: ", filteredData.length);
+    localStorage.setItem("appsCount", filteredData.length);
+    return filteredData;
+  }
 };
 
 export const Applications2 = () => {
@@ -248,35 +265,12 @@ export const Applications2 = () => {
   };
 
   const drawApplicationCards = () => {
-    var apps = applicationData
+    var apps = _DATA
+      .currentData()
       .map((app) => ({
         ...app,
         installation_status: getInstallationStatusObject(app.name),
       }))
-      .filter((app) => {
-        console.log("filtertags: ", filterTags);
-        let intersect = [];
-        if (app.categories) {
-          intersect = getArrayOfObjArray(filterTags).filter((value) =>
-            app.categories.includes(value)
-          );
-        }
-        if (filterTags.length == 0) {
-          return app;
-        } else if (intersect.length > 0) {
-          return app;
-        }
-      })
-      .filter((app) => {
-        if (searchTerm == "") {
-          return app;
-        } else if (
-          app.name.toLowerCase().includes(searchTerm.toLowerCase().trim())
-        ) {
-          return app;
-        }
-      })
-
       // .filter((app) => {
       //   console.log("OBJ-app: ", app.installation_status);
       //   console.log("OBJ-filter: ", filterObj);
@@ -371,11 +365,7 @@ export const Applications2 = () => {
           />
         );
       });
-    var appsCount = filterAppsBySearchTermAndInstallationStatus(
-      applicationData,
-      searchTerm
-    ).length;
-    localStorage.setItem("appsCount", appsCount);
+
     return apps;
   };
 
@@ -434,6 +424,7 @@ export const Applications2 = () => {
   };
 
   useEffect(() => {
+    console.log("count: ", localStorage.getItem("appsCount"));
     setAppsSearchResultCount(applicationData.length);
     setIsListLayout(localStorage.getItem("isListLayout"));
 
