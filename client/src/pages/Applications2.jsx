@@ -35,7 +35,7 @@ const filterAppsBySearchTermAndInstallationStatus = (
   try {
     var filteredData = data
       .filter((app) => {
-        console.log("filte rtags: ", filterTags);
+        // console.log("filtertags: ", filterTags);
         let intersect = [];
         if (app.categories) {
           intersect = getArrayOfObjArray(filterTags).filter((value) =>
@@ -62,13 +62,13 @@ const filterAppsBySearchTermAndInstallationStatus = (
   } catch (error) {
     console.log(error);
   } finally {
-    console.log("len filtered: ", filteredData.length);
+    // console.log("len filtered: ", filteredData.length);
     localStorage.setItem("appsCount", filteredData.length);
     return filteredData;
   }
 };
 
-export const Applications2 = () => {
+export const Applications2 = (props) => {
   const [applicationData, setApplicationData] = useState([]);
   const [newAppList, setNewAppList] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -139,6 +139,14 @@ export const Applications2 = () => {
     "wip_queue",
   ];
 
+  const addCategoryTofilterTags = (newCategoryObj) => {
+    setIsShowMoreFilters(true);
+    var newList = filterTags;
+    newList.push(newCategoryObj);
+    setFilterTags(newList);
+    console.log("filTags list: ", filterTags);
+  };
+
   const setCategoriesFilterTags = (tagsList) => {
     setFilterTags(tagsList);
   };
@@ -147,7 +155,7 @@ export const Applications2 = () => {
     return await queueData.filter(function (obj) {
       if (JSON.parse(obj.payload).name === appName) {
         // setAppQueue(obj.routing_key);
-        console.log("get status debug: ", obj.routing_key);
+        // console.log("get status debug: ", obj.routing_key);
         return obj.routing_key;
       } else {
       }
@@ -157,8 +165,8 @@ export const Applications2 = () => {
   const toggleListLayout = (b) => {
     setIsListLayout(b);
     localStorage.setItem("isListLayout", b);
-    console.log("isListLayout: ", b);
-    console.log("isListLayout-local: ", localStorage.getItem("isListLayout"));
+    // console.log("isListLayout: ", b);
+    // console.log("isListLayout-local: ", localStorage.getItem("isListLayout"));
   };
 
   const getQueueStatusList = (appName) => {
@@ -362,6 +370,7 @@ export const Applications2 = () => {
             isMqConnected={isMqConnected}
             getQueueStatusList={getQueueStatusList}
             isListLayout={isListLayout}
+            addCategoryTofilterTags={addCategoryTofilterTags}
           />
         );
       });
@@ -414,7 +423,7 @@ export const Applications2 = () => {
     var promises = applicationData.map((app) => {
       // console.log("app: ", app);
       app["status"] = getQueueStatusList(app.name);
-      console.log("l in map: ", l);
+      // console.log("l in map: ", l);
       return l.push(app);
     });
     Promise.all(promises).then(() => {
@@ -424,7 +433,7 @@ export const Applications2 = () => {
   };
 
   useEffect(() => {
-    console.log("count: ", localStorage.getItem("appsCount"));
+    // console.log("count: ", localStorage.getItem("appsCount"));
     setAppsSearchResultCount(applicationData.length);
     setIsListLayout(localStorage.getItem("isListLayout"));
 

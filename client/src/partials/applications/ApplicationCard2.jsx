@@ -10,6 +10,7 @@ import { toast } from "react-toastify";
 import LinearProgress from "@mui/material/LinearProgress";
 import axios from "axios";
 import ApplicationStatusActionButton from "./ApplicationStatusActionButton";
+import ApplicationCategoryTag from "../../partials/ApplicationCategoryTag";
 
 function ApplicationCard2(props) {
   const { history } = props;
@@ -216,15 +217,11 @@ function ApplicationCard2(props) {
   const drawAppTags = (appTags) => {
     return appTags.map((appTag, i) => {
       return (
-        <li
-          key={i}
-          className="rounded bg-gray-500 text-sm mr-1.5 mb-2 px-1.5  w-auto inline-block"
-        >
-          {appTag
-            .replaceAll("-", " ")
-            .replaceAll("_", " ")
-            .replace(/\b\w/g, (l) => l.toUpperCase())}
-        </li>
+        <ApplicationCategoryTag
+          appTag={appTag}
+          keyNo={i}
+          addCategoryTofilterTags={props.addCategoryTofilterTags}
+        />
       );
     });
   };
@@ -274,9 +271,9 @@ function ApplicationCard2(props) {
                   </div>
                 </Link>
                 <div className="px-4 pb-3">
-                  <ul className="float-left">
+                  <div className="float-left">
                     {props.app.categories && drawAppTags(props.app.categories)}
-                  </ul>
+                  </div>
                 </div>
               </div>
               <div className="flex col-span-2 ml-2 h-full w-full">
