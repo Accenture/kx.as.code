@@ -2,6 +2,7 @@ import React, { useState, useEffect, Component } from "react";
 import { Link } from "react-router-dom";
 import EditMenu from "../EditMenu";
 import { TrashCan32, Restart32 } from "@carbon/icons-react";
+import ApplicationStatusActionButton from "../applications/ApplicationStatusActionButton";
 
 function ApplicationGroupCard(props) {
   const appGroupBreadcrumb = props.appGroup.name
@@ -12,6 +13,7 @@ function ApplicationGroupCard(props) {
     .replaceAll("_", " ");
 
   const [appGroupComponents, setAppGroupComponents] = useState([]);
+  const [isMqConnected, setIsMqConnected] = useState(true);
 
   useEffect(() => {
     console.log("useEffect called.");
@@ -35,8 +37,8 @@ function ApplicationGroupCard(props) {
   };
 
   return (
-    <div className="col-span-full sm:col-span-6 xl:col-span-4 bg-inv2 shadow-lg rounded">
-      <div className="relative h-[330px]">
+    <div className="col-span-full sm:col-span-6 xl:col-span-4 bg-inv2 rounded">
+      <div className="relative h-[400px]">
         <div className="flex-col justify-between p-6">
           {/* Header */}
           <header className="flex justify-between items-start">
@@ -101,6 +103,15 @@ function ApplicationGroupCard(props) {
               )}
             </ul>
           </div>
+          <ApplicationStatusActionButton
+            // isMqConnected={props.isMqConnected}
+            isMqConnected={true}
+            getQueueStatusList={() => {}}
+            appName={""}
+            category={""}
+            applicationInstallHandler={() => {}}
+            refreshActionButton={() => {}}
+          />
         </div>
 
         {/* <div className="w-full flex justify-center">

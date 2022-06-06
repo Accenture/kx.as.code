@@ -77,11 +77,10 @@ function App() {
               <Route exact path="/apps">
                 <Applications2 />
               </Route>
-              <Route
-                exact
-                path="/application-groups"
-                render={(props) => <ApplicationGroups {...props} />}
-              />
+              <Route exact path="/application-groups">
+                <ApplicationGroups />
+              </Route>
+              
               <Route
                 exact
                 path="/settings"
