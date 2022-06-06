@@ -1,10 +1,54 @@
-import { React, Component } from "react";
+import { React } from "react";
 import ApplicationCard2 from "../partials/applications/ApplicationCard2.jsx";
 import axios from "axios";
 import { FaThList } from "react-icons/fa";
 import { BsGrid3X3GapFill } from "react-icons/bs";
 import MultipleSelectCheckmarks from "../partials/MultipleSelectCheckmarks";
 import { useState, useEffect } from "react";
+import _ from "lodash";
+
+import PaginationRounded from "../partials/PaginationRounded.jsx";
+import usePagination from "../utils/Pagination";
+import noResultsFace from "../media/svg/no_results_face.svg";
+import FilterSelectedOptions from "../partials/FilterSelectedOptions";
+import Button from "@mui/material/Button";
+import AddIcon from "@mui/icons-material/Add";
+import RemoveIcon from "@mui/icons-material/Remove";
+import { display } from "@mui/system";
+
+const filterAppsBySearchTermAndInstallationStatus = (
+  data,
+  searchTerm,
+  filterTags
+) => {
+  var filteredData = data
+    .filter((app) => {
+      if (searchTerm == "") {
+        return app;
+      } else if (
+        app.name.toLowerCase().includes(searchTerm.toLowerCase().trim())
+      ) {
+        return app;
+      }
+    })
+    .filter((app) => {
+      if (filterTags) {
+        if (app.hasOwnProperty("categories") && !filterTags.length == 0) {
+          return app.categories.map((cat) => {
+            filterTags.map((tag) => {
+              if (tag.name === cat) {
+                return app;
+              } else {
+                return "";
+              }
+            });
+          });
+        }
+      }
+    });
+
+  return filteredData;
+};
 
 export const Applications2 = () => {
   const [applicationData, setApplicationData] = useState([]);
@@ -15,12 +59,57 @@ export const Applications2 = () => {
   const [appsSearchResultCount, setAppsSearchResultCount] = useState(0);
   const [isMqConnected, setIsMqConnected] = useState(true);
   const [isListLayout, setIsListLayout] = useState(true);
+  const [isShowMoreFilters, setIsShowMoreFilters] = useState(false);
+
   const [sortSelect, setSortSelect] = useState("asc");
+  const [resultsPerPage, setResultsPerPage] = useState(10);
+  const [filterTags, setFilterTags] = useState([]);
+
+  let [page, setPage] = useState(1);
+  // const PER_PAGE = resultsPerPage;
+  let _DATA = usePagination(
+    filterAppsBySearchTermAndInstallationStatus(
+      applicationData,
+      searchTerm,
+      filterTags
+    ),
+    resultsPerPage
+  );
+  const count = Math.ceil(
+    filterAppsBySearchTermAndInstallationStatus(
+      applicationData,
+      searchTerm,
+      filterTags
+    ).length / resultsPerPage
+  );
+
   const [filterStatusList, setFilterStatusList] = useState([
     "failed_queue",
     "completed_queue",
     "pending_queue",
   ]);
+
+  const setPageAndJumpData = (e, p) => {
+    setPage(p);
+    _DATA.jump(p);
+  };
+
+  const [filterObj, setFilterObj] = useState({
+    // isInstalled: false,
+    // isFailed: false,
+    // isInstalling: false,
+    // isUninstalling: false,
+    // isPending: false,
+  });
+
+  const [filterInstallationStatusList, setFilterInstallationStatusList] =
+    useState([
+      "isInstalled",
+      "isFailed",
+      "isInstalling",
+      "isUninstalling",
+      "isPending",
+    ]);
 
   // const filterStatusList = ["failed_queue", "completed_queue"];
 
@@ -31,6 +120,10 @@ export const Applications2 = () => {
     "retry_queue",
     "wip_queue",
   ];
+
+  const setCategoriesFilterTags = (tagsList) => {
+    setFilterTags(tagsList);
+  };
 
   const getQueueStatusByAppName = async (appName) => {
     return await queueData.filter(function (obj) {
@@ -71,6 +164,25 @@ export const Applications2 = () => {
       setApplicationData(response.data);
     });
   };
+  const getInstallationFilterStatusObject = (appName) => {
+    let obj = {
+      isInstalled: false,
+      isFailed: false,
+      isInstalling: false,
+      isUninstalling: false,
+      isPending: false,
+    };
+
+    if (filterInstallationStatusList.includes("isCompleted")) {
+      obj.isCompleted = true;
+    } else if (filterInstallationStatusList.includes("isPending")) {
+      obj.isPending = true;
+    } else if (filterInstallationStatusList.includes("isFailed")) {
+      obj.isFailed = true;
+    }
+
+    return obj;
+  };
 
   const getInstallationStatusObject = (appName) => {
     let obj = {
@@ -104,42 +216,64 @@ export const Applications2 = () => {
     return obj;
   };
 
+  const syncFilter = () => {
+    let obj = {
+      isInstalled: false,
+      isFailed: false,
+      isInstalling: false,
+      isUninstalling: false,
+      isPending: false,
+    };
+    try {
+      if (filterInstallationStatusList.includes("isInstalled")) {
+        obj.isInstalled = true;
+      } else if (filterInstallationStatusList.includes("IsPending")) {
+        obj.isPending = true;
+      } else if (filterInstallationStatusList.includes("IsFailed")) {
+        obj.isFailed = true;
+      }
+    } catch (err) {
+    } finally {
+      setFilterObj(obj);
+    }
+  };
+
   const drawApplicationCards = () => {
-    var apps = applicationData
-      .filter((app) => {
-        if (searchTerm == "") {
-          // console.log("VAL TEST: ", app);
-          return app;
-        } else if (
-          app.name.toLowerCase().includes(searchTerm.toLowerCase().trim())
-        ) {
-          return app;
-        }
-      })
+    var apps = _DATA
+      .currentData()
       .map((app) => ({
         ...app,
         installation_status: getInstallationStatusObject(app.name),
       }))
-      .filter((app) => {
-        console.log("APP DEBUG: ", app);
-        let count = 0;
-        let intersect = filterStatusList.filter((value) =>
-          getQueueStatusList(app.name).includes(value)
-        );
-        filterStatusList.map((status) => {
-          if (intersect.includes(status)) {
-            count++;
-          }
-        });
-        if (count > 0) {
-          return app;
-        } else if (
-          !getQueueStatusList(app.name).includes("completed_queue") &&
-          !filterStatusList.includes("completed_queue")
-        ) {
-          return app;
-        }
-      })
+      // .filter((app) => {
+      //   console.log("OBJ-app: ", app.installation_status);
+      //   console.log("OBJ-filter: ", filterObj);
+
+      //   if (_.isEqual(app.installation_status, filterObj)) {
+      //     return app;
+      //   } else {
+      //   }
+      // })
+      // .filter((app) => {
+      //   console.log("APP DEBUG: ", app);
+      //   let count = 0;
+      //   let intersect = filterStatusList.filter((value) =>
+      //     getQueueStatusList(app.name).includes(value)
+      //   );
+      //   filterStatusList.map((status) => {
+      //     if (intersect.includes(status)) {
+      //       count++;
+      //     }
+      //   });
+      //   if (count > 0) {
+      //     return app;
+      //   } else if (
+      //     !getQueueStatusList(app.name).includes("completed_queue") &&
+      //     !filterStatusList.includes("completed_queue")
+      //   ) {
+      //     return app;
+      //   }
+      // })
       // .filter((app) => {
       //   console.log("List1: ", getQueueStatusList(app.name));
       //   console.log("List2: ", filterStatusList);
@@ -192,6 +326,7 @@ export const Applications2 = () => {
       //   });
       // })
       .map((app, i) => {
+        // console.log("APP status debug: ", app.installation_status);
         return (
           <ApplicationCard2
             app={app}
@@ -204,7 +339,10 @@ export const Applications2 = () => {
           />
         );
       });
-    var appsCount = apps.length;
+    var appsCount = filterAppsBySearchTermAndInstallationStatus(
+      applicationData,
+      searchTerm
+    ).length;
     localStorage.setItem("appsCount", appsCount);
     return apps;
   };
@@ -284,7 +422,7 @@ export const Applications2 = () => {
     return () => {
       // clearInterval(id);
     };
-  }, [filterStatusList]);
+  }, []);
 
   return (
     <div className="px-6 sm:px-6 lg:px-24 py-8 w-full max-w-9xl mx-auto">
@@ -297,13 +435,14 @@ export const Applications2 = () => {
           Which Applications you want to install into your KX.AS Code
           environemnt?
         </div>
+
         <div className="border-b-2 border-gray-700"></div>
       </div>
 
       {/* Applications actions */}
-      <div className="flex mb-4 justify-between">
+      <div className="flex mb-2 justify-between">
         {/* Left: Actions */}
-        <div className="flex">
+        <div className="flex items-center">
           <div className="flex ">
             {/* Search Input Field */}
             <div className="group relative mb-3">
@@ -323,9 +462,10 @@ export const Applications2 = () => {
               <input
                 type="text"
                 placeholder="Search Applications..."
-                className="h-[56px] focus:ring-2 focus:ring-kxBlue focus:outline-none bg-ghBlack2 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 rounded text-md border-0 shadow outline-none focus:outline-none focus:ring min-w-80 pl-10"
+                className="h-[56px] focus:ring-2 focus:ring-kxBlue bg-ghBlack2 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 rounded text-md border-0 shadow outline-none focus:outline-none w-[240px] pl-10"
                 onChange={(e) => {
                   setSearchTerm(e.target.value);
+                  _DATA.jump(1); // reset page to 1
                 }}
               />
             </div>
@@ -335,27 +475,84 @@ export const Applications2 = () => {
                             isFailed={this.state.isFailed}
                             isPending={this.state.isPending} /> */}
           </div>
-          <MultipleSelectCheckmarks
-            setFilterStatusList={setFilterStatusList}
-            filterStatusList={filterStatusList}
-          />
+
+          <div className="h-11 ml-3">
+            <Button
+              variant="outlined"
+              size="small"
+              className="h-8"
+              onClick={(e) => {
+                setIsShowMoreFilters(!isShowMoreFilters);
+              }}
+            >
+              {isShowMoreFilters ? (
+                <RemoveIcon fontSize="small" />
+              ) : (
+                <AddIcon fontSize="small" />
+              )}
+              {isShowMoreFilters ? "Hide" : "Show"} More filters
+            </Button>
+          </div>
         </div>
 
         {/* Right: Actions */}
-        <div className="">
-          <select
-            onChange={(e) => {
-              setSortSelect(e.target.value);
-            }}
-            name="sort-select"
-            id="sort-select"
-            className="h-[56px] bg-ghBlack2 py-3 border-none rounded-md cursor-pointer"
-          >
-            <option value="asc">Sort by name A-Z</option>
-            <option value="desc">Sort by name Z-A</option>
-          </select>
+        <div className="flex">
+          <div className="mr-5">
+            <span>Results per Page: </span>
+            <select
+              onChange={(e) => {
+                setResultsPerPage(e.target.value);
+                _DATA.jump(1); // reset page to 1
+              }}
+              name="results-per-page-select"
+              id="results-per-page-select"
+              className="h-[56px] bg-ghBlack2 py-3 border-none rounded-md cursor-pointer"
+            >
+              <option value="10">10</option>
+              <option value="20">20</option>
+              <option value="30">30</option>
+              <option value="40">40</option>
+              <option value="50">50</option>
+            </select>
+          </div>
+
+          <div>
+            <span>Sort by: </span>
+            <select
+              onChange={(e) => {
+                setSortSelect(e.target.value);
+              }}
+              name="sort-select"
+              id="sort-select"
+              className="h-[56px] bg-ghBlack2 py-3 border-none rounded-md cursor-pointer"
+            >
+              <option value="asc">Name A-Z</option>
+              <option value="desc">Name Z-A</option>
+            </select>
+          </div>
         </div>
       </div>
+
+      {/* More Filters section */}
+      <div className={` ${isShowMoreFilters ? "" : "hidden"} `}>
+        <div className="flex mb-2">
+          <FilterSelectedOptions
+            applicationData={applicationData}
+            setCategoriesFilterTags={setCategoriesFilterTags}
+          />
+
+          <MultipleSelectCheckmarks
+            setFilterStatusList={setFilterStatusList}
+            filterStatusList={filterStatusList}
+            filterInstallationStatusList={filterInstallationStatusList}
+            setFilterInstallationStatusList={setFilterInstallationStatusList}
+            setFilterObj={setFilterObj}
+            drawApplicationCards={drawApplicationCards}
+            syncFilter={syncFilter}
+          />
+        </div>
+      </div>
+
       {/* Results count and galery action buttons */}
       <div className="flex justify-between items-center">
         {/* left */}
@@ -391,7 +588,42 @@ export const Applications2 = () => {
         </div>
       </div>
 
+      {/* Pagination Top */}
+      <div className="flex justify-center pb-10">
+        <PaginationRounded
+          setPageAndJumpData={setPageAndJumpData}
+          page={page}
+          PER_PAGE={resultsPerPage}
+          count={count}
+        />
+      </div>
+
+      {localStorage.getItem("appsCount") <= 0 && (
+        <div className="">
+          <div className="flex justify-center">
+            <img
+              src={noResultsFace}
+              height="100px"
+              width="100px"
+              alt="No results"
+            ></img>
+          </div>
+          <div className="flex justify-center text-lg mt-3 text-gray-500">
+            No results.
+          </div>
+        </div>
+      )}
       <div className="grid grid-cols-12 gap-2">{drawApplicationCards()}</div>
+
+      {/* Pagination bottom */}
+      <div className="flex justify-center pt-10">
+        <PaginationRounded
+          setPageAndJumpData={setPageAndJumpData}
+          page={page}
+          PER_PAGE={resultsPerPage}
+          count={count}
+        />
+      </div>
     </div>
   );
 };

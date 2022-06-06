@@ -8,7 +8,7 @@ import Select from "@mui/material/Select";
 import Checkbox from "@mui/material/Checkbox";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 
-const ITEM_HEIGHT = 50;
+const ITEM_HEIGHT = 60;
 const ITEM_PADDING_TOP = 8;
 const MenuProps = {
   PaperProps: {
@@ -19,7 +19,14 @@ const MenuProps = {
   },
 };
 
-const statusList = ["failed_queue", "completed_queue", "pending_queue"];
+const statusList = [
+  "isInstalled",
+  "isFailed",
+  "isInstalling",
+  "isUninstalling",
+  "isPending",
+];
+
 const darkTheme = createTheme({
   palette: {
     mode: "dark",
@@ -27,46 +34,38 @@ const darkTheme = createTheme({
 });
 
 export default function MultipleSelectCheckmarks(props) {
-  // const [status, setStatus] = React.useState([]);
-
-  const [selectValueList, setSelectValueList] = React.useState([]);
-
-  const getSelectStatusListItem = (string) => {
-    if (string === "completed_queue") {
-      return "Installed";
-    } else if (string === "pending_queue") {
-      return "Pending";
-    } else if (string === "failed_queue") {
-      return "Failed";
-    }
-  };
-
-  const getSelectValueList = (list) => {
-    let valueList = [];
-    list.map((elem) => {
-      if (elem === "completed_queue") {
-        valueList.push("Installed");
-      } else if (elem === "pending_queue") {
-        valueList.push("Pending");
-      } else if (elem === "failed_queue") {
-        valueList.push("Failed");
-      }
-    });
-    return valueList;
-  };
-
   const handleChange = (event) => {
     const {
       target: { value },
     } = event;
-    // setStatus(
-    //   // On autofill we get a stringified value.
-    //   typeof value === "string" ? value.split(",") : value
-    // );
-    props.setFilterStatusList(
-      typeof value === "string" ? value.split(",") : value
-    );
-    // console.log("status: ", props.filterStatusList);
+
+    try {
+      props.setFilterInstallationStatusList(
+        // On autofill we get a stringified value.
+        typeof value === "string" ? value.split(",") : value
+      );
+    } catch (err) {
+    } finally {
+      let obj = {
+        isInstalled: false,
+        isFailed: false,
+        isInstalling: false,
+        isUninstalling: false,
+        isPending: false,
+      };
+      try {
+        if (props.filterInstallationStatusList.includes("isInstalled")) {
+          obj.isInstalled = true;
+        } else if (props.filterInstallationStatusList.includes("IsPending")) {
+          obj.isPending = true;
+        } else if (props.filterInstallationStatusList.includes("IsFailed")) {
+          obj.isFailed = true;
+        }
+      } catch (err) {
+      } finally {
+        props.setFilterObj(obj);
+      }
+    }
   };
 
   return (
@@ -80,16 +79,20 @@ export default function MultipleSelectCheckmarks(props) {
             labelId="demo-multiple-checkbox-label"
             id="demo-multiple-checkbox"
             multiple
-            value={props.filterStatusList}
+            value={props.filterInstallationStatusList}
             onChange={handleChange}
             input={<OutlinedInput label="Installation Status" />}
             renderValue={(selected) => selected.join(", ")}
             MenuProps={MenuProps}
           >
-            {statusList.map((s) => (
-              <MenuItem key={s} value={s}>
-                <Checkbox checked={props.filterStatusList.indexOf(s) > -1} />
-                <ListItemText primary={getSelectStatusListItem(s)} />
+            {statusList.map((name) => (
+              <MenuItem key={name} value={name}>
+                <Checkbox
+                  checked={
+                    props.filterInstallationStatusList.indexOf(name) > -1
+                  }
+                />
+                <ListItemText primary={name} />
               </MenuItem>
             ))}
           </Select>

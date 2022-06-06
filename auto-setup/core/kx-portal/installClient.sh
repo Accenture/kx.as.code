@@ -27,6 +27,10 @@ npm run start:prod
 ''' | sudo tee ${installationWorkspace}/kx-portal/kxPortalStart.sh
 chmod 755 ${installationWorkspace}/kx-portal/kxPortalStart.sh
 
+# Create .forever directory
+/usr/bin/sudo mkdir -p /var/www/.forever
+/usr/bin/sudo chown www-data:www-data /var/www/.forever
+
 echo """
 [Unit]
 Description=Start the KX.AS.CODE Portal

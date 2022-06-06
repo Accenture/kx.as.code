@@ -21,11 +21,20 @@ import { Applications2 } from "./pages/Applications2";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import KXASCodeNotifications from "./partials/applications/KXASCodeNotifications";
+import { ThemeProvider, createTheme } from "@mui/material/styles";
+
 
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const location = useLocation();
+
+  const darkTheme = createTheme({
+    palette: {
+      mode: "dark",
+    },
+  });
+
 
   useEffect(() => {
     document.querySelector("html").style.scrollBehavior = "auto";
@@ -36,7 +45,9 @@ function App() {
 
   return (
     <>
-      <KXASCodeNotifications />
+        <ThemeProvider theme={darkTheme}>
+
+      {/* <KXASCodeNotifications /> */}
       <div className="flex h-screen overflow-hidden bg-inv1 text-white text-sm">
         {/* Sidebar */}
         <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
@@ -84,6 +95,7 @@ function App() {
           </main>
         </div>
       </div>
+      </ThemeProvider>
     </>
   );
 }

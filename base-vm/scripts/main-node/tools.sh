@@ -64,7 +64,6 @@ sudo chmod 755 ${INSTALLATION_WORKSPACE}
 sudo mkdir -p /home/${VM_USER}
 sudo chown -R ${VM_USER}:${VM_USER} /home/${VM_USER}
 
-
 # Install Node & NPM packages
 sudo git clone -b v0.39.1 https://github.com/nvm-sh/nvm.git /opt/nvm
 sudo mkdir /usr/local/nvm
@@ -93,18 +92,6 @@ sudo chmod 777 ${INSTALLATION_WORKSPACE}
 export lensVersion="v5.5.1"
 git clone --branch ${lensVersion} https://github.com/lensapp/lens.git
 cd ${INSTALLATION_WORKSPACE}/lens
-
-# Build OpenLens
-sudo bash -c '''
-export NVM_DIR=/usr/local/nvm
-source /opt/nvm/nvm.sh
-nvm use --delete-prefix lts/fermium
-npm install --global yarn
-make build || true # Do not fail KX.AS.CODE image build on error
-debOpenLensInstaller=$(find ${INSTALLATION_WORKSPACE}/lens/dist -name "OpenLens-*.deb")
-mv ${debOpenLensInstaller} ${INSTALLATION_WORKSPACE}
-nvm use --delete-prefix lts/gallium
-'''
 
 # Tidy up
 sudo rm -rf ${INSTALLATION_WORKSPACE}/lens
