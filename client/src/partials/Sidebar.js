@@ -80,7 +80,10 @@ function Sidebar({
           <NavLink exact to="/" className="flex pl-3">
             <img src={kxIcon} height="50px" width="50px" alt="KX AS Code Logo"></img>
           </NavLink>
-          <div className="pl-4 text-white flex my-auto lg:hidden lg:sidebar-expanded:block 2xl:block font-extrabold md:text-xl md:text-md">KX.AS CODE</div>
+          <div className="pl-4 text-white flex my-auto lg:hidden lg:sidebar-expanded:block 2xl:block md:text-md md:text-md">
+            <div className='font-bold'>KX.AS CODE</div>
+            <div className='text-sm'>Portal v.8.5.0</div>
+          </div>
         </div>
 
         {/* Links */}

@@ -13,19 +13,27 @@ import Sidebar from "./partials/Sidebar";
 import Header from "./partials/Header";
 import Settings from "./pages/Settings";
 import BasicBreadcrumbs from "./partials/BasicBreadcrumbs";
-import ExampleApp1 from "./partials/ExampleApp1";
 import AppDetails from "./pages/AppDetails";
 import Home2 from "./pages/Home";
 import ApplicationGroups from "./pages/ApplicationGroups";
-import { Applications2 } from "./pages/Applications2";
+import { Applications } from "./pages/Applications";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import KXASCodeNotifications from "./partials/applications/KXASCodeNotifications";
+import { ThemeProvider, createTheme } from "@mui/material/styles";
+
 
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const location = useLocation();
+
+  const darkTheme = createTheme({
+    palette: {
+      mode: "dark",
+    },
+  });
+
 
   useEffect(() => {
     document.querySelector("html").style.scrollBehavior = "auto";
@@ -36,6 +44,8 @@ function App() {
 
   return (
     <>
+        <ThemeProvider theme={darkTheme}>
+
       {/* <KXASCodeNotifications /> */}
       <div className="flex h-screen overflow-hidden bg-inv1 text-white text-sm">
         {/* Sidebar */}
@@ -64,13 +74,12 @@ function App() {
                 <Dashboard />
               </Route>
               <Route exact path="/apps">
-                <Applications2 />
+                <Applications />
               </Route>
-              <Route
-                exact
-                path="/application-groups"
-                render={(props) => <ApplicationGroups {...props} />}
-              />
+              <Route exact path="/application-groups">
+                <ApplicationGroups />
+              </Route>
+              
               <Route
                 exact
                 path="/settings"
@@ -84,6 +93,7 @@ function App() {
           </main>
         </div>
       </div>
+      </ThemeProvider>
     </>
   );
 }

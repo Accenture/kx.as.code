@@ -8,11 +8,8 @@ import { useState, useEffect } from "react";
 
 export default function ApplicationStatusActionButton(props) {
   const getActionButton = () => {
-    if (
-      props.getQueueStatusList(props.appName) != undefined &&
-      props.isMqConnected
-    ) {
-      if (props.getQueueStatusList(props.appName).includes("pending_queue")) {
+    if (props.isMqConnected) {
+      if (false) {
         return (
           <button
             className="bg-gray-600 p-2 px-5 rounded items-center flex"
@@ -40,11 +37,7 @@ export default function ApplicationStatusActionButton(props) {
             <span className="text-white">Processing...</span>
           </button>
         );
-      } else if (
-        props.getQueueStatusList(props.appName).includes("completed_queue") &&
-        !props.getQueueStatusList(props.appName).includes("pending_queue") &&
-        props.category != "core"
-      ) {
+      } else if (false) {
         return (
           <button
             className="bg-red-500 p-2 px-5 rounded items-center flex"
@@ -56,11 +49,7 @@ export default function ApplicationStatusActionButton(props) {
             <span className="flex my-auto">Uninstall</span>
           </button>
         );
-      } else if (
-        !props.getQueueStatusList(props.appName).includes("completed_queue") &&
-        !props.getQueueStatusList(props.appName).includes("pending_queue") &&
-        props.category != "core"
-      ) {
+      } else if (true) {
         return (
           <button
             className="bg-kxBlue p-2 px-5 rounded items-center flex"
@@ -80,7 +69,7 @@ export default function ApplicationStatusActionButton(props) {
       return (
         <div className="text-red-500 border-red-500 rounded-md border p-2 flex">
           <AiOutlineWarning className="mt-auto mb-auto table text-4xl mr-2" />
-          Installation Status not available. Please check conneciton to RabbitMQ
+          Installation Status not available. Please check connection to RabbitMQ
           service.
         </div>
       );
