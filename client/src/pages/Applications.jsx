@@ -471,117 +471,120 @@ export const Applications = (props) => {
         <div className="border-b-2 border-gray-700"></div>
       </div>
 
-      {/* Applications actions */}
-      <div className="flex mb-2 justify-between">
-        {/* Left: Actions */}
-        <div className="flex items-center">
-          <div className="flex ">
-            {/* Search Input Field */}
-            <div className="group relative mb-3">
-              <svg
-                width="20"
-                height="20"
-                fill="currentColor"
-                className="absolute left-3 top-1/2 -mt-2.5 text-gray-500 pointer-events-none group-focus-within:text-kxBlue"
-                aria-hidden="true"
-              >
-                <path
-                  fillRule="evenodd"
-                  clipRule="evenodd"
-                  d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+      {/* Filter Section */}
+      <div className="bg-inv3 px-5 py-8 my-5 rounded">
+        {/* Applications actions */}
+        <div className="flex justify-between">
+          {/* Left: Actions */}
+          <div className="flex items-center">
+            <div className="flex ">
+              {/* Search Input Field */}
+              <div className="group relative">
+                <svg
+                  width="20"
+                  height="20"
+                  fill="currentColor"
+                  className="absolute left-3 top-1/2 -mt-2.5 text-gray-500 pointer-events-none group-focus-within:text-kxBlue"
+                  aria-hidden="true"
+                >
+                  <path
+                    fillRule="evenodd"
+                    clipRule="evenodd"
+                    d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+                  />
+                </svg>
+                <input
+                  type="text"
+                  placeholder="Search Applications..."
+                  className="h-[56px] focus:ring-2 focus:ring-kxBlue bg-ghBlack2 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 rounded text-md border-0 shadow outline-none focus:outline-none w-[240px] pl-10"
+                  onChange={(e) => {
+                    setSearchTerm(e.target.value);
+                    _DATA.jump(1); // reset page to 1
+                  }}
                 />
-              </svg>
-              <input
-                type="text"
-                placeholder="Search Applications..."
-                className="h-[56px] focus:ring-2 focus:ring-kxBlue bg-ghBlack2 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 rounded text-md border-0 shadow outline-none focus:outline-none w-[240px] pl-10"
-                onChange={(e) => {
-                  setSearchTerm(e.target.value);
-                  _DATA.jump(1); // reset page to 1
-                }}
-              />
-            </div>
+              </div>
 
-            {/* <FilterButton filterHandler={this.filterHandler}
+              {/* <FilterButton filterHandler={this.filterHandler}
                             isCompleted={this.state.isCompleted}
                             isFailed={this.state.isFailed}
                             isPending={this.state.isPending} /> */}
+            </div>
+
+            <div className="ml-3">
+              <Button
+                variant="outlined"
+                size="small"
+                className="h-full"
+                onClick={(e) => {
+                  setIsShowMoreFilters(!isShowMoreFilters);
+                }}
+              >
+                {isShowMoreFilters ? (
+                  <RemoveIcon fontSize="small" />
+                ) : (
+                  <AddIcon fontSize="small" />
+                )}
+                {isShowMoreFilters ? "Hide" : "Show"} More filters
+              </Button>
+            </div>
           </div>
 
-          <div className="h-11 ml-3">
-            <Button
-              variant="outlined"
-              size="small"
-              className="h-8"
-              onClick={(e) => {
-                setIsShowMoreFilters(!isShowMoreFilters);
-              }}
-            >
-              {isShowMoreFilters ? (
-                <RemoveIcon fontSize="small" />
-              ) : (
-                <AddIcon fontSize="small" />
-              )}
-              {isShowMoreFilters ? "Hide" : "Show"} More filters
-            </Button>
+          {/* Right: Actions */}
+          <div className="flex">
+            <div className="mr-5">
+              <span>Results per Page: </span>
+              <select
+                onChange={(e) => {
+                  setResultsPerPage(e.target.value);
+                  _DATA.jump(1); // reset page to 1
+                }}
+                name="results-per-page-select"
+                id="results-per-page-select"
+                className="h-[56px] bg-ghBlack2 py-3 border-none rounded-md cursor-pointer"
+              >
+                <option value="10">10</option>
+                <option value="20">20</option>
+                <option value="30">30</option>
+                <option value="40">40</option>
+                <option value="50">50</option>
+              </select>
+            </div>
+
+            <div>
+              <span>Sort by: </span>
+              <select
+                onChange={(e) => {
+                  setSortSelect(e.target.value);
+                }}
+                name="sort-select"
+                id="sort-select"
+                className="h-[56px] bg-ghBlack2 py-3 border-none rounded-md cursor-pointer"
+              >
+                <option value="asc">Name A-Z</option>
+                <option value="desc">Name Z-A</option>
+              </select>
+            </div>
           </div>
         </div>
 
-        {/* Right: Actions */}
-        <div className="flex">
-          <div className="mr-5">
-            <span>Results per Page: </span>
-            <select
-              onChange={(e) => {
-                setResultsPerPage(e.target.value);
-                _DATA.jump(1); // reset page to 1
-              }}
-              name="results-per-page-select"
-              id="results-per-page-select"
-              className="h-[56px] bg-ghBlack2 py-3 border-none rounded-md cursor-pointer"
-            >
-              <option value="10">10</option>
-              <option value="20">20</option>
-              <option value="30">30</option>
-              <option value="40">40</option>
-              <option value="50">50</option>
-            </select>
+        {/* More Filters section */}
+        <div className={` ${isShowMoreFilters ? "" : "hidden"} mt-5`}>
+          <div className="flex">
+            <FilterSelectedOptions
+              applicationData={applicationData}
+              setCategoriesFilterTags={setCategoriesFilterTags}
+            />
+
+            <MultipleSelectCheckmarks
+              setFilterStatusList={setFilterStatusList}
+              filterStatusList={filterStatusList}
+              filterInstallationStatusList={filterInstallationStatusList}
+              setFilterInstallationStatusList={setFilterInstallationStatusList}
+              setFilterObj={setFilterObj}
+              drawApplicationCards={drawApplicationCards}
+              syncFilter={syncFilter}
+            />
           </div>
-
-          <div>
-            <span>Sort by: </span>
-            <select
-              onChange={(e) => {
-                setSortSelect(e.target.value);
-              }}
-              name="sort-select"
-              id="sort-select"
-              className="h-[56px] bg-ghBlack2 py-3 border-none rounded-md cursor-pointer"
-            >
-              <option value="asc">Name A-Z</option>
-              <option value="desc">Name Z-A</option>
-            </select>
-          </div>
-        </div>
-      </div>
-
-      {/* More Filters section */}
-      <div className={` ${isShowMoreFilters ? "" : "hidden"} `}>
-        <div className="flex mb-2">
-          <FilterSelectedOptions
-            applicationData={applicationData}
-            setCategoriesFilterTags={setCategoriesFilterTags}
-          />
-
-          <MultipleSelectCheckmarks
-            setFilterStatusList={setFilterStatusList}
-            filterStatusList={filterStatusList}
-            filterInstallationStatusList={filterInstallationStatusList}
-            setFilterInstallationStatusList={setFilterInstallationStatusList}
-            setFilterObj={setFilterObj}
-            drawApplicationCards={drawApplicationCards}
-            syncFilter={syncFilter}
-          />
         </div>
       </div>
 
