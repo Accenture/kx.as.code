@@ -242,7 +242,7 @@ function ApplicationCard2(props) {
             }`}
             loading="lazy"
           >
-            <div className="grid grid-cols-12 hover:bg-gray-700 bg-inv2 rounded items-center px-5 py-2">
+            <div className="grid grid-cols-12 hover:bg-gray-700 bg-inv3 rounded items-center px-5 py-2">
               <div className="flex col-span-10 items-center">
                 <div className="grid grid-cols-12 w-full items-center">
                   <div className="flex col-span-4 w-full">
@@ -262,7 +262,7 @@ function ApplicationCard2(props) {
                             <div className="text-white bg-ghBlack2 rounded p-0 px-1.5 uppercase w-fit inline-block my-1">
                               {props.app.installation_group_folder}
                             </div>
-                            <h2 className="hover:underline hover:cursor-pointer text-lg text-white mb-2 flex items-center">
+                            <h2 className="hover:underline hover:cursor-pointer text-[16px] text-white mb-2 flex items-center">
                               {allQueueStatus != "" && (
                                 <StatusPoint installStatus={allQueueStatus} />
                               )}

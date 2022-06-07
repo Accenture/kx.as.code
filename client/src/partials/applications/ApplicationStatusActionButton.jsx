@@ -61,7 +61,7 @@ export default function ApplicationStatusActionButton(props) {
             <div className="flex items-start">
               <FaArrowAltCircleDown className="mr-2 flex my-auto text-white" />
             </div>
-            <span className="flex my-auto">Install</span>
+            <span className="flex my-auto text-[16px]">Install</span>
           </button>
         );
       }

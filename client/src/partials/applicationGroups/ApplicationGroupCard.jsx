@@ -37,44 +37,48 @@ function ApplicationGroupCard(props) {
   };
 
   return (
-    <div className="col-span-full sm:col-span-6 xl:col-span-3 hover:bg-gray-700 bg-inv2 rounded">
-      <div className="relative h-[400px]">
+    <div className="col-span-full sm:col-span-6 xl:col-span-3 hover:bg-gray-700 bg-inv3 rounded">
+      <div className="relative">
         <div className="flex-col justify-between p-6">
           {/* Header */}
-          <header className="flex justify-between items-start">
-            {/* Category name */}
-            <div className="text-white bg-ghBlack2 rounded p-0 px-1.5">
-              {appGroupCategory}
-            </div>
-          </header>
+          <div className="h-12">
+            <header className="flex justify-between items-start">
+              {/* Category name */}
+              <div className="text-white bg-ghBlack2 rounded p-0 px-1.5">
+                {appGroupCategory}
+              </div>
+            </header>
 
-          <div className="">
-            <Link to={"/application-groups/" + appGroupBreadcrumb}>
-              <h2 className="hover:underline hover:cursor-pointer text-2xl text-white">
-                {props.appGroup.name}
-              </h2>
-            </Link>
+            <div className="">
+              <Link to={"/application-groups/" + appGroupBreadcrumb}>
+                <h2 className="hover:underline hover:cursor-pointer text-2xl text-white">
+                  {props.appGroup.name}
+                </h2>
+              </Link>
+            </div>
           </div>
 
           {/* Main Card Content */}
           <div className="mb-4">{props.appGroup.description}</div>
 
-          <div className="float-left">
+          <div className="flexh-[200px]">
             <ul className="float-left">
               {drawApplicationGroupCardComponentsTags(
                 props.appGroup.components
               )}
             </ul>
           </div>
-          <ApplicationStatusActionButton
-            // isMqConnected={props.isMqConnected}
-            isMqConnected={true}
-            getQueueStatusList={() => {}}
-            appName={""}
-            category={""}
-            applicationInstallHandler={() => {}}
-            refreshActionButton={() => {}}
-          />
+          <div>
+            <ApplicationStatusActionButton
+              // isMqConnected={props.isMqConnected}
+              isMqConnected={true}
+              getQueueStatusList={() => {}}
+              appName={""}
+              category={""}
+              applicationInstallHandler={() => {}}
+              refreshActionButton={() => {}}
+            />
+          </div>
         </div>
 
         {/* <div className="w-full flex justify-center">
