@@ -37,7 +37,7 @@ function ApplicationGroupCard(props) {
   };
 
   return (
-    <div className="col-span-full sm:col-span-6 xl:col-span-4 bg-inv2 rounded">
+    <div className="col-span-full sm:col-span-6 xl:col-span-3 hover:bg-gray-700 bg-inv2 rounded">
       <div className="relative h-[400px]">
         <div className="flex-col justify-between p-6">
           {/* Header */}

@@ -297,8 +297,8 @@ function ApplicationCard2(props) {
         </>
       ) : (
         <div
-          className={`flex flex-col col-span-full bg-inv2 shadow-lg rounded ${
-            props.isListLayout ? "col-span-full" : "sm:col-span-6 xl:col-span-4"
+          className={`flex flex-col col-span-full hover:bg-gray-700 bg-inv2 rounded ${
+            props.isListLayout ? "col-span-full" : "sm:col-span-6 xl:col-span-3"
           }`}
           loading="lazy"
         >
