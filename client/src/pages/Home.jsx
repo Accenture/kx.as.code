@@ -56,7 +56,7 @@ export default function Home2() {
           </div>
         </div>
         {/* right */}
-        <div className="col-span-6">
+        <div className="col-span-6 mt-10">
           <img
             src={homeImg}
             height="900px"
