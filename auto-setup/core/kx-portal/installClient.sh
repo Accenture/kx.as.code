@@ -19,19 +19,14 @@ tar -xJvf ${installationWorkspace}/node-${nodejsVersion}-linux-x64.tar.xz -C ${N
 
 # Create KX-Portal start script
 echo '''#!/bin/bash
-cd '${sharedGitHome}'/kx.as.code/client
+export KX_PORTAL_HOME='${sharedGitHome}'/kx.as.code/client
+cd ${KX_PORTAL_HOME}
 export NODE_PORT=3000
-export NPM_ROOT='${NPM_ROOT}'
-export NPM_CONFIG_PREFIX=${NPM_ROOT}
-export HOME=${NPM_ROOT}
-sudo mkdir -p ${NPM_ROOT}
-sudo chown -R '${vmUser}' ${NPM_ROOT}
+export NPM_CONFIG_PREFIX=${KX_PORTAL_HOME}
+export HOME=${KX_PORTAL_HOME}
+export PATH="${PATH}:'${NPM_ROOT}'/node-'${nodejsVersion}'-linux-x64/bin"
 
-export PATH="${PATH}:${NPM_ROOT}/node-'${nodejsVersion}'-linux-x64/bin"
-
-npm config set prefix ${NPM_ROOT}
-sudo chown -R kx.hero $(npm config get prefix)/{lib/node_modules,bin,share}
-npm install --location=global
+npm install
 npm run start:prod
 ''' | sudo tee ${installationWorkspace}/kx-portal/kxPortalStart.sh
 chmod 755 ${installationWorkspace}/kx-portal/kxPortalStart.sh
@@ -48,7 +43,7 @@ User=kx.hero
 Restart=always
 WorkingDirectory=${sharedGitHome}/kx.as.code/client
 StandardOutput=append:${installationWorkspace}/kx-portal/kx-portal.log
-StandardError=append:${installationWorkspace}/kx-portal/kx-portal.err
+StandardError=append:${installationWorkspace}/kx-portal/kx-portal.log
 ExecStart=${installationWorkspace}/kx-portal/kxPortalStart.sh
 
 [Install]
