@@ -267,5 +267,3 @@ echo """#!/bin/bash
 sudo chmod 755 /home/${VM_USER}/.config/autostart-scripts/xeventbind.sh
 sudo chown ${VM_USER}:${VM_USER} /home/${VM_USER}/.config/autostart-scripts/xeventbind.sh
 
-# Install NPM for KX.AS.CODE Portal
-sudo apt-get install -y nodejs npm
