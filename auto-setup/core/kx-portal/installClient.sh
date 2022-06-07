@@ -15,7 +15,8 @@ downloadFile "https://nodejs.org/dist/${nodejsVersion}/node-${nodejsVersion}-lin
 
 # Unpack downloaded NodeJS package
 export NPM_ROOT=${installationWorkspace}/kx-portal/npm
-tar -xJvf ${installationWorkspace}/node-${nodejsVersion}-linux-x64.tar.xz -C ${NPM_ROOT}
+/usr/bin/sudo mkdir -p ${NPM_ROOT}
+/usr/bin/sudo tar -xJvf ${installationWorkspace}/node-${nodejsVersion}-linux-x64.tar.xz -C ${NPM_ROOT}
 
 # Create KX-Portal start script
 echo '''#!/bin/bash

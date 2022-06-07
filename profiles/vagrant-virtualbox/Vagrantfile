@@ -44,6 +44,7 @@ NUM_50GB_LOCAL_SIZE=((profile_config_local_volumes['fifty_gb'].to_f * 50) * 1.02
 
 # Calculate disk size needs for requested local volumes configured in profile-config.json
 LOCAL_KUBE_VOLUMES_DISK_SIZE=NUM_1GB_LOCAL_SIZE+NUM_5GB_LOCAL_SIZE+NUM_10GB_LOCAL_SIZE+NUM_30GB_LOCAL_SIZE+NUM_50GB_LOCAL_SIZE+1
+puts "#{NUM_1GB_LOCAL_SIZE}+#{NUM_5GB_LOCAL_SIZE}+#{NUM_10GB_LOCAL_SIZE}+#{NUM_30GB_LOCAL_SIZE}+#{NUM_50GB_LOCAL_SIZE}+1"
 puts "Local Disk Size: #{LOCAL_KUBE_VOLUMES_DISK_SIZE}GB"
 
 # Environment variables will override the profile-config.json file properties. This was added for the Jenkins jobs, so that they can override parameters
