@@ -133,7 +133,7 @@ function ApplicationGroups() {
         </div>
       </div>
 
-      <div className="grid grid-cols-12 gap-8">
+      <div className="grid grid-cols-12 gap-2">
         {drawApplicationGroupCards()}
       </div>
 

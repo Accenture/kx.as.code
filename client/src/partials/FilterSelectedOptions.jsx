@@ -6,15 +6,17 @@ import Stack from "@mui/material/Stack";
 import { useState, useEffect } from "react";
 
 export default function Tags(props) {
+  const [options, setOptions] = useState([]);
+
   const getObjList = (list) => {
-    console.log("debug-list: ", list);
+    // console.log("debug-list: ", list);
     let categoriesObjList = [];
     try {
       list.map((tag) => {
         let obj = {};
         categoriesObjList.push((obj["name"] = tag));
       });
-      console.log("categoriesObjList: ", categoriesObjList);
+      // console.log("categoriesObjList: ", categoriesObjList);
     } catch (error) {
       console.log(error);
     } finally {
@@ -26,9 +28,9 @@ export default function Tags(props) {
     let categoriesList = [];
 
     try {
-      console.log("app data: ", props.applicationData);
+      // console.log("app data: ", props.applicationData);
       props.applicationData.map((app) => {
-        console.log("app: ", app.categories);
+        // console.log("app: ", app.categories);
 
         if (app.categories) {
           app.categories.map((tag) => {
@@ -47,7 +49,7 @@ export default function Tags(props) {
         obj["name"] = tag;
         categoriesObjList.push(obj);
       });
-      console.log("categoriesObjList: ", categoriesObjList);
+      // console.log("categoriesObjList: ", categoriesObjList);
       return categoriesObjList;
     }
   };
@@ -66,7 +68,7 @@ export default function Tags(props) {
         // defaultValue={[categories[13]]}
         onChange={(event, value) => {
           props.setCategoriesFilterTags(value);
-          console.log(value);
+          // console.log(value);
         }}
         filterSelectedOptions
         renderInput={(params) => (

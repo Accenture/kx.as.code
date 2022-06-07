@@ -37,7 +37,7 @@ function ApplicationGroupCard(props) {
   };
 
   return (
-    <div className="col-span-full sm:col-span-6 xl:col-span-4 bg-inv2 rounded">
+    <div className="col-span-full sm:col-span-6 xl:col-span-3 hover:bg-gray-700 bg-inv2 rounded">
       <div className="relative h-[400px]">
         <div className="flex-col justify-between p-6">
           {/* Header */}
@@ -46,43 +46,6 @@ function ApplicationGroupCard(props) {
             <div className="text-white bg-ghBlack2 rounded p-0 px-1.5">
               {appGroupCategory}
             </div>
-
-            {/* Menu button */}
-            <EditMenu className="relative inline-flex">
-              <li>
-                <Link
-                  className="font-medium text-sm text-white hover:text-gray-500 flex py-1 px-3"
-                  to="#0"
-                >
-                  <div className="flex items-start">
-                    <Restart32 className="p-1 flex my-auto" />
-                  </div>
-                  <span className="flex my-auto">Reinstall</span>
-                </Link>
-              </li>
-              <li>
-                <Link
-                  className="font-medium text-sm text-white hover:text-gray-500 flex py-1 px-3"
-                  to="#0"
-                >
-                  <div className="flex items-start">
-                    <Restart32 className="p-1 flex my-auto" />
-                  </div>
-                  <span className="flex my-auto">Reinstall</span>
-                </Link>
-              </li>
-              <li>
-                <Link
-                  className="font-medium text-sm text-red-500 hover:text-red-600 flex py-1 px-3"
-                  to="#0"
-                >
-                  <div className="flex items-start">
-                    <TrashCan32 className="p-1 flex my-auto" />
-                  </div>
-                  <span className="flex my-auto">Uninstall</span>
-                </Link>
-              </li>
-            </EditMenu>
           </header>
 
           <div className="">
