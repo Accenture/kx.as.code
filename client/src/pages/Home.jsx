@@ -19,7 +19,7 @@ export default function Home2() {
       {/* Intro Header Section */}
       <div className="grid grid-cols-12">
         {/* left */}
-        <div className="col-span-6">
+        <div className="col-span-5">
           {/* left header with logo */}
           <div className="flex items-center">
             <img
@@ -56,7 +56,7 @@ export default function Home2() {
           </div>
         </div>
         {/* right */}
-        <div className="col-span-6 mt-10">
+        <div className="col-span-7 mt-10">
           <img
             src={homeImg}
             height="900px"
