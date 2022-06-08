@@ -19,6 +19,10 @@ export NPM_ROOT=${installationWorkspace}/kx-portal/npm
 /usr/bin/sudo tar -xJvf ${installationWorkspace}/node-${nodejsVersion}-linux-x64.tar.xz -C ${NPM_ROOT}
 export PATH="${PATH}:${NPM_ROOT}/node-${nodejsVersion}-linux-x64/bin"
 
+# Set kernel parameters
+sudo sysctl -w fs.inotify.max_user_watches=524288
+echo "fs.inotify.max_user_watches=524288" | sudo tee -a /etc/sysctl.conf
+
 # Install KX-Portal
 export KX_PORTAL_HOME=${sharedGitHome}/kx.as.code/client
 npm config set fetch-retry-maxtimeout 120000
@@ -30,9 +34,12 @@ do
   npm install || rc=$? && log_info "Execution of npm install for KX-Portal returned with rc=$rc"
   if [[ ${rc} -eq 0 ]]; then
     log_info "NPM install succeeded. Continuing"
+    /usr/bin/sudo chown -R ${vmUser}:${vmUser} ${KX_PORTAL_HOME}
     break
   else
     log_warn "NPM install return with a non zero exit code. Trying again"
+    /usr/bin/sudo rm -rf ${KX_PORTAL_HOME}/node_modules
+    /usr/bin/sudo rm -f ${KX_PORTAL_HOME}/package-lock.json
     sleep 15
   fi
 done
