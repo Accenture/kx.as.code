@@ -17,6 +17,27 @@ downloadFile "https://nodejs.org/dist/${nodejsVersion}/node-${nodejsVersion}-lin
 export NPM_ROOT=${installationWorkspace}/kx-portal/npm
 /usr/bin/sudo mkdir -p ${NPM_ROOT}
 /usr/bin/sudo tar -xJvf ${installationWorkspace}/node-${nodejsVersion}-linux-x64.tar.xz -C ${NPM_ROOT}
+export PATH="${PATH}:${NPM_ROOT}/node-${nodejsVersion}-linux-x64/bin"
+
+# Install KX-Portal
+export KX_PORTAL_HOME=${sharedGitHome}/kx.as.code/client
+npm config set fetch-retry-maxtimeout 120000
+cd ${KX_PORTAL_HOME}
+rc=0
+for i in {1..5}
+do
+  log_info "Attempting npm install for KX-Portal - try ${i}"
+  npm install || rc=$? && log_info "Execution of npm install for KX-Portal returned with rc=$rc"
+  if [[ ${rc} -eq 0 ]]; then
+    log_info "NPM install succeeded. Continuing"
+    break
+  else
+    log_warn "NPM install return with a non zero exit code. Trying again"
+    sleep 15
+  fi
+done
+cd -
+
 
 # Create KX-Portal start script
 echo '''#!/bin/bash
@@ -26,8 +47,6 @@ export NODE_PORT=3000
 export NPM_CONFIG_PREFIX=${KX_PORTAL_HOME}
 export HOME=${KX_PORTAL_HOME}
 export PATH="${PATH}:'${NPM_ROOT}'/node-'${nodejsVersion}'-linux-x64/bin"
-
-npm install
 npm run start:prod
 ''' | sudo tee ${installationWorkspace}/kx-portal/kxPortalStart.sh
 chmod 755 ${installationWorkspace}/kx-portal/kxPortalStart.sh
