@@ -2,6 +2,7 @@ import React from "react";
 import WelcomeBanner from "../partials/WelcomeBanner";
 import kxIcon from "../media/svg/icon-blau-2.svg";
 import homeImg from "../media/svg/home-image.svg";
+import cubesImg from "../media/svg/cubes.svg";
 import { useHistory } from "react-router-dom";
 
 export default function Home2() {
@@ -17,9 +18,10 @@ export default function Home2() {
       {/* <WelcomeBanner /> */}
 
       {/* Intro Header Section */}
-      <div className="grid grid-cols-12">
+      <div className="grid grid-cols-12 gap-14">
+        <div id="home-left"></div>
         {/* left */}
-        <div className="col-span-5">
+        <div className="col-span-5" id="">
           {/* left header with logo */}
           <div className="flex items-center">
             <img
@@ -32,12 +34,12 @@ export default function Home2() {
           </div>
 
           {/* Intro Title */}
-          <div className="text-[38px] font-semibold w-[400px] leading-tight my-7">
+          <div className="text-[38px] font-extrabold leading-tight my-7">
             Transfer Knowledge as a Code - All in One VM.
           </div>
 
           {/* Intro Text */}
-          <div className="text-[18px] w-[400px] tracking-wide text-justify">
+          <div className="text-[18px]  tracking-wide text-justify">
             Learn and share knowledge. Use it for demoing new technologies,
             tools and processes. Keep your physical workstation clean whilst
             experimenting. Have fun playing around with new technologies and use
@@ -51,13 +53,14 @@ export default function Home2() {
               className="bg-kxBlue hover:bg-kxBlueH px-5 py-3 text-[18px] rounded"
               onClick={applicationPage}
             >
-              Install Applications
+              Get Started
             </button>
           </div>
         </div>
         {/* right */}
         <div className="col-span-7 mt-10">
           <img
+            className="bg-gray-400 p-8 rounded-xl"
             src={homeImg}
             height="900px"
             width="900px"

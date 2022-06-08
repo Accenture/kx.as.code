@@ -11,3 +11,14 @@
 @import "additional-styles/theme.scss";
 
 @tailwind utilities;
+
+#home-left{
+    background-image: url("../media/svg/cubes.svg");
+    display: block;
+    left: -90px;
+
+    width: 200px;
+    height: 505px;
+    position: absolute;
+    opacity: 0.3;
+}
