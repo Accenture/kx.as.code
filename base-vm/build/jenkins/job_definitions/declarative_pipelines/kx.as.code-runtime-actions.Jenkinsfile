@@ -62,10 +62,10 @@ pipeline {
                         vagrant global-status --prune
                         runningProfileMainVms=\$(vagrant status --no-tty | grep kx-main | grep ${profile} | grep running || true)
                         runningProfileNodeVms=\$(vagrant status --no-tty | grep kx-node | grep ${profile} | grep running || true)
-                        if [ -z \${runningProfileMainVms} ]; then
+                        if [ -z "\${runningProfileMainVms}" ]; then
                             vagrant box remove kxascode/kx-main --provider ${profile} --box-version 0 --force
                         fi
-                        if [ -z \${runningProfileNodeVms} ]; then
+                        if [ -z "\${runningProfileNodeVms}" ]; then
                             vagrant box remove kxascode/kx-node --provider ${profile} --box-version 0 --force
                         fi
                         if [ "${vagrant_action}" == "destroy" ]; then
