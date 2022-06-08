@@ -3,6 +3,7 @@ import { NavLink, useLocation } from "react-router-dom";
 import { Apps32, Dashboard32, Settings32 } from "@carbon/icons-react";
 
 import kxIcon from "../media/svg/icon-blau-2.svg";
+import kxIconW from "../media/svg/ks-logo-w.svg";
 import templatesIcon from "../media/svg/side-icon.svg";
 
 function Sidebar({ sidebarOpen, setSidebarOpen }) {
@@ -95,7 +96,7 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
           {/* Logo */}
           <NavLink exact to="/" className="flex pl-3">
             <img
-              src={kxIcon}
+              src={kxIconW}
               height="50px"
               width="50px"
               alt="KX AS Code Logo"

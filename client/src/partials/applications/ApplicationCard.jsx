@@ -297,7 +297,7 @@ function ApplicationCard2(props) {
         </>
       ) : (
         <div
-          className={`flex flex-col col-span-full hover:bg-gray-700 bg-inv2 rounded ${
+          className={`flex flex-col col-span-full hover:bg-gray-700 bg-inv3 rounded ${
             props.isListLayout ? "col-span-full" : "sm:col-span-6 xl:col-span-3"
           }`}
           loading="lazy"
@@ -314,7 +314,7 @@ function ApplicationCard2(props) {
                 {/* <StatusTag installStatus={props.app.queueName} /> */}
               </div>
               {/* Menu button */}
-              {props.app.installation_group_folder != "core" && (
+              {/* {props.app.installation_group_folder != "core" && (
                 <EditMenu className="relative inline-flex">
                   {props.app.installation_group_folder === "completed_queue" ? (
                     <li>
@@ -342,7 +342,7 @@ function ApplicationCard2(props) {
                     </li>
                   )}
                 </EditMenu>
-              )}
+              )} */}
             </header>
 
             <Link to={"/apps/" + getSlug()}>

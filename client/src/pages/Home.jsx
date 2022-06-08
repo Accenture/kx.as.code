@@ -3,6 +3,7 @@ import WelcomeBanner from "../partials/WelcomeBanner";
 import kxIcon from "../media/svg/icon-blau-2.svg";
 import homeImg from "../media/svg/home-image.svg";
 import cubesImg from "../media/svg/cubes.svg";
+import kxIconW from "../media/svg/ks-logo-w.svg";
 import { useHistory } from "react-router-dom";
 
 export default function Home2() {
@@ -25,21 +26,22 @@ export default function Home2() {
           {/* left header with logo */}
           <div className="flex items-center">
             <img
-              src={kxIcon}
+              src={kxIconW}
               height="50px"
               width="50px"
               alt="KX AS Code Logo"
             ></img>
-            <span className="text-[24px] font-semibold ml-3">KX.AS CODE</span>
+            <span className="text-[24px] font-semibold">KX.AS CODE</span>
           </div>
 
           {/* Intro Title */}
           <div className="text-[38px] font-extrabold leading-tight my-7">
-            Transfer Knowledge as a Code - All in One VM.
+            <span className="text-kxBlue">Transfer Knowledge as a Code</span> -
+            All in One VM.
           </div>
 
           {/* Intro Text */}
-          <div className="text-[18px] tracking-wide text-justify">
+          <div className="text-[16px] tracking-wide text-justify">
             Learn and share knowledge. Use it for demoing new technologies,
             tools and processes. Keep your physical workstation clean whilst
             experimenting. Have fun playing around with new technologies and use
