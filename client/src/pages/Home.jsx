@@ -60,7 +60,7 @@ export default function Home2() {
         {/* right */}
         <div className="col-span-7 mt-10">
           <img
-            className="bg-gray-400 p-8 rounded-xl"
+            className="bg-inv2 p-8 rounded-xl"
             src={homeImg}
             height="900px"
             width="900px"

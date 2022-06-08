@@ -103,7 +103,7 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
           </NavLink>
           <div className="pl-4 text-white flex my-auto lg:hidden lg:sidebar-expanded:block 2xl:block md:text-md md:text-md">
             <div className="font-extrabold">KX.AS CODE</div>
-            <div className="text-sm">Portal v.8.5.0</div>
+            <div className="text-sm">Portal v.0.8.5</div>
           </div>
         </div>
 
