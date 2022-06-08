@@ -60,11 +60,19 @@ pipeline {
                         echo "Current directory \$(pwd)"
                         cd profiles/vagrant-${profile}
                         vagrant global-status --prune
+                        runningProfileMainVms=$(vagrant status --no-tty | grep kx-main | grep ${profile}) | grep running
+                        runningProfileNodeVms=$(vagrant status --no-tty | grep kx-node | grep ${profile}) | grep running
+                        if [ -z ${runningProfileMainVms} ]; then
+                            vagrant box remove kxascode/kx-main --provider ${profile} --box-version 0 --force
+                        fi
+                        if [ -z ${runningProfileNodeVms} ]; then
+                            vagrant box remove kxascode/kx-node --provider ${profile} --box-version 0 --force
+                        fi
                         if [ "${vagrant_action}" == "destroy" ]; then
                             vagrant destroy --force --no-tty
                         elif [ "${vagrant_action}" == "up" ]; then
                             vagrant up --no-tty
-                            if [[ 2 -gt 1 ]]; then
+                            if [[ ${num_kx_main_nodes} -gt 1 ]]; then
                                 i=2
                                 while [ \$i -le \${num_kx_main_nodes} ];
                                 do
@@ -72,7 +80,7 @@ pipeline {
                                     let i=\$i+1
                                 done
                             fi
-                            if [[ 2 -gt 0 ]]; then
+                            if [[ ${num_kx_worker_nodes} -gt 0 ]]; then
                                 i=1
                                 while [ \$i -le \${num_kx_worker_nodes} ];
                                 do
