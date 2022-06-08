@@ -39,7 +39,7 @@ function ApplicationGroupCard(props) {
   return (
     <div className="col-span-full sm:col-span-6 xl:col-span-3 hover:bg-gray-700 bg-inv3 rounded">
       <div className="relative">
-        <div className="flex-col justify-between p-6">
+        <div className="p-6">
           {/* Header */}
           <div className="h-12">
             <header className="flex justify-between items-start">
@@ -61,14 +61,14 @@ function ApplicationGroupCard(props) {
           {/* Main Card Content */}
           <div className="mb-4">{props.appGroup.description}</div>
 
-          <div className="flexh-[200px]">
+          <div className="flex h-[150px]">
             <ul className="float-left">
               {drawApplicationGroupCardComponentsTags(
                 props.appGroup.components
               )}
             </ul>
           </div>
-          <div>
+          <div className="">
             <ApplicationStatusActionButton
               // isMqConnected={props.isMqConnected}
               isMqConnected={true}
