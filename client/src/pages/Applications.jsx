@@ -472,7 +472,7 @@ export const Applications = (props) => {
         <div className="text-xl font-bold italic text-gray-500">
           APPLICATIONS
         </div>
-        <div className="pt-4 pb-6">
+        <div className="pt-4 pb-6 text-[16px]">
           Which Applications you want to install into your KX.AS Code
           environemnt?
         </div>
@@ -617,11 +617,11 @@ export const Applications = (props) => {
         {/* left */}
         <div className="">
           {searchTerm != "" ? (
-            <div className="text-md text-gray-400 mb-4">
+            <div className="text-[16px] text-gray-400 mb-4">
               {localStorage.getItem("appsCount")} results for "{searchTerm}"
             </div>
           ) : (
-            <div className="text-md text-gray-400 mb-4">
+            <div className="text-[16px] text-gray-400 mb-4">
               {localStorage.getItem("appsCount")} available Applications
             </div>
           )}
