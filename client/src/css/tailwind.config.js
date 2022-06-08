@@ -29,6 +29,7 @@ module.exports = {
         ghBlack4: "#2f3640",
         kxBlue: "#5a86ff",
         kxBlue2: "#3253ad",
+        kxBlueH: "#5e7bcc",
         kxRed: "#ff3246",
 
         //Status Color

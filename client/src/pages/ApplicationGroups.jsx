@@ -79,7 +79,7 @@ function ApplicationGroups() {
         <div className="text-xl font-bold italic text-gray-500">
           APPLICATION GROUPS
         </div>
-        <div className="pt-4 pb-6">
+        <div className="pt-4 pb-6 text-[16px]">
           Here you can select an application group from a list of available
           templates. An application group is a set of applications that are
           commonly deployed together, and in many cases they will also be
