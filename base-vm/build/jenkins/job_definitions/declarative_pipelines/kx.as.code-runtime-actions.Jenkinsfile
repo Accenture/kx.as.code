@@ -60,12 +60,12 @@ pipeline {
                         echo "Current directory \$(pwd)"
                         cd profiles/vagrant-${profile}
                         vagrant global-status --prune
-                        runningProfileMainVms=$(vagrant status --no-tty | grep kx-main | grep ${profile}) | grep running
-                        runningProfileNodeVms=$(vagrant status --no-tty | grep kx-node | grep ${profile}) | grep running
-                        if [ -z ${runningProfileMainVms} ]; then
+                        runningProfileMainVms=\$(vagrant status --no-tty | grep kx-main | grep ${profile} | grep running
+                        runningProfileNodeVms=\$(vagrant status --no-tty | grep kx-node | grep ${profile} | grep running
+                        if [ -z \${runningProfileMainVms} ]; then
                             vagrant box remove kxascode/kx-main --provider ${profile} --box-version 0 --force
                         fi
-                        if [ -z ${runningProfileNodeVms} ]; then
+                        if [ -z \${runningProfileNodeVms} ]; then
                             vagrant box remove kxascode/kx-node --provider ${profile} --box-version 0 --force
                         fi
                         if [ "${vagrant_action}" == "destroy" ]; then
