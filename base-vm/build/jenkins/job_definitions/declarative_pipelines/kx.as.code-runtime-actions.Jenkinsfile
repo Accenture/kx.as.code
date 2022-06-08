@@ -72,7 +72,7 @@ pipeline {
                             vagrant destroy --force --no-tty
                         elif [ "${vagrant_action}" == "up" ]; then
                             vagrant up --no-tty
-                            if [[ ${num_kx_main_nodes} -gt 1 ]]; then
+                            if [ \${num_kx_main_nodes} -gt 1 ]; then
                                 i=2
                                 while [ \$i -le \${num_kx_main_nodes} ];
                                 do
@@ -80,7 +80,7 @@ pipeline {
                                     let i=\$i+1
                                 done
                             fi
-                            if [[ ${num_kx_worker_nodes} -gt 0 ]]; then
+                            if [ \${num_kx_worker_nodes} -gt 0 ]; then
                                 i=1
                                 while [ \$i -le \${num_kx_worker_nodes} ];
                                 do
