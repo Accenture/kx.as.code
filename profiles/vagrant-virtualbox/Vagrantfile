@@ -87,14 +87,18 @@ WORKSPACE_HOME ||= :"../.."
 
 if ARGV[0] == "up" && File.exist?("#{WORKSPACE_HOME}/#{KX_MAIN_BOX_LOCATION}")
     KX_MAIN_BOX_URL = "file://#{WORKSPACE_HOME}/#{KX_MAIN_BOX_LOCATION}"
+    puts "Found local box #{KX_MAIN_BOX_LOCATION}, using that instead of cloud"
 else
     KX_MAIN_BOX_URL = "https://app.vagrantup.com/kxascode/boxes/kx-main"
+    puts "Did not find local box #{KX_MAIN_BOX_LOCATION}, downloading box from cloud"
 end
 
 if ARGV[0] == "up" && File.exist?("#{WORKSPACE_HOME}/#{KX_NODE_BOX_LOCATION}")
     KX_NODE_BOX_URL = "file://#{WORKSPACE_HOME}/#{KX_NODE_BOX_LOCATION}"
+    puts "Found local box #{KX_NODE_BOX_LOCATION}, using that instead of cloud"
 else
     KX_NODE_BOX_URL = "https://app.vagrantup.com/kxascode/boxes/kx-node"
+    puts "Did not find local box #{KX_NODE_BOX_LOCATION}, downloading box from cloud"
 end
 
 if (MAIN_NODE_COUNT - 1) < 1
