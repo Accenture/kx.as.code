@@ -39,7 +39,7 @@ export default function Home2() {
           </div>
 
           {/* Intro Text */}
-          <div className="text-[18px]  tracking-wide text-justify">
+          <div className="text-[18px] tracking-wide text-justify">
             Learn and share knowledge. Use it for demoing new technologies,
             tools and processes. Keep your physical workstation clean whilst
             experimenting. Have fun playing around with new technologies and use
@@ -60,7 +60,7 @@ export default function Home2() {
         {/* right */}
         <div className="col-span-7 mt-10">
           <img
-            className="bg-inv2 p-8 rounded-xl"
+            className="bg-kxBlue p-8 rounded-xl bg-gradient-to-r from-inv1"
             src={homeImg}
             height="900px"
             width="900px"
