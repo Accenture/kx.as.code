@@ -70,7 +70,7 @@ pipeline {
                         if [ "\${runningProfileNodeVms}" == "" ]; then
                             vagrant box remove kxascode/kx-node --provider ${profile} --box-version 0 --force || true
                         fi
-                        if [ "\${importedKxNodeBoxes}" != "" ]; then
+                        if [ "\${importedKxMainBoxes}" != "" ]; then
                             vagrant box remove kxascode/kx-main --provider ${profile} --box-version \${mainBoxVersion} --force || true
                         fi
                         if [ "\${importedKxNodeBoxes}" != "" ]; then
