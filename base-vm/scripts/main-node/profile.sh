@@ -97,3 +97,5 @@ HideUsers=vagrant
 ''' | sudo tee /etc/sddm.conf
 
 
+echo "typeset -g POWERLEVEL9K_INSTANT_PROMPT=quiet" | sudo tee -a /home/${VM_USER}/.bashrc /home/${VM_USER}/.zshrc /root/.bashrc /root/.zshrc
+echo "cat /etc/motd" | sudo tee -a /home/${VM_USER}/.bashrc /home/${VM_USER}/.zshrc /root/.bashrc /root/.zshrc
