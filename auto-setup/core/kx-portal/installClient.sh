@@ -27,12 +27,14 @@ echo "fs.inotify.max_user_watches=524288" | sudo tee -a /etc/sysctl.conf
 export KX_PORTAL_HOME=${sharedGitHome}/kx.as.code/client
 
 # Optimize NPM configuration
-npm config set registry http://registry.npmjs.org/
+npm config set registry https://registry.npmjs.org/
 npm config set loglevel info
 npm config set fetch-retries 3
 npm config set fetch-retry-mintimeout 15000
 npm config set fetch-retry-maxtimeout 90000
 npm config set cache-min 86400
+
+npm cache clear --force
 
 cd ${KX_PORTAL_HOME}
 rc=0
@@ -48,6 +50,7 @@ do
     log_warn "NPM install return with a non zero exit code. Trying again"
     /usr/bin/sudo rm -rf ${KX_PORTAL_HOME}/node_modules
     /usr/bin/sudo rm -f ${KX_PORTAL_HOME}/package-lock.json
+    npm cache clear --force
     sleep 15
   fi
 done
