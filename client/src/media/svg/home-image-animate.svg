@@ -64,7 +64,7 @@
           transform: translate(0px,-10px);
         }
         50% {
-          transform: translate(0px,13px);
+          transform: translate(0px,5px);
         }
         100% {
           transform: translate(0px,-10px);
