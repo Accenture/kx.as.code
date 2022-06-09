@@ -41,7 +41,7 @@ function ApplicationGroupCard(props) {
       <div className="relative">
         <div className="p-6">
           {/* Header */}
-          <div className="h-12">
+          <div className="h-[100px]">
             <header className="flex justify-between items-start">
               {/* Category name */}
               <div className="text-white bg-ghBlack2 rounded p-0 px-1.5">
@@ -51,7 +51,10 @@ function ApplicationGroupCard(props) {
 
             <div className="">
               <Link to={"/application-groups/" + appGroupBreadcrumb}>
-                <h2 className="hover:underline hover:cursor-pointer text-2xl text-white">
+                <h2
+                  className="hover:underline hover:cursor-pointer text-2xl text-white truncate"
+                  alt={props.appGroup.name}
+                >
                   {props.appGroup.name}
                 </h2>
               </Link>

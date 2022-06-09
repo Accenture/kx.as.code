@@ -1,7 +1,7 @@
 import React from "react";
 import WelcomeBanner from "../partials/WelcomeBanner";
 import kxIcon from "../media/svg/icon-blau-2.svg";
-import homeImg from "../media/svg/home-image.svg";
+import homeImg from "../media/svg/home-image-animate.svg";
 import cubesImg from "../media/svg/cubes.svg";
 import kxIconW from "../media/svg/ks-logo-w.svg";
 import { useHistory } from "react-router-dom";
@@ -27,8 +27,8 @@ export default function Home2() {
           <div className="flex items-center">
             <img
               src={kxIconW}
-              height="50px"
-              width="50px"
+              height="80px"
+              width="80px"
               alt="KX AS Code Logo"
             ></img>
             <span className="text-[24px] font-semibold">KX.AS CODE</span>
