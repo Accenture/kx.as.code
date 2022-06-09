@@ -1,7 +1,51 @@
 import React from "react";
 import AddIcon from "@mui/icons-material/Add";
+import { useState, useEffect } from "react";
+import axios from "axios";
 
 export default function Dashboard() {
+  const [applicationCountCompleted, setApplicationCountCompleted] = useState(0);
+  const [applicationCountFailed, setApplicationCountFailed] = useState(0);
+  const [applicationCountPending, setApplicationCountPending] = useState(0);
+
+  const [queueData, setQueueData] = useState([]);
+
+  const queueList = [
+    "pending_queue",
+    "failed_queue",
+    "completed_queue",
+    "retry_queue",
+    "wip_queue",
+  ];
+
+  const getApplicationCountByQueue = (queueName) => {
+    var count = 0;
+    queueData.map((app, i) => {
+      if (app.routing_key == queueName) {
+        count = count + 1;
+      }
+    });
+    return count;
+  };
+
+  const fetchQueueData = () => {
+    const requests = queueList.map((queue) => {
+      return axios
+        .get("http://localhost:5001/api/queues/" + queue)
+        .then((response) => {
+          response.data.map((app) => {
+            queueData.push(app);
+          });
+        })
+        .then(() => {});
+    });
+  };
+  useEffect(() => {
+    fetchQueueData();
+
+    return () => {};
+  }, []);
+
   return (
     <div className="px-4 sm:px-6 lg:px-24 py-8 w-full max-w-9xl mx-auto">
       {/* Applications Header */}
@@ -15,7 +59,9 @@ export default function Dashboard() {
           <div className="text-[16px] uppercase font-bold text-gray-600">
             Installed Applications
           </div>
-          <div className="flex justify-center mt-8 text-[50px]">8</div>
+          <div className="flex justify-center mt-8 text-[50px]">
+            {getApplicationCountByQueue("completed_queue")}
+          </div>
           <div className="flex justify-center text-[14px]">
             Application count
           </div>
@@ -25,7 +71,9 @@ export default function Dashboard() {
           <div className="text-[16px]  uppercase font-bold text-gray-600">
             Failed Applications
           </div>
-          <div className="flex justify-center mt-8 text-[50px]">3</div>
+          <div className="flex justify-center mt-8 text-[50px]">
+            {getApplicationCountByQueue("failed_queue")}
+          </div>
           <div className="flex justify-center text-[14px]">
             Application count
           </div>
@@ -35,7 +83,9 @@ export default function Dashboard() {
           <div className="text-[16px] uppercase font-bold text-gray-600">
             Pending Applications
           </div>
-          <div className="flex justify-center mt-8 text-[50px]">10</div>
+          <div className="flex justify-center mt-8 text-[50px]">
+            {getApplicationCountByQueue("pending_queue")}
+          </div>
           <div className="flex justify-center text-[14px]">
             Application count
           </div>
