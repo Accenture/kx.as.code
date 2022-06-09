@@ -75,13 +75,17 @@ nvm install lts/fermium
 nvm use --delete-prefix lts/gallium
 npm install --global envhandlebars
 npm install --global yarn
+npm install --global pnpm
+nvm use --delete-prefix lts/fermium
+npm install --global envhandlebars
+npm install --global yarn
+npm install --global pnpm
 '''
 
-echo '''
-#!/bin/bash
-VERSION=`cat /usr/local/nvm/alias/default`
-export PATH="/usr/local/nvm/versions/node/v$VERSION/bin:$PATH"
-''' | sudo tee /etc/profile.d/nvm.sh
+echo '''#!/bin/bash
+VERSION=$(cat /usr/local/nvm/alias/$(cat /usr/local/nvm/alias/default))
+export PATH="/usr/local/nvm/versions/node/$VERSION/bin:$PATH"
+''' | sudo tee -a /etc/profile.d/nvm.sh
 sudo chmod +x /etc/profile.d/nvm.sh
 
 sudo chown -R ${BASE_IMAGE_SSH_USER}:${BASE_IMAGE_SSH_USER} /home/${BASE_IMAGE_SSH_USER}
@@ -93,5 +97,11 @@ export lensVersion="v5.5.1"
 git clone --branch ${lensVersion} https://github.com/lensapp/lens.git
 cd ${INSTALLATION_WORKSPACE}/lens
 
+# Build OpenLens
+make build || true # Do not fail KX.AS.CODE image build on error
+debOpenLensInstaller=$(find ${INSTALLATION_WORKSPACE}/lens/dist -name "OpenLens-*.deb")
+mv ${debOpenLensInstaller} ${INSTALLATION_WORKSPACE}
+
 # Tidy up
+nvm use --delete-prefix lts/gallium
 sudo rm -rf ${INSTALLATION_WORKSPACE}/lens
