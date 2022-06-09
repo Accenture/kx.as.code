@@ -25,7 +25,15 @@ echo "fs.inotify.max_user_watches=524288" | sudo tee -a /etc/sysctl.conf
 
 # Install KX-Portal
 export KX_PORTAL_HOME=${sharedGitHome}/kx.as.code/client
-npm config set fetch-retry-maxtimeout 120000
+
+# Optimize NPM configuration
+npm config set registry http://registry.npmjs.org/
+npm config set loglevel info
+npm config set fetch-retries 3
+npm config set fetch-retry-mintimeout 15000
+npm config set fetch-retry-maxtimeout 90000
+npm config set cache-min 86400
+
 cd ${KX_PORTAL_HOME}
 rc=0
 for i in {1..5}
