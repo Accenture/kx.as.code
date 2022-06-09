@@ -11,7 +11,7 @@ export default function Dashboard() {
 
       {/* Dashboard Components */}
       <div className="grid grid-cols-12 gap-2">
-        <div className="col-span-3 bg-ghBlack rounded h-60 p-6  border-2 border-ghBlack hover:border-gray-700">
+        <div className="col-span-3 bg-ghBlack rounded-lg h-60 p-6  border-2 border-ghBlack hover:border-gray-700">
           <div className="text-[16px] uppercase font-bold text-gray-600">
             Installed Applications
           </div>
@@ -21,7 +21,7 @@ export default function Dashboard() {
           </div>
         </div>
 
-        <div className="col-span-3 bg-ghBlack rounded h-60 p-6  border-2 border-ghBlack hover:border-gray-700">
+        <div className="col-span-3 bg-ghBlack rounded-lg h-60 p-6  border-2 border-ghBlack hover:border-gray-700">
           <div className="text-[16px]  uppercase font-bold text-gray-600">
             Failed Applications
           </div>
@@ -31,7 +31,7 @@ export default function Dashboard() {
           </div>
         </div>
 
-        <div className="col-span-3 bg-ghBlack rounded h-60 p-6  border-2 border-ghBlack hover:border-gray-700">
+        <div className="col-span-3 bg-ghBlack rounded-lg h-60 p-6  border-2 border-ghBlack hover:border-gray-700">
           <div className="text-[16px] uppercase font-bold text-gray-600">
             Pending Applications
           </div>
@@ -41,7 +41,7 @@ export default function Dashboard() {
           </div>
         </div>
 
-        <div className="col-span-3 text-gray-700 bg-inv1 rounded h-60 p-6  border-2 border-dashed border-gray-700 hover:border-gray-600">
+        <div className="col-span-3 text-gray-700 bg-inv1 rounded-lg h-60 p-6  border-2 border-dashed border-gray-700 hover:border-gray-600">
           <div className="flex justify-center mt-16 text-[50px]">
             <AddIcon
               fontSize="inherit"
