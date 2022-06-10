@@ -2,6 +2,8 @@ checkUrlHealth() {
 
   urlToCall=${1}
   expectedHttpResponseCode=${2}
+  curlAuthOption=${3}
+
   export urlStatus="NOK"
 
   for i in {1..20}; do
