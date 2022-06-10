@@ -9,6 +9,7 @@ set -euo pipefail
 /usr/bin/sudo chown -R ${vmUser}:${vmUser} ${installationWorkspace}/kx-portal
 
 nodeAlreadyInstalled=$(which node || true)
+# TODO - in theory not needed anymore, as node backed into base image, but keeping it here for now
 if [[ -z ${nodeAlreadyInstalled} ]]; then
 
   # Download NodeJS
@@ -38,20 +39,28 @@ npm config set fetch-retries 3
 npm config set fetch-retry-mintimeout 1000000
 npm config set fetch-retry-maxtimeout 6000000
 npm config set cache-min 86400
+
+# Cleanup before install
 npm cache clear --force
+sudo rm -rf ${KX_PORTAL_HOME}/node_modules ${KX_PORTAL_HOME}/pnpm-lock.yaml
+
+# Set PNMP configuration
+pnpm config set auto-install-peers true
+pnpm config set strict-peer-dependencies false
 
 cd ${KX_PORTAL_HOME}
 rc=0
-for i in {1..2}
+for i in {1..3}
 do
   log_info "Attempting npm install for KX-Portal - try ${i}"
-  npm install --no-audit --verbose || rc=$? && log_info "Execution of npm install for KX-Portal returned with rc=$rc"
+  pnpm install || rc=$? && log_info "Execution of pnpm install for KX-Portal returned with rc=$rc"
   if [[ ${rc} -eq 0 ]]; then
-    log_info "NPM install succeeded. Continuing"
+    log_info "PNPM install succeeded. Continuing"
     /usr/bin/sudo chown -R ${vmUser}:${vmUser} ${KX_PORTAL_HOME}
     break
   else
-    log_warn "NPM install return with a non zero exit code. Trying again"
+    log_warn "PNPM install returned with a non zero exit code. Trying again"
+    sudo rm -rf ${KX_PORTAL_HOME}/node_modules ${KX_PORTAL_HOME}/pnpm-lock.yaml
     sleep 15
   fi
 done
@@ -98,6 +107,9 @@ else
   /usr/bin/sudo systemctl daemon-reload
   /usr/bin/sudo systemctl restart kx.as.code-portal.service
 fi
+
+# Call running KX-Portal to check status and pre-compile site
+checkUrlHealth "http://localhost:3000" "200"
 
 # Install the desktop shortcut for KX.AS.CODE Portal
 shortcutsDirectory="/home/${vmUser}/Desktop"
