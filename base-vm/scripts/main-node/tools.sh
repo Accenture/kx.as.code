@@ -98,6 +98,7 @@ git clone --branch ${lensVersion} https://github.com/lensapp/lens.git
 cd ${INSTALLATION_WORKSPACE}/lens
 
 # Build OpenLens
+source /etc/profile.d/nvm.sh
 make build || true # Do not fail KX.AS.CODE image build on error
 debOpenLensInstaller=$(find ${INSTALLATION_WORKSPACE}/lens/dist -name "OpenLens-*.deb")
 mv ${debOpenLensInstaller} ${INSTALLATION_WORKSPACE}
