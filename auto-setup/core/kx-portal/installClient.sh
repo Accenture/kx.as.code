@@ -26,8 +26,8 @@ if [[ -z ${nodeAlreadyInstalled} ]]; then
 fi
 
 # Set kernel parameters
-sudo sysctl -w fs.inotify.max_user_watches=524288
-echo "fs.inotify.max_user_watches=524288" | sudo tee -a /etc/sysctl.conf
+/usr/bin/sudo sysctl -w fs.inotify.max_user_watches=524288
+echo "fs.inotify.max_user_watches=524288" | /usr/bin/sudo tee -a /etc/sysctl.conf
 
 # Install KX-Portal
 export KX_PORTAL_HOME=${sharedGitHome}/kx.as.code/client
@@ -42,7 +42,7 @@ npm config set cache-min 86400
 
 # Cleanup before install
 npm cache clear --force
-sudo rm -rf ${KX_PORTAL_HOME}/node_modules ${KX_PORTAL_HOME}/pnpm-lock.yaml
+/usr/bin/sudo rm -rf ${KX_PORTAL_HOME}/node_modules ${KX_PORTAL_HOME}/pnpm-lock.yaml
 
 # Set PNMP configuration
 pnpm config set auto-install-peers true
@@ -60,7 +60,7 @@ do
     break
   else
     log_warn "PNPM install returned with a non zero exit code. Trying again"
-    sudo rm -rf ${KX_PORTAL_HOME}/node_modules ${KX_PORTAL_HOME}/pnpm-lock.yaml
+    /usr/bin/sudo rm -rf ${KX_PORTAL_HOME}/node_modules ${KX_PORTAL_HOME}/pnpm-lock.yaml
     sleep 15
   fi
 done
@@ -76,7 +76,7 @@ export NODE_PORT=3000
 export NPM_CONFIG_PREFIX=${KX_PORTAL_HOME}
 export HOME=${KX_PORTAL_HOME}
 npm run start:prod
-''' | sudo tee ${installationWorkspace}/kx-portal/kxPortalStart.sh
+''' | /usr/bin/sudo tee ${installationWorkspace}/kx-portal/kxPortalStart.sh
 chmod 755 ${installationWorkspace}/kx-portal/kxPortalStart.sh
 
 echo """
@@ -99,7 +99,7 @@ WantedBy=multi-user.target
 """ | /usr/bin/sudo tee /etc/systemd/system/kx.as.code-portal.service
 
 # Enable service
-serviceEnabled=$(sudo systemctl is-enabled kx.as.code-portal.service)
+serviceEnabled=$(/usr/bin/sudo systemctl is-enabled kx.as.code-portal.service)
 if [[ "${serviceEnabled}" == "disabled" ]]; then
   /usr/bin/sudo systemctl enable --now kx.as.code-portal.service
   /usr/bin/sudo systemctl daemon-reload
