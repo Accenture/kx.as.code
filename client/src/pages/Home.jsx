@@ -27,16 +27,16 @@ export default function Home2() {
           <div className="flex items-center">
             <img
               src={kxIconW}
-              height="80px"
-              width="80px"
+              height="70px"
+              width="70px"
               alt="KX AS Code Logo"
             ></img>
             <span className="text-[24px] font-semibold">KX.AS CODE</span>
           </div>
 
           {/* Intro Title */}
-          <div className="text-[38px] font-extrabold leading-tight my-7">
-            <span className="text-kxBlue">Transfer Knowledge as a Code</span> -
+          <div className="text-[42px] font-extrabold leading-tight my-7">
+            <span className="text-kxBlue">Transfer Knowledge as Code</span> -
             All in One VM.
           </div>
 
