@@ -36,7 +36,7 @@ export default function Home2() {
 
           {/* Intro Title */}
           <div className="text-[38px] font-extrabold leading-tight my-7">
-            <span className="text-kxBlue">Transfer Knowledge as a Code</span> -
+            <span className="text-kxBlue">Transfer Knowledge as Code</span> -
             All in One VM.
           </div>
 

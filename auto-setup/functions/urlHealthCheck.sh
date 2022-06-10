@@ -2,7 +2,7 @@ checkUrlHealth() {
 
   urlToCall=${1}
   expectedHttpResponseCode=${2}
-  curlAuthOption=${3}
+  curlAuthOption=${3-} # Optional. Set to empty default value if not set.
 
   export urlStatus="NOK"
 
