@@ -38,28 +38,20 @@ npm config set fetch-retries 3
 npm config set fetch-retry-mintimeout 1000000
 npm config set fetch-retry-maxtimeout 6000000
 npm config set cache-min 86400
-
 npm cache clear --force
-pnpm config set auto-install-peers true
-pnpm config set strict-peer-dependencies false
 
 cd ${KX_PORTAL_HOME}
 rc=0
-for i in {1..1}
+for i in {1..2}
 do
   log_info "Attempting npm install for KX-Portal - try ${i}"
-  #npm install --no-audit --verbose || rc=$? && log_info "Execution of npm install for KX-Portal returned with rc=$rc"
-  pnpm install || rc=$? && log_info "Execution of pnpm install for KX-Portal returned with rc=$rc"
+  npm install --no-audit --verbose || rc=$? && log_info "Execution of npm install for KX-Portal returned with rc=$rc"
   if [[ ${rc} -eq 0 ]]; then
     log_info "NPM install succeeded. Continuing"
     /usr/bin/sudo chown -R ${vmUser}:${vmUser} ${KX_PORTAL_HOME}
     break
   else
     log_warn "NPM install return with a non zero exit code. Trying again"
-    /usr/bin/sudo rm -rf ${KX_PORTAL_HOME}/node_modules
-    /usr/bin/sudo rm -f ${KX_PORTAL_HOME}/package-lock.json
-    /usr/bin/sudo rm -f ${KX_PORTAL_HOME}/pnpm-lock.yaml
-    npm cache clear --force
     sleep 15
   fi
 done
@@ -67,14 +59,14 @@ cd -
 
 # Create KX-Portal start script
 echo '''#!/bin/bash
+source /etc/profile.d/nvm.sh
+nvm use --delete-prefix lts/gallium
 export KX_PORTAL_HOME='${sharedGitHome}'/kx.as.code/client
 cd ${KX_PORTAL_HOME}
 export NODE_PORT=3000
 export NPM_CONFIG_PREFIX=${KX_PORTAL_HOME}
 export HOME=${KX_PORTAL_HOME}
-export NODE_OPTIONS=--openssl-legacy-provider
-export PATH="${PATH}:'${NPM_ROOT}'/node-'${nodejsVersion}'-linux-x64/bin"
-pnpm run start:prod
+npm run start:prod
 ''' | sudo tee ${installationWorkspace}/kx-portal/kxPortalStart.sh
 chmod 755 ${installationWorkspace}/kx-portal/kxPortalStart.sh
 
@@ -100,7 +92,8 @@ WantedBy=multi-user.target
 # Enable service
 serviceEnabled=$(sudo systemctl is-enabled kx.as.code-portal.service)
 if [[ "${serviceEnabled}" == "disabled" ]]; then
-  /usr/bin/sudo systemctl enable servicename --now kx.as.code-portal.service
+  /usr/bin/sudo systemctl enable --now kx.as.code-portal.service
+  /usr/bin/sudo systemctl daemon-reload
 else
   /usr/bin/sudo systemctl daemon-reload
   /usr/bin/sudo systemctl restart kx.as.code-portal.service

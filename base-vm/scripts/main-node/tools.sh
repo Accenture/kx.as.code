@@ -85,6 +85,8 @@ npm install --global pnpm
 echo '''#!/bin/bash
 VERSION=$(cat /usr/local/nvm/alias/$(cat /usr/local/nvm/alias/default))
 export PATH="/usr/local/nvm/versions/node/$VERSION/bin:$PATH"
+export NVM_DIR=/usr/local/nvm
+source /opt/nvm/nvm.sh
 ''' | sudo tee -a /etc/profile.d/nvm.sh
 sudo chmod +x /etc/profile.d/nvm.sh
 
@@ -99,6 +101,7 @@ cd ${INSTALLATION_WORKSPACE}/lens
 
 # Build OpenLens
 source /etc/profile.d/nvm.sh
+nvm use --delete-prefix lts/fermium
 make build || true # Do not fail KX.AS.CODE image build on error
 debOpenLensInstaller=$(find ${INSTALLATION_WORKSPACE}/lens/dist -name "OpenLens-*.deb")
 mv ${debOpenLensInstaller} ${INSTALLATION_WORKSPACE}
