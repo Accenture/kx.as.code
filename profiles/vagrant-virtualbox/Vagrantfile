@@ -44,6 +44,7 @@ NUM_50GB_LOCAL_SIZE=((profile_config_local_volumes['fifty_gb'].to_f * 50) * 1.02
 
 # Calculate disk size needs for requested local volumes configured in profile-config.json
 LOCAL_KUBE_VOLUMES_DISK_SIZE=NUM_1GB_LOCAL_SIZE+NUM_5GB_LOCAL_SIZE+NUM_10GB_LOCAL_SIZE+NUM_30GB_LOCAL_SIZE+NUM_50GB_LOCAL_SIZE+1
+puts "#{NUM_1GB_LOCAL_SIZE}+#{NUM_5GB_LOCAL_SIZE}+#{NUM_10GB_LOCAL_SIZE}+#{NUM_30GB_LOCAL_SIZE}+#{NUM_50GB_LOCAL_SIZE}+1"
 puts "Local Disk Size: #{LOCAL_KUBE_VOLUMES_DISK_SIZE}GB"
 
 # Environment variables will override the profile-config.json file properties. This was added for the Jenkins jobs, so that they can override parameters
@@ -86,14 +87,18 @@ WORKSPACE_HOME ||= :"../.."
 
 if ARGV[0] == "up" && File.exist?("#{WORKSPACE_HOME}/#{KX_MAIN_BOX_LOCATION}")
     KX_MAIN_BOX_URL = "file://#{WORKSPACE_HOME}/#{KX_MAIN_BOX_LOCATION}"
+    puts "Found local box #{KX_MAIN_BOX_LOCATION}, using that instead of cloud"
 else
     KX_MAIN_BOX_URL = "https://app.vagrantup.com/kxascode/boxes/kx-main"
+    puts "Did not find local box #{KX_MAIN_BOX_LOCATION}, downloading box from cloud"
 end
 
 if ARGV[0] == "up" && File.exist?("#{WORKSPACE_HOME}/#{KX_NODE_BOX_LOCATION}")
     KX_NODE_BOX_URL = "file://#{WORKSPACE_HOME}/#{KX_NODE_BOX_LOCATION}"
+    puts "Found local box #{KX_NODE_BOX_LOCATION}, using that instead of cloud"
 else
     KX_NODE_BOX_URL = "https://app.vagrantup.com/kxascode/boxes/kx-node"
+    puts "Did not find local box #{KX_NODE_BOX_LOCATION}, downloading box from cloud"
 end
 
 if (MAIN_NODE_COUNT - 1) < 1

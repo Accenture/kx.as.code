@@ -1,6 +1,9 @@
 #!/bin/bash -x
 set -euo pipefail
 
+# Do not install GlusterFS if standalone mode = true, as in this case, the vagrantfile does not mount the associated hard disk
+if [[ ${standaloneMode} == "false" ]]; then
+
 # Get GlusterFS volume size from profile-config.json
 export glusterFsDiskSize=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.glusterFsDiskSize')
 
@@ -346,3 +349,5 @@ kubectl apply -f ${installationWorkspace}/glusterfs-sc.yaml
 
 # Make gluster-heketi storage class Kubernetes NOT default (switched default to local storage)
 kubectl patch storageclass gluster-heketi-sc -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"false"}}}'
+
+fi

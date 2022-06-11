@@ -12,11 +12,11 @@ export number30gbVolumes=$(cat ${installationWorkspace}/profile-config.json | jq
 export number50gbVolumes=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.local_volumes.fifty_gb')
 
 # Calculate total needed disk size (should match the value the VM was provisioned with, else automatic detection of the correct disk may fail)
-export size1gbVolumes=$(awk "BEGIN{printf \"%.0f\", (($number1gbVolumes * 1)) * 1.04}")
-export size5gbVolumes=$(awk "BEGIN{printf \"%.0f\", (($number5gbVolumes * 5)) * 1.02}")
-export size10gbVolumes=$(awk "BEGIN{printf \"%.0f\", (($number10gbVolumes * 10)) * 1.02}")
-export size30gbVolumes=$(awk "BEGIN{printf \"%.0f\", (($number30gbVolumes * 30)) * 1.02}")
-export size50gbVolumes=$(awk "BEGIN{printf \"%.0f\", (($number50gbVolumes * 50)) * 1.02}")
+export size1gbVolumes=$(roundUp "$(awk "BEGIN{printf \"%.2f\", (($number1gbVolumes * 1)) * 1.04}")")
+export size5gbVolumes=$(roundUp "$(awk "BEGIN{printf \"%.2f\", (($number5gbVolumes * 5)) * 1.02}")")
+export size10gbVolumes=$(roundUp "$(awk "BEGIN{printf \"%.2f\", (($number10gbVolumes * 10)) * 1.02}")")
+export size30gbVolumes=$(roundUp "$(awk "BEGIN{printf \"%.2f\", (($number30gbVolumes * 30)) * 1.02}")")
+export size50gbVolumes=$(roundUp "$(awk "BEGIN{printf \"%.2f\", (($number50gbVolumes * 50)) * 1.02}")")
 export localKubeVolumesDiskSize=$(( ${size1gbVolumes} + ${size5gbVolumes} + ${size10gbVolumes} + ${size30gbVolumes} + ${size50gbVolumes} + 1 ))
 
 # Install NVME CLI if needed, for example, for AWS

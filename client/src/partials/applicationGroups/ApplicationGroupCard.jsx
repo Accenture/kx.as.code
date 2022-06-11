@@ -2,6 +2,7 @@ import React, { useState, useEffect, Component } from "react";
 import { Link } from "react-router-dom";
 import EditMenu from "../EditMenu";
 import { TrashCan32, Restart32 } from "@carbon/icons-react";
+import ApplicationStatusActionButton from "../applications/ApplicationStatusActionButton";
 
 function ApplicationGroupCard(props) {
   const appGroupBreadcrumb = props.appGroup.name
@@ -12,6 +13,7 @@ function ApplicationGroupCard(props) {
     .replaceAll("_", " ");
 
   const [appGroupComponents, setAppGroupComponents] = useState([]);
+  const [isMqConnected, setIsMqConnected] = useState(true);
 
   useEffect(() => {
     console.log("useEffect called.");
@@ -35,71 +37,50 @@ function ApplicationGroupCard(props) {
   };
 
   return (
-    <div className="col-span-full sm:col-span-6 xl:col-span-4 bg-inv2 shadow-lg rounded">
-      <div className="relative h-[330px]">
-        <div className="flex-col justify-between p-6">
+    <div className="col-span-full sm:col-span-6 xl:col-span-3 hover:bg-gray-700 bg-inv3 rounded">
+      <div className="relative">
+        <div className="p-6">
           {/* Header */}
-          <header className="flex justify-between items-start">
-            {/* Category name */}
-            <div className="text-white bg-ghBlack2 rounded p-0 px-1.5">
-              {appGroupCategory}
+          <div className="h-[100px]">
+            <header className="flex justify-between items-start">
+              {/* Category name */}
+              <div className="text-white bg-ghBlack2 rounded p-0 px-1.5">
+                {appGroupCategory}
+              </div>
+            </header>
+
+            <div className="">
+              <Link to={"/application-groups/" + appGroupBreadcrumb}>
+                <h2
+                  className="hover:underline hover:cursor-pointer text-2xl text-white truncate"
+                  alt={props.appGroup.name}
+                >
+                  {props.appGroup.name}
+                </h2>
+              </Link>
             </div>
-
-            {/* Menu button */}
-            <EditMenu className="relative inline-flex">
-              <li>
-                <Link
-                  className="font-medium text-sm text-white hover:text-gray-500 flex py-1 px-3"
-                  to="#0"
-                >
-                  <div className="flex items-start">
-                    <Restart32 className="p-1 flex my-auto" />
-                  </div>
-                  <span className="flex my-auto">Reinstall</span>
-                </Link>
-              </li>
-              <li>
-                <Link
-                  className="font-medium text-sm text-white hover:text-gray-500 flex py-1 px-3"
-                  to="#0"
-                >
-                  <div className="flex items-start">
-                    <Restart32 className="p-1 flex my-auto" />
-                  </div>
-                  <span className="flex my-auto">Reinstall</span>
-                </Link>
-              </li>
-              <li>
-                <Link
-                  className="font-medium text-sm text-red-500 hover:text-red-600 flex py-1 px-3"
-                  to="#0"
-                >
-                  <div className="flex items-start">
-                    <TrashCan32 className="p-1 flex my-auto" />
-                  </div>
-                  <span className="flex my-auto">Uninstall</span>
-                </Link>
-              </li>
-            </EditMenu>
-          </header>
-
-          <div className="">
-            <Link to={"/application-groups/" + appGroupBreadcrumb}>
-              <h2 className="hover:underline hover:cursor-pointer text-2xl text-white">
-                {props.appGroup.name}
-              </h2>
-            </Link>
           </div>
 
           {/* Main Card Content */}
           <div className="mb-4">{props.appGroup.description}</div>
 
-          <div className="float-left">
+          <div className="flex h-[150px]">
             <ul className="float-left">
               {drawApplicationGroupCardComponentsTags(
                 props.appGroup.components
               )}
             </ul>
+          </div>
+          <div className="">
+            <ApplicationStatusActionButton
+              // isMqConnected={props.isMqConnected}
+              isMqConnected={true}
+              getQueueStatusList={() => {}}
+              appName={""}
+              category={""}
+              applicationInstallHandler={() => {}}
+              refreshActionButton={() => {}}
+            />
           </div>
         </div>
 

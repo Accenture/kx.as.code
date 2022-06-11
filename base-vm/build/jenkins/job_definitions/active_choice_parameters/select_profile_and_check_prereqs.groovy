@@ -1,6 +1,6 @@
     import groovy.json.JsonSlurper
     import groovy.json.JsonBuilder
-
+    import static groovy.io.FileType.FILES
     import javax.swing.text.html.HTML
 
     def githubKxVersion
@@ -197,56 +197,93 @@
 
         def vagrantJson = jsonSlurper.parseText('{ "system": { "vagrantVmwarePluginInstalled": "' + vagrantVmwarePluginInstalled + '", "vagrantParallelsPluginInstalled": "' + vagrantParallelsPluginInstalled + '", "parallelsExecutable": "' + parallelsExecutableExists + '", "vboxExecutable": "' + vboxExecutableExists + '", "vmwareExecutable": "' + vmwareExecutableExists + '"}}')
 
-        new File("${currentDir}/jenkins_shared_workspace/kx.as.code/base-vm/boxes/").eachDir { boxDirectories << it.name }
-
-        def boxDirectoryList = []
-        def provider
-        def version
-        boxDirectories.eachWithIndex { boxDirectory, i ->
-
-            boxProvider = boxDirectories[i].substring(0, boxDirectories[i].lastIndexOf("-"))
-            boxVersion = boxDirectories[i].substring(boxDirectories[i].substring(0, boxDirectories[i].lastIndexOf("-")).length() + 1, boxDirectories[i].length())
-
-            new File("${currentDir}/jenkins_shared_workspace/kx.as.code/base-vm/boxes/${boxDirectory}/").eachFile { boxDirectoryList << it.name }
-            boxDirectoryList.eachWithIndex { box, j ->
-                if (box.endsWith('.box')) {
-                    boxName = box.substring(0, box.lastIndexOf("-"))
-                    if (boxName == "kx-main" || boxName == "kx-node") {
-                        boxesList.add('"' + boxName + " " + boxProvider + " " + boxVersion + '"')
-                        if (boxName == "kx-main" && boxProvider == "virtualbox") {
-                            virtualboxLocalVagrantBoxMainExists = "true"
-                            virtualboxLocalVagrantBoxMainVersion = boxVersion
-                        }
-                        if (boxName == "kx-node" && boxProvider == "virtualbox") {
-                            virtualboxLocalVagrantBoxNodeExists = "true"
-                            virtualboxLocalVagrantBoxNodeVersion = boxVersion
-                        }
-                        if (boxName == "kx-main" && boxProvider == "vmware-desktop") {
-                            vmwareLocalVagrantBoxMainExists = "true"
-                            vmwareLocalVagrantBoxMainVersion = boxVersion
-
-                        }
-                        if (boxName == "kx-node" && boxProvider == "vmware-desktop") {
-                            vmwareLocalVagrantBoxNodeExists = "true"
-                            vmwareLocalVagrantBoxNodeVersion = boxVersion
-
-                        }
-                        if (boxName == "kx-main" && boxProvider == "parallels") {
-                            parallelsLocalVagrantBoxMainExists = "true"
-                            parallelsLocalVagrantBoxMainVersion = boxVersion
-
-                        }
-                        if (boxName == "kx-node" && boxProvider == "parallels") {
-                            parallelsLocalVagrantBoxNodeExists = "true"
-                            parallelsLocalVagrantBoxNodeVersion = boxVersion
-                        }
-                    }
-                }
+        def boxParentDir
+        def boxFilename
+        def splitboxVersion
+        def splitboxProvider
+        def splitboxNodeType
+        def concatendatedBoxVar
+        new File("${currentDir}/jenkins_shared_workspace/kx.as.code/base-vm/boxes/").traverse(type: FILES, maxDepth: 1) {
+            if (it.name.endsWith('.box')) {
+                boxParentDir = it.getParentFile().getName()
+                boxFilename = it.name
+                splitboxVersion = boxParentDir.substring(boxParentDir.lastIndexOf("-") + 1, boxParentDir.size())
+                splitboxProvider = boxParentDir.substring(0, boxParentDir.lastIndexOf("-"))
+                splitboxNodeType = boxFilename.substring(0, boxFilename.lastIndexOf("-"))
+                boxDirectories << [splitboxVersion, splitboxProvider, splitboxNodeType]
             }
         }
 
-        def boxesJson = jsonSlurper.parseText('{ "boxes": { "virtualboxLocalVagrantBoxMainExists": "' + virtualboxLocalVagrantBoxMainExists + '", "virtualboxLocalVagrantBoxMainVersion": "' + virtualboxLocalVagrantBoxMainVersion + '", "virtualboxLocalVagrantBoxNodeExists": "' + virtualboxLocalVagrantBoxNodeExists + '", "virtualboxLocalVagrantBoxNodeVersion": "' + virtualboxLocalVagrantBoxNodeVersion + '", "vmwareLocalVagrantBoxMainExists": "' + vmwareLocalVagrantBoxMainExists + '", "vmwareLocalVagrantBoxMainVersion": "' + vmwareLocalVagrantBoxMainVersion + '", "vmwareLocalVagrantBoxNodeExists": "' + vmwareLocalVagrantBoxNodeExists + '", "vmwareLocalVagrantBoxNodeVersion": "' + vmwareLocalVagrantBoxNodeVersion + '", "parallelsLocalVagrantBoxMainExists": "' + parallelsLocalVagrantBoxMainExists + '", "parallelsLocalVagrantBoxMainVersion": "' + parallelsLocalVagrantBoxMainVersion + '", "parallelsLocalVagrantBoxNodeExists": "' + parallelsLocalVagrantBoxNodeExists + '", "parallelsLocalVagrantBoxNodeVersion": "' + parallelsLocalVagrantBoxNodeVersion + '"}}')
+        def filteredVirtualBoxKxNodeList = boxDirectories.findAll {
+            it[1] == "virtualbox" && it[2] == "kx-node"
+        }.sort { a, b -> a[0] <=> b[1] }
 
+        def filteredVirtualBoxKxMainList = boxDirectories.findAll {
+            it[1] == "virtualbox" && it[2] == "kx-main"
+        }.sort { a, b -> a[0] <=> b[1] }
+
+        println "filteredVirtualBoxKxNodeList list: " + filteredVirtualBoxKxNodeList
+        println "filteredVirtualBoxKxMainList list: " + filteredVirtualBoxKxMainList
+
+        if (filteredVirtualBoxKxMainList) {
+            virtualboxLocalVagrantBoxMainVersion = filteredVirtualBoxKxMainList[0][0]
+            virtualboxLocalVagrantBoxMainExists = "true"
+            println "virtualboxLocalVagrantBoxMainVersion: " + virtualboxLocalVagrantBoxMainVersion
+        }
+
+        if (filteredVirtualBoxKxNodeList) {
+            virtualboxLocalVagrantBoxNodeVersion = filteredVirtualBoxKxNodeList[0][0]
+            virtualboxLocalVagrantBoxNodeExists = "true"
+            println "virtualboxLocalVagrantBoxNodeVersion: " + virtualboxLocalVagrantBoxNodeVersion
+        }
+
+        def filteredVmwareDesktopKxNodeList = boxDirectories.findAll {
+            it[1] == "vmware-desktop" && it[2] == "kx-node"
+        }.sort{ a,b -> a[0] <=> b[1] }
+
+        def filteredVmwareDesktopKxMainList = boxDirectories.findAll {
+            it[1] == "vmware-desktop" && it[2] == "kx-main"
+        }.sort{ a,b -> a[0] <=> b[1] }
+
+        println "filteredVmwareDesktopKxNodeList list: " + filteredVmwareDesktopKxNodeList
+        println "filteredVmwareDesktopKxMainList list: " + filteredVmwareDesktopKxMainList
+
+        if (filteredVmwareDesktopKxMainList) {
+            vmwareLocalVagrantBoxMainVersion = filteredVmwareDesktopKxMainList[0][0]
+            vmwareLocalVagrantBoxMainExists = "true"
+            println "vmwareLocalVagrantBoxMainVersion: " + vmwareLocalVagrantBoxMainVersion
+        }
+
+        if (filteredVmwareDesktopKxNodeList) {
+            vmwareLocalVagrantBoxNodeVersion = filteredVmwareDesktopKxNodeList[0][0]
+            vmwareLocalVagrantBoxNodeExists = "true"
+            println "vmwareLocalVagrantBoxNodeVersion: " + vmwareLocalVagrantBoxNodeVersion
+        }
+
+        def filteredParallelsKxNodeList = boxDirectories.findAll {
+            it[1] == "parallels" && it[2] == "kx-node"
+        }.sort{ a,b -> a[0] <=> b[1] }
+
+        def filteredParallelsKxMainList = boxDirectories.findAll {
+            it[1] == "parallels" && it[2] == "kx-main"
+        }.sort{ a,b -> a[0] <=> b[1] }
+
+        println "filteredParallelsKxNodeList list: " + filteredParallelsKxNodeList
+        println "filteredParallelsKxMainList list: " + filteredParallelsKxMainList
+
+        if (filteredParallelsKxMainList) {
+            parallelsLocalVagrantBoxMainVersion = filteredParallelsKxMainList[0][0]
+            parallelsLocalVagrantBoxMainExists = "true"
+            println "parallelsLocalVagrantBoxMainVersion: " + parallelsLocalVagrantBoxMainVersion
+        }
+
+        if (filteredParallelsKxNodeList) {
+            parallelsLocalVagrantBoxNodeVersion = filteredParallelsKxNodeList[0][0]
+            parallelsLocalVagrantBoxNodeExists = "true"
+            println "parallelsLocalVagrantBoxNodeVersion: " + parallelsLocalVagrantBoxNodeVersion
+        }
+
+        def boxesJson = jsonSlurper.parseText('{ "boxes": { "virtualboxLocalVagrantBoxMainExists": "' + virtualboxLocalVagrantBoxMainExists + '", "virtualboxLocalVagrantBoxMainVersion": "' + virtualboxLocalVagrantBoxMainVersion + '", "virtualboxLocalVagrantBoxNodeExists": "' + virtualboxLocalVagrantBoxNodeExists + '", "virtualboxLocalVagrantBoxNodeVersion": "' + virtualboxLocalVagrantBoxNodeVersion + '", "vmwareLocalVagrantBoxMainExists": "' + vmwareLocalVagrantBoxMainExists + '", "vmwareLocalVagrantBoxMainVersion": "' + vmwareLocalVagrantBoxMainVersion + '", "vmwareLocalVagrantBoxNodeExists": "' + vmwareLocalVagrantBoxNodeExists + '", "vmwareLocalVagrantBoxNodeVersion": "' + vmwareLocalVagrantBoxNodeVersion + '", "parallelsLocalVagrantBoxMainExists": "' + parallelsLocalVagrantBoxMainExists + '", "parallelsLocalVagrantBoxMainVersion": "' + parallelsLocalVagrantBoxMainVersion + '", "parallelsLocalVagrantBoxNodeExists": "' + parallelsLocalVagrantBoxNodeExists + '", "parallelsLocalVagrantBoxNodeVersion": "' + parallelsLocalVagrantBoxNodeVersion + '"}}')
         try {
             builder boxesJson
             builder vagrantJson

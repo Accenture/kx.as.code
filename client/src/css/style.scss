@@ -7,7 +7,18 @@
 @import "additional-styles/utility-patterns.scss";
 @import "additional-styles/range-slider.scss";
 @import "additional-styles/toggle-switch.scss";
-@import "additional-styles/flatpickr.scss";
+//@import "additional-styles/flatpickr.scss";
 @import "additional-styles/theme.scss";
 
 @tailwind utilities;
+
+#home-left{
+    background-image: url("../media/svg/cubes.svg");
+    display: block;
+    left: -90px;
+
+    width: 200px;
+    height: 505px;
+    position: absolute;
+    opacity: 0.3;
+}
