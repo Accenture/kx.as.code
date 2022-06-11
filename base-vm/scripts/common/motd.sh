@@ -8,7 +8,7 @@ echo '''
 |_|\_\/_/\_(_)__,_|___(_)___\___/ \__,_|\___|
 
 Welcome to the KX.AS.CODE workstation.
-"PLAY LEARN INNOVATE" is the motto here.
+"PLAY LEARN EXPERIMENT INNOVATE SHARE" is the motto here.
 
 ''' | sudo tee /etc/motd
 
