@@ -63,10 +63,6 @@
             },
             {
                 "install_folder": "core",
-                "name": "kxascode-docs"
-            },
-            {
-                "install_folder": "core",
                 "name": "metrics-server"
             },
             {
