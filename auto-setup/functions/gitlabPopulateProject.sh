@@ -22,7 +22,7 @@ populateGitlabProject() {
   if [[ -n ${itemsToExclude} ]]; then
     for itemToExclude in ${itemsToExclude}
     do
-      find /var/tmp/${gitlabRepoName}/ -name "${itemToExclude}" -exec rm -rf \;
+      /usr/bin/sudo find /var/tmp/${gitlabRepoName}/ -name ${itemToExclude} -exec rm -rf {} +
     done
   fi
 
