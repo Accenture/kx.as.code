@@ -46,6 +46,10 @@ sudo mv mo /usr/local/bin
 chmod 755 /usr/local/bin/mo
 
 if [[ ${COMPUTE_ENGINE_BUILD} == "true"   ]]; then
+  # Install NoMachine
+  wget https://download.nomachine.com/download/7.9/Linux/nomachine_7.9.2_1_amd64.deb
+  sudo apt-get install -y ./nomachine_7.9.2_1_amd64.deb
+  rm -f ./nomachine_7.9.2_1_amd64.deb
   # Ensure NoMachine starts dedicated virtual display if private or public cloud
   sudo sed -E -i 's/#PhysicalDisplays(.*)/PhysicalDisplays 1005/g' /usr/NX/etc/node.cfg
   sudo sed -E -i 's/#DisplayBase(.*)/DisplayBase 1005/g' /usr/NX/etc/server.cfg
