@@ -2,3 +2,20 @@
 gitlab-runner:
   preEntrypointScript: |
       echo -e '    [[runners.kubernetes.volumes.host_path]]\n      name = "docker"\n      mount_path = "/var/run/docker.sock" '>> /home/gitlab-runner/.gitlab-runner/config.toml
+
+# Extended timeouts
+postgresql:
+  livenessProbe:
+    enabled: true
+    initialDelaySeconds: 60
+    periodSeconds: 15
+    timeoutSeconds: 10
+    failureThreshold: 6
+    successThreshold: 1
+  readinessProbe:
+    enabled: true
+    initialDelaySeconds: 60
+    periodSeconds: 15
+    timeoutSeconds: 10
+    failureThreshold: 6
+    successThreshold: 1
