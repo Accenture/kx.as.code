@@ -15,6 +15,7 @@ sudo DEBIAN_FRONTEND=noninteractive apt-get -y install \
     git \
     jq \
     htop \
+    btop \
     sshpass \
     fontconfig \
     fontconfig-config \
