@@ -53,6 +53,9 @@ getNetworkConfiguration
 # Source profile-config.json set for this KX.AS.CODE installation
 getProfileConfiguration
 
+# Switch off GUI if switch set to do so in KX.AS.CODE profile-config.json
+disableLinuxDesktop
+
 # Configure network, as well as Bind9 and HTTP(S) Proxy settings
 configureNetwork
 
