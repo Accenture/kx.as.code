@@ -21,7 +21,7 @@ disableLinuxDesktop() {
     sudo systemctl set-default graphical.target
     ''' | /usr/bin/sudo tee ${installationWorkspace}/reEnableKdeDesktopOnBoot.sh
 
-    /usr/bin/sudo chmod 755 tee ${installationWorkspace}/reEnableKdeDesktopOnBoot.sh
+    /usr/bin/sudo chmod 755 ${installationWorkspace}/reEnableKdeDesktopOnBoot.sh
 
   fi
 }
