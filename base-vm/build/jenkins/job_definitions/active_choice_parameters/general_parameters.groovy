@@ -38,6 +38,7 @@ try {
 def infoTextStandaloneMode = "Determines whether to run with a single main node or with additional worker nodes. This will automatically set KX-Workers to zero, Kx-Main to 1, and ensures \"Allow Workloads on Kubernetes Master\" is set to true"
 def infoTextWorkloadOnMaster = "Determines whether workloads will be permitted on master nodes or not. Only set this to false if you start KX.AS.CODE with worker nodes"
 def standaloneModeExtendedDescription = "If you set standalone mode to true, then the number of main nodes is automatically set to 1, and worked nodes set to 0 and disabled completely. If you have only build the main Vagrant box so far, then standalone mode will be enabled automatically"
+def infoTexDisableDesktop = "Recommended if you are really low on resources. Disabling the KDE Plasma Desktop will save some CPU and memory. You can still start the desktop manually by typing \"<i>startx</i>\" on the command line once KX.AS.CODE is up"
 
 try {
     // language=HTML
@@ -74,8 +75,8 @@ try {
     </div>
 
     <div id="standalone-toggle-div" style="display: none;">
-    <br><br>
-        <h2>Standalone or Cluster Mode</h2>
+        <br>
+        <h2>Additional Toggles</h2>
         <p>
         ${standaloneModeExtendedDescription}
         </p>
@@ -98,8 +99,19 @@ try {
         </div>
     </div>
 
+    <div class="outerWrapper" id="disable-desktop-div" style="display: none">
+        <div class="wrapper">
+            <span class="span-toggle-text">Disable Linux Desktop</span><label for="general-param-disable-desktop-toggle" class="checkbox-switch">
+            <input type="checkbox" onclick="updateCheckbox(this.id); updateConcatenatedGeneralParamsReturnVariable();" id="general-param-disable-desktop-toggle" value="" checked="">
+            <span id="general-param-disable-desktop-toggle-span" class=""></span></label>
+            <span class="tooltip-info"><span class="info-span"><img src="/userContent/icons/information-variant.svg" class="info-icon" alt="info"><span class="tooltiptext">${infoTexDisableDesktop}</span></span></span>
+            <style scoped="scoped" onload="updateCheckbox('general-param-disable-desktop-toggle');">   </style>
+        </div>
+    </div>
+
     <input type="hidden" id="general-param-standalone-mode-toggle-name-value" name="general-param-standalone-mode-toggle-name-value" value="">
     <input type="hidden" id="general-param-workloads-on-master-toggle-name-value" name="general-param-workloads-on-master-toggle-name-value" value="">
+    <input type="hidden" id="general-param-disable-desktop-toggle-name-value" name="general-param-disable-desktop-toggle-name-value" value="">
     <input type="hidden" id="concatenated-general-params" name="value" value="" >
     <style scoped="scoped" onload="updateConcatenatedGeneralParamsReturnVariable();">   </style>
     """

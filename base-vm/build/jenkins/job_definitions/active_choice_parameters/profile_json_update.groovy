@@ -8,6 +8,7 @@ def ENVIRONMENT_PREFIX
 def BASE_PASSWORD
 def STANDALONE_MODE
 def ALLOW_WORKLOADS_ON_KUBERNETES_MASTER
+def DISABLE_LINUX_DESKTOP
 def NUMBER_OF_KX_MAIN_NODES
 def KX_MAIN_ADMIN_CPU_CORES
 def KX_MAIN_ADMIN_MEMORY
@@ -79,6 +80,7 @@ try {
         BASE_PASSWORD = generalParameterElements[3]
         STANDALONE_MODE = generalParameterElements[4]
         ALLOW_WORKLOADS_ON_KUBERNETES_MASTER = generalParameterElements[5]
+        DISABLE_LINUX_DESKTOP = generalParameterElements[6]
     }
 
     if ( KX_MAIN_NODES_CONFIG ) {
@@ -167,6 +169,12 @@ try {
         parsedJson.config.allowWorkloadsOnMaster = ALLOW_WORKLOADS_ON_KUBERNETES_MASTER
     } else {
         ALLOW_WORKLOADS_ON_KUBERNETES_MASTER = parsedJson.config.allowWorkloadsOnMaster
+    }
+
+    if (DISABLE_LINUX_DESKTOP) {
+        parsedJson.config.disableLinuxDesktop = DISABLE_LINUX_DESKTOP
+    } else {
+        DISABLE_LINUX_DESKTOP = parsedJson.config.disableLinuxDesktop
     }
 
     def local_storage_num_one_gb = parsedJson.config.local_volumes.one_gb

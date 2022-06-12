@@ -135,6 +135,7 @@ try {
         BASE_PASSWORD = generalParameterElements[3]
         STANDALONE_MODE = generalParameterElements[4]
         ALLOW_WORKLOADS_ON_KUBERNETES_MASTER = generalParameterElements[5]
+        DISABLE_LINUX_DESKTOP = generalParameterElements[6]
     } else {
         BASE_DOMAIN = parsedJson.config.baseDomain
         ENVIRONMENT_PREFIX = parsedJson.config.environmentPrefix
@@ -142,6 +143,7 @@ try {
         BASE_PASSWORD = parsedJson.config.basePassword
         STANDALONE_MODE = parsedJson.config.standaloneMode
         ALLOW_WORKLOADS_ON_KUBERNETES_MASTER = parsedJson.config.allowWorkloadsOnMaster
+        DISABLE_LINUX_DESKTOP = parsedJson.config.disableLinuxDesktop
     }
 
     if ( KX_MAIN_NODES_CONFIG ) {
@@ -380,6 +382,10 @@ try {
                     <div class="row">
                         <div class="cell cell-label">Allow Workloads on K8s Master</div>
                         <div class="cell cell-value" id="summary-workloads-on-master-value"></div>
+                    </div>
+                    <div class="row">
+                        <div class="cell cell-label">Disable Linux Desktop</div>
+                        <div class="cell cell-value" id="summary-disable-desktop-value"></div>
                     </div>
                 </div>
             </div>

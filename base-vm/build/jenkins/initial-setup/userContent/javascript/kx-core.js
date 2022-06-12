@@ -262,11 +262,12 @@ function updateConcatenatedGeneralParamsReturnVariable() {
 
     let standaloneModeCheckedStatus = document.getElementById("general-param-standalone-mode-toggle").checked
     let workloadsOnMasterCheckedStatus = document.getElementById("general-param-workloads-on-master-toggle").checked
+    let disableLinuxDesktop = document.getElementById("general-param-disable-desktop-toggle").checked
 
     let parentId = document.getElementById("concatenated-general-params").parentNode.id;
     jQuery('#' + parentId).trigger('change');
 
-    document.getElementById("concatenated-general-params").value = baseDomainValue + ";" + teamNameValue + ";" + usernameValue + ";" + passwordValue + ";" + standaloneModeCheckedStatus + ";" + workloadsOnMasterCheckedStatus;
+    document.getElementById("concatenated-general-params").value = baseDomainValue + ";" + teamNameValue + ";" + usernameValue + ";" + passwordValue + ";" + standaloneModeCheckedStatus + ";" + workloadsOnMasterCheckedStatus + ";" + disableLinuxDesktop;
 
     //#TODO - Placeholder to check if issue after commenting out line below
     //change_panel_selection("config-panel-general-params");
@@ -321,12 +322,15 @@ function updateCheckbox(checkboxElementId) {
         document.getElementById('general-param-workloads-on-master-toggle').className = "checkbox-slider-checked-disabled round";
         document.getElementById('general-param-workloads-on-master-toggle-span').className = "checkbox-slider-checked-disabled round";
         document.getElementById('general-param-workloads-on-master-toggle-name-value').value = true;
+        document.getElementById('general-param-disable-desktop-toggle').className = "checkbox-slider round";
+        document.getElementById('general-param-disable-desktop-toggle-span').className = "checkbox-slider round";
     } else if (document.getElementById("system-prerequisites-check").value === "full") {
-
         document.getElementById('general-param-standalone-mode-toggle').className = "checkbox-slider round";
         document.getElementById('general-param-standalone-mode-toggle-span').className = "checkbox-slider round";
         document.getElementById('general-param-workloads-on-master-toggle').className = "checkbox-slider round";
         document.getElementById('general-param-workloads-on-master-toggle-span').className = "checkbox-slider round";
+        document.getElementById('general-param-disable-desktop-toggle').className = "checkbox-slider round";
+        document.getElementById('general-param-disable-desktop-toggle-span').className = "checkbox-slider round";
     }
 
     let parentId = document.getElementById(checkboxElementId + '-name-value').parentNode.id;
@@ -870,6 +874,7 @@ function populateReviewTable() {
     document.getElementById("summary-profile-value").innerText = document.getElementById("profiles").value;
     document.getElementById("summary-standalone-mode-value").innerText = document.getElementById("general-param-standalone-mode-toggle").value;
     document.getElementById("summary-workloads-on-master-value").innerText = document.getElementById("general-param-workloads-on-master-toggle").value;
+    document.getElementById("summary-disable-desktop-value").innerText = document.getElementById("general-param-disable-desktop-toggle").value;
     let numMainNodes = parseInt(document.getElementById("counter_value_main_node_count_value").innerText);
     document.getElementById("summary-main-nodes-number-value").innerText = numMainNodes;
     let numWorkerNodes = parseInt(document.getElementById("counter_value_worker_node_count_value").innerText);
@@ -1209,6 +1214,7 @@ function hideParameterDivs() {
         "main-memory-div",
         "general-parameters-div",
         "workloads-on-master-div",
+        "disable-desktop-div",
         "main-cpu-count-div",
         "worker-memory-div",
         "network-storage-div",
@@ -1288,6 +1294,7 @@ function change_panel_selection(config_panel) {
                     moveDivToConfigPanel("general-parameters-div");
                     moveDivToConfigPanel("standalone-toggle-div");
                     moveDivToConfigPanel("workloads-on-master-div");
+                    moveDivToConfigPanel("disable-desktop-div");
                     updateNavigationFooter("config-panel-profile-selection", "config-panel-kx-main-config");
                     break;
                 case "config-panel-kx-main-config":
