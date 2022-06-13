@@ -67,9 +67,9 @@ try {
                 <div class="tooltip-info"><span class="info-span"><img src="/userContent/icons/information-variant.svg" class="info-icon" alt="info"><span class="tooltiptext">${infoTextEnvironmentPrefix}</span></span></div>
                 <br><a onClick="generateTeamName();" style="cursor: pointer; cursor: hand; color: var(--kx-material-primary-70);"><img src="/userContent/icons/refresh.svg" class="info-icon svg-blue" alt="info">Generate Team Name</a>
             </span>
-            <span class="input-box-span">
+            <span class="input-box-span" style="vertical-align: middle;">
                 <label for="general-param-password" class="input-box-label">Password</label>
-                <input class="input-box" id="general-param-password" type="password" placeholder="${config_basePassword}" value="${config_basePassword}" onchange="updateConcatenatedGeneralParamsReturnVariable();">
+                <span><input class="input-box password-input-box" id="general-param-password" type="password" placeholder="${config_basePassword}" value="${config_basePassword}" onchange="updateConcatenatedGeneralParamsReturnVariable();"></span><span class="password-show-hide-icon" onclick="showHidePassword()"><img id="general-param-password-svg" src="/userContent/icons/eye-outline.svg" class="svg-blue password-show-hide-icon-svg"></span>
                 <div class="tooltip-info"><span class="info-span"><img src="/userContent/icons/information-variant.svg" class="info-icon" alt="info"><span class="tooltiptext">${infoTextBasePassword}</span></span></div>
                 <br><a onClick="generatePassword();" style="cursor: pointer; cursor: hand; color: var(--kx-material-primary-70);"><img src="/userContent/icons/refresh.svg" class="info-icon svg-blue" alt="info">Generate Password</a>
             </span>

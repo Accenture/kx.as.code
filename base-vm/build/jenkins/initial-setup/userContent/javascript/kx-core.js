@@ -1806,3 +1806,54 @@ function generatePassword() {
     console.log(generatedPassword);
     document.getElementById("general-param-password").value = generatedPassword;
 }
+
+function updateStartModeSelection(elementId) {
+    console.log(elementId);
+    if ( elementId === "normal" ) {
+        console.log("selected normal");
+        document.getElementById("selection-normal-label").className = "selection-label selection-label-selected";
+        document.getElementById("selection-normal-radio").className = "selection-radio selection-radio-selected";
+        document.getElementById("selection-lite-label").className = "selection-label selection-label-unselected";
+        document.getElementById("selection-lite-radio").className = "selection-radio selection-radio-unselected";
+        document.getElementById("selection-minimal-label").className = "selection-label selection-label-unselected";
+        document.getElementById("selection-minimal-radio").className = "selection-radio selection-radio-unselected";
+        document.getElementById("selection-normal-svg").src = "/userContent/icons/radiobox-marked.svg";
+        document.getElementById("selection-lite-svg").src = "/userContent/icons/radiobox-blank.svg";
+        document.getElementById("selection-minimal-svg").src = "/userContent/icons/radiobox-blank.svg";
+    } else if ( elementId === "lite" ) {
+        console.log("selected lite");
+        document.getElementById("selection-normal-label").className = "selection-label selection-label-unselected";
+        document.getElementById("selection-normal-radio").className = "selection-radio selection-radio-unselected";
+        document.getElementById("selection-lite-label").className = "selection-label selection-label-selected";
+        document.getElementById("selection-lite-radio").className = "selection-radio selection-radio-selected";
+        document.getElementById("selection-minimal-label").className = "selection-label selection-label-unselected";
+        document.getElementById("selection-minimal-radio").className = "selection-radio selection-radio-unselected";
+        document.getElementById("selection-normal-svg").src = "/userContent/icons/radiobox-blank.svg";
+        document.getElementById("selection-lite-svg").src = "/userContent/icons/radiobox-marked.svg";
+        document.getElementById("selection-minimal-svg").src = "/userContent/icons/radiobox-blank.svg";
+    } else if ( elementId === "minimal" ) {
+        console.log("selected minimal");
+        document.getElementById("selection-normal-label").className = "selection-label selection-label-unselected";
+        document.getElementById("selection-normal-radio").className = "selection-radio selection-radio-unselected";
+        document.getElementById("selection-lite-label").className = "selection-label selection-label-unselected";
+        document.getElementById("selection-lite-radio").className = "selection-radio selection-radio-unselected";
+        document.getElementById("selection-minimal-label").className = "selection-label selection-label-selected";
+        document.getElementById("selection-minimal-radio").className = "selection-radio selection-radio-selected";
+        document.getElementById("selection-normal-svg").src = "/userContent/icons/radiobox-blank.svg";
+        document.getElementById("selection-lite-svg").src = "/userContent/icons/radiobox-blank.svg";
+        document.getElementById("selection-minimal-svg").src = "/userContent/icons/radiobox-marked.svg";
+    }
+}
+
+function showHidePassword() {
+
+    let currentPasswordInputBoxType = document.getElementById("general-param-password").type;
+    if (currentPasswordInputBoxType === "password") {
+        document.getElementById("general-param-password").type = "text";
+        document.getElementById("general-param-password-svg").src = "/userContent/icons/eye-off-outline.svg";
+    } else {
+        document.getElementById("general-param-password").type = "password";
+        document.getElementById("general-param-password-svg").src = "/userContent/icons/eye-outline.svg";
+    }
+
+}
