@@ -9,8 +9,8 @@ app.use(bodyParser.json());
 
 const PORT = process.env.PORT || 5001;
 const dataPath = "../src/data/combined-metadata-files.json";
-const rabbitMqUsername = "guest";
-const rabbitMqPassword = "guest";
+const rabbitMqUsername = "test";
+const rabbitMqPassword = "test";
 const rabbitMqHost = "127.0.0.1";
 
 app.route("/api/add/application/:queue_name").post((req, res) => {
