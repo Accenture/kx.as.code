@@ -1778,3 +1778,31 @@ function calculateHeatmapScalePosition() {
     document.getElementById("current-resource-settings-span").style.left = ( heatmapScalePosition - 94 ) + "px";
 
 }
+
+function generateTeamName() {
+    const xhr = new XMLHttpRequest(),
+        method = "GET",
+        url = "/userContent/data/environment_prefix_names";
+    xhr.open(method, url, true);
+    xhr.onreadystatechange = function () {
+        // In local files, status is 0 upon success in Mozilla Firefox
+        if (xhr.readyState === XMLHttpRequest.DONE) {
+            let status = xhr.status;
+            if (status === 0 || (status >= 200 && status < 400)) {
+                // The request has been completed successfully
+                let teamNames = xhr.responseText.split(/\r?\n/);
+                let teamName = teamNames[Math.floor(Math.random()*teamNames.length)];
+                document.getElementById("general-param-team-name").value = teamName;
+            } else {
+                // Oh no! There has been an error with the request!
+            }
+        }
+    };
+    xhr.send();
+}
+
+function generatePassword() {
+    let generatedPassword = Math.random().toString(36).slice(-8);
+    console.log(generatedPassword);
+    document.getElementById("general-param-password").value = generatedPassword;
+}

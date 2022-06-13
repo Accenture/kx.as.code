@@ -65,11 +65,13 @@ try {
                 <label for="general-param-team-name" class="input-box-label">Team Name</label>
                 <input class="input-box" id="general-param-team-name" type="text" placeholder="${config_environmentPrefix}" value="${config_environmentPrefix}" onchange="updateConcatenatedGeneralParamsReturnVariable();">
                 <div class="tooltip-info"><span class="info-span"><img src="/userContent/icons/information-variant.svg" class="info-icon" alt="info"><span class="tooltiptext">${infoTextEnvironmentPrefix}</span></span></div>
+                <br><a onClick="generateTeamName();" style="cursor: pointer; cursor: hand; color: var(--kx-material-primary-70);"><img src="/userContent/icons/refresh.svg" class="info-icon svg-blue" alt="info">Generate Team Name</a>
             </span>
             <span class="input-box-span">
                 <label for="general-param-password" class="input-box-label">Password</label>
                 <input class="input-box" id="general-param-password" type="password" placeholder="${config_basePassword}" value="${config_basePassword}" onchange="updateConcatenatedGeneralParamsReturnVariable();">
                 <div class="tooltip-info"><span class="info-span"><img src="/userContent/icons/information-variant.svg" class="info-icon" alt="info"><span class="tooltiptext">${infoTextBasePassword}</span></span></div>
+                <br><a onClick="generatePassword();" style="cursor: pointer; cursor: hand; color: var(--kx-material-primary-70);"><img src="/userContent/icons/refresh.svg" class="info-icon svg-blue" alt="info">Generate Password</a>
             </span>
         </div>
     </div>
