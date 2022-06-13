@@ -75,6 +75,7 @@ BACKSPACE="guess"'
 
 # Add load of global variables to bashrc and zshrc
 echo -e "\nsource /etc/environment" | sudo tee -a /home/${VM_USER}/.bashrc /home/${VM_USER}/.zshrc /root/.bashrc /root/.zshrc
+echo -e "\nsource /etc/profile.d/nvm.sh" | sudo tee -a /home/${VM_USER}/.bashrc /home/${VM_USER}/.zshrc /root/.bashrc /root/.zshrc
 
 # Hide Vagrant user from Login screen
 echo '''[Autologin]
@@ -97,3 +98,5 @@ HideUsers=vagrant
 ''' | sudo tee /etc/sddm.conf
 
 
+echo "typeset -g POWERLEVEL9K_INSTANT_PROMPT=quiet" | sudo tee -a /home/${VM_USER}/.bashrc /home/${VM_USER}/.zshrc /root/.bashrc /root/.zshrc
+echo "cat /etc/motd" | sudo tee -a /home/${VM_USER}/.bashrc /home/${VM_USER}/.zshrc /root/.bashrc /root/.zshrc

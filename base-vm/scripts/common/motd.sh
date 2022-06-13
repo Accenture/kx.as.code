@@ -1,11 +1,16 @@
 #!/bin/bash -x
 set -euo pipefail
 
-sudo bash -c 'cat << EOF > /etc/motd
+echo '''
+| | ____  __  __ _ ___   ___ ___   __| | ___
+| |/ /\ \/ / / _` / __| / __/ _ \ / _` |/ _ \
+|   <  >  < | (_| \__ \| (_| (_) | (_| |  __/
+|_|\_\/_/\_(_)__,_|___(_)___\___/ \__,_|\___|
+
 Welcome to the KX.AS.CODE workstation.
 "PLAY LEARN INNOVATE" is the motto here.
 
-EOF'
+''' | sudo tee /etc/motd
 
 KUBE_VERSION=$(echo "${KUBE_VERSION}" | cut -d'-' -f1)
 TIMESTAMP=$(date +"%d-%m-%y %T")

@@ -2,6 +2,7 @@ getProfileConfiguration() {
 
   # Get configs from profile-config.json
   export virtualizationType=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.virtualizationType')
+  export standaloneMode=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.standaloneMode')
   export baseIpType=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.baseIpType')
   export dnsResolution=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.dnsResolution')
 

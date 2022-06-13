@@ -44,6 +44,7 @@ NUM_50GB_LOCAL_SIZE=((profile_config_local_volumes['fifty_gb'].to_f * 50) * 1.02
 
 # Calculate disk size needs for requested local volumes configured in profile-config.json
 LOCAL_KUBE_VOLUMES_DISK_SIZE=NUM_1GB_LOCAL_SIZE+NUM_5GB_LOCAL_SIZE+NUM_10GB_LOCAL_SIZE+NUM_30GB_LOCAL_SIZE+NUM_50GB_LOCAL_SIZE+1
+puts "#{NUM_1GB_LOCAL_SIZE}+#{NUM_5GB_LOCAL_SIZE}+#{NUM_10GB_LOCAL_SIZE}+#{NUM_30GB_LOCAL_SIZE}+#{NUM_50GB_LOCAL_SIZE}+1"
 puts "Local Disk Size: #{LOCAL_KUBE_VOLUMES_DISK_SIZE}GB"
 
 # Environment variables will override the profile-config.json file properties. This was added for the Jenkins jobs, so that they can override parameters
@@ -86,14 +87,18 @@ WORKSPACE_HOME ||= :"../.."
 
 if ARGV[0] == "up" && File.exist?("#{WORKSPACE_HOME}/#{KX_MAIN_BOX_LOCATION}")
     KX_MAIN_BOX_URL = "file://#{WORKSPACE_HOME}/#{KX_MAIN_BOX_LOCATION}"
+    puts "Found local box #{KX_MAIN_BOX_LOCATION}, using that instead of cloud"
 else
     KX_MAIN_BOX_URL = "https://app.vagrantup.com/kxascode/boxes/kx-main"
+    puts "Did not find local box #{KX_MAIN_BOX_LOCATION}, downloading box from cloud"
 end
 
 if ARGV[0] == "up" && File.exist?("#{WORKSPACE_HOME}/#{KX_NODE_BOX_LOCATION}")
     KX_NODE_BOX_URL = "file://#{WORKSPACE_HOME}/#{KX_NODE_BOX_LOCATION}"
+    puts "Found local box #{KX_NODE_BOX_LOCATION}, using that instead of cloud"
 else
     KX_NODE_BOX_URL = "https://app.vagrantup.com/kxascode/boxes/kx-node"
+    puts "Did not find local box #{KX_NODE_BOX_LOCATION}, downloading box from cloud"
 end
 
 if (MAIN_NODE_COUNT - 1) < 1
@@ -124,8 +129,9 @@ Vagrant.configure("2") do |config|
     subconfig.vm.network :forwarded_port, guest: 22, host: 2222, id: "ssh", disabled: true
     subconfig.vm.network :forwarded_port, guest: 22, host: 2230, id: "ssh-kx-main", auto_correct: true
     subconfig.vm.network :forwarded_port, guest_ip: "#{NAT_MAIN_GUEST_IP_ADDRESS}", guest: 5672, host_ip: "127.0.0.1", host: 5672, id: "rabbitmq"
-    subconfig.vm.network :forwarded_port, guest_ip: "#{NAT_MAIN_GUEST_IP_ADDRESS}", guest: 3000, host_ip: "127.0.0.1", host: 3000, id: "kx-portal", auto_correct: true
-    subconfig.vm.network :forwarded_port, guest_ip: "#{NAT_MAIN_GUEST_IP_ADDRESS}", guest: 5001, host_ip: "127.0.0.1", host: 5001, id: "kx-portal-backend"
+    subconfig.vm.network :forwarded_port, guest_ip: "#{NAT_MAIN_GUEST_IP_ADDRESS}", guest: 15672, host_ip: "127.0.0.1", host: 15672, id: "rabbitmq-api"
+    #subconfig.vm.network :forwarded_port, guest_ip: "#{NAT_MAIN_GUEST_IP_ADDRESS}", guest: 3000, host_ip: "127.0.0.1", host: 3000, id: "kx-portal", auto_correct: true
+    #subconfig.vm.network :forwarded_port, guest_ip: "#{NAT_MAIN_GUEST_IP_ADDRESS}", guest: 5001, host_ip: "127.0.0.1", host: 5001, id: "kx-portal-backend"
     subconfig.vm.network :forwarded_port, guest_ip: "#{NAT_MAIN_GUEST_IP_ADDRESS}", guest: 443, host_ip: "127.0.0.1", host: 443, id: "k8s-ingress", auto_correct: true
     subconfig.vm.box_url = "#{KX_MAIN_BOX_URL}"
     subconfig.vm.provision "shell", inline: "hostname -I | awk {'print $1'} | tr -d ' \\t\\n\\r' | sudo tee /vagrant/kx.as.code_main-ip-address"
