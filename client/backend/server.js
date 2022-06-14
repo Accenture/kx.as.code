@@ -179,13 +179,7 @@ app.get("/api/applications/:app_name", (req, res) => {
 
 app.route("/api/consume/:queue_name").get((req, res) => {
   connection = amqp.connect(
-    "amqp://" +
-      rabbitMqUsername +
-      ":" +
-      rabbitMqPassword +
-      rabbitMqUsername +
-      "@" +
-      rabbitMqHost
+    "amqp://" + rabbitMqUsername + ":" + rabbitMqPassword + "@" + rabbitMqHost
   );
 
   connection.then(async (conn) => {

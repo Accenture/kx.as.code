@@ -63,7 +63,7 @@ export default function KXASCodeNotifications() {
       .then(() => {
         // setQueueData(queueData);
         // console.log("queue data messages: ", queueData);
-        // notify(JSON.parse(queueData[0].payload).message);
+        notify(JSON.parse(queueData[0].payload).message);
       })
       .then(() => {});
   };

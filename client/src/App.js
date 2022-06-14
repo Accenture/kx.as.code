@@ -22,7 +22,6 @@ import "react-toastify/dist/ReactToastify.css";
 import KXASCodeNotifications from "./partials/applications/KXASCodeNotifications";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 
-
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -34,7 +33,6 @@ function App() {
     },
   });
 
-
   useEffect(() => {
     document.querySelector("html").style.scrollBehavior = "auto";
     window.scroll({ top: 0 });
@@ -44,55 +42,54 @@ function App() {
 
   return (
     <>
-        <ThemeProvider theme={darkTheme}>
+      <ThemeProvider theme={darkTheme}>
+        <KXASCodeNotifications />
+        <div className="flex h-screen overflow-hidden bg-inv1 text-white text-sm">
+          {/* Sidebar */}
+          <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
 
-      {/* <KXASCodeNotifications /> */}
-      <div className="flex h-screen overflow-hidden bg-inv1 text-white text-sm">
-        {/* Sidebar */}
-        <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+          {/* Content area */}
+          <div className="relative flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
+            {/*  Site header */}
+            <Header sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+            <ToastContainer
+              position="bottom-right"
+              autoClose={5000}
+              hideProgressBar={false}
+              newestOnTop={false}
+              closeOnClick
+              rtl={false}
+              pauseOnFocusLoss
+              draggable
+              pauseOnHover
+            />
+            <main className="pb-20">
+              <BasicBreadcrumbs />
+              <Switch>
+                <Route exact path="/" component={Home2} />
+                <Route exact path="/dashboard">
+                  <Dashboard />
+                </Route>
+                <Route exact path="/apps">
+                  <Applications />
+                </Route>
+                <Route exact path="/application-groups">
+                  <ApplicationGroups />
+                </Route>
 
-        {/* Content area */}
-        <div className="relative flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
-          {/*  Site header */}
-          <Header sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
-          <ToastContainer
-            position="bottom-right"
-            autoClose={5000}
-            hideProgressBar={false}
-            newestOnTop={false}
-            closeOnClick
-            rtl={false}
-            pauseOnFocusLoss
-            draggable
-            pauseOnHover
-          />
-          <main className="pb-20">
-            <BasicBreadcrumbs />
-            <Switch>
-              <Route exact path="/" component={Home2} />
-              <Route exact path="/dashboard">
-                <Dashboard />
-              </Route>
-              <Route exact path="/apps">
-                <Applications />
-              </Route>
-              <Route exact path="/application-groups">
-                <ApplicationGroups />
-              </Route>
-              
-              <Route
-                exact
-                path="/settings"
-                render={(props) => <Settings {...props} />}
-              />
-              <Route
-                path="/apps/:app"
-                render={(props) => <AppDetails {...props} />}
-              />
-            </Switch>
-          </main>
+                <Route
+                  exact
+                  path="/settings"
+                  render={(props) => <Settings {...props} />}
+                />
+                <Route
+                  path="/apps/:app"
+                  render={(props) => <AppDetails {...props} />}
+                />
+              </Switch>
+            </main>
+          </div>
         </div>
-      </div>
       </ThemeProvider>
     </>
   );
