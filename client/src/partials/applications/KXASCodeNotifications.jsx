@@ -33,6 +33,7 @@ export default function KXASCodeNotifications() {
       return axios
         .get("http://localhost:5001/api/queues/" + queue)
         .then((response) => {
+          setQueueData(queueData);
           // console.log(
           //   "payload debug: ",
           //   JSON.parse(response.data[0].payload).message
@@ -61,9 +62,10 @@ export default function KXASCodeNotifications() {
 
     Promise.all(requests)
       .then(() => {
-        // setQueueData(queueData);
         // console.log("queue data messages: ", queueData);
-        notify(JSON.parse(queueData[0].payload).message);
+        if (queueData.length >= 1) {
+          notify(JSON.parse(queueData[0].payload).message);
+        }
       })
       .then(() => {});
   };

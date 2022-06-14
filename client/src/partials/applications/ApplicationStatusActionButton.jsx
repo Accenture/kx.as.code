@@ -7,9 +7,14 @@ import { AiOutlineWarning } from "react-icons/ai";
 import { useState, useEffect } from "react";
 
 export default function ApplicationStatusActionButton(props) {
+  useEffect(() => {
+    console.log("list-actionbutton: ", props.getQueueStatusList("jira"));
+    return () => {};
+  }, []);
+
   const getActionButton = () => {
     if (props.isMqConnected) {
-      if (false) {
+      if (true) {
         return (
           <button
             className="bg-gray-600 p-2 px-5 rounded items-center flex"
