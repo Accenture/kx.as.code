@@ -41,7 +41,7 @@ autoSetupHelmInstall() {
   # Check if Helm chart version is specified, and if so, check if it is valid
   helmVersion=$(echo ${helm_params} | jq -r '.helm_version')
   if [[ -n ${helmVersion} ]] && [[ ${helmVersion} != "null" ]]; then
-    if [[ -n $(helm search repo ${helmRepositoryName} -o json | jq -r '.[] | select(.version=="'${helmVersion}'")') ]]; then
+    if [[ -n $(helm search repo -l ${helmRepositoryName} -o json | jq -r '.[] | select(.version=="'${helmVersion}'")') ]]; then
       log_info "Specified Helm version ${helmVersion} exists in repository ${helmRepositoryName}. All good. Continuing to install this version"
       helmVersionOption="--version ${helmVersion}"
     else

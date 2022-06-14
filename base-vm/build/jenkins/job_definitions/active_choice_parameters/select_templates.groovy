@@ -20,6 +20,7 @@ def template_id
 def template_name
 def template_description
 def template_path
+def selectedTemplates
 def profileParentPath = ""
 def template_paths = []
 def existingTemplatesInSelectedProfile = ""
@@ -27,8 +28,13 @@ def profile_template_paths = []
 def extendedDescription = "Here you can select an application group from a list of available templates. An application group is a set of applications that are commonly deployed together, and in many cases they will also be integrated within KX.AS.CODE."
 
 try {
+
     //File profilePath = new File("C:/Git/kx.as.code_test/base-vm/build/jenkins/jenkins_shared_workspace/kx.as.code/profiles/vagrant-virtualbox/profile-config.json")
-    File profilePath = new File(PROFILE)
+    File profilePath = new File(PROFILE.split(";")[0])
+    parsedJson = new JsonSlurper().parse(profilePath)
+    selectedTemplates = parsedJson.config.selectedTemplates
+    println("Received selectedTemplates from profile JSON: ${selectedTemplates}")
+
     profileParentPath = profilePath.getParentFile().toString()
     new File(profileParentPath).eachFileMatch(~/^aq.*.json$/) { profile_template_paths << it.path }
 
@@ -113,7 +119,7 @@ try {
         </div>
     </div>
     </body>
-    <input type="hidden" id="concatenated-templates-list" name="value" value="" >
+    <input type="hidden" id="concatenated-templates-list" name="value" value="${selectedTemplates}" >
     <input type="hidden" id="profile-template-paths" value='${existingTemplatesInSelectedProfile}' >
     <input type="hidden" id="template-definitions-array" value='${templateDefinitionsArray}' >
     <input type="hidden" id="template-components-array" value='${templateComponentsArray}' >

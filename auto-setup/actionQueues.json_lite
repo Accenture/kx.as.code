@@ -15,6 +15,10 @@
             },
             {
                 "install_folder": "core",
+                "name": "openldap"
+            },
+            {
+                "install_folder": "core",
                 "name": "kubernetes-tools"
             },
             {
@@ -44,7 +48,15 @@
             {
                 "install_folder": "core",
                 "name": "docker-registry"
-            }
+            },
+            {
+                "install_folder": "core",
+                "name": "metrics-server"
+            },
+            {
+                "install_folder": "core",
+                "name": "keycloak"
+            },
         ],
         "uninstall": [],
         "purge": [],

@@ -127,7 +127,7 @@ async function triggerBuild(nodeType) {
     formData.append('kx_domain', document.getElementById('general-param-base-domain').value);
     formData.append('kx_main_hostname', nodeType);
     formData.append('profile', document.getElementById('profiles').value);
-    formData.append('profile_path', document.getElementById('selected-profile-path').value);
+    formData.append('profile_path', getProfilePath());
     formData.append('node_type', nodeType);
 
     const config = {
@@ -160,10 +160,11 @@ function update_selected_value() {
     let selectedOptionNumber = document.getElementById("profiles").selectedIndex;
     let profilePaths = getProfilePaths().split(',');
     let profilePath = profilePaths[selectedOptionNumber] + '/profile-config.json'
-
-    document.getElementById("selected-profile-path").value = profilePath;
-    document.getElementById("selected-profile-path").setAttribute("selected-profile-path", profilePath);
-    let parentId = document.getElementById("selected-profile-path").parentNode.id;
+    let startMode = document.getElementsByClassName("selection-radio-selected")[0].id.split("-")[1]
+    let concatenatedProfileSelection = profilePath + ";" + startMode;
+    document.getElementById("concatenated-profile-selection").value = concatenatedProfileSelection;
+    document.getElementById("concatenated-profile-selection").setAttribute("concatenated-profile-selection", concatenatedProfileSelection);
+    let parentId = document.getElementById("concatenated-profile-selection").parentNode.id;
 
     jQuery('#' + parentId).trigger('change');
 }
@@ -262,11 +263,12 @@ function updateConcatenatedGeneralParamsReturnVariable() {
 
     let standaloneModeCheckedStatus = document.getElementById("general-param-standalone-mode-toggle").checked
     let workloadsOnMasterCheckedStatus = document.getElementById("general-param-workloads-on-master-toggle").checked
+    let disableLinuxDesktop = document.getElementById("general-param-disable-desktop-toggle").checked
 
     let parentId = document.getElementById("concatenated-general-params").parentNode.id;
     jQuery('#' + parentId).trigger('change');
 
-    document.getElementById("concatenated-general-params").value = baseDomainValue + ";" + teamNameValue + ";" + usernameValue + ";" + passwordValue + ";" + standaloneModeCheckedStatus + ";" + workloadsOnMasterCheckedStatus;
+    document.getElementById("concatenated-general-params").value = baseDomainValue + ";" + teamNameValue + ";" + usernameValue + ";" + passwordValue + ";" + standaloneModeCheckedStatus + ";" + workloadsOnMasterCheckedStatus + ";" + disableLinuxDesktop;
 
     //#TODO - Placeholder to check if issue after commenting out line below
     //change_panel_selection("config-panel-general-params");
@@ -321,12 +323,15 @@ function updateCheckbox(checkboxElementId) {
         document.getElementById('general-param-workloads-on-master-toggle').className = "checkbox-slider-checked-disabled round";
         document.getElementById('general-param-workloads-on-master-toggle-span').className = "checkbox-slider-checked-disabled round";
         document.getElementById('general-param-workloads-on-master-toggle-name-value').value = true;
+        document.getElementById('general-param-disable-desktop-toggle').className = "checkbox-slider round";
+        document.getElementById('general-param-disable-desktop-toggle-span').className = "checkbox-slider round";
     } else if (document.getElementById("system-prerequisites-check").value === "full") {
-
         document.getElementById('general-param-standalone-mode-toggle').className = "checkbox-slider round";
         document.getElementById('general-param-standalone-mode-toggle-span').className = "checkbox-slider round";
         document.getElementById('general-param-workloads-on-master-toggle').className = "checkbox-slider round";
         document.getElementById('general-param-workloads-on-master-toggle-span').className = "checkbox-slider round";
+        document.getElementById('general-param-disable-desktop-toggle').className = "checkbox-slider round";
+        document.getElementById('general-param-disable-desktop-toggle-span').className = "checkbox-slider round";
     }
 
     let parentId = document.getElementById(checkboxElementId + '-name-value').parentNode.id;
@@ -868,8 +873,10 @@ getAllJenkinsBuilds().catch(error => {
 function populateReviewTable() {
 
     document.getElementById("summary-profile-value").innerText = document.getElementById("profiles").value;
+    document.getElementById("summary-start-mode-value").innerText = document.getElementById('concatenated-profile-selection').value.split(';')[1];
     document.getElementById("summary-standalone-mode-value").innerText = document.getElementById("general-param-standalone-mode-toggle").value;
     document.getElementById("summary-workloads-on-master-value").innerText = document.getElementById("general-param-workloads-on-master-toggle").value;
+    document.getElementById("summary-disable-desktop-value").innerText = document.getElementById("general-param-disable-desktop-toggle").value;
     let numMainNodes = parseInt(document.getElementById("counter_value_main_node_count_value").innerText);
     document.getElementById("summary-main-nodes-number-value").innerText = numMainNodes;
     let numWorkerNodes = parseInt(document.getElementById("counter_value_worker_node_count_value").innerText);
@@ -914,7 +921,7 @@ async function performRuntimeAction(vagrantAction) {
     formData.append('num_kx_worker_nodes', document.getElementById('counter_value_worker_node_count_value').innerText);
     formData.append('dockerhub_email', '');
     formData.append('profile', document.getElementById('profiles').value);
-    formData.append('profile_path', document.getElementById('selected-profile-path').value);
+    formData.append('profile_path', getProfilePath());
     formData.append('vagrant_action', vagrantAction);
     const config = {
         method: 'POST',
@@ -1088,6 +1095,7 @@ function remove_selected_template_list_item(selectedTemplate) {
 }
 
 function populate_template_option_list(selectedTemplate) {
+    console.log("populate_template_option_list(" + selectedTemplate + ")");
     let templateNameOptionDisplayText;
     let templateNameOption;
     let selectedIndex = 0;
@@ -1140,21 +1148,31 @@ function populate_template_option_list(selectedTemplate) {
 
 function selectTemplatesAlreadyExistingInProfile(existingTemplates) {
     templateRows = existingTemplates.split(",");
+    console.log("selectTemplatesAlreadyExistingInProfile(" + existingTemplates + ")");
+    console.log("templateRows: " + templateRows);
+    document.getElementById("selected-components-list").innerText = ""
     for (let template of templateRows) {
         let selectedTemplate = template;
+        console.log("addTemplateToProfile(" + selectedTemplate + ")");
         addTemplateToProfile(selectedTemplate);
     }
 }
 
 function addTemplateToProfile(selectedTemplate) {
+    console.log("Function called by --> " + addTemplateToProfile.caller.name);
     if ( ! selectedTemplate ) {
         selectedTemplate = document.getElementById("templates").value;
     }
-    let selectedTemplateList = document.getElementById("concatenated-templates-list").value.split(',');
-    selectedTemplate = selectedTemplate.replaceAll("*","");
-    if ( selectedTemplateList.includes(selectedTemplate) !== true && selectedTemplateList.includes(selectedTemplate + "*") !== true ) {
+    if ( selectedTemplate !== "-- Select Templates --" ) {
+        let selectedTemplateList = document.getElementById("concatenated-templates-list").value.split(',');
+        console.log("addTemplateToProfile - selectedTemplateList --> -" + selectedTemplateList + "-");
+        console.log("addTemplateToProfile - selectedTemplate --> -" + selectedTemplate + "-");
+        selectedTemplate = selectedTemplate.replaceAll("*", "");
         selectedTemplateList.push(selectedTemplate);
-        document.getElementById("concatenated-templates-list").value = selectedTemplateList.toString().replace(/^,/,'');
+        let uniqueSelectedTemplateList = [...new Set(selectedTemplateList.sort())];
+        console.log("uniqueSelectedTemplateList --> " + uniqueSelectedTemplateList);
+        document.getElementById("concatenated-templates-list").value = uniqueSelectedTemplateList.toString().replace(/^,/, '');
+        console.log("addTemplateToProfile - calling --> populate_template_option_list(" + selectedTemplate + ")");
         populate_template_option_list(selectedTemplate);
         populate_selected_template_list(selectedTemplate);
         let parentId = document.getElementById("concatenated-templates-list").parentNode.id;
@@ -1209,6 +1227,7 @@ function hideParameterDivs() {
         "main-memory-div",
         "general-parameters-div",
         "workloads-on-master-div",
+        "disable-desktop-div",
         "main-cpu-count-div",
         "worker-memory-div",
         "network-storage-div",
@@ -1288,6 +1307,7 @@ function change_panel_selection(config_panel) {
                     moveDivToConfigPanel("general-parameters-div");
                     moveDivToConfigPanel("standalone-toggle-div");
                     moveDivToConfigPanel("workloads-on-master-div");
+                    moveDivToConfigPanel("disable-desktop-div");
                     updateNavigationFooter("config-panel-profile-selection", "config-panel-kx-main-config");
                     break;
                 case "config-panel-kx-main-config":
@@ -1770,4 +1790,90 @@ function calculateHeatmapScalePosition() {
     document.getElementById("current-resource-settings-div").innerHTML = resourceSettingsInnerHtml;
     document.getElementById("current-resource-settings-span").style.left = ( heatmapScalePosition - 94 ) + "px";
 
+}
+
+function generateTeamName() {
+    const xhr = new XMLHttpRequest(),
+        method = "GET",
+        url = "/userContent/data/environment_prefix_names";
+    xhr.open(method, url, true);
+    xhr.onreadystatechange = function () {
+        // In local files, status is 0 upon success in Mozilla Firefox
+        if (xhr.readyState === XMLHttpRequest.DONE) {
+            let status = xhr.status;
+            if (status === 0 || (status >= 200 && status < 400)) {
+                // The request has been completed successfully
+                let teamNames = xhr.responseText.split(/\r?\n/);
+                let teamName = teamNames[Math.floor(Math.random()*teamNames.length)];
+                document.getElementById("general-param-team-name").value = teamName;
+            } else {
+                // Oh no! There has been an error with the request!
+            }
+        }
+    };
+    xhr.send();
+}
+
+function generatePassword() {
+    let generatedPassword = Math.random().toString(36).slice(-10);
+    console.log(generatedPassword);
+    document.getElementById("general-param-password").value = generatedPassword;
+}
+
+function updateStartModeSelection(elementId) {
+    console.log(elementId);
+    if ( elementId === "normal" ) {
+        console.log("selected normal");
+        document.getElementById("selection-normal-label").className = "selection-label selection-label-selected";
+        document.getElementById("selection-normal-radio").className = "selection-radio selection-radio-selected";
+        document.getElementById("selection-lite-label").className = "selection-label selection-label-unselected";
+        document.getElementById("selection-lite-radio").className = "selection-radio selection-radio-unselected";
+        document.getElementById("selection-minimal-label").className = "selection-label selection-label-unselected";
+        document.getElementById("selection-minimal-radio").className = "selection-radio selection-radio-unselected";
+        document.getElementById("selection-normal-svg").src = "/userContent/icons/radiobox-marked.svg";
+        document.getElementById("selection-lite-svg").src = "/userContent/icons/radiobox-blank.svg";
+        document.getElementById("selection-minimal-svg").src = "/userContent/icons/radiobox-blank.svg";
+    } else if ( elementId === "lite" ) {
+        console.log("selected lite");
+        document.getElementById("selection-normal-label").className = "selection-label selection-label-unselected";
+        document.getElementById("selection-normal-radio").className = "selection-radio selection-radio-unselected";
+        document.getElementById("selection-lite-label").className = "selection-label selection-label-selected";
+        document.getElementById("selection-lite-radio").className = "selection-radio selection-radio-selected";
+        document.getElementById("selection-minimal-label").className = "selection-label selection-label-unselected";
+        document.getElementById("selection-minimal-radio").className = "selection-radio selection-radio-unselected";
+        document.getElementById("selection-normal-svg").src = "/userContent/icons/radiobox-blank.svg";
+        document.getElementById("selection-lite-svg").src = "/userContent/icons/radiobox-marked.svg";
+        document.getElementById("selection-minimal-svg").src = "/userContent/icons/radiobox-blank.svg";
+    } else if ( elementId === "minimal" ) {
+        console.log("selected minimal");
+        document.getElementById("selection-normal-label").className = "selection-label selection-label-unselected";
+        document.getElementById("selection-normal-radio").className = "selection-radio selection-radio-unselected";
+        document.getElementById("selection-lite-label").className = "selection-label selection-label-unselected";
+        document.getElementById("selection-lite-radio").className = "selection-radio selection-radio-unselected";
+        document.getElementById("selection-minimal-label").className = "selection-label selection-label-selected";
+        document.getElementById("selection-minimal-radio").className = "selection-radio selection-radio-selected";
+        document.getElementById("selection-normal-svg").src = "/userContent/icons/radiobox-blank.svg";
+        document.getElementById("selection-lite-svg").src = "/userContent/icons/radiobox-blank.svg";
+        document.getElementById("selection-minimal-svg").src = "/userContent/icons/radiobox-marked.svg";
+    }
+    update_selected_value();
+}
+
+function showHidePassword() {
+
+    let currentPasswordInputBoxType = document.getElementById("general-param-password").type;
+    if (currentPasswordInputBoxType === "password") {
+        document.getElementById("general-param-password").type = "text";
+        document.getElementById("general-param-password-svg").src = "/userContent/icons/eye-off-outline.svg";
+    } else {
+        document.getElementById("general-param-password").type = "password";
+        document.getElementById("general-param-password-svg").src = "/userContent/icons/eye-outline.svg";
+    }
+
+}
+
+function getProfilePath() {
+    document.getElementById('concatenated-profile-selection').value;
+    let concatenatedProfileSelection = document.getElementById('concatenated-profile-selection').value.split(';');
+    return concatenatedProfileSelection[0];
 }

@@ -305,6 +305,7 @@
         def HTML = """
     <body>
         <div id="headline-select-profile-div" style="display: none;">
+        <span>
         <h1>Select Profile &amp; Check Pre-Requisites</h1>
         <span class="description-paragraph-span"><p>${extendedDescription}</p></span>
         </div>
@@ -314,8 +315,24 @@
             <select id="profiles" class="profiles-select capitalize" value="Virtualbox" onchange="updateProfileAndPrereqsCheckTab();">
             </select>
             </label>
+    </span>
+    <span style="margin-left: 30px; display: inline-flex;">
+            <span class="button-range-span">
+                <span><button type="button" class="selection-label selection-label-header">Start Mode</button></span>
+            </span>
+            <span id="normal" class="button-range-span selection-span" onclick="updateStartModeSelection(this.id)">
+                <span id="selection-normal-radio" class="selection-radio selection-radio-selected"><img id="selection-normal-svg" src="/userContent/icons/radiobox-marked.svg" class="svg-blue"></span><span id="selection-normal-label" class="selection-label selection-label-selected">Normal</span>
+            </span>
+            <span id="lite" class="button-range-span selection-span" onclick="updateStartModeSelection(this.id)">
+                <span id="selection-lite-radio" class="selection-radio selection-radio-unselected"><img id="selection-lite-svg" src="/userContent/icons/radiobox-blank.svg" class="svg-blue"></span><span id="selection-lite-label" class="selection-label selection-label-unselected">Lite</span>
+            </span>
+            <span id="minimal" class="button-range-span selection-span" onclick="updateStartModeSelection(this.id)">
+                <span id="selection-minimal-radio" class="selection-radio selection-radio-unselected"><img id="selection-minimal-svg" src="/userContent/icons/radiobox-blank.svg" class="svg-blue"></span><span id="selection-minimal-label" class="selection-label selection-label-unselected" style="border: 1px solid var(--kx-material-primary-70); border-width: 1px 1px 1px 0; border-radius: 0 5px 5px 0px;">Minimal</span>
+            </span>
+    </span>
+            
         </div>
-        <input type="hidden" id="selected-profile-path" name="value" value="">
+        <input type="hidden" id="concatenated-profile-selection" name="value" value="">
         <style scoped="scoped" onload="populate_profile_option_list();">   </style>
 
         <div id="prerequisites-div" style="display: none;">

@@ -1,14 +1,14 @@
 [Desktop Entry]
 Actions=new-window;new-private-window;
 Categories=Development
-Comment[en_US]=HTOP
-Comment=HTOP
-Exec=tilix -a app-new-window -x "htop"
-GenericName[en_US]=HTOP
-GenericName=HTOP
+Comment[en_US]=BTOP
+Comment=BTOP
+Exec=tilix --window-style=disable-csd-hide-toolbar --maximize -a app-new-window -x "btop"
+GenericName[en_US]=BTOP
+GenericName=BTOP
 Icon=utilities-system-monitor
 MimeType=text/html;image/webp;application/xml;
-Name=HTOP
+Name=BTOP
 Path=
 StartupNotify=true
 Terminal=true
