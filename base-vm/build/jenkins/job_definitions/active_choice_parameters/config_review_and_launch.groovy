@@ -48,7 +48,7 @@ int overallRemainingCpuCoresPercentage
 int overallRemainingMemoryPercentage
 
 def parsedJson
-def jsonFilePath = PROFILE
+def jsonFilePath = PROFILE.split(";")[0]
 def inputFile = new File(jsonFilePath)
 
 def ALLOW_WORKLOADS_ON_KUBERNETES_MASTER

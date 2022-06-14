@@ -28,7 +28,7 @@ def extendedDescription = "Here you can select an application group from a list 
 
 try {
     //File profilePath = new File("C:/Git/kx.as.code_test/base-vm/build/jenkins/jenkins_shared_workspace/kx.as.code/profiles/vagrant-virtualbox/profile-config.json")
-    File profilePath = new File(PROFILE)
+    File profilePath = new File(PROFILE.split(";")[0])
     profileParentPath = profilePath.getParentFile().toString()
     new File(profileParentPath).eachFileMatch(~/^aq.*.json$/) { profile_template_paths << it.path }
 

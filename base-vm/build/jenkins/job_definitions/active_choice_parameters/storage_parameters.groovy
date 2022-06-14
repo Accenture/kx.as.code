@@ -11,7 +11,7 @@ def localStorageNumFiftyGb
 try {
     extendedDescription = "This tab defines the amount of storage allocated to KX.AS.CODE. There are two types - (1) fast local, but not portable storage, eg. tied to a host, and (2) slower, but portable network storage. Each type of storage has it's own \"storage-class\" in Kubernetes."
 
-    def jsonFilePath = PROFILE
+    def jsonFilePath = PROFILE.split(";")[0]
     def inputFile = new File(jsonFilePath)
     def parsedJson = new JsonSlurper().parse(inputFile)
 

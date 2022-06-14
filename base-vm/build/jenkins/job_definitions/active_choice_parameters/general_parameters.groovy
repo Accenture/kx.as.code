@@ -11,7 +11,7 @@ def config_basePassword
 def generalParamsExtendedDescription
 
 try {
-    def jsonFilePath = PROFILE
+    def jsonFilePath = PROFILE.split(";")[0]
     def inputFile = new File(jsonFilePath)
     parsedJson = new JsonSlurper().parse(inputFile)
 } catch(e) {

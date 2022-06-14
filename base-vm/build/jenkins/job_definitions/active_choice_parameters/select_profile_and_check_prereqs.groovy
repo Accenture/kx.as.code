@@ -332,7 +332,7 @@
     </span>
             
         </div>
-        <input type="hidden" id="selected-profile-path" name="value" value="">
+        <input type="hidden" id="concatenated-profile-selection" name="value" value="">
         <style scoped="scoped" onload="populate_profile_option_list();">   </style>
 
         <div id="prerequisites-div" style="display: none;">

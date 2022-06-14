@@ -1,6 +1,9 @@
 import groovy.json.JsonSlurper
 import groovy.json.JsonBuilder
 import java.nio.file.Files
+import java.nio.file.Paths
+import java.nio.file.Path
+import java.nio.file.StandardCopyOption
 
 def BASE_DOMAIN
 def BASE_USER
@@ -21,7 +24,8 @@ def generalParameterElements
 
 def updatedJson
 def parsedJson
-def jsonFilePath = PROFILE
+def jsonFilePath = PROFILE.split(";")[0]
+def profileStartMode = PROFILE.split(";")[1]
 def inputFile = new File(jsonFilePath)
 def profileParentPath = inputFile.getParentFile().getName()
 def profileName = inputFile.getName()
@@ -32,15 +36,19 @@ def jsonInputFile
 
 def template_paths = []
 def selectedTemplates = []
+def profile_template_paths = []
 def destinationFile
 def alreadyExistingTemplateFilesInProfile = []
-def fileToDelete
 
 def currentDir = new File(".").getAbsolutePath().replaceAll("\\\\", "/")
 currentDir = currentDir.substring(0, currentDir.length() - 1)
 
 new File("${currentDir}/jenkins_shared_workspace/kx.as.code/templates/").eachFileMatch(~/^aq.*.json$/) { template_paths << it.path }
-selectedTemplates = TEMPLATE_SELECTOR.split(';');
+new File("${currentDir}/jenkins_shared_workspace/kx.as.code/profiles/${profileParentPath}/").eachFileMatch(~/^aq.*.json$/) { profile_template_paths << it.path }
+println(TEMPLATE_SELECTOR)
+selectedTemplates = TEMPLATE_SELECTOR.split(',');
+println("selectedTemplates: ${selectedTemplates}")
+println("profile_template_paths: ${profile_template_paths}")
 
 try {
     if ( USER_PROVISIONING ) {
@@ -52,15 +60,60 @@ try {
     println("Something went wrong in the groovy user provisioning block (profile_json_update.groovy): ${e}")
 }
 
+println("Profile Start Mode: ${profileStartMode}")
+
+def actionQueueFile;
+switch (profileStartMode) {
+    case "normal": actionQueueFile = "actionQueues.json";
+        break;
+    case "lite": actionQueueFile = "actionQueues.json_lite";
+        break;
+    case "minimal": actionQueueFile = "actionQueues.json_minimal";
+        break;
+}
+def actionQueuePath = "${currentDir}/jenkins_shared_workspace/kx.as.code/auto-setup/${actionQueueFile}";
+
 try {
+    try {
+        Path sourcePath  = Paths.get(actionQueuePath);
+        Path targetPath = Paths.get("${currentDir}/jenkins_shared_workspace/kx.as.code/profiles/${profileParentPath}/actionQueue.json");
+        Files.copy(sourcePath, targetPath, StandardCopyOption.REPLACE_EXISTING)
+    } catch (IOException e) {
+        println("Caught IOException when copying actionQueue")
+    }
+} catch (e) {
+    println("Something went wrong in the groovy template block (profile_json_update.groovy): ${e}")
+}
+
+try {
+    profile_template_paths.eachWithIndex { file, i ->
+        try {
+            println("Deleting template ${file}")
+            Path fileToDelete = Paths.get(file)
+            Files.delete(fileToDelete)
+        } catch (IOException e) {
+            println("Caught IOException when deleting template")
+        }
+    }
+} catch (e) {
+    println("Something went wrong in the groovy template block (profile_json_update.groovy): ${e}")
+}
+
+try {
+    println(template_paths)
     template_paths.eachWithIndex { file, i ->
         jsonInputFile = new File(file)
         parsedTemplateJson = new JsonSlurper().parse(jsonInputFile)
         templateName = parsedTemplateJson.title
         selectedTemplates.eachWithIndex { selectedTemplate, j ->
+            println(selectedTemplate)
             if (selectedTemplate == templateName) {
                 destinationFile = new File("${currentDir}/jenkins_shared_workspace/kx.as.code/profiles/${profileParentPath}/${jsonInputFile.getName()}")
-                Files.copy(jsonInputFile.toPath(), destinationFile.toPath())
+                try {
+                    Files.copy(jsonInputFile.toPath(), destinationFile.toPath())
+                } catch (IOException e) {
+                    println("Caught IOException when copying template")
+                }
             }
         }
     }
