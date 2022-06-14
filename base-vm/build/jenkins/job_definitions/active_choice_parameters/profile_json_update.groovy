@@ -125,6 +125,8 @@ try {
 
     parsedJson = new JsonSlurper().parse(inputFile)
 
+    parsedJson.config.startupMode = profileStartMode
+
     if ( GENERAL_PARAMETERS ) {
         generalParameterElements = GENERAL_PARAMETERS.split(';')
         BASE_DOMAIN = generalParameterElements[0]
@@ -184,6 +186,16 @@ try {
     if (OLD_KX_WORKER_NODES_MEMORY != KX_WORKER_NODES_MEMORY && KX_WORKER_NODES_MEMORY != "" && KX_WORKER_NODES_MEMORY) {
         parsedJson.config.vm_properties.worker_node_memory = KX_WORKER_NODES_MEMORY.toInteger()
     }
+
+    if (TEMPLATE_SELECTOR) {
+        def OLD_TEMPLATE_SELECTOR = parsedJson.config.selectedTemplates
+        if (OLD_TEMPLATE_SELECTOR != TEMPLATE_SELECTOR && TEMPLATE_SELECTOR != "") {
+            parsedJson.config.selectedTemplates = TEMPLATE_SELECTOR
+        }
+    } else {
+        TEMPLATE_SELECTOR = parsedJson.config.selectedTemplates
+    }
+
 
     if (BASE_DOMAIN) {
         def OLD_BASE_DOMAIN = parsedJson.config.baseDomain

@@ -372,10 +372,6 @@ try {
             <div class="flex-item">
                 <div class="table">
                     <div class="row">
-                        <div class="cell cell-label">Profile</div>
-                        <div class="cell cell-value capitalize" id="summary-profile-value" ></div>
-                    </div>
-                    <div class="row">
                         <div class="cell cell-label">Standalone Mode</div>
                         <div class="cell cell-value" id="summary-standalone-mode-value"></div>
                     </div>
@@ -415,8 +411,9 @@ try {
             <div class="div-border-text-inline">
                 <h2 class="h2-header-in-line"><span class="span-h2-header-in-line"><img class="svg-blue" src="/userContent/icons/rocket-launch-outline.svg" height="25" width="25">&nbsp;Launcher Config Panel</span></h2>
                 <div class="div-inner-h2-header-in-line-wrapper">
-                    <span class="description-paragraph-span"><p>Below you can see the last executed builds for each image tpe if there were any. If none, then click the play button for each type of node.</p></span>
-                </div>
+                    <span class="description-paragraph-span"><p>Here you can start, stop and destroy the KX.AS.CODE environment. KX.AS.CODE will be deployed to \"<span id="summary-profile-value" ></span>\" started in \"<span id="summary-start-mode-value" ></span>\" mode.
+                    </div>
+
                 <div class="div-inner-h2-header-in-line-wrapper">
                     <span style="vertical-align: middle; display: inline-block;">
                         <span class="launch-action-text-label" style="width: 50px;">Date: </span><span id="kx-launch-build-timestamp" class="build-action-text-value"></span>
@@ -432,6 +429,7 @@ try {
                         <img src='/userContent/icons/cancel.svg' class="build-action-icon" title="Delete Environment" alt="Delete Environment" onclick='performRuntimeAction("destroy");' />|
                         <div class="console-log"><span class="console-log-span"><img src="/userContent/icons/text-box-outline.svg" onMouseover='showConsoleLog("KX.AS.CODE_Runtime_Actions", "kx-launch");' onclick='openFullConsoleLog("KX.AS.CODE_Runtime_Actions", "kx-launch");' class="build-action-icon" alt="View Build Log" title="Click to open full log in new tab"><span class="consolelogtext" id='kxLaunchBuildConsoleLog'></span></span></div>
                     </span>
+                                    </div>
                 </div>
             </div>
          </div>

@@ -127,7 +127,7 @@ async function triggerBuild(nodeType) {
     formData.append('kx_domain', document.getElementById('general-param-base-domain').value);
     formData.append('kx_main_hostname', nodeType);
     formData.append('profile', document.getElementById('profiles').value);
-    formData.append('profile_path', document.getElementById('selected-profile-path').value);
+    formData.append('profile_path', getProfilePath());
     formData.append('node_type', nodeType);
 
     const config = {
@@ -160,10 +160,11 @@ function update_selected_value() {
     let selectedOptionNumber = document.getElementById("profiles").selectedIndex;
     let profilePaths = getProfilePaths().split(',');
     let profilePath = profilePaths[selectedOptionNumber] + '/profile-config.json'
-
-    document.getElementById("selected-profile-path").value = profilePath;
-    document.getElementById("selected-profile-path").setAttribute("selected-profile-path", profilePath);
-    let parentId = document.getElementById("selected-profile-path").parentNode.id;
+    let startMode = document.getElementsByClassName("selection-radio-selected")[0].id.split("-")[1]
+    let concatenatedProfileSelection = profilePath + ";" + startMode;
+    document.getElementById("concatenated-profile-selection").value = concatenatedProfileSelection;
+    document.getElementById("concatenated-profile-selection").setAttribute("concatenated-profile-selection", concatenatedProfileSelection);
+    let parentId = document.getElementById("concatenated-profile-selection").parentNode.id;
 
     jQuery('#' + parentId).trigger('change');
 }
@@ -872,6 +873,7 @@ getAllJenkinsBuilds().catch(error => {
 function populateReviewTable() {
 
     document.getElementById("summary-profile-value").innerText = document.getElementById("profiles").value;
+    document.getElementById("summary-start-mode-value").innerText = document.getElementById('concatenated-profile-selection').value.split(';')[1];
     document.getElementById("summary-standalone-mode-value").innerText = document.getElementById("general-param-standalone-mode-toggle").value;
     document.getElementById("summary-workloads-on-master-value").innerText = document.getElementById("general-param-workloads-on-master-toggle").value;
     document.getElementById("summary-disable-desktop-value").innerText = document.getElementById("general-param-disable-desktop-toggle").value;
@@ -919,7 +921,7 @@ async function performRuntimeAction(vagrantAction) {
     formData.append('num_kx_worker_nodes', document.getElementById('counter_value_worker_node_count_value').innerText);
     formData.append('dockerhub_email', '');
     formData.append('profile', document.getElementById('profiles').value);
-    formData.append('profile_path', document.getElementById('selected-profile-path').value);
+    formData.append('profile_path', getProfilePath());
     formData.append('vagrant_action', vagrantAction);
     const config = {
         method: 'POST',
@@ -1093,6 +1095,7 @@ function remove_selected_template_list_item(selectedTemplate) {
 }
 
 function populate_template_option_list(selectedTemplate) {
+    console.log("populate_template_option_list(" + selectedTemplate + ")");
     let templateNameOptionDisplayText;
     let templateNameOption;
     let selectedIndex = 0;
@@ -1145,21 +1148,31 @@ function populate_template_option_list(selectedTemplate) {
 
 function selectTemplatesAlreadyExistingInProfile(existingTemplates) {
     templateRows = existingTemplates.split(",");
+    console.log("selectTemplatesAlreadyExistingInProfile(" + existingTemplates + ")");
+    console.log("templateRows: " + templateRows);
+    document.getElementById("selected-components-list").innerText = ""
     for (let template of templateRows) {
         let selectedTemplate = template;
+        console.log("addTemplateToProfile(" + selectedTemplate + ")");
         addTemplateToProfile(selectedTemplate);
     }
 }
 
 function addTemplateToProfile(selectedTemplate) {
+    console.log("Function called by --> " + addTemplateToProfile.caller.name);
     if ( ! selectedTemplate ) {
         selectedTemplate = document.getElementById("templates").value;
     }
-    let selectedTemplateList = document.getElementById("concatenated-templates-list").value.split(',');
-    selectedTemplate = selectedTemplate.replaceAll("*","");
-    if ( selectedTemplateList.includes(selectedTemplate) !== true && selectedTemplateList.includes(selectedTemplate + "*") !== true ) {
+    if ( selectedTemplate !== "-- Select Templates --" ) {
+        let selectedTemplateList = document.getElementById("concatenated-templates-list").value.split(',');
+        console.log("addTemplateToProfile - selectedTemplateList --> -" + selectedTemplateList + "-");
+        console.log("addTemplateToProfile - selectedTemplate --> -" + selectedTemplate + "-");
+        selectedTemplate = selectedTemplate.replaceAll("*", "");
         selectedTemplateList.push(selectedTemplate);
-        document.getElementById("concatenated-templates-list").value = selectedTemplateList.toString().replace(/^,/,'');
+        let uniqueSelectedTemplateList = [...new Set(selectedTemplateList.sort())];
+        console.log("uniqueSelectedTemplateList --> " + uniqueSelectedTemplateList);
+        document.getElementById("concatenated-templates-list").value = uniqueSelectedTemplateList.toString().replace(/^,/, '');
+        console.log("addTemplateToProfile - calling --> populate_template_option_list(" + selectedTemplate + ")");
         populate_template_option_list(selectedTemplate);
         populate_selected_template_list(selectedTemplate);
         let parentId = document.getElementById("concatenated-templates-list").parentNode.id;
@@ -1802,7 +1815,7 @@ function generateTeamName() {
 }
 
 function generatePassword() {
-    let generatedPassword = Math.random().toString(36).slice(-8);
+    let generatedPassword = Math.random().toString(36).slice(-10);
     console.log(generatedPassword);
     document.getElementById("general-param-password").value = generatedPassword;
 }
@@ -1843,6 +1856,7 @@ function updateStartModeSelection(elementId) {
         document.getElementById("selection-lite-svg").src = "/userContent/icons/radiobox-blank.svg";
         document.getElementById("selection-minimal-svg").src = "/userContent/icons/radiobox-marked.svg";
     }
+    update_selected_value();
 }
 
 function showHidePassword() {
@@ -1856,4 +1870,10 @@ function showHidePassword() {
         document.getElementById("general-param-password-svg").src = "/userContent/icons/eye-outline.svg";
     }
 
+}
+
+function getProfilePath() {
+    document.getElementById('concatenated-profile-selection').value;
+    let concatenatedProfileSelection = document.getElementById('concatenated-profile-selection').value.split(';');
+    return concatenatedProfileSelection[0];
 }

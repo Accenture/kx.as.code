@@ -8,6 +8,7 @@ def config_baseDomain
 def config_environmentPrefix
 def config_baseUser
 def config_basePassword
+def config_startupMode
 def generalParamsExtendedDescription
 
 try {
@@ -28,6 +29,7 @@ try {
     config_environmentPrefix = parsedJson.config.environmentPrefix
     config_baseUser = parsedJson.config.baseUser
     config_basePassword = parsedJson.config.basePassword
+    config_startupMode = parsedJson.config.startupMode
 
     generalParamsExtendedDescription = "In this panel you set the parameters that define how the internal DNS of KX.AS.CODE will be configured. Each new service that is provisioned in KX.AS.CODE will have the fully qualified domain name (FQDN) of &lt;service_name&gt;.&lt;team_name&gt;.&lt;base_domain&gt;. The username and password fields determine the base admin user password. It is possible to add additional users. In the last section, you determine if running in standalone or cluster mode. Standalone mode starts up one main node only. This is recommended for any physical environment with less than 16G ram. If enable worker nodes,then you can also choose to have workloads running on both main and worker nodes, or only on worker nodes."
 
