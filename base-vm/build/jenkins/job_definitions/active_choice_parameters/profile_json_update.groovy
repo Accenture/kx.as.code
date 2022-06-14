@@ -45,10 +45,8 @@ currentDir = currentDir.substring(0, currentDir.length() - 1)
 
 new File("${currentDir}/jenkins_shared_workspace/kx.as.code/templates/").eachFileMatch(~/^aq.*.json$/) { template_paths << it.path }
 new File("${currentDir}/jenkins_shared_workspace/kx.as.code/profiles/${profileParentPath}/").eachFileMatch(~/^aq.*.json$/) { profile_template_paths << it.path }
-println(TEMPLATE_SELECTOR)
 selectedTemplates = TEMPLATE_SELECTOR.split(',');
-println("selectedTemplates: ${selectedTemplates}")
-println("profile_template_paths: ${profile_template_paths}")
+
 
 try {
     if ( USER_PROVISIONING ) {
@@ -59,8 +57,6 @@ try {
 } catch (e) {
     println("Something went wrong in the groovy user provisioning block (profile_json_update.groovy): ${e}")
 }
-
-println("Profile Start Mode: ${profileStartMode}")
 
 def actionQueueFile;
 switch (profileStartMode) {
@@ -88,7 +84,6 @@ try {
 try {
     profile_template_paths.eachWithIndex { file, i ->
         try {
-            println("Deleting template ${file}")
             Path fileToDelete = Paths.get(file)
             Files.delete(fileToDelete)
         } catch (IOException e) {
@@ -100,13 +95,11 @@ try {
 }
 
 try {
-    println(template_paths)
     template_paths.eachWithIndex { file, i ->
         jsonInputFile = new File(file)
         parsedTemplateJson = new JsonSlurper().parse(jsonInputFile)
         templateName = parsedTemplateJson.title
         selectedTemplates.eachWithIndex { selectedTemplate, j ->
-            println(selectedTemplate)
             if (selectedTemplate == templateName) {
                 destinationFile = new File("${currentDir}/jenkins_shared_workspace/kx.as.code/profiles/${profileParentPath}/${jsonInputFile.getName()}")
                 try {

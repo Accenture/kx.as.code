@@ -222,19 +222,14 @@
             it[1] == "virtualbox" && it[2] == "kx-main"
         }.sort { a, b -> a[0] <=> b[1] }
 
-        println "filteredVirtualBoxKxNodeList list: " + filteredVirtualBoxKxNodeList
-        println "filteredVirtualBoxKxMainList list: " + filteredVirtualBoxKxMainList
-
         if (filteredVirtualBoxKxMainList) {
             virtualboxLocalVagrantBoxMainVersion = filteredVirtualBoxKxMainList[0][0]
             virtualboxLocalVagrantBoxMainExists = "true"
-            println "virtualboxLocalVagrantBoxMainVersion: " + virtualboxLocalVagrantBoxMainVersion
         }
 
         if (filteredVirtualBoxKxNodeList) {
             virtualboxLocalVagrantBoxNodeVersion = filteredVirtualBoxKxNodeList[0][0]
             virtualboxLocalVagrantBoxNodeExists = "true"
-            println "virtualboxLocalVagrantBoxNodeVersion: " + virtualboxLocalVagrantBoxNodeVersion
         }
 
         def filteredVmwareDesktopKxNodeList = boxDirectories.findAll {
@@ -245,19 +240,15 @@
             it[1] == "vmware-desktop" && it[2] == "kx-main"
         }.sort{ a,b -> a[0] <=> b[1] }
 
-        println "filteredVmwareDesktopKxNodeList list: " + filteredVmwareDesktopKxNodeList
-        println "filteredVmwareDesktopKxMainList list: " + filteredVmwareDesktopKxMainList
 
         if (filteredVmwareDesktopKxMainList) {
             vmwareLocalVagrantBoxMainVersion = filteredVmwareDesktopKxMainList[0][0]
             vmwareLocalVagrantBoxMainExists = "true"
-            println "vmwareLocalVagrantBoxMainVersion: " + vmwareLocalVagrantBoxMainVersion
         }
 
         if (filteredVmwareDesktopKxNodeList) {
             vmwareLocalVagrantBoxNodeVersion = filteredVmwareDesktopKxNodeList[0][0]
             vmwareLocalVagrantBoxNodeExists = "true"
-            println "vmwareLocalVagrantBoxNodeVersion: " + vmwareLocalVagrantBoxNodeVersion
         }
 
         def filteredParallelsKxNodeList = boxDirectories.findAll {
@@ -268,19 +259,14 @@
             it[1] == "parallels" && it[2] == "kx-main"
         }.sort{ a,b -> a[0] <=> b[1] }
 
-        println "filteredParallelsKxNodeList list: " + filteredParallelsKxNodeList
-        println "filteredParallelsKxMainList list: " + filteredParallelsKxMainList
-
         if (filteredParallelsKxMainList) {
             parallelsLocalVagrantBoxMainVersion = filteredParallelsKxMainList[0][0]
             parallelsLocalVagrantBoxMainExists = "true"
-            println "parallelsLocalVagrantBoxMainVersion: " + parallelsLocalVagrantBoxMainVersion
         }
 
         if (filteredParallelsKxNodeList) {
             parallelsLocalVagrantBoxNodeVersion = filteredParallelsKxNodeList[0][0]
             parallelsLocalVagrantBoxNodeExists = "true"
-            println "parallelsLocalVagrantBoxNodeVersion: " + parallelsLocalVagrantBoxNodeVersion
         }
 
         def boxesJson = jsonSlurper.parseText('{ "boxes": { "virtualboxLocalVagrantBoxMainExists": "' + virtualboxLocalVagrantBoxMainExists + '", "virtualboxLocalVagrantBoxMainVersion": "' + virtualboxLocalVagrantBoxMainVersion + '", "virtualboxLocalVagrantBoxNodeExists": "' + virtualboxLocalVagrantBoxNodeExists + '", "virtualboxLocalVagrantBoxNodeVersion": "' + virtualboxLocalVagrantBoxNodeVersion + '", "vmwareLocalVagrantBoxMainExists": "' + vmwareLocalVagrantBoxMainExists + '", "vmwareLocalVagrantBoxMainVersion": "' + vmwareLocalVagrantBoxMainVersion + '", "vmwareLocalVagrantBoxNodeExists": "' + vmwareLocalVagrantBoxNodeExists + '", "vmwareLocalVagrantBoxNodeVersion": "' + vmwareLocalVagrantBoxNodeVersion + '", "parallelsLocalVagrantBoxMainExists": "' + parallelsLocalVagrantBoxMainExists + '", "parallelsLocalVagrantBoxMainVersion": "' + parallelsLocalVagrantBoxMainVersion + '", "parallelsLocalVagrantBoxNodeExists": "' + parallelsLocalVagrantBoxNodeExists + '", "parallelsLocalVagrantBoxNodeVersion": "' + parallelsLocalVagrantBoxNodeVersion + '"}}')

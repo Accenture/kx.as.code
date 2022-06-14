@@ -10,7 +10,6 @@ try {
 
     File usersJsonFile = new File("${profileParentPath}/users.json")
 
-    println("Users JSON file exists? ${usersJsonFile.exists()}")
     if ( usersJsonFile.exists() ) {
         parsedUserJson = usersJsonFile.text.replace("\n", "").replace("\r", "").replace(" ", "")
     }

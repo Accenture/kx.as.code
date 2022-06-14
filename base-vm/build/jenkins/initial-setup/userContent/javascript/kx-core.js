@@ -164,9 +164,7 @@ function update_selected_value() {
     let concatenatedProfileSelection = profilePath + ";" + startMode;
     document.getElementById("concatenated-profile-selection").value = concatenatedProfileSelection;
     document.getElementById("concatenated-profile-selection").setAttribute("concatenated-profile-selection", concatenatedProfileSelection);
-    let parentId = document.getElementById("concatenated-profile-selection").parentNode.id;
-
-    jQuery('#' + parentId).trigger('change');
+    triggerChoiceParameterUpdate('concatenated-profile-selection');
 }
 
 function compareVersions() {
@@ -265,9 +263,7 @@ function updateConcatenatedGeneralParamsReturnVariable() {
     let workloadsOnMasterCheckedStatus = document.getElementById("general-param-workloads-on-master-toggle").checked
     let disableLinuxDesktop = document.getElementById("general-param-disable-desktop-toggle").checked
 
-    let parentId = document.getElementById("concatenated-general-params").parentNode.id;
-    jQuery('#' + parentId).trigger('change');
-
+    triggerChoiceParameterUpdate('concatenated-general-params');
     document.getElementById("concatenated-general-params").value = baseDomainValue + ";" + teamNameValue + ";" + usernameValue + ";" + passwordValue + ";" + standaloneModeCheckedStatus + ";" + workloadsOnMasterCheckedStatus + ";" + disableLinuxDesktop;
 
     //#TODO - Placeholder to check if issue after commenting out line below
@@ -334,10 +330,24 @@ function updateCheckbox(checkboxElementId) {
         document.getElementById('general-param-disable-desktop-toggle-span').className = "checkbox-slider round";
     }
 
-    let parentId = document.getElementById(checkboxElementId + '-name-value').parentNode.id;
+    triggerChoiceParameterUpdate(checkboxElementId + '-name-value');
 
+}
+
+function triggerChoiceParameterUpdate(elementId) {
+    let parentId;
+    let baseCommand = "document.getElementById(\"" + elementId + "\").parentNode";
+    let command;
+    for (let i = 0; i < 15; i++) {
+        command = baseCommand + ".id";
+        parentId = eval(command);
+        if (parentId.startsWith("formattedHtml_choice-parameter")) {
+            break;
+        } else {
+            baseCommand = baseCommand + ".parentNode";
+        }
+    }
     jQuery('#' + parentId).trigger('change');
-
 }
 
 function show_value(x, previousElementId, elementId, valueElementId, warningElementId, minWarning, valueDisplayConversion, rangeUnit) {
@@ -347,12 +357,6 @@ function show_value(x, previousElementId, elementId, valueElementId, warningElem
         document.getElementById(valueElementId).innerHTML = (x_float / valueDisplayConversion) + " " + rangeUnit;
         document.getElementById(elementId).value = x;
         document.getElementById(elementId).setAttribute(elementId, x);
-        let parentId = document.getElementById(elementId).parentNode.parentNode.parentNode.parentNode.parentNode.id;
-        if (parentId === '') {
-            parentId = document.getElementById(elementId).parentNode.id;
-        }
-
-        jQuery('#' + parentId).trigger('change');
         if (parseInt(x) < parseInt(minWarning)) {
             document.getElementById(warningElementId).style.visibility = "visible";
         } else {
@@ -381,8 +385,6 @@ function update_display_value(x, valueElementId, valueDisplayConversion, rangeUn
 
 function add_one(previousElementId, elementId, valueElementId, warningElementId, minWarning, valueDisplayConversion, rangeUnit, step, max) {
     let count = parseInt(document.getElementById(elementId).value) + parseInt(step);
-    console.log('let count = parseInt(document.getElementById("'  + elementId + '").value) + parseInt(' + step + ');');
-    console.log('( ' + count + ' <= ' + max + ' )');
     if (count <= max) {
         show_value(count, previousElementId, elementId, valueElementId, warningElementId, minWarning, valueDisplayConversion, rangeUnit);
     }
@@ -418,6 +420,7 @@ function updateConcatenatedNodeReturnVariable(hiddenValueElementId) {
     let concatenatedValue = nodeCount + ";" + cpuCores + ";" + memory;
 
     document.getElementById(hiddenValueElementId).value = concatenatedValue;
+    triggerChoiceParameterUpdate(hiddenValueElementId);
 }
 
 function updateConcatenatedStorageReturnVariable() {
@@ -430,9 +433,7 @@ function updateConcatenatedStorageReturnVariable() {
     let concatenatedLocalVolumeParams = counterHiddenValueIdOneGb + ";" + counterHiddenValueIdFiveGb + ";" + counterHiddenValueIdTenGb + ";" + counterHiddenValueIdThirtyGb + ";" + counterHiddenValueIdFiftyGb + ";" + networkStorageValueGb;
     document.getElementById("concatenated-storage-params").value = concatenatedLocalVolumeParams;
     document.getElementById("concatenated-storage-params").setAttribute("concatenated-storage-params", concatenatedLocalVolumeParams);
-    let parentId = document.getElementById('concatenated-storage-params').parentNode.id;
-
-    jQuery('#' + parentId).trigger('change');
+    let parentId = triggerChoiceParameterUpdate('concatenated-storage-params');
 }
 
 function updateAllConcatenatedVariables() {
@@ -1095,7 +1096,6 @@ function remove_selected_template_list_item(selectedTemplate) {
 }
 
 function populate_template_option_list(selectedTemplate) {
-    console.log("populate_template_option_list(" + selectedTemplate + ")");
     let templateNameOptionDisplayText;
     let templateNameOption;
     let selectedIndex = 0;
@@ -1148,35 +1148,26 @@ function populate_template_option_list(selectedTemplate) {
 
 function selectTemplatesAlreadyExistingInProfile(existingTemplates) {
     templateRows = existingTemplates.split(",");
-    console.log("selectTemplatesAlreadyExistingInProfile(" + existingTemplates + ")");
-    console.log("templateRows: " + templateRows);
     document.getElementById("selected-components-list").innerText = ""
     for (let template of templateRows) {
         let selectedTemplate = template;
-        console.log("addTemplateToProfile(" + selectedTemplate + ")");
         addTemplateToProfile(selectedTemplate);
     }
 }
 
 function addTemplateToProfile(selectedTemplate) {
-    console.log("Function called by --> " + addTemplateToProfile.caller.name);
     if ( ! selectedTemplate ) {
         selectedTemplate = document.getElementById("templates").value;
     }
     if ( selectedTemplate !== "-- Select Templates --" ) {
         let selectedTemplateList = document.getElementById("concatenated-templates-list").value.split(',');
-        console.log("addTemplateToProfile - selectedTemplateList --> -" + selectedTemplateList + "-");
-        console.log("addTemplateToProfile - selectedTemplate --> -" + selectedTemplate + "-");
         selectedTemplate = selectedTemplate.replaceAll("*", "");
         selectedTemplateList.push(selectedTemplate);
         let uniqueSelectedTemplateList = [...new Set(selectedTemplateList.sort())];
-        console.log("uniqueSelectedTemplateList --> " + uniqueSelectedTemplateList);
         document.getElementById("concatenated-templates-list").value = uniqueSelectedTemplateList.toString().replace(/^,/, '');
-        console.log("addTemplateToProfile - calling --> populate_template_option_list(" + selectedTemplate + ")");
         populate_template_option_list(selectedTemplate);
         populate_selected_template_list(selectedTemplate);
-        let parentId = document.getElementById("concatenated-templates-list").parentNode.id;
-        jQuery('#' + parentId).trigger('change');
+        triggerChoiceParameterUpdate('concatenated-templates-list');
     }
 }
 
@@ -1195,8 +1186,7 @@ function removeTemplateFromProfile(templateToRemoveId) {
             document.getElementById("concatenated-templates-list").value = selectedTemplateList.toString();
             populate_template_option_list(selectedTemplate);
             remove_selected_template_list_item("selected-component-item-icon-" + selectedTemplate);
-            let parentId = document.getElementById("concatenated-templates-list").parentNode.id;
-            jQuery('#' + parentId).trigger('change');
+            triggerChoiceParameterUpdate('concatenated-templates-list');
         }
     } catch (e) {
         console.log(e)
@@ -1699,8 +1689,7 @@ function buildUserJsonFromDivTable() {
     }
     let allUsersJson = '{ "config": { "additionalUsers": [' + userJsonNodes.toString() + '] } }';
     document.getElementById('concatenated-user-provisioning-list').value = allUsersJson;
-    let parentId = document.getElementById("concatenated-user-provisioning-list").parentNode.id;
-    jQuery('#' + parentId).trigger('change');
+    triggerChoiceParameterUpdate('concatenated-user-provisioning-list');
 
 }
 

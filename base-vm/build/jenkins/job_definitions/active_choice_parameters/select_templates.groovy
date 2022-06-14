@@ -33,8 +33,6 @@ try {
     File profilePath = new File(PROFILE.split(";")[0])
     parsedJson = new JsonSlurper().parse(profilePath)
     selectedTemplates = parsedJson.config.selectedTemplates
-    println("Received selectedTemplates from profile JSON: ${selectedTemplates}")
-
     profileParentPath = profilePath.getParentFile().toString()
     new File(profileParentPath).eachFileMatch(~/^aq.*.json$/) { profile_template_paths << it.path }
 
