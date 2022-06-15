@@ -25,7 +25,7 @@ if [[ -n ${nvme_cli_needed} ]]; then
     /usr/bin/sudo apt install -y nvme-cli lvm2
 fi
 
-partitionB1Exists=$(lsblk -o NAME,FSTYPE,SIZE -J | jq -r '.blockdevices[] | select(.name=="sdb") | .children[] | select(.name=="sdb1") | .name')
+partitionB1Exists=$(lsblk -o NAME,FSTYPE,SIZE -J | jq -r '.blockdevices[] | select(.name=="sdb") | .children[]? | select(.name=="sdb1") | .name')
 
 if [[ "${partitionB1Exists}" != "sdb1" ]]; then
   # Determine Drive B (Local K8s Volumes Storage)
