@@ -3,6 +3,23 @@ set -euo pipefail
 
 . /etc/environment
 
+# Added function to round up the disk space allocated for the LVM creations
+roundUp() {
+
+# Necessary as Vagrantfile was rounding up .5, unlike awk which is rounding that down
+number=$1
+
+bc << EOF
+num = $number;
+base = num / 1;
+if (((num - base) * 10) >= 5 )
+    base += 1;
+print base;
+EOF
+echo ""
+
+}
+
 export kxHomeDir=/usr/share/kx.as.code
 export sharedGitRepositories=${kxHomeDir}/git
 export installationWorkspace=${kxHomeDir}/workspace
@@ -99,17 +116,17 @@ if [[ -n ${nvme_cli_needed} ]]; then
     /usr/bin/sudo apt install -y nvme-cli lvm2
 fi
 
-partitionB1Exists=$(lsblk -o NAME,FSTYPE,SIZE -J | jq -r '.blockdevices[] | select(.name=="sdb") | .children[] | select(.name=="sdb1") | .name')
+partitionB1Exists=$(lsblk -o NAME,FSTYPE,SIZE -J | jq -r '.blockdevices[] | select(.name=="sdb") | .children[]? | select(.name=="sdb1") | .name')
 
 if [[ "${partitionB1Exists}" != "sdb1" ]]; then
   # Determine Drive B (Local K8s Volumes Storage)
   for i in {{1..30}}; do
     driveB=$(lsblk -o NAME,FSTYPE,SIZE -dsn -J | jq -r '.[] | .[] | select(.fstype==null) | select(.size=="'${localKubeVolumesDiskSize}'G") | .name' || true)
     if [[ -z ${driveB} ]]; then
-      log_info "Drive for local volumes not yet available. Trying a maximum of 30 times. Attempt ${i}"
+      echo "Drive for local volumes not yet available. Trying a maximum of 30 times. Attempt ${i}"
       sleep 15
     else
-      log_info "Drive for local volumes (${driveB}) now available after attempt ${i} of 30"
+      echo "Drive for local volumes (${driveB}) now available after attempt ${i} of 30"
       break
     fi
   done
@@ -162,7 +179,7 @@ create_volumes() {
                   /usr/bin/sudo mkdir -p ${BASE_K8S_LOCAL_VOLUMES_DIR}/k8s_${1}_local_k8s_volume_${i}
                   errorOutput=$(/usr/bin/sudo mount /dev/k8s_local_vol_group/k8s_${1}_local_k8s_volume_${i} ${BASE_K8S_LOCAL_VOLUMES_DIR}/k8s_${1}_local_k8s_volume_${i} 2>&1 >/dev/null || true)
                   if [[ -z "${errorOutput}" ]]; then
-                    log_info "Successfully mounted /dev/k8s_local_vol_group/k8s_${1}_local_k8s_volume_${i} to ${BASE_K8S_LOCAL_VOLUMES_DIR}/k8s_${1}_local_k8s_volume_${i}"
+                    echo "Successfully mounted /dev/k8s_local_vol_group/k8s_${1}_local_k8s_volume_${i} to ${BASE_K8S_LOCAL_VOLUMES_DIR}/k8s_${1}_local_k8s_volume_${i}"
                     break
                   else
                     log_error "Mount error after mount attempt ${j}!: ${errorOutput}"

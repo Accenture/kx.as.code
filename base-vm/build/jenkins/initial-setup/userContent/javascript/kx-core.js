@@ -1750,23 +1750,23 @@ function calculateHeatmapScalePosition() {
     switch (true) {
         case (heatmapScalePositionPercentage <= 5):
             document.getElementById("experience-meter-emoji-icon").src="/userContent/icons/emoji_robot1.png";
-            document.getElementById("triangle-heat-highlight").style.filter = "brightness(0) saturate(100%) invert(70%) sepia(1%) saturate(0%) hue-rotate(157deg) brightness(90%) contrast(93%)";
+            document.getElementById("triangle-heat-highlight").style.filter = "invert(62%) sepia(100%) saturate(6354%) hue-rotate(331deg) brightness(90%) contrast(87%)";
             break;
         case (heatmapScalePositionPercentage <= 25):
             document.getElementById("experience-meter-emoji-icon").src="/userContent/icons/emoji_robot2.png";
-            document.getElementById("triangle-heat-highlight").style.filter = "brightness(0) saturate(100%) invert(61%) sepia(98%) saturate(337%) hue-rotate(357deg) brightness(95%) contrast(94%)";
+            document.getElementById("triangle-heat-highlight").style.filter = "invert(28%) sepia(98%) saturate(1942%) hue-rotate(2deg) brightness(104%) contrast(98%)";
             break;
         case (heatmapScalePositionPercentage <= 50):
             document.getElementById("experience-meter-emoji-icon").src="/userContent/icons/emoji_robot3.png";
-            document.getElementById("triangle-heat-highlight").style.filter = "invert(63%) sepia(79%) saturate(418%) hue-rotate(357deg) brightness(97%) contrast(89%)";
+            document.getElementById("triangle-heat-highlight").style.filter = "invert(81%) sepia(48%) saturate(1309%) hue-rotate(331deg) brightness(95%) contrast(93%)";
             break;
         case (heatmapScalePositionPercentage <= 75):
             document.getElementById("experience-meter-emoji-icon").src="/userContent/icons/emoji_robot4.png";
-            document.getElementById("triangle-heat-highlight").style.filter = "brightness(0) saturate(100%) invert(31%) sepia(89%) saturate(2356%) hue-rotate(329deg) brightness(89%) contrast(91%)";
+            document.getElementById("triangle-heat-highlight").style.filter = "invert(86%) sepia(92%) saturate(2105%) hue-rotate(11deg) brightness(99%) contrast(99%)";
             break;
         case (heatmapScalePositionPercentage <= 100):
             document.getElementById("experience-meter-emoji-icon").src="/userContent/icons/emoji_robot5.png";
-            document.getElementById("triangle-heat-highlight").style.filter = "invert(29%) sepia(99%) saturate(2353%) hue-rotate(330deg) brightness(90%) contrast(88%)";
+            document.getElementById("triangle-heat-highlight").style.filter = "invert(73%) sepia(10%) saturate(2873%) hue-rotate(87deg) brightness(88%) contrast(64%)";
             break;
         default:
             break;

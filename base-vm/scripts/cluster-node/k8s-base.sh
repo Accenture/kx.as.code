@@ -1,8 +1,8 @@
 #!/bin/bash -x
 set -euo pipefail
 
-# Ensure time is accurate
-sudo apt-get install -y ntpdate
+# Ensure time is accurate with NTP + bc command line calculator for storage calculations
+sudo apt-get install -y ntpdate bc
 
 KUBEDIR=${INSTALLATION_WORKSPACE}
 sudo mkdir -p ${KUBEDIR}
