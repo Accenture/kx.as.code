@@ -19,7 +19,7 @@ As well as learning and sharing knowledge, there are several more use cases for 
 
 It can be considered as a local cloud like Kubernetes environment with a lot of things you would expect to see when managing a Kubernetes cluster in the cloud, including an ingress controller, storage cluster, DNS, a certificate authority... and the best bit, you just have to fill out a couple of config files and vagrant up/terraform apply, and you are on your way!
 
-![whatsinthebox](docs/docs/images/whatsinthebox.png)
+![whatsinthebox](docs/images/whatsinthebox.png)
 
 ## Why did we create this workstation?
 Many reasons! For our own learning and fun, for enabling others to enjoy and get into DevOps, as well as to give something back to the community, because we and everyone else in DevOps, benefit hugely from the wonderful OpenSource tools that are out there!
@@ -27,7 +27,7 @@ Many reasons! For our own learning and fun, for enabling others to enjoy and get
 Additionally, the machines we use at work or have sitting at home are getting more powerful all the time, and not everyone has access to a cloud account, so lets use that power we have at home or at work to do more! :metal:
 
 ## What makes this different to other solutions?
-As this we originally envisaged this as a DevOps training/enablement environment, we didn't just want to deploy a bunch of empty tools, but to make it feel like a live project environment, with repositories and docker images already populated, and some processes in place, to demonstrate for example, topics such as container runtime security or GitOps.
+As this we originally envisaged this as a DevOps training/enablement environment, we didn't just want to deploy a bunch of empty tools, but to make it feel like a live project environment, with repositories and docker images already populated, and some processes in place, to demonstrate for example, topics such as container runtime security or GitOps. It includes a complete self-developed automation framework, to dynamically decide what is installed, to give each user a complete custom experience, and allow the user to save resources, by not installing items that are not needed. The automation framework enables a touch free install of components as they are added to the RabbitMQ based installation queue.
 
 ## Where can I deploy KX.AS.CODE?
 KX.AS.CODE can be deployed locally or in the cloud, be it a private or public cloud. The most tested solutions are currently OpenStack and VirtualBox. Here a full list of solutions we have run KX.AS.CODE on.
@@ -42,12 +42,16 @@ KX.AS.CODE can be deployed locally or in the cloud, be it a private or public cl
 ## What type of deployments does KX.AS.CODE support?
 Depending on how big your laptop, desktop or server is, you can either deploy KX.AS.CODE in standalone mode, which means that everything happens in the one VM, or you can enable to have multiple worker and main nodes provisioned.
 
-It is possible through configuration, if physical resources are low, to have an additional worker node, and still have workloads started on the Kubernetes master.
-
 ## What is the minimal specification?
-Whilst we have run it on some laptops with just 8GB ram, you will not have a good experience with this setup, even in standalone mode. The absolute minimum is a laptop/desktop/server with 12GB ram (allocating 8GB to KX.AS.CODE), although to have a good experience, it is recommended the host has at least 16GB ram, so that 12GB can be allocated to KX.AS.CODE.
+Whilst we have run it on some laptops with just 8GB ram, you will not have a good experience with this setup, even in standalone mode. 
+That said, to enable lower speced laptops, it is now possible to start KX.AS.CODE in "minimal" mode, which removes multiple features not required on a local setup. 
+
+For example, network storage, SSO solutions (openLDAP server and Keycloak), remote desktop services, and so on. It is also possible to run completely headless without the desktop, in order again to save memory and CPU that would otherwise be consumed by the KDE Plasma desktop.
+
+Ideally, the minimum is a laptop/desktop/server with 12GB ram (allocating 8GB to KX.AS.CODE), although to have a good experience, it is recommended the underlying host has at least 16GB ram, so that 12GB can be allocated to KX.AS.CODE.
 
 After that, the more the merrier! 32GB upwards things are starting to look good. The less memory and CPU cores you have, the less solutions/tools you can provision on your Kubernetes cluster.
+
 If you are deploying to the public cloud, then your possibilities are endless, and you can deploy the entire stack - currently around 30 DevOps tools and more to come!
 
 ## Sounds good! Where can I get the images?
