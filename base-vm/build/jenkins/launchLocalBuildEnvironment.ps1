@@ -373,7 +373,7 @@ select-string -path $filename -pattern '(?<={{)(.*?)(?=}})' -allmatches  |
 $env:Path += ";C:/Program Files/Git/bin;C:/Program Files/Git/usr/bin;C:/Git/kx.as.code_test"
 Start-Process -FilePath $javaBinary -ArgumentList "-jar", ".\jenkins.war", "--httpListenAddress=$jenkins_listen_address", "--httpPort=$jenkins_server_port"
 
-$jenkinsUrl = "http://${jenkins_listen_address}:${jenkins_server_port}"
+$jenkinsUrl = "http://localhost:${jenkins_server_port}"
 Write-Output "jenkinsUrl: `"$jenkinsUrl"`"
 Write-Output "Discovered java binary: `"$javaBinary`""
 

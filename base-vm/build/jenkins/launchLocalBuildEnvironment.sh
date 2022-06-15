@@ -336,7 +336,7 @@ export JENKINS_HOME="$(pwd)/jenkins_home"
 screen -wipe
 screen -L -Logfile ./jenkinsLog_$(date '+%Y%m%d_%H%M%S').txt -S jenkins -d -m ${javaBinary} -jar ./jenkins.war --httpListenAddress=${jenkins_listen_address} --httpPort=${jenkins_server_port}
 
-jenkins_url="http://${jenkins_listen_address}:${jenkins_server_port}"
+jenkins_url="http://localhost:${jenkins_server_port}"
 
 # Downloading Jenkins CLI used for creating Jenkins credentials
 echo -e "${orange}- [INFO] The next steps - downloading Jar files from Jenkins - might take a few minutes, as Jenkins needs to finish coming up before it will work${nc}"
