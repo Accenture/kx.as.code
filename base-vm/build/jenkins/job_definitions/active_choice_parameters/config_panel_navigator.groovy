@@ -1,8 +1,9 @@
 try {
     // language=HTML
     def HTML = """
-    <body>
-        <div class="config-outer-wrapper">
+    <body xmlns="http://www.w3.org/1999/html">
+        <div id="config-panel-loading-progress-status-overlay"></div>
+        <div id="config-panel-outer-div" class="config-outer-wrapper">
             <div class="config-inner-panel">
                 <div id="config-navigator" class="config-selector-panel">
                     <div class="config-tab-selected" id="config-panel-profile-selection" onclick="change_panel_selection(this.id);"><img src="/userContent/icons/format-list-checks.svg" id="config-panel-profile-selection-icon" class="config-panel-icon svg-blue" alt="Profile Selection"></div>

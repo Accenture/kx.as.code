@@ -5,12 +5,24 @@ current_dir    = File.dirname(File.expand_path(__FILE__))
 if Vagrant::Util::Platform.windows?
   # Is Windows
   puts "Vagrant launched from windows."
+  vboxExecutable = "C:/Program Files/Oracle/VirtualBox/VBoxManage.exe"
 elsif Vagrant::Util::Platform.darwin?
   # Is Mac
   puts "Vagrant launched from mac."
+  vboxExecutable = "/Applications/VirtualBox.app/Contents/MacOS/VBoxManage"
 else
   # Assume WSL for now
   puts "Vagrant launched from other system, maybe WSL?"
+end
+
+# Checking if VirtualBox natnetwork is installed, and configuring it if not
+kxascodeNetworkExists = `bash -c "#{vboxExecutable.shellescape} natnetwork list kxascode | tail -1"`.strip
+puts "VirtualBox NAT network found: #{kxascodeNetworkExists}"
+if kxascodeNetworkExists == "1 network found"
+    puts "VirtualBox already has the KX.AS.CODE NAT network installed. Nothing to do."
+elsif kxascodeNetworkExists == "0 networks found"
+    puts "VirtualBox does not yet have the KX.AS.CODE NAT network installed. Creating it."
+    `bash -c "#{vboxExecutable.shellescape} natnetwork add --netname kxascode --network '10.100.76.0/24' --enable`
 end
 
 # Read Profile Config file

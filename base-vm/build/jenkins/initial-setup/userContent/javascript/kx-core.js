@@ -156,11 +156,13 @@ function populate_profile_option_list() {
     }
 }
 
-function update_selected_value() {
-    let selectedOptionNumber = document.getElementById("profiles").selectedIndex;
+function update_selected_value(selectedProfileIndex) {
+    if ( ! selectedProfileIndex ) {
+        selectedProfileIndex = document.getElementById("profiles").selectedIndex;
+    }
     let profilePaths = getProfilePaths().split(',');
-    let profilePath = profilePaths[selectedOptionNumber] + '/profile-config.json'
-    let startMode = document.getElementsByClassName("selection-radio-selected")[0].id.split("-")[1]
+    let profilePath = profilePaths[selectedProfileIndex] + '/profile-config.json'
+    let startMode = document.getElementsByClassName("selection-radio-selected")[0].id.split("-")[1];
     let concatenatedProfileSelection = profilePath + ";" + startMode;
     document.getElementById("concatenated-profile-selection").value = concatenatedProfileSelection;
     document.getElementById("concatenated-profile-selection").setAttribute("concatenated-profile-selection", concatenatedProfileSelection);
@@ -270,7 +272,7 @@ function updateConcatenatedGeneralParamsReturnVariable() {
     //change_panel_selection("config-panel-general-params");
 }
 
-function waitForElement(elementId, callBack){
+async function waitForElement(elementId, callBack){
     window.setTimeout(function(){
         let element = document.getElementById(elementId);
         if(element){
@@ -282,6 +284,8 @@ function waitForElement(elementId, callBack){
 }
 
 function updateCheckbox(checkboxElementId) {
+
+    disableControlPanel(arguments.callee.name);;
 
     waitForElement(checkboxElementId, function () {
 
@@ -331,7 +335,7 @@ function updateCheckbox(checkboxElementId) {
     }
 
     triggerChoiceParameterUpdate(checkboxElementId + '-name-value');
-
+    enableControlPanel(arguments.callee.name);
 }
 
 function triggerChoiceParameterUpdate(elementId) {
@@ -882,8 +886,9 @@ function populateReviewTable() {
     document.getElementById("summary-main-nodes-number-value").innerText = numMainNodes;
     let numWorkerNodes = parseInt(document.getElementById("counter_value_worker_node_count_value").innerText);
     document.getElementById("summary-worker-nodes-number-value").innerText = numWorkerNodes;
-    if (document.getElementById("concatenated-templates-list").value === "") {
+    if (document.getElementById("concatenated-templates-list").value === "" || ! document.getElementById("concatenated-templates-list").value) {
         document.getElementById("list-templates-to-install").innerHTML = "<i>None</i>"
+        document.getElementById("list-templates-tooltip-text").innerText = "No application group template has been selected";
     } else {
         let templatesList = document.getElementById("concatenated-templates-list").value;
         let templatesListArray = templatesList.split(',');
@@ -937,14 +942,14 @@ async function performRuntimeAction(vagrantAction) {
     refreshGetBuildJobList("KX.AS.CODE_Runtime_Actions", "kx-launch");
 }
 
-function updateProfileAndPrereqsCheckTab() {
+function updateProfileAndPrereqsCheckTab(selectedProfileIndex) {
     getBuildJobListForProfile("KX.AS.CODE_Image_Builder", "kx-main");
     getBuildJobListForProfile("KX.AS.CODE_Image_Builder", "kx-node");
     getAvailableLocalBoxes();
     getAvailableCloudBoxes()
     compareVersions();
     checkVagrantPreRequisites();
-    updateProfileSelection();
+    update_selected_value(selectedProfileIndex);
 }
 
 function displayOrHideKxAlreadyRunningWarning(mainNodes) {
@@ -975,7 +980,7 @@ function getTemplates(selectedTemplate) {
         }
         getTemplateComponents(templateId);
     } catch (e) {
-        console.log(e)
+        console.debug(e)
     }
     return [ definitionsArray, templateId];
 }
@@ -1056,7 +1061,7 @@ function getTemplateComponents(templateId) {
                 }
             }
         } catch (e) {
-            console.log(e);
+            console.debug(e);
         }
     }
 
@@ -1091,7 +1096,7 @@ function remove_selected_template_list_item(selectedTemplate) {
             }
         }
     } catch (e) {
-        console.log(e);
+        console.debug(e);
     }
 }
 
@@ -1189,7 +1194,7 @@ function removeTemplateFromProfile(templateToRemoveId) {
             triggerChoiceParameterUpdate('concatenated-templates-list');
         }
     } catch (e) {
-        console.log(e)
+        console.debug(e)
     }
 }
 
@@ -1239,7 +1244,7 @@ function hideParameterDivs() {
                 sleep(1);
             }
         } catch (e) {
-            console.log(e);
+            console.debug(e);
         }
     })
 }
@@ -1250,7 +1255,29 @@ function sleep(seconds){
         true;
 }
 
+async function disableControlPanel(caller) {
+    document.getElementById('config-panel-outer-div').style.pointerEvents = "none";
+    document.getElementById('config-panel-outer-div').style.opacity = "0.5";
+}
+
+async function enableControlPanel(caller) {
+    if (caller === "change_panel_selection") {
+        await new Promise(resolve => setTimeout(resolve, 5000));
+    } else {
+        await new Promise(resolve => setTimeout(resolve, 4000));
+    }
+    document.getElementById('config-panel-outer-div').style.pointerEvents="auto";
+    document.getElementById('config-panel-outer-div').style.opacity="1.0";
+    sessionStorage.disableControlPanelExecutedOnce = true;
+
+}
+
 function change_panel_selection(config_panel) {
+
+    if (config_panel === "config-panel-general-params") {
+        disableControlPanel(arguments.callee.name);
+    }
+
     if ( document.getElementById('system-prerequisites-check').value === "failed" ) {
         config_panel = "config-panel-profile-selection";
     }
@@ -1341,6 +1368,10 @@ function change_panel_selection(config_panel) {
             document.getElementById(configPanelIcon).className = "config-panel-icon svg-white";
         }
     })
+    if (config_panel === "config-panel-general-params") {
+        enableControlPanel(arguments.callee.name);
+    }
+
 }
 
 function removeAllChildNodes(parent) {
@@ -1379,7 +1410,7 @@ function moveDivToConfigPanel(configDiv) {
         }
         divConfigPanelChild.style.display = displayType;
     } catch (e) {
-        console.log(e);
+        console.debug(e);
     }
 }
 
@@ -1438,7 +1469,7 @@ function getAvailableLocalBoxes() {
                 localVagrantBoxNodeVersion = getParallelsLocalVagrantBoxNodeVersion();
                 break;
             default:
-                console.log("Weird, box type not known. Normally the box type is either VirtualBox, VMWare or Parallels");
+                console.debug("Weird, box type not known. Normally the box type is either VirtualBox, VMWare or Parallels");
         }
         if ( localVagrantBoxMainVersion !== "null" ) {
             document.getElementById("kx-main-local-box-version").innerHTML = localVagrantBoxMainVersion;
@@ -1463,7 +1494,7 @@ function getAvailableLocalBoxes() {
         }
 
     } catch (e) {
-        console.log("Error getting box versions: " + e);
+        console.debug("Error getting box versions: " + e);
     }
 }
 
@@ -1486,7 +1517,7 @@ function getAvailableCloudBoxes() {
                 cloudVagrantBoxNodeVersion = getParallelsKxNodeVagrantCloudVersion();
                 break;
             default:
-                console.log("Weird, box type not known. Normally the box type is either VirtualBox, VMWare or Parallels");
+                console.debug("Weird, box type not known. Normally the box type is either VirtualBox, VMWare or Parallels");
         }
         if ( cloudVagrantBoxMainVersion !== "null" ) {
             document.getElementById("kx-main-vagrant-cloud-box-version").innerHTML = cloudVagrantBoxMainVersion;
@@ -1511,7 +1542,7 @@ function getAvailableCloudBoxes() {
         }
 
     } catch (e) {
-        console.log("Error getting box versions: " + e);
+        console.debug("Error getting box versions: " + e);
     }
 }
 
@@ -1551,8 +1582,11 @@ function checkVagrantPreRequisites() {
     }
 }
 
-function updateProfileSelection() {
-    let selectedProfile = document.getElementById("profiles").value;
+function updateProfileSelection(selectedProfileIndex) {
+    if ( ! selectedProfileIndex ) {
+        selectedProfileIndex = document.getElementById("profiles").selectedIndex;
+    }
+    let selectedProfile = document.getElementById("profiles").options[selectedProfileIndex].text
     let parallelsExecutableExists = getParallelsExecutableExists();
     let vboxExecutableExists = getVboxExecutableExists();
     let vmwareExecutableExists = getVmwareExecutableExists();
@@ -1579,10 +1613,9 @@ function updateProfileSelection() {
 
         // Pre-requisite value must be either "full", "standalone" or "failed"
         document.getElementById("system-prerequisites-check").value = prerequisitesCheckResult;
+        document.getElementById("profiles").value = defaultProfile;
         sessionStorage.hasCodeRunBefore = true;
     }
-
-    document.getElementById("profiles").value = defaultProfile;
 
     if (sessionStorage.getItem('hasCodeRunBefore') !== null) {
         if ( selectedProfile === "virtualbox" && vboxExecutableExists === "true" && vboxVagrantPluginInstalled === "true" ) {
@@ -1597,7 +1630,9 @@ function updateProfileSelection() {
         // Pre-requisite value must be either "full", "standalone" or "failed"
         document.getElementById("system-prerequisites-check").value = selectedProfileCheckResult;
     }
+    //triggerChoiceParameterUpdate('concatenated-profile-selection');
     change_panel_selection('config-panel-profile-selection');
+
 }
 
 function buildInitialUsersTableFromJson(usersJsonFileContent) {
@@ -1719,8 +1754,6 @@ function calculateHeatmapScalePosition() {
         totalAvailableMemory = workerNodeCount * workerNodeMemory;
     }
 
-    console.log("totalAvailableMemory: " + totalAvailableMemory + " totalAvailableCpuCores: " + totalAvailableCpuCores );
-
     let cpuScore;
     if ( totalAvailableCpuCores >= cpuCoresHeatScaleMax ) {
         cpuScore = 1;
@@ -1745,7 +1778,6 @@ function calculateHeatmapScalePosition() {
     }
 
     let heatmapScalePositionPercentage = ( heatmapScalePosition / heatScaleDivWidth ) * 100;
-    console.log("heatmapScalePositionPercentage: " + heatmapScalePositionPercentage);
 
     switch (true) {
         case (heatmapScalePositionPercentage <= 5):
@@ -1773,7 +1805,6 @@ function calculateHeatmapScalePosition() {
     }
 
     document.getElementById("experience-marker").style.left = heatmapScalePosition + "px";
-    console.log("Setting heatmapScalePosition to " + heatmapScalePosition);
 
     let resourceSettingsInnerHtml = '<span class="experience-meter-title">Current Selection</span><span class="experience-meter-label">CPU</span><span class="experience-meter-value">' + totalAvailableCpuCores + ' vCores</span class="experience-meter-label"><span class="experience-meter-label">Memory</span><span class="experience-meter-value">' + ( totalAvailableMemory / 1024 )+ 'GB</span>'
     document.getElementById("current-resource-settings-div").innerHTML = resourceSettingsInnerHtml;
@@ -1805,14 +1836,11 @@ function generateTeamName() {
 
 function generatePassword() {
     let generatedPassword = Math.random().toString(36).slice(-10);
-    console.log(generatedPassword);
     document.getElementById("general-param-password").value = generatedPassword;
 }
 
 function updateStartModeSelection(elementId) {
-    console.log(elementId);
     if ( elementId === "normal" ) {
-        console.log("selected normal");
         document.getElementById("selection-normal-label").className = "selection-label selection-label-selected";
         document.getElementById("selection-normal-radio").className = "selection-radio selection-radio-selected";
         document.getElementById("selection-lite-label").className = "selection-label selection-label-unselected";
@@ -1823,7 +1851,6 @@ function updateStartModeSelection(elementId) {
         document.getElementById("selection-lite-svg").src = "/userContent/icons/radiobox-blank.svg";
         document.getElementById("selection-minimal-svg").src = "/userContent/icons/radiobox-blank.svg";
     } else if ( elementId === "lite" ) {
-        console.log("selected lite");
         document.getElementById("selection-normal-label").className = "selection-label selection-label-unselected";
         document.getElementById("selection-normal-radio").className = "selection-radio selection-radio-unselected";
         document.getElementById("selection-lite-label").className = "selection-label selection-label-selected";
@@ -1834,7 +1861,6 @@ function updateStartModeSelection(elementId) {
         document.getElementById("selection-lite-svg").src = "/userContent/icons/radiobox-marked.svg";
         document.getElementById("selection-minimal-svg").src = "/userContent/icons/radiobox-blank.svg";
     } else if ( elementId === "minimal" ) {
-        console.log("selected minimal");
         document.getElementById("selection-normal-label").className = "selection-label selection-label-unselected";
         document.getElementById("selection-normal-radio").className = "selection-radio selection-radio-unselected";
         document.getElementById("selection-lite-label").className = "selection-label selection-label-unselected";
@@ -1866,3 +1892,4 @@ function getProfilePath() {
     let concatenatedProfileSelection = document.getElementById('concatenated-profile-selection').value.split(';');
     return concatenatedProfileSelection[0];
 }
+

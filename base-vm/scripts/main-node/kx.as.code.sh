@@ -163,10 +163,10 @@ sudo mkdir -p "${vendorDocsDirectory}"
 sudo chmod a+rwx "${vendorDocsDirectory}"
 sudo ln -s "${vendorDocsDirectory}" /home/${VM_USER}/Desktop/
 
-# Show /etc/motd even when in X-Windows terminal (not SSH)
+# Show /etc/motd.kxascode even when in X-Windows terminal (not SSH)
 echo -e '\n# Added to show KX.AS.CODE MOTD also in X-Windows Terminal (already showing in SSH per default)
 if [ -z $(echo $SSH_TTY) ]; then
-cat /etc/motd | sed -e "s/^/ /"
+cat /etc/motd.kxascode | sed -e "s/^/ /"
 fi' | sudo tee -a /home/${VM_USER}/.zshrc
 
 # Stop ZSH adding % to the output of every commands_whitelist
@@ -267,3 +267,24 @@ echo """#!/bin/bash
 sudo chmod 755 /home/${VM_USER}/.config/autostart-scripts/xeventbind.sh
 sudo chown ${VM_USER}:${VM_USER} /home/${VM_USER}/.config/autostart-scripts/xeventbind.sh
 
+# Create script for re-enabling desktop
+echo """#!/bin/bash
+# Backup original Grub file that starts KDE Plasma
+/usr/bin/sudo cp /etc/default/grub /etc/default/grub.gui
+
+# Replace with value to
+sed -i '/GRUB_CMDLINE_LINUX/s/\".*\"/\"text\"/' /etc/default/grub
+sed -i 's/#GRUB_TERMINAL=console/GRUB_TERMINAL=console/g' /etc/default/grub
+/usr/bin/sudo update-grub
+/usr/bin/sudo systemctl set-default multi-user.target
+echo \"dmesg -n 1\" | sudo tee -a /home/${VM_USER}/.zshrc
+""" | /usr/bin/sudo tee ${installationWorkspace}/disableKdeDesktopOnBoot.sh
+
+/usr/bin/sudo chmod 755 ${installationWorkspace}/disableKdeDesktopOnBoot.sh
+
+
+    # Checking if taint already removed
+    masterNodeTaints=$(kubectl get nodes -o json | jq '.items[] | select(.metadata.name=="kx-main1") | select(.spec.taints[]?.effect=="NoSchedule")')
+    if [[ -n ${masterNodeTaints} ]]; then
+      kubectl taint nodes --all node-role.kubernetes.io/master-
+    fi

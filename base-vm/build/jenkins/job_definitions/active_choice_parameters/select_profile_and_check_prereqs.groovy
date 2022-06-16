@@ -298,7 +298,7 @@
         <div id="select-profile-div" style="display: none;">
             <br>
             <label for="profiles" class="input-box-label" style="margin: 0px;">Profiles</label>
-            <select id="profiles" class="profiles-select capitalize" value="Virtualbox" onchange="updateProfileAndPrereqsCheckTab();">
+            <select id="profiles" class="profiles-select capitalize" value="" onchange="updateProfileAndPrereqsCheckTab(this.selectedIndex);">
             </select>
             </label>
     </span>
@@ -318,7 +318,6 @@
     </span>
             
         </div>
-        <input type="hidden" id="concatenated-profile-selection" name="value" value="">
         <style scoped="scoped" onload="populate_profile_option_list();">   </style>
 
         <div id="prerequisites-div" style="display: none;">
@@ -410,6 +409,7 @@
                 
             </div>
         </div>
+        <input type="hidden" id="concatenated-profile-selection" name="value" value="">
     </body>
     """
         return HTML
