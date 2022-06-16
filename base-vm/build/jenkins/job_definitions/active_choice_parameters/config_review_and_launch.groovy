@@ -53,10 +53,10 @@ def inputFile = new File(jsonFilePath)
 
 def ALLOW_WORKLOADS_ON_KUBERNETES_MASTER
 
-def kxMainRunningVms
-def kxWorkerRunningVms
-def numKxMainRunningVms
-def numKxWorkerRunningVms
+def kxMainRunningVms = []
+def kxWorkerRunningVms = []
+def numKxMainRunningVms = []
+def numKxWorkerRunningVms = []
 
 try {
 
@@ -278,21 +278,30 @@ try {
     def runningVirtualMachinesList = []
 
     if ( PROFILE.contains("vmware-desktop")) {
-        runningVirtualMachines = "${vmwareCliPath} list".execute().text
-        runningVirtualMachinesList = new String(runningVirtualMachines).split('\n')
-        kxMainRunningVms = runningVirtualMachinesList.findAll { it.contains('kx.as.code-demo1-main') }
-        kxWorkerRunningVms = runningVirtualMachinesList.findAll { it.contains('kx.as.code-demo1-worker') }
+        File vmwareCliPathExists = new File(vmwareCliPath)
+        if ( vmwareCliPathExists.exists() ) {
+            runningVirtualMachines = "${vmwareCliPath} list".execute().text
+            runningVirtualMachinesList = new String(runningVirtualMachines).split('\n')
+            kxMainRunningVms = runningVirtualMachinesList.findAll { it.contains('kx.as.code-demo1-main') }
+            kxWorkerRunningVms = runningVirtualMachinesList.findAll { it.contains('kx.as.code-demo1-worker') }
+        }
     } else if ( PROFILE.contains("parallels") ) {
-        Process runningVirtualMachinesProcess = ["${parallelsCliPath}", "list"].execute()
-        virtualMachinesList = new String(runningVirtualMachinesProcess.text).split('\n')
-        runningVirtualMachinesList = virtualMachinesList.findAll { it.contains('running') }
-        kxMainRunningVms = runningVirtualMachinesList.findAll { it.contains('kx.as.code-demo1-main') }
-        kxWorkerRunningVms = runningVirtualMachinesList.findAll { it.contains('kx.as.code-demo1-worker') }
+        File parallelsCliPathExists = new File(parallelsCliPath)
+        if ( parallelsCliPathExists.exists() ) {
+            Process runningVirtualMachinesProcess = ["${parallelsCliPath}", "list"].execute()
+            virtualMachinesList = new String(runningVirtualMachinesProcess.text).split('\n')
+            runningVirtualMachinesList = virtualMachinesList.findAll { it.contains('running') }
+            kxMainRunningVms = runningVirtualMachinesList.findAll { it.contains('kx.as.code-demo1-main') }
+            kxWorkerRunningVms = runningVirtualMachinesList.findAll { it.contains('kx.as.code-demo1-worker') }
+        }
     } else if ( PROFILE.contains("virtualbox")) {
-        runningVirtualMachines = "${virtualboxCliPath} list runningvms".execute().text
-        runningVirtualMachinesList = new String(runningVirtualMachines).split('\n')
-        kxMainRunningVms = runningVirtualMachinesList.findAll { it.contains('kx.as.code-demo1-main') }
-        kxWorkerRunningVms = runningVirtualMachinesList.findAll { it.contains('kx.as.code-demo1-worker') }
+        File virtualboxCliPathExists = new File(parallelsCliPath)
+        if ( virtualboxCliPathExists.exists() ) {
+            runningVirtualMachines = "${virtualboxCliPath} list runningvms".execute().text
+            runningVirtualMachinesList = new String(runningVirtualMachines).split('\n')
+            kxMainRunningVms = runningVirtualMachinesList.findAll { it.contains('kx.as.code-demo1-main') }
+            kxWorkerRunningVms = runningVirtualMachinesList.findAll { it.contains('kx.as.code-demo1-worker') }
+        }
     }
 
 } catch(e) {
