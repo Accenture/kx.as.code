@@ -278,13 +278,27 @@ sed -i 's/#GRUB_TERMINAL=console/GRUB_TERMINAL=console/g' /etc/default/grub
 /usr/bin/sudo update-grub
 /usr/bin/sudo systemctl set-default multi-user.target
 echo \"dmesg -n 1\" | sudo tee -a /home/${VM_USER}/.zshrc
-""" | /usr/bin/sudo tee ${installationWorkspace}/disableKdeDesktopOnBoot.sh
+""" | /usr/bin/sudo tee ${INSTALLATION_WORKSPACE}/disableKdeDesktopOnBoot.sh
+/usr/bin/sudo chmod 755 ${INSTALLATION_WORKSPACE}/disableKdeDesktopOnBoot.sh
 
-/usr/bin/sudo chmod 755 ${installationWorkspace}/disableKdeDesktopOnBoot.sh
+# Create script for re-enabling desktop
+echo """#!/bin/bash
+/usr/bin/sudo cp /etc/default/grub /etc/default/grub.console
+/usr/bin/sudo cp /etc/default/grub.gui /etc/default/grub
+/usr/bin/sudo systemctl set-default graphical.target
+""" | /usr/bin/sudo tee ${INSTALLATION_WORKSPACE}/enableKdeDesktopOnBoot.sh
+/usr/bin/sudo chmod 755 ${INSTALLATION_WORKSPACE}/enableKdeDesktopOnBoot.sh
 
+echo """#!/bin/bash
+masterNodeTaints=\$(kubectl get nodes -o json | jq '.items[] | select(.metadata.name==\"kx-main1\") | select(.spec.taints[]?.effect==\"NoSchedule\")')
+if [[ -n \${masterNodeTaints} ]]; then
+  kubectl taint nodes --all node-role.kubernetes.io/master-
+fi
+""" | /usr/bin/sudo tee ${INSTALLATION_WORKSPACE}/removedNoScheduleTaintFromMasterNodes.sh
+/usr/bin/sudo chmod 755 ${INSTALLATION_WORKSPACE}/removedNoScheduleTaintFromMasterNodes.sh
 
-    # Checking if taint already removed
-    masterNodeTaints=$(kubectl get nodes -o json | jq '.items[] | select(.metadata.name=="kx-main1") | select(.spec.taints[]?.effect=="NoSchedule")')
-    if [[ -n ${masterNodeTaints} ]]; then
-      kubectl taint nodes --all node-role.kubernetes.io/master-
-    fi
+# Create script for re-tainting master nodes with NoSchedule
+echo """#!/bin/bash
+kubectl taint nodes -l node-role.kubernetes.io/master= master node-role.kubernetes.io/master:NoSchedule --overwrite
+""" | /usr/bin/sudo tee ${INSTALLATION_WORKSPACE}/enableK8sNoScheduleTaintOnMasterNodes.sh
+/usr/bin/sudo chmod 755 ${INSTALLATION_WORKSPACE}/enableK8sNoScheduleTaintOnMasterNodes.sh
