@@ -117,6 +117,18 @@ function getParallelsPluginInstalled() {
 }
 
 async function triggerBuild(nodeType) {
+
+    document.getElementById(nodeType + "-build-result").className = "";
+    document.getElementById(nodeType + "-build-result").style.justifyContent = "center";
+    document.getElementById(nodeType + "-build-result").innerHTML = "<div class='dot-flashing' style='background-color: white; margin-right: 15px; margin-left: 15px;'></div>";
+
+    // Disable buttons to avoid double builds
+    document.getElementById("build-" + nodeType + "-play-button").style.pointerEvents = "none";
+    document.getElementById("build-" + nodeType + "-play-button").style.cursor = "not-allowed";
+    document.getElementById("build-" + nodeType + "-play-button").style.opacity = "0.3";
+
+    disableControlPanel(arguments.callee.name);
+
     let jenkinsCrumb = getCrumb().value;
     let localKxVersion = getLocalKxVersion();
     let formData = new FormData();
@@ -140,6 +152,9 @@ async function triggerBuild(nodeType) {
     }
     let response = await fetch('/job/Actions/job/KX.AS.CODE_Image_Builder/buildWithParameters', config);
     let data = await response.text();
+
+    await new Promise(resolve => setTimeout(resolve, 10000))
+    enableControlPanel(arguments.callee.name);
     refreshGetBuildJobList("KX.AS.CODE_Image_Builder", nodeType)
 }
 
@@ -283,9 +298,16 @@ async function waitForElement(elementId, callBack){
     },500)
 }
 
+function setInitialCheckboxValue(checkboxElementId, checked) {
+    document.getElementById(checkboxElementId).className = "checkbox-slider round";
+    document.getElementById(checkboxElementId).checked = checked;
+    document.getElementById(checkboxElementId).value = checked;
+    document.getElementById(checkboxElementId + '-name-value').value = checked;
+}
+
 function updateCheckbox(checkboxElementId) {
 
-    disableControlPanel(arguments.callee.name);;
+    disableControlPanel(arguments.callee.name);
 
     waitForElement(checkboxElementId, function () {
 
@@ -301,39 +323,37 @@ function updateCheckbox(checkboxElementId) {
     });
 
     if (document.getElementById(checkboxElementId).checked === true) {
-
+        document.getElementById(checkboxElementId).className = "checkbox-slider round";
         document.getElementById(checkboxElementId).checked = true;
         document.getElementById(checkboxElementId).value = true;
-
         document.getElementById(checkboxElementId + '-name-value').value = true;
     } else {
-
+        document.getElementById(checkboxElementId).className = "checkbox-slider round";
         document.getElementById(checkboxElementId).checked = false;
         document.getElementById(checkboxElementId).value = false;
-
         document.getElementById(checkboxElementId + '-name-value').value = false;
     }
+    /*
+        if (document.getElementById("system-prerequisites-check").value === "standalone" || document.getElementById("system-prerequisites-check").value === "failed") {
 
-    if (document.getElementById("system-prerequisites-check").value === "standalone" || document.getElementById("system-prerequisites-check").value === "failed") {
-
-        document.getElementById('general-param-standalone-mode-toggle').checked = true;
-        document.getElementById('general-param-workloads-on-master-toggle').checked = true;
-        document.getElementById('general-param-standalone-mode-toggle').className = "checkbox-slider-checked-disabled round";
-        document.getElementById('general-param-standalone-mode-toggle-span').className = "checkbox-slider-checked-disabled round";
-        document.getElementById('general-param-workloads-on-master-toggle').className = "checkbox-slider-checked-disabled round";
-        document.getElementById('general-param-workloads-on-master-toggle-span').className = "checkbox-slider-checked-disabled round";
-        document.getElementById('general-param-workloads-on-master-toggle-name-value').value = true;
-        document.getElementById('general-param-disable-desktop-toggle').className = "checkbox-slider round";
-        document.getElementById('general-param-disable-desktop-toggle-span').className = "checkbox-slider round";
-    } else if (document.getElementById("system-prerequisites-check").value === "full") {
-        document.getElementById('general-param-standalone-mode-toggle').className = "checkbox-slider round";
-        document.getElementById('general-param-standalone-mode-toggle-span').className = "checkbox-slider round";
-        document.getElementById('general-param-workloads-on-master-toggle').className = "checkbox-slider round";
-        document.getElementById('general-param-workloads-on-master-toggle-span').className = "checkbox-slider round";
-        document.getElementById('general-param-disable-desktop-toggle').className = "checkbox-slider round";
-        document.getElementById('general-param-disable-desktop-toggle-span').className = "checkbox-slider round";
-    }
-
+            document.getElementById('general-param-standalone-mode-toggle').checked = true;
+            document.getElementById('general-param-workloads-on-master-toggle').checked = true;
+            document.getElementById('general-param-standalone-mode-toggle').className = "checkbox-slider-checked-disabled round";
+            document.getElementById('general-param-standalone-mode-toggle-span').className = "checkbox-slider-checked-disabled round";
+            document.getElementById('general-param-workloads-on-master-toggle').className = "checkbox-slider-checked-disabled round";
+            document.getElementById('general-param-workloads-on-master-toggle-span').className = "checkbox-slider-checked-disabled round";
+            document.getElementById('general-param-workloads-on-master-toggle-name-value').value = true;
+            document.getElementById('general-param-disable-desktop-toggle').className = "checkbox-slider round";
+            document.getElementById('general-param-disable-desktop-toggle-span').className = "checkbox-slider round";
+        } else if (document.getElementById("system-prerequisites-check").value === "full") {
+            document.getElementById('general-param-standalone-mode-toggle').className = "checkbox-slider round";
+            document.getElementById('general-param-standalone-mode-toggle-span').className = "checkbox-slider round";
+            document.getElementById('general-param-workloads-on-master-toggle').className = "checkbox-slider round";
+            document.getElementById('general-param-workloads-on-master-toggle-span').className = "checkbox-slider round";
+            document.getElementById('general-param-disable-desktop-toggle').className = "checkbox-slider round";
+            document.getElementById('general-param-disable-desktop-toggle-span').className = "checkbox-slider round";
+        }
+    */
     triggerChoiceParameterUpdate(checkboxElementId + '-name-value');
     enableControlPanel(arguments.callee.name);
 }
@@ -506,6 +526,12 @@ async function getBuildJobListForProfile(job, nodeType) {
                 } else {
                     styleClass = 'build-result build-result-neutral';
                 }
+                // Re-enable buttons to avoid double builds
+                document.getElementById("build-" + nodeType + "-play-button").style.pointerEvents = "auto";
+                document.getElementById("build-" + nodeType + "-play-button").style.cursor = "pointer";
+                document.getElementById("build-" + nodeType + "-play-button").style.opacity = "1.0";
+
+                // Write status to control panel
                 document.getElementById(nodeType + "-build-result").innerHTML = '<span className="build-action-text-value build-action-text-value-result" style="width: 70px;">' + kxBuilds[0].result + '</span>';
                 document.getElementById(nodeType + "-build-result").className = styleClass;
                 document.getElementById(nodeType + "-build-number-link").innerHTML = "<a href='" + kxBuilds[0].url + "' target='_blank' rel='noopener noreferrer' style='font-weight: normal;'># " + kxBuilds[0].number + "</a>";
@@ -898,6 +924,18 @@ function populateReviewTable() {
 }
 
 async function performRuntimeAction(vagrantAction) {
+
+    document.getElementById("kx-launch-build-result").className = "";
+    document.getElementById("kx-launch-build-result").style.justifyContent = "center";
+    document.getElementById("kx-launch-build-result").innerHTML = "<div class='dot-flashing' style='background-color: white; margin-right: 15px; margin-left: 15px;'></div>";
+
+    // Disable buttons to avoid double builds
+    document.getElementById("build-kx-launch-play-button").style.pointerEvents = "none";
+    document.getElementById("build-kx-launch-play-button").style.cursor = "not-allowed";
+    document.getElementById("build-kx-launch-play-button").style.opacity = "0.3";
+
+    disableControlPanel(arguments.callee.name);
+
     let jenkinsCrumb = getCrumb().value;
     let formData = new FormData();
 
@@ -939,7 +977,11 @@ async function performRuntimeAction(vagrantAction) {
     }
     let response = await fetch('/job/Actions/job/KX.AS.CODE_Runtime_Actions/buildWithParameters', config);
     let data = await response.text();
+
+    await new Promise(resolve => setTimeout(resolve, 10000))
+    enableControlPanel(arguments.callee.name);
     refreshGetBuildJobList("KX.AS.CODE_Runtime_Actions", "kx-launch");
+
 }
 
 function updateProfileAndPrereqsCheckTab(selectedProfileIndex) {
