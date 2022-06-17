@@ -58,12 +58,13 @@ def kxWorkerRunningVms = []
 def numKxMainRunningVms = []
 def numKxWorkerRunningVms = []
 
+def virtualboxCliPath
+def vmwareCliPath
+def parallelsCliPath
+
 try {
 
     def OS = System.getProperty("os.name", "generic").toLowerCase(Locale.ENGLISH);
-    def virtualboxCliPath
-    def vmwareCliPath
-    def parallelsCliPath
 
     if ((OS.indexOf("mac") >= 0) || (OS.indexOf("darwin") >= 0)) {
         underlyingOS = "darwin"
@@ -282,8 +283,8 @@ try {
         if ( vmwareCliPathExists.exists() ) {
             runningVirtualMachines = "${vmwareCliPath} list".execute().text
             runningVirtualMachinesList = new String(runningVirtualMachines).split('\n')
-            kxMainRunningVms = runningVirtualMachinesList.findAll { it.contains('kx.as.code-demo1-main') }
-            kxWorkerRunningVms = runningVirtualMachinesList.findAll { it.contains('kx.as.code-demo1-worker') }
+            kxMainRunningVms = runningVirtualMachinesList.findAll { it =~ /kx.as.code-(.*)-main(.*)/ }
+            kxWorkerRunningVms = runningVirtualMachinesList.findAll { it =~ /kx.as.code-(.*)-worker(.*)/ }
         }
     } else if ( PROFILE.contains("parallels") ) {
         File parallelsCliPathExists = new File(parallelsCliPath)
@@ -291,16 +292,16 @@ try {
             Process runningVirtualMachinesProcess = ["${parallelsCliPath}", "list"].execute()
             virtualMachinesList = new String(runningVirtualMachinesProcess.text).split('\n')
             runningVirtualMachinesList = virtualMachinesList.findAll { it.contains('running') }
-            kxMainRunningVms = runningVirtualMachinesList.findAll { it.contains('kx.as.code-demo1-main') }
-            kxWorkerRunningVms = runningVirtualMachinesList.findAll { it.contains('kx.as.code-demo1-worker') }
+            kxMainRunningVms = runningVirtualMachinesList.findAll { it =~ /kx.as.code-(.*)-main(.*)/ }
+            kxWorkerRunningVms = runningVirtualMachinesList.findAll { it =~ /kx.as.code-(.*)-worker(.*)/ }
         }
     } else if ( PROFILE.contains("virtualbox")) {
-        File virtualboxCliPathExists = new File(parallelsCliPath)
+        File virtualboxCliPathExists = new File(virtualboxCliPath)
         if ( virtualboxCliPathExists.exists() ) {
             runningVirtualMachines = "${virtualboxCliPath} list runningvms".execute().text
             runningVirtualMachinesList = new String(runningVirtualMachines).split('\n')
-            kxMainRunningVms = runningVirtualMachinesList.findAll { it.contains('kx.as.code-demo1-main') }
-            kxWorkerRunningVms = runningVirtualMachinesList.findAll { it.contains('kx.as.code-demo1-worker') }
+            kxMainRunningVms = runningVirtualMachinesList.findAll { it =~ /kx.as.code-(.*)-main(.*)/ }
+            kxWorkerRunningVms = runningVirtualMachinesList.findAll { it =~ /kx.as.code-(.*)-worker(.*)/ }
         }
     }
 
@@ -432,8 +433,8 @@ try {
                         <span class="launch-action-text-label" style="width: 115px;">Kube-Version:</span><span id="kx-launch-build-kube-version" class="build-action-text-value build-action-text-value-result" style="width: 80px;"></span>
                         <span class="build-number-span" id="kx-launch-build-number-link"></span>
                     </span>
-                    <span class='span-rounded-border'>
-                        <img src='/userContent/icons/play.svg' class="build-action-icon" title="Start Environment" alt="Start Environment" onclick='performRuntimeAction("up");' />|
+                    <span id="launcher-config-panel-actions" class='span-rounded-border'>
+                        <img src='/userContent/icons/play.svg' class="build-action-icon" title="Start Environment" alt="Start Environment" onclick='performRuntimeAction("up");' id="build-kx-launch-play-button"/>|
                         <img src='/userContent/icons/stop.svg' class="build-action-icon" title="Stop Environment" alt="Stop Environment" onclick='performRuntimeAction("halt");' />|
                         <img src='/userContent/icons/cancel.svg' class="build-action-icon" title="Delete Environment" alt="Delete Environment" onclick='performRuntimeAction("destroy");' />|
                         <div class="console-log"><span class="console-log-span"><img src="/userContent/icons/text-box-outline.svg" onMouseover='showConsoleLog("KX.AS.CODE_Runtime_Actions", "kx-launch");' onclick='openFullConsoleLog("KX.AS.CODE_Runtime_Actions", "kx-launch");' class="build-action-icon" alt="View Build Log" title="Click to open full log in new tab"><span class="consolelogtext" id='kxLaunchBuildConsoleLog'></span></span></div>

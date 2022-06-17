@@ -72,7 +72,7 @@ def actionQueuePath = "${currentDir}/jenkins_shared_workspace/kx.as.code/auto-se
 try {
     try {
         Path sourcePath  = Paths.get(actionQueuePath);
-        Path targetPath = Paths.get("${currentDir}/jenkins_shared_workspace/kx.as.code/profiles/${profileParentPath}/actionQueue.json");
+        Path targetPath = Paths.get("${currentDir}/jenkins_shared_workspace/kx.as.code/profiles/${profileParentPath}/actionQueues.json");
         Files.copy(sourcePath, targetPath, StandardCopyOption.REPLACE_EXISTING)
     } catch (IOException e) {
         println("Caught IOException when copying actionQueue")
@@ -186,9 +186,8 @@ try {
             parsedJson.config.selectedTemplates = TEMPLATE_SELECTOR
         }
     } else {
-        TEMPLATE_SELECTOR = parsedJson.config.selectedTemplates
+        parsedJson.config.selectedTemplates = ""
     }
-
 
     if (BASE_DOMAIN) {
         def OLD_BASE_DOMAIN = parsedJson.config.baseDomain
@@ -235,46 +234,40 @@ try {
         DISABLE_LINUX_DESKTOP = parsedJson.config.disableLinuxDesktop
     }
 
-    def local_storage_num_one_gb = parsedJson.config.local_volumes.one_gb
-    int number1GbVolumes = storageParameterElements[0].toInteger()
-    if (local_storage_num_one_gb.toInteger() != number1GbVolumes && number1GbVolumes != "" && number1GbVolumes) {
-        parsedJson.config.local_volumes.one_gb = number1GbVolumes
+    if (storageParameterElements) {
+        def local_storage_num_one_gb = parsedJson.config.local_volumes.one_gb
+        int number1GbVolumes = storageParameterElements[0].toInteger()
+        if (local_storage_num_one_gb.toInteger() != number1GbVolumes && number1GbVolumes != "") {
+            parsedJson.config.local_volumes.one_gb = number1GbVolumes
+        }
+        def local_storage_num_five_gb = parsedJson.config.local_volumes.five_gb
+        int number5GbVolumes = storageParameterElements[1].toInteger()
+        if (local_storage_num_five_gb.toInteger() != number5GbVolumes && number5GbVolumes != "") {
+            parsedJson.config.local_volumes.five_gb = number5GbVolumes
+        }
+        def local_storage_num_ten_gb = parsedJson.config.local_volumes.ten_gb
+        int number10GbVolumes = storageParameterElements[2].toInteger()
+        if (local_storage_num_ten_gb.toInteger() != number10GbVolumes && number10GbVolumes != "") {
+            parsedJson.config.local_volumes.ten_gb = number10GbVolumes
+        }
+        def local_storage_num_thirty_gb = parsedJson.config.local_volumes.thirty_gb
+        int number30GbVolumes = storageParameterElements[3].toInteger()
+        if (local_storage_num_thirty_gb.toInteger() != number30GbVolumes && number30GbVolumes != "") {
+            parsedJson.config.local_volumes.thirty_gb = number30GbVolumes
+        }
+        def local_storage_num_fifty_gb = parsedJson.config.local_volumes.fifty_gb
+        int number50GbVolumes = storageParameterElements[4].toInteger()
+        if (local_storage_num_fifty_gb.toInteger() != number50GbVolumes && number50GbVolumes != "") {
+            parsedJson.config.local_volumes.fifty_gb = number50GbVolumes
+        }
+        def OLD_NETWORK_STORAGE_OPTIONS = parsedJson.config.glusterFsDiskSize
+        int NETWORK_STORAGE_OPTIONS = storageParameterElements[5].toInteger()
+        if (OLD_NETWORK_STORAGE_OPTIONS != NETWORK_STORAGE_OPTIONS && NETWORK_STORAGE_OPTIONS != "") {
+            parsedJson.config.glusterFsDiskSize = NETWORK_STORAGE_OPTIONS
+        }
     }
-
-    def local_storage_num_five_gb = parsedJson.config.local_volumes.five_gb
-    int number5GbVolumes = storageParameterElements[1].toInteger()
-    if (local_storage_num_five_gb.toInteger() != number5GbVolumes && number5GbVolumes != "" && number5GbVolumes) {
-        parsedJson.config.local_volumes.five_gb = number1GbVolumes
-    }
-
-    def local_storage_num_ten_gb = parsedJson.config.local_volumes.ten_gb
-    int number10GbVolumes = storageParameterElements[2].toInteger()
-    if (local_storage_num_ten_gb.toInteger() != number10GbVolumes && number10GbVolumes != "" && number10GbVolumes) {
-        parsedJson.config.local_volumes.ten_gb = number10GbVolumes
-    }
-
-    def local_storage_num_thirty_gb = parsedJson.config.local_volumes.thirty_gb
-    int number30GbVolumes = storageParameterElements[3].toInteger()
-    if (local_storage_num_thirty_gb.toInteger() != number30GbVolumes && number30GbVolumes != "" && number30GbVolumes) {
-        parsedJson.config.local_volumes.thirty_gb = number30GbVolumes
-    }
-
-    def local_storage_num_fifty_gb = parsedJson.config.local_volumes.fifty_gb
-    int number50GbVolumes = storageParameterElements[4].toInteger()
-    if (local_storage_num_fifty_gb.toInteger() != number50GbVolumes && number50GbVolumes != "" && number50GbVolumes) {
-        parsedJson.config.local_volumes.fifty_gb = number50GbVolumes
-    }
-
-    def OLD_NETWORK_STORAGE_OPTIONS = parsedJson.config.glusterFsDiskSize
-    int NETWORK_STORAGE_OPTIONS = storageParameterElements[5].toInteger()
-    if (OLD_NETWORK_STORAGE_OPTIONS != NETWORK_STORAGE_OPTIONS && NETWORK_STORAGE_OPTIONS != "" && NETWORK_STORAGE_OPTIONS) {
-        parsedJson.config.glusterFsDiskSize = NETWORK_STORAGE_OPTIONS
-    }
-
     updatedJson = new JsonBuilder(parsedJson).toPrettyString()
-
     new File(jsonFilePath).write(new JsonBuilder(parsedJson).toPrettyString())
-
 } catch(e) {
     println("Something went wrong in the GROOVY block (profile_json_update.groovy): ${e}")
 }

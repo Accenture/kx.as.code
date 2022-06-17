@@ -15,9 +15,19 @@ echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" | /usr/bin/sudo tee
 
 # Read Kubernetes version to be installed
 kubeVersion=$(cat ${installationWorkspace}/versions.json | jq -r '.kubernetes')
-/usr/bin/sudo apt-get update
-/usr/bin/sudo apt-get install -y kubelet=${kubeVersion} kubeadm=${kubeVersion} kubectl=${kubeVersion}
-/usr/bin/sudo apt-mark hold kubelet kubeadm kubectl
+for i in {1..5}
+do
+  log_info "Installing Kubernetes tools (Attempt ${i} of 5)."
+  /usr/bin/sudo apt-get update
+  /usr/bin/sudo apt-get install -y kubelet=${kubeVersion} kubeadm=${kubeVersion} kubectl=${kubeVersion}
+  /usr/bin/sudo apt-mark hold kubelet kubeadm kubectl
+  if [[ -n $(kubectl version) ]]; then
+    log_info "Kubectl accessible after install. Looks good. Continuing."
+    break
+  else
+    log_warn "Kubectl not accessible after install. Trying again."
+  fi
+done
 
 # Install Kubernetes YAML validation tool
 downloadFile "https://github.com/instrumenta/kubeval/releases/download/${kubevalVersion}/kubeval-linux-amd64.tar.gz" \
@@ -28,9 +38,19 @@ tar xf ${installationWorkspace}/kubeval-linux-amd64.tar.gz -C ${installationWork
 /usr/bin/sudo cp -f ${installationWorkspace}/kubeval /usr/local/bin
 
 # Install Helm 3
-curl -fsSL --output ${certificatesWorkspace}/get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
-chmod 700 ${certificatesWorkspace}/get_helm.sh
-${certificatesWorkspace}/get_helm.sh
+for i in {1..5}
+do
+    log_info "Installing Helm (Attempt ${i} of 5)."
+    curl -fsSL --output ${certificatesWorkspace}/get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
+    chmod 700 ${certificatesWorkspace}/get_helm.sh
+    ${certificatesWorkspace}/get_helm.sh
+    if [[ -n $(helm version) ]]; then
+      log_info "Helm accessible after install. Looks good. Continuing."
+      break
+    else
+      log_warn "Helm not accessible after install. Trying again."
+    fi
+done
 
 # Correct permissions before next step
 /usr/bin/sudo chown -hR ${vmUser}:${vmUser} /home/${vmUser}

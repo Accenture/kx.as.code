@@ -17,4 +17,4 @@ TIMESTAMP=$(date +"%d-%m-%y %T")
 echo -e "KX.AS.CODE Home: ${INSTALLATION_WORKSPACE}
 KX.AS.CODE Build Date: ${TIMESTAMP}
 KX.AS.CODE Build Version: ${VERSION}
-Kubernetes Version: ${KUBE_VERSION}\n" | sudo tee -a /etc/motd
+Kubernetes Version: ${KUBE_VERSION}\n" | sudo tee -a /etc/motd.kxascode

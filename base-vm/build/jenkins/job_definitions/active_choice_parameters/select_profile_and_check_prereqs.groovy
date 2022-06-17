@@ -298,7 +298,7 @@
         <div id="select-profile-div" style="display: none;">
             <br>
             <label for="profiles" class="input-box-label" style="margin: 0px;">Profiles</label>
-            <select id="profiles" class="profiles-select capitalize" value="Virtualbox" onchange="updateProfileAndPrereqsCheckTab();">
+            <select id="profiles" class="profiles-select capitalize" value="" onchange="updateProfileAndPrereqsCheckTab(this.selectedIndex);">
             </select>
             </label>
     </span>
@@ -318,7 +318,6 @@
     </span>
             
         </div>
-        <input type="hidden" id="concatenated-profile-selection" name="value" value="">
         <style scoped="scoped" onload="populate_profile_option_list();">   </style>
 
         <div id="prerequisites-div" style="display: none;">
@@ -356,8 +355,8 @@
                         <span class="build-action-text-label" style="width: 110px;">Kube Version: </span><span id="kx-main-build-kube-version" style="width: 80px;" class="build-action-text-value build-action-text-value-result"></span>
                         <span class="build-number-span" style="margin-right: 25px;" id="kx-main-build-number-link"></span>
                     </span>
-                    <span class='span-rounded-border'>
-                        <img src='/userContent/icons/play.svg' class="build-action-icon" title="Start Build" alt="Start Build" onclick='triggerBuild("kx-main");' />|
+                    <span id="builder-config-panel-kx-main-actions" class='span-rounded-border'>
+                        <img src='/userContent/icons/play.svg' class="build-action-icon" title="Start Build" alt="Start Build" onclick='triggerBuild("kx-main");' id="build-kx-main-play-button"/>|
                         <img src='/userContent/icons/cancel.svg' class="build-action-icon" title="Cancel Build" alt="Cancel Build" onclick='stopTriggeredBuild("KX.AS.CODE_Image_Builder", "kx-main");' />|
                         <div class="console-log"><span class="console-log-span"><img src="/userContent/icons/text-box-outline.svg" onMouseover='showConsoleLog("KX.AS.CODE_Image_Builder", "kx-main");' onclick='openFullConsoleLog("KX.AS.CODE_Image_Builder", "kx-main");' class="build-action-icon" alt="View Build Log" title="Click to open full log in new tab"><span class="consolelogtext" id='kxMainBuildConsoleLog'></span></span></div>
                     </span>
@@ -370,8 +369,8 @@
                         <span class="build-action-text-label" style="width: 110px;">Kube Version: </span><span id="kx-node-build-kube-version" style="width: 80px;" class="build-action-text-value build-action-text-value-result"></span>
                         <span class="build-number-span" style="margin-right: 25px;" id="kx-node-build-number-link"></span>
                     </span>
-                    <span class='span-rounded-border'>
-                        <img src='/userContent/icons/play.svg' class="build-action-icon" title="Start Build" alt="Start Build" onclick='triggerBuild("kx-node");' />|
+                    <span id="builder-config-panel-kx-node-actions" class='span-rounded-border'>
+                        <img src='/userContent/icons/play.svg' class="build-action-icon" title="Start Build" alt="Start Build" onclick='triggerBuild("kx-node");' id="build-kx-node-play-button"/>|
                         <img src='/userContent/icons/cancel.svg' class="build-action-icon" title="Cancel Build" alt="Cancel Build" onclick='stopTriggeredBuild("KX.AS.CODE_Image_Builder", "kx-node");' />|
                         <div class="console-log"><span class="console-log-span"><img src="/userContent/icons/text-box-outline.svg" onMouseover='showConsoleLog("KX.AS.CODE_Image_Builder", "kx-node");' onclick='openFullConsoleLog("KX.AS.CODE_Image_Builder", "kx-node");' class="build-action-icon" alt="View Build Log" title="Click to open full log in new tab"><span class="consolelogtext" id='kxNodeBuildConsoleLog'></span></span></div>
                     </span>
@@ -410,6 +409,7 @@
                 
             </div>
         </div>
+        <input type="hidden" id="concatenated-profile-selection" name="value" value="">
     </body>
     """
         return HTML

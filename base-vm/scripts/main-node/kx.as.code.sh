@@ -163,10 +163,10 @@ sudo mkdir -p "${vendorDocsDirectory}"
 sudo chmod a+rwx "${vendorDocsDirectory}"
 sudo ln -s "${vendorDocsDirectory}" /home/${VM_USER}/Desktop/
 
-# Show /etc/motd even when in X-Windows terminal (not SSH)
+# Show /etc/motd.kxascode even when in X-Windows terminal (not SSH)
 echo -e '\n# Added to show KX.AS.CODE MOTD also in X-Windows Terminal (already showing in SSH per default)
 if [ -z $(echo $SSH_TTY) ]; then
-cat /etc/motd | sed -e "s/^/ /"
+cat /etc/motd.kxascode | sed -e "s/^/ /"
 fi' | sudo tee -a /home/${VM_USER}/.zshrc
 
 # Stop ZSH adding % to the output of every commands_whitelist
@@ -267,3 +267,38 @@ echo """#!/bin/bash
 sudo chmod 755 /home/${VM_USER}/.config/autostart-scripts/xeventbind.sh
 sudo chown ${VM_USER}:${VM_USER} /home/${VM_USER}/.config/autostart-scripts/xeventbind.sh
 
+# Create script for re-enabling desktop
+echo """#!/bin/bash
+# Backup original Grub file that starts KDE Plasma
+/usr/bin/sudo cp /etc/default/grub /etc/default/grub.gui
+
+# Replace with value to
+sed -i '/GRUB_CMDLINE_LINUX/s/\".*\"/\"text\"/' /etc/default/grub
+sed -i 's/#GRUB_TERMINAL=console/GRUB_TERMINAL=console/g' /etc/default/grub
+/usr/bin/sudo update-grub
+/usr/bin/sudo systemctl set-default multi-user.target
+echo \"dmesg -n 1\" | sudo tee -a /home/${VM_USER}/.zshrc
+""" | /usr/bin/sudo tee ${INSTALLATION_WORKSPACE}/disableKdeDesktopOnBoot.sh
+/usr/bin/sudo chmod 755 ${INSTALLATION_WORKSPACE}/disableKdeDesktopOnBoot.sh
+
+# Create script for re-enabling desktop
+echo """#!/bin/bash
+/usr/bin/sudo cp /etc/default/grub /etc/default/grub.console
+/usr/bin/sudo cp /etc/default/grub.gui /etc/default/grub
+/usr/bin/sudo systemctl set-default graphical.target
+""" | /usr/bin/sudo tee ${INSTALLATION_WORKSPACE}/enableKdeDesktopOnBoot.sh
+/usr/bin/sudo chmod 755 ${INSTALLATION_WORKSPACE}/enableKdeDesktopOnBoot.sh
+
+echo """#!/bin/bash
+masterNodeTaints=\$(kubectl get nodes -o json | jq '.items[] | select(.metadata.name==\"kx-main1\") | select(.spec.taints[]?.effect==\"NoSchedule\")')
+if [[ -n \${masterNodeTaints} ]]; then
+  kubectl taint nodes --all node-role.kubernetes.io/master-
+fi
+""" | /usr/bin/sudo tee ${INSTALLATION_WORKSPACE}/removedNoScheduleTaintFromMasterNodes.sh
+/usr/bin/sudo chmod 755 ${INSTALLATION_WORKSPACE}/removedNoScheduleTaintFromMasterNodes.sh
+
+# Create script for re-tainting master nodes with NoSchedule
+echo """#!/bin/bash
+kubectl taint nodes -l node-role.kubernetes.io/master= master node-role.kubernetes.io/master:NoSchedule --overwrite
+""" | /usr/bin/sudo tee ${INSTALLATION_WORKSPACE}/enableK8sNoScheduleTaintOnMasterNodes.sh
+/usr/bin/sudo chmod 755 ${INSTALLATION_WORKSPACE}/enableK8sNoScheduleTaintOnMasterNodes.sh
