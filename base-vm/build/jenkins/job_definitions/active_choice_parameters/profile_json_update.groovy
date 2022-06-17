@@ -72,7 +72,7 @@ def actionQueuePath = "${currentDir}/jenkins_shared_workspace/kx.as.code/auto-se
 try {
     try {
         Path sourcePath  = Paths.get(actionQueuePath);
-        Path targetPath = Paths.get("${currentDir}/jenkins_shared_workspace/kx.as.code/profiles/${profileParentPath}/actionQueue.json");
+        Path targetPath = Paths.get("${currentDir}/jenkins_shared_workspace/kx.as.code/profiles/${profileParentPath}/actionQueues.json");
         Files.copy(sourcePath, targetPath, StandardCopyOption.REPLACE_EXISTING)
     } catch (IOException e) {
         println("Caught IOException when copying actionQueue")
