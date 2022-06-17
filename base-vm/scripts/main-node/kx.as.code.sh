@@ -267,24 +267,22 @@ echo """#!/bin/bash
 sudo chmod 755 /home/${VM_USER}/.config/autostart-scripts/xeventbind.sh
 sudo chown ${VM_USER}:${VM_USER} /home/${VM_USER}/.config/autostart-scripts/xeventbind.sh
 
-# Create script for re-enabling desktop
+# Create script for disabling desktop
 echo """#!/bin/bash
-# Backup original Grub file that starts KDE Plasma
-/usr/bin/sudo cp /etc/default/grub /etc/default/grub.gui
-
-# Replace with value to
-sed -i '/GRUB_CMDLINE_LINUX/s/\".*\"/\"text\"/' /etc/default/grub
-sed -i 's/#GRUB_TERMINAL=console/GRUB_TERMINAL=console/g' /etc/default/grub
+/usr/bin/sudo sed -i '/GRUB_CMDLINE_LINUX_DEFAULT=/s/\".*\"/\"text\"/' /etc/default/grub
+/usr/bin/sudo sed -i 's/GRUB_CMDLINE_LINUX=/#GRUB_CMDLINE_LINUX=/g' /etc/default/grub
+/usr/bin/sudo sed -i 's/#GRUB_TERMINAL=console/GRUB_TERMINAL=console/g' /etc/default/grub
 /usr/bin/sudo update-grub
 /usr/bin/sudo systemctl set-default multi-user.target
-echo \"dmesg -n 1\" | sudo tee -a /home/${VM_USER}/.zshrc
 """ | /usr/bin/sudo tee ${INSTALLATION_WORKSPACE}/disableKdeDesktopOnBoot.sh
 /usr/bin/sudo chmod 755 ${INSTALLATION_WORKSPACE}/disableKdeDesktopOnBoot.sh
 
 # Create script for re-enabling desktop
 echo """#!/bin/bash
-/usr/bin/sudo cp /etc/default/grub /etc/default/grub.console
-/usr/bin/sudo cp /etc/default/grub.gui /etc/default/grub
+/usr/bin/sudo sed -i '/GRUB_CMDLINE_LINUX_DEFAULT=/s/\".*\"/\"quiet splash\"/' /etc/default/grub
+/usr/bin/sudo sed -i 's/#GRUB_CMDLINE_LINUX=/GRUB_CMDLINE_LINUX=/g' /etc/default/grub
+/usr/bin/sudo sed -i 's/GRUB_TERMINAL=console/#GRUB_TERMINAL=console/g' /etc/default/grub
+/usr/bin/sudo update-grub
 /usr/bin/sudo systemctl set-default graphical.target
 """ | /usr/bin/sudo tee ${INSTALLATION_WORKSPACE}/enableKdeDesktopOnBoot.sh
 /usr/bin/sudo chmod 755 ${INSTALLATION_WORKSPACE}/enableKdeDesktopOnBoot.sh
