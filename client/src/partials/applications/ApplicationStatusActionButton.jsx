@@ -14,7 +14,7 @@ export default function ApplicationStatusActionButton(props) {
 
   const getActionButton = () => {
     if (props.isMqConnected) {
-      if (true) {
+      if (false) {
         return (
           <button
             className="bg-gray-600 p-2 px-5 rounded items-center flex"
@@ -54,7 +54,7 @@ export default function ApplicationStatusActionButton(props) {
             <span className="flex my-auto">Uninstall</span>
           </button>
         );
-      } else if (true) {
+      } else if (props.category != "core") {
         return (
           <button
             className="bg-kxBlue p-2 px-5 rounded items-center flex"

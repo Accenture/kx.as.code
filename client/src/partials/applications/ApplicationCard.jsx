@@ -90,9 +90,9 @@ function ApplicationCard(props) {
           props.fetchApplicationAndQueueData();
         })
         .then(() => {
-          setTimeout(() => {
-            refreshActionButton.current();
-          }, 2000);
+          // setTimeout(() => {
+          //   refreshActionButton.current();
+          // }, 2000);
         })
         .catch((error) => {
           console.error("There was an error!", error);

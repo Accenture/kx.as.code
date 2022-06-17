@@ -15,13 +15,7 @@ const rabbitMqHost = "localhost";
 
 app.route("/api/add/application/:queue_name").post((req, res) => {
   connection = amqp.connect(
-    "amqp://" +
-      rabbitMqUsername +
-      ":" +
-      rabbitMqPassword +
-      rabbitMqUsername +
-      "@" +
-      rabbitMqHost
+    "amqp://" + rabbitMqUsername + ":" + rabbitMqPassword + "@" + rabbitMqHost
   );
   console.log("install app req.body: ", req.body);
 
@@ -123,7 +117,6 @@ app.route("/api/move/:from_queue/:to_queue").get((req, res) => {
     rabbitMqUsername +
     ":" +
     rabbitMqPassword +
-    rabbitMqUsername +
     "@" +
     rabbitMqHost +
     ":15672/api/parameters/shovel/%2F/Move%20from%20" +
