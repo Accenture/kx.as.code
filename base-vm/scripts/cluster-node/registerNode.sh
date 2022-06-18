@@ -7,6 +7,49 @@ export kxHomeDir=/usr/share/kx.as.code
 export sharedGitRepositories=${kxHomeDir}/git
 export installationWorkspace=${kxHomeDir}/workspace
 
+
+# Added function to round up the disk space allocated for the LVM creations
+roundUp() {
+
+# Necessary as Vagrantfile was rounding up .5, unlike awk which is rounding that down
+number=$1
+
+bc << EOF
+num = $number;
+base = num / 1;
+if (((num - base) * 10) >= 5 )
+    base += 1;
+print base;
+EOF
+echo ""
+
+}
+
+# Check profile-config.json file is present before executing script
+while [[ ! -f ${installationWorkspace}/profile-config.json ]]; do
+  echo "Waiting for ${installationWorkspace}/profile-config.json file"
+  sleep 15
+done
+
+# Get configs from profile-config.json
+export virtualizationType=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.virtualizationType')
+export environmentPrefix=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.environmentPrefix')
+if [ -z ${environmentPrefix} ]; then
+    export baseDomain="$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.baseDomain')"
+else
+    export baseDomain="${environmentPrefix}.$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.baseDomain')"
+fi
+export defaultKeyboardLanguage=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.defaultKeyboardLanguage')
+export baseIpType=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.baseIpType')
+export dnsResolution=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.dnsResolution')
+export baseIpRangeStart=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.baseIpRangeStart')
+export baseIpRangeEnd=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.baseIpRangeEnd')
+
+# Get proxy settings
+export httpProxySetting=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.proxy_settings.http_proxy')
+export httpsProxySetting=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.proxy_settings.https_proxy')
+export noProxySetting=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.proxy_settings.no_proxy')
+
 export baseUser=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.baseUser')
 export basePassword=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.basePassword')
 export startupMode=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.startupMode')
@@ -50,48 +93,6 @@ if [[ ! -f  /usr/share/kx.as.code/.config/network_status ]]; then
   checkAndUpdateBaseUsername
   checkAndUpdateBasePassword
 fi
-
-# Added function to round up the disk space allocated for the LVM creations
-roundUp() {
-
-# Necessary as Vagrantfile was rounding up .5, unlike awk which is rounding that down
-number=$1
-
-bc << EOF
-num = $number;
-base = num / 1;
-if (((num - base) * 10) >= 5 )
-    base += 1;
-print base;
-EOF
-echo ""
-
-}
-
-# Check profile-config.json file is present before executing script
-while [[ ! -f ${installationWorkspace}/profile-config.json ]]; do
-  echo "Waiting for ${installationWorkspace}/profile-config.json file"
-  sleep 15
-done
-
-# Get configs from profile-config.json
-export virtualizationType=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.virtualizationType')
-export environmentPrefix=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.environmentPrefix')
-if [ -z ${environmentPrefix} ]; then
-    export baseDomain="$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.baseDomain')"
-else
-    export baseDomain="${environmentPrefix}.$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.baseDomain')"
-fi
-export defaultKeyboardLanguage=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.defaultKeyboardLanguage')
-export baseIpType=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.baseIpType')
-export dnsResolution=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.dnsResolution')
-export baseIpRangeStart=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.baseIpRangeStart')
-export baseIpRangeEnd=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.baseIpRangeEnd')
-
-# Get proxy settings
-export httpProxySetting=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.proxy_settings.http_proxy')
-export httpsProxySetting=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.proxy_settings.https_proxy')
-export noProxySetting=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.proxy_settings.no_proxy')
 
 # Determine node role type (main or worker)
 if [[ "$(hostname)" =~ "kx-worker" ]]; then
