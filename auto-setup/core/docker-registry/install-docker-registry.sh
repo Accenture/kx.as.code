@@ -49,7 +49,7 @@ spec:
           secretName: docker-registry-tls-cert
       - name: auth-vol
         secret:
-           secretName: docker-registry-default-htpasswd
+           secretName: docker-registry-htpasswd
       containers:
         - image: registry:2
           name: docker-registry
