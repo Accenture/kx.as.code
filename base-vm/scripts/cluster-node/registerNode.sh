@@ -27,8 +27,8 @@ checkAndUpdateBaseUsername() {
         /usr/bin/sudo mkdir -pm 700 /home/${baseUser}/.ssh
 
       # Get new user group ID
-      newGid=$(id -g ${userid})
-      /usr/bin/sudo chown -f -R ${newGid}:${newGid} /home/${userid}
+      newGid=$(id -g ${baseUser})
+      /usr/bin/sudo chown -f -R ${newGid}:${newGid} /home/${baseUser}
 
       # Ensure the permissions are set correct
       /usr/bin/sudo chown -R ${baseUser}:${baseUser} /home/${baseUser}/.ssh
