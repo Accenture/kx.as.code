@@ -17,6 +17,11 @@ if [[ ! ${kubeAdminStatus} ]]; then
     /usr/bin/sudo mkdir -p /usr/share/kx.as.code/skel/.kube
     /usr/bin/sudo cp -f /etc/kubernetes/admin.conf /usr/share/kx.as.code/skel/.kube/config
     sed -n -i '/users:/q;p' /usr/share/kx.as.code/skel/.kube/config
+    if [[ "${vmUser}" != "${baseUser}" ]] && [[ -d /home/${vmUser} ]]; then
+      /usr/bin/sudo mkdir -p /home/${vmUser}/.kube
+      /usr/bin/sudo cp -f /etc/kubernetes/admin.conf /home/${vmUser}/.kube/config
+      /usr/bin/sudo chown $(id -u ${vmUser}):$(id -g ${vmUser}) /home/${vmUser}/.kube/config
+    fi
 else
     log_warn "Kubernetes cluster is already initialized. Skipping"
 fi
