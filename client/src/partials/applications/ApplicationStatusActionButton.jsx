@@ -7,6 +7,11 @@ import { AiOutlineWarning } from "react-icons/ai";
 import { useState, useEffect } from "react";
 
 export default function ApplicationStatusActionButton(props) {
+  useEffect(() => {
+    console.log("list-actionbutton: ", props.getQueueStatusList("jira"));
+    return () => {};
+  }, []);
+
   const getActionButton = () => {
     if (props.isMqConnected) {
       if (false) {
@@ -49,7 +54,7 @@ export default function ApplicationStatusActionButton(props) {
             <span className="flex my-auto">Uninstall</span>
           </button>
         );
-      } else if (true) {
+      } else if (props.category != "core") {
         return (
           <button
             className="bg-kxBlue p-2 px-5 rounded items-center flex"

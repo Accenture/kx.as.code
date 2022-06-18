@@ -2,21 +2,18 @@
 <!-- Generator: Adobe Illustrator 26.2.1, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
 <svg version="1.1" id="a" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 571.8 378.4" style="enable-background:new 0 0 571.8 378.4;" xml:space="preserve">
     <style type="text/css">
-        .st0{fill:#FFFFFF;}
+	.st0{fill:#FFFFFF;}
 	.st1{fill:#161B22;}
 	.st2{fill:#737373;}
 	.st3{fill:#4870FF;}
 	.st4{fill:#0D1117;}
 
-    
     .floating-cube {
         animation: floatAnim 5s ease-in-out infinite;
-
       }
       .floating-cube2 {
         animation: floatAnim2 5s ease-in-out infinite;
-        <!-- animation: rotating 30s linear infinite; -->
-        }
+      }
 
       .floating-cube3 {
         animation: floatAnim3 5s ease-in-out infinite;
@@ -26,61 +23,15 @@
         animation: floatAnimx 5s ease-in-out infinite;
       }
 
-      @keyframes rotating {
-  from {
-    -ms-transform: rotate(20deg);
-    -moz-transform: rotate(20deg);
-    -webkit-transform: rotate(20deg);
-    -o-transform: rotate(20deg);
-    transform: rotate(20deg);
-  }
-  to {
-    -ms-transform: rotate(360deg);
-    -moz-transform: rotate(360deg);
-    -webkit-transform: rotate(360deg);
-    -o-transform: rotate(360deg);
-    transform: rotate(360deg);
-  }
-}
-
-      @keyframes tiltImage {
-  0% {
-    transform: skewY(5deg);
-  }
-  50% {
-    transform: skewY(-5deg);
-  }
-  100% {
-    transform: skewY(5deg);
-  }
-}
-
-
       @keyframes floatAnim {
         0% {
           transform: translate(0px,0px);
-          -ms-transform: rotate(0deg);
-    -moz-transform: rotate(0deg);
-    -webkit-transform: rotate(0deg);
-    -o-transform: rotate(0deg);
-    transform: rotate(0deg);
         }
         50% {
           transform: translate(0px,15px);
-             -ms-transform: rotate(5deg);
-    -moz-transform: rotate(5deg);
-    -webkit-transform: rotate(5deg);
-    -o-transform: rotate(5deg);
-    transform: rotate(5deg);
-           
         }
         100% {
           transform: translate(0px,0px);
-          -ms-transform: rotate(0deg);
-    -moz-transform: rotate(0deg);
-    -webkit-transform: rotate(0deg);
-    -o-transform: rotate(0deg);
-    transform: rotate(0deg);
         }
       }
 
@@ -118,14 +69,16 @@
         100% {
           transform: translate(0px,-10px);
         }
-    </style>
+
+        
+</style>
     <path class="st0" d="M405.2,155.5l-66.6-35.8l-1,37.2l0.3,37.2L405.2,155.5z" />
     <path class="st1" d="M106.6,205.3c18.3-38.9,58.3-124,107.3-117.7c41.3,5.4,43,69.8,90.2,83.6c58.5,17.1,90.1-71.8,164.1-61.8
 	c37.9,5.1,81.2,35.4,90,70.5c22.8,91.5-184.3,238.9-262.4,188c-36.3-23.6-25.7-77.6-67.3-98.2c-55.1-27.3-120.4,44.7-141.4,23.1
 	C72.5,277.8,93.8,232.5,106.6,205.3L106.6,205.3z" />
-    <path class="st2" d="M399.6,149.9l-60.2-32.4l-61.2,32.3l60.6,35L399.6,149.9z" />
+    <path class="st0" d="M399.6,149.9l-60.2-32.4l-61.2,32.3l60.6,35L399.6,149.9z" />
     <path class="st0" d="M278.2,187.7l60.6,35l3.8,7.3v3l-3.5,16.7l-60.6-35L278.2,187.7L278.2,187.7z" />
-    <path class="st0" d="M338.6,222.7l0.2,27.1l60.5-34.9l-0.2-27.4L338.6,222.7L338.6,222.7z" />
+    <path class="st2" d="M338.6,222.7l0.2,27.1l60.5-34.9l-0.2-27.4L338.6,222.7L338.6,222.7z" />
     <path class="st3" d="M391.8,75.2c-2.1-0.8-0.3-29.3,14.6-34.3c5.7-1.9,13.9-0.5,17.6,5c5,7.3,0.7,19.2-5.6,22.1
 	c-6.1,2.8-11.9-4.2-19.1-0.8C393.7,69.6,392.8,75.5,391.8,75.2L391.8,75.2z" />
     <path class="st2" d="M339.3,117.5l-61.2,32.3l60.6,35" />
@@ -134,7 +87,7 @@
         <path class="st3" d="M301.9,150.4l36.8,22.2l37.9-21.7l0.2,25.3l-37.9,21.1l-36.7-22.1L301.9,150.4z" />
     </g>
     <path class="st0" d="M278.2,149.9l60.6,35l60.8-35v27l-60.6,35l-60.6-35L278.2,149.9L278.2,149.9z" />
-    <path class="st0" d="M338.6,184.8l0.1,27.3l60.8-35.3v-26.9L338.6,184.8L338.6,184.8z" />
+    <path class="st2" d="M338.6,184.8l0.1,27.3l60.8-35.3v-26.9L338.6,184.8L338.6,184.8z" />
     <path class="st3" d="M257.6,199.7c-1.6-2.3-36.2,9.1-37.5,29.1c-0.5,7.7,3.9,17.2,11.8,20.1c10.6,3.8,23.9-5.4,25.3-14.1
 	c1.4-8.5-9-13.3-7.2-23.3C251.3,203.9,258.4,200.8,257.6,199.7L257.6,199.7z" />
     <path class="st3" d="M379.4,212.3c2.3-12.6,34.3-20.9,60-11.1c13.2,5,35.3,18.8,35.6,37c0.5,25.7-42.9,49-63.5,37.5
