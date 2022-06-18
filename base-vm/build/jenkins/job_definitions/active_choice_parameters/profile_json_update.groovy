@@ -1,6 +1,9 @@
 import groovy.json.JsonSlurper
 import groovy.json.JsonBuilder
 import java.nio.file.Files
+import java.nio.file.Paths
+import java.nio.file.Path
+import java.nio.file.StandardCopyOption
 
 def BASE_DOMAIN
 def BASE_USER
@@ -8,6 +11,7 @@ def ENVIRONMENT_PREFIX
 def BASE_PASSWORD
 def STANDALONE_MODE
 def ALLOW_WORKLOADS_ON_KUBERNETES_MASTER
+def DISABLE_LINUX_DESKTOP
 def NUMBER_OF_KX_MAIN_NODES
 def KX_MAIN_ADMIN_CPU_CORES
 def KX_MAIN_ADMIN_MEMORY
@@ -20,7 +24,8 @@ def generalParameterElements
 
 def updatedJson
 def parsedJson
-def jsonFilePath = PROFILE
+def jsonFilePath = PROFILE.split(";")[0]
+def profileStartMode = PROFILE.split(";")[1]
 def inputFile = new File(jsonFilePath)
 def profileParentPath = inputFile.getParentFile().getName()
 def profileName = inputFile.getName()
@@ -31,15 +36,17 @@ def jsonInputFile
 
 def template_paths = []
 def selectedTemplates = []
+def profile_template_paths = []
 def destinationFile
 def alreadyExistingTemplateFilesInProfile = []
-def fileToDelete
 
 def currentDir = new File(".").getAbsolutePath().replaceAll("\\\\", "/")
 currentDir = currentDir.substring(0, currentDir.length() - 1)
 
 new File("${currentDir}/jenkins_shared_workspace/kx.as.code/templates/").eachFileMatch(~/^aq.*.json$/) { template_paths << it.path }
-selectedTemplates = TEMPLATE_SELECTOR.split(';');
+new File("${currentDir}/jenkins_shared_workspace/kx.as.code/profiles/${profileParentPath}/").eachFileMatch(~/^aq.*.json$/) { profile_template_paths << it.path }
+selectedTemplates = TEMPLATE_SELECTOR.split(',');
+
 
 try {
     if ( USER_PROVISIONING ) {
@@ -51,6 +58,42 @@ try {
     println("Something went wrong in the groovy user provisioning block (profile_json_update.groovy): ${e}")
 }
 
+def actionQueueFile;
+switch (profileStartMode) {
+    case "normal": actionQueueFile = "actionQueues.json";
+        break;
+    case "lite": actionQueueFile = "actionQueues.json_lite";
+        break;
+    case "minimal": actionQueueFile = "actionQueues.json_minimal";
+        break;
+}
+def actionQueuePath = "${currentDir}/jenkins_shared_workspace/kx.as.code/auto-setup/${actionQueueFile}";
+
+try {
+    try {
+        Path sourcePath  = Paths.get(actionQueuePath);
+        Path targetPath = Paths.get("${currentDir}/jenkins_shared_workspace/kx.as.code/profiles/${profileParentPath}/actionQueues.json");
+        Files.copy(sourcePath, targetPath, StandardCopyOption.REPLACE_EXISTING)
+    } catch (IOException e) {
+        println("Caught IOException when copying actionQueue")
+    }
+} catch (e) {
+    println("Something went wrong in the groovy template block (profile_json_update.groovy): ${e}")
+}
+
+try {
+    profile_template_paths.eachWithIndex { file, i ->
+        try {
+            Path fileToDelete = Paths.get(file)
+            Files.delete(fileToDelete)
+        } catch (IOException e) {
+            println("Caught IOException when deleting template")
+        }
+    }
+} catch (e) {
+    println("Something went wrong in the groovy template block (profile_json_update.groovy): ${e}")
+}
+
 try {
     template_paths.eachWithIndex { file, i ->
         jsonInputFile = new File(file)
@@ -59,7 +102,11 @@ try {
         selectedTemplates.eachWithIndex { selectedTemplate, j ->
             if (selectedTemplate == templateName) {
                 destinationFile = new File("${currentDir}/jenkins_shared_workspace/kx.as.code/profiles/${profileParentPath}/${jsonInputFile.getName()}")
-                Files.copy(jsonInputFile.toPath(), destinationFile.toPath())
+                try {
+                    Files.copy(jsonInputFile.toPath(), destinationFile.toPath())
+                } catch (IOException e) {
+                    println("Caught IOException when copying template")
+                }
             }
         }
     }
@@ -71,6 +118,8 @@ try {
 
     parsedJson = new JsonSlurper().parse(inputFile)
 
+    parsedJson.config.startupMode = profileStartMode
+
     if ( GENERAL_PARAMETERS ) {
         generalParameterElements = GENERAL_PARAMETERS.split(';')
         BASE_DOMAIN = generalParameterElements[0]
@@ -79,6 +128,7 @@ try {
         BASE_PASSWORD = generalParameterElements[3]
         STANDALONE_MODE = generalParameterElements[4]
         ALLOW_WORKLOADS_ON_KUBERNETES_MASTER = generalParameterElements[5]
+        DISABLE_LINUX_DESKTOP = generalParameterElements[6]
     }
 
     if ( KX_MAIN_NODES_CONFIG ) {
@@ -130,6 +180,15 @@ try {
         parsedJson.config.vm_properties.worker_node_memory = KX_WORKER_NODES_MEMORY.toInteger()
     }
 
+    if (TEMPLATE_SELECTOR) {
+        def OLD_TEMPLATE_SELECTOR = parsedJson.config.selectedTemplates
+        if (OLD_TEMPLATE_SELECTOR != TEMPLATE_SELECTOR && TEMPLATE_SELECTOR != "") {
+            parsedJson.config.selectedTemplates = TEMPLATE_SELECTOR
+        }
+    } else {
+        parsedJson.config.selectedTemplates = ""
+    }
+
     if (BASE_DOMAIN) {
         def OLD_BASE_DOMAIN = parsedJson.config.baseDomain
         if (OLD_BASE_DOMAIN != BASE_DOMAIN && BASE_DOMAIN != "") {
@@ -169,46 +228,46 @@ try {
         ALLOW_WORKLOADS_ON_KUBERNETES_MASTER = parsedJson.config.allowWorkloadsOnMaster
     }
 
-    def local_storage_num_one_gb = parsedJson.config.local_volumes.one_gb
-    int number1GbVolumes = storageParameterElements[0].toInteger()
-    if (local_storage_num_one_gb.toInteger() != number1GbVolumes && number1GbVolumes != "" && number1GbVolumes) {
-        parsedJson.config.local_volumes.one_gb = number1GbVolumes
+    if (DISABLE_LINUX_DESKTOP) {
+        parsedJson.config.disableLinuxDesktop = DISABLE_LINUX_DESKTOP
+    } else {
+        DISABLE_LINUX_DESKTOP = parsedJson.config.disableLinuxDesktop
     }
 
-    def local_storage_num_five_gb = parsedJson.config.local_volumes.five_gb
-    int number5GbVolumes = storageParameterElements[1].toInteger()
-    if (local_storage_num_five_gb.toInteger() != number5GbVolumes && number5GbVolumes != "" && number5GbVolumes) {
-        parsedJson.config.local_volumes.five_gb = number1GbVolumes
+    if (storageParameterElements) {
+        def local_storage_num_one_gb = parsedJson.config.local_volumes.one_gb
+        int number1GbVolumes = storageParameterElements[0].toInteger()
+        if (local_storage_num_one_gb.toInteger() != number1GbVolumes && number1GbVolumes != "") {
+            parsedJson.config.local_volumes.one_gb = number1GbVolumes
+        }
+        def local_storage_num_five_gb = parsedJson.config.local_volumes.five_gb
+        int number5GbVolumes = storageParameterElements[1].toInteger()
+        if (local_storage_num_five_gb.toInteger() != number5GbVolumes && number5GbVolumes != "") {
+            parsedJson.config.local_volumes.five_gb = number5GbVolumes
+        }
+        def local_storage_num_ten_gb = parsedJson.config.local_volumes.ten_gb
+        int number10GbVolumes = storageParameterElements[2].toInteger()
+        if (local_storage_num_ten_gb.toInteger() != number10GbVolumes && number10GbVolumes != "") {
+            parsedJson.config.local_volumes.ten_gb = number10GbVolumes
+        }
+        def local_storage_num_thirty_gb = parsedJson.config.local_volumes.thirty_gb
+        int number30GbVolumes = storageParameterElements[3].toInteger()
+        if (local_storage_num_thirty_gb.toInteger() != number30GbVolumes && number30GbVolumes != "") {
+            parsedJson.config.local_volumes.thirty_gb = number30GbVolumes
+        }
+        def local_storage_num_fifty_gb = parsedJson.config.local_volumes.fifty_gb
+        int number50GbVolumes = storageParameterElements[4].toInteger()
+        if (local_storage_num_fifty_gb.toInteger() != number50GbVolumes && number50GbVolumes != "") {
+            parsedJson.config.local_volumes.fifty_gb = number50GbVolumes
+        }
+        def OLD_NETWORK_STORAGE_OPTIONS = parsedJson.config.glusterFsDiskSize
+        int NETWORK_STORAGE_OPTIONS = storageParameterElements[5].toInteger()
+        if (OLD_NETWORK_STORAGE_OPTIONS != NETWORK_STORAGE_OPTIONS && NETWORK_STORAGE_OPTIONS != "") {
+            parsedJson.config.glusterFsDiskSize = NETWORK_STORAGE_OPTIONS
+        }
     }
-
-    def local_storage_num_ten_gb = parsedJson.config.local_volumes.ten_gb
-    int number10GbVolumes = storageParameterElements[2].toInteger()
-    if (local_storage_num_ten_gb.toInteger() != number10GbVolumes && number10GbVolumes != "" && number10GbVolumes) {
-        parsedJson.config.local_volumes.ten_gb = number10GbVolumes
-    }
-
-    def local_storage_num_thirty_gb = parsedJson.config.local_volumes.thirty_gb
-    int number30GbVolumes = storageParameterElements[3].toInteger()
-    if (local_storage_num_thirty_gb.toInteger() != number30GbVolumes && number30GbVolumes != "" && number30GbVolumes) {
-        parsedJson.config.local_volumes.thirty_gb = number30GbVolumes
-    }
-
-    def local_storage_num_fifty_gb = parsedJson.config.local_volumes.fifty_gb
-    int number50GbVolumes = storageParameterElements[4].toInteger()
-    if (local_storage_num_fifty_gb.toInteger() != number50GbVolumes && number50GbVolumes != "" && number50GbVolumes) {
-        parsedJson.config.local_volumes.fifty_gb = number50GbVolumes
-    }
-
-    def OLD_NETWORK_STORAGE_OPTIONS = parsedJson.config.glusterFsDiskSize
-    int NETWORK_STORAGE_OPTIONS = storageParameterElements[5].toInteger()
-    if (OLD_NETWORK_STORAGE_OPTIONS != NETWORK_STORAGE_OPTIONS && NETWORK_STORAGE_OPTIONS != "" && NETWORK_STORAGE_OPTIONS) {
-        parsedJson.config.glusterFsDiskSize = NETWORK_STORAGE_OPTIONS
-    }
-
     updatedJson = new JsonBuilder(parsedJson).toPrettyString()
-
     new File(jsonFilePath).write(new JsonBuilder(parsedJson).toPrettyString())
-
 } catch(e) {
     println("Something went wrong in the GROOVY block (profile_json_update.groovy): ${e}")
 }

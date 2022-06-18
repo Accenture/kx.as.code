@@ -25,7 +25,7 @@ if [[ -n ${nvme_cli_needed} ]]; then
     /usr/bin/sudo apt install -y nvme-cli lvm2
 fi
 
-partitionB1Exists=$(lsblk -o NAME,FSTYPE,SIZE -J | jq -r '.blockdevices[] | select(.name=="sdb") | .children[] | select(.name=="sdb1") | .name')
+partitionB1Exists=$(lsblk -o NAME,FSTYPE,SIZE -J | jq -r '.blockdevices[] | select(.name=="sdb") | .children[]? | select(.name=="sdb1") | .name')
 
 if [[ "${partitionB1Exists}" != "sdb1" ]]; then
   # Determine Drive B (Local K8s Volumes Storage)
@@ -51,6 +51,7 @@ if [[ "${partitionB1Exists}" != "sdb1" ]]; then
     log_error "Error finding mounted drive for setting up the K8s local storage service. Quitting script and sending task to failure queue"
     return 1
   fi
+
   # Check logical partitions
   /usr/bin/sudo lvs
   /usr/bin/sudo df -hT

@@ -138,9 +138,9 @@ fi
     # Ensure the whole network setup does not execute again on next run after reboot
     /usr/bin/sudo mkdir -p ${sharedKxHome}/.config
     echo "KX.AS.CODE network config done" | /usr/bin/sudo tee ${sharedKxHome}/.config/network_status
-
-    # Reboot if static network settings to activate them
-    if  [[ "${baseIpType}" == "static"   ]]; then
+    disableLinuxDesktop=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.disableLinuxDesktop')
+    # Reboot if static network settings to activate them. Reboot anyway if not static, if disableLinuxDesktop was set to true
+    if  [[ "${baseIpType}" == "static"   ]] || [[ "${disableLinuxDesktop}" == "true"   ]]; then
         # Reboot machine to ensure all network changes are active
         /usr/bin/sudo reboot
     else

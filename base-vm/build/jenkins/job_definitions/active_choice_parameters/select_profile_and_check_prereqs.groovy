@@ -222,19 +222,14 @@
             it[1] == "virtualbox" && it[2] == "kx-main"
         }.sort { a, b -> a[0] <=> b[1] }
 
-        println "filteredVirtualBoxKxNodeList list: " + filteredVirtualBoxKxNodeList
-        println "filteredVirtualBoxKxMainList list: " + filteredVirtualBoxKxMainList
-
         if (filteredVirtualBoxKxMainList) {
             virtualboxLocalVagrantBoxMainVersion = filteredVirtualBoxKxMainList[0][0]
             virtualboxLocalVagrantBoxMainExists = "true"
-            println "virtualboxLocalVagrantBoxMainVersion: " + virtualboxLocalVagrantBoxMainVersion
         }
 
         if (filteredVirtualBoxKxNodeList) {
             virtualboxLocalVagrantBoxNodeVersion = filteredVirtualBoxKxNodeList[0][0]
             virtualboxLocalVagrantBoxNodeExists = "true"
-            println "virtualboxLocalVagrantBoxNodeVersion: " + virtualboxLocalVagrantBoxNodeVersion
         }
 
         def filteredVmwareDesktopKxNodeList = boxDirectories.findAll {
@@ -245,19 +240,15 @@
             it[1] == "vmware-desktop" && it[2] == "kx-main"
         }.sort{ a,b -> a[0] <=> b[1] }
 
-        println "filteredVmwareDesktopKxNodeList list: " + filteredVmwareDesktopKxNodeList
-        println "filteredVmwareDesktopKxMainList list: " + filteredVmwareDesktopKxMainList
 
         if (filteredVmwareDesktopKxMainList) {
             vmwareLocalVagrantBoxMainVersion = filteredVmwareDesktopKxMainList[0][0]
             vmwareLocalVagrantBoxMainExists = "true"
-            println "vmwareLocalVagrantBoxMainVersion: " + vmwareLocalVagrantBoxMainVersion
         }
 
         if (filteredVmwareDesktopKxNodeList) {
             vmwareLocalVagrantBoxNodeVersion = filteredVmwareDesktopKxNodeList[0][0]
             vmwareLocalVagrantBoxNodeExists = "true"
-            println "vmwareLocalVagrantBoxNodeVersion: " + vmwareLocalVagrantBoxNodeVersion
         }
 
         def filteredParallelsKxNodeList = boxDirectories.findAll {
@@ -268,19 +259,14 @@
             it[1] == "parallels" && it[2] == "kx-main"
         }.sort{ a,b -> a[0] <=> b[1] }
 
-        println "filteredParallelsKxNodeList list: " + filteredParallelsKxNodeList
-        println "filteredParallelsKxMainList list: " + filteredParallelsKxMainList
-
         if (filteredParallelsKxMainList) {
             parallelsLocalVagrantBoxMainVersion = filteredParallelsKxMainList[0][0]
             parallelsLocalVagrantBoxMainExists = "true"
-            println "parallelsLocalVagrantBoxMainVersion: " + parallelsLocalVagrantBoxMainVersion
         }
 
         if (filteredParallelsKxNodeList) {
             parallelsLocalVagrantBoxNodeVersion = filteredParallelsKxNodeList[0][0]
             parallelsLocalVagrantBoxNodeExists = "true"
-            println "parallelsLocalVagrantBoxNodeVersion: " + parallelsLocalVagrantBoxNodeVersion
         }
 
         def boxesJson = jsonSlurper.parseText('{ "boxes": { "virtualboxLocalVagrantBoxMainExists": "' + virtualboxLocalVagrantBoxMainExists + '", "virtualboxLocalVagrantBoxMainVersion": "' + virtualboxLocalVagrantBoxMainVersion + '", "virtualboxLocalVagrantBoxNodeExists": "' + virtualboxLocalVagrantBoxNodeExists + '", "virtualboxLocalVagrantBoxNodeVersion": "' + virtualboxLocalVagrantBoxNodeVersion + '", "vmwareLocalVagrantBoxMainExists": "' + vmwareLocalVagrantBoxMainExists + '", "vmwareLocalVagrantBoxMainVersion": "' + vmwareLocalVagrantBoxMainVersion + '", "vmwareLocalVagrantBoxNodeExists": "' + vmwareLocalVagrantBoxNodeExists + '", "vmwareLocalVagrantBoxNodeVersion": "' + vmwareLocalVagrantBoxNodeVersion + '", "parallelsLocalVagrantBoxMainExists": "' + parallelsLocalVagrantBoxMainExists + '", "parallelsLocalVagrantBoxMainVersion": "' + parallelsLocalVagrantBoxMainVersion + '", "parallelsLocalVagrantBoxNodeExists": "' + parallelsLocalVagrantBoxNodeExists + '", "parallelsLocalVagrantBoxNodeVersion": "' + parallelsLocalVagrantBoxNodeVersion + '"}}')
@@ -305,17 +291,33 @@
         def HTML = """
     <body>
         <div id="headline-select-profile-div" style="display: none;">
+        <span>
         <h1>Select Profile &amp; Check Pre-Requisites</h1>
         <span class="description-paragraph-span"><p>${extendedDescription}</p></span>
         </div>
         <div id="select-profile-div" style="display: none;">
             <br>
             <label for="profiles" class="input-box-label" style="margin: 0px;">Profiles</label>
-            <select id="profiles" class="profiles-select capitalize" value="Virtualbox" onchange="updateProfileAndPrereqsCheckTab();">
+            <select id="profiles" class="profiles-select capitalize" value="" onchange="updateProfileAndPrereqsCheckTab(this.selectedIndex);">
             </select>
             </label>
+    </span>
+    <span style="margin-left: 30px; display: inline-flex;">
+            <span class="button-range-span">
+                <span><button type="button" class="selection-label selection-label-header">Start Mode</button></span>
+            </span>
+            <span id="normal" class="button-range-span selection-span" onclick="updateStartModeSelection(this.id)">
+                <span id="selection-normal-radio" class="selection-radio selection-radio-selected"><img id="selection-normal-svg" src="/userContent/icons/radiobox-marked.svg" class="svg-blue"></span><span id="selection-normal-label" class="selection-label selection-label-selected">Normal</span>
+            </span>
+            <span id="lite" class="button-range-span selection-span" onclick="updateStartModeSelection(this.id)">
+                <span id="selection-lite-radio" class="selection-radio selection-radio-unselected"><img id="selection-lite-svg" src="/userContent/icons/radiobox-blank.svg" class="svg-blue"></span><span id="selection-lite-label" class="selection-label selection-label-unselected">Lite</span>
+            </span>
+            <span id="minimal" class="button-range-span selection-span" onclick="updateStartModeSelection(this.id)">
+                <span id="selection-minimal-radio" class="selection-radio selection-radio-unselected"><img id="selection-minimal-svg" src="/userContent/icons/radiobox-blank.svg" class="svg-blue"></span><span id="selection-minimal-label" class="selection-label selection-label-unselected" style="border: 1px solid var(--kx-material-primary-70); border-width: 1px 1px 1px 0; border-radius: 0 5px 5px 0px;">Minimal</span>
+            </span>
+    </span>
+            
         </div>
-        <input type="hidden" id="selected-profile-path" name="value" value="">
         <style scoped="scoped" onload="populate_profile_option_list();">   </style>
 
         <div id="prerequisites-div" style="display: none;">
@@ -353,8 +355,8 @@
                         <span class="build-action-text-label" style="width: 110px;">Kube Version: </span><span id="kx-main-build-kube-version" style="width: 80px;" class="build-action-text-value build-action-text-value-result"></span>
                         <span class="build-number-span" style="margin-right: 25px;" id="kx-main-build-number-link"></span>
                     </span>
-                    <span class='span-rounded-border'>
-                        <img src='/userContent/icons/play.svg' class="build-action-icon" title="Start Build" alt="Start Build" onclick='triggerBuild("kx-main");' />|
+                    <span id="builder-config-panel-kx-main-actions" class='span-rounded-border'>
+                        <img src='/userContent/icons/play.svg' class="build-action-icon" title="Start Build" alt="Start Build" onclick='triggerBuild("kx-main");' id="build-kx-main-play-button"/>|
                         <img src='/userContent/icons/cancel.svg' class="build-action-icon" title="Cancel Build" alt="Cancel Build" onclick='stopTriggeredBuild("KX.AS.CODE_Image_Builder", "kx-main");' />|
                         <div class="console-log"><span class="console-log-span"><img src="/userContent/icons/text-box-outline.svg" onMouseover='showConsoleLog("KX.AS.CODE_Image_Builder", "kx-main");' onclick='openFullConsoleLog("KX.AS.CODE_Image_Builder", "kx-main");' class="build-action-icon" alt="View Build Log" title="Click to open full log in new tab"><span class="consolelogtext" id='kxMainBuildConsoleLog'></span></span></div>
                     </span>
@@ -367,8 +369,8 @@
                         <span class="build-action-text-label" style="width: 110px;">Kube Version: </span><span id="kx-node-build-kube-version" style="width: 80px;" class="build-action-text-value build-action-text-value-result"></span>
                         <span class="build-number-span" style="margin-right: 25px;" id="kx-node-build-number-link"></span>
                     </span>
-                    <span class='span-rounded-border'>
-                        <img src='/userContent/icons/play.svg' class="build-action-icon" title="Start Build" alt="Start Build" onclick='triggerBuild("kx-node");' />|
+                    <span id="builder-config-panel-kx-node-actions" class='span-rounded-border'>
+                        <img src='/userContent/icons/play.svg' class="build-action-icon" title="Start Build" alt="Start Build" onclick='triggerBuild("kx-node");' id="build-kx-node-play-button"/>|
                         <img src='/userContent/icons/cancel.svg' class="build-action-icon" title="Cancel Build" alt="Cancel Build" onclick='stopTriggeredBuild("KX.AS.CODE_Image_Builder", "kx-node");' />|
                         <div class="console-log"><span class="console-log-span"><img src="/userContent/icons/text-box-outline.svg" onMouseover='showConsoleLog("KX.AS.CODE_Image_Builder", "kx-node");' onclick='openFullConsoleLog("KX.AS.CODE_Image_Builder", "kx-node");' class="build-action-icon" alt="View Build Log" title="Click to open full log in new tab"><span class="consolelogtext" id='kxNodeBuildConsoleLog'></span></span></div>
                     </span>
@@ -407,6 +409,7 @@
                 
             </div>
         </div>
+        <input type="hidden" id="concatenated-profile-selection" name="value" value="">
     </body>
     """
         return HTML

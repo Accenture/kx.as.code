@@ -256,7 +256,7 @@
     }
   ],
   "variables": {
-    "disk_size": "40",
+    "disk_size": "50",
     "kx_home": "/usr/share/kx.as.code",
     "compute_engine_build": "true",
     "headless": "true",

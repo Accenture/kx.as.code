@@ -547,7 +547,6 @@ input:checked + .checkbox-slider:before {
     border-radius: 5px;
     width: 60px;
     background: var(--kx-very-dark-grey-100);
-    -100);
     font-size: 14px;
     font-family: Courier;
     font-weight: 400;
@@ -1602,7 +1601,7 @@ select, option {
     display: inline-block;
     vertical-align: middle;
     border-radius: 15px;
-    background-image: linear-gradient(to right,rgba(158, 158, 158, .7) 0%, rgba(235, 168, 52, .7) 25%, rgba(235, 168, 52, 1) 50%, rgba(217, 56, 86, .7) 75%, rgba(217, 56, 86, 1) 100%);
+    background-image: linear-gradient(to right, rgba(217, 56, 86, 1) 0%, rgba(252,76,2) 25%, rgba(235, 168, 52, 1) 50%, rgba(206, 251, 2) 75%, var(--kx-success-green-100) 100%);
 }
 
 .experience-heat-bar-div {
@@ -1680,4 +1679,80 @@ select, option {
 .experience-meter-emoji-icon-span {
     margin-bottom: 10px;
     margin-left: 20px;
+}
+
+.selection-label {
+    display: inline-block;
+    width: 6em;
+    opacity: 1;
+    padding: 9px 0 9px 7px;
+    text-align: left;
+    color: var(--kx-material-primary-70);
+    border: 1px solid var(--kx-material-primary-70);
+    border-width: 1px 0 1px 0;
+    border-radius: 0 0 0 0;
+}
+
+.selection-span:hover {
+    opacity: 0.5;
+}
+
+.selection-label-selected {
+    background: var(--kx-very-light-grey);
+    cursor: not-allowed;
+}
+
+.selection-label-unselected {
+    background: white;
+    cursor: pointer;
+}
+
+.selection-radio {
+    display: inline-block;
+    width: 2em;
+    color: var(--kx-material-primary-70);
+    background: var(--kx-very-light-grey);
+    opacity: 1;
+    padding: 8px 0 6px 0;
+    border: 0px solid var(--kx-material-primary-70);
+    border-width: 1px 0 1px 0;
+    border-radius: 0 0 0 0;
+    text-align: right;
+}
+
+.selection-radio-selected {
+    background: var(--kx-very-light-grey);
+    cursor: not-allowed;
+}
+
+.selection-radio-unselected {
+    background: white;
+    cursor: pointer;
+}
+
+.selection-label-header {
+    color: white;
+    background: var(--kx-material-primary-70);
+    padding: 12px 0 12px 10px;
+    border-radius: 5px 0 0 5px;
+    width: 7em;
+    border-width: 0 0 0 0;
+}
+
+.password-show-hide-icon {
+    width: 35px;
+    line-height: 15px;
+    margin-left: -4px;
+    margin-bottom: 10px;
+    padding: 9.5px 7px 10px 0;
+    background: var(--kx-very-light-grey);
+    border-radius: 5px 5px 0 0;
+}
+
+.password-show-hide-icon-svg:hover {
+    opacity: 0.5;
+}
+.password-input-box {
+    width: 125px;
+    border-radius: 0 0 0 0;
 }

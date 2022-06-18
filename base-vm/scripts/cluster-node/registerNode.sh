@@ -3,6 +3,23 @@ set -euo pipefail
 
 . /etc/environment
 
+# Added function to round up the disk space allocated for the LVM creations
+roundUp() {
+
+# Necessary as Vagrantfile was rounding up .5, unlike awk which is rounding that down
+number=$1
+
+bc << EOF
+num = $number;
+base = num / 1;
+if (((num - base) * 10) >= 5 )
+    base += 1;
+print base;
+EOF
+echo ""
+
+}
+
 export kxHomeDir=/usr/share/kx.as.code
 export sharedGitRepositories=${kxHomeDir}/git
 export installationWorkspace=${kxHomeDir}/workspace
@@ -86,11 +103,11 @@ export number30gbVolumes=$(cat ${installationWorkspace}/profile-config.json | jq
 export number50gbVolumes=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.local_volumes.fifty_gb')
 
 # Calculate total needed disk size (should match the value the VM was provisioned with, else automatic detection of the correct disk may fail)
-export size1gbVolumes=$(awk "BEGIN{printf \"%.0f\", (($number1gbVolumes * 1)) * 1.04}")
-export size5gbVolumes=$(awk "BEGIN{printf \"%.0f\", (($number5gbVolumes * 5)) * 1.02}")
-export size10gbVolumes=$(awk "BEGIN{printf \"%.0f\", (($number10gbVolumes * 10)) * 1.02}")
-export size30gbVolumes=$(awk "BEGIN{printf \"%.0f\", (($number30gbVolumes * 30)) * 1.02}")
-export size50gbVolumes=$(awk "BEGIN{printf \"%.0f\", (($number50gbVolumes * 50)) * 1.02}")
+export size1gbVolumes=$(roundUp "$(awk "BEGIN{printf \"%.2f\", (($number1gbVolumes * 1)) * 1.04}")")
+export size5gbVolumes=$(roundUp "$(awk "BEGIN{printf \"%.2f\", (($number5gbVolumes * 5)) * 1.02}")")
+export size10gbVolumes=$(roundUp "$(awk "BEGIN{printf \"%.2f\", (($number10gbVolumes * 10)) * 1.02}")")
+export size30gbVolumes=$(roundUp "$(awk "BEGIN{printf \"%.2f\", (($number30gbVolumes * 30)) * 1.02}")")
+export size50gbVolumes=$(roundUp "$(awk "BEGIN{printf \"%.2f\", (($number50gbVolumes * 50)) * 1.02}")")
 export localKubeVolumesDiskSize=$(( ${size1gbVolumes} + ${size5gbVolumes} + ${size10gbVolumes} + ${size30gbVolumes} + ${size50gbVolumes} + 1 ))
 
 # Install NVME CLI if needed, for example, for AWS
@@ -99,17 +116,12 @@ if [[ -n ${nvme_cli_needed} ]]; then
     /usr/bin/sudo apt install -y nvme-cli lvm2
 fi
 
-partitionB1Exists=$(lsblk -o NAME,FSTYPE,SIZE -J | jq -r '.blockdevices[] | select(.name=="sdb") | .children[] | select(.name=="sdb1") | .name')
+partitionB1Exists=$(lsblk -o NAME,FSTYPE,SIZE -J | jq -r '.blockdevices[] | select(.name=="sdb") | .children[]? | select(.name=="sdb1") | .name')
 
 if [[ "${partitionB1Exists}" != "sdb1" ]]; then
-
   # Determine Drive B (Local K8s Volumes Storage)
   for i in {{1..30}}; do
-    if [[ -f /usr/share/kx.as.code/.config/driveB ]]; then
-      driveB=$(cat /usr/share/kx.as.code/.config/driveB)
-    else
-      driveB=$(lsblk -o NAME,FSTYPE,SIZE -dsn -J | jq -r '.[] | .[] | select(.fstype==null) | select(.size=="'${localKubeVolumesDiskSize}'G") | .name' || true)
-    fi
+    driveB=$(lsblk -o NAME,FSTYPE,SIZE -dsn -J | jq -r '.[] | .[] | select(.fstype==null) | select(.size=="'${localKubeVolumesDiskSize}'G") | .name' || true)
     if [[ -z ${driveB} ]]; then
       echo "Drive for local volumes not yet available. Trying a maximum of 30 times. Attempt ${i}"
       sleep 15
@@ -125,6 +137,10 @@ if [[ "${partitionB1Exists}" != "sdb1" ]]; then
   else
       driveB=$(cat /usr/share/kx.as.code/.config/driveB)
       formatted=true
+  fi
+  if [[ -z ${driveB} ]]; then
+    log_error "Error finding mounted drive for setting up the K8s local storage service. Quitting script and sending task to failure queue"
+    return 1
   fi
 
   # Check logical partitions
@@ -148,7 +164,6 @@ if [[ "${partitionB1Exists}" != "sdb1" ]]; then
       /usr/bin/sudo pvcreate /dev/${driveB_Partition}
       /usr/bin/sudo vgcreate k8s_local_vol_group /dev/${driveB_Partition}
   fi
-
 fi
 BASE_K8S_LOCAL_VOLUMES_DIR=/mnt/k8s_local_volumes
 
@@ -167,7 +182,7 @@ create_volumes() {
                     echo "Successfully mounted /dev/k8s_local_vol_group/k8s_${1}_local_k8s_volume_${i} to ${BASE_K8S_LOCAL_VOLUMES_DIR}/k8s_${1}_local_k8s_volume_${i}"
                     break
                   else
-                    echo "Mount error after mount attempt ${j}!: ${errorOutput}"
+                    log_error "Mount error after mount attempt ${j}!: ${errorOutput}"
                   fi
                 done
                 # Don't add entry to /etc/fstab if the volumes was not created, possibly due to running out of diskspace

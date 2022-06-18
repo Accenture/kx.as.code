@@ -5,9 +5,6 @@ export rc=0
 
 mkdir -p ${installationWorkspace}
 
-# Switch off GUI if switch set to do so in KX.AS.CODE profile-config.json
-disableLinuxDesktop
-
 # Install envhandlebars needed to do moustache variable replacements
 installEnvhandlebars
 

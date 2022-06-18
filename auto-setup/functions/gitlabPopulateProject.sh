@@ -1,8 +1,9 @@
 populateGitlabProject() {
 
-  gitlabProjectName=$1
-  gitlabRepoName=$2
-  sourceCodeLocation=$3
+  gitlabProjectName="${1}"
+  gitlabRepoName="${2}"
+  sourceCodeLocation="${3}"
+  itemsToExclude="${4-}" # Optional. Default value set to empty if not set.
 
   # Create base directory for Gitlab Demo repositories
   mkdir -p ${installationWorkspace}/staging/
@@ -17,6 +18,13 @@ populateGitlabProject() {
   mkdir -p /var/tmp/${gitlabRepoName}
   cp -rf ${sourceCodeLocation}/* /var/tmp/${gitlabRepoName}/
   rm -rf /var/tmp/${gitlabRepoName}/.git
+
+  if [[ -n ${itemsToExclude} ]]; then
+    for itemToExclude in ${itemsToExclude}
+    do
+      /usr/bin/sudo find /var/tmp/${gitlabRepoName}/ -name ${itemToExclude} -exec rm -rf {} +
+    done
+  fi
 
   numFilesInRepoDir=0
   gitStatusRc=0

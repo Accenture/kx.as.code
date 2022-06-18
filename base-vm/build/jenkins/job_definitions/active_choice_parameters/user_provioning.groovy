@@ -5,12 +5,11 @@ def profileParentPath
 
 try {
 
-    File profilePath = new File(PROFILE)
+    File profilePath = new File(PROFILE.split(";")[0])
     profileParentPath = profilePath.getParentFile()
 
     File usersJsonFile = new File("${profileParentPath}/users.json")
 
-    println("Users JSON file exists? ${usersJsonFile.exists()}")
     if ( usersJsonFile.exists() ) {
         parsedUserJson = usersJsonFile.text.replace("\n", "").replace("\r", "").replace(" ", "")
     }

@@ -7,8 +7,8 @@ sudo cp -rfT ${INSTALLATION_WORKSPACE}/skel /root
 sudo chown -R ${VM_USER}:${VM_USER} /home/${VM_USER}
 sudo chmod -R 755 /home/${VM_USER}/Desktop/*.desktop
 
-# Update system desktop icon file for HTOP
-sudo cp -f /home/${VM_USER}/Desktop/HTOP.desktop /usr/share/applications/htop.desktop
+# Update system desktop icon file for BTOP
+sudo cp -f /home/${VM_USER}/Desktop/BTOP.desktop /usr/share/applications/btop.desktop
 sudo cp -f /home/${VM_USER}/Desktop/Tilix.desktop /usr/share/applications/com.gexperts.Tilix.desktop
 
 # Change screen resolution to more respectable 1920x1200 (default is 800x600)
@@ -99,4 +99,4 @@ HideUsers=vagrant
 
 
 echo "typeset -g POWERLEVEL9K_INSTANT_PROMPT=quiet" | sudo tee -a /home/${VM_USER}/.bashrc /home/${VM_USER}/.zshrc /root/.bashrc /root/.zshrc
-echo "cat /etc/motd" | sudo tee -a /home/${VM_USER}/.bashrc /home/${VM_USER}/.zshrc /root/.bashrc /root/.zshrc
+echo "cat /etc/motd.kxascode" | sudo tee -a /home/${VM_USER}/.bashrc /home/${VM_USER}/.zshrc /root/.bashrc /root/.zshrc
