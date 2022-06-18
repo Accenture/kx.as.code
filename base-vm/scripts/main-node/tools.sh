@@ -99,7 +99,7 @@ sudo chown -R ${BASE_IMAGE_SSH_USER}:${BASE_IMAGE_SSH_USER} /home/${BASE_IMAGE_S
 # Compiling OpenLens for later installation when KX.AS.CODE comes up
 cd ${INSTALLATION_WORKSPACE}
 sudo chmod 777 ${INSTALLATION_WORKSPACE}
-export lensVersion="v5.5.1"
+export lensVersion="v5.5.4"
 git clone --branch ${lensVersion} https://github.com/lensapp/lens.git
 cd ${INSTALLATION_WORKSPACE}/lens
 
