@@ -29,11 +29,11 @@ extraEnv:   |
    - name: ROOT_URL
      value: 'https://{{ componentName }}.{{ baseDomain }}/'
    - name: ADMIN_USERNAME
-     value: '{{ vmUser}}'
+     value: '{{ baseUser}}'
    - name: ADMIN_PASS
      value: '{{ rocketchatAdminPassword }}'
    - name: ADMIN_EMAIL
-     value: '{{ vmUser}}@{{ baseDomain }}'
+     value: '{{ baseUser}}@{{ baseDomain }}'
    - name: OVERWRITE_SETTING_Organization_Type
      value: '{{ organizationType }}'
    - name: OVERWRITE_SETTING_Organization_Name

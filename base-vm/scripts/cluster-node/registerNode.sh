@@ -3,6 +3,51 @@ set -euo pipefail
 
 . /etc/environment
 
+export kxHomeDir=/usr/share/kx.as.code
+export sharedGitRepositories=${kxHomeDir}/git
+export installationWorkspace=${kxHomeDir}/workspace
+
+export baseUser=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.baseUser')
+export basePassword=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.basePassword')
+export startupMode=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.startupMode')
+export standaloneMode=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.standaloneMode')
+
+checkAndUpdateBaseUsername() {
+
+  # Create new username rather than modify the old one
+
+  sourceGroups=$(id -Gn "kx.hero" | sed "s/ /,/g" | sed -r 's/\<'"kx.hero"'\>\b,?//g')
+  sourceShell=$(awk -F : -v name="kx.hero" '(name == $1) { print $7 }' /etc/passwd)
+
+  /usr/bin/sudo useradd --groups ${sourceGroups} --shell ${sourceShell} --create-home --home-dir /home/${baseUser} ${baseUser}
+
+  if [ ! -f /home/${baseUser}/.ssh/id_rsa ]; then
+      # Create the kx.hero user ssh directory.
+      /usr/bin/sudo mkdir -pm 700 /home/${baseUser}/.ssh
+
+    # Get new user group ID
+    newGid=$(id -g ${userid})
+    /usr/bin/sudo chown -f -R ${newGid}:${newGid} /home/${userid}
+
+    # Ensure the permissions are set correct
+    /usr/bin/sudo chown -R ${baseUser}:${baseUser} /home/${baseUser}/.ssh
+  fi
+
+}
+
+checkAndUpdateBasePassword() {
+  vmPassword=$(cat /usr/share/kx.as.code/.config/.user.cred)
+  if [[ "${vmPassword}" != "${basePassword}" ]]; then
+    sudo usermod --password $(echo "${basePassword}" | openssl passwd -1 -stdin) "${baseUser}"
+  fi
+}
+
+# Modify username and password if modified in profile-config.json
+if [[ ! -f  /usr/share/kx.as.code/.config/network_status ]]; then
+  checkAndUpdateBaseUsername
+  checkAndUpdateBasePassword
+fi
+
 # Added function to round up the disk space allocated for the LVM creations
 roundUp() {
 
@@ -20,10 +65,6 @@ echo ""
 
 }
 
-export kxHomeDir=/usr/share/kx.as.code
-export sharedGitRepositories=${kxHomeDir}/git
-export installationWorkspace=${kxHomeDir}/workspace
-
 # Check profile-config.json file is present before executing script
 while [[ ! -f ${installationWorkspace}/profile-config.json ]]; do
   echo "Waiting for ${installationWorkspace}/profile-config.json file"
@@ -39,8 +80,6 @@ else
     export baseDomain="${environmentPrefix}.$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.baseDomain')"
 fi
 export defaultKeyboardLanguage=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.defaultKeyboardLanguage')
-export baseUser=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.baseUser')
-export basePassword=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.basePassword')
 export baseIpType=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.baseIpType')
 export dnsResolution=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.dnsResolution')
 export baseIpRangeStart=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.baseIpRangeStart')
@@ -639,17 +678,19 @@ XKBOPTIONS=""
 BACKSPACE=\"guess\"
 ''' | /usr/bin/sudo tee /etc/default/keyboard
 
-# Enable LDAP on worker node
-export ldapDn="dc=kx-as-code,dc=local"
+if [[ "${startupMode}" != "normal" ]]; then
 
-# Get LdapDN from main node and setup base variables
-ldapDnFull=$(/usr/bin/sudo -H -i -u "${vmUser}" bash -c "ssh -o StrictHostKeyChecking=no $vmUser@${kxMainIp} '/usr/bin/sudo slapcat | grep dn'")
-ldapDnFirstPart=$(echo ${ldapDnFull} | head -1 | sed 's/dn: //g' | sed 's/dc=//g' | cut -f1 -d',')
-ldapDnSecondPart=$(echo ${ldapDnFull} | head -1 | sed 's/dn: //g' | sed 's/dc=//g' | cut -f2 -d',')
+  # Enable LDAP on worker node
+  export ldapDn="dc=kx-as-code,dc=local"
 
-export kcRealm=${ldapDnFirstPart}
-export ldapDn="dc=${ldapDnFirstPart},dc=${ldapDnSecondPart}"
-export ldapServer=ldap.${baseDomain}
+  # Get LdapDN from main node and setup base variables
+  ldapDnFull=$(/usr/bin/sudo -H -i -u "${vmUser}" bash -c "ssh -o StrictHostKeyChecking=no $vmUser@${kxMainIp} '/usr/bin/sudo slapcat | grep dn'")
+  ldapDnFirstPart=$(echo ${ldapDnFull} | head -1 | sed 's/dn: //g' | sed 's/dc=//g' | cut -f1 -d',')
+  ldapDnSecondPart=$(echo ${ldapDnFull} | head -1 | sed 's/dn: //g' | sed 's/dc=//g' | cut -f2 -d',')
+
+  export kcRealm=${ldapDnFirstPart}
+  export ldapDn="dc=${ldapDnFirstPart},dc=${ldapDnSecondPart}"
+  export ldapServer=ldap.${baseDomain}
 
 # Configure Client selections before install
 cat << EOF | /usr/bin/sudo debconf-set-selections
@@ -664,19 +705,20 @@ libnss-ldap libnss-ldap/rootbinddn  string  cn=admin,${ldapDn}
 libnss-ldap shared/ldapns/ldap_version  select  3
 libnss-ldap libnss-ldap/nsswitch    note
 EOF
-/usr/bin/sudo DEBIAN_FRONTEND=noninteractive apt-get install -q -y libnss-ldapd libpam-ldap
 
-# Add LDAP client config
-echo "BASE    ${ldapDn}" | tee -a /etc/ldap/ldap.conf
-echo "URI     ldap://${ldapServer}" | tee -a /etc/ldap/ldap.conf
+  /usr/bin/sudo DEBIAN_FRONTEND=noninteractive apt-get install -q -y libnss-ldapd libpam-ldap
 
-# Add LDAP auth method to /etc/nsswitch.conf
-/usr/bin/sudo sed -i '/^passwd:/s/$/ ldap/' /etc/nsswitch.conf
-/usr/bin/sudo sed -i '/^group:/s/$/ ldap/' /etc/nsswitch.conf
-/usr/bin/sudo sed -i '/^shadow:/s/$/ ldap/' /etc/nsswitch.conf
-/usr/bin/sudo sed -i '/^gshadow:/s/$/ ldap/' /etc/nsswitch.conf
+  # Add LDAP client config
+  echo "BASE    ${ldapDn}" | tee -a /etc/ldap/ldap.conf
+  echo "URI     ldap://${ldapServer}" | tee -a /etc/ldap/ldap.conf
 
-export vmPassword="$(cat ${kxHomeDir}/.config/.user.cred)"
+  # Add LDAP auth method to /etc/nsswitch.conf
+  /usr/bin/sudo sed -i '/^passwd:/s/$/ ldap/' /etc/nsswitch.conf
+  /usr/bin/sudo sed -i '/^group:/s/$/ ldap/' /etc/nsswitch.conf
+  /usr/bin/sudo sed -i '/^shadow:/s/$/ ldap/' /etc/nsswitch.conf
+  /usr/bin/sudo sed -i '/^gshadow:/s/$/ ldap/' /etc/nsswitch.conf
+
+  export vmPassword="$(cat ${kxHomeDir}/.config/.user.cred)"
 
 echo '''
 # nslcd configuration file. See nslcd.conf(5)
@@ -709,16 +751,18 @@ tls_cacertfile /etc/ssl/certs/ca-certificates.crt
 
 ''' | /usr/bin/sudo tee /etc/nslcd.conf
 
-# Ensure home directory is created on first login
-echo "session required      pam_mkhomedir.so   skel=${kxHomeDir}/skel umask=0002" | /usr/bin/sudo tee -a /etc/pam.d/common-session
+  # Ensure home directory is created on first login
+  echo "session required      pam_mkhomedir.so   skel=${kxHomeDir}/skel umask=0002" | /usr/bin/sudo tee -a /etc/pam.d/common-session
 
-# Check if ldap users are returned with getent passwd
-getent passwd
+  # Check if ldap users are returned with getent passwd
+  getent passwd
 
-# Delete local user and replace with ldap user if added to LDAP correctly
-ldapUserExists=$(/usr/bin/sudo ldapsearch -x -b "uid=${vmUser},ou=Users,ou=People,${ldapDn}" | grep numEntries || true)
-if [[ -n ${ldapUserExists} ]]; then
-    /usr/bin/sudo userdel ${vmUser}
+  # Delete local user and replace with ldap user if added to LDAP correctly
+  ldapUserExists=$(/usr/bin/sudo ldapsearch -x -b "uid=${vmUser},ou=Users,ou=People,${ldapDn}" | grep numEntries || true)
+  if [[ -n ${ldapUserExists} ]]; then
+      /usr/bin/sudo userdel ${vmUser}
+  fi
+
 fi
 
 # Reboot machine to ensure all network changes are active

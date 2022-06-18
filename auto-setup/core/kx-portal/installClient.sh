@@ -6,7 +6,7 @@ set -euo pipefail
 
 # Setup logging directory
 /usr/bin/sudo mkdir ${installationWorkspace}/kx-portal
-/usr/bin/sudo chown -R ${vmUser}:${vmUser} ${installationWorkspace}/kx-portal
+/usr/bin/sudo chown -R ${baseUser}:${baseUser} ${installationWorkspace}/kx-portal
 
 nodeAlreadyInstalled=$(which node || true)
 # TODO - in theory not needed anymore, as node backed into base image, but keeping it here for now
@@ -56,7 +56,7 @@ do
   pnpm install || rc=$? && log_info "Execution of pnpm install for KX-Portal returned with rc=$rc"
   if [[ ${rc} -eq 0 ]]; then
     log_info "PNPM install succeeded. Continuing"
-    /usr/bin/sudo chown -R ${vmUser}:${vmUser} ${KX_PORTAL_HOME}
+    /usr/bin/sudo chown -R ${baseUser}:${baseUser} ${KX_PORTAL_HOME}
     break
   else
     log_warn "PNPM install returned with a non zero exit code. Trying again"
@@ -112,7 +112,7 @@ fi
 checkUrlHealth "http://localhost:3000" "200"
 
 # Install the desktop shortcut for KX.AS.CODE Portal
-shortcutsDirectory="/home/${vmUser}/Desktop"
+shortcutsDirectory="/home/${baseUser}/Desktop"
 primaryUrl="http://localhost:3000"
 shortcutText="KX.AS.CODE Portal"
 iconPath="${installComponentDirectory}/$(cat ${componentMetadataJson} | jq -r '.shortcut_icon')"
@@ -120,14 +120,14 @@ browserOptions=""
 createDesktopIcon "${shortcutsDirectory}" "${primaryUrl}" "${shortcutText}" "${iconPath}" "${browserOptions}"
 
 # Copy desktop icons to skel directory for future users
-/usr/bin/sudo cp /home/"${vmUser}"/Desktop/"${shortcutText}" "${skelDirectory}"/Desktop
+/usr/bin/sudo cp /home/"${baseUser}"/Desktop/"${shortcutText}" "${skelDirectory}"/Desktop
 
 # Create new RabbitMQ user and assign permissions
 kxHeroUserExists=$(rabbitmqadmin list users --format=pretty_json | jq -r '.[] | select(.name=="kx.hero") | .name')
 if [[ -z ${kxHeroUserExists} ]]; then
-  /usr/bin/sudo rabbitmqctl add_user "${vmUser}" "${vmPassword}"
-  /usr/bin/sudo rabbitmqctl set_user_tags "${vmUser}" administrator
-  /usr/bin/sudo rabbitmqctl set_permissions -p / "${vmUser}" ".*" ".*" ".*"
+  /usr/bin/sudo rabbitmqctl add_user "${baseUser}" "${vmPassword}"
+  /usr/bin/sudo rabbitmqctl set_user_tags "${baseUser}" administrator
+  /usr/bin/sudo rabbitmqctl set_permissions -p / "${baseUser}" ".*" ".*" ".*"
 fi
 
 # Create TEMPORARY new RabbitMQ user and assign permissions # TODO - Remove once frontend username/password is parameterized

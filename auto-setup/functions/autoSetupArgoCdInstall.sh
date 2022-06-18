@@ -44,7 +44,7 @@ autoSetupArgoCdInstall() {
   # Add Git repository to ArgoCD if not already present
   argoRepoExists=$(argocd repo list --output json | jq -r '.[] | select(.repo=="'${argoCdRepositoryUrl}'") | .repo')
   if [[ -z ${argoRepoExists} ]]; then
-    argocd repo add --insecure-skip-server-verification ${argoCdRepositoryUrl} --username ${vmUser} --password ${vmPassword}
+    argocd repo add --insecure-skip-server-verification ${argoCdRepositoryUrl} --username ${baseUser} --password ${vmPassword}
   fi
 
   # Check if auto-prune option should be added to deploy command

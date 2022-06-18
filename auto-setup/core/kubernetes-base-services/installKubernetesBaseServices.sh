@@ -10,9 +10,9 @@ if [[ ! ${kubeAdminStatus} ]]; then
     # Setup KX and root users as Kubernetes Admin
     mkdir -p /root/.kube
     cp -f /etc/kubernetes/admin.conf /root/.kube/config
-    /usr/bin/sudo -H -i -u ${vmUser} sh -c "mkdir -p /home/${vmUser}/.kube"
-    /usr/bin/sudo cp -f /etc/kubernetes/admin.conf /home/${vmUser}/.kube/config
-    /usr/bin/sudo chown $(id -u ${vmUser}):$(id -g ${vmUser}) /home/${vmUser}/.kube/config
+    /usr/bin/sudo -H -i -u ${baseUser} sh -c "mkdir -p /home/${baseUser}/.kube"
+    /usr/bin/sudo cp -f /etc/kubernetes/admin.conf /home/${baseUser}/.kube/config
+    /usr/bin/sudo chown $(id -u ${baseUser}):$(id -g ${baseUser}) /home/${baseUser}/.kube/config
     # Add kube config to skel directory for future users
     /usr/bin/sudo mkdir -p /usr/share/kx.as.code/skel/.kube
     /usr/bin/sudo cp -f /etc/kubernetes/admin.conf /usr/share/kx.as.code/skel/.kube/config

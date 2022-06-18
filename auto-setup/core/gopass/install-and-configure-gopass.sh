@@ -39,21 +39,21 @@ do
     rndServiceStatus=$(systemctl show -p SubState --value rng-tools.service)
 done
 
-if [[ ! -f /home/${vmUser}/.gnupg/pubring.kbx ]]; then
+if [[ ! -f /home/${baseUser}/.gnupg/pubring.kbx ]]; then
 
-/usr/bin/sudo -H -i -u ${vmUser} gpg2 --list-secret-keys
+/usr/bin/sudo -H -i -u ${baseUser} gpg2 --list-secret-keys
 
-rm -rf /home/${vmUser}/.local/share/gopass && rm -rf /home/${vmUser}/.config/gopass && rm -rf /home/${vmUser}/.gnupg
-mkdir -m 0700 /home/${vmUser}/.gnupg
-touch /home/${vmUser}/.gnupg/gpg.conf
-chmod 600 /home/${vmUser}/.gnupg/gpg.conf
-chown -R ${vmUser}:${vmUser} /home/${vmUser}/.gnupg
+rm -rf /home/${baseUser}/.local/share/gopass && rm -rf /home/${baseUser}/.config/gopass && rm -rf /home/${baseUser}/.gnupg
+mkdir -m 0700 /home/${baseUser}/.gnupg
+touch /home/${baseUser}/.gnupg/gpg.conf
+chmod 600 /home/${baseUser}/.gnupg/gpg.conf
+chown -R ${baseUser}:${baseUser} /home/${baseUser}/.gnupg
 
 # Generate ${installationWorkspace}/initializeGpg.sh script
 echo """#!/bin/bash -x
 set -euo pipefail
 
-cd /home/${vmUser}/.gnupg
+cd /home/${baseUser}/.gnupg
 gpg2 --list-keys
 
 cat >${installationWorkspace}/keydetails <<EOF
@@ -62,9 +62,9 @@ cat >${installationWorkspace}/keydetails <<EOF
     Key-Length: 2048
     Subkey-Type: RSA
     Subkey-Length: 2048
-    Name-Real: ${vmUser}
-    Name-Comment: ${vmUser}
-    Name-Email: ${vmUser}@${baseDomain}
+    Name-Real: ${baseUser}
+    Name-Comment: ${baseUser}
+    Name-Email: ${baseUser}@${baseDomain}
     Expire-Date: 0
     %no-ask-passphrase
     %no-protection
@@ -77,13 +77,13 @@ EOF
 gpg2 --batch --verbose --gen-key ${installationWorkspace}/keydetails
 
 # Set trust to 5 for the key so we can encrypt without prompt.
-echo -e '5\ny\n' | gpg2 --batch --command-fd 0 --expert --edit-key ${vmUser}@${baseDomain} trust;
+echo -e '5\ny\n' | gpg2 --batch --command-fd 0 --expert --edit-key ${baseUser}@${baseDomain} trust;
 
 # Test that the key was created and the permission the trust was set.
 gpg2 --list-keys
 
 # Test the key can encrypt and decrypt.
-gpg2 --batch -e -a -r ${vmUser}@${baseDomain} ${installationWorkspace}/keydetails
+gpg2 --batch -e -a -r ${baseUser}@${baseDomain} ${installationWorkspace}/keydetails
 
 # Delete the options and decrypt the original to stdout.
 rm ${installationWorkspace}/keydetails
@@ -100,7 +100,7 @@ match_max 100000
 expect "*Please enter the number of a key*"
 send "0\r"
 expect "*Please enter an email address for password store git config*"
-send "'${vmUser}'@'${baseDomain}'\r"
+send "'${baseUser}'@'${baseDomain}'\r"
 expect "*Do you want to add a git remote*"
 send "N\r"
 expect eof
@@ -109,19 +109,19 @@ expect eof
 # Initialize GPG
 log_info "Initializing GNUGPG"
 chmod 755 ${installationWorkspace}/initializeGpg.sh
-/usr/bin/sudo -H -i -u ${vmUser} ${installationWorkspace}/initializeGpg.sh
+/usr/bin/sudo -H -i -u ${baseUser} ${installationWorkspace}/initializeGpg.sh
 
 # Setup GoPass
 log_info "Setting up GoPass"
-/usr/bin/sudo -H -i -u ${vmUser} /usr/bin/expect ${installationWorkspace}/initializeGoPass.exp
+/usr/bin/sudo -H -i -u ${baseUser} /usr/bin/expect ${installationWorkspace}/initializeGoPass.exp
 
 # Insert first secret with GoPass -> KX.Hero Password
 log_info "Adding first password to GoPass for testing"
-pushPassword "${vmUser}-user-password" "${vmPassword}"
+pushPassword "${baseUser}-user-password" "${vmPassword}"
 
 # Test password retrieval with GoPass
 log_info "Retrieving first password to GoPass for testing"
-password=$(getPassword "${vmUser}-user-password")
+password=$(getPassword "${baseUser}-user-password")
 log_info "Retrieved password: ${password}"
 
 fi

@@ -32,11 +32,6 @@ if [[ ${numUsersToCreate} -ne 0 ]]; then
         # Create user's desktop folder
         /usr/bin/sudo mkdir -p /home/${userid}/Desktop
 
-        # Add desktop shortcuts for all users
-        if /usr/bin/sudo test ! -e /home/${userid}/Desktop/"KX.AS.CODE Source"; then
-            /usr/bin/sudo ln -s ${sharedGitHome}/kx.as.code /home/${userid}/Desktop/"KX.AS.CODE Source"
-        fi
-
         # Add admin tools folder to desktop if user has admin role
         if [[ "${userRole}" == "admin" ]]; then
             if /usr/bin/sudo test ! -e /home/${userid}/Desktop/"Admin Tools"; then
@@ -45,7 +40,7 @@ if [[ ${numUsersToCreate} -ne 0 ]]; then
         fi
 
         # Add DevOps tools folder to desktop
-        if /usr/bin/sudo test ! -e /home/${userid}/Desktop/"DevOps Tools"; then
+        if /usr/bin/sudo test ! -e /home/${userid}/Desktop/"Applications"; then
             /usr/bin/sudo ln -s "${shortcutsDirectory}" /home/${userid}/Desktop/
         fi
 

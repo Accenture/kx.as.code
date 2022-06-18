@@ -5,7 +5,7 @@ set -euo pipefail
 /usr/bin/sudo apt-get install -y ntpdate
 
 /usr/bin/sudo mkdir -p ${certificatesWorkspace}
-/usr/bin/sudo chown $(id -u ${vmUser}):$(id -g ${vmUser}) ${certificatesWorkspace}
+/usr/bin/sudo chown $(id -u ${baseUser}):$(id -g ${baseUser}) ${certificatesWorkspace}
 cd ${certificatesWorkspace}
 
 # Download and install latest Kubectl and kubeadm binaries
@@ -53,7 +53,7 @@ do
 done
 
 # Correct permissions before next step
-/usr/bin/sudo chown -hR ${vmUser}:${vmUser} /home/${vmUser}
+/usr/bin/sudo chown -hR ${baseUser}:${baseUser} /home/${baseUser}
 
 # Add stable helm repo if it does not already exist
 helmRepoExists=$(helm repo list --output json | jq -r '.[] | select(.name=="stable") | .name' || true)

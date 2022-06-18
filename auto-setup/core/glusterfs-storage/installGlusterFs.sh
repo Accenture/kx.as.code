@@ -274,12 +274,12 @@ heketi-cli topology load --user admin --secret ${adminPassword} --json=/etc/heke
 
 if [ ! -f ${installationWorkspace}/heketi_creds.sh ]; then
     # Add heketi cluster details to bashrc and zshrc for heketi-cli (kx user)
-    echo -e "\nexport HEKETI_CLI_SERVER=http://${mainIpAddress}:8080" >> /home/${vmUser}/.zshrc
-    echo "export HEKETI_CLI_USER=admin" >> /home/${vmUser}/.zshrc
-    echo "export HEKETI_CLI_KEY=\"${adminPassword}\"" >> /home/${vmUser}/.zshrc
-    echo -e "\nexport HEKETI_CLI_SERVER=http://${mainIpAddress}:8080" >> /home/${vmUser}/.bashrc
-    echo "export HEKETI_CLI_USER=admin" >> /home/${vmUser}/.bashrc
-    echo "export HEKETI_CLI_KEY=\"${adminPassword}\"" >> /home/${vmUser}/.bashrc
+    echo -e "\nexport HEKETI_CLI_SERVER=http://${mainIpAddress}:8080" >> /home/${baseUser}/.zshrc
+    echo "export HEKETI_CLI_USER=admin" >> /home/${baseUser}/.zshrc
+    echo "export HEKETI_CLI_KEY=\"${adminPassword}\"" >> /home/${baseUser}/.zshrc
+    echo -e "\nexport HEKETI_CLI_SERVER=http://${mainIpAddress}:8080" >> /home/${baseUser}/.bashrc
+    echo "export HEKETI_CLI_USER=admin" >> /home/${baseUser}/.bashrc
+    echo "export HEKETI_CLI_KEY=\"${adminPassword}\"" >> /home/${baseUser}/.bashrc
 
     # Add heketi cluster details to bashrc and zshrc for heketi-cli (root)
     echo -e "\nexport HEKETI_CLI_SERVER=http://${mainIpAddress}:8080" | /usr/bin/sudo tee -a /root/.zshrc

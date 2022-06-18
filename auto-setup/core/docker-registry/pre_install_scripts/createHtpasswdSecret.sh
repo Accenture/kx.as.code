@@ -2,11 +2,11 @@
 set -euox pipefail
 
 # Create password
-export defaultRegistryUserPassword=$(managedApiKey "docker-registry-${vmUser}-password")
+export defaultRegistryUserPassword=$(managedApiKey "docker-registry-${baseUser}-password")
 
 # Generate HTPASSWD file
 apt-get install -y apache2-utils
-htpasswd -Bb -c ${installationWorkspace}/docker-registry-htpasswd ${vmUser} ${defaultRegistryUserPassword}
+htpasswd -Bb -c ${installationWorkspace}/docker-registry-htpasswd ${baseUser} ${defaultRegistryUserPassword}
 
 # Add KX.AS.CODE HTPASSWD secret to Docker Registry namespace
 kubectl get secret docker-registry-default-htpasswd --namespace=${namespace} ||

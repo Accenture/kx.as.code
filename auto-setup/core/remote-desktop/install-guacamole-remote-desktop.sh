@@ -85,7 +85,7 @@ guacAdminPassword=$(managedPassword "guacamole-admin-password")
 cat guacamole-auth-jdbc-${guacamoleVersion}/postgresql/schema/*.sql | /usr/bin/sudo su - postgres -c "psql -d guacamole_db -f -"
 
 # Create Guacamole database users
-guacUser=$(echo $vmUser | sed 's/\./_/g')
+guacUser=$(echo $baseUser | sed 's/\./_/g')
 
 # Generate random passwords for guacamole user via custom bash functions
 guacUserPassword=$(managedPassword "guacamole-user-password")
@@ -162,7 +162,7 @@ echo '''
 
     <!-- Per-user authentication and config information -->
     <authorize
-        username="'${vmUser}'"
+        username="'${baseUser}'"
         password="'${md5Password}'"
         encoding="md5">
 
@@ -181,15 +181,15 @@ echo '''
 
 /usr/bin/sudo apt -y install tigervnc-standalone-server
 
-/usr/bin/sudo mkdir -p /home/${vmUser}/.vnc
-echo ${vncPassword} | /usr/bin/sudo bash -c "vncpasswd -f > /home/${vmUser}/.vnc/passwd"
-/usr/bin/sudo chown -R ${vmUser}:${vmUser} /home/${vmUser}/.vnc
-/usr/bin/sudo chmod 0600 /home/${vmUser}/.vnc/passwd
+/usr/bin/sudo mkdir -p /home/${baseUser}/.vnc
+echo ${vncPassword} | /usr/bin/sudo bash -c "vncpasswd -f > /home/${baseUser}/.vnc/passwd"
+/usr/bin/sudo chown -R ${baseUser}:${baseUser} /home/${baseUser}/.vnc
+/usr/bin/sudo chmod 0600 /home/${baseUser}/.vnc/passwd
 
-/usr/bin/sudo -H -i -u ${vmUser} sh -c "vncserver"
+/usr/bin/sudo -H -i -u ${baseUser} sh -c "vncserver"
 
-vmUserId=$(id -g ${vmUser})
-vmUserGroupId=$(id -u ${vmUser})
+baseUserId=$(id -g ${baseUser})
+baseUserGroupId=$(id -u ${baseUser})
 
 echo '''
 [Unit]
@@ -201,9 +201,9 @@ After=ntp.service
 
 [Service]
 Type=forking
-User='${vmUserId}'
-Group='${vmUserGroupId}'
-WorkingDirectory=/home/'${vmUser}'
+User='${baseUserId}'
+Group='${baseUserGroupId}'
+WorkingDirectory=/home/'${baseUser}'
 
 ExecStartPre=-/usr/bin/vncserver -kill :%i > /dev/null 2>&1
 ExecStart=/usr/bin/vncserver -depth 24 -geometry 1920x1200 -localhost :%i
@@ -213,7 +213,7 @@ ExecStop=/usr/bin/vncserver -kill :%i
 WantedBy=multi-user.target
 ''' | /usr/bin/sudo tee /etc/systemd/system/vncserver@.service
 
-/usr/bin/sudo -H -i -u ${vmUser} bash -c "vncserver -kill :1 || true"
+/usr/bin/sudo -H -i -u ${baseUser} bash -c "vncserver -kill :1 || true"
 
 # Starting up VNC service for Remote Desktop
 for i in {1..5}; do

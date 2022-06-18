@@ -10,7 +10,7 @@ echo '''
 Welcome to the KX.AS.CODE workstation.
 "PLAY LEARN EXPERIMENT INNOVATE SHARE" is the motto here.
 
-''' | sudo tee /etc/motd
+''' | sudo tee /etc/motd.kxascode
 
 KUBE_VERSION=$(echo "${KUBE_VERSION}" | cut -d'-' -f1)
 TIMESTAMP=$(date +"%d-%m-%y %T")

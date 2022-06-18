@@ -6,7 +6,7 @@ curl -O https://raw.githubusercontent.com/spinnaker/halyard/master/install/debia
 
 # Create directory
 mkdir -p /opt/spinnaker
-chown ${vmUser}:${vmUser} /opt/spinnaker
+chown ${baseUser}:${baseUser} /opt/spinnaker
 
 /usr/bin/sudo mkdir -p /opt/spinnaker
 /usr/bin/sudo chown kx.hero:kx.hero /opt/spinnaker

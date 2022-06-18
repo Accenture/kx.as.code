@@ -9,7 +9,7 @@ createDesktopIcon() {
   browserOptions="${5}"
 
   mkdir -p "${targetDirectory}"
-  chown "${vmUser}":"${vmUser}" "${targetDirectory}"
+  chown "${baseUser}":"${baseUser}" "${targetDirectory}"
 
   echo """
   [Desktop Entry]
@@ -28,6 +28,6 @@ createDesktopIcon() {
   """ | tee "${targetDirectory}"/"${shortcutText}"
   sed -i 's/^[ \t]*//g' "${targetDirectory}"/"${shortcutText}"
   chmod 755 "${targetDirectory}"/"${shortcutText}"
-  chown "${vmUser}":"${vmUser}" "${targetDirectory}"/"${shortcutText}"
+  chown "${baseUser}":"${baseUser}" "${targetDirectory}"/"${shortcutText}"
 
 }

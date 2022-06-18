@@ -16,7 +16,7 @@ cp -r /usr/share/kx.as.code/git/kx.as.code_docs /var/tmp/
 rm -rf /var/tmp/kx.as.code_docs/.git
 if [[ ! -d ${installationWorkspace}/staging/kx.as.code_docs/.git  ]]; then
     mkdir -p ${installationWorkspace}/staging/kx.as.code_docs
-    git clone https://"${vmUser}":"${vmPassword}"@${gitDomain}/kx.as.code/kx.as.code_docs.git ${installationWorkspace}/staging/kx.as.code_docs
+    git clone https://"${baseUser}":"${vmPassword}"@${gitDomain}/kx.as.code/kx.as.code_docs.git ${installationWorkspace}/staging/kx.as.code_docs
     gitCommitMessage='Initial push of KX.AS.CODE "Docs" into Gitlab'
     cd ${installationWorkspace}/staging/kx.as.code_docs
 else
@@ -25,7 +25,7 @@ else
     gitCommitMessage='Updated KX.AS.CODE "Docs"'
 fi
 
-chown -R ${vmUser}:${vmUser} ${installationWorkspace}/staging/kx.as.code_docs
+chown -R ${baseUser}:${baseUser} ${installationWorkspace}/staging/kx.as.code_docs
 cp -rf /var/tmp/kx.as.code_docs/* ${installationWorkspace}/staging/kx.as.code_docs/
 
 # Replace mustache placeholders in YAML files

@@ -148,7 +148,7 @@ dockerRegistries:
    address: {{ dockerRegistryDomain }}
    username: {{ kxRobotUser }}
    password: {{ kxRobotToken }}
-   email: {{ vmUser }}@{{ baseDomain }}
+   email: {{ baseUser }}@{{ baseDomain }}
 # - name: gcr
 #   address: https://gcr.io
 #   username: _json_key

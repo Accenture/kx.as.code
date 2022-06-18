@@ -11,8 +11,8 @@ populateGitlabProject() {
   gitlabDomain="${componentName}.${baseDomain}"
 
   # Set Git committer details
-  git config --global user.name "${vmUser}"
-  git config --global user.email "${vmUser}@${baseDomain}"
+  git config --global user.name "${baseUser}"
+  git config --global user.email "${baseUser}@${baseDomain}"
 
   # Add project to Gitlab
   mkdir -p /var/tmp/${gitlabRepoName}
@@ -42,11 +42,11 @@ populateGitlabProject() {
 
   if [[ ! -d ${installationWorkspace}/staging/${gitlabRepoName} ]]; then
     for i in {1..5}; do
-        git clone https://"${vmUser}":"${vmPassword}"@gitlab.${baseDomain}/${gitlabProjectName}/${gitlabRepoName}.git ${installationWorkspace}/staging/${gitlabRepoName}
+        git clone https://"${baseUser}":"${vmPassword}"@gitlab.${baseDomain}/${gitlabProjectName}/${gitlabRepoName}.git ${installationWorkspace}/staging/${gitlabRepoName}
         if [[ $? -eq 0 ]] || [[ $? -eq 128 ]]; then break; else sleep 5; fi
     done
     cp -rf /var/tmp/${gitlabRepoName}/. ${installationWorkspace}/staging/${gitlabRepoName}/
-    chown -R ${vmUser}:${vmUser} ${installationWorkspace}/staging/${gitlabRepoName}
+    chown -R ${baseUser}:${baseUser} ${installationWorkspace}/staging/${gitlabRepoName}
     cd ${installationWorkspace}/staging/${gitlabRepoName}
     git add .
     git commit -m 'Initial population of '${gitlabProjectName}/${gitlabRepoName}' source into Gitlab'

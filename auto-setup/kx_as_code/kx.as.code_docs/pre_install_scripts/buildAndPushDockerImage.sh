@@ -15,7 +15,7 @@ cd ${installationWorkspace}/staging/kx.as.code_docs/
 
 # Install Python Dependencies
 pip3 install -r requirements.txt
-export PATH=$PATH:/home/$vmUser/.local/bin
+export PATH=$PATH:/home/$baseUser/.local/bin
 
 # Copy Latest README.md Docs
 sourceRepoLocation=/usr/share/kx.as.code/git/kx.as.code

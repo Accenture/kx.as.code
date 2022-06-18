@@ -15,7 +15,7 @@ if [ ! -f ${certificatesWorkspace}/kx_server.pem ]; then
 
     # Create Directories
     /usr/bin/sudo mkdir -p ${certificatesWorkspace}
-    /usr/bin/sudo chown ${vmUser}:${vmUser} ${certificatesWorkspace}
+    /usr/bin/sudo chown ${baseUser}:${baseUser} ${certificatesWorkspace}
     cd ${certificatesWorkspace}
 
     # Create Root CA Config File
@@ -140,7 +140,7 @@ EOF
     /usr/bin/sudo cp ${certificatesWorkspace}/kx_intermediate_ca.pem ${installationWorkspace}/kx-certs/ca.crt
     /usr/bin/sudo cp ${certificatesWorkspace}/kx_server-key.pem ${installationWorkspace}/kx-certs/tls.key
     /usr/bin/sudo cp ${certificatesWorkspace}/kx_server.pem ${installationWorkspace}/kx-certs/tls.crt
-    /usr/bin/sudo chown -R ${vmUser}:${vmUser} ${installationWorkspace}/kx-certs
+    /usr/bin/sudo chown -R ${baseUser}:${baseUser} ${installationWorkspace}/kx-certs
 
     # Import Certificates into Browser Certificate Repositories
     cat << EOF > ${installationWorkspace}/trustKXRootCAs.sh
@@ -180,11 +180,11 @@ EOF
 
     # Add KX.AS.CODE Root CA cert to Chrome CA Store. Will be exeuted for Firefox after user login
     /usr/bin/sudo chmod +x /usr/local/bin/trustKXRootCAs.sh
-    /usr/bin/sudo rm -rf /home/${vmUser}/.pki
-    mkdir -p /home/${vmUser}/.pki/nssdb/
-    chown -R ${vmUser}:${vmUser} /home/${vmUser}/.pki
-    /usr/bin/sudo -H -i -u ${vmUser} sh -c "certutil -N --empty-password -d sql:/home/${vmUser}/.pki/nssdb"
-    /usr/bin/sudo -H -i -u ${vmUser} sh -c "/usr/local/bin/trustKXRootCAs.sh"
-    /usr/bin/sudo -H -i -u ${vmUser} sh -c "certutil -L -d sql:/home/${vmUser}/.pki/nssdb"
+    /usr/bin/sudo rm -rf /home/${baseUser}/.pki
+    mkdir -p /home/${baseUser}/.pki/nssdb/
+    chown -R ${baseUser}:${baseUser} /home/${baseUser}/.pki
+    /usr/bin/sudo -H -i -u ${baseUser} sh -c "certutil -N --empty-password -d sql:/home/${baseUser}/.pki/nssdb"
+    /usr/bin/sudo -H -i -u ${baseUser} sh -c "/usr/local/bin/trustKXRootCAs.sh"
+    /usr/bin/sudo -H -i -u ${baseUser} sh -c "certutil -L -d sql:/home/${baseUser}/.pki/nssdb"
 
 fi
