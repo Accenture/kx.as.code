@@ -12,7 +12,7 @@ import axios from "axios";
 import ApplicationStatusActionButton from "./ApplicationStatusActionButton";
 import ApplicationCategoryTag from "../ApplicationCategoryTag";
 
-function ApplicationCard2(props) {
+function ApplicationCard(props) {
   const { history } = props;
 
   const [appId, setAppId] = useState("");
@@ -90,9 +90,9 @@ function ApplicationCard2(props) {
           props.fetchApplicationAndQueueData();
         })
         .then(() => {
-          setTimeout(() => {
-            refreshActionButton.current();
-          }, 2000);
+          // setTimeout(() => {
+          //   refreshActionButton.current();
+          // }, 2000);
         })
         .catch((error) => {
           console.error("There was an error!", error);
@@ -283,8 +283,7 @@ function ApplicationCard2(props) {
               </div>
               <div className="flex col-span-2 w-full justify-end">
                 <ApplicationStatusActionButton
-                  // isMqConnected={props.isMqConnected}
-                  isMqConnected={true}
+                  isMqConnected={props.isMqConnected}
                   getQueueStatusList={props.getQueueStatusList}
                   appName={props.app.name}
                   category={props.app.installation_group_folder}
@@ -446,4 +445,4 @@ function ApplicationCard2(props) {
   );
 }
 
-export default ApplicationCard2;
+export default ApplicationCard;
