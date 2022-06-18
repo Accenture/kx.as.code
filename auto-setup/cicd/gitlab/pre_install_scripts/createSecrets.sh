@@ -51,11 +51,11 @@ kubectl get secret server-crt --namespace=${namespace} || \
     kubectl create secret generic server-crt --from-file=server.pem=${certificatesWorkspace}/kx_server.pem -n ${namespace}
 
 # Create docker pull secret for private registry
-dockerRegistryAddUser "gitlab"
-export baseUserRegistryUserPassword=$(managedApiKey "docker-registry-gitlab-user")
+log_info "Adding user gitlab user to docker-registry htpasswd file"
+gitlabUserDockerRegistryPassword=$(dockerRegistryAddUser "gitlab")
 kubectl get secret gitlab-image-pull-secret --namespace=${namespace} || \
     kubectl create secret docker-registry gitlab-image-pull-secret \
     --namespace ${namespace} \
     --docker-server="https://docker-registry.${baseDomain}" \
     --docker-username="gitlab" \
-    --docker-password="${baseUserRegistryUserPassword}"
+    --docker-password="${gitlabUserDockerRegistryPassword}"
