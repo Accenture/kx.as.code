@@ -14,23 +14,26 @@ export standaloneMode=$(cat ${installationWorkspace}/profile-config.json | jq -r
 
 checkAndUpdateBaseUsername() {
 
-  # Create new username rather than modify the old one
+  if [[ "${vmUser}" != "${baseUser}" ]]; then
 
-  sourceGroups=$(id -Gn "kx.hero" | sed "s/ /,/g" | sed -r 's/\<'"kx.hero"'\>\b,?//g')
-  sourceShell=$(awk -F : -v name="kx.hero" '(name == $1) { print $7 }' /etc/passwd)
+    # Create new username rather than modify the old one
+    sourceGroups=$(id -Gn "kx.hero" | sed "s/ /,/g" | sed -r 's/\<'"kx.hero"'\>\b,?//g')
+    sourceShell=$(awk -F : -v name="kx.hero" '(name == $1) { print $7 }' /etc/passwd)
 
-  /usr/bin/sudo useradd --groups ${sourceGroups} --shell ${sourceShell} --create-home --home-dir /home/${baseUser} ${baseUser}
+    /usr/bin/sudo useradd --groups ${sourceGroups} --shell ${sourceShell} --create-home --home-dir /home/${baseUser} ${baseUser}
 
-  if [ ! -f /home/${baseUser}/.ssh/id_rsa ]; then
-      # Create the kx.hero user ssh directory.
-      /usr/bin/sudo mkdir -pm 700 /home/${baseUser}/.ssh
+    if [ ! -f /home/${baseUser}/.ssh/id_rsa ]; then
+        # Create the kx.hero user ssh directory.
+        /usr/bin/sudo mkdir -pm 700 /home/${baseUser}/.ssh
 
-    # Get new user group ID
-    newGid=$(id -g ${userid})
-    /usr/bin/sudo chown -f -R ${newGid}:${newGid} /home/${userid}
+      # Get new user group ID
+      newGid=$(id -g ${userid})
+      /usr/bin/sudo chown -f -R ${newGid}:${newGid} /home/${userid}
 
-    # Ensure the permissions are set correct
-    /usr/bin/sudo chown -R ${baseUser}:${baseUser} /home/${baseUser}/.ssh
+      # Ensure the permissions are set correct
+      /usr/bin/sudo chown -R ${baseUser}:${baseUser} /home/${baseUser}/.ssh
+    fi
+
   fi
 
 }
