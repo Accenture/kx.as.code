@@ -71,7 +71,7 @@ checkAndUpdateBaseUsername() {
     printf "${baseUser}        ALL=(ALL)       NOPASSWD: ALL\n" | /usr/bin/sudo tee -a /etc/sudoers
 
     # Hide old base user kx.hero
-    /usr/bin/sudo sed -i '/^HideUsers=vagrant/ s/$/,'${vmUser}'/' sddm.conf
+    /usr/bin/sudo sed -i '/^HideUsers=vagrant/ s/$/,'${vmUser}'/' /etc/sddm.conf
 
     # Update permission on Git repository
     /usr/bin/sudo chown -R ${baseUser}:${baseUser} ${sharedGitHome}

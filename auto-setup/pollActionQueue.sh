@@ -96,7 +96,7 @@ rc=0
 # Get total number of messages
 sleep 5
 
-# In case of reboot or restart of this poller, move item from wip_queue to retry queue
+# In case of reboot or restart of this poller, move item from wip_queue to retry queue, or failure queue, if retries >= 3
 wipQueue=$(rabbitmqadmin list queues name messages --format raw_json | jq -r '.[] | select(.name=="wip_queue") | .messages')
 if [[ ${wipQueue} -ne 0 ]]; then
   payload=$(rabbitmqadmin get queue=wip_queue --format=raw_json ackmode=ack_requeue_false | jq -c -r '.[].payload')
