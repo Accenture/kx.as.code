@@ -169,7 +169,7 @@ if [[ ${numUsersToCreate} -ne 0 ]]; then
             # Check user was added successfully
             /usr/bin/sudo ldapsearch -H ldapi:/// -Y EXTERNAL -LLL -b "${ldapDn}" memberOf 2> /dev/null | grep memberOf
 
-            # Give user root priviliges
+            # Give user full sudo priviliges
             printf "${userid}        ALL=(ALL)       NOPASSWD: ALL\n" | /usr/bin/sudo tee -a /etc/sudoers
 
         fi

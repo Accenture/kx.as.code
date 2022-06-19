@@ -64,6 +64,12 @@ checkAndUpdateBaseUsername() {
         /usr/bin/sudo chown -R ${baseUser}:${baseUser} /home/${baseUser}/.config/autostart-scripts
     fi
 
+    # Ensure Desktop icons have execute permissions
+    /usr/bin/sudo chmod 755 /home/${baseUser}/Desktop/*.desktop
+
+    # Give user full sudo priviliges
+    printf "${baseUser}        ALL=(ALL)       NOPASSWD: ALL\n" | /usr/bin/sudo tee -a /etc/sudoers
+
   fi
             
 }
