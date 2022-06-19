@@ -23,4 +23,4 @@ EOF
 
 # Give *.desktop files execute permissions
 chmod 755 "${adminShortcutsDirectory}"/"${shortcutText}"
-chown ${vmUser}:${vmUser} "${adminShortcutsDirectory}"/"${shortcutText}"
+chown ${baseUser}:${baseUser} "${adminShortcutsDirectory}"/"${shortcutText}"

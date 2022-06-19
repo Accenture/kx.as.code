@@ -30,7 +30,8 @@ fi
 echo "fs.inotify.max_user_watches=524288" | /usr/bin/sudo tee -a /etc/sysctl.conf
 
 # Install KX-Portal
-export KX_PORTAL_HOME=${sharedGitHome}/kx.as.code/client
+/usr/bin/sudo cp -rf ${sharedGitHome}/kx.as.code/client ${installationWorkspace}/kx-portal
+export KX_PORTAL_HOME=${installationWorkspace}/kx-portal/client
 
 # Optimize NPM configuration
 npm config set registry https://registry.npmjs.org/
@@ -70,7 +71,7 @@ cd -
 echo '''#!/bin/bash
 source /etc/profile.d/nvm.sh
 nvm use --delete-prefix lts/gallium
-export KX_PORTAL_HOME='${sharedGitHome}'/kx.as.code/client
+export KX_PORTAL_HOME='${KX_PORTAL_HOME}'
 cd ${KX_PORTAL_HOME}
 export NODE_PORT=3000
 export NPM_CONFIG_PREFIX=${KX_PORTAL_HOME}
@@ -89,7 +90,7 @@ After=network.target
 Type=simple
 User=kx.hero
 Restart=always
-WorkingDirectory=${sharedGitHome}/kx.as.code/client
+WorkingDirectory=${KX_PORTAL_HOME}
 StandardOutput=append:${installationWorkspace}/kx-portal/kx-portal.log
 StandardError=append:${installationWorkspace}/kx-portal/kx-portal.log
 ExecStart=${installationWorkspace}/kx-portal/kxPortalStart.sh
@@ -123,7 +124,7 @@ createDesktopIcon "${shortcutsDirectory}" "${primaryUrl}" "${shortcutText}" "${i
 /usr/bin/sudo cp /home/"${vmUser}"/Desktop/"${shortcutText}" "${skelDirectory}"/Desktop
 
 # Create new RabbitMQ user and assign permissions
-kxHeroUserExists=$(rabbitmqadmin list users --format=pretty_json | jq -r '.[] | select(.name=="kx.hero") | .name')
+kxHeroUserExists=$(rabbitmqadmin list users --format=pretty_json | jq -r '.[] | select(.name=="'${vmUser}'") | .name')
 if [[ -z ${kxHeroUserExists} ]]; then
   /usr/bin/sudo rabbitmqctl add_user "${vmUser}" "${vmPassword}"
   /usr/bin/sudo rabbitmqctl set_user_tags "${vmUser}" administrator
@@ -137,3 +138,6 @@ if [[ -z ${testUserExists} ]]; then
   /usr/bin/sudo rabbitmqctl set_user_tags "test" administrator
   /usr/bin/sudo rabbitmqctl set_permissions -p / "test" ".*" ".*" ".*"
 fi
+
+# Ensure all files in KX_PORTAL_HOME owned by vmUser (kx.hero)
+/usr/bin/sudo chown -R ${vmUser}:${vmUser} ${KX_PORTAL_HOME}

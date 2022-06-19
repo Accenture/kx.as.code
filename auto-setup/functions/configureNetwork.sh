@@ -131,7 +131,7 @@ fi
         printf -v service '"'"'%s,'"'"' '${baseip}'.{1..253}
         export no_proxy="${lan%,},${service%,},${pool%,},127.0.0.1,.'${baseDomain}'";
         export NO_PROXY=$no_proxy
-        ''' | /usr/bin/sudo tee -a /root/.bashrc /root/.zshrc /home/${vmUser}/.bashrc /home/${vmUser}/.zshrc
+        ''' | /usr/bin/sudo tee -a /root/.bashrc /root/.zshrc /home/${baseUser}/.bashrc /home/${baseUser}/.zshrc
 
     fi
 

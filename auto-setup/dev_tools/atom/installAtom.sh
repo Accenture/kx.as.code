@@ -10,7 +10,7 @@ downloadFile "https://github.com/atom/atom/releases/download/${atomVersion}/atom
 /usr/bin/sudo apt-get install -y ${installationWorkspace}/atom-${atomVersion}-amd64.deb
 
 # Install useful Atom plugins
-/usr/bin/sudo -H -i -u ${vmUser} sh -c "/usr/bin/apm install \
+/usr/bin/sudo -H -i -u ${baseUser} sh -c "/usr/bin/apm install \
       file-icons \
       atom-material-ui \
       atom-material-syntax \
@@ -20,9 +20,9 @@ downloadFile "https://github.com/atom/atom/releases/download/${atomVersion}/atom
       minimap-highlight-selected"
 
 # Disable Atom data collection and welcome screen
-/usr/bin/sudo mkdir -p /home/${vmUser}/.atom/storage
-/usr/bin/sudo chown -R ${vmUser}:${vmUser} /home/${vmUser}/.atom
-/usr/bin/sudo -H -i -u ${vmUser} sh -c "echo '\"*\":\n
+/usr/bin/sudo mkdir -p /home/${baseUser}/.atom/storage
+/usr/bin/sudo chown -R ${baseUser}:${baseUser} /home/${baseUser}/.atom
+/usr/bin/sudo -H -i -u ${baseUser} sh -c "echo '\"*\":\n
   core:\n
     telemetryConsent: \"no\"\n
   editor: {}\n
@@ -35,10 +35,10 @@ downloadFile "https://github.com/atom/atom/releases/download/${atomVersion}/atom
       \"highlight-selected\": true\n
       \"highlight-selectedDecorationsZIndex\": 0\n
   welcome:\n
-    showOnStartup: false' > /home/${vmUser}/.atom/config.cson"
+    showOnStartup: false' > /home/${baseUser}/.atom/config.cson"
 
 # Configure Atom with kx.as.code project folder
-/usr/bin/sudo -H -i -u ${vmUser} sh -c "echo \"{\\\"version\\\":\\\"1\\\",\\\"windows\\\":[{\\\"projectRoots\\\":[\\\"${SHARED_GIT_REPOSITORIES}/kx.as.code\\\"]}]}\" > /home/${vmUser}/.atom/storage/application.json"
+/usr/bin/sudo -H -i -u ${baseUser} sh -c "echo \"{\\\"version\\\":\\\"1\\\",\\\"windows\\\":[{\\\"projectRoots\\\":[\\\"${SHARED_GIT_REPOSITORIES}/kx.as.code\\\"]}]}\" > /home/${baseUser}/.atom/storage/application.json"
 
 # Add updated icon to Desktop
 echo '''[Desktop Entry]
@@ -52,6 +52,6 @@ StartupNotify=true
 Categories=GNOME;GTK;Utility;TextEditor;Development;
 MimeType=text/plain;
 StartupWMClass=atom
-''' | /usr/bin/sudo tee /usr/share/applications/atom.desktop /home/${vmUser}/Desktop/atom.desktop
-/usr/bin/sudo chmod 755 /home/${vmUser}/Desktop/atom.desktop
-/usr/bin/sudo chown ${vmUser}:${vmUser} /home/${vmUser}/Desktop/atom.desktop
+''' | /usr/bin/sudo tee /usr/share/applications/atom.desktop /home/${baseUser}/Desktop/atom.desktop
+/usr/bin/sudo chmod 755 /home/${baseUser}/Desktop/atom.desktop
+/usr/bin/sudo chown ${baseUser}:${baseUser} /home/${baseUser}/Desktop/atom.desktop

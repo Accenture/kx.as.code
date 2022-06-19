@@ -53,7 +53,7 @@ Actions=new-window;new-private-window;
 /usr/bin/sudo chmod 755 "${adminShortcutsDirectory}/RabbitMQ"
 
 # Copy desktop icons to skel directory for future users
-/usr/bin/sudo cp /home/"${vmUser}"/Desktop/"${shortcutText}" "${skelDirectory}"/Desktop
+/usr/bin/sudo cp /home/"${baseUser}"/Desktop/"${shortcutText}" "${skelDirectory}"/Desktop
 
 # Remove default virtual host using port 80
 /usr/bin/sudo rm -f /etc/nginx/sites-enabled/default

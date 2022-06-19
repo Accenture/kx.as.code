@@ -5,8 +5,8 @@ set -euo pipefail
 export personalAccessToken=$(getPassword "gitlab-personal-access-token")
 
 # Get Registry Robot Credentials for KX.AS.CODE project
-#export kxRobotUser=$(cat /home/${vmUser}/.config/kx.as.code/.kx-harbor-robot.cred | jq -r '.name' | sed 's/\$/\$\$/g')
-#export kxRobotToken=$(cat /home/${vmUser}/.config/kx.as.code/.kx-harbor-robot.cred | jq -r '.token')
+#export kxRobotUser=$(cat /home/${baseUser}/.config/kx.as.code/.kx-harbor-robot.cred | jq -r '.name' | sed 's/\$/\$\$/g')
+#export kxRobotToken=$(cat /home/${baseUser}/.config/kx.as.code/.kx-harbor-robot.cred | jq -r '.token')
 
 # Create variable in KX.AS.Code group
 createGitlabVariable() {
@@ -31,7 +31,7 @@ createGitlabVariable() {
   fi
 }
 
-createGitlabVariable "GIT_USER" "${vmUser}" "kx.as.code"
+createGitlabVariable "GIT_USER" "${baseUser}" "kx.as.code"
 createGitlabVariable "PERSONAL_ACCESS_TOKEN" "${personalAccessToken}" "kx.as.code"
 createGitlabVariable "DOCKER_REGISTRY_DOMAIN" "${dockerRegistryDomain}" "kx.as.code"
 createGitlabVariable "BASE_DOMAIN" "${baseDomain}" "kx.as.code"

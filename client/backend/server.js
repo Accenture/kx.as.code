@@ -9,19 +9,13 @@ app.use(bodyParser.json());
 
 const PORT = process.env.PORT || 5001;
 const dataPath = "../src/data/combined-metadata-files.json";
-const rabbitMqUsername = "guest";
-const rabbitMqPassword = "guest";
-const rabbitMqHost = "127.0.0.1";
+const rabbitMqUsername = "test";
+const rabbitMqPassword = "test";
+const rabbitMqHost = "localhost";
 
 app.route("/api/add/application/:queue_name").post((req, res) => {
   connection = amqp.connect(
-    "amqp://" +
-      rabbitMqUsername +
-      ":" +
-      rabbitMqPassword +
-      rabbitMqUsername +
-      "@" +
-      rabbitMqHost
+    "amqp://" + rabbitMqUsername + ":" + rabbitMqPassword + "@" + rabbitMqHost
   );
   console.log("install app req.body: ", req.body);
 
@@ -123,7 +117,6 @@ app.route("/api/move/:from_queue/:to_queue").get((req, res) => {
     rabbitMqUsername +
     ":" +
     rabbitMqPassword +
-    rabbitMqUsername +
     "@" +
     rabbitMqHost +
     ":15672/api/parameters/shovel/%2F/Move%20from%20" +
@@ -179,13 +172,7 @@ app.get("/api/applications/:app_name", (req, res) => {
 
 app.route("/api/consume/:queue_name").get((req, res) => {
   connection = amqp.connect(
-    "amqp://" +
-      rabbitMqUsername +
-      ":" +
-      rabbitMqPassword +
-      rabbitMqUsername +
-      "@" +
-      rabbitMqHost
+    "amqp://" + rabbitMqUsername + ":" + rabbitMqPassword + "@" + rabbitMqHost
   );
 
   connection.then(async (conn) => {

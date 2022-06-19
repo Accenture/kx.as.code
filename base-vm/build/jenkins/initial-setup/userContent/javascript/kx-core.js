@@ -132,8 +132,8 @@ async function triggerBuild(nodeType) {
     let jenkinsCrumb = getCrumb().value;
     let localKxVersion = getLocalKxVersion();
     let formData = new FormData();
-    formData.append('kx_vm_user', document.getElementById('general-param-username').value);
-    formData.append('kx_vm_password', document.getElementById('general-param-password').value);
+    formData.append('kx_vm_user', 'kx.hero'); //user changed at runtime, rather than build time
+    formData.append('kx_vm_password', 'L3arnandshare'); //user changed at runtime, rather than build time
     formData.append('vagrant_compute_engine_build', 'false');
     formData.append('kx_version', localKxVersion);
     formData.append('kx_domain', document.getElementById('general-param-base-domain').value);

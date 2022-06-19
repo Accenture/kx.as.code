@@ -1,11 +1,11 @@
 #!/bin/bash -x
 set -euo pipefail
 
-/usr/bin/sudo mkdir -p /home/${vmUser}/.config/OpenLens
+/usr/bin/sudo mkdir -p /home/${baseUser}/.config/OpenLens
 
 runningKubeVersion=$(kubectl version -o json | jq -r '.serverVersion | .gitVersion')
 
-/usr/bin/sudo chown -R ${vmUser}:${vmUser} /home/${vmUser}/.config/OpenLens
+/usr/bin/sudo chown -R ${baseUser}:${baseUser} /home/${baseUser}/.config/OpenLens
 
 # NO LONGER INSTALLING THE STANDARD PACKAGE WHICH NOW ENFORCES LOGIN TO A LENS-ID
 # IF COMPILING ALSO DOES NOT REMOVE THIS NEED, THEN LENS WILL BE REMOVED AS A CORE COMPONENT
@@ -54,6 +54,6 @@ X-DBUS-ServiceName=
 X-DBUS-StartupType=
 X-KDE-SubstituteUID=false
 X-KDE-Username=
-''' | /usr/bin/sudo tee /home/${vmUser}/Desktop/openlens.desktop
-/usr/bin/sudo chmod 755 /home/${vmUser}/Desktop/openlens.desktop
-/usr/bin/sudo chown ${vmUser}:${vmUser} /home/${vmUser}/Desktop/openlens.desktop
+''' | /usr/bin/sudo tee /home/${baseUser}/Desktop/openlens.desktop
+/usr/bin/sudo chmod 755 /home/${baseUser}/Desktop/openlens.desktop
+/usr/bin/sudo chown ${baseUser}:${baseUser} /home/${baseUser}/Desktop/openlens.desktop

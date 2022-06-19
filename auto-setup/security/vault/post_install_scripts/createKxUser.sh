@@ -6,5 +6,5 @@ kubectl exec -n ${namespace} vault-0 -- vault login "${initialRootToken}"
 userExists=$(kubectl exec -ti -n ${namespace} vault-0 -- vault read auth/userpass/users/kx.heros | wc -l)
 if [[ $userExists -le 1 ]]; then
     export kxHeroVaultPassword=$(managedPassword "vault-kx.hero-user-password")
-    kubectl exec -n ${namespace} vault-0 -- vault write auth/userpass/users/${vmUser} password="${kxHeroVaultPassword}" policies=admins
+    kubectl exec -n ${namespace} vault-0 -- vault write auth/userpass/users/${baseUser} password="${kxHeroVaultPassword}" policies=admins
 fi

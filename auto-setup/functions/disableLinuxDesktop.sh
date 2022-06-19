@@ -9,8 +9,9 @@ disableLinuxDesktop() {
     /usr/bin/sudo cp /etc/default/grub /etc/default/grub.gui
 
     # Replace with value to
-    sed -i '/GRUB_CMDLINE_LINUX/s/".*"/"text"/' /etc/default/grub
-    sed -i 's/#GRUB_TERMINAL=console/GRUB_TERMINAL=console/g' /etc/default/grub
+    /usr/bin/sudo sed -i '/GRUB_CMDLINE_LINUX_DEFAULT=/s/\".*\"/\"text\"/' /etc/default/grub
+    /usr/bin/sudo sed -i 's/GRUB_CMDLINE_LINUX=/#GRUB_CMDLINE_LINUX=/g' /etc/default/grub
+    /usr/bin/sudo sed -i 's/#GRUB_TERMINAL=console/GRUB_TERMINAL=console/g' /etc/default/grub
     /usr/bin/sudo  update-grub
     /usr/bin/sudo  systemctl set-default multi-user.target
 
