@@ -52,10 +52,11 @@ kubectl get secret server-crt --namespace=${namespace} || \
 
 # Create docker pull secret for private registry
 log_info "Adding user gitlab user to docker-registry htpasswd file"
-gitlabUserDockerRegistryPassword=$(dockerRegistryAddUser "gitlab")
+dockerRegistryAddUser "gitlab"
+passwordForAddedUser=$(managedApiKey "docker-registry-gitlab-password")
 kubectl get secret gitlab-image-pull-secret --namespace=${namespace} || \
     kubectl create secret docker-registry gitlab-image-pull-secret \
     --namespace ${namespace} \
     --docker-server="https://docker-registry.${baseDomain}" \
     --docker-username="gitlab" \
-    --docker-password="${gitlabUserDockerRegistryPassword}"
+    --docker-password="${passwordForAddedUser}"
