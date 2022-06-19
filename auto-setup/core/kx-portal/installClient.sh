@@ -6,7 +6,7 @@ set -euo pipefail
 
 # Setup logging directory
 /usr/bin/sudo mkdir ${installationWorkspace}/kx-portal
-/usr/bin/sudo chown -R ${baseUser}:${baseUser} ${installationWorkspace}/kx-portal
+/usr/bin/sudo chown -R ${vmUser}:${vmUser} ${installationWorkspace}/kx-portal
 
 nodeAlreadyInstalled=$(which node || true)
 # TODO - in theory not needed anymore, as node backed into base image, but keeping it here for now
@@ -30,7 +30,8 @@ fi
 echo "fs.inotify.max_user_watches=524288" | /usr/bin/sudo tee -a /etc/sysctl.conf
 
 # Install KX-Portal
-export KX_PORTAL_HOME=${sharedGitHome}/kx.as.code/client
+/usr/bin/sudo cp -rf ${sharedGitHome}/kx.as.code/client ${installationWorkspace}/kx-portal
+export KX_PORTAL_HOME=${installationWorkspace}/kx-portal/client
 
 # Optimize NPM configuration
 npm config set registry https://registry.npmjs.org/
@@ -56,7 +57,7 @@ do
   pnpm install || rc=$? && log_info "Execution of pnpm install for KX-Portal returned with rc=$rc"
   if [[ ${rc} -eq 0 ]]; then
     log_info "PNPM install succeeded. Continuing"
-    /usr/bin/sudo chown -R ${baseUser}:${baseUser} ${KX_PORTAL_HOME}
+    /usr/bin/sudo chown -R ${vmUser}:${vmUser} ${KX_PORTAL_HOME}
     break
   else
     log_warn "PNPM install returned with a non zero exit code. Trying again"
@@ -70,7 +71,7 @@ cd -
 echo '''#!/bin/bash
 source /etc/profile.d/nvm.sh
 nvm use --delete-prefix lts/gallium
-export KX_PORTAL_HOME='${sharedGitHome}'/kx.as.code/client
+export KX_PORTAL_HOME='${KX_PORTAL_HOME}'
 cd ${KX_PORTAL_HOME}
 export NODE_PORT=3000
 export NPM_CONFIG_PREFIX=${KX_PORTAL_HOME}
@@ -89,7 +90,7 @@ After=network.target
 Type=simple
 User=kx.hero
 Restart=always
-WorkingDirectory=${sharedGitHome}/kx.as.code/client
+WorkingDirectory=${KX_PORTAL_HOME}
 StandardOutput=append:${installationWorkspace}/kx-portal/kx-portal.log
 StandardError=append:${installationWorkspace}/kx-portal/kx-portal.log
 ExecStart=${installationWorkspace}/kx-portal/kxPortalStart.sh
@@ -112,7 +113,7 @@ fi
 checkUrlHealth "http://localhost:3000" "200"
 
 # Install the desktop shortcut for KX.AS.CODE Portal
-shortcutsDirectory="/home/${baseUser}/Desktop"
+shortcutsDirectory="/home/${vmUser}/Desktop"
 primaryUrl="http://localhost:3000"
 shortcutText="KX.AS.CODE Portal"
 iconPath="${installComponentDirectory}/$(cat ${componentMetadataJson} | jq -r '.shortcut_icon')"
@@ -120,14 +121,14 @@ browserOptions=""
 createDesktopIcon "${shortcutsDirectory}" "${primaryUrl}" "${shortcutText}" "${iconPath}" "${browserOptions}"
 
 # Copy desktop icons to skel directory for future users
-/usr/bin/sudo cp /home/"${baseUser}"/Desktop/"${shortcutText}" "${skelDirectory}"/Desktop
+/usr/bin/sudo cp /home/"${vmUser}"/Desktop/"${shortcutText}" "${skelDirectory}"/Desktop
 
 # Create new RabbitMQ user and assign permissions
-kxHeroUserExists=$(rabbitmqadmin list users --format=pretty_json | jq -r '.[] | select(.name=="kx.hero") | .name')
+kxHeroUserExists=$(rabbitmqadmin list users --format=pretty_json | jq -r '.[] | select(.name=="'${vmUser}'") | .name')
 if [[ -z ${kxHeroUserExists} ]]; then
-  /usr/bin/sudo rabbitmqctl add_user "${baseUser}" "${vmPassword}"
-  /usr/bin/sudo rabbitmqctl set_user_tags "${baseUser}" administrator
-  /usr/bin/sudo rabbitmqctl set_permissions -p / "${baseUser}" ".*" ".*" ".*"
+  /usr/bin/sudo rabbitmqctl add_user "${vmUser}" "${vmPassword}"
+  /usr/bin/sudo rabbitmqctl set_user_tags "${vmUser}" administrator
+  /usr/bin/sudo rabbitmqctl set_permissions -p / "${vmUser}" ".*" ".*" ".*"
 fi
 
 # Create TEMPORARY new RabbitMQ user and assign permissions # TODO - Remove once frontend username/password is parameterized
@@ -137,3 +138,6 @@ if [[ -z ${testUserExists} ]]; then
   /usr/bin/sudo rabbitmqctl set_user_tags "test" administrator
   /usr/bin/sudo rabbitmqctl set_permissions -p / "test" ".*" ".*" ".*"
 fi
+
+# Ensure all files in KX_PORTAL_HOME owned by vmUser (kx.hero)
+/usr/bin/sudo chown -R ${vmUser}:${vmUser} ${KX_PORTAL_HOME}
