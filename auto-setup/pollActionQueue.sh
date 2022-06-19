@@ -101,7 +101,12 @@ wipQueue=$(rabbitmqadmin list queues name messages --format raw_json | jq -r '.[
 if [[ ${wipQueue} -ne 0 ]]; then
   payload=$(rabbitmqadmin get queue=wip_queue --format=raw_json ackmode=ack_requeue_false | jq -c -r '.[].payload')
   log_info "WIP payload: ${payload}"
-  rabbitmqadmin publish exchange=action_workflow routing_key=retry_queue properties="{\"delivery_mode\": 2}" payload=''${payload}''
+  retries=$(echo ${payload} | jq -c -r '.retries')
+  if [[ ${retries} -ge 3 ]]; then
+    rabbitmqadmin publish exchange=action_workflow routing_key=failed_queue properties="{\"delivery_mode\": 2}" payload=''${payload}''
+  else
+    rabbitmqadmin publish exchange=action_workflow routing_key=retry_queue properties="{\"delivery_mode\": 2}" payload=''${payload}''
+  fi
 fi
 
 # Poll pending queue and trigger actions if message is present
