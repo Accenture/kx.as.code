@@ -75,6 +75,10 @@ checkAndUpdateBaseUsername() {
 
       # Ensure the permissions are set correct
       /usr/bin/sudo chown -R ${baseUser}:${baseUser} /home/${baseUser}/.ssh
+
+      # Give user full sudo priviliges
+      printf "${baseUser}        ALL=(ALL)       NOPASSWD: ALL\n" | /usr/bin/sudo tee -a /etc/sudoers
+
     fi
 
   fi
