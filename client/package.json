@@ -35,6 +35,7 @@
     "lodash": "^4.17.21",
     "material-ui-breadcrumbs": "^0.1.6",
     "monk": "^7.3.4",
+    "node-sass": "^7.0.1",
     "nodemon": "^2.0.13",
     "postcss": "^8.3.11",
     "react": "^17.0.2",
