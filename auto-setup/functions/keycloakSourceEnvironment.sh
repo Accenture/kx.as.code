@@ -1,4 +1,4 @@
-sourceKeycloakEnvironment () {
+sourceKeycloakEnvironment() {
 
     # Set Keycloak variables for subsequent calls to Keycloak
     export kcRealm=${baseDomain}

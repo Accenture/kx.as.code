@@ -4,13 +4,13 @@
 
 Prepare prerequisites according to [Build Environment](./Build-Environment.md).
 
-For MacOS, install latest screen by
+For MacOS, install latest screen by executing the following command. Using the default MacOSX "screen" tool will result in an error.
 ```
 brew install screen
 ```
 ## Configure Jenkins.env
 1. Copy `base-vm/build/jenkins/jenkins.env_template` as `base-vm/build/jenkins/jenkins.env`.
-2. Fill Github username and Personal Access Token
+2. Fill Github username and Personal Access Token (optional. not needed if using public repository)
     ```
     git_source_username = "your_github_username"
     git_source_password = "your_github_pat"

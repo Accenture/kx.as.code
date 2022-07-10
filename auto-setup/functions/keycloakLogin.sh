@@ -1,4 +1,4 @@
-keycloakLogin () {
+keycloakLogin() {
 
     # Source Keycloak Environment
     sourceKeycloakEnvironment
