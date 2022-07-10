@@ -1,4 +1,4 @@
-mapKeycloakUserToGroup () {
+mapKeycloakUserToGroup() {
 
     # Assign incoming parameters to variables
     userId=${1}
