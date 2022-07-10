@@ -1,4 +1,4 @@
-# Building KX.AS.CODE
+# Build Environment
 
 If you just want to start KX.AS.CODE using the standard images, you do not need to build the images yourself. Both the main and worker nodes are available on the [Vagrant Cloud](https://app.vagrantup.com/kxascode/){:target="\_blank"}.
 For starting KX.AS.CODE without building the images yourself, follow the [Quick Start Guide](../../User-Guide/Quick-Start-Guide/).

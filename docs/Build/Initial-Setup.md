@@ -1,8 +1,8 @@
-# KX.AS.CODE Jenkins Builder & Launcher Setup Guide
+# Jenkins Builder & Launcher
 
 ## Pre-install Steps
 
-Prepare prerequisites according to the [Building KX.AS.CODE](./Build-Environment.md) guide.
+Prepare prerequisites according to the [Build Environment](./Build-Environment.md) guide.
 
 For MacOS, install latest screen by executing the following command. Using the default MacOSX "screen" tool will result in an error.
 ```bash
