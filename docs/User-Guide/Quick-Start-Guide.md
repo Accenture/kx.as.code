@@ -32,14 +32,13 @@ jenkins_listen_address = "127.0.0.1"  ## Set to localhost for security reasons
 jenkins_server_port = "8081"
 ```
 
-!!! info "If you are also intending to build KX.AS.CODE images, and not just launch existing public ones in the Vagrant Cloud, then you also need to add your Github.com credentials. This is only needed if building from a private Github.com repository (at time of writing, this is still the case for the main repository)"
+!!! info "If you are also intending to build KX.AS.CODE images, and not just launch existing public ones in the Vagrant Cloud, then you may need to add your Github.com credentials, if the repository is private. As the main KX.AS.CODE repository is public, this is not needed and the properties can be left blank."
     ```
     git_source_username = "change-me"
     git_source_password = "change-me"
     ```
 
 Everything else in the file goes beyond the Quick Start guide, and will be described on other pages.
-
 
 !!! note "Once the jenkins.env is ready, execute the launch script in order to start the Jenkins KX-Launcher job:"
     ```

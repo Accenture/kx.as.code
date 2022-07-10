@@ -1,6 +1,7 @@
 # Building KX.AS.CODE
 
-As the images are currently not available on Vagrant
+If you just want to start KX.AS.CODE using the standard images, you do not need to build the images yourself. Both the main and worker nodes are available on the [Vagrant Cloud](https://app.vagrantup.com/kxascode/){:target="\_blank"}.
+For starting KX.AS.CODE without building the images yourself, follow the [Quick Start Guide](../../User-Guide/Quick-Start-Guide/).
 
 ## Prerequisites
 
@@ -11,8 +12,6 @@ As the images are currently not available on Vagrant
   - VMWare Workstation/Fusion
   - Parallels Pro
   - VirtualBox - https://www.virtualbox.org/wiki/Downloads
-
-
 
 !!! tip "Apart from Virtualbox, all of the above will need to be licensed."
 
@@ -44,7 +43,7 @@ https://cdimage.debian.org/debian-cd/current/amd64/iso-cd/
 
 #### Parallels
 
-Note, for Parallels you will need the pro edition, as without it, the build process will not work. See [here](https://www.packer.io/docs/builders/parallels) for more information.
+Note, for Parallels you will need the pro edition, as without it, the build process will not work. See [here](https://www.packer.io/docs/builders/parallels){:target="\_blank"} for more information.
 
 Note that although you can build the VMWare images without a license, you will not be able to start up KX.AS.CODE with Vagrant if you do not have the license to the VMWare Desktop Vagrant plugin.
 

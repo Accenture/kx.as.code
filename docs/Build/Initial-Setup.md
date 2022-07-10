@@ -1,22 +1,24 @@
-# Jenkins Setup Guide
+# KX.AS.CODE Jenkins Builder & Launcher Setup Guide
 
-## Preinstall Steps
+## Pre-install Steps
 
-Prepare prerequisites according to [Build Environment](./Build-Environment.md).
+Prepare prerequisites according to the [Building KX.AS.CODE](./Build-Environment.md) guide.
 
 For MacOS, install latest screen by executing the following command. Using the default MacOSX "screen" tool will result in an error.
-```
+```bash
 brew install screen
 ```
+
 ## Configure Jenkins.env
 1. Copy `base-vm/build/jenkins/jenkins.env_template` as `base-vm/build/jenkins/jenkins.env`.
 2. Fill Github username and Personal Access Token (optional. not needed if using public repository)
-    ```
+    ```bash
     git_source_username = "your_github_username"
     git_source_password = "your_github_pat"
     ```
+   
 ## Run launchLocalBuildEnvironment.sh
-```
+```bash
 cd base-vm/build/jenkins
 # For Linux or MacOS
 ./launchLocalBuildEnvironment.sh
@@ -26,31 +28,21 @@ cd base-vm/build/jenkins
 Wait until the build is finished.
 
 If the following message is shown,
-```
+```bash
 - [WARN] One or more OPTIONAL components required to successfully build packer images for KX.AS.CODE for VMWARE were missing. Ignore if not building VMware images
 Do you wish to continue anyway?
 1) Yes
 2) No
 ```
-Enter 1 to continue.
+If you do not intend to build VMWare images, `1` to continue anyway.
 
 In the end, this message will be shown in console
 
-<span style="color:green">- [INFO] Congratulations! Jenkins for KX.AS.CODE is successfully configured and running. Access Jenkins via the following URL: http://127.0.0.1:8080</span>
+```bash
+- [INFO] Congratulations! Jenkins for KX.AS.CODE is successfully configured and running. Access Jenkins via the following URL: http://localhost:8080/job/KX.AS.CODE_Launcher/build?delay=0sec
+```
 
-which means the build was successful.
+If you get the `Congratulations`, Jenkins is up and running, you can access it via the URL [http://localhost:8081/job/KX.AS.CODE_Launcher/build?delay=0sec](http://localhost:8080/job/KX.AS.CODE_Launcher/build?delay=0sec){:target="\_blank"}.
 
-## Initialise Virtual Machine KX.AS.CODE
-1. Access Jenkins via http://127.0.0.1:8080
-2. Go to  `KX.AS.CODE_Launcher` -> `Build with Parameters`
-3. Select the profile to create VM
-4. Click "Start Build" icon on `Build VM images` -> KX.AS.CODE.MAIN
-5. Refresh status by clicking "Refresh Data" icon.
-When the build is finished, build status will become <span style="color:green">Success</span>.
+!!! warning "Remember that if you changed the IP or port for Jenkins in `jenkins.env`, you will need to use that when launching the Jenkins URL, instead of the default `localhost:8080` combination."
 
-## Configure
-Navigate to other tabs and allocate appropriate resources for KX.AS.CODE.
-
-## Review and Launch
-Navigate to the last tab `Review and Launch`, click `Start Environment` to build the enviroment in the main node.
-When the build is finished, status will become <span style="color:green">Success</span>.
