@@ -1,4 +1,3 @@
-[![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
 # Welcome!
 
 Welcome to the KX.AS.CODE learning workstation. This virtual workstation was created with two primary goals in mind.
@@ -17,26 +16,26 @@ As well as learning and sharing knowledge, there are several more use cases for 
 *   Experimenting and innovating
 *   Test tool integrations
 
-!!! danger "Want to get started quickly? Read our [Quick Start Guide](../../User-Guide/Quick-Start-Guide/)."
+!!! danger "Want to get started quickly? Read our [Quick Start Guide](../User-Guide/Quick-Start-Guide/)."
 
 ## What is the KX.AS.CODE Workstation?
 It can be considered a fully automated cloud like Kubernetes environment with a lot of things you would expect to see when managing a Kubernetes cluster in the cloud, including an ingress controller, storage cluster, DNS services, a certificate authority... and the best bit, you just have to fill out a couple of config files and vagrant up/terraform apply, and you are on your way!
 
-!!! info "To find out more about what KX.AS.CODE is, and how it came about, read our [Questions and Answers](../../Overview/Questions_and_Answers/)."
+!!! info "To find out more about what KX.AS.CODE is, and how it came about, read our [Questions and Answers](../Overview/Questions_and_Answers/)."
 
-!!! info "For a more detailed look at the components that make up KX.AS.CODE, check out the [Architecture](../../Overview/Architecture/)."
+!!! info "For a more detailed look at the components that make up KX.AS.CODE, check out the [Architecture](../Overview/Architecture/)."
 
 ## Contributing
 We are happy to receive contributions, ideas and dare I say it, bug fixes or suggestions on how to do things better! We never stop learning! :nerd_face:
 
-For more details on how you can contribute to the project, checkout the [CONTRIBUTE.md](../../Development/Contribution-Guidelines/) file
+For more details on how you can contribute to the project, checkout the [CONTRIBUTE.md](../Development/Contribution-Guidelines/) file
 
 ## KX.AS.CODE
 
 ### Login screen
 Depending on whether the defaults were changed or not, you can either log in with your own user, or the default `kx.hero`. 
 
-Additional users will also be available if applied before launching KX.AS.CODE. See the [User Management Guide](../..//Deployment/User-Management/).
+Additional users will also be available if applied before launching KX.AS.CODE. See the [User Management Guide](..//Deployment/User-Management/).
 
 ![](images/kx.as.code_login_screen.png)
 
@@ -125,7 +124,7 @@ Applications and be removed and added from the KX.AS.CODE Portal's application s
 ### KX.AS.CODE Application Groups
 
 Applications can be installed in integrated groups. This is still a work in progress. Currently, this page provides a view of the available groups, but not yet an option to install them.
-See the [manual installations](../../User-Guide/Manual-Provisioning/#installation-groups) page, on how to install the groups manually without the portal.
+See the [manual installations](../User-Guide/Manual-Provisioning/#installation-groups) page, on how to install the groups manually without the portal.
 
 !!! warning "The portal is still in BETA, so may not always behave as expected."
 
