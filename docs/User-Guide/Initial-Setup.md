@@ -2,7 +2,7 @@
 
 ## Pre-install Steps
 
-Prepare prerequisites according to the [Build Environment](./Build-Environment.md) guide.
+Prepare prerequisites according to the [Build Environment](Build/Build-Environment/) guide.
 
 For MacOS, install latest screen by executing the following command. Using the default MacOSX "screen" tool will result in an error.
 ```bash
