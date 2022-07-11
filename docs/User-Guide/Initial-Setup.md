@@ -14,10 +14,11 @@ brew install screen
 2. Fill Github username and Personal Access Token (optional. not needed if using public repository)
     ```bash
     git_source_username = "your_github_username"
-    git_source_password = "your_github_pat"
+    git_source_password = "your_github_personal_access_token"
     ```
-   
-## Run launchLocalBuildEnvironment.sh
+
+## Run launchLocalBuildEnvironment
+Depending on whether you are running on MacOS, Linux or Windows, you will need to execute the following launcher script.
 ```bash
 cd base-vm/build/jenkins
 # For Linux or MacOS
@@ -25,7 +26,15 @@ cd base-vm/build/jenkins
 # For Windows PowerShell
 .\launchLocalBuildEnvironment.ps1
 ```
-Wait until the build is finished.
+
+The script takes care of:
+- Downloading the Jenkins WAR file
+- Downloading all necessary tools (including Java, jq, packer, mo)
+- Applying KX.AS.CODE customizations to Jenkins
+- Generating the Jenkins jobs
+- Creating password credential in Jenkins
+
+!!! note "Vagrant still needs to be installed manually, as it is not a portable installer/utility. You can download Vagrant from [here](https://www.vagrantup.com/downloads.html){:target="\_blank"}"
 
 If the following message is shown,
 ```bash
@@ -34,7 +43,7 @@ Do you wish to continue anyway?
 1) Yes
 2) No
 ```
-If you do not intend to build VMWare images, `1` to continue anyway.
+Select `1` if you do not intend to build VMWare images. You can download the needed [OVFTool](https://code.vmware.com/web/tool/4.4.0/ovf){:target="\_blank"} OVFTool later manually if you change your mind.
 
 In the end, this message will be shown in console
 
@@ -44,5 +53,5 @@ In the end, this message will be shown in console
 
 If you get the `Congratulations`, Jenkins is up and running, you can access it via the URL [http://localhost:8081/job/KX.AS.CODE_Launcher/build?delay=0sec](http://localhost:8080/job/KX.AS.CODE_Launcher/build?delay=0sec){:target="\_blank"}.
 
-!!! warning "Remember that if you changed the IP or port for Jenkins in `jenkins.env`, you will need to use that when launching the Jenkins URL, instead of the default `localhost:8080` combination."
+!!! warning "If you changed the IP or port for Jenkins in `jenkins.env`, you will need to use that when launching the Jenkins URL, instead of the default `localhost:8080` combination."
 
