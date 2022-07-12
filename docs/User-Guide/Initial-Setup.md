@@ -2,9 +2,9 @@
 
 ## Pre-install Steps
 
-Prepare prerequisites according to the [Build Environment](../../Build/Build-Environment/) guide.
+Prepare prerequisites according to the [Build Environment](../../Build/Local-Virtualizations/) guide.
 
-For MacOS, install latest screen by executing the following command. Using the default MacOSX "screen" tool will result in an error.
+For MacOSX, install the latest `screen` utility by executing the following command. Using the default MacOSX `screen` tool will result in an error`, as it does not have the needed options.
 ```bash
 brew install screen
 ```
@@ -18,7 +18,7 @@ brew install screen
     ```
 
 ## Run launchLocalBuildEnvironment
-Depending on whether you are running on MacOS, Linux or Windows, you will need to execute the following launcher script.
+Depending on whether you are running on MacOSX, Linux or Windows, you will need to execute the following launcher script.
 ```bash
 cd base-vm/build/jenkins
 # For Linux or MacOS

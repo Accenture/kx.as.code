@@ -2,7 +2,7 @@
 
 Welcome to the KX.AS.CODE learning workstation. This virtual workstation was created with two primary goals in mind.
 
-*   `PLAY`, `LEARN`, `EXPERIMENT`, `INNOVATE`, `SHARE`, succeed :muscle: :trophy:
+*   `PLAY`, `LEARN`, `EXPERIMENT`, `INNOVATE`, `SHARE`, :muscle: :trophy:
 *   Share knowledge as code!
 
 !!! tip "KX.AS.CODE was built with the belief that playing and experimentation is the best way to learn new tricks and ultimately innovate." 
@@ -25,12 +25,7 @@ It can be considered a fully automated cloud like Kubernetes environment with a 
 
 !!! info "For a more detailed look at the components that make up KX.AS.CODE, check out the [Architecture](Overview/Architecture/)."
 
-## Contributing
-We are happy to receive contributions, ideas and dare I say it, bug fixes or suggestions on how to do things better! We never stop learning! :nerd_face:
-
-For more details on how you can contribute to the project, checkout the [CONTRIBUTE.md](Development/Contribution-Guidelines/) file
-
-## KX.AS.CODE
+## KX.AS.CODE Highlights
 
 ### Login screen
 Depending on whether the defaults were changed or not, you can either log in with your own user, or the default `kx.hero`. 
@@ -69,7 +64,7 @@ All administration passwords for accessing all admin tools and applications are 
 
 ![](images/kx.as.code_gopass.png)
 
-### Installed application
+### Example application, Gitlab
 
 Here an example Gitlab application that was installed via the KX.AS.CODE automated install scripts.
 
@@ -131,8 +126,12 @@ See the [manual installations](User-Guide/Manual-Provisioning/#installation-grou
 ![](images/kx.as.code_portal_application_groups.png)
 
 
+## Contributing
+We are happy to receive contributions, ideas and dare I say it, bug fixes or suggestions on how to do things better! We never stop learning! :nerd_face:
+
+For more details on how you can contribute to the project, checkout the [CONTRIBUTE.md](Development/Contribution-Guidelines/) file
 
 Wish you all the best and enjoy the DevOps workstation! :smile:
 
-Yours, Patrick Delamere (Accenture Song), creator of KX.AS.CODE
+Patrick Delamere (Accenture Song), creator of KX.AS.CODE
 
