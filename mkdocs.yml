@@ -7,8 +7,8 @@ site_author: 'Patrick Delamere'
 docs_dir: docs
 
 theme:
-    logo: images/kxascode_white_logo.png
-    favicon: images/favicon.png
+    logo: assets/images/kxascode_white_logo.png
+    favicon: assets/images/favicon.png
     name: material
     palette:
         accent: pink
@@ -34,12 +34,17 @@ markdown_extensions:
     - pymdownx.superfences
     - pymdownx.magiclink
     - pymdownx.emoji:
-          emoji_index: !!python/name:materialx.emoji.twemoji
-          emoji_generator: !!python/name:materialx.emoji.to_svg
+        emoji_index: !!python/name:materialx.emoji.twemoji
+        emoji_generator: !!python/name:materialx.emoji.to_svg
     - toc:
         permalink: true
     - codehilite:
         guess_lang: false
+
+extra_css:
+    - assets/css/custom.css
+extra_javascript:
+    - assets/js/custom.js
 
 plugins:
     - search:
