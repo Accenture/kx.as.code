@@ -91,7 +91,7 @@ The configurator automatically selects the profile dependent on the pre-requisit
 
     To save even more resources, you can disable the linux desktop on the next tab. Whilst this is great for saving system resources, however, you will lose some of the experience with using KX.AS.CODE as a workstation.
 
-![](../images/kx-as-code_configurator_select-profile.png)
+![](../assets/images/kx-as-code_configurator_select-profile.png){: .zoom}
 
 On the next tab, you can setup some general parameters. These are all optional. If you don't change anything, then the default username and password will be "kx.hero" amd "L3arnandshare". The domain for all provisioned tools will be *.demo1.kx-as-code.local.
 
@@ -100,7 +100,7 @@ On the next tab, you can setup some general parameters. These are all optional. 
     - **Allow Workloads on Kubernetes Master** - Must be set if starting KX.AS.CODE with just the main node and no worker nodes, else it will be impossible to deploy any workloads.
     - **Disable Linux Desktop** - Set this to boot the VM into the command prompt instead of the KDE Plasma GUI. This is useful is you are low on resources.
 
-![](../images/kx-as-code_configurator_general-parameters.png)
+![](../assets/images/kx-as-code_configurator_general-parameters.png){: .zoom}
 
 The resource configuration tab allows you to select the host resources that you wish to allocate to the KX.AS.CODE virtual machine.
 
@@ -113,7 +113,7 @@ The resource configuration tab allows you to select the host resources that you 
     
     Although the idea was originally for KX.AS.CODE to also work on low spec 8GB RAM laptops, experience has shown that the experience is very poor on such a low spec'd' host.
 
-![](../images/kx-as-code_configurator_resource-configuration.png)
+![](../assets/images/kx-as-code_configurator_resource-configuration.png){: .zoom}
 
 On the storage tab you shouldn't need to change anything. The local volumes will be provisioned as logical volume mounts and then allocated to the Kubernetes local storage provisioner. They are accessible via the `local-storage-sc` storage class.
 The network storage will only be provisioned in the "normal" startup mode.
@@ -124,42 +124,42 @@ If the network service is provisioned, the storage can be allocated automaticall
 
 !!! tip "All storage is allocated thinly, so you can over allocate without issue, as long as you don't intend to actually use all the space. Over-allocating is useful, in order to give you more volumes of varying sizes to play with, when deploying Kubernetes workloads."
 
-![](../images/kx-as-code_configurator_storage-parameters.png)
+![](../assets/images/kx-as-code_configurator_storage-parameters.png){: .zoom}
 
 In the template selector you can pre-define which applications should be installed automatically after the core services have been installed. You can select multiple application groups. Careful not to select too much, else your experience will suffer, and you will start getting bouncing pods as they are evicted due to lack of physical resources.
 !!! note "Remember you can add and remove applications later once KX.AS.CODE is up. It is not necessary to select everything now."
 
-![](../images/kx-as-code_configurator_template-selector.png)
+![](../assets/images/kx-as-code_configurator_template-selector.png){: .zoom}
 
 User provisioning was implemented to allow team usage of KX.AS.CODE. This is most suited to KX.AS.CODE deployments to the public or private clouds, eg. AWS and OpenStack. Scripts for both of these are available in the KX.AS.CODE repository.
 If you are just starting KX.AS.CODE on a local virtualization solution, such as VirtualBox, VMWare Desktop/Fusion, or Parallels, for your own use, you can ignore this tab.
 
-![](../images/kx-as-code_configurator_user-provisioning.png)
+![](../assets/images/kx-as-code_configurator_user-provisioning.png){: .zoom}
 
 Finally, after completing the previous tabs, you come to the last tab, where you can review everything that was selected.
 
 Examine the pie charts and see if anything needs to be adjusted. If storage is red, you may be able to ignore it, since the storage is thinly provisioned anyway.
 When happy, click the play button and start KX.AS.CODE!
 
-![](../images/kx-as-code_configurator_review-launch.png)
+![](../assets/images/kx-as-code_configurator_review-launch.png){: .zoom}
 
 Once you have clicked play, you should see the progress dots. You can either hover over the logs icon to see progress in a preview popup, or you can click on the log icon to see the full log. 
 
 Once successfully completed, you will get a green status. If the status is red with failed, check the log and make the required adjustments as per the error message.
 
-![](../images/kx-as-code_configurator_launch-environment.png)
+![](../assets/images/kx-as-code_configurator_launch-environment.png){: .zoom}
 
 Once up, you should see the following in VirtualBox.
 In this example, KX.AS.CODE was started with 1 KX-Main node and 2 KX-Worker nodes.
 
-![](../images/virtualbox_started_deskop-disabled.png)
+![](../assets/images/virtualbox_started_deskop-disabled.png){: .zoom}
 
 In this example, KX.AS.CODE was started without the desktop, to re-enable it, execute the following script.
 `/usr/share/kx.as.code/workspace/reEnableKdeDesktopOnBoot.sh`
 
 Once done, you can type `startx` to start the desktop immediately without rebooting.
     
-![](../images/virtualbox_started_desktop.png)
+![](../assets/images/virtualbox_started_desktop.png){: .zoom}
 
 More documentation to come in future, but this should have gotten you started. Here some basic troubleshooting steps and dos/donts.
 
