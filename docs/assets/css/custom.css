@@ -1,0 +1,25 @@
+.zoom img {
+    height: auto;
+    width: auto;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 4px;
+    background-color: #fff;
+}
+
+.shadow {
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.zoom {
+    transition: transform ease-in-out 0.1s;
+    cursor: zoom-in;
+}
+
+.image-zoom-large {
+    transform: scale(1.0);
+    cursor: zoom-out;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    z-index: 1;
+    position: absolute;
+}

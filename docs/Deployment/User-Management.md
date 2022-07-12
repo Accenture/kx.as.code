@@ -10,13 +10,13 @@ There are two ways to deploy KX.AS.CODE with additional users. The first is via 
 
 Go to the user management tab in the Jenkins based KX.AS.CODE configurator and add the requested details for each user. Click the add button for each entered user to add it to the table.
 
-![](../images/kx-as-code_configurator_user-provisioning.png)
+![](../assets/images/kx-as-code_configurator_user-provisioning.png){: .zoom}
 
 Each time a user is added, the profile's `users.json` is updated. 
 
 You cannot remove the `kx.hero` user as it is a standard user. It is possible to change the base default user by changing it in the general properties tab.
 
-![](../images/kx-as-code_configurator_general-parameters.png)
+![](../assets/images/kx-as-code_configurator_general-parameters.png){: .zoom}
 
 !!! tip "The `kx.hero` user will never be deleted. When you change the base user in the general parameters tab, the user is created as a new base user and will be the default login. The old user will be hidden from the desktop's login screen, but not entirely deleted."
 
