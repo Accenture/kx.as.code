@@ -1,2 +1,2 @@
-# Provisioning templates
+# Installation Groups
 

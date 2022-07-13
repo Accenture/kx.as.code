@@ -6,7 +6,7 @@ This section describes the execution flow for items added for installation from 
 
 Once the instruction to install a tool is received from the frontend (by adding it to the "pending" queue in RabbitMQ), the installation flow for all tool installations is as follows.
 
-[![KX.AS.CODE Architecture-Installation Flow](images/KX.AS.CODE Architecture-Installation Flow.png)](images/KX.AS.CODE Architecture-Installation Flow.png)
+[![KX.AS.CODE Architecture-Installation Flow](../assets/images/KX.AS.CODE Architecture-Installation Flow.png)](images/KX.AS.CODE Architecture-Installation Flow.png)
 
 
 

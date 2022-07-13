@@ -1,4 +1,4 @@
-# Manual Installations
+# Manual Provisioning
 
 The development of the NodeJS based KX.AS.CODE Portal is currently in progress in order to select application and tools for installation into the KX.AS.CODE workstation. The application will drop messages onto a queue which will be picked up by the install script.
 

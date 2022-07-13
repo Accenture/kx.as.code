@@ -2,7 +2,7 @@
 
 It can be considered as a local cloud like Kubernetes environment with a lot of things you would expect to see when managing a Kubernetes cluster in the cloud, including an ingress controller, storage cluster, DNS, a certificate authority... and the best bit, you just have to fill out a couple of config files and vagrant up/terraform apply, and you are on your way!
 
-![whatsinthebox](../images/whatsinthebox.png)
+![whatsinthebox](../assets/images/whatsinthebox.png)
 
 ## Why did we create this workstation?
 Many reasons! For our own learning and fun, for enabling others to enjoy and get into DevOps, as well as to give something back to the community, because we and everyone else in DevOps, benefit hugely from the wonderful OpenSource tools that are out there!
