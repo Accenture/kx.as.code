@@ -1,6 +1,5 @@
 # Contribute
 
-## Welcome
 This guide provides some basic rules for contributing to this asset. This project is intended to run as an in house OpenSource project, which means that anyone can contribute.
 Remember, the ultimate goal of this project is
 

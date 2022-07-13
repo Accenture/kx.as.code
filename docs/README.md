@@ -16,7 +16,7 @@ As well as learning and sharing knowledge, there are several more use cases for 
 *   Experimenting and innovating
 *   Test tool integrations
 
-!!! danger "Want to get started quickly? Read our [Quick Start Guide](User-Guide/Quick-Start-Guide/)."
+!!! abstract "Want to get started quickly? Read our [Quick Start Guide](./Quick-Start-Guide/)."
 
 ## What is the KX.AS.CODE Workstation?
 It can be considered a fully automated cloud like Kubernetes environment with a lot of things you would expect to see when managing a Kubernetes cluster in the cloud, including an ingress controller, storage cluster, DNS services, a certificate authority... and the best bit, you just have to fill out a couple of config files and vagrant up/terraform apply, and you are on your way!
