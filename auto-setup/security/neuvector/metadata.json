@@ -1,0 +1,57 @@
+{
+    "name": "neuvector",
+    "namespace": "neuvector",
+    "installation_type": "helm",
+    "installation_group_folder": "security",
+    "environment_variables": {
+        "imageTag": "5.0.1"
+    },
+    "helm_params": {
+        "repository_url": "https://neuvector.github.io/neuvector-helm/",
+        "repository_name": "neuvector/core",
+        "helm_version": "2.2.0-b2",
+        "set_key_values": []
+    },
+    "categories": [
+        "security"
+    ],
+    "urls": [
+        {
+            "url": "https://{{componentName}}.{{baseDomain}}/",
+            "healthchecks": {
+                "liveliness": {
+                    "http_path": "/",
+                    "http_auth_required": false,
+                    "expected_http_response_code": "400",
+                    "expected_http_response_string": "",
+                    "expected_json_response": {
+                        "json_path": "",
+                        "json_value": ""
+                    },
+                    "health_shell_check_command": "",
+                    "expected_shell_check_command_response": ""
+                },
+                "readiness": {
+                    "http_path": "/",
+                    "http_auth_required": false,
+                    "expected_http_response_code": "400",
+                    "expected_http_response_string": "",
+                    "expected_json_response": {
+                        "json_path": "",
+                        "json_value": ""
+                    },
+                    "health_shell_check_command": "",
+                    "expected_shell_check_command_response": ""
+                }
+            }
+        }
+    ],
+    "Description": "Container Runtime Security",
+    "shortcut_text": "NeuVector",
+    "shortcut_icon": "neuvector.png",
+    "pre_install_scripts": [
+        "create_certs_secret.sh",
+        "create_service_account.sh"
+    ],
+    "post_install_scripts": []
+}
