@@ -21,7 +21,7 @@ As well as learning and sharing knowledge, there are several more use cases for 
     Want to get started quickly? Read our [Quick Start Guide](./Quick-Start-Guide/).
 
 !!! example "Contribute an application"
-    If you want to contribute another application to KX.AS.CODE, read our [development walk-through](../../Development/Adding-a-Solution/)
+    If you want to contribute another application to KX.AS.CODE, read our [development walk-through](Development/Adding-a-Solution/)
 
 ## What is the KX.AS.CODE Workstation?
 It can be considered a fully automated cloud like Kubernetes environment with a lot of things you would expect to see when managing a Kubernetes cluster in the cloud, including an ingress controller, storage cluster, DNS services, a certificate authority... and the best bit, you just have to fill out a couple of config files and vagrant up/terraform apply, and you are on your way!
