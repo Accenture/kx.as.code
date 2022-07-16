@@ -11,18 +11,18 @@ All the tools below are installable either from the [Jenkins based launcher](/Qu
 <div class="table">
     <div class="rowGroup">
         <div class="row">
-            <div class="cell-logo"><img src="/assets/images/argocd.png" class="logo"></div>
+            <div class="cell-logo"><img src="../../assets/images/argocd.png" class="logo"></div>
             <div class="cell-category">GitOps</div>
             <div class="cell-screenshot">
                 <div class="slideshow-container">
                     <div class="argocdImage fade">
-                        <img class="zoom-table" src="/assets/images/argocd_screenshot1.png" style="width:100%;">
+                        <img class="zoom-table" src="../../assets/images/argocd_screenshot1.png" style="width:100%;">
                     </div>
                     <div class="argocdImage fade">
-                        <img class="zoom-table" src="/assets/images/argocd_screenshot2.png" style="width:100%;">
+                        <img class="zoom-table" src="../../assets/images/argocd_screenshot2.png" style="width:100%;">
                     </div>
                     <div class="argocdImage fade">
-                        <img class="zoom-table" src="/assets/images/argocd_screenshot3.png" style="width:100%;">
+                        <img class="zoom-table" src="../../assets/images/argocd_screenshot3.png" style="width:100%;">
                     </div>
                     <a class="prev" onclick="plusSlides(-1,'argocd')">&#10094;</a>
                     <a class="next" onclick="plusSlides(1,'argocd')">&#10095;</a>
@@ -47,22 +47,22 @@ All the tools below are installable either from the [Jenkins based launcher](/Qu
             <div class="cell-screenshot">
                 <div class="slideshow-container">
                     <div class="artifactoryImage fade">
-                        <img class="zoom-table" src="/assets/images/artifactory_screenshot1.png" style="width:100%">
+                        <img class="zoom-table" src="../../assets/images/artifactory_screenshot1.png" style="width:100%">
                     </div>
                     <div class="artifactoryImage fade">
-                        <img class="zoom-table" src="/assets/images/artifactory_screenshot2.png" style="width:100%">
+                        <img class="zoom-table" src="../../assets/images/artifactory_screenshot2.png" style="width:100%">
                     </div>
                     <div class="artifactoryImage fade">
-                        <img class="zoom-table" src="/assets/images/artifactory_screenshot3.png" style="width:100%">
+                        <img class="zoom-table" src="../../assets/images/artifactory_screenshot3.png" style="width:100%">
                     </div>
                     <div class="artifactoryImage fade">
-                        <img class="zoom-table" src="/assets/images/artifactory_screenshot4.png" style="width:100%">
+                        <img class="zoom-table" src="../../assets/images/artifactory_screenshot4.png" style="width:100%">
                     </div>
                     <div class="artifactoryImage fade">
-                        <img class="zoom-table" src="/assets/images/artifactory_screenshot5.png" style="width:100%">
+                        <img class="zoom-table" src="../../assets/images/artifactory_screenshot5.png" style="width:100%">
                     </div>
                     <div class="artifactoryImage fade">
-                        <img class="zoom-table" src="/assets/images/artifactory_screenshot6.png" style="width:100%">
+                        <img class="zoom-table" src="../../assets/images/artifactory_screenshot6.png" style="width:100%">
                     </div>
                     <a class="prev" onclick="plusSlides(-1,'artifactory')">&#10094;</a>
                     <a class="next" onclick="plusSlides(1,'artifactory')">&#10095;</a>
@@ -91,10 +91,10 @@ All the tools below are installable either from the [Jenkins based launcher](/Qu
             <div class="cell-screenshot">
                 <div class="slideshow-container">
                     <div class="consulImage fade">
-                        <img class="zoom-table" src="/assets/images/consul_screenshot1.png" style="width:100%">
+                        <img class="zoom-table" src="../../assets/images/consul_screenshot1.png" style="width:100%">
                     </div>
                     <div class="consulImage fade">
-                        <img class="zoom-table" src="/assets/images/consul_screenshot2.png" style="width:100%">
+                        <img class="zoom-table" src="../../assets/images/consul_screenshot2.png" style="width:100%">
                     </div>
                     <a class="prev" onclick="plusSlides(-1,'consul')">&#10094;</a>
                     <a class="next" onclick="plusSlides(1,'consul')">&#10095;</a>
@@ -120,13 +120,13 @@ All the tools below are installable either from the [Jenkins based launcher](/Qu
             <div class="cell-screenshot">
                 <div class="slideshow-container">
                     <div class="giteaImage fade">
-                        <img class="zoom-table" src="/assets/images/gitea_screenshot1.png" style="width:100%">
+                        <img class="zoom-table" src="../../assets/images/gitea_screenshot1.png" style="width:100%">
                     </div>
                     <div class="giteaImage fade">
-                        <img class="zoom-table" src="/assets/images/gitea_screenshot2.png" style="width:100%">
+                        <img class="zoom-table" src="../../assets/images/gitea_screenshot2.png" style="width:100%">
                     </div>
                     <div class="giteaImage fade">
-                        <img class="zoom-table" src="/assets/images/gitea_screenshot3.png" style="width:100%">
+                        <img class="zoom-table" src="../../assets/images/gitea_screenshot3.png" style="width:100%">
                     </div>
                     <a class="prev" onclick="plusSlides(-1,'gitea')">&#10094;</a>
                     <a class="next" onclick="plusSlides(1,'gitea')">&#10095;</a>
@@ -152,13 +152,13 @@ All the tools below are installable either from the [Jenkins based launcher](/Qu
             <div class="cell-screenshot">
                 <div class="slideshow-container">
                     <div class="gitlabImage fade">
-                        <img class="zoom-table" src="/assets/images/gitlab_screenshot1.png" style="width:100%">
+                        <img class="zoom-table" src="../../assets/images/gitlab_screenshot1.png" style="width:100%">
                     </div>
                     <div class="gitlabImage fade">
-                        <img class="zoom-table" src="/assets/images/gitlab_screenshot2.png" style="width:100%">
+                        <img class="zoom-table" src="../../assets/images/gitlab_screenshot2.png" style="width:100%">
                     </div>
                     <div class="gitlabImage fade">
-                        <img class="zoom-table" src="/assets/images/gitlab_screenshot3.png" style="width:100%">
+                        <img class="zoom-table" src="../../assets/images/gitlab_screenshot3.png" style="width:100%">
                     </div>
                     <a class="prev" onclick="plusSlides(-1,'gitlab')">&#10094;</a>
                     <a class="next" onclick="plusSlides(1,'gitlab')">&#10095;</a>
@@ -184,7 +184,7 @@ All the tools below are installable either from the [Jenkins based launcher](/Qu
             <div class="cell-screenshot">
                 <div class="slideshow-container">
                     <div class="harborImage fade">
-                        <img class="zoom-table" src="/assets/images/harbor_screenshot1.png" style="width:100%">
+                        <img class="zoom-table" src="../../assets/images/harbor_screenshot1.png" style="width:100%">
                     </div>
                     <a class="prev" onclick="plusSlides(-1,'harbor')">&#10094;</a>
                     <a class="next" onclick="plusSlides(1,'harbor')">&#10095;</a>
@@ -211,10 +211,10 @@ All the tools below are installable either from the [Jenkins based launcher](/Qu
             <div class="cell-screenshot">
                 <div class="slideshow-container">
                     <div class="jenkinsImage fade">
-                        <img class="zoom-table" src="/assets/images/jenkins_screenshot1.png" style="width:100%">
+                        <img class="zoom-table" src="../../assets/images/jenkins_screenshot1.png" style="width:100%">
                     </div>
                     <div class="jenkinsImage fade">
-                        <img class="zoom-table" src="/assets/images/jenkins_screenshot2.png" style="width:100%">
+                        <img class="zoom-table" src="../../assets/images/jenkins_screenshot2.png" style="width:100%">
                     </div>
                     <a class="prev" onclick="plusSlides(-1,'jenkins')">&#10094;</a>
                     <a class="next" onclick="plusSlides(1,'jenkins')">&#10095;</a>
@@ -241,16 +241,16 @@ All the tools below are installable either from the [Jenkins based launcher](/Qu
             <div class="cell-screenshot">
                 <div class="slideshow-container">
                     <div class="nexus3Image fade">
-                        <img class="zoom-table" src="/assets/images/nexus3_screenshot1.png" style="width:100%">
+                        <img class="zoom-table" src="../../assets/images/nexus3_screenshot1.png" style="width:100%">
                     </div>
                     <div class="nexus3Image fade">
-                        <img class="zoom-table" src="/assets/images/nexus3_screenshot2.png" style="width:100%">
+                        <img class="zoom-table" src="../../assets/images/nexus3_screenshot2.png" style="width:100%">
                     </div>
                     <div class="nexus3Image fade">
-                        <img class="zoom-table" src="/assets/images/nexus3_screenshot3.png" style="width:100%">
+                        <img class="zoom-table" src="../../assets/images/nexus3_screenshot3.png" style="width:100%">
                     </div>
                     <div class="nexus3Image fade">
-                        <img class="zoom-table" src="/assets/images/nexus3_screenshot4.png" style="width:100%">
+                        <img class="zoom-table" src="../../assets/images/nexus3_screenshot4.png" style="width:100%">
                     </div>
                     <a class="prev" onclick="plusSlides(-1,'nexus3')">&#10094;</a>
                     <a class="next" onclick="plusSlides(1,'nexus3')">&#10095;</a>
@@ -277,13 +277,13 @@ All the tools below are installable either from the [Jenkins based launcher](/Qu
             <div class="cell-screenshot">
                 <div class="slideshow-container">
                     <div class="teamcityImage fade">
-                        <img class="zoom-table" src="/assets/images/teamcity_screenshot1.png" style="width:100%">
+                        <img class="zoom-table" src="../../assets/images/teamcity_screenshot1.png" style="width:100%">
                     </div>
                     <div class="teamcityImage fade">
-                        <img class="zoom-table" src="/assets/images/teamcity_screenshot2.png" style="width:100%">
+                        <img class="zoom-table" src="../../assets/images/teamcity_screenshot2.png" style="width:100%">
                     </div>
                     <div class="teamcityImage fade">
-                        <img class="zoom-table" src="/assets/images/teamcity_screenshot3.png" style="width:100%">
+                        <img class="zoom-table" src="../../assets/images/teamcity_screenshot3.png" style="width:100%">
                     </div>
                     <a class="prev" onclick="plusSlides(-1,'teamcity')">&#10094;</a>
                     <a class="next" onclick="plusSlides(1,'teamcity')">&#10095;</a>
@@ -312,16 +312,16 @@ All the tools below are installable either from the [Jenkins based launcher](/Qu
             <div class="cell-screenshot">
                 <div class="slideshow-container">
                     <div class="elasticsearchImage fade">
-                        <img class="zoom-table" src="/assets/images/elastic-elasticsearch_screenshot1.png" style="width:100%">
+                        <img class="zoom-table" src="../../assets/images/elastic-elasticsearch_screenshot1.png" style="width:100%">
                     </div>
                     <div class="elasticsearchImage fade">
-                        <img class="zoom-table" src="/assets/images/elastic-elasticsearch_screenshot2.png" style="width:100%">
+                        <img class="zoom-table" src="../../assets/images/elastic-elasticsearch_screenshot2.png" style="width:100%">
                     </div>
                     <div class="elasticsearchImage fade">
-                        <img class="zoom-table" src="/assets/images/elastic-elasticsearch_screenshot3.png" style="width:100%">
+                        <img class="zoom-table" src="../../assets/images/elastic-elasticsearch_screenshot3.png" style="width:100%">
                     </div>
                     <div class="elasticsearchImage fade">
-                        <img class="zoom-table" src="/assets/images/elastic-elasticsearch_screenshot4.png" style="width:100%">
+                        <img class="zoom-table" src="../../assets/images/elastic-elasticsearch_screenshot4.png" style="width:100%">
                     </div>
                     <a class="prev" onclick="plusSlides(-1,'elasticsearch')">&#10094;</a>
                     <a class="next" onclick="plusSlides(1,'elasticsearch')">&#10095;</a>
@@ -347,13 +347,13 @@ All the tools below are installable either from the [Jenkins based launcher](/Qu
             <div class="cell-screenshot">
                 <div class="slideshow-container">
                     <div class="filebeatImage fade">
-                        <img class="zoom-table" src="/assets/images/elastic-filebeat_screenshot1.png" style="width:100%">
+                        <img class="zoom-table" src="../../assets/images/elastic-filebeat_screenshot1.png" style="width:100%">
                     </div>
                     <div class="filebeatImage fade">
-                        <img class="zoom-table" src="/assets/images/elastic-filebeat_screenshot2.png" style="width:100%">
+                        <img class="zoom-table" src="../../assets/images/elastic-filebeat_screenshot2.png" style="width:100%">
                     </div>
                     <div class="filebeatImage fade">
-                        <img class="zoom-table" src="/assets/images/elastic-filebeat_screenshot3.png" style="width:100%">
+                        <img class="zoom-table" src="../../assets/images/elastic-filebeat_screenshot3.png" style="width:100%">
                     </div>
                     <a class="prev" onclick="plusSlides(-1,'filebeat')">&#10094;</a>
                     <a class="next" onclick="plusSlides(1,'filebeat')">&#10095;</a>
@@ -379,10 +379,10 @@ All the tools below are installable either from the [Jenkins based launcher](/Qu
             <div class="cell-screenshot">
                 <div class="slideshow-container">
                     <div class="heartbeatImage fade">
-                        <img class="zoom-table" src="/assets/images/elastic-heartbeat_screenshot1.png" style="width:100%">
+                        <img class="zoom-table" src="../../assets/images/elastic-heartbeat_screenshot1.png" style="width:100%">
                     </div>
                     <div class="heartbeatImage fade">
-                        <img class="zoom-table" src="/assets/images/elastic-heartbeat_screenshot2.png" style="width:100%">
+                        <img class="zoom-table" src="../../assets/images/elastic-heartbeat_screenshot2.png" style="width:100%">
                     </div>
                     <a class="prev" onclick="plusSlides(-1,'heartbeat')">&#10094;</a>
                     <a class="next" onclick="plusSlides(1,'heartbeat')">&#10095;</a>
@@ -407,16 +407,16 @@ All the tools below are installable either from the [Jenkins based launcher](/Qu
             <div class="cell-screenshot">
                 <div class="slideshow-container">
                     <div class="kibanaImage fade">
-                        <img class="zoom-table" src="/assets/images/elastic-kibana_screenshot1.png" style="width:100%">
+                        <img class="zoom-table" src="../../assets/images/elastic-kibana_screenshot1.png" style="width:100%">
                     </div>
                     <div class="kibanaImage fade">
-                        <img class="zoom-table" src="/assets/images/elastic-kibana_screenshot2.png" style="width:100%">
+                        <img class="zoom-table" src="../../assets/images/elastic-kibana_screenshot2.png" style="width:100%">
                     </div>
                     <div class="kibanaImage fade">
-                        <img class="zoom-table" src="/assets/images/elastic-kibana_screenshot3.png" style="width:100%">
+                        <img class="zoom-table" src="../../assets/images/elastic-kibana_screenshot3.png" style="width:100%">
                     </div>
                     <div class="kibanaImage fade">
-                        <img class="zoom-table" src="/assets/images/elastic-kibana_screenshot4.png" style="width:100%">
+                        <img class="zoom-table" src="../../assets/images/elastic-kibana_screenshot4.png" style="width:100%">
                     </div>
                     <a class="prev" onclick="plusSlides(-1,'kibana')">&#10094;</a>
                     <a class="next" onclick="plusSlides(1,'kibana')">&#10095;</a>
@@ -443,7 +443,7 @@ All the tools below are installable either from the [Jenkins based launcher](/Qu
             <div class="cell-screenshot">
                 <div class="slideshow-container">
                     <div class="metricbeatImage fade">
-                        <img class="zoom-table" src="/assets/images/elastic-metricbeat_screenshot1.png" style="width:100%">
+                        <img class="zoom-table" src="../../assets/images/elastic-metricbeat_screenshot1.png" style="width:100%">
                     </div>
                     <a class="prev" onclick="plusSlides(-1,'metricbeat')">&#10094;</a>
                     <a class="next" onclick="plusSlides(1,'metricbeat')">&#10095;</a>
@@ -467,7 +467,7 @@ All the tools below are installable either from the [Jenkins based launcher](/Qu
             <div class="cell-screenshot">
                 <div class="slideshow-container">
                     <div class="packetbeatImage fade">
-                        <img class="zoom-table" src="/assets/images/elastic-packetbeat_screenshot1.png" style="width:100%">
+                        <img class="zoom-table" src="../../assets/images/elastic-packetbeat_screenshot1.png" style="width:100%">
                     </div>
                     <a class="prev" onclick="plusSlides(-1,'packetbeat')">&#10094;</a>
                     <a class="next" onclick="plusSlides(1,'packetbeat')">&#10095;</a>
@@ -491,16 +491,16 @@ All the tools below are installable either from the [Jenkins based launcher](/Qu
             <div class="cell-screenshot">
                 <div class="slideshow-container">
                     <div class="grafanaImage fade">
-                        <img class="zoom-table" src="/assets/images/grafana_screenshot1.png" style="width:100%">
+                        <img class="zoom-table" src="../../assets/images/grafana_screenshot1.png" style="width:100%">
                     </div>
                     <div class="grafanaImage fade">
-                        <img class="zoom-table" src="/assets/images/grafana_screenshot2.png" style="width:100%">
+                        <img class="zoom-table" src="../../assets/images/grafana_screenshot2.png" style="width:100%">
                     </div>
                     <div class="grafanaImage fade">
-                        <img class="zoom-table" src="/assets/images/grafana_screenshot3.png" style="width:100%">
+                        <img class="zoom-table" src="../../assets/images/grafana_screenshot3.png" style="width:100%">
                     </div>
                     <div class="grafanaImage fade">
-                        <img class="zoom-table" src="/assets/images/grafana_screenshot4.png" style="width:100%">
+                        <img class="zoom-table" src="../../assets/images/grafana_screenshot4.png" style="width:100%">
                     </div>
                     <a class="prev" onclick="plusSlides(-1,'grafana')">&#10094;</a>
                     <a class="next" onclick="plusSlides(1,'grafana')">&#10095;</a>
@@ -527,7 +527,7 @@ All the tools below are installable either from the [Jenkins based launcher](/Qu
             <div class="cell-screenshot">
                 <div class="slideshow-container">
                     <div class="grafana-lokiImage fade">
-                        <img class="zoom-table" src="/assets/images/grafana_screenshot4.png" style="width:100%">
+                        <img class="zoom-table" src="../../assets/images/grafana_screenshot4.png" style="width:100%">
                     </div>
                     <a class="prev" onclick="plusSlides(-1,'grafana-loki')">&#10094;</a>
                     <a class="next" onclick="plusSlides(1,'grafana-loki')">&#10095;</a>
@@ -551,7 +551,7 @@ All the tools below are installable either from the [Jenkins based launcher](/Qu
             <div class="cell-screenshot">
                 <div class="slideshow-container">
                     <div class="graphiteImage fade">
-                        <img class="zoom-table" src="/assets/images/graphite_screenshot1.png" style="width:100%">
+                        <img class="zoom-table" src="../../assets/images/graphite_screenshot1.png" style="width:100%">
                     </div>
                     <a class="prev" onclick="plusSlides(-1,'graphite')">&#10094;</a>
                     <a class="next" onclick="plusSlides(1,'graphite')">&#10095;</a>
@@ -575,10 +575,10 @@ All the tools below are installable either from the [Jenkins based launcher](/Qu
             <div class="cell-screenshot">
                 <div class="slideshow-container">
                     <div class="prometheusImage fade">
-                        <img class="zoom-table" src="/assets/images/prometheus_screenshot1.png" style="width:100%">
+                        <img class="zoom-table" src="../../assets/images/prometheus_screenshot1.png" style="width:100%">
                     </div>
                     <div class="prometheusImage fade">
-                        <img class="zoom-table" src="/assets/images/prometheus_screenshot2.png" style="width:100%">
+                        <img class="zoom-table" src="../../assets/images/prometheus_screenshot2.png" style="width:100%">
                     </div>
                     <a class="prev" onclick="plusSlides(-1,'prometheus')">&#10094;</a>
                     <a class="next" onclick="plusSlides(1,'prometheus')">&#10095;</a>
@@ -605,25 +605,25 @@ All the tools below are installable either from the [Jenkins based launcher](/Qu
             <div class="cell-screenshot">
                 <div class="slideshow-container">
                     <div class="neuvectorImage fade">
-                        <img class="zoom-table" src="/assets/images/neuvector_screenshot1.png" style="width:100%">
+                        <img class="zoom-table" src="../../assets/images/neuvector_screenshot1.png" style="width:100%">
                     </div>
                     <div class="neuvectorImage fade">
-                        <img class="zoom-table" src="/assets/images/neuvector_screenshot2.png" style="width:100%">
+                        <img class="zoom-table" src="../../assets/images/neuvector_screenshot2.png" style="width:100%">
                     </div>
                     <div class="neuvectorImage fade">
-                        <img class="zoom-table" src="/assets/images/neuvector_screenshot3.png" style="width:100%">
+                        <img class="zoom-table" src="../../assets/images/neuvector_screenshot3.png" style="width:100%">
                     </div>
                     <div class="neuvectorImage fade">
-                        <img class="zoom-table" src="/assets/images/neuvector_screenshot4.png" style="width:100%">
+                        <img class="zoom-table" src="../../assets/images/neuvector_screenshot4.png" style="width:100%">
                     </div>
                     <div class="neuvectorImage fade">
-                        <img class="zoom-table" src="/assets/images/neuvector_screenshot5.png" style="width:100%">
+                        <img class="zoom-table" src="../../assets/images/neuvector_screenshot5.png" style="width:100%">
                     </div>
                     <div class="neuvectorImage fade">
-                        <img class="zoom-table" src="/assets/images/neuvector_screenshot6.png" style="width:100%">
+                        <img class="zoom-table" src="../../assets/images/neuvector_screenshot6.png" style="width:100%">
                     </div>
                     <div class="neuvectorImage fade">
-                        <img class="zoom-table" src="/assets/images/neuvector_screenshot7.png" style="width:100%">
+                        <img class="zoom-table" src="../../assets/images/neuvector_screenshot7.png" style="width:100%">
                     </div>
                     <a class="prev" onclick="plusSlides(-1,'neuvector')">&#10094;</a>
                     <a class="next" onclick="plusSlides(1,'neuvector')">&#10095;</a>
@@ -653,10 +653,10 @@ All the tools below are installable either from the [Jenkins based launcher](/Qu
             <div class="cell-screenshot">
                 <div class="slideshow-container">
                     <div class="sysdig-falcoImage fade">
-                        <img class="zoom-table" src="/assets/images/sysdig-falco_screenshot1.png" style="width:100%">
+                        <img class="zoom-table" src="../../assets/images/sysdig-falco_screenshot1.png" style="width:100%">
                     </div>
                     <div class="sysdig-falcoImage fade">
-                        <img class="zoom-table" src="/assets/images/sysdig-falco_screenshot2.png" style="width:100%">
+                        <img class="zoom-table" src="../../assets/images/sysdig-falco_screenshot2.png" style="width:100%">
                     </div>
                     <a class="prev" onclick="plusSlides(-1,'sysdig-falco')">&#10094;</a>
                     <a class="next" onclick="plusSlides(1,'sysdig-falco')">&#10095;</a>
@@ -681,13 +681,13 @@ All the tools below are installable either from the [Jenkins based launcher](/Qu
             <div class="cell-screenshot">
                 <div class="slideshow-container">
                     <div class="vaultImage fade">
-                        <img class="zoom-table" src="/assets/images/vault_screenshot1.png" style="width:100%">
+                        <img class="zoom-table" src="../../assets/images/vault_screenshot1.png" style="width:100%">
                     </div>
                     <div class="vaultImage fade">
-                        <img class="zoom-table" src="/assets/images/vault_screenshot2.png" style="width:100%">
+                        <img class="zoom-table" src="../../assets/images/vault_screenshot2.png" style="width:100%">
                     </div>
                     <div class="vaultImage fade">
-                        <img class="zoom-table" src="/assets/images/vault_screenshot3.png" style="width:100%">
+                        <img class="zoom-table" src="../../assets/images/vault_screenshot3.png" style="width:100%">
                     </div>
                     <a class="prev" onclick="plusSlides(-1,'vault')">&#10094;</a>
                     <a class="next" onclick="plusSlides(1,'vault')">&#10095;</a>
@@ -714,10 +714,10 @@ All the tools below are installable either from the [Jenkins based launcher](/Qu
             <div class="cell-screenshot">
                 <div class="slideshow-container">
                     <div class="mattermostImage fade">
-                        <img class="zoom-table" src="/assets/images/mattermost_screenshot1.png" style="width:100%">
+                        <img class="zoom-table" src="../../assets/images/mattermost_screenshot1.png" style="width:100%">
                     </div>
                     <div class="mattermostImage fade">
-                        <img class="zoom-table" src="/assets/images/mattermost_screenshot2.png" style="width:100%">
+                        <img class="zoom-table" src="../../assets/images/mattermost_screenshot2.png" style="width:100%">
                     </div>
                     <a class="prev" onclick="plusSlides(-1,'mattermost')">&#10094;</a>
                     <a class="next" onclick="plusSlides(1,'mattermost')">&#10095;</a>
@@ -742,10 +742,10 @@ All the tools below are installable either from the [Jenkins based launcher](/Qu
             <div class="cell-screenshot">
                 <div class="slideshow-container">
                     <div class="rocketchatImage fade">
-                        <img class="zoom-table" src="/assets/images/rocketchat_screenshot1.png" style="width:100%">
+                        <img class="zoom-table" src="../../assets/images/rocketchat_screenshot1.png" style="width:100%">
                     </div>
                     <div class="rocketchatImage fade">
-                        <img class="zoom-table" src="/assets/images/rocketchat_screenshot2.png" style="width:100%">
+                        <img class="zoom-table" src="../../assets/images/rocketchat_screenshot2.png" style="width:100%">
                     </div>
                     <a class="prev" onclick="plusSlides(-1,'rocketchat')">&#10094;</a>
                     <a class="next" onclick="plusSlides(1,'rocketchat')">&#10095;</a>
@@ -771,10 +771,10 @@ All the tools below are installable either from the [Jenkins based launcher](/Qu
             <div class="cell-screenshot">
                 <div class="slideshow-container">
                     <div class="minio-s3Image fade">
-                        <img class="zoom-table" src="/assets/images/minio-s3_screenshot1.png" style="width:100%">
+                        <img class="zoom-table" src="../../assets/images/minio-s3_screenshot1.png" style="width:100%">
                     </div>
                     <div class="minio-s3Image fade">
-                        <img class="zoom-table" src="/assets/images/minio-s3_screenshot2.png" style="width:100%">
+                        <img class="zoom-table" src="../../assets/images/minio-s3_screenshot2.png" style="width:100%">
                     </div>
                     <a class="prev" onclick="plusSlides(-1,'minio-s3')">&#10094;</a>
                     <a class="next" onclick="plusSlides(1,'minio-s3')">&#10095;</a>
@@ -799,16 +799,16 @@ All the tools below are installable either from the [Jenkins based launcher](/Qu
             <div class="cell-screenshot">
                 <div class="slideshow-container">
                     <div class="nextcloudImage fade">
-                        <img class="zoom-table" src="/assets/images/nextcloud_screenshot1.png" style="width:100%">
+                        <img class="zoom-table" src="../../assets/images/nextcloud_screenshot1.png" style="width:100%">
                     </div>
                     <div class="nextcloudImage fade">
-                        <img class="zoom-table" src="/assets/images/nextcloud_screenshot2.png" style="width:100%">
+                        <img class="zoom-table" src="../../assets/images/nextcloud_screenshot2.png" style="width:100%">
                     </div>
                     <div class="nextcloudImage fade">
-                        <img class="zoom-table" src="/assets/images/nextcloud_screenshot3.png" style="width:100%">
+                        <img class="zoom-table" src="../../assets/images/nextcloud_screenshot3.png" style="width:100%">
                     </div>
                     <div class="nextcloudImage fade">
-                        <img class="zoom-table" src="/assets/images/nextcloud_screenshot4.png" style="width:100%">
+                        <img class="zoom-table" src="../../assets/images/nextcloud_screenshot4.png" style="width:100%">
                     </div>
                     <a class="prev" onclick="plusSlides(-1,'nextcloud')">&#10094;</a>
                     <a class="next" onclick="plusSlides(1,'nextcloud')">&#10095;</a>
@@ -836,7 +836,7 @@ All the tools below are installable either from the [Jenkins based launcher](/Qu
             <div class="cell-screenshot">
                 <div class="slideshow-container">
                     <div class="selenium4Image fade">
-                        <img class="zoom-table" src="/assets/images/selenium4_screenshot1.png" style="width:100%">
+                        <img class="zoom-table" src="../../assets/images/selenium4_screenshot1.png" style="width:100%">
                     </div>
                     <a class="prev" onclick="plusSlides(-1,'selenium4')">&#10094;</a>
                     <a class="next" onclick="plusSlides(1,'selenium4')">&#10095;</a>
@@ -860,13 +860,13 @@ All the tools below are installable either from the [Jenkins based launcher](/Qu
             <div class="cell-screenshot">
                 <div class="slideshow-container">
                     <div class="sonarqubeImage fade">
-                        <img class="zoom-table" src="/assets/images/sonarqube_screenshot1.png" style="width:100%">
+                        <img class="zoom-table" src="../../assets/images/sonarqube_screenshot1.png" style="width:100%">
                     </div>
                     <div class="sonarqubeImage fade">
-                        <img class="zoom-table" src="/assets/images/sonarqube_screenshot2.png" style="width:100%">
+                        <img class="zoom-table" src="../../assets/images/sonarqube_screenshot2.png" style="width:100%">
                     </div>
                     <div class="sonarqubeImage fade">
-                        <img class="zoom-table" src="/assets/images/sonarqube_screenshot3.png" style="width:100%">
+                        <img class="zoom-table" src="../../assets/images/sonarqube_screenshot3.png" style="width:100%">
                     </div>
                     <a class="prev" onclick="plusSlides(-1,'sonarqube')">&#10094;</a>
                     <a class="next" onclick="plusSlides(1,'sonarqube')">&#10095;</a>
