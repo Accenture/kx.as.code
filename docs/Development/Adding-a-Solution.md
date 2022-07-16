@@ -11,7 +11,7 @@ First an important note, relevant regardless of the chosen installation method (
 Below an example walk-through adding NeuVector as an application installed via the helm installation method.
 
 !!! tip
-    Remember that there are many [functions](/Development/Available-Functions/) available that you can directly utilize in your scripts.
+    Remember that there are many [functions](../../Development/Available-Functions/) available that you can directly utilize in your scripts.
 
     In particular for [KeyCloak SSO integration](/Development/Available-Functions/#keycloak-sso), it is highly advisable to use the [enableKeycloakSSOForSolution()](/Development/Available-Functions/#enablekeycloakssoforsolution) function, as it takes care to call all the other needed functions.
 

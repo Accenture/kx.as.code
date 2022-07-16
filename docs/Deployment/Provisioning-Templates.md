@@ -6,7 +6,7 @@ There are currently two ways to install applications groups. Either via the Jenk
 
 ## Via the Jenkins based Launcher
 
-See the [guide](/Quick-Start-Guide/) for starting the [launcher](/Quick-Start-Guide/) if you have not already done so.
+See the [guide](../../Quick-Start-Guide/) for starting the [launcher](../../Quick-Start-Guide/) if you have not already done so.
 
 ![](../assets/images/kx-as-code_configurator_template-selector.png){: .zoom}
 
