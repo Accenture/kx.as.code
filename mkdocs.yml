@@ -11,8 +11,9 @@ nav:
     - 'Quick-Start-Guide.md'
     - 'Overview':
         - 'Overview/Architecture.md'
+        - 'Overview/Application-Library.md'
         - 'Overview/Future-Roadmap.md'
-        - 'Overview/Questions_and_Answers.md'
+        - 'Overview/Questions-and-Answers.md'
         - 'Overview/Raising-a-Bug-Report.md'
         - 'Overview/Raising-a-Feature-Request.md'
     - 'Build':
@@ -31,7 +32,6 @@ nav:
         - 'Deployment/Provisioning-Templates.md'
         - 'Deployment/Public-Clouds.md'
         - 'Deployment/Remote-Access.md'
-        - 'Deployment/Tool-Library.md'
         - 'Deployment/Troubleshooting.md'
         - 'Deployment/User-Management.md'
     - 'Development':
@@ -72,6 +72,7 @@ markdown_extensions:
     - admonition
     - def_list
     - attr_list
+    - pymdownx.extra
     - pymdownx.tilde
     - pymdownx.details
     - pymdownx.superfences

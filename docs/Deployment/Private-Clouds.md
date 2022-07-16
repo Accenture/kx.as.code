@@ -2,9 +2,9 @@
 
 ## OpenStack
 
-If you do not yet have access to an OpenStack or DevStack environment, you can follow our [guide](/Prerequisites/OpenStack-Setup/) for setting up DevStack.
+If you do not yet have access to an OpenStack or DevStack environment, you can follow our [guide](../../Prerequisites/OpenStack-Setup/) for setting up DevStack.
 
-To start KX.AS.CODE on OpenStack, you first need to follow the [OpenStack build guide](/Build/Private-Clouds/), as these images are not publicly avaialable.
+To start KX.AS.CODE on OpenStack, you first need to follow the [OpenStack build guide](../../Build/Private-Clouds/), as these images are not publicly avaialable.
 
 To deploy KX.AS.CODE to OpenStack, open a command line session, checkout the KX.AS.CODE repository, and  navigate to the OpenStack deployment profile folder.
 

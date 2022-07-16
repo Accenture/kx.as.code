@@ -18,6 +18,5 @@ https://www.packer.io/plugins/builders/openstack
 - Access to the Debian base image
 - Access to the internet
 
-
-
-
+!!! info
+    This guide is still a work in progress.

@@ -11,4 +11,7 @@ First, understand how the packer build process for AWS works by reading the foll
 ###Prerequisites
 - An AWS account
 - Route to the internet in the AWS network where the packer build will be launched
--  
+- 
+
+!!! info
+    This guide is still a work in progress.

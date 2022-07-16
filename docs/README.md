@@ -21,7 +21,7 @@ As well as learning and sharing knowledge, there are several more use cases for 
     Want to get started quickly? Read our [Quick Start Guide](./Quick-Start-Guide/).
 
 !!! tip "Applications Library"
-    Check out the [applications library](/Overview/Application-Library/), to see which solutions can be installed with a single click!
+    Check out the [applications library](Overview/Application-Library/), to see which solutions can be installed with a single click!
 
 !!! example "Contribute an application"
     If you want to contribute another application to KX.AS.CODE, read our [development walk-through](Development/Adding-a-Solution/)
