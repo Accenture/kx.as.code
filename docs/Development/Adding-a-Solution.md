@@ -13,7 +13,39 @@ Below an example walk-through adding NeuVector as an application installed via t
 !!! tip
     Remember that there are many [functions](/Development/Available-Functions/) available that you can directly utilize in your scripts.
 
-1. Determine category. Current available categories are as follows:
+    In particular for [KeyCloak SSO integration](/Development/Available-Functions/#keycloak-sso), it is highly advisable to use the [enableKeycloakSSOForSolution()](/Development/Available-Functions/#enablekeycloakssoforsolution) function, as it takes care to call all the other needed functions.
+
+Below a complete walk through for adding an application with helm. ArgoCD and Script based methods will also be covered, but in less detail. as the main flow is the same.
+
+In summary, the example walk-through covers the following flow.
+
+1. Create your feature branch
+2. Determine target category for solution
+3. Determine install method
+4. Create the base directories.
+5. Populate the directory with the relevant files
+6. Create metadata.json and values_template.yaml
+7. Test the developed solution
+8. Check that the solution came up successfully
+9. Once fixed, move item to the restart queue
+10. Re-Test application
+11. Commit the code to GitHub.com
+12. Create pull request
+
+### Create your feature branch
+
+Start by creating a new feature branch from the develop branch. Remember that you will need a GitHub account to commit your changes afterwards.
+
+<pre>
+<code>cd /usr/share/kx.as.code/git/kx.as.code
+git checkout develop
+<span style="opacity: 0.5">#git checkout -b feature/add-<i>&lt;name of application&gt;</i>-application</span>
+git checkout -b feature/add-neuvector-application
+</code>
+</pre>
+### Determine target category for solution
+
+Current available categories are as follows.
 
 | Category | Examples |
 | --- | --- |
@@ -22,22 +54,13 @@ Below an example walk-through adding NeuVector as an application installed via t
 |dev_tools| BackStage, Atom, Postman|
 |monitoring|Prometheus, Tick-Stack, Elastic-Stack, Loki-Stack, Netdata |
 |quality_assurance|Selenium-Grid, SonarQube|
-|security|Hashicorp Vault, Sysdig Falco|
-|storage|Minio-S3|
+|security|BitWarden, NeuVector, Hashicorp Vault, Sysdig Falco|
+|storage|Minio-S3, NextCloud|
 
-2. Determine install method (ArgoCD, Helm or purely Script based)
+### Determine install method 
 
-3. Create the needed directory structure for the desired installation method
+Current possibilities are ArgoCD, [Helm](https://helm.sh/){:target="\_blank"} or purely Script based. In future we will look to also enable deployment with [Kustomize](https://kustomize.io/){:target="\_blank"}.
 
-##### Helm
-
-Below a work through for adding an application with helm.
-
-
-
-3. Create a values_template.yaml file and add the correct contents (adjust the solutions default https://github.com/neuvector/neuvector-helm/blob/master/charts/core/values.yaml, and modify as per the solution's documentation (https://github.com/neuvector/neuvector-helm/tree/master/charts/core)
-4. Check if there is a newer image tag and correct if available (ensure new verison matches chart. highly likely if only minor version number increased, like with NeuVector 5.0.0 -> 5.0.1)
-5. Add the image as an environment variable in metadata.json and then use the mustache annotation in the values.template
 
 ### Create the base directories.   
 ![](../assets/images/add_application_workflow1.png){: .zoom}
@@ -73,28 +96,66 @@ In NeuVector we created 7 screenshots. This may vary from solution to solution. 
 ### Create metadata.json and values_template.yaml
 Best to copy the helm values file from the solution's GitHub repository and modify it to match the KX.AS.CODE environment.
 
-For a simple solution, it is also possible to get away with only having the base directory and metadata.json, since it is possible to represent change to the `Helm values file` also in the form of a `set_values` block in `metadata.json`.
+In the example with NeuVector, we copied the default [values.yaml](https://github.com/neuvector/neuvector-helm/blob/master/charts/core/values.yaml){:target="\_blank"}, and modified it as per the solution's [documentation](https://github.com/neuvector/neuvector-helm/tree/master/charts/core){:target="\_blank"}.
+
+For a simple solution, it is also possible to get away with only having the base directory and `metadata.json`, since it is possible to represent change to the Helm values file also in the form of a `set_key_values` block in `metadata.json`.
 Taking the example for the values file added for NeuVector, the json in metadata.json would look as follows:
 
-```json linenums="1" hl_lines="6 11 12"
-    "helm_params": {
-        "repository_url": "https://neuvector.github.io/neuvector-helm/",
-        "repository_name": "neuvector/core",
-        "helm_version": "2.2.0-b2",
-        "set_key_values": [
-            "tag={{imageTag}}",
-            "controller.ingress.enabled=true",
-            "controller.ingress.tls=true",
-            "controller.ingress.secretName=kx-certificates",        
-            "controller.ingress.ingressClassName=nginx",
-            "controller.ingress.host[0]={{componentName}}.{{baseDomain}}",
-            "controller.ingress.path=\/",
-            "controller.pvc.enabled=true",
-            "controller.pvc.capacity=1Gi",
-            "controller.pvc.storageClass=gluster-heketi"
-        ]
-    }
-```
+!!! tip
+    In the default NeuVector `values.yaml` file, the `imageTag` was `5.0.0`. It's always worth to check in the source registry (in this case [Docker Hub](https://hub.docker.com/r/neuvector/controller/tags){:target="\_blank"}), to see if there is a new version available. 
+
+    Word of caution, a minor version change is probably safe. Careful with updating to a new major version, as it may not be compatible with the helm chart. 
+
+    For NeuVector, `5.0.1` was available. This was added to metadata.json and referenced in the values file, as you can see in the example below.
+
+!!! example
+
+    First define the environment variable with the new version. This is relevant for both approaches, using either `set_key_values[]` or the `values_template.yaml` file, or a combination of both.
+
+    ```json linenums="1" hl_lines="2"
+        "environment_variables": {
+            "imageTag": "5.0.1"
+        },
+    ```
+
+    Example `metadata.json` using inline Helm parameters with `set_key_values[]` block
+
+    ```json linenums="1" hl_lines="3 12 13"
+        "helm_params": {
+            "repository_url": "https://neuvector.github.io/neuvector-helm/",
+            "repository_name": "neuvector/core",
+            "helm_version": "2.2.0-b2",
+            "set_key_values": [
+                "tag={{imageTag}}",
+                "controller.ingress.enabled=true",
+                "controller.ingress.tls=true",
+                "controller.ingress.secretName=kx-certificates",        
+                "controller.ingress.ingressClassName=nginx",
+                "controller.ingress.host[0]={{componentName}}.{{baseDomain}}",
+                "controller.ingress.path=\/",
+                "controller.pvc.enabled=true",
+                "controller.pvc.capacity=1Gi",
+                "controller.pvc.storageClass=gluster-heketi"
+            ]
+        }
+    ```
+
+    Example if using `values_template.yaml`
+
+    ``` yaml linenums="1" hl_lines="8"
+    # Default values for neuvector.
+    # This is a YAML-formatted file.
+    # Declare variables to be passed into the templates.
+    
+    openshift: false
+    
+    registry: docker.io
+    tag: {{imageTag}}
+    oem:
+    imagePullSecrets:
+    psp: false
+    serviceAccount: default
+    ```
 
 !!! tip 
     Notice also the `{{ mustache }}` variables in the `set_key_values[]` block. These will also be replaced automatically with both global variables and those in `metadata.json`.
@@ -103,8 +164,8 @@ Taking the example for the values file added for NeuVector, the json in metadata
 !!! note
     The above snippet is just an example and doesn't represent all the changes made to the values file for NeuVector.
 
-In this example however, we have chosen not to do that, and to create the `values_template.yaml` instead. See screenshot.
-It is also possible to mix, and have both the JSON and the values file. As per `Helm` standard, the `set_values` will override those in the values file.
+In this example however, we have chosen not to do use the inline `set_key_values[]` in `metadata.json`, and to create the `values_template.yaml` instead. See screenshot.
+It is also possible to mix, and have both the JSON and the values file. As per `Helm` standard, the `set_key_values[]` will override those in the values file.
 
 Notice in `metadata.json` the set environment variable `imageTag`, and how it is referenced in `values_template.yaml` as `{{imageTag}}`.
 The KX.AS.CODE framework will automatically substitute the placeholder in `values_template.yaml` with the variable in `metadata.json`.
@@ -118,18 +179,21 @@ Once the initial development is done, publish the new solution to the message qu
 
 <pre>
 <code>
+<span style="white-space: pre-wrap; opacity: 0.5"># In your case, don't forget to change the installation folder "security" and application name "neuvector" to whatever is relevant for your application</span>
 <span style="white-space: pre-wrap;">rabbitmqadmin publish exchange=action_workflow routing_key=pending_queue payload='{"install_folder":"security","name":"neuvector","action":"install","retries":"0"}'</span>
 </code>
 </pre>
 
-Once the message is added to the pending_queue, you should get an installation started message.
+Once the message is added to the `pending_queue`, you should get an installation started message.
 
 ![](../assets/images/add_application_workflow3.png){: .zoom}
 
 ### Check that the solution came up successfully
 
 For demonstration purposes, this one failed. Open either the `Kubernetes Dashboard`, the `OpenLens` application, or use the `kubectl` CLI, to figure out what went wrong.
+
 In our example, it was an incorrect setting on the `pvc`.
+
 ![](../assets/images/add_application_workflow4.png){: .zoom}
 ![](../assets/images/add_application_workflow5.png){: .zoom}
 
@@ -147,29 +211,21 @@ If on the `wip_queue`, use the GUI to move the message to the `retry_queue`. In 
 
     helm uninstall _<application name\>_ --namespace _<namespace\>_
 
-    `helm uninstall neuvector --namespace neuvector`
+    !!! example
+        `helm uninstall neuvector --namespace neuvector`
 
 ![](../assets/images/add_application_workflow6.png){: .zoom}
 ![](../assets/images/add_application_workflow7.png){: .zoom}
 
 ### Re-Test Application
+
 Once the installation is successful and all pods are green, check that the desktop icon has appeared in the Desktop's Applications folder with the correct icon and tha the page opens up correctly and is functional, eg. login works and there are no errors inside the application.
 
 ![](../assets/images/add_application_workflow8.png){: .zoom}
 ![](../assets/images/add_application_workflow9.png){: .zoom}
 ![](../assets/images/add_application_workflow10.png){: .zoom}
 
-### Commit the Code to Github.com
-
-Start by creating a new feature from the develop branch (if you didn't already before you started developing).
-
-<pre>
-<code>
-git checkout develop
-<span style="opacity: 0.5">#git checkout -b feature/add-<i>&lt;name of application&gt;</i>-application</span>
-git checkout -b feature/add-neuvector-application
-</code>
-</pre>
+### Commit the Code to GitHub.com
 
 ![](../assets/images/add_application_workflow12.png){: .zoom}
 
@@ -177,7 +233,9 @@ You can also complete the actions in the VSCode built into the KX.AS.CODE VM, su
 
 ![](../assets/images/add_application_workflow13.png){: .zoom}
 
-Once committed, go to [Github.com](https://github.com/Accenture/kx.as.code/compare){:target="\_blank"} and create a [pull request](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request){:target="\_blank"}.
+### Create pull request
+
+Once committed, go to [GitHub.com](https://github.com/Accenture/kx.as.code/compare){:target="\_blank"} and create a [pull request](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request){:target="\_blank"}.
 
 ![](../assets/images/add_application_workflow14.png){: .zoom}
 
@@ -190,7 +248,7 @@ Someone from the core KX.AS.CODE development team will review your change and ei
 
 
 
-##### ArgoCD
+## ArgoCD
 
-##### Scripts
+## Scripts
 
