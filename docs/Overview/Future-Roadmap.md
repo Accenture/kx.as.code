@@ -9,3 +9,5 @@ Just some ideas for now. Let us know your thoughts.
 5. Add Private Cloud and Public Cloud builds to Jenkins setup
 6. Add more central functions for Gitlab and other solutions
 
+!!! tip
+    You can suggest any further ideas to our [KX.AS.CODE Discord channel](https://discord.gg/FXeavNQnC5){:target="\_blank"}, and subsequently [raise a feature request](/Overview/Raising-a-Feature-Request/) on GitHub.com.

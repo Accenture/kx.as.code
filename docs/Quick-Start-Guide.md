@@ -6,11 +6,13 @@ That said, editing the JSON directly is also not so difficult, but comes without
 
 As this is a quick start guide, we will concentrate on the Jenkins approach here, and cover the manual start-up and more advanced options in another guide.
 
-!!! info "PRE-REQUISITES: Although most things are checked automatically by various validation, you should have 2 things in place before launching KX.AS.CODE."
+!!! info 
+    PRE-REQUISITES: Although most things are checked automatically by various validation, you should have 2 things in place before launching KX.AS.CODE.
     - VirtualBox - https://www.virtualbox.org/wiki/Downloads
     - Vagrant - https://www.vagrantup.com/downloads
 
-!!! note "For your convenience, pre-built KX.AS.CODE images have been uploaded to the Vagrant Cloud. You can find them under the following links:"
+!!! note 
+    For your convenience, pre-built KX.AS.CODE images have been uploaded to the Vagrant Cloud. You can find them under the following links:
     - KX-Main - https://app.vagrantup.com/kxascode/boxes/kx-main
     - KX-Node - https://app.vagrantup.com/kxascode/boxes/kx-node
     
@@ -32,7 +34,8 @@ jenkins_listen_address = "127.0.0.1"  ## Set to localhost for security reasons
 jenkins_server_port = "8081"
 ```
 
-!!! info "If you are also intending to build KX.AS.CODE images, and not just launch existing public ones in the Vagrant Cloud, then you may need to add your Github.com credentials, if the repository is private. As the main KX.AS.CODE repository is public, this is not needed and the properties can be left blank."
+!!! info
+    If you are also intending to build KX.AS.CODE images, and not just launch existing public ones in the Vagrant Cloud, then you may need to add your Github.com credentials, if the repository is private. As the main KX.AS.CODE repository is public, this is not needed and the properties can be left blank.
     ```
     git_source_username = "change-me"
     git_source_password = "change-me"
@@ -40,7 +43,8 @@ jenkins_server_port = "8081"
 
 Everything else in the file goes beyond the Quick Start guide, and will be described on other pages.
 
-!!! note "Once the jenkins.env is ready, execute the launch script in order to start the Jenkins KX-Launcher job:"
+!!! note
+    Once the jenkins.env is ready, execute the launch script in order to start the Jenkins KX-Launcher job:
     ```
     # Mac/Linux
     ./launchLocalBuildEnvironment.sh
@@ -51,21 +55,25 @@ Everything else in the file goes beyond the Quick Start guide, and will be descr
     ```
 
 Once you receive the confirmation that Jenkins is up, you will receive the URL for accessing the launcher. Open it in your browser of choice.
-!!! info "The URL will look something like this:"
+!!! info
+    The URL will look something like this:
     `http://localhost:8081/job/KX.AS.CODE_Launcher/build?delay=0sec`
     Port and IP may be different depending on changes you made in `jenkins.env`.
 
 On first load of Jenkins, you will see KX.AS.CODE configuration panel. The tabs are all described below.
 
-!!! warning "Do not click the tabs in the configuration panel too quickly. This can cause a display error, as jenkins is still processing. We will manage this better in future, but for now just try to wait a couple of seconds before switching to the next tab. If you do hit the display snag, just refresh the browser and all will be good again"
+!!! warning 
+    Do not click the tabs in the configuration panel too quickly. This can cause a display error, as jenkins is still processing. We will manage this better in future, but for now just try to wait a couple of seconds before switching to the next tab. If you do hit the display snag, just refresh the browser and all will be good again.
 
-!!! note "You can ignore the Builder Config Panel at the bottom of the first tab, as the latest images are already available on the Vagrant Cloud and will be downloaded automatically."
+!!! note 
+    You can ignore the Builder Config Panel at the bottom of the first tab, as the latest images are already available on the Vagrant Cloud and will be downloaded automatically.
 
 When the configurator first loads, it will check all the system pre-requisites. If any of them show a warning, then you will need to fix those before attempting to launch KX.AS.CODE.
 
 The configurator automatically selects the profile dependent on the pre-requisites it found on your system. If you have multiple virtualization solutions, you can choose another by selecting an alternative "Profile" from the drop down.
 
-!!! warning  "Starting KX.AS.CODE with lower host system resources"
+!!! warning
+    Starting KX.AS.CODE with lower host system resources
     If you have less than 16GB RAM and less than 8 cores (16 threads/vCores) on your host, you should choose either the _Lite_ or _Minimal_ startup mode.
 
     | Start Up Mode | Normal | Lite | Minimal |
@@ -104,7 +112,9 @@ On the next tab, you can setup some general parameters. These are all optional. 
 
 The resource configuration tab allows you to select the host resources that you wish to allocate to the KX.AS.CODE virtual machine.
 
-!!! warning "Do not over allocate. The performance worsens if your host is starved of resources. At a minimum, leave at least 4 threads and 6gb ram to your host, so for a host with 32GB RAM and an Octa processor, you should allocate maximum, 12 of the 16 threads, and 24GB of the 32GB RAM available."
+!!! warning 
+    Do not over allocate. The performance worsens if your host is starved of resources. At a minimum, leave at least 4 threads and 6gb ram to your host, so for a host with 32GB RAM and an Octa processor, you should allocate maximum, 12 of the 16 threads, and 24GB of the 32GB RAM available.
+
     | Host | RAM Allocation | CPU vCores Allocation | 
     | ---------------|----------------|----------------|
     | 8GB RAM, 8 vCores | 4GB | 2 Cores |
@@ -122,12 +132,14 @@ If running in standalone, Lite or Minimal mode, the GlusterFS Network storage se
 
 If the network service is provisioned, the storage can be allocated automatically in Kubernetes using the `gluster-heketi-sc` storage class in the persistent volume claim.
 
-!!! tip "All storage is allocated thinly, so you can over allocate without issue, as long as you don't intend to actually use all the space. Over-allocating is useful, in order to give you more volumes of varying sizes to play with, when deploying Kubernetes workloads."
+!!! tip 
+    All storage is allocated thinly, so you can over allocate without issue, as long as you don't intend to actually use all the space. Over-allocating is useful, in order to give you more volumes of varying sizes to play with, when deploying Kubernetes workloads.
 
 ![](../assets/images/kx-as-code_configurator_storage-parameters.png){: .zoom}
 
 In the template selector you can pre-define which applications should be installed automatically after the core services have been installed. You can select multiple application groups. Careful not to select too much, else your experience will suffer, and you will start getting bouncing pods as they are evicted due to lack of physical resources.
-!!! note "Remember you can add and remove applications later once KX.AS.CODE is up. It is not necessary to select everything now."
+!!! note 
+    Remember you can add and remove applications later once KX.AS.CODE is up. It is not necessary to select everything now.
 
 ![](../assets/images/kx-as-code_configurator_template-selector.png){: .zoom}
 

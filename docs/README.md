@@ -5,7 +5,8 @@ Welcome to the KX.AS.CODE learning workstation. This virtual workstation was cre
 *   `PLAY`, `LEARN`, `EXPERIMENT`, `INNOVATE`, `SHARE` :muscle: :trophy:
 *   Share knowledge as code!
 
-!!! tip "KX.AS.CODE was built with the belief that playing and experimentation is the best way to learn new tricks and ultimately innovate." 
+!!! tip
+    KX.AS.CODE was built with the belief that playing and experimentation is the best way to learn new tricks and ultimately innovate. 
 
 As well as learning and sharing knowledge, there are several more use cases for this KX workstation. Here just a few more:
 
@@ -16,14 +17,23 @@ As well as learning and sharing knowledge, there are several more use cases for 
 *   Experimenting and innovating
 *   Test tool integrations
 
-!!! abstract "Want to get started quickly? Read our [Quick Start Guide](./Quick-Start-Guide/)."
+!!! abstract "Quick Start Guide"
+    Want to get started quickly? Read our [Quick Start Guide](./Quick-Start-Guide/).
+
+!!! tip "Applications Library"
+    Check out the [applications library](Overview/Application-Library/), to see which solutions can be installed with a single click!
+
+!!! example "Contribute an application"
+    If you want to contribute another application to KX.AS.CODE, read our [development walk-through](Development/Adding-a-Solution/)
 
 ## What is the KX.AS.CODE Workstation?
 It can be considered a fully automated cloud like Kubernetes environment with a lot of things you would expect to see when managing a Kubernetes cluster in the cloud, including an ingress controller, storage cluster, DNS services, a certificate authority... and the best bit, you just have to fill out a couple of config files and vagrant up/terraform apply, and you are on your way!
 
-!!! info "To find out more about what KX.AS.CODE is, and how it came about, read our [Questions and Answers](Overview/Questions_and_Answers/)."
+!!! question "Questions & Answers"
+    To find out more about what KX.AS.CODE is, and how it came about, read our [Questions and Answers](Overview/Questions_and_Answers/).
 
-!!! info "For a more detailed look at the components that make up KX.AS.CODE, check out the [Architecture](Overview/Architecture/)."
+!!! info "Architecture"
+    For a more detailed look at the components that make up KX.AS.CODE, check out the [Architecture](Overview/Architecture/).
 
 ## KX.AS.CODE Highlights
 
@@ -104,7 +114,8 @@ Since KX.AS.CODE is all about sharing knowledge as code, a pre-configured VSCode
 
 The KX.AS.CODE portal makes adding and removing applications easier, and provides status on current installed items.
 
-!!! warning "The portal is still in BETA, so may not always behave as expected."
+!!! warning 
+    The portal is still in BETA, so may not always behave as expected.
 
 ![](assets/images/kx.as.code_portal.png){: .zoom}
 
@@ -112,7 +123,8 @@ The KX.AS.CODE portal makes adding and removing applications easier, and provide
 
 Applications and be removed and added from the KX.AS.CODE Portal's application screen.
 
-!!! warning "The portal is still in BETA, so may not always behave as expected."
+!!! warning
+    The portal is still in BETA, so may not always behave as expected.
 
 ![](assets/images/kx.as.code_portal_applications.png){: .zoom}
 
@@ -121,7 +133,8 @@ Applications and be removed and added from the KX.AS.CODE Portal's application s
 Applications can be installed in integrated groups. This is still a work in progress. Currently, this page provides a view of the available groups, but not yet an option to install them.
 See the [manual installations](User-Guide/Manual-Provisioning/#installation-groups) page, on how to install the groups manually without the portal.
 
-!!! warning "The portal is still in BETA, so may not always behave as expected."
+!!! warning 
+    The portal is still in BETA, so may not always behave as expected.
 
 ![](assets/images/kx.as.code_portal_application_groups.png){: .zoom}
 
