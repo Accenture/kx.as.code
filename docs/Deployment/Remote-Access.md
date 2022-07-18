@@ -1,8 +1,26 @@
 # Remote Access
 
+There are two approaches to accessing applications remotely.
+1. Access the application URLs directly remotely
+2. Access the desktop remotely
 
+## Accessing application URLs directly from remote
 
-## Accessing KX.AS.CODE Remotely
+In order to access them securly with valid SSL certificates, you will need to first copy the self generated KX-Certs to your local machine, and then import them to your local certificate store. 
+cp -r /usr/share/kx.as.code/workspace/kx-certs /vagrant
+cp -r /usr/share/kx.as.code/workspace/certificates/kx_root_ca.pem /vagrant/kx-certs
+
+The Root CA must be imnported to your trusted root CA store. The other two can just be imported to your usual operating system's server certificate store.
+
+```bash
+# Windows: C:\Windows\System32\drivers\etc
+# Linux/MacOSX: /etc/hosts
+
+# Add the following line to your hosts file. 
+127.0.0.1 gitlab.demo1.kx-as-code.local argocd.demo1.kx-as-code.local minio-s3.demo1.kx-as-code.local mattermost.demo1.kx-as-code.local artifactory.demo1.kx-as-code.local kubernetes-dashboard.demo1.kx-as-code.local remote-desktop.demo1.kx-as-code.local
+```
+
+## Accessing KX.AS.CODE Desktop Remotely
 
 There are three ways to access KX.AS.CODE remotely.
 
@@ -14,7 +32,7 @@ Table: Remote desktop listening ports
 
 | Technology                                       | Listening Port |
 | ------------------------------------------------ | -------------- |
-| Apache Guacamole - https://guacamole.apache.org/ | 8098 (TCP)     |
+| Apache Guacamole - https://guacamole.apache.org/ | 8043 (TCP)     |
 | TigerVNC - https://tigervnc.org/                 | 5901 (TCP)     |
 | NoMachine - https://www.nomachine.com/           | 4000 (TCP/UDP) |
 

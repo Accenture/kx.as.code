@@ -10,8 +10,11 @@ document.querySelectorAll('.zoom-table').forEach(item => {
     })
 });
 
-
 let slideIndex = 1;
+showSlides(slideIndex, "gopass");
+showSlides(slideIndex, "keycloak");
+showSlides(slideIndex, "openlens");
+showSlides(slideIndex, "kubernetes-dashboard");
 showSlides(slideIndex, "argocd");
 showSlides(slideIndex, "neuvector");
 showSlides(slideIndex, "elasticsearch");
@@ -39,6 +42,9 @@ showSlides(slideIndex, "selenium4");
 showSlides(slideIndex, "sonarqube");
 showSlides(slideIndex, "sysdig-falco");
 showSlides(slideIndex, "teamcity");
+showSlides(slideIndex, "influxdb2");
+showSlides(slideIndex, "telegraf");
+showSlides(slideIndex, "telegraf-ds");
 
 // Next/previous controls
 function plusSlides(n, sliderGroup) {

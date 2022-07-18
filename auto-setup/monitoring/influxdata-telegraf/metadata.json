@@ -4,7 +4,7 @@
     "installation_type": "helm",
     "installation_group_folder": "monitoring",
     "environment_variables": {
-        "imageTag": "1.22-alpine"
+        "imageTag": "1.23.2-alpine"
     },
     "helm_params": {
         "repository_url": "https://helm.influxdata.com/",

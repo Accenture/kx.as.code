@@ -3,7 +3,13 @@ image:
   tag: {{imageTag}}
   pullPolicy: IfNotPresent
 
+## Annotations to be added to InfluxDB pods
+##
 podAnnotations: {}
+
+## Labels to be added to InfluxDB pods
+##
+podLabels: {}
 
 nameOverride: ""
 fullnameOverride: ""
@@ -21,7 +27,7 @@ resources: {}
   #  memory: 128Mi
   # requests:
   #  cpu: 100m
-#  memory: 128Mi
+  #  memory: 128Mi
 
 ## Node labels for pod assignment
 ## ref: https://kubernetes.io/docs/user-guide/node-selection/
@@ -49,7 +55,7 @@ livenessProbe: {}
   # initialDelaySeconds: 0
   # periodSeconds: 10
   # timeoutSeconds: 1
-# failureThreshold: 3
+  # failureThreshold: 3
 
 readinessProbe: {}
   # path: "/health"
@@ -58,7 +64,7 @@ readinessProbe: {}
   # periodSeconds: 10
   # timeoutSeconds: 1
   # successThreshold: 1
-# failureThreshold: 3
+  # failureThreshold: 3
 
 startupProbe:
   enabled: false
@@ -119,6 +125,31 @@ persistence:
   size: 5Gi
   mountPath: /var/lib/influxdb2
   subPath: ""
+
+## Add custom volume and volumeMounts
+##
+# volumes:
+#   - name: influxdb2-templates
+#     hostPath:
+#       path: /data/influxdb2-templates
+#       type: Directory
+# mountPoints:
+#   - name: influxdb2-templates
+#     mountPath: /influxdb2-templates
+#     readOnly: true
+
+## Allow executing custom init scripts
+## If the container finds any files with the .sh extension inside of the
+## /docker-entrypoint-initdb.d folder, it will execute them.
+## When multiple scripts are present, they will be executed in lexical sort order by name.
+## For more details see Custom Initialization Scripts in https://hub.docker.com/_/influxdb
+initScripts:
+  enabled: false
+  scripts:
+    init.sh: |+
+      #!/bin/bash
+      influx apply --force yes -u https://raw.githubusercontent.com/influxdata/community-templates/master/influxdb2_operational_monitoring/influxdb2_operational_monitoring.yml
+      influx apply --force yes -u https://raw.githubusercontent.com/influxdata/community-templates/master/k8s/k8s.yml
 
 ## Specify a service type
 ## ref: http://kubernetes.io/docs/user-guide/services/

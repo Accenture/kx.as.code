@@ -120,3 +120,16 @@ Included in this group are:
 rabbitmqadmin publish exchange=action_workflow routing_key=pending_queue payload='{"install_folder":"security","name":"vault","action":"install","retries":"0"}'
 rabbitmqadmin publish exchange=action_workflow routing_key=pending_queue payload='{"install_folder":"security","name":"vault","action":"install","retries":"0"}'
 ```
+
+### Tick Stack
+
+Included in this group are:
+
+- Influxdb2
+- Telegraf DS
+
+```bash
+rabbitmqadmin publish exchange=action_workflow routing_key=pending_queue payload='{"install_folder":"monitoring","name":"influxdata-influxdb2","action":"install","retries":"0"}'
+rabbitmqadmin publish exchange=action_workflow routing_key=pending_queue payload='{"install_folder":"monitoring","name":"influxdata-telegraf-ds","action":"install","retries":"0"}'
+rabbitmqadmin publish exchange=action_workflow routing_key=pending_queue payload='{"install_folder":"monitoring","name":"influxdata-telegraf","action":"install","retries":"0"}'
+```

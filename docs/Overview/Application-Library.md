@@ -1,5 +1,153 @@
 All the tools below are installable either from the [Jenkins based launcher](/Quick-Start-Guide/), the KX-Portal, or via the [command line](/Deployment/Manual-Provisioning/).
 
+## Core
+
+### Kubernetes Desktop
+<div class="description-dev"><q><i>Kubernetes-dashboard is a community managed lightweight code hosting solution written in Go. It is published under the MIT license.
+</i></q><br>- Kubernetes-dashboard</div>
+<div class="table">
+    <div class="rowGroup">
+        <div class="row">
+            <div class="cell-logo"><img src="../../assets/images/kubernetes.png" class="logo"></div>
+            <div class="cell-category">Core</div>
+            <div class="cell-screenshot">
+                <div class="slideshow-container">
+                    <div class="kubernetes-dashboardImage fade">
+                        <img class="zoom-table" src="../../assets/images/kubernetes-dashboard_screenshot1.png" style="width:100%">
+                    </div>
+                    <div class="kubernetes-dashboardImage fade">
+                        <img class="zoom-table" src="../../assets/images/kubernetes-dashboard_screenshot2.png" style="width:100%">
+                    </div>
+                    <a class="prev" onclick="plusSlides(-1,'kubernetes-dashboard')">&#10094;</a>
+                    <a class="next" onclick="plusSlides(1,'kubernetes-dashboard')">&#10095;</a>
+                </div>
+                <div style="text-align:center">
+                    <span class="kubernetes-dashboardDot" onclick="currentSlide(1,'kubernetes-dashboard')"></span>
+                    <span class="kubernetes-dashboardDot" onclick="currentSlide(2,'kubernetes-dashboard')"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<hr/>
+
+### OpenLens
+<div class="description-dev"><q><i>Openlens is a free and open user interface that lets you visualize your Elasticsearch data and navigate the Elastic Stack. Do anything from tracking query load to understanding the way requests flow through your apps.</i></q><br>- Elastic</div>
+<div class="table">
+    <div class="rowGroup">
+        <div class="row">
+            <div class="cell-logo"><img src="../../assets/images/openlens.png" class="logo"></div>
+            <div class="cell-category">Core</div>
+            <div class="cell-screenshot">
+                <div class="slideshow-container">
+                    <div class="openlensImage fade">
+                        <img class="zoom-table" src="../../assets/images/openlens_screenshot1.png" style="width:100%">
+                    </div>
+                    <div class="openlensImage fade">
+                        <img class="zoom-table" src="../../assets/images/openlens_screenshot2.png" style="width:100%">
+                    </div>
+                    <div class="openlensImage fade">
+                        <img class="zoom-table" src="../../assets/images/openlens_screenshot3.png" style="width:100%">
+                    </div>
+                    <div class="openlensImage fade">
+                        <img class="zoom-table" src="../../assets/images/openlens_screenshot4.png" style="width:100%">
+                    </div>
+                    <a class="prev" onclick="plusSlides(-1,'openlens')">&#10094;</a>
+                    <a class="next" onclick="plusSlides(1,'openlens')">&#10095;</a>
+                </div>
+                <div style="text-align:center">
+                    <span class="openlensDot" onclick="currentSlide(1,'openlens')"></span>
+                    <span class="openlensDot" onclick="currentSlide(2,'openlens')"></span>
+                    <span class="openlensDot" onclick="currentSlide(3,'openlens')"></span>
+                    <span class="openlensDot" onclick="currentSlide(4,'openlens')"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<hr/>
+
+### GoPass
+<div class="description-dev"><q><i>Gopass is a community managed lightweight code hosting solution written in Go. It is published under the MIT license.
+</i></q><br>- Gopass</div>
+<div class="table">
+    <div class="rowGroup">
+        <div class="row">
+            <div class="cell-logo"><img src="../../assets/images/gopass.png" class="logo"></div>
+            <div class="cell-category">Core</div>
+            <div class="cell-screenshot">
+                <div class="slideshow-container">
+                    <div class="gopassImage fade">
+                        <img class="zoom-table" src="../../assets/images/gopass_screenshot1.png" style="width:100%">
+                    </div>
+                    <a class="prev" onclick="plusSlides(-1,'gopass')">&#10094;</a>
+                    <a class="next" onclick="plusSlides(1,'gopass')">&#10095;</a>
+                </div>
+                <div style="text-align:center">
+                    <span class="gopassDot" onclick="currentSlide(1,'gopass')"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<hr/>
+
+### Keycloak
+<div class="description-dev"><q><i>Keycloak is a free and open user interface that lets you visualize your Elasticsearch data and navigate the Elastic Stack. Do anything from tracking query load to understanding the way requests flow through your apps.</i></q><br>- Elastic</div>
+<div class="table">
+    <div class="rowGroup">
+        <div class="row">
+            <div class="cell-logo"><img src="../../assets/images/keycloak.png" class="logo"></div>
+            <div class="cell-category">Core</div>
+            <div class="cell-screenshot">
+                <div class="slideshow-container">
+                    <div class="keycloakImage fade">
+                        <img class="zoom-table" src="../../assets/images/keycloak_screenshot1.png" style="width:100%">
+                    </div>
+                    <div class="keycloakImage fade">
+                        <img class="zoom-table" src="../../assets/images/keycloak_screenshot2.png" style="width:100%">
+                    </div>
+                    <div class="keycloakImage fade">
+                        <img class="zoom-table" src="../../assets/images/keycloak_screenshot3.png" style="width:100%">
+                    </div>
+                    <div class="keycloakImage fade">
+                        <img class="zoom-table" src="../../assets/images/keycloak_screenshot4.png" style="width:100%">
+                    </div>
+                    <div class="keycloakImage fade">
+                        <img class="zoom-table" src="../../assets/images/keycloak_screenshot5.png" style="width:100%">
+                    </div>
+                    <div class="keycloakImage fade">
+                        <img class="zoom-table" src="../../assets/images/keycloak_screenshot6.png" style="width:100%">
+                    </div>
+                    <a class="prev" onclick="plusSlides(-1,'keycloak')">&#10094;</a>
+                    <a class="next" onclick="plusSlides(1,'keycloak')">&#10095;</a>
+                </div>
+                <div style="text-align:center">
+                    <span class="keycloakDot" onclick="currentSlide(1,'keycloak')"></span>
+                    <span class="keycloakDot" onclick="currentSlide(2,'keycloak')"></span>
+                    <span class="keycloakDot" onclick="currentSlide(3,'keycloak')"></span>
+                    <span class="keycloakDot" onclick="currentSlide(4,'keycloak')"></span>
+                    <span class="keycloakDot" onclick="currentSlide(5,'keycloak')"></span>
+                    <span class="keycloakDot" onclick="currentSlide(6,'keycloak')"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<hr/>
+
+### LDAP Account Manager
+
+
+### Rabbitmq Manager
+
+
+### Postgresql Manager
+
+
+
+
+
 ## CICD
 <hr/>
 <span style="background-color: rgb(205, 209, 228, 0.3);">
@@ -337,6 +485,7 @@ All the tools below are installable either from the [Jenkins based launcher](/Qu
     </div>
 </div>
 <hr/>
+
 ### FileBeat
 <div class="description-dev"><q><i>Lightweight shipper for logs. Filebeat is part of the Elastic Stack, meaning it works seamlessly with Logstash, Elasticsearch, and Kibana. Whether you want to transform or enrich your logs and files with Logstash, fiddle with some analytics in Elasticsearch, or build and share dashboards in Kibana, Filebeat makes it easy to ship your data to where it matters most.</i></q><br>- Elastic</div>
 <div class="table">
@@ -558,6 +707,110 @@ All the tools below are installable either from the [Jenkins based launcher](/Qu
                 </div>
                 <div style="text-align:center">
                     <span class="graphiteDot" onclick="currentSlide(1,'graphite')"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<hr/>
+
+### Influxdata Influxdb2
+<div class="description-dev"><q><i>Influxdb2 is a free and open user interface that lets you visualize your Elasticsearch data and navigate the Elastic Stack. Do anything from tracking query load to understanding the way requests flow through your apps.</i></q><br>- Elastic</div>
+<div class="table">
+    <div class="rowGroup">
+        <div class="row">
+            <div class="cell-logo"><img src="../../assets/images/influxdb2.png" class="logo"></div>
+            <div class="cell-category">Monitoring</div>
+            <div class="cell-screenshot">
+                <div class="slideshow-container">
+                    <div class="influxdb2Image fade">
+                        <img class="zoom-table" src="../../assets/images/influxdb2_screenshot1.png" style="width:100%">
+                    </div>
+                    <div class="influxdb2Image fade">
+                        <img class="zoom-table" src="../../assets/images/influxdb2_screenshot2.png" style="width:100%">
+                    </div>
+                    <div class="influxdb2Image fade">
+                        <img class="zoom-table" src="../../assets/images/influxdb2_screenshot3.png" style="width:100%">
+                    </div>
+                    <div class="influxdb2Image fade">
+                        <img class="zoom-table" src="../../assets/images/influxdb2_screenshot4.png" style="width:100%">
+                    </div>
+                    <div class="influxdb2Image fade">
+                        <img class="zoom-table" src="../../assets/images/influxdb2_screenshot5.png" style="width:100%">
+                    </div>
+                    <div class="influxdb2Image fade">
+                        <img class="zoom-table" src="../../assets/images/influxdb2_screenshot6.png" style="width:100%">
+                    </div>
+                    <div class="influxdb2Image fade">
+                        <img class="zoom-table" src="../../assets/images/influxdb2_screenshot7.png" style="width:100%">
+                    </div>
+                    <div class="influxdb2Image fade">
+                        <img class="zoom-table" src="../../assets/images/influxdb2_screenshot8.png" style="width:100%">
+                    </div>
+                    <a class="prev" onclick="plusSlides(-1,'influxdb2')">&#10094;</a>
+                    <a class="next" onclick="plusSlides(1,'influxdb2')">&#10095;</a>
+                </div>
+                <div style="text-align:center">
+                    <span class="influxdb2Dot" onclick="currentSlide(1,'influxdb2')"></span>
+                    <span class="influxdb2Dot" onclick="currentSlide(2,'influxdb2')"></span>
+                    <span class="influxdb2Dot" onclick="currentSlide(3,'influxdb2')"></span>
+                    <span class="influxdb2Dot" onclick="currentSlide(4,'influxdb2')"></span>
+                    <span class="influxdb2Dot" onclick="currentSlide(5,'influxdb2')"></span>
+                    <span class="influxdb2Dot" onclick="currentSlide(6,'influxdb2')"></span>
+                    <span class="influxdb2Dot" onclick="currentSlide(7,'influxdb2')"></span>
+                    <span class="influxdb2Dot" onclick="currentSlide(8,'influxdb2')"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<hr/>
+
+### Influxdata Telegraf
+<div class="description-dev"><q><i>Telegraf is a free and open user interface that lets you visualize your Elasticsearch data and navigate the Elastic Stack. Do anything from tracking query load to understanding the way requests flow through your apps.</i></q><br>- Elastic</div>
+<div class="table">
+    <div class="rowGroup">
+        <div class="row">
+            <div class="cell-logo"><img src="../../assets/images/influxdb2.png" class="logo"></div>
+            <div class="cell-category">Monitoring</div>
+            <div class="cell-screenshot">
+                <div class="slideshow-container">
+                    <div class="telegrafImage fade">
+                        <img class="zoom-table" src="../../assets/images/influxdb2_screenshot8.png" style="width:100%">
+                    </div>
+                    <a class="prev" onclick="plusSlides(-1,'telegraf')">&#10094;</a>
+                    <a class="next" onclick="plusSlides(1,'telegraf')">&#10095;</a>
+                </div>
+                <div style="text-align:center">
+                    <span class="telegrafDot" onclick="currentSlide(8,'telegraf')"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<hr/>
+
+### Influxdata Telegraf-ds
+<div class="description-dev"><q><i>Telegraf-ds is a free and open user interface that lets you visualize your Elasticsearch data and navigate the Elastic Stack. Do anything from tracking query load to understanding the way requests flow through your apps.</i></q><br>- Elastic</div>
+<div class="table">
+    <div class="rowGroup">
+        <div class="row">
+            <div class="cell-logo"><img src="../../assets/images/influxdb2.png" class="logo"></div>
+            <div class="cell-category">Monitoring</div>
+            <div class="cell-screenshot">
+                <div class="slideshow-container">
+                    <div class="telegraf-dsImage fade">
+                        <img class="zoom-table" src="../../assets/images/influxdb2_screenshot6.png" style="width:100%">
+                    </div>
+                    <div class="telegraf-dsImage fade">
+                        <img class="zoom-table" src="../../assets/images/influxdb2_screenshot7.png" style="width:100%">
+                    </div>
+                    <a class="prev" onclick="plusSlides(-1,'telegraf-ds')">&#10094;</a>
+                    <a class="next" onclick="plusSlides(1,'telegraf-ds')">&#10095;</a>
+                </div>
+                <div style="text-align:center">
+                    <span class="telegraf-dsDot" onclick="currentSlide(1,'telegraf-ds')"></span>
+                    <span class="telegraf-dsDot" onclick="currentSlide(2,'telegraf-ds')"></span>
                 </div>
             </div>
         </div>
