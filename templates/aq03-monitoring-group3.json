@@ -10,6 +10,10 @@
       {
         "install_folder": "monitoring",
         "name": "influxdata-telegraf-ds"
+      },
+      {
+        "install_folder": "monitoring",
+        "name": "influxdata-telegraf"
       }
     ]
   }

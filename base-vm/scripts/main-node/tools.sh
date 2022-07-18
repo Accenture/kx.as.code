@@ -16,7 +16,8 @@ sudo apt-get -y install \
     conky-all \
     bc \
     dbus-x11 \
-    pwgen
+    pwgen \
+    kde-spectacle
 
 # Install Google-Chrome
 wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
