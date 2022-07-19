@@ -10,7 +10,7 @@ Many reasons! For our own learning and fun, for enabling others to enjoy and get
 Additionally, the machines we use at work or have sitting at home are getting more powerful all the time, and not everyone has access to a cloud account, so lets use that power we have at home or at work to do more! :metal:
 
 ## What makes this different to other solutions?
-As this we originally envisaged this as a DevOps training/enablement environment, we didn't just want to deploy a bunch of empty tools, but to make it feel like a live project environment, with repositories and docker images already populated, and some processes in place, to demonstrate for example, topics such as container runtime security or GitOps.
+As we originally envisaged this as a DevOps training/enablement environment, we didn't just want to deploy a bunch of empty tools, but to make it feel like a live project environment, with repositories and docker images already populated, and some processes in place, to demonstrate for example, topics such as container runtime security or GitOps.
 
 ## Where can I deploy KX.AS.CODE?
 KX.AS.CODE can be deployed locally or in the cloud, be it a private or public cloud. The most tested solutions are currently OpenStack and VirtualBox. Here a full list of solutions we have run KX.AS.CODE on.
@@ -34,10 +34,10 @@ After that, the more the merrier! 32GB upwards things are starting to look good.
 If you are deploying to the public cloud, then your possibilities are endless, and you can deploy the entire stack - currently around 30 DevOps tools and more to come!
 
 ## Sounds good! Where can I get the images?
-Currently, we do not have a public repository for the images needed for each virtualization solution. However, we have made it very easy to build your own. We have provided detailed instructions, but in short, you just need to fill out an environment file, run the Jenkins launch script, which creates your build environment, and finally, depending on the underlying solution, you can run the deployment jobs.
+You can either build your own boxes (needed if you customized the solution), or just have Vagrant pull them from the [Vagrant Cloud](https://app.vagrantup.com/kxascode) for you automatically.
 
-Only the VMs for the local virtualization environments (VMWare, VirtualBox, Parallels) can be deployed via Jenkins at the moment. The private and public cloud deployments need some command line love, but it's as easy as changing into the directory and executing `terraform apply`.
+Only the VMs for the local virtualization environments (VMWare, VirtualBox, Parallels) can be deployed via Jenkins at the moment. The private and public cloud deployments need some command line love, but it's as easy as changing into the directory and executing `terraform apply` (after modifying the base parameters in profile-config.json).
 
 ## Where is the solution now?
 
-I guess it will never be "finished". DevOps is a fast paced world with lots of great tools coming out all the time. KX.AS.CODE was created and continues to be worked on as a side project by some very passionate and dedicated DevOps Engineers at Accenture Interactive ASGR, who have not lost their appetite for learning and trying new tools, so expect more releases to come in future! :partying_face:
+I guess it will never be "finished". DevOps is a fast paced world with lots of great tools coming out all the time. KX.AS.CODE was created and continues to be worked on as a side project by some very passionate and dedicated DevOps Engineers at Accenture Interactive ASG, who have not lost their appetite for learning and trying new tools, so expect more releases to come in future! :partying_face:
