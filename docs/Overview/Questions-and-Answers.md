@@ -7,7 +7,7 @@ It can be considered as a local cloud like Kubernetes environment with a lot of 
 ## Why did we create this workstation?
 Many reasons! For our own learning and fun, for enabling others to enjoy and get into DevOps, as well as to give something back to the community, because we and everyone else in DevOps, benefit hugely from the wonderful OpenSource tools that are out there!
 
-Additionally, the machines we use at work or have sitting at home are getting more powerful all the time, and not everyone has access to a cloud account, so lets use that power we have at home or at work to do more! :metal:
+Additionally, the machines we use at work or have sitting at home are getting more powerful all the time, and not everyone has access to a cloud account, so lets use the power we have at home or at work to do more! :metal:
 
 ## What makes this different to other solutions?
 As we originally envisaged this as a DevOps training/enablement environment, we didn't just want to deploy a bunch of empty tools, but to make it feel like a live project environment, with repositories and docker images already populated, and some processes in place, to demonstrate for example, topics such as container runtime security or GitOps.
@@ -30,7 +30,7 @@ It is possible through configuration, if physical resources are low, to have an 
 ## What is the minimal specification?
 Whilst we have run it on some laptops with just 8GB ram, you will not have a good experience with this setup, even in standalone mode. The absolute minimum is a laptop/desktop/server with 12GB ram (allocating 8GB to KX.AS.CODE), although to have a good experience, it is recommended the host has at least 16GB ram, so that 12GB can be allocated to KX.AS.CODE.
 
-After that, the more the merrier! 32GB upwards things are starting to look good. The less memory and CPU cores you have, the less solutions/tools you can provision on your Kubernetes cluster.
+After that, the more the merrier! 24GB upwards things are starting to look good. The less memory and CPU cores you have, the less solutions/tools you can provision on your Kubernetes cluster.
 If you are deploying to the public cloud, then your possibilities are endless, and you can deploy the entire stack - currently around 30 DevOps tools and more to come!
 
 ## Sounds good! Where can I get the images?
