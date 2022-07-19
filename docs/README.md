@@ -30,7 +30,7 @@ As well as learning and sharing knowledge, there are several more use cases for 
 It can be considered a fully automated cloud like Kubernetes environment with a lot of things you would expect to see when managing a Kubernetes cluster in the cloud, including an ingress controller, storage cluster, DNS services, a certificate authority... and the best bit, you just have to fill out a couple of config files and vagrant up/terraform apply, and you are on your way!
 
 !!! question "Questions & Answers"
-    To find out more about what KX.AS.CODE is, and how it came about, read our [Questions and Answers](Overview/Questions_and_Answers/).
+    To find out more about what KX.AS.CODE is, and how it came about, read our [Questions and Answers](Overview/Questions-and-Answers/).
 
 !!! info "Architecture"
     For a more detailed look at the components that make up KX.AS.CODE, check out the [Architecture](Overview/Architecture/).
