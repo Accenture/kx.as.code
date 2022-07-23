@@ -47,9 +47,22 @@ sudo apt-get install -y netplan.io
 # Install BTOP
 mkdir ${INSTALLATION_WORKSPACE}/btop
 cd ${INSTALLATION_WORKSPACE}/btop
-wget https://github.com/aristocratos/btop/releases/download/v1.2.7/btop-x86_64-linux-musl.tbz
-echo "b3b7cd2a8ef6ebbbadab3ca7689096efa3e4b1e4e11b9a68ed6dedb1e3475fb5 btop-x86_64-linux-musl.tbz" | sha256sum --check
-bunzip2 ${INSTALLATION_WORKSPACE}/btop/btop-x86_64-linux-musl.tbz
-tar xvf ${INSTALLATION_WORKSPACE}/btop/btop-x86_64-linux-musl.tar
+if [[ -n $( uname -a | grep "aarch64") ]]; then
+  # Download URL for ARM64 CPU architecture
+  BTOP_URL="https://github.com/aristocratos/btop/releases/download/v1.2.8/btop-aarch64-linux-musl.tbz"
+  BTOP_CHECKSUM="5c8642bd9d8e38eee38980b5c39b8ee9c830f99470622cd137800899a905dd3f"
+else
+  # Download URL for X86_64 CPU architecture
+  BTOP_URL="https://github.com/aristocratos/btop/releases/download/v1.2.8/btop-x86_64-linux-musl.tbz"
+  BTOP_CHECKSUM="fd860e6d30e01fd6f30e161017cefceec799c5a617f9a5debc0947754b4d251c"
+fi
+
+wget ${BTOP_URL}
+BTOP_FILE=$(basename ${BTOP_URL})
+echo "${BTOP_CHECKSUM} ${BTOP_FILE}" | sha256sum --check
+
+bunzip2 ${INSTALLATION_WORKSPACE}/btop/${BTOP_FILE}
+BTOP_TAR=$(echo "${BTOP_FILE%.*}.tar")
+tar xvf ${INSTALLATION_WORKSPACE}/btop/${BTOP_TAR}
 sudo cp -f ${INSTALLATION_WORKSPACE}/btop/bin/btop /usr/local/bin
 rm -rf ${INSTALLATION_WORKSPACE}/btop
