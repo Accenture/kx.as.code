@@ -1,46 +1,88 @@
 {
   "variables": {},
-  "builders": [{
-    "type": "arm",
-    "file_urls" : ["https://downloads.raspberrypi.org/raspios_arm64/images/raspios_arm64-2022-04-07/2022-04-04-raspios-bullseye-arm64.img.xz"],
-    "file_checksum_url": "https://downloads.raspberrypi.org/raspios_arm64/images/raspios_arm64-2022-04-07/2022-04-04-raspios-bullseye-arm64.img.xz.sha256",
-    "file_checksum_type": "sha256",
-    "file_target_extension": "xz",
-    "file_unarchive_cmd": ["xz", "--decompress", "$ARCHIVE_PATH"],
-    "image_build_method": "reuse",
-    "image_path": "2022-04-04-raspios-bullseye-arm64.img",
-    "image_size": "6G",
-    "image_type": "dos",
-    "image_partitions": [
-      {
-        "name": "boot",
-        "type": "c",
-        "start_sector": "2048",
-        "filesystem": "fat",
-        "size": "256M",
-        "mountpoint": "/boot/firmware"
-      },
-      {
-        "name": "root",
-        "type": "83",
-        "start_sector": "526336",
-        "filesystem": "ext4",
-        "size": "2.8G",
-        "mountpoint": "/"
-      }
-
-    ],
-    "image_chroot_env": ["PATH=/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/bin:/sbin"],
-    "qemu_binary_source_path": "/usr/bin/qemu-aarch64-static",
-    "qemu_binary_destination_path": "/usr/bin/qemu-aarch64-static"
-  }],
+  "builders": [
+    {
+      "type": "arm",
+      "file_urls": [
+        "https://downloads.raspberrypi.org/raspios_arm64/images/raspios_arm64-2022-04-07/2022-04-04-raspios-bullseye-arm64.img.xz"
+      ],
+      "file_checksum_url": "https://downloads.raspberrypi.org/raspios_arm64/images/raspios_arm64-2022-04-07/2022-04-04-raspios-bullseye-arm64.img.xz.sha256",
+      "file_checksum_type": "sha256",
+      "file_target_extension": "xz",
+      "file_unarchive_cmd": [
+        "xz",
+        "--decompress",
+        "$ARCHIVE_PATH"
+      ],
+      "image_build_method": "reuse",
+      "image_path": "2022-04-04-raspios-bullseye-arm64.img",
+      "image_size": "6G",
+      "image_type": "dos",
+      "image_partitions": [
+        {
+          "name": "boot",
+          "type": "c",
+          "start_sector": "2048",
+          "filesystem": "fat",
+          "size": "256M",
+          "mountpoint": "/boot/firmware"
+        },
+        {
+          "name": "root",
+          "type": "83",
+          "start_sector": "526336",
+          "filesystem": "ext4",
+          "size": "2.8G",
+          "mountpoint": "/"
+        }
+      ],
+      "image_chroot_env": [
+        "PATH=/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/bin:/sbin"
+      ],
+      "qemu_binary_source_path": "/usr/bin/qemu-aarch64-static",
+      "qemu_binary_destination_path": "/usr/bin/qemu-aarch64-static"
+    }
+  ],
   "provisioners": [
     {
       "type": "shell",
       "inline": [
         "touch /tmp/test"
       ]
+    },
+    {
+      "environment_vars": [
+        "VM_USER={{user `vm_user`}}",
+        "VM_PASSWORD={{user `vm_password`}}",
+        "KX_HOME={{user `kx_home`}}",
+        "SKELDIR={{user `kx_home`}}/workspace/skel",
+        "SHARED_GIT_REPOSITORIES={{user `kx_home`}}/git",
+        "INSTALLATION_WORKSPACE={{user `kx_home`}}/workspace"
+      ],
+      "scripts": [
+        "../../../scripts/base/directories.sh",
+        "../../../scripts/base/vagrant-user.sh",
+        "../../../scripts/base/kx-user.sh",
+        "../../../scripts/base/update.sh",
+        "../../../scripts/base/locale.sh"
+      ],
+      "type": "shell",
+      "start_retry_timeout": "15m",
+      "expect_disconnect": "true"
     }
   ],
-  "post-processors": []
+  "post-processors": [],
+  "variables": {
+    "hostname": "kx-main",
+    "kx_home": "/usr/share/kx.as.code",
+    "http_proxy": "{{env `http_proxy`}}",
+    "https_proxy": "{{env `https_proxy`}}",
+    "no_proxy": "{{env `no_proxy`}}",
+    "ssh_fullname": "KX Hero",
+    "update": "true",
+    "base_image_ssh_user": "vagrant",
+    "vm_name": "kx-main",
+    "vm_user": "kx.hero",
+    "vm_password": "L3arnandshare"
+  }
 }
