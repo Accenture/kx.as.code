@@ -1,5 +1,4 @@
 {
-  "variables": {},
   "builders": [
     {
       "type": "arm",
@@ -14,7 +13,7 @@
         "--decompress",
         "$ARCHIVE_PATH"
       ],
-      "image_build_method": "reuse",
+      "image_build_method": "resize",
       "image_path": "2022-04-04-raspios-bullseye-arm64.img",
       "image_size": "6G",
       "image_type": "dos",
@@ -32,7 +31,7 @@
           "type": "83",
           "start_sector": "526336",
           "filesystem": "ext4",
-          "size": "2.8G",
+          "size": "0",
           "mountpoint": "/"
         }
       ],
@@ -107,7 +106,12 @@
         "../../../scripts/common/tools.sh",
         "../../../scripts/common/powerline.sh",
         "../../../scripts/common/docker.sh"
-      ]
+      ],
+       "type": "shell",
+       "pause_before": "60s",
+       "start_retry_timeout": "15m",
+       "expect_disconnect": "true"
+    }
   ],
   "post-processors": [],
   "variables": {
