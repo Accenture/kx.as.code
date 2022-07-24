@@ -4,6 +4,8 @@ set -euo pipefail
 # UrlEncode GIT password in case of special characters
 if [[ -n $GIT_SOURCE_TOKEN ]]; then
     GIT_SOURCE_TOKEN_ENCODED=$(python3 -c "import urllib.parse; print(urllib.parse.quote(input()))" <<< "${GIT_SOURCE_TOKEN}")
+else
+    GIT_SOURCE_TOKEN_ENCODED=""
 fi
 
 # Make directories for KX.AS.CODE checkout

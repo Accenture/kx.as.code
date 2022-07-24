@@ -8,6 +8,12 @@ Welcome to the KX.AS.CODE learning workstation. This virtual workstation was cre
 !!! tip
     KX.AS.CODE was built with the belief that playing and experimentation is the best way to learn new tricks and ultimately innovate. 
 
+!!! danger "NEW! Raspberry Pi Enablement!"
+
+    ![](assets/images/raspberrypi_logo.png){ width="35" align=left loading=lazy }
+
+    We just started a new project to enable ARM64, and more specifically, KX.AS.CODE on a Rasbperry Pi cluster. Read more in the Raspberry Pi [build](Build/Raspberry-Pi-Cluster/) and [deployment](Deployment/Raspberry-Pi-Cluster/) guides.
+
 As well as learning and sharing knowledge, there are several more use cases for this KX workstation. Here just a few more:
 
 *   Use it for demoing new technologies/tools/processes
