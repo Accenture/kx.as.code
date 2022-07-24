@@ -47,7 +47,18 @@ Once the images are built, they need to be flashed to the SD card.
 
 Download and install the [Raspberry Pi imager](https://www.raspberrypi.com/news/raspberry-pi-imager-imaging-utility/).
 
-Once installed, open it.
+Once installed, open it. and select the img you just built and the target SD card.
+
+!!! danger "Important note!"
+    Be 100% sure that you select the correct storage device in the Raspberry imaging device. To be safe, you may want to detach other removable storage. The imaging tool will remove all existing data from the target device!
+
+![](../assets/images/Raspberry_PI_Setup_5.png){ loading=lazy }
+
+Once the image is flashed to the SD card, you should be able to insert the SD card into the Raspberry Pi. Reboot it or switch it on, and you should see KX.AS.CODE starting up.
+
+If you kept all the defaults, you can log in with `kx.hero` and `L3arnandshare`.
+
+For more details on deploying the built images, see the [Raspberry Deployment Guide](../../Deployment/Raspberry-Pi-Cluster/).
 
 !!! info
     This guide is still a work in progress.
