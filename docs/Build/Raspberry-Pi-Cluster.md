@@ -48,3 +48,6 @@ Once the images are built, they need to be flashed to the SD card.
 Download and install the [Raspberry Pi imager](https://www.raspberrypi.com/news/raspberry-pi-imager-imaging-utility/).
 
 Once installed, open it.
+
+!!! info
+    This guide is still a work in progress.

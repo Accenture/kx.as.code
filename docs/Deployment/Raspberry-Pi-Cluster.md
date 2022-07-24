@@ -34,3 +34,5 @@ Most of the parts described above
 Not on the list and not mandatory, but a nice touch is to add some luminous labels. :smile:
 ![](../assets/images/Raspberry_PI_Setup_4.jpg){: .zoom}
 
+!!! info
+    This guide is still a work in progress.
