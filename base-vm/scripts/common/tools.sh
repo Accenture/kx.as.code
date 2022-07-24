@@ -40,7 +40,7 @@ sudo DEBIAN_FRONTEND=noninteractive apt-get -y install \
 # Install open-vm-tools if target is not a baremetal Raspberry Pi
 # TODO - Needs updating for Mac ARM64
 if [[ -z $( uname -a | grep "aarch64") ]]; then
-        sudo DEBIAN_FRONTEND=noninteractive apt-get -y install open-vm-tools
+  sudo DEBIAN_FRONTEND=noninteractive apt-get -y install open-vm-tools
 fi
 
 # Install Powerline Status
