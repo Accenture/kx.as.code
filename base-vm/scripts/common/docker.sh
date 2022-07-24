@@ -32,6 +32,7 @@ sudo apt-get -y install docker-ce docker-ce-cli containerd.io
 sudo usermod -aG docker $VM_USER
 
 # Setup daemon.
+sudo mkdir -p /etc/docker
 sudo bash -c 'cat > /etc/docker/daemon.json <<EOF
 {
   "exec-opts": ["native.cgroupdriver=systemd"],
