@@ -29,15 +29,8 @@ sudo apt-get full-upgrade -y
 sudo apt-get -y autoremove --purge
 sudo apt-get clean
 
-if [[ $DISABLE_IPV6 =~ true || $DISABLE_IPV6 =~ 1 ]]; then
-    echo "==> Disabling IPv6"
-    sudo sed -i 's/^GRUB_CMDLINE_LINUX=.*/GRUB_CMDLINE_LINUX="ipv6.disable=1"/' \
-        /etc/default/grub
-    #update-grub
-fi
-
-# Disable grub boot menu and splash screen - do nothing if running on ARM64
-if [[ -z $( uname -a | grep "aarch64") ]]; then
+# Disable grub boot menu and splash screen - do nothing if running on Raspberry Pi
+if [[ -z $(which raspinfo) ]]; then
   sudo sed -i -e '/^GRUB_TIMEOUT=/aGRUB_RECORDFAIL_TIMEOUT=0' \
       -e 's/^GRUB_CMDLINE_LINUX_DEFAULT=.*/GRUB_CMDLINE_LINUX_DEFAULT="quiet nosplash"/' \
       /etc/default/grub

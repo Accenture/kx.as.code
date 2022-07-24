@@ -41,8 +41,7 @@ sudo DEBIAN_FRONTEND=noninteractive apt-get -y install \
     psmisc
 
 # Install open-vm-tools if target is not a baremetal Raspberry Pi
-# TODO - Needs updating for Mac ARM64
-if [[ -z $( uname -a | grep "aarch64") ]]; then
+if [[ -z $( uname -a | grep "aarch64") ]] && [[ -z $(which raspinfo) ]]; then
   sudo DEBIAN_FRONTEND=noninteractive apt-get -y install open-vm-tools
 fi
 

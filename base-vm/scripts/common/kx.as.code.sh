@@ -1,7 +1,8 @@
 #!/bin/bash -x
 set -euo pipefail
 
-if [[ -z $( uname -a | grep "aarch64") ]]; then
+# Only modify Grub settings if not running on Raspberry Pi
+if [[ -z $(which raspinfo) ]]; then
 
   echo "COMPUTE_ENGINE_BUILD: ${COMPUTE_ENGINE_BUILD}"
   if [[ ${COMPUTE_ENGINE_BUILD} == "true"   ]]; then
