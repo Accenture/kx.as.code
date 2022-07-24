@@ -18,6 +18,7 @@ nav:
         - 'Overview/Raising-a-Feature-Request.md'
     - 'Build':
         - 'Build/Local-Virtualizations.md'
+        - 'Build\Raspberry-Pi-Cluster.md'
         - 'Build/Private-Clouds.md'
         - 'Build/Public-Clouds.md'
         - 'Build/Troubleshooting.md'
@@ -26,6 +27,7 @@ nav:
         - 'Deployment/Deployment-Profiles.md'
         - 'Deployment/Initial-Setup.md'
         - 'Deployment/Local-Virtualizations.md'
+        - 'Deployment\Raspberry-Pi-Cluster.md'
         - 'Deployment/Manual-Provisioning.md'
         - 'Deployment/Private-Clouds.md'
         - 'Deployment/Provisioning-Flow.md'
