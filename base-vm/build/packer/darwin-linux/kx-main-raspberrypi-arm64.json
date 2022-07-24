@@ -15,7 +15,7 @@
       ],
       "image_build_method": "resize",
       "image_path": "2022-04-04-raspios-bullseye-arm64.img",
-      "image_size": "6G",
+      "image_size": "10G",
       "image_type": "dos",
       "image_partitions": [
         {
