@@ -1,9 +1,9 @@
-# Deploy Images for Raspberry Pi Cluster
+# Raspberry Pi Cluster
 
 This guide will detail how to deploy the images you built for the KX.AS.CODE Raspberry Pi cluster.
 
-!!! danger
-This has only been tested on an 8GB Raspberry Pi 4B. It is not recommended to use anything less, as the resources will not be sufficient to run all the KX.AS.CODE services! Also note that one Raspberry Pi 4B will not be enough. In our testing, we have used four Raspberry Pi 4 boards setup in a 1 x KX-Main and 3 x KX-Workers configuration.
+!!! danger "Important"
+    This has only been tested on an 8GB Raspberry Pi 4B. It is not recommended to use anything less, as the resources will not be sufficient to run all the KX.AS.CODE services! Also note that one Raspberry Pi 4B will not be enough. In our testing, we have used four Raspberry Pi 4B boards setup in a 1 x KX-Main and 3 x KX-Workers configuration.
 
 Hardware Pre-requisites
 
@@ -26,13 +26,11 @@ Here some photos from our first setup, including some of our learnings.
 Most of the parts described above
 ![](../assets/images/Raspberry_PI_Setup_1.jpg){: .zoom}
 
-First Raspberry Pi 4B installed into the desktop server rack
-![](../assets/images/Raspberry_PI_Setup_2.jpg){: .zoom}
+!!! warning
+    The Raspberry Pi does not have enough power to keep the NVME drive running. A powered hub is required. Either choose another type of drive, or like us, purchase a bunch of powered hubs, to manage it
 
-First leaning. The Raspberry Pi does not have enough power to keep the NVME drive running. A powered hub is required. 
 ![](../assets/images/Raspberry_PI_Setup_3.jpg){: .zoom}
 
-Not on the list, but a nice touch is to add some luminous labels. :-)
+Not on the list and not mandatory, but a nice touch is to add some luminous labels. :smile:
 ![](../assets/images/Raspberry_PI_Setup_4.jpg){: .zoom}
-
 
