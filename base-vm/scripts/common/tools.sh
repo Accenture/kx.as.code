@@ -1,6 +1,9 @@
 #!/bin/bash -x
 set -euo pipefail
 
+# Enable SSH
+sudo systemctl enable ssh
+
 # Add retry config for apt
 echo 'APT::Acquire::Retries "3";' | sudo tee /etc/apt/apt.conf.d/80-retries
 
