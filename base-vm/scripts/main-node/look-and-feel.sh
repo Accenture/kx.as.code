@@ -9,15 +9,6 @@ if [[ -z $(which raspinfo) ]]; then
   # Install KDE-Plasma GUI
   sudo DEBIAN_FRONTEND=noninteractive apt install -y kde-plasma-desktop
 
-  # Copy files needed for KX.AS.CODE look and file to relevant places
-  sudo mkdir -p /usr/share/logos/
-  sudo cp ${INSTALLATION_WORKSPACE}/theme/logos/* /usr/share/logos/
-
-  # Copy files needed for KX.AS.CODE look and file to relevant places
-  sudo mkdir -p /usr/share/backgrounds/
-  sudo cp ${INSTALLATION_WORKSPACE}/theme/backgrounds/* /usr/share/backgrounds/
-  sudo rm -rf /usr/share/wallpapers/*
-
   # Change SDDM Login Screen
   sudo apt-get install -y qtbase5-dev qtchooser qt5-qmake qtbase5-dev-tools
   sudo apt install -y \
@@ -27,6 +18,15 @@ if [[ -z $(which raspinfo) ]]; then
       qml-module-qtgraphicaleffects
 
 fi
+
+# Copy files needed for KX.AS.CODE look and file to relevant places
+sudo mkdir -p /usr/share/logos/
+sudo cp ${INSTALLATION_WORKSPACE}/theme/logos/* /usr/share/logos/
+
+# Copy files needed for KX.AS.CODE look and file to relevant places
+sudo mkdir -p /usr/share/backgrounds/
+sudo cp ${INSTALLATION_WORKSPACE}/theme/backgrounds/* /usr/share/backgrounds/
+sudo rm -rf /usr/share/wallpapers/*
 
 # Change SDDM Login Screen
 sudo cp -r ${INSTALLATION_WORKSPACE}/theme/sddm/chili-0.1.5 /usr/share/sddm/themes
