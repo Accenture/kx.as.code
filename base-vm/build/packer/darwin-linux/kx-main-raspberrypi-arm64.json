@@ -111,6 +111,37 @@
        "pause_before": "60s",
        "start_retry_timeout": "15m",
        "expect_disconnect": "true"
+    },
+    {
+      "environment_vars": [
+        "BASE_IMAGE_SSH_USER={{user `base_image_ssh_user`}}",
+        "VM_USER={{user `vm_user`}}",
+        "VM_PASSWORD={{user `vm_password`}}",
+        "GIT_SOURCE_USER={{user `git_source_user`}}",
+        "GIT_SOURCE_TOKEN={{user `git_source_token`}}",
+        "GIT_SOURCE_BRANCH={{user `git_source_branch`}}",
+        "VERSION={{user `version`}}",
+        "KX_HOME={{user `kx_home`}}",
+        "SKELDIR={{user `kx_home`}}/workspace/skel",
+        "SHARED_GIT_REPOSITORIES={{user `kx_home`}}/git",
+        "INSTALLATION_WORKSPACE={{user `kx_home`}}/workspace",
+        "COMPUTE_ENGINE_BUILD={{user `compute_engine_build`}}"
+      ],
+      "scripts": [
+        "../../../scripts/main-node/tools.sh",
+        "../../../scripts/main-node/dns.sh",
+        "../../../scripts/main-node/kx.as.code.sh",
+        "../../../scripts/main-node/profile.sh",
+        "../../../scripts/main-node/look-and-feel.sh",
+        "../../../scripts/main-node/rabbitmq.sh",
+        "../../../scripts/main-node/vscode.sh",
+        "../../../scripts/main-node/update-skel.sh",
+        "../../../scripts/main-node/cleanup.sh"
+      ],
+      "type": "shell",
+      "pause_before": "60s",
+      "start_retry_timeout": "15m",
+      "expect_disconnect": "true"
     }
   ],
   "post-processors": [],

@@ -6,6 +6,7 @@ echo 'APT::Acquire::Retries "3";' | sudo tee /etc/apt/apt.conf.d/80-retries
 
 # Basic tools for all nodes - main and workers
 sudo DEBIAN_FRONTEND=noninteractive apt-get -y install \
+    software-properties-common \
     xfsprogs \
     net-tools \
     dnsutils \

@@ -12,7 +12,7 @@ sudo apt-get -y install \
 curl -fsSL https://download.docker.com/linux/debian/gpg | sudo apt-key add -
 sudo apt-key fingerprint 0EBFCD88
 
-# Install Debian Docker Repository
+# Determine CPU architecture
 if [[ -n $( uname -a | grep "aarch64") ]]; then
   ARCH="arm64"
 else
