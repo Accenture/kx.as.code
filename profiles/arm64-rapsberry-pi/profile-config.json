@@ -1,0 +1,54 @@
+{
+    "config": {
+        "allowWorkloadsOnMaster": "false",
+        "baseDomain": "kx-as-code.local",
+        "baseIpType": "static",
+        "basePassword": "L3arnandshare",
+        "baseUser": "kx.hero",
+        "certificationMode": false,
+        "defaultKeyboardLanguage": "de",
+        "disableLinuxDesktop": false,
+        "disableSessionTimeout": true,
+        "dnsResolution": "static",
+        "docker": {
+            "dockerhub_email": "",
+            "dockerhub_password": "",
+            "dockerhub_username": ""
+        },
+        "environmentPrefix": "demo1",
+        "glusterFsDiskSize": 200,
+        "local_volumes": {
+            "fifty_gb": 0,
+            "five_gb": 10,
+            "one_gb": 10,
+            "ten_gb": 10,
+            "thirty_gb": 0
+        },
+        "metalLbIpRange": {
+            "ipRangeEnd": "10.10.76.150",
+            "ipRangeStart": "10.10.76.100"
+        },
+        "proxy_settings": {
+            "http_proxy": "",
+            "https_proxy": "",
+            "no_proxy": ""
+        },
+        "sslProvider": "self-signed",
+        "standaloneMode": "false",
+        "staticNetworkSetup": {
+            "baseFixedIpAddresses": {
+                "kx-main1": "10.4.76.10",
+                "kx-main2": "10.4.76.11",
+                "kx-main3": "10.4.76.12",
+                "kx-worker1": "10.4.76.13",
+                "kx-worker2": "10.4.76.14",
+                "kx-worker3": "10.4.76.15",
+                "kx-worker4": "10.4.76.16"
+            },
+            "dns1": "10.4.76.10",
+            "dns2": "8.8.8.8",
+            "gateway": "10.4.76.1"
+        },
+        "virtualizationType": "none"
+    }
+}
