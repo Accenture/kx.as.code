@@ -1,4 +1,5 @@
 checkDockerHubRateLimit() {
+  export dockerAuthApiUrl="https://auth.docker.io/token?service=registry.docker.io&scope=repository:ratelimitpreview/test:pull"
   if [[ -f /var/tmp/.tmp.json ]]; then
     export dockerHubUsername=$(cat /var/tmp/.tmp.json | jq -r '.DOCKERHUB_USER')
     export dockerHubPassword=$(cat /var/tmp/.tmp.json | jq -r '.DOCKERHUB_PASSWORD')
@@ -9,6 +10,8 @@ checkDockerHubRateLimit() {
     else
       dockerHubToken=$(curl "${dockerAuthApiUrl}" | jq -r .token)
     fi
+  else
+    dockerHubToken=$(curl "${dockerAuthApiUrl}" | jq -r .token)
   fi
   curl --head -H "Authorization: Bearer ${dockerHubToken}" https://registry-1.docker.io/v2/ratelimitpreview/test/manifests/latest 2>&1 | sudo tee ${installationWorkspace}/rateLimitResponse.txt
   dockerHubRateLimitResponse=$(cat ${installationWorkspace}/rateLimitResponse.txt | grep -i RateLimit | cut -d' ' -f2 | cut -d';' -f1 || true)
