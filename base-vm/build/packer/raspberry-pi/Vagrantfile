@@ -26,5 +26,9 @@ Vagrant.configure("2") do |config|
     /usr/local/go/bin/go build -buildvcs=false
     sudo cp -f packer-builder-arm /usr/local/bin
 
+    # Building the GoPass-Ui package, as there is no ARM64 version available on the site
+    # Once built, the package will be copied into the target image for later installation via the usual KX.AS.CODE installation process
+    sudo bash -c "source /opt/nvm/nvm.sh && nvm install lts/fermium"
+    sudo bash -c "source /opt/nvm/nvm.sh && nvm use lts/fermium && npm install && npm run release"
   SHELL
 end
