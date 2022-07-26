@@ -1,6 +1,8 @@
 #!/bin/bash -x
 set -euo pipefail
 
+if [[ -z $(which raspinfo) ]]; then
+
 # Set default email and password to use and setup on first start of PGADMIN
 export PGADMIN_DEFAULT_EMAIL=admin@${baseDomain}
 export PGADMIN_DEFAULT_PASSWORD=${vmPassword}
@@ -80,3 +82,5 @@ fi
 
 # Restart NGINX so new virtual host is loaded
 /usr/bin/sudo systemctl restart nginx
+
+fi

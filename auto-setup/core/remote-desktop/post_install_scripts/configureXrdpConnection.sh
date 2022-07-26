@@ -1,6 +1,8 @@
 #!/bin/bash -x
 set -euo pipefail
 
+if [[ -z $(which raspinfo) ]]; then
+
 # Create and configure XRDP connection in Guacamole database
 echo """
 INSERT INTO public.guacamole_connection(
@@ -50,3 +52,5 @@ systemctl restart tomcat9
 systemctl restart guacd
 systemctl restart xrdp.service
 systemctl restart xrdp-sesman.service
+
+fi
