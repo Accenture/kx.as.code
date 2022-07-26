@@ -12,6 +12,9 @@ do
   echo "Loaded function $(cat ${function} | grep '()' | sed 's/{//g')"
 done
 
+# Establish whether running on AMD64 or ARM64 CPU architecture
+getCpuArchitecture
+
 # Declare variables to avoid ubound errors
 export retries="0"
 export action=""

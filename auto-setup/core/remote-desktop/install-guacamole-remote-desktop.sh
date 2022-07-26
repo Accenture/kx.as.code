@@ -1,6 +1,9 @@
 #!/bin/bash -x
 set -euo pipefail
 
+# Save resourcrs on the Raspberry Pi. Install NoMachine only.
+if [[ -z $(which raspinfo) ]]; then
+
 SHARED_GIT_REPOSITORIES=/usr/share/kx.as.code/git
 
 # Install & configure XRDP to ensure support for multiple users
@@ -301,4 +304,6 @@ if [[ -f /etc/apache2/ports.conf ]]; then
   fi
   systemctl restart apache2
   systemctl status apache2.service
+fi
+
 fi

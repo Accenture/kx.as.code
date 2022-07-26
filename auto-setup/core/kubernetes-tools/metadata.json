@@ -5,7 +5,8 @@
     "installation_group_folder": "core",
     "environment_variables": {
         "kubevalVersion": "v0.16.1",
-        "kubevalChecksum": "2d6f9bda1423b93787fa05d9e8dfce2fc1190fefbcd9d0936b9635f3f78ba790"
+        "kubevalChecksum": "2d6f9bda1423b93787fa05d9e8dfce2fc1190fefbcd9d0936b9635f3f78ba790",
+        "k3sVersion": "v1.21.12-rc2+k3s1"
     },
     "retry": "true",
     "install_scripts": [

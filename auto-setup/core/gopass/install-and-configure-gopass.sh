@@ -10,7 +10,7 @@ downloadFile "https://github.com/gopasspw/gopass/releases/download/v${gopassVers
   "${!gopassChecksum}" \
   "${installationWorkspace}/gopass_${gopassVersion}_linux_${cpuArchitecture}.deb"
 
-/usr/bin/sudo apt-get install -y ${installationWorkspace}/gopass_${gopassVersion}_linux_amd64.deb
+/usr/bin/sudo apt-get install -y ${installationWorkspace}/gopass_${gopassVersion}_linux_${cpuArchitecture}.deb
 
 # There is currently no packaged version for ARM64. #TODO - Add code to build GoPassUi for ARM64.
 if [[ "${cpuArchitecture}" == "amd64" ]]; then

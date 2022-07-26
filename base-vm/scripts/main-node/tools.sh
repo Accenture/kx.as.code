@@ -61,7 +61,7 @@ curl -sSL https://git.io/get-mo -o mo
 sudo mv mo /usr/local/bin
 sudo chmod 755 /usr/local/bin/mo
 
-if [[ ${COMPUTE_ENGINE_BUILD} == "true"  ]]; then
+if [[ ${COMPUTE_ENGINE_BUILD} == "true"  ]] || [[ -n $(which raspinfo) ]]; then
   # Install NoMachine
   mkdir ${INSTALLATION_WORKSPACE}/nomachine
   cd ${INSTALLATION_WORKSPACE}/nomachine
