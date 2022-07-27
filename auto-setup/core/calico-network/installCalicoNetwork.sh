@@ -12,7 +12,8 @@ for i in {1..10}; do
     kubectl apply -f ${installationWorkspace}/calico.yaml
     kubectl -n kube-system set env daemonset/calico-node FELIX_IGNORELOOSERPF=true
   else
-    #kubectl apply -f https://projectcalico.docs.tigera.io/manifests/calico.yaml
+    # Install Calico Network on Raspberry Pi
+    sed -i -e '/^          "mtu": __CNI_MTU__,/a\          "container_settings": {\n            "allow_ip_forwarding": true\n          },' calico.yaml
     kubectl apply -f ${installationWorkspace}/calico.yaml
   fi
 
