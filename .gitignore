@@ -35,6 +35,8 @@ terraform.tfstate.backup
 /.idea/
 **/*.vdi
 **/*.vmdk
+**/*.img
+base-vm/build/packer/raspberry-pi/packer-builder-arm
 **/kx.as.code_main-ip-address
 agent.jar
 amazon-corretto*

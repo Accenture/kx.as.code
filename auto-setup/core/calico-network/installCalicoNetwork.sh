@@ -2,17 +2,21 @@
 set -euo pipefail
 
 # Ensure Kubernetes is available before proceeding to the next step
-timeout -s TERM 6000 bash -c \
-    'while [[ "$(curl -s -k https://localhost:6443/livez)" != "ok" ]];\
-do sleep 5;\
-done'
+kubernetesHealthCheck
 
 for i in {1..10}; do
-  # Install Calico Network
   curl https://docs.projectcalico.org/${calicoVersion}/manifests/calico.yaml --output ${installationWorkspace}/calico.yaml
-  sed -i -e '/^            - name: FELIX_HEALTHENABLED/{:a; N; /\n              value: "true"/!ba; a\            - name: IP_AUTODETECTION_METHOD\n              value: "interface='${netDevice}'"' -e '}' ${installationWorkspace}/calico.yaml
-  kubectl apply -f ${installationWorkspace}/calico.yaml
-  kubectl -n kube-system set env daemonset/calico-node FELIX_IGNORELOOSERPF=true
+  if [[ -z $(which raspinfo) ]]; then
+    # Install Calico Network
+    sed -i -e '/^            - name: FELIX_HEALTHENABLED/{:a; N; /\n              value: "true"/!ba; a\            - name: IP_AUTODETECTION_METHOD\n              value: "interface='${netDevice}'"' -e '}' ${installationWorkspace}/calico.yaml
+    kubectl apply -f ${installationWorkspace}/calico.yaml
+    kubectl -n kube-system set env daemonset/calico-node FELIX_IGNORELOOSERPF=true
+  else
+    # Install Calico Network on Raspberry Pi
+    sed -i -e '/^          "mtu": __CNI_MTU__,/a\          "container_settings": {\n            "allow_ip_forwarding": true\n          },' calico.yaml
+    kubectl apply -f ${installationWorkspace}/calico.yaml
+  fi
+
   # Check that Calico node pods are running and exit loop if up
   if [[ -n $(kubectl get pods -n ${namespace} --field-selector=status.phase==Running --selector "k8s-app=calico-node" -o json | jq -r '.items[].metadata.name') ]]; then
     # Running Calico pod found. Break out of for loop

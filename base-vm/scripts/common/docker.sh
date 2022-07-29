@@ -12,9 +12,15 @@ sudo apt-get -y install \
 curl -fsSL https://download.docker.com/linux/debian/gpg | sudo apt-key add -
 sudo apt-key fingerprint 0EBFCD88
 
-# Install Debian Docker Repository
+# Determine CPU architecture
+if [[ -n $( uname -a | grep "aarch64") ]]; then
+  ARCH="arm64"
+else
+  ARCH="amd64"
+fi
+
 sudo add-apt-repository \
-    "deb [arch=amd64] https://download.docker.com/linux/debian \
+    "deb [arch=${ARCH}] https://download.docker.com/linux/debian \
    $(lsb_release -cs) \
    stable"
 
@@ -26,6 +32,7 @@ sudo apt-get -y install docker-ce docker-ce-cli containerd.io
 sudo usermod -aG docker $VM_USER
 
 # Setup daemon.
+sudo mkdir -p /etc/docker
 sudo bash -c 'cat > /etc/docker/daemon.json <<EOF
 {
   "exec-opts": ["native.cgroupdriver=systemd"],
@@ -44,8 +51,22 @@ sudo systemctl daemon-reload
 sudo systemctl restart docker
 
 # Install Docker Compose
-sudo curl -L "https://github.com/docker/compose/releases/download/1.26.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-sudo chmod +x /usr/local/bin/docker-compose
+mkdir ${INSTALLATION_WORKSPACE}/docker
+cd ${INSTALLATION_WORKSPACE}/docker
+if [[ -n $( uname -a | grep "aarch64") ]]; then
+  # Download URL for ARM64 CPU architecture
+  DOCKER_COMPOSE_URL="https://github.com/docker/compose/releases/download/v2.7.0/docker-compose-linux-aarch64"
+  DOCKER_COMPOSE_CHECKSUM="bcc79aff65b35581246feca30d53261eddcfc79285868061b31f3ff86d102563"
+else
+  # Download URL for X86_64 CPU architecture
+  DOCKER_COMPOSE_URL="https://github.com/docker/compose/releases/download/v2.7.0/docker-compose-linux-x86_64"
+  DOCKER_COMPOSE_CHECKSUM="184df811a70366fa339e99df38fc6ff24fc9e51b3388335efe51c1941377d4ce"
+fi
+wget  ${DOCKER_COMPOSE_URL}
+DOCKER_COMPOSE_FILE=$(basename ${DOCKER_COMPOSE_URL})
+echo "${DOCKER_COMPOSE_CHECKSUM} ${DOCKER_COMPOSE_FILE}" | sha256sum --check
+sudo chmod +x ${DOCKER_COMPOSE_FILE}
+sudo mv ${DOCKER_COMPOSE_FILE} /usr/local/bin/docker-compose
 
 # For ElasticSearch in ELK stack
 echo "vm.max_map_count=262144" | sudo tee -a /etc/sysctl.conf

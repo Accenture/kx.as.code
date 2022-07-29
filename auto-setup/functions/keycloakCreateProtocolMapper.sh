@@ -1,4 +1,4 @@
-createKeycloakProtocolMapper () {
+createKeycloakProtocolMapper() {
 
     # Assign incoming parameters to variables
     clientId=${1}
