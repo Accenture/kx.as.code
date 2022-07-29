@@ -265,7 +265,7 @@ while :; do
                 logFilename=$(setLogFilename)
                 log_debug "Launching installation process for \"${componentName}\": ${payload}"
                 log_debug ">>> ${autoSetupHome}/autoSetup.sh -a ${action} -c ${componentName} -f ${componentInstallationFolder} -r ${retries}"
-                ${autoSetupHome}/autoSetup.sh -a ${action} -c ${componentName} -f ${componentInstallationFolder} 2>> ${logFilename} || rc=$? && log_debug "Installation of \"${componentName}\" returned with rc=$rc"
+                ${autoSetupHome}/autoSetup.sh -a ${action} -c ${componentName} -f ${componentInstallationFolder} -r ${retries} 2>> ${logFilename} || rc=$? && log_debug "Installation of \"${componentName}\" returned with rc=$rc"
                 if [[ ${rc} -ne 0 ]]; then
                   log_error "Installation of returned with a non zero return code ($rc)"
                   echo ${payload} | sudo tee ${installationWorkspace}/current_payload.err

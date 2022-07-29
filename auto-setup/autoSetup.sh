@@ -23,7 +23,7 @@ do
   echo "Loaded function $(cat ${function} | grep '()' | sed 's/{//g')"
 done
 
-log_debug "Called autoSetup.sh with action: ${action}, componentName: ${componentName}, componentInstallationFolder: ${componentInstallationFolder}"
+log_debug "Called autoSetup.sh with action: ${action}, componentName: ${componentName}, componentInstallationFolder: ${componentInstallationFolder}, retries: ${retries}"
 
 # Define component install directory
 export installComponentDirectory=${autoSetupHome}/${componentInstallationFolder}/${componentName}

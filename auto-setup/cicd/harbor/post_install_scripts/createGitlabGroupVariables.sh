@@ -8,8 +8,8 @@ export personalAccessToken=$(cat /usr/share/kx.as.code/.config/.admin.gitlab.pat
 export kxascodeGroupId=$(curl -s --header "Private-Token: ${personalAccessToken}" https://gitlab.${baseDomain}/api/v4/groups | jq '.[] | select(.name=="kx.as.code") | .id')
 
 # Get Registry Robot Credentials for KX.AS.CODE project
-export kxRobotUser=$(cat /home/${baseUser}/.config/kx.as.code/.kx-harbor-robot.cred | jq -r '.name' | sed 's/\$/\$\$/g')
-export kxRobotToken=$(cat /home/${baseUser}/.config/kx.as.code/.kx-harbor-robot.cred | jq -r '.token')
+export kxRobotUser=$(cat /usr/share/kx.as.code/.config/.kx-harbor-robot.cred | jq -r '.name')
+export kxRobotToken=$(cat /usr/share/kx.as.code/.config/.kx-harbor-robot.cred | jq -r '.secret')
 
 # Create variable "REGISTRY_ROBOT_PASSWORD" in KX.AS.Code group
 groupVariableExists=$(curl --header "PRIVATE-TOKEN: ${personalAccessToken}" "https://gitlab.${baseDomain}/api/v4/groups/${kxascodeGroupId}/variables/REGISTRY_ROBOT_PASSWORD" | jq -r '.key')
