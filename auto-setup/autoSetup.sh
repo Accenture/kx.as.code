@@ -1,8 +1,37 @@
 #!/bin/bash
-set -euox pipefail
+
+# Read options passed to script via pollActionQueue.sh
+while getopts a:c:f:r: option
+do
+    case "${option}" in
+        a) action=${OPTARG};;
+        c) componentName=${OPTARG};;
+        f) componentInstallationFolder=${OPTARG};;
+        r) retries=${OPTARG};;
+    esac
+done
+
+# Get global base variables from globalVariables.json
+source /usr/share/kx.as.code/git/kx.as.code/auto-setup/functions/getGlobalVariables.sh # source function
+getGlobalVariables # execute function
+
+# Load Central Functions
+functionsLocation="${autoSetupHome}/functions"
+for function in $(find ${functionsLocation} -name "*.sh")
+do
+  source ${function}
+  echo "Loaded function $(cat ${function} | grep '()' | sed 's/{//g')"
+done
+
+log_debug "Called autoSetup.sh with action: ${action}, componentName: ${componentName}, componentInstallationFolder: ${componentInstallationFolder}"
+
+# Define component install directory
+export installComponentDirectory=${autoSetupHome}/${componentInstallationFolder}/${componentName}
+
+# Define location of metadata JSON file for component
+export componentMetadataJson=${installComponentDirectory}/metadata.json
 
 export rc=0
-
 mkdir -p ${installationWorkspace}
 
 # Install envhandlebars needed to do moustache variable replacements
@@ -10,6 +39,9 @@ installEnvhandlebars
 
 # Un/Installing Components
 log_info "-------- Component: ${componentName} Component Folder: ${componentInstallationFolder} Action: ${action}"
+
+# Source profile-config.json set for this KX.AS.CODE installation
+getProfileConfiguration
 
 # Get Component Installation Variables
 getComponentInstallationProperties
@@ -22,7 +54,7 @@ if [[ ${action} == "install"   ]]; then
     createKubernetesNamespace || rc=$? && log_info "Execution of createKubernetesNamespace() returned with rc=$rc"
     if [[ ${rc} -ne 0 ]]; then
       log_error "Execution of createKubernetesNamespace() returned with a non zero return code ($rc)"
-      return $rc
+      exit $rc
     fi
 
     log_info "installationType: ${installationType}"
@@ -37,7 +69,7 @@ if [[ ${action} == "install"   ]]; then
     autoSetupPreInstallSteps 2>> ${logFilename} || rc=$? && log_info "Execution of autoSetupPreInstallSteps() returned with rc=$rc"
     if [[ ${rc} -ne 0 ]]; then
       log_error "Execution of autoSetupPreInstallSteps() returned with a non zero return code ($rc)"
-      return $rc
+      exit $rc
     fi
 
     ####################################################################################################################################################################
@@ -48,7 +80,7 @@ if [[ ${action} == "install"   ]]; then
       autoSetupScriptInstall 2>> ${logFilename} || rc=$? && log_info "Execution of autoSetupScriptInstall() returned with rc=$rc"
     if [[ ${rc} -ne 0 ]]; then
       log_error "Execution of autoSetupScriptInstall() returned with a non zero return code ($rc)"
-      return $rc
+      exit $rc
     fi
 
     ####################################################################################################################################################################
@@ -59,7 +91,7 @@ if [[ ${action} == "install"   ]]; then
       autoSetupHelmInstall 2>> ${logFilename} || rc=$? && log_info "Execution of autoSetupHelmInstall() returned with rc=$rc"
     if [[ ${rc} -ne 0 ]]; then
       log_error "Execution of autoSetupHelmInstall() returned with a non zero return code ($rc)"
-      return $rc
+      exit $rc
     fi
 
     ####################################################################################################################################################################
@@ -70,7 +102,7 @@ if [[ ${action} == "install"   ]]; then
       autoSetupArgoCdInstall 2>> ${logFilename} || rc=$? && log_info "Execution of autoSetupArgoCdInstall() returned with rc=$rc"
     if [[ ${rc} -ne 0 ]]; then
       log_error "Execution of autoSetupArgoCdInstall() returned with a non zero return code ($rc)"
-      return $rc
+      exit $rc
     fi
 
     else
@@ -91,7 +123,7 @@ if [[ ${action} == "install"   ]]; then
       checkRunningKubernetesPods 2>> ${logFilename} || rc=$? && log_info "Execution of checkRunningKubernetesPods() returned with rc=$rc"
     if [[ ${rc} -ne 0 ]]; then
       log_error "Execution of checkRunningKubernetesPods() returned with a non zero return code ($rc)"
-      return $rc
+      exit $rc
     fi
 
       # Check if URL health checks defined in metadata.json return result as expected/described in metadata.json file
@@ -99,7 +131,7 @@ if [[ ${action} == "install"   ]]; then
       applicationDeploymentHealthCheck 2>> ${logFilename} || rc=$? && log_info "Execution of applicationDeploymentHealthCheck() returned with rc=$rc"
     if [[ ${rc} -ne 0 ]]; then
       log_error "Execution of applicationDeploymentHealthCheck() returned with a non zero return code ($rc)"
-      return $rc
+      exit $rc
     fi
 
     fi
@@ -117,7 +149,7 @@ if [[ ${action} == "install"   ]]; then
     postInstallStepLetsEncrypt 2>> ${logFilename} || rc=$? && log_info "Execution of postInstallStepLetsEncrypt() returned with rc=$rc"
     if [[ ${rc} -ne 0 ]]; then
       log_error "Execution of postInstallStepLetsEncrypt() returned with a non zero return code ($rc)"
-      return $rc
+      exit $rc
     fi
 
     # Execute scripts defined in metadata.json, listed post_install_scripts section
@@ -125,7 +157,7 @@ if [[ ${action} == "install"   ]]; then
     executePostInstallScripts 2>> ${logFilename} || rc=$? && log_info "Execution of executePostInstallScripts() returned with rc=$rc"
     if [[ ${rc} -ne 0 ]]; then
       log_error "Execution of executePostInstallScripts() returned with a non zero return code ($rc)"
-      return $rc
+      exit $rc
     fi
      
     ####################################################################################################################################################################
