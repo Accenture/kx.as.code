@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash
 set -euo pipefail
 
 # Replace commas with spaces for channelsToCreate variable from metadata.json

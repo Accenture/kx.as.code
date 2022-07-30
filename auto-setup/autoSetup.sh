@@ -1,15 +1,10 @@
 #!/bin/bash
 
-# Read options passed to script via pollActionQueue.sh
-while getopts a:c:f:r: option
-do
-    case "${option}" in
-        a) action=${OPTARG};;
-        c) componentName=${OPTARG};;
-        f) componentInstallationFolder=${OPTARG};;
-        r) retries=${OPTARG};;
-    esac
-done
+payload=${1}
+export retries=$(echo ${payload} | jq -c -r '.retries')
+export action=$(echo ${payload} | jq -c -r '.action')
+export componentName=$(echo ${payload} | jq -c -r '.name')
+export componentInstallationFolder=$(echo ${payload} | jq -c -r '.install_folder')
 
 # Get global base variables from globalVariables.json
 source /usr/share/kx.as.code/git/kx.as.code/auto-setup/functions/getGlobalVariables.sh # source function
@@ -22,6 +17,8 @@ do
   source ${function}
   echo "Loaded function $(cat ${function} | grep '()' | sed 's/{//g')"
 done
+
+export logFilename=$(setLogFilename "${componentName}" "${retries}")
 
 log_debug "Called autoSetup.sh with action: ${action}, componentName: ${componentName}, componentInstallationFolder: ${componentInstallationFolder}, retries: ${retries}"
 

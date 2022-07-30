@@ -15,7 +15,7 @@ spec:
   resources:
     requests:
       storage: 10Gi
-  storageClassName: gluster-heketi-sc
+  storageClassName: local-storage-sc
 """ | /usr/bin/sudo tee ${installationWorkspace}/docker-registry-pvc.yaml
 
 

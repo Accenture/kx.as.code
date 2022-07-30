@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash
 set -euo pipefail
 
 # Install Tools to Generate Certificate Authority
@@ -147,7 +147,7 @@ EOF
 
     # Import Certificates into Browser Certificate Repositories
     cat << EOF > ${installationWorkspace}/trustKXRootCAs.sh
-#!/bin/bash -x
+#!/bin/bash
 set -euo pipefail
 certfile="/usr/share/ca-certificates/kubernetes/kx-intermediate-ca.crt"
 certname="KX.AS.CODE Intermediate CA"

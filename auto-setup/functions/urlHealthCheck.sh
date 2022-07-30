@@ -6,7 +6,7 @@ checkUrlHealth() {
 
   export urlStatus="NOK"
 
-  for i in {1..20}; do
+  for i in {1..60}; do
       http_code=$(curl ${curlAuthOption} -s -o /dev/null -L -w '%{http_code}' ${urlToCall} || true)
       if [[ "${http_code}" == "${expectedHttpResponseCode}" ]]; then
           log_info "URL \"${urlToCall}\" seems healthy. Received expected response [RC=${http_code}]"
