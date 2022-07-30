@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash
 set -euo pipefail
 
 # Ensure to get the correct checksum from metadata.json depending on the CPU architecture (AMD64 or ARM64)

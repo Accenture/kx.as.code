@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash
 set -euo pipefail
 
 # Set variables
@@ -47,7 +47,7 @@ clientSecret=$(kubectl -n ${namespace} exec ${kcPod} --container ${kcContainer} 
     ${kcAdmCli} get clients/${clientId}/client-secret | jq -r '.value')
 
 # Create setup script for new users
-echo '''#!/bin/bash -x
+echo '''#!/bin/bash
 set -euo pipefail
 kubectl config set-credentials oidc \
 --exec-api-version=client.authentication.k8s.io/v1beta1 \

@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash
 set -euo pipefail
 
 # Save resourcrs on the Raspberry Pi. Install NoMachine only.

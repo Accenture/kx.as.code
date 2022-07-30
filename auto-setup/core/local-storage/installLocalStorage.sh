@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash
 set -euo pipefail
 
 # Install nvme-cli if running on host with NVMe block devices (for example on AWS with EBS)

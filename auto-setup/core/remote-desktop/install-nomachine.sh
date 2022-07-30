@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash
 set -euo pipefail
 
 # Do not install if public cloud or Raspberry Pi, as in these cases, NoMachine would have already been installed into the image.

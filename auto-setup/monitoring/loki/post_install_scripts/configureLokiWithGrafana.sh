@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash
 
 ## This scrips creates a loki Datasource in grafana and an integration between grafana and the loki such that the logs can be viewed in the grafana explore section.
 curl -X  POST -H "Accept: application/json" -H "Content-Type: application/json" https://${grafanaUser}:${grafanaPassword}@grafana.${baseDomain}/api/datasources --data-binary @- << EOF

@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash
 set -euo pipefail
 
 kubeAdminStatus=$(kubectl cluster-info | grep "is running at" || true)

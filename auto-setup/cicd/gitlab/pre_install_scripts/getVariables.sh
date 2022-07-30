@@ -1,5 +1,8 @@
-#!/bin/bash -x
+#!/bin/bash
 set -euo pipefail
 
-. ${installComponentDirectory}/helper_scripts/getMinIoAccessKey.sh
-. ${installComponentDirectory}/helper_scripts/getNginxControllerIp.sh
+# Get Mino-S3 access and secret keys
+minioS3GetAccessAndSecretKeys
+
+# Get NGINX controller IP
+export nginxIngressIp=$(getNginxControllerIp)

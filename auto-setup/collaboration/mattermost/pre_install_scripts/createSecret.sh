@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash
 set -euo pipefail
 
 # Copy Minio secret to Gitlab namespace for Mattermost to use

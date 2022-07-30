@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash
 set -euo pipefail
 
 # Copy Elastic Stack credentials & certificates from elastic-stack namespace to kube-system namespace
