@@ -126,7 +126,7 @@
     try {
 
         //TODO - change this away from hardcoded user URL - current entry for debugging only
-        def githubVersionJson = new JsonSlurper().parse('https://raw.githubusercontent.com/patdel76/kx/main/versions.json'.toURL())
+        def githubVersionJson = new JsonSlurper().parse('https://raw.githubusercontent.com/Accenture/kx.as.code/main/versions.json'.toURL())
         githubKxVersion = githubVersionJson.kxascode
         githubKubeVersion = githubVersionJson.kubernetes
 
