@@ -67,5 +67,7 @@
         "createSecrets.sh",
         "installMinIoCli.sh"
     ],
-    "post_install_scripts": []
+    "post_install_scripts": [
+        "intializeMinioS3.sh"
+    ]
 }

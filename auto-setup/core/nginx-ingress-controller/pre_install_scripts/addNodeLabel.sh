@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash
 set -euo pipefail
 
 # Set label on main node to ensure controller is deployed there

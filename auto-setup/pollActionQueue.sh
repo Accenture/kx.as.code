@@ -39,6 +39,8 @@ installEnvhandlebars
 # Check profile-config.json file is present before starting script
 waitForFile ${installationWorkspace}/profile-config.json
 
+export logFilename=$(setLogFilename "poller")
+
 cd ${installationWorkspace}
 
 # Copy metadata.json to installation workspace if it doesn't exist
@@ -120,6 +122,8 @@ fi
 # Poll pending queue and trigger actions if message is present
 while :; do
 
+    export logFilename=$(setLogFilename "poller")
+
     # Check if any actionQueue templates have been added and need processing
     if [[ -n $(ls ${installationWorkspace}/aq*.json 2>/dev/null || true) ]]; then
         populateActionQueuesJson
@@ -200,7 +204,7 @@ while :; do
                     log_debug "Moved component payload to failed_queue: ${payload}"
                     message="${componentName} installation failed after ${retries} retries. [$((${completedQueue} + 1))/${totalMessages}]"
                     notifyAllChannels "${message}" "error" "failed"
-                    retries=0
+                    export retries=0
                     rm -f ${installationWorkspace}/current_payload.err
                 fi
             fi
@@ -262,14 +266,16 @@ while :; do
 
                 # Launch the component installation process
                 rc=0
-                logFilename=$(setLogFilename)
                 log_debug "Launching installation process for \"${componentName}\": ${payload}"
-                log_debug ">>> ${autoSetupHome}/autoSetup.sh -a ${action} -c ${componentName} -f ${componentInstallationFolder} -r ${retries}"
-                ${autoSetupHome}/autoSetup.sh -a ${action} -c ${componentName} -f ${componentInstallationFolder} 2>> ${logFilename} || rc=$? && log_debug "Installation of \"${componentName}\" returned with rc=$rc"
+                log_debug "${autoSetupHome}/autoSetup.sh -a ${action} -c ${componentName} -f ${componentInstallationFolder} -r ${retries-0}"
+                log_debug "${autoSetupHome}/autoSetup.sh -- payload: ''${payload}''"
+
+                ${autoSetupHome}/autoSetup.sh ''${payload}'' 2>> ${logFilename} || rc=$? && log_debug "Installation of \"${componentName}\" returned with rc=$rc"
                 if [[ ${rc} -ne 0 ]]; then
                   log_error "Installation of returned with a non zero return code ($rc)"
                   echo ${payload} | sudo tee ${installationWorkspace}/current_payload.err
                 fi
+                export logFilename=$(setLogFilename "poller")
                 log_debug "Installation process for \"${componentName}\" returned with \$?=${logRc} and rc=$rc"
             fi
             sleep 5

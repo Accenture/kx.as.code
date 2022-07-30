@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash
 set -euo pipefail
 
 # Create secret for CA certificates. This ensures the ALM integration with Gitlab works

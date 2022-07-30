@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash
 set -euo pipefail
 
 # Import KX.AS.CODE Wildcard Certificate into Kubernetes

@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash
 set -euo pipefail
 
 # Ensure Kubernetes is available before proceeding to the next step

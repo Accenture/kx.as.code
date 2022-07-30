@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash
 set -euo pipefail
 
 # Get Personal Access Token
@@ -36,5 +36,3 @@ createGitlabVariable "PERSONAL_ACCESS_TOKEN" "${personalAccessToken}" "kx.as.cod
 createGitlabVariable "DOCKER_REGISTRY_DOMAIN" "${dockerRegistryDomain}" "kx.as.code"
 createGitlabVariable "BASE_DOMAIN" "${baseDomain}" "kx.as.code"
 createGitlabVariable "GIT_DOMAIN" "${gitDomain}" "kx.as.code"
-#createGitlabVariable "HARBOR_ROBOT_KX_USER" "${kxRobotUser}" "kx.as.code"
-#createGitlabVariable "HARBOR_ROBOT_KX_TOKEN" "${kxRobotToken}" "kx.as.code"

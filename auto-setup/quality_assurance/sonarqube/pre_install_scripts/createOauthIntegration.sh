@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash
 set -euo pipefail
 
 # Create application to facilitate Gitlab as OAUTH provider for SonarQube

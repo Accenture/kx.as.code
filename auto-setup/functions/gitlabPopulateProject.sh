@@ -8,7 +8,7 @@ populateGitlabProject() {
   # Create base directory for Gitlab Demo repositories
   mkdir -p ${installationWorkspace}/staging/
 
-  gitlabDomain="${componentName}.${baseDomain}"
+  gitlabDomain="gitlab.${baseDomain}"
 
   # Set Git committer details
   git config --global user.name "${baseUser}"

@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash
 set -euo pipefail
 
 # Do not install GlusterFS if standalone mode = true, as in this case, the vagrantfile does not mount the associated hard disk

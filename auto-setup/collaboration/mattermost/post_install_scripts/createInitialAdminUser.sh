@@ -1,9 +1,9 @@
 #!/bin/bash
 set -euox pipefail
 
-. ${installComponentDirectory}/helper_scripts/getLoginToken.sh
+mattermostAdminPassword=$(getPassword "mattermost-admin-password")
 
-if [[ -z ${mattermostLoginToken} ]]; then
+if [[ -z ${mattermostAdminPassword} ]]; then
     # Get pod for running CLI commands
     mattermostPod=$(kubectl get pod -n ${namespace} -l app.kubernetes.io/name=mattermost-team-edition  --output=name)
 
