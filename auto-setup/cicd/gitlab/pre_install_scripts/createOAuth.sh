@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash
 
 # Create Keycloak Client
 redirectUris="https://${componentName}.${baseDomain}/users/auth/openid_connect/callback"

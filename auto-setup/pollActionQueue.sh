@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash
 
 # Get global base variables from globalVariables.json
 source /usr/share/kx.as.code/git/kx.as.code/auto-setup/functions/getGlobalVariables.sh # source function
@@ -11,6 +11,9 @@ do
   source ${function}
   echo "Loaded function $(cat ${function} | grep '()' | sed 's/{//g')"
 done
+
+# Establish whether running on AMD64 or ARM64 CPU architecture
+getCpuArchitecture
 
 # Declare variables to avoid ubound errors
 export retries="0"
@@ -31,10 +34,12 @@ getVersions
 installEnvhandlebars
 
 # Import error handler
-source "${sharedGitHome}/kx.as.code/base-vm/dependencies/shell-core/base/trap.bash"
+#source "${sharedGitHome}/kx.as.code/base-vm/dependencies/shell-core/base/trap.bash"
 
 # Check profile-config.json file is present before starting script
 waitForFile ${installationWorkspace}/profile-config.json
+
+export logFilename=$(setLogFilename "poller")
 
 cd ${installationWorkspace}
 
@@ -100,17 +105,24 @@ sleep 5
 wipQueue=$(rabbitmqadmin list queues name messages --format raw_json | jq -r '.[] | select(.name=="wip_queue") | .messages')
 if [[ ${wipQueue} -ne 0 ]]; then
   payload=$(rabbitmqadmin get queue=wip_queue --format=raw_json ackmode=ack_requeue_false | jq -c -r '.[].payload')
-  log_info "WIP payload: ${payload}"
+  componentName=$(echo ${payload} | jq -c -r '.name')
+  log_debug "Loaded payload from wip_queue after restart: ${payload}"
   retries=$(echo ${payload} | jq -c -r '.retries')
   if [[ ${retries} -ge 3 ]]; then
     rabbitmqadmin publish exchange=action_workflow routing_key=failed_queue properties="{\"delivery_mode\": 2}" payload=''${payload}''
+    waitForMessageOnActionQueue "failed_queue" "${componentName}"
+    log_debug "Published payload from wip_queue to failed_queue after restart: ${payload}"
   else
     rabbitmqadmin publish exchange=action_workflow routing_key=retry_queue properties="{\"delivery_mode\": 2}" payload=''${payload}''
+    waitForMessageOnActionQueue "retry_queue" "${componentName}"
+    log_debug "Published payload from wip_queue to retry_queue after restart: ${payload}"
   fi
 fi
 
 # Poll pending queue and trigger actions if message is present
 while :; do
+
+    export logFilename=$(setLogFilename "poller")
 
     # Check if any actionQueue templates have been added and need processing
     if [[ -n $(ls ${installationWorkspace}/aq*.json 2>/dev/null || true) ]]; then
@@ -150,46 +162,49 @@ while :; do
 
         if [[ ${wipQueue} -ne 0 ]]; then
 
-            # In case of system restart, read payload from WIP queue, rather than relying on already set variables
+            # Read payload from WIP queue, rather than relying on already set variables
             payload=$(rabbitmqadmin get queue=wip_queue --format=raw_json ackmode=ack_requeue_false | jq -c -r '.[].payload')
-            echo "WIP payload: ${payload}"
+            log_debug "Read payload from wip_queue: ${payload}"
             export retries=$(echo ${payload} | jq -c -r '.retries')
             export action=$(echo ${payload} | jq -c -r '.action')
             export componentName=$(echo ${payload} | jq -c -r '.name')
             export componentInstallationFolder=$(echo ${payload} | jq -c -r '.install_folder')
             export retriesParameter=$(cat ${autoSetupHome}/${componentInstallationFolder}/${componentName}/metadata.json | jq -r '.retry?')
 
-            # Move item from pending to completed or error queue
-            if [[ ! -f ${installationWorkspace}/current_payload.err ]]; then
-                echo "Completed payload: ${payload}"
+            # Move item from wip to completed or error queue
+            if [[ ! -f ${installationWorkspace}/current_payload.err ]] && [[ -n ${payload} ]]; then
                 rabbitmqadmin publish exchange=action_workflow routing_key=completed_queue properties="{\"delivery_mode\": 2}" payload=''${payload}''
+                waitForMessageOnActionQueue "completed_queue" "${componentName}"
+                log_debug "Moved component payload from wip_queue to completed_queue: ${payload}"
                 message="${componentName} installed successfully [$((${completedQueue} + 1))/${totalMessages}]"
                 notifyAllChannels "${message}" "info" "success"
                 if [[ "${componentName}" == "${lastCoreElementToInstall}" ]]; then
                     message="CONGRATULATIONS. That concludes the core setup. Your optional components will now be installed"
                     notifyAllChannels "${message}" "info" "all_core_completed_successfully"
+                    log_debug "All core component have been installed successfully"
                 fi
                 retries=0
-            else
+            elif [[ -n ${payload} ]]; then
                 if [[ "${retriesParameter}" != "false" ]] && [[ ${retries} -lt 3 ]]; then
                     sleep 10
                     ((retries = ${retries} + 1))
                     payload=$(echo ${payload} | jq --arg retries ${retries} -c -r '.retries=$retries')
-                    log_info "Retry payload: ${payload}"
+                    log_debug "Moved component payload from wip_queue to retry_queue: ${payload}"
                     rabbitmqadmin publish exchange=action_workflow routing_key=retry_queue properties="{\"delivery_mode\": 2}" payload=''${payload}''
+                    waitForMessageOnActionQueue "retry_queue" "${componentName}"
                     cat ${installationWorkspace}/actionQueues.json | jq -c -r '(.state.processed[] | select(.name=="'${componentName}'").retries) = "'${retries}'"' | tee ${installationWorkspace}/actionQueues.json.tmp
                     mv ${installationWorkspace}/actionQueues.json.tmp ${installationWorkspace}/actionQueues.json
-                    message="${componentName} installation error after try #${retries}. Will retry three times maximum. [$((${completedQueue} + 1))/${totalMessages}]"
+                    message="${componentName} installation error after ${retries} retries. Will retry three times maximum. [$((${completedQueue} + 1))/${totalMessages}]"
                     notifyAllChannels "${message}" "warn" "failed"
-
                     rm -f ${installationWorkspace}/current_payload.err
                 else
                     payload=$(echo ${payload} | jq -c -r '(.retries)="0"' | jq -c -r '. += {"failed_retries":"'${retries}'"}')
-                    log_error "Failed payload: ${payload}"
                     rabbitmqadmin publish exchange=action_workflow routing_key=failed_queue properties="{\"delivery_mode\": 2}" payload=''${payload}''
-                    retries=0
+                    waitForMessageOnActionQueue "failed_queue" "${componentName}"
+                    log_debug "Moved component payload to failed_queue: ${payload}"
                     message="${componentName} installation failed after ${retries} retries. [$((${completedQueue} + 1))/${totalMessages}]"
                     notifyAllChannels "${message}" "error" "failed"
+                    export retries=0
                     rm -f ${installationWorkspace}/current_payload.err
                 fi
             fi
@@ -197,19 +212,23 @@ while :; do
 
         # If there is something in the wip or failed queue, do not schedule an installation
         if [[ ${wipQueue} -eq 0 ]] && [[ ${failedQueue} -eq 0 ]]; then
+            # Populate the payload
             if [[ ${retryQueue} -ne 0 ]]; then
                 # If no errors or wip, check first if there are any installation items that need to be retried, after a failure was fixed
+                log_debug "Found item in retry queue. Proceeding to get payload from retry_queue: ${payload}"
                 payload=$(rabbitmqadmin get queue=retry_queue --format=raw_json ackmode=ack_requeue_false | jq -c -r '.[].payload')
-                echo "Payload for retry queue = \"${payload}\""
             elif [[ ${pendingQueue} -ne 0 ]]; then
-            # If there were no retry items, check if there is anything in the pending queue that needs to be installed
+                # If there were no retry items, check if there is anything in the pending queue that needs to be installed
                 payload=$(rabbitmqadmin get queue=pending_queue --format=raw_json ackmode=ack_requeue_false | jq -c -r '.[].payload')
-                echo "Payload for pending queue = \"${payload}\""
+                log_debug "No items found in retry queue. Proceeding to get payload from pending_queue: ${payload}"
             else
+                # Nothing to process
+                log_debug "Found no messages in pending or retry queues. Nothing to do."
                 payload=""
             fi
             # Start the installation process if an item was found in the pending or retry queue
             if [ -n "${payload}" ]; then
+                log_debug "Found payload to process: ${payload}"
                 # Define Variables for autoSetup.sh script
                 export action=$(echo ${payload} | jq -r '.action')
                 export componentName=$(echo ${payload} | jq -r '.name')
@@ -226,12 +245,16 @@ while :; do
 
                 # Add item to wip queue to notify install is in progress
                 rabbitmqadmin publish exchange=action_workflow routing_key=wip_queue properties="{\"delivery_mode\": 2}" payload=''${payload}''
-                message="${componentName} installation started [$((${completedQueue} + 1))/${totalMessages}]"
-                notifyAllChannels "${message}" "info" "started"
+                waitForMessageOnActionQueue "wip_queue" "${componentName}"
+                if [[ ${retries} -eq 0 ]]; then
+                    log_debug "Notifiying installation started for ${componentName}, as not a retry - retries: ${retries}"
+                    message="${componentName} installation started [$((${completedQueue} + 1))/${totalMessages}]"
+                    notifyAllChannels "${message}" "info" "started"
+                fi
 
                 # Launch autoSetup.sh
                 if [[ "${componentName}" == "${firstCoreElementToInstall}" ]]; then
-                     notify "Initialization started. Please be patient. This could take up to 30 minutes, depending on your system size and speed of internet connection" "dialog-warning"
+                    notify "Initialization started. Please be patient. This could take up to 30 minutes, depending on your system size and speed of internet connection" "dialog-warning"
                     echo "${componentName} = ${firstCoreElementToInstall}"
                 fi
                 count=$((count + 1))
@@ -242,10 +265,18 @@ while :; do
                 checkDockerHubRateLimit
 
                 # Launch the component installation process
-                logFilename=$(setLogFilename)
-                . ${autoSetupHome}/autoSetup.sh &> ${logFilename}
-                logRc=$?
-                log_info "Installation process for \"${componentName}\" returned with \$?=${logRc} and rc=$rc"
+                rc=0
+                log_debug "Launching installation process for \"${componentName}\": ${payload}"
+                log_debug "${autoSetupHome}/autoSetup.sh -a ${action} -c ${componentName} -f ${componentInstallationFolder} -r ${retries-0}"
+                log_debug "${autoSetupHome}/autoSetup.sh -- payload: ''${payload}''"
+
+                ${autoSetupHome}/autoSetup.sh ''${payload}'' 2>> ${logFilename} || rc=$? && log_debug "Installation of \"${componentName}\" returned with rc=$rc"
+                if [[ ${rc} -ne 0 ]]; then
+                  log_error "Installation of returned with a non zero return code ($rc)"
+                  echo ${payload} | sudo tee ${installationWorkspace}/current_payload.err
+                fi
+                export logFilename=$(setLogFilename "poller")
+                log_debug "Installation process for \"${componentName}\" returned with \$?=${logRc} and rc=$rc"
             fi
             sleep 5
         fi

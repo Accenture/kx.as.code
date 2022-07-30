@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash
 set -euo pipefail
 
 # Ensure time is accurate
@@ -8,6 +8,7 @@ set -euo pipefail
 /usr/bin/sudo chown $(id -u ${baseUser}):$(id -g ${baseUser}) ${certificatesWorkspace}
 cd ${certificatesWorkspace}
 
+if [[ cpuArchitecture == "amd64" ]]; then
 # Download and install latest Kubectl and kubeadm binaries
 apt-get update && /usr/bin/sudo apt-get install -y apt-transport-https
 curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | /usr/bin/sudo apt-key add -
@@ -36,6 +37,21 @@ downloadFile "https://github.com/instrumenta/kubeval/releases/download/${kubeval
 
 tar xf ${installationWorkspace}/kubeval-linux-amd64.tar.gz -C ${installationWorkspace}
 /usr/bin/sudo cp -f ${installationWorkspace}/kubeval /usr/local/bin
+
+else
+
+  # Install K3S instead of K8s, due to limited resources on Raspberry Pi
+  curl -sfL https://get.k3s.io -o ${installationWorkspace}/k3s-install.sh
+
+  # Build binary for ARM64 as not available yet (at time of writing)
+  /usr/bin/sudo apt-get install -y golang
+  mkdir -p ${installationWorkspace}/kubeval
+  git clone --depth 1 --branch ${kubevalVersion} https://github.com/instrumenta/kubeval.git ${installationWorkspace}/kubeval
+  cd ${installationWorkspace}/kubeval
+  make build
+  /usr/bin/sudo ${installationWorkspace}/kubeval/bin/kubeval /usr/local/bin
+fi
+
 
 # Install Helm 3
 for i in {1..5}

@@ -26,5 +26,15 @@ Vagrant.configure("2") do |config|
     /usr/local/go/bin/go build -buildvcs=false
     sudo cp -f packer-builder-arm /usr/local/bin
 
+    # Building the GoPass-Ui package, as there is no ARM64 version available on the site
+    # Once built, the package will be copied into the target image for later installation via the usual KX.AS.CODE installation process
+
+    #sudo /bin/dd if=/dev/zero of=/var/swap.1 bs=1M count=1024
+    #sudo /bin/dd if=/dev/zero of=/var/swap.1 bs=1K count=4M
+    #sudo /sbin/mkswap /var/swap.1
+    #sudo /sbin/swapon /var/swap.1
+    #sudo bash -c "source /opt/nvm/nvm.sh && nvm install lts/gallium"
+    #source /opt/nvm/nvm.sh && nvm use lts/gallium && npm install --force --legacy-peer-deps && npm run release
+
   SHELL
 end

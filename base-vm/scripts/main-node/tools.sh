@@ -61,7 +61,7 @@ curl -sSL https://git.io/get-mo -o mo
 sudo mv mo /usr/local/bin
 sudo chmod 755 /usr/local/bin/mo
 
-if [[ ${COMPUTE_ENGINE_BUILD} == "true"  ]]; then
+if [[ ${COMPUTE_ENGINE_BUILD} == "true"  ]] || [[ -n $(which raspinfo) ]]; then
   # Install NoMachine
   mkdir ${INSTALLATION_WORKSPACE}/nomachine
   cd ${INSTALLATION_WORKSPACE}/nomachine
@@ -134,11 +134,12 @@ export lensVersion="v5.5.4"
 git clone --branch ${lensVersion} https://github.com/lensapp/lens.git
 cd ${INSTALLATION_WORKSPACE}/lens
 
+source /etc/profile.d/nvm.sh
+
 # Build OpenLens
 if [[ -z $(which raspinfo) ]]; then
-  source /etc/profile.d/nvm.sh
   nvm use --delete-prefix lts/fermium
-  make build || true # Do not fail KX.AS.CODE image build on error
+  sudo bash -c "cd /usr/share/kx.as.code/workspace/lens; source /etc/profile.d/nvm.sh; nvm use --delete-prefix lts/fermium; npm install -g yarn; yarn install; make build"
   debOpenLensInstaller=$(find ${INSTALLATION_WORKSPACE}/lens/dist -name "OpenLens-*.deb")
   mv ${debOpenLensInstaller} ${INSTALLATION_WORKSPACE}
 

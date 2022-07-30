@@ -20,12 +20,6 @@ config:
   MM_SERVICESETTINGS_ENABLELOCALMODE:  "true"
   MM_TEAMSETTINGS_SITENAME: "KX.AS.CODE ChatOps"
   MM_EMAILSETTINGS_ENABLESIGNUPWITHEMAIL: "false"
-  MM_GITLABSETTINGS_ENABLE: "true"
-  MM_GITLABSETTINGS_SECRET: "{{clientSecret}}"
-  MM_GITLABSETTINGS_ID: "mattermost"
-  MM_GITLABSETTINGS_AUTHENDPOINT: "https://keycloak.{{baseDomain}}/auth/realms/{{baseDomain}}/protocol/openid-connect/auth"
-  MM_GITLABSETTINGS_TOKENENDPOINT: "https://keycloak.{{baseDomain}}/auth/realms/{{baseDomain}}/protocol/openid-connect/token"
-  MM_GITLABSETTINGS_USERAPIENDPOINT: "https://keycloak.{{baseDomain}}/auth/realms/{{baseDomain}}/protocol/openid-connect/userinfo"
   
 ingress: 
   enabled: true

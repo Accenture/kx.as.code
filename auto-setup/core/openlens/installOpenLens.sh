@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash
 set -euo pipefail
 
 /usr/bin/sudo mkdir -p /home/${baseUser}/.config/OpenLens

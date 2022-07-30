@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash
 set -euo pipefail
 
 if [[ -z $(getPassword "gitlab-personal-access-token") ]]; then

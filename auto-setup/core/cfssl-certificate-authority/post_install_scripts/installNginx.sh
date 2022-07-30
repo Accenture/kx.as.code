@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash
 set -euo pipefail
 
 skelDirectory=/usr/share/kx.as.code/skel

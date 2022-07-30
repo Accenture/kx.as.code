@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash
 set -euo pipefail
 
 # Allow worklads on faster if toggle set to allow this on KX.AS.CODE launcher

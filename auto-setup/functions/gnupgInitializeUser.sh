@@ -18,7 +18,7 @@ chown -R ${userToInitialize}:${userToInitialize} ${installationWorkspace}/gnupg-
 chmod 700 ${installationWorkspace}/gnupg-${userToInitialize}
 
 # Generate ${installationWorkspace}/initializeGpg.sh script
-echo """#!/bin/bash -x
+echo """#!/bin/bash
 set -euo pipefail
 
 cd /home/${userToInitialize}/.gnupg
