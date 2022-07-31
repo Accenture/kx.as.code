@@ -125,7 +125,6 @@
 
     try {
 
-        //TODO - change this away from hardcoded user URL - current entry for debugging only
         def githubVersionJson = new JsonSlurper().parse('https://raw.githubusercontent.com/Accenture/kx.as.code/main/versions.json'.toURL())
         githubKxVersion = githubVersionJson.kxascode
         githubKubeVersion = githubVersionJson.kubernetes
@@ -307,15 +306,26 @@
                 <span><button type="button" class="selection-label selection-label-header">Start Mode</button></span>
             </span>
             <span id="normal" class="button-range-span selection-span" onclick="updateStartModeSelection(this.id)">
-                <span id="selection-normal-radio" class="selection-radio selection-radio-selected"><img id="selection-normal-svg" src="/userContent/icons/radiobox-marked.svg" class="svg-blue"></span><span id="selection-normal-label" class="selection-label selection-label-selected">Normal</span>
+                <span id="selection-normal-radio" class="selection-radio start-mode-selection-radio-selected"><img id="selection-normal-svg" src="/userContent/icons/radiobox-marked.svg" class="svg-blue"></span><span id="selection-normal-label" class="selection-label selection-label-selected">Normal</span>
             </span>
             <span id="lite" class="button-range-span selection-span" onclick="updateStartModeSelection(this.id)">
-                <span id="selection-lite-radio" class="selection-radio selection-radio-unselected"><img id="selection-lite-svg" src="/userContent/icons/radiobox-blank.svg" class="svg-blue"></span><span id="selection-lite-label" class="selection-label selection-label-unselected">Lite</span>
+                <span id="selection-lite-radio" class="selection-radio start-mode-selection-radio-unselected"><img id="selection-lite-svg" src="/userContent/icons/radiobox-blank.svg" class="svg-blue"></span><span id="selection-lite-label" class="selection-label selection-label-unselected">Lite</span>
             </span>
             <span id="minimal" class="button-range-span selection-span" onclick="updateStartModeSelection(this.id)">
-                <span id="selection-minimal-radio" class="selection-radio selection-radio-unselected"><img id="selection-minimal-svg" src="/userContent/icons/radiobox-blank.svg" class="svg-blue"></span><span id="selection-minimal-label" class="selection-label selection-label-unselected" style="border: 1px solid var(--kx-material-primary-70); border-width: 1px 1px 1px 0; border-radius: 0 5px 5px 0px;">Minimal</span>
+                <span id="selection-minimal-radio" class="selection-radio start-mode-selection-radio-unselected"><img id="selection-minimal-svg" src="/userContent/icons/radiobox-blank.svg" class="svg-blue"></span><span id="selection-minimal-label" class="selection-label selection-label-unselected" style="border: 1px solid var(--kx-material-primary-70); border-width: 1px 1px 1px 0; border-radius: 0 5px 5px 0px;">Minimal</span>
             </span>
     </span>
+    <span style="margin-left: 30px; display: inline-flex;">
+        <span class="button-range-span">
+            <span><button type="button" class="selection-label selection-label-header">Orchestrator</button></span>
+        </span>
+        <span id="k8s" class="button-range-span selection-span" onclick="updateOrchestratorSelection(this.id)">
+            <span id="selection-k8s-radio" class="selection-radio orchestrator-selection-radio-selected"><img id="selection-k8s-svg" src="/userContent/icons/radiobox-marked.svg" class="svg-blue"></span><span id="selection-k8s-label" class="selection-label selection-label-selected">K8s</span>
+        </span>
+        <span id="k3s" class="button-range-span selection-span" onclick="updateOrchestratorSelection(this.id)">
+            <span id="selection-k3s-radio" class="selection-radio orchestrator-selection-radio-unselected"><img id="selection-k3s-svg" src="/userContent/icons/radiobox-blank.svg" class="svg-blue"></span><span id="selection-k3s-label" class="selection-label selection-label-unselected" style="border: 1px solid var(--kx-material-primary-70); border-width: 1px 1px 1px 0; border-radius: 0 5px 5px 0px;">K3s</span>
+        </span>
+</span>
             
         </div>
         <style scoped="scoped" onload="populate_profile_option_list();">   </style>

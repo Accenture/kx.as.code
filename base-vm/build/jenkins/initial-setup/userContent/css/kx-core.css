@@ -1441,7 +1441,7 @@ select, option {
     font-weight: normal;
     border-bottom-left-radius: 5px;
     border-top-left-radius: 5px;
-    width: 270px;
+    width: 210px;
     height: 15px;
     padding-left: 5px;
     padding-top: 2px;
@@ -1450,7 +1450,7 @@ select, option {
 
 .cell-value {
     background-color: white;
-    width: 150px;
+    width: 100px;
     height: 15px;
     padding-right: 15px;
     padding-top: 2px;
@@ -1720,12 +1720,22 @@ select, option {
     text-align: right;
 }
 
-.selection-radio-selected {
+.start-mode-selection-radio-selected {
     background: var(--kx-very-light-grey);
     cursor: not-allowed;
 }
 
-.selection-radio-unselected {
+.start-mode-selection-radio-unselected {
+    background: white;
+    cursor: pointer;
+}
+
+.orchestrator-selection-radio-selected {
+    background: var(--kx-very-light-grey);
+    cursor: not-allowed;
+}
+
+.orchestrator-selection-radio-unselected {
     background: white;
     cursor: pointer;
 }

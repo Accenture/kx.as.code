@@ -416,6 +416,23 @@ try {
                     </div>                   
                 </div>
             </div>
+            <div class="flex-item">
+                <div class="table">
+                    <div class="row">
+                        <div class="cell cell-label">Start Mode</div>
+                        <div class="cell cell-value" id="summary-start-mode-value"></div>
+                    </div>
+                    <div class="row">
+                        <div class="cell cell-label">Orchestrator</div>
+                        <div class="cell cell-value" id="summary-orchestrator-value"></div>
+                    </div>
+                     <div class="row">
+                        <div class="cell cell-label">Profile</div>
+                         <div class="cell cell-value" id="summary-profile-value"></div>
+                        </div>
+                    </div>                   
+                </div>
+            </div>
          </div>
 
             <div class="div-border-text-inline">
