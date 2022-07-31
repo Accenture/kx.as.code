@@ -135,7 +135,7 @@ while [[ -z ${netDevice} ]] && [[ -z ${nodeIp} ]]; do
   if [[ "${baseIpType}" == "static" ]] &&  [[ ! -f /usr/share/kx.as.code/.config/network_status ]]; then
     export nodeIp="ignore"
   else
-    export nodeIp=$(ifconfig ${netDevice} | awk '/inet / {print $2}')
+    export nodeIp=$(ip -4 a show ${netDevice} | grep -oP '(?<=inet\s)\d+(\.\d+){3}')
   fi
 done
 
@@ -280,11 +280,13 @@ if [[ ${baseIpType} == "static"   ]]; then
 elif [[ -n $(dig kx-main1.${baseDomain} +short) ]]; then
   # Try DNS
   export kxMainIp=$(dig kx-main1.${baseDomain} +short)
+  export kxNodeIp=$(ip -4 a show ${netDevice} | grep -oP '(?<=inet\s)\d+(\.\d+){3}')
 else
     # If no static IP or DNS, wait for file containing KxMain IP
     timeout -s TERM 3000 bash -c 'while [ ! -f /var/tmp/kx.as.code_main-ip-address ];         do
     echo "Waiting for kx-main IP address" && sleep 5;         done'
     export kxMainIp=$(cat /var/tmp/kx.as.code_main-ip-address)
+    export kxNodeIp=$(ip -4 a show ${netDevice} | grep -oP '(?<=inet\s)\d+(\.\d+){3}')
 fi
 
 if [[ ! -f /usr/share/kx.as.code/.config/network_status ]]; then
@@ -571,7 +573,7 @@ elif [[ "${kubeOrchestrator}" == "k3s" ]]; then
 
   # Join K3s cluster
   k3sToken=$(/usr/bin/sudo -H -i -u "${vmUser}" bash -c "ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} 'sudo cat /var/lib/rancher/k3s/server/node-token'")
-  curl -sfL https://get.k3s.io | K3S_URL=https://${kxMainIp}:6443 K3S_TOKEN=${k3sToken} sh -
+  curl -sfL https://get.k3s.io | K3S_URL=https://${kxMainIp}:6443 INSTALL_K3S_EXEC="--node-ip ${kxNodeIp}" K3S_TOKEN=${k3sToken} sh -
 
 fi
 
