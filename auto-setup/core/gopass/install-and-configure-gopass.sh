@@ -15,11 +15,11 @@ downloadFile "https://github.com/gopasspw/gopass/releases/download/v${gopassVers
 # There is currently no packaged version for ARM64. #TODO - Add code to build GoPassUi for ARM64.
 if [[ "${cpuArchitecture}" == "amd64" ]]; then
   # Download & Install GoPass UI
-  downloadFile "https://github.com/codecentric/gopass-ui/releases/download/v${gopassUiVersion}/gopass-ui_${gopassUiVersion}_${cpuArchitecture}.deb" \
-    "${gopassUiChecksum}" \
-    "${installationWorkspace}/gopass-ui_${gopassUiVersion}_${cpuArchitecture}.deb"
+  downloadFile "https://github.com/codecentric/gopass-ui/releases/download/v${gopassAmd64UiVersion}/gopass-ui_${gopassAmd64UiVersion}_${cpuArchitecture}.deb" \
+    "${gopassAmd64UiChecksum}" \
+    "${installationWorkspace}/gopass-ui_${gopassAmd64UiVersion}_${cpuArchitecture}.deb"
 
-  /usr/bin/sudo apt-get install -y ${installationWorkspace}/gopass-ui_${gopassUiVersion}_${cpuArchitecture}.deb
+  /usr/bin/sudo apt-get install -y ${installationWorkspace}/gopass-ui_${gopassAmd64UiVersion}_${cpuArchitecture}.deb
 fi
  # Install GNUPG2 and RNG-Tools
 /usr/bin/sudo apt-get install -y gnupg2 rng-tools expect xclip

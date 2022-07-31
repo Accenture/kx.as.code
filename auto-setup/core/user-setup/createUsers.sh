@@ -7,6 +7,8 @@ export ldapAdminPassword=$(getPassword "openldap-admin-password")
 
 newGid=""
 
+/usr/bin/sudo apt-get install -y unscd
+
 if [[ ${numUsersToCreate} -ne 0 ]]; then
     for i in $(seq 0 $((numUsersToCreate - 1))); do
         echo "i: $i"
