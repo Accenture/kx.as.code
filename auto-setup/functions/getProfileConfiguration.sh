@@ -5,7 +5,8 @@ getProfileConfiguration() {
   export standaloneMode=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.standaloneMode')
   export baseIpType=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.baseIpType')
   export dnsResolution=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.dnsResolution')
-
+  export kubeOrchestrator=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.kubeOrchestrator')
+  
   if [[ ${baseIpType} == "static"   ]]; then
       # Get fixed IPs if defined
       export fixedIpHosts=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.staticNetworkSetup.baseFixedIpAddresses | keys[]')

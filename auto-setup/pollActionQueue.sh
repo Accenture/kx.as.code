@@ -197,6 +197,15 @@ while :; do
                     message="${componentName} installation error after ${retries} retries. Will retry three times maximum. [$((${completedQueue} + 1))/${totalMessages}]"
                     notifyAllChannels "${message}" "warn" "failed"
                     rm -f ${installationWorkspace}/current_payload.err
+                elif [[ "${retriesParameter}" == "skip" ]] && [[ ${retries} -lt 3 ]]; then
+                    payload=$(echo ${payload} | jq -c -r '(.retries)="0"' | jq -c -r '. += {"failed_retries":"'${retries}'"}')
+                    rabbitmqadmin publish exchange=action_workflow routing_key=skipped_queue properties="{\"delivery_mode\": 2}" payload=''${payload}''
+                    waitForMessageOnActionQueue "skipped_queue" "${componentName}"
+                    log_debug "Moved component payload to skipped_queue: ${payload}"
+                    message="${componentName} installation failed after ${retries} retries. Moved item to skipped queue and continuing. [$((${completedQueue} + 1))/${totalMessages}]"
+                    notifyAllChannels "${message}" "error" "failed"
+                    export retries=0
+                    rm -f ${installationWorkspace}/current_payload.err
                 else
                     payload=$(echo ${payload} | jq -c -r '(.retries)="0"' | jq -c -r '. += {"failed_retries":"'${retries}'"}')
                     rabbitmqadmin publish exchange=action_workflow routing_key=failed_queue properties="{\"delivery_mode\": 2}" payload=''${payload}''

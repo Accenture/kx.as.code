@@ -4,7 +4,7 @@ set -euo pipefail
 kubeAdminStatus=$(kubectl cluster-info | grep "is running at" || true)
 
 if [[ ! ${kubeAdminStatus} ]]; then
-    if [[ -z $(which raspinfo) ]]; then
+    if [[ "${kubeOrchestrator}" == "k8s" ]]; then
         # Pull Kubernetes images
         /usr/bin/sudo kubeadm config images pull
         /usr/bin/sudo kubeadm init --apiserver-advertise-address=${mainIpAddress} --pod-network-cidr=20.96.0.0/12 --upload-certs --control-plane-endpoint=api-internal.${baseDomain}:6443
@@ -19,7 +19,7 @@ if [[ ! ${kubeAdminStatus} ]]; then
         export KUBE_CONFIG_FILE=/etc/kubernetes/admin.conf
     else
         mkdir -p /root/.kube
-        INSTALL_K3S_VERSION=${k3sVersion} INSTALL_K3S_EXEC="--no-deploy=traefik --flannel-backend=none --disable-network-policy --cluster-cidr=10.20.76.0/16" bash ${installationWorkspace}/k3s-install.sh
+        INSTALL_K3S_VERSION=${k3sVersion} INSTALL_K3S_EXEC="--disable servicelb --disable traefik --flannel-backend=none --disable-network-policy --cluster-cidr=10.20.76.0/16 --cluster-init --advertise-address ${mainIpAddress} --kube-apiserver-arg default-not-ready-toleration-seconds=10 " bash ${installationWorkspace}/k3s-install.sh
         export KUBE_CONFIG_FILE=/etc/rancher/k3s/k3s.yaml
     fi
 
@@ -40,7 +40,7 @@ if [[ ! ${kubeAdminStatus} ]]; then
     fi
 
 else
-    log_warn "Kubernetes cluster is already initialized. Skipping"
+    log_info "Kubernetes cluster is already initialized. Skipping"
 fi
 
 # Output K8s cluster health
