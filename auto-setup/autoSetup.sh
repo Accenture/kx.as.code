@@ -18,6 +18,9 @@ do
   echo "Loaded function $(cat ${function} | grep '()' | sed 's/{//g')"
 done
 
+# Get K8s and K3s versions to install
+getVersions
+
 export logFilename=$(setLogFilename "${componentName}" "${retries}")
 
 log_debug "Called autoSetup.sh with action: ${action}, componentName: ${componentName}, componentInstallationFolder: ${componentInstallationFolder}, retries: ${retries}"
