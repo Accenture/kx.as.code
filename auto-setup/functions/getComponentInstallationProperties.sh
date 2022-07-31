@@ -16,6 +16,10 @@ getComponentInstallationProperties() {
   export applicationUrl=$(cat ${componentMetadataJson} | jq -r '.urls[0]?.url?')
   export applicationDomain=$(echo ${applicationUrl} | sed 's/https:\/\///g')
 
+  # Get desktop shortcut variables
+  export shortcutText=$(cat ${componentMetadataJson} | jq -r 'shortcut_text')
+  export shortcutIcon=$(cat ${componentMetadataJson} | jq -r 'shortcut_icon')
+
   # Set application environment variables if set in metadata.json
   if [[ "$(cat ${componentMetadataJson} | jq -r '.environment_variables')" != "null" ]]; then
     log_info "Processing environment variables for component ${componentName}"

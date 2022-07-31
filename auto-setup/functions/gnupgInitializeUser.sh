@@ -77,12 +77,12 @@ expect eof
 # Initialize GPG
 log_info "Initializing GNUGPG"
 chmod 755 ${installationWorkspace}/gnupg-${userToInitialize}/initializeGpg.sh
-sudo chown -R patrick:patrick ${installationWorkspace}/gnupg-${userToInitialize}
+/usr/bin/sudo chown -R ${userToInitialize}:${userToInitialize} ${installationWorkspace}/gnupg-${userToInitialize}
 /usr/bin/sudo -H -i -u ${userToInitialize} ${installationWorkspace}/gnupg-${userToInitialize}/initializeGpg.sh
 
 # Setup GoPass
 log_info "Setting up GoPass"
-/usr/bin/sudo -H -i -u ${userToInitialize} /usr/bin/expect ${installationWorkspace}/gnupg-${userToInitialize}/initializeGoPass.exp
+/usr/bin/sudo -H -i -u ${userToInitialize} /usr/bin/expect -d ${installationWorkspace}/gnupg-${userToInitialize}/initializeGoPass.exp
 
 # Insert first secret with GoPass -> KX.Hero Password
 log_info "Adding first password to GoPass for testing"

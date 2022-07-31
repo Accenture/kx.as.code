@@ -1,10 +1,10 @@
 gitlabCreateUser() {
 
     gitlabUserName=${1}
+    skipConfirmation=${2-true}
+    state=${3-active}
+    canCreateProject=${4-true}
     gitlabUserPassword=$(managedPassword "gitlab-${gitlabUserName}-user-password")
-    skipConfirmation=${3-true}
-    state=${4-active}
-    canCreateProject=${5-true}
 
     # Get Gitlab personal access token
     export personalAccessToken=$(getPassword "gitlab-personal-access-token")
