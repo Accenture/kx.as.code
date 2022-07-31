@@ -80,9 +80,14 @@ chmod 755 ${installationWorkspace}/gnupg-${userToInitialize}/initializeGpg.sh
 /usr/bin/sudo chown -R ${userToInitialize}:${userToInitialize} ${installationWorkspace}/gnupg-${userToInitialize}
 /usr/bin/sudo -H -i -u ${userToInitialize} ${installationWorkspace}/gnupg-${userToInitialize}/initializeGpg.sh
 
-# Setup GoPass
-log_info "Setting up GoPass"
-/usr/bin/sudo -H -i -u ${userToInitialize} /usr/bin/expect -d ${installationWorkspace}/gnupg-${userToInitialize}/initializeGoPass.exp
+# Check if GoPass already initialized
+/usr/bin/sudo -H -i -u ${userToInitialize} bash -c 'echo "123" | gopass insert '${baseDomain}'/test' || rc=$?
+if [[ ${rc} != 0 ]]; then
+    # Setup GoPass
+    log_info "Setting up GoPass"
+    timeout -s TERM 60 bash -c '/usr/bin/sudo -H -i -u '${userToInitialize}' /usr/bin/expect -d '${installationWorkspace}'/gnupg-'${userToInitialize}'/initializeGoPass.exp'
+fi
+/usr/bin/sudo -H -i -u ${userToInitialize} bash -c 'gopass delete -f '${baseDomain}'/test'
 
 # Insert first secret with GoPass -> KX.Hero Password
 log_info "Adding first password to GoPass for testing"
