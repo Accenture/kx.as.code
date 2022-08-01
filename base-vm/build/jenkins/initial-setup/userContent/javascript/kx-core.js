@@ -1522,7 +1522,7 @@ function getAvailableLocalBoxes() {
             document.getElementById("local-main-version-status-svg").src = "/userContent/icons/checkbox-marked-circle-outline.svg";
             document.getElementById("local-main-version-status-svg").className = "checklist-status-icon svg-bright-green";
         } else {
-            document.getElementById("kx-main-local-box-version").innerHTML = "<i>Not found</i>";
+            document.getElementById("kx-main-local-box-version").innerHTML = "<i>- (optional)</i>";
             document.getElementById("local-main-version-status-svg").src = "/userContent/icons/alert-outline.svg";
             document.getElementById("local-main-version-status-svg").className = "checklist-status-icon svg-orange-red";
         }
@@ -1532,7 +1532,7 @@ function getAvailableLocalBoxes() {
             document.getElementById("local-node-version-status-svg").src = "/userContent/icons/checkbox-marked-circle-outline.svg";
             document.getElementById("local-node-version-status-svg").className = "checklist-status-icon svg-bright-green";
         } else {
-            document.getElementById("kx-node-local-box-version").innerHTML = "<i>Not found</i>";
+            document.getElementById("kx-node-local-box-version").innerHTML = "<i>- (Optional)</i>";
             document.getElementById("local-node-version-status-svg").src = "/userContent/icons/alert-outline.svg";
             document.getElementById("local-node-version-status-svg").className = "checklist-status-icon svg-orange-red";
             document.getElementById('standalone-mode-toggle').value = "true";
