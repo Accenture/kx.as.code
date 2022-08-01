@@ -1149,7 +1149,7 @@ select {
 }
 
 .build-action-text-value {
-    width: 140px;
+    width: 150px;
     border: none;
     color: var(--kx-very-dark-grey-100);
     padding: 2px 2px;

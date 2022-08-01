@@ -355,7 +355,7 @@
             <div class="div-border-text-inline">
                 <h2 class="h2-header-in-line"><span class="span-h2-header-in-line"><img class="svg-blue" src="/userContent/icons/robot-industrial-outline.svg" height="25" width="25">&nbsp;Builder Config Panel</span></h2>
                 <div class="div-inner-h2-header-in-line-wrapper">
-                    <span class="description-paragraph-span"><p>Below you can see the last executed builds for each image tpe if there were any. If none, then click the play button for each type of node.</p></span>
+                    <span class="description-paragraph-span"><p>Below you can see the last executed builds for each image type if there were any. <b>You do not need to build your own images if you have not customized any code and just want to start up the KX.AS.CODE environment.</b> The existing images will be downloaded from the Vagrant Cloud automatically.</p></span>
                 </div>
                 <div style="width: 100%;">
                     <span style="width: 940px;">
