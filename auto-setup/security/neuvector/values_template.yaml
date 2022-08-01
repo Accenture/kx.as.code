@@ -53,7 +53,7 @@ controller:
     enabled: true
     accessModes:
       - ReadWriteOnce
-    storageClass: gluster-heketi-sc
+    storageClass: kadalu.storage-pool-1
     capacity: 1Gi
   azureFileShare:
     enabled: false

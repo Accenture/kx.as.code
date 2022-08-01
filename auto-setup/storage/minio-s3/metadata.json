@@ -9,7 +9,7 @@
         "helm_version": "",
         "set_key_values": [
             "persistence.enabled=true",
-            "persistence.storageClass=gluster-heketi-sc",
+            "persistence.storageClass=kadalu.storage-pool-1",
             "persistence.size=10Gi",
             "persistence.accessMode=ReadWriteOnce",
             "existingSecret=minio-accesskey-secret",

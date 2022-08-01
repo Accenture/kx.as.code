@@ -4,7 +4,7 @@ metadata:
   name: confluence-server-pvclaim
   namespace: {{namespace}}
 spec:
-  storageClassName: gluster-heketi-sc
+  storageClassName: kadalu.storage-pool-1
   accessModes:
     - ReadWriteOnce
   resources:

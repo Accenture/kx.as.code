@@ -1,0 +1,6 @@
+cainjector:
+  enabled: true
+  replicaCount: 1
+
+  extraArgs:
+    - --leader-elect=false

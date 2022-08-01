@@ -6,7 +6,7 @@ metadata:
 spec:
   accessModes:
     - ReadWriteOnce
-  storageClassName: gluster-heketi-sc
+  storageClassName: kadalu.storage-pool-1
   resources:
     requests:
       storage: 1Gi
