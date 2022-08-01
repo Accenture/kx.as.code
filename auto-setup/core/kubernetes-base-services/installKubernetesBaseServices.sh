@@ -47,6 +47,7 @@ if [[ ! ${kubeAdminStatus} ]] || [[ "${kubeOrchestrator}" == "k3s" ]]; then
     cp -f ${KUBE_CONFIG_FILE} /root/.kube/config
     /usr/bin/sudo -H -i -u ${baseUser} sh -c "mkdir -p /home/${baseUser}/.kube"
     /usr/bin/sudo cp -f ${KUBE_CONFIG_FILE} /home/${baseUser}/.kube/config
+    echo "export KUBECONFIG=/home/${baseUser}/.kube/config" | /usr/bin/sudo tee -a /home/${baseUser}/.bashrc /home/${baseUser}/.zshrc
     /usr/bin/sudo chown $(id -u ${baseUser}):$(id -g ${baseUser}) /home/${baseUser}/.kube/config
     # Add kube config to skel directory for future users
     /usr/bin/sudo mkdir -p /usr/share/kx.as.code/skel/.kube

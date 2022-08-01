@@ -2,10 +2,7 @@
 set -euo pipefail
 
 # Ensure Kubernetes is available before proceeding to the next step
-timeout -s TERM 600 bash -c \
-    'while [[ "$(curl -s -k https://localhost:6443/livez)" != "ok" ]];\
-do sleep 5;\
-done'
+kubernetesHealthCheck
 
 export kcRealm=${baseDomain}
 

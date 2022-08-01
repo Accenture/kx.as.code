@@ -1,5 +1,5 @@
 #!/bin/bash
-set -euo pipefail
+set -euox pipefail
 
 # Set variables
 export kcRealm=${baseDomain}
@@ -13,7 +13,7 @@ keycloakAdminPassword=$(managedPassword "keycloak-admin-password")
 
 # Ensure Kubernetes is available before proceeding to the next step
 # shellcheck disable=SC2016
-timeout -s TERM 600 bash -c 'while [[ "$(curl -s -k https://localhost:6443/livez)" != "ok" ]]; do sleep 5; done'
+kubernetesHealthCheck
 
 # Get Keycloak POD name for subsequent Keycloak CLI commands
 export kcPod=$(kubectl get pods -l 'app.kubernetes.io/name=keycloak' -n ${namespace} --output=json | jq -r '.items[].metadata.name')
