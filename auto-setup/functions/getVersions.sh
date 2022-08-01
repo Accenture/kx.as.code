@@ -5,4 +5,5 @@ getVersions() {
   fi
   export kxVersion=$(cat ${installationWorkspace}/versions.json| jq -r '.kxascode')
   export kubeVersion=$(cat ${installationWorkspace}/versions.json| jq -r '.kubernetes' | cut -d'-' -f1)
+  export k3sVersion=$(cat ${installationWorkspace}/versions.json| jq -r '.k3s')
 }

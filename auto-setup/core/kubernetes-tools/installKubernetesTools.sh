@@ -85,4 +85,6 @@ swapoff -a
 sed -i '/swap/d' /etc/fstab
 
 # Error with rc=1 if kubectl still doesn't exist
-which kubectl
+if [[ "${kubeOrchestrator}" == "k8s" ]]; then
+  which kubectl
+fi

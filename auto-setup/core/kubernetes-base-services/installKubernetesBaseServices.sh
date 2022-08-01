@@ -1,10 +1,14 @@
 #!/bin/bash
 set -euo pipefail
 
-kubeAdminStatus=$(kubectl cluster-info | grep "is running at" || true)
+kubeAdminStatus=""
+if [[ "${kubeOrchestrator}" == "k8s" ]]; then
+    kubeAdminStatus=$(kubectl cluster-info | grep "is running at" || true)
+fi
 
-if [[ ! ${kubeAdminStatus} ]]; then
+if [[ ! ${kubeAdminStatus} ]] || [[ "${kubeOrchestrator}" == "k3s" ]]; then
     if [[ "${kubeOrchestrator}" == "k8s" ]]; then
+        log_info "Profile set to use K8s. Proceeding to initialize the K8s cluster"
         # Pull Kubernetes images
         /usr/bin/sudo kubeadm config images pull
         /usr/bin/sudo kubeadm init --apiserver-advertise-address=${mainIpAddress} --pod-network-cidr=20.96.0.0/12 --upload-certs --control-plane-endpoint=api-internal.${baseDomain}:6443
@@ -16,10 +20,25 @@ if [[ ! ${kubeAdminStatus} ]]; then
         /usr/bin/sudo systemctl daemon-reload
         /usr/bin/sudo systemctl restart kubelet
 
+        # Call function to check Kubernetes Health
+        kubernetesHealthCheck 
+        
         export KUBE_CONFIG_FILE=/etc/kubernetes/admin.conf
     else
+        log_info "Profile set to use K3s. Proceeding to launch the K3s install script"
         mkdir -p /root/.kube
-        INSTALL_K3S_VERSION=${k3sVersion} INSTALL_K3S_EXEC="--disable servicelb --disable traefik --flannel-backend=none --disable-network-policy --cluster-cidr=10.20.76.0/16 --cluster-init --advertise-address ${mainIpAddress} --kube-apiserver-arg default-not-ready-toleration-seconds=10 " bash ${installationWorkspace}/k3s-install.sh
+        log_debug "INSTALL_K3S_VERSION=${k3sVersion} INSTALL_K3S_EXEC=\"--disable servicelb --disable traefik --flannel-backend=none --disable-network-policy --cluster-cidr=10.20.76.0/16 --cluster-init --node-ip=${mainIpAddress} --node-external-ip=${mainIpAddress} --bind-address=${mainIpAddress} --tls-san=api-internal.${baseDomain} --advertise-address=${mainIpAddress} --kube-apiserver-arg default-not-ready-toleration-seconds=10\" bash ${installationWorkspace}/k3s-install.sh"
+        INSTALL_K3S_VERSION=${k3sVersion} INSTALL_K3S_EXEC="--disable servicelb --disable traefik --flannel-backend=none --disable-network-policy --cluster-cidr=10.20.76.0/16 --cluster-init --node-ip=${mainIpAddress} --node-external-ip=${mainIpAddress} --bind-address=${mainIpAddress} --tls-san=api-internal.${baseDomain} --advertise-address=${mainIpAddress} --kube-apiserver-arg default-not-ready-toleration-seconds=10" bash ${installationWorkspace}/k3s-install.sh
+
+        # Call function to check Kubernetes Health
+        kubernetesHealthCheck  
+
+        # Wait for storage class "local-path" to be available by K3s before proceeeding to update it
+        waitForKubernetesResource "local-path" "storageclass"
+
+        # Remove "default" tag on K3s "local-path" storage class, as this will be set to "local-storage" later
+        kubectl patch storageclass local-path -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"false"}}}'
+
         export KUBE_CONFIG_FILE=/etc/rancher/k3s/k3s.yaml
     fi
 

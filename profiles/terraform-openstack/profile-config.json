@@ -36,6 +36,7 @@
         "virtualizationType": "private-cloud",
         "environmentPrefix": "demo1",
         "glusterFsDiskSize": "200",
+        "kubeOrchestrator": "k8s",
         "sslProvider": "self-signed",
         "baseDomain": "kx-as-code.local",
         "baseUser": "kx.hero",

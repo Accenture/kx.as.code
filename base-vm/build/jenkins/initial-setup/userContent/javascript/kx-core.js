@@ -177,8 +177,9 @@ function update_selected_value(selectedProfileIndex) {
     }
     let profilePaths = getProfilePaths().split(',');
     let profilePath = profilePaths[selectedProfileIndex] + '/profile-config.json'
-    let startMode = document.getElementsByClassName("selection-radio-selected")[0].id.split("-")[1];
-    let concatenatedProfileSelection = profilePath + ";" + startMode;
+    let startMode = document.getElementsByClassName("start-mode-selection-radio-selected")[0].id.split("-")[1];
+    let orchestrator = document.getElementsByClassName("orchestrator-selection-radio-selected")[0].id.split("-")[1];
+    let concatenatedProfileSelection = profilePath + ";" + startMode + ";" + orchestrator;
     document.getElementById("concatenated-profile-selection").value = concatenatedProfileSelection;
     document.getElementById("concatenated-profile-selection").setAttribute("concatenated-profile-selection", concatenatedProfileSelection);
     triggerChoiceParameterUpdate('concatenated-profile-selection');
@@ -912,6 +913,9 @@ function populateReviewTable() {
     document.getElementById("summary-main-nodes-number-value").innerText = numMainNodes;
     let numWorkerNodes = parseInt(document.getElementById("counter_value_worker_node_count_value").innerText);
     document.getElementById("summary-worker-nodes-number-value").innerText = numWorkerNodes;
+    document.getElementById("summary-start-mode-value").innerText = document.getElementById('concatenated-profile-selection').value.split(';')[1];
+    document.getElementById("summary-orchestrator-value").innerText = document.getElementById('concatenated-profile-selection').value.split(';')[2];
+    document.getElementById("summary-profile-value").innerText = document.getElementById("profiles").value;
     if (document.getElementById("concatenated-templates-list").value === "" || ! document.getElementById("concatenated-templates-list").value) {
         document.getElementById("list-templates-to-install").innerHTML = "<i>None</i>"
         document.getElementById("list-templates-tooltip-text").innerText = "No application group template has been selected";
@@ -1884,34 +1888,54 @@ function generatePassword() {
 function updateStartModeSelection(elementId) {
     if ( elementId === "normal" ) {
         document.getElementById("selection-normal-label").className = "selection-label selection-label-selected";
-        document.getElementById("selection-normal-radio").className = "selection-radio selection-radio-selected";
+        document.getElementById("selection-normal-radio").className = "selection-radio start-mode-selection-radio-selected";
         document.getElementById("selection-lite-label").className = "selection-label selection-label-unselected";
-        document.getElementById("selection-lite-radio").className = "selection-radio selection-radio-unselected";
+        document.getElementById("selection-lite-radio").className = "selection-radio start-mode-selection-radio-unselected";
         document.getElementById("selection-minimal-label").className = "selection-label selection-label-unselected";
-        document.getElementById("selection-minimal-radio").className = "selection-radio selection-radio-unselected";
+        document.getElementById("selection-minimal-radio").className = "selection-radio start-mode-selection-radio-unselected";
         document.getElementById("selection-normal-svg").src = "/userContent/icons/radiobox-marked.svg";
         document.getElementById("selection-lite-svg").src = "/userContent/icons/radiobox-blank.svg";
         document.getElementById("selection-minimal-svg").src = "/userContent/icons/radiobox-blank.svg";
     } else if ( elementId === "lite" ) {
         document.getElementById("selection-normal-label").className = "selection-label selection-label-unselected";
-        document.getElementById("selection-normal-radio").className = "selection-radio selection-radio-unselected";
+        document.getElementById("selection-normal-radio").className = "selection-radio start-mode-selection-radio-unselected";
         document.getElementById("selection-lite-label").className = "selection-label selection-label-selected";
-        document.getElementById("selection-lite-radio").className = "selection-radio selection-radio-selected";
+        document.getElementById("selection-lite-radio").className = "selection-radio start-mode-selection-radio-selected";
         document.getElementById("selection-minimal-label").className = "selection-label selection-label-unselected";
-        document.getElementById("selection-minimal-radio").className = "selection-radio selection-radio-unselected";
+        document.getElementById("selection-minimal-radio").className = "selection-radio start-mode-selection-radio-unselected";
         document.getElementById("selection-normal-svg").src = "/userContent/icons/radiobox-blank.svg";
         document.getElementById("selection-lite-svg").src = "/userContent/icons/radiobox-marked.svg";
         document.getElementById("selection-minimal-svg").src = "/userContent/icons/radiobox-blank.svg";
     } else if ( elementId === "minimal" ) {
         document.getElementById("selection-normal-label").className = "selection-label selection-label-unselected";
-        document.getElementById("selection-normal-radio").className = "selection-radio selection-radio-unselected";
+        document.getElementById("selection-normal-radio").className = "selection-radio start-mode-selection-radio-unselected";
         document.getElementById("selection-lite-label").className = "selection-label selection-label-unselected";
-        document.getElementById("selection-lite-radio").className = "selection-radio selection-radio-unselected";
+        document.getElementById("selection-lite-radio").className = "selection-radio start-mode-selection-radio-unselected";
         document.getElementById("selection-minimal-label").className = "selection-label selection-label-selected";
-        document.getElementById("selection-minimal-radio").className = "selection-radio selection-radio-selected";
+        document.getElementById("selection-minimal-radio").className = "selection-radio start-mode-selection-radio-selected";
         document.getElementById("selection-normal-svg").src = "/userContent/icons/radiobox-blank.svg";
         document.getElementById("selection-lite-svg").src = "/userContent/icons/radiobox-blank.svg";
         document.getElementById("selection-minimal-svg").src = "/userContent/icons/radiobox-marked.svg";
+    }
+    update_selected_value();
+}
+
+
+function updateOrchestratorSelection(elementId) {
+    if ( elementId === "k8s" ) {
+        document.getElementById("selection-k8s-label").className = "selection-label selection-label-selected";
+        document.getElementById("selection-k8s-radio").className = "selection-radio orchestrator-selection-radio-selected";
+        document.getElementById("selection-k3s-label").className = "selection-label selection-label-unselected";
+        document.getElementById("selection-k3s-radio").className = "selection-radio orchestrator-selection-radio-unselected";
+        document.getElementById("selection-k8s-svg").src = "/userContent/icons/radiobox-marked.svg";
+        document.getElementById("selection-k3s-svg").src = "/userContent/icons/radiobox-blank.svg";
+    } else if ( elementId === "k3s" ) {
+        document.getElementById("selection-k8s-label").className = "selection-label selection-label-unselected";
+        document.getElementById("selection-k8s-radio").className = "selection-radio orchestrator-selection-radio-unselected";
+        document.getElementById("selection-k3s-label").className = "selection-label selection-label-selected";
+        document.getElementById("selection-k3s-radio").className = "selection-radio orchestrator-selection-radio-selected";
+        document.getElementById("selection-k8s-svg").src = "/userContent/icons/radiobox-blank.svg";
+        document.getElementById("selection-k3s-svg").src = "/userContent/icons/radiobox-marked.svg";
     }
     update_selected_value();
 }

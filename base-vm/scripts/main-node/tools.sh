@@ -106,12 +106,7 @@ sudo bash -c '''
 export NVM_DIR=/usr/local/nvm
 source /opt/nvm/nvm.sh
 nvm install lts/gallium
-nvm install lts/fermium
 nvm use --delete-prefix lts/gallium
-npm install --global envhandlebars
-npm install --global yarn
-npm install --global pnpm
-nvm use --delete-prefix lts/fermium
 npm install --global envhandlebars
 npm install --global yarn
 npm install --global pnpm
@@ -130,21 +125,19 @@ sudo chown -R ${BASE_IMAGE_SSH_USER}:${BASE_IMAGE_SSH_USER} /home/${BASE_IMAGE_S
 # Compiling OpenLens for later installation when KX.AS.CODE comes up
 cd ${INSTALLATION_WORKSPACE}
 sudo chmod 777 ${INSTALLATION_WORKSPACE}
-export lensVersion="v5.5.4"
+export lensVersion="v6.0.0"
 git clone --branch ${lensVersion} https://github.com/lensapp/lens.git
 cd ${INSTALLATION_WORKSPACE}/lens
+# Remove AppImage and RPM from Linux build targets
+sudo sed -i -e '/"rpm",/d' -e '/"AppImage"/d' -e 's/"deb",/"deb"/' ${INSTALLATION_WORKSPACE}/lens/package.json
 
 source /etc/profile.d/nvm.sh
 
 # Build OpenLens
 if [[ -z $(which raspinfo) ]]; then
-  nvm use --delete-prefix lts/fermium
-  sudo bash -c "cd /usr/share/kx.as.code/workspace/lens; source /etc/profile.d/nvm.sh; nvm use --delete-prefix lts/fermium; npm install -g yarn; yarn install; make build"
+  sudo bash -c "cd /usr/share/kx.as.code/workspace/lens; source /etc/profile.d/nvm.sh; nvm use --delete-prefix lts/gallium; npm install -g yarn; yarn install; make build"
   debOpenLensInstaller=$(find ${INSTALLATION_WORKSPACE}/lens/dist -name "OpenLens-*.deb")
-  mv ${debOpenLensInstaller} ${INSTALLATION_WORKSPACE}
-
+  sudo mv ${debOpenLensInstaller} ${INSTALLATION_WORKSPACE}
   # Tidy up
   sudo rm -rf ${INSTALLATION_WORKSPACE}/lens
 fi
-
-nvm use --delete-prefix lts/gallium

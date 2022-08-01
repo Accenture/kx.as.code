@@ -14,8 +14,8 @@ else
   CALICOCTL_CHECKSUM="98407b1c608fec0896004767c72cd4b6cf939976d67d3eca121f1f02137c92a7"
 fi
 
-wget  ${CALICOCTL_URL}
-CALICOCTL_CHECKSUM=$(basename ${CALICOCTL_URL})
+wget ${CALICOCTL_URL}
+CALICOCTL_FILE=$(basename ${CALICOCTL_URL})
 echo "${CALICOCTL_CHECKSUM} ${CALICOCTL_FILE}" | sha256sum --check
 sudo chmod +x ${CALICOCTL_FILE}
 sudo mv ${CALICOCTL_FILE} /usr/local/bin/calicoctl
