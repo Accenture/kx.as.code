@@ -44,16 +44,18 @@ if [[ "${partitionC1Exists}" != "sdc1" ]]; then
 fi
 
 # Update Debian repositories as default is old
-glusterfsMajorVersion=$(echo ${glusterfsVersion} | cut -f 1 -d'.')
-wget -O - https://download.gluster.org/pub/gluster/glusterfs/${glusterfsMajorVersion}/rsa.pub | /usr/bin/sudo apt-key add -
-echo deb [arch=amd64] https://download.gluster.org/pub/gluster/glusterfs/${glusterfsMajorVersion}/${glusterfsVersion}/Debian/buster/amd64/apt buster main | /usr/bin/sudo tee /etc/apt/sources.list.d/gluster.list
+#glusterfsMajorVersion=$(echo ${glusterfsVersion} | cut -f 1 -d'.')
+#wget -O - https://download.gluster.org/pub/gluster/glusterfs/${glusterfsMajorVersion}/rsa.pub | /usr/bin/sudo apt-key add -
+#echo deb [arch=amd64] https://download.gluster.org/pub/gluster/glusterfs/${glusterfsMajorVersion}/${glusterfsVersion}/Debian/bullseye/amd64/apt bullseye main | /usr/bin/sudo tee /etc/apt/sources.list.d/gluster.list
+
+# Reverted to default GlusterFs (9.2.1) server in Bullseye, for comptibility with ARM64
 /usr/bin/sudo apt update
 /usr/bin/sudo apt install -y glusterfs-server
 /usr/bin/sudo /usr/bin/sudo systemctl enable --now glusterd
 
 # Install Heketi for automatically provisioning Kubernetes volumes
 heketiMajorVersion=$(echo ${heketiVersion} | cut -f 1 -d'.')
-wget -O - https://github.com/heketi/heketi/releases/download/v${heketiVersion}/heketi-v${heketiVersion}-release-${heketiMajorVersion}.linux.amd64.tar.gz | /usr/bin/sudo tar xvzf - &&
+wget -O - https://github.com/heketi/heketi/releases/download/v${heketiVersion}/heketi-v${heketiVersion}-release-${heketiMajorVersion}.linux.${cpuArchitecture}.tar.gz | /usr/bin/sudo tar xvzf - &&
     /usr/bin/sudo cp -f heketi/{heketi,heketi-cli} /usr/local/bin
 
 # Add Heketi user and group
