@@ -42,13 +42,16 @@ if [[ -z ${localVolumesDiskName} ]] || [[ "${localVolumesDiskName}" == "null" ]]
         sleep 15
       else
         log_info "Drive for local volumes (${driveB}) now available after attempt ${i} of 30"
+        echo "${driveB}" | /usr/bin/sudo tee /usr/share/kx.as.code/.config/driveB
         break
       fi
     done
+  else
+    driveB=$(cat /usr/share/kx.as.code/.config/driveB)
   fi
 else
   log_info "Setting drive B to ${localVolumesDiskName} as per profile-config.json"
-  driveB=${localVolumesDiskName}
+  echo "${localVolumesDiskName}" | /usr/bin/sudo tee /usr/share/kx.as.code/.config/driveB
 fi
 
 # Check logical partitions
@@ -69,6 +72,8 @@ if [[ -z $(lsblk -o NAME,FSTYPE,SIZE -J /dev/${driveB} | jq '.blockdevices[].chi
         sleep 5
       fi
     done
+else
+    driveB_Partition=$(lsblk -o NAME,FSTYPE,SIZE -J | jq -r '.[] | .[]  | select(.name=="'${driveB}'") | .children[]?.name')  
 fi
 
 # Create physical volume if it does not exist

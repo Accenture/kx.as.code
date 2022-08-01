@@ -76,7 +76,9 @@ waitForKubernetesResource "server-storage-pool-1-0" "statefulset" "kadalu"
 kubectl get statefulset server-storage-pool-1-0 -n kadalu -o yaml | /usr/bin/sudo tee ${installationWorkspace}/kadalu-server-storage-pool-statefulset.yaml
 if [[ -f ${installationWorkspace}/kadalu-server-storage-pool-statefulset.yaml ]]; then
   /usr/bin/sudo sed -i -e '/^                values:/{:a; N; /\n                - kx-main1/!ba; a \      tolerations:\n        - key: node-role.kubernetes.io/master\n          operator: Exists\n          effect: NoSchedule' -e '}' ${installationWorkspace}/kadalu-server-storage-pool-statefulset.yaml
-  kubectl apply -f ${installationWorkspace}/kadalu-server-storage-pool-statefulset.yaml -n kadalu
+  
+  # Validate and apply the updated config-map
+  kubernetesApplyYamlFile "${installationWorkspace}/kadalu-server-storage-pool-statefulset.yaml" "kadalu"
 else
   log_error "${installationWorkspace}/kadalu-server-storage-pool-statefulset.yaml does not exist after exporting statefulset with kubectl"
   exit 1
@@ -95,5 +97,8 @@ waitForKubernetesResource "kadalu.storage-pool-1" "storageclass"
 
 # Make kadalu.storage-pool-1 storage class Kubernetes NOT default (switched default to local storage)
 kubectl patch storageclass kadalu.storage-pool-1 -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"false"}}}'
+
+# Remove storage pool server if it already exists, so a new one can be provisioned after updating the statefulset above
+kubectl delete pods -l "app.kubernetes.io/component=server" -n kadalu
 
 fi
