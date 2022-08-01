@@ -179,7 +179,7 @@ if ( $override_action -eq "recreate" -Or $override_action -eq "destroy" -Or $ove
 $composeDownloadVersion = "1.29.2"
 $javaDownloadVersion = "11.0.3.7.1"
 $jqDownloadVersion = "1.6"
-$jenkinsDownloadVersion = "2.332.2"
+$jenkinsDownloadVersion = "2.346.2"
 
 # Determine OS this script is running on and set appropriate download links and commands
 Write-Output "- [INFO] Script running on Windows. Setting appropriate download links" | Blue
@@ -309,7 +309,7 @@ if (!(test-path .\jenkins.war)) {
 # Check if plugin manager already downloaded or not
 if (!(test-path .\jenkins-plugin-manager.jar)) {
     # Install Jenkins Plugins
-    $jenkinsPluginManagerVersion = "2.11.1"
+    $jenkinsPluginManagerVersion = "2.12.8"
     Write-Output "Downloading Jenkins Plugin Manager..." | Blue
     Invoke-WebRequest -Uri https://github.com/jenkinsci/plugin-installation-manager-tool/releases/download/$jenkinsPluginManagerVersion/jenkins-plugin-manager-$jenkinsPluginManagerVersion.jar -OutFile .\jenkins-plugin-manager.jar
 }

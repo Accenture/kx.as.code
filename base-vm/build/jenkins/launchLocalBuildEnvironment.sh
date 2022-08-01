@@ -238,7 +238,7 @@ echo "Setting jenkins_home to ${jenkins_home_absolute_path}"
 cp -rf ./initial-setup/ ./jenkins_home
 
 # Download and update Jenkins WAR file with needed plugins
-jenkinsDownloadVersion="2.332.2"
+jenkinsDownloadVersion="2.346.2"
 jenkinsWarFileUrl="https://get.jenkins.io/war-stable/${jenkinsDownloadVersion}/jenkins.war"
 if [ ! -f ./jenkins.war ]; then
     # Download Jenkins WAR file
@@ -249,7 +249,7 @@ fi
 # Check if plugin manager already downloaded or not
 if [ ! -f ./jenkins-plugin-manager.jar ]; then
     # Install Jenkins Plugins
-    jenkinsPluginManagerVersion="2.12.3"
+    jenkinsPluginManagerVersion="2.12.8"
     echo "Downloading Jenkins Plugin Manager..."
     echo "curl -L -o ./jenkins-plugin-manager.jar https://github.com/jenkinsci/plugin-installation-manager-tool/releases/download/${jenkinsPluginManagerVersion}/jenkins-plugin-manager-${jenkinsPluginManagerVersion}.jar"
     curl -L -o ./jenkins-plugin-manager.jar https://github.com/jenkinsci/plugin-installation-manager-tool/releases/download/${jenkinsPluginManagerVersion}/jenkins-plugin-manager-${jenkinsPluginManagerVersion}.jar
