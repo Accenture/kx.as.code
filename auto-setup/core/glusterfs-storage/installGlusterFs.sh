@@ -43,12 +43,12 @@ if [[ "${partitionC1Exists}" != "sdc1" ]]; then
 
 fi
 
-# Update Debian repositories as default is old
+# Update Debian repositories as default is old (Was for Debian Buster. Now commented out as switched to Debian Bullseye)
 #glusterfsMajorVersion=$(echo ${glusterfsVersion} | cut -f 1 -d'.')
 #wget -O - https://download.gluster.org/pub/gluster/glusterfs/${glusterfsMajorVersion}/rsa.pub | /usr/bin/sudo apt-key add -
 #echo deb [arch=amd64] https://download.gluster.org/pub/gluster/glusterfs/${glusterfsMajorVersion}/${glusterfsVersion}/Debian/bullseye/amd64/apt bullseye main | /usr/bin/sudo tee /etc/apt/sources.list.d/gluster.list
 
-# Reverted to default GlusterFs (9.2.1) server in Bullseye, for comptibility with ARM64
+# Reverted to default GlusterFs (9.2-1) server in Bullseye, for comptibility with ARM64
 /usr/bin/sudo apt update
 /usr/bin/sudo apt install -y glusterfs-server
 /usr/bin/sudo /usr/bin/sudo systemctl enable --now glusterd
