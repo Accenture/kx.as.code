@@ -55,6 +55,10 @@ export basePassword=$(cat ${installationWorkspace}/profile-config.json | jq -r '
 export startupMode=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.startupMode')
 export standaloneMode=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.standaloneMode')
 
+export kxVersion=$(cat ${installationWorkspace}/versions.json | jq -r '.kxascode')
+export k8sVersion=$(cat ${installationWorkspace}/versions.json | jq -r '.kubernetes')
+export k3sVersion=$(cat ${installationWorkspace}/versions.json | jq -r '.k3s')
+
 checkAndUpdateBaseUsername() {
 
   if [[ "${vmUser}" != "${baseUser}" ]]; then
@@ -573,7 +577,7 @@ elif [[ "${kubeOrchestrator}" == "k3s" ]]; then
 
   # Join K3s cluster
   k3sToken=$(/usr/bin/sudo -H -i -u "${vmUser}" bash -c "ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} 'sudo cat /var/lib/rancher/k3s/server/node-token'")
-  curl -sfL https://get.k3s.io | K3S_URL=https://${kxMainIp}:6443 INSTALL_K3S_EXEC="--node-ip ${kxNodeIp}" K3S_TOKEN=${k3sToken} sh -
+  curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=${k3sVersion} K3S_URL=https://${kxMainIp}:6443 INSTALL_K3S_EXEC="--node-ip ${kxNodeIp}" K3S_TOKEN=${k3sToken} sh -
 
 fi
 
