@@ -59,20 +59,6 @@ gpg2 --batch -d ${installationWorkspace}/gnupg-${userToInitialize}/keydetails.as
 rm ${installationWorkspace}/gnupg-${userToInitialize}/keydetails.asc
 """ | /usr/bin/sudo tee ${installationWorkspace}/gnupg-${userToInitialize}/initializeGpg.sh
 
-# Generate ${installationWorkspace}/initializeGoPass.exp Expect script
-echo '''#!/usr/bin/expect
-# Initialize GoPass
-set timeout -1
-spawn gopass setup
-match_max 100000
-expect "*Please enter the number of a key*"
-send "0\r"
-expect "*Please enter an email address for password store git config*"
-send "'${userToInitialize}'@'${baseDomain}'\r"
-expect "*Do you want to add a git remote*"
-send "N\r"
-expect eof
-''' | /usr/bin/sudo tee ${installationWorkspace}/gnupg-${userToInitialize}/initializeGoPass.exp
 
 # Initialize GPG
 log_info "Initializing GNUGPG"
@@ -87,7 +73,8 @@ if [[ ${rc} -ne 0 ]]; then
     log_info "Setting up GoPass"
     for i in {1..3}
     do
-        timeout -s TERM 30 bash -c '/usr/bin/sudo -H -i -u '${userToInitialize}' /usr/bin/expect -d '${installationWorkspace}'/gnupg-'${userToInitialize}'/initializeGoPass.exp' || rc=$?
+        rc=0
+        /usr/bin/sudo -H -i -u ${userToInitialize} bash -c "gopass setup --email ${userToInitialize}@${baseDomain} --name ${userToInitialize} --storage fs" || rc=$?
         if [[ ${rc} -ne 0 ]]; then
             log_warn "Attempt ${i} to initialize GoPass failed. Trying again for a maximum of 3 times, before pusing item to failure queue"
             export initializeStatus="fail"

@@ -9,5 +9,7 @@ if [ -z $(kubectl get secrets -n minio-s3 --output=name --field-selector metadat
     kubectl create secret generic minio-accesskey-secret \
         --from-literal=accesskey=${minioAccessKey} \
         --from-literal=secretkey=${minioSecretKey} \
+        --from-literal=rootUser=${minioAccessKey} \
+        --from-literal=rootPassword=${minioSecretKey} \
         --namespace minio-s3
 fi
