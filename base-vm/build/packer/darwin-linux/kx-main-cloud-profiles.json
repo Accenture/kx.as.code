@@ -195,6 +195,11 @@
       "destination": "{{user `kx_home`}}/workspace/scripts"
     },
     {
+      "type": "file",
+      "source": "../../../../versions.json",
+      "destination": "{{user `kx_home`}}/workspace/versions.json"
+    },
+    {
       "environment_vars": [
         "BASE_IMAGE_SSH_USER={{user `base_image_ssh_user`}}",
         "VM_USER={{user `vm_user`}}",
