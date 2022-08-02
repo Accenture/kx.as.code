@@ -179,7 +179,7 @@ if ( $override_action -eq "recreate" -Or $override_action -eq "destroy" -Or $ove
 $composeDownloadVersion = "1.29.2"
 $javaDownloadVersion = "11.0.3.7.1"
 $jqDownloadVersion = "1.6"
-$jenkinsDownloadVersion = "2.346.2"
+$jenkinsDownloadVersion = "2.332.2"
 
 # Determine OS this script is running on and set appropriate download links and commands
 Write-Output "- [INFO] Script running on Windows. Setting appropriate download links" | Blue

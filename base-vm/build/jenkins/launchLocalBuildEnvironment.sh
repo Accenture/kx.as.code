@@ -238,7 +238,7 @@ echo "Setting jenkins_home to ${jenkins_home_absolute_path}"
 cp -rf ./initial-setup/ ./jenkins_home
 
 # Download and update Jenkins WAR file with needed plugins
-jenkinsDownloadVersion="2.346.2"
+jenkinsDownloadVersion="2.332.2"
 jenkinsWarFileUrl="https://get.jenkins.io/war-stable/${jenkinsDownloadVersion}/jenkins.war"
 if [ ! -f ./jenkins.war ]; then
     # Download Jenkins WAR file
