@@ -82,12 +82,36 @@ chmod 755 ${installationWorkspace}/gnupg-${userToInitialize}/initializeGpg.sh
 
 # Check if GoPass already initialized
 /usr/bin/sudo -H -i -u ${userToInitialize} bash -c 'echo "123" | gopass insert '${baseDomain}'/test' || rc=$?
-if [[ ${rc} != 0 ]]; then
+if [[ ${rc} -ne 0 ]]; then
     # Setup GoPass
     log_info "Setting up GoPass"
-    timeout -s TERM 60 bash -c '/usr/bin/sudo -H -i -u '${userToInitialize}' /usr/bin/expect -d '${installationWorkspace}'/gnupg-'${userToInitialize}'/initializeGoPass.exp'
+    for i in {1..3}
+    do
+        timeout -s TERM 30 bash -c '/usr/bin/sudo -H -i -u '${userToInitialize}' /usr/bin/expect -d '${installationWorkspace}'/gnupg-'${userToInitialize}'/initializeGoPass.exp' || rc=$?
+        if [[ ${rc} -ne 0 ]]; then
+            log_warn "Attempt ${i} to initialize GoPass failed. Trying again for a maximum of 3 times, before pusing item to failure queue"
+            export initializeStatus="fail"
+        else
+            log_info "Attempt ${i} to initialize GoPass succeeded. Continuing"
+            export initializeStatus="success"
+            break
+        fi
+    done
 fi
-/usr/bin/sudo -H -i -u ${userToInitialize} bash -c 'gopass delete -f '${baseDomain}'/test'
+
+# Check if GoPass initialized correctly after the maximum 3 attempts above
+if [[ "${initializeStatus}" == "success" ]]; then
+    # Final test as now intialized
+    log_debug "Executing final test of GoPass after initialization success, so it should work now"
+    /usr/bin/sudo -H -i -u ${userToInitialize} bash -c 'echo "123" | gopass insert '${baseDomain}'/test'
+    /usr/bin/sudo -H -i -u ${userToInitialize} bash -c 'gopass list'
+    /usr/bin/sudo -H -i -u ${userToInitialize} bash -c 'gopass show '${baseDomain}'/test'
+    /usr/bin/sudo -H -i -u ${userToInitialize} bash -c 'gopass delete -f '${baseDomain}'/test'
+    log_debug "Looks good. GoPass test passed. Proceeding to the next steps"
+else
+    log_error "Even after 3 attempts it was not possible to successfully initialize GoPass. Exiting with RC=1"
+    exit 1
+fi
 
 # Insert first secret with GoPass -> KX.Hero Password
 log_info "Adding first password to GoPass for testing"

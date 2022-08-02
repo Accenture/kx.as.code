@@ -27,8 +27,8 @@ if [[ ! ${kubeAdminStatus} ]] || [[ "${kubeOrchestrator}" == "k3s" ]]; then
     else
         log_info "Profile set to use K3s. Proceeding to launch the K3s install script"
         mkdir -p /root/.kube
-        log_debug "INSTALL_K3S_VERSION=${k3sVersion} INSTALL_K3S_EXEC=\"--disable servicelb --disable traefik --flannel-backend=none --disable-network-policy --cluster-cidr=10.20.76.0/16 --cluster-init --node-ip=${mainIpAddress} --node-external-ip=${mainIpAddress} --bind-address=${mainIpAddress} --tls-san=api-internal.${baseDomain} --advertise-address=${mainIpAddress} --kube-apiserver-arg='default-not-ready-toleration-seconds=60'\" bash ${installationWorkspace}/k3s-install.sh"
-        INSTALL_K3S_VERSION=${k3sVersion} INSTALL_K3S_EXEC="--disable servicelb --disable traefik --flannel-backend=none --disable-network-policy --cluster-cidr=10.20.76.0/16 --cluster-init --node-ip=${mainIpAddress} --node-external-ip=${mainIpAddress} --bind-address=${mainIpAddress} --tls-san=api-internal.${baseDomain} --advertise-address=${mainIpAddress} --kube-apiserver-arg='default-not-ready-toleration-seconds=60'" bash ${installationWorkspace}/k3s-install.sh
+        log_debug "INSTALL_K3S_VERSION=${k3sVersion} INSTALL_K3S_EXEC="--disable servicelb --disable traefik --flannel-backend=none --disable-network-policy --cluster-cidr 10.20.76.0/16 --cluster-init --node-ip ${mainIpAddress} --node-external-ip ${mainIpAddress} --bind-address ${mainIpAddress} --tls-san api-internal.${baseDomain} --advertise-address ${mainIpAddress}" bash ${installationWorkspace}/k3s-install.sh"
+        INSTALL_K3S_VERSION=${k3sVersion} INSTALL_K3S_EXEC="--disable servicelb --disable traefik --flannel-backend=none --disable-network-policy --cluster-cidr 10.20.76.0/16 --cluster-init --node-ip ${mainIpAddress} --node-external-ip ${mainIpAddress} --bind-address ${mainIpAddress} --tls-san api-internal.${baseDomain} --advertise-address ${mainIpAddress}" bash ${installationWorkspace}/k3s-install.sh
 
         # Call function to check Kubernetes Health
         kubernetesHealthCheck  
