@@ -24,7 +24,7 @@ kubectl get secret generic s3cmd-config -n ${namespace} ||
         -n ${namespace} | kubectl apply -f -
 
 # Generate initial root password
-export gitlabRootPassword=$(managedPassword "gitlab-root-password" "${componentName}")
+export gitlabRootPassword=$(managedPassword "gitlab-root-password" "gitlab")
 
 # Set initial root password
 kubectl get secret ${componentName}-gitlab-initial-root-password -n ${namespace} ||
@@ -53,7 +53,7 @@ kubectl get secret server-crt --namespace=${namespace} || \
 # Create docker pull secret for private registry
 log_info "Adding user gitlab user to docker-registry htpasswd file"
 dockerRegistryAddUser "gitlab"
-passwordForAddedUser=$(managedApiKey "docker-registry-gitlab-password")
+passwordForAddedUser=$(managedApiKey "docker-registry-gitlab-password" "docker-registry")
 kubectl get secret gitlab-image-pull-secret --namespace=${namespace} || \
     kubectl create secret docker-registry gitlab-image-pull-secret \
     --namespace ${namespace} \

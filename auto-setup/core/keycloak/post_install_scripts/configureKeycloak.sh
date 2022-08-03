@@ -9,7 +9,7 @@ export kcBinDir=/opt/jboss/keycloak/bin/
 export kcAdmCli=/opt/jboss/keycloak/bin/kcadm.sh
 
 # Generate Keycloak Admin Password
-keycloakAdminPassword=$(managedPassword "keycloak-admin-password" "${componentName}")
+keycloakAdminPassword=$(managedPassword "keycloak-admin-password" "keycloak")
 
 # Ensure Kubernetes is available before proceeding to the next step
 # shellcheck disable=SC2016
@@ -102,7 +102,7 @@ kcParentId=$(kubectl -n ${namespace} exec ${kcPod} --container ${kcContainer} --
     ${kcAdmCli} get / --fields id --format csv --noquotes)
 
 # Get LDAP Admin Password
-export ldapAdminPassword=$(getPassword "openldap-admin-password")
+export ldapAdminPassword=$(getPassword "openldap-admin-password" "openldap")
 
 # Create LDAP User Federation
 if [[ ! $(kubectl -n ${namespace} exec ${kcPod} --container ${kcContainer} -- ${kcAdmCli} get components -r ${kcRealm} | jq -r '.[] | select(.providerId=="ldap") | .name') ]]; then

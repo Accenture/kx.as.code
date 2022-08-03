@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # Get Personal Access Token
-export personalAccessToken=$(getPassword "gitlab-personal-access-token")
+export personalAccessToken=$(getPassword "gitlab-personal-access-token" "gitlab")
 
 # Get Registry Robot Credentials for KX.AS.CODE project
 #export kxRobotUser=$(cat /home/${baseUser}/.config/kx.as.code/.kx-harbor-robot.cred | jq -r '.name' | sed 's/\$/\$\$/g')

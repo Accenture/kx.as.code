@@ -2,8 +2,8 @@
 set -euox pipefail
 
 # Create and export password variable for later mustache substitution
-export nextcloudAdminPassword=$(managedPassword "nextcloud-admin-password" "${componentName}")
-export nextcloudPostgresqlPassword=$(managedPassword "nextcloud-postgresql-password" "${componentName}")
+export nextcloudAdminPassword=$(managedPassword "nextcloud-admin-password" "nextcloud")
+export nextcloudPostgresqlPassword=$(managedPassword "nextcloud-postgresql-password" "nextcloud")
 
 # Create DB user secret, else deployment fails
 kubectl get secret nextcloud-db -n ${namespace} || \

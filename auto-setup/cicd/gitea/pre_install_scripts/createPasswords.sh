@@ -2,8 +2,8 @@
 set -euo pipefail
 
 # Generate Gitea Postgresql Password
-export postgresqlPassword=$(managedPassword "gitea-postgresql-password" "${componentName}")
+export postgresqlPassword=$(managedPassword "gitea-postgresql-password" "gitea")
 
 # Generate Gitea Admin Password
-export giteaAdminPassword=$(managedPassword "gitea-admin-password" "${componentName}")
+export giteaAdminPassword=$(managedPassword "gitea-admin-password" "gitea")
 

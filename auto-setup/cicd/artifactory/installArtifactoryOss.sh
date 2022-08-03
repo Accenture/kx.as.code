@@ -19,8 +19,8 @@ sed -i 's/jfrog\/artifactory-pro/jfrog\/artifactory-oss/g' values.yaml
 sed -i -z 's/nginx:\n  enabled: true/nginx:\n  enabled: false/' values.yaml
 
 # Create Artifactory Admin and Postgresql Passwords
-export adminPassword=$(managedPassword "artifactory-admin-password" "${componentName}")
-export postgresqlPassword=$(managedPassword "artifactory-postgresql-password" "${componentName}")
+export adminPassword=$(managedPassword "artifactory-admin-password" "artifactory")
+export postgresqlPassword=$(managedPassword "artifactory-postgresql-password" "artifactory")
 
 # Pull Postgres dependency
 helm dep update

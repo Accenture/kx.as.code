@@ -2,7 +2,7 @@
 set -euox pipefail
 
 # Create password
-export defaultRegistryUserPassword=$(managedApiKey "docker-registry-${baseUser}-password")
+export defaultRegistryUserPassword=$(managedApiKey "docker-registry-${baseUser}-password" "docker-registry")
 
 # Generate HTPASSWD file
 apt-get install -y apache2-utils

@@ -41,7 +41,7 @@ populateGitlabProject() {
   fi
 
   # Retrieve passsword
-  gitlabUserPassword=$(managedPassword "gitlab-${baseUser}-user-password" "${componentName}")
+  gitlabUserPassword=$(managedPassword "gitlab-${baseUser}-user-password" "gitlab")
 
   if [[ ! -d ${installationWorkspace}/staging/${gitlabRepoName} ]]; then
     for i in {1..5}; do

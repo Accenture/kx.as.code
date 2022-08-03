@@ -4,7 +4,7 @@ gitlabMapUserToGroup() {
     gitlabGroupName=${2}
 
     # Get Gitlab personal access token
-    personalAccessToken=$(getPassword "gitlab-personal-access-token")
+    personalAccessToken=$(getPassword "gitlab-personal-access-token"  "gitlab")
 
     # Get Gitlab user and group ids
     gitlabUserId=$(gitlabGetUserId "${gitlabUserName}")

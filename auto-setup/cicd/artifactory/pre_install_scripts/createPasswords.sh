@@ -2,5 +2,5 @@
 set -euox pipefail
 
 # Create Artifactory Admin and Postgresql Passwords
-export adminPassword=$(managedPassword "artifactory-admin-password" "${componentName}")
-export postgresqlPassword=$(managedApiKey "artifactory-postgresql-password" "${componentName}")
+export adminPassword=$(managedPassword "artifactory-admin-password" "artifactory")
+export postgresqlPassword=$(managedApiKey "artifactory-postgresql-password" "artifactory")

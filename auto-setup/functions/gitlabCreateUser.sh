@@ -4,10 +4,10 @@ gitlabCreateUser() {
     skipConfirmation=${2-true}
     state=${3-active}
     canCreateProject=${4-true}
-    gitlabUserPassword=$(managedPassword "gitlab-${gitlabUserName}-user-password" "${componentName}")
+    gitlabUserPassword=$(managedPassword "gitlab-${gitlabUserName}-user-password" "gitlab")
 
     # Get Gitlab personal access token
-    export personalAccessToken=$(getPassword "gitlab-personal-access-token")
+    export personalAccessToken=$(getPassword "gitlab-personal-access-token" "gitlab")
 
     # Create kx.hero user in Gitlab
     export gitlabUserId=$(curl -s --header "Private-Token: ${personalAccessToken}" https://gitlab.${baseDomain}/api/v4/users | jq '.[] | select(.username=="'${gitlabUserName}'") | .id')

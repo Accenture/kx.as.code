@@ -7,7 +7,7 @@ gitlabCreateGroup() {
     projectCreationLevel=${5-developer}
 
     # Get Gitlab personal access token
-    export personalAccessToken=$(getPassword "gitlab-personal-access-token")
+    export personalAccessToken=$(getPassword "gitlab-personal-access-token" "gitlab")
 
     # Create kx.as.code group in Gitlab
     export gitlabGroupId=$(curl -s --header "Private-Token: ${personalAccessToken}" https://gitlab.${baseDomain}/api/v4/groups | jq '.[] | select(.name=="'${gitlabGroupName}'") | .id')
