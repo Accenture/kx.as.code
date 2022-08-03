@@ -8,6 +8,6 @@ if [[ -n ${postgresqlPasswordExists}   ]]; then
     log_info "SonarQube postgresql password already exists. Using that one"
 else
     # Create SonarQube Postgresql password
-    export postgresqlPassword=$(managedPassword "sonarqube-postgresql-password")
+    export postgresqlPassword=$(managedPassword "sonarqube-postgresql-password" "${componentName}")
     log_info "SonarQube postgresql password does not exist. Creating a new one"
 fi

@@ -11,10 +11,15 @@ if [[ ! ${kubeAdminStatus} ]] || [[ "${kubeOrchestrator}" == "k3s" ]]; then
         log_info "Profile set to use K8s. Proceeding to initialize the K8s cluster"
         # Pull Kubernetes images
         /usr/bin/sudo kubeadm config images pull
+
+        # Inititalise Kubernetes
+        /usr/bin/sudo rm -f /etc/containerd/config.toml
+        /usr/bin/sudo systemctl restart containerd
         /usr/bin/sudo kubeadm init --apiserver-advertise-address=${mainIpAddress} --pod-network-cidr=20.96.0.0/12 --upload-certs --control-plane-endpoint=api-internal.${baseDomain}:6443
 
         # Fix reliance on non existent file: /run/systemd/resolve/resolv.conf
-        /usr/bin/sudo sed -i '/^\[Service\]/a Environment="KUBELET_EXTRA_ARGS=--resolv-conf=\/etc\/resolv.conf --node-ip='${mainIpAddress}'"' /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+        # Commented out as depracated in Kubernetes 1.2.4. Will remove in future completely
+        #/usr/bin/sudo sed -i '/^\[Service\]/a Environment="KUBELET_EXTRA_ARGS=--resolv-conf=\/etc\/resolv.conf --node-ip='${mainIpAddress}'"' /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
 
         # Restart Kubelet
         /usr/bin/sudo systemctl daemon-reload

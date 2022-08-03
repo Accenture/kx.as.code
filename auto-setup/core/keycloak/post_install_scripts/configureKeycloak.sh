@@ -9,7 +9,7 @@ export kcBinDir=/opt/jboss/keycloak/bin/
 export kcAdmCli=/opt/jboss/keycloak/bin/kcadm.sh
 
 # Generate Keycloak Admin Password
-keycloakAdminPassword=$(managedPassword "keycloak-admin-password")
+keycloakAdminPassword=$(managedPassword "keycloak-admin-password" "${componentName}")
 
 # Ensure Kubernetes is available before proceeding to the next step
 # shellcheck disable=SC2016

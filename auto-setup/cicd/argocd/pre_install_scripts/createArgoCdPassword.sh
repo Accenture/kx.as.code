@@ -2,7 +2,7 @@
 set -euox pipefail
 
 # Create Jenkins Admin Password
-export generatedAdminPassword=$(managedPassword "argocd-admin-password")
+export generatedAdminPassword=$(managedPassword "argocd-admin-password" "${componentName}")
 
 # Install htpasswd for bcrypt encoded password
 apt-get install -y apache2-utils

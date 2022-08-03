@@ -29,7 +29,7 @@ if [[ ${numUsersToCreate} -ne 0 ]]; then
         echo "${userid} ${firstname} ${surname} ${email}"
 
         # Generate User Password
-        export generatedPassword=$(managedPassword "user-${userid}-password")
+        export generatedPassword=$(managedPassword "user-${userid}-password" "users")
 
         # Create user's desktop folder
         /usr/bin/sudo mkdir -p /home/${userid}/Desktop

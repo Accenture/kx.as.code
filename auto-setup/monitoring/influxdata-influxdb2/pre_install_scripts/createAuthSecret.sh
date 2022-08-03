@@ -2,10 +2,10 @@
 set -euox pipefail
 
 # Create InfluxDB2 admin password
-export influxdb2AdminPassword=''$(managedPassword "influxdb2-admin-password")''
+export influxdb2AdminPassword=''$(managedPassword "influxdb2-admin-password" "${componentName}")''
 
 # Create InfluxDB2 admin token
-export influxdb2AdminToken=''$(managedPassword "influxdb2-admin-token")''
+export influxdb2AdminToken=''$(managedPassword "influxdb2-admin-token" "${componentName}")''
 
 # Create credentials secret
 kubectl get secret influxdb-auth --namespace ${namespace} ||

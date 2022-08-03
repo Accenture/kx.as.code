@@ -24,7 +24,7 @@ kubectl get secret generic s3cmd-config -n ${namespace} ||
         -n ${namespace} | kubectl apply -f -
 
 # Generate initial root password
-export gitlabRootPassword=$(managedPassword "gitlab-root-password")
+export gitlabRootPassword=$(managedPassword "gitlab-root-password" "${componentName}")
 
 # Set initial root password
 kubectl get secret ${componentName}-gitlab-initial-root-password -n ${namespace} ||

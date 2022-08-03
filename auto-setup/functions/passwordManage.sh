@@ -1,12 +1,16 @@
 managedPassword() {
+
+  passwordName=${1}
+  passwordGroup=${2-}
+
   # Conditional statement in case this is being re-run for an already deployed solution
-  if [[ -z $(getPassword "${1}") ]]; then
+  if [[ -z $(getPassword "${passwordName}") ]]; then
     # Generate new secure password and push to GoPass
     generatedPassword="$(generatePassword)"
-    pushPassword "${1}" "${generatedPassword}"
+    pushPassword "${passwordName}" "${generatedPassword}" "${passwordGroup}"
   else
     # Pull existing password from GoPass as it already exists
-    generatedPassword=$(getPassword "${1}")
+    generatedPassword=$(getPassword "${passwordName}" "${passwordGroup}")
   fi
   echo "${generatedPassword}"
 }

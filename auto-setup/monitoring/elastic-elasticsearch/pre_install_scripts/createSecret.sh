@@ -60,7 +60,7 @@ instances:
     ${elasticStackCertsDir}/metricbeat
 
 # Create ElasticSearch "elastic" CA password
-export elasticCaPassword=$(managedPassword "elastic-ca-password")
+export elasticCaPassword=$(managedPassword "elastic-ca-password" "elastic-stack")
 
 if [[ ! -f ${elasticStackCertsDir}/ca.zip ]]; then
   # Create Elastic CA with elasticsearch-certutil if it does not already exist
@@ -104,7 +104,7 @@ kubectl -n ${namespace} create secret generic elastic-certificates \
     --from-file=${elasticStackCertsDir}/packetbeat/packetbeat.key
 
 # Create ElasticSearch "elastic" admin password
-export elasticAdminPassword=$(managedPassword "elastic-admin-password")
+export elasticAdminPassword=$(managedPassword "elastic-admin-password" "elastic-stack")
 
 # Create credentials secret
 kubectl get secret elastic-credentials --namespace ${namespace} ||

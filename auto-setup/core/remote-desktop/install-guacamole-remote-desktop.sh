@@ -82,7 +82,7 @@ if [[ -z $(/usr/bin/sudo su - postgres -c "psql -lqt | cut -d \| -f 1" | grep gu
 fi
 
 # Generate random passwords for guacadmin via custom bash functions
-guacAdminPassword=$(managedPassword "guacamole-admin-password")
+guacAdminPassword=$(managedPassword "guacamole-admin-password" "${componentName}")
 
 /usr/bin/sudo sed -i "s/-- 'guacadmin'/-- '${guacAdminPassword}'/g" guacamole-auth-jdbc-${guacamoleVersion}/postgresql/schema/002-create-admin-user.sql
 cat guacamole-auth-jdbc-${guacamoleVersion}/postgresql/schema/*.sql | /usr/bin/sudo su - postgres -c "psql -d guacamole_db -f -"
@@ -91,7 +91,7 @@ cat guacamole-auth-jdbc-${guacamoleVersion}/postgresql/schema/*.sql | /usr/bin/s
 guacUser=$(echo $baseUser | sed 's/\./_/g')
 
 # Generate random passwords for guacamole user via custom bash functions
-guacUserPassword=$(managedPassword "guacamole-user-password")
+guacUserPassword=$(managedPassword "guacamole-user-password" "${componentName}")
 
 if [[ -z $(/usr/bin/sudo su - postgres -c "psql -t -c 'SELECT u.usename AS \"User Name\" FROM pg_catalog.pg_user u;'" | grep guacamole_user) ]]; then
   /usr/bin/sudo su - postgres -c "psql -d guacamole_db -c \"CREATE USER guacamole_user WITH PASSWORD '${guacUserPassword}';\""
@@ -155,10 +155,10 @@ postgresql-auto-create-accounts: true
 ''' | /usr/bin/sudo tee /etc/guacamole/guacamole.properties
 
 # Generate random passwords for guacamole user via custom bash functions
-md5Password=$(managedPassword "guacamole-md5-password")
+md5Password=$(managedPassword "guacamole-md5-password" "${componentName}")
 
 # Generate random passwords for guacamole user via custom bash functions
-vncPassword=$(managedPassword "guacamole-vnc-password")
+vncPassword=$(managedPassword "guacamole-vnc-password" "${componentName}")
 
 echo '''
 <user-mapping>
