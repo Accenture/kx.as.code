@@ -74,6 +74,9 @@ if [[ ${rc} -ne 0 ]]; then
     for i in {1..3}
     do
         rc=0
+        gpgKeyId=$(/usr/bin/sudo -H -i -u ${userToInitialize} bash -c "gpg --list-secret-keys --with-colons | head -1 |  cut -d':' -f5")
+        log_debug "Initializing GoPass with key id ${gpgKeyId}"
+        /usr/bin/sudo -H -i -u ${userToInitialize} bash -c "gopass init --storage fs --path /home/${userToInitialize}/.local/share/gopass/stores/root ${gpgKeyId}"
         /usr/bin/sudo -H -i -u ${userToInitialize} bash -c "gopass setup --storage fs --alias kxascode --create --name \"${userToInitialize}\" --email \"${userToInitialize}@${baseDomain}\"" || rc=$?
         if [[ ${rc} -ne 0 ]]; then
             log_warn "Attempt ${i} to initialize GoPass failed. Trying again for a maximum of 3 times, before pusing item to failure queue"
