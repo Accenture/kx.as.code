@@ -4,12 +4,12 @@
     "installation_type": "helm",
     "installation_group_folder": "cicd",
     "environment_variables": {
-        "appVersion": "7.33.8"
+        "appVersion": "7.41.4"
     },
     "helm_params": {
         "repository_url": "https://charts.jfrog.io",
         "repository_name": "jfrog/artifactory-oss",
-        "helm_version": "107.33.8",
+        "helm_version": "107.41.4",
         "set_key_values": []
     },
     "categories": [

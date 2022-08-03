@@ -9,4 +9,4 @@ for bucket in ${s3BucketsToCreate}; do
 done
 
 # List created S3 buckets
-mc ls minio --insecure
+mc ls myminio --insecure

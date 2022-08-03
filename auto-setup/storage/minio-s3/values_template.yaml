@@ -218,10 +218,10 @@ consoleIngress:
     # nginx.ingress.kubernetes.io/whitelist-source-range: 0.0.0.0/0
   path: /
   hosts:
-    - console.{{ componentName }}.{{ baseDomain }}
+    - console-{{ componentName }}.{{ baseDomain }}
   tls:
     -  hosts:
-         - console.{{ componentName }}.{{ baseDomain }}
+         - console-{{ componentName }}.{{ baseDomain }}
 
 ## Node labels for pod assignment
 ## Ref: https://kubernetes.io/docs/user-guide/node-selection/

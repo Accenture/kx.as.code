@@ -6,7 +6,7 @@
     "helm_params": {
         "repository_url": "https://helm.goharbor.io",
         "repository_name": "harbor/harbor",
-        "helm_version": "1.7.3",
+        "helm_version": "1.9.3",
         "set_key_values": [
             "persistence.enabled=true",
             "persistence.persistentVolumeClaim.registry.storageClass=local-storage-sc",

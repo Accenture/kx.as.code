@@ -74,7 +74,7 @@ if [[ ${rc} -ne 0 ]]; then
     for i in {1..3}
     do
         rc=0
-        /usr/bin/sudo -H -i -u ${userToInitialize} bash -c "gopass setup --email ${userToInitialize}@${baseDomain} --name ${userToInitialize} --storage fs" || rc=$?
+        /usr/bin/sudo -H -i -u ${userToInitialize} bash -c "gopass setup --storage fs --alias kxascode --create --name \"${userToInitialize}\" --email \"${userToInitialize}@${baseDomain}\"" || rc=$?
         if [[ ${rc} -ne 0 ]]; then
             log_warn "Attempt ${i} to initialize GoPass failed. Trying again for a maximum of 3 times, before pusing item to failure queue"
             export initializeStatus="fail"
@@ -97,6 +97,11 @@ if [[ "${initializeStatus}" == "success" ]]; then
     log_debug "Looks good. GoPass test passed. Proceeding to the next steps"
 else
     log_error "Even after 3 attempts it was not possible to successfully initialize GoPass. Exiting with RC=1"
+    # Cleanup for next run
+    log_error "Cleaning up GoPass directories before next attempt"
+    rm -rf /home/${userToInitialize}/.local/share/gopass
+    rm -rf /home/${userToInitialize}/.config/gopass
+    rm -rf /home/${userToInitialize}/.gnupg
     exit 1
 fi
 
