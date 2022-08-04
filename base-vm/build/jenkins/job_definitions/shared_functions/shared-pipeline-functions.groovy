@@ -1,12 +1,12 @@
 def setBuildEnvironment(profile,node_type,vagrant_action) {
 
-    //println("setBuildEnvironment() -> Received parameters: profile: ${profile}, node_type: ${node_type}, vagrant_action: ${vagrant_action}")
+    println("setBuildEnvironment() -> Received parameters: profile: ${profile}, node_type: ${node_type}, vagrant_action: ${vagrant_action}")
 
-    os = sh (
-        script: 'uname -s',
-        returnStdout: true
-    ).toLowerCase().trim()
-
+    def sout = new StringBuilder(), serr = new StringBuilder()
+    def proc = 'uname'.execute()
+    proc.consumeProcessOutput(sout, serr)
+    proc.waitForOrKill(1000)
+    os=sout.toString().toLowerCase().trim()
     println("os: ${os}")
 
     if ( os == "darwin" ) {
