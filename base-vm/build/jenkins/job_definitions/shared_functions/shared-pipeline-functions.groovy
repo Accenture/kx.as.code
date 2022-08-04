@@ -6,6 +6,9 @@ def setBuildEnvironment(profile,node_type,vagrant_action) {
         script: 'uname -s',
         returnStdout: true
     ).toLowerCase().trim()
+
+    println("os: ${os}")
+
     if ( os == "darwin" ) {
         echo "Running on Mac"
         packerOsFolder="darwin-linux"
