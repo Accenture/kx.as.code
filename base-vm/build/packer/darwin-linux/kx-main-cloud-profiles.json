@@ -131,6 +131,8 @@
         "flavor": "{{user `openstack_flavor`}}",
         "availability_zone": "nova",
         "ssh_timeout": "10000s",
+	"ssh_keypair_name": "packer-build",
+	"ssh_private_key_file": "~/.ssh/id_rsa",
         "insecure": "true"
       }
   ],
