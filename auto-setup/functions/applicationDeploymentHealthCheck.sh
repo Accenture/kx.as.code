@@ -1,4 +1,4 @@
-applicationDeploymentHealthCheck () {
+applicationDeploymentHealthCheck() {
 
   # URL READINESS HEALTH CHECK
   applicationUrls=$(cat ${componentMetadataJson} | jq -r '.urls[]?.url?' | mo)

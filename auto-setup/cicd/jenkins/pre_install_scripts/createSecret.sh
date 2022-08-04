@@ -1,8 +1,8 @@
-#!/bin/bash -x
+#!/bin/bash
 set -euo pipefail
 
 # Create Jenkins Admin Password
-export jenkinsAdminPassword=$(managedPassword "jenkins-admin-password")
+export jenkinsAdminPassword=$(managedPassword "jenkins-admin-password" "jenkins")
 
 # Create secret if it does not exist
 kubectl get secret jenkins-admin-secret --namespace ${namespace} ||

@@ -249,7 +249,7 @@ fi
 # Check if plugin manager already downloaded or not
 if [ ! -f ./jenkins-plugin-manager.jar ]; then
     # Install Jenkins Plugins
-    jenkinsPluginManagerVersion="2.12.3"
+    jenkinsPluginManagerVersion="2.12.8"
     echo "Downloading Jenkins Plugin Manager..."
     echo "curl -L -o ./jenkins-plugin-manager.jar https://github.com/jenkinsci/plugin-installation-manager-tool/releases/download/${jenkinsPluginManagerVersion}/jenkins-plugin-manager-${jenkinsPluginManagerVersion}.jar"
     curl -L -o ./jenkins-plugin-manager.jar https://github.com/jenkinsci/plugin-installation-manager-tool/releases/download/${jenkinsPluginManagerVersion}/jenkins-plugin-manager-${jenkinsPluginManagerVersion}.jar

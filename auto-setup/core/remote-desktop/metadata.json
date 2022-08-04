@@ -3,6 +3,7 @@
     "namespace": "",
     "installation_type": "script",
     "installation_group_folder": "core",
+    "retry": "skip",
     "environment_variables": {
         "guacamoleVersion": "1.3.0",
         "guacamoleChecksum": "bc5511c7170841f90d437b5a07b7ec2f5bfd061f2a5bfc4e4d0fc4d7b303fb4c",

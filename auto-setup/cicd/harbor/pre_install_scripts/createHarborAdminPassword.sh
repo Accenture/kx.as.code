@@ -1,5 +1,5 @@
-#!/bin/bash -x
+#!/bin/bash
 set -euo pipefail
 
-# Create Artifactory Admin and Postgresql Passwords
-export harborAdminPassword=$(managedApiKey "harbor-admin-password")
+# Create Create Harbor Admin Password
+export harborAdminPassword=$(managedApiKey "harbor-admin-password" "harbor")

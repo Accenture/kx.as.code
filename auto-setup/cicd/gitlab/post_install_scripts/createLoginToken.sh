@@ -1,7 +1,7 @@
-#!/bin/bash -x
+#!/bin/bash
 set -euo pipefail
 
-if [[ -z $(getPassword "gitlab-personal-access-token") ]]; then
+if [[ -z $(getPassword "gitlab-personal-access-token" "gitlab") ]]; then
 
     # Set Gitlab admin user
     export adminUser="root"
@@ -10,7 +10,7 @@ if [[ -z $(getPassword "gitlab-personal-access-token") ]]; then
     export podName=$(kubectl get pods -n ${namespace} -l app=toolbox -o=custom-columns=:metadata.name --no-headers)
 
     # Generate personal access token
-    export personalAccessToken=$(managedApiKey "gitlab-personal-access-token")
+    export personalAccessToken=$(managedApiKey "gitlab-personal-access-token" "gitlab")
 
     # Save generated token to admin user account
     kubectl exec -n ${namespace} ${podName} -c toolbox -- gitlab-rails runner "token = User.find_by_username('${adminUser}').personal_access_tokens.create(scopes: [:api], name: 'Automation token'); token.set_token('${personalAccessToken}'); token.save!"

@@ -4,7 +4,7 @@
     "installation_type": "script",
     "installation_group_folder": "core",
     "environment_variables": {
-        "glusterfsVersion": "8.6",
+        "glusterfsVersion": "9.2-1",
         "heketiVersion": "10.4.0"
     },
     "install_scripts": [

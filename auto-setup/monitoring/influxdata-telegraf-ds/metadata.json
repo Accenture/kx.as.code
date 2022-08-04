@@ -4,12 +4,12 @@
     "installation_type": "helm",
     "installation_group_folder": "monitoring",
     "environment_variables": {
-        "imageTag": "1.10.0-alpine"
+        "imageTag": "1.23.2-alpine"
     },
     "helm_params": {
         "repository_url": "https://helm.influxdata.com/",
         "repository_name": "influxdata/telegraf-ds",
-        "helm_version": "1.8.1",
+        "helm_version": "1.1.0",
         "set_key_values": []
     },
     "categories": [

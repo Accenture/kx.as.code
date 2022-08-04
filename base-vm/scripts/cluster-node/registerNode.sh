@@ -55,6 +55,10 @@ export basePassword=$(cat ${installationWorkspace}/profile-config.json | jq -r '
 export startupMode=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.startupMode')
 export standaloneMode=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.standaloneMode')
 
+export kxVersion=$(cat ${installationWorkspace}/versions.json | jq -r '.kxascode')
+export k8sVersion=$(cat ${installationWorkspace}/versions.json | jq -r '.kubernetes')
+export k3sVersion=$(cat ${installationWorkspace}/versions.json | jq -r '.k3s')
+
 checkAndUpdateBaseUsername() {
 
   if [[ "${vmUser}" != "${baseUser}" ]]; then
@@ -135,7 +139,7 @@ while [[ -z ${netDevice} ]] && [[ -z ${nodeIp} ]]; do
   if [[ "${baseIpType}" == "static" ]] &&  [[ ! -f /usr/share/kx.as.code/.config/network_status ]]; then
     export nodeIp="ignore"
   else
-    export nodeIp=$(ifconfig ${netDevice} | awk '/inet / {print $2}')
+    export nodeIp=$(ip -4 a show ${netDevice} | grep -oP '(?<=inet\s)\d+(\.\d+){3}')
   fi
 done
 
@@ -280,11 +284,13 @@ if [[ ${baseIpType} == "static"   ]]; then
 elif [[ -n $(dig kx-main1.${baseDomain} +short) ]]; then
   # Try DNS
   export kxMainIp=$(dig kx-main1.${baseDomain} +short)
+  export kxNodeIp=$(ip -4 a show ${netDevice} | grep -oP '(?<=inet\s)\d+(\.\d+){3}')
 else
     # If no static IP or DNS, wait for file containing KxMain IP
     timeout -s TERM 3000 bash -c 'while [ ! -f /var/tmp/kx.as.code_main-ip-address ];         do
     echo "Waiting for kx-main IP address" && sleep 5;         done'
     export kxMainIp=$(cat /var/tmp/kx.as.code_main-ip-address)
+    export kxNodeIp=$(ip -4 a show ${netDevice} | grep -oP '(?<=inet\s)\d+(\.\d+){3}')
 fi
 
 if [[ ! -f /usr/share/kx.as.code/.config/network_status ]]; then
@@ -535,33 +541,45 @@ while [[ "$rc" != "0" ]]; do
 done
 
 # Wait for Kubernetes to be available
-while [[ "$(curl -k -s https://${kxMainIp}:6443/livez)" != "ok" ]]; do
-  echo "Waiting for https://${kxMainIp}:6443/livez"
+while [[ "$(/usr/bin/sudo -H -i -u "${vmUser}" bash -c "ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} \"sudo kubectl get --raw='/readyz'\"")" != "ok" ]]; do
+  echo "Waiting for kubectl get --raw='/readyz' to return ok"
   sleep 15
 done
 
-# Kubernetes master is reachable, join the node to cluster
-if [[ "${nodeRole}" == "kx-worker" ]]; then
-  /usr/bin/sudo -H -i -u "${vmUser}" bash -c "ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} 'sudo kubeadm token create --print-join-command 2>/dev/null'" > ${installationWorkspace}/kubeJoin.sh
-elif [[ "${nodeRole}" == "kx-main" ]]; then
-  echo "k8sCertKey=\$(/usr/bin/sudo -H -i -u ${vmUser} bash -c \"ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} 'sudo kubeadm init phase upload-certs --upload-certs | tail -1'\")" > ${installationWorkspace}/kubeJoin.sh
-  echo "$(/usr/bin/sudo -H -i -u ${vmUser} bash -c "ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} 'sudo kubeadm token create --print-join-command 2>/dev/null'") --control-plane --apiserver-advertise-address ${nodeIp} --certificate-key \${k8sCertKey} || true" >> ${installationWorkspace}/kubeJoin.sh
+# Get Kubernetes orchestrator to use
+export kubeOrchestrator=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.kubeOrchestrator')
+
+if [[ "${kubeOrchestrator}" == "k8s" ]]; then
+
+  # Kubernetes master is reachable, join the node to cluster
+  if [[ "${nodeRole}" == "kx-worker" ]]; then
+    /usr/bin/sudo -H -i -u "${vmUser}" bash -c "ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} 'sudo kubeadm token create --print-join-command 2>/dev/null'" > ${installationWorkspace}/kubeJoin.sh
+  elif [[ "${nodeRole}" == "kx-main" ]]; then
+    echo "k8sCertKey=\$(/usr/bin/sudo -H -i -u ${vmUser} bash -c \"ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} 'sudo kubeadm init phase upload-certs --upload-certs | tail -1'\")" > ${installationWorkspace}/kubeJoin.sh
+    echo "$(/usr/bin/sudo -H -i -u ${vmUser} bash -c "ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} 'sudo kubeadm token create --print-join-command 2>/dev/null'") --control-plane --apiserver-advertise-address ${nodeIp} --certificate-key \${k8sCertKey} || true" >> ${installationWorkspace}/kubeJoin.sh
+  fi
+  /usr/bin/sudo chmod 755 ${installationWorkspace}/kubeJoin.sh
+
+  # Fix reliance on non existent file: /run/systemd/resolve/resolv.conf
+  /usr/bin/sudo sed -i '/^\[Service\]/a Environment="KUBELET_EXTRA_ARGS=--resolv-conf=\/etc\/resolv.conf --node-ip='${nodeIp}'"' /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+  # Restart Kubelet
+  /usr/bin/sudo systemctl daemon-reload
+  /usr/bin/sudo systemctl restart kubelet
+
+  # Keep trying to join Kubernetes cluster until successful
+  while [[ ! -f /var/lib/kubelet/config.yaml ]]; do
+    /usr/bin/sudo ${installationWorkspace}/kubeJoin.sh
+    echo "Waiting for kx-worker/kx-main to be connected successfully to main node"
+    sleep 30
+  done
+
+elif [[ "${kubeOrchestrator}" == "k3s" ]]; then
+
+  # Join K3s cluster
+  k3sToken=$(/usr/bin/sudo -H -i -u "${vmUser}" bash -c "ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} 'sudo cat /var/lib/rancher/k3s/server/node-token'")
+  curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=${k3sVersion} K3S_URL=https://${kxMainIp}:6443 INSTALL_K3S_EXEC="--node-ip ${kxNodeIp}" K3S_TOKEN=${k3sToken} sh -
+
 fi
-/usr/bin/sudo chmod 755 ${installationWorkspace}/kubeJoin.sh
-
-# Fix reliance on non existent file: /run/systemd/resolve/resolv.conf
-/usr/bin/sudo sed -i '/^\[Service\]/a Environment="KUBELET_EXTRA_ARGS=--resolv-conf=\/etc\/resolv.conf --node-ip='${nodeIp}'"' /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
-# Restart Kubelet
-/usr/bin/sudo systemctl daemon-reload
-/usr/bin/sudo systemctl restart kubelet
-
-
-# Keep trying to join Kubernetes cluster until successful
-while [[ ! -f /var/lib/kubelet/config.yaml ]]; do
-  /usr/bin/sudo ${installationWorkspace}/kubeJoin.sh
-  echo "Waiting for kx-worker/kx-main to be connected successfully to main node"
-  sleep 30
-done
 
 if [[ "${nodeRole}" == "kx-main" ]]; then
   # Setup KX and root users as Kubernetes Admin

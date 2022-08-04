@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash
 set -euo pipefail
 
 # Set variables
@@ -9,10 +9,7 @@ export kcBinDir=/opt/jboss/keycloak/bin/
 export kcAdmCli=/opt/jboss/keycloak/bin/kcadm.sh
 
 # Ensure Kubernetes is available before proceeding to the next step
-timeout -s TERM 600 bash -c \
-    'while [[ "$(curl -s -k https://localhost:6443/livez)" != "ok" ]];\
-do sleep 5;\
-done'
+kubernetesHealthCheck
 
 # Get Keycloak POD name for subsequent Keycloak CLI commands
 export kcPod=$(kubectl get pods -l 'app.kubernetes.io/name=keycloak' -n ${namespace} --output=json | jq -r '.items[].metadata.name')
@@ -47,7 +44,7 @@ clientSecret=$(kubectl -n ${namespace} exec ${kcPod} --container ${kcContainer} 
     ${kcAdmCli} get clients/${clientId}/client-secret | jq -r '.value')
 
 # Create setup script for new users
-echo '''#!/bin/bash -x
+echo '''#!/bin/bash
 set -euo pipefail
 kubectl config set-credentials oidc \
 --exec-api-version=client.authentication.k8s.io/v1beta1 \

@@ -1,10 +1,10 @@
-#!/bin/bash -x
+#!/bin/bash
 set -euo pipefail
 
 export ldapServer=127.0.0.1
 
 # Generate LDAP Admin Password
-export ldapAdminPassword=$(managedPassword "openldap-admin-password")
+export ldapAdminPassword=$(managedPassword "openldap-admin-password" "openldap")
 
 # Install OpenLDAP server and utilities
 echo -e " \

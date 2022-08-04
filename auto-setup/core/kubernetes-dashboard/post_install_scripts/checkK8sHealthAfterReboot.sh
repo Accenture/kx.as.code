@@ -1,8 +1,8 @@
-#!/bin/bash -x
+#!/bin/bash
 set -euo pipefail
 
 cat << EOF > /usr/share/kx.as.code/checkK8sStartup.sh
-#!/bin/bash -x
+#!/bin/bash
 set -euo pipefail
 
 baseUser="kx.hero"

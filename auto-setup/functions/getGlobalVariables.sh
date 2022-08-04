@@ -12,4 +12,7 @@ getGlobalVariables() {
         done
     fi
     IFS=$OLDIFS
+
+    export DEBIAN_FRONTEND=noninteractive
+
 }

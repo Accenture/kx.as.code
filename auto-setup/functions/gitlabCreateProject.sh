@@ -1,7 +1,7 @@
 createGitlabProject() {
 
   # Get Gitlab personal access token
-  export personalAccessToken=$(getPassword "gitlab-personal-access-token")
+  export personalAccessToken=$(getPassword "gitlab-personal-access-token" "gitlab")
 
   gitlabProjectName=$1
   gitlabGroupName=$2

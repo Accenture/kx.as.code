@@ -1,6 +1,13 @@
 #!/bin/bash -x
 set -euo pipefail
 
+# Determine CPU architecture
+if [[ -n $( uname -a | grep "aarch64") ]]; then
+  ARCH="arm64"
+else
+  ARCH="amd64"
+fi
+
 sudo apt-get -y install \
     fonts-cantarell \
     fonts-noto-extra \
@@ -16,17 +23,26 @@ sudo apt-get -y install \
     conky-all \
     bc \
     dbus-x11 \
-    pwgen
+    pwgen \
+    kde-spectacle
 
 # Install Google-Chrome
-wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
-sudo sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list'
-sudo apt-get update
-sudo apt-get install -y google-chrome-stable
+if [[ "${ARCH}" == "arm64" ]]; then
+  sudo apt install -y chromium
+else
+  wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
+  sudo sh -c 'echo "deb [arch='${ARCH}'] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list'
+  sudo apt-get update
+  sudo apt-get install -y google-chrome-stable
+fi
 
 # Set User File Associations
 sudo update-alternatives --install /usr/bin/editor editor /usr/bin/vim 100
-sudo update-alternatives --install /usr/bin/x-www-browser x-www-browser /usr/bin/google-chrome-stable 100
+if [[ "${ARCH}" == "arm64" ]]; then
+  sudo update-alternatives --install /usr/bin/x-www-browser x-www-browser /usr/bin/chromium 100
+else
+  sudo update-alternatives --install /usr/bin/x-www-browser x-www-browser /usr/bin/google-chrome-stable 100
+fi
 
 # Install Typora for showing WELCOME.md after GNOME login
 sudo wget -qO - https://typora.io/linux/public-key.asc | sudo apt-key add -
@@ -43,13 +59,28 @@ sudo ln -s /etc/profile.d/vte-2.91.sh /etc/profile.d/vte.sh
 # Install Mustach Template Variable Replacement Tool
 curl -sSL https://git.io/get-mo -o mo
 sudo mv mo /usr/local/bin
-chmod 755 /usr/local/bin/mo
+sudo chmod 755 /usr/local/bin/mo
 
-if [[ ${COMPUTE_ENGINE_BUILD} == "true"   ]]; then
+if [[ ${COMPUTE_ENGINE_BUILD} == "true"  ]] || [[ -n $(which raspinfo) ]]; then
   # Install NoMachine
-  wget https://download.nomachine.com/download/7.9/Linux/nomachine_7.9.2_1_amd64.deb
-  sudo apt-get install -y ./nomachine_7.9.2_1_amd64.deb
-  rm -f ./nomachine_7.9.2_1_amd64.deb
+  mkdir ${INSTALLATION_WORKSPACE}/nomachine
+  cd ${INSTALLATION_WORKSPACE}/nomachine
+  if [[ -n $( uname -a | grep "aarch64") ]]; then
+    # Download URL for ARM64 CPU architecture
+    NOMACHINE_URL="https://download.nomachine.com/download/7.10/Arm/nomachine_7.10.1_1_arm64.deb"
+    NOMACHINE_CHECKSUM="75fc2a23c73c0dcd9c683b9ebf9fe4d821f9562b3b058441d4989d7fcd4c6977"
+  else
+    # Download URL for X86_64 CPU architecture
+    NOMACHINE_URL="https://download.nomachine.com/download/7.10/Linux/nomachine_7.10.1_1_amd64.deb"
+    NOMACHINE_CHECKSUM="e948895fd41adbded25e4ddc7b9637585e46af9d041afadfd620a2f8bb23362c"
+  fi
+
+  wget  ${NOMACHINE_URL}
+  NOMACHINE_FILE=$(basename ${NOMACHINE_URL})
+  echo "${NOMACHINE_CHECKSUM} ${NOMACHINE_FILE}" | sha256sum --check
+
+  sudo apt-get install -y ./${NOMACHINE_FILE}
+  rm -f ./${NOMACHINE_FILE}
   # Ensure NoMachine starts dedicated virtual display if private or public cloud
   sudo sed -E -i 's/#PhysicalDisplays(.*)/PhysicalDisplays 1005/g' /usr/NX/etc/node.cfg
   sudo sed -E -i 's/#DisplayBase(.*)/DisplayBase 1005/g' /usr/NX/etc/server.cfg
@@ -75,12 +106,7 @@ sudo bash -c '''
 export NVM_DIR=/usr/local/nvm
 source /opt/nvm/nvm.sh
 nvm install lts/gallium
-nvm install lts/fermium
 nvm use --delete-prefix lts/gallium
-npm install --global envhandlebars
-npm install --global yarn
-npm install --global pnpm
-nvm use --delete-prefix lts/fermium
 npm install --global envhandlebars
 npm install --global yarn
 npm install --global pnpm
@@ -99,17 +125,19 @@ sudo chown -R ${BASE_IMAGE_SSH_USER}:${BASE_IMAGE_SSH_USER} /home/${BASE_IMAGE_S
 # Compiling OpenLens for later installation when KX.AS.CODE comes up
 cd ${INSTALLATION_WORKSPACE}
 sudo chmod 777 ${INSTALLATION_WORKSPACE}
-export lensVersion="v5.5.4"
+export lensVersion="v6.0.0"
 git clone --branch ${lensVersion} https://github.com/lensapp/lens.git
 cd ${INSTALLATION_WORKSPACE}/lens
+# Remove AppImage and RPM from Linux build targets
+sudo sed -i -e '/"rpm",/d' -e '/"AppImage"/d' -e 's/"deb",/"deb"/' ${INSTALLATION_WORKSPACE}/lens/package.json
+
+source /etc/profile.d/nvm.sh
 
 # Build OpenLens
-source /etc/profile.d/nvm.sh
-nvm use --delete-prefix lts/fermium
-make build || true # Do not fail KX.AS.CODE image build on error
-debOpenLensInstaller=$(find ${INSTALLATION_WORKSPACE}/lens/dist -name "OpenLens-*.deb")
-mv ${debOpenLensInstaller} ${INSTALLATION_WORKSPACE}
-
-# Tidy up
-nvm use --delete-prefix lts/gallium
-sudo rm -rf ${INSTALLATION_WORKSPACE}/lens
+if [[ -z $(which raspinfo) ]]; then
+  sudo bash -c "cd /usr/share/kx.as.code/workspace/lens; source /etc/profile.d/nvm.sh; nvm use --delete-prefix lts/gallium; npm install -g yarn; yarn install; make build"
+  debOpenLensInstaller=$(find ${INSTALLATION_WORKSPACE}/lens/dist -name "OpenLens-*.deb")
+  sudo mv ${debOpenLensInstaller} ${INSTALLATION_WORKSPACE}
+  # Tidy up
+  sudo rm -rf ${INSTALLATION_WORKSPACE}/lens
+fi

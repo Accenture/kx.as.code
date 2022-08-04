@@ -26,6 +26,7 @@ def updatedJson
 def parsedJson
 def jsonFilePath = PROFILE.split(";")[0]
 def profileStartMode = PROFILE.split(";")[1]
+def orchestrator = PROFILE.split(";")[2]
 def inputFile = new File(jsonFilePath)
 def profileParentPath = inputFile.getParentFile().getName()
 def profileName = inputFile.getName()
@@ -119,6 +120,7 @@ try {
     parsedJson = new JsonSlurper().parse(inputFile)
 
     parsedJson.config.startupMode = profileStartMode
+    parsedJson.config.kubeOrchestrator = orchestrator
 
     if ( GENERAL_PARAMETERS ) {
         generalParameterElements = GENERAL_PARAMETERS.split(';')

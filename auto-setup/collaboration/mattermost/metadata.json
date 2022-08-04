@@ -8,12 +8,12 @@
         "memory": "256"
     },
     "environment_variables": {
-        "imageTag": "6.4.2@sha256:4e76b95177a17125e35b0ee2c843baff6656b8b9fc045507d08f810dca9765e5"
+        "imageTag": "7.1.2"
     },
     "helm_params": {
         "repository_url": "https://helm.mattermost.com",
         "repository_name": "mattermost/mattermost-team-edition",
-        "helm_version": "6.4.2",
+        "helm_version": "6.6.9",
         "set_key_values": []
     },
     "categories": [

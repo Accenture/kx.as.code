@@ -1,5 +1,5 @@
-#!/bin/bash -x
-set -euo pipefail
+#!/bin/bash
+set -euox pipefail
 
 # Set variables
 export kcRealm=${baseDomain}
@@ -9,11 +9,11 @@ export kcBinDir=/opt/jboss/keycloak/bin/
 export kcAdmCli=/opt/jboss/keycloak/bin/kcadm.sh
 
 # Generate Keycloak Admin Password
-keycloakAdminPassword=$(managedPassword "keycloak-admin-password")
+keycloakAdminPassword=$(managedPassword "keycloak-admin-password" "keycloak")
 
 # Ensure Kubernetes is available before proceeding to the next step
 # shellcheck disable=SC2016
-timeout -s TERM 600 bash -c 'while [[ "$(curl -s -k https://localhost:6443/livez)" != "ok" ]]; do sleep 5; done'
+kubernetesHealthCheck
 
 # Get Keycloak POD name for subsequent Keycloak CLI commands
 export kcPod=$(kubectl get pods -l 'app.kubernetes.io/name=keycloak' -n ${namespace} --output=json | jq -r '.items[].metadata.name')
@@ -102,7 +102,7 @@ kcParentId=$(kubectl -n ${namespace} exec ${kcPod} --container ${kcContainer} --
     ${kcAdmCli} get / --fields id --format csv --noquotes)
 
 # Get LDAP Admin Password
-export ldapAdminPassword=$(getPassword "openldap-admin-password")
+export ldapAdminPassword=$(getPassword "openldap-admin-password" "openldap")
 
 # Create LDAP User Federation
 if [[ ! $(kubectl -n ${namespace} exec ${kcPod} --container ${kcContainer} -- ${kcAdmCli} get components -r ${kcRealm} | jq -r '.[] | select(.providerId=="ldap") | .name') ]]; then

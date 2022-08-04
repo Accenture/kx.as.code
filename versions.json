@@ -1,4 +1,5 @@
 {
-  "kxascode": "0.8.8",
-  "kubernetes": "1.21.3-00"
+  "kxascode": "0.8.9",
+  "kubernetes": "1.24.3-00",
+  "k3s": "v1.24.3+k3s1"
 }

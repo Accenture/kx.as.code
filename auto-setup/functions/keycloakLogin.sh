@@ -1,4 +1,4 @@
-keycloakLogin () {
+keycloakLogin() {
 
     # Source Keycloak Environment
     sourceKeycloakEnvironment
@@ -6,7 +6,7 @@ keycloakLogin () {
     if [[ -n "${kcPod}" ]]; then
 
       # Login to Keycloak
-      export keycloakAdminPassword=$(getPassword "keycloak-admin-password")
+      export keycloakAdminPassword=$(getPassword "keycloak-admin-password" "keycloak")
       kubectl -n ${kcNamespace} exec ${kcPod} --container ${kcContainer} -- \
           ${kcAdmCli} config credentials --server ${kcInternalUrl}/auth --realm ${kcRealm} --user admin --password ${keycloakAdminPassword}
 

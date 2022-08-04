@@ -1,0 +1,40 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+# All Vagrant configuration is done below. The "2" in Vagrant.configure
+# configures the configuration version (we support older styles for
+# backwards compatibility). Please don't change it unless you know what
+# you're doing.
+Vagrant.configure("2") do |config|
+  config.vm.box = "ubuntu/focal64"
+  config.disksize.size = '40GB'
+  config.vm.synced_folder "../../../../", "/kx.as.code"
+  config.vm.provision "shell", inline: <<-SHELL
+    curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
+    sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
+
+    apt-get update
+    apt-get install -y git golang qemu-user-static packer libarchive-tools qemu-utils
+    rm -rf packer-builder-arm *>/dev/null
+
+    sudo curl -LO https://go.dev/dl/go1.18.4.linux-amd64.tar.gz
+    sudo tar -C /usr/local -xzf go1.18.4.linux-amd64.tar.gz
+
+    git clone https://github.com/mkaczanowski/packer-builder-arm
+    cd packer-builder-arm
+    /usr/local/go/bin/go mod download
+    /usr/local/go/bin/go build -buildvcs=false
+    sudo cp -f packer-builder-arm /usr/local/bin
+
+    # Building the GoPass-Ui package, as there is no ARM64 version available on the site
+    # Once built, the package will be copied into the target image for later installation via the usual KX.AS.CODE installation process
+
+    #sudo /bin/dd if=/dev/zero of=/var/swap.1 bs=1M count=1024
+    #sudo /bin/dd if=/dev/zero of=/var/swap.1 bs=1K count=4M
+    #sudo /sbin/mkswap /var/swap.1
+    #sudo /sbin/swapon /var/swap.1
+    #sudo bash -c "source /opt/nvm/nvm.sh && nvm install lts/gallium"
+    #source /opt/nvm/nvm.sh && nvm use lts/gallium && npm install --force --legacy-peer-deps && npm run release
+
+  SHELL
+end

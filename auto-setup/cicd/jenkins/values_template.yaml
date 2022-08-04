@@ -875,7 +875,7 @@ persistence:
   ##   set, choosing the default provisioner.  (gp2 on AWS, standard on
   ##   GKE, AWS & OpenStack)
   ##
-  storageClass: gluster-heketi-sc
+  storageClass: kadalu.storage-pool-1
   annotations: {}
   labels: {}
   accessMode: "ReadWriteOnce"

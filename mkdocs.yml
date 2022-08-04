@@ -6,9 +6,54 @@ site_author: 'Patrick Delamere'
 
 docs_dir: docs
 
+nav:
+    - 'README.md'
+    - 'Quick-Start-Guide.md'
+    - 'Overview':
+        - 'Overview/Architecture.md'
+        - 'Overview/Application-Library.md'
+        - 'Overview/Future-Roadmap.md'
+        - 'Overview/Questions-and-Answers.md'
+        - 'Overview/Raising-a-Bug-Report.md'
+        - 'Overview/Raising-a-Feature-Request.md'
+    - 'Build':
+        - 'Build/Local-Virtualizations.md'
+        - 'Build/Raspberry-Pi-Cluster.md'
+        - 'Build/Private-Clouds.md'
+        - 'Build/Public-Clouds.md'
+        - 'Build/Troubleshooting.md'
+    - 'Deployment':
+        - 'Deployment/Configuration-Options.md'
+        - 'Deployment/Deployment-Profiles.md'
+        - 'Deployment/Initial-Setup.md'
+        - 'Deployment/Local-Virtualizations.md'
+        - 'Deployment/Raspberry-Pi-Cluster.md'
+        - 'Deployment/Manual-Provisioning.md'
+        - 'Deployment/Private-Clouds.md'
+        - 'Deployment/Provisioning-Flow.md'
+        - 'Deployment/Provisioning-Templates.md'
+        - 'Deployment/Public-Clouds.md'
+        - 'Deployment/Remote-Access.md'
+        - 'Deployment/Troubleshooting.md'
+        - 'Deployment/User-Management.md'
+    - 'Development':
+        - 'Development/Adding-a-Solution.md'
+        - 'Development/Available-Functions.md'
+        - 'Development/Best-Practices.md'
+        - 'Development/Contribution-Guidelines.md'
+        - 'Development/Debugging.md'
+        - 'Development/Provisioning-with-ArgoCD.md'
+        - 'Development/Provisioning-with-Helm.md'
+        - 'Development/Provisioning-with-Kustomize.md'
+        - 'Development/Provisioning-with-Scripts.md'
+        - 'Development/Solution-Metadata.md'
+        - 'Development/Troubleshootings.md'
+    - 'Prerequisites':
+        - 'Prerequisites/OpenStack-Setup.md'
+
 theme:
-    logo: images/kxascode_white_logo.png
-    favicon: images/favicon.png
+    logo: assets/images/kxascode_white_logo.png
+    favicon: assets/images/favicon.png
     name: material
     palette:
         accent: pink
@@ -29,14 +74,23 @@ markdown_extensions:
     - admonition
     - def_list
     - attr_list
+    - pymdownx.extra
     - pymdownx.tilde
     - pymdownx.details
     - pymdownx.superfences
     - pymdownx.magiclink
+    - pymdownx.emoji:
+        emoji_index: !!python/name:materialx.emoji.twemoji
+        emoji_generator: !!python/name:materialx.emoji.to_svg
     - toc:
         permalink: true
     - codehilite:
         guess_lang: false
+
+extra_css:
+    - assets/css/custom.css
+extra_javascript:
+    - assets/js/custom.js
 
 plugins:
     - search:

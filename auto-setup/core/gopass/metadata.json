@@ -4,10 +4,12 @@
     "installation_type": "script",
     "installation_group_folder": "core",
     "environment_variables": {
-        "gopassVersion": "1.12.6",
-        "gopassChecksum": "287e7dc89c924a12c9d197790e21ec13bbfd122d790de3d5d42d16789ac68468",
-        "gopassUiVersion": "0.8.0",
-        "gopassUiChecksum": "64255b6e829e5432f387327857fbaa3609a537d151eafb1b8c36f7ffed51b115"
+        "gopassVersion": "1.14.4",
+        "gopassAmd64Checksum": "4ec4d45356d87347709c8dfe43e67e5af5bf672da37ec9a1aa5ee6d090e4e4f4",
+        "gopassAmd64UiVersion": "0.8.0",
+        "gopassAmd64UiChecksum": "64255b6e829e5432f387327857fbaa3609a537d151eafb1b8c36f7ffed51b115",
+        "gopassArm64Version": "1.14.4",
+        "gopassArm64Checksum": "8d6a63436d8a79a0b590cfb71e4f1f732d0756a8cab322c544c16ef8563f1307"
     },
     "install_scripts": [
         "install-and-configure-gopass.sh"

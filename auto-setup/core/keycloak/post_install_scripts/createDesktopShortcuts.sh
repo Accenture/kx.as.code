@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash
 set -euo pipefail
 
 # if Primary URL[0] in URLs Array exists and Icon is defined, create Desktop Shortcut

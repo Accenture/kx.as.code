@@ -1,38 +1,31 @@
-#!/bin/bash -x
+#!/bin/bash
 set -euo pipefail
 
 # Enable DNS resolution in Kubernetes for *.${baseDomain} domain
+
+# Wait for Config Map to become available
+waitForKubernetesResource "coredns" "configmap" "kube-system"
+
+# Get existing config-map
+#kubectl get cm -n kube-system coredns -o yaml | /usr/bin/sudo tee ${installationWorkspace}/coredns.yaml
+
+# Update exported YAML file with external DNS server (bind9 instance installed on KX-Main1)
+#/usr/bin/sudo sed -i -e '/^        loadbalance/{:a; N; /\n    }/!ba; a \    '${baseDomain}':53 {\n        errors\n        cache 30\n        forward . '${mainIpAddress}'\n    }' -e '}' ${installationWorkspace}/coredns.yaml
+
 echo '''
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: coredns
+  name: coredns-custom
   namespace: kube-system
 data:
-  Corefile: |
-    .:53 {
-        errors
-        health {
-            lameduck 5s
-        }
-        ready
-        kubernetes cluster.local in-addr.arpa ip6.arpa {
-            pods insecure
-            fallthrough in-addr.arpa ip6.arpa
-            ttl 30
-        }
-        prometheus :9153
-        forward . /etc/resolv.conf {
-            max_concurrent 1000
-        }
-        cache 30
-        loop
-        reload
-        loadbalance
-    }
+  log.override: |
+    log
+  custom.server: |
     '${baseDomain}':53 {
-        errors
-        cache 30
-        forward . '${mainIpAddress}'
+      forward . '${mainIpAddress}'
     }
-''' | kubectl apply -f -
+''' | /usr/bin/sudo tee ${installationWorkspace}/custom-coredns.yaml
+
+# Validate and apply the updated config-map
+kubernetesApplyYamlFile "${installationWorkspace}/custom-coredns.yaml" "kube-system"

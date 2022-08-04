@@ -1,0 +1,174 @@
+{
+  "builders": [
+    {
+      "type": "arm",
+      "file_urls": [
+        "https://downloads.raspberrypi.org/raspios_arm64/images/raspios_arm64-2022-04-07/2022-04-04-raspios-bullseye-arm64.img.xz"
+      ],
+      "file_checksum_url": "https://downloads.raspberrypi.org/raspios_arm64/images/raspios_arm64-2022-04-07/2022-04-04-raspios-bullseye-arm64.img.xz.sha256",
+      "file_checksum_type": "sha256",
+      "file_target_extension": "xz",
+      "file_unarchive_cmd": [
+        "xz",
+        "--decompress",
+        "$ARCHIVE_PATH"
+      ],
+      "image_build_method": "resize",
+      "image_path": "2022-04-04-raspios-bullseye-arm64.img",
+      "image_size": "10G",
+      "image_type": "dos",
+      "image_partitions": [
+        {
+          "name": "boot",
+          "type": "c",
+          "start_sector": "2048",
+          "filesystem": "fat",
+          "size": "256M",
+          "mountpoint": "/boot/firmware"
+        },
+        {
+          "name": "root",
+          "type": "83",
+          "start_sector": "526336",
+          "filesystem": "ext4",
+          "size": "0",
+          "mountpoint": "/"
+        }
+      ],
+      "image_chroot_env": [
+        "PATH=/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/bin:/sbin"
+      ],
+      "qemu_binary_source_path": "/usr/bin/qemu-aarch64-static",
+      "qemu_binary_destination_path": "/usr/bin/qemu-aarch64-static"
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "shell",
+      "inline": [
+        "touch /tmp/test"
+      ]
+    },
+    {
+      "environment_vars": [
+        "VM_USER={{user `vm_user`}}",
+        "VM_PASSWORD={{user `vm_password`}}",
+        "KX_HOME={{user `kx_home`}}",
+        "SKELDIR={{user `kx_home`}}/workspace/skel",
+        "SHARED_GIT_REPOSITORIES={{user `kx_home`}}/git",
+        "INSTALLATION_WORKSPACE={{user `kx_home`}}/workspace"
+      ],
+      "scripts": [
+        "../../../scripts/base/directories.sh",
+        "../../../scripts/base/vagrant-user.sh",
+        "../../../scripts/base/kx-user.sh",
+        "../../../scripts/base/update.sh",
+        "../../../scripts/base/locale.sh"
+      ],
+      "type": "shell",
+      "start_retry_timeout": "15m",
+      "expect_disconnect": "true"
+    },
+    {
+      "type": "file",
+      "source": "../../../dependencies/skel",
+      "destination": "{{user `kx_home`}}/workspace/skel"
+    },
+    {
+      "type": "file",
+      "source": "../../../dependencies/theme",
+      "destination": "{{user `kx_home`}}/workspace/theme"
+    },
+    {
+      "type": "file",
+      "source": "../../../scripts/main-node",
+      "destination": "{{user `kx_home`}}/workspace/scripts"
+    },
+    {
+      "type": "file",
+      "source": "../../../../versions.json",
+      "destination": "{{user `kx_home`}}/workspace/versions.json"
+    },
+    {
+      "environment_vars": [
+        "BASE_IMAGE_SSH_USER={{user `base_image_ssh_user`}}",
+        "VM_USER={{user `vm_user`}}",
+        "VM_PASSWORD={{user `vm_password`}}",
+        "GIT_SOURCE_BRANCH={{user `git_source_branch`}}",
+        "GITHUB_USER={{user `github_user`}}",
+        "GITHUB_TOKEN={{user `github_token`}}",
+        "VERSION={{user `version`}}",
+        "KUBE_VERSION={{user `kube_version`}}",
+        "COMPUTE_ENGINE_BUILD={{user `compute_engine_build`}}",
+        "KX_HOME={{user `kx_home`}}",
+        "SKELDIR={{user `kx_home`}}/workspace/skel",
+        "SHARED_GIT_REPOSITORIES={{user `kx_home`}}/git",
+        "INSTALLATION_WORKSPACE={{user `kx_home`}}/workspace"
+      ],
+      "scripts": [
+        "../../../scripts/common/motd.sh",
+        "../../../scripts/common/kx.as.code.sh",
+        "../../../scripts/common/tools.sh",
+        "../../../scripts/common/powerline.sh",
+        "../../../scripts/common/docker.sh"
+      ],
+       "type": "shell",
+       "pause_before": "60s",
+       "start_retry_timeout": "15m",
+       "expect_disconnect": "true"
+    },
+    {
+      "environment_vars": [
+        "BASE_IMAGE_SSH_USER={{user `base_image_ssh_user`}}",
+        "VM_USER={{user `vm_user`}}",
+        "VM_PASSWORD={{user `vm_password`}}",
+        "GIT_SOURCE_USER={{user `git_source_user`}}",
+        "GIT_SOURCE_TOKEN={{user `git_source_token`}}",
+        "GIT_SOURCE_URL={{user `git_source_url`}}",
+        "GIT_SOURCE_BRANCH={{user `git_source_branch`}}",
+        "VERSION={{user `version`}}",
+        "KX_HOME={{user `kx_home`}}",
+        "SKELDIR={{user `kx_home`}}/workspace/skel",
+        "SHARED_GIT_REPOSITORIES={{user `kx_home`}}/git",
+        "INSTALLATION_WORKSPACE={{user `kx_home`}}/workspace",
+        "COMPUTE_ENGINE_BUILD={{user `compute_engine_build`}}"
+      ],
+      "scripts": [
+        "../../../scripts/main-node/tools.sh",
+        "../../../scripts/main-node/dns.sh",
+        "../../../scripts/main-node/kx.as.code.sh",
+        "../../../scripts/main-node/profile.sh",
+        "../../../scripts/main-node/look-and-feel.sh",
+        "../../../scripts/main-node/rabbitmq.sh",
+        "../../../scripts/main-node/vscode.sh",
+        "../../../scripts/main-node/update-skel.sh",
+        "../../../scripts/main-node/cleanup.sh"
+      ],
+      "type": "shell",
+      "pause_before": "60s",
+      "start_retry_timeout": "15m",
+      "expect_disconnect": "true"
+    }
+  ],
+  "post-processors": [],
+  "variables": {
+    "hostname": "kx-main",
+    "kx_home": "/usr/share/kx.as.code",
+    "http_proxy": "{{env `http_proxy`}}",
+    "https_proxy": "{{env `https_proxy`}}",
+    "no_proxy": "{{env `no_proxy`}}",
+    "ssh_fullname": "KX Hero",
+    "update": "true",
+    "base_image_ssh_user": "pi",
+    "vm_name": "kx-main",
+    "vm_user": "kx.hero",
+    "vm_password": "L3arnandshare",
+    "git_source_url": "https://github.com/Accenture/kx.as.code.git",
+    "git_source_branch": "feature/raspberrypi-enablement",
+    "github_user":  "",
+    "github_token": "",
+    "version": "0.8.8",
+    "kube_version": "1.21.3-00",
+    "compute_engine_build": "false"
+  }
+}

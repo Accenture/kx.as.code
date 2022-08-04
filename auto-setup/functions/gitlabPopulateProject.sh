@@ -8,7 +8,7 @@ populateGitlabProject() {
   # Create base directory for Gitlab Demo repositories
   mkdir -p ${installationWorkspace}/staging/
 
-  gitlabDomain="${componentName}.${baseDomain}"
+  gitlabDomain="gitlab.${baseDomain}"
 
   # Set Git committer details
   git config --global user.name "${baseUser}"
@@ -40,9 +40,12 @@ populateGitlabProject() {
     rm -rf ${installationWorkspace}/staging/${gitlabRepoName}
   fi
 
+  # Retrieve passsword
+  gitlabUserPassword=$(managedPassword "gitlab-${baseUser}-user-password" "gitlab")
+
   if [[ ! -d ${installationWorkspace}/staging/${gitlabRepoName} ]]; then
     for i in {1..5}; do
-        git clone https://"${baseUser}":"${vmPassword}"@gitlab.${baseDomain}/${gitlabProjectName}/${gitlabRepoName}.git ${installationWorkspace}/staging/${gitlabRepoName}
+        git clone https://"${baseUser}":"${gitlabUserPassword}"@gitlab.${baseDomain}/${gitlabProjectName}/${gitlabRepoName}.git ${installationWorkspace}/staging/${gitlabRepoName}
         if [[ $? -eq 0 ]] || [[ $? -eq 128 ]]; then break; else sleep 5; fi
     done
     cp -rf /var/tmp/${gitlabRepoName}/. ${installationWorkspace}/staging/${gitlabRepoName}/

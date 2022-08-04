@@ -1,8 +1,8 @@
-#!/bin/bash -x
+#!/bin/bash
 set -euo pipefail
 
 # Create Grafana Admin Password
-export grafanaAdminPassword=$(managedPassword "grafana-admin-password")
+export grafanaAdminPassword=$(managedPassword "grafana-admin-password" "grafana")
 
 # Create Grafana admin user secret
 kubectl get secret  grafana-admin-credentials -n ${namespace} ||

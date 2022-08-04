@@ -1,14 +1,17 @@
-#!/bin/bash -x
+#!/bin/bash
 set -euo pipefail
 
 # Install Tools to Generate Certificate Authority
-sudo curl -L https://github.com/cloudflare/cfssl/releases/download/v${cfsslVersion}/cfssl_${cfsslVersion}_linux_amd64 -o cfssl
-sudo chmod +x cfssl
-sudo curl -L https://github.com/cloudflare/cfssl/releases/download/v${cfsslVersion}/cfssljson_${cfsslVersion}_linux_amd64 -o cfssljson
-sudo chmod +x cfssljson
-sudo curl -L https://github.com/cloudflare/cfssl/releases/download/v${cfsslVersion}/cfssl-certinfo_${cfsslVersion}_linux_amd64 -o cfssl-certinfo
-sudo chmod +x cfssl-certinfo
-sudo mv cfssl* /usr/local/bin
+# Replacing the bottom with the golang-cfssl apt package
+#sudo curl -L https://github.com/cloudflare/cfssl/releases/download/v${cfsslVersion}/cfssl_${cfsslVersion}_linux_amd64 -o cfssl
+#sudo chmod +x cfssl
+#sudo curl -L https://github.com/cloudflare/cfssl/releases/download/v${cfsslVersion}/cfssljson_${cfsslVersion}_linux_amd64 -o cfssljson
+#sudo chmod +x cfssljson
+#sudo curl -L https://github.com/cloudflare/cfssl/releases/download/v${cfsslVersion}/cfssl-certinfo_${cfsslVersion}_linux_amd64 -o cfssl-certinfo
+#sudo chmod +x cfssl-certinfo
+#sudo mv cfssl* /usr/local/bin
+
+/usr/bin/sudo apt-get install -y golang-cfssl 
 
 # Only run this script automatically on first login
 if [ ! -f ${certificatesWorkspace}/kx_server.pem ]; then
@@ -144,7 +147,7 @@ EOF
 
     # Import Certificates into Browser Certificate Repositories
     cat << EOF > ${installationWorkspace}/trustKXRootCAs.sh
-#!/bin/bash -x
+#!/bin/bash
 set -euo pipefail
 certfile="/usr/share/ca-certificates/kubernetes/kx-intermediate-ca.crt"
 certname="KX.AS.CODE Intermediate CA"
