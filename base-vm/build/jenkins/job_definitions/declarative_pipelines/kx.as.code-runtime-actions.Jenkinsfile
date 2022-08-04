@@ -59,7 +59,7 @@ pipeline {
                         echo "Vagrant action: ${vagrant_action}"
                         echo "Current directory \$(pwd)"
                         cd profiles/vagrant-${profile}
-                        vagrant global-status --prune
+                        VAGRANT_LOG=info vagrant global-status --prune
                         runningProfileMainVms=\$(vagrant status --no-tty | grep kx-main | grep ${profile} | grep running || true)
                         runningProfileNodeVms=\$(vagrant status --no-tty | grep kx-node | grep ${profile} | grep running || true)
                         importedKxMainBoxes=\$(vagrant box list | grep kx-main | grep ${profile} | grep \${mainBoxVersion} || true)
@@ -79,12 +79,12 @@ pipeline {
                         if [ "${vagrant_action}" == "destroy" ]; then
                             vagrant destroy --force --no-tty
                         elif [ "${vagrant_action}" == "up" ]; then
-                            vagrant up --no-tty
+                            VAGRANT_LOG=info vagrant up --no-tty
                             if [ \${num_kx_main_nodes} -gt 1 ]; then
                                 i=2
                                 while [ \$i -le \${num_kx_main_nodes} ];
                                 do
-                                    vagrant up --no-tty kx-main\$i
+                                    VAGRANT_LOG=info vagrant up --no-tty kx-main\$i
                                     let i=\$i+1
                                 done
                             fi
@@ -92,7 +92,7 @@ pipeline {
                                 i=1
                                 while [ \$i -le \${num_kx_worker_nodes} ];
                                 do
-                                    vagrant up --no-tty kx-worker\$i
+                                    VAGRANT_LOG=info vagrant up --no-tty kx-worker\$i
                                     let i=\$i+1
                                 done
                             fi
