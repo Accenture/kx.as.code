@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash
 set -euo pipefail
 
 . /etc/environment
@@ -602,12 +602,42 @@ EOF
   /usr/bin/sudo systemctl daemon-reload
   /usr/bin/sudo systemctl restart kubelet
 
- /usr/bin/sudo -H -i -u "${vmUser}" bash -c "sudo bash -c 'kubectl get pods -n kube-system \
-    -o wide --field-selector spec.nodeName=$(hostname)},status.phase=Running \
-    -l k8s-app=calico-node \
-    --ignore-not-found=true \
-    -o json' \" | \
-    jq '.items[].status.containerStatuses[] | select(.ready==true)'"
+calicoNodeReady=""
+
+for i in {1..20}
+do
+
+  calicoNodeReady=$(/usr/bin/sudo -H -i -u "${vmUser}" bash -c "ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} \"kubectl get pods -n kube-system \
+    -o wide --field-selector spec.nodeName=$(hostname),status.phase=Running \
+    -l k8s-app=calico-node --ignore-not-found=true -o json\"
+    | \
+    jq '.items[].status.containerStatuses[] | select(.ready==true)'")
+
+  if [[ -n ${calicoNodeReady} ]]; then
+    echo "Calico node pod is ready and running on this node"
+    break
+  else
+    echo "Calico node pod is not ready. Checking again in 15 seconds (try ${i} of 40)"
+    sleep 15
+  fi
+
+done
+
+# Final check on the status of Calico
+if [[ -n ${calicoNodeReady} ]]; then
+  echo "Calico node pod is ready and running on this node"
+else
+  if [[ ! -f /usr/share/kx.as.code/workspace/forced_reboot_flag ]]; then
+    echo "Calico node pod is not ready yet, even after 40 checks in 10 minutes. Going to try a reboot, after that it's time for some debugging"
+    echo "forced_restart_launched. If you see this file, then possibly the setup of calico failed on this node, resulting in 1 reboot to remove the block" | sudo tee /usr/share/kx.as.code/workspace/forced_reboot_flag
+    reboot
+  else
+    echo "Calico node pod is not ready yet, even after 40 checks in 10 minutes. Already tried a reboot, it's time for some debugging"
+    echo "Disabled the \"k8s-register-node\" service, to avoid an infinite reboot loop. You can re-enable and launch it again once you have fixed the issue"
+    /usr/bin/sudo systemctl disable k8s-register-node.service
+    exit 1
+  fi
+fi
 
 
 elif [[ "${kubeOrchestrator}" == "k3s" ]]; then
