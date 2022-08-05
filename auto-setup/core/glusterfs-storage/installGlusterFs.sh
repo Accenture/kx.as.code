@@ -1,5 +1,5 @@
 #!/bin/bash
-set -euo pipefail
+set -euox pipefail
 
 partitionExists=""
 glusterFsDrive=""
@@ -29,12 +29,10 @@ if [[ -z ${glusterFsDiskName} ]] || [[ "${glusterFsDiskName}" == "null" ]]; then
     glusterFsDrive=$(cat /usr/share/kx.as.code/.config/glusterFsDrive)
   else
     glusterFsDrive=$(lsblk -o NAME,FSTYPE,SIZE -dsn -J | jq -r '.[] | .[] | select(.fstype==null) | select(.size=="'$((${glusterFsDiskSize}+1))'G") | .name' || true)
+    echo "${glusterFsDrive}" | /usr/bin/sudo tee /usr/share/kx.as.code/.config/localStorageDrive
+
   fi
   partitionExists=$(lsblk -o NAME,FSTYPE,SIZE -J | jq -r '.blockdevices[] | select(.name=="'${glusterFsDrive}'") | .children[]? | select(.name=="'${glusterFsDrive}'1") | .name')
-  if [[ "${partitionExists}" != "${glusterFsDrive}1" ]]; then
-    # Determine Drive for GlusterFS
-    glusterFsDrive=$(cat /usr/share/kx.as.code/.config/glusterFsDrive)
-  fi
 else
   log_info "Setting drive for GlusterFs to ${glusterFsDiskName} as per profile-config.json"
   echo "${glusterFsDiskName}" | /usr/bin/sudo tee /usr/share/kx.as.code/.config/glusterFsDrive
@@ -43,7 +41,7 @@ fi
 
 # Prepare disk
 /usr/bin/sudo wipefs -a -t dos -f /dev/${glusterFsDrive}
-/usr/bin/sudofdisk -l /dev/${glusterFsDrive}
+/usr/bin/sudo fdisk -l /dev/${glusterFsDrive}
 /usr/bin/sudo mkfs.xfs /dev/${glusterFsDrive}
 
 # Install GlusterFs (9.2-1) server from Debian Bullseye distribution

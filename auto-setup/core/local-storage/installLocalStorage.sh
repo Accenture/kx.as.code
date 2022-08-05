@@ -1,5 +1,5 @@
 #!/bin/bash
-set -euo pipefail
+set -euox pipefail
 
 partitionExists=""
 localStorageDrive=""
@@ -38,12 +38,9 @@ if [[ -z ${localVolumesDiskName} ]] || [[ "${localVolumesDiskName}" == "null" ]]
     localStorageDrive=$(cat /usr/share/kx.as.code/.config/localStorageDrive)
   else
     localStorageDrive=$(lsblk -o NAME,FSTYPE,SIZE -dsn -J | jq -r '.[] | .[] | select(.fstype==null) | select(.size=="'${localKubeVolumesDiskSize}'G") | .name' || true)
+    echo "${localStorageDrive}" | /usr/bin/sudo tee /usr/share/kx.as.code/.config/localStorageDrive
   fi
   partitionExists=$(lsblk -o NAME,FSTYPE,SIZE -J | jq -r '.blockdevices[] | select(.name=="'${localStorageDrive}'") | .children[]? | select(.name=="'${localStorageDrive}'1") | .name')
-  if [[ "${partitionExists}" != "${localStorageDrive}1" ]]; then
-    # Determine Drive B (Local K8s Volumes Storage)
-    localStorageDrive=$(cat /usr/share/kx.as.code/.config/localStorageDrive)
-  fi
 else
   log_info "Setting drive for local storage volumes to ${localVolumesDiskName} as per profile-config.json"
   echo "${localVolumesDiskName}" | /usr/bin/sudo tee /usr/share/kx.as.code/.config/localStorageDrive
