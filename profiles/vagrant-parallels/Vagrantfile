@@ -131,7 +131,6 @@ Vagrant.configure("2") do |config|
     subconfig.vm.provision "shell", inline: "cat /usr/share/kx.as.code/workspace/users.json | jq '.'"
     subconfig.vm.provision "shell", inline: "cat /usr/share/kx.as.code/workspace/actionQueues.json | jq '.'"
     subconfig.vm.provision "shell", inline: 'echo -e "$(date "+%Y-%m-%d_%H%M%S") | KX-Main VM created by Vagrant" | sudo tee /usr/share/kx.as.code/workspace/gogogo'
-    subconfig.trigger.after :destroy do |trigger|
     subconfig.vm.provision :shell do |s|
       s.inline = "echo -e '{ \"DOCKERHUB_USER\": \"#{DOCKERHUB_USER}\", \"DOCKERHUB_EMAIL\": \"#{DOCKERHUB_EMAIL}\", \"DOCKERHUB_PASSWORD\": \"#{DOCKERHUB_PASSWORD}\" }' | sudo tee /var/tmp/.tmp.json"
     end
