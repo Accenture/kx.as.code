@@ -597,6 +597,12 @@ EOF
     sleep 30
   done
 
+  # Ensure Kubelet listenson correct IP. Especially important for VirtualBox with the additional NAT NIC
+  /usr/bin/sudo sed -i '/^\[Service\]/a Environment="KUBELET_EXTRA_ARGS=--node-ip='${kxNodeIp}'"' /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+
+  # As --resolv.conf was deprecated, use new method to update resolv.conf
+  /usr/bin/sudo sed -i 's/^\(resolvConf:\).*/\1 \/etc\/resolv.conf/' /var/lib/kubelet/config.yaml
+
 elif [[ "${kubeOrchestrator}" == "k3s" ]]; then
 
   # Join K3s cluster
