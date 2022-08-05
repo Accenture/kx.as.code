@@ -1,6 +1,9 @@
 #!/bin/bash
 set -euo pipefail
 
+partitionExists=""
+localStorageDrive=""
+
 # Install nvme-cli if running on host with NVMe block devices (for example on AWS with EBS)
 /usr/bin/sudo lsblk -i -o kname,mountpoint,fstype,size,maj:min,name,state,rm,rota,ro,type,label,model,serial
 
@@ -30,28 +33,21 @@ fi
 
 # If disk name not supplied in config, try to work out which free disk to use (by checking un-partitioned disk size against requested size in profile-config.json - only relevant)
 if [[ -z ${localVolumesDiskName} ]] || [[ "${localVolumesDiskName}" == "null" ]]; then
-  log_info "Drive B not defined in profile-config.json. Attempting to automatically detect the correct drive."
-  partitionB1Exists=$(lsblk -o NAME,FSTYPE,SIZE -J | jq -r '.blockdevices[] | select(.name=="sdb") | .children[]? | select(.name=="sdb1") | .name')
-
-  if [[ "${partitionB1Exists}" != "sdb1" ]]; then
-    # Determine Drive B (Local K8s Volumes Storage)
-    for i in {{1..30}}; do
-      driveB=$(lsblk -o NAME,FSTYPE,SIZE -dsn -J | jq -r '.[] | .[] | select(.fstype==null) | select(.size=="'${localKubeVolumesDiskSize}'G") | .name' || true)
-      if [[ -z ${driveB} ]]; then
-        log_info "Drive for local volumes not yet available. Trying a maximum of 30 times. Attempt ${i}"
-        sleep 15
-      else
-        log_info "Drive for local volumes (${driveB}) now available after attempt ${i} of 30"
-        echo "${driveB}" | /usr/bin/sudo tee /usr/share/kx.as.code/.config/driveB
-        break
-      fi
-    done
+  log_info "Drive for local storage not defined in profile-config.json. Attempting to automatically detect the correct drive."
+  if [[ -f /usr/share/kx.as.code/.config/localStorageDrive ]]; then
+    localStorageDrive=$(cat /usr/share/kx.as.code/.config/localStorageDrive)
   else
-    driveB=$(cat /usr/share/kx.as.code/.config/driveB)
+    localStorageDrive=$(lsblk -o NAME,FSTYPE,SIZE -dsn -J | jq -r '.[] | .[] | select(.fstype==null) | select(.size=="'${localKubeVolumesDiskSize}'G") | .name' || true)
+  fi
+  partitionExists=$(lsblk -o NAME,FSTYPE,SIZE -J | jq -r '.blockdevices[] | select(.name=="'${localStorageDrive}'") | .children[]? | select(.name=="'${localStorageDrive}'1") | .name')
+  if [[ "${partitionExists}" != "${localStorageDrive}1" ]]; then
+    # Determine Drive B (Local K8s Volumes Storage)
+    localStorageDrive=$(cat /usr/share/kx.as.code/.config/localStorageDrive)
   fi
 else
-  log_info "Setting drive B to ${localVolumesDiskName} as per profile-config.json"
-  echo "${localVolumesDiskName}" | /usr/bin/sudo tee /usr/share/kx.as.code/.config/driveB
+  log_info "Setting drive for local storage volumes to ${localVolumesDiskName} as per profile-config.json"
+  echo "${localVolumesDiskName}" | /usr/bin/sudo tee /usr/share/kx.as.code/.config/localStorageDrive
+  localStorageDrive=${localVolumesDiskName}
 fi
 
 # Check logical partitions
@@ -59,34 +55,34 @@ fi
 /usr/bin/sudo df -hT
 /usr/bin/sudo lsblk
 
-# Create full partition on /dev/${driveB}
-if [[ -z $(lsblk -o NAME,FSTYPE,SIZE -J /dev/${driveB} | jq '.blockdevices[].children[]?') ]]; then
-    echo 'type=83' | /usr/bin/sudo sfdisk /dev/${driveB}
+# Create full partition on /dev/${localStorageDrive}
+if [[ "${partitionExists}" != "${localStorageDrive}1" ]]; then
+  if [[ -z $(lsblk -o NAME,FSTYPE,SIZE -J /dev/${localStorageDrive} | jq '.blockdevices[].children[]?') ]]; then
+    echo 'type=83' | /usr/bin/sudo sfdisk /dev/${localStorageDrive}
     for i in {1..5}; do
-      driveB_Partition=$(lsblk -o NAME,FSTYPE,SIZE -J | jq -r '.[] | .[]  | select(.name=="'${driveB}'") | .children[]?.name')
-      if [[ -n ${driveB_Partition} ]]; then
-        log_info "Disk ${driveB} partitioned successfully -> ${driveB_Partition}"
+      localStorageDrive_Partition=$(lsblk -o NAME,FSTYPE,SIZE -J | jq -r '.[] | .[]  | select(.name=="'${localStorageDrive}'") | .children[]?.name')
+      if [[ -n ${localStorageDrive_Partition} ]]; then
+        log_info "Disk ${localStorageDrive} partitioned successfully -> ${localStorageDrive_Partition}"
         break
       else
-        log_warn "Disk partition could not be found on ${driveB} (attempt ${i}), trying again"
+        log_warn "Disk partition could not be found on ${localStorageDrive} (attempt ${i}), trying again"
         sleep 5
       fi
     done
-else
-    driveB_Partition=$(lsblk -o NAME,FSTYPE,SIZE -J | jq -r '.[] | .[]  | select(.name=="'${driveB}'") | .children[]?.name')  
+  fi
 fi
 
 # Create physical volume if it does not exist
-pv=$(pvdisplay /dev/${driveB_Partition} || true)
+pv=$(pvdisplay /dev/${localStorageDrive_Partition} || true)
 if [[ -z ${pv} ]]; then
-  log_info "PV /dev/${driveB_Partition} did not exist, creating it."
-  /usr/bin/sudo pvcreate -f /dev/${driveB_Partition} && pvdisplay
-  pv=$(pvdisplay /dev/${driveB_Partition} || true)
+  log_info "PV /dev/${localStorageDrive_Partition} did not exist, creating it."
+  /usr/bin/sudo pvcreate -f /dev/${localStorageDrive_Partition} && pvdisplay
+  pv=$(pvdisplay /dev/${localStorageDrive_Partition} || true)
   if [[ -z ${pv} ]]; then
-    log_error "PV /dev/${driveB_Partition} still does not exist after attempting to create it. Exiting script with RC=1"
+    log_error "PV /dev/${localStorageDrive_Partition} still does not exist after attempting to create it. Exiting script with RC=1"
     exit 1
   else
-    log_info "PV /dev/${driveB_Partition} created successfully. Continuing to provision volume group"
+    log_info "PV /dev/${localStorageDrive_Partition} created successfully. Continuing to provision volume group"
   fi
 fi
 
@@ -94,7 +90,7 @@ fi
 vg=$(vgdisplay k8s_local_vol_group || true)
 if [[ -z ${vg} ]]; then
   log_info "VG k8s_local_vol_group did not exist, creating it."
-  /usr/bin/sudo vgcreate k8s_local_vol_group /dev/${driveB_Partition} && vgdisplay
+  /usr/bin/sudo vgcreate k8s_local_vol_group /dev/${localStorageDrive_Partition} && vgdisplay
   vg=$(vgdisplay k8s_local_vol_group || true)
   if [[ -z ${vg} ]]; then
     log_error "VG k8s_local_vol_group still does not exist after attempting to create it. Exiting script with RC=1"
@@ -105,8 +101,8 @@ if [[ -z ${vg} ]]; then
 fi
 
 # Check if nominated drive now has the necessary partition to proceed to the next step
-if [[ -z $(lsblk -o NAME,FSTYPE,SIZE -J /dev/${driveB} | jq '.blockdevices[].children[]?') ]]; then
-  log_error "Selected disk ${driveB} still has no partitions. Exiting script and setting local_volumes provision script to status failed. "
+if [[ -z $(lsblk -o NAME,FSTYPE,SIZE -J /dev/${localStorageDrive} | jq '.blockdevices[].children[]?') ]]; then
+  log_error "Selected disk ${localStorageDrive} still has no partitions. Exiting script and setting local_volumes provision script to status failed. "
   exit 1
 fi
 
