@@ -305,10 +305,14 @@ for initialSetupJobConfgXmlFile in ${initialSetupJobConfgXmlFiles}; do
           echo ${placeholder}
           echo ${!placeholder}
           echo ${initialSetupJobConfgXmlFile}_tmp
-          sed -E -i '' "s|{{${placeholder}}}|${!placeholder}|g" ${initialSetupJobConfgXmlFile}_tmp
+          if [[ "$(uname)" == "Darwin" ]]; then
+            sed -E -i '' "s|\{\{${placeholder}\}\}|${!placeholder}|g" ${initialSetupJobConfgXmlFile}_tmp
+          else
+            sed -E -i "s|\{\{${placeholder}\}\}|${!placeholder}|g" ${initialSetupJobConfgXmlFile}_tmp
+          fi
         done
         if [ -s "${initialSetupJobConfgXmlFile}_tmp" ]; then
-            mv "${initialSetupJobConfgXmlFile}_tmp" "${initialSetupJobConfgXmlFile}"
+            cp "${initialSetupJobConfgXmlFile}_tmp" "${initialSetupJobConfgXmlFile}"
             break
         else
             echo -e "${red}- [ERROR] Target config.xml file was empty after mustach replacement. Trying again${nc}"

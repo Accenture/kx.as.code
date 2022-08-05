@@ -2,27 +2,18 @@ def setBuildEnvironment(profile,node_type,vagrant_action) {
 
     println("setBuildEnvironment() -> Received parameters: profile: ${profile}, node_type: ${node_type}, vagrant_action: ${vagrant_action}")
 
-    os = sh (
-        script: 'uname -s',
-        returnStdout: true
-    ).toLowerCase().trim()
-    if ( os == "darwin" ) {
+    def osNameProperty = System.getProperty("os.name", "generic").toLowerCase(Locale.ENGLISH);
+
+    if ((osNameProperty.indexOf("mac") >= 0) || (osNameProperty.indexOf("darwin") >= 0)) {
         echo "Running on Mac"
+        os="darwin"
         packerOsFolder="darwin-linux"
         jqDownloadPath="${JQ_DARWIN_DOWNLOAD_URL}"
         vmWareDiskUtilityPath="/System/Volumes/Data/Applications/VMware Fusion.app/Contents/Library/vmware-vdiskmanager"
         virtualboxCliPath = "/Applications/VirtualBox.app/Contents/MacOS/VBoxManage"
         vmwareCliPath = "/Applications/VMware\\ Fusion.app/Contents/Public/vmrun"
         parallelsCliPath = "/Applications/Parallels Desktop.app/Contents/MacOS/prlctl"
-    } else if ( os == "linux" ) {
-        echo "Running on Linux"
-        packerOsFolder="darwin-linux"
-        jqDownloadPath="${JQ_LINUX_DOWNLOAD_URL}"
-        vmWareDiskUtilityPath=""
-        virtualboxCliPath = "/usr/bin/vboxmanage"
-        vmwareCliPath = "/usr/bin/vmrun"
-        parallelsCliPath = ""
-    } else {
+    } else if (osNameProperty.indexOf("win") >= 0) {
         echo "Running on Windows"
         os="windows"
         packerOsFolder="windows"
@@ -31,6 +22,17 @@ def setBuildEnvironment(profile,node_type,vagrant_action) {
         virtualboxCliPath = "C:/Program Files/Oracle/VirtualBox/VBoxManage.exe"
         vmwareCliPath = "C:/Program Files (x86)/VMware/VMware Workstation/vmrun.exe"
         parallelsCliPath = ""
+    } else if (osNameProperty.indexOf("nux") >= 0) {
+        echo "Running on Linux"
+        os="linux"
+        packerOsFolder="darwin-linux"
+        jqDownloadPath="${JQ_LINUX_DOWNLOAD_URL}"
+        vmWareDiskUtilityPath=""
+        virtualboxCliPath = "/usr/bin/vboxmanage"
+        vmwareCliPath = "/usr/bin/vmrun"
+        parallelsCliPath = ""
+    } else {
+        underlyingOS = "other"
     }
 
     sh """
