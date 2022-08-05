@@ -17,7 +17,7 @@ createDesktopIcon() {
   Name=${shortcutText}
   GenericName=${shortcutText}
   Comment=${shortcutText}
-  Exec=/usr/bin/google-chrome-stable %U ${urlToOpen} --use-gl=angle --password-store=basic ${browserOptions}
+  Exec=/usr/bin/chromium %U ${urlToOpen} --use-gl=angle --password-store=basic ${browserOptions}
   StartupNotify=true
   Terminal=false
   Icon=${iconPath}

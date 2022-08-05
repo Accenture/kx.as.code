@@ -41,7 +41,7 @@ Version=1.0
 Name=RabbitMQ
 GenericName=RabbitMQ
 Comment=RabbitMQ Action Queues
-Exec=/usr/bin/google-chrome-stable %U http://localhost:15672/ --use-gl=angle --password-store=basic
+Exec=/usr/bin/chromium %U http://localhost:15672/ --use-gl=angle --password-store=basic
 StartupNotify=true
 Terminal=false
 Icon=/usr/share/kx.as.code/git/kx.as.code/base-vm/images/rabbitmq.png

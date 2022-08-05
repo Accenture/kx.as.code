@@ -583,12 +583,7 @@ EOF
   /usr/bin/sudo apt-get install -y containerd.io
   /usr/bin/sudo containerd config default | /usr/bin/sudo tee /etc/containerd/config.toml
   /usr/bin/sudo sed -i 's/SystemdCgroup = false/SystemdCgroup = true/g' /etc/containerd/config.toml
-  /usr/bin/sudo systemctl restart containerd  
-
-
-  # Restart Kubelet
-  /usr/bin/sudo systemctl daemon-reload
-  /usr/bin/sudo systemctl restart kubelet
+  /usr/bin/sudo systemctl restart containerd
 
   # Keep trying to join Kubernetes cluster until successful
   while [[ ! -f /var/lib/kubelet/config.yaml ]]; do
@@ -602,6 +597,18 @@ EOF
 
   # As --resolv.conf was deprecated, use new method to update resolv.conf
   /usr/bin/sudo sed -i 's/^\(resolvConf:\).*/\1 \/etc\/resolv.conf/' /var/lib/kubelet/config.yaml
+
+  # Restart Kubelet
+  /usr/bin/sudo systemctl daemon-reload
+  /usr/bin/sudo systemctl restart kubelet
+
+ /usr/bin/sudo -H -i -u "${vmUser}" bash -c "sudo bash -c 'kubectl get pods -n kube-system \
+    -o wide --field-selector spec.nodeName=$(hostname)},status.phase=Running \
+    -l k8s-app=calico-node \
+    --ignore-not-found=true \
+    -o json' \" | \
+    jq '.items[].status.containerStatuses[] | select(.ready==true)'"
+
 
 elif [[ "${kubeOrchestrator}" == "k3s" ]]; then
 

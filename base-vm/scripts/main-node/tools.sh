@@ -41,7 +41,7 @@ sudo update-alternatives --install /usr/bin/editor editor /usr/bin/vim 100
 if [[ "${ARCH}" == "arm64" ]]; then
   sudo update-alternatives --install /usr/bin/x-www-browser x-www-browser /usr/bin/chromium 100
 else
-  sudo update-alternatives --install /usr/bin/x-www-browser x-www-browser /usr/bin/google-chrome-stable 100
+  sudo update-alternatives --install /usr/bin/x-www-browser x-www-browser /usr/bin/chromium 100
 fi
 
 # Install Typora for showing WELCOME.md after GNOME login

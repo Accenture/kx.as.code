@@ -12,7 +12,7 @@ Version=1.0
 Name=Kubernetes Dashboard IAM
 GenericName=Kubernetes Dashboard IAM
 Comment=Kubernetes Dashboard IAM
-Exec=/usr/bin/google-chrome-stable %U https://${componentName}-iam.${baseDomain} --use-gl=angle --password-store=basic
+Exec=/usr/bin/chromium %U https://${componentName}-iam.${baseDomain} --use-gl=angle --password-store=basic --incognito --new-window
 StartupNotify=true
 Terminal=false
 Icon=${iconPath}
@@ -29,7 +29,7 @@ Version=1.0
 Name=Kubernetes Dashboard
 GenericName=Kubernetes Dashboard
 Comment=Kubernetes Dashboard
-Exec=/usr/bin/google-chrome-stable %U https://${componentName}.${baseDomain} --use-gl=angle --password-store=basic
+Exec=/usr/bin/chromium %U https://${componentName}.${baseDomain} --use-gl=angle --password-store=basic --incognito --new-window
 StartupNotify=true
 Terminal=false
 Icon=${iconPath}

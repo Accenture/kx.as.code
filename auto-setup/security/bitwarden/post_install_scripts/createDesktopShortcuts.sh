@@ -12,7 +12,7 @@ Version=1.0
 Name=${shortcutText}
 GenericName=${shortcutText}
 Comment=${shortcutText}
-Exec=/usr/bin/google-chrome-stable %U https://${componentName}.${baseDomain}:4483 --use-gl=angle --password-store=basic
+Exec=/usr/bin/chromium %U https://${componentName}.${baseDomain}:4483 --use-gl=angle --password-store=basic
 StartupNotify=true
 Terminal=false
 Icon=${iconPath}
