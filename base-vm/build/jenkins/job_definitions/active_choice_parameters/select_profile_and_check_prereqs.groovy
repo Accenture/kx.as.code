@@ -161,8 +161,8 @@
             underlyingOS = "other"
         }
 
-        def systemCheckJsonFilePath = "${currentDir}/jenkins_shared_workspace/kx.as.code/system-check.json"
-        def systemCheckJsonFile = new File(systemCheckJsonFilePath)
+        //def systemCheckJsonFilePath = "${currentDir}/jenkins_shared_workspace/kx.as.code/system-check.json"
+        //def systemCheckJsonFile = new File(systemCheckJsonFilePath)
 
         parallelsExecutableExists = ""
         if (underlyingOS == "darwin") {
@@ -215,11 +215,11 @@
 
         def filteredVirtualBoxKxNodeList = boxDirectories.findAll {
             it[1] == "virtualbox" && it[2] == "kx-node"
-        }.sort { a, b -> a[0] <=> b[1] }
+        }.sort { a, b -> a[1] <=> b[0] }
 
         def filteredVirtualBoxKxMainList = boxDirectories.findAll {
             it[1] == "virtualbox" && it[2] == "kx-main"
-        }.sort { a, b -> a[0] <=> b[1] }
+        }.sort { a, b -> a[1] <=> b[0] }
 
         if (filteredVirtualBoxKxMainList) {
             virtualboxLocalVagrantBoxMainVersion = filteredVirtualBoxKxMainList[0][0]
@@ -233,11 +233,11 @@
 
         def filteredVmwareDesktopKxNodeList = boxDirectories.findAll {
             it[1] == "vmware-desktop" && it[2] == "kx-node"
-        }.sort{ a,b -> a[0] <=> b[1] }
+        }.sort{ a,b -> a[1] <=> b[0] }
 
         def filteredVmwareDesktopKxMainList = boxDirectories.findAll {
             it[1] == "vmware-desktop" && it[2] == "kx-main"
-        }.sort{ a,b -> a[0] <=> b[1] }
+        }.sort{ a,b -> a[1] <=> b[0] }
 
 
         if (filteredVmwareDesktopKxMainList) {
@@ -252,11 +252,11 @@
 
         def filteredParallelsKxNodeList = boxDirectories.findAll {
             it[1] == "parallels" && it[2] == "kx-node"
-        }.sort{ a,b -> a[0] <=> b[1] }
+        }.sort{ a,b -> a[1] <=> b[0] }
 
         def filteredParallelsKxMainList = boxDirectories.findAll {
             it[1] == "parallels" && it[2] == "kx-main"
-        }.sort{ a,b -> a[0] <=> b[1] }
+        }.sort{ a,b -> a[1] <=> b[0] }
 
         if (filteredParallelsKxMainList) {
             parallelsLocalVagrantBoxMainVersion = filteredParallelsKxMainList[0][0]
@@ -275,7 +275,7 @@
             def mergedJson = boxesJson + vagrantJson
             builder mergedJson
 
-            new File(systemCheckJsonFilePath).write(builder.toPrettyString())
+            //new File(systemCheckJsonFilePath).write(builder.toPrettyString())
         } catch (e) {
             println("Error creating and writing system check JSON file: " + e)
         }
