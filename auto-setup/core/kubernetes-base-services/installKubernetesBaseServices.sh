@@ -33,7 +33,7 @@ EOF
         # Using containerd.io from Docker repository instead, which includes containerd v1.6.6   
         # See https://containerd.io/releases/ for details on matching containerd versions with versions of Kubernetes
         /usr/bin/sudo apt-get install -y containerd.io
-        /usr/bin/sudo containerd config default /etc/containerd/config.toml
+        /usr/bin/sudo containerd config default | /usr/bin/sudo tee /etc/containerd/config.toml
         /usr/bin/sudo sed -i 's/SystemdCgroup = false/SystemdCgroup = true/g' /etc/containerd/config.toml
         /usr/bin/sudo systemctl restart containerd        
 
@@ -42,6 +42,9 @@ EOF
 
         # Ensure Kubelet listenson correct IP. Especially important for VirtualBox with the additional NAT NIC
         /usr/bin/sudo sed -i '/^\[Service\]/a Environment="KUBELET_EXTRA_ARGS=--node-ip='${mainIpAddress}'"' /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+
+        # As --resolv.conf was deprecated, use new method to update resolv.conf
+        /usr/bin/sudo sed -i 's/^\(resolvConf:\).*/\1 \/etc\/resolv.conf/' /var/lib/kubelet/config.yaml
 
         # Restart Kubelet
         /usr/bin/sudo systemctl daemon-reload

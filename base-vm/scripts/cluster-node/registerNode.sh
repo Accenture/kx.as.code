@@ -560,8 +560,32 @@ if [[ "${kubeOrchestrator}" == "k8s" ]]; then
   fi
   /usr/bin/sudo chmod 755 ${installationWorkspace}/kubeJoin.sh
 
-  # Fix reliance on non existent file: /run/systemd/resolve/resolv.conf
-  /usr/bin/sudo sed -i '/^\[Service\]/a Environment="KUBELET_EXTRA_ARGS=--resolv-conf=\/etc\/resolv.conf --node-ip='${nodeIp}'"' /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+cat <<EOF | /usr/bin/sudo tee /etc/modules-load.d/k8s.conf
+overlay
+br_netfilter
+EOF
+
+  /usr/bin/sudo modprobe overlay
+  /usr/bin/sudo modprobe br_netfilter
+
+        # Apply kernel parameters
+cat <<EOF | /usr/bin/sudo tee /etc/sysctl.d/99-kubernetes-cri.conf
+net.bridge.bridge-nf-call-iptables  = 1
+net.ipv4.ip_forward                 = 1
+net.bridge.bridge-nf-call-ip6tables = 1
+EOF
+        /usr/bin/sudo sysctl --system
+
+  # As Kubernetes 1.24 no longer used Docker, need to install containerd
+  # Not using containderd package from Debian, as it is only at v1.4.13
+  # Using containerd.io from Docker repository instead, which includes containerd v1.6.6   
+  # See https://containerd.io/releases/ for details on matching containerd versions with versions of Kubernetes
+  /usr/bin/sudo apt-get install -y containerd.io
+  /usr/bin/sudo containerd config default | /usr/bin/sudo tee /etc/containerd/config.toml
+  /usr/bin/sudo sed -i 's/SystemdCgroup = false/SystemdCgroup = true/g' /etc/containerd/config.toml
+  /usr/bin/sudo systemctl restart containerd  
+
+
   # Restart Kubelet
   /usr/bin/sudo systemctl daemon-reload
   /usr/bin/sudo systemctl restart kubelet
