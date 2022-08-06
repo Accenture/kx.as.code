@@ -71,8 +71,16 @@ waitForKubernetesResource "server-storage-pool-1-0" "statefulset" "kadalu"
 # Edit default statefulset to allow it to be schedule on master kx-main1, despite the node taint
 kubectl get statefulset server-storage-pool-1-0 -n kadalu -o yaml | /usr/bin/sudo tee ${installationWorkspace}/kadalu-server-storage-pool-statefulset.yaml
 if [[ -f ${installationWorkspace}/kadalu-server-storage-pool-statefulset.yaml ]]; then
-  /usr/bin/sudo sed -i -e '/^                values:/{:a; N; /\n                - kx-main1/!ba; a \      tolerations:\n        - key: node-role.kubernetes.io/master\n          operator: Exists\n          effect: NoSchedule' -e '}' ${installationWorkspace}/kadalu-server-storage-pool-statefulset.yaml
-  
+
+  # Modify exported stefulset YAML to add tolerations for master and control-plane roles
+  /usr/bin/sudo sed -i -e '/^                values:/{:a; N; /\n                - kx-main1/!ba; a \      tolerations:\n        - key: node-role.kubernetes.io/master\n          operator: Exists\n          effect: NoSchedule\n        - key: node-role.kubernetes.io/control-plane\n          operator: Exists\n          effect: NoSchedule' -e '}' ${installationWorkspace}/kadalu-server-storage-pool-statefulset.yaml
+
+  # Cleaup YAML to remove previous versioning annotations 
+  /usr/bin/sudo sed -i '/creationTimestamp:/d' kadalu-server-storage-pool-statefulset.yaml
+  /usr/bin/sudo sed -i '/resourceVersion:/d' kadalu-server-storage-pool-statefulset.yaml
+  /usr/bin/sudo sed -i '/selfLink:/d' kadalu-server-storage-pool-statefulset.yaml
+  /usr/bin/sudo sed -i '/uid:/d' kadalu-server-storage-pool-statefulset.yaml
+
   # Validate and apply the updated config-map
   kubernetesApplyYamlFile "${installationWorkspace}/kadalu-server-storage-pool-statefulset.yaml" "kadalu"
 else

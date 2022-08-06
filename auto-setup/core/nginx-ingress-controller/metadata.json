@@ -19,7 +19,9 @@
             "controller.hostNetwork=true",
             "controller.extraArgs.report-node-internal-ip-address=",
             "controller.tolerations[0].effect=NoSchedule",
-            "controller.tolerations[0].key=node-role.kubernetes.io/master"
+            "controller.tolerations[0].key=node-role.kubernetes.io/master",
+            "controller.tolerations[1].effect=NoSchedule",
+            "controller.tolerations[1].key=node-role.kubernetes.io/control-plane"
         ],
         "set_string_key_values": [
             "controller.nodeSelector.\"ingress-controller\"=true"
