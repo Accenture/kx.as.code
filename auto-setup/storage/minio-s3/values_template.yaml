@@ -91,7 +91,7 @@ rootPassword: ""
 ## All mentioned variables will be ignored in values file.
 ## .data.rootUser and .data.rootPassword are mandatory,
 ## others depend on enabled status of corresponding sections.
-existingSecret: "minio-accesskey-secret"
+existingSecret: "minio-admin-password"
 
 ## Directory on the MinIO pof
 certsPath: "/etc/minio/certs/"
@@ -251,7 +251,7 @@ podLabels: {}
 ##
 resources:
   requests:
-    memory: 16Gi
+    memory: 1Gi
 
 ## List of policies to be created after minio install
 ##
