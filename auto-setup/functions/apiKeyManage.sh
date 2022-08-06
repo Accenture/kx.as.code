@@ -10,7 +10,7 @@ managedApiKey() {
     generatedApiKey=$(getPassword "${passwordName}")
   fi
 
-  if [[ -z ${generatedPassword} ]]; then
+  if [[ -z ${generatedApiKey} ]]; then
     # Generate new secure password and push to GoPass
     generatedApiKey="$(generateApiKey)"
     if [[ -n "${passwordGroup}" ]]; then

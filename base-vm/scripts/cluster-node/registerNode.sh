@@ -604,7 +604,7 @@ EOF
 
 calicoNodeReady=""
 
-for i in {1..20}
+for i in {1..15}
 do
 
   calicoNodeReady=$(/usr/bin/sudo -H -i -u "${vmUser}" bash -c "ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} \"kubectl get pods -n kube-system \
@@ -617,7 +617,7 @@ do
     echo "Calico node pod is ready and running on this node"
     break
   else
-    echo "Calico node pod is not ready. Checking again in 15 seconds (try ${i} of 40)"
+    echo "Calico node pod is not ready. Checking again in 15 seconds (try ${i} of 15)"
     sleep 15
   fi
 
@@ -628,11 +628,11 @@ if [[ -n ${calicoNodeReady} ]]; then
   echo "Calico node pod is ready and running on this node"
 else
   if [[ ! -f /usr/share/kx.as.code/workspace/forced_reboot_flag ]]; then
-    echo "Calico node pod is not ready yet, even after 40 checks in 10 minutes. Going to try a reboot, after that it's time for some debugging"
+    echo "Calico node pod is not ready yet, even after 15 checks in 10 minutes. Going to try a reboot, after that it's time for some debugging"
     echo "forced_restart_launched. If you see this file, then possibly the setup of calico failed on this node, resulting in 1 reboot to remove the block" | sudo tee /usr/share/kx.as.code/workspace/forced_reboot_flag
     reboot
   else
-    echo "Calico node pod is not ready yet, even after 40 checks in 10 minutes. Already tried a reboot, it's time for some debugging"
+    echo "Calico node pod is not ready yet, even after 15 checks in 10 minutes. Already tried a reboot, it's time for some debugging"
     echo "Disabled the \"k8s-register-node\" service, to avoid an infinite reboot loop. You can re-enable and launch it again once you have fixed the issue"
     /usr/bin/sudo systemctl disable k8s-register-node.service
     exit 1

@@ -25,11 +25,5 @@ if [ -z $(echo $SSH_TTY) ]; then
 cat /etc/motd.kxascode | sed -e "s/^/ /"
 fi' | sudo tee -a /home/${VM_USER}/.zshrc /home/${VM_USER}/.bashrc
 
-# Show /etc/motd.kxascode even when in X-Windows terminal (not SSH)
-echo -e '\n# Added to show KX.AS.CODE MOTD also in X-Windows Terminal (already showing in SSH per default)
-if [ -z $(echo $SSH_TTY) ]; then
-cat /etc/motd.kxascode | sed -e "s/^/ /"
-fi' | sudo tee -a /home/${VM_USER}/.zshrc /home/${VM_USER}/.bashrc
-
 # Stop ZSH adding % to the output of every commands_whitelist
 echo "export PROMPT_EOL_MARK=''" | sudo tee -a /home/${VM_USER}/.zshrc
