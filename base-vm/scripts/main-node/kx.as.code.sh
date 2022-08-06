@@ -200,10 +200,6 @@ if [[ $PACKER_BUILDER_TYPE =~ virtualbox ]]; then
 
 fi
 
-# Give *.desktop files execute permissions
-sudo chmod 755 /home/${VM_USER}/Desktop/*.desktop
-sudo cp /home/${VM_USER}/Desktop/*.desktop /usr/share/applications
-
 # Create Kubernetes logging and custom scripts directory
 sudo mkdir -p ${INSTALLATION_WORKSPACE}
 sudo chown ${VM_USER}:${VM_USER} ${INSTALLATION_WORKSPACE}
