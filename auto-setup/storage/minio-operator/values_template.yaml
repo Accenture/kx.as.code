@@ -319,15 +319,15 @@ users:
   ## Add new policies as explained here https://docs.min.io/docs/minio-multi-user-quickstart-guide.html
   ## NOTE: this will fail if LDAP is enabled in your MinIO deployment
   ## make sure to disable this if you are using LDAP.
-  - accessKey: console
-    secretKey: console123
-    policy: consoleAdmin
+  - #existingSecret: 
+    #policy: consoleAdmin
+    #accessKey: console
+    #secretKey: console123
   # Or you can refer to specific secret
-  #- accessKey: externalSecret
-  #  existingSecret: my-secret
-  #  existingSecretKey: password
-  #  policy: readonly
-
+  - accessKey: "accessKey"
+    existingSecret: "minio-console-admin-access-secret"
+    existingSecretKey: "secretKey"
+    policy: "consoleAdmin"
 
 ## Additional Annotations for the Kubernetes Job makeUserJob
 makeUserJob:

@@ -1,11 +1,12 @@
 minioS3CreateBucket() {
 
     minioS3BucketName=${1}
+    tenant=${2-myminio}
+    region=${3-us-east-1}
 
     # Create S3 Bucket if it doesn't already exist
-    minioS3BucketExists=$(mc ls  myminio --insecure --json | jq '. | select(.key=="'${minioS3BucketName}'/")')
-    if [[ -z ${minioS3BucketExists} ]]; then
-        mc mb myminio/${minioS3BucketName} --insecure
+    if [[ -z $(mc ls ${tenant}/${bucketName} --json | jq -r '.status?') ]]; then
+        mc mb ${tenant}/${bucketName} --region ${region} --ignore-existing
     fi
 
 }

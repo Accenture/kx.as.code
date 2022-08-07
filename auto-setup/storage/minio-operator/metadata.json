@@ -1,13 +1,10 @@
 {
-    "name": "minio-s3",
-    "namespace": "minio-s3",
-    "installation_type": "helm",
+    "name": "minio-operator",
+    "namespace": "minio-operator",
+    "installation_type": "script",
     "installation_group_folder": "storage",
-    "helm_params": {
-        "repository_url": "https://charts.min.io/",
-        "repository_name": "minio/minio",
-        "helm_version": "4.0.8",
-        "set_key_values": []
+    "environment_variables": {
+        "operatorVersion": "4.4.28"
     },
     "categories": [
         "s3-storage"
@@ -53,7 +50,11 @@
         "createSecrets.sh",
         "installMinIoCli.sh"
     ],
+    "install_scripts": [
+        "installMinioOperator.sh"
+    ],
     "post_install_scripts": [
-        "intializeMinioS3.sh"
+        "intializeMinioOperator.sh",
+        "deployYamlFiles.sh"
     ]
 }
