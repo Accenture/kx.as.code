@@ -19,7 +19,7 @@ deployYamlFilesToKubernetes() {
                 yamlFilename="${componentName}_$(basename ${yamlFiles[$i]})"
                 envhandlebars <${yamlFiles[$i]} >${installationWorkspace}/${yamlFilename}
                 updateStorageClassIfNeeded "${installationWorkspace}/${yamlFilename}"
-                kubeval ${installationWorkspace}/${yamlFilename} --strict || rc=$? && log_info "kubeval returned with rc=$rc"
+                kubeval ${installationWorkspace}/${yamlFilename} --schema-location https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master --strict || rc=$? && log_info "kubeval returned with rc=$rc"
                 if [[ ${rc} -eq 0 ]]; then
                     log_info "YAML validation ok for ${yamlFilename}. Continuing to apply."
                     kubectl apply -f ${installationWorkspace}/${yamlFilename} -n ${namespace}

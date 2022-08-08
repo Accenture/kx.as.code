@@ -1,5 +1,4 @@
 #!/bin/bash
-set -euo pipefail
+set -euox pipefail
 
-# TODO - make this optional depending on whether Gitlab is installed or not
 createGitlabProject "teamcity" "devops"

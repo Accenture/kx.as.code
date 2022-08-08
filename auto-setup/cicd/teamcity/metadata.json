@@ -47,6 +47,8 @@
     "shortcut_text": "Teamcity",
     "shortcut_icon": "teamcity.png",
     "pre_install_scripts": [
+        "createGitProject.sh",
+        "populateGitProject.sh",
         "rebuildDockerImage.sh"
     ],
     "post_install_scripts": []

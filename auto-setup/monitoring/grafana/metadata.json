@@ -92,6 +92,8 @@
     "api_docs_url": "https://grafana.com/docs/grafana/latest/http_api/curl-examples/?src=grafana_gettingstarted",
     "vendor_docs_url": "https://grafana.com/docs/",
     "pre_install_scripts": [
+        "createGitProject.sh",
+        "populateGitProject.sh",
         "installGrafanaImageRenderer.sh",
         "getMinIoAccessKey.sh",
         "createAdminCredentialsSecret.sh",
