@@ -221,6 +221,7 @@ cve:
       # key1: value1
       # key2: value2
 docker:
+  enabled: false
   path: /var/run/docker.sock
 
 resources: {}
@@ -240,7 +241,7 @@ bottlerocket:
   runtimePath: /run/dockershim.sock
 
 containerd:
-  enabled: false
+  enabled: true
   path: /run/containerd/containerd.sock
 
 crio:

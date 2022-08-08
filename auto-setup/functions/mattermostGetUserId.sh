@@ -1,10 +1,14 @@
 mattermostGetUserId() {
 
-    mattermostUsername=${1}
+    if [[ $(checkApplicationInstalled "mattermost" "collaboration") ]]; then
 
-    # Get login token for API call
-    mattermostLoginToken=$(mattermostGetLoginToken "admin")
+        mattermostUsername=${1}
 
-    curl -s -H 'Authorization: Bearer '${mattermostLoginToken}'' -X GET https://mattermost.${baseDomain}/api/v4/users/username/${mattermostUsername} | jq -r '.id'
+        # Get login token for API call
+        mattermostLoginToken=$(mattermostGetLoginToken "admin")
+
+        curl -s -H 'Authorization: Bearer '${mattermostLoginToken}'' -X GET https://mattermost.${baseDomain}/api/v4/users/username/${mattermostUsername} | jq -r '.id'
+
+    fi
 
 }

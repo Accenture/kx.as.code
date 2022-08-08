@@ -29,7 +29,7 @@
                     "expected_shell_check_command_response": ""
                 },
                 "readiness": {
-                    "http_path": "/",
+                    "http_path": "/mnt",
                     "http_auth_required": false,
                     "expected_http_response_code": "200",
                     "expected_http_response_string": "",

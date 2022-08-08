@@ -1,34 +1,38 @@
 createKeycloakUser() {
 
-    # Assign incoming parameters to variables
-    username=${1}
+    if [[ $(checkApplicationInstalled "keycloak" "core") ]]; then
 
-    # Source Keycloak Environment
-    sourceKeycloakEnvironment
+        # Assign incoming parameters to variables
+        username=${1}
 
-    if [[ -n "${kcPod}" ]]; then
+        # Source Keycloak Environment
+        sourceKeycloakEnvironment
 
-      # Call function to login to Keycloak
-      keycloakLogin
+        if [[ -n "${kcPod}" ]]; then
 
-      # Get Keycloak UserId
-      export userId=$(kubectl -n ${kcNamespace} exec ${kcPod} --container ${kcContainer} -- \
-          ${kcAdmCli} get users -r ${kcRealm} -q username=${username} | jq -r '.[] | select(.username=="'${username}'") | .id')
+            # Call function to login to Keycloak
+            keycloakLogin
 
-      if [[ "${userId}" == "null" ]] || [[ -z "${userId}" ]]; then
+            # Get Keycloak UserId
+            export userId=$(kubectl -n ${kcNamespace} exec ${kcPod} --container ${kcContainer} -- \
+                ${kcAdmCli} get users -r ${kcRealm} -q username=${username} | jq -r '.[] | select(.username=="'${username}'") | .id')
 
-          # Create a new Keycloak User
-          kubectl -n ${kcNamespace} exec ${kcPod} --container ${kcContainer} -- \
-              ${kcAdmCli} create users -r ${kcRealm} -s username=${username} -s enabled=true
+            if [[ "${userId}" == "null" ]] || [[ -z "${userId}" ]]; then
 
-          # Get Keycloak UserId
-          export userId=$(kubectl -n ${kcNamespace} exec ${kcPod} --container ${kcContainer} -- \
-              ${kcAdmCli} get users -r ${kcRealm} -q username=${username} | jq -r '.[] | select(.username=="'${username}'") | .id')
-      else
-          >&2 log_info "User \"${username}\" already exists with id ${userId}. Skipping its creation"
-      fi
+                # Create a new Keycloak User
+                kubectl -n ${kcNamespace} exec ${kcPod} --container ${kcContainer} -- \
+                    ${kcAdmCli} create users -r ${kcRealm} -s username=${username} -s enabled=true
 
-      echo "${userId}"
+                # Get Keycloak UserId
+                export userId=$(kubectl -n ${kcNamespace} exec ${kcPod} --container ${kcContainer} -- \
+                    ${kcAdmCli} get users -r ${kcRealm} -q username=${username} | jq -r '.[] | select(.username=="'${username}'") | .id')
+            else
+                >&2 log_info "User \"${username}\" already exists with id ${userId}. Skipping its creation"
+            fi
+
+            echo "${userId}"
+
+        fi
 
     fi
 
