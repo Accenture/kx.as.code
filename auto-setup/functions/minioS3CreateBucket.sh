@@ -1,6 +1,6 @@
 minioS3CreateBucket() {
 
-    minioS3BucketName=${1}
+    bucketName=${1}
     tenant=${2-myminio}
     region=${3-us-east-1}
 

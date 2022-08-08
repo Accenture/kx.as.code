@@ -1015,7 +1015,7 @@ All the tools below are installable either from the [Jenkins based launcher](/Qu
 
 ## Cloud Storage
 ### Minio-s3
-<div class="description-dev"><q><i>Minio-s3 is a free and open user interface that lets you visualize your Elasticsearch data and navigate the Elastic Stack. Do anything from tracking query load to understanding the way requests flow through your apps.</i></q><br>- Elastic</div>
+<div class="description-dev"><q><i>MinIO Object Store is a free and open user interface that lets you visualize your Elasticsearch data and navigate the Elastic Stack. Do anything from tracking query load to understanding the way requests flow through your apps.</i></q><br>- Elastic</div>
 <div class="table">
     <div class="rowGroup">
         <div class="row">

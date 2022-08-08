@@ -8,7 +8,7 @@ minioS3CreateTenant "gitlab"
 export s3BucketsToCreate=$(echo ${s3BucketsToCreate} | sed 's/;/ /g')
 for bucket in ${s3BucketsToCreate}; do
     # Call bash funtion to create bucket in Minio-S3
-    minioS3CreateBucket "${bucket}" "gitlab"
+    minioS3CreateBucket "${bucket}" "gitlab" "eu-central-1"
 done
 
 # List created S3 buckets

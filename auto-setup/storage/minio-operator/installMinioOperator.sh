@@ -9,3 +9,8 @@ set -euox pipefail
 # Check version
 kubectl minio version
 
+# Deploy MinIO-S3 ingress YAML file
+deployYamlFilesToKubernetes
+
+# Initialize Minio-S3 Operator
+kubectl minio init --namespace ${namespace}
