@@ -4,7 +4,7 @@ minioS3CreateTenant() {
     servers=${2-1}
     volumes=${3-1}
     capacity=${4-10Gi}
-    storageClass=${5-local-storage-sc }
+    storageClass=${5-local-storage-sc}
     minioNamespace="minio-${tenant}"
 
     # Create Kubernetes Namespace

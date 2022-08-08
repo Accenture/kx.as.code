@@ -215,11 +215,11 @@
 
         def filteredVirtualBoxKxNodeList = boxDirectories.findAll {
             it[1] == "virtualbox" && it[2] == "kx-node"
-        }.sort { a, b -> a[1] <=> b[0] }
+        }.sort { a, b -> a[0] <=> b[1] }
 
         def filteredVirtualBoxKxMainList = boxDirectories.findAll {
             it[1] == "virtualbox" && it[2] == "kx-main"
-        }.sort { a, b -> a[1] <=> b[0] }
+        }.sort { a, b -> a[0] <=> b[1] }
 
         if (filteredVirtualBoxKxMainList) {
             virtualboxLocalVagrantBoxMainVersion = filteredVirtualBoxKxMainList[0][0]
