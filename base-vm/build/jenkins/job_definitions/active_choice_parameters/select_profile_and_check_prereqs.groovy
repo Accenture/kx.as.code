@@ -57,6 +57,7 @@
             profilePaths.removeAll { it.toLowerCase().endsWith('parallels') }
         } else if (OS.indexOf("nux") >= 0) {
             underlyingOS = "linux"
+            profilePaths.removeAll { it.toLowerCase().endsWith('parallels') }
         } else {
             underlyingOS = "other"
         }
@@ -86,37 +87,37 @@
         if (virtualboxKxMainVagrantCloudVersions) {
             virtualboxKxMainVagrantCloudVersion = virtualboxKxMainVagrantCloudVersions[0].version
         } else {
-            virtualboxKxMainVagrantCloudVersion = "-"
+            virtualboxKxMainVagrantCloudVersion = "-1"
         }
 
         if (virtualboxKxNodeVagrantCloudVersions) {
             virtualboxKxNodeVagrantCloudVersion = virtualboxKxNodeVagrantCloudVersions[0].version
         } else {
-            virtualboxKxNodeVagrantCloudVersion = "-"
+            virtualboxKxNodeVagrantCloudVersion = "-1"
         }
 
         if (vmwareDesktopKxMainVagrantCloudVersions) {
             vmwareDesktopKxMainVagrantCloudVersion = vmwareDesktopKxMainVagrantCloudVersions[0].version
         } else {
-            vmwareDesktopKxMainVagrantCloudVersion = "-"
+            vmwareDesktopKxMainVagrantCloudVersion = "-1"
         }
 
         if (vmwareDesktopKxNodeVagrantCloudVersions) {
             vmwareDesktopKxNodeVagrantCloudVersion = vmwareDesktopKxNodeVagrantCloudVersions[0].version
         } else {
-            vmwareDesktopKxNodeVagrantCloudVersion = "-"
+            vmwareDesktopKxNodeVagrantCloudVersion = "-1"
         }
 
         if (parallelsKxMainVagrantCloudVersions) {
             parallelsKxMainVagrantCloudVersion = parallelsKxMainVagrantCloudVersions[0].version
         } else {
-            parallelsKxMainVagrantCloudVersion = "-"
+            parallelsKxMainVagrantCloudVersion = "-1"
         }
 
         if (parallelsKxNodeVagrantCloudVersions) {
             parallelsKxNodeVagrantCloudVersion = parallelsKxNodeVagrantCloudVersions[0].version
         } else {
-            parallelsKxNodeVagrantCloudVersion = "-"
+            parallelsKxNodeVagrantCloudVersion = "-1"
         }
 
     } catch (e) {

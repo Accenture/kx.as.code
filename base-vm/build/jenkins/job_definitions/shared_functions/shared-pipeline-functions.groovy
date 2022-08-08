@@ -27,7 +27,7 @@ def setBuildEnvironment(profile,node_type,vagrant_action) {
         os="linux"
         packerOsFolder="darwin-linux"
         jqDownloadPath="${JQ_LINUX_DOWNLOAD_URL}"
-        vmWareDiskUtilityPath=""
+        vmWareDiskUtilityPath="usr/bin/vmware-vdiskmanager"
         virtualboxCliPath = "/usr/bin/vboxmanage"
         vmwareCliPath = "/usr/bin/vmrun"
         parallelsCliPath = ""
@@ -35,12 +35,12 @@ def setBuildEnvironment(profile,node_type,vagrant_action) {
         underlyingOS = "other"
     }
 
-    sh """
-    if [ ! -f ./jq* ]; then
-        curl -L -o jq ${jqDownloadPath}
-        chmod +x ./jq
-    fi
-    """
+    //sh """
+    //if [ ! -f ./jq* ]; then
+    //    curl -L -o jq ${jqDownloadPath}
+    //    chmod +x ./jq
+    //fi
+    //"""
 
     kx_version = sh (script: "cat versions.json | ./jq -r '.kxascode'", returnStdout: true).trim()
     kube_version = sh (script: "cat versions.json | ./jq -r '.kubernetes'", returnStdout: true).trim()

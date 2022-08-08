@@ -34,8 +34,10 @@
             "https_proxy": "",
             "no_proxy": ""
         },
+        "selectedTemplates": "null",
         "sslProvider": "self-signed",
         "standaloneMode": "true",
+        "startupMode": "normal",
         "staticNetworkSetup": {
             "baseFixedIpAddresses": {
                 "kx-main1": "10.100.76.200",

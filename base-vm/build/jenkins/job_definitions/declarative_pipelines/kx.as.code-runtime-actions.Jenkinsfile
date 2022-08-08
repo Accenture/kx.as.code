@@ -99,11 +99,11 @@ pipeline {
                         else
                             vagrant ${vagrant_action} --no-tty
                         fi
-                        if [ "${profile}" == "virtualbox" ]; then
+                        if [ \"${profile}\" == \"virtualbox\" ]; then
                             \"${virtualboxCliPath}\" list vms
-                        elif [ "${profile}" == "parallels" ]; then
+                        elif [ \"${profile}\" == \"parallels\" ]; then
                             \"${parallelsCliPath}\" list
-                        elif [ "${profile}" == "vmware-desktop" ]; then
+                        elif [ \"${profile}\" == \"vmware-desktop\" ]; then
                             \"${vmwareCliPath}\" list
                         fi
                         """

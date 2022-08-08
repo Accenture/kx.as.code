@@ -946,18 +946,18 @@ async function performRuntimeAction(vagrantAction) {
     let kxMainVersionToDeploy
     let kxNodeVersionToDeploy
 
-    let cloudKxMainVersion = document.getElementById("kx-main-vagrant-cloud-box-version").innerText;
-    let cloudKxNodeVersion = document.getElementById("kx-main-vagrant-cloud-box-version").innerText;
-    let localKxMainVersion = document.getElementById("virtualbox-local-vagrant-box-main-version").value;
-    let localKxNodeVersion = document.getElementById("virtualbox-local-vagrant-box-node-version").value;
+    let cloudKxMainVersion = document.getElementById("kx-main-vagrant-cloud-box-version").value;
+    let cloudKxNodeVersion = document.getElementById("kx-node-vagrant-cloud-box-version").value;
+    let localKxMainVersion = document.getElementById("kx-main-local-box-version").value;
+    let localKxNodeVersion = document.getElementById("kx-node-local-box-version").value;
 
-    if ( localKxMainVersion > cloudKxMainVersion ) {
+    if ( localKxMainVersion.toString() > cloudKxMainVersion.toString() ) {
         kxMainVersionToDeploy = localKxMainVersion
     } else {
         kxMainVersionToDeploy = cloudKxMainVersion
     }
 
-    if ( localKxNodeVersion > cloudKxNodeVersion ) {
+    if ( localKxNodeVersion.toString() > cloudKxNodeVersion.toString() ) {
         kxNodeVersionToDeploy = localKxNodeVersion
     } else {
         kxNodeVersionToDeploy = cloudKxNodeVersion
@@ -1517,22 +1517,26 @@ function getAvailableLocalBoxes() {
             default:
                 console.debug("Weird, box type not known. Normally the box type is either VirtualBox, VMWare or Parallels");
         }
-        if ( localVagrantBoxMainVersion !== "null" ) {
+        if ( localVagrantBoxMainVersion !== "null" && localVagrantBoxMainVersion !== "-1") {
             document.getElementById("kx-main-local-box-version").innerHTML = localVagrantBoxMainVersion;
+            document.getElementById("kx-main-local-box-version").value = localVagrantBoxMainVersion;
             document.getElementById("local-main-version-status-svg").src = "/userContent/icons/checkbox-marked-circle-outline.svg";
             document.getElementById("local-main-version-status-svg").className = "checklist-status-icon svg-bright-green";
         } else {
-            document.getElementById("kx-main-local-box-version").innerHTML = "<i>- (optional)</i>";
-            document.getElementById("local-main-version-status-svg").src = "/userContent/icons/alert-outline.svg";
+            document.getElementById("kx-main-local-box-version").innerHTML = "<i>- (Optional)</i>";
+            document.getElementById("kx-main-local-box-version").value = -1;
+            document.getElementById("local-main-version-status-svg").value = "/userContent/icons/alert-outline.svg";
             document.getElementById("local-main-version-status-svg").className = "checklist-status-icon svg-orange-red";
         }
 
-        if ( localVagrantBoxNodeVersion !== "null" ) {
+        if ( localVagrantBoxNodeVersion !== "null" && localVagrantBoxNodeVersion !== "-1") {
             document.getElementById("kx-node-local-box-version").innerHTML = localVagrantBoxNodeVersion;
+            document.getElementById("kx-node-local-box-version").value = localVagrantBoxNodeVersion;
             document.getElementById("local-node-version-status-svg").src = "/userContent/icons/checkbox-marked-circle-outline.svg";
             document.getElementById("local-node-version-status-svg").className = "checklist-status-icon svg-bright-green";
         } else {
             document.getElementById("kx-node-local-box-version").innerHTML = "<i>- (Optional)</i>";
+            document.getElementById("kx-node-local-box-version").value = -1;
             document.getElementById("local-node-version-status-svg").src = "/userContent/icons/alert-outline.svg";
             document.getElementById("local-node-version-status-svg").className = "checklist-status-icon svg-orange-red";
             document.getElementById('standalone-mode-toggle').value = "true";
@@ -1555,7 +1559,7 @@ function getAvailableCloudBoxes() {
                 cloudVagrantBoxNodeVersion = getVirtualboxKxNodeVagrantCloudVersion();
                 break;
             case "vmware-desktop":
-                cloudVagrantBoxMainVersion = getVmwareDesktopKxMainVagrantCloudVersion()
+                cloudVagrantBoxMainVersion = getVmwareDesktopKxMainVagrantCloudVersion();
                 cloudVagrantBoxNodeVersion = getVmwareDesktopKxNodeVagrantCloudVersion();
                 break;
             case "parallels":
@@ -1565,22 +1569,26 @@ function getAvailableCloudBoxes() {
             default:
                 console.debug("Weird, box type not known. Normally the box type is either VirtualBox, VMWare or Parallels");
         }
-        if ( cloudVagrantBoxMainVersion !== "null" ) {
+        if ( cloudVagrantBoxMainVersion !== "null" && cloudVagrantBoxMainVersion !== "-1" ) {
             document.getElementById("kx-main-vagrant-cloud-box-version").innerHTML = cloudVagrantBoxMainVersion;
+            document.getElementById("kx-main-vagrant-cloud-box-version").value = cloudVagrantBoxMainVersion;
             document.getElementById("cloud-main-version-status-svg").src = "/userContent/icons/checkbox-marked-circle-outline.svg";
             document.getElementById("cloud-main-version-status-svg").className = "checklist-status-icon svg-bright-green";
         } else {
             document.getElementById("kx-main-vagrant-cloud-box-version").innerHTML = "<i>Not found</i>";
+            document.getElementById("kx-main-vagrant-cloud-box-version").value = -1;
             document.getElementById("cloud-main-version-status-svg").src = "/userContent/icons/alert-outline.svg";
             document.getElementById("cloud-main-version-status-svg").className = "checklist-status-icon svg-orange-red";
         }
 
-        if ( cloudVagrantBoxNodeVersion !== "null" ) {
+        if ( cloudVagrantBoxNodeVersion !== "null" && cloudVagrantBoxNodeVersion !== "-1") {
             document.getElementById("kx-node-vagrant-cloud-box-version").innerHTML = cloudVagrantBoxNodeVersion;
+            document.getElementById("kx-node-vagrant-cloud-box-version").value = cloudVagrantBoxNodeVersion;
             document.getElementById("cloud-node-version-status-svg").src = "/userContent/icons/checkbox-marked-circle-outline.svg";
             document.getElementById("cloud-node-version-status-svg").className = "checklist-status-icon svg-bright-green";
         } else {
             document.getElementById("kx-node-vagrant-cloud-box-version").innerHTML = "<i>Not found</i>";
+            document.getElementById("kx-node-vagrant-cloud-box-version").value = -1;
             document.getElementById("cloud-node-version-status-svg").src = "/userContent/icons/alert-outline.svg";
             document.getElementById("cloud-node-version-status-svg").className = "checklist-status-icon svg-orange-red";
             document.getElementById('standalone-mode-toggle').value = "true";
