@@ -11,10 +11,10 @@
     ],
     "urls": [
         {
-            "url": "https://{{componentName}}.{{baseDomain}}",
+            "url": "https://console-{{componentName}}.{{baseDomain}}",
             "healthchecks": {
                 "liveliness": {
-                    "http_path": "/minio/health/ready",
+                    "http_path": "/",
                     "http_auth_required": false,
                     "expected_http_response_code": "200",
                     "expected_http_response_string": "",
@@ -26,7 +26,7 @@
                     "expected_shell_check_command_response": ""
                 },
                 "readiness": {
-                    "http_path": "/minio/health/ready",
+                    "http_path": "/",
                     "http_auth_required": false,
                     "expected_http_response_code": "200",
                     "expected_http_response_string": "",
@@ -40,8 +40,8 @@
             }
         }
     ],
-    "Description": "MinIO S3 Storage",
-    "shortcut_text": "MinIO S3",
+    "Description": "MinIO Object Storage",
+    "shortcut_text": "MinIO Console",
     "shortcut_icon": "minio.png",
     "api_docs_type": "web",
     "api_docs_url": "https://docs.min.io/docs/minio-client-complete-guide.html",

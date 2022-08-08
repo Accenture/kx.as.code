@@ -36,9 +36,8 @@ You could create your own installation groups, but below some of the ones that h
 
 Included in this group are:
 
-- MinIo-S3
+- MinIo-Operator
 - Gitlab CE
-- Gitlab Runner
 - Mattermost
 - Harbor
 - ArgoCD
@@ -47,12 +46,11 @@ Included in this group are:
 
 ```bash
 rabbitmqadmin publish exchange=action_workflow routing_key=pending_queue payload='{"install_folder":"storage","name":"minio-s3","action":"install","retries":"0"}'
-rabbitmqadmin publish exchange=action_workflow routing_key=pending_queue payload='{"install_folder":"cicd","name":"gitlab-ce","action":"install","retries":"0"}'
+rabbitmqadmin publish exchange=action_workflow routing_key=pending_queue payload='{"install_folder":"cicd","name":"gitlab","action":"install","retries":"0"}'
 rabbitmqadmin publish exchange=action_workflow routing_key=pending_queue payload='{"install_folder":"collaboration","name":"mattermost","action":"install","retries":"0"}'
 rabbitmqadmin publish exchange=action_workflow routing_key=pending_queue payload='{"install_folder":"cicd","name":"harbor","action":"install","retries":"0"}'
-rabbitmqadmin publish exchange=action_workflow routing_key=pending_queue payload='{"install_folder":"cicd","name":"gitlab-runner","action":"install","retries":"0"}'
 rabbitmqadmin publish exchange=action_workflow routing_key=pending_queue payload='{"install_folder":"cicd","name":"argocd","action":"install","retries":"0"}'
-rabbitmqadmin publish exchange=action_workflow routing_key=pending_queue payload='{"install_folder":"cicd","name":"artifactory-oss","action":"install","retries":"0"}'
+rabbitmqadmin publish exchange=action_workflow routing_key=pending_queue payload='{"install_folder":"cicd","name":"artifactory","action":"install","retries":"0"}'
 ```
 
 
