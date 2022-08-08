@@ -29,7 +29,7 @@
                     "expected_shell_check_command_response": ""
                 },
                 "readiness": {
-                    "http_path": "/",
+                    "http_path": "/mnt",
                     "http_auth_required": false,
                     "expected_http_response_code": "200",
                     "expected_http_response_string": "",
@@ -47,8 +47,6 @@
     "shortcut_text": "Teamcity",
     "shortcut_icon": "teamcity.png",
     "pre_install_scripts": [
-        "createGitProject.sh",
-        "populateGitProject.sh",
         "rebuildDockerImage.sh"
     ],
     "post_install_scripts": []

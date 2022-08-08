@@ -18,7 +18,7 @@
             "ingress.tls[0].hosts[0]={{componentName}}.{{baseDomain}}",
             "persistence.enabled=true",
             "persistence.size=4Gi",
-            "persistence.storageClassName=gluster-heketi",
+            "persistence.storageClassName=kadalu.storage-pool-1",
             "admin.userKey=admin-user",
             "admin.passwordKey=admin-password",
             "admin.existingSecret=grafana-admin-credentials",
@@ -92,8 +92,6 @@
     "api_docs_url": "https://grafana.com/docs/grafana/latest/http_api/curl-examples/?src=grafana_gettingstarted",
     "vendor_docs_url": "https://grafana.com/docs/",
     "pre_install_scripts": [
-        "createGitProject.sh",
-        "populateGitProject.sh",
         "installGrafanaImageRenderer.sh",
         "getMinIoAccessKey.sh",
         "createAdminCredentialsSecret.sh",

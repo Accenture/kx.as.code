@@ -2,7 +2,7 @@ minioS3CreateBucket() {
 
     bucketName=${1}
     tenant=${2-myminio}
-    region=${3-us-east-1}
+    region=${3-eu-central-1}
 
     # Create S3 Bucket if it doesn't already exist
     if [[ -z $(mc ls ${tenant}/${bucketName} --json | jq -r '.status?') ]]; then

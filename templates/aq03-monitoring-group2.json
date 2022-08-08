@@ -13,6 +13,10 @@
       },
       {
         "install_folder": "monitoring",
+        "name": "loki"
+      },
+      {
+        "install_folder": "monitoring",
         "name": "graphite"
       }
     ]
