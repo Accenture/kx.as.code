@@ -1,6 +1,7 @@
 <?xml version='1.1' encoding='UTF-8'?>
-<scriptApproval plugin="script-security@1131.v8b_b_5eda_c328e">
+<scriptApproval plugin="script-security@1145.vb_cf6cf6ed960">
   <approvedScriptHashes>
+    <string>007fd27963031ebed29a93734727f3bb9130b2ac</string>
     <string>0090d328110c53d007f71c344487be2661c87a1e</string>
     <string>0091f4513d687fc707e79c194de9eb1ba0ccc3ab</string>
     <string>00cdfdcf7c19e980d7e878fd296815fbafea6947</string>
@@ -20,9 +21,11 @@
     <string>072afde6244a9ad4c41892400453ed9335dccf45</string>
     <string>07b8d116f3c85b6e7d9a2a0db000f5c762514f3b</string>
     <string>0891c0e5cefb1d8f2c8204dd457ad895ac7a5c8a</string>
+    <string>0a9c7b4bee824e09e80d7d20fbad346073f65460</string>
     <string>0aaa6f453b83f45e0879e707dfa0b843f03dd1c2</string>
     <string>0bb78cbdb6295f616c28cb3ac6c8653761ec4b81</string>
     <string>0eac3e6726bd5eff4424fb76fbf72fb0c17a47f6</string>
+    <string>0faec3a2e3031ee243a7de42e1d440fc8930dc43</string>
     <string>10a35c2c61b5353af4f241d6a5bb51b5e758433a</string>
     <string>10e6a95d2e59c3709f2f55ff04a8641a9cd9f25a</string>
     <string>1140c7063e49369b1938330bcc51ee3a45347733</string>
@@ -48,6 +51,7 @@
     <string>2113fcd93d8222f53f9b416f4d81f30e3bc0d384</string>
     <string>21d08c4c0f54d2aeb2f11985692ef21aeac04a39</string>
     <string>21e8a14c6cc8267b0ff60a73af51ab91f75cf07e</string>
+    <string>229539a0f5e5d283b844d0e1461b572bea9513ac</string>
     <string>23577bc4b720cd5b29a22eafed1103770b6be7e0</string>
     <string>23ace2f267443e749675addb05d14399b760f3c1</string>
     <string>247f1310aedfc33978e1890ebf78574cbb196548</string>
@@ -107,6 +111,7 @@
     <string>450a643cb02c587177fbd368cd3bafc890e7e79c</string>
     <string>45671ce0390607e11bec6f6925d2dadce6259173</string>
     <string>45b495b39ed03d577152868cab5543fcf3b41bfb</string>
+    <string>45e551c0fad598903adb944dc2eae8620c26b723</string>
     <string>45fc03609f2fa75b1cdb17f163682f174cc1802d</string>
     <string>46053b058dde55b81cd9ad10043aebf1deeb4abc</string>
     <string>46a5f2f2a4b14414dd5589627331d0ce7058033d</string>
@@ -120,6 +125,7 @@
     <string>4a68b60a13fabef9cabe534b7e72ae092fde480d</string>
     <string>4a7c6cc4259332438d8f0b6815792665b13f15b0</string>
     <string>4c1528007b1d4e1a8f10e21d7add11f71889b17a</string>
+    <string>4d9b05a13f9bc55b301c0ddf3d2025b32d08ad34</string>
     <string>4e08de8738e52fea0cbeed998882521d97c2d945</string>
     <string>4e10293c07d835e3921f79936e417dec8ef4e1a6</string>
     <string>4eb4d131cdb4627fa62918cd582de43cb3fe1835</string>
@@ -184,6 +190,7 @@
     <string>74514ea925fd2c5ccbd3066a87129ba799155800</string>
     <string>75df379b3bb7081051024451a1a4ed1b4c6e182a</string>
     <string>76b383a7095fd3eb646847b94fb28fcbaa275b84</string>
+    <string>7729fbcdabd21353944104d3b5a3bd24ea76768e</string>
     <string>777577df3f3c0f7d1f1a18956ec75479e11be34b</string>
     <string>78cddfcb25b4a35d248f0a48d726de2d7eee6f40</string>
     <string>7b008f88e0c78249b7461cca4ef5707723202079</string>
@@ -212,6 +219,7 @@
     <string>884acb445086e415879d9c02f79f41aab05cd33c</string>
     <string>88f01e682d38f7ac52a2a6834d35b92853d47588</string>
     <string>8a1a86f993664adb77d212a97480e961b9773aed</string>
+    <string>8b0eb6c7e3c30f568033201837701411d53fb543</string>
     <string>8c8c540bf9c9d4b855933639367b45fe5c4fc16d</string>
     <string>8d3ec3428ce09fbdc6b2749b0b45e3f0af6a6de7</string>
     <string>8d7069ecfd94123d9d8b84753e146621420e590b</string>
@@ -239,6 +247,7 @@
     <string>9be02dfd8ad44db1632da7cbd0039aa88a1dfd98</string>
     <string>9bf92c6a2579adc8e814edadc710b2f927dcf01a</string>
     <string>9c3004b54aa5b4575c837c53cba52b3de9e3503a</string>
+    <string>9c89e85b5944be9c24a160bde639bc4d4f007beb</string>
     <string>9df3aab24cbc60db16b247e1f34fb2d88db1245d</string>
     <string>9f7794169aad4aa3839c0a0d337d82cf4cc8c5c7</string>
     <string>a0b44184dcefebe972255b6e968163be79c5bf23</string>
@@ -310,6 +319,7 @@
     <string>d79f0c872fc48a76c10f10aee4834f481acc7f8c</string>
     <string>d89c45ccc2c8189d94150bb3b340da7932032a04</string>
     <string>d8e4a29c2189b37865d82f01cd37a80912f78c9e</string>
+    <string>d8fee538b708a0502438a988fcea7a7cf4773747</string>
     <string>d9324482354a792dfc7dc1c16f8489adb29fe056</string>
     <string>da41056ca661a7f8731878fc5d27f9dd1c0a9993</string>
     <string>daca30650ef78cabed5138955b93e6a5c51c564c</string>
@@ -334,6 +344,7 @@
     <string>e648f1236376fbe2d8c1630031e8fd8940babba9</string>
     <string>e7ac9cdde2833caafef2ee3b51ee5dbb3854c140</string>
     <string>e8c1240fa4497f9789d03da81e8e0ecf05958321</string>
+    <string>e8fd7940c6feca4abf470573f57a8f2883d2b408</string>
     <string>e8fe1c793bdf16381df68fc7e17a93cfe7cac415</string>
     <string>e9550a200423e977e0ca76d29afeafd34912b49a</string>
     <string>eb63e832af6cedd47ea15a860fb96e2e991f128f</string>
@@ -367,6 +378,7 @@
   <approvedSignatures>
     <string>method hudson.model.Job getLastCompletedBuild</string>
     <string>method jenkins.model.Jenkins getItemByFullName java.lang.String</string>
+    <string>staticMethod java.lang.System getProperty java.lang.String java.lang.String</string>
     <string>staticMethod jenkins.model.Jenkins getInstance</string>
     <string>staticMethod org.codehaus.groovy.runtime.DefaultGroovyMethods execute java.lang.String</string>
     <string>staticMethod org.codehaus.groovy.runtime.ProcessGroovyMethods getText java.lang.Process</string>

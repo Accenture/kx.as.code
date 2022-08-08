@@ -24,25 +24,14 @@ sudo apt-get -y install \
     bc \
     dbus-x11 \
     pwgen \
-    kde-spectacle
+    kde-spectacle \
+    chromium
 
-# Install Google-Chrome
-if [[ "${ARCH}" == "arm64" ]]; then
-  sudo apt install -y chromium
-else
-  wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
-  sudo sh -c 'echo "deb [arch='${ARCH}'] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list'
-  sudo apt-get update
-  sudo apt-get install -y google-chrome-stable
-fi
 
 # Set User File Associations
 sudo update-alternatives --install /usr/bin/editor editor /usr/bin/vim 100
-if [[ "${ARCH}" == "arm64" ]]; then
-  sudo update-alternatives --install /usr/bin/x-www-browser x-www-browser /usr/bin/chromium 100
-else
-  sudo update-alternatives --install /usr/bin/x-www-browser x-www-browser /usr/bin/google-chrome-stable 100
-fi
+sudo update-alternatives --install /usr/bin/x-www-browser x-www-browser /usr/bin/chromium 100
+
 
 # Install Typora for showing WELCOME.md after GNOME login
 sudo wget -qO - https://typora.io/linux/public-key.asc | sudo apt-key add -

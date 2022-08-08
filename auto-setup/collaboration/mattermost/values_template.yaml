@@ -7,11 +7,11 @@ persistence:
   data:
     enabled: true
     size: 1Gi
-    storageClass: gluster-heketi-sc
+    storageClass: kadalu.storage-pool-1
   plugins:
     enabled: true
     size: 0.5Gi
-    storageClass: gluster-heketi-sc
+    storageClass: kadalu.storage-pool-1
 
 config:
   MM_PLUGINSETTINGS_CLIENTDIRECTORY: "./client/plugins"

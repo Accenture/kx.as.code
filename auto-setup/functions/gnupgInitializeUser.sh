@@ -59,20 +59,6 @@ gpg2 --batch -d ${installationWorkspace}/gnupg-${userToInitialize}/keydetails.as
 rm ${installationWorkspace}/gnupg-${userToInitialize}/keydetails.asc
 """ | /usr/bin/sudo tee ${installationWorkspace}/gnupg-${userToInitialize}/initializeGpg.sh
 
-# Generate ${installationWorkspace}/initializeGoPass.exp Expect script
-echo '''#!/usr/bin/expect
-# Initialize GoPass
-set timeout -1
-spawn gopass setup
-match_max 100000
-expect "*Please enter the number of a key*"
-send "0\r"
-expect "*Please enter an email address for password store git config*"
-send "'${userToInitialize}'@'${baseDomain}'\r"
-expect "*Do you want to add a git remote*"
-send "N\r"
-expect eof
-''' | /usr/bin/sudo tee ${installationWorkspace}/gnupg-${userToInitialize}/initializeGoPass.exp
 
 # Initialize GPG
 log_info "Initializing GNUGPG"
@@ -82,20 +68,53 @@ chmod 755 ${installationWorkspace}/gnupg-${userToInitialize}/initializeGpg.sh
 
 # Check if GoPass already initialized
 /usr/bin/sudo -H -i -u ${userToInitialize} bash -c 'echo "123" | gopass insert '${baseDomain}'/test' || rc=$?
-if [[ ${rc} != 0 ]]; then
+if [[ ${rc} -ne 0 ]]; then
     # Setup GoPass
     log_info "Setting up GoPass"
-    timeout -s TERM 60 bash -c '/usr/bin/sudo -H -i -u '${userToInitialize}' /usr/bin/expect -d '${installationWorkspace}'/gnupg-'${userToInitialize}'/initializeGoPass.exp'
+    for i in {1..3}
+    do
+        rc=0
+        gpgKeyId=$(/usr/bin/sudo -H -i -u ${userToInitialize} bash -c "gpg --list-secret-keys --with-colons | head -1 |  cut -d':' -f5")
+        log_debug "Initializing GoPass with key id ${gpgKeyId}"
+        /usr/bin/sudo -H -i -u ${userToInitialize} bash -c "gopass init --storage fs --path /home/${userToInitialize}/.local/share/gopass/stores/root ${gpgKeyId}"
+        /usr/bin/sudo -H -i -u ${userToInitialize} bash -c "gopass setup --storage fs --alias kxascode --create --name \"${userToInitialize}\" --email \"${userToInitialize}@${baseDomain}\"" || rc=$?
+        if [[ ${rc} -ne 0 ]]; then
+            log_warn "Attempt ${i} to initialize GoPass failed. Trying again for a maximum of 3 times, before pusing item to failure queue"
+            export initializeStatus="fail"
+        else
+            log_info "Attempt ${i} to initialize GoPass succeeded. Continuing"
+            export initializeStatus="success"
+            break
+        fi
+    done
 fi
-/usr/bin/sudo -H -i -u ${userToInitialize} bash -c 'gopass delete -f '${baseDomain}'/test'
+
+# Check if GoPass initialized correctly after the maximum 3 attempts above
+if [[ "${initializeStatus}" == "success" ]]; then
+    # Final test as now intialized
+    log_debug "Executing final test of GoPass after initialization success, so it should work now"
+    /usr/bin/sudo -H -i -u ${userToInitialize} bash -c 'echo "123" | gopass insert '${baseDomain}'/test'
+    /usr/bin/sudo -H -i -u ${userToInitialize} bash -c 'gopass list'
+    /usr/bin/sudo -H -i -u ${userToInitialize} bash -c 'gopass show '${baseDomain}'/test'
+    /usr/bin/sudo -H -i -u ${userToInitialize} bash -c 'gopass delete -f '${baseDomain}'/test'
+    log_debug "Looks good. GoPass test passed. Proceeding to the next steps"
+else
+    log_error "Even after 3 attempts it was not possible to successfully initialize GoPass. Exiting with RC=1"
+    # Cleanup for next run
+    log_error "Cleaning up GoPass directories before next attempt"
+    rm -rf /home/${userToInitialize}/.local/share/gopass
+    rm -rf /home/${userToInitialize}/.config/gopass
+    rm -rf /home/${userToInitialize}/.gnupg
+    exit 1
+fi
 
 # Insert first secret with GoPass -> KX.Hero Password
 log_info "Adding first password to GoPass for testing"
-pushPassword "${userToInitialize}-user-password" "${userPassword}"
+pushPassword "${userToInitialize}-user-password" "${userPassword}" "users"
 
 # Test password retrieval with GoPass
 log_info "Retrieving first password to GoPass for testing"
-password=$(getPassword "${userToInitialize}-user-password")
+password=$(getPassword "${userToInitialize}-user-password" "users")
 log_info "Retrieved password: ${password}"
 
 fi

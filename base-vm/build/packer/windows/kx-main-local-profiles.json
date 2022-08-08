@@ -344,6 +344,11 @@
       "destination": "{{user `kx_home`}}/workspace/scripts"
     },
     {
+      "type": "file",
+      "source": "../../../../versions.json",
+      "destination": "{{user `kx_home`}}/workspace/versions.json"
+    },
+    {
       "environment_vars": [
            "BASE_IMAGE_SSH_USER={{user `base_image_ssh_user`}}",
            "VM_USER={{user `vm_user`}}",
@@ -413,13 +418,13 @@
       "headless": "true",
       "http_proxy": "{{env `http_proxy`}}",
       "https_proxy": "{{env `https_proxy`}}",
-      "iso_checksum": "8488abc1361590ee7a3c9b00ec059b29dfb1da40f8ba4adf293c7a30fa943eb2",
+      "iso_checksum": "7892981e1da216e79fb3a1536ce5ebab157afdd20048fe458f2ae34fbc26c19b",
       "iso_checksum_type": "sha256",
       "iso_path": "iso",
-      "iso_url": "https://cdimage.debian.org/mirror/cdimage/archive/11.1.0/amd64/iso-cd/debian-11.1.0-amd64-netinst.iso",
-      "iso_file": "debian-11.1.0-amd64-netinst.iso",
-      "guest_additions_url": "https://download.virtualbox.org/virtualbox/6.1.32/VBoxGuestAdditions_6.1.32.iso",
-      "guest_additions_checksum": "3ab8d64c209d89ffc48e71df68ac0da2cf76074579ffaf2dba008ddbef44129c",
+      "iso_url": "https://cdimage.debian.org/mirror/cdimage/archive/11.3.0/amd64/iso-cd/debian-11.3.0-amd64-netinst.iso",
+      "iso_file": "debian-11.3.0-amd64-netinst.iso",
+      "guest_additions_url": "https://download.virtualbox.org/virtualbox/6.1.36/VBoxGuestAdditions_6.1.36.iso",
+      "guest_additions_checksum": "c987cdc8c08c579f56d921c85269aeeac3faf636babd01d9461ce579c9362cdd",
       "no_proxy": "{{env `no_proxy`}}",
       "preseed_path": "preseed.cfg",
       "shutdown_command": "echo 'vagrant' | sudo -Srm -rf shutdown -P now",

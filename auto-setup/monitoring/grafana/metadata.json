@@ -18,7 +18,7 @@
             "ingress.tls[0].hosts[0]={{componentName}}.{{baseDomain}}",
             "persistence.enabled=true",
             "persistence.size=4Gi",
-            "persistence.storageClassName=gluster-heketi",
+            "persistence.storageClassName=kadalu.storage-pool-1",
             "admin.userKey=admin-user",
             "admin.passwordKey=admin-password",
             "admin.existingSecret=grafana-admin-credentials",

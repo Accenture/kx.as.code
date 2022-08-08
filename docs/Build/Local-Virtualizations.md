@@ -116,14 +116,21 @@ To get the checksum, just visit the link https://download.virtualbox.org/virtual
 
 #### Parallels
 
-Note, for Parallels you will need the pro edition, as without it, the build process will not work. See [here](https://www.packer.io/docs/builders/parallels){:target="\_blank"} for more information. In particular, only pro supports [Integrations With Vagrant/Docker/Packer/Minikube](https://www.parallels.com/eu/products/desktop/pro/){:target="\_blank"} other differences between the standard and pro editions of Parallels.
+Note, for Parallels you will need the business edition, as without it, the build process will not work. See [here](https://www.packer.io/docs/builders/parallels){:target="\_blank"} for more information. In particular, only the business edition supports [Integrations With Vagrant/Docker/Packer/Minikube](https://www.parallels.com/eu/products/desktop/pro/){:target="\_blank"} other differences between the standard and business editions of Parallels.
 
+Also, you need to download and install the [Parallels Virtualization SDK](https://www.parallels.com/products/business/download/#pdb-v17){:target="\_blank"}
+
+Once done, you are good to go. Head to the Quick Start Guide, and select Parallels as the profile in the drop-down and build the images using the build panel in the first tab.
+
+As with VirtualBox, you can also trigger the build process manually. Replace `kx-main-virtualbox` in the example above with `kx-main-parallels` for building the main node, and `kx-node-virtualbox` with `kx-node-parallels` for building the cluster node.
 
 
 #### VMWare
 
 !!! info
-  The same OVA is used to deploy to both `VMWare Desktop` and to `VMWare vSphere`.
+  The same OVA is used to deploy to both `VMWare Desktop` and to `VMWare vSphere`.`
+
+For VMWare you will need a licensed version of either VMWare Fusion (Mac) or VMWare Workstation (Windows).
 
 
 #### Updating VirtualBox Guest Additions
@@ -143,6 +150,5 @@ Note, for Parallels you will need the pro edition, as without it, the build proc
 
 !!! danger "Important"
   Important. Currently, this process does not work on ARM based processors.
-
 
 

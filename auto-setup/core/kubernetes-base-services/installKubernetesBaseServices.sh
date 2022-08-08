@@ -11,10 +11,40 @@ if [[ ! ${kubeAdminStatus} ]] || [[ "${kubeOrchestrator}" == "k3s" ]]; then
         log_info "Profile set to use K8s. Proceeding to initialize the K8s cluster"
         # Pull Kubernetes images
         /usr/bin/sudo kubeadm config images pull
+
+cat <<EOF | /usr/bin/sudo tee /etc/modules-load.d/k8s.conf
+overlay
+br_netfilter
+EOF
+
+        /usr/bin/sudo modprobe overlay
+        /usr/bin/sudo modprobe br_netfilter
+
+        # Apply kernel parameters
+cat <<EOF | /usr/bin/sudo tee /etc/sysctl.d/99-kubernetes-cri.conf
+net.bridge.bridge-nf-call-iptables  = 1
+net.ipv4.ip_forward                 = 1
+net.bridge.bridge-nf-call-ip6tables = 1
+EOF
+        /usr/bin/sudo sysctl --system
+
+        # As Kubernetes 1.24 no longer used Docker, need to install containerd
+        # Not using containderd package from Debian, as it is only at v1.4.13
+        # Using containerd.io from Docker repository instead, which includes containerd v1.6.6   
+        # See https://containerd.io/releases/ for details on matching containerd versions with versions of Kubernetes
+        /usr/bin/sudo apt-get install -y containerd.io
+        /usr/bin/sudo containerd config default | /usr/bin/sudo tee /etc/containerd/config.toml
+        /usr/bin/sudo sed -i 's/SystemdCgroup = false/SystemdCgroup = true/g' /etc/containerd/config.toml
+        /usr/bin/sudo systemctl restart containerd        
+
+        # Inititalise Kubernetes
         /usr/bin/sudo kubeadm init --apiserver-advertise-address=${mainIpAddress} --pod-network-cidr=20.96.0.0/12 --upload-certs --control-plane-endpoint=api-internal.${baseDomain}:6443
 
-        # Fix reliance on non existent file: /run/systemd/resolve/resolv.conf
-        /usr/bin/sudo sed -i '/^\[Service\]/a Environment="KUBELET_EXTRA_ARGS=--resolv-conf=\/etc\/resolv.conf --node-ip='${mainIpAddress}'"' /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+        # Ensure Kubelet listenson correct IP. Especially important for VirtualBox with the additional NAT NIC
+        /usr/bin/sudo sed -i '/^\[Service\]/a Environment="KUBELET_EXTRA_ARGS=--node-ip='${mainIpAddress}'"' /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+
+        # As --resolv.conf was deprecated, use new method to update resolv.conf
+        /usr/bin/sudo sed -i 's/^\(resolvConf:\).*/\1 \/etc\/resolv.conf/' /var/lib/kubelet/config.yaml
 
         # Restart Kubelet
         /usr/bin/sudo systemctl daemon-reload
@@ -27,8 +57,8 @@ if [[ ! ${kubeAdminStatus} ]] || [[ "${kubeOrchestrator}" == "k3s" ]]; then
     else
         log_info "Profile set to use K3s. Proceeding to launch the K3s install script"
         mkdir -p /root/.kube
-        log_debug "INSTALL_K3S_VERSION=${k3sVersion} INSTALL_K3S_EXEC=\"--disable servicelb --disable traefik --flannel-backend=none --disable-network-policy --cluster-cidr=10.20.76.0/16 --cluster-init --node-ip=${mainIpAddress} --node-external-ip=${mainIpAddress} --bind-address=${mainIpAddress} --tls-san=api-internal.${baseDomain} --advertise-address=${mainIpAddress} --kube-apiserver-arg default-not-ready-toleration-seconds=10\" bash ${installationWorkspace}/k3s-install.sh"
-        INSTALL_K3S_VERSION=${k3sVersion} INSTALL_K3S_EXEC="--disable servicelb --disable traefik --flannel-backend=none --disable-network-policy --cluster-cidr=10.20.76.0/16 --cluster-init --node-ip=${mainIpAddress} --node-external-ip=${mainIpAddress} --bind-address=${mainIpAddress} --tls-san=api-internal.${baseDomain} --advertise-address=${mainIpAddress} --kube-apiserver-arg default-not-ready-toleration-seconds=10" bash ${installationWorkspace}/k3s-install.sh
+        log_debug "INSTALL_K3S_VERSION=${k3sVersion} INSTALL_K3S_EXEC="--disable servicelb --disable traefik --flannel-backend=none --disable-network-policy --cluster-cidr 10.20.76.0/16 --cluster-init --node-ip ${mainIpAddress} --node-external-ip ${mainIpAddress} --bind-address ${mainIpAddress} --tls-san api-internal.${baseDomain} --advertise-address ${mainIpAddress}" bash ${installationWorkspace}/k3s-install.sh"
+        INSTALL_K3S_VERSION=${k3sVersion} INSTALL_K3S_EXEC="--disable servicelb --disable traefik --flannel-backend=none --disable-network-policy --cluster-cidr 10.20.76.0/16 --cluster-init --node-ip ${mainIpAddress} --node-external-ip ${mainIpAddress} --bind-address ${mainIpAddress} --tls-san api-internal.${baseDomain} --advertise-address ${mainIpAddress}" bash ${installationWorkspace}/k3s-install.sh
 
         # Call function to check Kubernetes Health
         kubernetesHealthCheck  
@@ -47,6 +77,7 @@ if [[ ! ${kubeAdminStatus} ]] || [[ "${kubeOrchestrator}" == "k3s" ]]; then
     cp -f ${KUBE_CONFIG_FILE} /root/.kube/config
     /usr/bin/sudo -H -i -u ${baseUser} sh -c "mkdir -p /home/${baseUser}/.kube"
     /usr/bin/sudo cp -f ${KUBE_CONFIG_FILE} /home/${baseUser}/.kube/config
+    echo "export KUBECONFIG=/home/${baseUser}/.kube/config" | /usr/bin/sudo tee -a /home/${baseUser}/.bashrc /home/${baseUser}/.zshrc
     /usr/bin/sudo chown $(id -u ${baseUser}):$(id -g ${baseUser}) /home/${baseUser}/.kube/config
     # Add kube config to skel directory for future users
     /usr/bin/sudo mkdir -p /usr/share/kx.as.code/skel/.kube

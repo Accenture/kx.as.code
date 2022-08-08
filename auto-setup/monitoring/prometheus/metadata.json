@@ -19,7 +19,7 @@
             "pushgateway.image.tag={{pushGatewayImageTag}}",
             "alertmanager.image.tag={{alertManagerImageTag}}",
             "alertmanager.persistentVolume.enabled=true",
-            "alertmanager.persistentVolume.storageClass=gluster-heketi-sc",
+            "alertmanager.persistentVolume.storageClass=kadalu.storage-pool-1",
             "alertmanager.ingress.enabled=true",
             "alertmanager.ingress.annotations.\"kubernetes\\.io/ingress\\.class\"=nginx",
             "alertmanager.ingress.hosts[0]=alertmanager.{{baseDomain}}",

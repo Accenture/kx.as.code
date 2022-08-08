@@ -1,15 +1,19 @@
 mattermostGetChannelId() {
 
-    mattermostTeamName=${1}
-    mattermostChannelName=${2}
+    if [[ $(checkApplicationInstalled "mattermost" "collaboration") ]]; then
 
-    # Get login token for API call
-    mattermostLoginToken=$(mattermostGetLoginToken "admin")
+        mattermostTeamName=${1}
+        mattermostChannelName=${2}
 
-    # Get Mattermost Team Id
-    mattermostTeamId=$(mattermostGetTeamId "${mattermostTeamName}")
-    
-    # Get Mattermost Channel Id
-    curl -s -H 'Authorization: Bearer '${mattermostLoginToken}'' -X GET https://mattermost.${baseDomain}/api/v4/teams/${mattermostTeamId}/channels/name/${mattermostChannelName} | jq -r '.id'
+        # Get login token for API call
+        mattermostLoginToken=$(mattermostGetLoginToken "admin")
+
+        # Get Mattermost Team Id
+        mattermostTeamId=$(mattermostGetTeamId "${mattermostTeamName}")
+        
+        # Get Mattermost Channel Id
+        curl -s -H 'Authorization: Bearer '${mattermostLoginToken}'' -X GET https://mattermost.${baseDomain}/api/v4/teams/${mattermostTeamId}/channels/name/${mattermostChannelName} | jq -r '.id'
+
+    fi
 
 }

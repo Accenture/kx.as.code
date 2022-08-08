@@ -1,10 +1,14 @@
 minioS3Initialize() {
 
-    # Get Mino-S3 access and secret keys
-    minioS3GetAccessAndSecretKeys
+    if [[ $(checkApplicationInstalled "minio-operator" "storage") ]]; then
 
-    # Create the S3 Buckets needed for Gitlab in MinIO
-    mc config host add minio https://minio-s3.${baseDomain} ${minioAccessKey} ${minioSecretKey} --api S3v4
-    log_debug "mc config host add minio https://minio-s3.${baseDomain} ${minioAccessKey} ${minioSecretKey} --api S3v4"
+        # Get Mino-S3 access and secret keys
+        minioS3GetAccessAndSecretKeys "${baseUser}"
+
+        # Create the S3 Buckets needed for Gitlab in MinIO
+        log_debug "mc config host add myminio https://minio-s3.${baseDomain} ${minioAccessKey} ${minioSecretKey} --api S3v4"
+        log_debug "$(mc config host add myminio https://minio-s3.${baseDomain} ${minioAccessKey} ${minioSecretKey} --api S3v4)"
+
+    fi
 
 }

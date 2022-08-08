@@ -80,7 +80,7 @@
             "gitlab.gitlab-shell.maxReplicas=1",
             "gitlab.toolbox.backups.objectStorage.config.secret=s3cmd-config",
             "gitlab.toolbox.backups.objectStorage.config.key=config",
-            "gitlab.gitaly.persistence.storageClass=gluster-heketi-sc",
+            "gitlab.gitaly.persistence.storageClass=kadalu.storage-pool-1",
             "gitlab.gitaly.persistence.size=10Gi",
             "postgresql.persistence.storageClass=local-storage-sc",
             "postgresql.persistence.size=5Gi",

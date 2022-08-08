@@ -8,7 +8,7 @@ sudo chmod 777 $KX_HOME
 # Create user (if not already present)
 if ! id -u $VM_USER > /dev/null 2>&1; then
     sudo groupadd $VM_USER -g 1600
-    sudo useradd $VM_USER -u 1600 -g $VM_USER -G sudo -d /home/$VM_USER --create-home
+    sudo useradd $VM_USER -u 1600 -g $VM_USER -G sudo -s /bin/bash -d /home/$VM_USER --create-home
     echo "${VM_USER}:${VM_PASSWORD}" | sudo chpasswd
 fi
 

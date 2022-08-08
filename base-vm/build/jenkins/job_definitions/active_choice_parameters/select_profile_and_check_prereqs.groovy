@@ -57,6 +57,7 @@
             profilePaths.removeAll { it.toLowerCase().endsWith('parallels') }
         } else if (OS.indexOf("nux") >= 0) {
             underlyingOS = "linux"
+            profilePaths.removeAll { it.toLowerCase().endsWith('parallels') }
         } else {
             underlyingOS = "other"
         }
@@ -86,37 +87,37 @@
         if (virtualboxKxMainVagrantCloudVersions) {
             virtualboxKxMainVagrantCloudVersion = virtualboxKxMainVagrantCloudVersions[0].version
         } else {
-            virtualboxKxMainVagrantCloudVersion = "-"
+            virtualboxKxMainVagrantCloudVersion = "-1"
         }
 
         if (virtualboxKxNodeVagrantCloudVersions) {
             virtualboxKxNodeVagrantCloudVersion = virtualboxKxNodeVagrantCloudVersions[0].version
         } else {
-            virtualboxKxNodeVagrantCloudVersion = "-"
+            virtualboxKxNodeVagrantCloudVersion = "-1"
         }
 
         if (vmwareDesktopKxMainVagrantCloudVersions) {
             vmwareDesktopKxMainVagrantCloudVersion = vmwareDesktopKxMainVagrantCloudVersions[0].version
         } else {
-            vmwareDesktopKxMainVagrantCloudVersion = "-"
+            vmwareDesktopKxMainVagrantCloudVersion = "-1"
         }
 
         if (vmwareDesktopKxNodeVagrantCloudVersions) {
             vmwareDesktopKxNodeVagrantCloudVersion = vmwareDesktopKxNodeVagrantCloudVersions[0].version
         } else {
-            vmwareDesktopKxNodeVagrantCloudVersion = "-"
+            vmwareDesktopKxNodeVagrantCloudVersion = "-1"
         }
 
         if (parallelsKxMainVagrantCloudVersions) {
             parallelsKxMainVagrantCloudVersion = parallelsKxMainVagrantCloudVersions[0].version
         } else {
-            parallelsKxMainVagrantCloudVersion = "-"
+            parallelsKxMainVagrantCloudVersion = "-1"
         }
 
         if (parallelsKxNodeVagrantCloudVersions) {
             parallelsKxNodeVagrantCloudVersion = parallelsKxNodeVagrantCloudVersions[0].version
         } else {
-            parallelsKxNodeVagrantCloudVersion = "-"
+            parallelsKxNodeVagrantCloudVersion = "-1"
         }
 
     } catch (e) {
@@ -161,8 +162,8 @@
             underlyingOS = "other"
         }
 
-        def systemCheckJsonFilePath = "${currentDir}/jenkins_shared_workspace/kx.as.code/system-check.json"
-        def systemCheckJsonFile = new File(systemCheckJsonFilePath)
+        //def systemCheckJsonFilePath = "${currentDir}/jenkins_shared_workspace/kx.as.code/system-check.json"
+        //def systemCheckJsonFile = new File(systemCheckJsonFilePath)
 
         parallelsExecutableExists = ""
         if (underlyingOS == "darwin") {
@@ -233,11 +234,11 @@
 
         def filteredVmwareDesktopKxNodeList = boxDirectories.findAll {
             it[1] == "vmware-desktop" && it[2] == "kx-node"
-        }.sort{ a,b -> a[0] <=> b[1] }
+        }.sort{ a,b -> a[1] <=> b[0] }
 
         def filteredVmwareDesktopKxMainList = boxDirectories.findAll {
             it[1] == "vmware-desktop" && it[2] == "kx-main"
-        }.sort{ a,b -> a[0] <=> b[1] }
+        }.sort{ a,b -> a[1] <=> b[0] }
 
 
         if (filteredVmwareDesktopKxMainList) {
@@ -252,11 +253,11 @@
 
         def filteredParallelsKxNodeList = boxDirectories.findAll {
             it[1] == "parallels" && it[2] == "kx-node"
-        }.sort{ a,b -> a[0] <=> b[1] }
+        }.sort{ a,b -> a[1] <=> b[0] }
 
         def filteredParallelsKxMainList = boxDirectories.findAll {
             it[1] == "parallels" && it[2] == "kx-main"
-        }.sort{ a,b -> a[0] <=> b[1] }
+        }.sort{ a,b -> a[1] <=> b[0] }
 
         if (filteredParallelsKxMainList) {
             parallelsLocalVagrantBoxMainVersion = filteredParallelsKxMainList[0][0]
@@ -275,7 +276,7 @@
             def mergedJson = boxesJson + vagrantJson
             builder mergedJson
 
-            new File(systemCheckJsonFilePath).write(builder.toPrettyString())
+            //new File(systemCheckJsonFilePath).write(builder.toPrettyString())
         } catch (e) {
             println("Error creating and writing system check JSON file: " + e)
         }

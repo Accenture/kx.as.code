@@ -3,7 +3,7 @@ dockerRegistryAddUser() {
   userToAdd=${1}
 
   # Create password
-  export passwordForUserToAdd=$(managedApiKey "docker-registry-${userToAdd}-password")
+  export passwordForUserToAdd=$(managedApiKey "docker-registry-${userToAdd}-password" "docker-registry")
 
   # Generate HTPASSWD file
   apt-get install -y apache2-utils

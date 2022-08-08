@@ -1,0 +1,60 @@
+{
+    "name": "minio-operator",
+    "namespace": "minio-operator",
+    "installation_type": "script",
+    "installation_group_folder": "storage",
+    "environment_variables": {
+        "operatorVersion": "4.4.28"
+    },
+    "categories": [
+        "s3-storage"
+    ],
+    "urls": [
+        {
+            "url": "https://console-{{componentName}}.{{baseDomain}}",
+            "healthchecks": {
+                "liveliness": {
+                    "http_path": "/",
+                    "http_auth_required": false,
+                    "expected_http_response_code": "200",
+                    "expected_http_response_string": "",
+                    "expected_json_response": {
+                        "json_path":"",
+                        "json_value": ""
+                    },
+                    "health_shell_check_command": "",
+                    "expected_shell_check_command_response": ""
+                },
+                "readiness": {
+                    "http_path": "/",
+                    "http_auth_required": false,
+                    "expected_http_response_code": "200",
+                    "expected_http_response_string": "",
+                    "expected_json_response": {
+                        "json_path": "",
+                        "json_value": ""
+                    },
+                    "health_shell_check_command": "",
+                    "expected_shell_check_command_response": ""
+                }
+            }
+        }
+    ],
+    "Description": "MinIO Object Storage",
+    "shortcut_text": "MinIO Console",
+    "shortcut_icon": "minio.png",
+    "api_docs_type": "web",
+    "api_docs_url": "https://docs.min.io/docs/minio-client-complete-guide.html",
+    "vendor_docs_url": "https://docs.min.io",
+    "pre_install_scripts": [
+        "createSecrets.sh",
+        "installMinIoCli.sh"
+    ],
+    "install_scripts": [
+        "installMinioOperator.sh"
+    ],
+    "post_install_scripts": [
+        "intializeMinioOperator.sh",
+        "deployYamlFiles.sh"
+    ]
+}

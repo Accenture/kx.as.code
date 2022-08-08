@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash
 set -euo pipefail
 
 . /etc/environment
@@ -54,6 +54,10 @@ export baseUser=$(cat ${installationWorkspace}/profile-config.json | jq -r '.con
 export basePassword=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.basePassword')
 export startupMode=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.startupMode')
 export standaloneMode=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.standaloneMode')
+
+export kxVersion=$(cat ${installationWorkspace}/versions.json | jq -r '.kxascode')
+export k8sVersion=$(cat ${installationWorkspace}/versions.json | jq -r '.kubernetes')
+export k3sVersion=$(cat ${installationWorkspace}/versions.json | jq -r '.k3s')
 
 checkAndUpdateBaseUsername() {
 
@@ -556,11 +560,30 @@ if [[ "${kubeOrchestrator}" == "k8s" ]]; then
   fi
   /usr/bin/sudo chmod 755 ${installationWorkspace}/kubeJoin.sh
 
-  # Fix reliance on non existent file: /run/systemd/resolve/resolv.conf
-  /usr/bin/sudo sed -i '/^\[Service\]/a Environment="KUBELET_EXTRA_ARGS=--resolv-conf=\/etc\/resolv.conf --node-ip='${nodeIp}'"' /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
-  # Restart Kubelet
-  /usr/bin/sudo systemctl daemon-reload
-  /usr/bin/sudo systemctl restart kubelet
+cat <<EOF | /usr/bin/sudo tee /etc/modules-load.d/k8s.conf
+overlay
+br_netfilter
+EOF
+
+  /usr/bin/sudo modprobe overlay
+  /usr/bin/sudo modprobe br_netfilter
+
+        # Apply kernel parameters
+cat <<EOF | /usr/bin/sudo tee /etc/sysctl.d/99-kubernetes-cri.conf
+net.bridge.bridge-nf-call-iptables  = 1
+net.ipv4.ip_forward                 = 1
+net.bridge.bridge-nf-call-ip6tables = 1
+EOF
+        /usr/bin/sudo sysctl --system
+
+  # As Kubernetes 1.24 no longer used Docker, need to install containerd
+  # Not using containderd package from Debian, as it is only at v1.4.13
+  # Using containerd.io from Docker repository instead, which includes containerd v1.6.6   
+  # See https://containerd.io/releases/ for details on matching containerd versions with versions of Kubernetes
+  /usr/bin/sudo apt-get install -y containerd.io
+  /usr/bin/sudo containerd config default | /usr/bin/sudo tee /etc/containerd/config.toml
+  /usr/bin/sudo sed -i 's/SystemdCgroup = false/SystemdCgroup = true/g' /etc/containerd/config.toml
+  /usr/bin/sudo systemctl restart containerd
 
   # Keep trying to join Kubernetes cluster until successful
   while [[ ! -f /var/lib/kubelet/config.yaml ]]; do
@@ -569,11 +592,59 @@ if [[ "${kubeOrchestrator}" == "k8s" ]]; then
     sleep 30
   done
 
+  # Ensure Kubelet listenson correct IP. Especially important for VirtualBox with the additional NAT NIC
+  /usr/bin/sudo sed -i '/^\[Service\]/a Environment="KUBELET_EXTRA_ARGS=--node-ip='${kxNodeIp}'"' /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+
+  # As --resolv.conf was deprecated, use new method to update resolv.conf
+  /usr/bin/sudo sed -i 's/^\(resolvConf:\).*/\1 \/etc\/resolv.conf/' /var/lib/kubelet/config.yaml
+
+  # Restart Kubelet
+  /usr/bin/sudo systemctl daemon-reload
+  /usr/bin/sudo systemctl restart kubelet
+
+calicoNodeReady=""
+
+for i in {1..15}
+do
+
+  calicoNodeReady=$(/usr/bin/sudo -H -i -u "${vmUser}" bash -c "ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} \"kubectl get pods -n kube-system \
+    -o wide --field-selector spec.nodeName=$(hostname),status.phase=Running \
+    -l k8s-app=calico-node --ignore-not-found=true -o json\"
+    | \
+    jq '.items[].status.containerStatuses[] | select(.ready==true)'")
+
+  if [[ -n ${calicoNodeReady} ]]; then
+    echo "Calico node pod is ready and running on this node"
+    break
+  else
+    echo "Calico node pod is not ready. Checking again in 15 seconds (try ${i} of 15)"
+    sleep 15
+  fi
+
+done
+
+# Final check on the status of Calico
+if [[ -n ${calicoNodeReady} ]]; then
+  echo "Calico node pod is ready and running on this node"
+else
+  if [[ ! -f /usr/share/kx.as.code/workspace/forced_reboot_flag ]]; then
+    echo "Calico node pod is not ready yet, even after 15 checks in 10 minutes. Going to try a reboot, after that it's time for some debugging"
+    echo "forced_restart_launched. If you see this file, then possibly the setup of calico failed on this node, resulting in 1 reboot to remove the block" | sudo tee /usr/share/kx.as.code/workspace/forced_reboot_flag
+    reboot
+  else
+    echo "Calico node pod is not ready yet, even after 15 checks in 10 minutes. Already tried a reboot, it's time for some debugging"
+    echo "Disabled the \"k8s-register-node\" service, to avoid an infinite reboot loop. You can re-enable and launch it again once you have fixed the issue"
+    /usr/bin/sudo systemctl disable k8s-register-node.service
+    exit 1
+  fi
+fi
+
+
 elif [[ "${kubeOrchestrator}" == "k3s" ]]; then
 
   # Join K3s cluster
   k3sToken=$(/usr/bin/sudo -H -i -u "${vmUser}" bash -c "ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} 'sudo cat /var/lib/rancher/k3s/server/node-token'")
-  curl -sfL https://get.k3s.io | K3S_URL=https://${kxMainIp}:6443 INSTALL_K3S_EXEC="--node-ip ${kxNodeIp}" K3S_TOKEN=${k3sToken} sh -
+  curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=${k3sVersion} K3S_URL=https://${kxMainIp}:6443 INSTALL_K3S_EXEC="--node-ip ${kxNodeIp}" K3S_TOKEN=${k3sToken} sh -
 
 fi
 

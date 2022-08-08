@@ -13,7 +13,7 @@ grafana.ini:
   external_image_storage:
     provider: s3
   external_image_storage.s3:
-    endpoint: http://minios3.minio-s3:9000
+    endpoint: http://minio.minio-operator:9000
     bucket: grafana-image-storage
     region: eu-central-1
     access_key: {{minioAccessKey}}

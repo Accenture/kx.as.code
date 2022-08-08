@@ -34,8 +34,10 @@
             "https_proxy": "",
             "no_proxy": ""
         },
+        "selectedTemplates": "null",
         "sslProvider": "self-signed",
         "standaloneMode": "true",
+        "startupMode": "normal",
         "virtualizationType": "local",
         "vm_properties": {
             "3d_acceleration": "off",

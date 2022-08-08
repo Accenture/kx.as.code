@@ -309,7 +309,7 @@ if (!(test-path .\jenkins.war)) {
 # Check if plugin manager already downloaded or not
 if (!(test-path .\jenkins-plugin-manager.jar)) {
     # Install Jenkins Plugins
-    $jenkinsPluginManagerVersion = "2.11.1"
+    $jenkinsPluginManagerVersion = "2.12.8"
     Write-Output "Downloading Jenkins Plugin Manager..." | Blue
     Invoke-WebRequest -Uri https://github.com/jenkinsci/plugin-installation-manager-tool/releases/download/$jenkinsPluginManagerVersion/jenkins-plugin-manager-$jenkinsPluginManagerVersion.jar -OutFile .\jenkins-plugin-manager.jar
 }

@@ -36,26 +36,21 @@ You could create your own installation groups, but below some of the ones that h
 
 Included in this group are:
 
-- MinIo-S3
+- MinIo-Operator
 - Gitlab CE
-- Gitlab Runner
 - Mattermost
 - Harbor
 - ArgoCD
 - jFrog Artifactory
 
-
 ```bash
-rabbitmqadmin publish exchange=action_workflow routing_key=pending_queue payload='{"install_folder":"storage","name":"minio-s3","action":"install","retries":"0"}'
-rabbitmqadmin publish exchange=action_workflow routing_key=pending_queue payload='{"install_folder":"cicd","name":"gitlab-ce","action":"install","retries":"0"}'
+rabbitmqadmin publish exchange=action_workflow routing_key=pending_queue payload='{"install_folder":"storage","name":"minio-operator","action":"install","retries":"0"}'
+rabbitmqadmin publish exchange=action_workflow routing_key=pending_queue payload='{"install_folder":"cicd","name":"gitlab","action":"install","retries":"0"}'
 rabbitmqadmin publish exchange=action_workflow routing_key=pending_queue payload='{"install_folder":"collaboration","name":"mattermost","action":"install","retries":"0"}'
 rabbitmqadmin publish exchange=action_workflow routing_key=pending_queue payload='{"install_folder":"cicd","name":"harbor","action":"install","retries":"0"}'
-rabbitmqadmin publish exchange=action_workflow routing_key=pending_queue payload='{"install_folder":"cicd","name":"gitlab-runner","action":"install","retries":"0"}'
 rabbitmqadmin publish exchange=action_workflow routing_key=pending_queue payload='{"install_folder":"cicd","name":"argocd","action":"install","retries":"0"}'
-rabbitmqadmin publish exchange=action_workflow routing_key=pending_queue payload='{"install_folder":"cicd","name":"artifactory-oss","action":"install","retries":"0"}'
+rabbitmqadmin publish exchange=action_workflow routing_key=pending_queue payload='{"install_folder":"cicd","name":"artifactory","action":"install","retries":"0"}'
 ```
-
-
 
 ### CICD Group
 
@@ -71,8 +66,6 @@ rabbitmqadmin publish exchange=action_workflow routing_key=pending_queue payload
 rabbitmqadmin publish exchange=action_workflow routing_key=pending_queue payload='{"install_folder":"cicd","name":"nexus3","action":"install","retries":"0"}'
 ```
 
-
-
 ### Quality Assurance Group
 
 Included in this group are:
@@ -82,31 +75,42 @@ Included in this group are:
 
 ```bash
 rabbitmqadmin publish exchange=action_workflow routing_key=pending_queue payload='{"install_folder":"quality_assurance","name":"sonarqube","action":"install","retries":"0"}'
-rabbitmqadmin publish exchange=action_workflow routing_key=pending_queue payload='{"install_folder":"quality_assurance","name":"selenium","action":"install","retries":"0"}'
+rabbitmqadmin publish exchange=action_workflow routing_key=pending_queue payload='{"install_folder":"quality_assurance","name":"selenium4","action":"install","retries":"0"}'
 ```
 
+### Elastic Stack
 
+Included in this group are:
 
-### Monitoring and Log Aggregation Group
-
-- Prometheus
-- Grafana
-- Grafana Image Renderer
-- Graphite
 - Elastic ElasticSearch
 - Elastic Kibana
 - Elastic Filebeat
+- Elastic Metricbeat
+- Elastic Heartbeat
+
+```bash
+rabbitmqadmin publish exchange=action_workflow routing_key=pending_queue payload='{"install_folder":"monitoring","name":"elastic-elasticsearch","action":"install","retries":"0"}'
+rabbitmqadmin publish exchange=action_workflow routing_key=pending_queue payload='{"install_folder":"monitoring","name":"elastic-kibana","action":"install","retries":"0"}'
+rabbitmqadmin publish exchange=action_workflow routing_key=pending_queue payload='{"install_folder":"monitoring","name":"elastic-filebeat","action":"install","retries":"0"}'
+rabbitmqadmin publish exchange=action_workflow routing_key=pending_queue payload='{"install_folder":"monitoring","name":"elastic-metricbeat","action":"install","retries":"0"}'
+rabbitmqadmin publish exchange=action_workflow routing_key=pending_queue payload='{"install_folder":"monitoring","name":"elastic-heartbeat","action":"install","retries":"0"}'
+```
+
+### Monitoring and Log Aggregation Group
+
+Included in this group are:
+
+- Prometheus
+- Grafana
+- Loki
+- Graphite
 
 ```bash
 rabbitmqadmin publish exchange=action_workflow routing_key=pending_queue payload='{"install_folder":"monitoring","name":"prometheus","action":"install","retries":"0"}'
 rabbitmqadmin publish exchange=action_workflow routing_key=pending_queue payload='{"install_folder":"monitoring","name":"grafana","action":"install","retries":"0"}'
-rabbitmqadmin publish exchange=action_workflow routing_key=pending_queue payload='{"install_folder":"monitoring","name":"grafana-image-renderer","action":"install","retries":"0"}'
+rabbitmqadmin publish exchange=action_workflow routing_key=pending_queue payload='{"install_folder":"monitoring","name":"loki","action":"install","retries":"0"}'
 rabbitmqadmin publish exchange=action_workflow routing_key=pending_queue payload='{"install_folder":"monitoring","name":"graphite","action":"install","retries":"0"}'
-rabbitmqadmin publish exchange=action_workflow routing_key=pending_queue payload='{"install_folder":"monitoring","name":"elastic-elasticsearch-oss","action":"install","retries":"0"}'
-rabbitmqadmin publish exchange=action_workflow routing_key=pending_queue payload='{"install_folder":"monitoring","name":"elastic-kibana-oss","action":"install","retries":"0"}'
-rabbitmqadmin publish exchange=action_workflow routing_key=pending_queue payload='{"install_folder":"monitoring","name":"elastic-filebeat-oss","action":"install","retries":"0"}'
 ```
-
 
 
 ### Security Group
@@ -118,7 +122,7 @@ Included in this group are:
 
 ```bash
 rabbitmqadmin publish exchange=action_workflow routing_key=pending_queue payload='{"install_folder":"security","name":"vault","action":"install","retries":"0"}'
-rabbitmqadmin publish exchange=action_workflow routing_key=pending_queue payload='{"install_folder":"security","name":"vault","action":"install","retries":"0"}'
+rabbitmqadmin publish exchange=action_workflow routing_key=pending_queue payload='{"install_folder":"security","name":"sysdig-falco","action":"install","retries":"0"}'
 ```
 
 ### Tick Stack
@@ -127,6 +131,7 @@ Included in this group are:
 
 - Influxdb2
 - Telegraf DS
+- Telegraf
 
 ```bash
 rabbitmqadmin publish exchange=action_workflow routing_key=pending_queue payload='{"install_folder":"monitoring","name":"influxdata-influxdb2","action":"install","retries":"0"}'

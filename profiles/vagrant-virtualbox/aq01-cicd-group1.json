@@ -5,7 +5,7 @@
     "install": [
       {
         "install_folder": "storage",
-        "name": "minio-s3"
+        "name": "minio-operator"
       },
       {
         "install_folder": "cicd",

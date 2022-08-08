@@ -3,7 +3,7 @@ set -euo pipefail
 
 export numUsersToCreate=$(jq -r '.config.additionalUsers[].firstname' ${installationWorkspace}/users.json | wc -l)
 export ldapDn=$(/usr/bin/sudo slapcat | grep dn | head -1 | cut -f2 -d' ')
-export ldapAdminPassword=$(getPassword "openldap-admin-password")
+export ldapAdminPassword=$(getPassword "openldap-admin-password" "openldap")
 
 newGid=""
 
@@ -29,7 +29,7 @@ if [[ ${numUsersToCreate} -ne 0 ]]; then
         echo "${userid} ${firstname} ${surname} ${email}"
 
         # Generate User Password
-        export generatedPassword=$(managedPassword "user-${userid}-password")
+        export generatedPassword=$(managedPassword "user-${userid}-password" "users")
 
         # Create user's desktop folder
         /usr/bin/sudo mkdir -p /home/${userid}/Desktop

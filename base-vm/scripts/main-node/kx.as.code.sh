@@ -165,45 +165,6 @@ sudo mkdir -p "${vendorDocsDirectory}"
 sudo chmod a+rwx "${vendorDocsDirectory}"
 sudo ln -s "${vendorDocsDirectory}" /home/${VM_USER}/Desktop/
 
-# Show /etc/motd.kxascode even when in X-Windows terminal (not SSH)
-echo -e '\n# Added to show KX.AS.CODE MOTD also in X-Windows Terminal (already showing in SSH per default)
-if [ -z $(echo $SSH_TTY) ]; then
-cat /etc/motd.kxascode | sed -e "s/^/ /"
-fi' | sudo tee -a /home/${VM_USER}/.zshrc
-
-# Stop ZSH adding % to the output of every commands_whitelist
-echo "export PROMPT_EOL_MARK=''" | sudo tee -a /home/${VM_USER}/.zshrc
-
-# Put README Icon on Desktop
-sudo bash -c "cat <<EOF > /home/${VM_USER}/Desktop/README.desktop
-[Desktop Entry]
-Version=1.0
-Name=KX.AS.CODE Readme
-GenericName=KX.AS.CODE Readme
-Comment=KX.AS.CODE Readme
-Exec=/usr/bin/typora ${SHARED_GIT_REPOSITORIES}/kx.as.code/README.md
-StartupNotify=true
-Terminal=false
-Icon=${SHARED_GIT_REPOSITORIES}/kx.as.code/base-vm/images/kx-readme.png
-Type=Application
-Categories=Development
-EOF"
-
-# Put CONTRIBUTE Icon on Desktop
-sudo bash -c "cat <<EOF > /home/${VM_USER}/Desktop/CONTRIBUTE.desktop
-[Desktop Entry]
-Version=1.0
-Name=KX.AS.CODE Contribute
-GenericName=KX.AS.CODE Contribute
-Comment=KX.AS.CODE Contribute
-Exec=/usr/bin/typora ${SHARED_GIT_REPOSITORIES}/docs/Development/Contribution-Guidelines.md
-StartupNotify=true
-Terminal=false
-Icon=${SHARED_GIT_REPOSITORIES}/kx.as.code/base-vm/images/kx-contribute.png
-Type=Application
-Categories=Development
-EOF"
-
 if [[ $PACKER_BUILDER_TYPE =~ virtualbox ]]; then
 
     # Add icon for restarting the VirtualBox clipboard service
@@ -238,10 +199,6 @@ if [[ $PACKER_BUILDER_TYPE =~ virtualbox ]]; then
     sudo chmod 755 /usr/share/kx.as.code/restartVBoxClient.sh
 
 fi
-
-# Give *.desktop files execute permissions
-sudo chmod 755 /home/${VM_USER}/Desktop/*.desktop
-sudo cp /home/${VM_USER}/Desktop/*.desktop /usr/share/applications
 
 # Create Kubernetes logging and custom scripts directory
 sudo mkdir -p ${INSTALLATION_WORKSPACE}

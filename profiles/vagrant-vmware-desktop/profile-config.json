@@ -1,6 +1,6 @@
 {
     "config": {
-        "allowWorkloadsOnMaster": "true",
+        "allowWorkloadsOnMaster": "false",
         "baseDomain": "kx-as-code.local",
         "baseIpType": "dynamic",
         "basePassword": "L3arnandshare",
@@ -34,18 +34,20 @@
             "https_proxy": "",
             "no_proxy": ""
         },
+        "selectedTemplates": "null",
         "sslProvider": "self-signed",
-        "standaloneMode": "true",
+        "standaloneMode": "false",
+        "startupMode": "normal",
         "virtualizationType": "local",
         "vm_properties": {
             "main_admin_node_cpu_cores": 4,
-            "main_admin_node_memory": 12288,
+            "main_admin_node_memory": 16384,
             "main_node_count": 1,
             "main_replica_node_cpu_cores": 2,
             "main_replica_node_memory": 8196,
-            "worker_node_count": 0,
-            "worker_node_cpu_cores": 2,
-            "worker_node_memory": 8192
+            "worker_node_count": 2,
+            "worker_node_cpu_cores": 4,
+            "worker_node_memory": 16384
         }
     }
 }

@@ -12,7 +12,7 @@ Version=1.0
 Name=Kubernetes Dashboard IAM
 GenericName=Kubernetes Dashboard IAM
 Comment=Kubernetes Dashboard IAM
-Exec=/usr/bin/google-chrome-stable %U https://${componentName}-iam.${baseDomain} --use-gl=angle --password-store=basic
+Exec=/usr/bin/chromium %U https://${componentName}-iam.${baseDomain} --use-gl=angle --password-store=basic --incognito --new-window
 StartupNotify=true
 Terminal=false
 Icon=${iconPath}
@@ -29,7 +29,7 @@ Version=1.0
 Name=Kubernetes Dashboard
 GenericName=Kubernetes Dashboard
 Comment=Kubernetes Dashboard
-Exec=/usr/bin/google-chrome-stable %U https://${componentName}.${baseDomain} --use-gl=angle --password-store=basic
+Exec=/usr/bin/chromium %U https://${componentName}.${baseDomain} --use-gl=angle --password-store=basic --incognito --new-window
 StartupNotify=true
 Terminal=false
 Icon=${iconPath}
@@ -51,8 +51,8 @@ cat << EOF > /usr/share/kx.as.code/getK8sClusterAdminToken.sh
 #!/bin/bash
 set -euo pipefail
 
-# Get token for logging onto K8s dashboard
-kubectl get secret \$(kubectl get serviceaccount dashboard -o jsonpath="{.secrets[0].name}") -o jsonpath="{.data.token}" | base64 --decode
+# Get token for logging onto Kubernetes dashboard
+kubectl --kubeconfig /home/${baseUser}/.kube/config get secret \$(kubectl --kubeconfig /home/${baseUser}/.kube/config get serviceaccount dashboard -o jsonpath="{.secrets[0].name}") -o jsonpath="{.data.token}" | base64 --decode
 echo -e "\n"
 sleep 5
 read -p "Press [Enter] key to close the window..."

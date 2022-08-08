@@ -6,6 +6,7 @@ sudo cp -rfT ${INSTALLATION_WORKSPACE}/skel /home/${VM_USER}
 sudo cp -rfT ${INSTALLATION_WORKSPACE}/skel /root
 sudo chown -R ${VM_USER}:${VM_USER} /home/${VM_USER}
 sudo chmod -R 755 /home/${VM_USER}/Desktop/*.desktop
+sudo cp /home/${VM_USER}/Desktop/*.desktop /usr/share/applications
 
 # Update system desktop icon file for BTOP
 sudo cp -f /home/${VM_USER}/Desktop/BTOP.desktop /usr/share/applications/btop.desktop
