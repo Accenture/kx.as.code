@@ -7,7 +7,7 @@
         "baseUser": "kx.hero",
         "certificationMode": false,
         "defaultKeyboardLanguage": "de",
-        "disableLinuxDesktop": false,
+        "disableLinuxDesktop": "false",
         "disableSessionTimeout": true,
         "dnsResolution": "static",
         "docker": {
@@ -17,7 +17,7 @@
         },
         "environmentPrefix": "demo1",
         "glusterFsDiskSize": 200,
-        "kubeOrchestrator": "k8s",
+        "kubeOrchestrator": "k3s",
         "local_volumes": {
             "fifty_gb": 0,
             "five_gb": 10,
@@ -34,8 +34,10 @@
             "https_proxy": "",
             "no_proxy": ""
         },
+        "selectedTemplates": "CICD Group 1,null",
         "sslProvider": "self-signed",
-        "standaloneMode": "true",
+        "standaloneMode": "false",
+        "startupMode": "normal",
         "staticNetworkSetup": {
             "baseFixedIpAddresses": {
                 "kx-main1": "10.100.76.200",
