@@ -626,14 +626,18 @@ done
 # Final check on the status of Calico
 if [[ -n ${calicoNodeReady} ]]; then
   echo "Calico node pod is ready and running on this node"
+  if [[ -f /usr/share/kx.as.code/workspace/forced_reboot_flag ]]; then
+    echo "$(date '+%Y-%m-%d_%H%M%S') Reboot done. Looks like that did the trick and we're in business" | sudo -a tee /usr/share/kx.as.code/workspace/forced_reboot_flag
+  fi
 else
   if [[ ! -f /usr/share/kx.as.code/workspace/forced_reboot_flag ]]; then
     echo "Calico node pod is not ready yet, even after 15 checks in 10 minutes. Going to try a reboot, after that it's time for some debugging"
-    echo "forced_restart_launched. If you see this file, then possibly the setup of calico failed on this node, resulting in 1 reboot to remove the block" | sudo tee /usr/share/kx.as.code/workspace/forced_reboot_flag
+    echo "$(date '+%Y-%m-%d_%H%M%S') forced_restart_launched. If you see this file, then possibly the setup of calico failed on this node, resulting in 1 reboot to remove the block" | sudo tee /usr/share/kx.as.code/workspace/forced_reboot_flag
     reboot
   else
     echo "Calico node pod is not ready yet, even after 15 checks in 10 minutes. Already tried a reboot, it's time for some debugging"
     echo "Disabled the \"k8s-register-node\" service, to avoid an infinite reboot loop. You can re-enable and launch it again once you have fixed the issue"
+    echo "$(date '+%Y-%m-%d_%H%M%S') Reboot did not resolve the issue. Further debugging needed" | sudo tee -a /usr/share/kx.as.code/workspace/forced_reboot_flag
     /usr/bin/sudo systemctl disable k8s-register-node.service
     exit 1
   fi

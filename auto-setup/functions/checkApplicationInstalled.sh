@@ -18,8 +18,10 @@ checkApplicationInstalled() {
   http_code=$(curl -s -o /dev/null -L -w '%{http_code}' ${applicationUrl}${urlCheckPath} || true)
   if [[ "${http_code}" == "404" ]]; then
     false
+    echo "$(date '+%Y-%m-%d_%H%M%S') [DEBUG] Application \"${componentName}\" is not installed. Will skip next steps that relies on this application to be available" >&2
   else
     true
+    echo "$(date '+%Y-%m-%d_%H%M%S') [DEBUG] Application \"${componentName}\" is installed Continuing with application specific next steps" >&2
   fi
 
 }
