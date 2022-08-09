@@ -1,6 +1,10 @@
 sourceKeycloakEnvironment() {
 
-    if [[ $(checkApplicationInstalled "keycloak" "core") ]]; then
+    set -x
+
+    if checkApplicationInstalled "keycloak" "core"; then
+
+        log_debug "Entered sourceKeycloakEnvironment()"
 
         # Set Keycloak variables for subsequent calls to Keycloak
         export kcRealm=${baseDomain}
@@ -11,5 +15,7 @@ sourceKeycloakEnvironment() {
         export kcNamespace="keycloak"
 
     fi
+
+    set +x
 
 }

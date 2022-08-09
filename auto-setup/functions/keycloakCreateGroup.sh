@@ -1,6 +1,6 @@
 createKeycloakGroup() {
 
-    if [[ $(checkApplicationInstalled "keycloak" "core") ]]; then
+    if checkApplicationInstalled "keycloak" "core"; then
 
         # Assign incoming parameters to variables
         group=${1}

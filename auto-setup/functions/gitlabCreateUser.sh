@@ -1,6 +1,6 @@
 gitlabCreateUser() {
 
-    if [[ $(checkApplicationInstalled "gitlab" "cicd") ]]; then
+    if checkApplicationInstalled "gitlab" "cicd"; then
 
         gitlabUserName=${1}
         skipConfirmation=${2-true}

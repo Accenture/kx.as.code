@@ -1,6 +1,6 @@
 mattermostCreateWebhook() {
 
-    if [[ $(checkApplicationInstalled "mattermost" "collaboration") ]]; then
+    if checkApplicationInstalled "mattermost" "collaboration"; then
 
         # Create Mattermost Webhook
         mattermostWebhookName=${1}

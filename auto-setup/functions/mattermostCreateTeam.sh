@@ -1,6 +1,6 @@
 mattermostCreateTeam() {
 
-    if [[ $(checkApplicationInstalled "mattermost" "collaboration") ]]; then
+    if checkApplicationInstalled "mattermost" "collaboration"; then
 
         mattermostTeam=${1}
         mattermostTeamDisplayName=${2-${mattermostTeam^^}}

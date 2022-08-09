@@ -1,6 +1,6 @@
 harborCreateRobotAccount() {
 
-    if [[ $(checkApplicationInstalled "harbor" "cicd") ]]; then
+    if checkApplicationInstalled "harbor" "cicd"; then
 
         harborProjectId=${1}
         harborRobotUser=${2}

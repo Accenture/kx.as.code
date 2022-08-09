@@ -1,6 +1,6 @@
 keycloakLogin() {
 
-    if [[ $(checkApplicationInstalled "keycloak" "core") ]]; then
+    if checkApplicationInstalled "keycloak" "core"; then
 
         # Source Keycloak Environment
         sourceKeycloakEnvironment

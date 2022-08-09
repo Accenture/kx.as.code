@@ -1,6 +1,6 @@
 mapKeycloakUserToGroup() {
 
-    if [[ $(checkApplicationInstalled "keycloak" "core") ]]; then
+    if checkApplicationInstalled "keycloak" "core"; then
 
         # Assign incoming parameters to variables
         userId=${1}

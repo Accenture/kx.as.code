@@ -1,6 +1,8 @@
 createKeycloakUser() {
 
-    if [[ $(checkApplicationInstalled "keycloak" "core") ]]; then
+    set -x
+
+    if checkApplicationInstalled "keycloak" "core"; then
 
         # Assign incoming parameters to variables
         username=${1}
@@ -35,5 +37,7 @@ createKeycloakUser() {
         fi
 
     fi
+
+    set +x
 
 }

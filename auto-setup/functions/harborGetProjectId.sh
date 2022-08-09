@@ -1,6 +1,6 @@
 harborGetProjectId() {
 
-    if [[ $(checkApplicationInstalled "harbor" "cicd") ]]; then
+    if checkApplicationInstalled "harbor" "cicd"; then
 
         harborProjectName=${1}
 

@@ -2,7 +2,7 @@ enableKeycloakSSOForSolution() {
 
     # Function to take care of all the steps needed to create a Keycloak client for the solution
 
-    if [[ $(checkApplicationInstalled "keycloak" "core") ]]; then
+    if checkApplicationInstalled "keycloak" "core"; then
 
         # Assign incoming parameters to variables
         redirectUris=${1}

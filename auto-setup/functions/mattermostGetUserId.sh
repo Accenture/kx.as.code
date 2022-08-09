@@ -1,6 +1,6 @@
 mattermostGetUserId() {
 
-    if [[ $(checkApplicationInstalled "mattermost" "collaboration") ]]; then
+    if checkApplicationInstalled "mattermost" "collaboration"; then
 
         mattermostUsername=${1}
 

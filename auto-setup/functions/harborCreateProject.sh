@@ -1,6 +1,6 @@
 harborCreateProject() {
 
-    if [[ $(checkApplicationInstalled "harbor" "cicd") ]]; then
+    if checkApplicationInstalled "harbor" "cicd"; then
 
         # Create project with mandatory name input and assign default values for rest if not set
         harborProjectName="${1}"

@@ -1,6 +1,6 @@
 mattermostCreateChannel() {
 
-    if [[ $(checkApplicationInstalled "mattermost" "collaboration") ]]; then
+    if checkApplicationInstalled "mattermost" "collaboration"; then
 
         channel=${1}
         teamId=${2}

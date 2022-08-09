@@ -1,6 +1,6 @@
 createGitlabProject() {
 
-  if [[ $(checkApplicationInstalled "gitlab" "cicd") ]]; then
+  if checkApplicationInstalled "gitlab" "cicd"; then
 
     # Get Gitlab personal access token
     export personalAccessToken=$(getPassword "gitlab-personal-access-token" "gitlab")

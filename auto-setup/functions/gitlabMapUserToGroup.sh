@@ -1,6 +1,6 @@
 gitlabMapUserToGroup() {
 
-    if [[ $(checkApplicationInstalled "gitlab" "cicd") ]]; then
+    if checkApplicationInstalled "gitlab" "cicd"; then
 
         gitlabUserName=${1}
         gitlabGroupName=${2}

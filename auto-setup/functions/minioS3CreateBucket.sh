@@ -1,6 +1,6 @@
 minioS3CreateBucket() {
 
-    if [[ $(checkApplicationInstalled "minio-operator" "storage") ]]; then
+    if checkApplicationInstalled "minio-operator" "storage"; then
 
         bucketName=${1}
         tenant=${2-myminio}

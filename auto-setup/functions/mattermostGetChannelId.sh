@@ -1,6 +1,6 @@
 mattermostGetChannelId() {
 
-    if [[ $(checkApplicationInstalled "mattermost" "collaboration") ]]; then
+    if checkApplicationInstalled "mattermost" "collaboration"; then
 
         mattermostTeamName=${1}
         mattermostChannelName=${2}

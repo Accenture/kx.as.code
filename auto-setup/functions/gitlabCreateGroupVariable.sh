@@ -1,6 +1,6 @@
 gitlabCreateGroupVariable() {
 
-    if [[ $(checkApplicationInstalled "gitlab" "cicd") ]]; then
+    if checkApplicationInstalled "gitlab" "cicd"; then
 
         gitlabVariableKey=${1}
         gitlabVariableValue=${2}

@@ -1,6 +1,6 @@
 minioS3CreateServiceAccount() {
 
-    if [[ $(checkApplicationInstalled "minio-operator" "storage") ]]; then
+    if checkApplicationInstalled "minio-operator" "storage"; then
 
         username=${1}
 

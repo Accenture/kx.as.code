@@ -1,6 +1,6 @@
 mattermostMapUserToTeam() {
 
-    if [[ $(checkApplicationInstalled "mattermost" "collaboration") ]]; then
+    if checkApplicationInstalled "mattermost" "collaboration"; then
 
         mattermostUsername=${1}
         mattermostTeamName=${2}

@@ -1,6 +1,6 @@
 minioS3CreateTenant() {
 
-    if [[ $(checkApplicationInstalled "minio-operator" "storage") ]]; then
+    if checkApplicationInstalled "minio-operator" "storage"; then
 
         tenant=${1}
         servers=${2-1}

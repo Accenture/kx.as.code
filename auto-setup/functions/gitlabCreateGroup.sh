@@ -1,6 +1,6 @@
 gitlabCreateGroup() {
 
-    if [[ $(checkApplicationInstalled "gitlab" "cicd") ]]; then
+    if checkApplicationInstalled "gitlab" "cicd"; then
 
         gitlabGroupName=${1}
         visibility=${2-internal}

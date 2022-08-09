@@ -1,6 +1,6 @@
 gitlabGetGroupId() {
 
-    if [[ $(checkApplicationInstalled "gitlab" "cicd") ]]; then
+    if checkApplicationInstalled "gitlab" "cicd"; then
 
         groupName=${1}
 

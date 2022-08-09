@@ -1,6 +1,6 @@
 mattermostGetLoginToken() {
 
-    if [[ $(checkApplicationInstalled "mattermost" "collaboration") ]]; then
+    if checkApplicationInstalled "mattermost" "collaboration"; then
 
         mattermostUser=${1}
 

@@ -1,6 +1,6 @@
 mattermostGetTeamId() {
 
-    if [[ $(checkApplicationInstalled "mattermost" "collaboration") ]]; then
+    if checkApplicationInstalled "mattermost" "collaboration"; then
 
         teamName=${1}
 

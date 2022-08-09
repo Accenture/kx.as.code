@@ -1,6 +1,6 @@
 populateGitlabProject() {
 
-  if [[ $(checkApplicationInstalled "gitlab" "cicd") ]]; then
+  if checkApplicationInstalled "gitlab" "cicd"; then
 
     gitlabProjectName="${1}"
     gitlabRepoName="${2}"
