@@ -503,7 +503,7 @@ do
         break
     else
     # Try again
-        echo "Looks like the entry for this node has not yet been added (or not yet added correctly). Addig it, or renewing if entry was not valid"
+        echo "Looks like the entry for this node has not yet been added (or not yet added correctly). Adding it, or renewing if entry was not valid"
     fi
 
 done
