@@ -432,13 +432,6 @@ while [[ "${fileExists}" != "true"  ]]; do
   sleep 15
 done
 
-#!/bin/bash -x
-export vmUser=kx.hero
-export baseDomain=demo1.kx-as-code.local
-export kxMainIp=172.16.225.136
-export nodeIp=172.16.225.135
-
-
 checkBind9Entry() {
 
     bind9Entry=${1}
