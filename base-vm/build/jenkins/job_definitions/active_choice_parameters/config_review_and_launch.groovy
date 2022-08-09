@@ -438,7 +438,7 @@ try {
             <div class="div-border-text-inline">
                 <h2 class="h2-header-in-line"><span class="span-h2-header-in-line"><img class="svg-blue" src="/userContent/icons/rocket-launch-outline.svg" height="25" width="25">&nbsp;Launcher Config Panel</span></h2>
                 <div class="div-inner-h2-header-in-line-wrapper">
-                    <span class="description-paragraph-span"><p>Here you can start, stop and destroy the KX.AS.CODE environment. KX.AS.CODE will be deployed to \"<span id="summary-profile-value" ></span>\" started in \"<span id="summary-start-mode-value" ></span>\" mode.
+                    <span class="description-paragraph-span"><p>Here you can start, stop and destroy the KX.AS.CODE environment. Review your selections above and then hit the play button!
                     </div>
 
                 <div class="div-inner-h2-header-in-line-wrapper">
