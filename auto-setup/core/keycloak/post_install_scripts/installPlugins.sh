@@ -12,7 +12,7 @@ export kcAdmCli=/opt/jboss/keycloak/bin/kcadm.sh
 kubernetesHealthCheck
 
 # Get Keycloak POD name for subsequent Keycloak CLI commands
-export kcPod=$(kubectl get pods -l 'app.kubernetes.io/name=keycloak' -n ${namespace} --output=json | jq -r '.items[].metadata.name')
+sourceKeycloakEnvironment
 
 # Install OIDC Login and KauthProxy
 /usr/bin/sudo kubectl krew install auth-proxy oidc-login
@@ -24,11 +24,11 @@ export kcPod=$(kubectl get pods -l 'app.kubernetes.io/name=keycloak' -n ${namesp
 kubectl -n ${namespace} exec ${kcPod} --container ${kcContainer} -- \
     ${kcAdmCli} config credentials --server ${kcInternalUrl}/auth --realm ${kcRealm} --user admin --password ${keycloakAdminPassword} --client admin-cli
 
-clientId=$(kubectl -n ${namespace} exec ${kcPod} --container ${kcContainer} -- \
-    ${kcAdmCli} get clients -r ${kcRealm} --fields id,clientId | jq -r '.[] | select(.clientId=="kubernetes") | .id')
+# Get clientId from Keycloak
+clientId=$(getKeycloakClientId "kubernetes")
 
-clientSecret=$(kubectl -n ${namespace} exec ${kcPod} --container ${kcContainer} -- \
-    ${kcAdmCli} get clients/${clientId}/client-secret | jq -r '.value')
+# Get or create secret for clientId
+clientSecret=$(getKeycloakClientSecret "${clientId}")
 
 # Create setup script for new users
 echo '''#!/bin/bash

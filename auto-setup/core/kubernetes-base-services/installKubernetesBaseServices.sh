@@ -38,7 +38,7 @@ EOF
         /usr/bin/sudo systemctl restart containerd        
 
         # Inititalise Kubernetes
-        /usr/bin/sudo kubeadm init --apiserver-advertise-address=${mainIpAddress} --pod-network-cidr=20.96.0.0/12 --upload-certs --control-plane-endpoint=api-internal.${baseDomain}:6443
+        /usr/bin/sudo kubeadm init --apiserver-advertise-address=${mainIpAddress} --pod-network-cidr=20.96.0.0/12 --upload-certs --control-plane-endpoint=api-internal.${baseDomain}:6443 --apiserver-cert-extra-sans=api-internal.${baseDomain},localhost,127.0.0.1,${mainIpAddress},$(hostname)
 
         # Ensure Kubelet listenson correct IP. Especially important for VirtualBox with the additional NAT NIC
         /usr/bin/sudo sed -i '/^\[Service\]/a Environment="KUBELET_EXTRA_ARGS=--node-ip='${mainIpAddress}'"' /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
