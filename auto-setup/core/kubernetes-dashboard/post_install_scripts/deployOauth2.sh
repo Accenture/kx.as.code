@@ -18,20 +18,14 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   annotations:
-    kubernetes.io/ingress.class: nginx
-    kubernetes.io/tls-acme: "true"
-    nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
-    nginx.ingress.kubernetes.io/proxy-buffer-size: "64k"
-    nginx.ingress.kubernetes.io/proxy-buffers-number: "8"
     nginx.ingress.kubernetes.io/auth-url: "https://$host/oauth2/auth"
     nginx.ingress.kubernetes.io/auth-signin: "https://$host/oauth2/start?rd=$escaped_request_uri"
-    nginx.ingress.kubernetes.io/auth-response-headers: "X-Auth-Request-Access-Token, Authorization"
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+    nginx.ingress.kubernetes.io/auth-response-headers: "authorization"
   name: '${componentName}'-iam-ingress
   namespace: '${namespace}'
 spec:
-  tls:
-  - hosts:
-    - '${componentName}'-iam.'${baseDomain}'
+  ingressClassName: nginx
   rules:
   - host: '${componentName}'-iam.'${baseDomain}'
     http:
@@ -40,7 +34,7 @@ spec:
           service:
             name: '${componentName}'
             port:
-              number: 8443
+              number: 443
         path: /
         pathType: Prefix
 ---
@@ -61,6 +55,9 @@ spec:
               number: 4180
         path: /oauth2
         pathType: Prefix
+  tls:
+  - hosts:
+    - '${componentName}'-iam.'${baseDomain}'
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -130,7 +127,7 @@ spec:
   selector:
     k8s-app: oauth2-proxy
 ''' | /usr/bin/sudo tee ${installationWorkspace}/oauth2-proxy-deployment.yaml
-kubernetesApplyYamlFile "${installationWorkspace}/oauth2-proxy-deployment.yaml"
+kubernetesApplyYamlFile "${installationWorkspace}/oauth2-proxy-deployment.yaml" "kubernetes-dashboard"
 
 # Create ClusterRole binding for Keycloak User Group
 echo '''
@@ -147,7 +144,7 @@ subjects:
   kind: Group
   name: /kcadmins
 ''' | /usr/bin/sudo tee ${installationWorkspace}/keycloak-admin-group-clusterbinding.yaml
-kubernetesApplyYamlFile "${installationWorkspace}/keycloak-admin-group-clusterbinding.yaml"
+kubernetesApplyYamlFile "${installationWorkspace}/keycloak-admin-group-clusterbinding.yaml" "kubernetes-dashboard"
 
 # Create CA config map for connecting to Kubernetes Dashboard from Oauth2-Proxy
 echo """
@@ -160,4 +157,4 @@ data:
   ca.crt: |-
     $(/usr/bin/sudo cat ${installationWorkspace}/kx-certs/ca.crt | sed '2,30s/^/    /')
 """ | /usr/bin/sudo tee  ${installationWorkspace}/kubernetes-dashboard-ca-configmap.yaml
-kubernetesApplyYamlFile "${installationWorkspace}/kubernetes-dashboard-ca-configmap.yaml"
+kubernetesApplyYamlFile "${installationWorkspace}/kubernetes-dashboard-ca-configmap.yaml" "kubernetes-dashboard"
