@@ -43,6 +43,7 @@ else
 fi
 echo "${sha256sum} ${INSTALLATION_WORKSPACE}/yq" | sha256sum --check
 sudo cp ${INSTALLATION_WORKSPACE}/yq /usr/local/bin/yq
+sudo chmod +x /usr/local/bin/yq
 
 # Install Typora for showing WELCOME.md after GNOME login
 sudo wget -qO - https://typora.io/linux/public-key.asc | sudo apt-key add -
