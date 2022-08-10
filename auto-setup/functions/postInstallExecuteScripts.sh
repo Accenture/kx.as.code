@@ -1,4 +1,8 @@
 executePostInstallScripts() {
+
+  # Call common function to execute common function start commands, such as setting verbose output etc
+  functionStart
+
   componentPostInstallScripts=$(cat ${componentMetadataJson} | jq -r '.post_install_scripts[]?')
   # Loop round post-install scripts
   for script in ${componentPostInstallScripts}; do
@@ -14,4 +18,8 @@ executePostInstallScripts() {
       fi
     fi
   done
+
+  # Call common function to execute common function start commands, such as unsetting verbose output etc
+  functionEnd
+
 }

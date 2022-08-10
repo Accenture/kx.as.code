@@ -32,6 +32,17 @@ sudo apt-get -y install \
 sudo update-alternatives --install /usr/bin/editor editor /usr/bin/vim 100
 sudo update-alternatives --install /usr/bin/x-www-browser x-www-browser /usr/bin/chromium 100
 
+# Install YQ
+yqVersion=4.27.2
+if [[ -n $( uname -a | grep "aarch64") ]]; then
+  curl -L -o ${INSTALLATION_WORKSPACE}/yq https://github.com/mikefarah/yq/releases/download/v${yqVersion}/yq_linux_arm64
+  sha256sum="9ef1d5f08d038024c8c713085b72d42822f458a3bc15d0dd8dad5c4c3678e5d2"
+else
+  curl -L -o ${INSTALLATION_WORKSPACE}/yq https://github.com/mikefarah/yq/releases/download/v${yqVersion}/yq_linux_amd64
+  sha256sum="19a50ad8c7e173d40ae34310164adf19e2eef278db7cb6c4b7efcd097c030600"
+fi
+echo "${sha256sum} ${INSTALLATION_WORKSPACE}/yq" | sha256sum --check
+sudo cp ${INSTALLATION_WORKSPACE}/yq /usr/local/bin/yq
 
 # Install Typora for showing WELCOME.md after GNOME login
 sudo wget -qO - https://typora.io/linux/public-key.asc | sudo apt-key add -
@@ -64,7 +75,7 @@ if [[ ${COMPUTE_ENGINE_BUILD} == "true"  ]] || [[ -n $(which raspinfo) ]]; then
     NOMACHINE_CHECKSUM="e948895fd41adbded25e4ddc7b9637585e46af9d041afadfd620a2f8bb23362c"
   fi
 
-  wget  ${NOMACHINE_URL}
+  wget ${NOMACHINE_URL}
   NOMACHINE_FILE=$(basename ${NOMACHINE_URL})
   echo "${NOMACHINE_CHECKSUM} ${NOMACHINE_FILE}" | sha256sum --check
 

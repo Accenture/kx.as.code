@@ -1,5 +1,8 @@
 checkRunningKubernetesPods() {
 
+  # Call common function to execute common function start commands, such as setting verbose output etc
+  functionStart
+
   for i in {1..100}; do
     # Added workaround for Gitlab-Runner, which is not expected to work until later
     # This is because at this stage the docker registry is not yet up to push the custom image
@@ -18,4 +21,8 @@ checkRunningKubernetesPods() {
     rc=1
     return ${rc}
   fi
+
+  # Call common function to execute common function start commands, such as unsetting verbose output etc
+  functionEnd
+  
 }

@@ -1,5 +1,8 @@
 configureBindDns() {
 
+# Call common function to execute common function start commands, such as setting verbose output etc
+functionStart
+
 echo '''//
 // Do any local configuration here
 //
@@ -47,5 +50,8 @@ api-internal      IN      A      '${mainIpAddress}'
 
 /usr/bin/sudo named-checkconf
 /usr/bin/sudo named-checkzone ${baseDomain} /etc/bind/db.${baseDomain}
+
+# Call common function to execute common function start commands, such as unsetting verbose output etc
+functionEnd
 
 }

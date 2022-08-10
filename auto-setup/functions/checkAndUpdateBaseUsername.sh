@@ -1,5 +1,8 @@
 checkAndUpdateBaseUsername() {
 
+  # Call common function to execute common function start commands, such as setting verbose output etc
+  functionStart
+
   if [[ "${vmUser}" != "${baseUser}" ]]; then
 
     # Create new username rather than modify the old one
@@ -77,5 +80,8 @@ checkAndUpdateBaseUsername() {
     /usr/bin/sudo chown -R ${baseUser}:${baseUser} ${sharedGitHome}
 
   fi
-            
+
+  # Call common function to execute common function start commands, such as unsetting verbose output etc
+  functionEnd
+      
 }

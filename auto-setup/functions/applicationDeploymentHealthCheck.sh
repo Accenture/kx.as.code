@@ -1,5 +1,8 @@
 applicationDeploymentHealthCheck() {
 
+  # Call common function to execute common function start commands, such as setting verbose output etc
+  functionStart
+
   # URL READINESS HEALTH CHECK
   applicationUrls=$(cat ${componentMetadataJson} | jq -r '.urls[]?.url?' | mo)
 
@@ -65,6 +68,9 @@ applicationDeploymentHealthCheck() {
               fi
           done
       fi
-
   done
+
+  # Call common function to execute common function start commands, such as unsetting verbose output etc
+  functionEnd
+  
 }

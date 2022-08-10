@@ -1,4 +1,8 @@
 checkGlusterFsServiceInstalled() {
+
+  # Call common function to execute common function start commands, such as setting verbose output etc
+  functionStart
+
   rc=0
   sudo systemctl list-units --full -all | grep -F "glusterd.service" || rc=$? && log_info "Execution of checkGlusterFsServiceInstalled() returned with rc=$rc"
   if [[ $rc -eq 1 ]]; then
@@ -8,4 +12,8 @@ checkGlusterFsServiceInstalled() {
       log_info "Glusterfs is installed. Continuing with storage as defined in the solution's YAML configuration files"
       export forceStorageClassToLocal="false"
   fi
+
+  # Call common function to execute common function start commands, such as unsetting verbose output etc
+  functionEnd
+  
 }

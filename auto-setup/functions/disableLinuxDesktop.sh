@@ -1,5 +1,8 @@
 disableLinuxDesktop() {
 
+  # Call common function to execute common function start commands, such as setting verbose output etc
+  functionStart
+
   # Read disable linux desktop property from profile configuration
   disableLinuxDesktop=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.disableLinuxDesktop')
 
@@ -16,4 +19,8 @@ disableLinuxDesktop() {
     /usr/bin/sudo  systemctl set-default multi-user.target
 
   fi
+
+  # Call common function to execute common function start commands, such as unsetting verbose output etc
+  functionEnd
+  
 }

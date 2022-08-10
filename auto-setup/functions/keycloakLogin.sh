@@ -1,5 +1,8 @@
 keycloakLogin() {
 
+    # Call common function to execute common function start commands, such as setting verbose output etc
+    functionStart
+
     if checkApplicationInstalled "keycloak" "core"; then
 
         # Source Keycloak Environment
@@ -16,4 +19,7 @@ keycloakLogin() {
 
     fi
 
+    # Call common function to execute common function start commands, such as unsetting verbose output etc
+    functionEnd
+    
 }

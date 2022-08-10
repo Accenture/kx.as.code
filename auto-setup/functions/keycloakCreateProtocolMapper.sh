@@ -1,5 +1,8 @@
 createKeycloakProtocolMapper() {
 
+    # Call common function to execute common function start commands, such as setting verbose output etc
+    functionStart
+
     if checkApplicationInstalled "keycloak" "core"; then
 
         # Assign incoming parameters to variables
@@ -19,7 +22,7 @@ createKeycloakProtocolMapper() {
                 ${kcAdmCli} get clients/${clientId}/protocol-mappers/models \
                 --realm ${kcRealm})
 
-            log_info "ProtocolMapper: ${protocolMapper}"
+            >&2 log_info "ProtocolMapper: ${protocolMapper}"
 
             if [[ "${protocolMapper}" == "null" ]] || [[ -z $(echo ${protocolMapper} | tr -d "[]") ]] || [[ -z $(echo ${protocolMapper} | tr -d "[ ]") ]]; then
                 # Create client scope protocol mapper
@@ -44,4 +47,7 @@ createKeycloakProtocolMapper() {
 
     fi
 
+    # Call common function to execute common function start commands, such as unsetting verbose output etc
+    functionEnd
+    
 }

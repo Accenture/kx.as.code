@@ -1,5 +1,8 @@
 pushPassword() {
 
+  # Call common function to execute common function start commands, such as setting verbose output etc
+  functionStart
+
   passwordName=${1}
   password=${2}
   passwordGroup=${3-}
@@ -11,4 +14,7 @@ pushPassword() {
     /usr/bin/sudo -H -i -u ${baseUser} bash -c "echo \"${password}\" | gopass insert \"${baseDomain}/${passwordName}\""
   fi
 
+  # Call common function to execute common function start commands, such as unsetting verbose output etc
+  functionEnd
+  
 }

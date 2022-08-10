@@ -1,5 +1,8 @@
 downloadFile() {
 
+  # Call common function to execute common function start commands, such as setting verbose output etc
+  functionStart
+
   url="${1}"
   checksum="${2}"
 
@@ -30,9 +33,13 @@ downloadFile() {
     sleep 15
   done
 
-    # Finally return with an error return code if download not OK [NOK]
-    if [[ "${checkResult}" == "NOK" ]]; then
-      log_error "Checksum of downloaded file ${outputFilename} NOK"
-      exit 1
-    fi
+  # Finally return with an error return code if download not OK [NOK]
+  if [[ "${checkResult}" == "NOK" ]]; then
+    log_error "Checksum of downloaded file ${outputFilename} NOK"
+    exit 1
+  fi
+
+  # Call common function to execute common function start commands, such as unsetting verbose output etc
+  functionEnd
+
 }

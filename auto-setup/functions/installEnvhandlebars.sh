@@ -1,5 +1,8 @@
 installEnvhandlebars() {
 
+  # Call common function to execute common function start commands, such as setting verbose output etc
+  functionStart
+
   export nvmVersionSelectedAlias="$(cat /usr/local/nvm/alias/$(cat /usr/local/nvm/alias/default))"
   export nvmVersionSelectedPath="/usr/local/nvm/versions/node/${nvmVersionSelectedAlias}/bin"
 
@@ -23,4 +26,7 @@ installEnvhandlebars() {
       export PATH=$(dirname $(find ${nvmVersionSelectedPath} -type f -executable -name "envhandlebars")):$PATH
   fi
 
+    # Call common function to execute common function start commands, such as unsetting verbose output etc
+    functionEnd
+    
 }

@@ -1,4 +1,8 @@
 notify() {
+
+  # Call common function to execute common function start commands, such as setting verbose output etc
+  functionStart
+
   openDisplays=$(w -oush | grep -Eo ' :[0-9]+' | sort -u -t\  -k1,1 | cut -d \  -f 2 || true)
   log_info "Detected unique displays: ${openDisplays}"
   messageTimeout=300000
@@ -14,4 +18,8 @@ notify() {
         notify-send -t \"${messageTimeout}\" \"${messageTitle}\" \"${message}\" --icon=\"${messageType}\""
     fi
   done
+
+  # Call common function to execute common function start commands, such as unsetting verbose output etc
+  functionEnd
+  
 }

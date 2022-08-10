@@ -1,4 +1,8 @@
 getGlobalVariables() {
+
+  # Call common function to execute common function start commands, such as setting verbose output etc
+  functionStart
+
     OLDIFS=$IFS
     IFS="§"
     # Set environment variables if set in globalVariables.json
@@ -15,4 +19,7 @@ getGlobalVariables() {
 
     export DEBIAN_FRONTEND=noninteractive
 
+  # Call common function to execute common function start commands, such as unsetting verbose output etc
+  functionEnd
+  
 }

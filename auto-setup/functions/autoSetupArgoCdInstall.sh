@@ -1,4 +1,8 @@
 autoSetupArgoCdInstall() {
+
+  # Call common function to execute common function start commands, such as setting verbose output etc
+  functionStart
+  
   # No upgrade for ArgoCD based applications, as these should be updated via GitOps
 
   log_info "Established installation type is \"${installationType}\". Proceeding in that way"
@@ -73,4 +77,8 @@ autoSetupArgoCdInstall() {
       sleep 5
     fi
   done
+
+  # Call common function to execute common function start commands, such as unsetting verbose output etc
+  functionEnd
+
 }

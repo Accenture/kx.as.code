@@ -1,5 +1,8 @@
 notifyAllChannels() {
 
+  # Call common function to execute common function start commands, such as setting verbose output etc
+  functionStart
+
   message=${1}
 
   # Set log_level
@@ -31,5 +34,8 @@ notifyAllChannels() {
   notify "${message}" "${dialog_type}"
   log_debug addToNotificationQueue "${message}" "${log_level}" "${action_status}"
   addToNotificationQueue "${message}" "${log_level}" "${action_status}"
+
+  # Call common function to execute common function start commands, such as unsetting verbose output etc
+  functionEnd
 
 }

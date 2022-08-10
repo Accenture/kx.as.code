@@ -1,6 +1,7 @@
 createKeycloakUser() {
 
-    set -x
+    # Call common function to execute common function start commands, such as setting verbose output etc
+    functionStart
 
     if checkApplicationInstalled "keycloak" "core"; then
 
@@ -38,6 +39,7 @@ createKeycloakUser() {
 
     fi
 
-    set +x
-
+    # Call common function to execute common function start commands, such as unsetting verbose output etc
+    functionEnd
+    
 }

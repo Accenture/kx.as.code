@@ -1,5 +1,8 @@
 dockerRegistryAddUser() {
 
+  # Call common function to execute common function start commands, such as setting verbose output etc
+  functionStart
+
   userToAdd=${1}
 
   # Create password
@@ -27,4 +30,7 @@ dockerRegistryAddUser() {
   # Restart registry so new credential is picked up
   kubectl rollout restart deployments/docker-registry -n docker-registry
 
+  # Call common function to execute common function start commands, such as unsetting verbose output etc
+  functionEnd
+  
 }

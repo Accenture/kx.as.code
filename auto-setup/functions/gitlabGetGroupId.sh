@@ -1,5 +1,8 @@
 gitlabGetGroupId() {
 
+    # Call common function to execute common function start commands, such as setting verbose output etc
+    functionStart
+
     if checkApplicationInstalled "gitlab" "cicd"; then
 
         groupName=${1}
@@ -12,4 +15,7 @@ gitlabGetGroupId() {
 
     fi
 
+    # Call common function to execute common function start commands, such as unsetting verbose output etc
+    functionEnd
+    
 }

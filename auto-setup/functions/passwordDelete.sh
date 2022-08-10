@@ -1,5 +1,9 @@
 deletePassword() {
 
+  # Call common function to execute common function start commands, such as setting verbose output etc
+  functionStart
+
+
   passwordName=${1}
   passwordGroup=${2-}
 
@@ -11,4 +15,7 @@ deletePassword() {
     /usr/bin/sudo -H -i -u ${baseUser} bash -c "gopass delete --force \"${baseDomain}/${passwordName}\""
   fi
 
+  # Call common function to execute common function start commands, such as unsetting verbose output etc
+  functionEnd
+  
 }

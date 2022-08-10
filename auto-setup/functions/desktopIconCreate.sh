@@ -1,6 +1,8 @@
-#!/bin/bash
 # shellcheck disable=SC2154 disable=SC1091
 createDesktopIcon() {
+
+  # Call common function to execute common function start commands, such as setting verbose output etc
+  functionStart
 
   targetDirectory="${1}"
   urlToOpen=${2}
@@ -30,4 +32,7 @@ createDesktopIcon() {
   chmod 755 "${targetDirectory}"/"${shortcutText}"
   chown "${baseUser}":"${baseUser}" "${targetDirectory}"/"${shortcutText}"
 
+  # Call common function to execute common function start commands, such as unsetting verbose output etc
+  functionEnd
+  
 }

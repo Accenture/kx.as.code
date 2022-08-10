@@ -1,5 +1,8 @@
 mattermostGetChannelId() {
 
+    # Call common function to execute common function start commands, such as setting verbose output etc
+    functionStart
+
     if checkApplicationInstalled "mattermost" "collaboration"; then
 
         mattermostTeamName=${1}
@@ -16,4 +19,7 @@ mattermostGetChannelId() {
 
     fi
 
+    # Call common function to execute common function start commands, such as unsetting verbose output etc
+    functionEnd
+    
 }
