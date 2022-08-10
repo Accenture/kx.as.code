@@ -158,3 +158,20 @@ data:
     $(/usr/bin/sudo cat ${installationWorkspace}/kx-certs/ca.crt | sed '2,30s/^/    /')
 """ | /usr/bin/sudo tee  ${installationWorkspace}/kubernetes-dashboard-ca-configmap.yaml
 kubernetesApplyYamlFile "${installationWorkspace}/kubernetes-dashboard-ca-configmap.yaml" "kubernetes-dashboard"
+
+## Put Kubernetes Dashboard **WITH** IAM login Icon on Desktop
+#cat << EOF > /home/${baseUser}/Desktop/Kubernetes-Dashboard-OIDC.desktop
+#[Desktop Entry]
+#Version=1.0
+#Name=Kubernetes Dashboard IAM
+#GenericName=Kubernetes Dashboard IAM
+#Comment=Kubernetes Dashboard IAM
+#Exec=/usr/bin/chromium %U https://${componentName}-iam.${baseDomain} --use-gl=angle --password-store=basic --incognito --new-window
+#StartupNotify=true
+#Terminal=false
+#Icon=${iconPath}
+#Type=Application
+#Categories=Development
+#MimeType=text/html;text/xml;application/xhtml_xml;image/webp;x-scheme-handler/http;x-scheme-handler/https;x-scheme-handler/ftp;
+#Actions=new-window;new-private-window;
+#EOF
