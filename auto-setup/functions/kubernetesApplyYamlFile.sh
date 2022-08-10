@@ -4,7 +4,7 @@ kubernetesApplyYamlFile() {
     functionStart
 
     kubeYamlFileLocation=${1}
-    kubeNamespace=${2}
+    kubeNamespace=${2-default}
 
     if [[ -f ${kubeYamlFileLocation} ]]; then
 
