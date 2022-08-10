@@ -14,24 +14,11 @@ kubernetesHealthCheck
 # Get Keycloak POD name for subsequent Keycloak CLI commands
 export kcPod=$(kubectl get pods -l 'app.kubernetes.io/name=keycloak' -n ${namespace} --output=json | jq -r '.items[].metadata.name')
 
-# Install Krew for installing kauthproxy and kubelogin
-(
-    set -x
-    cd "$(mktemp -d)" &&
-        curl -fsSLO "https://github.com/kubernetes-sigs/krew/releases/latest/download/krew.tar.gz" &&
-        tar zxvf krew.tar.gz &&
-        KREW=./krew-"$(uname | tr '[:upper:]' '[:lower:]')_$(uname -m | sed -e 's/x86_64/amd64/' -e 's/arm.*$/arm/' -e 's/aarch64$/arm64/')" &&
-        "$KREW" install krew
-)
-
-# Put Krew on the path before calling it
-cp /root/.krew/bin/kubectl-krew /usr/local/bin
-
 # Install OIDC Login and KauthProxy
 /usr/bin/sudo kubectl krew install auth-proxy oidc-login
 
 # Make plugins available to all
-cp /root/.krew/bin/kubectl-* /usr/local/bin
+/usr/bin/sudo cp -f /root/.krew/bin/kubectl-* /usr/local/bin
 
 # Get credential token in new Realm
 kubectl -n ${namespace} exec ${kcPod} --container ${kcContainer} -- \

@@ -6,15 +6,21 @@
     "environment_variables": {
         "kubevalVersion": "v0.16.1",
         "kubevalChecksum": "2d6f9bda1423b93787fa05d9e8dfce2fc1190fefbcd9d0936b9635f3f78ba790",
-        "k3sVersion": "v1.21.12-rc2+k3s1"
+        "k3sVersion": "v1.21.12-rc2+k3s1",
+        "krewVersion": "v0.4.3",
+        "krewAmd64Checksum": "5df32eaa0e888a2566439c4ccb2ef3a3e6e89522f2f2126030171e2585585e4f",
+        "krewArm64Checksum": "0994923848882ad0d4825d5af1dc227687a10a02688f785709b03549dd34d71d"
     },
     "retry": "true",
-    "install_scripts": [
-        "installKubernetesTools.sh"
-    ],
+
     "Description": "Kubernetes Tools",
     "shortcut_text": "Kubernetes Tools",
     "shortcut_icon": "kubernetes.png",
     "pre_install_scripts": [],
-    "post_install_scripts": []
+    "install_scripts": [
+        "installKubernetesTools.sh"
+    ],
+    "post_install_scripts": [
+        "installPluginManager.sh"
+    ]
 }
