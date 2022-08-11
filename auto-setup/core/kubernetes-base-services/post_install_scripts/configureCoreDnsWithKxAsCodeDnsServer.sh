@@ -44,9 +44,6 @@ cat ${installationWorkspace}/${resourceName}_${resourceType}_${namespace}.json |
 # Apply combined YAML file
 kubernetesApplyYamlFile "${installationWorkspace}/${resourceName}_combined_${resourceType}_${namespace}.yaml" "kube-system"
 
-# Recreate CoreDNS pods to apply changes to configmap
-kubectl delete pods -l k8s-app=kube-dns -n kube-system
-
 fi
 
 else
@@ -60,12 +57,15 @@ data:
   log.override: |
     log
   '${baseDomain}'.server: |
-    '${baseDomain}' {
-      forward . '${mainIpAddress}':53
-  }
+    '${baseDomain}':53 {
+      forward . '${mainIpAddress}'
+    }
 ''' | /usr/bin/sudo tee ${installationWorkspace}/custom-coredns.yaml
 
 # Validate and apply the updated config-map
 kubernetesApplyYamlFile "${installationWorkspace}/custom-coredns.yaml" "kube-system"
 
 fi
+
+# Recreate CoreDNS pods to apply changes to configmap
+kubectl delete pods -l k8s-app=kube-dns -n kube-system
