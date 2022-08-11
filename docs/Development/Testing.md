@@ -16,4 +16,4 @@ If you are developing to add solutions to KX.AS.CODE, consider to test the follo
 
 - `Repeatability` - a script mut be able to run twice without error, which requires validations, so that if for example, an API call already succeeded in the previous run, then it is not executed again, preventing "x already exists" error messages, and the item going unnecessarily into the failure queue.
   
-- `Transparency` - A script must exit with RC1 if any step does not succeed - this ensures that the user get the correct notification and transparency, whether the installation succeeded or not. Additionally. the framework retries 3 times or sends it to the failure queue for further analysis, if the maximum number of retries is reached.
+- `Transparency` - A script must exit with RC1 if any step does not succeed - this ensures that the user get the correct notification and transparency, whether the installation succeeded or not. Additionally, the framework retries 3 times or sends it to the failure queue for further analysis, if the maximum number of retries is reached.
