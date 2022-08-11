@@ -1,0 +1,12 @@
+{
+  "title": "Security Group 2",
+  "description": "Mix of security scanning and runtime services",
+  "action_queues": {
+    "install": [
+      {
+        "install_folder": "security",
+        "name": "neuvector"
+      }
+    ]
+  }
+}
