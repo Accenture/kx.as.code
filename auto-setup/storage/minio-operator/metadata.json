@@ -54,7 +54,6 @@
         "installMinioOperator.sh"
     ],
     "post_install_scripts": [
-        "intializeMinioOperator.sh",
-        "deployYamlFiles.sh"
+        "intializeMinioOperator.sh"
     ]
 }
