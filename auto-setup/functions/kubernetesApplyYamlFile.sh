@@ -1,9 +1,10 @@
 kubernetesApplyYamlFile() {
 
-    log_debug "Entered function kubernetesApplyYamlFile()"
+    # Call common function to execute common function start commands, such as setting verbose output etc
+    functionStart
 
     kubeYamlFileLocation=${1}
-    kubeNamespace=${2}
+    kubeNamespace=${2-default}
 
     if [[ -f ${kubeYamlFileLocation} ]]; then
 
@@ -28,4 +29,7 @@ kubernetesApplyYamlFile() {
         exit 1
     fi
 
+    # Call common function to execute common function start commands, such as unsetting verbose output etc
+    functionEnd
+    
 }

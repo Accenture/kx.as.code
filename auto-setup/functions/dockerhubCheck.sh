@@ -1,4 +1,8 @@
 checkDockerHubRateLimit() {
+
+# Call common function to execute common function start commands, such as setting verbose output etc
+  functionStart
+
   export dockerAuthApiUrl="https://auth.docker.io/token?service=registry.docker.io&scope=repository:ratelimitpreview/test:pull"
   if [[ -f /var/tmp/.tmp.json ]]; then
     export dockerHubUsername=$(cat /var/tmp/.tmp.json | jq -r '.DOCKERHUB_USER')
@@ -28,4 +32,8 @@ checkDockerHubRateLimit() {
     fi
     log_info "As an anonymous user you have a rate limit of ${dockerHubAllowLimit} with ${dockerHubRemainingLimit} downloads remaining in the current ${dockerHubRateLimitTimePeriod} hour window"
   fi
+
+  # Call common function to execute common function start commands, such as unsetting verbose output etc
+  functionEnd
+  
 }

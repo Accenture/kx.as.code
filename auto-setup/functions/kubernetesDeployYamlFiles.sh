@@ -1,6 +1,7 @@
 deployYamlFilesToKubernetes() {
 
-    log_debug "Entered function deployYamlFilesToKubernetes()"
+    # Call common function to execute common function start commands, such as setting verbose output etc
+    functionStart
 
     # Create regcred for pulling images from private registry
     createK8sCredentialSecretForCoreRegistry
@@ -36,4 +37,7 @@ deployYamlFilesToKubernetes() {
         log_warn "${installationWorkspace}/deployment_yaml not found. Nothing to deploy."
     fi
 
+    # Call common function to execute common function start commands, such as unsetting verbose output etc
+    functionEnd
+    
 }

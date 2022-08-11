@@ -1,5 +1,8 @@
 populateActionQueuesRabbitMq() {
 
+  # Call common function to execute common function start commands, such as setting verbose output etc
+  functionStart
+
   # Populate pending queue on first start with default core components
   defaultComponentsToInstall=$(cat ${installationWorkspace}/actionQueues.json | jq -r '.action_queues.install[].name')
   for componentName in ${defaultComponentsToInstall}; do
@@ -21,4 +24,7 @@ populateActionQueuesRabbitMq() {
       sleep 1
   done
   
+    # Call common function to execute common function start commands, such as unsetting verbose output etc
+    functionEnd
+
 }

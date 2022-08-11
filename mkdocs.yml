@@ -16,6 +16,11 @@ nav:
         - 'Overview/Questions-and-Answers.md'
         - 'Overview/Raising-a-Bug-Report.md'
         - 'Overview/Raising-a-Feature-Request.md'
+        - 'Overview/Networking.md'
+        - 'Overview/Orchestrators.md'
+        - 'Overview/Remote-Access.md'
+        - 'Overview/Single-Sign-On-(SSO).md'
+        - 'Overview/Storage.md'
     - 'Build':
         - 'Build/Local-Virtualizations.md'
         - 'Build/Raspberry-Pi-Cluster.md'
@@ -29,6 +34,7 @@ nav:
         - 'Deployment/Local-Virtualizations.md'
         - 'Deployment/Raspberry-Pi-Cluster.md'
         - 'Deployment/Manual-Provisioning.md'
+        - 'Deployment/Minimal-Deployment.md'
         - 'Deployment/Private-Clouds.md'
         - 'Deployment/Provisioning-Flow.md'
         - 'Deployment/Provisioning-Templates.md'
@@ -47,6 +53,7 @@ nav:
         - 'Development/Provisioning-with-Kustomize.md'
         - 'Development/Provisioning-with-Scripts.md'
         - 'Development/Solution-Metadata.md'
+        - 'Development/Testing.md'
         - 'Development/Troubleshootings.md'
     - 'Prerequisites':
         - 'Prerequisites/OpenStack-Setup.md'

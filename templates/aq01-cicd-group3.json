@@ -1,0 +1,12 @@
+{
+  "title": "CICD Group 3",
+  "description": "CICD Group 1 for sites with a lower physical resources",
+  "action_queues": {
+    "install": [
+      {
+        "install_folder": "cicd",
+        "name": "teamcity"
+      }
+    ]
+  }
+}

@@ -432,9 +432,76 @@ while [[ "${fileExists}" != "true"  ]]; do
   sleep 15
 done
 
+checkBind9Entry() {
 
-# Add server IP to Bind9 DNS service on KX-Main1 host
-/usr/bin/sudo -H -i -u "${vmUser}" bash -c "ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} \"/usr/bin/sudo sed -i '/\*.*IN.*A.*${kxMainIp}/ i $(hostname)    IN      A      ${nodeIp}' /etc/bind/db.${baseDomain}\""
+    bind9Entry=${1}
+
+    # Check if entry is complete
+    if [[ -n $(echo ${bind9Entry} | grep -E "$(hostname)(.*)IN(.*)A(.*)[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}") ]]; then
+
+        echo "All good. Nothing further to do" >&2
+        true
+        return
+
+    else
+        
+        echo "Entry not valid. Returning false" >&2
+        false
+        return
+
+    fi
+}
+
+addIpToBind9DnsServer() {
+
+    # See if server already configured in Bind9
+    bind9Entry=$(/usr/bin/sudo -H -i -u "${vmUser}" bash -c "ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} \"cat /etc/bind/db.${baseDomain} | grep -E '$(hostname)'\"")
+    if [[ -n ${bind9Entry} ]]; then
+        
+        # Checking if existing entry is valid
+        if checkBind9Entry "${bind9Entry}"; then
+
+            echo "All good, returning true"
+            true
+            return
+
+        else
+
+            # Entry for host exists but seems to be invalid. Will delete entry and recreate it
+            /usr/bin/sudo -H -i -u "${vmUser}" bash -c "ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} \"sudo sed -i '/'$(hostname)'/d' /etc/bind/db.${baseDomain}\""
+
+            # Add entry again
+            /usr/bin/sudo -H -i -u "${vmUser}" bash -c "ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} \"/usr/bin/sudo sed -i '/\*.*IN.*A.*${kxMainIp}/ i $(hostname)    IN      A      ${nodeIp}' /etc/bind/db.${baseDomain}\""
+            
+            # Return false to ensure re-check of DNS entry
+            false
+            return
+        fi
+
+    else
+        # There is no entry for this host in bind9 yet. Adding it
+        /usr/bin/sudo -H -i -u "${vmUser}" bash -c "ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} \"/usr/bin/sudo sed -i '/\*.*IN.*A.*${kxMainIp}/ i $(hostname)    IN      A      ${nodeIp}' /etc/bind/db.${baseDomain}\""
+
+            # Return false to ensure re-check of DNS entry
+            false
+            return
+    fi
+}
+
+for i in {1..5}
+do
+
+    if addIpToBind9DnsServer; then
+        echo "Looks like the entry was added successfully"
+        break
+    else
+    # Try again
+        echo "Looks like the entry for this node has not yet been added (or not yet added correctly). Adding it, or renewing if entry was not valid"
+    fi
+
+done
+
+
 if [[ "${nodeRole}" == "kx-main" ]]; then
   /usr/bin/sudo -H -i -u "${vmUser}" bash -c "ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} \"/usr/bin/sudo sed -i '/\*.*IN.*A.*${kxMainIp}/ i api-internal    IN      A      ${nodeIp}' /etc/bind/db.${baseDomain}\""
   host=$(hostname); export hostNum=${host: -1}
@@ -626,14 +693,18 @@ done
 # Final check on the status of Calico
 if [[ -n ${calicoNodeReady} ]]; then
   echo "Calico node pod is ready and running on this node"
+  if [[ -f /usr/share/kx.as.code/workspace/forced_reboot_flag ]]; then
+    echo "$(date '+%Y-%m-%d_%H%M%S') Reboot done. Looks like that did the trick and we're in business" | sudo -a tee /usr/share/kx.as.code/workspace/forced_reboot_flag
+  fi
 else
   if [[ ! -f /usr/share/kx.as.code/workspace/forced_reboot_flag ]]; then
     echo "Calico node pod is not ready yet, even after 15 checks in 10 minutes. Going to try a reboot, after that it's time for some debugging"
-    echo "forced_restart_launched. If you see this file, then possibly the setup of calico failed on this node, resulting in 1 reboot to remove the block" | sudo tee /usr/share/kx.as.code/workspace/forced_reboot_flag
+    echo "$(date '+%Y-%m-%d_%H%M%S') forced_restart_launched. If you see this file, then possibly the setup of calico failed on this node, resulting in 1 reboot to remove the block" | sudo tee /usr/share/kx.as.code/workspace/forced_reboot_flag
     reboot
   else
     echo "Calico node pod is not ready yet, even after 15 checks in 10 minutes. Already tried a reboot, it's time for some debugging"
     echo "Disabled the \"k8s-register-node\" service, to avoid an infinite reboot loop. You can re-enable and launch it again once you have fixed the issue"
+    echo "$(date '+%Y-%m-%d_%H%M%S') Reboot did not resolve the issue. Further debugging needed" | sudo tee -a /usr/share/kx.as.code/workspace/forced_reboot_flag
     /usr/bin/sudo systemctl disable k8s-register-node.service
     exit 1
   fi

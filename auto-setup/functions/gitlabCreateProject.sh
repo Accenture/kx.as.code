@@ -1,6 +1,9 @@
 createGitlabProject() {
 
-  if [[ $(checkApplicationInstalled "gitlab" "cicd") ]]; then
+  # Call common function to execute common function start commands, such as setting verbose output etc
+  functionStart
+
+  if checkApplicationInstalled "gitlab" "cicd"; then
 
     # Get Gitlab personal access token
     export personalAccessToken=$(getPassword "gitlab-personal-access-token" "gitlab")
@@ -37,5 +40,8 @@ createGitlabProject() {
     fi
 
   fi
-  
+
+  # Call common function to execute common function start commands, such as unsetting verbose output etc
+  functionEnd
+
 }

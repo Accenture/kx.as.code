@@ -117,7 +117,7 @@ shortcutsDirectory="/home/${vmUser}/Desktop"
 primaryUrl="http://localhost:3000"
 shortcutText="KX.AS.CODE Portal"
 iconPath="${installComponentDirectory}/$(cat ${componentMetadataJson} | jq -r '.shortcut_icon')"
-browserOptions=""
+browserOptions="--new-window --app=http://localhost:3000"
 createDesktopIcon "${shortcutsDirectory}" "${primaryUrl}" "${shortcutText}" "${iconPath}" "${browserOptions}"
 
 # Copy desktop icons to skel directory for future users

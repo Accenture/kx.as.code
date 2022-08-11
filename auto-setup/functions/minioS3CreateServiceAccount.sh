@@ -1,6 +1,9 @@
 minioS3CreateServiceAccount() {
 
-    if [[ $(checkApplicationInstalled "minio-operator" "storage") ]]; then
+    # Call common function to execute common function start commands, such as setting verbose output etc
+    functionStart
+
+    if checkApplicationInstalled "minio-operator" "storage"; then
 
         username=${1}
 
@@ -17,4 +20,7 @@ minioS3CreateServiceAccount() {
 
     fi
 
+    # Call common function to execute common function start commands, such as unsetting verbose output etc
+    functionEnd
+    
 }

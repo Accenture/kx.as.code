@@ -1,6 +1,9 @@
 minioS3CreateTenant() {
 
-    if [[ $(checkApplicationInstalled "minio-operator" "storage") ]]; then
+    # Call common function to execute common function start commands, such as setting verbose output etc
+    functionStart
+
+    if checkApplicationInstalled "minio-operator" "storage"; then
 
         tenant=${1}
         servers=${2-1}
@@ -24,4 +27,7 @@ minioS3CreateTenant() {
 
     fi
 
+    # Call common function to execute common function start commands, such as unsetting verbose output etc
+    functionEnd
+    
 }

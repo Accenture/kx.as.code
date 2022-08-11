@@ -1,6 +1,9 @@
 harborCreateRobotAccount() {
 
-    if [[ $(checkApplicationInstalled "harbor" "cicd") ]]; then
+    # Call common function to execute common function start commands, such as setting verbose output etc
+    functionStart
+
+    if checkApplicationInstalled "harbor" "cicd"; then
 
         harborProjectId=${1}
         harborRobotUser=${2}
@@ -43,4 +46,7 @@ harborCreateRobotAccount() {
 
     fi
 
+    # Call common function to execute common function start commands, such as unsetting verbose output etc
+    functionEnd
+    
 }

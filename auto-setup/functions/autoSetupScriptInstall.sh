@@ -1,5 +1,10 @@
 autoSetupScriptInstall() {
-  log_info "Established installation type is \"${installationType}\". Proceeding in that way"
+
+    # Call common function to execute common function start commands, such as setting verbose output etc
+    functionStart
+
+    log_info "Established installation type is \"${installationType}\". Proceeding in that way"
+
     # Get script list to execute
     scriptsToExecute=$(cat ${componentMetadataJson} | jq -r '.install_scripts[]?')
 
@@ -18,4 +23,8 @@ autoSetupScriptInstall() {
             return 1
         fi
     done
+
+    # Call common function to execute common function start commands, such as unsetting verbose output etc
+    functionEnd  
+
 }

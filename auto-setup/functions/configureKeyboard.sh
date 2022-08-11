@@ -1,5 +1,8 @@
 configureKeyboardSettings() {
 
+  # Call common function to execute common function start commands, such as setting verbose output etc
+  functionStart
+
   # Set default keyboard language
   keyboardLanguages=""
   availableLanguages="us de gb fr it es"
@@ -27,5 +30,8 @@ XKBOPTIONS=""
 
 BACKSPACE=\"guess\"
 ''' | /usr/bin/sudo tee /etc/default/keyboard
+
+# Call common function to execute common function start commands, such as unsetting verbose output etc
+functionEnd
 
 }

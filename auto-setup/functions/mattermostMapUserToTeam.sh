@@ -1,6 +1,9 @@
 mattermostMapUserToTeam() {
 
-    if [[ $(checkApplicationInstalled "mattermost" "collaboration") ]]; then
+    # Call common function to execute common function start commands, such as setting verbose output etc
+    functionStart
+
+    if checkApplicationInstalled "mattermost" "collaboration"; then
 
         mattermostUsername=${1}
         mattermostTeamName=${2}
@@ -29,4 +32,7 @@ mattermostMapUserToTeam() {
 
     fi
 
+    # Call common function to execute common function start commands, such as unsetting verbose output etc
+    functionEnd
+    
 }

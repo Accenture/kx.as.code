@@ -1,6 +1,9 @@
 populateGitlabProject() {
 
-  if [[ $(checkApplicationInstalled "gitlab" "cicd") ]]; then
+  # Call common function to execute common function start commands, such as setting verbose output etc
+  functionStart
+
+  if checkApplicationInstalled "gitlab" "cicd"; then
 
     gitlabProjectName="${1}"
     gitlabRepoName="${2}"
@@ -60,4 +63,7 @@ populateGitlabProject() {
 
   fi
 
+    # Call common function to execute common function start commands, such as unsetting verbose output etc
+    functionEnd
+    
 }

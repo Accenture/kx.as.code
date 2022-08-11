@@ -1,6 +1,9 @@
 mattermostCreateUser() {
 
-    if [[ $(checkApplicationInstalled "mattermost" "collaboration") ]]; then
+    # Call common function to execute common function start commands, such as setting verbose output etc
+    functionStart
+
+    if checkApplicationInstalled "mattermost" "collaboration"; then
 
         mattermostUser=${1}
 
@@ -24,4 +27,7 @@ mattermostCreateUser() {
 
     fi
 
+    # Call common function to execute common function start commands, such as unsetting verbose output etc
+    functionEnd
+    
 }

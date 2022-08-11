@@ -1,5 +1,8 @@
 getComponentInstallationProperties() {
 
+  # Call common function to execute common function start commands, such as setting verbose output etc
+  functionStart
+
   # Define component install directory
   export installComponentDirectory=${autoSetupHome}/${componentInstallationFolder}/${componentName}
 
@@ -33,4 +36,7 @@ getComponentInstallationProperties() {
     log_info "No environment variables defined for ${componentName}"
   fi
 
+  # Call common function to execute common function start commands, such as unsetting verbose output etc
+  functionEnd
+  
 }

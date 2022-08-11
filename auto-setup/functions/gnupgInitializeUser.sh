@@ -1,5 +1,8 @@
 gnupgInitializeUser() {
 
+# Call common function to execute common function start commands, such as setting verbose output etc
+functionStart
+
 userToInitialize=${1}
 userPassword=${2}
 
@@ -118,5 +121,8 @@ password=$(getPassword "${userToInitialize}-user-password" "users")
 log_info "Retrieved password: ${password}"
 
 fi
+
+# Call common function to execute common function start commands, such as unsetting verbose output etc
+functionEnd
 
 }

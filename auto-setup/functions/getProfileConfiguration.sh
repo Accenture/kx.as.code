@@ -1,5 +1,8 @@
 getProfileConfiguration() {
 
+  # Call common function to execute common function start commands, such as setting verbose output etc
+  functionStart
+
   # Get configs from profile-config.json
   export virtualizationType=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.virtualizationType')
   export standaloneMode=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.standaloneMode')
@@ -77,4 +80,7 @@ getProfileConfiguration() {
   export s3ObjectStoreDomain="$(cat ${autoSetupHome}/${defaultS3ObjectStorePath}/metadata.json | jq -r '.name').${baseDomain}"
   export s3ObjectStoreUrl="https://${s3ObjectStoreDomain}"
 
+  # Call common function to execute common function start commands, such as unsetting verbose output etc
+  functionEnd
+  
 }

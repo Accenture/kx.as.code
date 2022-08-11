@@ -1,5 +1,8 @@
 configureNetwork() {
 
+# Call common function to execute common function start commands, such as setting verbose output etc
+functionStart
+
 if [[ ! -f ${sharedKxHome}/.config/network_status ]]; then
 
     # Change DNS resolution to allow wildcards for resolving locally deployed K8s services
@@ -169,4 +172,8 @@ else
   log_info "All good. No NICs to update with \"ipv4.ignore-auto-dns yes\""
 fi
 IFS=$OLD_IFS
+
+# Call common function to execute common function start commands, such as unsetting verbose output etc
+functionEnd
+
 }

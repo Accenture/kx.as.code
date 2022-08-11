@@ -1,6 +1,9 @@
 gitlabMapUserToGroup() {
 
-    if [[ $(checkApplicationInstalled "gitlab" "cicd") ]]; then
+    # Call common function to execute common function start commands, such as setting verbose output etc
+    functionStart
+
+    if checkApplicationInstalled "gitlab" "cicd"; then
 
         gitlabUserName=${1}
         gitlabGroupName=${2}
@@ -35,4 +38,7 @@ gitlabMapUserToGroup() {
 
     fi
 
+    # Call common function to execute common function start commands, such as unsetting verbose output etc
+    functionEnd
+    
 }

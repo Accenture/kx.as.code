@@ -1,4 +1,8 @@
 autoSetupPreInstallSteps() {
+
+  # Call common function to execute common function start commands, such as setting verbose output etc
+  functionStart
+
   componentPreInstallScripts=$(cat ${componentMetadataJson} | jq -r '.pre_install_scripts[]?')
   # Loop round pre-install scripts
   for script in ${componentPreInstallScripts}; do
@@ -14,4 +18,8 @@ autoSetupPreInstallSteps() {
       fi
     fi
   done
+
+  # Call common function to execute common function start commands, such as unsetting verbose output etc
+  functionEnd
+   
 }

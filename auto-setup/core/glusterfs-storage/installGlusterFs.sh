@@ -68,20 +68,14 @@ log_debug "Initializing kadalu storage pool with - kubectl kadalu storage-add st
 # Wait for Kubernetest statefulset to become available
 waitForKubernetesResource "server-storage-pool-1-0" "statefulset" "kadalu"
 
-# Edit default statefulset to allow it to be schedule on master kx-main1, despite the node taint
-kubectl get statefulset server-storage-pool-1-0 -n kadalu -o yaml | /usr/bin/sudo tee ${installationWorkspace}/kadalu-server-storage-pool-statefulset.yaml
+# Edit default statefulset to allow it to be scheduled on master kx-main1, despite the node taint (needed due to the new control-plane node taint)
+kubectl get statefulset server-storage-pool-1-0 -n kadalu -o=json | \
+  jq 'del(.metadata.resourceVersion,.metadata.uid,.metadata.selfLink,.metadata.creationTimestamp,.metadata.annotations,.metadata.generation,.metadata.ownerReferences,.status)' | \
+  jq '.spec.template.spec.tolerations |= (. + [{"effect": "NoSchedule","key": "node-role.kubernetes.io/control-plane","operator": "Exists"}] | unique)' | \
+  yq eval . --prettyPrint | /usr/bin/sudo tee ${installationWorkspace}/kadalu-server-storage-pool-statefulset.yaml
+
 if [[ -f ${installationWorkspace}/kadalu-server-storage-pool-statefulset.yaml ]]; then
-
-  # Modify exported stefulset YAML to add tolerations for master and control-plane roles
-  /usr/bin/sudo sed -i -e '/^                values:/{:a; N; /\n                - kx-main1/!ba; a \      tolerations:\n        - key: node-role.kubernetes.io/master\n          operator: Exists\n          effect: NoSchedule\n        - key: node-role.kubernetes.io/control-plane\n          operator: Exists\n          effect: NoSchedule' -e '}' ${installationWorkspace}/kadalu-server-storage-pool-statefulset.yaml
-
-  # Cleaup YAML to remove previous versioning annotations 
-  /usr/bin/sudo sed -i '/creationTimestamp:/d' kadalu-server-storage-pool-statefulset.yaml
-  /usr/bin/sudo sed -i '/resourceVersion:/d' kadalu-server-storage-pool-statefulset.yaml
-  /usr/bin/sudo sed -i '/selfLink:/d' kadalu-server-storage-pool-statefulset.yaml
-  /usr/bin/sudo sed -i '/uid:/d' kadalu-server-storage-pool-statefulset.yaml
-
-  # Validate and apply the updated config-map
+  # Validate and apply the updated statefulset yaml
   kubernetesApplyYamlFile "${installationWorkspace}/kadalu-server-storage-pool-statefulset.yaml" "kadalu"
 else
   log_error "${installationWorkspace}/kadalu-server-storage-pool-statefulset.yaml does not exist after exporting statefulset with kubectl"

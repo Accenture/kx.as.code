@@ -1,8 +1,11 @@
 enableKeycloakSSOForSolution() {
 
+    # Call common function to execute common function start commands, such as setting verbose output etc
+    functionStart
+
     # Function to take care of all the steps needed to create a Keycloak client for the solution
 
-    if [[ $(checkApplicationInstalled "keycloak" "core") ]]; then
+    if checkApplicationInstalled "keycloak" "core"; then
 
         # Assign incoming parameters to variables
         redirectUris=${1}
@@ -32,5 +35,8 @@ enableKeycloakSSOForSolution() {
         createKeycloakProtocolMapper "${clientId}" "${fullPath}"
 
     fi
+
+    # Call common function to execute common function start commands, such as unsetting verbose output etc
+    functionEnd
 
 }

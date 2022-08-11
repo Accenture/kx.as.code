@@ -1,4 +1,8 @@
 autoSetupHelmInstall() {
+
+  # Call common function to execute common function start commands, such as setting verbose output etc
+  functionStart
+  
   log_debug "Established installation type is \"${installationType}\". Proceeding in that way"
   # Get helm parameters
   helm_params=$(cat ${componentMetadataJson} | jq -r '.'${installationType}'_params')
@@ -64,4 +68,8 @@ autoSetupHelmInstall() {
     log_error "Execution of Helm command \"${helmCommmand}\" ended in a non zero return code ($rc)"
     return ${rc}
   fi
+
+  # Call common function to execute common function start commands, such as unsetting verbose output etc
+  functionEnd
+  
 }
