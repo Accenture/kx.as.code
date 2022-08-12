@@ -16,40 +16,9 @@
         "monitoring",
         "metrics"
     ],
-    "urls": [
-        {
-            "url": "",
-            "healthchecks": {
-                "liveliness": {
-                    "http_path": "/",
-                    "http_auth_required": false,
-                    "expected_http_response_code": "",
-                    "expected_http_response_string": "",
-                    "expected_json_response": {
-                        "json_path": "",
-                        "json_value": ""
-                    },
-                    "health_shell_check_command": "",
-                    "expected_shell_check_command_response": ""
-                },
-                "readiness": {
-                    "http_path": "/",
-                    "http_auth_required": false,
-                    "expected_http_response_code": "",
-                    "expected_http_response_string": "",
-                    "expected_json_response": {
-                        "json_path": "",
-                        "json_value": ""
-                    },
-                    "health_shell_check_command": "",
-                    "expected_shell_check_command_response": ""
-                }
-            }
-        }
-    ],
     "Description": "Metricbeat Description",
     "shortcut_text": "",
-    "shortcut_icon": "",
+    "shortcut_icon": "metricbeat.png",
     "pre_install_scripts": [],
     "post_install_scripts": []
 }
