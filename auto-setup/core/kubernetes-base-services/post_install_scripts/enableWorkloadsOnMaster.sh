@@ -10,7 +10,7 @@ if [[ ${allowWorkloadsOnMaster} == "true"   ]]; then
     if [[ -n ${controlPlaneNodeTaints} ]]; then
       kubectl taint nodes --selector=node-role.kubernetes.io/control-plane node-role.kubernetes.io/control-plane=:NoSchedule- --overwrite=true
     fi
-    masterNodeTaints=$(sudo kubectl get nodes --selector=node-role.kubernetes.io/master -o json | jq '.items[]?.spec.taints | select(.[]?.key=="node-role.kubernetes.io/master")')
+    masterNodeTaints=$(sudo kubectl get nodes --selector=node-role.kubernetes.io/control-plane -o json | jq '.items[]?.spec.taints | select(.[]?.key=="node-role.kubernetes.io/master")')
     if [[ -n ${masterNodeTaints} ]]; then
       kubectl taint nodes --selector=node-role.kubernetes.io/control-plane node-role.kubernetes.io/master=:NoSchedule- --overwrite=true
     fi
