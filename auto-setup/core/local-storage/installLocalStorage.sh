@@ -3,6 +3,7 @@ set -euox pipefail
 
 partitionExists=""
 localStorageDrive=""
+localStorageDrive_Partition=""
 
 # Install nvme-cli if running on host with NVMe block devices (for example on AWS with EBS)
 /usr/bin/sudo lsblk -i -o kname,mountpoint,fstype,size,maj:min,name,state,rm,rota,ro,type,label,model,serial
@@ -37,7 +38,7 @@ if [[ -z ${localVolumesDiskName} ]] || [[ "${localVolumesDiskName}" == "null" ]]
   if [[ -f /usr/share/kx.as.code/.config/localStorageDrive ]]; then
     localStorageDrive=$(cat /usr/share/kx.as.code/.config/localStorageDrive)
   else
-    localStorageDrive=$(lsblk -o NAME,FSTYPE,SIZE -dsn -J | jq -r '.[] | .[] | select(.fstype==null) | select(.size=="'${localKubeVolumesDiskSize}'G") | .name' || true)
+    localStorageDrive=$(lsblk -J | jq -r '.blockdevices[] | select(.size=="'${localKubeVolumesDiskSize}'G") | .name')
     echo "${localStorageDrive}" | /usr/bin/sudo tee /usr/share/kx.as.code/.config/localStorageDrive
   fi
   partitionExists=$(lsblk -o NAME,FSTYPE,SIZE -J | jq -r '.blockdevices[] | select(.name=="'${localStorageDrive}'") | .children[]? | select(.name=="'${localStorageDrive}'1") | .name')
@@ -67,6 +68,8 @@ if [[ "${partitionExists}" != "${localStorageDrive}1" ]]; then
       fi
     done
   fi
+else
+  localStorageDrive_Partition=$(lsblk -o NAME,FSTYPE,SIZE -J | jq -r '.[] | .[]  | select(.name=="'${localStorageDrive}'") | .children[]?.name')
 fi
 
 # Create physical volume if it does not exist
