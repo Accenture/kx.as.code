@@ -6,6 +6,10 @@
       {
         "install_folder": "cicd",
         "name": "teamcity"
+      },
+      {
+        "install_folder": "collaboration",
+        "name": "mattermost"
       }
     ]
   }
