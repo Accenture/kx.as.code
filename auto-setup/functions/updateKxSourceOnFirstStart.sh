@@ -21,7 +21,7 @@ updateKxSourceOnFirstStart() {
    git --no-pager diff ${currentGitBranch} origin/${currentGitBranch} | /usr/bin/sudo tee ${installationWorkspace}/gitChangeLogDetailed.log
 
    # Generate summary change log
-   git --no-pager diff ${currentGitBranch} origin/${currentGitBranch} --name-status | /usr/bin/sudo tee ${installationWorkspace}/gitChangeLogDetailed.log
+   git --no-pager diff ${currentGitBranch} origin/${currentGitBranch} --name-status | /usr/bin/sudo tee ${installationWorkspace}/gitChangeLogSummary.log
 
    # Pull latest code from current branch. If you want to switch to another branch, you will have to navigate to the git directory and do it manually
    /usr/bin/sudo git pull --no-edit ${currentGitBranch}
