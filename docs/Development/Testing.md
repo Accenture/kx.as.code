@@ -4,9 +4,9 @@ To ensure that the platform works across all the supported virtualization platfo
 
 |Virtualization|Host Operating System|Startup Mode|Orchestrator|Installation Groups|
 |----|----|----|----|----|
-|Parallels|MacOS Monterey|Minimal|K3s|CICD Group 3, Monitoring Group 3, Security Group 2|
+|Parallels|MacOS Monterey|Minimal|K3s|CICD Group 3, Monitoring Group 2, Security Group 1|
 |VirtualBox|Windows 11|Normal|K8s|CICD Group 1, Security Group 2, QA Group, Monitoring Group 1|
-|VMWare Workstation|Debian Linux 11|Lite|K8s|Monitoring Group 1, CICD Group 2, Cloud Storage Group|
+|VMWare Workstation|Debian Linux 11|Lite|K8s|Monitoring Group 3, CICD Group 2, Cloud Storage Group|
 
 The matrix above ensures we hit as many combinations as possible.
 
