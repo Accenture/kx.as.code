@@ -1,0 +1,22 @@
+name: Changelog
+on:
+  release:
+    types:
+      - created
+jobs:
+  changelog:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: "✏️ Generate release changelog"
+        uses: heinrichreimer/github-changelog-generator-action@v2.3
+        with:
+          token: ${{ secrets.GH_TOKEN }}
+          output: CHANGELOG.md
+          headerLabel: "# 📑 Changelog"
+          breakingLabel: '### 💥 Breaking'
+          enhancementLabel: '### 🚀 Enhancements'
+          bugsLabel: '### 🐛 Bug fixes'
+          stripGeneratorNotice: true
+          issues: true
+          sinceTag: ${{ github.event.release.tag_name }}
+          
