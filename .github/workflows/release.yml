@@ -10,17 +10,24 @@ jobs:
         with:
           token: ${{ secrets.GH_TOKEN }}
           output: CHANGELOG.md
+          base: HISTORY.md
           headerLabel: "# 📑 Changelog"
-          breakingLabel: '### 💥 Breaking'
-          enhancementLabel: '### 🚀 Enhancements'
-          bugsLabel: '### 🐛 Bug fixes'
+          breakingLabel: '### Breaking'
+          enhancementLabel: '### Enhancements'
+          bugsLabel: '### Bug fixes'
           stripGeneratorNotice: true
+          release-url: https://github.com/Accenture/kx.as.code/releases/tag/v0.8.9
           sinceTag: v0.8.6
       - name: Archive-CHANGELOG.md
         uses: actions/upload-artifact@v3
         with:
           name: CHANGELOG.md
-          path: ./CHANGELOG.md   
+          path: ./CHANGELOG.md  
+      - name: Archive-HISTORY.md
+        uses: actions/upload-artifact@v3
+        with:
+          name: HISTORY.md
+          path: ./HISTORY.md  
       - name: Get CHANGELOG
         id: vars
         run: |
@@ -35,4 +42,4 @@ jobs:
           DISCORD_WEBHOOK: ${{ secrets.WEBHOOK_URL }}
         uses: Ilshidur/action-discord@master
         with:
-          args: "${{ steps.vars.outputs.changelog }}"
+          args: "${{ steps.vars.outputs.changelog }}\n"
