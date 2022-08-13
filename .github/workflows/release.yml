@@ -29,7 +29,6 @@ jobs:
       - name: Send CHANGELOG to Discord
         env:
           DISCORD_WEBHOOK: ${{ secrets.WEBHOOK_URL }}
-          DISCORD_MULTILINE: 1
         uses: Ilshidur/action-discord@master
         with:
-          args: "${{ steps.vars.outputs.changelog }}"
+          args: "🚀 bla bla.\n🚀 bla bla. ${{ steps.vars.outputs.changelog }}"
