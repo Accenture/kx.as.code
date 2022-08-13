@@ -52,6 +52,7 @@ nav:
         - 'Development/Provisioning-with-Helm.md'
         - 'Development/Provisioning-with-Kustomize.md'
         - 'Development/Provisioning-with-Scripts.md'
+        - 'Development/Releasing.md'
         - 'Development/Solution-Metadata.md'
         - 'Development/Testing.md'
         - 'Development/Troubleshootings.md'
