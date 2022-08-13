@@ -191,3 +191,10 @@ EOF
     /usr/bin/sudo -H -i -u ${baseUser} sh -c "certutil -L -d sql:/home/${baseUser}/.pki/nssdb"
 
 fi
+
+# Check if "externalAccessDirectory" directory exists and create if not
+createExternalAccessDirectory
+
+# Make certificates available to end user for accessing URLs outside of the VM
+/usr/bin/sudo cp -f ${certificatesWorkspace}/kx_root_ca.pem ${externalAccessDirectory}/kx-root-ca.crt
+/usr/bin/sudo cp -f ${certificatesWorkspace}/kx_intermediate_ca.pem ${externalAccessDirectory}/kx-intermediate-ca.crt

@@ -22,40 +22,9 @@
       "monitoring",
       "datastore"
   ],
-  "urls": [
-      {
-          "url": "",
-          "healthchecks": {
-              "liveliness": {
-                  "http_path": "/",
-                  "http_auth_required": false,
-                  "expected_http_response_code": "",
-                  "expected_http_response_string": "",
-                  "expected_json_response": {
-                      "json_path": "",
-                      "json_value": ""
-                  },
-                  "health_shell_check_command": "",
-                  "expected_shell_check_command_response": ""
-              },
-              "readiness": {
-                  "http_path": "/",
-                  "http_auth_required": false,
-                  "expected_http_response_code": "",
-                  "expected_http_response_string": "",
-                  "expected_json_response": {
-                      "json_path": "",
-                      "json_value": ""
-                  },
-                  "health_shell_check_command": "",
-                  "expected_shell_check_command_response": ""
-              }
-          }
-      }
-  ],
   "Description": "Loki Description",
   "shortcut_text": "",
-  "shortcut_icon": "",
+  "shortcut_icon": "grafana-loki.png",
   "pre_install_scripts": [
     "getGrafanaAccessKey.sh"
   ],

@@ -36,6 +36,7 @@
         },
         "sslProvider": "self-signed",
         "standaloneMode": "false",
+        "startupMode": "normal",
         "staticNetworkSetup": {
             "baseFixedIpAddresses": {
                 "kx-main1": "10.4.76.10",
@@ -50,6 +51,7 @@
             "dns2": "8.8.8.8",
             "gateway": "10.4.76.1"
         },
-        "virtualizationType": "none"
+        "virtualizationType": "none",
+        "updateSourceOnStart": "true"
     }
 }

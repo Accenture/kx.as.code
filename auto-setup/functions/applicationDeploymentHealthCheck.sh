@@ -70,6 +70,9 @@ applicationDeploymentHealthCheck() {
       fi
   done
 
+  # Update hosts file so that a user can use domain names outside of the VM to access the provisioned applications/urls
+  updateHostFileForExternalUse
+
   # Call common function to execute common function start commands, such as unsetting verbose output etc
   functionEnd
   

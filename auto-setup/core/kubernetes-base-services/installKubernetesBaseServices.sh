@@ -53,7 +53,7 @@ EOF
         # Call function to check Kubernetes Health
         kubernetesHealthCheck 
         
-        export KUBE_CONFIG_FILE=/etc/kubernetes/admin.conf
+        export kubeConfigFile=/etc/kubernetes/admin.conf
     else
         log_info "Profile set to use K3s. Proceeding to launch the K3s install script"
         mkdir -p /root/.kube
@@ -69,26 +69,30 @@ EOF
         # Remove "default" tag on K3s "local-path" storage class, as this will be set to "local-storage" later
         kubectl patch storageclass local-path -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"false"}}}'
 
-        export KUBE_CONFIG_FILE=/etc/rancher/k3s/k3s.yaml
+        export kubeConfigFile=/etc/rancher/k3s/k3s.yaml
     fi
 
     # Setup KX and root users as Kubernetes Admin
     mkdir -p /root/.kube
-    cp -f ${KUBE_CONFIG_FILE} /root/.kube/config
+    cp -f ${kubeConfigFile} /root/.kube/config
     /usr/bin/sudo -H -i -u ${baseUser} sh -c "mkdir -p /home/${baseUser}/.kube"
-    /usr/bin/sudo cp -f ${KUBE_CONFIG_FILE} /home/${baseUser}/.kube/config
-    echo "export KUBECONFIG=/home/${baseUser}/.kube/config" | /usr/bin/sudo tee -a /home/${baseUser}/.bashrc /home/${baseUser}/.zshrc
+    /usr/bin/sudo cp -f ${kubeConfigFile} /home/${baseUser}/.kube/config
+    if [[ -z $(cat /home/${baseUser}/.bashrc | grep KUBECONFIG) ]]; then
+        echo "export KUBECONFIG=/home/${baseUser}/.kube/config" | /usr/bin/sudo tee -a /home/${baseUser}/.bashrc /home/${baseUser}/.zshrc
+    fi
+    if [[ -z $(cat /home/${baseUser}/.oh-my-zsh/plugins/kubectl/kubectl.plugin.zsh | grep KUBECONFIG) ]]; then
+        sed -i '1s;^;export KUBECONFIG=/home/'${baseUser}'/.kube/config\n;' /home/${baseUser}/.oh-my-zsh/plugins/kubectl/kubectl.plugin.zsh
+    fi
     /usr/bin/sudo chown $(id -u ${baseUser}):$(id -g ${baseUser}) /home/${baseUser}/.kube/config
     # Add kube config to skel directory for future users
     /usr/bin/sudo mkdir -p /usr/share/kx.as.code/skel/.kube
-    /usr/bin/sudo cp -f ${KUBE_CONFIG_FILE} /usr/share/kx.as.code/skel/.kube/config
+    /usr/bin/sudo cp -f ${kubeConfigFile} /usr/share/kx.as.code/skel/.kube/config
     sed -n -i '/users:/q;p' /usr/share/kx.as.code/skel/.kube/config
     if [[ "${vmUser}" != "${baseUser}" ]] && [[ -d /home/${vmUser} ]]; then
         /usr/bin/sudo mkdir -p /home/${vmUser}/.kube
-        /usr/bin/sudo cp -f ${KUBE_CONFIG_FILE} /home/${vmUser}/.kube/config
+        /usr/bin/sudo cp -f ${kubeConfigFile} /home/${vmUser}/.kube/config
         /usr/bin/sudo chown $(id -u ${vmUser}):$(id -g ${vmUser}) /home/${vmUser}/.kube/config
     fi
-
 else
     log_info "Kubernetes cluster is already initialized. Skipping"
 fi

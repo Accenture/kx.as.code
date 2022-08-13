@@ -128,6 +128,8 @@ enforcer:
   tolerations:
     - effect: NoSchedule
       key: node-role.kubernetes.io/master
+    - effect: NoSchedule
+      key: node-role.kubernetes.io/control-plane
   resources: {}
     # limits:
     #   cpu: 400m
@@ -233,7 +235,7 @@ resources: {}
   #   memory: 2280Mi
 
 k3s:
-  enabled: false
+  enabled: {{K3S_TOGGLE}}
   runtimePath: /run/k3s/containerd/containerd.sock
 
 bottlerocket:
@@ -241,7 +243,7 @@ bottlerocket:
   runtimePath: /run/dockershim.sock
 
 containerd:
-  enabled: true
+  enabled: {{K8S_TOGGLE}}
   path: /run/containerd/containerd.sock
 
 crio:

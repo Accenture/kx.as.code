@@ -51,7 +51,8 @@
     "shortcut_icon": "neuvector.png",
     "pre_install_scripts": [
         "create_certs_secret.sh",
-        "create_service_account.sh"
+        "create_service_account.sh",
+        "toggle_kube_orchestrator.sh"
     ],
     "post_install_scripts": []
 }

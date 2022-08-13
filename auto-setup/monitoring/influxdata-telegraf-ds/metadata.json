@@ -18,7 +18,7 @@
     ],
     "Description": "Influxdata Telegraf Description",
     "shortcut_text": "Influxdata Telegraf",
-    "shortcut_icon": "",
+    "shortcut_icon": "telegraf-ds.png",
     "pre_install_scripts": [
         "getAuthToken.sh"
     ],

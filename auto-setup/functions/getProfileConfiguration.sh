@@ -9,6 +9,7 @@ getProfileConfiguration() {
   export baseIpType=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.baseIpType')
   export dnsResolution=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.dnsResolution')
   export kubeOrchestrator=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.kubeOrchestrator')
+  export updateSourceOnStart=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.updateSourceOnStart')
   
   if [[ ${baseIpType} == "static"   ]]; then
       # Get fixed IPs if defined

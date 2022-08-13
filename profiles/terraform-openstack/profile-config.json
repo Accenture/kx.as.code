@@ -34,6 +34,8 @@
             "fifty_gb": 0
         },
         "virtualizationType": "private-cloud",
+        "updateSourceOnStart": "true",
+        "startupMode": "normal",
         "environmentPrefix": "demo1",
         "glusterFsDiskSize": "200",
         "kubeOrchestrator": "k8s",

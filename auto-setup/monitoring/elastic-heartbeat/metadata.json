@@ -11,7 +11,7 @@
     ],
     "Description": "Heartbeat Description",
     "shortcut_text": "",
-    "shortcut_icon": "",
+    "shortcut_icon": "heartbeat.png",
     "install_scripts": [
         "installHeartbeat.sh"
     ],

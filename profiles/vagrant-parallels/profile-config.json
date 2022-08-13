@@ -38,6 +38,7 @@
         "sslProvider": "self-signed",
         "standaloneMode": "true",
         "startupMode": "normal",
+        "updateSourceOnStart": "true",
         "virtualizationType": "local",
         "vm_properties": {
             "3d_acceleration": "off",

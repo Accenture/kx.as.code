@@ -28,9 +28,8 @@ if [[ -z ${glusterFsDiskName} ]] || [[ "${glusterFsDiskName}" == "null" ]]; then
   if [[ -f /usr/share/kx.as.code/.config/glusterFsDrive ]]; then
     glusterFsDrive=$(cat /usr/share/kx.as.code/.config/glusterFsDrive)
   else
-    glusterFsDrive=$(lsblk -o NAME,FSTYPE,SIZE -dsn -J | jq -r '.[] | .[] | select(.fstype==null) | select(.size=="'$((${glusterFsDiskSize}+1))'G") | .name' || true)
-    echo "${glusterFsDrive}" | /usr/bin/sudo tee /usr/share/kx.as.code/.config/localStorageDrive
-
+    glusterFsDrive=$(lsblk -J | jq -r '.blockdevices[] | select(.size=="'$((${glusterFsDiskSize}+1))'G") | .name')
+    echo "${glusterFsDrive}" | /usr/bin/sudo tee /usr/share/kx.as.code/.config/glusterFsDrive
   fi
   partitionExists=$(lsblk -o NAME,FSTYPE,SIZE -J | jq -r '.blockdevices[] | select(.name=="'${glusterFsDrive}'") | .children[]? | select(.name=="'${glusterFsDrive}'1") | .name')
 else
@@ -71,7 +70,7 @@ waitForKubernetesResource "server-storage-pool-1-0" "statefulset" "kadalu"
 # Edit default statefulset to allow it to be scheduled on master kx-main1, despite the node taint (needed due to the new control-plane node taint)
 kubectl get statefulset server-storage-pool-1-0 -n kadalu -o=json | \
   jq 'del(.metadata.resourceVersion,.metadata.uid,.metadata.selfLink,.metadata.creationTimestamp,.metadata.annotations,.metadata.generation,.metadata.ownerReferences,.status)' | \
-  jq '.spec.template.spec.tolerations |= (. + [{"effect": "NoSchedule","key": "node-role.kubernetes.io/control-plane","operator": "Exists"}] | unique)' | \
+  jq '.spec.template.spec.tolerations |= (. + [{"effect": "NoSchedule","key": "node-role.kubernetes.io/control-plane","operator": "Exists"},{"effect": "NoSchedule","key": "node-role.kubernetes.io/master","operator": "Exists"}] | unique)' | \
   yq eval . --prettyPrint | /usr/bin/sudo tee ${installationWorkspace}/kadalu-server-storage-pool-statefulset.yaml
 
 if [[ -f ${installationWorkspace}/kadalu-server-storage-pool-statefulset.yaml ]]; then
