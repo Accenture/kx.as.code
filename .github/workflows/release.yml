@@ -22,21 +22,27 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: CHANGELOG.md
-          path: ./CHANGELOG.md  
-      - name: Archive-HISTORY.md
-        uses: actions/upload-artifact@v3
-        with:
-          name: HISTORY.md
-          path: ./HISTORY.md  
+          path: ./CHANGELOG.md   
       - name: Get CHANGELOG
         id: vars
         run: |
           set -x
           CHANGELOG=$(cat ./CHANGELOG.md | awk '/###/ {exit} {print}')
+          if [ ! -f ./HISTORY.md ]; then
+            touch ./HISTORY.md
+          fi
+          if [ -z $(cat ./HISTORY.md | grep "v0.8.9") ]; then
+            echo "$(cat ./CHANGELOG.md | tee -a ./HISTORY.md)
+          fi
           CHANGELOG="${CHANGELOG//'%'/'%25'}"
           CHANGELOG="${CHANGELOG//$'\n'/'%0A'}"
           CHANGELOG="${CHANGELOG//$'\r'/'%0D'}"
           echo ::set-output name=changelog::$(echo $CHANGELOG)
+      - name: Archive-HISTORY.md
+        uses: actions/upload-artifact@v3
+        with:
+          name: HISTORY.md
+          path: ./HISTORY.md
       - name: Send CHANGELOG to Discord
         env:
           DISCORD_WEBHOOK: ${{ secrets.WEBHOOK_URL }}
