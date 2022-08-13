@@ -15,8 +15,7 @@ jobs:
           enhancementLabel: '### 🚀 Enhancements'
           bugsLabel: '### 🐛 Bug fixes'
           stripGeneratorNotice: true
-          issues: true
-          sinceTag: v0.8.9
+          sinceTag: v0.8.6
       - name: Archive CHANGELOG.md
         uses: actions/upload-artifact@v3
         with:
