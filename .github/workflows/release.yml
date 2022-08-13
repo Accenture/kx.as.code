@@ -27,7 +27,9 @@ jobs:
           set -x
           echo ::set-output name=changelog::$(cat ./CHANGELOG.md | awk '/###/ {exit} {print}' | awk '{printf "%s\\n", $0}')
       - name: Send CHANGELOG to Discord
-        uses: tsickert/discord-webhook@v4.0.0
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.WEBHOOK_URL }}
+          DISCORD_MULTILINE: 1
+        uses: Ilshidur/action-discord@master
         with:
-          webhook-url: ${{ secrets.WEBHOOK_URL }}
-          content: ${{ steps.vars.outputs.changelog }}
+          args: '${{ steps.vars.outputs.changelog }}'
