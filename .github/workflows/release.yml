@@ -24,13 +24,9 @@ jobs:
   notify:
     runs-on: ubuntu-latest
     steps:
-    - name: Discord notification
-      uses: LeGitHubDeTai/github-to-discord@main
+    - name: Send CHANGELOG.md to discord channel
+      uses: sinshutu/upload-to-discord@master
       env:
-        DISCORD_WEBHOOK: ${{ secrets.WEBHOOK_URL }}
-        DISCORD_USERNAME: Patrick Delamere
-        DISCORD_AVATAR: https://raw.githubusercontent.com/LeGitHubDeTai/github-to-discord/main/icon.png
-        MESSAGE_TITLE: New Version
-        MESSAGE_DESCRIPTION: New Release Note!
-        MESSAGE_URL: https://github.com/Accenture/kx.as.code
-        MESSAGE_COLOR: 5814783
+        DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+      with:
+        args: ./CHANGELOG.md 
