@@ -18,7 +18,6 @@ nav:
         - 'Overview/Raising-a-Feature-Request.md'
         - 'Overview/Networking.md'
         - 'Overview/Orchestrators.md'
-        - 'Overview/Remote-Access.md'
         - 'Overview/Single-Sign-On-(SSO).md'
         - 'Overview/Storage.md'
     - 'Build':
@@ -30,6 +29,7 @@ nav:
     - 'Deployment':
         - 'Deployment/Configuration-Options.md'
         - 'Deployment/Deployment-Profiles.md'
+        - 'Deployment/External-Application-Access.md'
         - 'Deployment/Initial-Setup.md'
         - 'Deployment/Local-Virtualizations.md'
         - 'Deployment/Raspberry-Pi-Cluster.md'
