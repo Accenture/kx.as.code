@@ -27,7 +27,7 @@ jobs:
           SHORT_CHANGELOG=$(echo -e "$FULL_CHANGELOG" | awk '/\*\*/ {exit} {print}' | sed 's/#[^ ] *//g' | sed '/Changelog/d')
           echo -e "$FULL_CHANGELOG" | sudo tee ./CHANGELOG.md
           if [ ! -f ./HISTORY.md ]; then
-            echo -e "# History\n\nHistory is the past, the future is [here](https://accenture.github.io/kx.as.code/Overview/Future-Roadmap/)\n" | sudo tee ./HISTORY.md
+            echo -e "# History\n\nHistory is the past, the future is [here](https://accenture.github.io/kx.as.code/Overview/Future-Roadmap/)\n\n" | sudo tee ./HISTORY.md
           fi
           if [ -z $(cat ./HISTORY.md | grep "${RELEASE}") ]; then
             if [ -z $(cat ./HISTORY.md | grep "##") ]; then
