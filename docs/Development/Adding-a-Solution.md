@@ -61,7 +61,6 @@ Current available categories are as follows.
 
 Current possibilities are ArgoCD, [Helm](https://helm.sh/){:target="\_blank"} or purely Script based. In future we will look to also enable deployment with [Kustomize](https://kustomize.io/){:target="\_blank"}.
 
-
 ### Create the base directories.   
 ![](../assets/images/add_application_workflow1.png){: .zoom}
 
@@ -170,6 +169,9 @@ It is also possible to mix, and have both the JSON and the values file. As per `
 Notice in `metadata.json` the set environment variable `imageTag`, and how it is referenced in `values_template.yaml` as `{{imageTag}}`.
 The KX.AS.CODE framework will automatically substitute the placeholder in `values_template.yaml` with the variable in `metadata.json`.
 
+!!! info
+    For a full description on the configurable options in `metadata.json`, visit the [Solution Metadata](../../Development/Solution-Metadata/) page.
+
 ![](../assets/images/add_application_workflow11.png){: .zoom}
 ![](../assets/images/add_application_workflow16.png){: .zoom}
 
@@ -244,11 +246,12 @@ Someone from the core KX.AS.CODE development team will review your change and ei
 ![](../assets/images/add_application_workflow15.png){: .zoom}
 
 
-
-
-
-
 ## ArgoCD
+
+!!! info
+    More details to come
 
 ## Scripts
 
+!!! info
+    More details to come
