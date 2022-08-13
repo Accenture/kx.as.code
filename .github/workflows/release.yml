@@ -26,13 +26,13 @@ jobs:
         id: vars
         run: |
           set -x
-          CHANGELOG=$(cat ./CHANGELOG.md | awk '/###/ {exit} {print}')
+          CHANGELOG=$(cat ./CHANGELOG.md | awk '/\*\*/ {exit} {print}')
           if [ ! -f ./HISTORY.md ]; then
             echo "CHANGE HISTORY" ./HISTORY.md
             # History
             History is the past, the future is [here](https://accenture.github.io/kx.as.code/Overview/Future-Roadmap/)
           fi
-          if [ -z $(cat ./HISTORY.md | grep ${{ env.RELEASE }}") ]; then
+          if [ -z $(cat ./HISTORY.md | grep ${RELEASE}") ]; then
             cat ./CHANGELOG.md | tee -a ./HISTORY.md
           fi
           CHANGELOG="${CHANGELOG//'%'/'%25'}"
@@ -49,5 +49,5 @@ jobs:
           DISCORD_WEBHOOK: ${{ secrets.WEBHOOK_URL }}
         uses: Ilshidur/action-discord@master
         with:
-          args: "${{ steps.vars.outputs.changelog }}\n"
+          args: "${{ steps.vars.outputs.changelog }}"
 
