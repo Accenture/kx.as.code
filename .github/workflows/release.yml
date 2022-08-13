@@ -24,8 +24,8 @@ jobs:
       - name: Get CHANGELOG
         id: vars
         run: |
-          echo ::set-output name=changelog::$(cat ./CHANGELOG.md | sed '/\\*\\*/q' | sed '$d')
-          echo $(cat ./CHANGELOG.md | sed '/\\*\\*/q' | sed '$d')
+          changelogSummary=$(cat ./CHANGELOG.md | awk '/\*\*/ {exit} {print}'))
+          echo ::set-output name=changelog::$(echo $changelogSummary)
       - name: Send CHANGELOG to Discord
         uses: tsickert/discord-webhook@v4.0.0
         with:
