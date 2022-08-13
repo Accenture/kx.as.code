@@ -17,11 +17,6 @@ jobs:
           stripGeneratorNotice: true
           releaseUrl: https://github.com/Accenture/kx.as.code/releases/tag/${{ env.RELEASE }}
           sinceTag: ${{ env.SINCE_TAG }}
-      - name: Archive-CHANGELOG.md
-        uses: actions/upload-artifact@v3
-        with:
-          name: CHANGELOG.md
-          path: ./CHANGELOG.md   
       - name: Get CHANGELOG
         id: vars
         run: |
@@ -31,16 +26,21 @@ jobs:
           SHORT_CHANGELOG=$(echo $FULL_CHANGELOG | awk '/\*\*/ {exit} {print}' | sed 's/#[^ ] *//g')
           echo $FULL_CHANGELOG | sudo tee ./CHANGELOG.md
           if [ ! -f ./HISTORY.md ]; then
-            echo "# History\n\nHistory is the past, the future is [here](https://accenture.github.io/kx.as.code/Overview/Future-Roadmap/)\n\n"
+            echo "# History\n\nHistory is the past, the future is [here](https://accenture.github.io/kx.as.code/Overview/Future-Roadmap/)\n\n" | sudo tee ./HISTORY.md
           fi
           if [ -z $(cat ./HISTORY.md | grep "${RELEASE}") ]; then
-            echo "$HISTORY_CHANGELOG" | tee -a ./HISTORY.md
+            echo "$HISTORY_CHANGELOG" | sudo tee -a ./HISTORY.md
           fi
           SHORT_CHANGELOG="${SHORT_CHANGELOG//'%'/'%25'}"
           SHORT_CHANGELOG="${SHORT_CHANGELOG//$'\n'/'%0A'}"
           SHORT_CHANGELOG="${SHORT_CHANGELOG//$'\r'/'%0D'}"
           SHORT_CHANGELOG="${SHORT_CHANGELOG//$'\r'/'%0D'}"
           echo ::set-output name=changelog::$(echo $SHORT_CHANGELOG)
+      - name: Archive-CHANGELOG.md
+        uses: actions/upload-artifact@v3
+        with:
+          name: CHANGELOG.md
+          path: ./CHANGELOG.md
       - name: Archive-HISTORY.md
         uses: actions/upload-artifact@v3
         with:
@@ -52,4 +52,3 @@ jobs:
         uses: Ilshidur/action-discord@master
         with:
           args: "${{ steps.vars.outputs.changelog }}"
-
