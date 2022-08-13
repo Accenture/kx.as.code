@@ -10,7 +10,6 @@ jobs:
         with:
           token: ${{ secrets.GH_TOKEN }}
           output: CHANGELOG.md
-          base: HISTORY.md
           headerLabel: "# 📑 Changelog"
           breakingLabel: '### Breaking'
           enhancementLabel: '### Enhancements'
@@ -32,7 +31,7 @@ jobs:
             touch ./HISTORY.md
           fi
           if [ -z $(cat ./HISTORY.md | grep "v0.8.9") ]; then
-            echo "$(cat ./CHANGELOG.md | tee -a ./HISTORY.md)
+            cat ./CHANGELOG.md | tee -a ./HISTORY.md
           fi
           CHANGELOG="${CHANGELOG//'%'/'%25'}"
           CHANGELOG="${CHANGELOG//$'\n'/'%0A'}"
