@@ -47,6 +47,8 @@ For more information, see the code linked above, and visit [Guacamole's site](ht
 
 This service is used by Guacamole to serve up the VNC traffic remotely via VNC. It is not setup securely, so it is not recommended to use this connection, except for local installations of KX.AS.CODE, where in most cases, remote access will not be needed, because the local virtualization tools provide direct access to the desktop.
 
+To access the VNC desktop, you will need a VNC client. There are a few available, but here is one we have used in the past - [RealVNC Viewer](https://www.realvnc.com/en/connect/download/viewer/){:target="\_blank"}.
+
 Read more about TigerVNC [here](https://tigervnc.org/){:target="\_blank"}.
 
 ##### NoMachine
@@ -55,3 +57,4 @@ NoMachine has its own proprietary security transport protocol (read more [here](
 
 This is the recommended remote desktop solution, however, please note the free version has several restrictions - 1. no multi-user support, 2. requires a dedicated client to be installed.
 
+You can download NoMachine [here](https://www.nomachine.com/download).
