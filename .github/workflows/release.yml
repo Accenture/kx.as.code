@@ -16,6 +16,7 @@ jobs:
           token: ${{ secrets.GH_TOKEN }}
           output: CHANGELOG.md
           stripGeneratorNotice: true
+          pullRequests: false
           releaseUrl: https://github.com/Accenture/kx.as.code/releases/tag/${{ env.RELEASE }}
           sinceTag: ${{ env.SINCE_TAG }}
       - name: Get CHANGELOG
