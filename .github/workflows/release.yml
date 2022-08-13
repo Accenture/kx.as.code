@@ -1,6 +1,10 @@
 name: Changelog
 on: workflow_dispatch 
 
+env:
+  RELEASE: v0.8.9
+  SINCE_TAG: v0.8.6
+  
 jobs:
   changelog:
     runs-on: ubuntu-20.04
@@ -10,13 +14,9 @@ jobs:
         with:
           token: ${{ secrets.GH_TOKEN }}
           output: CHANGELOG.md
-          headerLabel: "# 📑 Changelog"
-          breakingLabel: '### Breaking'
-          enhancementLabel: '### Enhancements'
-          bugsLabel: '### Bug fixes'
           stripGeneratorNotice: true
-          release-url: https://github.com/Accenture/kx.as.code/releases/tag/v0.8.9
-          sinceTag: v0.8.6
+          release-url: https://github.com/Accenture/kx.as.code/releases/tag/${{ env.RELEASE }}
+          sinceTag: ${{ env.SINCE_TAG }}
       - name: Archive-CHANGELOG.md
         uses: actions/upload-artifact@v3
         with:
@@ -28,9 +28,11 @@ jobs:
           set -x
           CHANGELOG=$(cat ./CHANGELOG.md | awk '/###/ {exit} {print}')
           if [ ! -f ./HISTORY.md ]; then
-            touch ./HISTORY.md
+            echo "CHANGE HISTORY" ./HISTORY.md
+            # History
+            History is the past, the future is [here](https://accenture.github.io/kx.as.code/Overview/Future-Roadmap/)
           fi
-          if [ -z $(cat ./HISTORY.md | grep "v0.8.9") ]; then
+          if [ -z $(cat ./HISTORY.md | grep ${{ env.RELEASE }}") ]; then
             cat ./CHANGELOG.md | tee -a ./HISTORY.md
           fi
           CHANGELOG="${CHANGELOG//'%'/'%25'}"
@@ -48,3 +50,4 @@ jobs:
         uses: Ilshidur/action-discord@master
         with:
           args: "${{ steps.vars.outputs.changelog }}\n"
+
