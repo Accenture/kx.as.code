@@ -16,9 +16,9 @@ jobs:
           bugsLabel: '### 🐛 Bug fixes'
           stripGeneratorNotice: true
           issues: true
-          sinceTag: ${{ github.event.release.tag_name }}
+          sinceTag: v0.8.9
       - name: Archive CHANGELOG.md
         uses: actions/upload-artifact@v3
         with:
           name: CHANGELOG.md
-          path: /github/workspace/CHANGELOG.md        
+          path: ./CHANGELOG.md        
