@@ -28,9 +28,7 @@ jobs:
           set -x
           CHANGELOG=$(cat ./CHANGELOG.md | awk '/\*\*/ {exit} {print}')
           if [ ! -f ./HISTORY.md ]; then
-            echo "CHANGE HISTORY" ./HISTORY.md
-            # History
-            History is the past, the future is [here](https://accenture.github.io/kx.as.code/Overview/Future-Roadmap/)
+            echo -e "# History\n\nHistory is the past, the future is [here](https://accenture.github.io/kx.as.code/Overview/Future-Roadmap/)\n\n"
           fi
           if [ -z $(cat ./HISTORY.md | grep ${RELEASE}") ]; then
             cat ./CHANGELOG.md | tee -a ./HISTORY.md
