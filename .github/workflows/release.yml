@@ -25,10 +25,14 @@ jobs:
         id: vars
         run: |
           set -x
-          echo ::set-output name=changelog::$(cat ./CHANGELOG.md | awk '/###/ {exit} {print}' | awk '{printf "%s\\n", $0}')
+          CHANGELOG=$(cat ./CHANGELOG.md | awk '/###/ {exit} {print}')
+          CHANGELOG="${CHANGELOG//'%'/'%25'}"
+          CHANGELOG="${CHANGELOG//$'\n'/'%0A'}"
+          CHANGELOG="${CHANGELOG//$'\r'/'%0D'}"
+          echo ::set-output name=changelog::$(echo $CHANGELOG)
       - name: Send CHANGELOG to Discord
         env:
           DISCORD_WEBHOOK: ${{ secrets.WEBHOOK_URL }}
         uses: Ilshidur/action-discord@master
         with:
-          args: "🚀 bla bla.\n🚀 bla bla. ${{ steps.vars.outputs.changelog }}"
+          args: "${{ steps.vars.outputs.changelog }}"
