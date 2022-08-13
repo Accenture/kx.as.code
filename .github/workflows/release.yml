@@ -30,6 +30,11 @@ jobs:
             echo -e "# History\n\nHistory is the past, the future is [here](https://accenture.github.io/kx.as.code/Overview/Future-Roadmap/)" | sudo tee ./HISTORY.md
           fi
           if [ -z $(cat ./HISTORY.md | grep "${RELEASE}") ]; then
+            if [ -z $(cat ./HISTORY.md | grep "##") ]; then
+            HISTORY_HEADER="$(cat ./HISTORY.md | head -n 4)"
+            HISTORY_BODY="$(cat ./HISTORY.md | tail -n +4)"
+            echo "$HISTORY_HEADER HISTORY_CHANGELOG $HISTORY_BODY" | sudo tee -a ./HISTORY.md
+          else
             echo -e "$HISTORY_CHANGELOG" | sudo tee -a ./HISTORY.md
           fi
           SHORT_CHANGELOG="${SHORT_CHANGELOG//'%'/'%25'}"
