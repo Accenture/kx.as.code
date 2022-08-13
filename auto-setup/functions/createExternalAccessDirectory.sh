@@ -14,6 +14,11 @@ createExternalAccessDirectory() {
     export externalAccessDirectory=/kx-external-access
   fi
 
+  # Ensure directory is cleaned on first start of KX.AS.CODE
+  if [[ ! -f /usr/share/kx.as.code/.config/network_status  ]]; then
+    /usr/bin/sudo rm -f ${externalAccessDirectory}/*
+  fi
+
   log_debug "Set externalAccessDirectory to ${externalAccessDirectory}"
 
   # Call common function to execute common function start commands, such as unsetting verbose output etc
