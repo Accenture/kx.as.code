@@ -27,13 +27,13 @@ jobs:
           SHORT_CHANGELOG=$(echo -e "$FULL_CHANGELOG" | awk '/\*\*/ {exit} {print}' | sed 's/#[^ ] *//g' | sed '/Changelog/d')
           echo -e "$FULL_CHANGELOG" | sudo tee ./CHANGELOG.md
           if [ ! -f ./HISTORY.md ]; then
-            echo -e "# History\n\nHistory is the past, the future is [here](https://accenture.github.io/kx.as.code/Overview/Future-Roadmap/)\n\n" | sudo tee ./HISTORY.md
+            echo -e "# History\n\nHistory is the past, the future is [here](https://accenture.github.io/kx.as.code/Overview/Future-Roadmap/)" | sudo tee ./HISTORY.md
           fi
           if [ -z $(cat ./HISTORY.md | grep "${RELEASE}") ]; then
             if [ -z $(cat ./HISTORY.md | grep "##") ]; then
-              HISTORY_HEADER="$(cat ./HISTORY.md | head -n 5)"
-              HISTORY_BODY="$(cat ./HISTORY.md | tail -n +5)"
-              echo -e "$HISTORY_HEADER $HISTORY_CHANGELOG $HISTORY_BODY" | sudo tee ./HISTORY.md
+              HISTORY_HEADER="$(cat ./HISTORY.md | head -n 4)"
+              HISTORY_BODY="$(cat ./HISTORY.md | tail -n +4)"
+              echo -e "$HISTORY_HEADER$HISTORY_CHANGELOG\n$HISTORY_BODY" | sudo tee ./HISTORY.md
             else
               echo -e "$HISTORY_CHANGELOG" | sudo tee -a ./HISTORY.md
             fi
@@ -64,13 +64,13 @@ jobs:
           git config user.name "GitHub Actions"
           git config user.email noreply@github.com
           git add ./CHANGELOG.md ./HISTORY.md
-          git commit -m 'Update Changelog and History file for release v${{ env.RELEASE }}'
+          git commit -m 'Update Changelog and History file for release ${{ env.RELEASE }}'
           git remote set-url origin https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/${{ github.repository }}          
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v4
         with:
-          commit-message: Upload Changelog v${{ env.RELEASE }}
+          commit-message: Upload Changelog ${{ env.RELEASE }}
           title: Upload Changelog
-          body: Upload Changelog and History file for release v${{ env.RELEASE }}
-          branch: feature/changelog-for-v${{ env.RELEASE }}
+          body: Upload Changelog and History file for release ${{ env.RELEASE }}
+          branch: feature/changelog-for-${{ env.RELEASE }}
           token: ${{ secrets.GH_TOKEN }}
