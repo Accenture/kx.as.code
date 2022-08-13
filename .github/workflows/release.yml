@@ -20,10 +20,12 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: CHANGELOG.md
-          path: ./CHANGELOG.md        
-      - name: Send CHANGELOG.md to discord channel
-        uses: sinshutu/upload-to-discord@master
-        env:
-          DISCORD_WEBHOOK: ${{ secrets.WEBHOOK_URL }}
+          path: ./CHANGELOG.md   
+      - name: Get version
+        id: vars
+        run: echo ::set-output name=changelog::$(cat ./CHANGELOG.md)
+      - name: Discord Webhook Action
+        uses: tsickert/discord-webhook@v4.0.0
         with:
-          args: ./CHANGELOG.md 
+          webhook-url: ${{ secrets.WEBHOOK_URL }}
+          raw-data: ./CHANGELOG.md 
