@@ -33,7 +33,7 @@ jobs:
             if [ -z $(cat ./HISTORY.md | grep "##") ]; then
               HISTORY_HEADER="$(cat ./HISTORY.md | head -n 4)"
               HISTORY_BODY="$(cat ./HISTORY.md | tail -n +4)"
-              echo -e "$HISTORY_HEADER$HISTORY_CHANGELOG\n$HISTORY_BODY" | sudo tee ./HISTORY.md
+              echo -e "$HISTORY_HEADER\n$HISTORY_CHANGELOG\n$HISTORY_BODY" | sudo tee ./HISTORY.md
             else
               echo -e "$HISTORY_CHANGELOG" | sudo tee -a ./HISTORY.md
             fi
