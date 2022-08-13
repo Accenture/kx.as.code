@@ -23,10 +23,9 @@ jobs:
           path: ./CHANGELOG.md   
       - name: Get CHANGELOG
         id: vars
-        shell: bash {0}
         run: |
           set -x
-          echo ::set-output name=changelog::$(cat ./CHANGELOG.md | awk '/\*\*/ {exit} {print}')
+          echo ::set-output name=changelog::$(cat ./CHANGELOG.md | awk '/###/ {exit} {print}')
       - name: Send CHANGELOG to Discord
         uses: tsickert/discord-webhook@v4.0.0
         with:
