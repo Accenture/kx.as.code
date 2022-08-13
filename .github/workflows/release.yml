@@ -29,7 +29,7 @@ jobs:
           FULL_CHANGELOG=$(cat ./CHANGELOG.md | sed '/Full Changelog/d' | awk -v RS='\n\n\n' 1)
           HISTORY_CHANGELOG=$(echo $FULL_CHANGELOG | sed '/Changelog/d')
           SHORT_CHANGELOG=$(echo $FULL_CHANGELOG | awk '/\*\*/ {exit} {print}' | sed 's/#[^ ] *//g')
-          echo $FULL_CHANGELOG | tee ./CHANGELOG.md
+          echo $FULL_CHANGELOG | sudo tee ./CHANGELOG.md
           if [ ! -f ./HISTORY.md ]; then
             echo "# History\n\nHistory is the past, the future is [here](https://accenture.github.io/kx.as.code/Overview/Future-Roadmap/)\n\n"
           fi
