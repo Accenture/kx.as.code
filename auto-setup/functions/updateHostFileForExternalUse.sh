@@ -12,7 +12,7 @@ updateHostFileForExternalUse() {
   echo "# Linux/Mac: /etc/hosts" | /usr/bin/sudo tee -a ${externalAccessDirectory}/hosts
   echo "# Windows: C:\Windows\System32\drivers\etc\hosts" | /usr/bin/sudo tee -a ${externalAccessDirectory}/hosts
   echo -e "\n" | /usr/bin/sudo tee -a ${externalAccessDirectory}/hosts
-  echo "${mainIpAddress}       ${ingressTlsUrls}" | /usr/bin/sudo tee -a ${externalAccessDirectory}/hosts
+  echo "127.0.0.1       ${ingressTlsUrls}" | /usr/bin/sudo tee -a ${externalAccessDirectory}/hosts
 
   # Call common function to execute common function start commands, such as unsetting verbose output etc
   functionEnd
