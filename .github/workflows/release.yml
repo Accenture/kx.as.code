@@ -21,3 +21,16 @@ jobs:
         with:
           name: CHANGELOG.md
           path: ./CHANGELOG.md        
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Discord notification
+      uses: LeGitHubDeTai/github-to-discord@main
+      env:
+        DISCORD_WEBHOOK: ${{ secrets.WEBHOOK_URL }}
+        DISCORD_USERNAME: Patrick Delamere
+        DISCORD_AVATAR: https://raw.githubusercontent.com/LeGitHubDeTai/github-to-discord/main/icon.png
+        MESSAGE_TITLE: New Version
+        MESSAGE_DESCRIPTION: New Release Note!
+        MESSAGE_URL: https://github.com/Accenture/kx.as.code
+        MESSAGE_COLOR: 5814783
