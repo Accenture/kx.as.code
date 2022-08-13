@@ -32,4 +32,4 @@ jobs:
           DISCORD_MULTILINE: 1
         uses: Ilshidur/action-discord@master
         with:
-          args: '${{ steps.vars.outputs.changelog }}'
+          args: "${{ steps.vars.outputs.changelog }}"
