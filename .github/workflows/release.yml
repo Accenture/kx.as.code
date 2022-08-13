@@ -17,4 +17,8 @@ jobs:
           stripGeneratorNotice: true
           issues: true
           sinceTag: ${{ github.event.release.tag_name }}
-          
+      - name: Archive CHANGELOG.md
+        uses: actions/upload-artifact@v3
+        with:
+          name: CHANGELOG.md
+          path: /github/workspace/CHANGELOG.md        
