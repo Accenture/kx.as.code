@@ -21,11 +21,11 @@ jobs:
         with:
           name: CHANGELOG.md
           path: ./CHANGELOG.md   
-      - name: Get version
+      - name: Get CHANGELOG
         id: vars
         run: echo ::set-output name=changelog::$(cat ./CHANGELOG.md)
-      - name: Discord Webhook Action
+      - name: Send CHANGELOG to Discord
         uses: tsickert/discord-webhook@v4.0.0
         with:
           webhook-url: ${{ secrets.WEBHOOK_URL }}
-          raw-data: ./CHANGELOG.md 
+          content: ${{ steps.vars.outputs.changelog }}
