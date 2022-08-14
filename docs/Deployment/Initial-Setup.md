@@ -41,6 +41,7 @@ brew install screen
 
 ## Run launchLocalBuildEnvironment
 Depending on whether you are running on MacOSX, Linux or Windows, you will need to execute the following launcher script from the repository root.
+
 ```bash
 cd base-vm/build/jenkins
 # For Linux or MacOSX
@@ -58,7 +59,8 @@ The script takes care of:
 - Generating the Jenkins jobs
 - Creating password credential in Jenkins
 
-!!! note "Vagrant still needs to be installed manually, as it is not a portable installer/utility. You can download Vagrant from [here](https://www.vagrantup.com/downloads.html){:target="\_blank"}"
+!!! note
+    Vagrant still needs to be installed manually, as it is not a portable installer/utility. You can download Vagrant from [here](https://www.vagrantup.com/downloads.html){:target="\_blank"}
 
 If the following message is shown,
 
@@ -74,7 +76,9 @@ Select `1` if you do not intend to build VMWare images. You can download the nee
 
 If all goes well, you should see the following message in the console:
 
-!!! success "- [INFO] Congratulations! Jenkins for KX.AS.CODE is successfully configured and running. Access Jenkins via the following URL: [http://localhost:8080/job/KX.AS.CODE_Launcher/build?delay=0sec](http://localhost:8080/job/KX.AS.CODE_Launcher/build?delay=0sec){:target="\_blank"}.""
+!!! success 
+    - [INFO] Congratulations! Jenkins for KX.AS.CODE is successfully configured and running. Access Jenkins via the following URL: [http://localhost:8080/job/KX.AS.CODE_Launcher/build?delay=0sec](http://localhost:8080/job/KX.AS.CODE_Launcher/build?delay=0sec){:target="\_blank"}."
 
-!!! warning "If you changed the IP or port for Jenkins in `jenkins.env`, you will need to use that when launching the Jenkins URL, instead of the default `localhost:8080` combination."
+!!! warning
+    If you changed the IP or port for Jenkins in `jenkins.env`, you will need to use that when launching the Jenkins URL, instead of the default `localhost:8080` combination."
 

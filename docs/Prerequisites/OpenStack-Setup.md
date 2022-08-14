@@ -2,10 +2,11 @@
 
 If you would like to deploy KX.AS.CODE to OpenStack, but don't have an environment, follow the guide below to set up our own test environment.
 
-## Follow basic instructions here
-https://docs.openstack.org/devstack/latest/
-!!! tip "At the time of writing, Ubuntu 20.04 is the most tested operating system used with DevStack. The instructions here assume you are using that distribution."
+## Initial Dev-Stack setup
+For detailed instructions for setting up DevStack, see the following [guide](https://docs.openstack.org/devstack/latest/)
 
+!!! tip
+    At the time of writing, Ubuntu 20.04 is the most tested operating system used with DevStack. The instructions here assume you are using that distribution.
 
 Here a short summary of the link provided above.
 ```bash
@@ -15,7 +16,8 @@ sudo -u stack -i
 git clone https://opendev.org/openstack/devstack
 cd devstack
 ```
-!!! warning "Don't run `./stack.sh` until you have completed further steps below"
+!!! warning
+    Don't run `./stack.sh` until you have completed further steps below
 
 ## General Points on Networking
 It is recommended to have an additional NIC dedicated to the OpenStack public interface. In the example below, that is `eth1`.
@@ -99,7 +101,8 @@ apt install -y ./iputils-arping_20210202-1_amd64.deb
 ```
 
 ## Setup Stack Data Mount
-!!! info "There are a few ways to provide storage to your DevStack install. Through a logical volume mount with phyisical drives (virtual drives if not on bare metal), or a volume file. Both are described below. Follow one of the two guides depending on your setup."
+!!! info
+    There are a few ways to provide storage to your DevStack install. Through a logical volume mount with phyisical drives (virtual drives if not on bare metal), or a volume file. Both are described below. Follow one of the two guides depending on your setup.
 
 ### Virtual Stack Volume file
 ```bash
@@ -121,7 +124,8 @@ vi /etc/lvm/lvm.conf
 filter = [ "a/nvme0n1/", "a/nvme1n1/", "r/.*/"] # change to match the name of your physical drives
 ```
 
-!!! info "Once you have completed all the above, you are ready to launch `./stack.sh`. Once done, you can proceed to the next steps below"
+!!! info
+    Once you have completed all the above, you are ready to launch `./stack.sh`. Once done, you can proceed to the next steps below
 
 ## Update nova settings
 In order to avoid timeout issues (default is 3 minutes) creating block devices, update the nova.conf file as follows:
@@ -133,7 +137,8 @@ block_device_allocate_retries=600
 block_device_allocate_retries_interval=3
 ```
 
-!!! danger "Not updating this setting will result in the following error message when provisioning VMs in OpenStack with large block storage: `[Error: Build of instance 5c7eb729-03c6-489f-899c-c748416ca6ae aborted: Volume 71169a26-ec13-4fa6-b14c-ce66560a7d45 did not finish being created even after we waited 184 seconds or 61 attempts. And its status is downloading.]`"
+!!! danger "Important"
+    Not updating this setting will result in the following error message when provisioning VMs in OpenStack with large block storage: `[Error: Build of instance 5c7eb729-03c6-489f-899c-c748416ca6ae aborted: Volume 71169a26-ec13-4fa6-b14c-ce66560a7d45 did not finish being created even after we waited 184 seconds or 61 attempts. And its status is downloading.]`
 
 ## Set authentication for CLI
 Execute the following before executing any `openstack` commands, else they will fail with an unauthorized message.
@@ -228,13 +233,15 @@ openstack image create \
 ```
 
 ## Create SSH Key
-!!! tip "Creating the SSH key will make it easy to enter the VM for debugging a failed build"
+!!! tip
+    Creating the SSH key will make it easy to enter the VM for debugging a failed build
 ```bash
 openstack keypair create --public-key ~/.ssh/id_rsa.pub packer-build
 ```
 
 ## Build Packer Image
-!!! warning "Note, the value for `openstack_networks` must be the private network (named "shared" or "private" in the default DevStack setup), and not the public one."
+!!! warning
+    Note, the value for `openstack_networks` must be the private network (named "shared" or "private" in the default DevStack setup), and not the public one.
 
 In order to build KX.AS.CODE, you can now run the following commands.
 
@@ -291,6 +298,7 @@ packer build -force -only kx.as.code-node-openstack \
   -var openstack_security_groups=default \
   -var ssh_keypair_name=packer-build \
   ./kx-node-cloud-profiles.json
+  
 ## Restarting OpenStack in case of issues
 ```bash
 # Optionally restart network if connectivity issues start appearing, such as DNS timeout etc

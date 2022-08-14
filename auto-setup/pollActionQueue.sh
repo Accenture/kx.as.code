@@ -61,6 +61,9 @@ getProfileConfiguration
 # Get latest source code if flag set accordingly in profile-config.json
 updateKxSourceOnFirstStart
 
+# Create and clean the external access directory
+createExternalAccessDirectory
+
 # Modify username and password if modified in profile-config.json
 if [[ ! -f /usr/share/kx.as.code/.config/network_status ]]; then
   checkAndUpdateBaseUsername

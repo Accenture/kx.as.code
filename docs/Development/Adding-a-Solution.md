@@ -6,7 +6,7 @@ First an important note, relevant regardless of the chosen installation method (
 
 !!! note
     The configuration file, `metadata.json`, is absolutely mandatory for each component directory. This tells the KX.AS.CODE installation framework exactly what and how to install the application in question.
-    See the following guide that describes `metadata.json` in detail.
+    See the following [guide](../../Development/Solution-Metadata/) that describes `metadata.json` in detail.
 
 Below an example walk-through adding NeuVector as an application installed via the helm installation method.
 
@@ -61,7 +61,6 @@ Current available categories are as follows.
 
 Current possibilities are ArgoCD, [Helm](https://helm.sh/){:target="\_blank"} or purely Script based. In future we will look to also enable deployment with [Kustomize](https://kustomize.io/){:target="\_blank"}.
 
-
 ### Create the base directories.   
 ![](../assets/images/add_application_workflow1.png){: .zoom}
 
@@ -99,6 +98,9 @@ Best to copy the helm values file from the solution's GitHub repository and modi
 In the example with NeuVector, we copied the default [values.yaml](https://github.com/neuvector/neuvector-helm/blob/master/charts/core/values.yaml){:target="\_blank"}, and modified it as per the solution's [documentation](https://github.com/neuvector/neuvector-helm/tree/master/charts/core){:target="\_blank"}.
 
 For a simple solution, it is also possible to get away with only having the base directory and `metadata.json`, since it is possible to represent change to the Helm values file also in the form of a `set_key_values` block in `metadata.json`.
+
+See the [Solution Metadata](../../Development/Solution-Metadata/#helm) documentation for Helm for more details on the possible parameters.
+
 Taking the example for the values file added for NeuVector, the json in metadata.json would look as follows:
 
 !!! tip
@@ -169,6 +171,9 @@ It is also possible to mix, and have both the JSON and the values file. As per `
 
 Notice in `metadata.json` the set environment variable `imageTag`, and how it is referenced in `values_template.yaml` as `{{imageTag}}`.
 The KX.AS.CODE framework will automatically substitute the placeholder in `values_template.yaml` with the variable in `metadata.json`.
+
+!!! info
+    For a full description on the configurable options in `metadata.json`, visit the [Solution Metadata](../../Development/Solution-Metadata/) page.
 
 ![](../assets/images/add_application_workflow11.png){: .zoom}
 ![](../assets/images/add_application_workflow16.png){: .zoom}
@@ -244,11 +249,33 @@ Someone from the core KX.AS.CODE development team will review your change and ei
 ![](../assets/images/add_application_workflow15.png){: .zoom}
 
 
-
-
-
-
 ## ArgoCD
+
+As with Helm, there are some ArgoCD specific parameters that need to be included in `metadata.json`. 
+
+!!! note
+    You must have installed ArgoCD before you can use this installation method
+
+!!! tip
+    If you also install Gitlab, you can automatically push code there and use that as the source repo url reference. See the [Grafana component](https://github.com/Accenture/kx.as.code/tree/main/auto-setup/monitoring/grafana) for an example on how to do this. Here the two functions, [createGitlabProject](../../Development/Available-Functions/#creategitlabproject) and [populateGitlabProject](../../Development/Available-Functions/#populategitlabproject), are used to achieve this.
+
+For general information on ArgoCD, visit their [docs site](https://argo-cd.readthedocs.io/en/stable/){:target="\_blank"}.
+
+Most oof the steps are the same as for the Helm installation method, but here some additional information for steps 5 & 6.
+
+#### 5. Populate the directory with the relevant files
+In this scenario, instead of the `values_template.yaml` file, you should create a `deployment_yaml` directory, and place YAM files for all the resources you wish to create in there. See the following [example](https://github.com/Accenture/kx.as.code/tree/main/auto-setup/monitoring/grafana/deployment_yaml){:target="\_blank"}.
+
+#### 6. Create metadata.json
+See the [Solution Metadata](../../Development/Solution-Metadata/#argocd) documentation for ArgoCD, for more details on the possible parameters.
+
+!!! note
+    See also the available functions for ArgoCD based installations [here](../../Development/Available-Functions/#argocd).
 
 ## Scripts
 
+This is the easiest approach, as it does not require any specific configuration, such as those needed for Helm and ArgoCD to operate.
+
+That said, consider the following points.
+
+- You can also use this method to install files in `deployment_yaml` without ArgoCD. Simply add the needed YAML files to this directory within your component's directory, and then call the [deployYamlFilesToKubernetes()](../../Development/Available-Functions/#deployyamlfilestokubernetes) function in your main script. The function checks that the YAML is valid with [kubeVal](https://kubeval.instrumenta.dev/){:target="\_blank"} before applying.  

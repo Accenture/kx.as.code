@@ -1,9 +1,218 @@
 # Available Functions
 
-The functions below can be used when creating scripts to install new solutions in the [auto-setup](https://github.com/Accenture/kx.as.code/tree/main/auto-setup) folder.
+The functions below can be used when creating scripts to install new solutions in the [auto-setup](https://github.com/Accenture/kx.as.code/tree/main/auto-setup){:target="\_blank"} folder.
 
 !!! info 
-    The core setup functions are used during the initial KX.AS.CODE deployment only, and should not be used other than for the base setup, before additional solutions are added on top, eg. those in the other category folders, such as cicd, collaboration, monitoring, and so on.
+    The core setup functions are used during the initial KX.AS.CODE deployment only, and should not be used for regular component installations, eg. those in the other category folders, such as cicd, collaboration, monitoring, and so on.
+
+Here a quick table of contents, listing the function groups for easier navigation and overview.
+
+1. [Application Deployments](../../Development/Available-Functions/#application-deployments)
+2. [ArgoCD](../..//Development/Available-Functions/#argocd)
+3. [Core Setup](../../Development/Available-Functions/#core-setup)
+4. [Credential Management](../../Development/Available-Functions/#credential-management)
+5. [Docker Registry](../../Development/Available-Functions/#docker-registry)
+6. [General Helpers](../../Development/Available-Functions/#general-helpers)
+7. [Gitlab](../../Development/Available-Functions/#gitlab)
+8. [Harbor](../../Development/Available-Functions/#harbor)
+9. [Keycloak IAM/SSO](../../Development/Available-Functions/#keycloak-iamsso)
+10. [Kubernetes](../../Development/Available-Functions/#kubernetes)
+11. [Logging](../../Development/Available-Functions/#logging)
+12. [Mattermost](../../Development/Available-Functions/#mattermost)
+13. [MinIO-S3](../../Development/Available-Functions/#minio-s3)
+14. [Notifications](../../Development/Available-Functions/#notifications)
+15. [RabbitMQ Core Setup](../../Development/Available-Functions/#rabbitmq-core-setup)
+
+## Application Deployments
+
+These functions are executed by the KX.AS.CODE [autoSetup.sh](https://github.com/Accenture/kx.as.code/blob/main/auto-setup/autoSetup.sh){:target="\_blank"} auto-setup framework and do not need to be called individually by any of the custom component installation scripts.
+
+### applicationDeploymentHealthCheck()
+:material-git: Location: [auto-setup/functions/applicationDeploymentHealthCheck.sh](https://github.com/Accenture/kx.as.code/tree/main/auto-setup/functions/applicationDeploymentHealthCheck.sh){:target="\_blank"}
+
+This executes a health-check based on the application URL [0] found in the `metadata.json` of the component being installed.
+
+!!! info
+    There are no inputs to this function, as all the needed data comes from the component's `metadata.json`.
+
+!!! tip
+    Here an example extract from Gitlab's `metadata.json`
+    The JSON below defines both the Kubernetes `liveliness` check and the `readiness` checks. You can read more about Kubernetes health probes [here](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#define-a-liveness-http-request){:target="\_blank"}.
+    This one defines the following:
+
+    - URL path to access (will be appended to the base url)
+    - Expected HTTP response  code
+    - Expected JSON response text given json-path
+
+    As you can see in the JSON, there are more options available. These will be described on another page, which describes in detail the contents of the `metadata.json`.
+
+    ```json linenums="1"
+    "urls": [
+        {
+            "url": "https://{{componentName}}.{{baseDomain}}",
+            "healthchecks": {
+                "liveliness": {
+                    "http_path": "/-/readiness",
+                    "http_auth_required": false,
+                    "expected_http_response_code": "200",
+                    "expected_http_response_string": "",
+                    "expected_json_response": {
+                        "json_path": ".status",
+                        "json_value": "ok"
+                    },
+                    "health_shell_check_command": "",
+                    "expected_shell_check_command_response": ""
+                },
+                "readiness": {
+                    "http_path": "/-/readiness",
+                    "http_auth_required": false,
+                    "expected_http_response_code": "200",
+                    "expected_http_response_string": "",
+                    "expected_json_response": {
+                        "json_path": ".status",
+                        "json_value": "ok"
+                    }
+                }
+            }
+        }
+    ]
+    ```
+
+!!! note "Usage"
+    `applicationDeploymentHealthCheck`
+
+### autoSetupArgoCdInstall()
+:material-git: Location: [auto-setup/functions/autoSetupArgoCdInstall.sh](https://github.com/Accenture/kx.as.code/tree/main/auto-setup/functions/autoSetupArgoCdInstall.sh){:target="\_blank"}
+
+!!! danger "Important"
+    Note. You must deploy the `ArgoCD` application, before executing any component installations that depend on `ArgoCD`
+
+!!! info 
+    There are no inputs to this function, as all the needed data comes from the component's `metadata.json`.
+
+!!! example
+    Here an example snippet from a `metadata.json` for executing an application deployment with `ArgoCD`.
+
+    The JSON below shows an example for deploying .
+
+    The JSON shown here will described on another page, which describes in detail the contents of the `metadata.json`.
+    Read up on [ArgoCD's core concepts](https://argo-cd.readthedocs.io/en/stable/core_concepts/){:target="\_blank"} to understand better the parameters below.
+
+    ```json linenums="1"
+    {
+        "name": "myApp",
+        "namespace": "devops",
+        "installation_type": "argocd",
+        "installation_group_folder": "kx_as_code",
+        "argocd_params": {
+            "repository": "{{gitUrl}}/kx.as.code/kx.as.code_docs.git",
+            "path": "kubernetes",
+            "dest_server": "https://kubernetes.default.svc",
+            "dest_namespace": "devops",
+            "sync_policy": "automated",
+            "auto_prune": true,
+            "self_heal": true
+        }
+    }
+    ```
+
+### autoSetupHelmInstall()
+:material-git: Location: [auto-setup/functions/autoSetupHelmInstall.sh](https://github.com/Accenture/kx.as.code/tree/main/auto-setup/functions/autoSetupHelmInstall.sh){:target="\_blank"}
+
+!!! info 
+    There are no inputs to this function, as all the needed data comes from the component's `metadata.json` and `values_template.yaml` file.
+
+!!! example
+    Here an example extract from ArgoCD's `metadata.json`"
+    
+    The JSON below defines the parameters needed to execute a deployment via helm. 
+
+    The JSON is described in more detail on a page dedicated to `metadata.json`, so will only be described high level here.
+
+    ```json linenums="1"
+    {    
+        "helm_params": {
+            "repository_url": "https://argoproj.github.io/argo-helm",
+            "repository_name": "argo/argo-cd",
+            "helm_version": "4.2.1",
+            "set_key_values": [
+                "global.image.tag={{imageTag}}",
+                "installCRDs=false",
+                "configs.secret.argocdServerAdminPassword='{{argoCdAdminPassword}}'",
+                "controller.clusterAdminAccess.enabled=true",
+                "server.clusterAdminAccess.enabled=true",
+                "server.extraArgs[0]=--insecure"
+            ]
+        }
+    }
+    ```
+
+### autoSetupPreInstallSteps()
+:material-git: Location: [auto-setup/functions/autoSetupPreInstallSteps.sh](https://github.com/Accenture/kx.as.code/tree/main/auto-setup/functions/autoSetupPreInstallSteps.sh){:target="\_blank"}
+
+Executes all the pre-install scripts as defined in `metadata.json` and located in the `pre_install_scripts` folder of the component in question.
+
+### autoSetupScriptInstall()
+:material-git: Location: [auto-setup/functions/autoSetupScriptInstall.sh](https://github.com/Accenture/kx.as.code/tree/main/auto-setup/functions/autoSetupScriptInstall.sh){:target="\_blank"}
+
+Executes all the main installation scripts as defined in `metadata.json` and located in the root folder of the component in question.
+These scripts run after the pre and before the post installation scripts.
+
+### createDesktopIcon()
+:material-git: Location: [auto-setup/functions/desktopIconCreate.sh](https://github.com/Accenture/kx.as.code/tree/main/auto-setup/functions/desktopIconCreate.sh){:target="\_blank"}
+
+!!! note "Usage"
+    `createDesktopIcon "<shortcutsDirectory>" "<primaryUrl>" "<shortcutText>" "<iconPath>" "<browserOptions>"`
+
+!!! example
+    ```bash linenums="1"
+    # Install the desktop shortcut for KX.AS.CODE Portal
+    shortcutsDirectory="/home/${vmUser}/Desktop"
+    primaryUrl="http://localhost:3000"
+    shortcutText="KX.AS.CODE Portal"
+    iconPath="${installComponentDirectory}/$(cat ${componentMetadataJson} | jq -r '.shortcut_icon')"
+    browserOptions=""
+    createDesktopIcon "${shortcutsDirectory}" "${primaryUrl}" "${shortcutText}" "${iconPath}" "${browserOptions}"
+    ```
+
+### checkRunningKubernetesPods()
+:material-git: Location: [auto-setup/functions/kubernetesCheckRunningPods.sh](https://github.com/Accenture/kx.as.code/tree/main/auto-setup/functions/kubernetesCheckRunningPods.sh){:target="\_blank"}
+
+This checks that the number of deployed pods equals the number of running pods for a given component installation. This is just a pre-check before proceeding onto the URL health checks.
+
+### createKubernetesNamespace()
+:material-git: Location: [auto-setup/functions/kubernetesCreateNamespace.sh](https://github.com/Accenture/kx.as.code/tree/main/auto-setup/functions/kubernetesCreateNamespace.sh){:target="\_blank"}
+
+!!! info "There are no inputs to this function, as all the needed data comes from the component's `metadata.json`."
+
+### deployYamlFilesToKubernetes()
+:material-git: Location: [auto-setup/functions/kubernetesDeployYamlFiles.sh](https://github.com/Accenture/kx.as.code/tree/main/auto-setup/functions/kubernetesDeployYamlFiles.sh){:target="\_blank"}
+
+Deploys all Kubernetes YAML files in the component's optional `deployment_yaml` directory.
+
+`${installComponentDirectory}/deployment_yaml/*.yaml`
+
+It also replaces all the `{{ mustache }}` placeholders in those YAML files with the values in global and component specific environment variables.
+
+Finally, a validation check is done with [kubeval](https://kubeval.instrumenta.dev/){:target="\_blank"} to ensure the YAML file is valid before applying it. The function will exit with `RC=1` if a YAML file is found not to be valid.
+
+## ArgoCD
+
+### argoCdLogin()
+:material-git: Location: [auto-setup/functions/argoCdLogin.sh](https://github.com/Accenture/kx.as.code/tree/main/auto-setup/functions/argoCdLogin.sh){:target="_blank"}
+
+Logs into ArgoCD before performing any ArgoCD specific actions.
+
+!!! warning
+    This function probably still works, but needs adjusting to take into account the new credential management process. 
+
+!!! note "Usage"
+    `argoCdLogin`
+
+!!! example
+    ```bash linenums="1"
+    argoCdLogin
+    ```
 
 ## Core Setup
 These functions are called when KX.AS.CODE are first setup. They should not be needed in any of the auto-setup scripts that deploy applications on top of the base KX.AS.CODE setup. They were created to increase the readability of the code, not necessarily because the present blocks of code that will be needed repeatedly.
@@ -112,6 +321,19 @@ The KX.AS.CODE virtualization profiles are currently setup as follows:
 
 !!! note "Usage"
     `configureNetwork`
+
+### createExternalAccessDirectory()
+:material-git: Location: [auto-setup/functions/createExternalAccessDirectory.sh](https://github.com/Accenture/kx.as.code/tree/main/auto-setup/functions/createExternalAccessDirectory.sh){:target="\_blank"}
+
+Creates directory `/vagrant/kx-external-access` (if local virtualization is in use) or `/kx-external-access` if private or public cloud. This directory will eventually contain the hosts file and the KX.AS.CODE certificates, which can be used to access the deployed applications outside of the VM.
+
+!!! note "Usage"
+    `createExternalAccessDirectory`
+
+!!! example
+    ```bash linenums="1"
+    createExternalAccessDirectory
+    ```
 
 ### disableLinuxDesktop()
 :material-git: Location: [auto-setup/functions/disableLinuxDesktop.sh](https://github.com/Accenture/kx.as.code/tree/main/auto-setup/functions/disableLinuxDesktop.sh){:target="\_blank"}
@@ -343,6 +565,33 @@ If a component installation is not in progress, the generic logfile name is used
 !!! note "Usage"
     `setLogFilename`
 
+### updateHostFileForExternalUse()
+:material-git: Location: [auto-setup/functions/updateHostFileForExternalUse.sh](https://github.com/Accenture/kx.as.code/tree/main/auto-setup/functions/updateHostFileForExternalUse.sh){:target="\_blank"}
+
+This function is automatically run with every application install. It makes all configured Kubernetes ingress endpoints available in the kx-external-access directory. See also the function `createExternalAccessDirectory()`.    
+
+!!! note "Usage"
+    updateHostFileForExternalUse
+    ``
+
+!!! example
+    ```bash linenums="1"
+    updateHostFileForExternalUse
+    ```
+
+### updateKxSourceOnFirstStart()
+:material-git: Location: [auto-setup/functions/updateKxSourceOnFirstStart.sh](https://github.com/Accenture/kx.as.code/tree/main/auto-setup/functions/updateKxSourceOnFirstStart.sh){:target="\_blank"}
+
+Dependent on a flag set in profile-config.json, the KX.AS.CODE source will be uppdated from Git on first start, to ensure any critical fixes are pulled since the last official release. This saves needing to rebuild the entire image with every minor release, and also ensures the user does not need to upgrade their KX.AS.CODE machine for a minor fix.
+
+!!! note "Usage"
+    `updateKxSourceOnFirstStart`
+
+!!! example
+    ```bash linenums="1"
+    updateKxSourceOnFirstStart
+    ```
+
 ### updateStorageClassIfNeeded()
 :material-git: Location: [auto-setup/functions/updateStorageClassIfNeeded.sh](https://github.com/Accenture/kx.as.code/tree/main/auto-setup/functions/updateStorageClassIfNeeded.sh){:target="\_blank"}
 
@@ -351,40 +600,36 @@ Detects if `glusterfs` is installed or not. If not, this function automatically 
 !!! note "Usage"
     `updateStorageClassIfNeeded`
 
-## RabbitMQ Core Setup
-### checkRabbitMq()
-:material-git: Location: [auto-setup/functions/rabbitMQCheck.sh](https://github.com/Accenture/kx.as.code/tree/main/auto-setup/functions/rabbitMQCheck.sh){:target="\_blank"}
+### waitForMessageOnActionQueue()
+:material-git: Location: [auto-setup/functions/waitForMessageOnActionQueue.sh](https://github.com/Accenture/kx.as.code/tree/main/auto-setup/functions/waitForMessageOnActionQueue.sh){:target="_blank"}
 
-Checks if `rabbitmqadmin` is installed. If not, installed it, including setting up bash completion scripts.
-
-!!! note "Usage"
-    `checkRabbitMq`
-
-### createRabbitMQExchange()
-:material-git: Location: [auto-setup/functions/rabbitMQExchangeCreation.sh](https://github.com/Accenture/kx.as.code/tree/main/auto-setup/functions/rabbitMQExchangeCreation.sh){:target="\_blank"}
-
-Creates the rabbitMQ exchange if not already present.
+Waits for the message to actually be available on the target RabbitMQ queue, before proceeding with the next step.
 
 !!! note "Usage"
-    `createRabbitMQExchange`
+    `waitForMessageOnActionQueue <queue_name> <application>`
 
-### createRabbitMQQueues()
-:material-git: Location: [auto-setup/functions/rabbitMQQueuesCreation.sh](https://github.com/Accenture/kx.as.code/tree/main/auto-setup/functions/rabbitMQQueuesCreation.sh){:target="\_blank"}
+!!! example
+    ```bash linenums="1"
+    waitForMessageOnActionQueue "retry_queue" "${componentName}"
+    ```
 
-Creates the rabbitMQ queues if not already present.
+## Credential Management
+
+### deletePassword()
+:material-git: Location: [auto-setup/functions/passwordDelete.sh](https://github.com/Accenture/kx.as.code/tree/main/auto-setup/functions/passwordDelete.sh){:target="_blank"}
+
+Deletes a password from GoPass.
+
+The password group is only needed if the password was created with a password group. In GoPass, the password group is shown as a folder under the domain name.
 
 !!! note "Usage"
-    `createRabbitMQQueues`
+    `deletePassword "<pasword name in GoPass>" "<password group>"`
 
-### createRabbitMQWorkflowBindings()
-:material-git: Location: [auto-setup/functions/rabbitMQWorkflowBindingsCreation.sh](https://github.com/Accenture/kx.as.code/tree/main/auto-setup/functions/rabbitMQWorkflowBindingsCreation.sh){:target="\_blank"}
+!!! example
+    ```bash linenums="1"
+    deletePassword "gitlab-root-user" gitlab"
+    ```
 
-Creates the rabbitMQ workflow bindings if not already present.
-
-!!! note "Usage"
-    `createRabbitMQWorkflowBindings`
-
-## Security
 ### generateApiKey()
 :material-git: Location: [auto-setup/functions/apiKeyGenerate.sh](https://github.com/Accenture/kx.as.code/tree/main/auto-setup/functions/apiKeyGenerate.sh){:target="\_blank"}
 
@@ -409,11 +654,11 @@ Saves the developer the hassle of making several calls and writing their own val
 This checks if the api key is already in GoPass, and creates it if not, subsequently returning it. If it already exists, the API key is retrieved from GoPass and again, returned.
 
 !!! note "Usage"
-    `apiKeyManage "<name of api key>"`
+    `apiKeyManage "<name of api key>" "<password group>"`
 
 !!! example
     ```bash linenums="1"
-    export apiKey=$(managedApiKey "gitlab-api-key")
+    export apiKey=$(managedApiKey "gitlab-api-key" "gitlab")
     ```
 
 
@@ -439,11 +684,11 @@ To keep issues to a minimum with special characters, only the following special 
 Gets the password as stored in GoPass by passing the name of the password generated previously.
 
 !!! note "Usage"
-    `passwordGet "<name of password>"`
+    `passwordGet "<name of password>" "<password group>"`
 
 !!! example
     ```bash linenums="1"
-    export password=$(passwordGet "gitlab-root-password")
+    export password=$(passwordGet "gitlab-root-password" "gitlab")
     ```
 
 ### managedPassword()
@@ -453,11 +698,11 @@ Saves the developer the hassle of making several calls and writing their own val
 This checks if the password is already in GoPass, and creates it if not, subsequently returning it. If it already exists, the password is retrieved from GoPass and again, returned. 
 
 !!! note "Usage"
-    `passwordManage "<name of password>"`
+    `passwordManage "<name of password>" "<password group>"`
 
 !!! example
     ```bash linenums="1"
-    export password=$(passwordManage "gitlab-root-password")
+    export password=$(passwordManage "gitlab-root-password" "gitlab")
     ```
 
 ### pushPassword()
@@ -465,20 +710,373 @@ This checks if the password is already in GoPass, and creates it if not, subsequ
 
 !!! hint 
     Best just to use `passwordManage`, which does all the get, generate and push in one go, with validation checks etc
+
 Pushes the password to GoPass. 
 
 !!! note "Usage"
-    `passwordPush "<name of password>" "<password>"`
+    `passwordPush "<name of password>" "<password>" "<password group>"`
 
 !!! example
     ```bash linenums="1"
     password=$(generatePassword))
-    passwordPush "gitlab-root-password" "${password}"
+    passwordPush "gitlab-root-password" "${password} "gitlab"
     ```
 
-## Keycloak SSO
-These functions were generated to avoid repeating the same code for each component connected to Keycloak SSO.
-For general documentation on how Keycloak SSO works, read the following [documentation](https://www.keycloak.org/docs/latest/securing_apps/).
+### renewApiKey()
+:material-git: Location: [auto-setup/functions/apiKeyRenew.sh](https://github.com/Accenture/kx.as.code/tree/main/auto-setup/functions/apiKeyRenew.sh){:target="_blank"}
+
+Renews the specified API key.
+
+!!! note "Usage"
+    `renewApiKey "<pasword name>" "<password group>"`
+
+!!! example
+    ```bash linenums="1"
+    renewApiKey "gitlab-personal-access-token" "gitlab"
+    ```
+
+## Docker Registry
+
+The functions here are for managing the standard [docker registry](https://hub.docker.com/_/registry){:target="\_blank"} installed as part of the [core setup](https://github.com/Accenture/kx.as.code/tree/main/auto-setup/core/docker-registry){:target="\_blank"}.
+
+### dockerRegistryAddUser()
+:material-git: Location: [auto-setup/functions/dockerCoreRegistryAddUser.sh](https://github.com/Accenture/kx.as.code/tree/main/auto-setup/functions/dockerCoreRegistryAddUser.sh){:target="\_blank"}
+
+Creates or updates the Kubernetes secret containing the `htpasswd` file containing username and passwords, in the Docker Registry namespace, and remounts into the docker-registry pod, subsequently redeploying the POD with a rolling update.
+
+!!! note "Usage"
+    `dockerRegistryAddUser "<username>"`
+
+### createK8sCredentialSecretForCoreRegistry()
+:material-git: Location: [auto-setup/functions/dockerCoreRegistryK8sCredential.sh](https://github.com/Accenture/kx.as.code/tree/main/auto-setup/functions/dockerCoreRegistryK8sCredential.sh){:target="\_blank"}
+
+Creates the regCred secret needed by other deployments for pulling images from the private core docker registry.
+The secret is created in the Kubernetes namespace of the current solution being installed.
+
+!!! note "Usage"
+    `createK8sCredentialSecretForCoreRegistry`
+
+### loginToCoreRegistry()
+:material-git: Location: [auto-setup/functions/dockerCoreRegistryLogin.sh](https://github.com/Accenture/kx.as.code/tree/main/auto-setup/functions/dockerCoreRegistryLogin.sh){:target="\_blank"}
+
+!!! tip 
+    This is usually carried out by the other docker-registry functions, and rarely needs to be called directly.
+
+!!! note "Usage"
+    `loginToCoreRegistry`
+
+Logs into the KX.AS.CODE docker registry. Needed before executing any other actions against the registry.
+
+
+### pushDockerImageToCoreRegistry()
+:material-git: Location: [auto-setup/functions/dockerCoreRegistryPush.sh](https://github.com/Accenture/kx.as.code/tree/main/auto-setup/functions/dockerCoreRegistryPush.sh){:target="\_blank"}
+
+Pushes a built image to the KX.AS.CODE core docker registry.
+
+!!! note "Usage"
+    `pushDockerImageToCoreRegistry "<docker image path>:<tag>"`
+
+!!! example
+    ```bash linenums="1"
+    docker build -f ${installationWorkspace}/Dockerfile.Docker-Dind -t docker-registry.${baseDomain}/devops/docker:${gitlabDindImageVersion} .
+    pushDockerImageToCoreRegistry "devops/docker:${gitlabDindImageVersion}"
+    ```
+
+## General Helpers
+
+### checkApplicationInstalled()
+:material-git: Location: [auto-setup/functions/checkApplicationInstalled.sh](https://github.com/Accenture/kx.as.code/tree/main/auto-setup/functions/checkApplicationInstalled.sh){:target="_blank"}
+
+Checks if a given application is installed or not. This is important for application installations that rely on other solutions to be available. For example, if the configuration needs Mattermost to be installed before creating a notification webhook, this part of the installation process could be skipped if the application is not installed, rather than failing the whole installation, due to a missing dependency.
+
+!!! note "Usage"
+    `checkApplicationInstalled "<application name>" "<application category folder>"`
+
+!!! example
+    ```bash linenums="1"
+    checkApplicationInstalled "gitlab" "cicd"
+    ```
+
+### functionStart()
+:material-git: Location: [auto-setup/functions/functionStart.sh](https://github.com/Accenture/kx.as.code/tree/main/auto-setup/functions/functionStart.sh){:target="_blank"}
+
+Is called at the start of each function. Include common steps such as enabling debug logging.
+
+!!! note "Usage"
+    `functionStart`
+
+!!! example
+    ```bash linenums="1"
+    functionStart
+    ```
+
+### functionEnd()
+:material-git: Location: [auto-setup/functions/functionEnd.sh](https://github.com/Accenture/kx.as.code/tree/main/auto-setup/functions/functionEnd.sh){:target="_blank"}
+
+Is called at the start of each function. Include common steps such as disabling debug logging.
+
+!!! note "Usage"
+    `functionEnd`
+
+!!! example
+    ```bash linenums="1"
+    functionEnd
+    ```
+
+### getCpuArchitecture()
+:material-git: Location: [auto-setup/functions/getCpuArchitecture.sh](https://github.com/Accenture/kx.as.code/tree/main/auto-setup/functions/getCpuArchitecture.sh){:target="_blank"}
+
+Sets the global `cpuArchitecture` variable to either `amd64` or `arm64`. This can then be used in scripts to decide which version of a binary ot install.
+
+!!! note "Usage"
+    `getCpuArchitecture`
+
+!!! example
+    ```bash linenums="1"
+    getCpuArchitecture
+    ```
+
+### getNginxControllerIp()
+:material-git: Location: [auto-setup/functions/getNginxControllerIp.sh](https://github.com/Accenture/kx.as.code/tree/main/auto-setup/functions/getNginxControllerIp.sh){:target="_blank"}
+
+!!! note "Usage"
+    `nginxIngressIp`
+
+!!! example
+    ```bash linenums="1"
+    # Function returns the NGINX Ingress Controller's IP address. You will need to export the returned result to a variable.
+    export nginxIngressIp=$(getNginxControllerIp)
+    ```
+
+### roundUp()
+:material-git: Location: [auto-setup/functions/arithmeticRoundUp.sh](https://github.com/Accenture/kx.as.code/tree/main/auto-setup/functions/arithmeticRoundUp.sh){:target="\_blank"}
+
+This rounds a number up rather than down, when a value if x.5. This was created to fix a mismatch between the calculation done in Ruby (the Vagrantfile), and later the same calculation in bash.
+
+!!! note "Usage"
+    `roundUp <floating point number>`
+
+### checkDockerHubRateLimit()
+:material-git: Location: [auto-setup/functions/dockerhubCheck.sh](https://github.com/Accenture/kx.as.code/tree/main/auto-setup/functions/dockerhubCheck.sh){:target="\_blank"}
+
+Since Docker Hub limited the number of downloads for anonymous and fee account users, this function is called before every component installation, to make sure the user is not close to the limit (<25), or the limit is used  up (0 download remaining).
+Either find will result in a warning or error message respectively. This is to help the user understand why component installations may be failing due to image pull failures.
+
+To solve this, a user can add their docker hub credentials to profile-config.json.
+
+More details on the Docker Hub download rate limit can be found on the following [link](https://docs.docker.com/docker-hub/download-rate-limit/){:target="\_blank"}.
+
+### downloadFile()
+:material-git: Location: [auto-setup/functions/downloadFile.sh](https://github.com/Accenture/kx.as.code/tree/main/auto-setup/functions/downloadFile.sh){:target="\_blank"}
+
+!!! note "Usage"
+    `downloadFile "<file url>" "<sha256sum checksum>" "<output_filename>"`
+
+If the output filename is not provided, the filename provided in the URL will be used instead.
+
+It is recommended to add the `version` and `checksum` to the component's `metadata.json` as environment variables, and then reference those in the installation script, rather than hard coding both.
+
+!!! example
+    
+        metadata.json:
+        ```json linenums="1"
+        {
+            "environment_variables": {
+                "guacamoleVersion": "1.3.0",
+                "guacamoleChecksum": "bc5511c7170841f90d437b5a07b7ec2f5bfd061f2a5bfc4e4d0fc4d7b303fb4c"
+            }
+        }
+        ```
+    script:
+    ```bash linenums="1"
+    # Download, build, install and enable Guacamole
+    downloadFile "https://apache.org/dyn/closer.cgi?action=download&filename=guacamole/${guacamoleVersion}/source/guacamole-server-${guacamoleVersion}.tar.gz" \
+        "${guacamoleChecksum}" \
+        "${installationWorkspace}/guacamole-server-${guacamoleVersion}.tar.gz" && log_info "Return code received after downloading guacamole-server-${guacamoleVersion}.tar.gz is $?"
+    ```
+
+### waitForFile()
+:material-git: Location: [auto-setup/functions/waitForFile.sh](https://github.com/Accenture/kx.as.code/tree/main/auto-setup/functions/waitForFile.sh){:target="\_blank"}
+
+Waits for a file to be at a given location. This is useful is a file is required before a next step in an installation process can be triggered, but is not available until other processing is completed.
+
+!!! note "Usage"
+    `waitForFile "<absolute path to file>"`
+
+### checkUrlHealth()
+:material-git: Location: [auto-setup/functions/urlHealthCheck.sh](https://github.com/Accenture/kx.as.code/tree/main/auto-setup/functions/urlHealthCheck.sh){:target="\_blank"}
+
+!!! note "Usage"
+    `checkUrlHealth "<url>" "<expected http response code>" "<basic authentication>"`
+
+Basic authentication must have the form `"<username>:<password>"`. Basic authentication is optional. It is recommended to use the `managedPassword` function to store and retrieve the password securely.
+The `URL` and expected `RC` are mandatory.
+
+!!! example
+    ```bash linenums="1"
+    # Call running KX-Portal to check status and pre-compile site
+    checkUrlHealth "http://localhost:3000" "200"
+    ```
+
+## Gitlab
+
+Functions for interacting with the Gitlab API. Currently just 2 functions. These will be expanded in future.
+
+### createGitlabProject()
+:material-git: Location: [auto-setup/functions/gitlabCreateProject.sh](https://github.com/Accenture/kx.as.code/tree/main/auto-setup/functions/gitlabCreateProject.sh){:target="\_blank"}
+
+Create a new project in Gitlab.
+
+!!! note "Usage"
+    `createGitlabProject "<project name>" "<group name>"`
+
+!!! example
+    ```bash linenums="1"
+    createGitlabProject "grafana-image-renderer" "devops"
+    ```
+
+### gitlabCreateGroup()
+:material-git: Location: [auto-setup/functions/gitlabCreateGroup.sh](https://github.com/Accenture/kx.as.code/tree/main/auto-setup/functions/gitlabCreateGroup.sh){:target="_blank"}
+
+Create a group in Gitlab.
+
+!!! note "Usage"
+    `gitlabCreateGroup "<group name>"`
+
+!!! example
+    ```bash linenums="1"
+    gitlabCreateGroup "kx.as.code"
+    ```
+
+### gitlabCreateGroupVariable()
+:material-git: Location: [auto-setup/functions/gitlabCreateGroupVariable.sh](https://github.com/Accenture/kx.as.code/tree/main/auto-setup/functions/gitlabCreateGroupVariable.sh){:target="_blank"}
+
+Add a group variable for use in CICD pipelines.
+
+!!! note "Usage"
+    `gitlabCreateGroupVariable "<variable name>" "<variable key>" "<variable value>"`
+
+!!! example
+    ```bash linenums="1"
+    gitlabCreateGroupVariable "REGISTRY_ROBOT_PASSWORD" "${kxRobotToken}" "${kxascodeGroupId}"
+    ```
+
+### gitlabCreateUser()
+:material-git: Location: [auto-setup/functions/gitlabCreateUser.sh](https://github.com/Accenture/kx.as.code/tree/main/auto-setup/functions/gitlabCreateUser.sh){:target="_blank"}
+
+Create a user in Gitlab.
+
+!!! note "Usage"
+    `gitlabCreateUser "<username>"`
+
+!!! example
+    ```bash linenums="1"
+    gitlabCreateUser "joe.bloggs"
+    ```
+
+
+### gitlabGetGroupId()
+:material-git: Location: [auto-setup/functions/gitlabGetGroupId.sh](https://github.com/Accenture/kx.as.code/tree/main/auto-setup/functions/gitlabGetGroupId.sh){:target="_blank"}
+
+Get the id of an existing user in Gitlab.
+
+Get the id of an available group in Gitlab
+
+!!! note "Usage"
+    `gitlabGetGroupId "<gitlab group>"`
+
+!!! example
+    ```bash linenums="1"
+    gitlabGroupId=$(gitlabGetGroupId "kx.as.code")
+    ```
+
+### gitlabGetUserId()
+:material-git: Location: [auto-setup/functions/gitlabGetUserId.sh](https://github.com/Accenture/kx.as.code/tree/main/auto-setup/functions/gitlabGetUserId.sh){:target="_blank"}
+
+Get the id of an available user in Gitlab
+
+!!! note "Usage"
+    `gitlabGetUserId "<gitlab username>"`
+
+!!! example
+    ```bash linenums="1"
+    gitlabUserId=$(gitlabGetUserId "joe.bloggs")
+    ```
+
+### gitlabMapUserToGroup()
+:material-git: Location: [auto-setup/functions/gitlabMapUserToGroup.sh](https://github.com/Accenture/kx.as.code/tree/main/auto-setup/functions/gitlabMapUserToGroup.sh){:target="_blank"}
+
+Map a user to a group in Gitlab
+
+!!! note "Usage"
+    `gitlabMapUserToGroup "<gitlab username>" "<gitlab group name>"`
+
+!!! example
+    ```bash linenums="1"
+    gitlabMapUserToGroup "joe.bloggs" "kx.as.code"
+    ```
+
+### populateGitlabProject()
+:material-git: Location: [auto-setup/functions/gitlabPopulateProject.sh](https://github.com/Accenture/kx.as.code/tree/main/auto-setup/functions/gitlabPopulateProject.sh){:target="\_blank"}
+
+Populate a project in Gitlab with source code from a given directory.
+
+!!! note "Usage"
+    `populateGitlabProject "<gitlabProjectName>" "<gitlabRepoName>" "<sourceCodeLocation>"`
+
+!!! example
+    ```bash linenums="1"
+    populateGitlabProject "devops" "grafana-image-renderer" "${autoSetupHome}/monitoring/grafana/deployment_yaml"
+    ```
+
+## Harbor
+
+### harborCreateProject()
+:material-git: Location: [auto-setup/functions/harborCreateProject.sh](https://github.com/Accenture/kx.as.code/tree/main/auto-setup/functions/harborCreateProject.sh){:target="_blank"}
+
+Create a new project in Harbor.
+
+!!! note "Usage"
+    `harborCreateProject "<harbor project name>"`
+
+!!! example
+    ```bash linenums="1"
+    harborCreateProject "kx-as-code"
+    ```
+
+### harborCreateRobotAccount()
+:material-git: Location: [auto-setup/functions/harborCreateRobotAccount.sh](https://github.com/Accenture/kx.as.code/tree/main/auto-setup/functions/harborCreateRobotAccount.sh){:target="_blank"}
+
+Create a robot account for use in CICD pipelines.
+
+!!! note "Usage"
+    `harborCreateRobotAccount "<project id>" "<robot id name>" "<robot id short description>"`
+
+!!! example
+    ```bash linenums="1"
+    # Get Harbor Project Ids
+    export kxHarborProjectId=$(harborGetProjectId "kx-as-code")
+    # Create Harbor robot account
+    harborCreateRobotAccount "${kxHarborProjectId}" "kx-cicd-user" "KX.AS.CODE CICD User"
+    ```
+
+### harborGetProjectId()
+:material-git: Location: [auto-setup/functions/harborGetProjectId.sh](https://github.com/Accenture/kx.as.code/tree/main/auto-setup/functions/harborGetProjectId.sh){:target="_blank"}
+
+Get the id of a previously created project.
+
+!!! note "Usage"
+    `harborGetProjectId "<harbor project name>"`
+
+!!! example
+    ```bash linenums="1"
+    export kxHarborProjectId=$(harborGetProjectId "kx-as-code")
+    ```
+
+
+## Keycloak IAM/SSO
+These functions were generated to avoid repeating the same code for each component connected to Keycloak IAM/SSO.
+For general documentation on how Keycloak IAM/SSO works, read the following [documentation](https://www.keycloak.org/docs/latest/securing_apps/).
 ??? abstract "Examples for using enableKeycloakSSOForSolution()"
     In most situations, it should be enough to call `enableKeycloakSSOForSolution()` to create the SSO configuration in Keycloak for the respective component installation. Only in rare cases is this not possible, due to the particularities of the component for which SSO is being enabled. Expand this box to see examples.
 
@@ -648,6 +1246,20 @@ Create a new user in Keycloak.
     enableKeycloakSSOForSolution "${redirectUris}" "${rootUrl}" "${baseUrl}" "${protocol}" "${fullPath}" "${scopes}"
     ```
 
+### getKeycloakClientId()
+:material-git: Location: [auto-setup/functions/keycloakGetClientId.sh](https://github.com/Accenture/kx.as.code/tree/main/auto-setup/functions/keycloakGetClientId.sh){:target="\_blank"}
+
+Get the client id for a given client.
+
+!!! note "Usage"
+    `getKeycloakClientId "<client name>"`
+
+!!! example
+    ```bash linenums="1"
+    # Get Keycloak Client Id
+    export clientId=$(getKeycloakClientId "kubernetes")
+    ```
+
 ### getKeycloakClientSecret()
 :material-git: Location: [auto-setup/functions/keycloakGetClientSecret.sh](https://github.com/Accenture/kx.as.code/tree/main/auto-setup/functions/keycloakGetClientSecret.sh){:target="\_blank"}
 
@@ -714,6 +1326,74 @@ The environment variables set are the following:
     sourceKeycloakEnvironment
     ```
 
+## Kubernetes
+
+### kubernetesApplyYamlFile()
+:material-git: Location: [auto-setup/functions/kubernetesApplyYamlFile.sh](https://github.com/Accenture/kx.as.code/tree/main/auto-setup/functions/kubernetesApplyYamlFile.sh){:target="_blank"}
+
+Executes the following actions against the YAML file path passed to it.
+- Environment variable replacement for `{{ mustache_variables }}`
+- Validation of YAML via [KubeVal](https://kubeval.instrumenta.dev/)
+- kubectl apply of the YAML file to the specified namespace
+
+If no namespace is provided, the resource will be applied to the `default` namespace - where relevant. Some resources do not live in a namespace, so for these, the namespace will be ignored.
+
+!!! note "Usage"
+    `kubernetesApplyYamlFile "<YAML file absolute path>" "<optional target kubernetes namespace>"`
+
+!!! example
+    ```bash linenums="1"
+    kubernetesApplyYamlFile "${installationWorkspace}/kadalu-server-storage-pool-statefulset.yaml" "kadalu"
+    ```
+
+### kubernetesExportResource()
+:material-git: Location: [auto-setup/functions/kubernetesExportResource.sh](https://github.com/Accenture/kx.as.code/tree/main/auto-setup/functions/kubernetesExportResource.sh){:target="_blank"}
+
+Does more than export a Kubernetes resource to a YAML file. It also strips it of the version specific items, to avoid issues during a `kubectl apply`.
+
+The default process is as follows:
+
+1. Export the resource as JSON
+2. Use JSON processing to remove the kube management and version line items
+3. Convert to YAML
+
+If the selected output method is JSON (reason could be the need for additional JSON manipulation before converting to YAML), then the 3rd step will not be executed.
+
+!!! note "Usage"
+kubernetesExportResource "<resource name to export>" "<kubernetes resource type>" "<kubernetes namespace>" "<yaml or json>"
+    ``
+
+!!! example
+    ```bash linenums="1"
+    kubernetesExportResource "coredns" "configmap" "kube-system" "json"
+    ```
+
+### kubernetesHealthCheck()
+:material-git: Location: [auto-setup/functions/kubernetesHealthCheck.sh](https://github.com/Accenture/kx.as.code/tree/main/auto-setup/functions/kubernetesHealthCheck.sh){:target="_blank"}
+
+Calls the Kubernetes health API. This is important for some procecesses that result in a temporary down-time of Kubernetes. This function lets the next steps know when Kubernetes is back online and healthy.
+
+!!! note "Usage"
+    `kubernetesHealthCheck`
+
+!!! example
+    ```bash linenums="1"
+    kubernetesHealthCheck
+    ```
+
+### waitForKubernetesResource()
+:material-git: Location: [auto-setup/functions/waitForKubernetesResource.sh](https://github.com/Accenture/kx.as.code/tree/main/auto-setup/functions/waitForKubernetesResource.sh){:target="_blank"}
+
+This checks and waits for a Kubernetes resource to become available. This is needed if a step, such as `kubernetesExportResource()` for example, needs a resource to be available before it can be successfully executed. 
+
+!!! note "Usage"
+    `waitForKubernetesResource "<resource name>" "<kubernetes resource type>" "<kubernetes namespace>"`
+
+!!! example
+    ```bash linenums="1"
+    waitForKubernetesResource "server-storage-pool-1-0" "statefulset" "kadalu"
+    ```
+
 ## Logging
 
 ### log_debug()
@@ -748,6 +1428,198 @@ Send message with timestamp and [WARN] prefix to KX.AS.CODE installation log.
 !!! note "Usage"
     `log_warn "<log message>"`
 
+## Mattermost
+
+### mattermostCreateChannel()
+:material-git: Location: [auto-setup/functions/mattermostCreateChannel.sh](https://github.com/Accenture/kx.as.code/tree/main/auto-setup/functions/mattermostCreateChannel.sh){:target="_blank"}
+
+Create a Mattermost channel.
+
+!!! note "Usage"
+    `mattermostCreateChannel "<channel name>" "<team id>"`
+
+!!! example
+    ```bash linenums="1"
+    # Get Mattermost team id
+    kxascodeTeamId=$(mattermostGetTeamId "kxascode")
+    # Add Channels
+    mattermostCreateChannel "Security" "${kxascodeTeamId}"
+    ```
+
+### mattermostCreateTeam()
+:material-git: Location: [auto-setup/functions/mattermostCreateTeam.sh](https://github.com/Accenture/kx.as.code/tree/main/auto-setup/functions/mattermostCreateTeam.sh){:target="_blank"}
+
+Create a Mattermost team.
+
+!!! note "Usage"
+    `mattermostCreateTeam "<team name>" "<team headline>"`
+
+!!! example
+    ```bash linenums="1"
+    mattermostCreateTeam "kxascode" "Team KX.AS.CODE"
+    ```
+
+### mattermostCreateUser()
+:material-git: Location: [auto-setup/functions/mattermostCreateUser.sh](https://github.com/Accenture/kx.as.code/tree/main/auto-setup/functions/mattermostCreateUser.sh){:target="_blank"}
+
+Create a Mattermost user.
+
+!!! note "Usage"
+    `mattermostCreateUser "<username>"`
+
+!!! example
+    ```bash linenums="1"
+    # Create technical user for posting notifications
+    mattermostCreateUser "security"
+    ```
+
+### mattermostCreateWebhook()
+:material-git: Location: [auto-setup/functions/mattermostCreateWebhook.sh](https://github.com/Accenture/kx.as.code/tree/main/auto-setup/functions/mattermostCreateWebhook.sh){:target="_blank"}
+
+Create a Mattermost webhook.
+
+!!! note "Usage"
+    `mattermostCreateWebhook "<mattermost webhook name>" "<mattermost team name>" "<mattermost channel name>" "<mattermost webhook avatar url>"`
+
+!!! example
+    ```bash linenums="1"
+    mattermostCreateWebhook "cicd" "kxascode" "CICD" "https://about.gitlab.com/images/press/logo/png/gitlab-logo-500.png"
+    ```
+
+### mattermostGetChannelId()
+:material-git: Location: [auto-setup/functions/mattermostGetChannelId.sh](https://github.com/Accenture/kx.as.code/tree/main/auto-setup/functions/mattermostGetChannelId.sh){:target="_blank"}
+
+Get a Mattermost channel id.
+
+!!! note "Usage"
+    `mattermostGetChannelId "<mattermost team name>" "<mattermost channel name>"`
+
+!!! example
+    ```bash linenums="1"
+    channelId=$(mattermostGetChannelId "kxascode" "Security")
+    ```
+
+### mattermostGetLoginToken()
+:material-git: Location: [auto-setup/functions/mattermostGetLoginToken.sh](https://github.com/Accenture/kx.as.code/tree/main/auto-setup/functions/mattermostGetLoginToken.sh){:target="_blank"}
+
+This is normally called automatically before performing any of the other Mattermost calls. It gets the login token needed to authorize next steps.
+
+!!! note "Usage"
+    `mattermostGetLoginToken "<usernmame>"`
+
+!!! example
+    ```bash linenums="1"
+    mattermostLoginToken=$(mattermostGetLoginToken "admin")
+    ```
+
+### mattermostGetTeamId()
+:material-git: Location: [auto-setup/functions/mattermostGetTeamId.sh](https://github.com/Accenture/kx.as.code/tree/main/auto-setup/functions/mattermostGetTeamId.sh){:target="_blank"}
+
+Get a Mattermost team id.
+
+!!! note "Usage"
+    `mattermostGetTeamId "<mattermost team name>"`
+
+!!! example
+    ```bash linenums="1"
+    # Get Mattermost team id
+    kxascodeTeamId=$(mattermostGetTeamId "kxascode")
+    ```
+
+### mattermostGetUserId()
+:material-git: Location: [auto-setup/functions/mattermostGetUserId.sh](https://github.com/Accenture/kx.as.code/tree/main/auto-setup/functions/mattermostGetUserId.sh){:target="_blank"}
+
+Get a Mattermost user id.
+
+!!! note "Usage"
+    `mattermostGetUserId "<mattermost username>"`
+
+!!! example
+    ```bash linenums="1"
+    # Get Mattermost User Id
+    mattermostUserId=$(mattermostGetUserId "${mattermostUsername}")
+    ```
+
+### mattermostMapUserToTeam()
+:material-git: Location: [auto-setup/functions/mattermostMapUserToTeam.sh](https://github.com/Accenture/kx.as.code/tree/main/auto-setup/functions/mattermostMapUserToTeam.sh){:target="_blank"}
+
+Map a Mattermost user to a Mattermost Team.
+
+!!! note "Usage"
+    `mattermostMapUserToTeam "<mattermost username>" "<mattermost team name>"`
+
+!!! example
+    ```bash linenums="1"
+    mattermostMapUserToTeam "securty" "kxascode"
+    ```
+
+## MinIO-S3
+
+### minioS3CreateBucket()
+:material-git: Location: [auto-setup/functions/minioS3CreateBucket.sh](https://github.com/Accenture/kx.as.code/tree/main/auto-setup/functions/minioS3CreateBucket.sh){:target="_blank"}
+
+Create bucket in MinIO-S3.
+
+!!! note "Usage"
+    `minioS3CreateBucket "<bucket name>" "<minio tenant>" "<aws compatible region>"`
+
+!!! example
+    ```bash linenums="1"
+    minioS3CreateBucket "mattermost-file-storage" "mattermost" "eu-central-1"
+    ```
+
+### minioS3CreateServiceAccount()
+:material-git: Location: [auto-setup/functions/minioS3CreateServiceAccount.sh](https://github.com/Accenture/kx.as.code/tree/main/auto-setup/functions/minioS3CreateServiceAccount.sh){:target="_blank"}
+
+Create MinIO service account. TRhe generated service account's api key and secret will be published to GoPass.
+
+!!! note "Usage"
+    `minioS3CreateServiceAccount "<minio service account name>"`
+
+!!! example
+    ```bash linenums="1"
+    minioS3CreateServiceAccount "kxascode-sa"
+    ```
+
+### minioS3CreateTenant()
+:material-git: Location: [auto-setup/functions/minioS3CreateTenant.sh](https://github.com/Accenture/kx.as.code/tree/main/auto-setup/functions/minioS3CreateTenant.sh){:target="_blank"}
+
+Creates a new tenant in [MinIO](https://docs.min.io/minio/k8s/tenant-management/deploy-minio-tenant.html){:target="\_blank"}. See here for more information on MinIO tenants.
+
+!!! note "Usage"
+    `minioS3CreateTenant "<tenant name>"`
+
+!!! example
+    ```bash linenums="1"
+    minioS3CreateTenant "gitlab"
+    ```
+
+### minioS3GetAccessAndSecretKeys()
+:material-git: Location: [auto-setup/functions/minioS3GetAccessAndSecretKeys.sh](https://github.com/Accenture/kx.as.code/tree/main/auto-setup/functions/minioS3GetAccessAndSecretKeys.sh){:target="_blank"}
+
+Sets two global variables, `minioAccessKey` and `minioSecretKey`, that can be used in subsequent steps.
+
+!!! note "Usage"
+    `minioS3GetAccessAndSecretKeys <service account name>`
+
+!!! example
+    ```bash linenums="1"
+    minioS3GetAccessAndSecretKeys "gitlab"
+    ```
+
+### minioS3Initialize()
+:material-git: Location: [auto-setup/functions/minioS3Initialize.sh](https://github.com/Accenture/kx.as.code/tree/main/auto-setup/functions/minioS3Initialize.sh){:target="_blank"}
+
+Basic steps to allow the MinIO instance to be manageable via MinIO's command line tool - `mc`.
+
+!!! note "Usage"
+    `minioS3Initialize`
+
+!!! example
+    ```bash linenums="1"
+    minioS3Initialize
+    ```
+
 ## Notifications
 ### addToNotificationQueue()
 :material-git: Location: [auto-setup/functions/addToNotificationQueue.sh](https://github.com/Accenture/kx.as.code/tree/main/auto-setup/functions/addToNotificationQueue.sh){:target="\_blank"}
@@ -755,7 +1627,7 @@ Send message with timestamp and [WARN] prefix to KX.AS.CODE installation log.
 Adds a notification to the RabbitMQ `notification_queue`.
 
 !!! info
-    This is called by `notifyAllChannels` and most likely no need to call it on its own.
+This is called by `notifyAllChannels` and most likely no need to call it on its own.
 
 ### notify()
 :material-git: Location: [auto-setup/functions/notify.sh](https://github.com/Accenture/kx.as.code/tree/main/auto-setup/functions/notify.sh){:target="\_blank"}
@@ -763,7 +1635,7 @@ Adds a notification to the RabbitMQ `notification_queue`.
 Sends a notification to the desktop. It receives the `message` as input, as well `dialogue_type`, which can be either `info` (shows as blue), `warn` (orange) or `error` (red).
 
 !!! note "Usage"
-    `notify "<message>" "<dialog_type>"`
+`notify "<message>" "<dialog_type>"`
 
 Send a notification to the Linux desktop only. Preferred method is to send a notification to all channels, which results in the notification also being displayed in the KX-Portal NodeJS webapp.
 See function, _notifyAllChannels_.
@@ -774,7 +1646,7 @@ See function, _notifyAllChannels_.
 Send a notification to both the Linux desktop and to the KX-Portal via the RabbitMQ "notification_queue".
 
 !!! note "Usage"
-    `notifyAllChannels "<message>" "<log_level>" "<action_status>"`
+`notifyAllChannels "<message>" "<log_level>" "<action_status>"`
 
 | Field Name | Description | Possible Values | 
 | ---------------|----------------|----------------|
@@ -782,325 +1654,40 @@ Send a notification to both the Linux desktop and to the KX-Portal via the Rabbi
 | log_level | The type of notification dialogue to show | info (shows as blue), warn (orange) or error (red) |
 | status | This should be the status of the last action, eg. install | success, failure |
 
-## Docker Registry
 
-The functions here are for managing the standard [docker registry](https://hub.docker.com/_/registry){:target="\_blank"} installed as part of the [core setup](https://github.com/Accenture/kx.as.code/tree/main/auto-setup/core/docker-registry){:target="\_blank"}.
+## RabbitMQ Core Setup
 
-### dockerRegistryAddUser()
-:material-git: Location: [auto-setup/functions/dockerCoreRegistryAddUser.sh](https://github.com/Accenture/kx.as.code/tree/main/auto-setup/functions/dockerCoreRegistryAddUser.sh){:target="\_blank"}
+These are part of the core setup and should never need to be called separately by any of the component installation routines.
 
-Creates or updates the Kubernetes secret containing the `htpasswd` file containing username and passwords, in the Docker Registry namespace, and remounts into the docker-registry pod, subsequently redeploying the POD with a rolling update.
+### checkRabbitMq()
+:material-git: Location: [auto-setup/functions/rabbitMQCheck.sh](https://github.com/Accenture/kx.as.code/tree/main/auto-setup/functions/rabbitMQCheck.sh){:target="\_blank"}
 
-!!! note "Usage"
-    `dockerRegistryAddUser "<username>"`
-
-### createK8sCredentialSecretForCoreRegistry()
-:material-git: Location: [auto-setup/functions/dockerCoreRegistryK8sCredential.sh](https://github.com/Accenture/kx.as.code/tree/main/auto-setup/functions/dockerCoreRegistryK8sCredential.sh){:target="\_blank"}
-
-Creates the regCred secret needed by other deployments for pulling images from the private core docker registry.
-The secret is created in the Kubernetes namespace of the current solution being installed.
+Checks if `rabbitmqadmin` is installed. If not, installed it, including setting up bash completion scripts.
 
 !!! note "Usage"
-    `createK8sCredentialSecretForCoreRegistry`
+`checkRabbitMq`
 
-### loginToCoreRegistry()
-:material-git: Location: [auto-setup/functions/dockerCoreRegistryLogin.sh](https://github.com/Accenture/kx.as.code/tree/main/auto-setup/functions/dockerCoreRegistryLogin.sh){:target="\_blank"}
+### createRabbitMQExchange()
+:material-git: Location: [auto-setup/functions/rabbitMQExchangeCreation.sh](https://github.com/Accenture/kx.as.code/tree/main/auto-setup/functions/rabbitMQExchangeCreation.sh){:target="\_blank"}
 
-!!! tip 
-    This is usually carried out by the other docker-registry functions, and rarely needs to be called directly.
-
-!!! note "Usage"
-    `loginToCoreRegistry`
-
-Logs into the KX.AS.CODE docker registry. Needed before executing any other actions against the registry.
-
-
-### pushDockerImageToCoreRegistry()
-:material-git: Location: [auto-setup/functions/dockerCoreRegistryPush.sh](https://github.com/Accenture/kx.as.code/tree/main/auto-setup/functions/dockerCoreRegistryPush.sh){:target="\_blank"}
-
-Pushes a built image to the KX.AS.CODE core docker registry.
+Creates the rabbitMQ exchange if not already present.
 
 !!! note "Usage"
-    `pushDockerImageToCoreRegistry "<docker image path>:<tag>"`
+`createRabbitMQExchange`
 
-!!! example
-    ```bash linenums="1"
-    docker build -f ${installationWorkspace}/Dockerfile.Docker-Dind -t docker-registry.${baseDomain}/devops/docker:${gitlabDindImageVersion} .
-    pushDockerImageToCoreRegistry "devops/docker:${gitlabDindImageVersion}"
-    ```
+### createRabbitMQQueues()
+:material-git: Location: [auto-setup/functions/rabbitMQQueuesCreation.sh](https://github.com/Accenture/kx.as.code/tree/main/auto-setup/functions/rabbitMQQueuesCreation.sh){:target="\_blank"}
 
-## Application Deployments
-
-These functions are executed by the KX.AS.CODE [autoSetup.sh](https://github.com/Accenture/kx.as.code/blob/main/auto-setup/autoSetup.sh){:target="\_blank"} auto-setup framework and do not need to be called individually by any of the custom component installation scripts.
-
-### applicationDeploymentHealthCheck()
-:material-git: Location: [auto-setup/functions/applicationDeploymentHealthCheck.sh](https://github.com/Accenture/kx.as.code/tree/main/auto-setup/functions/applicationDeploymentHealthCheck.sh){:target="\_blank"}
-
-This executes a health-check based on the application URL [0] found in the `metadata.json` of the component being installed.
-
-!!! info
-    There are no inputs to this function, as all the needed data comes from the component's `metadata.json`.
-
-!!! tip
-    Here an example extract from Gitlab's `metadata.json`
-    The JSON below defines both the Kubernetes `liveliness` check and the `readiness` checks. You can read more about Kubernetes health probes [here](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#define-a-liveness-http-request){:target="\_blank"}.
-    This one defines the following:
-
-    - URL path to access (will be appended to the base url)
-    - Expected HTTP response  code
-    - Expected JSON response text given json-path
-
-    As you can see in the JSON, there are more options available. These will be described on another page, which describes in detail the contents of the `metadata.json`.
-
-    ```json linenums="1"
-    "urls": [
-        {
-            "url": "https://{{componentName}}.{{baseDomain}}",
-            "healthchecks": {
-                "liveliness": {
-                    "http_path": "/-/readiness",
-                    "http_auth_required": false,
-                    "expected_http_response_code": "200",
-                    "expected_http_response_string": "",
-                    "expected_json_response": {
-                        "json_path": ".status",
-                        "json_value": "ok"
-                    },
-                    "health_shell_check_command": "",
-                    "expected_shell_check_command_response": ""
-                },
-                "readiness": {
-                    "http_path": "/-/readiness",
-                    "http_auth_required": false,
-                    "expected_http_response_code": "200",
-                    "expected_http_response_string": "",
-                    "expected_json_response": {
-                        "json_path": ".status",
-                        "json_value": "ok"
-                    }
-                }
-            }
-        }
-    ]
-    ```
+Creates the rabbitMQ queues if not already present.
 
 !!! note "Usage"
-    `applicationDeploymentHealthCheck`
+`createRabbitMQQueues`
 
-### autoSetupArgoCdInstall()
-:material-git: Location: [auto-setup/functions/autoSetupArgoCdInstall.sh](https://github.com/Accenture/kx.as.code/tree/main/auto-setup/functions/autoSetupArgoCdInstall.sh){:target="\_blank"}
+### createRabbitMQWorkflowBindings()
+:material-git: Location: [auto-setup/functions/rabbitMQWorkflowBindingsCreation.sh](https://github.com/Accenture/kx.as.code/tree/main/auto-setup/functions/rabbitMQWorkflowBindingsCreation.sh){:target="\_blank"}
 
-!!! danger "Important"
-    Note. You must deploy the `ArgoCD` application, before executing any component installations that depend on `ArgoCD`
-
-!!! info 
-    There are no inputs to this function, as all the needed data comes from the component's `metadata.json`.
-
-!!! example
-    Here an example snippet from a `metadata.json` for executing an application deployment with `ArgoCD`.
-
-    The JSON below shows an example for deploying .
-
-    The JSON shown here will described on another page, which describes in detail the contents of the `metadata.json`.
-    Read up on [ArgoCD's core concepts](https://argo-cd.readthedocs.io/en/stable/core_concepts/){:target="\_blank"} to understand better the parameters below.
-
-    ```json linenums="1"
-    {
-        "name": "myApp",
-        "namespace": "devops",
-        "installation_type": "argocd",
-        "installation_group_folder": "kx_as_code",
-        "argocd_params": {
-            "repository": "{{gitUrl}}/kx.as.code/kx.as.code_docs.git",
-            "path": "kubernetes",
-            "dest_server": "https://kubernetes.default.svc",
-            "dest_namespace": "devops",
-            "sync_policy": "automated",
-            "auto_prune": true,
-            "self_heal": true
-        }
-    }
-    ```
-
-### autoSetupHelmInstall()
-:material-git: Location: [auto-setup/functions/autoSetupHelmInstall.sh](https://github.com/Accenture/kx.as.code/tree/main/auto-setup/functions/autoSetupHelmInstall.sh){:target="\_blank"}
-
-!!! info 
-    There are no inputs to this function, as all the needed data comes from the component's `metadata.json` and `values_template.yaml` file.
-
-!!! example
-    Here an example extract from ArgoCD's `metadata.json`"
-    
-    The JSON below defines the parameters needed to execute a deployment via helm. 
-
-    The JSON is described in more detail on a page dedicated to `metadata.json`, so will only be described high level here.
-
-    ```json linenums="1"
-    {    
-        "helm_params": {
-            "repository_url": "https://argoproj.github.io/argo-helm",
-            "repository_name": "argo/argo-cd",
-            "helm_version": "4.2.1",
-            "set_key_values": [
-                "global.image.tag={{imageTag}}",
-                "installCRDs=false",
-                "configs.secret.argocdServerAdminPassword='{{argoCdAdminPassword}}'",
-                "controller.clusterAdminAccess.enabled=true",
-                "server.clusterAdminAccess.enabled=true",
-                "server.extraArgs[0]=--insecure"
-            ]
-        }
-    }
-    ```
-
-### autoSetupPreInstallSteps()
-:material-git: Location: [auto-setup/functions/autoSetupPreInstallSteps.sh](https://github.com/Accenture/kx.as.code/tree/main/auto-setup/functions/autoSetupPreInstallSteps.sh){:target="\_blank"}
-
-Executes all the pre-install scripts as defined in `metadata.json` and located in the `pre_install_scripts` folder of the component in question.
-
-### autoSetupScriptInstall()
-:material-git: Location: [auto-setup/functions/autoSetupScriptInstall.sh](https://github.com/Accenture/kx.as.code/tree/main/auto-setup/functions/autoSetupScriptInstall.sh){:target="\_blank"}
-
-Executes all the main installation scripts as defined in `metadata.json` and located in the root folder of the component in question.
-These scripts run after the pre and before the post installation scripts.
-
-### createDesktopIcon()
-:material-git: Location: [auto-setup/functions/desktopIconCreate.sh](https://github.com/Accenture/kx.as.code/tree/main/auto-setup/functions/desktopIconCreate.sh){:target="\_blank"}
+Creates the rabbitMQ workflow bindings if not already present.
 
 !!! note "Usage"
-    `createDesktopIcon "<shortcutsDirectory>" "<primaryUrl>" "<shortcutText>" "<iconPath>" "<browserOptions>"`
-
-!!! example
-    ```bash linenums="1"
-    # Install the desktop shortcut for KX.AS.CODE Portal
-    shortcutsDirectory="/home/${vmUser}/Desktop"
-    primaryUrl="http://localhost:3000"
-    shortcutText="KX.AS.CODE Portal"
-    iconPath="${installComponentDirectory}/$(cat ${componentMetadataJson} | jq -r '.shortcut_icon')"
-    browserOptions=""
-    createDesktopIcon "${shortcutsDirectory}" "${primaryUrl}" "${shortcutText}" "${iconPath}" "${browserOptions}"
-    ```
-
-### checkRunningKubernetesPods()
-:material-git: Location: [auto-setup/functions/kubernetesCheckRunningPods.sh](https://github.com/Accenture/kx.as.code/tree/main/auto-setup/functions/kubernetesCheckRunningPods.sh){:target="\_blank"}
-
-This checks that the number of deployed pods equals the number of running pods for a given component installation. This is just a pre-check before proceeding onto the URL health checks.
-
-### createKubernetesNamespace()
-:material-git: Location: [auto-setup/functions/kubernetesCreateNamespace.sh](https://github.com/Accenture/kx.as.code/tree/main/auto-setup/functions/kubernetesCreateNamespace.sh){:target="\_blank"}
-
-!!! info "There are no inputs to this function, as all the needed data comes from the component's `metadata.json`."
-
-### deployYamlFilesToKubernetes()
-:material-git: Location: [auto-setup/functions/kubernetesDeployYamlFiles.sh](https://github.com/Accenture/kx.as.code/tree/main/auto-setup/functions/kubernetesDeployYamlFiles.sh){:target="\_blank"}
-
-Deploys all Kubernetes YAML files in the component's optional `deployment_yaml` directory.
-
-`${installComponentDirectory}/deployment_yaml/*.yaml`
-
-It also replaces all the `{{ mustache }}` placeholders in those YAML files with the values in global and component specific environment variables.
-
-Finally, a validation check is done with [kubeval](https://kubeval.instrumenta.dev/){:target="\_blank"} to ensure the YAML file is valid before applying it. The function will exit with `RC=1` if a YAML file is found not to be valid.
-
-## General Helpers
-### roundUp()
-:material-git: Location: [auto-setup/functions/arithmeticRoundUp.sh](https://github.com/Accenture/kx.as.code/tree/main/auto-setup/functions/arithmeticRoundUp.sh){:target="\_blank"}
-
-This rounds a number up rather than down, when a value if x.5. This was created to fix a mismatch between the calculation done in Ruby (the Vagrantfile), and later the same calculation in bash.
-
-!!! note "Usage"
-    `roundUp <floating point number>`
-
-### checkDockerHubRateLimit()
-:material-git: Location: [auto-setup/functions/dockerhubCheck.sh](https://github.com/Accenture/kx.as.code/tree/main/auto-setup/functions/dockerhubCheck.sh){:target="\_blank"}
-
-Since Docker Hub limited the number of downloads for anonymous and fee account users, this function is called before every component installation, to make sure the user is not close to the limit (<25), or the limit is used  up (0 download remaining).
-Either find will result in a warning or error message respectively. This is to help the user understand why component installations may be failing due to image pull failures.
-
-To solve this, a user can add their docker hub credentials to profile-config.json.
-
-More details on the Docker Hub download rate limit can be found on the following [link](https://docs.docker.com/docker-hub/download-rate-limit/){:target="\_blank"}.
-
-### downloadFile()
-:material-git: Location: [auto-setup/functions/downloadFile.sh](https://github.com/Accenture/kx.as.code/tree/main/auto-setup/functions/downloadFile.sh){:target="\_blank"}
-
-!!! note "Usage"
-    `downloadFile "<file url>" "<sha256sum checksum>" "<output_filename>"`
-
-If the output filename is not provided, the filename provided in the URL will be used instead.
-
-It is recommended to add the `version` and `checksum` to the component's `metadata.json` as environment variables, and then reference those in the installation script, rather than hard coding both.
-
-!!! example
-    
-        metadata.json:
-        ```json linenums="1"
-        {
-            "environment_variables": {
-                "guacamoleVersion": "1.3.0",
-                "guacamoleChecksum": "bc5511c7170841f90d437b5a07b7ec2f5bfd061f2a5bfc4e4d0fc4d7b303fb4c"
-            }
-        }
-        ```
-    script:
-    ```bash linenums="1"
-    # Download, build, install and enable Guacamole
-    downloadFile "https://apache.org/dyn/closer.cgi?action=download&filename=guacamole/${guacamoleVersion}/source/guacamole-server-${guacamoleVersion}.tar.gz" \
-        "${guacamoleChecksum}" \
-        "${installationWorkspace}/guacamole-server-${guacamoleVersion}.tar.gz" && log_info "Return code received after downloading guacamole-server-${guacamoleVersion}.tar.gz is $?"
-    ```
-
-### waitForFile()
-:material-git: Location: [auto-setup/functions/waitForFile.sh](https://github.com/Accenture/kx.as.code/tree/main/auto-setup/functions/waitForFile.sh){:target="\_blank"}
-
-Waits for a file to be at a given location. This is useful is a file is required before a next step in an installation process can be triggered, but is not available until other processing is completed.
-
-!!! note "Usage"
-    `waitForFile "<absolute path to file>"`
-
-### checkUrlHealth()
-:material-git: Location: [auto-setup/functions/urlHealthCheck.sh](https://github.com/Accenture/kx.as.code/tree/main/auto-setup/functions/urlHealthCheck.sh){:target="\_blank"}
-
-!!! note "Usage"
-    `checkUrlHealth "<url>" "<expected http response code>" "<basic authentication>"`
-
-Basic authentication must have the form `"<username>:<password>"`. Basic authentication is optional. It is recommended to use the `managedPassword` function to store and retrieve the password securely.
-The `URL` and expected `RC` are mandatory.
-
-!!! example
-    ```bash linenums="1"
-    # Call running KX-Portal to check status and pre-compile site
-    checkUrlHealth "http://localhost:3000" "200"
-    ```
-
-## Gitlab
-
-Functions for interacting with the Gitlab API. Currently just 2 functions. These will be expanded in future.
-
-### createGitlabProject()
-:material-git: Location: [auto-setup/functions/gitlabCreateProject.sh](https://github.com/Accenture/kx.as.code/tree/main/auto-setup/functions/gitlabCreateProject.sh){:target="\_blank"}
-
-Create a new project in Gitlab.
-
-!!! note "Usage"
-    `createGitlabProject "<project name>" "<group name>"`
-
-!!! example
-    ```bash linenums="1"
-    createGitlabProject "grafana-image-renderer" "devops"
-    ```
-
-### populateGitlabProject()
-:material-git: Location: [auto-setup/functions/gitlabPopulateProject.sh](https://github.com/Accenture/kx.as.code/tree/main/auto-setup/functions/gitlabPopulateProject.sh){:target="\_blank"}
-
-Populate a project in Gitlab with source code from a given directory.
-
-!!! note "Usage"
-    `populateGitlabProject "<gitlabProjectName>" "<gitlabRepoName>" "<sourceCodeLocation>"`
-
-!!! example
-    ```bash linenums="1"
-    populateGitlabProject "devops" "grafana-image-renderer" "${autoSetupHome}/monitoring/grafana/deployment_yaml"
-    ```
-
+`createRabbitMQWorkflowBindings`
 

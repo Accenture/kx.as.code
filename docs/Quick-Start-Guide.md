@@ -75,27 +75,27 @@ The configurator automatically selects the profile dependent on the pre-requisit
 !!! warning
     Starting KX.AS.CODE with lower host system resources
     If you have less than 16GB RAM and less than 8 cores (16 threads/vCores) on your host, you should choose either the _Lite_ or _Minimal_ startup mode.
-
+    
     | Start Up Mode | Normal | Lite | Minimal |
     | ---------------|----------------|----------------|----------------|
-    | KX-Portal | X | X | X |
-    | GoPass Credential Manager | X | X | X |
-    | Certificate Authority | X | X | X |
-    | Kubernetes | X | X | X |
-    | Docker Registry | X | X | X |
-    | Calico Network | X | X | X |
-    | Local Storage Volumes | X | X | X |
-    | NGINX Ingress Controller | X | X | X |
-    | MetalLB Load Balancer | X | X | |
-    | OpenLDAP Server | X | X | |
-    | Keycloak SSO Server | X | X | |
-    | Kubernetes Metrics Server | X | X | |
-    | OpenLens Kubernetes IDE | X | X | |
-    | Cert Manager | X | | |
-    | Kubernetes Dashboard| X | | |
-    | Network Storage Services | X | | |
-    | Remote Desktop Services | X | | |
-    | Multi-User Support| X | | |
+    | KX-Portal | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+    | GoPass Credential Manager | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+    | Certificate Authority | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+    | Kubernetes | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+    | Docker Registry | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+    | Calico Network | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+    | Local Storage Volumes | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+    | NGINX Ingress Controller | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+    | MetalLB Load Balancer | :white_check_mark: | :white_check_mark: | |
+    | OpenLDAP Server | :white_check_mark: | :white_check_mark: | |
+    | Keycloak SSO Server | :white_check_mark: | :white_check_mark: | |
+    | Kubernetes Metrics Server | :white_check_mark: | :white_check_mark: | |
+    | OpenLens Kubernetes IDE | :white_check_mark: | :white_check_mark: | |
+    | Cert Manager | :white_check_mark: | | |
+    | Kubernetes Dashboard| :white_check_mark: | | |
+    | Network Storage Services | :white_check_mark: | | |
+    | Remote Desktop Services | :white_check_mark: | | |
+    | Multi-User Support| :white_check_mark: | | |
 
     To save even more resources, you can disable the linux desktop on the next tab. Whilst this is great for saving system resources, however, you will lose some of the experience with using KX.AS.CODE as a workstation.
 

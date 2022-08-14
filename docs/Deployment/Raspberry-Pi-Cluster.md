@@ -2,6 +2,8 @@
 
 This guide will detail how to deploy the images you built for the KX.AS.CODE Raspberry Pi cluster.
 
+This is still a work in progress. You can follow our Raspberry Pi enablement progress on our [Discord Raspberry Pi channel](https://discord.gg/XC64HNgeXK){:target="\_blank"}!
+
 !!! info
     If you have not yet built the images, see the [Raspberry Image Build Guide](../../Build/Raspberry-Pi-Cluster/).
 

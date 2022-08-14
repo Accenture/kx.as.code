@@ -1,15 +1,8 @@
 # Installation Flow
 
-------
-
 This section describes the execution flow for items added for installation from the KX.AS.CODE frontend.
 
-Once the instruction to install a tool is received from the frontend (by adding it to the "pending" queue in RabbitMQ), the installation flow for all tool installations is as follows.
-
-[![KX.AS.CODE Architecture-Installation Flow](../assets/images/KX.AS.CODE Architecture-Installation Flow.png)](images/KX.AS.CODE Architecture-Installation Flow.png)
-
-
-
+Once the instruction to install a tool is received from the frontend (by adding it to the "pending" queue in RabbitMQ - either manually or via the KX-Portal), the installation flow is triggered.
 
 The metadata.json that accompanies each solution determines which main installation method is used:
 
@@ -17,11 +10,7 @@ The metadata.json that accompanies each solution determines which main installat
 - Helm3
 - ArgoCD
 
-
-
-Below a detail description for defining the contents of metadata,json.
-
-
+Below a detailed description for defining the contents of metadata.json.
 
 #### General Options
 
@@ -49,7 +38,6 @@ Before going into the detail of each installation type, here the general configu
 	"vendor_docs_url": "https://docs.gitlab.com/ce/"
 }
 ```
-
 
 | Parameter                 | Description                                                  | Mandatory/Optional |
 | ------------------------- | ------------------------------------------------------------ | ------------------ |

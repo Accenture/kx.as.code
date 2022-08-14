@@ -4,9 +4,10 @@ The most recent addition to KX.AS.CODE has been to add ARM64 support, stating wi
 
 This guide will detail the steps for building the Raspberry Pi image. For deployment, see the deployment guide.
 
+This is still a work in progress. You can follow our Raspberry Pi enablement progress on our [Discord Raspberry Pi channel](https://discord.gg/XC64HNgeXK){:target="\_blank"}!
+
 !!! danger "Important"
     This has only been tested on an 8GB Raspberry Pi 4B. It is not recommended to use anything less, as the resources will not be sufficient to run all the KX.AS.CODE services! Also, note that one Raspberry Pi 4B will not be enough. In our testing, we have used four Raspberry Pi 4B boards set up in a 1 x KX-Main and 3 x KX-Workers configuration.
-
 
 First of all, thanks go out to `solo-io` and `mkaczanowski` who built the ARM64 plugins for packer, which has allowed us to enable this function! Here are their repositories.
 
