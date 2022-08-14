@@ -12,7 +12,7 @@ There are just three things that need to be performed.
 
 All the files you need are made available to you during the initial core setup of KX.AS.CODE.
 
-![](../assets/images/external_access_1.png)
+![](../assets/images/external_access_1.png){: .zoom}
 !!! danger "Important"
     If you are running KX.AS.CODE in a public cloud, it is recommended to access the deployed applications via an `allow list`. Check your cloud's documentation on how to do this.
 
@@ -27,7 +27,7 @@ The hosts file can be found in the profile directory for the virtualization solu
 
 Once done, if you access one of the applications in the hosts file, you are likely to see the following in your browser.
 
-![](../assets/images/external_access_5.png)
+![](../assets/images/external_access_5.png){: .zoom}
 
 The error that "Your connection is not private" is normal, as you have likely not yet imported the KX.AS.CODE certificate authority root certificates. The SSL section below will explain how to do this.  
 
@@ -46,7 +46,7 @@ Therefore, to access the URLs remotely and have a green padlock in your browser,
 
 As we saw in the section above, before the certificates are trusted, your browsers will show an error. Digging a little deeper, you would see the following:
 
-![](../assets/images/external_access_2.png)
+![](../assets/images/external_access_2.png){: .zoom}
 
 Most of the time, regardless of what operating system you are working on, double-clicking the certificate normally gives the option to install it to the local certificate store.
 
@@ -59,19 +59,19 @@ As in the first screenshot above, there are 2 certificates (`Kx-root-ca.crt` and
 Double click each one and follow the process in the screenshots below.
 Where there is no screenshot, simply press next or ok to proceed to the next step.
 
-![](../assets/images/external_access_3.png)
+![](../assets/images/external_access_3.png){: .zoom}
 
 Very important to select the `Trusted Root Certification Authorities`. For the intermediate certificate file import, you may choose the `Intermediate Certification Authorities` store
 
-![](../assets/images/external_access_4.png)
+![](../assets/images/external_access_4.png){: .zoom}
 
 After the certificates are imported, be sure to restart your browser, or open a new tab in incognito mode.
 
 Certificate chain complete
 
-![](../assets/images/external_access_6.png)
+![](../assets/images/external_access_6.png){: .zoom}
 
 Gitlab now loading with a trusted certificate and the error message has gone
 
-![](../assets/images/external_access_7.png)
+![](../assets/images/external_access_7.png){: .zoom}
 

@@ -1,6 +1,6 @@
 # Raising a Bug Report
 
-Before raising an issue, be sure to follow the [troubleshooting](/kx.as.code/Deployment/Troubleshooting/) steps.
+Before raising an issue, be sure to follow the [troubleshooting](../../Deployment/Troubleshooting/) steps.
 
 !!! bug
     If that didn't help, then you can raise an issue on [Github.com](https://github.com/Accenture/kx.as.code/issues){:target="\_blank"}.

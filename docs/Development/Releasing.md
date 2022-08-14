@@ -22,7 +22,7 @@ When a version of KX.AS.CODE is ready for release, the following actions need to
 
 5. Create a release summary issue, which will form the high level description in the automated release note
 
-    !!! danger
+    !!! danger "Important"
         The summary issue must be tagged with the label `release-summary` and the associated release must be set in the `milestone` field.
 
     ![](../assets/images/release_process_4.png){: .zoom}
