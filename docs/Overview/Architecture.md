@@ -1,6 +1,6 @@
 # Architecture
 
-The image is now out of date and will be updated soon. In the meantime, here what has changed since.
+Below is a high level depiction of the KX.AS.CODE architecture.
 
 ### Changelog
 
@@ -12,5 +12,4 @@ The image is now out of date and will be updated soon. In the meantime, here wha
 
 ### Diagram
 
-[![Architecture](images/image-20201112132221706.png)](images/image-20201112132221706.png)
-
+[![Architecture](../assets/images/KX.AS.CODE Architecture-Overall Architecture_202208.png)](../assets/images/KX.AS.CODE Architecture-Overall Architecture_202208.png){:target="_blank"}

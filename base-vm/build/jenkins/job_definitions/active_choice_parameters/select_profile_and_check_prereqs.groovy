@@ -37,6 +37,13 @@
     def vmwareDesktopKxNodeVagrantCloudVersion
     def parallelsKxMainVagrantCloudVersion
     def parallelsKxNodeVagrantCloudVersion
+    def newestKxMainVirtualBox
+
+    static def mostRecentVersion(versions){
+        return versions.collectEntries{
+            [(it=~/\d+|\D+/).findAll().collect{it.padLeft(3,'0')}.join(),it]
+        }.sort().values()[-1]
+    }
 
     try {
 
@@ -218,54 +225,54 @@
             it[1] == "virtualbox" && it[2] == "kx-node"
         }.sort { a, b -> a[0] <=> b[1] }
 
+
         def filteredVirtualBoxKxMainList = boxDirectories.findAll {
             it[1] == "virtualbox" && it[2] == "kx-main"
         }.sort { a, b -> a[0] <=> b[1] }
 
         if (filteredVirtualBoxKxMainList) {
-            virtualboxLocalVagrantBoxMainVersion = filteredVirtualBoxKxMainList[0][0]
+            virtualboxLocalVagrantBoxMainVersion = mostRecentVersion(filteredVirtualBoxKxMainList)[0]
             virtualboxLocalVagrantBoxMainExists = "true"
         }
 
         if (filteredVirtualBoxKxNodeList) {
-            virtualboxLocalVagrantBoxNodeVersion = filteredVirtualBoxKxNodeList[0][0]
+            virtualboxLocalVagrantBoxNodeVersion = mostRecentVersion(filteredVirtualBoxKxNodeList)[0]
             virtualboxLocalVagrantBoxNodeExists = "true"
         }
-
-        def filteredVmwareDesktopKxNodeList = boxDirectories.findAll {
-            it[1] == "vmware-desktop" && it[2] == "kx-node"
-        }.sort{ a,b -> a[1] <=> b[0] }
 
         def filteredVmwareDesktopKxMainList = boxDirectories.findAll {
             it[1] == "vmware-desktop" && it[2] == "kx-main"
         }.sort{ a,b -> a[1] <=> b[0] }
 
+        def filteredVmwareDesktopKxNodeList = boxDirectories.findAll {
+            it[1] == "vmware-desktop" && it[2] == "kx-node"
+        }.sort{ a,b -> a[1] <=> b[0] }
 
         if (filteredVmwareDesktopKxMainList) {
-            vmwareLocalVagrantBoxMainVersion = filteredVmwareDesktopKxMainList[0][0]
+            vmwareLocalVagrantBoxMainVersion = mostRecentVersion(filteredVmwareDesktopKxMainList)[0]
             vmwareLocalVagrantBoxMainExists = "true"
         }
 
         if (filteredVmwareDesktopKxNodeList) {
-            vmwareLocalVagrantBoxNodeVersion = filteredVmwareDesktopKxNodeList[0][0]
+            vmwareLocalVagrantBoxNodeVersion = mostRecentVersion(filteredVmwareDesktopKxNodeList)[0]
             vmwareLocalVagrantBoxNodeExists = "true"
         }
-
-        def filteredParallelsKxNodeList = boxDirectories.findAll {
-            it[1] == "parallels" && it[2] == "kx-node"
-        }.sort{ a,b -> a[1] <=> b[0] }
 
         def filteredParallelsKxMainList = boxDirectories.findAll {
             it[1] == "parallels" && it[2] == "kx-main"
         }.sort{ a,b -> a[1] <=> b[0] }
 
+        def filteredParallelsKxNodeList = boxDirectories.findAll {
+            it[1] == "parallels" && it[2] == "kx-node"
+        }.sort{ a,b -> a[1] <=> b[0] }
+
         if (filteredParallelsKxMainList) {
-            parallelsLocalVagrantBoxMainVersion = filteredParallelsKxMainList[0][0]
+            parallelsLocalVagrantBoxMainVersion = mostRecentVersion(filteredParallelsKxMainList)[0]
             parallelsLocalVagrantBoxMainExists = "true"
         }
 
         if (filteredParallelsKxNodeList) {
-            parallelsLocalVagrantBoxNodeVersion = filteredParallelsKxNodeList[0][0]
+            parallelsLocalVagrantBoxNodeVersion = mostRecentVersion(filteredParallelsKxNodeList)[0]
             parallelsLocalVagrantBoxNodeExists = "true"
         }
 

@@ -86,3 +86,11 @@ sudo systemctl enable k8s-register-node
 sudo systemctl daemon-reload
 
 echo "typeset -g POWERLEVEL9K_INSTANT_PROMPT=quiet" | sudo tee -a /home/${VM_USER}/.bashrc /home/${VM_USER}/.zshrc /root/.bashrc /root/.zshrc
+
+# Show /etc/motd.kxascode even when in X-Windows terminal (not just SSH)
+echo -e '\n# Added to show KX.AS.CODE MOTD also in X-Windows Terminal (already showing in SSH per default)
+if [ -z $(echo $SSH_TTY) ]; then
+  cat /etc/motd.kxascode | sed -e "s/^/ /"
+else
+  cat /etc/motd.kxascode
+fi' | sudo tee -a /home/${VM_USER}/.bashrc /home/${VM_USER}/.zshrc /root/.bashrc /root/.zshrc
