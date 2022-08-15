@@ -12,7 +12,7 @@
     ],
     "Description": "Metrics Server",
     "shortcut_text": "Metrics Server",
-    "shortcut_icon": "kubernetes.png",
+    "shortcut_icon": "metrics-server.png",
     "pre_install_scripts": [],
     "post_install_scripts": []
 }

@@ -10,9 +10,9 @@
     "install_scripts": [
         "install-and-configure-openldap.sh"
     ],
-    "Description": "",
-    "shortcut_text": "",
-    "shortcut_icon": "",
+    "Description": "User interface for managing OpenLDAP",
+    "shortcut_text": "LDAP Account Manager",
+    "shortcut_icon": "ldap-account-manager",
     "pre_install_scripts": [],
     "post_install_scripts": [
         "enableOpenLdapTls.sh",

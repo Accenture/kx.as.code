@@ -48,7 +48,7 @@
     ],
     "Description": "Selenium Grid allows the execution of WebDriver scripts on remote machines (virtual or real) by routing commands sent by the client to remote browser instances. It aims to provide an easy way to run tests in parallel on multiple machines.",
     "shortcut_text": "Selenium Grid 4",
-    "shortcut_icon": "selenium.png",
+    "shortcut_icon": "selenium4.png",
     "pre_install_scripts": [],
     "post_install_scripts": []
 }

@@ -15,7 +15,7 @@
 
     "Description": "Kubernetes Tools",
     "shortcut_text": "Kubernetes Tools",
-    "shortcut_icon": "kubernetes.png",
+    "shortcut_icon": "kubernetes-tools.png",
     "pre_install_scripts": [],
     "install_scripts": [
         "installKubernetesTools.sh"

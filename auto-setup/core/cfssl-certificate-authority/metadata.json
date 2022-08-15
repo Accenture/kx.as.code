@@ -11,7 +11,7 @@
     ],
     "Description": "CFSSL Certificate Authority",
     "shortcut_text": "CFSSL-CA",
-    "shortcut_icon": "cloudflare.png",
+    "shortcut_icon": "cfssl-certificate-authority.png",
     "pre_install_scripts": [],
     "post_install_scripts": [
         "installNginx.sh"

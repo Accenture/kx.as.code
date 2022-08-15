@@ -17,7 +17,7 @@
     ],
     "Description": "Guacamole Remote Desktop",
     "shortcut_text": "Guacamole Remote Desktop",
-    "shortcut_icon": "",
+    "shortcut_icon": "remote-desktop.png",
     "pre_install_scripts": [],
     "post_install_scripts": [
         "configureXrdpConnection.sh",

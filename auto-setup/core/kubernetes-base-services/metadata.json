@@ -8,7 +8,7 @@
     ],
     "Description": "Kubernetes Base Services",
     "shortcut_text": "Kubernetes Base Services",
-    "shortcut_icon": "kubernetes.png",
+    "shortcut_icon": "kubernetes-base-services.png",
     "pre_install_scripts": [],
     "post_install_scripts": [
         "configureCoreDnsWithKxAsCodeDnsServer.sh",

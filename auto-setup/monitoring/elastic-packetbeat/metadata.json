@@ -12,7 +12,7 @@
     ],
     "Description": "Lightweight shipper for network data. Monitoring your network traffic is critical to gaining observability and securing your environment — ensuring high levels of performance and security. Packetbeat is a lightweight network packet analyzer that sends data from your hosts and containers to Logstash or Elasticsearch.",
     "shortcut_text": "",
-    "shortcut_icon": "",
+    "shortcut_icon": "elastic-packetbeat.png",
     "install_scripts": [
         "installPacketbeat.sh"
     ],

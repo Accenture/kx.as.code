@@ -11,7 +11,7 @@
     ],
     "Description": "auditbeat Description",
     "shortcut_text": "",
-    "shortcut_icon": "",
+    "shortcut_icon": "elastic-auditbeat",
     "install_scripts": [
         "installAuditbeat.sh"
     ],

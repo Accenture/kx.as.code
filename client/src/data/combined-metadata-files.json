@@ -609,7 +609,7 @@
     ],
     "Description": "Nexus3 manages binaries and build artifacts across your software supply chain.",
     "shortcut_text": "Nexus3 OSS",
-    "shortcut_icon": "nexus.png",
+    "shortcut_icon": "nexus3.png",
     "swagger_docs_url": "https://{{componentName}}.{{baseDomain}}/#admin/system/api",
     "api_docs_url": "https://help.sonatype.com/repomanager3/rest-and-integration-api",
     "vendor_docs_url": "https://help.sonatype.com/repomanager3",
@@ -935,7 +935,7 @@
     ],
     "Description": "Calico Network",
     "shortcut_text": "Calico Network",
-    "shortcut_icon": "calico.png",
+    "shortcut_icon": "calico-network.png",
     "pre_install_scripts": [],
     "post_install_scripts": []
   },
@@ -981,7 +981,7 @@
     ],
     "Description": "CFSSL Certificate Authority",
     "shortcut_text": "CFSSL-CA",
-    "shortcut_icon": "cloudflare.png",
+    "shortcut_icon": "cfssl-certificate-authority.png",
     "pre_install_scripts": [],
     "post_install_scripts": [
       "installNginx.sh"
@@ -1051,7 +1051,7 @@
     ],
     "Description": "GlusterFS Network Storage (slow)",
     "shortcut_text": "GlusterFS",
-    "shortcut_icon": "glusterfs.png",
+    "shortcut_icon": "glusterfs-storage.png",
     "pre_install_scripts": [],
     "post_install_scripts": []
   },
@@ -1162,7 +1162,7 @@
     ],
     "Description": "Kubernetes Base Services",
     "shortcut_text": "Kubernetes Base Services",
-    "shortcut_icon": "kubernetes.png",
+    "shortcut_icon": "kubernetes-base-services.png",
     "pre_install_scripts": [],
     "post_install_scripts": [
       "configureCoreDnsWithKxAsCodeDnsServer.sh",
@@ -1217,7 +1217,7 @@
     ],
     "Description": "Dashboard is a web-based Kubernetes user interface. You can use Dashboard to deploy containerized applications to a Kubernetes cluster, troubleshoot your containerized application, and manage the cluster resources",
     "shortcut_text": "Kubernetes Dashboard",
-    "shortcut_icon": "kubernetes.png",
+    "shortcut_icon": "kubernetes-dashboard.png",
     "install_scripts": [
       "installDashboard.sh"
     ],
@@ -1244,7 +1244,7 @@
     "retry": "true",
     "Description": "Kubernetes Tools",
     "shortcut_text": "Kubernetes Tools",
-    "shortcut_icon": "kubernetes.png",
+    "shortcut_icon": "kubernetes-tools.png",
     "pre_install_scripts": [],
     "install_scripts": [
       "installKubernetesTools.sh"
@@ -1275,7 +1275,7 @@
     ],
     "Description": "KX.AS.CODE Management and Status Portal",
     "shortcut_text": "KX.AS.CODE Portal",
-    "shortcut_icon": "kx-logo-blue.png",
+    "shortcut_icon": "kx-portal.png",
     "pre_install_scripts": [],
     "post_install_scripts": []
   },
@@ -1316,7 +1316,7 @@
     ],
     "Description": "MetalLB Load Balancer",
     "shortcut_text": "MetalLB Load Balancer",
-    "shortcut_icon": "metallb.png",
+    "shortcut_icon": "metallb-loadbalancer.png",
     "post_install_scripts": []
   },
   {
@@ -1333,7 +1333,7 @@
     ],
     "Description": "Metrics Server",
     "shortcut_text": "Metrics Server",
-    "shortcut_icon": "kubernetes.png",
+    "shortcut_icon": "metrics-server.png",
     "pre_install_scripts": [],
     "post_install_scripts": []
   },
@@ -1368,7 +1368,7 @@
     },
     "Description": "NGINX Ingress Controller",
     "shortcut_text": "NGINX Ingress Controller",
-    "shortcut_icon": "nginx.png",
+    "shortcut_icon": "nginx-ingress-controller.png",
     "pre_install_scripts": [
       "createWildcardCertSecret.sh",
       "addNodeLabel.sh"
@@ -1390,9 +1390,9 @@
     "install_scripts": [
       "install-and-configure-openldap.sh"
     ],
-    "Description": "",
-    "shortcut_text": "",
-    "shortcut_icon": "",
+    "Description": "User interface for managing OpenLDAP",
+    "shortcut_text": "LDAP Account Manager",
+    "shortcut_icon": "ldap-account-manager",
     "pre_install_scripts": [],
     "post_install_scripts": [
       "enableOpenLdapTls.sh",
@@ -1402,7 +1402,7 @@
     ]
   },
   {
-    "name": "open-lens",
+    "name": "openlens",
     "namespace": "",
     "installation_type": "script",
     "installation_group_folder": "core",
@@ -1435,7 +1435,7 @@
     ],
     "Description": "Guacamole Remote Desktop",
     "shortcut_text": "Guacamole Remote Desktop",
-    "shortcut_icon": "",
+    "shortcut_icon": "remote-desktop.png",
     "pre_install_scripts": [],
     "post_install_scripts": [
       "configureXrdpConnection.sh",
@@ -1554,7 +1554,7 @@
     ],
     "Description": "auditbeat Description",
     "shortcut_text": "",
-    "shortcut_icon": "",
+    "shortcut_icon": "elastic-auditbeat",
     "install_scripts": [
       "installAuditbeat.sh"
     ],
@@ -1649,7 +1649,7 @@
     ],
     "Description": "Filebeat is a lightweight shipper for logs and is part of the Elastic Stack",
     "shortcut_text": "",
-    "shortcut_icon": "filebeat.png",
+    "shortcut_icon": "elastic-filebeat.png",
     "pre_install_scripts": [],
     "post_install_scripts": []
   },
@@ -1666,7 +1666,7 @@
     ],
     "Description": "Lightweight shipper for uptime monitoring. Monitor services for their availability with active probing.",
     "shortcut_text": "",
-    "shortcut_icon": "heartbeat.png",
+    "shortcut_icon": "elastic-heartbeat.png",
     "install_scripts": [
       "installHeartbeat.sh"
     ],
@@ -1727,7 +1727,7 @@
     ],
     "Description": "Kibana is a free and open user interface that lets you visualize your Elasticsearch data and navigate the Elastic Stack",
     "shortcut_text": "Kibana",
-    "shortcut_icon": "kibana.png",
+    "shortcut_icon": "elastic-kibana.png",
     "pre_install_scripts": [
       "generateEncryptionKey.sh"
     ],
@@ -1753,7 +1753,7 @@
     ],
     "Description": "Lightweight shipper for metrics. Collect metrics from your systems and services. From CPU to memory, Redis to NGINX, and much more, Metricbeat is a lightweight way to send system and service statistics.",
     "shortcut_text": "",
-    "shortcut_icon": "metricbeat.png",
+    "shortcut_icon": "elastic-metricbeat.png",
     "pre_install_scripts": [],
     "post_install_scripts": []
   },
@@ -1771,7 +1771,7 @@
     ],
     "Description": "Lightweight shipper for network data. Monitoring your network traffic is critical to gaining observability and securing your environment — ensuring high levels of performance and security. Packetbeat is a lightweight network packet analyzer that sends data from your hosts and containers to Logstash or Elasticsearch.",
     "shortcut_text": "",
-    "shortcut_icon": "",
+    "shortcut_icon": "elastic-packetbeat.png",
     "install_scripts": [
       "installPacketbeat.sh"
     ],
@@ -1992,7 +1992,7 @@
     ],
     "Description": "InfluxDB is an open-source time series database developed by the company InfluxData. It is written in the Go programming language for storage and retrieval of time series data in fields such as operations monitoring, application metrics, Internet of Things sensor data, and real-time analytics.",
     "shortcut_text": "InfluxDB2",
-    "shortcut_icon": "influxdb2.png",
+    "shortcut_icon": "influxdata-influxdb2.png",
     "pre_install_scripts": [
       "createAuthSecret.sh"
     ],
@@ -2018,7 +2018,7 @@
     ],
     "Description": "Telegraf is a server-based agent for collecting and sending all metrics and events from databases, systems, and IoT sensors.",
     "shortcut_text": "Influxdata Telegraf",
-    "shortcut_icon": "telegraf.png",
+    "shortcut_icon": "influxdata-telegraf.png",
     "pre_install_scripts": [
       "getAuthToken.sh"
     ],
@@ -2044,7 +2044,7 @@
     ],
     "Description": "Telegraf is a server-based agent for collecting and sending all metrics and events from databases, systems, and IoT sensors.",
     "shortcut_text": "Influxdata Telegraf",
-    "shortcut_icon": "telegraf-ds.png",
+    "shortcut_icon": "influxdata-telegraf-ds.png",
     "pre_install_scripts": [
       "getAuthToken.sh"
     ],
@@ -2078,7 +2078,7 @@
     ],
     "Description": "Loki is a horizontally scalable, highly available, multi-tenant log aggregation system inspired by Prometheus. It is designed to be very cost effective and easy to operate. It does not index the contents of the logs, but rather a set of labels for each log stream.",
     "shortcut_text": "",
-    "shortcut_icon": "grafana-loki.png",
+    "shortcut_icon": "loki.png",
     "pre_install_scripts": [
       "getGrafanaAccessKey.sh"
     ],
@@ -2213,7 +2213,7 @@
     ],
     "Description": "Selenium Grid allows the execution of WebDriver scripts on remote machines (virtual or real) by routing commands sent by the client to remote browser instances. It aims to provide an easy way to run tests in parallel on multiple machines.",
     "shortcut_text": "Selenium Grid 4",
-    "shortcut_icon": "selenium.png",
+    "shortcut_icon": "selenium4.png",
     "pre_install_scripts": [],
     "post_install_scripts": []
   },
@@ -2526,7 +2526,7 @@
     ],
     "Description": "MinIO offers high-performance, S3 compatible object storage. Native to Kubernetes, MinIO is the only object storage suite available on every public cloud, every Kubernetes distribution, the private cloud and the edge.",
     "shortcut_text": "MinIO Console",
-    "shortcut_icon": "minio.png",
+    "shortcut_icon": "minio-operator.png",
     "api_docs_type": "web",
     "api_docs_url": "https://docs.min.io/docs/minio-client-complete-guide.html",
     "vendor_docs_url": "https://docs.min.io",

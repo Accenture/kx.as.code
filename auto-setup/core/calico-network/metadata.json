@@ -13,7 +13,7 @@
     ],
     "Description": "Calico Network",
     "shortcut_text": "Calico Network",
-    "shortcut_icon": "calico.png",
+    "shortcut_icon": "calico-network.png",
     "pre_install_scripts": [],
     "post_install_scripts": []
 }
