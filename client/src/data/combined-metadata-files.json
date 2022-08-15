@@ -714,7 +714,7 @@
         }
       }
     ],
-    "Description": "Atlassian Confluence Description",
+    "Description": "Confluence is a team workspace where knowledge and collaboration meet. Trusted for documentation, decisions, project collaboration & Jira integrations.",
     "shortcut_text": "Atlassian Confluence",
     "shortcut_icon": "confluence.png",
     "pre_install_scripts": [
@@ -766,7 +766,7 @@
         }
       }
     ],
-    "Description": "Atlassian Jira Description",
+    "Description": "Plan, track, and manage your agile and software development projects in Jira. Customize your workflow, collaborate, and release great software.",
     "shortcut_text": "Atlassian Jira",
     "shortcut_icon": "jira.png",
     "pre_install_scripts": [
@@ -933,7 +933,7 @@
     "install_scripts": [
       "installCalicoNetwork.sh"
     ],
-    "Description": "Calico Network",
+    "Description": "Free and open source, Project Calico is designed to simplify, scale, and secure container and Kubernetes networks.",
     "shortcut_text": "Calico Network",
     "shortcut_icon": "calico-network.png",
     "pre_install_scripts": [],
@@ -960,7 +960,7 @@
     "install_scripts": [
       "installCertManager.sh"
     ],
-    "Description": "Cert Manager",
+    "Description": "Cert-manager is a powerful and extensible X.509 certificate controller for Kubernetes and OpenShift workloads. It will obtain certificates from a variety of Issuers, both popular public Issuers as well as private Issuers, and ensure the certificates are valid and up-to-date, and will attempt to renew certificates at a configured time before expiry.",
     "shortcut_text": "Cert Manager",
     "shortcut_icon": "cert-manager.png",
     "pre_install_scripts": [],
@@ -979,7 +979,7 @@
     "install_scripts": [
       "installCfsslCertificateAuthority.sh"
     ],
-    "Description": "CFSSL Certificate Authority",
+    "Description": "CFSSL is CloudFlare's PKI/TLS swiss army knife. It is both a command line tool and an HTTP API server for signing, verifying, and bundling TLS certificates. It requires Go 1.12+ to build.",
     "shortcut_text": "CFSSL-CA",
     "shortcut_icon": "cfssl-certificate-authority.png",
     "pre_install_scripts": [],
@@ -1028,7 +1028,7 @@
     "install_scripts": [
       "install-docker-registry.sh"
     ],
-    "Description": "Docker Registry",
+    "Description": "The Registry is a stateless, highly scalable server side application that stores and lets you distribute Docker images.",
     "shortcut_text": "Docker Registry",
     "shortcut_icon": "docker-registry.png",
     "pre_install_scripts": [
@@ -1049,7 +1049,7 @@
     "install_scripts": [
       "installGlusterFs.sh"
     ],
-    "Description": "GlusterFS Network Storage (slow)",
+    "Description": "Gluster is a free and open source software scalable network filesystem.",
     "shortcut_text": "GlusterFS",
     "shortcut_icon": "glusterfs-storage.png",
     "pre_install_scripts": [],
@@ -1074,7 +1074,7 @@
     "install_scripts": [
       "install-and-configure-gopass.sh"
     ],
-    "Description": "Gopass CLI credential manager",
+    "Description": "gopass is a password manager for the command line written in Go.",
     "shortcut_text": "GoPass UI",
     "shortcut_icon": "gopass.png",
     "pre_install_scripts": [],
@@ -1160,7 +1160,7 @@
     "install_scripts": [
       "installKubernetesBaseServices.sh"
     ],
-    "Description": "Kubernetes Base Services",
+    "Description": "Kubernetes, also known as K8s, is an open-source system for automating deployment, scaling, and management of containerized applications.",
     "shortcut_text": "Kubernetes Base Services",
     "shortcut_icon": "kubernetes-base-services.png",
     "pre_install_scripts": [],
@@ -1242,7 +1242,7 @@
       "krewArm64Checksum": "0994923848882ad0d4825d5af1dc227687a10a02688f785709b03549dd34d71d"
     },
     "retry": "true",
-    "Description": "Kubernetes Tools",
+    "Description": "Kubernetes tools for initializing and managing the Kubernetes cluster",
     "shortcut_text": "Kubernetes Tools",
     "shortcut_icon": "kubernetes-tools.png",
     "pre_install_scripts": [],
@@ -1293,7 +1293,7 @@
     "install_scripts": [
       "installLocalStorage.sh"
     ],
-    "Description": "Local Storage (fast)",
+    "Description": "The local volume static provisioner manages PersistentVolume lifecycle for pre-allocated disks by detecting and creating PVs for each local disk on the host, and cleaning up the disks when released.",
     "shortcut_text": "Local Storage",
     "shortcut_icon": "local-storage.png",
     "pre_install_scripts": [],
@@ -1314,7 +1314,7 @@
     "pre_install_scripts": [
       "createMemberListSecret.sh"
     ],
-    "Description": "MetalLB Load Balancer",
+    "Description": "MetalLB is a load-balancer implementation for bare metal Kubernetes clusters, using standard routing protocols.",
     "shortcut_text": "MetalLB Load Balancer",
     "shortcut_icon": "metallb-loadbalancer.png",
     "post_install_scripts": []
@@ -1331,7 +1331,7 @@
     "install_scripts": [
       "installMetricsServer.sh"
     ],
-    "Description": "Metrics Server",
+    "Description": "Metrics Server is a scalable, efficient source of container resource metrics for Kubernetes built-in autoscaling pipelines.",
     "shortcut_text": "Metrics Server",
     "shortcut_icon": "metrics-server.png",
     "pre_install_scripts": [],
@@ -1366,7 +1366,7 @@
         "controller.nodeSelector.\"ingress-controller\"=true"
       ]
     },
-    "Description": "NGINX Ingress Controller",
+    "Description": "The NGINX Ingress Controller is an application that runs in a cluster and configures an HTTP load balancer according to Ingress resources.",
     "shortcut_text": "NGINX Ingress Controller",
     "shortcut_icon": "nginx-ingress-controller.png",
     "pre_install_scripts": [
@@ -1390,7 +1390,7 @@
     "install_scripts": [
       "install-and-configure-openldap.sh"
     ],
-    "Description": "User interface for managing OpenLDAP",
+    "Description": "User interface for managing OpenLDAP. OpenLDAP Software is an open source implementation of the Lightweight Directory Access Protocol.",
     "shortcut_text": "LDAP Account Manager",
     "shortcut_icon": "ldap-account-manager",
     "pre_install_scripts": [],
@@ -1433,7 +1433,7 @@
       "install-nomachine.sh",
       "install-guacamole-remote-desktop.sh"
     ],
-    "Description": "Guacamole Remote Desktop",
+    "Description": "Apache Guacamole is a clientless remote desktop gateway. It supports standard protocols like VNC, RDP, and SSH.",
     "shortcut_text": "Guacamole Remote Desktop",
     "shortcut_icon": "remote-desktop.png",
     "pre_install_scripts": [],
@@ -1451,7 +1451,7 @@
     "install_scripts": [
       "createUsers.sh"
     ],
-    "Description": "Create additional users",
+    "Description": "Create additional users defined in a KX.AS.CODE profile's users.json file",
     "shortcut_text": "Create Users",
     "shortcut_icon": "",
     "pre_install_scripts": [],
@@ -1469,9 +1469,9 @@
     "install_scripts": [
       "installAtom.sh"
     ],
-    "Description": "atom",
+    "Description": "Atom is a free and open-source text and source code editor for macOS, Linux, and Microsoft Windows with support for plug-ins written in JavaScript, and embedded Git Control",
     "shortcut_text": "atom",
-    "shortcut_icon": "",
+    "shortcut_icon": "atom.png",
     "pre_install_scripts": [],
     "post_install_scripts": []
   },
@@ -1514,9 +1514,9 @@
         }
       }
     ],
-    "Description": "Backstage",
-    "shortcut_text": "",
-    "shortcut_icon": "",
+    "Description": "An open platform for building developer portals. Powered by a centralized software catalog, Backstage restores order to your infrastructure and enables your product teams to ship high-quality code quickly.",
+    "shortcut_text": "Backstage",
+    "shortcut_icon": "backstage.png",
     "pre_install_scripts": [],
     "post_install_scripts": []
   },
@@ -1534,7 +1534,7 @@
     ],
     "Description": "Postman",
     "shortcut_text": "Postman",
-    "shortcut_icon": "",
+    "shortcut_icon": "postman.png",
     "pre_install_scripts": [],
     "post_install_scripts": []
   },
@@ -1552,7 +1552,7 @@
     "categories": [
       "monitoring"
     ],
-    "Description": "auditbeat Description",
+    "Description": "Auditbeat is a lightweight shipper that you can install on your servers to audit the activities of users and processes on your systems.",
     "shortcut_text": "",
     "shortcut_icon": "elastic-auditbeat",
     "install_scripts": [
@@ -2296,7 +2296,7 @@
     "install_scripts": [
       "install-and-configure-bitwarden.sh"
     ],
-    "Description": "Bitwarden credential manager",
+    "Description": "Bitwarden is an integrated open source password management solution for individuals, teams, and business organizations.",
     "shortcut_text": "Bitwarden",
     "shortcut_icon": "bitwarden.png",
     "pre_install_scripts": [],
