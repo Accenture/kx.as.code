@@ -16,7 +16,7 @@
         "monitoring",
         "log-harvester"
     ],
-    "Description": "Filebeat Description",
+    "Description": "Filebeat is a lightweight shipper for logs and is part of the Elastic Stack",
     "shortcut_text": "",
     "shortcut_icon": "filebeat.png",
     "pre_install_scripts": [],

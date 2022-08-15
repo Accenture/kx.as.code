@@ -57,7 +57,7 @@
             }
         }
     ],
-    "Description": "ArgoCD Description",
+    "Description": "Argo CD is a declarative, GitOps continuous delivery tool for Kubernetes",
     "shortcut_text": "Argo CD",
     "shortcut_icon": "argocd.png",
     "swagger_docs_url": "https://{{componentName}}.{{baseDomain}}/swagger-ui",

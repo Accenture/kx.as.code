@@ -70,7 +70,7 @@
             }
         }
     ],
-    "Description": "Harbor Description",
+    "Description": "Harbor is an open source registry that secures artifacts with policies and role-based access control, ensures images are scanned and free from vulnerabilities, and signs images as trusted.",
     "shortcut_text": "Harbor",
     "shortcut_icon": "harbor.png",
     "swagger_docs_url": "https://{{componentName}}.{{baseDomain}}/devcenter-api-2.0",

@@ -3,6 +3,9 @@
     "namespace": "",
     "installation_type": "script",
     "installation_group_folder": "core",
+    "categories": [
+        "credential-manager"
+    ],
     "environment_variables": {
         "gopassVersion": "1.14.4",
         "gopassAmd64Checksum": "4ec4d45356d87347709c8dfe43e67e5af5bf672da37ec9a1aa5ee6d090e4e4f4",

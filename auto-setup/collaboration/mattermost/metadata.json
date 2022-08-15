@@ -51,7 +51,7 @@
             }
         }
     ],
-    "Description": "Mattermost ChatOps Collaboration",
+    "Description": "Mattermost is an open source platform for secure collaboration across the entire software development lifecycle.",
     "shortcut_text": "Mattermost",
     "shortcut_icon": "mattermost.png",
     "postman_docs_url": "https://documenter.getpostman.com/view/4508214/RW8FERUn",

@@ -17,8 +17,7 @@
         "set_key_values": []
     },
     "categories": [
-        "security",
-        "credential-store"
+        "security"
     ],
     "urls": [
         {
@@ -51,7 +50,7 @@
             }
         }
     ],
-    "Description": "Container Runtime Security",
+    "Description": "co is the open source standard tool for continuous risk and threat detection across Kubernetes, containers and cloud. Falco acts as your security camera, continuously detecting unexpected behavior, configuration changes, intrusions, and data theft in real time.",
     "shortcut_text": "Sysdig Falco",
     "shortcut_icon": "sysdig-falco.png",
     "pre_install_scripts": [],

@@ -1,20 +1,11 @@
 {
-    "name": "selenium4",
-    "namespace": "selenium4",
+    "name": "backstage",
+    "namespace": "backstage",
     "installation_type": "script",
-    "installation_group_folder": "test_automation",
-    "environment_variables": {
-        "gitTag": "4.1.2-20220317",
-        "imageTag": "4.1.2-20220317",
-        "nodesImageTag": "4.1.2-20220317"
-
-    },
-    "install_scripts": [
-        "install-selenium-grid-4.sh"
-    ],
-    "categories": [
-        "test-automation"
-    ],
+    "installation_group_folder": "dev_tools",
+    "environment_variables": {},
+    "install_scripts": [],
+    "categories": [],
     "urls": [
         {
             "url": "https://{{componentName}}.{{baseDomain}}",
@@ -46,9 +37,9 @@
             }
         }
     ],
-    "Description": "Selenium Grid 4 Description",
-    "shortcut_text": "Selenium Grid 4",
-    "shortcut_icon": "selenium.png",
+    "Description": "Backstage",
+    "shortcut_text": "",
+    "shortcut_icon": "",
     "pre_install_scripts": [],
     "post_install_scripts": []
 }

@@ -16,7 +16,7 @@
         "data-collection",
         "agent"
     ],
-    "Description": "Influxdata Telegraf Description",
+    "Description": "Telegraf is a server-based agent for collecting and sending all metrics and events from databases, systems, and IoT sensors.",
     "shortcut_text": "Influxdata Telegraf",
     "shortcut_icon": "telegraf.png",
     "pre_install_scripts": [

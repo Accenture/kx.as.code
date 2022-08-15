@@ -48,7 +48,7 @@
             }
         }
     ],
-    "Description": "HashiCorp Consul Service Discovery",
+    "Description": "Consul is a free and open-source service networking platform developed by HashiCorp",
     "shortcut_text": "HashiCorp Consul",
     "shortcut_icon": "consul.png",
     "api_docs_type": "web",

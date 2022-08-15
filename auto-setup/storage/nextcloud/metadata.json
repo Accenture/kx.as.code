@@ -47,7 +47,7 @@
             }
         }
     ],
-    "Description": "Nextcloud Storage",
+    "Description": "Nextcloud is a suite of client-server software for creating and using file hosting services. It is enterprise-ready with comprehensive support options. Being free and open-source software, anyone is allowed to install and operate it on their own private server devices.",
     "shortcut_text": "Nextcloud",
     "shortcut_icon": "nextcloud.png",
     "api_docs_type": "web",

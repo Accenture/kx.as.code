@@ -47,7 +47,7 @@
             }
         }
     ],
-    "Description": "Nexus3 Description",
+    "Description": "Nexus3 manages binaries and build artifacts across your software supply chain.",
     "shortcut_text": "Nexus3 OSS",
     "shortcut_icon": "nexus.png",
     "swagger_docs_url": "https://{{componentName}}.{{baseDomain}}/#admin/system/api",
