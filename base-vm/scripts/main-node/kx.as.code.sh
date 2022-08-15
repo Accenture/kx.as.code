@@ -259,11 +259,3 @@ echo """#!/bin/bash
 kubectl taint nodes -l node-role.kubernetes.io/master= master node-role.kubernetes.io/master:NoSchedule --overwrite
 """ | /usr/bin/sudo tee ${INSTALLATION_WORKSPACE}/enableK8sNoScheduleTaintOnMasterNodes.sh
 /usr/bin/sudo chmod 755 ${INSTALLATION_WORKSPACE}/enableK8sNoScheduleTaintOnMasterNodes.sh
-
-# Show /etc/motd.kxascode even when in X-Windows terminal (not just SSH)
-echo -e '\n# Added to show KX.AS.CODE MOTD also in X-Windows Terminal (already showing in SSH per default)
-if [ -z $(echo $SSH_TTY) ]; then
-  cat /etc/motd.kxascode | sed -e "s/^/ /"
-else
-  cat /etc/motd.kxascode
-fi' | sudo tee -a /home/${VM_USER}/.bashrc /home/${VM_USER}/.zshrc /root/.bashrc /root/.zshrc
