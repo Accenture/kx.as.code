@@ -31,4 +31,4 @@ if [ -z $(echo $SSH_TTY) ]; then
   cat /etc/motd.kxascode | sed -e "s/^/ /"
 else
   cat /etc/motd.kxascode
-fi' | sudo tee -a sudo tee -a /home/${VM_USER}/.bashrc /home/${VM_USER}/.zshrc /root/.bashrc /root/.zshrc
+fi' | sudo tee -a /home/${VM_USER}/.bashrc /home/${VM_USER}/.zshrc /root/.bashrc /root/.zshrc
