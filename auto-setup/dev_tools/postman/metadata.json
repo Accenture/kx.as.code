@@ -12,7 +12,7 @@
     ],
     "Description": "Postman",
     "shortcut_text": "Postman",
-    "shortcut_icon": "",
+    "shortcut_icon": "postman.png",
     "pre_install_scripts": [],
     "post_install_scripts": []
 }

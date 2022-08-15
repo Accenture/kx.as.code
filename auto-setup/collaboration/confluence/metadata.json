@@ -41,7 +41,7 @@
             }
         }
     ],
-    "Description": "Atlassian Confluence Description",
+    "Description": "Confluence is a team workspace where knowledge and collaboration meet. Trusted for documentation, decisions, project collaboration & Jira integrations.",
     "shortcut_text": "Atlassian Confluence",
     "shortcut_icon": "confluence.png",
     "pre_install_scripts": [

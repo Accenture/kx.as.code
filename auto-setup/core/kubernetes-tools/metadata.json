@@ -13,7 +13,7 @@
     },
     "retry": "true",
 
-    "Description": "Kubernetes Tools",
+    "Description": "Kubernetes tools for initializing and managing the Kubernetes cluster",
     "shortcut_text": "Kubernetes Tools",
     "shortcut_icon": "kubernetes-tools.png",
     "pre_install_scripts": [],

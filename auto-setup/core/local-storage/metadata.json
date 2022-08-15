@@ -12,7 +12,7 @@
     "install_scripts": [
         "installLocalStorage.sh"
     ],
-    "Description": "Local Storage (fast)",
+    "Description": "The local volume static provisioner manages PersistentVolume lifecycle for pre-allocated disks by detecting and creating PVs for each local disk on the host, and cleaning up the disks when released.",
     "shortcut_text": "Local Storage",
     "shortcut_icon": "local-storage.png",
     "pre_install_scripts": [],

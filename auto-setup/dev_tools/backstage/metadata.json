@@ -37,9 +37,9 @@
             }
         }
     ],
-    "Description": "Backstage",
-    "shortcut_text": "",
-    "shortcut_icon": "",
+    "Description": "An open platform for building developer portals. Powered by a centralized software catalog, Backstage restores order to your infrastructure and enables your product teams to ship high-quality code quickly.",
+    "shortcut_text": "Backstage",
+    "shortcut_icon": "backstage.png",
     "pre_install_scripts": [],
     "post_install_scripts": []
 }

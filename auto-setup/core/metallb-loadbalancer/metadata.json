@@ -13,7 +13,7 @@
     "pre_install_scripts": [
         "createMemberListSecret.sh"
     ],
-    "Description": "MetalLB Load Balancer",
+    "Description": "MetalLB is a load-balancer implementation for bare metal Kubernetes clusters, using standard routing protocols.",
     "shortcut_text": "MetalLB Load Balancer",
     "shortcut_icon": "metallb-loadbalancer.png",
     "post_install_scripts": []

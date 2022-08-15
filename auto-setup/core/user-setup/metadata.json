@@ -6,7 +6,7 @@
     "install_scripts": [
         "createUsers.sh"
     ],
-    "Description": "Create additional users",
+    "Description": "Create additional users defined in a KX.AS.CODE profile's users.json file",
     "shortcut_text": "Create Users",
     "shortcut_icon": "",
     "pre_install_scripts": [],

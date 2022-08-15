@@ -17,7 +17,7 @@
     "install_scripts": [
         "install-and-configure-gopass.sh"
     ],
-    "Description": "Gopass CLI credential manager",
+    "Description": "gopass is a password manager for the command line written in Go.",
     "shortcut_text": "GoPass UI",
     "shortcut_icon": "gopass.png",
     "pre_install_scripts": [],

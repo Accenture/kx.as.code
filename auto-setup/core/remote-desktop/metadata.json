@@ -15,7 +15,7 @@
         "install-nomachine.sh",
         "install-guacamole-remote-desktop.sh"
     ],
-    "Description": "Guacamole Remote Desktop",
+    "Description": "Apache Guacamole is a clientless remote desktop gateway. It supports standard protocols like VNC, RDP, and SSH.",
     "shortcut_text": "Guacamole Remote Desktop",
     "shortcut_icon": "remote-desktop.png",
     "pre_install_scripts": [],

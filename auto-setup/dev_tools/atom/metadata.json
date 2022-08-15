@@ -10,9 +10,9 @@
     "install_scripts": [
         "installAtom.sh"
     ],
-    "Description": "atom",
+    "Description": "Atom is a free and open-source text and source code editor for macOS, Linux, and Microsoft Windows with support for plug-ins written in JavaScript, and embedded Git Control",
     "shortcut_text": "atom",
-    "shortcut_icon": "",
+    "shortcut_icon": "atom.png",
     "pre_install_scripts": [],
     "post_install_scripts": []
 }
