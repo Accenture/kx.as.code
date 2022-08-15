@@ -2,7 +2,7 @@
 
 Welcome to the KX.AS.CODE workstation. This virtual workstation was initially created with two primary goals in mind, but has since become so much more!
 
-*   Play, learn, experiment, innovate, share! :muscle: :trophy:
+*   Play, learn, experiment, innovate! :muscle: :trophy:
 *   Share knowledge a code!
 
 ## What is the KX.AS.CODE Workstation?
