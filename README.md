@@ -37,9 +37,13 @@ For the full guide on KX.AS.CODE, read full [documentation](https://accenture.gi
 <span style="margin-left: 20px; font-size: large"><b>Raspberry Pi enablement! :heart: </b> 
 </span>
 </div>
+<br>
+Whilst the solution already works on Parallels, VirtualBox, VMWare, OpenStack and AWS, it's time to prepare for ARM64 compatibility. Currently, KX.AS.CODE is limited to running on AMD64 CPU architectures. 
 
-<span>Whilst the solution already works on Parallels, VirtualBox, VMWare, OpenStack and AWS, it's time to prepare for ARM64 compatibility. Currently, KX.AS.CODE is limited to running on AMD64 CPU architectures. The Raspberry Pi project will add ARM64 to the mix. Once done, the next step will be to test and optimize for Mac M1/M2 CPUs as well.
+The Raspberry Pi project will add ARM64 to the mix. Once done, the next step will be to test and optimize for Mac M1/M2 CPUs as well.
+
 This is also the first time we run KX.AS.CODE on bare-metal, which is an additional bonus. :smile:
+
 Here some screenshots from our current project.
 
 ![](docs/assets/images/Raspberry_PI_Setup_1.jpg)
