@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # Put Guacamole Remote Desktop Icon on Desktop
-iconPath=${installComponentDirectory}/guacamole.png
+iconPath=${installComponentDirectory}/remote-desktop.png
 cat << EOF > "${adminShortcutsDirectory}/Guacamole-Remote-Desktop"
 [Desktop Entry]
 Version=1.0

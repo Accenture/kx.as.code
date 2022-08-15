@@ -27,9 +27,9 @@
             "controller.nodeSelector.\"ingress-controller\"=true"
       ]
     },
-    "Description": "NGINX Ingress Controller",
+    "Description": "The NGINX Ingress Controller is an application that runs in a cluster and configures an HTTP load balancer according to Ingress resources.",
     "shortcut_text": "NGINX Ingress Controller",
-    "shortcut_icon": "nginx.png",
+    "shortcut_icon": "nginx-ingress-controller.png",
     "pre_install_scripts": [
         "createWildcardCertSecret.sh",
         "addNodeLabel.sh"

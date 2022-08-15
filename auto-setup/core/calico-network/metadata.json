@@ -11,9 +11,9 @@
     "install_scripts": [
         "installCalicoNetwork.sh"
     ],
-    "Description": "Calico Network",
+    "Description": "Free and open source, Project Calico is designed to simplify, scale, and secure container and Kubernetes networks.",
     "shortcut_text": "Calico Network",
-    "shortcut_icon": "calico.png",
+    "shortcut_icon": "calico-network.png",
     "pre_install_scripts": [],
     "post_install_scripts": []
 }

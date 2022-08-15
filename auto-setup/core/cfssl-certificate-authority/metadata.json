@@ -9,9 +9,9 @@
     "install_scripts": [
         "installCfsslCertificateAuthority.sh"
     ],
-    "Description": "CFSSL Certificate Authority",
+    "Description": "CFSSL is CloudFlare's PKI/TLS swiss army knife. It is both a command line tool and an HTTP API server for signing, verifying, and bundling TLS certificates. It requires Go 1.12+ to build.",
     "shortcut_text": "CFSSL-CA",
-    "shortcut_icon": "cloudflare.png",
+    "shortcut_icon": "cfssl-certificate-authority.png",
     "pre_install_scripts": [],
     "post_install_scripts": [
         "installNginx.sh"

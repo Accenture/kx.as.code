@@ -1,5 +1,5 @@
 {
-    "name": "open-lens",
+    "name": "openlens",
     "namespace": "",
     "installation_type": "script",
     "installation_group_folder": "core",
@@ -7,9 +7,9 @@
     "install_scripts": [
         "installOpenLens.sh"
     ],
-    "Description": "Kubernetes Admin Client",
-    "shortcut_text": "Kubernetes OpenLens",
-    "shortcut_icon": "",
+    "Description": "Lens IDE provides the full situational awareness for everything that runs in Kubernetes.",
+    "shortcut_text": "OpenLens IDE",
+    "shortcut_icon": "openlens.png",
     "pre_install_scripts": [],
     "post_install_scripts": []
 }

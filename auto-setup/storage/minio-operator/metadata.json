@@ -7,7 +7,8 @@
         "operatorVersion": "4.4.28"
     },
     "categories": [
-        "s3-storage"
+        "s3",
+        "object-store"
     ],
     "urls": [
         {
@@ -40,9 +41,9 @@
             }
         }
     ],
-    "Description": "MinIO Object Storage",
+    "Description": "MinIO offers high-performance, S3 compatible object storage. Native to Kubernetes, MinIO is the only object storage suite available on every public cloud, every Kubernetes distribution, the private cloud and the edge.",
     "shortcut_text": "MinIO Console",
-    "shortcut_icon": "minio.png",
+    "shortcut_icon": "minio-operator.png",
     "api_docs_type": "web",
     "api_docs_url": "https://docs.min.io/docs/minio-client-complete-guide.html",
     "vendor_docs_url": "https://docs.min.io",

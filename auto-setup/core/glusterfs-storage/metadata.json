@@ -10,9 +10,9 @@
     "install_scripts": [
         "installGlusterFs.sh"
     ],
-    "Description": "GlusterFS Network Storage (slow)",
+    "Description": "Gluster is a free and open source software scalable network filesystem.",
     "shortcut_text": "GlusterFS",
-    "shortcut_icon": "glusterfs.png",
+    "shortcut_icon": "glusterfs-storage.png",
     "pre_install_scripts": [],
     "post_install_scripts": []
 }

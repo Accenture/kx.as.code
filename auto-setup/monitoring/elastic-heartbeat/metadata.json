@@ -9,9 +9,9 @@
     "categories": [
         "monitoring"
     ],
-    "Description": "Heartbeat Description",
+    "Description": "Lightweight shipper for uptime monitoring. Monitor services for their availability with active probing.",
     "shortcut_text": "",
-    "shortcut_icon": "heartbeat.png",
+    "shortcut_icon": "elastic-heartbeat.png",
     "install_scripts": [
         "installHeartbeat.sh"
     ],

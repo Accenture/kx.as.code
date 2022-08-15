@@ -41,7 +41,7 @@
             }
         }
     ],
-    "Description": "Atlassian Jira Description",
+    "Description": "Plan, track, and manage your agile and software development projects in Jira. Customize your workflow, collaborate, and release great software.",
     "shortcut_text": "Atlassian Jira",
     "shortcut_icon": "jira.png",
     "pre_install_scripts": [

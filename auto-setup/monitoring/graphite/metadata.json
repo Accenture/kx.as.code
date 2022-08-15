@@ -13,8 +13,8 @@
         "set_key_values": []
     },
     "categories": [
-        "monitoring",
-        "cicd"
+        "time-series",
+        "database"
     ],
     "urls": [
         {
@@ -47,7 +47,7 @@
             }
         }
     ],
-    "Description": "Graphite for collecting SiteSpeed.io Metrics",
+    "Description": "Graphite is an enterprise-ready monitoring tool that runs equally well on cheap hardware or Cloud infrastructure. Teams use Graphite to track the performance of their websites, applications, business services, and networked servers. It marked the start of a new generation of monitoring tools, making it easier than ever to store, retrieve, share, and visualize time-series data.",
     "shortcut_text": "Graphite",
     "shortcut_icon": "graphite.png",
     "api_docs_type": "web",

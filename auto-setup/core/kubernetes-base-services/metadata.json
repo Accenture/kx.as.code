@@ -6,9 +6,13 @@
     "install_scripts": [
         "installKubernetesBaseServices.sh"
     ],
-    "Description": "Kubernetes Base Services",
+    "categories": [
+        "orchestration",
+        "kubernetes"
+    ],
+    "Description": "Kubernetes, also known as K8s, is an open-source system for automating deployment, scaling, and management of containerized applications.",
     "shortcut_text": "Kubernetes Base Services",
-    "shortcut_icon": "kubernetes.png",
+    "shortcut_icon": "kubernetes-base-services.png",
     "pre_install_scripts": [],
     "post_install_scripts": [
         "configureCoreDnsWithKxAsCodeDnsServer.sh",

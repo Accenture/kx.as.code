@@ -1,8 +1,12 @@
 {
-    "name": "portal",
+    "name": "kx-portal",
     "namespace": "",
     "installation_type": "script",
     "installation_group_folder": "core",
+    "categories": [
+        "management",
+        "portal"
+    ],
     "environment_variables": {
         "nodejsVersion": "v16.15.1",
         "nodejsChecksum": "b749f7a76e56dfd6dfb8a910b8a2a871159661557680aa95acf13c9514422c12"
@@ -16,7 +20,7 @@
     ],
     "Description": "KX.AS.CODE Management and Status Portal",
     "shortcut_text": "KX.AS.CODE Portal",
-    "shortcut_icon": "kx-logo-blue.png",
+    "shortcut_icon": "kx-portal.png",
     "pre_install_scripts": [],
     "post_install_scripts": []
 }

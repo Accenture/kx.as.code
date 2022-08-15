@@ -94,7 +94,9 @@
     "categories": [
         "git-repository",
         "docker-registry",
-        "cicd"
+        "cicd",
+        "wiki",
+        "issue-tracking"
     ],
     "urls": [
         {
@@ -125,7 +127,7 @@
             }
         }
     ],
-    "Description": "Gitlab Git Repository and CICD",
+    "Description": "GitLab is an open source end-to-end software development platform with built-in version control, issue tracking, code review, CI/CD, and more",
     "shortcut_text": "Gitlab",
     "shortcut_icon": "gitlab.png",
     "api_docs_type": "help",

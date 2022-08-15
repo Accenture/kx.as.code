@@ -1099,7 +1099,7 @@ function getTemplateComponents(templateId) {
                         '</div>' +
                         '</div>' +
                         '<div>' +
-                        '   <span class="component-description-span">' + componentArray[i].description + '</span>' +
+                        '   <span class="component-description-span">' + componentArray[i].description.replace(/(.{50})..+/, "$1…") + '</span>' +
                         '</div>';
 
                     iDiv.innerHTML = componentItemInnerHTML;

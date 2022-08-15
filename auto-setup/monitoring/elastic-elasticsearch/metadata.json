@@ -60,7 +60,7 @@
             }
         }
     ],
-    "Description": "Elasticsearch Description",
+    "Description": "Elasticsearch is a distributed, RESTful search and analytics engine capable of addressing a growing number of use cases.",
     "shortcut_text": "Elasticsearch",
     "shortcut_icon": "es.png",
     "pre_install_scripts": [

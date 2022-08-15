@@ -43,7 +43,7 @@
             }
         }
     ],
-    "Description": "Teamcity CICD",
+    "Description": "TeamCity is a continuous integration server that integrates with all major IDEs, version control and issue tracking systems, and can be used by teams of any size.",
     "shortcut_text": "Teamcity",
     "shortcut_icon": "teamcity.png",
     "pre_install_scripts": [

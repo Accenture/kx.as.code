@@ -1,0 +1,206 @@
+[
+  {
+    "title": "CICD Group 1",
+    "description": "CICD Group 1 for sites with a larger physical resources",
+    "action_queues": {
+      "install": [
+        {
+          "install_folder": "storage",
+          "name": "minio-operator"
+        },
+        {
+          "install_folder": "cicd",
+          "name": "gitlab"
+        },
+        {
+          "install_folder": "collaboration",
+          "name": "mattermost"
+        },
+        {
+          "install_folder": "cicd",
+          "name": "harbor"
+        },
+        {
+          "install_folder": "cicd",
+          "name": "argocd"
+        },
+        {
+          "install_folder": "cicd",
+          "name": "artifactory"
+        }
+      ]
+    }
+  },
+  {
+    "title": "CICD Group 2",
+    "description": "CICD Group 1 for sites with a lower physical resources",
+    "action_queues": {
+      "install": [
+        {
+          "install_folder": "cicd",
+          "name": "gitea"
+        },
+        {
+          "install_folder": "cicd",
+          "name": "jenkins"
+        },
+        {
+          "install_folder": "collaboration",
+          "name": "rocketchat"
+        },
+        {
+          "install_folder": "cicd",
+          "name": "nexus3"
+        }
+      ]
+    }
+  },
+  {
+    "title": "CICD Group 3",
+    "description": "A CICD group with TeamCity and Mattermost",
+    "action_queues": {
+      "install": [
+        {
+          "install_folder": "cicd",
+          "name": "teamcity"
+        },
+        {
+          "install_folder": "collaboration",
+          "name": "mattermost"
+        }
+      ]
+    }
+  },
+  {
+    "title": "QA Group 1",
+    "description": "QA group comprising of SonarQube and Selenium",
+    "action_queues": {
+      "install": [
+        {
+          "install_folder": "quality_assurance",
+          "name": "sonarqube"
+        },
+        {
+          "install_folder": "quality_assurance",
+          "name": "selenium4"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Elastic-Stack",
+    "description": "Monitoring group with the Elastic-Stack",
+    "action_queues": {
+      "install": [
+        {
+          "install_folder": "monitoring",
+          "name": "elastic-elasticsearch"
+        },
+        {
+          "install_folder": "monitoring",
+          "name": "elastic-kibana"
+        },
+        {
+          "install_folder": "monitoring",
+          "name": "elastic-filebeat"
+        },
+        {
+          "install_folder": "monitoring",
+          "name": "elastic-metricbeat"
+        },
+        {
+          "install_folder": "monitoring",
+          "name": "elastic-heartbeat"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Prometheus/Grafana Stack",
+    "description": "Monitoring group with the Prometheus/Grafana stack",
+    "action_queues": {
+      "install": [
+        {
+          "install_folder": "monitoring",
+          "name": "prometheus"
+        },
+        {
+          "install_folder": "monitoring",
+          "name": "grafana"
+        },
+        {
+          "install_folder": "monitoring",
+          "name": "loki"
+        },
+        {
+          "install_folder": "monitoring",
+          "name": "graphite"
+        }
+      ]
+    }
+  },
+  {
+    "title": "InfluxDB2/Telegraf Stack",
+    "description": "Monitoring group with the InfluxDB2/Telegraf stack",
+    "action_queues": {
+      "install": [
+        {
+          "install_folder": "monitoring",
+          "name": "influxdata-influxdb2"
+        },
+        {
+          "install_folder": "monitoring",
+          "name": "influxdata-telegraf-ds"
+        },
+        {
+          "install_folder": "monitoring",
+          "name": "influxdata-telegraf"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Cloud Services Stack",
+    "description": "Currently just Nextcloud",
+    "action_queues": {
+      "install": [
+        {
+          "install_folder": "storage",
+          "name": "nextcloud"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Security Group 1",
+    "description": "Mix of security scanning and runtime services",
+    "action_queues": {
+      "install": [
+        {
+          "install_folder": "security",
+          "name": "sysdig-falco"
+        },
+        {
+          "install_folder": "cicd",
+          "name": "consul"
+        },
+        {
+          "install_folder": "security",
+          "name": "vault"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Security Group 2",
+    "description": "Mix of security scanning and runtime services",
+    "action_queues": {
+      "install": [
+        {
+          "install_folder": "security",
+          "name": "neuvector"
+        }
+      ]
+    }
+  }
+]

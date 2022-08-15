@@ -13,7 +13,9 @@
         "set_key_values": []
     },
     "categories": [
-        "cicd"
+        "cicd",
+        "job-scheduling",
+        "cron"
     ],
     "urls": [
         {
@@ -46,7 +48,7 @@
             }
         }
     ],
-    "Description": "Jenkins Description",
+    "Description": "The leading open source automation server, Jenkins provides hundreds of plugins to support building, deploying and automating any project.",
     "shortcut_text": "Jenkins",
     "shortcut_icon": "jenkins.png",
     "api_docs_url": "https://www.jenkins.io/doc/book/using/remote-access-api/",

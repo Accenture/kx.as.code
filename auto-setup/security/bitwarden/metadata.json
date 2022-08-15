@@ -6,7 +6,7 @@
     "install_scripts": [
         "install-and-configure-bitwarden.sh"
     ],
-    "Description": "Bitwarden credential manager",
+    "Description": "Bitwarden is an integrated open source password management solution for individuals, teams, and business organizations.",
     "shortcut_text": "Bitwarden",
     "shortcut_icon": "bitwarden.png",
     "pre_install_scripts": [],

@@ -39,7 +39,7 @@
     "install_scripts": [
         "install-docker-registry.sh"
     ],
-    "Description": "Docker Registry",
+    "Description": "The Registry is a stateless, highly scalable server side application that stores and lets you distribute Docker images.",
     "shortcut_text": "Docker Registry",
     "shortcut_icon": "docker-registry.png",
     "pre_install_scripts": [

@@ -400,7 +400,7 @@ Consul is a distributed, highly available, and data center aware solution to con
 ### Gitlab
 <a href="https://github.com/Accenture/kx.as.code/tree/main/auto-setup/cicd/gitlab" target="_blank">Installation Files</a> | <a href="" target="_blank">Application Documentation</a> | <a href="https://gitlab.com/gitlab-org/gitlab" target="_blank">Application Source Code</a>
 <div class="description-dev"><q><i>
-GitLab is an open source end-to-end software development platform with built-in version control, issue tracking, code review, CI/CD, and more. Self-host GitLab on your own servers, in a container, or on a cloud provider.
+GitLab is an open source end-to-end software development platform with built-in version control, issue tracking, code review, CI/CD, and more.
 </i></q><br>- gitlab.com/gitlab-org/gitlab</div>
 <div class="table">
     <div class="rowGroup">
@@ -649,7 +649,7 @@ Lightweight shipper for logs. Filebeat is part of the Elastic Stack, meaning it 
 ### Elastic Heartbeat
 <a href="https://github.com/Accenture/kx.as.code/tree/main/auto-setup/monitoring/elastic-heartbeat" target="_blank">Installation Files</a> | <a href="https://www.elastic.co/guide/en/beats/heartbeat/current/index.html" target="_blank">Application Documentation</a> | <a href="https://github.com/elastic/beats" target="_blank">Application Source Code</a>
 <div class="description-dev"><q><i>
-Lightweight shipper for logs. Heartbeat is part of the Elastic Stack, meaning it works seamlessly with Logstash, Elasticsearch, and Kibana. Whether you want to transform or enrich your logs and files with Logstash, fiddle with some analytics in Elasticsearch, or build and share dashboards in Kibana, Heartbeat makes it easy to ship your data to where it matters most.
+Lightweight shipper for uptime monitoring. Monitor services for their availability with active probing. Given a list of URLs, Heartbeat asks the simple question: Are you alive? Heartbeat ships this information and response time to the rest of the Elastic Stack for further analysis.
 </i></q><br>- elastic.co</div>
 <div class="table">
     <div class="rowGroup">
@@ -719,7 +719,7 @@ Kibana is a free and open user interface that lets you visualize your Elasticsea
 ### Elastic Metricbeat
 <a href="https://github.com/Accenture/kx.as.code/tree/main/auto-setup/monitoring/elastic-metricbeat" target="_blank">Installation Files</a> | <a href="https://www.elastic.co/guide/en/beats/metricbeat/current/index.html" target="_blank">Application Documentation</a> | <a href="https://github.com/elastic/beats" target="_blank">Application Source Code</a>
 <div class="description-dev"><q><i>
-Metricbeat is a free and open user interface that lets you visualize your Elasticsearch data and navigate the Elastic Stack. Do anything from tracking query load to understanding the way requests flow through your apps.
+Lightweight shipper for metrics. Collect metrics from your systems and services. From CPU to memory, Redis to NGINX, and much more, Metricbeat is a lightweight way to send system and service statistics.
 </i></q><br>- elastic.co</div>
 <div class="table">
     <div class="rowGroup">
@@ -746,7 +746,7 @@ Metricbeat is a free and open user interface that lets you visualize your Elasti
 ### Elastic Packetbeat
 <a href="https://github.com/Accenture/kx.as.code/tree/main/auto-setup/monitoring/elastic-packetbeat" target="_blank">Installation Files</a> | <a href="https://www.elastic.co/guide/en/beats/packetbeat/current/index.html" target="_blank">Application Documentation</a> | <a href="https://github.com/elastic/beats" target="_blank">Application Source Code</a>
 <div class="description-dev"><q><i>
-Lightweight shipper for logs. Packetbeat is part of the Elastic Stack, meaning it works seamlessly with Logstash, Elasticsearch, and Kibana. Whether you want to transform or enrich your logs and files with Logstash, fiddle with some analytics in Elasticsearch, or build and share dashboards in Kibana, Packetbeat makes it easy to ship your data to where it matters most.
+Lightweight shipper for network data. Monitoring your network traffic is critical to gaining observability and securing your environment — ensuring high levels of performance and security. Packetbeat is a lightweight network packet analyzer that sends data from your hosts and containers to Logstash or Elasticsearch.
 </i></q><br>- elastic.co</div>
 <div class="table">
     <div class="rowGroup">
@@ -978,7 +978,9 @@ Telegraf is a server-based agent for collecting and sending all metrics and even
 
 ### Prometheus
 <a href="https://github.com/Accenture/kx.as.code/tree/main/auto-setup/monitoring/prometheus" target="_blank">Installation Files</a> | <a href="https://prometheus.io/docs/introduction/overview/" target="_blank">Application Documentation</a> | <a href="https://github.com/prometheus/prometheus" target="_blank">Application Source Code</a>
-<div class="description-dev"><q><i>Prometheus is a free and open user interface that lets you visualize your Elasticsearch data and navigate the Elastic Stack. Do anything from tracking query load to understanding the way requests flow through your apps.</i></q><br>- Elastic</div>
+<div class="description-dev"><q><i>
+Prometheus collects and stores its metrics as time series data, i.e. metrics information is stored with the timestamp at which it was recorded, alongside optional key-value pairs called labels.
+</i></q><br>- prometheus.io</div>
 <div class="table">
     <div class="rowGroup">
         <div class="row">

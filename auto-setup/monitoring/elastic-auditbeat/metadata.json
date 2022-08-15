@@ -9,9 +9,9 @@
     "categories": [
         "monitoring"
     ],
-    "Description": "auditbeat Description",
+    "Description": "Auditbeat is a lightweight shipper that you can install on your servers to audit the activities of users and processes on your systems.",
     "shortcut_text": "",
-    "shortcut_icon": "",
+    "shortcut_icon": "elastic-auditbeat",
     "install_scripts": [
         "installAuditbeat.sh"
     ],

@@ -54,7 +54,7 @@
             }
         }
     ],
-    "Description": "Rocketchat ChatOps Collaboration",
+    "Description": "Rocket.Chat is an open-source fully customizable communications platform developed in JavaScript for organizations with high standards of data protection.",
     "shortcut_text": "Rocketchat",
     "shortcut_icon": "rocketchat.png",
     "api_docs_url": "https://docs.rocket.chat/api/rest-api",

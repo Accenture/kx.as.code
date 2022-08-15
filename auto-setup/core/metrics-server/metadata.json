@@ -10,9 +10,9 @@
     "install_scripts": [
         "installMetricsServer.sh"
     ],
-    "Description": "Metrics Server",
+    "Description": "Metrics Server is a scalable, efficient source of container resource metrics for Kubernetes built-in autoscaling pipelines.",
     "shortcut_text": "Metrics Server",
-    "shortcut_icon": "kubernetes.png",
+    "shortcut_icon": "metrics-server.png",
     "pre_install_scripts": [],
     "post_install_scripts": []
 }

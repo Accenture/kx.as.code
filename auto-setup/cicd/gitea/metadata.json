@@ -47,7 +47,7 @@
             }
         }
     ],
-    "Description": "Gitea Description",
+    "Description": "Gitea is a community managed lightweight code hosting solution written in Go.",
     "shortcut_text": "Gitea",
     "shortcut_icon": "gitea.png",
     "swagger_docs_url": "https://{{componentName}}.{{baseDomain}}/devcenter-api-2.0",

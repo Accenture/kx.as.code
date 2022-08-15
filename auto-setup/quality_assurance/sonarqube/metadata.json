@@ -17,7 +17,10 @@
         "set_key_values": []
     },
     "categories": [
-        "code-quality"
+        "code-quality",
+        "security",
+        "technical-debt",
+        "bugs"
     ],
     "urls": [
         {
@@ -50,7 +53,7 @@
             }
         }
     ],
-    "Description": "Sonarqube Description",
+    "Description": "SonarQube (formerly Sonar) is an open-source platform developed by SonarSource for continuous inspection of code quality to perform automatic reviews with static analysis of code to detect bugs, code smells on 17 programming languages. SonarQube offers reports on duplicated code, coding standards, unit tests, code coverage, code complexity, comments, bugs, and security recommendations.",
     "shortcut_text": "Sonarqube",
     "shortcut_icon": "sonarqube.png",
     "api_docs_type": "help",

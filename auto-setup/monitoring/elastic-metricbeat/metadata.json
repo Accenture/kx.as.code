@@ -16,9 +16,9 @@
         "monitoring",
         "metrics"
     ],
-    "Description": "Metricbeat Description",
+    "Description": "Lightweight shipper for metrics. Collect metrics from your systems and services. From CPU to memory, Redis to NGINX, and much more, Metricbeat is a lightweight way to send system and service statistics.",
     "shortcut_text": "",
-    "shortcut_icon": "metricbeat.png",
+    "shortcut_icon": "elastic-metricbeat.png",
     "pre_install_scripts": [],
     "post_install_scripts": []
 }
