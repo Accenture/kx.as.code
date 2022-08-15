@@ -5,8 +5,7 @@ Currently, KX.AS.CODE fulfills the following use cases:
 
 1. DevOps training environment
 2. Fullstack development/DevOps environment
-3. Workforce enablement
-4. A HomeLab DevOps environment! See our Raspberry Pi [build](../../Build/Raspberry-Pi-Cluster/) and [deployment](../../Deployment/Raspberry-Pi-Cluster/) guides!
+3. A HomeLab DevOps environment! See our Raspberry Pi [build](../../Build/Raspberry-Pi-Cluster/) and [deployment](../../Deployment/Raspberry-Pi-Cluster/) guides!
 
 You can follow our Raspberry Pi enablement progress on our [Discord Raspberry Pi channel](https://discord.gg/XC64HNgeXK){:target="\_blank"}!
 
