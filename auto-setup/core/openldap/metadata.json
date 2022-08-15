@@ -12,7 +12,7 @@
     ],
     "Description": "User interface for managing OpenLDAP. OpenLDAP Software is an open source implementation of the Lightweight Directory Access Protocol.",
     "shortcut_text": "LDAP Account Manager",
-    "shortcut_icon": "ldap-account-manager",
+    "shortcut_icon": "ldap-account-manager.png",
     "pre_install_scripts": [],
     "post_install_scripts": [
         "enableOpenLdapTls.sh",

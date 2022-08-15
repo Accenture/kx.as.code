@@ -11,8 +11,12 @@
         "krewAmd64Checksum": "5df32eaa0e888a2566439c4ccb2ef3a3e6e89522f2f2126030171e2585585e4f",
         "krewArm64Checksum": "0994923848882ad0d4825d5af1dc227687a10a02688f785709b03549dd34d71d"
     },
+    "categories": [
+        "orchestration",
+        "kubernetes",
+        "tool"
+    ],
     "retry": "true",
-
     "Description": "Kubernetes tools for initializing and managing the Kubernetes cluster",
     "shortcut_text": "Kubernetes Tools",
     "shortcut_icon": "kubernetes-tools.png",
