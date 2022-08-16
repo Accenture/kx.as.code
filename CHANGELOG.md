@@ -1,5 +1,32 @@
 # Changelog
 
+## [v0.8.10](https://github.com/Accenture/kx.as.code/releases/tag/v0.8.10) (2022-08-16)
+
+[Full Changelog](https://github.com/Accenture/kx.as.code/compare/v0.8.9...v0.8.10)
+
+This is a fairly minor release and has been mainly about stabilization and finalizing the documentation.
+
+**Implemented enhancements:**
+
+- Update client combined metadata file [\#277](https://github.com/Accenture/kx.as.code/issues/277)
+- Add description data to all metadata.json files [\#276](https://github.com/Accenture/kx.as.code/issues/276)
+- Clean up old kx-external-access directory when redploying KX.AS.CODE [\#273](https://github.com/Accenture/kx.as.code/issues/273)
+
+**Fixed bugs:**
+
+- Launcher shows "null" on review page when 0 templates selected [\#286](https://github.com/Accenture/kx.as.code/issues/286)
+- Jenkins launcher shows 0.8.9 newer than 0.8.10 [\#283](https://github.com/Accenture/kx.as.code/issues/283)
+- Use localhost for external hosts file entries [\#274](https://github.com/Accenture/kx.as.code/issues/274)
+- getGlobalVariables.sh: line 4: functionStart: command not found [\#272](https://github.com/Accenture/kx.as.code/issues/272)
+
+**Closed issues:**
+
+- Update documentation [\#270](https://github.com/Accenture/kx.as.code/issues/270)
+
+# History
+
+History is the past, the future is [here](https://accenture.github.io/kx.as.code/Overview/Future-Roadmap/)
+
 ## [v0.8.9](https://github.com/Accenture/kx.as.code/releases/tag/v0.8.9) (2022-08-12)
 The major focus for this release has been the upgrade of Kubernetes to v1.24, and adding the option to use K3s instead of K8s. See below for other enhancements and bug fixes.
 
@@ -46,3 +73,6 @@ The major focus for this release has been the upgrade of Kubernetes to v1.24, an
 - Updated node version to gallium [\#182](https://github.com/Accenture/kx.as.code/pull/182) ([patdel76](https://github.com/patdel76))
 - Release/v0.8.5 [\#181](https://github.com/Accenture/kx.as.code/pull/181) ([patdel76](https://github.com/patdel76))
 - Create actionQueues.json\_standalone\_single\_user [\#180](https://github.com/Accenture/kx.as.code/pull/180) ([patdel76](https://github.com/patdel76))
+
+
+
