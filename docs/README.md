@@ -45,6 +45,8 @@ KX.AS.CODE can be deployed locally or in the cloud, be it a private or public cl
 
     We just started a new project to enable ARM64, and more specifically, KX.AS.CODE on a Rasbperry Pi cluster. Read more in the Raspberry Pi [build](Build/Raspberry-Pi-Cluster/) and [deployment](Deployment/Raspberry-Pi-Cluster/) guides.
 
+    You can follow our Raspberry Pi enablement progress on our [Discord Raspberry Pi channel](https://discord.gg/XC64HNgeXK).
+
 !!! example "Contribute an application"
     If you want to contribute another application to KX.AS.CODE, read our [development walk-through](Development/Adding-a-Solution/)
 
