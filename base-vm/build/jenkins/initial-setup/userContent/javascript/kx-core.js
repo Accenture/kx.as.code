@@ -916,7 +916,7 @@ function populateReviewTable() {
     document.getElementById("summary-start-mode-value").innerText = document.getElementById('concatenated-profile-selection').value.split(';')[1];
     document.getElementById("summary-orchestrator-value").innerText = document.getElementById('concatenated-profile-selection').value.split(';')[2];
     document.getElementById("summary-profile-value").innerText = document.getElementById("profiles").value;
-    if (document.getElementById("concatenated-templates-list").value === "" || ! document.getElementById("concatenated-templates-list").value) {
+    if (document.getElementById("concatenated-templates-list").value === "" || ! document.getElementById("concatenated-templates-list").value || document.getElementById("concatenated-templates-list").value === "null") {
         document.getElementById("list-templates-to-install").innerHTML = "<i>None</i>"
         document.getElementById("list-templates-tooltip-text").innerText = "No application group template has been selected";
     } else {
@@ -1451,6 +1451,8 @@ function moveDivToConfigPanel(configDiv) {
             if ( configDiv === "review-and-launch-div" ) {
                 populateReviewTable();
             }
+        } else if ( configDiv === "select-profile-div") {
+            displayType = "inline-flex";
         } else {
             displayType = "block";
         }

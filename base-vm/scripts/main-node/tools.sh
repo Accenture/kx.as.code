@@ -25,7 +25,8 @@ sudo apt-get -y install \
     dbus-x11 \
     pwgen \
     kde-spectacle \
-    chromium
+    chromium \
+    wmctrl
 
 
 # Set User File Associations

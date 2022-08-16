@@ -178,4 +178,3 @@ For more details on how you can contribute to the project, checkout the [CONTRIB
 Wish you all the best and enjoy the DevOps workstation! :smile:
 
 Patrick Delamere (Accenture Song), creator of KX.AS.CODE
-

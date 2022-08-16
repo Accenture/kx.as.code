@@ -31,10 +31,10 @@ For the full guide on KX.AS.CODE, read full [documentation](https://accenture.gi
 
 ## What are we currently working on?
 
-<div style="background-color:rgb(220, 20, 60, 0.4); padding: 20px">
-<span style="vertical-align: middle; display: inline-block;">
-<img src="https://github.com/Accenture/kx.as.code/raw/main/docs/assets/images/raspberrypi_logo.png" width="35px"></span>
-<span style="margin-left: 20px; font-size: large"><b>Raspberry Pi enablement! :heart: </b> 
+<div style="background-color:rgb(220, 20, 60, 0.4); display: flex; width: 100%;  margin:auto; padding: 10px; flex-drection:row; align-items : center;">
+<span style="vertical-align: middle; display: inline-block; width: 10%; text-align:right;">
+<img src="https://github.com/Accenture/kx.as.code/raw/main/docs/assets/images/raspberrypi_logo.png" height="70px"></span>
+<span style="vertical-align: middle; font-size: x-large; display: inline-block; width: 90%; text-align: center;">Raspberry Pi enablement &#10083;&#65039;  
 </span>
 </div>
 <br>
@@ -43,6 +43,8 @@ Whilst the solution already works on Parallels, VirtualBox, VMWare, OpenStack an
 The Raspberry Pi project will add ARM64 to the mix. Once done, the next step will be to test and optimize for Mac M1/M2 CPUs as well.
 
 This is also the first time we run KX.AS.CODE on bare-metal, which is an additional bonus. :smile:
+
+You can follow our Raspberry Pi enablement progress on our [Discord Raspberry Pi channel](https://discord.gg/XC64HNgeXK).
 
 Here some screenshots from our current project.
 

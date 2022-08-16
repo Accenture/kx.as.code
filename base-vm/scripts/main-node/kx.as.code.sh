@@ -119,7 +119,7 @@ echo """[Desktop Entry]
 Type=Application
 Name=SetKeyboardLanguage
 Exec=setxkbmap ${keyboardLanguages} -option grp:alt_shift_toggle
-""" | sudo tee /home/${userid}/.config/autostart/keyboard-language.desktop
+""" | sudo tee /home/'${VM_USER}'/.config/autostart/keyboard-language.desktop
 
 
 # Correct permissions
@@ -128,6 +128,20 @@ vmUserId=$(id -u)
 KX_HOME='${KX_HOME}'
 SHARED_GIT_REPOSITORIES=${KX_HOME}/git
 /usr/bin/typora ${SHARED_GIT_REPOSITORIES}/kx.as.code/README.md &
+
+WINDOW_NAME="Typora"
+for i in {1..50}
+do
+        if [[ -n $(wmctrl -lG | grep "$WINDOW_NAME" || true) ]]; then
+                echo "Found window: $(wmctrl -lG | grep "$WINDOW_NAME")"
+                break;
+        fi
+done
+
+IFS='\''x'\'' read sw sh < <(xdpyinfo | grep dimensions | grep -o '\''[0-9x]*'\'' | head -n1)
+read wx wy ww wh < <(wmctrl -lG | grep "$WINDOW_NAME" | sed '\''s/^[^ ]* *[^ ]* //;s/[^0-9 ].*//;'\'')
+wmctrl -r "$WINDOW_NAME" -e 0,$(($sw/2-$ww/2)),$(($sh/2-$wh/2)),$ww,$wh
+
 chmod 755 /home/${vmUser}/.config/autostart/check-k8s.desktop
 chown ${vmUser}:${vmUser} /home/${vmUser}/.config/autostart/check-k8s.desktop
 sudo chmod 777 ${SHARED_GIT_REPOSITORIES}/*

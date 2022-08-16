@@ -1038,7 +1038,6 @@ input:checked + .checkbox-slider:before {
     -webkit-appearance: none;
     appearance: none;
     padding-left: 10px;
-    margin: -4px;
     cursor: pointer;
     border: none;
     width: 200px;
@@ -1665,7 +1664,7 @@ select, option {
     opacity: 1.0;
     display: block;
     left: 10px;
-    top: px;
+    top: 0;
     border-width: thin;
     border-color: white;
     position: relative;
@@ -1691,6 +1690,7 @@ select, option {
     border: 1px solid var(--kx-material-primary-70);
     border-width: 1px 0 1px 0;
     border-radius: 0 0 0 0;
+    vertical-align: top;
 }
 
 .selection-span:hover {
