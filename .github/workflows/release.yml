@@ -26,19 +26,6 @@ jobs:
           FULL_CHANGELOG=$(cat ./CHANGELOG.md | sed '/Full Changelog/d' | awk -v RS='\n\n\n' 1)
           HISTORY_CHANGELOG=$(echo -e "$FULL_CHANGELOG" | sed '/Changelog/d')
           SHORT_CHANGELOG=$(echo -e "$FULL_CHANGELOG" | awk '/\*\*/ {exit} {print}' | sed 's/#[^ ] *//g' | sed '/Changelog/d')
-          echo -e "$FULL_CHANGELOG" | sudo tee ./CHANGELOG.md
-          if [ ! -f ./HISTORY.md ]; then
-            echo -e "# History\n\nHistory is the past, the future is [here](https://accenture.github.io/kx.as.code/Overview/Future-Roadmap/)" | sudo tee ./HISTORY.md
-          fi
-          if [ -z "$(cat ./HISTORY.md | grep \"${RELEASE}\")" ]; then
-            if [ -z "$(cat ./HISTORY.md | grep \"##\")" ]; then
-              HISTORY_HEADER="$(cat ./HISTORY.md | head -n 4)"
-              HISTORY_BODY="$(cat ./HISTORY.md | tail -n +4)"
-              echo -e "$HISTORY_HEADER\n$HISTORY_CHANGELOG\n$HISTORY_BODY" | sudo tee ./HISTORY.md
-            else
-              echo -e "$HISTORY_CHANGELOG" | sudo tee -a ./HISTORY.md
-            fi
-          fi
           SHORT_CHANGELOG="${SHORT_CHANGELOG//'%'/'%25'}"
           SHORT_CHANGELOG="${SHORT_CHANGELOG//$'\n'/'%0A'}"
           SHORT_CHANGELOG="${SHORT_CHANGELOG//$'\r'/'%0D'}"
