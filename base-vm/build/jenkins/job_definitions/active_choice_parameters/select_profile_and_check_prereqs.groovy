@@ -79,50 +79,56 @@
 
     try {
 
-        Process vagrantCloudAvailableKxBoxVersions = ["vagrant", "cloud", "search", "kxascode", "--sort-by", "updated", "--provider", "virtualbox", "--json"].execute()
+        Process vagrantCloudAvailableKxBoxVersions = ["vagrant", "cloud", "search", "kxascode", "--sort-by", "updated", "--json"].execute()
         def parsedVagrantCloudBoxesJson = new JsonSlurper().parseText(vagrantCloudAvailableKxBoxVersions.text)
 
-        def virtualboxKxMainVagrantCloudVersions = parsedVagrantCloudBoxesJson.findAll { it.providers == "virtualbox" && it.name == "kxascode/kx-main" }
-        def virtualboxKxNodeVagrantCloudVersions = parsedVagrantCloudBoxesJson.findAll { it.providers == "virtualbox" && it.name == "kxascode/kx-node" }
+        println(parsedVagrantCloudBoxesJson)
 
-        def vmwareDesktopKxMainVagrantCloudVersions = parsedVagrantCloudBoxesJson.findAll { it.providers == "vmware_desktop" && it.name == "kxascode/kx-main" }
-        def vmwareDesktopKxNodeVagrantCloudVersions = parsedVagrantCloudBoxesJson.findAll { it.providers == "vmware_desktop" && it.name == "kxascode/kx-node" }
+        //TODO Fix temporary workaround to get versions individually for provider and node type combination
+        def virtualboxKxMainVagrantCloudVersions = parsedVagrantCloudBoxesJson[0].version
+        def virtualboxKxNodeVagrantCloudVersions = parsedVagrantCloudBoxesJson[1].version
+        println("virtualbox main cloud: ${virtualboxKxMainVagrantCloudVersions}")
 
-        def parallelsKxMainVagrantCloudVersions = parsedVagrantCloudBoxesJson.findAll { it.providers == "parallels" && it.name == "kxascode/kx-main" }
-        def parallelsKxNodeVagrantCloudVersions = parsedVagrantCloudBoxesJson.findAll { it.providers == "parallels" && it.name == "kxascode/kx-node" }
+        def vmwareDesktopKxMainVagrantCloudVersions = parsedVagrantCloudBoxesJson[0].version
+        def vmwareDesktopKxNodeVagrantCloudVersions = parsedVagrantCloudBoxesJson[1].version
+        println("vmware_desktop main cloud: ${vmwareDesktopKxMainVagrantCloudVersions}")
+
+        def parallelsKxMainVagrantCloudVersions = parsedVagrantCloudBoxesJson[0].version
+        def parallelsKxNodeVagrantCloudVersions = parsedVagrantCloudBoxesJson[1].version
+        println("parallels main cloud: ${parallelsKxMainVagrantCloudVersions}")
 
         if (virtualboxKxMainVagrantCloudVersions) {
-            virtualboxKxMainVagrantCloudVersion = virtualboxKxMainVagrantCloudVersions[0].version
+            virtualboxKxMainVagrantCloudVersion = virtualboxKxMainVagrantCloudVersions
         } else {
             virtualboxKxMainVagrantCloudVersion = "-1"
         }
 
         if (virtualboxKxNodeVagrantCloudVersions) {
-            virtualboxKxNodeVagrantCloudVersion = virtualboxKxNodeVagrantCloudVersions[0].version
+            virtualboxKxNodeVagrantCloudVersion = virtualboxKxNodeVagrantCloudVersions
         } else {
             virtualboxKxNodeVagrantCloudVersion = "-1"
         }
 
         if (vmwareDesktopKxMainVagrantCloudVersions) {
-            vmwareDesktopKxMainVagrantCloudVersion = vmwareDesktopKxMainVagrantCloudVersions[0].version
+            vmwareDesktopKxMainVagrantCloudVersion = vmwareDesktopKxMainVagrantCloudVersions
         } else {
             vmwareDesktopKxMainVagrantCloudVersion = "-1"
         }
 
         if (vmwareDesktopKxNodeVagrantCloudVersions) {
-            vmwareDesktopKxNodeVagrantCloudVersion = vmwareDesktopKxNodeVagrantCloudVersions[0].version
+            vmwareDesktopKxNodeVagrantCloudVersion = vmwareDesktopKxNodeVagrantCloudVersions
         } else {
             vmwareDesktopKxNodeVagrantCloudVersion = "-1"
         }
 
         if (parallelsKxMainVagrantCloudVersions) {
-            parallelsKxMainVagrantCloudVersion = parallelsKxMainVagrantCloudVersions[0].version
+            parallelsKxMainVagrantCloudVersion = parallelsKxMainVagrantCloudVersions
         } else {
             parallelsKxMainVagrantCloudVersion = "-1"
         }
 
         if (parallelsKxNodeVagrantCloudVersions) {
-            parallelsKxNodeVagrantCloudVersion = parallelsKxNodeVagrantCloudVersions[0].version
+            parallelsKxNodeVagrantCloudVersion = parallelsKxNodeVagrantCloudVersions
         } else {
             parallelsKxNodeVagrantCloudVersion = "-1"
         }
