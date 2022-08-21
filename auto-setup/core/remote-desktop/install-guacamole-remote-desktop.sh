@@ -278,7 +278,21 @@ fi
 
 # Customize Guacamole
 /usr/bin/sudo sed -i 's/"Apache Guacamole"/"KX.AS.CODE"/g' /var/lib/tomcat9/webapps/guacamole/translations/en.json
-/usr/bin/sudo cp -f ${SHARED_GIT_REPOSITORIES}/kx.as.code/base-vm/images/guacamole/* /var/lib/tomcat9/webapps/guacamole/images/
+
+# Copy images to customize Guacamole login screen
+customImagesDirectory="${installationWorkspace}/custom-images"
+customImages="guac-mono-192.png guac-tricolor.png logo-144.png logo-64.png"
+if [[ -f "${customImagesDirectory}/guac-tricolor.png" ]]; then
+  for image in ${images}
+  do
+    if [[ -f "${customImagesDirectory}/${image}" ]]; then
+      /usr/bin/sudo cp -f "${customImagesDirectory}/${image}" /var/lib/tomcat9/webapps/guacamole/images/
+    fi
+  done
+else
+  /usr/bin/sudo cp -f ${SHARED_GIT_REPOSITORIES}/kx.as.code/base-vm/images/guacamole/* /var/lib/tomcat9/webapps/guacamole/images/
+fi
+
 /usr/bin/sudo sed -i 's/^    width: 3em;/    width: 9em;/g' /var/lib/tomcat9/webapps/guacamole/guacamole.css
 /usr/bin/sudo sed -i 's/^    height: 3em;/    height: 9em;/g' /var/lib/tomcat9/webapps/guacamole/guacamole.css
 /usr/bin/sudo sed -i 's/^    background-size:         3em 3em;/    background-size:         9em 9em;/g' /var/lib/tomcat9/webapps/guacamole/guacamole.css
