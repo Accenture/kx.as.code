@@ -9,7 +9,7 @@ customizeImage() {
     customImagesDirectory="${installationWorkspace}/custom-images"
 
     # Calculate source file name
-    sourceImageFilePath=$(find "${customImagesDirectory}" -maxdepth 1 -name "${sourceImageFile}.jpg" -o -name "${sourceImageFile}.png" -print)
+    sourceImageFilePath=$(find "${customImagesDirectory}" -maxdepth 1 -name "${sourceImageFile}.jpg" -o -name "${sourceImageFile}.png" | head -1)
     sourceImageFileName=$(basename "${sourceImageFilePath%.*}")
 
     # Calculate target file extension
