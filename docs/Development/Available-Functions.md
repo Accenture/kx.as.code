@@ -5,6 +5,14 @@ The functions below can be used when creating scripts to install new solutions i
 !!! info 
     The core setup functions are used during the initial KX.AS.CODE deployment only, and should not be used for regular component installations, eg. those in the other category folders, such as cicd, collaboration, monitoring, and so on.
 
+!!! tip
+    You can override functions by copying them to the auto-setup/functions-custom folder. This is 
+    recommended, to avoid upgrade issues in future.
+
+    As well as overriding existing functions, new custom functions should also be dropped to the functions-custom folder.
+
+    If you develop a new function that would be interesting to the wider community, then create a PR and lets add it to the main functions directory.
+
 Here a quick table of contents, listing the function groups for easier navigation and overview.
 
 1. [Application Deployments](../../Development/Available-Functions/#application-deployments)

@@ -61,6 +61,11 @@ getProfileConfiguration
 # Get latest source code if flag set accordingly in profile-config.json
 updateKxSourceOnFirstStart
 
+# Apply customizations on first boot
+if [[ ! -f /usr/share/kx.as.code/.config/network_status ]]; then
+    applyCustomizations
+fi
+
 # Create and clean the external access directory
 createExternalAccessDirectory
 
