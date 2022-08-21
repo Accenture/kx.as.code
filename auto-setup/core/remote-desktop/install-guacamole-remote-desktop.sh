@@ -283,7 +283,7 @@ fi
 customImagesDirectory="${installationWorkspace}/custom-images"
 customImages="guac-mono-192.png guac-tricolor.png logo-144.png logo-64.png"
 if [[ -f "${customImagesDirectory}/guac-tricolor.png" ]]; then
-  for image in ${images}
+  for image in ${customImages}
   do
     if [[ -f "${customImagesDirectory}/${image}" ]]; then
       /usr/bin/sudo cp -f "${customImagesDirectory}/${image}" /var/lib/tomcat9/webapps/guacamole/images/
