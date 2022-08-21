@@ -1,15 +1,25 @@
 {
     "name": "docker-registry",
     "namespace": "docker-registry",
-    "installation_type": "script",
+    "installation_type": "helm",
     "installation_group_folder": "core",
     "environment_variables": {
-        "imageTag": "2.7.1"
+        "imageTag": "2.7.1",
+        "uiImageTag": "2.2.1"
+    },
+    "helm_params": {
+        "repository_url": "https://helm.joxit.dev",
+        "repository_name": "joxit/docker-registry-ui",
+        "helm_version": "0.2.0",
+        "set_key_values": [
+            "ui.image=joxit/docker-registry-ui:{{uiImageTag}}",
+            "ui.dockerRegistryUrl=https://docker-registry-service:5000"
+        ]
     },
     "retry": "true",
     "urls": [
         {
-            "url": "https://{{componentName}}.{{baseDomain}}",
+            "url": "https://{{componentName}}-ui.{{baseDomain}}",
             "healthchecks": {
                 "liveliness": {
                     "http_path": "/",
@@ -36,15 +46,14 @@
             }
         }
     ],
-    "install_scripts": [
-        "install-docker-registry.sh"
-    ],
+    "install_scripts": [],
     "Description": "The Registry is a stateless, highly scalable server side application that stores and lets you distribute Docker images.",
     "shortcut_text": "Docker Registry",
     "shortcut_icon": "docker-registry.png",
     "pre_install_scripts": [
         "createTlsCertsSecret.sh",
-        "createHtpasswdSecret.sh"
+        "createHtpasswdSecret.sh",
+        "install-docker-registry.sh"
     ],
     "post_install_scripts": []
 }
