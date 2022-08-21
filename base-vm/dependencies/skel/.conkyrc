@@ -65,7 +65,7 @@ conky.config = {
 }
 
 conky.text = [[
-${goto 6}${voffset 100}${image /usr/share/logos/kxascode_white_logo_conky.png -s 200x109}
+${goto 6}${voffset 100}${image /usr/share/logos/conky_logo.png -s 200x109}
 ${color white}KX-Version:$color ${exec cat /usr/share/kx.as.code/git/kx.as.code/versions.json | jq -r '.kxascode'}
 ${color white}Kube-Version:$color ${exec cat /usr/share/kx.as.code/git/kx.as.code/versions.json | jq -r '.kubernetes'}
 $hr
