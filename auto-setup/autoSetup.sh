@@ -18,6 +18,14 @@ do
   echo "Loaded function $(cat ${function} | grep '()' | sed 's/{//g')"
 done
 
+# Load CUSTOM Central Functions - these can either be new ones, or copied and edited functions from the main functions directory above, which will override the ones loaded in the previous step
+customFunctionsLocation="${autoSetupHome}/functions-custom"
+for function in $(find ${customFunctionsLocation} -name "*.sh")
+do
+  source ${function}
+  echo "Loaded custom function $(cat ${function} | grep '()' | sed 's/{//g')"
+done
+
 # Get K8s and K3s versions to install
 getVersions
 
