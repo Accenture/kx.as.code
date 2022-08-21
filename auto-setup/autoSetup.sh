@@ -14,16 +14,23 @@ getGlobalVariables # execute function
 functionsLocation="${autoSetupHome}/functions"
 for function in $(find ${functionsLocation} -name "*.sh")
 do
+  functionName="$(cat ${function} | grep -E '^[[:alnum:]].*().*{' | sed 's/()*.{//g')"
   source ${function}
-  echo "Loaded function $(cat ${function} | grep '()' | sed 's/{//g')"
+  echo "Loaded function ${functionName}()"
 done
 
 # Load CUSTOM Central Functions - these can either be new ones, or copied and edited functions from the main functions directory above, which will override the ones loaded in the previous step
 customFunctionsLocation="${autoSetupHome}/functions-custom"
+loadedFunctions="$(compgen -A function)"
 for function in $(find ${customFunctionsLocation} -name "*.sh")
 do
   source ${function}
-  echo "Loaded custom function $(cat ${function} | grep '()' | sed 's/{//g')"
+  customFunctionName="$(cat ${function} | grep -E '^[[:alnum:]].*().*{' | sed 's/()*.{//g')"
+  if [[ -z $(echo "${loadedFunctions}" | grep ${customFunctionName}) ]]; then
+    log_debug "Loaded new custom function ${customFunctionName}()"
+  else
+    log_debug "Overriding central function ${customFunctionName}() with custom one!"
+  fi
 done
 
 # Get K8s and K3s versions to install
