@@ -8,18 +8,13 @@ else
     GIT_SOURCE_TOKEN_ENCODED=""
 fi
 
+GIT_SOURCE_USER=$(echo ${GIT_SOURCE_USER} | sed 's/@/%40/g')
+
 # Make directories for KX.AS.CODE checkout
 sudo mkdir -p /home/${VM_USER}/Desktop/
 sudo chown -R ${VM_USER}:${VM_USER} /home/${VM_USER}
 
 gitSourceUrl=$(echo "${GIT_SOURCE_URL}" | sed 's;https://;;g')
-
-
-if [[ -n ${GIT_SOURCE_TOKEN_ENCODED} ]]; then
-    gitSourceCloneUrl="https://${GIT_SOURCE_USER}:${GIT_SOURCE_TOKEN_ENCODED}@${gitSourceUrl}"
-else
-    gitSourceCloneUrl="https://${gitSourceUrl}"
-fi
 
 if [[ -z ${GIT_SOURCE_BRANCH} ]]; then
     gitSourceBranch="main"
@@ -30,7 +25,11 @@ fi
 sudo mkdir -p ${SHARED_GIT_REPOSITORIES}
 
 # Clone KX.AS.CODE GIT repository into VM
-sudo git clone --depth 1 --branch ${gitSourceBranch} ${gitSourceCloneUrl} ${SHARED_GIT_REPOSITORIES}/kx.as.code
+if [[ -n ${GIT_SOURCE_USER} ]]; then
+        sudo git clone --depth 1 --branch ${gitSourceBranch} https://"${GIT_SOURCE_USER}":"${GIT_SOURCE_TOKEN_ENCODED}"@${gitSourceUrl} ${SHARED_GIT_REPOSITORIES}/kx.as.code
+else
+        sudo git clone --depth 1 --branch ${gitSourceBranch} https://${gitSourceUrl} ${SHARED_GIT_REPOSITORIES}/kx.as.code
+fi
 sudo chown -R ${VM_USER}:${VM_USER} ${SHARED_GIT_REPOSITORIES}
 sudo ln -s ${SHARED_GIT_REPOSITORIES}/kx.as.code /home/${VM_USER}/Desktop/"KX.AS.CODE Source"
 
