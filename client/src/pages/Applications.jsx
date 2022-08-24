@@ -52,6 +52,7 @@ const filterAppsBySearchTermAndInstallationStatus = (
           );
         }
         if (Array.isArray(filterTags)) {
+          console.log("filterTags: ", filterTags);
           if (filterTags.length == 0) {
             return app;
           } else if (intersect.length > 0) {
