@@ -52,7 +52,7 @@
         currentDir = new File(".").getAbsolutePath().replaceAll("\\\\", "/")
         currentDir = currentDir.substring(0, currentDir.length() - 1)
 
-        new File("${currentDir}/jenkins_shared_workspace/kx.as.code/profiles/").eachDirMatch(~/.*vagrant.*/) { profilePaths << it.path }
+        new File("${shared_workspace}/profiles/").eachDirMatch(~/.*vagrant.*/) { profilePaths << it.path }
 
         String underlyingOS
 
@@ -143,7 +143,7 @@
         githubKxVersion = githubVersionJson.kxascode
         githubKubeVersion = githubVersionJson.kubernetes
 
-        def localVersionFile = "${currentDir}/jenkins_shared_workspace/kx.as.code/versions.json"
+        def localVersionFile = "${shared_workspace}/versions.json"
         def localVersionJson = new File(localVersionFile)
         def parsedLocalVersionJson = new JsonSlurper().parse(localVersionJson)
 
@@ -175,7 +175,7 @@
             underlyingOS = "other"
         }
 
-        //def systemCheckJsonFilePath = "${currentDir}/jenkins_shared_workspace/kx.as.code/system-check.json"
+        //def systemCheckJsonFilePath = "${shared_workspace}/system-check.json"
         //def systemCheckJsonFile = new File(systemCheckJsonFilePath)
 
         parallelsExecutableExists = ""
@@ -216,7 +216,7 @@
         def splitboxProvider
         def splitboxNodeType
         def concatendatedBoxVar
-        new File("${currentDir}/jenkins_shared_workspace/kx.as.code/base-vm/boxes/").traverse(type: FILES, maxDepth: 1) {
+        new File("${shared_workspace}/base-vm/boxes/").traverse(type: FILES, maxDepth: 1) {
             if (it.name.endsWith('.box')) {
                 boxParentDir = it.getParentFile().getName()
                 boxFilename = it.name

@@ -47,7 +47,7 @@ try {
             existingTemplatesInSelectedProfile = existingTemplatesInSelectedProfile +  "," + parsedJson.title
         }
     }
-    new File('jenkins_shared_workspace/kx.as.code/templates/').eachFileMatch(~/^aq.*.json$/) { template_paths << it.path }
+    new File("${shared_workspace}/templates/").eachFileMatch(~/^aq.*.json$/) { template_paths << it.path }
     template_paths_csv = template_paths.join(",")
     template_paths_csv = template_paths_csv.replaceAll("\\\\", "/")
 
@@ -68,7 +68,7 @@ try {
         for (int j = 0; j < template_items.size(); j++) {
             category = parsedJson.action_queues.install[j].install_folder
             component = parsedJson.action_queues.install[j].name
-            componentDirectory = "jenkins_shared_workspace/kx.as.code/auto-setup/${category}/${component}"
+            componentDirectory = "${shared_workspace}/auto-setup/${category}/${component}"
             metadataInputFilePath = "${componentDirectory}/metadata.json"
             metadataInputFile = new File(metadataInputFilePath)
             metadataJson = new JsonSlurper().parse(metadataInputFile)
@@ -77,7 +77,7 @@ try {
             shortcutIcon = metadataJson.shortcut_icon
             try {
                 //Files.copy(jenkins_shared_workspace/kx.as.code/auto-setup/${category}/${component}/${shortcutIcon}, jenkins_home/userContent/icons/${shortcutIcon})
-                def fileEx = new File("jenkins_shared_workspace/kx.as.code/auto-setup/${category}/${component}/${shortcutIcon}")
+                def fileEx = new File("${shared_workspace}/auto-setup/${category}/${component}/${shortcutIcon}")
                 def fileDest = new File("jenkins_home/userContent/icons/${shortcutIcon}")
                 def fileExPath = fileEx.toPath()
                 def fileDestPath = fileDest.toPath()

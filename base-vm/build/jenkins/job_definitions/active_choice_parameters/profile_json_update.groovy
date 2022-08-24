@@ -44,14 +44,14 @@ def alreadyExistingTemplateFilesInProfile = []
 def currentDir = new File(".").getAbsolutePath().replaceAll("\\\\", "/")
 currentDir = currentDir.substring(0, currentDir.length() - 1)
 
-new File("${currentDir}/jenkins_shared_workspace/kx.as.code/templates/").eachFileMatch(~/^aq.*.json$/) { template_paths << it.path }
-new File("${currentDir}/jenkins_shared_workspace/kx.as.code/profiles/${profileParentPath}/").eachFileMatch(~/^aq.*.json$/) { profile_template_paths << it.path }
+new File("${shared_workspace}/templates/").eachFileMatch(~/^aq.*.json$/) { template_paths << it.path }
+new File("${shared_workspace}/profiles/${profileParentPath}/").eachFileMatch(~/^aq.*.json$/) { profile_template_paths << it.path }
 selectedTemplates = TEMPLATE_SELECTOR.split(',');
 
 
 try {
     if ( USER_PROVISIONING ) {
-        def userJsonFilePath = "${currentDir}/jenkins_shared_workspace/kx.as.code/profiles/${profileParentPath}/users.json"
+        def userJsonFilePath = "${shared_workspace}/profiles/${profileParentPath}/users.json"
         def parsedUserJson = new JsonSlurper().parseText(USER_PROVISIONING)
         new File(userJsonFilePath).write(new JsonBuilder(parsedUserJson).toPrettyString())
     }
@@ -68,12 +68,12 @@ switch (profileStartMode) {
     case "minimal": actionQueueFile = "actionQueues.json_minimal";
         break;
 }
-def actionQueuePath = "${currentDir}/jenkins_shared_workspace/kx.as.code/auto-setup/${actionQueueFile}";
+def actionQueuePath = "${shared_workspace}/auto-setup/${actionQueueFile}";
 
 try {
     try {
         Path sourcePath  = Paths.get(actionQueuePath);
-        Path targetPath = Paths.get("${currentDir}/jenkins_shared_workspace/kx.as.code/profiles/${profileParentPath}/actionQueues.json");
+        Path targetPath = Paths.get("${shared_workspace}/profiles/${profileParentPath}/actionQueues.json");
         Files.copy(sourcePath, targetPath, StandardCopyOption.REPLACE_EXISTING)
     } catch (IOException e) {
         println("Caught IOException when copying actionQueue")
@@ -102,7 +102,7 @@ try {
         templateName = parsedTemplateJson.title
         selectedTemplates.eachWithIndex { selectedTemplate, j ->
             if (selectedTemplate == templateName) {
-                destinationFile = new File("${currentDir}/jenkins_shared_workspace/kx.as.code/profiles/${profileParentPath}/${jsonInputFile.getName()}")
+                destinationFile = new File("${shared_workspace}/profiles/${profileParentPath}/${jsonInputFile.getName()}")
                 try {
                     Files.copy(jsonInputFile.toPath(), destinationFile.toPath())
                 } catch (IOException e) {
