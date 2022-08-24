@@ -5,7 +5,7 @@
             "oauth": "cicd/gitlab",
             "chatops": "collaboration/mattermost",
             "docker-registry": "core/docker-registry",
-            "s3-object-store": "storage/minio-s3"
+            "s3-object-store": "storage/minio-operator"
         }
     }
 }
