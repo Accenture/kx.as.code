@@ -29,11 +29,22 @@ if [[ "${kubeOrchestrator}" == "k8s" ]]; then
       break
     else
       log_warn "Kubectl not accessible after install. Trying again."
+      sleep 15
     fi
   done
 else
   # Install K3s instead, as K8s not specified in profile
-  curl -sfL https://get.k3s.io -o ${installationWorkspace}/k3s-install.sh
+  for i in {1..5}
+  do
+    curl -sfL https://get.k3s.io -o ${installationWorkspace}/k3s-install.sh
+    if [[ -f ${installationWorkspace}/k3s-install.sh ]]; then
+      log_info "k3s-install.sh downloaded. Looks good. Continuing."
+      break
+    else
+      log_warn "k3s-install.sh not accessible after download. Trying again."
+      sleep 15
+    fi
+  done
 fi
 
 # Install Kubeval for validating Kubernetes YAML files before deploying them
