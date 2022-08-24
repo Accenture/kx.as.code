@@ -13,7 +13,7 @@ ui:
   # Title of the registry
   title: "KX.AS.CODE Docker Registry UI"
   # Allow delete of images
-  deleteImages: false
+  deleteImages: true
   # UI behave as a proxy of the registry
   proxy: true
   # The URL of your docker registry, may be a service (when proxy is on) or an external URL.
@@ -21,9 +21,9 @@ ui:
   # Override the pull URL
   pullUrl: null
   # Show number of tags per images on catalog page. This will produce + nb images requests, not recommended on large registries.
-  showCatalogNbTags: false
+  showCatalogNbTags: true
   # Show content digest in docker tag list.
-  showContentDigest: false
+  showContentDigest: true
   # Remove the menu that show the dialogs to add, remove and change the endpoint of your docker registry.
   singleRegistry: true
   # Limit the number of elementfs in the catalog page.
@@ -38,7 +38,8 @@ ui:
       - Access-Control-Allow-Origin: 'https://docker-registry.{{componentName}}.{{baseDomain}}'
       - Access-Control-Allow-Credentials: "'true'"
       - Access-Control-Allow-Headers: "Authorization, Accept"
-      - Access-Control-Allow-Methods: "HEAD, 'GET, OPTIONS"
+      - Access-Control-Allow-Methods: "HEAD, GET, OPTIONS, DELETE"
+      - Access-Control-Expose-Headers: "Docker-Content-Digest"
   # Update the default Nginx configuration and **forward custom headers** to your backend docker registry. Only when `ui.proxy` is used.
   # Example:
   # nginxProxyPassHeaders: [ my-first-header, my-second-header ]
