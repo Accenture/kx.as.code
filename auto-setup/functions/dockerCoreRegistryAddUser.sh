@@ -19,7 +19,7 @@ dockerRegistryAddUser() {
   fi
 
   # Test user
-  echo "${passwordForUserToAdd}" | htpasswd -i -v docker-registry-htpasswd gitlab
+  echo "${passwordForUserToAdd}" | htpasswd -i -v docker-registry-htpasswd ${userToAdd}
 
   # Add KX.AS.CODE HTPASSWD secret to Docker Registry namespace
   kubectl delete secret docker-registry-htpasswd --namespace=docker-registry &&
