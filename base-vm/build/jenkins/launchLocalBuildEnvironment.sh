@@ -405,7 +405,7 @@ if [[ ! -f ./securedCredentials ]]; then
       done
   done
 
-  credentialsToStore="git_source_username git_source_password artifactory_username artifactory_password dockerhub_username dockerhub_password dockerhub_email"
+  credentialsToStore="git_source_username git_source_password dockerhub_username dockerhub_password dockerhub_email"
 
   # Get Jenkins Crumb
   export jenkinsCrumb=$(curl -s --cookie-jar /tmp/cookies -u admin:admin ${jenkins_url}/crumbIssuer/api/json | jq -r '.crumb')
