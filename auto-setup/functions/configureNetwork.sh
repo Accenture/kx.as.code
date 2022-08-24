@@ -143,7 +143,7 @@ fi
     echo "KX.AS.CODE network config done" | /usr/bin/sudo tee ${sharedKxHome}/.config/network_status
     disableLinuxDesktop=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.disableLinuxDesktop')
     # Reboot if static network settings to activate them. Reboot anyway if not static, if disableLinuxDesktop was set to true
-    if  [[ "${baseIpType}" == "static"   ]] || [[ "${disableLinuxDesktop}" == "true"   ]]; then
+    if  [[ "${baseIpType}" == "static"   ]] || [[ "${disableLinuxDesktop}" == "true"   ]] || [[ "${vm_User}" != "${baseUser}" ]]; then
         # Reboot machine to ensure all network changes are active
         /usr/bin/sudo reboot
     else
