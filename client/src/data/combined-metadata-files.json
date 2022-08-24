@@ -1408,6 +1408,9 @@
     "post_install_scripts": []
   },
   {
+    "metadata": {}
+  },
+  {
     "name": "elastic-auditbeat",
     "namespace": "elastic-stack",
     "installation_type": "script",
