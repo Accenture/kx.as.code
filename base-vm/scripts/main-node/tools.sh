@@ -26,7 +26,8 @@ sudo apt-get -y install \
     pwgen \
     kde-spectacle \
     chromium \
-    wmctrl
+    wmctrl \
+    syslinux-utils
 
 
 # Set User File Associations
@@ -128,7 +129,7 @@ sudo chown -R ${BASE_IMAGE_SSH_USER}:${BASE_IMAGE_SSH_USER} /home/${BASE_IMAGE_S
 cd ${INSTALLATION_WORKSPACE}
 sudo chmod 777 ${INSTALLATION_WORKSPACE}
 export lensVersion="v6.0.0"
-git clone --branch ${lensVersion} https://github.com/lensapp/lens.git
+git clone --depth 1 --branch ${lensVersion} https://github.com/lensapp/lens.git
 cd ${INSTALLATION_WORKSPACE}/lens
 # Remove AppImage and RPM from Linux build targets
 sudo sed -i -e '/"rpm",/d' -e '/"AppImage"/d' -e 's/"deb",/"deb"/' ${INSTALLATION_WORKSPACE}/lens/package.json
@@ -137,9 +138,9 @@ source /etc/profile.d/nvm.sh
 
 # Build OpenLens
 if [[ -z $(which raspinfo) ]]; then
-  sudo bash -c "cd /usr/share/kx.as.code/workspace/lens; source /etc/profile.d/nvm.sh; nvm use --delete-prefix lts/gallium; npm install -g yarn; yarn install; make build"
-  debOpenLensInstaller=$(find ${INSTALLATION_WORKSPACE}/lens/dist -name "OpenLens-*.deb")
-  sudo mv ${debOpenLensInstaller} ${INSTALLATION_WORKSPACE}
-  # Tidy up
-  sudo rm -rf ${INSTALLATION_WORKSPACE}/lens
+ sudo bash -c "cd /usr/share/kx.as.code/workspace/lens; source /etc/profile.d/nvm.sh; nvm use --delete-prefix lts/gallium; npm install -g yarn; yarn install; make build"
+ debOpenLensInstaller=$(find ${INSTALLATION_WORKSPACE}/lens/dist -name "OpenLens-*.deb")
+ sudo mv ${debOpenLensInstaller} ${INSTALLATION_WORKSPACE}
+ # Tidy up
+ sudo rm -rf ${INSTALLATION_WORKSPACE}/lens
 fi
