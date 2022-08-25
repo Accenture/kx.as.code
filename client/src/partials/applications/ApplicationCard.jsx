@@ -357,7 +357,7 @@ function ApplicationCard(props) {
               </h2>
             </Link>
             <div className="text-xs font-semibold text-gray-400 uppercase mb-1"></div>
-            <div className="pb-5">{props.app.Description}</div>
+            {/* <div className="pb-5 line-clamp-4">{props.app.Description}</div> */}
 
             <div className="">
               {/* {console.log("in render queue: ", appQueue)} */}
