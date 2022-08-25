@@ -48,65 +48,70 @@ pipeline {
             steps {
                 script {
                     dir(shared_workspace) {
-                        sh """
-                        #!/bin/bash
-                        set -x
-                        export mainBoxVersion=${kx_main_version}
-                        export nodeBoxVersion=${kx_node_version}
-                        export num_kx_main_nodes=${num_kx_main_nodes}
-                        export num_kx_worker_nodes=${num_kx_worker_nodes}
-                        echo "Profile path: ${profile_path}"
-                        echo "Vagrant action: ${vagrant_action}"
-                        echo "Current directory \$(pwd)"
-                        cd profiles/vagrant-${profile}
-                        VAGRANT_LOG=info vagrant global-status --prune
-                        runningProfileMainVms=\$(vagrant status --no-tty | grep kx-main | grep ${profile} | grep running || true)
-                        runningProfileNodeVms=\$(vagrant status --no-tty | grep kx-node | grep ${profile} | grep running || true)
-                        importedKxMainBoxes=\$(vagrant box list | grep kx-main | grep ${profile} | grep \${mainBoxVersion} || true)
-                        importedKxNodeBoxes=\$(vagrant box list | grep kx-node | grep ${profile} | grep \${nodeBoxVersion} || true)
-                        if [ "\${runningProfileMainVms}" == "" ]; then
-                            vagrant box remove kxascode/kx-main --provider ${profile} --box-version 0 --force || true
-                        fi
-                        if [ "\${runningProfileNodeVms}" == "" ]; then
-                            vagrant box remove kxascode/kx-node --provider ${profile} --box-version 0 --force || true
-                        fi
-                        if [ "\${importedKxMainBoxes}" != "" ]; then
-                            vagrant box remove kxascode/kx-main --provider ${profile} --box-version \${mainBoxVersion} --force || true
-                        fi
-                        if [ "\${importedKxNodeBoxes}" != "" ]; then
-                            vagrant box remove kxascode/kx-node --provider ${profile} --box-version \${nodeBoxVersion} --force || true
-                        fi
-                        if [ "${vagrant_action}" == "destroy" ]; then
-                            vagrant destroy --force --no-tty
-                        elif [ "${vagrant_action}" == "up" ]; then
-                            VAGRANT_LOG=info vagrant up --no-tty
-                            if [ \${num_kx_main_nodes} -gt 1 ]; then
-                                i=2
-                                while [ \$i -le \${num_kx_main_nodes} ];
-                                do
-                                    VAGRANT_LOG=info vagrant up --no-tty kx-main\$i
-                                    let i=\$i+1
-                                done
+                        withCredentials([file(credentialsId: 'VM_CREDENTIALS_FILE', variable: 'vmCredentialsFile')]) {
+                        withCredentials([string(credentialsId: 'SECRET_TEXT', variable: 'hash')]) {
+                            sh """
+                            #!/bin/bash
+                            set -x
+                            export mainBoxVersion=${kx_main_version}
+                            export nodeBoxVersion=${kx_node_version}
+                            export num_kx_main_nodes=${num_kx_main_nodes}
+                            export num_kx_worker_nodes=${num_kx_worker_nodes}
+                            echo "Profile path: ${profile_path}"
+                            echo "Vagrant action: ${vagrant_action}"
+                            echo "Current directory \$(pwd)"
+                            echo "Credentials file: ${vmCredentialsFile}"
+                            cp -f ${vmCredentialsFile} profiles/vagrant-${profile}/.vmCredentialsFile
+                            cd profiles/vagrant-${profile}
+                            VAGRANT_LOG=info vagrant global-status --prune
+                            runningProfileMainVms=\$(vagrant status --no-tty | grep kx-main | grep ${profile} | grep running || true)
+                            runningProfileNodeVms=\$(vagrant status --no-tty | grep kx-node | grep ${profile} | grep running || true)
+                            importedKxMainBoxes=\$(vagrant box list | grep kx-main | grep ${profile} | grep \${mainBoxVersion} || true)
+                            importedKxNodeBoxes=\$(vagrant box list | grep kx-node | grep ${profile} | grep \${nodeBoxVersion} || true)
+                            if [ "\${runningProfileMainVms}" == "" ]; then
+                                vagrant box remove kxascode/kx-main --provider ${profile} --box-version 0 --force || true
                             fi
-                            if [ \${num_kx_worker_nodes} -gt 0 ]; then
-                                i=1
-                                while [ \$i -le \${num_kx_worker_nodes} ];
-                                do
-                                    VAGRANT_LOG=info vagrant up --no-tty kx-worker\$i
-                                    let i=\$i+1
-                                done
+                            if [ "\${runningProfileNodeVms}" == "" ]; then
+                                vagrant box remove kxascode/kx-node --provider ${profile} --box-version 0 --force || true
                             fi
-                        else
-                            vagrant ${vagrant_action} --no-tty
-                        fi
-                        if [ \"${profile}\" == \"virtualbox\" ]; then
-                            \"${virtualboxCliPath}\" list vms
-                        elif [ \"${profile}\" == \"parallels\" ]; then
-                            \"${parallelsCliPath}\" list
-                        elif [ \"${profile}\" == \"vmware-desktop\" ]; then
-                            \"${vmwareCliPath}\" list
-                        fi
-                        """
+                            if [ "\${importedKxMainBoxes}" != "" ]; then
+                                vagrant box remove kxascode/kx-main --provider ${profile} --box-version \${mainBoxVersion} --force || true
+                            fi
+                            if [ "\${importedKxNodeBoxes}" != "" ]; then
+                                vagrant box remove kxascode/kx-node --provider ${profile} --box-version \${nodeBoxVersion} --force || true
+                            fi
+                            if [ "${vagrant_action}" == "destroy" ]; then
+                                vagrant destroy --force --no-tty
+                            elif [ "${vagrant_action}" == "up" ]; then
+                                VAGRANT_LOG=info vagrant up --no-tty
+                                if [ \${num_kx_main_nodes} -gt 1 ]; then
+                                    i=2
+                                    while [ \$i -le \${num_kx_main_nodes} ];
+                                    do
+                                        VAGRANT_LOG=info vagrant up --no-tty kx-main\$i
+                                        let i=\$i+1
+                                    done
+                                fi
+                                if [ \${num_kx_worker_nodes} -gt 0 ]; then
+                                    i=1
+                                    while [ \$i -le \${num_kx_worker_nodes} ];
+                                    do
+                                        VAGRANT_LOG=info vagrant up --no-tty kx-worker\$i
+                                        let i=\$i+1
+                                    done
+                                fi
+                            else
+                                vagrant ${vagrant_action} --no-tty
+                            fi
+                            if [ \"${profile}\" == \"virtualbox\" ]; then
+                                \"${virtualboxCliPath}\" list vms
+                            elif [ \"${profile}\" == \"parallels\" ]; then
+                                \"${parallelsCliPath}\" list
+                            elif [ \"${profile}\" == \"vmware-desktop\" ]; then
+                                \"${vmwareCliPath}\" list
+                            fi
+                            """
+                        }}
                     }
                 }
             }

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Cleanup for debugging
-ps -ef | grep jenkins.war | grep -v grep | awk {'print $2'} | xargs kill -9 #&& rm -rf ./jenkins_home
+#ps -ef | grep jenkins.war | grep -v grep | awk {'print $2'} | xargs kill -9 && rm -rf ./jenkins_home
 
 # Define ansi colours
 red="\033[31m"
@@ -12,6 +12,11 @@ nc="\033[0m" # No Color
 
 override_action=""
 error=""
+
+# Set shared workspace directory for Vagrant and Terraform jobs
+shared_workspace_base_directory_path="$(pwd)/jenkins_shared_workspace"
+git_root_path=$(git rev-parse --show-toplevel)
+export shared_workspace_directory_path="${shared_workspace_base_directory_path}/$(basename ${git_root_path})"
 
 # Source the user configured env file before creating the KX.AS.CODE Jenkins environment
 if [ ! -f ./jenkins.env ]; then
@@ -40,6 +45,13 @@ fi
 
 # Settings that will be used for provisioning Jenkins, including credentials etc
 source ./jenkins.env
+
+
+# Add OpenSSL binary to PATH if provided in jenkins.env
+if [[ -n ${openssl_path} ]]; then
+  export PATH=${openssl_path}:${PATH}
+  echo ${PATH}
+fi
 
 while getopts :dhrsfu opt; do
     case $opt in
@@ -113,7 +125,7 @@ if [[ ${override_action} == "recreate"   ]] || [[ ${override_action} == "destroy
             echo -e "${red}- [INFO] jenkins_home deleted${nc}"
             if [[ ${override_action} == "fully-destroy" ]]; then
                 echo -e "${red}- [INFO] Deleting jenkins_remote directory...${nc}"
-                rm -f ./jenkins_remote/workspace/shared_workspace/kx.as.code || true
+                rm -f ${shared_workspace_directory_path} || true
             fi
             echo -e "${red}- [INFO] Deleting downloaded tools...${nc}"
             rm -rf ./jq ./java ./agent.jar ./jenkins-cli.jar ./mo ./docker-compose || true
@@ -276,10 +288,6 @@ if [ ! -f ${jenkins_home}/jenkins.install.InstallUtil.lastExecVersion ]; then
 fi
 
 # Create shared workspace directory for Vagrant and Terraform jobs
-shared_workspace_base_directory_path="$(pwd)/jenkins_shared_workspace"
-export shared_workspace_directory_path="${shared_workspace_base_directory_path}/kx.as.code"
-git_root_path=$(git rev-parse --show-toplevel)
-
 if [[ ! -L ${shared_workspace_directory_path} ]] && [[ ! -e ${shared_workspace_directory_path} ]]; then
   mkdir -p ${shared_workspace_base_directory_path}
   ln -s  ${git_root_path} ${shared_workspace_base_directory_path}
@@ -340,7 +348,7 @@ export JENKINS_HOME="$(pwd)/jenkins_home"
 screen -wipe
 screen -L -Logfile ./jenkinsLog_$(date '+%Y%m%d_%H%M%S').txt -S jenkins -d -m ${javaBinary} -jar ./jenkins.war --httpListenAddress=${jenkins_listen_address} --httpPort=${jenkins_server_port}
 
-jenkins_url="http://localhost:${jenkins_server_port}"
+jenkins_url="http://${jenkins_listen_address}:${jenkins_server_port}"
 
 # Downloading Jenkins CLI used for creating Jenkins credentials
 echo -e "${orange}- [INFO] The next steps - downloading Jar files from Jenkins - might take a few minutes, as Jenkins needs to finish coming up before it will work${nc}"
@@ -375,22 +383,61 @@ for i in {1..60}; do
     sleep 30
 done
 
-# Creating credentials in Jenkins
-credentialXmlFiles=$(find jenkins_home/ -name "credential_*.xml")
-for credentialXmlFile in ${credentialXmlFiles}; do
-    echo "[INFO] Replacing placeholders with values in ${credentialXmlFile}"
-    for i in {1..5}; do
-        cat "${credentialXmlFile}" | ./mo > "${credentialXmlFile}_mo"
-        if [ -s "${credentialXmlFile}_mo" ]; then
-            cat "${credentialXmlFile}_mo" | "${javaBinary}" -jar jenkins-cli.jar -s ${jenkins_url} create-credentials-by-xml system::system::jenkins _ || true
-            rm "${credentialXmlFile}_mo"
-            break
+if [[ ! -f ./securedCredentials ]]; then
+
+  export credentials_salt=$(openssl rand -base64 12)
+  echo ${credentials_salt} > credentials_salt
+
+  # Creating credentials in Jenkins
+  credentialXmlFiles=$(find ./jenkins_home -name "credential_*.xml")
+  for credentialXmlFile in ${credentialXmlFiles}; do
+      echo ${git_source_password}
+      echo "[INFO] Replacing placeholders with values in ${credentialXmlFile}"
+      for i in {1..5}; do
+          cat "${credentialXmlFile}" | ./mo > "${credentialXmlFile}_mo"
+          if [ -s "${credentialXmlFile}_mo" ]; then
+              cat "${credentialXmlFile}_mo" | "${javaBinary}" -jar jenkins-cli.jar -s ${jenkins_url} create-credentials-by-xml system::system::jenkins _ || true
+              rm "${credentialXmlFile}_mo"
+              break
+          else
+              echo -e "${red}- [ERROR] Target config.xml file was empty after mustach replacement. Trying again${nc}"
+          fi
+      done
+  done
+
+  credentialsToStore="git_source_username git_source_password dockerhub_username dockerhub_password dockerhub_email"
+
+  # Get Jenkins Crumb
+  export jenkinsCrumb=$(curl -s --cookie-jar /tmp/cookies -u admin:admin ${jenkins_url}/crumbIssuer/api/json | jq -r '.crumb')
+
+  if [[ ! -f securedCredentials ]]; then
+
+    # Create encrypted file
+    for credential in ${credentialsToStore}
+    do
+      if [[ "${!credential:0:9}" != "U2FsdGVkX" ]] && [[ -n ${!credential} ]]; then
+        encryptedCred=$(echo ${!credential} | openssl enc -aes-256-cbc -pbkdf2 -salt -A -a -pass pass:${credentials_salt})
+        echo "${credential}:${encryptedCred}" | tee -a securedCredentials
+        # Replace line in env with encrypted version
+        if [[ "$(uname)" == "Darwin" ]]; then
+          sed -i '' 's;^'${credential}'.*;'${credential}'="'${encryptedCred}'";g' ./jenkins.env
         else
-            echo -e "${red}- [ERROR] Target config.xml file was empty after mustach replacement. Trying again${nc}"
+          sed -i 's;^'${credential}'.*;'${credential}'="'${encryptedCred}'";g' ./jenkins.env
         fi
+      else
+        echo "${credential}:\"${!credential}\"" | tee -a securedCredentials
+      fi
     done
-done
-IFS=${OLD_IFS}
+
+    # Post encrypted file to Jenkins as a credential
+    curl -X POST --cookie /tmp/cookies -H "Jenkins-Crumb: ${jenkinsCrumb}" -u admin:admin \
+      ${jenkins_url}/credentials/store/system/domain/_/createCredentials \
+      -F securedCredentials=@$(pwd)/securedCredentials \
+      -F 'json={"": "4", "credentials": {"file": "securedCredentials", "id": "VM_CREDENTIALS_FILE", "description": "KX.AS.CODE credentials", "stapler-class": "org.jenkinsci.plugins.plaincredentials.impl.FileCredentialsImpl", "$class": "org.jenkinsci.plugins.plaincredentials.impl.FileCredentialsImpl"}}'
+
+  fi
+
+fi
 
 # Checking if Vagrant is installed
 vagrantInstalled=$(vagrant -v 2> /dev/null | grep -E "Vagrant.*([0-9]+)\.([0-9]+)\.([0-9]+)")
