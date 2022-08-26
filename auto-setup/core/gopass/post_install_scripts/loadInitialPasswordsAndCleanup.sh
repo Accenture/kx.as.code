@@ -1,12 +1,15 @@
-#!/bin/bash -x
+#!/bin/bash
 set -euo pipefail
 
 # Get hash passed in from the Jenkins based launcher
 hash="$(/usr/bin/sudo cat /var/tmp/.hash)"
 
-# Loop through encrpted credentials file and load into GoPass
+# Ensure no Windows characters blocking decryption
+/usr/bin/sudo apt-get install dos2unix
+/usr/bin/sudo dos2unix /vagrant/.vmCredentialsFile --oldfile
+
+# Loop through encrypted credentials file and load into GoPass
 while IFS='' read -r credential || [[ -n "$credential" ]]; do
-    echo "$credential"
     name=$(echo ${credential} | cut -f 1 -d':')
     secret=$(echo ${credential} | cut -f 2 -d':')
     if [[ "${secret}" != '""' ]] && [[ "${secret}" != "" ]]; then

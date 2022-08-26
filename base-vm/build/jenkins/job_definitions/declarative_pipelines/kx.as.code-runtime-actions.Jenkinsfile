@@ -26,6 +26,7 @@ pipeline {
     parameters {
         string(name: 'kx_main_version', defaultValue: '', description: '')
         string(name: 'kx_node_version', defaultValue: '', description: '')
+        string(name: 'kx_version_override', defaultValue: '', description: '')
         string(name: 'num_kx_main_nodes', defaultValue: '', description: '')
         string(name: 'num_kx_worker_nodes', defaultValue: '', description: '')
         string(name: 'dockerhub_email', defaultValue: '', description: '')
@@ -60,9 +61,13 @@ pipeline {
                             echo "Profile path: ${profile_path}"
                             echo "Vagrant action: ${vagrant_action}"
                             echo "Current directory \$(pwd)"
-                            echo "Credentials file: ${vmCredentialsFile}"
-                            cp -f ${vmCredentialsFile} profiles/vagrant-${profile}/.vmCredentialsFile
                             cd profiles/vagrant-${profile}
+                            # Fix for Windows to correct path
+                            export vmCredentialsFile=\$(echo "$vmCredentialsFile" | sed 's;\\\\;\\/;g' | sed 's;:;;g')
+                            if [ "\${vmCredentialsFile:0:1}" != "/" ]; then
+                                export vmCredentialsFile="/\${vmCredentialsFile}"
+                            fi
+                            cp -f \$vmCredentialsFile ./.vmCredentialsFile
                             VAGRANT_LOG=info vagrant global-status --prune
                             runningProfileMainVms=\$(vagrant status --no-tty | grep kx-main | grep ${profile} | grep running || true)
                             runningProfileNodeVms=\$(vagrant status --no-tty | grep kx-node | grep ${profile} | grep running || true)

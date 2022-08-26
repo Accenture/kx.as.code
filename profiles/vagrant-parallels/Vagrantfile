@@ -123,7 +123,7 @@ Vagrant.configure("2") do |config|
     subconfig.vm.box_url = "#{KX_MAIN_BOX_URL}"
     subconfig.vm.provision "shell", inline: "hostname -I | awk {'print $1'} | tr -d ' \\t\\n\\r' | sudo tee /vagrant/kx.as.code_main-ip-address"
     subconfig.vm.provision "shell", inline: "for i in {1..5}; do echo \"Waiting for /vagrant ... [\${i}\" of 5]; if [ -d /vagrant ]; then sudo cp -v -f /vagrant/*.json /usr/share/kx.as.code/workspace; break; else echo \"/vagrant not yet not available\"; sleep 5; fi; done"
-    subconfig.vm.provision "shell", inline: "sudo cp -v -f /vagrant/.vmCredentialsFile /usr/share/kx.as.code/.config/ 2>/dev/null || true"
+    subconfig.vm.provision "shell", inline: "sudo mv -v -f /vagrant/.vmCredentialsFile /usr/share/kx.as.code/.config/ 2>/dev/null || true"
     subconfig.vm.provision "shell", inline: "sudo mkdir -p /usr/share/kx.as.code/workspace/custom-images"
     subconfig.vm.provision "shell", inline: "sudo cp -v -f /vagrant/avatar.{jpg,png} /vagrant/background.{jpg,png} /vagrant/boot.{jpg,png} /vagrant/conky_logo.{jpg,png} /vagrant/logo_icon.{jpg,png} /usr/share/kx.as.code/workspace/custom-images 2>/dev/null || true"
     subconfig.vm.provision "shell", inline: "cat /usr/share/kx.as.code/workspace/profile-config.json | jq '.'"
