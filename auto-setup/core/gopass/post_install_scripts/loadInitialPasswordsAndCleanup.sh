@@ -6,7 +6,7 @@ hash="$(/usr/bin/sudo cat /var/tmp/.hash)"
 
 # Ensure no Windows characters blocking decryption
 /usr/bin/sudo apt-get install dos2unix
-/usr/bin/sudo dos2unix /vagrant/.vmCredentialsFile --oldfile
+/usr/bin/sudo dos2unix ${sharedKxHome}/.config/.vmCredentialsFile
 
 # Loop through encrypted credentials file and load into GoPass
 while IFS='' read -r credential || [[ -n "$credential" ]]; do
