@@ -418,6 +418,8 @@ do
 
 Invoke-WebRequest -Uri $jenkinsUrl/jnlpJars/jenkins-cli.jar -OutFile .\jenkins-cli.jar
 
+$credentials_salt = openssl rand -base64 12
+
 # Replace mustache variables in credential xml files
 Get-ChildItem "$JENKINS_HOME\" -Filter credential_*.xml |
         Foreach-Object {
@@ -447,9 +449,6 @@ $jenkinsCrumb = (curl.exe -s --cookie-jar ./cookies -u admin:admin $jenkinsUrl/c
 
 if (!(test-path .\securedCredentials))
 {
-
-    $credentials_salt = openssl rand -base64 12
-    $credentials_salt | Out-File -FilePath .\credentials_salt
 
     $credentialsToStore = "git_source_username git_source_password dockerhub_username dockerhub_password dockerhub_email"
     $credentialsToStore.Split(" ") | ForEach {
