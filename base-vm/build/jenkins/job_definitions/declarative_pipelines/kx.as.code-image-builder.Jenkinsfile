@@ -57,7 +57,7 @@ pipeline {
                             }
                             sh """
                             cd base-vm/build/packer/${packerOsFolder}
-                            PACKER_LOG=1 ${packerPath}/packer build -force -on-error=abort -only ${node_type}-${profile} \
+                            ${packerPath}/packer build -force -on-error=abort -only ${node_type}-${profile} \
                             -var "compute_engine_build=${vagrant_compute_engine_build}" \
                             -var "memory=8192" \
                             -var "cpus=2" \
