@@ -5,20 +5,27 @@ import { TrashCan32, Restart32 } from "@carbon/icons-react";
 import ApplicationStatusActionButton from "../applications/ApplicationStatusActionButton";
 
 function ApplicationGroupCard(props) {
-  const appGroupBreadcrumb = props.appGroup.name
+  const appGroupBreadcrumb = props.appGroup.title
     .replaceAll(" ", "-")
     .replace(/\b\w/g, (l) => l.toLowerCase());
-  const appGroupCategory = props.appGroup.group_category
-    .toUpperCase()
-    .replaceAll("_", " ");
+  //const appGroupCategory = props.appGroup.group_category.toUpperCase().replaceAll("_", " ");
 
   const [appGroupComponents, setAppGroupComponents] = useState([]);
   const [isMqConnected, setIsMqConnected] = useState(true);
 
   useEffect(() => {
     console.log("useEffect called.");
+    getAllComponents(props.appGroup.action_queries);
     return () => {};
   }, []);
+
+  const getAllComponents = (action_queries) => {
+    if (action_queries) {
+      action_queries["install"].map((q) => {
+        setAppGroupComponents((current) => q.name);
+      });
+    }
+  };
 
   const drawApplicationGroupCardComponentsTags = (appGroupComponentTags) => {
     return appGroupComponentTags.map((appGroupComponent, i) => {
@@ -45,7 +52,7 @@ function ApplicationGroupCard(props) {
             <header className="flex justify-between items-start">
               {/* Category name */}
               <div className="text-white bg-ghBlack2 rounded p-0 px-1.5">
-                {appGroupCategory}
+                {"Undefined"}
               </div>
             </header>
 
@@ -53,9 +60,9 @@ function ApplicationGroupCard(props) {
               <Link to={"/application-groups/" + appGroupBreadcrumb}>
                 <h2
                   className="hover:underline hover:cursor-pointer text-2xl text-white truncate"
-                  alt={props.appGroup.name}
+                  alt={props.appGroup.title}
                 >
-                  {props.appGroup.name}
+                  {props.appGroup.title}
                 </h2>
               </Link>
             </div>
@@ -66,9 +73,7 @@ function ApplicationGroupCard(props) {
 
           <div className="flex h-[150px]">
             <ul className="float-left">
-              {drawApplicationGroupCardComponentsTags(
-                props.appGroup.components
-              )}
+              {/* {drawApplicationGroupCardComponentsTags(props.appGroupComponents)} */}
             </ul>
           </div>
           <div className="">

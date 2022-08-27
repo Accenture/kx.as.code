@@ -5,7 +5,7 @@ import FilterButton from "../partials/actions/FilterButton";
 import Modal from "../partials/applicationGroups/Modal";
 import { useState, useEffect } from "react";
 
-const applicationGroupJson = require("../../src/data/application-groups.json");
+const applicationGroupJson = require("../../src/data/combined-application-group-files.json");
 
 function ApplicationGroups() {
   const [searchTerm, setSearchTerm] = useState("");
