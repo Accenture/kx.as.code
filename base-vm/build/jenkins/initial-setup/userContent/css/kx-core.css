@@ -1766,3 +1766,80 @@ select, option {
     width: 125px;
     border-radius: 0 0 0 0;
 }
+
+.custom-variable-table {
+    display:table;
+    width: 1100px;
+}
+
+.custom-variable-header {
+    display:table-header-group;
+    font-weight:bold;
+    line-height: 40px;
+}
+
+.custom-variable-rowGroup {
+    display:table-row-group;
+}
+
+.custom-variable-row {
+    display:table-row;
+    line-height: 40px;
+}
+
+.custom-variable-row-added {
+    display:table-row;
+    line-height: 40px;
+}
+
+.custom-variable-cell {
+    display:table-cell;
+    width:180px;
+}
+
+.custom-variable-cell-key {
+    width:250px;
+}
+
+.custom-variable-image-cell {
+    display:table-cell;
+    width:30px;
+    cursor: pointer;
+}
+
+.custom-variable-input-box {
+    width: 170px;
+    padding: 10px 0 10px 5px;
+}
+
+.custom-variable-input-box-key {
+    width: 245px;
+}
+
+.custom-variable-table-container {
+    max-width: 600px;
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    max-height: 290px;
+    overflow-y: auto;
+    scrollbar-gutter: both-edges;
+    scrollbar-width: thin;
+}
+
+.custom-variable-table-container::-webkit-scrollbar {
+    width: 16px;
+}
+
+.custom-variable-table-container::-webkit-scrollbar-track {
+    background-color: #efefef;
+    border-radius: 0px;
+}
+
+.custom-variable-table-container::-webkit-scrollbar-thumb {
+    border: 5px solid transparent;
+    border-radius: 100px;
+    background-color: #e5c4ff;
+    background-clip: content-box;
+}

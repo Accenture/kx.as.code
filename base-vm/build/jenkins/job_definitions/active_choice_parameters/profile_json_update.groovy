@@ -59,6 +59,16 @@ try {
     println("Something went wrong in the groovy user provisioning block (profile_json_update.groovy): ${e}")
 }
 
+try {
+    if ( CUSTOM_VARIABLES ) {
+        def customVariablesJsonFilePath = "${shared_workspace}/profiles/${profileParentPath}/customVariables.json"
+        def parsedCustomVariablesJson = new JsonSlurper().parseText(CUSTOM_VARIABLES)
+        new File(customVariablesJsonFilePath).write(new JsonBuilder(parsedCustomVariablesJson).toPrettyString())
+    }
+} catch (e) {
+    println("Something went wrong in the groovy custom variables block (profile_json_update.groovy): ${e}")
+}
+
 def actionQueueFile;
 switch (profileStartMode) {
     case "normal": actionQueueFile = "actionQueues.json";

@@ -151,6 +151,7 @@ Vagrant.configure("2") do |config|
     subconfig.vm.provision "shell", inline: "sudo cp -v -f /vagrant/avatar.{jpg,png} /vagrant/background.{jpg,png} /vagrant/boot.{jpg,png} /vagrant/conky_logo.{jpg,png} /vagrant/logo_icon.{jpg,png} /usr/share/kx.as.code/workspace/custom-images 2>/dev/null || true"
     subconfig.vm.provision "shell", inline: "cat /usr/share/kx.as.code/workspace/profile-config.json | jq '.'"
     subconfig.vm.provision "shell", inline: "cat /usr/share/kx.as.code/workspace/users.json | jq '.'"
+    subconfig.vm.provision "shell", inline: "cat /usr/share/kx.as.code/workspace/customVariables.json | jq '.'"
     subconfig.vm.provision "shell", inline: "cat /usr/share/kx.as.code/workspace/actionQueues.json | jq '.'"
     subconfig.vm.provision "shell", inline: 'echo $1 | sudo tee /var/tmp/.hash && sudo chmod 400 /var/tmp/.hash', :args => "#{HASH}"
     subconfig.vm.provision "shell", inline: 'echo -e "$(date "+%Y-%m-%d_%H%M%S") | KX-Main VM created by Vagrant" | sudo tee /usr/share/kx.as.code/workspace/gogogo'
