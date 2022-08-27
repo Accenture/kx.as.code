@@ -419,6 +419,7 @@ do
 Invoke-WebRequest -Uri $jenkinsUrl/jnlpJars/jenkins-cli.jar -OutFile .\jenkins-cli.jar
 
 $credentials_salt = openssl rand -base64 12
+#Write-Output $credentials_salt
 
 # Replace mustache variables in credential xml files
 Get-ChildItem "$JENKINS_HOME\" -Filter credential_*.xml |
@@ -452,7 +453,12 @@ if (!(test-path .\securedCredentials))
 
     $credentialsToStore = "git_source_username git_source_password dockerhub_username dockerhub_password dockerhub_email"
     $credentialsToStore.Split(" ") | ForEach {
-        $encryptedCredential = (Write-Host $( Get-Variable "$_" -ValueOnly ) | openssl enc -aes-256-cbc -pbkdf2 -salt -A -a -pass pass:$credentials_salt)
+        $encryptedCredential = (Write-Output $( Get-Variable "$_" -ValueOnly ) | openssl enc -aes-256-cbc -pbkdf2 -salt -A -a -pass pass:$credentials_salt)
+        # Test Unencryption
+        $unencryptedCredential = (Write-Output $encryptedCredential | openssl enc -aes-256-cbc -pbkdf2 -salt -A -a -pass pass:$credentials_salt -d)
+        if ( $unencryptedCredential -ne $( Get-Variable "$_" -ValueOnly ) ) {
+            Write-Output "- [ERROR] Encryption and subsequent decryption value do not match."
+        }
         "$_`:$encryptedCredential" | Out-File -FilePath .\securedCredentials -Append
     }
 
