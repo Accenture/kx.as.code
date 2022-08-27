@@ -9,7 +9,6 @@ export componentInstallationFolder=$(echo ${payload} | jq -c -r '.install_folder
 # Get global base variables from globalVariables.json
 source /usr/share/kx.as.code/git/kx.as.code/auto-setup/functions/getGlobalVariables.sh # source function
 getGlobalVariables
-getCustomVariables
 
 # Load Central Functions
 functionsLocation="${autoSetupHome}/functions"
@@ -21,6 +20,7 @@ do
 done
 
 # Load CUSTOM Central Functions - these can either be new ones, or copied and edited functions from the main functions directory above, which will override the ones loaded in the previous step
+getCustomVariables # load global custom variables
 customFunctionsLocation="${autoSetupHome}/functions-custom"
 loadedFunctions="$(compgen -A function)"
 for function in $(find ${customFunctionsLocation} -name "*.sh")
