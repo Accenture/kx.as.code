@@ -14,17 +14,14 @@ function ApplicationGroupCard(props) {
   const [isMqConnected, setIsMqConnected] = useState(true);
 
   useEffect(() => {
-    console.log("useEffect called.");
-    getAllComponents(props.appGroup.action_queries);
+    getAllComponents(props.appGroup.action_queues);
     return () => {};
   }, []);
 
-  const getAllComponents = (action_queries) => {
-    if (action_queries) {
-      action_queries["install"].map((q) => {
-        setAppGroupComponents((current) => q.name);
-      });
-    }
+  const getAllComponents = (action_queues) => {
+    action_queues["install"].map((q) => {
+      setAppGroupComponents((current) => [...current, q.name]);
+    });
   };
 
   const drawApplicationGroupCardComponentsTags = (appGroupComponentTags) => {
@@ -73,7 +70,7 @@ function ApplicationGroupCard(props) {
 
           <div className="flex h-[150px]">
             <ul className="float-left">
-              {/* {drawApplicationGroupCardComponentsTags(props.appGroupComponents)} */}
+              {drawApplicationGroupCardComponentsTags(appGroupComponents)}
             </ul>
           </div>
           <div className="">
