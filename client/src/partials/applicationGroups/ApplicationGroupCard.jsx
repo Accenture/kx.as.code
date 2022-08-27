@@ -4,6 +4,33 @@ import EditMenu from "../EditMenu";
 import { TrashCan32, Restart32 } from "@carbon/icons-react";
 import ApplicationStatusActionButton from "../applications/ApplicationStatusActionButton";
 
+import image from "../../media/png/appImgs/postman.png";
+
+import AliceCarousel from "react-alice-carousel";
+import "react-alice-carousel/lib/alice-carousel.css";
+
+const responsive = {
+  0: { items: 3 },
+  568: { items: 3 },
+  1024: { items: 3 },
+};
+const Gallery = (props) => {
+  console.log("itemsList-2: ", props.itemsList);
+
+  return (
+    <AliceCarousel
+      mouseTracking
+      items={props.itemsList}
+      responsive={responsive}
+      controlsStrategy="default"
+      disableDotsControls={true}
+      // paddingRight={20}
+    />
+  );
+};
+
+const handleDragStart = (e) => e.preventDefault();
+
 function ApplicationGroupCard(props) {
   const appGroupBreadcrumb = props.appGroup.title
     .replaceAll(" ", "-")
@@ -12,17 +39,56 @@ function ApplicationGroupCard(props) {
 
   const [appGroupComponents, setAppGroupComponents] = useState([]);
   const [isMqConnected, setIsMqConnected] = useState(true);
+  const [itemsList, setItemsList] = useState([]);
 
   useEffect(() => {
-    getAllComponents(props.appGroup.action_queues);
+    fetchAllComponents(props.appGroup.action_queues);
     return () => {};
   }, []);
 
-  const getAllComponents = (action_queues) => {
-    action_queues["install"].map((q) => {
-      setAppGroupComponents((current) => [...current, q.name]);
+  async function fetchAllComponents(action_queues) {
+    var components = await action_queues["install"].map((q) => {
+      return q.name;
+    });
+    setImageList(components);
+  }
+
+  const setImageList = (appGroupComponents) => {
+    // var itemsTmp = [];
+    appGroupComponents.map((appName) => {
+      console.log("appName setImg: ", appName);
+      console.log("itemsList: ", itemsList);
+
+      // const res = import(`../../media/png/appImgs/${appName}.png`);
+      // console.log("RES: ", res);
+
+      // setItemsList(
+
+      // )
+      //   <img
+      //     src={require(`../../media/png/appImgs/${appName}.png`).default}
+      //     onDragStart={handleDragStart}
+      //     role="presentation"
+      //   />
+      // );
+
+      // setItemsList(itemsTmp);
+
+      setItemsList((current) => [
+        ...current,
+        <img
+          className="bg-ghBlack3 p-3 rounded"
+          heigth="50px"
+          width="50px"
+          src={require(`../../media/png/appImgs/${appName}.png`).default}
+          onDragStart={handleDragStart}
+          role="presentation"
+        />,
+      ]);
     });
   };
+
+  const drawComponentsWithAppImages = () => {};
 
   const drawApplicationGroupCardComponentsTags = (appGroupComponentTags) => {
     return appGroupComponentTags.map((appGroupComponent, i) => {
@@ -68,10 +134,13 @@ function ApplicationGroupCard(props) {
           {/* Main Card Content */}
           <div className="mb-4">{props.appGroup.description}</div>
 
-          <div className="flex h-[150px]">
+          <div className="flex h-[50px]">
             <ul className="float-left">
               {drawApplicationGroupCardComponentsTags(appGroupComponents)}
             </ul>
+          </div>
+          <div>
+            <Gallery itemsList={itemsList} />
           </div>
           <div className="">
             <ApplicationStatusActionButton
