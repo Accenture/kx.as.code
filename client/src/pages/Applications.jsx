@@ -44,7 +44,6 @@ const filterAppsBySearchTermAndInstallationStatus = (
   try {
     var filteredData = data
       .filter((app) => {
-        // console.log("filtertags: ", filterTags);
         let intersect = [];
         if (app.categories) {
           intersect = getArrayOfObjArray(filterTags).filter((value) =>
@@ -52,7 +51,6 @@ const filterAppsBySearchTermAndInstallationStatus = (
           );
         }
         if (Array.isArray(filterTags)) {
-          console.log("filterTags: ", filterTags);
           if (filterTags.length == 0) {
             return app;
           } else if (intersect.length > 0) {
