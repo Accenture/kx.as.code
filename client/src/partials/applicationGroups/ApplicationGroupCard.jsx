@@ -15,8 +15,6 @@ const responsive = {
   1024: { items: 3 },
 };
 const Gallery = (props) => {
-  console.log("itemsList-2: ", props.itemsList);
-
   return (
     <AliceCarousel
       mouseTracking
