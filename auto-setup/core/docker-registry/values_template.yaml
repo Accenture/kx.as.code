@@ -35,7 +35,7 @@ ui:
   # nginxProxyHeaders:
   #  - my-heeader-name: my-header-value
   nginxProxyHeaders:
-      - Access-Control-Allow-Origin: 'https://docker-registry.{{componentName}}.{{baseDomain}}'
+      - Access-Control-Allow-Origin: 'https://docker-registry-ui.{{componentName}}.{{baseDomain}}'
       - Access-Control-Allow-Credentials: "'true'"
       - Access-Control-Allow-Headers: "Authorization, Accept"
       - Access-Control-Allow-Methods: "HEAD, GET, OPTIONS, DELETE"

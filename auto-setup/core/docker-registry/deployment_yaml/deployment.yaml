@@ -26,6 +26,9 @@ spec:
       - name: auth-vol
         secret:
            secretName: docker-registry-htpasswd
+      - name: docker-registry-config
+        configMap:
+          name: docker-registry-config
       containers:
         - image: registry:2
           name: docker-registry
@@ -62,3 +65,6 @@ spec:
             mountPath: "/auth/htpasswd"
             subPath: docker-registry-htpasswd
             readOnly: true
+          - name: docker-registry-config
+            mountPath: /etc/docker/registry/config.yml
+            subPath: config.yml
