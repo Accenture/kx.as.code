@@ -226,7 +226,18 @@ if [[ ${action} == "install"   ]]; then
       createDesktopIcon "${apiDocsDirectory}" "${postmanApiDocsUrl}" "${shortcutText} Postman" "${iconPath}" "${browserOptions}"
     fi
 
-elif [[ ${action} == "upgrade"   ]]; then
+elif [[ ${action} == "executeTask" ]]; then
+
+  export taskToExecute=$(echo ${payload} | jq -c -r '.task')
+  rc=0
+  autoSetupExecuteTask "${taskToExecute}" 2>> ${logFilename} || rc=$? && log_info "Execution of autoSetupExecuteTask() for task \"${taskToExecute}\" returned with rc=$rc"
+    if [[ ${rc} -ne 0 ]]; then
+      log_error "Execution of autoSetupExecuteTask() for task \"${taskToExecute}\" returned with a non zero return code ($rc)"
+      exit $rc
+    fi
+
+
+elif [[ ${action} == "upgrade" ]]; then
 
     ## TODO - for the most solutions this can be handled by the install script with new versions set
     echo "TODO: Upgrade"
@@ -235,7 +246,7 @@ elif [[ ${action} == "uninstall"   ]] || [[ ${action} == "purge"   ]]; then
 
     echo "Uninstall or purge action"
 
-    if [[ ${installationType} == "helm"   ]]; then
+    if [[ ${installationType} == "helm" ]]; then
 
         # Helm uninstall
         helm delete ${componentName} --namespace ${namespace}

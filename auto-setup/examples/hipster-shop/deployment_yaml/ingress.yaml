@@ -7,9 +7,9 @@ metadata:
 spec:
   tls:
     - hosts:
-        - ${componentName}.${baseDomain}
+        - {{componentName}}.{{baseDomain}}
   rules:
-    - host: ${componentName}.${baseDomain}
+    - host: {{componentName}}.{{baseDomain}}
       http:
         paths:
           - backend:
