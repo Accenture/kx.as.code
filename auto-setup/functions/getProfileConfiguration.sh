@@ -49,6 +49,7 @@ getProfileConfiguration() {
   export basePassword=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.basePassword')
   export baseIpRangeStart=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.baseIpRangeStart')
   export baseIpRangeEnd=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.baseIpRangeEnd')
+  export logLevel=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.logLevel')
   export metalLbIpRangeStart=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.metalLbIpRange.ipRangeStart')
   export metalLbIpRangeEnd=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.metalLbIpRange.ipRangeEnd')
   export sslProvider=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.sslProvider')
