@@ -45,8 +45,8 @@
     }
   ],
   "retry": "true",
-  "Description": "Google's Hipster Shop micro-services example",
-  "shortcut_text": "Hipster-Shop",
+  "Description": "Google&apos;s Hipster Shop micro-services example",
+  "shortcut_text": "Hipster Shop",
   "shortcut_icon": "hipster-shop.png",
   "pre_install_scripts": [],
   "install_scripts": [
