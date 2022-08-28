@@ -5,6 +5,14 @@ autoSetupExecuteTask() {
 
   taskToExecute=${1}
 
+  # Check dependent component is installed before executing task
+  returnCode=$(checkApplicationInstalled "$(cat ${componentMetadataJson} | jq -r '.name')" "$(cat ${componentMetadataJson} | jq -r '.installation_group_folder')")
+  if [[ "${returnCode}" -ne 0 ]]; then
+    log_error "Cannot execute a task against a component that is not installed. Exiting."
+    false
+    return
+  fi
+
   # Get properties from component's metatdata for task to execute
   metadataForTaskToExecute=$(cat ${componentMetadataJson} | jq -r '.available_tasks[]? | select(.name=="'${taskToExecute}'")' | mo)
 
