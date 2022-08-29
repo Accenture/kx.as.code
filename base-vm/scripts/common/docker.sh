@@ -31,7 +31,7 @@ sudo apt-get -y install docker-ce docker-ce-cli containerd.io
 # Add user to Docker group
 sudo usermod -aG docker $VM_USER
 
-# Setup daemon.
+# Setup daemon. With experimental features to enable --squash
 sudo mkdir -p /etc/docker
 sudo bash -c 'cat > /etc/docker/daemon.json <<EOF
 {
@@ -40,7 +40,8 @@ sudo bash -c 'cat > /etc/docker/daemon.json <<EOF
   "log-opts": {
     "max-size": "100m"
   },
-  "storage-driver": "overlay2"
+  "storage-driver": "overlay2",
+  "experimental": true
 }
 EOF'
 

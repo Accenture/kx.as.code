@@ -14,5 +14,6 @@
   "adminShortcutsDirectory": "${sharedKxHome}/Admin Tools",
   "vmUser": "kx.hero",
   "vmUserId": "$(id -u ${vmUser})",
-  "vmPassword": "$(cat ${sharedKxHome}/.config/.user.cred)"
+  "vmPassword": "$(cat ${sharedKxHome}/.config/.user.cred)",
+  "kanikoVersion": "v1.9.0"
 }
