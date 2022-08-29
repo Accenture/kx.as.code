@@ -273,7 +273,7 @@ function ApplicationCard(props) {
                                 placement="top"
                                 arrow
                               >
-                                <button>
+                                <button className="inline">
                                   <HiOutlineInformationCircle className="ml-1" />
                                 </button>
                               </Tooltip>
@@ -362,14 +362,13 @@ function ApplicationCard(props) {
                 {allQueueStatus != "" && (
                   <StatusPoint installStatus={allQueueStatus} />
                 )}
-                <span className="flex">
-                  {getTransformedName()}
-                  <Tooltip title={props.app.Description} placement="top" arrow>
-                    <button>
-                      <HiOutlineInformationCircle className="ml-1 text-base" />
-                    </button>
-                  </Tooltip>
-                </span>
+
+                {getTransformedName()}
+                <Tooltip title={props.app.Description} placement="top" arrow>
+                  <button className="inline-block">
+                    <HiOutlineInformationCircle className="ml-1 text-base" />
+                  </button>
+                </Tooltip>
               </h2>
             </Link>
             <div className="text-xs font-semibold text-gray-400 uppercase mb-1"></div>
