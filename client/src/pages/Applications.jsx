@@ -637,7 +637,7 @@ export const Applications = (props) => {
                   }}
                 />
               }
-              label="Core Applications"
+              label="Show Core Applications"
             />
           </FormGroup>
         </div>
