@@ -36,7 +36,10 @@ app.route("/api/add/application/:queue_name").post((req, res) => {
     );
   });
 
-  res.send("The POST request is being processed!");
+  res.send(
+    "The POST request is being processed to Queue: ",
+    req.params.queue_name
+  );
 });
 
 app.use((req, res, next) => {
@@ -71,7 +74,6 @@ app.route("/api/checkRmqConn").get((req, res) => {
 
 app.route("/api/queues/:queue_name").get((req, res) => {
   try {
-    console.log("get q triggered.");
     var url =
       "http://" +
       rabbitMqUsername +
@@ -83,7 +85,7 @@ app.route("/api/queues/:queue_name").get((req, res) => {
       req.params.queue_name +
       "/get";
 
-    console.log("url: ", url);
+    // console.log("url: ", url);
 
     var dataString =
       '{"vhost":"/","name":"' +
