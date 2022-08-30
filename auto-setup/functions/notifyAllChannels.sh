@@ -6,7 +6,7 @@ notifyAllChannels() {
   local message=${1}
   local logLevel=${2-info}
   local actionStatus=${3-unknown}
-  local action=${4}
+  local action=${4-}
 
   if [[ "${logLevel}" == "error" ]]; then
     dialogType="dialog-error"

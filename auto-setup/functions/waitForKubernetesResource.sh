@@ -5,7 +5,7 @@ waitForKubernetesResource() {
 
   export resourceName=${1}
   export resourceType=${2}
-  export resourceNamespace=${3-default}
+  export resourceNamespace=${3-${namespace}}
 
   # Waiting for Kubernetes resource to be available
   timeout -s TERM 600 bash -c \

@@ -13,7 +13,7 @@ pushDockerImageToCoreRegistry() {
   for i in {1..5}
   do
     docker push docker-registry.${baseDomain}/${imagePathToPush} || rc=$?  && log_info "Push to Docker returned with rc=${rc}"
-    if [[ $rc ne 0 ]]; then
+    if [[ $rc -ne 0 ]]; then
       log_warn "Docker push exited with a non zero return code after try ${i}. Will try again a maximum of 5 times"
     else
       log_info "Docker push exited with return code 0 after try ${i}. Looks good. Continuing."
