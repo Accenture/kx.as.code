@@ -54,7 +54,7 @@ export default function ScreenshotCarroussel(props) {
   return (
     <>
       <div className="grid grid-cols-12">
-        <div className="flex col-span-12 md:col-span-8">
+        <div className="flex col-span-12 md:col-span-12">
           <SCarousel screenshots={screenshots} imageName={imageName} />
         </div>
         <div className="flex md:col-span-6"></div>
