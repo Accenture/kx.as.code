@@ -10,6 +10,7 @@ import Tooltip from "@mui/material/Tooltip";
 
 export default function AppDetails(props) {
   const [appData, setAppData] = useState([]);
+  const [availableTasksList, setAvailableTasksList] = useState([]);
 
   const {
     location: { pathname },
@@ -24,7 +25,38 @@ export default function AppDetails(props) {
       .then((response) => {
         console.log("appDetails: ", response.data);
         setAppData(response.data);
+        if (response.data.hasOwnProperty("available_tasks")) {
+          setAvailableTasksList(response.data.available_tasks);
+        }
       });
+  };
+
+  const drawAwailableTasksComponents = () => {
+    return availableTasksList.map((task, i) => {
+      return (
+        <div
+          key={i}
+          className="bg-ghBlack2 p-2 hover:bg-gray-700 rounded-md flex items-center justify-between mb-2 pl-4"
+        >
+          <span className="flex mr-2">
+            {task.title}
+            <Tooltip title={task.description} placement="top" arrow>
+              <button className="inline">
+                <HiOutlineInformationCircle className="ml-1 text-lg" />
+              </button>
+            </Tooltip>
+          </span>
+          <span>
+            <button className="bg-kxBlue p-1 px-4 rounded items-center flex hover:pr-5">
+              <span>
+                <VscTerminalPowershell className="text-2xl mr-2" />
+              </span>{" "}
+              Execute
+            </button>
+          </span>
+        </div>
+      );
+    });
   };
 
   useEffect(() => {
@@ -74,52 +106,11 @@ export default function AppDetails(props) {
         </div>
         <div className="col-span-4 p-5 bg-inv3 rounded-lg pt-10 border border-1 border-gray-700">
           <h2 className="mb-3 text-lg">Executable Tasks</h2>
-
-          <div className="bg-ghBlack2 p-2 hover:bg-gray-700 rounded-md flex items-center justify-between mb-2 pl-4">
-            <span className="flex mr-2">
-              Task 2
-              <Tooltip
-                title="Some Information about this task."
-                placement="top"
-                arrow
-              >
-                <button className="inline">
-                  <HiOutlineInformationCircle className="ml-1 text-lg" />
-                </button>
-              </Tooltip>
-            </span>
-            <span>
-              <button className="bg-kxBlue p-1 px-4 rounded items-center flex hover:pr-5">
-                <span>
-                  <VscTerminalPowershell className="text-2xl mr-2" />
-                </span>{" "}
-                Execute
-              </button>
-            </span>
-          </div>
-
-          <div className="bg-ghBlack2 p-2 hover:bg-gray-700 rounded-md flex items-center justify-between mb-2 pl-4">
-            <span className="flex mr-2">
-              Task 1
-              <Tooltip
-                title="Some Information about this task."
-                placement="top"
-                arrow
-              >
-                <button className="inline">
-                  <HiOutlineInformationCircle className="ml-1 text-lg" />
-                </button>
-              </Tooltip>
-            </span>
-            <span>
-              <button className="bg-kxBlue p-1 px-4 rounded items-center flex hover:pr-5">
-                <span>
-                  <VscTerminalPowershell className="text-2xl mr-2" />
-                </span>{" "}
-                Execute
-              </button>
-            </span>
-          </div>
+          {availableTasksList.length < 0 ? (
+            drawAwailableTasksComponents()
+          ) : (
+            <div>No Tasks available.</div>
+          )}
         </div>
       </div>
     </div>

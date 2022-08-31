@@ -912,15 +912,25 @@
   {
     "name": "docker-registry",
     "namespace": "docker-registry",
-    "installation_type": "script",
+    "installation_type": "helm",
     "installation_group_folder": "core",
     "environment_variables": {
-      "imageTag": "2.7.1"
+      "imageTag": "2.7.1",
+      "uiImageTag": "2.2.1"
+    },
+    "helm_params": {
+      "repository_url": "https://helm.joxit.dev",
+      "repository_name": "joxit/docker-registry-ui",
+      "helm_version": "0.2.0",
+      "set_key_values": [
+        "ui.image=joxit/docker-registry-ui:{{uiImageTag}}",
+        "ui.dockerRegistryUrl=https://docker-registry-service:5000"
+      ]
     },
     "retry": "true",
     "urls": [
       {
-        "url": "https://{{componentName}}.{{baseDomain}}",
+        "url": "https://{{componentName}}-ui.{{baseDomain}}",
         "healthchecks": {
           "liveliness": {
             "http_path": "/",
@@ -947,13 +957,14 @@
         }
       }
     ],
-    "install_scripts": ["install-docker-registry.sh"],
+    "install_scripts": [],
     "Description": "The Registry is a stateless, highly scalable server side application that stores and lets you distribute Docker images.",
     "shortcut_text": "Docker Registry",
     "shortcut_icon": "docker-registry.png",
     "pre_install_scripts": [
       "createTlsCertsSecret.sh",
-      "createHtpasswdSecret.sh"
+      "createHtpasswdSecret.sh",
+      "install-docker-registry.sh"
     ],
     "post_install_scripts": []
   },
@@ -992,7 +1003,10 @@
     "shortcut_text": "GoPass UI",
     "shortcut_icon": "gopass.png",
     "pre_install_scripts": [],
-    "post_install_scripts": ["createDesktopShortcuts.sh"]
+    "post_install_scripts": [
+      "loadInitialPasswordsAndCleanup.sh",
+      "createDesktopShortcuts.sh"
+    ]
   },
   {
     "name": "keycloak",
@@ -1408,6 +1422,70 @@
     "post_install_scripts": []
   },
   {
+    "name": "hipster-shop",
+    "namespace": "shop-example",
+    "installation_type": "script",
+    "installation_group_folder": "examples",
+    "environment_variables": {
+      "branch": ""
+    },
+    "categories": ["content", "hipster", "shop", "frontend", "micro-services"],
+    "urls": [
+      {
+        "url": "https://{{componentName}}.{{baseDomain}}/",
+        "healthchecks": {
+          "liveliness": {
+            "http_path": "/",
+            "http_auth_required": false,
+            "expected_http_response_code": "200",
+            "expected_http_response_string": "",
+            "expected_json_response": {
+              "json_path": "",
+              "json_value": ""
+            },
+            "health_shell_check_command": "",
+            "expected_shell_check_command_response": ""
+          },
+          "readiness": {
+            "http_path": "/",
+            "http_auth_required": false,
+            "expected_http_response_code": "200",
+            "expected_http_response_string": "",
+            "expected_json_response": {
+              "json_path": "",
+              "json_value": ""
+            },
+            "health_shell_check_command": "",
+            "expected_shell_check_command_response": ""
+          }
+        }
+      }
+    ],
+    "retry": "true",
+    "Description": "Google&apos;s Hipster Shop micro-services example",
+    "shortcut_text": "Hipster Shop",
+    "shortcut_icon": "hipster-shop.png",
+    "pre_install_scripts": [],
+    "install_scripts": ["deployHipsterShop.sh"],
+    "post_install_scripts": [],
+    "available_tasks": [
+      {
+        "name": "restartFrontend",
+        "title": "Restart frontend",
+        "description": "Restart the frontend microservice",
+        "script": "restartFrontend.sh",
+        "inputs": [
+          {
+            "branch": {
+              "default": "develop",
+              "mandatory": false
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
     "name": "elastic-auditbeat",
     "namespace": "elastic-stack",
     "installation_type": "script",
@@ -1821,27 +1899,6 @@
     "post_install_scripts": []
   },
   {
-    "name": "telegraf",
-    "namespace": "influxdata",
-    "installation_type": "helm",
-    "installation_group_folder": "monitoring",
-    "environment_variables": {
-      "imageTag": "1.23.2-alpine"
-    },
-    "helm_params": {
-      "repository_url": "https://helm.influxdata.com/",
-      "repository_name": "influxdata/telegraf",
-      "helm_version": "1.8.18",
-      "set_key_values": []
-    },
-    "categories": ["data-collection", "agent"],
-    "Description": "Telegraf is a server-based agent for collecting and sending all metrics and events from databases, systems, and IoT sensors.",
-    "shortcut_text": "Influxdata Telegraf",
-    "shortcut_icon": "influxdata-telegraf.png",
-    "pre_install_scripts": ["getAuthToken.sh"],
-    "post_install_scripts": []
-  },
-  {
     "name": "telegraf-ds",
     "namespace": "influxdata",
     "installation_type": "helm",
@@ -1861,6 +1918,27 @@
     "shortcut_icon": "influxdata-telegraf-ds.png",
     "pre_install_scripts": ["getAuthToken.sh"],
     "post_install_scripts": ["modifyConfiguration.sh"]
+  },
+  {
+    "name": "telegraf",
+    "namespace": "influxdata",
+    "installation_type": "helm",
+    "installation_group_folder": "monitoring",
+    "environment_variables": {
+      "imageTag": "1.23.2-alpine"
+    },
+    "helm_params": {
+      "repository_url": "https://helm.influxdata.com/",
+      "repository_name": "influxdata/telegraf",
+      "helm_version": "1.8.18",
+      "set_key_values": []
+    },
+    "categories": ["data-collection", "agent"],
+    "Description": "Telegraf is a server-based agent for collecting and sending all metrics and events from databases, systems, and IoT sensors.",
+    "shortcut_text": "Influxdata Telegraf",
+    "shortcut_icon": "influxdata-telegraf.png",
+    "pre_install_scripts": ["getAuthToken.sh"],
+    "post_install_scripts": []
   },
   {
     "name": "loki",
