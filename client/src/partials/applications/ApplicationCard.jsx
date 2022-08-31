@@ -220,7 +220,7 @@ function ApplicationCard(props) {
       return (
         <ApplicationCategoryTag
           appTag={appTag}
-          keyNo={i}
+          keyId={i}
           addCategoryTofilterTags={props.addCategoryTofilterTags}
         />
       );
@@ -298,6 +298,7 @@ function ApplicationCard(props) {
                   appName={props.app.name}
                   category={props.app.installation_group_folder}
                   applicationInstallHandler={applicationInstallHandler}
+                  applicationUninstallHandler={applicationUninstallHandler}
                   refreshActionButton={refreshActionButton}
                 />
               </div>

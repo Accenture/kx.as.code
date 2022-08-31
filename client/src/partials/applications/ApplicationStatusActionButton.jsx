@@ -50,6 +50,9 @@ export default function ApplicationStatusActionButton(props) {
           <button
             className="bg-red-500 p-2 px-5 rounded items-center flex"
             to="#0"
+            onClick={() => {
+              props.applicationUninstallHandler();
+            }}
           >
             <div className="flex items-start">
               <ImCross className="p-0.5 flex my-auto" />

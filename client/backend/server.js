@@ -13,6 +13,21 @@ const rabbitMqUsername = "test";
 const rabbitMqPassword = "test";
 const rabbitMqHost = "localhost";
 
+app.use((req, res, next) => {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Credentials", "true");
+  res.setHeader("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT");
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    "Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers"
+  );
+  next();
+  bodyParser.json();
+  bodyParser.urlencoded({
+    extended: true,
+  });
+});
+
 app.route("/api/add/application/:queue_name").post((req, res) => {
   connection = amqp.connect(
     "amqp://" + rabbitMqUsername + ":" + rabbitMqPassword + "@" + rabbitMqHost
@@ -36,25 +51,7 @@ app.route("/api/add/application/:queue_name").post((req, res) => {
     );
   });
 
-  res.send(
-    "The POST request is being processed to Queue: ",
-    req.params.queue_name
-  );
-});
-
-app.use((req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Credentials", "true");
-  res.setHeader("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT");
-  res.setHeader(
-    "Access-Control-Allow-Headers",
-    "Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers"
-  );
-  next();
-  bodyParser.json();
-  bodyParser.urlencoded({
-    extended: true,
-  });
+  res.send("The POST request is being processed to Queue: ");
 });
 
 app.route("/api/checkRmqConn").get((req, res) => {
