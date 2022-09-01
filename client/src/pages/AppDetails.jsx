@@ -26,6 +26,7 @@ export default function AppDetails(props) {
         console.log("appDetails: ", response.data);
         setAppData(response.data);
         if (response.data.hasOwnProperty("available_tasks")) {
+          console.log("available_tasks: ", response.data.available_tasks);
           setAvailableTasksList(response.data.available_tasks);
         }
       });
@@ -106,7 +107,7 @@ export default function AppDetails(props) {
         </div>
         <div className="col-span-4 p-5 bg-inv3 rounded-lg pt-10 border border-1 border-gray-700">
           <h2 className="mb-3 text-lg">Executable Tasks</h2>
-          {availableTasksList.length < 0 ? (
+          {availableTasksList.length > 0 ? (
             drawAwailableTasksComponents()
           ) : (
             <div>No Tasks available.</div>
