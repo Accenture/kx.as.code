@@ -7,6 +7,7 @@ notifyAllChannels() {
   local logLevel=${2-info}
   local actionStatus=${3-unknown}
   local action=${4-}
+  local notificationTimeout=${5-300000}
 
   if [[ "${logLevel}" == "error" ]]; then
     dialogType="dialog-error"
@@ -25,7 +26,7 @@ notifyAllChannels() {
   fi
 
   log_debug notify "${message}" "${dialogType}"
-  notify "${message}" "${dialogType}"
+  notify "${message}" "${dialogType}" "${notificationTimeout}"
   log_debug addToNotificationQueue "${message}" "${logLevel}" "${actionStatus}"
   addToNotificationQueue "${message}" "${logLevel}" "${actionStatus}"
 

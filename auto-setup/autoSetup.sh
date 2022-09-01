@@ -82,7 +82,7 @@ if [[ ${action} == "install"   ]]; then
     ##      P R E    I N S T A L L    S T E P S
     ####################################################################################################################################################################
     rc=0
-    autoSetupPreInstallSteps 2>> ${logFilename} || rc=$? && log_info "Execution of autoSetupPreInstallSteps() returned with rc=$rc"
+    autoSetupPreInstallSteps &> ${logFilename} || rc=$? && log_info "Execution of autoSetupPreInstallSteps() returned with rc=$rc"
     if [[ ${rc} -ne 0 ]]; then
       log_error "Execution of autoSetupPreInstallSteps() returned with a non zero return code ($rc)"
       exit $rc
@@ -93,7 +93,7 @@ if [[ ${action} == "install"   ]]; then
     ####################################################################################################################################################################
     if [[ ${installationType} == "script" ]]; then
       rc=0
-      autoSetupScriptInstall 2>> ${logFilename} || rc=$? && log_info "Execution of autoSetupScriptInstall() returned with rc=$rc"
+      autoSetupScriptInstall &> ${logFilename} || rc=$? && log_info "Execution of autoSetupScriptInstall() returned with rc=$rc"
     if [[ ${rc} -ne 0 ]]; then
       log_error "Execution of autoSetupScriptInstall() returned with a non zero return code ($rc)"
       exit $rc
@@ -104,7 +104,7 @@ if [[ ${action} == "install"   ]]; then
     ####################################################################################################################################################################
     elif [[ ${installationType} == "helm" ]]; then
       rc=0
-      autoSetupHelmInstall 2>> ${logFilename} || rc=$? && log_info "Execution of autoSetupHelmInstall() returned with rc=$rc"
+      autoSetupHelmInstall &> ${logFilename} || rc=$? && log_info "Execution of autoSetupHelmInstall() returned with rc=$rc"
     if [[ ${rc} -ne 0 ]]; then
       log_error "Execution of autoSetupHelmInstall() returned with a non zero return code ($rc)"
       exit $rc
@@ -115,7 +115,7 @@ if [[ ${action} == "install"   ]]; then
     ####################################################################################################################################################################
     elif [[ ${installationType} == "argocd" ]] && [[ ${action}=="install" ]]; then
       rc=0
-      autoSetupArgoCdInstall 2>> ${logFilename} || rc=$? && log_info "Execution of autoSetupArgoCdInstall() returned with rc=$rc"
+      autoSetupArgoCdInstall &> ${logFilename} || rc=$? && log_info "Execution of autoSetupArgoCdInstall() returned with rc=$rc"
     if [[ ${rc} -ne 0 ]]; then
       log_error "Execution of autoSetupArgoCdInstall() returned with a non zero return code ($rc)"
       exit $rc
@@ -136,7 +136,7 @@ if [[ ${action} == "install"   ]]; then
       # Excluding core_groups to avoid missing cross dependency issues between core services, for example,
       # coredns waiting for calico network to be installed, preventing other service from being provisioned
       rc=0
-      checkRunningKubernetesPods 2>> ${logFilename} || rc=$? && log_info "Execution of checkRunningKubernetesPods() returned with rc=$rc"
+      checkRunningKubernetesPods &> ${logFilename} || rc=$? && log_info "Execution of checkRunningKubernetesPods() returned with rc=$rc"
     if [[ ${rc} -ne 0 ]]; then
       log_error "Execution of checkRunningKubernetesPods() returned with a non zero return code ($rc)"
       exit $rc
@@ -144,7 +144,7 @@ if [[ ${action} == "install"   ]]; then
 
       # Check if URL health checks defined in metadata.json return result as expected/described in metadata.json file
       rc=0
-      applicationDeploymentHealthCheck 2>> ${logFilename} || rc=$? && log_info "Execution of applicationDeploymentHealthCheck() returned with rc=$rc"
+      applicationDeploymentHealthCheck &> ${logFilename} || rc=$? && log_info "Execution of applicationDeploymentHealthCheck() returned with rc=$rc"
     if [[ ${rc} -ne 0 ]]; then
       log_error "Execution of applicationDeploymentHealthCheck() returned with a non zero return code ($rc)"
       exit $rc
@@ -162,7 +162,7 @@ if [[ ${action} == "install"   ]]; then
     # If LetsEncrypt is not disabled in metadata.json for application in question and sslType set to letsencrypt,
     # then inject LetsEncrypt annotations into the applications ingress resources
     rc=0
-    postInstallStepLetsEncrypt 2>> ${logFilename} || rc=$? && log_info "Execution of postInstallStepLetsEncrypt() returned with rc=$rc"
+    postInstallStepLetsEncrypt &> ${logFilename} || rc=$? && log_info "Execution of postInstallStepLetsEncrypt() returned with rc=$rc"
     if [[ ${rc} -ne 0 ]]; then
       log_error "Execution of postInstallStepLetsEncrypt() returned with a non zero return code ($rc)"
       exit $rc
@@ -170,7 +170,7 @@ if [[ ${action} == "install"   ]]; then
 
     # Execute scripts defined in metadata.json, listed post_install_scripts section
     rc=0
-    executePostInstallScripts 2>> ${logFilename} || rc=$? && log_info "Execution of executePostInstallScripts() returned with rc=$rc"
+    executePostInstallScripts &> ${logFilename} || rc=$? && log_info "Execution of executePostInstallScripts() returned with rc=$rc"
     if [[ ${rc} -ne 0 ]]; then
       log_error "Execution of executePostInstallScripts() returned with a non zero return code ($rc)"
       exit $rc
@@ -230,7 +230,7 @@ elif [[ ${action} == "executeTask" ]]; then
 
   export taskToExecute=$(echo ${payload} | jq -c -r '.task')
   rc=0
-  autoSetupExecuteTask "${taskToExecute}" 2>> ${logFilename} || rc=$? && log_info "Execution of autoSetupExecuteTask() for task \"${taskToExecute}\" returned with rc=$rc"
+  autoSetupExecuteTask "${taskToExecute}" &> ${logFilename} || rc=$? && log_info "Execution of autoSetupExecuteTask() for task \"${taskToExecute}\" returned with rc=$rc"
     if [[ ${rc} -ne 0 ]]; then
       log_error "Execution of autoSetupExecuteTask() for task \"${taskToExecute}\" returned with a non zero return code ($rc)"
       exit $rc
