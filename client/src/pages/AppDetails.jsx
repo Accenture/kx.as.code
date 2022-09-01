@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 // import NotFound from "../partials/NotFound";
 import axios from "axios";
 import AppLogo from "../partials/applications/AppLogo";
+import AppTaskComponent from "../pages/AppTaskComponent";
 import ScreenshotCarroussel from "../partials/applications/ScreenshotCarroussel";
 import { VscTerminalPowershell } from "react-icons/vsc";
 import { FaArrowAltCircleDown } from "react-icons/fa";
@@ -32,30 +33,61 @@ export default function AppDetails(props) {
       });
   };
 
+  // TODO clean up -> Dublicate Code
+  const getApplicationDataByName = async () => {
+    try {
+      const respoonseData = await axios.get(
+        "http://localhost:5001/api/applications/" + appData.name
+      );
+      return respoonseData.data;
+    } catch (error) {
+      console.log("Error: ", error);
+    }
+  };
+
+  // TODO Rewrite all Installation / Execution Handler in one function with different parameters
+  const taskExecutionHandler = async (taskName) => {
+    // notify("install"); -> TODO: notifier for exutable tasks
+    getApplicationDataByName().then((appData) => {
+      var payloadObj = {
+        install_folder: appData.installation_group_folder,
+        name: appData.name,
+        task: taskName, // TODO: pass task
+        action: "executeTask",
+        retries: "0",
+      };
+      const applicationPayload = payloadObj;
+
+      // TODO rewrite Endpoint to add install and exe actions to pending_queue via POST
+      axios
+        .post(
+          "http://localhost:5001/api/add/application/pending_queue",
+          applicationPayload
+        )
+        .then(() => {
+          // setAppQueue("pending_queue");
+          // props.fetchQueueData();
+          // props.fetchApplicationAndQueueData();
+        })
+        .then(() => {
+          // setTimeout(() => {
+          //   refreshActionButton.current();
+          // }, 2000);
+        })
+        .catch((error) => {
+          console.error("There was an error!", error);
+        });
+    });
+  };
+
   const drawAwailableTasksComponents = () => {
     return availableTasksList.map((task, i) => {
       return (
-        <div
+        <AppTaskComponent
           key={i}
-          className="bg-ghBlack2 p-2 hover:bg-gray-700 rounded-md flex items-center justify-between mb-2 pl-4"
-        >
-          <span className="flex mr-2">
-            {task.title}
-            <Tooltip title={task.description} placement="top" arrow>
-              <button className="inline">
-                <HiOutlineInformationCircle className="ml-1 text-lg" />
-              </button>
-            </Tooltip>
-          </span>
-          <span>
-            <button className="bg-kxBlue p-1 px-4 rounded items-center flex hover:pr-5">
-              <span>
-                <VscTerminalPowershell className="text-2xl mr-2" />
-              </span>{" "}
-              Execute
-            </button>
-          </span>
-        </div>
+          task={task}
+          taskExecutionHandler={taskExecutionHandler}
+        />
       );
     });
   };
