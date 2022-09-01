@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import EditMenu from "../EditMenu";
-import { TrashCan32, Restart32 } from "@carbon/icons-react";
+import { HiOutlineInformationCircle } from "react-icons/hi";
 import StatusTag from "../StatusTag";
 import StatusPoint from "../StatusPoint";
 import { useState, useEffect, useRef } from "react";
@@ -11,6 +11,7 @@ import LinearProgress from "@mui/material/LinearProgress";
 import axios from "axios";
 import ApplicationStatusActionButton from "./ApplicationStatusActionButton";
 import ApplicationCategoryTag from "../ApplicationCategoryTag";
+import Tooltip from "@mui/material/Tooltip";
 
 function ApplicationCard(props) {
   const { history } = props;
@@ -198,7 +199,7 @@ function ApplicationCard(props) {
 
   useEffect(() => {
     // print queue/ instalation status by setAppName
-    // console.log("App Name: ", props.app.name);
+    console.log("App: ", props.app);
     // console.log("Installation Status: ", props.getQueNameNew(props.app.name));
 
     setUp();
@@ -219,7 +220,7 @@ function ApplicationCard(props) {
       return (
         <ApplicationCategoryTag
           appTag={appTag}
-          keyNo={i}
+          keyId={i}
           addCategoryTofilterTags={props.addCategoryTofilterTags}
         />
       );
@@ -253,7 +254,11 @@ function ApplicationCard(props) {
                       <div className="flex items-center">
                         {/* Icon */}
                         <div className="">
-                          <AppLogo width={"50px"} appName={props.app.name} />
+                          <AppLogo
+                            //height={"40px"}
+                            //width={"40px"}
+                            appName={props.app.name}
+                          />
                           {/* <StatusTag installStatus={props.app.queueName} /> */}
                         </div>
                         <div className="mx-3 flex col-span-6">
@@ -267,6 +272,15 @@ function ApplicationCard(props) {
                                 <StatusPoint installStatus={allQueueStatus} />
                               )}
                               {getTransformedName()}
+                              <Tooltip
+                                title={props.app.Description}
+                                placement="top"
+                                arrow
+                              >
+                                <button className="inline">
+                                  <HiOutlineInformationCircle className="ml-1" />
+                                </button>
+                              </Tooltip>
                             </h2>
                           </div>
                         </div>
@@ -288,6 +302,7 @@ function ApplicationCard(props) {
                   appName={props.app.name}
                   category={props.app.installation_group_folder}
                   applicationInstallHandler={applicationInstallHandler}
+                  applicationUninstallHandler={applicationUninstallHandler}
                   refreshActionButton={refreshActionButton}
                 />
               </div>
@@ -304,10 +319,10 @@ function ApplicationCard(props) {
           <div className="p-6">
             <header className="flex justify-between items-start mb-2">
               {/* Icon */}
-              <div className="flex content-start">
+              <div className="">
                 <AppLogo
-                  height={"50px"}
-                  width={"50px"}
+                  //height={"50px"}
+                  // width={"50px"}
                   appName={props.app.name}
                 />
                 {/* <StatusTag installStatus={props.app.queueName} /> */}
@@ -343,7 +358,6 @@ function ApplicationCard(props) {
                 </EditMenu>
               )} */}
             </header>
-
             <Link to={"/apps/" + getSlug()}>
               {/* Category name */}
               <div className="text-white bg-ghBlack2 rounded p-0 px-1.5 uppercase w-fit inline-block my-2">
@@ -353,12 +367,17 @@ function ApplicationCard(props) {
                 {allQueueStatus != "" && (
                   <StatusPoint installStatus={allQueueStatus} />
                 )}
+
                 {getTransformedName()}
+                <Tooltip title={props.app.Description} placement="top" arrow>
+                  <button className="inline-block">
+                    <HiOutlineInformationCircle className="ml-1 text-base" />
+                  </button>
+                </Tooltip>
               </h2>
             </Link>
             <div className="text-xs font-semibold text-gray-400 uppercase mb-1"></div>
             {/* <div className="pb-5 line-clamp-4">{props.app.Description}</div> */}
-
             <div className="">
               {/* {console.log("in render queue: ", appQueue)} */}
               {/* {appQueue === "pending_queue" && (
@@ -430,7 +449,6 @@ function ApplicationCard(props) {
             </div>
             {/* Seperator */}
             <div className="pb-3 mb-3 border-b-2 border-gray-600 w-full"></div>
-
             <div className="float-left">
               <ul className="float-left">
                 {props.app.categories && drawAppTags(props.app.categories)}

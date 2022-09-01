@@ -19,6 +19,9 @@ import { list } from "postcss";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
+import FormGroup from "@mui/material/FormGroup";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Checkbox from "@mui/material/Checkbox";
 import Select from "@mui/material/Select";
 import Box from "@mui/material/Box";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -39,12 +42,20 @@ const getArrayOfObjArray = (objArray) => {
 const filterAppsBySearchTermAndInstallationStatus = (
   data,
   searchTerm,
-  filterTags
+  filterTags,
+  isCheckedCore
 ) => {
   try {
     var filteredData = data
+      // Filter core applications
       .filter((app) => {
-        // console.log("filtertags: ", filterTags);
+        if (isCheckedCore && app.installation_group_folder == "core") {
+          return app;
+        } else if (app.installation_group_folder != "core") {
+          return app;
+        }
+      })
+      .filter((app) => {
         let intersect = [];
         if (app.categories) {
           intersect = getArrayOfObjArray(filterTags).filter((value) =>
@@ -52,7 +63,6 @@ const filterAppsBySearchTermAndInstallationStatus = (
           );
         }
         if (Array.isArray(filterTags)) {
-          console.log("filterTags: ", filterTags);
           if (filterTags.length == 0) {
             return app;
           } else if (intersect.length > 0) {
@@ -93,13 +103,16 @@ export const Applications = (props) => {
   const [resultsPerPage, setResultsPerPage] = useState(10);
   const [filterTags, setFilterTags] = useState([]);
 
+  const [isCheckedCore, setIsCheckedCore] = useState(false);
+
   let [page, setPage] = useState(1);
   // const PER_PAGE = resultsPerPage;
   let _DATA = usePagination(
     filterAppsBySearchTermAndInstallationStatus(
       applicationData,
       searchTerm,
-      filterTags
+      filterTags,
+      isCheckedCore
     ),
     resultsPerPage
   );
@@ -107,7 +120,8 @@ export const Applications = (props) => {
     filterAppsBySearchTermAndInstallationStatus(
       applicationData,
       searchTerm,
-      filterTags
+      filterTags,
+      isCheckedCore
     ).length / resultsPerPage
   );
 
@@ -154,7 +168,6 @@ export const Applications = (props) => {
     var newList = filterTags;
     newList.push(newCategoryObj);
     setFilterTags(newList);
-    console.log("filTags list: ", filterTags);
   };
 
   const setCategoriesFilterTags = (tagsList) => {
@@ -610,6 +623,23 @@ export const Applications = (props) => {
               syncFilter={syncFilter}
             />
           </div>
+
+          {/* Checkbox for Core Applications Filter */}
+          <FormGroup>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  value={isCheckedCore}
+                  id="checkbox-filter-core"
+                  onClick={() => {
+                    setIsCheckedCore(!isCheckedCore);
+                    console.log("Checked: ", isCheckedCore);
+                  }}
+                />
+              }
+              label="Show Core Applications"
+            />
+          </FormGroup>
         </div>
       </div>
 

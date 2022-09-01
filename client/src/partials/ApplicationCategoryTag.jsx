@@ -16,10 +16,10 @@ export default function ApplicationCategoryTag(props) {
   }, []);
 
   return (
-    <Tooltip title="Add to filters" placement="top" arrow>
+    <Tooltip title="Add to filters" placement="top" arrow key={props.keyId}>
       <button
         id={props.appTag}
-        key={props.keyNo}
+        key={props.keyId}
         className="rounded bg-gray-500 hover:bg-kxBlue text-sm mr-1.5 mb-2 px-1.5 w-auto
       inline-block"
         onClick={(e) => {

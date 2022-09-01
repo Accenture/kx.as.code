@@ -8,13 +8,13 @@ import { useState, useEffect } from "react";
 
 export default function ApplicationStatusActionButton(props) {
   useEffect(() => {
-    console.log("list-actionbutton: ", props.getQueueStatusList("jira"));
+    console.log("list-actionbutton: ", props.getQueueStatusList(props.appName));
     return () => {};
   }, []);
 
   const getActionButton = () => {
     if (props.isMqConnected) {
-      if (false) {
+      if (props.getQueueStatusList(props.appName) == "pending_queue") {
         return (
           <button
             className="bg-gray-600 p-2 px-5 rounded items-center flex"
@@ -42,11 +42,17 @@ export default function ApplicationStatusActionButton(props) {
             <span className="text-white">Processing...</span>
           </button>
         );
-      } else if (false) {
+      } else if (
+        props.getQueueStatusList(props.appName) == "completed_queue" &&
+        props.category != "core"
+      ) {
         return (
           <button
             className="bg-red-500 p-2 px-5 rounded items-center flex"
             to="#0"
+            onClick={() => {
+              props.applicationUninstallHandler();
+            }}
           >
             <div className="flex items-start">
               <ImCross className="p-0.5 flex my-auto" />
