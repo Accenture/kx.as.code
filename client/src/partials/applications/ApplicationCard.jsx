@@ -254,7 +254,11 @@ function ApplicationCard(props) {
                       <div className="flex items-center">
                         {/* Icon */}
                         <div className="">
-                          <AppLogo width={"50px"} appName={props.app.name} />
+                          <AppLogo
+                            //height={"40px"}
+                            //width={"40px"}
+                            appName={props.app.name}
+                          />
                           {/* <StatusTag installStatus={props.app.queueName} /> */}
                         </div>
                         <div className="mx-3 flex col-span-6">
@@ -315,10 +319,10 @@ function ApplicationCard(props) {
           <div className="p-6">
             <header className="flex justify-between items-start mb-2">
               {/* Icon */}
-              <div className="flex content-start">
+              <div className="">
                 <AppLogo
-                  height={"50px"}
-                  width={"50px"}
+                  //height={"50px"}
+                  // width={"50px"}
                   appName={props.app.name}
                 />
                 {/* <StatusTag installStatus={props.app.queueName} /> */}

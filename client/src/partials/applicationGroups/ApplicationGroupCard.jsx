@@ -109,18 +109,18 @@ function ApplicationGroupCard(props) {
       <div className="relative">
         <div className="p-6">
           {/* Header */}
-          <div className="h-[100px]">
+          <div className="pb-4">
             <header className="flex justify-between items-start">
               {/* Category name */}
-              <div className="text-white bg-ghBlack2 rounded p-0 px-1.5">
+              {/* <div className="text-white bg-ghBlack2 rounded p-0 px-1.5">
                 {"Undefined"}
-              </div>
+              </div> */}
             </header>
 
             <div className="">
               <Link to={"/application-groups/" + appGroupBreadcrumb}>
                 <h2
-                  className="hover:underline hover:cursor-pointer text-2xl text-white truncate"
+                  className="hover:underline hover:cursor-pointer text-lg text-white truncate"
                   alt={props.appGroup.title}
                 >
                   {props.appGroup.title}
@@ -130,9 +130,9 @@ function ApplicationGroupCard(props) {
           </div>
 
           {/* Main Card Content */}
-          <div className="mb-4">{props.appGroup.description}</div>
+          {/* <div className="mb-4">{props.appGroup.description}</div> */}
 
-          <div className="flex h-[50px]">
+          <div className="flex">
             <ul className="float-left">
               {drawApplicationGroupCardComponentsTags(appGroupComponents)}
             </ul>
