@@ -108,7 +108,7 @@ function ApplicationGroupCard(props) {
               </div> */}
             </header>
 
-            <div className="">
+            <div className="flex items-center">
               <Link to={"/application-groups/" + appGroupBreadcrumb}>
                 <h2
                   className="hover:underline hover:cursor-pointer text-lg text-white truncate"
@@ -117,6 +117,9 @@ function ApplicationGroupCard(props) {
                   {props.appGroup.title}
                 </h2>
               </Link>
+              <div className="bg-ghBlack2 p-1 rounded center text-center ml-3 w-8 text-sm">
+                {appGroupComponents.length}
+              </div>
             </div>
           </div>
 
@@ -158,7 +161,7 @@ function ApplicationGroupCard(props) {
                 })}
               </Slider>
 
-              <div className="flex justify-between py-6">
+              <div className="flex justify-between pb-4">
                 <ButtonBack className="hover:bg-gray-600 p-2 px-3 text-sm rounded items-center flex">
                   Back
                 </ButtonBack>
