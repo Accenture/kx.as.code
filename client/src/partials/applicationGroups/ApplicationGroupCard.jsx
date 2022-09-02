@@ -136,8 +136,8 @@ function ApplicationGroupCard(props) {
 
             <CarouselProvider
               visibleSlides={4}
-              totalSlides={6}
-              step={3}
+              totalSlides={appGroupComponents.length}
+              step={1}
               naturalSlideWidth={400}
               naturalSlideHeight={400}
             >
