@@ -12,6 +12,7 @@ import axios from "axios";
 import ApplicationStatusActionButton from "./ApplicationStatusActionButton";
 import ApplicationCategoryTag from "../ApplicationCategoryTag";
 import Tooltip from "@mui/material/Tooltip";
+import Checkbox from "@mui/material/Checkbox";
 
 function ApplicationCard(props) {
   const { history } = props;
@@ -21,6 +22,8 @@ function ApplicationCard(props) {
   const [allQueueStatus, setAllQueueStatus] = useState([]);
   const [applicationData, setApplicationData] = useState({});
   const [appQueue, setAppQueue] = useState("undefined");
+  const [isSelected, setIsSelected] = useState(false);
+  const [isHover, setIsHover] = useState(false);
 
   const refreshActionButton = useRef(null);
 
@@ -98,6 +101,50 @@ function ApplicationCard(props) {
         .catch((error) => {
           console.error("There was an error!", error);
         });
+    });
+  };
+
+  const actionHandler = async (installFolder, name, action) => {
+    //TODO -> rewrite notify function
+    //notify("action")
+    getApplicationDataByName().then((appData) => {
+      var payloadObj = {
+        install_folder: installFolder,
+        name: name,
+        action: action,
+        retries: "0",
+      };
+      const applicationPayload = payloadObj;
+
+      if (action === "install") {
+        axios
+          .post(
+            // TODO -> add new endpoint for task actions
+            "http://localhost:5001/api/add/application/pending_queue",
+            applicationPayload
+          )
+          .then(() => {
+            // TODO rewrite to fetchAppsData() + fetchQueuesData()
+            props.fetchApplicationAndQueueData();
+          })
+          .catch((error) => {
+            console.error("Installation Error: ", error);
+          });
+      } else if (action === "uninstall") {
+        axios
+          .get
+          // TODO -> add consume function
+          ()
+          .then(() => {
+            // TODO rewrite to fetchAppsData() + fetchQueuesData()
+            props.fetchApplicationAndQueueData();
+          })
+          .catch((error) => {
+            console.error("Uninstallation Error: ", error);
+          });
+      } else if (action === "taskExecution") {
+        // add post request for task execution
+      }
     });
   };
 
@@ -311,7 +358,7 @@ function ApplicationCard(props) {
         </>
       ) : (
         <div
-          className={`flex flex-col col-span-full hover:bg-gray-700 bg-inv3 rounded ${
+          className={`flex flex-col col-span-full hover:bg-gray-700 bg-inv3 rounded border-2 border-inv3 hover:border-2 hover:border-gray-600 ${
             props.isListLayout ? "col-span-full" : "sm:col-span-6 xl:col-span-3"
           }`}
           loading="lazy"
@@ -357,6 +404,13 @@ function ApplicationCard(props) {
                   )}
                 </EditMenu>
               )} */}
+              <div
+                className={`${!isHover ? "hidden" : "visible"}`}
+                onMouseEnter={() => setIsHover(true)}
+                onMouseLeave={() => setIsHover(false)}
+              >
+                <Checkbox checked={isSelected} />
+              </div>
             </header>
             <Link to={"/apps/" + getSlug()}>
               {/* Category name */}
