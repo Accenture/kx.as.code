@@ -96,7 +96,7 @@ export const Applications = (props) => {
   const [isLoading, setIsLoading] = useState(true);
   const [appsSearchResultCount, setAppsSearchResultCount] = useState(0);
   const [isMqConnected, setIsMqConnected] = useState(true);
-  const [isListLayout, setIsListLayout] = useState(true);
+  const [isListLayout, setIsListLayout] = useState(false);
   const [isShowMoreFilters, setIsShowMoreFilters] = useState(false);
 
   const [sortSelect, setSortSelect] = useState("asc");
@@ -187,7 +187,8 @@ export const Applications = (props) => {
 
   const toggleListLayout = (b) => {
     setIsListLayout(b);
-    localStorage.setItem("isListLayout", b);
+    // localStorage.setItem("isListLayout", b);
+
     // console.log("isListLayout: ", b);
     // console.log("isListLayout-local: ", localStorage.getItem("isListLayout"));
   };
@@ -458,7 +459,7 @@ export const Applications = (props) => {
   useEffect(() => {
     // console.log("count: ", localStorage.getItem("appsCount"));
     setAppsSearchResultCount(applicationData.length);
-    setIsListLayout(localStorage.getItem("isListLayout"));
+    // setIsListLayout(localStorage.getItem("isListLayout"));
 
     // const id = setInterval(() => {
     //   fetchData();
