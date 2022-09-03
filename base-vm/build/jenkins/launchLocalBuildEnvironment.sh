@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -x
 
 # Cleanup for debugging
 #ps -ef | grep jenkins.war | grep -v grep | awk {'print $2'} | xargs kill -9 && rm -rf ./jenkins_home
@@ -137,6 +137,9 @@ if [[ ${override_action} == "recreate"   ]] || [[ ${override_action} == "destroy
         fi
     fi
 fi
+
+# Update Jenkins userContent file
+cp -rf ./initial-setup/userContent/. jenkins_home/userContent/
 
 # Versions that will be downloaded if already installed binaries not found
 javaDownloadVersion=11.0.3.7.1
@@ -405,7 +408,7 @@ if [[ ! -f ./securedCredentials ]]; then
       done
   done
 
-  credentialsToStore="git_source_username git_source_password dockerhub_username dockerhub_password dockerhub_email"
+  credentialsToStore="git_source_username git_source_password artifactory_username artifactory_password dockerhub_username dockerhub_password dockerhub_email"
 
   # Get Jenkins Crumb
   export jenkinsCrumb=$(curl -s --cookie-jar /tmp/cookies -u admin:admin ${jenkins_url}/crumbIssuer/api/json | jq -r '.crumb')
@@ -415,18 +418,8 @@ if [[ ! -f ./securedCredentials ]]; then
     # Create encrypted file
     for credential in ${credentialsToStore}
     do
-      if [[ "${!credential:0:9}" != "U2FsdGVkX" ]] && [[ -n ${!credential} ]]; then
         encryptedCred=$(echo ${!credential} | openssl enc -aes-256-cbc -pbkdf2 -salt -A -a -pass pass:${credentials_salt})
         echo "${credential}:${encryptedCred}" | tee -a securedCredentials
-        # Replace line in env with encrypted version
-        if [[ "$(uname)" == "Darwin" ]]; then
-          sed -i '' 's;^'${credential}'.*;'${credential}'="'${encryptedCred}'";g' ./jenkins.env
-        else
-          sed -i 's;^'${credential}'.*;'${credential}'="'${encryptedCred}'";g' ./jenkins.env
-        fi
-      else
-        echo "${credential}:\"${!credential}\"" | tee -a securedCredentials
-      fi
     done
 
     # Post encrypted file to Jenkins as a credential
