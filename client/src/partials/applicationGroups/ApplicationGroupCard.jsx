@@ -117,9 +117,12 @@ function ApplicationGroupCard(props) {
                   {props.appGroup.title}
                 </h2>
               </Link>
-              <div className="bg-ghBlack2 p-1 rounded center text-center ml-3 w-8 text-sm">
+              {/* <div className="bg-ghBlack2 p-1 rounded center text-center ml-3 w-8 text-sm">
                 {appGroupComponents.length}
-              </div>
+              </div> */}
+            </div>
+            <div className="text-gray-500">
+              {appGroupComponents.length} Applications
             </div>
           </div>
 
@@ -138,8 +141,8 @@ function ApplicationGroupCard(props) {
               visibleSlides={4}
               totalSlides={appGroupComponents.length}
               step={1}
-              naturalSlideWidth={400}
-              naturalSlideHeight={400}
+              naturalSlideWidth={500}
+              naturalSlideHeight={500}
             >
               <Slider>
                 {itemsList.map((image, i) => {
@@ -151,7 +154,7 @@ function ApplicationGroupCard(props) {
                         arrow
                       >
                         <NavLink to={`/apps/${appGroupComponents[i]}`}>
-                          <div className="flex justify-center rounded-md hover:bg-gray-600 p-2 hover:pointer">
+                          <div className="flex justify-center rounded-md hover:bg-gray-600 p-1 hover:pointer">
                             {image}
                           </div>
                         </NavLink>
