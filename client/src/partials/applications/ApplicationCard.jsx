@@ -278,7 +278,7 @@ function ApplicationCard(props) {
         .replace(/\b\w/g, (l) => l.toUpperCase())
     );
     return () => {};
-  }, [appQueue]);
+  }, [appQueue, isSelected]);
 
   const drawAppTags = (appTags) => {
     return appTags.map((appTag, i) => {

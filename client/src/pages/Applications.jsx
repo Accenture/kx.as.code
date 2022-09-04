@@ -4,7 +4,7 @@ import axios from "axios";
 import { FaThList } from "react-icons/fa";
 import { BsGrid3X3GapFill } from "react-icons/bs";
 import MultipleSelectCheckmarks from "../partials/MultipleSelectCheckmarks";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useReducer } from "react";
 import _ from "lodash";
 
 import PaginationRounded from "../partials/PaginationRounded.jsx";
@@ -635,6 +635,7 @@ export const Applications = (props) => {
             />
 
             <MultipleSelectCheckmarks
+              disable
               setFilterStatusList={setFilterStatusList}
               filterStatusList={filterStatusList}
               filterInstallationStatusList={filterInstallationStatusList}
