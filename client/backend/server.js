@@ -6,7 +6,7 @@ const amqp = require("amqplib");
 const app = express();
 const bodyParser = require("body-parser");
 app.use(bodyParser.json());
-
+ 
 const PORT = process.env.PORT || 5001;
 const dataPath = "../src/data/combined-metadata-files.json";
 const rabbitMqUsername = "test";

@@ -24,8 +24,26 @@ function ApplicationCard(props) {
   const [appQueue, setAppQueue] = useState("undefined");
   const [isSelected, setIsSelected] = useState(false);
   const [isHover, setIsHover] = useState(false);
+  const [isHovering, setIsHovering] = useState(false);
 
   const refreshActionButton = useRef(null);
+
+  const selectHandler = () => {
+    setIsSelected(!isSelected);
+    if (isSelected) {
+      props.applicationSelectedCount("select");
+    } else {
+      props.applicationSelectedCount("unselect");
+    }
+  };
+
+  const handleMouseOver = () => {
+    setIsHovering(true);
+  };
+
+  const handleMouseOut = () => {
+    setIsHovering(false);
+  };
 
   var defaultPayload = {
     install_folder: "undefined",
@@ -260,7 +278,7 @@ function ApplicationCard(props) {
         .replace(/\b\w/g, (l) => l.toUpperCase())
     );
     return () => {};
-  }, [appQueue]);
+  }, [appQueue, isSelected]);
 
   const drawAppTags = (appTags) => {
     return appTags.map((appTag, i) => {
@@ -358,10 +376,17 @@ function ApplicationCard(props) {
         </>
       ) : (
         <div
-          className={`flex flex-col col-span-full hover:bg-gray-700 bg-inv3 rounded border-2 border-inv3 hover:border-2 hover:border-gray-600 ${
+          className={`relative flex flex-col col-span-full ${
+            isSelected ? "hover:border-kxBlue" : "hover:bg-gray-700"
+          } hover:bg-gray-700 bg-inv3 rounded border-2 ${
+            isSelected ? "border-kxBlue" : "border-inv3"
+          } hover:border-2 hover:border-gray-600 ${
             props.isListLayout ? "col-span-full" : "sm:col-span-6 xl:col-span-3"
           }`}
           loading="lazy"
+          onMouseOver={handleMouseOver}
+          onMouseOut={handleMouseOut}
+          s
         >
           <div className="p-6">
             <header className="flex justify-between items-start mb-2">
@@ -404,12 +429,14 @@ function ApplicationCard(props) {
                   )}
                 </EditMenu>
               )} */}
-              <div
-                className={`${!isHover ? "hidden" : "visible"}`}
-                onMouseEnter={() => setIsHover(true)}
-                onMouseLeave={() => setIsHover(false)}
-              >
-                <Checkbox checked={isSelected} />
+              <div className="">
+                <div
+                  className={`${
+                    isHovering || isSelected ? "visible" : "hidden"
+                  }`}
+                >
+                  <Checkbox checked={isSelected} onChange={selectHandler} />
+                </div>
               </div>
             </header>
             <Link to={"/apps/" + getSlug()}>
@@ -511,6 +538,15 @@ function ApplicationCard(props) {
           </div>
 
           <div className="flex-grow"></div>
+          <div
+            className={`w-full bg-gray-500 absolute bottom-0 transform transition-all duration-300 ease-out ${
+              isHovering
+                ? "visible transform transition duration-300 scale-y-100 h-20"
+                : "scale-y-0 h-0"
+            }`}
+          >
+            Test
+          </div>
         </div>
       )}
     </>

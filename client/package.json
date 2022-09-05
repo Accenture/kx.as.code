@@ -15,6 +15,7 @@
     "@mui/icons-material": "^5.5.1",
     "@mui/material": "^5.8.1",
     "@tailwindcss/forms": "^0.3.4",
+    "@tailwindcss/line-clamp": "^0.4.2",
     "@testing-library/jest-dom": "^5.15.1",
     "@testing-library/react": "^11.2.7",
     "@testing-library/user-event": "^12.8.3",
@@ -61,8 +62,8 @@
     "web-vitals": "^1.1.2"
   },
   "scripts": {
-    "start:dev": "concurrently \"TAILWIND_MODE=watch craco start\" \"cd backend && nodemon server.js\"",
-    "start:prod": "concurrently \"TAILWIND_MODE=watch craco start\" \"cd backend && forever server.js\"",
+    "start:dev": "concurrently 'TAILWIND_MODE=watch craco start' 'cd backend && nodemon server.js'",
+    "start:prod": "concurrently 'TAILWIND_MODE=watch craco start' 'cd backend && forever server.js'",
     "build": "craco build",
     "test": "craco test",
     "eject": "react-scripts eject"
@@ -84,11 +85,5 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "devDependencies": {
-    "@tailwindcss/line-clamp": "^0.4.0",
-    "autoprefixer": "^9.8.8",
-    "postcss": "^7.0.39",
-    "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.2.17"
   }
 }

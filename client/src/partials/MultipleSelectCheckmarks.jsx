@@ -76,6 +76,7 @@ export default function MultipleSelectCheckmarks(props) {
             Installation Status
           </InputLabel>
           <Select
+            disabled
             labelId="demo-multiple-checkbox-label"
             id="demo-multiple-checkbox"
             multiple

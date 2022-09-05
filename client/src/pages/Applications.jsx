@@ -4,7 +4,7 @@ import axios from "axios";
 import { FaThList } from "react-icons/fa";
 import { BsGrid3X3GapFill } from "react-icons/bs";
 import MultipleSelectCheckmarks from "../partials/MultipleSelectCheckmarks";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useReducer } from "react";
 import _ from "lodash";
 
 import PaginationRounded from "../partials/PaginationRounded.jsx";
@@ -104,6 +104,7 @@ export const Applications = (props) => {
   const [filterTags, setFilterTags] = useState([]);
 
   const [isCheckedCore, setIsCheckedCore] = useState(false);
+  const [selectedCount, setSelectedCount] = useState(0);
 
   let [page, setPage] = useState(1);
   // const PER_PAGE = resultsPerPage;
@@ -162,6 +163,14 @@ export const Applications = (props) => {
     "retry_queue",
     "wip_queue",
   ];
+
+  const applicationSelectedCount = (action) => {
+    if (action == "select") {
+      setSelectedCount(selectedCount + 1);
+    } else {
+      setSelectedCount(selectedCount + 1);
+    }
+  };
 
   const addCategoryTofilterTags = (newCategoryObj) => {
     setIsShowMoreFilters(true);
@@ -395,6 +404,7 @@ export const Applications = (props) => {
             getQueueStatusList={getQueueStatusList}
             isListLayout={isListLayout}
             addCategoryTofilterTags={addCategoryTofilterTags}
+            applicationSelectedCount={applicationSelectedCount}
           />
         );
       });
@@ -493,6 +503,16 @@ export const Applications = (props) => {
         </div>
 
         <div className="border-b-2 border-gray-700"></div>
+      </div>
+
+      <div
+        className={`flex justify-end ${
+          selectedCount > 0 ? "visible" : "hidden"
+        }`}
+      >
+        <button className="bg-kxBlue p-2 px-5 rounded items-center flex">
+          Install Selected Applicaitons ({selectedCount})
+        </button>
       </div>
 
       {/* Filter Section */}
@@ -615,6 +635,7 @@ export const Applications = (props) => {
             />
 
             <MultipleSelectCheckmarks
+              disable
               setFilterStatusList={setFilterStatusList}
               filterStatusList={filterStatusList}
               filterInstallationStatusList={filterInstallationStatusList}
