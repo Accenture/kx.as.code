@@ -541,7 +541,7 @@ function ApplicationCard(props) {
           <div
             className={`w-full bg-gray-500 absolute bottom-0 transform transition-all duration-300 ease-out ${
               isHovering
-                ? "visible transform transition duration-300 scale-y-100 h-20"
+                ? "visible transform transition duration-300 h-20"
                 : "scale-y-0 h-0"
             }`}
           >
