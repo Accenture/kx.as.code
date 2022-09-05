@@ -376,7 +376,7 @@ function ApplicationCard(props) {
         </>
       ) : (
         <div
-          className={`flex flex-col col-span-full ${
+          className={`relative flex flex-col col-span-full ${
             isSelected ? "hover:border-kxBlue" : "hover:bg-gray-700"
           } hover:bg-gray-700 bg-inv3 rounded border-2 ${
             isSelected ? "border-kxBlue" : "border-inv3"
@@ -538,6 +538,15 @@ function ApplicationCard(props) {
           </div>
 
           <div className="flex-grow"></div>
+          <div
+            className={`w-full bg-gray-500 absolute bottom-0 transform transition-all duration-300 ease-out ${
+              isHovering
+                ? "visible transform transition duration-300 scale-y-100 h-20"
+                : "scale-y-0 h-0"
+            }`}
+          >
+            Test
+          </div>
         </div>
       )}
     </>
