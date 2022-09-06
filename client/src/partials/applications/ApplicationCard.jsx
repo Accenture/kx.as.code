@@ -530,23 +530,34 @@ function ApplicationCard(props) {
             </div>
             {/* Seperator */}
             <div className="pb-3 mb-3 border-b-2 border-gray-600 w-full"></div>
-            <div className="float-left">
+            <div className="float-left h-12">
               <ul className="float-left">
                 {props.app.categories && drawAppTags(props.app.categories)}
               </ul>
             </div>
           </div>
-
           <div className="flex-grow"></div>
-          <div
-            className={`w-full bg-gray-500 absolute bottom-0 transform transition-all duration-300 ease-out ${
+          {/* <div
+            className={`w-full bg-gray-500 absolute bottom-0 transform transition-all duration-300 ease-in ${
               isHovering
                 ? "visible transform transition duration-300 h-20"
                 : "scale-y-0 h-0"
             }`}
           >
             Test
+          </div> */}
+
+          <div
+            className={`w-full bg-gray-700 absolute -bottom-20 h-20 p-5 ${
+              isHovering
+                ? "h-20 visible transition-transform -translate-y-20 ease-out duration-500"
+                : ""
+            }`}
+          >
+            {props.app.available_tasks ? props.app.available_tasks.length : 0}{" "}
+            Executable Tasks.
           </div>
+          <div className="w-full absolute bg-inv1 h-20 -bottom-20"></div>
         </div>
       )}
     </>
