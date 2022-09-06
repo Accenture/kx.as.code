@@ -548,16 +548,16 @@ function ApplicationCard(props) {
           </div> */}
 
           <div
-            className={`w-full bg-gray-700 absolute -bottom-20 h-20 p-5 ${
+            className={`w-full bg-gray-700 absolute bottom-[-82px] h-20 p-5 ${
               isHovering
-                ? "h-20 visible transition-transform -translate-y-20 ease-out duration-500"
+                ? "h-20 visible transition-transform translate-y-[-82px] ease-out duration-500"
                 : ""
             }`}
           >
-            {props.app.available_tasks ? props.app.available_tasks.length : 0}{" "}
-            Executable Tasks.
+            <span className="font-bold text-gray-400">Available Tasks: </span>
+            {props.app.available_tasks ? props.app.available_tasks.length : 0}
           </div>
-          <div className="w-full absolute bg-inv1 h-20 -bottom-20"></div>
+          <div className="w-full absolute bg-inv1 h-20 bottom-[-82px]"></div>
         </div>
       )}
     </>
