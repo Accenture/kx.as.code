@@ -3,7 +3,9 @@ import { Carousel } from "react-responsive-carousel";
 import { useState, useEffect } from "react";
 
 export default function SCarousel(props) {
-  useEffect(() => {}, [props.screenshots]);
+  useEffect(() => {
+    console.log("screenshots-caoursell: ", props.screenshots);
+  }, [props.screenshots]);
 
   return (
     <Carousel swipeable>

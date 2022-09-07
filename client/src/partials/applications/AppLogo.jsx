@@ -20,12 +20,13 @@ export default function AppLogo(props) {
         const response = await import(
           `../../media/png/appImgs/${imageName}.png`
         );
+        // console.log("response img: ", response.default);
         setImage(response.default);
       } catch (err) {
-        console.log(err);
-      } finally {
+        // console.log(err);
         const response = await import(`../../media/svg/no_image_app.svg`);
         setImage(response.default);
+      } finally {
       }
     };
 

@@ -8,6 +8,7 @@ import { useState, useEffect } from "react";
 
 export default function ApplicationStatusActionButton(props) {
   useEffect(() => {
+    console.log("list-actionbutton: ", props.getQueueStatusList(props.appName));
     return () => {};
   }, []);
 

@@ -13,7 +13,6 @@ import ApplicationStatusActionButton from "./ApplicationStatusActionButton";
 import ApplicationCategoryTag from "../ApplicationCategoryTag";
 import Tooltip from "@mui/material/Tooltip";
 import Checkbox from "@mui/material/Checkbox";
-import Skeleton from "@mui/material/Skeleton";
 
 function ApplicationCard(props) {
   const { history } = props;
@@ -26,7 +25,6 @@ function ApplicationCard(props) {
   const [isSelected, setIsSelected] = useState(false);
   const [isHover, setIsHover] = useState(false);
   const [isHovering, setIsHovering] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
 
   const refreshActionButton = useRef(null);
 
@@ -86,7 +84,6 @@ function ApplicationCard(props) {
       const respoonseData = await axios.get(
         "http://localhost:5001/api/applications/" + props.app.name
       );
-
       return respoonseData.data;
     } catch (error) {
       console.log("Error: ", error);
@@ -209,6 +206,7 @@ function ApplicationCard(props) {
     props.queueData.filter(function (obj) {
       if (JSON.parse(obj.payload).name === props.app.name) {
         setAppQueue(JSON.parse(obj.payload).name);
+        console.log("in GetQueue queue Name: ", obj.routing_key);
         return obj.routing_key;
       } else {
       }
@@ -223,12 +221,16 @@ function ApplicationCard(props) {
 
   const getQueueByAppName = () => {
     return props.queueData.filter(function (obj) {
+      // console.log("in GetQueue app Name-1: ", obj);
+
       if (JSON.parse(obj.payload).name === props.app.name) {
+        console.log("in GetQueue queue Name: ", obj.routing_key);
         return obj.routing_key;
       } else {
       }
     });
     // .then((obj) => {
+    //   console.log("queue name: ", obj[0].routing_key);
     //   return obj[0].routing_key;
     // });
   };
@@ -253,21 +255,21 @@ function ApplicationCard(props) {
     return await props.queueData.filter(function (obj) {
       if (JSON.parse(obj.payload).name === props.app.name) {
         setAppQueue(obj.routing_key);
+        // console.log("in GetQueue queue Name: ", obj.routing_key);
         return obj.routing_key;
       } else {
       }
     });
   };
 
-  const sleep = (time) => {
-    return new Promise((resolve) => setTimeout(resolve, time));
-  };
-
   useEffect(() => {
+    // print queue/ instalation status by setAppName
+    console.log("App: ", props.app);
+    // console.log("Installation Status: ", props.getQueNameNew(props.app.name));
+
     setUp();
 
     fetchAppQueueData33().catch("Error: ", console.error);
-    setIsLoading(false);
 
     setAppName(
       props.app.name
@@ -276,7 +278,7 @@ function ApplicationCard(props) {
         .replace(/\b\w/g, (l) => l.toUpperCase())
     );
     return () => {};
-  }, [appQueue]);
+  }, [appQueue, isSelected]);
 
   const drawAppTags = (appTags) => {
     return appTags.map((appTag, i) => {
@@ -372,10 +374,6 @@ function ApplicationCard(props) {
             </div>
           </div>
         </>
-      ) : isLoading ? (
-        <div className="flex flex-col col-span-full sm:col-span-6 xl:col-span-3">
-          <Skeleton variant="rounded" animation="wave" height={300} />
-        </div>
       ) : (
         <div
           className={`relative flex flex-col col-span-full ${
@@ -462,6 +460,7 @@ function ApplicationCard(props) {
             <div className="text-xs font-semibold text-gray-400 uppercase mb-1"></div>
             {/* <div className="pb-5 line-clamp-4">{props.app.Description}</div> */}
             <div className="">
+              {/* {console.log("in render queue: ", appQueue)} */}
               {/* {appQueue === "pending_queue" && (
             <button
               className="bg-kxBlue/50 p-3 px-5 rounded items-center flex"

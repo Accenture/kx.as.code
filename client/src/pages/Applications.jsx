@@ -82,6 +82,7 @@ const filterAppsBySearchTermAndInstallationStatus = (
   } catch (error) {
     console.log(error);
   } finally {
+    // console.log("len filtered: ", filteredData.length);
     localStorage.setItem("appsCount", filteredData.length);
     return filteredData;
   }
@@ -186,6 +187,7 @@ export const Applications = (props) => {
     return await queueData.filter(function (obj) {
       if (JSON.parse(obj.payload).name === appName) {
         // setAppQueue(obj.routing_key);
+        // console.log("get status debug: ", obj.routing_key);
         return obj.routing_key;
       } else {
       }
@@ -195,6 +197,9 @@ export const Applications = (props) => {
   const toggleListLayout = (b) => {
     setIsListLayout(b);
     // localStorage.setItem("isListLayout", b);
+
+    // console.log("isListLayout: ", b);
+    // console.log("isListLayout-local: ", localStorage.getItem("isListLayout"));
   };
 
   const getQueueStatusList = (appName) => {
@@ -202,29 +207,21 @@ export const Applications = (props) => {
     let queueList = [];
     queueData.map((obj) => {
       if (JSON.parse(obj.payload).name === appName) {
+        // console.log("in GetQueue queue Name: ", obj.routing_key);
         queueList.push(obj.routing_key);
+        // console.log("list: ", queueList);
       } else {
       }
     });
+    // console.log("Debug getQueSTatusList: ", queueList);
     return queueList;
   };
 
-  function sleep(time) {
-    return new Promise((resolve) => setTimeout(resolve, time));
-  }
-
   const fetchData = () => {
-    try {
-      setIsLoading(true);
-      axios
-        .get("http://localhost:5001/api/applications")
-        .then((response) => {
-          setApplicationData(response.data);
-        })
-        .then(() => {});
-    } catch (error) {
-    } finally {
-    }
+    setIsLoading(true);
+    axios.get("http://localhost:5001/api/applications").then((response) => {
+      setApplicationData(response.data);
+    });
   };
   const getInstallationFilterStatusObject = (appName) => {
     let obj = {
@@ -316,12 +313,16 @@ export const Applications = (props) => {
         installation_status: getInstallationStatusObject(app.name),
       }))
       // .filter((app) => {
+      //   console.log("OBJ-app: ", app.installation_status);
+      //   console.log("OBJ-filter: ", filterObj);
+
       //   if (_.isEqual(app.installation_status, filterObj)) {
       //     return app;
       //   } else {
       //   }
       // })
       // .filter((app) => {
+      //   console.log("APP DEBUG: ", app);
       //   let count = 0;
       //   let intersect = filterStatusList.filter((value) =>
       //     getQueueStatusList(app.name).includes(value)
@@ -341,6 +342,8 @@ export const Applications = (props) => {
       //   }
       // })
       // .filter((app) => {
+      //   console.log("List1: ", getQueueStatusList(app.name));
+      //   console.log("List2: ", filterStatusList);
 
       //   let intersect = filterStatusList.filter((value) =>
       //     getQueueStatusList(app.name).includes(value)
@@ -373,18 +376,24 @@ export const Applications = (props) => {
         return 0;
       })
       // .filter((app) => {
+      //   // console.log("val name: ", app.name);
+      //   console.log("App debug in filter: ", app);
       //   return filterStatusList.map((statusA) => {
       //     let appQueueList = getQueueStatusList(app.name);
 
-      //     if (appQueueList.includes(statusA)) {
+      //     console.log("Check app status: ", appQueueList);
+      //     console.log("Check status: ", statusA);
 
+      //     if (appQueueList.includes(statusA)) {
+      //       console.error("includes");
       //       return app;
       //     } else {
-
+      //       console.error("includes not ");
       //     }
       //   });
       // })
       .map((app, i) => {
+        // console.log("APP status debug: ", app.installation_status);
         return (
           <ApplicationCard
             app={app}
@@ -396,7 +405,6 @@ export const Applications = (props) => {
             isListLayout={isListLayout}
             addCategoryTofilterTags={addCategoryTofilterTags}
             applicationSelectedCount={applicationSelectedCount}
-            isLoading={isLoading}
           />
         );
       });
@@ -417,18 +425,25 @@ export const Applications = (props) => {
       return axios
         .get("http://localhost:5001/api/queues/" + queue)
         .then((response) => {
+          // console.log("debug-response: ", response);
           response.data.map((app) => {
             queueData.push(app);
+            // console.log("Queue Data debug: ", queueData);
           });
         })
-        .then(() => {});
+        .then(() => {
+          // console.log("debug-all data: ", queueData);
+        });
     });
 
     Promise.all(requests)
       .then(() => {
         setQueueData(queueData);
+        setIsLoading(false);
       })
-      .then(() => {});
+      .then(() => {
+        // console.log("QueueData after fetch: ", queueData);
+      });
   };
 
   const checkMqConnection = () => {
@@ -440,17 +455,25 @@ export const Applications = (props) => {
   const addStatusToAppData = () => {
     let l = [];
     var promises = applicationData.map((app) => {
+      // console.log("app: ", app);
       app["status"] = getQueueStatusList(app.name);
+      // console.log("l in map: ", l);
       return l.push(app);
     });
     Promise.all(promises).then(() => {
+      // console.log("new app list: ", newAppList);
       setNewAppList(l);
     });
   };
 
   useEffect(() => {
+    // console.log("count: ", localStorage.getItem("appsCount"));
     setAppsSearchResultCount(applicationData.length);
     // setIsListLayout(localStorage.getItem("isListLayout"));
+
+    // const id = setInterval(() => {
+    //   fetchData();
+    // }, 20000);
 
     checkMqConnection();
 
@@ -632,6 +655,7 @@ export const Applications = (props) => {
                   id="checkbox-filter-core"
                   onClick={() => {
                     setIsCheckedCore(!isCheckedCore);
+                    console.log("Checked: ", isCheckedCore);
                   }}
                 />
               }
