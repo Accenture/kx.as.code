@@ -6,7 +6,6 @@ import { BsGrid3X3GapFill } from "react-icons/bs";
 import MultipleSelectCheckmarks from "../partials/MultipleSelectCheckmarks";
 import { useState, useEffect, useReducer } from "react";
 import _ from "lodash";
-
 import PaginationRounded from "../partials/PaginationRounded.jsx";
 import usePagination from "../utils/Pagination";
 import noResultsFace from "../media/svg/no_results_face.svg";
@@ -28,6 +27,8 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { IconButton } from "@material-ui/core";
 import { FormatListBulleted } from "@mui/icons-material";
 import AppsIcon from "@mui/icons-material/Apps";
+import Tooltip from "@mui/material/Tooltip";
+import { HiOutlineInformationCircle } from "react-icons/hi";
 
 const getArrayOfObjArray = (objArray) => {
   let list = [];
@@ -496,10 +497,19 @@ export const Applications = (props) => {
       <div className="text-white pb-10">
         <div className="text-xl font-bold italic text-gray-500">
           APPLICATIONS
+          <Tooltip
+            title="Install applications into your KX.AS Code
+          environemnt."
+            placement="top"
+            arrow
+          >
+            <button className="inline">
+              <HiOutlineInformationCircle className="ml-1" />
+            </button>
+          </Tooltip>
         </div>
         <div className="pt-4 pb-6 text-[16px]">
-          Which Applications you want to install into your KX.AS Code
-          environemnt?
+          Install applications into your KX.AS Code environemnt.
         </div>
 
         <div className="border-b-2 border-gray-700"></div>
