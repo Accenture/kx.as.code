@@ -1,0 +1,18 @@
+{
+    "name": "intellij-idea",
+    "namespace": "",
+    "installation_type": "script",
+    "installation_group_folder": "dev_tools",
+    "environment_variables": {
+        "intellijIdeaVersion": "2022.2.1",
+        "intellijIdeaChecksum": "93eb9391a898aad164ca47965e0445cbf0f04d7062b6875c4e4a3136799ee6cf"
+    },
+    "install_scripts": [
+        "installIntelijIdea.sh"
+    ],
+    "Description": "IntelliJ IDEA is an integrated development environment (IDE) written in Java for developing computer software written in Java, Kotlin, Groovy, and other JVM-based languages",
+    "shortcut_text": "IntelliJ Idea",
+    "shortcut_icon": "intellij-idea.png",
+    "pre_install_scripts": [],
+    "post_install_scripts": []
+}
