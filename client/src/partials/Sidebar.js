@@ -38,8 +38,6 @@ function Sidebar({ sidebarOpen, setSidebarOpen }, props) {
 
   // close if the esc key is pressed
   useEffect(() => {
-    console.log("versions sidebar: ", versions);
-
     const keyHandler = ({ keyCode }) => {
       if (!sidebarOpen || keyCode !== 27) return;
       setSidebarOpen(false);

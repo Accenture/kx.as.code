@@ -20,14 +20,11 @@ export default function AppDetails(props) {
 
   const fetchAppData = () => {
     const slug = pathnames[pathnames.length - 1];
-    console.log("path: ", slug);
     axios
       .get("http://localhost:5001/api/applications/" + slug)
       .then((response) => {
-        console.log("appDetails: ", response.data);
         setAppData(response.data);
         if (response.data.hasOwnProperty("available_tasks")) {
-          console.log("available_tasks: ", response.data.available_tasks);
           setAvailableTasksList(response.data.available_tasks);
         }
       });

@@ -17,7 +17,6 @@ export default function KXASCodeNotifications() {
   }, []);
 
   // const getNotificationMessageList = () => {
-  //   console.log("fetchedData-debug-33: ", queueData);
   //   queueData
   //     .map((obj) => {
   //       let message = JSON.parse(obj.payload).message;
@@ -34,15 +33,6 @@ export default function KXASCodeNotifications() {
         .get("http://localhost:5001/api/queues/" + queue)
         .then((response) => {
           setQueueData(queueData);
-          // console.log(
-          //   "payload debug: ",
-          //   JSON.parse(response.data[0].payload).message
-          // );
-          // console.log(
-          //   "payload type: ",
-          //   typeof JSON.parse(response.data[0].payload).message
-          // );
-
           try {
             if (response.data.length >= 1) {
               let message = JSON.parse(response.data[0].payload).message;
@@ -62,7 +52,6 @@ export default function KXASCodeNotifications() {
 
     Promise.all(requests)
       .then(() => {
-        // console.log("queue data messages: ", queueData);
         if (queueData.length >= 1) {
           notify(JSON.parse(queueData[0].payload).message);
         }
