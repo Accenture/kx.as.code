@@ -3,9 +3,7 @@
 # Download Azure Data Studio
 downloadFile "https://go.microsoft.com/fwlink/?linkid=2204570" \
     "${azureDataStudioChecksum}" \
-    "${buildWorkspace}/azuredatastudio-linux-${azureDataStudioVersion}.deb" \
-    "${pmiArtifactoryUser}" \
-    "${pmiArtifactoryPassword}" || rc=$?
+    "${installationWorkspace}/azuredatastudio-linux-${azureDataStudioVersion}.deb" || rc=$?
 if [[ ${rc} -ne 0 ]]; then
     log_error "Downloading azuredatastudio-linux-${azureDataStudioVersion}.deb returned with ($rc). Exiting with RC=$rc"
     exit $rc

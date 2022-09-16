@@ -7,6 +7,10 @@
             },
             {
                 "install_folder": "core",
+                "name": "kx-portal"
+            },
+            {
+                "install_folder": "core",
                 "name": "cfssl-certificate-authority"
             },
             {

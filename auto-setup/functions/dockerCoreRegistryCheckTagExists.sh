@@ -3,8 +3,10 @@ dockerCoreRegistryCheckTagExists() {
   # Call common function to execute common function start commands, such as setting verbose output etc
   functionStart
 
-  imagePath=${1}
-  imageTag=${2}
+  image=${1}
+
+  imagePath=$(echo ${image} | cut -d':' -f1)
+  imageTag=$(echo ${image} | cut -d':' -f2)
 
   local dockerRegistryPassword=$(getPassword "docker-registry-${baseUser}-password" "docker-registry")
 

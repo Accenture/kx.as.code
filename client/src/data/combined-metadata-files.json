@@ -1044,7 +1044,15 @@
       "createHtpasswdSecret.sh",
       "install-docker-registry.sh"
     ],
-    "post_install_scripts": []
+    "post_install_scripts": [],
+    "available_tasks": [
+      {
+        "name": "pruneDockerRegistry",
+        "title": "Prune Docker Registry",
+        "description": "Prunes deleted images from the Docker Registry",
+        "script": "pruneDockerRegistry.sh"
+      }
+    ]
   },
   {
     "name": "glusterfs-storage",
@@ -1477,10 +1485,34 @@
     "post_install_scripts": []
   },
   {
+    "name": "mssql-server",
+    "namespace": "mssql-server",
+    "installation_type": "script",
+    "installation_group_folder": "database",
+    "categories": [
+      "database",
+      "mssql",
+      "server"
+    ],
+    "retry": "false",
+    "Description": "Microsoft SQL 2019 database server.",
+    "shortcut_text": "MSSQL Database",
+    "shortcut_icon": "mssql-server.png",
+    "pre_install_scripts": [
+      "createKubernetesSecret.sh"
+    ],
+    "install_scripts": [
+      "deployMsSqlDatabaseServer.sh"
+    ],
+    "post_install_scripts": [
+      "installMssqlClient.sh"
+    ]
+  },
+  {
     "name": "atom",
     "namespace": "",
     "installation_type": "script",
-    "installation_group_folder": "core",
+    "installation_group_folder": "dev_tools",
     "environment_variables": {
       "atomVersion": "v1.60.0",
       "atomChecksum": "5c7c0259062b9d4911d2537bfceaff5316f9de111698840a90d7cd497df891a6"
@@ -1491,6 +1523,24 @@
     "Description": "Atom is a free and open-source text and source code editor for macOS, Linux, and Microsoft Windows with support for plug-ins written in JavaScript, and embedded Git Control",
     "shortcut_text": "atom",
     "shortcut_icon": "atom.png",
+    "pre_install_scripts": [],
+    "post_install_scripts": []
+  },
+  {
+    "name": "azure-data-studio",
+    "namespace": "",
+    "installation_type": "script",
+    "installation_group_folder": "core",
+    "environment_variables": {
+      "azureDataStudioVersion": "1.39.1",
+      "azureDataStudioChecksum": "b22fcdbb6b4c104b65c7ddf438af3f7678bfd1f49a07cf8f33c2602908e772fa"
+    },
+    "install_scripts": [
+      "installAzureDataStudio.sh"
+    ],
+    "Description": "Azure Data Studio is a cross-platform modern editor focused on data development. It&apos;s available for Linux, MacOS, and Windows. Plus, Azure Data Studio comes with an integrated terminal so you&apos;re never far away from psql.",
+    "shortcut_text": "Azure Data Studio",
+    "shortcut_icon": "azure-data-studio.png",
     "pre_install_scripts": [],
     "post_install_scripts": []
   },
@@ -1540,10 +1590,42 @@
     "post_install_scripts": []
   },
   {
+    "name": "gimp",
+    "namespace": "",
+    "installation_type": "script",
+    "installation_group_folder": "dev_tools",
+    "install_scripts": [
+      "installGimp.sh"
+    ],
+    "Description": "GIMP is a free and open-source raster graphics editor used for image manipulation and image editing, free-form drawing, transcoding between different image file formats, and more specialized tasks.",
+    "shortcut_text": "Gimp",
+    "shortcut_icon": "gimp.png",
+    "pre_install_scripts": [],
+    "post_install_scripts": []
+  },
+  {
+    "name": "intellij-idea",
+    "namespace": "",
+    "installation_type": "script",
+    "installation_group_folder": "dev_tools",
+    "environment_variables": {
+      "intellijIdeaVersion": "2022.2.1",
+      "intellijIdeaChecksum": "93eb9391a898aad164ca47965e0445cbf0f04d7062b6875c4e4a3136799ee6cf"
+    },
+    "install_scripts": [
+      "installIntelijIdea.sh"
+    ],
+    "Description": "IntelliJ IDEA is an integrated development environment (IDE) written in Java for developing computer software written in Java, Kotlin, Groovy, and other JVM-based languages",
+    "shortcut_text": "IntelliJ Idea",
+    "shortcut_icon": "intellij-idea.png",
+    "pre_install_scripts": [],
+    "post_install_scripts": []
+  },
+  {
     "name": "postman",
     "namespace": "",
     "installation_type": "script",
-    "installation_group_folder": "core",
+    "installation_group_folder": "dev_tools",
     "environment_variables": {
       "postmanVersion": "9.19.0",
       "postmanChecksum": "9ba608c130e7936895dd9752ea0c55055b3be7649c445ff72f36d82042c1b996"
@@ -1558,10 +1640,44 @@
     "post_install_scripts": []
   },
   {
+    "name": "vsode",
+    "namespace": "",
+    "installation_type": "script",
+    "installation_group_folder": "dev_tools",
+    "environment_variables": {
+      "vscodeVersion": "",
+      "vscodeChecksum": ""
+    },
+    "install_scripts": [
+      "installVsCode.sh"
+    ],
+    "Description": "Visual Studio Code is a lightweight but powerful source code editor which runs on your desktop. It comes with built-in support for JavaScript, TypeScript and Node.js and has a rich ecosystem of extensions for other languages and runtimes (such as C++, C#, Java, Python, PHP, Go, .NET)",
+    "shortcut_text": "Visual Studio Code",
+    "shortcut_icon": "vscode.png",
+    "pre_install_scripts": [],
+    "post_install_scripts": []
+  },
+  {
     "name": "hipster-shop",
     "namespace": "shop-example",
     "installation_type": "script",
     "installation_group_folder": "examples",
+    "installation_input_arguments": [
+      {
+        "argumentKey": "branch",
+        "argumentDefaultValue": "main",
+        "fieldType": "alphaNumeric",
+        "mandatory": false
+      },
+      {
+        "argumentKey": "replicas",
+        "argumentDefaultValue": 1,
+        "minValue": 1,
+        "maxValue": 10,
+        "fieldType": "numeric",
+        "mandatory": false
+      }
+    ],
     "environment_variables": {
       "branch": ""
     },

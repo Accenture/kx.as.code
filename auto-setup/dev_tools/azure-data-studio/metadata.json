@@ -10,9 +10,9 @@
     "install_scripts": [
         "installAzureDataStudio.sh"
     ],
-    "Description": "Azure Data Studio is a cross-platform modern editor focused on data development. It's available for Linux, MacOS, and Windows. Plus, Azure Data Studio comes with an integrated terminal so you're never far away from psql.",
+    "Description": "Azure Data Studio is a cross-platform modern editor focused on data development. It&apos;s available for Linux, MacOS, and Windows. Plus, Azure Data Studio comes with an integrated terminal so you&apos;re never far away from psql.",
     "shortcut_text": "Azure Data Studio",
-    "shortcut_icon": "azure-data-studu.png",
+    "shortcut_icon": "azure-data-studio.png",
     "pre_install_scripts": [],
     "post_install_scripts": []
 }

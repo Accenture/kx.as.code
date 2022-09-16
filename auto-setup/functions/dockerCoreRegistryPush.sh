@@ -22,7 +22,7 @@ pushDockerImageToCoreRegistry() {
   done
 
   # Complete a final check to verify Docker now exists in Docker registry
-  imageTagExists=$(dockerCoreRegistryCheckTagExists "content/aem-author" "${jiraId}")
+  imageTagExists=$(dockerCoreRegistryCheckTagExists "${imagePathToPush}")
   if ${imageTagExists}; then
     return 0
   else

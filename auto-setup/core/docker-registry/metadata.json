@@ -55,5 +55,13 @@
         "createHtpasswdSecret.sh",
         "install-docker-registry.sh"
     ],
-    "post_install_scripts": []
+    "post_install_scripts": [],
+    "available_tasks": [
+        {
+            "name": "pruneDockerRegistry",
+            "title": "Prune Docker Registry",
+            "description": "Prunes deleted images from the Docker Registry",
+            "script": "pruneDockerRegistry.sh"
+        }
+    ]
 }
