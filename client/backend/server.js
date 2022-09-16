@@ -6,7 +6,7 @@ const amqp = require("amqplib");
 const app = express();
 const bodyParser = require("body-parser");
 app.use(bodyParser.json());
- 
+
 const PORT = process.env.PORT || 5001;
 const dataPath = "../src/data/combined-metadata-files.json";
 const rabbitMqUsername = "test";
@@ -199,7 +199,6 @@ app.route("/api/consume/:queue_name").get((req, res) => {
         //console.log("Empty Queue")
       }
     } catch (error) {
-      //console.log("Error while consuming from rabbitmq queue", error)
       return Promise.reject(error);
     }
   });
