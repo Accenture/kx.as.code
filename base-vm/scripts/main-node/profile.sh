@@ -1,6 +1,22 @@
 #!/bin/bash -x
 set -euo pipefail
 
+# Update SKEL Desktop files with correct browser path
+export preferredBrowser=$(readlink -f /etc/alternatives/x-www-browser)
+if [[ "${preferredBrowser}" == "/usr/bin/chromium" ]]; then
+  export preferredBrowserIcon="chromium"
+else
+  export preferredBrowserIcon="google-chrome"
+fi
+desktopFiles=$(find /usr/share/kx.as.code/workspace/skel/Desktop/*.desktop)
+for desktopFile in ${desktopFiles}
+do
+  cat "${desktopFile}" | /usr/local/bin/mo | sudo tee "${desktopFile}_tmp"
+  if [ -s "${desktopFile}_tmp" ]; then
+      sudo mv "${desktopFile}_tmp" "${desktopFile}"
+  fi
+done
+
 # Copy Skel
 sudo cp -rfT ${INSTALLATION_WORKSPACE}/skel /home/${VM_USER}
 sudo cp -rfT ${INSTALLATION_WORKSPACE}/skel /root
@@ -128,4 +144,5 @@ alias vi="nvim"
 alias oldvim="/vim"
 alias vimdiff="nvim -d"
 export EDITOR=nvim
+export BROWSER='$(readlink -f /etc/alternatives/x-www-browser)'
 ''' | sudo tee -a /etc/profile.d/nvim.sh /home/${VM_USER}/.bashrc /home/${VM_USER}/.zshrc /root/.bashrc /root/.zshrc

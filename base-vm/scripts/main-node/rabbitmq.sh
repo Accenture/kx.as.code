@@ -34,6 +34,8 @@ sudo apt-get install -y rabbitmq-server
 
 adminShortcutsDirectory="/usr/share/kx.as.code/Admin Tools"
 
+export preferredBrowser=$(readlink -f /etc/alternatives/x-www-browser)
+
 # Install Desktop Shortcut
 echo '''
 [Desktop Entry]
@@ -41,7 +43,7 @@ Version=1.0
 Name=RabbitMQ
 GenericName=RabbitMQ
 Comment=RabbitMQ Action Queues
-Exec=/usr/bin/chromium %U http://localhost:15672/ --use-gl=angle --password-store=basic
+Exec='${preferredBrowser}' %U http://localhost:15672/ --use-gl=angle --password-store=basic
 StartupNotify=true
 Terminal=false
 Icon=/usr/share/kx.as.code/git/kx.as.code/base-vm/images/rabbitmq.png
