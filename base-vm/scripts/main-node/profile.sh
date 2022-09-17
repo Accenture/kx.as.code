@@ -114,12 +114,12 @@ fi' | sudo tee -a /home/${VM_USER}/.bashrc /home/${VM_USER}/.zshrc /root/.bashrc
 sudo -u $VM_USER sh -c "curl -fLo /home/${VM_USER}/.local/share/nvim/site/autoload/plug.vim --create-dirs \
        https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim"
 
-sudo -u $VM_USER sh -c "nvim -es -u /home/${VM_USER}/.config/nvim/init.vim -i NONE -c \"PlugInstall\" -c \"qa\""
+sudo -u $VM_USER sh -c "/usr/bin/nvim -es -u /home/${VM_USER}/.config/nvim/init.vim -i NONE -c \"PlugInstall\" -c \"qa\""
 
 sudo sh -c "curl -fLo /root/.local/share/nvim/site/autoload/plug.vim --create-dirs \
 https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim"
 
-sudo sh -c "nvim -es -u /root/.config/nvim/init.vim -i NONE -c \"PlugInstall\" -c \"qa\""
+sudo sh -c "/usr/bin/nvim -es -u /root/.config/nvim/init.vim -i NONE -c \"PlugInstall\" -c \"qa\""
 
 # Add aliases to open NVIM instead of VIM or VI
 echo '''
