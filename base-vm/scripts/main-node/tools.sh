@@ -25,15 +25,32 @@ sudo apt-get -y install \
     dbus-x11 \
     pwgen \
     kde-spectacle \
-    chromium \
     wmctrl \
     syslinux-utils \
-    gnome-keyring
+    gnome-keyring \
+    neovim
 
 
 # Set User File Associations
 sudo update-alternatives --install /usr/bin/editor editor /usr/bin/vim 100
-sudo update-alternatives --install /usr/bin/x-www-browser x-www-browser /usr/bin/chromium 100
+
+# Install Google-Chrome
+if [[ "${ARCH}" == "arm64" ]]; then
+  sudo apt install -y chromium
+else
+  wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
+  sudo sh -c 'echo "deb [arch='${ARCH}'] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list'
+  sudo apt-get update
+  sudo apt-get install -y google-chrome-stable
+fi
+
+# Set User File Associations
+sudo update-alternatives --install /usr/bin/editor editor /usr/bin/vim 100
+if [[ "${ARCH}" == "arm64" ]]; then
+  sudo update-alternatives --install /usr/bin/x-www-browser x-www-browser /usr/bin/chromium 100
+else
+  sudo update-alternatives --install /usr/bin/x-www-browser x-www-browser /usr/bin/google-chrome-stable 100
+fi
 
 # Install YQ
 yqVersion=4.27.2
@@ -138,10 +155,10 @@ sudo sed -i -e '/"rpm",/d' -e '/"AppImage"/d' -e 's/"deb",/"deb"/' ${INSTALLATIO
 source /etc/profile.d/nvm.sh
 
 # Build OpenLens
-#if [[ -z $(which raspinfo) ]]; then
-# sudo bash -c "cd /usr/share/kx.as.code/workspace/lens; source /etc/profile.d/nvm.sh; nvm use --delete-prefix lts/gallium; npm install -g yarn; yarn install; make build"
-# debOpenLensInstaller=$(find ${INSTALLATION_WORKSPACE}/lens/dist -name "OpenLens-*.deb")
-# sudo mv ${debOpenLensInstaller} ${INSTALLATION_WORKSPACE}
-# # Tidy up
-# sudo rm -rf ${INSTALLATION_WORKSPACE}/lens
-#fi
+if [[ -z $(which raspinfo) ]]; then
+ sudo bash -c "cd /usr/share/kx.as.code/workspace/lens; source /etc/profile.d/nvm.sh; nvm use --delete-prefix lts/gallium; npm install -g yarn; yarn install; make build"
+ debOpenLensInstaller=$(find ${INSTALLATION_WORKSPACE}/lens/dist -name "OpenLens-*.deb")
+ sudo mv ${debOpenLensInstaller} ${INSTALLATION_WORKSPACE}
+ # Tidy up
+ sudo rm -rf ${INSTALLATION_WORKSPACE}/lens
+fi

@@ -1,11 +1,11 @@
 #!/bin/bash
-set -euo pipefail
+set -euox pipefail
 
 # Install NGINX
 /usr/bin/sudo apt-get install -y nginx
 
 # Setup logging directory
-/usr/bin/sudo mkdir ${installationWorkspace}/kx-portal
+/usr/bin/sudo mkdir -p ${installationWorkspace}/kx-portal
 /usr/bin/sudo chown -R ${vmUser}:${vmUser} ${installationWorkspace}/kx-portal
 
 bunAlreadyInstalled=$(which bun || true)
@@ -36,14 +36,34 @@ do
   if [[ ${rc} -eq 0 ]]; then
     log_info "Bun install succeeded. Continuing"
     /usr/bin/sudo chown -R ${vmUser}:${vmUser} ${KX_PORTAL_HOME}
-    break
+    installSucceeded="OK"
   else
-    log_warn "Bun‚ install returned with a non zero exit code. Trying again"
+    log_warn "Bun install returned with a non zero exit code. Trying again"
     /usr/bin/sudo rm -rf ${KX_PORTAL_HOME}/node_modules ${KX_PORTAL_HOME}/bun.lockb
+    installSucceeded="NOK"
     sleep 15
+  fi
+
+  if [[ "${installSucceeded}" == "OK" ]]; then
+    # Test homepage is up with Cypress
+    rc=0
+    echo "docker run --rm -e EXTERNAL_URL=http://${mainIpAddress}:3000 -v ${KX_PORTAL_HOME}:/e2e -w /e2e cypress/included:10.8.0 run --env EXTERNAL_URL=http://${mainIpAddress}:3000"
+    docker run --rm -e EXTERNAL_URL="http://${mainIpAddress}:3000" -v ${KX_PORTAL_HOME}:/e2e -w /e2e cypress/included:10.8.0 run --env EXTERNAL_URL="http://${mainIpAddress}:3000" || rc=$? && log_info "Execution of Cypress test for KX-Portal returned with rc=$rc"
+    if [[ ${rc} -eq 0 ]]; then
+      log_info "Cypress test succeeded. Continuing"
+      break
+    else
+      log_warn "Cypress test returned with a non zero exit code. Trying install again"
+      /usr/bin/sudo rm -rf ${KX_PORTAL_HOME}/node_modules ${KX_PORTAL_HOME}/bun.lockb
+      instalSlucceeded="NOK"
+      sleep 15
+    fi
   fi
 done
 cd -
+
+# Cleanup Cypress image to save disk space
+#docker rmi cypress/included:10.8.0
 
 # Create KX-Portal start script
 echo '''#!/bin/bash

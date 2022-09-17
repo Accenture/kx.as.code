@@ -15,5 +15,6 @@ getGlobalVariables() {
     IFS=$OLDIFS
 
     export DEBIAN_FRONTEND=noninteractive
+    export preferredBrowser=$(readlink -f /etc/alternatives/x-www-browser)
 
 }

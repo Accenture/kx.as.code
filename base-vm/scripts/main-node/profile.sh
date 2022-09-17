@@ -100,7 +100,7 @@ HideUsers=vagrant
 ''' | sudo tee /etc/sddm.conf
 
 echo "typeset -g POWERLEVEL9K_INSTANT_PROMPT=quiet" | sudo tee -a /home/${VM_USER}/.zshrc /root/.zshrc
-echo "KUBECONFIG=~/.kube/config" | sudo tee -a /home/${VM_USER}/.bashrc /home/${VM_USER}/.zshrc /root/.bashrc /root/.zshrc
+#echo "KUBECONFIG=~/.kube/config" | sudo tee -a /home/${VM_USER}/.bashrc /home/${VM_USER}/.zshrc /root/.bashrc /root/.zshrc
 
 # Show /etc/motd.kxascode even when in X-Windows terminal (not just SSH)
 echo -e '\n# Added to show KX.AS.CODE MOTD also in X-Windows Terminal (already showing in SSH per default)
@@ -109,3 +109,23 @@ if [ -z $(echo $SSH_TTY) ]; then
 else
   cat /etc/motd.kxascode
 fi' | sudo tee -a /home/${VM_USER}/.bashrc /home/${VM_USER}/.zshrc /root/.bashrc /root/.zshrc
+
+# Add plugin manager to NVIM and install plugins
+sudo -u $VM_USER sh -c "curl -fLo /home/${VM_USER}/.local/share/nvim/site/autoload/plug.vim --create-dirs \
+       https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim"
+
+sudo -u $VM_USER sh -c "nvim -es -u /home/${VM_USER}/.config/nvim/init.vim -i NONE -c \"PlugInstall\" -c \"qa\""
+
+sudo sh -c "curl -fLo /root/.local/share/nvim/site/autoload/plug.vim --create-dirs \
+https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim"
+
+sudo sh -c "nvim -es -u /root/.config/nvim/init.vim -i NONE -c \"PlugInstall\" -c \"qa\""
+
+# Add aliases to open NVIM instead of VIM or VI
+echo '''
+alias vim="nvim"
+alias vi="nvim"
+alias oldvim="/vim"
+alias vimdiff="nvim -d"
+export EDITOR=nvim
+''' | sudo tee -a /etc/profile.d/nvim.sh /home/${VM_USER}/.bashrc /home/${VM_USER}/.zshrc /root/.bashrc /root/.zshrc

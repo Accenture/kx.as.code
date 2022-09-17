@@ -150,10 +150,14 @@ xset s off
 xset s noblank
 xset -dpms
 
+# Install NeoVIM plugins
+nvim -es -u ~/.config/nvim/init.vim -i NONE -c "PlugInstall" -c "qa"
+
+# Remove welcome script from autostart folder
 rm -f $HOME/.config/autostart-scripts/showWelcome.sh
 ''' | sudo tee /home/${VM_USER}/.config/autostart-scripts/showWelcome.sh
 
-sudo chmod 755  /home/${VM_USER}/.config/autostart-scripts/*.sh
+sudo chmod 755 /home/${VM_USER}/.config/autostart-scripts/*.sh
 sudo chown ${VM_USER}:${VM_USER} /home/${VM_USER}/.config/autostart-scripts/*.sh
 sudo cp -f /home/${VM_USER}/.config/autostart-scripts/showWelcome.sh ${INSTALLATION_WORKSPACE}
 

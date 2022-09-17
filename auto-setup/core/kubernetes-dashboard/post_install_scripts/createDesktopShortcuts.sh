@@ -12,7 +12,7 @@ Version=1.0
 Name=Kubernetes Dashboard
 GenericName=Kubernetes Dashboard
 Comment=Kubernetes Dashboard
-Exec=/usr/bin/chromium %U https://${componentName}.${baseDomain} --use-gl=angle --password-store=basic --incognito --new-window
+Exec=${preferredBrowser} %U https://${componentName}.${baseDomain} --use-gl=angle --password-store=basic --incognito --new-window
 StartupNotify=true
 Terminal=false
 Icon=${iconPath}

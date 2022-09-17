@@ -20,7 +20,7 @@ if [[ -n ${primaryUrl}   ]]; then
         Name=${shortcutText}
         GenericName=${shortcutText}
         Comment=${shortcutText}
-        Exec=/usr/bin/chromium %U ${primaryUrl} --use-gl=angle --password-store=basic ${browserOptions}
+        Exec=${preferredBrowser} %U ${primaryUrl} --use-gl=angle --password-store=basic ${browserOptions}
         StartupNotify=true
         Terminal=false
         Icon=${iconPath}
