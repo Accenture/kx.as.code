@@ -32,7 +32,7 @@ sudo apt-get -y install \
 
 
 # Set User File Associations
-sudo update-alternatives --install /usr/bin/editor editor /usr/bin/vim 100
+sudo update-alternatives --install /usr/bin/editor editor /usr/bin/nvim 100
 
 # Install Google-Chrome
 if [[ "${ARCH}" == "arm64" ]]; then
