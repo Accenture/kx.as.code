@@ -288,7 +288,7 @@
           <projectName>KX.AS.CODE_Launcher</projectName>
           <projectFullName>KX.AS.CODE_Launcher</projectFullName>
           <parameters class="linked-hash-map"/>
-          <referencedParameters>PROFILE, GENERAL_PARAMETERS, KX_MAIN_NODES_CONFIG, KX_WORKER_NODES_CONFIG, STORAGE_PARAMETERS, TEMPLATE_SELECTOR, USER_PROVISIONING</referencedParameters>
+          <referencedParameters>PROFILE, GENERAL_PARAMETERS, KX_MAIN_NODES_CONFIG, KX_WORKER_NODES_CONFIG, STORAGE_PARAMETERS, TEMPLATE_SELECTOR, USER_PROVISIONING, CUSTOM_VARIABLES</referencedParameters>
           <choiceType>ET_FORMATTED_HTML</choiceType>
           <omitValueField>true</omitValueField>
         </org.biouno.unochoice.DynamicReferenceParameter>
