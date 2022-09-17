@@ -32,7 +32,7 @@ rc=0
 for i in {1..3}
 do
   log_info "Attempting bun install for KX-Portal - try ${i}"
-  timeout -s TERM 300 bun install || rc=$? && log_info "Execution of bun install for KX-Portal returned with rc=$rc"
+  sudo timeout -s TERM 300 bun install || rc=$? && log_info "Execution of bun install for KX-Portal returned with rc=$rc"
   if [[ ${rc} -eq 0 ]]; then
     log_info "Bun install succeeded. Continuing"
     /usr/bin/sudo chown -R ${vmUser}:${vmUser} ${KX_PORTAL_HOME}
@@ -42,22 +42,6 @@ do
     /usr/bin/sudo rm -rf ${KX_PORTAL_HOME}/node_modules ${KX_PORTAL_HOME}/bun.lockb
     installSucceeded="NOK"
     sleep 15
-  fi
-
-  if [[ "${installSucceeded}" == "OK" ]]; then
-    # Test homepage is up with Cypress
-    rc=0
-    echo "docker run --rm -e EXTERNAL_URL=http://${mainIpAddress}:3000 -v ${KX_PORTAL_HOME}:/e2e -w /e2e cypress/included:10.8.0 run --env EXTERNAL_URL=http://${mainIpAddress}:3000"
-    docker run --rm -e EXTERNAL_URL="http://${mainIpAddress}:3000" -v ${KX_PORTAL_HOME}:/e2e -w /e2e cypress/included:10.8.0 run --env EXTERNAL_URL="http://${mainIpAddress}:3000" || rc=$? && log_info "Execution of Cypress test for KX-Portal returned with rc=$rc"
-    if [[ ${rc} -eq 0 ]]; then
-      log_info "Cypress test succeeded. Continuing"
-      break
-    else
-      log_warn "Cypress test returned with a non zero exit code. Trying install again"
-      /usr/bin/sudo rm -rf ${KX_PORTAL_HOME}/node_modules ${KX_PORTAL_HOME}/bun.lockb
-      instalSlucceeded="NOK"
-      sleep 15
-    fi
   fi
 done
 cd -
@@ -70,6 +54,7 @@ echo '''#!/bin/bash
 source /etc/profile.d/nvm.sh
 export KX_PORTAL_HOME='${KX_PORTAL_HOME}'
 cd ${KX_PORTAL_HOME}
+sudo timeout -s TERM 300 bun install
 sudo chown -R kx.hero:kx.hero ${KX_PORTAL_HOME}
 export HOME=${KX_PORTAL_HOME}
 bun run start:prod
@@ -107,6 +92,23 @@ fi
 
 # Call running KX-Portal to check status and pre-compile site
 checkUrlHealth "http://localhost:3000" "200"
+
+# Run basic Cypress E2E test
+if [[ "${installSucceeded}" == "OK" ]]; then
+  # Test homepage is up with Cypress
+  rc=0
+  echo "docker run --rm -e EXTERNAL_URL=http://${mainIpAddress}:3000 -v ${KX_PORTAL_HOME}:/e2e -w /e2e cypress/included:10.8.0 run --env EXTERNAL_URL=http://${mainIpAddress}:3000"
+  docker run --rm -e EXTERNAL_URL="http://${mainIpAddress}:3000" -v ${KX_PORTAL_HOME}:/e2e -w /e2e cypress/included:10.8.0 run --env EXTERNAL_URL="http://${mainIpAddress}:3000" || rc=$? && log_info "Execution of Cypress test for KX-Portal returned with rc=$rc"
+  if [[ ${rc} -eq 0 ]]; then
+    log_info "Cypress test succeeded. Continuing"
+    true
+    return
+  else
+    log_warn "Cypress test returned with a non zero exit code. Trying install again"
+    false
+    return
+  fi
+fi
 
 # Install the desktop shortcut for KX.AS.CODE Portal
 shortcutsDirectory="/home/${vmUser}/Desktop"
