@@ -4,7 +4,8 @@ sudo cp -f /home/${VM_USER}/p10k.zsh ${SKELDIR}
 sudo cp -f /home/${VM_USER}/.zshrc ${SKELDIR}
 sudo cp -f  /home/${VM_USER}/.bashrc ${SKELDIR}
 sudo cp -rf /home/${VM_USER}/.oh-my-zsh ${SKELDIR}
-sudo cp -rf /home/${VM_USER}.local ${SKELDIR}
+sudo cp -rf /home/${VM_USER}/.local ${SKELDIR}
+sudo cp -rf /home/${VM_USER}/.config ${SKELDIR}
 
 sudo mkdir -p ${SKELDIR}/.ssh
 sudo chmod 700 ${SKELDIR}/.ssh
