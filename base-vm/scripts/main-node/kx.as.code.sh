@@ -40,9 +40,6 @@ if [[ -n ${GIT_SOURCE_TOKEN_ENCODED} ]]; then
     sudo sed -i 's/'${GIT_SOURCE_USER}':'${GIT_SOURCE_TOKEN_ENCODED}'@//g' ${SHARED_GIT_REPOSITORIES}/kx.as.code/.git/config
 fi
 
-# Configure Typora to show Welcome message after login
-sudo -H -i -u ${VM_USER} sh -c "mkdir -p /home/${VM_USER}/.config/Typora/"
-
 # Install daemonizer for starting KX.AS.CODE poller as brackground service
 sudo apt-get install -y daemonize
 
@@ -126,9 +123,11 @@ vmUser=$(id -nu)
 vmUserId=$(id -u)
 KX_HOME='${KX_HOME}'
 SHARED_GIT_REPOSITORIES=${KX_HOME}/git
-/usr/bin/typora ${SHARED_GIT_REPOSITORIES}/kx.as.code/README.md &
+export BROWSER=$(readlink -f /etc/alternatives/x-www-browser)
+/usr/local/bin/grip -b ${SHARED_GIT_REPOSITORIES}/kx.as.code/README.md &
 
-WINDOW_NAME="Typora"
+WINDOW_NAME="README.md - Grip"
+
 for i in {1..50}
 do
         if [[ -n $(wmctrl -lG | grep "$WINDOW_NAME" || true) ]]; then

@@ -3,7 +3,7 @@ Version=1.0
 Name=KX.AS.CODE Contribute
 GenericName=KX.AS.CODE Contribute
 Comment=KX.AS.CODE Contribute
-Exec=/usr/bin/chromium --app=https://accenture.github.io/kx.as.code/Development/Contribution-Guidelines/ --use-gl=angle --password-store=basic --new-window
+Exec=${preferredBrowser} --app=https://accenture.github.io/kx.as.code/Development/Contribution-Guidelines/ --use-gl=angle --password-store=basic --new-window
 StartupNotify=true
 Terminal=false
 Icon=/usr/share/kx.as.code/git/kx.as.code/base-vm/images/kx-contribute.png
