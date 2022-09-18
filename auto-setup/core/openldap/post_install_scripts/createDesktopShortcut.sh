@@ -12,7 +12,7 @@ Version=1.0
 Name=${shortcutText}
 GenericName=${shortcutText}
 Comment=${shortcutText}
-Exec=/usr/bin/chromium %U https://ldapadmin.${baseDomain}:6043/lam --use-gl=angle --password-store=basic
+Exec=${preferredBrowser} %U https://ldapadmin.${baseDomain}:6043/lam --use-gl=angle --password-store=basic
 StartupNotify=true
 Terminal=false
 Icon=${iconPath}

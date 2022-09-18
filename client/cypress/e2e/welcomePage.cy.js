@@ -1,6 +1,6 @@
 describe('kx.as.code portal', () => {
   it('welcome-page loaded', () => {
-    cy.visit('http://localhost:3000')
+    cy.visit(Cypress.env('EXTERNAL_URL'))
     cy.contains('Transfer Knowledge as Code - All in One VM.')
   })
 })

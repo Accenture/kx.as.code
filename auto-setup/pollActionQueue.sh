@@ -2,14 +2,30 @@
 
 # Get global base variables from globalVariables.json
 source /usr/share/kx.as.code/git/kx.as.code/auto-setup/functions/getGlobalVariables.sh # source function
-getGlobalVariables # execute function
+getGlobalVariables
 
 # Load Central Functions
 functionsLocation="${autoSetupHome}/functions"
 for function in $(find ${functionsLocation} -name "*.sh")
 do
+  functionName="$(cat ${function} | grep -E '^[[:alnum:]].*().*{' | sed 's/()*.{//g')"
   source ${function}
-  echo "Loaded function $(cat ${function} | grep '()' | sed 's/{//g')"
+  echo "Loaded function ${functionName}()"
+done
+
+# Load CUSTOM Central Functions - these can either be new ones, or copied and edited functions from the main functions directory above, which will override the ones loaded in the previous step
+getCustomVariables # load global custom variables
+customFunctionsLocation="${autoSetupHome}/functions-custom"
+loadedFunctions="$(compgen -A function)"
+for function in $(find ${customFunctionsLocation} -name "*.sh")
+do
+  source ${function}
+  customFunctionName="$(cat ${function} | grep -E '^[[:alnum:]].*().*{' | sed 's/()*.{//g')"
+  if [[ -z $(echo "${loadedFunctions}" | grep ${customFunctionName}) ]]; then
+    log_debug "Loaded new custom function ${customFunctionName}()"
+  else
+    log_debug "Overriding central function ${customFunctionName}() with custom one!"
+  fi
 done
 
 # Establish whether running on AMD64 or ARM64 CPU architecture
@@ -60,6 +76,11 @@ getProfileConfiguration
 
 # Get latest source code if flag set accordingly in profile-config.json
 updateKxSourceOnFirstStart
+
+# Apply customizations on first boot
+if [[ ! -f /usr/share/kx.as.code/.config/network_status ]]; then
+    applyCustomizations
+fi
 
 # Create and clean the external access directory
 createExternalAccessDirectory
@@ -148,12 +169,13 @@ while :; do
     count=0
 
     # Ensure DNS is working before continuing to avoid downstream failures
-    rc=1
+    rc=""
     while [[ ${rc} -ne 0 ]]; do
-        host -t A deb.debian.org && rc=$? || true
+        rc=0
+        host -t A deb.debian.org >/dev/null || rc=$?
         if [[ $rc -ne 0 ]]; then
           log_warn "DNS resolution currently not working. Waiting for DNS resolution to work again before continuing"
-          sleep 5
+          sleep 15
         fi
     done
 
@@ -183,10 +205,10 @@ while :; do
                 waitForMessageOnActionQueue "completed_queue" "${componentName}"
                 log_debug "Moved component payload from wip_queue to completed_queue: ${payload}"
                 message="${componentName} installed successfully [$((${completedQueue} + 1))/${totalMessages}]"
-                notifyAllChannels "${message}" "info" "success"
+                notifyAllChannels "${message}" "info" "success" "${action}"
                 if [[ "${componentName}" == "${lastCoreElementToInstall}" ]]; then
                     message="CONGRATULATIONS. That concludes the core setup. Your optional components will now be installed"
-                    notifyAllChannels "${message}" "info" "all_core_completed_successfully"
+                    notifyAllChannels "${message}" "info" "all_core_completed_successfully" "${action}"
                     log_debug "All core component have been installed successfully"
                 fi
                 retries=0
@@ -201,7 +223,7 @@ while :; do
                     cat ${installationWorkspace}/actionQueues.json | jq -c -r '(.state.processed[] | select(.name=="'${componentName}'").retries) = "'${retries}'"' | tee ${installationWorkspace}/actionQueues.json.tmp
                     mv ${installationWorkspace}/actionQueues.json.tmp ${installationWorkspace}/actionQueues.json
                     message="${componentName} installation error after ${retries} retries. Will retry three times maximum. [$((${completedQueue} + 1))/${totalMessages}]"
-                    notifyAllChannels "${message}" "warn" "failed"
+                    notifyAllChannels "${message}" "warn" "failed" "${action}"
                     rm -f ${installationWorkspace}/current_payload.err
                 elif [[ "${retriesParameter}" == "skip" ]] && [[ ${retries} -lt 3 ]]; then
                     payload=$(echo ${payload} | jq -c -r '(.retries)="0"' | jq -c -r '. += {"failed_retries":"'${retries}'"}')
@@ -209,7 +231,7 @@ while :; do
                     waitForMessageOnActionQueue "skipped_queue" "${componentName}"
                     log_debug "Moved component payload to skipped_queue: ${payload}"
                     message="${componentName} installation failed after ${retries} retries. Moved item to skipped queue and continuing. [$((${completedQueue} + 1))/${totalMessages}]"
-                    notifyAllChannels "${message}" "error" "failed"
+                    notifyAllChannels "${message}" "error" "failed" "${action}"
                     export retries=0
                     rm -f ${installationWorkspace}/current_payload.err
                 else
@@ -218,7 +240,7 @@ while :; do
                     waitForMessageOnActionQueue "failed_queue" "${componentName}"
                     log_debug "Moved component payload to failed_queue: ${payload}"
                     message="${componentName} installation failed after ${retries} retries. [$((${completedQueue} + 1))/${totalMessages}]"
-                    notifyAllChannels "${message}" "error" "failed"
+                    notifyAllChannels "${message}" "error" "failed" "${action}"
                     export retries=0
                     rm -f ${installationWorkspace}/current_payload.err
                 fi
@@ -264,7 +286,7 @@ while :; do
                 if [[ ${retries} -eq 0 ]]; then
                     log_debug "Notifiying installation started for ${componentName}, as not a retry - retries: ${retries}"
                     message="${componentName} installation started [$((${completedQueue} + 1))/${totalMessages}]"
-                    notifyAllChannels "${message}" "info" "started"
+                    notifyAllChannels "${message}" "info" "started" "${action}"
                 fi
 
                 # Launch autoSetup.sh
@@ -282,16 +304,18 @@ while :; do
                 # Launch the component installation process
                 rc=0
                 log_debug "Launching installation process for \"${componentName}\": ${payload}"
-                log_debug "${autoSetupHome}/autoSetup.sh -a ${action} -c ${componentName} -f ${componentInstallationFolder} -r ${retries-0}"
-                log_debug "${autoSetupHome}/autoSetup.sh -- payload: ''${payload}''"
-
+                log_debug "${autoSetupHome}/autoSetup.sh ''${payload}''"
                 ${autoSetupHome}/autoSetup.sh ''${payload}'' 2>> ${logFilename} || rc=$? && log_debug "Installation of \"${componentName}\" returned with rc=$rc"
                 if [[ ${rc} -ne 0 ]]; then
                   log_error "Installation of returned with a non zero return code ($rc)"
                   echo ${payload} | sudo tee ${installationWorkspace}/current_payload.err
                 fi
                 export logFilename=$(setLogFilename "poller")
-                log_debug "Installation process for \"${componentName}\" returned with \$?=${logRc} and rc=$rc"
+                if [[ "$(echo ${payload} | jq '.action')" == "install" ]]; then
+                    log_debug "Install process for \"${componentName}\" returned with \$?=${logRc} and rc=$rc"
+                elif [[ "$(echo ${payload} | jq '.action')" == "executeTask" ]]; then
+                    log_debug "Task execution process for \"${componentName}\" returned with \$?=${logRc} and rc=$rc"
+                fi
             fi
             sleep 5
         fi

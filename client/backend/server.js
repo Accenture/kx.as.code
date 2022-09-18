@@ -13,6 +13,21 @@ const rabbitMqUsername = "test";
 const rabbitMqPassword = "test";
 const rabbitMqHost = "localhost";
 
+app.use((req, res, next) => {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Credentials", "true");
+  res.setHeader("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT");
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    "Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers"
+  );
+  next();
+  bodyParser.json();
+  bodyParser.urlencoded({
+    extended: true,
+  });
+});
+
 app.route("/api/add/application/:queue_name").post((req, res) => {
   connection = amqp.connect(
     "amqp://" + rabbitMqUsername + ":" + rabbitMqPassword + "@" + rabbitMqHost
@@ -36,22 +51,7 @@ app.route("/api/add/application/:queue_name").post((req, res) => {
     );
   });
 
-  res.send("The POST request is being processed!");
-});
-
-app.use((req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Credentials", "true");
-  res.setHeader("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT");
-  res.setHeader(
-    "Access-Control-Allow-Headers",
-    "Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers"
-  );
-  next();
-  bodyParser.json();
-  bodyParser.urlencoded({
-    extended: true,
-  });
+  res.send("The POST request is being processed to Queue: ");
 });
 
 app.route("/api/checkRmqConn").get((req, res) => {
@@ -71,7 +71,6 @@ app.route("/api/checkRmqConn").get((req, res) => {
 
 app.route("/api/queues/:queue_name").get((req, res) => {
   try {
-    console.log("get q triggered.");
     var url =
       "http://" +
       rabbitMqUsername +
@@ -83,7 +82,7 @@ app.route("/api/queues/:queue_name").get((req, res) => {
       req.params.queue_name +
       "/get";
 
-    console.log("url: ", url);
+    // console.log("url: ", url);
 
     var dataString =
       '{"vhost":"/","name":"' +
@@ -200,7 +199,6 @@ app.route("/api/consume/:queue_name").get((req, res) => {
         //console.log("Empty Queue")
       }
     } catch (error) {
-      //console.log("Error while consuming from rabbitmq queue", error)
       return Promise.reject(error);
     }
   });

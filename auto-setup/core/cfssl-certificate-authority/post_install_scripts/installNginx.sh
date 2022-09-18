@@ -39,7 +39,7 @@ Version=1.0
 Name=RabbitMQ
 GenericName=RabbitMQ
 Comment=RabbitMQ Action Queues
-Exec=/usr/bin/chromium %U https://rabbitmq.'${baseDomain}':4043 --use-gl=angle --password-store=basic
+Exec='${preferredBrowser}' %U https://rabbitmq.'${baseDomain}':4043 --use-gl=angle --password-store=basic
 StartupNotify=true
 Terminal=false
 Icon=/usr/share/kx.as.code/git/kx.as.code/base-vm/images/rabbitmq.png

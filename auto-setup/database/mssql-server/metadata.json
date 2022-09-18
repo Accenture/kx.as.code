@@ -1,0 +1,24 @@
+{
+    "name": "mssql-server",
+    "namespace": "mssql-server",
+    "installation_type": "script",
+    "installation_group_folder": "database",
+    "categories": [
+        "database",
+        "mssql",
+        "server"
+    ],
+    "retry": "false",
+    "Description": "Microsoft SQL 2019 database server.",
+    "shortcut_text": "MSSQL Database",
+    "shortcut_icon": "mssql-server.png",
+    "pre_install_scripts": [
+        "createKubernetesSecret.sh"
+    ],
+    "install_scripts": [
+        "deployMsSqlDatabaseServer.sh"
+    ],
+    "post_install_scripts": [
+        "installMssqlClient.sh"
+    ]
+}

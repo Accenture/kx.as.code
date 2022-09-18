@@ -22,6 +22,7 @@
     "shortcut_icon": "gopass.png",
     "pre_install_scripts": [],
     "post_install_scripts": [
+        "loadInitialPasswordsAndCleanup.sh",
         "createDesktopShortcuts.sh"
     ]
 }

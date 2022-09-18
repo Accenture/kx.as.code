@@ -3,37 +3,32 @@ notifyAllChannels() {
   # Call common function to execute common function start commands, such as setting verbose output etc
   functionStart
 
-  message=${1}
+  local message=${1}
+  local logLevel=${2-info}
+  local actionStatus=${3-unknown}
+  local action=${4-}
+  local notificationTimeout=${5-300000}
 
-  # Set log_level
-  if [[ -n ${2} ]]; then
-    log_level=${2}
+  if [[ "${logLevel}" == "error" ]]; then
+    dialogType="dialog-error"
+    log_error "${message}"
+  elif [[ "${logLevel}" == "warn" ]]; then
+    dialogType="dialog-warning"
+    log_warn "${message}"
   else
-    log_level="info"
+    dialogType="dialog-information"
+    log_info "${message}"
   fi
 
-  # Set action_status
-  if [[ -n ${3} ]]; then
-    action_status=${3}
-  else
-    action_status="unknown"
+  # Change message if task was executed rather than solution installed
+  if [[ "${action}" == "executeTask" ]]; then
+    message=$(echo "${1}" | sed 's/installation/task execution/g' | sed 's/installed/task executed/g')
   fi
 
-    if [[ "${log_level}" == "error" ]]; then
-      dialog_type="dialog-error"
-      log_error "${message}"
-    elif [[ "${log_level}" == "warn" ]]; then
-      dialog_type="dialog-warning"
-      log_warn "${message}"
-    else
-      dialog_type="dialog-information"
-      log_info "${message}"
-    fi
-
-  log_debug notify "${message}" "${dialog_type}"
-  notify "${message}" "${dialog_type}"
-  log_debug addToNotificationQueue "${message}" "${log_level}" "${action_status}"
-  addToNotificationQueue "${message}" "${log_level}" "${action_status}"
+  log_debug notify "${message}" "${dialogType}"
+  notify "${message}" "${dialogType}" "${notificationTimeout}"
+  log_debug addToNotificationQueue "${message}" "${logLevel}" "${actionStatus}"
+  addToNotificationQueue "${message}" "${logLevel}" "${actionStatus}"
 
   # Call common function to execute common function start commands, such as unsetting verbose output etc
   functionEnd

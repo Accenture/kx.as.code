@@ -26,12 +26,20 @@ getComponentInstallationProperties() {
   # Set application environment variables if set in metadata.json
   if [[ "$(cat ${componentMetadataJson} | jq -r '.environment_variables')" != "null" ]]; then
     log_info "Processing environment variables for component ${componentName}"
-    export applicationEnvironmentVariables=$(cat ${componentMetadataJson} | jq -r '.environment_variables | to_entries|map("\(.key)=\(.value|tostring)")|.[] ')
-    if [[ -n ${applicationEnvironmentVariables} ]]; then
-        for environmentVariable in ${applicationEnvironmentVariables}; do
-            export ${environmentVariable}
-        done
-    fi
+
+    applicationEnvironmentVariablesJson=$(cat ${componentMetadataJson} | jq -r '.environment_variables')
+    applicationEnvironmentVariables=$(echo ${applicationEnvironmentVariablesJson} | jq -r 'keys_unsorted | .[]')
+
+    for applicationEnvironmentVariable in ${applicationEnvironmentVariables}
+    do
+        # Export variable with mustach variable replacement
+        export ${applicationEnvironmentVariable}=$(echo "$applicationEnvironmentVariablesJson" | jq -r '.'${applicationEnvironmentVariable}'' | mo)
+        # Export variable with environment variable replacement
+        export ${applicationEnvironmentVariable}=$(eval echo ${!applicationEnvironmentVariable})
+        # Log for debugging purposes
+        log_debug "Export environment variable: ${applicationEnvironmentVariable}=${!applicationEnvironmentVariable}"
+    done
+
   else
     log_info "No environment variables defined for ${componentName}"
   fi

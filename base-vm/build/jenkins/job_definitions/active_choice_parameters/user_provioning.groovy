@@ -62,7 +62,7 @@ try {
             </div>
             <div class="user-cell user-cell-email">
                 <span class="input-box-span">
-                    <input class="input-box user-input-box user-input-box-email" id="user-details-email" type="text"  value="">
+                    <input class="input-box user-input-box user-input-box-email" id="user-details-email" type="text" onkeyup="nospaces(this);" value="">
                 </span>
             </div>
             <div class="user-cell">

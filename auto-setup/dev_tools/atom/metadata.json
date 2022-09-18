@@ -2,7 +2,7 @@
     "name": "atom",
     "namespace": "",
     "installation_type": "script",
-    "installation_group_folder": "core",
+    "installation_group_folder": "dev_tools",
     "environment_variables": {
         "atomVersion": "v1.60.0",
         "atomChecksum": "5c7c0259062b9d4911d2537bfceaff5316f9de111698840a90d7cd497df891a6"

@@ -5,7 +5,7 @@ createDesktopIcon() {
   functionStart
 
   targetDirectory="${1}"
-  urlToOpen=${2}
+  urlToOpen="${2}"
   shortcutText="${3}"
   iconPath="${4}"
   browserOptions="${5}"
@@ -19,7 +19,7 @@ createDesktopIcon() {
   Name=${shortcutText}
   GenericName=${shortcutText}
   Comment=${shortcutText}
-  Exec=/usr/bin/chromium %U ${urlToOpen} --use-gl=angle --password-store=basic ${browserOptions}
+  Exec=${preferredBrowser} %U ${urlToOpen} --use-gl=angle --password-store=basic ${browserOptions}
   StartupNotify=true
   Terminal=false
   Icon=${iconPath}

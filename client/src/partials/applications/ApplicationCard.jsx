@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import EditMenu from "../EditMenu";
-import { TrashCan32, Restart32 } from "@carbon/icons-react";
+import { HiOutlineInformationCircle } from "react-icons/hi";
 import StatusTag from "../StatusTag";
 import StatusPoint from "../StatusPoint";
 import { useState, useEffect, useRef } from "react";
@@ -11,6 +11,8 @@ import LinearProgress from "@mui/material/LinearProgress";
 import axios from "axios";
 import ApplicationStatusActionButton from "./ApplicationStatusActionButton";
 import ApplicationCategoryTag from "../ApplicationCategoryTag";
+import Tooltip from "@mui/material/Tooltip";
+import Checkbox from "@mui/material/Checkbox";
 
 function ApplicationCard(props) {
   const { history } = props;
@@ -20,8 +22,28 @@ function ApplicationCard(props) {
   const [allQueueStatus, setAllQueueStatus] = useState([]);
   const [applicationData, setApplicationData] = useState({});
   const [appQueue, setAppQueue] = useState("undefined");
+  const [isSelected, setIsSelected] = useState(false);
+  const [isHover, setIsHover] = useState(false);
+  const [isHovering, setIsHovering] = useState(false);
 
   const refreshActionButton = useRef(null);
+
+  const selectHandler = () => {
+    setIsSelected(!isSelected);
+    if (isSelected) {
+      props.applicationSelectedCount("select");
+    } else {
+      props.applicationSelectedCount("unselect");
+    }
+  };
+
+  const handleMouseOver = () => {
+    setIsHovering(true);
+  };
+
+  const handleMouseOut = () => {
+    setIsHovering(false);
+  };
 
   var defaultPayload = {
     install_folder: "undefined",
@@ -97,6 +119,50 @@ function ApplicationCard(props) {
         .catch((error) => {
           console.error("There was an error!", error);
         });
+    });
+  };
+
+  const actionHandler = async (installFolder, name, action) => {
+    //TODO -> rewrite notify function
+    //notify("action")
+    getApplicationDataByName().then((appData) => {
+      var payloadObj = {
+        install_folder: installFolder,
+        name: name,
+        action: action,
+        retries: "0",
+      };
+      const applicationPayload = payloadObj;
+
+      if (action === "install") {
+        axios
+          .post(
+            // TODO -> add new endpoint for task actions
+            "http://localhost:5001/api/add/application/pending_queue",
+            applicationPayload
+          )
+          .then(() => {
+            // TODO rewrite to fetchAppsData() + fetchQueuesData()
+            props.fetchApplicationAndQueueData();
+          })
+          .catch((error) => {
+            console.error("Installation Error: ", error);
+          });
+      } else if (action === "uninstall") {
+        axios
+          .get
+          // TODO -> add consume function
+          ()
+          .then(() => {
+            // TODO rewrite to fetchAppsData() + fetchQueuesData()
+            props.fetchApplicationAndQueueData();
+          })
+          .catch((error) => {
+            console.error("Uninstallation Error: ", error);
+          });
+      } else if (action === "taskExecution") {
+        // add post request for task execution
+      }
     });
   };
 
@@ -198,7 +264,7 @@ function ApplicationCard(props) {
 
   useEffect(() => {
     // print queue/ instalation status by setAppName
-    // console.log("App Name: ", props.app.name);
+    console.log("App: ", props.app);
     // console.log("Installation Status: ", props.getQueNameNew(props.app.name));
 
     setUp();
@@ -212,14 +278,14 @@ function ApplicationCard(props) {
         .replace(/\b\w/g, (l) => l.toUpperCase())
     );
     return () => {};
-  }, [appQueue]);
+  }, [appQueue, isSelected]);
 
   const drawAppTags = (appTags) => {
     return appTags.map((appTag, i) => {
       return (
         <ApplicationCategoryTag
           appTag={appTag}
-          keyNo={i}
+          keyId={i}
           addCategoryTofilterTags={props.addCategoryTofilterTags}
         />
       );
@@ -253,7 +319,11 @@ function ApplicationCard(props) {
                       <div className="flex items-center">
                         {/* Icon */}
                         <div className="">
-                          <AppLogo width={"50px"} appName={props.app.name} />
+                          <AppLogo
+                            //height={"40px"}
+                            //width={"40px"}
+                            appName={props.app.name}
+                          />
                           {/* <StatusTag installStatus={props.app.queueName} /> */}
                         </div>
                         <div className="mx-3 flex col-span-6">
@@ -267,6 +337,15 @@ function ApplicationCard(props) {
                                 <StatusPoint installStatus={allQueueStatus} />
                               )}
                               {getTransformedName()}
+                              <Tooltip
+                                title={props.app.Description}
+                                placement="top"
+                                arrow
+                              >
+                                <button className="inline">
+                                  <HiOutlineInformationCircle className="ml-1" />
+                                </button>
+                              </Tooltip>
                             </h2>
                           </div>
                         </div>
@@ -288,6 +367,7 @@ function ApplicationCard(props) {
                   appName={props.app.name}
                   category={props.app.installation_group_folder}
                   applicationInstallHandler={applicationInstallHandler}
+                  applicationUninstallHandler={applicationUninstallHandler}
                   refreshActionButton={refreshActionButton}
                 />
               </div>
@@ -296,18 +376,25 @@ function ApplicationCard(props) {
         </>
       ) : (
         <div
-          className={`flex flex-col col-span-full hover:bg-gray-700 bg-inv3 rounded ${
+          className={`relative flex flex-col col-span-full ${
+            isSelected ? "hover:border-kxBlue" : "hover:bg-gray-700"
+          } hover:bg-gray-700 bg-inv3 rounded border-2 ${
+            isSelected ? "border-kxBlue" : "border-inv3"
+          } hover:border-2 hover:border-gray-600 ${
             props.isListLayout ? "col-span-full" : "sm:col-span-6 xl:col-span-3"
           }`}
           loading="lazy"
+          onMouseOver={handleMouseOver}
+          onMouseOut={handleMouseOut}
+          s
         >
           <div className="p-6">
             <header className="flex justify-between items-start mb-2">
               {/* Icon */}
-              <div className="flex content-start">
+              <div className="">
                 <AppLogo
-                  height={"50px"}
-                  width={"50px"}
+                  //height={"50px"}
+                  // width={"50px"}
                   appName={props.app.name}
                 />
                 {/* <StatusTag installStatus={props.app.queueName} /> */}
@@ -342,8 +429,16 @@ function ApplicationCard(props) {
                   )}
                 </EditMenu>
               )} */}
+              <div className="">
+                <div
+                  className={`${
+                    isHovering || isSelected ? "visible" : "hidden"
+                  }`}
+                >
+                  <Checkbox checked={isSelected} onChange={selectHandler} />
+                </div>
+              </div>
             </header>
-
             <Link to={"/apps/" + getSlug()}>
               {/* Category name */}
               <div className="text-white bg-ghBlack2 rounded p-0 px-1.5 uppercase w-fit inline-block my-2">
@@ -353,12 +448,17 @@ function ApplicationCard(props) {
                 {allQueueStatus != "" && (
                   <StatusPoint installStatus={allQueueStatus} />
                 )}
+
                 {getTransformedName()}
+                <Tooltip title={props.app.Description} placement="top" arrow>
+                  <button className="inline-block">
+                    <HiOutlineInformationCircle className="ml-1 text-base" />
+                  </button>
+                </Tooltip>
               </h2>
             </Link>
             <div className="text-xs font-semibold text-gray-400 uppercase mb-1"></div>
-            <div className="pb-5">{props.app.Description}</div>
-
+            {/* <div className="pb-5 line-clamp-4">{props.app.Description}</div> */}
             <div className="">
               {/* {console.log("in render queue: ", appQueue)} */}
               {/* {appQueue === "pending_queue" && (
@@ -430,15 +530,34 @@ function ApplicationCard(props) {
             </div>
             {/* Seperator */}
             <div className="pb-3 mb-3 border-b-2 border-gray-600 w-full"></div>
-
-            <div className="float-left">
+            <div className="float-left h-12">
               <ul className="float-left">
                 {props.app.categories && drawAppTags(props.app.categories)}
               </ul>
             </div>
           </div>
-
           <div className="flex-grow"></div>
+          {/* <div
+            className={`w-full bg-gray-500 absolute bottom-0 transform transition-all duration-300 ease-in ${
+              isHovering
+                ? "visible transform transition duration-300 h-20"
+                : "scale-y-0 h-0"
+            }`}
+          >
+            Test
+          </div> */}
+
+          <div
+            className={`w-full bg-gray-700 absolute bottom-[-82px] h-20 p-5 ${
+              isHovering
+                ? "h-20 visible transition-transform translate-y-[-82px] ease-out duration-500"
+                : ""
+            }`}
+          >
+            <span className="font-bold text-gray-400">Available Tasks: </span>
+            {props.app.available_tasks ? props.app.available_tasks.length : 0}
+          </div>
+          <div className="w-full absolute bg-inv1 h-20 bottom-[-82px]"></div>
         </div>
       )}
     </>

@@ -21,3 +21,8 @@ Terminal=false
 Type=Application
 Categories=Development;
 ''' | sudo tee /usr/share/applications/postman.desktop
+
+# Copy Desktop Icon to user's Applications folder
+shortcutText=$(cat ${componentMetadataJson} | jq -r '.shortcut_text')
+cp -f /usr/share/applications/postman.desktop /home/${baseUser}/Desktop/Applications/"${shortcutText}"
+chmod 755 /home/${baseUser}/Desktop/Applications/"${shortcutText}"

@@ -8,18 +8,13 @@ else
     GIT_SOURCE_TOKEN_ENCODED=""
 fi
 
+GIT_SOURCE_USER=$(echo ${GIT_SOURCE_USER} | sed 's/@/%40/g')
+
 # Make directories for KX.AS.CODE checkout
 sudo mkdir -p /home/${VM_USER}/Desktop/
 sudo chown -R ${VM_USER}:${VM_USER} /home/${VM_USER}
 
 gitSourceUrl=$(echo "${GIT_SOURCE_URL}" | sed 's;https://;;g')
-
-
-if [[ -n ${GIT_SOURCE_TOKEN_ENCODED} ]]; then
-    gitSourceCloneUrl="https://${GIT_SOURCE_USER}:${GIT_SOURCE_TOKEN_ENCODED}@${gitSourceUrl}"
-else
-    gitSourceCloneUrl="https://${gitSourceUrl}"
-fi
 
 if [[ -z ${GIT_SOURCE_BRANCH} ]]; then
     gitSourceBranch="main"
@@ -30,7 +25,11 @@ fi
 sudo mkdir -p ${SHARED_GIT_REPOSITORIES}
 
 # Clone KX.AS.CODE GIT repository into VM
-sudo git clone --depth 1 --branch ${gitSourceBranch} ${gitSourceCloneUrl} ${SHARED_GIT_REPOSITORIES}/kx.as.code
+if [[ -n ${GIT_SOURCE_USER} ]]; then
+        sudo git clone --depth 1 --branch ${gitSourceBranch} https://"${GIT_SOURCE_USER}":"${GIT_SOURCE_TOKEN_ENCODED}"@${gitSourceUrl} ${SHARED_GIT_REPOSITORIES}/kx.as.code
+else
+        sudo git clone --depth 1 --branch ${gitSourceBranch} https://${gitSourceUrl} ${SHARED_GIT_REPOSITORIES}/kx.as.code
+fi
 sudo chown -R ${VM_USER}:${VM_USER} ${SHARED_GIT_REPOSITORIES}
 sudo ln -s ${SHARED_GIT_REPOSITORIES}/kx.as.code /home/${VM_USER}/Desktop/"KX.AS.CODE Source"
 
@@ -40,9 +39,6 @@ sudo git config credential.helper 'cache --timeout=3600'
 if [[ -n ${GIT_SOURCE_TOKEN_ENCODED} ]]; then
     sudo sed -i 's/'${GIT_SOURCE_USER}':'${GIT_SOURCE_TOKEN_ENCODED}'@//g' ${SHARED_GIT_REPOSITORIES}/kx.as.code/.git/config
 fi
-
-# Configure Typora to show Welcome message after login
-sudo -H -i -u ${VM_USER} sh -c "mkdir -p /home/${VM_USER}/.config/Typora/"
 
 # Install daemonizer for starting KX.AS.CODE poller as brackground service
 sudo apt-get install -y daemonize
@@ -62,7 +58,7 @@ User=0
 Type=forking
 Environment=VM_USER=${VM_USER}
 Environment=KUBEDIR=${INSTALLATION_WORKSPACE}
-ExecStart=daemonize -p /run/kxascode.pid -a -o ${INSTALLATION_WORKSPACE}/kx.as.code_autoSetup.log -e ${INSTALLATION_WORKSPACE}/kx.as.code_autoSetup.err -l ${INSTALLATION_WORKSPACE}/kx.as.code_autoSetup.lock /bin/bash -x /usr/share/kx.as.code/git/kx.as.code/auto-setup/pollActionQueue.sh
+ExecStart=daemonize -p /run/kxascode.pid -a -o ${INSTALLATION_WORKSPACE}/kx.as.code_autoSetup.log -e ${INSTALLATION_WORKSPACE}/kx.as.code_autoSetup.log -l ${INSTALLATION_WORKSPACE}/kx.as.code_autoSetup.lock /bin/bash -x /usr/share/kx.as.code/git/kx.as.code/auto-setup/pollActionQueue.sh
 TimeoutSec=infinity
 Restart=always
 RestartSec=5s
@@ -127,15 +123,18 @@ vmUser=$(id -nu)
 vmUserId=$(id -u)
 KX_HOME='${KX_HOME}'
 SHARED_GIT_REPOSITORIES=${KX_HOME}/git
-/usr/bin/typora ${SHARED_GIT_REPOSITORIES}/kx.as.code/README.md &
+export BROWSER=$(readlink -f /etc/alternatives/x-www-browser)
+/usr/local/bin/grip -b ${SHARED_GIT_REPOSITORIES}/kx.as.code/README.md &
 
-WINDOW_NAME="Typora"
+WINDOW_NAME="README.md - Grip"
+
 for i in {1..50}
 do
         if [[ -n $(wmctrl -lG | grep "$WINDOW_NAME" || true) ]]; then
                 echo "Found window: $(wmctrl -lG | grep "$WINDOW_NAME")"
                 break;
         fi
+        sleep 0.5
 done
 
 IFS='\''x'\'' read sw sh < <(xdpyinfo | grep dimensions | grep -o '\''[0-9x]*'\'' | head -n1)
@@ -151,10 +150,14 @@ xset s off
 xset s noblank
 xset -dpms
 
+# Install NeoVIM plugins
+nvim -es -u ~/.config/nvim/init.vim -i NONE -c "PlugInstall" -c "qa"
+
+# Remove welcome script from autostart folder
 rm -f $HOME/.config/autostart-scripts/showWelcome.sh
 ''' | sudo tee /home/${VM_USER}/.config/autostart-scripts/showWelcome.sh
 
-sudo chmod 755  /home/${VM_USER}/.config/autostart-scripts/*.sh
+sudo chmod 755 /home/${VM_USER}/.config/autostart-scripts/*.sh
 sudo chown ${VM_USER}:${VM_USER} /home/${VM_USER}/.config/autostart-scripts/*.sh
 sudo cp -f /home/${VM_USER}/.config/autostart-scripts/showWelcome.sh ${INSTALLATION_WORKSPACE}
 

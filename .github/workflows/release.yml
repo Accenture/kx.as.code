@@ -2,8 +2,8 @@ name: release-process
 on: workflow_dispatch
 
 env:
-  RELEASE: v0.8.10
-  SINCE_TAG: v0.8.9
+  RELEASE: v0.8.11
+  SINCE_TAG: v0.8.10
 
 jobs:
   changelog:
@@ -31,19 +31,15 @@ jobs:
           SHORT_CHANGELOG="${SHORT_CHANGELOG//$'\r'/'%0D'}"
           SHORT_CHANGELOG="${SHORT_CHANGELOG//$'\r'/'%0D'}"
           echo ::set-output name=changelog::$(echo -e "$SHORT_CHANGELOG\n")
+          echo ::set-output name=webhook_url_secret::$(echo -e "WEBHOOK_URL_${GITHUB_REF##*/}")
       - name: Archive-CHANGELOG.md
         uses: actions/upload-artifact@v3
         with:
           name: CHANGELOG.md
           path: ./CHANGELOG.md
-      - name: Archive-HISTORY.md
-        uses: actions/upload-artifact@v3
-        with:
-          name: HISTORY.md
-          path: ./HISTORY.md
       - name: Send CHANGELOG to Discord
         env:
-          DISCORD_WEBHOOK: ${{ secrets.WEBHOOK_URL }}
+          DISCORD_WEBHOOK: "${{ secrets[ steps.vars.outputs.webhook_url_secret ] }}"
         uses: Ilshidur/action-discord@master
         with:
           args: "${{ steps.vars.outputs.changelog }}"
@@ -51,14 +47,14 @@ jobs:
         run: |
           git config user.name "GitHub Actions"
           git config user.email noreply@github.com
-          git add ./CHANGELOG.md ./HISTORY.md
-          git commit -m 'Update Changelog and History file for release ${{ env.RELEASE }}'
+          git add ./CHANGELOG.md
+          git commit -m 'Update Changelog file for release ${{ env.RELEASE }}'
           git remote set-url origin https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/${{ github.repository }}          
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v4
         with:
           commit-message: Upload Changelog ${{ env.RELEASE }}
           title: Upload Changelog
-          body: Upload Changelog and History file for release ${{ env.RELEASE }}
+          body: Upload Changelog file for release ${{ env.RELEASE }}
           branch: feature/changelog-for-${{ env.RELEASE }}
           token: ${{ secrets.GH_TOKEN }}

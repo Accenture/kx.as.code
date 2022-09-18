@@ -5,7 +5,7 @@ notify() {
 
   openDisplays=$(w -oush | grep -Eo ' :[0-9]+' | sort -u -t\  -k1,1 | cut -d \  -f 2 || true)
   log_info "Detected unique displays: ${openDisplays}"
-  messageTimeout=300000
+  messageTimeout=${3-300000}
   messageTitle="KX.AS.CODE Notification"
   message=${1}
   messageType=${2}

@@ -9,6 +9,9 @@ if [[ -z $(which raspinfo) ]]; then
   # Install KDE-Plasma GUI
   sudo DEBIAN_FRONTEND=noninteractive apt install -y kde-plasma-desktop
 
+  # Uninstall default KDE Konqueror browser
+  sudo apt-get remove -y konqueror
+
   # Change SDDM Login Screen
   sudo apt-get install -y qtbase5-dev qtchooser qt5-qmake qtbase5-dev-tools
   sudo apt install -y \

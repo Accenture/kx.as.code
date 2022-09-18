@@ -11,16 +11,16 @@
           <randomName>choice-parameter-178291677290751</randomName>
           <visibleItemCount>1</visibleItemCount>
           <script class="org.biouno.unochoice.model.GroovyScript">
-            <secureScript plugin="script-security@1145.vb_cf6cf6ed960">
+            <secureScript plugin="script-security@1175.v4b_d517d6db_f0">
               <script>try {
-                evaluate(new File("job_definitions/active_choice_parameters/header.groovy"))
+                evaluate(new File(&quot;job_definitions/active_choice_parameters/header.groovy&quot;))
                 } catch(e) {
-                println("Something went wrong loading the GROOVY file --> header: ${e}")
+                println(&quot;Something went wrong loading the GROOVY file --&gt; header: ${e}&quot;)
                 }
               </script>
               <sandbox>false</sandbox>
             </secureScript>
-            <secureFallbackScript plugin="script-security@1145.vb_cf6cf6ed960">
+            <secureFallbackScript plugin="script-security@1175.v4b_d517d6db_f0">
               <script></script>
               <sandbox>false</sandbox>
             </secureFallbackScript>
@@ -37,16 +37,16 @@
           <randomName>choice-parameter-754202547224400</randomName>
           <visibleItemCount>1</visibleItemCount>
           <script class="org.biouno.unochoice.model.GroovyScript">
-            <secureScript plugin="script-security@1145.vb_cf6cf6ed960">
+            <secureScript plugin="script-security@1175.v4b_d517d6db_f0">
               <script>try {
-                evaluate(new File("job_definitions/active_choice_parameters/select_profile_and_check_prereqs.groovy"))
+                evaluate(new File(&quot;job_definitions/active_choice_parameters/select_profile_and_check_prereqs.groovy&quot;))
                 } catch(e) {
-                println("Something went wrong loading the GROOVY file --> select_profile_and_check_prereqs.groovy: ${e}")
+                println(&quot;Something went wrong loading the GROOVY file --&gt; select_profile_and_check_prereqs.groovy: ${e}&quot;)
                 }
               </script>
               <sandbox>false</sandbox>
             </secureScript>
-            <secureFallbackScript plugin="script-security@1145.vb_cf6cf6ed960">
+            <secureFallbackScript plugin="script-security@1175.v4b_d517d6db_f0">
               <script></script>
               <sandbox>false</sandbox>
             </secureFallbackScript>
@@ -63,16 +63,16 @@
           <randomName>choice-parameter-100850523030854</randomName>
           <visibleItemCount>1</visibleItemCount>
           <script class="org.biouno.unochoice.model.GroovyScript">
-            <secureScript plugin="script-security@1145.vb_cf6cf6ed960">
+            <secureScript plugin="script-security@1175.v4b_d517d6db_f0">
               <script>try {
-                evaluate(new File("job_definitions/active_choice_parameters/general_parameters.groovy"))
+                evaluate(new File(&quot;job_definitions/active_choice_parameters/general_parameters.groovy&quot;))
                 } catch(e) {
-                println("Something went wrong loading the GROOVY file --> general_parameters.groovy: ${e}")
+                println(&quot;Something went wrong loading the GROOVY file --&gt; general_parameters.groovy: ${e}&quot;)
                 }
               </script>
               <sandbox>false</sandbox>
             </secureScript>
-            <secureFallbackScript plugin="script-security@1145.vb_cf6cf6ed960">
+            <secureFallbackScript plugin="script-security@1175.v4b_d517d6db_f0">
               <script></script>
               <sandbox>false</sandbox>
             </secureFallbackScript>
@@ -89,16 +89,16 @@
           <randomName>choice-parameter-17383888424897</randomName>
           <visibleItemCount>1</visibleItemCount>
           <script class="org.biouno.unochoice.model.GroovyScript">
-            <secureScript plugin="script-security@1145.vb_cf6cf6ed960">
+            <secureScript plugin="script-security@1175.v4b_d517d6db_f0">
               <script>try {
-                evaluate(new File("job_definitions/active_choice_parameters/properties_main_node.groovy"))
+                evaluate(new File(&quot;job_definitions/active_choice_parameters/properties_main_node.groovy&quot;))
                 } catch(e) {
-                println("Something went wrong loading the GROOVY file --> properties_main_node.groovy: ${e}")
+                println(&quot;Something went wrong loading the GROOVY file --&gt; properties_main_node.groovy: ${e}&quot;)
                 }
               </script>
               <sandbox>false</sandbox>
             </secureScript>
-            <secureFallbackScript plugin="script-security@1145.vb_cf6cf6ed960">
+            <secureFallbackScript plugin="script-security@1175.v4b_d517d6db_f0">
               <script></script>
               <sandbox>false</sandbox>
             </secureFallbackScript>
@@ -115,16 +115,16 @@
           <randomName>choice-parameter-191340721703028</randomName>
           <visibleItemCount>1</visibleItemCount>
           <script class="org.biouno.unochoice.model.GroovyScript">
-            <secureScript plugin="script-security@1145.vb_cf6cf6ed960">
+            <secureScript plugin="script-security@1175.v4b_d517d6db_f0">
               <script>try {
-                evaluate(new File("job_definitions/active_choice_parameters/properties_worker_node.groovy"))
+                evaluate(new File(&quot;job_definitions/active_choice_parameters/properties_worker_node.groovy&quot;))
                 } catch(e) {
-                println("Something went wrong loading the GROOVY file --> properties_worker_node.groovy: ${e}")
+                println(&quot;Something went wrong loading the GROOVY file --&gt; properties_worker_node.groovy: ${e}&quot;)
                 }
               </script>
               <sandbox>false</sandbox>
             </secureScript>
-            <secureFallbackScript plugin="script-security@1145.vb_cf6cf6ed960">
+            <secureFallbackScript plugin="script-security@1175.v4b_d517d6db_f0">
               <script></script>
               <sandbox>false</sandbox>
             </secureFallbackScript>
@@ -141,16 +141,16 @@
           <randomName>choice-parameter-249885383324784</randomName>
           <visibleItemCount>1</visibleItemCount>
           <script class="org.biouno.unochoice.model.GroovyScript">
-            <secureScript plugin="script-security@1145.vb_cf6cf6ed960">
+            <secureScript plugin="script-security@1175.v4b_d517d6db_f0">
               <script>try {
-                evaluate(new File("job_definitions/active_choice_parameters/storage_parameters.groovy"))
+                evaluate(new File(&quot;job_definitions/active_choice_parameters/storage_parameters.groovy&quot;))
                 } catch(e) {
-                println("Something went wrong loading the GROOVY file --> storage_parameters.groovy: ${e}")
+                println(&quot;Something went wrong loading the GROOVY file --&gt; storage_parameters.groovy: ${e}&quot;)
                 }
               </script>
               <sandbox>false</sandbox>
             </secureScript>
-            <secureFallbackScript plugin="script-security@1145.vb_cf6cf6ed960">
+            <secureFallbackScript plugin="script-security@1175.v4b_d517d6db_f0">
               <script></script>
               <sandbox>false</sandbox>
             </secureFallbackScript>
@@ -167,16 +167,16 @@
           <randomName>choice-parameter-289437698944100</randomName>
           <visibleItemCount>1</visibleItemCount>
           <script class="org.biouno.unochoice.model.GroovyScript">
-            <secureScript plugin="script-security@1145.vb_cf6cf6ed960">
+            <secureScript plugin="script-security@1175.v4b_d517d6db_f0">
               <script>try {
-                evaluate(new File("job_definitions/active_choice_parameters/select_templates.groovy"))
+                evaluate(new File(&quot;job_definitions/active_choice_parameters/select_templates.groovy&quot;))
                 } catch(e) {
-                println("Something went wrong loading the GROOVY file --> select_templates.groovy: ${e}")
+                println(&quot;Something went wrong loading the GROOVY file --&gt; select_templates.groovy: ${e}&quot;)
                 }
               </script>
               <sandbox>false</sandbox>
             </secureScript>
-            <secureFallbackScript plugin="script-security@1145.vb_cf6cf6ed960">
+            <secureFallbackScript plugin="script-security@1175.v4b_d517d6db_f0">
               <script></script>
               <sandbox>false</sandbox>
             </secureFallbackScript>
@@ -193,16 +193,16 @@
           <randomName>choice-parameter-12643302043893</randomName>
           <visibleItemCount>1</visibleItemCount>
           <script class="org.biouno.unochoice.model.GroovyScript">
-            <secureScript plugin="script-security@1145.vb_cf6cf6ed960">
+            <secureScript plugin="script-security@1175.v4b_d517d6db_f0">
               <script>try {
-                evaluate(new File("job_definitions/active_choice_parameters/user_provioning.groovy"))
+                evaluate(new File(&quot;job_definitions/active_choice_parameters/user_provioning.groovy&quot;))
                 } catch(e) {
-                println("Something went wrong loading the GROOVY file --> user_provioning.groovy: ${e}")
+                println(&quot;Something went wrong loading the GROOVY file --&gt; user_provioning.groovy: ${e}&quot;)
                 }
               </script>
               <sandbox>false</sandbox>
             </secureScript>
-            <secureFallbackScript plugin="script-security@1145.vb_cf6cf6ed960">
+            <secureFallbackScript plugin="script-security@1175.v4b_d517d6db_f0">
               <script></script>
               <sandbox>false</sandbox>
             </secureFallbackScript>
@@ -215,20 +215,46 @@
           <omitValueField>true</omitValueField>
         </org.biouno.unochoice.DynamicReferenceParameter>
         <org.biouno.unochoice.DynamicReferenceParameter plugin="uno-choice@2.6.1">
-          <name>REVIEW_AND_LAUNCH</name>
-          <randomName>choice-parameter-754202555857300</randomName>
+          <name>CUSTOM_VARIABLES</name>
+          <randomName>choice-parameter-484278803633700</randomName>
           <visibleItemCount>1</visibleItemCount>
           <script class="org.biouno.unochoice.model.GroovyScript">
-            <secureScript plugin="script-security@1145.vb_cf6cf6ed960">
+            <secureScript plugin="script-security@1175.v4b_d517d6db_f0">
               <script>try {
-                evaluate(new File("job_definitions/active_choice_parameters/config_review_and_launch.groovy"))
+                evaluate(new File(&quot;job_definitions/active_choice_parameters/custom_variables.groovy&quot;))
                 } catch(e) {
-                println("Something went wrong loading the GROOVY file --> config_review_and_launch.groovy: ${e}")
+                println(&quot;Something went wrong loading the GROOVY file --&gt; custom_variables.groovy: ${e}&quot;)
                 }
               </script>
               <sandbox>false</sandbox>
             </secureScript>
-            <secureFallbackScript plugin="script-security@1145.vb_cf6cf6ed960">
+            <secureFallbackScript plugin="script-security@1175.v4b_d517d6db_f0">
+              <script></script>
+              <sandbox>false</sandbox>
+            </secureFallbackScript>
+          </script>
+          <projectName>KX.AS.CODE_Launcher</projectName>
+          <projectFullName>KX.AS.CODE_Launcher</projectFullName>
+          <parameters class="linked-hash-map"/>
+          <referencedParameters>PROFILE</referencedParameters>
+          <choiceType>ET_FORMATTED_HTML</choiceType>
+          <omitValueField>false</omitValueField>
+        </org.biouno.unochoice.DynamicReferenceParameter>
+        <org.biouno.unochoice.DynamicReferenceParameter plugin="uno-choice@2.6.1">
+          <name>REVIEW_AND_LAUNCH</name>
+          <randomName>choice-parameter-754202555857300</randomName>
+          <visibleItemCount>1</visibleItemCount>
+          <script class="org.biouno.unochoice.model.GroovyScript">
+            <secureScript plugin="script-security@1175.v4b_d517d6db_f0">
+              <script>try {
+                evaluate(new File(&quot;job_definitions/active_choice_parameters/config_review_and_launch.groovy&quot;))
+                } catch(e) {
+                println(&quot;Something went wrong loading the GROOVY file --&gt; config_review_and_launch.groovy: ${e}&quot;)
+                }
+              </script>
+              <sandbox>false</sandbox>
+            </secureScript>
+            <secureFallbackScript plugin="script-security@1175.v4b_d517d6db_f0">
               <script></script>
               <sandbox>false</sandbox>
             </secureFallbackScript>
@@ -245,16 +271,16 @@
           <randomName>choice-parameter-754202556275600</randomName>
           <visibleItemCount>1</visibleItemCount>
           <script class="org.biouno.unochoice.model.GroovyScript">
-            <secureScript plugin="script-security@1145.vb_cf6cf6ed960">
+            <secureScript plugin="script-security@1175.v4b_d517d6db_f0">
               <script>try {
-                evaluate(new File("job_definitions/active_choice_parameters/profile_json_update.groovy"))
+                evaluate(new File(&quot;job_definitions/active_choice_parameters/profile_json_update.groovy&quot;))
                 } catch(e) {
-                println("Something went wrong loading the GROOVY file --> profile_json_update.groovy: ${e}")
+                println(&quot;Something went wrong loading the GROOVY file --&gt; profile_json_update.groovy: ${e}&quot;)
                 }
               </script>
               <sandbox>false</sandbox>
             </secureScript>
-            <secureFallbackScript plugin="script-security@1145.vb_cf6cf6ed960">
+            <secureFallbackScript plugin="script-security@1175.v4b_d517d6db_f0">
               <script></script>
               <sandbox>false</sandbox>
             </secureFallbackScript>
@@ -262,7 +288,7 @@
           <projectName>KX.AS.CODE_Launcher</projectName>
           <projectFullName>KX.AS.CODE_Launcher</projectFullName>
           <parameters class="linked-hash-map"/>
-          <referencedParameters>PROFILE, GENERAL_PARAMETERS, KX_MAIN_NODES_CONFIG, KX_WORKER_NODES_CONFIG, STORAGE_PARAMETERS, TEMPLATE_SELECTOR, USER_PROVISIONING</referencedParameters>
+          <referencedParameters>PROFILE, GENERAL_PARAMETERS, KX_MAIN_NODES_CONFIG, KX_WORKER_NODES_CONFIG, STORAGE_PARAMETERS, TEMPLATE_SELECTOR, USER_PROVISIONING, CUSTOM_VARIABLES</referencedParameters>
           <choiceType>ET_FORMATTED_HTML</choiceType>
           <omitValueField>true</omitValueField>
         </org.biouno.unochoice.DynamicReferenceParameter>
@@ -271,16 +297,16 @@
           <randomName>choice-parameter-754202556709100</randomName>
           <visibleItemCount>1</visibleItemCount>
           <script class="org.biouno.unochoice.model.GroovyScript">
-            <secureScript plugin="script-security@1145.vb_cf6cf6ed960">
+            <secureScript plugin="script-security@1175.v4b_d517d6db_f0">
               <script>try {
-                evaluate(new File("job_definitions/active_choice_parameters/config_panel_navigator.groovy"))
+                evaluate(new File(&quot;job_definitions/active_choice_parameters/config_panel_navigator.groovy&quot;))
                 } catch(e) {
-                println("Something went wrong loading the GROOVY file --> config_panel_navigator.groovy: ${e}")
+                println(&quot;Something went wrong loading the GROOVY file --&gt; config_panel_navigator.groovy: ${e}&quot;)
                 }
               </script>
               <sandbox>false</sandbox>
             </secureScript>
-            <secureFallbackScript plugin="script-security@1145.vb_cf6cf6ed960">
+            <secureFallbackScript plugin="script-security@1175.v4b_d517d6db_f0">
               <script></script>
               <sandbox>false</sandbox>
             </secureFallbackScript>

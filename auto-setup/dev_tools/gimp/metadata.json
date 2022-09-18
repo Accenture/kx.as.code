@@ -1,0 +1,14 @@
+{
+    "name": "gimp",
+    "namespace": "",
+    "installation_type": "script",
+    "installation_group_folder": "dev_tools",
+    "install_scripts": [
+        "installGimp.sh"
+    ],
+    "Description": "GIMP is a free and open-source raster graphics editor used for image manipulation and image editing, free-form drawing, transcoding between different image file formats, and more specialized tasks.",
+    "shortcut_text": "Gimp",
+    "shortcut_icon": "gimp.png",
+    "pre_install_scripts": [],
+    "post_install_scripts": []
+}

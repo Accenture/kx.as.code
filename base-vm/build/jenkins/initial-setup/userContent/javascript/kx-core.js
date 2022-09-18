@@ -1277,6 +1277,7 @@ function hideParameterDivs() {
         "headline-storage-div",
         "templates-div",
         "user-provisioning-div",
+        "custom-variables-div",
         "review-and-launch-div"
     ];
 
@@ -1348,6 +1349,7 @@ function change_panel_selection(config_panel) {
         "config-panel-storage-config",
         "config-panel-template-selection",
         "config-panel-user-provisioning",
+        "config-panel-custom-variables",
         "config-panel-kx-summary-start"
     ];
     let configPanelIcon
@@ -1396,13 +1398,17 @@ function change_panel_selection(config_panel) {
                     break;
                 case "config-panel-user-provisioning":
                     moveDivToConfigPanel("user-provisioning-div");
-                    updateNavigationFooter("config-panel-template-selection", "config-panel-kx-summary-start");
+                    updateNavigationFooter("config-panel-template-selection", "config-panel-custom-variables");
+                    break;
+                case "config-panel-custom-variables":
+                    moveDivToConfigPanel("custom-variables-div");
+                    updateNavigationFooter("config-panel-user-provisioning", "config-panel-kx-summary-start");
                     break;
                 case "config-panel-kx-summary-start":
                     populateReviewTable();
                     getBuildJobListForProfile('KX.AS.CODE_Runtime_Actions', 'kx-launch');
                     moveDivToConfigPanel("review-and-launch-div");
-                    updateNavigationFooter("config-panel-user-provisioning", "");
+                    updateNavigationFooter("config-panel-custom-variables", "");
                     break;
             }
         } else {
@@ -1655,13 +1661,19 @@ function updateProfileSelection(selectedProfileIndex) {
     if (sessionStorage.getItem('hasCodeRunBefore') === null) {
         if ( vboxExecutableExists === "true" && vboxVagrantPluginInstalled === "true" ) {
             defaultProfile = "virtualbox";
+            updateStartModeSelection(document.getElementById("virtualbox-profile-selected-startup-mode").value);
+            updateOrchestratorSelection(document.getElementById("virtualbox-profile-selected-orchestrator").value);
             if (selectedProfile === "virtualbox") { selectedProfileCheckResult = "full"; }
             prerequisitesCheckResult = "full";
         } else if ( vmwareExecutableExists === "true" && vmwareVagrantPluginInstalled === "true" ) {
             defaultProfile = "vmware-desktop";
+            updateStartModeSelection(document.getElementById("vmware-desktop-profile-selected-startup-mode").value);
+            updateOrchestratorSelection(document.getElementById("vmware-desktop-profile-selected-orchestrator").value);
             prerequisitesCheckResult = "full";
         } else if ( parallelsExecutableExists === "true" && parallelsPluginInstalled === "true" ) {
             defaultProfile = "parallels";
+            updateStartModeSelection(document.getElementById("parallels-profile-selected-startup-mode").value);
+            updateOrchestratorSelection(document.getElementById("parallels-profile-selected-orchestrator").value);
             prerequisitesCheckResult = "full";
         } else {
             prerequisitesCheckResult = "failed";
@@ -1676,10 +1688,16 @@ function updateProfileSelection(selectedProfileIndex) {
     if (sessionStorage.getItem('hasCodeRunBefore') !== null) {
         if ( selectedProfile === "virtualbox" && vboxExecutableExists === "true" && vboxVagrantPluginInstalled === "true" ) {
             selectedProfileCheckResult = "full";
+            updateStartModeSelection(document.getElementById("virtualbox-profile-selected-startup-mode").value);
+            updateOrchestratorSelection(document.getElementById("virtualbox-profile-selected-orchestrator").value);
         } else if ( selectedProfile === "vmware-desktop" && vmwareExecutableExists === "true" && vmwareVagrantPluginInstalled === "true" ) {
             selectedProfileCheckResult = "full";
+            updateStartModeSelection(document.getElementById("vmware-desktop-profile-selected-startup-mode").value);
+            updateOrchestratorSelection(document.getElementById("vmware-desktop-profile-selected-orchestrator").value);
         } else if ( selectedProfile === "parallels" && parallelsExecutableExists === "true" && parallelsPluginInstalled === "true" ) {
             selectedProfileCheckResult = "full";
+            updateStartModeSelection(document.getElementById("parallels-profile-selected-startup-mode").value);
+            updateOrchestratorSelection(document.getElementById("parallels-profile-selected-orchestrator").value);
         } else {
             selectedProfileCheckResult = "failed";
         }
@@ -1969,3 +1987,88 @@ function getProfilePath() {
     return concatenatedProfileSelection[0];
 }
 
+function buildInitialCustomVariablesTableFromJson(customVariablesJsonFileContent) {
+    const customVariablesJson = JSON.parse(customVariablesJsonFileContent);
+    for (let customVariable of customVariablesJson.config.customVariables) {
+        addCustomVariableToTable(customVariable.key, customVariable.value);
+    }
+}
+
+function checkIfCustomVariableAlreadyExistsInTable(customVariableKey) {
+    let addCustomVariableBoolean = true;
+    for ( let i=0; i<document.getElementsByClassName('custom-variable-cell-key').length; i++ ){
+        if( document.getElementsByClassName('custom-variable-cell-key')[i].innerText.includes(customVariableKey) ) {
+            addCustomVariableBoolean = false;
+            break;
+        }
+    }
+    return addCustomVariableBoolean
+}
+
+function addCustomVariableToTable( customVariableKey, customVariableValue ) {
+
+    let addCustomVariableBoolean;
+
+    if (!customVariableKey) {
+        customVariableKey = document.getElementById("custom-variable-key").value;
+        customVariableValue = document.getElementById("custom-variable-value").value;
+    }
+
+    addCustomVariableBoolean = checkIfCustomVariableAlreadyExistsInTable(customVariableKey);
+
+    if ( addCustomVariableBoolean ) {
+        let tableRowHtml = '<div class="custom-variable-cell-key" id="key_' + customVariableKey + '">' + customVariableKey + '</div>' +
+            '<div class="custom-variable-cell" id="value_' + customVariableKey + '">' + customVariableValue + '</div>' +
+            '<div class="custom-variable-image-cell"><img src="/userContent/icons/delete.svg" title="remove custom variable" alt="remove custom-variable" onclick="removeCustomVariableFromTable(&quot;' + customVariableKey + '&quot;);"></div>';
+        let customVariablesTableDiv = document.createElement('div');
+        customVariablesTableDiv.className = 'custom-variable-row-added';
+        customVariablesTableDiv.id = customVariableKey;
+        customVariablesTableDiv.innerHTML = tableRowHtml;
+        document.getElementById('custom-variable-row-group').appendChild(customVariablesTableDiv);
+        buildCustomVariablesJsonFromDivTable()
+    }
+
+}
+
+function removeCustomVariableFromTable(customVariableTableRowDivToRemove) {
+    let customVariableRowToDeleteElement = document.getElementById(customVariableTableRowDivToRemove);
+    customVariableRowToDeleteElement.remove();
+    buildCustomVariablesJsonFromDivTable()
+}
+
+function getCustomVariablesTableRows() {
+    let divRowList = [];
+    let everyChild = document.querySelectorAll(".custom-variable-row-added");
+    for (let i = 0; i<everyChild.length; i++) {
+        if ( everyChild[i].id !== null && everyChild[i].id !== "") {
+            divRowList.push(everyChild[i].id);
+        }
+    }
+    return divRowList;
+}
+
+function buildCustomVariablesJsonFromDivTable() {
+    let customVariableTableRows = getCustomVariablesTableRows();
+    let customVariableJsonNodes = [];
+    let customVariableJsonNode;
+    let customVariableRowElement;
+    let customVariableKey;
+    let customVariableValue;
+    for (let i = 0; i<customVariableTableRows.length; i++) {
+        customVariableRowElement = document.getElementById(customVariableTableRows[i]).id;
+        customVariableKey = document.getElementById("key_" + customVariableRowElement).innerText;
+        customVariableValue = document.getElementById("value_" + customVariableRowElement).innerText;
+        customVariableJsonNode = '{ "key": "' + customVariableKey + '", "value": "' + customVariableValue + '"}';
+        customVariableJsonNodes.push(customVariableJsonNode);
+    }
+    let allCustomVariablesJson = '{ "config": { "customVariables": [' + customVariableJsonNodes.toString() + '] } }';
+    document.getElementById('concatenated-custom-variables-list').value = allCustomVariablesJson;
+    triggerChoiceParameterUpdate('concatenated-custom-variables-list');
+
+}
+
+function nospaces(t){
+    if(t.value.match(/\s/g)) {
+        t.value = t.value.replace(/\s/g, '');
+    }
+}

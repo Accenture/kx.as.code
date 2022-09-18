@@ -1,0 +1,12 @@
+{
+  "title": "Examples Group 1",
+  "description": "Group used to show specific use cases and for debugging changes and enhancements to framework",
+  "action_queues": {
+    "install": [
+      {
+        "install_folder": "examples",
+        "name": "hipster-shop"
+      }
+    ]
+  }
+}

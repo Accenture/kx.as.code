@@ -1,16 +1,28 @@
 #!/bin/bash -x
 set -euo pipefail
 
+# Update SKEL Desktop files with correct browser path
+export preferredBrowser=$(readlink -f /etc/alternatives/x-www-browser)
+if [[ "${preferredBrowser}" == "/usr/bin/chromium" ]]; then
+  export preferredBrowserIcon="chromium"
+else
+  export preferredBrowserIcon="google-chrome"
+fi
+desktopFiles=$(find /usr/share/kx.as.code/workspace/skel/Desktop/*.desktop)
+for desktopFile in ${desktopFiles}
+do
+  cat "${desktopFile}" | /usr/local/bin/mo | sudo tee "${desktopFile}_tmp"
+  if [ -s "${desktopFile}_tmp" ]; then
+      sudo mv "${desktopFile}_tmp" "${desktopFile}"
+  fi
+done
+
 # Copy Skel
 sudo cp -rfT ${INSTALLATION_WORKSPACE}/skel /home/${VM_USER}
 sudo cp -rfT ${INSTALLATION_WORKSPACE}/skel /root
 sudo chown -R ${VM_USER}:${VM_USER} /home/${VM_USER}
 sudo chmod -R 755 /home/${VM_USER}/Desktop/*.desktop
 sudo cp /home/${VM_USER}/Desktop/*.desktop /usr/share/applications
-
-# Update system desktop icon file for BTOP
-sudo cp -f /home/${VM_USER}/Desktop/BTOP.desktop /usr/share/applications/btop.desktop
-sudo cp -f /home/${VM_USER}/Desktop/Tilix.desktop /usr/share/applications/com.gexperts.Tilix.desktop
 
 # Change screen resolution to more respectable 1920x1200 (default is 800x600)
 sudo bash -c 'cat <<EOF > /etc/X11/xorg.conf
@@ -100,7 +112,7 @@ HideUsers=vagrant
 ''' | sudo tee /etc/sddm.conf
 
 echo "typeset -g POWERLEVEL9K_INSTANT_PROMPT=quiet" | sudo tee -a /home/${VM_USER}/.zshrc /root/.zshrc
-echo "KUBECONFIG=~/.kube/config" | sudo tee -a /home/${VM_USER}/.bashrc /home/${VM_USER}/.zshrc /root/.bashrc /root/.zshrc
+#echo "KUBECONFIG=~/.kube/config" | sudo tee -a /home/${VM_USER}/.bashrc /home/${VM_USER}/.zshrc /root/.bashrc /root/.zshrc
 
 # Show /etc/motd.kxascode even when in X-Windows terminal (not just SSH)
 echo -e '\n# Added to show KX.AS.CODE MOTD also in X-Windows Terminal (already showing in SSH per default)
@@ -109,3 +121,24 @@ if [ -z $(echo $SSH_TTY) ]; then
 else
   cat /etc/motd.kxascode
 fi' | sudo tee -a /home/${VM_USER}/.bashrc /home/${VM_USER}/.zshrc /root/.bashrc /root/.zshrc
+
+# Add plugin manager to NVIM and install plugins
+sudo -u ${VM_USER} sh -c "curl -fLo /home/${VM_USER}/.local/share/nvim/site/autoload/plug.vim --create-dirs \
+       https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim"
+sudo -u ${VM_USER} sh -c "mkdir -p /home/${VM_USER}/.local/share/nvim/plugged"
+sudo -u ${VM_USER} sh -c "/usr/bin/nvim -u /home/${VM_USER}/.config/nvim/init.vim -i NONE -c \"PlugInstall\" -c \"qa\""
+
+sudo sh -c "curl -fLo /root/.local/share/nvim/site/autoload/plug.vim --create-dirs \
+        https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim"
+sudo sh -c "mkdir -p /root/.local/share/nvim/plugged"
+sudo sh -c "/usr/bin/nvim -u /root/.config/nvim/init.vim -i NONE -c \"PlugInstall\" -c \"qa\""
+
+# Add aliases to open NVIM instead of VIM or VI
+echo '''
+alias vim="nvim"
+alias vi="nvim"
+alias oldvim="/vim"
+alias vimdiff="nvim -d"
+export EDITOR=nvim
+export BROWSER='$(readlink -f /etc/alternatives/x-www-browser)'
+''' | sudo tee -a /etc/profile.d/nvim.sh /home/${VM_USER}/.bashrc /home/${VM_USER}/.zshrc /root/.bashrc /root/.zshrc

@@ -25,6 +25,7 @@
             "ten_gb": 10,
             "thirty_gb": 0
         },
+        "logLevel": "info",
         "metalLbIpRange": {
             "ipRangeEnd": "10.10.76.150",
             "ipRangeStart": "10.10.76.100"

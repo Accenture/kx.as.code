@@ -3,7 +3,7 @@ Version=1.0
 Name=KX.AS.CODE Docs
 GenericName=KX.AS.CODE Docs
 Comment=KX.AS.CODE Docs
-Exec=/usr/bin/chromium --app=https://accenture.github.io/kx.as.code/ --use-gl=angle --password-store=basic --new-window --start-maximized
+Exec={{preferredBrowser}} --app=https://accenture.github.io/kx.as.code/ --use-gl=angle --password-store=basic --new-window --start-maximized
 StartupNotify=true
 Terminal=false
 Icon=/usr/share/kx.as.code/git/kx.as.code/base-vm/images/kx-docs.png

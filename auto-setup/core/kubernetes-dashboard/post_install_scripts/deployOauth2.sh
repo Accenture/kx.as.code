@@ -166,7 +166,7 @@ kubernetesApplyYamlFile "${installationWorkspace}/kubernetes-dashboard-ca-config
 #Name=Kubernetes Dashboard IAM
 #GenericName=Kubernetes Dashboard IAM
 #Comment=Kubernetes Dashboard IAM
-#Exec=/usr/bin/chromium %U https://${componentName}-iam.${baseDomain} --use-gl=angle --password-store=basic --incognito --new-window
+#Exec=${preferredBrowser} %U https://${componentName}-iam.${baseDomain} --use-gl=angle --password-store=basic --incognito --new-window
 #StartupNotify=true
 #Terminal=false
 #Icon=${iconPath}

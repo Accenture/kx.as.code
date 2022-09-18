@@ -12,6 +12,7 @@ try {
                     <div class="config-tab" id="config-panel-storage-config" onclick="change_panel_selection(this.id);"><img src="/userContent/icons/harddisk.svg" id="config-panel-storage-config-icon" class="config-panel-icon svg-white" alt="Storage Configuration"></div>
                     <div class="config-tab" id="config-panel-template-selection" onclick="change_panel_selection(this.id);"><img src="/userContent/icons/apps.svg" id="config-panel-template-selection-icon" class="config-panel-icon svg-white" alt="Application Template Group Selection"></div>
                     <div class="config-tab" id="config-panel-user-provisioning" onclick="change_panel_selection(this.id);"><img src="/userContent/icons/account-multiple.svg" id="config-panel-user-provisioning-icon" class="config-panel-icon svg-white" alt="User Provisioning"></div>
+                    <div class="config-tab" id="config-panel-custom-variables" onclick="change_panel_selection(this.id);"><img src="/userContent/icons/cog-outline.svg" id="config-panel-custom-variables-icon" class="config-panel-icon svg-white" alt="Custom Variables"></div>
                     <div class="config-tab" id="config-panel-kx-summary-start" onclick="change_panel_selection(this.id);"><img src="/userContent/icons/clipboard-text-play-outline.svg" id="config-panel-kx-summary-start-icon" class="config-panel-icon svg-white" alt="Deployment"></div>
                 </div>
                 <div id="config-placeholder" class="config-placeholder">

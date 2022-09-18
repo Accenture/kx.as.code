@@ -42,6 +42,13 @@ Foreach ($line in (Get-Content -Path "jenkins.env" | Where-Object {$_ -notmatch 
 
 . ./jenkins.env.ps1
 
+# Add OpenSSL binary to PATH if provided in jenkins.env
+if ( $openssl_path -ne "" ) {
+    $env:Path += ";$openssl_path"
+    Write-Output $PATH
+}
+
+
 # Checking Windows specific pre-requisites
 # Git bash must be installed and available, else "sh" will not work in the Jenkins pipeline
 if (Get-Command "c:\Program Files\Git\bin\sh.exe" -ErrorAction SilentlyContinue)
@@ -179,12 +186,14 @@ if ( $override_action -eq "recreate" -Or $override_action -eq "destroy" -Or $ove
 $composeDownloadVersion = "1.29.2"
 $javaDownloadVersion = "11.0.3.7.1"
 $jqDownloadVersion = "1.6"
+$curlDownloadVersion = "7.84.0_9"
 $jenkinsDownloadVersion = "2.332.2"
 
 # Determine OS this script is running on and set appropriate download links and commands
 Write-Output "- [INFO] Script running on Windows. Setting appropriate download links" | Blue
 $javaInstallerUrl = "https://d3pxv6yz143wms.cloudfront.net/" + $javaDownloadVersion + "/amazon-corretto-" + $javaDownloadVersion + "-windows-x64.zip"
 $jqInstallerUrl = "https://github.com/stedolan/jq/releases/download/jq-" + $jqDownloadVersion + "/jq-win64.exe"
+$curlDownloadUrl = "https://curl.se/windows/dl-" + $curlDownloadVersion + "/curl-" + $curlDownloadVersion + "-win64-mingw.zip"
 $jenkinsWarFileUrl = "https://get.jenkins.io/war-stable/" + $jenkinsDownloadVersion + "/jenkins.war"
 $os = "windows"
 
@@ -255,6 +264,11 @@ if ( ! $javaBinary ) {
         Write-Output "Java binary: $javaBinary"
         & $javaBinary -version
     }
+}
+
+# Download curl.exe if not installed. Installed as standard on Windows 10 & 11
+if ( ! (which curl.exe)) {
+    Invoke-WebRequest $curlDownloadUrl -OutFile .\curl.exe
 }
 
 # Create shared workspace directory for Vagrant and Terraform jobs
@@ -404,6 +418,9 @@ do
 
 Invoke-WebRequest -Uri $jenkinsUrl/jnlpJars/jenkins-cli.jar -OutFile .\jenkins-cli.jar
 
+$credentials_salt = openssl rand -base64 12
+#Write-Output $credentials_salt
+
 # Replace mustache variables in credential xml files
 Get-ChildItem "$JENKINS_HOME\" -Filter credential_*.xml |
         Foreach-Object {
@@ -429,5 +446,30 @@ Get-ChildItem "$JENKINS_HOME\" -Filter credential_*.xml |
             }
         }
 
+$jenkinsCrumb = (curl.exe -s --cookie-jar ./cookies -u admin:admin $jenkinsUrl/crumbIssuer/api/json) | ConvertFrom-Json | Select-Object -expand "crumb"
+
+if (!(test-path .\securedCredentials))
+{
+
+    $credentialsToStore = "git_source_username git_source_password dockerhub_username dockerhub_password dockerhub_email"
+    $credentialsToStore.Split(" ") | ForEach {
+        $encryptedCredential = (Write-Output $( Get-Variable "$_" -ValueOnly ) | openssl enc -aes-256-cbc -pbkdf2 -salt -A -a -pass pass:$credentials_salt)
+        # Test Unencryption
+        $unencryptedCredential = (Write-Output $encryptedCredential | openssl enc -aes-256-cbc -pbkdf2 -salt -A -a -pass pass:$credentials_salt -d)
+        if ( $unencryptedCredential -ne $( Get-Variable "$_" -ValueOnly ) ) {
+            Write-Output "- [ERROR] Encryption and subsequent decryption value do not match."
+        }
+        "$_`:$encryptedCredential" | Out-File -FilePath .\securedCredentials -Append
+    }
+
+    # Post encrypted file to Jenkins as a credential
+    curl.exe -X POST --cookie .\cookies -H "Jenkins-Crumb: $jenkinsCrumb" `
+        -u admin:admin `
+        -F securedCredentials=@.\securedCredentials `
+        -F "json={\`"\`": \`"4\`", \`"credentials\`": { \`"file\`": \`"securedCredentials\`", \`"id\`": \`"VM_CREDENTIALS_FILE\`", \`"description\`": \`"KX.AS.CODE credentials\`", \`"stapler-class\`": \`"org.jenkinsci.plugins.plaincredentials.impl.FileCredentialsImpl\`", \`"`$class\`": \`"org.jenkinsci.plugins.plaincredentials.impl.FileCredentialsImpl\`"}}" `
+        $jenkinsUrl/credentials/store/system/domain/_/createCredentials
+
+}
+
 Write-Output "- [INFO] Congratulations! Jenkins for KX.AS.CODE is successfully configured and running. Access Jenkins via the following URL: " | Green
-Write-Output "- ${jenkinsUrl}/job/KX.AS.CODE_Launcher/build?delay=0sec" | Blue
+Write-Output "- $jenkinsUrl/job/KX.AS.CODE_Launcher/build?delay=0sec" | Blue

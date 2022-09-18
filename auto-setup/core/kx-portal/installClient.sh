@@ -1,27 +1,21 @@
 #!/bin/bash
-set -euo pipefail
+set -euox pipefail
 
 # Install NGINX
 /usr/bin/sudo apt-get install -y nginx
 
 # Setup logging directory
-/usr/bin/sudo mkdir ${installationWorkspace}/kx-portal
+/usr/bin/sudo mkdir -p ${installationWorkspace}/kx-portal
 /usr/bin/sudo chown -R ${vmUser}:${vmUser} ${installationWorkspace}/kx-portal
 
-nodeAlreadyInstalled=$(which node || true)
-# TODO - in theory not needed anymore, as node backed into base image, but keeping it here for now
-if [[ -z ${nodeAlreadyInstalled} ]]; then
+bunAlreadyInstalled=$(which bun || true)
+if [[ -z ${bunAlreadyInstalled} ]]; then
 
-  # Download NodeJS
-  downloadFile "https://nodejs.org/dist/${nodejsVersion}/node-${nodejsVersion}-linux-x64.tar.xz" \
-    "${nodejsChecksum}" \
-    "${installationWorkspace}/node-${nodejsVersion}-linux-x64.tar.xz" && log_info "Return code received after downloading node-${nodejsVersion}-linux-x64.tar.xz is $?"
+  # Install Bun
+  curl https://bun.sh/install | bash
 
-  # Unpack downloaded NodeJS package
-  export NPM_ROOT=${installationWorkspace}/kx-portal/npm
-  /usr/bin/sudo mkdir -p ${NPM_ROOT}
-  /usr/bin/sudo tar -xJvf ${installationWorkspace}/node-${nodejsVersion}-linux-x64.tar.xz -C ${NPM_ROOT}
-  export PATH="${PATH}:${NPM_ROOT}/node-${nodejsVersion}-linux-x64/bin"
+  # Activate bun on path
+  cp -f /root/.bun/bin/bun /usr/local/bin
 
 fi
 
@@ -33,50 +27,38 @@ echo "fs.inotify.max_user_watches=524288" | /usr/bin/sudo tee -a /etc/sysctl.con
 /usr/bin/sudo cp -rf ${sharedGitHome}/kx.as.code/client ${installationWorkspace}/kx-portal
 export KX_PORTAL_HOME=${installationWorkspace}/kx-portal/client
 
-# Optimize NPM configuration
-npm config set registry https://registry.npmjs.org/
-npm config set loglevel info
-npm config set fetch-retries 3
-npm config set fetch-retry-mintimeout 1000000
-npm config set fetch-retry-maxtimeout 6000000
-npm config set cache-min 86400
-
-# Cleanup before install
-npm cache clear --force
-/usr/bin/sudo rm -rf ${KX_PORTAL_HOME}/node_modules ${KX_PORTAL_HOME}/pnpm-lock.yaml
-
-# Set PNMP configuration
-pnpm config set auto-install-peers true
-pnpm config set strict-peer-dependencies false
-
 cd ${KX_PORTAL_HOME}
 rc=0
 for i in {1..3}
 do
-  log_info "Attempting npm install for KX-Portal - try ${i}"
-  pnpm install || rc=$? && log_info "Execution of pnpm install for KX-Portal returned with rc=$rc"
+  log_info "Attempting bun install for KX-Portal - try ${i}"
+  sudo timeout -s TERM 300 bun install || rc=$? && log_info "Execution of bun install for KX-Portal returned with rc=$rc"
   if [[ ${rc} -eq 0 ]]; then
-    log_info "PNPM install succeeded. Continuing"
+    log_info "Bun install succeeded. Continuing"
     /usr/bin/sudo chown -R ${vmUser}:${vmUser} ${KX_PORTAL_HOME}
+    installSucceeded="OK"
     break
   else
-    log_warn "PNPM install returned with a non zero exit code. Trying again"
-    /usr/bin/sudo rm -rf ${KX_PORTAL_HOME}/node_modules ${KX_PORTAL_HOME}/pnpm-lock.yaml
+    log_warn "Bun install returned with a non zero exit code. Trying again"
+    /usr/bin/sudo rm -rf ${KX_PORTAL_HOME}/node_modules ${KX_PORTAL_HOME}/bun.lockb
+    installSucceeded="NOK"
     sleep 15
   fi
 done
 cd -
 
+# Cleanup Cypress image to save disk space
+#docker rmi cypress/included:10.8.0
+
 # Create KX-Portal start script
 echo '''#!/bin/bash
 source /etc/profile.d/nvm.sh
-nvm use --delete-prefix lts/gallium
 export KX_PORTAL_HOME='${KX_PORTAL_HOME}'
 cd ${KX_PORTAL_HOME}
-export NODE_PORT=3000
-export NPM_CONFIG_PREFIX=${KX_PORTAL_HOME}
+sudo timeout -s TERM 300 bun install
+sudo chown -R kx.hero:kx.hero ${KX_PORTAL_HOME}
 export HOME=${KX_PORTAL_HOME}
-npm run start:prod
+bun run start:prod
 ''' | /usr/bin/sudo tee ${installationWorkspace}/kx-portal/kxPortalStart.sh
 chmod 755 ${installationWorkspace}/kx-portal/kxPortalStart.sh
 
@@ -112,6 +94,21 @@ fi
 # Call running KX-Portal to check status and pre-compile site
 checkUrlHealth "http://localhost:3000" "200"
 
+# Run basic Cypress E2E test
+if [[ "${installSucceeded}" == "OK" ]]; then
+  # Test homepage is up with Cypress
+  rc=0
+  echo "docker run --rm -e EXTERNAL_URL=http://${mainIpAddress}:3000 -v ${KX_PORTAL_HOME}:/e2e -w /e2e cypress/included:10.8.0 run --env EXTERNAL_URL=http://${mainIpAddress}:3000"
+  docker run --rm -e EXTERNAL_URL="http://${mainIpAddress}:3000" -v ${KX_PORTAL_HOME}:/e2e -w /e2e cypress/included:10.8.0 run --env EXTERNAL_URL="http://${mainIpAddress}:3000" || rc=$? && log_info "Execution of Cypress test for KX-Portal returned with rc=$rc"
+  if [[ ${rc} -eq 0 ]]; then
+    log_info "Cypress test succeeded. Continuing"
+  else
+    log_warn "Cypress test returned with a non zero exit code. Trying install again"
+    false
+    return
+  fi
+fi
+
 # Install the desktop shortcut for KX.AS.CODE Portal
 shortcutsDirectory="/home/${vmUser}/Desktop"
 primaryUrl="http://localhost:3000"
@@ -119,6 +116,16 @@ shortcutText="KX.AS.CODE Portal"
 iconPath="${installComponentDirectory}/$(cat ${componentMetadataJson} | jq -r '.shortcut_icon')"
 browserOptions="--new-window --app=http://localhost:3000"
 createDesktopIcon "${shortcutsDirectory}" "${primaryUrl}" "${shortcutText}" "${iconPath}" "${browserOptions}"
+
+if [[ "${vmUser}" != "${baseUser}" ]]; then
+  # Install the desktop shortcut for KX.AS.CODE Portal
+  shortcutsDirectory="/home/${baseUser}/Desktop"
+  primaryUrl="http://localhost:3000"
+  shortcutText="KX.AS.CODE Portal"
+  iconPath="${installComponentDirectory}/$(cat ${componentMetadataJson} | jq -r '.shortcut_icon')"
+  browserOptions="--new-window --app=http://localhost:3000"
+  createDesktopIcon "${shortcutsDirectory}" "${primaryUrl}" "${shortcutText}" "${iconPath}" "${browserOptions}"
+fi
 
 # Copy desktop icons to skel directory for future users
 /usr/bin/sudo cp /home/"${vmUser}"/Desktop/"${shortcutText}" "${skelDirectory}"/Desktop

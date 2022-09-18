@@ -57,16 +57,12 @@ WORKER_NODE_MEMORY = ENV['WorkerNodeMemory'] || profile_config_json['config']['v
 puts "WORKER_NODE_MEMORY: #{WORKER_NODE_MEMORY}"
 THREE_D_ACCELERATION = ENV['threedAcceleration'] || profile_config_json['config']['vm_properties']['3d_acceleration']
 puts "WORKER_NODE_MEMORY: #{THREE_D_ACCELERATION}"
-DOCKERHUB_USER = ENV['dockerHubUsername']
-puts "DOCKERHUB_USER: #{DOCKERHUB_USER}"
-DOCKERHUB_EMAIL = ENV['dockerHubEmail'] || profile_config_json['config']['docker']['dockerhub_email']
-puts "DOCKERHUB_EMAIL: #{DOCKERHUB_EMAIL}"
-DOCKERHUB_PASSWORD = ENV['dockerHubPassword']
-puts "DOCKERHUB_PASSWORD: #{DOCKERHUB_PASSWORD}"
 MAIN_BOX_VERSION = ENV['mainBoxVersion'] || kx_version_json['kxascode']
 puts "MAIN_BOX_VERSION: #{MAIN_BOX_VERSION}"
 NODE_BOX_VERSION = ENV['nodeBoxVersion'] || kx_version_json['kxascode']
 puts "NODE_BOX_VERSION: #{NODE_BOX_VERSION}"
+HASH = ENV['hash']
+puts "HASH: #{HASH}"
 KX_MAIN_BOX_LOCATION = ENV['kxMainBoxLocation'] || "base-vm/boxes/parallels-#{MAIN_BOX_VERSION}/kx-main-#{MAIN_BOX_VERSION}.box"
 puts "KX_MAIN_BOX_LOCATION: #{KX_MAIN_BOX_LOCATION}"
 KX_NODE_BOX_LOCATION = ENV['kxNodeBoxLocation'] || "base-vm/boxes/parallels-#{NODE_BOX_VERSION}/kx-node-#{NODE_BOX_VERSION}.box"
@@ -74,17 +70,17 @@ puts "KX_NODE_BOX_LOCATION: #{KX_NODE_BOX_LOCATION}"
 
 WORKSPACE_HOME ||= :"../.."
 
-if ARGV[0] == "up" && File.exist?("#{WORKSPACE_HOME}/#{KX_MAIN_BOX_LOCATION}")
+if File.exist?("#{WORKSPACE_HOME}/#{KX_MAIN_BOX_LOCATION}")
     KX_MAIN_BOX_URL = "file://#{WORKSPACE_HOME}/#{KX_MAIN_BOX_LOCATION}"
-    puts "Found local box #{KX_MAIN_BOX_LOCATION}, using that instead of cloud"
+    puts "Found local box #{KX_MAIN_BOX_URL}, using that instead of cloud"
 else
     KX_MAIN_BOX_URL = "https://app.vagrantup.com/kxascode/boxes/kx-main"
     puts "Did not find local box #{KX_MAIN_BOX_LOCATION}, downloading box from cloud"
 end
 
-if ARGV[0] == "up" && File.exist?("#{WORKSPACE_HOME}/#{KX_NODE_BOX_LOCATION}")
+if File.exist?("#{WORKSPACE_HOME}/#{KX_NODE_BOX_LOCATION}")
     KX_NODE_BOX_URL = "file://#{WORKSPACE_HOME}/#{KX_NODE_BOX_LOCATION}"
-    puts "Found local box #{KX_NODE_BOX_LOCATION}, using that instead of cloud"
+    puts "Found local box #{KX_NODE_BOX_URL}, using that instead of cloud"
 else
     KX_NODE_BOX_URL = "https://app.vagrantup.com/kxascode/boxes/kx-node"
     puts "Did not find local box #{KX_NODE_BOX_LOCATION}, downloading box from cloud"
@@ -111,7 +107,7 @@ WORKSPACE_HOME = File.dirname(File.expand_path('../..', __FILE__))
 Vagrant.configure("2") do |config|
   config.vm.define "kx-main1", primary: true do |subconfig|
     subconfig.vm.box = "kxascode/kx-main"
-    if !File.exist?("#{WORKSPACE_HOME}/#{KX_MAIN_BOX_LOCATION}")
+    if KX_MAIN_BOX_URL.start_with?("https://app.vagrantup.com/kxascode")
         subconfig.vm.box_version = "#{MAIN_BOX_VERSION}"
     end
     subconfig.vm.hostname = "kx-main1"
@@ -127,13 +123,15 @@ Vagrant.configure("2") do |config|
     subconfig.vm.box_url = "#{KX_MAIN_BOX_URL}"
     subconfig.vm.provision "shell", inline: "hostname -I | awk {'print $1'} | tr -d ' \\t\\n\\r' | sudo tee /vagrant/kx.as.code_main-ip-address"
     subconfig.vm.provision "shell", inline: "for i in {1..5}; do echo \"Waiting for /vagrant ... [\${i}\" of 5]; if [ -d /vagrant ]; then sudo cp -v -f /vagrant/*.json /usr/share/kx.as.code/workspace; break; else echo \"/vagrant not yet not available\"; sleep 5; fi; done"
+    subconfig.vm.provision "shell", inline: "sudo mv -v -f /vagrant/.vmCredentialsFile /usr/share/kx.as.code/.config/ 2>/dev/null || true"
+    subconfig.vm.provision "shell", inline: "sudo mkdir -p /usr/share/kx.as.code/workspace/custom-images"
+    subconfig.vm.provision "shell", inline: "sudo cp -v -f /vagrant/avatar.{jpg,png} /vagrant/background.{jpg,png} /vagrant/boot.{jpg,png} /vagrant/conky_logo.{jpg,png} /vagrant/logo_icon.{jpg,png} /usr/share/kx.as.code/workspace/custom-images 2>/dev/null || true"
     subconfig.vm.provision "shell", inline: "cat /usr/share/kx.as.code/workspace/profile-config.json | jq '.'"
     subconfig.vm.provision "shell", inline: "cat /usr/share/kx.as.code/workspace/users.json | jq '.'"
+    subconfig.vm.provision "shell", inline: "cat /usr/share/kx.as.code/workspace/customVariables.json | jq '.'"
     subconfig.vm.provision "shell", inline: "cat /usr/share/kx.as.code/workspace/actionQueues.json | jq '.'"
+    subconfig.vm.provision "shell", inline: 'echo $1 | sudo tee /var/tmp/.hash && sudo chmod 400 /var/tmp/.hash', :args => "#{HASH}"
     subconfig.vm.provision "shell", inline: 'echo -e "$(date "+%Y-%m-%d_%H%M%S") | KX-Main VM created by Vagrant" | sudo tee /usr/share/kx.as.code/workspace/gogogo'
-    subconfig.vm.provision :shell do |s|
-      s.inline = "echo -e '{ \"DOCKERHUB_USER\": \"#{DOCKERHUB_USER}\", \"DOCKERHUB_EMAIL\": \"#{DOCKERHUB_EMAIL}\", \"DOCKERHUB_PASSWORD\": \"#{DOCKERHUB_PASSWORD}\" }' | sudo tee /var/tmp/.tmp.json"
-    end
     subconfig.vm.provider "parallels" do |v|
       v.name = "kx.as.code-#{ENVIRONMENT_PREFIX}-main1-#{MAIN_BOX_VERSION}"
       v.memory = MAIN_ADMIN_NODE_MEMORY
@@ -150,7 +148,7 @@ Vagrant.configure("2") do |config|
     (2..MAIN_NODE_COUNT).each do |i|
       config.vm.define "kx-main#{i}", primary: false, autostart: false do |subconfig|
         subconfig.vm.box = "kxascode/kx-node"
-        if !File.exist?("#{WORKSPACE_HOME}/#{KX_NODE_BOX_LOCATION}")
+        if KX_NODE_BOX_URL.start_with?("https://app.vagrantup.com/kxascode")
             subconfig.vm.box_version = "#{NODE_BOX_VERSION}"
         end
         subconfig.vm.hostname = "kx-main#{i}"
@@ -179,7 +177,7 @@ Vagrant.configure("2") do |config|
   (1..WORKER_NODE_COUNT).each do |i|
     config.vm.define "kx-worker#{i}", primary: false, autostart: false do |subconfig|
       subconfig.vm.box = "kxascode/kx-node"
-      if !File.exist?("#{WORKSPACE_HOME}/#{KX_NODE_BOX_LOCATION}")
+      if KX_NODE_BOX_URL.start_with?("https://app.vagrantup.com/kxascode")
           subconfig.vm.box_version = "#{NODE_BOX_VERSION}"
       end
       subconfig.vm.hostname = "kx-worker#{i}"

@@ -6,7 +6,7 @@ import kxIcon from "../media/svg/icon-blau-2.svg";
 import kxIconW from "../media/svg/ks-logo-w.svg";
 import templatesIcon from "../media/svg/side-icon.svg";
 
-function Sidebar({ sidebarOpen, setSidebarOpen }) {
+function Sidebar({ sidebarOpen, setSidebarOpen }, props) {
   const location = useLocation();
   const { pathname } = location;
 
@@ -17,6 +17,8 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
   const [sidebarExpanded, setSidebarExpanded] = useState(
     storedSidebarExpanded === null ? false : storedSidebarExpanded === "true"
   );
+
+  const versions = require("../data/versions.json");
 
   // close on click outside
   useEffect(() => {
@@ -36,6 +38,8 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
 
   // close if the esc key is pressed
   useEffect(() => {
+    console.log("versions sidebar: ", versions);
+
     const keyHandler = ({ keyCode }) => {
       if (!sidebarOpen || keyCode !== 27) return;
       setSidebarOpen(false);
@@ -104,7 +108,7 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
           </NavLink>
           <div className="pl-4 text-white flex my-auto lg:hidden lg:sidebar-expanded:block 2xl:block md:text-md md:text-md">
             <div className="font-extrabold">KX.AS CODE</div>
-            <div className="text-sm">Portal v.0.8.5</div>
+            <div className="text-sm">Portal v.{versions.kxascode}</div>
           </div>
         </div>
 

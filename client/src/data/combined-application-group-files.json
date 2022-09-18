@@ -1,5 +1,17 @@
 [
   {
+    "title": "Examples Group 1",
+    "description": "Group used to show specific use cases and for debugging changes and enhancements to framework",
+    "action_queues": {
+      "install": [
+        {
+          "install_folder": "examples",
+          "name": "hipster-shop"
+        }
+      ]
+    }
+  },
+  {
     "title": "CICD Group 1",
     "description": "CICD Group 1 for sites with a larger physical resources",
     "action_queues": {
@@ -57,7 +69,7 @@
   },
   {
     "title": "CICD Group 3",
-    "description": "A CICD group with TeamCity and Mattermost",
+    "description": "CICD Group 1 for sites with a lower physical resources",
     "action_queues": {
       "install": [
         {

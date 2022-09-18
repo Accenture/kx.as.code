@@ -1,8 +1,5 @@
 setLogFilename() {
 
-  # Call common function to execute common function start commands, such as setting verbose output etc
-  functionStart
-
   logType=${1-poller}
   retries=${2-0}
 
@@ -14,8 +11,5 @@ setLogFilename() {
     # Send log to generic log, if ${componentName} not defined
     echo "${installationWorkspace}/kx.as.code_autoSetup.log"
   fi
-
-  # Call common function to execute common function start commands, such as unsetting verbose output etc
-  functionEnd
   
 }

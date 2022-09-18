@@ -8,14 +8,30 @@ export componentInstallationFolder=$(echo ${payload} | jq -c -r '.install_folder
 
 # Get global base variables from globalVariables.json
 source /usr/share/kx.as.code/git/kx.as.code/auto-setup/functions/getGlobalVariables.sh # source function
-getGlobalVariables # execute function
+getGlobalVariables
 
 # Load Central Functions
 functionsLocation="${autoSetupHome}/functions"
 for function in $(find ${functionsLocation} -name "*.sh")
 do
+  functionName="$(cat ${function} | grep -E '^[[:alnum:]].*().*{' | sed 's/()*.{//g')"
   source ${function}
-  echo "Loaded function $(cat ${function} | grep '()' | sed 's/{//g')"
+  echo "Loaded function ${functionName}()"
+done
+
+# Load CUSTOM Central Functions - these can either be new ones, or copied and edited functions from the main functions directory above, which will override the ones loaded in the previous step
+getCustomVariables # load global custom variables
+customFunctionsLocation="${autoSetupHome}/functions-custom"
+loadedFunctions="$(compgen -A function)"
+for function in $(find ${customFunctionsLocation} -name "*.sh")
+do
+  source ${function}
+  customFunctionName="$(cat ${function} | grep -E '^[[:alnum:]].*().*{' | sed 's/()*.{//g')"
+  if [[ -z $(echo "${loadedFunctions}" | grep ${customFunctionName}) ]]; then
+    log_debug "Loaded new custom function ${customFunctionName}()"
+  else
+    log_debug "Overriding central function ${customFunctionName}() with custom one!"
+  fi
 done
 
 # Get K8s and K3s versions to install
@@ -66,7 +82,7 @@ if [[ ${action} == "install"   ]]; then
     ##      P R E    I N S T A L L    S T E P S
     ####################################################################################################################################################################
     rc=0
-    autoSetupPreInstallSteps 2>> ${logFilename} || rc=$? && log_info "Execution of autoSetupPreInstallSteps() returned with rc=$rc"
+    autoSetupPreInstallSteps &>> ${logFilename} || rc=$? && log_info "Execution of autoSetupPreInstallSteps() returned with rc=$rc"
     if [[ ${rc} -ne 0 ]]; then
       log_error "Execution of autoSetupPreInstallSteps() returned with a non zero return code ($rc)"
       exit $rc
@@ -77,7 +93,7 @@ if [[ ${action} == "install"   ]]; then
     ####################################################################################################################################################################
     if [[ ${installationType} == "script" ]]; then
       rc=0
-      autoSetupScriptInstall 2>> ${logFilename} || rc=$? && log_info "Execution of autoSetupScriptInstall() returned with rc=$rc"
+      autoSetupScriptInstall &>> ${logFilename} || rc=$? && log_info "Execution of autoSetupScriptInstall() returned with rc=$rc"
     if [[ ${rc} -ne 0 ]]; then
       log_error "Execution of autoSetupScriptInstall() returned with a non zero return code ($rc)"
       exit $rc
@@ -88,7 +104,7 @@ if [[ ${action} == "install"   ]]; then
     ####################################################################################################################################################################
     elif [[ ${installationType} == "helm" ]]; then
       rc=0
-      autoSetupHelmInstall 2>> ${logFilename} || rc=$? && log_info "Execution of autoSetupHelmInstall() returned with rc=$rc"
+      autoSetupHelmInstall &>> ${logFilename} || rc=$? && log_info "Execution of autoSetupHelmInstall() returned with rc=$rc"
     if [[ ${rc} -ne 0 ]]; then
       log_error "Execution of autoSetupHelmInstall() returned with a non zero return code ($rc)"
       exit $rc
@@ -99,7 +115,7 @@ if [[ ${action} == "install"   ]]; then
     ####################################################################################################################################################################
     elif [[ ${installationType} == "argocd" ]] && [[ ${action}=="install" ]]; then
       rc=0
-      autoSetupArgoCdInstall 2>> ${logFilename} || rc=$? && log_info "Execution of autoSetupArgoCdInstall() returned with rc=$rc"
+      autoSetupArgoCdInstall &>> ${logFilename} || rc=$? && log_info "Execution of autoSetupArgoCdInstall() returned with rc=$rc"
     if [[ ${rc} -ne 0 ]]; then
       log_error "Execution of autoSetupArgoCdInstall() returned with a non zero return code ($rc)"
       exit $rc
@@ -120,7 +136,7 @@ if [[ ${action} == "install"   ]]; then
       # Excluding core_groups to avoid missing cross dependency issues between core services, for example,
       # coredns waiting for calico network to be installed, preventing other service from being provisioned
       rc=0
-      checkRunningKubernetesPods 2>> ${logFilename} || rc=$? && log_info "Execution of checkRunningKubernetesPods() returned with rc=$rc"
+      checkRunningKubernetesPods &>> ${logFilename} || rc=$? && log_info "Execution of checkRunningKubernetesPods() returned with rc=$rc"
     if [[ ${rc} -ne 0 ]]; then
       log_error "Execution of checkRunningKubernetesPods() returned with a non zero return code ($rc)"
       exit $rc
@@ -128,7 +144,7 @@ if [[ ${action} == "install"   ]]; then
 
       # Check if URL health checks defined in metadata.json return result as expected/described in metadata.json file
       rc=0
-      applicationDeploymentHealthCheck 2>> ${logFilename} || rc=$? && log_info "Execution of applicationDeploymentHealthCheck() returned with rc=$rc"
+      applicationDeploymentHealthCheck &>> ${logFilename} || rc=$? && log_info "Execution of applicationDeploymentHealthCheck() returned with rc=$rc"
     if [[ ${rc} -ne 0 ]]; then
       log_error "Execution of applicationDeploymentHealthCheck() returned with a non zero return code ($rc)"
       exit $rc
@@ -146,7 +162,7 @@ if [[ ${action} == "install"   ]]; then
     # If LetsEncrypt is not disabled in metadata.json for application in question and sslType set to letsencrypt,
     # then inject LetsEncrypt annotations into the applications ingress resources
     rc=0
-    postInstallStepLetsEncrypt 2>> ${logFilename} || rc=$? && log_info "Execution of postInstallStepLetsEncrypt() returned with rc=$rc"
+    postInstallStepLetsEncrypt &>> ${logFilename} || rc=$? && log_info "Execution of postInstallStepLetsEncrypt() returned with rc=$rc"
     if [[ ${rc} -ne 0 ]]; then
       log_error "Execution of postInstallStepLetsEncrypt() returned with a non zero return code ($rc)"
       exit $rc
@@ -154,7 +170,7 @@ if [[ ${action} == "install"   ]]; then
 
     # Execute scripts defined in metadata.json, listed post_install_scripts section
     rc=0
-    executePostInstallScripts 2>> ${logFilename} || rc=$? && log_info "Execution of executePostInstallScripts() returned with rc=$rc"
+    executePostInstallScripts &>> ${logFilename} || rc=$? && log_info "Execution of executePostInstallScripts() returned with rc=$rc"
     if [[ ${rc} -ne 0 ]]; then
       log_error "Execution of executePostInstallScripts() returned with a non zero return code ($rc)"
       exit $rc
@@ -210,7 +226,18 @@ if [[ ${action} == "install"   ]]; then
       createDesktopIcon "${apiDocsDirectory}" "${postmanApiDocsUrl}" "${shortcutText} Postman" "${iconPath}" "${browserOptions}"
     fi
 
-elif [[ ${action} == "upgrade"   ]]; then
+elif [[ ${action} == "executeTask" ]]; then
+
+  export taskToExecute=$(echo ${payload} | jq -c -r '.task')
+  rc=0
+  autoSetupExecuteTask "${taskToExecute}" &>> ${logFilename} || rc=$? && log_info "Execution of autoSetupExecuteTask() for task \"${taskToExecute}\" returned with rc=$rc"
+    if [[ ${rc} -ne 0 ]]; then
+      log_error "Execution of autoSetupExecuteTask() for task \"${taskToExecute}\" returned with a non zero return code ($rc)"
+      exit $rc
+    fi
+
+
+elif [[ ${action} == "upgrade" ]]; then
 
     ## TODO - for the most solutions this can be handled by the install script with new versions set
     echo "TODO: Upgrade"
@@ -219,7 +246,7 @@ elif [[ ${action} == "uninstall"   ]] || [[ ${action} == "purge"   ]]; then
 
     echo "Uninstall or purge action"
 
-    if [[ ${installationType} == "helm"   ]]; then
+    if [[ ${installationType} == "helm" ]]; then
 
         # Helm uninstall
         helm delete ${componentName} --namespace ${namespace}

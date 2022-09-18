@@ -4,9 +4,8 @@ import axios from "axios";
 import { FaThList } from "react-icons/fa";
 import { BsGrid3X3GapFill } from "react-icons/bs";
 import MultipleSelectCheckmarks from "../partials/MultipleSelectCheckmarks";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useReducer } from "react";
 import _ from "lodash";
-
 import PaginationRounded from "../partials/PaginationRounded.jsx";
 import usePagination from "../utils/Pagination";
 import noResultsFace from "../media/svg/no_results_face.svg";
@@ -19,12 +18,17 @@ import { list } from "postcss";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
+import FormGroup from "@mui/material/FormGroup";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Checkbox from "@mui/material/Checkbox";
 import Select from "@mui/material/Select";
 import Box from "@mui/material/Box";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { IconButton } from "@material-ui/core";
 import { FormatListBulleted } from "@mui/icons-material";
 import AppsIcon from "@mui/icons-material/Apps";
+import Tooltip from "@mui/material/Tooltip";
+import { HiOutlineInformationCircle } from "react-icons/hi";
 
 const getArrayOfObjArray = (objArray) => {
   let list = [];
@@ -39,12 +43,20 @@ const getArrayOfObjArray = (objArray) => {
 const filterAppsBySearchTermAndInstallationStatus = (
   data,
   searchTerm,
-  filterTags
+  filterTags,
+  isCheckedCore
 ) => {
   try {
     var filteredData = data
+      // Filter core applications
       .filter((app) => {
-        // console.log("filtertags: ", filterTags);
+        if (isCheckedCore && app.installation_group_folder == "core") {
+          return app;
+        } else if (app.installation_group_folder != "core") {
+          return app;
+        }
+      })
+      .filter((app) => {
         let intersect = [];
         if (app.categories) {
           intersect = getArrayOfObjArray(filterTags).filter((value) =>
@@ -85,12 +97,15 @@ export const Applications = (props) => {
   const [isLoading, setIsLoading] = useState(true);
   const [appsSearchResultCount, setAppsSearchResultCount] = useState(0);
   const [isMqConnected, setIsMqConnected] = useState(true);
-  const [isListLayout, setIsListLayout] = useState(true);
+  const [isListLayout, setIsListLayout] = useState(false);
   const [isShowMoreFilters, setIsShowMoreFilters] = useState(false);
 
   const [sortSelect, setSortSelect] = useState("asc");
   const [resultsPerPage, setResultsPerPage] = useState(10);
   const [filterTags, setFilterTags] = useState([]);
+
+  const [isCheckedCore, setIsCheckedCore] = useState(false);
+  const [selectedCount, setSelectedCount] = useState(0);
 
   let [page, setPage] = useState(1);
   // const PER_PAGE = resultsPerPage;
@@ -98,7 +113,8 @@ export const Applications = (props) => {
     filterAppsBySearchTermAndInstallationStatus(
       applicationData,
       searchTerm,
-      filterTags
+      filterTags,
+      isCheckedCore
     ),
     resultsPerPage
   );
@@ -106,7 +122,8 @@ export const Applications = (props) => {
     filterAppsBySearchTermAndInstallationStatus(
       applicationData,
       searchTerm,
-      filterTags
+      filterTags,
+      isCheckedCore
     ).length / resultsPerPage
   );
 
@@ -148,12 +165,19 @@ export const Applications = (props) => {
     "wip_queue",
   ];
 
+  const applicationSelectedCount = (action) => {
+    if (action == "select") {
+      setSelectedCount(selectedCount + 1);
+    } else {
+      setSelectedCount(selectedCount + 1);
+    }
+  };
+
   const addCategoryTofilterTags = (newCategoryObj) => {
     setIsShowMoreFilters(true);
     var newList = filterTags;
     newList.push(newCategoryObj);
     setFilterTags(newList);
-    console.log("filTags list: ", filterTags);
   };
 
   const setCategoriesFilterTags = (tagsList) => {
@@ -173,7 +197,8 @@ export const Applications = (props) => {
 
   const toggleListLayout = (b) => {
     setIsListLayout(b);
-    localStorage.setItem("isListLayout", b);
+    // localStorage.setItem("isListLayout", b);
+
     // console.log("isListLayout: ", b);
     // console.log("isListLayout-local: ", localStorage.getItem("isListLayout"));
   };
@@ -380,6 +405,7 @@ export const Applications = (props) => {
             getQueueStatusList={getQueueStatusList}
             isListLayout={isListLayout}
             addCategoryTofilterTags={addCategoryTofilterTags}
+            applicationSelectedCount={applicationSelectedCount}
           />
         );
       });
@@ -444,7 +470,7 @@ export const Applications = (props) => {
   useEffect(() => {
     // console.log("count: ", localStorage.getItem("appsCount"));
     setAppsSearchResultCount(applicationData.length);
-    setIsListLayout(localStorage.getItem("isListLayout"));
+    // setIsListLayout(localStorage.getItem("isListLayout"));
 
     // const id = setInterval(() => {
     //   fetchData();
@@ -471,13 +497,32 @@ export const Applications = (props) => {
       <div className="text-white pb-10">
         <div className="text-xl font-bold italic text-gray-500">
           APPLICATIONS
+          <Tooltip
+            title="Install applications into your KX.AS Code
+          environemnt."
+            placement="top"
+            arrow
+          >
+            <button className="inline">
+              <HiOutlineInformationCircle className="ml-1" />
+            </button>
+          </Tooltip>
         </div>
         <div className="pt-4 pb-6 text-[16px]">
-          Which Applications you want to install into your KX.AS Code
-          environemnt?
+          Install applications into your KX.AS Code environemnt.
         </div>
 
         <div className="border-b-2 border-gray-700"></div>
+      </div>
+
+      <div
+        className={`flex justify-end ${
+          selectedCount > 0 ? "visible" : "hidden"
+        }`}
+      >
+        <button className="bg-kxBlue p-2 px-5 rounded items-center flex">
+          Install Selected Applicaitons ({selectedCount})
+        </button>
       </div>
 
       {/* Filter Section */}
@@ -600,6 +645,7 @@ export const Applications = (props) => {
             />
 
             <MultipleSelectCheckmarks
+              disable
               setFilterStatusList={setFilterStatusList}
               filterStatusList={filterStatusList}
               filterInstallationStatusList={filterInstallationStatusList}
@@ -609,6 +655,23 @@ export const Applications = (props) => {
               syncFilter={syncFilter}
             />
           </div>
+
+          {/* Checkbox for Core Applications Filter */}
+          <FormGroup>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  value={isCheckedCore}
+                  id="checkbox-filter-core"
+                  onClick={() => {
+                    setIsCheckedCore(!isCheckedCore);
+                    console.log("Checked: ", isCheckedCore);
+                  }}
+                />
+              }
+              label="Show Core Applications"
+            />
+          </FormGroup>
         </div>
       </div>
 

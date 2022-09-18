@@ -2,7 +2,7 @@
     "name": "postman",
     "namespace": "",
     "installation_type": "script",
-    "installation_group_folder": "core",
+    "installation_group_folder": "dev_tools",
     "environment_variables": {
         "postmanVersion": "9.19.0",
         "postmanChecksum": "9ba608c130e7936895dd9752ea0c55055b3be7649c445ff72f36d82042c1b996"
