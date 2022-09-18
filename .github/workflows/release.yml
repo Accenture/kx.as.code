@@ -31,7 +31,6 @@ jobs:
           SHORT_CHANGELOG="${SHORT_CHANGELOG//$'\r'/'%0D'}"
           SHORT_CHANGELOG="${SHORT_CHANGELOG//$'\r'/'%0D'}"
           echo ::set-output name=changelog::$(echo -e "$SHORT_CHANGELOG\n")
-          echo ::set-output name=webhook_url_secret::${{ secrets[$(echo "WEBHOOK_URL_${GITHUB_REF##*/,,}")] }}
       - name: Archive-CHANGELOG.md
         uses: actions/upload-artifact@v3
         with:
