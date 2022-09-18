@@ -406,7 +406,7 @@
       "http_bind_address": "0.0.0.0",
       "http_port_min": "8090",
       "http_port_max": "8099",
-      "shutdown_command": "echo 'vagrant' | sudo -S shutdown -P now",
+      "shutdown_command": "echo 'halt -p' > shutdown.sh; echo 'vagrant'|sudo -S sh 'shutdown.sh'",
       "ssh_fullname": "KX Hero",
       "update": "true",
       "video_memory": "128",
