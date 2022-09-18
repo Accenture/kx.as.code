@@ -1,44 +1,58 @@
 {
-   "checksum": "9320e78341b3db8c44c62cbe40049067",
+   "checksum": "5ec81fe929761c89f4ec517ddc08d3dd",
    "roots": {
       "bookmark_bar": {
          "children": [ {
-            "date_added": "0",
-            "guid": "2a9777bf-4f14-4ad7-8b62-9dd6e7ca2ebe",
-            "id": "2",
+            "date_added": "13307986660900019",
+            "guid": "d165f0d7-d4e7-4eec-9424-f1152f3c2a13",
+            "id": "5",
+            "name": "KX.AS.CODE Portal",
+            "type": "url",
+            "url": "http://localhost:3000/apps"
+         }, {
+            "date_added": "13307986724987563",
+            "guid": "16ad3d75-25db-4b5e-8c4e-f815d79b7c1d",
+            "id": "6",
             "name": "KX.AS.CODE Docs",
             "type": "url",
             "url": "https://accenture.github.io/kx.as.code/"
          }, {
-            "date_added": "0",
-            "guid": "3f50aa81-1895-4f5a-8aa9-2dcf1d3e84c7",
-            "id": "3",
-            "name": "KX.AS.CODE Portal",
+            "date_added": "13307986751487791",
+            "guid": "c115bb3a-b721-4e73-839c-6ec631211004",
+            "id": "7",
+            "name": "Contribute - KX.AS.CODE",
             "type": "url",
-            "url": "http://localhost:3000/"
+            "url": "https://accenture.github.io/kx.as.code/Development/Contribution-Guidelines/"
+         }, {
+            "date_added": "13307986799879692",
+            "guid": "15e1b392-17ff-4985-bb72-9bee8497c9ba",
+            "id": "8",
+            "name": "CHANGELOG - KX.AS.CODE",
+            "type": "url",
+            "url": "https://github.com/Accenture/kx.as.code/blob/main/CHANGELOG.md"
          } ],
-         "date_added": "13304620799150529",
-         "date_modified": "0",
+         "date_added": "13307979577086754",
+         "date_modified": "13307986799879692",
          "guid": "0bc5d13f-2cba-5d74-951f-3f233fe6c908",
          "id": "1",
          "name": "Bookmarks bar",
          "type": "folder"
       },
       "other": {
-         "children": [  ],0
-         "date_added": "13304620799150532",
+         "children": [  ],
+         "date_added": "13307979577086755",
          "date_modified": "0",
          "guid": "82b081ec-3dd3-529c-8475-ab6c344590dd",
-         "id": "4",
+         "id": "2",
          "name": "Other bookmarks",
          "type": "folder"
       },
       "synced": {
          "children": [  ],
-         "date_added": "13304620799150533",
+         "date_added": "13307979577086756",
          "date_modified": "0",
          "guid": "4cf2e351-0e85-532b-bb37-df045d8f8d0f",
-         "id": "5",
+         "id": "3",
          "name": "Mobile bookmarks",
          "type": "folder"
       }
