@@ -1,5 +1,5 @@
 {
-    "name": "telegraf",
+    "name": "influxdata-telegraf",
     "namespace": "influxdata",
     "installation_type": "helm",
     "installation_group_folder": "monitoring",

@@ -1,5 +1,5 @@
 {
-    "name": "influxdb2",
+    "name": "influxdata-influxdb2",
     "namespace": "influxdata",
     "installation_type": "helm",
     "installation_group_folder": "monitoring",
@@ -48,7 +48,7 @@
         }
     ],
     "Description": "InfluxDB is an open-source time series database developed by the company InfluxData. It is written in the Go programming language for storage and retrieval of time series data in fields such as operations monitoring, application metrics, Internet of Things sensor data, and real-time analytics.",
-    "shortcut_text": "InfluxDB2",
+    "shortcut_text": "Influxdata InfluxDB2",
     "shortcut_icon": "influxdata-influxdb2.png",
     "pre_install_scripts": [
         "createAuthSecret.sh"

@@ -20,7 +20,7 @@ echo """[Desktop Entry]
 Version=1.0
 Type=Application
 Name=IntelliJ IDEA Community Edition
-Icon=/home/patrick/intellij-idea/bin/idea.svg
+Icon=${installComponentDirectory}/intellij-idea.png
 Exec=\"/home/${baseUser}/intellij-idea/bin/idea.sh\" %f
 Comment=Capable and Ergonomic IDE for JVM
 Categories=Development;IDE;

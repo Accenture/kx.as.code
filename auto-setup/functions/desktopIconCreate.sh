@@ -5,7 +5,7 @@ createDesktopIcon() {
   functionStart
 
   targetDirectory="${1}"
-  urlToOpen=${2}
+  urlToOpen="${2}"
   shortcutText="${3}"
   iconPath="${4}"
   browserOptions="${5}"

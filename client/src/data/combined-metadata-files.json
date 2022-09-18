@@ -1640,7 +1640,7 @@
     "post_install_scripts": []
   },
   {
-    "name": "vsode",
+    "name": "visual-studio-code",
     "namespace": "",
     "installation_type": "script",
     "installation_group_folder": "dev_tools",
@@ -1653,7 +1653,7 @@
     ],
     "Description": "Visual Studio Code is a lightweight but powerful source code editor which runs on your desktop. It comes with built-in support for JavaScript, TypeScript and Node.js and has a rich ecosystem of extensions for other languages and runtimes (such as C++, C#, Java, Python, PHP, Go, .NET)",
     "shortcut_text": "Visual Studio Code",
-    "shortcut_icon": "vscode.png",
+    "shortcut_icon": "visual-studio-code.png",
     "pre_install_scripts": [],
     "post_install_scripts": []
   },
@@ -2146,7 +2146,7 @@
     "post_install_scripts": []
   },
   {
-    "name": "influxdb2",
+    "name": "influxdata-influxdb2",
     "namespace": "influxdata",
     "installation_type": "helm",
     "installation_group_folder": "monitoring",
@@ -2195,7 +2195,7 @@
       }
     ],
     "Description": "InfluxDB is an open-source time series database developed by the company InfluxData. It is written in the Go programming language for storage and retrieval of time series data in fields such as operations monitoring, application metrics, Internet of Things sensor data, and real-time analytics.",
-    "shortcut_text": "InfluxDB2",
+    "shortcut_text": "Influxdata InfluxDB2",
     "shortcut_icon": "influxdata-influxdb2.png",
     "pre_install_scripts": [
       "createAuthSecret.sh"
@@ -2203,7 +2203,7 @@
     "post_install_scripts": []
   },
   {
-    "name": "telegraf-ds",
+    "name": "influxdata-telegraf-ds",
     "namespace": "influxdata",
     "installation_type": "helm",
     "installation_group_folder": "monitoring",
@@ -2221,7 +2221,7 @@
       "agent"
     ],
     "Description": "Telegraf is a server-based agent for collecting and sending all metrics and events from databases, systems, and IoT sensors.",
-    "shortcut_text": "Influxdata Telegraf",
+    "shortcut_text": "Influxdata Telegraf DS",
     "shortcut_icon": "influxdata-telegraf-ds.png",
     "pre_install_scripts": [
       "getAuthToken.sh"
@@ -2231,7 +2231,7 @@
     ]
   },
   {
-    "name": "telegraf",
+    "name": "influxdata-telegraf",
     "namespace": "influxdata",
     "installation_type": "helm",
     "installation_group_folder": "monitoring",

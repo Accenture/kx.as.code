@@ -37,6 +37,7 @@ do
     log_info "Bun install succeeded. Continuing"
     /usr/bin/sudo chown -R ${vmUser}:${vmUser} ${KX_PORTAL_HOME}
     installSucceeded="OK"
+    break
   else
     log_warn "Bun install returned with a non zero exit code. Trying again"
     /usr/bin/sudo rm -rf ${KX_PORTAL_HOME}/node_modules ${KX_PORTAL_HOME}/bun.lockb
@@ -101,8 +102,6 @@ if [[ "${installSucceeded}" == "OK" ]]; then
   docker run --rm -e EXTERNAL_URL="http://${mainIpAddress}:3000" -v ${KX_PORTAL_HOME}:/e2e -w /e2e cypress/included:10.8.0 run --env EXTERNAL_URL="http://${mainIpAddress}:3000" || rc=$? && log_info "Execution of Cypress test for KX-Portal returned with rc=$rc"
   if [[ ${rc} -eq 0 ]]; then
     log_info "Cypress test succeeded. Continuing"
-    true
-    return
   else
     log_warn "Cypress test returned with a non zero exit code. Trying install again"
     false

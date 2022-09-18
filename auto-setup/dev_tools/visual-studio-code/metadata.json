@@ -1,5 +1,5 @@
 {
-    "name": "vsode",
+    "name": "visual-studio-code",
     "namespace": "",
     "installation_type": "script",
     "installation_group_folder": "dev_tools",
@@ -12,7 +12,7 @@
     ],
     "Description": "Visual Studio Code is a lightweight but powerful source code editor which runs on your desktop. It comes with built-in support for JavaScript, TypeScript and Node.js and has a rich ecosystem of extensions for other languages and runtimes (such as C++, C#, Java, Python, PHP, Go, .NET)",
     "shortcut_text": "Visual Studio Code",
-    "shortcut_icon": "vscode.png",
+    "shortcut_icon": "visual-studio-code.png",
     "pre_install_scripts": [],
     "post_install_scripts": []
 }
