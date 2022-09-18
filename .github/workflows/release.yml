@@ -31,7 +31,7 @@ jobs:
           SHORT_CHANGELOG="${SHORT_CHANGELOG//$'\r'/'%0D'}"
           SHORT_CHANGELOG="${SHORT_CHANGELOG//$'\r'/'%0D'}"
           echo ::set-output name=changelog::$(echo -e "$SHORT_CHANGELOG\n")
-          echo ::set-output name=webhook_url_secret::$(echo "WEBHOOK_URL_${GITHUB_REF##*/,,}")
+          echo ::set-output name=webhook_url_secret::${{ secrets[$(echo "WEBHOOK_URL_${GITHUB_REF##*/,,}")] }}
       - name: Archive-CHANGELOG.md
         uses: actions/upload-artifact@v3
         with:
@@ -44,7 +44,7 @@ jobs:
           path: ./HISTORY.md
       - name: Send CHANGELOG to Discord
         env:
-          DISCORD_WEBHOOK: ${{ secrets["${{steps.vars.outputs.webhook_url_secret}}"] }}
+          DISCORD_WEBHOOK: ${{steps.vars.outputs.webhook_url_secret}}
         uses: Ilshidur/action-discord@master
         with:
           args: "${{ steps.vars.outputs.changelog }}"
