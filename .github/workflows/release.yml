@@ -49,7 +49,7 @@ jobs:
           args: "${{ steps.vars.outputs.changelog }}"
       - name: Commit CHANGELOG Changes
         run: |
-          echo "::set-env name=DISCORD_WEBHOOK_URL::${{ secrets[env.DISCORD_WEBHOOK_SECRET_NAME] }}"
+          echo "::set-env name=DISCORD_WEBHOOK::${{ secrets[env.DISCORD_WEBHOOK_SECRET_NAME] }}"
           git config user.name "GitHub Actions"
           git config user.email noreply@github.com
           git add ./CHANGELOG.md ./HISTORY.md
