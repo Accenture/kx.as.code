@@ -24,10 +24,6 @@ sudo chown -R ${VM_USER}:${VM_USER} /home/${VM_USER}
 sudo chmod -R 755 /home/${VM_USER}/Desktop/*.desktop
 sudo cp /home/${VM_USER}/Desktop/*.desktop /usr/share/applications
 
-# Update system desktop icon file for BTOP
-sudo cp -f /home/${VM_USER}/Desktop/BTOP.desktop /usr/share/applications/btop.desktop
-sudo cp -f /home/${VM_USER}/Desktop/Tilix.desktop /usr/share/applications/com.gexperts.Tilix.desktop
-
 # Change screen resolution to more respectable 1920x1200 (default is 800x600)
 sudo bash -c 'cat <<EOF > /etc/X11/xorg.conf
 Section "Device"
