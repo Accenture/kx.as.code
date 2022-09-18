@@ -44,7 +44,7 @@ jobs:
           path: ./HISTORY.md
       - name: Send CHANGELOG to Discord
         env:
-          DISCORD_WEBHOOK: "${{ secrets[ ${{ steps.vars.outputs.webhook_url_secret }} ] }}"
+          DISCORD_WEBHOOK: "${{ secrets[ steps.vars.outputs.webhook_url_secret ] }}"
         uses: Ilshidur/action-discord@master
         with:
           args: "${{ steps.vars.outputs.changelog }}"
