@@ -1661,13 +1661,19 @@ function updateProfileSelection(selectedProfileIndex) {
     if (sessionStorage.getItem('hasCodeRunBefore') === null) {
         if ( vboxExecutableExists === "true" && vboxVagrantPluginInstalled === "true" ) {
             defaultProfile = "virtualbox";
+            updateStartModeSelection(document.getElementById("virtualbox-profile-selected-startup-mode").value);
+            updateOrchestratorSelection(document.getElementById("virtualbox-profile-selected-orchestrator").value);
             if (selectedProfile === "virtualbox") { selectedProfileCheckResult = "full"; }
             prerequisitesCheckResult = "full";
         } else if ( vmwareExecutableExists === "true" && vmwareVagrantPluginInstalled === "true" ) {
             defaultProfile = "vmware-desktop";
+            updateStartModeSelection(document.getElementById("vmware-desktop-profile-selected-startup-mode").value);
+            updateOrchestratorSelection(document.getElementById("vmware-desktop-profile-selected-orchestrator").value);
             prerequisitesCheckResult = "full";
         } else if ( parallelsExecutableExists === "true" && parallelsPluginInstalled === "true" ) {
             defaultProfile = "parallels";
+            updateStartModeSelection(document.getElementById("parallels-profile-selected-startup-mode").value);
+            updateOrchestratorSelection(document.getElementById("parallels-profile-selected-orchestrator").value);
             prerequisitesCheckResult = "full";
         } else {
             prerequisitesCheckResult = "failed";
@@ -1682,10 +1688,16 @@ function updateProfileSelection(selectedProfileIndex) {
     if (sessionStorage.getItem('hasCodeRunBefore') !== null) {
         if ( selectedProfile === "virtualbox" && vboxExecutableExists === "true" && vboxVagrantPluginInstalled === "true" ) {
             selectedProfileCheckResult = "full";
+            updateStartModeSelection(document.getElementById("virtualbox-profile-selected-startup-mode").value);
+            updateOrchestratorSelection(document.getElementById("virtualbox-profile-selected-orchestrator").value);
         } else if ( selectedProfile === "vmware-desktop" && vmwareExecutableExists === "true" && vmwareVagrantPluginInstalled === "true" ) {
             selectedProfileCheckResult = "full";
+            updateStartModeSelection(document.getElementById("vmware-desktop-profile-selected-startup-mode").value);
+            updateOrchestratorSelection(document.getElementById("vmware-desktop-profile-selected-orchestrator").value);
         } else if ( selectedProfile === "parallels" && parallelsExecutableExists === "true" && parallelsPluginInstalled === "true" ) {
             selectedProfileCheckResult = "full";
+            updateStartModeSelection(document.getElementById("parallels-profile-selected-startup-mode").value);
+            updateOrchestratorSelection(document.getElementById("parallels-profile-selected-orchestrator").value);
         } else {
             selectedProfileCheckResult = "failed";
         }

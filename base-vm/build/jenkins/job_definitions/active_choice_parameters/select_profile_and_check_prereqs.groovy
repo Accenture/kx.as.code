@@ -29,6 +29,11 @@
     def parallelsLocalVagrantBoxNodeVersion
     def extendedDescription
     def profilePaths = []
+    def profileJsonPaths = []
+    def pathSplit = []
+    def profileRead
+    def profileStartMode
+    def orchestrator
     def boxDirectories = []
     def currentDir
     def virtualboxKxMainVagrantCloudVersion
@@ -38,6 +43,12 @@
     def parallelsKxMainVagrantCloudVersion
     def parallelsKxNodeVagrantCloudVersion
     def newestKxMainVirtualBox
+    def virtualboxSelectedStartupMode
+    def virtualboxSelectedOrchestrator
+    def vmwareDesktopSelectedStartupMode
+    def vmwareDesktopSelectedOrchestrator
+    def parallelsSelectedStartupMode
+    def parallelsSelectedOrchestrator
 
     static def mostRecentVersion(versions){
         return versions.collectEntries{
@@ -76,6 +87,46 @@
     } catch (e) {
         println("Something went wrong in the GROOVY block (select_profile_and_check_prereqs.groovy): ${e}")
     }
+
+    try {
+        new File("${shared_workspace}/profiles/").eachDirMatch(~/.*vagrant.*/) { profileJsonPaths << it.path }
+        profileJsonPaths.eachWithIndex { file, i ->
+            try {
+                def inputFile = new File(file + "/profile-config.json")
+                // Read profiles to get previously set settings
+                println(file)
+                pathSplit = file.split("\\\\")
+                profileRead = pathSplit[pathSplit.length - 1]
+                println(profileRead)
+                parsedJson = new JsonSlurper().parse(inputFile)
+                profileStartMode = parsedJson.config.startupMode
+                orchestrator = parsedJson.config.kubeOrchestrator
+                println(profileStartMode)
+                println(orchestrator)
+                if (profileRead == "vagrant-parallels") {
+                    parallelsSelectedStartupMode = profileStartMode
+                    parallelsSelectedOrchestrator = orchestrator
+                } else if (profileRead == "vagrant-virtualbox") {
+                    virtualboxSelectedStartupMode = profileStartMode
+                    virtualboxSelectedOrchestrator = orchestrator
+                } else if (profileRead == "vagrant-vmware-desktop") {
+                    vmwareDesktopSelectedStartupMode = profileStartMode
+                    vmwareDesktopSelectedOrchestrator = orchestrator
+                }
+            } catch (IOException e) {
+                println("Caught IOException when reading profile")
+            }
+        }
+    } catch (e) {
+        println("Something went wrong in the groovy read profile JSON block (select_profile_and_check_prereqs.groovy): ${e}")
+    }
+
+    /*virtualboxSelectedStartupMode
+    virtualboxSelectedOrchestrator
+    vmwareDesktopSelectedStartupMode
+    vmwareDesktopSelectedOrchestrator
+    parallelsSelectedStartupMode
+    parallelsSelectedOrchestrator*/
 
     try {
 
@@ -430,6 +481,12 @@
                 <input type="hidden" id="vmware-local-vagrant-box-node-exists" value='${vmwareLocalVagrantBoxNodeExists}' >
                 <input type="hidden" id="parallels-local-vagrant-box-main-exists" value='${parallelsLocalVagrantBoxMainExists}' >
                 <input type="hidden" id="parallels-local-vagrant-box-node-exists" value='${parallelsLocalVagrantBoxNodeExists}' >
+                <input type="hidden" id="virtualbox-profile-selected-startup-mode" value='${virtualboxSelectedStartupMode}' >
+                <input type="hidden" id="virtualbox-profile-selected-orchestrator" value='${virtualboxSelectedOrchestrator}' >
+                <input type="hidden" id="vmware-desktop-profile-selected-startup-mode" value='${vmwareDesktopSelectedStartupMode}' >
+                <input type="hidden" id="vmware-desktop-profile-selected-orchestrator" value='${vmwareDesktopSelectedOrchestrator}' >
+                <input type="hidden" id="parallels-profile-selected-startup-mode" value='${parallelsSelectedStartupMode}' >
+                <input type="hidden" id="parallels-profile-selected-orchestrator" value='${parallelsSelectedOrchestrator}' >
                 
             </div>
         </div>
