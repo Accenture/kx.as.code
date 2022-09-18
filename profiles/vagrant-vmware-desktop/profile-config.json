@@ -38,7 +38,7 @@
         "selectedTemplates": "CICD Group 1,null",
         "sslProvider": "self-signed",
         "standaloneMode": "false",
-        "startupMode": "normal",
+        "startupMode": "minimal",
         "updateSourceOnStart": "true",
         "virtualizationType": "local",
         "vm_properties": {
