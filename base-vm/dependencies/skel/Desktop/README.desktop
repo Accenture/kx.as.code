@@ -3,7 +3,7 @@ Version=1.0
 Name=KX.AS.CODE Readme
 GenericName=KX.AS.CODE Readme
 Comment=KX.AS.CODE Readme
-Exec=${preferredBrowser} --app=https://github.com/Accenture/kx.as.code/blob/main/README.md --use-gl=angle --password-store=basic --new-window
+Exec={{preferredBrowser}} --app=https://github.com/Accenture/kx.as.code/blob/main/README.md --use-gl=angle --password-store=basic --new-window
 StartupNotify=true
 Terminal=false
 Icon=/usr/share/kx.as.code/git/kx.as.code/base-vm/images/kx-readme.png
