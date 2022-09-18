@@ -35,10 +35,10 @@
             "https_proxy": "",
             "no_proxy": ""
         },
-        "selectedTemplates": "CICD Group 1,null",
+        "selectedTemplates": "",
         "sslProvider": "self-signed",
         "standaloneMode": "false",
-        "startupMode": "normal",
+        "startupMode": "minimal",
         "updateSourceOnStart": "true",
         "virtualizationType": "local",
         "vm_properties": {

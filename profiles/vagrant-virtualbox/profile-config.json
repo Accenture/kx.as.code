@@ -35,7 +35,7 @@
             "https_proxy": "",
             "no_proxy": ""
         },
-        "selectedTemplates": "null",
+        "selectedTemplates": "",
         "sslProvider": "self-signed",
         "standaloneMode": "true",
         "startupMode": "minimal",

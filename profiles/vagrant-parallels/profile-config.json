@@ -17,7 +17,7 @@
         },
         "environmentPrefix": "demo1",
         "glusterFsDiskSize": 200,
-        "kubeOrchestrator": "k8s",
+        "kubeOrchestrator": "k3s",
         "local_volumes": {
             "fifty_gb": 0,
             "five_gb": 10,
@@ -35,10 +35,10 @@
             "https_proxy": "",
             "no_proxy": ""
         },
-        "selectedTemplates": "null",
+        "selectedTemplates": "",
         "sslProvider": "self-signed",
         "standaloneMode": "true",
-        "startupMode": "normal",
+        "startupMode": "minimal",
         "updateSourceOnStart": "true",
         "virtualizationType": "local",
         "vm_properties": {
