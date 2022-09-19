@@ -1533,7 +1533,7 @@ function getAvailableLocalBoxes() {
         } else {
             document.getElementById("kx-main-local-box-version").innerHTML = "<i>- (Optional)</i>";
             document.getElementById("kx-main-local-box-version").value = -1;
-            document.getElementById("local-main-version-status-svg").value = "/userContent/icons/alert-outline.svg";
+            document.getElementById("local-main-version-status-svg").src = "/userContent/icons/alert-outline.svg";
             document.getElementById("local-main-version-status-svg").className = "checklist-status-icon svg-orange-red";
         }
 
