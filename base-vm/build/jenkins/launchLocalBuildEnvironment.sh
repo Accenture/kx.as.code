@@ -1,7 +1,7 @@
-#!/bin/bash -x
+#!/bin/bash
 
 # Cleanup for debugging
-#ps -ef | grep jenkins.war | grep -v grep | awk {'print $2'} | xargs kill -9 && rm -rf ./jenkins_home
+ps -ef | grep jenkins.war | grep -v grep | awk {'print $2'} | xargs kill -9 && rm -rf ./jenkins_home
 
 # Define ansi colours
 red="\033[31m"
@@ -32,9 +32,7 @@ else
 fi
 
 # Source variables in jenkins.env file
-set -a
 . ./jenkins.env
-set +a
 
 # Check the correct number of parameters have been passed
 if [[ $# -gt 1 ]]; then
@@ -139,6 +137,7 @@ if [[ ${override_action} == "recreate"   ]] || [[ ${override_action} == "destroy
 fi
 
 # Update Jenkins userContent file
+mkdir -p jenkins_home/userContent/
 cp -rf ./initial-setup/userContent/. jenkins_home/userContent/
 
 # Versions that will be downloaded if already installed binaries not found
@@ -394,7 +393,6 @@ if [[ ! -f ./securedCredentials ]]; then
   # Creating credentials in Jenkins
   credentialXmlFiles=$(find ./jenkins_home -name "credential_*.xml")
   for credentialXmlFile in ${credentialXmlFiles}; do
-      echo ${git_source_password}
       echo "[INFO] Replacing placeholders with values in ${credentialXmlFile}"
       for i in {1..5}; do
           cat "${credentialXmlFile}" | ./mo > "${credentialXmlFile}_mo"
@@ -408,7 +406,7 @@ if [[ ! -f ./securedCredentials ]]; then
       done
   done
 
-  credentialsToStore="git_source_username git_source_password artifactory_username artifactory_password dockerhub_username dockerhub_password dockerhub_email"
+  credentialsToStore="git_source_username git_source_password dockerhub_username dockerhub_password dockerhub_email"
 
   # Get Jenkins Crumb
   export jenkinsCrumb=$(curl -s --cookie-jar /tmp/cookies -u admin:admin ${jenkins_url}/crumbIssuer/api/json | jq -r '.crumb')
