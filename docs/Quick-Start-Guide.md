@@ -148,6 +148,10 @@ If you are just starting KX.AS.CODE on a local virtualization solution, such as 
 
 ![](../assets/images/kx-as-code_configurator_user-provisioning.png){: .zoom}
 
+The next tab allows you to add custom global properties to the profile. You only needs to complete this if you have created a custom component that requires a custom global variable to be defined.
+
+![](../assets/images/kx-as-code_configurator_custom-global-variables.png)
+
 Finally, after completing the previous tabs, you come to the last tab, where you can review everything that was selected.
 
 Examine the pie charts and see if anything needs to be adjusted. If storage is red, you may be able to ignore it, since the storage is thinly provisioned anyway.

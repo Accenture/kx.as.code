@@ -1596,11 +1596,11 @@ select, option {
 
 .experience-heat-bar {
     height: 20px;
-    width: 800px;
+    width: 900px;
     display: inline-block;
     vertical-align: middle;
     border-radius: 15px;
-    background-image: linear-gradient(to right, rgba(217, 56, 86, 1) 0%, rgba(252,76,2) 25%, rgba(235, 168, 52, 1) 50%, rgba(206, 251, 2) 75%, var(--kx-success-green-100) 100%);
+    background-image: linear-gradient(to right, rgba(221, 58, 78, 1) 5%, rgba(243, 71, 25, 1) 10%, rgba(246, 110, 20, 1) 20%, rgba(235, 167, 51, 1) 25%, rgba(217, 220, 21, 1) 30%, rgba(173, 234, 27, 1) 50%, rgba(89, 191, 95, 1) 100%);
 }
 
 .experience-heat-bar-div {
@@ -1657,7 +1657,7 @@ select, option {
     -webkit-appearance: none;
     appearance: none;
     width: 20px;
-    border: solid;
+    border: none;
     height: 20px;
     /* background: var(--kx-dark-grey-100); */
     cursor: pointer;
@@ -1794,7 +1794,7 @@ select, option {
 
 .custom-variable-cell {
     display:table-cell;
-    width:180px;
+    width:300px;
 }
 
 .custom-variable-cell-key {
@@ -1808,7 +1808,7 @@ select, option {
 }
 
 .custom-variable-input-box {
-    width: 170px;
+    width: 270px;
     padding: 10px 0 10px 5px;
 }
 
@@ -1817,7 +1817,7 @@ select, option {
 }
 
 .custom-variable-table-container {
-    max-width: 600px;
+    max-width: 1200px;
     display: -webkit-box;
     display: -moz-box;
     display: -ms-flexbox;

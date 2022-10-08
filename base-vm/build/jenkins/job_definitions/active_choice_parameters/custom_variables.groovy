@@ -25,7 +25,7 @@ try {
 <body>
     <div id="custom-variables-div" style="display: none;">
 
-    <h1>Custom Variables</h1>
+    <h1>Custom Global Variables</h1>
     <div><span class="description-paragraph-span"><p>Here you can set key/value pairs that can be used by solutions when they are being installed. For example, you my want to set a branch name here, that can be used as input into a build process later on. The variables can be used to replace placeholders in static config files or bash scripts with <code>{{variable_key_name}}</code> and <code>\${variable_key_name}</code> respectively</p></span></div>
     <br><br>
     <div class="custom-variables-table">
