@@ -73,7 +73,7 @@ try {
 }
 
 int workerNodeCpuCoresMin = 1
-int workerNodeCpuCoresMax = 16
+int workerNodeCpuCoresMax = 20
 int workerNodeCpuCoresStep = 1
 int workerNodeCpuCoresStartValue = worker_node_cpu_cores.toInteger()
 int workerNodeCpuCoresMinWarning = 2
@@ -98,7 +98,7 @@ try {
 }
 
 int workerNodeMemoryMin = 4096
-int workerNodeMemoryMax = 32768
+int workerNodeMemoryMax = 65536
 int workerNodeMemoryStep = 1024
 int workerNodeMemoryStartValue = worker_node_memory.toInteger()
 int workerNodeMemoryMinWarning = 8192

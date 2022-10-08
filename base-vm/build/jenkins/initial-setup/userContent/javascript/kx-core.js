@@ -1842,37 +1842,45 @@ function calculateHeatmapScalePosition() {
         memoryScore = (totalAvailableMemory / memoryHeatScaleMax);
     }
 
-    let heatScaleDivWidth = 770;
+    let heatScaleDivWidth = 880;
 
     let heatmapScalePosition;
+
     if ( totalAvailableCpuCores < cpuCoresHeatScaleMin || totalAvailableMemory < memoryHeatScaleMin ) {
         heatmapScalePosition = 10;
     } else {
         heatmapScalePosition = heatScaleDivWidth * ( ( cpuScore + memoryScore ) / 2 );
     }
-
     let heatmapScalePositionPercentage = ( heatmapScalePosition / heatScaleDivWidth ) * 100;
 
     switch (true) {
         case (heatmapScalePositionPercentage <= 5):
             document.getElementById("experience-meter-emoji-icon").src="/userContent/icons/emoji_robot1.png";
-            document.getElementById("triangle-heat-highlight").style.filter = "invert(62%) sepia(100%) saturate(6354%) hue-rotate(331deg) brightness(90%) contrast(87%)";
+            document.getElementById("triangle-heat-highlight").style.filter = "invert(36%) sepia(53%) saturate(5349%) hue-rotate(334deg) brightness(92%) contrast(88%)";
+            break;
+        case (heatmapScalePositionPercentage <= 10):
+            document.getElementById("experience-meter-emoji-icon").src="/userContent/icons/emoji_robot1.png";
+            document.getElementById("triangle-heat-highlight").style.filter = "invert(36%) sepia(59%) saturate(5081%) hue-rotate(355deg) brightness(101%) contrast(91%)";
+            break;
+        case (heatmapScalePositionPercentage <= 20):
+            document.getElementById("experience-meter-emoji-icon").src="/userContent/icons/emoji_robot2.png";
+            document.getElementById("triangle-heat-highlight").style.filter = "invert(48%) sepia(33%) saturate(2153%) hue-rotate(351deg) brightness(98%) contrast(98%)";
             break;
         case (heatmapScalePositionPercentage <= 25):
             document.getElementById("experience-meter-emoji-icon").src="/userContent/icons/emoji_robot2.png";
-            document.getElementById("triangle-heat-highlight").style.filter = "invert(28%) sepia(98%) saturate(1942%) hue-rotate(2deg) brightness(104%) contrast(98%)";
+            document.getElementById("triangle-heat-highlight").style.filter = "invert(70%) sepia(85%) saturate(746%) hue-rotate(338deg) brightness(101%) contrast(85%)";
+            break;
+        case (heatmapScalePositionPercentage <= 30):
+            document.getElementById("experience-meter-emoji-icon").src="/userContent/icons/emoji_robot3.png";
+            document.getElementById("triangle-heat-highlight").style.filter = "invert(94%) sepia(75%) saturate(2435%) hue-rotate(359deg) brightness(93%) contrast(84%)";
             break;
         case (heatmapScalePositionPercentage <= 50):
-            document.getElementById("experience-meter-emoji-icon").src="/userContent/icons/emoji_robot3.png";
-            document.getElementById("triangle-heat-highlight").style.filter = "invert(81%) sepia(48%) saturate(1309%) hue-rotate(331deg) brightness(95%) contrast(93%)";
-            break;
-        case (heatmapScalePositionPercentage <= 75):
             document.getElementById("experience-meter-emoji-icon").src="/userContent/icons/emoji_robot4.png";
-            document.getElementById("triangle-heat-highlight").style.filter = "invert(86%) sepia(92%) saturate(2105%) hue-rotate(11deg) brightness(99%) contrast(99%)";
+            document.getElementById("triangle-heat-highlight").style.filter = "invert(82%) sepia(45%) saturate(844%) hue-rotate(23deg) brightness(107%) contrast(84%)";
             break;
         case (heatmapScalePositionPercentage <= 100):
             document.getElementById("experience-meter-emoji-icon").src="/userContent/icons/emoji_robot5.png";
-            document.getElementById("triangle-heat-highlight").style.filter = "invert(73%) sepia(10%) saturate(2873%) hue-rotate(87deg) brightness(88%) contrast(64%)";
+            document.getElementById("triangle-heat-highlight").style.filter = "invert(62%) sepia(52%) saturate(436%) hue-rotate(74deg) brightness(94%) contrast(94%)";
             break;
         default:
             break;
@@ -1880,9 +1888,9 @@ function calculateHeatmapScalePosition() {
 
     document.getElementById("experience-marker").style.left = heatmapScalePosition + "px";
 
-    let resourceSettingsInnerHtml = '<span class="experience-meter-title">Current Selection</span><span class="experience-meter-label">CPU</span><span class="experience-meter-value">' + totalAvailableCpuCores + ' vCores</span class="experience-meter-label"><span class="experience-meter-label">Memory</span><span class="experience-meter-value">' + ( totalAvailableMemory / 1024 )+ 'GB</span>'
+    let resourceSettingsInnerHtml = '<span class="experience-meter-title">Rought estimated experience based on current selection</span><span class="experience-meter-label">CPU</span><span class="experience-meter-value">' + totalAvailableCpuCores + ' vCores</span class="experience-meter-label"><span class="experience-meter-label">Memory</span><span class="experience-meter-value">' + ( totalAvailableMemory / 1024 )+ 'GB</span>'
     document.getElementById("current-resource-settings-div").innerHTML = resourceSettingsInnerHtml;
-    document.getElementById("current-resource-settings-span").style.left = ( heatmapScalePosition - 94 ) + "px";
+    document.getElementById("current-resource-settings-span").style.left = ( heatmapScalePosition - 130 ) + "px";
 
 }
 
