@@ -2,8 +2,19 @@
 
 Welcome to the KX.AS.CODE workstation. This virtual workstation was initially created with two primary goals in mind, but has since become so much more!
 
-*   Play, learn, experiment, innovate! :muscle: :trophy:
-*   Share knowledge as code!
+* Play, learn, experiment, innovate! :muscle: :trophy:
+* Share knowledge as code!
+
+Since then, due to the increase in the power and feature-set of KX.AS.CODE, the use case has expanded to the following more complex usage (see [use case example](../../Overview/Use-Case-Example/)):
+
+* Dynamic on-demand provisioning/destruction of test environments in the public/private cloud
+* End-to-end developer workstation to enhance local quality assurance capabilities 
+
+!!! quote "Message from the creator"
+    <i>I made this workstation public, because we all in the IT industry gain so much from OpenSource solutions and I wanted to give something back. There are so many amazing solutions out there for free, it's incredible! Enjoy the workstation!</i>
+    -- Patrick Delamere :slightly_smiling_face:  
+    
+    <i>P.S. Would be great if you could come and say hello in our [Discord channel](https://discord.gg/TbwD9cmqUC) and tell us how you are using KX.AS.CODE!</i> :partying_face:
 
 !!! tip
     KX.AS.CODE was built with the belief that playing and experimentation is the best way to learn new tricks and ultimately innovate.
@@ -21,13 +32,13 @@ KX.AS.CODE can be considered as a `local cloud like` Kubernetes environment with
 !!! question "Questions & Answers"
     To find out more about what KX.AS.CODE is, and how it came about, read our [Questions and Answers](Overview/Questions-and-Answers/).
 
-## What else?
+## Use Cases
 
 Currently, KX.AS.CODE fulfills the following use cases:
 
-1. DevOps training environment
-2. Fullstack development/DevOps environment
-3. A HomeLab DevOps environment - see below our Raspberry Pi project!
+1. Fullstack development/test environment (see [use case example](../../Overview/Use-Case-Example/))
+2. DevOps training environment
+3. A HomeLab developer/DevOps environment - see below our Raspberry Pi project!
 
 ## Where can I deploy KX.AS.CODE?
 KX.AS.CODE can be deployed locally or in the cloud, be it a private or public cloud. The most tested solutions are currently OpenStack and VirtualBox. Here a full list of solutions we have run KX.AS.CODE on.
@@ -177,6 +188,4 @@ We are happy to receive contributions, ideas and dare I say it, bug fixes or sug
 
 For more details on how you can contribute to the project, checkout the [CONTRIBUTE.md](Development/Contribution-Guidelines/) file
 
-Wish you all the best and enjoy the DevOps workstation! :smile:
 
-Patrick Delamere (Accenture Song), creator of KX.AS.CODE

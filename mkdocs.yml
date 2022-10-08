@@ -12,6 +12,7 @@ nav:
     - 'Overview':
         - 'Overview/Architecture.md'
         - 'Overview/Application-Library.md'
+        - 'Overview/Concepts.md'
         - 'Overview/Future-Roadmap.md'
         - 'Overview/Questions-and-Answers.md'
         - 'Overview/Raising-a-Bug-Report.md'
@@ -20,6 +21,8 @@ nav:
         - 'Overview/Orchestrators.md'
         - 'Overview/IAM-and-SSO.md'
         - 'Overview/Storage.md'
+        - 'Overview/Task-Executions.md'
+        - 'Overview/Use-Case-Example.md'
     - 'Build':
         - 'Build/Local-Virtualizations.md'
         - 'Build/Raspberry-Pi-Cluster.md'
@@ -27,6 +30,7 @@ nav:
         - 'Build/Public-Clouds.md'
     - 'Deployment':
         - 'Deployment/Configuration-Options.md'
+        - 'Deployment/Customizing.md'
         - 'Deployment/Deployment-Profiles.md'
         - 'Deployment/External-Application-Access.md'
         - 'Deployment/Initial-Setup.md'
@@ -43,8 +47,8 @@ nav:
         - 'Deployment/User-Management.md'
     - 'Development':
         - 'Development/Adding-a-Solution.md'
-        - 'Development/Available-Functions.md'
         - 'Development/Best-Practices.md'
+        - 'Development/Central-Functions.md'
         - 'Development/Contribution-Guidelines.md'
         - 'Development/Debugging.md'
         - 'Development/Releasing.md'
