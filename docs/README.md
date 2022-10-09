@@ -28,6 +28,8 @@ KX.AS.CODE can be considered as a `local cloud like` Kubernetes environment with
 
 Once the base services are up, KX.AS.CODE even has a built in `App Store` for quickly installing additional solutions on top of the base above, such as `Gitlab`, `Grafana`, `InfluxDB`, `SonarQube`, `NeuVector`, `IntelliJ IDEA`, `MSSQLServer`... and many many more!
 
+As a bonus, you also get a desktop for easily accessing and managing deployed applications. The desktop obviously makes things easier, but if you wanted to run without the desktop, see our [external access guide](../../Deployment/External-Application-Access/).
+
 !!! info "Applications Library"
     Check out the [applications library](Overview/Application-Library/), to see which solutions can be installed with a single click!
 

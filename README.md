@@ -5,7 +5,7 @@ Welcome to the KX.AS.CODE workstation. This virtual workstation was initially cr
 * Play, learn, experiment, innovate! :muscle: :trophy:
 * Share knowledge as code!
 
-Since then, due to the increase in the power and feature-set of KX.AS.CODE, the use case has expanded to the following more complex usage (see [use case example](../../Overview/Use-Case-Example/)):
+Since then, due to the increase in the power and feature-set of KX.AS.CODE, the use case has expanded to the following more complex usage (see [use case example](https://accenture.github.io/kx.as.code/Overview/Use-Case-Example/)):
 
 * Dynamic on-demand provisioning/destruction of test environments in the public/private cloud
 * End-to-end developer workstation to enhance local quality assurance capabilities
@@ -15,6 +15,8 @@ Since then, due to the increase in the power and feature-set of KX.AS.CODE, the 
 KX.AS.CODE can be considered as a `local cloud like` Kubernetes environment with a lot of things you would expect to see when managing a Kubernetes cluster in the cloud, including an `ingress controller`, `local and network storage services`, `load-balancer`, `domain services`, `identity management`, `secrets management`, `remote desktop services`, a `certificate authority`... and the best bit, you can launch it very quickly from our Jenkins based configurator and launcher. See the [Quick Start Guide](https://accenture.github.io/kx.as.code/Quick-Start-Guide/)!
 
 Once the base services are up, KX.AS.CODE even has a built in `App Store` for quickly installing additional solutions on top of the base above, such as `Gitlab`, `Grafana`, `InfluxDB`, `SonarQube`, `NeuVector`, `IntelliJ IDEA`, `MSSQLServer`... and many many more!
+
+As a bonus, you also get a desktop for easily accessing and managing deployed applications. The desktop obviously makes things easier, but if you wanted to run without the desktop, see our [external access guide](https://accenture.github.io/kx.as.code/Deployment/External-Application-Access/).
 
 Check out the [applications library](https://accenture.github.io/kx.as.code/Overview/Application-Library/), to see which solutions can be installed with a single click!
 
