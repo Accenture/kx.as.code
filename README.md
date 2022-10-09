@@ -18,7 +18,7 @@ Since then, due to the increase in the power and feature-set of KX.AS.CODE, the 
 
 ## What is the KX.AS.CODE Workstation?
 
-KX.AS.CODE can be considered as a `local cloud like` Kubernetes environment with a lot of things you would expect to see when managing a Kubernetes cluster in the cloud, including an `ingress controller`, `local and network storage services`, `load-balancer`, `domain services`, `identity management`, `secrets management`, `remote desktop services`, a `certificate authority`... and the best bit, you can launch it very quickly from our Jenkins based configurator and launcher. See the [Quick Start Guide](https://accenture.github.io/kx.as.code/Quick-Start-Guide/)!
+KX.AS.CODE can be considered as a dynamic fully configurable and customizable `local cloud like` `Kubernetes environment` with a lot of things you would expect to see when managing a `Kubernetes cluster` in the `cloud`, including an `ingress controller`, `local and network storage services`, `load-balancer`, `domain services`, `identity management`, `secrets management`, `remote desktop services`, a `certificate authority`... and the best bit, you can launch it very quickly from our Jenkins based configurator and launcher. See the [Quick Start Guide](https://accenture.github.io/kx.as.code/Quick-Start-Guide/)!
 
 Once the base services are up, KX.AS.CODE even has a built in `App Store` for quickly installing additional solutions on top of the base above, such as `Gitlab`, `Grafana`, `InfluxDB`, `SonarQube`, `NeuVector`, `IntelliJ IDEA`, `MSSQLServer`... and many many more!
 
@@ -73,6 +73,12 @@ Here some impressions of KX.AS.CODE. Read our [documentation](https://accenture.
 Configure your KX.AS.CODE instance using the Jenkins based launcher. On this screen you can select between K3s and K8s amongst others.
 
 ![](docs/assets/images/kx-as-code_configurator_select-profile.png)
+
+### Hardware resource allocation for virtual machine(s)
+
+Here you determine how much physical resource you want to allocate to the kx-main and the optional kx-worker node(s). The experience bar gives you a very rough indication as to the experience you may expect given the allocation.
+
+![](docs/assets/images/kx-as-code_configurator_resource-configuration.png)
 
 ### Optionally select application groups to install
 
