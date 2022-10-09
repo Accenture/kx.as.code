@@ -24,7 +24,9 @@ Since then, due to the increase in the power and feature-set of KX.AS.CODE, the 
 
 ## What is the KX.AS.CODE Workstation?
 
-KX.AS.CODE can be considered as a `local cloud like` Kubernetes environment with a lot of things you would expect to see when managing a Kubernetes cluster in the cloud, including an ingress controller, storage cluster, DNS, a certificate authority... and the best bit, you just have to fill out a couple of config files and `vagrant up`/`terraform apply`, and you are on your way!
+KX.AS.CODE can be considered as a `local cloud like` Kubernetes environment with a lot of things you would expect to see when managing a Kubernetes cluster in the cloud, including an `ingress controller`, `local and network storage services`, `load-balancer`, `domain services`, `identity management`, `secrets management`, `remote desktop services`, a `certificate authority`... and the best bit, you can launch it very quickly from our Jenkins based configurator and launcher. See the [Quick Start Guide](https://accenture.github.io/kx.as.code/Quick-Start-Guide/)!
+
+Once the base services are up, KX.AS.CODE even has a built in `App Store` for quickly installing additional solutions on top of the base above, such as `Gitlab`, `Grafana`, `InfluxDB`, `SonarQube`, `NeuVector`, `IntelliJ IDEA`, `MSSQLServer`... and many many more!
 
 !!! info "Applications Library"
     Check out the [applications library](Overview/Application-Library/), to see which solutions can be installed with a single click!
@@ -159,29 +161,31 @@ Since KX.AS.CODE is all about sharing knowledge as code, a pre-configured VSCode
 The KX.AS.CODE portal makes adding and removing applications easier, and provides status on current installed items.
 
 !!! warning 
-    The portal is still in ALPHA, so may not always behave as expected.
+    The portal is still in ALPHA, so may not always behave as expected. The basics such as installing `components` and executing `tasks` should be OK.
 
 ![](assets/images/kx.as.code_portal.png){: .zoom}
 
-### KX.AS.CODE Application Management
+### KX.AS.CODE Portal -  App Store
 
 Applications and be removed and added from the KX.AS.CODE Portal's application screen.
 
-!!! warning
-    The portal is still in ALPHA, so may not always behave as expected.
-
 ![](assets/images/kx.as.code_portal_applications.png){: .zoom}
 
-### KX.AS.CODE Application Groups
+### KX.AS.CODE Portal - Application Details
 
-Applications can be installed in integrated groups. This is still a work in progress. Currently, this page provides a view of the available groups, but not yet an option to install them.
-See the [manual installations](User-Guide/Manual-Provisioning/#installation-groups) page, on how to install the groups manually without the portal.
+The application details screen shows more information about the application. It is also possible to execute `tasks` from this screen.
+In the future, this screen will also allow the user to enter values for input arguments.
 
-!!! warning 
-    The portal is still in ALPHA, so may not always behave as expected.
+![](assets/images/kx.as.code_portal_application_details.png){: .zoom}
+![](assets/images/executeTasksDockerRegistry.png){: .zoom}
+
+### KX.AS.CODE Portal - Application Groups
+
+Applications can be installed in integrated groups. This is still in development, so the install button currently does not execute the group installation.
+See the [manual installations](../../Deployment/Manual-Provisioning/#installation-groups) page, on how to install the groups manually without the portal.
+
 
 ![](assets/images/kx.as.code_portal_application_groups.png){: .zoom}
-
 
 ## Contributing
 We are happy to receive contributions, ideas and dare I say it, bug fixes or suggestions on how to do things better! We never stop learning! :nerd_face:

@@ -2,20 +2,21 @@
 
 Welcome to the KX.AS.CODE workstation. This virtual workstation was initially created with two primary goals in mind, but has since become so much more!
 
-*   Play, learn, experiment, innovate! :muscle: :trophy:
-*   Share knowledge a code!
+* Play, learn, experiment, innovate! :muscle: :trophy:
+* Share knowledge as code!
+
+Since then, due to the increase in the power and feature-set of KX.AS.CODE, the use case has expanded to the following more complex usage (see [use case example](../../Overview/Use-Case-Example/)):
+
+* Dynamic on-demand provisioning/destruction of test environments in the public/private cloud
+* End-to-end developer workstation to enhance local quality assurance capabilities
 
 ## What is the KX.AS.CODE Workstation?
 
-KX.AS.CODE can be considered as a `local cloud like` Kubernetes environment with a lot of things you would expect to see when managing a Kubernetes cluster in the cloud, including an ingress controller, storage cluster, DNS, a certificate authority... and the best bit, you just have to fill out a couple of config files and `vagrant up`/`terraform apply`, and you are on your way!
+KX.AS.CODE can be considered as a `local cloud like` Kubernetes environment with a lot of things you would expect to see when managing a Kubernetes cluster in the cloud, including an `ingress controller`, `local and network storage services`, `load-balancer`, `domain services`, `identity management`, `secrets management`, `remote desktop services`, a `certificate authority`... and the best bit, you can launch it very quickly from our Jenkins based configurator and launcher. See the [Quick Start Guide](https://accenture.github.io/kx.as.code/Quick-Start-Guide/)!
 
-## What else?
+Once the base services are up, KX.AS.CODE even has a built in `App Store` for quickly installing additional solutions on top of the base above, such as `Gitlab`, `Grafana`, `InfluxDB`, `SonarQube`, `NeuVector`, `IntelliJ IDEA`, `MSSQLServer`... and many many more!
 
-Currently, KX.AS.CODE fulfills the following use cases:
-
-1. DevOps training environment
-2. Fullstack development/DevOps environment
-3. A HomeLab DevOps environment - see below our Raspberry Pi project!
+Check out the [applications library](https://accenture.github.io/kx.as.code/Overview/Application-Library/), to see which solutions can be installed with a single click!
 
 ## Where can I deploy KX.AS.CODE?
 KX.AS.CODE can be deployed locally or in the cloud, be it a private or public cloud. The most tested solutions are currently OpenStack and VirtualBox. Here a full list of solutions we have run KX.AS.CODE on.
@@ -62,19 +63,19 @@ Here some impressions of KX.AS.CODE. Read our [documentation](https://accenture.
 
 Configure your KX.AS.CODE instance using the Jenkins based launcher. On this screen you can select between K3s and K8s amongst others.
 
-![](docs/assets/images/jenkins_minimal_setup.png)
+![](docs/assets/images/kx-as-code_configurator_select-profile.png)
 
 ### Optionally select application groups to install
 
 You can also configure application groups that will be installed on first launch of KX.AS.CODE. More groups and individual applications can be added later.
 
-![](docs/assets/images/jenkins_installation_groups.png)
+![](docs/assets/images/kx-as-code_configurator_template-selector.png)
 
 ### Review configuration and launch KX.AS.CODE
 
 Once done configuring KX.AS.CODE in the launcher, you can review the settings and launch the KX.AS.CODE environment.
 
-![](docs/assets/images/jenkins_minimal_setup5.png)
+![](docs/assets/images/kx-as-code_configurator_review-launch.png)
 
 ### KX.AS.CODE login screen
 
@@ -154,15 +155,24 @@ The KX.AS.CODE portal makes adding and removing applications easier, and provide
 
 ![](docs/assets/images/kx.as.code_portal.png)
 
-### KX.AS.CODE Portal - Applications
+### KX.AS.CODE Portal - App Store
 
-Applications and be removed and added from the KX.AS.CODE Portal's application screen.
+Applications and be removed and added from the KX.AS.CODE Portal's app store screen.
 
 ![](docs/assets/images/kx.as.code_portal_applications.png)
 
+### KX.AS.CODE Portal - Application Details
+
+The application details screen shows more information about the application. It is also possible to execute `tasks` from this screen.
+In the future, this screen will also allow the user to enter values for input arguments.
+
+![](docs/assets/images/kx.as.code_portal_application_details.png)
+![](assets/images/executeTasksDockerRegistry.png)
+
 ### KX.AS.CODE Portal - Application Groups
 
-Applications can be installed in integrated groups.
+Applications can be installed in integrated groups. This is still in development, so the install button currently does not execute the group installation.
+See the [manual installations](Deployment/Manual-Provisioning/#installation-groups) page, on how to install the groups manually without the portal.
 
 ![](docs/assets/images/kx.as.code_portal_application_groups.png)
 
