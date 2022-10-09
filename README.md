@@ -18,11 +18,11 @@ Since then, due to the increase in the power and feature-set of KX.AS.CODE, the 
 
 ## What is the KX.AS.CODE Workstation?
 
-KX.AS.CODE can be considered as a dynamic fully configurable and customizable `local cloud like` `Kubernetes environment` with a lot of things you would expect to see when managing a `Kubernetes cluster` in the `cloud`, including an `ingress controller`, `local and network storage services`, `load-balancer`, `domain services`, `identity management`, `secrets management`, `remote desktop services`, a `certificate authority`... and the best bit, you can launch it very quickly from our Jenkins based configurator and launcher. See the [Quick Start Guide](https://accenture.github.io/kx.as.code/Quick-Start-Guide/)!
+KX.AS.CODE is a dynamic fully configurable and customizable `local cloud like` `Kubernetes environment` with a number of functionalities you would expect to see when managing a `Kubernetes cluster` in the `cloud`, including an `ingress controller`, `local and network storage services`, `load-balancer`, `domain services`, `identity management`, `secrets management`, `remote desktop services`, a `certificate authority`... and the best bit, you can launch it very quickly from our Jenkins based configurator and launcher. See the [Quick Start Guide](https://accenture.github.io/kx.as.code/Quick-Start-Guide/)!
 
-Once the base services are up, KX.AS.CODE even has a built in `App Store` for quickly installing additional solutions on top of the base above, such as `Gitlab`, `Grafana`, `InfluxDB`, `SonarQube`, `NeuVector`, `IntelliJ IDEA`, `MSSQLServer`... and many many more!
+Once the base services are up, KX.AS.CODE has a built in `App Store` for quickly installing additional solutions on top of the base outlined above, such as `Gitlab`, `Grafana`, `InfluxDB`, `SonarQube`, `NeuVector`, `IntelliJ IDEA`, `MSSQLServer`... and many many more!
 
-As a bonus, you also get a desktop for easily accessing and managing deployed applications. The desktop obviously makes things easier, but if you wanted to run without the desktop, see our [external access guide](https://accenture.github.io/kx.as.code/Deployment/External-Application-Access/).
+As a bonus, you also get a `desktop` for easily accessing and managing deployed applications. The desktop makes things easier, but if you prefer, you can also deploy KX.AS.CODE without it.
 
 Check out the [applications library](https://accenture.github.io/kx.as.code/Overview/Application-Library/), to see which solutions can be installed with a single click!
 
