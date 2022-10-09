@@ -10,6 +10,12 @@ Since then, due to the increase in the power and feature-set of KX.AS.CODE, the 
 * Dynamic on-demand provisioning/destruction of test environments in the public/private cloud
 * End-to-end developer workstation to enhance local quality assurance capabilities
 
+### Message from the creator of KX.AS.CODE
+> <i>I am a big fan of OpenSource technologies. Happy to give something back to the community. Without all the OpenSource technologies out there, this workstation wouldn't even be possible!</i>
+-- Patrick Delamere, :slightly_smiling_face:
+>
+><i>P.S. Would be great if you could come and say hello in our [Discord channel](https://discord.gg/TbwD9cmqUC) and tell us how you are using KX.AS.CODE!</i> :partying_face:
+
 ## What is the KX.AS.CODE Workstation?
 
 KX.AS.CODE can be considered as a `local cloud like` Kubernetes environment with a lot of things you would expect to see when managing a Kubernetes cluster in the cloud, including an `ingress controller`, `local and network storage services`, `load-balancer`, `domain services`, `identity management`, `secrets management`, `remote desktop services`, a `certificate authority`... and the best bit, you can launch it very quickly from our Jenkins based configurator and launcher. See the [Quick Start Guide](https://accenture.github.io/kx.as.code/Quick-Start-Guide/)!
@@ -178,10 +184,3 @@ Applications can be installed in integrated groups. This is still in development
 See the [manual installations](Deployment/Manual-Provisioning/#installation-groups) page, on how to install the groups manually without the portal.
 
 ![](docs/assets/images/kx.as.code_portal_application_groups.png)
-
-
-### Message from the creator of KX.AS.CODE
-> <i>I am a big fan of OpenSource technologies. Happy to give something back to the community. Without all the OpenSource technologies out there, this workstation wouldn't even be possible!</i>
--- Patrick Delamere, :slightly_smiling_face:
->
-><i>P.S. Would be great if you could come and say hello in our [Discord channel](https://discord.gg/TbwD9cmqUC) and tell us how you are using KX.AS.CODE!</i> :partying_face:
