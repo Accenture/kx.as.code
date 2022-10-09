@@ -20,6 +20,7 @@ As a bonus, you also get a desktop for easily accessing and managing deployed ap
 
 Check out the [applications library](https://accenture.github.io/kx.as.code/Overview/Application-Library/), to see which solutions can be installed with a single click!
 
+
 ## Where can I deploy KX.AS.CODE?
 KX.AS.CODE can be deployed locally or in the cloud, be it a private or public cloud. The most tested solutions are currently OpenStack and VirtualBox. Here a full list of solutions we have run KX.AS.CODE on.
 
@@ -178,3 +179,9 @@ See the [manual installations](Deployment/Manual-Provisioning/#installation-grou
 
 ![](docs/assets/images/kx.as.code_portal_application_groups.png)
 
+
+### Message from the creator of KX.AS.CODE
+> <i>I am a big fan of OpenSource technologies. Happy to give something back to the community. Without all the OpenSource technologies out there, this workstation wouldn't even be possible!</i>
+-- Patrick Delamere, :slightly_smiling_face:
+>
+><i>P.S. Would be great if you could come and say hello in our [Discord channel](https://discord.gg/TbwD9cmqUC) and tell us how you are using KX.AS.CODE!</i> :partying_face:

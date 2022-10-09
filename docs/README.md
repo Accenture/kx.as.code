@@ -11,7 +11,7 @@ Since then, due to the increase in the power and feature-set of KX.AS.CODE, the 
 * End-to-end developer workstation to enhance local quality assurance capabilities 
 
 !!! quote "Message from the creator"
-    <i>I made this workstation public, because we all in the IT industry gain so much from OpenSource solutions and I wanted to give something back. There are so many amazing solutions out there for free, it's incredible! Enjoy the workstation!</i>
+    <i>I am a big fan of OpenSource technologies. Happy to give something back to the community. Without all the OpenSource technologies out there, this workstation wouldn't even be possible!</i>
     -- Patrick Delamere :slightly_smiling_face:  
     
     <i>P.S. Would be great if you could come and say hello in our [Discord channel](https://discord.gg/TbwD9cmqUC) and tell us how you are using KX.AS.CODE!</i> :partying_face:
@@ -40,7 +40,7 @@ As a bonus, you also get a desktop for easily accessing and managing deployed ap
 
 Currently, KX.AS.CODE fulfills the following use cases:
 
-1. Fullstack development/test environment (see [use case example](../../Overview/Use-Case-Example/))
+1. Fullstack development/test environment (see [use case example](Overview/Use-Case-Example/))
 2. DevOps training environment
 3. A HomeLab developer/DevOps environment - see below our Raspberry Pi project!
 
