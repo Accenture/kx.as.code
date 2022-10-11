@@ -4,10 +4,12 @@
 
 Prepare prerequisites according to the [Build Environment](../../Build/Local-Virtualizations/) guide.
 
-For MacOSX, install the latest `screen` utility by executing the following command. Using the default MacOSX `screen` tool will result in an error`, as it does not have the needed options.
-```bash
-brew install screen
-```
+!!! danger "MacOSX launchLocalBuildEnvironment.sh incompatibilities"
+    MacOSX contains old packages for `screen` and `openssl`, compared to Linux and Windows. Please upgrade these packages. The easiest way to do this is with [Homebrew](https://brew.sh/){:target="\_blank"}."
+    ```
+    # Upgrade incompatible packages on MacOSX before launching launchLocalBuildEnvironment.sh!
+    brew install openssl screen
+    ```
 
 ## Configure Jenkins.env
 1. Copy `base-vm/build/jenkins/jenkins.env_template` to `base-vm/build/jenkins/jenkins.env`.
