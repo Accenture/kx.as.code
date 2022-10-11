@@ -18,7 +18,7 @@ Since then, due to the increase in the power and feature-set of KX.AS.CODE, the 
 
 ## What is the KX.AS.CODE Workstation?
 
-KX.AS.CODE is a dynamic fully configurable and customizable `local cloud like` `Kubernetes environment` with a number of functionalities you would expect to see when managing a `Kubernetes cluster` in the `cloud`, including an `ingress controller`, `local and network storage services`, `load-balancer`, `domain services`, `identity management`, `secrets management`, `remote desktop services`, a `certificate authority`... and the best bit, you can launch it very quickly from our Jenkins based configurator and launcher. See the [Quick Start Guide](https://accenture.github.io/kx.as.code/Quick-Start-Guide/)!
+KX.AS.CODE is a dynamic fully configurable and customizable `local cloud like` `Kubernetes environment` with a number of functionalities you would expect to see when managing a `Kubernetes cluster` in the `cloud`, including an `ingress controller`, `local and network storage services`, `load-balancer`, `domain services`, `identity management`, `secrets management`, a `certificate authority`... and the best bit, you can launch it very quickly from our Jenkins based configurator and launcher. See the [Quick Start Guide](https://accenture.github.io/kx.as.code/Quick-Start-Guide/)!
 
 Once the base services are up, KX.AS.CODE has a built in `App Store` for quickly installing additional solutions on top of the base outlined above, such as `Gitlab`, `Grafana`, `InfluxDB`, `SonarQube`, `NeuVector`, `IntelliJ IDEA`, `MSSQLServer`... and many many more!
 
@@ -172,7 +172,7 @@ The KX.AS.CODE portal makes adding and removing applications easier, and provide
 
 ### KX.AS.CODE Portal - App Store
 
-Applications and be removed and added from the KX.AS.CODE Portal's app store screen.
+Applications can be removed and added from the KX.AS.CODE Portal's app store screen.
 
 ![](docs/assets/images/kx.as.code_portal_applications.png)
 
