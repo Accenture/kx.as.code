@@ -5,7 +5,7 @@
 Prepare prerequisites according to the [Build Environment](../../Build/Local-Virtualizations/) guide.
 
 !!! danger "MacOSX launchLocalBuildEnvironment.sh incompatibilities"
-    MacOSX contains old packages for `screen` and `openssl`, compared to Linux and Windows. Please upgrade these packages. The easiest way to do this is with [Homebrew](https://brew.sh/){:target="\_blank"}."
+    MacOSX contains old packages for `screen` and `openssl`, compared to Linux and Windows. Please upgrade these packages. The easiest way to do this is with [Homebrew](https://brew.sh/){:target="\_blank"}.
     ```
     # Upgrade incompatible packages on MacOSX before launching launchLocalBuildEnvironment.sh!
     brew install openssl screen
