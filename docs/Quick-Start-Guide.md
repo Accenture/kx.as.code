@@ -18,7 +18,7 @@ As this is a quick start guide, we will concentrate on the Jenkins approach here
     
     There is no need to download the boxes manually. Vagrant will take care of that automatically when starting KX.AS.CODE.
 
-First you need to clone the KX.AS.CODE Github repository:
+First you need to clone the KX.AS.CODE GitHub repository:
 
 ```
 git clone https://github.com/Accenture/kx.as.code.git
@@ -35,7 +35,7 @@ jenkins_server_port = "8081"
 ```
 
 !!! info
-    If you are also intending to build KX.AS.CODE images, and not just launch existing public ones in the Vagrant Cloud, then you may need to add your Github.com credentials, if the repository is private. As the main KX.AS.CODE repository is public, this is not needed and the properties can be left blank.
+    If you are also intending to build KX.AS.CODE images, and not just launch existing public ones in the Vagrant Cloud, then you may need to add your GitHub.com credentials, if the repository is private. As the main KX.AS.CODE repository is public, this is not needed and the properties can be left blank.
     ```
     git_source_username = "change-me"
     git_source_password = "change-me"
@@ -52,6 +52,13 @@ Everything else in the file goes beyond the Quick Start guide, and will be descr
     ```
     # Windows
     .\launchLocalBuildEnvironment.ps1
+    ```
+
+!!! danger "MacOSX incompatibilities"
+    MacOSX contains old packages for `screen` and `openssl`, compared to Linux and Windows. Please upgrade these packages. The easiest way to do this is with [Homebrew](https://brew.sh/){:target="\_blank"}."
+    ```
+    # Upgrade incompatible packages on MacOSX
+    brew install openssl screen
     ```
 
 Once you receive the confirmation that Jenkins is up, you will receive the URL for accessing the launcher. Open it in your browser of choice.
