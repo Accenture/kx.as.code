@@ -43,6 +43,13 @@ jenkins_server_port = "8081"
 
 Everything else in the file goes beyond the Quick Start guide, and will be described on other pages.
 
+!!! danger "MacOSX launchLocalBuildEnvironment.sh incompatibilities"
+    MacOSX contains old packages for `screen` and `openssl`, compared to Linux and Windows. Please upgrade these packages. The easiest way to do this is with [Homebrew](https://brew.sh/){:target="\_blank"}."
+    ```
+    # Upgrade incompatible packages on MacOSX before launching launchLocalBuildEnvironment.sh!
+    brew install openssl screen
+    ```
+
 !!! note
     Once the jenkins.env is ready, execute the launch script in order to start the Jenkins KX-Launcher job:
     ```
@@ -52,13 +59,6 @@ Everything else in the file goes beyond the Quick Start guide, and will be descr
     ```
     # Windows
     .\launchLocalBuildEnvironment.ps1
-    ```
-
-!!! danger "MacOSX incompatibilities"
-    MacOSX contains old packages for `screen` and `openssl`, compared to Linux and Windows. Please upgrade these packages. The easiest way to do this is with [Homebrew](https://brew.sh/){:target="\_blank"}."
-    ```
-    # Upgrade incompatible packages on MacOSX
-    brew install openssl screen
     ```
 
 Once you receive the confirmation that Jenkins is up, you will receive the URL for accessing the launcher. Open it in your browser of choice.
