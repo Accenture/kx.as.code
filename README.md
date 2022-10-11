@@ -172,7 +172,7 @@ The KX.AS.CODE portal makes adding and removing applications easier, and provide
 
 ### KX.AS.CODE Portal - App Store
 
-Applications and be removed and added from the KX.AS.CODE Portal's app store screen.
+Applications can be removed and added from the KX.AS.CODE Portal's app store screen.
 
 ![](docs/assets/images/kx.as.code_portal_applications.png)
 
