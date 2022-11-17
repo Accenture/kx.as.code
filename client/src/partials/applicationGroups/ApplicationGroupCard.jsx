@@ -3,6 +3,8 @@ import { Link, NavLink } from "react-router-dom";
 // import EditMenu from "../EditMenu";
 // import { TrashCan32, Restart32 } from "@carbon/icons-react";
 import ApplicationStatusActionButton from "../applications/ApplicationStatusActionButton";
+import { MdArrowBackIosNew } from "react-icons/md";
+import { MdArrowForwardIos } from "react-icons/md";
 import {
   CarouselProvider,
   Slider,
@@ -144,32 +146,46 @@ function ApplicationGroupCard(props) {
               naturalSlideWidth={500}
               naturalSlideHeight={500}
             >
-              <Slider>
-                {itemsList.map((image, i) => {
-                  return (
-                    <Slide index={i}>
-                      <Tooltip
-                        title={appGroupComponents[i]}
-                        placement="top"
-                        arrow
-                      >
-                        <NavLink to={`/apps/${appGroupComponents[i]}`}>
-                          <div className="flex justify-center rounded-md hover:bg-gray-600 p-1 hover:pointer">
-                            {image}
-                          </div>
-                        </NavLink>
-                      </Tooltip>
-                    </Slide>
-                  );
-                })}
-              </Slider>
+              <div className="flex items-center">
+                <div>
+                  <ButtonBack className="hover:bg-gray-600 p-2 px-3 text-sm rounded items-center flex">
+                    <MdArrowBackIosNew />
+                  </ButtonBack>
+                </div>
+                <div className="w-full">
+                  <Slider>
+                    {itemsList.map((image, i) => {
+                      return (
+                        <Slide index={i}>
+                          <Tooltip
+                            title={appGroupComponents[i]}
+                            placement="top"
+                            arrow
+                          >
+                            <NavLink to={`/apps/${appGroupComponents[i]}`}>
+                              <div className="flex justify-center rounded-md hover:bg-gray-600 p-1 hover:pointer">
+                                {image}
+                              </div>
+                            </NavLink>
+                          </Tooltip>
+                        </Slide>
+                      );
+                    })}
+                  </Slider>
+                </div>
+                <div>
+                  <ButtonNext className="hover:bg-gray-600 p-2 px-3 text-sm rounded items-center flex">
+                    <MdArrowForwardIos />
+                  </ButtonNext>
+                </div>
+              </div>
 
               <div className="flex justify-between pb-4">
                 <ButtonBack className="hover:bg-gray-600 p-2 px-3 text-sm rounded items-center flex">
-                  Back
+                  <MdArrowBackIosNew />
                 </ButtonBack>
                 <ButtonNext className="hover:bg-gray-600 p-2 px-3 text-sm rounded items-center flex">
-                  Next
+                  <MdArrowForwardIos />
                 </ButtonNext>
               </div>
             </CarouselProvider>
