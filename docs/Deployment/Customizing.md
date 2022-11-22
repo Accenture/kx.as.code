@@ -1,4 +1,4 @@
-# Customizing
+# Customizing KX.AS.CODE
 
 You don't need to code to give KX.AS.CODE the look and feel you desire. If you add certain files to the profile directory, they will automatically be picked up and distributed as needed.
 
