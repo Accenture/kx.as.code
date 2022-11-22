@@ -8,7 +8,7 @@
         "installOpenLens.sh"
     ],
     "Description": "Lens IDE provides the full situational awareness for everything that runs in Kubernetes.",
-    "shortcut_text": "OpenLens IDE",
+    "shortcut_text": "OpenLens Kubernetes IDE",
     "shortcut_icon": "openlens.png",
     "pre_install_scripts": [],
     "post_install_scripts": []
