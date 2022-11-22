@@ -34,6 +34,10 @@ runningKubeVersion=$(kubectl version -o json | jq -r '.serverVersion | .gitVersi
 debOpenLensInstaller=$(find ${installationWorkspace} -name "OpenLens-*.deb")
 sudo apt-get install -y "${debOpenLensInstaller}"
 
+shortcutIcon=$(cat ${componentMetadataJson} | jq -r '.shortcut_icon')
+shortcutText=$(cat ${componentMetadataJson} | jq -r '.shortcut_text')
+iconPath=${installComponentDirectory}/${shortcutIcon}
+
 echo '''[Desktop Entry]
 Categories=Network;
 Comment[en_US]=OpenLens - The Kubernetes IDE
@@ -54,6 +58,14 @@ X-DBUS-ServiceName=
 X-DBUS-StartupType=
 X-KDE-SubstituteUID=false
 X-KDE-Username=
-''' | /usr/bin/sudo tee /home/${baseUser}/Desktop/openlens.desktop
-/usr/bin/sudo chmod 755 /home/${baseUser}/Desktop/openlens.desktop
-/usr/bin/sudo chown ${baseUser}:${baseUser} /home/${baseUser}/Desktop/openlens.desktop
+''' | tee "${adminShortcutsDirectory}"/"${shortcutText}"
+sed -i 's/^[ \t]*//g' "${adminShortcutsDirectory}"/"${shortcutText}"
+chmod 755 "${adminShortcutsDirectory}"/"${shortcutText}"
+
+# Add icon to base user desktop
+cp -f "${adminShortcutsDirectory}"/"${shortcutText}" /home/${baseUser}/Desktop/"${shortcutText}".desktop
+chmod 755 /home/${baseUser}/Desktop/"${shortcutText}".desktop
+
+# Update SKEL directory
+cp -f /home/${baseUser}/Desktop/"${shortcutText}".desktop "${skelDirectory}"/Desktop
+chmod 755 ${skelDirectory}/Desktop/*.desktop
