@@ -4,6 +4,14 @@ set -euo pipefail
 # Ensure Kubernetes is available before proceeding to the next step
 kubernetesHealthCheck
 
+# Update the Linux NetworkManager config to avoid conflict with the Calico Network Controller
+echo '''[keyfile]
+unmanaged-devices=interface-name:cali*;interface-name:tunl*;interface-name:vxlan.calico;interface-name:vxlan-v6.calico;interface-name:wireguard.cali;interface-name:wg-v6.cali
+''' | /usr/bin/sudo tee /etc/NetworkManager/conf.d/calico.conf
+
+# Restart Network Manager to apply the new setting
+/usr/bin/sudo systemctl restart NetworkManager
+
 for i in {1..10}; do
   curl https://docs.projectcalico.org/${calicoVersion}/manifests/calico.yaml --output ${installationWorkspace}/calico.yaml
   if [[ -z $(which raspinfo) ]]; then
