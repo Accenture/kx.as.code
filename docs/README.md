@@ -2,8 +2,19 @@
 
 Welcome to the KX.AS.CODE workstation. This virtual workstation was initially created with two primary goals in mind, but has since become so much more!
 
-*   Play, learn, experiment, innovate! :muscle: :trophy:
-*   Share knowledge as code!
+* Play, learn, experiment, innovate! :muscle: :trophy:
+* Share knowledge as code!
+
+Since then, due to the increase in the power and feature-set of KX.AS.CODE, the use case has expanded to the following more complex usage (see [use case example](../../Overview/Use-Case-Example/)):
+
+* Dynamic on-demand provisioning/destruction of test environments in the public/private cloud
+* End-to-end developer workstation to enhance local quality assurance capabilities 
+
+!!! quote "Message from the creator"
+    <i>I am a big fan of OpenSource technologies. Happy to give something back to the community. Without all the OpenSource technologies out there, this workstation wouldn't even be possible!</i>
+    -- Patrick Delamere :slightly_smiling_face:  
+    
+    <i>P.S. Would be great if you could come and say hello in our [Discord channel](https://discord.gg/TbwD9cmqUC) and tell us how you are using KX.AS.CODE!</i> :partying_face:
 
 !!! tip
     KX.AS.CODE was built with the belief that playing and experimentation is the best way to learn new tricks and ultimately innovate.
@@ -13,7 +24,11 @@ Welcome to the KX.AS.CODE workstation. This virtual workstation was initially cr
 
 ## What is the KX.AS.CODE Workstation?
 
-KX.AS.CODE can be considered as a `local cloud like` Kubernetes environment with a lot of things you would expect to see when managing a Kubernetes cluster in the cloud, including an ingress controller, storage cluster, DNS, a certificate authority... and the best bit, you just have to fill out a couple of config files and `vagrant up`/`terraform apply`, and you are on your way!
+KX.AS.CODE is a dynamic fully configurable and customizable `local cloud like` `Kubernetes environment` with a number of functionalities you would expect to see when managing a `Kubernetes cluster` in the `cloud`, including an `ingress controller`, `local and network storage services`, `load-balancer`, `domain services`, `identity management`, `secrets management`, a `certificate authority`... and the best bit, you can launch it very quickly from our Jenkins based configurator and launcher. See the [Quick Start Guide](./Quick-Start-Guide/)!
+
+Once the base services are up, KX.AS.CODE has a built in `App Store` for quickly installing additional solutions on top of the base outlined above, such as `Gitlab`, `Grafana`, `InfluxDB`, `SonarQube`, `NeuVector`, `IntelliJ IDEA`, `MSSQLServer`... and many many more!
+
+As a bonus, you also get a `desktop` for easily accessing and managing deployed applications. The desktop makes things easier, but if you prefer, you can also deploy KX.AS.CODE without it.
 
 !!! info "Applications Library"
     Check out the [applications library](Overview/Application-Library/), to see which solutions can be installed with a single click!
@@ -21,13 +36,13 @@ KX.AS.CODE can be considered as a `local cloud like` Kubernetes environment with
 !!! question "Questions & Answers"
     To find out more about what KX.AS.CODE is, and how it came about, read our [Questions and Answers](Overview/Questions-and-Answers/).
 
-## What else?
+## Use Cases
 
 Currently, KX.AS.CODE fulfills the following use cases:
 
-1. DevOps training environment
-2. Fullstack development/DevOps environment
-3. A HomeLab DevOps environment - see below our Raspberry Pi project!
+1. Fullstack development/test environment (see [use case example](Overview/Use-Case-Example/))
+2. DevOps training environment
+3. A HomeLab developer/DevOps environment - see below our Raspberry Pi project!
 
 ## Where can I deploy KX.AS.CODE?
 KX.AS.CODE can be deployed locally or in the cloud, be it a private or public cloud. The most tested solutions are currently OpenStack and VirtualBox. Here a full list of solutions we have run KX.AS.CODE on.
@@ -57,6 +72,12 @@ KX.AS.CODE can be deployed locally or in the cloud, be it a private or public cl
 Configure your KX.AS.CODE instance using the Jenkins based launcher. On this screen you can select between K3s and K8s amongst others.
 
 ![](assets/images/jenkins_minimal_setup.png){: .zoom}
+
+### Hardware resource allocation for virtual machine(s)
+
+Here you determine how much physical resource you want to allocate to the kx-main and the optional kx-worker node(s). The experience bar gives you a very rough indication as to the experience you may expect given the allocation.
+
+![](assets/images/kx-as-code_configurator_resource-configuration.png){: .zoom}
 
 ### Optionally select application groups to install
 
@@ -148,35 +169,35 @@ Since KX.AS.CODE is all about sharing knowledge as code, a pre-configured VSCode
 The KX.AS.CODE portal makes adding and removing applications easier, and provides status on current installed items.
 
 !!! warning 
-    The portal is still in ALPHA, so may not always behave as expected.
+    The portal is still in ALPHA, so may not always behave as expected. The basics such as installing `components` and executing `tasks` should be OK.
 
 ![](assets/images/kx.as.code_portal.png){: .zoom}
 
-### KX.AS.CODE Application Management
+### KX.AS.CODE Portal -  App Store
 
-Applications and be removed and added from the KX.AS.CODE Portal's application screen.
-
-!!! warning
-    The portal is still in ALPHA, so may not always behave as expected.
+Applications can be removed and added from the KX.AS.CODE Portal's application screen.
 
 ![](assets/images/kx.as.code_portal_applications.png){: .zoom}
 
-### KX.AS.CODE Application Groups
+### KX.AS.CODE Portal - Application Details
 
-Applications can be installed in integrated groups. This is still a work in progress. Currently, this page provides a view of the available groups, but not yet an option to install them.
-See the [manual installations](User-Guide/Manual-Provisioning/#installation-groups) page, on how to install the groups manually without the portal.
+The application details screen shows more information about the application. It is also possible to execute `tasks` from this screen.
+In the future, this screen will also allow the user to enter values for input arguments.
 
-!!! warning 
-    The portal is still in ALPHA, so may not always behave as expected.
+![](assets/images/kx.as.code_portal_application_details.png){: .zoom}
+![](assets/images/executeTasksDockerRegistry.png){: .zoom}
+
+### KX.AS.CODE Portal - Application Groups
+
+Applications can be installed in integrated groups. This is still in development, so the install button currently does not execute the group installation.
+See the [manual installations](../../Deployment/Manual-Provisioning/#installation-groups) page, on how to install the groups manually without the portal.
+
 
 ![](assets/images/kx.as.code_portal_application_groups.png){: .zoom}
-
 
 ## Contributing
 We are happy to receive contributions, ideas and dare I say it, bug fixes or suggestions on how to do things better! We never stop learning! :nerd_face:
 
 For more details on how you can contribute to the project, checkout the [CONTRIBUTE.md](Development/Contribution-Guidelines/) file
 
-Wish you all the best and enjoy the DevOps workstation! :smile:
 
-Patrick Delamere (Accenture Song), creator of KX.AS.CODE

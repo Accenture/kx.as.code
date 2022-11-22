@@ -73,7 +73,7 @@ try {
 }
 
 int mainNodeCpuCoresMin = 1
-int mainNodeCpuCoresMax = 16
+int mainNodeCpuCoresMax = 20
 int mainNodeCpuCoresStep = 1
 int mainNodeCpuCoresStartValue = main_admin_node_cpu_cores.toInteger()
 int mainNodeCpuCoresMinWarning = 2
@@ -98,7 +98,7 @@ try {
 }
 
 int mainNodeMemoryMin = 4096
-int mainNodeMemoryMax = 32768
+int mainNodeMemoryMax = 65536
 int mainNodeMemoryStep = 1024
 int mainNodeMemoryStartValue = main_admin_node_memory.toInteger()
 int mainNodeMemoryMinWarning = 8192
@@ -130,37 +130,57 @@ try {
                     </div>
                 </span>
                 <span>
-                    <div class="experience-meter-tooltip-info" style="left: 172.5px;">
+                    <div class="experience-meter-tooltip-info" style="left: 122px;">
                         <span class="info-span">
                             <img src="/userContent/icons/triangle-small-down.svg" class="experience-meter-marker-icon svg-blue" alt="" />
                             <span class="experience-meter-tooltip-text">
-                                <div><span class="experience-meter-title">Install Multiple Application</span><span class="experience-meter-label">CPU</span><span class="experience-meter-value">4 vCores</span class="experience-meter-label"><span class="experience-meter-label">Memory</span><span class="experience-meter-value">16GB</span></div>
+                                <div><span class="experience-meter-title">Install Multiple Applications</span><span class="experience-meter-label">CPU</span><span class="experience-meter-value">4 vCores</span class="experience-meter-label"><span class="experience-meter-label">Memory</span><span class="experience-meter-value">10GB</span></div>
                             </span>
                         </span>
                     </div>
                 </span>
                 <span>
-                    <div class="experience-meter-tooltip-info" style="left: 345px;">
+                    <div class="experience-meter-tooltip-info" style="left: 243px;">
                         <span class="info-span">
                             <img src="/userContent/icons/triangle-small-down.svg" class="experience-meter-marker-icon svg-blue" alt="" />
                             <span class="experience-meter-tooltip-text">
-                                <div><span class="experience-meter-title">Install One Application Group</span><span class="experience-meter-label">CPU</span><span class="experience-meter-value">8 vCores</span class="experience-meter-label"><span class="experience-meter-label">Memory</span><span class="experience-meter-value">32GB</span></div>
+                                <div><span class="experience-meter-title">Install Multiple Applications</span><span class="experience-meter-label">CPU</span><span class="experience-meter-value">6 vCores</span class="experience-meter-label"><span class="experience-meter-label">Memory</span><span class="experience-meter-value">24GB</span></div>
                             </span>
                         </span>
                     </div>
                 </span>
                 <span>
-                    <div class="experience-meter-tooltip-info" style="left: 517.5px;">
+                    <div class="experience-meter-tooltip-info" style="left: 365px;">
                         <span class="info-span">
                             <img src="/userContent/icons/triangle-small-down.svg" class="experience-meter-marker-icon svg-blue" alt="" />
                             <span class="experience-meter-tooltip-text">
-                                <div><span class="experience-meter-title">Install One of Each Group Type</span><span class="experience-meter-label">CPU</span><span class="experience-meter-value">16 vCores</span class="experience-meter-label"><span class="experience-meter-label">Memory</span><span class="experience-meter-value">48GB</span></div>
+                                <div><span class="experience-meter-title">Install One Application Group</span><span class="experience-meter-label">CPU</span><span class="experience-meter-value">8 vCores</span class="experience-meter-label"><span class="experience-meter-label">Memory</span><span class="experience-meter-value">38GB</span></div>
                             </span>
                         </span>
                     </div>
                 </span>
                 <span>
-                    <div class="experience-meter-tooltip-info" style="left: 680px;">
+                    <div class="experience-meter-tooltip-info" style="left: 487px;">
+                        <span class="info-span">
+                            <img src="/userContent/icons/triangle-small-down.svg" class="experience-meter-marker-icon svg-blue" alt="" />
+                            <span class="experience-meter-tooltip-text">
+                                <div><span class="experience-meter-title">Install One of Each Group Type</span><span class="experience-meter-label">CPU</span><span class="experience-meter-value">12 vCores</span class="experience-meter-label"><span class="experience-meter-label">Memory</span><span class="experience-meter-value">46GB</span></div>
+                            </span>
+                        </span>
+                    </div>
+                </span>
+                <span>
+                    <div class="experience-meter-tooltip-info" style="left: 608px;">
+                        <span class="info-span">
+                            <img src="/userContent/icons/triangle-small-down.svg" class="experience-meter-marker-icon svg-blue" alt="" />
+                            <span class="experience-meter-tooltip-text">
+                                <div><span class="experience-meter-title">Install One of Each Group Type</span><span class="experience-meter-label">CPU</span><span class="experience-meter-value">16 vCores</span class="experience-meter-label"><span class="experience-meter-label">Memory</span><span class="experience-meter-value">54GB</span></div>
+                            </span>
+                        </span>
+                    </div>
+                </span>
+                <span>
+                    <div class="experience-meter-tooltip-info" style="left: 730px;">
                         <span class="info-span">
                             <img src="/userContent/icons/triangle-small-down.svg" class="experience-meter-marker-icon svg-blue" alt="" />
                             <span class="experience-meter-tooltip-text">

@@ -16,4 +16,5 @@ In most cases, applications can be configured in Keycloak with a single call to 
 
 See [here](../../Development/Available-Functions/#keycloak-iamsso) for all [Keycloak functions](../../Development/Available-Functions/#keycloak-iamsso) available when developing to add a new application to KX.AS.CODE.
 
-
+!!! info
+    If you want to start KX.AS.CODE with multiple user support enabled, you must select the `normal` startup mode, as `lite` and `minimal` do not include the needed IAM & SSO components, openLDAP and Keycloak.

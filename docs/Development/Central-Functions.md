@@ -1,4 +1,4 @@
-# Available Functions
+# Central Functions
 
 The functions below can be used when creating scripts to install new solutions in the [auto-setup](https://github.com/Accenture/kx.as.code/tree/main/auto-setup){:target="\_blank"} folder.
 
@@ -224,6 +224,96 @@ Logs into ArgoCD before performing any ArgoCD specific actions.
 
 ## Core Setup
 These functions are called when KX.AS.CODE are first setup. They should not be needed in any of the auto-setup scripts that deploy applications on top of the base KX.AS.CODE setup. They were created to increase the readability of the code, not necessarily because the present blocks of code that will be needed repeatedly.
+
+### applyCustomizations()
+:material-git: Location: [auto-setup/functions/applyCustomizations.sh](https://github.com/Accenture/kx.as.code/tree/main/auto-setup/functions/applyCustomizations.sh){:target="_blank"}
+
+Applies all the visual customization images that were copied into the VM when KX.AS.CODE first started, and applies the customizations where required.
+
+!!! note "Usage"
+    `applyCustomizations`
+
+!!! example
+    ```bash linenums="1"
+    applyCustomizations
+    ```
+
+
+### autoSetupExecuteTask()
+:material-git: Location: [auto-setup/functions/autoSetupExecuteTask.sh](https://github.com/Accenture/kx.as.code/tree/main/auto-setup/functions/autoSetupExecuteTask.sh){:target="_blank"}
+
+Executes task triggered via KX-Portal. The available tasks for a component are defined in the component's metadata.json file.
+Here an example JSON.
+```json
+{
+  "available_tasks": [
+    {
+      "name": "restartFrontend",
+      "title": "Restart frontend",
+      "description": "Restart the frontend microservice",
+      "script": "restartFrontend.sh",
+      "inputs": [
+        {
+          "branch": {
+            "default": "develop",
+            "mandatory": false
+          }
+        }
+      ],
+    }
+  ]
+}
+```
+
+See also the following [page](../../Overview/Task-Executions/) for more details.
+
+!!! note "Usage"
+    `autoSetupExecuteTask "<taskToExecute>"`
+
+!!! example
+    ```bash linenums="1"
+    # Executes task triggered via KX-Portal
+    autoSetupExecuteTask "restartFrontend"
+    ```
+
+### customizeImage()
+:material-git: Location: [auto-setup/functions/customizeImage.sh](https://github.com/Accenture/kx.as.code/tree/main/auto-setup/functions/customizeImage.sh){:target="_blank"}
+
+Checks the validity of the image to be customized before applying it
+
+!!! note "Usage"
+    `customizeImage "<image function>" "<image target location>"`
+
+!!! example
+    ```bash linenums="1"
+    # Apply custom desktop background
+    customizeImage "background" "/usr/share/backgrounds/background.jpg"
+    ```
+
+### getCustomVariables()
+:material-git: Location: [auto-setup/functions/getCustomVariables.sh](https://github.com/Accenture/kx.as.code/tree/main/auto-setup/functions/getCustomVariables.sh){:target="\_blank"}
+
+Loads the custom environment variables defined in a profile's customVariables.json file. These can be defined in either the Jenkins based launcher, or simply by manually adding a customVariable.json file to the profile directory before launching KX.AS.CODE.
+Here an example of the expected json:
+```json
+{
+  "config": {
+    "customVariables": [
+      {
+        "key": "branch",
+        "value": "main"
+      },
+      {
+        "key": "version",
+        "value": "1.2.3"
+      }
+    ]
+  }
+}
+```
+
+!!! note "Usage"
+`getCustomVariables`
 
 ### populateActionQueuesJson()
 :material-git: Location: [auto-setup/functions/actionQueuesPopulateJson.sh](https://github.com/Accenture/kx.as.code/tree/main/auto-setup/functions/actionQueuesPopulateJson.sh){:target="\_blank"}
@@ -755,6 +845,19 @@ Creates or updates the Kubernetes secret containing the `htpasswd` file containi
 !!! note "Usage"
     `dockerRegistryAddUser "<username>"`
 
+### dockerCoreRegistryCheckTagExists()
+:material-git: Location: [auto-setup/functions/dockerCoreRegistryCheckTagExists.sh](https://github.com/Accenture/kx.as.code/tree/main/auto-setup/functions/dockerCoreRegistryCheckTagExists.sh){:target="\_blank"}
+
+Creates or updates the Kubernetes secret containing the `htpasswd` file containing username and passwords, in the Docker Registry namespace, and remounts into the docker-registry pod, subsequently redeploying the POD with a rolling update.
+
+!!! note "Usage"
+`dockerCoreRegistryCheckTagExists "<imagePath>"`
+
+!!! example
+```bash linenums="1"
+dockerCoreRegistryCheckTagExists "devops/docker:${gitlabDindImageVersion}"
+```
+
 ### createK8sCredentialSecretForCoreRegistry()
 :material-git: Location: [auto-setup/functions/dockerCoreRegistryK8sCredential.sh](https://github.com/Accenture/kx.as.code/tree/main/auto-setup/functions/dockerCoreRegistryK8sCredential.sh){:target="\_blank"}
 
@@ -792,6 +895,19 @@ Pushes a built image to the KX.AS.CODE core docker registry.
 
 ## General Helpers
 
+### addKxCertsSecretToNamespace()
+:material-git: Location: [auto-setup/functions/addKxCertsSecretToNamespace.sh](https://github.com/Accenture/kx.as.code/tree/main/auto-setup/functions/addKxCertsSecretToNamespace.sh){:target="_blank"}
+
+Adds a secret into the component's namespace containing the KX.AS.CODE certificates. This is useful when the component needs to upload the certificates internally for end-to-end encryption, or it simply needs access to the KX.AS.CODE certificate for verification purposes.
+
+!!! note "Usage"
+    `addKxCertsSecretToNamespace`
+
+!!! example
+    ```bash linenums="1"
+    addKxCertsSecretToNamespace
+    ```
+
 ### checkApplicationInstalled()
 :material-git: Location: [auto-setup/functions/checkApplicationInstalled.sh](https://github.com/Accenture/kx.as.code/tree/main/auto-setup/functions/checkApplicationInstalled.sh){:target="_blank"}
 
@@ -803,6 +919,19 @@ Checks if a given application is installed or not. This is important for applica
 !!! example
     ```bash linenums="1"
     checkApplicationInstalled "gitlab" "cicd"
+    ```
+
+### checkImageFileType()
+:material-git: Location: [auto-setup/functions/checkImageFileType.sh](https://github.com/Accenture/kx.as.code/tree/main/auto-setup/functions/checkImageFileType.sh){:target="_blank"}
+
+Returns the image file type for the image path passed into the function call.
+
+!!! note "Usage"
+    `checkImageFileType "<source image file path>"`
+
+!!! example
+    ```bash linenums="1"
+    checkImageFileType "/usr/share/backgrounds/background.jpg"
     ```
 
 ### functionStart()
@@ -855,6 +984,30 @@ Sets the global `cpuArchitecture` variable to either `amd64` or `arm64`. This ca
     # Function returns the NGINX Ingress Controller's IP address. You will need to export the returned result to a variable.
     export nginxIngressIp=$(getNginxControllerIp)
     ```
+
+### kubernetesGetServiceLoadBalancerIp()
+:material-git: Location: [auto-setup/functions/kubernetesGetServiceLoadBalancerIp.sh](https://github.com/Accenture/kx.as.code/tree/main/auto-setup/functions/kubernetesGetServiceLoadBalancerIp.sh){:target="_blank"}
+
+!!! note "Usage"
+`kubernetesGetServiceLoadBalancerIp`
+
+!!! example
+```bash linenums="1"
+# Function returns the service's external load balancer IP address. You will need to export the returned result to a variable.
+export gitlabServiceIpAddress=$(kubernetesGetServiceLoadBalancerIp "gitlab-service" "gitlab")
+```
+
+### installDebianPackage()
+:material-git: Location: [auto-setup/functions/installDebianPackage.sh](https://github.com/Accenture/kx.as.code/tree/main/auto-setup/functions/installDebianPackage.sh){:target="_blank"}
+
+!!! note "Usage"
+`installDebianPackage "<Debian package name>"`
+
+!!! example
+```bash linenums="1"
+# Function installs the requested Debian package if not already installed.
+installDebianPackage "vim"
+```
 
 ### roundUp()
 :material-git: Location: [auto-setup/functions/arithmeticRoundUp.sh](https://github.com/Accenture/kx.as.code/tree/main/auto-setup/functions/arithmeticRoundUp.sh){:target="\_blank"}
@@ -1084,7 +1237,7 @@ Get the id of a previously created project.
 
 ## Keycloak IAM/SSO
 These functions were generated to avoid repeating the same code for each component connected to Keycloak IAM/SSO.
-For general documentation on how Keycloak IAM/SSO works, read the following [documentation](https://www.keycloak.org/docs/latest/securing_apps/).
+For general documentation on how Keycloak IAM/SSO works, read the following [documentation](https://www.keycloak.org/docs/latest/securing_apps/){:target="_blank"}.
 ??? abstract "Examples for using enableKeycloakSSOForSolution()"
     In most situations, it should be enough to call `enableKeycloakSSOForSolution()` to create the SSO configuration in Keycloak for the respective component installation. Only in rare cases is this not possible, due to the particularities of the component for which SSO is being enabled. Expand this box to see examples.
 

@@ -1,4 +1,4 @@
-# Customizing KX.AS.CODE
+# Customizing
 
 You don't need to code to give KX.AS.CODE the look and feel you desire. If you add certain files to the profile directory, they will automatically be picked up and distributed as needed.
 
@@ -11,3 +11,16 @@ Here a short table detailing which files to drop for which customization.
 | Desktop Conky Logo | conky_logo.png | 1000 x 500 | This will update the Conky widget, displayed top right on the desktop | ![](../../assets/images/customization_conky_logo.png) |
 | Boot Logo | boot.png | 220 x 120 | This will update the KX.AS.CODE boot Plymouth theme. Not applicable for private and public cloud installations | ![](../../assets/images/customization_boot_screen.png) |
 | Guacamole Remote Desktop Logo | logo_icon.png | 200 x 200 | Several sizes are needed. Backend processing will take care to create the 4 needed sizes | ![](../../assets/images/customization_guacamole.png) |
+
+As KX.AS.CODE is not just a Kubernetes environment, but a framework, there are many more ways to customize KX.AS.CODE.
+This page concentrated primarily on the customization of visual components.
+
+See the following pages for customizing functionality.
+
+- [Use-Case Example](../../Overview/Use-Case-Example/)
+- [Components to install](../../Overview/Application-Library/)
+- [Add your own installation groups](../../Deployment/Provisioning-Templates/)
+- [Profile customization, including domain name etc](../../Deployment/Configuration-Options/)
+- [Adding custom component walk-through](../../Development/Adding-a-Solution/)
+- [Adding custom central functions](../../Development/Central-Functions/)
+- [Customizing component metadata](../../Development/Solution-Metadata/)

@@ -18,7 +18,7 @@ As this is a quick start guide, we will concentrate on the Jenkins approach here
     
     There is no need to download the boxes manually. Vagrant will take care of that automatically when starting KX.AS.CODE.
 
-First you need to clone the KX.AS.CODE Github repository:
+First you need to clone the KX.AS.CODE GitHub repository:
 
 ```
 git clone https://github.com/Accenture/kx.as.code.git
@@ -35,13 +35,20 @@ jenkins_server_port = "8081"
 ```
 
 !!! info
-    If you are also intending to build KX.AS.CODE images, and not just launch existing public ones in the Vagrant Cloud, then you may need to add your Github.com credentials, if the repository is private. As the main KX.AS.CODE repository is public, this is not needed and the properties can be left blank.
+    If you are also intending to build KX.AS.CODE images, and not just launch existing public ones in the Vagrant Cloud, then you may need to add your GitHub.com credentials, if the repository is private. As the main KX.AS.CODE repository is public, this is not needed and the properties can be left blank.
     ```
     git_source_username = "change-me"
     git_source_password = "change-me"
     ```
 
 Everything else in the file goes beyond the Quick Start guide, and will be described on other pages.
+
+!!! danger "MacOSX launchLocalBuildEnvironment.sh incompatibilities"
+    MacOSX contains old packages for `screen` and `openssl`, compared to Linux and Windows. Please upgrade these packages. The easiest way to do this is with [Homebrew](https://brew.sh/){:target="\_blank"}.
+    ```
+    # Upgrade incompatible packages on MacOSX before launching launchLocalBuildEnvironment.sh!
+    brew install openssl screen
+    ```
 
 !!! note
     Once the jenkins.env is ready, execute the launch script in order to start the Jenkins KX-Launcher job:
@@ -147,6 +154,10 @@ User provisioning was implemented to allow team usage of KX.AS.CODE. This is mos
 If you are just starting KX.AS.CODE on a local virtualization solution, such as VirtualBox, VMWare Desktop/Fusion, or Parallels, for your own use, you can ignore this tab.
 
 ![](../assets/images/kx-as-code_configurator_user-provisioning.png){: .zoom}
+
+The next tab allows you to add custom global properties to the profile. You only needs to complete this if you have created a custom component that requires a custom global variable to be defined.
+
+![](../assets/images/kx-as-code_configurator_custom-global-variables.png)
 
 Finally, after completing the previous tabs, you come to the last tab, where you can review everything that was selected.
 
