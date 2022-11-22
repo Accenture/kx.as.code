@@ -128,7 +128,8 @@ if [[ "${vmUser}" != "${baseUser}" ]]; then
 fi
 
 # Copy desktop icons to skel directory for future users
-/usr/bin/sudo cp /home/"${vmUser}"/Desktop/"${shortcutText}" "${skelDirectory}"/Desktop
+/usr/bin/sudo mkdir -p "${skelDirectory}"/Desktop
+/usr/bin/sudo cp -f /home/"${vmUser}"/Desktop/"${shortcutText}" "${skelDirectory}"/Desktop
 
 # Create new RabbitMQ user and assign permissions
 kxHeroUserExists=$(rabbitmqadmin list users --format=pretty_json | jq -r '.[] | select(.name=="'${vmUser}'") | .name')

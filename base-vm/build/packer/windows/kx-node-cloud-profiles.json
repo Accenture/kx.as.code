@@ -47,7 +47,7 @@
         "VM_USER={{user `vm_user`}}",
         "VM_PASSWORD={{user `vm_password`}}",
         "KX_HOME={{user `kx_home`}}",
-        "SKELDIR={{user `kx_home`}}/workspace/skel",
+        "SKELDIR={{user `kx_home`}}/skel",
         "SHARED_GIT_REPOSITORIES={{user `kx_home`}}/git",
         "INSTALLATION_WORKSPACE={{user `kx_home`}}/workspace"
       ],
@@ -81,7 +81,7 @@
     {
       "type": "file",
       "source": "../../../dependencies/skel",
-      "destination": "{{user `kx_home`}}/workspace/skel"
+      "destination": "{{user `kx_home`}}/skel"
     },
     {
       "type": "file",
@@ -107,7 +107,7 @@
         "KUBE_VERSION={{user `kube_version`}}",
         "COMPUTE_ENGINE_BUILD={{user `compute_engine_build`}}",
         "KX_HOME={{user `kx_home`}}",
-        "SKELDIR={{user `kx_home`}}/workspace/skel",
+        "SKELDIR={{user `kx_home`}}/skel",
         "SHARED_GIT_REPOSITORIES={{user `kx_home`}}/git",
         "INSTALLATION_WORKSPACE={{user `kx_home`}}/workspace"
       ],
@@ -131,7 +131,7 @@
         "VERSION={{user `version`}}",
         "KUBE_VERSION={{user `kube_version`}}",
         "KX_HOME={{user `kx_home`}}",
-        "SKELDIR={{user `kx_home`}}/workspace/skel",
+        "SKELDIR={{user `kx_home`}}/skel",
         "SHARED_GIT_REPOSITORIES={{user `kx_home`}}/git",
         "INSTALLATION_WORKSPACE={{user `kx_home`}}/workspace"
       ],
