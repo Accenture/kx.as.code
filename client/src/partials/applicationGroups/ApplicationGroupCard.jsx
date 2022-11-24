@@ -146,9 +146,9 @@ function ApplicationGroupCard(props) {
               naturalSlideWidth={500}
               naturalSlideHeight={500}
             >
-              <div className="flex items-center">
-                <div>
-                  <ButtonBack className="hover:bg-gray-600 p-2 px-3 text-sm rounded items-center flex">
+              <div className="flex items-center py-5                                                                                                                                                                                                                                                                                                                                                                                   ">
+                <div className="h-14">
+                  <ButtonBack className="hover:bg-gray-600 px-3 text-sm rounded items-center flex h-full">
                     <MdArrowBackIosNew />
                   </ButtonBack>
                 </div>
@@ -173,21 +173,21 @@ function ApplicationGroupCard(props) {
                     })}
                   </Slider>
                 </div>
-                <div>
-                  <ButtonNext className="hover:bg-gray-600 p-2 px-3 text-sm rounded items-center flex">
+                <div className="h-14">
+                  <ButtonNext className="hover:bg-gray-600 px-3 text-sm rounded items-center flex h-full">
                     <MdArrowForwardIos />
                   </ButtonNext>
                 </div>
               </div>
 
-              <div className="flex justify-between pb-4">
+              {/* <div className="flex justify-between pb-4">
                 <ButtonBack className="hover:bg-gray-600 p-2 px-3 text-sm rounded items-center flex">
                   <MdArrowBackIosNew />
                 </ButtonBack>
                 <ButtonNext className="hover:bg-gray-600 p-2 px-3 text-sm rounded items-center flex">
                   <MdArrowForwardIos />
                 </ButtonNext>
-              </div>
+              </div> */}
             </CarouselProvider>
           </div>
           <div className="">
