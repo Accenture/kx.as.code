@@ -8,7 +8,7 @@ if [[ "${preferredBrowser}" == "/usr/bin/chromium" ]]; then
 else
   export preferredBrowserIcon="google-chrome"
 fi
-desktopFiles=$(find /usr/share/kx.as.code/workspace/skel/Desktop/*.desktop)
+desktopFiles=$(find ${SKELDIR}/Desktop -type f -name "*.desktop")
 for desktopFile in ${desktopFiles}
 do
   cat "${desktopFile}" | /usr/local/bin/mo | sudo tee "${desktopFile}_tmp"
@@ -18,11 +18,11 @@ do
 done
 
 # Copy Skel
-sudo cp -rfT ${INSTALLATION_WORKSPACE}/skel /home/${VM_USER}
-sudo cp -rfT ${INSTALLATION_WORKSPACE}/skel /root
+sudo cp -rfT ${SKELDIR} /home/${VM_USER}
+sudo cp -rfT ${SKELDIR} /root
 sudo chown -R ${VM_USER}:${VM_USER} /home/${VM_USER}
 sudo chmod -R 755 /home/${VM_USER}/Desktop/*.desktop
-sudo cp /home/${VM_USER}/Desktop/*.desktop /usr/share/applications
+sudo cp -fv /home/${VM_USER}/Desktop/*.desktop /usr/share/applications
 
 # Change screen resolution to more respectable 1920x1200 (default is 800x600)
 sudo bash -c 'cat <<EOF > /etc/X11/xorg.conf

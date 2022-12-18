@@ -147,7 +147,7 @@
         "VM_USER={{user `vm_user`}}",
         "VM_PASSWORD={{user `vm_password`}}",
         "KX_HOME={{user `kx_home`}}",
-        "SKELDIR={{user `kx_home`}}/workspace/skel",
+        "SKELDIR={{user `kx_home`}}/skel",
         "SHARED_GIT_REPOSITORIES={{user `kx_home`}}/git",
         "INSTALLATION_WORKSPACE={{user `kx_home`}}/workspace"
       ],
@@ -180,7 +180,7 @@
     {
       "type": "file",
       "source": "../../../dependencies/skel",
-      "destination": "{{user `kx_home`}}/workspace/skel"
+      "destination": "{{user `kx_home`}}"
     },
     {
       "type": "file",
@@ -210,7 +210,7 @@
         "KUBE_VERSION={{user `kube_version`}}",
         "COMPUTE_ENGINE_BUILD={{user `compute_engine_build`}}",
         "KX_HOME={{user `kx_home`}}",
-        "SKELDIR={{user `kx_home`}}/workspace/skel",
+        "SKELDIR={{user `kx_home`}}/skel",
         "SHARED_GIT_REPOSITORIES={{user `kx_home`}}/git",
         "INSTALLATION_WORKSPACE={{user `kx_home`}}/workspace"
       ],
@@ -237,7 +237,7 @@
         "GIT_SOURCE_BRANCH={{user `git_source_branch`}}",
         "VERSION={{user `version`}}",
         "KX_HOME={{user `kx_home`}}",
-        "SKELDIR={{user `kx_home`}}/workspace/skel",
+        "SKELDIR={{user `kx_home`}}/skel",
         "SHARED_GIT_REPOSITORIES={{user `kx_home`}}/git",
         "INSTALLATION_WORKSPACE={{user `kx_home`}}/workspace",
         "COMPUTE_ENGINE_BUILD={{user `compute_engine_build`}}"
@@ -260,7 +260,7 @@
     }
   ],
   "variables": {
-    "disk_size": "50",
+    "disk_size": "80",
     "compute_engine_build": "true",
     "headless": "true",
     "ssh_fullname": "KX Hero",

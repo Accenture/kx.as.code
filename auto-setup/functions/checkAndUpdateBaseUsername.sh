@@ -36,7 +36,7 @@ checkAndUpdateBaseUsername() {
     fi
 
     # Copy all file to user
-    /usr/bin/sudo cp -rfT ${installationWorkspace}/skel /home/${baseUser}
+    /usr/bin/sudo cp -rfT "${skelDirectory}" /home/${baseUser}
     /usr/bin/sudo rm -rf /home/${baseUser}/.cache/sessions
 
     # Get new user group ID

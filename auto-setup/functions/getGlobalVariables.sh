@@ -16,5 +16,6 @@ getGlobalVariables() {
 
     export DEBIAN_FRONTEND=noninteractive
     export preferredBrowser=$(readlink -f /etc/alternatives/x-www-browser)
+    mkdir -p "${skelDirectory}"/Desktop
 
 }

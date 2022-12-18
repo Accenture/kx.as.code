@@ -3,13 +3,18 @@ configureNetwork() {
 # Call common function to execute common function start commands, such as setting verbose output etc
 functionStart
 
+# Ensure hostname is in hosts file to avoid warnings when using sudo
+if [[ -z $(cat /etc/hosts | grep $(hostname)) ]]; then
+  sed -i '/127.0.1.1/ s/$/ '$(hostname)'/' /etc/hosts
+fi
+
 if [[ ! -f ${sharedKxHome}/.config/network_status ]]; then
 
     # Change DNS resolution to allow wildcards for resolving locally deployed K8s services
     echo "DNSStubListener=no" | /usr/bin/sudo tee -a /etc/systemd/resolved.conf
     /usr/bin/sudo systemctl restart systemd-resolved
 
-    # Configue DNS - /etc/resolv.conf
+    # Configure DNS - /etc/resolv.conf
     /usr/bin/sudo rm -f /etc/resolv.conf
     echo "nameserver ${mainIpAddress}" | /usr/bin/sudo tee /etc/resolv.conf
 

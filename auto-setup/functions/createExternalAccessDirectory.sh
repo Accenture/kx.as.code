@@ -9,7 +9,7 @@ createExternalAccessDirectory() {
     fi
     /usr/bin/sudo mkdir -p /vagrant/kx-external-access
     export externalAccessDirectory=/vagrant/kx-external-access
-  elif [[ ! -d /kx-external-access ]]; then
+  else
     /usr/bin/sudo mkdir /kx-external-access
     export externalAccessDirectory=/kx-external-access
   fi

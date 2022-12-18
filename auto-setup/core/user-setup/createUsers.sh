@@ -57,7 +57,7 @@ if [[ ${numUsersToCreate} -ne 0 ]]; then
         fi
 
         # Copy all file to user
-        /usr/bin/sudo cp -rfT ${installationWorkspace}/skel /home/${userid}
+        /usr/bin/sudo cp -rfT "${skelDirectory}" /home/${userid}
         /usr/bin/sudo rm -rf /home/${userid}/.cache/sessions
 
         if ! id -u ${userid} > /dev/null 2>&1; then
@@ -201,7 +201,7 @@ if [[ ${numUsersToCreate} -ne 0 ]]; then
 
         # Assign random avatar to user
         ls /usr/share/avatars/avatar_*.png | sort -R | tail -1 | while read file; do
-            if [[ -z $(diff ${installationWorkspace}/skel/.face.icon /home/${userid}/.face.icon) ]]; then
+            if [[ -z $(diff "${skelDirectory}"/.face.icon /home/${userid}/.face.icon) ]]; then
                 /usr/bin/sudo cp -f $file /home/${userid}/.face.icon
                 echo "Set face avatar to ${file}"
             fi
@@ -235,6 +235,16 @@ if [[ ${numUsersToCreate} -ne 0 ]]; then
             /usr/bin/sudo -H -i -u ${userid} bash -c "yes | ssh-keygen -f ssh-keygen -m PEM -t rsa -b 4096 -q -f /home/${userid}/.ssh/id_rsa -N ''"
         fi
 
+        # Add desktop customization script to new users autostart-scripts folder
+        if /usr/bin/sudo test ! -f /home/${userid}/.config/autostart-scripts/showWelcome.sh; then
+            /usr/bin/sudo mkdir -p /home/${userid}/.config/autostart-scripts
+            /usr/bin/sudo cp -f ${installationWorkspace}/showWelcome.sh /home/${userid}/.config/autostart-scripts
+            /usr/bin/sudo chmod -R 755 /home/${userid}/.config/autostart-scripts
+            /usr/bin/sudo chown -R ${userid}:${userid} /home/${userid}/.config/autostart-scripts
+        fi
+
+    if checkApplicationInstalled "keycloak" "core"; then
+
         if /usr/bin/sudo test ! -f /home/${userid}/.kube/config; then
             # Create Kubeconfig file
             /usr/bin/sudo mkdir -p /home/${userid}/.kube
@@ -244,14 +254,6 @@ if [[ ${numUsersToCreate} -ne 0 ]]; then
             # Enable Keycloak OIDC for new user
             /usr/bin/sudo -H -i -u ${userid} bash -c "${installationWorkspace}/client-oidc-setup.sh"
             /usr/bin/sudo -H -i -u ${userid} bash -c "kubectl config set-context --current --user=oidc"
-        fi
-
-        # Add desktop customization script to new users autostart-scripts folder
-        if /usr/bin/sudo test ! -f /home/${userid}/.config/autostart-scripts/showWelcome.sh; then
-            /usr/bin/sudo mkdir -p /home/${userid}/.config/autostart-scripts
-            /usr/bin/sudo cp -f ${installationWorkspace}/showWelcome.sh /home/${userid}/.config/autostart-scripts
-            /usr/bin/sudo chmod -R 755 /home/${userid}/.config/autostart-scripts
-            /usr/bin/sudo chown -R ${userid}:${userid} /home/${userid}/.config/autostart-scripts
         fi
 
         # Source Keycloak Environment
@@ -266,7 +268,36 @@ if [[ ${numUsersToCreate} -ne 0 ]]; then
 
         # Create K8s cluster role binding for OIDC user if it does not exist
         /usr/bin/sudo kubectl get clusterrolebinding oidc-cluster-admin-${userid} || \
-            /usr/bin/sudo kubectl create clusterrolebinding oidc-cluster-admin-${userid} --clusterrole=cluster-admin --user='https://keycloak.'${baseDomain}'/auth/realms/'${kcRealm}'#'${kcUserId}''
+        /usr/bin/sudo kubectl create clusterrolebinding oidc-cluster-admin-${userid} --clusterrole=cluster-admin --user='https://keycloak.'${baseDomain}'/auth/realms/'${kcRealm}'#'${kcUserId}''
+
+    else
+
+      if [[ "${kubeOrchestrator}" == "k3s" ]]; then
+        export kubeConfigFile=/etc/rancher/k3s/k3s.yaml
+      else
+        export kubeConfigFile=/etc/kubernetes/admin.conf
+      fi
+
+      /usr/bin/sudo -H -i -u ${userid} sh -c "mkdir -p /home/${userid}/.kube"
+      /usr/bin/sudo cp -f ${kubeConfigFile} /home/${userid}/.kube/config
+      
+      # Ensure user has correct access permissions to .kube/config file
+      /usr/bin/sudo chmod 600 /home/${userid}/.kube/config
+      /usr/bin/sudo chown ${userid}:${userid}/.kube/config
+
+
+      if [[ -z $(cat /home/${userid}/.bashrc | grep KUBECONFIG) ]]; then
+          echo "export KUBECONFIG=/home/${userid}/.kube/config" | /usr/bin/sudo tee -a /home/${userid}/.bashrc /home/${userid}/.zshrc
+      fi
+
+    fi
+
+    # Ensure user has correct access permissions to desktop files
+    /usr/bin/sudo chmod 755 /home/${userid}/*.desktop
+    /usr/bin/sudo chown ${userid}:${userid}/*.desktop
+
+    # Initialize gnupg for new user to use with GoPass
+    gnupgInitializeUser "${userid}" "${generatedPassword}"
 
         # Create and configure XRDP connection in Guacamole database
         if [[ -z $(/usr/bin/sudo su - postgres -c "psql -t -U postgres -d guacamole_db -c \"select name FROM guacamole_entity WHERE name = '${userid}' AND guacamole_entity.type = 'USER';\"") ]]; then

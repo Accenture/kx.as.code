@@ -22,12 +22,17 @@ MimeType=text/html;text/xml;application/xhtml_xml;image/webp;x-scheme-handler/ht
 Actions=new-window;new-private-window;
 EOF
 
+cp -f /home/${baseUser}/Desktop/Kubernetes-Dashboard.desktop "${adminShortcutsDirectory}"/"Kubernetes Dashboard"
+chmod 755 "${adminShortcutsDirectory}"/"Kubernetes Dashboard"
+
 # Give *.desktop files execute permissions
 chmod 755 /home/${baseUser}/Desktop/*.desktop
 chown ${baseUser}:${baseUser} /home/${baseUser}/Desktop/*.desktop
 
 # Copy IAM desktop icon to skel directory for future users
-/usr/bin/sudo cp /home/${baseUser}/Desktop/Kubernetes-Dashboard-OIDC.desktop ${skelDirectory}/Desktop
+if [[ -f /home/${baseUser}/Desktop/Kubernetes-Dashboard-OIDC.desktop ]]; then
+  /usr/bin/sudo cp -f /home/${baseUser}/Desktop/Kubernetes-Dashboard-OIDC.desktop ${skelDirectory}/Desktop
+fi
 
 # Create Get Admin Token Script
 cat << EOF > /usr/share/kx.as.code/getK8sClusterAdminToken.sh
@@ -63,3 +68,11 @@ EOF
 # Give *.desktop files execute permissions
 chmod 755 /home/${baseUser}/Desktop/*.desktop
 chown ${baseUser}:${baseUser} /home/${baseUser}/Desktop/*.desktop
+
+cp -f /home/${baseUser}/Desktop/Get-Kubernetes-Token.desktop "${adminShortcutsDirectory}"/"Get Kubernetes Token"
+chmod 755 "${adminShortcutsDirectory}"/"Get Kubernetes Token"
+
+# Update SKEL directory
+cp -f /home/${baseUser}/Desktop/Get-Kubernetes-Token.desktop ${skelDirectory}/Desktop
+cp -f /home/${baseUser}/Desktop/Kubernetes-Dashboard.desktop ${skelDirectory}/Desktop
+chmod 755 ${skelDirectory}/Desktop/*.desktop

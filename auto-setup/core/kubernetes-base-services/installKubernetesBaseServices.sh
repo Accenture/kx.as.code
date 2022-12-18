@@ -85,9 +85,9 @@ EOF
     fi
     /usr/bin/sudo chown $(id -u ${baseUser}):$(id -g ${baseUser}) /home/${baseUser}/.kube/config
     # Add kube config to skel directory for future users
-    /usr/bin/sudo mkdir -p /usr/share/kx.as.code/skel/.kube
-    /usr/bin/sudo cp -f ${kubeConfigFile} /usr/share/kx.as.code/skel/.kube/config
-    sed -n -i '/users:/q;p' /usr/share/kx.as.code/skel/.kube/config
+    /usr/bin/sudo mkdir -p "${skelDirectory}"/.kube
+    /usr/bin/sudo cp -f ${kubeConfigFile} "${skelDirectory}"/.kube/config
+    sed -n -i '/users:/q;p' "${skelDirectory}"/.kube/config
     if [[ "${vmUser}" != "${baseUser}" ]] && [[ -d /home/${vmUser} ]]; then
         /usr/bin/sudo mkdir -p /home/${vmUser}/.kube
         /usr/bin/sudo cp -f ${kubeConfigFile} /home/${vmUser}/.kube/config
