@@ -323,7 +323,7 @@
     {
       "type": "file",
       "source": "../../../dependencies/skel",
-      "destination": "{{user `kx_home`}}/skel"
+      "destination": "{{user `kx_home`}}"
     },
     {
       "type": "file",
