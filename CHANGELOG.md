@@ -1,8 +1,30 @@
 # Changelog
 
-## [v0.8.11](https://github.com/Accenture/kx.as.code/releases/tag/v0.8.11) (2022-09-18)
+## [v0.8.12](https://github.com/Accenture/kx.as.code/releases/tag/v0.8.12) (2022-09-18)
+This release contains a critical fix! The fix resolved an issue where the Linux NetworkManager and Kubernetes were getting in each others way, resulting in unstable workloads. The rest of the changes are mainly minor enhancements and fixes. See full release note below.
 
-[Full Changelog](https://github.com/Accenture/kx.as.code/compare/v0.8.10...HEAD)
+**Implemented enhancements:**
+
+- Upgrade OpenLens to v6.1.13 #369
+- Enable NoMachine for ARM64 CPU architecture #368
+- Widen global variables tab table spacing #352
+- Enhance experience meter in Jenkins based launcher #351
+- Update Documentation #350
+
+**Fixed bugs:**
+
+- External access directory not created for cloud instance #370
+- Fix new user initialisation #367
+- Remove repetitive warning when using sudo #366
+- Deployed services in Kubernetes are not stable #365
+- Remembering Orchestrator and Start-Mode not working on Mac and Linux #348
+- KX-Portal backend server crashing with TypeError: Cannot read properties of null (reading 'message') #336
+
+# History
+
+History is the past, the future is [here](https://accenture.github.io/kx.as.code/Overview/Future-Roadmap/)
+
+## [v0.8.11](https://github.com/Accenture/kx.as.code/releases/tag/v0.8.11) (2022-09-18)
 
 v0.8.11 is a bumper release with quite a few new features and bug fixes. A major new feature is the ability to execute "tasks" against a "component" once it has been installed (for example, "purge deleted images" in the "docker-registry" component). Tasks are defined in the component's metadata,json.  The client KX-Portal also received a number of updates, including the ability to launch the new tasks.
 Read the full list below for more details.
@@ -35,13 +57,7 @@ Read the full list below for more details.
 - KX.AS.CODE auto-update source on first start not working [\#306](https://github.com/Accenture/kx.as.code/issues/306)
 - Blank screen in KX-Portal from page 4 onwards [\#280](https://github.com/Accenture/kx.as.code/issues/280)
 
-# History
-
-History is the past, the future is [here](https://accenture.github.io/kx.as.code/Overview/Future-Roadmap/)
-
 ## [v0.8.10](https://github.com/Accenture/kx.as.code/releases/tag/v0.8.10) (2022-08-16)
-
-[Full Changelog](https://github.com/Accenture/kx.as.code/compare/v0.8.9...v0.8.10)
 
 This is a fairly minor release and has been mainly about stabilization and finalizing the documentation.
 
