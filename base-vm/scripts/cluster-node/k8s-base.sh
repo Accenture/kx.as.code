@@ -9,7 +9,7 @@ sudo mkdir -p ${KUBEDIR}
 sudo chown ${VM_USER}:${VM_USER} ${KUBEDIR}
 
 # Copy Skel
-sudo cp -rfT ${INSTALLATION_WORKSPACE}/skel /home/$VM_USER
+sudo cp -rfT ${SKELDIR} /home/$VM_USER
 sudo chown -R $VM_USER:$VM_USER /home/$VM_USER
 
 # Let iptables see bridged traffic
