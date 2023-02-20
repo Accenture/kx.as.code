@@ -44,8 +44,8 @@
             }
         }
     ],
-    "Descriptions": "Prometheus collects and stores its metrics as time series data, i.e. metrics information is stored with the timestamp at which it was recorded, alongside optional key-value pairs called labels.",
-    "shortcut_text": "Prometheus",
+    "Description": "Prometheus collects and stores its metrics as time series data, i.e. metrics information is stored with the timestamp at which it was recorded, alongside optional key-value pairs called labels.",
+    "shortcut_text": "Prometheus & Grafana Stack",
     "shortcut_icon": "prometheus.png",
     "api_docs_url": "https://prometheus.io/docs/prometheus/latest/querying/api/",
     "vendor_docs_url": "https://prometheus.io/docs",
