@@ -3,6 +3,11 @@ autoSetupScriptInstall() {
     # Call common function to execute common function start commands, such as setting verbose output etc
     functionStart
 
+    local blockScriptExecution="false"
+    if [[ "${retryMode}" == "true" ]] && [[ "${retryInstallPhase}" == "main_scripts" ]]; then
+        blockScriptExecution="true"
+    fi
+
     log_info "Established installation type is \"${installationType}\". Proceeding in that way"
 
     # Get script list to execute
@@ -15,12 +20,28 @@ autoSetupScriptInstall() {
 
     # Execute scripts
     for script in ${scriptsToExecute}; do
-        log_info "Executing script \"${script}\" in directory ${installComponentDirectory}"
-        updateStorageClassIfNeeded "${installComponentDirectory}/${script}"
-        . ${installComponentDirectory}/${script} || rc=$? && log_info "${installComponentDirectory}/${script} returned with rc=$rc"
-        if [[ ${rc} -ne 0 ]]; then
-            log_error "Execution of install script \"${script}\" ended in a non zero return code ($rc)"
-            return 1
+
+        # Unblock execution if set to true and script to be executed matches script to be retried
+        if [[ "${blockScriptExecution}" == "true" ]] && [[ ${retryScript} == ${script} ]]; then
+            blockScriptExecution="false"
+        else
+            log_debug "Skipping execution of script ${script} as already executed successfully prior to retry of component installation"
+
+        fi
+
+        # Execute script if there script execution is not blocked
+        if [[ "${blockScriptExecution}" != "true" ]]; then
+            log_info "Executing script \"${script}\" in directory ${installComponentDirectory}"
+            updateStorageClassIfNeeded "${installComponentDirectory}/${script}"
+            # Export retry data in case an error errors and the component installation needs to be retried
+            autoSetupSaveRetryData "2" "main_scripts" "${script}" "${payload}"
+            . ${installComponentDirectory}/${script} || rc=$? && log_info "${installComponentDirectory}/${script} returned with rc=$rc"
+            if [[ ${rc} -ne 0 ]]; then
+                log_error "Execution of install script \"${script}\" ended in a non zero return code ($rc)"
+                exit 1
+            else
+                autoSetupClearRetryData
+            fi
         fi
     done
 
