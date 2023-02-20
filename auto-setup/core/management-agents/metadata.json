@@ -1,0 +1,15 @@
+{
+    "name": "management-agents",
+    "namespace": "",
+    "installation_type": "script",
+    "installation_group_folder": "core",
+    "retry": "true",
+    "install_scripts": [
+        "installAwsSsmAgent.sh"
+    ],
+    "Description": "Management agents, such as AWS SSM",
+    "shortcut_text": "",
+    "shortcut_icon": "",
+    "pre_install_scripts": [],
+    "post_install_scripts": []
+}
