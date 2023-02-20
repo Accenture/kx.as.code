@@ -73,3 +73,9 @@ BTOP_TAR=$(echo "${BTOP_FILE%.*}.tar")
 tar xvf ${INSTALLATION_WORKSPACE}/btop/${BTOP_TAR}
 sudo cp -f ${INSTALLATION_WORKSPACE}/btop/bin/btop /usr/local/bin
 rm -rf ${INSTALLATION_WORKSPACE}/btop
+
+# Set kernel parameters
+/usr/bin/sudo sysctl -w fs.inotify.max_user_watches=524288
+echo "fs.inotify.max_user_watches=524288" | /usr/bin/sudo tee -a /etc/sysctl.conf
+/usr/bin/sudo sysctl -w fs.inotify.max_user_instances=8192
+echo "fs.inotify.max_user_instances=8192" | /usr/bin/sudo tee -a /etc/sysctl.conf

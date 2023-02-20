@@ -69,6 +69,12 @@ log_debug "Called autoSetup.sh with action: ${action}, componentName: ${componen
 # Define component install directory
 export installComponentDirectory=${autoSetupHome}/${componentInstallationFolder}/${componentName}
 
+# Check component directory exists
+if [[ ! -d "${installComponentDirectory}" ]]; then
+  log_error "Fatal error. Component directory ''${installComponentDirectory}'' does not exist. ${componentName^} cannot be installed." "0"
+  exit 123
+fi
+
 # Define location of metadata JSON file for component
 export componentMetadataJson=${installComponentDirectory}/metadata.json
 
@@ -111,7 +117,7 @@ if [[ ${action} == "install" ]]; then
       ##      P R E    I N S T A L L    S T E P S
       ####################################################################################################################################################################
       rc=0
-      autoSetupPreInstallSteps &>> ${logFilename} || rc=$? && log_info "Execution of autoSetupPreInstallSteps() returned with rc=$rc"
+      autoSetupExecuteScripts "1" &>> ${logFilename} || rc=$? && log_info "Execution of autoSetupExecuteScripts for pre-install-scripts returned with rc=$rc"
       if [[ ${rc} -ne 0 ]]; then
         log_error "Execution of autoSetupPreInstallSteps() returned with a non zero return code ($rc)"
         setRetryDataFailureState
@@ -127,7 +133,7 @@ if [[ ${action} == "install" ]]; then
       ####################################################################################################################################################################
       if [[ ${installationType} == "script" ]]; then
         rc=0
-        autoSetupScriptInstall &>> ${logFilename} || rc=$? && log_info "Execution of autoSetupScriptInstall() returned with rc=$rc"
+        autoSetupExecuteScripts "2" &>> ${logFilename} || rc=$? && log_info "Execution of autoSetupExecuteScripts for main install scripts returned with rc=$rc"
         if [[ ${rc} -ne 0 ]]; then
           log_error "Execution of autoSetupScriptInstall() returned with a non zero return code ($rc)"
           setRetryDataFailureState
@@ -214,7 +220,7 @@ if [[ ${action} == "install" ]]; then
     rc=0
     postInstallStepLetsEncrypt &>> ${logFilename} || rc=$? && log_info "Execution of postInstallStepLetsEncrypt() returned with rc=$rc"
     if [[ ${rc} -ne 0 ]]; then
-      log_error "Execution of postInstallStepLetsEncrypt() returned with a non zero return code ($rc)"
+      log_error "Execution of postInstallStepLetsEncrypt() returned with a non zero return code ($rc)" "0"
       exit $rc
     fi
 
@@ -222,7 +228,7 @@ if [[ ${action} == "install" ]]; then
     if ( [[ "${retryMode}" == "true" ]] || [[ "${retryMode}" == "notapplicable" ]] ) && [[ ${retryPhaseId} -le 5 ]]; then
       # Execute scripts defined in metadata.json, listed post_install_scripts section
       rc=0
-      executePostInstallScripts &>> ${logFilename} || rc=$? && log_info "Execution of executePostInstallScripts() returned with rc=$rc"
+      autoSetupExecuteScripts "5" &>> ${logFilename} || rc=$? && log_info "Execution of autoSetupExecuteScripts for post-install-scripts returned with rc=$rc"
       if [[ ${rc} -ne 0 ]]; then
         log_error "Execution of executePostInstallScripts() returned with a non zero return code ($rc)"
         setRetryDataFailureState

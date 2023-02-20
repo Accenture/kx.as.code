@@ -2184,7 +2184,9 @@
     "api_docs_type": "web",
     "api_docs_url": "https://graphite.readthedocs.io/en/1.1.7/render_api.html",
     "vendor_docs_url": "https://graphite.readthedocs.io/",
-    "pre_install_scripts": [],
+    "pre_install_scripts": [
+      "createGraphiteIngress.sh"
+    ],
     "post_install_scripts": []
   },
   {
@@ -2329,7 +2331,8 @@
       "getGrafanaAccessKey.sh"
     ],
     "post_install_scripts": [
-      "configureLokiWithGrafana.sh"
+      "configureLokiWithGrafana.sh",
+      "importGrafanaDashboard.sh"
     ]
   },
   {
@@ -2411,6 +2414,64 @@
     "post_install_scripts": []
   },
   {
+    "name": "prometheus-stack",
+    "namespace": "prometheus-stack",
+    "installation_type": "helm",
+    "installation_group_folder": "monitoring",
+    "environment_variables": {},
+    "helm_params": {
+      "repository_url": "https://prometheus-community.github.io/helm-charts",
+      "repository_name": "prometheus-community/kube-prometheus-stack",
+      "helm_version": "45.1.0",
+      "set_key_values": []
+    },
+    "categories": [
+      "monitoring"
+    ],
+    "urls": [
+      {
+        "url": "https://prometheus.{{baseDomain}}",
+        "healthchecks": {
+          "liveliness": {
+            "http_path": "/-/ready",
+            "http_auth_required": false,
+            "expected_http_response_code": "200",
+            "expected_http_response_string": "",
+            "expected_json_response": {
+              "json_path": "",
+              "json_value": ""
+            },
+            "health_shell_check_command": "",
+            "expected_shell_check_command_response": ""
+          },
+          "readiness": {
+            "http_path": "/-/ready",
+            "http_auth_required": false,
+            "expected_http_response_code": "200",
+            "expected_http_response_string": "",
+            "expected_json_response": {
+              "json_path": "",
+              "json_value": ""
+            },
+            "health_shell_check_command": "",
+            "expected_shell_check_command_response": ""
+          }
+        }
+      }
+    ],
+    "Description": "Prometheus collects and stores its metrics as time series data, i.e. metrics information is stored with the timestamp at which it was recorded, alongside optional key-value pairs called labels.",
+    "shortcut_text": "Prometheus & Grafana Stack",
+    "shortcut_icon": "prometheus.png",
+    "api_docs_url": "https://prometheus.io/docs/prometheus/latest/querying/api/",
+    "vendor_docs_url": "https://prometheus.io/docs",
+    "pre_install_scripts": [
+      "generateAdminPassword.sh"
+    ],
+    "post_install_scripts": [
+      "createGrafanaDesktopIcon.sh"
+    ]
+  },
+  {
     "name": "selenium4",
     "namespace": "selenium4",
     "installation_type": "script",
@@ -2467,7 +2528,7 @@
     "name": "sonarqube",
     "namespace": "sonarqube",
     "installation_type": "helm",
-    "installation_group_folder": "cicd",
+    "installation_group_folder": "quality_assurance",
     "minimum_resources": {
       "cpu": "1000",
       "memory": "3000"

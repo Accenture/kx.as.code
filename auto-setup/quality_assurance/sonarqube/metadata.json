@@ -2,7 +2,7 @@
     "name": "sonarqube",
     "namespace": "sonarqube",
     "installation_type": "helm",
-    "installation_group_folder": "cicd",
+    "installation_group_folder": "quality_assurance",
     "minimum_resources": {
         "cpu": "1000",
         "memory": "3000"
