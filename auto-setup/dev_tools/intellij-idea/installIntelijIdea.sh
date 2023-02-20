@@ -1,4 +1,5 @@
-#!/bin/bash -x
+#!/bin/bash
+set -euo pipefail
 
 # Download Idea IntelliJ 
 downloadFile "https://download.jetbrains.com/idea/ideaIC-${intellijIdeaVersion}.tar.gz" \
