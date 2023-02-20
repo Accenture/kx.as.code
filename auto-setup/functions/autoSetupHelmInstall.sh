@@ -68,6 +68,8 @@ autoSetupHelmInstall() {
   ${installationWorkspace}/helm_${componentName}.sh || rc=$? && log_info "${installationWorkspace}/helm_${componentName}.sh returned with rc=$rc"
   if [[ ${rc} -ne 0 ]]; then
     log_error "Execution of Helm command \"${helmCommmand}\" ended in a non zero return code ($rc)"
+    autoSetupSaveRetryData "3" "helm_install" "helm_${componentName}.sh" "${payload}"
+    setRetryDataFailureState
     exit ${rc}
   else
     autoSetupClearRetryData

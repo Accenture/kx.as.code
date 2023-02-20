@@ -14,6 +14,9 @@ autoSetupPreInstallSteps() {
   for script in ${componentPreInstallScripts}; do
     if [[ ! -f ${installComponentDirectory}/pre_install_scripts/${script} ]]; then
       log_error "Pre-install script ${installComponentDirectory}/pre_install_scripts/${script} does not exist. Check your spelling in the \"kxascode.json\" file and that it is checked in correctly into Git"
+      autoSetupSaveRetryData "1" "pre_install_scripts" "${script}" "${payload}"
+      setRetryDataFailureState
+      exit 1
     else
 
       # Unblock execution if set to true and script to be executed matches script to be retried

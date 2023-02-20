@@ -114,7 +114,7 @@ if [[ ${action} == "install" ]]; then
       autoSetupPreInstallSteps &>> ${logFilename} || rc=$? && log_info "Execution of autoSetupPreInstallSteps() returned with rc=$rc"
       if [[ ${rc} -ne 0 ]]; then
         log_error "Execution of autoSetupPreInstallSteps() returned with a non zero return code ($rc)"
-        cat ${installationWorkspace}/.retryDataStore.json | jq '.state="script failed! waiting to be fixed and restarted"' >${installationWorkspace}/.retryDataStore.json_tmp && mv ${installationWorkspace}/.retryDataStore.json_tmp ${installationWorkspace}/.retryDataStore.json
+        setRetryDataFailureState
         exit $rc
       fi
     else
@@ -130,7 +130,7 @@ if [[ ${action} == "install" ]]; then
         autoSetupScriptInstall &>> ${logFilename} || rc=$? && log_info "Execution of autoSetupScriptInstall() returned with rc=$rc"
         if [[ ${rc} -ne 0 ]]; then
           log_error "Execution of autoSetupScriptInstall() returned with a non zero return code ($rc)"
-          cat ${installationWorkspace}/.retryDataStore.json | jq '.state="script failed! waiting to be fixed and restarted"' >${installationWorkspace}/.retryDataStore.json_tmp && mv ${installationWorkspace}/.retryDataStore.json_tmp ${installationWorkspace}/.retryDataStore.json
+          setRetryDataFailureState
           exit $rc
         fi
       fi
@@ -147,7 +147,7 @@ if [[ ${action} == "install" ]]; then
         autoSetupHelmInstall &>> ${logFilename} || rc=$? && log_info "Execution of autoSetupHelmInstall() returned with rc=$rc"
         if [[ ${rc} -ne 0 ]]; then
           log_error "Execution of autoSetupHelmInstall() returned with a non zero return code ($rc)"
-          cat ${installationWorkspace}/.retryDataStore.json | jq '.state="script failed! waiting to be fixed and restarted"' >${installationWorkspace}/.retryDataStore.json_tmp && mv ${installationWorkspace}/.retryDataStore.json_tmp ${installationWorkspace}/.retryDataStore.json
+          setRetryDataFailureState
           exit $rc
         fi
       fi
@@ -225,7 +225,7 @@ if [[ ${action} == "install" ]]; then
       executePostInstallScripts &>> ${logFilename} || rc=$? && log_info "Execution of executePostInstallScripts() returned with rc=$rc"
       if [[ ${rc} -ne 0 ]]; then
         log_error "Execution of executePostInstallScripts() returned with a non zero return code ($rc)"
-        cat ${installationWorkspace}/.retryDataStore.json | jq '.state="script failed! waiting to be fixed and restarted"' >${installationWorkspace}/.retryDataStore.json_tmp && mv ${installationWorkspace}/.retryDataStore.json_tmp ${installationWorkspace}/.retryDataStore.json
+        setRetryDataFailureState
         exit $rc
       fi
     else

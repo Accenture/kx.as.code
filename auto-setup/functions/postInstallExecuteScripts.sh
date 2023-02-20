@@ -12,7 +12,10 @@ executePostInstallScripts() {
   # Loop round post-install scripts
   for script in ${componentPostInstallScripts}; do
     if [[ ! -f ${installComponentDirectory}/post_install_scripts/${script} ]]; then
-      log_error "Post-install script ${installComponentDirectory}/post_install_scripts/${script} does not exist. Check your spelling in the \"kxascode.json\" file and that it is checked in correctly into Git"
+      log_error "Post-install script ${installComponentDirectory}/post_install_scripts/${script} does not exist. Check your spelling in the \"metadata.json\" file and that it is checked in correctly into Git"
+      autoSetupSaveRetryData "5" "post_install_scripts" "${script}" "${payload}"
+      setRetryDataFailureState
+      exit 1
     else
       echo "Executing post-install script ${installComponentDirectory}/post_install_scripts/${script}"
       log_info "Executing post-install script ${installComponentDirectory}/post_install_scripts/${script}"
