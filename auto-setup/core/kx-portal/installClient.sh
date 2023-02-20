@@ -19,10 +19,6 @@ if [[ -z ${bunAlreadyInstalled} ]]; then
 
 fi
 
-# Set kernel parameters
-/usr/bin/sudo sysctl -w fs.inotify.max_user_watches=524288
-echo "fs.inotify.max_user_watches=524288" | /usr/bin/sudo tee -a /etc/sysctl.conf
-
 # Install KX-Portal
 /usr/bin/sudo cp -rf "${sharedGitHome}/kx.as.code/client" "${installationWorkspace}/kx-portal"
 export KX_PORTAL_HOME="${installationWorkspace}/kx-portal/client"
