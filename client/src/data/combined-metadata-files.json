@@ -1327,6 +1327,21 @@
     "post_install_scripts": []
   },
   {
+    "name": "management-agents",
+    "namespace": "",
+    "installation_type": "script",
+    "installation_group_folder": "core",
+    "retry": "true",
+    "install_scripts": [
+      "installAwsSsmAgent.sh"
+    ],
+    "Description": "Management agents, such as AWS SSM",
+    "shortcut_text": "",
+    "shortcut_icon": "",
+    "pre_install_scripts": [],
+    "post_install_scripts": []
+  },
+  {
     "name": "metallb-loadbalancer",
     "namespace": "metallb-system",
     "installation_type": "script",
@@ -1438,7 +1453,7 @@
       "installOpenLens.sh"
     ],
     "Description": "Lens IDE provides the full situational awareness for everything that runs in Kubernetes.",
-    "shortcut_text": "OpenLens IDE",
+    "shortcut_text": "OpenLens Kubernetes IDE",
     "shortcut_icon": "openlens.png",
     "pre_install_scripts": [],
     "post_install_scripts": []
@@ -1612,6 +1627,13 @@
       "intellijIdeaVersion": "2022.2.1",
       "intellijIdeaChecksum": "93eb9391a898aad164ca47965e0445cbf0f04d7062b6875c4e4a3136799ee6cf"
     },
+    "plugins_to_install": [
+      {
+        "name": "jprofiler",
+        "downloadUrl": "https://plugins.jetbrains.com/plugin/download?rel=true&updateId=254367",
+        "sha256Sum": "1aa10689f726eca6d431a7bb8c99680595b796523fbd0fbe725096972231cf2a"
+      }
+    ],
     "install_scripts": [
       "installIntelijIdea.sh"
     ],
@@ -1619,6 +1641,26 @@
     "shortcut_text": "IntelliJ Idea",
     "shortcut_icon": "intellij-idea.png",
     "pre_install_scripts": [],
+    "post_install_scripts": [
+      "installPlugins.sh"
+    ]
+  },
+  {
+    "name": "jprofiler",
+    "namespace": "",
+    "installation_type": "script",
+    "installation_group_folder": "dev_tools",
+    "environment_variables": {
+      "jprofilerExecutableVersion": "13_0_5",
+      "jprofilerExecutableChecksum": "1c1c1f1c607ec6d4ced83573c65a3e5ff9b3e3ca24284a6f23a32657ccc38fb8"
+    },
+    "Description": "JPROFILER is a high-profile Java language profiler. Profiles in the programming world are tools that help programmers monitor program execution processes",
+    "shortcut_text": "JProfiler",
+    "shortcut_icon": "jprofiler.png",
+    "pre_install_scripts": [],
+    "install_scripts": [
+      "installJProfiler.sh"
+    ],
     "post_install_scripts": []
   },
   {
