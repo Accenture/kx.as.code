@@ -1,12 +1,12 @@
 notifyAllChannels() {
 
   local message=${1}
-  local logLevel=${2-info}
-  local actionStatus=${3-unknown}
-  local action=${4-}
-  local acionQueueJsonPayload=${5-}
-  local actionDuration=${6-}
-  local notificationTimeout=${7-300000}
+  local logLevel=${2:-info}
+  local actionStatus=${3:-unknown}
+  local action=${4:-}
+  local acionQueueJsonPayload=${5:-}
+  local actionDuration=${6:-}
+  local notificationTimeout=${7:-300000}
 
   if [[ -n ${acionQueueJsonPayload} ]]; then
 
@@ -27,13 +27,10 @@ notifyAllChannels() {
 
   if [[ "${logLevel}" == "error" ]]; then
     dialogType="dialog-error"
-    log_error "${message}"
   elif [[ "${logLevel}" == "warn" ]]; then
     dialogType="dialog-warning"
-    log_warn "${message}"
   else
     dialogType="dialog-information"
-    log_info "${message}"
   fi
 
   # Change message if task was executed rather than solution installed
@@ -43,9 +40,9 @@ notifyAllChannels() {
 
   log_debug "notify \"${message}\" \"${dialogType}\""
 
-  sendSlackNotification "${message}" "${logLevel}" "${actionStatus}" "${componentName:-}" "${action}" "${category:-}" "${retries:-}" "${task:-}" "${autoSetupDuration:-}"
-  sendMsTeamsNotification "${message}" "${logLevel}" "${actionStatus}" "${componentName:-}" "${action}" "${category:-}" "${retries:-}" "${task:-}" "${autoSetupDuration:-}"
-  sendEmailNotification "${message}" "${logLevel}" "${actionStatus}" "${componentName:-}" "${action}" "${category:-}" "${retries:-}" "${task:-}" "${autoSetupDuration:-}"
+  sendSlackNotification "${message}" "${logLevel}" "${actionStatus}" "${componentName:-}" "${action}" "${category:-}" "${retries:-}" "${task:-}" "${actionDuration}"
+  sendMsTeamsNotification "${message}" "${logLevel}" "${actionStatus}" "${componentName:-}" "${action}" "${category:-}" "${retries:-}" "${task:-}" "${actionDuration}"
+  sendEmailNotification "${message}" "${logLevel}" "${actionStatus}" "${componentName:-}" "${action}" "${category:-}" "${retries:-}" "${task:-}" "${actionDuration}"
 
   notify "${message}" "${dialogType}" "${notificationTimeout}"
   log_debug addToNotificationQueue "${message}" "${logLevel}" "${actionStatus}"

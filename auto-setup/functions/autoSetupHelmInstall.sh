@@ -64,11 +64,11 @@ autoSetupHelmInstall() {
   chmod 755 ${installationWorkspace}/helm_${componentName}.sh
   updateStorageClassIfNeeded "${installationWorkspace}/helm_${componentName}.sh"
   # Export retry data in case an error errors and the component installation needs to be retried
-  autoSetupSaveRetryData "3" "helm_install" "helm_${componentName}.sh" "${payload}"
+  autoSetupSaveRetryData "3" "helm_${componentName}.sh" "${payload}"
   ${installationWorkspace}/helm_${componentName}.sh || rc=$? && log_info "${installationWorkspace}/helm_${componentName}.sh returned with rc=$rc"
   if [[ ${rc} -ne 0 ]]; then
     log_error "Execution of Helm command \"${helmCommmand}\" ended in a non zero return code ($rc)"
-    autoSetupSaveRetryData "3" "helm_install" "helm_${componentName}.sh" "${payload}"
+    autoSetupSaveRetryData "3" "helm_${componentName}.sh" "${payload}"
     setRetryDataFailureState
     exit ${rc}
   else
