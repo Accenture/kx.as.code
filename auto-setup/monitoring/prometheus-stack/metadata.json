@@ -52,5 +52,7 @@
     "pre_install_scripts": [
         "generateAdminPassword.sh"
     ],
-    "post_install_scripts": []
+    "post_install_scripts": [
+        "createGrafanaDesktopIcon.sh"
+    ]
 }
