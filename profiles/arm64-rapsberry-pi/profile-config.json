@@ -53,5 +53,10 @@
         },
         "virtualizationType": "none",
         "updateSourceOnStart": "true"
+    },
+    "notification_endpoints": {
+        "slack_webhook": "",
+        "ms_teams_webhook": "",
+        "email_address": ""
     }
 }
