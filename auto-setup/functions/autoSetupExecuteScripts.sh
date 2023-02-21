@@ -89,7 +89,7 @@ autoSetupExecuteScripts() {
             exit 1
         else
             autoSetupClearRetryData
-            log_info "Success. Execution of script ''${installDirectory}/${script}'' ended with return code ($rc)" "${autoSetupScriptDuration}"
+            log_info "Success. Execution of script ''${installDirectory}/${script}'' ran ${autoSetupScriptDuration} and ended with return code ($rc)" "${autoSetupScriptDuration}"
         fi
       fi
     fi
