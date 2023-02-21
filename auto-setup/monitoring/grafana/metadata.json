@@ -4,12 +4,12 @@
     "installation_type": "helm",
     "installation_group_folder": "monitoring",
     "environment_variables": {
-        "grafanaVersion": "8.4.2"
+        "grafanaVersion": "9.3.6"
     },
     "helm_params": {
         "repository_url": "https://grafana.github.io/helm-charts",
         "repository_name": "grafana/grafana",
-        "helm_version": "6.24.1",
+        "helm_version": "6.50.7",
         "set_key_values": [
             "image.tag={{grafanaVersion}}",
             "ingress.enabled=true",
@@ -18,7 +18,6 @@
             "ingress.tls[0].hosts[0]={{componentName}}.{{baseDomain}}",
             "persistence.enabled=true",
             "persistence.size=4Gi",
-            "persistence.storageClassName=kadalu.storage-pool-1",
             "admin.userKey=admin-user",
             "admin.passwordKey=admin-password",
             "admin.existingSecret=grafana-admin-credentials",
