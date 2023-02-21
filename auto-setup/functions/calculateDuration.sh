@@ -11,7 +11,14 @@ calculateDuration() {
     local durationMinutes=$(echo "${durationTimestamp3}/60" | bc)
     local durationSeconds=$(echo "${durationTimestamp3}-60*${durationMinutes}" | bc)
 
-    #LC_NUMERIC=C printf "%d:%02d:%02d:%02.4f" ${durationDays} ${durationHours} ${durationMinutes} ${durationSeconds}
-    LC_NUMERIC=C printf "%d day %02d hours %02d minutes %02.4f seconds" ${durationDays} ${durationHours} ${durationMinutes} ${durationSeconds}
+    if [[ "${durationDays}" -gt 0 ]]; then
+       LC_NUMERIC=C printf "%d day %02d hours %02d minutes %02.4f seconds" ${durationDays} ${durationHours} ${durationMinutes} ${durationSeconds}
+    elif [[ "${durationHours}" -gt 0 ]]; then
+       LC_NUMERIC=C printf "%02d hours %02d minutes %02.4f seconds" ${durationHours} ${durationMinutes} ${durationSeconds}
+    elif [[ "${durationMinutes}" -gt 0 ]]; then
+       LC_NUMERIC=C printf "%02d minutes %02.4f seconds" ${durationMinutes} ${durationSeconds}
+     else [[ $(echo ${durationSeconds} | cut -d$(locale decimal_point) -f1) -gt 0 ]]
+       LC_NUMERIC=C printf "%02.4f seconds" ${durationSeconds}
+    fi
 
 }
