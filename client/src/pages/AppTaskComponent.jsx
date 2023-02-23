@@ -22,7 +22,7 @@ export default function AppTaskComponent(props) {
         <button
           to="#0"
           onClick={() => {
-            props.taskExecutionHandler(props.task.title);
+            props.taskExecutionHandler(props.task.name);
           }}
           className="bg-kxBlue p-1 px-4 rounded items-center flex hover:pr-5"
         >
