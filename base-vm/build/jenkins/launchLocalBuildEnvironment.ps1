@@ -419,7 +419,7 @@ do
 Invoke-WebRequest -Uri $jenkinsUrl/jnlpJars/jenkins-cli.jar -OutFile .\jenkins-cli.jar
 
 $credentials_salt = openssl rand -base64 12
-#Write-Output $credentials_salt
+Write-Output $credentials_salt | Out-File -FilePath .\credentials_salt
 
 # Replace mustache variables in credential xml files
 Get-ChildItem "$JENKINS_HOME\" -Filter credential_*.xml |
