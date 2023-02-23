@@ -1,5 +1,8 @@
 sendMsTeamsNotification() {
 
+    # Call common function to execute common function start commands, such as setting verbose output etc
+    functionStart "true"
+    
     local message=${1:-}
     local logLevel=${2:-info}
     local actionStatus=${3:-unkown}
@@ -12,7 +15,7 @@ sendMsTeamsNotification() {
     local msTeamsNotificationWebhook="$(cat ${installationWorkspace}/profile-config.json | jq -r '.notification_endpoints.ms_teams_webhook')"
 
     if [[ "${logLevel}" == "error" ]] || [[ "${actionStatus}" == "failed" ]]; then
-        local lastExecutingScript="$(cat ${installationWorkspace}/.retryDataStore.json | tr -d "[:cntrl:]" | jq '.script')"
+        local lastExecutingScript="$(cat ${installationWorkspace}/.retryDataStore.json | tr -d "[:cntrl:]" | jq -r '.script')"
         local lastExecutingFunction="$(cat ${installationWorkspace}/.currentFunctionExecuting)"
     else
         local lastExecutingScript=""
@@ -50,7 +53,7 @@ sendMsTeamsNotification() {
                 \"summary\": \"[${logLevel^^}] ${action^} for ${componentName^} ${actionStatus}\",
                 \"sections\": [{
                     \"activityTitle\": \"DCE2.0 Developer Workstation - ${baseDomain}\",
-                    \"activitySubtitle\": \"${statusEmoticon} [${logLevel^^}] ${message}\",
+                    \"activitySubtitle\": \"${statusEmoticon} [${logLevel^^}] $(echo ${message} | sed 's/"/\\"/g')\",
                     \"activityImage\": \"\",
                     \"facts\": [{
                         \"name\": \"Component\",
@@ -85,5 +88,8 @@ sendMsTeamsNotification() {
             curl -H 'Content-Type: application/json' -d "${messageCard}" ${msTeamsNotificationWebhook}
 
     fi
+
+    # Call common function to execute common function start commands, such as unsetting verbose output etc
+    functionEnd
 
 }

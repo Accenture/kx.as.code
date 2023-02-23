@@ -1,7 +1,7 @@
 sendEmailNotification() {
 
   # Call common function to execute common function start commands, such as setting verbose output etc
-  functionStart
+  functionStart "true"
 
   local message=${1:-}
   local alertType=${2:-info}

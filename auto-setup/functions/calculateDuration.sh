@@ -22,3 +22,5 @@ calculateDuration() {
     fi
 
 }
+
+

@@ -1,10 +1,10 @@
 #!/bin/bash -x
 
 payload=${1}
-export retries=$(echo ${payload} | jq -c -r '.retries')
-export action=$(echo ${payload} | jq -c -r '.action')
-export componentName=$(echo ${payload} | jq -c -r '.name')
-export componentInstallationFolder=$(echo ${payload} | jq -c -r '.install_folder')
+export retries=$(echo "${payload}" | jq -c -r '.retries')
+export action=$(echo "${payload}" | jq -c -r '.action')
+export componentName=$(echo "${payload}" | jq -c -r '.name')
+export componentInstallationFolder=$(echo "${payload}" | jq -c -r '.install_folder')
 
 # Read retry store from installationWorkspace if it exists
 retryMode="false"
@@ -71,7 +71,7 @@ export installComponentDirectory=${autoSetupHome}/${componentInstallationFolder}
 
 # Check component directory exists
 if [[ ! -d "${installComponentDirectory}" ]]; then
-  log_error "Fatal error. Component directory ''${installComponentDirectory}'' does not exist. ${componentName^} cannot be installed." "0"
+  log_error "Fatal error. Component directory \"${installComponentDirectory}\" does not exist. ${componentName^} cannot be installed." "0"
   exit 123
 fi
 
@@ -288,9 +288,9 @@ if [[ ${action} == "install" ]]; then
       createDesktopIcon "${apiDocsDirectory}" "${postmanApiDocsUrl}" "${shortcutText} Postman" "${iconPath}" "${browserOptions}"
     fi
 
-elif [[ ${action} == "executeTask" ]]; then
+elif [[ "${action}" == "executeTask" ]]; then
 
-  export taskToExecute=$(echo ${payload} | jq -c -r '.task')
+  export taskToExecute=$(echo "${payload}" | jq -c -r '.task')
   rc=0
   autoSetupExecuteTask "${taskToExecute}" &>> ${logFilename} || rc=$? && log_info "Execution of autoSetupExecuteTask() for task \"${taskToExecute}\" returned with rc=$rc"
   if [[ ${rc} -ne 0 ]]; then

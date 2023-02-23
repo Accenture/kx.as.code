@@ -16,12 +16,12 @@ grafanaImportDashboardJsonFile() {
 
         # Check curl JSON response
         if [[ $(echo ${curlResponse} | jq -r '.imported') == "true" ]]; then
-            log_info "Grafana dashboard ''${dashboardJsonFilePath}'' imported successfully"
+            log_info "Grafana dashboard  \"${dashboardJsonFilePath} \" imported successfully"
         else
             if [[ $(echo ${curlResponse} | jq -r '.status') == "version-mismatch" ]]; then
                 log_warn "Couldn't import Grafana dashboard due to version mismatch - probably already imported. Ignoring and continuing"
             else
-                log_error "Didn't get the expected response importing Grafana Dashboard ''${dashboardJsonFilePath}''"
+                log_error "Didn't get the expected response importing Grafana Dashboard  \"${dashboardJsonFilePath} \""
                 log_error "Exiting with RC=1"
                 exit 1
             fi

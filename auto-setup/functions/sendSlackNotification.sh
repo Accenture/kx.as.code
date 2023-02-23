@@ -1,5 +1,8 @@
 sendSlackNotification() {
 
+    # Call common function to execute common function start commands, such as setting verbose output etc
+    functionStart "true"
+
     local message=${1:-}
     local logLevel=${2:-info}
     local actionStatus=${3:-unkown}
@@ -12,7 +15,7 @@ sendSlackNotification() {
     local slackNotificationWebhook="$(cat ${installationWorkspace}/profile-config.json | jq -r '.notification_endpoints.slack_webhook')"
 
     if [[ "${logLevel}" == "error" ]] || [[ "${actionStatus}" == "failed" ]]; then
-        local lastExecutingScript="$(cat ${installationWorkspace}/.retryDataStore.json | tr -d "[:cntrl:]" | jq '.script')"
+        local lastExecutingScript="$(cat ${installationWorkspace}/.retryDataStore.json | tr -d "[:cntrl:]" | jq -r '.script')"
         local lastExecutingFunction="${currentFunctionExecuting:-}"
     else
         local lastExecutingScript=""
@@ -45,13 +48,13 @@ sendSlackNotification() {
 
         # Generate message to post to Slack
         messageCard="{
-            \"text\": \"${message}\",
+            \"text\": \"$(echo ${message} | sed 's/"/\\"/g')\",
             \"blocks\": [
                 {
                         \"type\": \"section\",
                         \"text\": {
                                 \"type\": \"mrkdwn\",
-                                \"text\": \"${statusEmoticon} [${logLevel^^}] ${message}\"
+                                \"text\": \"${statusEmoticon} [${logLevel^^}] $(echo ${message} | sed 's/"/\\"/g')\"
                         }
                 },
                 {
@@ -97,9 +100,11 @@ sendSlackNotification() {
         # Post message to Slack
         curl -H "Content-type: application/json" \
             --data "${messageCard}" \
-            -X POST https://hooks.slack.com/services/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
-
+            -X POST ${slackNotificationWebhook}
 
     fi
+
+    # Call common function to execute common function start commands, such as unsetting verbose output etc
+    functionEnd
     
 }

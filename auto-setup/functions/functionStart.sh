@@ -1,5 +1,7 @@
 functionStart() {
 
+    local skipFunctionCallCapture=${1:-false}
+
     # Set functionStart timestamps
     export functionStartFriendlyTimestamp=$(date "+%d-%m-%Y %H:%M:%S")
     export functionStartEpochTimestamp=$(date "+%s.%N")
@@ -8,8 +10,10 @@ functionStart() {
     local functionEndFriendlyTimestamp=${functionStartFriendlyTimestamp}
     local functionEndEpochTimestamp=${functionStartEpochTimestamp}
 
-    # Reference for notifications
-    echo "${FUNCNAME[1]}()" >${installationWorkspace}/.currentFunctionExecuting
+    if [[ "${skipFunctionCallCapture}" != "true" ]]; then
+        # Reference for notifications
+        echo "${FUNCNAME[1]}()" >${installationWorkspace}/.currentFunctionExecuting
+    fi
 
     >&2 log_debug "Entered function ${FUNCNAME[1]}() at ${functionStartFriendlyTimestamp}"
 

@@ -85,11 +85,11 @@ autoSetupExecuteScripts() {
         autoSetupScriptDuration=$(calculateDuration "${scriptStartEpochTimestamp}" "${scriptEndEpochTimestamp}")
 
         if [[ ${rc} -ne 0 ]]; then
-            log_error "Execution of script ''${installDirectory}/${script}'' ended in a non zero return code ($rc)" "${autoSetupScriptDuration}"
+            log_error "Execution of script \"${installDirectory}/${script}\" ended in a non zero return code ($rc)" "${autoSetupScriptDuration}"
             exit 1
         else
             autoSetupClearRetryData
-            log_info "Success. Execution of script ''${installDirectory}/${script}'' ran ${autoSetupScriptDuration} and ended with return code ($rc)" "${autoSetupScriptDuration}"
+            log_info "Success. Execution of script \"${installDirectory}/${script}\" ran ${autoSetupScriptDuration} and ended with return code ($rc)" "${autoSetupScriptDuration}"
         fi
       fi
     fi

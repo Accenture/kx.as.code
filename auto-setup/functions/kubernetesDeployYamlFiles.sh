@@ -27,7 +27,7 @@ deployYamlFilesToKubernetes() {
                     # Adapt namespace if resource yaml specifies an alternative to the default
                     local alternateNamespace=$(cat  ${installationWorkspace}/${yamlFilename} | yq -r '.metadata.namespace')
                     if [[ -n ${alternateNamespace} ]] && [[ "${alternateNamespace}" != "null" ]] && [[ "${namespace}" != "${alternateNamespace}" ]]; then
-                        log_debug "Detected alternate namespace in resource YAML. Will deploy to ''${alternateNamespace}'' namespace, instead of ''${namespace}''"
+                        log_debug "Detected alternate namespace in resource YAML. Will deploy to \"${alternateNamespace}\" namespace, instead of \"${namespace}\""
                         kubectl apply -f ${installationWorkspace}/${yamlFilename} -n ${alternateNamespace}
                     else
                         kubectl apply -f ${installationWorkspace}/${yamlFilename} -n ${namespace}
