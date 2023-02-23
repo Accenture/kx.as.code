@@ -165,7 +165,7 @@ if [[ ${action} == "install" ]]; then
       ####################################################################################################################################################################
       ##      A R G O    C D    I N S T A L L
       ####################################################################################################################################################################
-      if [[ ${installationType} == "argocd" ]] && [[ ${action}=="install" ]]; then
+      if [[ "${installationType}" == "argocd" ]] && [[ "${action}" == "install" ]]; then
         rc=0
         autoSetupArgoCdInstall &>> ${logFilename} || rc=$? && log_info "Execution of autoSetupArgoCdInstall() returned with rc=$rc"
         if [[ ${rc} -ne 0 ]]; then
