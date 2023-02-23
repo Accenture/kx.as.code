@@ -42,15 +42,13 @@ export dockerHubPassword=""
 export dockerHubEmail=""
 export forceStorageClassToLocal="false"
 export kcPod=""
+export sendToFailureQueue="false"
 
 # Get and export versions - currently versions for Kubernetes and KX.AS.CODE
 getVersions
 
 # Install envhandlebars needed to do moustache variable replacements
 installEnvhandlebars
-
-# Import error handler
-#source "${sharedGitHome}/kx.as.code/base-vm/dependencies/shell-core/base/trap.bash"
 
 # Check profile-config.json file is present before starting script
 waitForFile ${installationWorkspace}/profile-config.json
@@ -124,6 +122,9 @@ populateActionQueuesRabbitMq
 retries=0
 logRc=0
 rc=0
+
+# Create empty retry file
+touch ${installationWorkspace}/.retryDataStore.json
 
 # Get total number of messages
 sleep 5
@@ -205,15 +206,16 @@ while :; do
                 waitForMessageOnActionQueue "completed_queue" "${componentName}"
                 log_debug "Moved component payload from wip_queue to completed_queue: ${payload}"
                 message="${componentName} installed successfully [$((${completedQueue} + 1))/${totalMessages}]"
-                notifyAllChannels "${message}" "info" "success" "${action}"
+                notifyAllChannels "${message}" "info" "success" "${action}" "${payload}" "${autoSetupDuration}"
+                resetAutoSetupTimestamps
                 if [[ "${componentName}" == "${lastCoreElementToInstall}" ]]; then
                     message="CONGRATULATIONS. That concludes the core setup. Your optional components will now be installed"
-                    notifyAllChannels "${message}" "info" "all_core_completed_successfully" "${action}"
+                     "${message}" "info" "all_core_completed_successfully" "${action}" "${payload}"
                     log_debug "All core component have been installed successfully"
                 fi
                 retries=0
             elif [[ -n ${payload} ]]; then
-                if [[ "${retriesParameter}" != "false" ]] && [[ ${retries} -lt 3 ]]; then
+                if [[ "${retriesParameter}" != "false" ]] && [[ ${retries} -lt 3 ]] && [[ "${sendToFailureQueue}" != "true" ]]; then
                     sleep 10
                     ((retries = ${retries} + 1))
                     payload=$(echo ${payload} | jq --arg retries ${retries} -c -r '.retries=$retries')
@@ -223,7 +225,8 @@ while :; do
                     cat ${installationWorkspace}/actionQueues.json | jq -c -r '(.state.processed[] | select(.name=="'${componentName}'").retries) = "'${retries}'"' | tee ${installationWorkspace}/actionQueues.json.tmp
                     mv ${installationWorkspace}/actionQueues.json.tmp ${installationWorkspace}/actionQueues.json
                     message="${componentName} installation error after ${retries} retries. Will retry three times maximum. [$((${completedQueue} + 1))/${totalMessages}]"
-                    notifyAllChannels "${message}" "warn" "failed" "${action}"
+                    notifyAllChannels "${message}" "warn" "failed" "${action}" "${payload}" "${autoSetupDuration}"
+                    resetAutoSetupTimestamps
                     rm -f ${installationWorkspace}/current_payload.err
                 elif [[ "${retriesParameter}" == "skip" ]] && [[ ${retries} -lt 3 ]]; then
                     payload=$(echo ${payload} | jq -c -r '(.retries)="0"' | jq -c -r '. += {"failed_retries":"'${retries}'"}')
@@ -231,7 +234,8 @@ while :; do
                     waitForMessageOnActionQueue "skipped_queue" "${componentName}"
                     log_debug "Moved component payload to skipped_queue: ${payload}"
                     message="${componentName} installation failed after ${retries} retries. Moved item to skipped queue and continuing. [$((${completedQueue} + 1))/${totalMessages}]"
-                    notifyAllChannels "${message}" "error" "failed" "${action}"
+                    notifyAllChannels "${message}" "error" "failed" "${action}" "${payload}" "${autoSetupDuration}"
+                    resetAutoSetupTimestamps
                     export retries=0
                     rm -f ${installationWorkspace}/current_payload.err
                 else
@@ -240,9 +244,10 @@ while :; do
                     waitForMessageOnActionQueue "failed_queue" "${componentName}"
                     log_debug "Moved component payload to failed_queue: ${payload}"
                     message="${componentName} installation failed after ${retries} retries. [$((${completedQueue} + 1))/${totalMessages}]"
-                    notifyAllChannels "${message}" "error" "failed" "${action}"
+                    notifyAllChannels "${message}" "error" "failed" "${action}" "${payload}" "${autoSetupDuration}"
+                    resetAutoSetupTimestamps
                     export retries=0
-                    rm -f ${installationWorkspace}/current_payload.err
+                    export sendToFailureQueue="false"
                 fi
             fi
         fi
@@ -285,8 +290,9 @@ while :; do
                 waitForMessageOnActionQueue "wip_queue" "${componentName}"
                 if [[ ${retries} -eq 0 ]]; then
                     log_debug "Notifiying installation started for ${componentName}, as not a retry - retries: ${retries}"
-                    message="${componentName} installation started [$((${completedQueue} + 1))/${totalMessages}]"
-                    notifyAllChannels "${message}" "info" "started" "${action}"
+                    message="Installation of ${componentName} started [$((${completedQueue} + 1))/${totalMessages}]"
+                    notifyAllChannels "${message}" "info" "started" "${action}" "${payload}" "${autoSetupDuration}"
+                    resetAutoSetupTimestamps
                 fi
 
                 # Launch autoSetup.sh
@@ -305,16 +311,36 @@ while :; do
                 rc=0
                 log_debug "Launching installation process for \"${componentName}\": ${payload}"
                 log_debug "${autoSetupHome}/autoSetup.sh ''${payload}''"
+                autoSetupStartEpochTimestamp=$(date "+%s.%N")
                 ${autoSetupHome}/autoSetup.sh ''${payload}'' 2>> ${logFilename} || rc=$? && log_debug "Installation of \"${componentName}\" returned with rc=$rc"
+                if [[ ${rc} -eq 123 ]]; then
+                    log_debug "Received RC=123 from autoSetup.sh. This indicated a non-recoverable error. Preventing a retry for ''${componentName}''"
+                    sendToFailureQueue="true"
+                fi
+                autoSetupEndEpochTimestamp=$(date "+%s.%N")
+                autoSetupDuration=$(calculateDuration "${autoSetupStartEpochTimestamp}" "${autoSetupEndEpochTimestamp}")
+
                 if [[ ${rc} -ne 0 ]]; then
                   log_error "Installation of returned with a non zero return code ($rc)"
                   echo ${payload} | sudo tee ${installationWorkspace}/current_payload.err
                 fi
                 export logFilename=$(setLogFilename "poller")
-                if [[ "$(echo ${payload} | jq '.action')" == "install" ]]; then
-                    log_debug "Install process for \"${componentName}\" returned with \$?=${logRc} and rc=$rc"
-                elif [[ "$(echo ${payload} | jq '.action')" == "executeTask" ]]; then
-                    log_debug "Task execution process for \"${componentName}\" returned with \$?=${logRc} and rc=$rc"
+                log_debug "Returned from autoSetup.sh with rc=$rc. payload: ${payload}"
+
+
+                if [[ "$(echo ${payload} | jq -r '.action')" == "install" ]]; then
+                    log_debug "Install process for ''${componentName}'' returned with \$?=${logRc} and rc=$rc"
+                elif [[ "$(echo ${payload} | jq -r '.action')" == "executeTask" ]]; then
+                    log_debug "Task execution process for ''${componentName}'' returned with \$?=${logRc} and rc=$rc"
+                    if [[ ${rc} -eq 0 ]]; then
+                        message="Executing task ''$(echo ${payload} | jq -r '.task')''  for ''${componentName}'' completed successfully"
+                        notifyAllChannels "${message}" "info" "success" "${action}" "${payload}" "${autoSetupDuration}"
+                        resetAutoSetupTimestamps
+                    else
+                        message="Executing task ''$(echo ${payload} | jq -r '.task')'' process for ''${componentName}'' ended with error code RC=${rc}"
+                        notifyAllChannels "${message}" "error" "failed" "${action}" "${payload}" "${autoSetupDuration}"
+                        resetAutoSetupTimestamps
+                    fi
                 fi
             fi
             sleep 5

@@ -26,6 +26,7 @@ autoSetupArgoCdInstall() {
       argocd cert add-tls ${gitDomain} --from ${installationWorkspace}/kx-certs/ca.crt
     else
       log_error "Could not upload KX.AS.CODE CA (${installationWorkspace}/kx-certs/ca.crt) to ArgoCD. It appears to be missing."
+      exit 1
     fi
   fi
 
@@ -67,7 +68,7 @@ autoSetupArgoCdInstall() {
   ${argoCdAppAddCommand} || rc=$? && log_info "ArgoCD command: ${argoCdAppAddCommand} returned with rc=$rc"
   if [[ ${rc} -ne 0 ]]; then
     log_error "Execution of ArgoCD command ended in a non zero return code ($rc)"
-    return 1
+    exit 1
   fi
   for i in {1..10}; do
     response=$(argocd app list --output json | jq -r '.[] | select (.metadata.name=="'${componentName}'") | .metadata.name')

@@ -7,6 +7,13 @@
         "intellijIdeaVersion": "2022.2.1",
         "intellijIdeaChecksum": "93eb9391a898aad164ca47965e0445cbf0f04d7062b6875c4e4a3136799ee6cf"
     },
+    "plugins_to_install": [
+        {
+            "name": "jprofiler",
+            "downloadUrl": "https://plugins.jetbrains.com/plugin/download?rel=true&updateId=254367",
+            "sha256Sum": "1aa10689f726eca6d431a7bb8c99680595b796523fbd0fbe725096972231cf2a"
+        }
+    ],
     "install_scripts": [
         "installIntelijIdea.sh"
     ],
@@ -14,5 +21,7 @@
     "shortcut_text": "IntelliJ Idea",
     "shortcut_icon": "intellij-idea.png",
     "pre_install_scripts": [],
-    "post_install_scripts": []
+    "post_install_scripts": [
+        "installPlugins.sh"
+    ]
 }

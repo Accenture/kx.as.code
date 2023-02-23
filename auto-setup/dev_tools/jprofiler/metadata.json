@@ -1,0 +1,18 @@
+{
+    "name": "jprofiler",
+    "namespace": "",
+    "installation_type": "script",
+    "installation_group_folder": "dev_tools",
+    "environment_variables": {
+        "jprofilerExecutableVersion": "13_0_5",
+        "jprofilerExecutableChecksum": "1c1c1f1c607ec6d4ced83573c65a3e5ff9b3e3ca24284a6f23a32657ccc38fb8"
+    },
+    "Description": "JPROFILER is a high-profile Java language profiler. Profiles in the programming world are tools that help programmers monitor program execution processes",
+    "shortcut_text": "JProfiler",
+    "shortcut_icon": "jprofiler.png",
+    "pre_install_scripts": [],
+    "install_scripts": [
+        "installJProfiler.sh"
+    ],
+    "post_install_scripts": []
+}

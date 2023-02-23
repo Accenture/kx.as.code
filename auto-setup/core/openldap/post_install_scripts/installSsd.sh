@@ -97,3 +97,7 @@ ldap_access_filter = (objectClass=posixAccount)
 
 # Check ldapsearch is working after changes
 /usr/bin/sudo ldapsearch -H ldapi:/// -Y EXTERNAL -b "ou=People,${ldapDn}" dn -LLL -Q
+
+# Turn off apparmor for SSSD to avoid endless flood of messages in the syslog
+/usr/bin/sudo ln -sf /etc/apparmor.d/usr.sbin.sssd /etc/apparmor.d/disable/
+/usr/bin/sudo apparmor_parser -R /etc/apparmor.d/usr.sbin.sssd

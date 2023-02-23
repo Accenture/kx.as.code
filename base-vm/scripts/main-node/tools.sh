@@ -28,7 +28,9 @@ sudo apt-get -y install \
     wmctrl \
     syslinux-utils \
     gnome-keyring \
-    neovim
+    neovim \
+    lynx \
+    bsd-mailx
 
 
 # Set User File Associations
@@ -99,6 +101,7 @@ if [[ ${COMPUTE_ENGINE_BUILD} == "true"  ]] || [[ -n $(which raspinfo) ]]; then
   rm -f ./${NOMACHINE_FILE}
   # Ensure NoMachine starts dedicated virtual display if private or public cloud
   sudo sed -E -i 's/#PhysicalDisplays(.*)/PhysicalDisplays 1005/g' /usr/NX/etc/node.cfg
+  sudo sed -E -i 's/^DefaultDesktopCommand(.*)/DefaultDesktopCommand "env -u WAYLAND_DISPLAY \/usr\/bin\/dbus-launch --sh-syntax --exit-with-session \/usr\/bin\/startkde"/g' /usr/NX/etc/node.cfg
   sudo sed -E -i 's/#DisplayBase(.*)/DisplayBase 1005/g' /usr/NX/etc/server.cfg
   sudo sed -E -i 's/#CreateDisplay(.*)/CreateDisplay 1/g' /usr/NX/etc/server.cfg
   sudo sed -E -i 's/#DisplayOwner(.*)/DisplayOwner '${VM_USER}'/g' /usr/NX/etc/server.cfg

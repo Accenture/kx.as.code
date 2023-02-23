@@ -29,6 +29,7 @@
     "getGrafanaAccessKey.sh"
   ],
   "post_install_scripts": [
-    "configureLokiWithGrafana.sh"
+    "configureLokiWithGrafana.sh",
+    "importGrafanaDashboard.sh"
   ]
 }

@@ -2,8 +2,8 @@ name: release-process
 on: workflow_dispatch
 
 env:
-  RELEASE: v0.8.11
-  SINCE_TAG: v0.8.10
+  RELEASE: v0.8.12
+  SINCE_TAG: v0.8.11
 
 jobs:
   changelog:
