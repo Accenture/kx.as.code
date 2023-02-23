@@ -3,6 +3,10 @@
         "install": [
             {
                 "install_folder": "core",
+                "name": "management-agents"
+            },
+            {
+                "install_folder": "core",
                 "name": "gopass"
             },
             {

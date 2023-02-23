@@ -20,14 +20,23 @@ deployYamlFilesToKubernetes() {
                 yamlFilename="${componentName}_$(basename ${yamlFiles[$i]})"
                 envhandlebars <${yamlFiles[$i]} >${installationWorkspace}/${yamlFilename}
                 updateStorageClassIfNeeded "${installationWorkspace}/${yamlFilename}"
-                kubeval ${installationWorkspace}/${yamlFilename} --schema-location https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master --strict || rc=$? && log_info "kubeval returned with rc=$rc"
+                log_debug "kubeval ${installationWorkspace}/${yamlFilename} --schema-location https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master --strict --ignore-missing-schemas"
+                kubeval ${installationWorkspace}/${yamlFilename} --schema-location https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master --strict --ignore-missing-schemas || rc=$? && log_info "kubeval returned with rc=$rc"
                 if [[ ${rc} -eq 0 ]]; then
                     log_info "YAML validation ok for ${yamlFilename}. Continuing to apply."
-                    kubectl apply -f ${installationWorkspace}/${yamlFilename} -n ${namespace}
+                    # Adapt namespace if resource yaml specifies an alternative to the default
+                    local alternateNamespace=$(cat  ${installationWorkspace}/${yamlFilename} | yq -r '.metadata.namespace')
+                    if [[ -n ${alternateNamespace} ]] && [[ "${alternateNamespace}" != "null" ]] && [[ "${namespace}" != "${alternateNamespace}" ]]; then
+                        log_debug "Detected alternate namespace in resource YAML. Will deploy to \"${alternateNamespace}\" namespace, instead of \"${namespace}\""
+                        kubectl apply -f ${installationWorkspace}/${yamlFilename} -n ${alternateNamespace}
+                    else
+                        kubectl apply -f ${installationWorkspace}/${yamlFilename} -n ${namespace}
+                    fi
                 else
                     log_error "YAML validation failed for ${yamlFiles[$i]}. Exiting"
                     return ${rc}
                 fi
+
             done
         else
             log_warn "No YAML files found in ${installationWorkspace}/deployment_yaml. Nothing to apply"

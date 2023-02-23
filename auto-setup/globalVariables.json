@@ -15,5 +15,10 @@
   "vmUser": "kx.hero",
   "vmUserId": "$(id -u ${vmUser})",
   "vmPassword": "$(cat ${sharedKxHome}/.config/.user.cred)",
-  "kanikoVersion": "v1.9.0"
+  "kanikoVersion": "v1.9.0",
+  "colourGreen": "33FFAC",
+  "colourBlue": "33A2FF",
+  "colourRed": "FA1806",
+  "colourAmber": "FF7401",
+  "colourGrey": "A29E97"
 }

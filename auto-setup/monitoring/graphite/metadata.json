@@ -53,6 +53,8 @@
     "api_docs_type": "web",
     "api_docs_url": "https://graphite.readthedocs.io/en/1.1.7/render_api.html",
     "vendor_docs_url": "https://graphite.readthedocs.io/",
-    "pre_install_scripts": [],
+    "pre_install_scripts": [
+        "createGraphiteIngress.sh"
+    ],
     "post_install_scripts": []
 }

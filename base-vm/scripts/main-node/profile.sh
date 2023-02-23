@@ -91,6 +91,13 @@ BACKSPACE="guess"'
 echo -e "\nsource /etc/environment" | sudo tee -a /home/${VM_USER}/.bashrc /home/${VM_USER}/.zshrc /root/.bashrc /root/.zshrc
 echo -e "\nsource /etc/profile.d/nvm.sh" | sudo tee -a /home/${VM_USER}/.bashrc /home/${VM_USER}/.zshrc /root/.bashrc /root/.zshrc
 
+# Create XDBUS file for receiving desktop notifications from the KX.AS.CODE framework
+echo '''#!/bin/bash
+touch ${HOME}/.dbus/Xdbus
+chmod 600 ${HOME}/.dbus/Xdbus
+declare -p DBUS_SESSION_BUS_ADDRESS | tee ${HOME}/.dbus/Xdbus
+''' | sudo tee /home/${VM_USER}/.config/autostart/xdbus.sh
+
 # Hide Vagrant user from Login screen
 echo '''[Autologin]
 Relogin=false

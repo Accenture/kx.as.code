@@ -134,11 +134,7 @@
       "install": [
         {
           "install_folder": "monitoring",
-          "name": "prometheus"
-        },
-        {
-          "install_folder": "monitoring",
-          "name": "grafana"
+          "name": "prometheus-stack"
         },
         {
           "install_folder": "monitoring",

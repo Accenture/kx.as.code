@@ -39,6 +39,7 @@ downloadFile() {
 
   log_info "Downloading ${outputFilename} from ${url}"
   # Download file with subsequent checksum validation
+  local i
   for i in {1..15}
   do
     /usr/bin/sudo curl -L --connect-timeout 5 \
@@ -48,7 +49,10 @@ downloadFile() {
       -o "${outputFilename}" \
       ${authOption} "${url}"
 
-    checkResult=$(echo "${checksum}" "${outputFilename}" | sha256sum -c --quiet && echo "OK" || echo "NOK")
+    if [[ "${checksum}" != "not-applicable" ]]; then
+      checkResult=$(echo "${checksum}" "${outputFilename}" | sha256sum -c --quiet && echo "OK" || echo "NOK")
+    fi
+
     echo "${checkResult}"
     if [[ "${checkResult}" == "OK" ]]; then
       log_info "Checksum of downloaded file ${outputFilename} OK"
@@ -61,7 +65,7 @@ downloadFile() {
   # Finally return with an error return code if download not OK [NOK]
   if [[ "${checkResult}" == "NOK" ]]; then
     log_error "Checksum of downloaded file ${outputFilename} NOK"
-    return 1
+    exit 1
   fi
 
   # Call common function to execute common function start commands, such as unsetting verbose output etc

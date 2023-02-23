@@ -1327,6 +1327,21 @@
     "post_install_scripts": []
   },
   {
+    "name": "management-agents",
+    "namespace": "",
+    "installation_type": "script",
+    "installation_group_folder": "core",
+    "retry": "true",
+    "install_scripts": [
+      "installAwsSsmAgent.sh"
+    ],
+    "Description": "Management agents, such as AWS SSM",
+    "shortcut_text": "",
+    "shortcut_icon": "",
+    "pre_install_scripts": [],
+    "post_install_scripts": []
+  },
+  {
     "name": "metallb-loadbalancer",
     "namespace": "metallb-system",
     "installation_type": "script",
@@ -1438,7 +1453,7 @@
       "installOpenLens.sh"
     ],
     "Description": "Lens IDE provides the full situational awareness for everything that runs in Kubernetes.",
-    "shortcut_text": "OpenLens IDE",
+    "shortcut_text": "OpenLens Kubernetes IDE",
     "shortcut_icon": "openlens.png",
     "pre_install_scripts": [],
     "post_install_scripts": []
@@ -1612,6 +1627,13 @@
       "intellijIdeaVersion": "2022.2.1",
       "intellijIdeaChecksum": "93eb9391a898aad164ca47965e0445cbf0f04d7062b6875c4e4a3136799ee6cf"
     },
+    "plugins_to_install": [
+      {
+        "name": "jprofiler",
+        "downloadUrl": "https://plugins.jetbrains.com/plugin/download?rel=true&updateId=254367",
+        "sha256Sum": "1aa10689f726eca6d431a7bb8c99680595b796523fbd0fbe725096972231cf2a"
+      }
+    ],
     "install_scripts": [
       "installIntelijIdea.sh"
     ],
@@ -1619,6 +1641,26 @@
     "shortcut_text": "IntelliJ Idea",
     "shortcut_icon": "intellij-idea.png",
     "pre_install_scripts": [],
+    "post_install_scripts": [
+      "installPlugins.sh"
+    ]
+  },
+  {
+    "name": "jprofiler",
+    "namespace": "",
+    "installation_type": "script",
+    "installation_group_folder": "dev_tools",
+    "environment_variables": {
+      "jprofilerExecutableVersion": "13_0_5",
+      "jprofilerExecutableChecksum": "1c1c1f1c607ec6d4ced83573c65a3e5ff9b3e3ca24284a6f23a32657ccc38fb8"
+    },
+    "Description": "JPROFILER is a high-profile Java language profiler. Profiles in the programming world are tools that help programmers monitor program execution processes",
+    "shortcut_text": "JProfiler",
+    "shortcut_icon": "jprofiler.png",
+    "pre_install_scripts": [],
+    "install_scripts": [
+      "installJProfiler.sh"
+    ],
     "post_install_scripts": []
   },
   {
@@ -2142,7 +2184,9 @@
     "api_docs_type": "web",
     "api_docs_url": "https://graphite.readthedocs.io/en/1.1.7/render_api.html",
     "vendor_docs_url": "https://graphite.readthedocs.io/",
-    "pre_install_scripts": [],
+    "pre_install_scripts": [
+      "createGraphiteIngress.sh"
+    ],
     "post_install_scripts": []
   },
   {
@@ -2287,7 +2331,8 @@
       "getGrafanaAccessKey.sh"
     ],
     "post_install_scripts": [
-      "configureLokiWithGrafana.sh"
+      "configureLokiWithGrafana.sh",
+      "importGrafanaDashboard.sh"
     ]
   },
   {
@@ -2369,6 +2414,64 @@
     "post_install_scripts": []
   },
   {
+    "name": "prometheus-stack",
+    "namespace": "prometheus-stack",
+    "installation_type": "helm",
+    "installation_group_folder": "monitoring",
+    "environment_variables": {},
+    "helm_params": {
+      "repository_url": "https://prometheus-community.github.io/helm-charts",
+      "repository_name": "prometheus-community/kube-prometheus-stack",
+      "helm_version": "45.1.0",
+      "set_key_values": []
+    },
+    "categories": [
+      "monitoring"
+    ],
+    "urls": [
+      {
+        "url": "https://prometheus.{{baseDomain}}",
+        "healthchecks": {
+          "liveliness": {
+            "http_path": "/-/ready",
+            "http_auth_required": false,
+            "expected_http_response_code": "200",
+            "expected_http_response_string": "",
+            "expected_json_response": {
+              "json_path": "",
+              "json_value": ""
+            },
+            "health_shell_check_command": "",
+            "expected_shell_check_command_response": ""
+          },
+          "readiness": {
+            "http_path": "/-/ready",
+            "http_auth_required": false,
+            "expected_http_response_code": "200",
+            "expected_http_response_string": "",
+            "expected_json_response": {
+              "json_path": "",
+              "json_value": ""
+            },
+            "health_shell_check_command": "",
+            "expected_shell_check_command_response": ""
+          }
+        }
+      }
+    ],
+    "Description": "Prometheus collects and stores its metrics as time series data, i.e. metrics information is stored with the timestamp at which it was recorded, alongside optional key-value pairs called labels.",
+    "shortcut_text": "Prometheus & Grafana Stack",
+    "shortcut_icon": "prometheus-stack.png",
+    "api_docs_url": "https://prometheus.io/docs/prometheus/latest/querying/api/",
+    "vendor_docs_url": "https://prometheus.io/docs",
+    "pre_install_scripts": [
+      "generateAdminPassword.sh"
+    ],
+    "post_install_scripts": [
+      "createGrafanaDesktopIcon.sh"
+    ]
+  },
+  {
     "name": "selenium4",
     "namespace": "selenium4",
     "installation_type": "script",
@@ -2425,7 +2528,7 @@
     "name": "sonarqube",
     "namespace": "sonarqube",
     "installation_type": "helm",
-    "installation_group_folder": "cicd",
+    "installation_group_folder": "quality_assurance",
     "minimum_resources": {
       "cpu": "1000",
       "memory": "3000"

@@ -1,0 +1,58 @@
+{
+    "name": "prometheus-stack",
+    "namespace": "prometheus-stack",
+    "installation_type": "helm",
+    "installation_group_folder": "monitoring",
+    "environment_variables": {},
+    "helm_params": {
+        "repository_url": "https://prometheus-community.github.io/helm-charts",
+        "repository_name": "prometheus-community/kube-prometheus-stack",
+        "helm_version": "45.1.0",
+        "set_key_values": []
+    },
+    "categories": [
+        "monitoring"
+    ],
+    "urls": [
+        {
+            "url": "https://prometheus.{{baseDomain}}",
+            "healthchecks": {
+                "liveliness": {
+                    "http_path": "/-/ready",
+                    "http_auth_required": false,
+                    "expected_http_response_code": "200",
+                    "expected_http_response_string": "",
+                    "expected_json_response": {
+                        "json_path": "",
+                        "json_value": ""
+                    },
+                    "health_shell_check_command": "",
+                    "expected_shell_check_command_response": ""
+                },
+                "readiness": {
+                    "http_path": "/-/ready",
+                    "http_auth_required": false,
+                    "expected_http_response_code": "200",
+                    "expected_http_response_string": "",
+                    "expected_json_response": {
+                        "json_path": "",
+                        "json_value": ""
+                    },
+                    "health_shell_check_command": "",
+                    "expected_shell_check_command_response": ""
+                }
+            }
+        }
+    ],
+    "Description": "Prometheus collects and stores its metrics as time series data, i.e. metrics information is stored with the timestamp at which it was recorded, alongside optional key-value pairs called labels.",
+    "shortcut_text": "Prometheus & Grafana Stack",
+    "shortcut_icon": "prometheus-stack.png",
+    "api_docs_url": "https://prometheus.io/docs/prometheus/latest/querying/api/",
+    "vendor_docs_url": "https://prometheus.io/docs",
+    "pre_install_scripts": [
+        "generateAdminPassword.sh"
+    ],
+    "post_install_scripts": [
+        "createGrafanaDesktopIcon.sh"
+    ]
+}

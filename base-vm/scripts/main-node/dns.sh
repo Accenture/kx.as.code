@@ -27,7 +27,7 @@ echo '''options {
         dnssec-validation auto;
 
         listen-on-v6 { any; };
-
+        allow-query { any; };
         version "not currently available";
         recursion yes;
         querylog yes;

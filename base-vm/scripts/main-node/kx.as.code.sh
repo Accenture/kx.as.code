@@ -32,15 +32,16 @@ else
 fi
 sudo chown -R ${VM_USER}:${VM_USER} ${SHARED_GIT_REPOSITORIES}
 sudo ln -s ${SHARED_GIT_REPOSITORIES}/kx.as.code /home/${VM_USER}/Desktop/"KX.AS.CODE Source"
-
+sudo git config --global --add safe.directory /usr/share/kx.as.code/git/kx.as.code
 cd ${SHARED_GIT_REPOSITORIES}/kx.as.code
+sudo git status
 sudo git config credential.helper 'cache --timeout=3600'
 
 if [[ -n ${GIT_SOURCE_TOKEN_ENCODED} ]]; then
     sudo sed -i 's/'${GIT_SOURCE_USER}':'${GIT_SOURCE_TOKEN_ENCODED}'@//g' ${SHARED_GIT_REPOSITORIES}/kx.as.code/.git/config
 fi
 
-# Install daemonizer for starting KX.AS.CODE poller as brackground service
+# Install daemonize for starting KX.AS.CODE poller as background service
 sudo apt-get install -y daemonize
 
 # Add Kubernetes Initialize Script to systemd

@@ -19,33 +19,35 @@ if [[ -z ${bunAlreadyInstalled} ]]; then
 
 fi
 
-# Set kernel parameters
-/usr/bin/sudo sysctl -w fs.inotify.max_user_watches=524288
-echo "fs.inotify.max_user_watches=524288" | /usr/bin/sudo tee -a /etc/sysctl.conf
-
 # Install KX-Portal
-/usr/bin/sudo cp -rf ${sharedGitHome}/kx.as.code/client ${installationWorkspace}/kx-portal
-export KX_PORTAL_HOME=${installationWorkspace}/kx-portal/client
+/usr/bin/sudo cp -rf "${sharedGitHome}/kx.as.code/client" "${installationWorkspace}/kx-portal"
+export KX_PORTAL_HOME="${installationWorkspace}/kx-portal/client"
 
-cd ${KX_PORTAL_HOME}
+cd "${KX_PORTAL_HOME}"
 rc=0
 for i in {1..3}
 do
   log_info "Attempting bun install for KX-Portal - try ${i}"
-  sudo timeout -s TERM 300 bun install || rc=$? && log_info "Execution of bun install for KX-Portal returned with rc=$rc"
+  /usr/bin/sudo timeout -s TERM 300 bun install || rc=$? && log_info "Execution of bun install for KX-Portal returned with rc=$rc"
   if [[ ${rc} -eq 0 ]]; then
     log_info "Bun install succeeded. Continuing"
-    /usr/bin/sudo chown -R ${vmUser}:${vmUser} ${KX_PORTAL_HOME}
+    /usr/bin/sudo chown -R "${vmUser}":"${vmUser}" "${KX_PORTAL_HOME}"
     installSucceeded="OK"
     break
   else
     log_warn "Bun install returned with a non zero exit code. Trying again"
-    /usr/bin/sudo rm -rf ${KX_PORTAL_HOME}/node_modules ${KX_PORTAL_HOME}/bun.lockb
+    /usr/bin/sudo rm -rf "${KX_PORTAL_HOME}/node_modules" "${KX_PORTAL_HOME}/bun.lockb"
     installSucceeded="NOK"
+    rc=0
     sleep 15
   fi
 done
 cd -
+
+if [[ "${installSucceeded}" == "NOK" ]]; then
+  log_error "The kx-portal install failed. Aborting component installation"
+  exit 1
+fi
 
 # Cleanup Cypress image to save disk space
 #docker rmi cypress/included:10.8.0
@@ -148,4 +150,6 @@ if [[ -z ${testUserExists} ]]; then
 fi
 
 # Ensure all files in KX_PORTAL_HOME owned by vmUser (kx.hero)
-/usr/bin/sudo chown -R ${vmUser}:${vmUser} ${KX_PORTAL_HOME}
+log_debug "/usr/bin/sudo chown -R \"${vmUser}\":\"${vmUser}\" \"${KX_PORTAL_HOME}\""
+/usr/bin/sudo chown -R "${vmUser}":"${vmUser}" "${KX_PORTAL_HOME}" || rc=$?
+log_debug "Chown action ended with RC=${rc}"

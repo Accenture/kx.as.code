@@ -66,5 +66,10 @@
             "worker_node_cpu_cores": 6,
             "worker_node_memory": 32768
         }
+    },
+    "notification_endpoints": {
+        "slack_webhook": "",
+        "ms_teams_webhook": "",
+        "email_address": ""
     }
 }

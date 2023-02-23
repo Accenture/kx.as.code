@@ -1,0 +1,22 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{namespace}}-{{componentName}}
+  namespace: {{namespace}}
+  annotations:
+    kubernetes.io/ingress.class: nginx
+spec:
+  tls:
+    - hosts:
+        - {{componentName}}.{{baseDomain}}
+  rules:
+    - host: {{componentName}}.{{baseDomain}}
+      http:
+        paths:
+          - path: /
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: graphite
+                port:
+                  number: 8080

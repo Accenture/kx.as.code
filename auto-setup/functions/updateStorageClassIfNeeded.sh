@@ -3,7 +3,6 @@ updateStorageClassIfNeeded() {
    # Call common function to execute common function start commands, such as setting verbose output etc
   functionStart
 
-  log_info "Entered function updateStorageClassIfNeeded()"
   if [[ "${componentName}" != "glusterfs-storage" ]]; then
     if [[ "${forceStorageClassToLocal}" == "true" ]]; then
       log_info "forceStorageClassToLocal was true. Modifying ${1} to use local storageClass"

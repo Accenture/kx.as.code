@@ -16,7 +16,6 @@ endif
 " Theme
 syntax enable
 colorscheme OceanicNext
-set number
 set tabstop=2 shiftwidth=2 expandtab
 
 " Mappings
@@ -27,8 +26,8 @@ map <F8> :make<CR>
 autocmd VimEnter * AirlineTheme luna
 
 " Ensures color escape characters show properly
-if @% != ""
-    autocmd VimEnter *.log term cat %
-endif
+"if @% != ""
+""    autocmd VimEnter *.log term cat %
+"endif
 
 let g:deoplete#enable_at_startup = 1

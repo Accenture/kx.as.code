@@ -1,10 +1,36 @@
-#!/bin/bash
+#!/bin/bash -x
 
 payload=${1}
-export retries=$(echo ${payload} | jq -c -r '.retries')
-export action=$(echo ${payload} | jq -c -r '.action')
-export componentName=$(echo ${payload} | jq -c -r '.name')
-export componentInstallationFolder=$(echo ${payload} | jq -c -r '.install_folder')
+export retries=$(echo "${payload}" | jq -c -r '.retries')
+export action=$(echo "${payload}" | jq -c -r '.action')
+export componentName=$(echo "${payload}" | jq -c -r '.name')
+export componentInstallationFolder=$(echo "${payload}" | jq -c -r '.install_folder')
+
+# Read retry store from installationWorkspace if it exists
+retryMode="false"
+retryPhaseId="0"
+if [[ -n $(cat ${installationWorkspace}/.retryDataStore.json) ]]; then
+  cleanRetryDataStoreJson=$(cat ${installationWorkspace}/.retryDataStore.json | tr -d "[:cntrl:]")
+  escapedPayload=$(echo ${cleanRetryDataStoreJson} | jq -r '.payload')
+  retryComponentName=$(echo "${escapedPayload}" | jq -r '.name')
+  retryComponentInstallationFolder=$(echo "${escapedPayload}" | jq -r '.install_folder')
+  if [[ ${retryComponentName} == "${componentName}" ]] && [[ "${retryComponentInstallationFolder}" == "${componentInstallationFolder}" ]]; then
+    retryPhaseId=$(echo ${cleanRetryDataStoreJson} | jq -r '.phase_id')
+    retryInstallPhase=$(echo ${cleanRetryDataStoreJson} | jq -r '.install_phase')
+    retryScript=$(echo ${cleanRetryDataStoreJson} | jq -r '.script')
+    retryAction=$(echo "${escapedPayload}" | jq -r '.action')
+    retryNumber=$(echo "${escapedPayload}" | jq -r '.retries')
+    # Initially set retryMode to false until further validation later in script
+    retryMode="true"
+  else
+    # Clear retry data as the install process has moved on, and it seems the last retry state was not cleared
+    echo "" >${installationWorkspace}/.retryDataStore.json
+    retryMode="notapplicable"
+  fi
+else
+  # Ensure installations continue as normal
+  retryMode="notapplicable"
+fi
 
 # Get global base variables from globalVariables.json
 source /usr/share/kx.as.code/git/kx.as.code/auto-setup/functions/getGlobalVariables.sh # source function
@@ -20,7 +46,6 @@ do
 done
 
 # Load CUSTOM Central Functions - these can either be new ones, or copied and edited functions from the main functions directory above, which will override the ones loaded in the previous step
-getCustomVariables # load global custom variables
 customFunctionsLocation="${autoSetupHome}/functions-custom"
 loadedFunctions="$(compgen -A function)"
 for function in $(find ${customFunctionsLocation} -name "*.sh")
@@ -44,6 +69,12 @@ log_debug "Called autoSetup.sh with action: ${action}, componentName: ${componen
 # Define component install directory
 export installComponentDirectory=${autoSetupHome}/${componentInstallationFolder}/${componentName}
 
+# Check component directory exists
+if [[ ! -d "${installComponentDirectory}" ]]; then
+  log_error "Fatal error. Component directory \"${installComponentDirectory}\" does not exist. ${componentName^} cannot be installed." "0"
+  exit 123
+fi
+
 # Define location of metadata JSON file for component
 export componentMetadataJson=${installComponentDirectory}/metadata.json
 
@@ -62,8 +93,11 @@ getProfileConfiguration
 # Get Component Installation Variables
 getComponentInstallationProperties
 
+# Get custom variables and override global and component ones where same name is specified
+getCustomVariables
+
 # Start the installation process for the pending or retry queues
-if [[ ${action} == "install"   ]]; then
+if [[ ${action} == "install" ]]; then
 
     # Create namespace if it does not exist
     rc=0
@@ -78,52 +112,74 @@ if [[ ${action} == "install"   ]]; then
     # Check if GlusterFS is installed for upcoming action
     checkGlusterFsServiceInstalled
 
-    ####################################################################################################################################################################
-    ##      P R E    I N S T A L L    S T E P S
-    ####################################################################################################################################################################
-    rc=0
-    autoSetupPreInstallSteps &>> ${logFilename} || rc=$? && log_info "Execution of autoSetupPreInstallSteps() returned with rc=$rc"
-    if [[ ${rc} -ne 0 ]]; then
-      log_error "Execution of autoSetupPreInstallSteps() returned with a non zero return code ($rc)"
-      exit $rc
-    fi
-
-    ####################################################################################################################################################################
-    ##      S C R I P T    I N S T A L L
-    ####################################################################################################################################################################
-    if [[ ${installationType} == "script" ]]; then
+    if ( [[ "${retryMode}" == "true" ]] || [[ "${retryMode}" == "notapplicable" ]] ) && [[ ${retryPhaseId} -le 1 ]]; then
+      ####################################################################################################################################################################
+      ##      P R E    I N S T A L L    S T E P S
+      ####################################################################################################################################################################
       rc=0
-      autoSetupScriptInstall &>> ${logFilename} || rc=$? && log_info "Execution of autoSetupScriptInstall() returned with rc=$rc"
-    if [[ ${rc} -ne 0 ]]; then
-      log_error "Execution of autoSetupScriptInstall() returned with a non zero return code ($rc)"
-      exit $rc
-    fi
-
-    ####################################################################################################################################################################
-    ##      H E L M    I N S T A L L   /   U P G R A D E
-    ####################################################################################################################################################################
-    elif [[ ${installationType} == "helm" ]]; then
-      rc=0
-      autoSetupHelmInstall &>> ${logFilename} || rc=$? && log_info "Execution of autoSetupHelmInstall() returned with rc=$rc"
-    if [[ ${rc} -ne 0 ]]; then
-      log_error "Execution of autoSetupHelmInstall() returned with a non zero return code ($rc)"
-      exit $rc
-    fi
-
-    ####################################################################################################################################################################
-    ##      A R G O    C D    I N S T A L L
-    ####################################################################################################################################################################
-    elif [[ ${installationType} == "argocd" ]] && [[ ${action}=="install" ]]; then
-      rc=0
-      autoSetupArgoCdInstall &>> ${logFilename} || rc=$? && log_info "Execution of autoSetupArgoCdInstall() returned with rc=$rc"
-    if [[ ${rc} -ne 0 ]]; then
-      log_error "Execution of autoSetupArgoCdInstall() returned with a non zero return code ($rc)"
-      exit $rc
-    fi
-
+      autoSetupExecuteScripts "1" &>> ${logFilename} || rc=$? && log_info "Execution of autoSetupExecuteScripts for pre-install-scripts returned with rc=$rc"
+      if [[ ${rc} -ne 0 ]]; then
+        log_error "Execution of autoSetupPreInstallSteps() returned with a non zero return code ($rc)"
+        setRetryDataFailureState
+        exit $rc
+      fi
     else
-        log_error "Did not recognize installation type of \"${installationType}\". Valid values are \"helm\", \"argocd\" or \"script\""
+      log_info "Skipping pre-install steps, as in retry-mode for ${componentName}, and this stage was already completed successfully before"
     fi
+
+    if ( [[ "${retryMode}" == "true" ]] || [[ "${retryMode}" == "notapplicable" ]] ) && [[ ${retryPhaseId} -le 2 ]]; then
+      ####################################################################################################################################################################
+      ##      S C R I P T    I N S T A L L
+      ####################################################################################################################################################################
+      if [[ ${installationType} == "script" ]]; then
+        rc=0
+        autoSetupExecuteScripts "2" &>> ${logFilename} || rc=$? && log_info "Execution of autoSetupExecuteScripts for main install scripts returned with rc=$rc"
+        if [[ ${rc} -ne 0 ]]; then
+          log_error "Execution of autoSetupScriptInstall() returned with a non zero return code ($rc)"
+          setRetryDataFailureState
+          exit $rc
+        fi
+      fi
+    else
+      log_info "Skipping main script installation step, as in retry-mode for ${componentName}, and this stage was already completed successfully before"
+    fi
+
+    if ( [[ "${retryMode}" == "true" ]] || [[ "${retryMode}" == "notapplicable" ]] ) && [[ ${retryPhaseId} -le 3 ]]; then
+      ####################################################################################################################################################################
+      ##      H E L M    I N S T A L L   /   U P G R A D E
+      ####################################################################################################################################################################
+      if [[ ${installationType} == "helm" ]]; then
+        rc=0
+        autoSetupHelmInstall &>> ${logFilename} || rc=$? && log_info "Execution of autoSetupHelmInstall() returned with rc=$rc"
+        if [[ ${rc} -ne 0 ]]; then
+          log_error "Execution of autoSetupHelmInstall() returned with a non zero return code ($rc)"
+          setRetryDataFailureState
+          exit $rc
+        fi
+      fi
+    else
+      log_info "Skipping helm-chart installation step, as in retry-mode for ${componentName}, and this stage was already completed successfully before"
+    fi
+
+    if ( [[ "${retryMode}" == "true" ]] || [[ "${retryMode}" == "notapplicable" ]] ) && [[ ${retryPhaseId} -le 4 ]]; then
+      ####################################################################################################################################################################
+      ##      A R G O    C D    I N S T A L L
+      ####################################################################################################################################################################
+      if [[ ${installationType} == "argocd" ]] && [[ ${action}=="install" ]]; then
+        rc=0
+        autoSetupArgoCdInstall &>> ${logFilename} || rc=$? && log_info "Execution of autoSetupArgoCdInstall() returned with rc=$rc"
+        if [[ ${rc} -ne 0 ]]; then
+          log_error "Execution of autoSetupArgoCdInstall() returned with a non zero return code ($rc)"
+          exit $rc
+        fi
+      fi
+    else
+      log_info "Skipping argocd installation step, as in retry-mode for ${componentName}, and this stage was already completed successfully before"
+    fi
+
+    #else
+    #    log_error "Did not recognize installation type of \"${installationType}\". Valid values are \"helm\", \"argocd\" or \"script\""
+    #fi
 
     ####################################################################################################################################################################
     ##      H E A L T H    C H E C K S
@@ -137,18 +193,18 @@ if [[ ${action} == "install"   ]]; then
       # coredns waiting for calico network to be installed, preventing other service from being provisioned
       rc=0
       checkRunningKubernetesPods &>> ${logFilename} || rc=$? && log_info "Execution of checkRunningKubernetesPods() returned with rc=$rc"
-    if [[ ${rc} -ne 0 ]]; then
-      log_error "Execution of checkRunningKubernetesPods() returned with a non zero return code ($rc)"
-      exit $rc
-    fi
+      if [[ ${rc} -ne 0 ]]; then
+        log_error "Execution of checkRunningKubernetesPods() returned with a non zero return code ($rc)"
+        exit $rc
+      fi
 
       # Check if URL health checks defined in metadata.json return result as expected/described in metadata.json file
       rc=0
       applicationDeploymentHealthCheck &>> ${logFilename} || rc=$? && log_info "Execution of applicationDeploymentHealthCheck() returned with rc=$rc"
-    if [[ ${rc} -ne 0 ]]; then
-      log_error "Execution of applicationDeploymentHealthCheck() returned with a non zero return code ($rc)"
-      exit $rc
-    fi
+      if [[ ${rc} -ne 0 ]]; then
+        log_error "Execution of applicationDeploymentHealthCheck() returned with a non zero return code ($rc)"
+        exit $rc
+      fi
 
     fi
 
@@ -164,16 +220,22 @@ if [[ ${action} == "install"   ]]; then
     rc=0
     postInstallStepLetsEncrypt &>> ${logFilename} || rc=$? && log_info "Execution of postInstallStepLetsEncrypt() returned with rc=$rc"
     if [[ ${rc} -ne 0 ]]; then
-      log_error "Execution of postInstallStepLetsEncrypt() returned with a non zero return code ($rc)"
+      log_error "Execution of postInstallStepLetsEncrypt() returned with a non zero return code ($rc)" "0"
       exit $rc
     fi
 
-    # Execute scripts defined in metadata.json, listed post_install_scripts section
-    rc=0
-    executePostInstallScripts &>> ${logFilename} || rc=$? && log_info "Execution of executePostInstallScripts() returned with rc=$rc"
-    if [[ ${rc} -ne 0 ]]; then
-      log_error "Execution of executePostInstallScripts() returned with a non zero return code ($rc)"
-      exit $rc
+    log_debug "( [[ \"${retryMode}\" == \"true\" ]] || [[ \"${retryMode}\" == \"notapplicable\" ]] ) && [[ ${retryPhaseId} -le 5 ]]"
+    if ( [[ "${retryMode}" == "true" ]] || [[ "${retryMode}" == "notapplicable" ]] ) && [[ ${retryPhaseId} -le 5 ]]; then
+      # Execute scripts defined in metadata.json, listed post_install_scripts section
+      rc=0
+      autoSetupExecuteScripts "5" &>> ${logFilename} || rc=$? && log_info "Execution of autoSetupExecuteScripts for post-install-scripts returned with rc=$rc"
+      if [[ ${rc} -ne 0 ]]; then
+        log_error "Execution of executePostInstallScripts() returned with a non zero return code ($rc)"
+        setRetryDataFailureState
+        exit $rc
+      fi
+    else
+      log_info "Skipping post installation step, as in retry-mode for ${componentName}, and this stage was already completed successfully before"
     fi
      
     ####################################################################################################################################################################
@@ -226,15 +288,15 @@ if [[ ${action} == "install"   ]]; then
       createDesktopIcon "${apiDocsDirectory}" "${postmanApiDocsUrl}" "${shortcutText} Postman" "${iconPath}" "${browserOptions}"
     fi
 
-elif [[ ${action} == "executeTask" ]]; then
+elif [[ "${action}" == "executeTask" ]]; then
 
-  export taskToExecute=$(echo ${payload} | jq -c -r '.task')
+  export taskToExecute=$(echo "${payload}" | jq -c -r '.task')
   rc=0
   autoSetupExecuteTask "${taskToExecute}" &>> ${logFilename} || rc=$? && log_info "Execution of autoSetupExecuteTask() for task \"${taskToExecute}\" returned with rc=$rc"
-    if [[ ${rc} -ne 0 ]]; then
-      log_error "Execution of autoSetupExecuteTask() for task \"${taskToExecute}\" returned with a non zero return code ($rc)"
-      exit $rc
-    fi
+  if [[ ${rc} -ne 0 ]]; then
+    log_error "Execution of autoSetupExecuteTask() for task \"${taskToExecute}\" returned with a non zero return code ($rc)"
+    exit $rc
+  fi
 
 
 elif [[ ${action} == "upgrade" ]]; then
