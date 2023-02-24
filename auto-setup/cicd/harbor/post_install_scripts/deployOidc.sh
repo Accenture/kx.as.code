@@ -49,7 +49,7 @@ if [[ -n ${clientId} ]] && [[ -n ${clientSecret} ]]; then
   { "url":"https://keycloak.'${baseDomain}'/auth/realms/'${baseDomain}'",
     "verify_cert":false
   }' )
-  if [[ ${harborOidcPingRes} -eq 200 ]] ||  [[ ${harborOidcPingRes} = '' ]];
+  if [[ ${harborOidcPingRes} -eq 200 ]] ||  [[ -z ${harborOidcPingRes} ]];
   then
       echo  "OIDC Test Connection Successful"
   else echo  "Fail to Connect"
