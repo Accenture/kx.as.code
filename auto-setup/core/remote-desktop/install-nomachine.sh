@@ -11,11 +11,11 @@ if [[ -z $(which raspinfo) ]]; then
     if [[ -n $( uname -a | grep "aarch64") ]]; then
       # Download URL for ARM64 CPU architecture
       nomachineUrl="https://download.nomachine.com/download/${majorNoMachineVersion}/Arm/nomachine_${nomachineVersion}_arm64.deb"
-      nomachineChecksum="75fc2a23c73c0dcd9c683b9ebf9fe4d821f9562b3b058441d4989d7fcd4c6977"
+      nomachineChecksum="${nomachineArm64Checksum}"
     else
       # Download URL for X86_64 CPU architecture
       nomachineUrl="https://download.nomachine.com/download/${majorNoMachineVersion}/Linux/nomachine_${nomachineVersion}_amd64.deb"
-      nomachineChecksum="e948895fd41adbded25e4ddc7b9637585e46af9d041afadfd620a2f8bb23362c"
+      nomachineChecksum="${nomachineAmd64Checksum}"
     fi
 
     # Download NoMachine

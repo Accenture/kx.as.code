@@ -5,11 +5,19 @@
     "installation_group_folder": "core",
     "retry": "skip",
     "environment_variables": {
-        "guacamoleVersion": "1.3.0",
-        "guacamoleChecksum": "bc5511c7170841f90d437b5a07b7ec2f5bfd061f2a5bfc4e4d0fc4d7b303fb4c",
-        "nomachineVersion": "7.6.2_4",
-        "nomachineChecksum": "94b9d0cdfc91bece6962a2ed39e9b736c3abe9d44b5fd8db59c0aec10b7539d7",
-        "postgresqlDriverVersion": "42.2.19"
+        "guacamoleVersion": "1.5.0",
+        "guacamoleTarChecksum": "c6c09e4056f1edd88a3c425ef05043ff835da5c1c92348bbdbf5a99e512f5fd4",
+        "guacamoleWarChecksum": "9c4e807aa70bc138f3b6cc66cc44b75daa944a015944b9ab6f780d7868498620",
+        "guacamoleAuthJdbcChecksum": "f47e066c4d3167202b9c866f63cba806f2cb0a00a5c00847e07870b124b5fb75",
+        "guacamoleAuthTotpChecksum": "c703f7c541f5a513c1588a5bedeae4461cd4135b11d6eb874ac059f48445942f",
+        "guacamoleAuthLdapChecksum": "4a97a6c88f5e27920725178abd154aa709498c9d0bbcfee835be448202037497",
+        "postgresqlDriverVersion": "42.5.4",
+        "postgresqlDriverChecksum": "f48fcb0b6959bc8b478657f57ba43c1acca4cade6abca5f17bf9bc9c363cb66f",
+        "nomachineVersion": "8.4.2_1",
+        "nomachineArm64Checksum": "7311c9a5699f5c981673d476a92d62e37267dcae4e464926ef600c86ff4d0d0c",
+        "nomachineAmd64Checksum": "0934b3cf8468d3748a84a084b5eebd4c06974499e29a1f512ae61488357962fa"
+
+
     },
     "install_scripts": [
         "install-nomachine.sh",
