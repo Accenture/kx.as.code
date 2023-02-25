@@ -40,7 +40,6 @@ jprofilerCreateUpdateUserConfig() {
         </recordingProfiles>
     </generalSettings>'
 
-
     # Create sessions
     local numberOfConfiguredSessions=0
     local jProfilerXmlConfigSession=""
