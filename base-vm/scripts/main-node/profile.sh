@@ -74,7 +74,7 @@ ls /usr/share/avatars/avatar_*.png | sort -R | tail -1 | while read file; do
 done
 sudo chown ${VM_USER}:${VM_USER} /home/${VM_USER}/.face.icon
 
-# Add keyboard layouts so they can be selected from XFCE4 panel
+# Add keyboard layouts so they can be selected from KDE panel
 sudo bash -c 'cat <<EOF > /etc/default/keyboard
 # KEYBOARD CONFIGURATION FILE
 
@@ -93,10 +93,15 @@ echo -e "\nsource /etc/profile.d/nvm.sh" | sudo tee -a /home/${VM_USER}/.bashrc 
 
 # Create XDBUS file for receiving desktop notifications from the KX.AS.CODE framework
 echo '''#!/bin/bash
-touch ${HOME}/.dbus/Xdbus
-chmod 600 ${HOME}/.dbus/Xdbus
-declare -p DBUS_SESSION_BUS_ADDRESS | tee ${HOME}/.dbus/Xdbus
-''' | sudo tee /home/${VM_USER}/.config/autostart/xdbus.sh
+if [[ -n ${DISPLAY} ]]; then
+  touch ${HOME}/.dbus/Xdbus
+  chmod 600 ${HOME}/.dbus/Xdbus
+  declare -p DBUS_SESSION_BUS_ADDRESS | tee ${HOME}/.dbus/Xdbus
+  declare -p DISPLAY | tee -a ${HOME}/.dbus/Xdbus
+fi
+''' | sudo tee /etc/profile.d/xdbus.sh
+echo -e "\nsource /etc/profile.d/xdbus.sh" | sudo tee -a /home/${VM_USER}/.bashrc /home/${VM_USER}/.zshrc /root/.bashrc /root/.zshrc
+
 
 # Hide Vagrant user from Login screen
 echo '''[Autologin]
