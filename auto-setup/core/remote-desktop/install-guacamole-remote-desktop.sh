@@ -327,6 +327,9 @@ else
   /usr/bin/sudo cp -f ${sharedGitHome}/kx.as.code/base-vm/images/guacamole/* /var/lib/tomcat9/webapps/guacamole/images/
 fi
 
+/usr/bin/sudo sed -i 's/guac-tricolor.svg/guac-tricolor.png/g' /var/lib/tomcat9/webapps/guacamole/app/login/styles/dialog.css
+/usr/bin/sudo sed -i 's/guac-tricolor.svg/guac-tricolor.png/g' /var/lib/tomcat9/webapps/guacamole/1.guacamole.8c18237a4a94ee9845d9.css
+
 /usr/bin/sudo sed -i 's/^    width: 3em;/    width: 9em;/g' /var/lib/tomcat9/webapps/guacamole/guacamole.css
 /usr/bin/sudo sed -i 's/^    height: 3em;/    height: 9em;/g' /var/lib/tomcat9/webapps/guacamole/guacamole.css
 /usr/bin/sudo sed -i 's/^    background-size:         3em 3em;/    background-size:         9em 9em;/g' /var/lib/tomcat9/webapps/guacamole/guacamole.css

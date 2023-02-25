@@ -81,7 +81,7 @@ sudo bash -c 'cat <<EOF > /etc/default/keyboard
 # Consult the keyboard(5) manual page.
 
 XKBMODEL="pc105"
-XKBLAYOUT="de,us,gb,fr,it,es"
+XKBLAYOUT="us,de,it,in,gb,fr,es,cn"
 XKBVARIANT=""
 XKBOPTIONS=""
 
@@ -98,6 +98,8 @@ if [[ -n ${DISPLAY} ]]; then
   chmod 600 ${HOME}/.dbus/Xdbus
   declare -p DBUS_SESSION_BUS_ADDRESS | tee ${HOME}/.dbus/Xdbus
   declare -p DISPLAY | tee -a ${HOME}/.dbus/Xdbus
+  sudo localectl set-x11-keymap us,de,it,in,gb,fr,es,cn pc-105 , grp:alt_shift_toggle
+  setxkbmap -model pc105 -layout us,de,it,in,gb,fr,es,cn -option grp:alt_shift_toggle
 fi
 ''' | sudo tee /etc/profile.d/xdbus.sh
 echo -e "\nsource /etc/profile.d/xdbus.sh" | sudo tee -a /home/${VM_USER}/.bashrc /home/${VM_USER}/.zshrc /root/.bashrc /root/.zshrc
