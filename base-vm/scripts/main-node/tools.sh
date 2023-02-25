@@ -30,7 +30,8 @@ sudo apt-get -y install \
     gnome-keyring \
     neovim \
     lynx \
-    bsd-mailx
+    bsd-mailx \
+    xprintidle
 
 
 # Set User File Associations

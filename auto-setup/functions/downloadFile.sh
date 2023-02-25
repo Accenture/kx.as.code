@@ -3,11 +3,11 @@ downloadFile() {
   # Call common function to execute common function start commands, such as setting verbose output etc
   functionStart
 
-  url="${1}"
-  checksum="${2}"
-  targetPath="${3-}"
-  user="${4-}"
-  password="${5-}"
+  local url="${1}"
+  local checksum="${2}"
+  local targetPath="${3-}"
+  local user="${4-}"
+  local password="${5-}"
 
   # Set authentication if passed into function
   if [[ -n ${user} ]] && [[ -n ${password} ]]; then
@@ -18,14 +18,14 @@ downloadFile() {
 
   # Get filename from URL if target path not provided, and use default workspace
   if [[ $(echo ${targetPath} | awk -F/ '{ print NF - 1 }') -gt 0 ]]; then
-    outputFilename="${targetPath}"
+    local outputFilename="${targetPath}"
   else
-    outputFilename="${installationWorkspace}/$(basename ${url})"
+    local outputFilename="${installationWorkspace}/$(basename ${url})"
   fi
 
   # Exit the script if the file already downloaded successfully in the past
   if [[ -f ${outputFilename} ]]; then
-    checkResult=$(echo "${checksum}" "${outputFilename}" | sha256sum -c --quiet && echo "OK" || echo "NOK")
+    local checkResult=$(echo "${checksum}" "${outputFilename}" | sha256sum -c --quiet && echo "OK" || echo "NOK")
     echo "${checkResult}"
     if [[ "${checkResult}" == "OK" ]]; then
       log_info "Checksum of prevously downloaded file ${outputFilename} OK. Exiting with RC=0 "
@@ -50,7 +50,7 @@ downloadFile() {
       ${authOption} "${url}"
 
     if [[ "${checksum}" != "not-applicable" ]]; then
-      checkResult=$(echo "${checksum}" "${outputFilename}" | sha256sum -c --quiet && echo "OK" || echo "NOK")
+      local checkResult=$(echo "${checksum}" "${outputFilename}" | sha256sum -c --quiet && echo "OK" || echo "NOK")
     fi
 
     echo "${checkResult}"

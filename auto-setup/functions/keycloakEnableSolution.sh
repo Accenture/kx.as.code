@@ -34,6 +34,12 @@ enableKeycloakSSOForSolution() {
         # Create Keycloak Protocol Mapper
         createKeycloakProtocolMapper "${clientId}" "${fullPath}"
 
+    else
+
+        # Set blank variables do avoid unbound errors further down the line
+        export clientId=""
+        export clientSecret=""
+
     fi
 
     # Call common function to execute common function start commands, such as unsetting verbose output etc

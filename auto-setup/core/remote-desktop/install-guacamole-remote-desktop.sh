@@ -4,8 +4,6 @@ set -euo pipefail
 # Save resourcrs on the Raspberry Pi. Install NoMachine only.
 if [[ -z $(which raspinfo) ]]; then
 
-SHARED_GIT_REPOSITORIES=/usr/share/kx.as.code/git
-
 # Install & configure XRDP to ensure support for multiple users
 /usr/bin/sudo apt install -y xrdp
 /usr/bin/sudo sed -i '/^test -x \/etc\/X11\/Xsession && exec \/etc\/X11\/Xsession.*/i \unset DBUS_SESSION_BUS_ADDRESS' /etc/xrdp/startwm.sh
@@ -15,13 +13,18 @@ SHARED_GIT_REPOSITORIES=/usr/share/kx.as.code/git
 /usr/bin/sudo apt install -y build-essential libcairo2-dev libjpeg62-turbo-dev libpng-dev libtool-bin libossp-uuid-dev libvncserver-dev freerdp2-dev libssh2-1-dev libtelnet-dev libwebsockets-dev libpulse-dev libvorbis-dev libwebp-dev libssl-dev libpango1.0-dev libswscale-dev libavcodec-dev libavutil-dev libavformat-dev
 
 # Download, build, install and enable Guacamole
-#https://apache.org/dyn/closer.cgi?action=download&filename=guacamole/1.3.0/source/guacamole-server-1.3.0.tar.gz
-downloadFile "https://apache.org/dyn/closer.cgi?action=download&filename=guacamole/${guacamoleVersion}/source/guacamole-server-${guacamoleVersion}.tar.gz" \
-  "${guacamoleChecksum}" \
-  "${installationWorkspace}/guacamole-server-${guacamoleVersion}.tar.gz" && log_info "Return code received after downloading guacamole-server-${guacamoleVersion}.tar.gz is $?"
+#https://apache.org/dyn/closer.cgi?action=download&filename=guacamole/1.5.0/source/guacamole-server-1.5.0.tar.gz
+filename="guacamole-server-${guacamoleVersion}.tar.gz"
+downloadFile "https://apache.org/dyn/closer.cgi?action=download&filename=guacamole/${guacamoleVersion}/source/${filename}" \
+  "${guacamoleTarChecksum}" \
+  "${installationWorkspace}/${filename}" || rc=$?
+if [[ ${rc} -ne 0 ]]; then
+    log_error "Downloading Guacamole War file returned with ($rc). Exiting with RC=$rc"
+    exit $rc
+fi
 
-tar -xvf guacamole-server-${guacamoleVersion}.tar.gz
-cd guacamole-server-${guacamoleVersion}
+tar -xvf guacamole-server-${guacamoleVersion}.tar.gz --directory ${installationWorkspace}
+cd ${installationWorkspace}/guacamole-server-${guacamoleVersion}
 ./configure --with-init-dir=/etc/init.d --enable-allow-freerdp-snapshots
 /usr/bin/sudo make
 /usr/bin/sudo make install
@@ -30,9 +33,19 @@ cd guacamole-server-${guacamoleVersion}
 
 ### Install Tomact and Configure Guacamole web app
 /usr/bin/sudo apt install -y tomcat9 tomcat9-admin tomcat9-common tomcat9-user
-wget https://downloads.apache.org/guacamole/${guacamoleVersion}/binary/guacamole-${guacamoleVersion}.war
+# Download Guacamole WAR file
+# NOTE: Sometimes the old version suddenly becomes available on the Apache site and this breaks the install.
+# You will need to update metadata.json for this component with the new version and matching sha256sum if this is the case.
+filename="guacamole-${guacamoleVersion}.war"
+downloadFile "https://downloads.apache.org/guacamole/${guacamoleVersion}/binary/${filename}" \
+    "${guacamoleWarChecksum}" \
+    "${installationWorkspace}/${filename}" || rc=$?
+if [[ ${rc} -ne 0 ]]; then
+    log_error "Downloading ${filename} file returned with ($rc). Exiting with RC=$rc"
+    exit $rc
+fi
 
-/usr/bin/sudo mv guacamole-${guacamoleVersion}.war /var/lib/tomcat9/webapps/guacamole.war
+/usr/bin/sudo mv ${installationWorkspace}/${filename} /var/lib/tomcat9/webapps/guacamole.war
 /usr/bin/sudo sed -i 's/8080/8098/g' /var/lib/tomcat9/conf/server.xml
 /usr/bin/sudo systemctl restart tomcat9 guacd
 /usr/bin/sudo mkdir -p /etc/guacamole/
@@ -40,32 +53,53 @@ wget https://downloads.apache.org/guacamole/${guacamoleVersion}/binary/guacamole
 # Download extensions
 export extensionsToDownload="jdbc ldap totp"
 for extension in ${extensionsToDownload}; do
-  for i in {{1..5}}; do
-    curl -o guacamole-auth-${extension}-${guacamoleVersion}.tar.gz -L "https://apache.org/dyn/closer.cgi?action=download&filename=guacamole/${guacamoleVersion}/binary/guacamole-auth-${extension}-${guacamoleVersion}.tar.gz" || true
-    if [[ -f guacamole-auth-${extension}-${guacamoleVersion}.tar.gz ]]; then
-      # Check integrity of downloaded tar file before continuing
-      if [[ -n $(tar tzf guacamole-auth-${extension}-${guacamoleVersion}.tar.gz || true) ]]; then
-        log_info "Download of guacamole-auth-${extension}-${guacamoleVersion}.tar.gz succeeded after ${i} of 5 attempts"
-        break
-      else
-        /usr/bin/sudo rm -f guacamole-auth-${extension}-${guacamoleVersion}.tar.gz
-        log_info "Download attempt ${i} of 5 of guacamole-auth-${extension}-${guacamoleVersion}.tar.gz failed"
-      fi
-    fi
-    sleep 15
-    done
-    tar xvzf guacamole-auth-${extension}-${guacamoleVersion}.tar.gz
-    /usr/bin/sudo mkdir -p /etc/guacamole/extensions
-    if [[ ${extension} == "jdbc" ]]; then
-        /usr/bin/sudo mv guacamole-auth-${extension}-${guacamoleVersion}/postgresql/guacamole-auth-${extension}-postgresql-${guacamoleVersion}.jar /etc/guacamole/extensions
-    else
-        /usr/bin/sudo mv guacamole-auth-${extension}-${guacamoleVersion}/guacamole-auth-${extension}-${guacamoleVersion}.jar /etc/guacamole/extensions
-    fi
+
+  case ${extension} in
+        jdbc)
+            fileChecksum="${guacamoleAuthJdbcChecksum}"
+            ;;
+
+        ldap)
+            fileChecksum="${guacamoleAuthLdapChecksum}"
+            ;;
+
+        totp)
+            fileChecksum="${guacamoleAuthTotpChecksum}"
+            ;;
+        *)
+            log_error "Invalid Guacamole extension passed. Exiting"
+            exit 1
+  esac
+
+  filename="guacamole-auth-${extension}-${guacamoleVersion}.tar.gz"
+  downloadFile "https://apache.org/dyn/closer.cgi?action=download&filename=guacamole/${guacamoleVersion}/binary/${filename}" \
+    "${fileChecksum}" \
+    "${installationWorkspace}/${filename}" || rc=$?
+  if [[ ${rc} -ne 0 ]]; then
+      log_error "Downloading ${filename} file returned with ($rc). Exiting with RC=$rc"
+      exit $rc
+  fi
+
+  tar xvzf "${installationWorkspace}/${filename}" --directory ${installationWorkspace}
+  /usr/bin/sudo mkdir -p /etc/guacamole/extensions
+  if [[ ${extension} == "jdbc" ]]; then
+      /usr/bin/sudo mv ${installationWorkspace}/guacamole-auth-${extension}-${guacamoleVersion}/postgresql/guacamole-auth-${extension}-postgresql-${guacamoleVersion}.jar /etc/guacamole/extensions
+  else
+      /usr/bin/sudo mv ${installationWorkspace}/guacamole-auth-${extension}-${guacamoleVersion}/guacamole-auth-${extension}-${guacamoleVersion}.jar /etc/guacamole/extensions
+  fi
+
 done
 
 # Download Postgresql JDBC driver
 /usr/bin/sudo mkdir -p /etc/guacamole/lib
-/usr/bin/sudo curl -o /etc/guacamole/lib/postgresql-${postgresqlDriverVersion}.jar -L https://jdbc.postgresql.org/download/postgresql-${postgresqlDriverVersion}.jar
+filename="postgresql-${postgresqlDriverVersion}.jar"
+downloadFile "https://jdbc.postgresql.org/download/${filename}" \
+  "${postgresqlDriverChecksum}" \
+  "/etc/guacamole/lib/${filename}" || rc=$?
+if [[ ${rc} -ne 0 ]]; then
+    log_error "Downloading ${filename} file returned with ($rc). Exiting with RC=$rc"
+    exit $rc
+fi
 
 # Install Postgresql
 /usr/bin/sudo apt-get install -y postgresql postgresql-contrib
@@ -84,8 +118,8 @@ fi
 # Generate random passwords for guacadmin via custom bash functions
 guacAdminPassword=$(managedPassword "guacamole-admin-password" "remote-desktop")
 
-/usr/bin/sudo sed -i "s/-- 'guacadmin'/-- '${guacAdminPassword}'/g" guacamole-auth-jdbc-${guacamoleVersion}/postgresql/schema/002-create-admin-user.sql
-cat guacamole-auth-jdbc-${guacamoleVersion}/postgresql/schema/*.sql | /usr/bin/sudo su - postgres -c "psql -d guacamole_db -f -"
+/usr/bin/sudo sed -i "s/-- 'guacadmin'/-- '${guacAdminPassword}'/g" ${installationWorkspace}/guacamole-auth-jdbc-${guacamoleVersion}/postgresql/schema/002-create-admin-user.sql
+cat ${installationWorkspace}/guacamole-auth-jdbc-${guacamoleVersion}/postgresql/schema/*.sql | /usr/bin/sudo su - postgres -c "psql -d guacamole_db -f -"
 
 # Create Guacamole database users
 guacUser=$(echo $baseUser | sed 's/\./_/g')
@@ -290,7 +324,7 @@ if [[ -f "${customImagesDirectory}/guac-tricolor.png" ]]; then
     fi
   done
 else
-  /usr/bin/sudo cp -f ${SHARED_GIT_REPOSITORIES}/kx.as.code/base-vm/images/guacamole/* /var/lib/tomcat9/webapps/guacamole/images/
+  /usr/bin/sudo cp -f ${sharedGitHome}/kx.as.code/base-vm/images/guacamole/* /var/lib/tomcat9/webapps/guacamole/images/
 fi
 
 /usr/bin/sudo sed -i 's/^    width: 3em;/    width: 9em;/g' /var/lib/tomcat9/webapps/guacamole/guacamole.css
