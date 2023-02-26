@@ -28,14 +28,6 @@ sudo update-alternatives --set ip6tables /usr/sbin/ip6tables-legacy
 sudo update-alternatives --set arptables /usr/sbin/arptables-legacy
 sudo update-alternatives --set ebtables /usr/sbin/ebtables-legacy
 
-# Download and install latest Kubectl and kubeadm binaries
-sudo apt-get update && sudo apt-get install -y apt-transport-https
-curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
-echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee -a /etc/apt/sources.list.d/kubernetes.list
-sudo apt-get update
-sudo apt-get install -y kubelet=${KUBE_VERSION} kubeadm=${KUBE_VERSION} kubectl=${KUBE_VERSION}
-sudo apt-mark hold kubelet kubeadm kubectl
-
 # Switch off swap
 sudo swapoff -a
 sudo sed -i '/swap/d' /etc/fstab
@@ -49,15 +41,6 @@ export afterServiceList=""
 if [[ "${PACKER_BUILDER_TYPE}" =~ "virtualbox" ]]; then
   export afterServiceList="After=vboxadd-service.service"
 fi
-
-# Wait until cloud-init service completes before running node registration script
-#if [[ "${COMPUTE_ENGINE_BUILD}" == "true"   ]]; then
-#  if [[ -z ${afterServiceList} ]]; then
-#    export afterServiceList="After=cloud-init.service"
-#  else
-#    export afterServiceList="${afterServiceList}"$'\n'"After=cloud-init.service"
-#  fi
-#fi
 
 # Add Kubernetes Join Script to systemd
 sudo bash -c "cat <<EOF > /etc/systemd/system/k8s-register-node.service

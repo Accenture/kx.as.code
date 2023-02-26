@@ -107,7 +107,7 @@ function Sidebar({ sidebarOpen, setSidebarOpen }, props) {
             ></img>
           </NavLink>
           <div className="pl-4 text-white flex my-auto lg:hidden lg:sidebar-expanded:block 2xl:block md:text-md md:text-md">
-            <div className="font-extrabold">KX.AS CODE</div>
+            <div className="font-extrabold">KX.AS.CODE</div>
             <div className="text-sm">Portal v.{versions.kxascode}</div>
           </div>
         </div>
