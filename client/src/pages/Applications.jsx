@@ -498,7 +498,7 @@ export const Applications = (props) => {
         <div className="text-xl font-bold italic text-gray-500">
           APPLICATIONS
           <Tooltip
-            title="Install applications into your KX.AS Code
+            title="Install applications into your KX.AS.CODE
           environemnt."
             placement="top"
             arrow
@@ -509,7 +509,7 @@ export const Applications = (props) => {
           </Tooltip>
         </div>
         <div className="pt-4 pb-6 text-[16px]">
-          Install applications into your KX.AS Code environemnt.
+          Install applications into your KX.AS.CODE environemnt.
         </div>
 
         <div className="border-b-2 border-gray-700"></div>

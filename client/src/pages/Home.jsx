@@ -31,7 +31,7 @@ export default function Home2() {
               width="70px"
               alt="KX AS Code Logo"
             ></img>
-            <span className="text-[24px] font-semibold">KX.AS CODE</span>
+            <span className="text-[24px] font-semibold">KX.AS.CODE</span>
           </div>
 
           {/* Intro Title */}
