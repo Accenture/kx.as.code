@@ -30,27 +30,30 @@ notify() {
       done
 
       log_debug "Full json: $(echo ${fullJson} | jq)"
-      log_debug "Latest user display: $(echo ${fullJson} | jq '. | sort_by(.idletime) | .[1]')"
+      log_debug "Latest user display: $(echo ${fullJson} | jq '. | sort_by(.idletime) | .[0]')"
 
-      local mostRecentSessionIdletime=$(echo ${fullJson} | jq -r '. | sort_by(.idletime) | .[1] | .idletime')
-      local mostRecentSessionDisplay=$(echo ${fullJson} | jq -r '. | sort_by(.idletime) | .[1] | .display')
+      local mostRecentSessionIdletime=$(echo ${fullJson} | jq -r '. | sort_by(.idletime) | .[0] | .idletime')
+      local mostRecentSessionDisplay=$(echo ${fullJson} | jq -r '. | sort_by(.idletime) | .[0] | .display')
 
       log_debug "${user} --> ${user}Display"
       log_debug "${user} idle-time --> ${mostRecentSessionIdletime}"
       log_debug "${user} display--> ${mostRecentSessionDisplay}"
 
-      idleTimeSeconds=$(( ${mostRecentSessionIdletime} / 1000 ))
-      idleTimeMinutes=$(( ${mostRecentSessionIdletime} / 60000 ))
+      if [[ -n ${mostRecentSessionIdletime} ]] && [[ "${mostRecentSessionIdletime}" != "null" ]]; then
 
-      log_debug "Idle time in minutes: ${idleTimeSeconds}"
-      log_debug "Idle time in seconds: ${idleTimeMinutes}"
+        idleTimeSeconds=$(( ${mostRecentSessionIdletime} / 1000 ))
+        idleTimeMinutes=$(( ${mostRecentSessionIdletime} / 60000 ))
 
-      if [[ ${idleTimeMinutes} -le 15 ]]; then
-        /usr/bin/sudo -H -i -u ${user} bash -c " \
-            source /home/${user}/.dbus/Xdbus && env && \
-            env && \
-            notify-send -t \"${messageTimeout}\" \"${messageTitle}\" \"${message}\" --icon=\"${messageType}\""
-            log_debug "Notification sent"
+        log_debug "Idle time in minutes: ${idleTimeSeconds}"
+        log_debug "Idle time in seconds: ${idleTimeMinutes}"
+
+        if [[ ${idleTimeMinutes} -le 15 ]]; then
+          /usr/bin/sudo -H -i -u ${user} bash -c " \
+              source /home/${user}/.dbus/Xdbus && env && \
+              env && \
+              notify-send -t \"${messageTimeout}\" \"${messageTitle}\" \"${message}\" --icon=\"${messageType}\""
+              log_debug "Notification sent"
+        fi
       fi
     fi
   done
