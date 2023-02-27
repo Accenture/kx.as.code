@@ -16,6 +16,7 @@ loginToCoreRegistry() {
       break
     else
       log_warn "Logging into the local docker registry failed. Trying again"
+      rc=0 # Reset return code back to 0
       sleep 10
     fi
   done
