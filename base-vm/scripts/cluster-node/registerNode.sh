@@ -616,16 +616,33 @@ while [[ "$rc" != "0" ]]; do
   sleep 15
 done
 
-# Wait for Kubernetes to be available
-while [[ "$(/usr/bin/sudo -H -i -u "${vmUser}" bash -c "ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} \"sudo kubectl get --raw='/readyz'\"")" != "ok" ]]; do
-  echo "Waiting for kubectl get --raw='/readyz' to return ok"
-  sleep 15
-done
-
 # Get Kubernetes orchestrator to use
 export kubeOrchestrator=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.kubeOrchestrator')
 
 if [[ "${kubeOrchestrator}" == "k8s" ]]; then
+
+  # Download and install latest Kubectl and kubeadm binaries
+  apt-get update
+  DEBIAN_FRONTEND=noninteractive /usr/bin/sudo apt-get install -y apt-transport-https
+  curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | /usr/bin/sudo apt-key add -
+  echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" | /usr/bin/sudo tee -a /etc/apt/sources.list.d/kubernetes.list
+
+  # Read Kubernetes version to be installed
+  kubeVersion=$(cat ${installationWorkspace}/versions.json | jq -r '.kubernetes')
+  for i in {1..5}
+  do
+    echo "Installing Kubernetes tools (Attempt ${i} of 5)."
+    /usr/bin/sudo apt-get update
+    DEBIAN_FRONTEND=noninteractive /usr/bin/sudo apt-get install -y kubelet=${kubeVersion} kubeadm=${kubeVersion} kubectl=${kubeVersion}
+    /usr/bin/sudo apt-mark hold kubelet kubeadm kubectl
+    if [[ -n $(kubectl version) ]]; then
+      echo "Kubectl accessible after install. Looks good. Continuing."
+      break
+    else
+      log_warn "Kubectl not accessible after install. Trying again."
+      sleep 15
+    fi
+  done
 
   # Kubernetes master is reachable, join the node to cluster
   if [[ "${nodeRole}" == "kx-worker" ]]; then
