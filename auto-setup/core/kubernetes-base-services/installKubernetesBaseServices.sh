@@ -55,10 +55,18 @@ EOF
         
         export kubeConfigFile=/etc/kubernetes/admin.conf
     else
+
+        allowWorkloadsOnMaster=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.allowWorkloadsOnMaster')
+        if [[ "${allowWorkloadsOnMaster}" == "false" ]]; then
+            taintMasterNodeOption="--node-taint CriticalAddonsOnly=true:NoExecute"
+        else
+            taintMasterNodeOption=""
+        fi
+
         log_info "Profile set to use K3s. Proceeding to launch the K3s install script"
         mkdir -p /root/.kube
-        log_debug "INSTALL_K3S_VERSION=${k3sVersion} INSTALL_K3S_EXEC="--disable servicelb --disable traefik --flannel-backend=none --disable-network-policy --cluster-cidr 10.20.76.0/16 --cluster-init --node-ip ${mainIpAddress} --node-external-ip ${mainIpAddress} --bind-address ${mainIpAddress} --tls-san api-internal.${baseDomain} --advertise-address ${mainIpAddress}" bash ${installationWorkspace}/k3s-install.sh"
-        INSTALL_K3S_VERSION=${k3sVersion} INSTALL_K3S_EXEC="--disable servicelb --disable traefik --flannel-backend=none --disable-network-policy --cluster-cidr 10.20.76.0/16 --cluster-init --node-ip ${mainIpAddress} --node-external-ip ${mainIpAddress} --bind-address ${mainIpAddress} --tls-san api-internal.${baseDomain} --advertise-address ${mainIpAddress}" bash ${installationWorkspace}/k3s-install.sh
+        log_debug "INSTALL_K3S_VERSION=${k3sVersion} INSTALL_K3S_EXEC="--disable servicelb --disable traefik --flannel-backend=none --disable-network-policy --cluster-cidr 10.20.76.0/16 --cluster-init --node-ip ${mainIpAddress} --node-external-ip ${mainIpAddress} --bind-address ${mainIpAddress} --tls-san api-internal.${baseDomain} --advertise-address ${mainIpAddress} ${taintMasterNodeOption}" bash ${installationWorkspace}/k3s-install.sh"
+        INSTALL_K3S_VERSION=${k3sVersion} INSTALL_K3S_EXEC="--disable servicelb --disable traefik --flannel-backend=none --disable-network-policy --cluster-cidr 10.20.76.0/16 --cluster-init --node-ip ${mainIpAddress} --node-external-ip ${mainIpAddress} --bind-address ${mainIpAddress} --tls-san api-internal.${baseDomain} --advertise-address ${mainIpAddress} ${taintMasterNodeOption}" bash ${installationWorkspace}/k3s-install.sh
 
         # Call function to check Kubernetes Health
         kubernetesHealthCheck  
