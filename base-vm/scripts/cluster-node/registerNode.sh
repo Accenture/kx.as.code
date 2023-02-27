@@ -7,6 +7,35 @@ export kxHomeDir=/usr/share/kx.as.code
 export sharedGitRepositories=${kxHomeDir}/git
 export installationWorkspace=${kxHomeDir}/workspace
 
+log_debug() {
+    if [[ "${logLevel}" == "debug" ]]; then
+        >&2 echo "$(date '+%Y-%m-%d_%H%M%S') [DEBUG] ${1}"
+    fi
+}
+
+log_error() {
+    if [[ "${logLevel}" == "error" ]] || [[ "${logLevel}" == "debug" ]]; then
+        >&2 echo "$(date '+%Y-%m-%d_%H%M%S') [ERROR] ${1}"
+    fi
+}
+
+log_info() {
+    if [[ "${logLevel}" == "info" ]] || [[ "${logLevel}" == "error" ]] || [[ "${logLevel}" == "warn" ]] || [[ "${logLevel}" == "debug" ]]; then
+        >&2 echo "$(date '+%Y-%m-%d_%H%M%S') [INFO] ${1}"
+    fi
+}
+
+log_trace() {
+    if [[ "${logLevel}" == "trace" ]]; then
+        >&2 echo "$(date '+%Y-%m-%d_%H%M%S') [TRACE] ${1}"
+    fi
+}
+
+log_warn() {
+    if [[ "${logLevel}" == "error" ]] || [[ "${logLevel}" == "warn" ]] || [[ "${logLevel}" == "debug" ]]; then
+        >&2 echo "$(date '+%Y-%m-%d_%H%M%S') [WARN] ${1}"
+    fi
+}
 
 # Added function to round up the disk space allocated for the LVM creations
 roundUp() {
@@ -631,12 +660,12 @@ if [[ "${kubeOrchestrator}" == "k8s" ]]; then
   kubeVersion=$(cat ${installationWorkspace}/versions.json | jq -r '.kubernetes')
   for i in {1..5}
   do
-    echo "Installing Kubernetes tools (Attempt ${i} of 5)."
+    log_info "Installing Kubernetes tools (Attempt ${i} of 5)."
     /usr/bin/sudo apt-get update
     DEBIAN_FRONTEND=noninteractive /usr/bin/sudo apt-get install -y kubelet=${kubeVersion} kubeadm=${kubeVersion} kubectl=${kubeVersion}
     /usr/bin/sudo apt-mark hold kubelet kubeadm kubectl
-    if [[ -n $(kubectl version) ]]; then
-      echo "Kubectl accessible after install. Looks good. Continuing."
+    if [[ -n $(which kubectl || true) ]]; then
+      log_info "Kubectl accessible after install. Looks good. Continuing."
       break
     else
       log_warn "Kubectl not accessible after install. Trying again."
@@ -644,12 +673,20 @@ if [[ "${kubeOrchestrator}" == "k8s" ]]; then
     fi
   done
 
+  # Check a final time to see if Kubectl exists, else exit wih non-zero status as the install failed
+  if [[ -z $(which kubectl || true) ]]; then
+      log_error "Kubectl not accessible after trying to install it 5 times. Exiting with non-zero return code."
+      exit 1
+  fi
+
   # Kubernetes master is reachable, join the node to cluster
   if [[ "${nodeRole}" == "kx-worker" ]]; then
     /usr/bin/sudo -H -i -u "${vmUser}" bash -c "ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} 'sudo kubeadm token create --print-join-command 2>/dev/null'" > ${installationWorkspace}/kubeJoin.sh
+    log_info "Created join script for joining Kubernetes cluster as kx-worker node -> ${installationWorkspace}/kubeJoin.sh"
   elif [[ "${nodeRole}" == "kx-main" ]]; then
     echo "k8sCertKey=\$(/usr/bin/sudo -H -i -u ${vmUser} bash -c \"ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} 'sudo kubeadm init phase upload-certs --upload-certs | tail -1'\")" > ${installationWorkspace}/kubeJoin.sh
     echo "$(/usr/bin/sudo -H -i -u ${vmUser} bash -c "ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} 'sudo kubeadm token create --print-join-command 2>/dev/null'") --control-plane --apiserver-advertise-address ${nodeIp} --certificate-key \${k8sCertKey} || true" >> ${installationWorkspace}/kubeJoin.sh
+    log_info "Created join script for joining Kubernetes cluster as kx-main node -> ${installationWorkspace}/kubeJoin.sh"
   fi
   /usr/bin/sudo chmod 755 ${installationWorkspace}/kubeJoin.sh
 
@@ -681,11 +718,11 @@ EOF
   # Keep trying to join Kubernetes cluster until successful
   while [[ ! -f /var/lib/kubelet/config.yaml ]]; do
     /usr/bin/sudo ${installationWorkspace}/kubeJoin.sh
-    echo "Waiting for kx-worker/kx-main to be connected successfully to main node"
+    log_info "Waiting for kx-worker/kx-main to be connected successfully to main node"
     sleep 30
   done
 
-  # Ensure Kubelet listenson correct IP. Especially important for VirtualBox with the additional NAT NIC
+  # Ensure Kubelet listens on correct IP. Especially important for VirtualBox with the additional NAT NIC
   /usr/bin/sudo sed -i '/^\[Service\]/a Environment="KUBELET_EXTRA_ARGS=--node-ip='${kxNodeIp}'"' /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
 
   # As --resolv.conf was deprecated, use new method to update resolv.conf
@@ -707,10 +744,10 @@ do
     jq '.items[].status.containerStatuses[] | select(.ready==true)'")
 
   if [[ -n ${calicoNodeReady} ]]; then
-    echo "Calico node pod is ready and running on this node"
+    log_info "Calico node pod is ready and running on this node"
     break
   else
-    echo "Calico node pod is not ready. Checking again in 15 seconds (try ${i} of 15)"
+    log_warn "Calico node pod is not ready. Checking again in 15 seconds (try ${i} of 15)"
     sleep 15
   fi
 
@@ -718,19 +755,19 @@ done
 
 # Final check on the status of Calico
 if [[ -n ${calicoNodeReady} ]]; then
-  echo "Calico node pod is ready and running on this node"
+  log_info "Calico node pod is ready and running on this node"
   if [[ -f /usr/share/kx.as.code/workspace/forced_reboot_flag ]]; then
     echo "$(date '+%Y-%m-%d_%H%M%S') Reboot done. Looks like that did the trick and we're in business" | sudo -a tee /usr/share/kx.as.code/workspace/forced_reboot_flag
   fi
 else
   if [[ ! -f /usr/share/kx.as.code/workspace/forced_reboot_flag ]]; then
-    echo "Calico node pod is not ready yet, even after 15 checks in 10 minutes. Going to try a reboot, after that it's time for some debugging"
-    echo "$(date '+%Y-%m-%d_%H%M%S') forced_restart_launched. If you see this file, then possibly the setup of calico failed on this node, resulting in 1 reboot to remove the block" | sudo tee /usr/share/kx.as.code/workspace/forced_reboot_flag
+    log_warn "Calico node pod is not ready yet, even after 15 checks in 10 minutes. Going to try a reboot, after that it's time for some debugging"
+    log_warn "$(date '+%Y-%m-%d_%H%M%S') forced_restart_launched. If you see this file, then possibly the setup of calico failed on this node, resulting in 1 reboot to remove the block" | sudo tee /usr/share/kx.as.code/workspace/forced_reboot_flag
     reboot
   else
-    echo "Calico node pod is not ready yet, even after 15 checks in 10 minutes. Already tried a reboot, it's time for some debugging"
-    echo "Disabled the \"k8s-register-node\" service, to avoid an infinite reboot loop. You can re-enable and launch it again once you have fixed the issue"
-    echo "$(date '+%Y-%m-%d_%H%M%S') Reboot did not resolve the issue. Further debugging needed" | sudo tee -a /usr/share/kx.as.code/workspace/forced_reboot_flag
+    log_error "Calico node pod is not ready yet, even after 15 checks in 10 minutes. Already tried a reboot, it's time for some debugging"
+    log_error "Disabled the \"k8s-register-node\" service, to avoid an infinite reboot loop. You can re-enable and launch it again once you have fixed the issue"
+    log_error "$(date '+%Y-%m-%d_%H%M%S') Reboot did not resolve the issue. Further debugging needed" | sudo tee -a /usr/share/kx.as.code/workspace/forced_reboot_flag
     /usr/bin/sudo systemctl disable k8s-register-node.service
     exit 1
   fi
@@ -759,7 +796,7 @@ if [[ "${nodeRole}" == "kx-main" ]]; then
   /usr/bin/sudo kubectl label nodes $(hostname) ingress-controller=true --overwrite=true
   # Check if NGINX ingress namespace exists yet before proceeding
   if [[ -n $(kubectl get namespace -o json | jq -r '.items[].metadata | select(.name=="nginx-ingress-controller") | .name') ]]; then
-    echo "Namespace nginx-ingress-controller exists. Checking if additional replica needs to be added"
+    log_info "Namespace nginx-ingress-controller exists. Checking if additional replica needs to be added"
     # Add an NGINX controller to the newly provisioned KX-Main node if not already running
     if [[ -z "$(/usr/bin/sudo kubectl -n nginx-ingress-controller get pod -o wide | grep $(hostname))" ]]; then
       replicaCount=$(/usr/bin/sudo kubectl get deploy -n nginx-ingress-controller -o json | jq -r '.items[].spec.replicas')
@@ -769,7 +806,7 @@ if [[ "${nodeRole}" == "kx-main" ]]; then
       fi
     fi
   else
-    echo "Namespace nginx-ingress-controller does not yet exist. Not adding replica. The install process on KX-Main1 will take care of it"
+    log_info "Namespace nginx-ingress-controller does not yet exist. Not adding replica. The install process on KX-Main1 will take care of it"
   fi
 fi
 
@@ -814,35 +851,10 @@ if ( [[ -n ${httpProxySetting} ]] || [[ -n ${httpsProxySetting} ]] ) && ( [[ "${
     fi
 fi
 
-# Create script to pull KX App Images from Main1
-set +o histexpand
-echo """#!/bin/bash -x
-set -euo pipefail
-
-. /etc/environment
-export vmUser=${vmUser}
-
-echo \"Attempting to download KX Apps from KX-Main\"
-/usr/bin/sudo -H -i -u "${vmUser}" bash -c 'scp -o StrictHostKeyChecking=no '${vmUser}'@'${kxMainIp}':'${installationWorkspace}'/docker-kx-*.tar '${installationWorkspace}'';
-
-if [ -f ${installationWorkspace}/docker-kx-docs.tar ]; then
-  docker load -i ${installationWorkspace}/docker-kx-docs.tar
-fi
-
-if [ -f ${installationWorkspace}/docker-kx-docs.tar ]; then
-  /usr/bin/sudo crontab -r
-fi
-""" | /usr/bin/sudo tee ${installationWorkspace}/scpKxTars.sh
-
-/usr/bin/sudo chmod 755 ${installationWorkspace}/scpKxTars.sh
-/usr/bin/sudo crontab -l | {
-    echo "* * * * * ${installationWorkspace}/scpKxTars.sh"
-} | /usr/bin/sudo crontab - || true
-
 # Set default keyboard language
 defaultUserKeyboardLanguage=$(jq -r '.config.defaultKeyboardLanguage' ${installationWorkspace}/profile-config.json)
 keyboardLanguages=""
-availableLanguages="us de gb fr it es"
+availableLanguages="us de gb fr it es in cn"
 for language in ${availableLanguages}; do
     if [[ -z ${keyboardLanguages} ]]; then
         keyboardLanguages="${language}"
@@ -868,13 +880,14 @@ XKBOPTIONS=""
 BACKSPACE=\"guess\"
 ''' | /usr/bin/sudo tee /etc/default/keyboard
 
-if [[ "${startupMode}" != "normal" ]]; then
+log_info "Keyboard language settings updated"
 
-  # Enable LDAP on worker node
-  export ldapDn="dc=kx-as-code,dc=local"
+# If ldapDn configured on kx-main1, set it up on node as well
+export ldapDn=$(/usr/bin/sudo -H -i -u "${vmUser}" bash -c "ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} \"/usr/bin/sudo slapcat | grep dn | head -1 | cut -f2 -d' ' || true\"")
+if [[ -n ${ldapDn} ]] && [[ "${ldapDn}" != "null" ]]; then
 
   # Get LdapDN from main node and setup base variables
-  ldapDnFull=$(/usr/bin/sudo -H -i -u "${vmUser}" bash -c "ssh -o StrictHostKeyChecking=no $vmUser@${kxMainIp} '/usr/bin/sudo slapcat | grep dn'")
+  ldapDnFull=$(/usr/bin/sudo -H -i -u "${vmUser}" bash -c "ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} '/usr/bin/sudo slapcat | grep dn'")
   ldapDnFirstPart=$(echo ${ldapDnFull} | head -1 | sed 's/dn: //g' | sed 's/dc=//g' | cut -f1 -d',')
   ldapDnSecondPart=$(echo ${ldapDnFull} | head -1 | sed 's/dn: //g' | sed 's/dc=//g' | cut -f2 -d',')
 
@@ -949,9 +962,9 @@ tls_cacertfile /etc/ssl/certs/ca-certificates.crt
 
   # Delete local user and replace with ldap user if added to LDAP correctly
   ldapUserExists=$(/usr/bin/sudo ldapsearch -x -b "uid=${vmUser},ou=Users,ou=People,${ldapDn}" | grep numEntries || true)
-  if [[ -n ${ldapUserExists} ]]; then
-      /usr/bin/sudo userdel ${vmUser}
-  fi
+  #if [[ -n ${ldapUserExists} ]]; then
+  #    /usr/bin/sudo userdel ${vmUser}
+  #fi
 
 fi
 
