@@ -94,6 +94,7 @@ echo -e "\nsource /etc/profile.d/nvm.sh" | sudo tee -a /home/${VM_USER}/.bashrc 
 # Create XDBUS file for receiving desktop notifications from the KX.AS.CODE framework
 echo '''#!/bin/bash
 if [[ -n ${DISPLAY} ]]; then
+  mkdir -p ${HOME}/.dbus
   touch ${HOME}/.dbus/Xdbus
   chmod 600 ${HOME}/.dbus/Xdbus
   declare -p DBUS_SESSION_BUS_ADDRESS | tee ${HOME}/.dbus/Xdbus
@@ -103,7 +104,6 @@ if [[ -n ${DISPLAY} ]]; then
 fi
 ''' | sudo tee /etc/profile.d/xdbus.sh
 echo -e "\nsource /etc/profile.d/xdbus.sh" | sudo tee -a /home/${VM_USER}/.bashrc /home/${VM_USER}/.zshrc /root/.bashrc /root/.zshrc
-
 
 # Hide Vagrant user from Login screen
 echo '''[Autologin]
