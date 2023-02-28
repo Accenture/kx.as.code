@@ -13,31 +13,31 @@ fi
 
 log_debug() {
     if [[ "${logLevel}" == "debug" ]]; then
-        >&2 echo "$(date '+%Y-%m-%d_%H%M%S') [DEBUG] ${1}"
+        >&2 echo "[DEBUG] ${1}"
     fi
 }
 
 log_error() {
     if [[ "${logLevel}" == "error" ]] || [[ "${logLevel}" == "debug" ]]; then
-        >&2 echo "$(date '+%Y-%m-%d_%H%M%S') [ERROR] ${1}"
+        >&2 echo "[ERROR] ${1}"
     fi
 }
 
 log_info() {
     if [[ "${logLevel}" == "info" ]] || [[ "${logLevel}" == "error" ]] || [[ "${logLevel}" == "warn" ]] || [[ "${logLevel}" == "debug" ]]; then
-        >&2 echo "$(date '+%Y-%m-%d_%H%M%S') [INFO] ${1}"
+        >&2 echo "[INFO] ${1}"
     fi
 }
 
 log_trace() {
     if [[ "${logLevel}" == "trace" ]]; then
-        >&2 echo "$(date '+%Y-%m-%d_%H%M%S') [TRACE] ${1}"
+        >&2 echo "[TRACE] ${1}"
     fi
 }
 
 log_warn() {
     if [[ "${logLevel}" == "error" ]] || [[ "${logLevel}" == "warn" ]] || [[ "${logLevel}" == "debug" ]]; then
-        >&2 echo "$(date '+%Y-%m-%d_%H%M%S') [WARN] ${1}"
+        >&2 echo "[WARN] ${1}"
     fi
 }
 
@@ -677,22 +677,29 @@ if [[ "${kubeOrchestrator}" == "k8s" ]]; then
     fi
   done
 
+  log_debug "Final check for kubectl"
+
   # Check a final time to see if Kubectl exists, else exit wih non-zero status as the install failed
-  if [[ -z $(which kubectl || true) ]]; then
+  if [[ -z $(which kubectl || rc=$? && log_error "Seems the final check for kubectl failed. RC=${rc}") ]]; then
       log_error "Kubectl not accessible after trying to install it 5 times. Exiting with non-zero return code."
       exit 1
   fi
 
+  log_debug "Final check for kubectl successful"
+
   # Kubernetes master is reachable, join the node to cluster
   if [[ "${nodeRole}" == "kx-worker" ]]; then
+	  log_debug "Creating join script for KX-Worker"
     /usr/bin/sudo -H -i -u "${vmUser}" bash -c "ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} 'sudo kubeadm token create --print-join-command 2>/dev/null'" > ${installationWorkspace}/kubeJoin.sh
     log_info "Created join script for joining Kubernetes cluster as kx-worker node -> ${installationWorkspace}/kubeJoin.sh"
   elif [[ "${nodeRole}" == "kx-main" ]]; then
+	  log_debug "Creating join script for KX-Main"
     echo "k8sCertKey=\$(/usr/bin/sudo -H -i -u ${vmUser} bash -c \"ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} 'sudo kubeadm init phase upload-certs --upload-certs | tail -1'\")" > ${installationWorkspace}/kubeJoin.sh
     echo "$(/usr/bin/sudo -H -i -u ${vmUser} bash -c "ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} 'sudo kubeadm token create --print-join-command 2>/dev/null'") --control-plane --apiserver-advertise-address ${nodeIp} --certificate-key \${k8sCertKey} || true" >> ${installationWorkspace}/kubeJoin.sh
     log_info "Created join script for joining Kubernetes cluster as kx-main node -> ${installationWorkspace}/kubeJoin.sh"
   fi
   /usr/bin/sudo chmod 755 ${installationWorkspace}/kubeJoin.sh
+
 
 cat <<EOF | /usr/bin/sudo tee /etc/modules-load.d/k8s.conf
 overlay
@@ -710,14 +717,18 @@ net.bridge.bridge-nf-call-ip6tables = 1
 EOF
         /usr/bin/sudo sysctl --system
 
+  log_debug "Starting containerd"
+
   # As Kubernetes 1.24 no longer used Docker, need to install containerd
   # Not using containderd package from Debian, as it is only at v1.4.13
-  # Using containerd.io from Docker repository instead, which includes containerd v1.6.6   
+  # Using containerd.io from Docker repository instead, which includes containerd v1.6.6
   # See https://containerd.io/releases/ for details on matching containerd versions with versions of Kubernetes
   /usr/bin/sudo apt-get install -y containerd.io
   /usr/bin/sudo containerd config default | /usr/bin/sudo tee /etc/containerd/config.toml
   /usr/bin/sudo sed -i 's/SystemdCgroup = false/SystemdCgroup = true/g' /etc/containerd/config.toml
   /usr/bin/sudo systemctl restart containerd
+
+  log_debug "Executing kubeJoin.sh script"
 
   # Keep trying to join Kubernetes cluster until successful
   while [[ ! -f /var/lib/kubelet/config.yaml ]]; do
@@ -735,6 +746,8 @@ EOF
   # Restart Kubelet
   /usr/bin/sudo systemctl daemon-reload
   /usr/bin/sudo systemctl restart kubelet
+
+  log_debug "Successfully restarted Kubelet"
 
 calicoNodeReady=""
 
