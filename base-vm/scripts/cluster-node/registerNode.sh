@@ -6,6 +6,10 @@ set -euo pipefail
 export kxHomeDir=/usr/share/kx.as.code
 export sharedGitRepositories=${kxHomeDir}/git
 export installationWorkspace=${kxHomeDir}/workspace
+export logLevel=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.logLevel')
+if [[ -z ${logLevel} ]] || [[ "${logLevel}" == "null" ]]; then
+  export logLevel="info"
+fi
 
 log_debug() {
     if [[ "${logLevel}" == "debug" ]]; then
