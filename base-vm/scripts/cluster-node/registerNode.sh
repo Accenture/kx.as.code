@@ -1,5 +1,4 @@
 #!/bin/bash
-set -euo pipefail
 
 . /etc/environment
 
@@ -670,6 +669,7 @@ if [[ "${kubeOrchestrator}" == "k8s" ]]; then
     /usr/bin/sudo apt-mark hold kubelet kubeadm kubectl
     if [[ -n $(which kubectl || true) ]]; then
       log_info "Kubectl accessible after install. Looks good. Continuing."
+      break
     else
       log_warn "Kubectl not accessible after install. Trying again."
       sleep 15
