@@ -653,6 +653,12 @@ export kubeOrchestrator=$(cat ${installationWorkspace}/profile-config.json | jq 
 
 if [[ "${kubeOrchestrator}" == "k8s" ]]; then
 
+  # Wait for Kubernetes to be available
+  while [[ "$(curl -k -s https://${kxMainIp}:6443/livez)" != "ok" ]]; do
+    echo "Waiting for https://${kxMainIp}:6443/livez"
+    sleep 15
+  done
+
   # Download and install latest Kubectl and kubeadm binaries
   apt-get update
   DEBIAN_FRONTEND=noninteractive /usr/bin/sudo apt-get install -y apt-transport-https
@@ -689,15 +695,26 @@ if [[ "${kubeOrchestrator}" == "k8s" ]]; then
   # Kubernetes master is reachable, join the node to cluster
   if [[ "${nodeRole}" == "kx-worker" ]]; then
 	  log_debug "Creating join script for KX-Worker"
+    log_debug "Creating kubeJoin.sh script --> /usr/bin/sudo -H -i -u \"${vmUser}\" bash -c \"ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} 'sudo kubeadm token create --print-join-command'\""
     /usr/bin/sudo -H -i -u "${vmUser}" bash -c "ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} 'sudo kubeadm token create --print-join-command 2>/dev/null'" > ${installationWorkspace}/kubeJoin.sh
     log_info "Created join script for joining Kubernetes cluster as kx-worker node -> ${installationWorkspace}/kubeJoin.sh"
   elif [[ "${nodeRole}" == "kx-main" ]]; then
 	  log_debug "Creating join script for KX-Main"
+	  log_debug "k8sCertKey=\$(/usr/bin/sudo -H -i -u ${vmUser} bash -c \"ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} 'sudo kubeadm init phase upload-certs --upload-certs | tail -1'\")"
     echo "k8sCertKey=\$(/usr/bin/sudo -H -i -u ${vmUser} bash -c \"ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} 'sudo kubeadm init phase upload-certs --upload-certs | tail -1'\")" > ${installationWorkspace}/kubeJoin.sh
+    log_debug "Creating kubeJoin.sh script -->  \"echo \$(/usr/bin/sudo -H -i -u ${vmUser} bash -c \"ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} 'sudo kubeadm token create --print-join-command 2>/dev/null'\") --control-plane --apiserver-advertise-address ${nodeIp} --certificate-key \${k8sCertKey}\""
     echo "$(/usr/bin/sudo -H -i -u ${vmUser} bash -c "ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} 'sudo kubeadm token create --print-join-command 2>/dev/null'") --control-plane --apiserver-advertise-address ${nodeIp} --certificate-key \${k8sCertKey} || true" >> ${installationWorkspace}/kubeJoin.sh
     log_info "Created join script for joining Kubernetes cluster as kx-main node -> ${installationWorkspace}/kubeJoin.sh"
   fi
   /usr/bin/sudo chmod 755 ${installationWorkspace}/kubeJoin.sh
+
+  # Kubernetes master is reachable, join the node to cluster
+  if [[ "${nodeRole}" == "kx-worker" ]]; then
+    /usr/bin/sudo -H -i -u "${vmUser}" bash -c "ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} 'sudo kubeadm token create --print-join-command 2>/dev/null'" > ${installationWorkspace}/kubeJoin.sh
+  elif [[ "${nodeRole}" == "kx-main" ]]; then
+    echo "k8sCertKey=\$(/usr/bin/sudo -H -i -u ${vmUser} bash -c \"ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} 'sudo kubeadm init phase upload-certs --upload-certs | tail -1'\")" > ${installationWorkspace}/kubeJoin.sh
+    echo "$(/usr/bin/sudo -H -i -u ${vmUser} bash -c "ssh -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp} 'sudo kubeadm token create --print-join-command 2>/dev/null'") --control-plane --apiserver-advertise-address ${nodeIp} --certificate-key \${k8sCertKey} || true" >> ${installationWorkspace}/kubeJoin.sh
+  fi
 
 
 cat <<EOF | /usr/bin/sudo tee /etc/modules-load.d/k8s.conf
@@ -788,7 +805,6 @@ else
     exit 1
   fi
 fi
-
 
 elif [[ "${kubeOrchestrator}" == "k3s" ]]; then
 
