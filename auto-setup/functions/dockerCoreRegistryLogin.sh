@@ -6,7 +6,7 @@ loginToCoreRegistry() {
   # Get password
   export defaultRegistryUserPassword=$(managedApiKey "docker-registry-${baseUser}-password" "docker-registry")
 
-  # Log into the Docker regitry, trying a maximum of ten times before giving up
+  # Log into the Docker registry, trying a maximum of ten times before giving up
   local i
   for i in {1..10}
   do
