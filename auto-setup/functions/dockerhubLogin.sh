@@ -22,14 +22,14 @@ dockerhubLogin() {
         sleep 10
       fi
     done
-  fi
 
-  # Confirm login credentials are accessible
-  if [[ "$(cat /root/.docker/config.json | jq -r '.auths | has("https://index.docker.io/v1/")')" == "true" ]]; then
-    log_debug "Dockerhub login successfully registzered in Docker config file"
-  else
-    log_error "Could not find the attempted Dockerhub login in the Docker config file. Login must have failed"
-    exit 1
+    # Confirm login credentials are accessible
+    if [[ "$(cat /root/.docker/config.json | jq -r '.auths | has("https://index.docker.io/v1/")')" == "true" ]]; then
+      log_debug "Dockerhub login successfully registered in Docker config file"
+    else
+      log_warn "Could not find the attempted Dockerhub login in the Docker config file. Login must have failed"
+    fi
+
   fi
 
   # Call common function to execute common function start commands, such as unsetting verbose output etc
