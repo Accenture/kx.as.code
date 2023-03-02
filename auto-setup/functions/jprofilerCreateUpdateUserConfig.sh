@@ -22,10 +22,10 @@ jprofilerCreateUpdateUserConfig() {
         local kubeNameSpaceOption="-n ${kubeNamespace}"
     fi
 
-    # Create XML Header for JProfiler General Config
+    # Create XML for JProfiler General Config
     local jProfilerXmlConfigHeader='<?xml version="1.0" encoding="UTF-8"?>
     <config version="'${jProfilerVersion}'">
-    <licenseKey name="Evaluation" company="" authenticationFilePath="" key="E-J13-AUTO#1862670-2023.02.28-10-yu48xrpyv8xugb#3bb7b" />
+    <licenseKey name="Evaluation" company="" authenticationFilePath="" key="" />
     <generalSettings setupHasRun="true">
         <jvmConfigurations defaultId="100">
         <jvmConfiguration name="Debian JRE '${systemJavaVrsion}'" id="100" javaHome="/usr/lib/jvm/default-java" version="'${systemJavaVrsion}'" vendor="Debian" arch="amd64" isJRE="true" />
@@ -38,7 +38,8 @@ jprofilerCreateUpdateUserConfig() {
             <actionKey id="cpu" />
         </recordingProfile>
         </recordingProfiles>
-    </generalSettings>'
+    </generalSettings>
+    <sessions>'
 
     # Create sessions
     local numberOfConfiguredSessions=0
@@ -56,13 +57,14 @@ jprofilerCreateUpdateUserConfig() {
                 <group type="exclusive" name="Default excludes" template="defaultExcludes" />
             </filters>
             </session>'
-            jProfilerXmlConfigSessions="<sessions>${jProfilerXmlConfigSessions}${jProfilerXmlConfigSession}</sessions>"
+            jProfilerXmlConfigSessions="${jProfilerXmlConfigSessions}${jProfilerXmlConfigSession}"
         done
     done
 
-    # Create XML Header for JProfiler Footer Config
+    # Create XML for JProfiler Footer Config
     ((sessionId++))
-    local jProfilerXmlConfigFooter='  <nextId id="'${sessionId}'" />
+    local jProfilerXmlConfigFooter='  </sessions>
+      <nextId id="'${sessionId}'" />
     </config>'
 
     # Back up old config if it exists
