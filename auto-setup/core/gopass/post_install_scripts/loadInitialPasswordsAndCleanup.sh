@@ -14,10 +14,11 @@ while IFS='' read -r credential || [[ -n "$credential" ]]; do
     secret=$(echo ${credential} | cut -f 2 -d':')
     if [[ "${secret}" != '""' ]] && [[ "${secret}" != "" ]]; then
            decryptedSecret=$(echo "${secret}" | openssl enc -aes-256-cbc -pbkdf2 -salt -A -a -pass pass:${hash} -d)
+           cleanedSecret=$(cleanOutput "${decryptedSecret}")
     else
            decryptedSecret=""
     fi
-    pushPassword "${name}" "${decryptedSecret}" "base-user-${baseUser}"
+    pushPassword "${name}" "${cleanedSecret}" "base-user-${baseUser}"
 done < "${sharedKxHome}/.config/.vmCredentialsFile"
 
 # Cleanup files

@@ -118,9 +118,6 @@ createRabbitMQWorkflowBindings
 populateActionQueuesJson
 populateActionQueuesRabbitMq
 
-# Ensure user is logged in to Dockerhub if credentials provided
-dockerhubCreateDefaultRegcred
-
 # Set tries to 0. If an install failed and the retry flag is set to true for that component in metadata.json, attempts will be made to retry up to 3 times
 retries=0
 logRc=0
