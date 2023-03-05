@@ -506,7 +506,7 @@ fi
 export path_to_git_executable="git"
 export path_to_sh_executable="sh"
 
-initialSetupJobConfgXmlFiles=$(find jenkins_home -not \( -path jenkins_home/plugins -prune \) -not \( -path jenkins_home/war -prune \) -name "*.xml")
+initialSetupJobConfgXmlFiles=$(find jenkins_home -not \( -path jenkins_home/plugins -prune \) -not \( -path jenkins_home/war -prune \) -not \( -path jenkins_home/fingerprints -prune \) -name "*.xml" -maxdepth 5)
 for initialSetupJobConfgXmlFile in ${initialSetupJobConfgXmlFiles}; do
   log_info "Replacing placeholders with values in ${initialSetupJobConfgXmlFile}"
   for i in {1..5}; do
