@@ -392,7 +392,6 @@ Foreach ($line in (Get-Content -Path "jenkins.env" | Where-Object {$_ -notmatch 
 # Add OpenSSL binary to PATH if provided in jenkins.env
 if ( $openssl_path -ne "" ) {
     $env:Path += ";$openssl_path"
-    Write-Output $PATH
 }
 
 checkVersions $scriptParam
