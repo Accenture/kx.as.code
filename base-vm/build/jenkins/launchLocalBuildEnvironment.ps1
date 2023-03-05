@@ -397,6 +397,11 @@ if ( $openssl_path -ne "" ) {
 
 checkVersions $scriptParam
 
+# Download curl.exe if not installed. Installed as standard on Windows 10 & 11
+if ( ! (which curl.exe)) {
+    Invoke-WebRequest $curlDownloadUrl -OutFile .\curl.exe
+}
+
 $downloadAndInstallPortableGit = $null
 
 if ( ( Test-Path -Path "$PSScriptRoot\git\bin\git.exe" ) -And ( Test-Path -Path "$PSScriptRoot\git\usr\bin\nohup.exe" ) -And ( Test-Path -Path "C:\Program Files\git\usr\bin\msys-2.0.dll" ) )
@@ -467,7 +472,7 @@ if ($downloadAndInstallPortableGit)
     else
     {
         Log_Debug "Proceeding to download and unpack portable Git ->  $gitDownloadUrl"
-        Invoke-WebRequest $gitDownloadUrl -OutFile .\portable-git-archive.exe
+        curl.exe -L --progress-bar $gitDownloadUrl -o .\portable-git-archive.exe
         .\portable-git-archive.exe -o .\git -y
         $path_to_git_executable = "$PSScriptRoot\git\bin\git.exe"
         $path_to_sh_executable = "$PSScriptRoot\git\bin\sh.exe"
@@ -520,7 +525,7 @@ $minimalJqVersion = "1.5"
 
 function Download-Tool {
     param ([string]$downloadUrl, [string]$webOutput)
-    Invoke-WebRequest $downloadUrl -OutFile $webOutput
+    curl.exe -L --progress-bar $downloadUrl -o $webOutput
     If(!(test-path $webOutput)) {
         Log_Error "Download of $webOutput. Check your internet and try again"
         Exit
@@ -566,7 +571,7 @@ if ( ! $javaBinary ) {
     if (!(Get-Command java.exe -ErrorAction SilentlyContinue)) {
         Log_Info "Java not found. Downloading and installing to current directory under ./java"
         $webOutput = "amazon-corretto-windows-x64.zip"
-        Invoke-WebRequest $javaInstallerUrl -OutFile .\$webOutput
+        curl.exe -L --progress-bar $javaInstallerUrl -o .\$webOutput
         Log_Info "Executing... Expand-Archive -LiteralPath .\$webOutput .\java"
         Expand-Archive -LiteralPath .\$webOutput .\java
         $javaBinary = Get-ChildItem .\java -recurse -include "java.exe"
@@ -579,11 +584,6 @@ if ( ! $javaBinary ) {
         Log_Debug "Java binary: $javaBinary"
         & $javaBinary -version
     }
-}
-
-# Download curl.exe if not installed. Installed as standard on Windows 10 & 11
-if ( ! (which curl.exe)) {
-    Invoke-WebRequest $curlDownloadUrl -OutFile .\curl.exe
 }
 
 # Create shared workspace directory for Vagrant and Terraform jobs
@@ -636,7 +636,7 @@ if ( ! ( Test-Path -Path $shared_workspace_directory_path ) )
 if (!(test-path .\jenkins.war)) {
     # Download Jenkins WAR file
     Log_Info "Downloading Jenkins WAR file..."
-    Invoke-WebRequest $jenkinsWarFileUrl -OutFile jenkins.war
+    curl.exe -L --progress-bar $jenkinsWarFileUrl -o jenkins.war
 }
 
 # Bypass Jenkins setup wizard
@@ -690,7 +690,7 @@ if (!(test-path .\jenkins-plugin-manager.jar)) {
     # Install Jenkins Plugins
     $jenkinsPluginManagerVersion = "2.12.8"
     Log_Indo "Downloading Jenkins Plugin Manager..."
-    Invoke-WebRequest -Uri https://github.com/jenkinsci/plugin-installation-manager-tool/releases/download/$jenkinsPluginManagerVersion/jenkins-plugin-manager-$jenkinsPluginManagerVersion.jar -OutFile .\jenkins-plugin-manager.jar
+    curl.exe -L --progress-bar https://github.com/jenkinsci/plugin-installation-manager-tool/releases/download/$jenkinsPluginManagerVersion/jenkins-plugin-manager-$jenkinsPluginManagerVersion.jar -o .\jenkins-plugin-manager.jar
 }
 
 # Download plugins if not yet installed
@@ -738,7 +738,7 @@ do
 }while($webRequest -ne "200")
 
 # Download Jenkins CLI from started Jenkins
-Invoke-WebRequest -Uri $jenkinsUrl/jnlpJars/jenkins-cli.jar -OutFile .\jenkins-cli.jar
+curl.exe -L --progress-bar $jenkinsUrl/jnlpJars/jenkins-cli.jar -o .\jenkins-cli.jar
 
 # Create salt for encryption
 $credentials_salt = openssl rand -base64 12
