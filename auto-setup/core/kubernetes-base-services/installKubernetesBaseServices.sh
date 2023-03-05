@@ -113,8 +113,5 @@ kubectl get --raw="/readyz?verbose"
 # List running Kubernetes services
 kubectl get all --all-namespaces
 
-# Install Secret if Credentials Exist
-if [[ -n ${dockerHubUsername} ]] && [[ -n ${dockerHubPassword} ]] && [[ -n ${dockerHubEmail} ]]; then
-    kubectl create secret docker-registry regcred --docker-server=https://index.docker.io/v1/ --docker-username=${dockerHubUsername} --docker-password=${dockerHubPassword} --docker-email=${dockerHubEmail}
-    #rm -f /var/tmp/.tmp.json
-fi
+# Ensure user is logged in to Dockerhub if credentials provided
+dockerhubCreateDefaultRegcred

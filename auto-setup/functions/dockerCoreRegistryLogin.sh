@@ -6,9 +6,9 @@ loginToCoreRegistry() {
   # Get password
   export defaultRegistryUserPassword=$(managedApiKey "docker-registry-${baseUser}-password" "docker-registry")
 
-  # Log into the Docker regitry, trying a maximum of ten times before giving up
+  # Log into the Docker registry, trying a maximum of ten times before giving up
   local i
-  for i in {1..10}
+  for i in {1..100}
   do
     echo ${defaultRegistryUserPassword} | docker login -u ${baseUser} https://docker-registry.${baseDomain} --password-stdin || local rc=$?
     if [[ ${rc} -eq 0 ]]; then
@@ -20,6 +20,14 @@ loginToCoreRegistry() {
       sleep 10
     fi
   done
+
+  # Confirm login credentials are accessible
+  if [[ "$(cat /root/.docker/config.json | jq -r '.auths | has("docker-registry.'${baseDomain}'")')" == "true" ]]; then
+    log_debug "Core docker registry login successfully registzered in Docker config file"
+  else
+    log_error "Could not find the attempted core docker registry login in the Docker config file. Login must have failed"
+    exit 1
+  fi
 
   # Call common function to execute common function start commands, such as unsetting verbose output etc
   functionEnd
