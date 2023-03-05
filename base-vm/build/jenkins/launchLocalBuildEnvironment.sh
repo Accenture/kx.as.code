@@ -167,6 +167,7 @@ checkVersions()  {
 
   if [[ "${checkErrors}" -gt 0 ]]; then
     log_error "There were errors during dependency checks. Please resolve these issues and relaunch the script."
+    exit 1
   elif [[ "${checkWarnings}" -gt 0 ]] && [[ "${1}" != "-i" ]]; then
     log_warn "There was/were ${checkWarnings} warning(s) during the dependency version checks. You can choose to ignore these by starting the script with the -i option."
     log_warn "Be aware that old versions of dependencies may result in the solution not working correctly."
@@ -276,7 +277,7 @@ while getopts :dhrsfui opt; do
     ;;
   h)
     echo -e """The $0 script has the following options:
-            -i  [i]gnore warnings and start the launcher anyway, knowing that this may cause issues and result in the solution not running as expected
+            -i  [i]gnore warnings and start the launcher anyway, knowing that this may cause issues
             -d  [d]estroy and rebuild Jenkins environment. All history is also deleted
             -f  [f]ully destroy and rebuild, including ALL built images and ALL KX.AS.CODE virtual machines!
             -h  [h]elp me and show this help text
@@ -502,6 +503,11 @@ if [[ ! -f ./mo ]]; then
   curl -sSL https://git.io/get-mo -o mo
   chmod +x ./mo
 fi
+
+# Setting default values. Created for Windows ps1 script, but still needs to be populated here.
+path_to_git_executable="git"
+path_to_sh_executable="sh"
+
 initialSetupJobConfgXmlFiles=$(find jenkins_home/jobs -name "config.xml")
 for initialSetupJobConfgXmlFile in ${initialSetupJobConfgXmlFiles}; do
   log_info "Replacing placeholders with values in ${initialSetupJobConfgXmlFile}"
