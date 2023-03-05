@@ -212,11 +212,6 @@ log_warn() {
 override_action=""
 error=""
 
-# Set shared workspace directory for Vagrant and Terraform jobs
-shared_workspace_base_directory_path="$(pwd)/jenkins_shared_workspace"
-git_root_path=$(git rev-parse --show-toplevel)
-export shared_workspace_directory_path="${shared_workspace_base_directory_path}/$(basename ${git_root_path})"
-
 # Source the user configured env file before creating the KX.AS.CODE Jenkins environment
 if [ ! -f ./jenkins.env ]; then
   log_error "Please create the jenkins.env file in the base-vm/build/jenkins folder by copying the template (jenkins.env.template --> jenkins.env), and adding the details"
@@ -230,9 +225,6 @@ else
   sed -i 's/ = /=/g' ./jenkins.env
 fi
 
-# Source variables in jenkins.env file
-. ./jenkins.env
-
 # Check the correct number of parameters have been passed
 if [[ $# -gt 1 ]]; then
   log_error "You must provide one parameter only\n"
@@ -242,6 +234,12 @@ fi
 
 # Settings that will be used for provisioning Jenkins, including credentials etc
 source ./jenkins.env
+
+# Set shared workspace directory for Vagrant and Terraform jobs
+shared_workspace_base_directory_path="$(pwd)/$(basename ${jenkins_shared_workspace})"
+git_root_path=$(git rev-parse --show-toplevel)
+export shared_workspace_directory_path="${shared_workspace_base_directory_path}/$(basename ${git_root_path})"
+
 
 # Add OpenSSL binary to PATH if provided in jenkins.env
 if [[ -n ${openssl_path} ]]; then
@@ -377,7 +375,7 @@ jqBinaryLocal=$(find ./ -type f \( -name "jq" -or -name "jq.exe" \))
 jqBinary=${jqBinaryWhich:-${jqBinaryLocal}}
 if [[ -z ${jqBinary} ]]; then
   log_info "jq is not installed or not reachable. Downloading from https://github.com/stedolan/jq/releases/download/${nc}"
-  curl -L -s -o ./jq ${jqInstallerUrl}
+  curl -# -L -s -o ./jq ${jqInstallerUrl}
   chmod 755 ./jq
   if [[ $os == "windows" ]]; then
     mv ./jq ./jq.exe
@@ -408,7 +406,7 @@ if [[ -z ${javaBinary} ]]; then
     base=${javaInstallerUrl%.*}
     ext=${javaInstallerUrl#$base.}
     if [[ ${ext} == "gz" ]]; then
-      curl -s -o amazon-corretto-11-x64-linux-jdk.tar.gz -L ${javaInstallerUrl}
+      curl -# -o amazon-corretto-11-x64-linux-jdk.tar.gz -L ${javaInstallerUrl}
       tar tzf amazon-corretto-11-x64-linux-jdk.tar.gz >/dev/null
       if [[ $? -ne 0 ]]; then
         log_error "The downloaded Java compressed tar.gz file does not seem to be valid. Please check your internet connection and try again${nc}"
@@ -448,7 +446,7 @@ fi
 jenkins_home=${jenkins_home_absolute_path}
 log_info "Setting jenkins_home to ${jenkins_home_absolute_path}"
 
-# Copy Initial Setuop files to Jenkins Home
+# Copy Initial Setup files to Jenkins Home
 cp -rf ./initial-setup/ ./jenkins_home
 
 # Download and update Jenkins WAR file with needed plugins
@@ -457,7 +455,7 @@ jenkinsWarFileUrl="https://get.jenkins.io/war-stable/${jenkinsDownloadVersion}/j
 if [ ! -f ./jenkins.war ]; then
   # Download Jenkins WAR file
   log_info "Downloading Jenkins WAR file..."
-  curl -s -L -o jenkins.war ${jenkinsWarFileUrl}
+  curl -# -L -o jenkins.war ${jenkinsWarFileUrl}
 fi
 
 # Check if plugin manager already downloaded or not
@@ -466,7 +464,7 @@ if [ ! -f ./jenkins-plugin-manager.jar ]; then
   jenkinsPluginManagerVersion="2.12.8"
   log_info "Downloading Jenkins Plugin Manager..."
   log_debug "curl -s -L -o ./jenkins-plugin-manager.jar https://github.com/jenkinsci/plugin-installation-manager-tool/releases/download/${jenkinsPluginManagerVersion}/jenkins-plugin-manager-${jenkinsPluginManagerVersion}.jar"
-  curl -s -L -o ./jenkins-plugin-manager.jar https://github.com/jenkinsci/plugin-installation-manager-tool/releases/download/${jenkinsPluginManagerVersion}/jenkins-plugin-manager-${jenkinsPluginManagerVersion}.jar
+  curl -# -L -o ./jenkins-plugin-manager.jar https://github.com/jenkinsci/plugin-installation-manager-tool/releases/download/${jenkinsPluginManagerVersion}/jenkins-plugin-manager-${jenkinsPluginManagerVersion}.jar
 fi
 
 # Download plugins if not yet installed
@@ -500,15 +498,15 @@ OLD_IFS=${IFS}
 IFS=$'\n'
 # Download tool for replacing mustache variables
 if [[ ! -f ./mo ]]; then
-  curl -sSL https://git.io/get-mo -o mo
+  curl -# -SL https://git.io/get-mo -o mo
   chmod +x ./mo
 fi
 
 # Setting default values. Created for Windows ps1 script, but still needs to be populated here.
-path_to_git_executable="git"
-path_to_sh_executable="sh"
+export path_to_git_executable="git"
+export path_to_sh_executable="sh"
 
-initialSetupJobConfgXmlFiles=$(find jenkins_home/jobs -name "config.xml")
+initialSetupJobConfgXmlFiles=$(find jenkins_home -not \( -path jenkins_home/plugins -prune \) -not \( -path jenkins_home/war -prune \) -name "*.xml")
 for initialSetupJobConfgXmlFile in ${initialSetupJobConfgXmlFiles}; do
   log_info "Replacing placeholders with values in ${initialSetupJobConfgXmlFile}"
   for i in {1..5}; do
@@ -530,23 +528,28 @@ for initialSetupJobConfgXmlFile in ${initialSetupJobConfgXmlFiles}; do
       cp "${initialSetupJobConfgXmlFile}_tmp" "${initialSetupJobConfgXmlFile}"
       break
     else
-      log_error "Target config.xml file was empty after mustach replacement. Trying again${nc}"
+      log_error "Target ${initialSetupJobConfgXmlFile} file was empty after mustach replacement. Trying again${nc}"
     fi
   done
 done
 IFS=${OLD_IFS}
 
-# Replace variables in main config xml file
-for i in {1..5}; do
-  log_info "Replacing placeholders with values in ${jenkins_home}/config.xml"
-  cat "${jenkins_home}/config.xml" | ./mo >"${jenkins_home}/config.xml_tmp"
-  if [ -s "${jenkins_home}/config.xml_tmp" ]; then
-    mv "${jenkins_home}/config.xml_tmp" "${jenkins_home}/config.xml"
-    break
-  else
-    log_error "Target jenkins_home/config.xml file was empty after mustach replacement. Trying again${nc}"
-  fi
-done
+## Replace variables in main config xml files
+#jenkinsHomeConfgXmlFiles=$(find ${jenkins_home} -name "*.xml" -maxdepth 1)
+#log_debug "Discovered config files: ${jenkinsHomeConfgXmlFiles}"
+#for configFile in ${jenkinsHomeConfgXmlFiles}
+#do
+#  for i in {1..5}; do
+#    log_info "Replacing placeholders with values in ${configFile}"
+#    cat "${configFile}" | ./mo >"${configFile}_tmp"
+#    if [ -s "${configFile}_tmp" ]; then
+#      mv "${configFile}_tmp" "${configFile}"
+#      break
+#    else
+#      log_error "Target ${configFile} file was empty after mustach replacement. Trying again${nc}"
+#    fi
+#  done
+#done
 
 # Set jenkins_home and start Jenkins
 # Start manually for debugging with Start-Process -FilePath .\java\jdk11.0.3_7\bin\java.exe -ArgumentList "-jar", ".\jenkins.war", "--httpListenAddress=127.0.0.1", "--httpPort=8081"
@@ -564,7 +567,7 @@ while [[ ! -f ./jenkins-cli.jar ]]; do
   for i in {1..60}; do
     http_code=$(curl -s -o /dev/null -L -w '%{http_code}' ${jenkins_url}/jnlpJars/jenkins-cli.jar || true)
     if [[ ${http_code} == "200" ]]; then
-      curl -s ${jenkins_url}/jnlpJars/jenkins-cli.jar -o jenkins-cli.jar
+      curl -# ${jenkins_url}/jnlpJars/jenkins-cli.jar -o jenkins-cli.jar
       break 2
     fi
     log_info "Waiting for ${jenkins_url}/jnlpJars/jenkins-cli.jar [RC=${http_code}]${nc}"
