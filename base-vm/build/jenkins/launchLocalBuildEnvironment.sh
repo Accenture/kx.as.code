@@ -3,7 +3,7 @@
 # Cleanup for debugging
 #ps -ef | grep jenkins.war | grep -v grep | awk {'print $2'} | xargs kill -9 && rm -rf ./jenkins_home
 
-logLevel="debug"
+logLevel="info"
 
 # Check if underlying system is Mac or Linux
 system=$(uname)
