@@ -3,7 +3,7 @@
 # Cleanup for debugging
 #ps -ef | grep jenkins.war | grep -v grep | awk {'print $2'} | xargs kill -9 && rm -rf ./jenkins_home
 
-logLevel="info"
+logLevel="debug"
 
 # Check if underlying system is Mac or Linux
 system=$(uname)
@@ -26,7 +26,7 @@ if [[ "${system}" == "Darwin" ]]; then
   opensslVersionRequired="3.0.5"
 elif [[ "${system}" == "Linux" ]]; then
 # Linux
-  vmWareDiskUtilityPath="usr/bin/vmware-vdiskmanager"
+  vmWareDiskUtilityPath="/usr/bin/vmware-vdiskmanager"
   virtualboxCliPath="/usr/bin/vboxmanage"
   vmwareCliPath="/usr/bin/vmrun"
   opensslVersionRequired="1.1.1"
@@ -53,8 +53,8 @@ checkExecutableExists() {
 
   if [[ ! -f ${executablePath} ]]; then
     log_"${warnOrErrorIfNotExist}" "Executable ${executableToCheck} does not exist at the given path."
-    ((checkErrors++))
     if [[ "${warnOrErrorIfNotExist}" == "error" ]]; then
+     ((checkErrors++))
       return 1
     else
       return 2
@@ -79,7 +79,7 @@ checkVMWareVersion() {
   checkResponse=$?
   log_debug "checkResponse: ${checkResponse}"
   if [[ "${checkResponse}" -eq 0 ]]; then
-    installedVmwareVersion=$("${vmwareCliPath}" | grep version | grep -E -o "(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)")
+    installedVmwareVersion=$("${vmwareCliPath}" | grep version | grep -E -o "([0-9]{1,}\.)+[0-9]{1,}")
     versionCompare "${installedVmwareVersion}" "${vmwareRequiredVersion}" "VMWare"
     ((availableVirtualizationPlatforms++))
   fi
@@ -152,12 +152,16 @@ checkVersions()  {
 
   log_info "Launching version checks..."
   checkVMWareVersion
+  log_debug "checkErrors 1: ${checkErrors}"
   checkVirtualBoxVersion
   if [[ "${system}" == "Darwin" ]]; then
     checkParallelsVersion
   fi
+  log_debug "checkErrors 2: ${checkErrors}"
   checkVagrantVersion
+  log_debug "checkErrors 3: ${checkErrors}"
   checkOpenSSLVersion
+  log_debug "checkErrors 4: ${checkErrors}"
   log_debug "Errors: ${checkErrors}"
   log_debug "Warnings: ${checkWarnings}"
   log_debug "Available Virtualization Platforms: ${availableVirtualizationPlatforms}"
@@ -335,10 +339,6 @@ fi
 # Script is set to start launch environment. Proceeding with checks.
 checkVersions "${1}"
 
-# Update Jenkins userContent file
-mkdir -p jenkins_home/userContent/
-cp -rf ./initial-setup/userContent/. jenkins_home/userContent/
-
 # Versions that will be downloaded if already installed binaries not found
 javaDownloadVersion=11.0.3.7.1
 jqDownloadVersion=1.6
@@ -373,6 +373,7 @@ log_debug "Set jq download link to: ${jqInstallerUrl}"
 jqBinaryWhich=$(which jq | sed 's;jq not found;;g')
 jqBinaryLocal=$(find ./ -type f \( -name "jq" -or -name "jq.exe" \))
 jqBinary=${jqBinaryWhich:-${jqBinaryLocal}}
+
 if [[ -z ${jqBinary} ]]; then
   log_info "jq is not installed or not reachable. Downloading from https://github.com/stedolan/jq/releases/download/${nc}"
   curl -# -L -s -o ./jq ${jqInstallerUrl}
@@ -449,6 +450,10 @@ log_info "Setting jenkins_home to ${jenkins_home_absolute_path}"
 # Copy Initial Setup files to Jenkins Home
 cp -rf ./initial-setup/ ./jenkins_home
 
+# Update Jenkins userContent file
+mkdir -p jenkins_home/userContent/
+cp -rf ./initial-setup/userContent/. jenkins_home/userContent/
+
 # Download and update Jenkins WAR file with needed plugins
 jenkinsDownloadVersion="2.332.2"
 jenkinsWarFileUrl="https://get.jenkins.io/war-stable/${jenkinsDownloadVersion}/jenkins.war"
@@ -474,8 +479,23 @@ if [ -z "${availablePlugins}" ]; then
   #jenkinsDeliveryPipelinePluginVersion="1.4.2"
   #echo "${javaBinary} -jar ./jenkins-plugin-manager.jar --war ./jenkins.war --plugin-download-directory ${jenkins_home}/plugins --plugin-file ./initial-setup/plugins.txt --plugins delivery-pipeline-plugin:${jenkinsDeliveryPipelinePluginVersion} deployit-plugin"
   log_debug "${javaBinary} -jar ./jenkins-plugin-manager.jar --war ./jenkins.war --plugin-download-directory ${jenkins_home}/plugins --plugin-file ./initial-setup/plugins.txt"
-  ${javaBinary} -jar ./jenkins-plugin-manager.jar --war ./jenkins.war --plugin-download-directory ${jenkins_home}/plugins --plugin-file ./initial-setup/plugins.txt
+  for i in {1..5}
+  do
+    ${javaBinary} -jar ./jenkins-plugin-manager.jar --war ./jenkins.war --plugin-download-directory ${jenkins_home}/plugins --plugin-file ./initial-setup/plugins.txt
+    if [[ -f ${jenkins_home}/plugins/build-monitor-plugin.jpi ]]; then
+      log_info "Seems plugins downloaded OK. Continuing."
+      break
+    else
+      log_warn "Seems not all plugins downloaded OK. Will try again"
+    fi
+  done
+  # Final check - exit with non-zero error code if still not all plugins available
+  if [[ ! -f ${jenkins_home}/plugins/build-monitor-plugin.jpi ]]; then
+      log_info "${jenkins_home}/plugins/build-monitor-plugin plugin still missing. Exiting with non-zero return code."
+      exit 1
+  fi
 fi
+
 
 # Bypass Jenkins setup wizard
 if [ ! -f ${jenkins_home}/jenkins.install.UpgradeWizard.state ]; then
@@ -617,7 +637,7 @@ if [[ ! -f ./securedCredentials ]]; then
   credentialsToStore="git_source_username git_source_password artifactory_username artifactory_password aws_secretmanager_accessid aws_secretmanager_accesskey dockerhub_username dockerhub_password dockerhub_email"
 
   # Get Jenkins Crumb
-  export jenkinsCrumb=$(curl -s --cookie-jar /tmp/cookies -u admin:admin ${jenkins_url}/crumbIssuer/api/json | jq -r '.crumb')
+  export jenkinsCrumb=$(curl -s --cookie-jar /tmp/cookies -u admin:admin ${jenkins_url}/crumbIssuer/api/json | ${jqBinary} -r '.crumb')
 
   if [[ ! -f securedCredentials ]]; then
 
