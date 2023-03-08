@@ -442,7 +442,6 @@
         "expose.tls.notarySecretName=kx.as.code-wildcard-cert",
         "harborAdminPassword=\"{{harborAdminPassword}}\"",
         "expose.ingress.annotations.\"nginx\\.ingress\\.kubernetes\\.io/proxy-body-size\"=\"10000m\"",
-        "imagePullSecrets[0].name={{defaultDockerHubSecret}}",
         "logLevel=debug"
       ]
     },

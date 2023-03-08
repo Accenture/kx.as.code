@@ -11,6 +11,15 @@ createKubernetesNamespace() {
         if [[ "$(kubectl get namespace ${namespace} --template={{.status.phase}})" != "Active" ]] && [[ ${namespace} != "kube-system" ]] && [[ ${namespace} != "default" ]]; then
             log_info "Namespace \"${namespace}\" does not exist. Creating"
             kubectl create namespace ${namespace}
+            # Install Secret if Credentials Exist
+            if [[ -z $(kubectl get secret regcred -n ${namespace} -o name || true) ]]; then
+            log_debug "Creating regcred in \"${namespace}\" namespace"
+              #kubectl get secret regcred --namespace=default -o yaml | sed 's/namespace: .*/namespace: '${namespace}'/' | kubectl apply -f -
+              dockerhubCreateDefaultRegcred "${namespace}"
+              log_debug "Patching default namespace service account to automatically use \"regcred\" imagePullSecret"
+              log_debug "This is important to avoid running into the Dockerhub rate limit"
+              kubectl patch serviceaccount default -p '{"imagePullSecrets": [{"name": "regcred"}]}' -n ${namespace}
+            fi
         else
             log_info "Namespace \"${namespace}\" already exists. Moving on"
         fi

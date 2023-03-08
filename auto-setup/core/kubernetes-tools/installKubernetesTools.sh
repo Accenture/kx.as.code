@@ -13,9 +13,10 @@ if [[ "${kubeOrchestrator}" == "k8s" ]]; then
   # Download and install latest Kubectl and kubeadm binaries
   apt-get update
   DEBIAN_FRONTEND=noninteractive /usr/bin/sudo apt-get install -y apt-transport-https
-  curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | /usr/bin/sudo apt-key add -
-  echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" | /usr/bin/sudo tee -a /etc/apt/sources.list.d/kubernetes.list
-
+  /usr/bin/sudo curl -fsSL https://dl.k8s.io/apt/doc/apt-key.gpg | apt-key add -
+  echo "deb [signed-by=/etc/apt/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | /usr/bin/sudo tee /etc/apt/sources.list.d/kubernetes.list
+  echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" | /usr/bin/sudo tee /etc/apt/sources.list.d/kubernetes.list
+  
   # Read Kubernetes version to be installed
   kubeVersion=$(cat ${installationWorkspace}/versions.json | jq -r '.kubernetes')
   for i in {1..5}
@@ -32,6 +33,15 @@ if [[ "${kubeOrchestrator}" == "k8s" ]]; then
       sleep 15
     fi
   done
+
+  # Final check for Kubectk
+  if [[ -n $(kubectl version) ]]; then
+    log_info "Kubectl accessible after install. Looks good. Continuing."
+  else
+    log_info "Kubectl not accessible after several tries to install. Exiting with a non-zero status code."
+    exit 1
+  fi
+
 else
   # Install K3s instead, as K8s not specified in profile
   for i in {1..5}

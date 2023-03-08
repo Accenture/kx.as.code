@@ -57,8 +57,24 @@ autoSetupHelmInstall() {
     helmVersionOption=""
   fi
 
+  if [[ -n $(kubectl get secret regcred -n ${namespace} -o name || true) ]]; then
+    log_debug "Setting helm install to use imagePullSecrets"
+    log_debug "This is important to avoid running into the Dockerhub rate limit"
+    imagePullSecretsOverride=$(echo ${helm_params} | jq -r '.imagePullSecretsOverride')
+    if [[ -n ${imagePullSecretsOverride} ]] && [[ "${imagePullSecretsOverride}" != "null" ]]; then
+      loh_debug "Using the helmPullSecretOverride option found in metadata.yaml - \"${imagePullSecretsOverride}\""
+      imagePullSecretOption="--set ${imagePullSecretsOverride}"
+    else
+      # Set imagePullSecret option
+      log_debug "Setting default helm regcred option -> \"--set imagePullSecrets[0].name=regcred\""
+      imagePullSecretOption="--set imagePullSecrets[0].name=regcred"
+    fi
+  else
+    imagePullSecretOption=""
+  fi
+
   # Execute installation via Helm
-  helmCommmand=$(echo -e "helm upgrade --install ${helmVersionOption} ${valuesFileOption} ${componentName} --namespace ${namespace} ${helm_set_string_key_value_params} ${helm_set_key_value_params} ${helmRepositoryName}")
+  helmCommmand=$(echo -e "helm upgrade --install ${helmVersionOption} ${valuesFileOption} ${componentName} --namespace ${namespace} ${helm_set_string_key_value_params} ${helm_set_key_value_params} ${imagePullSecretOption} ${helmRepositoryName}")
   echo ${helmCommmand} | tee ${installationWorkspace}/helm_${componentName}.sh
   log_debug "Helm command: $(cat ${installationWorkspace}/helm_${componentName}.sh)"
   chmod 755 ${installationWorkspace}/helm_${componentName}.sh

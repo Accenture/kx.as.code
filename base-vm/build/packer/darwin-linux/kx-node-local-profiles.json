@@ -41,7 +41,8 @@
           ["modifyvm", "{{.Name}}", "--vrde", "off"],
           ["modifyvm", "{{.Name}}", "--memory", "{{user `memory`}}"],
           ["modifyvm", "{{.Name}}", "--cpus", "{{user `cpus`}}"],
-          ["modifyvm", "{{.Name}}", "--clipboard", "bidirectional"]
+          ["modifyvm", "{{.Name}}", "--clipboard", "bidirectional"],
+          ["modifyvm", "{{.Name}}", "--nat-localhostreachable1", "on"]
       ],
       "vboxmanage_post": [
         ["modifyvm", "{{.Name}}", "--nic1", "natnetwork","--natnetwork1","kxascode"]
@@ -372,13 +373,13 @@
       "headless": "true",
       "http_proxy": "{{env `http_proxy`}}",
       "https_proxy": "{{env `https_proxy`}}",
-      "iso_checksum": "7892981e1da216e79fb3a1536ce5ebab157afdd20048fe458f2ae34fbc26c19b",
+      "iso_checksum": "e307d0e583b4a8f7e5b436f8413d4707dd4242b70aea61eb08591dc0378522f3",
       "iso_checksum_type": "sha256",
       "iso_path": "iso",
-      "iso_url": "https://cdimage.debian.org/mirror/cdimage/archive/11.3.0/amd64/iso-cd/debian-11.3.0-amd64-netinst.iso",
-      "iso_file": "debian-11.3.0-amd64-netinst.iso",
-      "guest_additions_url": "https://download.virtualbox.org/virtualbox/6.1.36/VBoxGuestAdditions_6.1.36.iso",
-      "guest_additions_checksum": "c987cdc8c08c579f56d921c85269aeeac3faf636babd01d9461ce579c9362cdd",
+      "iso_url": "https://cdimage.debian.org/mirror/cdimage/archive/11.5.0/amd64/iso-cd/debian-11.5.0-amd64-netinst.iso",
+      "iso_file": "debian-11.5.0-amd64-netinst.iso",
+      "guest_additions_url": "https://download.virtualbox.org/virtualbox/7.0.6/VBoxGuestAdditions_7.0.6.iso",
+      "guest_additions_checksum": "21e0f407d2a4f5c286084a70718aa20235ea75969eca0cab6cfab43a3499a010",
       "memory": "8192",
       "no_proxy": "{{env `no_proxy`}}",
       "parallels_tools_mode": "upload",

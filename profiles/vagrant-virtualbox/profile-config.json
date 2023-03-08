@@ -1,13 +1,13 @@
 {
     "config": {
-        "allowWorkloadsOnMaster": "true",
+        "allowWorkloadsOnMaster": "false",
         "baseDomain": "kx-as-code.local",
         "baseIpType": "static",
         "basePassword": "L3arnandshare",
         "baseUser": "kx.hero",
         "certificationMode": false,
         "defaultKeyboardLanguage": "de",
-        "disableLinuxDesktop": "true",
+        "disableLinuxDesktop": "false",
         "disableSessionTimeout": true,
         "dnsResolution": "static",
         "docker": {
@@ -35,9 +35,9 @@
             "https_proxy": "",
             "no_proxy": ""
         },
-        "selectedTemplates": "",
+        "selectedTemplates": "CICD Group 1,Cloud Services Stack,Prometheus/Grafana Stack,QA Group 1,Security Group 2",
         "sslProvider": "self-signed",
-        "standaloneMode": "true",
+        "standaloneMode": "false",
         "startupMode": "minimal",
         "staticNetworkSetup": {
             "baseFixedIpAddresses": {
@@ -58,18 +58,18 @@
         "vm_properties": {
             "3d_acceleration": "off",
             "main_admin_node_cpu_cores": 4,
-            "main_admin_node_memory": 12288,
+            "main_admin_node_memory": 16384,
             "main_node_count": 1,
             "main_replica_node_cpu_cores": 2,
             "main_replica_node_memory": 8196,
-            "worker_node_count": 0,
+            "worker_node_count": 3,
             "worker_node_cpu_cores": 6,
-            "worker_node_memory": 32768
+            "worker_node_memory": 24576
         }
     },
     "notification_endpoints": {
-        "slack_webhook": "",
+        "email_address": "",
         "ms_teams_webhook": "",
-        "email_address": ""
+        "slack_webhook": ""
     }
 }

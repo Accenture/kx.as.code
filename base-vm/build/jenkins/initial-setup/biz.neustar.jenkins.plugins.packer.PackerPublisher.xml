@@ -8,7 +8,7 @@
         <hudson.tools.InstallSourceProperty>
           <installers>
             <hudson.tools.ZipExtractionInstaller>
-              <url>https://releases.hashicorp.com/packer/1.8.3/packer_1.8.3_linux_amd64.zip</url>
+              <url>https://releases.hashicorp.com/packer/1.8.6/packer_1.8.6_linux_amd64.zip</url>
             </hudson.tools.ZipExtractionInstaller>
           </installers>
         </hudson.tools.InstallSourceProperty>
@@ -25,7 +25,7 @@
         <hudson.tools.InstallSourceProperty>
           <installers>
             <hudson.tools.ZipExtractionInstaller>
-              <url>https://releases.hashicorp.com/packer/1.8.3/packer_1.8.3_darwin_amd64.zip</url>
+              <url>https://releases.hashicorp.com/packer/1.8.6/packer_1.8.6_darwin_amd64.zip</url>
             </hudson.tools.ZipExtractionInstaller>
           </installers>
         </hudson.tools.InstallSourceProperty>
@@ -42,7 +42,7 @@
         <hudson.tools.InstallSourceProperty>
           <installers>
             <hudson.tools.ZipExtractionInstaller>
-              <url>https://releases.hashicorp.com/packer/1.8.3/packer_1.8.3_windows_amd64.zip</url>
+              <url>https://releases.hashicorp.com/packer/1.8.6/packer_1.8.6_windows_amd64.zip</url>
             </hudson.tools.ZipExtractionInstaller>
           </installers>
         </hudson.tools.InstallSourceProperty>

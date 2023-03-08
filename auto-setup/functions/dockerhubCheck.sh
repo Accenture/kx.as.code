@@ -4,10 +4,13 @@ checkDockerHubRateLimit() {
   functionStart
 
   export dockerAuthApiUrl="https://auth.docker.io/token?service=registry.docker.io&scope=repository:ratelimitpreview/test:pull"
-  if [[ -f /var/tmp/.tmp.json ]]; then
-    export dockerHubUsername=$(cat /var/tmp/.tmp.json | jq -r '.DOCKERHUB_USER')
-    export dockerHubPassword=$(cat /var/tmp/.tmp.json | jq -r '.DOCKERHUB_PASSWORD')
-    export dockerHubEmail=$(cat /var/tmp/.tmp.json | jq -r '.DOCKERHUB_EMAIL')
+
+  local dockerHubUsername=$(getPassword "dockerhub_username" "base-user-${baseUser}")
+  local dockerHubPassword=$(getPassword "dockerhub_password" "base-user-${baseUser}")
+  local dockerHubEmail=$(getPassword "dockerhub_email" "base-user-${baseUser}")
+
+  if [[ -n ${dockerHubUsername} ]] && [[ -n ${dockerHubPassword} ]]; then
+ 
     export dockerAuthApiUrl="https://auth.docker.io/token?service=registry.docker.io&scope=repository:ratelimitpreview/test:pull"
     if [[ -n ${dockerHubUsername} ]] && [[ -n ${dockerHubPassword} ]]; then
       dockerHubToken=$(curl --user ''${dockerHubUsername}:${dockerHubPassword}'' "${dockerAuthApiUrl}" | jq -r .token)
