@@ -9,30 +9,30 @@ Everyone here played a role in making KX.AS.ODE the great product that it is tod
 
 | Avatar | Contributor | Contributions (Commits) | Comments |
 ---------|-------------|---------------|---------------|
-|  <img alt="patdel76" src="https://avatars.githubusercontent.com/u/8320300?v=4" width="100"> | [@patdel76](src="https://github.com/patdel76) <br />(Patrick Delamere) | 1821 | Patrick is the creator, architect and primary <br />developer of the automation framework and <br />product owner for all aspects of the solution. |
-|  <img alt="burakkylp" src="https://avatars.githubusercontent.com/u/35352534?v=4" width="100"> | [@burakkylp](src="https://github.com/burakkylp) | 212 | Burak is the primary author of the frontend <br /> KX-Portal application and creator of the <br />current logo. |
+|  <img alt="patdel76" src="https://avatars.githubusercontent.com/u/8320300?v=4" width="100"> | [@patdel76](https://github.com/patdel76) <br />(Patrick Delamere) | 1821 | Patrick is the creator, architect and primary <br />developer of the automation framework and <br />product owner for all aspects of the solution. |
+|  <img alt="burakkylp" src="https://avatars.githubusercontent.com/u/35352534?v=4" width="100"> | [@burakkylp](https://github.com/burakkylp) | 212 | Burak is the primary author of the frontend <br /> KX-Portal application and creator of the <br />current logo. |
 
 ### Additional Contributors
 
 | Avatar | Contributor | Contributions (Commits) |
 ---------|-------------|---------------|
-|  <img alt="nouranelanzeery1191" src="https://avatars.githubusercontent.com/u/47716008?v=4" width="100"> | [@nouranelanzeery1191](src="https://github.com/nouranelanzeery1191) | 32 |
-|  <img alt="monikadhariwal" src="https://avatars.githubusercontent.com/u/76562473?v=4" width="100"> | [@monikadhariwal](src="https://github.com/monikadhariwal) | 13 |
-|  <img alt="atomic-structure" src="https://avatars.githubusercontent.com/u/30082263?v=4" width="100"> | [@atomic-structure](src="https://github.com/atomic-structure) | 11 |
+|  <img alt="nouranelanzeery1191" src="https://avatars.githubusercontent.com/u/47716008?v=4" width="100"> | [@nouranelanzeery1191](https://github.com/nouranelanzeery1191) | 32 |
+|  <img alt="monikadhariwal" src="https://avatars.githubusercontent.com/u/76562473?v=4" width="100"> | [@monikadhariwal](https://github.com/monikadhariwal) | 13 |
+|  <img alt="atomic-structure" src="https://avatars.githubusercontent.com/u/30082263?v=4" width="100"> | [@atomic-structure](https://github.com/atomic-structure) | 11 |
 |  <img alt="liyaou" src="https://avatars.githubusercontent.com/u/105428163?v=4" width="100"> | [@liyaou](https://github.com/liyaou) | 9 |
-|  <img alt="pujan14" src="https://avatars.githubusercontent.com/u/8578303?v=4" width="100"> | [@pujan14](src="https://github.com/pujan14) | 8 |
-|  <img alt="akshaygupta1311" src="https://avatars.githubusercontent.com/u/43351926?v=4" width="100"> | [@akshaygupta1311](src="https://github.com/akshaygupta1311) | 6 |
-|  <img alt="Asure89" src="https://avatars.githubusercontent.com/u/20336951?v=4" width="100"> | [@Asure89](src="https://github.com/Asure89) | 5 |
-|  <img alt="accn-kanwal" src="https://avatars.githubusercontent.com/u/63425773?v=4" width="100"> | [@accn-kanwal](src="https://github.com/accn-kanwal) | 5 |
-|  <img alt="manojRY" src="https://avatars.githubusercontent.com/u/16360625?v=4" width="100"> | [@manojRY](src="https://github.com/manojRY) | 3 |
-|  <img alt="pujanshah3333" src="https://avatars.githubusercontent.com/u/71491747?v=4" width="100"> | [@pujanshah3333](src="https://github.com/pujanshah3333) | 3 |
-|  <img alt="Rohit844880" src="https://avatars.githubusercontent.com/u/49117524?v=4" width="100"> | [@Rohit844880](src="https://github.com/Rohit844880) | 3 |
-|  <img alt="Sriramkrish2" src="https://avatars.githubusercontent.com/u/55122504?v=4" width="100"> | [@Sriramkrish2](src="https://github.com/Sriramkrish2) | 3 |
-|  <img alt="web-flow" src="https://avatars.githubusercontent.com/u/19864447?v=4" width="100"> | [@web-flow](src="https://github.com/web-flow) | 2 |
-|  <img alt="ganesh35" src="https://avatars.githubusercontent.com/u/6005210?v=4" width="100"> | [@ganesh35](src="https://github.com/ganesh35) | 2 |
-|  <img alt="jarobar435" src="https://avatars.githubusercontent.com/u/14972707?v=4" width="100"> | [@jarobar435](src="https://github.com/jarobar435) | 1 |
-|  <img alt="nouran-elanzeery2" src="https://avatars.githubusercontent.com/u/50950422?v=4" width="100"> | [@nouran-elanzeery2](src="https://github.com/nouran-elanzeery2) | 1 |
-|  <img alt="ACN-kck" src="https://avatars.githubusercontent.com/u/16131873?v=4" width="100"> | [@ACN-kck](src="https://github.com/ACN-kck) | 1 |
+|  <img alt="pujan14" src="https://avatars.githubusercontent.com/u/8578303?v=4" width="100"> | [@pujan14](https://github.com/pujan14) | 8 |
+|  <img alt="akshaygupta1311" src="https://avatars.githubusercontent.com/u/43351926?v=4" width="100"> | [@akshaygupta1311](https://github.com/akshaygupta1311) | 6 |
+|  <img alt="Asure89" src="https://avatars.githubusercontent.com/u/20336951?v=4" width="100"> | [@Asure89](https://github.com/Asure89) | 5 |
+|  <img alt="accn-kanwal" src="https://avatars.githubusercontent.com/u/63425773?v=4" width="100"> | [@accn-kanwal](https://github.com/accn-kanwal) | 5 |
+|  <img alt="manojRY" src="https://avatars.githubusercontent.com/u/16360625?v=4" width="100"> | [@manojRY](https://github.com/manojRY) | 3 |
+|  <img alt="pujanshah3333" src="https://avatars.githubusercontent.com/u/71491747?v=4" width="100"> | [@pujanshah3333](https://github.com/pujanshah3333) | 3 |
+|  <img alt="Rohit844880" src="https://avatars.githubusercontent.com/u/49117524?v=4" width="100"> | [@Rohit844880](https://github.com/Rohit844880) | 3 |
+|  <img alt="Sriramkrish2" src="https://avatars.githubusercontent.com/u/55122504?v=4" width="100"> | [@Sriramkrish2](https://github.com/Sriramkrish2) | 3 |
+|  <img alt="web-flow" src="https://avatars.githubusercontent.com/u/19864447?v=4" width="100"> | [@web-flow](https://github.com/web-flow) | 2 |
+|  <img alt="ganesh35" src="https://avatars.githubusercontent.com/u/6005210?v=4" width="100"> | [@ganesh35](https://github.com/ganesh35) | 2 |
+|  <img alt="jarobar435" src="https://avatars.githubusercontent.com/u/14972707?v=4" width="100"> | [@jarobar435](https://github.com/jarobar435) | 1 |
+|  <img alt="nouran-elanzeery2" src="https://avatars.githubusercontent.com/u/50950422?v=4" width="100"> | [@nouran-elanzeery2](https://github.com/nouran-elanzeery2) | 1 |
+|  <img alt="ACN-kck" src="https://avatars.githubusercontent.com/u/16131873?v=4" width="100"> | [@ACN-kck](https://github.com/ACN-kck) | 1 |
 
 ### Additional Contributors (not on Github.com)
 
