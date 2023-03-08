@@ -37,6 +37,6 @@ Everyone here played a role in making KX.AS.ODE the great product that it is tod
 ### Additional Contributors (not on Github.com)
 
 - Hemlata Kalvani - contributed the ArgoCD, FluxCD, Jenkins applications in the original version of KX.AS.CODE. 
-- Sin Hegde - largely responsible for the user experience in the original KX-Portal. Created a fantastic logo and new name for KX.AS.CODE that we were not able to use in the end.
+- Sin Hegde - largely responsible for the user experience in the original KX-Portal.
 - Anish Thodivial - sounding board for new ideas and thinking of new ways to use KX.AS.CODE. Always great to receive your feedback.
 - Niklas Giesenkirchen - contributed the Atlassian applications in the original version of KX.AS.CODE.
