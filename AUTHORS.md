@@ -16,7 +16,7 @@ Everyone here played a role in making KX.AS.ODE the great product that it is tod
 
 | Avatar | Contributor | Contributions (Commits) |
 ---------|-------------|---------------|
-|  <img alt="nouranelanzeery1191" src="https://avatars.githubusercontent.com/u/47716008?v=4" width="100"> | [@nouranelanzeery1191](https://github.com/nouranelanzeery1191) | 32 |
+|  <img alt="nouranelanzeery1191" src="https://avatars.githubusercontent.com/u/47716008?v=4" width="100"> | [@nouranelanzeery1191](https://github.com/nouranelanzeery1191) <br /> (Nouran Elanzeery) | 33 |
 |  <img alt="Asure89" src="https://avatars.githubusercontent.com/u/20336951?v=4" width="100"> | [@liyaou](https://github.com/Asure89) <br />(Liya Ou) | 14 |
 |  <img alt="monikadhariwal" src="https://avatars.githubusercontent.com/u/76562473?v=4" width="100"> | [@monikadhariwal](https://github.com/monikadhariwal) | 13 |
 |  <img alt="atomic-structure" src="https://avatars.githubusercontent.com/u/30082263?v=4" width="100"> | [@atomic-structure](https://github.com/atomic-structure) | 11 |
@@ -30,7 +30,6 @@ Everyone here played a role in making KX.AS.ODE the great product that it is tod
 |  <img alt="web-flow" src="https://avatars.githubusercontent.com/u/19864447?v=4" width="100"> | [@web-flow](https://github.com/web-flow) | 2 |
 |  <img alt="ganesh35" src="https://avatars.githubusercontent.com/u/6005210?v=4" width="100"> | [@ganesh35](https://github.com/ganesh35) | 2 |
 |  <img alt="jarobar435" src="https://avatars.githubusercontent.com/u/14972707?v=4" width="100"> | [@jarobar435](https://github.com/jarobar435) | 1 |
-|  <img alt="nouran-elanzeery2" src="https://avatars.githubusercontent.com/u/50950422?v=4" width="100"> | [@nouran-elanzeery2](https://github.com/nouran-elanzeery2) | 1 |
 |  <img alt="ACN-kck" src="https://avatars.githubusercontent.com/u/16131873?v=4" width="100"> | [@ACN-kck](https://github.com/ACN-kck) | 1 |
 
 ### Additional Contributors (not on Github.com)
