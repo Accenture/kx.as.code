@@ -31,9 +31,9 @@ Everyone here played a role in making KX.AS.ODE the great product that it is tod
 |  <img alt="jarobar435" src="https://avatars.githubusercontent.com/u/14972707?v=4" width="100"> | [@jarobar435](https://github.com/jarobar435) | 1 |
 |  <img alt="ACN-kck" src="https://avatars.githubusercontent.com/u/16131873?v=4" width="100"> | [@ACN-kck](https://github.com/ACN-kck) | 1 |
 
-### Additional Contributors (not on Github.com)
+### Additional Contributors (not through Github.com)
 
 - Hemlata Kalvani - contributed the ArgoCD, FluxCD, Jenkins applications in the original version of KX.AS.CODE. 
 - Sin Hegde - largely responsible for the user experience in the original KX-Portal.
-- Anish Thodivial - sounding board for new ideas and thinking of new ways to use KX.AS.CODE. Always great to receive your feedback.
+- Anish Thodivial [@anishthodivial](https://github.com/anishthodivial) - sounding board for new ideas and thinking of new ways to use KX.AS.CODE. Always great to receive your feedback.
 - Niklas Giesenkirchen - contributed the Atlassian applications in the original version of KX.AS.CODE.
