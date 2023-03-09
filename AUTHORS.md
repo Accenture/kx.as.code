@@ -10,7 +10,7 @@ Everyone here played a role in making KX.AS.ODE the great product that it is tod
 | Avatar | Contributor | Contributions (Commits) | Comments |
 ---------|-------------|---------------|---------------|
 |  <img alt="patdel76" src="https://avatars.githubusercontent.com/u/8320300?v=4" width="100"> | [@patdel76](https://github.com/patdel76) <br />(Patrick Delamere) | 1821 | Patrick is the creator, architect and primary <br />developer of the automation framework and <br />product owner for all aspects of the solution. |
-|  <img alt="burakkylp" src="https://avatars.githubusercontent.com/u/35352534?v=4" width="100"> | [@burakkylp](https://github.com/burakkylp) | 212 | Burak is the primary author of the frontend <br /> KX-Portal application and creator of the <br />current logo. |
+|  <img alt="burakkylp" src="https://avatars.githubusercontent.com/u/35352534?v=4" width="100"> | [@burakkylp](https://github.com/burakkylp)  <br />(Burak Kayaalp)| 212 | Burak is the primary author of the frontend <br /> KX-Portal application and creator of the <br />current logo. |
 
 ### Additional Contributors
 
