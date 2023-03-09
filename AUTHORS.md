@@ -22,7 +22,7 @@ Everyone here played a role in making KX.AS.ODE the great product that it is tod
 |  <img alt="atomic-structure" src="https://avatars.githubusercontent.com/u/30082263?v=4" width="100"> | [@atomic-structure](https://github.com/atomic-structure) | 11 |
 |  <img alt="pujan14" src="https://avatars.githubusercontent.com/u/8578303?v=4" width="100"> | [@pujan14](https://github.com/pujan14) | 8 |
 |  <img alt="akshaygupta1311" src="https://avatars.githubusercontent.com/u/43351926?v=4" width="100"> | [@akshaygupta1311](https://github.com/akshaygupta1311) | 6 |
-|  <img alt="accn-kanwal" src="https://avatars.githubusercontent.com/u/63425773?v=4" width="100"> | [@accn-kanwal](https://github.com/accn-kanwal) | 5 |
+|  <img alt="accn-kanwal" src="https://avatars.githubusercontent.com/u/63425773?v=4" width="100"> | [@accn-kanwal](https://github.com/accn-kanwal) <br /> (Kanwaljit Kaur) | 5 |
 |  <img alt="manojRY" src="https://avatars.githubusercontent.com/u/16360625?v=4" width="100"> | [@manojRY](https://github.com/manojRY) | 3 |
 |  <img alt="pujanshah3333" src="https://avatars.githubusercontent.com/u/71491747?v=4" width="100"> | [@pujanshah3333](https://github.com/pujanshah3333) | 3 |
 |  <img alt="Rohit844880" src="https://avatars.githubusercontent.com/u/49117524?v=4" width="100"> | [@Rohit844880](https://github.com/Rohit844880) | 3 |
