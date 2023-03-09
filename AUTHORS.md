@@ -20,11 +20,10 @@ Everyone here played a role in making KX.AS.ODE the great product that it is tod
 |  <img alt="Asure89" src="https://avatars.githubusercontent.com/u/20336951?v=4" width="100"> | [@liyaou](https://github.com/Asure89) <br />(Liya Ou) | 14 |
 |  <img alt="monikadhariwal" src="https://avatars.githubusercontent.com/u/76562473?v=4" width="100"> | [@monikadhariwal](https://github.com/monikadhariwal) | 13 |
 |  <img alt="atomic-structure" src="https://avatars.githubusercontent.com/u/30082263?v=4" width="100"> | [@atomic-structure](https://github.com/atomic-structure) | 11 |
-|  <img alt="pujan14" src="https://avatars.githubusercontent.com/u/8578303?v=4" width="100"> | [@pujan14](https://github.com/pujan14) | 8 |
+|  <img alt="pujan14" src="https://avatars.githubusercontent.com/u/8578303?v=4" width="100"> | [@pujan14](https://github.com/pujan14) | 11 |
 |  <img alt="akshaygupta1311" src="https://avatars.githubusercontent.com/u/43351926?v=4" width="100"> | [@akshaygupta1311](https://github.com/akshaygupta1311) | 6 |
 |  <img alt="accn-kanwal" src="https://avatars.githubusercontent.com/u/63425773?v=4" width="100"> | [@accn-kanwal](https://github.com/accn-kanwal) <br /> (Kanwaljit Kaur) | 5 |
 |  <img alt="manojRY" src="https://avatars.githubusercontent.com/u/16360625?v=4" width="100"> | [@manojRY](https://github.com/manojRY) | 3 |
-|  <img alt="pujanshah3333" src="https://avatars.githubusercontent.com/u/71491747?v=4" width="100"> | [@pujanshah3333](https://github.com/pujanshah3333) | 3 |
 |  <img alt="Rohit844880" src="https://avatars.githubusercontent.com/u/49117524?v=4" width="100"> | [@Rohit844880](https://github.com/Rohit844880) | 3 |
 |  <img alt="Sriramkrish2" src="https://avatars.githubusercontent.com/u/55122504?v=4" width="100"> | [@Sriramkrish2](https://github.com/Sriramkrish2) | 3 |
 |  <img alt="web-flow" src="https://avatars.githubusercontent.com/u/19864447?v=4" width="100"> | [@web-flow](https://github.com/web-flow) | 2 |
