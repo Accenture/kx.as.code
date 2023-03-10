@@ -96,7 +96,7 @@ getComponentInstallationProperties
 # Get custom variables and override global and component ones where same name is specified
 getCustomVariables
 
-# Source Keycloack varibles if installed and accessible
+# Source Keycloak variables if installed and accessible
 if checkApplicationInstalled "keycloak" "core"; then
   sourceKeycloakEnvironment
 fi

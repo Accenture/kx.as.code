@@ -3,7 +3,7 @@ createK8sCredentialSecretForCoreRegistry() {
   # Call common function to execute common function start commands, such as setting verbose output etc
   functionStart
 
-  # Check core docker-registy is installed and accesible before creating secret to login and access it
+  # Check core docker-registry is installed and accessible before creating secret to login and access it
   if checkApplicationInstalled "docker-registry" "core"; then
   
     # Login to ensure credential file present
