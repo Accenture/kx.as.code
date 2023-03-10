@@ -96,6 +96,11 @@ getComponentInstallationProperties
 # Get custom variables and override global and component ones where same name is specified
 getCustomVariables
 
+# Source Keycloack varibles if installed and accessible
+if checkApplicationInstalled "keycloak" "core"; then
+  sourceKeycloakEnvironment
+fi
+
 # Start the installation process for the pending or retry queues
 if [[ ${action} == "install" ]]; then
 
