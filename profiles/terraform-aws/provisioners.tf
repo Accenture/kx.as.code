@@ -61,7 +61,7 @@ resource "null_resource" "kx_main_admin_provisioner" {
       "sudo hostnamectl set-hostname kx-main1",
       "echo \"${tls_private_key.kx_key.public_key_openssh}\" | sudo tee -a /home/kx.hero/.ssh/authorized_keys /home/admin/.ssh/authorized_keys",
       "echo \"${tls_private_key.kx_key.private_key_pem}\" | sudo tee /home/kx.hero/.ssh/id_rsa /home/admin/.ssh/id_rsa",
-      "echo \"${tls_private_key.kx_key.public_key_openssh}\" | sudo tee /home/kx.hero/.ssh/id_rsa.pub /home/admin/.ssh/id_rsa.pub"
+      "echo \"${tls_private_key.kx_key.public_key_openssh}\" | sudo tee /home/kx.hero/.ssh/id_rsa.pub /home/admin/.ssh/id_rsa.pub",
       "echo -e '{ \"DOCKERHUB_USER\": \"${local.dockerhub_username}\", \"DOCKERHUB_EMAIL\": \"${local.dockerhub_email}\", \"DOCKERHUB_PASSWORD\": \"${local.dockerhub_password}\" }' | sudo tee /var/tmp/.tmp.json"
     ]
 
