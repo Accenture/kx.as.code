@@ -1,0 +1,68 @@
+{
+    "aws_region": "eu-central-1",
+    "aws_availability_zone_one": "eu-central-1a",
+    "aws_availability_zone_two": "eu-central-1b",
+    "vm_properties": {
+        "kx_main_ami_id": "",
+        "admin_main_node_instance_type": "m6i.4xlarge",
+        "replica_main_node_instance_type": "m6i.xlarge",
+        "main_node_count": 1,
+        "kx_node_ami_id": "",
+        "worker_node_instance_type": "m6i.xlarge",
+        "worker_node_count": 0
+    },
+    "config": {
+        "allowWorkloadsOnMaster": true,
+        "disableSessionTimeout": true,
+        "certificationMode": false,
+        "disableLinuxDesktop": false,
+        "defaultKeyboardLanguage": "us",
+        "local_volumes": {
+            "one_gb": 10,
+            "five_gb": 10,
+            "ten_gb": 10,
+            "thirty_gb": 0,
+            "fifty_gb": 2
+        },
+        "logLevel": "debug",
+        "startupMode": "minimal",
+        "virtualizationType": "public-cloud",
+        "updateSourceOnStart": "true",
+        "environmentPrefix": "dce20home-256176",
+        "glusterFsDiskSize": "200",
+        "kubeOrchestrator": "k3s",
+        "sslProvider": "self-signed",
+        "letsEncryptEnvironment": "prod",
+        "sslDomainAdminEmail": "admin@dce20home-256176.pmi-dev-wkstn.io",
+        "mxDnsRecord": "mail.pmi-dev-wkstn.io",
+        "baseDomain": "pmi-dev-wkstn.io",
+        "baseUser": "kx.hero",
+        "basePassword": "L3arnandshare",
+        "baseIpType": "dynamic",
+        "dnsResolution": "hybrid",
+        "metalLbIpRange": {
+            "ipRangeStart": "10.0.76.200",
+            "ipRangeEnd": "10.0.76.250"
+        },
+        "vpc_id": "",
+        "subnet_id":  "",
+        "subnet_cidr_block": "172.31.16.0/20",
+        "security_group": "",
+        "vpc_cidr_block": "10.0.0.0/16",
+        "private_subnet_cidr_one": "10.0.76.0/24",
+        "private_subnet_cidr_two": "10.0.5.0/24",
+        "public_subnet_cidr_one": "10.0.3.0/24",
+        "public_subnet_cidr_two": "10.0.4.0/24",
+        "remote_access_cidrs": []
+    },
+    "docker": {
+        "dockerhub_username": "",
+        "dockerhub_email": "",
+        "dockerhub_password": ""
+    },
+   "notification_endpoints": {
+        "slack_webhook": "https://hooks.slack.com/services/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",
+        "ms_teams_webhook": "https://accenture.webhook.office.com/webhookb2/a50741cd-3c76-496e-9683-3a3f5c0a32f3@e0793d39-0939-496d-b129-198edd916feb/IncomingWebhook/807394ea1ab9468c872028454a6e894f/689e6b18-7fe9-4757-a8df-0526b8c5a3be",
+        "email_address": ""
+   }
+}

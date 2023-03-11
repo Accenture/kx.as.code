@@ -3,11 +3,11 @@
     "aws_availability_zone_one": "us-east-2a",
     "aws_availability_zone_two": "us-east-2b",
     "vm_properties": {
-        "kx_main_ami_id": "ami-01f288cf55df167f4",
+        "kx_main_ami_id": "",
         "admin_main_node_instance_type": "t3.xlarge",
         "replica_main_node_instance_type": "t3.large",
         "main_node_count": 3,
-        "kx_node_ami_id": "ami-0fb6171130567ae83",
+        "kx_node_ami_id": "",
         "worker_node_instance_type": "t3.large",
         "worker_node_count": 4,
         "bastion_node_instance_type": "t3.nano"
@@ -17,7 +17,7 @@
         "disableSessionTimeout": true,
         "certificationMode": false,
         "disableLinuxDesktop": false,
-        "defaultKeyboardLanguage": "de",
+        "defaultKeyboardLanguage": "us",
         "local_volumes": {
             "one_gb": 20,
             "five_gb": 15,
@@ -48,7 +48,7 @@
         "private_subnet_cidr_two": "10.0.5.0/24",
         "public_subnet_cidr_one": "10.0.3.0/24",
         "public_subnet_cidr_two": "10.0.4.0/24",
-        "remote_access_cidrs": ["84.178.213.25/32"]
+        "remote_access_cidrs": []
     },
     "docker": {
         "dockerhub_username": "",
