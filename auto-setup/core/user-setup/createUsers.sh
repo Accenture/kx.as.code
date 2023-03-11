@@ -242,6 +242,7 @@ if [[ ${numUsersToCreate} -ne 0 ]]; then
             if /usr/bin/sudo test ! -f /home/${userid}/.ssh/id_rsa; then
                 /usr/bin/sudo chmod 700 /home/${userid}/.ssh
                 /usr/bin/sudo -H -i -u ${userid} bash -c "yes | ssh-keygen -f ssh-keygen -m PEM -t rsa -b 4096 -q -f /home/${userid}/.ssh/id_rsa -N ''"
+                /usr/bin/sudo -H -i -u ${userid} bash -c "cat /home/${userid}/.ssh/id_rsa.pub | tee -a /home/${userid}/.ssh/authorized_keys"
             fi
 
             # Add desktop customization script to new users autostart-scripts folder
