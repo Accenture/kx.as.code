@@ -179,6 +179,8 @@ done
 # Install nvme-cli if running on host with NVMe block devices (for example on AWS with EBS)
 /usr/bin/sudo lsblk -i -o kname,mountpoint,fstype,size,maj:min,name,state,rm,rota,ro,type,label,model,serial
 
+export localKubeVolumesDiskSize=$(cat ${installationWorkspace}/profile-config.json| jq -r '.state.provisioned_disks.local_storage_disk_size')
+
 # Get number of local volumes to pre-provision
 export number1gbVolumes=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.local_volumes.one_gb')
 export number5gbVolumes=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.local_volumes.five_gb')
@@ -186,13 +188,15 @@ export number10gbVolumes=$(cat ${installationWorkspace}/profile-config.json | jq
 export number30gbVolumes=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.local_volumes.thirty_gb')
 export number50gbVolumes=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.local_volumes.fifty_gb')
 
-# Calculate total needed disk size (should match the value the VM was provisioned with, else automatic detection of the correct disk may fail)
-export size1gbVolumes=$(roundUp "$(awk "BEGIN{printf \"%.2f\", (($number1gbVolumes * 1)) * 1.04}")")
-export size5gbVolumes=$(roundUp "$(awk "BEGIN{printf \"%.2f\", (($number5gbVolumes * 5)) * 1.02}")")
-export size10gbVolumes=$(roundUp "$(awk "BEGIN{printf \"%.2f\", (($number10gbVolumes * 10)) * 1.02}")")
-export size30gbVolumes=$(roundUp "$(awk "BEGIN{printf \"%.2f\", (($number30gbVolumes * 30)) * 1.02}")")
-export size50gbVolumes=$(roundUp "$(awk "BEGIN{printf \"%.2f\", (($number50gbVolumes * 50)) * 1.02}")")
-export localKubeVolumesDiskSize=$(( ${size1gbVolumes} + ${size5gbVolumes} + ${size10gbVolumes} + ${size30gbVolumes} + ${size50gbVolumes} + 1 ))
+if [[ -z ${localKubeVolumesDiskSize} ]] || [[ "${localKubeVolumesDiskSize}" == "null" ]]; then
+  # Calculate total needed disk size (should match the value the VM was provisioned with, else automatic detection of the correct disk may fail)
+  export size1gbVolumes=$(roundUp "$(awk "BEGIN{printf \"%.2f\", (($number1gbVolumes * 1)) * 1.04}")")
+  export size5gbVolumes=$(roundUp "$(awk "BEGIN{printf \"%.2f\", (($number5gbVolumes * 5)) * 1.02}")")
+  export size10gbVolumes=$(roundUp "$(awk "BEGIN{printf \"%.2f\", (($number10gbVolumes * 10)) * 1.02}")")
+  export size30gbVolumes=$(roundUp "$(awk "BEGIN{printf \"%.2f\", (($number30gbVolumes * 30)) * 1.02}")")
+  export size50gbVolumes=$(roundUp "$(awk "BEGIN{printf \"%.2f\", (($number50gbVolumes * 50)) * 1.02}")")
+  export localKubeVolumesDiskSize=$(( ${size1gbVolumes} + ${size5gbVolumes} + ${size10gbVolumes} + ${size30gbVolumes} + ${size50gbVolumes} + 1 ))
+fi
 
 # Install NVME CLI if needed, for example, for AWS
 nvme_cli_needed=$(df -h | grep "nvme" || true)
@@ -224,7 +228,7 @@ if [[ "${partitionB1Exists}" != "sdb1" ]]; then
   fi
   if [[ -z ${driveB} ]]; then
     log_error "Error finding mounted drive for setting up the K8s local storage service. Quitting script and sending task to failure queue"
-    return 1
+    exit 1
   fi
 
   # Check logical partitions
