@@ -61,6 +61,8 @@ data:
     clientId: argocd
     clientSecret: \$oidc.keycloak.clientSecret
     requestedScopes: ['openid', 'profile', 'email', 'groups']
+    rootCA: |-
+      $(/usr/bin/sudo cat ${installationWorkspace}/kx-certs/ca.crt | sed '2,30s/^/      /')
 """ | /usr/bin/sudo tee ${installationWorkspace}/argocd-cm-patch.yaml
 kubectl apply -f ${installationWorkspace}/argocd-cm-patch.yaml
 
