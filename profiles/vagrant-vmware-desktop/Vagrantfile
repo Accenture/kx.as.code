@@ -36,6 +36,8 @@ if STANDALONE_MODE != "true"
     # Get needed capacity for GlusterFS volumes disk size
     GLUSTERFS_KUBE_VOLUMES_DISK_SIZE=profile_config_json['config']['glusterFsDiskSize'].to_i + 1
     puts "GlusterFS Disk Size: #{GLUSTERFS_KUBE_VOLUMES_DISK_SIZE}GB"
+else
+    GLUSTERFS_KUBE_VOLUMES_DISK_SIZE=0
 end
 
 # Calculate needed local disk capacity
@@ -150,9 +152,9 @@ Vagrant.configure("2") do |config|
         trigger.warn = "Destroying VM's disks"
             trigger.run = { :inline => "bash -c 'rm -f kx.as.code_main-ip-address kx-main-local-k8s-storage.vmdk kx-main-glusterfs-k8s-storage.vmdk'" }
         end
-        subconfig.vm.provision :shell do |s|
-          s.inline = "echo -e '{ \"DOCKERHUB_USER\": \"#{DOCKERHUB_USER}\", \"DOCKERHUB_EMAIL\": \"#{DOCKERHUB_EMAIL}\", \"DOCKERHUB_PASSWORD\": \"#{DOCKERHUB_PASSWORD}\" }' | sudo tee /var/tmp/.tmp.json"
-        end
+        #subconfig.vm.provision :shell do |s|
+        #  s.inline = "echo -e '{ \"DOCKERHUB_USER\": \"#{DOCKERHUB_USER}\", \"DOCKERHUB_EMAIL\": \"#{DOCKERHUB_EMAIL}\", \"DOCKERHUB_PASSWORD\": \"#{DOCKERHUB_PASSWORD}\" }' | sudo tee /var/tmp/.tmp.json"
+        #end
         subconfig.vm.provider "vmware_desktop" do |v|
             kx_main1_local_k8s_storage="#{current_dir}/kx-main1-local-k8s-storage.vmdk"
             if Vagrant::Util::Platform.windows?
@@ -165,7 +167,7 @@ Vagrant.configure("2") do |config|
             if STANDALONE_MODE != "true"
                 kx_main1_glusterfs_k8s_storage="#{current_dir}/kx-main1-glusterfs-k8s-storage.vmdk"
                 if Vagrant::Util::Platform.windows?
-                    kx_main_glusterfs_k8s_storage = kx_main_glusterfs_k8s_storage.gsub(/\//, '\\')
+                    kx_main1_glusterfs_k8s_storage = kx_main1_glusterfs_k8s_storage.gsub(/\//, '\\')
                 end
                 if ARGV[0] == "up" && ! File.exist?(kx_main1_glusterfs_k8s_storage)
                   `"#{VMWARE_DISK_UTILITY}" -c -s #{GLUSTERFS_KUBE_VOLUMES_DISK_SIZE}GB -a lsilogic -t 0 #{kx_main1_glusterfs_k8s_storage}`
