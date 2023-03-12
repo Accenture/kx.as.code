@@ -161,17 +161,13 @@ Vagrant.configure("2") do |config|
         subconfig.vm.provision "shell", inline: "jq '. + { \"state\": { \"networking_configuration_status\": \"todo\", \"kx_main1_ip_address\": \"'$(cat /vagrant/kx.as.code_main-ip-address)'\", \"provisioned_disks\": { \"local_storage_disk_size\": #{LOCAL_KUBE_VOLUMES_DISK_SIZE}, \"network_storage_disk_size\": #{GLUSTERFS_KUBE_VOLUMES_DISK_SIZE} } } }' /usr/share/kx.as.code/workspace/profile-config.json >/tmp/profile-config.json && mv /tmp/profile-config.json /usr/share/kx.as.code/workspace/profile-config.json"
         subconfig.vm.provision "shell", inline: "cat /usr/share/kx.as.code/workspace/profile-config.json | jq '.'"
         subconfig.vm.provision "shell", inline: 'echo -e "$(date "+%Y-%m-%d_%H%M%S") | KX-Main VM created by Vagrant" | sudo tee /usr/share/kx.as.code/workspace/gogogo'
-        subconfig.trigger.after :destroy do |trigger|
-          trigger.warn = "Destroying VM's disks"
-          trigger.run = { :inline => "bash -c 'rm -f kx-main#{i}-local-k8s-storage.vdi'" }
-        end
-      subconfig.vm.provider "parallels" do |v|
-        v.name = "kx.as.code-#{ENVIRONMENT_PREFIX}-main#{i}-#{NODE_BOX_VERSION}"
-        v.memory = MAIN_REPLICA_NODE_MEMORY
-        v.cpus = MAIN_REPLICA_NODE_CPU_CORES
-        v.customize ["set", :id, "--3d-accelerate", "highest"]
-        v.customize ["set", :id, "--high-resolution", "on"]
-        v.customize ["set", :id, "--device-add", "hdd", "--size", LOCAL_KUBE_VOLUMES_DISK_SIZE.to_i * 1024]
+        subconfig.vm.provider "parallels" do |v|
+            v.name = "kx.as.code-#{ENVIRONMENT_PREFIX}-main#{i}-#{NODE_BOX_VERSION}"
+            v.memory = MAIN_REPLICA_NODE_MEMORY
+            v.cpus = MAIN_REPLICA_NODE_CPU_CORES
+            v.customize ["set", :id, "--3d-accelerate", "highest"]
+            v.customize ["set", :id, "--high-resolution", "on"]
+            v.customize ["set", :id, "--device-add", "hdd", "--size", LOCAL_KUBE_VOLUMES_DISK_SIZE.to_i * 1024]
         end
       end
     end
