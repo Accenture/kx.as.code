@@ -8,14 +8,14 @@ createExternalAccessDirectory() {
       /usr/bin/sudo mount -a
     fi
     /usr/bin/sudo mkdir -p /vagrant/kx-external-access
-    export externalAccessDirectory=/vagrant/kx-external-access
+    export externalAccessDirectory="/vagrant/kx-external-access"
   else
     /usr/bin/sudo mkdir /kx-external-access
-    export externalAccessDirectory=/kx-external-access
+    export externalAccessDirectory="/kx-external-access"
   fi
 
   # Ensure directory is cleaned on first start of KX.AS.CODE
-  if [[ ! -f /usr/share/kx.as.code/.config/network_status  ]]; then
+  if [[ "$(cat ${profileConfigJsonPath} | jq -r '.state.networking_configuration_status')" != "done" ]]; then
     /usr/bin/sudo rm -f ${externalAccessDirectory}/*
   fi
 
