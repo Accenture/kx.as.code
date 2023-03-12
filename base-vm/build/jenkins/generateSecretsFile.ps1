@@ -233,22 +233,22 @@ if ( $args.count -gt 1 ) {
 
 if ( $override_action -eq "recreate" -Or $override_action -eq "fully-recreate" ) {
     Log_Info "OK! Proceeding to ${override_action} the secrets file"
-    if (test-path .\securedCredentials_backup)
+    if (test-path .\.vmCredentialsFile_backup)
     {
-        Log_Info "Removing existing backup file - .\securedCredentials_backup"
-        Remove-Item -Force -Path .\securedCredentials_backup
+        Log_Info "Removing existing backup file - .\.vmCredentialsFile_backup"
+        Remove-Item -Force -Path .\.vmCredentialsFile_backup
     }
-    Log_Info "Renaming exising secrets file to .\securedCredentials_backup"
-    Rename-Item -Force -Path .\securedCredentials  -NewName .\securedCredentials_backup
+    Log_Info "Renaming exising secrets file to .\.vmCredentialsFile_backup"
+    Rename-Item -Force -Path .\.vmCredentialsFile  -NewName .\.vmCredentialsFile_backup
     if ($override_action -eq "fully-recreate")
     {
-        if (test-path .\credentials_salt_backup)
+        if (test-path .\.hash_backup)
         {
-            Log_Info "Removing existing backup file - .\credentials_salt_backup"
-            Remove-Item -Force -Path .\credentials_salt_backup
+            Log_Info "Removing existing backup file - .\.hash_backup"
+            Remove-Item -Force -Path .\.hash_backup
         }
-        Log_Info "Renaming exising secrets file to .\credentials_salt_backup"
-        Rename-Item -Force -Path .\credentials_salt  -NewName .\credentials_salt_backup
+        Log_Info "Renaming exising secrets file to .\.hash_backup"
+        Rename-Item -Force -Path .\.hash  -NewName .\.hash_backup
     }
 }
 else
@@ -374,34 +374,34 @@ if ($downloadAndInstallPortableGit)
 
 checkOpenSslVersion
 
-if (!(test-path .\credentials_salt))
+if (!(test-path .\.hash))
 {
     # Create salt for encryption
-    $credentials_salt = & $path_to_openssl_executable rand -base64 12
-    Write-Output $credentials_salt | Out-File -FilePath .\credentials_salt
-    Log_Info "Done. Created credentials_salt file"
+    $hash = & $path_to_openssl_executable rand -base64 12
+    Write-Output $hash | Out-File -FilePath .\.hash
+    Log_Info "Done. Created .hash file"
 }
 else
 {
-    Log_Info "Using existing credentials_salt file"
-    $credentials_salt = Get-Content -Path .\credentials_salt -TotalCount 1
-    Log_Debug "credentials_salt: $credentials_salt"
+    Log_Info "Using existing .hash file"
+    $hash = Get-Content -Path .\.hash -TotalCount 1
+    Log_Debug ".hash: $hash"
 }
 
-if (!(test-path .\securedCredentials))
+if (!(test-path .\.vmCredentialsFile))
 {
     # Create encrypted secrets file for importing into VM
     $credentialsToStore = "git_source_username git_source_password dockerhub_username dockerhub_password dockerhub_email"
     $credentialsToStore.Split(" ") | ForEach {
-        $encryptedCredential = (Write-Output $( Get-Variable "$_" -ValueOnly ) | & $path_to_openssl_executable enc -aes-256-cbc -pbkdf2 -salt -A -a -pass pass:$credentials_salt)
+        $encryptedCredential = (Write-Output $( Get-Variable "$_" -ValueOnly ) | & $path_to_openssl_executable enc -aes-256-cbc -pbkdf2 -salt -A -a -pass pass:$hash)
         # Test Unencryption
-        $unencryptedCredential = (Write-Output $encryptedCredential | & $path_to_openssl_executable enc -aes-256-cbc -pbkdf2 -salt -A -a -pass pass:$credentials_salt -d)
+        $unencryptedCredential = (Write-Output $encryptedCredential | & $path_to_openssl_executable enc -aes-256-cbc -pbkdf2 -salt -A -a -pass pass:$hash -d)
         if ( $unencryptedCredential -ne $( Get-Variable "$_" -ValueOnly ) ) {
             Log_Error "Encryption and subsequent decryption value do not match."
         }
-        "$_`:$encryptedCredential" | Out-File -FilePath .\securedCredentials -Append
+        "$_`:$encryptedCredential" | Out-File -FilePath .\.vmCredentialsFile -Append
     }
     Log_Info "Done. Created encrypted secrets file"
 } else {
-    Log_Info "Found existing .\securedCredentials, skipping."
+    Log_Info "Found existing .\.vmCredentialsFile, skipping."
 }

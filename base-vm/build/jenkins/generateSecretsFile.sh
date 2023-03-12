@@ -194,8 +194,8 @@ while getopts :hrfi opt; do
     echo -e """The $0 script has the following options:
             -i  [i]gnore warnings and start the secret filw generator anyway, knowing that this may cause issues
             -f  [f]ully recreate hash and secrets file
-            -h  [h]elp me and show this help text
             -r  [r]ecreate secrets file using existing hash
+            -h  [h]elp me and show this help text
             """
     exit 0
     ;;
@@ -209,11 +209,11 @@ done
 
 if [[ ${override_action} == "recreate" ]] || [[ ${override_action} == "fully-recreate" ]]; then
   log_info "OK! Proceeding to ${override_action} the secrets file${nc}"
-    if [[ -f ./securedCredentials ]]; then
-      mv securedCredentials securedCredentials_backup
+    if [[ -f ./.vmCredentialsFile ]]; then
+      mv .vmCredentialsFile .vmCredentialsFile_backup
     fi
-    if [[ -f ./credentials_salt ]]; then
-      mv credentials_salt credentials_salt_backup
+    if [[ -f ./.hash ]]; then
+      mv .hash .hash_backup
     fi
 else
   log_info "You did not pass any option to this script. Exiting."
@@ -224,19 +224,21 @@ fi
 # Script is set to start launch environment. Proceeding with checks.
 checkVersions "${1}"
 
-if [[ ! -f ./credentials_salt ]]; then
-  # Create credentials_salt file
-  export credentials_salt=$(openssl rand -base64 12)
-  echo ${credentials_salt} >credentials_salt
-  log_info "Done. Created credentials_salt file"
+if [[ ! -f ./.hash ]]; then
+  # Create .hash file
+  export hash=$(openssl rand -base64 12)
+  echo ${hash} >.hash
+  log_info "Done. Created .hash file"
+else
+  export hash=$(cat ./.hash)
 fi
 
 
-if [[ ! -f securedCredentials ]]; then
+if [[ ! -f .vmCredentialsFile ]]; then
   # Create encrypted secrets file
   credentialsToStore="git_source_username git_source_password  dockerhub_username dockerhub_password dockerhub_email"
   for credential in ${credentialsToStore}; do
-    echo "${credential}:$(echo ${!credential} | openssl enc -aes-256-cbc -pbkdf2 -salt -A -a -pass pass:${credentials_salt})" | tee -a securedCredentials 1>/dev/null
+    echo "${credential}:$(echo ${!credential} | openssl enc -aes-256-cbc -pbkdf2 -salt -A -a -pass pass:${hash})" | tee -a .vmCredentialsFile 1>/dev/null
   done
   log_info "Done. Created encrypted secrets file"
 fi

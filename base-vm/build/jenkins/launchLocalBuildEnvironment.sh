@@ -331,7 +331,7 @@ if [[ ${override_action} == "recreate" ]] || [[ ${override_action} == "destroy" 
       log_info "Deleting Jenkins war file..."
       rm -f ./jenkins.war
       log_info "Deleting jenkins_home directory..."
-      rm -rf ./jenkins_home ./credentials_salt ./securedCredentials ./jenkinsLog*.txt || true
+      rm -rf ./jenkins_home ./.hash ./.vmCredentialsFile ./jenkinsLog*.txt || true
       if [[ ${override_action} == "fully-destroy" ]]; then
         log_info "Deleting jenkins workspace..."
         rm -rf ${shared_workspace_base_directory_path} || true
@@ -648,7 +648,7 @@ export jenkinsCrumb=$(curl -s --cookie-jar /tmp/cookies -u admin:admin ${jenkins
 # Post encrypted file to Jenkins as a credential
 curl -s -X POST --cookie /tmp/cookies -H "Jenkins-Crumb: ${jenkinsCrumb}" -u admin:admin \
   ${jenkins_url}/credentials/store/system/domain/_/createCredentials \
-  -F securedCredentials=@$(pwd)/securedCredentials \
+  -F securedCredentials=@$(pwd)/.vmCredentialsFile \
   -F 'json={"": "4", "credentials": {"file": "securedCredentials", "id": "VM_CREDENTIALS_FILE", "description": "KX.AS.CODE credentials", "stapler-class": "org.jenkinsci.plugins.plaincredentials.impl.FileCredentialsImpl", "$class": "org.jenkinsci.plugins.plaincredentials.impl.FileCredentialsImpl"}}'
 
 # Checking if Vagrant is installed

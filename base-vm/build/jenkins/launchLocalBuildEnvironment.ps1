@@ -352,8 +352,8 @@ if ( $override_action -eq "recreate" -Or $override_action -eq "destroy" -Or $ove
         {
             Log_Info "Deleting jenkins_home directory..."
             Remove-Item -Recurse -Force -Path .\jenkins_home
-            Remove-Item -Force -Path .\securedCredentials
-            Remove-Item -Force -Path .\credentials_salt
+            Remove-Item -Force -Path .\.vmCredentialsFile
+            Remove-Item -Force -Path .\.hash
             Remove-Item -Force -Path .\cookies
             Log_Info "jenkins_home deleted"
             if ($override_action -eq "fully-destroy")
@@ -769,7 +769,7 @@ $jenkinsCrumb = (curl.exe -s --cookie-jar ./cookies -u admin:admin $jenkinsUrl/c
 # Post encrypted file to Jenkins as a credential
 curl.exe -X POST --cookie .\cookies -H "Jenkins-Crumb: $jenkinsCrumb" `
     -u admin:admin `
-    -F securedCredentials=@.\securedCredentials `
+    -F securedCredentials=@.\.vmCredentialsFile `
     -F "json={\`"\`": \`"4\`", \`"credentials\`": { \`"file\`": \`"securedCredentials\`", \`"id\`": \`"VM_CREDENTIALS_FILE\`", \`"description\`": \`"KX.AS.CODE credentials\`", \`"stapler-class\`": \`"org.jenkinsci.plugins.plaincredentials.impl.FileCredentialsImpl\`", \`"`$class\`": \`"org.jenkinsci.plugins.plaincredentials.impl.FileCredentialsImpl\`"}}" `
     $jenkinsUrl/credentials/store/system/domain/_/createCredentials
 
