@@ -76,7 +76,7 @@ getProfileConfiguration
 updateKxSourceOnFirstStart
 
 # Apply customizations on first boot
-if [[ ! -f /usr/share/kx.as.code/.config/network_status ]]; then
+if [[ "$(cat ${profileConfigJsonPath} | jq -r '.state.networking_configuration_status')" != "done" ]]; then
     applyCustomizations
 fi
 
@@ -84,7 +84,7 @@ fi
 createExternalAccessDirectory
 
 # Modify username and password if modified in profile-config.json
-if [[ ! -f /usr/share/kx.as.code/.config/network_status ]]; then
+if [[ "$(cat ${profileConfigJsonPath} | jq -r '.state.networking_configuration_status')" != "done" ]]; then
   checkAndUpdateBaseUsername
   checkAndUpdateBasePassword
 fi

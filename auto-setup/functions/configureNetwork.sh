@@ -8,7 +8,7 @@ if [[ -z $(cat /etc/hosts | grep $(hostname)) ]]; then
   sed -i '/127.0.1.1/ s/$/ '$(hostname)'/' /etc/hosts
 fi
 
-if [[ ! -f ${sharedKxHome}/.config/network_status ]]; then
+if [[ "$(cat ${profileConfigJsonPath} | jq -r '.state.networking_configuration_status')" != "done" ]]; then
 
     # Change DNS resolution to allow wildcards for resolving locally deployed K8s services
     echo "DNSStubListener=no" | /usr/bin/sudo tee -a /etc/systemd/resolved.conf
@@ -146,6 +146,7 @@ fi
     # Ensure the whole network setup does not execute again on next run after reboot
     /usr/bin/sudo mkdir -p ${sharedKxHome}/.config
     echo "KX.AS.CODE network config done" | /usr/bin/sudo tee ${sharedKxHome}/.config/network_status
+    jq '.state.networking_configuration_status="done"' ${profileConfigJsonPath} >/tmp/profile-config.json && /usr/bin/sudo mv /tmp/profile-config.json ${profileConfigJsonPath}
     disableLinuxDesktop=$(cat ${profileConfigJsonPath} | jq -r '.config.disableLinuxDesktop')
     # Reboot if static network settings to activate them. Reboot anyway if not static, if disableLinuxDesktop was set to true
     if  [[ "${baseIpType}" == "static"   ]] || [[ "${disableLinuxDesktop}" == "true"   ]] || [[ "${vm_User}" != "${baseUser}" ]]; then

@@ -148,7 +148,7 @@ checkAndUpdateBasePassword() {
 }
 
 # Modify username and password if modified in profile-config.json
-if [[ "$(cat /usr/share/kx.as.code/workspace/profile-config.json | jq -r '.state.networking_configuration_status')" ]]; then
+if [[ "$(cat ${profileConfigJsonPath} | jq -r '.state.networking_configuration_status')" != "done" ]]; then
   checkAndUpdateBaseUsername
   checkAndUpdateBasePassword
 fi
@@ -187,7 +187,7 @@ while [[ -z ${netDevice} ]] && [[ -z ${nodeIp} ]]; do
   done
   echo "NIC exclusions: ${nicExclusions}"
   echo "NIC to use: ${netDevice}"
-  if [[ "${baseIpType}" == "static" ]] &&  [[ ! -f /usr/share/kx.as.code/.config/network_status ]]; then
+  if [[ "${baseIpType}" == "static" ]] &&  [[ "$(cat ${profileConfigJsonPath} | jq -r '.state.networking_configuration_status')" != "done" ]]; then
     export nodeIp="ignore"
   else
     export nodeIp=$(ip -4 a show ${netDevice} | grep -oP '(?<=inet\s)\d+(\.\d+){3}')
@@ -359,7 +359,7 @@ else
     export kxNodeIp=$(ip -4 a show ${netDevice} | grep -oP '(?<=inet\s)\d+(\.\d+){3}')
 fi
 
-if [[ ! -f /usr/share/kx.as.code/.config/network_status ]]; then
+if [[ "$(cat ${profileConfigJsonPath} | jq -r '.state.networking_configuration_status')" != "done" ]]; then
 
     if [[ ${baseIpType} == "static"  ]] || [[ ${dnsResolution} == "hybrid"   ]]; then
         # Change DNS resolution to allow wildcards for resolving locally deployed K8s services
