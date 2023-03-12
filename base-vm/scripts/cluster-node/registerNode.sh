@@ -447,8 +447,8 @@ fi
     fi
 
     # Ensure the whole network setup does not execute again on next run after reboot
-    /usr/bin/sudo mkdir -p /usr/share/kx.as.code/.config
-    echo "KX.AS.CODE network config done" | /usr/bin/sudo tee /usr/share/kx.as.code/.config/network_status
+    jq '.state.networking_configuration_status="done"' ${profileConfigJsonPath} >/tmp/profile-config.json \
+      && /usr/bin/sudo mv /tmp/profile-config.json ${profileConfigJsonPath}
 
     # Reboot machine to ensure all network changes are active
     if [ "${baseIpType}" == "static" ]; then
