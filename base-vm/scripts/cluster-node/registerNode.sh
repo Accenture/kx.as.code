@@ -187,7 +187,7 @@ while [[ -z ${netDevice} ]] && [[ -z ${nodeIp} ]]; do
   done
   echo "NIC exclusions: ${nicExclusions}"
   echo "NIC to use: ${netDevice}"
-  if [[ "${baseIpType}" == "static" ]] &&  [[ "$(cat ${profileConfigJsonPath} | jq -r '.state.networking_configuration_status')" != "done" ]]; then
+  if [[ "${baseIpType}" == "static" ]] && [[ "$(cat ${profileConfigJsonPath} | jq -r '.state.networking_configuration_status')" != "done" ]]; then
     export nodeIp="ignore"
   else
     export nodeIp=$(ip -4 a show ${netDevice} | grep -oP '(?<=inet\s)\d+(\.\d+){3}')
@@ -464,7 +464,7 @@ fi
 mkdir -p ${installationWorkspace}
 chown -R ${vmUser}:${vmUser} ${installationWorkspace}
 
-if [[ ${virtualizationType} != "public-cloud"   ]] && [[ ${virtualizationType} != "private-cloud"   ]]; then
+if [[ "${virtualizationType}" != "public-cloud"   ]] && [[ "${virtualizationType}" != "private-cloud"   ]]; then
     # Create RSA key for kx.hero user
     mkdir -p /home/${vmUser}/.ssh
     chown -R ${vmUser}:${vmUser} /home/${vmUser}/.ssh
