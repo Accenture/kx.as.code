@@ -9,15 +9,15 @@ localStorageDrive_Partition=""
 /usr/bin/sudo lsblk -i -o kname,mountpoint,fstype,size,maj:min,name,state,rm,rota,ro,type,label,model,serial
 
 # Use disk name if supplied in profile-config.json - override that should only be used in rare cases
-export localVolumesDiskName=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.local_volumes.diskName')
-export localKubeVolumesDiskSize=$(cat ${installationWorkspace}/profile-config.json| jq -r '.state.provisioned_disks.local_storage_disk_size')
+export localVolumesDiskName=$(cat ${profileConfigJsonPath} | jq -r '.config.local_volumes.diskName')
+export localKubeVolumesDiskSize=$(cat ${profileConfigJsonPath}| jq -r '.state.provisioned_disks.local_storage_disk_size')
 
 # Get number of local volumes to pre-provision
-export number1gbVolumes=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.local_volumes.one_gb')
-export number5gbVolumes=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.local_volumes.five_gb')
-export number10gbVolumes=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.local_volumes.ten_gb')
-export number30gbVolumes=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.local_volumes.thirty_gb')
-export number50gbVolumes=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.local_volumes.fifty_gb')
+export number1gbVolumes=$(cat ${profileConfigJsonPath} | jq -r '.config.local_volumes.one_gb')
+export number5gbVolumes=$(cat ${profileConfigJsonPath} | jq -r '.config.local_volumes.five_gb')
+export number10gbVolumes=$(cat ${profileConfigJsonPath} | jq -r '.config.local_volumes.ten_gb')
+export number30gbVolumes=$(cat ${profileConfigJsonPath} | jq -r '.config.local_volumes.thirty_gb')
+export number50gbVolumes=$(cat ${profileConfigJsonPath} | jq -r '.config.local_volumes.fifty_gb')
 
 if [[ -z ${localKubeVolumesDiskSize} ]] || [[ "${localKubeVolumesDiskSize}" == "null" ]]; then
   # Calculate total needed disk size (should match the value the VM was provisioned with, else automatic detection of the correct disk may fail)

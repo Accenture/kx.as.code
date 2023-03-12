@@ -11,10 +11,10 @@ if [[ ${standaloneMode} == "false" ]]; then
 /usr/bin/sudo lsblk -i -o kname,mountpoint,fstype,size,maj:min,name,state,rm,rota,ro,type,label,model,serial
 
 # Use disk name if supplied in profile-config.json. Override should only be used in rare cases
-export glusterFsDiskName=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.glusterFsDiskName')
+export glusterFsDiskName=$(cat ${profileConfigJsonPath} | jq -r '.config.glusterFsDiskName')
 
 # Get GlusterFS volume size from profile-config.json
-export glusterFsDiskSize=$(cat ${installationWorkspace}/profile-config.json | jq -r '.state.provisioned_disks.network_storage_disk_size')
+export glusterFsDiskSize=$(cat ${profileConfigJsonPath} | jq -r '.state.provisioned_disks.network_storage_disk_size')
 
 # Install NVME CLI if needed, for example, for AWS
 nvme_cli_needed=$(df -h | grep "nvme" || true)
