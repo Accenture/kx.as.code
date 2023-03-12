@@ -3,10 +3,28 @@ set -euo pipefail
 
 . /etc/environment
 
-export kxHomeDir=/usr/share/kx.as.code
-export sharedGitRepositories=${kxHomeDir}/git
-export installationWorkspace=${kxHomeDir}/workspace
-export logLevel=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.logLevel')
+getGlobalVariables() {
+    OLDIFS=$IFS
+    IFS="§"
+    # Set environment variables if set in globalVariables.json
+    globalVariables=$(cat /usr/share/kx.as.code/workspace/globalVariables.json | jq -r '. | to_entries|map("\(.key)=\(.value|tostring)§")|.[]' )
+    if [[ -n ${globalVariables} ]]; then
+        for environmentVariable in ${globalVariables}; do
+            envVarName="$(echo ${environmentVariable} | cut -f1 -d= | tr -d '\n\r' | tr -d '§')"
+            envVarValue="$(echo ${environmentVariable} | cut -f2 -d= | tr -d '\n\r' | tr -d '§')"
+            echo export ${envVarName}=''$(eval echo ${envVarValue})''
+            export ${envVarName}=''$(eval echo ${envVarValue})''
+        done
+    fi
+    IFS=$OLDIFS
+}
+
+# Load global KX.AS.CODE variables from workspace/globalVariables.json
+getGlobalVariables
+
+# Get log level from profile-config.json
+export logLevel=$(cat ${profileConfigJsonPath} | jq -r '.config.logLevel')
+
 if [[ -z ${logLevel} ]] || [[ "${logLevel}" == "null" ]]; then
   export logLevel="info"
 fi
@@ -59,34 +77,34 @@ echo ""
 }
 
 # Check profile-config.json file is present before executing script
-while [[ ! -f ${installationWorkspace}/profile-config.json ]]; do
-  echo "Waiting for ${installationWorkspace}/profile-config.json file"
+while [[ ! -f ${profileConfigJsonPath} ]]; do
+  echo "Waiting for ${profileConfigJsonPath} file"
   sleep 15
 done
 
 # Get configs from profile-config.json
-export virtualizationType=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.virtualizationType')
-export environmentPrefix=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.environmentPrefix')
+export virtualizationType=$(cat ${profileConfigJsonPath} | jq -r '.config.virtualizationType')
+export environmentPrefix=$(cat ${profileConfigJsonPath} | jq -r '.config.environmentPrefix')
 if [ -z ${environmentPrefix} ]; then
-    export baseDomain="$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.baseDomain')"
+    export baseDomain="$(cat ${profileConfigJsonPath} | jq -r '.config.baseDomain')"
 else
-    export baseDomain="${environmentPrefix}.$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.baseDomain')"
+    export baseDomain="${environmentPrefix}.$(cat ${profileConfigJsonPath} | jq -r '.config.baseDomain')"
 fi
-export defaultKeyboardLanguage=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.defaultKeyboardLanguage')
-export baseIpType=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.baseIpType')
-export dnsResolution=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.dnsResolution')
-export baseIpRangeStart=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.baseIpRangeStart')
-export baseIpRangeEnd=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.baseIpRangeEnd')
+export defaultKeyboardLanguage=$(cat ${profileConfigJsonPath} | jq -r '.config.defaultKeyboardLanguage')
+export baseIpType=$(cat ${profileConfigJsonPath} | jq -r '.config.baseIpType')
+export dnsResolution=$(cat ${profileConfigJsonPath} | jq -r '.config.dnsResolution')
+export baseIpRangeStart=$(cat ${profileConfigJsonPath} | jq -r '.config.baseIpRangeStart')
+export baseIpRangeEnd=$(cat ${profileConfigJsonPath} | jq -r '.config.baseIpRangeEnd')
 
 # Get proxy settings
-export httpProxySetting=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.proxy_settings.http_proxy')
-export httpsProxySetting=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.proxy_settings.https_proxy')
-export noProxySetting=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.proxy_settings.no_proxy')
+export httpProxySetting=$(cat ${profileConfigJsonPath} | jq -r '.config.proxy_settings.http_proxy')
+export httpsProxySetting=$(cat ${profileConfigJsonPath} | jq -r '.config.proxy_settings.https_proxy')
+export noProxySetting=$(cat ${profileConfigJsonPath} | jq -r '.config.proxy_settings.no_proxy')
 
-export baseUser=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.baseUser')
-export basePassword=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.basePassword')
-export startupMode=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.startupMode')
-export standaloneMode=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.standaloneMode')
+export baseUser=$(cat ${profileConfigJsonPath} | jq -r '.config.baseUser')
+export basePassword=$(cat ${profileConfigJsonPath} | jq -r '.config.basePassword')
+export startupMode=$(cat ${profileConfigJsonPath} | jq -r '.config.startupMode')
+export standaloneMode=$(cat ${profileConfigJsonPath} | jq -r '.config.standaloneMode')
 
 export kxVersion=$(cat ${installationWorkspace}/versions.json | jq -r '.kxascode')
 export k8sVersion=$(cat ${installationWorkspace}/versions.json | jq -r '.kubernetes')
@@ -130,7 +148,7 @@ checkAndUpdateBasePassword() {
 }
 
 # Modify username and password if modified in profile-config.json
-if [[ ! -f  /usr/share/kx.as.code/.config/network_status ]]; then
+if [[ "$(cat /usr/share/kx.as.code/workspace/profile-config.json | jq -r '.state.networking_configuration_status')" ]]; then
   checkAndUpdateBaseUsername
   checkAndUpdateBasePassword
 fi
@@ -179,14 +197,14 @@ done
 # Install nvme-cli if running on host with NVMe block devices (for example on AWS with EBS)
 /usr/bin/sudo lsblk -i -o kname,mountpoint,fstype,size,maj:min,name,state,rm,rota,ro,type,label,model,serial
 
-export localKubeVolumesDiskSize=$(cat ${installationWorkspace}/profile-config.json| jq -r '.state.provisioned_disks.local_storage_disk_size')
+export localKubeVolumesDiskSize=$(cat ${profileConfigJsonPath} | jq -r '.state.provisioned_disks.local_storage_disk_size')
 
 # Get number of local volumes to pre-provision
-export number1gbVolumes=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.local_volumes.one_gb')
-export number5gbVolumes=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.local_volumes.five_gb')
-export number10gbVolumes=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.local_volumes.ten_gb')
-export number30gbVolumes=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.local_volumes.thirty_gb')
-export number50gbVolumes=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.local_volumes.fifty_gb')
+export number1gbVolumes=$(cat ${profileConfigJsonPath} | jq -r '.config.local_volumes.one_gb')
+export number5gbVolumes=$(cat ${profileConfigJsonPath} | jq -r '.config.local_volumes.five_gb')
+export number10gbVolumes=$(cat ${profileConfigJsonPath} | jq -r '.config.local_volumes.ten_gb')
+export number30gbVolumes=$(cat ${profileConfigJsonPath} | jq -r '.config.local_volumes.thirty_gb')
+export number50gbVolumes=$(cat ${profileConfigJsonPath} | jq -r '.config.local_volumes.fifty_gb')
 
 if [[ -z ${localKubeVolumesDiskSize} ]] || [[ "${localKubeVolumesDiskSize}" == "null" ]]; then
   # Calculate total needed disk size (should match the value the VM was provisioned with, else automatic detection of the correct disk may fail)
@@ -301,7 +319,7 @@ create_volumes $(awk "BEGIN{printf \"%.2f\", (50 * 1.02)}") ${number50gbVolumes}
 /usr/bin/sudo lsblk
 
 # Install AWS SSM Agent if running in AWS
-deployedAwsAmiImage=$(cat ${installationWorkspace}/profile-config.json | jq -r '.vm_properties.kx_main_ami_id')
+deployedAwsAmiImage=$(cat ${profileConfigJsonPath} | jq -r '.vm_properties.kx_main_ami_id')
 if [[ -n "${deployedAwsAmiImage}" ]] && [[ "${deployedAwsAmiImage}" != "null" ]]; then
   mkdir ${installationWorkspace}/aws-ssm
   curl -o ${installationWorkspace}/aws-ssm/amazon-ssm-agent.deb https://s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/debian_amd64/amazon-ssm-agent.deb
@@ -314,23 +332,25 @@ cd ${installationWorkspace}
 # Wait until the worker has the main node's IP file
 if [[ ${baseIpType} == "static"   ]]; then
     # Get fixed IPs if defined
-    export fixedIpHosts=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.staticNetworkSetup.baseFixedIpAddresses | keys[]')
+    export fixedIpHosts=$(cat ${profileConfigJsonPath} | jq -r '.config.staticNetworkSetup.baseFixedIpAddresses | keys[]')
     for fixIpHost in ${fixedIpHosts}; do
         fixIpHostVariableName=$(echo ${fixIpHost} | sed 's/-/__/g')
-        export ${fixIpHostVariableName}_IpAddress="$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.staticNetworkSetup.baseFixedIpAddresses."'${fixIpHost}'"')"
+        export ${fixIpHostVariableName}_IpAddress="$(cat ${profileConfigJsonPath} | jq -r '.config.staticNetworkSetup.baseFixedIpAddresses."'${fixIpHost}'"')"
         if [[ ${fixIpHost} == "kx-main1" ]]; then
-            export kxMainIp="$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.staticNetworkSetup.baseFixedIpAddresses."'${fixIpHost}'"')"
+            export kxMainIp="$(cat ${profileConfigJsonPath} | jq -r '.config.staticNetworkSetup.baseFixedIpAddresses."'${fixIpHost}'"')"
         elif [[ ${fixIpHost} == "$(hostname)" ]]; then
-            export kxNodeIp="$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.staticNetworkSetup.baseFixedIpAddresses."'${fixIpHost}'"')"
+            export kxNodeIp="$(cat ${profileConfigJsonPath} | jq -r '.config.staticNetworkSetup.baseFixedIpAddresses."'${fixIpHost}'"')"
         fi
     done
-    export fixedNicConfigGateway=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.staticNetworkSetup.gateway')
-    export fixedNicConfigDns1=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.staticNetworkSetup.dns1')
-    export fixedNicConfigDns2=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.staticNetworkSetup.dns2')
+    export fixedNicConfigGateway=$(cat ${profileConfigJsonPath} | jq -r '.config.staticNetworkSetup.gateway')
+    export fixedNicConfigDns1=$(cat ${profileConfigJsonPath} | jq -r '.config.staticNetworkSetup.dns1')
+    export fixedNicConfigDns2=$(cat ${profileConfigJsonPath} | jq -r '.config.staticNetworkSetup.dns2')
 elif [[ -n $(dig kx-main1.${baseDomain} +short) ]]; then
   # Try DNS
   export kxMainIp=$(dig kx-main1.${baseDomain} +short)
   export kxNodeIp=$(ip -4 a show ${netDevice} | grep -oP '(?<=inet\s)\d+(\.\d+){3}')
+elif [[ -n $(cat ${profileConfigJsonPath} | jq -r '.state.kx_main1_ip_address') ]] && [[ "$(cat ${profileConfigJsonPath} | jq -r '.state.kx_main1_ip_address')" != "null" ]]; then
+    kxMainIp=$(cat ${profileConfigJsonPath} | jq -r '.state.kx_main1_ip_address')
 else
     # If no static IP or DNS, wait for file containing KxMain IP
     timeout -s TERM 3000 bash -c 'while [ ! -f /var/tmp/kx.as.code_main-ip-address ];         do
@@ -470,7 +490,7 @@ while [[ "${available}" == "false"  ]]; do
 done
 
 # Add key to KX-Main host
-/usr/bin/sudo -H -i -u "${vmUser}" bash -c "sshpass -f ${kxHomeDir}/.config/.user.cred ssh-copy-id -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp}"
+/usr/bin/sudo -H -i -u "${vmUser}" bash -c "sshpass -f ${sharedKxHome}/.config/.user.cred ssh-copy-id -o StrictHostKeyChecking=no ${vmUser}@${kxMainIp}"
 
 fileExists=""
 while [[ "${fileExists}" != "true"  ]]; do
@@ -654,7 +674,7 @@ while [[ "$rc" != "0" ]]; do
 done
 
 # Get Kubernetes orchestrator to use
-export kubeOrchestrator=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.kubeOrchestrator')
+export kubeOrchestrator=$(cat ${profileConfigJsonPath} | jq -r '.config.kubeOrchestrator')
 
 if [[ "${kubeOrchestrator}" == "k8s" ]]; then
 
@@ -889,7 +909,7 @@ if ( [[ -n ${httpProxySetting} ]] || [[ -n ${httpsProxySetting} ]] ) && ( [[ "${
 fi
 
 # Set default keyboard language
-defaultUserKeyboardLanguage=$(jq -r '.config.defaultKeyboardLanguage' ${installationWorkspace}/profile-config.json)
+defaultUserKeyboardLanguage=$(jq -r '.config.defaultKeyboardLanguage' ${profileConfigJsonPath})
 keyboardLanguages=""
 availableLanguages="us de gb fr it es in cn"
 for language in ${availableLanguages}; do
@@ -958,7 +978,7 @@ EOF
   /usr/bin/sudo sed -i '/^shadow:/s/$/ ldap/' /etc/nsswitch.conf
   /usr/bin/sudo sed -i '/^gshadow:/s/$/ ldap/' /etc/nsswitch.conf
 
-  export vmPassword="$(cat ${kxHomeDir}/.config/.user.cred)"
+  export vmPassword="$(cat ${sharedKxHome}/.config/.user.cred)"
 
 echo '''
 # nslcd configuration file. See nslcd.conf(5)
@@ -992,7 +1012,7 @@ tls_cacertfile /etc/ssl/certs/ca-certificates.crt
 ''' | /usr/bin/sudo tee /etc/nslcd.conf
 
   # Ensure home directory is created on first login
-  echo "session required      pam_mkhomedir.so   skel=${kxHomeDir}/skel umask=0002" | /usr/bin/sudo tee -a /etc/pam.d/common-session
+  echo "session required      pam_mkhomedir.so   skel=${sharedKxHome}/skel umask=0002" | /usr/bin/sudo tee -a /etc/pam.d/common-session
 
   # Check if ldap users are returned with getent passwd
   getent passwd

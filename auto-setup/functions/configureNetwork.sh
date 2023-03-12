@@ -18,8 +18,8 @@ if [[ ! -f ${sharedKxHome}/.config/network_status ]]; then
     /usr/bin/sudo rm -f /etc/resolv.conf
     echo "nameserver ${mainIpAddress}" | /usr/bin/sudo tee /etc/resolv.conf
 
-    export private_subnet_cidr_one=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.private_subnet_cidr_one')
-    export private_subnet_cidr_two=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.private_subnet_cidr_two')
+    export private_subnet_cidr_one=$(cat ${profileConfigJsonPath} | jq -r '.config.private_subnet_cidr_one')
+    export private_subnet_cidr_two=$(cat ${profileConfigJsonPath} | jq -r '.config.private_subnet_cidr_two')
 
     if [[ "${private_subnet_cidr_one}" != "null" ]]; then
       allowedIpRanges="${private_subnet_cidr_one}"
@@ -146,7 +146,7 @@ fi
     # Ensure the whole network setup does not execute again on next run after reboot
     /usr/bin/sudo mkdir -p ${sharedKxHome}/.config
     echo "KX.AS.CODE network config done" | /usr/bin/sudo tee ${sharedKxHome}/.config/network_status
-    disableLinuxDesktop=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.disableLinuxDesktop')
+    disableLinuxDesktop=$(cat ${profileConfigJsonPath} | jq -r '.config.disableLinuxDesktop')
     # Reboot if static network settings to activate them. Reboot anyway if not static, if disableLinuxDesktop was set to true
     if  [[ "${baseIpType}" == "static"   ]] || [[ "${disableLinuxDesktop}" == "true"   ]] || [[ "${vm_User}" != "${baseUser}" ]]; then
         # Reboot machine to ensure all network changes are active

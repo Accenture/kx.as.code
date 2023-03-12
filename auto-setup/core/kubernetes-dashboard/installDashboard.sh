@@ -20,7 +20,7 @@ kubectl delete secret kubernetes-dashboard-certs -n ${namespace}
 kubectl create secret generic kubernetes-dashboard-certs --from-file=${installationWorkspace}/kx-certs -n ${namespace}
 
 # Update Kubernetes Dashboard with new certificate
-if [[ "$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.disableSessionTimeout' || true)" == "true"   ]]; then
+if [[ "$(cat ${profileConfigJsonPath} | jq -r '.config.disableSessionTimeout' || true)" == "true"   ]]; then
     sed -i '/^ *args:/,/^ *[^:]*:/s/^.*- --auto-generate-certificates/            - --tls-cert-file=\/tls.crt\n            - --tls-key-file=\/tls.key\n            - --token-ttl=0\n            #- --auto-generate-certificates/' ${installationWorkspace}/dashboard.yaml
 else
     sed -i '/^ *args:/,/^ *[^:]*:/s/^.*- --auto-generate-certificates/            - --tls-cert-file=\/tls.crt\n            - --tls-key-file=\/tls.key\n            #- --auto-generate-certificates/' ${installationWorkspace}/dashboard.yaml

@@ -51,7 +51,7 @@ getVersions
 installEnvhandlebars
 
 # Check profile-config.json file is present before starting script
-waitForFile ${installationWorkspace}/profile-config.json
+waitForFile ${profileConfigJsonPath}
 
 export logFilename=$(setLogFilename "poller")
 

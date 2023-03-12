@@ -141,22 +141,32 @@ Vagrant.configure("2") do |config|
         subconfig.vm.provision "shell", inline: "sudo mv -v -f /vagrant/.vmCredentialsFile /usr/share/kx.as.code/.config/ 2>/dev/null || true"
         subconfig.vm.provision "shell", inline: "sudo mkdir -p /usr/share/kx.as.code/workspace/custom-images"
         subconfig.vm.provision "shell", inline: "sudo cp -v -f /vagrant/avatar.{jpg,png} /vagrant/background.{jpg,png} /vagrant/boot.{jpg,png} /vagrant/conky_logo.{jpg,png} /vagrant/logo_icon.{jpg,png} /usr/share/kx.as.code/workspace/custom-images 2>/dev/null || true"
-        subconfig.vm.provision "shell", inline: "jq '. + { \"state\": { \"kx_main1_ip_address\": \"'$(cat /vagrant/kx.as.code_main-ip-address)'\", \"provisioned_disks\": { \"local_storage_disk_size\": #{LOCAL_KUBE_VOLUMES_DISK_SIZE}, \"network_storage_disk_size\": #{GLUSTERFS_KUBE_VOLUMES_DISK_SIZE} } } }' /usr/share/kx.as.code/workspace/profile-config.json >/tmp/profile-config.json && mv /tmp/profile-config.json /usr/share/kx.as.code/workspace/profile-config.json"
+        subconfig.vm.provision "shell", inline: "jq '. + { \"state\": { \"networking_configuration_status\": \"todo\", \"kx_main1_ip_address\": \"'$(cat /vagrant/kx.as.code_main-ip-address)'\", \"provisioned_disks\": { \"local_storage_disk_size\": #{LOCAL_KUBE_VOLUMES_DISK_SIZE}, \"network_storage_disk_size\": #{GLUSTERFS_KUBE_VOLUMES_DISK_SIZE} } } }' /usr/share/kx.as.code/workspace/profile-config.json >/tmp/profile-config.json && mv /tmp/profile-config.json /usr/share/kx.as.code/workspace/profile-config.json"
         subconfig.vm.provision "shell", inline: "cat /usr/share/kx.as.code/workspace/profile-config.json | jq '.'"
         subconfig.vm.provision "shell", inline: "cat /usr/share/kx.as.code/workspace/users.json | jq '.'"
         subconfig.vm.provision "shell", inline: "cat /usr/share/kx.as.code/workspace/customVariables.json | jq '.'"
         subconfig.vm.provision "shell", inline: "cat /usr/share/kx.as.code/workspace/actionQueues.json | jq '.'"
         subconfig.vm.provision "shell", inline: 'echo $1 | sudo tee /var/tmp/.hash && sudo chmod 400 /var/tmp/.hash', :args => "#{HASH}"
         subconfig.vm.provision "shell", inline: 'echo -e "$(date "+%Y-%m-%d_%H%M%S") | KX-Main VM created by Vagrant" | sudo tee /usr/share/kx.as.code/workspace/gogogo'
-        subconfig.trigger.after :destroy do |trigger|
-        trigger.warn = "Destroying VM's disks"
-            trigger.run = { :inline => "bash -c 'rm -f kx.as.code_main-ip-address kx-main-local-k8s-storage.vmdk kx-main-glusterfs-k8s-storage.vmdk'" }
+        #subconfig.trigger.before :destroy do
+        #    warn = "Halting machine kx-main1"
+        #    run = { inline: "vagrant halt kx-main1 --force" }
+        #end
+        subconfig.trigger.after :destroy do
+              warn = "Destroying kx-main1 VM's disks"
+              run = {
+                inline: <<-SHELL
+                    rm -f kx.as.code_main-ip-address
+                    rm -f kx-main1-local-k8s-storage.vmdk
+                    rm -f kx-main1-glusterfs-k8s-storage.vmdk
+                    SHELL
+                    }
         end
         #subconfig.vm.provision :shell do |s|
         #  s.inline = "echo -e '{ \"DOCKERHUB_USER\": \"#{DOCKERHUB_USER}\", \"DOCKERHUB_EMAIL\": \"#{DOCKERHUB_EMAIL}\", \"DOCKERHUB_PASSWORD\": \"#{DOCKERHUB_PASSWORD}\" }' | sudo tee /var/tmp/.tmp.json"
         #end
         subconfig.vm.provider "vmware_desktop" do |v|
-            kx_main1_local_k8s_storage="#{current_dir}/kx-main1-local-k8s-storage.vmdk"
+            kx_main1_local_k8s_storage = "#{current_dir}/kx-main1-local-k8s-storage.vmdk"
             if Vagrant::Util::Platform.windows?
                 kx_main1_local_k8s_storage = kx_main1_local_k8s_storage.gsub(/\//, '\\')
             end
@@ -205,13 +215,17 @@ Vagrant.configure("2") do |config|
         subconfig.vm.box_url = "#{KX_NODE_BOX_URL}"
         subconfig.vm.provision "shell", inline: "while [ ! -f /vagrant/kx.as.code_main-ip-address ]; do echo \"Waiting for kx.as.code_main-ip-address\" && sleep 15; done; cp /vagrant/kx.as.code_main-ip-address /var/tmp/"
         subconfig.vm.provision "shell", inline: "for i in {1..5}; do echo \"Waiting for /vagrant ... [\${i}\" of 5]; if [ -d /vagrant ]; then sudo cp -v -f /vagrant/profile-config.json /usr/share/kx.as.code/workspace; break; else echo \"/vagrant not yet not available\"; sleep 5; fi; done"
-        subconfig.vm.provision "shell", inline: "jq '. + { \"state\": { \"kx_main1_ip_address\": \"'$(cat /vagrant/kx.as.code_main-ip-address)'\", \"provisioned_disks\": { \"local_storage_disk_size\": #{LOCAL_KUBE_VOLUMES_DISK_SIZE}, \"network_storage_disk_size\": #{GLUSTERFS_KUBE_VOLUMES_DISK_SIZE} } } }' /usr/share/kx.as.code/workspace/profile-config.json >/tmp/profile-config.json && mv /tmp/profile-config.json /usr/share/kx.as.code/workspace/profile-config.json"
+        subconfig.vm.provision "shell", inline: "jq '. + { \"state\": { \"networking_configuration_status\": \"todo\", \"kx_main1_ip_address\": \"'$(cat /vagrant/kx.as.code_main-ip-address)'\", \"provisioned_disks\": { \"local_storage_disk_size\": #{LOCAL_KUBE_VOLUMES_DISK_SIZE}, \"network_storage_disk_size\": #{GLUSTERFS_KUBE_VOLUMES_DISK_SIZE} } } }' /usr/share/kx.as.code/workspace/profile-config.json >/tmp/profile-config.json && mv /tmp/profile-config.json /usr/share/kx.as.code/workspace/profile-config.json"
         subconfig.vm.provision "shell", inline: "cat /usr/share/kx.as.code/workspace/profile-config.json | jq '.'"
         subconfig.vm.provision "shell", inline: 'echo -e "$(date "+%Y-%m-%d_%H%M%S") | KX-Main VM created by Vagrant" | sudo tee /usr/share/kx.as.code/workspace/gogogo'
-        subconfig.trigger.after :destroy do |trigger|
-          trigger.warn = "Destroying VM's disks"
-              trigger.run = { :inline => "bash -c 'rm -f kx-main#{i}-local-k8s-storage.vmdk'" }
-          end
+        subconfig.trigger.after :destroy do
+              warn = "Destroying kx-main#{i} VM's disks"
+              run = {
+                inline: <<-SHELL
+                    rm -f kx-main#{i}-local-k8s-storage.vmdk
+                    SHELL
+              }
+        end
           subconfig.vm.provider "vmware_desktop" do |v|
 
             kx_main_local_k8s_storage="#{current_dir}/kx-main#{i}-local-k8s-storage.vmdk"
@@ -251,12 +265,16 @@ Vagrant.configure("2") do |config|
           subconfig.vm.box_url = "#{KX_NODE_BOX_URL}"
           subconfig.vm.provision "shell", inline: "while [ ! -f /vagrant/kx.as.code_main-ip-address ]; do echo \"Waiting for kx.as.code_main-ip-address\" && sleep 15; done; cp /vagrant/kx.as.code_main-ip-address /var/tmp/"
           subconfig.vm.provision "shell", inline: "for i in {1..5}; do echo \"Waiting for /vagrant ... [\${i}\" of 5]; if [ -d /vagrant ]; then sudo cp -v -f /vagrant/profile-config.json /usr/share/kx.as.code/workspace; break; else echo \"/vagrant not yet not available\"; sleep 5; fi; done"
-          subconfig.vm.provision "shell", inline: "jq '. + { \"state\": { \"kx_main1_ip_address\": \"'$(cat /vagrant/kx.as.code_main-ip-address)'\", \"provisioned_disks\": { \"local_storage_disk_size\": #{LOCAL_KUBE_VOLUMES_DISK_SIZE}, \"network_storage_disk_size\": #{GLUSTERFS_KUBE_VOLUMES_DISK_SIZE} } } }' /usr/share/kx.as.code/workspace/profile-config.json >/tmp/profile-config.json && mv /tmp/profile-config.json /usr/share/kx.as.code/workspace/profile-config.json"
+          subconfig.vm.provision "shell", inline: "jq '. + { \"state\": { \"networking_configuration_status\": \"todo\", \"kx_main1_ip_address\": \"'$(cat /vagrant/kx.as.code_main-ip-address)'\", \"provisioned_disks\": { \"local_storage_disk_size\": #{LOCAL_KUBE_VOLUMES_DISK_SIZE}, \"network_storage_disk_size\": #{GLUSTERFS_KUBE_VOLUMES_DISK_SIZE} } } }' /usr/share/kx.as.code/workspace/profile-config.json >/tmp/profile-config.json && mv /tmp/profile-config.json /usr/share/kx.as.code/workspace/profile-config.json"
           subconfig.vm.provision "shell", inline: "cat /usr/share/kx.as.code/workspace/profile-config.json | jq '.'"
           subconfig.vm.provision "shell", inline: 'echo -e "$(date "+%Y-%m-%d_%H%M%S") | KX-Worker VM created by Vagrant" | sudo tee /usr/share/kx.as.code/workspace/gogogo'
-          subconfig.trigger.after :destroy do |trigger|
-            trigger.warn = "Destroying VM's disks"
-            trigger.run = { :inline => "bash -c 'rm -f kx-worker#{i}-local-k8s-storage.vmdk'" }
+          subconfig.trigger.after :destroy do
+                warn = "Destroying kx-main#{i} VM's disks"
+                run = {
+                  inline: <<-SHELL
+                      rm -f kx-worker#{i}-local-k8s-storage.vmdk
+                      SHELL
+                }
           end
           subconfig.vm.provider "vmware_desktop" do |v|
 

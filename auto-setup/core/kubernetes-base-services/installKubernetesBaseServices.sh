@@ -56,7 +56,7 @@ EOF
         export kubeConfigFile=/etc/kubernetes/admin.conf
     else
 
-        allowWorkloadsOnMaster=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.allowWorkloadsOnMaster')
+        allowWorkloadsOnMaster=$(cat ${profileConfigJsonPath} | jq -r '.config.allowWorkloadsOnMaster')
         if [[ "${allowWorkloadsOnMaster}" == "false" ]]; then
             taintMasterNodeOption="--node-taint CriticalAddonsOnly=true:NoExecute"
         else
