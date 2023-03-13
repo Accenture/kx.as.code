@@ -185,41 +185,41 @@ checkVersions()  {
 
 log_debug() {
     message=${1}
-    colour=${2:-$nc}
+    colour=${2:-nc}
     if [[ "${logLevel}" == "debug" ]]; then
-        >&2 echo -e "${colour}[DEBUG] ${message}${nc}"
+        >&2 echo -e "${!colour}[DEBUG] ${message}${nc}"
     fi
 }
 
 log_error() {
     message=${1}
-    colour=${2:-$red}
+    colour=${2:-red}
     if [[ "${logLevel}" == "error" ]] || [[ "${logLevel}" == "debug" ]]; then
-        >&2 echo -e "${colour}[ERROR] ${message}${nc}"
+        >&2 echo -e "${!colour}[ERROR] ${message}${nc}"
     fi
 }
 
 log_info() {
     message=${1}
-    colour=${2:-$nc}
+    colour=${2:-nc}
     if [[ "${logLevel}" == "info" ]] || [[ "${logLevel}" == "error" ]] || [[ "${logLevel}" == "warn" ]] || [[ "${logLevel}" == "debug" ]]; then
-        >&2 echo -e "${colour}[INFO] ${message}${nc}"
+        >&2 echo -e "${!colour}[INFO] ${message}${nc}"
     fi
 }
 
 log_trace() {
     message=${1}
-    colour=${2:-$nc}
+    colour=${2:-nc}
     if [[ "${logLevel}" == "trace" ]]; then
-        >&2 echo -e "${colour}[TRACE] ${message}${nc}"
+        >&2 echo -e "${!colour}[TRACE] ${message}${nc}"
     fi
 }
 
 log_warn() {
     message=${1}
-    colour=${2:-$orange}
-    if [[ "${logLevel}" == "error" ]] || [[ "${logLevel}" == "warn" ]] || [[ "${logLevel}" == "debug" ]]; then
-        >&2 echo -e "${colour}[WARN] ${message}${nc}"
+    colour=${2:-orange}
+    if [[ "${logLevel}" == "info" ]] || [[ "${logLevel}" == "error" ]] || [[ "${logLevel}" == "warn" ]] || [[ "${logLevel}" == "debug" ]]; then
+        >&2 echo -e "${!colour}[WARN] ${message}${nc}"
     fi
 }
 
@@ -458,7 +458,7 @@ jenkins_home=${jenkins_home_absolute_path}
 log_info "Setting jenkins_home to ${jenkins_home_absolute_path}"
 
 # Copy Initial Setup files to Jenkins Home
-cp -rf ./initial-setup/ ./jenkins_home
+cp -rf ./initial-setup/. jenkins_home/
 
 # Update Jenkins userContent file
 mkdir -p jenkins_home/userContent/
@@ -536,14 +536,14 @@ fi
 export path_to_git_executable="git"
 export path_to_sh_executable="sh"
 
-initialSetupJobConfgXmlFiles=$(find jenkins_home -not \( -path jenkins_home/plugins -prune \) -not \( -path jenkins_home/war -prune \) -not \( -path jenkins_home/fingerprints -prune \) -name "*.xml" -maxdepth 5)
+initialSetupJobConfgXmlFiles=$(find jenkins_home -not \( -path jenkins_home/plugins -prune \) -not \( -path jenkins_home/war -prune \) -not \( -path jenkins_home/fingerprints -prune \) -name "*.xml" -maxdepth 5 | grep -v "credential_")
 for initialSetupJobConfgXmlFile in ${initialSetupJobConfgXmlFiles}; do
   log_info "Replacing placeholders with values in ${initialSetupJobConfgXmlFile}"
   for i in {1..5}; do
     # Get list of variables to replace
     placeholdersToReplace=$(sed -n 's/.*{{\(.*[a-z_]\)}}.*/\1/p' ${initialSetupJobConfgXmlFile})
     log_debug ${placeholdersToReplace}
-    cp ${initialSetupJobConfgXmlFile} ${initialSetupJobConfgXmlFile}_tmp
+    cp -f ${initialSetupJobConfgXmlFile} ${initialSetupJobConfgXmlFile}_tmp
     for placeholder in ${placeholdersToReplace}; do
       log_debug ${placeholder}
       log_debug ${!placeholder}
@@ -555,7 +555,8 @@ for initialSetupJobConfgXmlFile in ${initialSetupJobConfgXmlFiles}; do
       fi
     done
     if [ -s "${initialSetupJobConfgXmlFile}_tmp" ]; then
-      cp "${initialSetupJobConfgXmlFile}_tmp" "${initialSetupJobConfgXmlFile}"
+      cp -f "${initialSetupJobConfgXmlFile}_tmp" "${initialSetupJobConfgXmlFile}"
+      rm -f "${initialSetupJobConfgXmlFile}_tmp"
       break
     else
       log_error "Target ${initialSetupJobConfgXmlFile} file was empty after mustach replacement. Trying again"
@@ -610,11 +611,11 @@ done
 export jenkinsCrumb=$(curl -s --cookie-jar /tmp/cookies -u admin:admin ${jenkins_url}/crumbIssuer/api/json | ${jqBinary} -r '.crumb')
 
 # Generated encrypted secret file to upload to Jenkins
-. ./generateSecretsFile.sh -r
+$(pwd)/generateSecretsFile.sh -r
 
 # Read hash created by above script
 export hash=$(cat ./.hash | head -1)
-log_debug "Extracted hash from previous script call: *$hash*" "orange"
+log_debug "Extracted hash from previous script call: *${hash}*" "orange"
 
 # Creating credentials in Jenkins
 credentialXmlFiles=$(find ./jenkins_home -name "credential_*.xml")
@@ -622,21 +623,27 @@ for credentialXmlFile in ${credentialXmlFiles}; do
   log_info "Replacing placeholders with values in ${credentialXmlFile}"
   for i in {1..5}; do
     cat "${credentialXmlFile}" | ./mo >"${credentialXmlFile}_mo"
-    credentialId=$(cat "${credentialXmlFile}" | grep -oPm1 "(?<=<id>)[^<]+")
+    if [[ "${system}" == "Linux" ]]; then
+      export credentialId=$(cat "${credentialXmlFile}" | grep -oPm1 "(?<=<id>)[^<]+")
+    elif [[ "${system}" == "Darwin" ]]; then
+      export credentialId=$(cat "${credentialXmlFile}" | grep '<id>' "${credentialXmlFile}" | sed 's@.*<id>\(.*\)</id>.*@\1@')
+    fi
     if [ -s "${credentialXmlFile}_mo" ]; then
       # Remove credential before creating/recreating it
-      httpResponseCode=$(curl -X GET --cookie ./cookies -H "Jenkins-Crumb: ${jenkinsCrumb}" -u admin:admin ${jenkinsUrl}/credentials/store/system/domain/_/credential/${credentialId} -L -s -o /dev/null -w "%{http_code}")
+      log_debug "curl -X GET --cookie /tmp/cookies -H \"Jenkins-Crumb: ${jenkinsCrumb}\" -u admin:admin ${jenkins_url}/credentials/store/system/domain/_/credential/${credentialId} -L -s -o /dev/null -w \"%{http_code}\""
+      httpResponseCode=$(curl -X GET --cookie /tmp/cookies -H "Jenkins-Crumb: ${jenkinsCrumb}" -u admin:admin ${jenkins_url}/credentials/store/system/domain/_/credential/${credentialId} -L -s -o /dev/null -w "%{http_code}")
       if [[ "${httpResponseCode}" == "200" ]]; then
-        log_debug "curl -X POST --cookie ./cookies -H \"Jenkins-Crumb: ${jenkinsCrumb}\" -u admin:admin ${jenkinsUrl}/credentials/store/system/domain/_/credential/$credentialId/doDelete"
+        log_debug "curl -X POST --cookie /tmp/cookies -H \"Jenkins-Crumb: ${jenkinsCrumb}\" -u admin:admin ${jenkins_url}/credentials/store/system/domain/_/credential/${credentialId}/doDelete"
         log_info "Deleting credential with id ${credentialId} so it can be recreated"
-        curl -X POST --cookie ./cookies -H "Jenkins-Crumb: ${jenkinsCrumb}" \
+        curl -X POST --cookie /tmp/cookies -H "Jenkins-Crumb: ${jenkinsCrumb}" \
           -u admin:admin \
-          ${jenkinsUrl}/credentials/store/system/domain/_/credential/${credentialId}/doDelete
+          ${jenkins_url}/credentials/store/system/domain/_/credential/${credentialId}/doDelete
       else
         log_debug "Nothing to delete, as credential ${credentialId} did not exit yet" "orange"
       fi
       cat "${credentialXmlFile}_mo" | "${javaBinary}" -jar jenkins-cli.jar -s ${jenkins_url} create-credentials-by-xml system::system::jenkins _ || true
-      rm "${credentialXmlFile}_mo"
+      rm -f "${credentialXmlFile}_mo"
+      rm -f "${credentialXmlFile}"
       break
     else
       log_error "Target config.xml file was empty after mustach replacement. Trying again"
@@ -645,12 +652,12 @@ for credentialXmlFile in ${credentialXmlFiles}; do
 done
 
 # Delete credential in order to update/recreate it in next step
-httpResponseCode=$(curl -X GET --cookie ./cookies -H "Jenkins-Crumb: ${jenkinsCrumb}" -u admin:admin ${jenkinsUrl}/credentials/store/system/domain/_/credential/VM_CREDENTIALS_FILE -L -s -o /dev/null -w "%{http_code}")
+httpResponseCode=$(curl -X GET --cookie /tmp/cookies -H "Jenkins-Crumb: ${jenkinsCrumb}" -u admin:admin ${jenkins_url}/credentials/store/system/domain/_/credential/VM_CREDENTIALS_FILE -L -s -o /dev/null -w "%{http_code}")
 if [[ "${httpResponseCode}" == "200" ]]; then
- log_debug "curl -X POST --cookie ./cookies -H \"Jenkins-Crumb: ${jenkinsCrumb}\" -u admin:admin ${jenkinsUrl}/credentials/store/system/domain/_/credential/VM_CREDENTIALS_FILE/doDelete"
- curl -X POST --cookie ./cookies -H "Jenkins-Crumb: ${jenkinsCrumb}" \
+ log_debug "curl -X POST --cookie /tmp/cookies -H \"Jenkins-Crumb: ${jenkinsCrumb}\" -u admin:admin ${jenkins_url}/credentials/store/system/domain/_/credential/VM_CREDENTIALS_FILE/doDelete"
+ curl -X POST --cookie /tmp/cookies -H "Jenkins-Crumb: ${jenkinsCrumb}" \
      -u admin:admin \
-      ${jenkinsUrl}/credentials/store/system/domain/_/credential/VM_CREDENTIALS_FILE/doDelete
+      ${jenkins_url}/credentials/store/system/domain/_/credential/VM_CREDENTIALS_FILE/doDelete
 else
   log_debug "Nothing to delete, as credential VM_CREDENTIALS_FILE did not exit yet" "orange"
 fi
@@ -692,4 +699,4 @@ if [[ ${error} == "true" ]]; then
 fi
 
 log_info "Congratulations! Jenkins for KX.AS.CODE is successfully configured and running. Access Jenkins via the following URL:" "green"
-log_ingo "${jenkins_url}/job/KX.AS.CODE_Launcher/build?delay=0sec" "blue"
+log_info "${jenkins_url}/job/KX.AS.CODE_Launcher/build?delay=0sec" "blue"

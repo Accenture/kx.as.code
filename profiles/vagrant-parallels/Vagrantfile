@@ -21,6 +21,8 @@ if STANDALONE_MODE != "true"
     # Get needed capacity for GlusterFS volumes disk size
     GLUSTERFS_KUBE_VOLUMES_DISK_SIZE=profile_config_json['config']['glusterFsDiskSize'].to_i + 1
     puts "GlusterFS Disk Size: #{GLUSTERFS_KUBE_VOLUMES_DISK_SIZE}GB"
+else
+    GLUSTERFS_KUBE_VOLUMES_DISK_SIZE=0
 end
 
 # Calculate needed local disk capacity

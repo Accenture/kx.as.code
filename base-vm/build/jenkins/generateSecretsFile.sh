@@ -27,6 +27,7 @@ checkExecutableExists() {
   local warnOrErrorIfNotExist="${2}"
 
   # Define path to executable
+  log_debug "executableToCheck: ${executableToCheck}"
   if [[ "${executableToCheck:0:1}" != / && "${executableToCheck:0:2}" != ~[/a-z] ]]; then
     executablePath=$(which "${executableToCheck}")
   else
@@ -109,32 +110,42 @@ checkVersions()  {
 }
 
 log_debug() {
+    message=${1}
+    colour=${2:-$nc}
     if [[ "${logLevel}" == "debug" ]]; then
-        >&2 echo -e "[DEBUG] ${1}${nc}"
+        >&2 echo -e "${!colour}[DEBUG] ${message}${nc}"
     fi
 }
 
 log_error() {
+    message=${1}
+    colour=${2:-$red}
     if [[ "${logLevel}" == "error" ]] || [[ "${logLevel}" == "debug" ]]; then
-        >&2 echo -e "${red}[ERROR] ${1}${nc}"
+        >&2 echo -e "${!colour}[ERROR] ${message}${nc}"
     fi
 }
 
 log_info() {
+    message=${1}
+    colour=${2:-$nc}
     if [[ "${logLevel}" == "info" ]] || [[ "${logLevel}" == "error" ]] || [[ "${logLevel}" == "warn" ]] || [[ "${logLevel}" == "debug" ]]; then
-        >&2 echo -e "[INFO] ${1}${nc}"
+        >&2 echo -e "${!colour}[INFO] ${message}${nc}"
     fi
 }
 
 log_trace() {
+    message=${1}
+    colour=${2:-$nc}
     if [[ "${logLevel}" == "trace" ]]; then
-        >&2 echo -e "[TRACE] ${1}${nc}"
+        >&2 echo -e "${!colour}[TRACE] ${message}${nc}"
     fi
 }
 
 log_warn() {
-    if [[ "${logLevel}" == "error" ]] || [[ "${logLevel}" == "warn" ]] || [[ "${logLevel}" == "debug" ]]; then
-        >&2 echo -e "${orange}[WARN] ${1}${nc}"
+    message=${1}
+    colour=${2:-$orange}
+    if [[ "${logLevel}" == "info" ]] || [[ "${logLevel}" == "error" ]] || [[ "${logLevel}" == "warn" ]] || [[ "${logLevel}" == "debug" ]]; then
+        >&2 echo -e "${!colour}[WARN] ${message}${nc}"
     fi
 }
 
@@ -217,7 +228,7 @@ if [[ ${override_action} == "recreate" ]] || [[ ${override_action} == "fully-rec
     fi
 else
   log_info "You did not pass any option to this script. Exiting."
-  -/$0 -h
+  $0 -h
   exit
 fi
 
