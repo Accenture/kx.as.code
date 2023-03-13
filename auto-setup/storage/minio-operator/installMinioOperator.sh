@@ -33,4 +33,9 @@ spec:
 # Apply patch
 kubectl patch deployment minio-operator -n ${namespace} --patch-file ${installationWorkspace}/minio-operator-deployment-patch.yaml
 
+# Re-deploy with anti-affinity removed and reduce number of replicas to 1
+kubectl scale deployment minio-operator --replicas=0 -n ${namespace}
+sleep 5
+kubectl scale deployment minio-operator --replicas=1 -n ${namespace}
+
 fi
