@@ -14,3 +14,23 @@ deployYamlFilesToKubernetes
 
 # Initialize Minio-S3 Operator
 kubectl minio init --namespace ${namespace}
+
+# Patch Operator Deployment if single node KX.AS.CODE setup
+if [[ -z $(kubectl get nodes | grep "kx-worker") ]]; then
+
+# Create patch file to remove node anti-affinity
+echo '''apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: minio-operator
+  namespace: '${namespace}'
+spec:
+  template:
+    spec:
+      affinity:
+''' | /usr/bin/sudo tee ${installationWorkspace}/minio-operator-deployment-patch.yaml
+
+# Apply patch
+kubectl patch deployment minio-operator -n ${namespace} --patch-file ${installationWorkspace}/minio-operator-deployment-patch.yaml
+
+fi
