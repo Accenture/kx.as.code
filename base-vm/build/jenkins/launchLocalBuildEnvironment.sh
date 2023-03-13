@@ -564,23 +564,6 @@ for initialSetupJobConfgXmlFile in ${initialSetupJobConfgXmlFiles}; do
 done
 IFS=${OLD_IFS}
 
-## Replace variables in main config xml files
-#jenkinsHomeConfgXmlFiles=$(find ${jenkins_home} -name "*.xml" -maxdepth 1)
-#log_debug "Discovered config files: ${jenkinsHomeConfgXmlFiles}"
-#for configFile in ${jenkinsHomeConfgXmlFiles}
-#do
-#  for i in {1..5}; do
-#    log_info "Replacing placeholders with values in ${configFile}"
-#    cat "${configFile}" | ./mo >"${configFile}_tmp"
-#    if [ -s "${configFile}_tmp" ]; then
-#      mv "${configFile}_tmp" "${configFile}"
-#      break
-#    else
-#      log_error "Target ${configFile} file was empty after mustach replacement. Trying again${nc}"
-#    fi
-#  done
-#done
-
 # Set jenkins_home and start Jenkins
 # Start manually for debugging with Start-Process -FilePath .\java\jdk11.0.3_7\bin\java.exe -ArgumentList "-jar", ".\jenkins.war", "--httpListenAddress=127.0.0.1", "--httpPort=8081"
 export JENKINS_HOME="$(pwd)/jenkins_home"
@@ -623,8 +606,15 @@ for i in {1..60}; do
   sleep 30
 done
 
+# Get Jenkins Crumb
+export jenkinsCrumb=$(curl -s --cookie-jar /tmp/cookies -u admin:admin ${jenkins_url}/crumbIssuer/api/json | ${jqBinary} -r '.crumb')
+
 # Generated encrypted secret file to upload to Jenkins
 . ./generateSecretsFile.sh -r
+
+# Read hash created by above script
+export hash=$(cat ./.hash | head -1)
+log_debug "Extracted hash from previous script call: *$hash*" "orange"
 
 # Creating credentials in Jenkins
 credentialXmlFiles=$(find ./jenkins_home -name "credential_*.xml")
@@ -632,7 +622,19 @@ for credentialXmlFile in ${credentialXmlFiles}; do
   log_info "Replacing placeholders with values in ${credentialXmlFile}"
   for i in {1..5}; do
     cat "${credentialXmlFile}" | ./mo >"${credentialXmlFile}_mo"
+    credentialId=$(cat "${credentialXmlFile}" | grep -oPm1 "(?<=<id>)[^<]+")
     if [ -s "${credentialXmlFile}_mo" ]; then
+      # Remove credential before creating/recreating it
+      httpResponseCode=$(curl -X GET --cookie ./cookies -H "Jenkins-Crumb: ${jenkinsCrumb}" -u admin:admin ${jenkinsUrl}/credentials/store/system/domain/_/credential/${credentialId} -L -s -o /dev/null -w "%{http_code}")
+      if [[ "${httpResponseCode}" == "200" ]]; then
+        log_debug "curl -X POST --cookie ./cookies -H \"Jenkins-Crumb: ${jenkinsCrumb}\" -u admin:admin ${jenkinsUrl}/credentials/store/system/domain/_/credential/$credentialId/doDelete"
+        log_info "Deleting credential with id ${credentialId} so it can be recreated"
+        curl -X POST --cookie ./cookies -H "Jenkins-Crumb: ${jenkinsCrumb}" \
+          -u admin:admin \
+          ${jenkinsUrl}/credentials/store/system/domain/_/credential/${credentialId}/doDelete
+      else
+        log_debug "Nothing to delete, as credential ${credentialId} did not exit yet" "orange"
+      fi
       cat "${credentialXmlFile}_mo" | "${javaBinary}" -jar jenkins-cli.jar -s ${jenkins_url} create-credentials-by-xml system::system::jenkins _ || true
       rm "${credentialXmlFile}_mo"
       break
@@ -642,8 +644,16 @@ for credentialXmlFile in ${credentialXmlFiles}; do
   done
 done
 
-# Get Jenkins Crumb
-export jenkinsCrumb=$(curl -s --cookie-jar /tmp/cookies -u admin:admin ${jenkins_url}/crumbIssuer/api/json | ${jqBinary} -r '.crumb')
+# Delete credential in order to update/recreate it in next step
+httpResponseCode=$(curl -X GET --cookie ./cookies -H "Jenkins-Crumb: ${jenkinsCrumb}" -u admin:admin ${jenkinsUrl}/credentials/store/system/domain/_/credential/VM_CREDENTIALS_FILE -L -s -o /dev/null -w "%{http_code}")
+if [[ "${httpResponseCode}" == "200" ]]; then
+ log_debug "curl -X POST --cookie ./cookies -H \"Jenkins-Crumb: ${jenkinsCrumb}\" -u admin:admin ${jenkinsUrl}/credentials/store/system/domain/_/credential/VM_CREDENTIALS_FILE/doDelete"
+ curl -X POST --cookie ./cookies -H "Jenkins-Crumb: ${jenkinsCrumb}" \
+     -u admin:admin \
+      ${jenkinsUrl}/credentials/store/system/domain/_/credential/VM_CREDENTIALS_FILE/doDelete
+else
+  log_debug "Nothing to delete, as credential VM_CREDENTIALS_FILE did not exit yet" "orange"
+fi
 
 # Post encrypted file to Jenkins as a credential
 curl -s -X POST --cookie /tmp/cookies -H "Jenkins-Crumb: ${jenkinsCrumb}" -u admin:admin \
@@ -651,13 +661,7 @@ curl -s -X POST --cookie /tmp/cookies -H "Jenkins-Crumb: ${jenkinsCrumb}" -u adm
   -F securedCredentials=@$(pwd)/.vmCredentialsFile \
   -F 'json={"": "4", "credentials": {"file": "securedCredentials", "id": "VM_CREDENTIALS_FILE", "description": "KX.AS.CODE credentials", "stapler-class": "org.jenkinsci.plugins.plaincredentials.impl.FileCredentialsImpl", "$class": "org.jenkinsci.plugins.plaincredentials.impl.FileCredentialsImpl"}}'
 
-# Checking if Vagrant is installed
-vagrantInstalled=$(vagrant -v 2>/dev/null | grep -E "Vagrant.*([0-9]+)\.([0-9]+)\.([0-9]+)")
-if [[ -z ${vagrantInstalled} ]]; then
-  log_warn "Vagrant not installed or not reachable. Download vagrant from https://www.vagrantup.com/downloads.html and ensure it is reachable on your PATH."
-  log_warn "You will still be able to run packer builds, however, without Vagrant, you cannot bring up local machines"
-fi
-
+#TODO Move this check to be with other checks at the beginning of the script
 # Optional tool only needed for Vagrant VMWare profiles
 ovftoolInstalled=$(ovftool --version 2>/dev/null | grep -E "VMware ovftool ([0-9]+)\.([0-9]+)\.([0-9]+)" || true)
 if [[ -z ${ovftoolInstalled} ]]; then

@@ -752,6 +752,7 @@ $jenkinsCrumb = (curl.exe -s --cookie-jar ./cookies -u admin:admin $jenkinsUrl/c
 
 # Read hash created by above script
 $hash = Get-Content -Path .\.hash -TotalCount 1
+Log_Debug "Extracted hash from previous script call: *$hash*" "DarkYellow"
 
 # Import credential xml files into Jenkins
 Get-ChildItem "$JENKINS_HOME\" -Filter credential_*.xml |
@@ -765,14 +766,22 @@ Get-ChildItem "$JENKINS_HOME\" -Filter credential_*.xml |
                 $xml = [xml](Get-Content $filename)
                 $credentialId = $xml.SelectNodes("//id").Innertext
                 # Delete credential in order to update/recreate it in next step
-                Log_Debug "curl.exe -s -f -X POST --cookie .\cookies -H `"Jenkins-Crumb: $jenkinsCrumb`" -u admin:admin $jenkinsUrl/credentials/store/system/domain/_/credential/$credentialId/doDelete"
-                Log_Info "Deleting credential with id $credentialId so it can be recreated"
-                curl.exe -s -f -X POST --cookie .\cookies -H "Jenkins-Crumb: $jenkinsCrumb" `
-                    -u admin:admin `
-                    $jenkinsUrl/credentials/store/system/domain/_/credential/$credentialId/doDelete
+                # Check if crdential exists and delete if it does
+                $httpResponseCode = (curl.exe -X GET --cookie .\cookies -H "Jenkins-Crumb: $jenkinsCrumb" -u admin:admin $jenkinsUrl/credentials/store/system/domain/_/credential/$credentialId -L -s -o /dev/null -w "%{http_code}")
+                Log_Debug "Received httpResponseCode = $httpResponseCode, from check if credential $credentialId exists or not"
+                if ( $httpResponseCode -eq "200" )
+                {
+                    Log_Debug "curl.exe -X POST --cookie .\cookies -H `"Jenkins-Crumb: $jenkinsCrumb`" -u admin:admin $jenkinsUrl/credentials/store/system/domain/_/credential/$credentialId/doDelete"
+                    Log_Info "Deleting credential with id $credentialId so it can be recreated"
+                    curl.exe -X POST --cookie .\cookies -H "Jenkins-Crumb: $jenkinsCrumb" `
+                        -u admin:admin `
+                        $jenkinsUrl/credentials/store/system/domain/_/credential/$credentialId/doDelete
+                } else {
+                    Log_Debug "Nothing to delete, as credential $credentialId did not exit yet" "DarkYellow"
+                }
                 # Create credential
                 Write-Output $content | & $javaBinary -jar .\jenkins-cli.jar -s $jenkinsUrl create-credentials-by-xml system::system::jenkins _
-                Remove-Item -Force -Path $filename
+                #Remove-Item -Force -Path $filename
             } catch {
                 Log_Debug "Variable replacements for $filename failed. Please make sure the XML credential for $filename is valid"
                 Write-Output "$javaBinary -jar .\jenkins-cli.jar -s $jenkinsUrl create-credentials-by-xml system::system::jenkins _"
@@ -780,12 +789,17 @@ Get-ChildItem "$JENKINS_HOME\" -Filter credential_*.xml |
         }
 
 # Delete credential in order to update/recreate it in next step
-Log_Debug "curl.exe -s -f -X POST --cookie .\cookies -H `"Jenkins-Crumb: $jenkinsCrumb`" -u admin:admin $jenkinsUrl/credentials/store/system/domain/_/credential/VM_CREDENTIALS_FILE/doDelete"
-curl.exe -s -f -X POST --cookie .\cookies -H "Jenkins-Crumb: $jenkinsCrumb" `
+$httpResponseCode = (curl.exe -X GET --cookie .\cookies -H "Jenkins-Crumb: $jenkinsCrumb" -u admin:admin $jenkinsUrl/credentials/store/system/domain/_/credential/VM_CREDENTIALS_FILE -L -s -o /dev/null -w "%{http_code}")
+Log_Debug "Received httpResponseCode = $httpResponseCode, from check if credential VM_CREDENTIALS_FILE exists or not"
+if ( $httpResponseCode -eq "200" )
+{
+    Log_Debug "curl.exe -X POST --cookie .\cookies -H `"Jenkins-Crumb: $jenkinsCrumb`" -u admin:admin $jenkinsUrl/credentials/store/system/domain/_/credential/VM_CREDENTIALS_FILE/doDelete"
+    curl.exe -X POST --cookie .\cookies -H "Jenkins-Crumb: $jenkinsCrumb" `
     -u admin:admin `
      $jenkinsUrl/credentials/store/system/domain/_/credential/VM_CREDENTIALS_FILE/doDelete
-
-$jenkinsCrumb = (curl.exe -s --cookie-jar ./cookies -u admin:admin $jenkinsUrl/crumbIssuer/api/json) | ConvertFrom-Json | Select-Object -expand "crumb"
+} else {
+    Log_Debug "Nothing to delete, as credential VM_CREDENTIALS_FILE did not exit yet" "DarkYellow"
+}
 
 # Post encrypted file to Jenkins as a credential
 curl.exe -X POST --cookie .\cookies -H "Jenkins-Crumb: $jenkinsCrumb" `

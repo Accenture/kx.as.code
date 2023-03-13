@@ -380,6 +380,7 @@ if (!(test-path .\.hash))
     $hash = & $path_to_openssl_executable rand -base64 12
     Write-Output $hash | Out-File -FilePath .\.hash
     Log_Info "Done. Created .hash file"
+    Log_Debug ".hash: $hash"
 }
 else
 {

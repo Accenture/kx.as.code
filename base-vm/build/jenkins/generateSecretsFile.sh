@@ -227,10 +227,11 @@ checkVersions "${1}"
 if [[ ! -f ./.hash ]]; then
   # Create .hash file
   export hash=$(openssl rand -base64 12)
-  echo ${hash} >.hash
+  echo ${hash} >./.hash
   log_info "Done. Created .hash file"
 else
-  export hash=$(cat ./.hash)
+  log_info "Done. Read existing hash file"
+  export hash=$(cat ./.hash | head -1)
 fi
 
 
