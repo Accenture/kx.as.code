@@ -744,6 +744,15 @@ do
 # Download Jenkins CLI from started Jenkins
 curl.exe -L --progress-bar $jenkinsUrl/jnlpJars/jenkins-cli.jar -o .\jenkins-cli.jar
 
+# Get Jenkins crumb for authenticating subsequent requests
+$jenkinsCrumb = (curl.exe -s --cookie-jar ./cookies -u admin:admin $jenkinsUrl/crumbIssuer/api/json) | ConvertFrom-Json | Select-Object -expand "crumb"
+
+# Generate secrets file and hash
+.\generateSecretsFile.ps1 -r
+
+# Read hash created by above script
+$hash = Get-Content -Path .\.hash -TotalCount 1
+
 # Import credential xml files into Jenkins
 Get-ChildItem "$JENKINS_HOME\" -Filter credential_*.xml |
         Foreach-Object {
@@ -753,6 +762,15 @@ Get-ChildItem "$JENKINS_HOME\" -Filter credential_*.xml |
             try
             {
                 $content = Get-Content -Path $filename -Raw
+                $xml = [xml](Get-Content $filename)
+                $credentialId = $xml.SelectNodes("//id").Innertext
+                # Delete credential in order to update/recreate it in next step
+                Log_Debug "curl.exe -s -f -X POST --cookie .\cookies -H `"Jenkins-Crumb: $jenkinsCrumb`" -u admin:admin $jenkinsUrl/credentials/store/system/domain/_/credential/$credentialId/doDelete"
+                Log_Info "Deleting credential with id $credentialId so it can be recreated"
+                curl.exe -s -f -X POST --cookie .\cookies -H "Jenkins-Crumb: $jenkinsCrumb" `
+                    -u admin:admin `
+                    $jenkinsUrl/credentials/store/system/domain/_/credential/$credentialId/doDelete
+                # Create credential
                 Write-Output $content | & $javaBinary -jar .\jenkins-cli.jar -s $jenkinsUrl create-credentials-by-xml system::system::jenkins _
                 Remove-Item -Force -Path $filename
             } catch {
@@ -761,10 +779,13 @@ Get-ChildItem "$JENKINS_HOME\" -Filter credential_*.xml |
             }
         }
 
-# Get Jenkins crumb for authenticating subsequent requests
-$jenkinsCrumb = (curl.exe -s --cookie-jar ./cookies -u admin:admin $jenkinsUrl/crumbIssuer/api/json) | ConvertFrom-Json | Select-Object -expand "crumb"
+# Delete credential in order to update/recreate it in next step
+Log_Debug "curl.exe -s -f -X POST --cookie .\cookies -H `"Jenkins-Crumb: $jenkinsCrumb`" -u admin:admin $jenkinsUrl/credentials/store/system/domain/_/credential/VM_CREDENTIALS_FILE/doDelete"
+curl.exe -s -f -X POST --cookie .\cookies -H "Jenkins-Crumb: $jenkinsCrumb" `
+    -u admin:admin `
+     $jenkinsUrl/credentials/store/system/domain/_/credential/VM_CREDENTIALS_FILE/doDelete
 
-.\generateSecretsFile.ps1 -r
+$jenkinsCrumb = (curl.exe -s --cookie-jar ./cookies -u admin:admin $jenkinsUrl/crumbIssuer/api/json) | ConvertFrom-Json | Select-Object -expand "crumb"
 
 # Post encrypted file to Jenkins as a credential
 curl.exe -X POST --cookie .\cookies -H "Jenkins-Crumb: $jenkinsCrumb" `
