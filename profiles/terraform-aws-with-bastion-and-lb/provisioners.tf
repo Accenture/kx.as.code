@@ -136,7 +136,7 @@ resource "null_resource" "kx_main_admin_action_queue_templates" {
   provisioner "remote-exec" {
     inline = [
       "sudo mv /var/tmp/*.json /usr/share/kx.as.code/workspace/",
-      "jq '. + { \"state\": { \"kx_main1_ip_address\": \"${aws_instance.kx_main_admin.private_ip}\", \"provisioned_disks\": { \"local_storage_disk_size\": ${local.local_storage_volume_size}, \"network_storage_disk_size\": ${glusterfs_storage_volume_size} } } }' /usr/share/kx.as.code/workspace/profile-config.json >/tmp/profile-config.json && mv /tmp/profile-config.json /usr/share/kx.as.code/workspace/profile-config.json"
+      "jq '. + { \"state\": { \"kx_main1_ip_address\": \"${aws_instance.kx_main_admin.private_ip}\", \"provisioned_disks\": { \"local_storage_disk_size\": ${local.local_storage_volume_size}, \"network_storage_disk_size\": ${local.glusterfs_storage_volume_size} } } }' /usr/share/kx.as.code/workspace/profile-config.json >/tmp/profile-config.json && sudo mv /tmp/profile-config.json /usr/share/kx.as.code/workspace/profile-config.json",
       "echo \"$(date '+%Y-%m-%d_%H%M%S') | KX-Main Admin VM created by Terraform\" | sudo tee /usr/share/kx.as.code/workspace/gogogo"
 
     ]
@@ -215,7 +215,7 @@ resource "null_resource" "kx_worker_provisioner" {
   provisioner "remote-exec" {
     inline = [
       "sudo mv /var/tmp/*.json /usr/share/kx.as.code/workspace/",
-      "jq '. + { \"state\": { \"kx_main1_ip_address\": \"${aws_instance.kx_main_admin.private_ip}\", \"provisioned_disks\": { \"local_storage_disk_size\": ${local.local_storage_volume_size}, \"network_storage_disk_size\": ${glusterfs_storage_volume_size} } } }' /usr/share/kx.as.code/workspace/profile-config.json >/tmp/profile-config.json && mv /tmp/profile-config.json /usr/share/kx.as.code/workspace/profile-config.json"
+      "jq '. + { \"state\": { \"kx_main1_ip_address\": \"${aws_instance.kx_main_admin.private_ip}\", \"provisioned_disks\": { \"local_storage_disk_size\": ${local.local_storage_volume_size}, \"network_storage_disk_size\": ${local.glusterfs_storage_volume_size} } } }' /usr/share/kx.as.code/workspace/profile-config.json >/tmp/profile-config.json && sudo mv /tmp/profile-config.json /usr/share/kx.as.code/workspace/profile-config.json",
       "echo \"$(date '+%Y-%m-%d_%H%M%S') | KX-Main VM created by Terraform\" | sudo tee /usr/share/kx.as.code/workspace/gogogo"
     ]
     connection {
@@ -292,7 +292,7 @@ resource "null_resource" "kx_main_replica" {
   provisioner "remote-exec" {
     inline = [
       "sudo mv /var/tmp/*.json /usr/share/kx.as.code/workspace/",
-      "jq '. + { \"state\": { \"kx_main1_ip_address\": \"${aws_instance.kx_main_admin.private_ip}\", \"provisioned_disks\": { \"local_storage_disk_size\": ${local.local_storage_volume_size}, \"network_storage_disk_size\": ${glusterfs_storage_volume_size} } } }' /usr/share/kx.as.code/workspace/profile-config.json >/tmp/profile-config.json && mv /tmp/profile-config.json /usr/share/kx.as.code/workspace/profile-config.json"
+      "jq '. + { \"state\": { \"kx_main1_ip_address\": \"${aws_instance.kx_main_admin.private_ip}\", \"provisioned_disks\": { \"local_storage_disk_size\": ${local.local_storage_volume_size}, \"network_storage_disk_size\": ${local.glusterfs_storage_volume_size} } } }' /usr/share/kx.as.code/workspace/profile-config.json >/tmp/profile-config.json && sudo mv /tmp/profile-config.json /usr/share/kx.as.code/workspace/profile-config.json",
       "echo \"$(date '+%Y-%m-%d_%H%M%S') | KX-Main Replica VM created by Terraform\" | sudo tee /usr/share/kx.as.code/workspace/gogogo"
     ]
     connection {
