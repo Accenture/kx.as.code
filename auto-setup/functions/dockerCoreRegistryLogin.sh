@@ -10,7 +10,7 @@ loginToCoreRegistry() {
   local i
   for i in {1..100}
   do
-    echo ${defaultRegistryUserPassword} | docker login -u ${baseUser} https://docker-registry.${baseDomain} --password-stdin || local rc=$?
+    echo ${defaultRegistryUserPassword} | >&2 docker login -u ${baseUser} https://docker-registry.${baseDomain} --password-stdin || local rc=$?
     if [[ ${rc} -eq 0 ]]; then
       log_debug "Successfully logged into local docker registry. Continuing"
       break
@@ -23,7 +23,7 @@ loginToCoreRegistry() {
 
   # Confirm login credentials are accessible
   if [[ "$(cat /root/.docker/config.json | jq -r '.auths | has("docker-registry.'${baseDomain}'")')" == "true" ]]; then
-    log_debug "Core docker registry login successfully registzered in Docker config file"
+    log_debug "Core docker registry login successfully registered in Docker config file"
   else
     log_error "Could not find the attempted core docker registry login in the Docker config file. Login must have failed"
     exit 1

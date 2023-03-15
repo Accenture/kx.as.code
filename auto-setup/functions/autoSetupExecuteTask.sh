@@ -17,7 +17,8 @@ autoSetupExecuteTask() {
 
   # Get script to execute
   local taskScriptToExecute=${installComponentDirectory}/available_tasks/$(echo ${metadataForTaskToExecute} | jq -r '.script')
-
+  local rc=0
+  
   # Check that script exists
   if [[ -f ${taskScriptToExecute} ]]; then
     log_info "Executing task script \"${taskScriptToExecute}\" in directory ${installComponentDirectory}/available_tasks"
@@ -26,7 +27,7 @@ autoSetupExecuteTask() {
     echo "${taskScriptToExecute}" >${installationWorkspace}/.currentTaskScriptExecuting
     . ${taskScriptToExecute} || rc=$? && log_info "task script \"${taskScriptToExecute}\" returned with rc=$rc"
     if [[ ${rc} -ne 0 ]]; then
-        log_error "Execution of task script \"${script}\" ended in a non zero return code ($rc)"
+        log_error "Execution of task script \"${taskScriptToExecute}\" ended in a non zero return code ($rc)"
         exit 1
     else
         echo "" >${installationWorkspace}/.currentTaskScriptExecuting

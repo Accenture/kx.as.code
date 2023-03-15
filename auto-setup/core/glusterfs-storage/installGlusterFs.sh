@@ -28,7 +28,7 @@ if [[ -z ${glusterFsDiskName} ]] || [[ "${glusterFsDiskName}" == "null" ]]; then
   if [[ -f /usr/share/kx.as.code/.config/glusterFsDrive ]]; then
     glusterFsDrive=$(cat /usr/share/kx.as.code/.config/glusterFsDrive)
   else
-    glusterFsDrive=$(lsblk -J | jq -r '.blockdevices[] | select(.size=="'$((${glusterFsDiskSize}))'G") | .name')
+    glusterFsDrive=$(lsblk -J | jq -r '.blockdevices[] | select(.size=="'${glusterFsDiskSize}'G") | .name')
     echo "${glusterFsDrive}" | /usr/bin/sudo tee /usr/share/kx.as.code/.config/glusterFsDrive
   fi
   partitionExists=$(lsblk -o NAME,FSTYPE,SIZE -J | jq -r '.blockdevices[] | select(.name=="'${glusterFsDrive}'") | .children[]? | select(.name=="'${glusterFsDrive}'1") | .name')

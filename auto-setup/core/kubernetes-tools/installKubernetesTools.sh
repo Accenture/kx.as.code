@@ -34,7 +34,7 @@ if [[ "${kubeOrchestrator}" == "k8s" ]]; then
     fi
   done
 
-  # Final check for Kubectk
+  # Final check for Kubectl
   if [[ -n $(kubectl version) ]]; then
     log_info "Kubectl accessible after install. Looks good. Continuing."
   else
