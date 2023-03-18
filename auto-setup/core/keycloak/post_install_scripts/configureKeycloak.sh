@@ -124,7 +124,7 @@ if [[ ! $(kubectl -n ${namespace} exec ${kcPod} --container ${kcContainer} -- ${
         -s 'config.rdnLDAPAttribute=["uid"]' \
         -s 'config.uuidLDAPAttribute=["uid"]' \
         -s 'config.userObjectClasses=["posixAccount"]' \
-        -s 'config.connectionUrl=["ldap://'ldap.${baseDomain}':389"]' \
+        -s 'config.connectionUrl=["ldap://ldap.'${baseDomain}':389"]' \
         -s 'config.usersDn=["ou=Users,ou=People,'${ldapDn}'"]' \
         -s 'config.authType=["simple"]' \
         -s 'config.bindDn=["cn=admin,'${ldapDn}'"]' \
