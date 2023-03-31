@@ -2,8 +2,8 @@
 set -euo pipefail
 
 # Get MetalLB IP ranges from config
-export metalLbIpRangeStart=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.metalLbIpRange.ipRangeStart')
-export metalLbIpRangeEnd=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.metalLbIpRange.ipRangeEnd')
+export metalLbIpRangeStart=$(cat ${profileConfigJsonPath} | jq -r '.config.metalLbIpRange.ipRangeStart')
+export metalLbIpRangeEnd=$(cat ${profileConfigJsonPath} | jq -r '.config.metalLbIpRange.ipRangeEnd')
 
 # Install Metallb LoadBalancer
 curl https://raw.githubusercontent.com/google/metallb/${metalLbVersion}/manifests/metallb.yaml --output ${installationWorkspace}/metallb.yaml

@@ -3,7 +3,7 @@ updateKxSourceOnFirstStart() {
   # Call common function to execute common function start commands, such as setting verbose output etc
   functionStart
 
-  if [[ "${updateSourceOnStart}" == "true" ]] && [[ ! -f /usr/share/kx.as.code/.config/network_status ]]; then
+  if [[ "${updateSourceOnStart}" == "true" ]] && [[ "$(cat ${profileConfigJsonPath} | jq -r '.state.networking_configuration_status')" != "done" ]]; then
 
   # Ensure no Windows characters blocking decryption
   /usr/bin/sudo apt-get install dos2unix

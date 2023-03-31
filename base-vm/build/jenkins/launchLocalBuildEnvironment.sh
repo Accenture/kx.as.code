@@ -184,32 +184,42 @@ checkVersions()  {
 }
 
 log_debug() {
+    message=${1}
+    colour=${2:-nc}
     if [[ "${logLevel}" == "debug" ]]; then
-        >&2 echo -e "[DEBUG] ${1}${nc}"
+        >&2 echo -e "${!colour}[DEBUG] ${message}${nc}"
     fi
 }
 
 log_error() {
+    message=${1}
+    colour=${2:-red}
     if [[ "${logLevel}" == "error" ]] || [[ "${logLevel}" == "debug" ]]; then
-        >&2 echo -e "${red}[ERROR] ${1}${nc}"
+        >&2 echo -e "${!colour}[ERROR] ${message}${nc}"
     fi
 }
 
 log_info() {
+    message=${1}
+    colour=${2:-nc}
     if [[ "${logLevel}" == "info" ]] || [[ "${logLevel}" == "error" ]] || [[ "${logLevel}" == "warn" ]] || [[ "${logLevel}" == "debug" ]]; then
-        >&2 echo -e "[INFO] ${1}${nc}"
+        >&2 echo -e "${!colour}[INFO] ${message}${nc}"
     fi
 }
 
 log_trace() {
+    message=${1}
+    colour=${2:-nc}
     if [[ "${logLevel}" == "trace" ]]; then
-        >&2 echo -e "[TRACE] ${1}${nc}"
+        >&2 echo -e "${!colour}[TRACE] ${message}${nc}"
     fi
 }
 
 log_warn() {
-    if [[ "${logLevel}" == "error" ]] || [[ "${logLevel}" == "warn" ]] || [[ "${logLevel}" == "debug" ]]; then
-        >&2 echo -e "${orange}[WARN] ${1}${nc}"
+    message=${1}
+    colour=${2:-orange}
+    if [[ "${logLevel}" == "info" ]] || [[ "${logLevel}" == "error" ]] || [[ "${logLevel}" == "warn" ]] || [[ "${logLevel}" == "debug" ]]; then
+        >&2 echo -e "${!colour}[WARN] ${message}${nc}"
     fi
 }
 
@@ -284,13 +294,13 @@ while getopts :dhrsfui opt; do
             -f  [f]ully destroy and rebuild, including ALL built images and ALL KX.AS.CODE virtual machines!
             -h  [h]elp me and show this help text
             -r  [r]ecreate Jenkins jobs with updated parameters. Will keep history
-            -s  [s]op the Jenkins build environment
+            -s  [s]top the Jenkins build environment
             -u  [u]ninstall and give me back my disk space\n
             """
     exit 0
     ;;
   \?)
-    log_error "Invalid option: -$OPTARG. Call \"$0 -h\" to display help text\n${nc}" >&2
+    log_error "Invalid option: -$OPTARG. Call \"$0 -h\" to display help text\n" >&2
     ${0} -h
     exit 1
     ;;
@@ -312,21 +322,21 @@ if [[ ${override_action} == "recreate" ]] || [[ ${override_action} == "destroy" 
   echo -e "${red}${areYouSureQuestion} [Y/N]${nc} "
   read -r REPLY
   if [[ $REPLY =~ ^[Yy]$ ]]; then
-    log_info "OK! Proceeding to ${override_action} the KX.AS.CODE Jenkins environment${nc}"
+    log_info "OK! Proceeding to ${override_action} the KX.AS.CODE Jenkins environment"
     screen -wipe -q >/dev/null
     ps -ef | grep jenkins.war | grep -v grep | awk {'print $2'} | xargs kill -9
-    log_info "Deleting Jenkins jobs...${nc}"
+    log_info "Deleting Jenkins jobs..."
     find ./jenkins_home/jobs -type f -name "config.xml" -exec rm -f {} \; 2>/dev/null || true
     if [[ ${override_action} == "destroy" ]] || [[ ${override_action} == "fully-destroy" ]] || [[ ${override_action} == "uninstall" ]]; then
-      log_info "Deleting Jenkins war file...${nc}"
+      log_info "Deleting Jenkins war file..."
       rm -f ./jenkins.war
-      log_info "Deleting jenkins_home directory...${nc}"
-      rm -rf ./jenkins_home ./credentials_salt ./securedCredentials ./jenkinsLog*.txt || true
+      log_info "Deleting jenkins_home directory..."
+      rm -rf ./jenkins_home ./.hash ./.vmCredentialsFile ./jenkinsLog*.txt || true
       if [[ ${override_action} == "fully-destroy" ]]; then
-        log_info "Deleting jenkins workspace...${nc}"
+        log_info "Deleting jenkins workspace..."
         rm -rf ${shared_workspace_base_directory_path} || true
       fi
-      log_info "Deleting downloaded tools...${nc}"
+      log_info "Deleting downloaded tools..."
       rm -rf ./jq ./java ./amazon-corretto*.tar.gz ./jenkins-cli.jar ./mo ./jenkins-plugin-manager.jar || true
     fi
     if [[ ${override_action} == "uninstall" ]] ||  [[ ${override_action} == "destroy" ]] || [[ ${override_action} == "fully-destroy" ]]; then
@@ -347,19 +357,19 @@ jqDownloadVersion=1.6
 case $(uname -s) in
 
 Linux)
-  log_info "Script running on Linux. Setting appropriate download links${nc}"
+  log_info "Script running on Linux. Setting appropriate download links"
   javaInstallerUrl="https://d3pxv6yz143wms.cloudfront.net/${javaDownloadVersion}/amazon-corretto-${javaDownloadVersion}-linux-x64.tar.gz"
   jqInstallerUrl="https://github.com/stedolan/jq/releases/download/jq-${jqDownloadVersion}/jq-linux64"
   os=linux
   ;;
 Darwin)
-  log_info "Script running on Darwin. Setting appropriate download links${nc}"
+  log_info "Script running on Darwin. Setting appropriate download links"
   javaInstallerUrl="https://d3pxv6yz143wms.cloudfront.net/${javaDownloadVersion}/amazon-corretto-${javaDownloadVersion}-macosx-x64.tar.gz"
   jqInstallerUrl="https://github.com/stedolan/jq/releases/download/jq-${jqDownloadVersion}/jq-osx-amd64"
   os=darwin
   ;;
 *)
-  log_info "Script running on Windows. Setting appropriate download links${nc}"
+  log_info "Script running on Windows. Setting appropriate download links"
   javaInstallerUrl="https://d3pxv6yz143wms.cloudfront.net/${javaDownloadVersion}/amazon-corretto-${javaDownloadVersion}-windows-x64.zip"
   jqInstallerUrl="https://github.com/stedolan/jq/releases/download/jq-${jqDownloadVersion}/jq-win64.exe"
   os=windows
@@ -375,7 +385,7 @@ jqBinaryLocal=$(find ./ -type f \( -name "jq" -or -name "jq.exe" \))
 jqBinary=${jqBinaryWhich:-${jqBinaryLocal}}
 
 if [[ -z ${jqBinary} ]]; then
-  log_info "jq is not installed or not reachable. Downloading from https://github.com/stedolan/jq/releases/download/${nc}"
+  log_info "jq is not installed or not reachable. Downloading from https://github.com/stedolan/jq/releases/download/"
   curl -# -L -s -o ./jq ${jqInstallerUrl}
   chmod 755 ./jq
   if [[ $os == "windows" ]]; then
@@ -391,7 +401,7 @@ if [[ -z ${jqBinary} ]]; then
   else
     jqBinary=$(which jq)
     if [[ $? -ne 0 ]]; then
-      log_error "jq not found and could not be downloaded/installed. Exiting${nc}"
+      log_error "jq not found and could not be downloaded/installed. Exiting"
       exit 1
     fi
   fi
@@ -402,7 +412,7 @@ javaBinary=$(find ./java -type f -name "java" 2>/dev/null || true)
 if [[ -z ${javaBinary} ]]; then
   javaInstalled=$(${javaBinary} --version 2>/dev/null | head -1 | grep -E ".*([0-9]+)\.([0-9]+)\.([0-9]+).*")
   if [[ -z ${javaInstalled} ]]; then
-    log_info "Java not installed or not reachable. Will download Java from https://docs.aws.amazon.com/corretto/latest/corretto-11-ug/downloads-list.html${nc}"
+    log_info "Java not installed or not reachable. Will download Java from https://docs.aws.amazon.com/corretto/latest/corretto-11-ug/downloads-list.html"
     mkdir -p java
     base=${javaInstallerUrl%.*}
     ext=${javaInstallerUrl#$base.}
@@ -410,15 +420,15 @@ if [[ -z ${javaBinary} ]]; then
       curl -# -o amazon-corretto-11-x64-linux-jdk.tar.gz -L ${javaInstallerUrl}
       tar tzf amazon-corretto-11-x64-linux-jdk.tar.gz >/dev/null
       if [[ $? -ne 0 ]]; then
-        log_error "The downloaded Java compressed tar.gz file does not seem to be valid. Please check your internet connection and try again${nc}"
+        log_error "The downloaded Java compressed tar.gz file does not seem to be valid. Please check your internet connection and try again"
         exit 1
       fi
-      log_info "The downloaded Java compressed tar.gz file seems to be complete. Extracting files and continuing${nc}"
+      log_info "The downloaded Java compressed tar.gz file seems to be complete. Extracting files and continuing"
       tar xzf amazon-corretto-11-x64-linux-jdk.tar.gz -C ./java --strip-components=1 >/dev/null
     fi
     javaBinary=$(find ./java -type f -name "java")
     if [[ -z ${javaBinary} ]]; then
-      log_error "Java not found and could not be downloaded/installed. Exiting${nc}"
+      log_error "Java not found and could not be downloaded/installed. Exiting"
       exit 1
     fi
     error="false"
@@ -426,7 +436,7 @@ if [[ -z ${javaBinary} ]]; then
 fi
 
 if [ -d ${jenkins_home} ] && [[ ${override_action} != "recreate" ]] && [[ ${override_action} != "destroy" ]] && [[ ${override_action} != "fully-destroy" ]]; then
-  log_info "${jenkins_home} already exists. Will skip Jenkins setup. Delete or rename ${jenkins_home} if you want to re-install Jenkins${nc}"
+  log_info "${jenkins_home} already exists. Will skip Jenkins setup. Delete or rename ${jenkins_home} if you want to re-install Jenkins"
 fi
 
 firstTwoChars=$(echo "${jenkins_home}" | head -c2)
@@ -448,7 +458,7 @@ jenkins_home=${jenkins_home_absolute_path}
 log_info "Setting jenkins_home to ${jenkins_home_absolute_path}"
 
 # Copy Initial Setup files to Jenkins Home
-cp -rf ./initial-setup/ ./jenkins_home
+cp -rf ./initial-setup/. jenkins_home/
 
 # Update Jenkins userContent file
 mkdir -p jenkins_home/userContent/
@@ -491,7 +501,7 @@ if [ -z "${availablePlugins}" ]; then
   done
   # Final check - exit with non-zero error code if still not all plugins available
   if [[ ! -f ${jenkins_home}/plugins/build-monitor-plugin.jpi ]]; then
-      log_info "${jenkins_home}/plugins/build-monitor-plugin plugin still missing. Exiting with non-zero return code."
+      log_error "${jenkins_home}/plugins/build-monitor-plugin plugin still missing. Exiting with non-zero return code."
       exit 1
   fi
 fi
@@ -526,14 +536,14 @@ fi
 export path_to_git_executable="git"
 export path_to_sh_executable="sh"
 
-initialSetupJobConfgXmlFiles=$(find jenkins_home -not \( -path jenkins_home/plugins -prune \) -not \( -path jenkins_home/war -prune \) -not \( -path jenkins_home/fingerprints -prune \) -name "*.xml" -maxdepth 5)
+initialSetupJobConfgXmlFiles=$(find jenkins_home -not \( -path jenkins_home/plugins -prune \) -not \( -path jenkins_home/war -prune \) -not \( -path jenkins_home/fingerprints -prune \) -name "*.xml" -maxdepth 5 | grep -v "credential_")
 for initialSetupJobConfgXmlFile in ${initialSetupJobConfgXmlFiles}; do
   log_info "Replacing placeholders with values in ${initialSetupJobConfgXmlFile}"
   for i in {1..5}; do
     # Get list of variables to replace
     placeholdersToReplace=$(sed -n 's/.*{{\(.*[a-z_]\)}}.*/\1/p' ${initialSetupJobConfgXmlFile})
     log_debug ${placeholdersToReplace}
-    cp ${initialSetupJobConfgXmlFile} ${initialSetupJobConfgXmlFile}_tmp
+    cp -f ${initialSetupJobConfgXmlFile} ${initialSetupJobConfgXmlFile}_tmp
     for placeholder in ${placeholdersToReplace}; do
       log_debug ${placeholder}
       log_debug ${!placeholder}
@@ -545,31 +555,15 @@ for initialSetupJobConfgXmlFile in ${initialSetupJobConfgXmlFiles}; do
       fi
     done
     if [ -s "${initialSetupJobConfgXmlFile}_tmp" ]; then
-      cp "${initialSetupJobConfgXmlFile}_tmp" "${initialSetupJobConfgXmlFile}"
+      cp -f "${initialSetupJobConfgXmlFile}_tmp" "${initialSetupJobConfgXmlFile}"
+      rm -f "${initialSetupJobConfgXmlFile}_tmp"
       break
     else
-      log_error "Target ${initialSetupJobConfgXmlFile} file was empty after mustach replacement. Trying again${nc}"
+      log_error "Target ${initialSetupJobConfgXmlFile} file was empty after mustach replacement. Trying again"
     fi
   done
 done
 IFS=${OLD_IFS}
-
-## Replace variables in main config xml files
-#jenkinsHomeConfgXmlFiles=$(find ${jenkins_home} -name "*.xml" -maxdepth 1)
-#log_debug "Discovered config files: ${jenkinsHomeConfgXmlFiles}"
-#for configFile in ${jenkinsHomeConfgXmlFiles}
-#do
-#  for i in {1..5}; do
-#    log_info "Replacing placeholders with values in ${configFile}"
-#    cat "${configFile}" | ./mo >"${configFile}_tmp"
-#    if [ -s "${configFile}_tmp" ]; then
-#      mv "${configFile}_tmp" "${configFile}"
-#      break
-#    else
-#      log_error "Target ${configFile} file was empty after mustach replacement. Trying again${nc}"
-#    fi
-#  done
-#done
 
 # Set jenkins_home and start Jenkins
 # Start manually for debugging with Start-Process -FilePath .\java\jdk11.0.3_7\bin\java.exe -ArgumentList "-jar", ".\jenkins.war", "--httpListenAddress=127.0.0.1", "--httpPort=8081"
@@ -581,8 +575,8 @@ screen -L -Logfile ./jenkinsLog_$(date '+%Y%m%d_%H%M%S').txt -S jenkins -d -m ${
 jenkins_url="http://${jenkins_listen_address}:${jenkins_server_port}"
 
 # Downloading Jenkins CLI used for creating Jenkins credentials
-log_warn "The next steps - downloading Jar files from Jenkins - might take a few minutes, as Jenkins needs to finish coming up before it will work${nc}"
-log_info "Waiting for jenkins-cli.jar to become available...${nc}"
+log_warn "The next steps - downloading Jar files from Jenkins - might take a few minutes, as Jenkins needs to finish coming up before it will work"
+log_info "Waiting for jenkins-cli.jar to become available..."
 while [[ ! -f ./jenkins-cli.jar ]]; do
   for i in {1..60}; do
     http_code=$(curl -s -o /dev/null -L -w '%{http_code}' ${jenkins_url}/jnlpJars/jenkins-cli.jar || true)
@@ -590,97 +584,109 @@ while [[ ! -f ./jenkins-cli.jar ]]; do
       curl -# ${jenkins_url}/jnlpJars/jenkins-cli.jar -o jenkins-cli.jar
       break 2
     fi
-    log_info "Waiting for ${jenkins_url}/jnlpJars/jenkins-cli.jar [RC=${http_code}]${nc}"
+    log_info "Waiting for ${jenkins_url}/jnlpJars/jenkins-cli.jar [RC=${http_code}]"
     sleep 30
   done
 done
 
 # Check if Jenkins CLI is now available, if not exit script with error
 if [[ ! -f ./jenkins-cli.jar ]]; then
-  log_error "Jenkins jenkins-cli.jar is still not available even after 30 minutes. It should not take this long for Jenkins to start... ${nc}"
+  log_error "Jenkins jenkins-cli.jar is still not available even after 30 minutes. It should not take this long for Jenkins to start..."
   exit 1
 fi
 
 # In case jars already existed, add an additional check to wait for RC200
-log_info "Waiting for Jenkins to be fully up before continuing...${nc}"
+log_info "Waiting for Jenkins to be fully up before continuing..."
 for i in {1..60}; do
   http_code=$(curl -s -o /dev/null -L -w '%{http_code}' ${jenkins_url}/view/Status/ || true)
   if [[ ${http_code} == "200" ]]; then
-    log_info "Jenkins is up, continuing with setting up the build & deploy environment${nc}"
+    log_info "Jenkins is up, continuing with setting up the build & deploy environment"
     break
   fi
-  log_info "Waiting for ${jenkins_url}/view/Status/ [RC=${http_code}]${nc}"
+  log_info "Waiting for ${jenkins_url}/view/Status/ [RC=${http_code}]"
   sleep 30
 done
 
-if [[ ! -f ./securedCredentials ]]; then
+# Get Jenkins Crumb
+export jenkinsCrumb=$(curl -s --cookie-jar /tmp/cookies -u admin:admin ${jenkins_url}/crumbIssuer/api/json | ${jqBinary} -r '.crumb')
 
-  export credentials_salt=$(openssl rand -base64 12)
-  echo ${credentials_salt} >credentials_salt
+# Generated encrypted secret file to upload to Jenkins
+$(pwd)/generateSecretsFile.sh -r
 
-  # Creating credentials in Jenkins
-  credentialXmlFiles=$(find ./jenkins_home -name "credential_*.xml")
-  for credentialXmlFile in ${credentialXmlFiles}; do
-    log_info "Replacing placeholders with values in ${credentialXmlFile}"
-    for i in {1..5}; do
-      cat "${credentialXmlFile}" | ./mo >"${credentialXmlFile}_mo"
-      if [ -s "${credentialXmlFile}_mo" ]; then
-        cat "${credentialXmlFile}_mo" | "${javaBinary}" -jar jenkins-cli.jar -s ${jenkins_url} create-credentials-by-xml system::system::jenkins _ || true
-        rm "${credentialXmlFile}_mo"
-        break
+# Read hash created by above script
+export hash=$(cat ./.hash | head -1)
+log_debug "Extracted hash from previous script call: *${hash}*" "orange"
+
+# Creating credentials in Jenkins
+credentialXmlFiles=$(find ./jenkins_home -name "credential_*.xml")
+for credentialXmlFile in ${credentialXmlFiles}; do
+  log_info "Replacing placeholders with values in ${credentialXmlFile}"
+  for i in {1..5}; do
+    cat "${credentialXmlFile}" | ./mo >"${credentialXmlFile}_mo"
+    if [[ "${system}" == "Linux" ]]; then
+      export credentialId=$(cat "${credentialXmlFile}" | grep -oPm1 "(?<=<id>)[^<]+")
+    elif [[ "${system}" == "Darwin" ]]; then
+      export credentialId=$(cat "${credentialXmlFile}" | grep '<id>' "${credentialXmlFile}" | sed 's@.*<id>\(.*\)</id>.*@\1@')
+    fi
+    if [ -s "${credentialXmlFile}_mo" ]; then
+      # Remove credential before creating/recreating it
+      log_debug "curl -X GET --cookie /tmp/cookies -H \"Jenkins-Crumb: ${jenkinsCrumb}\" -u admin:admin ${jenkins_url}/credentials/store/system/domain/_/credential/${credentialId} -L -s -o /dev/null -w \"%{http_code}\""
+      httpResponseCode=$(curl -X GET --cookie /tmp/cookies -H "Jenkins-Crumb: ${jenkinsCrumb}" -u admin:admin ${jenkins_url}/credentials/store/system/domain/_/credential/${credentialId} -L -s -o /dev/null -w "%{http_code}")
+      if [[ "${httpResponseCode}" == "200" ]]; then
+        log_debug "curl -X POST --cookie /tmp/cookies -H \"Jenkins-Crumb: ${jenkinsCrumb}\" -u admin:admin ${jenkins_url}/credentials/store/system/domain/_/credential/${credentialId}/doDelete"
+        log_info "Deleting credential with id ${credentialId} so it can be recreated"
+        curl -X POST --cookie /tmp/cookies -H "Jenkins-Crumb: ${jenkinsCrumb}" \
+          -u admin:admin \
+          ${jenkins_url}/credentials/store/system/domain/_/credential/${credentialId}/doDelete
       else
-        log_error "Target config.xml file was empty after mustach replacement. Trying again${nc}"
+        log_debug "Nothing to delete, as credential ${credentialId} did not exit yet" "orange"
       fi
-    done
+      cat "${credentialXmlFile}_mo" | "${javaBinary}" -jar jenkins-cli.jar -s ${jenkins_url} create-credentials-by-xml system::system::jenkins _ || true
+      rm -f "${credentialXmlFile}_mo"
+      rm -f "${credentialXmlFile}"
+      break
+    else
+      log_error "Target config.xml file was empty after mustach replacement. Trying again"
+    fi
   done
+done
 
-  credentialsToStore="git_source_username git_source_password artifactory_username artifactory_password aws_secretmanager_accessid aws_secretmanager_accesskey dockerhub_username dockerhub_password dockerhub_email"
-
-  # Get Jenkins Crumb
-  export jenkinsCrumb=$(curl -s --cookie-jar /tmp/cookies -u admin:admin ${jenkins_url}/crumbIssuer/api/json | ${jqBinary} -r '.crumb')
-
-  if [[ ! -f securedCredentials ]]; then
-
-    # Create encrypted file
-    for credential in ${credentialsToStore}; do
-      echo "${credential}:$(echo ${!credential} | openssl enc -aes-256-cbc -pbkdf2 -salt -A -a -pass pass:${credentials_salt})" | tee -a securedCredentials 1>/dev/null
-    done
-
-    # Post encrypted file to Jenkins as a credential
-    curl -s -X POST --cookie /tmp/cookies -H "Jenkins-Crumb: ${jenkinsCrumb}" -u admin:admin \
-      ${jenkins_url}/credentials/store/system/domain/_/createCredentials \
-      -F securedCredentials=@$(pwd)/securedCredentials \
-      -F 'json={"": "4", "credentials": {"file": "securedCredentials", "id": "VM_CREDENTIALS_FILE", "description": "KX.AS.CODE credentials", "stapler-class": "org.jenkinsci.plugins.plaincredentials.impl.FileCredentialsImpl", "$class": "org.jenkinsci.plugins.plaincredentials.impl.FileCredentialsImpl"}}'
-
-  fi
-
+# Delete credential in order to update/recreate it in next step
+httpResponseCode=$(curl -X GET --cookie /tmp/cookies -H "Jenkins-Crumb: ${jenkinsCrumb}" -u admin:admin ${jenkins_url}/credentials/store/system/domain/_/credential/VM_CREDENTIALS_FILE -L -s -o /dev/null -w "%{http_code}")
+if [[ "${httpResponseCode}" == "200" ]]; then
+ log_debug "curl -X POST --cookie /tmp/cookies -H \"Jenkins-Crumb: ${jenkinsCrumb}\" -u admin:admin ${jenkins_url}/credentials/store/system/domain/_/credential/VM_CREDENTIALS_FILE/doDelete"
+ curl -X POST --cookie /tmp/cookies -H "Jenkins-Crumb: ${jenkinsCrumb}" \
+     -u admin:admin \
+      ${jenkins_url}/credentials/store/system/domain/_/credential/VM_CREDENTIALS_FILE/doDelete
+else
+  log_debug "Nothing to delete, as credential VM_CREDENTIALS_FILE did not exit yet" "orange"
 fi
 
-# Checking if Vagrant is installed
-vagrantInstalled=$(vagrant -v 2>/dev/null | grep -E "Vagrant.*([0-9]+)\.([0-9]+)\.([0-9]+)")
-if [[ -z ${vagrantInstalled} ]]; then
-  log_warn "Vagrant not installed or not reachable. Download vagrant from https://www.vagrantup.com/downloads.html and ensure it is reachable on your PATH."
-  log_warn "You will still be able to run packer builds, however, without Vagrant, you cannot bring up local machines"
-fi
+# Post encrypted file to Jenkins as a credential
+curl -s -X POST --cookie /tmp/cookies -H "Jenkins-Crumb: ${jenkinsCrumb}" -u admin:admin \
+  ${jenkins_url}/credentials/store/system/domain/_/createCredentials \
+  -F securedCredentials=@$(pwd)/.vmCredentialsFile \
+  -F 'json={"": "4", "credentials": {"file": "securedCredentials", "id": "VM_CREDENTIALS_FILE", "description": "KX.AS.CODE credentials", "stapler-class": "org.jenkinsci.plugins.plaincredentials.impl.FileCredentialsImpl", "$class": "org.jenkinsci.plugins.plaincredentials.impl.FileCredentialsImpl"}}'
 
+#TODO Move this check to be with other checks at the beginning of the script
 # Optional tool only needed for Vagrant VMWare profiles
 ovftoolInstalled=$(ovftool --version 2>/dev/null | grep -E "VMware ovftool ([0-9]+)\.([0-9]+)\.([0-9]+)" || true)
 if [[ -z ${ovftoolInstalled} ]]; then
-  log_warn "Optional VMWare OVFTool not installed or not reachable. Download OVTOool from https://code.vmware.com/web/tool/4.4.0/ovf and ensure it is reachable on your PATH${nc}"
+  log_warn "Optional VMWare OVFTool not installed or not reachable. Download OVTOool from https://code.vmware.com/web/tool/4.4.0/ovf and ensure it is reachable on your PATH"
   warning="true"
 fi
 
 if [[ ${warning} == "true" ]]; then
   log_warn "One or more OPTIONAL components required to successfully build packer images for KX.AS.CODE for VMWARE were missing. Ignore if not building VMware images"
-  echo -e "Do you wish to continue anyway?"
+  log_warn "Do you wish to continue anyway?"
   select yn in "Yes" "No"; do
     case $yn in
     Yes)
-      log_warn "[Yes], Continuing..."
+      log_info "[Yes], Continuing..."
       break
       ;;
     No)
-      echo -e "[No], Exiting script..."
+      log_info "[No], Exiting script..."
       exit 1
       ;;
     esac
@@ -692,4 +698,5 @@ if [[ ${error} == "true" ]]; then
   exit 1
 fi
 
-log_info "${blue}Congratulations! Jenkins for KX.AS.CODE is successfully configured and running. Access Jenkins via the following URL: ${jenkins_url}/job/KX.AS.CODE_Launcher/build?delay=0sec${nc}"
+log_info "Congratulations! Jenkins for KX.AS.CODE is successfully configured and running. Access Jenkins via the following URL:" "green"
+log_info "${jenkins_url}/job/KX.AS.CODE_Launcher/build?delay=0sec" "blue"

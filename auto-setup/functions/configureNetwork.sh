@@ -8,7 +8,7 @@ if [[ -z $(cat /etc/hosts | grep $(hostname)) ]]; then
   sed -i '/127.0.1.1/ s/$/ '$(hostname)'/' /etc/hosts
 fi
 
-if [[ ! -f ${sharedKxHome}/.config/network_status ]]; then
+if [[ "$(cat ${profileConfigJsonPath} | jq -r '.state.networking_configuration_status')" != "done" ]]; then
 
     # Change DNS resolution to allow wildcards for resolving locally deployed K8s services
     echo "DNSStubListener=no" | /usr/bin/sudo tee -a /etc/systemd/resolved.conf
@@ -18,8 +18,8 @@ if [[ ! -f ${sharedKxHome}/.config/network_status ]]; then
     /usr/bin/sudo rm -f /etc/resolv.conf
     echo "nameserver ${mainIpAddress}" | /usr/bin/sudo tee /etc/resolv.conf
 
-    export private_subnet_cidr_one=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.private_subnet_cidr_one')
-    export private_subnet_cidr_two=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.private_subnet_cidr_two')
+    export private_subnet_cidr_one=$(cat ${profileConfigJsonPath} | jq -r '.config.private_subnet_cidr_one')
+    export private_subnet_cidr_two=$(cat ${profileConfigJsonPath} | jq -r '.config.private_subnet_cidr_two')
 
     if [[ "${private_subnet_cidr_one}" != "null" ]]; then
       allowedIpRanges="${private_subnet_cidr_one}"
@@ -144,9 +144,10 @@ fi
     fi
 
     # Ensure the whole network setup does not execute again on next run after reboot
-    /usr/bin/sudo mkdir -p ${sharedKxHome}/.config
-    echo "KX.AS.CODE network config done" | /usr/bin/sudo tee ${sharedKxHome}/.config/network_status
-    disableLinuxDesktop=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.disableLinuxDesktop')
+    jq '.state.networking_configuration_status="done"' ${profileConfigJsonPath} >/tmp/profile-config.json \
+      && /usr/bin/sudo mv /tmp/profile-config.json ${profileConfigJsonPath}
+
+    disableLinuxDesktop=$(cat ${profileConfigJsonPath} | jq -r '.config.disableLinuxDesktop')
     # Reboot if static network settings to activate them. Reboot anyway if not static, if disableLinuxDesktop was set to true
     if  [[ "${baseIpType}" == "static"   ]] || [[ "${disableLinuxDesktop}" == "true"   ]] || [[ "${vm_User}" != "${baseUser}" ]]; then
         # Reboot machine to ensure all network changes are active

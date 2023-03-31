@@ -97,8 +97,8 @@ if [[ -n ${DISPLAY} ]]; then
   mkdir -p ${HOME}/.dbus
   touch ${HOME}/.dbus/Xdbus
   chmod 600 ${HOME}/.dbus/Xdbus
-  declare -p DBUS_SESSION_BUS_ADDRESS | tee ${HOME}/.dbus/Xdbus
-  declare -p DISPLAY | tee -a ${HOME}/.dbus/Xdbus
+  declare -p DBUS_SESSION_BUS_ADDRESS > ${HOME}/.dbus/Xdbus
+  declare -p DISPLAY >> ${HOME}/.dbus/Xdbus
   sudo localectl set-x11-keymap us,de,it,in,gb,fr,es,cn pc-105 , grp:alt_shift_toggle
   setxkbmap -model pc105 -layout us,de,it,in,gb,fr,es,cn -option grp:alt_shift_toggle
 fi

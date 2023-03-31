@@ -1,6 +1,7 @@
 {
   "sharedKxHome": "/usr/share/kx.as.code",
   "installationWorkspace": "${sharedKxHome}/workspace",
+  "profileConfigJsonPath": "${installationWorkspace}/profile-config.json",
   "certificatesWorkspace": "${installationWorkspace}/certificates",
   "actionWorkflows": "pending wip completed failed retry notification skipped",
   "defaultDockerHubSecret": "default/regcred",

@@ -12,7 +12,7 @@ sendSlackNotification() {
     local retries=${7:-}
     local task=${8:-}
     local actionDuration=${9:-}
-    local slackNotificationWebhook="$(cat ${installationWorkspace}/profile-config.json | jq -r '.notification_endpoints.slack_webhook')"
+    local slackNotificationWebhook="$(cat ${profileConfigJsonPath} | jq -r '.notification_endpoints.slack_webhook')"
 
     if [[ "${logLevel}" == "error" ]] || [[ "${actionStatus}" == "failed" ]]; then
         local lastExecutingScript="$(cat ${installationWorkspace}/.retryDataStore.json | tr -d "[:cntrl:]" | jq -r '.script')"

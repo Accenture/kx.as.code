@@ -4,7 +4,7 @@ disableLinuxDesktop() {
   functionStart
 
   # Read disable linux desktop property from profile configuration
-  disableLinuxDesktop=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.disableLinuxDesktop')
+  disableLinuxDesktop=$(cat ${profileConfigJsonPath} | jq -r '.config.disableLinuxDesktop')
 
   if [[ ${disableLinuxDesktop} == "true" ]]; then
 

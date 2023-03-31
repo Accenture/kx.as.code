@@ -13,7 +13,7 @@ sendEmailNotification() {
   local task=${8:-}
   local actionDuration=${9:-}
 
-  local emailAddress="$(cat ${installationWorkspace}/profile-config.json | jq -r '.notification_endpoints.email_address')"
+  local emailAddress="$(cat ${profileConfigJsonPath} | jq -r '.notification_endpoints.email_address')"
 
   if [[ -n ${emailAddress} ]] && [[ "${emailAddress}" != "null" ]] && [[ -n ${message} ]]; then
 

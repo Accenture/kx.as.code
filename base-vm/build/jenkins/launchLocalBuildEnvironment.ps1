@@ -19,6 +19,11 @@ $opensslVersionRequired = "1.1.1"
 # Define ansi colours
 function Green
 {
+    process { Write-Host $_ -ForegroundColor White }
+}
+
+function Green
+{
     process { Write-Host $_ -ForegroundColor Green }
 }
 
@@ -39,41 +44,41 @@ function Blue
 
 function Log_Info
 {
-    param ([string]$Message)
+    param ([string]$Message,[string]$Colour="White")
 
     if ($Log_Level -eq "info" -Or $Log_Level -eq  "error" -Or $Log_Level -eq "warn" -Or $Log_Level -eq "debug")
     {
-        Write-Host "[INFO] $Message"
+        Write-Host "[INFO] $Message" -ForegroundColor ${Colour}
     }
 }
 
 function Log_Debug
 {
-    param ([string]$Message)
+    param ([string]$Message,[string]$Colour="White")
 
     if ($Log_Level -eq "debug")
     {
-        Write-Host "[DEBUG] $Message"
+        Write-Host "[DEBUG] $Message" -ForegroundColor ${Colour}
     }
 }
 
 function Log_Warn
 {
-    param ([string]$Message)
+    param ([string]$Message,[string]$Colour="DarkYellow")
 
     if ( $Log_Level -eq  "error" -Or $Log_Level -eq "warn" -Or $Log_Level -eq "debug" -Or $Log_Level -eq "info")
     {
-        Write-Host "[WARN] $Message" -ForegroundColor DarkYellow
+        Write-Host "[WARN] $Message" -ForegroundColor ${Colour}
     }
 }
 
 function Log_Error
 {
-    param ([string]$Message)
+    param ([string]$Message,[string]$Colour="Red")
 
     if ( $Log_Level -eq "error" -Or $Log_Level -eq "debug" )
     {
-        Write-Host "[ERROR] $Message" -ForegroundColor Red
+        Write-Host "[ERROR] $Message" -ForegroundColor ${Colour}
     }
 }
 
@@ -289,7 +294,7 @@ if ( $scriptParam ) {
               -f  [f]ully destroy and rebuild, including ALL built images and ALL KX.AS.CODE virtual machines!
               -h  [h]elp me and show this help text
               -r  [r]ecreate Jenkins jobs with updated parameters. Will keep history
-              -s  [s]op the Jenkins build environment
+              -s  [s]top the Jenkins build environment
               -u  [u]ninstall and give me back my disk space`n"
             Exit
         }
@@ -347,8 +352,8 @@ if ( $override_action -eq "recreate" -Or $override_action -eq "destroy" -Or $ove
         {
             Log_Info "Deleting jenkins_home directory..."
             Remove-Item -Recurse -Force -Path .\jenkins_home
-            Remove-Item -Force -Path .\securedCredentials
-            Remove-Item -Force -Path .\credentials_salt
+            Remove-Item -Force -Path .\.vmCredentialsFile
+            Remove-Item -Force -Path .\.hash
             Remove-Item -Force -Path .\cookies
             Log_Info "jenkins_home deleted"
             if ($override_action -eq "fully-destroy")
@@ -415,13 +420,13 @@ else
     {
         $path_to_git_executable = "C:\Program Files\Git\bin\git.exe"
         $path_to_sh_executable = "C:\Program Files\Git\bin\sh.exe"
-        $env:Path + ";C:\Program Files\Git\bin\;" + $env:Path
+        $env:Path = "C:\Program Files\Git\bin\;" + $env:Path
     }
     elseif ( (Get-Command "$Env:HOMEDRIVE\$Env:HOMEPATH\AppData\Local\Programs\Git\bin\git.exe"  -ErrorAction SilentlyContinue) -And (Get-Command "$Env:HOMEDRIVE\$Env:HOMEPATH\AppData\Local\Programs\Git\bin\sh.exe"  -ErrorAction SilentlyContinue) )
     {
         $path_to_git_executable = "$Env:HOMEDRIVE\$Env:HOMEPATH\AppData\Local\Programs\Git\bin\git.exe"
         $path_to_sh_executable = "$Env:HOMEDRIVE\$Env:HOMEPATH\AppData\Local\Programs\Git\bin\sh.exe"
-        $env:Path + "$Env:HOMEDRIVE\$Env:HOMEPATH\AppData\Local\Programs\Git\bin;" + $env:Path
+        $env:Path = "$Env:HOMEDRIVE\$Env:HOMEPATH\AppData\Local\Programs\Git\bin;" + $env:Path
     }
     else
     {
@@ -653,7 +658,7 @@ New-Item -Path "$JENKINS_HOME\jobs" -Name "logfiles" -ItemType "directory"
 Copy-Item -Path ".\initial-setup\*" -Destination "$JENKINS_HOME\" -Recurse -Force
 Get-ChildItem "$JENKINS_HOME\jobs" -Recurse -Filter config.xml |
 Foreach-Object {
-    Write-Output "Replacing placeholders in job XML definition file $(Write-Output $_.FullName)"
+    Log_Info "Replacing placeholders in job XML definition file $(Write-Output $_.FullName)"
     $filename = $_.FullName
     $tempFilePath = "$filename.tmp"
     select-string -path $_.FullName -pattern '(?<={{)(.*?)(?=}})' -allmatches  |
@@ -671,7 +676,7 @@ Foreach-Object {
 Get-ChildItem "$JENKINS_HOME\" -Filter *.xml |
             Foreach-Object {
                 $filename =  $_.FullName
-                Log_Info "Replacing placeholders in XML configuration file $( Write-Output $filename )"
+                Log_Info "Replacing placeholders in XML configuration file $filename"
                 $tempFilePath = "$filename.tmp"
                 select-string -path $filename -pattern '(?<={{)(.*?)(?=}})' -allmatches  |
                         foreach-object { $_.matches } |
@@ -739,52 +744,69 @@ do
 # Download Jenkins CLI from started Jenkins
 curl.exe -L --progress-bar $jenkinsUrl/jnlpJars/jenkins-cli.jar -o .\jenkins-cli.jar
 
-# Create salt for encryption
-$credentials_salt = openssl rand -base64 12
-Write-Output $credentials_salt | Out-File -FilePath .\credentials_salt
+# Get Jenkins crumb for authenticating subsequent requests
+$jenkinsCrumb = (curl.exe -s --cookie-jar ./cookies -u admin:admin $jenkinsUrl/crumbIssuer/api/json) | ConvertFrom-Json | Select-Object -expand "crumb"
+
+# Generate secrets file and hash
+.\generateSecretsFile.ps1 -r
+
+# Read hash created by above script
+$hash = Get-Content -Path .\.hash -TotalCount 1
+Log_Debug "Extracted hash from previous script call: *$hash*" "DarkYellow"
 
 # Import credential xml files into Jenkins
 Get-ChildItem "$JENKINS_HOME\" -Filter credential_*.xml |
         Foreach-Object {
-            Write-Output "Replacing parameters in credential XML defintion file $(Write-Output $_.FullName)"
+            Log_Debug "Replacing parameters in credential XML defintion file $(Write-Output $_.FullName)"
             $filename = $_.FullName
-            Write-Output "Attempting to upload $filename to Jenkins"
+            Log_Info "Attempting to upload $filename to Jenkins"
             try
             {
                 $content = Get-Content -Path $filename -Raw
+                $xml = [xml](Get-Content $filename)
+                $credentialId = $xml.SelectNodes("//id").Innertext
+                # Delete credential in order to update/recreate it in next step
+                # Check if crdential exists and delete if it does
+                $httpResponseCode = (curl.exe -X GET --cookie .\cookies -H "Jenkins-Crumb: $jenkinsCrumb" -u admin:admin $jenkinsUrl/credentials/store/system/domain/_/credential/$credentialId -L -s -o /dev/null -w "%{http_code}")
+                Log_Debug "Received httpResponseCode = $httpResponseCode, from check if credential $credentialId exists or not"
+                if ( $httpResponseCode -eq "200" )
+                {
+                    Log_Debug "curl.exe -X POST --cookie .\cookies -H `"Jenkins-Crumb: $jenkinsCrumb`" -u admin:admin $jenkinsUrl/credentials/store/system/domain/_/credential/$credentialId/doDelete"
+                    Log_Info "Deleting credential with id $credentialId so it can be recreated"
+                    curl.exe -X POST --cookie .\cookies -H "Jenkins-Crumb: $jenkinsCrumb" `
+                        -u admin:admin `
+                        $jenkinsUrl/credentials/store/system/domain/_/credential/$credentialId/doDelete
+                } else {
+                    Log_Debug "Nothing to delete, as credential $credentialId did not exit yet" "DarkYellow"
+                }
+                # Create credential
                 Write-Output $content | & $javaBinary -jar .\jenkins-cli.jar -s $jenkinsUrl create-credentials-by-xml system::system::jenkins _
                 Remove-Item -Force -Path $filename
             } catch {
-                Write-Output "Variable replacements for $filename failed. Please make sure the XML credential for $filename is valid" | Red
-                Write-Output "$javaBinary -jar .\jenkins-cli.jar -s $jenkinsUrl create-credentials-by-xml system::system::jenkins _" | Red
+                Log_Debug "Variable replacements for $filename failed. Please make sure the XML credential for $filename is valid"
+                Write-Output "$javaBinary -jar .\jenkins-cli.jar -s $jenkinsUrl create-credentials-by-xml system::system::jenkins _"
             }
         }
 
-# Get Jenkins crumb for authenticating subsequent requests
-$jenkinsCrumb = (curl.exe -s --cookie-jar ./cookies -u admin:admin $jenkinsUrl/crumbIssuer/api/json) | ConvertFrom-Json | Select-Object -expand "crumb"
-
-if (!(test-path .\securedCredentials))
+# Delete credential in order to update/recreate it in next step
+$httpResponseCode = (curl.exe -X GET --cookie .\cookies -H "Jenkins-Crumb: $jenkinsCrumb" -u admin:admin $jenkinsUrl/credentials/store/system/domain/_/credential/VM_CREDENTIALS_FILE -L -s -o /dev/null -w "%{http_code}")
+Log_Debug "Received httpResponseCode = $httpResponseCode, from check if credential VM_CREDENTIALS_FILE exists or not"
+if ( $httpResponseCode -eq "200" )
 {
-
-    $credentialsToStore = "git_source_username git_source_password dockerhub_username dockerhub_password dockerhub_email"
-    $credentialsToStore.Split(" ") | ForEach {
-        $encryptedCredential = (Write-Output $( Get-Variable "$_" -ValueOnly ) | openssl enc -aes-256-cbc -pbkdf2 -salt -A -a -pass pass:$credentials_salt)
-        # Test Unencryption
-        $unencryptedCredential = (Write-Output $encryptedCredential | openssl enc -aes-256-cbc -pbkdf2 -salt -A -a -pass pass:$credentials_salt -d)
-        if ( $unencryptedCredential -ne $( Get-Variable "$_" -ValueOnly ) ) {
-            Log_Error "Encryption and subsequent decryption value do not match."
-        }
-        "$_`:$encryptedCredential" | Out-File -FilePath .\securedCredentials -Append
-    }
-
-    # Post encrypted file to Jenkins as a credential
+    Log_Debug "curl.exe -X POST --cookie .\cookies -H `"Jenkins-Crumb: $jenkinsCrumb`" -u admin:admin $jenkinsUrl/credentials/store/system/domain/_/credential/VM_CREDENTIALS_FILE/doDelete"
     curl.exe -X POST --cookie .\cookies -H "Jenkins-Crumb: $jenkinsCrumb" `
-        -u admin:admin `
-        -F securedCredentials=@.\securedCredentials `
-        -F "json={\`"\`": \`"4\`", \`"credentials\`": { \`"file\`": \`"securedCredentials\`", \`"id\`": \`"VM_CREDENTIALS_FILE\`", \`"description\`": \`"KX.AS.CODE credentials\`", \`"stapler-class\`": \`"org.jenkinsci.plugins.plaincredentials.impl.FileCredentialsImpl\`", \`"`$class\`": \`"org.jenkinsci.plugins.plaincredentials.impl.FileCredentialsImpl\`"}}" `
-        $jenkinsUrl/credentials/store/system/domain/_/createCredentials
-
+    -u admin:admin `
+     $jenkinsUrl/credentials/store/system/domain/_/credential/VM_CREDENTIALS_FILE/doDelete
+} else {
+    Log_Debug "Nothing to delete, as credential VM_CREDENTIALS_FILE did not exit yet" "DarkYellow"
 }
 
-Log_Info "Congratulations! Jenkins for KX.AS.CODE is successfully configured and running. Access Jenkins via the following URL: " | Green
-Write-Output "[INFO] $jenkinsUrl/job/KX.AS.CODE_Launcher/build?delay=0sec" | Blue
+# Post encrypted file to Jenkins as a credential
+curl.exe -X POST --cookie .\cookies -H "Jenkins-Crumb: $jenkinsCrumb" `
+    -u admin:admin `
+    -F securedCredentials=@.\.vmCredentialsFile `
+    -F "json={\`"\`": \`"4\`", \`"credentials\`": { \`"file\`": \`"securedCredentials\`", \`"id\`": \`"VM_CREDENTIALS_FILE\`", \`"description\`": \`"KX.AS.CODE credentials\`", \`"stapler-class\`": \`"org.jenkinsci.plugins.plaincredentials.impl.FileCredentialsImpl\`", \`"`$class\`": \`"org.jenkinsci.plugins.plaincredentials.impl.FileCredentialsImpl\`"}}" `
+    $jenkinsUrl/credentials/store/system/domain/_/createCredentials
+
+Log_Info "Congratulations! Jenkins for KX.AS.CODE is successfully configured and running. Access Jenkins via the following URL: " "Green"
+Log_Info "$jenkinsUrl/job/KX.AS.CODE_Launcher/build?delay=0sec" "Blue"

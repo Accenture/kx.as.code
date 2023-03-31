@@ -10,11 +10,11 @@ if [[ ${standaloneMode} == "false" ]]; then
 # Install nvme-cli if running on host with NVMe block devices (for example on AWS with EBS)
 /usr/bin/sudo lsblk -i -o kname,mountpoint,fstype,size,maj:min,name,state,rm,rota,ro,type,label,model,serial
 
-# Use disk name if supplied in profile-config.json
-export glusterFsDiskName=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.glusterFsDiskName')
+# Use disk name if supplied in profile-config.json. Override should only be used in rare cases
+export glusterFsDiskName=$(cat ${profileConfigJsonPath} | jq -r '.config.glusterFsDiskName')
 
 # Get GlusterFS volume size from profile-config.json
-export glusterFsDiskSize=$(cat ${installationWorkspace}/profile-config.json | jq -r '.config.glusterFsDiskSize')
+export glusterFsDiskSize=$(cat ${profileConfigJsonPath} | jq -r '.state.provisioned_disks.network_storage_disk_size')
 
 # Install NVME CLI if needed, for example, for AWS
 nvme_cli_needed=$(df -h | grep "nvme" || true)
@@ -28,7 +28,7 @@ if [[ -z ${glusterFsDiskName} ]] || [[ "${glusterFsDiskName}" == "null" ]]; then
   if [[ -f /usr/share/kx.as.code/.config/glusterFsDrive ]]; then
     glusterFsDrive=$(cat /usr/share/kx.as.code/.config/glusterFsDrive)
   else
-    glusterFsDrive=$(lsblk -J | jq -r '.blockdevices[] | select(.size=="'$((${glusterFsDiskSize}+1))'G") | .name')
+    glusterFsDrive=$(lsblk -J | jq -r '.blockdevices[] | select(.size=="'${glusterFsDiskSize}'G") | .name')
     echo "${glusterFsDrive}" | /usr/bin/sudo tee /usr/share/kx.as.code/.config/glusterFsDrive
   fi
   partitionExists=$(lsblk -o NAME,FSTYPE,SIZE -J | jq -r '.blockdevices[] | select(.name=="'${glusterFsDrive}'") | .children[]? | select(.name=="'${glusterFsDrive}'1") | .name')

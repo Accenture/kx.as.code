@@ -62,7 +62,6 @@ resource "null_resource" "kx_main_admin_provisioner" {
       "echo \"${tls_private_key.kx_key.public_key_openssh}\" | sudo tee -a /home/kx.hero/.ssh/authorized_keys /home/admin/.ssh/authorized_keys",
       "echo \"${tls_private_key.kx_key.private_key_pem}\" | sudo tee /home/kx.hero/.ssh/id_rsa /home/admin/.ssh/id_rsa",
       "echo \"${tls_private_key.kx_key.public_key_openssh}\" | sudo tee /home/kx.hero/.ssh/id_rsa.pub /home/admin/.ssh/id_rsa.pub"
-      "echo -e '{ \"DOCKERHUB_USER\": \"${local.dockerhub_username}\", \"DOCKERHUB_EMAIL\": \"${local.dockerhub_email}\", \"DOCKERHUB_PASSWORD\": \"${local.dockerhub_password}\" }' | sudo tee /var/tmp/.tmp.json"
     ]
 
     connection {
@@ -107,9 +106,21 @@ resource "null_resource" "kx_main_admin_provisioner" {
 
   }
 
+}
+
+resource "null_resource" "kx_main_admin_action_queue_templates" {
+
+  depends_on = [
+    aws_instance.kx_main_admin,
+    null_resource.kx_main_admin_provisioner
+  ]
+
+  for_each = fileset(path.module, "aq*.json")
+
   provisioner "file" {
-    source      = "aq03-monitoring-group1.json"
-    destination = "/var/tmp/aq03-monitoring-group1.json"
+
+    source = "${path.module}/${each.value}"
+    destination = "/var/tmp/${each.value}"
 
     connection {
       type        = "ssh"
@@ -125,6 +136,7 @@ resource "null_resource" "kx_main_admin_provisioner" {
   provisioner "remote-exec" {
     inline = [
       "sudo mv /var/tmp/*.json /usr/share/kx.as.code/workspace/",
+      "jq '. + { \"state\": { \"kx_main1_ip_address\": \"${aws_instance.kx_main_admin.private_ip}\", \"provisioned_disks\": { \"local_storage_disk_size\": ${local.local_storage_volume_size}, \"network_storage_disk_size\": ${local.glusterfs_storage_volume_size} } } }' /usr/share/kx.as.code/workspace/profile-config.json >/tmp/profile-config.json && sudo mv /tmp/profile-config.json /usr/share/kx.as.code/workspace/profile-config.json",
       "echo \"$(date '+%Y-%m-%d_%H%M%S') | KX-Main Admin VM created by Terraform\" | sudo tee /usr/share/kx.as.code/workspace/gogogo"
 
     ]
@@ -139,6 +151,7 @@ resource "null_resource" "kx_main_admin_provisioner" {
       bastion_host_key = file(local_file.kx_ssh_key.filename)
     }
   }
+
 }
 
 resource "null_resource" "kx_worker_provisioner" {
@@ -202,6 +215,7 @@ resource "null_resource" "kx_worker_provisioner" {
   provisioner "remote-exec" {
     inline = [
       "sudo mv /var/tmp/*.json /usr/share/kx.as.code/workspace/",
+      "jq '. + { \"state\": { \"kx_main1_ip_address\": \"${aws_instance.kx_main_admin.private_ip}\", \"provisioned_disks\": { \"local_storage_disk_size\": ${local.local_storage_volume_size}, \"network_storage_disk_size\": ${local.glusterfs_storage_volume_size} } } }' /usr/share/kx.as.code/workspace/profile-config.json >/tmp/profile-config.json && sudo mv /tmp/profile-config.json /usr/share/kx.as.code/workspace/profile-config.json",
       "echo \"$(date '+%Y-%m-%d_%H%M%S') | KX-Main VM created by Terraform\" | sudo tee /usr/share/kx.as.code/workspace/gogogo"
     ]
     connection {
@@ -278,6 +292,7 @@ resource "null_resource" "kx_main_replica" {
   provisioner "remote-exec" {
     inline = [
       "sudo mv /var/tmp/*.json /usr/share/kx.as.code/workspace/",
+      "jq '. + { \"state\": { \"kx_main1_ip_address\": \"${aws_instance.kx_main_admin.private_ip}\", \"provisioned_disks\": { \"local_storage_disk_size\": ${local.local_storage_volume_size}, \"network_storage_disk_size\": ${local.glusterfs_storage_volume_size} } } }' /usr/share/kx.as.code/workspace/profile-config.json >/tmp/profile-config.json && sudo mv /tmp/profile-config.json /usr/share/kx.as.code/workspace/profile-config.json",
       "echo \"$(date '+%Y-%m-%d_%H%M%S') | KX-Main Replica VM created by Terraform\" | sudo tee /usr/share/kx.as.code/workspace/gogogo"
     ]
     connection {
