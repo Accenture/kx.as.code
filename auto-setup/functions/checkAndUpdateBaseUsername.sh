@@ -7,8 +7,8 @@ checkAndUpdateBaseUsername() {
 
     # Create new username rather than modify the old one
 
-    sourceGroups=$(id -Gn "kx.hero" | sed "s/ /,/g" | sed -r 's/\<'"kx.hero"'\>\b,?//g')
-    sourceShell=$(awk -F : -v name="kx.hero" '(name == $1) { print $7 }' /etc/passwd)
+    sourceGroups=$(id -Gn "${baseUser}" | sed "s/ /,/g" | sed -r 's/\<'"${baseUser}"'\>\b,?//g')
+    sourceShell=$(awk -F : -v name="${baseUser}" '(name == $1) { print $7 }' /etc/passwd)
 
     /usr/bin/sudo useradd --groups ${sourceGroups} --shell ${sourceShell} --create-home --home-dir /home/${baseUser} ${baseUser}
 

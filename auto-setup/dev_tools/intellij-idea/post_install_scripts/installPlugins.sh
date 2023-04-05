@@ -30,6 +30,6 @@ do
     fi
 
     # Unzip plugin to IntelliJ plugins folder
-    unzip ${installationWorkspace}/${targetFileName} -d /home/kx.hero/intellij-idea/plugins
+    unzip ${installationWorkspace}/${targetFileName} -d /home/${baseUser}/intellij-idea/plugins
 
 done

@@ -6,7 +6,7 @@ set -euox pipefail
 
 # Setup logging directory
 /usr/bin/sudo mkdir -p ${installationWorkspace}/kx-portal
-/usr/bin/sudo chown -R ${vmUser}:${vmUser} ${installationWorkspace}/kx-portal
+/usr/bin/sudo chown -R ${baseUser}:${baseUser} ${installationWorkspace}/kx-portal
 
 bunAlreadyInstalled=$(which bun || true)
 if [[ -z ${bunAlreadyInstalled} ]]; then
@@ -31,7 +31,7 @@ do
   /usr/bin/sudo timeout -s TERM 300 bun install || rc=$? && log_info "Execution of bun install for KX-Portal returned with rc=$rc"
   if [[ ${rc} -eq 0 ]]; then
     log_info "Bun install succeeded. Continuing"
-    /usr/bin/sudo chown -R "${vmUser}":"${vmUser}" "${KX_PORTAL_HOME}"
+    /usr/bin/sudo chown -R "${baseUser}":"${baseUser}" "${KX_PORTAL_HOME}"
     installSucceeded="OK"
     break
   else
@@ -58,7 +58,7 @@ source /etc/profile.d/nvm.sh
 export KX_PORTAL_HOME='${KX_PORTAL_HOME}'
 cd ${KX_PORTAL_HOME}
 sudo timeout -s TERM 300 bun install
-sudo chown -R kx.hero:kx.hero ${KX_PORTAL_HOME}
+sudo chown -R '${baseUser}':'${baseUser}' ${KX_PORTAL_HOME}
 export HOME=${KX_PORTAL_HOME}
 bun run start:prod
 ''' | /usr/bin/sudo tee ${installationWorkspace}/kx-portal/kxPortalStart.sh
@@ -72,7 +72,7 @@ After=network.target
 
 [Service]
 Type=simple
-User=kx.hero
+User=${baseUser}
 Restart=always
 WorkingDirectory=${KX_PORTAL_HOME}
 StandardOutput=append:${installationWorkspace}/kx-portal/kx-portal.log
@@ -112,7 +112,7 @@ if [[ "${installSucceeded}" == "OK" ]]; then
 fi
 
 # Install the desktop shortcut for KX.AS.CODE Portal
-shortcutsDirectory="/home/${vmUser}/Desktop"
+shortcutsDirectory="/home/${baseUser}/Desktop"
 primaryUrl="http://localhost:3000"
 shortcutText="KX.AS.CODE Portal"
 iconPath="${installComponentDirectory}/$(cat ${componentMetadataJson} | jq -r '.shortcut_icon')"
@@ -131,14 +131,14 @@ fi
 
 # Copy desktop icons to skel directory for future users
 /usr/bin/sudo mkdir -p "${skelDirectory}"/Desktop
-/usr/bin/sudo cp -f /home/"${vmUser}"/Desktop/"${shortcutText}" "${skelDirectory}"/Desktop
+/usr/bin/sudo cp -f /home/"${baseUser}"/Desktop/"${shortcutText}" "${skelDirectory}"/Desktop
 
 # Create new RabbitMQ user and assign permissions
 kxHeroUserExists=$(rabbitmqadmin list users --format=pretty_json | jq -r '.[] | select(.name=="'${vmUser}'") | .name')
 if [[ -z ${kxHeroUserExists} ]]; then
-  /usr/bin/sudo rabbitmqctl add_user "${vmUser}" "${vmPassword}"
-  /usr/bin/sudo rabbitmqctl set_user_tags "${vmUser}" administrator
-  /usr/bin/sudo rabbitmqctl set_permissions -p / "${vmUser}" ".*" ".*" ".*"
+  /usr/bin/sudo rabbitmqctl add_user "${baseUser}" "${basePassword}"
+  /usr/bin/sudo rabbitmqctl set_user_tags "${baseUser}" administrator
+  /usr/bin/sudo rabbitmqctl set_permissions -p / "${baseUser}" ".*" ".*" ".*"
 fi
 
 # Create TEMPORARY new RabbitMQ user and assign permissions # TODO - Remove once frontend username/password is parameterized
@@ -150,6 +150,6 @@ if [[ -z ${testUserExists} ]]; then
 fi
 
 # Ensure all files in KX_PORTAL_HOME owned by vmUser (kx.hero)
-log_debug "/usr/bin/sudo chown -R \"${vmUser}\":\"${vmUser}\" \"${KX_PORTAL_HOME}\""
-/usr/bin/sudo chown -R "${vmUser}":"${vmUser}" "${KX_PORTAL_HOME}" || rc=$?
+log_debug "/usr/bin/sudo chown -R \"${baseUser}\":\"${baseUser}\" \"${KX_PORTAL_HOME}\""
+/usr/bin/sudo chown -R "${baseUser}":"${baseUser}" "${KX_PORTAL_HOME}" || rc=$?
 log_debug "Chown action ended with RC=${rc}"

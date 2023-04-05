@@ -76,7 +76,7 @@ function Log_Error
 {
     param ([string]$Message,[string]$Colour="Red")
 
-    if ( $Log_Level -eq "error" -Or $Log_Level -eq "debug" )
+    if ( $Log_Level -eq  "error" -Or $Log_Level -eq "warn" -Or $Log_Level -eq "debug" -Or $Log_Level -eq "info")
     {
         Write-Host "[ERROR] $Message" -ForegroundColor ${Colour}
     }
@@ -204,6 +204,9 @@ function checkVagrantVersion
         $installedVagrantVersion = & "vagrant" version | Select-String '((?:\d{1,3}\.){2}\d{1,3})' | ForEach-Object { $_.Matches[0].Groups[1].Value } | Select -First 1
         Log_Debug ($installedVagrantVersion)
         versionCompare "${installedVagrantVersion}" "${vagrantVersionRequired}" "Vagrant"
+    } else {
+        Log_Error "Vagrant not installed. Please install and try again."
+        Log_Error "You can download Vagrant from https://www.vagrantup.com/Downloads"
     }
 }
 
@@ -396,7 +399,7 @@ Foreach ($line in (Get-Content -Path "jenkins.env" | Where-Object {$_ -notmatch 
 
 # Add OpenSSL binary to PATH if provided in jenkins.env
 if ( $openssl_path -ne "" ) {
-    $env:Path += ";$openssl_path"
+    $env:Path = "$openssl_path;" + $env:Path
 }
 
 checkVersions $scriptParam
@@ -422,11 +425,11 @@ else
         $path_to_sh_executable = "C:\Program Files\Git\bin\sh.exe"
         $env:Path = "C:\Program Files\Git\bin\;" + $env:Path
     }
-    elseif ( (Get-Command "$Env:HOMEDRIVE\$Env:HOMEPATH\AppData\Local\Programs\Git\bin\git.exe"  -ErrorAction SilentlyContinue) -And (Get-Command "$Env:HOMEDRIVE\$Env:HOMEPATH\AppData\Local\Programs\Git\bin\sh.exe"  -ErrorAction SilentlyContinue) )
+    elseif ( (Get-Command "$Env:HOMEDRIVE$Env:HOMEPATH\AppData\Local\Programs\Git\bin\git.exe"  -ErrorAction SilentlyContinue) -And (Get-Command "$Env:HOMEDRIVE$Env:HOMEPATH\AppData\Local\Programs\Git\bin\sh.exe"  -ErrorAction SilentlyContinue) )
     {
-        $path_to_git_executable = "$Env:HOMEDRIVE\$Env:HOMEPATH\AppData\Local\Programs\Git\bin\git.exe"
-        $path_to_sh_executable = "$Env:HOMEDRIVE\$Env:HOMEPATH\AppData\Local\Programs\Git\bin\sh.exe"
-        $env:Path = "$Env:HOMEDRIVE\$Env:HOMEPATH\AppData\Local\Programs\Git\bin;" + $env:Path
+        $path_to_git_executable = "$Env:HOMEDRIVE$Env:HOMEPATH\AppData\Local\Programs\Git\bin\git.exe"
+        $path_to_sh_executable = "$Env:HOMEDRIVE$Env:HOMEPATH\AppData\Local\Programs\Git\bin\sh.exe"
+        $env:Path = "$Env:HOMEDRIVE$Env:HOMEPATH\AppData\Local\Programs\Git\bin;" + $env:Path
     }
     else
     {
@@ -442,13 +445,16 @@ else
     {
         Log_Info "Git nohup.exe and associated DLLs installed and in correct place, continuing."
         $path_to_nohup_executables = "C:\Program Files\Git\usr\bin"
+        $env:Path = "$path_to_nohup_executables;" + $env:Path
+        Log_Debug "Set path to nohup to $path_to_nohup_executables;"
     }
-    elseif ( (Get-Command "$Env:HOMEDRIVE\$Env:HOMEPATH\AppData\Local\Programs\Git\usr\bin\nohup.exe" -ErrorAction SilentlyContinue) -And ( Test-Path -Path "$Env:HOMEDRIVE\$Env:HOMEPATH\AppData\Local\Programs\Git\usr\bin\msys-2.0.dll") -And ( Test-Path -Path "$Env:HOMEDRIVE\$Env:HOMEPATH\AppData\Local\Programs\Git\usr\bin\msys-iconv-2.dll") )
+    elseif ( (Get-Command "$Env:HOMEDRIVE$Env:HOMEPATH\AppData\Local\Programs\Git\usr\bin\nohup.exe" -ErrorAction SilentlyContinue) -And ( Test-Path -Path "$Env:HOMEDRIVE$Env:HOMEPATH\AppData\Local\Programs\Git\usr\bin\msys-2.0.dll") -And ( Test-Path -Path "$Env:HOMEDRIVE$Env:HOMEPATH\AppData\Local\Programs\Git\usr\bin\msys-iconv-2.dll") )
     {
-        $path_to_nohup_executables = "$Env:HOMEDRIVE\$Env:HOMEPATH\AppData\Local\Programs\Git\usr\bin"
-        $env:Path + "$Env:HOMEDRIVE\$Env:HOMEPATH\AppData\Local\Programs\Git\usr\bin;" + $env:Path
+        $path_to_nohup_executables = "$Env:HOMEDRIVE$Env:HOMEPATH\AppData\Local\Programs\Git\usr\bin"
+        $env:Path = "$path_to_nohup_executables;" + $env:Path
+        Log_Debug "Found nohup in user installed git location. Set path to nohup to $path_to_nohup_executables;"
         $downloadAndInstallPortableGit = "true"
-        $softLinkTarget = "$Env:HOMEDRIVE\$Env:HOMEPATH\AppData\Local\Programs\Git\usr\bin"
+        $softLinkTarget = "$Env:HOMEDRIVE$Env:HOMEPATH\AppData\Local\Programs\Git\usr\bin"
     }
     else
     {
@@ -708,8 +714,7 @@ if (!(Test-Path -Path $JENKINS_HOME\plugins\*)) {
 # Set jenkins_home and start Jenkins
 # Start manually for debugging with Start-Process -FilePath .\java\jdk11.0.3_7\bin\java.exe -ArgumentList "-jar", ".\jenkins.war", "--httpListenAddress=127.0.0.1", "--httpPort=8081"
 [Environment]::SetEnvironmentVariable("JENKINS_HOME", "${PWD}\jenkins_home")
-# TODO - Test Git paths on line below. Currently hardcoded for debugging
-$env:Path += ";C:/Program Files/Git/bin;C:/Program Files/Git/usr/bin;C:/Git/kx.as.code_test"
+$env:Path = "C:\Program Files\Git\bin;C:\Program Files\Git\usr\bin;$git_root_path;" + $env:Path
 
 # Start Jenkins
 $javaProcess = Start-Process -FilePath $javaBinary -ArgumentList "-jar", ".\jenkins.war", "--httpListenAddress=$jenkins_listen_address", "--httpPort=$jenkins_server_port" -PassThru
