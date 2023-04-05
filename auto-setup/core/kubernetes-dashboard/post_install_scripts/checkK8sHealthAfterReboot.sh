@@ -5,7 +5,6 @@ cat << EOF > /usr/share/kx.as.code/checkK8sStartup.sh
 #!/bin/bash
 set -euo pipefail
 
-baseUser="kx.hero"
 baseUserId=\$(id -u ${baseUser})
 
 # Test to see if the Kubernetes Cluster is up and notify when done
