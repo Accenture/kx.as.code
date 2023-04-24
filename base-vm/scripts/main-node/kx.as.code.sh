@@ -277,3 +277,15 @@ echo """#!/bin/bash
 kubectl taint nodes -l node-role.kubernetes.io/master= master node-role.kubernetes.io/master:NoSchedule --overwrite
 """ | /usr/bin/sudo tee ${INSTALLATION_WORKSPACE}/enableK8sNoScheduleTaintOnMasterNodes.sh
 /usr/bin/sudo chmod 755 ${INSTALLATION_WORKSPACE}/enableK8sNoScheduleTaintOnMasterNodes.sh
+
+# Ensure main KX.AS.CODE log rotates
+echo """${INSTALLATION_WORKSPACE}/kx.as.code_autoSetup.log {
+  daily
+  rotate 14
+  compress
+  delaycompress
+  notifempty
+  missingok
+  create 640 root adm
+}
+"""  | sudo tee /etc/logrotate.d/kx.as.code
