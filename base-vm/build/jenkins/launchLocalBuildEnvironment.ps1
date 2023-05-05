@@ -1,6 +1,6 @@
 $scriptParam = ($MyInvocation.Line -replace ('^.*' + [regex]::Escape($MyInvocation.InvocationName)) -split '[;|]')[0].Trim()
 
-$Log_Level = "info"
+$Log_Level = "debug"
 
 # List all required version prerequisites. These are the versions this script has been tested with.
 # In particular Mac OpenSSL will cause issues if not the correct version
@@ -573,28 +573,17 @@ function Check-Tool
 $jqBinary = (Check-Tool jq.exe $minimalJqVersion $jqInstallerUrl)[1]
 Log_Debug "jqBinary: $jqBinary"
 
-$javaBinary = Get-ChildItem .\java -recurse -include "java.exe"
-Log_Debug "Discovered java binary: `"$javaBinary`""
 
 # Install Java
-if ( ! $javaBinary ) {
-    if (!(Get-Command java.exe -ErrorAction SilentlyContinue)) {
-        Log_Info "Java not found. Downloading and installing to current directory under ./java"
-        $webOutput = "amazon-corretto-windows-x64.zip"
-        curl.exe -L --progress-bar $javaInstallerUrl -o .\$webOutput
-        Log_Info "Executing... Expand-Archive -LiteralPath .\$webOutput .\java"
-        Expand-Archive -LiteralPath .\$webOutput .\java
-        $javaBinary = Get-ChildItem .\java -recurse -include "java.exe"
-        Log_Debug "Java binary: $javaBinary"
-        & $javaBinary -version
-    }
-    else
-    {
-        $javaBinary = "java.exe"
-        Log_Debug "Java binary: $javaBinary"
-        & $javaBinary -version
-    }
-}
+Log_Info "Java not found. Downloading and installing to current directory under ./java"
+$webOutput = "amazon-corretto-windows-x64.zip"
+curl.exe -L --progress-bar $javaInstallerUrl -o .\$webOutput
+Log_Info "Executing... Expand-Archive -LiteralPath .\$webOutput .\java"
+Expand-Archive -LiteralPath .\$webOutput .\java
+$javaBinary = Get-ChildItem .\java -recurse -include "java.exe"
+Log_Debug "Java binary: $javaBinary"
+& $javaBinary -version
+
 
 # Create shared workspace directory for Vagrant and Terraform jobs
 $shared_workspace_base_directory_path = $JENKINS_SHARED_WORKSPACE
