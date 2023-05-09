@@ -407,27 +407,33 @@ if [[ -z ${jqBinary} ]]; then
   fi
 fi
 
-# Download and install Java
-log_info "Downloading Java from https://docs.aws.amazon.com/corretto/latest/corretto-11-ug/downloads-list.html"
-mkdir -p java
-base=${javaInstallerUrl%.*}
-ext=${javaInstallerUrl#$base.}
-if [[ ${ext} == "gz" ]]; then
-  curl -# -o amazon-corretto-11-x64-linux-jdk.tar.gz -L ${javaInstallerUrl}
-  tar tzf amazon-corretto-11-x64-linux-jdk.tar.gz >/dev/null
-  if [[ $? -ne 0 ]]; then
-    log_error "The downloaded Java compressed tar.gz file does not seem to be valid. Please check your internet connection and try again"
-    exit 1
-  fi
-  log_info "The downloaded Java compressed tar.gz file seems to be complete. Extracting files and continuing"
-  tar xzf amazon-corretto-11-x64-linux-jdk.tar.gz -C ./java --strip-components=1 >/dev/null
-fi
-javaBinary=$(find ./java -type f -name "java")
+# Check if Java is installed
+javaBinary=$(find ./java -type f -name "java" 2>/dev/null || true)
 if [[ -z ${javaBinary} ]]; then
-  log_error "Java not found and could not be downloaded/installed. Exiting"
-  exit 1
+  javaInstalled=$(${javaBinary} --version 2>/dev/null | head -1 | grep -E ".*([0-9]+)\.([0-9]+)\.([0-9]+).*")
+  if [[ -z ${javaInstalled} ]]; then
+    log_info "Java not installed or not reachable. Will download Java from https://docs.aws.amazon.com/corretto/latest/corretto-11-ug/downloads-list.html"
+    mkdir -p java
+    base=${javaInstallerUrl%.*}
+    ext=${javaInstallerUrl#$base.}
+    if [[ ${ext} == "gz" ]]; then
+      curl -# -o amazon-corretto-11-x64-linux-jdk.tar.gz -L ${javaInstallerUrl}
+      tar tzf amazon-corretto-11-x64-linux-jdk.tar.gz >/dev/null
+      if [[ $? -ne 0 ]]; then
+        log_error "The downloaded Java compressed tar.gz file does not seem to be valid. Please check your internet connection and try again"
+        exit 1
+      fi
+      log_info "The downloaded Java compressed tar.gz file seems to be complete. Extracting files and continuing"
+      tar xzf amazon-corretto-11-x64-linux-jdk.tar.gz -C ./java --strip-components=1 >/dev/null
+    fi
+    javaBinary=$(find ./java -type f -name "java")
+    if [[ -z ${javaBinary} ]]; then
+      log_error "Java not found and could not be downloaded/installed. Exiting"
+      exit 1
+    fi
+    error="false"
+  fi
 fi
-error="false"
 
 if [ -d ${jenkins_home} ] && [[ ${override_action} != "recreate" ]] && [[ ${override_action} != "destroy" ]] && [[ ${override_action} != "fully-destroy" ]]; then
   log_info "${jenkins_home} already exists. Will skip Jenkins setup. Delete or rename ${jenkins_home} if you want to re-install Jenkins"

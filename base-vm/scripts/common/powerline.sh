@@ -14,9 +14,9 @@ sudo mkdir -p ${SKELDIR}
 export SKELDIR=${SKELDIR}
 
 sudo -H -i -u root sh -c 'mkdir -p /root/.local/share/fonts'
-sudo -H -i -u root sh -c 'cd /root/.local/share/fonts && curl -fLo "Droid Sans Mono for Powerline Nerd Font Complete.otf" https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/DroidSansMono/DroidSansMNerdFontMono-Regular.otf'
+sudo -H -i -u root sh -c 'cd /root/.local/share/fonts && curl -fLo "Droid Sans Mono for Powerline Nerd Font Complete.otf" https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/DroidSansMono/complete/Droid%20Sans%20Mono%20Nerd%20Font%20Complete.otf'
 sudo -H -i -u $VM_USER sh -c 'mkdir -p /home/'$VM_USER'/.local/share/fonts'
-sudo -H -i -u $VM_USER sh -c 'cd /home/'$VM_USER'/.local/share/fonts && curl -fLo "Droid Sans Mono for Powerline Nerd Font Complete.otf" https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/DroidSansMono/DroidSansMNerdFontMono-Regular.otf'
+sudo -H -i -u $VM_USER sh -c 'cd /home/'$VM_USER'/.local/share/fonts && curl -fLo "Droid Sans Mono for Powerline Nerd Font Complete.otf" https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/DroidSansMono/complete/Droid%20Sans%20Mono%20Nerd%20Font%20Complete.otf'
 
 # Setup root user
 sudo -H -i -u root sh -c 'yes | sh -c "$(wget -qO- https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" --unattended'
