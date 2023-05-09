@@ -56,6 +56,10 @@ amazon-corretto*
 /base-vm/build/jenkins/jq.exe
 /base-vm/build/jenkins/jenkins.env.docker-compose.ps1
 /base-vm/build/jenkins/docker-compose.exe
+/base-vm/build/jenkins/jenkinsPid
+/base-vm/build/jenkins/.hash
+/base-vm/build/jenkins/.vmCredentialsFile
+/base-vm/build/jenkins/cookies
 /profiles/aws-demo1/aws/
 /base-vm/build/jenkins/jenkins.iml
 /jq
