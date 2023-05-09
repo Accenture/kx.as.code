@@ -575,7 +575,7 @@ Log_Debug "jqBinary: $jqBinary"
 
 
 # Install Java
-Log_Info "Java not found. Downloading and installing to current directory under ./java"
+Log_Info "Downloading and installing to current directory under ./java"
 $webOutput = "amazon-corretto-windows-x64.zip"
 curl.exe -L --progress-bar $javaInstallerUrl -o .\$webOutput
 Log_Info "Executing... Expand-Archive -LiteralPath .\$webOutput .\java"
