@@ -16,7 +16,13 @@ if [[ -z $(which raspinfo) ]]; then
 
       # Customize boot splash screen
       sudo apt-get install -y plymouth-themes
-      sudo cp -iRv ${INSTALLATION_WORKSPACE}/theme/plymouth/kx.as.code /usr/share/plymouth/themes/
+      sudo mkdir -p /usr/share/plymouth/themes/kx.as.code
+      sudo cp -iRv ${INSTALLATION_WORKSPACE}/theme/plymouth/kx.as.code/*.png /usr/share/plymouth/themes/kx.as.code
+      # In case of CRLF line endings
+      find ${INSTALLATION_WORKSPACE}/theme/plymouth/kx.as.code/ -type f | grep -E "\.script$|\.plymouth$" | while read filepath; do
+        filename=$(basename "${filepath}")
+        sed $'s/\r$//' "${filepath}" | sudo tee /usr/share/plymouth/themes/kx.as.code/"${filename}"
+      done
       sudo plymouth-set-default-theme -R kx.as.code
   fi
   cat /etc/default/grub
