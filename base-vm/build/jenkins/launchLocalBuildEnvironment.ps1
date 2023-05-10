@@ -577,8 +577,8 @@ $javaBinary = Get-ChildItem .\java -recurse -include "java.exe"
 Log_Debug "Discovered java binary: `"$javaBinary`""
 
 # Install Java
-
-if (  ( Test-Path -Path "./java/jdk11.0.3_7/bin/java.exe" ) ) {
+$javaLocalBinaryPath = "./java/" + $javaDownloadVersion + "/bin/java.exe"
+if (  ( Test-Path -Path $javaLocalBinaryPath ) ) {
     Write-Host "Java Binary already present. Skipping Installation of Java"
 }else{
     Log_Info "Downloading and installing to current directory under ./java"
