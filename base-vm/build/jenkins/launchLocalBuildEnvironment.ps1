@@ -577,14 +577,20 @@ $javaBinary = Get-ChildItem .\java -recurse -include "java.exe"
 Log_Debug "Discovered java binary: `"$javaBinary`""
 
 # Install Java
-Log_Info "Downloading and installing to current directory under ./java"
-$webOutput = "amazon-corretto-windows-x64.zip"
-curl.exe -L --progress-bar $javaInstallerUrl -o .\$webOutput
-Log_Info "Executing... Expand-Archive -LiteralPath .\$webOutput .\java"
-Expand-Archive -LiteralPath .\$webOutput .\java
-$javaBinary = Get-ChildItem .\java -recurse -include "java.exe"
-Log_Debug "Java binary: $javaBinary"
-& $javaBinary -version
+
+if (  ( Test-Path -Path "./java/jdk11.0.3_7/bin/java.exe" ) ) {
+    Write-Host "Java Binary already present. Skipping Installation of Java"
+}else{
+    Log_Info "Downloading and installing to current directory under ./java"
+    $webOutput = "amazon-corretto-windows-x64.zip"
+    curl.exe -L --progress-bar $javaInstallerUrl -o .\$webOutput
+    Log_Info "Executing... Expand-Archive -LiteralPath .\$webOutput .\java"
+    Expand-Archive -LiteralPath .\$webOutput .\java
+    $javaBinary = Get-ChildItem .\java -recurse -include "java.exe"
+    Log_Debug "Java binary: $javaBinary"
+    & $javaBinary -version
+}
+
 
 # Create shared workspace directory for Vagrant and Terraform jobs
 $shared_workspace_base_directory_path = $JENKINS_SHARED_WORKSPACE
