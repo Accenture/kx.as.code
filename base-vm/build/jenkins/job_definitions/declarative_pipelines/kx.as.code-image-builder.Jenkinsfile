@@ -70,8 +70,8 @@ pipeline {
                             -var "vm_password=${kx_vm_password}" \
                             -var "git_source_url=${git_source_url}" \
                             -var "git_source_branch=${git_source_branch}" \
-                            -var "git_source_user=${git_source_user}" \
-                            -var "git_source_token=${git_source_token}" \
+                            -var "git_source_user=\${git_source_user:-}" \
+                            -var "git_source_token=\${git_source_token:-}" \
                             -var "base_image_ssh_user=${vagrant_ssh_username}" \
                             ./${node_type}-local-profiles.json
                             """
