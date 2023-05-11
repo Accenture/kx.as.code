@@ -573,12 +573,11 @@ function Check-Tool
 $jqBinary = (Check-Tool jq.exe $minimalJqVersion $jqInstallerUrl)[1]
 Log_Debug "jqBinary: $jqBinary"
 
-$javaBinary = Get-ChildItem .\java -recurse -include "java.exe"
+# Install Java
+$javaBinary = Get-ChildItem ./java -recurse -include "java.exe"
 Log_Debug "Discovered java binary: `"$javaBinary`""
 
-# Install Java
-$javaLocalBinaryPath = "./java/" + $javaDownloadVersion + "/bin/java.exe"
-if (  ( Test-Path -Path $javaLocalBinaryPath ) ) {
+if (  ( Test-Path -Path $javaBinary ) ) {
     Write-Host "Java Binary already present. Skipping Installation of Java"
 }else{
     Log_Info "Downloading and installing to current directory under ./java"
