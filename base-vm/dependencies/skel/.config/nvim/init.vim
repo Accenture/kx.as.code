@@ -1,6 +1,6 @@
 " Plugins directory
 call plug#begin('~/.local/share/nvim/plugged')
-    Plug 'mhartington/oceanic-next'
+    Plug 'folke/tokyonight.nvim', { 'branch': 'main' }
     Plug 'scrooloose/nerdtree'
     Plug 'Xuyuanp/nerdtree-git-plugin'
     Plug 'vim-airline/vim-airline'
@@ -15,7 +15,7 @@ endif
 
 " Theme
 syntax enable
-colorscheme OceanicNext
+"colorscheme tokyonight
 set tabstop=2 shiftwidth=2 expandtab
 
 " Mappings
@@ -23,7 +23,7 @@ map <F2> :NERDTreeToggle<CR>
 map <F8> :make<CR>
 
 " Autoloads
-autocmd VimEnter * AirlineTheme luna
+autocmd VimEnter * AirlineTheme dark
 
 " Ensures color escape characters show properly
 "if @% != ""

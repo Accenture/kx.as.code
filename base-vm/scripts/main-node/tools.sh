@@ -28,11 +28,16 @@ sudo apt-get -y install \
     wmctrl \
     syslinux-utils \
     gnome-keyring \
-    neovim \
     lynx \
     bsd-mailx \
     xprintidle
 
+# Download and install NeoVIM - version in Debian distribution too old to work with new themes
+curl -L -o ${INSTALLATION_WORKSPACE}/nvim-linux64.deb https://github.com/neovim/neovim/releases/download/v0.7.2/nvim-linux64.deb
+sha256sum="dce77cae95c2c115e43159169e2d2faaf93bce6862d5adad7262f3aa3cf60df8"
+echo "${sha256sum} ${INSTALLATION_WORKSPACE}/nvim-linux64.deb" | sha256sum --check
+sudo apt-get install -y ${INSTALLATION_WORKSPACE}/nvim-linux64.deb
+pip3 install neovim
 
 # Set User File Associations
 sudo update-alternatives --install /usr/bin/editor editor /usr/bin/nvim 100
