@@ -1,0 +1,50 @@
+html {
+  font-family: 'Mulish', -apple-system Helvetica, sans-serif;
+}
+
+body {
+  background: url('background.jpg') no-repeat center center;
+  background-attachment: fixed;
+  background-size: 100% 100%;
+  margin: 0;
+}
+
+.main-container {
+  display: flex;
+  justify-content: center;
+  padding: 80px;
+}
+
+.main-container > div {
+  text-align: center;
+}
+
+.box {
+  background-color: white;
+  border-radius: 4px;
+  box-shadow: #a0a6b9 6px 2px 16px 0, #a0a6b9 -6px -2px 16px 0;
+  min-width: 320px;
+  margin-top: 24px;
+  padding: 24px;
+}
+
+.link-button {
+  font-size: 14px;
+  text-decoration: none;
+  background-color: #3552ca;
+  color: #f2f7fb;
+  padding: 6px 12px;
+  border: 1px solid transparent;
+  border-radius: 2px;
+  cursor: pointer;
+}
+
+@media (max-width: 767px) {
+  .main-container {
+    padding: 48px;
+  }
+
+  .box {
+    min-width: 0;
+  }
+}
