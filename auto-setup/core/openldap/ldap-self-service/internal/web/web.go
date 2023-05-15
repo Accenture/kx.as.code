@@ -11,15 +11,17 @@ func execute(u string, op string, np string) error {
 	conf := yamlcustom.ParseYAML()
 	userDN := conf.Conf[0].UserDN
 	ldapADDR := conf.Conf[1].LDAP
+	fmt.Println(userDN,ldapADDR)
 
 	// here we perform the pwd command.
 	// we can store the output of this in our out variable
 	// and catch any errors in err
 
 	//out, err := exec.Command("ldappasswd", "-H", ldapADDR, "-x", "-D", "cn="+u+","+userDN, "-w", op, "-s", np).Output()
-	cmd := "ldappasswd -H " + ldapADDR + " -x -D cn=" + u + "," + userDN + " -w " + op + " -s " + np
+	cmd := "ldappasswd -H " + ldapADDR + " -x -D 'uid=" + u + "," + userDN + "' -w '" + op + "' -s '" + np + "'"
 	out, err := exec.Command("bash", "-c", cmd).Output()
-
+	//fmt.Println(cmd)
+	fmt.Println(out,err)
 	// if there is an error with our execution
 	// handle it here
 	if err != nil {

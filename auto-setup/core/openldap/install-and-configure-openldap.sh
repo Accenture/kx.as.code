@@ -1,5 +1,5 @@
 #!/bin/bash
-set -euo pipefail
+set -euox pipefail
 
 export ldapServer=127.0.0.1
 
@@ -207,4 +207,21 @@ tls_cacertfile /etc/ssl/certs/ca-certificates.crt
 # Ensure home directory is created on first login
 if [[ -z $( grep "session required      pam_mkhomedir.so   skel=${skelDirectory} umask=0002" /etc/pam.d/common-session ) ]]; then
     echo "session required      pam_mkhomedir.so   skel=${skelDirectory} umask=0002" | /usr/bin/sudo tee -a /etc/pam.d/common-session
+fi
+
+# Allow users to change their own passwords
+/usr/bin/sudo ldapsearch -Y EXTERNAL -H ldapi:/// -b cn=config | grep "olcAccess: {0}to attrs=userPassword" || exists=false
+if [[ "${exists}" == "false" ]]; then
+echo '''
+dn: olcDatabase={1}mdb,cn=config
+changetype: modify
+add: olcAccess
+olcAccess: {1}to attrs=userPassword
+ by self write
+ by anonymous auth
+ by dn="cn=admin,'${ldapDn}'" write
+ by * none
+''' | /usr/bin/sudo tee /etc/ldap/allow_user_password_change.ldif
+/usr/bin/sudo ldapadd -Y EXTERNAL -H ldapi:/// -f /etc/ldap/allow_user_password_change.ldif
+exists=""
 fi
