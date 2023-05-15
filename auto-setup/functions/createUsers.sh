@@ -284,29 +284,29 @@ createUsers() {
 
             else
 
-            if [[ "${kubeOrchestrator}" == "k3s" ]]; then
-                export kubeConfigFile=/etc/rancher/k3s/k3s.yaml
-            else
-                export kubeConfigFile=/etc/kubernetes/admin.conf
-            fi
+              if [[ "${kubeOrchestrator}" == "k3s" ]]; then
+                  export kubeConfigFile=/etc/rancher/k3s/k3s.yaml
+              else
+                  export kubeConfigFile=/etc/kubernetes/admin.conf
+              fi
 
-            /usr/bin/sudo -H -i -u ${userid} sh -c "mkdir -p /home/${userid}/.kube"
-            /usr/bin/sudo cp -f ${kubeConfigFile} /home/${userid}/.kube/config
+              /usr/bin/sudo -H -i -u ${userid} sh -c "mkdir -p /home/${userid}/.kube"
+              /usr/bin/sudo cp -f ${kubeConfigFile} /home/${userid}/.kube/config
 
-            # Ensure user has correct access permissions to .kube/config file
-            /usr/bin/sudo chmod 600 /home/${userid}/.kube/config
-            /usr/bin/sudo chown ${userid}:${userid} /home/${userid}/.kube/config
+              # Ensure user has correct access permissions to .kube/config file
+              /usr/bin/sudo chmod 600 /home/${userid}/.kube/config
+              /usr/bin/sudo chown ${userid}:${userid} /home/${userid}/.kube/config
 
 
-            if [[ -z $(cat /home/${userid}/.bashrc | grep KUBECONFIG) ]]; then
-                echo "export KUBECONFIG=/home/${userid}/.kube/config" | /usr/bin/sudo tee -a /home/${userid}/.bashrc /home/${userid}/.zshrc
-            fi
+              if [[ -z $(cat /home/${userid}/.bashrc | grep KUBECONFIG) ]]; then
+                  echo "export KUBECONFIG=/home/${userid}/.kube/config" | /usr/bin/sudo tee -a /home/${userid}/.bashrc /home/${userid}/.zshrc
+              fi
 
             fi
 
             # Ensure user has correct access permissions to desktop files
-            /usr/bin/sudo chmod 755 /home/${userid}/*.desktop
-            /usr/bin/sudo chown ${userid}:${userid}/*.desktop
+            /usr/bin/sudo chmod 755 /home/${userid}/Desktop/*.desktop
+            /usr/bin/sudo chown ${userid}:${userid} /home/${userid}/Desktop/*.desktop
 
             # Initialize gnupg for new user to use with GoPass
             gnupgInitializeUser "${userid}" "${generatedPassword}"
