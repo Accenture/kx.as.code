@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Self Service Changing User Password</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Mulish:wght@400;600;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="index.css">
+    <link rel="stylesheet" href="template.css">
+</head>
+
+<body>
+    <div class="main-container">
+        <div class="box">
+            <h2>Change LDAP Password</h2>
+            <form method="POST" action="/form">
+                <div class="form-body">
+                    <label>Username</label><input name="username" type="text" value="" />
+                    <label>Current Password</label><input name="oldpassword" type="password" value="" />
+                    <label>New Password</label><input name="newpassword" type="password" value="" />
+                </div>
+                <div>
+                    <button class="link-button" type="submit">Change Password</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+
+</html>

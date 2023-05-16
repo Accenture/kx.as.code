@@ -1,0 +1,21 @@
+label {
+  display: flex;
+  flex-direction: row;
+  line-height: 26px;
+  margin-top: 8px;
+}
+
+input {
+  background-clip: padding-box;
+  border: 1px solid #ced4da;
+  border-radius: 2px;
+  line-height: 1.5;
+  width: 100%;
+}
+
+.form-body {
+  font-size: 14px;
+  font-weight: 600;
+  text-align: left;
+  padding: 0 16px 24px 16px;
+}

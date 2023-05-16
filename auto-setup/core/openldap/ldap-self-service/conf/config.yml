@@ -1,0 +1,3 @@
+conf:
+- userdn: "ou=users,dc=example,dc=com"
+- ldap: "ldap://mgp-ldap.gds-gov.tech"

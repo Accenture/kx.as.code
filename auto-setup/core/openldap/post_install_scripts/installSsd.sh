@@ -1,10 +1,13 @@
 #!/bin/bash
-set -euo pipefail
+set -euox pipefail
 
 # Install System Security Services Daemon (SSSD)
 
 # Set variables for base DN
 export ldapDn=$(/usr/bin/sudo slapcat | grep dn | head -1 | cut -f2 -d' ')
+
+# Get LDAP Admin Password
+export ldapAdminPassword=$(getPassword "openldap-admin-password" "openldap")
 
 # Install SSSD
 /usr/bin/sudo apt-get install -y sssd libpam-sss libnss-sss
@@ -99,5 +102,10 @@ ldap_access_filter = (objectClass=posixAccount)
 /usr/bin/sudo ldapsearch -H ldapi:/// -Y EXTERNAL -b "ou=People,${ldapDn}" dn -LLL -Q
 
 # Turn off apparmor for SSSD to avoid endless flood of messages in the syslog
-/usr/bin/sudo ln -sf /etc/apparmor.d/usr.sbin.sssd /etc/apparmor.d/disable/
-/usr/bin/sudo apparmor_parser -R /etc/apparmor.d/usr.sbin.sssd
+if [[ ! -f /etc/apparmor.d/disable/usr.sbin.sssd ]]; then
+  /usr/bin/sudo ln -sf /etc/apparmor.d/usr.sbin.sssd /etc/apparmor.d/disable/
+  log_debug "Disabling /etc/apparmor.d/usr.sbin.sssd to avoid log flooding"
+  /usr/bin/sudo apparmor_parser -R /etc/apparmor.d/usr.sbin.sssd
+else
+  log_debug "/etc/apparmor.d/usr.sbin.sssd already disabled"
+fi
