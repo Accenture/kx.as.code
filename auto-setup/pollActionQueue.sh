@@ -203,9 +203,9 @@ while :; do
             # If failure exists, ensure it was for the component that just ran
             if [[ -f ${installationWorkspace}/current_payload.err ]]; then
                 lastFailedComponent=$(cat ${installationWorkspace}/current_payload.err | jq -r '.name')
-                log_debug "Found an old error file that did not match the last installed component. Cleaning up"
                 if [[ "${componentName}" != "${lastFailedComponent}" ]]; then
                     # Clean up old error file that does not match workload on WIP queue
+                    log_debug "Found an old error file that did not match the last installed component. Cleaning up"
                     rm -f ${installationWorkspace}/current_payload.err
                 fi
             fi
@@ -321,7 +321,8 @@ while :; do
                 log_debug "Launching installation process for \"${componentName}\": ${payload}"
                 log_debug "${autoSetupHome}/autoSetup.sh \"{payload}\""
                 autoSetupStartEpochTimestamp=$(date "+%s.%N")
-                ${autoSetupHome}/autoSetup.sh "${payload}" 2>> ${logFilename} || rc=$?
+                autoSetupLogFilename=$(setLogFilename "${componentName}" "${retries}")
+                ${autoSetupHome}/autoSetup.sh "${payload}" 2>> ${autoSetupLogFilename} || rc=$?
                 if [[ ${rc} -eq 123 ]]; then
                     log_debug "Received RC=123 from autoSetup.sh. This indicated a non-recoverable error. Preventing a retry for \"${componentName}\""
                     sendToFailureQueue="true"
@@ -330,7 +331,7 @@ while :; do
                 autoSetupDuration=$(calculateDuration "${autoSetupStartEpochTimestamp}" "${autoSetupEndEpochTimestamp}")
 
                 if [[ ${rc} -ne 0 ]]; then
-                  log_error "Installation of returned with a non zero return code ($rc)"
+                  log_error "autoSetup.sh returned to pollActionQueue.sh (for \"${componentName}\") with a non zero return code ($rc)"
                   echo "${payload}" | sudo tee ${installationWorkspace}/current_payload.err
                 fi
                 export logFilename=$(setLogFilename "poller")
