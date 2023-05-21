@@ -30,7 +30,11 @@ createUsers() {
             fi
 
             # Generate user id
-            userid=$(generateUsername "${firstname}" "${surname}")
+            if [[ "${firstname}" == "Kx" ]] ;then
+              userid="kx.hero"
+            else
+              userid=$(generateUsername "${firstname}" "${surname}")
+            fi
 
             # Check if user already exists in Guacamole database.
             # As this is the last action for user creation,
