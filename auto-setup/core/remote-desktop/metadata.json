@@ -16,8 +16,6 @@
         "nomachineVersion": "8.4.2_1",
         "nomachineArm64Checksum": "7311c9a5699f5c981673d476a92d62e37267dcae4e464926ef600c86ff4d0d0c",
         "nomachineAmd64Checksum": "0934b3cf8468d3748a84a084b5eebd4c06974499e29a1f512ae61488357962fa"
-
-
     },
     "install_scripts": [
         "install-nomachine.sh",
