@@ -216,6 +216,7 @@
       ],
       "scripts": [
         "../../../scripts/common/motd.sh",
+        "../../../scripts/common/hardening.sh",
         "../../../scripts/common/kx.as.code.sh",
         "../../../scripts/common/tools.sh",
         "../../../scripts/common/docker.sh",

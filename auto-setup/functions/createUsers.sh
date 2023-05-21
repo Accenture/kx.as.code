@@ -312,7 +312,7 @@ createUsers() {
             gnupgInitializeUser "${userid}" "${generatedPassword}"
 
                 # Create and configure XRDP connection in Guacamole database
-                if [[ -z $(/usr/bin/sudo su - postgres -c "psql -t -U postgres -d guacamole_db -c \"select name FROM guacamole_entity WHERE name = '${userid}' AND guacamole_entity.type = 'USER';\"") ]]; then
+                if [[ -z $(/usr/bin/sudo -u postgres psql -t -U postgres -d guacamole_db -c "select name FROM guacamole_entity WHERE name = '${userid}' AND guacamole_entity.type = 'USER';") ]]; then
                 echo """
             INSERT INTO guacamole_entity (name, type) VALUES ('${userid}', 'USER');
             INSERT INTO guacamole_user (entity_id, password_hash, password_salt, password_date)
@@ -335,7 +335,7 @@ createUsers() {
             JOIN guacamole_entity          ON permissions.username = guacamole_entity.name AND guacamole_entity.type = 'USER'
             JOIN guacamole_entity affected ON permissions.affected_username = affected.name AND guacamole_entity.type = 'USER'
             JOIN guacamole_user            ON guacamole_user.entity_id = affected.entity_id;
-            """ | /usr/bin/sudo su - postgres -c "psql -U postgres -d guacamole_db" -
+            """ | /usr/bin/sudo -u postgres psql -U postgres -d guacamole_db
 
                 # Create and configure XRDP connection in Guacamole database
                 echo """
@@ -354,7 +354,7 @@ createUsers() {
             'READ'
             );
 
-            """ | /usr/bin/sudo su - postgres -c "psql -U postgres -d guacamole_db" -
+            """ | /usr/bin/sudo -u postgres psql -U postgres -d guacamole_db
             fi
         else
             log_debug "User with id \"${userid}\" already exists. Skipping creation"
