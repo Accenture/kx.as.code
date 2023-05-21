@@ -8,7 +8,7 @@ generateUsername() {
   if [[ ${firstnameSubstringLength} -le 0 ]]; then
       firstnameSubstringLength=1
   fi
-  userid="$(echo ${surname,,} | cut -c1-7)$(echo ${firstname,,} | cut -c1-${firstnameSubstringLength})"
+  userId="$(echo ${surname,,} | cut -c1-7)$(echo ${firstname,,} | cut -c1-${firstnameSubstringLength})"
 
   echo "${userId}"
 
