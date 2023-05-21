@@ -38,9 +38,10 @@ checkAndUpdateBaseUsername() {
     /usr/bin/sudo cp -rfT "${skelDirectory}" /home/${baseUser}
     /usr/bin/sudo rm -rf /home/${baseUser}/.cache/sessions
 
-    # Get new user group ID
+    # Get new user and group IDs
+    newUid=$(id -u ${baseUser}) # In case script is re-run and the variable not set as a result
     newGid=$(id -g ${baseUser}) # In case script is re-run and the variable not set as a result
-    /usr/bin/sudo chown -f -R ${newGid}:${newGid} /home/${baseUser} || true
+    /usr/bin/sudo chown -f -R ${newUid}:${newGid} /home/${baseUser} || true
 
     # Create SSH directory
     if [ ! -d /home/${baseUser}/.ssh ]; then
