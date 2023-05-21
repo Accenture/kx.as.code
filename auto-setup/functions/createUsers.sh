@@ -1,29 +1,36 @@
 createUsers() {
 
-    export numUsersToCreate=$(jq -r '.config.additionalUsers[].firstname' ${installationWorkspace}/users.json | wc -l)
+   # Use input, else read users.json in workspace
+    local firstname=${1:-}
+    local surname=${2:-}
+    local email=${3:-}
+    local defaultUserKeyboardLanguage=${4:-}
+    local userRole=${5:-}
+
+    if [[ -z ${firstname} ]]; then
+      local numUsersToCreate=$(jq -r '.config.additionalUsers[].firstname' ${installationWorkspace}/users.json | wc -l)
+    else
+      local numUsersToCreate=1
+      local creationMode="singleUserCreation"
+    fi
     export ldapDn=$(/usr/bin/sudo slapcat | grep dn | head -1 | cut -f2 -d' ')
     export ldapAdminPassword=$(getPassword "openldap-admin-password" "openldap")
-
-    newGid=""
 
     /usr/bin/sudo apt-get install -y unscd
 
     if [[ ${numUsersToCreate} -ne 0 ]]; then
         for i in $(seq 0 $((numUsersToCreate - 1))); do
             echo "i: $i"
-            firstname=$(jq -r '.config.additionalUsers['$i'].firstname' ${installationWorkspace}/users.json)
-            surname=$(jq -r '.config.additionalUsers['$i'].surname' ${installationWorkspace}/users.json)
-            email=$(jq -r '.config.additionalUsers['$i'].email' ${installationWorkspace}/users.json)
-            defaultUserKeyboardLanguage=$(jq -r '.config.additionalUsers['$i'].keyboard_language' ${installationWorkspace}/users.json)
-            userRole=$(jq -r '.config.additionalUsers['$i'].role' ${installationWorkspace}/users.json)
-
-            firstnameSubstringLength=$((8 - ${#surname}))
-
-            if [[ ${firstnameSubstringLength} -le 0 ]]; then
-                firstnameSubstringLength=1
+            if [[ ${creationMode} != "singleUserCreation" ]]; then
+              firstname=$(jq -r '.config.additionalUsers['$i'].firstname' ${installationWorkspace}/users.json)
+              surname=$(jq -r '.config.additionalUsers['$i'].surname' ${installationWorkspace}/users.json)
+              email=$(jq -r '.config.additionalUsers['$i'].email' ${installationWorkspace}/users.json)
+              defaultUserKeyboardLanguage=$(jq -r '.config.additionalUsers['$i'].keyboard_language' ${installationWorkspace}/users.json)
+              userRole=$(jq -r '.config.additionalUsers['$i'].role' ${installationWorkspace}/users.json)
             fi
-            echo $firstnameSubstringLength
-            userid="$(echo ${surname,,} | cut -c1-7)$(echo ${firstname,,} | cut -c1-${firstnameSubstringLength})"
+
+            # Generate user id
+            userid=$(generateUsername "${firstname}" "${surname}")
 
             # Check if user already exists in Guacamole database.
             # As this is the last action for user creation,

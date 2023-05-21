@@ -29,11 +29,16 @@ getProfileConfiguration() {
   fi
 
   export environmentPrefix=$(cat ${profileConfigJsonPath} | jq -r '.config.environmentPrefix')
-
   if [ -z ${environmentPrefix} ]; then
       export baseDomain=$(cat ${profileConfigJsonPath} | jq -r '.config.baseDomain')
   else
-      export baseDomain="${environmentPrefix}.$(cat ${profileConfigJsonPath} | jq -r '.config.baseDomain')"
+      if [[ "${environmentPrefix}" == "ownerId" ]]; then
+          export ownerId=$(getOwnerId)
+          export environmentPrefix=${ownerId}
+          export baseDomain="${ownerId}.$(cat ${profileConfigJsonPath} | jq -r '.config.baseDomain')"
+        else
+          export baseDomain="${environmentPrefix}.$(cat ${profileConfigJsonPath} | jq -r '.config.baseDomain')"
+        fi
   fi
 
   # For use in tools that require and organization name, where "." cause an error
@@ -45,7 +50,7 @@ getProfileConfiguration() {
   fi
 
   export defaultKeyboardLanguage=$(cat ${profileConfigJsonPath} | jq -r '.config.defaultKeyboardLanguage')
-  export baseUser=$(cat ${profileConfigJsonPath} | jq -r '.config.baseUser')
+  export baseUser=$(getOwnerId)
   export basePassword=$(cat ${profileConfigJsonPath} | jq -r '.config.basePassword')
   export baseIpRangeStart=$(cat ${profileConfigJsonPath} | jq -r '.config.baseIpRangeStart')
   export baseIpRangeEnd=$(cat ${profileConfigJsonPath} | jq -r '.config.baseIpRangeEnd')
