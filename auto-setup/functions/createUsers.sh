@@ -9,6 +9,7 @@ createUsers() {
 
     if [[ -z ${firstname} ]]; then
       local numUsersToCreate=$(jq -r '.config.additionalUsers[].firstname' ${installationWorkspace}/users.json | wc -l)
+      local creationMode="users-json"
     else
       local numUsersToCreate=1
       local creationMode="singleUserCreation"
@@ -38,7 +39,7 @@ createUsers() {
 
             # Check if user already exists in Guacamole database.
             # As this is the last action for user creation,
-            # this would mean that user was alrready created successfully
+            # this would mean that user was already created successfully
             # and does not need to be created again
             useridExistsInGuacamoleDatabase=$(echo "select name from guacamole_entity where name = '${userid}'" | /usr/bin/sudo su - postgres -c "psql -qtAX -U postgres -d guacamole_db")
 
@@ -82,8 +83,8 @@ createUsers() {
                 /usr/bin/sudo cp -rfT "${skelDirectory}" /home/${userid}
                 /usr/bin/sudo rm -rf /home/${userid}/.cache/sessions
 
-                if ! id -u ${userid} > /dev/null 2>&1; then
-
+                if ! /usr/bin/sudo ldapsearch -x -b "uid=${userid},ou=Users,ou=People,${ldapDn}"; then
+                    log_debug "User uid=${userid} does not exist in LDAP. Creating..."
                     if [ ! -f /home/${userid}/.ssh/id_rsa ]; then
                         # Create the kx.hero user ssh directory.
                         /usr/bin/sudo mkdir -pm 700 /home/${userid}/.ssh
@@ -195,7 +196,8 @@ createUsers() {
 
                     # Give user full sudo priviliges
                     printf "${userid}        ALL=(ALL)       NOPASSWD: ALL\n" | /usr/bin/sudo tee -a /etc/sudoers
-
+                else
+                   log_debug "User uid=${userid} already exists in LDAP. Skipping creation"
                 fi
 
                 # Set default keyboard language as per users.json
@@ -230,11 +232,12 @@ createUsers() {
                 done
 
                 # Loop change ownership to wait for OpenLDAP user to be available for setting ownership
+                newUid=$(id -u ${userid}) # In case script is re-run and the variable not set as a result
                 newGid=$(id -g ${userid}) # In case script is re-run and the variable not set as a result
                 for i in {1..10}; do
                     echo "i: $i"
-                    /usr/bin/sudo chown -f -R ${newGid}:${newGid} /home/${userid} || true
-                    if [[ $(stat -c '%u' /home/${userid} || true) -eq ${newGid} ]]; then
+                    /usr/bin/sudo chown -f -R ${newUid}:${newGid} /home/${userid} || true
+                    if [[ $(stat -c '%u' /home/${userid} || true) -eq ${newUid} ]]; then
                         break
                     else
                         sleep 10
@@ -245,7 +248,7 @@ createUsers() {
                 if /usr/bin/sudo test ! -f /home/${userid}/.pki/nssdb; then
                     /usr/bin/sudo rm -rf /home/${userid}/.pki
                     mkdir -p /home/${userid}/.pki/nssdb/
-                    chown -R ${newGid}:${newGid} /home/${userid}/.pki
+                    chown -R ${newUid}:${newGid} /home/${userid}/.pki
                     /usr/bin/sudo -H -i -u ${userid} bash -c "certutil -N --empty-password -d sql:/home/${userid}/.pki/nssdb"
                     /usr/bin/sudo -H -i -u ${userid} bash -c "/usr/local/bin/trustKXRootCAs.sh"
                     /usr/bin/sudo -H -i -u ${userid} bash -c "certutil -L -d sql:/home/${userid}/.pki/nssdb"
