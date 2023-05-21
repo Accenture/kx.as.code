@@ -280,12 +280,11 @@ kubectl taint nodes -l node-role.kubernetes.io/master= master node-role.kubernet
 
 # Ensure main KX.AS.CODE log rotates
 echo """${INSTALLATION_WORKSPACE}/kx.as.code_autoSetup.log {
+  copytruncate
   daily
-  rotate 14
+  rotate 7
   compress
-  delaycompress
-  notifempty
   missingok
-  create 640 root adm
+  size 50M
 }
 """  | sudo tee /etc/logrotate.d/kx.as.code
