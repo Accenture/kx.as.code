@@ -10,12 +10,6 @@ Since then, due to the increase in the power and feature-set of KX.AS.CODE, the 
 * Dynamic on-demand provisioning/destruction of test environments in the public/private cloud
 * End-to-end developer workstation to enhance local quality assurance capabilities 
 
-!!! quote "Message from the creator"
-    <i>I am a big fan of OpenSource technologies. Happy to give something back to the community. Without all the OpenSource technologies out there, this workstation wouldn't even be possible!</i>
-    -- Patrick Delamere :slightly_smiling_face:  
-    
-    <i>P.S. Would be great if you could come and say hello in our [Discord channel](https://discord.gg/TbwD9cmqUC) and tell us how you are using KX.AS.CODE!</i> :partying_face:
-
 !!! tip
     KX.AS.CODE was built with the belief that playing and experimentation is the best way to learn new tricks and ultimately innovate.
 
