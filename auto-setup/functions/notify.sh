@@ -4,7 +4,7 @@ notify() {
   functionStart
 
   local openDisplays=$(w -oush | grep -Eo ' :[0-9]+' | sort -u -t\  -k1,1 | cut -d \  -f 2 || true)
-  local log_debug "Detected unique displays: ${openDisplays}"
+  log_debug "Detected unique displays: ${openDisplays}"
   local messageTimeout=${3-300000}
   local messageTitle="KX.AS.CODE Notification"
   local message=${1}

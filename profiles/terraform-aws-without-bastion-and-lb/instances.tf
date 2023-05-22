@@ -23,7 +23,7 @@ resource "aws_security_group" "kx_nodes" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = local.remote_access_cidrs
+    cidr_blocks = local.remote_access_cidrs_admins
   }
 
   ingress {
@@ -37,42 +37,42 @@ resource "aws_security_group" "kx_nodes" {
     from_port   = 443
     to_port     = 443
     protocol    = "tcp"
-    cidr_blocks = local.remote_access_cidrs
+    cidr_blocks = local.remote_access_cidrs_admins
   }
 
   ingress {
     from_port   = 6443
     to_port     = 6443
     protocol    = "tcp"
-    cidr_blocks = local.remote_access_cidrs
+    cidr_blocks = local.remote_access_cidrs_admins
   }
 
   ingress {
     from_port   = 4000
     to_port     = 4000
     protocol    = "tcp"
-    cidr_blocks = local.remote_access_cidrs
+    cidr_blocks = local.remote_access_cidrs_admins
   }
 
   ingress {
     from_port   = 4000
     to_port     = 4000
     protocol    = "udp"
-    cidr_blocks = local.remote_access_cidrs
+    cidr_blocks = local.remote_access_cidrs_admins
   }
 
   ingress {
     from_port   = 8043
     to_port     = 8043
     protocol    = "tcp"
-    cidr_blocks = local.remote_access_cidrs
+    cidr_blocks = local.remote_access_cidrs_admins
   }
 
   ingress {
     from_port   = 8
     to_port     = -1
     protocol    = "icmp"
-    cidr_blocks = local.remote_access_cidrs
+    cidr_blocks = local.remote_access_cidrs_admins
   }
 
   ingress {
@@ -101,6 +101,7 @@ resource "aws_security_group" "kx_nodes" {
     Name = "kx_main"
     Environment = "DEV"
     EnvironmentPrefix = local.prefix
+    Owner = "${local.owner_surname}, ${local.owner_firstname} <${local.userid}>"
   }
 }
 
@@ -136,7 +137,7 @@ resource "aws_instance" "kx_main_admin" {
     Hostname = "kx-main1.${local.kx_as_code_domain}"
     Environment = "DEV"
     EnvironmentPrefix = local.prefix
-
+    Owner = "${local.owner_surname}, ${local.owner_firstname} <${local.userid}>"
   }
 
 }
@@ -164,6 +165,7 @@ resource "aws_instance" "kx_main_replica" {
     Hostname = "kx-main${count.index + 2}.${local.kx_as_code_domain}"
     Environment = "DEV"
     EnvironmentPrefix = local.prefix
+    Owner = "${local.owner_surname}, ${local.owner_firstname} <${local.userid}>"
   }
 }
 
@@ -189,6 +191,7 @@ resource "aws_instance" "kx_worker" {
     Hostname = "kx-worker${count.index + 1}.${local.kx_as_code_domain}"
     Environment = "DEV"
     EnvironmentPrefix = local.prefix
+    Owner = "${local.owner_surname}, ${local.owner_firstname} <${local.userid}>"
   }
 }
 

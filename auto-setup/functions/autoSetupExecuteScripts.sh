@@ -85,6 +85,7 @@ autoSetupExecuteScripts() {
         autoSetupScriptDuration=$(calculateDuration "${scriptStartEpochTimestamp}" "${scriptEndEpochTimestamp}")
 
         if [[ ${rc} -ne 0 ]]; then
+            setRetryDataFailureState
             log_error "Execution of script \"${installDirectory}/${script}\" ended in a non zero return code ($rc)" "${autoSetupScriptDuration}"
             exit 1
         else

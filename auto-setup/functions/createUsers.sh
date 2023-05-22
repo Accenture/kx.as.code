@@ -1,33 +1,45 @@
 createUsers() {
 
-    export numUsersToCreate=$(jq -r '.config.additionalUsers[].firstname' ${installationWorkspace}/users.json | wc -l)
+   # Use input, else read users.json in workspace
+    local firstname=${1:-}
+    local surname=${2:-}
+    local email=${3:-}
+    local defaultUserKeyboardLanguage=${4:-}
+    local userRole=${5:-}
+
+    if [[ -z ${firstname} ]]; then
+      local numUsersToCreate=$(jq -r '.config.additionalUsers[].firstname' ${installationWorkspace}/users.json | wc -l)
+      local creationMode="users-json"
+    else
+      local numUsersToCreate=1
+      local creationMode="singleUserCreation"
+    fi
     export ldapDn=$(/usr/bin/sudo slapcat | grep dn | head -1 | cut -f2 -d' ')
     export ldapAdminPassword=$(getPassword "openldap-admin-password" "openldap")
-
-    newGid=""
 
     /usr/bin/sudo apt-get install -y unscd
 
     if [[ ${numUsersToCreate} -ne 0 ]]; then
         for i in $(seq 0 $((numUsersToCreate - 1))); do
             echo "i: $i"
-            firstname=$(jq -r '.config.additionalUsers['$i'].firstname' ${installationWorkspace}/users.json)
-            surname=$(jq -r '.config.additionalUsers['$i'].surname' ${installationWorkspace}/users.json)
-            email=$(jq -r '.config.additionalUsers['$i'].email' ${installationWorkspace}/users.json)
-            defaultUserKeyboardLanguage=$(jq -r '.config.additionalUsers['$i'].keyboard_language' ${installationWorkspace}/users.json)
-            userRole=$(jq -r '.config.additionalUsers['$i'].role' ${installationWorkspace}/users.json)
-
-            firstnameSubstringLength=$((8 - ${#surname}))
-
-            if [[ ${firstnameSubstringLength} -le 0 ]]; then
-                firstnameSubstringLength=1
+            if [[ ${creationMode} != "singleUserCreation" ]]; then
+              firstname=$(jq -r '.config.additionalUsers['$i'].firstname' ${installationWorkspace}/users.json)
+              surname=$(jq -r '.config.additionalUsers['$i'].surname' ${installationWorkspace}/users.json)
+              email=$(jq -r '.config.additionalUsers['$i'].email' ${installationWorkspace}/users.json)
+              defaultUserKeyboardLanguage=$(jq -r '.config.additionalUsers['$i'].keyboard_language' ${installationWorkspace}/users.json)
+              userRole=$(jq -r '.config.additionalUsers['$i'].role' ${installationWorkspace}/users.json)
             fi
-            echo $firstnameSubstringLength
-            userid="$(echo ${surname,,} | cut -c1-7)$(echo ${firstname,,} | cut -c1-${firstnameSubstringLength})"
+
+            # Generate user id
+            if [[ "${firstname}" == "Kx" ]] ;then
+              userid="kx.hero"
+            else
+              userid=$(generateUsername "${firstname}" "${surname}")
+            fi
 
             # Check if user already exists in Guacamole database.
             # As this is the last action for user creation,
-            # this would mean that user was alrready created successfully
+            # this would mean that user was already created successfully
             # and does not need to be created again
             useridExistsInGuacamoleDatabase=$(echo "select name from guacamole_entity where name = '${userid}'" | /usr/bin/sudo su - postgres -c "psql -qtAX -U postgres -d guacamole_db")
 
@@ -71,8 +83,8 @@ createUsers() {
                 /usr/bin/sudo cp -rfT "${skelDirectory}" /home/${userid}
                 /usr/bin/sudo rm -rf /home/${userid}/.cache/sessions
 
-                if ! id -u ${userid} > /dev/null 2>&1; then
-
+                if ! /usr/bin/sudo ldapsearch -x -b "uid=${userid},ou=Users,ou=People,${ldapDn}"; then
+                    log_debug "User uid=${userid} does not exist in LDAP. Creating..."
                     if [ ! -f /home/${userid}/.ssh/id_rsa ]; then
                         # Create the kx.hero user ssh directory.
                         /usr/bin/sudo mkdir -pm 700 /home/${userid}/.ssh
@@ -184,7 +196,8 @@ createUsers() {
 
                     # Give user full sudo priviliges
                     printf "${userid}        ALL=(ALL)       NOPASSWD: ALL\n" | /usr/bin/sudo tee -a /etc/sudoers
-
+                else
+                   log_debug "User uid=${userid} already exists in LDAP. Skipping creation"
                 fi
 
                 # Set default keyboard language as per users.json
@@ -219,11 +232,12 @@ createUsers() {
                 done
 
                 # Loop change ownership to wait for OpenLDAP user to be available for setting ownership
+                newUid=$(id -u ${userid}) # In case script is re-run and the variable not set as a result
                 newGid=$(id -g ${userid}) # In case script is re-run and the variable not set as a result
                 for i in {1..10}; do
                     echo "i: $i"
-                    /usr/bin/sudo chown -f -R ${newGid}:${newGid} /home/${userid} || true
-                    if [[ $(stat -c '%u' /home/${userid} || true) -eq ${newGid} ]]; then
+                    /usr/bin/sudo chown -f -R ${newUid}:${newGid} /home/${userid} || true
+                    if [[ $(stat -c '%u' /home/${userid} || true) -eq ${newUid} ]]; then
                         break
                     else
                         sleep 10
@@ -234,7 +248,7 @@ createUsers() {
                 if /usr/bin/sudo test ! -f /home/${userid}/.pki/nssdb; then
                     /usr/bin/sudo rm -rf /home/${userid}/.pki
                     mkdir -p /home/${userid}/.pki/nssdb/
-                    chown -R ${newGid}:${newGid} /home/${userid}/.pki
+                    chown -R ${newUid}:${newGid} /home/${userid}/.pki
                     /usr/bin/sudo -H -i -u ${userid} bash -c "certutil -N --empty-password -d sql:/home/${userid}/.pki/nssdb"
                     /usr/bin/sudo -H -i -u ${userid} bash -c "/usr/local/bin/trustKXRootCAs.sh"
                     /usr/bin/sudo -H -i -u ${userid} bash -c "certutil -L -d sql:/home/${userid}/.pki/nssdb"
@@ -312,7 +326,7 @@ createUsers() {
             gnupgInitializeUser "${userid}" "${generatedPassword}"
 
                 # Create and configure XRDP connection in Guacamole database
-                if [[ -z $(/usr/bin/sudo su - postgres -c "psql -t -U postgres -d guacamole_db -c \"select name FROM guacamole_entity WHERE name = '${userid}' AND guacamole_entity.type = 'USER';\"") ]]; then
+                if [[ -z $(/usr/bin/sudo -u postgres psql -t -U postgres -d guacamole_db -c "select name FROM guacamole_entity WHERE name = '${userid}' AND guacamole_entity.type = 'USER';") ]]; then
                 echo """
             INSERT INTO guacamole_entity (name, type) VALUES ('${userid}', 'USER');
             INSERT INTO guacamole_user (entity_id, password_hash, password_salt, password_date)
@@ -335,7 +349,7 @@ createUsers() {
             JOIN guacamole_entity          ON permissions.username = guacamole_entity.name AND guacamole_entity.type = 'USER'
             JOIN guacamole_entity affected ON permissions.affected_username = affected.name AND guacamole_entity.type = 'USER'
             JOIN guacamole_user            ON guacamole_user.entity_id = affected.entity_id;
-            """ | /usr/bin/sudo su - postgres -c "psql -U postgres -d guacamole_db" -
+            """ | /usr/bin/sudo -u postgres psql -U postgres -d guacamole_db
 
                 # Create and configure XRDP connection in Guacamole database
                 echo """
@@ -354,7 +368,7 @@ createUsers() {
             'READ'
             );
 
-            """ | /usr/bin/sudo su - postgres -c "psql -U postgres -d guacamole_db" -
+            """ | /usr/bin/sudo -u postgres psql -U postgres -d guacamole_db
             fi
         else
             log_debug "User with id \"${userid}\" already exists. Skipping creation"

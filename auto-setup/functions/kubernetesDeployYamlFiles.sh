@@ -9,15 +9,15 @@ deployYamlFilesToKubernetes() {
     if [[ -d ${installComponentDirectory}/deployment_yaml ]]; then
 
         shopt -s globstar nullglob
-        export yamlFiles=( ${installComponentDirectory}/deployment_yaml/*.yaml )
-        log_info "Found following YMAL files to process for ${componentName}:\n${yamlFiles[@]}"
+        local yamlFiles=( ${installComponentDirectory}/deployment_yaml/*.yaml )
+        log_info "Found following YAML files to process for ${componentName}:\n${yamlFiles[@]}"
 
         if [[ -n ${yamlFiles[@]} ]]; then
 
             for i in "${!yamlFiles[@]}"; do
 
                 log_info "Procssing yaml file #${i} --> ${yamlFiles[$i]}"
-                yamlFilename="${componentName}_$(basename ${yamlFiles[$i]})"
+                local yamlFilename="${componentName}_$(basename ${yamlFiles[$i]})"
                 envhandlebars <${yamlFiles[$i]} >${installationWorkspace}/${yamlFilename}
                 updateStorageClassIfNeeded "${installationWorkspace}/${yamlFilename}"
                 log_debug "kubeval ${installationWorkspace}/${yamlFilename} --schema-location https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master --strict --ignore-missing-schemas"

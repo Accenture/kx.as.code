@@ -3,12 +3,24 @@ checkAndUpdateBaseUsername() {
   # Call common function to execute common function start commands, such as setting verbose output etc
   functionStart
 
+  # Check if owner details defined in users.json
+  firstname=$(jq -r '.config.owner.firstname' ${installationWorkspace}/users.json)
+  surname=$(jq -r '.config.owner.surname' ${installationWorkspace}/users.json)
+  email=$(jq -r '.config.owner.email' ${installationWorkspace}/users.json)
+  defaultUserKeyboardLanguage=$(jq -r '.config.owner.keyboard_language' ${installationWorkspace}/users.json)
+  userRole=$(jq -r '.config.owner.role' ${installationWorkspace}/users.json)
+
+  if [[ -n ${firstname} ]] && [[ "${firstname}" != "null" ]]; then
+   export baseUser=$(getOwnerId)
+  else
+   export baseUser="kx.hero"
+  fi
+
   if [[ "${vmUser}" != "${baseUser}" ]]; then
 
     # Create new username rather than modify the old one
-
-    sourceGroups=$(id -Gn "${baseUser}" | sed "s/ /,/g" | sed -r 's/\<'"${baseUser}"'\>\b,?//g')
-    sourceShell=$(awk -F : -v name="${baseUser}" '(name == $1) { print $7 }' /etc/passwd)
+    sourceGroups=$(id -Gn "${vmUser}" | sed "s/ /,/g" | sed -r 's/\<'"${vmUser}"'\>\b,?//g')
+    sourceShell=$(awk -F : -v name="${vmUser}" '(name == $1) { print $7 }' /etc/passwd)
 
     /usr/bin/sudo useradd --groups ${sourceGroups} --shell ${sourceShell} --create-home --home-dir /home/${baseUser} ${baseUser}
 
@@ -39,9 +51,10 @@ checkAndUpdateBaseUsername() {
     /usr/bin/sudo cp -rfT "${skelDirectory}" /home/${baseUser}
     /usr/bin/sudo rm -rf /home/${baseUser}/.cache/sessions
 
-    # Get new user group ID
+    # Get new user and group IDs
+    newUid=$(id -u ${baseUser}) # In case script is re-run and the variable not set as a result
     newGid=$(id -g ${baseUser}) # In case script is re-run and the variable not set as a result
-    /usr/bin/sudo chown -f -R ${newGid}:${newGid} /home/${baseUser} || true
+    /usr/bin/sudo chown -f -R ${newUid}:${newGid} /home/${baseUser} || true
 
     # Create SSH directory
     if [ ! -d /home/${baseUser}/.ssh ]; then

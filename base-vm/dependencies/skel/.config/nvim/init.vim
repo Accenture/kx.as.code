@@ -9,6 +9,9 @@ call plug#begin('~/.local/share/nvim/plugged')
     Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 call plug#end()
 
+runtime! plugin/rplugin.vim
+silent! UpdateRemotePlugins
+
 if (has("termguicolors"))
     set termguicolors
 endif

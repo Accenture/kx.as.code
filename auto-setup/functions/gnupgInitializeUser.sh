@@ -113,11 +113,11 @@ fi
 
 # Insert first secret with GoPass -> KX.Hero Password
 log_info "Adding first password to GoPass for testing"
-pushPassword "${userToInitialize}-user-password" "${userPassword}" "users"
+pushPassword "user-${userToInitialize}-password" "${userPassword}" "users"
 
 # Test password retrieval with GoPass
 log_info "Retrieving first password to GoPass for testing"
-password=$(getPassword "${userToInitialize}-user-password" "users")
+password=$(getPassword "user-${userToInitialize}-password" "users")
 log_info "Retrieved password: ${password}"
 
 fi

@@ -1,6 +1,5 @@
 jprofilerCreateUpdateUserConfig() {
 
-
     local kubePodLabels=${1:-}
     local kubeNamespace=${2:-}
     local username=${3:-$baseUser}

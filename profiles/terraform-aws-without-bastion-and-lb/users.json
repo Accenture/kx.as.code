@@ -1,20 +1,19 @@
 {
     "config": {
-        "additionalUsers":
-        [
+        "owner": {
+            "firstname": "",
+            "surname": "",
+            "email": "",
+            "keyboard_language": "us",
+            "role": "admin"
+        },
+        "additionalUsers": [
             {
-                "firstname": "Joe",
-                "surname": "Bloggs",
-                "email": "joe@kx-as-code.local",
+                "firstname": "Anuja",
+                "surname": "Padole",
+                "email": "anuja.anil.padole@accenture.com",
                 "keyboard_language": "us",
                 "role": "admin"
-            },
-            {
-                "firstname": "Max",
-                "surname": "Mustermann",
-                "email": "max@kx-as-code.local",
-                "keyboard_language": "de",
-                "role": "user"
             }
         ]
     }
