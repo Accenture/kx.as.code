@@ -37,7 +37,7 @@ curl -L -o ${INSTALLATION_WORKSPACE}/nvim-linux64.deb https://github.com/neovim/
 sha256sum="dce77cae95c2c115e43159169e2d2faaf93bce6862d5adad7262f3aa3cf60df8"
 echo "${sha256sum} ${INSTALLATION_WORKSPACE}/nvim-linux64.deb" | sha256sum --check
 sudo apt-get install -y ${INSTALLATION_WORKSPACE}/nvim-linux64.deb
-pip3 install neovim
+sudo -H pip3 install neovim
 
 # Set User File Associations
 sudo update-alternatives --install /usr/bin/editor editor /usr/bin/nvim 100
@@ -132,6 +132,7 @@ export NVM_DIR=/usr/local/nvm
 source /opt/nvm/nvm.sh
 nvm install lts/gallium
 nvm use --delete-prefix lts/gallium
+npm install --global npm@9.6.6
 npm install --global envhandlebars
 npm install --global yarn
 npm install --global pnpm
@@ -150,18 +151,37 @@ sudo chown -R ${BASE_IMAGE_SSH_USER}:${BASE_IMAGE_SSH_USER} /home/${BASE_IMAGE_S
 # Compiling OpenLens for later installation when KX.AS.CODE comes up
 cd ${INSTALLATION_WORKSPACE}
 sudo chmod 777 ${INSTALLATION_WORKSPACE}
-export lensVersion="v6.1.13"
+export lensVersion="v6.4.15"
 git clone --depth 1 --branch ${lensVersion} https://github.com/lensapp/lens.git
 cd ${INSTALLATION_WORKSPACE}/lens
 # Remove AppImage and RPM from Linux build targets
-sudo sed -i -e '/"rpm",/d' -e '/"AppImage"/d' -e 's/"deb",/"deb"/' ${INSTALLATION_WORKSPACE}/lens/package.json
-
+sudo sed -i -e '/"rpm",/d' -e '/"AppImage"/d' -e 's/"deb",/"deb"/' ${INSTALLATION_WORKSPACE}/lens/packages/open-lens/package.json
 source /etc/profile.d/nvm.sh
 
-# Build OpenLens
+### Build OpenLens
+rc=0
 if [[ -z $(which raspinfo) ]]; then
- cd /usr/share/kx.as.code/workspace/lens; source /etc/profile.d/nvm.sh; nvm use --delete-prefix lts/gallium; npm install yarn; yarn install; make build
- debOpenLensInstaller=$(find ${INSTALLATION_WORKSPACE}/lens/dist -name "OpenLens-*.deb")
+  for i in {1..3}; do
+    cd ${INSTALLATION_WORKSPACE}/lens
+    source /etc/profile.d/nvm.sh
+    nvm use --delete-prefix lts/gallium
+    npm config set fetch-retries 5
+    npm config set fetch-retry-factor 20
+    npm config set fetch-retry-mintimeout 20000
+    npm config set fetch-retry-maxtimeout 120000
+    npm config set fetch-timeout 600000
+    yarn
+    yarn run build
+    yarn run build:app || rc=$?
+    if [[ ${rc} -ne 0 ]]; then
+      echo "Open-Lens build attempt #${i} failed. Trying again (max 3 times)."
+      rc=0 # Reset rc before next run
+    else
+      echo "Open-Lens build attempt #${i} succeeded. Continuing."
+      break
+    fi
+  done
+ debOpenLensInstaller=$(find ${INSTALLATION_WORKSPACE}/lens/packages/open-lens/dist -name "OpenLens-*.deb")
  sudo mv ${debOpenLensInstaller} ${INSTALLATION_WORKSPACE}
  # Tidy up
  sudo rm -rf ${INSTALLATION_WORKSPACE}/lens
