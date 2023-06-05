@@ -393,8 +393,9 @@ Foreach ($line in (Get-Content -Path "jenkins.env" | Where-Object {$_ -notmatch 
 {
     # Created for sourcing for this script
     $line -replace '^', '$' `
-    -replace '(\w+)\s=\s(\x22\w+\x22)', "`$1 = `$2" `
-    -replace '(\w+)\s=\s(\w+)', "`$1 = `"`$2`"" | Add-Content -Path 'jenkins.env.ps1'
+    -replace '(\w+)\s=\s\x22(\S+)\x22', "`$1 = `$2" `
+    -replace '(\w+)\s=\s(\S+)', "`$1 = `"`$2`"" `
+    -replace '""""', '""' | Add-Content -Path 'jenkins.env.ps1'
 }
 
 . ./jenkins.env.ps1
