@@ -392,7 +392,9 @@ Remove-Item -Force -Path 'jenkins.env.ps1'
 Foreach ($line in (Get-Content -Path "jenkins.env" | Where-Object {$_ -notmatch '^#.*'} | Where-Object {$_ -notmatch '^$'}))
 {
     # Created for sourcing for this script
-    $line -replace '^', '$' | Add-Content -Path 'jenkins.env.ps1'
+    $line -replace '^', '$' `
+    -replace '(\w+)\s=\s(\x22\w+\x22)', "`$1 = `$2" `
+    -replace '(\w+)\s=\s(\w+)', "`$1 = `"`$2`"" | Add-Content -Path 'jenkins.env.ps1'
 }
 
 . ./jenkins.env.ps1
