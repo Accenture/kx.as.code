@@ -340,6 +340,26 @@ do
           echo "status=enabled
           BANNER_FILE=''" > ./${file}.cfg
           ;;
+      5.4.1.1)
+          pwd
+          cd etc/conf.d
+          echo "status=enabled
+          OPTIONS='PASS_MAX_DAYS=90 LOGIN_RETRIES=5 LOGIN_TIMEOUT=1800'" > ./${file}.cfg
+          sudo sed -i '0,/^[^#]/ s//auth required pam_tally2.so onerr=fail deny=5 unlock_time=1800 audit\n&/' /etc/pam.d/common-auth
+          sudo sed -i '/^[^#]/ s/\(sha512\|yescrypt\)/& minlen=9 remember=10 dcredit=-1 ucredit=-1 lcredit=-1 ocredit=-1/' /etc/pam.d/common-password
+          ;;
+      5.4.1.2)
+          pwd
+          cd etc/conf.d
+          echo "status=enabled
+          OPTIONS='PASS_MIN_DAYS=1'" > ./${file}.cfg
+          ;;
+      5.4.1.3)
+          pwd
+          cd etc/conf.d
+          echo "status=enabled
+          OPTIONS='PASS_WARN_AGE=7'" > ./${file}.cfg
+          ;;
       5.4.2)
           pwd
           cd etc/conf.d
