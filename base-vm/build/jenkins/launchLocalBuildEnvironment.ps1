@@ -593,8 +593,6 @@ if (  ( $javaBinary -ne $null ) ) {
     & $javaBinary -version
 }
 
-Exit
-
 # Create shared workspace directory for Vagrant and Terraform jobs
 $shared_workspace_base_directory_path = $JENKINS_SHARED_WORKSPACE
 Log_Debug "shared_workspace_base_directory_path: $shared_workspace_base_directory_path"
