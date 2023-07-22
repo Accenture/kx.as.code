@@ -21,9 +21,9 @@ notifyAllChannels() {
     if [[ "${action}" == "executeTask" ]]; then
       local task=$(echo ${acionQueueJsonPayload} | jq -r '.task')
       action="Task Execution"
-    elif [[ "${action}" == "install" ]]; then
+    elif [[ "${action}" == "install" ]] || [[ "${action}" == "uninstall" ]]; then
       local task="n/a"
-      action="Component Installation"
+      action="Component ${action^}ation"
     fi
 
   fi
