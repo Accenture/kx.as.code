@@ -1,7 +1,5 @@
 #!/bin/bash -x
 
-INSTALLATION_WORKSPACE=/usr/share/kx.as.code/workspace
-
 cisHardeningToRun="""
 1.1.10
 1.1.11.1
@@ -176,9 +174,9 @@ cisHardeningToRun="""
 ### Initialize steps
 cisDirectory=${INSTALLATION_WORKSPACE}/debian-cis
 cisReportsDirectory=${INSTALLATION_WORKSPACE}/debian-cis-reports
-mkdir -p ${cisReportsDirectory}
-if [ ! -f ${cisDirectory} ]; then
-  git clone --depth 1  https://github.com/ovh/debian-cis.git ${cisDirectory}
+sudo mkdir -p ${cisReportsDirectory}
+if [ ! -d ${cisDirectory} ]; then
+  sudo git clone --depth 1  https://github.com/ovh/debian-cis.git ${cisDirectory}
 fi
 cd ${cisDirectory}
 sudo cp -f ${cisDirectory}/debian/default /etc/default/cis-hardening
@@ -188,7 +186,7 @@ sudo sed -i "s#CIS_ROOT_DIR=.*#CIS_ROOT_DIR='$(pwd)'#" /etc/default/cis-hardenin
 pass_check (){
     FAIL_MESSAGE="[KO]CheckFailed"
     FAIL_MESSAGE=$(echo "$FAIL_MESSAGE" | tr -d '[:space:]' | tr '[:upper:]' '[:lower:]')
-    STR=`sudo bin/hardening/$1.sh --audit`
+    STR=$(sudo bin/hardening/"$1".sh --audit)
     STR=$(echo "$STR" | tr -d '[:space:]' | tr '[:upper:]' '[:lower:]')
     if [[ "$STR" == *"$FAIL_MESSAGE"* ]]; then
         echo "failed"
@@ -201,14 +199,13 @@ pass_check (){
 
 for cisScriptId in ${cisHardeningToRun}
 do
-  cd bin/hardening
-  file=$(find ./ -name ${cisScriptId}_* -type f)
-  file=$(basename "$file")
+  cd ${cisDirectory}/bin/hardening
+  file=$(ls -q ${cisScriptId}*)
   file="${file%.*}"
   cd ../../etc/conf.d
-  echo "status=enabled" > ./${file}.cfg
+  echo "status=enabled" | sudo tee -a ./"${file}".cfg
   cd ./../..
-  pass_check ${file}
+  pass_check "${file}"
   return_code=$?
 #  if [[ $return_code == 0 ]]; then
 #    continue
@@ -309,20 +306,20 @@ do
           PERMISSIONS='640'
           USER='root'
           GROUP='adm'
-          EXCEPTIONS=''" > ./${file}.cfg
+          EXCEPTIONS=''" | sudo tee -a ./"${file}".cfg
           ;;
       4.2.1.5)
           pwd
           cd etc/conf.d
           echo "status=enabled
-          SYSLOG_BASEDIR='/etc/syslog-ng'" > ./${file}.cfg
+          SYSLOG_BASEDIR='/etc/syslog-ng'" | sudo tee -a ./"${file}".cfg
           ;;
       4.2.1.6)
           pwd
           cd etc/conf.d
           echo "status=enabled
           SYSLOG_BASEDIR='/etc/syslog-ng'
-          REMOTE_HOST=false" > ./${file}.cfg
+          REMOTE_HOST=false" | sudo tee -a ./"${file}".cfg
           ;;
       5.2.18)
           pwd
@@ -331,19 +328,19 @@ do
           ALLOWED_USERS=''
           ALLOWED_GROUPS=''
           DENIED_USERS=''
-          DENIED_GROUPS=''" > ./${file}.cfg
+          DENIED_GROUPS=''" | sudo tee -a ./"${file}".cfg
           ;;
       5.2.19)
           pwd
           cd etc/conf.d
           echo "status=enabled
-          BANNER_FILE=''" > ./${file}.cfg
+          BANNER_FILE=''" | sudo tee -a ./"${file}".cfg
           ;;
       5.4.1.1)
           pwd
           cd etc/conf.d
           echo "status=enabled
-          OPTIONS='PASS_MAX_DAYS=90 LOGIN_RETRIES=5 LOGIN_TIMEOUT=1800'" > ./${file}.cfg
+          OPTIONS='PASS_MAX_DAYS=90 LOGIN_RETRIES=5 LOGIN_TIMEOUT=1800'" | sudo tee -a ./"${file}".cfg
           sudo sed -i '0,/^[^#]/ s//auth required pam_tally2.so onerr=fail deny=5 unlock_time=1800 audit\n&/' /etc/pam.d/common-auth
           sudo sed -i '/^[^#]/ s/\(sha512\|yescrypt\)/& minlen=9 remember=10 dcredit=-1 ucredit=-1 lcredit=-1 ocredit=-1/' /etc/pam.d/common-password
           ;;
@@ -351,24 +348,24 @@ do
           pwd
           cd etc/conf.d
           echo "status=enabled
-          OPTIONS='PASS_MIN_DAYS=1'" > ./${file}.cfg
+          OPTIONS='PASS_MIN_DAYS=1'" | sudo tee -a ./"${file}".cfg
           ;;
       5.4.1.3)
           pwd
           cd etc/conf.d
           echo "status=enabled
-          OPTIONS='PASS_WARN_AGE=7'" > ./${file}.cfg
+          OPTIONS='PASS_WARN_AGE=7'" | sudo tee -a ./"${file}".cfg
           ;;
       5.4.2)
           pwd
           cd etc/conf.d
           echo "status=enabled
-          EXCEPTIONS=''" > ./${file}.cfg
+          EXCEPTIONS=''" | sudo tee -a ./"${file}".cfg
           ;;
       6.1.13)
           cd etc/conf.d
           echo "status=enabled
-          EXCEPTIONS="/bin/mount /usr/bin/mount /bin/ping /usr/bin/ping /bin/ping6 /usr/bin/ping6 /bin/su /usr/bin/su /bin/umount /usr/bin/umount /usr/bin/chfn /usr/bin/chsh /usr/bin/fping /usr/bin/fping6 /usr/bin/gpasswd /usr/bin/mtr /usr/bin/newgrp /usr/bin/passwd /usr/bin/sudo /usr/bin/sudoedit /usr/lib/openssh/ssh-keysign /usr/lib/pt_chown /usr/bin/at"" > ./${file}.cfg
+          EXCEPTIONS="/bin/mount /usr/bin/mount /bin/ping /usr/bin/ping /bin/ping6 /usr/bin/ping6 /bin/su /usr/bin/su /bin/umount /usr/bin/umount /usr/bin/chfn /usr/bin/chsh /usr/bin/fping /usr/bin/fping6 /usr/bin/gpasswd /usr/bin/mtr /usr/bin/newgrp /usr/bin/passwd /usr/bin/sudo /usr/bin/sudoedit /usr/lib/openssh/ssh-keysign /usr/lib/pt_chown /usr/bin/at"" | sudo tee -a ./"${file}".cfg
           ;;
           *)
 
@@ -377,17 +374,17 @@ do
   cd ${cisDirectory}
   rc=0
 
-  sudo bin/hardening/${cisScriptId}_*.sh --apply &>>${cisReportsDirectory}/cis_${cisScriptId}_apply_output.txt || rc=$?
+  sudo bin/hardening/"${cisScriptId}"_*.sh --apply | sudo tee -a ${cisReportsDirectory}/cis_"${cisScriptId}"_apply_output.txt || rc=$?
   if [[ ${rc} -ne 0 ]]; then
-    echo "Apply for CIS script with ID ${cisScriptId} ended in a non zero return code." >>${cisReportsDirectory}/cis_error_summary_report.txt
+    echo "Apply for CIS script with ID ${cisScriptId} ended in a non zero return code." | sudo tee -a ${cisReportsDirectory}/cis_error_summary_report.txt
     rc=0 # reset rc variable
   else
     echo "Apply for CIS script with ID ${cisScriptId} ended OK."
   fi
 
-  sudo bin/hardening/${cisScriptId}_*.sh --audit &>>${cisReportsDirectory}/cis_${cisScriptId}_audit_output.txt || rc=$?
+  sudo bin/hardening/"${cisScriptId}"_*.sh --audit | sudo tee -a ${cisReportsDirectory}/cis_"${cisScriptId}"_audit_output.txt || rc=$?
   if [[ ${rc} -ne 0 ]]; then
-    echo "Audit for CIS script with ID ${cisScriptId} ended in a non zero return code." >>${cisReportsDirectory}/cis_error_summary_report.txt
+    echo "Audit for CIS script with ID ${cisScriptId} ended in a non zero return code." | sudo tee -a ${cisReportsDirectory}/cis_error_summary_report.txt
     rc=0 # reset rc variable
   else
     echo "Audit for CIS script with ID ${cisScriptId} ended OK."
@@ -397,7 +394,7 @@ done
 
 # Final audit
 cd ${cisDirectory}
-sudo bin/hardening.sh --audit-all &>>${cisReportsDirectory}/cis_audit_report_output.txt
+sudo bin/hardening.sh --audit-all | sudo tee -a ${cisReportsDirectory}/cis_audit_report_output.txt
 
 # Clean-up
 #sudo rm -rf ${cisDirectory}

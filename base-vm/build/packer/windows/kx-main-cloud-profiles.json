@@ -216,7 +216,6 @@
       ],
       "scripts": [
         "../../../scripts/common/motd.sh",
-        "../../../scripts/common/hardening.sh",
         "../../../scripts/common/kx.as.code.sh",
         "../../../scripts/common/tools.sh",
         "../../../scripts/common/powerline.sh",
@@ -258,7 +257,20 @@
       "pause_before": "60s",
       "start_retry_timeout": "15m",
       "expect_disconnect": "true"
-    }
+    },
+    {
+      "environment_vars": [
+           "KX_HOME={{user `kx_home`}}",
+           "INSTALLATION_WORKSPACE={{user `kx_home`}}/workspace"
+       ],
+       "scripts": [
+           "../../../scripts/common/hardening.sh"
+     ],
+       "type": "shell",
+       "pause_before": "60s",
+       "start_retry_timeout": "15m",
+       "expect_disconnect": "true"
+     }
   ],
   "variables": {
     "disk_size": "80",
