@@ -22,5 +22,5 @@ while IFS='' read -r credential || [[ -n "$credential" ]]; do
 done < "${sharedKxHome}/.config/.vmCredentialsFile"
 
 # Cleanup files
-/usr/bin/sudo rm -f cat /var/tmp/.hash
+/usr/bin/sudo rm -f /var/tmp/.hash
 /usr/bin/sudo rm -f ${sharedKxHome}/.config/.vmCredentialsFile
