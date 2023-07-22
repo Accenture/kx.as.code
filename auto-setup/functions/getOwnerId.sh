@@ -10,8 +10,8 @@ getOwnerId() {
     ownerId=$(generateUsername "${firstname}" "${surname}")
     echo "${ownerId}"
   else
-    log_debug "Owner not defined in users.json. Using default kx-hero instead"
-    echo "kx-hero"
+    log_debug "Owner not defined in users.json. Using default kx.hero instead"
+    echo "kx.hero"
   fi
 
 }
