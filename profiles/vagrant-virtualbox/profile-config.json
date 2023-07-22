@@ -11,7 +11,7 @@
         "disableSessionTimeout": true,
         "dnsResolution": {
             "resolutionType": "static",
-            "dns1": "1ß.100.76.200",
+            "dns1": "10.100.76.200",
             "dns2": "8.8.8.8",
             "dnsForwarding": "none"
         },
