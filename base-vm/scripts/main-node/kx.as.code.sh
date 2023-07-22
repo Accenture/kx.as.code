@@ -288,3 +288,7 @@ echo """${INSTALLATION_WORKSPACE}/kx.as.code_autoSetup.log {
   size 50M
 }
 """  | sudo tee /etc/logrotate.d/kx.as.code
+
+# Ensure that KX.AS.CODE workspace is writable by logrotate service
+echo "ReadWritePaths=${INSTALLATION_WORKSPACE}" | /usr/bin/sudo tee -a /lib/systemd/system/logrotate.service
+/usr/bin/sudo systemctl daemon-reload && /usr/bin/sudo systemctl start logrotate
