@@ -1,6 +1,6 @@
 {
     "config": {
-        "allowWorkloadsOnMaster": "false",
+        "allowWorkloadsOnMaster": "true",
         "baseDomain": "kx-as-code.local",
         "baseIpType": "static",
         "basePassword": "L3arnandshare",
@@ -9,7 +9,12 @@
         "defaultKeyboardLanguage": "de",
         "disableLinuxDesktop": "false",
         "disableSessionTimeout": true,
-        "dnsResolution": "static",
+        "dnsResolution": {
+            "resolutionType": "static",
+            "dns1": "1ß.100.76.200",
+            "dns2": "8.8.8.8",
+            "dnsForwarding": "none"
+        },
         "docker": {
             "dockerhub_email": "",
             "dockerhub_password": "",
@@ -17,7 +22,7 @@
         },
         "environmentPrefix": "demo1",
         "glusterFsDiskSize": 200,
-        "kubeOrchestrator": "k8s",
+        "kubeOrchestrator": "k3s",
         "local_volumes": {
             "fifty_gb": 0,
             "five_gb": 10,
@@ -35,7 +40,7 @@
             "https_proxy": "",
             "no_proxy": ""
         },
-        "selectedTemplates": "CICD Group 1",
+        "selectedTemplates": "Examples Group 1",
         "sslProvider": "self-signed",
         "standaloneMode": "false",
         "startupMode": "minimal",
@@ -58,13 +63,13 @@
         "vm_properties": {
             "3d_acceleration": "off",
             "main_admin_node_cpu_cores": 4,
-            "main_admin_node_memory": 16384,
+            "main_admin_node_memory": 8192,
             "main_node_count": 1,
             "main_replica_node_cpu_cores": 2,
             "main_replica_node_memory": 8196,
-            "worker_node_count": 2,
-            "worker_node_cpu_cores": 8,
-            "worker_node_memory": 32768
+            "worker_node_count": 1,
+            "worker_node_cpu_cores": 4,
+            "worker_node_memory": 8192
         }
     },
     "notification_endpoints": {
