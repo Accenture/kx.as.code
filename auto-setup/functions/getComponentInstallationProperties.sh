@@ -33,11 +33,11 @@ getComponentInstallationProperties() {
     for applicationEnvironmentVariable in ${applicationEnvironmentVariables}
     do
         # Export variable with mustach variable replacement
-        export ${applicationEnvironmentVariable}=$(echo "$applicationEnvironmentVariablesJson" | jq -r '.'${applicationEnvironmentVariable}'' | mo)
+        export ${applicationEnvironmentVariable}="$(echo "$applicationEnvironmentVariablesJson" | jq -r '.'${applicationEnvironmentVariable}'' | mo)"
         # Export variable with environment variable replacement
-        export ${applicationEnvironmentVariable}=$(eval echo ${!applicationEnvironmentVariable})
+        export ${applicationEnvironmentVariable}="$(eval echo "${!applicationEnvironmentVariable}")"
         # Log for debugging purposes
-        log_debug "Export environment variable: ${applicationEnvironmentVariable}=${!applicationEnvironmentVariable}"
+        log_debug "Export environment variable: ${applicationEnvironmentVariable}=\"${!applicationEnvironmentVariable}\""
     done
 
   else
