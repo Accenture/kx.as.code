@@ -1,13 +1,13 @@
 {
     "name": "prometheus-stack",
-    "namespace": "prometheus-stack",
+    "namespace": "monitoring",
     "installation_type": "helm",
     "installation_group_folder": "monitoring",
     "environment_variables": {},
     "helm_params": {
         "repository_url": "https://prometheus-community.github.io/helm-charts",
         "repository_name": "prometheus-community/kube-prometheus-stack",
-        "helm_version": "45.1.0",
+        "helm_version": "46.1.0",
         "set_key_values": []
     },
     "categories": [
