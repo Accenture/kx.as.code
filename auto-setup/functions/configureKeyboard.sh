@@ -5,7 +5,7 @@ configureKeyboardSettings() {
 
   # Set default keyboard language
   keyboardLanguages=""
-  availableLanguages="us de gb fr it es"
+  availableLanguages="us"
   for language in ${availableLanguages}; do
     if [[ -z ${keyboardLanguages} ]]; then
       keyboardLanguages="${language}"

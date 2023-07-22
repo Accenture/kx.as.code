@@ -110,36 +110,36 @@ createUsers() {
 
                     # Add User Group to OpenLDAP for Linux login
                     if ! /usr/bin/sudo ldapsearch -x -b "cn=${userid},ou=Groups,ou=People,${ldapDn}"; then
-                    echo '''
-            dn: cn='${userid}',ou=Groups,ou=People,'${ldapDn}'
-            objectClass: posixGroup
-            cn: '${userid}'
-            gidNumber: '${newGid}'
-            ''' | sed -e 's/^[ \t]*//' | sed '/^$/d' | /usr/bin/sudo tee /etc/ldap/users_group_${userid}.ldif
-                    /usr/bin/sudo ldapadd -D "cn=admin,${ldapDn}" -w "${ldapAdminPassword}" -H ldapi:/// -f /etc/ldap/users_group_${userid}.ldif
+                      echo '''
+                      dn: cn='${userid}',ou=Groups,ou=People,'${ldapDn}'
+                      objectClass: posixGroup
+                      cn: '${userid}'
+                      gidNumber: '${newGid}'
+                      ''' | sed -e 's/^[ \t]*//' | sed '/^$/d' | /usr/bin/sudo tee /etc/ldap/users_group_${userid}.ldif
+                      /usr/bin/sudo ldapadd -D "cn=admin,${ldapDn}" -w "${ldapAdminPassword}" -H ldapi:/// -f /etc/ldap/users_group_${userid}.ldif
                     fi
 
                     # Add User to OpenLDAP
                     if ! /usr/bin/sudo ldapsearch -x -b "uid=${userid},ou=Users,ou=People,${ldapDn}"; then
-                    echo '''
-            dn: uid='${userid}',ou=Users,ou=People,'${ldapDn}'
-            objectClass: top
-            objectClass: posixAccount
-            objectClass: shadowAccount
-            objectClass: inetOrgPerson
-            objectClass: organizationalPerson
-            objectClass: person
-            cn: '${userid}'
-            sn: '${userid}'
-            uid: '${userid}'
-            uidNumber: '${newGid}'
-            gidNumber: '${newGid}'
-            homeDirectory: /home/'${userid}'
-            userPassword: '${generatedPassword}'
-            mail: '${email}'
-            loginShell: /bin/zsh
-            ''' | sed -e 's/^[ \t]*//' | sed '/^$/d' | /usr/bin/sudo tee /etc/ldap/new_user_${userid}.ldif
-                    /usr/bin/sudo ldapadd -D "cn=admin,${ldapDn}" -w "${ldapAdminPassword}" -H ldapi:/// -f /etc/ldap/new_user_${userid}.ldif
+                      echo '''
+                      dn: uid='${userid}',ou=Users,ou=People,'${ldapDn}'
+                      objectClass: top
+                      objectClass: posixAccount
+                      objectClass: shadowAccount
+                      objectClass: inetOrgPerson
+                      objectClass: organizationalPerson
+                      objectClass: person
+                      cn: '${userid}'
+                      sn: '${userid}'
+                      uid: '${userid}'
+                      uidNumber: '${newGid}'
+                      gidNumber: '${newGid}'
+                      homeDirectory: /home/'${userid}'
+                      userPassword: '${generatedPassword}'
+                      mail: '${email}'
+                      loginShell: /bin/zsh
+                      ''' | sed -e 's/^[ \t]*//' | sed '/^$/d' | /usr/bin/sudo tee /etc/ldap/new_user_${userid}.ldif
+                      /usr/bin/sudo ldapadd -D "cn=admin,${ldapDn}" -w "${ldapAdminPassword}" -H ldapi:/// -f /etc/ldap/new_user_${userid}.ldif
                     fi
 
                     # Restart NSLCD and NSCD to make new users available for logging in
@@ -172,21 +172,21 @@ createUsers() {
                     if [[ -z ${kcadminGroupExists} ]]; then
                         # Create kcadmins group with new user
                         echo '''
-                dn: cn=kcadmins,ou=Groups,ou=People,'${ldapDn}'
-                objectClass: groupOfNames
-                cn: kcadmins
-                member: uid='${userid}',ou=Users,ou=People,'${ldapDn}'
-                ''' | sed -e 's/^[ \t]*//' | sed '/^$/d' | /usr/bin/sudo tee /etc/ldap/create-groupOfNames-group.ldif
+                        dn: cn=kcadmins,ou=Groups,ou=People,'${ldapDn}'
+                        objectClass: groupOfNames
+                        cn: kcadmins
+                        member: uid='${userid}',ou=Users,ou=People,'${ldapDn}'
+                        ''' | sed -e 's/^[ \t]*//' | sed '/^$/d' | /usr/bin/sudo tee /etc/ldap/create-groupOfNames-group.ldif
                         /usr/bin/sudo ldapadd -D "cn=admin,${ldapDn}" -w "${ldapAdminPassword}" -H ldapi:/// -f /etc/ldap/create-groupOfNames-group.ldif
                     else
                         if ! /usr/bin/sudo ldapsearch -x -b "cn=kcadmins,ou=Groups,ou=People,${ldapDn}" '(&(objectClass=groupOfNames)(member=uid='${userid}',ou=Users,ou=People,'${ldapDn}'))' | grep -q ^dn:; then
                         # Add user to existing kcadmins group
                         echo '''
-                    dn: uid='${userid}',ou=Users,ou=People,'${ldapDn}'
-                    changetype: modify
-                    add: memberOf
-                    memberOf: cn=kcadmins,ou=Groups,ou=People,'${ldapDn}'
-                    ''' | sed -e 's/^[ \t]*//' | sed '/^$/d' | /usr/bin/sudo tee /etc/ldap/add_user_${userid}_to_kcadmins.ldif
+                        dn: uid='${userid}',ou=Users,ou=People,'${ldapDn}'
+                        changetype: modify
+                        add: memberOf
+                        memberOf: cn=kcadmins,ou=Groups,ou=People,'${ldapDn}'
+                        ''' | sed -e 's/^[ \t]*//' | sed '/^$/d' | /usr/bin/sudo tee /etc/ldap/add_user_${userid}_to_kcadmins.ldif
                             /usr/bin/sudo ldapadd -D "cn=admin,${ldapDn}" -w "${ldapAdminPassword}" -H ldapi:/// -f /etc/ldap/add_user_${userid}_to_kcadmins.ldif
                         fi
                     fi
@@ -202,7 +202,7 @@ createUsers() {
 
                 # Set default keyboard language as per users.json
                 keyboardLanguages=""
-                availableLanguages="us de gb fr it es"
+                availableLanguages="us"
                 for language in ${availableLanguages}; do
                     if [[ -z ${keyboardLanguages} ]]; then
                         keyboardLanguages="${language}"
@@ -219,7 +219,7 @@ createUsers() {
                 echo """[Desktop Entry]
                 Type=Application
                 Name=SetKeyboardLanguage
-                Exec=setxkbmap ${keyboardLanguages} -option grp:alt_shift_toggle
+                Exec=setxkbmap ${keyboardLanguages}
                 """ | sed -e 's/^[ \t]*//' | sed '/^$/d' | /usr/bin/sudo tee /home/${userid}/.config/autostart/keyboard-language.desktop
                 fi
 
@@ -269,106 +269,104 @@ createUsers() {
                     /usr/bin/sudo chown -R ${userid}:${userid} /home/${userid}/.config/autostart-scripts
                 fi
 
-            if checkApplicationInstalled "keycloak" "core"; then
-
                 if /usr/bin/sudo test ! -f /home/${userid}/.kube/config; then
                     # Create Kubeconfig file
                     /usr/bin/sudo mkdir -p /home/${userid}/.kube
                     /usr/bin/sudo cat /etc/kubernetes/admin.conf | sed '/users:/,$d' | sed 's/kubernetes-admin/oidc/g' | /usr/bin/sudo tee /home/${userid}/.kube/config
                     /usr/bin/sudo chown -R ${userid}:${userid} /home/${userid}/.kube
                     /usr/bin/sudo chmod 600 /home/${userid}/.kube/config
+                fi
+
+
+                if [[ "${kubeOrchestrator}" == "k3s" ]]; then
+                    export kubeConfigFile=/etc/rancher/k3s/k3s.yaml
+                else
+                    export kubeConfigFile=/etc/kubernetes/admin.conf
+                fi
+
+                /usr/bin/sudo -H -i -u ${userid} sh -c "mkdir -p /home/${userid}/.kube"
+                /usr/bin/sudo cp -f ${kubeConfigFile} /home/${userid}/.kube/config
+
+                # Ensure user has correct access permissions to .kube/config file
+                /usr/bin/sudo chmod 600 /home/${userid}/.kube/config
+                /usr/bin/sudo chown ${userid}:${userid} /home/${userid}/.kube/config
+
+
+                if [[ -z $(cat /home/${userid}/.bashrc | grep KUBECONFIG) ]]; then
+                    echo "export KUBECONFIG=/home/${userid}/.kube/config" | /usr/bin/sudo tee -a /home/${userid}/.bashrc /home/${userid}/.zshrc
+                fi
+
+                if checkApplicationInstalled "keycloak" "core"; then ###########
+
+                    # Source Keycloak Environment
+                    sourceKeycloakEnvironment
+
+                    # Call function to login to Keycloak
+                    keycloakLogin
+
                     # Enable Keycloak OIDC for new user
                     /usr/bin/sudo -H -i -u ${userid} bash -c "${installationWorkspace}/client-oidc-setup.sh"
                     /usr/bin/sudo -H -i -u ${userid} bash -c "kubectl config set-context --current --user=oidc"
-                fi
 
-                # Source Keycloak Environment
-                sourceKeycloakEnvironment
+                    # Get Keycloak User Id
+                    export kcUserId=$(kubectl -n keycloak exec ${kcPod} --container ${kcContainer} -- \
+                        ${kcAdmCli} get users -r ${kcRealm} -q username=${userid} | jq -r '.[].id')
 
-                # Call function to login to Keycloak
-                keycloakLogin
+                    # Create K8s cluster role binding for OIDC user if it does not exist
+                    /usr/bin/sudo kubectl get clusterrolebinding oidc-cluster-admin-${userid} || \
+                    /usr/bin/sudo kubectl create clusterrolebinding oidc-cluster-admin-${userid} --clusterrole=cluster-admin --user='https://keycloak.'${baseDomain}'/auth/realms/'${kcRealm}'#'${kcUserId}''
 
-                # Get Keycloak User Id
-                export kcUserId=$(kubectl -n keycloak exec ${kcPod} --container ${kcContainer} -- \
-                    ${kcAdmCli} get users -r ${kcRealm} -q username=${userid} | jq -r '.[].id')
+                fi ##########
 
-                # Create K8s cluster role binding for OIDC user if it does not exist
-                /usr/bin/sudo kubectl get clusterrolebinding oidc-cluster-admin-${userid} || \
-                /usr/bin/sudo kubectl create clusterrolebinding oidc-cluster-admin-${userid} --clusterrole=cluster-admin --user='https://keycloak.'${baseDomain}'/auth/realms/'${kcRealm}'#'${kcUserId}''
+                # Ensure user has correct access permissions to desktop files
+                /usr/bin/sudo chmod 755 /home/${userid}/Desktop/*.desktop
+                /usr/bin/sudo chown ${userid}:${userid} /home/${userid}/Desktop/*.desktop
 
-            else
-
-              if [[ "${kubeOrchestrator}" == "k3s" ]]; then
-                  export kubeConfigFile=/etc/rancher/k3s/k3s.yaml
-              else
-                  export kubeConfigFile=/etc/kubernetes/admin.conf
-              fi
-
-              /usr/bin/sudo -H -i -u ${userid} sh -c "mkdir -p /home/${userid}/.kube"
-              /usr/bin/sudo cp -f ${kubeConfigFile} /home/${userid}/.kube/config
-
-              # Ensure user has correct access permissions to .kube/config file
-              /usr/bin/sudo chmod 600 /home/${userid}/.kube/config
-              /usr/bin/sudo chown ${userid}:${userid} /home/${userid}/.kube/config
-
-
-              if [[ -z $(cat /home/${userid}/.bashrc | grep KUBECONFIG) ]]; then
-                  echo "export KUBECONFIG=/home/${userid}/.kube/config" | /usr/bin/sudo tee -a /home/${userid}/.bashrc /home/${userid}/.zshrc
-              fi
-
-            fi
-
-            # Ensure user has correct access permissions to desktop files
-            /usr/bin/sudo chmod 755 /home/${userid}/Desktop/*.desktop
-            /usr/bin/sudo chown ${userid}:${userid} /home/${userid}/Desktop/*.desktop
-
-            # Initialize gnupg for new user to use with GoPass
-            gnupgInitializeUser "${userid}" "${generatedPassword}"
+                # Initialize gnupg for new user to use with GoPass
+                gnupgInitializeUser "${userid}" "${generatedPassword}"
 
                 # Create and configure XRDP connection in Guacamole database
                 if [[ -z $(/usr/bin/sudo -u postgres psql -t -U postgres -d guacamole_db -c "select name FROM guacamole_entity WHERE name = '${userid}' AND guacamole_entity.type = 'USER';") ]]; then
                 echo """
-            INSERT INTO guacamole_entity (name, type) VALUES ('${userid}', 'USER');
-            INSERT INTO guacamole_user (entity_id, password_hash, password_salt, password_date)
-            SELECT
-                entity_id,
-                decode('CA458A7D494E3BE824F5E1E175A1556C0F8EEF2C2D7DF3633BEC4A29C4411960', 'hex'),  -- '${generatedPassword}'
-                decode('FE24ADC5E11E2B25288D1704ABE67A79E342ECC26064CE69C5B3177795A82264', 'hex'),
-                CURRENT_TIMESTAMP
-            FROM guacamole_entity WHERE name = '${userid}' AND guacamole_entity.type = 'USER';
+                INSERT INTO guacamole_entity (name, type) VALUES ('${userid}', 'USER');
+                INSERT INTO guacamole_user (entity_id, password_hash, password_salt, password_date)
+                SELECT
+                    entity_id,
+                    decode('CA458A7D494E3BE824F5E1E175A1556C0F8EEF2C2D7DF3633BEC4A29C4411960', 'hex'),  -- '${generatedPassword}'
+                    decode('FE24ADC5E11E2B25288D1704ABE67A79E342ECC26064CE69C5B3177795A82264', 'hex'),
+                    CURRENT_TIMESTAMP
+                FROM guacamole_entity WHERE name = '${userid}' AND guacamole_entity.type = 'USER';
 
-            -- Grant admin permission to read/update/administer self
-            INSERT INTO guacamole_user_permission (entity_id, affected_user_id, permission)
-            SELECT guacamole_entity.entity_id, guacamole_user.user_id, permission::guacamole_object_permission_type
-            FROM (
-                VALUES
-                    ('${userid}', '${userid}', 'READ'),
-                    ('${userid}', '${userid}', 'UPDATE'),
-                    ('${userid}', '${userid}', 'ADMINISTER')
-            ) permissions (username, affected_username, permission)
-            JOIN guacamole_entity          ON permissions.username = guacamole_entity.name AND guacamole_entity.type = 'USER'
-            JOIN guacamole_entity affected ON permissions.affected_username = affected.name AND guacamole_entity.type = 'USER'
-            JOIN guacamole_user            ON guacamole_user.entity_id = affected.entity_id;
-            """ | /usr/bin/sudo -u postgres psql -U postgres -d guacamole_db
+                -- Grant admin permission to read/update/administer self
+                INSERT INTO guacamole_user_permission (entity_id, affected_user_id, permission)
+                SELECT guacamole_entity.entity_id, guacamole_user.user_id, permission::guacamole_object_permission_type
+                FROM (
+                    VALUES
+                        ('${userid}', '${userid}', 'READ'),
+                        ('${userid}', '${userid}', 'UPDATE'),
+                        ('${userid}', '${userid}', 'ADMINISTER')
+                ) permissions (username, affected_username, permission)
+                JOIN guacamole_entity          ON permissions.username = guacamole_entity.name AND guacamole_entity.type = 'USER'
+                JOIN guacamole_entity affected ON permissions.affected_username = affected.name AND guacamole_entity.type = 'USER'
+                JOIN guacamole_user            ON guacamole_user.entity_id = affected.entity_id;
+                """ | /usr/bin/sudo -u postgres psql -U postgres -d guacamole_db
 
                 # Create and configure XRDP connection in Guacamole database
                 echo """
+                INSERT INTO public.guacamole_connection_group_permission(entity_id, connection_group_id, permission)
+                VALUES (
+                (select entity_id from guacamole_entity where name = '${userid}'),
+                (select connection_group_id from guacamole_connection_group where connection_group_name = 'kx-as-code'),
+                'READ'
+                );
 
-            INSERT INTO public.guacamole_connection_group_permission(entity_id, connection_group_id, permission)
-            VALUES (
-            (select entity_id from guacamole_entity where name = '${userid}'),
-            (select connection_group_id from guacamole_connection_group where connection_group_name = 'kx-as-code'),
-            'READ'
-            );
-
-            INSERT INTO public.guacamole_connection_permission(entity_id, connection_id, permission)
-            VALUES (
-            (select entity_id from guacamole_entity where name = '${userid}'),
-            (select connection_id from guacamole_connection where connection_name = 'rdp'),
-            'READ'
-            );
-
-            """ | /usr/bin/sudo -u postgres psql -U postgres -d guacamole_db
+                INSERT INTO public.guacamole_connection_permission(entity_id, connection_id, permission)
+                VALUES (
+                (select entity_id from guacamole_entity where name = '${userid}'),
+                (select connection_id from guacamole_connection where connection_name = 'rdp'),
+                'READ'
+                );
+                """ | /usr/bin/sudo -u postgres psql -U postgres -d guacamole_db
             fi
         else
             log_debug "User with id \"${userid}\" already exists. Skipping creation"
