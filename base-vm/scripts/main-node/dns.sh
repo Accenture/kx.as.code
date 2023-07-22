@@ -25,7 +25,7 @@ echo '''options {
         // you will need to update your keys.  See https://www.isc.org/bind-keys
         //========================================================================
         dnssec-validation auto;
-
+        auth-nxdomain no;
         listen-on-v6 { any; };
         allow-query { any; };
         version "not currently available";
