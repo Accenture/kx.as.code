@@ -5,10 +5,10 @@ notify() {
 
   local openDisplays=$(w -oush | grep -Eo ' :[0-9]+' | sort -u -t\  -k1,1 | cut -d \  -f 2 || true)
   log_debug "Detected unique displays: ${openDisplays}"
-  local messageTimeout=${3-300000}
-  local messageTitle="KX.AS.CODE Notification"
-  local message=${1}
-  local messageType=${2}
+  local message=${1:-}
+  local messageType=${2:-"dialog-information"}
+  local messageTimeout=${3:-300000}
+  local messageTitle=${4:-"KX.AS.CODE Notification"}
 
   # Get list of connected displays
   local displayFiles=$(/usr/bin/sudo find /home/*/.dbus -maxdepth 1 -type f -name "Xdbus")
