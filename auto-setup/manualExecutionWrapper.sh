@@ -59,4 +59,4 @@ getProfileConfiguration
 # Get custom variables and override global and component ones where same name is specified
 getCustomVariables
 
-${functionToExecute}
+$@
