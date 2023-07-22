@@ -158,7 +158,7 @@ cd ${INSTALLATION_WORKSPACE}/lens
 sudo sed -i -e '/"rpm",/d' -e '/"AppImage"/d' -e 's/"deb",/"deb"/' ${INSTALLATION_WORKSPACE}/lens/packages/open-lens/package.json
 source /etc/profile.d/nvm.sh
 
-### Build OpenLens
+# Build OpenLens
 rc=0
 if [[ -z $(which raspinfo) ]]; then
   for i in {1..3}; do
@@ -184,5 +184,5 @@ if [[ -z $(which raspinfo) ]]; then
  debOpenLensInstaller=$(find ${INSTALLATION_WORKSPACE}/lens/packages/open-lens/dist -name "OpenLens-*.deb")
  sudo mv ${debOpenLensInstaller} ${INSTALLATION_WORKSPACE}
  # Tidy up
- sudo rm -rf ${INSTALLATION_WORKSPACE}/lens
+ sudo rm -rf ${INSTALLATION_WORKSPACE}/lens || true
 fi
