@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # Do not install if public cloud or Raspberry Pi, as in these cases, NoMachine would have already been installed into the image.
-if [[ -z $(which raspinfo) ]]; then
+if [[ -z $(which raspinfo) ]] && [[ "${installNoMachine}" == "true" ]]; then
 
   noMachineAlreadyInstalled=$(apt list nomachine | grep -i "installed")
   if [[ -z ${noMachineAlreadyInstalled} ]]; then

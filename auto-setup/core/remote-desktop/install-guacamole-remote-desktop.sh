@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # Save resourcrs on the Raspberry Pi. Install NoMachine only.
-if [[ -z $(which raspinfo) ]]; then
+if [[ -z $(which raspinfo) ]] && [[ "${installGuacamole}" == "true" ]]; then
 
 # Install & configure XRDP to ensure support for multiple users
 /usr/bin/sudo apt install -y xrdp
@@ -15,7 +15,7 @@ if [[ -z $(which raspinfo) ]]; then
 # Download, build, install and enable Guacamole
 #https://apache.org/dyn/closer.cgi?action=download&filename=guacamole/1.5.0/source/guacamole-server-1.5.0.tar.gz
 filename="guacamole-server-${guacamoleVersion}.tar.gz"
-downloadFile "https://apache.org/dyn/closer.cgi?action=download&filename=guacamole/${guacamoleVersion}/source/${filename}" \
+downloadFile "https://apache.org/dyn/closer.lua/guacamole/${guacamoleVersion}/source/${filename}?action=download" \
   "${guacamoleTarChecksum}" \
   "${installationWorkspace}/${filename}" || rc=$?
 if [[ ${rc} -ne 0 ]]; then
@@ -225,8 +225,8 @@ echo ${vncPassword} | /usr/bin/sudo bash -c "vncpasswd -f > /home/${baseUser}/.v
 
 /usr/bin/sudo -H -i -u ${baseUser} sh -c "vncserver"
 
-baseUserId=$(id -g ${baseUser})
-baseUserGroupId=$(id -u ${baseUser})
+baseUserId=$(id -u ${baseUser})
+baseUserGroupId=$(id -g ${baseUser})
 
 echo '''
 [Unit]
@@ -281,8 +281,8 @@ server {
 
     server_name remote-desktop.'${baseDomain}';
 
-    listen [::]:8043 ssl ipv6only=on;
-    listen 8043 ssl;
+    listen [::]:8080 ssl ipv6only=on;
+    listen 8080 ssl;
     ssl_certificate '${installationWorkspace}'/kx-certs/tls.crt;
     ssl_certificate_key '${installationWorkspace}'/kx-certs/tls.key;
 
@@ -328,7 +328,7 @@ else
 fi
 
 /usr/bin/sudo sed -i 's/guac-tricolor.svg/guac-tricolor.png/g' /var/lib/tomcat9/webapps/guacamole/app/login/styles/dialog.css
-/usr/bin/sudo sed -i 's/guac-tricolor.svg/guac-tricolor.png/g' /var/lib/tomcat9/webapps/guacamole/1.guacamole.8c18237a4a94ee9845d9.css
+/usr/bin/sudo sed -i 's/guac-tricolor.svg/guac-tricolor.png/g' /var/lib/tomcat9/webapps/guacamole/*.css
 
 /usr/bin/sudo sed -i 's/^    width: 3em;/    width: 9em;/g' /var/lib/tomcat9/webapps/guacamole/guacamole.css
 /usr/bin/sudo sed -i 's/^    height: 3em;/    height: 9em;/g' /var/lib/tomcat9/webapps/guacamole/guacamole.css
@@ -356,5 +356,43 @@ if [[ -f /etc/apache2/ports.conf ]]; then
   systemctl restart apache2
   systemctl status apache2.service
 fi
+
+# Apply ingress resources to proxy access via NGINX ingress controller
+echo """apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/upstream-vhost: remote-desktop.${baseDomain}
+  name: proxy-service-remote-desktop-ingress
+spec:
+  ingressClassName: nginx
+  tls:
+  - hosts:
+    - remote-desktop.${baseDomain}
+  rules:
+  - host: remote-desktop.${baseDomain}
+    http:
+      paths:
+      - backend:
+          service:
+            name: proxy-service-remote-desktop
+            port:
+              number: 8099
+        path: /
+        pathType: ImplementationSpecific
+""" | /usr/bin/sudo tee ${installationWorkspace}/external-remote-desktop-service.yaml
+kubectl apply -f ${installationWorkspace}/external-remote-desktop-service.yaml
+
+echo """apiVersion: v1
+kind: Service
+metadata:
+  name: proxy-service-remote-desktop
+  namespace: default
+spec:
+  type: ExternalName
+  externalName: remote-desktop.${baseDomain}
+""" | /usr/bin/sudo tee ${installationWorkspace}/external-remote-desktop-ingress.yaml
+kubectl apply -f ${installationWorkspace}/external-remote-desktop-ingress.yaml
 
 fi
