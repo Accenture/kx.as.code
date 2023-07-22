@@ -331,6 +331,11 @@ elif [[ ${action} == "uninstall"   ]] || [[ ${action} == "purge"   ]]; then
 
         # Script uninstall
         echo "Executing Scripted uninstall routine"
+        if [[ -f ${installComponentDirectory}/uninstall.sh ]]; then
+          . ${installComponentDirectory}/uninstall.sh
+        else
+          log_warn "Uninstall script for \"${componentName}\" not found. Expected to find \"uninstall.sh\" at the following path \"${installComponentDirectory}/uninstall.sh\""
+        fi
 
     else
         log_error "Cannot uninstall \"${componentName}\" as installation type \"${installationType}\" is not recognized"
