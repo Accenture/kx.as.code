@@ -6,6 +6,7 @@ functionStart
 # Ensure hostname is in hosts file to avoid warnings when using sudo
 if [[ -z $(cat /etc/hosts | grep $(hostname)) ]]; then
   sed -i '/127.0.1.1/ s/$/ '$(hostname)'/' /etc/hosts
+  sed -i '/127.0.1.1/ s/$/ '$(hostname)'/' /etc/cloud/templates/hosts.debian.tmpl
 fi
 
 if [[ "$(cat ${profileConfigJsonPath} | jq -r '.state.networking_configuration_status')" != "done" ]]; then
@@ -32,14 +33,22 @@ if [[ "$(cat ${profileConfigJsonPath} | jq -r '.state.networking_configuration_s
 
     # Call to function that configures Bind9 DNS server
     configureBindDns
-
+    local dnsServerList=""
     if  [[ "${baseIpType}" == "static" ]] || [[ "${dnsResolution}" == "hybrid" ]]; then
         # Prevent DHCLIENT updating static IP
-        if [[ ${dnsResolution} == "hybrid"   ]]; then
-            echo "supersede domain-name-servers ${mainIpAddress};" | /usr/bin/sudo tee -a /etc/dhcp/dhclient.conf
-        else
-            echo "supersede domain-name-servers ${fixedNicConfigDns1}, ${fixedNicConfigDns2};" | /usr/bin/sudo tee -a /etc/dhcp/dhclient.conf
+        if [[ -n ${fixedNicConfigDns1} ]]; then
+          local dnsServerList="${fixedNicConfigDns1}"
         fi
+        if [[ -n ${fixedNicConfigDns2} ]]; then
+          local dnsServerList="${dnsServerList}, ${fixedNicConfigDns2}"
+        fi
+        if [[ ${dnsResolution} == "hybrid"   ]] && [[ -n ${dnsServerList} ]]; then
+            local dnsServerList="${dnsServerList}, ${mainIpAddress}"
+        else
+            local dnsServerList="${mainIpAddress}"
+        fi
+        local dnsServerList=$(echo "${dnsServerList}" | sed 's/^,//')
+        echo "supersede domain-name-servers ${dnsServerList};" | /usr/bin/sudo tee -a /etc/dhcp/dhclient.conf
         echo '''
         #!/bin/sh
         make_resolv_conf(){
@@ -166,7 +175,7 @@ if [[ -n ${nicsToUpdate} ]]; then
   do
       log_info "Updating NIC \"${nicToUpdate}\" with \"ipv4.ignore-auto-dns yes\""
       /usr/bin/sudo nmcli con mod "${nicToUpdate}" ipv4.ignore-auto-dns yes
-      if [[ ${dnsResolution} == "hybrid"   ]]; then
+      if [[ ${dnsResolution} == "hybrid" ]]; then
         /usr/bin/sudo nmcli con mod "${nicToUpdate}" ipv4.dns "${mainIpAddress},8.8.8.8"
       else
         /usr/bin/sudo nmcli con mod "${nicToUpdate}" ipv4.dns "${fixedNicConfigDns1},${fixedNicConfigDns2}"
