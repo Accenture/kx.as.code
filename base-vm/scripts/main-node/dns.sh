@@ -30,7 +30,7 @@ echo '''options {
         allow-query { any; };
         version "not currently available";
         recursion yes;
-        querylog yes;
+        querylog no;
         allow-transfer { none; };
 
 };''' | sudo tee /etc/bind/named.conf.options
