@@ -8,6 +8,7 @@ local userPassword=${2}
 
 if [[ "${userToInitialize}" == "root" ]]; then
   local homeFolder="/root"
+  local userPassword=""
 else
   local homeFolder="/home/${userToInitialize}"
 fi
