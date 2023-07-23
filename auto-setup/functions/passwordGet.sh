@@ -6,11 +6,22 @@ getPassword() {
   passwordName=$(echo ${1} | sed 's/ /-/g')
   passwordGroup=${2-}
 
+  if [[ "${passwordGroup}" == "base-technical-credentials" ]]; then
+    # If technical admin password, push to root GoPass repository, instead of the base user's
+    local gopassUser="root"
+  elif [[ -n $(echo "${passwordName}" | grep -E "user-.*-password") ]] && [[ "${passwordGroup}" == "users" ]]; then
+    # if pushing user password, push directly to user's own GoPass repository
+    local gopassUser=$(echo "${passwordName}" | grep -E "user-.*-password" | awk -F- '{print $2}')
+  else
+    # Push to VM owner's GoPass Repository
+    local gopassUser="${baseUser}"
+  fi
+
   # Retrieve the password from GoPass
   if [[ -n "${passwordGroup}" ]]; then 
-    /usr/bin/sudo -H -i -u ${baseUser} bash -c "gopass show --yes --password \"${baseDomain}/${passwordGroup}/${passwordName}\"" || rc=$?
+    /usr/bin/sudo -H -i -u ${gopassUser} bash -c "gopass show --yes --password \"${baseDomain}/${passwordGroup}/${passwordName}\"" || rc=$?
   else
-    /usr/bin/sudo -H -i -u ${baseUser} bash -c "gopass show --yes --password \"${baseDomain}/${passwordName}\"" || rc=$?
+    /usr/bin/sudo -H -i -u ${gopassUser} bash -c "gopass show --yes --password \"${baseDomain}/${passwordName}\"" || rc=$?
   fi
   
   if [[ ${rc} -eq 11 ]]; then

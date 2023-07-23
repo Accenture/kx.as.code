@@ -3,18 +3,24 @@ gnupgInitializeUser() {
 # Call common function to execute common function start commands, such as setting verbose output etc
 functionStart
 
-userToInitialize=${1}
-userPassword=${2}
+local userToInitialize=${1}
+local userPassword=${2}
 
-if [[ ! -f /home/${userToInitialize}/.gnupg/pubring.kbx ]]; then
+if [[ "${userToInitialize}" == "root" ]]; then
+  local homeFolder="/root"
+else
+  local homeFolder="/home/${userToInitialize}"
+fi
+
+if [[ ! -f ${homeFolder}/.gnupg/pubring.kbx ]]; then
 
 /usr/bin/sudo -H -i -u ${userToInitialize} gpg2 --list-secret-keys
 
-rm -rf /home/${userToInitialize}/.local/share/gopass && rm -rf /home/${userToInitialize}/.config/gopass && rm -rf /home/${userToInitialize}/.gnupg
-mkdir -m 0700 /home/${userToInitialize}/.gnupg
-touch /home/${userToInitialize}/.gnupg/gpg.conf
-chmod 700 /home/${userToInitialize}/.gnupg/gpg.conf
-chown -R ${userToInitialize}:${userToInitialize} /home/${userToInitialize}/.gnupg
+rm -rf ${homeFolder}/.local/share/gopass && rm -rf ${homeFolder}/.config/gopass && rm -rf ${homeFolder}/.gnupg
+mkdir -m 0700 ${homeFolder}/.gnupg
+touch ${homeFolder}/.gnupg/gpg.conf
+chmod 700 ${homeFolder}/.gnupg/gpg.conf
+chown -R ${userToInitialize}:${userToInitialize} ${homeFolder}/.gnupg
 
 mkdir ${installationWorkspace}/gnupg-${userToInitialize}
 chown -R ${userToInitialize}:${userToInitialize} ${installationWorkspace}/gnupg-${userToInitialize}
@@ -24,7 +30,7 @@ chmod 700 ${installationWorkspace}/gnupg-${userToInitialize}
 echo """#!/bin/bash
 set -euo pipefail
 
-cd /home/${userToInitialize}/.gnupg
+cd ${homeFolder}/.gnupg
 gpg2 --list-keys
 
 cat >${installationWorkspace}/gnupg-${userToInitialize}/keydetails <<EOF
@@ -79,7 +85,7 @@ if [[ ${rc} -ne 0 ]]; then
         rc=0
         gpgKeyId=$(/usr/bin/sudo -H -i -u ${userToInitialize} bash -c "gpg --list-secret-keys --with-colons | head -1 |  cut -d':' -f5")
         log_debug "Initializing GoPass with key id ${gpgKeyId}"
-        /usr/bin/sudo -H -i -u ${userToInitialize} bash -c "gopass init --storage fs --path /home/${userToInitialize}/.local/share/gopass/stores/root ${gpgKeyId}"
+        /usr/bin/sudo -H -i -u ${userToInitialize} bash -c "gopass init --storage fs --path ${homeFolder}/.local/share/gopass/stores/root ${gpgKeyId}"
         /usr/bin/sudo -H -i -u ${userToInitialize} bash -c "gopass setup --storage fs --alias kxascode --create --name \"${userToInitialize}\" --email \"${userToInitialize}@${baseDomain}\"" || rc=$?
         if [[ ${rc} -ne 0 ]]; then
             log_warn "Attempt ${i} to initialize GoPass failed. Trying again for a maximum of 3 times, before pusing item to failure queue"
@@ -94,7 +100,7 @@ fi
 
 # Check if GoPass initialized correctly after the maximum 3 attempts above
 if [[ "${initializeStatus}" == "success" ]]; then
-    # Final test as now intialized
+    # Final test as now initialized
     log_debug "Executing final test of GoPass after initialization success, so it should work now"
     /usr/bin/sudo -H -i -u ${userToInitialize} bash -c 'echo "123" | gopass insert '${baseDomain}'/test'
     /usr/bin/sudo -H -i -u ${userToInitialize} bash -c 'gopass list'
@@ -105,9 +111,9 @@ else
     log_error "Even after 3 attempts it was not possible to successfully initialize GoPass. Exiting with RC=1"
     # Cleanup for next run
     log_error "Cleaning up GoPass directories before next attempt"
-    rm -rf /home/${userToInitialize}/.local/share/gopass
-    rm -rf /home/${userToInitialize}/.config/gopass
-    rm -rf /home/${userToInitialize}/.gnupg
+    rm -rf ${homeFolder}/.local/share/gopass
+    rm -rf ${homeFolder}/.config/gopass
+    rm -rf ${homeFolder}/.gnupg
     exit 1
 fi
 
