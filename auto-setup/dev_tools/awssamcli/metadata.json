@@ -1,0 +1,17 @@
+{
+    "name": "awssamcli",
+    "namespace": "",
+    "installation_type": "script",
+    "installation_group_folder": "dev_tools",
+    "environment_variables": {
+        "awssamcliChecksum": "0810f3290373e20df480b56faf5e9e77e25870825dbab521758258a24aa470d9"
+    },
+    "install_scripts": [
+        "installAwsSamCli.sh"
+    ],
+    "Description": "The AWS Serverless Application Model (SAM) is an open-source framework for building serverless applications.",
+    "shortcut_text": "AWS SAM",
+    "shortcut_icon": "awssamcli.png",
+    "pre_install_scripts": [],
+    "post_install_scripts": []
+}
