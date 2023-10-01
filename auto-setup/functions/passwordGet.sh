@@ -1,12 +1,10 @@
 getPassword() {
 
-  # Call common function to execute common function start commands, such as setting verbose output etc
-  functionStart
-
   passwordName=$(echo ${1} | sed 's/ /-/g')
-  passwordGroup=${2-}
+  passwordGroup=${2:-}
+  local rc=0
 
-  if [[ "${passwordGroup}" == "base-technical-credentials" ]]; then
+  if [[ "${passwordGroup}" == "base-technical-credentials" ]] || [[ -n "$(echo ${coreGopassGroups} | grep -Eo '(^|[[:space:]])'${passwordGroup}'([[:space:]]|$)')" ]]; then
     # If technical admin password, push to root GoPass repository, instead of the base user's
     local gopassUser="root"
   elif [[ -n $(echo "${passwordName}" | grep -E "user-.*-password") ]] && [[ "${passwordGroup}" == "users" ]]; then
@@ -19,9 +17,9 @@ getPassword() {
 
   # Retrieve the password from GoPass
   if [[ -n "${passwordGroup}" ]]; then 
-    /usr/bin/sudo -H -i -u ${gopassUser} bash -c "gopass show --yes --password \"${baseDomain}/${passwordGroup}/${passwordName}\"" || rc=$?
+    /usr/bin/sudo -H -i -u ${gopassUser} bash -c "gopass show --yes --password \"${baseDomain}/${passwordGroup}/${passwordName}\"" || local rc=$?
   else
-    /usr/bin/sudo -H -i -u ${gopassUser} bash -c "gopass show --yes --password \"${baseDomain}/${passwordName}\"" || rc=$?
+    /usr/bin/sudo -H -i -u ${gopassUser} bash -c "gopass show --yes --password \"${baseDomain}/${passwordName}\"" || local rc=$?
   fi
   
   if [[ ${rc} -eq 11 ]]; then
@@ -32,7 +30,4 @@ getPassword() {
     fi
   fi
 
-  # Call common function to execute common function start commands, such as unsetting verbose output etc
-  functionEnd
-  
 }
