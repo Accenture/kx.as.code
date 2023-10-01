@@ -1,0 +1,15 @@
+{
+    "name": "openvpn-client",
+    "namespace": "",
+    "installation_type": "script",
+    "installation_group_folder": "security",
+    "environment_variables": {},
+    "Description": "openvpn-client",
+    "shortcut_text": "OpenVPN Client",
+    "shortcut_icon": "openvpn-client.png",
+    "pre_install_scripts": [],
+    "install_scripts": [
+        "installOpenVpnClient.sh"
+    ],
+    "post_install_scripts": []
+}
