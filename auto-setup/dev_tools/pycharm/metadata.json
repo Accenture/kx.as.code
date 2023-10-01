@@ -1,0 +1,21 @@
+{
+    "name": "pycharm",
+    "namespace": "",
+    "installation_type": "script",
+    "installation_group_folder": "dev_tools",
+    "environment_variables": {
+        "pycharmVersion": "2023.2.1",
+        "pycharmChecksum": "5956c6cb5a5bad1d9749e487b3bb69fcbf0170f52324e4ff009283b723838778"
+    },
+    "plugins_to_install": [],
+    "install_scripts": [
+        "installPyCharm.sh"
+    ],
+    "Description": "PyCharm is an integrated development environment (IDE) used for programming in Python.",
+    "shortcut_text": "PyCharm",
+    "shortcut_icon": "pycharm.png",
+    "pre_install_scripts": [],
+    "post_install_scripts": [
+        "installPlugins.sh"
+    ]
+}

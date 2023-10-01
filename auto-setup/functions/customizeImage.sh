@@ -1,8 +1,5 @@
 customizeImage() {
 
-    # Call common function to execute common function start commands, such as setting verbose output etc
-    functionStart
-
     sourceImageFile=$1
     targetImageFile=$2
 
@@ -35,8 +32,5 @@ customizeImage() {
     else
         log_debug "No custom  \"${sourceImageFileName}\" image to apply. Skipping."
     fi
-
-    # Call common function to execute common function start commands, such as unsetting verbose output etc
-    functionEnd
 
 }

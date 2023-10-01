@@ -1,5 +1,4 @@
 #!/bin/bash
-set -euo pipefail
 
 export bitwardenHomeDir=/opt/bitwarden
 export bitwardenDataDir=${bitwardenHomeDir}/bwdata

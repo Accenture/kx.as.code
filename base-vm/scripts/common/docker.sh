@@ -56,12 +56,12 @@ mkdir ${INSTALLATION_WORKSPACE}/docker
 cd ${INSTALLATION_WORKSPACE}/docker
 if [[ -n $( uname -a | grep "aarch64") ]]; then
   # Download URL for ARM64 CPU architecture
-  DOCKER_COMPOSE_URL="https://github.com/docker/compose/releases/download/v2.7.0/docker-compose-linux-aarch64"
-  DOCKER_COMPOSE_CHECKSUM="bcc79aff65b35581246feca30d53261eddcfc79285868061b31f3ff86d102563"
+  DOCKER_COMPOSE_URL="https://github.com/docker/compose/releases/download/v2.20.3/docker-compose-linux-aarch64"
+  DOCKER_COMPOSE_CHECKSUM="9d6a6396b7604a390977ffff78379090f7c6910160bbd3b9669e2fcc635633c5"
 else
   # Download URL for X86_64 CPU architecture
-  DOCKER_COMPOSE_URL="https://github.com/docker/compose/releases/download/v2.7.0/docker-compose-linux-x86_64"
-  DOCKER_COMPOSE_CHECKSUM="184df811a70366fa339e99df38fc6ff24fc9e51b3388335efe51c1941377d4ce"
+  DOCKER_COMPOSE_URL="https://github.com/docker/compose/releases/download/v2.20.3/docker-compose-linux-x86_64"
+  DOCKER_COMPOSE_CHECKSUM="f45e4cb687df8b48a57f656097ce7175fa8e8bef70be407b011e29ff663f475f"
 fi
 wget  ${DOCKER_COMPOSE_URL}
 DOCKER_COMPOSE_FILE=$(basename ${DOCKER_COMPOSE_URL})

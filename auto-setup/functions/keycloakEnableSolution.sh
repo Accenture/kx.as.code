@@ -1,10 +1,5 @@
 enableKeycloakSSOForSolution() {
 
-    # Call common function to execute common function start commands, such as setting verbose output etc
-    functionStart
-
-    # Function to take care of all the steps needed to create a Keycloak client for the solution
-
     if checkApplicationInstalled "keycloak" "core"; then
 
         # Assign incoming parameters to variables
@@ -14,9 +9,15 @@ enableKeycloakSSOForSolution() {
         protocol=${4}
         fullPath=${5}
         scopes=${6:-ignore} # optional
+        clientName=${7:-"${namespace}"}
 
         # Create Keycloak Client - $1 = redirectUris, $2 = rootUrl
-        export clientId=$(createKeycloakClient "${redirectUris}" "${rootUrl}" "${baseUrl}")
+        log_debug "FUNCTION_CALL: createKeycloakClient \"${redirectUris}\" \"${rootUrl}\" \"${baseUrl}\" \"${clientName}\""
+        export clientId=$(createKeycloakClient "${redirectUris}" "${rootUrl}" "${baseUrl}" "${clientName}")
+
+        # If Keycloak client already existed, chek if new  redirectUri needs to be added
+        log_debug "FUNCTION_CALL: keycloakUpdateRedirectUris \"${clientId}\" \"${redirectUris}\""
+        keycloakUpdateRedirectUris "${clientName}" "${redirectUris}"
 
         # Get Keycloak Client Secret
         export clientSecret=$(getKeycloakClientSecret "${clientId}")
@@ -34,6 +35,9 @@ enableKeycloakSSOForSolution() {
         # Create Keycloak Protocol Mapper
         createKeycloakProtocolMapper "${clientId}" "${fullPath}"
 
+        # Enforce MFA in Realm's authentication flow
+        keycloakUpdateRequiredActionsAuthFlow
+
     else
 
         # Set blank variables do avoid unbound errors further down the line
@@ -41,8 +45,5 @@ enableKeycloakSSOForSolution() {
         export clientSecret=""
 
     fi
-
-    # Call common function to execute common function start commands, such as unsetting verbose output etc
-    functionEnd
 
 }

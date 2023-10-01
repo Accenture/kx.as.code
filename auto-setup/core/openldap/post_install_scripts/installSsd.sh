@@ -1,5 +1,4 @@
 #!/bin/bash
-set -euox pipefail
 
 # Install System Security Services Daemon (SSSD)
 
@@ -25,7 +24,7 @@ if [[ "${exists}" == "false" ]]; then
   objectClass: simpleSecurityObject
   objectClass: organizationalRole
   userPassword: ${ldapAdminPassword}
-  """ | /usr/bin/sudo tee /etc/ldap/ldap-readonly-user.ldif
+  """ | sed -e 's/^[ \t]*//' | /usr/bin/sudo tee /etc/ldap/ldap-readonly-user.ldif
   # Apply readonly user LDIF file
   /usr/bin/sudo ldapadd -D "cn=admin,${ldapDn}" -w "${ldapAdminPassword}" -H ldapi:/// -f /etc/ldap/ldap-readonly-user.ldif
   exists=""
@@ -51,7 +50,7 @@ if [[ "${exists}" == "false" ]]; then
     by self write
     by anonymous auth
     by * none
-  """ | /usr/bin/sudo tee /etc/ldap/readonly-user_access.ldif
+  """ | sed -e 's/^[ \t]*//' | /usr/bin/sudo tee /etc/ldap/readonly-user_access.ldif
   # TODO: Commented out as currently not working
   #sudo ldapadd -D "cn=admin,${ldapDn}" -w "${ldapAdminPassword}" -H ldapi:/// -f /etc/ldap/readonly-user_access.ldif
   exists=""
@@ -81,7 +80,7 @@ auth_provider = ldap
 chpass_provider = ldap
 access_provider = ldap
 ldap_uri = ldap://ldap.${baseDomain}
-ldap_default_bind_dn = admin,${ldapDn}
+ldap_default_bind_dn = cn=admin,${ldapDn}
 ldap_default_authtok = ${ldapAdminPassword}
 ldap_tls_reqcert = demand
 ldap_tls_cacert = /etc/ldap/sasl2/ca.crt

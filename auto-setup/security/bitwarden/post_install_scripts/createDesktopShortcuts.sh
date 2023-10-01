@@ -1,5 +1,4 @@
 #!/bin/bash
-set -euo pipefail
 
 shortcutIcon=$(cat ${componentMetadataJson} | jq -r '.shortcut_icon')
 shortcutText=$(cat ${componentMetadataJson} | jq -r '.shortcut_text')

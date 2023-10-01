@@ -1,8 +1,5 @@
 checkRunningKubernetesPods() {
 
-  # Call common function to execute common function start commands, such as setting verbose output etc
-  functionStart
-
   local i
   for i in {1..100}; do
     # Excluded evicted pods from the total, assuming that the admin has fixed any resource constraints, since evictions are usually not an issue with the solution itself
@@ -20,8 +17,5 @@ checkRunningKubernetesPods() {
     log_warn "After 60 checks, the number of total pods (${totalPods}) in the ${namespace} namespace still does not equal the number of running pods (${runningPods})"
     exit 1
   fi
-
-  # Call common function to execute common function start commands, such as unsetting verbose output etc
-  functionEnd
   
 }

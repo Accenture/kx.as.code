@@ -1,0 +1,33 @@
+{
+    "name": "oauth2-proxy",
+    "namespace": "oauth2-proxy",
+    "installation_type": "helm",
+    "installation_group_folder": "security",
+    "environment_variables": {
+        "oauth2Version": "7.4.0"
+    },
+    "retry": "false",
+    "helm_params": {
+        "repository_url": "https://oauth2-proxy.github.io/manifests",
+        "repository_name": "oauth2-proxy/oauth2-proxy",
+        "helm_version": "6.16.1",
+        "set_key_values": [],
+        "set_string_key_values": []
+    },
+    "categories": [
+        "oauth2",
+        "mfa",
+        "security"
+    ],
+    "letsencrypt": {
+        "enabled": true
+    },
+    "Description": "OAuth2 Proxy",
+    "shortcut_text": "OAuth2 Proxy",
+    "shortcut_icon": "",
+    "pre_install_scripts": [
+        "createOauth2ProxyDependencies.sh"
+    ],
+    "install_scripts": [],
+    "post_install_scripts": []
+}

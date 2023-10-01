@@ -1,35 +1,64 @@
 kubernetesApplyYamlFile() {
 
-    # Call common function to execute common function start commands, such as setting verbose output etc
-    functionStart
+  kubeYamlSourceFileLocation=${1}
+  kubeYamlTargetFileLocation="${installationWorkspace}/${componentName}_$(basename "${kubeYamlSourceFileLocation}")"
+  kubeNamespace=${2:-default}
 
-    kubeYamlFileLocation=${1}
-    kubeNamespace=${2-default}
+  if [[ -f ${kubeYamlSourceFileLocation} ]]; then
 
-    if [[ -f ${kubeYamlFileLocation} ]]; then
+    # Do moustache variable replacements
+    envhandlebars <${kubeYamlSourceFileLocation} >${kubeYamlTargetFileLocation}
 
-        # Do moustache variable replacements
-        envhandlebars <${kubeYamlFileLocation} >${kubeYamlFileLocation}_processed
+    # Check if storage-class needs updating
+    updateStorageClassIfNeeded "${kubeYamlTargetFileLocation}"
 
-        # Check if storage-class needs updating
-        updateStorageClassIfNeeded "${kubeYamlFileLocation}"
+    # Validate YAML file
+    kubeval ${kubeYamlTargetFileLocation} --schema-location https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master --strict || local rc=$? && log_info "kubeval returned with rc=$rc"
 
-        # Validate YAML file
-        kubeval ${kubeYamlFileLocation} --schema-location https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master --strict || rc=$? && log_info "kubeval returned with rc=$rc"
-        if [[ ${rc} -eq 0 ]]; then
-            log_info "YAML validation ok for ${kubeYamlFileLocation}. Continuing to apply."
-            log_debug "$(kubectl apply -f ${kubeYamlFileLocation} -n ${kubeNamespace})"
-        else
-            log_error "YAML validation failed for ${kubeYamlFileLocation}. Exiting"
-            return ${rc}
-        fi
-
+    # Check if Kubernetes K8s API definition/resource exists, before applying the YAML file
+    yamlK8sApi=$(cat ${kubeYamlTargetFileLocation} | yq -r '.apiVersion' | cut -d'/' -f1)
+    yamlK8sKind=$(cat ${kubeYamlTargetFileLocation} | yq -r '.kind')
+    yamlShortVersionCheck=$(echo $yamlK8sApi | grep -E "^v[0-9]$" || true)
+    yamlResourceName=$(cat ${kubeYamlTargetFileLocation} | yq -r '.metadata.name')
+    if [[ -n ${yamlShortVersionCheck} ]]; then
+      customResourceCheck=$(kubectl api-resources --api-group= --sort-by=kind --no-headers=true | awk {'print $5'} | grep "${yamlK8sKind}" || true)
+      if [[ -z ${customResourceCheck} ]]; then
+        customResourceCheck=$(kubectl api-resources --api-group= --sort-by=kind --no-headers=true | awk {'print $4'} | grep "${yamlK8sKind}" || true)
+      fi
     else
-        log_warn "${kubeYamlFileLocation} not found. Exiting with RC=1"
-        exit 1
+      customResourceCheck=$(kubectl api-resources --api-group=${yamlK8sApi} --sort-by=kind --no-headers=true | awk {'print $5'} | grep "${yamlK8sKind}" || true)
     fi
+    if [[ -n ${customResourceCheck} ]]; then
+      if [[ ${rc} -eq 0 ]]; then
+        log_info "YAML validation ok for ${kubeYamlTargetFileLocation}. Continuing to apply."
+        local yamlNamespace=$(cat ${kubeYamlTargetFileLocation} | yq -r '.metadata.namespace')
+        if [[ -z ${yamlNamespace} ]]; then
+          local yamlNamespace="${namespace}"
+        fi
+        if [[ -n ${yamlNamespace} ]] && [[ "${yamlNamespace}" != "null" ]] && [[ "${kubeNamespace}" != "${yamlNamespace}" ]]; then
+          log_debug "Detected alternate namespace in resource YAML. Will deploy to \"${yamlNamespace}\" namespace, instead of \"${kubeNamespace}\""
+        fi
+        log_debug "$(kubectl apply -f ${kubeYamlTargetFileLocation} -n ${yamlNamespace})"
+        if [[ "${yamlK8sKind,,}" == "ingress" ]] && [[ ${restrictIngressAccess,,} == "true" ]]; then
+          # Get local subnet for whitelisting
+          allowIpRangeForOauthLessAccess="$(echo ${mainIpAddress} | cut -d"." -f1-3).0/24"
+          # Add IP CIDR to NGINX allowlist to original ingress resource
+          kubectl annotate --overwrite ingress ${yamlResourceName} -n ${yamlNamespace} "nginx.ingress.kubernetes.io/whitelist-source-range=${allowIpRangeForOauthLessAccess}"
+        fi
+        if [[ "${yamlK8sKind,,}" == "deployment" ]]; then
+          # Wait for deployment rollout to complete
+          kubectl rollout status -n ${yamlNamespace} deployment/${yamlResourceName}
+        fi
+      else
+        log_error "YAML validation failed for ${kubeYamlTargetFileLocation}. Exiting"
+        return ${rc}
+      fi
+    else
+      log_error "It seems the API \"${yamlK8sApi}\" needed to successfully apply the resource Type \"${yamlK8sKind}\" defined in ${kubeYamlTargetFileLocation} is not installed. Continuing, as it is likely intentional that the dependency is not installed"
+    fi
+  else
+    log_error "${kubeYamlTargetFileLocation} not found. Exiting with RC=1"
+    exit 1
+  fi
 
-    # Call common function to execute common function start commands, such as unsetting verbose output etc
-    functionEnd
-    
 }

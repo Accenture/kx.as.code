@@ -3,9 +3,8 @@ kind: Ingress
 metadata:
   name: {{namespace}}-{{componentName}}
   namespace: {{namespace}}
-  annotations:
-    kubernetes.io/ingress.class: nginx
 spec:
+  ingressClassName: nginx
   tls:
     - hosts:
         - {{componentName}}.{{baseDomain}}

@@ -1,5 +1,4 @@
 #!/bin/bash
-set -euox pipefail
 
 # Create Jenkins Admin Password
 export generatedAdminPassword=$(managedPassword "argocd-admin-password" "${componentName}")

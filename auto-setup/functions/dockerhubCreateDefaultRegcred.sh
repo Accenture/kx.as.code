@@ -1,8 +1,5 @@
 dockerhubCreateDefaultRegcred() {
 
-# Call common function to execute common function start commands, such as setting verbose output etc
-  functionStart
-
   namespace=${1:-default}
 
   # Login to Dockerhub
@@ -11,7 +8,7 @@ dockerhubCreateDefaultRegcred() {
   if [[ $(cat /root/.docker/config.json | jq '.auths | has("https://index.docker.io/v1/") ') == "true" ]]; then
    
     # Create secret
-    kubectl get secret regcred -n ${namespace} | \
+    kubectl get secret regcred -n ${namespace} || \
       kubectl create secret generic regcred \
           --from-file=.dockerconfigjson=/root/.docker/config.json \
           --type=kubernetes.io/dockerconfigjson \
@@ -24,7 +21,4 @@ dockerhubCreateDefaultRegcred() {
 
   fi
 
-  # Call common function to execute common function start commands, such as unsetting verbose output etc
-  functionEnd
-  
 }

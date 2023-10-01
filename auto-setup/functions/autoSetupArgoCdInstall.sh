@@ -1,8 +1,5 @@
 autoSetupArgoCdInstall() {
 
-  # Call common function to execute common function start commands, such as setting verbose output etc
-  functionStart
-  
   # No upgrade for ArgoCD based applications, as these should be updated via GitOps
 
   log_info "Established installation type is \"${installationType}\". Proceeding in that way"
@@ -65,7 +62,7 @@ autoSetupArgoCdInstall() {
   # Add App to ArgoCD
   argoCdAppAddCommand="argocd app create $(echo ${componentName} | sed 's/_/-/g') --repo  ${argoCdRepositoryUrl} --path ${argoCdRepositoryPath}  --dest-server ${argoCdDestinationServer} --dest-namespace ${argoCdDestinationNameSpace} --sync-policy ${argoCdSyncPolicy} ${argoCdAutoPruneOption} ${argoCdSelfHealOption}"
   log_debug "ArgoCD command: ${argoCdAppAddCommand}"
-  ${argoCdAppAddCommand} || rc=$? && log_info "ArgoCD command: ${argoCdAppAddCommand} returned with rc=$rc"
+  ${argoCdAppAddCommand} || local rc=$? && log_info "ArgoCD command: ${argoCdAppAddCommand} returned with rc=$rc"
   if [[ ${rc} -ne 0 ]]; then
     log_error "Execution of ArgoCD command ended in a non zero return code ($rc)"
     exit 1
@@ -78,8 +75,5 @@ autoSetupArgoCdInstall() {
       sleep 5
     fi
   done
-
-  # Call common function to execute common function start commands, such as unsetting verbose output etc
-  functionEnd
 
 }

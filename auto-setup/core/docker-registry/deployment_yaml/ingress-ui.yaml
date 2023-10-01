@@ -7,7 +7,6 @@ metadata:
     app: docker-registry-ui
     release: docker-registry-ui
   annotations:
-    kubernetes.io/ingress.class: "nginx"
     nginx.ingress.kubernetes.io/configuration-snippet: |
         more_set_headers "Access-Control-Allow-Origin: $http_origin";
     nginx.ingress.kubernetes.io/cors-allow-credentials: "true"
@@ -15,6 +14,7 @@ metadata:
         OPTIONS, DELETE, PATCH
     nginx.ingress.kubernetes.io/enable-cors: "true"
 spec:
+  ingressClassName: nginx
   tls:
     - hosts:
         - {{componentName}}-ui.{{baseDomain}}

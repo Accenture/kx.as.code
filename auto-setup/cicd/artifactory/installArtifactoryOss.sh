@@ -1,5 +1,4 @@
 #!/bin/bash
-set -euox pipefail
 
 #### Using script approach rather than direct Helm install,
 #### as standard Helm install was not working. Persistence

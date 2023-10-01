@@ -1,4 +1,5 @@
-#!/bin/bash -x
+#!/bin/bash
+set -o pipefail
 
 payload=${1}
 export retries=$(echo "${payload}" | jq -c -r '.retries')
@@ -32,32 +33,25 @@ else
   retryMode="notapplicable"
 fi
 
+# Load Minmal Functions
+coreInitialFunctionsToLoad="getGlobalVariables getCustomVariables sourceFunctionScripts setLogFilename logDebug logInfo logError logWarn functionFailure functionStart functionEnd injectWrapperIntoFunctionScripts"
+for coreInitialFunctionToLoad in ${coreInitialFunctionsToLoad}; do
+  source "/usr/share/kx.as.code/git/kx.as.code/auto-setup/functions/${coreInitialFunctionToLoad}.sh"
+done
+
 # Get global base variables from globalVariables.json
-source /usr/share/kx.as.code/git/kx.as.code/auto-setup/functions/getGlobalVariables.sh # source function
 getGlobalVariables
 
 # Load Central Functions
-functionsLocation="${autoSetupHome}/functions"
-for function in $(find ${functionsLocation} -name "*.sh")
-do
-  functionName="$(cat ${function} | grep -E '^[[:alnum:]].*().*{' | sed 's/()*.{//g')"
-  source ${function}
-  echo "Loaded function ${functionName}()"
-done
+functionsLocation="${installationWorkspace}/functions"
+sourceFunctionScripts "${functionsLocation}"
 
 # Load CUSTOM Central Functions - these can either be new ones, or copied and edited functions from the main functions directory above, which will override the ones loaded in the previous step
-customFunctionsLocation="${autoSetupHome}/functions-custom"
-loadedFunctions="$(compgen -A function)"
-for function in $(find ${customFunctionsLocation} -name "*.sh")
-do
-  source ${function}
-  customFunctionName="$(cat ${function} | grep -E '^[[:alnum:]].*().*{' | sed 's/()*.{//g')"
-  if [[ -z $(echo "${loadedFunctions}" | grep ${customFunctionName}) ]]; then
-    log_debug "Loaded new custom function ${customFunctionName}()"
-  else
-    log_debug "Overriding central function ${customFunctionName}() with custom one!"
-  fi
-done
+getCustomVariables # load global custom variables
+
+# Load Custom Central Functions
+customFunctionsLocation="${installationWorkspace}/functions-custom"
+sourceFunctionScripts "${customFunctionsLocation}"
 
 # Get K8s and K3s versions to install
 getVersions
@@ -104,194 +98,194 @@ fi
 # Start the installation process for the pending or retry queues
 if [[ ${action} == "install" ]]; then
 
-    # Create namespace if it does not exist
+  # Create namespace if it does not exist
+  rc=0
+  createKubernetesNamespace || rc=$? && log_info "Execution of createKubernetesNamespace() returned with rc=$rc"
+  if [[ ${rc} -ne 0 ]]; then
+    log_warn "Execution of createKubernetesNamespace() returned with a non zero return code ($rc)"
+    exit $rc
+  fi
+
+  log_info "installationType: ${installationType}"
+
+  # Check if GlusterFS is installed for upcoming action
+  checkGlusterFsServiceInstalled
+
+  if ([[ "${retryMode}" == "true" ]] || [[ "${retryMode}" == "notapplicable" ]]) && [[ ${retryPhaseId} -le 1 ]]; then
+    ####################################################################################################################################################################
+    ##      P R E    I N S T A L L    S T E P S
+    ####################################################################################################################################################################
     rc=0
-    createKubernetesNamespace || rc=$? && log_info "Execution of createKubernetesNamespace() returned with rc=$rc"
+    autoSetupExecuteScripts "1" || rc=$? && log_info "Execution of autoSetupExecuteScripts for pre-install-scripts returned with rc=$rc"
     if [[ ${rc} -ne 0 ]]; then
-      log_error "Execution of createKubernetesNamespace() returned with a non zero return code ($rc)"
+      log_warn "Execution of autoSetupPreInstallSteps() returned with a non zero return code ($rc)"
+      setRetryDataFailureState
       exit $rc
     fi
+  else
+    log_info "Skipping pre-install steps, as in retry-mode for ${componentName}, and this stage was already completed successfully before"
+  fi
 
-    log_info "installationType: ${installationType}"
-
-    # Check if GlusterFS is installed for upcoming action
-    checkGlusterFsServiceInstalled
-
-    if ( [[ "${retryMode}" == "true" ]] || [[ "${retryMode}" == "notapplicable" ]] ) && [[ ${retryPhaseId} -le 1 ]]; then
-      ####################################################################################################################################################################
-      ##      P R E    I N S T A L L    S T E P S
-      ####################################################################################################################################################################
+  if ([[ "${retryMode}" == "true" ]] || [[ "${retryMode}" == "notapplicable" ]]) && [[ ${retryPhaseId} -le 2 ]]; then
+    ####################################################################################################################################################################
+    ##      S C R I P T    I N S T A L L
+    ####################################################################################################################################################################
+    if [[ ${installationType} == "script" ]]; then
       rc=0
-      autoSetupExecuteScripts "1" || rc=$? && log_info "Execution of autoSetupExecuteScripts for pre-install-scripts returned with rc=$rc"
+      autoSetupExecuteScripts "2" || rc=$? && log_info "Execution of autoSetupExecuteScripts for main install scripts returned with rc=$rc"
       if [[ ${rc} -ne 0 ]]; then
-        log_error "Execution of autoSetupPreInstallSteps() returned with a non zero return code ($rc)"
+        log_warn "Execution of autoSetupScriptInstall() returned with a non zero return code ($rc)"
         setRetryDataFailureState
         exit $rc
       fi
-    else
-      log_info "Skipping pre-install steps, as in retry-mode for ${componentName}, and this stage was already completed successfully before"
     fi
+  else
+    log_info "Skipping main script installation step, as in retry-mode for ${componentName}, and this stage was already completed successfully before"
+  fi
 
-    if ( [[ "${retryMode}" == "true" ]] || [[ "${retryMode}" == "notapplicable" ]] ) && [[ ${retryPhaseId} -le 2 ]]; then
-      ####################################################################################################################################################################
-      ##      S C R I P T    I N S T A L L
-      ####################################################################################################################################################################
-      if [[ ${installationType} == "script" ]]; then
-        rc=0
-        autoSetupExecuteScripts "2" || rc=$? && log_info "Execution of autoSetupExecuteScripts for main install scripts returned with rc=$rc"
-        if [[ ${rc} -ne 0 ]]; then
-          log_error "Execution of autoSetupScriptInstall() returned with a non zero return code ($rc)"
-          setRetryDataFailureState
-          exit $rc
-        fi
-      fi
-    else
-      log_info "Skipping main script installation step, as in retry-mode for ${componentName}, and this stage was already completed successfully before"
-    fi
-
-    if ( [[ "${retryMode}" == "true" ]] || [[ "${retryMode}" == "notapplicable" ]] ) && [[ ${retryPhaseId} -le 3 ]]; then
-      ####################################################################################################################################################################
-      ##      H E L M    I N S T A L L   /   U P G R A D E
-      ####################################################################################################################################################################
-      if [[ ${installationType} == "helm" ]]; then
-        rc=0
-        autoSetupHelmInstall || rc=$? && log_info "Execution of autoSetupHelmInstall() returned with rc=$rc"
-        if [[ ${rc} -ne 0 ]]; then
-          log_error "Execution of autoSetupHelmInstall() returned with a non zero return code ($rc)"
-          setRetryDataFailureState
-          exit $rc
-        fi
-      fi
-    else
-      log_info "Skipping helm-chart installation step, as in retry-mode for ${componentName}, and this stage was already completed successfully before"
-    fi
-
-    if ( [[ "${retryMode}" == "true" ]] || [[ "${retryMode}" == "notapplicable" ]] ) && [[ ${retryPhaseId} -le 4 ]]; then
-      ####################################################################################################################################################################
-      ##      A R G O    C D    I N S T A L L
-      ####################################################################################################################################################################
-      if [[ "${installationType}" == "argocd" ]] && [[ "${action}" == "install" ]]; then
-        rc=0
-        autoSetupArgoCdInstall || rc=$? && log_info "Execution of autoSetupArgoCdInstall() returned with rc=$rc"
-        if [[ ${rc} -ne 0 ]]; then
-          log_error "Execution of autoSetupArgoCdInstall() returned with a non zero return code ($rc)"
-          exit $rc
-        fi
-      fi
-    else
-      log_info "Skipping argocd installation step, as in retry-mode for ${componentName}, and this stage was already completed successfully before"
-    fi
-
-    #else
-    #    log_error "Did not recognize installation type of \"${installationType}\". Valid values are \"helm\", \"argocd\" or \"script\""
-    #fi
-
+  if ([[ "${retryMode}" == "true" ]] || [[ "${retryMode}" == "notapplicable" ]]) && [[ ${retryPhaseId} -le 3 ]]; then
     ####################################################################################################################################################################
-    ##      H E A L T H    C H E C K S
+    ##      H E L M    I N S T A L L   /   U P G R A D E
     ####################################################################################################################################################################
-
-    if [[ ${componentInstallationFolder} != "core" ]]; then
-
-      # PODS RUNNING CHECKS
-
-      # Excluding core_groups to avoid missing cross dependency issues between core services, for example,
-      # coredns waiting for calico network to be installed, preventing other service from being provisioned
+    if [[ ${installationType} == "helm" ]]; then
       rc=0
-      checkRunningKubernetesPods || rc=$? && log_info "Execution of checkRunningKubernetesPods() returned with rc=$rc"
+      autoSetupHelmInstall || rc=$? && log_info "Execution of autoSetupHelmInstall() returned with rc=$rc"
       if [[ ${rc} -ne 0 ]]; then
-        log_error "Execution of checkRunningKubernetesPods() returned with a non zero return code ($rc)"
-        exit $rc
-      fi
-
-      # Check if URL health checks defined in metadata.json return result as expected/described in metadata.json file
-      rc=0
-      applicationDeploymentHealthCheck || rc=$? && log_info "Execution of applicationDeploymentHealthCheck() returned with rc=$rc"
-      if [[ ${rc} -ne 0 ]]; then
-        log_error "Execution of applicationDeploymentHealthCheck() returned with a non zero return code ($rc)"
-        exit $rc
-      fi
-
-    fi
-
-    # SCRIPTED HEALTH CHECK
-    #TODO for the future - so far, the URL and POD checks have been sufficient
-
-    ####################################################################################################################################################################
-    ##      P O S T    I N S T A L L    S T E P S
-    ####################################################################################################################################################################
-
-    # If LetsEncrypt is not disabled in metadata.json for application in question and sslType set to letsencrypt,
-    # then inject LetsEncrypt annotations into the applications ingress resources
-    rc=0
-    postInstallStepLetsEncrypt || rc=$? && log_info "Execution of postInstallStepLetsEncrypt() returned with rc=$rc"
-    if [[ ${rc} -ne 0 ]]; then
-      log_error "Execution of postInstallStepLetsEncrypt() returned with a non zero return code ($rc)" "0"
-      exit $rc
-    fi
-
-    log_debug "( [[ \"${retryMode}\" == \"true\" ]] || [[ \"${retryMode}\" == \"notapplicable\" ]] ) && [[ ${retryPhaseId} -le 5 ]]"
-    if ( [[ "${retryMode}" == "true" ]] || [[ "${retryMode}" == "notapplicable" ]] ) && [[ ${retryPhaseId} -le 5 ]]; then
-      # Execute scripts defined in metadata.json, listed post_install_scripts section
-      rc=0
-      autoSetupExecuteScripts "5" || rc=$? && log_info "Execution of autoSetupExecuteScripts for post-install-scripts returned with rc=$rc"
-      if [[ ${rc} -ne 0 ]]; then
-        log_error "Execution of executePostInstallScripts() returned with a non zero return code ($rc)"
+        log_warn "Execution of autoSetupHelmInstall() returned with a non zero return code ($rc)"
         setRetryDataFailureState
         exit $rc
       fi
-    else
-      log_info "Skipping post installation step, as in retry-mode for ${componentName}, and this stage was already completed successfully before"
     fi
-     
+  else
+    log_info "Skipping helm-chart installation step, as in retry-mode for ${componentName}, and this stage was already completed successfully before"
+  fi
+
+  if ([[ "${retryMode}" == "true" ]] || [[ "${retryMode}" == "notapplicable" ]]) && [[ ${retryPhaseId} -le 4 ]]; then
     ####################################################################################################################################################################
-    ##      I N S T A L L    D E S K T O P    S H O R T C U T S
+    ##      A R G O    C D    I N S T A L L
     ####################################################################################################################################################################
+    if [[ "${installationType}" == "argocd" ]] && [[ "${action}" == "install" ]]; then
+      rc=0
+      autoSetupArgoCdInstall || rc=$? && log_info "Execution of autoSetupArgoCdInstall() returned with rc=$rc"
+      if [[ ${rc} -ne 0 ]]; then
+        log_warn "Execution of autoSetupArgoCdInstall() returned with a non zero return code ($rc)"
+        exit $rc
+      fi
+    fi
+  else
+    log_info "Skipping argocd installation step, as in retry-mode for ${componentName}, and this stage was already completed successfully before"
+  fi
 
-    # if Primary URL[0] in URLs Array exists and Icon is defined, create Desktop Shortcut
-    applicationUrls=$(cat ${componentMetadataJson} | jq -r '.urls[]?.url?' | mo)
-    primaryUrl=$(echo ${applicationUrls} | cut -f1 -d' ')
-    browserOptions=""
-    shortcutText=$(cat ${componentMetadataJson} | jq -r '.shortcut_text')
-    if [[ -z ${shortcutText} ]] || [[ ${shortcutText} == "null" ]]; then
-        shortcutText="$(tr '[:lower:]' '[:upper:]' <<< ${componentName:0:1})${componentName:1}"
+  #else
+  #    log_error "Did not recognize installation type of \"${installationType}\". Valid values are \"helm\", \"argocd\" or \"script\""
+  #fi
+
+  ####################################################################################################################################################################
+  ##      H E A L T H    C H E C K S
+  ####################################################################################################################################################################
+
+  if [[ ${componentInstallationFolder} != "core" ]]; then
+
+    # PODS RUNNING CHECKS
+
+    # Excluding core_groups to avoid missing cross dependency issues between core services, for example,
+    # coredns waiting for calico network to be installed, preventing other service from being provisioned
+    rc=0
+    checkRunningKubernetesPods || rc=$? && log_info "Execution of checkRunningKubernetesPods() returned with rc=$rc"
+    if [[ ${rc} -ne 0 ]]; then
+      log_warn "Execution of checkRunningKubernetesPods() returned with a non zero return code ($rc)"
+      exit $rc
     fi
 
-    # Create primary desktop icon to launch tool's site with Chrome
-    if [[ -n ${primaryUrl} ]]; then
-        shortcutIcon=$(cat ${componentMetadataJson} | jq -r '.shortcut_icon')
-        iconPath=${installComponentDirectory}/${shortcutIcon}
-        if [[ -n ${primaryUrl} ]] && [[ ${primaryUrl} != "null" ]] && [[ -f ${iconPath} ]] && [[ -n ${shortcutText} ]]; then
-          createDesktopIcon "${devopsShortcutsDirectory}" "${primaryUrl}" "${shortcutText}" "${iconPath}" "${browserOptions}"
-        fi
+    # Check if URL health checks defined in metadata.json return result as expected/described in metadata.json file
+    rc=0
+    applicationDeploymentHealthCheck || rc=$? && log_info "Execution of applicationDeploymentHealthCheck() returned with rc=$rc"
+    if [[ ${rc} -ne 0 ]]; then
+      log_warn "Execution of applicationDeploymentHealthCheck() returned with a non zero return code ($rc)"
+      exit $rc
     fi
 
-    vendorDocsUrl=$(cat ${componentMetadataJson} | jq -r '.vendor_docs_url' | mo)
-    if [[ -n ${vendorDocsUrl} ]] && [[ ${vendorDocsUrl} != "null" ]]; then
-      iconPath=${sharedGitHome}/kx.as.code/base-vm/images/vendor_docs_icon.png
-      createDesktopIcon "${vendorDocsDirectory}" "${vendorDocsUrl}" "${shortcutText}" "${iconPath}" "${browserOptions}"
-    fi
+  fi
 
-    # Create desktop icon to launch tool's documentation with Chrome
-    apiDocsUrl=$(cat ${componentMetadataJson} | jq -r '.api_docs_url' | mo)
-    if [[ -n ${apiDocsUrl} ]] && [[ ${apiDocsUrl} != "null" ]]; then
-      shortcutIcon=$(cat ${componentMetadataJson} | jq -r '.shortcut_icon')
-      iconPath=${installComponentDirectory}/${shortcutIcon}
-      createDesktopIcon "${apiDocsDirectory}" "${apiDocsUrl}"  "${shortcutText}" "${iconPath}" "${browserOptions}"
-    fi
+  # SCRIPTED HEALTH CHECK
+  #TODO for the future - so far, the URL and POD checks have been sufficient
 
-    # Create desktop icon to launch tool's Swagger site with Chrome
-    swaggerApiDocsUrl=$(cat ${componentMetadataJson} | jq -r '.swagger_docs_url' | mo)
-    if [[ -n ${swaggerApiDocsUrl} ]] && [[ ${swaggerApiDocsUrl} != "null" ]]; then
-      iconPath=${sharedGitHome}/kx.as.code/base-vm/images/swagger.png
-      createDesktopIcon "${apiDocsDirectory}" "${swaggerApiDocsUrl}" "${shortcutText} Swagger" "${iconPath}" "${browserOptions}"
-    fi
+  ####################################################################################################################################################################
+  ##      P O S T    I N S T A L L    S T E P S
+  ####################################################################################################################################################################
 
-    # Create desktop icon to launch tool's Postman site with Chrome
-    postmanApiDocsUrl=$(cat ${componentMetadataJson} | jq -r '.postman_docs_url' | mo)
-    if [[ -n ${postmanApiDocsUrl} ]] && [[ ${postmanApiDocsUrl} != "null" ]]; then
-      iconPath=${sharedGitHome}/kx.as.code/base-vm/images/postman.png
-      createDesktopIcon "${apiDocsDirectory}" "${postmanApiDocsUrl}" "${shortcutText} Postman" "${iconPath}" "${browserOptions}"
+  # If LetsEncrypt is not disabled in metadata.json for application in question and sslType set to letsencrypt,
+  # then inject LetsEncrypt annotations into the applications ingress resources
+  rc=0
+  postInstallStepLetsEncrypt || rc=$? && log_info "Execution of postInstallStepLetsEncrypt() returned with rc=$rc"
+  if [[ ${rc} -ne 0 ]]; then
+    log_warn "Execution of postInstallStepLetsEncrypt() returned with a non zero return code ($rc)" "0"
+    exit $rc
+  fi
+
+  log_debug "( [[ \"${retryMode}\" == \"true\" ]] || [[ \"${retryMode}\" == \"notapplicable\" ]] ) && [[ ${retryPhaseId} -le 5 ]]"
+  if ([[ "${retryMode}" == "true" ]] || [[ "${retryMode}" == "notapplicable" ]]) && [[ ${retryPhaseId} -le 5 ]]; then
+    # Execute scripts defined in metadata.json, listed post_install_scripts section
+    rc=0
+    autoSetupExecuteScripts "5" || rc=$? && log_info "Execution of autoSetupExecuteScripts for post-install-scripts returned with rc=$rc"
+    if [[ ${rc} -ne 0 ]]; then
+      log_warn "Execution of executePostInstallScripts() returned with a non zero return code ($rc)"
+      setRetryDataFailureState
+      exit $rc
     fi
+  else
+    log_info "Skipping post installation step, as in retry-mode for ${componentName}, and this stage was already completed successfully before"
+  fi
+
+  ####################################################################################################################################################################
+  ##      I N S T A L L    D E S K T O P    S H O R T C U T S
+  ####################################################################################################################################################################
+
+  # if Primary URL[0] in URLs Array exists and Icon is defined, create Desktop Shortcut
+  applicationUrls=$(cat ${componentMetadataJson} | jq -r '.urls[]?.url?' | mo)
+  primaryUrl=$(echo ${applicationUrls} | cut -f1 -d' ')
+  browserOptions=""
+  shortcutText=$(cat ${componentMetadataJson} | jq -r '.shortcut_text')
+  if [[ -z ${shortcutText} ]] || [[ ${shortcutText} == "null" ]]; then
+    shortcutText="$(tr '[:lower:]' '[:upper:]' <<< ${componentName:0:1})${componentName:1}"
+  fi
+
+  # Create primary desktop icon to launch tool's site with Chrome
+  if [[ -n ${primaryUrl} ]]; then
+    shortcutIcon=$(cat ${componentMetadataJson} | jq -r '.shortcut_icon')
+    iconPath=${installComponentDirectory}/${shortcutIcon}
+    if [[ -n ${primaryUrl} ]] && [[ ${primaryUrl} != "null" ]] && [[ -f ${iconPath} ]] && [[ -n ${shortcutText} ]]; then
+      createDesktopIcon "${applicationShortcutsDirectory}" "${primaryUrl}" "${shortcutText}" "${iconPath}" "${browserOptions}"
+    fi
+  fi
+
+  vendorDocsUrl=$(cat ${componentMetadataJson} | jq -r '.vendor_docs_url' | mo)
+  if [[ -n ${vendorDocsUrl} ]] && [[ ${vendorDocsUrl} != "null" ]]; then
+    iconPath=${sharedGitHome}/kx.as.code/base-vm/images/vendor_docs_icon.png
+    createDesktopIcon "${vendorDocsDirectory}" "${vendorDocsUrl}" "${shortcutText}" "${iconPath}" "${browserOptions}"
+  fi
+
+  # Create desktop icon to launch tool's documentation with Chrome
+  apiDocsUrl=$(cat ${componentMetadataJson} | jq -r '.api_docs_url' | mo)
+  if [[ -n ${apiDocsUrl} ]] && [[ ${apiDocsUrl} != "null" ]]; then
+    shortcutIcon=$(cat ${componentMetadataJson} | jq -r '.shortcut_icon')
+    iconPath=${installComponentDirectory}/${shortcutIcon}
+    createDesktopIcon "${apiDocsDirectory}" "${apiDocsUrl}" "${shortcutText}" "${iconPath}" "${browserOptions}"
+  fi
+
+  # Create desktop icon to launch tool's Swagger site with Chrome
+  swaggerApiDocsUrl=$(cat ${componentMetadataJson} | jq -r '.swagger_docs_url' | mo)
+  if [[ -n ${swaggerApiDocsUrl} ]] && [[ ${swaggerApiDocsUrl} != "null" ]]; then
+    iconPath=${sharedGitHome}/kx.as.code/base-vm/images/swagger.png
+    createDesktopIcon "${apiDocsDirectory}" "${swaggerApiDocsUrl}" "${shortcutText} Swagger" "${iconPath}" "${browserOptions}"
+  fi
+
+  # Create desktop icon to launch tool's Postman site with Chrome
+  postmanApiDocsUrl=$(cat ${componentMetadataJson} | jq -r '.postman_docs_url' | mo)
+  if [[ -n ${postmanApiDocsUrl} ]] && [[ ${postmanApiDocsUrl} != "null" ]]; then
+    iconPath=${sharedGitHome}/kx.as.code/base-vm/images/postman.png
+    createDesktopIcon "${apiDocsDirectory}" "${postmanApiDocsUrl}" "${shortcutText} Postman" "${iconPath}" "${browserOptions}"
+  fi
 
 elif [[ "${action}" == "executeTask" ]]; then
 
@@ -299,71 +293,70 @@ elif [[ "${action}" == "executeTask" ]]; then
   rc=0
   autoSetupExecuteTask "${taskToExecute}" || rc=$? && log_info "Execution of autoSetupExecuteTask() for task \"${taskToExecute}\" returned with rc=$rc"
   if [[ ${rc} -ne 0 ]]; then
-    log_error "Execution of autoSetupExecuteTask() for task \"${taskToExecute}\" returned with a non zero return code ($rc)"
-    exit $rc
+    log_warn "Execution of autoSetupExecuteTask() for task \"${taskToExecute}\" returned with a non zero return code ($rc)"
+    exit ${rc}
   fi
-
 
 elif [[ ${action} == "upgrade" ]]; then
 
-    ## TODO - for the most solutions this can be handled by the install script with new versions set
-    echo "TODO: Upgrade"
+  ## TODO - for the most solutions this can be handled by the install script with new versions set
+  echo "TODO: Upgrade"
 
-elif [[ ${action} == "uninstall"   ]] || [[ ${action} == "purge"   ]]; then
+elif [[ ${action} == "uninstall" ]] || [[ ${action} == "purge" ]]; then
 
-    echo "Uninstall or purge action"
+  echo "Uninstall or purge action"
 
-    if [[ ${installationType} == "helm" ]]; then
+  if [[ ${installationType} == "helm" ]]; then
 
-        # Helm uninstall
-        helm delete ${componentName} --namespace ${namespace}
+    # Helm uninstall
+    helm delete ${componentName} --namespace ${namespace}
 
-    elif [[ ${installationType} == "argocd" ]]; then
+  elif [[ ${installationType} == "argocd" ]]; then
 
-        # Login to ArgoCD
-        argoCdInstallScriptsHome="${autoSetupHome}/cicd/argocd"
-        . ${argoCdInstallScriptsHome}/helper_scripts/login.sh
+    # Login to ArgoCD
+    argoCdInstallScriptsHome="${autoSetupHome}/cicd/argocd"
+    . ${argoCdInstallScriptsHome}/helper_scripts/login.sh
 
-        # ArgoCD uninstall application
-        argocd app delete ${componentName} --cascade
+    # ArgoCD uninstall application
+    argocd app delete ${componentName} --cascade
 
-    elif [[ ${installationType} == "script" ]]; then
+  elif [[ ${installationType} == "script" ]]; then
 
-        # Script uninstall
-        echo "Executing Scripted uninstall routine"
-        if [[ -f ${installComponentDirectory}/uninstall.sh ]]; then
-          . ${installComponentDirectory}/uninstall.sh
-        else
-          log_warn "Uninstall script for \"${componentName}\" not found. Expected to find \"uninstall.sh\" at the following path \"${installComponentDirectory}/uninstall.sh\""
-        fi
-
+    # Script uninstall
+    echo "Executing Scripted uninstall routine"
+    if [[ -f ${installComponentDirectory}/uninstall.sh ]]; then
+      . ${installComponentDirectory}/uninstall.sh
     else
-        log_error "Cannot uninstall \"${componentName}\" as installation type \"${installationType}\" is not recognized"
+      log_warn "Uninstall script for \"${componentName}\" not found. Expected to find \"uninstall.sh\" at the following path \"${installComponentDirectory}/uninstall.sh\""
     fi
 
-    # Remove Vendor Docs Shortcut if it exists
-    if [ -f "${vendorDocsDirectory}"/"${shortcutText}" ]; then
-        rm -f "${vendorDocsDirectory}"/"${shortcutText}"
-    fi
+  else
+    log_error "Cannot uninstall \"${componentName}\" as installation type \"${installationType}\" is not recognized"
+  fi
 
-    # Remove API Docs Shortcut if it exists
-    if [ -f "${apiDocsDirectory}"/"${shortcutText}" ]; then
-        rm -f "${apiDocsDirectory}"/"${shortcutText}"
-    fi
+  # Remove Vendor Docs Shortcut if it exists
+  if [ -f "${vendorDocsDirectory}"/"${shortcutText}" ]; then
+    rm -f "${vendorDocsDirectory}"/"${shortcutText}"
+  fi
 
-    # Remove Application Shortcut if it exists
-    if [ -f "${shortcutsDirectory}"/"${shortcutText}" ]; then
-        rm -f "${shortcutsDirectory}"/"${shortcutText}" ]
-    fi
+  # Remove API Docs Shortcut if it exists
+  if [ -f "${apiDocsDirectory}"/"${shortcutText}" ]; then
+    rm -f "${apiDocsDirectory}"/"${shortcutText}"
+  fi
 
-    # Remove Postman API Shortcut if it exists
-    if [ -f "${apiDocsDirectory}"/"${shortcutText}"_Postman ]; then
-        rm -f "${apiDocsDirectory}"/"${shortcutText}"_Postman
-    fi
+  # Remove Application Shortcut if it exists
+  if [ -f "${shortcutsDirectory}"/"${shortcutText}" ]; then
+    rm -f "${shortcutsDirectory}"/"${shortcutText}" ]
+  fi
 
-    # Remove Swagger API Shortcut if it exists
-    if [ -f "${apiDocsDirectory}"/"${shortcutText}"_Swagger ]; then
-        rm -f "${apiDocsDirectory}"/"${shortcutText}"_Swagger
-    fi
+  # Remove Postman API Shortcut if it exists
+  if [ -f "${apiDocsDirectory}"/"${shortcutText}"_Postman ]; then
+    rm -f "${apiDocsDirectory}"/"${shortcutText}"_Postman
+  fi
+
+  # Remove Swagger API Shortcut if it exists
+  if [ -f "${apiDocsDirectory}"/"${shortcutText}"_Swagger ]; then
+    rm -f "${apiDocsDirectory}"/"${shortcutText}"_Swagger
+  fi
 
 fi # end of action actions condition

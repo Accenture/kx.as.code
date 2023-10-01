@@ -1,5 +1,4 @@
 #!/bin/bash
-set -euox pipefail
 
 initialRootToken=$(echo -e $(kubectl get secret vault-initial-root-token -n ${namespace} -o json | jq -r '.data."initial-root-token"' | base64 --decode))
 kubectl exec -n ${namespace} vault-0 -- vault login "${initialRootToken}"

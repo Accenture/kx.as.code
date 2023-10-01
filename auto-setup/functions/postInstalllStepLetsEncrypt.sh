@@ -1,8 +1,5 @@
 postInstallStepLetsEncrypt() {
 
-  # Call common function to execute common function start commands, such as setting verbose output etc
-  functionStart
-
   if [[ -n ${namespace} ]]; then
     # LetsEncrypt
     letsencryptEnabled=$(cat ${componentMetadataJson} | jq '.letsencrypt?.enabled?')
@@ -31,8 +28,5 @@ postInstallStepLetsEncrypt() {
 
     fi
   fi
-
-  # Call common function to execute common function start commands, such as unsetting verbose output etc
-  functionEnd
   
 }

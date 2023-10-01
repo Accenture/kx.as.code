@@ -1,5 +1,4 @@
 #!/bin/bash
-set -euox pipefail
 
 # Build Docker image
 cd ${installationWorkspace}

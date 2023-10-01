@@ -1,5 +1,4 @@
 #!/bin/bash
-set -euo pipefail
 
 # Create memberlist secret if it does not already exist
 kubectl get secret -n ${namespace} memberlist -o json | jq -r '.metadata.name' || \

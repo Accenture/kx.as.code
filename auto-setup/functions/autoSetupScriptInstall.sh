@@ -1,8 +1,5 @@
 autoSetupScriptInstall() {
 
-    # Call common function to execute common function start commands, such as setting verbose output etc
-    functionStart
-
     local blockScriptExecution="false"
     if [[ "${retryMode}" == "true" ]] && [[ "${retryInstallPhase}" == "main_scripts" ]]; then
         blockScriptExecution="true"
@@ -42,7 +39,7 @@ autoSetupScriptInstall() {
                 updateStorageClassIfNeeded "${installComponentDirectory}/${script}"
                 # Export retry data in case an error errors and the component installation needs to be retried
                 autoSetupSaveRetryData "2" "main_scripts" "${script}" "${payload}"
-                . ${installComponentDirectory}/${script} || rc=$? && log_info "${installComponentDirectory}/${script} returned with rc=$rc"
+                . ${installComponentDirectory}/${script} || local rc=$? && log_info "${installComponentDirectory}/${script} returned with rc=$rc"
                 if [[ ${rc} -ne 0 ]]; then
                     log_error "Execution of install script \"${script}\" ended in a non zero return code ($rc)"
                     exit 1
@@ -52,8 +49,5 @@ autoSetupScriptInstall() {
             fi
         fi
     done
-
-    # Call common function to execute common function start commands, such as unsetting verbose output etc
-    functionEnd  
 
 }

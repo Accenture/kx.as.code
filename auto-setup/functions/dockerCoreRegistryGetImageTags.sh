@@ -1,15 +1,14 @@
-dockerCoreRegistryGetImageTags() { 
-
-  # Call common function to execute common function start commands, such as setting verbose output etc
-  functionStart
+dockerCoreRegistryGetImageTags() {
 
   local imagePath=${1}
+  local dockerRegistryPassword=$(getPassword "docker-registry-${namespace}-password" "docker-registry")
 
   # Get image tags
-  curl -sS -X GET -u ${baseUser}:${dockerRegistryPassword} \
-    https://docker-registry.${baseDomain}/v2/${imagePath}/tags/list | jq -r '.tags[]' | tr '\r\n' ' '
+  imageTags=$(curl -sS -X GET -u ${namespace}:${dockerRegistryPassword} \
+    https://docker-registry.${baseDomain}/v2/${imagePath}/tags/list)
 
-  # Call common function to execute common function start commands, such as unsetting verbose output etc
-  functionEnd
-
+  # Retrieve Docker images tags if tags array is not "null"
+  if [[ "$(echo ${imageTags} | jq '.tags')" != "null" ]] || [[ -z "$(echo ${imageTags} | jq '.tags')" ]]; then
+     echo ${imageTags} | jq -r '.tags[]' | tr '\r\n' ' '
+  fi
 }

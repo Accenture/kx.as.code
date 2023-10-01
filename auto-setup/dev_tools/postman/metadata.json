@@ -4,8 +4,8 @@
     "installation_type": "script",
     "installation_group_folder": "dev_tools",
     "environment_variables": {
-        "postmanVersion": "9.19.0",
-        "postmanChecksum": "9ba608c130e7936895dd9752ea0c55055b3be7649c445ff72f36d82042c1b996"
+        "postmanVersion": "10.13.6",
+        "postmanChecksum": "53dd74f3494fbfb9f3206f240ab962b5dbe52aea1fb842b636dc9d0e4535d1fb"
     },
     "install_scripts": [
         "installPostman.sh"

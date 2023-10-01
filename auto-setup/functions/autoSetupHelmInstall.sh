@@ -1,8 +1,5 @@
 autoSetupHelmInstall() {
 
-  # Call common function to execute common function start commands, such as setting verbose output etc
-  functionStart
-
   log_debug "Established installation type is \"${installationType}\". Proceeding in that way"
   # Get helm parameters
   helm_params=$(cat ${componentMetadataJson} | jq -r '.'${installationType}'_params')
@@ -33,7 +30,7 @@ autoSetupHelmInstall() {
 
   # Determine whether a values_template.yaml file exists for the solution and use it if so - and replace mustache variables such as url etc
   if [[ -f ${installComponentDirectory}/values_template.yaml ]]; then
-    envhandlebars <${installComponentDirectory}/values_template.yaml >${installationWorkspace}/${componentName}_values.yaml
+    envhandlebars <${installComponentDirectory}/values_template.yaml | sed 's/&#x3D;/=/g' | sed "s/&#x27;/'/g" | tr '\r\n' '\275\276' | tr -d "[:cntrl:]" | tr "\275\276" "\r\n" >${installationWorkspace}/${componentName}_values.yaml
     # Force storage to local-storage if glusterfs not installed
     updateStorageClassIfNeeded "${installationWorkspace}/${componentName}_values.yaml"
     valuesFileOption="-f ${installationWorkspace}/${componentName}_values.yaml"
@@ -81,7 +78,7 @@ autoSetupHelmInstall() {
   updateStorageClassIfNeeded "${installationWorkspace}/helm_${componentName}.sh"
   # Export retry data in case an error errors and the component installation needs to be retried
   autoSetupSaveRetryData "3" "helm_${componentName}.sh" "${payload}"
-  ${installationWorkspace}/helm_${componentName}.sh || rc=$? && log_info "${installationWorkspace}/helm_${componentName}.sh returned with rc=$rc"
+  . ${installationWorkspace}/helm_${componentName}.sh || local rc=$? && log_info "${installationWorkspace}/helm_${componentName}.sh returned with rc=$rc"
   if [[ ${rc} -ne 0 ]]; then
     log_error "Execution of Helm command \"${helmCommmand}\" ended in a non zero return code ($rc)"
     autoSetupSaveRetryData "3" "helm_${componentName}.sh" "${payload}"
@@ -90,8 +87,5 @@ autoSetupHelmInstall() {
   else
     autoSetupClearRetryData
   fi
-
-  # Call common function to execute common function start commands, such as unsetting verbose output etc
-  functionEnd
   
 }

@@ -1,8 +1,5 @@
 getProfileConfiguration() {
 
-  # Call common function to execute common function start commands, such as setting verbose output etc
-  functionStart
-
   # Get configs from profile-config.json
   export virtualizationType=$(cat ${profileConfigJsonPath} | jq -r '.config.virtualizationType | select(.!=null)')
   export standaloneMode=$(cat ${profileConfigJsonPath} | jq -r '.config.standaloneMode | select(.!=null)')
@@ -12,37 +9,37 @@ getProfileConfiguration() {
   export kubeOrchestrator=$(cat ${profileConfigJsonPath} | jq -r '.config.kubeOrchestrator | select(.!=null)')
   export updateSourceOnStart=$(cat ${profileConfigJsonPath} | jq -r '.config.updateSourceOnStart | select(.!=null)')
 
-  if  [[ "${baseIpType}" == "static" ]] || [[ "${dnsResolution}" == "hybrid" ]]; then
-        export fixedNicConfigDns1=$(cat ${profileConfigJsonPath} | jq -r '.config.dnsResolution.dns1 | select(.!=null)')
-        export fixedNicConfigDns2=$(cat ${profileConfigJsonPath} | jq -r '.config.dnsResolution.dns2 | select(.!=null)')
+  if [[ "${baseIpType}" == "static" ]] || [[ "${dnsResolution}" == "hybrid" ]]; then
+    export fixedNicConfigDns1=$(cat ${profileConfigJsonPath} | jq -r '.config.dnsResolution.dns1 | select(.!=null)')
+    export fixedNicConfigDns2=$(cat ${profileConfigJsonPath} | jq -r '.config.dnsResolution.dns2 | select(.!=null)')
   fi
 
   if [[ ${baseIpType} == "static" ]]; then
-      # Get fixed IPs if defined
-      export fixedIpHosts=$(cat ${profileConfigJsonPath} | jq -r '.config.staticNetworkSetup.baseFixedIpAddresses | keys[]')
-      for fixIpHost in ${fixedIpHosts}; do
-          fixIpHostVariableName=$(echo ${fixIpHost} | sed 's/-/__/g')
-          export ${fixIpHostVariableName}_IpAddress="$(cat ${profileConfigJsonPath} | jq -r '.config.staticNetworkSetup.baseFixedIpAddresses."'${fixIpHost}'"')"
-          if [[ ${fixIpHost} == "kx-main1" ]]; then
-              export mainIpAddress="$(cat ${profileConfigJsonPath} | jq -r '.config.staticNetworkSetup.baseFixedIpAddresses."'${fixIpHost}'"')"
-          fi
-      done
-      export fixedNicConfigGateway=$(cat ${profileConfigJsonPath} | jq -r '.config.staticNetworkSetup.gateway | select(.!=null)')
+    # Get fixed IPs if defined
+    export fixedIpHosts=$(cat ${profileConfigJsonPath} | jq -r '.config.staticNetworkSetup.baseFixedIpAddresses | keys[]')
+    for fixIpHost in ${fixedIpHosts}; do
+      fixIpHostVariableName=$(echo ${fixIpHost} | sed 's/-/__/g')
+      export ${fixIpHostVariableName}_IpAddress="$(cat ${profileConfigJsonPath} | jq -r '.config.staticNetworkSetup.baseFixedIpAddresses."'${fixIpHost}'"')"
+      if [[ ${fixIpHost} == "kx-main1" ]]; then
+        export mainIpAddress="$(cat ${profileConfigJsonPath} | jq -r '.config.staticNetworkSetup.baseFixedIpAddresses."'${fixIpHost}'"')"
+      fi
+    done
+    export fixedNicConfigGateway=$(cat ${profileConfigJsonPath} | jq -r '.config.staticNetworkSetup.gateway | select(.!=null)')
   else
-      export mainIpAddress=$(ip a s ${netDevice} | egrep -o 'inet [0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | cut -d' ' -f2)
+    export mainIpAddress=$(ip a s ${netDevice} | egrep -o 'inet [0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | cut -d' ' -f2)
   fi
 
   export environmentPrefix=$(cat ${profileConfigJsonPath} | jq -r '.config.environmentPrefix | select(.!=null)')
   if [ -z ${environmentPrefix} ]; then
-      export baseDomain=$(cat ${profileConfigJsonPath} | jq -r '.config.baseDomain | select(.!=null)')
+    export baseDomain=$(cat ${profileConfigJsonPath} | jq -r '.config.baseDomain | select(.!=null)')
   else
-      if [[ "${environmentPrefix}" == "ownerId" ]]; then
-          export ownerId=$(getOwnerId)
-          export environmentPrefix=${ownerId}
-          export baseDomain="${ownerId}.$(cat ${profileConfigJsonPath} | jq -r '.config.baseDomain | select(.!=null)')"
-        else
-          export baseDomain="${environmentPrefix}.$(cat ${profileConfigJsonPath} | jq -r '.config.baseDomain | select(.!=null)')"
-        fi
+    if [[ "${environmentPrefix}" == "ownerId" ]]; then
+      export ownerId=$(getOwnerId)
+      export environmentPrefix=${ownerId}
+      export baseDomain="${ownerId}.$(cat ${profileConfigJsonPath} | jq -r '.config.baseDomain | select(.!=null)')"
+    else
+      export baseDomain="${environmentPrefix}.$(cat ${profileConfigJsonPath} | jq -r '.config.baseDomain | select(.!=null)')"
+    fi
   fi
 
   # For use in tools that require and organization name, where "." cause an error
@@ -50,7 +47,7 @@ getProfileConfiguration() {
 
   export numKxMainNodes=$(cat ${profileConfigJsonPath} | jq -r '.vm_properties.main_node_count | select(.!=null)')
   if [[ "${numKxMainNodes}" = "null" ]]; then
-      export numKxMainNodes="1"
+    export numKxMainNodes="1"
   fi
 
   export defaultKeyboardLanguage=$(cat ${profileConfigJsonPath} | jq -r '.config.defaultKeyboardLanguage | select(.!=null)')
@@ -60,9 +57,17 @@ getProfileConfiguration() {
   if [[ "${virtualizationType}" == "public-cloud" ]]; then
     # Use GoPass only if already installed, else generate password directly, and it will later be added to GoPass
     if [[ -f /usr/bin/gopass ]]; then
+      # Get password from GoPass
+      log_debug "Getting existing credential for \"${baseUser}\" from Gopass"
       export basePassword=$(managedPassword "user-${baseUser}-password" "users")
     else
-      export basePassword=$(generatePassword)
+      if id ${baseUser}; then
+        # Generate new password
+        log_debug "Setting new password for \"${baseUser}\""
+        export basePassword=$(generatePassword)
+        # Update user system password
+        /usr/bin/sudo usermod --password $(echo "${basePassword}" | openssl passwd -1 -stdin) "${baseUser}"
+      fi
     fi
   else
     export basePassword=$(cat ${profileConfigJsonPath} | jq -r '.config.basePassword | select(.!=null)')
@@ -103,7 +108,4 @@ getProfileConfiguration() {
   export s3ObjectStoreDomain="$(cat ${autoSetupHome}/${defaultS3ObjectStorePath}/metadata.json | jq -r '.name').${baseDomain}"
   export s3ObjectStoreUrl="https://${s3ObjectStoreDomain}"
 
-  # Call common function to execute common function start commands, such as unsetting verbose output etc
-  functionEnd
-  
 }

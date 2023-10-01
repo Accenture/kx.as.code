@@ -1,9 +1,7 @@
 #!/bin/bash
-set -euo pipefail
 
 cat << EOF > /usr/share/kx.as.code/checkK8sStartup.sh
 #!/bin/bash
-set -euo pipefail
 
 baseUserId=\$(id -u ${baseUser})
 

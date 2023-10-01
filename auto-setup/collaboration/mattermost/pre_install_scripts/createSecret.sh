@@ -1,5 +1,4 @@
 #!/bin/bash
-set -euo pipefail
 
 # Copy Minio secret to Gitlab namespace for Mattermost to use
 minioAccessKey=$(kubectl get secret minio-accesskey-secret -n minio-s3 -o json | jq -r '.data.accesskey' | base64 --decode)

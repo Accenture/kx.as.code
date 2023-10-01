@@ -1,12 +1,8 @@
 checkAndUpdateBasePassword() {
 
-  # Call common function to execute common function start commands, such as setting verbose output etc
-  functionStart
+  export generatedPassword="$(generatePassword)"
+  /usr/bin/sudo usermod --password $(echo "${generatedPassword}" | openssl passwd -1 -stdin) "${baseUser}"
+  echo "${generatedPassword}" | /usr/bin/sudo tee ${sharedKxHome}/.config/.user.cred
+  /usr/bin/sudo chown 400 ${sharedKxHome}/.config/.user.cred
 
-  vmPassword=$(cat /usr/share/kx.as.code/.config/.user.cred)
-  /usr/bin/sudo usermod --password $(echo "${basePassword}" | openssl passwd -1 -stdin) "${baseUser}"
-
-  # Call common function to execute common function start commands, such as unsetting verbose output etc
-  functionEnd
-   
 }

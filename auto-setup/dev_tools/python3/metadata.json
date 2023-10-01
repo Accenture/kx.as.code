@@ -1,0 +1,18 @@
+{
+    "name": "python3",
+    "namespace": "",
+    "installation_type": "script",
+    "installation_group_folder": "dev_tools",
+    "environment_variables": {
+        "python3Version": "3.9.9",
+        "python3Checksum": "2cc7b67c1f3f66c571acc42479cdf691d8ed6b47bee12c9b68430413a17a44ea"
+    },
+    "install_scripts": [
+        "installPython3.sh"
+    ],
+    "Description": "Python3",
+    "shortcut_text": "Python3",
+    "shortcut_icon": "python3.png",
+    "pre_install_scripts": [],
+    "post_install_scripts": []
+}

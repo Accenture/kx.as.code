@@ -1,5 +1,4 @@
 #!/bin/bash
-set -euo pipefail
 
 # Build Teamcity Server Docker image
 cd ${installationWorkspace}

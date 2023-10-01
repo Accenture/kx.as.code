@@ -1,5 +1,4 @@
 #!/bin/bash
-set -euox pipefail
 
 # Create combined server and intermediate CA crt file
 cat ${installationWorkspace}/kx-certs/tls.crt \

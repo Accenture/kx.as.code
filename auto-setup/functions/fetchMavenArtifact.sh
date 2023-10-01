@@ -1,8 +1,5 @@
 fetchMavenArtifact() {
 
-  # Call common function to execute common function start commands, such as setting verbose output etc
-  functionStart
-
   local artifactGroup=${1}
   local artifactId=${2}
   local artifactVersion=${3}
@@ -23,8 +20,5 @@ fetchMavenArtifact() {
   else
     log_error "Maven artifact file - ${artifactId}-${artifactVersion}.${artifactExtension} - was not downloaded successfully. Please check you have entered everything correctly"
   fi
-
-  # Call common function to execute common function start commands, such as unsetting verbose output etc
-  functionEnd
 
 }

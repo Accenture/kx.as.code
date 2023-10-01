@@ -1,5 +1,4 @@
 #!/bin/bash
-set -euo pipefail
 
 # Create Jenkins Admin Password
 export jenkinsAdminPassword=$(managedPassword "jenkins-admin-password" "jenkins")

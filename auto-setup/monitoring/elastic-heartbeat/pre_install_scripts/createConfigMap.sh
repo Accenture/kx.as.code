@@ -1,5 +1,4 @@
 #!/bin/bash
-set -euo pipefail
 
 # Get list of Ingress TLS URLs
 export ingressTlsUrls=$(kubectl get ingress --all-namespaces -o json | jq -r '"\(.items[].spec.tls[]?.hosts[])"' | sort | uniq)

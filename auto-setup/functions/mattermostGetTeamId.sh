@@ -1,8 +1,5 @@
 mattermostGetTeamId() {
 
-    # Call common function to execute common function start commands, such as setting verbose output etc
-    functionStart
-
     if checkApplicationInstalled "mattermost" "collaboration"; then
 
         teamName=${1}
@@ -13,9 +10,6 @@ mattermostGetTeamId() {
         # Get Mattermost Team id
         curl -s -H 'Authorization: Bearer '${mattermostLoginToken}'' -X GET https://mattermost.${baseDomain}/api/v4/teams/name/${teamName} | jq -r '.id'
 
-    fi
-
-    # Call common function to execute common function start commands, such as unsetting verbose output etc
-    functionEnd
+    fi  
     
 }

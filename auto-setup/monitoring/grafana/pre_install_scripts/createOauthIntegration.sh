@@ -1,5 +1,4 @@
 #!/bin/bash
-set -euo pipefail
 
 ####################################################################
 # This script has been replaced by Keycloak and is no longer in use

@@ -37,7 +37,8 @@ sudo DEBIAN_FRONTEND=noninteractive apt-get -y install \
     rsync \
     lvm2 \
     netcat \
-    psmisc
+    psmisc \
+    grc
 
 # Install open-vm-tools if target is not a baremetal Raspberry Pi
 if [[ -z $( uname -a | grep "aarch64") ]] && [[ -z $(which raspinfo) ]]; then

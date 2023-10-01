@@ -1,5 +1,4 @@
 #!/bin/bash
-set -euox pipefail
 
 mattermostAdminPassword=$(getPassword "mattermost-admin-password" "mattermost")
 

@@ -1,12 +1,9 @@
 getKeycloakClientId() {
 
-    # Call common function to execute common function start commands, such as setting verbose output etc
-    functionStart
-
     if checkApplicationInstalled "keycloak" "core"; then
 
         # Assign incoming parameters to variables
-        local componentName=${1}
+        local clientName=${1}
 
         # Source Keycloak Environment
         sourceKeycloakEnvironment
@@ -18,14 +15,16 @@ getKeycloakClientId() {
 
             # Export ClientId
             export clientId=$(kubectl -n ${kcNamespace} exec ${kcPod} --container ${kcContainer} -- \
-            ${kcAdmCli} get clients --fields id,clientId | jq -r '.[] | select(.clientId=="'${componentName}'") | .id')
+            ${kcAdmCli} get clients --fields id,clientId -r ${kcRealm} | jq -r '.[] | select(.clientId=="'${clientName}'") | .id')
 
-            if [[ "${clientId}" == "null" ]] || [[ -z ${clientId} ]]; then
-                >&2 log_info "Keycloak client for ${componentName} does not exit. Are you sure it was already created?"
+	    log_debug "Command: kubectl -n ${kcNamespace} exec ${kcPod} --container ${kcContainer} -- ${kcAdmCli} get clients --fields id,clientId -r ${kcRealm} | jq -r '.[] | select(.clientId==\"${clientName}\") | .id' | wc -l"
+	    log_debug "Installed Keycloak clients: $(kubectl -n ${kcNamespace} exec ${kcPod} --container ${kcContainer} -- ${kcAdmCli} get clients --fields id,clientId -r ${kcRealm})"
+            if ! (( $(kubectl -n ${kcNamespace} exec ${kcPod} --container ${kcContainer} -- ${kcAdmCli} get clients --fields id,clientId -r ${kcRealm} | jq -r '.[] | select(.clientId=="'${clientName}'") | .id' | wc -l) )); then 
+                >&2 log_info "Keycloak client for ${clientName} does not exit. Are you sure it was already created?"
                 false
                 return
             else
-                >&2 log_info "Keycloak client for ${componentName} exists (${clientId}). Returning it to calling function"
+                >&2 log_info "Keycloak client for ${clientName} exists (${clientName}). Returning it to calling function"
                 echo "${clientId}"
                 true
                 return
@@ -33,9 +32,6 @@ getKeycloakClientId() {
 
         fi
 
-    fi
-
-    # Call common function to execute common function start commands, such as unsetting verbose output etc
-    functionEnd
+    fi  
     
 }

@@ -1,6 +1,7 @@
+####_EXCLUDE_FROM_FUNCTION_HEADER_FOOTER_INJECTION_####
 functionEnd() {
 
-    if [[ "${logLevel}" == "debug" ]]; then
+    if [[ "${logLevel}" == "trace" ]]; then
         set +x
     fi
 

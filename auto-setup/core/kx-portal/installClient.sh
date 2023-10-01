@@ -1,5 +1,4 @@
 #!/bin/bash
-set -euox pipefail
 
 # Install NGINX
 /usr/bin/sudo apt-get install -y nginx
@@ -84,8 +83,7 @@ WantedBy=multi-user.target
 """ | /usr/bin/sudo tee /etc/systemd/system/kx.as.code-portal.service
 
 # Enable service
-serviceEnabled=$(/usr/bin/sudo systemctl is-enabled kx.as.code-portal.service)
-if [[ "${serviceEnabled}" == "disabled" ]]; then
+if /usr/bin/sudo systemctl is-enabled kx.as.code-portal.service; then
   /usr/bin/sudo systemctl enable --now kx.as.code-portal.service
   /usr/bin/sudo systemctl daemon-reload
 else

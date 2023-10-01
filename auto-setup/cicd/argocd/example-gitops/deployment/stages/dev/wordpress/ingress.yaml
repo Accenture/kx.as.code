@@ -1,13 +1,12 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  annotations:
-    kubernetes.io/ingress.class: nginx
   generation: 1
   labels:
     app.kubernetes.io/instance: wordpress
   name: wordpress-dev
 spec:
+  ingressClassName: nginx
   rules:
   - host: wordpress-dev.demo1.kx-as-code.local
     http:

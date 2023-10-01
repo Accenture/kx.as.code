@@ -1,5 +1,4 @@
 #!/bin/bash
-set -euo pipefail
 
 # Create CA config map for connecting to LDAPS from Keycloak for User Federation
 echo """

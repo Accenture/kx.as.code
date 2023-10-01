@@ -1,5 +1,4 @@
 #!/bin/bash
-set -euo pipefail
 
 # Download Postman
 downloadFile "https://dl.pstmn.io/download/version/${postmanVersion}/linux64" \
@@ -8,7 +7,9 @@ downloadFile "https://dl.pstmn.io/download/version/${postmanVersion}/linux64" \
 
 # Install Postman
 /usr/bin/sudo tar -xzf ${installationWorkspace}/postman-${postmanVersion}-linux-x64.tar.gz -C /usr/local
-/usr/bin/sudo ln -s /usr/local/Postman/Postman /usr/bin/postman
+if [[ ! -L /usr/bin/postman ]]; then
+  /usr/bin/sudo ln -s /usr/local/Postman/Postman /usr/bin/postman
+fi
 
 # Create Shortcut for Postman
 echo '''

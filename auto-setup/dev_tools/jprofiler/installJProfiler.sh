@@ -1,6 +1,4 @@
-
 #!/bin/bash
-set -euo pipefail
 
 # Get details of zip to download from metadata.json
 export filename="jprofiler_linux-x64_${jprofilerExecutableVersion}.deb"

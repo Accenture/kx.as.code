@@ -1,5 +1,4 @@
 #!/bin/bash
-set -euo pipefail
 
 # Create application to facilitate Gitlab as OAUTH provider for SonarQube
 export sonarqubeApplicationId=$(curl -s --header "Private-Token: ${personalAccessToken}" ${gitUrl}/api/v4/applications | jq '.[] | select(.application_name=="SonarQube") | .id')

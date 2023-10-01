@@ -1,5 +1,4 @@
 #!/bin/bash
-set -euo pipefail
 
 # Generate Gitea Postgresql Password
 export postgresqlPassword=$(managedPassword "gitea-postgresql-password" "gitea")

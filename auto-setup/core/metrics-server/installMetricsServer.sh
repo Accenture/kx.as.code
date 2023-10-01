@@ -1,5 +1,4 @@
 #!/bin/bash
-set -euo pipefail
 
 # Only install separately if target orchestrator is K8s, because K3s already installs the metric server as standard
 if [[ "${kubeOrchestrator}" == "k8s" ]]; then

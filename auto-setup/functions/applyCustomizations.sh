@@ -1,8 +1,5 @@
 applyCustomizations() {
 
-    # Call common function to execute common function start commands, such as setting verbose output etc
-    functionStart
-
     customImagesDirectory="${installationWorkspace}/custom-images"
 
     # Apply custom background
@@ -36,8 +33,5 @@ applyCustomizations() {
                 /var/lib/tomcat9/webapps/guacamole/images/
         fi
     fi
-
-    # Call common function to execute common function start commands, such as unsetting verbose output etc
-    functionEnd
 
 }

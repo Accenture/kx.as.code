@@ -1,0 +1,17 @@
+{
+    "name": "awscli",
+    "namespace": "",
+    "installation_type": "script",
+    "installation_group_folder": "dev_tools",
+    "environment_variables": {
+        "awscliChecksum": "0e9fbdbef8b6c2b2f9e86d7368bf640da7e917a23373b347c44a9d1827677256"
+    },
+    "install_scripts": [
+        "installAwsCli.sh"
+    ],
+    "Description": "The AWS Command Line Interface (AWS CLI) is a unified tool to manage your AWS services.",
+    "shortcut_text": "AWS CLI",
+    "shortcut_icon": "awscli.png",
+    "pre_install_scripts": [],
+    "post_install_scripts": []
+}

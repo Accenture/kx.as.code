@@ -1,64 +1,80 @@
+####_EXCLUDE_FROM_FUNCTION_HEADER_FOOTER_INJECTION_####
 notify() {
-
-  # Call common function to execute common function start commands, such as setting verbose output etc
-  functionStart
-
+  set +x
   local openDisplays=$(w -oush | grep -Eo ' :[0-9]+' | sort -u -t\  -k1,1 | cut -d \  -f 2 || true)
-  log_debug "Detected unique displays: ${openDisplays}"
-  local message=${1:-}
+  log_trace "Detected unique displays: ${openDisplays}"
+  local message=''${1:-}''
   local messageType=${2:-"dialog-information"}
   local messageTimeout=${3:-300000}
   local messageTitle=${4:-"KX.AS.CODE Notification"}
+  local notificationTitle="$(cat ${profileConfigJsonPath} | jq -r '.notification_title | select(.!=null)')"
+
+  if [[ -z ${notificationTitle} ]]; then
+    notificationTitle="KX.AS.CODE"
+  fi
+  local parsedMessage=$(echo ''${message}'' | sed 's/"/\"/g' | sed 's/\\$//g')
 
   # Get list of connected displays
-  local displayFiles=$(/usr/bin/sudo find /home/*/.dbus -maxdepth 1 -type f -name "Xdbus")
+  local displayFiles=$(/usr/bin/sudo find /home/*/.dbus -maxdepth 1 -type f -name "Xdbus" || true)
 
-  for displayFile in ${displayFiles}
-  do
-    if [[ -f /home/${baseUser}/.dbus/Xdbus ]]; then
+  for displayFile in ${displayFiles}; do
+    if [[ -f ${displayFile} ]]; then
 
       local user=$(echo "${displayFile}" | cut -d'/' -f3)
-      local userDisplays=$(ps e -u ${user} | grep -Po " DISPLAY=[\.0-9A-Za-z:]* " | sort -u)
-      local fullJson="[]"
+      if [[ -n ${user} ]] && [[ "${user}" != "admin" ]] && [[ "${user}" != "root" ]]; then
 
-      for userDisplay in ${userDisplays}
-      do
-        log_debug "Checking if display ${userDisplay} belonging to ${user} is active"
-        local idleTime=$(eval "export ${userDisplay}" && /usr/bin/sudo -u ${user} xprintidle)
-        local json="[{ \"display\": \"${userDisplay}\", \"idletime\": \"${idleTime}\" }]"
-        local fullJson=$(echo ${fullJson} | jq ". + ${json}")
-      done
+        log_trace "Getting user displays for \"${user}\""
+        local userDisplays=$(ps e -u ${user} | grep -Po "DISPLAY=[\.0-9A-Za-z:]* " | sed -e 's/ //' | cut -d'.' -f1 | sort -u | uniq || log_trace "No displays found for \"${user}\"")
+        log_trace "User \"${user}\" has \"${userDisplays}\" displays"
+        local fullJson="[]"
 
-      log_debug "Full json: $(echo ${fullJson} | jq)"
-      log_debug "Latest user display: $(echo ${fullJson} | jq '. | sort_by(.idletime) | .[0]')"
+        if [[ -n ${userDisplays} ]]; then
 
-      local mostRecentSessionIdletime=$(echo ${fullJson} | jq -r '. | sort_by(.idletime) | .[0] | .idletime')
-      local mostRecentSessionDisplay=$(echo ${fullJson} | jq -r '. | sort_by(.idletime) | .[0] | .display')
+          for userDisplay in ${userDisplays}; do
+            # Final check display is active by comparing two lists
+            log_trace "Checking if any of the user displays \"${userDisplays}\" are active"
+            log_trace "Displays in /tmp/.X11-unix: $(cd /tmp/.X11-unix && for x in X*; do echo \":${x#X}\"; done)"
+            activeDisplay=$(echo "$(echo ${userDisplays} | cut -f2 -d'=')" | grep -Fx "$(cd /tmp/.X11-unix && for x in X*; do echo ":${x#X}"; done)")
+            log_trace "Active display(s) found: \"${activeDisplay}\""
+            if [[ -n ${activeDisplay} ]]; then
+              log_trace "Seems display \"${userDisplay}\" belonging to \"${user}\" is active. Checking idle time"
+              local idleTime=$(eval "export ${userDisplay}" && /usr/bin/sudo -u ${user} xprintidle)
+              local json="[{ \"display\": \"${userDisplay}\", \"idletime\": \"${idleTime}\" }]"
+              local fullJson=$(echo ${fullJson} | jq ". + ${json}")
+            else
+              log_trace "User display \"${userDisplay}\" no longer valid. Skipping".
+            fi
+          done
 
-      log_debug "${user} --> ${user}Display"
-      log_debug "${user} idle-time --> ${mostRecentSessionIdletime}"
-      log_debug "${user} display--> ${mostRecentSessionDisplay}"
+          if [[ "${fullJson}" != "[]" ]]; then
+            log_trace "Full json: $(echo ${fullJson} | jq)"
+            log_trace "Latest user display: $(echo ${fullJson} | jq '. | sort_by(.idletime) | .[0]')"
 
-      if [[ -n ${mostRecentSessionIdletime} ]] && [[ "${mostRecentSessionIdletime}" != "null" ]]; then
+            local mostRecentSessionIdletime=$(echo ${fullJson} | jq -r '. | sort_by(.idletime) | .[0] | .idletime')
+            local mostRecentSessionDisplay=$(echo ${fullJson} | jq -r '. | sort_by(.idletime) | .[0] | .display')
 
-        idleTimeSeconds=$(( ${mostRecentSessionIdletime} / 1000 ))
-        idleTimeMinutes=$(( ${mostRecentSessionIdletime} / 60000 ))
+            log_trace "${user} --> ${user}Display"
+            log_trace "${user} idle-time --> ${mostRecentSessionIdletime}"
+            log_trace "${user} display--> ${mostRecentSessionDisplay}"
 
-        log_debug "Idle time in minutes: ${idleTimeSeconds}"
-        log_debug "Idle time in seconds: ${idleTimeMinutes}"
+            if [[ -n ${mostRecentSessionIdletime} ]] && [[ "${mostRecentSessionIdletime}" != "null" ]]; then
 
-        if [[ ${idleTimeMinutes} -le 15 ]]; then
-          /usr/bin/sudo -H -i -u ${user} bash -c " \
-              source /home/${user}/.dbus/Xdbus && env && \
-              env && \
-              notify-send -t \"${messageTimeout}\" \"${messageTitle}\" \"${message}\" --icon=\"${messageType}\""
-              log_debug "Notification sent"
+              idleTimeSeconds=$((${mostRecentSessionIdletime} / 1000))
+              idleTimeMinutes=$((${mostRecentSessionIdletime} / 60000))
+
+              log_trace "Idle time in minutes: ${idleTimeSeconds}"
+              log_trace "Idle time in seconds: ${idleTimeMinutes}"
+
+              if [[ ${idleTimeMinutes} -le 15 ]]; then
+                /usr/bin/sudo -H -i -u ${user} bash -c " \
+                    source /home/${user}/.dbus/Xdbus && \
+                    notify-send -t \"${messageTimeout}\" \"${notificationTitle}\" \"${parsedMessage}\" --icon=\"${messageType}\""
+                log_trace "Notification sent"
+              fi
+            fi
+          fi
         fi
       fi
     fi
   done
-
-  # Call common function to execute common function start commands, such as unsetting verbose output etc
-  functionEnd
-
 }

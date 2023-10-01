@@ -1,5 +1,4 @@
 #!/bin/bash
-set -euo pipefail
 
 # Stop KX-Portal
 /usr/bin/sudo systemctl stop kx.as.code-portal.service

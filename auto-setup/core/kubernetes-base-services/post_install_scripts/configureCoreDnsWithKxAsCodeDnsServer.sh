@@ -1,5 +1,4 @@
 #!/bin/bash
-set -euo pipefail
 
 # Enable DNS resolution in Kubernetes for *.${baseDomain} domain
 

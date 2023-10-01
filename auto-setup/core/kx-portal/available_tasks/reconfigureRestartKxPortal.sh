@@ -1,5 +1,4 @@
 #!/bin/bash
-set -euo pipefail
 
 # Create new combined JSON metadata file
 cd "${sharedGitHome}/kx.as.code/client"

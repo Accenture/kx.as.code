@@ -1,5 +1,4 @@
 #!/bin/bash
-set -euox pipefail
 
 # Set Gitlab admin user
 export adminUser="root"

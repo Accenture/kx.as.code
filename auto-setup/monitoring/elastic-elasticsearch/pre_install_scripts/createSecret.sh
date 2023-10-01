@@ -1,5 +1,4 @@
 #!/bin/bash
-set -euox pipefail
 
 # Create directory for storing generated certs
 export elasticStackCertsDir=${installationWorkspace}/elastic-stack-certs

@@ -1,5 +1,4 @@
 #!/bin/bash
-set -euo pipefail
 
 # Download Atom editor
 downloadFile "https://github.com/atom/atom/releases/download/${atomVersion}/atom-amd64.deb" \

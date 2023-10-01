@@ -1,5 +1,4 @@
 #!/bin/bash
-set -euo pipefail
 
 # Install Tools to Generate Certificate Authority
 # Replacing the bottom with the golang-cfssl apt package
@@ -148,7 +147,6 @@ EOF
     # Import Certificates into Browser Certificate Repositories
     cat << EOF > ${installationWorkspace}/trustKXRootCAs.sh
 #!/bin/bash
-set -euo pipefail
 certfile="/usr/share/ca-certificates/kubernetes/kx-intermediate-ca.crt"
 certname="KX.AS.CODE Intermediate CA"
 # For cert8 (legacy - DBM)

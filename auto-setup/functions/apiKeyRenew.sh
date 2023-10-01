@@ -1,10 +1,7 @@
 renewApiKey() {
 
-  # Call common function to execute common function start commands, such as setting verbose output etc
-  functionStart
-
   passwordName=${1}
-  passwordGroup=${2-}
+  passwordGroup=${2:-}
 
   # Conditional statement in case this is being re-run for an already deployed solution
   if [[ -n "${passwordGroup}" ]]; then
@@ -26,8 +23,5 @@ renewApiKey() {
   fi
 
   echo "${generatedApiKey}"
-
-  # Call common function to execute common function start commands, such as unsetting verbose output etc
-  functionEnd
 
 }

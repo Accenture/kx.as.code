@@ -1,8 +1,5 @@
 autoSetupExecuteTask() {
 
-  # Call common function to execute common function start commands, such as setting verbose output etc
-  functionStart
-
   local taskToExecute=${1}
 
   # Check dependent component is installed before executing task
@@ -18,26 +15,26 @@ autoSetupExecuteTask() {
   # Get script to execute
   local taskScriptToExecute=${installComponentDirectory}/available_tasks/$(echo ${metadataForTaskToExecute} | jq -r '.script')
   local rc=0
-  
+
   # Check that script exists
   if [[ -f ${taskScriptToExecute} ]]; then
     log_info "Executing task script \"${taskScriptToExecute}\" in directory ${installComponentDirectory}/available_tasks"
     # Additional reference for notifications
     log_debug "currentTaskScriptExecuting=${taskScriptToExecute}"
     echo "${taskScriptToExecute}" >${installationWorkspace}/.currentTaskScriptExecuting
-    . ${taskScriptToExecute} || rc=$? && log_info "task script \"${taskScriptToExecute}\" returned with rc=$rc"
+    . ${taskScriptToExecute} || local rc=$? && log_info "task script \"${taskScriptToExecute}\" returned with rc=$rc"
+    # Final cleanup after script execution
+    # clearSensitiveDataFromLog "${logFilename}"
+    # clearSensitiveDataFromLog "${installationWorkspace}/kx.as.code_autoSetup.log"
     if [[ ${rc} -ne 0 ]]; then
-        log_error "Execution of task script \"${taskScriptToExecute}\" ended in a non zero return code ($rc)"
-        exit 1
+      log_error "Execution of task script \"${taskScriptToExecute}\" ended in a non zero return code ($rc)"
+      exit 1
     else
-        echo "" >${installationWorkspace}/.currentTaskScriptExecuting
+      echo "" >${installationWorkspace}/.currentTaskScriptExecuting
     fi
   else
     log_error "Cannot execute task \"${taskToExecute}\", as script \"${taskScriptToExecute}\" does not exist"
     exit 1
   fi
-
-  # Call common function to execute common function start commands, such as unsetting verbose output etc
-  functionEnd
 
 }

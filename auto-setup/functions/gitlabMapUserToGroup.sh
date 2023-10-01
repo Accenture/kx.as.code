@@ -1,8 +1,5 @@
 gitlabMapUserToGroup() {
 
-    # Call common function to execute common function start commands, such as setting verbose output etc
-    functionStart
-
     if checkApplicationInstalled "gitlab" "cicd"; then
 
         gitlabUserName=${1}
@@ -15,7 +12,6 @@ gitlabMapUserToGroup() {
         gitlabUserId=$(gitlabGetUserId "${gitlabUserName}")
         gitlabGroupId=$(gitlabGetGroupId "${gitlabGroupName}")
         gitlabRootUserId=$(curl -s --header "Private-Token: ${personalAccessToken}" https://gitlab.${baseDomain}/api/v4/users | jq -r '.[] | select (.username=="root") | .id')
-
 
         # Add new user as group admin to new KX.AS.CODE group
         mappedUser=$(curl -s --header "Private-Token: ${personalAccessToken}" https://gitlab.${baseDomain}/api/v4/groups/${gitlabGroupId}/members | jq '.[] | select(.username=="'${gitlabUserName}'") | .id')
@@ -37,8 +33,5 @@ gitlabMapUserToGroup() {
         fi
 
     fi
-
-    # Call common function to execute common function start commands, such as unsetting verbose output etc
-    functionEnd
     
 }

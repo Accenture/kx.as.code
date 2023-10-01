@@ -1,5 +1,4 @@
 #!/bin/bash
-set -euox pipefail
 
 # Workaround to avoid the error Error: UPGRADE FAILED: cannot patch "gitlab-webservice" with kind Ingress:
 # admission webhook "validate.nginx.ingress.kubernetes.io" denied the request: rejecting admission review

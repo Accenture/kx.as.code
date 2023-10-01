@@ -1,5 +1,4 @@
 #!/bin/bash
-set -euo pipefail
 
 # Wait until API is available before continuing
 checkUrlHealth "https://${componentName}.${baseDomain}/api/v2.0/ping" "200"

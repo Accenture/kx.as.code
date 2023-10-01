@@ -20,6 +20,3 @@ CONF
 /usr/bin/sudo systemctl restart exim4
 
 }
-
-
-

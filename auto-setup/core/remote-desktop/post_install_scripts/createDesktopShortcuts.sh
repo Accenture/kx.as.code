@@ -1,5 +1,4 @@
 #!/bin/bash
-set -euo pipefail
 
 # Put Guacamole Remote Desktop Icon on Desktop
 iconPath=${installComponentDirectory}/remote-desktop.png

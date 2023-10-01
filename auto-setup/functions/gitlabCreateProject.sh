@@ -1,8 +1,5 @@
 createGitlabProject() {
 
-  # Call common function to execute common function start commands, such as setting verbose output etc
-  functionStart
-
   if checkApplicationInstalled "gitlab" "cicd"; then
 
     # Get Gitlab personal access token
@@ -40,8 +37,5 @@ createGitlabProject() {
     fi
 
   fi
-
-  # Call common function to execute common function start commands, such as unsetting verbose output etc
-  functionEnd
 
 }

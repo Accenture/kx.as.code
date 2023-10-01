@@ -1,5 +1,4 @@
 #!/bin/bash
-set -euo pipefail
 
 kubeAdminStatus=""
 if [[ "${kubeOrchestrator}" == "k8s" ]]; then
@@ -114,4 +113,4 @@ kubectl get --raw="/readyz?verbose"
 kubectl get all --all-namespaces
 
 # Ensure user is logged in to Dockerhub if credentials provided
-dockerhubCreateDefaultRegcred
+kubectl get secret regcred -n ${namespace} || dockerhubCreateDefaultRegcred

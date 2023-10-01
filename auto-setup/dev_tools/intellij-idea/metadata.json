@@ -4,8 +4,8 @@
     "installation_type": "script",
     "installation_group_folder": "dev_tools",
     "environment_variables": {
-        "intellijIdeaVersion": "2022.2.1",
-        "intellijIdeaChecksum": "93eb9391a898aad164ca47965e0445cbf0f04d7062b6875c4e4a3136799ee6cf"
+        "intellijIdeaVersion": "2023.2.2",
+        "intellijIdeaChecksum": "cf647137394e27b3011072e463dc2e4bcdd54dc6ea9406e487a47648fc77bd26"
     },
     "plugins_to_install": [
         {

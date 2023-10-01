@@ -1,16 +1,13 @@
 downloadFile() {
 
-  # Call common function to execute common function start commands, such as setting verbose output etc
-  functionStart
-
   local url="${1}"
   local checksum="${2}"
-  local targetPath="${3-}"
-  local user="${4-}"
-  local password="${5-}"
+  local targetPath="${3:-}"
+  local user="${4:-}"
+  local password="${5:-}"
 
   # Set authentication if passed into function
-  if [[ -n ${user} ]] && [[ -n ${password} ]]; then
+  if [[ -n "${user}" ]] && [[ -n "${password}" ]]; then
     local authOption="--user ${user}:${password}"
   else
     local authOption=""
@@ -72,8 +69,5 @@ downloadFile() {
     log_error "Checksum of downloaded file ${outputFilename} NOK"
     exit 1
   fi
-
-  # Call common function to execute common function start commands, such as unsetting verbose output etc
-  functionEnd
 
 }

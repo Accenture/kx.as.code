@@ -1,5 +1,4 @@
 #!/bin/bash
-set -euox pipefail
 
 # Remove docker config from configmap. Work around as helm chart ignores this in values.yaml
 #kubectl get configmap influxdata-telegraf-ds -n ${namespace} --show-managed-fields=false --show-labels=false -o yaml | sed '/docker/d' | kubectl apply -n ${namespace} -f -

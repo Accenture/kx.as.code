@@ -3,10 +3,9 @@ kind: Ingress
 metadata:
   name: console-{{componentName}}
   namespace: {{namespace}}
-  annotations:
-    kubernetes.io/ingress.class: nginx
   managedFields:
 spec:
+  ingressClassName: nginx
   tls:
     - hosts:
         - console-{{componentName}}.{{baseDomain}}

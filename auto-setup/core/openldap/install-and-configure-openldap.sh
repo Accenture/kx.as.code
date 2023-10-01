@@ -1,5 +1,4 @@
 #!/bin/bash
-set -euox pipefail
 
 export ldapServer=127.0.0.1
 
@@ -212,16 +211,15 @@ fi
 # Allow users to change their own passwords
 /usr/bin/sudo ldapsearch -Y EXTERNAL -H ldapi:/// -b cn=config | grep "olcAccess: {0}to attrs=userPassword" || exists=false
 if [[ "${exists}" == "false" ]]; then
-echo '''
-dn: olcDatabase={1}mdb,cn=config
+echo '''dn: olcDatabase={1}mdb,cn=config
 changetype: modify
-add: olcAccess
+replace: olcAccess
 olcAccess: {1}to attrs=userPassword
- by self write
- by anonymous auth
- by dn="cn=admin,'${ldapDn}'" write
- by * none
+  by self write
+  by anonymous auth
+  by dn="cn=admin,'${ldapDn}'" write
+  by * none
 ''' | /usr/bin/sudo tee /etc/ldap/allow_user_password_change.ldif
-/usr/bin/sudo ldapadd -Y EXTERNAL -H ldapi:/// -f /etc/ldap/allow_user_password_change.ldif
-exists=""
+/usr/bin/sudo ldapmodify -Y EXTERNAL -H ldapi:/// -f /etc/ldap/allow_user_password_change.ldif || rc=$?
 fi
+

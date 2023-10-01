@@ -2,35 +2,50 @@
 set -euo pipefail
 
 # Determine CPU architecture
-if [[ -n $( uname -a | grep "aarch64") ]]; then
+if [[ -n $(uname -a | grep "aarch64") ]]; then
   ARCH="arm64"
 else
   ARCH="amd64"
 fi
 
 sudo apt-get -y install \
-    fonts-cantarell \
-    fonts-noto-extra \
-    fonts-powerline \
-    fonts-noto-color-emoji \
-    mesa-utils \
-    software-properties-common \
-    libnss3-tools \
-    xdotool \
-    tmux \
-    libxss1 \
-    fonts-liberation \
-    conky-all \
-    bc \
-    dbus-x11 \
-    pwgen \
-    kde-spectacle \
-    wmctrl \
-    syslinux-utils \
-    gnome-keyring \
-    lynx \
-    bsd-mailx \
-    xprintidle
+  fonts-cantarell \
+  fonts-noto-extra \
+  fonts-powerline \
+  fonts-noto-color-emoji \
+  mesa-utils \
+  software-properties-common \
+  libnss3-tools \
+  xdotool \
+  tmux \
+  libxss1 \
+  fonts-liberation \
+  conky-all \
+  bc \
+  dbus-x11 \
+  pwgen \
+  kde-spectacle \
+  wmctrl \
+  syslinux-utils \
+  gnome-keyring \
+  lynx \
+  bsd-mailx \
+  xprintidle \
+  lnav
+
+# Install SHFMT
+if [[ "${ARCH}" == "arm64" ]]; then
+  shfmtUrl=https://github.com/mvdan/sh/releases/download/v3.7.0/shfmt_v3.7.0_linux_arm64
+  sha256sum="111612560d15bd53d8e8f8f85731176ce12f3b418ec473d39a40ed6bbec772de"
+else
+  shfmtUrl=https://github.com/mvdan/sh/releases/download/v3.7.0/shfmt_v3.7.0_linux_amd64
+  sha256sum="0264c424278b18e22453fe523ec01a19805ce3b8ebf18eaf3aadc1edc23f42e3"
+fi
+filename=$(basename "${shfmtUrl}")
+curl -L -o ${INSTALLATION_WORKSPACE}/${filename} ${shfmtUrl}
+echo "${sha256sum} ${INSTALLATION_WORKSPACE}/${filename}" | sha256sum --check
+sudo mv ${INSTALLATION_WORKSPACE}/${filename} /usr/local/bin/shfmt
+sudo chmod 755 /usr/local/bin/shfmt
 
 # Download and install NeoVIM - version in Debian distribution too old to work with new themes
 curl -L -o ${INSTALLATION_WORKSPACE}/nvim-linux64.deb https://github.com/neovim/neovim/releases/download/v0.7.2/nvim-linux64.deb
@@ -61,17 +76,7 @@ else
 fi
 
 # Install YQ
-yqVersion=4.27.2
-if [[ -n $( uname -a | grep "aarch64") ]]; then
-  curl -L -o ${INSTALLATION_WORKSPACE}/yq https://github.com/mikefarah/yq/releases/download/v${yqVersion}/yq_linux_arm64
-  sha256sum="9ef1d5f08d038024c8c713085b72d42822f458a3bc15d0dd8dad5c4c3678e5d2"
-else
-  curl -L -o ${INSTALLATION_WORKSPACE}/yq https://github.com/mikefarah/yq/releases/download/v${yqVersion}/yq_linux_amd64
-  sha256sum="19a50ad8c7e173d40ae34310164adf19e2eef278db7cb6c4b7efcd097c030600"
-fi
-echo "${sha256sum} ${INSTALLATION_WORKSPACE}/yq" | sha256sum --check
-sudo cp ${INSTALLATION_WORKSPACE}/yq /usr/local/bin/yq
-sudo chmod +x /usr/local/bin/yq
+sudo -H pip3 install yq
 
 # Install Grip for showing WELCOME.md after desktop login
 sudo -H pip3 install grip
@@ -85,35 +90,6 @@ curl -sSL https://git.io/get-mo -o mo
 sudo mv mo /usr/local/bin
 sudo chmod 755 /usr/local/bin/mo
 
-if [[ ${COMPUTE_ENGINE_BUILD} == "true"  ]] || [[ -n $(which raspinfo) ]]; then
-  # Install NoMachine
-  mkdir ${INSTALLATION_WORKSPACE}/nomachine
-  cd ${INSTALLATION_WORKSPACE}/nomachine
-  if [[ -n $( uname -a | grep "aarch64") ]]; then
-    # Download URL for ARM64 CPU architecture
-    NOMACHINE_URL="https://download.nomachine.com/download/7.10/Arm/nomachine_7.10.1_1_arm64.deb"
-    NOMACHINE_CHECKSUM="75fc2a23c73c0dcd9c683b9ebf9fe4d821f9562b3b058441d4989d7fcd4c6977"
-  else
-    # Download URL for X86_64 CPU architecture
-    NOMACHINE_URL="https://download.nomachine.com/download/7.10/Linux/nomachine_7.10.1_1_amd64.deb"
-    NOMACHINE_CHECKSUM="e948895fd41adbded25e4ddc7b9637585e46af9d041afadfd620a2f8bb23362c"
-  fi
-
-  wget ${NOMACHINE_URL}
-  NOMACHINE_FILE=$(basename ${NOMACHINE_URL})
-  echo "${NOMACHINE_CHECKSUM} ${NOMACHINE_FILE}" | sha256sum --check
-
-  sudo apt-get install -y ./${NOMACHINE_FILE}
-  rm -f ./${NOMACHINE_FILE}
-  # Ensure NoMachine starts dedicated virtual display if private or public cloud
-  sudo sed -E -i 's/#PhysicalDisplays(.*)/PhysicalDisplays 1005/g' /usr/NX/etc/node.cfg
-  sudo sed -E -i 's/^DefaultDesktopCommand(.*)/DefaultDesktopCommand "env -u WAYLAND_DISPLAY \/usr\/bin\/dbus-launch --sh-syntax --exit-with-session \/usr\/bin\/startkde"/g' /usr/NX/etc/node.cfg
-  sudo sed -E -i 's/#DisplayBase(.*)/DisplayBase 1005/g' /usr/NX/etc/server.cfg
-  sudo sed -E -i 's/#CreateDisplay(.*)/CreateDisplay 1/g' /usr/NX/etc/server.cfg
-  sudo sed -E -i 's/#DisplayOwner(.*)/DisplayOwner '${VM_USER}'/g' /usr/NX/etc/server.cfg
-  sudo sed -E -i 's/#DisplayGeometry(.*)/DisplayGeometry 1920x1200/g' /usr/NX/etc/server.cfg
-fi
-
 # Enable Desktop Notifications with "notify-send" from bash scripts
 sudo apt-get install -y libnotify-bin
 
@@ -123,6 +99,13 @@ sudo chown ${VM_USER}:${VM_USER} ${INSTALLATION_WORKSPACE}
 sudo chmod 755 ${INSTALLATION_WORKSPACE}
 sudo mkdir -p /home/${VM_USER}
 sudo chown -R ${VM_USER}:${VM_USER} /home/${VM_USER}
+
+# Install inotify-tools from source (version in Debian 11 is outdated)
+cd ${INSTALLATION_WORKSPACE}
+sudo wget http://ftp.debian.org/debian/pool/main/i/inotify-tools/inotify-tools_3.22.6.0-4\~bpo11+1_amd64.deb
+sudo wget http://ftp.debian.org/debian/pool/main/i/inotify-tools/libinotifytools0_3.22.6.0-4\~bpo11+1_amd64.deb
+sudo dpkg --install ./libinotifytools0_3.22.6.0-4~bpo11+1_amd64.deb
+sudo dpkg --install ./inotify-tools_3.22.6.0-4\~bpo11+1_amd64.deb
 
 # Install Node & NPM packages
 sudo git clone -b v0.39.1 https://github.com/nvm-sh/nvm.git /opt/nvm
@@ -142,20 +125,25 @@ echo '''#!/bin/bash
 VERSION=$(cat /usr/local/nvm/alias/$(cat /usr/local/nvm/alias/default))
 export PATH="/usr/local/nvm/versions/node/$VERSION/bin:$PATH"
 export NVM_DIR=/usr/local/nvm
-source /opt/nvm/nvm.sh
+. /opt/nvm/nvm.sh
 ''' | sudo tee -a /etc/profile.d/nvm.sh
 sudo chmod +x /etc/profile.d/nvm.sh
 
 sudo chown -R ${BASE_IMAGE_SSH_USER}:${BASE_IMAGE_SSH_USER} /home/${BASE_IMAGE_SSH_USER}
 
+# Install OpenVPN3
+curl -fsSL https://swupdate.openvpn.net/repos/openvpn-repo-pkg-key.pub | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/openvpn-repo-pkg-keyring.gpg
+DISTRO=$(lsb_release -c | awk '{print $2}')
+sudo curl -fsSL https://swupdate.openvpn.net/community/openvpn3/repos/openvpn3-${DISTRO}.list -o /etc/apt/sources.list.d/openvpn3.list
+sudo apt-get update
+sudo apt-get install -y openvpn3
+
 # Compiling OpenLens for later installation when KX.AS.CODE comes up
 cd ${INSTALLATION_WORKSPACE}
 sudo chmod 777 ${INSTALLATION_WORKSPACE}
-export lensVersion="v6.4.15"
+export lensVersion="v6.5.2"
 git clone --depth 1 --branch ${lensVersion} https://github.com/lensapp/lens.git
 cd ${INSTALLATION_WORKSPACE}/lens
-# Remove AppImage and RPM from Linux build targets
-sudo sed -i -e '/"rpm",/d' -e '/"AppImage"/d' -e 's/"deb",/"deb"/' ${INSTALLATION_WORKSPACE}/lens/packages/open-lens/package.json
 source /etc/profile.d/nvm.sh
 
 # Build OpenLens
@@ -170,9 +158,9 @@ if [[ -z $(which raspinfo) ]]; then
     npm config set fetch-retry-mintimeout 20000
     npm config set fetch-retry-maxtimeout 120000
     npm config set fetch-timeout 600000
-    yarn
-    yarn run build
-    yarn run build:app || rc=$?
+    npm run all:install
+    sudo sed -i -e '/"rpm",/d' -e '/"AppImage"/d' -e 's/"deb",/"deb"/' ${INSTALLATION_WORKSPACE}/lens/open-lens/package.json
+    npx nx run open-lens:build:app --x64
     if [[ ${rc} -ne 0 ]]; then
       echo "Open-Lens build attempt #${i} failed. Trying again (max 3 times)."
       rc=0 # Reset rc before next run
@@ -181,8 +169,8 @@ if [[ -z $(which raspinfo) ]]; then
       break
     fi
   done
- debOpenLensInstaller=$(find ${INSTALLATION_WORKSPACE}/lens/packages/open-lens/dist -name "OpenLens-*.deb")
- sudo mv ${debOpenLensInstaller} ${INSTALLATION_WORKSPACE}
- # Tidy up
- sudo rm -rf ${INSTALLATION_WORKSPACE}/lens || true
+  debOpenLensInstaller=$(find ${INSTALLATION_WORKSPACE}/lens/open-lens/dist -name "OpenLens-*.deb")
+  sudo mv ${debOpenLensInstaller} ${INSTALLATION_WORKSPACE}
+  # Tidy up
+  sudo rm -rf ${INSTALLATION_WORKSPACE}/lens || true
 fi

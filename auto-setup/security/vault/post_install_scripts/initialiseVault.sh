@@ -1,5 +1,4 @@
 #!/bin/bash
-set -euox pipefail
 
 export vaultInitializedStatusJson=$(kubectl exec -n ${namespace} vault-0 -- vault status -format=json)
 export vaultInitializedStatus=$(echo ${vaultInitializedStatusJson} | jq -r '.initialized')
