@@ -1,5 +1,4 @@
 #!/bin/bash
-set -euox pipefail
 
 if [[ "${vmUser}" != "${baseUser}" ]]; then
   # Check if owner details defined in users.json
