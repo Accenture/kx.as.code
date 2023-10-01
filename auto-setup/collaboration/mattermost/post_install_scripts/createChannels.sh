@@ -1,5 +1,4 @@
 #!/bin/bash
-set -euo pipefail
 
 # Get Mattermost team id
 kxascodeTeamId=$(mattermostGetTeamId "kxascode")

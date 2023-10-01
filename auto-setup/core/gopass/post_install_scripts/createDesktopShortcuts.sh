@@ -1,5 +1,4 @@
 #!/bin/bash
-set -euo pipefail
 
 shortcutIcon=$(cat ${componentMetadataJson} | jq -r '.shortcut_icon')
 shortcutText=$(cat ${componentMetadataJson} | jq -r '.shortcut_text')
@@ -21,6 +20,9 @@ Categories=Development
 Actions=new-window;new-private-window;
 EOF
 
+# Also make GoPass icon available in applications folder
+cp "${adminShortcutsDirectory}"/"${shortcutText}" "${applicationShortcutsDirectory}"
+
 # Give *.desktop files execute permissions
-chmod 755 "${adminShortcutsDirectory}"/"${shortcutText}"
-chown ${baseUser}:${baseUser} "${adminShortcutsDirectory}"/"${shortcutText}"
+chmod 755 "${adminShortcutsDirectory}"/"${shortcutText}" "${applicationShortcutsDirectory}"/"${shortcutText}"
+chown ${baseUser}:${baseUser} "${adminShortcutsDirectory}"/"${shortcutText}" "${applicationShortcutsDirectory}"/"${shortcutText}"

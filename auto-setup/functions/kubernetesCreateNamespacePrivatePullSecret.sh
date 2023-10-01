@@ -16,4 +16,5 @@ kubernetesCreateNamespacePrivatePullSecret() {
   else
     log_info "Not adding pull secret to namespace for core local docker-registry, as docker-registry not yet running"
   fi
+  
 }

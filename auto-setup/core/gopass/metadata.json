@@ -14,15 +14,23 @@
         "gopassArm64Version": "1.14.4",
         "gopassArm64Checksum": "8d6a63436d8a79a0b590cfb71e4f1f732d0756a8cab322c544c16ef8563f1307"
     },
-    "install_scripts": [
-        "install-and-configure-gopass.sh"
-    ],
     "Description": "gopass is a password manager for the command line written in Go.",
     "shortcut_text": "GoPass UI",
     "shortcut_icon": "gopass.png",
     "pre_install_scripts": [],
+    "install_scripts": [
+        "install-and-configure-gopass.sh"
+    ],
     "post_install_scripts": [
         "loadInitialPasswordsAndCleanup.sh",
         "createDesktopShortcuts.sh"
+    ],
+    "available_tasks": [
+        {
+            "name": "reconfigureRestartKxPortal",
+            "title": "Reconfigure and restart the KX-Portal",
+            "description": "Reconfigures and restarts KX-Portal to ensure new components and tasks are picked up",
+            "script": "reconfigureRestartKxPortal.sh"
+        }
     ]
 }

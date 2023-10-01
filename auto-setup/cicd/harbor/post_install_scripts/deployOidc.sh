@@ -1,4 +1,4 @@
-#!/bin/bash -eux
+#!/bin/bash
 
 # Integrate solution with Keycloak
 redirectUris="https://${componentName}.${baseDomain}/c/oidc/callback"

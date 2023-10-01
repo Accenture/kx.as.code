@@ -1,5 +1,4 @@
 #!/bin/bash
-set -euo pipefail
 
 # Add CA certs secret for the local domain
 kubectl get secret kx-certificates -n ${namespace} || \

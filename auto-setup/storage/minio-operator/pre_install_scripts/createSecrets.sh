@@ -1,5 +1,4 @@
 #!/bin/bash
-set -euox pipefail
 
 # Check if secret already exists in case of re-run of this script
 if [ -z $(kubectl get secrets -n minio-operator --output=name --field-selector metadata.name=minio-admin-secret) ]; then

@@ -1,5 +1,4 @@
 #!/bin/bash
-set -euo pipefail
 
 # Add KX.AS.CODE CA cert to NeuVector namespace
 kubectl get secret kx-certificates --namespace=${namespace} ||

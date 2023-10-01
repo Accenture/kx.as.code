@@ -1,5 +1,4 @@
 #!/bin/bash
-set -euox pipefail
 
 # Add regcred secret to TeamCity namespace
 createK8sCredentialSecretForCoreRegistry

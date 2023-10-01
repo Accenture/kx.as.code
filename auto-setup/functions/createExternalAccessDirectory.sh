@@ -1,8 +1,5 @@
 createExternalAccessDirectory() {
 
-  # Call common function to execute common function start commands, such as setting verbose output etc
-  functionStart
-
   if [[ -d /vagrant ]]; then
     if [[ -z $(df -h | grep vagrant) ]]; then
       /usr/bin/sudo mount -a
@@ -21,8 +18,4 @@ createExternalAccessDirectory() {
 
   log_debug "Set externalAccessDirectory to ${externalAccessDirectory}"
 
-  # Call common function to execute common function start commands, such as unsetting verbose output etc
-  functionEnd
-
 }
-

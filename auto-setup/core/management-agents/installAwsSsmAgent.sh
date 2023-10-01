@@ -1,5 +1,4 @@
 #!/bin/bash
-set -euo pipefail
 
 # Install AWS SSM Agent if running in AWS
 deployedAwsAmiImage=$(cat ${profileConfigJsonPath} | jq -r '.vm_properties.kx_main_ami_id')

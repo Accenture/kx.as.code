@@ -1,5 +1,4 @@
 #!/bin/bash
-set -euo pipefail
 
 # Set variables for base DN
 export ldapDn=$(/usr/bin/sudo slapcat | grep dn | head -1 | cut -f2 -d' ')

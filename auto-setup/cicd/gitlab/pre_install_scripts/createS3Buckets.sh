@@ -1,5 +1,4 @@
 #!/bin/bash
-set -euo pipefail
 
 # Create S3 Tenant for Gitlab
 minioS3CreateTenant "gitlab"

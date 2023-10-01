@@ -1,12 +1,9 @@
 deletePassword() {
 
-  # Call common function to execute common function start commands, such as setting verbose output etc
-  functionStart
-
   passwordName=${1}
-  passwordGroup=${2-}
+  passwordGroup=${2:-}
 
-  if [[ "${passwordGroup}" == "base-technical-credentials" ]]; then
+  if [[ "${passwordGroup}" == "base-technical-credentials" ]] || [[ -n "$(echo ${coreGopassGroups} | grep -Eo '(^|[[:space:]])'${passwordGroup}'([[:space:]]|$)')" ]]; then
     # If technical admin password, push to root GoPass repository, instead of the base user's
     local gopassUser="root"
   elif [[ -n $(echo "${passwordName}" | grep -E "user-.*-password") ]] && [[ "${passwordGroup}" == "users" ]]; then
@@ -24,8 +21,5 @@ deletePassword() {
   else
     /usr/bin/sudo -H -i -u ${gopassUser} bash -c "gopass delete --force \"${baseDomain}/${passwordName}\""
   fi
-
-  # Call common function to execute common function start commands, such as unsetting verbose output etc
-  functionEnd
   
 }

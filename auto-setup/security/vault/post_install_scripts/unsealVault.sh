@@ -1,5 +1,4 @@
 #!/bin/bash
-set -euox pipefail
 
 vaultSealStatus=$(kubectl exec -n ${namespace} vault-0 -- vault status -format=json | jq -r '.sealed')
 if [[ "${vaultSealStatus}" == "true"   ]]; then

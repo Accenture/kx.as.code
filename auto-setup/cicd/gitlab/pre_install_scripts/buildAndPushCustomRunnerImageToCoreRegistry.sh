@@ -1,5 +1,4 @@
 #!/bin/bash
-set -euox pipefail
 
 # Change into workspace so it finds the CA certificates
 cd ${installationWorkspace}

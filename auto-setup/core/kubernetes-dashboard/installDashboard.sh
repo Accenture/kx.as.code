@@ -1,5 +1,4 @@
 #!/bin/bash
-set -euo pipefail
 
 # Install Kubernetes Dashboard
 curl https://raw.githubusercontent.com/kubernetes/dashboard/v${kubernetesDashboardVersion}/aio/deploy/recommended.yaml --output ${installationWorkspace}/dashboard.yaml

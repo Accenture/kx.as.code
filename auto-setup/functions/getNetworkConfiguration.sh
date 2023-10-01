@@ -1,8 +1,5 @@
 getNetworkConfiguration() {
 
-  # Call common function to execute common function start commands, such as setting verbose output etc
-  functionStart
-
   # Determine which NIC to bind to, to avoid binding to internal VirtualBox NAT NICs for example, where all hosts have the same IP - 10.0.2.15
   export nicList=$(nmcli device show | grep -E 'enp|ens|eth0' | grep 'GENERAL.DEVICE' | awk '{print $2}')
   export ipsToExclude="10.0.2.15"   # IP addresses not to configure with static IP. For example, default Virtualbox IP 10.0.2.15
@@ -27,7 +24,4 @@ getNetworkConfiguration() {
   echo "NIC exclusions: ${nicExclusions}"
   echo "NIC to use: ${netDevice}"
 
-  # Call common function to execute common function start commands, such as unsetting verbose output etc
-  functionEnd
-  
 }

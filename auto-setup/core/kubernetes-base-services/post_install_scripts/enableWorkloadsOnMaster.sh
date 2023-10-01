@@ -1,5 +1,4 @@
 #!/bin/bash
-set -euo pipefail
 
 # Allow worklads on master if toggle set to allow this on KX.AS.CODE launcher
 allowWorkloadsOnMaster=$(cat ${profileConfigJsonPath} | jq -r '.config.allowWorkloadsOnMaster')

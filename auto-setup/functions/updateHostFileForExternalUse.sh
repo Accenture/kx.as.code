@@ -1,8 +1,5 @@
 updateHostFileForExternalUse() {
 
-  # Call common function to execute common function start commands, such as setting verbose output etc
-  functionStart
-
   # Check if "externalAccessDirectory" directory exists and create if not
   createExternalAccessDirectory
 
@@ -20,8 +17,5 @@ updateHostFileForExternalUse() {
   fi
 
   echo "${lbExternalIpAddress}       ${ingressTlsUrls}" | /usr/bin/sudo tee -a ${externalAccessDirectory}/hosts
-
-  # Call common function to execute common function start commands, such as unsetting verbose output etc
-  functionEnd
 
 }

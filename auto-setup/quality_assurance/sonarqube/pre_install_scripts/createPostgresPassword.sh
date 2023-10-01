@@ -1,5 +1,4 @@
 #!/bin/bash
-set -euo pipefail
 
 # Create postgresql password or use existing if it already exists
 postgresqlPasswordExists=$(kubectl get secret --namespace ${namespace} sonarqube-postgresql -o json | jq -r '.data."postgresql-password"')

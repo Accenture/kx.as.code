@@ -1,8 +1,5 @@
 configureNetwork() {
 
-# Call common function to execute common function start commands, such as setting verbose output etc
-functionStart
-
 # Ensure hostname is in hosts file to avoid warnings when using sudo
 if [[ -z $(cat /etc/hosts | grep $(hostname)) ]]; then
   sed -i '/127.0.1.1/ s/$/ '$(hostname)'/' /etc/hosts
@@ -49,12 +46,12 @@ if [[ "$(cat ${profileConfigJsonPath} | jq -r '.state.networking_configuration_s
         fi
         local dnsServerList=$(echo "${dnsServerList}" | sed 's/^,//')
         echo "supersede domain-name-servers ${dnsServerList};" | /usr/bin/sudo tee -a /etc/dhcp/dhclient.conf
-        echo '''
-        #!/bin/sh
-        make_resolv_conf(){
-            :
-        }
-        ''' | sed -e 's/^[ \t]*//' | sed 's/:/    :/g' | /usr/bin/sudo tee /etc/dhcp/dhclient-enter-hooks.d/nodnsupdate
+sudo bash -c "cat << 'EOF' > /etc/dhcp/dhclient-enter-hooks.d/nodnsupdate
+#!/bin/sh
+make_resolv_conf(){
+    :
+}
+EOF"
         /usr/bin/sudo chmod +x /etc/dhcp/dhclient-enter-hooks.d/nodnsupdate
     fi
 
@@ -72,10 +69,12 @@ if [[ "$(cat ${profileConfigJsonPath} | jq -r '.state.networking_configuration_s
         fixedNicMac=$(cat /sys/class/net/${netDevice}/address)
         nicExclusions=$(echo -n "${nicExclusions//[[:space:]]/}")
 
-echo """network:
+sudo bash -c "cat << 'EOF' > /etc/netplan/kx-netplan.yaml
+network:
   version: 2
   renderer: NetworkManager
-  ethernets:""" | /usr/bin/sudo tee /etc/netplan/kx-netplan.yaml
+  ethernets:
+EOF"
 
 if [[ -n ${nicExclusions} ]]; then
   for nic in ${nicExclusions}; do
@@ -83,30 +82,33 @@ if [[ -n ${nicExclusions} ]]; then
     existingNicGateway=$(ip route | grep ${nic} | awk '/default/ { print $3 }')
     existingNicMac=$(cat /sys/class/net/${nic}/address)
     nicExclusions=$(echo -n "${nicExclusions//[[:space:]]/}")
-echo """      ${nic}:
+sudo bash -c "cat << 'EOF' >> /etc/netplan/kx-netplan.yaml
+      ${nic}:
           match:
-              macaddress: "${existingNicMac}"
+              macaddress: \"${existingNicMac}\"
           dhcp4: no
           addresses:
               - ${existingNicIpAddress}/24
           gateway4: ${existingNicGateway}
           nameservers:
-              addresses: [${fixedNicConfigDns1}, ${fixedNicConfigDns2}]""" | /usr/bin/sudo tee -a /etc/netplan/kx-netplan.yaml
+              addresses: [${fixedNicConfigDns1}, ${fixedNicConfigDns2}]
+EOF"
   done
 fi
 
 if [[ -n ${netDevice} ]]; then
 fixedNicMac=$(cat /sys/class/net/${netDevice}/address)
-echo """      ${netDevice}:
+sudo bash -c "cat << 'EOF' >> /etc/netplan/kx-netplan.yaml
+      ${netDevice}:
           match:
-              macaddress: "${fixedNicMac}"
+              macaddress: \"${fixedNicMac}\"
           dhcp4: no
           addresses:
               - ${mainIpAddress}/24
           gateway4: ${fixedNicConfigGateway}
           nameservers:
               addresses: [${fixedNicConfigDns1}, ${fixedNicConfigDns2}]
-""" | /usr/bin/sudo tee -a /etc/netplan/kx-netplan.yaml
+EOF"
 fi
 
         /usr/bin/sudo netplan try
@@ -128,27 +130,30 @@ fi
         httpProxySettingBase=$(echo ${httpProxySetting} | sed 's/https:\/\///g' | sed 's/http:\/\///g')
         httpsProxySettingBase=$(echo ${httpsProxySetting} | sed 's/https:\/\///g' | sed 's/http:\/\///g')
 
-        echo '''
-        [Service]
-        Environment="HTTP_PROXY='${httpProxySettingBase}'/" "HTTPS_PROXY='${httpsProxySettingBase}'/" "NO_PROXY=localhost,127.0.0.1,.'${baseDomain}'"
-        ''' | /usr/bin/sudo tee /etc/systemd/system/docker.service.d/http-proxy.conf
+sudo bash -c "cat << 'EOF' > /etc/systemd/system/docker.service.d/http-proxy.conf
+[Service]
+Environment=\"HTTP_PROXY=${httpProxySettingBase}/\" \"HTTPS_PROXY=${httpsProxySettingBase}/\" \"NO_PROXY=localhost,127.0.0.1,.${baseDomain}\"
+EOF"
 
         systemctl daemon-reload
         systemctl restart docker
 
         baseip=$(echo ${mainIpAddress} | cut -d'.' -f1-3)
 
-        echo '''
-        export http_proxy='${httpProxySetting}'
-        export HTTP_PROXY=$http_proxy
-        export https_proxy='${httpsProxySetting}'
-        export HTTPS_PROXY=$https_proxy
-        printf -v lan '"'"'%s,'"'"' '${mainIpAddress}'
-        printf -v pool '"'"'%s,'"'"' '${baseip}'.{1..253}
-        printf -v service '"'"'%s,'"'"' '${baseip}'.{1..253}
-        export no_proxy="${lan%,},${service%,},${pool%,},127.0.0.1,.'${baseDomain}'";
-        export NO_PROXY=$no_proxy
-        ''' | /usr/bin/sudo tee -a /root/.bashrc /root/.zshrc /home/${baseUser}/.bashrc /home/${baseUser}/.zshrc
+for file in /root/.bashrc /root/.zshrc /home/${baseUser}/.bashrc /home/${baseUser}/.zshrc
+do
+sudo bash -c "cat << 'EOF' >> ${file}
+export http_proxy=${httpProxySetting}
+export HTTP_PROXY=\$http_proxy
+export https_proxy=${httpsProxySetting}
+export HTTPS_PROXY=\$https_proxy
+printf -v lan '%s,' ${mainIpAddress}
+printf -v pool '%s,' ${baseip}.{1..253}
+printf -v service '%s,' ${baseip}.{1..253}
+export no_proxy=\"\${lan%,},\${service%,},\${pool%,},127.0.0.1,.${baseDomain}\";
+export NO_PROXY=\$no_proxy
+EOF"
+done
 
     fi
 
@@ -187,8 +192,5 @@ else
   log_info "All good. No NICs to update with \"ipv4.ignore-auto-dns yes\""
 fi
 IFS=$OLD_IFS
-
-# Call common function to execute common function start commands, such as unsetting verbose output etc
-functionEnd
 
 }

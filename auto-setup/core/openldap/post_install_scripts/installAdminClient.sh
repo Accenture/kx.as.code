@@ -1,5 +1,4 @@
 #!/bin/bash
-set -euo pipefail
 
 # Install LDAP Account Manager
 /usr/bin/sudo apt-get remove -y ldap-account-manager

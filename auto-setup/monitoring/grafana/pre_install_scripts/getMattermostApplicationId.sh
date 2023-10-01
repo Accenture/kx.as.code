@@ -1,5 +1,4 @@
 #!/bin/bash
-set -euo pipefail
 
 # Only execute the next step if Mattermost is installed
 if [[ $(checkApplicationInstalled "mattermost" "collaboration") ]]; then

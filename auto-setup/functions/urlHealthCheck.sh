@@ -1,8 +1,5 @@
 checkUrlHealth() {
 
-  # Call common function to execute common function start commands, such as setting verbose output etc
-  functionStart
-
   urlToCall=${1}
   expectedHttpResponseCode=${2:-200}
   curlAuthOption=${3:-} # Optional. Set to empty default value if not set.
@@ -23,8 +20,5 @@ checkUrlHealth() {
   if [[ ${urlStatus} == "NOK" ]]; then
     log_error "Health checks for ${urlToCall} ended in error. Check the logs and try again"
   fi
-
-  # Call common function to execute common function start commands, such as unsetting verbose output etc
-  functionEnd
   
 }

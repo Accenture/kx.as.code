@@ -1,8 +1,5 @@
 autoSetupPreInstallSteps() {
 
-  # Call common function to execute common function start commands, such as setting verbose output etc
-  functionStart
-
   local blockScriptExecution="false"
   if [[ "${retryMode}" == "true" ]] && [[ "${retryInstallPhase}" == "pre_install_scripts" ]]; then
     blockScriptExecution="true"
@@ -32,7 +29,7 @@ autoSetupPreInstallSteps() {
         updateStorageClassIfNeeded "${installComponentDirectory}/pre_install_scripts/${script}"
         # Export retry data in case an error errors and the component installation needs to be retried
         autoSetupSaveRetryData "1" "pre_install_scripts" "${script}" "${payload}"
-        . ${installComponentDirectory}/pre_install_scripts/${script} || rc=$? && log_info "${installComponentDirectory}/pre_install_scripts/${script} returned with rc=$rc"
+        . ${installComponentDirectory}/pre_install_scripts/${script} || local rc=$? && log_info "${installComponentDirectory}/pre_install_scripts/${script} returned with rc=$rc"
         if [[ ${rc} -ne 0 ]]; then
           log_error "Execution of pre install script \"${script}\" ended in a non zero return code ($rc)"
           exit 1
@@ -42,9 +39,5 @@ autoSetupPreInstallSteps() {
       fi
     fi
   done
-
-  # Call common function to execute common function start commands, such as unsetting verbose output etc
-  functionEnd
    
 }
-

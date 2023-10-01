@@ -1,5 +1,4 @@
 #!/bin/bash
-set -euo pipefail
 
 # The annotation for HTTP Version 1.0 below is a workaround for an issue described here: https://github.com/argoproj/argo-cd/issues/3896
 echo '''

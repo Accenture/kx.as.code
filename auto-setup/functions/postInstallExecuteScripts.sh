@@ -1,8 +1,5 @@
 executePostInstallScripts() {
 
-  # Call common function to execute common function start commands, such as setting verbose output etc
-  functionStart
-
   local blockScriptExecution="false"
   if [[ "${retryMode}" == "true" ]] && [[ "${retryInstallPhase}" == "post_install_scripts" ]]; then
     blockScriptExecution="true"
@@ -31,7 +28,7 @@ executePostInstallScripts() {
       if [[ "${blockScriptExecution}" != "true" ]]; then
         # Export retry data in case an error errors and the component installation needs to be retried
         autoSetupSaveRetryData "5" "post_install_scripts" "${script}" "${payload}"
-        . ${installComponentDirectory}/post_install_scripts/${script} || rc=$? && log_info "${installComponentDirectory}/post_install_scripts/${script} returned with rc=$rc"
+        . ${installComponentDirectory}/post_install_scripts/${script} || local rc=$? && log_info "${installComponentDirectory}/post_install_scripts/${script} returned with rc=$rc"
       fi
       if [[ ${rc} -ne 0 ]]; then
         log_error "Execution of post install script \"${script}\" ended in a non zero return code ($rc)"
@@ -41,8 +38,5 @@ executePostInstallScripts() {
       fi
     fi
   done
-
-  # Call common function to execute common function start commands, such as unsetting verbose output etc
-  functionEnd
 
 }

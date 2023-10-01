@@ -1,5 +1,4 @@
 #!/bin/bash
-set -euox pipefail
 
 # Create InfluxDB2 admin password
 export influxdb2AdminPassword=''$(managedPassword "influxdb2-admin-password" "influxdb2")''

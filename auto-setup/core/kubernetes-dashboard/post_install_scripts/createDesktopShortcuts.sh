@@ -1,5 +1,4 @@
 #!/bin/bash
-set -euo pipefail
 
 shortcutIcon=$(cat ${componentMetadataJson} | jq -r '.shortcut_icon')
 shortcutText=$(cat ${componentMetadataJson} | jq -r '.shortcut_text')
@@ -37,7 +36,6 @@ fi
 # Create Get Admin Token Script
 cat << EOF > /usr/share/kx.as.code/getK8sClusterAdminToken.sh
 #!/bin/bash
-set -euo pipefail
 
 # Get token for logging onto Kubernetes dashboard
 kubectl --kubeconfig /home/${baseUser}/.kube/config get secret \$(kubectl --kubeconfig /home/${baseUser}/.kube/config get serviceaccount dashboard -o jsonpath="{.secrets[0].name}") -o jsonpath="{.data.token}" | base64 --decode

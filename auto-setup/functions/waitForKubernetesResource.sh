@@ -1,8 +1,5 @@
 waitForKubernetesResource() {
 
-  # Call common function to execute common function start commands, such as setting verbose output etc
-  functionStart
-
   export resourceName=${1}
   export resourceType=${2}
   export resourceNamespace=${3-${namespace}}
@@ -13,8 +10,5 @@ waitForKubernetesResource() {
     do \
       echo "Waiting for Kubernetes \"'${resourceType}'\" resource with name \"'${resourceName}'\" to be available in \"'${resourceNamespace}'\" namespace" && sleep 3; \
   done' ${1} ${2}
-
-  # Call common function to execute common function start commands, such as unsetting verbose output etc
-  functionEnd
   
 }

@@ -1,8 +1,5 @@
 waitForMessageOnActionQueue() {
 
-  # Call common function to execute common function start commands, such as setting verbose output etc
-  functionStart
-
   local queueName="${1}"
   local componentName="${2}"
 
@@ -12,8 +9,5 @@ waitForMessageOnActionQueue() {
     do \
       echo "Waiting for payload for \"'${componentName}'\" to arrive in \"'${queueName}'\" message queue" && sleep 3; \
   done'
-
-  # Call common function to execute common function start commands, such as unsetting verbose output etc
-  functionEnd
 
 }

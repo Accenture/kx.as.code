@@ -1,5 +1,4 @@
 #!/bin/bash
-set -euo pipefail
 
 # Get MinIO Access Access and Secret Keys
 if [[ $(checkApplicationInstalled "minio-operator" "storage") ]]; then

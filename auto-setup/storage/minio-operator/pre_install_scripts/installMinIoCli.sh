@@ -1,5 +1,4 @@
 #!/bin/bash
-set -euo pipefail
 
 # Install MinIO command line tool (mc) if not yet install
 if [ ! -f /usr/local/bin/mc ]; then

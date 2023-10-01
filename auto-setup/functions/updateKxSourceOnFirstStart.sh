@@ -1,8 +1,5 @@
 updateKxSourceOnFirstStart() {
 
-  # Call common function to execute common function start commands, such as setting verbose output etc
-  functionStart
-
   if [[ "${updateSourceOnStart}" == "true" ]] && [[ "$(cat ${profileConfigJsonPath} | jq -r '.state.networking_configuration_status')" != "done" ]]; then
 
   # Ensure no Windows characters blocking decryption
@@ -35,20 +32,23 @@ updateKxSourceOnFirstStart() {
    cd ${sharedGitHome}/kx.as.code
 
    # Set origin to include credentials if applicable
-   gitOriginUrl=$(git config --get remote.origin.url)
+   local gitOriginUrlOriginal=$(git config --get remote.origin.url)
    if [[ -n ${gitUsername} ]] && [[ -n ${gitPassword} ]]; then
-     gitOriginUrlTemp=$(echo ${gitOriginUrl} | sed 's;https://;;g')
-     gitOriginUrl="https://${gitUsername}:${gitPassword}@${gitOriginUrlTemp}"
+     local gitOriginUrlCleaned=$(echo "${gitOriginUrlOriginal}" | sed 's/'${gitUsername}':'${gitPassword}'@//g')
+     local gitOriginUrlTemp=$(echo ${gitOriginUrlCleaned} | sed 's;https://;;g')
+     local gitOriginUrl="https://${gitUsername}:${gitPassword}@${gitOriginUrlTemp}"
+     # Update git remote origin
+     git remote set-url origin ${gitOriginUrl}
    fi
 
    # Get current branch
-   currentGitBranch=$(git branch --show-current)
+   local currentGitBranch=$(git branch --show-current)
 
    # Initial checkout was shallow. Updating tracked refs to allow checkout of other branches
    /usr/bin/sudo git remote set-branches origin '*'
 
    # Fetch changes before pulling in order to generate a change log
-   /usr/bin/sudo git fetch ${gitOriginUrl} ${currentGitBranch} -v
+   /usr/bin/sudo git fetch origin ${currentGitBranch}
 
    # Generate detailed change log
    git --no-pager diff ${currentGitBranch} remotes/origin/${currentGitBranch} | /usr/bin/sudo tee ${installationWorkspace}/gitChangeLogDetailed.log
@@ -57,16 +57,15 @@ updateKxSourceOnFirstStart() {
    git --no-pager diff ${currentGitBranch} remotes/origin/${currentGitBranch} --name-status | /usr/bin/sudo tee ${installationWorkspace}/gitChangeLogSummary.log
 
    # Pull latest code from current branch. If you want to switch to another branch, you will have to navigate to the git directory and do it manually
-   /usr/bin/sudo git pull ${gitOriginUrl} ${currentGitBranch} --no-edit
+   /usr/bin/sudo git pull --no-edit
 
-   # Correct permissions.
-   /usr/bin/sudo chown -R ${baseUser}:${baseUser} ${sharedGitHome}
+   if [[ -n ${gitUsername} ]] && [[ -n ${gitPassword} ]]; then
+     # Remove credentials from remote origin
+     sudo sed -i 's/'${gitUsername}':'${gitPassword}'@//g' ${sharedGitHome}/kx.as.code/.git/config
+   fi
 
    log_debug "Pulled the latest code from ${currentGitBranch}, which is the branch this image was built with."
 
   fi
-
-  # Call common function to execute common function start commands, such as unsetting verbose output etc
-  functionEnd
 
 }

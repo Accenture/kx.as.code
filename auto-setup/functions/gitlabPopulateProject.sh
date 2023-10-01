@@ -1,14 +1,11 @@
 populateGitlabProject() {
 
-  # Call common function to execute common function start commands, such as setting verbose output etc
-  functionStart
-
   if checkApplicationInstalled "gitlab" "cicd"; then
 
     gitlabProjectName="${1}"
     gitlabRepoName="${2}"
     sourceCodeLocation="${3}"
-    itemsToExclude="${4-}" # Optional. Default value set to empty if not set.
+    itemsToExclude="${4:-}" # Optional. Default value set to empty if not set.
 
     # Create base directory for Gitlab Demo repositories
     mkdir -p ${installationWorkspace}/staging/
@@ -63,7 +60,4 @@ populateGitlabProject() {
 
   fi
 
-    # Call common function to execute common function start commands, such as unsetting verbose output etc
-    functionEnd
-    
 }

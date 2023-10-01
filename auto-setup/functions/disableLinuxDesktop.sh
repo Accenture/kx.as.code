@@ -1,8 +1,5 @@
 disableLinuxDesktop() {
 
-  # Call common function to execute common function start commands, such as setting verbose output etc
-  functionStart
-
   # Read disable linux desktop property from profile configuration
   disableLinuxDesktop=$(cat ${profileConfigJsonPath} | jq -r '.config.disableLinuxDesktop')
 
@@ -20,7 +17,4 @@ disableLinuxDesktop() {
 
   fi
 
-  # Call common function to execute common function start commands, such as unsetting verbose output etc
-  functionEnd
-  
 }

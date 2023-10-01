@@ -1,5 +1,4 @@
 #!/bin/bash
-set -euox pipefail
 
 # Create and export password variable for later mustache substitution
 export nextcloudAdminPassword=$(managedPassword "nextcloud-admin-password" "nextcloud")

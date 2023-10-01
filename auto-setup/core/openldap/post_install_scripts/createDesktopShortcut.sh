@@ -1,5 +1,4 @@
 #!/bin/bash
-set -euo pipefail
 
 # Add Desktop Icon to SKEL directory
 shortcutIcon=ldap-account-manager.png

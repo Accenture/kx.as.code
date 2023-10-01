@@ -1,5 +1,4 @@
 #!/bin/bash
-set -euox pipefail
 
 # Copy code to KX.AS.CODE home
 mkdir -p ${sharedKxHome}/ldap-self-service-portal

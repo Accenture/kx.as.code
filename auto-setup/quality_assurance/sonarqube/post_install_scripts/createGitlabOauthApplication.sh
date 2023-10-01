@@ -1,5 +1,4 @@
 #!/bin/bash
-set -euo pipefail
 
 export personalAccessToken=$(getPassword "gitlab-personal-access-token" "gitlab")
 

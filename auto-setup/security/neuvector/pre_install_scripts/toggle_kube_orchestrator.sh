@@ -1,5 +1,4 @@
 #!/bin/bash
-set -euo pipefail
 
 # Set variables for later function "autoSetupHelmInstall()" which will replace the {{ mustache }} variables in values_template.yaml via the envhandlebars utility
 
