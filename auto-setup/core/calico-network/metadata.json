@@ -4,8 +4,9 @@
     "installation_type": "script",
     "installation_group_folder": "core",
     "environment_variables": {
-        "calicoVersion": "v3.19",
-        "calicoCtlVersion": "v3.19.1"
+        "calicoVersion": "v3.26.1",
+        "calicoCtlVersion": "v3.26.1",
+      	"calicoCtlChecksum": "c8f61c1c8e2504410adaff4a7255c65785fe7805eebfd63340ccd3c472aa42cf"
     },
     "retry": "true",
     "install_scripts": [
