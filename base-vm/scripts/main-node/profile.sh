@@ -1,5 +1,5 @@
-#!/bin/bash -x
-set -euo pipefail
+#!/bin/bash
+set -euox pipefail
 
 # Update SKEL Desktop files with correct browser path
 export preferredBrowser=$(readlink -f /etc/alternatives/x-www-browser)
@@ -56,6 +56,9 @@ echo -e '\n# Fix for Tilix\nif [ $TILIX_ID ] || [ $VTE_VERSION ]; then
         source /etc/profile.d/vte.sh
 fi' | sudo tee -a /home/${VM_USER}/.zshrc /root/.zshrc
 
+# Update VIM plugins
+echo "nvim -c':UpdateRemotePlugins' -es" | sudo tee -a /home/${VM_USER}/.zshrc /root/.zshrc
+
 # Ensure users permissions are correct
 sudo chown -R ${VM_USER}:${VM_USER} /home/${VM_USER}
 
@@ -93,7 +96,8 @@ echo -e "\nsource /etc/profile.d/nvm.sh" | sudo tee -a /home/${VM_USER}/.bashrc 
 
 # Create XDBUS file for receiving desktop notifications from the KX.AS.CODE framework
 echo '''#!/bin/bash
-if [[ -n ${DISPLAY} ]]; then
+executedAsUser=$(id -u -n)
+if [ ! -z ${DISPLAY} ] && [ "${executedAsUser}" != "root" ] && [ "${executedAsUser}" != "admin" ]; then
   mkdir -p ${HOME}/.dbus
   touch ${HOME}/.dbus/Xdbus
   chmod 600 ${HOME}/.dbus/Xdbus
