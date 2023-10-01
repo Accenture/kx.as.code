@@ -1,8 +1,5 @@
 checkDockerHubRateLimit() {
 
-# Call common function to execute common function start commands, such as setting verbose output etc
-  functionStart
-
   export dockerAuthApiUrl="https://auth.docker.io/token?service=registry.docker.io&scope=repository:ratelimitpreview/test:pull"
 
   local dockerHubUsername=$(getPassword "dockerhub_username" "base-technical-credentials")
@@ -20,10 +17,17 @@ checkDockerHubRateLimit() {
   else
     dockerHubToken=$(curl "${dockerAuthApiUrl}" | jq -r .token)
   fi
-  curl --head -H "Authorization: Bearer ${dockerHubToken}" https://registry-1.docker.io/v2/ratelimitpreview/test/manifests/latest 2>&1 | sudo tee ${installationWorkspace}/rateLimitResponse.txt
+  curl -s --head -H "Authorization: Bearer ${dockerHubToken}" https://registry-1.docker.io/v2/ratelimitpreview/test/manifests/latest 2>&1 | sudo tee ${installationWorkspace}/rateLimitResponse.txt
   dockerHubRateLimitResponse=$(cat ${installationWorkspace}/rateLimitResponse.txt | grep -i RateLimit | cut -d' ' -f2 | cut -d';' -f1 || true)
-  dockerHubAllowLimit=$(echo ${dockerHubRateLimitResponse} | awk {'print $1'})
-  dockerHubRemainingLimit=$(echo ${dockerHubRateLimitResponse} | awk {'print $2'})
+  if [[ -n ${dockerHubRateLimitResponse} ]]; then
+    dockerHubAllowLimit=$(echo ${dockerHubRateLimitResponse} | awk {'print $1'})
+    dockerHubRemainingLimit=$(echo ${dockerHubRateLimitResponse} | awk {'print $2'})
+  else
+    log_warn "Received an empty response when retrieving the docker hub rate limit. Will continue anyway"
+    dockerHubAllowLimit=""
+    dockerHubRemainingLimit=""
+  fi
+
   if [[ -n ${dockerHubRemainingLimit} ]]; then
     dockerHubRateLimitTimePeriod=$(($(cat ${installationWorkspace}/rateLimitResponse.txt | grep "ratelimit-remaining" | cut -d'=' -f2 | tr -d " \t\n\r") / 3600))
     if [[ ${dockerHubRemainingLimit} -le 0 ]]; then
@@ -36,7 +40,4 @@ checkDockerHubRateLimit() {
     log_info "As an anonymous user you have a rate limit of ${dockerHubAllowLimit} with ${dockerHubRemainingLimit} downloads remaining in the current ${dockerHubRateLimitTimePeriod} hour window"
   fi
 
-  # Call common function to execute common function start commands, such as unsetting verbose output etc
-  functionEnd
-  
 }
