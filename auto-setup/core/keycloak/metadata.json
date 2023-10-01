@@ -5,7 +5,9 @@
     "installation_group_folder": "core",
     "environment_variables": {
         "kcContainer": "keycloak",
-        "imageTag": "15.0.2"
+        "imageTag": "17.0.1-legacy",
+        "enableK8sOidc": "true",
+        "enableK3sOidc": "false"
     },
     "categories": [
         "sso",
@@ -16,7 +18,7 @@
     "helm_params": {
         "repository_url": "https://codecentric.github.io/helm-charts",
         "repository_name": "codecentric/keycloak",
-        "helm_version": "15.1.0",
+        "helm_version": "18.4.3",
         "set_key_values": []
     },
     "letsencrypt": {
@@ -62,9 +64,8 @@
     ],
     "post_install_scripts": [
         "configureKeycloak.sh",
-        "configureK8s.sh",
-        "activateAdditionalSettings.sh",
-        "installPlugins.sh",
+        "configureKubernetes.sh",
+        "installKubernetesPlugins.sh",
         "createDesktopShortcuts.sh"
     ]
 }

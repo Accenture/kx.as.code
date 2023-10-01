@@ -1,5 +1,4 @@
 #!/bin/bash
-set -euo pipefail
 
 # if Primary URL[0] in URLs Array exists and Icon is defined, create Desktop Shortcut
 applicationUrls=$(cat ${componentMetadataJson} | jq -r '.urls[]?.url?' | mo)
