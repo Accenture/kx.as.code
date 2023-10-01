@@ -1,5 +1,4 @@
 #!/bin/bash
-set -euo pipefail
 
 # Download Idea IntelliJ 
 downloadFile "https://download.jetbrains.com/idea/ideaIC-${intellijIdeaVersion}.tar.gz" \
@@ -31,3 +30,4 @@ StartupNotify=true
 """ | /usr/bin/sudo tee /home/${baseUser}/Desktop/Applications/"${shortcutText}"
 chmod 755 /home/${baseUser}/Desktop/Applications/"${shortcutText}"
 chown ${baseUser}:${baseUser} /home/${baseUser}/Desktop/Applications/"${shortcutText}"
+cp -f /home/${baseUser}/Desktop/Applications/"${shortcutText}" /home/${baseUser}/.local/share/applications

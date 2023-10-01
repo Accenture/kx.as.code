@@ -1,8 +1,6 @@
 #!/bin/bash
-set -euo pipefail
 
-local numberOfPluginsToInstall=$(($(cat ${componentMetadataJson} | jq '.plugins_to_install | length') -1))
-local i
+numberOfPluginsToInstall=$(($(cat ${componentMetadataJson} | jq '.plugins_to_install | length') -1))
 for (( i=0; i<=${numberOfPluginsToInstall}; i++ ))
 do
 
