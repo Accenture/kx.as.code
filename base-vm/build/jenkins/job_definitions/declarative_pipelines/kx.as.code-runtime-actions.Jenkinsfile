@@ -88,6 +88,7 @@ pipeline {
                             if [ "${vagrant_action}" == "destroy" ]; then
                                 vagrant destroy --force --no-tty
                             elif [ "${vagrant_action}" == "up" ]; then
+                                vagrant box update
                                 vagrant up --no-tty
                                 if [ \${num_kx_main_nodes} -gt 1 ]; then
                                     i=2
