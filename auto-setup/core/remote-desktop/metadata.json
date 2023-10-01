@@ -3,21 +3,23 @@
     "namespace": "",
     "installation_type": "script",
     "installation_group_folder": "core",
-    "retry": "skip",
+    "retry": "false",
     "environment_variables": {
         "installGuacamole": "true",
-        "installNoMachine": "true",
-        "guacamoleVersion": "1.5.2",
-        "guacamoleTarChecksum": "a8d4813feaeb1e6f35fbfd2cf57cb0429db2225960cbfed36252f65ac93dffc4",
-        "guacamoleWarChecksum": "86efc30016e4038948d8c1a5c37a0b05e38dadd3104db6ec03755bc6e3111c40",
-        "guacamoleAuthJdbcChecksum": "0c050fcf9e062eadb242f2962217870919cd02a119bc3e71d77efdd4b7f88e06",
-        "guacamoleAuthTotpChecksum": "a548bc7b27e19bd94e07ae1877752a2c4518000beca5a64230fc18a13dee17d5",
-        "guacamoleAuthLdapChecksum": "49420bbe6f12f56a6ad8b31139512f289faada004074709b6a3a8e1475e9bd23",
-        "postgresqlDriverVersion": "42.5.4",
-        "postgresqlDriverChecksum": "f48fcb0b6959bc8b478657f57ba43c1acca4cade6abca5f17bf9bc9c363cb66f",
-        "nomachineVersion": "8.4.2_1",
-        "nomachineArm64Checksum": "7311c9a5699f5c981673d476a92d62e37267dcae4e464926ef600c86ff4d0d0c",
-        "nomachineAmd64Checksum": "0934b3cf8468d3748a84a084b5eebd4c06974499e29a1f512ae61488357962fa"
+        "installNoMachine": "false",
+        "tomcatVersion": "tomcat9",
+        "guacamoleVersion": "1.5.3",
+        "guacamoleTarChecksum": "dd4eebfb79fdef23d20dc585da8952e1b46a3411ec46836895c041488cf6dbc4",
+        "guacamoleWarChecksum": "15a34e6ed6cf6f03fe20f90f67d2d609713a89cd3cb324f89edf1e7696e6ed61",
+        "guacamoleAuthJdbcChecksum": "ed3ba771ce48a38a0e56f029913b8051249dbebfdd32ffedbce2df0db132247f",
+        "guacamoleAuthTotpChecksum": "5ca05d5edb6f06f7c3d836db749dce3984524ac6bf113271f07abd7c2814dfce",
+        "guacamoleAuthLdapChecksum": "06e5bb41daa7cf21d32518b6b3a14da7534ea24fa1a411a49f0cd9ef101cba95",
+        "mysqldbJavaClientDriverVersion": "8.1.0",
+        "mysqldbJavaClientDriverChecksum": "f9cfd1044615a252541b8c2cab921b0b0e8ed7c07c6ca2708f329e2c263293bb",
+        "nomachineVersion": "8.8.1_1",
+        "nomachineArm64Checksum": "b76fce9d6d8edcc2afae9f84bed7eaafbf6b0e0026d03eef3de6edc0c662a723",
+        "nomachineAmd64Checksum": "53d68cffa13ce2eaaf7c3b6391707cb54ffa63209738e5c27506bdb9fadc8c61",
+        "guacamoleMfaType": "keycloak"
     },
     "install_scripts": [
         "install-nomachine.sh",
@@ -29,7 +31,14 @@
     "pre_install_scripts": [],
     "post_install_scripts": [
         "configureXrdpConnection.sh",
-        "installPgAdmin.sh",
         "createDesktopShortcuts.sh"
+    ],
+    "available_tasks": [
+        {
+            "name": "createRemoteDesktopUsers",
+            "title": "Create Remote Desktop Users",
+            "description": "Create Remote Desktop Users. Like only needed in specific cases, such as repopulating a new database",
+            "script": "createRemoteDesktopUsers.sh"
+        }
     ]
 }
