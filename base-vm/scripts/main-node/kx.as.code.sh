@@ -32,8 +32,9 @@ else
 fi
 sudo chown -R ${VM_USER}:${VM_USER} ${SHARED_GIT_REPOSITORIES}
 sudo ln -s ${SHARED_GIT_REPOSITORIES}/kx.as.code /home/${VM_USER}/Desktop/"KX.AS.CODE Source"
-sudo git config --global --add safe.directory /usr/share/kx.as.code/git/kx.as.code
+sudo git config --global --add safe.directory ${SHARED_GIT_REPOSITORIES}/kx.as.code
 cd ${SHARED_GIT_REPOSITORIES}/kx.as.code
+sudo git remote set-branches origin '*'
 sudo git status
 sudo git config credential.helper 'cache --timeout=3600'
 
@@ -60,7 +61,7 @@ Type=forking
 Environment=VM_USER=${VM_USER}
 Environment=KUBEDIR=${INSTALLATION_WORKSPACE}
 ExecStart=daemonize -p /run/kxascode.pid -a -o ${INSTALLATION_WORKSPACE}/kx.as.code_autoSetup.log -e ${INSTALLATION_WORKSPACE}/kx.as.code_autoSetup.log -l ${INSTALLATION_WORKSPACE}/kx.as.code_autoSetup.lock /bin/bash -x /usr/share/kx.as.code/git/kx.as.code/auto-setup/pollActionQueue.sh
-TimeoutSec=infinity
+TimeoutSec=10s
 Restart=always
 RestartSec=5s
 RemainAfterExit=no
@@ -73,7 +74,7 @@ sudo systemctl daemon-reload
 
 sudo mkdir -p /home/${VM_USER}/.config/autostart-scripts
 
-echo '''#!/bin/bash
+echo '''#!/bin/bash -x
 
 # Wait for Plasmashell to be available
 while [[ ! $(pgrep plasmashell) ]]; do sleep 2; done
@@ -155,18 +156,34 @@ xset -dpms
 nvim -es -u ~/.config/nvim/init.vim -i NONE -c "PlugInstall" -c "qa"
 
 # Remove welcome script from autostart folder
-rm -f $HOME/.config/autostart-scripts/showWelcome.sh
-''' | sudo tee /home/${VM_USER}/.config/autostart-scripts/showWelcome.sh
+rm -f $HOME/.config/autostart-scripts/initializeDesktop.sh
+''' | sudo tee ${INSTALLATION_WORKSPACE}/initializeDesktop.sh
 
-sudo chmod 755 /home/${VM_USER}/.config/autostart-scripts/*.sh
-sudo chown ${VM_USER}:${VM_USER} /home/${VM_USER}/.config/autostart-scripts/*.sh
-sudo cp -f /home/${VM_USER}/.config/autostart-scripts/showWelcome.sh ${INSTALLATION_WORKSPACE}
+echo '''#!/bin/bash -x
+if (( ! P9K_SSH )); then
+  rc=0
+  while [[ -z $(ps -ef | grep plasmashell | grep desktop.so | grep $(id -u --name) | grep -v grep) ]];
+  do
+    sleep 1;
+  done
+  '${INSTALLATION_WORKSPACE}'/initializeDesktop.sh > ${HOME}/.initializeDesktop.log 2>&1 || rc=$?
+  echo "Script ended with rc=${rc}"
+fi
+''' | sudo tee /home/${VM_USER}/.config/autostart-scripts/initializeDesktop.sh
+
+sudo chmod 755 /home/${VM_USER}/.config/autostart-scripts/*.sh ${INSTALLATION_WORKSPACE}/initializeDesktop.sh
+sudo chown ${VM_USER}:${VM_USER} /home/${VM_USER}/.config/autostart-scripts/*.sh ${INSTALLATION_WORKSPACE}/initializeDesktop.sh
 
 # Create shortcut directories
 shortcutsDirectory="/usr/share/kx.as.code/Applications"
 sudo mkdir -p "${shortcutsDirectory}"
 sudo chmod a+rwx "${shortcutsDirectory}"
 sudo ln -s "${shortcutsDirectory}" /home/${VM_USER}/Desktop/
+
+taskShortcutsDirectory="/usr/share/kx.as.code/Tasks"
+sudo mkdir -p "${taskShortcutsDirectory}"
+sudo chmod a+rwx "${taskShortcutsDirectory}"
+sudo ln -s "${taskShortcutsDirectory}" /home/${VM_USER}/Desktop/
 
 adminShortcutsDirectory="/usr/share/kx.as.code/Admin Tools"
 sudo mkdir -p "${adminShortcutsDirectory}"
