@@ -4,18 +4,20 @@
     "installation_type": "helm",
     "installation_group_folder": "core",
     "environment_variables": {
-        "imageTag": "2.7.1",
-        "uiImageTag": "2.2.1"
+        "imageTag": "2.8.2",
+        "uiImageTag": "2.5.0",
+        "dockerRegistryUiAuth": "keycloak"
     },
     "helm_params": {
         "repository_url": "https://helm.joxit.dev",
         "repository_name": "joxit/docker-registry-ui",
-        "helm_version": "0.2.0",
+        "helm_version": "1.1.2",
         "set_key_values": [
             "ui.image=joxit/docker-registry-ui:{{uiImageTag}}",
             "ui.dockerRegistryUrl=https://docker-registry-service:5000"
         ]
     },
+    "restrictIngressAccess": "true",
     "retry": "true",
     "urls": [
         {
@@ -55,7 +57,11 @@
         "createHtpasswdSecret.sh",
         "install-docker-registry.sh"
     ],
-    "post_install_scripts": [],
+    "post_install_scripts": [
+        "addTaskShortcuts.sh",
+        "installOauth2Proxy.sh"
+
+    ],
     "available_tasks": [
         {
             "name": "pruneDockerRegistry",
