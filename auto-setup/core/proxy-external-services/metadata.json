@@ -1,0 +1,17 @@
+{
+    "name": "proxy-external-services",
+    "namespace": "",
+    "installation_type": "script",
+    "installation_group_folder": "core",
+    "environment_variables": {
+        "ingressToProxy": "remote-desktop:8099:false kx-portal:3000:true"
+    },
+    "install_scripts": [
+        "install.sh"
+    ],
+    "Description": "Creates an ingress configuration for services not hosted in Kubernetes, and addes Keycloak AUTH if installed",
+    "shortcut_text": "",
+    "shortcut_icon": "",
+    "pre_install_scripts": [],
+    "post_install_scripts": []
+}
