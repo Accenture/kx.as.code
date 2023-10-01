@@ -1,19 +1,23 @@
 applicationDeploymentHealthCheck() {
 
-  # Call common function to execute common function start commands, such as setting verbose output etc
-  functionStart
-
   # URL READINESS HEALTH CHECK
   applicationUrls=$(cat ${componentMetadataJson} | jq -r '.urls[]?.url?' | mo)
 
   for applicationUrl in ${applicationUrls}; do
-      readinessCheckData=$(cat ${componentMetadataJson} | jq -r '.urls[0]?.healthchecks?.readiness?')
-      urlCheckPath=$(echo ${readinessCheckData} | jq -r '.http_path')
-      authorizationRequired=$(echo ${readinessCheckData} | jq -r '.http_auth_required')
-      expectedHttpResponseCode=$(echo ${readinessCheckData} | jq -r '.expected_http_response_code')
-      expectedContentString=$(echo ${readinessCheckData} | jq -r '.expected_http_response_string')
-      expectedJsonValue=$(echo ${readinessCheckData} | jq -r '.expected_json_response.json_value')
+      readinessCheckData=$(cat ${componentMetadataJson} | jq -r '.urls[0]?.healthchecks?.readiness? | select(.!=null)')
+      alternativeHealthCheckUrl=$(echo ${readinessCheckData} | jq -r '.alternativeUrl | select(.!=null)')
+      urlCheckPath=$(echo ${readinessCheckData} | jq -r '.http_path | select(.!=null)')
+      authorizationRequired=$(echo ${readinessCheckData} | jq -r '.http_auth_required | select(.!=null)')
+      expectedHttpResponseCode=$(echo ${readinessCheckData} | jq -r '.expected_http_response_code | select(.!=null)')
+      expectedContentString=$(echo ${readinessCheckData} | jq -r '.expected_http_response_string | select(.!=null)')
+      expectedJsonValue=$(echo ${readinessCheckData} | jq -r '.expected_json_response.json_value | select(.!=null)')
       curlAuthOption=""
+
+      # Override health check URL if alternative set in metadata.json
+      if [[ -n ${alternativeHealthCheckUrl} ]]; then
+      log_debug "Alternative readiness check set for \"${componentName}\". Using \"${alternativeHealthCheckUrl}\" instead of the default"
+        applicationUrl="${alternativeHealthCheckUrl}"
+      fi
 
       # Set default if not defined in metadata.json
       if [[ -z ${expectedHttpResponseCode} ]]; then
@@ -22,10 +26,10 @@ applicationDeploymentHealthCheck() {
 
       # Set curl auth option, if http_auth_required=true in solution's metadata.json
       if [[ "${authorizationRequired}" == "true" ]]; then
-          httpAuthSecretName=$(echo ${readinessCheckData} | jq -r '.http_auth_secret.secret_name?')
-          httpAuthUsernameField=$(echo ${readinessCheckData} | jq -r '.http_auth_secret.username_field?')
+          httpAuthSecretName=$(echo ${readinessCheckData} | jq -r '.http_auth_secret.secret_name? | select(.!=null)')
+          httpAuthUsernameField=$(echo ${readinessCheckData} | jq -r '.http_auth_secret.username_field? | select(.!=null)')
           httpAuthUsername=$(kubectl get secret -n ${namespace} ${httpAuthSecretName} -o json | jq -r '.data.'${httpAuthUsernameField}'' | base64 --decode)
-          httpAuthPasswordField=$(echo ${readinessCheckData} | jq -r '.http_auth_secret.password_field?')
+          httpAuthPasswordField=$(echo ${readinessCheckData} | jq -r '.http_auth_secret.password_field? | select(.!=null)')
           httpAuthPassword=$(kubectl get secret -n ${namespace} ${httpAuthSecretName} -o json | jq -r '.data.'${httpAuthPasswordField}'' | base64 --decode)
           curlAuthOption="-u ${httpAuthUsername}:${httpAuthPassword}"
       fi
@@ -48,7 +52,7 @@ applicationDeploymentHealthCheck() {
       if [[ -n ${expectedContentString} ]]; then
           for i in {1..5}; do
               returnedContent=$(curl -s -L ${applicationUrl}${urlCheckPath})
-              if [[ ${expectedContentString} =~ ${returnedContent} ]]; then
+              if [[ -n $(echo "${returnedContent}" | grep "${expectedContentString}") ]]; then
                   log_info "Expected content matched returned health check content, exiting loop"
                   break
               else
@@ -72,8 +76,5 @@ applicationDeploymentHealthCheck() {
 
   # Update hosts file so that a user can use domain names outside of the VM to access the provisioned applications/urls
   updateHostFileForExternalUse
-
-  # Call common function to execute common function start commands, such as unsetting verbose output etc
-  functionEnd
   
 }
