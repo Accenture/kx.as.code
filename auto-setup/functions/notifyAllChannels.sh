@@ -1,9 +1,7 @@
+####_EXCLUDE_FROM_FUNCTION_HEADER_FOOTER_INJECTION_####
 notifyAllChannels() {
-
-  # Call common function to execute common function start commands, such as setting verbose output etc
-  functionStart
-
-  local message=${1}
+  set +x
+  local message="${1}"
   local logLevel=${2:-info}
   local actionStatus=${3:-unknown}
   local action=${4:-}
@@ -38,21 +36,23 @@ notifyAllChannels() {
 
   # Change message if task was executed rather than solution installed
   if [[ "${action}" == "Task Execution" ]]; then
-    message=$(echo "${1}" | sed "s/Installation of/Execution of task \"${task}\" for/g" | sed "s/installed/task  \"${task} \" executed/g")
+    message='$(echo "'${1}'" | sed "s/Installation of/Execution of task \"'${task}'\" for/g" | sed "s/installed/task  \"'${task}' \" executed/g")'
   fi
 
-  log_debug "notify \"${message}\" \"${dialogType}\""
+  log_trace "Sending following notification: ${message}"
 
   sendDiscordNotification "${message}" "${logLevel}" "${actionStatus}" "${componentName:-}" "${action}" "${category:-}" "${retries:-}" "${task:-}" "${actionDuration}"
   sendSlackNotification "${message}" "${logLevel}" "${actionStatus}" "${componentName:-}" "${action}" "${category:-}" "${retries:-}" "${task:-}" "${actionDuration}"
   sendMsTeamsNotification "${message}" "${logLevel}" "${actionStatus}" "${componentName:-}" "${action}" "${category:-}" "${retries:-}" "${task:-}" "${actionDuration}"
   sendEmailNotification "${message}" "${logLevel}" "${actionStatus}" "${componentName:-}" "${action}" "${category:-}" "${retries:-}" "${task:-}" "${actionDuration}"
 
+  # Add task duration to end of message if available
+  if [[ -n "${actionDuration}" ]]; then
+    message="${message} (${actionDuration})"
+  fi
+
   notify "${message}" "${dialogType}" "${notificationTimeout}"
-  log_debug addToNotificationQueue "${message}" "${logLevel}" "${actionStatus}"
+  log_trace addToNotificationQueue "${message}" "${logLevel}" "${actionStatus}"
   addToNotificationQueue "${message}" "${logLevel}" "${actionStatus}"
 
-    # Call common function to execute common function start commands, such as unsetting verbose output etc
-    functionEnd
-    
 }
