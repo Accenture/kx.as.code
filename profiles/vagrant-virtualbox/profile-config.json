@@ -40,9 +40,9 @@
             "https_proxy": "",
             "no_proxy": ""
         },
-        "selectedTemplates": "Examples Group 1",
+        "selectedTemplates": "",
         "sslProvider": "self-signed",
-        "standaloneMode": "false",
+        "standaloneMode": "true",
         "startupMode": "minimal",
         "staticNetworkSetup": {
             "baseFixedIpAddresses": {
@@ -62,17 +62,18 @@
         "virtualizationType": "local",
         "vm_properties": {
             "3d_acceleration": "off",
-            "main_admin_node_cpu_cores": 4,
-            "main_admin_node_memory": 8192,
+            "main_admin_node_cpu_cores": 8,
+            "main_admin_node_memory": 32768,
             "main_node_count": 1,
             "main_replica_node_cpu_cores": 2,
             "main_replica_node_memory": 8196,
-            "worker_node_count": 1,
+            "worker_node_count": 0,
             "worker_node_cpu_cores": 4,
             "worker_node_memory": 8192
         }
     },
     "notification_endpoints": {
+        "discord_webhook": "",
         "email_address": "",
         "ms_teams_webhook": "",
         "slack_webhook": ""
