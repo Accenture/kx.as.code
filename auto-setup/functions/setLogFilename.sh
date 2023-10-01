@@ -1,7 +1,8 @@
+####_EXCLUDE_FROM_FUNCTION_HEADER_FOOTER_INJECTION_####
 setLogFilename() {
 
-  logType=${1-poller}
-  retries=${2-0}
+  logType=${1:-poller}
+  retries=${2:-0}
 
   export logTimestamp=$(date '+%Y-%m-%d')
   if [[ "${logType}" != "poller" ]]; then
