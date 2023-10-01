@@ -22,7 +22,9 @@
     "shortcut_text": "KX.AS.CODE Portal",
     "shortcut_icon": "kx-portal.png",
     "pre_install_scripts": [],
-    "post_install_scripts": [],
+    "post_install_scripts": [
+        "addTaskShortcuts.sh"
+    ],
     "available_tasks": [
         {
             "name": "reconfigureRestartKxPortal",
@@ -34,7 +36,7 @@
             "name": "rebuildKxPortal",
             "title": "Re-install KX-Portal",
             "description": "Re-installs the KX-Portal to ensure new source is compiled and deployed",
-            "script": "rebuildKxPortal"
+            "script": "rebuildKxPortal.sh"
         }
     ]
 }

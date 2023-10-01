@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash
 
 # Remove KX-Portal service
 /usr/bin/sudo systemctl stop kx.as.code-portal.service
