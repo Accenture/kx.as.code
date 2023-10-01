@@ -82,9 +82,9 @@ WORKER_NODE_MEMORY = ENV['WorkerNodeMemory'] || profile_config_json['config']['v
 puts "WORKER_NODE_MEMORY: #{WORKER_NODE_MEMORY}"
 THREE_D_ACCELERATION = ENV['threedAcceleration'] || profile_config_json['config']['vm_properties']['3d_acceleration']
 puts "WORKER_NODE_MEMORY: #{THREE_D_ACCELERATION}"
-MAIN_BOX_VERSION = ENV['mainBoxVersion'] || kx_version_json['kxascode']
+MAIN_BOX_VERSION = kx_version_json['kxascode'] || ENV['mainBoxVersion']
 puts "MAIN_BOX_VERSION: #{MAIN_BOX_VERSION}"
-NODE_BOX_VERSION = ENV['nodeBoxVersion'] || kx_version_json['kxascode']
+NODE_BOX_VERSION = kx_version_json['kxascode'] || ENV['nodeBoxVersion']
 puts "NODE_BOX_VERSION: #{NODE_BOX_VERSION}"
 HASH = ENV['hash']
 puts "HASH: #{HASH}"
