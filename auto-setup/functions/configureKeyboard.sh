@@ -1,37 +1,31 @@
 configureKeyboardSettings() {
 
-  # Call common function to execute common function start commands, such as setting verbose output etc
-  functionStart
-
-  # Set default keyboard language
-  keyboardLanguages=""
-  availableLanguages="us"
-  for language in ${availableLanguages}; do
-    if [[ -z ${keyboardLanguages} ]]; then
-      keyboardLanguages="${language}"
-    else
-      if [[ ${language} == "${defaultKeyboardLanguage}" ]]; then
-        keyboardLanguages="${language},${keyboardLanguages}"
+    # Set default keyboard language
+    keyboardLanguages=""
+    availableLanguages="us"
+    for language in ${availableLanguages}; do
+      if [[ -z ${keyboardLanguages} ]]; then
+        keyboardLanguages="${language}"
       else
-        keyboardLanguages="${keyboardLanguages},${language}"
+        if [[ ${language} == "${defaultKeyboardLanguage}" ]]; then
+          keyboardLanguages="${language},${keyboardLanguages}"
+        else
+          keyboardLanguages="${keyboardLanguages},${language}"
+        fi
       fi
-    fi
-  done
+    done
 
-  echo '''
-# KEYBOARD CONFIGURATION FILE
+    echo '''
+  # KEYBOARD CONFIGURATION FILE
 
-# Consult the keyboard(5) manual page.
+  # Consult the keyboard(5) manual page.
 
-XKBMODEL="pc105"
-XKBLAYOUT="'${keyboardLanguages}'"
-XKBVARIANT=""
-XKBOPTIONS=""
+  XKBMODEL="pc105"
+  XKBLAYOUT="'${keyboardLanguages}'"
+  XKBVARIANT=""
+  XKBOPTIONS=""
 
-BACKSPACE=\"guess\"
-''' | /usr/bin/sudo tee /etc/default/keyboard
-
-# Call common function to execute common function start commands, such as unsetting verbose output etc
-functionEnd
+  BACKSPACE=\"guess\"
+  ''' | sed -e 's/^[ \t]*//' | /usr/bin/sudo tee /etc/default/keyboard
 
 }
