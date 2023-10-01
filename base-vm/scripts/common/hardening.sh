@@ -177,14 +177,15 @@ cisHardeningToRun="""
 ### Initialize steps
 cisDirectory=${INSTALLATION_WORKSPACE}/debian-cis
 cisReportsDirectory=${INSTALLATION_WORKSPACE}/debian-cis-reports
-mkdir -p ${cisReportsDirectory}
+sudo mkdir -p ${cisReportsDirectory}
+chmod 777 ${INSTALLATION_WORKSPACE}/debian-cis-reports
 if [ ! -f ${cisDirectory} ]; then
-  git clone --depth 1  https://github.com/ovh/debian-cis.git ${cisDirectory}
+  sudo git clone --depth 1  https://github.com/ovh/debian-cis.git ${cisDirectory}
 fi
 cd ${cisDirectory}
+chmod 777 ${INSTALLATION_WORKSPACE}/debian-cis
 sudo cp -f ${cisDirectory}/debian/default /etc/default/cis-hardening
 sudo sed -i "s#/opt/debian-cis#$(pwd)#" /etc/default/cis-hardening
-
 
 pass_check (){
     FAIL_MESSAGE="[KO]CheckFailed"
@@ -378,17 +379,17 @@ do
   cd ${cisDirectory}
   rc=0
 
-  sudo bin/hardening/${cisScriptId}_*.sh --apply &>>${cisReportsDirectory}/cis_${cisScriptId}_apply_output.txt || rc=$?
+  sudo bin/hardening/${cisScriptId}_*.sh --apply | sudo tee -a ${cisReportsDirectory}/cis_${cisScriptId}_apply_output.txt || rc=$?
   if [[ ${rc} -ne 0 ]]; then
-    echo "Apply for CIS script with ID ${cisScriptId} ended in a non zero return code." >>${cisReportsDirectory}/cis_error_summary_report.txt
+    echo "Apply for CIS script with ID ${cisScriptId} ended in a non zero return code." | sudo tee -a ${cisReportsDirectory}/cis_error_summary_report.txt
     rc=0 # reset rc variable
   else
     echo "Apply for CIS script with ID ${cisScriptId} ended OK."
   fi
 
-  sudo bin/hardening/${cisScriptId}_*.sh --audit &>>${cisReportsDirectory}/cis_${cisScriptId}_audit_output.txt || rc=$?
+  sudo bin/hardening/${cisScriptId}_*.sh --audit | sudo tee -a ${cisReportsDirectory}/cis_${cisScriptId}_audit_output.txt || rc=$?
   if [[ ${rc} -ne 0 ]]; then
-    echo "Audit for CIS script with ID ${cisScriptId} ended in a non zero return code." >>${cisReportsDirectory}/cis_error_summary_report.txt
+    echo "Audit for CIS script with ID ${cisScriptId} ended in a non zero return code." | sudo tee -a ${cisReportsDirectory}/cis_error_summary_report.txt
     rc=0 # reset rc variable
   else
     echo "Audit for CIS script with ID ${cisScriptId} ended OK."
@@ -398,7 +399,7 @@ done
 
 # Final audit
 cd ${cisDirectory}
-sudo bin/hardening.sh --audit-all &>>${cisReportsDirectory}/cis_audit_report_output.txt
+sudo bin/hardening.sh --audit-all | sudo tee -a ${cisReportsDirectory}/cis_audit_report_output.txt
 
 # Clean-up
 #sudo rm -rf ${cisDirectory}
