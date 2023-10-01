@@ -1,5 +1,4 @@
 #!/bin/bash
-set -euo pipefail
 
 # Get number of KX-Main nodes
 if [[ "${kubeOrchestrator}" == "k8s" ]]; then

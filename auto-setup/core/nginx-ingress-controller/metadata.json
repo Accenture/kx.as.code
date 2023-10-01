@@ -4,13 +4,13 @@
     "installation_type": "helm",
     "installation_group_folder": "core",
     "environment_variables": {
-        "nginxControllerVersion": "v1.6.4"
+        "nginxControllerVersion": "v1.9.0"
     },
     "retry": "true",
     "helm_params": {
         "repository_url": "https://kubernetes.github.io/ingress-nginx",
         "repository_name": "ingress-nginx/ingress-nginx",
-        "helm_version": "4.5.2",
+        "helm_version": "4.8.0",
         "set_key_values": [],
         "set_string_key_values": [
             "controller.nodeSelector.\"ingress-controller\"=true"
@@ -21,7 +21,8 @@
     "shortcut_icon": "nginx-ingress-controller.png",
     "pre_install_scripts": [
         "createWildcardCertSecret.sh",
-        "addNodeLabel.sh"
+        "addNodeLabel.sh",
+        "freePorts.sh"
     ],
     "post_install_scripts": [
         "workaround.sh",

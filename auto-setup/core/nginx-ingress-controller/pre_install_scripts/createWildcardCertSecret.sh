@@ -1,8 +1,7 @@
 #!/bin/bash
-set -euo pipefail
 
 # Import KX.AS.CODE Wildcard Certificate into Kubernetes
-kubectl get secret kx.as.code-wildcard-cert -n ${namespace} -o json | jq -r '.metadata.name' || \
+kubectl get secret kx.as.code-wildcard-cert -n ${namespace} || \
     kubectl create secret generic kx.as.code-wildcard-cert -n ${namespace} --from-file=${installationWorkspace}/kx-certs
 
 # Check Self-Signed TLS certificate is valid
