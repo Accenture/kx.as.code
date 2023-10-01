@@ -4,7 +4,7 @@
     "installation_type": "script",
     "installation_group_folder": "core",
     "environment_variables": {
-        "metalLbVersion": "v0.10.2"
+        "metalLbVersion": "v0.13.10"
     },
     "retry": "true",
     "install_scripts": [
