@@ -2,7 +2,7 @@
     "name": "azure-data-studio",
     "namespace": "",
     "installation_type": "script",
-    "installation_group_folder": "core",
+    "installation_group_folder": "dev_tools",
     "environment_variables": {
         "azureDataStudioVersion": "1.39.1",
         "azureDataStudioChecksum": "b22fcdbb6b4c104b65c7ddf438af3f7678bfd1f49a07cf8f33c2602908e772fa"

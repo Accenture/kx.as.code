@@ -13,7 +13,7 @@ dockerCoreRegistryCheckTagExists() {
   # Check if tag exists in core docker registry
   dockerImageTagExists=$(curl -X GET -u ${baseUser}:${dockerRegistryPassword} \
     https://docker-registry.${baseDomain}/v2/${imagePath}/tags/list | \
-    jq -r '.tags[] | contains("'${imageTag}'")')
+    jq -r '.tags[] | contains("'${imageTag}'")' | grep "true" | head -1)
 
   if [[ ${dockerImageTagExists} ]]; then
     log_debug "Docker image ${imagePath}:${imageTag} was found in the local core registry"

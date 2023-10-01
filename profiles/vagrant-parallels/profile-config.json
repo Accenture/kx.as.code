@@ -9,7 +9,12 @@
         "defaultKeyboardLanguage": "de",
         "disableLinuxDesktop": false,
         "disableSessionTimeout": true,
-        "dnsResolution": "hybrid",
+        "dnsResolution": {
+            "resolutionType": "hybrid",
+            "dns1": "",
+            "dns2": "",
+            "dnsForwarding": "none"
+        },
         "docker": {
             "dockerhub_email": "",
             "dockerhub_password": "",

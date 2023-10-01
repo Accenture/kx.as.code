@@ -3,8 +3,8 @@ dockerhubLogin() {
 # Call common function to execute common function start commands, such as setting verbose output etc
   functionStart
 
-  local dockerHubUsername=$(getPassword "dockerhub_username" "base-user-${baseUser}")
-  local dockerHubPassword=$(getPassword "dockerhub_password" "base-user-${baseUser}")
+  local dockerHubUsername=$(getPassword "dockerhub_username" "base-technical-credentials")
+  local dockerHubPassword=$(getPassword "dockerhub_password" "base-technical-credentials")
 
   if [[ -n ${dockerHubUsername} ]] && [[ -n ${dockerHubPassword} ]]; then
 

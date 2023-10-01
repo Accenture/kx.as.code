@@ -5,9 +5,9 @@ checkDockerHubRateLimit() {
 
   export dockerAuthApiUrl="https://auth.docker.io/token?service=registry.docker.io&scope=repository:ratelimitpreview/test:pull"
 
-  local dockerHubUsername=$(getPassword "dockerhub_username" "base-user-${baseUser}")
-  local dockerHubPassword=$(getPassword "dockerhub_password" "base-user-${baseUser}")
-  local dockerHubEmail=$(getPassword "dockerhub_email" "base-user-${baseUser}")
+  local dockerHubUsername=$(getPassword "dockerhub_username" "base-technical-credentials")
+  local dockerHubPassword=$(getPassword "dockerhub_password" "base-technical-credentials")
+  local dockerHubEmail=$(getPassword "dockerhub_email" "base-technical-credentials")
 
   if [[ -n ${dockerHubUsername} ]] && [[ -n ${dockerHubPassword} ]]; then
  

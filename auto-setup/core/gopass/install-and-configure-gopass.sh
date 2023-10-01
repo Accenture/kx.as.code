@@ -47,6 +47,7 @@ done
 
 # Initialize gnupg for baseUser and vmUser if different
 gnupgInitializeUser "${baseUser}" "${basePassword}"
+gnupgInitializeUser "root" "${basePassword}"
 if [[ "${vmUser}" != "${baseUser}" ]]; then
   gnupgInitializeUser "${vmUser}" "${vmPassword}"
 fi

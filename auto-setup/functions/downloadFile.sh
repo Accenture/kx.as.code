@@ -50,7 +50,12 @@ downloadFile() {
       ${authOption} "${url}"
 
     if [[ "${checksum}" != "not-applicable" ]]; then
-      local checkResult=$(echo "${checksum}" "${outputFilename}" | sha256sum -c --quiet && echo "OK" || echo "NOK")
+      local checkOutput=$(echo "${checksum}" "${outputFilename}" | sha256sum -c --quiet && echo "OK" || echo "NOK")
+      if [[ "${checkOutput}" == "OK" ]]; then
+        local checkResult=${checkOutput}
+      else
+        local checkResult=$(echo ${checkOutput} | awk '{print $3}')
+      fi
     fi
 
     echo "${checkResult}"

@@ -18,9 +18,9 @@ while IFS='' read -r credential || [[ -n "$credential" ]]; do
     else
            decryptedSecret=""
     fi
-    pushPassword "${name}" "${cleanedSecret}" "base-user-${baseUser}"
+    pushPassword "${name}" "${cleanedSecret}" "base-technical-credentials"
 done < "${sharedKxHome}/.config/.vmCredentialsFile"
 
 # Cleanup files
-/usr/bin/sudo rm -f cat /var/tmp/.hash
+/usr/bin/sudo rm -f /var/tmp/.hash
 /usr/bin/sudo rm -f ${sharedKxHome}/.config/.vmCredentialsFile

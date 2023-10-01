@@ -3,7 +3,7 @@ set -euo pipefail
 
 # UrlEncode GIT password in case of special characters
 if [[ -n $GIT_SOURCE_TOKEN ]]; then
-    GIT_SOURCE_TOKEN_ENCODED=$(python3 -c "import urllib.parse; print(urllib.parse.quote(input()))" <<< "${GIT_SOURCE_TOKEN}")
+    GIT_SOURCE_TOKEN_ENCODED=$(python3 -c "import urllib.parse; print(urllib.parse.quote(input(),safe=''))" <<< "${GIT_SOURCE_TOKEN}")
 else
     GIT_SOURCE_TOKEN_ENCODED=""
 fi
@@ -98,7 +98,7 @@ lookandfeeltool -a org.kde.breezedark.desktop
 # Set default keyboard language as per users.json
 defaultUserKeyboardLanguage=$(jq -r '\''.config.defaultKeyboardLanguage'\'' '${INSTALLATION_WORKSPACE}'/profile-config.json)
 keyboardLanguages=""
-availableLanguages="us de gb fr it es"
+availableLanguages="us"
 for language in ${availableLanguages}
 do
 if [[ -z ${keyboardLanguages} ]]; then
@@ -115,7 +115,7 @@ done
 echo """[Desktop Entry]
 Type=Application
 Name=SetKeyboardLanguage
-Exec=setxkbmap ${keyboardLanguages} -option grp:alt_shift_toggle
+Exec=setxkbmap ${keyboardLanguages}
 """ | sudo tee /home/'${VM_USER}'/.config/autostart/keyboard-language.desktop
 
 
@@ -288,3 +288,7 @@ echo """${INSTALLATION_WORKSPACE}/kx.as.code_autoSetup.log {
   size 50M
 }
 """  | sudo tee /etc/logrotate.d/kx.as.code
+
+# Ensure that KX.AS.CODE workspace is writable by logrotate service
+echo "ReadWritePaths=${INSTALLATION_WORKSPACE}" | /usr/bin/sudo tee -a /lib/systemd/system/logrotate.service
+/usr/bin/sudo systemctl daemon-reload && /usr/bin/sudo systemctl start logrotate

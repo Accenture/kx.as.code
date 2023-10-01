@@ -1,0 +1,20 @@
+{
+    "name": "microsoft-edge",
+    "namespace": "",
+    "installation_type": "script",
+    "installation_group_folder": "core",
+    "environment_variables": {
+        "removeChrome": "false",
+        "makeEdgeDefaultBrowser": "false"
+    },
+    "install_scripts": [
+        "installMicrosoftEdge.sh"
+    ],
+    "Description": "Microsoft Edge browser based on Chromium",
+    "shortcut_text": "Microsoft Edge",
+    "shortcut_icon": "microsoft-edge.png",
+    "pre_install_scripts": [],
+    "post_install_scripts": [
+        "optionalSteps.sh"
+    ]
+}

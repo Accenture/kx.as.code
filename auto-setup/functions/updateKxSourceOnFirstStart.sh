@@ -11,8 +11,22 @@ updateKxSourceOnFirstStart() {
 
   # Get git credentials
   local hash="$(/usr/bin/sudo cat /var/tmp/.hash)"
-  local gitUsername=$(/usr/bin/sudo cat ${sharedKxHome}/.config/.vmCredentialsFile | grep "git_source_username" | cut -f 2 -d':' | openssl enc -aes-256-cbc -pbkdf2 -salt -A -a -pass pass:${hash} -d | sed 's/@/%40/g')
-  local gitPassword=$(/usr/bin/sudo cat ${sharedKxHome}/.config/.vmCredentialsFile | grep "git_source_password" | cut -f 2 -d':' | openssl enc -aes-256-cbc -pbkdf2 -salt -A -a -pass pass:${hash} -d)
+
+  # Get username and clean/replace characters that break the git commands
+  local gitUsername=$(/usr/bin/sudo cat ${sharedKxHome}/.config/.vmCredentialsFile | \
+                    grep "git_source_username" | \
+                    cut -f 2 -d':' | \
+                    openssl enc -aes-256-cbc -pbkdf2 -salt -A -a -pass pass:${hash} -d | \
+                    tr -d "[:cntrl:]" | \
+                    sed 's/@/%40/g')
+
+  # Get password and clean/replace characters that break the git commands
+  local gitPassword=$(/usr/bin/sudo cat ${sharedKxHome}/.config/.vmCredentialsFile | \
+                    grep "git_source_password" | \
+                    cut -f 2 -d':' | \
+                    openssl enc -aes-256-cbc -pbkdf2 -salt -A -a -pass pass:${hash} -d | \
+                    tr -d "[:cntrl:]" | \
+                    python3 -c "import urllib.parse; print(urllib.parse.quote(input(),safe=''))")
 
    # Pull latest source code from the source code repository
    log_debug "updateSourceOnStart set to true. Pulling latest code from Github"

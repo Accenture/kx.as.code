@@ -3,6 +3,60 @@ configureBindDns() {
 # Call common function to execute common function start commands, such as setting verbose output etc
 functionStart
 
+local dnsServerList=""
+
+# Update BIN9 configuration of profile-config JSON has configured DNS forwarding
+if [[ "${dnsForwarding}" == "only" ]]; then
+
+# Can only enabled dnsForwarding if a DNS server IP has been define to forward requests to
+if [[ -n "${fixedNicConfigDns1}" ]] || [[ -n "${fixedNicConfigDns2}" ]]; then
+
+if [[ -n ${fixedNicConfigDns1} ]]; then
+  local dnsServerList="\t${fixedNicConfigDns1};\n"
+fi
+if [[ -n ${fixedNicConfigDns2} ]]; then
+  local dnsServerList="${dnsServerList}\t\t${fixedNicConfigDns2};"
+fi
+
+# Overwrite existing bind9 configuration to enable dns forwarding
+echo -e '''options {
+        directory "/var/cache/bind";
+
+        // If there is a firewall between you and nameservers you want
+        // to talk to, you may need to fix the firewall to allow multiple
+        // ports to talk.  See http://www.kb.cert.org/vuls/id/800113
+
+        // If your ISP provided one or more IP addresses for stable
+        // nameservers, you probably want to use them as forwarders.
+        // Uncomment the following block, and insert the addresses replacing
+        // the all-0s placeholder.
+
+        forward '${dnsForwarding}';
+        forwarders {
+        '${dnsServerList}'
+         };
+
+        //========================================================================
+        // If BIND logs error messages about the root key being expired,
+        // you will need to update your keys.  See https://www.isc.org/bind-keys
+        //========================================================================
+        dnssec-enable no;
+        dnssec-validation no;
+        auth-nxdomain no;
+        listen-on-v6 { any; };
+        allow-query { any; };
+        version "not currently available";
+        recursion yes;
+        querylog yes;
+        allow-transfer { none; };
+
+};''' | /usr/bin/sudo tee /etc/bind/named.conf.options
+
+else
+  log_warn "You have set dnsForwarding to \"only\", but not defined any DNS servers in profile-config.json. Ignoring setting. You must at least define .config.dnsResolution.dns1 to enable this."
+fi
+fi
+
 echo '''//
 // Do any local configuration here
 //
@@ -50,6 +104,9 @@ api-internal      IN      A      '${mainIpAddress}'
 
 /usr/bin/sudo named-checkconf
 /usr/bin/sudo named-checkzone ${baseDomain} /etc/bind/db.${baseDomain}
+
+# Restart Bind9
+/usr/bin/sudo systemctl restart bind9
 
 # Call common function to execute common function start commands, such as unsetting verbose output etc
 functionEnd

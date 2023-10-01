@@ -1,31 +1,22 @@
 #!/bin/bash
 set -euo pipefail
 
-# Download LDAP Account Manager
-downloadFile "https://prdownloads.sourceforge.net/lam/ldap-account-manager_${lamVersion}_all.deb" \
-  "${lamChecksum}" \
-  "${installationWorkspace}/ldap-account-manager_${lamVersion}_all.deb" && echo "Return code from file download is $?"
-
 # Install LDAP Account Manager
-/usr/bin/sudo apt-get install -y ${installationWorkspace}/ldap-account-manager_${lamVersion}_all.deb
+/usr/bin/sudo apt-get remove -y ldap-account-manager
+/usr/bin/sudo DEBIAN_FRONTEND=noninteractive apt-get install -y ldap-account-manager
 /usr/bin/sudo apt-get --fix-broken install -y
-
-# Wait for LDAP Account Manager config file to become available. Retry install if not present.
-for i in {1..5}
-do
-  if [ ! -f /var/lib/ldap-account-manager/config/lam.conf ]; then
-    # Retry install
-    log_warn "LAM install not successful. Trying again (${i} of 5)"
-    /usr/bin/sudo apt-get install -y ${installationWorkspace}/ldap-account-manager_${lamVersion}_all.deb
-    /usr/bin/sudo apt-get --fix-broken install -y
-  else
-    log_info "LAM installed successfully"
-    break
-  fi
-done
 
 # Install PHP FPM
 /usr/bin/sudo apt install -y nginx php-fpm
+
+# Wait for LAM config file
+for i in {1..10}
+do
+    if [ -f /var/lib/ldap-account-manager/config/lam.conf ]; then
+      break
+    fi
+    sleep 10
+done
 
 if [ -f /var/lib/ldap-account-manager/config/lam.conf ]; then
   # Configure NGINX

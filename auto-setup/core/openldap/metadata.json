@@ -4,8 +4,6 @@
     "installation_type": "script",
     "installation_group_folder": "core",
     "environment_variables": {
-        "lamVersion": "7.4-1",
-        "lamChecksum": "8f7fd851db2c736b6e138144938b448b6c15e2bc8e44b5e5056dab70d6780bbb",
         "selfServiceWebPort": "8880"
     },
     "install_scripts": [

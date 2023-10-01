@@ -21,9 +21,9 @@ notifyAllChannels() {
     if [[ "${action}" == "executeTask" ]]; then
       local task=$(echo ${acionQueueJsonPayload} | jq -r '.task')
       action="Task Execution"
-    elif [[ "${action}" == "install" ]]; then
+    elif [[ "${action}" == "install" ]] || [[ "${action}" == "uninstall" ]]; then
       local task="n/a"
-      action="Component Installation"
+      action="Component ${action^}ation"
     fi
 
   fi
@@ -43,6 +43,7 @@ notifyAllChannels() {
 
   log_debug "notify \"${message}\" \"${dialogType}\""
 
+  sendDiscordNotification "${message}" "${logLevel}" "${actionStatus}" "${componentName:-}" "${action}" "${category:-}" "${retries:-}" "${task:-}" "${actionDuration}"
   sendSlackNotification "${message}" "${logLevel}" "${actionStatus}" "${componentName:-}" "${action}" "${category:-}" "${retries:-}" "${task:-}" "${actionDuration}"
   sendMsTeamsNotification "${message}" "${logLevel}" "${actionStatus}" "${componentName:-}" "${action}" "${category:-}" "${retries:-}" "${task:-}" "${actionDuration}"
   sendEmailNotification "${message}" "${logLevel}" "${actionStatus}" "${componentName:-}" "${action}" "${category:-}" "${retries:-}" "${task:-}" "${actionDuration}"

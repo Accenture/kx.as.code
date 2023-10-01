@@ -13,10 +13,13 @@ createKubernetesNamespace() {
             kubectl create namespace ${namespace}
             # Create secret to internal private registry
             log_debug "Creating regcred for internal private registry in \"${namespace}\""
-            kubernetesCreateNamespacePrivatePullSecret
+            # Prevent lookups against a docker-registry that may not yet be installed, even if the namespace exists
+            if [[ "${namespace}" != "docker-registry" ]]; then
+              kubernetesCreateNamespacePrivatePullSecret
+            fi
             # Install Secret if Credentials Exist
             if [[ -z $(kubectl get secret regcred -n ${namespace} -o name || true) ]]; then
-            log_debug "Creating regcred for DockerHub in \"${namespace}\""
+              log_debug "Creating regcred for DockerHub in \"${namespace}\""
               dockerhubCreateDefaultRegcred "${namespace}"
               log_debug "Patching default namespace service account to automatically use \"regcred\" imagePullSecret"
               log_debug "This is important to avoid running into the Dockerhub rate limit"

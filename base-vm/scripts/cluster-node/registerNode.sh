@@ -911,7 +911,7 @@ fi
 # Set default keyboard language
 defaultUserKeyboardLanguage=$(jq -r '.config.defaultKeyboardLanguage' ${profileConfigJsonPath})
 keyboardLanguages=""
-availableLanguages="us de gb fr it es in cn"
+availableLanguages="us"
 for language in ${availableLanguages}; do
     if [[ -z ${keyboardLanguages} ]]; then
         keyboardLanguages="${language}"
