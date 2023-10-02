@@ -10,53 +10,55 @@ sendSlackNotification() {
   local retries=${7:-}
   local task=${8:-}
   local actionDuration=${9:-}
-  local slackNotificationWebhook="$(cat ${profileConfigJsonPath} | jq -r '.notification_endpoints.slack_webhook')"
+  local slackNotificationWebhook="$(cat ${profileConfigJsonPath} | jq -r '.notification_endpoints.slack_webhook | select(.!=null)')"
   local notificationTitle="$(cat ${profileConfigJsonPath} | jq -r '.notification_title | select(.!=null)')"
 
-  if [[ -z ${notificationTitle} ]]; then
-    notificationTitle="KX.AS.CODE"
-  fi
-  
-  parseMessage=$(echo ${message} | sed 's/"/\"/g' | sed 's/\\$//g')
+  if [[ -n ${slackNotificationWebhook} ]]; then
 
-  if [[ "${logLevel}" == "error" ]] || [[ "${actionStatus}" == "failed" ]]; then
-    local lastExecutingScript="$(cat ${installationWorkspace}/.retryDataStore.json | tr -d "[:cntrl:]" | jq -r '.script')"
-    local lastExecutingFunction="${currentFunctionExecuting:-}"
-  else
-    local lastExecutingScript="-"
-    local lastExecutingFunction="-"
-  fi
-
-  if [[ -z ${actionDuration} ]]; then
-    actionDuration="-"
-  fi
-
-  #logLevel --> info, error, warn
-  #actionStatus --> success, failed, warning
-
-  # Send message if necessary variables are populated
-  if [[ -n ${slackNotificationWebhook} ]] && [[ "${slackNotificationWebhook}" != "null" ]] && [[ -n ${message} ]]; then
-
-    # Determine colour of message card
-    if [[ "${logLevel}" == "error" ]] || [[ "${actionStatus}" == "failed" ]]; then
-      statusColour="${colourRed}"
-      statusEmoticon=":large_red_square:"
-    elif [[ "${logLevel}" == "warn" ]] || [[ "${actionStatus}" == "warning" ]]; then
-      statusColour="${colourAmber}"
-      statusEmoticon=":large_orange_square:"
-    elif [[ "${actionStatus}" == "success" ]]; then
-      statusColour="${colourGreen}"
-      statusEmoticon=":large_green_square:"
-    elif [[ "${logLevel}" == "info" ]]; then
-      statusColour="${colourBlue}"
-      statusEmoticon=":large_blue_square:"
-    else
-      statusColour="${colourGrey}"
-      statusEmoticon=":black_large_square:"
+    if [[ -z ${notificationTitle} ]]; then
+      notificationTitle="KX.AS.CODE"
     fi
 
-    # Generate message to post to Slack
-    echo '''{
+    parseMessage=$(echo ${message} | sed 's/"/\"/g' | sed 's/\\$//g')
+
+    if [[ "${logLevel}" == "error" ]] || [[ "${actionStatus}" == "failed" ]]; then
+      local lastExecutingScript="$(cat ${installationWorkspace}/.retryDataStore.json | tr -d "[:cntrl:]" | jq -r '.script')"
+      local lastExecutingFunction="${currentFunctionExecuting:-}"
+    else
+      local lastExecutingScript="-"
+      local lastExecutingFunction="-"
+    fi
+
+    if [[ -z ${actionDuration} ]]; then
+      actionDuration="-"
+    fi
+
+    #logLevel --> info, error, warn
+    #actionStatus --> success, failed, warning
+
+    # Send message if necessary variables are populated
+    if [[ -n ${slackNotificationWebhook} ]] && [[ "${slackNotificationWebhook}" != "null" ]] && [[ -n ${message} ]]; then
+
+      # Determine colour of message card
+      if [[ "${logLevel}" == "error" ]] || [[ "${actionStatus}" == "failed" ]]; then
+        statusColour="${colourRed}"
+        statusEmoticon=":large_red_square:"
+      elif [[ "${logLevel}" == "warn" ]] || [[ "${actionStatus}" == "warning" ]]; then
+        statusColour="${colourAmber}"
+        statusEmoticon=":large_orange_square:"
+      elif [[ "${actionStatus}" == "success" ]]; then
+        statusColour="${colourGreen}"
+        statusEmoticon=":large_green_square:"
+      elif [[ "${logLevel}" == "info" ]]; then
+        statusColour="${colourBlue}"
+        statusEmoticon=":large_blue_square:"
+      else
+        statusColour="${colourGrey}"
+        statusEmoticon=":black_large_square:"
+      fi
+
+      # Generate message to post to Slack
+      echo '''{
             "text": "'${parseMessage}'",
             "blocks": [
                 {
@@ -106,11 +108,11 @@ sendSlackNotification() {
             ]
         }''' | /usr/bin/sudo tee ${installationWorkspace}/slackNotification.json
 
-    # Post message to Slack
-    curl -H "Content-type: application/json" \
-      --data @${installationWorkspace}/slackNotification.json \
-      -X POST ${slackNotificationWebhook}
+      # Post message to Slack
+      curl -H "Content-type: application/json" \
+        --data @${installationWorkspace}/slackNotification.json \
+        -X POST ${slackNotificationWebhook}
 
+    fi
   fi
-
 }
