@@ -40,7 +40,7 @@
             "https_proxy": "",
             "no_proxy": ""
         },
-        "selectedTemplates": "",
+        "selectedTemplates": "Examples Group 1",
         "sslProvider": "self-signed",
         "standaloneMode": "true",
         "startupMode": "minimal",
