@@ -13,49 +13,51 @@ sendMsTeamsNotification() {
   local msTeamsNotificationWebhook="$(cat ${profileConfigJsonPath} | jq -r '.notification_endpoints.ms_teams_webhook | select(.!=null)')"
   local notificationTitle="$(cat ${profileConfigJsonPath} | jq -r '.notification_title | select(.!=null)')"
 
-  if [[ -z ${notificationTitle} ]]; then
-    notificationTitle="KX.AS.CODE"
-  fi
+  if [[ -n ${msTeamsNotificationWebhook} ]]; then
 
-  parsedMessage=$(echo ''${message}'' | sed 's/"/\\"/g' | sed 's/\\$//g')
-
-  if [[ "${logLevel}" == "error" ]] || [[ "${actionStatus}" == "failed" ]]; then
-    local lastExecutingScript="$(cat ${installationWorkspace}/.retryDataStore.json | tr -d "[:cntrl:]" | jq -r '.script')"
-    local lastExecutingFunction="$(cat ${installationWorkspace}/.currentFunctionExecuting)"
-  else
-    local lastExecutingScript="~"
-    local lastExecutingFunction="~"
-  fi
-
-  if [[ -z "${actionDuration}" ]]; then
-    actionDuration="~"
-  fi
-
-  #logLevel --> info, error, warn
-  #actionStatus --> success, failed, warning
-
-  # Send message if necessary variables are populated
-  if [[ -n "${msTeamsNotificationWebhook}" ]] && [[ "${msTeamsNotificationWebhook}" != "null" ]] && [[ -n "${message}" ]]; then
-
-    # Determine colour of message card
-    if [[ "${logLevel}" == "error" ]] || [[ "${actionStatus}" == "failed" ]]; then
-      statusColour="${colourRed}"
-      statusEmoticon="&#128997;"
-    elif [[ "${logLevel}" == "warn" ]] || [[ "${actionStatus}" == "warning" ]]; then
-      statusColour="${colourAmber}"
-      statusEmoticon="&#128999;"
-    elif [[ "${actionStatus}" == "success" ]]; then
-      statusColour="${colourGreen}"
-      statusEmoticon="&#129001;"
-    elif [[ "${logLevel}" == "info" ]]; then
-      statusColour="${colourBlue}"
-      statusEmoticon="&#128998;"
-    else
-      statusColour="${colourGrey}"
-      statusEmoticon="&#11035;"
+    if [[ -z ${notificationTitle} ]]; then
+      notificationTitle="KX.AS.CODE"
     fi
 
-    echo '''{
+    parsedMessage=$(echo ''${message}'' | sed 's/"/\\"/g' | sed 's/\\$//g')
+
+    if [[ "${logLevel}" == "error" ]] || [[ "${actionStatus}" == "failed" ]]; then
+      local lastExecutingScript="$(cat ${installationWorkspace}/.retryDataStore.json | tr -d "[:cntrl:]" | jq -r '.script')"
+      local lastExecutingFunction="$(cat ${installationWorkspace}/.currentFunctionExecuting)"
+    else
+      local lastExecutingScript="~"
+      local lastExecutingFunction="~"
+    fi
+
+    if [[ -z "${actionDuration}" ]]; then
+      actionDuration="~"
+    fi
+
+    #logLevel --> info, error, warn
+    #actionStatus --> success, failed, warning
+
+    # Send message if necessary variables are populated
+    if [[ -n "${msTeamsNotificationWebhook}" ]] && [[ "${msTeamsNotificationWebhook}" != "null" ]] && [[ -n "${message}" ]]; then
+
+      # Determine colour of message card
+      if [[ "${logLevel}" == "error" ]] || [[ "${actionStatus}" == "failed" ]]; then
+        statusColour="${colourRed}"
+        statusEmoticon="&#128997;"
+      elif [[ "${logLevel}" == "warn" ]] || [[ "${actionStatus}" == "warning" ]]; then
+        statusColour="${colourAmber}"
+        statusEmoticon="&#128999;"
+      elif [[ "${actionStatus}" == "success" ]]; then
+        statusColour="${colourGreen}"
+        statusEmoticon="&#129001;"
+      elif [[ "${logLevel}" == "info" ]]; then
+        statusColour="${colourBlue}"
+        statusEmoticon="&#128998;"
+      else
+        statusColour="${colourGrey}"
+        statusEmoticon="&#11035;"
+      fi
+
+      echo '''{
                 "@type": "MessageCard",
                 "@context": "http://schema.org/extensions",
                 "themeColor": "'${statusColour}'",
@@ -93,8 +95,8 @@ sendMsTeamsNotification() {
                 }]
                 }''' | /usr/bin/sudo tee ${installationWorkspace}/msTeamsNotification.json
 
-    curl -H 'Content-Type: application/json' -d @${installationWorkspace}/msTeamsNotification.json ${msTeamsNotificationWebhook}
+      curl -H 'Content-Type: application/json' -d @${installationWorkspace}/msTeamsNotification.json ${msTeamsNotificationWebhook}
 
+    fi
   fi
-
 }
