@@ -57,6 +57,9 @@ pipeline {
                             }
                             sh """
                             cd base-vm/build/packer/${packerOsFolder}
+                            ${packerPath}/packer plugins install github.com/hashicorp/vmware
+                            ${packerPath}/packer plugins install github.com/hashicorp/virtualbox
+                            ${packerPath}/packer plugins install github.com/hashicorp/vagrant
                             ${packerPath}/packer build -force -on-error=abort -only ${node_type}-${profile} \
                             -var "compute_engine_build=${vagrant_compute_engine_build}" \
                             -var "memory=8192" \

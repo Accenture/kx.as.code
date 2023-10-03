@@ -2,6 +2,8 @@
 
 INSTALLATION_WORKSPACE=/usr/share/kx.as.code/workspace
 
+# TODO - Re-enable 5.4.1.1 once figured out correct config (tally2 versus faillock")
+
 cisHardeningToRun="""
 1.1.10
 1.1.11.1
@@ -124,7 +126,6 @@ cisHardeningToRun="""
 5.3.2
 5.3.3
 5.3.4
-5.4.1.1
 5.4.1.2
 5.4.1.3
 5.4.1.4
