@@ -2,6 +2,8 @@ injectWrapperIntoFunctionScripts() {
 
 local functionsLocation="${1}"
 
+set +x
+
 # Define ansi colours
 red="\033[31m"
 green="\033[32m"
@@ -83,5 +85,9 @@ else
 fi
 
 done
+
+if [[ "${logLevel}" == "trace" ]]; then
+    set -x
+fi
 
 }
