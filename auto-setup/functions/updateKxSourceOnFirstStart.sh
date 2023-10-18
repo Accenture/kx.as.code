@@ -2,30 +2,37 @@ updateKxSourceOnFirstStart() {
 
   if [[ "${updateSourceOnStart}" == "true" ]] && [[ "$(cat ${profileConfigJsonPath} | jq -r '.state.networking_configuration_status')" != "done" ]]; then
 
-    # Ensure no Windows characters blocking decryption
-    /usr/bin/sudo apt-get install dos2unix
-    if [[ -f ${sharedKxHome}/.config/.vmCredentialsFile ]]; then
-      /usr/bin/sudo dos2unix ${sharedKxHome}/.config/.vmCredentialsFile
+    if [[ -f ${sharedKxHome}/.config/.vmCredentialsFile ]] && [[ -f /var/tmp/.hash ]]; then
+
+      # Ensure no Windows characters blocking decryption
+      /usr/bin/sudo apt-get install dos2unix
+      if [[ -f ${sharedKxHome}/.config/.vmCredentialsFile ]]; then
+        /usr/bin/sudo dos2unix ${sharedKxHome}/.config/.vmCredentialsFile
+      fi
+
+      # Get git credentials
+      local hash="$(/usr/bin/sudo cat /var/tmp/.hash)"
+
+      # Get username and clean/replace characters that break the git commands
+      local gitUsername=$(/usr/bin/sudo cat ${sharedKxHome}/.config/.vmCredentialsFile |
+        grep "git_source_username" |
+        cut -f 2 -d':' |
+        openssl enc -aes-256-cbc -pbkdf2 -salt -A -a -pass pass:${hash} -d |
+        tr -d "[:cntrl:]" |
+        sed 's/@/%40/g')
+
+      # Get password and clean/replace characters that break the git commands
+      local gitPassword=$(/usr/bin/sudo cat ${sharedKxHome}/.config/.vmCredentialsFile |
+        grep "git_source_password" |
+        cut -f 2 -d':' |
+        openssl enc -aes-256-cbc -pbkdf2 -salt -A -a -pass pass:${hash} -d |
+        tr -d "[:cntrl:]" |
+        python3 -c "import urllib.parse; print(urllib.parse.quote(input(),safe=''))")
+
+    else
+      local gitUsername=""
+      local gitPassword=""
     fi
-
-    # Get git credentials
-    local hash="$(/usr/bin/sudo cat /var/tmp/.hash)"
-
-    # Get username and clean/replace characters that break the git commands
-    local gitUsername=$(/usr/bin/sudo cat ${sharedKxHome}/.config/.vmCredentialsFile |
-      grep "git_source_username" |
-      cut -f 2 -d':' |
-      openssl enc -aes-256-cbc -pbkdf2 -salt -A -a -pass pass:${hash} -d |
-      tr -d "[:cntrl:]" |
-      sed 's/@/%40/g')
-
-    # Get password and clean/replace characters that break the git commands
-    local gitPassword=$(/usr/bin/sudo cat ${sharedKxHome}/.config/.vmCredentialsFile |
-      grep "git_source_password" |
-      cut -f 2 -d':' |
-      openssl enc -aes-256-cbc -pbkdf2 -salt -A -a -pass pass:${hash} -d |
-      tr -d "[:cntrl:]" |
-      python3 -c "import urllib.parse; print(urllib.parse.quote(input(),safe=''))")
 
     # Pull latest source code from the source code repository
     log_debug "updateSourceOnStart set to true. Pulling latest code from Github"
