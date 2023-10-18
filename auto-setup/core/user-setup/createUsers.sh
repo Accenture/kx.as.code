@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [[ "${vmUser}" != "${baseUser}" ]]; then
+if [[ "${vmUser}" != "${baseUser}" ]] && [[ -f ${installationWorkspace}/users.json ]]; then
   # Check if owner details defined in users.json
   firstname=$(jq -r '.config.owner.firstname' ${installationWorkspace}/users.json)
   surname=$(jq -r '.config.owner.surname' ${installationWorkspace}/users.json)
@@ -23,6 +23,8 @@ createUsers "${firstname}" \
             "${defaultUserKeyboardLanguage}" \
             "${userRole}"
 
-# Call function for creating users
-# Note: Feature externalized to function so it can be called separately outside of the framework using the manual execution wrapper
-createUsers
+if [[ -f ${installationWorkspace}/users.json ]]; then
+  # Call function for creating users
+  # Note: Feature externalized to function so it can be called separately outside of the framework using the manual execution wrapper
+  createUsers
+fi
