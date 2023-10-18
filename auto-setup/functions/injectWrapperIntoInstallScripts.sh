@@ -1,5 +1,7 @@
 injectWrapperIntoInstallScripts() {
 
+set +x
+
 local scriptPath="${1}"
 local scriptFilename="$(basename ${scriptPath})"
 local scriptRelativeSubPath=$(echo "${scriptPath%/*}" | sed 's;'${autoSetupHome}';;g')
@@ -43,5 +45,9 @@ if [[ "${scriptFilename}" != "injectWrapperIntoInstallScripts.sh" ]]; then
 fi
 
 log_debug "${blue}Completed script wrapper injection for ${scriptRelativeSubPath}/${scriptFilename}()${nc}"
+
+if [[ "${logLevel}" == "trace" ]]; then
+    set -x
+fi
 
 }
