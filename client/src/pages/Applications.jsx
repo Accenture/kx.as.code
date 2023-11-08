@@ -40,6 +40,7 @@ const getArrayOfObjArray = (objArray) => {
   return list;
 };
 
+
 const filterAppsBySearchTermAndInstallationStatus = (
   data,
   searchTerm,
@@ -106,6 +107,12 @@ export const Applications = (props) => {
 
   const [isCheckedCore, setIsCheckedCore] = useState(false);
   const [selectedCount, setSelectedCount] = useState(0);
+
+  const [totalChecked, setTotalChecked] = useState(0);
+
+  const handleTotalCheckedChange = (isChecked) => {
+    setTotalChecked(isChecked ? totalChecked + 1 : totalChecked - 1);
+  };
 
   let [page, setPage] = useState(1);
   // const PER_PAGE = resultsPerPage;
@@ -406,6 +413,7 @@ export const Applications = (props) => {
             isListLayout={isListLayout}
             addCategoryTofilterTags={addCategoryTofilterTags}
             applicationSelectedCount={applicationSelectedCount}
+            onCheck={handleTotalCheckedChange}
           />
         );
       });
@@ -517,11 +525,11 @@ export const Applications = (props) => {
 
       <div
         className={`flex justify-end ${
-          selectedCount > 0 ? "visible" : "hidden"
+          totalChecked > 0 ? "visible" : "hidden"
         }`}
       >
         <button className="bg-kxBlue p-2 px-5 rounded items-center flex">
-          Install Selected Applicaitons ({selectedCount})
+          Install Selected Applicaitons ({totalChecked})
         </button>
       </div>
 

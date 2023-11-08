@@ -22,20 +22,17 @@ function ApplicationCard(props) {
   const [allQueueStatus, setAllQueueStatus] = useState([]);
   const [applicationData, setApplicationData] = useState({});
   const [appQueue, setAppQueue] = useState("undefined");
-  const [isSelected, setIsSelected] = useState(false);
   const [isHover, setIsHover] = useState(false);
   const [isHovering, setIsHovering] = useState(false);
 
-  const refreshActionButton = useRef(null);
+  const [isChecked, setIsChecked] = useState(false);
 
-  const selectHandler = () => {
-    setIsSelected(!isSelected);
-    if (isSelected) {
-      props.applicationSelectedCount("select");
-    } else {
-      props.applicationSelectedCount("unselect");
-    }
+  const handleCheckboxChange = (isChecked) => {
+    setIsChecked(isChecked);
+    props.onCheck(isChecked);
   };
+
+  const refreshActionButton = useRef(null);
 
   const handleMouseOver = () => {
     setIsHovering(true);
@@ -278,7 +275,7 @@ function ApplicationCard(props) {
         .replace(/\b\w/g, (l) => l.toUpperCase())
     );
     return () => {};
-  }, [appQueue, isSelected]);
+  }, [appQueue]);
 
   const drawAppTags = (appTags) => {
     return appTags.map((appTag, i) => {
@@ -377,9 +374,9 @@ function ApplicationCard(props) {
       ) : (
         <div
           className={`relative flex flex-col col-span-full ${
-            isSelected ? "hover:border-kxBlue" : "hover:bg-gray-700"
+            isChecked ? "hover:border-kxBlue" : "hover:bg-gray-700"
           } hover:bg-gray-700 bg-inv3 rounded border-2 ${
-            isSelected ? "border-kxBlue" : "border-inv3"
+            isChecked ? "border-kxBlue" : "border-inv3"
           } hover:border-2 hover:border-gray-600 ${
             props.isListLayout ? "col-span-full" : "sm:col-span-6 xl:col-span-3"
           }`}
@@ -432,10 +429,10 @@ function ApplicationCard(props) {
               <div className="">
                 <div
                   className={`${
-                    isHovering || isSelected ? "visible" : "hidden"
+                    isHovering || isChecked ? "visible" : "hidden"
                   }`}
                 >
-                  <Checkbox checked={isSelected} onChange={selectHandler} />
+                  <Checkbox checked={isChecked} onChange={(e) => handleCheckboxChange(e.target.checked)} />
                 </div>
               </div>
             </header>
