@@ -3,13 +3,14 @@ import { Link } from "react-router-dom";
 import { ImCross } from "react-icons/im";
 import { FaArrowAltCircleDown } from "react-icons/fa";
 import { AiOutlineWarning } from "react-icons/ai";
+import { BiError } from "react-icons/bi"
 
 import { useState, useEffect } from "react";
 
 export default function ApplicationStatusActionButton(props) {
   useEffect(() => {
     console.log("list-actionbutton: ", props.getQueueStatusList(props.appName));
-    return () => {};
+    return () => { };
   }, []);
 
   const getActionButton = () => {
@@ -78,11 +79,18 @@ export default function ApplicationStatusActionButton(props) {
       }
     } else {
       return (
-        <div className="text-red-500 border-red-500 rounded-md border p-2 flex">
-          <AiOutlineWarning className="mt-auto mb-auto table text-4xl mr-2" />
-          Installation Status not available. Please check connection to RabbitMQ
-          service.
-        </div>
+
+        <button
+          className="border-red-500 border p-2 px-5 rounded items-center flex text-red-500"
+          to="#0"
+          onClick={() => {
+            props.applicationInstallHandler();
+          }}
+        >
+          <span className="flex my-auto text-base"><AiOutlineWarning className="mt-auto mb-auto table text-lg mr-2" />
+            ActionButton Error</span>
+        </button>
+
       );
     }
   };

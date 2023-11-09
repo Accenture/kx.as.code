@@ -282,7 +282,7 @@ function ApplicationCard(props) {
       return (
         <ApplicationCategoryTag
           appTag={appTag}
-          keyId={i}
+          key={i}
           addCategoryTofilterTags={props.addCategoryTofilterTags}
         />
       );

@@ -37,7 +37,7 @@ export default function Dashboard() {
   const fetchQueueData = () => {
     const requests = queueList.map((queue) => {
       return axios
-        .get("http://localhost:5001/api/queues/" + queue)
+        .get("http://localhost:5001/mock/api/queues/" + queue)
         .then((response) => {
           response.data.map((app) => {
             queueData.push(app);

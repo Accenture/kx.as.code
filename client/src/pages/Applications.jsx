@@ -432,7 +432,7 @@ export const Applications = (props) => {
   const fetchQueueData = () => {
     const requests = queueList.map((queue) => {
       return axios
-        .get("http://localhost:5001/api/queues/" + queue)
+        .get("http://localhost:5001/mock/api/queues/" + queue)
         .then((response) => {
           // console.log("debug-response: ", response);
           response.data.map((app) => {
