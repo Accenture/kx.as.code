@@ -14,7 +14,7 @@ export default function ApplicationStatusActionButton(props) {
   }, []);
 
   const getActionButton = () => {
-    if (props.isMqConnected) {
+    if (!props.isMqConnected) { // TODO: Disable in API Mock Mode
       if (props.getQueueStatusList(props.appName) == "pending_queue") {
         return (
           <button
@@ -87,7 +87,8 @@ export default function ApplicationStatusActionButton(props) {
             props.applicationInstallHandler();
           }}
         >
-          <span className="flex my-auto text-base"><AiOutlineWarning className="mt-auto mb-auto table text-lg mr-2" />
+          <span className="flex my-auto text-base">
+            <AiOutlineWarning className="mt-auto mb-auto table text-lg mr-2" />
             ActionButton Error</span>
         </button>
 
