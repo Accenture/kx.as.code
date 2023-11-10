@@ -693,7 +693,7 @@ export const Applications = (props) => {
             </div>
           ) : (
             <div className="text-[16px] text-gray-400 mb-4">
-              {localStorage.getItem("appsCount")} available Applications
+              Filter result: {localStorage.getItem("appsCount")} Applications
             </div>
           )}
         </div>

@@ -52,7 +52,7 @@ function ApplicationGroupCard(props) {
 
   useEffect(() => {
     fetchAllComponents(props.appGroup.action_queues);
-    return () => {};
+    return () => { };
   }, []);
 
   async function fetchAllComponents(action_queues) {
@@ -70,16 +70,16 @@ function ApplicationGroupCard(props) {
         ...current,
         <img
           className="p-1 rounded"
-          style={{ height: "50px", width: "50px" }}
+          style={{ height: '50px', width: '50px', objectFit: 'contain' }}
           src={require(`../../media/png/appImgs/${appName}.png`).default}
           onDragStart={handleDragStart}
-          role="presentation"
+          role="presentation" 
         />,
       ]);
     });
   };
 
-  const drawComponentsWithAppImages = () => {};
+  const drawComponentsWithAppImages = () => { };
 
   const drawApplicationGroupCardComponentsTags = (appGroupComponentTags) => {
     return appGroupComponentTags.map((appGroupComponent, i) => {
@@ -194,11 +194,11 @@ function ApplicationGroupCard(props) {
             <ApplicationStatusActionButton
               // isMqConnected={props.isMqConnected}
               isMqConnected={true}
-              getQueueStatusList={() => {}}
+              getQueueStatusList={() => { }}
               appName={""}
               category={""}
-              applicationInstallHandler={() => {}}
-              refreshActionButton={() => {}}
+              applicationInstallHandler={() => { }}
+              refreshActionButton={() => { }}
             />
           </div>
         </div>
