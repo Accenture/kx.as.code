@@ -3,14 +3,23 @@ import AddIcon from "@mui/icons-material/Add";
 import axios from "axios";
 import { DndProvider, useDrag, useDrop } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
+import Button from "@mui/material/Button";
+import RemoveIcon from "@mui/icons-material/Remove";
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 
-const QueueComponent = ({ queueName, count, isSpecial, index, moveQueue }) => {
-  const [{ isDragging }, drag] = useDrag({
+
+
+const QueueComponent = ({ queueName, count, index, moveQueue }) => {
+  const [isDragging, setIsDragging] = useState(false);
+
+  const [, drag, preview] = useDrag({
     type: "QUEUE_COMPONENT",
     item: { queueName, index },
-    collect: (monitor) => ({
-      isDragging: !!monitor.isDragging(),
-    }),
+    collect: (monitor) => {
+      setIsDragging(!!monitor.isDragging());
+      return {};
+    },
   });
 
   const [, drop] = useDrop({
@@ -25,19 +34,24 @@ const QueueComponent = ({ queueName, count, isSpecial, index, moveQueue }) => {
 
   return (
     <div
-      ref={(node) => drag(drop(node))}
-      className={`col-span-3 bg-ghBlack rounded-lg h-60 p-6 border-2 ${
-        isSpecial ? "border-dashed border-gray-700" : "border-ghBlack hover:border-gray-700"
-      } ${isDragging ? "opacity-0" : ""}`}
+      ref={(node) => {
+        drag(drop(node));
+        preview(node);
+      }}
+      className={`col-span-3 bg-ghBlack rounded-md h-40 p-3 border border-gray-600`}
+      style={{
+        border: isDragging ? "1px solid white" : "",
+        opacity: isDragging ? 0.5 : 1,
+      }}
     >
-      <div className="text-[16px] uppercase font-bold text-gray-600">{queueName}</div>
-      <div className="flex justify-center mt-8 text-[50px]">{count}</div>
-      <div className="flex justify-center text-[14px]">Application count</div>
+      <div className="text-base uppercase">{queueName}</div>
+      <div className="flex justify-center mt-5 text-2xl">{count}</div>
+      <div className="flex justify-center text-sm">Messages</div>
     </div>
   );
 };
 
-export default function Dashboard() {
+const Dashboard = () => {
   const [queueList, setQueueList] = useState([
     "pending_queue",
     "failed_queue",
@@ -48,19 +62,7 @@ export default function Dashboard() {
   ]);
 
   const [queueData, setQueueData] = useState([]);
-
-  const onDragEnd = (result) => {
-    if (!result.destination) return;
-
-    const updatedQueueList = Array.from(queueList);
-    const [movedQueue] = updatedQueueList.splice(result.source.index, 1);
-    updatedQueueList.splice(result.destination.index, 0, movedQueue);
-
-    setQueueList(updatedQueueList);
-  };
-
-  const getApplicationCountByQueue = (queueName) =>
-    queueData.filter((app) => app.routing_key === queueName).length;
+  const [isOpenQueueDashboardSection, setIsOpenQueueDashboardSection] = useState(true);
 
   const fetchQueueData = async () => {
     try {
@@ -78,11 +80,12 @@ export default function Dashboard() {
   };
 
   const moveQueue = (fromIndex, toIndex) => {
-    const updatedQueueList = Array.from(queueList);
-    const [movedQueue] = updatedQueueList.splice(fromIndex, 1);
-    updatedQueueList.splice(toIndex, 0, movedQueue);
-
-    setQueueList(updatedQueueList);
+    setQueueList((prevList) => {
+      const updatedQueueList = [...prevList];
+      const [movedQueue] = updatedQueueList.splice(fromIndex, 1);
+      updatedQueueList.splice(toIndex, 0, movedQueue);
+      return updatedQueueList;
+    });
   };
 
   useEffect(() => {
@@ -93,25 +96,49 @@ export default function Dashboard() {
     <div className="px-4 sm:px-6 lg:px-24 py-8 w-full max-w-9xl mx-auto">
       <div className="text-white text-xl font-bold py-5 italic">MY DASHBOARD</div>
 
-      <DndProvider backend={HTML5Backend}>
-        <div className="grid grid-cols-12 gap-2">
-          {queueList.map((queueName, index) => (
-            <QueueComponent
-              key={index}
-              queueName={queueName}
-              count={getApplicationCountByQueue(queueName)}
-              isSpecial={index === 3}
-              index={index}
-              moveQueue={moveQueue}
-            />
-          ))}
-          <div className="col-span-3 text-gray-700 bg-inv1 rounded-lg h-60 p-6 border-2 border-dashed border-gray-700 hover:border-gray-600">
-            <div className="flex justify-center mt-16 text-[50px]">
-              <AddIcon fontSize="inherit" color="inherit" className="hover:text-600" />
-            </div>
+      <div className={`bg-inv3 px-5 rounded-md border border-gray-600 ${isOpenQueueDashboardSection > 0 ? "py-5" : "pt-5"} `}>
+
+        {/* Dashboard section header */}
+        <div className="flex justify-between items-center pb-5">
+          {/* Dashboard section title */}
+          <div className="text-base items-center">
+            RabbitMQ Queues Monitoring
+          </div>
+          <div className=''>
+            <Button
+              variant="outlined"
+              size="small"
+              className="h-full text-black bg-green-500"
+              onClick={(e) => {
+                setIsOpenQueueDashboardSection(!isOpenQueueDashboardSection);
+              }}
+            >
+              {isOpenQueueDashboardSection ? (
+                <ExpandLessIcon fontSize="small" />
+              ) : (
+                <ExpandMoreIcon fontSize="small" />
+              )}
+            </Button>
           </div>
         </div>
-      </DndProvider>
+
+        <DndProvider backend={HTML5Backend}>
+          <div className={`grid grid-cols-12 gap-2 hover:border-gray-400 ${isOpenQueueDashboardSection > 0 ? "visible" : "hidden"}`}>
+            {queueList.map((queueName, index) => (
+              <QueueComponent
+                key={index}
+                queueName={queueName}
+                count={queueData.filter((app) => app.routing_key === queueName).length}
+                index={index}
+                moveQueue={moveQueue}
+              />
+            ))}
+          </div>
+        </DndProvider>
+
+      </div>
     </div>
   );
-}
+};
+
+export default Dashboard;

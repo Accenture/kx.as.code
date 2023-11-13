@@ -3,7 +3,8 @@ import { Link } from "react-router-dom";
 import { ImCross } from "react-icons/im";
 import { FaArrowAltCircleDown } from "react-icons/fa";
 import { AiOutlineWarning } from "react-icons/ai";
-import { BiError } from "react-icons/bi"
+import RestartAltIcon from '@mui/icons-material/RestartAlt';
+import Tooltip from "@mui/material/Tooltip";
 
 import { useState, useEffect } from "react";
 
@@ -17,31 +18,44 @@ export default function ApplicationStatusActionButton(props) {
     if (!props.isMqConnected) { // TODO: Disable in API Mock Mode
       if (props.getQueueStatusList(props.appName) == "pending_queue") {
         return (
-          <button
-            className="bg-gray-600 p-2 px-5 rounded items-center flex"
-            disabled
-          >
-            <svg
-              className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
-              fill="none"
-              viewBox="0 0 24 24"
+          <div className="flex">
+            <button
+              className="bg-gray-600 p-2 px-5 rounded-bl rounded-tl items-center flex"
+              disabled
             >
-              <circle
-                className="opacity-25"
-                cx="12"
-                cy="12"
-                r="10"
-                stroke="currentColor"
-                strokeWidth="4"
-              ></circle>
-              <path
-                className="opacity-75"
-                fill="currentColor"
-                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-              ></path>
-            </svg>
-            <span className="text-white">Processing...</span>
-          </button>
+              <svg
+                className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                ></circle>
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                ></path>
+              </svg>
+              <span className="text-white">Processing...</span>
+            </button>
+            <Tooltip title={`Re-install ${props.appName}`} placement="top" arrow>
+              <button className="bg-kxBlue p-2 rounded-br rounded-tr">
+                <RestartAltIcon
+                  aria-label="list"
+                  color="white"
+                  onClick={() => {
+                    props.applicationInstallHandler();
+                  }}
+                />
+              </button>
+            </Tooltip>
+          </div>
         );
       } else if (
         props.getQueueStatusList(props.appName) == "completed_queue" &&
