@@ -427,7 +427,7 @@ export const Applications = (props) => {
   };
 
   // TODO get status by app name -> Return e.g. completed, pending, none
-  const getInstallationStatusByAppName = () => {};
+  const getInstallationStatusByAppName = () => { };
 
   const fetchQueueData = () => {
     const requests = queueList.map((queue) => {
@@ -523,15 +523,16 @@ export const Applications = (props) => {
         <div className="border-b-2 border-gray-700"></div>
       </div>
 
-      <div
-        className={`flex justify-end ${
-          totalChecked > 0 ? "visible" : "hidden"
-        }`}
-      >
-        <button className="bg-kxBlue p-2 px-5 rounded items-center flex">
-          Install Selected Applicaitons ({totalChecked})
-        </button>
+      <div className="h-[40px]">
+        <div className={`flex justify-end ${totalChecked > 0 ? "visible" : "hidden"}`}>
+          {totalChecked > 0 && (
+            <button className="bg-kxBlue p-2 px-5 rounded items-center flex">
+              Install Selected {totalChecked === 1 ? "Application" : "Applications"} ({totalChecked})
+            </button>
+          )}
+        </div>
       </div>
+
 
       {/* Filter Section */}
       <div className="bg-inv3 px-5 py-8 my-5 rounded border border-gray-600">

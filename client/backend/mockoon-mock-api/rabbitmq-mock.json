@@ -75,7 +75,7 @@
       "responses": [
         {
           "uuid": "a50822c2-b025-4dc9-af93-8f1ea4bb3c54",
-          "body": "[]",
+          "body": "[{\n    \"payload_bytes\": 84,\n    \"redelivered\": true,\n    \"exchange\": \"action_workflow\",\n    \"routing_key\": \"pending_queue\",\n    \"message_count\": 19,\n    \"properties\": {\n      \"delivery_mode\": 2\n    },\n    \"payload\": \"{\\\"install_folder\\\":\\\"colaboration\\\",\\\"name\\\":\\\"confluence\\\",\\\"action\\\":\\\"install\\\",\\\"retries\\\":\\\"0\\\"}\",\n    \"payload_encoding\": \"string\"\n  }, \n  {\n    \"payload_bytes\": 84,\n    \"redelivered\": true,\n    \"exchange\": \"action_workflow\",\n    \"routing_key\": \"pending_queue\",\n    \"message_count\": 19,\n    \"properties\": {\n      \"delivery_mode\": 2\n    },\n    \"payload\": \"{\\\"install_folder\\\":\\\"colaboration\\\",\\\"name\\\":\\\"jenkins\\\",\\\"action\\\":\\\"install\\\",\\\"retries\\\":\\\"0\\\"}\",\n    \"payload_encoding\": \"string\"\n  }]",
           "latency": 0,
           "statusCode": 200,
           "label": "",

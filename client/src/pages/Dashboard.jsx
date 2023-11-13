@@ -28,7 +28,7 @@ const QueueComponent = ({ queueName, count, isSpecial, index, moveQueue }) => {
       ref={(node) => drag(drop(node))}
       className={`col-span-3 bg-ghBlack rounded-lg h-60 p-6 border-2 ${
         isSpecial ? "border-dashed border-gray-700" : "border-ghBlack hover:border-gray-700"
-      } ${isDragging ? "opacity-50" : ""}`}
+      } ${isDragging ? "opacity-0" : ""}`}
     >
       <div className="text-[16px] uppercase font-bold text-gray-600">{queueName}</div>
       <div className="flex justify-center mt-8 text-[50px]">{count}</div>
