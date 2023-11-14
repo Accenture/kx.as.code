@@ -7,6 +7,8 @@ import Button from "@mui/material/Button";
 import RemoveIcon from "@mui/icons-material/Remove";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
+import Tooltip from "@mui/material/Tooltip";
+
 
 
 
@@ -45,8 +47,14 @@ const QueueComponent = ({ queueName, count, index, moveQueue }) => {
       }}
     >
       <div className="text-base uppercase">{queueName}</div>
-      <div className="flex justify-center mt-5 text-2xl">{count}</div>
-      <div className="flex justify-center text-sm">Messages</div>
+      <Tooltip title={`Open ${queueName} messages in new Tab.`} placement="top" arrow>
+      <a href={`http://localhost:5001/mock/api/queues/${queueName}`} className="hover:underline hover:text-kxBlue" target="_blank">
+        <div className="flex justify-center mt-5 text-2xl">
+          {count}
+        </div>
+        <div className="flex justify-center text-sm">Messages</div>
+      </a>
+      </Tooltip>
     </div>
   );
 };
