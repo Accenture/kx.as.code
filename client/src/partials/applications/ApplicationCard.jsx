@@ -51,7 +51,7 @@ function ApplicationCard(props) {
 
   const NotificationMessage = (notificationProps) => (
     <div className="flex items-center">
-      <AppLogo height={"40px"} width={"40px"} appName={props.app.name} />
+      <AppLogo appName={props.app.name} />
       <div className="ml-2">{notificationProps.notificationMessage}</div>
     </div>
   );
@@ -315,10 +315,8 @@ function ApplicationCard(props) {
                     >
                       <div className="flex items-center">
                         {/* Icon */}
-                        <div className="">
+                        <div className="h-auto w-10">
                           <AppLogo
-                            //height={"40px"}
-                            //width={"40px"}
                             appName={props.app.name}
                           />
                           {/* <StatusTag installStatus={props.app.queueName} /> */}
@@ -374,7 +372,8 @@ function ApplicationCard(props) {
       ) : (
         <div
           className={`relative flex flex-col col-span-full ${
-            isChecked ? "hover:border-kxBlue" : "hover:bg-gray-700"
+            // Bug: hover:border-kxBlue not working. Fix -> [#5a86ff]
+            isChecked ? "hover:border-[#5a86ff]" : "hover:bg-gray-700"
           } hover:bg-gray-700 bg-inv3 rounded border-2 ${
             isChecked ? "border-kxBlue" : "border-inv3"
           } hover:border-2 hover:border-gray-600 ${
@@ -388,10 +387,8 @@ function ApplicationCard(props) {
           <div className="p-6">
             <header className="flex justify-between items-start mb-2">
               {/* Icon */}
-              <div className="">
+              <div className="h-auto w-10">
                 <AppLogo
-                  //height={"50px"}
-                  // width={"50px"}
                   appName={props.app.name}
                 />
                 {/* <StatusTag installStatus={props.app.queueName} /> */}

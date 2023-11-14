@@ -216,7 +216,7 @@
       "type": "http",
       "documentation": "",
       "method": "get",
-      "endpoint": "mock/api/jenkins/healthcheck",
+      "endpoint": "api/jenkins/healthcheck",
       "responses": [
         {
           "uuid": "710155bb-4a2b-49c3-bd70-ae39a1fb3f61",

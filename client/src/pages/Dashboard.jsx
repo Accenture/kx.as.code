@@ -46,7 +46,7 @@ const QueueComponent = ({ queueName, count, index, moveQueue }) => {
         drag(drop(node));
         preview(node);
       }}
-      className={`col-span-3 bg-inv2 rounded-md h-40 p-3 border border-gray-600`}
+      className={`col-span-3 bg-gray-700 hover:bg-[#3d4d63] rounded-md h-40 p-3`}
       style={{
         border: isDragging ? "1px solid white" : "",
         opacity: isDragging ? 0.5 : 1,
