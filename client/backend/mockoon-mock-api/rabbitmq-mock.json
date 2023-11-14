@@ -210,6 +210,35 @@
       ],
       "enabled": true,
       "responseMode": null
+    },
+    {
+      "uuid": "02590561-5b86-4e02-970a-5546d4edfa04",
+      "type": "http",
+      "documentation": "",
+      "method": "get",
+      "endpoint": "mock/api/jenkins/healthcheck",
+      "responses": [
+        {
+          "uuid": "710155bb-4a2b-49c3-bd70-ae39a1fb3f61",
+          "body": "{}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id"
+        }
+      ],
+      "enabled": true,
+      "responseMode": null
     }
   ],
   "rootChildren": [
@@ -240,6 +269,10 @@
     {
       "type": "route",
       "uuid": "8c060dae-775d-45cd-b8df-7e696a39ae8c"
+    },
+    {
+      "type": "route",
+      "uuid": "02590561-5b86-4e02-970a-5546d4edfa04"
     }
   ],
   "proxyMode": false,

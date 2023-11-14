@@ -8,9 +8,15 @@ import RemoveIcon from "@mui/icons-material/Remove";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import Tooltip from "@mui/material/Tooltip";
+import HealthcheckDashboard from "../partials/dashboard/HealthcheckDashboard"
 
 
-
+const HealthcheckInfoComponent = ({ healthcheckStatus }) => {
+  return (
+    <div className="rounded h-10 m-2 w-5 bg-green-500">
+    </div>
+  )
+}
 
 const QueueComponent = ({ queueName, count, index, moveQueue }) => {
   const [isDragging, setIsDragging] = useState(false);
@@ -40,7 +46,7 @@ const QueueComponent = ({ queueName, count, index, moveQueue }) => {
         drag(drop(node));
         preview(node);
       }}
-      className={`col-span-3 bg-ghBlack rounded-md h-40 p-3 border border-gray-600`}
+      className={`col-span-3 bg-inv2 rounded-md h-40 p-3 border border-gray-600`}
       style={{
         border: isDragging ? "1px solid white" : "",
         opacity: isDragging ? 0.5 : 1,
@@ -48,12 +54,12 @@ const QueueComponent = ({ queueName, count, index, moveQueue }) => {
     >
       <div className="text-base uppercase">{queueName}</div>
       <Tooltip title={`Open ${queueName} messages in new Tab.`} placement="top" arrow>
-      <a href={`http://localhost:5001/mock/api/queues/${queueName}`} className="hover:underline hover:text-kxBlue" target="_blank">
-        <div className="flex justify-center mt-5 text-2xl">
-          {count}
-        </div>
-        <div className="flex justify-center text-sm">Messages</div>
-      </a>
+        <a href={`http://localhost:5001/mock/api/queues/${queueName}`} className="hover:underline hover:text-kxBlue" target="_blank">
+          <div className="flex justify-center mt-5 text-2xl">
+            {count}
+          </div>
+          <div className="flex justify-center text-sm">Messages</div>
+        </a>
       </Tooltip>
     </div>
   );
@@ -71,6 +77,15 @@ const Dashboard = () => {
 
   const [queueData, setQueueData] = useState([]);
   const [isOpenQueueDashboardSection, setIsOpenQueueDashboardSection] = useState(true);
+  const [isOpenAppsHealthcheckDashboardSection, setIsOpenAppsHealthcheckDashboardSection] = useState(true);
+  const [applicationData, setApplicationData] = useState([]);
+
+
+  const fetchApplicationData = () => {
+    axios.get("http://localhost:5001/api/applications").then((response) => {
+      setApplicationData(response.data);
+    });
+  };
 
   const fetchQueueData = async () => {
     try {
@@ -98,13 +113,15 @@ const Dashboard = () => {
 
   useEffect(() => {
     fetchQueueData();
+    fetchApplicationData();
   }, []);
 
   return (
     <div className="px-4 sm:px-6 lg:px-24 py-8 w-full max-w-9xl mx-auto">
       <div className="text-white text-xl font-bold py-5 italic">MY DASHBOARD</div>
 
-      <div className={`bg-inv3 px-5 rounded-md border border-gray-600 ${isOpenQueueDashboardSection > 0 ? "py-5" : "pt-5"} `}>
+      {/* Dashboard Section Queue Monitoring */}
+      <div className={`mb-5 bg-inv px-5 rounded-md border border-gray-600 ${isOpenQueueDashboardSection > 0 ? "py-5" : "pt-5"} `}>
 
         {/* Dashboard section header */}
         <div className="flex justify-between items-center pb-5">
@@ -116,7 +133,7 @@ const Dashboard = () => {
             <Button
               variant="outlined"
               size="small"
-              className="h-full text-black bg-green-500"
+              className="h-full text-black"
               onClick={(e) => {
                 setIsOpenQueueDashboardSection(!isOpenQueueDashboardSection);
               }}
@@ -131,7 +148,7 @@ const Dashboard = () => {
         </div>
 
         <DndProvider backend={HTML5Backend}>
-          <div className={`grid grid-cols-12 gap-2 hover:border-gray-400 ${isOpenQueueDashboardSection > 0 ? "visible" : "hidden"}`}>
+          <div className={`grid grid-cols-12 gap-2 hover:border-gray-400 ${isOpenQueueDashboardSection > 0 ? "visible" : "hidden"} hover:cursor-pointer`}>
             {queueList.map((queueName, index) => (
               <QueueComponent
                 key={index}
@@ -145,6 +162,9 @@ const Dashboard = () => {
         </DndProvider>
 
       </div>
+
+      <HealthcheckDashboard applicationData={applicationData} queueData={queueData} />
+
     </div>
   );
 };
