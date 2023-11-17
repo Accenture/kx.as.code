@@ -7,6 +7,7 @@
     "environment_variables": {
         "installGuacamole": "true",
         "installNoMachine": "false",
+        "installX2Go": "false",
         "tomcatVersion": "tomcat9",
         "guacamoleVersion": "1.5.3",
         "guacamoleTarChecksum": "dd4eebfb79fdef23d20dc585da8952e1b46a3411ec46836895c041488cf6dbc4",
