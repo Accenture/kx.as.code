@@ -185,6 +185,11 @@ sudo mkdir -p "${taskShortcutsDirectory}"
 sudo chmod a+rwx "${taskShortcutsDirectory}"
 sudo ln -s "${taskShortcutsDirectory}" /home/${VM_USER}/Desktop/
 
+logsShortcutsDirectory="/usr/share/kx.as.code/Logs"
+sudo mkdir -p "${logsShortcutsDirectory}"
+sudo chmod a+rwx "${logsShortcutsDirectory}"
+sudo ln -s "${logsShortcutsDirectory}" /home/${VM_USER}/Desktop/
+
 adminShortcutsDirectory="/usr/share/kx.as.code/Admin Tools"
 sudo mkdir -p "${adminShortcutsDirectory}"
 sudo chmod a+rwx "${adminShortcutsDirectory}"
