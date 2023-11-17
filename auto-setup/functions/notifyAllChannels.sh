@@ -36,7 +36,7 @@ notifyAllChannels() {
 
   # Change message if task was executed rather than solution installed
   if [[ "${action}" == "Task Execution" ]]; then
-    message='$(echo "'${1}'" | sed "s/Installation of/Execution of task \"'${task}'\" for/g" | sed "s/installed/task  \"'${task}' \" executed/g")'
+    message=$(echo "${1}" | sed 's/Installation of/Execution of task '${task}' for/g' | sed 's/installed/task '${task}' executed/g')
   fi
 
   log_trace "Sending following notification: ${message}"
@@ -44,7 +44,7 @@ notifyAllChannels() {
   sendDiscordNotification "${message}" "${logLevel}" "${actionStatus}" "${componentName:-}" "${action}" "${category:-}" "${retries:-}" "${task:-}" "${actionDuration}"
   sendSlackNotification "${message}" "${logLevel}" "${actionStatus}" "${componentName:-}" "${action}" "${category:-}" "${retries:-}" "${task:-}" "${actionDuration}"
   sendMsTeamsNotification "${message}" "${logLevel}" "${actionStatus}" "${componentName:-}" "${action}" "${category:-}" "${retries:-}" "${task:-}" "${actionDuration}"
-  sendEmailNotification "${message}" "${logLevel}" "${actionStatus}" "${componentName:-}" "${action}" "${category:-}" "${retries:-}" "${task:-}" "${actionDuration}"
+  #sendEmailNotification "${message}" "${logLevel}" "${actionStatus}" "${componentName:-}" "${action}" "${category:-}" "${retries:-}" "${task:-}" "${actionDuration}"
 
   # Add task duration to end of message if available
   if [[ -n "${actionDuration}" ]]; then
