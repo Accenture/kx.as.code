@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from 'react';
 import AddIcon from "@mui/icons-material/Add";
 import axios from "axios";
 import { DndProvider, useDrag, useDrop } from "react-dnd";
@@ -20,89 +20,58 @@ const HealthcheckInfoBox = ({ healthcheckStatus }) => {
   } else {
     bgColorClass = 'bg-red-500';
   } return (
-    <div className={`rounded h-10 m-1 w-3 ${bgColorClass}`}>
+    <div className={`rounded h-8 m-1 w-2 ${bgColorClass}`}>
     </div>
   );
 };
 
 const HealthCheckInfoComponent = ({ appName }) => {
-  const [status, setStatus] = useState(null);
+  const [appHealthcheckDataArray, setAppHealthcheckDataArray] = useState([]);
+  const [status, setStatus] = useState(0);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await fetch(`http://localhost:8000/mock/api/jenkins/healthcheck`);
-        const data = await response.json();
 
-        if (response.status === 200) {
-          setStatus(200);
-        } else if (response.status === 0) {
-          setStatus(0);
-        } else {
-          setStatus(404);
-        }
+        const healthcheckDataObj = {
+          timestamp: new Date(),
+          status: response.status,
+        };
+
+        setStatus(response.status);
+
+        setAppHealthcheckDataArray(prevArray => [...prevArray, healthcheckDataObj]);
       } catch (error) {
         console.error('Error fetching data:', error);
-        setStatus('fail');
       }
     };
+
     fetchData();
+
+    const intervalId = setInterval(fetchData, 1000); 
+
+    return () => clearInterval(intervalId);
   }, [appName]);
+
+  useEffect(() => {
+    const backgroundProcess = async () => {
+
+    };
+
+    backgroundProcess();
+  }, [appHealthcheckDataArray]);
+
   return (
-    <div className="flex">
-      <HealthcheckInfoBox healthcheckStatus={status} />
-      <HealthcheckInfoBox healthcheckStatus={status} />
-      <HealthcheckInfoBox healthcheckStatus={status} />
-      <HealthcheckInfoBox healthcheckStatus={status} />
-      <HealthcheckInfoBox healthcheckStatus={status} />
-      <HealthcheckInfoBox healthcheckStatus={status} />
-      <HealthcheckInfoBox healthcheckStatus={status} />
-      <HealthcheckInfoBox healthcheckStatus={404} />
-      <HealthcheckInfoBox healthcheckStatus={404} />
-      <HealthcheckInfoBox healthcheckStatus={404} />
-      <HealthcheckInfoBox healthcheckStatus={404} />
-      <HealthcheckInfoBox healthcheckStatus={0} />
-      <HealthcheckInfoBox healthcheckStatus={0} />
-      <HealthcheckInfoBox healthcheckStatus={0} />
-      <HealthcheckInfoBox healthcheckStatus={0} />
-      <HealthcheckInfoBox healthcheckStatus={0} />
-      <HealthcheckInfoBox healthcheckStatus={0} />
-      <HealthcheckInfoBox healthcheckStatus={0} />
-      <HealthcheckInfoBox healthcheckStatus={0} />
-      <HealthcheckInfoBox healthcheckStatus={0} />
-      <HealthcheckInfoBox healthcheckStatus={0} />
-      <HealthcheckInfoBox healthcheckStatus={0} />
-      <HealthcheckInfoBox healthcheckStatus={0} />
-      <HealthcheckInfoBox healthcheckStatus={0} />
-      <HealthcheckInfoBox healthcheckStatus={0} />
-      <HealthcheckInfoBox healthcheckStatus={0} />
-      <HealthcheckInfoBox healthcheckStatus={0} />
-      <HealthcheckInfoBox healthcheckStatus={0} />
-      <HealthcheckInfoBox healthcheckStatus={0} />
-      <HealthcheckInfoBox healthcheckStatus={0} />
-      <HealthcheckInfoBox healthcheckStatus={0} />
-      <HealthcheckInfoBox healthcheckStatus={0} />
-      <HealthcheckInfoBox healthcheckStatus={0} />
-      <HealthcheckInfoBox healthcheckStatus={0} />
-      <HealthcheckInfoBox healthcheckStatus={0} />
-      <HealthcheckInfoBox healthcheckStatus={0} />
-      <HealthcheckInfoBox healthcheckStatus={0} />
-      <HealthcheckInfoBox healthcheckStatus={0} />
-      <HealthcheckInfoBox healthcheckStatus={0} />
-      <HealthcheckInfoBox healthcheckStatus={0} />
-      <HealthcheckInfoBox healthcheckStatus={0} />
-      <HealthcheckInfoBox healthcheckStatus={0} />
-      <HealthcheckInfoBox healthcheckStatus={0} />
-      <HealthcheckInfoBox healthcheckStatus={0} />
-      <HealthcheckInfoBox healthcheckStatus={0} />
-      <HealthcheckInfoBox healthcheckStatus={0} />
-      <HealthcheckInfoBox healthcheckStatus={0} />
-      <HealthcheckInfoBox healthcheckStatus={0} />
-      <HealthcheckInfoBox healthcheckStatus={0} />
+    <div className="flex justify-start">
+      {appHealthcheckDataArray.map((healthcheckData, index) => (
+        <HealthcheckInfoBox key={index} healthcheckStatus={healthcheckData.status} />
+      ))}
     </div>
   );
-
 };
+
+
 
 
 const checkIsAppNameInCompletedQueue = (queueData, appName) => {
@@ -144,7 +113,7 @@ const checkIsAppNameInCompletedQueue = (queueData, appName) => {
 const HealthcheckDashboard = (props) => {
   const [isOpenAppsHealthcheckDashboardSection, setIsOpenAppsHealthcheckDashboardSection] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
-  
+
   useEffect(() => {
 
   }, []);
@@ -178,36 +147,36 @@ const HealthcheckDashboard = (props) => {
       <div className={`w-full ${isOpenAppsHealthcheckDashboardSection > 0 ? "visible" : "hidden"}`}>
         {/* Search Input Field */}
         <div className="group relative mb-5">
-            <svg
-              width="20"
-              height="20"
-              fill="currentColor"
-              className="absolute left-3 top-1/2 -mt-2.5 text-gray-500 pointer-events-none group-focus-within:text-kxBlue"
-              aria-hidden="true"
-            >
-              <path
-                fillRule="evenodd"
-                clipRule="evenodd"
-                d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
-              />
-            </svg>
-            <input
-              type="text"
-              placeholder="Search..."
-              className="focus:ring-2 focus:ring-kxBlue focus:outline-none bg-ghBlack2 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 rounded text-md border-0 shadow outline-none focus:outline-none focus:ring min-w-80 pl-10"
-              onChange={(e) => {
-                setSearchTerm(e.target.value);
-              }}
+          <svg
+            width="20"
+            height="20"
+            fill="currentColor"
+            className="absolute left-3 top-1/2 -mt-2.5 text-gray-500 pointer-events-none group-focus-within:text-kxBlue"
+            aria-hidden="true"
+          >
+            <path
+              fillRule="evenodd"
+              clipRule="evenodd"
+              d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
             />
-          </div>
+          </svg>
+          <input
+            type="text"
+            placeholder="Search..."
+            className="focus:ring-2 focus:ring-kxBlue focus:outline-none bg-ghBlack2 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 rounded text-md border-0 shadow outline-none focus:outline-none focus:ring min-w-80 pl-10"
+            onChange={(e) => {
+              setSearchTerm(e.target.value);
+            }}
+          />
+        </div>
         {props.applicationData.filter((item) => {
-        const lowerCaseName = (item.name || '').toLowerCase();
-        if (searchTerm === "") {
-          return true;
-        } else {
-          return lowerCaseName.includes(searchTerm.toLowerCase().trim());
-        }
-      }).map((item, key) => {
+          const lowerCaseName = (item.name || '').toLowerCase();
+          if (searchTerm === "") {
+            return true;
+          } else {
+            return lowerCaseName.includes(searchTerm.toLowerCase().trim());
+          }
+        }).map((item, key) => {
           const isInCompletedQueue = checkIsAppNameInCompletedQueue(props.queueData, item.name);
           return (
             <div key={key}>
