@@ -17,7 +17,7 @@ createLogRotationConfiguration() {
     local filename="$(basename \"${logFilePath}\")"
     local logRotateShortFileName="$(basename $filename $(echo .$filename | cut -d'.' -f2) | sed 's/\*.*$//g')"
 
-    if [[ -z $(grep "${logFilePath}" /etc/logrotate.d/* ) ]]; then
+    if [[ -z $(grep -r "${logFilePath}" /etc/logrotate.d) ]]; then
 
       # Add new log rotation configuration for log file
       echo """${logFilePath} {
@@ -38,7 +38,7 @@ createLogRotationConfiguration() {
       # Restart Log Rotation service
       /usr/bin/sudo systemctl daemon-reload && /usr/bin/sudo systemctl start logrotate
 
-    set +o noglob # re-enable wildcard expansion
+      set +o noglob # re-enable wildcard expansion
 
     fi
 
