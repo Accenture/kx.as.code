@@ -40,6 +40,7 @@ const performHealthCheck = async () => {
   try {
     const response = await axios.get(healthCheckEndpoint);
     const healthCheckObj = {
+      appName: "",
       timestamp: new Date().toISOString(),
       status: response.status,
     };
