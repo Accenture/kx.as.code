@@ -68,6 +68,12 @@
             "title": "Prune Docker Registry",
             "description": "Prunes deleted images from the Docker Registry",
             "script": "pruneDockerRegistry.sh"
+        },
+        {
+            "name": "resetRegistryRepository",
+            "title": "Reset Docker Registry",
+            "description": "Completely clears all repositories from the docker registry",
+            "script": "resetRegistryRepository.sh"
         }
     ]
 }
