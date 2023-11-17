@@ -30,7 +30,7 @@
             "ten_gb": 10,
             "thirty_gb": 0
         },
-        "logLevel": "info",
+        "logLevel": "debug",
         "metalLbIpRange": {
             "ipRangeEnd": "10.10.76.150",
             "ipRangeStart": "10.10.76.100"
@@ -49,18 +49,18 @@
         "vm_properties": {
             "3d_acceleration": "off",
             "main_admin_node_cpu_cores": 4,
-            "main_admin_node_memory": 12288,
+            "main_admin_node_memory": 8192,
             "main_node_count": 1,
             "main_replica_node_cpu_cores": 2,
-            "main_replica_node_memory": 8196,
+            "main_replica_node_memory": 8192,
             "worker_node_count": 0,
             "worker_node_cpu_cores": 2,
             "worker_node_memory": 8192
         }
     },
     "notification_endpoints": {
-        "slack_webhook": "",
+        "email_address": "",
         "ms_teams_webhook": "",
-        "email_address": ""
+        "slack_webhook": ""
     }
 }
