@@ -7,7 +7,7 @@
         "baseUser": "kx.hero",
         "certificationMode": false,
         "defaultKeyboardLanguage": "de",
-        "disableLinuxDesktop": "false",
+        "disableLinuxDesktop": false,
         "disableSessionTimeout": true,
         "dnsResolution": {
             "dns1": "10.100.76.200",
@@ -30,7 +30,7 @@
             "ten_gb": 10,
             "thirty_gb": 0
         },
-        "logLevel": "info",
+        "logLevel": "debug",
         "metalLbIpRange": {
             "ipRangeEnd": "10.10.76.150",
             "ipRangeStart": "10.10.76.100"
@@ -40,7 +40,7 @@
             "https_proxy": "",
             "no_proxy": ""
         },
-        "selectedTemplates": "Examples Group 1",
+        "selectedTemplates": "",
         "sslProvider": "self-signed",
         "standaloneMode": "true",
         "startupMode": "minimal",
@@ -62,18 +62,17 @@
         "virtualizationType": "local",
         "vm_properties": {
             "3d_acceleration": "off",
-            "main_admin_node_cpu_cores": 8,
-            "main_admin_node_memory": 32768,
+            "main_admin_node_cpu_cores": 4,
+            "main_admin_node_memory": 8192,
             "main_node_count": 1,
             "main_replica_node_cpu_cores": 2,
-            "main_replica_node_memory": 8196,
+            "main_replica_node_memory": 8192,
             "worker_node_count": 0,
-            "worker_node_cpu_cores": 4,
+            "worker_node_cpu_cores": 6,
             "worker_node_memory": 8192
         }
     },
     "notification_endpoints": {
-        "discord_webhook": "",
         "email_address": "",
         "ms_teams_webhook": "",
         "slack_webhook": ""

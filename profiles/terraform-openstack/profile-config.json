@@ -44,7 +44,12 @@
         "baseUser": "kx.hero",
         "basePassword": "L3arnandshare",
         "baseIpType": "dynamic",
-        "dnsResolution": "hybrid",
+        "dnsResolution": {
+            "resolutionType": "hybrid",
+            "dns1": "",
+            "dns2": "",
+            "dnsForwarding": "none"
+        },
         "metalLbIpRange": {
             "ipRangeStart": "10.10.76.100",
             "ipRangeEnd": "10.10.76.150"

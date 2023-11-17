@@ -1,6 +1,6 @@
 injectWrapperIntoInstallScripts() {
 
-set +x
+set +x 
 
 local scriptPath="${1}"
 local scriptFilename="$(basename ${scriptPath})"

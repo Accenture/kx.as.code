@@ -5,8 +5,8 @@ export default function AppLogo(props) {
   const [image, setImage] = useState();
   const imageName = props.appName;
 
-  const [height, setHeight] = useState("10px");
-  const [width, setWidth] = useState("10px");
+  // const [height, setHeight] = useState("10px");
+  // const [width, setWidth] = useState("10px");
 
   const setImageSize = () => {
     // setHeight(props.height);
@@ -35,7 +35,7 @@ export default function AppLogo(props) {
 
   return (
     <>
-      <img src={image} alt={props.appName} style={{ height: "50px" }} />
+      <img src={image} alt={props.appName} />
     </>
   );
 }

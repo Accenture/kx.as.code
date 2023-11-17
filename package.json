@@ -1,0 +1,1 @@
+{ "dependencies": { "@dnd-kit/core": "^6.1.0", "react-dnd": "latest", "react-dnd-html5-backend": "latest", "react-draggable": "^4.4.6", "react-modal": "^3.16.1" } }

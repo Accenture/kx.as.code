@@ -1,7 +1,13 @@
 {
     "config": {
-        "additionalUsers":
-        [
+        "owner": {
+            "firstname": "Kx",
+            "surname": "Hero",
+            "email": "kx.hero@pmi-dev-wkstn.io",
+            "keyboard_language": "us",
+            "role": "admin"
+        },
+        "additionalUsers": [
             {
                 "firstname": "Joe",
                 "surname": "Bloggs",

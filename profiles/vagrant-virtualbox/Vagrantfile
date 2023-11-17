@@ -82,12 +82,28 @@ WORKER_NODE_MEMORY = ENV['WorkerNodeMemory'] || profile_config_json['config']['v
 puts "WORKER_NODE_MEMORY: #{WORKER_NODE_MEMORY}"
 THREE_D_ACCELERATION = ENV['threedAcceleration'] || profile_config_json['config']['vm_properties']['3d_acceleration']
 puts "WORKER_NODE_MEMORY: #{THREE_D_ACCELERATION}"
-MAIN_BOX_VERSION = kx_version_json['kxascode'] || ENV['mainBoxVersion']
+MAIN_BOX_VERSION = ENV['mainBoxVersion'] || kx_version_json['kxascode']
 puts "MAIN_BOX_VERSION: #{MAIN_BOX_VERSION}"
-NODE_BOX_VERSION = kx_version_json['kxascode'] || ENV['nodeBoxVersion']
+NODE_BOX_VERSION = ENV['nodeBoxVersion'] || kx_version_json['kxascode']
 puts "NODE_BOX_VERSION: #{NODE_BOX_VERSION}"
-HASH = ENV['hash']
-puts "HASH: #{HASH}"
+
+HASH = ""
+if File.exist?(".vmCredentialsFile")
+    HASH = ENV['hash']
+    if HASH.nil? || HASH.empty?
+        if File.exist?(".hash")
+            puts "Found .hash file .Extracting the hash value for decrypting secrets in VM"
+            HASH = file = File.read('.hash')
+        else
+            puts "WARN: Both .hash file and hash environment variable don't exist. This will lead to corrupt failed decryption inside the VM"
+        end
+    else
+        puts "Using environment variable hash for decrypting secrets in VM"
+    end
+else
+    puts "No .vmCredentials file found in profile folder. No credentials to upload and decrypt inside the VM"
+end
+
 KX_MAIN_BOX_LOCATION = ENV['kxMainBoxLocation'] || "base-vm/boxes/virtualbox-#{MAIN_BOX_VERSION}/kx-main-#{MAIN_BOX_VERSION}.box"
 puts "KX_MAIN_BOX_LOCATION: #{KX_MAIN_BOX_LOCATION}"
 KX_NODE_BOX_LOCATION = ENV['kxNodeBoxLocation'] || "base-vm/boxes/virtualbox-#{NODE_BOX_VERSION}/kx-node-#{NODE_BOX_VERSION}.box"
@@ -148,7 +164,7 @@ Vagrant.configure("2") do |config|
     subconfig.vm.box_url = "#{KX_MAIN_BOX_URL}"
     subconfig.vm.provision "shell", inline: "hostname -I && hostname -I | awk {'print $1'} | tr -d ' \\t\\n\\r' | sudo tee /vagrant/kx.as.code_main-ip-address"
     subconfig.vm.provision "shell", inline: "for i in {1..5}; do echo \"Waiting for /vagrant ... [\${i}\" of 5]; if [ -d /vagrant ]; then sudo cp -v -f /vagrant/*.json /usr/share/kx.as.code/workspace; break; else echo \"/vagrant not yet not available\"; sleep 5; fi; done"
-    subconfig.vm.provision "shell", inline: "sudo mv -f /vagrant/.vmCredentialsFile /usr/share/kx.as.code/.config/ 2>/dev/null || true"
+    subconfig.vm.provision "shell", inline: "sudo cp -f /vagrant/.vmCredentialsFile /usr/share/kx.as.code/.config/ 2>/dev/null || true"
     subconfig.vm.provision "shell", inline: "sudo mkdir -p /usr/share/kx.as.code/workspace/custom-images"
     subconfig.vm.provision "shell", inline: "sudo cp -v -f /vagrant/avatar.{jpg,png} /vagrant/background.{jpg,png} /vagrant/boot.{jpg,png} /vagrant/conky_logo.{jpg,png} /vagrant/logo_icon.{jpg,png} /usr/share/kx.as.code/workspace/custom-images 2>/dev/null || true"
     subconfig.vm.provision "shell", inline: "jq '. + { \"state\": { \"networking_configuration_status\": \"todo\", \"kx_main1_ip_address\": \"'$(cat /vagrant/kx.as.code_main-ip-address)'\", \"provisioned_disks\": { \"local_storage_disk_size\": #{LOCAL_KUBE_VOLUMES_DISK_SIZE}, \"network_storage_disk_size\": #{GLUSTERFS_KUBE_VOLUMES_DISK_SIZE} } } }' /usr/share/kx.as.code/workspace/profile-config.json >/tmp/profile-config.json && mv /tmp/profile-config.json /usr/share/kx.as.code/workspace/profile-config.json"

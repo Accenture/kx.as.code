@@ -22,20 +22,17 @@ function ApplicationCard(props) {
   const [allQueueStatus, setAllQueueStatus] = useState([]);
   const [applicationData, setApplicationData] = useState({});
   const [appQueue, setAppQueue] = useState("undefined");
-  const [isSelected, setIsSelected] = useState(false);
   const [isHover, setIsHover] = useState(false);
   const [isHovering, setIsHovering] = useState(false);
 
-  const refreshActionButton = useRef(null);
+  const [isChecked, setIsChecked] = useState(false);
 
-  const selectHandler = () => {
-    setIsSelected(!isSelected);
-    if (isSelected) {
-      props.applicationSelectedCount("select");
-    } else {
-      props.applicationSelectedCount("unselect");
-    }
+  const handleCheckboxChange = (isChecked) => {
+    setIsChecked(isChecked);
+    props.onCheck(isChecked);
   };
+
+  const refreshActionButton = useRef(null);
 
   const handleMouseOver = () => {
     setIsHovering(true);
@@ -54,7 +51,7 @@ function ApplicationCard(props) {
 
   const NotificationMessage = (notificationProps) => (
     <div className="flex items-center">
-      <AppLogo height={"40px"} width={"40px"} appName={props.app.name} />
+      <AppLogo appName={props.app.name} />
       <div className="ml-2">{notificationProps.notificationMessage}</div>
     </div>
   );
@@ -278,14 +275,14 @@ function ApplicationCard(props) {
         .replace(/\b\w/g, (l) => l.toUpperCase())
     );
     return () => {};
-  }, [appQueue, isSelected]);
+  }, [appQueue]);
 
   const drawAppTags = (appTags) => {
     return appTags.map((appTag, i) => {
       return (
         <ApplicationCategoryTag
           appTag={appTag}
-          keyId={i}
+          key={i}
           addCategoryTofilterTags={props.addCategoryTofilterTags}
         />
       );
@@ -318,10 +315,8 @@ function ApplicationCard(props) {
                     >
                       <div className="flex items-center">
                         {/* Icon */}
-                        <div className="">
+                        <div className="h-auto w-10">
                           <AppLogo
-                            //height={"40px"}
-                            //width={"40px"}
                             appName={props.app.name}
                           />
                           {/* <StatusTag installStatus={props.app.queueName} /> */}
@@ -377,9 +372,10 @@ function ApplicationCard(props) {
       ) : (
         <div
           className={`relative flex flex-col col-span-full ${
-            isSelected ? "hover:border-kxBlue" : "hover:bg-gray-700"
+            // Bug: hover:border-kxBlue not working. Fix -> [#5a86ff]
+            isChecked ? "hover:border-[#5a86ff]" : "hover:bg-gray-700"
           } hover:bg-gray-700 bg-inv3 rounded border-2 ${
-            isSelected ? "border-kxBlue" : "border-inv3"
+            isChecked ? "border-kxBlue" : "border-inv3"
           } hover:border-2 hover:border-gray-600 ${
             props.isListLayout ? "col-span-full" : "sm:col-span-6 xl:col-span-3"
           }`}
@@ -391,10 +387,8 @@ function ApplicationCard(props) {
           <div className="p-6">
             <header className="flex justify-between items-start mb-2">
               {/* Icon */}
-              <div className="">
+              <div className="h-auto w-10">
                 <AppLogo
-                  //height={"50px"}
-                  // width={"50px"}
                   appName={props.app.name}
                 />
                 {/* <StatusTag installStatus={props.app.queueName} /> */}
@@ -432,10 +426,10 @@ function ApplicationCard(props) {
               <div className="">
                 <div
                   className={`${
-                    isHovering || isSelected ? "visible" : "hidden"
+                    isHovering || isChecked ? "visible" : "hidden"
                   }`}
                 >
-                  <Checkbox checked={isSelected} onChange={selectHandler} />
+                  <Checkbox checked={isChecked} onChange={(e) => handleCheckboxChange(e.target.checked)} />
                 </div>
               </div>
             </header>

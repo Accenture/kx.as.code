@@ -119,21 +119,60 @@ generateTaskShortcutFiles() {
         for i in $(seq 0 $((numberOfTasks - 1))); do
             taskJson=$(echo ${tasksJsonArray} | jq '.['${i}']')
             taskName=$(echo ${taskJson} | jq -r '.name')
+            log_debug "Current Task: ${taskName}"
             taskTitle=$(echo ${taskJson} | jq -r '.title')
             taskDescription=$(echo ${taskJson} | jq -r '.description')
             taskScript=$(echo ${taskJson} | jq -r '.taskScript')
+            taskMessage=$(echo ${taskJson} | jq -r '.message | select(.!=null)')
+            taskMessageType=$(echo ${taskJson} | jq -r '.messageType | select(.!=null)')
+            taskEnabled=$(echo ${taskJson} | jq -r '.enabled | select(.!=null)')
+
+            if [[ "${taskEnabled}" == "false" ]]; then
+                taskMessage="Task '${taskTitle}' is disabled and will therefore not be executed."
+                taskMessageType="info"
+            fi
         
-            rabbitMqCommand="rabbitmqadmin publish exchange=action_workflow routing_key=pending_queue payload=\"{\\\"install_folder\\\":\\\"${tasksComponentCategory}\\\",\\\"name\\\":\\\"${tasksComponentName}\\\",\\\"task\\\":\\\"${taskName}\\\",\\\"action\\\":\\\"executeTask\\\",\\\"retries\\\":\\\"0\\\"}\""
+            if [[ -n ${taskMessage} ]]; then
+                if [[ -n ${taskMessageType} ]]; then
+                		case ${taskMessageType} in
+                            warn)
+                                messageColour="${ansiOrange}"
+                                messagePrefix="[Warning]"
+                                ;;
 
-            taskFilename="$(echo ${taskTitle} | sed 's/\// /g')"
+                            critical)
+                                messageColour="${ansiRed}"
+                                messagePrefix="[Critical]"
+                                ;;
+                            *)
+                                messageColour="${ansiBlue}"
+                                messagePrefix="[Info]"
+                                ;;
+                        esac
+                fi
+                messageCommand="echo -e '${messageColour}${messagePrefix} ${taskMessage}${ansiReset}\n'; read -s -n 1 -p 'Press any key to continue . . .'; echo ''"
+            else
+                messageCommand=""
+            fi
 
-cat << EOF > "${shortcutDestinationFolder}"/"${taskFilename}"
+            if [[ "${taskEnabled}" == "false" ]]; then
+                # Task is commented out in the task launch script
+                rabbitMqCommand="# rabbitmqadmin publish exchange=action_workflow routing_key=pending_queue payload=\"{\\\"install_folder\\\":\\\"${tasksComponentCategory}\\\",\\\"name\\\":\\\"${tasksComponentName}\\\",\\\"task\\\":\\\"${taskName}\\\",\\\"action\\\":\\\"executeTask\\\",\\\"retries\\\":\\\"0\\\"}\""
+            else
+                rabbitMqCommand="rabbitmqadmin publish exchange=action_workflow routing_key=pending_queue payload=\"{\\\"install_folder\\\":\\\"${tasksComponentCategory}\\\",\\\"name\\\":\\\"${tasksComponentName}\\\",\\\"task\\\":\\\"${taskName}\\\",\\\"action\\\":\\\"executeTask\\\",\\\"retries\\\":\\\"0\\\"}\""
+            fi
+
+            taskDesktopFilename="$(echo ${taskTitle} | sed 's/\// /g')"
+            log_debug "Current task file name: ${taskScript}"
+            log_debug "Current Task Title: ${taskTitle}"
+
+cat << EOF > "${shortcutDestinationFolder}"/"${taskDesktopFilename}"
 [Desktop Entry]
 Version=1.0
 Name=Tilix
 Comment=Tilix
 Keywords=shell;prompt;command;commandline;cmd;
-Exec=tilix -e bash -c "${shortcutDestinationFolder}/'.${taskFilename}.sh'"
+Exec=tilix -e bash -c "${shortcutDestinationFolder}/'.${taskDesktopFilename}.sh'"
 Terminal=false
 Type=Application
 StartupNotify=true
@@ -142,7 +181,7 @@ Icon=system-run
 DBusActivatable=true
 EOF
 
-cat << EOF > "${shortcutDestinationFolder}"/".${taskFilename}.sh"
+cat << EOF > "${shortcutDestinationFolder}"/".${taskDesktopFilename}.sh"
 #!/bin/bash
 #
 # Task Id: ${taskName}
@@ -150,25 +189,23 @@ cat << EOF > "${shortcutDestinationFolder}"/".${taskFilename}.sh"
 # Task Description: ${taskDescription}
 #
 
+${messageCommand}
+
 # Publish message to RabbitMQ to trigger task
 ${rabbitMqCommand}
 
-function pause(){
-read -s -n 1 -p "Press any key to continue . . ."
-echo ""
-}
+echo -e "\nThe requested task has been scheduled. This window will close automatically in 5 seconds\n"
+echo -e "Task Id: ${taskName}"
+echo -e "Task Title: ${taskTitle}"
+echo -e "Task Description: ${taskDescription}"
+sleep 5
 
-pause
-
-if wmctrl -l | grep -i "Tilix: ${tasksComponentName} Cockpit"; then 
-    wmctrl -i -a \$(wmctrl -l | grep -i "Tilix: ${tasksComponentName} Cockpit" | awk {'print \$1'} | tail -1)
-else
-    ${logCommand}
-fi
 EOF
-
+    log_debug "Added files for : ${taskDesktopFilename}"
         done
     fi
+
+if [[ -n ${namespace} ]]; then
 
     # Create script for following component pod log
     echo '''#!/bin/bash
@@ -184,7 +221,7 @@ EOF
             sleep 2
         else
             clear
-            echo -e "${orange}\e[3mHybris is currently not running. It may be that it is not installed or that it is stopped because a build is in progress.${nc}\e[0m"
+            echo -e "${orange}\e[3m'${tasksComponentName}' is currently not running. It may be that it is not installed or that it is stopped because a build is in progress.${nc}\e[0m"
         fi
     done
     ''' | sed -e 's/^[ \t]*//' | /usr/bin/sudo tee "${shortcutDestinationFolder}"/".View_${tasksComponentName}_Runtime_Logs.sh"
@@ -203,6 +240,74 @@ Categories=System;TerminalEmulator;
 Icon=system-run
 DBusActivatable=true
 EOF
+
+    # Create script for downloading component pod log
+    echo '''#!/bin/bash
+    # Define ansi colours
+    red="\u001b[31m"
+    green="\u001b[32m"
+    orange="\u001b[33m"
+    blue="\u001b[36m"
+    nc="\u001b[0m" # No Color
+    mkdir -p /usr/share/kx.as.code/Logs/'${namespace}'/'${tasksComponentName}'
+    timestamp=$(date +%d%m%Y_%H%M%S)
+    if (( $( sudo kubectl get pods -n '${namespace}' -l app='${tasksComponentName}' -o name --field-selector=status.phase=Running | wc -l ) )); then
+        runningPod=$(sudo kubectl get pods -n '${namespace}' -l app='${tasksComponentName}' -o name --field-selector=status.phase=Running | cut -d'\''/'\'' -f2)
+        if [[ -n ${runningPod} ]]; then
+            podLogDirectory=$(sudo find /var/log/pods -type d -name "*${runningPod}*")
+            gzFiles=$(sudo find ${podLogDirectory} -type f -name "*.gz")
+            if [[ -n ${podLogDirectory} ]]; then
+                if [[ -n ${gzFiles} ]]; then
+                    for gzFile in ${gzFiles}
+                    do
+                        sudo gunzip -k ${gzFile}
+                    done
+                fi
+                logTimestamp=$(date +%d%m%Y_%H%M%S)
+                logFiles="$(sudo find ${podLogDirectory} ! -name "*.gz" -type f -name "*.log*" -printf "%T+ %p\n" | sort | awk {'\''print $2'\''})"
+                mkdir -p /usr/share/kx.as.code/Logs/'${tasksComponentName}'
+                for logFile in ${logFiles}
+                do
+                    sudo bash -c "cat ${logFile} >>/usr/share/kx.as.code/Logs/'${tasksComponentName}'/'${tasksComponentName}'_${logTimestamp}.log"
+                done
+                sudo chown -R '${baseUser}':'${baseUser}' /usr/share/kx.as.code/Logs/'${tasksComponentName}'/
+                if [[ -n ${gzFiles} ]]; then
+                    for gzFile in ${gzFiles}
+                    do
+                        logFile=$(echo ${gzFile} | sed '\''s/\.gz$//g'\'')
+                        sudo rm -f ${logFile}
+                    done
+                fi
+                sleep 2
+            fi
+        fi
+    else
+        clear
+        echo -e "${orange}\e[3m'${tasksComponentName}' is currently not running. It may be that it is not installed or that it is stopped because a build is in progress.${nc}\e[0m"
+        sleep 5
+    fi
+    ''' | sed -e 's/^    //' | /usr/bin/sudo tee "${shortcutDestinationFolder}"/".Download_${tasksComponentName}_Runtime_Logs.sh"
+
+cat << EOF > "${shortcutDestinationFolder}"/"Download ${tasksComponentName} Runtime Logs"
+[Desktop Entry]
+Version=1.0
+Name=Tilix
+Comment=Tilix
+Keywords=shell;prompt;command;commandline;cmd;
+Exec=tilix -e bash -c "${shortcutDestinationFolder}/.Download_${tasksComponentName}_Runtime_Logs.sh"
+Terminal=false
+Type=Application
+StartupNotify=true
+Categories=System;TerminalEmulator;
+Icon=system-run
+DBusActivatable=true
+EOF
+
+fi
+    # Create log rotation configuration
+    createLogRotationConfiguration \
+        "/usr/share/kx.as.code/Logs/${tasksComponentName}/${tasksComponentName}*.log" \
+        "150M"
 
     # Create script for viewing component's cockpit
     echo '''#!/bin/bash
@@ -283,7 +388,7 @@ getLastItemFromQueue() {
         export messageCounts="\${messageCounts} \${queueName}: \e[3m\e[2m\${messageCount}\e[23m\e[22m"
     fi
     if [[ "\${queueName}" == "failed_queue" ]] && [[ "\${messageCount}" -gt 0 ]]; then
-        export warningMessage="\${red}\nWarning! You have a message in the failure queue. No further processing will occur until this message is cleared!\${nc}"
+        export warningMessage="\${orange}\nWarning! You have a message in the failure queue. The failed queue will be cleared automatically if the item on the pending and failed queues both have action \"executeTask\", otherwise you will need to clear it manually using the \"Purge Queue\" task\${nc}"
     fi
     payload=\$(echo \${queueMessages} | jq -r '. | '\${firstOrLast}' | .payload | select(.!=null)')
     if [[ -n \${payload} ]]; then

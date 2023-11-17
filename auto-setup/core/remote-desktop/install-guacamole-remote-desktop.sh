@@ -5,6 +5,7 @@ if [[ -z $(which raspinfo) ]] && [[ "${installGuacamole}" == "true" ]]; then
 
 	# Install & configure XRDP to ensure support for multiple users
 	/usr/bin/sudo apt install -y xrdp
+	/usr/bin/sudo sed -i 's/^FuseMountName=.*/FuseMountName=\/run\/user\/%u\/thinclient_drives/g' /etc/xrdp/sesman.ini
 	/usr/bin/sudo sed -i '/^test -x \/etc\/X11\/Xsession && exec \/etc\/X11\/Xsession.*/i \unset DBUS_SESSION_BUS_ADDRESS' /etc/xrdp/startwm.sh
 	/usr/bin/sudo sed -i '/^test -x \/etc\/X11\/Xsession && exec \/etc\/X11\/Xsession.*/i \unset XDG_RUNTIME_DIR' /etc/xrdp/startwm.sh
 
