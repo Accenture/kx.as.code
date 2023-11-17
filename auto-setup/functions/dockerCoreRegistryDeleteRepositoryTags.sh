@@ -1,12 +1,13 @@
 dockerCoreRegistryDeleteRepositoryTags() {
 
   local imagePath=${1:-}
+  local imageTag=${2:-}
   local dockerRegistryPassword=$(getPassword "docker-registry-${namespace}-password" "docker-registry")
 
   if [[ -n ${imagePath} ]]; then
 
     # Get repository tags
-    local imageTags=$(dockerCoreRegistryGetImageTags "${imagePath}")
+    local imageTags=$(dockerCoreRegistryGetImageTags "${imagePath}" "${imageTag}")
 
     # Delete image tags from registry
     for imageTag in ${imageTags}
