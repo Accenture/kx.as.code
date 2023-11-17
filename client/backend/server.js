@@ -2,6 +2,8 @@ const express = require("express");
 const request = require("request");
 const fs = require("fs");
 const amqp = require("amqplib");
+const cors = require('cors');
+const axios = require('axios');
 
 const app = express();
 const bodyParser = require("body-parser");
@@ -12,6 +14,8 @@ const dataPath = "../src/data/combined-metadata-files.json";
 const rabbitMqUsername = "test";
 const rabbitMqPassword = "test";
 const rabbitMqHost = "localhost";
+
+app.use(cors());
 
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -107,6 +111,22 @@ app.route("/api/queues/:queue_name").get((req, res) => {
     console.log(error);
   }
 });
+
+
+app.get('/mock/api/queues/:queue_name', async (req, res) => {
+  const { queue_name } = req.params;
+
+  try {
+    const response = await axios.get(`http://localhost:8000/mock/api/queues/${queue_name}`);
+    
+    const responseData = response.data;
+
+    res.json(responseData);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 
 //move queue endpoint
 app.route("/api/move/:from_queue/:to_queue").get((req, res) => {

@@ -40,6 +40,7 @@ const getArrayOfObjArray = (objArray) => {
   return list;
 };
 
+
 const filterAppsBySearchTermAndInstallationStatus = (
   data,
   searchTerm,
@@ -106,6 +107,12 @@ export const Applications = (props) => {
 
   const [isCheckedCore, setIsCheckedCore] = useState(false);
   const [selectedCount, setSelectedCount] = useState(0);
+
+  const [totalChecked, setTotalChecked] = useState(0);
+
+  const handleTotalCheckedChange = (isChecked) => {
+    setTotalChecked(isChecked ? totalChecked + 1 : totalChecked - 1);
+  };
 
   let [page, setPage] = useState(1);
   // const PER_PAGE = resultsPerPage;
@@ -406,6 +413,7 @@ export const Applications = (props) => {
             isListLayout={isListLayout}
             addCategoryTofilterTags={addCategoryTofilterTags}
             applicationSelectedCount={applicationSelectedCount}
+            onCheck={handleTotalCheckedChange}
           />
         );
       });
@@ -419,12 +427,12 @@ export const Applications = (props) => {
   };
 
   // TODO get status by app name -> Return e.g. completed, pending, none
-  const getInstallationStatusByAppName = () => {};
+  const getInstallationStatusByAppName = () => { };
 
   const fetchQueueData = () => {
     const requests = queueList.map((queue) => {
       return axios
-        .get("http://localhost:5001/api/queues/" + queue)
+        .get("http://localhost:5001/mock/api/queues/" + queue)
         .then((response) => {
           // console.log("debug-response: ", response);
           response.data.map((app) => {
@@ -515,15 +523,16 @@ export const Applications = (props) => {
         <div className="border-b-2 border-gray-700"></div>
       </div>
 
-      <div
-        className={`flex justify-end ${
-          selectedCount > 0 ? "visible" : "hidden"
-        }`}
-      >
-        <button className="bg-kxBlue p-2 px-5 rounded items-center flex">
-          Install Selected Applicaitons ({selectedCount})
-        </button>
+      <div className="h-[40px]">
+        <div className={`flex justify-end ${totalChecked > 0 ? "visible" : "hidden"}`}>
+          {totalChecked > 0 && (
+            <button className="bg-kxBlue p-2 px-5 rounded items-center flex">
+              Install Selected {totalChecked === 1 ? "Application" : "Applications"} ({totalChecked})
+            </button>
+          )}
+        </div>
       </div>
+
 
       {/* Filter Section */}
       <div className="bg-inv3 px-5 py-8 my-5 rounded border border-gray-600">
@@ -685,7 +694,7 @@ export const Applications = (props) => {
             </div>
           ) : (
             <div className="text-[16px] text-gray-400 mb-4">
-              {localStorage.getItem("appsCount")} available Applications
+              Filter result: {localStorage.getItem("appsCount")} Applications
             </div>
           )}
         </div>

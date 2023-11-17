@@ -49,22 +49,21 @@ function ApplicationGroups() {
   // }
 
   useEffect(() => {
-    return () => {};
+    return () => { };
   }, []);
 
   const drawApplicationGroupCards = () => {
-    return applicationGroupJson
-      .filter((val) => {
-        if (searchTerm == "") {
-          return val;
-        } else if (
-          val.name.toLowerCase().includes(searchTerm.toLowerCase().trim())
-        ) {
-          return val;
+    return (applicationGroupJson || [])
+      .filter((appGroup) => {
+        const lowerCaseName = (appGroup.title || '').toLowerCase();
+        if (searchTerm === "") {
+          return true;
+        } else {
+          return lowerCaseName.includes(searchTerm.toLowerCase().trim());
         }
       })
       .map((appGroup, i) => {
-        return <ApplicationGroupCard appGroup={appGroup} key={i} />;
+       return <ApplicationGroupCard appGroup={appGroup} key={i} />;
       });
   };
 

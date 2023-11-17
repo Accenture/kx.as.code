@@ -52,7 +52,7 @@ function ApplicationGroupCard(props) {
 
   useEffect(() => {
     fetchAllComponents(props.appGroup.action_queues);
-    return () => {};
+    return () => { };
   }, []);
 
   async function fetchAllComponents(action_queues) {
@@ -70,7 +70,7 @@ function ApplicationGroupCard(props) {
         ...current,
         <img
           className="p-1 rounded"
-          style={{ height: "50px", width: "50px" }}
+          style={{ height: '50px', width: '50px', objectFit: 'contain' }}
           src={require(`../../media/png/appImgs/${appName}.png`).default}
           onDragStart={handleDragStart}
           role="presentation"
@@ -79,7 +79,7 @@ function ApplicationGroupCard(props) {
     });
   };
 
-  const drawComponentsWithAppImages = () => {};
+  const drawComponentsWithAppImages = () => { };
 
   const drawApplicationGroupCardComponentsTags = (appGroupComponentTags) => {
     return appGroupComponentTags.map((appGroupComponent, i) => {
@@ -124,7 +124,7 @@ function ApplicationGroupCard(props) {
               </div> */}
             </div>
             <div className="text-gray-500">
-              {appGroupComponents.length} Applications
+              {appGroupComponents.length} {appGroupComponents.length > 1 ? "Applications" : "Application"}
             </div>
           </div>
 
@@ -146,13 +146,13 @@ function ApplicationGroupCard(props) {
               naturalSlideWidth={500}
               naturalSlideHeight={500}
             >
-              <div className="flex items-center py-5                                                                                                                                                                                                                                                                                                                                                                                   ">
+              <div className="flex items-center py-5                                                                                                                                                                                                                                                                                                                                                          ">
                 <div className="h-14">
                   <ButtonBack className="hover:bg-gray-600 px-3 text-sm rounded items-center flex h-full">
                     <MdArrowBackIosNew />
                   </ButtonBack>
                 </div>
-                <div className="w-full">
+                <div className="w-full h-14">
                   <Slider>
                     {itemsList.map((image, i) => {
                       return (
@@ -163,7 +163,7 @@ function ApplicationGroupCard(props) {
                             arrow
                           >
                             <NavLink to={`/apps/${appGroupComponents[i]}`}>
-                              <div className="flex justify-center rounded-md hover:bg-gray-600 p-1 hover:pointer">
+                              <div className="flex justify-center rounded-md hover:bg-gray-600 p-1 hover:pointer h-14">
                                 {image}
                               </div>
                             </NavLink>
@@ -194,11 +194,11 @@ function ApplicationGroupCard(props) {
             <ApplicationStatusActionButton
               // isMqConnected={props.isMqConnected}
               isMqConnected={true}
-              getQueueStatusList={() => {}}
+              getQueueStatusList={() => { }}
               appName={""}
               category={""}
-              applicationInstallHandler={() => {}}
-              refreshActionButton={() => {}}
+              applicationInstallHandler={() => { }}
+              refreshActionButton={() => { }}
             />
           </div>
         </div>

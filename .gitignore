@@ -15,6 +15,7 @@ variables.json
 base-vm/**/config.yaml
 .idea
 *.lock
+client/bun.lockb
 /profiles/*/terraform.zip
 /profiles/*/.ovpn/cert
 /profiles/*/.ovpn/key

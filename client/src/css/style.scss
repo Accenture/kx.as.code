@@ -55,3 +55,13 @@
         -ms-transition: -ms-transform 0.26s ease;
         transition: transform 0.26s ease;
 }
+
+.modal-drag-handle {
+    width: 100%;
+    height: 20px;
+    cursor: move;
+    background-color: transparent;
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
