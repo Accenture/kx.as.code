@@ -77,10 +77,18 @@
       "script": "restartFrontend.sh",
       "inputs": [
         {
-          "branch": {
-            "default": "develop",
-            "mandatory": false
-          }
+          "argumentKey": "branch",
+          "argumentDefaultValue": "main",
+          "fieldType": "alphaNumeric",
+          "mandatory": false
+        },
+        {
+          "argumentKey": "replicas",
+          "argumentDefaultValue": 1,
+          "minValue": 1,
+          "maxValue": 10,
+          "fieldType": "numeric",
+          "mandatory": false
         }
       ]
     }

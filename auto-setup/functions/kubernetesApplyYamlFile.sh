@@ -1,8 +1,9 @@
 kubernetesApplyYamlFile() {
 
-  kubeYamlSourceFileLocation=${1}
-  kubeYamlTargetFileLocation="${installationWorkspace}/${componentName}_$(basename "${kubeYamlSourceFileLocation}")"
-  kubeNamespace=${2:-default}
+  local kubeYamlSourceFileLocation=${1}
+  local kubeYamlTargetFileLocation="${installationWorkspace}/${componentName}_$(basename "${kubeYamlSourceFileLocation}")"
+  local kubeNamespace=${2:-default}
+  local skipApply="false"
 
   if [[ -f ${kubeYamlSourceFileLocation} ]]; then
 
@@ -16,17 +17,17 @@ kubernetesApplyYamlFile() {
     kubeval ${kubeYamlTargetFileLocation} --schema-location https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master --strict || local rc=$? && log_info "kubeval returned with rc=$rc"
 
     # Check if Kubernetes K8s API definition/resource exists, before applying the YAML file
-    yamlK8sApi=$(cat ${kubeYamlTargetFileLocation} | yq -r '.apiVersion' | cut -d'/' -f1)
-    yamlK8sKind=$(cat ${kubeYamlTargetFileLocation} | yq -r '.kind')
-    yamlShortVersionCheck=$(echo $yamlK8sApi | grep -E "^v[0-9]$" || true)
-    yamlResourceName=$(cat ${kubeYamlTargetFileLocation} | yq -r '.metadata.name')
+    local yamlK8sApi=$(cat ${kubeYamlTargetFileLocation} | yq -r '.apiVersion' | cut -d'/' -f1)
+    local yamlK8sKind=$(cat ${kubeYamlTargetFileLocation} | yq -r '.kind')
+    local yamlShortVersionCheck=$(echo $yamlK8sApi | grep -E "^v[0-9]$" || true)
+    local yamlResourceName=$(cat ${kubeYamlTargetFileLocation} | yq -r '.metadata.name')
     if [[ -n ${yamlShortVersionCheck} ]]; then
-      customResourceCheck=$(kubectl api-resources --api-group= --sort-by=kind --no-headers=true | awk {'print $5'} | grep "${yamlK8sKind}" || true)
+      local customResourceCheck=$(kubectl api-resources --api-group= --sort-by=kind --no-headers=true | awk {'print $5'} | grep "${yamlK8sKind}" || true)
       if [[ -z ${customResourceCheck} ]]; then
-        customResourceCheck=$(kubectl api-resources --api-group= --sort-by=kind --no-headers=true | awk {'print $4'} | grep "${yamlK8sKind}" || true)
+        local customResourceCheck=$(kubectl api-resources --api-group= --sort-by=kind --no-headers=true | awk {'print $4'} | grep "${yamlK8sKind}" || true)
       fi
     else
-      customResourceCheck=$(kubectl api-resources --api-group=${yamlK8sApi} --sort-by=kind --no-headers=true | awk {'print $5'} | grep "${yamlK8sKind}" || true)
+      local customResourceCheck=$(kubectl api-resources --api-group=${yamlK8sApi} --sort-by=kind --no-headers=true | awk {'print $5'} | grep "${yamlK8sKind}" || true)
     fi
     if [[ -n ${customResourceCheck} ]]; then
       if [[ ${rc} -eq 0 ]]; then
@@ -38,7 +39,21 @@ kubernetesApplyYamlFile() {
         if [[ -n ${yamlNamespace} ]] && [[ "${yamlNamespace}" != "null" ]] && [[ "${kubeNamespace}" != "${yamlNamespace}" ]]; then
           log_debug "Detected alternate namespace in resource YAML. Will deploy to \"${yamlNamespace}\" namespace, instead of \"${kubeNamespace}\""
         fi
-        log_debug "$(kubectl apply -f ${kubeYamlTargetFileLocation} -n ${yamlNamespace})"
+        # Avoid re-creating pv or pvc if already existing
+        if [[ "${yamlK8sKind,,}" == "persistentvolumeclaim" ]] || [[ "${yamlK8sKind,,}" == "persistentvolume" ]]; then
+          if kubectl get ${yamlK8sKind} -n ${yamlNamespace} ${yamlResourceName}; then
+            log_debug "${yamlK8sKind} ${yamlResourceName} in ${yamlNamespace} already exists. Skipping kubectl apply for this resource"
+            local skipApply="true"
+          else
+            log_debug "${yamlK8sKind} ${yamlResourceName} in ${yamlNamespace} does not exist yet. Creating"
+            local skipApply="false"
+          fi
+        fi
+        if [[ "${skipApply}" == "false" ]]; then
+          log_debug "$(kubectl apply -f ${kubeYamlTargetFileLocation} -n ${yamlNamespace})"
+        else
+          log_debug "skipApply is true. Skipping apply of ${kubeYamlTargetFileLocation} in ${yamlNamespace} namespace"
+        fi
         if [[ "${yamlK8sKind,,}" == "ingress" ]] && [[ ${restrictIngressAccess,,} == "true" ]]; then
           # Get local subnet for whitelisting
           allowIpRangeForOauthLessAccess="$(echo ${mainIpAddress} | cut -d"." -f1-3).0/24"

@@ -16,14 +16,18 @@ sendEmailNotification() {
     notificationTitle="KX.AS.CODE"
   fi
   
-  local emailAddress="$(cat ${profileConfigJsonPath} | jq -r '.notification_endpoints.email_address')"
+  local emailAddress="$(cat ${profileConfigJsonPath} | jq -r '.notification_endpoints.email_address | select(.!=null)')"
 
-  if [[ -n ${emailAddress} ]] && [[ "${emailAddress}" != "null" ]] && [[ -n ${message} ]]; then
-
-      log_trace 'echo "<html><body>'${message}'</body></html>" | mailx -a "From: Dev VM Notification <noreply@'${baseDomain}'>" -a "Content-type: text/html;" -s "['${alertType^^}'] Testing Notifications" '${emailAddress}''
-
-      echo "<html><body>${message}</body></html>" | mailx -a "From: Dev VM Notification <noreply@${baseDomain}>" -a "Content-type: text/html;" -s "[${alertType^^}] Testing Notifications" ${emailAddress}
-
+  # If no MTA installed, skip email notifications
+  if which exim4; then
+    # If no notification email address defined, skip email notifications
+    if [[ -n ${emailAddress} ]] && [[ "${emailAddress}" != "null" ]] && [[ -n ${message} ]]; then
+        log_trace 'echo "<html><body>'${message}'</body></html>" | mailx -a "From: Dev VM Notification <noreply@'${baseDomain}'>" -a "Content-type: text/html;" -s "['${alertType^^}'] Testing Notifications" '${emailAddress}''
+        echo "<html><body>${message}</body></html>" | mailx -a "From: Dev VM Notification <noreply@${baseDomain}>" -a "Content-type: text/html;" -s "[${alertType^^}] Testing Notifications" ${emailAddress}
+    else
+        log_trace "No email address for notifications defined. Skipping"
+    fi
+    log_trace "No MTA (Exim4) installed. Skipping email notifications"
   fi
 
 }

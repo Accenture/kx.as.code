@@ -67,27 +67,38 @@ createUsers() {
           if /usr/bin/sudo test ! -e /home/${userid}/Desktop/"Admin Tools"; then
             /usr/bin/sudo ln -s "${adminShortcutsDirectory}" /home/${userid}/Desktop/
           fi
+          createFileManagerShortcut "${adminShortcutsDirectory}" "${userid}" "folder-root"
         fi
 
         # Add Applications folder to desktop
         if /usr/bin/sudo test ! -e /home/${userid}/Desktop/"Applications"; then
           /usr/bin/sudo ln -s "${shortcutsDirectory}" /home/${userid}/Desktop/
         fi
+        createFileManagerShortcut "${shortcutsDirectory}" "${userid}" "folder-favorites"
 
         # Add Tasks folder to desktop
         if /usr/bin/sudo test ! -e /home/${userid}/Desktop/"Tasks"; then
           /usr/bin/sudo ln -s "${taskShortcutsDirectory}" /home/${userid}/Desktop/
         fi
+        createFileManagerShortcut "${taskShortcutsDirectory}" "${userid}" "folder-script"
 
         # Add Vendor Docs folder to desktop
         if /usr/bin/sudo test ! -e /home/${userid}/Desktop/"Vendor Docs"; then
           /usr/bin/sudo ln -s "${vendorDocsDirectory}" /home/${userid}/Desktop/
         fi
+        createFileManagerShortcut "${vendorDocsDirectory}" "${userid}" "folder-text"
 
         # Add API Docs folder to desktop
         if /usr/bin/sudo test ! -e /home/${userid}/Desktop/"API Docs"; then
           /usr/bin/sudo ln -s "${apiDocsDirectory}" /home/${userid}/Desktop/
         fi
+        createFileManagerShortcut "${apiDocsDirectory}" "${userid}" "folder-text"
+
+        # Add Logs folder to desktop
+        if /usr/bin/sudo test ! -e /home/${userid}/Desktop/"Logs"; then
+          /usr/bin/sudo ln -s "${logsDirectory}" /home/${userid}/Desktop/
+        fi
+        createFileManagerShortcut "${logsDirectory}" "${userid}" "folder-text"
 
         # Copy all file to user
         /usr/bin/sudo cp -rfT "${skelDirectory}" /home/${userid}

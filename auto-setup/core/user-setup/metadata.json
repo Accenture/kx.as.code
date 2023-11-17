@@ -10,5 +10,13 @@
     "shortcut_text": "Create Users",
     "shortcut_icon": "",
     "pre_install_scripts": [],
-    "post_install_scripts": []
+    "post_install_scripts": [],
+    "available_tasks": [
+        {
+            "name": "createFileManagerShortcuts",
+            "title": "Create FIle Manager Shortcuts",
+            "description": "Create FIle Manager Shortcuts for all users",
+            "script": "createFileManagerShortcuts.sh"
+        }
+    ]
 }
