@@ -33,6 +33,7 @@ const HealthCheckInfoComponent = ({ appName }) => {
     const fetchData = async () => {
       try {
         const response = await fetch(`http://localhost:8000/mock/api/jenkins/healthcheck`);
+        // const response = await fetch(`http://localhost:8000/mock/api/${appName}/healthcheck`);
 
         const healthcheckDataObj = {
           timestamp: new Date(),
@@ -176,30 +177,6 @@ const HealthcheckDashboard = (props) => {
           } else {
             return lowerCaseName.includes(searchTerm.toLowerCase().trim());
           }
-        }).map((item, key) => {
-          const isInCompletedQueue = checkIsAppNameInCompletedQueue(props.queueData, item.name);
-          return (
-            <div key={key}>
-              {isInCompletedQueue ? (
-                <div className="px-5 p-2 bg-gray-700 hover:bg-[#3d4d63] mb-2 flex items-center rounded h-14">
-
-                  <span className="w-1/5 flex items-center">
-                    <span className="p-3 w-14 h-auto">
-                      <AppLogo
-                        appName={item.name}
-                      />
-                    </span>
-                    <span>
-                      {item.name}
-                    </span>
-                  </span>
-                  <span className="w-4/5">
-                    <HealthCheckInfoComponent appName={item.name} />
-                  </span>
-                </div>
-              ) : null}
-            </div>
-          );
         })}
       </div>
     </div>

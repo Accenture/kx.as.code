@@ -16,7 +16,6 @@ const rabbitMqUsername = "test";
 const rabbitMqPassword = "test";
 const rabbitMqHost = "localhost";
 
-const healthCheckEndpoint = "http://localhost:8000/mock/api/jenkins/healthcheck";
 const healthCheckInterval = 10000; // 10 seconds
 
 app.use(cors());
@@ -32,25 +31,47 @@ app.use((req, res, next) => {
   next();
 });
 
-// Health check data
-let healthCheckData = [];
+let healthCheckData = {};
 
-// Health check service
 const performHealthCheck = async () => {
   try {
-    const response = await axios.get(healthCheckEndpoint);
-    const healthCheckObj = {
-      appName: "",
-      timestamp: new Date().toISOString(),
-      status: response.status,
-    };
+    // Request to get the array of completed_queue objects
+    const completedQueueResponse = await axios.get("http://localhost:8000/mock/api/queues/completed_queue");
 
-    // Remove oldest health check data if array exceeds a certain size
-    if (healthCheckData.length >= 60) {
-      healthCheckData.shift();
+    // Parse the payload from each object in the response array
+    const appNames = completedQueueResponse.data.map((item) => {
+      const payloadObj = JSON.parse(item.payload);
+      return payloadObj.name;
+    });
+
+    // Perform health check for each appName
+    for (const appName of appNames) {
+      const healthCheckUrl = `http://localhost:8000/mock/api/${appName}/healthcheck`;
+
+      const response = await axios.get(healthCheckUrl);
+
+      // Check if the response structure is different
+      const responseDataArray = Array.isArray(response.data) ? response.data : [response.data];
+
+      // Create the health check data structure if it doesn't exist
+      if (!healthCheckData[appName]) {
+        healthCheckData[appName] = [];
+      }
+
+      // Add the health check status object
+      healthCheckData[appName].push({
+        timestamp: new Date().toISOString(),
+        status: response.status,
+      });
+
+      // If the array exceeds the limit, remove the oldest entry
+      if (healthCheckData[appName].length > 60) {
+        healthCheckData[appName].sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+        healthCheckData[appName].shift(); // Remove the oldest entry
+      }
+
+      console.log("Added health check status for", appName);
     }
-
-    healthCheckData.push(healthCheckObj);
 
     // Save health check data to file
     fs.writeFile(healthCheckDataPath, JSON.stringify(healthCheckData), (err) => {
@@ -63,7 +84,8 @@ const performHealthCheck = async () => {
   }
 };
 
-// Schedule health check every 10 seconds
+
+// Schedule health check every 10s
 setInterval(performHealthCheck, healthCheckInterval);
 
 app.route("/api/add/application/:queue_name").post(async (req, res) => {
@@ -144,7 +166,7 @@ app.get('/mock/api/queues/:queue_name', async (req, res) => {
 
   try {
     const response = await axios.get(`http://localhost:8000/mock/api/queues/${queue_name}`);
-    
+
     const responseData = response.data;
 
     res.json(responseData);
