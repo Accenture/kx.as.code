@@ -5,15 +5,14 @@ import kxIconW from "../media/svg/ks-logo-w.svg"
 
 const Home: React.FC = () => {
   return (
-    <div className="px-4 sm:px-6 lg:px-40 py-20 w-full max-w-9xl mx-auto">
+    <div className="px-4 sm:px-6 lg:px-40 py-20 w-full max-w-9xl mx-auto bg-ghBlack">
       {/* Welcome banner */}
       {/* <WelcomeBanner /> */}
 
       {/* Intro Header Section */}
       <div className="grid grid-cols-12 gap-14">
-        <div id="home-left"></div>
         {/* left */}
-        <div className="col-span-5" id="">
+        <div className="col-span-6" id="">
           {/* left header with logo */}
           <div className="flex items-center">
             <Image
@@ -42,7 +41,7 @@ const Home: React.FC = () => {
           {/* Getting Started Button */}
           <div className="mt-10">
             <button
-              className="bg-kxBlue hover:bg-kxBlueH px-5 py-3 text-[18px] rounded"
+              className="bg-kxBlue hover:bg-kxBlueH px-5 py-3 text-[18px]"
               // onClick={applicationPage}
             >
               Get Started
@@ -50,9 +49,9 @@ const Home: React.FC = () => {
           </div>
         </div>
         {/* right */}
-        <div className="col-span-7 mt-10">
+        <div className="col-span-6 mt-10">
           <Image
-            className="bg-kxBlue p-8 rounded-xl bg-gradient-to-r from-inv1"
+            className="bg-gray-500 p-8 bg-gradient-to-r from-ghBlack"
             src={homeImg}
             height={900}
             width={900}
