@@ -18,13 +18,19 @@ const AppLogo: React.FC<AppLogoProps> = (props) => {
     setImageSize();
     const fetchImage = async () => {
       try {
-        const response = await import(
-          `../../media/png/appImgs/${appName}.png`
-        );
-        setImage(response.default);
+        const imagePath = `/media/png/appImgs/${appName}.png`;
+        const imageResponse = await fetch(imagePath);
+        const blob = await imageResponse.blob();
+        const dataUrl = URL.createObjectURL(blob);
+        setImage(dataUrl);
       } catch (err) {
-        const response = await import(`../../media/svg/no_image_app.svg`);
-        setImage(response.default);
+        // Handle error or provide a fallback image
+        console.error("Error loading image:", err);
+        const noImagePath = "/media/svg/no_image_app.svg";
+        const noImageResponse = await fetch(noImagePath);
+        const noImageBlob = await noImageResponse.blob();
+        const noImageDataUrl = URL.createObjectURL(noImageBlob);
+        setImage(noImageDataUrl);
       }
     };
 

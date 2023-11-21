@@ -19,10 +19,9 @@ import Select from "@mui/material/Select";
 import Box from "@mui/material/Box";
 import FilterSelectedOptions from "../components/FilterSelectedOptions.jsx";
 import MultipleSelectCheckmarks from "../components/MultipleSelectCheckmarks";
-
-
-
-
+import { IconButton } from '@mui/material';
+import { FormatListBulleted } from "@mui/icons-material";
+import AppsIcon from "@mui/icons-material/Apps";
 
 
 const getArrayOfObjArray = (objArray: { name: string }[]) => {
@@ -80,7 +79,10 @@ const filterAppsBySearchTermAndInstallationStatus = (
   } catch (error) {
     console.log(error);
   } finally {
-    // localStorage.setItem("appsCount", filteredData.length.toString());
+    // Check if running in the browser environment
+    if (typeof window !== 'undefined' && window.localStorage) {
+      localStorage.setItem("appsCount", filteredData.length.toString());
+    }
     return filteredData;
   }
 };
@@ -155,7 +157,7 @@ const Applications = (props: any) => {
       isUninstalling: false,
       isPending: false,
     };
-  
+
     try {
       if (filterInstallationStatusList.includes("isInstalled")) {
         obj.isInstalled = true;
@@ -170,7 +172,7 @@ const Applications = (props: any) => {
       setFilterObj(obj);
     }
   };
-  
+
   interface InstallationStatus {
     isInstalled: boolean;
     isFailed: boolean;
@@ -178,7 +180,7 @@ const Applications = (props: any) => {
     isUninstalling?: boolean;
     isPending: boolean;
   }
-  
+
 
   const drawApplicationCards = (): JSX.Element[] => {
     const apps: JSX.Element[] = _DATA
@@ -347,6 +349,7 @@ const Applications = (props: any) => {
   }, []);
 
   return (
+    // TODO: Add ThemeProvider with Material UI Import in Layout Component
     // TODO: update Background trough NEXT.JS layout + Text
     <div className="px-6 sm:px-6 lg:px-24 py-8 w-full max-w-9xl mx-auto bg-ghBlack text-white">
       {/* Applications Header */}
@@ -364,7 +367,7 @@ const Applications = (props: any) => {
             </button>
           </Tooltip>
         </div>
-        <div className="pt-4 pb-6 text-[16px]">
+        <div className="pt-4 pb-6 text-base">
           Install applications into your KX.AS.CODE environemnt.
         </div>
 
@@ -374,7 +377,7 @@ const Applications = (props: any) => {
       <div className="h-[40px]">
         <div className={`flex justify-end ${totalChecked > 0 ? "visible" : "hidden"}`}>
           {totalChecked > 0 && (
-            <button className="bg-kxBlue p-2 px-5   items-center flex">
+            <button className="bg-kxBlue p-2 px-5 items-center flex text-base">
               Install Selected {totalChecked === 1 ? "Application" : "Applications"} ({totalChecked})
             </button>
           )}
@@ -406,7 +409,7 @@ const Applications = (props: any) => {
                 <input
                   type="text"
                   placeholder="Search Applications..."
-                  className="h-[56px] focus:ring-2 focus:ring-kxBlue bg-ghBlack2 px-3 py-3 placeholder-blueGray-300 text-blueGray-600   text-md border-0 shadow outline-none focus:outline-none w-[240px] pl-10"
+                  className="h-[56px] focus:ring-2 focus:ring-kxBlue bg-ghBlack2 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 text-base border-0 shadow outline-none focus:outline-none w-[240px] pl-10"
                   onChange={(e) => {
                     setSearchTerm(e.target.value);
                     _DATA.jump(1); // reset page to 1
@@ -414,10 +417,6 @@ const Applications = (props: any) => {
                 />
               </div>
 
-              {/* <FilterButton filterHandler={this.filterHandler}
-                            isCompleted={this.state.isCompleted}
-                            isFailed={this.state.isFailed}
-                            isPending={this.state.isPending} /> */}
             </div>
 
             <div className="ml-3">
@@ -528,6 +527,69 @@ const Applications = (props: any) => {
               label="Show Core Applications"
             />
           </FormGroup>
+        </div>
+      </div>
+
+      {/* Results count and galery action buttons */}
+      <div className="flex justify-between items-center">
+        {/* left */}
+        <div className="">
+          {searchTerm != "" ? (
+            <div className="text-[16px] text-gray-400 mb-4">
+              {/* Check if running in the browser environment */}
+              {typeof window !== 'undefined' && window.localStorage ? (localStorage.getItem("appsCount")) : (null)} results for "{searchTerm}"
+            </div>
+          ) : (
+            <div className="text-[16px] text-gray-400 mb-4">
+              {/* Check if running in the browser environment */}
+              {typeof window !== 'undefined' && window.localStorage ? (localStorage.getItem("appsCount")) : (null)
+              } Applications
+            </div>
+          )}
+        </div>
+        {/* right */}
+        <div className="mb-4 text-3xl">
+          {isListLayout ? (
+            <div>
+              <IconButton
+                aria-label="list"
+                color="primary"
+                onClick={() => {
+                  toggleListLayout(true);
+                }}
+              >
+                <FormatListBulleted />
+              </IconButton>
+              <IconButton
+                aria-label="galery"
+                onClick={() => {
+                  toggleListLayout(false);
+                }}
+              >
+                <AppsIcon />
+              </IconButton>
+            </div>
+          ) : (
+            <div>
+              <IconButton
+                aria-label="list"
+                onClick={() => {
+                  toggleListLayout(true);
+                }}
+              >
+                <FormatListBulleted />
+              </IconButton>
+              <IconButton
+                aria-label="galery"
+                color="primary"
+                onClick={() => {
+                  toggleListLayout(false);
+                }}
+              >
+                <AppsIcon />
+              </IconButton>
+            </div>
+          )}
         </div>
       </div>
 
