@@ -22,15 +22,15 @@ interface ApplicationCardProps {
   layout: boolean;
   addCategoryTofilterTags: (newCategoryObj: any) => void;
   isMqConnected: boolean;
-  history: any;
   onCheck: (isChecked: boolean) => void;
   fetchApplicationAndQueueData: () => void;
   getQueueStatusList: (appName: string) => string[];
   isListLayout: boolean;
+  queueData: any;
+  applicationSelectedCount: (action: string) => void;
 }
 
 function ApplicationCard(props: ApplicationCardProps) {
-  const { history } = props;
 
   const [appId, setAppId] = useState<string>("");
   const [appName, setAppName] = useState<string>("");
