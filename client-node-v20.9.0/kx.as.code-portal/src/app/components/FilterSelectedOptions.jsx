@@ -7,6 +7,7 @@ import { useState, useEffect } from "react";
 
 export default function Tags(props) {
   const [options, setOptions] = useState([]);
+  const [value, setValue] = useState(props.categoriesFilterTags || []);
 
   const getObjList = (list) => {
     // console.log("debug-list: ", list);
@@ -22,6 +23,11 @@ export default function Tags(props) {
     } finally {
       return categoriesObjList;
     }
+  };
+
+  const handleChange = (event, newValue) => {
+    setValue(newValue);
+    props.setCategoriesFilterTags(newValue);
   };
 
   const getAllCategoriesObj = () => {
@@ -61,24 +67,21 @@ export default function Tags(props) {
   return (
     <Stack spacing={3} sx={{ width: 500 }}>
       <Autocomplete
-        multiple
-        id="tags-outlined"
-        options={getAllCategoriesObj()}
-        getOptionLabel={(option) => option.name}
-        // defaultValue={[categories[13]]}
-        onChange={(event, value) => {
-          props.setCategoriesFilterTags(value);
-          // console.log(value);
-        }}
-        filterSelectedOptions
-        renderInput={(params) => (
-          <TextField
-            {...params}
-            label="Filter by Categories"
-            placeholder="Add Category"
-          />
-        )}
-      />
+      multiple
+      id="tags-outlined"
+      options={getAllCategoriesObj()}
+      getOptionLabel={(option) => option.name}
+      value={value}
+      onChange={handleChange}
+      filterSelectedOptions
+      renderInput={(params) => (
+        <TextField
+          {...params}
+          label="Filter by Categories"
+          placeholder="Add Category"
+        />
+      )}
+    />
     </Stack>
   );
 }

@@ -70,70 +70,22 @@ const ApplicationStatusActionButton: React.FC<ApplicationStatusActionButtonProps
             </Tooltip>
           </div>
         );
-      } else if (
-        true && // TODO: props.getQueueStatusList(props.appName) === "completed_queue" 
-        props.category !== "core"
-      ) {
-        return (
-            <Link className="bg-red-500 p-2 px-5 rounded items-center flex"
-            to="#0"
-            onClick={() => {
-              props.applicationUninstallHandler();
-            }}>
-         
-            <div className="flex items-start">
-              <ImCross className="p-0.5 flex my-auto" />
-            </div>
-            <span className="flex my-auto">Uninstall</span>
-          </Link>
-        );
-      } else if (props.category !== "core") {
-        return (
-          <div className="flex">
-            <Link
-              className="bg-kxBlue p-2 px-5 rounded-bl rounded-tl items-center flex"
-              to="#0"
-              onClick={() => {
-                props.applicationInstallHandler();
-              }}
-            >
-              <div className="flex items-start">
-                <FaArrowAltCircleDown className="mr-2 flex my-auto text-white" />
-              </div>
-              <span className="flex my-auto text-[16px]">Install</span>
-            </Link>
-            <Tooltip
-              title={`Re-install ${props.appName}`}
-              placement="top"
-              arrow
-            >
-              <button className="bg-kxBlue p-2 rounded-br rounded-tr ml-1 text-white">
-                <RestartAltIcon
-                  aria-label="list"
-                  color="inherit"
-                  onClick={() => {
-                    props.applicationInstallHandler();
-                  }}
-                />
-              </button>
-            </Tooltip>
-          </div>
-        );
-      }
+      } 
     } else {
       return (
-        <Link
-          className="border-red-500 border p-2 px-5 rounded items-center flex text-red-500"
-          to="#0"
-          onClick={() => {
-            props.applicationInstallHandler();
-          }}
-        >
-          <span className="flex my-auto text-base">
-            <AiOutlineWarning className="mt-auto mb-auto table text-lg mr-2" />
-            ActionButton Error
-          </span>
-        </Link>
+        // <Link
+        //   className="border-red-500 border p-2 px-5 rounded items-center flex text-red-500"
+        //   to="#0"
+        //   onClick={() => {
+        //     props.applicationInstallHandler();
+        //   }}
+        // >
+        //   <span className="flex my-auto text-base">
+        //     <AiOutlineWarning className="mt-auto mb-auto table text-lg mr-2" />
+        //     ActionButton Error
+        //   </span>
+        // </Link>
+        <></>
       );
     }
   };

@@ -165,13 +165,12 @@ const Applications = (props: any) => {
         obj.isFailed = true;
       }
     } catch (err) {
-      // Handle errors if necessary
+
     } finally {
       setFilterObj(obj);
     }
   };
   
-  // Define the InstallationStatus interface
   interface InstallationStatus {
     isInstalled: boolean;
     isFailed: boolean;
@@ -317,14 +316,11 @@ const Applications = (props: any) => {
         });
       });
 
-      // Wait for all requests to complete
       await Promise.all(requests);
 
-      // Additional logic after all requests are completed
-      // console.log("All requests completed");
     } catch (error) {
       console.error("Error fetching queue data:", error);
-      // Handle the error based on your requirements
+
     }
   };
 
@@ -334,14 +330,14 @@ const Applications = (props: any) => {
       await fetchData();
     } catch (error) {
       console.error("Error fetching application and queue data:", error);
-      // Handle the error based on your requirements
+
     }
   };
 
   useEffect(() => {
     setAppsSearchResultCount(applicationData.length);
 
-    checkMqConnection();
+    // checkMqConnection();
 
     try {
       fetchApplicationAndQueueData();
@@ -351,7 +347,8 @@ const Applications = (props: any) => {
   }, []);
 
   return (
-    <div className="px-6 sm:px-6 lg:px-24 py-8 w-full max-w-9xl mx-auto">
+    // TODO: update Background trough NEXT.JS layout + Text
+    <div className="px-6 sm:px-6 lg:px-24 py-8 w-full max-w-9xl mx-auto bg-ghBlack text-white">
       {/* Applications Header */}
       <div className="text-white pb-10">
         <div className="text-xl font-bold italic text-gray-500">
@@ -377,7 +374,7 @@ const Applications = (props: any) => {
       <div className="h-[40px]">
         <div className={`flex justify-end ${totalChecked > 0 ? "visible" : "hidden"}`}>
           {totalChecked > 0 && (
-            <button className="bg-kxBlue p-2 px-5 rounded items-center flex">
+            <button className="bg-kxBlue p-2 px-5   items-center flex">
               Install Selected {totalChecked === 1 ? "Application" : "Applications"} ({totalChecked})
             </button>
           )}
@@ -385,7 +382,7 @@ const Applications = (props: any) => {
       </div>
 
       {/* Filter Section */}
-      <div className="bg-inv3 px-5 py-8 my-5 rounded border border-gray-600">
+      <div className="bg-inv3 px-5 py-8 my-5   border border-gray-600">
         {/* Applications actions */}
         <div className="flex justify-between">
           {/* Left: Actions */}
@@ -409,7 +406,7 @@ const Applications = (props: any) => {
                 <input
                   type="text"
                   placeholder="Search Applications..."
-                  className="h-[56px] focus:ring-2 focus:ring-kxBlue bg-ghBlack2 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 rounded text-md border-0 shadow outline-none focus:outline-none w-[240px] pl-10"
+                  className="h-[56px] focus:ring-2 focus:ring-kxBlue bg-ghBlack2 px-3 py-3 placeholder-blueGray-300 text-blueGray-600   text-md border-0 shadow outline-none focus:outline-none w-[240px] pl-10"
                   onChange={(e) => {
                     setSearchTerm(e.target.value);
                     _DATA.jump(1); // reset page to 1
@@ -427,7 +424,7 @@ const Applications = (props: any) => {
               <Button
                 variant="outlined"
                 size="small"
-                className="h-full"
+                className="h-full rounded-none"
                 onClick={(e) => {
                   setIsShowMoreFilters(!isShowMoreFilters);
                 }}
@@ -444,7 +441,7 @@ const Applications = (props: any) => {
 
           {/* Right: Actions */}
           <div className="flex">
-            <div className="mr-5">
+            <div className="mr-5 text-white">
               <Box sx={{ minWidth: 120 }}>
                 <FormControl sx={{ minWidth: 120 }}>
                   <InputLabel id="demo-simple-select-label">

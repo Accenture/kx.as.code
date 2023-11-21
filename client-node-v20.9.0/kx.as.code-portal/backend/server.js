@@ -10,7 +10,7 @@ const bodyParser = require("body-parser");
 app.use(bodyParser.json());
 
 const PORT = process.env.PORT || 5001;
-const dataPath = "../src/data/combined-metadata-files.json";
+const dataPath = "./src/data/combined-metadata-files.json";
 const healthCheckDataPath = "./src/data/healthcheckdata.json";
 const rabbitMqUsername = "test";
 const rabbitMqPassword = "test";

@@ -25,12 +25,12 @@ const Home: React.FC = () => {
           </div>
 
           {/* Intro Title */}
-          <div className="text-[42px] font-extrabold leading-tight my-7">
+          <div className="text-[42px] font-bold leading-tight my-7">
             <span className="text-kxBlue">Transfer Knowledge as Code</span> - All in One VM.
           </div>
 
           {/* Intro Text */}
-          <div className="text-[16px] tracking-wide text-justify">
+          <div className="text-base tracking-wide text-justify">
             Learn and share knowledge. Use it for demoing new technologies,
             tools and processes. Keep your physical workstation clean whilst
             experimenting. Have fun playing around with new technologies and use
@@ -41,7 +41,7 @@ const Home: React.FC = () => {
           {/* Getting Started Button */}
           <div className="mt-10">
             <button
-              className="bg-kxBlue hover:bg-kxBlueH px-5 py-3 text-[18px]"
+              className="bg-kxBlue hover:bg-kxBlueH px-5 py-3 text-base"
               // onClick={applicationPage}
             >
               Get Started

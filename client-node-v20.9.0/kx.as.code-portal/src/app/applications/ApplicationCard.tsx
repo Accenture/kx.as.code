@@ -8,8 +8,8 @@ import ApplicationStatusActionButton from "./ApplicationActionButton";
 import ApplicationCategoryTag from "./ApplicationCategoryTag";
 import Tooltip from "@mui/material/Tooltip";
 import Checkbox from "@mui/material/Checkbox";
-import { Link } from "react-router-dom";
- 
+import Link from 'next/link';
+
 interface NotificationMessageProps {
   notificationMessage: string;
 }
@@ -206,10 +206,10 @@ function ApplicationCard(props: ApplicationCardProps) {
               <div className="flex col-span-10 items-center">
                 <div className="grid grid-cols-12 w-full items-center">
                   <div className="flex col-span-4 w-full">
-                    <Link
+                    {/* <Link
                       to={"/apps/" + getSlug()}
                       className="mx-3 flex col-span-6"
-                    >
+                    > */}
                       <div className="flex items-center">
                         <div className="h-auto w-10">
                           <AppLogo appName={props.app.name} />
@@ -238,7 +238,7 @@ function ApplicationCard(props: ApplicationCardProps) {
                           </div>
                         </div>
                       </div>
-                    </Link>
+                    {/* </Link> */}
                   </div>
                   <div className="flex col-span-8 w-full">
                     <ul className="float-left">
@@ -292,7 +292,7 @@ function ApplicationCard(props: ApplicationCardProps) {
                 </div>
               </div>
             </header>
-            <Link to={"/apps/" + getSlug()}>
+            {/* <Link to={"/apps/" + getSlug()}> */}
               <div className="text-white bg-ghBlack2 rounded p-0 px-1.5 uppercase w-fit inline-block my-2">
                 {props.app.installation_group_folder}
               </div>
@@ -307,7 +307,7 @@ function ApplicationCard(props: ApplicationCardProps) {
                   </button>
                 </Tooltip>
               </h2>
-            </Link>
+            {/* </Link> */}
             <div className="">
               <ApplicationStatusActionButton
                 isMqConnected={props.isMqConnected}
