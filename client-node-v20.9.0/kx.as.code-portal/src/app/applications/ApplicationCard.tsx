@@ -170,7 +170,7 @@ function ApplicationCard(props: ApplicationCardProps) {
   };
 
   useEffect(() => {
-    console.log("App: ", props.app);
+    // console.log("App: ", props.app);
     setUp();
     setAppName(
       props.app.name
@@ -185,7 +185,7 @@ function ApplicationCard(props: ApplicationCardProps) {
     return appTags.map((appTag, i) => (
       <ApplicationCategoryTag
         appTag={appTag}
-        keyId={i}
+        key={i}
         addCategoryTofilterTags={props.addCategoryTofilterTags}
       />
     ));

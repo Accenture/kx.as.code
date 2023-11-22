@@ -24,7 +24,7 @@ const AppLogo: React.FC<AppLogoProps> = (props) => {
         const dataUrl = URL.createObjectURL(blob);
         setImage(dataUrl);
       } catch (err) {
-        // Handle error or provide a fallback image
+        // Fallback image
         console.error("Error loading image:", err);
         const noImagePath = "/media/svg/no_image_app.svg";
         const noImageResponse = await fetch(noImagePath);

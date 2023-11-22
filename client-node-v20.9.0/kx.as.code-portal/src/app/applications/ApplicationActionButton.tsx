@@ -19,7 +19,7 @@ const ApplicationStatusActionButton: React.FC<ApplicationStatusActionButtonProps
   props
 ) => {
   useEffect(() => {
-    console.log("list-actionbutton: ", props.getQueueStatusList(props.appName));
+    // console.log("list-actionbutton: ", props.getQueueStatusList(props.appName));
     return () => {};
   }, []);
 

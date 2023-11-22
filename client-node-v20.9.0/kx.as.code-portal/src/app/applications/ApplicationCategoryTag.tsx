@@ -4,13 +4,11 @@ import Button from "@mui/material/Button";
 
 interface ApplicationCategoryTagProps {
   appTag: string;
-  keyId: number;
   addCategoryTofilterTags: (tag: { name: string }) => void;
 }
 
 const ApplicationCategoryTag: React.FC<ApplicationCategoryTagProps> = ({
   appTag,
-  keyId,
   addCategoryTofilterTags,
 }) => {
   const [appTagTransformed, setAppTagTransformed] = useState("");
@@ -22,7 +20,7 @@ const ApplicationCategoryTag: React.FC<ApplicationCategoryTagProps> = ({
   }, [appTag]);
 
   return (
-    <Tooltip title="Add to filters" placement="top" arrow key={keyId}>
+    <Tooltip title="Add to filters" placement="top" arrow>
       <Button
         id={appTag}
         className="rounded bg-gray-500 hover:bg-kxBlue text-sm mr-1.5 mb-2 px-1.5 w-auto inline-block"

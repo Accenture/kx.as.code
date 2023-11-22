@@ -42,7 +42,8 @@ const Home: React.FC = () => {
           <div className="mt-10">
             <button
               className="bg-kxBlue hover:bg-kxBlueH px-5 py-3 text-base"
-              // onClick={applicationPage}
+            // TODO: Add routing with history for breadcumbs  
+            // onClick={applicationPage}
             >
               Get Started
             </button>
