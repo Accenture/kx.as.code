@@ -13,10 +13,8 @@ function Sidebar({ sidebarOpen, setSidebarOpen }, props) {
   const trigger = useRef(null);
   const sidebar = useRef(null);
 
-  const storedSidebarExpanded = localStorage.getItem("sidebar-expanded");
-  const [sidebarExpanded, setSidebarExpanded] = useState(
-    storedSidebarExpanded === null ? false : storedSidebarExpanded === "true"
-  );
+  // const storedSidebarExpanded = localStorage.getItem("sidebar-expanded");
+  const [sidebarExpanded, setSidebarExpanded] = useState(falase);
 
   const versions = require("../data/versions.json");
 
@@ -49,13 +47,13 @@ function Sidebar({ sidebarOpen, setSidebarOpen }, props) {
   });
 
   useEffect(() => {
-    localStorage.setItem("sidebar-expanded", sidebarExpanded);
-    if (sidebarExpanded) {
-      document.querySelector("body").classList.add("sidebar-expanded");
-    } else {
-      document.querySelector("body").classList.remove("sidebar-expanded");
-    }
-  }, [sidebarExpanded]);
+    // localStorage.setItem("sidebar-expanded", sidebarExpanded);
+    // if (sidebarExpanded) {
+    //   document.querySelector("body").classList.add("sidebar-expanded");
+    // } else {
+    //   document.querySelector("body").classList.remove("sidebar-expanded");
+    // }
+  }, []);
 
   return (
     <div>

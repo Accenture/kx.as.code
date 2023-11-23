@@ -7,7 +7,7 @@ interface PaginationRoundedProps {
   count: number;
   page: number;
   setPageAndJumpData: (event: React.ChangeEvent<unknown>, page: number) => void;
-  setPage: React.Dispatch<React.SetStateAction<number>>;
+  PER_PAGE: number;
 }
 
 const useStyles = makeStyles((theme) =>

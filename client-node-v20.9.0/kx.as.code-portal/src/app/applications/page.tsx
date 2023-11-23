@@ -93,11 +93,11 @@ const Applications = (props: any) => {
   const [queueData, setQueueData] = useState<any[]>([]);
   const [appsSearchResultCount, setAppsSearchResultCount] = useState<number>(0);
   const [isMqConnected, setIsMqConnected] = useState<boolean>(true);
-  const [isListLayout, setIsListLayout] = useState<boolean>(false);
+  const [isListLayout, setIsListLayout] = useState<boolean>(true);
   const [isShowMoreFilters, setIsShowMoreFilters] = useState<boolean>(false);
 
   const [sortSelect, setSortSelect] = useState<string>("asc");
-  const [resultsPerPage, setResultsPerPage] = useState<any>(10);
+  const [resultsPerPage, setResultsPerPage] = useState<any>(20);
   const [filterTags, setFilterTags] = useState<any[]>([]);
 
   const [isCheckedCore, setIsCheckedCore] = useState<boolean>(false);
@@ -456,11 +456,10 @@ const Applications = (props: any) => {
                       _DATA.jump(1); // reset page to 1
                     }}
                   >
-                    <MenuItem value={10}>10</MenuItem>
                     <MenuItem value={20}>20</MenuItem>
-                    <MenuItem value={30}>30</MenuItem>
-                    <MenuItem value={40}>40</MenuItem>
-                    <MenuItem value={50}>50</MenuItem>
+                    <MenuItem value={32}>32</MenuItem>
+                    <MenuItem value={44}>44</MenuItem>
+                    <MenuItem value={56}>56</MenuItem>
                   </Select>
                 </FormControl>
               </Box>
@@ -593,8 +592,18 @@ const Applications = (props: any) => {
         </div>
       </div>
 
+      {/* Pagination Top */}
+      <div className="flex justify-center pb-10">
+        <PaginationRounded
+          setPageAndJumpData={setPageAndJumpData}
+          page={page}
+          PER_PAGE={resultsPerPage}
+          count={count}
+        />
+      </div>
+
       {/* Applications Content */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      <div className="grid grid-cols-12 gap-1">
         {
           _DATA.currentData().map((app, index) => (
             <ApplicationCard
@@ -620,8 +629,8 @@ const Applications = (props: any) => {
       <PaginationRounded
         count={count}
         page={page}
-        setPage={setPage}
         setPageAndJumpData={setPageAndJumpData}
+        PER_PAGE={resultsPerPage}
       />
     </div>
   );

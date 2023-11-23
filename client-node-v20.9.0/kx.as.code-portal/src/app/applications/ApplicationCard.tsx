@@ -196,30 +196,30 @@ function ApplicationCard(props: ApplicationCardProps) {
       {props.isListLayout ? (
         <>
           <div
-            className={`cursor-auto flex flex-col col-span-full rounded ${
+            className={`cursor-auto flex flex-col col-span-full ${
               props.isListLayout
                 ? "col-span-full"
                 : "sm:col-span-6 xl:col-span-4"
             }`}
           >
-            <div className="grid grid-cols-12 hover:bg-[#3d4d63] bg-gray-700 rounded items-center px-5 py-2">
+            <div className="grid grid-cols-12 hover:bg-[#3d4d63] bg-gray-700 items-center px-5 py-1">
               <div className="flex col-span-10 items-center">
-                <div className="grid grid-cols-12 w-full items-center">
-                  <div className="flex col-span-4 w-full">
+                <div className="grid grid-cols-12 items-center">
+                  <div className="flex col-span-4 pr-5">
                     {/* <Link
                       to={"/apps/" + getSlug()}
                       className="mx-3 flex col-span-6"
                     > */}
-                      <div className="flex items-center">
+                      <div className="flex items-center border-r-2 border-gray-500 w-[280px]">
                         <div className="h-auto w-10">
                           <AppLogo appName={props.app.name} />
                         </div>
                         <div className="mx-3 flex col-span-6">
                           <div>
-                            <div className="text-white bg-ghBlack2 rounded p-0 px-1.5 uppercase w-fit inline-block my-1">
+                            <div className="text-white bg-ghBlack2 p-0 py-1 px-2 uppercase w-fit inline-block my-1 text-xs">
                               {props.app.installation_group_folder}
                             </div>
-                            <h2 className="hover:underline hover:cursor-pointer text-[16px] text-white mb-2 flex items-center">
+                            <h2 className="hover:underline hover:cursor-pointer text-base text-white mb-2 flex items-center">
                               {/* {
                               allQueueStatus != "" && (
                                 <StatusPoint installStatus={allQueueStatus} />
@@ -265,8 +265,8 @@ function ApplicationCard(props: ApplicationCardProps) {
       ) : (
         <div
           className={`relative flex flex-col col-span-full ${
-            isChecked ? "hover:border-[#5a86ff]" : "hover:bg-[#3d4d63]"
-          } hover:bg-[#3d4d63] bg-gray-700 rounded border-2 ${
+            isChecked ? "hover:border-[#5a86ff]" : "hover:bg-[#3d4d63] hover:border-[#3d4d63]"
+          } hover:bg-[#3d4d63] bg-gray-700 border-2 ${
             isChecked ? "border-kxBlue" : "border-gray-700"
           } ${
             props.isListLayout ? "col-span-full" : "sm:col-span-6 xl:col-span-3"
@@ -279,7 +279,7 @@ function ApplicationCard(props: ApplicationCardProps) {
               <div className="h-auto w-10">
                 <AppLogo appName={props.app.name} />
               </div>
-              <div className="">
+              <div className="h-10">
                 <div
                   className={`${
                     isHovering || isChecked ? "visible" : "hidden"
@@ -293,7 +293,7 @@ function ApplicationCard(props: ApplicationCardProps) {
               </div>
             </header>
             {/* <Link to={"/apps/" + getSlug()}> */}
-              <div className="text-white bg-ghBlack2 rounded p-0 px-1.5 uppercase w-fit inline-block my-2">
+              <div className="text-white bg-ghBlack2 p-0 px-1.5 uppercase w-fit inline-block my-2">
                 {props.app.installation_group_folder}
               </div>
               <h2 className="hover:underline hover:cursor-pointer text-2xl text-white mb-2 flex items-center">
@@ -318,27 +318,13 @@ function ApplicationCard(props: ApplicationCardProps) {
                 applicationUninstallHandler={applicationUninstallHandler}
               />
             </div>
-            <div className="pb-3 mb-3 border-b-2 border-gray-600 w-full"></div>
-            <div className="float-left h-12">
+            <div className="pb-3 mb-3 border-b-2 border-gray-500 w-full"></div>
+            <div className="float-left h-32">
               <ul className="float-left">
                 {props.app.categories && drawAppTags(props.app.categories)}
               </ul>
             </div>
           </div>
-          <div className="flex-grow"></div>
-          <div
-            className={`w-full bg-[#3d4d63] absolute bottom-[-82px] h-20 p-5 ${
-              isHovering
-                ? "h-20 visible transition-transform translate-y-[-82px] ease-out duration-500"
-                : ""
-            }`}
-          >
-            <span className="font-bold text-gray-400">Available Tasks: </span>
-            {props.app.available_tasks
-              ? props.app.available_tasks.length
-              : 0}
-          </div>
-          <div className="w-full absolute bg-inv1 h-20 bottom-[-82px]"></div>
         </div>
       )}
     </>

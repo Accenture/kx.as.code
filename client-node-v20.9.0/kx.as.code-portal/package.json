@@ -11,6 +11,7 @@
     "dev:next": "next dev"
   },
   "dependencies": {
+    "@carbon/icons-react": "^11.30.1",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
     "@material-ui/styles": "^4.11.5",
@@ -26,6 +27,8 @@
     "next": "14.0.3",
     "nodemon": "^3.0.1",
     "react": "^18",
+    "react-dnd": "^16.0.1",
+    "react-dnd-html5-backend": "^16.0.1",
     "react-dom": "^18",
     "react-icons": "^4.12.0",
     "react-router-dom": "^6.19.0",

@@ -70,7 +70,7 @@ export default function MultipleSelectCheckmarks(props) {
 
   return (
     <div className="ml-2">
-      <ThemeProvider theme={darkTheme}>
+
         <FormControl sx={{ m: 0, width: 230 }}>
           <InputLabel id="demo-multiple-checkbox-label">
             Installation Status
@@ -98,7 +98,6 @@ export default function MultipleSelectCheckmarks(props) {
             ))}
           </Select>
         </FormControl>
-      </ThemeProvider>
     </div>
   );
 }
