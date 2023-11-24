@@ -64,9 +64,8 @@ function ApplicationCard(props: ApplicationCardProps) {
   );
 
   const notify = (action: string) => {
-    const notificationMessage = `${
-      action === "install" ? "Installation" : "Uninstallation"
-    } Action added to Queue for ${appName}.`;
+    const notificationMessage = `${action === "install" ? "Installation" : "Uninstallation"
+      } Action added to Queue for ${appName}.`;
 
     toast.info(
       <NotificationMessage notificationMessage={notificationMessage} />,
@@ -149,7 +148,7 @@ function ApplicationCard(props: ApplicationCardProps) {
       props.app.name &&
       props.app.name
         .replaceAll(" ", "-")
-        .replace(/\b\w/g, (l:any) => l.toLowerCase());
+        .replace(/\b\w/g, (l: any) => l.toLowerCase());
     setAppId(slug);
   };
 
@@ -157,7 +156,7 @@ function ApplicationCard(props: ApplicationCardProps) {
     return props.app.name
       .replaceAll("-", " ")
       .replaceAll("_", " ")
-      .replace(/\b\w/g, (l:any) => l.toUpperCase());
+      .replace(/\b\w/g, (l: any) => l.toUpperCase());
   };
 
   const getSlug = () => {
@@ -165,7 +164,7 @@ function ApplicationCard(props: ApplicationCardProps) {
       props.app.name &&
       props.app.name
         .replaceAll(" ", "-")
-        .replace(/\b\w/g, (l:any) => l.toLowerCase())
+        .replace(/\b\w/g, (l: any) => l.toLowerCase())
     );
   };
 
@@ -176,9 +175,9 @@ function ApplicationCard(props: ApplicationCardProps) {
       props.app.name
         .replaceAll("-", " ")
         .replaceAll("_", " ")
-        .replace(/\b\w/g, (l:any) => l.toUpperCase())
+        .replace(/\b\w/g, (l: any) => l.toUpperCase())
     );
-    return () => {};
+    return () => { };
   }, [appQueue]);
 
   const drawAppTags = (appTags: string[]) => {
@@ -196,59 +195,61 @@ function ApplicationCard(props: ApplicationCardProps) {
       {props.isListLayout ? (
         <>
           <div
-            className={`cursor-auto flex flex-col col-span-full ${
-              props.isListLayout
-                ? "col-span-full"
-                : "sm:col-span-6 xl:col-span-4"
-            }`}
+            className={`cursor-auto flex flex-col col-span-full ${props.isListLayout
+              ? "col-span-full"
+              : "sm:col-span-6 xl:col-span-4"
+              }`}
           >
-            <div className="grid grid-cols-12 hover:bg-[#3d4d63] bg-gray-700 items-center px-5 py-1">
+            <div className="grid grid-cols-12 hover:bg-ghBlack2 bg-ghBlack3 items-center py-1">
               <div className="flex col-span-10 items-center">
                 <div className="grid grid-cols-12 items-center">
-                  <div className="flex col-span-4 pr-5">
+                  <div className="flex col-span-4 pr-5 border-r-2 border-ghBlack">
                     {/* <Link
                       to={"/apps/" + getSlug()}
                       className="mx-3 flex col-span-6"
                     > */}
-                      <div className="flex items-center border-r-2 border-gray-500 w-[280px]">
-                        <div className="h-auto w-10">
-                          <AppLogo appName={props.app.name} />
-                        </div>
-                        <div className="mx-3 flex col-span-6">
-                          <div>
-                            <div className="text-white bg-ghBlack2 p-0 py-1 px-2 uppercase w-fit inline-block my-1 text-xs">
-                              {props.app.installation_group_folder}
-                            </div>
-                            <h2 className="hover:underline hover:cursor-pointer text-base text-white mb-2 flex items-center">
-                              {/* {
+                    <div className="flex items-center w-[280px] pl-5">
+                      <div className="h-auto w-10">
+                        <AppLogo appName={props.app.name} />
+                      </div>
+                      <div className="mx-3 flex col-span-6">
+                        <div>
+                          <div className="text-white bg-black p-0 py-1 px-2 uppercase w-fit inline-block my-1 text-xs">
+                            {props.app.installation_group_folder}
+                          </div>
+                          <h2 className="hover:underline hover:cursor-pointer text-base text-white mb-2 flex items-center">
+                            {/* {
                               allQueueStatus != "" && (
                                 <StatusPoint installStatus={allQueueStatus} />
                               )} */}
-                              {getTransformedName()}
-                              <Tooltip
-                                title={props.app.Description}
-                                placement="top"
-                                arrow
-                              >
-                                <button className="inline">
-                                  <HiOutlineInformationCircle className="ml-1" />
-                                </button>
-                              </Tooltip>
-                            </h2>
-                          </div>
+                            {getTransformedName()}
+                            <Tooltip
+                              title={props.app.Description}
+                              placement="top"
+                              arrow
+                            >
+                              <button className="inline">
+                                <HiOutlineInformationCircle className="ml-1" />
+                              </button>
+                            </Tooltip>
+                          </h2>
                         </div>
                       </div>
+                    </div>
                     {/* </Link> */}
                   </div>
-                  <div className="flex col-span-8 w-full">
+                  <div className="flex col-span-6 w-full pl-2">
                     <ul className="float-left">
                       {props.app.categories &&
                         drawAppTags(props.app.categories)}
                     </ul>
                   </div>
+
+
                 </div>
               </div>
-              <div className="flex col-span-2 w-full justify-end">
+              <div className="flex col-span-2 items-center justify-center border-l-2 border-ghBlack h-full">
+
                 <ApplicationStatusActionButton
                   isMqConnected={props.isMqConnected}
                   getQueueStatusList={props.getQueueStatusList}
@@ -256,34 +257,32 @@ function ApplicationCard(props: ApplicationCardProps) {
                   category={props.app.installation_group_folder}
                   applicationInstallHandler={applicationInstallHandler}
                   applicationUninstallHandler={applicationUninstallHandler}
-                  // refreshActionButton={refreshActionButton}
+                // refreshActionButton={refreshActionButton}
                 />
+
               </div>
             </div>
+
           </div>
         </>
       ) : (
         <div
-          className={`relative flex flex-col col-span-full ${
-            isChecked ? "hover:border-[#5a86ff]" : "hover:bg-[#3d4d63] hover:border-[#3d4d63]"
-          } hover:bg-[#3d4d63] bg-gray-700 border-2 ${
-            isChecked ? "border-kxBlue" : "border-gray-700"
-          } ${
-            props.isListLayout ? "col-span-full" : "sm:col-span-6 xl:col-span-3"
-          }`}
+          className={`relative flex flex-col col-span-full ${isChecked ? "hover:border-[#5a86ff]" : "hover:bg-ghBlack2 hover:border-ghBlack2"
+            } hover:bg-ghBlack3 bg-ghBlack3 border ${isChecked ? "border-kxBlue" : "border-ghBlack3"
+            } ${props.isListLayout ? "col-span-full" : "sm:col-span-6 xl:col-span-3"
+            }`}
           onMouseOver={handleMouseOver}
           onMouseOut={handleMouseOut}
         >
           <div className="p-6">
-            <header className="flex justify-between items-start mb-2">
+            <div className="flex justify-between items-start mb-2">
               <div className="h-auto w-10">
                 <AppLogo appName={props.app.name} />
               </div>
               <div className="h-10">
                 <div
-                  className={`${
-                    isHovering || isChecked ? "visible" : "hidden"
-                  }`}
+                  className={`${isHovering || isChecked ? "visible" : "hidden"
+                    }`}
                 >
                   <Checkbox
                     checked={isChecked}
@@ -291,22 +290,22 @@ function ApplicationCard(props: ApplicationCardProps) {
                   />
                 </div>
               </div>
-            </header>
+            </div>
             {/* <Link to={"/apps/" + getSlug()}> */}
-              <div className="text-white bg-ghBlack2 p-0 px-1.5 uppercase w-fit inline-block my-2">
-                {props.app.installation_group_folder}
-              </div>
-              <h2 className="hover:underline hover:cursor-pointer text-2xl text-white mb-2 flex items-center">
-                {/* {allQueueStatus != "" && (
+            <div className="text-white bg-ghBlack2 p-0 px-1.5 uppercase w-fit inline-block my-2">
+              {props.app.installation_group_folder}
+            </div>
+            <h2 className="hover:underline hover:cursor-pointer text-2xl text-white mb-2 flex items-center">
+              {/* {allQueueStatus != "" && (
                   <StatusPoint installStatus={allQueueStatus} />
                 )} */}
-                {getTransformedName()}
-                <Tooltip title={props.app.Description} placement="top" arrow>
-                  <button className="inline-block">
-                    <HiOutlineInformationCircle className="ml-1 text-base" />
-                  </button>
-                </Tooltip>
-              </h2>
+              {getTransformedName()}
+              <Tooltip title={props.app.Description} placement="top" arrow>
+                <button className="inline-block">
+                  <HiOutlineInformationCircle className="ml-1 text-base" />
+                </button>
+              </Tooltip>
+            </h2>
             {/* </Link> */}
             <div className="">
               <ApplicationStatusActionButton
@@ -318,7 +317,7 @@ function ApplicationCard(props: ApplicationCardProps) {
                 applicationUninstallHandler={applicationUninstallHandler}
               />
             </div>
-            <div className="pb-3 mb-3 border-b-2 border-gray-500 w-full"></div>
+            <div className="pb-3 mb-3 w-full"></div>
             <div className="float-left h-32">
               <ul className="float-left">
                 {props.app.categories && drawAppTags(props.app.categories)}

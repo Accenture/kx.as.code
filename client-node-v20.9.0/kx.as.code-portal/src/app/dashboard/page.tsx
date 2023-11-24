@@ -57,7 +57,7 @@ const QueueComponent: React.FC<QueueComponentProps> = ({ queueName, count, index
         drag(drop(node));
         preview(node);
       }}
-      className={`col-span-3 bg-gray-700 hover:bg-[#3d4d63] h-40 p-3`}
+      className={`col-span-3 bg-ghBlack2 hover:bg-ghBlack3 h-40 p-3`}
       style={{
         border: isDragging ? "1px solid white" : "",
         opacity: isDragging ? 0.5 : 1,
@@ -151,11 +151,11 @@ const Dashboard: React.FC = () => {
   }, []);
 
   return (
-    <div className="px-4 sm:px-6 lg:px-24 py-8 w-full max-w-9xl mx-auto">
+    <div className="px-4 sm:px-6 lg:px-24 py-8 w-full max-w-9xl mx-auto bg-ghBlack">
       <div className="text-white text-xl font-bold py-5 italic">DASHBOARD</div>
 
       {/* Dashboard Section Queue Monitoring */}
-      <div className={`mb-5 bg-inv px-5 border border-gray-600 ${isOpenQueueDashboardSection ? "py-5" : "pt-5"} `}>
+      <div className={`mb-5 bg-ghBlack px-5 border border-gray-600 ${isOpenQueueDashboardSection ? "py-5" : "pt-5"} `}>
 
         {/* Dashboard section header */}
         <div className="flex justify-between items-center pb-5">
@@ -174,9 +174,9 @@ const Dashboard: React.FC = () => {
                 }}
               >
                 {isOpenQueueDashboardSection ? (
-                  <ExpandLessIcon fontSize="small" />
+                  <ExpandLessIcon fontSize="small" className="text-white" />
                 ) : (
-                  <ExpandMoreIcon fontSize="small" />
+                  <ExpandMoreIcon fontSize="small" className="text-white"/>
                 )}
               </Button>
             </div>

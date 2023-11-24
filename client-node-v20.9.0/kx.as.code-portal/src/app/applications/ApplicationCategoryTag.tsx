@@ -21,16 +21,16 @@ const ApplicationCategoryTag: React.FC<ApplicationCategoryTagProps> = ({
 
   return (
     <Tooltip title="Add to filters" placement="top" arrow>
-      <Button
+      <button
         id={appTag}
-        className="bg-gray-500 hover:bg-kxBlue text-xs mr-1.5 px-2 w-auto inline-block text-black rounded-none py-1"
+        className="bg-gray-500 text-xs mr-1.5 px-2 w-auto inline-block text-white rounded-none py-1"
         onClick={() => {
           const tagObj = { name: appTag };
           addCategoryTofilterTags(tagObj);
         }}
       >
         {appTagTransformed}
-      </Button>
+      </button>
     </Tooltip>
   );
 };

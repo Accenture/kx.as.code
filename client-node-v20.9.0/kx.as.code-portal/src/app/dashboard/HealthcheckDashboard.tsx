@@ -126,7 +126,7 @@ const HealthcheckDashboard: React.FC<HealthcheckDashboardProps> = (props) => {
   }, []);
 
   return (
-    <div className={`mb-5 bg-inv px-5 border border-gray-600 ${isOpenAppsHealthcheckDashboardSection ? "py-5" : "pt-5"} `}>
+    <div className={`mb-5 px-5 border border-gray-600 ${isOpenAppsHealthcheckDashboardSection ? "py-5" : "pt-5"} `}>
       {/* Dashboard section header */}
       <div className="flex justify-between items-center pb-5">
         {/* Dashboard section title */}
@@ -137,15 +137,15 @@ const HealthcheckDashboard: React.FC<HealthcheckDashboardProps> = (props) => {
           <Button
             variant="text"
             size="small"
-            className="h-full text-white bg-ghBlack3 hover:bg-ghBlack3"
+            className="h-full text-white bg-ghBlack2 hover:bg-ghBlack3"
             onClick={() => {
               setIsOpenAppsHealthcheckDashboardSection(!isOpenAppsHealthcheckDashboardSection);
             }}
           >
             {isOpenAppsHealthcheckDashboardSection ? (
-              <ExpandLessIcon fontSize="small" />
+              <ExpandLessIcon fontSize="small" className="text-white" />
             ) : (
-              <ExpandMoreIcon fontSize="small" />
+              <ExpandMoreIcon fontSize="small" className="text-white" />
             )}
           </Button>
         </div>
@@ -170,7 +170,7 @@ const HealthcheckDashboard: React.FC<HealthcheckDashboardProps> = (props) => {
           <input
             type="text"
             placeholder="Search..."
-            className="focus:ring-kxBlue bg-ghBlack2 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 text-md border-0 shadow outline-none focus:outline-none focus:ring-2 min-w-80 pl-10"
+            className="focus:ring-kxBlue bg-ghBlack2 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 text-md border-0 shadow outline-none focus:outline-none focus:ring-1 min-w-80 pl-10"
             onChange={(e) => {
               setSearchTerm(e.target.value);
             }}

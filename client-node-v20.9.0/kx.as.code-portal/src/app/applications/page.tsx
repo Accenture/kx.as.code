@@ -356,16 +356,6 @@ const Applications = (props: any) => {
       <div className="text-white pb-10">
         <div className="text-xl font-bold italic text-gray-500">
           APPLICATIONS
-          <Tooltip
-            title="Install applications into your KX.AS.CODE
-          environemnt."
-            placement="top"
-            arrow
-          >
-            <button className="inline">
-              <HiOutlineInformationCircle className="ml-1" />
-            </button>
-          </Tooltip>
         </div>
         <div className="pt-4 pb-6 text-base">
           Install applications into your KX.AS.CODE environemnt.
@@ -385,7 +375,7 @@ const Applications = (props: any) => {
       </div>
 
       {/* Filter Section */}
-      <div className="bg-inv3 px-5 py-8 my-5   border border-gray-600">
+      <div className="bg-ghBlack3 px-5 py-8 my-5">
         {/* Applications actions */}
         <div className="flex justify-between">
           {/* Left: Actions */}
@@ -409,7 +399,7 @@ const Applications = (props: any) => {
                 <input
                   type="text"
                   placeholder="Search Applications..."
-                  className="h-[56px] focus:ring-2 focus:ring-kxBlue bg-ghBlack2 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 text-base border-0 shadow outline-none focus:outline-none w-[240px] pl-10"
+                  className="h-[56px] focus:ring-1 focus:ring-kxBlue bg-ghBlack2 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 text-base border-0 shadow outline-none focus:outline-none w-[240px] pl-10"
                   onChange={(e) => {
                     setSearchTerm(e.target.value);
                     _DATA.jump(1); // reset page to 1
@@ -625,13 +615,16 @@ const Applications = (props: any) => {
           )}
       </div>
 
-      {/* Pagination */}
-      <PaginationRounded
-        count={count}
-        page={page}
-        setPageAndJumpData={setPageAndJumpData}
-        PER_PAGE={resultsPerPage}
-      />
+      {/* Pagination bottom */}
+      <div className="flex justify-center pt-10">
+        <PaginationRounded
+          setPageAndJumpData={setPageAndJumpData}
+          page={page}
+          PER_PAGE={resultsPerPage}
+          count={count}
+        />
+      </div>
+
     </div>
   );
 };

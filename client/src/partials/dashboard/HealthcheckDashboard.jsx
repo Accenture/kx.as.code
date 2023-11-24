@@ -170,14 +170,14 @@ const HealthcheckDashboard = (props) => {
             }}
           />
         </div>
-        {props.applicationData.filter((item) => {
+        {/* {props.applicationData.filter((item) => {
           const lowerCaseName = (item.name || '').toLowerCase();
           if (searchTerm === "") {
             return true;
           } else {
             return lowerCaseName.includes(searchTerm.toLowerCase().trim());
           }
-        })}
+        })} */}
       </div>
     </div>
   );
