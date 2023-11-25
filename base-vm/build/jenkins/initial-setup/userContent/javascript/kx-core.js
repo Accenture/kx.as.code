@@ -1413,7 +1413,8 @@ function change_panel_selection(config_panel) {
             }
         } else {
             if ( document.getElementById('system-prerequisites-check').value === "failed" ) {
-                document.getElementById(item).className = "config-tab-disabled";
+                //document.getElementById(item).className = "config-tab-disabled";
+                document.getElementById(item).className = "config-tab";
             } else {
                 document.getElementById(item).className = "config-tab";
             }

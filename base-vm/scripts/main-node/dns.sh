@@ -2,7 +2,9 @@
 set -euo pipefail
 
 # Install Bind9 for local DNS resolution
-sudo apt install -y bind9 bind9utils bind9-doc
+# TODO - Re-enable systemd-resolved for Debian 12
+sudo apt install -y bind9 bind9utils bind9-doc #systemd-resolved
+#sudo systemctl enable systemd-resolved
 
 echo '''options {
         directory "/var/cache/bind";
