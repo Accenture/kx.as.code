@@ -28,6 +28,6 @@ if [[ -f /var/tmp/.hash ]] && [[ -f ${sharedKxHome}/.config/.vmCredentialsFile ]
        /usr/bin/sudo rm -f /var/tmp/.hash
        /usr/bin/sudo rm -f ${sharedKxHome}/.config/.vmCredentialsFile
   else
-    log_warn "The has used to decrypt the initial set of uploaded base password was either empty or not valid. Skipping the initial automated upload of credentials post GoPass installation"
+    log_warn "The hash used to decrypt the initial set of uploaded base passwords was either empty or not valid. Skipping the initial automated upload of credentials post GoPass installation"
   fi
 fi
