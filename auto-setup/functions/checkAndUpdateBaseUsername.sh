@@ -11,6 +11,9 @@ checkAndUpdateBaseUsername() {
 
     if [[ -n ${firstname} ]] && [[ "${firstname}" != "null" ]]; then
      export baseUser=$(getOwnerId)
+     if [[ "${baseUser}" == "herokx" ]]; then
+      export baseUser="kx.hero"
+     fi
     else
      export baseUser="kx.hero"
     fi

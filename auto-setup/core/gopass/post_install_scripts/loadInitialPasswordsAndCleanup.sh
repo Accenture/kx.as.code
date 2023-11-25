@@ -1,9 +1,11 @@
 #!/bin/bash
 
 if [[ -f /var/tmp/.hash ]] && [[ -f ${sharedKxHome}/.config/.vmCredentialsFile ]]; then
-
        # Get hash passed in from the Jenkins based launcher
        hash="$(/usr/bin/sudo cat /var/tmp/.hash)"
+
+       # Check has is valid
+       if [[ -n ${hash} ]] && [[ "${hash}" != "{{hash}}" ]]; then
 
        # Ensure no Windows characters blocking decryption
        /usr/bin/sudo apt-get install dos2unix
@@ -25,5 +27,7 @@ if [[ -f /var/tmp/.hash ]] && [[ -f ${sharedKxHome}/.config/.vmCredentialsFile ]
        # Cleanup files
        /usr/bin/sudo rm -f /var/tmp/.hash
        /usr/bin/sudo rm -f ${sharedKxHome}/.config/.vmCredentialsFile
-
+  else
+    log_warn "The has used to decrypt the initial set of uploaded base password was either empty or not valid. Skipping the initial automated upload of credentials post GoPass installation"
+  fi
 fi
