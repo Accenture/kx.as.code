@@ -16,7 +16,7 @@ const rabbitMqUsername = "test";
 const rabbitMqPassword = "test";
 const rabbitMqHost = "localhost";
 
-const healthCheckInterval = 10000; // 10 seconds
+const healthCheckInterval = 8000; // 10 seconds
 
 app.use(cors());
 
@@ -31,7 +31,8 @@ app.use((req, res, next) => {
   next();
 });
 
-let healthCheckData = {};
+let healthCheckData = {} ;
+
 
 const performHealthCheck = async () => {
   try {
@@ -54,23 +55,30 @@ const performHealthCheck = async () => {
       const responseDataArray = Array.isArray(response.data) ? response.data : [response.data];
 
       // Create the health check data structure if it doesn't exist
-      if (!healthCheckData[appName]) {
-        healthCheckData[appName] = [];
+      if (!healthCheckData.data) {
+        healthCheckData.data = {};
       }
 
-      // Add the health check status object
-      healthCheckData[appName].push({
-        timestamp: new Date().toISOString(),
-        status: response.status,
-      });
-
-      // If the array exceeds the limit, remove the oldest entry
-      if (healthCheckData[appName].length > 60) {
-        healthCheckData[appName].sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
-        healthCheckData[appName].shift(); // Remove the oldest entry
+      // Create the health check data structure if it doesn't exist for the specific app
+      if (!healthCheckData.data[appName]) {
+        healthCheckData.data[appName] = [];
       }
 
-      // console.log("Added health check status for", appName);
+      // Add the health check status object only if the array has fewer than 60 elements
+      if (healthCheckData.data[appName].length < 100) {
+        healthCheckData.data[appName].push({
+          timestamp: new Date().toISOString(),
+          status: response.status,
+        });
+      } else {
+        // If the array exceeds the limit, remove the oldest entry and add the new object
+        healthCheckData.data[appName].sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+        healthCheckData.data[appName].shift(); // Remove the oldest entry
+        healthCheckData.data[appName].push({
+          timestamp: new Date().toISOString(),
+          status: response.status,
+        });
+      }
     }
 
     // Save health check data to file
@@ -252,8 +260,7 @@ app.route("/api/consume/:queue_name").get(async (req, res) => {
       data.content ? eval("(" + data.content.toString() + ")()") : "";
       channel.ack(data);
     } else {
-      //console.log("Empty Queue")
-    }
+    } 
 
     res.send("The POST request is being processed!");
   } catch (error) {
@@ -267,10 +274,10 @@ app.get("/healthcheckdata", (req, res) => {
   fs.readFile(healthCheckDataPath, "utf8", (err, data) => {
     if (err) {
       console.error("Error reading health check data:", err);
-      res.status(500).send("Internal Server Error");
+      // res.status(500).send("Internal Server Error");
     } else {
       const healthCheckData = JSON.parse(data);
-      res.json(healthCheckData);
+      res.json(healthCheckData.data);
     }
   });
 });

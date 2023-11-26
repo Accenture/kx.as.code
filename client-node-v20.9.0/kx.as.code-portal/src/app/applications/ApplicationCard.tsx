@@ -200,7 +200,7 @@ function ApplicationCard(props: ApplicationCardProps) {
               : "sm:col-span-6 xl:col-span-4"
               }`}
           >
-            <div className="grid grid-cols-12 hover:bg-ghBlack2 bg-ghBlack3 items-center py-1">
+            <div className="grid grid-cols-12 hover:bg-ghBlack3 bg-ghBlack2 items-center py-1">
               <div className="flex col-span-10 items-center">
                 <div className="grid grid-cols-12 items-center">
                   <div className="flex col-span-4 pr-5 border-r-2 border-ghBlack">
@@ -217,7 +217,7 @@ function ApplicationCard(props: ApplicationCardProps) {
                           <div className="text-white bg-black p-0 py-1 px-2 uppercase w-fit inline-block my-1 text-xs">
                             {props.app.installation_group_folder}
                           </div>
-                          <h2 className="hover:underline hover:cursor-pointer text-base text-white mb-2 flex items-center">
+                          <h2 className="hover:underline hover:cursor-pointer text-base text-gray-400 mb-2 flex items-center">
                             {/* {
                               allQueueStatus != "" && (
                                 <StatusPoint installStatus={allQueueStatus} />
@@ -267,8 +267,8 @@ function ApplicationCard(props: ApplicationCardProps) {
         </>
       ) : (
         <div
-          className={`relative flex flex-col col-span-full ${isChecked ? "hover:border-[#5a86ff]" : "hover:bg-ghBlack2 hover:border-ghBlack2"
-            } hover:bg-ghBlack3 bg-ghBlack3 border ${isChecked ? "border-kxBlue" : "border-ghBlack3"
+          className={`relative flex flex-col col-span-full ${isChecked ? "hover:border-[#5a86ff]" : "hover:bg-ghBlack3 hover:border-ghBlack3"
+            } hover:bg-ghBlack3 bg-ghBlack2 border ${isChecked ? "border-kxBlue" : "border-ghBlack2"
             } ${props.isListLayout ? "col-span-full" : "sm:col-span-6 xl:col-span-3"
             }`}
           onMouseOver={handleMouseOver}

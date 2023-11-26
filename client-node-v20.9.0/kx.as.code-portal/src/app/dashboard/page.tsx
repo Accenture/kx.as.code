@@ -57,21 +57,21 @@ const QueueComponent: React.FC<QueueComponentProps> = ({ queueName, count, index
         drag(drop(node));
         preview(node);
       }}
-      className={`col-span-3 bg-ghBlack2 hover:bg-ghBlack3 h-40 p-3`}
+      className={`col-span-2 bg-ghBlack2 hover:bg-ghBlack3 h-auto p-3`}
       style={{
         border: isDragging ? "1px solid white" : "",
         opacity: isDragging ? 0.5 : 1,
       }}
     >
-      <div className="text-base uppercase">{queueName}</div>
+      <div className="text-sm uppercase text-gray-400">{queueName}</div>
       <Tooltip title={`Open ${queueName} messages in new Tab.`} placement="top" arrow>
         <div>
         <a href={`http://localhost:5001/mock/api/queues/${queueName}`} className="hover:underline hover:text-kxBlue" target="_blank">
-          <div className="flex justify-center mt-5 text-2xl">
+          <div className="flex justify-center mt-3 text-2xl">
             {count}
           </div>
         </a>
-        <div className="flex justify-center text-xs text-gray-400">Messages</div>
+        <div className="flex justify-center text-xs text-gray-500">Messages</div>
         </div>
       </Tooltip>
     </div>
@@ -92,10 +92,13 @@ const Dashboard: React.FC = () => {
   const [isOpenQueueDashboardSection, setIsOpenQueueDashboardSection] = useState(true);
   const [isOpenAppsHealthcheckDashboardSection, setIsOpenAppsHealthcheckDashboardSection] = useState(true);
   const [healthCheckData, setHealthCheckData] = useState([]);
+  const [applicationData, setApplicationData] = useState([]);
+  const [isHealthCheckDataLoading, setIsHealthCheckDataLoading] = useState(true);
+
 
   const fetchApplicationData = () => {
     axios.get("http://localhost:5001/api/applications").then((response) => {
-      setHealthCheckData(response.data);
+      setApplicationData(response.data);
     });
   };
 
@@ -128,12 +131,15 @@ const Dashboard: React.FC = () => {
       const response = await fetch("http://localhost:5001/healthcheckdata");
       const data = await response.json();
       setHealthCheckData(data);
+      setIsHealthCheckDataLoading(false);
     } catch (error) {
       console.error("Error fetching health check data:", error);
+      setIsHealthCheckDataLoading(false);
     }
   };
 
   useEffect(() => {
+
     fetchQueueData();
     fetchApplicationData();
 
@@ -143,12 +149,12 @@ const Dashboard: React.FC = () => {
     // Fetch data every minute
     const intervalId = setInterval(() => {
       fetchhealthcheckData();
-    }, 60000); // 60000 milliseconds = 1 minute
+    }, 10000); // 60000 milliseconds = 1 minute
 
     // Cleanup function to clear the interval when the component unmounts
     return () => clearInterval(intervalId);
 
-  }, []);
+  }, [healthCheckData]);
 
   return (
     <div className="px-4 sm:px-6 lg:px-24 py-8 w-full max-w-9xl mx-auto bg-ghBlack">
@@ -160,7 +166,7 @@ const Dashboard: React.FC = () => {
         {/* Dashboard section header */}
         <div className="flex justify-between items-center pb-5">
           {/* Dashboard section title */}
-          <div className="text-base items-center">
+          <div className="text-base items-center text-gray-400">
             RabbitMQ Queues Monitoring
           </div>
           <div className=''>
@@ -199,7 +205,11 @@ const Dashboard: React.FC = () => {
 
       </div>
 
-      <HealthcheckDashboard healthCheckData={healthCheckData} />
+      {isHealthCheckDataLoading ? (
+        <div>Loading Health Check Data...</div>
+      ) : (
+        <HealthcheckDashboard healthCheckData={healthCheckData} />
+      )}
 
     </div>
   );

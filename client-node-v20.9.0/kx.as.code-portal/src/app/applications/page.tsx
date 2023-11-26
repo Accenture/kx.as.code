@@ -354,10 +354,10 @@ const Applications = (props: any) => {
     <div suppressHydrationWarning={true} className="px-6 sm:px-6 lg:px-24 py-8 w-full max-w-9xl mx-auto bg-ghBlack text-white">
       {/* Applications Header */}
       <div className="text-white pb-10">
-        <div className="text-xl font-bold italic text-gray-500">
+        <div className="text-xl font-bold italic text-white">
           APPLICATIONS
         </div>
-        <div className="pt-4 pb-6 text-base">
+        <div className="pt-4 pb-6 text-base text-gray-400">
           Install applications into your KX.AS.CODE environemnt.
         </div>
 

@@ -36,7 +36,7 @@ const config: Config = {
         kxBlue2: '#3253ad',
         kxBlueH: '#5e7bcc',
         kxRed: '#f85149',
-        statusGreen: '#05f0a5',
+        statusGreen: '#07eb80',
         statusOrange: '#ff7800',
         statusRed: '#ff3246',
         statusYellow: '#ffeb32',

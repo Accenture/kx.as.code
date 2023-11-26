@@ -82,7 +82,7 @@ const performHealthCheck = async () => {
   } catch (error) {
     console.error("Error performing health check:", error);
   }
-};
+}; 
 
 
 // Schedule health check every 10s
