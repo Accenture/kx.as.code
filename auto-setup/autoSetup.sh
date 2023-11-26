@@ -33,28 +33,8 @@ else
   retryMode="notapplicable"
 fi
 
-# Load Minmal Functions
-coreInitialFunctionsToLoad="getGlobalVariables getCustomVariables sourceFunctionScripts setLogFilename logDebug logInfo logError logWarn functionFailure functionStart functionEnd injectWrapperIntoFunctionScripts"
-for coreInitialFunctionToLoad in ${coreInitialFunctionsToLoad}; do
-  source "/usr/share/kx.as.code/git/kx.as.code/auto-setup/functions/${coreInitialFunctionToLoad}.sh"
-done
-
-# Get global base variables from globalVariables.json
-getGlobalVariables
-
-# Load Central Functions
-functionsLocation="${installationWorkspace}/functions"
-sourceFunctionScripts "${functionsLocation}"
-
 # Load CUSTOM Central Functions - these can either be new ones, or copied and edited functions from the main functions directory above, which will override the ones loaded in the previous step
 getCustomVariables # load global custom variables
-
-# Load Custom Central Functions
-customFunctionsLocation="${installationWorkspace}/functions-custom"
-sourceFunctionScripts "${customFunctionsLocation}"
-
-# Get K8s and K3s versions to install
-getVersions
 
 export logFilename=$(setLogFilename "${componentName}" "${retries}")
 
@@ -75,25 +55,14 @@ export componentMetadataJson=${installComponentDirectory}/metadata.json
 export rc=0
 mkdir -p ${installationWorkspace}
 
-# Install envhandlebars needed to do moustache variable replacements
-installEnvhandlebars
-
 # Un/Installing Components
 log_info "-------- Component: ${componentName} Component Folder: ${componentInstallationFolder} Action: ${action}"
-
-# Source profile-config.json set for this KX.AS.CODE installation
-getProfileConfiguration
 
 # Get Component Installation Variables
 getComponentInstallationProperties
 
 # Get custom variables and override global and component ones where same name is specified
 getCustomVariables
-
-# Source Keycloak variables if installed and accessible
-if checkApplicationInstalled "keycloak" "core"; then
-  sourceKeycloakEnvironment
-fi
 
 # Start the installation process for the pending or retry queues
 if [[ ${action} == "install" ]]; then
