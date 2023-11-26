@@ -8,6 +8,10 @@ getOwnerId() {
 
   if [[ -n ${firstname} ]] && [[ "${firstname}" != "null" ]]; then
     ownerId=$(generateUsername "${firstname}" "${surname}")
+    if [[ "${ownerId}" == "herokx" ]]; then
+      # Default demo user name was used, reverting to demo user id
+     export ownerId="kx.hero"
+    fi
     echo "${ownerId}"
   else
     log_debug "Owner not defined in users.json. Using default kx.hero instead"

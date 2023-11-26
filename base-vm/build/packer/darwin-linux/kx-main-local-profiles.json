@@ -269,7 +269,9 @@
     },
     {
       "environment_vars": [
-          "VM_USER={{user `vm_user`}}"
+          "VM_USER={{user `vm_user`}}",
+          "VBOX_GUEST_ADDITIONS_DEB_URL={{user `vbox_guest_additions_deb_url`}}",
+          "VBOX_GUEST_ADDITIONS_DEB_CHECKSUM={{user `vbox_guest_additions_deb_checksum`}}"
       ],
       "script":"../../../scripts/base/virtualbox.sh",
       "only": ["{{user `vm_name`}}-virtualbox"],
@@ -398,6 +400,8 @@
       "iso_file": "debian-11.7.0-amd64-netinst.iso",
       "guest_additions_url": "https://download.virtualbox.org/virtualbox/7.0.12/VBoxGuestAdditions_7.0.12.iso",
       "guest_additions_checksum": "b37f6aabe5a32e8b96ccca01f37fb49f4fd06674f1b29bc8fe0f423ead37b917",
+      "vbox_guest_additions_deb_url": "",
+      "vbox_guest_additions_deb_checksum": "",
       "no_proxy": "{{env `no_proxy`}}",
       "parallels_tools_mode": "upload",
       "parallels_tools_guest_path": "/var/tmp/prl-tools-lin.iso",

@@ -1,4 +1,13 @@
-#!/bin/bash
+#!/bin/bash -x
+
+#  The ./startLauncher.sh script has the following options:
+#              -i  [i]gnore warnings and start the launcher anyway, knowing that this may cause issues
+#              -d  [d]estroy and rebuild Jenkins environment. All history is also deleted
+#              -f  [f]ully destroy and rebuild, including ALL built images and ALL KX.AS.CODE virtual machines!
+#              -h  [h]elp me and show this help text
+#              -r  [r]ecreate Jenkins jobs with updated parameters. Will keep history
+#              -s  [s]top the Jenkins build environment
+#              -u  [u]ninstall and give me back my disk space
 
 # Cleanup for debugging
 #ps -ef | grep jenkins.war | grep -v grep | awk {'print $2'} | xargs kill -9 && rm -rf ./jenkins_home
@@ -11,7 +20,7 @@ system=$(uname)
 # List all required version prerequisites. These are the versions this script has been tested with.
 # In particular Mac OpenSSL will cause issues if not the correct version
 vagrantVersionRequired="2.3.4"
-virtualboxVersionRequired="7.0.6"
+virtualboxVersionRequired="7.0.12"
 vmwareRequiredVersion="1.17.0"
 parallelsVersionRequired="18.2.0"
 packerVersionRequired="1.8.6"
@@ -169,16 +178,16 @@ checkVersions()  {
     log_error "There are no virtualization platforms installed. Please install either VMWare Desktop/Fusion, VirtualBox or Parallels (Mac only), and try again"
   fi
 
-  if [[ "${checkErrors}" -gt 0 ]]; then
+  if [[ "${checkErrors}" -gt 0 ]] && [[ "${1}" == "" ]]; then
     log_error "There were errors during dependency checks. Please resolve these issues and relaunch the script."
-    exit 1
-  elif [[ "${checkWarnings}" -gt 0 ]] && [[ "${1}" != "-i" ]]; then
-    log_warn "There was/were ${checkWarnings} warning(s) during the dependency version checks. You can choose to ignore these by starting the script with the -i option."
-    log_warn "Be aware that old versions of dependencies may result in the solution not working correctly."
     exit 1
   elif [[ "${checkWarnings}" -gt 0 ]] && [[ "${1}" == "-i" ]]; then
     log_warn "There was/were ${checkWarnings} warning(s) during the dependency version checks. Will continue anyway, as you started this script with the -i option."
     log_warn "Be aware that old versions of dependencies may result in the solution not working correctly."
+  elif [[ "${checkWarnings}" -gt 0 ]] && [[ "${1}" == "" ]]; then
+    log_warn "There was/were ${checkWarnings} warning(s) during the dependency version checks. You can choose to ignore these by starting the script with the -i option."
+    log_warn "Be aware that old versions of dependencies may result in the solution not working correctly."
+    exit 1
   fi
 
 }
@@ -313,9 +322,14 @@ if [[ ${override_action} == "stop" ]]; then
   log_info "Stopping the KX.AS.CODE Jenkins environment..."
   log_info "Stopping the Jenkins process..."
   screen -wipe -q >/dev/null
-  ps -ef | grep jenkins.war | grep -v grep | awk {'print $2'} | xargs kill -9
-  log_info "Stopped the Jenkins process"
-  exit 0
+  if [[ -n $(ps -ef | grep jenkins.war | grep -v grep) ]]; then
+    ps -ef | grep jenkins.war | grep -v grep | awk {'print $2'} | xargs kill -9
+    log_info "Stopped the Jenkins process"
+    exit 0
+  else
+    log_info "Jenkins process already stopped. Exiting."
+    exit 0
+  fi
 fi
 
 if [[ ${override_action} == "recreate" ]] || [[ ${override_action} == "destroy" ]] || [[ ${override_action} == "fully-destroy" ]] || [[ ${override_action} == "uninstall" ]]; then

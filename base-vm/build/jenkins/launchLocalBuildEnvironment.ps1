@@ -1,3 +1,12 @@
+#  The .\startLauncher.ps1 script has the following options:
+#              -i  [i]gnore warnings and start the launcher anyway, knowing that this may cause issues
+#              -d  [d]estroy and rebuild Jenkins environment. All history is also deleted
+#              -f  [f]ully destroy and rebuild, including ALL built images and ALL KX.AS.CODE virtual machines!
+#              -h  [h]elp me and show this help text
+#              -r  [r]ecreate Jenkins jobs with updated parameters. Will keep history
+#              -s  [s]top the Jenkins build environment
+#              -u  [u]ninstall and give me back my disk space
+
 $scriptParam = ($MyInvocation.Line -replace ('^.*' + [regex]::Escape($MyInvocation.InvocationName)) -split '[;|]')[0].Trim()
 
 $Log_Level = "info"
@@ -5,7 +14,7 @@ $Log_Level = "info"
 # List all required version prerequisites. These are the versions this script has been tested with.
 # In particular Mac OpenSSL will cause issues if not the correct version
 $vagrantVersionRequired="2.3.4"
-$virtualboxVersionRequired="7.0.6"
+$virtualboxVersionRequired="7.0.12"
 $vmwareRequiredVersion="1.17.0"
 $parallelsVersionRequired="18.2.0"
 $packerVersionRequired="1.8.6"
@@ -246,21 +255,20 @@ function checkVersions
 
     Log_Debug "Received script argument: $scriptParam"
 
-    if ( $checkErrors -gt 0 )
+    if ( $checkErrors -gt 0 -And $scriptParam -eq "" )
     {
         Log_Error "There were errors during dependency checks. Please resolve these issues and relaunch the script."
-        Exit 1
-    } elseif ($checkWarnings -gt 0 -And $scriptParam -ne "-i" )
-    {
-        Log_Warn "There was/were ${checkWarnings} warning(s) during the dependency version checks. You can choose to ignore these by starting the script with the -i option."
-        Log_Warn "Be aware that old versions of dependencies may result in the solution not working correctly."
         Exit 1
     } elseif ( $checkWarnings -gt 0 -And $scriptParam -eq "-i" )
     {
         Log_Warn "There was/were ${checkWarnings} warning(s) during the dependency version checks. Will continue anyway, as you started this script with the -i option."
         Log_Warn "Be aware that old versions of dependencies may result in the solution not working correctly."
+    } elseif ($checkWarnings -gt 0 -And $scriptParam -eq "" )
+    {
+        Log_Warn "There was/were ${checkWarnings} warning(s) during the dependency version checks. You can choose to ignore these by starting the script with the -i option."
+        Log_Warn "Be aware that old versions of dependencies may result in the solution not working correctly."
+        Exit 1
     }
-
 }
 
 if ( $scriptParam ) {
