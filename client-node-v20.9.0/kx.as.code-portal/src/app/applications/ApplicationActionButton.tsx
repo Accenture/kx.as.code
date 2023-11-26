@@ -24,12 +24,12 @@ const ApplicationStatusActionButton: React.FC<ApplicationStatusActionButtonProps
     }, []);
 
     const getActionButton = () => {
-        if (!props.isMqConnected) { // TODO: Disable in API Mock Mode
+        if (props.isMqConnected) { // TODO: Disable in API Mock Mode
             if (props.getQueueStatusList(props.appName).includes("pending_queue")) {
                 return (
-                    <div className="flex">
+                    <div className="flex w-full">
                         <button
-                            className="bg-gray-600 p-2 px-5 rounded-bl rounded-tl items-center flex"
+                            className="bg-ghBlack4 p-3 items-center flex w-full py-1"
                             disabled
                         >
                             <svg
@@ -51,10 +51,10 @@ const ApplicationStatusActionButton: React.FC<ApplicationStatusActionButtonProps
                                     d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                                 ></path>
                             </svg>
-                            <span className="text-white">Processing...</span>
+                            <span className="text-white text-sm">Processing...</span>
                         </button>
                         <Tooltip title={`Re-install ${props.appName}`} placement="top" arrow>
-                            <button className="bg-kxBlue p-2 rounded-br rounded-tr ml-1">
+                            <button className="bg-kxBlue2 p-2 ml-1 py-1">
                                 <RestartAltIcon
                                     className="text-white"
                                     aria-label="list"
@@ -72,7 +72,7 @@ const ApplicationStatusActionButton: React.FC<ApplicationStatusActionButtonProps
             ) {
                 return (
                     <button
-                        className="bg-red-500 p-2 px-5 rounded items-center flex"
+                        className="bg-statusRed p-2 px-3 justify-center items-center flex w-full py-1"
                         onClick={() => {
                             props.applicationUninstallHandler();
                         }}
@@ -80,14 +80,14 @@ const ApplicationStatusActionButton: React.FC<ApplicationStatusActionButtonProps
                         <div className="flex items-start">
                             <ImCross className="p-0.5 flex my-auto" />
                         </div>
-                        <span className="flex my-auto">Uninstall</span>
+                        <span className="flex my-auto text-sm">Uninstall</span>
                     </button>
                 );
             } else if (props.category != "core") {
                 return (
-                    <div className="flex">
+                    <div className="flex w-full">
                         <button
-                            className="bg-kxBlue p-2 px-5 rounded-bl rounded-tl items-center flex"
+                            className="bg-kxBlue p-2 px-5 items-center justify-center flex w-full py-1"
                             onClick={() => {
                                 props.applicationInstallHandler();
                             }}
@@ -95,10 +95,10 @@ const ApplicationStatusActionButton: React.FC<ApplicationStatusActionButtonProps
                             <div className="flex items-start">
                                 <FaArrowAltCircleDown className="mr-2 flex my-auto text-white" />
                             </div>
-                            <span className="flex my-auto text-[16px]">Install</span>
+                            <span className="flex my-auto text-sm">Install</span>
                         </button>
                         <Tooltip title={`Re-install ${props.appName}`} placement="top" arrow>
-                            <button className="bg-kxBlue p-2 rounded-br rounded-tr ml-1">
+                            <button className="bg-kxBlue2 p-2 ml-1 py-1">
                                 <RestartAltIcon
                                     aria-label="list"
                                     className="text-white"
@@ -115,7 +115,7 @@ const ApplicationStatusActionButton: React.FC<ApplicationStatusActionButtonProps
             return (
 
                 <button
-                    className="border-red-500 border px-5 text-kxRed text-xs flex p-2"
+                    className="border-red-500 border px-5 text-kxRed text-sm flex p-2"
                     onClick={() => {
                         props.applicationInstallHandler();
                     }}
@@ -134,7 +134,7 @@ const ApplicationStatusActionButton: React.FC<ApplicationStatusActionButtonProps
         };
     }, []);
 
-    return <div className="">{getActionButton()}</div>;
+    return <div className="w-full justify-center flex mx-3">{getActionButton()}</div>;
 };
 
 export default ApplicationStatusActionButton;

@@ -11,7 +11,7 @@ import Tooltip from "@mui/material/Tooltip";
 import AppLogo from "../applications/AppLogo";
 import { formatTimestamp } from '../utils/timestamp';
 import { withStyles } from '@mui/styles';
-import {transformName} from "../utils/application";
+import { transformName } from "../utils/application";
 
 interface HealthcheckInfoBoxProps {
     healthcheckStatus: number;
@@ -108,6 +108,20 @@ const HealthcheckDashboard: React.FC<HealthcheckDashboardProps> = (props) => {
 
     console.log("DEBUG: ", Object.keys(props.healthCheckData))
 
+    const filteredAndTransformedApps = Object.keys(props.healthCheckData)
+        .filter((app) => {
+            const appName = app.toLowerCase().trim();
+            return searchTerm === "" || appName.includes(searchTerm.toLowerCase().trim());
+        })
+        .map((appNameObj: any) => (
+            <div key={appNameObj}>
+                <div className='bg-ghBlack2 hover:bg-ghBlack3 mb-1 p-3 items-center text-gray-400'>
+                    <div className='mb-2'>{transformName(appNameObj)}</div>
+                    <HealthCheckInfoComponent appHealthcheckDataArray={props.healthCheckData[appNameObj]} />
+                </div>
+            </div>
+        ));
+
     return (
         <div className={`mb-5 px-5 border border-gray-600 ${isOpenAppsHealthcheckDashboardSection ? "py-5" : "pt-5"} `}>
             {/* Dashboard section header */}
@@ -179,6 +193,17 @@ const HealthcheckDashboard: React.FC<HealthcheckDashboardProps> = (props) => {
                             </div>
                         </div>
                     ))}
+
+                {Object.keys(props.healthCheckData)
+                    .filter((app) => {
+                        const appName = app.toLowerCase().trim();
+                        return searchTerm === "" || appName.includes(searchTerm.toLowerCase().trim());
+                    })
+                    .length === 0 && (
+                        <div className=''>
+                            <div className='mb-2 text-base text-gray-400'>No results for '{searchTerm}'</div>
+                        </div>
+                    )}
 
             </div>
         </div>

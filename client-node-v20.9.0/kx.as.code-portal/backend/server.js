@@ -16,7 +16,7 @@ const rabbitMqUsername = "test";
 const rabbitMqPassword = "test";
 const rabbitMqHost = "localhost";
 
-const healthCheckInterval = 8000; // 10 seconds
+const healthCheckInterval = 8000; // 8 seconds for testing purpose
 
 app.use(cors());
 
@@ -29,6 +29,13 @@ app.use((req, res, next) => {
     "Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers"
   );
   next();
+});
+
+
+// Global error handler for uncaught exceptions -> Remove after testing activity
+process.on('uncaughtException', (err) => {
+  console.error('Uncaught Exception:', err);
+
 });
 
 let healthCheckData = {} ;
@@ -64,7 +71,7 @@ const performHealthCheck = async () => {
         healthCheckData.data[appName] = [];
       }
 
-      // Add the health check status object only if the array has fewer than 60 elements
+      // Add the health check status object only if the array has fewer than 100 elements
       if (healthCheckData.data[appName].length < 100) {
         healthCheckData.data[appName].push({
           timestamp: new Date().toISOString(),
@@ -87,8 +94,14 @@ const performHealthCheck = async () => {
         console.error("Error writing health check data:", err);
       }
     });
-  } catch (error) {
-    console.error("Error performing health check:", error);
+  } catch (axiosError) {
+    // Handle AxiosError 
+    if (axios.isAxiosError(axiosError)) {
+      console.error("AxiosError during health check:", axiosError.message);
+    } else {
+      // Other type of errors
+      console.error("Error performing health check:", axiosError);
+    }
   }
 };
 

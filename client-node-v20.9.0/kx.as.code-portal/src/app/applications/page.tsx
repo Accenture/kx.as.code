@@ -92,7 +92,7 @@ const Applications = (props: any) => {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [queueData, setQueueData] = useState<any[]>([]);
   const [appsSearchResultCount, setAppsSearchResultCount] = useState<number>(0);
-  const [isMqConnected, setIsMqConnected] = useState<boolean>(true);
+  const [isMqConnected, setIsMqConnected] = useState<boolean>(false);
   const [isListLayout, setIsListLayout] = useState<boolean>(true);
   const [isShowMoreFilters, setIsShowMoreFilters] = useState<boolean>(false);
 
@@ -302,8 +302,8 @@ const Applications = (props: any) => {
 
   const checkMqConnection = async () => {
     try {
-      const response = await axios.get("http://localhost:5001/api/checkRmqConn");
-      setIsMqConnected(response.data);
+      const response = await axios.get("http://localhost:8000/mock/api/checkRmqConn");
+      response.status == 200 ? setIsMqConnected(true) : setIsMqConnected(false)
     } catch (error) {
       console.error("Error checking MQ connection:", error);
     }
@@ -339,7 +339,7 @@ const Applications = (props: any) => {
   useEffect(() => {
     setAppsSearchResultCount(applicationData.length);
 
-    // checkMqConnection();
+    checkMqConnection();
 
     try {
       fetchApplicationAndQueueData();

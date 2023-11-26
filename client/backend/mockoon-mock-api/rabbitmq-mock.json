@@ -415,24 +415,19 @@
       "responseMode": null
     },
     {
-      "uuid": "6311bad1-b933-40a5-83cd-c4f6d2cdbc89",
+      "uuid": "a30b3ec8-a486-4b16-bba6-d48e702c4513",
       "type": "http",
       "documentation": "",
       "method": "get",
-      "endpoint": "",
+      "endpoint": "api/hipster-shop/healthcheck",
       "responses": [
         {
-          "uuid": "99d909d1-e0dd-4d23-9a4e-edb37b8a40cb",
+          "uuid": "e757387c-3089-41e8-b3c8-5f7e8b5fe800",
           "body": "{}",
           "latency": 0,
           "statusCode": 200,
           "label": "",
-          "headers": [
-            {
-              "key": "",
-              "value": ""
-            }
-          ],
+          "headers": [],
           "bodyType": "INLINE",
           "filePath": "",
           "databucketID": "",
@@ -449,15 +444,15 @@
       "responseMode": null
     },
     {
-      "uuid": "a30b3ec8-a486-4b16-bba6-d48e702c4513",
+      "uuid": "385aaa46-b4d4-4d55-8f8c-db213de44ec4",
       "type": "http",
       "documentation": "",
       "method": "get",
-      "endpoint": "api/hipster-shop/healthcheck",
+      "endpoint": "api/checkRmqConn",
       "responses": [
         {
-          "uuid": "e757387c-3089-41e8-b3c8-5f7e8b5fe800",
-          "body": "{}",
+          "uuid": "7e2750fa-1db0-4406-9fb1-6a5c2dca10d1",
+          "body": "{\"Mock checkRmqConn\"}",
           "latency": 0,
           "statusCode": 200,
           "label": "",
@@ -537,11 +532,11 @@
     },
     {
       "type": "route",
-      "uuid": "6311bad1-b933-40a5-83cd-c4f6d2cdbc89"
+      "uuid": "a30b3ec8-a486-4b16-bba6-d48e702c4513"
     },
     {
       "type": "route",
-      "uuid": "a30b3ec8-a486-4b16-bba6-d48e702c4513"
+      "uuid": "385aaa46-b4d4-4d55-8f8c-db213de44ec4"
     }
   ],
   "proxyMode": false,

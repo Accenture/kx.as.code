@@ -214,7 +214,7 @@ function ApplicationCard(props: ApplicationCardProps) {
                       </div>
                       <div className="mx-3 flex col-span-6">
                         <div>
-                          <div className="text-white bg-black p-0 py-1 px-2 uppercase w-fit inline-block my-1 text-xs">
+                          <div className="text-white bg-ghBlack4 p-0 py-1 px-2 uppercase w-fit inline-block my-1 text-xs">
                             {props.app.installation_group_folder}
                           </div>
                           <h2 className="hover:underline hover:cursor-pointer text-base text-gray-400 mb-2 flex items-center">
