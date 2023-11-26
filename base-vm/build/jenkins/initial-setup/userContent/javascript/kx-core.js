@@ -473,17 +473,22 @@ async function refreshGetBuildJobList(job, nodeType, timeout=3000) {
     var buildStatus = getBuildJobListForProfile(job, nodeType);
     while (buildStatus !== 'DONE') {
         // wait for 3s
-        await new Promise(r => setTimeout(r, timeout))
+        await new Promise(r => setTimeout(r, timeout));
         buildStatus = getBuildJobListForProfile(job, nodeType);
     }
 }
 
 async function getBuildJobListForProfile(job, nodeType) {
+    console.debug("getBuildJobListForProfile(job, nodeType): " + job + ", " + nodeType);
     let styleColor;
     var buildStatus = 'IN PROGRESS';
     getAllJenkinsBuilds(job).then(data => {
         const kxBuilds = (() => {
+            console.debug("getAllJenkinsBuilds(job).then(data): ");
+            console.debug(data);
             const builds = filterBuilds(data);
+            console.debug("builds: ");
+            console.debug(builds);
             // Return builds according to profile selection
             const filteredBuilds = filterDataByVmType(builds, document.getElementById("profiles").value);
             if (nodeType === "kx-launch") {
@@ -561,8 +566,9 @@ async function getBuildJobListForProfile(job, nodeType) {
 async function getExtendedJobDetails(url) {
     let jenkinsCrumb = getCrumb().value;
     //let url = '/job/Actions/job/KX.AS.CODE_Runtime_Actions/42/api/json';
+    console.debug("jenkinsCrumb: " + jenkinsCrumb);
     let urlToFetch = url + '/api/json';
-
+    console.debug("URL to fetch: " + urlToFetch);
     let responseData = await fetch(urlToFetch, {
         method: 'GET',
         headers: {
@@ -589,7 +595,8 @@ function filterBuilds(data) {
     let tmp = [];
     let nodeType;
     let paramArrayLocation
-
+    console.debug("filterBuilds(data): ");
+    console.debug(data);
     const builds = data.builds;
 
 
@@ -601,15 +608,16 @@ function filterBuilds(data) {
         obj["result"] = e.result ? e.result : '-';
         obj["timestamp"] = e.timestamp ? e.timestamp : -1;
         obj["url"] = e.url ? e.url : '-';
-
-        if (e.actions[0]._class === 'hudson.model.ParametersAction') {
-            paramArrayLocation = 0;
-        } else if (e.actions[1]._class === 'hudson.model.ParametersAction') {
-            paramArrayLocation = 1;
+        let paramArrayLocation = i;
+        for (let i = 0; i < e.actions.length; i++) {
+            if (e.actions[i]._class === 'hudson.model.ParametersAction') {
+                console.debug("Found hudson.model.ParametersAction at array position " + i);
+                paramArrayLocation = i;
+                break;
+            } else {
+                console.debug("hudson.model.ParametersAction not found at array position " + i + ". Continuing search.");
+            }
         }
-
-
-
 
         e.actions[paramArrayLocation].parameters.filter((e) => {
 
