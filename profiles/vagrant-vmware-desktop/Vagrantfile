@@ -5,15 +5,15 @@ current_dir    = File.dirname(File.expand_path(__FILE__))
 if Vagrant::Util::Platform.windows?
   # Is Windows
   puts "Vagrant launched from Windows."
-  vboxExecutable = "C:/Program Files/Oracle/VirtualBox/VBoxManage.exe"
+  VMWARE_DISK_UTILITY="C:\\Program Files (x86)\\VMware\\VMware Workstation\\vmware-vdiskmanager.exe"
 elsif Vagrant::Util::Platform.darwin?
   # Is Mac
   puts "Vagrant launched from Mac."
-  vboxExecutable = "/Applications/VirtualBox.app/Contents/MacOS/VBoxManage"
+  VMWARE_DISK_UTILITY="/System/Volumes/Data/Applications/VMware Fusion.app/Contents/Library/vmware-vdiskmanager"
 elsif Vagrant::Util::Platform.linux?
   # Is Linux
   puts "Vagrant launched from Linux."
-  vboxExecutable = "/usr/bin/vboxmanage"
+  VMWARE_DISK_UTILITY="/usr/bin/vmware-vdiskmanager"
 else
   # Assume WSL for now
   puts "Vagrant launched from other system, maybe WSL? Exiting."
@@ -316,3 +316,5 @@ Vagrant.configure("2") do |config|
         end
     end
 end
+
+puts "End of Vagrantfile"

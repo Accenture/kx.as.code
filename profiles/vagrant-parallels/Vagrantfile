@@ -216,3 +216,5 @@ Vagrant.configure("2") do |config|
     end
   end
 end
+
+puts "End of Vagrantfile"
