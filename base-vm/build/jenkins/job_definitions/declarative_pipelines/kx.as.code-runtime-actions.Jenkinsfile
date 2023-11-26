@@ -69,6 +69,7 @@ pipeline {
                             fi
                             cp -f \$vmCredentialsFile ./.vmCredentialsFile
                             vagrant global-status --prune
+                            echo "Vagrant prune completed"
                             runningProfileMainVms=\$(vagrant status --no-tty | grep kx-main | grep ${profile} | grep running || true)
                             runningProfileNodeVms=\$(vagrant status --no-tty | grep kx-node | grep ${profile} | grep running || true)
                             importedKxMainBoxes=\$(vagrant box list | grep kx-main | grep ${profile} | grep \${mainBoxVersion} || true)
@@ -85,6 +86,7 @@ pipeline {
                             if [ "\${importedKxNodeBoxes}" != "" ]; then
                                 vagrant box remove kxascode/kx-node --provider ${profile} --box-version \${nodeBoxVersion} --force || true
                             fi
+                            echo "About to execute vagrant ${vagrant_action} on ${profile}"
                             if [ "${vagrant_action}" = "destroy" ]; then
                                 vagrant destroy --force --no-tty
                             elif [ "${vagrant_action}" = "up" ]; then

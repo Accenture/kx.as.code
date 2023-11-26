@@ -6,12 +6,8 @@ getOwnerId() {
   defaultUserKeyboardLanguage=$(jq -r '.config.owner.keyboard_language' ${installationWorkspace}/users.json)
   userRole=$(jq -r '.config.owner.role' ${installationWorkspace}/users.json)
 
-  if [[ -n ${firstname} ]] && [[ "${firstname}" != "null" ]]; then
+  if [[ -n ${firstname} ]] && [[ "${firstname}" != "null" ]] && [[ "${firstname,,}" != "kx" ]]; then
     ownerId=$(generateUsername "${firstname}" "${surname}")
-    if [[ "${ownerId}" == "herokx" ]]; then
-      # Default demo user name was used, reverting to demo user id
-     export ownerId="kx.hero"
-    fi
     echo "${ownerId}"
   else
     log_debug "Owner not defined in users.json. Using default kx.hero instead"
