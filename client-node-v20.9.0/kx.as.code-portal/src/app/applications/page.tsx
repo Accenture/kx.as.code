@@ -399,7 +399,7 @@ const Applications = (props: any) => {
                 <input
                   type="text"
                   placeholder="Search Applications..."
-                  className="h-[56px] focus:ring-1 focus:ring-kxBlue bg-ghBlack2 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 text-base border-0 shadow outline-none focus:outline-none w-[240px] pl-10"
+                  className="focus:ring-1 focus:ring-kxBlue bg-ghBlack2 px-3 py-2 placeholder-blueGray-300 text-blueGray-600 text-base border-0 shadow outline-none focus:outline-none w-[240px] pl-10"
                   onChange={(e) => {
                     setSearchTerm(e.target.value);
                     _DATA.jump(1); // reset page to 1
@@ -412,8 +412,7 @@ const Applications = (props: any) => {
             <div className="ml-3">
               <Button
                 variant="outlined"
-                size="small"
-                className="h-full rounded-none"
+                className="rounded-none"
                 onClick={(e) => {
                   setIsShowMoreFilters(!isShowMoreFilters);
                 }}

@@ -106,8 +106,6 @@ const HealthcheckDashboard: React.FC<HealthcheckDashboardProps> = (props) => {
 
     }, []);
 
-    console.log("DEBUG: ", Object.keys(props.healthCheckData))
-
     const filteredAndTransformedApps = Object.keys(props.healthCheckData)
         .filter((app) => {
             const appName = app.toLowerCase().trim();
@@ -169,7 +167,7 @@ const HealthcheckDashboard: React.FC<HealthcheckDashboardProps> = (props) => {
                         <input
                             type="text"
                             placeholder="Search..."
-                            className="focus:ring-kxBlue bg-ghBlack2 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 text-md border-0 shadow outline-none focus:outline-none focus:ring-1 min-w-80 pl-10"
+                            className="focus:ring-kxBlue bg-ghBlack2 px-3 py-2 placeholder-blueGray-300 text-blueGray-600 text-md border-0 shadow outline-none focus:outline-none focus:ring-1 min-w-80 pl-10"
                             onChange={(e) => {
                                 setSearchTerm(e.target.value);
                             }}
@@ -180,31 +178,32 @@ const HealthcheckDashboard: React.FC<HealthcheckDashboardProps> = (props) => {
                     <div className='text-gray-400 text-sm ml-3'>Installed Applications: {Object.keys(props.healthCheckData).length}</div>
                 </div>
 
-                {Object.keys(props.healthCheckData)
-                    .filter((app) => {
-                        const appName = app.toLowerCase().trim();
-                        return searchTerm === "" || appName.includes(searchTerm.toLowerCase().trim());
-                    })
-                    .map((appNameObj: any) => (
-                        <div key={appNameObj}>
-                            <div className='bg-ghBlack2 hover:bg-ghBlack3 mb-1 p-3 items-center text-gray-400'>
-                                <div className='mb-2'>{transformName(appNameObj)}</div>
-                                <HealthCheckInfoComponent appHealthcheckDataArray={props.healthCheckData[appNameObj]} />
+                <div className="h-[450px] overflow-auto scrollbar-orange">
+                    {Object.keys(props.healthCheckData)
+                        .filter((app) => {
+                            const appName = app.toLowerCase().trim();
+                            return searchTerm === "" || appName.includes(searchTerm.toLowerCase().trim());
+                        })
+                        .map((appNameObj: any) => (
+                            <div key={appNameObj}>
+                                <div className='bg-ghBlack2 hover:bg-ghBlack3 mb-1 p-3 items-center text-gray-400'>
+                                    <div className='mb-2'>{transformName(appNameObj)}</div>
+                                    <HealthCheckInfoComponent appHealthcheckDataArray={props.healthCheckData[appNameObj]} />
+                                </div>
                             </div>
-                        </div>
-                    ))}
+                        ))}
 
-                {Object.keys(props.healthCheckData)
-                    .filter((app) => {
-                        const appName = app.toLowerCase().trim();
-                        return searchTerm === "" || appName.includes(searchTerm.toLowerCase().trim());
-                    })
-                    .length === 0 && (
-                        <div className=''>
-                            <div className='mb-2 text-base text-gray-400'>No results for '{searchTerm}'</div>
-                        </div>
-                    )}
-
+                    {Object.keys(props.healthCheckData)
+                        .filter((app) => {
+                            const appName = app.toLowerCase().trim();
+                            return searchTerm === "" || appName.includes(searchTerm.toLowerCase().trim());
+                        })
+                        .length === 0 && (
+                            <div className=''>
+                                <div className='mb-2 text-base text-gray-400'>No results for '{searchTerm}'</div>
+                            </div>
+                        )}
+                </div>
             </div>
         </div>
     );

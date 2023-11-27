@@ -1,5 +1,4 @@
 import React, { FC } from "react";
-
 import { styled, useTheme, Theme, CSSObject } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import MuiDrawer from '@mui/material/Drawer';
@@ -19,10 +18,12 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import InboxIcon from '@mui/icons-material/MoveToInbox';
 import MailIcon from '@mui/icons-material/Mail';
+import Image from 'next/image'
+
 
 interface HeaderProps {
-open: boolean;
-handleDrawerOpen: () => void;
+  open: boolean;
+  handleDrawerOpen: () => void;
 }
 
 interface AppBarProps extends MuiAppBarProps {
@@ -50,24 +51,27 @@ const AppBar = styled(MuiAppBar, {
 const Header: FC<HeaderProps> = (props) => {
   return (
     <AppBar position="relative" open={props.open} className="bg-ghBlack3" elevation={0}>
-        <Toolbar>
-          <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            onClick={props.handleDrawerOpen}
-            edge="start"
-            sx={{
-              marginRight: 5,
-              ...(props.open && { display: 'none' }),
-            }}
-          >
-            <MenuIcon />
-          </IconButton>
-          <Typography variant="h6" noWrap component="div">
-            
-          </Typography>
-        </Toolbar>
-      </AppBar>
+      <Toolbar>
+        <IconButton
+          color="inherit"
+          aria-label="open drawer"
+          onClick={props.handleDrawerOpen}
+          edge="start"
+          sx={{
+            marginRight: 5,
+            ...(props.open && { display: 'none' }),
+          }}
+        >
+          <MenuIcon />
+        </IconButton>
+          <Image
+            src="/media/svg/ks-logo-w.svg"
+            width={50}
+            height={50}
+            alt="Picture of the author"
+          />
+      </Toolbar>
+    </AppBar>
   );
 };
 

@@ -10,14 +10,12 @@ export default function Tags(props) {
   const [value, setValue] = useState(props.categoriesFilterTags || []);
 
   const getObjList = (list) => {
-    // console.log("debug-list: ", list);
     let categoriesObjList = [];
     try {
       list.map((tag) => {
         let obj = {};
         categoriesObjList.push((obj["name"] = tag));
       });
-      // console.log("categoriesObjList: ", categoriesObjList);
     } catch (error) {
       console.log(error);
     } finally {

@@ -72,3 +72,23 @@ body {
   top: 0;
   left: 0;
 }
+
+
+/* For WebKit browsers (Chrome, Safari) */
+.scrollbar-orange::-webkit-scrollbar {
+  width: 20px;
+}
+
+.scrollbar-orange::-webkit-scrollbar-thumb {
+  background-color: #2f3640;
+}
+
+/* For Firefox */
+.scrollbar-orange {
+  scrollbar-width: thin;
+  scrollbar-color: #2f3640;
+}
+
+.scrollbar-orange:hover {
+  scrollbar-color: transparent transparent;
+}

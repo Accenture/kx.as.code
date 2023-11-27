@@ -54,8 +54,9 @@ export default function ThemeRegistry(props: any) {
         components: {
             MuiButton: {
                 styleOverrides: {
-                },
-            },
+
+                }
+            }
         },
         palette: { mode: "dark" },
         shape: {
