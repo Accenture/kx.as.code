@@ -385,7 +385,7 @@ while :; do
         fi
         autoSetupEndEpochTimestamp=$(date "+%s.%N")
         autoSetupDuration=$(calculateDuration "${autoSetupStartEpochTimestamp}" "${autoSetupEndEpochTimestamp}")
-
+        log_trace "Calculated duration for action ${action} for ${componentName} was ${autoSetupDuration}"
         if [[ ${autoSetupRc} -ne 0 ]]; then
           log_warn "autoSetup.sh returned to pollActionQueue.sh (for \"${componentName}\") with a non zero return code ($autoSetupRc)"
           echo "${payload}" | sudo tee ${installationWorkspace}/current_payload.err

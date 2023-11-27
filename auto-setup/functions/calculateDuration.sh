@@ -22,8 +22,6 @@ calculateDuration() {
        LC_NUMERIC=C printf "%02d minutes %02.0f seconds" "${durationMinutes}" "${durationSeconds}"
     elif [[ $(echo "${durationSeconds}" | cut -d"$(locale decimal_point)" -f1) -gt 0 ]]; then
        LC_NUMERIC=C printf "%02.0f seconds" "${durationSeconds}"
-    else
-      log_debug "Was not able to calculate a duration. Probably not an issue, but sending a debug message just in case"
     fi
 
     log_debug "Exiting calculateDuration() with rc=$?"

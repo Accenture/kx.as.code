@@ -36,7 +36,7 @@ notifyAllChannels() {
 
   # Change message if task was executed rather than solution installed
   if [[ "${action}" == "Task Execution" ]]; then
-    message=$(echo ${1} | tr -d '\n\r' | tr -dc '[:alnum:][:blank:]-/_' | base64 | sed 's/Installation of/Execution of task '${task}' for/g' | sed 's/installed/task '${task}' executed/g' | base64 -w 0)
+    message=$(echo ${1} | tr -d '\n\r' | tr -dc '[:alnum:][:blank:]-/_' | sed 's/Installation of/Execution of task '${task}' for/g' | sed 's/installed/task '${task}' executed/g' | base64 -w 0)
   fi
 
   log_trace "Sending following notification: ${message}"
@@ -48,7 +48,7 @@ notifyAllChannels() {
 
   # Add task duration to end of message if available
   if [[ -n "${actionDuration}" ]]; then
-    message="${message} (${actionDuration})"
+    message=$(echo "$(echo ${message} | base64 -d) (${actionDuration})" | base64 -w 0)
   fi
 
   notify "${message}" "${dialogType}" "${notificationTimeout}"
