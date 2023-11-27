@@ -7,6 +7,8 @@ export action=$(echo "${payload}" | jq -c -r '.action')
 export componentName=$(echo "${payload}" | jq -c -r '.name')
 export componentInstallationFolder=$(echo "${payload}" | jq -c -r '.install_folder')
 
+log_trace "Entered autoSetup.sh to ${action} ${componentName}"
+
 # Read retry store from installationWorkspace if it exists
 retryMode="false"
 retryPhaseId="0"

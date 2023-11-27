@@ -350,7 +350,7 @@ while :; do
         rabbitmqadmin publish exchange=action_workflow routing_key=wip_queue properties="{\"delivery_mode\": 2}" payload=''${payload}''
         waitForMessageOnActionQueue "wip_queue" "${componentName}"
         if [[ ${retries} -eq 0 ]]; then
-          log_debug "Notifiying ${action} started for \"${componentName}\", as not a retry - retries: ${retries}"
+          log_trace "Notifying ${action} started for \"${componentName}\", as not a retry - retries: ${retries}"
           if [[ "$(echo "${payload}" | jq -r '.action')" == "executeTask" ]]; then
             message="Execution of task \"$(echo "${payload}" | jq -r '.task')\" started for \"${componentName}\""
           else
@@ -379,7 +379,6 @@ while :; do
         autoSetupLogFilename=$(setLogFilename "${componentName}" "${retries}")
         autoSetupRc=0
         . ${autoSetupHome}/autoSetup.sh "${payload}" 2>&1 | logStreamFormatToFile || autoSetupRc=$?
-        #${autoSetupHome}/autoSetup.sh "${payload}" 2>&1 | /usr/bin/sudo tee -a ${autoSetupLogFilename} || autoSetupRc=$?
         if [[ ${autoSetupRc} -eq 123 ]]; then
           log_debug "Received RC=123 from autoSetup.sh. This indicated a non-recoverable error. Preventing a retry for \"${componentName}\""
           sendToFailureQueue="true"

@@ -1,7 +1,7 @@
 ####_EXCLUDE_FROM_FUNCTION_HEADER_FOOTER_INJECTION_####
 sendSlackNotification() {
   set +x
-  local message=''${1:-}''
+  local message=${1:-}
   local logLevel=${2:-"info"}
   local actionStatus=${3:-"unknown"}
   local componentName=${4:-"not applicable"}
@@ -18,8 +18,6 @@ sendSlackNotification() {
     if [[ -z ${notificationTitle} ]]; then
       notificationTitle="KX.AS.CODE"
     fi
-
-    parseMessage=$(echo ${message} | sed 's/"/\"/g' | sed 's/\\$//g')
 
     if [[ "${logLevel}" == "error" ]] || [[ "${actionStatus}" == "failed" ]]; then
       local lastExecutingScript="$(cat ${installationWorkspace}/.retryDataStore.json | tr -d "[:cntrl:]" | jq -r '.script')"
@@ -59,13 +57,13 @@ sendSlackNotification() {
 
       # Generate message to post to Slack
       echo '''{
-            "text": "'${parseMessage}'",
+            "text": "'$(echo ${message} | base64 -d)'",
             "blocks": [
                 {
                         "type": "section",
                         "text": {
                                 "type": "mrkdwn",
-                                "text": "'${statusEmoticon}' ['${logLevel^^}'] '${parseMessage}'"
+                                "text": "'${statusEmoticon}' ['${logLevel^^}'] '$(echo ${message} | base64 -d)'"
                         }
                 },
                 {

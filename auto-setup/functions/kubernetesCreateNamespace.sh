@@ -1,6 +1,6 @@
 createKubernetesNamespace() {
 
-  if [[ -n $(which kubectl || true) ]]; then
+  if [[ -n $(which kubectl || true) ]] && [[ -f /root/.kube/config ]]; then
     if [[ -z ${namespace} ]] && [[ ${namespace} != "kube-system" ]] && [[ ${namespace} != "default"   ]]; then
         log_info "System namespace or namespace defined for \"${componentName}\" in metadata.json. Not creating namespace. Most likely intentional and not an issue"
     else
