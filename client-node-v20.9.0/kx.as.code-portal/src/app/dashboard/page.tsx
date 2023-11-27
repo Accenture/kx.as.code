@@ -63,10 +63,10 @@ const QueueComponent: React.FC<QueueComponentProps> = ({ queueName, count, index
         opacity: isDragging ? 0.5 : 1,
       }}
     >
-      <div className="text-sm uppercase text-white">{queueName}</div>
+      <div className="text-sm uppercase text-white justify-center flex">{queueName}</div>
       <Tooltip title={`Open ${queueName} messages in new Tab.`} placement="top" arrow>
         <div>
-        <a href={`http://localhost:5001/mock/api/queues/${queueName}`} className="hover:underline hover:text-kxBlue" target="_blank">
+        <a href={`http://localhost:5001/api/queues/${queueName}`} className="hover:underline hover:text-kxBlue" target="_blank">
           <div className="flex justify-center mt-3 text-2xl">
             {count}
           </div>
@@ -106,7 +106,7 @@ const Dashboard: React.FC = () => {
     try {
       const responses = await Promise.all(
         queueList.map((queue) =>
-          axios.get(`http://localhost:5001/mock/api/queues/${queue}`)
+          axios.get(`http://localhost:5001/api/queues/${queue}`)
         )
       );
 

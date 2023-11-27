@@ -44,7 +44,7 @@ let healthCheckData = {} ;
 const performHealthCheck = async () => {
   try {
     // Request to get the array of completed_queue objects
-    const completedQueueResponse = await axios.get("http://localhost:8000/mock/api/queues/completed_queue");
+    const completedQueueResponse = await axios.get("http://localhost:5001/api/queues/completed_queue");
 
     // Parse the payload from each object in the response array
     const appNames = completedQueueResponse.data.map((item) => {
@@ -52,9 +52,11 @@ const performHealthCheck = async () => {
       return payloadObj.name;
     });
 
+    const baseDomain = "kx-as-code.local"
+
     // Perform health check for each appName
     for (const appName of appNames) {
-      const healthCheckUrl = `http://localhost:8000/mock/api/${appName}/healthcheck`;
+      const healthCheckUrl = `http://${appName}.${baseDomain}`;
 
       const response = await axios.get(healthCheckUrl);
 
@@ -182,19 +184,19 @@ app.route("/api/queues/:queue_name").get(async (req, res) => {
   }
 });
 
-app.get('/mock/api/queues/:queue_name', async (req, res) => {
-  const { queue_name } = req.params;
+// app.get('/api/queues/:queue_name', async (req, res) => {
+//   const { queue_name } = req.params;
 
-  try {
-    const response = await axios.get(`http://localhost:8000/mock/api/queues/${queue_name}`);
+//   try {
+//     const response = await axios.get(`http://localhost:5001/api/queues/${queue_name}`);
 
-    const responseData = response.data;
+//     const responseData = response.data;
 
-    res.json(responseData);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
+//     res.json(responseData);
+//   } catch (error) {
+//     res.status(500).json({ error: error.message });
+//   }
+// });
 
 app.route("/api/move/:from_queue/:to_queue").get((req, res) => {
   console.log("move triggered.");

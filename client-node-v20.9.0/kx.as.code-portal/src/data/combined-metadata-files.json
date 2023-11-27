@@ -518,7 +518,6 @@
     ],
     "urls": [
       {
-        "mockUrlHealthcheck": "http://localhost:8000/mock/api/jenkins/healthcheck",
         "url": "https://{{componentName}}.{{baseDomain}}",
         "healthchecks": {
           "liveliness": {

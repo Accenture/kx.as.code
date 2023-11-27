@@ -63,6 +63,7 @@ const ApplicationGroupCard: React.FC<ApplicationGroupCardProps> = (props) => {
           src={`/media/png/appImgs/${appName}.png`}
           onDragStart={handleDragStart}
           role="presentation"
+          key={i}
         />,
       ]);
     });
@@ -123,13 +124,13 @@ const ApplicationGroupCard: React.FC<ApplicationGroupCardProps> = (props) => {
                 <div className="w-full">
                   <Slider className="">{itemsList.map((image, i) => {
                     return (
-                      <Slide index={i}>
+                      <Slide index={i} key={i}>
                         <Tooltip
                           title={transformName(appGroupComponents[i])}
                           placement="top"
                           arrow
                         >
-                          <div className="flex items-center justify-center hover:bg-ghBlack4 p-1 hover:pointer h-14">
+                          <div className="flex items-center justify-center hover:bg-ghBlack4 p-1 hover:pointer h-14" key={i}>
                             {image}
                           </div>
                         </Tooltip>

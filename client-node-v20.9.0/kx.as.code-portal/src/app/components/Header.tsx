@@ -20,6 +20,8 @@ import InboxIcon from '@mui/icons-material/MoveToInbox';
 import MailIcon from '@mui/icons-material/Mail';
 import Image from 'next/image'
 import Link from "next/link";
+const versions = require("../../data/versions.json");
+
 
 
 interface HeaderProps {
@@ -75,6 +77,7 @@ const Header: FC<HeaderProps> = (props) => {
             alt="Picture of the author"
           />
           </Link>
+          <div className="text-sm">Portal v.{versions.kxascode}</div>
       </Toolbar>
     </AppBar>
   );

@@ -302,7 +302,7 @@ const Applications = (props: any) => {
 
   const checkMqConnection = async () => {
     try {
-      const response = await axios.get("http://localhost:8000/mock/api/checkRmqConn");
+      const response = await axios.get("http://localhost:5001/api/checkRmqConn");
       response.status == 200 ? setIsMqConnected(true) : setIsMqConnected(false)
     } catch (error) {
       console.error("Error checking MQ connection:", error);
@@ -312,7 +312,7 @@ const Applications = (props: any) => {
   const fetchQueueData = async () => {
     try {
       const requests = queueList.map(async (queue) => {
-        const response = await axios.get("http://localhost:5001/mock/api/queues/" + queue);
+        const response = await axios.get("http://localhost:5001/api/queues/" + queue);
         response.data.forEach((app: any) => {
           queueData.push(app);
         });

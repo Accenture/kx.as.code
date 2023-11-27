@@ -167,30 +167,30 @@ export default function RootLayout({
                 </Link>
               </ListItem>
               <ListItem key={"applications"} disablePadding sx={{ display: 'block' }}>
-              <Link href="/applications">
-                <ListItemButton
-                  sx={{
-                    minHeight: 40,
-                    justifyContent: open ? 'initial' : 'center',
-                    px: 2.5,
-                  }}
-                >
-                  <ListItemIcon
+                <Link href="/applications">
+                  <ListItemButton
                     sx={{
-                      minWidth: 0,
-                      mr: open ? 3 : 'auto',
-                      justifyContent: 'center',
+                      minHeight: 40,
+                      justifyContent: open ? 'initial' : 'center',
+                      px: 2.5,
                     }}
                   >
-                    <Image className=""
-                      src="/media/svg/ks-logo-w.svg"
-                      width={40}
-                      height={40}
-                      alt="Picture of the author"
-                    />
-                  </ListItemIcon>
-                  <ListItemText primary={"Applications"} sx={{ opacity: open ? 1 : 0, marginLeft: "-10px" }} />
-                </ListItemButton>
+                    <ListItemIcon
+                      sx={{
+                        minWidth: 0,
+                        mr: open ? 3 : 'auto',
+                        justifyContent: 'center',
+                      }}
+                    >
+                      <Image className=""
+                        src="/media/svg/ks-logo-w.svg"
+                        width={40}
+                        height={40}
+                        alt="Picture of the author"
+                      />
+                    </ListItemIcon>
+                    <ListItemText primary={"Applications"} sx={{ opacity: open ? 1 : 0, marginLeft: "-10px" }} />
+                  </ListItemButton>
                 </Link>
               </ListItem>
               <ListItem key={"Application Groups"} disablePadding sx={{ display: 'block' }}>
@@ -209,7 +209,7 @@ export default function RootLayout({
                         justifyContent: 'center',
                       }}
                     >
-                      <LiaCubesSolid className="text-3xl" />
+                      <LiaCubesSolid className="text-4xl" />
                     </ListItemIcon>
                     <ListItemText primary={"Application Groups"} sx={{ opacity: open ? 1 : 0 }} />
                   </ListItemButton>
@@ -239,10 +239,12 @@ export default function RootLayout({
               </ListItem>
             </List>
           </Drawer>
-          <Header drawerWidth={drawerWidth} handleDrawerOpen={handleDrawerOpen} open={open} />
-          {/* Sidebar */}
-          {/* <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} /> */}
-          {children}
+          <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+            <Header drawerWidth={drawerWidth} handleDrawerOpen={handleDrawerOpen} open={open} />
+            {/* Sidebar */}
+            {/* <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} /> */}
+            {children}
+          </Box>
         </ThemeRegistry>
       </body>
     </html>
