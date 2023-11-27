@@ -12,7 +12,7 @@ app.use(bodyParser.json());
 const PORT = process.env.PORT || 5001;
 const dataPath = "./src/data/combined-metadata-files.json";
 const healthCheckDataPath = "./src/data/healthcheckdata.json";
-const profileConfig = "../../profiles/vagrant-virtualbox/profile-config.json"
+const profileConfig = "./src/data/profile-config.json"
 const rabbitMqUsername = "test";
 const rabbitMqPassword = "test";
 const rabbitMqHost = "localhost";
@@ -53,7 +53,7 @@ const performHealthCheck = async () => {
       return payloadObj.name;
     });
 
-    const rawData = fs.readFileSync(healthCheckDataPath);
+    const rawData = fs.readFileSync(profileConfig);
     const configData = JSON.parse(rawData);  
     const environmentPrefix = configData.config.environmentPrefix;
     const baseDomain = configData.config.baseDomain;  
