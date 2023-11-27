@@ -63,7 +63,7 @@ const QueueComponent: React.FC<QueueComponentProps> = ({ queueName, count, index
         opacity: isDragging ? 0.5 : 1,
       }}
     >
-      <div className="text-sm uppercase text-gray-400">{queueName}</div>
+      <div className="text-sm uppercase text-white">{queueName}</div>
       <Tooltip title={`Open ${queueName} messages in new Tab.`} placement="top" arrow>
         <div>
         <a href={`http://localhost:5001/mock/api/queues/${queueName}`} className="hover:underline hover:text-kxBlue" target="_blank">
