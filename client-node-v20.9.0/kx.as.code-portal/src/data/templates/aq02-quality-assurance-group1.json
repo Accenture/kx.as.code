@@ -1,0 +1,15 @@
+{
+  "action_queues": {
+    "install": [
+      {
+        "install_folder": "quality_assurance",
+        "name": "sonarqube"
+      },
+      {
+        "install_folder": "quality_assurance",
+        "name": "selenium"
+      }
+    ]
+  }
+}
+

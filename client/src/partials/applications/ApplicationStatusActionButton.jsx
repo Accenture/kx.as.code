@@ -45,7 +45,7 @@ export default function ApplicationStatusActionButton(props) {
               <span className="text-white">Processing...</span>
             </button>
             <Tooltip title={`Re-install ${props.appName}`} placement="top" arrow>
-              <button className="bg-kxBlue p-2 rounded-br rounded-tr">
+              <button className="bg-kxBlue p-2 rounded-br rounded-tr ml-1">
                 <RestartAltIcon
                   aria-label="list"
                   color="white"
@@ -77,18 +77,31 @@ export default function ApplicationStatusActionButton(props) {
         );
       } else if (props.category != "core") {
         return (
-          <button
-            className="bg-kxBlue p-2 px-5 rounded items-center flex"
-            to="#0"
-            onClick={() => {
-              props.applicationInstallHandler();
-            }}
-          >
-            <div className="flex items-start">
-              <FaArrowAltCircleDown className="mr-2 flex my-auto text-white" />
-            </div>
-            <span className="flex my-auto text-[16px]">Install</span>
-          </button>
+          <div className="flex">
+            <button
+              className="bg-kxBlue p-2 px-5 rounded-bl rounded-tl items-center flex"
+              to="#0"
+              onClick={() => {
+                props.applicationInstallHandler();
+              }}
+            >
+              <div className="flex items-start">
+                <FaArrowAltCircleDown className="mr-2 flex my-auto text-white" />
+              </div>
+              <span className="flex my-auto text-[16px]">Install</span>
+            </button>
+            <Tooltip title={`Re-install ${props.appName}`} placement="top" arrow>
+              <button className="bg-kxBlue p-2 rounded-br rounded-tr ml-1">
+                <RestartAltIcon
+                  aria-label="list"
+                  color="white"
+                  onClick={() => {
+                    props.applicationInstallHandler();
+                  }}
+                />
+              </button>
+            </Tooltip>
+          </div>
         );
       }
     } else {

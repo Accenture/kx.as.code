@@ -1,0 +1,324 @@
+{
+    "metadata": {
+        "defaultApplications": {
+            "git": "cicd/gitlab-ce",
+            "oauth": "cicd/gitlab-ce",
+            "chatops": "collaboration/mattermost",
+            "docker-registry": "cicd/harbor",
+            "s3-object-store": "storage/minio-s3"
+        },
+        "available": {
+            "applications": [
+                {
+                    "install_folder": "cicd",
+                    "name": "argocd"
+                },
+                {
+                    "install_folder": "cicd",
+                    "name": "artifactory-oss"
+                },
+                {
+                    "install_folder": "core",
+                    "name": "calico-network"
+                },
+                {
+                    "install_folder": "core",
+                    "name": "cert-manager"
+                },
+                {
+                    "install_folder": "core",
+                    "name": "cfssl-certificate-authority"
+                },
+                {
+                    "install_folder": "collaboration",
+                    "name": "confluence"
+                },
+                {
+                    "install_folder": "cicd",
+                    "name": "consul"
+                },
+                {
+                    "install_folder": "monitoring",
+                    "name": "elastic-apm-oss"
+                },
+                {
+                    "install_folder": "monitoring",
+                    "name": "elastic-elasticsearch-oss"
+                },
+                {
+                    "install_folder": "monitoring",
+                    "name": "elastic-filebeat-oss"
+                },
+                {
+                    "install_folder": "monitoring",
+                    "name": "elastic-kibana-oss"
+                },
+                {
+                    "install_folder": "cicd",
+                    "name": "gitlab-ce"
+                },
+                {
+                    "install_folder": "cicd",
+                    "name": "gitlab-runner"
+                },
+                {
+                    "install_folder": "core",
+                    "name": "glusterfs-storage"
+                },
+                {
+                    "install_folder": "monitoring",
+                    "name": "grafana"
+                },
+                {
+                    "install_folder": "monitoring",
+                    "name": "grafana-image-renderer"
+                },
+                {
+                    "install_folder": "monitoring",
+                    "name": "graphite"
+                },
+                {
+                    "install_folder": "cicd",
+                    "name": "harbor"
+                },
+                {
+                    "install_folder": "collaboration",
+                    "name": "jira"
+                },
+                {
+                    "install_folder": "core",
+                    "name": "keycloak"
+                },
+                {
+                    "install_folder": "core",
+                    "name": "kontena-lens"
+                },
+                {
+                    "install_folder": "core",
+                    "name": "kubernetes-base-services"
+                },
+                {
+                    "install_folder": "core",
+                    "name": "kubernetes-dashboard"
+                },
+                {
+                    "install_folder": "core",
+                    "name": "kubernetes-tools"
+                },
+                {
+                    "install_folder": "core",
+                    "name": "kxascode-basic"
+                },
+                {
+                    "install_folder": "kx_as_code",
+                    "name": "kx.as.code_docs"
+                },
+                {
+                    "install_folder": "kx_as_code",
+                    "name": "kx.as.code_techradar"
+                },
+                {
+                    "install_folder": "core",
+                    "name": "local-storage"
+                },
+                {
+                    "install_folder": "collaboration",
+                    "name": "mattermost"
+                },
+                {
+                    "install_folder": "core",
+                    "name": "metallb-loadbalancer"
+                },
+                {
+                    "install_folder": "core",
+                    "name": "metrics-server"
+                },
+                {
+                    "install_folder": "storage",
+                    "name": "minio-s3"
+                },
+                {
+                    "install_folder": "storage",
+                    "name": "nextcloud"
+                },
+                {
+                    "install_folder": "cicd",
+                    "name": "nexus3"
+                },
+                {
+                    "install_folder": "core",
+                    "name": "nginx-ingress-controller"
+                },
+                {
+                    "install_folder": "core",
+                    "name": "openldap"
+                },
+                {
+                    "install_folder": "monitoring",
+                    "name": "prometheus"
+                },
+                {
+                    "install_folder": "core",
+                    "name": "remote-desktop"
+                },
+                {
+                    "install_folder": "collaboration",
+                    "name": "rocketchat"
+                },
+                {
+                    "install_folder": "test_automation",
+                    "name": "selenium"
+                },
+                {
+                    "install_folder": "cicd",
+                    "name": "sonarqube"
+                },
+                {
+                    "install_folder": "security",
+                    "name": "sysdig-falco"
+                },
+                {
+                    "install_folder": "core",
+                    "name": "user-setup"
+                }
+            ],
+            "groups": [
+                {
+                    "name": "Heavy weight",
+                    "group_category": "cicd",
+                    "description": "Full enterprise like features covering the entire CICD stack",
+                    "components": [
+                        "minio_s3",
+                        "gitlab_ce",
+                        "artifactory",
+                        "mattermost",
+                        "harbor",
+                        "argocd",
+                        "gitlab_runner"
+                    ]
+                },
+                {
+                    "name": "Light weight",
+                    "group_category": "cicd",
+                    "description": "Good CICD featureset, light on needed resources",
+                    "components": [
+                        "gitea",
+                        "nexus3",
+                        "jenkins",
+                        "rocketchat",
+                        "docker-registry",
+                        "flux",
+                        "gitlab_runner"
+                    ]
+                },
+                {
+                    "name": "KX.AS.CODE",
+                    "group_category": "kxascode",
+                    "description": "KX.AS.CODE Docs and TechRadar applications",
+                    "components": [
+                        "kx_as_code_docs",
+                        "kx_as_code_techradar"
+                    ]
+                },
+                {
+                    "name": "Prometheus, Grafana & ELK",
+                    "group_category": "monitoring",
+                    "description": "Kubernetes monitoring, alerting, log aggregation and visualization",
+                    "components": [
+                        "prometheus",
+                        "grafana",
+                        "grafana-image-renderer",
+                        "elastic-elasticsearch-oss",
+                        "elastic-kibana-oss",
+                        "elastic-filebeat-oss"
+                    ]
+                },
+                {
+                    "name": "Tick Stack & ELK",
+                    "group_category": "monitoring",
+                    "description": "Kubernetes monitoring with the Tick Stack",
+                    "components": [
+                        "tickstack",
+                        "grafana",
+                        "grafana-image-renderer",
+                        "elastic-elasticsearch-oss",
+                        "elastic-kibana-oss",
+                        "elastic-filebeat-oss"
+                    ]
+                },
+                {
+                    "name": "Elastic Stack Only",
+                    "group_category": "monitoring",
+                    "description": "Kubernetes monitoring with the Tick Stack",
+                    "components": [
+                        "elastic-elasticsearch-oss",
+                        "elastic-kibana-oss",
+                        "elastic-filebeat-oss"
+                    ]
+                },
+                {
+                    "name": "Quality Assurance",
+                    "group_category": "quality_assurance",
+                    "description": "Quality assurance, including browser test automation and code quality checks",
+                    "components": [
+                        "sonarqube",
+                        "selenium"
+                    ]
+                },
+                {
+                    "name": "Security",
+                    "group_category": "security",
+                    "description": "Centralized secrets management and Kubernetes runtime security",
+                    "components": [
+                        "sysdig_falco",
+                        "consul",
+                        "vault"
+                    ]
+                },
+                {
+                    "name": "Collaboration",
+                    "group_category": "collaboration",
+                    "description": "Collaboration with Atalassina tools. Note, these are not OpenSource",
+                    "components": [
+                        "jira",
+                        "confluence"
+                    ]
+                }
+            ],
+            "super_groups": [
+                {
+                    "name": "AWESOME Mode",
+                    "description": "At least one group from all group categories",
+                    "groups": [
+                        {
+                            "name": "Heavy Weight",
+                            "group_category": "cicd"
+                        },
+                        {
+                            "name": "Prometheus, Grafana & ELK",
+                            "group_category": "monitoring"
+                        },
+                        {
+                            "name": "Quality Assurance",
+                            "group_category": "quality_assurance"
+                        },
+                        {
+                            "name": "Security",
+                            "group_category": "security"
+                        }
+                    ]
+                },
+                {
+                    "name": "Light Mode",
+                    "description": "Minimal CICD setup",
+                    "groups": [
+                        {
+                            "name": "Light Weight",
+                            "group_category": "cicd"
+                        }
+                    ]
+                }
+            ]
+        }
+    }
+}

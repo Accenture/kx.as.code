@@ -104,7 +104,7 @@
       "responses": [
         {
           "uuid": "4c8e4cb6-5164-4272-b24d-3cf5152c7459",
-          "body": "[\n  {\n    \"payload_bytes\": 85,\n    \"redelivered\": true,\n    \"exchange\": \"action_workflow\",\n    \"routing_key\": \"completed_queue\",\n    \"message_count\": 24,\n    \"properties\": {\n      \"delivery_mode\": 2\n    },\n    \"payload\": \"{\\\"install_folder\\\":\\\"core\\\",\\\"name\\\":\\\"argocd\\\",\\\"action\\\":\\\"install\\\",\\\"retries\\\":\\\"0\\\"}\",\n    \"payload_encoding\": \"string\"\n  },\n  {\n    \"payload_bytes\": 74,\n    \"redelivered\": true,\n    \"exchange\": \"action_workflow\",\n    \"routing_key\": \"completed_queue\",\n    \"message_count\": 23,\n    \"properties\": {\n      \"delivery_mode\": 2\n    },\n    \"payload\": \"{\\\"install_folder\\\":\\\"core\\\",\\\"name\\\":\\\"artifactory\\\",\\\"action\\\":\\\"install\\\",\\\"retries\\\":\\\"0\\\"}\",\n    \"payload_encoding\": \"string\"\n  },\n  {\n    \"payload_bytes\": 77,\n    \"redelivered\": true,\n    \"exchange\": \"action_workflow\",\n    \"routing_key\": \"completed_queue\",\n    \"message_count\": 22,\n    \"properties\": {\n      \"delivery_mode\": 2\n    },\n    \"payload\": \"{\\\"install_folder\\\":\\\"core\\\",\\\"name\\\":\\\"kx-portal\\\",\\\"action\\\":\\\"install\\\",\\\"retries\\\":\\\"0\\\"}\",\n    \"payload_encoding\": \"string\"\n  },\n  {\n    \"payload_bytes\": 95,\n    \"redelivered\": true,\n    \"exchange\": \"action_workflow\",\n    \"routing_key\": \"completed_queue\",\n    \"message_count\": 21,\n    \"properties\": {\n      \"delivery_mode\": 2\n    },\n    \"payload\": \"{\\\"install_folder\\\":\\\"core\\\",\\\"name\\\":\\\"cfssl-certificate-authority\\\",\\\"action\\\":\\\"install\\\",\\\"retries\\\":\\\"0\\\"}\",\n    \"payload_encoding\": \"string\"\n  },\n  {\n    \"payload_bytes\": 76,\n    \"redelivered\": true,\n    \"exchange\": \"action_workflow\",\n    \"routing_key\": \"completed_queue\",\n    \"message_count\": 20,\n    \"properties\": {\n      \"delivery_mode\": 2\n    },\n    \"payload\": \"{\\\"install_folder\\\":\\\"core\\\",\\\"name\\\":\\\"openldap\\\",\\\"action\\\":\\\"install\\\",\\\"retries\\\":\\\"0\\\"}\",\n    \"payload_encoding\": \"string\"\n  },\n  {\n    \"payload_bytes\": 84,\n    \"redelivered\": true,\n    \"exchange\": \"action_workflow\",\n    \"routing_key\": \"completed_queue\",\n    \"message_count\": 19,\n    \"properties\": {\n      \"delivery_mode\": 2\n    },\n    \"payload\": \"{\\\"install_folder\\\":\\\"core\\\",\\\"name\\\":\\\"kubernetes-tools\\\",\\\"action\\\":\\\"install\\\",\\\"retries\\\":\\\"0\\\"}\",\n    \"payload_encoding\": \"string\"\n  }]",
+          "body": "[\n  {\n    \"payload_bytes\": 85,\n    \"redelivered\": true,\n    \"exchange\": \"action_workflow\",\n    \"routing_key\": \"completed_queue\",\n    \"message_count\": 24,\n    \"properties\": {\n      \"delivery_mode\": 2\n    },\n    \"payload\": \"{\\\"install_folder\\\":\\\"core\\\",\\\"name\\\":\\\"argocd\\\",\\\"action\\\":\\\"install\\\",\\\"retries\\\":\\\"0\\\"}\",\n    \"payload_encoding\": \"string\"\n  },\n  {\n    \"payload_bytes\": 74,\n    \"redelivered\": true,\n    \"exchange\": \"action_workflow\",\n    \"routing_key\": \"completed_queue\",\n    \"message_count\": 23,\n    \"properties\": {\n      \"delivery_mode\": 2\n    },\n    \"payload\": \"{\\\"install_folder\\\":\\\"core\\\",\\\"name\\\":\\\"artifactory\\\",\\\"action\\\":\\\"install\\\",\\\"retries\\\":\\\"0\\\"}\",\n    \"payload_encoding\": \"string\"\n  },\n  {\n    \"payload_bytes\": 77,\n    \"redelivered\": true,\n    \"exchange\": \"action_workflow\",\n    \"routing_key\": \"completed_queue\",\n    \"message_count\": 22,\n    \"properties\": {\n      \"delivery_mode\": 2\n    },\n    \"payload\": \"{\\\"install_folder\\\":\\\"core\\\",\\\"name\\\":\\\"kx-portal\\\",\\\"action\\\":\\\"install\\\",\\\"retries\\\":\\\"0\\\"}\",\n    \"payload_encoding\": \"string\"\n  },\n  {\n    \"payload_bytes\": 95,\n    \"redelivered\": true,\n    \"exchange\": \"action_workflow\",\n    \"routing_key\": \"completed_queue\",\n    \"message_count\": 21,\n    \"properties\": {\n      \"delivery_mode\": 2\n    },\n    \"payload\": \"{\\\"install_folder\\\":\\\"core\\\",\\\"name\\\":\\\"cfssl-certificate-authority\\\",\\\"action\\\":\\\"install\\\",\\\"retries\\\":\\\"0\\\"}\",\n    \"payload_encoding\": \"string\"\n  },\n  {\n    \"payload_bytes\": 76,\n    \"redelivered\": true,\n    \"exchange\": \"action_workflow\",\n    \"routing_key\": \"completed_queue\",\n    \"message_count\": 20,\n    \"properties\": {\n      \"delivery_mode\": 2\n    },\n    \"payload\": \"{\\\"install_folder\\\":\\\"core\\\",\\\"name\\\":\\\"openldap\\\",\\\"action\\\":\\\"install\\\",\\\"retries\\\":\\\"0\\\"}\",\n    \"payload_encoding\": \"string\"\n  },\n  {\n    \"payload_bytes\": 84,\n    \"redelivered\": true,\n    \"exchange\": \"action_workflow\",\n    \"routing_key\": \"completed_queue\",\n    \"message_count\": 19,\n    \"properties\": {\n      \"delivery_mode\": 2\n    },\n    \"payload\": \"{\\\"install_folder\\\":\\\"core\\\",\\\"name\\\":\\\"kubernetes-tools\\\",\\\"action\\\":\\\"install\\\",\\\"retries\\\":\\\"0\\\"}\",\n    \"payload_encoding\": \"string\"\n  },\n  {\n    \"payload_bytes\": 84,\n    \"redelivered\": true,\n    \"exchange\": \"action_workflow\",\n    \"routing_key\": \"completed_queue\",\n    \"message_count\": 19,\n    \"properties\": {\n      \"delivery_mode\": 2\n    },\n    \"payload\": \"{\\\"install_folder\\\":\\\"core\\\",\\\"name\\\":\\\"hipster-shop\\\",\\\"action\\\":\\\"install\\\",\\\"retries\\\":\\\"0\\\"}\",\n    \"payload_encoding\": \"string\"\n  }, \n  {\n    \"payload_bytes\": 84,\n    \"redelivered\": true,\n    \"exchange\": \"action_workflow\",\n    \"routing_key\": \"completed_queue\",\n    \"message_count\": 19,\n    \"properties\": {\n      \"delivery_mode\": 2\n    },\n    \"payload\": \"{\\\"install_folder\\\":\\\"core\\\",\\\"name\\\":\\\"jenkins\\\",\\\"action\\\":\\\"install\\\",\\\"retries\\\":\\\"0\\\"}\",\n    \"payload_encoding\": \"string\"\n  }]",
           "latency": 0,
           "statusCode": 200,
           "label": "",
@@ -239,6 +239,238 @@
       ],
       "enabled": true,
       "responseMode": null
+    },
+    {
+      "uuid": "178fafbf-ab0e-448b-8045-581d5cb6ae94",
+      "type": "http",
+      "documentation": "",
+      "method": "get",
+      "endpoint": "api/artifactory/healthcheck",
+      "responses": [
+        {
+          "uuid": "f55943ae-4922-4279-b2aa-efd17ab0ea0e",
+          "body": "{}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id"
+        }
+      ],
+      "enabled": true,
+      "responseMode": null
+    },
+    {
+      "uuid": "56a4dc6c-05b3-40d5-b566-9aac119c534d",
+      "type": "http",
+      "documentation": "",
+      "method": "get",
+      "endpoint": "api/kx-portal/healthcheck",
+      "responses": [
+        {
+          "uuid": "1793dba5-79d7-411b-ba02-03008e15f53d",
+          "body": "{}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id"
+        }
+      ],
+      "enabled": true,
+      "responseMode": null
+    },
+    {
+      "uuid": "9524a13a-f5ad-4ace-8bbd-67dd94879d15",
+      "type": "http",
+      "documentation": "",
+      "method": "get",
+      "endpoint": "api/cfssl-certificate-authority/healthcheck",
+      "responses": [
+        {
+          "uuid": "4174c986-a0d7-4560-ad3b-133c314412cf",
+          "body": "{}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id"
+        }
+      ],
+      "enabled": true,
+      "responseMode": null
+    },
+    {
+      "uuid": "abda640c-6945-4b36-8363-377f30eeee2c",
+      "type": "http",
+      "documentation": "",
+      "method": "get",
+      "endpoint": "api/openldap/healthcheck",
+      "responses": [
+        {
+          "uuid": "3b842627-e350-48bc-bf54-2a03c5168d6c",
+          "body": "{}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id"
+        }
+      ],
+      "enabled": true,
+      "responseMode": null
+    },
+    {
+      "uuid": "11c0ea19-45f1-4961-b478-29d8c0f8a5f8",
+      "type": "http",
+      "documentation": "",
+      "method": "get",
+      "endpoint": "api/kubernetes-tools/healthcheck",
+      "responses": [
+        {
+          "uuid": "69bd465f-118a-411b-8231-7e9135942a0a",
+          "body": "{}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id"
+        }
+      ],
+      "enabled": true,
+      "responseMode": null
+    },
+    {
+      "uuid": "4bee9cab-2802-414a-9546-2850a0369d8d",
+      "type": "http",
+      "documentation": "",
+      "method": "get",
+      "endpoint": "api/argocd/healthcheck",
+      "responses": [
+        {
+          "uuid": "02dd4ffe-191c-41fd-a75d-6bb5855b9359",
+          "body": "{}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id"
+        }
+      ],
+      "enabled": true,
+      "responseMode": null
+    },
+    {
+      "uuid": "a30b3ec8-a486-4b16-bba6-d48e702c4513",
+      "type": "http",
+      "documentation": "",
+      "method": "get",
+      "endpoint": "api/hipster-shop/healthcheck",
+      "responses": [
+        {
+          "uuid": "e757387c-3089-41e8-b3c8-5f7e8b5fe800",
+          "body": "{}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id"
+        }
+      ],
+      "enabled": true,
+      "responseMode": null
+    },
+    {
+      "uuid": "385aaa46-b4d4-4d55-8f8c-db213de44ec4",
+      "type": "http",
+      "documentation": "",
+      "method": "get",
+      "endpoint": "api/checkRmqConn",
+      "responses": [
+        {
+          "uuid": "7e2750fa-1db0-4406-9fb1-6a5c2dca10d1",
+          "body": "{\"Mock checkRmqConn\"}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id"
+        }
+      ],
+      "enabled": true,
+      "responseMode": null
     }
   ],
   "rootChildren": [
@@ -273,6 +505,38 @@
     {
       "type": "route",
       "uuid": "02590561-5b86-4e02-970a-5546d4edfa04"
+    },
+    {
+      "type": "route",
+      "uuid": "4bee9cab-2802-414a-9546-2850a0369d8d"
+    },
+    {
+      "type": "route",
+      "uuid": "178fafbf-ab0e-448b-8045-581d5cb6ae94"
+    },
+    {
+      "type": "route",
+      "uuid": "56a4dc6c-05b3-40d5-b566-9aac119c534d"
+    },
+    {
+      "type": "route",
+      "uuid": "9524a13a-f5ad-4ace-8bbd-67dd94879d15"
+    },
+    {
+      "type": "route",
+      "uuid": "abda640c-6945-4b36-8363-377f30eeee2c"
+    },
+    {
+      "type": "route",
+      "uuid": "11c0ea19-45f1-4961-b478-29d8c0f8a5f8"
+    },
+    {
+      "type": "route",
+      "uuid": "a30b3ec8-a486-4b16-bba6-d48e702c4513"
+    },
+    {
+      "type": "route",
+      "uuid": "385aaa46-b4d4-4d55-8f8c-db213de44ec4"
     }
   ],
   "proxyMode": false,

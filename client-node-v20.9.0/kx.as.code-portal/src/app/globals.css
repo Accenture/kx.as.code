@@ -1,0 +1,94 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=fallback");
+
+
+:root {
+  /* --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 214, 219, 220;
+  --background-end-rgb: 255, 255, 255; */
+  background-color: #0d1117;
+}
+
+@media (prefers-color-scheme: dark) {
+  /* :root {
+    --foreground-rgb: 255, 255, 255;
+    --background-start-rgb: 0, 0, 0;
+    --background-end-rgb: 0, 0, 0;
+  } */
+}
+
+body {
+  /* color: rgb(var(--foreground-rgb)); */
+  /* background: linear-gradient(
+      to bottom,
+      transparent,
+      rgb(var(--background-end-rgb))
+    )
+    rgb(var(--background-start-rgb)); */
+}
+
+@keyframes slide-up {
+  0%{
+      transform: translateY(100px)
+  }
+  100% {
+      transform: translateY(0)
+  }
+}
+
+.slide-up-card-container{
+  -webkit-transform: scaleY(1);
+      -o-transform: scaleY(1);
+      -ms-transform: scaleY(1);
+      transform: scaleY(1);
+}
+
+.slide-card-container{
+  -webkit-transform: scaleY(0);
+      -o-transform: scaleY(0);
+      -ms-transform: scaleY(0);
+      transform: scaleY(0);
+  
+      -webkit-transform-origin: top;
+      -o-transform-origin: top;
+      -ms-transform-origin: top;
+      transform-origin: top;
+  
+      -webkit-transition: -webkit-transform 0.26s ease-out;
+      -o-transition: -o-transform 0.26s ease;
+      -ms-transition: -ms-transform 0.26s ease;
+      transition: transform 0.26s ease;
+}
+
+.modal-drag-handle {
+  width: 100%;
+  height: 20px;
+  cursor: move;
+  background-color: transparent;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+
+/* For WebKit browsers (Chrome, Safari) */
+.scrollbar-orange::-webkit-scrollbar {
+  width: 15px;
+}
+
+.scrollbar-orange::-webkit-scrollbar-thumb {
+  background-color: #2f3640;
+}
+
+/* For Firefox */
+.scrollbar-orange {
+  scrollbar-width: thin;
+  scrollbar-color: #2f3640;
+}
+
+.scrollbar-orange:hover {
+  scrollbar-color: transparent transparent;
+}

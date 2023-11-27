@@ -1,0 +1,18 @@
+{
+  "action_queues": {
+    "install": [
+      {
+        "install_folder": "security",
+        "name": "sysdig-falco"
+      },
+      {
+        "install_folder": "cicd",
+        "name": "consul"
+      },
+      {
+        "install_folder": "security",
+        "name": "vault"
+      }
+    ]
+  }
+}

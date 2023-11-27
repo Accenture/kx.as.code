@@ -305,7 +305,7 @@ function ApplicationCard(props) {
             }`}
             loading="lazy"
           >
-            <div className="grid grid-cols-12 hover:bg-gray-700 bg-inv3 rounded items-center px-5 py-2">
+            <div className="grid grid-cols-12 hover:bg-[#3d4d63] bg-gray-700 rounded items-center px-5 py-2">
               <div className="flex col-span-10 items-center">
                 <div className="grid grid-cols-12 w-full items-center">
                   <div className="flex col-span-4 w-full">
@@ -373,10 +373,10 @@ function ApplicationCard(props) {
         <div
           className={`relative flex flex-col col-span-full ${
             // Bug: hover:border-kxBlue not working. Fix -> [#5a86ff]
-            isChecked ? "hover:border-[#5a86ff]" : "hover:bg-gray-700"
-          } hover:bg-gray-700 bg-inv3 rounded border-2 ${
-            isChecked ? "border-kxBlue" : "border-inv3"
-          } hover:border-2 hover:border-gray-600 ${
+            isChecked ? "hover:border-[#5a86ff]" : "hover:bg-[#3d4d63]"
+          } hover:bg-[#3d4d63] bg-gray-700 rounded border-2 ${
+            isChecked ? "border-kxBlue" : "border-gray-700"
+          } ${
             props.isListLayout ? "col-span-full" : "sm:col-span-6 xl:col-span-3"
           }`}
           loading="lazy"
@@ -542,7 +542,7 @@ function ApplicationCard(props) {
           </div> */}
 
           <div
-            className={`w-full bg-gray-700 absolute bottom-[-82px] h-20 p-5 ${
+            className={`w-full bg-[#3d4d63] absolute bottom-[-82px] h-20 p-5 ${
               isHovering
                 ? "h-20 visible transition-transform translate-y-[-82px] ease-out duration-500"
                 : ""

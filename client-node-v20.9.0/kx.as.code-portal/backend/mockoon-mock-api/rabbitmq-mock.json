@@ -1,0 +1,532 @@
+{
+  "uuid": "402d4275-a37f-44d8-b55d-79cf725c1e47",
+  "lastMigration": 29,
+  "name": "Rabbitmq mock",
+  "endpointPrefix": "mock",
+  "latency": 0,
+  "port": 8000,
+  "hostname": "",
+  "folders": [],
+  "routes": [
+    {
+      "uuid": "ece54f63-34fe-4f2d-be95-4442e315a056",
+      "type": "http",
+      "documentation": "",
+      "method": "get",
+      "endpoint": "",
+      "responses": [
+        {
+          "uuid": "bd2197e4-95cd-411c-9336-050f9dfe99ae",
+          "body": "{}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id"
+        }
+      ],
+      "enabled": true,
+      "responseMode": null
+    },
+    {
+      "uuid": "695f55e1-db25-4d0c-b077-11a35e95b982",
+      "type": "http",
+      "documentation": "",
+      "method": "get",
+      "endpoint": "api/queues/notification_queue",
+      "responses": [
+        {
+          "uuid": "48adc7e5-6e81-4efe-b242-e8f1a3b24e5f",
+          "body": "[\n  {\n    \"payload_bytes\": 274,\n    \"redelivered\": false,\n    \"exchange\": \"action_workflow\",\n    \"routing_key\": \"notification_queue\",\n    \"message_count\": 50,\n    \"properties\": {\n      \"delivery_mode\": 2\n    },\n    \"payload\": \"{ \\\"message\\\": \\\"Install of \\\"management-agents\\\" started [1/27]\\\", \\\"application\\\": \\\"management-agents\\\", \\\"installation_folder\\\": \\\"core\\\", \\\"message_type\\\": \\\"action_status\\\", \\\"action\\\": \\\"Component Installation\\\", \\\"action_status\\\": \\\"started\\\", \\\"log_level\\\": \\\"info\\\", \\\"timestamp\\\": \\\"1699471041\\\" }\",\n    \"payload_encoding\": \"string\"\n  },\n  {\n    \"payload_bytes\": 291,\n    \"redelivered\": false,\n    \"exchange\": \"action_workflow\",\n    \"routing_key\": \"notification_queue\",\n    \"message_count\": 49,\n    \"properties\": {\n      \"delivery_mode\": 2\n    },\n    \"payload\": \"{ \\\"message\\\": \\\"\\\"management-agents\\\" installed successfully [1/27] (02 seconds)\\\", \\\"application\\\": \\\"management-agents\\\", \\\"installation_folder\\\": \\\"core\\\", \\\"message_type\\\": \\\"action_status\\\", \\\"action\\\": \\\"Component Installation\\\", \\\"action_status\\\": \\\"success\\\", \\\"log_level\\\": \\\"info\\\", \\\"timestamp\\\": \\\"1699471059\\\" }\",\n    \"payload_encoding\": \"string\"\n  },\n  {\n    \"payload_bytes\": 252,\n    \"redelivered\": false,\n    \"exchange\": \"action_workflow\",\n    \"routing_key\": \"notification_queue\",\n    \"message_count\": 48,\n    \"properties\": {\n      \"delivery_mode\": 2\n    },\n    \"payload\": \"{ \\\"message\\\": \\\"Install of \\\"gopass\\\" started [1/27]\\\", \\\"application\\\": \\\"gopass\\\", \\\"installation_folder\\\": \\\"core\\\", \\\"message_type\\\": \\\"action_status\\\", \\\"action\\\": \\\"Component Installation\\\", \\\"action_status\\\": \\\"started\\\", \\\"log_level\\\": \\\"info\\\", \\\"timestamp\\\": \\\"1699471072\\\" }\",\n    \"payload_encoding\": \"string\"\n  }]",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id"
+        }
+      ],
+      "enabled": true,
+      "responseMode": null
+    },
+    {
+      "uuid": "7aea1d27-3827-4673-81ca-14e4988a95d1",
+      "type": "http",
+      "documentation": "",
+      "method": "get",
+      "endpoint": "api/queues/pending_queue",
+      "responses": [
+        {
+          "uuid": "a50822c2-b025-4dc9-af93-8f1ea4bb3c54",
+          "body": "[{\n    \"payload_bytes\": 84,\n    \"redelivered\": true,\n    \"exchange\": \"action_workflow\",\n    \"routing_key\": \"pending_queue\",\n    \"message_count\": 19,\n    \"properties\": {\n      \"delivery_mode\": 2\n    },\n    \"payload\": \"{\\\"install_folder\\\":\\\"colaboration\\\",\\\"name\\\":\\\"confluence\\\",\\\"action\\\":\\\"install\\\",\\\"retries\\\":\\\"0\\\"}\",\n    \"payload_encoding\": \"string\"\n  }, \n  {\n    \"payload_bytes\": 84,\n    \"redelivered\": true,\n    \"exchange\": \"action_workflow\",\n    \"routing_key\": \"pending_queue\",\n    \"message_count\": 19,\n    \"properties\": {\n      \"delivery_mode\": 2\n    },\n    \"payload\": \"{\\\"install_folder\\\":\\\"colaboration\\\",\\\"name\\\":\\\"jenkins\\\",\\\"action\\\":\\\"install\\\",\\\"retries\\\":\\\"0\\\"}\",\n    \"payload_encoding\": \"string\"\n  }]",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id"
+        }
+      ],
+      "enabled": true,
+      "responseMode": null
+    },
+    {
+      "uuid": "2bd0b554-06e3-400d-808b-7e85ab57057e",
+      "type": "http",
+      "documentation": "",
+      "method": "get",
+      "endpoint": "api/queues/completed_queue",
+      "responses": [
+        {
+          "uuid": "4c8e4cb6-5164-4272-b24d-3cf5152c7459",
+          "body": "[\n  {\n    \"payload_bytes\": 85,\n    \"redelivered\": true,\n    \"exchange\": \"action_workflow\",\n    \"routing_key\": \"completed_queue\",\n    \"message_count\": 24,\n    \"properties\": {\n      \"delivery_mode\": 2\n    },\n    \"payload\": \"{\\\"install_folder\\\":\\\"core\\\",\\\"name\\\":\\\"argocd\\\",\\\"action\\\":\\\"install\\\",\\\"retries\\\":\\\"0\\\"}\",\n    \"payload_encoding\": \"string\"\n  },\n  {\n    \"payload_bytes\": 74,\n    \"redelivered\": true,\n    \"exchange\": \"action_workflow\",\n    \"routing_key\": \"completed_queue\",\n    \"message_count\": 23,\n    \"properties\": {\n      \"delivery_mode\": 2\n    },\n    \"payload\": \"{\\\"install_folder\\\":\\\"core\\\",\\\"name\\\":\\\"artifactory\\\",\\\"action\\\":\\\"install\\\",\\\"retries\\\":\\\"0\\\"}\",\n    \"payload_encoding\": \"string\"\n  },\n  {\n    \"payload_bytes\": 77,\n    \"redelivered\": true,\n    \"exchange\": \"action_workflow\",\n    \"routing_key\": \"completed_queue\",\n    \"message_count\": 22,\n    \"properties\": {\n      \"delivery_mode\": 2\n    },\n    \"payload\": \"{\\\"install_folder\\\":\\\"core\\\",\\\"name\\\":\\\"kx-portal\\\",\\\"action\\\":\\\"install\\\",\\\"retries\\\":\\\"0\\\"}\",\n    \"payload_encoding\": \"string\"\n  },\n  {\n    \"payload_bytes\": 95,\n    \"redelivered\": true,\n    \"exchange\": \"action_workflow\",\n    \"routing_key\": \"completed_queue\",\n    \"message_count\": 21,\n    \"properties\": {\n      \"delivery_mode\": 2\n    },\n    \"payload\": \"{\\\"install_folder\\\":\\\"core\\\",\\\"name\\\":\\\"cfssl-certificate-authority\\\",\\\"action\\\":\\\"install\\\",\\\"retries\\\":\\\"0\\\"}\",\n    \"payload_encoding\": \"string\"\n  },\n  {\n    \"payload_bytes\": 76,\n    \"redelivered\": true,\n    \"exchange\": \"action_workflow\",\n    \"routing_key\": \"completed_queue\",\n    \"message_count\": 20,\n    \"properties\": {\n      \"delivery_mode\": 2\n    },\n    \"payload\": \"{\\\"install_folder\\\":\\\"core\\\",\\\"name\\\":\\\"openldap\\\",\\\"action\\\":\\\"install\\\",\\\"retries\\\":\\\"0\\\"}\",\n    \"payload_encoding\": \"string\"\n  },\n  {\n    \"payload_bytes\": 84,\n    \"redelivered\": true,\n    \"exchange\": \"action_workflow\",\n    \"routing_key\": \"completed_queue\",\n    \"message_count\": 19,\n    \"properties\": {\n      \"delivery_mode\": 2\n    },\n    \"payload\": \"{\\\"install_folder\\\":\\\"core\\\",\\\"name\\\":\\\"kubernetes-tools\\\",\\\"action\\\":\\\"install\\\",\\\"retries\\\":\\\"0\\\"}\",\n    \"payload_encoding\": \"string\"\n  }]",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id"
+        }
+      ],
+      "enabled": true,
+      "responseMode": null
+    },
+    {
+      "uuid": "8571bdda-7817-4a04-80b0-d49babbb93b8",
+      "type": "http",
+      "documentation": "",
+      "method": "get",
+      "endpoint": "api/queues/wip_queue",
+      "responses": [
+        {
+          "uuid": "f5626365-beaa-403f-a8f9-511d3a0402e4",
+          "body": "[]",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id"
+        }
+      ],
+      "enabled": true,
+      "responseMode": null
+    },
+    {
+      "uuid": "e0e3c4da-e343-40de-8247-02ff937734c6",
+      "type": "http",
+      "documentation": "",
+      "method": "get",
+      "endpoint": "api/queues/failed_queue",
+      "responses": [
+        {
+          "uuid": "46318b43-6a66-424c-9852-bf65c755d119",
+          "body": "[]",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id"
+        }
+      ],
+      "enabled": true,
+      "responseMode": null
+    },
+    {
+      "uuid": "8c060dae-775d-45cd-b8df-7e696a39ae8c",
+      "type": "http",
+      "documentation": "",
+      "method": "get",
+      "endpoint": "api/queues/retry_queue",
+      "responses": [
+        {
+          "uuid": "5bfe3999-8d1b-43ac-8c22-810795139753",
+          "body": "[]",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id"
+        }
+      ],
+      "enabled": true,
+      "responseMode": null
+    },
+    {
+      "uuid": "02590561-5b86-4e02-970a-5546d4edfa04",
+      "type": "http",
+      "documentation": "",
+      "method": "get",
+      "endpoint": "api/jenkins/healthcheck",
+      "responses": [
+        {
+          "uuid": "710155bb-4a2b-49c3-bd70-ae39a1fb3f61",
+          "body": "{}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id"
+        }
+      ],
+      "enabled": true,
+      "responseMode": null
+    },
+    {
+      "uuid": "178fafbf-ab0e-448b-8045-581d5cb6ae94",
+      "type": "http",
+      "documentation": "",
+      "method": "get",
+      "endpoint": "api/artifactory/healthcheck",
+      "responses": [
+        {
+          "uuid": "f55943ae-4922-4279-b2aa-efd17ab0ea0e",
+          "body": "{}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id"
+        }
+      ],
+      "enabled": true,
+      "responseMode": null
+    },
+    {
+      "uuid": "56a4dc6c-05b3-40d5-b566-9aac119c534d",
+      "type": "http",
+      "documentation": "",
+      "method": "get",
+      "endpoint": "api/kx-portal/healthcheck",
+      "responses": [
+        {
+          "uuid": "1793dba5-79d7-411b-ba02-03008e15f53d",
+          "body": "{}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id"
+        }
+      ],
+      "enabled": true,
+      "responseMode": null
+    },
+    {
+      "uuid": "9524a13a-f5ad-4ace-8bbd-67dd94879d15",
+      "type": "http",
+      "documentation": "",
+      "method": "get",
+      "endpoint": "api/cfssl-certificate-authority/healthcheck",
+      "responses": [
+        {
+          "uuid": "4174c986-a0d7-4560-ad3b-133c314412cf",
+          "body": "{}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id"
+        }
+      ],
+      "enabled": true,
+      "responseMode": null
+    },
+    {
+      "uuid": "abda640c-6945-4b36-8363-377f30eeee2c",
+      "type": "http",
+      "documentation": "",
+      "method": "get",
+      "endpoint": "api/openldap/healthcheck",
+      "responses": [
+        {
+          "uuid": "3b842627-e350-48bc-bf54-2a03c5168d6c",
+          "body": "{}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id"
+        }
+      ],
+      "enabled": true,
+      "responseMode": null
+    },
+    {
+      "uuid": "11c0ea19-45f1-4961-b478-29d8c0f8a5f8",
+      "type": "http",
+      "documentation": "",
+      "method": "get",
+      "endpoint": "api/kubernetes-tools/healthcheck",
+      "responses": [
+        {
+          "uuid": "69bd465f-118a-411b-8231-7e9135942a0a",
+          "body": "{}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id"
+        }
+      ],
+      "enabled": true,
+      "responseMode": null
+    },
+    {
+      "uuid": "4bee9cab-2802-414a-9546-2850a0369d8d",
+      "type": "http",
+      "documentation": "",
+      "method": "get",
+      "endpoint": "api/argocd/healthcheck",
+      "responses": [
+        {
+          "uuid": "02dd4ffe-191c-41fd-a75d-6bb5855b9359",
+          "body": "{}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id"
+        }
+      ],
+      "enabled": true,
+      "responseMode": null
+    }
+  ],
+  "rootChildren": [
+    {
+      "type": "route",
+      "uuid": "ece54f63-34fe-4f2d-be95-4442e315a056"
+    },
+    {
+      "type": "route",
+      "uuid": "695f55e1-db25-4d0c-b077-11a35e95b982"
+    },
+    {
+      "type": "route",
+      "uuid": "7aea1d27-3827-4673-81ca-14e4988a95d1"
+    },
+    {
+      "type": "route",
+      "uuid": "2bd0b554-06e3-400d-808b-7e85ab57057e"
+    },
+    {
+      "type": "route",
+      "uuid": "8571bdda-7817-4a04-80b0-d49babbb93b8"
+    },
+    {
+      "type": "route",
+      "uuid": "e0e3c4da-e343-40de-8247-02ff937734c6"
+    },
+    {
+      "type": "route",
+      "uuid": "8c060dae-775d-45cd-b8df-7e696a39ae8c"
+    },
+    {
+      "type": "route",
+      "uuid": "02590561-5b86-4e02-970a-5546d4edfa04"
+    },
+    {
+      "type": "route",
+      "uuid": "4bee9cab-2802-414a-9546-2850a0369d8d"
+    },
+    {
+      "type": "route",
+      "uuid": "178fafbf-ab0e-448b-8045-581d5cb6ae94"
+    },
+    {
+      "type": "route",
+      "uuid": "56a4dc6c-05b3-40d5-b566-9aac119c534d"
+    },
+    {
+      "type": "route",
+      "uuid": "9524a13a-f5ad-4ace-8bbd-67dd94879d15"
+    },
+    {
+      "type": "route",
+      "uuid": "abda640c-6945-4b36-8363-377f30eeee2c"
+    },
+    {
+      "type": "route",
+      "uuid": "11c0ea19-45f1-4961-b478-29d8c0f8a5f8"
+    }
+  ],
+  "proxyMode": false,
+  "proxyHost": "",
+  "proxyRemovePrefix": false,
+  "tlsOptions": {
+    "enabled": false,
+    "type": "CERT",
+    "pfxPath": "",
+    "certPath": "",
+    "keyPath": "",
+    "caPath": "",
+    "passphrase": ""
+  },
+  "cors": true,
+  "headers": [
+    {
+      "key": "Content-Type",
+      "value": "application/json"
+    },
+    {
+      "key": "",
+      "value": ""
+    },
+    {
+      "key": "Access-Control-Allow-Origin",
+      "value": "*"
+    },
+    {
+      "key": "Access-Control-Allow-Methods",
+      "value": "GET,POST,PUT,PATCH,DELETE,HEAD,OPTIONS"
+    },
+    {
+      "key": "Access-Control-Allow-Headers",
+      "value": "Content-Type, Origin, Accept, Authorization, Content-Length, X-Requested-With"
+    }
+  ],
+  "proxyReqHeaders": [
+    {
+      "key": "",
+      "value": ""
+    }
+  ],
+  "proxyResHeaders": [
+    {
+      "key": "",
+      "value": ""
+    }
+  ],
+  "data": [
+    {
+      "uuid": "a7b386d7-fcb0-4b8a-a9b2-2b97352494ff",
+      "id": "gea5",
+      "name": "Notifications",
+      "documentation": "",
+      "value": ""
+    }
+  ]
+}

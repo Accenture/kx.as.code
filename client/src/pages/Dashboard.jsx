@@ -79,6 +79,8 @@ const Dashboard = () => {
   const [isOpenQueueDashboardSection, setIsOpenQueueDashboardSection] = useState(true);
   const [isOpenAppsHealthcheckDashboardSection, setIsOpenAppsHealthcheckDashboardSection] = useState(true);
   const [applicationData, setApplicationData] = useState([]);
+  const [healthCheckData, setHealthCheckData] = useState([]);
+
 
 
   const fetchApplicationData = () => {
@@ -111,9 +113,31 @@ const Dashboard = () => {
     });
   };
 
+  const fetchhealthcheckData = async () => {
+    try {
+      const response = await fetch("http://localhost:5001/healthcheckdata");
+      const data = await response.json();
+      setHealthCheckData(data);
+    } catch (error) {
+      console.error("Error fetching health check data:", error);
+    }
+  };
+
   useEffect(() => {
     fetchQueueData();
     fetchApplicationData();
+
+    // Initial fetch
+    fetchhealthcheckData();
+
+    // Fetch data every minute
+    const intervalId = setInterval(() => {
+      fetchhealthcheckData();
+    }, 60000); // 60000 milliseconds = 1 minute
+
+    // Cleanup function to clear the interval when the component unmounts
+    return () => clearInterval(intervalId);
+    
   }, []);
 
   return (
@@ -163,7 +187,7 @@ const Dashboard = () => {
 
       </div>
 
-      <HealthcheckDashboard applicationData={applicationData} queueData={queueData} />
+      <HealthcheckDashboard healthCheckData={healthCheckData} />
 
     </div>
   );
