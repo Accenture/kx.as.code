@@ -12,6 +12,7 @@ app.use(bodyParser.json());
 const PORT = process.env.PORT || 5001;
 const dataPath = "./src/data/combined-metadata-files.json";
 const healthCheckDataPath = "./src/data/healthcheckdata.json";
+const profileConfig = "../../profiles/vagrant-virtualbox/profile-config.json"
 const rabbitMqUsername = "test";
 const rabbitMqPassword = "test";
 const rabbitMqHost = "localhost";
@@ -52,11 +53,14 @@ const performHealthCheck = async () => {
       return payloadObj.name;
     });
 
-    const baseDomain = "kx-as-code.local"
+    const rawData = fs.readFileSync(healthCheckDataPath);
+    const configData = JSON.parse(rawData);  
+    const environmentPrefix = configData.config.environmentPrefix;
+    const baseDomain = configData.config.baseDomain;  
 
     // Perform health check for each appName
     for (const appName of appNames) {
-      const healthCheckUrl = `http://${appName}.${baseDomain}`;
+      const healthCheckUrl = `http://${appName}.${environmentPrefix}.${baseDomain}`;
 
       const response = await axios.get(healthCheckUrl);
 
