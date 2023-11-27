@@ -5,7 +5,7 @@ import { Inter } from 'next/font/google'
 import './globals.css'
 import Header from "../app/components/Header";
 import ThemeRegistry from './ThemeRegistry';
-import Sidebar from "./components/Sidebar"
+// import Sidebar from "./components/Sidebar"
 
 import { styled, useTheme, Theme, CSSObject } from '@mui/material/styles';
 import Box from '@mui/material/Box';
@@ -26,6 +26,16 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import InboxIcon from '@mui/icons-material/MoveToInbox';
 import MailIcon from '@mui/icons-material/Mail';
+import { BrowserRouter as Router } from "react-router-dom";
+import { MdDashboard } from "react-icons/md";
+import Image from 'next/image'
+import { black } from "tailwindcss/colors";
+import Link from "next/link";
+import { LiaCubesSolid } from "react-icons/lia";
+import { IoSettingsSharp } from "react-icons/io5";
+
+
+
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -111,6 +121,9 @@ export default function RootLayout({
 
   const theme = useTheme();
   const [open, setOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const drawerWidth = 240;
+
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -122,10 +135,113 @@ export default function RootLayout({
 
   return (
     <html lang="en">
-      <body className={`${inter.className} bg-black`}>
-        <Header />
+      <body className={`${inter.className} bg-ghBlack mt-16`}>
         <ThemeRegistry options={{ key: 'mui' }}>
-
+          <Drawer variant="permanent" open={open} className="bg-kxBlue" >
+            <DrawerHeader className="">
+              <IconButton onClick={handleDrawerClose}>
+                {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
+              </IconButton>
+            </DrawerHeader>
+            <List className="">
+              <ListItem key={"Dashboard"} disablePadding sx={{ display: 'block' }}>
+                <Link href="/dashboard">
+                  <ListItemButton
+                    sx={{
+                      minHeight: 40,
+                      justifyContent: open ? 'initial' : 'center',
+                      px: 2.5,
+                    }}
+                  >
+                    <ListItemIcon
+                      sx={{
+                        minWidth: 0,
+                        mr: open ? 3 : 'auto',
+                        justifyContent: 'center',
+                      }}
+                    >
+                      <MdDashboard className="text-3xl" />
+                    </ListItemIcon>
+                    <ListItemText primary={"Dashboard"} sx={{ opacity: open ? 1 : 0 }} />
+                  </ListItemButton>
+                </Link>
+              </ListItem>
+              <ListItem key={"applications"} disablePadding sx={{ display: 'block' }}>
+              <Link href="/applications">
+                <ListItemButton
+                  sx={{
+                    minHeight: 40,
+                    justifyContent: open ? 'initial' : 'center',
+                    px: 2.5,
+                  }}
+                >
+                  <ListItemIcon
+                    sx={{
+                      minWidth: 0,
+                      mr: open ? 3 : 'auto',
+                      justifyContent: 'center',
+                    }}
+                  >
+                    <Image className=""
+                      src="/media/svg/ks-logo-w.svg"
+                      width={40}
+                      height={40}
+                      alt="Picture of the author"
+                    />
+                  </ListItemIcon>
+                  <ListItemText primary={"Applications"} sx={{ opacity: open ? 1 : 0, marginLeft: "-10px" }} />
+                </ListItemButton>
+                </Link>
+              </ListItem>
+              <ListItem key={"Application Groups"} disablePadding sx={{ display: 'block' }}>
+                <Link href="/application-groups">
+                  <ListItemButton
+                    sx={{
+                      minHeight: 40,
+                      justifyContent: open ? 'initial' : 'center',
+                      px: 2.5,
+                    }}
+                  >
+                    <ListItemIcon
+                      sx={{
+                        minWidth: 0,
+                        mr: open ? 3 : 'auto',
+                        justifyContent: 'center',
+                      }}
+                    >
+                      <LiaCubesSolid className="text-3xl" />
+                    </ListItemIcon>
+                    <ListItemText primary={"Application Groups"} sx={{ opacity: open ? 1 : 0 }} />
+                  </ListItemButton>
+                </Link>
+              </ListItem>
+              <ListItem key={"Settings"} disablePadding sx={{ display: 'block' }}>
+                <Link href="/settings">
+                  <ListItemButton
+                    sx={{
+                      minHeight: 40,
+                      justifyContent: open ? 'initial' : 'center',
+                      px: 2.5,
+                    }}
+                  >
+                    <ListItemIcon
+                      sx={{
+                        minWidth: 0,
+                        mr: open ? 3 : 'auto',
+                        justifyContent: 'center',
+                      }}
+                    >
+                      <IoSettingsSharp className="text-3xl" />
+                    </ListItemIcon>
+                    <ListItemText primary={"Settings"} sx={{ opacity: open ? 1 : 0 }} />
+                  </ListItemButton>
+                </Link>
+              </ListItem>
+            </List>
+          </Drawer>
+          <Header drawerWidth={drawerWidth} handleDrawerOpen={handleDrawerOpen} open={open} />
+          {/* Sidebar */}
+          {/* <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} /> */}
           {children}
         </ThemeRegistry>
       </body>

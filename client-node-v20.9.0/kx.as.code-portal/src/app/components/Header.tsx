@@ -19,11 +19,13 @@ import ListItemText from '@mui/material/ListItemText';
 import InboxIcon from '@mui/icons-material/MoveToInbox';
 import MailIcon from '@mui/icons-material/Mail';
 import Image from 'next/image'
+import Link from "next/link";
 
 
 interface HeaderProps {
   open: boolean;
   handleDrawerOpen: () => void;
+  drawerWidth?: number;
 }
 
 interface AppBarProps extends MuiAppBarProps {
@@ -39,8 +41,8 @@ const AppBar = styled(MuiAppBar, {
     duration: theme.transitions.duration.leavingScreen,
   }),
   ...(open && {
-    marginLeft: drawerWidth,
-    width: `calc(100% - ${drawerWidth}px)`,
+    marginLeft: 240,
+    width: `calc(100% - 240px)`,
     transition: theme.transitions.create(['width', 'margin'], {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.enteringScreen,
@@ -50,26 +52,29 @@ const AppBar = styled(MuiAppBar, {
 
 const Header: FC<HeaderProps> = (props) => {
   return (
-    <AppBar position="relative" open={props.open} className="bg-ghBlack3" elevation={0}>
-      <Toolbar>
+    <AppBar position="fixed" open={props.open} className="" elevation={0}>
+      <Toolbar className="bg-kxBlue">
         <IconButton
           color="inherit"
           aria-label="open drawer"
           onClick={props.handleDrawerOpen}
           edge="start"
           sx={{
+            borderRadius: 0,
             marginRight: 5,
             ...(props.open && { display: 'none' }),
           }}
         >
-          <MenuIcon />
+          <MenuIcon className=""/>
         </IconButton>
+        <Link href="/">
           <Image
             src="/media/svg/ks-logo-w.svg"
             width={50}
             height={50}
             alt="Picture of the author"
           />
+          </Link>
       </Toolbar>
     </AppBar>
   );

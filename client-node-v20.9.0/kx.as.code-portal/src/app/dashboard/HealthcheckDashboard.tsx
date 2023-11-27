@@ -178,7 +178,7 @@ const HealthcheckDashboard: React.FC<HealthcheckDashboardProps> = (props) => {
                     <div className='text-gray-400 text-sm ml-3'>Installed Applications: {Object.keys(props.healthCheckData).length}</div>
                 </div>
 
-                <div className="h-[450px] overflow-auto scrollbar-orange">
+                <div className="h-[400px] overflow-auto scrollbar-orange border-2 border-ghBlack4">
                     {Object.keys(props.healthCheckData)
                         .filter((app) => {
                             const appName = app.toLowerCase().trim();
@@ -200,7 +200,7 @@ const HealthcheckDashboard: React.FC<HealthcheckDashboardProps> = (props) => {
                         })
                         .length === 0 && (
                             <div className=''>
-                                <div className='mb-2 text-base text-gray-400'>No results for '{searchTerm}'</div>
+                                <div className='mb-2 text-base text-gray-400 pl-3 pt-3'>No results for '{searchTerm}'</div>
                             </div>
                         )}
                 </div>

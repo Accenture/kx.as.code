@@ -16,7 +16,7 @@ const rabbitMqUsername = "test";
 const rabbitMqPassword = "test";
 const rabbitMqHost = "localhost";
 
-const healthCheckInterval = 8000; // 8 seconds for testing purpose
+const healthCheckInterval = 5000; // 5 seconds for testing purpose
 
 app.use(cors());
 

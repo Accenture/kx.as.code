@@ -9,7 +9,7 @@
   /* --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
   --background-end-rgb: 255, 255, 255; */
-  background-color: black;
+  background-color: #0d1117;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -76,7 +76,7 @@ body {
 
 /* For WebKit browsers (Chrome, Safari) */
 .scrollbar-orange::-webkit-scrollbar {
-  width: 20px;
+  width: 15px;
 }
 
 .scrollbar-orange::-webkit-scrollbar-thumb {

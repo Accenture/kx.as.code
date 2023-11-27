@@ -8,7 +8,7 @@ import { useRouter } from 'next/navigation'
 const Home: React.FC = () => {
   const router = useRouter()
   return (
-    <div className="px-4 sm:px-6 lg:px-40 py-20 w-full max-w-9xl mx-auto bg-ghBlack">
+    <div className="px-4 sm:px-6 lg:px-40 py-20 w-full max-w-9xl mx-auto">
 
       {/* Intro Header Section */}
       <div className="grid grid-cols-12 gap-14">

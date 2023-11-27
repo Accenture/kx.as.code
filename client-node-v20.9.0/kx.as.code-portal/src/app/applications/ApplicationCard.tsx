@@ -217,7 +217,7 @@ function ApplicationCard(props: ApplicationCardProps) {
                           <div className="text-white bg-ghBlack4 p-0 py-1 px-2 uppercase w-fit inline-block my-1 text-xs">
                             {props.app.installation_group_folder}
                           </div>
-                          <h2 className="hover:underline hover:cursor-pointer text-base text-gray-400 mb-2 flex items-center">
+                          <h2 className="hover:underline hover:cursor-pointer text-base text-gray-400 flex items-center">
                             {/* {
                               allQueueStatus != "" && (
                                 <StatusPoint installStatus={allQueueStatus} />
