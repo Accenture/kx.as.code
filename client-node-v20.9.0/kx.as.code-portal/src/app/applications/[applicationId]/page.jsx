@@ -96,11 +96,11 @@ export default function ApplicationDetail(props) {
     }, []);
 
     return (
-        <div className="p-4">
+        <div className="px-4 sm:px-6 lg:px-24 py-8 w-full max-w-9xl mx-auto bg-ghBlack">
             {/* Header */}
-            <div className="grid grid-cols-12 py-5 p-5 items-center">
+            <div className="grid grid-cols-12 py-5 p-5 items-center bg-ghBlack2">
                 <div className="col-span-10">
-                    <div className="text-white bg-ghBlack2 p-0 px-1.5 uppercase w-fit inline-block my-2 text-base">
+                    <div className="text-white bg-ghBlack p-0 px-1.5 uppercase w-fit inline-block my-2 text-base">
                         {appData.installation_group_folder}
                     </div>
                     <div className="flex items-center">
@@ -133,16 +133,16 @@ export default function ApplicationDetail(props) {
             {/* Header Section 2 */}
 
             <div className="grid grid-cols-12 mt-5">
-                <div className="col-span-8 bg-ghBlack2 p-5 mr-5 pt-10">
+                <div className="col-span-8 border border-gray-600 p-5 mr-5">
                     <h2 className="mb-3 text-base">Screenshots</h2>
                     <ScreenshotCarroussel appName={appData.name} />
                 </div>
-                <div className="col-span-4 p-5 bg-ghBlack2 pt-10">
-                    <h2 className="mb-3 text-lg">Executable Tasks</h2>
+                <div className="col-span-4 p-5 border border-gray-600">
+                    <h2 className="mb-3 text-base">Executable Tasks</h2>
                     {availableTasksList.length > 0 ? (
                         drawAwailableTasksComponents()
                     ) : (
-                        <div>No Tasks available.</div>
+                        <div className="text-base text-gray-400">No Tasks available.</div>
                     )}
                 </div>
             </div>

@@ -186,7 +186,7 @@ export default function RootLayout({
                         src="/media/svg/ks-logo-w.svg"
                         width={40}
                         height={40}
-                        alt="Picture of the author"
+                        alt="KX.AS.Code Logo"
                       />
                     </ListItemIcon>
                     <ListItemText primary={"Applications"} sx={{ opacity: open ? 1 : 0, marginLeft: "-10px" }} />

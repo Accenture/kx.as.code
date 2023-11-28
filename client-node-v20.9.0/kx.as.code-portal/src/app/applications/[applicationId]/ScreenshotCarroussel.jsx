@@ -4,8 +4,6 @@ import { RiWindowLine } from "react-icons/ri";
 import SCarousel from "./SCarousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 
-// import img from "../../media/png/appImgs/jenkins.png";
-
 export default function ScreenshotCarroussel(props) {
   const [image, setImage] = useState();
   const [screenshots, setScreenshots] = useState([]);
@@ -36,7 +34,7 @@ export default function ScreenshotCarroussel(props) {
       try {
         for (let i = 1; i < 10; i++) {
           const response = await import(
-            `../../../media/png/screenshots/${imageName}_screenshot${i}.png`
+            `/media/png/screenshots/${imageName}_screenshot${i}.png`
           );
           screenshotsListTmp.push(response.default);
         }

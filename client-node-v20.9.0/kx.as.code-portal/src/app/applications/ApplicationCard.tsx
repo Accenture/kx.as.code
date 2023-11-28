@@ -204,10 +204,7 @@ function ApplicationCard(props: ApplicationCardProps) {
               <div className="flex col-span-10 items-center">
                 <div className="grid grid-cols-12 items-center">
                   <div className="flex col-span-4 pr-5 border-r-2 border-ghBlack">
-                    {/* <Link
-                      to={"/apps/" + getSlug()}
-                      className="mx-3 flex col-span-6"
-                    > */}
+
                     <div className="flex items-center w-[280px] pl-5">
                       <div className="h-auto w-10">
                         <AppLogo appName={props.app.name} />
@@ -217,26 +214,31 @@ function ApplicationCard(props: ApplicationCardProps) {
                           <div className="text-white bg-ghBlack4 p-0 py-1 px-2 uppercase w-fit inline-block my-1 text-xs">
                             {props.app.installation_group_folder}
                           </div>
-                          <h2 className="hover:underline hover:cursor-pointer text-base text-white flex items-center">
-                            {/* {
+                          <Link
+                            href={"/applications/" + getSlug()}
+                            className=""
+                          >
+                            <h2 className="hover:underline hover:cursor-pointer text-base text-white flex items-center">
+                              {/* {
                               allQueueStatus != "" && (
                                 <StatusPoint installStatus={allQueueStatus} />
                               )} */}
-                            {getTransformedName()}
-                            <Tooltip
-                              title={props.app.Description}
-                              placement="top"
-                              arrow
-                            >
-                              <button className="inline">
-                                <HiOutlineInformationCircle className="ml-1" />
-                              </button>
-                            </Tooltip>
-                          </h2>
+                              {getTransformedName()}
+                              <Tooltip
+                                title={props.app.Description}
+                                placement="top"
+                                arrow
+                              >
+                                <button className="inline">
+                                  <HiOutlineInformationCircle className="ml-1" />
+                                </button>
+                              </Tooltip>
+                            </h2>
+                          </Link>
                         </div>
                       </div>
                     </div>
-                    {/* </Link> */}
+
                   </div>
                   <div className="flex col-span-6 w-full pl-2">
                     <ul className="float-left">

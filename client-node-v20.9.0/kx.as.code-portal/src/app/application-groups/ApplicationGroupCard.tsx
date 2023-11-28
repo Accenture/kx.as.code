@@ -13,7 +13,14 @@ import { MdArrowBackIosNew, MdArrowForwardIos } from "react-icons/md";
 import ApplicationStatusActionButton from "../applications/ApplicationStatusActionButton";
 import Tooltip from "@mui/material/Tooltip";
 import { transformName } from "../utils/application";
+import { withStyles } from '@mui/styles';
 
+
+const StyledTooltip = withStyles({
+  tooltip: {
+      fontSize: '20px',
+  },
+})(Tooltip);
 
 interface ApplicationGroupCardProps {
   appGroup: any; // Replace 'any' with the actual type if available
@@ -146,16 +153,24 @@ const ApplicationGroupCard: React.FC<ApplicationGroupCardProps> = (props) => {
               </div>
             </CarouselProvider>
           </div>
-          <div className="">
-            <ApplicationStatusActionButton
-              isMqConnected={true}
-              getQueueStatusList={() => { }}
-              appName={""}
-              category={""}
-              applicationInstallHandler={() => { }}
-              refreshActionButton={() => { }}
-            />
-          </div>
+          <StyledTooltip
+            title={"BETA"}
+            placement="top"
+            arrow
+          >
+            <div className="">
+
+              <ApplicationStatusActionButton
+                isMqConnected={true}
+                getQueueStatusList={() => { }}
+                appName={""}
+                category={""}
+                applicationInstallHandler={() => { }}
+                refreshActionButton={() => { }}
+              />
+
+            </div>
+          </StyledTooltip>
         </div>
       </div>
     </div>

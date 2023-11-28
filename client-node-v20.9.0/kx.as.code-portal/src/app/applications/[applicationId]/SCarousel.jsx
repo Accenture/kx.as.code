@@ -1,6 +1,7 @@
 import React from "react";
 import { Carousel } from "react-responsive-carousel";
 import { useState, useEffect } from "react";
+import Image from 'next/image'
 
 export default function SCarousel(props) {
   useEffect(() => {
@@ -12,7 +13,13 @@ export default function SCarousel(props) {
       {props.screenshots.map((sc, i) => {
         return (
           <div key={i} className="rounded">
-            <img alt="" src={sc} className="rounded-xl" />
+            <Image className=""
+              src={sc}
+              width={100}
+              height={100}
+              alt="Screenshoot"
+            />
+            {/* <img alt="" src={sc} className="rounded-xl" /> */}
             {/* <p className="legend">{props.imageName}</p> */}
           </div>
         );
