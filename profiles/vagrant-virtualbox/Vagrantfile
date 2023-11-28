@@ -4,25 +4,38 @@ current_dir    = File.dirname(File.expand_path(__FILE__))
 
 if Vagrant::Util::Platform.windows?
   # Is Windows
-  puts "Vagrant launched from windows."
+  puts "Vagrant launched from Windows."
   vboxExecutable = "C:/Program Files/Oracle/VirtualBox/VBoxManage.exe"
 elsif Vagrant::Util::Platform.darwin?
   # Is Mac
-  puts "Vagrant launched from mac."
+  puts "Vagrant launched from Mac."
   vboxExecutable = "/Applications/VirtualBox.app/Contents/MacOS/VBoxManage"
+elsif Vagrant::Util::Platform.linux?
+  # Is Linux
+  puts "Vagrant launched from Linux."
+  vboxExecutable = "/usr/bin/vboxmanage"
 else
   # Assume WSL for now
-  puts "Vagrant launched from other system, maybe WSL?"
+  puts "Vagrant launched from other system, maybe WSL? Exiting."
 end
 
 # Checking if VirtualBox natnetwork is installed, and configuring it if not
-kxascodeNetworkExists = `bash -c "#{vboxExecutable.shellescape} natnetwork list kxascode | tail -1"`.strip
+if Vagrant::Util::Platform.windows?
+    kxascodeNetworkExists = `bash -c "#{vboxExecutable.shellescape} natnetwork list kxascode | tail -1"`.strip
+else
+    kxascodeNetworkExists = `bash -c "#{vboxExecutable} natnetwork list kxascode | tail -1"`.strip
+end
+
 puts "VirtualBox NAT network found: #{kxascodeNetworkExists}"
 if kxascodeNetworkExists == "1 network found"
     puts "VirtualBox already has the KX.AS.CODE NAT network installed. Nothing to do."
 elsif kxascodeNetworkExists == "0 networks found"
     puts "VirtualBox does not yet have the KX.AS.CODE NAT network installed. Creating it."
-    `bash -c "#{vboxExecutable.shellescape} natnetwork add --netname kxascode --network '10.100.76.0/24' --enable`
+    if Vagrant::Util::Platform.windows?
+        `bash -c "#{vboxExecutable.shellescape} natnetwork add --netname kxascode --network '10.100.76.0/24' --enable"`
+    else
+        `bash -c "#{vboxExecutable} natnetwork add --netname kxascode --network '10.100.76.0/24' --enable"`
+    end
 end
 
 # Read Profile Config file
@@ -62,6 +75,8 @@ puts "#{NUM_1GB_LOCAL_SIZE}+#{NUM_5GB_LOCAL_SIZE}+#{NUM_10GB_LOCAL_SIZE}+#{NUM_3
 puts "Local Disk Size: #{LOCAL_KUBE_VOLUMES_DISK_SIZE}GB"
 
 # Environment variables will override the profile-config.json file properties. This was added for the Jenkins jobs, so that they can override parameters
+PROFILE_PATH = ENV['profile_path']
+puts "PROFILE_PATH: #{PROFILE_PATH}"
 ENVIRONMENT_PREFIX = ENV['environmentPrefix'] || profile_config_json['config']['environmentPrefix']
 puts "ENVIRONMENT_PREFIX: #{ENVIRONMENT_PREFIX}"
 MAIN_NODE_COUNT = ENV['mainNodeCount'] || profile_config_json['config']['vm_properties']['main_node_count']
@@ -342,3 +357,5 @@ Vagrant.configure("2") do |config|
     end
 
 end
+
+puts "End of Vagrantfile"

@@ -64,19 +64,20 @@ pipeline {
                             cd profiles/vagrant-${profile}
                             # Fix for Windows to correct path
                             export vmCredentialsFile=\$(echo "$vmCredentialsFile" | sed 's;\\\\;\\/;g' | sed 's;:;;g')
-                            if [ "\${vmCredentialsFile:0:1}" != "/" ]; then
+                            if [ "\$(echo \$vmCredentialsFile | cut -c-1)" != "/" ]; then
                                 export vmCredentialsFile="/\${vmCredentialsFile}"
                             fi
                             cp -f \$vmCredentialsFile ./.vmCredentialsFile
                             vagrant global-status --prune
+                            echo "Vagrant prune completed"
                             runningProfileMainVms=\$(vagrant status --no-tty | grep kx-main | grep ${profile} | grep running || true)
                             runningProfileNodeVms=\$(vagrant status --no-tty | grep kx-node | grep ${profile} | grep running || true)
                             importedKxMainBoxes=\$(vagrant box list | grep kx-main | grep ${profile} | grep \${mainBoxVersion} || true)
                             importedKxNodeBoxes=\$(vagrant box list | grep kx-node | grep ${profile} | grep \${nodeBoxVersion} || true)
-                            if [ "\${runningProfileMainVms}" == "" ]; then
+                            if [ "\${runningProfileMainVms}" = "" ]; then
                                 vagrant box remove kxascode/kx-main --provider ${profile} --box-version 0 --force || true
                             fi
-                            if [ "\${runningProfileNodeVms}" == "" ]; then
+                            if [ "\${runningProfileNodeVms}" = "" ]; then
                                 vagrant box remove kxascode/kx-node --provider ${profile} --box-version 0 --force || true
                             fi
                             if [ "\${importedKxMainBoxes}" != "" ]; then
@@ -85,9 +86,10 @@ pipeline {
                             if [ "\${importedKxNodeBoxes}" != "" ]; then
                                 vagrant box remove kxascode/kx-node --provider ${profile} --box-version \${nodeBoxVersion} --force || true
                             fi
-                            if [ "${vagrant_action}" == "destroy" ]; then
+                            echo "About to execute vagrant ${vagrant_action} on ${profile}"
+                            if [ "${vagrant_action}" = "destroy" ]; then
                                 vagrant destroy --force --no-tty
-                            elif [ "${vagrant_action}" == "up" ]; then
+                            elif [ "${vagrant_action}" = "up" ]; then
                                 vagrant box update
                                 vagrant up --no-tty
                                 if [ \${num_kx_main_nodes} -gt 1 ]; then
@@ -109,11 +111,11 @@ pipeline {
                             else
                                 vagrant ${vagrant_action} --no-tty
                             fi
-                            if [ \"${profile}\" == \"virtualbox\" ]; then
+                            if [ \"${profile}\" = \"virtualbox\" ]; then
                                 \"${virtualboxCliPath}\" list vms
-                            elif [ \"${profile}\" == \"parallels\" ]; then
+                            elif [ \"${profile}\" = \"parallels\" ]; then
                                 \"${parallelsCliPath}\" list
-                            elif [ \"${profile}\" == \"vmware-desktop\" ]; then
+                            elif [ \"${profile}\" = \"vmware-desktop\" ]; then
                                 \"${vmwareCliPath}\" list
                             fi
                             """

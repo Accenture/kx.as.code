@@ -6,7 +6,7 @@ getOwnerId() {
   defaultUserKeyboardLanguage=$(jq -r '.config.owner.keyboard_language' ${installationWorkspace}/users.json)
   userRole=$(jq -r '.config.owner.role' ${installationWorkspace}/users.json)
 
-  if [[ -n ${firstname} ]] && [[ "${firstname}" != "null" ]]; then
+  if [[ -n ${firstname} ]] && [[ "${firstname}" != "null" ]] && [[ "${firstname,,}" != "kx" ]]; then
     ownerId=$(generateUsername "${firstname}" "${surname}")
     echo "${ownerId}"
   else

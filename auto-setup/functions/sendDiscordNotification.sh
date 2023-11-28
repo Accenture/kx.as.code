@@ -1,7 +1,7 @@
 ####_EXCLUDE_FROM_FUNCTION_HEADER_FOOTER_INJECTION_####
 sendDiscordNotification() {
   set +x
-  local message=''${1:-}''
+  local message=${1:-}
   local logLevel=${2:-"info"}
   local actionStatus=${3:-"unknown"}
   local componentName=${4:-"not applicable"}
@@ -20,8 +20,6 @@ sendDiscordNotification() {
     fi
 
     # Post message to Discord
-    parseMessage=$(echo ${message} | sed 's/"/\\\\\\"/g' | sed 's/\\$//g') # Ensure quotes are escaped
-
     if [[ "${logLevel}" == "error" ]] || [[ "${actionStatus}" == "failed" ]]; then
       local lastExecutingScript="$(cat ${installationWorkspace}/.retryDataStore.json | tr -d "[:cntrl:]" | jq -r '.script')"
       local lastExecutingFunction="${currentFunctionExecuting:-}"
@@ -36,7 +34,6 @@ sendDiscordNotification() {
 
     # logLevel --> info, error, warn
     # actionStatus --> success, failed, warning
-
     # Send message if necessary variables are populated
     if [[ -n ${discordNotificationWebhook} ]] && [[ "${discordNotificationWebhook}" != "null" ]] && [[ -n ${message} ]]; then
 
@@ -60,7 +57,7 @@ sendDiscordNotification() {
 
       echo '''{
         "username": "'${notificationTitle}' Notification ('${baseUser}')",
-        "content": "'${statusEmoticon}' '${parseMessage}'",
+        "content": "'${statusEmoticon}' '$(echo ${message} | base64 -d)'",
         "embeds": [
           {
             "description": "- Component: '${componentName^}' \n- Category: '${category^}'\n- Action: '${action^}'\n- Task: '${task^}'\n- Status: '${actionStatus^}'\n- Duration: '${actionDuration^}'\n- Last Executing Script: '${lastExecutingScript^}'\n- Last Executing Function: '${lastExecutingFunction^}'"

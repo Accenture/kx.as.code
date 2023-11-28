@@ -14,7 +14,7 @@ function Sidebar({ sidebarOpen, setSidebarOpen }, props) {
   const sidebar = useRef(null);
 
   // const storedSidebarExpanded = localStorage.getItem("sidebar-expanded");
-  const [sidebarExpanded, setSidebarExpanded] = useState(falase);
+  const [sidebarExpanded, setSidebarExpanded] = useState(false);
 
   const versions = require("../data/versions.json");
 

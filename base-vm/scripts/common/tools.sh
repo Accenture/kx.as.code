@@ -36,7 +36,7 @@ sudo DEBIAN_FRONTEND=noninteractive apt-get -y install \
     cifs-utils \
     rsync \
     lvm2 \
-    netcat \
+    netcat-openbsd \
     psmisc \
     grc
 
@@ -46,7 +46,10 @@ if [[ -z $( uname -a | grep "aarch64") ]] && [[ -z $(which raspinfo) ]]; then
 fi
 
 # Install Powerline Status
-sudo apt-get install -y python3-setuptools
+# TODO - Restore pipx when upgrading to Debian 12
+sudo apt-get install -y python3-setuptools # pipx
+#sudo pipx ensurepath
+#sudo pipx install powerline-status
 sudo pip3 install powerline-status
 
 # Install Netplan for later NIC configuration on first start

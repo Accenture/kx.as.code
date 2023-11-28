@@ -4,15 +4,19 @@ current_dir    = File.dirname(File.expand_path(__FILE__))
 
 if Vagrant::Util::Platform.windows?
   # Is Windows
-  puts "Vagrant launched from windows."
+  puts "Vagrant launched from Windows."
   VMWARE_DISK_UTILITY="C:\\Program Files (x86)\\VMware\\VMware Workstation\\vmware-vdiskmanager.exe"
 elsif Vagrant::Util::Platform.darwin?
   # Is Mac
-  puts "Vagrant launched from mac."
+  puts "Vagrant launched from Mac."
   VMWARE_DISK_UTILITY="/System/Volumes/Data/Applications/VMware Fusion.app/Contents/Library/vmware-vdiskmanager"
-else
-  puts "Assuming Vagrant launched from Linux"
+elsif Vagrant::Util::Platform.linux?
+  # Is Linux
+  puts "Vagrant launched from Linux."
   VMWARE_DISK_UTILITY="/usr/bin/vmware-vdiskmanager"
+else
+  # Assume WSL for now
+  puts "Vagrant launched from other system, maybe WSL? Exiting."
 end
 
 puts "VMWARE_DISK_UTILITY: #{VMWARE_DISK_UTILITY}"
@@ -76,8 +80,24 @@ MAIN_BOX_VERSION = ENV['mainBoxVersion'] || kx_version_json['kxascode']
 puts "MAIN_BOX_VERSION: #{MAIN_BOX_VERSION}"
 NODE_BOX_VERSION = ENV['nodeBoxVersion'] || kx_version_json['kxascode']
 puts "NODE_BOX_VERSION: #{NODE_BOX_VERSION}"
-HASH = ENV['hash']
-puts "HASH: #{HASH}"
+
+HASH = ""
+if File.exist?(".vmCredentialsFile")
+    HASH = ENV['hash']
+    if HASH.nil? || HASH.empty?
+        if File.exist?(".hash")
+            puts "Found .hash file .Extracting the hash value for decrypting secrets in VM"
+            HASH = file = File.read('.hash')
+        else
+            puts "WARN: Both .hash file and hash environment variable don't exist. This will lead to corrupt failed decryption inside the VM"
+        end
+    else
+        puts "Using environment variable hash for decrypting secrets in VM"
+    end
+else
+    puts "No .vmCredentials file found in profile folder. No credentials to upload and decrypt inside the VM"
+end
+
 KX_MAIN_BOX_LOCATION = ENV['kxMainBoxLocation'] || "base-vm/boxes/vmware-desktop-#{MAIN_BOX_VERSION}/kx-main-#{MAIN_BOX_VERSION}.box"
 puts "KX_MAIN_BOX_LOCATION: #{KX_MAIN_BOX_LOCATION}"
 KX_NODE_BOX_LOCATION = ENV['kxNodeBoxLocation'] || "base-vm/boxes/vmware-desktop-#{NODE_BOX_VERSION}/kx-node-#{NODE_BOX_VERSION}.box"
@@ -296,3 +316,5 @@ Vagrant.configure("2") do |config|
         end
     end
 end
+
+puts "End of Vagrantfile"

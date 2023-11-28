@@ -3,7 +3,7 @@ notify() {
   set +x
   local openDisplays=$(w -oush | grep -Eo ' :[0-9]+' | sort -u -t\  -k1,1 | cut -d \  -f 2 || true)
   log_trace "Detected unique displays: ${openDisplays}"
-  local message=''${1:-}''
+  local message=${1:-}
   local messageType=${2:-"dialog-information"}
   local messageTimeout=${3:-300000}
   local messageTitle=${4:-"KX.AS.CODE Notification"}
@@ -12,7 +12,6 @@ notify() {
   if [[ -z ${notificationTitle} ]]; then
     notificationTitle="KX.AS.CODE"
   fi
-  local parsedMessage=$(echo ''${message}'' | sed 's/"/\"/g' | sed 's/\\$//g')
 
   # Get list of connected displays
   local displayFiles=$(/usr/bin/sudo find /home/*/.dbus -maxdepth 1 -type f -name "Xdbus" || true)
@@ -34,7 +33,7 @@ notify() {
             # Final check display is active by comparing two lists
             log_trace "Checking if any of the user displays \"${userDisplays}\" are active"
             log_trace "Displays in /tmp/.X11-unix: $(cd /tmp/.X11-unix && for x in X*; do echo \":${x#X}\"; done)"
-            activeDisplay=$(echo "$(echo ${userDisplays} | cut -f2 -d'=')" | grep -Fx "$(cd /tmp/.X11-unix && for x in X*; do echo ":${x#X}"; done)")
+            activeDisplay=$(echo "$(echo ${userDisplay} | cut -f2 -d'=')" | grep -Fx "$(cd /tmp/.X11-unix && for x in X*; do echo ":${x#X}"; done)")
             log_trace "Active display(s) found: \"${activeDisplay}\""
             if [[ -n ${activeDisplay} ]]; then
               log_trace "Seems display \"${userDisplay}\" belonging to \"${user}\" is active. Checking idle time"
@@ -68,7 +67,7 @@ notify() {
               if [[ ${idleTimeMinutes} -le 15 ]]; then
                 /usr/bin/sudo -H -i -u ${user} bash -c " \
                     source /home/${user}/.dbus/Xdbus && \
-                    notify-send -t \"${messageTimeout}\" \"${notificationTitle}\" \"${parsedMessage}\" --icon=\"${messageType}\""
+                    notify-send -t \"${messageTimeout}\" \"${notificationTitle}\" \"$(echo ${message} | base64 -d)\" --icon=\"${messageType}\""
                 log_trace "Notification sent"
               fi
             fi

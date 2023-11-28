@@ -7,15 +7,23 @@ checkDockerHubRateLimit() {
   local dockerHubEmail=$(getPassword "dockerhub_email" "base-technical-credentials")
 
   if [[ -n ${dockerHubUsername} ]] && [[ -n ${dockerHubPassword} ]]; then
- 
+
     export dockerAuthApiUrl="https://auth.docker.io/token?service=registry.docker.io&scope=repository:ratelimitpreview/test:pull"
     if [[ -n ${dockerHubUsername} ]] && [[ -n ${dockerHubPassword} ]]; then
-      dockerHubToken=$(curl --user ''${dockerHubUsername}:${dockerHubPassword}'' "${dockerAuthApiUrl}" | jq -r .token)
+      dockerHubTokenJson=$(curl --user ''${dockerHubUsername}:${dockerHubPassword}'' "${dockerAuthApiUrl}")
     else
-      dockerHubToken=$(curl "${dockerAuthApiUrl}" | jq -r .token)
+      dockerHubTokenJson=$(curl "${dockerAuthApiUrl}")
     fi
   else
-    dockerHubToken=$(curl "${dockerAuthApiUrl}" | jq -r .token)
+    dockerHubTokenJson=$(curl "${dockerAuthApiUrl}")
+  fi
+  if [[ -n ${dockerHubTokenJson} ]]; then
+    dockerHubToken=$(echo ${dockerHubTokenJson} | jq -r '.token')
+  else
+    log_debug "Could not get a valid respond from Dockerhub, so not able to calculate how many downloads are left"
+    dockerHubAllowLimit=""
+    dockerHubRemainingLimit=""
+    exit 0
   fi
   curl -s --head -H "Authorization: Bearer ${dockerHubToken}" https://registry-1.docker.io/v2/ratelimitpreview/test/manifests/latest 2>&1 | sudo tee ${installationWorkspace}/rateLimitResponse.txt
   dockerHubRateLimitResponse=$(cat ${installationWorkspace}/rateLimitResponse.txt | grep -i RateLimit | cut -d' ' -f2 | cut -d';' -f1 || true)

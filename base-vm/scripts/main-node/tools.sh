@@ -52,7 +52,8 @@ curl -L -o ${INSTALLATION_WORKSPACE}/nvim-linux64.deb https://github.com/neovim/
 sha256sum="dce77cae95c2c115e43159169e2d2faaf93bce6862d5adad7262f3aa3cf60df8"
 echo "${sha256sum} ${INSTALLATION_WORKSPACE}/nvim-linux64.deb" | sha256sum --check
 sudo apt-get install -y ${INSTALLATION_WORKSPACE}/nvim-linux64.deb
-sudo -H pip3 install neovim
+# TODO - Restore --break-system-packages for Debian 12
+sudo -H pip3 install neovim #--break-system-packages
 
 # Set User File Associations
 sudo update-alternatives --install /usr/bin/editor editor /usr/bin/nvim 100
@@ -132,11 +133,11 @@ sudo chmod +x /etc/profile.d/nvm.sh
 sudo chown -R ${BASE_IMAGE_SSH_USER}:${BASE_IMAGE_SSH_USER} /home/${BASE_IMAGE_SSH_USER}
 
 # Install OpenVPN3
-curl -fsSL https://swupdate.openvpn.net/repos/openvpn-repo-pkg-key.pub | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/openvpn-repo-pkg-keyring.gpg
-DISTRO=$(lsb_release -c | awk '{print $2}')
-sudo curl -fsSL https://swupdate.openvpn.net/community/openvpn3/repos/openvpn3-${DISTRO}.list -o /etc/apt/sources.list.d/openvpn3.list
-sudo apt-get update
-sudo apt-get install -y openvpn3
+#curl -fsSL https://swupdate.openvpn.net/repos/openvpn-repo-pkg-key.pub | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/openvpn-repo-pkg-keyring.gpg
+#DISTRO=$(lsb_release -c | awk '{print $2}')
+#sudo curl -fsSL https://swupdate.openvpn.net/community/openvpn3/repos/openvpn3-${DISTRO}.list -o /etc/apt/sources.list.d/openvpn3.list
+#sudo apt-get update
+#sudo apt-get install -y openvpn3
 
 # Compiling OpenLens for later installation when KX.AS.CODE comes up
 cd ${INSTALLATION_WORKSPACE}

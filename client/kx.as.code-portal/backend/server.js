@@ -17,7 +17,7 @@ const rabbitMqUsername = "test";
 const rabbitMqPassword = "test";
 const rabbitMqHost = "localhost";
 
-const healthCheckInterval = 5000; // 5 seconds for testing purpose
+const healthCheckInterval = 60000; // 1 minute
 
 app.use(cors());
 
@@ -166,21 +166,18 @@ app.route("/api/checkRmqConn").get((req, res) => {
 
 app.route("/api/queues/:queue_name").get(async (req, res) => {
   try {
-    const url = `http://${rabbitMqUsername}:${rabbitMqPassword}@${rabbitMqHost}:15672/api/queues/%2F/${req.params.queue_name}/get`;
-    const dataString = '{"vhost":"/","name":"' + req.params.queue_name + '","truncate":"50000","ackmode":"ack_requeue_true","encoding":"auto","count":"100"}';
-
+    const url = `http://127.0.0.1:15672/api/queues/%2F/${req.params.queue_name}/get`;
+    const dataString = '{"count":99999999,"ackmode":"ack_requeue_true","encoding":"auto","truncate":50000}';
     const axiosOptions = {
       url: url,
       method: "POST",
-      auth: {
-        username: rabbitMqUsername,
-        password: rabbitMqPassword,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Basic ${Buffer.from('test:test').toString('base64')}`
       },
-      body: dataString,
+      data: dataString,
     };
-
     const response = await axios(axiosOptions);
-
     res.json(response.data);
   } catch (error) {
     console.error("Error getting queue:", error);

@@ -8,8 +8,7 @@
         "portal"
     ],
     "environment_variables": {
-        "nodejsVersion": "v16.15.1",
-        "nodejsChecksum": "b749f7a76e56dfd6dfb8a910b8a2a871159661557680aa95acf13c9514422c12"
+        "nodejsVersion": "v20.9.0"
     },
     "retry": "true",
     "letsencrypt": {
