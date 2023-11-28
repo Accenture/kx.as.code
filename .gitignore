@@ -85,3 +85,4 @@ base-vm/build/jenkins/initial-setup/jobs/KX.AS.CODE_Launcher/config.xml_backup
 /profiles/**/kx-external-access/
 **/.vagrant
 /profiles/**/actionQueues.json
+/client/.next/*
