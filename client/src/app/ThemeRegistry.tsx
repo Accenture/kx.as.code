@@ -59,7 +59,7 @@ export default function ThemeRegistry(props: any) {
             MuiDrawer: {
                 styleOverrides: {
                     paper: {
-                        backgroundColor: "#5a86ff",
+                        backgroundColor: "#161b22",
                         color: "white",
                         border: "none"
                     }
@@ -67,24 +67,35 @@ export default function ThemeRegistry(props: any) {
             },
             MuiListItemIcon: {
                 styleOverrides: {
-                  root: {
-                    backgroundcolor: 'blue',
-          
-                    '&.mui-selected': {
-                      backgroundcolor: 'red',
+                    root: {
+                        backgroundcolor: 'blue',
                     },
-                  },
                 },
-              },
-              MuiTooltip: {
+            },
+            MuiTooltip: {
                 styleOverrides: {
-                  tooltip: {
-                    backgroundColor: '#5a86ff',
-                    color: 'white',
-                    fontSize: "14px"
-                  }
+                    tooltip: {
+                        backgroundColor: '#5a86ff',
+                        color: 'white',
+                        fontSize: "14px"
+                    }
                 },
-              }
+            },
+            MuiMenuItem: {
+                styleOverrides: {
+                    root: {
+                        backgroundColor: "#161b22", 
+                        borderWidth: "0"
+                    }
+                }
+            },
+            MuiSelect: {
+                styleOverrides: {
+                    root: {
+                        // backgroundColor: "#161b22", 
+                    }
+                }
+            }
         },
         palette: { mode: "dark" },
         shape: {

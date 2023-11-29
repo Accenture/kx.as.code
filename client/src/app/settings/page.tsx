@@ -16,8 +16,8 @@ const Settings: React.FC = () => {
 
 
   return (
-    <div className="py-10 w-full bg-ghBlack text-white">
-      <div className="text-white pb-10 px-3">
+    <div className="py-8 w-full bg-ghBlack text-white">
+      <div className="text-white pb-10 px-20">
         <div className="text-xl font-bold italic text-white">SETTINGS</div>
       </div>
     </div>

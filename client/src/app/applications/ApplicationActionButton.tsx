@@ -115,13 +115,13 @@ const ApplicationStatusActionButton: React.FC<ApplicationStatusActionButtonProps
             return (
 
                 <button
-                    className="border-red-500 border px-5 text-kxRed text-sm flex p-2"
+                    className="border-red-500 border px-5 text-kxRed text-sm flex p-1 items-center"
                     onClick={() => {
                         props.applicationInstallHandler();
                     }}
                 >
                     <AiOutlineWarning className="text-lg mr-2" />
-                    ActionButton Error
+                     Error
                 </button>
 
             );

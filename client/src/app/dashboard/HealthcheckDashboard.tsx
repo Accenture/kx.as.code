@@ -121,7 +121,7 @@ const HealthcheckDashboard: React.FC<HealthcheckDashboardProps> = (props) => {
         ));
 
     return (
-        <div className={`mb-5 px-5 bg-ghBlack4 ${isOpenAppsHealthcheckDashboardSection ? "py-5" : "pt-5"} `}>
+        <div className={`mb-5 px-20 bg-ghBlack4 ${isOpenAppsHealthcheckDashboardSection ? "py-5" : "pt-5"} `}>
             {/* Dashboard section header */}
             <div className="flex justify-between items-center pb-5">
                 {/* Dashboard section title */}
@@ -178,7 +178,7 @@ const HealthcheckDashboard: React.FC<HealthcheckDashboardProps> = (props) => {
                     <div className='text-gray-400 text-sm ml-3'>Installed Applications: {Object.keys(props.healthCheckData).length}</div>
                 </div>
 
-                <div className="h-[400px] overflow-auto scrollbar-orange bg-ghBlack3">
+                <div className={` ${Object.keys(props.healthCheckData).length == 0 ? "h-[100px]" : "h-[400px]"} overflow-auto scrollbar-orange bg-ghBlack3`}>
                     {Object.keys(props.healthCheckData)
                         .filter((app) => {
                             const appName = app.toLowerCase().trim();

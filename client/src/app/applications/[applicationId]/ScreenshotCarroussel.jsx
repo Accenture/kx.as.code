@@ -34,7 +34,7 @@ export default function ScreenshotCarroussel(props) {
       try {
         for (let i = 1; i < 10; i++) {
           const response = await import(
-            `/media/png/screenshots/${imageName}_screenshot${i}.png`
+            `../../../media/png/screenshots/${imageName}_screenshot${i}.png`
           );
           screenshotsListTmp.push(response.default);
         }

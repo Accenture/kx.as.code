@@ -55,7 +55,7 @@ const AppBar = styled(MuiAppBar, {
 const Header: FC<HeaderProps> = (props) => {
   return (
     <AppBar position="fixed" open={props.open} className="" elevation={0}>
-      <Toolbar className="bg-ghBlack3">
+      <Toolbar className="bg-ghBlack4 border border-b-4 border-ghBlack2">
         <IconButton
           color="inherit"
           aria-label="open drawer"

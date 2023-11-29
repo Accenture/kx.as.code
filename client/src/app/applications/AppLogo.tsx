@@ -15,6 +15,8 @@ const AppLogo: React.FC<AppLogoProps> = (props) => {
   };
 
   useEffect(() => {
+    console.log("App Details DEBUG name: ", props.appName)
+
     setImageSize();
     const fetchImage = async () => {
       try {
@@ -37,7 +39,9 @@ const AppLogo: React.FC<AppLogoProps> = (props) => {
     fetchImage();
   }, [appName]);
 
-  return <img src={image} alt={appName} height={height} width={width} />;
+  // Conditional rendering: Render img only if image is available
+  return image ? <img src={image} alt={appName} height={height} width={width} /> : null;
+
 };
 
 export default AppLogo;

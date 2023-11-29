@@ -8,6 +8,7 @@ import ScreenshotCarroussel from "./ScreenshotCarroussel";
 import AppLogo from "../AppLogo";
 import { FaArrowAltCircleDown } from "react-icons/fa";
 import { usePathname } from 'next/navigation'
+import ApplicationStatusActionButton from "../ApplicationStatusActionButton";
 
 export default function ApplicationDetail(props) {
 
@@ -95,49 +96,63 @@ export default function ApplicationDetail(props) {
         fetchAppData();
     }, []);
 
+    if (!appData.name) {
+        // If appData.name is undefined, do not render the component
+        return null;
+    }
+
     return (
         <div className="px-4 sm:px-6 lg:px-24 py-8 w-full max-w-9xl mx-auto bg-ghBlack">
             {/* Header */}
             <div className="grid grid-cols-12 py-5 p-5 items-center bg-ghBlack2">
                 <div className="col-span-10">
-                    <div className="text-white bg-ghBlack p-0 px-1.5 uppercase w-fit inline-block my-2 text-base">
+                    <div className="text-white bg-ghBlack p-0 p-2 uppercase w-fit inline-block my-2 text-base">
                         {appData.installation_group_folder}
                     </div>
                     <div className="flex items-center">
                         <div className="mr-4">
-                            <AppLogo height={"50px"} width={"50px"} appName={appData.name} />
+                            <AppLogo height={"100px"} width={"100px"} appName={appData.name} />
                         </div>
                         <div className="">
-                            <div className="text-base capitalize">{appData.name} </div>
-                            <div className="text-gray-400">{appData.Description}</div>
+                            <div className="flex items-center">
+                                <div className="text-4xl capitalize">{appData.name} </div>
+                                <div className="ml-3 p-2 bg-ghBlack4 text-sm">{appData.environment_variables.imageTag}</div>
+                            </div>
+
+                            <div className="text-base text-gray-400">{appData.Description}</div>
                         </div>
+                        
+                    </div>
+
+                    {/* Categories */}
+                    <div className="mt-3">
+                        {appData.categories.map((item, i) => {
+                            return (<span className="bg-ghBlack4 p-2 mr-0.5 text-sm">{item}</span>)
+                        })}
                     </div>
                 </div>
                 {/* right section header */}
                 <div className="col-span-2 justify-end flex">
-                    <button
-                        className="bg-kxBlue p-2 px-5 items-center flex"
-                        to="#"
-                        onClick={() => { }}
-                    >
-                        <div className="flex items-center">
-                            <FaArrowAltCircleDown className="mr-2 flex my-auto text-white" />
-                        </div>
-                        <span className="flex my-auto text-base capitalize">
-                            Install {appData.name}
-                        </span>
-                    </button>
+                    {/* <ApplicationStatusActionButton
+                        isMqConnected={props.isMqConnected}
+                        getQueueStatusList={props.getQueueStatusList}
+                        appName={props.app.name}
+                        category={props.app.installation_group_folder}
+                        applicationInstallHandler={applicationInstallHandler}
+                        applicationUninstallHandler={applicationUninstallHandler}
+                    /> */}
+
                 </div>
             </div>
 
             {/* Header Section 2 */}
 
             <div className="grid grid-cols-12 mt-5">
-                <div className="col-span-8 border border-gray-600 p-5 mr-5">
+                <div className="col-span-8 bg-ghBlack2 p-5 mr-5">
                     <h2 className="mb-3 text-base">Screenshots</h2>
                     <ScreenshotCarroussel appName={appData.name} />
                 </div>
-                <div className="col-span-4 p-5 border border-gray-600">
+                <div className="col-span-4 p-5 bg-ghBlack4">
                     <h2 className="mb-3 text-base">Executable Tasks</h2>
                     {availableTasksList.length > 0 ? (
                         drawAwailableTasksComponents()

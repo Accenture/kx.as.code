@@ -57,7 +57,7 @@ const QueueComponent: React.FC<QueueComponentProps> = ({ queueName, count, index
         drag(drop(node));
         preview(node);
       }}
-      className={`col-span-2 bg-ghBlack2 hover:bg-ghBlack3 h-auto p-3`}
+      className={`col-span-6 sm:col-span-6 md:col-span-3 xl:col-span-2 bg-ghBlack2 hover:bg-ghBlack3 h-auto p-3`}
       style={{
         border: isDragging ? "1px solid white" : "",
         opacity: isDragging ? 0.5 : 1,
@@ -158,8 +158,11 @@ const Dashboard: React.FC = () => {
 
   return (
     <div className="py-8 w-full bg-ghBlack text-white">
-      <div className="text-white pb-10 px-3">
-        <div className="text-white text-xl font-bold py-5 italic">DASHBOARD</div>
+      <div className="text-white pb-10 px-20">
+        <div className="text-white text-xl font-bold">DASHBOARD</div>
+        <div className="pt-4 pb-6 text-base text-gray-400">
+          Monitor application metrics & etc.
+        </div>
       </div>
 
       {isHealthCheckDataLoading ? (
@@ -170,7 +173,7 @@ const Dashboard: React.FC = () => {
 
 
       {/* Dashboard Section Queue Monitoring */}
-      <div className={`mb-5 bg-ghBlack px-5 bg-ghBlack4 ${isOpenQueueDashboardSection ? "py-5" : "pt-5"} `}>
+      <div className={`mb-5 bg-ghBlack px-20 bg-ghBlack4 ${isOpenQueueDashboardSection ? "py-5" : "pt-5"} `}>
 
         {/* Dashboard section header */}
         <div className="flex justify-between items-center pb-5">

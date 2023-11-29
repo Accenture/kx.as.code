@@ -351,20 +351,18 @@ const Applications = (props: any) => {
   return (
     // TODO: Add ThemeProvider with Material UI Import in Layout Component
     // TODO: update Background trough NEXT.JS layout + Text
-    <div suppressHydrationWarning={true} className="py-10 w-full bg-ghBlack text-white">
+    <div suppressHydrationWarning={true} className="py-8 w-full bg-ghBlack text-white">
       {/* Applications Header */}
-      <div className="text-white pb-10 px-3">
-        <div className="text-xl font-bold italic text-white">
+      <div className="text-white pb-10 px-20">
+        <div className="text-xl font-bold text-white">
           APPLICATIONS
         </div>
         <div className="pt-4 pb-6 text-base text-gray-400">
           Install applications into your KX.AS.CODE environemnt.
         </div>
-
-        <div className="border-b-2 border-gray-700"></div>
       </div>
 
-      <div className="h-[40px]">
+      <div className="">
         <div className={`flex justify-end ${totalChecked > 0 ? "visible" : "hidden"}`}>
           {totalChecked > 0 && (
             <button className="bg-kxBlue p-2 px-5 items-center flex text-base">
@@ -375,7 +373,7 @@ const Applications = (props: any) => {
       </div>
 
       {/* Filter Section */}
-      <div className="bg-ghBlack4 px-5 py-8 my-5">
+      <div className="bg-ghBlack4 px-20 py-8 my-5">
         {/* Applications actions */}
         <div className="flex justify-between">
           {/* Left: Actions */}
@@ -411,7 +409,7 @@ const Applications = (props: any) => {
 
             <div className="ml-3">
               <button
-              className="p-2 px-5 bg-kxBlue2 text-sm"
+                className="p-2 px-5 bg-kxBlue2 text-sm"
                 onClick={(e) => {
                   setIsShowMoreFilters(!isShowMoreFilters);
                 }}
@@ -443,8 +441,23 @@ const Applications = (props: any) => {
                       setResultsPerPage(e.target.value);
                       _DATA.jump(1); // reset page to 1
                     }}
+                    sx={{
+                      color: "white",
+                      '.MuiOutlinedInput-notchedOutline': {
+                        borderColor: '#0d1117',
+                      },
+                      '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                        borderColor: 'rgba(228, 219, 233, 0.25)',
+                      },
+                      '&:hover .MuiOutlinedInput-notchedOutline': {
+                        borderColor: 'white',
+                      },
+                      '.MuiSvgIcon-root ': {
+                        fill: "white !important",
+                      }
+                    }}
                   >
-                    <MenuItem value={20}>20</MenuItem>
+                    <MenuItem value={20} className="bg-red-500">20</MenuItem>
                     <MenuItem value={32}>32</MenuItem>
                     <MenuItem value={44}>44</MenuItem>
                     <MenuItem value={56}>56</MenuItem>
@@ -467,6 +480,21 @@ const Applications = (props: any) => {
                     onChange={(e) => {
                       setSortSelect(e.target.value);
                       _DATA.jump(1); // reset page to 1
+                    }}
+                    sx={{
+                      color: "white",
+                      '.MuiOutlinedInput-notchedOutline': {
+                        borderColor: '#0d1117',
+                      },
+                      '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                        borderColor: 'rgba(228, 219, 233, 0.25)',
+                      },
+                      '&:hover .MuiOutlinedInput-notchedOutline': {
+                        borderColor: 'white',
+                      },
+                      '.MuiSvgIcon-root ': {
+                        fill: "white !important",
+                      }
                     }}
                   >
                     <MenuItem value={"asc"}>A-Z</MenuItem>
@@ -517,110 +545,112 @@ const Applications = (props: any) => {
         </div>
       </div>
 
-      {/* Results count and galery action buttons */}
-      <div className="flex justify-between items-center px-3">
-        {/* left */}
-        <div className="">
-          {searchTerm != "" ? (
-            <div className="text-[16px] text-gray-400 mb-4">
-              {/* Check if running in the browser environment */}
-              {typeof window !== 'undefined' && window.localStorage ? (localStorage.getItem("appsCount")) : (null)} results for "{searchTerm}"
-            </div>
-          ) : (
-            <div className="text-[16px] text-gray-400 mb-4">
-              {/* Check if running in the browser environment */}
-              {typeof window !== 'undefined' && window.localStorage ? (localStorage.getItem("appsCount")) : (null)
-              } Applications
-            </div>
-          )}
+      <div className="bg-ghBlack4 py-5">
+        {/* Results count and galery action buttons */}
+        <div className="flex justify-between items-center px-20">
+          {/* left */}
+          <div className="">
+            {searchTerm != "" ? (
+              <div className="text-[16px] text-gray-400 mb-4">
+                {/* Check if running in the browser environment */}
+                {typeof window !== 'undefined' && window.localStorage ? (localStorage.getItem("appsCount")) : (null)} results for "{searchTerm}"
+              </div>
+            ) : (
+              <div className="text-[16px] text-gray-400 mb-4">
+                {/* Check if running in the browser environment */}
+                {typeof window !== 'undefined' && window.localStorage ? (localStorage.getItem("appsCount")) : (null)
+                } Applications
+              </div>
+            )}
+          </div>
+          {/* right */}
+          <div className="mb-4 text-3xl">
+            {isListLayout ? (
+              <div>
+                <IconButton
+                  aria-label="list"
+                  color="primary"
+                  onClick={() => {
+                    toggleListLayout(true);
+                  }}
+                >
+                  <FormatListBulleted />
+                </IconButton>
+                <IconButton
+                  aria-label="galery"
+                  onClick={() => {
+                    toggleListLayout(false);
+                  }}
+                >
+                  <AppsIcon />
+                </IconButton>
+              </div>
+            ) : (
+              <div>
+                <IconButton
+                  aria-label="list"
+                  onClick={() => {
+                    toggleListLayout(true);
+                  }}
+                >
+                  <FormatListBulleted />
+                </IconButton>
+                <IconButton
+                  aria-label="galery"
+                  color="primary"
+                  onClick={() => {
+                    toggleListLayout(false);
+                  }}
+                >
+                  <AppsIcon />
+                </IconButton>
+              </div>
+            )}
+          </div>
         </div>
-        {/* right */}
-        <div className="mb-4 text-3xl">
-          {isListLayout ? (
-            <div>
-              <IconButton
-                aria-label="list"
-                color="primary"
-                onClick={() => {
-                  toggleListLayout(true);
-                }}
-              >
-                <FormatListBulleted />
-              </IconButton>
-              <IconButton
-                aria-label="galery"
-                onClick={() => {
-                  toggleListLayout(false);
-                }}
-              >
-                <AppsIcon />
-              </IconButton>
-            </div>
-          ) : (
-            <div>
-              <IconButton
-                aria-label="list"
-                onClick={() => {
-                  toggleListLayout(true);
-                }}
-              >
-                <FormatListBulleted />
-              </IconButton>
-              <IconButton
-                aria-label="galery"
-                color="primary"
-                onClick={() => {
-                  toggleListLayout(false);
-                }}
-              >
-                <AppsIcon />
-              </IconButton>
-            </div>
-          )}
+
+        {/* Pagination Top */}
+        <div className="flex justify-center pb-10">
+          <PaginationRounded
+            setPageAndJumpData={setPageAndJumpData}
+            page={page}
+            PER_PAGE={resultsPerPage}
+            count={count}
+          />
         </div>
-      </div>
 
-      {/* Pagination Top */}
-      <div className="flex justify-center pb-10">
-        <PaginationRounded
-          setPageAndJumpData={setPageAndJumpData}
-          page={page}
-          PER_PAGE={resultsPerPage}
-          count={count}
-        />
-      </div>
+        {/* Applications Content */}
+        <div className="grid grid-cols-12 gap-1 px-20">
+          {
+            _DATA.currentData().map((app, index) => (
+              <ApplicationCard
+                key={index}
+                app={app}
+                queueStatus={getQueueStatusByAppName(app.name)}
+                queueList={queueList}
+                layout={isListLayout}
+                addCategoryTofilterTags={addCategoryTofilterTags}
+                isMqConnected={isMqConnected}
+                fetchApplicationAndQueueData={fetchApplicationAndQueueData}
+                getQueueStatusList={getQueueStatusList}
+                isListLayout={isListLayout}
+                onCheck={handleTotalCheckedChange}
+                queueData={queueData}
+                applicationSelectedCount={applicationSelectedCount}
+              />
+            )
+            )}
+        </div>
 
-      {/* Applications Content */}
-      <div className="grid grid-cols-12 gap-1 px-3">
-        {
-          _DATA.currentData().map((app, index) => (
-            <ApplicationCard
-              key={index}
-              app={app}
-              queueStatus={getQueueStatusByAppName(app.name)}
-              queueList={queueList}
-              layout={isListLayout}
-              addCategoryTofilterTags={addCategoryTofilterTags}
-              isMqConnected={isMqConnected}
-              fetchApplicationAndQueueData={fetchApplicationAndQueueData}
-              getQueueStatusList={getQueueStatusList}
-              isListLayout={isListLayout}
-              onCheck={handleTotalCheckedChange}
-              queueData={queueData}
-              applicationSelectedCount={applicationSelectedCount}
-            />
-          )
-          )}
-      </div>
-
-      {/* Pagination bottom */}
-      <div className="flex justify-center pt-10">
-        <PaginationRounded
-          setPageAndJumpData={setPageAndJumpData}
-          page={page}
-          PER_PAGE={resultsPerPage}
-          count={count}
-        />
+        {/* Pagination bottom */}
+        <div className="flex justify-center pt-10">
+          <PaginationRounded
+            setPageAndJumpData={setPageAndJumpData}
+            page={page}
+            PER_PAGE={resultsPerPage}
+            count={count}
+          />
+        </div>
       </div>
 
     </div>

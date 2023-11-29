@@ -15,8 +15,8 @@ export default function SCarousel(props) {
           <div key={i} className="rounded">
             <Image className=""
               src={sc}
-              width={100}
-              height={100}
+              width={400}
+              height={200}
               alt="Screenshoot"
             />
             {/* <img alt="" src={sc} className="rounded-xl" /> */}

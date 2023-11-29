@@ -23,7 +23,7 @@ const StyledTooltip = withStyles({
 })(Tooltip);
 
 interface ApplicationGroupCardProps {
-  appGroup: any; // Replace 'any' with the actual type if available
+  appGroup: any;
 }
 
 const handleDragStart = (e: React.DragEvent<HTMLImageElement>) => e.preventDefault();
@@ -48,7 +48,7 @@ const ApplicationGroupCard: React.FC<ApplicationGroupCardProps> = (props) => {
   }
 
   const setImageList = (appGroupComponents: string[]) => {
-    // Clear the itemsList
+    // Clear itemsList
     setItemsList([]);
 
     appGroupComponents.forEach((appName, i) => {
@@ -91,7 +91,7 @@ const ApplicationGroupCard: React.FC<ApplicationGroupCardProps> = (props) => {
   };
 
   return (
-    <div className="col-span-full sm:col-span-6 xl:col-span-3 hover:bg-ghBlack3 bg-ghBlack2">
+    <div className="col-span-full sm:col-span-6 md:col-span-6 xl:col-span-3 hover:bg-ghBlack3 bg-ghBlack2">
       <div className="relative">
         <div className="p-6">
           {/* Header */}
