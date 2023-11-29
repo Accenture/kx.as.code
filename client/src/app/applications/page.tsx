@@ -351,9 +351,9 @@ const Applications = (props: any) => {
   return (
     // TODO: Add ThemeProvider with Material UI Import in Layout Component
     // TODO: update Background trough NEXT.JS layout + Text
-    <div suppressHydrationWarning={true} className="px-6 sm:px-6 lg:px-24 py-8 w-full max-w-9xl mx-auto bg-ghBlack text-white">
+    <div suppressHydrationWarning={true} className="py-10 w-full bg-ghBlack text-white">
       {/* Applications Header */}
-      <div className="text-white pb-10">
+      <div className="text-white pb-10 px-3">
         <div className="text-xl font-bold italic text-white">
           APPLICATIONS
         </div>
@@ -375,7 +375,7 @@ const Applications = (props: any) => {
       </div>
 
       {/* Filter Section */}
-      <div className="bg-ghBlack3 px-5 py-8 my-5">
+      <div className="bg-ghBlack4 px-5 py-8 my-5">
         {/* Applications actions */}
         <div className="flex justify-between">
           {/* Left: Actions */}
@@ -410,9 +410,8 @@ const Applications = (props: any) => {
             </div>
 
             <div className="ml-3">
-              <Button
-                variant="outlined"
-                className="rounded-none"
+              <button
+              className="p-2 px-5 bg-kxBlue2 text-sm"
                 onClick={(e) => {
                   setIsShowMoreFilters(!isShowMoreFilters);
                 }}
@@ -423,7 +422,7 @@ const Applications = (props: any) => {
                   <AddIcon fontSize="small" />
                 )}
                 {isShowMoreFilters ? "Hide" : "Show"} More filters
-              </Button>
+              </button>
             </div>
           </div>
 
@@ -519,7 +518,7 @@ const Applications = (props: any) => {
       </div>
 
       {/* Results count and galery action buttons */}
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center px-3">
         {/* left */}
         <div className="">
           {searchTerm != "" ? (
@@ -592,7 +591,7 @@ const Applications = (props: any) => {
       </div>
 
       {/* Applications Content */}
-      <div className="grid grid-cols-12 gap-1">
+      <div className="grid grid-cols-12 gap-1 px-3">
         {
           _DATA.currentData().map((app, index) => (
             <ApplicationCard

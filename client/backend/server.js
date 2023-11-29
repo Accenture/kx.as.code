@@ -16,6 +16,7 @@ const profileConfig = "./src/data/profile-config.json"
 const rabbitMqUsername = "test";
 const rabbitMqPassword = "test";
 const rabbitMqHost = "localhost";
+const rabbitMqPort = "15672";
 
 const healthCheckInterval = 60000; // 1 minute
 
@@ -39,13 +40,36 @@ process.on('uncaughtException', (err) => {
 
 });
 
-let healthCheckData = {} ;
+async function fetchHttPath(applicationName) {
+  const url = `http://localhost:5001/api/applications/${applicationName}`;
+
+  try {
+    const response = await axios.get(url);
+    const responseData = response.data;
+
+    if (responseData.urls && responseData.urls.length > 0) {
+      const httpPaths = responseData.urls.map(url => url.healthchecks.readiness.http_path);
+      console.log(`Application has URLs (http_path): ${httpPaths.join(', ')}`);
+      return httpPaths;
+    } else {
+      console.log(`Application has no URLs`);
+      return null;
+    }
+
+  } catch (error) {
+    console.error('Error fetching data:', error.message);
+    console.log("App: ", applicationName)
+    return null;
+  }
+}
+
+let healthCheckData = {};
 
 
 const performHealthCheck = async () => {
   try {
     // Request to get the array of completed_queue objects
-    const completedQueueResponse = await axios.get("http://localhost:5001/api/queues/completed_queue");
+    const completedQueueResponse = await axios.get(`http://${rabbitMqHost}:5001/api/queues/completed_queue`);
 
     // Parse the payload from each object in the response array
     const appNames = completedQueueResponse.data.map((item) => {
@@ -54,13 +78,24 @@ const performHealthCheck = async () => {
     });
 
     const rawData = fs.readFileSync(profileConfig);
-    const configData = JSON.parse(rawData);  
+    const configData = JSON.parse(rawData);
     const environmentPrefix = configData.config.environmentPrefix;
-    const baseDomain = configData.config.baseDomain;  
+    const baseDomain = configData.config.baseDomain;
 
     // Perform health check for each appName
     for (const appName of appNames) {
-      const healthCheckUrl = `http://${appName}.${environmentPrefix}.${baseDomain}`;
+
+      // Call fetchData to get httpPath
+      const httpPath = await fetchHttPath(appName);
+
+      // Skip health check if httpPath is null
+      if (httpPath === null) {
+        continue;
+      }
+
+      // Append httpPath to the healthCheckUrl
+      const healthCheckUrl = `http://${appName}.${environmentPrefix}.${baseDomain}${httpPath}`;
+
 
       const response = await axios.get(healthCheckUrl);
 
@@ -149,7 +184,7 @@ app.route("/api/checkRmqConn").get((req, res) => {
   console.log("checkRmqConn triggered.");
 
   try {
-    request("http://" + rabbitMqHost + ":15672", function (err, response, body) {
+    request("http://" + rabbitMqHost + ":" + rabbitMqPort, function (err, response, body) {
       if (err) {
         console.error("Error checking RMQ connection:", err);
         res.status(500).send("Internal Server Error");
@@ -166,7 +201,7 @@ app.route("/api/checkRmqConn").get((req, res) => {
 
 app.route("/api/queues/:queue_name").get(async (req, res) => {
   try {
-    const url = `http://127.0.0.1:15672/api/queues/%2F/${req.params.queue_name}/get`;
+    const url = `http://${rabbitMqHost}:${rabbitMqPort}/api/queues/%2F/${req.params.queue_name}/get`;
     const dataString = '{"count":99999999,"ackmode":"ack_requeue_true","encoding":"auto","truncate":50000}';
     const axiosOptions = {
       url: url,
@@ -202,7 +237,7 @@ app.route("/api/queues/:queue_name").get(async (req, res) => {
 app.route("/api/move/:from_queue/:to_queue").get((req, res) => {
   console.log("move triggered.");
 
-  const url = `http://${rabbitMqUsername}:${rabbitMqPassword}@${rabbitMqHost}:15672/api/parameters/shovel/%2F/Move%20from%20${req.params.from_queue}`;
+  const url = `http://${rabbitMqUsername}:${rabbitMqPassword}@${rabbitMqHost}:${rabbitMqPort}/api/parameters/shovel/%2F/Move%20from%20${req.params.from_queue}`;
   const dataString = '{"component":"shovel","vhost":"/","name":"Move from "' +
     req.params.from_queue +
     ',"value":{"src-uri":"amqp:///%2F","src-queue":"' +
@@ -276,13 +311,37 @@ app.route("/api/consume/:queue_name").get(async (req, res) => {
       data.content ? eval("(" + data.content.toString() + ")()") : "";
       channel.ack(data);
     } else {
-    } 
+    }
 
     res.send("The POST request is being processed!");
   } catch (error) {
     console.error("Error consuming queue:", error);
     res.status(500).send("Internal Server Error");
   }
+});
+
+// API endpoint to access health check data for Prometheus
+app.get("/healthcheckdata-prometheus", (req, res) => {
+  fs.readFile(healthCheckDataPath, "utf8", (err, data) => {
+    if (err) {
+      console.error("Error reading health check data:", err);
+    } else {
+      const healthCheckData = JSON.parse(data);
+
+      var response = "";
+      var resString = "application_status{app=";
+      let name = "";
+      for (const x in healthCheckData) {
+        name = x;
+        let mainStatus = healthCheckData[name][healthCheckData[name].length - 1];
+
+        response = response + resString + "\"" + name + "\"" + "}" + " " + mainStatus.status + " " + new Date().getTime() + "\n"
+
+      }
+      res.setHeader('Content-Type', register.contentType);
+      res.send(response);
+    }
+  });
 });
 
 // API endpoint to access health check data

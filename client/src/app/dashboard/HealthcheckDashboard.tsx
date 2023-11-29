@@ -34,7 +34,7 @@ const HealthcheckInfoBox: React.FC<HealthcheckInfoBoxProps> = ({ healthcheckStat
         bgColorClass = 'bg-red-500';
     }
 
-    const statusColorBox = <div className={`h-5 mr-1.5 w-2 ${bgColorClass}`}></div>;
+    const statusColorBox = <div className={`h-5 mr-1.5 w-full mx-auto ${bgColorClass}`}></div>;
 
     return (
         healthcheckStatus === 0 ? (statusColorBox) : (
@@ -50,11 +50,11 @@ interface HealthCheckInfoComponentProps {
 
 const HealthCheckInfoComponent: React.FC<HealthCheckInfoComponentProps> = ({ appHealthcheckDataArray }) => {
 
-    const healthcheckBoxes = appHealthcheckDataArray.slice(0, 100).map((item, index) => (
+    const healthcheckBoxes = appHealthcheckDataArray.slice(0, 120).map((item, index) => (
         <HealthcheckInfoBox key={index} healthcheckStatus={item.status} timestamp={item.timestamp} />
     ));
 
-    const remainingHealthcheckBoxes = Array.from({ length: Math.max(100 - appHealthcheckDataArray.length, 0) }).map((_, index) => (
+    const remainingHealthcheckBoxes = Array.from({ length: Math.max(120 - appHealthcheckDataArray.length, 0) }).map((_, index) => (
         // TODO: Update HealthcheckInfoBox -> accept null value for timestamp props
         <HealthcheckInfoBox key={index + appHealthcheckDataArray.length} healthcheckStatus={0} timestamp={new Date('2023-01-15T12:34:56.789Z')} />
     ));
@@ -121,7 +121,7 @@ const HealthcheckDashboard: React.FC<HealthcheckDashboardProps> = (props) => {
         ));
 
     return (
-        <div className={`mb-5 px-5 border border-gray-600 ${isOpenAppsHealthcheckDashboardSection ? "py-5" : "pt-5"} `}>
+        <div className={`mb-5 px-5 bg-ghBlack4 ${isOpenAppsHealthcheckDashboardSection ? "py-5" : "pt-5"} `}>
             {/* Dashboard section header */}
             <div className="flex justify-between items-center pb-5">
                 {/* Dashboard section title */}
@@ -178,7 +178,7 @@ const HealthcheckDashboard: React.FC<HealthcheckDashboardProps> = (props) => {
                     <div className='text-gray-400 text-sm ml-3'>Installed Applications: {Object.keys(props.healthCheckData).length}</div>
                 </div>
 
-                <div className="h-[400px] overflow-auto scrollbar-orange border-2 border-ghBlack4">
+                <div className="h-[400px] overflow-auto scrollbar-orange bg-ghBlack3">
                     {Object.keys(props.healthCheckData)
                         .filter((app) => {
                             const appName = app.toLowerCase().trim();

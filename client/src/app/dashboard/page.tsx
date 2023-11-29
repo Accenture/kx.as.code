@@ -66,12 +66,12 @@ const QueueComponent: React.FC<QueueComponentProps> = ({ queueName, count, index
       <div className="text-sm uppercase text-white justify-center flex">{queueName}</div>
       <Tooltip title={`Open ${queueName} messages in new Tab.`} placement="top" arrow>
         <div>
-        <a href={`http://localhost:5001/api/queues/${queueName}`} className="hover:underline hover:text-kxBlue" target="_blank">
-          <div className="flex justify-center mt-3 text-2xl">
-            {count}
-          </div>
-        </a>
-        <div className="flex justify-center text-xs text-gray-500">Messages</div>
+          <a href={`http://localhost:5001/api/queues/${queueName}`} className="hover:underline hover:text-kxBlue" target="_blank">
+            <div className="flex justify-center mt-3 text-2xl">
+              {count}
+            </div>
+          </a>
+          <div className="flex justify-center text-xs text-gray-500">Messages</div>
         </div>
       </Tooltip>
     </div>
@@ -157,11 +157,20 @@ const Dashboard: React.FC = () => {
   }, [healthCheckData]);
 
   return (
-    <div className="px-4 sm:px-6 lg:px-24 py-8 w-full max-w-9xl mx-auto bg-ghBlack">
-      <div className="text-white text-xl font-bold py-5 italic">DASHBOARD</div>
+    <div className="py-8 w-full bg-ghBlack text-white">
+      <div className="text-white pb-10 px-3">
+        <div className="text-white text-xl font-bold py-5 italic">DASHBOARD</div>
+      </div>
+
+      {isHealthCheckDataLoading ? (
+        <div>Loading Health Check Data...</div>
+      ) : (
+        <HealthcheckDashboard healthCheckData={healthCheckData} />
+      )}
+
 
       {/* Dashboard Section Queue Monitoring */}
-      <div className={`mb-5 bg-ghBlack px-5 border border-gray-600 ${isOpenQueueDashboardSection ? "py-5" : "pt-5"} `}>
+      <div className={`mb-5 bg-ghBlack px-5 bg-ghBlack4 ${isOpenQueueDashboardSection ? "py-5" : "pt-5"} `}>
 
         {/* Dashboard section header */}
         <div className="flex justify-between items-center pb-5">
@@ -182,7 +191,7 @@ const Dashboard: React.FC = () => {
                 {isOpenQueueDashboardSection ? (
                   <ExpandLessIcon fontSize="small" className="text-white" />
                 ) : (
-                  <ExpandMoreIcon fontSize="small" className="text-white"/>
+                  <ExpandMoreIcon fontSize="small" className="text-white" />
                 )}
               </Button>
             </div>
@@ -204,13 +213,6 @@ const Dashboard: React.FC = () => {
         </DndProvider>
 
       </div>
-
-      {isHealthCheckDataLoading ? (
-        <div>Loading Health Check Data...</div>
-      ) : (
-        <HealthcheckDashboard healthCheckData={healthCheckData} />
-      )}
-
     </div>
   );
 };

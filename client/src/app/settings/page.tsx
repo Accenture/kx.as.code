@@ -13,12 +13,13 @@ import Tooltip from "@mui/material/Tooltip";
 
 
 const Settings: React.FC = () => {
- 
+
 
   return (
-    <div className="px-4 sm:px-6 lg:px-24 py-8 w-full max-w-9xl mx-auto bg-ghBlack">
-      <div className="text-white text-xl font-bold py-5 italic">SETTINGS</div>
-
+    <div className="py-10 w-full bg-ghBlack text-white">
+      <div className="text-white pb-10 px-3">
+        <div className="text-xl font-bold italic text-white">SETTINGS</div>
+      </div>
     </div>
   );
 };
