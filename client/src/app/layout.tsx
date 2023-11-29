@@ -152,7 +152,7 @@ export default function RootLayout({
             <Drawer variant="permanent" open={open}>
               <DrawerHeader className="">
                 <IconButton onClick={handleDrawerClose}>
-                  {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
+                  {theme.direction === 'rtl' ? <ChevronRightIcon/> : <ChevronLeftIcon />}
                 </IconButton>
               </DrawerHeader>
               <List className="">
@@ -166,7 +166,7 @@ export default function RootLayout({
                           px: 2.5,
                         }}
                       >
-                        <ListItemIcon className=".mui-selected"
+                        <ListItemIcon
                           sx={{
                             minWidth: 0,
                             mr: open ? 3 : 'auto',

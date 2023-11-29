@@ -198,9 +198,9 @@ const HealthcheckDashboard: React.FC<HealthcheckDashboardProps> = (props) => {
                             const appName = app.toLowerCase().trim();
                             return searchTerm === "" || appName.includes(searchTerm.toLowerCase().trim());
                         })
-                        .length === 0 && (
+                        .length === 0 && searchTerm !== "" && (
                             <div className=''>
-                                <div className='mb-2 text-base text-gray-400 pl-3 pt-3'>No results for '{searchTerm}'</div>
+                                <div className='mb-2 text-base text-gray-400 pl-3 pt-3'>No results for ' {searchTerm}'</div>
                             </div>
                         )}
                 </div>
