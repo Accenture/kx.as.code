@@ -566,7 +566,8 @@ const Applications = (props: any) => {
           {/* right */}
           <div className="mb-4 text-3xl">
             {isListLayout ? (
-              <div>
+              <div className="flex items-center">
+                <div>
                 <IconButton
                   aria-label="list"
                   color="primary"
@@ -576,14 +577,21 @@ const Applications = (props: any) => {
                 >
                   <FormatListBulleted />
                 </IconButton>
-                <IconButton
-                  aria-label="galery"
-                  onClick={() => {
-                    toggleListLayout(false);
-                  }}
-                >
-                  <AppsIcon />
-                </IconButton>
+                {/* BETA feature -> Gallery view */}
+                </div> 
+                <Tooltip title={"BETA"} placement="top" arrow>
+
+                  <div>
+                    <IconButton disabled
+                      aria-label="galery"
+                      onClick={() => {
+                        toggleListLayout(false);
+                      }}
+                    >
+                      <AppsIcon />
+                    </IconButton>
+                  </div>
+                </Tooltip>
               </div>
             ) : (
               <div>
