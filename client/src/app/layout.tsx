@@ -170,7 +170,7 @@ export default function RootLayout({
                           },
                         }}
                       >
-                        <ListItemIcon
+                        <ListItemIcon className="listItemIconContainer"
                           sx={{
                             minWidth: 0,
                             mr: open ? 3 : 'auto',
@@ -199,7 +199,7 @@ export default function RootLayout({
                           },
                         }}
                       >
-                        <ListItemIcon
+                        <ListItemIcon className="listItemIconContainer"
                           sx={{
                             minWidth: 0,
                             mr: open ? 3 : 'auto',
@@ -232,7 +232,7 @@ export default function RootLayout({
                           },
                         }}
                       >
-                        <ListItemIcon
+                        <ListItemIcon className="listItemIconContainer"
                           sx={{
                             minWidth: 0,
                             mr: open ? 3 : 'auto',
@@ -262,7 +262,7 @@ export default function RootLayout({
                           },
                         }}
                       >
-                        <ListItemIcon
+                        <ListItemIcon className="listItemIconContainer"
                           sx={{
                             minWidth: 0,
                             mr: open ? 3 : 'auto',

@@ -87,6 +87,7 @@ export default function ApplicationDetail(props) {
                     key={i}
                     task={task}
                     taskExecutionHandler={taskExecutionHandler}
+                    appData={appData}
                 />
             );
         });
