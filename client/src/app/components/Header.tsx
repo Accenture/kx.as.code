@@ -77,7 +77,8 @@ const Header: FC<HeaderProps> = (props) => {
             alt="Picture of the author"
           />
           </Link>
-          <div className="text-sm">Portal v.{versions.kxascode}</div>
+          <div className="text-sm font-extrabold uppercase">KX.AS.Code 
+          <span className="font-medium ml-1 lowercase">v.{versions.kxascode}</span></div>
       </Toolbar>
     </AppBar>
   );

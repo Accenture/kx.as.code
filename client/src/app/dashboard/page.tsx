@@ -159,7 +159,7 @@ const Dashboard: React.FC = () => {
   return (
     <div className="py-8 w-full bg-ghBlack text-white">
       <div className="text-white pb-10 px-20">
-        <div className="text-white text-xl font-bold">DASHBOARD</div>
+        <div className="text-white text-4xl uppercase font-extrabold">DASHBOARD</div>
         <div className="pt-4 pb-6 text-base text-gray-400">
           Monitor application metrics & etc.
         </div>
@@ -178,7 +178,7 @@ const Dashboard: React.FC = () => {
         {/* Dashboard section header */}
         <div className="flex justify-between items-center pb-5">
           {/* Dashboard section title */}
-          <div className="text-base items-center text-gray-400">
+          <div className="text-xl font-bold items-center text-gray-400">
             RabbitMQ Queues Monitoring
           </div>
           <div className=''>

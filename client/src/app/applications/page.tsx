@@ -354,7 +354,7 @@ const Applications = (props: any) => {
     <div suppressHydrationWarning={true} className="py-8 w-full bg-ghBlack text-white">
       {/* Applications Header */}
       <div className="text-white pb-10 px-20">
-        <div className="text-xl font-bold text-white">
+        <div className="text-4xl uppercase font-extrabold text-white">
           APPLICATIONS
         </div>
         <div className="pt-4 pb-6 text-base text-gray-400">
@@ -397,7 +397,7 @@ const Applications = (props: any) => {
                 <input
                   type="text"
                   placeholder="Search Applications..."
-                  className="focus:ring-1 focus:ring-kxBlue bg-ghBlack2 px-3 py-2 placeholder-blueGray-300 text-blueGray-600 text-base border-0 shadow outline-none focus:outline-none w-[240px] pl-10"
+                  className="focus:ring-1 focus:ring-kxBlue bg-ghBlack px-3 py-2 placeholder-blueGray-300 text-blueGray-600 text-base border-0 shadow outline-none focus:outline-none w-[240px] pl-10"
                   onChange={(e) => {
                     setSearchTerm(e.target.value);
                     _DATA.jump(1); // reset page to 1

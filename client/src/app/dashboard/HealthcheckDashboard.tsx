@@ -125,7 +125,7 @@ const HealthcheckDashboard: React.FC<HealthcheckDashboardProps> = (props) => {
             {/* Dashboard section header */}
             <div className="flex justify-between items-center pb-5">
                 {/* Dashboard section title */}
-                <div className="text-base items-center text-gray-400">
+                <div className="text-xl font-bold items-center text-gray-400">
                     Application Healthcheck Monitoring
                 </div>
                 <div className=''>
@@ -167,7 +167,7 @@ const HealthcheckDashboard: React.FC<HealthcheckDashboardProps> = (props) => {
                         <input
                             type="text"
                             placeholder="Search..."
-                            className="focus:ring-kxBlue bg-ghBlack2 px-3 py-2 placeholder-blueGray-300 text-blueGray-600 text-md border-0 shadow outline-none focus:outline-none focus:ring-1 min-w-80 pl-10"
+                            className="focus:ring-kxBlue bg-ghBlack px-3 py-2 placeholder-blueGray-300 text-blueGray-600 text-md border-0 shadow outline-none focus:outline-none focus:ring-1 min-w-80 pl-10"
                             onChange={(e) => {
                                 setSearchTerm(e.target.value);
                             }}
@@ -175,7 +175,7 @@ const HealthcheckDashboard: React.FC<HealthcheckDashboardProps> = (props) => {
                     </div>
 
                     {/* Installed Application Count */}
-                    <div className='text-gray-400 text-sm ml-3'>Installed Applications: {Object.keys(props.healthCheckData).length}</div>
+                    <div className='text-gray-400 text-base ml-3'>Installed Applications: {Object.keys(props.healthCheckData).length}</div>
                 </div>
 
                 <div className={` ${Object.keys(props.healthCheckData).length == 0 ? "h-[100px]" : "h-[400px]"} overflow-auto scrollbar-orange bg-ghBlack3`}>

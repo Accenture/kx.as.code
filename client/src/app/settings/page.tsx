@@ -18,7 +18,7 @@ const Settings: React.FC = () => {
   return (
     <div className="py-8 w-full bg-ghBlack text-white">
       <div className="text-white pb-10 px-20">
-        <div className="text-xl font-bold italic text-white">SETTINGS</div>
+        <div className="text-4xl uppercase font-extrabold text-white">SETTINGS</div>
       </div>
     </div>
   );

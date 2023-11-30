@@ -100,7 +100,7 @@ const ApplicationGroupCard: React.FC<ApplicationGroupCardProps> = (props) => {
               <div className="flex items-center">
                 <Link href={`/application-groups/${appGroupBreadcrumb}`}>
                   <h2
-                    className="hover:underline hover:cursor-pointer text-lg text-white truncate"
+                    className="hover:underline hover:cursor-pointer text-lg font-extrabold uppercase text-white truncate"
                   >
                     {props.appGroup.title}
                   </h2>
@@ -137,9 +137,14 @@ const ApplicationGroupCard: React.FC<ApplicationGroupCardProps> = (props) => {
                           placement="top"
                           arrow
                         >
-                          <div className="flex items-center justify-center hover:bg-ghBlack4 p-1 hover:pointer h-14" key={i}>
+                          <Link
+                            href={"/applications/" + appGroupComponents[i]}
+                            className=""
+                          >
+                          <div className="flex items-center justify-center hover:bg-ghBlack4 p-1 hover:pointer h-16" key={i}>
                             {image}
                           </div>
+                          </Link>
                         </Tooltip>
                       </Slide>
                     );

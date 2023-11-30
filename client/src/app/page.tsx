@@ -8,7 +8,7 @@ import { useRouter } from 'next/navigation'
 const Home: React.FC = () => {
   const router = useRouter()
   return (
-    <div className="px-4 sm:px-6 lg:px-40 py-20 w-full max-w-9xl mx-auto">
+    <div className="px-20 sm:px-6 lg:px-20 py-20 w-full max-w-9xl">
 
       {/* Intro Header Section */}
       <div className="grid grid-cols-12 gap-14">
@@ -43,7 +43,7 @@ const Home: React.FC = () => {
           <div className="mt-10">
             <button
               type="button"
-              className="bg-kxBlue px-5 py-3 text-base w-[10rem] transition-all"
+              className="bg-kxBlue px-5 py-2 text-base transition-all"
               onClick={() => router.push('/applications')}
             >
               Get Started

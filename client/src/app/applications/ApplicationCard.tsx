@@ -200,7 +200,7 @@ function ApplicationCard(props: ApplicationCardProps) {
               : "sm:col-span-6 xl:col-span-4"
               }`}
           >
-            <div className="grid grid-cols-12 hover:bg-ghBlack3 bg-ghBlack2 items-center py-1">
+            <div className="grid grid-cols-12 hover:bg-ghBlack3 bg-ghBlack2 items-center py-2">
               <div className="flex col-span-10 items-center">
                 <div className="grid grid-cols-12 items-center">
                   <div className="flex col-span-4 pr-5 border-r-2 border-ghBlack">
@@ -211,20 +211,20 @@ function ApplicationCard(props: ApplicationCardProps) {
                       </div>
                       <div className="mx-3 flex col-span-6">
                         <div>
-                          <div className="text-white bg-ghBlack4 p-0 py-1 px-2 uppercase w-fit inline-block my-1 text-xs">
+                          <div className="text-white bg-ghBlack4 p-0 py-0.5 px-2 uppercase w-fit inline-block mb-2 text-xs font-extrabold">
                             {props.app.installation_group_folder}
                           </div>
                           <Link
                             href={"/applications/" + getSlug()}
                             className=""
                           >
-                            <h2 className="hover:underline hover:cursor-pointer text-base text-white flex items-center">
+                            <h2 className="hover:underline hover:cursor-pointer text-base text-white flex items-center font-bold">
                               {/* {
                               allQueueStatus != "" && (
                                 <StatusPoint installStatus={allQueueStatus} />
                               )} */}
                               {getTransformedName()}
-                              <Tooltip
+                              {/* <Tooltip
                                 title={props.app.Description}
                                 placement="top"
                                 arrow
@@ -232,7 +232,7 @@ function ApplicationCard(props: ApplicationCardProps) {
                                 <button className="inline">
                                   <HiOutlineInformationCircle className="ml-1" />
                                 </button>
-                              </Tooltip>
+                              </Tooltip> */}
                             </h2>
                           </Link>
                         </div>

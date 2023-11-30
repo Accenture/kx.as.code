@@ -102,11 +102,12 @@ export default function ApplicationDetail(props) {
     }
 
     return (
-        <div className="px-4 sm:px-6 lg:px-24 py-8 w-full max-w-9xl mx-auto bg-ghBlack">
+        <div className="px-3 sm:px-6 lg:px-24 py-8 w-full max-w-9xl mx-auto bg-ghBlack">
             {/* Header */}
-            <div className="grid grid-cols-12 py-5 p-5 items-center bg-ghBlack2">
-                <div className="col-span-10">
-                    <div className="text-white bg-ghBlack p-0 p-2 uppercase w-fit inline-block my-2 text-base">
+            <div className="grid grid-cols-12 items-center">
+                {/* Header left */}
+                <div className="col-span-9 bg-ghBlack2 p-5">
+                    <div className="text-white bg-ghBlack4 py-0.5 p-2 mb-2 uppercase w-fit inline-block text-base font-bold">
                         {appData.installation_group_folder}
                     </div>
                     <div className="flex items-center">
@@ -115,21 +116,32 @@ export default function ApplicationDetail(props) {
                         </div>
                         <div className="">
                             <div className="flex items-center">
-                                <div className="text-4xl capitalize">{appData.name} </div>
-                                <div className="ml-3 p-2 bg-ghBlack4 text-sm">{appData.environment_variables.imageTag}</div>
+                                <div className="text-4xl uppercase font-extrabold">{appData.name} </div>
+                                {appData.environment_variables && appData.environment_variables.imageTag && (
+                                    <div className="ml-3 p-2 py-0.5 bg-kxBlue2 text-sm">
+                                        {appData.environment_variables.imageTag}
+                                    </div>
+                                )}
+
                             </div>
 
                             <div className="text-base text-gray-400">{appData.Description}</div>
                         </div>
-                        
+
                     </div>
 
                     {/* Categories */}
                     <div className="mt-3">
-                        {appData.categories.map((item, i) => {
-                            return (<span className="bg-ghBlack4 p-2 mr-0.5 text-sm">{item}</span>)
-                        })}
+                        {appData.categories ? appData.categories.map((item, i) => {
+                            return (<span className="bg-ghBlack4 p-2 py-1 mr-0.5 text-sm">{item}</span>)
+                        }) : null}
                     </div>
+                </div>
+
+                {/* Header right */}
+                <div className="flex col-span-3 bg-ghBlack2 ml-5 p-5 h-full">
+                    <h2 className="mb-3 text-base"></h2>
+
                 </div>
                 {/* right section header */}
                 <div className="col-span-2 justify-end flex">
@@ -149,11 +161,11 @@ export default function ApplicationDetail(props) {
 
             <div className="grid grid-cols-12 mt-5">
                 <div className="col-span-8 bg-ghBlack2 p-5 mr-5">
-                    <h2 className="mb-3 text-base">Screenshots</h2>
+                    <h2 className="mb-3 text-xl uppercase font-extrabold text-gray-400">Screenshots</h2>
                     <ScreenshotCarroussel appName={appData.name} />
                 </div>
-                <div className="col-span-4 p-5 bg-ghBlack4">
-                    <h2 className="mb-3 text-base">Executable Tasks</h2>
+                <div className="col-span-4 p-5 bg-ghBlack2">
+                    <h2 className="mb-3 uppercase text-gray-400 font-extrabold text-xl">Executable Tasks</h2>
                     {availableTasksList.length > 0 ? (
                         drawAwailableTasksComponents()
                     ) : (
