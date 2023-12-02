@@ -21,7 +21,7 @@ export default function ApplicationDetail(props) {
 
     const checkApplicationIsInPendingQueue = async (name) => {
         try {
-            const response = await axios.get("http://localhost:8000/mock/api/queues/pending_queue");
+            const response = await axios.get("http://localhost:5001/api/queues/pending_queue");
 
             const isInPendingQueue = response.data.some((item) => {
                 try {
