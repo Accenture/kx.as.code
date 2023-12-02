@@ -81,6 +81,17 @@ const ApplicationStatusActionButton: React.FC<ApplicationStatusActionButtonProps
                             <ImCross className="p-0.5 flex my-auto" />
                         </div>
                         <span className="flex my-auto text-sm">Uninstall</span>
+                        <Tooltip title={`Re-install ${props.appName}`} placement="top" arrow>
+                            <button className="bg-kxBlue2 p-2 ml-1 py-1">
+                                <RestartAltIcon
+                                    aria-label="list"
+                                    className="text-white"
+                                    onClick={() => {
+                                        props.applicationInstallHandler();
+                                    }}
+                                />
+                            </button>
+                        </Tooltip>
                     </button>
                 );
             } else if (props.category != "core") {
@@ -97,17 +108,6 @@ const ApplicationStatusActionButton: React.FC<ApplicationStatusActionButtonProps
                             </div>
                             <span className="flex my-auto text-sm">Install</span>
                         </button>
-                        <Tooltip title={`Re-install ${props.appName}`} placement="top" arrow>
-                            <button className="bg-kxBlue2 p-2 ml-1 py-1">
-                                <RestartAltIcon
-                                    aria-label="list"
-                                    className="text-white"
-                                    onClick={() => {
-                                        props.applicationInstallHandler();
-                                    }}
-                                />
-                            </button>
-                        </Tooltip>
                     </div>
                 );
             }

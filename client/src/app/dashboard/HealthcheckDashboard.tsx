@@ -178,7 +178,7 @@ const HealthcheckDashboard: React.FC<HealthcheckDashboardProps> = (props) => {
                     <div className='text-gray-400 text-base ml-3'>Installed Applications: {Object.keys(props.healthCheckData).length}</div>
                 </div>
 
-                <div className={` ${Object.keys(props.healthCheckData).length == 0 ? "h-[100px]" : "h-[400px]"} overflow-auto scrollbar-orange bg-ghBlack3`}>
+                <div className={` ${Object.keys(props.healthCheckData).length == 0 ? "h-[100px]" : "h-[400px]"} overflow-auto scrollbar-orange bg-ghBlack`}>
                     {Object.keys(props.healthCheckData)
                         .filter((app) => {
                             const appName = app.toLowerCase().trim();
@@ -193,7 +193,8 @@ const HealthcheckDashboard: React.FC<HealthcheckDashboardProps> = (props) => {
                             </div>
                         ))}
 
-                    {Object.keys(props.healthCheckData)
+                                   
+                {Object.keys(props.healthCheckData).length !== 0 ? (Object.keys(props.healthCheckData)
                         .filter((app) => {
                             const appName = app.toLowerCase().trim();
                             return searchTerm === "" || appName.includes(searchTerm.toLowerCase().trim());
@@ -202,7 +203,9 @@ const HealthcheckDashboard: React.FC<HealthcheckDashboardProps> = (props) => {
                             <div className=''>
                                 <div className='mb-2 text-base text-gray-400 pl-3 pt-3'>No results for ' {searchTerm}'</div>
                             </div>
-                        )}
+                        )) : (<div className="text-base text-gray-400 p-3">No application healthcheck data available.</div>)}
+
+                    
                 </div>
             </div>
         </div>

@@ -108,6 +108,7 @@ export default function ThemeRegistry(props: any) {
             <ThemeProvider theme={darkTheme}>
                 <CssBaseline />
                 {children}
+
             </ThemeProvider>
         </CacheProvider>
     );

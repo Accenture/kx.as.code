@@ -97,7 +97,7 @@ const Applications = (props: any) => {
   const [isShowMoreFilters, setIsShowMoreFilters] = useState<boolean>(false);
 
   const [sortSelect, setSortSelect] = useState<string>("asc");
-  const [resultsPerPage, setResultsPerPage] = useState<any>(20);
+  const [resultsPerPage, setResultsPerPage] = useState<any>(10);
   const [filterTags, setFilterTags] = useState<any[]>([]);
 
   const [isCheckedCore, setIsCheckedCore] = useState<boolean>(false);
@@ -457,10 +457,10 @@ const Applications = (props: any) => {
                       }
                     }}
                   >
-                    <MenuItem value={20} className="bg-red-500">20</MenuItem>
-                    <MenuItem value={32}>32</MenuItem>
-                    <MenuItem value={44}>44</MenuItem>
-                    <MenuItem value={56}>56</MenuItem>
+                    <MenuItem value={10} className="bg-red-500">10</MenuItem>
+                    <MenuItem value={20}>20</MenuItem>
+                    <MenuItem value={50}>50</MenuItem>
+                    <MenuItem value={100}>100</MenuItem>
                   </Select>
                 </FormControl>
               </Box>

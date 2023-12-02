@@ -9,6 +9,7 @@ import ApplicationCategoryTag from "./ApplicationCategoryTag";
 import Tooltip from "@mui/material/Tooltip";
 import Checkbox from "@mui/material/Checkbox";
 import Link from 'next/link';
+import {transformName} from "../utils/application"
 
 interface NotificationMessageProps {
   notificationMessage: string;
@@ -58,14 +59,16 @@ function ApplicationCard(props: ApplicationCardProps) {
     notificationProps
   ) => (
     <div className="flex items-center">
-      <AppLogo appName={props.app.name} />
+       <div className="h-auto w-10">
+        <AppLogo appName={props.app.name} />
+      </div>
       <div className="ml-2">{notificationProps.notificationMessage}</div>
     </div>
   );
 
   const notify = (action: string) => {
     const notificationMessage = `${action === "install" ? "Installation" : "Uninstallation"
-      } Action added to Queue for ${appName}.`;
+      } Action added to Queue for ${transformName(props.app.name)}.`;
 
     toast.info(
       <NotificationMessage notificationMessage={notificationMessage} />,
@@ -78,6 +81,10 @@ function ApplicationCard(props: ApplicationCardProps) {
         draggable: true,
         progress: undefined,
         theme: "dark",
+        style: {
+          backgroundColor: "#2f3640",
+          borderRadius: 0
+        }
       }
     );
   };
@@ -169,7 +176,6 @@ function ApplicationCard(props: ApplicationCardProps) {
   };
 
   useEffect(() => {
-    // console.log("App: ", props.app);
     setUp();
     setAppName(
       props.app.name
@@ -201,7 +207,7 @@ function ApplicationCard(props: ApplicationCardProps) {
               }`}
           >
             <div className="grid grid-cols-12 hover:bg-ghBlack3 bg-ghBlack2 items-center py-2">
-              <div className="flex col-span-10 items-center">
+              <div className="flex col-span-9 items-center">
                 <div className="grid grid-cols-12 items-center">
                   <div className="flex col-span-4 pr-5 border-r-2 border-ghBlack">
 
@@ -250,7 +256,7 @@ function ApplicationCard(props: ApplicationCardProps) {
 
                 </div>
               </div>
-              <div className="flex col-span-2 items-center justify-center border-l-2 border-ghBlack h-full">
+              <div className="flex col-span-3 items-center justify-center border-l-2 border-ghBlack h-full">
 
                 <ApplicationStatusActionButton
                   isMqConnected={props.isMqConnected}

@@ -5,8 +5,6 @@ import { Inter } from 'next/font/google'
 import './globals.css'
 import Header from "../app/components/Header";
 import ThemeRegistry from './ThemeRegistry';
-// import Sidebar from "./components/Sidebar"
-
 import { styled, useTheme, Theme, CSSObject } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import MuiDrawer from '@mui/material/Drawer';
@@ -37,6 +35,14 @@ import Tooltip from "@mui/material/Tooltip";
 import { withStyles } from '@mui/styles';
 import Zoom from '@mui/material/Zoom';
 import { usePathname } from 'next/navigation'
+import Breadcrumb from "./components/Breadcrumb";
+import BasicBreadcrumbs from "./components/BasicBreadcrumbs"
+import "react-toastify/dist/ReactToastify.css";
+import { ToastContainer } from "react-toastify";
+import KXASCodeNotifications from "./components/KXASCodeNotifications"
+
+
+
 
 
 const inter = Inter({ subsets: ['latin'] })
@@ -164,9 +170,9 @@ export default function RootLayout({
                           minHeight: 40,
                           justifyContent: open ? 'initial' : 'center',
                           px: 2.5,
-                          backgroundColor: slug == "dashboard" ? "#5a86ff" : "", 
+                          backgroundColor: slug == "dashboard" ? "#5a86ff" : "",
                           '&:hover': {
-                            backgroundColor: slug == "dashboard" ? "#5a86ff" : "", 
+                            backgroundColor: slug == "dashboard" ? "#5a86ff" : "",
                           },
                         }}
                       >
@@ -195,7 +201,7 @@ export default function RootLayout({
                           px: 2.5,
                           backgroundColor: pathname.includes("/applications") ? "#5a86ff" : "",
                           '&:hover': {
-                            backgroundColor: pathname.includes("/applications") ? "#5a86ff" : "", 
+                            backgroundColor: pathname.includes("/applications") ? "#5a86ff" : "",
                           },
                         }}
                       >
@@ -228,7 +234,7 @@ export default function RootLayout({
                           px: 2.5,
                           backgroundColor: slug == "application-groups" ? "#5a86ff" : "",
                           '&:hover': {
-                            backgroundColor: slug == "application-groups" ? "#5a86ff" : "", 
+                            backgroundColor: slug == "application-groups" ? "#5a86ff" : "",
                           },
                         }}
                       >
@@ -258,7 +264,7 @@ export default function RootLayout({
                           px: 2.5,
                           backgroundColor: slug == "settings" ? "#5a86ff" : "",
                           '&:hover': {
-                            backgroundColor: slug == "settings" ? "#5a86ff" : "", 
+                            backgroundColor: slug == "settings" ? "#5a86ff" : "",
                           },
                         }}
                       >
@@ -279,10 +285,25 @@ export default function RootLayout({
               </List>
             </Drawer>
             <Box component="main" sx={{ flexGrow: 1, p: 0 }}>
-              <Header drawerWidth={drawerWidth} handleDrawerOpen={handleDrawerOpen} open={open} />
-              {/* Sidebar */}
-              {/* <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} /> */}
-              {children}
+              
+                <Header drawerWidth={drawerWidth} handleDrawerOpen={handleDrawerOpen} open={open} />
+                
+                <ToastContainer
+                  position="bottom-right"
+                  autoClose={5000}
+                  hideProgressBar={false}
+                  newestOnTop={false}
+                  closeOnClick
+                  rtl={false}
+                  pauseOnFocusLoss
+                  draggable
+                  pauseOnHover
+                />
+                <Breadcrumb />
+                {/* Sidebar */}
+                {/* <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} /> */}
+                <KXASCodeNotifications></KXASCodeNotifications>
+                {children}
             </Box>
           </Box>
         </ThemeRegistry>

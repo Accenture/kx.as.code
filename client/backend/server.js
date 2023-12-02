@@ -95,6 +95,7 @@ const performHealthCheck = async () => {
 
       // Append httpPath to the healthCheckUrl
       const healthCheckUrl = `http://${appName}.${environmentPrefix}.${baseDomain}${httpPath}`;
+      console.log("DEBUG - Healthcheck URL: ", healthCheckUrl)
 
 
       const response = await axios.get(healthCheckUrl);
@@ -113,7 +114,7 @@ const performHealthCheck = async () => {
       }
 
       // Add the health check status object only if the array has fewer than 100 elements
-      if (healthCheckData.data[appName].length < 100) {
+      if (healthCheckData.data[appName].length < 120) {
         healthCheckData.data[appName].push({
           timestamp: new Date().toISOString(),
           status: response.status,
@@ -147,7 +148,7 @@ const performHealthCheck = async () => {
 };
 
 
-// Schedule health check every 10s
+// Schedule health check every 60s
 setInterval(performHealthCheck, healthCheckInterval);
 
 app.route("/api/add/application/:queue_name").post(async (req, res) => {

@@ -18,7 +18,7 @@
     "@emotion/styled": "^11.11.0",
     "@material-ui/styles": "^4.11.5",
     "@mui/icons-material": "^5.14.18",
-    "@mui/material": "^5.14.18",
+    "@mui/material": "^5.14.19",
     "@mui/styles": "^5.14.18",
     "@tailwindcss/forms": "^0.5.7",
     "@tailwindcss/line-clamp": "^0.4.4",

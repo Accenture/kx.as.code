@@ -19,6 +19,27 @@ export default function ApplicationDetail(props) {
     const pathnames = pathname.split("/").filter((x) => x);
     const slug = pathnames[pathnames.length - 1];
 
+    const checkApplicationIsInPendingQueue = async (name) => {
+        try {
+            const response = await axios.get("http://localhost:8000/mock/api/queues/pending_queue");
+
+            const isInPendingQueue = response.data.some((item) => {
+                try {
+                    const payloadObj = JSON.parse(item.payload);
+                    return payloadObj.name === name;
+                } catch (error) {
+                    console.error("Error parsing payload:", error);
+                    return false;
+                }
+            });
+
+            return isInPendingQueue;
+        } catch (error) {
+            console.error("Error checking pending queue:", error);
+            return false;
+        }
+    };
+
     const fetchAppData = () => {
         console.log("slug:   ", slug)
         axios
@@ -84,6 +105,7 @@ export default function ApplicationDetail(props) {
         return availableTasksList.map((task, i) => {
             return (
                 <AppTaskComponent
+                    checkApplicationIsInPendingQueue={checkApplicationIsInPendingQueue}
                     key={i}
                     task={task}
                     taskExecutionHandler={taskExecutionHandler}
