@@ -69,7 +69,7 @@ let healthCheckData = {};
 const performHealthCheck = async () => {
   try {
     // Request to get the array of completed_queue objects
-    const completedQueueResponse = await axios.get(`http://${rabbitMqHost}:5001/api/queues/completed_queue`);
+    const completedQueueResponse = await axios.get(`http://localhost:5001/api/queues/completed_queue`);
 
     // Parse the payload from each object in the response array
     const appNames = completedQueueResponse.data.map((item) => {
