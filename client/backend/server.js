@@ -13,8 +13,8 @@ const PORT = process.env.PORT || 5001;
 const dataPath = "./src/data/combined-metadata-files.json";
 const healthCheckDataPath = "./src/data/healthcheckdata.json";
 const profileConfig = "./src/data/profile-config.json"
-const rabbitMqUsername = "test";
-const rabbitMqPassword = "test";
+const rabbitMqUsername = "guest";
+const rabbitMqPassword = "guest";
 const rabbitMqHost = "localhost";
 const rabbitMqPort = "15672";
 
@@ -290,72 +290,37 @@ app.get("/api/applications/:app_name", (req, res) => {
   });
 });
 
-app.route("/api/move/:from_queue/:to_queue").get((req, res) => {
-  console.log("move triggered.");
-  var url =
-    "http://" +
-    rabbitMqUsername +
-    ":" +
-    rabbitMqPassword +
-    "@" +
-    rabbitMqHost +
-    ":15672/api/parameters/shovel/%2F/Move%20from%20" +
-    req.params.from_queue;
 
-  var dataString =
-    '{"component":"shovel","vhost":"/","name":"Move from "' +
-    req.params.from_queue +
-    ',"value":{"src-uri":"amqp:///%2F","src-queue":"' +
-    req.params.from_queue +
-    '","src-protocol":"amqp091","src-prefetch-count":1000,"src-delete-after":"queue-length","dest-protocol":"amqp091","dest-uri":"amqp:///%2F","dest-add-forward-headers":false,"ack-mode":"on-confirm","dest-queue":"' +
-    req.params.to_queue +
-    '","src-consumer-args":{}}}';
+app.route("/api/consume/:queue_name").get(async (req, res) => {
+  try {
+    const rabbitMqConnectionString = `amqp://${rabbitMqUsername}:${rabbitMqPassword}@${rabbitMqHost}`;
+    let connection = await amqp.connect(rabbitMqConnectionString);
 
-  let options = {
-    url: url,
-    method: "PUT",
-    body: dataString,
-  };
+    const channel = await connection.createChannel();
+    await channel.assertExchange("action_workflow", "direct", {
+      durable: true,
+    });
+    await channel.assertQueue(req.params.queue_name);
+    channel.bindQueue(
+      req.params.queue_name,
+      "action_workflow",
+      req.params.queue_name
+    );
 
-  request(options, (error, response, body) => {
-    if (error || response.statusCode !== 200) {
-      return res.status(500).json({ type: "error", message: error });
+    let data = await channel.get(req.params.queue_name);
+
+    if (data) {
+      data.content ? eval("(" + data.content.toString() + ")()") : "";
+      channel.ack(data);
     } else {
-      res.json(JSON.parse(body));
     }
-  });
+
+    res.send("The POST request is being processed!");
+  } catch (error) {
+    console.error("Error consuming queue:", error);
+    res.status(500).send("Internal Server Error");
+  }
 });
-
-// app.route("/api/consume/:queue_name").get(async (req, res) => {
-//   try {
-//     const rabbitMqConnectionString = `amqp://${rabbitMqUsername}:${rabbitMqPassword}@${rabbitMqHost}`;
-//     let connection = await amqp.connect(rabbitMqConnectionString);
-
-//     const channel = await connection.createChannel();
-//     await channel.assertExchange("action_workflow", "direct", {
-//       durable: true,
-//     });
-//     await channel.assertQueue(req.params.queue_name);
-//     channel.bindQueue(
-//       req.params.queue_name,
-//       "action_workflow",
-//       req.params.queue_name
-//     );
-
-//     let data = await channel.get(req.params.queue_name);
-
-//     if (data) {
-//       data.content ? eval("(" + data.content.toString() + ")()") : "";
-//       channel.ack(data);
-//     } else {
-//     }
-
-//     res.send("The POST request is being processed!");
-//   } catch (error) {
-//     console.error("Error consuming queue:", error);
-//     res.status(500).send("Internal Server Error");
-//   }
-// });
 
 // API endpoint to access health check data for Prometheus
 app.get("/healthcheckdata-prometheus", (req, res) => {
