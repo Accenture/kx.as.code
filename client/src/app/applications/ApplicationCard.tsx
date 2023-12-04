@@ -199,6 +199,15 @@ function ApplicationCard(props: ApplicationCardProps) {
   return (
     <>
       {props.isListLayout ? (
+        props.isLoading ? (
+          <div className="animate-pulse flex flex-col col-span-full">
+            {/* Loading Skeleton */}
+            <div className="h-10 bg-gray-200 mb-2"></div>
+            <div className="h-10 bg-gray-200 mb-2"></div>
+            <div className="h-32 bg-gray-200 mb-2"></div>
+            {/* Add more skeleton elements as needed */}
+          </div>
+        ) : (
         <>
           <div
             className={`cursor-auto flex flex-col col-span-full ${props.isListLayout
@@ -273,7 +282,7 @@ function ApplicationCard(props: ApplicationCardProps) {
 
           </div>
         </>
-      ) : (
+      )) : (
         <div
           className={`relative flex flex-col col-span-full ${isChecked ? "hover:border-[#5a86ff]" : "hover:bg-ghBlack3 hover:border-ghBlack3"
             } hover:bg-ghBlack3 bg-ghBlack2 border ${isChecked ? "border-kxBlue" : "border-ghBlack2"

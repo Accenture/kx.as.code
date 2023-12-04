@@ -10,6 +10,7 @@ const applicationGroupJson: ApplicationGroup[] = require("../../data/combined-ap
 
 const ApplicationGroups: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   useEffect(() => {
 
@@ -73,7 +74,10 @@ const ApplicationGroups: React.FC = () => {
 
         {/* Application Groups actions */}
         <div className="grid grid-cols-12 gap-2">
-          {drawApplicationGroupCards()}
+          {isLoading ? (<div className="animate-pulse flex flex-col col-span-full">
+            {/* Loading Skeleton */}
+            <div className="h-20 bg-ghBlack2 mb-2"></div>
+          </div>): drawApplicationGroupCards()}
         </div>
       </div>
 

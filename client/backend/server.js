@@ -204,15 +204,17 @@ app.route("/api/queues/:queue_name").get(async (req, res) => {
   try {
     const url = `http://${rabbitMqHost}:${rabbitMqPort}/api/queues/%2F/${req.params.queue_name}/get`;
     const dataString = '{"count":99999999,"ackmode":"ack_requeue_true","encoding":"auto","truncate":50000}';
+    
     const axiosOptions = {
       url: url,
       method: "POST",
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Basic ${Buffer.from('test:test').toString('base64')}`
+        'Authorization': `Basic ${Buffer.from(`${rabbitMqUsername}:${rabbitMqPassword}`).toString('base64')}`
       },
       data: dataString,
     };
+
     const response = await axios(axiosOptions);
     res.json(response.data);
   } catch (error) {
@@ -325,37 +327,31 @@ app.get("/api/applications/:app_name", (req, res) => {
 
 app.route("/api/consume/:queue_name").get(async (req, res) => {
   try {
-    const rabbitMqConnectionString = `amqp://${rabbitMqUsername}:${rabbitMqPassword}@${rabbitMqHost}`;
-    let connection = await amqp.connect(rabbitMqConnectionString);
+    const queueName = req.params.queue_name;
+    const url = `http://${rabbitMqHost}:${rabbitMqPort}/api/queues/%2F/${queueName}/get`;
+    const dataString = '{"count":1,"ackmode":"ack_requeue_false","encoding":"auto","truncate":50000}';
 
-    const channel = await connection.createChannel();
-    await channel.assertExchange("action_workflow", "direct", {
-      durable: true,
-    });
+    const axiosOptions = {
+      url: url,
+      method: "POST",
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Basic ${Buffer.from(`${rabbitMqUsername}:${rabbitMqPassword}`).toString('base64')}`
+      },
+      data: dataString,
+    };
 
-    await channel.assertQueue(req.params.queue_name);
+    const response = await axios(axiosOptions);
 
-    channel.bindQueue(
-      req.params.queue_name,
-      "action_workflow",
-      req.params.queue_name
-    );
-
-    let data = await channel.get(req.params.queue_name);
-
-    if (data) {
-      const messageContent = data.content.toString();
-      console.log("Consumed Message:", messageContent);
-      eval("(" + messageContent + ")()");
-      channel.ack(data);
-      res.send("Message consumed successfully!");
+    if (response.data.length > 0) {
+      const messageContent = JSON.parse(response.data[0].payload);
+      res.json({ type: "success", message: "Message consumed successfully", content: messageContent });
     } else {
-      console.log("No messages in the queue.");
-      res.send("No messages in the queue.");
+      res.json({ type: "info", message: "No messages available in the queue" });
     }
   } catch (error) {
-    console.error("Error consuming queue:", error);
-    res.status(500).send("Internal Server Error");
+    console.error("Error consuming message from the queue:", error);
+    res.status(500).json({ type: "error", message: error.message });
   }
 });
 

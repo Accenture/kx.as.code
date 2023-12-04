@@ -102,6 +102,7 @@ const Applications = (props: any) => {
 
   const [isCheckedCore, setIsCheckedCore] = useState<boolean>(false);
   const [totalChecked, setTotalChecked] = useState<number>(0);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const [page, setPage] = useState<number>(1);
   let _DATA = usePagination({
@@ -297,6 +298,7 @@ const Applications = (props: any) => {
   const fetchData = () => {
     axios.get("http://localhost:5001/api/applications").then((response) => {
       setApplicationData(response.data);
+      setIsLoading(false)
     });
   };
 
@@ -568,17 +570,17 @@ const Applications = (props: any) => {
             {isListLayout ? (
               <div className="flex items-center">
                 <div>
-                <IconButton
-                  aria-label="list"
-                  color="primary"
-                  onClick={() => {
-                    toggleListLayout(true);
-                  }}
-                >
-                  <FormatListBulleted />
-                </IconButton>
-                {/* BETA feature -> Gallery view */}
-                </div> 
+                  <IconButton
+                    aria-label="list"
+                    color="primary"
+                    onClick={() => {
+                      toggleListLayout(true);
+                    }}
+                  >
+                    <FormatListBulleted />
+                  </IconButton>
+                  {/* BETA feature -> Gallery view */}
+                </div>
                 <Tooltip title={"BETA"} placement="top" arrow>
 
                   <div>
@@ -629,7 +631,21 @@ const Applications = (props: any) => {
 
         {/* Applications Content */}
         <div className="grid grid-cols-12 gap-1 px-20">
-          {
+          {isLoading ? (
+            <div className="animate-pulse flex flex-col col-span-full">
+              {/* Loading Skeleton */}
+              <div className="h-20 bg-ghBlack mb-2"></div>
+              <div className="h-20 bg-ghBlack mb-2"></div>
+              <div className="h-20 bg-ghBlack mb-2"></div>
+              <div className="h-20 bg-ghBlack mb-2"></div>
+              <div className="h-20 bg-ghBlack mb-2"></div>
+              <div className="h-20 bg-ghBlack mb-2"></div>
+              <div className="h-20 bg-ghBlack mb-2"></div>
+              <div className="h-20 bg-ghBlack mb-2"></div>
+              <div className="h-20 bg-ghBlack mb-2"></div>
+              <div className="h-20 bg-ghBlack mb-2"></div>
+            </div>
+            ) : (
             _DATA.currentData().map((app, index) => (
               <ApplicationCard
                 key={index}
@@ -647,7 +663,7 @@ const Applications = (props: any) => {
                 applicationSelectedCount={applicationSelectedCount}
               />
             )
-            )}
+            ))}
         </div>
 
         {/* Pagination bottom */}
