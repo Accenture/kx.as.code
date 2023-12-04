@@ -21,10 +21,12 @@ export default function KXASCodeNotifications() {
 
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      fetchQueueDataAndNotify();
-    }, 5000);
-    return () => clearInterval(interval);
+
+    // disable setIntervall function for Notifications:
+    // const interval = setInterval(() => {
+    //   fetchQueueDataAndNotify();
+    // }, 5000);
+    // return () => clearInterval(interval);
   }, []);
 
   // const getNotificationMessageList = () => {
