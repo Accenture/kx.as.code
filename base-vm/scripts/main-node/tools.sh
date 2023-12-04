@@ -76,8 +76,24 @@ else
   sudo update-alternatives --install /usr/bin/x-www-browser x-www-browser /usr/bin/google-chrome-stable 100
 fi
 
-# Install YQ
+# Install YQ - version that wraps JQ and includes XQ (default on path)
 sudo -H pip3 install yq
+
+# Install YQ - version with --prettyPrint
+yqVersion="v4.2.0"
+if [[ "${ARCH}" == "arm64" ]]; then
+  yqBinary="yq_linux_arm64"
+  sha256sum="c4e757bc23eb2212ffbbb76e33c4e7771c8f086bbbfc8984d30b2f62152680eb"
+else
+  yqBinary="yq_linux_amd64"
+  sha256sum="58e0e38d197eafdd03572bf21c302c585cc802fd099c26938189356717833962"
+fi
+yqUrl="https://github.com/mikefarah/yq/releases/download/${yqVersion}/${yqBinary}.tar.gz"
+curl -L -o ${INSTALLATION_WORKSPACE}/${yqBinary}.tar.gz ${yqUrl}
+echo "${sha256sum} ${INSTALLATION_WORKSPACE}/${yqBinary}.tar.gz" | sha256sum --check
+sudo tar xvzf ${INSTALLATION_WORKSPACE}/${yqBinary}.tar.gz -C ${INSTALLATION_WORKSPACE}
+sudo mv ${INSTALLATION_WORKSPACE}/${yqBinay} /usr/bin/yq
+sudo chmod +x /usr/bin/yq
 
 # Install Grip for showing WELCOME.md after desktop login
 sudo -H pip3 install grip
