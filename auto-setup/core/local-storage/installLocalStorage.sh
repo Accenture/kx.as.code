@@ -9,7 +9,7 @@ localStorageDrive_Partition=""
 
 # Use disk name if supplied in profile-config.json - override that should only be used in rare cases
 export localVolumesDiskName=$(cat ${profileConfigJsonPath} | jq -r '.config.local_volumes.diskName')
-export localKubeVolumesDiskSize=$(cat ${profileConfigJsonPath}| jq -r '.state.provisioned_disks.local_storage_disk_size')
+export localKubeVolumesDiskSize=$(cat ${profileConfigJsonPath} | jq -r '.state.provisioned_disks.local_storage_disk_size')
 
 # Get number of local volumes to pre-provision
 export number1gbVolumes=$(cat ${profileConfigJsonPath} | jq -r '.config.local_volumes.one_gb')
@@ -25,13 +25,13 @@ if [[ -z ${localKubeVolumesDiskSize} ]] || [[ "${localKubeVolumesDiskSize}" == "
   export size10gbVolumes=$(roundUp "$(awk "BEGIN{printf \"%.2f\", (($number10gbVolumes * 10)) * 1.02}")")
   export size30gbVolumes=$(roundUp "$(awk "BEGIN{printf \"%.2f\", (($number30gbVolumes * 30)) * 1.02}")")
   export size50gbVolumes=$(roundUp "$(awk "BEGIN{printf \"%.2f\", (($number50gbVolumes * 50)) * 1.02}")")
-  export localKubeVolumesDiskSize=$(( ${size1gbVolumes} + ${size5gbVolumes} + ${size10gbVolumes} + ${size30gbVolumes} + ${size50gbVolumes} + 1 ))
+  export localKubeVolumesDiskSize=$((${size1gbVolumes} + ${size5gbVolumes} + ${size10gbVolumes} + ${size30gbVolumes} + ${size50gbVolumes} + 1))
 fi
 
 # Install NVME CLI if needed, for example, for AWS
 nvme_cli_needed=$(df -h | grep "nvme" || true)
 if [[ -n ${nvme_cli_needed} ]]; then
-    /usr/bin/sudo apt install -y nvme-cli lvm2
+  /usr/bin/sudo apt install -y nvme-cli lvm2
 fi
 
 # If disk name not supplied in config, try to work out which free disk to use (by checking un-partitioned disk size against requested size in profile-config.json - only relevant)
@@ -111,36 +111,36 @@ fi
 BASE_K8S_LOCAL_VOLUMES_DIR=/mnt/k8s_local_volumes
 
 create_volumes() {
-    if [[ ${2} -ne 0 ]]; then
-        for i in $(eval echo "{1..$2}"); do
-            if [[ -z $(lsblk -J | jq -r ' .. .name? // empty | select(test("k8s_local_vol_group-k8s_'${1}'_local_k8s_volume_'${i}'"))' || true) ]]; then
-                for j in {1..5}; do
-                  # Added loop, as sometimes two tries are required
-                  volumeSizeToCreate=${1}
-                  /usr/bin/sudo lvcreate -L $(awk "BEGIN{printf \"%.2f\", (${volumeSizeToCreate} * 1024)}")M -n k8s_${1}_local_k8s_volume_${i} k8s_local_vol_group
-                  /usr/bin/sudo mkfs.xfs /dev/k8s_local_vol_group/k8s_${1}_local_k8s_volume_${i}
-                  /usr/bin/sudo mkdir -p ${BASE_K8S_LOCAL_VOLUMES_DIR}/k8s_${1}_local_k8s_volume_${i}
-                  errorOutput=$(/usr/bin/sudo mount /dev/k8s_local_vol_group/k8s_${1}_local_k8s_volume_${i} ${BASE_K8S_LOCAL_VOLUMES_DIR}/k8s_${1}_local_k8s_volume_${i} 2>&1 >/dev/null || true)
-                  if [[ -z "${errorOutput}" ]]; then
-                    log_info "Successfully mounted /dev/k8s_local_vol_group/k8s_${1}_local_k8s_volume_${i} to ${BASE_K8S_LOCAL_VOLUMES_DIR}/k8s_${1}_local_k8s_volume_${i}"
-                    break
-                  else
-                    log_error "Mount error after mount attempt ${j}!: ${errorOutput}"
-                  fi
-                done
-                # Don't add entry to /etc/fstab if the volumes was not created, possibly due to running out of diskspace
-                if [[ -L /dev/k8s_local_vol_group/k8s_${1}_local_k8s_volume_${i} ]] && [[ -e /dev/k8s_local_vol_group/k8s_${1}_local_k8s_volume_${i} ]]; then
-                    entryAlreadyExists=$(cat /etc/fstab | grep "/dev/k8s_local_vol_group/k8s_${1}_local_k8s_volume_${i}" || true)
-                    # Don't add entry to /etc/fstab if it already exists
-                    if [[ -z ${entryAlreadyExists} ]]; then
-                        /usr/bin/sudo echo '/dev/k8s_local_vol_group/k8s_'${1}'_local_k8s_volume_'${i}' '${BASE_K8S_LOCAL_VOLUMES_DIR}'/k8s_'${1}'_local_k8s_volume_'${i}' xfs defaults 0 0' | /usr/bin/sudo tee -a /etc/fstab
-                    fi
-                else
-                    echo "/dev/k8s_local_vol_group/k8s_${1}_local_k8s_volume_${i} does not exist. Not adding to /etc/fstab. Possible reason is that there was not enough space left on the drive to create it"
-                fi
-            fi
+  if [[ ${2} -ne 0 ]]; then
+    for i in $(eval echo "{1..$2}"); do
+      if [[ -z $(lsblk -J | jq -r ' .. .name? // empty | select(test("k8s_local_vol_group-k8s_'${1}'_local_k8s_volume_'${i}'"))' || true) ]]; then
+        for j in {1..5}; do
+          # Added loop, as sometimes two tries are required
+          volumeSizeToCreate=${1}
+          /usr/bin/sudo lvcreate -L $(awk "BEGIN{printf \"%.2f\", (${volumeSizeToCreate} * 1024)}")M -n k8s_${1}_local_k8s_volume_${i} k8s_local_vol_group
+          /usr/bin/sudo mkfs.xfs /dev/k8s_local_vol_group/k8s_${1}_local_k8s_volume_${i}
+          /usr/bin/sudo mkdir -p ${BASE_K8S_LOCAL_VOLUMES_DIR}/k8s_${1}_local_k8s_volume_${i}
+          errorOutput=$(/usr/bin/sudo mount /dev/k8s_local_vol_group/k8s_${1}_local_k8s_volume_${i} ${BASE_K8S_LOCAL_VOLUMES_DIR}/k8s_${1}_local_k8s_volume_${i} 2>&1 >/dev/null || true)
+          if [[ -z "${errorOutput}" ]]; then
+            log_info "Successfully mounted /dev/k8s_local_vol_group/k8s_${1}_local_k8s_volume_${i} to ${BASE_K8S_LOCAL_VOLUMES_DIR}/k8s_${1}_local_k8s_volume_${i}"
+            break
+          else
+            log_error "Mount error after mount attempt ${j}!: ${errorOutput}"
+          fi
         done
-    fi
+        # Don't add entry to /etc/fstab if the volumes was not created, possibly due to running out of diskspace
+        if [[ -L /dev/k8s_local_vol_group/k8s_${1}_local_k8s_volume_${i} ]] && [[ -e /dev/k8s_local_vol_group/k8s_${1}_local_k8s_volume_${i} ]]; then
+          entryAlreadyExists=$(cat /etc/fstab | grep "/dev/k8s_local_vol_group/k8s_${1}_local_k8s_volume_${i}" || true)
+          # Don't add entry to /etc/fstab if it already exists
+          if [[ -z ${entryAlreadyExists} ]]; then
+            /usr/bin/sudo echo '/dev/k8s_local_vol_group/k8s_'${1}'_local_k8s_volume_'${i}' '${BASE_K8S_LOCAL_VOLUMES_DIR}'/k8s_'${1}'_local_k8s_volume_'${i}' xfs defaults 0 0' | /usr/bin/sudo tee -a /etc/fstab
+          fi
+        else
+          echo "/dev/k8s_local_vol_group/k8s_${1}_local_k8s_volume_${i} does not exist. Not adding to /etc/fstab. Possible reason is that there was not enough space left on the drive to create it"
+        fi
+      fi
+    done
+  fi
 }
 
 # Adding space lost when creating Sig PV
@@ -157,17 +157,17 @@ create_volumes $(awk "BEGIN{printf \"%.2f\", (50 * 1.02)}") ${number50gbVolumes}
 
 # Checkout Storage Provisioner
 if [[ -d ./sig-storage-local-static-provisioner ]]; then
-    rm -rf ./sig-storage-local-static-provisioner
+  rm -rf ./sig-storage-local-static-provisioner
 fi
 git clone --depth=1 https://github.com/kubernetes-sigs/sig-storage-local-static-provisioner.git
 cd sig-storage-local-static-provisioner
 
 # Replace placeholders with environment variables from metadata.json
 echo "PATH: $PATH"
-envhandlebars < ${installComponentDirectory}/values.yaml > ${installationWorkspace}/${componentName}_values.yaml
+envhandlebars <${installComponentDirectory}/values.yaml >${installationWorkspace}/${componentName}_values.yaml
 
 # Generate install YAML file via Helm
-helm template -f ${installationWorkspace}/${componentName}_values.yaml local-volume-provisioner --namespace ${namespace} ./helm/provisioner > ${installationWorkspace}/local-volume-provisioner.generated.yaml
+helm template -f ${installationWorkspace}/${componentName}_values.yaml local-volume-provisioner --namespace ${namespace} ./helm/provisioner >${installationWorkspace}/local-volume-provisioner.generated.yaml
 
 # Apply YAML file
 kubectl apply -f ${installationWorkspace}/local-volume-provisioner.generated.yaml
@@ -186,7 +186,9 @@ reclaimPolicy: Delete
 ''' | kubectl apply -f -
 
 # Remove "default" tag on K3s "local-path" storage class, as this will be set to "local-storage" later
-kubectl patch storageclass local-path -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"false"}}}'
+if [[ "${kubeOrchestrator}" == "k3s" ]]; then
+  kubectl patch storageclass local-path -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"false"}}}'
+fi
 
 # Make local storage class default
 kubectl patch storageclass local-storage-sc -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
