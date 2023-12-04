@@ -11,8 +11,8 @@ export default function KXASCodeNotifications() {
       );
 
       if (response.data.type === "success") {
-        const content = response.data.content;
-        const message = `${content.action} ${content.name} in ${content.install_folder}`;
+        const payload = JSON.parse(response.data.content.payload);
+        const message = payload.message;
         notify(message, "info");
       } else {
         console.error("Error consuming queue:", response.data.message);

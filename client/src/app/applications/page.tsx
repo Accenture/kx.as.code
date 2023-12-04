@@ -24,6 +24,13 @@ import { FormatListBulleted } from "@mui/icons-material";
 import AppsIcon from "@mui/icons-material/Apps";
 
 
+const ApplicationCardsSkeleton = () => {
+  const divs = Array.from({ length: 10 }, (_, index) => (
+    <div key={index} className="h-16 bg-ghBlack mb-1"></div>
+  ));
+  return <>{divs}</>;
+};
+
 const getArrayOfObjArray = (objArray: { name: string }[]) => {
   let list: string[] = [];
   objArray.map((obj) => {
@@ -634,16 +641,8 @@ const Applications = (props: any) => {
           {isLoading ? (
             <div className="animate-pulse flex flex-col col-span-full">
               {/* Loading Skeleton */}
-              <div className="h-20 bg-ghBlack mb-2"></div>
-              <div className="h-20 bg-ghBlack mb-2"></div>
-              <div className="h-20 bg-ghBlack mb-2"></div>
-              <div className="h-20 bg-ghBlack mb-2"></div>
-              <div className="h-20 bg-ghBlack mb-2"></div>
-              <div className="h-20 bg-ghBlack mb-2"></div>
-              <div className="h-20 bg-ghBlack mb-2"></div>
-              <div className="h-20 bg-ghBlack mb-2"></div>
-              <div className="h-20 bg-ghBlack mb-2"></div>
-              <div className="h-20 bg-ghBlack mb-2"></div>
+              <ApplicationCardsSkeleton />
+
             </div>
             ) : (
             _DATA.currentData().map((app, index) => (
