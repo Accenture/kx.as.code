@@ -17,10 +17,10 @@ kubernetesApplyYamlFile() {
     kubeval ${kubeYamlTargetFileLocation} --schema-location https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master --strict || local rc=$? && log_info "kubeval returned with rc=$rc"
 
     # Check if Kubernetes K8s API definition/resource exists, before applying the YAML file
-    local yamlK8sApi=$(cat ${kubeYamlTargetFileLocation} | yq -r '.apiVersion' | cut -d'/' -f1)
-    local yamlK8sKind=$(cat ${kubeYamlTargetFileLocation} | yq -r '.kind')
+    local yamlK8sApi=$(cat ${kubeYamlTargetFileLocation} | /usr/local/bin/yq -r '.apiVersion' | cut -d'/' -f1)
+    local yamlK8sKind=$(cat ${kubeYamlTargetFileLocation} | /usr/local/bin/yq -r '.kind')
     local yamlShortVersionCheck=$(echo $yamlK8sApi | grep -E "^v[0-9]$" || true)
-    local yamlResourceName=$(cat ${kubeYamlTargetFileLocation} | yq -r '.metadata.name')
+    local yamlResourceName=$(cat ${kubeYamlTargetFileLocation} | /usr/local/bin/yq -r '.metadata.name')
     if [[ -n ${yamlShortVersionCheck} ]]; then
       local customResourceCheck=$(kubectl api-resources --api-group= --sort-by=kind --no-headers=true | awk {'print $5'} | grep "${yamlK8sKind}" || true)
       if [[ -z ${customResourceCheck} ]]; then
@@ -32,7 +32,7 @@ kubernetesApplyYamlFile() {
     if [[ -n ${customResourceCheck} ]]; then
       if [[ ${rc} -eq 0 ]]; then
         log_info "YAML validation ok for ${kubeYamlTargetFileLocation}. Continuing to apply."
-        local yamlNamespace=$(cat ${kubeYamlTargetFileLocation} | yq -r '.metadata.namespace')
+        local yamlNamespace=$(cat ${kubeYamlTargetFileLocation} | /usr/local/bin/yq -r '.metadata.namespace')
         if [[ -z ${yamlNamespace} ]]; then
           local yamlNamespace="${namespace}"
         fi

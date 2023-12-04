@@ -124,19 +124,19 @@ addOauthProxyToComponentNamespace() {
     if [[ "${separateExternalAccess}" == "true" ]]; then
       # Add new ingress resource for external access (original domain with -ext added) with Keycloak MFA.
       # Change URls and resource name to avoid overriding original resource
-      yq -i '.spec.rules[0].host="'${componentName}'-ext.'${baseDomain}'"' ${exportedYamlFilename} --yaml-output
-      yq -i '.spec.tls[0].hosts[0]="'${componentName}'-ext.'${baseDomain}'"' ${exportedYamlFilename} --yaml-output
-      yq -i '.metadata.name="'${componentName}'-ext-oauth-ingress"' ${exportedYamlFilename} --yaml-output
+      /usr/local/bin/yq -i '.spec.rules[0].host="'${componentName}'-ext.'${baseDomain}'"' ${exportedYamlFilename} --yaml-output
+      /usr/local/bin/yq -i '.spec.tls[0].hosts[0]="'${componentName}'-ext.'${baseDomain}'"' ${exportedYamlFilename} --yaml-output
+      /usr/local/bin/yq -i '.metadata.name="'${componentName}'-ext-oauth-ingress"' ${exportedYamlFilename} --yaml-output
     fi
 
     # Add OAUTH annotations to existing ingress object
-    yq -i ".metadata.annotations += ({\"nginx.ingress.kubernetes.io/auth-url\": \"https://\$host/oauth2/auth\"})" ${exportedYamlFilename} --yaml-output
-    yq -i ".metadata.annotations += ({\"nginx.ingress.kubernetes.io/auth-signin\": \"https://\$host/oauth2/start?rd=\$escaped_request_uri\"})" ${exportedYamlFilename} --yaml-output
-    yq -i ".metadata.annotations += ({\"nginx.ingress.kubernetes.io/auth-response-headers\": \"authorization\"})" ${exportedYamlFilename} --yaml-output
+    /usr/local/bin/yq -i ".metadata.annotations += ({\"nginx.ingress.kubernetes.io/auth-url\": \"https://\$host/oauth2/auth\"})" ${exportedYamlFilename} --yaml-output
+    /usr/local/bin/yq -i ".metadata.annotations += ({\"nginx.ingress.kubernetes.io/auth-signin\": \"https://\$host/oauth2/start?rd=\$escaped_request_uri\"})" ${exportedYamlFilename} --yaml-output
+    /usr/local/bin/yq -i ".metadata.annotations += ({\"nginx.ingress.kubernetes.io/auth-response-headers\": \"authorization\"})" ${exportedYamlFilename} --yaml-output
 
     if [[ "${separateExternalAccess}" == "true" ]]; then
       # Remove whitelist from exported resource definition in case this script was re-run
-      yq -i "del(.metadata.annotations.\"nginx.ingress.kubernetes.io/whitelist-source-range\")" ${exportedYamlFilename} --yaml-output
+      /usr/local/bin/yq -i "del(.metadata.annotations.\"nginx.ingress.kubernetes.io/whitelist-source-range\")" ${exportedYamlFilename} --yaml-output
     fi
     # Apply YAML ingress file for proected external access
     kubernetesApplyYamlFile "${exportedYamlFilename}"

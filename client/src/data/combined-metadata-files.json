@@ -1,0 +1,2922 @@
+[
+  {
+    "name": "argocd",
+    "namespace": "argocd",
+    "installation_type": "helm",
+    "installation_group_folder": "cicd",
+    "environment_variables": {
+      "imageTag": "v2.4.8"
+    },
+    "minimum_resources": {
+      "cpu": "1000",
+      "memory": "3000"
+    },
+    "helm_params": {
+      "repository_url": "https://argoproj.github.io/argo-helm",
+      "repository_name": "argo/argo-cd",
+      "helm_version": "4.10.5",
+      "set_key_values": [
+        "global.image.tag={{imageTag}}",
+        "installCRDs=false",
+        "configs.secret.argocdServerAdminPassword='{{argoCdAdminPassword}}'",
+        "controller.clusterAdminAccess.enabled=true",
+        "server.clusterAdminAccess.enabled=true",
+        "server.extraArgs[0]=--insecure"
+      ]
+    },
+    "categories": [
+      "gitops"
+    ],
+    "urls": [
+      {
+        "url": "https://{{componentName}}.{{baseDomain}}",
+        "healthchecks": {
+          "liveliness": {
+            "http_path": "/",
+            "http_auth_required": false,
+            "expected_http_response_code": "200",
+            "expected_http_response_string": "",
+            "expected_json_response": {
+              "json_path": "",
+              "json_value": ""
+            },
+            "health_shell_check_command": "",
+            "expected_shell_check_command_response": ""
+          },
+          "readiness": {
+            "http_path": "/",
+            "http_auth_required": false,
+            "expected_http_response_code": "200",
+            "expected_http_response_string": "",
+            "expected_json_response": {
+              "json_path": "",
+              "json_value": ""
+            },
+            "health_shell_check_command": "",
+            "expected_shell_check_command_response": ""
+          }
+        }
+      }
+    ],
+    "Description": "Argo CD is a declarative, GitOps continuous delivery tool for Kubernetes",
+    "shortcut_text": "Argo CD",
+    "shortcut_icon": "argocd.png",
+    "swagger_docs_url": "https://{{componentName}}.{{baseDomain}}/swagger-ui",
+    "api_docs_url": "https://argoproj.github.io/argo-cd/developer-guide/api-docs/",
+    "vendor_docs_url": "https://argoproj.github.io/argo-cd/",
+    "pre_install_scripts": [
+      "installArgoCdCli.sh",
+      "createArgoCdPassword.sh",
+      "createIngressObjects.sh"
+    ],
+    "post_install_scripts": [
+      "deployOauth2.sh"
+    ]
+  },
+  {
+    "name": "artifactory",
+    "namespace": "artifactory",
+    "installation_type": "helm",
+    "installation_group_folder": "cicd",
+    "environment_variables": {
+      "appVersion": "7.41.4"
+    },
+    "helm_params": {
+      "repository_url": "https://charts.jfrog.io",
+      "repository_name": "jfrog/artifactory-oss",
+      "helm_version": "107.41.4",
+      "set_key_values": []
+    },
+    "categories": [
+      "artifact-repository",
+      "docker-registry"
+    ],
+    "urls": [
+      {
+        "url": "https://{{componentName}}.{{baseDomain}}",
+        "healthchecks": {
+          "liveliness": {
+            "http_path": "/artifactory/api/system/ping",
+            "http_auth_required": false,
+            "expected_http_response_code": "200",
+            "expected_http_response_string": "OK",
+            "expected_json_response": {
+              "json_path": "",
+              "json_value": ""
+            },
+            "health_shell_check_command": "",
+            "expected_shell_check_command_response": ""
+          },
+          "readiness": {
+            "http_path": "/artifactory/api/system/ping",
+            "http_auth_required": false,
+            "expected_http_response_code": "200",
+            "expected_http_response_string": "OK",
+            "expected_json_response": {
+              "json_path": "",
+              "json_value": ""
+            },
+            "health_shell_check_command": "",
+            "expected_shell_check_command_response": ""
+          }
+        }
+      }
+    ],
+    "Description": "JFrog Artifactory is a universal DevOps solution providing end-to-end automation and management of binaries and artifacts through the application delivery process",
+    "shortcut_text": "Artifactory",
+    "shortcut_icon": "artifactory.png",
+    "api_docs_type": "web",
+    "api_docs_url": "https://www.jfrog.com/confluence/display/JFROG/Artifactory+REST+API",
+    "vendor_docs_url": "https://www.jfrog.com/confluence/display/JFROG/JFrog+Artifactory",
+    "pre_install_scripts": [
+      "createPasswords.sh"
+    ],
+    "post_install_scripts": [
+      "configureJfrogArtifactory.sh",
+      "changeAdminPassword.sh"
+    ]
+  },
+  {
+    "name": "consul",
+    "namespace": "consul",
+    "installation_type": "helm",
+    "installation_group_folder": "cicd",
+    "environment_variables": {
+      "consulVersion": "1.11.3",
+      "consulK8sVersion": "0.41.1"
+    },
+    "helm_params": {
+      "repository_url": "https://helm.releases.hashicorp.com",
+      "repository_name": "hashicorp/consul",
+      "helm_version": "0.41.1",
+      "set_key_values": []
+    },
+    "categories": [
+      "service-discovery",
+      "service-mesh"
+    ],
+    "urls": [
+      {
+        "url": "https://{{componentName}}.{{baseDomain}}",
+        "healthchecks": {
+          "liveliness": {
+            "http_path": "/",
+            "http_auth_required": false,
+            "expected_http_response_code": "200",
+            "expected_http_response_string": "",
+            "expected_json_response": {
+              "json_path": "",
+              "json_value": ""
+            },
+            "health_shell_check_command": "",
+            "expected_shell_check_command_response": ""
+          },
+          "readiness": {
+            "http_path": "/",
+            "http_auth_required": false,
+            "expected_http_response_code": "200",
+            "expected_http_response_string": "",
+            "expected_json_response": {
+              "json_path": "",
+              "json_value": ""
+            },
+            "health_shell_check_command": "",
+            "expected_shell_check_command_response": ""
+          }
+        }
+      }
+    ],
+    "Description": "Consul is a free and open-source service networking platform developed by HashiCorp",
+    "shortcut_text": "HashiCorp Consul",
+    "shortcut_icon": "consul.png",
+    "api_docs_type": "web",
+    "api_docs_url": "",
+    "vendor_docs_url": "",
+    "pre_install_scripts": [
+      "setDatacenterVariable.sh"
+    ],
+    "post_install_scripts": []
+  },
+  {
+    "name": "gitea",
+    "namespace": "gitea",
+    "installation_type": "helm",
+    "installation_group_folder": "cicd",
+    "environment_variables": {
+      "imageTag": "1.16.5"
+    },
+    "helm_params": {
+      "repository_url": "https://dl.gitea.io/charts/",
+      "repository_name": "gitea-charts/gitea",
+      "helm_version": "5.0.4",
+      "set_key_values": []
+    },
+    "categories": [
+      "git-repository",
+      "oauth-provider"
+    ],
+    "urls": [
+      {
+        "url": "https://{{componentName}}.{{baseDomain}}",
+        "healthchecks": {
+          "liveliness": {
+            "http_path": "/",
+            "http_auth_required": false,
+            "expected_http_response_code": "200",
+            "expected_http_response_string": "",
+            "expected_json_response": {
+              "json_path": "",
+              "json_value": ""
+            },
+            "health_shell_check_command": "",
+            "expected_shell_check_command_response": ""
+          },
+          "readiness": {
+            "http_path": "/",
+            "http_auth_required": false,
+            "expected_http_response_code": "200",
+            "expected_http_response_string": "",
+            "expected_json_response": {
+              "json_path": "",
+              "json_value": ""
+            },
+            "health_shell_check_command": "",
+            "expected_shell_check_command_response": ""
+          }
+        }
+      }
+    ],
+    "Description": "Gitea is a community managed lightweight code hosting solution written in Go.",
+    "shortcut_text": "Gitea",
+    "shortcut_icon": "gitea.png",
+    "swagger_docs_url": "https://{{componentName}}.{{baseDomain}}/devcenter-api-2.0",
+    "api_docs_url": "https://docs.gitea.io/en-us/api-usage/",
+    "vendor_docs_url": "https://docs.gitea.io/",
+    "pre_install_scripts": [
+      "createPasswords.sh"
+    ],
+    "post_install_scripts": []
+  },
+  {
+    "name": "gitlab",
+    "namespace": "gitlab",
+    "installation_type": "helm",
+    "installation_group_folder": "cicd",
+    "minimum_resources": {
+      "cpu": "1000",
+      "memory": "3000"
+    },
+    "environment_variables": {
+      "gitlabVersion": "v14.10.4",
+      "gitabRunnerVersion": "v14.10.1",
+      "s3BucketsToCreate": "gitlab-artifacts-storage;gitlab-backup-storage;gitlab-lfs-storage;gitlab-packages-storage;gitlab-registry-storage;gitlab-uploads-storage;runner-cache",
+      "gitlabDindImageVersion": "19.03.13-dind"
+    },
+    "helm_params": {
+      "repository_url": "https://charts.gitlab.io/",
+      "repository_name": "gitlab/gitlab",
+      "helm_version": "5.10.4",
+      "set_key_values": [
+        "global.hosts.domain={{baseDomain}}",
+        "global.hosts.externalIP={{nginxIngressIp}}",
+        "global.image.imagePullSecrets[0]=gitlab-image-pull-secret",
+        "externalUrl=https://{{componentName}}.{{baseDomain}}",
+        "global.edition=ce",
+        "prometheus.install=false",
+        "global.smtp.enabled=false",
+        "gitlab-runner.install=true",
+        "gitlab-runner.image=docker-registry.{{baseDomain}}/devops/gitlab-runner:alpine-{{gitabRunnerVersion}}",
+        "gitlab-runner.imagePullSecrets[0].name=gitlab-image-pull-secret",
+        "gitlab-runner.runners.privileged=true",
+        "gitlab-runner.runners.imagePullSecrets[0]=gitlab-image-pull-secret",
+        "gitlab-runner.certsSecretName=kx.as.code-wildcard-cert",
+        "global.ingress.class=nginx",
+        "global.ingress.enabled=true",
+        "global.ingress.tls.enabled=true",
+        "gitlab.webservice.ingress.tls.secretName=kx.as.code-wildcard-cert",
+        "nginx-ingress.enabled=false",
+        "global.certmanager.install=false",
+        "certmanager.install=false",
+        "global.ingress.configureCertmanager=false",
+        "global.hosts.https=true",
+        "global.minio.enabled=false",
+        "registry.enabled=false",
+        "global.appConfig.lfs.bucket=gitlab-lfs-storage",
+        "global.appConfig.lfs.connection.secret=object-storage",
+        "global.appConfig.lfs.connection.key=connection",
+        "global.appConfig.artifacts.bucket=gitlab-artifacts-storage",
+        "global.appConfig.artifacts.connection.secret=object-storage",
+        "global.appConfig.artifacts.connection.key=connection",
+        "global.appConfig.uploads.connection.secret=object-storage",
+        "global.appConfig.uploads.bucket=gitlab-uploads-storage",
+        "global.appConfig.uploads.connection.key=connection",
+        "global.appConfig.packages.bucket=gitlab-packages-storage",
+        "global.appConfig.packages.connection.secret=object-storage",
+        "global.appConfig.packages.connection.key=connection",
+        "global.appConfig.externalDiffs.bucket=gitlab-externaldiffs-storage",
+        "global.appConfig.externalDiffs.connection.secret=object-storage",
+        "global.appConfig.externalDiffs.connection.key=connection",
+        "global.appConfig.pseudonymizer.bucket=gitlab-pseudonymizer-storage",
+        "global.appConfig.pseudonymizer.connection.secret=object-storage",
+        "global.appConfig.pseudonymizer.connection.key=connection",
+        "redis.resources.requests.cpu=10m",
+        "redis.resources.requests.memory=64Mi",
+        "global.rails.bootsnap.enabled=false",
+        "gitlab.webservice.minReplicas=1",
+        "gitlab.webservice.maxReplicas=1",
+        "gitlab.webservice.resources.limits.memory=3G",
+        "gitlab.webservice.requests.cpu=100m",
+        "gitlab.webservice.requests.memory=900M",
+        "gitlab.workhorse.resources.limits.memory=100M",
+        "gitlab.workhorse.requests.cpu=10m",
+        "gitlab.workhorse.requests.memory=10M",
+        "gitlab.sidekiq.minReplicas=1",
+        "gitlab.sidekiq.maxReplicas=1",
+        "gitlab.sidekiq.resources.limits.memory=3G",
+        "gitlab.sidekiq.requests.cpu=50m",
+        "gitlab.sidekiq.requests.memory=625M",
+        "gitlab.gitlab-shell.minReplicas=1",
+        "gitlab.gitlab-shell.maxReplicas=1",
+        "gitlab.toolbox.backups.objectStorage.config.secret=s3cmd-config",
+        "gitlab.toolbox.backups.objectStorage.config.key=config",
+        "gitlab.gitaly.persistence.storageClass=kadalu.storage-pool-1",
+        "gitlab.gitaly.persistence.size=10Gi",
+        "postgresql.persistence.storageClass=local-storage-sc",
+        "postgresql.persistence.size=5Gi",
+        "redis.master.persistence.storageClass=local-storage-sc",
+        "redis.master.persistence.size=5Gi",
+        "global.certificates.customCAs[0].secret=intermediate-ca",
+        "global.certificates.customCAs[1].secret=root-ca",
+        "global.certificates.customCAs[2].secret=server-crt"
+      ]
+    },
+    "categories": [
+      "git-repository",
+      "docker-registry",
+      "cicd",
+      "wiki",
+      "issue-tracking"
+    ],
+    "urls": [
+      {
+        "url": "https://{{componentName}}.{{baseDomain}}",
+        "healthchecks": {
+          "liveliness": {
+            "http_path": "/-/readiness",
+            "http_auth_required": false,
+            "expected_http_response_code": "200",
+            "expected_http_response_string": "",
+            "expected_json_response": {
+              "json_path": ".status",
+              "json_value": "ok"
+            },
+            "health_shell_check_command": "",
+            "expected_shell_check_command_response": ""
+          },
+          "readiness": {
+            "http_path": "/-/readiness",
+            "http_auth_required": false,
+            "expected_http_response_code": "200",
+            "expected_http_response_string": "",
+            "expected_json_response": {
+              "json_path": ".status",
+              "json_value": "ok"
+            }
+          }
+        }
+      }
+    ],
+    "Description": "GitLab is an open source end-to-end software development platform with built-in version control, issue tracking, code review, CI/CD, and more",
+    "shortcut_text": "Gitlab",
+    "shortcut_icon": "gitlab.png",
+    "api_docs_type": "help",
+    "api_docs_url": "https://{{componentName}}.{{baseDomain}}/help/api/api_resources.md",
+    "vendor_docs_url": "https://docs.gitlab.com/ce/",
+    "pre_install_scripts": [
+      "buildAndPushCustomRunnerImageToCoreRegistry.sh",
+      "getVariables.sh",
+      "createS3Buckets.sh",
+      "createSecrets.sh",
+      "createOAuth.sh"
+    ],
+    "post_install_scripts": [
+      "createLoginToken.sh",
+      "createUsers.sh",
+      "createGroups.sh",
+      "createProjects.sh",
+      "mapUsersToGroups.sh",
+      "populateDemoProjects.sh",
+      "createGroupVariables.sh"
+    ]
+  },
+  {
+    "name": "harbor",
+    "namespace": "harbor",
+    "installation_type": "helm",
+    "installation_group_folder": "cicd",
+    "helm_params": {
+      "repository_url": "https://helm.goharbor.io",
+      "repository_name": "harbor/harbor",
+      "helm_version": "1.9.3",
+      "set_key_values": [
+        "persistence.enabled=true",
+        "persistence.persistentVolumeClaim.registry.storageClass=local-storage-sc",
+        "persistence.persistentVolumeClaim.registry.size=9Gi",
+        "persistence.persistentVolumeClaim.chartmuseum.size=5Gi",
+        "persistence.persistentVolumeClaim.chartmuseum.storageClass=kadalu.storage-pool-1",
+        "persistence.persistentVolumeClaim.database.size=5Gi",
+        "persistence.persistentVolumeClaim.database.storageClass=local-storage-sc",
+        "persistence.persistentVolumeClaim.redis.storageClass=local-storage-sc",
+        "persistence.persistentVolumeClaim.jobservice.storageClass=kadalu.storage-pool-1",
+        "persistence.persistentVolumeClaim.trivy.storageClass=kadalu.storage-pool-1",
+        "expose.type=ingress",
+        "expose.ingress.annotations.\"kubernetes\\.io/ingress\\.class\"=nginx",
+        "externalURL=https://{{componentName}}.{{baseDomain}}",
+        "expose.ingress.hosts.core={{componentName}}.{{baseDomain}}",
+        "expose.ingress.hosts.notary=notary.{{baseDomain}}",
+        "expose.tls.enabled=true",
+        "expose.tls.certSource=secret",
+        "expose.tls.caBundleSecretName=kx.as.code-wildcard-cert",
+        "expose.tls.caSecretName=kx.as.code-wildcard-cert",
+        "expose.tls.secretName=kx.as.code-wildcard-cert",
+        "expose.tls.notarySecretName=kx.as.code-wildcard-cert",
+        "harborAdminPassword=\"{{harborAdminPassword}}\"",
+        "expose.ingress.annotations.\"nginx\\.ingress\\.kubernetes\\.io/proxy-body-size\"=\"10000m\"",
+        "logLevel=debug"
+      ]
+    },
+    "categories": [
+      "docker-registry",
+      "helm-repository"
+    ],
+    "urls": [
+      {
+        "url": "https://{{componentName}}.{{baseDomain}}",
+        "healthchecks": {
+          "liveliness": {
+            "http_path": "/api/v2.0/ping",
+            "http_auth_required": false,
+            "expected_http_response_code": "200",
+            "expected_http_response_string": "Pong",
+            "expected_json_response": {
+              "json_path": "",
+              "json_value": ""
+            },
+            "health_shell_check_command": "",
+            "expected_shell_check_command_response": ""
+          },
+          "readiness": {
+            "http_path": "/api/v2.0/ping",
+            "http_auth_required": false,
+            "expected_http_response_code": "200",
+            "expected_http_response_string": "Pong",
+            "expected_json_response": {
+              "json_path": "",
+              "json_value": ""
+            },
+            "health_shell_check_command": "",
+            "expected_shell_check_command_response": ""
+          }
+        }
+      }
+    ],
+    "Description": "Harbor is an open source registry that secures artifacts with policies and role-based access control, ensures images are scanned and free from vulnerabilities, and signs images as trusted.",
+    "shortcut_text": "Harbor",
+    "shortcut_icon": "harbor.png",
+    "swagger_docs_url": "https://{{componentName}}.{{baseDomain}}/devcenter-api-2.0",
+    "api_docs_url": "https://goharbor.io/docs/2.1.0/build-customize-contribute/configure-swagger/",
+    "vendor_docs_url": "https://goharbor.io/docs",
+    "pre_install_scripts": [
+      "createSecret.sh",
+      "createHarborAdminPassword.sh"
+    ],
+    "post_install_scripts": [
+      "createProjects.sh",
+      "createRobotAccounts.sh",
+      "createGitlabGroupVariables.sh",
+      "deployOidc.sh"
+    ]
+  },
+  {
+    "name": "jenkins",
+    "namespace": "jenkins",
+    "installation_type": "helm",
+    "installation_group_folder": "cicd",
+    "environment_variables": {
+      "imageTag": "2.332.1-jdk11"
+    },
+    "helm_params": {
+      "repository_url": "https://charts.jenkins.io",
+      "repository_name": "jenkins/jenkins",
+      "helm_version": "3.11.8",
+      "set_key_values": []
+    },
+    "categories": [
+      "cicd",
+      "job-scheduling",
+      "cron"
+    ],
+    "urls": [
+      {
+        "url": "https://{{componentName}}.{{baseDomain}}",
+        "healthchecks": {
+          "liveliness": {
+            "http_path": "/login",
+            "http_auth_required": false,
+            "expected_http_response_code": "200",
+            "expected_http_response_string": "",
+            "expected_json_response": {
+              "json_path": "",
+              "json_value": ""
+            },
+            "health_shell_check_command": "",
+            "expected_shell_check_command_response": ""
+          },
+          "readiness": {
+            "http_path": "/login",
+            "http_auth_required": false,
+            "expected_http_response_code": "200",
+            "expected_http_response_string": "",
+            "expected_json_response": {
+              "json_path": "",
+              "json_value": ""
+            },
+            "health_shell_check_command": "",
+            "expected_shell_check_command_response": ""
+          }
+        }
+      }
+    ],
+    "Description": "The leading open source automation server, Jenkins provides hundreds of plugins to support building, deploying and automating any project.",
+    "shortcut_text": "Jenkins",
+    "shortcut_icon": "jenkins.png",
+    "api_docs_url": "https://www.jenkins.io/doc/book/using/remote-access-api/",
+    "vendor_docs_url": "https://www.jenkins.io/doc/",
+    "pre_install_scripts": [
+      "createSecret.sh"
+    ],
+    "post_install_scripts": []
+  },
+  {
+    "name": "nexus3",
+    "namespace": "nexus3",
+    "installation_type": "helm",
+    "installation_group_folder": "cicd",
+    "environment_variables": {
+      "imageTag": "3.38.0"
+    },
+    "helm_params": {
+      "repository_url": "https://sonatype.github.io/helm3-charts/",
+      "repository_name": "sonatype/nexus-repository-manager",
+      "helm_version": "38.0.0",
+      "set_key_values": []
+    },
+    "categories": [
+      "artifact-repository",
+      "docker-registry"
+    ],
+    "urls": [
+      {
+        "url": "https://{{componentName}}.{{baseDomain}}",
+        "healthchecks": {
+          "liveliness": {
+            "http_path": "/service/rest/v1/status",
+            "http_auth_required": false,
+            "expected_http_response_code": "200",
+            "expected_http_response_string": "",
+            "expected_json_response": {
+              "json_path": "",
+              "json_value": ""
+            },
+            "health_shell_check_command": "",
+            "expected_shell_check_command_response": ""
+          },
+          "readiness": {
+            "http_path": "/service/rest/v1/status",
+            "http_auth_required": false,
+            "expected_http_response_code": "200",
+            "expected_http_response_string": "",
+            "expected_json_response": {
+              "json_path": "",
+              "json_value": ""
+            },
+            "health_shell_check_command": "",
+            "expected_shell_check_command_response": ""
+          }
+        }
+      }
+    ],
+    "Description": "Nexus3 manages binaries and build artifacts across your software supply chain.",
+    "shortcut_text": "Nexus3 OSS",
+    "shortcut_icon": "nexus3.png",
+    "swagger_docs_url": "https://{{componentName}}.{{baseDomain}}/#admin/system/api",
+    "api_docs_url": "https://help.sonatype.com/repomanager3/rest-and-integration-api",
+    "vendor_docs_url": "https://help.sonatype.com/repomanager3",
+    "pre_install_scripts": [],
+    "post_install_scripts": []
+  },
+  {
+    "name": "teamcity",
+    "namespace": "teamcity",
+    "installation_type": "script",
+    "installation_group_folder": "cicd",
+    "environment_variables": {
+      "teamcityVersion": "2021.2.3"
+    },
+    "install_scripts": [
+      "installTeamCity.sh"
+    ],
+    "categories": [
+      "cicd"
+    ],
+    "urls": [
+      {
+        "url": "https://{{componentName}}.{{baseDomain}}",
+        "healthchecks": {
+          "liveliness": {
+            "http_path": "/",
+            "http_auth_required": false,
+            "expected_http_response_code": "200",
+            "expected_http_response_string": "",
+            "expected_json_response": {
+              "json_path": "",
+              "json_value": ""
+            },
+            "health_shell_check_command": "",
+            "expected_shell_check_command_response": ""
+          },
+          "readiness": {
+            "http_path": "/mnt",
+            "http_auth_required": false,
+            "expected_http_response_code": "200",
+            "expected_http_response_string": "",
+            "expected_json_response": {
+              "json_path": "",
+              "json_value": ""
+            },
+            "health_shell_check_command": "",
+            "expected_shell_check_command_response": ""
+          }
+        }
+      }
+    ],
+    "Description": "TeamCity is a continuous integration server that integrates with all major IDEs, version control and issue tracking systems, and can be used by teams of any size.",
+    "shortcut_text": "Teamcity",
+    "shortcut_icon": "teamcity.png",
+    "pre_install_scripts": [
+      "createGitProject.sh",
+      "populateGitProject.sh",
+      "rebuildDockerImage.sh"
+    ],
+    "post_install_scripts": []
+  },
+  {
+    "name": "confluence",
+    "namespace": "atlassian",
+    "installation_type": "script",
+    "installation_group_folder": "collaboration",
+    "install_scripts": [
+      "installConfluence.sh"
+    ],
+    "categories": [
+      "collaboration",
+      "wiki"
+    ],
+    "urls": [
+      {
+        "url": "https://{{componentName}}.{{baseDomain}}",
+        "healthchecks": {
+          "liveliness": {
+            "http_path": "/",
+            "http_auth_required": false,
+            "expected_http_response_code": "200",
+            "expected_http_response_string": "",
+            "expected_json_response": {
+              "json_path": "",
+              "json_value": ""
+            },
+            "health_shell_check_command": "",
+            "expected_shell_check_command_response": ""
+          },
+          "readiness": {
+            "http_path": "/",
+            "http_auth_required": false,
+            "expected_http_response_code": "200",
+            "expected_http_response_string": "",
+            "expected_json_response": {
+              "json_path": "",
+              "json_value": ""
+            },
+            "health_shell_check_command": "",
+            "expected_shell_check_command_response": ""
+          }
+        }
+      }
+    ],
+    "Description": "Confluence is a team workspace where knowledge and collaboration meet. Trusted for documentation, decisions, project collaboration & Jira integrations.",
+    "shortcut_text": "Atlassian Confluence",
+    "shortcut_icon": "confluence.png",
+    "pre_install_scripts": [
+      "createGitProject.sh",
+      "populateGitProject.sh"
+    ],
+    "post_install_scripts": []
+  },
+  {
+    "name": "jira",
+    "namespace": "atlassian",
+    "installation_type": "script",
+    "installation_group_folder": "collaboration",
+    "install_scripts": [
+      "installJira.sh"
+    ],
+    "categories": [
+      "collaboration",
+      "agile-management"
+    ],
+    "urls": [
+      {
+        "url": "https://{{componentName}}.{{baseDomain}}",
+        "healthchecks": {
+          "liveliness": {
+            "http_path": "/",
+            "http_auth_required": false,
+            "expected_http_response_code": "200",
+            "expected_http_response_string": "",
+            "expected_json_response": {
+              "json_path": "",
+              "json_value": ""
+            },
+            "health_shell_check_command": "",
+            "expected_shell_check_command_response": ""
+          },
+          "readiness": {
+            "http_path": "/",
+            "http_auth_required": false,
+            "expected_http_response_code": "200",
+            "expected_http_response_string": "",
+            "expected_json_response": {
+              "json_path": "",
+              "json_value": ""
+            },
+            "health_shell_check_command": "",
+            "expected_shell_check_command_response": ""
+          }
+        }
+      }
+    ],
+    "Description": "Plan, track, and manage your agile and software development projects in Jira. Customize your workflow, collaborate, and release great software.",
+    "shortcut_text": "Atlassian Jira",
+    "shortcut_icon": "jira.png",
+    "pre_install_scripts": [
+      "createGitProject.sh",
+      "populateGitProject.sh"
+    ],
+    "post_install_scripts": []
+  },
+  {
+    "name": "mattermost",
+    "namespace": "mattermost",
+    "installation_type": "helm",
+    "installation_group_folder": "collaboration",
+    "minimum_resources": {
+      "cpu": "250",
+      "memory": "256"
+    },
+    "environment_variables": {
+      "imageTag": "7.1.2"
+    },
+    "helm_params": {
+      "repository_url": "https://helm.mattermost.com",
+      "repository_name": "mattermost/mattermost-team-edition",
+      "helm_version": "6.6.9",
+      "set_key_values": []
+    },
+    "categories": [
+      "chatops",
+      "collaboration"
+    ],
+    "urls": [
+      {
+        "url": "https://{{componentName}}.{{baseDomain}}",
+        "healthchecks": {
+          "liveliness": {
+            "http_path": "/api/v4/system/ping",
+            "http_auth_required": false,
+            "expected_http_response_code": "200",
+            "expected_http_response_string": "",
+            "expected_json_response": {
+              "json_path": "",
+              "json_value": ""
+            },
+            "health_shell_check_command": "",
+            "expected_shell_check_command_response": ""
+          },
+          "readiness": {
+            "http_path": "/api/v4/system/ping",
+            "http_auth_required": false,
+            "expected_http_response_code": "200",
+            "expected_http_response_string": "",
+            "expected_json_response": {
+              "json_path": ".status",
+              "json_value": "OK"
+            },
+            "health_shell_check_command": "",
+            "expected_shell_check_command_response": ""
+          }
+        }
+      }
+    ],
+    "Description": "Mattermost is an open source platform for secure collaboration across the entire software development lifecycle.",
+    "shortcut_text": "Mattermost",
+    "shortcut_icon": "mattermost.png",
+    "postman_docs_url": "https://documenter.getpostman.com/view/4508214/RW8FERUn",
+    "api_docs_url": "https://api.mattermost.com/",
+    "vendor_docs_url": "https://docs.mattermost.com/",
+    "health_check_command": "",
+    "expected_check_command_response": "",
+    "pre_install_scripts": [
+      "createOidcConfig.sh"
+    ],
+    "post_install_scripts": [
+      "createInitialAdminUser.sh",
+      "createNotificationUsers.sh",
+      "createTeams.sh",
+      "mapUsersToTeams.sh",
+      "createChannels.sh",
+      "createWebhooks.sh"
+    ]
+  },
+  {
+    "name": "rocketchat",
+    "namespace": "rocketchat",
+    "installation_type": "helm",
+    "installation_group_folder": "collaboration",
+    "environment_variables": {
+      "imageTag": "4.5.4",
+      "organizationType": "community",
+      "organizationName": "KX.AS.CODE ChatOps",
+      "channelsToCreate": "General,Security,Monitoring,CICD"
+    },
+    "minimum_resources": {
+      "cpu": "250",
+      "memory": "256"
+    },
+    "helm_params": {
+      "repository_url": "https://rocketchat.github.io/helm-charts",
+      "repository_name": "rocketchat/rocketchat",
+      "helm_version": "4.5.4",
+      "set_key_values": []
+    },
+    "categories": [
+      "chatops",
+      "collaboration"
+    ],
+    "urls": [
+      {
+        "url": "https://{{componentName}}.{{baseDomain}}",
+        "healthchecks": {
+          "liveliness": {
+            "http_path": "/",
+            "http_auth_required": false,
+            "expected_http_response_code": "200",
+            "expected_http_response_string": "",
+            "expected_json_response": {
+              "json_path": "",
+              "json_value": ""
+            },
+            "health_shell_check_command": "",
+            "expected_shell_check_command_response": ""
+          },
+          "readiness": {
+            "http_path": "/",
+            "http_auth_required": false,
+            "expected_http_response_code": "200",
+            "expected_http_response_string": "",
+            "expected_json_response": {
+              "json_path": "",
+              "json_value": ""
+            },
+            "health_shell_check_command": "",
+            "expected_shell_check_command_response": ""
+          }
+        }
+      }
+    ],
+    "Description": "Rocket.Chat is an open-source fully customizable communications platform developed in JavaScript for organizations with high standards of data protection.",
+    "shortcut_text": "Rocketchat",
+    "shortcut_icon": "rocketchat.png",
+    "api_docs_url": "https://docs.rocket.chat/api/rest-api",
+    "vendor_docs_url": "https://docs.rocket.chat/",
+    "health_check_command": "",
+    "expected_check_command_response": "",
+    "pre_install_scripts": [
+      "createMongoDbPasswords.sh",
+      "createRocketChatAdminPassword.sh"
+    ],
+    "post_install_scripts": [
+      "loginToRocketChat.sh",
+      "createChannels.sh"
+    ]
+  },
+  {
+    "name": "calico-network",
+    "namespace": "kube-system",
+    "installation_type": "script",
+    "installation_group_folder": "core",
+    "environment_variables": {
+      "calicoVersion": "v3.19",
+      "calicoCtlVersion": "v3.19.1"
+    },
+    "retry": "true",
+    "install_scripts": [
+      "installCalicoNetwork.sh"
+    ],
+    "Description": "Free and open source, Project Calico is designed to simplify, scale, and secure container and Kubernetes networks.",
+    "shortcut_text": "Calico Network",
+    "shortcut_icon": "calico-network.png",
+    "pre_install_scripts": [],
+    "post_install_scripts": []
+  },
+  {
+    "name": "cert-manager",
+    "namespace": "cert-manager",
+    "installation_type": "helm",
+    "installation_group_folder": "core",
+    "environment_variables": {
+      "imageTag": "v1.5.4"
+    },
+    "retry": "true",
+    "helm_params": {
+      "repository_url": "https://charts.jetstack.io",
+      "repository_name": "jetstack/cert-manager",
+      "helm_version": "v1.5.4",
+      "set_key_values": [
+        "image.tag={{imageTag}}",
+        "installCRDs=true"
+      ]
+    },
+    "install_scripts": [
+      "installCertManager.sh"
+    ],
+    "Description": "Cert-manager is a powerful and extensible X.509 certificate controller for Kubernetes and OpenShift workloads. It will obtain certificates from a variety of Issuers, both popular public Issuers as well as private Issuers, and ensure the certificates are valid and up-to-date, and will attempt to renew certificates at a configured time before expiry.",
+    "shortcut_text": "Cert Manager",
+    "shortcut_icon": "cert-manager.png",
+    "pre_install_scripts": [],
+    "post_install_scripts": [
+      "installLetsEncryptIssuer.sh"
+    ]
+  },
+  {
+    "name": "cfssl-certificate-authority",
+    "namespace": "",
+    "installation_type": "script",
+    "installation_group_folder": "core",
+    "environment_variables": {
+      "cfsslVersion": "1.6.1"
+    },
+    "install_scripts": [
+      "installCfsslCertificateAuthority.sh"
+    ],
+    "Description": "CFSSL is CloudFlare's PKI/TLS swiss army knife. It is both a command line tool and an HTTP API server for signing, verifying, and bundling TLS certificates. It requires Go 1.12+ to build.",
+    "shortcut_text": "CFSSL-CA",
+    "shortcut_icon": "cfssl-certificate-authority.png",
+    "pre_install_scripts": [],
+    "post_install_scripts": [
+      "installNginx.sh"
+    ]
+  },
+  {
+    "name": "docker-registry",
+    "namespace": "docker-registry",
+    "installation_type": "helm",
+    "installation_group_folder": "core",
+    "environment_variables": {
+      "imageTag": "2.7.1",
+      "uiImageTag": "2.2.1"
+    },
+    "helm_params": {
+      "repository_url": "https://helm.joxit.dev",
+      "repository_name": "joxit/docker-registry-ui",
+      "helm_version": "0.2.0",
+      "set_key_values": [
+        "ui.image=joxit/docker-registry-ui:{{uiImageTag}}",
+        "ui.dockerRegistryUrl=https://docker-registry-service:5000"
+      ]
+    },
+    "retry": "true",
+    "urls": [
+      {
+        "url": "https://{{componentName}}-ui.{{baseDomain}}",
+        "healthchecks": {
+          "liveliness": {
+            "http_path": "/",
+            "http_auth_required": false,
+            "expected_http_response_code": "200",
+            "expected_http_response_string": "",
+            "expected_json_response": {
+              "json_path": "",
+              "json_value": ""
+            },
+            "health_shell_check_command": "",
+            "expected_shell_check_command_response": ""
+          },
+          "readiness": {
+            "http_path": "/",
+            "http_auth_required": false,
+            "expected_http_response_code": "200",
+            "expected_http_response_string": "",
+            "expected_json_response": {
+              "json_path": "",
+              "json_value": ""
+            }
+          }
+        }
+      }
+    ],
+    "install_scripts": [],
+    "Description": "The Registry is a stateless, highly scalable server side application that stores and lets you distribute Docker images.",
+    "shortcut_text": "Docker Registry",
+    "shortcut_icon": "docker-registry.png",
+    "pre_install_scripts": [
+      "createTlsCertsSecret.sh",
+      "createHtpasswdSecret.sh",
+      "install-docker-registry.sh"
+    ],
+    "post_install_scripts": [],
+    "available_tasks": [
+      {
+        "name": "pruneDockerRegistry",
+        "title": "Prune Docker Registry",
+        "description": "Prunes deleted images from the Docker Registry",
+        "script": "pruneDockerRegistry.sh"
+      }
+    ]
+  },
+  {
+    "name": "glusterfs-storage",
+    "namespace": "kube-system",
+    "installation_type": "script",
+    "installation_group_folder": "core",
+    "environment_variables": {
+      "glusterfsVersion": "9.2-1",
+      "heketiVersion": "10.4.0"
+    },
+    "install_scripts": [
+      "installGlusterFs.sh"
+    ],
+    "Description": "Gluster is a free and open source software scalable network filesystem.",
+    "shortcut_text": "GlusterFS",
+    "shortcut_icon": "glusterfs-storage.png",
+    "pre_install_scripts": [],
+    "post_install_scripts": []
+  },
+  {
+    "name": "gopass",
+    "namespace": "",
+    "installation_type": "script",
+    "installation_group_folder": "core",
+    "categories": [
+      "credential-manager"
+    ],
+    "environment_variables": {
+      "gopassVersion": "1.14.4",
+      "gopassAmd64Checksum": "4ec4d45356d87347709c8dfe43e67e5af5bf672da37ec9a1aa5ee6d090e4e4f4",
+      "gopassAmd64UiVersion": "0.8.0",
+      "gopassAmd64UiChecksum": "64255b6e829e5432f387327857fbaa3609a537d151eafb1b8c36f7ffed51b115",
+      "gopassArm64Version": "1.14.4",
+      "gopassArm64Checksum": "8d6a63436d8a79a0b590cfb71e4f1f732d0756a8cab322c544c16ef8563f1307"
+    },
+    "install_scripts": [
+      "install-and-configure-gopass.sh"
+    ],
+    "Description": "gopass is a password manager for the command line written in Go.",
+    "shortcut_text": "GoPass UI",
+    "shortcut_icon": "gopass.png",
+    "pre_install_scripts": [],
+    "post_install_scripts": [
+      "loadInitialPasswordsAndCleanup.sh",
+      "createDesktopShortcuts.sh"
+    ]
+  },
+  {
+    "name": "keycloak",
+    "namespace": "keycloak",
+    "installation_type": "helm",
+    "installation_group_folder": "core",
+    "environment_variables": {
+      "kcContainer": "keycloak",
+      "imageTag": "15.0.2"
+    },
+    "categories": [
+      "sso",
+      "iam",
+      "oauth-provider"
+    ],
+    "retry": "true",
+    "helm_params": {
+      "repository_url": "https://codecentric.github.io/helm-charts",
+      "repository_name": "codecentric/keycloak",
+      "helm_version": "15.1.0",
+      "set_key_values": []
+    },
+    "letsencrypt": {
+      "enabled": true
+    },
+    "urls": [
+      {
+        "url": "https://{{componentName}}.{{baseDomain}}",
+        "healthchecks": {
+          "liveliness": {
+            "http_path": "/",
+            "http_auth_required": false,
+            "expected_http_response_code": "200",
+            "expected_http_response_string": "",
+            "expected_json_response": {
+              "json_path": "",
+              "json_value": ""
+            },
+            "health_shell_check_command": "",
+            "expected_shell_check_command_response": ""
+          },
+          "readiness": {
+            "http_path": "/",
+            "http_auth_required": false,
+            "expected_http_response_code": "200",
+            "expected_http_response_string": "",
+            "expected_json_response": {
+              "json_path": "",
+              "json_value": ""
+            },
+            "health_shell_check_command": "",
+            "expected_shell_check_command_response": ""
+          }
+        }
+      }
+    ],
+    "Description": "Add authentication to applications and secure services. Keycloak provides user federation, strong authentication, user management, fine-grained authorization, and more.",
+    "shortcut_text": "Keycloak IAM",
+    "shortcut_icon": "keycloak.png",
+    "pre_install_scripts": [
+      "createKeycloakAdminPassword.sh",
+      "createConfigMap.sh"
+    ],
+    "post_install_scripts": [
+      "configureKeycloak.sh",
+      "configureK8s.sh",
+      "activateAdditionalSettings.sh",
+      "installPlugins.sh",
+      "createDesktopShortcuts.sh"
+    ]
+  },
+  {
+    "name": "kubernetes-base-services",
+    "namespace": "kube-system",
+    "installation_type": "script",
+    "installation_group_folder": "core",
+    "install_scripts": [
+      "installKubernetesBaseServices.sh"
+    ],
+    "categories": [
+      "orchestration",
+      "kubernetes"
+    ],
+    "Description": "Kubernetes, also known as K8s, is an open-source system for automating deployment, scaling, and management of containerized applications.",
+    "shortcut_text": "Kubernetes Base Services",
+    "shortcut_icon": "kubernetes-base-services.png",
+    "pre_install_scripts": [],
+    "post_install_scripts": [
+      "configureCoreDnsWithKxAsCodeDnsServer.sh",
+      "enableWorkloadsOnMaster.sh"
+    ]
+  },
+  {
+    "name": "kubernetes-dashboard",
+    "namespace": "kubernetes-dashboard",
+    "installation_type": "script",
+    "installation_group_folder": "core",
+    "environment_variables": {
+      "kubernetesDashboardVersion": "2.3.1"
+    },
+    "retry": "true",
+    "categories": [
+      "management",
+      "kubernetes",
+      "dashboard"
+    ],
+    "letsencrypt": {
+      "enabled": true
+    },
+    "urls": [
+      {
+        "url": "https://{{componentName}}.{{baseDomain}}",
+        "healthchecks": {
+          "liveliness": {
+            "http_path": "/",
+            "http_auth_required": false,
+            "expected_http_response_code": "200",
+            "expected_http_response_string": "",
+            "expected_json_response": {
+              "json_path": "",
+              "json_value": ""
+            },
+            "health_shell_check_command": "",
+            "expected_shell_check_command_response": ""
+          },
+          "readiness": {
+            "http_path": "/",
+            "http_auth_required": false,
+            "expected_http_response_code": "200",
+            "expected_http_response_string": "",
+            "expected_json_response": {
+              "json_path": "",
+              "json_value": ""
+            }
+          }
+        }
+      }
+    ],
+    "Description": "Dashboard is a web-based Kubernetes user interface. You can use Dashboard to deploy containerized applications to a Kubernetes cluster, troubleshoot your containerized application, and manage the cluster resources",
+    "shortcut_text": "Kubernetes Dashboard",
+    "shortcut_icon": "kubernetes-dashboard.png",
+    "install_scripts": [
+      "installDashboard.sh"
+    ],
+    "pre_install_scripts": [],
+    "post_install_scripts": [
+      "checkK8sHealthAfterReboot.sh",
+      "createDesktopShortcuts.sh",
+      "deployOauth2.sh"
+    ]
+  },
+  {
+    "name": "kubernetes-tools",
+    "namespace": "kube-system",
+    "installation_type": "script",
+    "installation_group_folder": "core",
+    "environment_variables": {
+      "kubevalVersion": "v0.16.1",
+      "kubevalChecksum": "2d6f9bda1423b93787fa05d9e8dfce2fc1190fefbcd9d0936b9635f3f78ba790",
+      "k3sVersion": "v1.21.12-rc2+k3s1",
+      "krewVersion": "v0.4.3",
+      "krewAmd64Checksum": "5df32eaa0e888a2566439c4ccb2ef3a3e6e89522f2f2126030171e2585585e4f",
+      "krewArm64Checksum": "0994923848882ad0d4825d5af1dc227687a10a02688f785709b03549dd34d71d"
+    },
+    "categories": [
+      "orchestration",
+      "kubernetes",
+      "tool"
+    ],
+    "retry": "true",
+    "Description": "Kubernetes tools for initializing and managing the Kubernetes cluster",
+    "shortcut_text": "Kubernetes Tools",
+    "shortcut_icon": "kubernetes-tools.png",
+    "pre_install_scripts": [],
+    "install_scripts": [
+      "installKubernetesTools.sh"
+    ],
+    "post_install_scripts": [
+      "installPluginManager.sh"
+    ]
+  },
+  {
+    "name": "kx-portal",
+    "namespace": "",
+    "installation_type": "script",
+    "installation_group_folder": "core",
+    "categories": [
+      "management",
+      "portal"
+    ],
+    "environment_variables": {
+      "nodejsVersion": "v16.15.1",
+      "nodejsChecksum": "b749f7a76e56dfd6dfb8a910b8a2a871159661557680aa95acf13c9514422c12"
+    },
+    "retry": "true",
+    "letsencrypt": {
+      "enabled": true
+    },
+    "install_scripts": [
+      "installClient.sh"
+    ],
+    "Description": "KX.AS.CODE Management and Status Portal",
+    "shortcut_text": "KX.AS.CODE Portal",
+    "shortcut_icon": "kx-portal.png",
+    "pre_install_scripts": [],
+    "post_install_scripts": []
+  },
+  {
+    "name": "local-storage",
+    "namespace": "kube-system",
+    "installation_type": "script",
+    "installation_group_folder": "core",
+    "environment_variables": {
+      "localProvisionerVersion": "2.4.0",
+      "hostDirectory": "/mnt/k8s_local_volumes",
+      "storageClassName": "local-storage-sc",
+      "fsType": "xfs"
+    },
+    "install_scripts": [
+      "installLocalStorage.sh"
+    ],
+    "Description": "The local volume static provisioner manages PersistentVolume lifecycle for pre-allocated disks by detecting and creating PVs for each local disk on the host, and cleaning up the disks when released.",
+    "shortcut_text": "Local Storage",
+    "shortcut_icon": "local-storage.png",
+    "pre_install_scripts": [],
+    "post_install_scripts": []
+  },
+  {
+    "name": "management-agents",
+    "namespace": "",
+    "installation_type": "script",
+    "installation_group_folder": "core",
+    "retry": "true",
+    "install_scripts": [
+      "installAwsSsmAgent.sh"
+    ],
+    "Description": "Management agents, such as AWS SSM",
+    "shortcut_text": "",
+    "shortcut_icon": "",
+    "pre_install_scripts": [],
+    "post_install_scripts": []
+  },
+  {
+    "name": "metallb-loadbalancer",
+    "namespace": "metallb-system",
+    "installation_type": "script",
+    "installation_group_folder": "core",
+    "environment_variables": {
+      "metalLbVersion": "v0.10.2"
+    },
+    "retry": "true",
+    "install_scripts": [
+      "installMetalLb.sh"
+    ],
+    "pre_install_scripts": [
+      "createMemberListSecret.sh"
+    ],
+    "Description": "MetalLB is a load-balancer implementation for bare metal Kubernetes clusters, using standard routing protocols.",
+    "shortcut_text": "MetalLB Load Balancer",
+    "shortcut_icon": "metallb-loadbalancer.png",
+    "post_install_scripts": []
+  },
+  {
+    "name": "metrics-server",
+    "namespace": "kube-system",
+    "installation_type": "script",
+    "installation_group_folder": "core",
+    "environment_variables": {
+      "metricsServerVersion": "v0.5.1"
+    },
+    "retry": "true",
+    "install_scripts": [
+      "installMetricsServer.sh"
+    ],
+    "Description": "Metrics Server is a scalable, efficient source of container resource metrics for Kubernetes built-in autoscaling pipelines.",
+    "shortcut_text": "Metrics Server",
+    "shortcut_icon": "metrics-server.png",
+    "pre_install_scripts": [],
+    "post_install_scripts": []
+  },
+  {
+    "name": "nginx-ingress-controller",
+    "namespace": "nginx-ingress-controller",
+    "installation_type": "helm",
+    "installation_group_folder": "core",
+    "environment_variables": {
+      "nginxControllerVersion": "v1.6.4"
+    },
+    "retry": "true",
+    "helm_params": {
+      "repository_url": "https://kubernetes.github.io/ingress-nginx",
+      "repository_name": "ingress-nginx/ingress-nginx",
+      "helm_version": "4.5.2",
+      "set_key_values": [],
+      "set_string_key_values": [
+        "controller.nodeSelector.\"ingress-controller\"=true"
+      ]
+    },
+    "Description": "The NGINX Ingress Controller is an application that runs in a cluster and configures an HTTP load balancer according to Ingress resources.",
+    "shortcut_text": "NGINX Ingress Controller",
+    "shortcut_icon": "nginx-ingress-controller.png",
+    "pre_install_scripts": [
+      "createWildcardCertSecret.sh",
+      "addNodeLabel.sh"
+    ],
+    "post_install_scripts": [
+      "workaround.sh",
+      "adjustNumReplicas.sh"
+    ]
+  },
+  {
+    "name": "openldap",
+    "namespace": "",
+    "installation_type": "script",
+    "installation_group_folder": "core",
+    "environment_variables": {
+      "lamVersion": "7.4-1",
+      "lamChecksum": "8f7fd851db2c736b6e138144938b448b6c15e2bc8e44b5e5056dab70d6780bbb"
+    },
+    "install_scripts": [
+      "install-and-configure-openldap.sh"
+    ],
+    "Description": "User interface for managing OpenLDAP. OpenLDAP Software is an open source implementation of the Lightweight Directory Access Protocol.",
+    "shortcut_text": "LDAP Account Manager",
+    "shortcut_icon": "ldap-account-manager.png",
+    "pre_install_scripts": [],
+    "post_install_scripts": [
+      "enableOpenLdapTls.sh",
+      "installSsd.sh",
+      "installAdminClient.sh",
+      "createDesktopShortcut.sh"
+    ]
+  },
+  {
+    "name": "openlens",
+    "namespace": "",
+    "installation_type": "script",
+    "installation_group_folder": "core",
+    "environment_variables": {},
+    "install_scripts": [
+      "installOpenLens.sh"
+    ],
+    "Description": "Lens IDE provides the full situational awareness for everything that runs in Kubernetes.",
+    "shortcut_text": "OpenLens Kubernetes IDE",
+    "shortcut_icon": "openlens.png",
+    "pre_install_scripts": [],
+    "post_install_scripts": []
+  },
+  {
+    "name": "remote-desktop",
+    "namespace": "",
+    "installation_type": "script",
+    "installation_group_folder": "core",
+    "retry": "skip",
+    "environment_variables": {
+      "guacamoleVersion": "1.5.0",
+      "guacamoleTarChecksum": "c6c09e4056f1edd88a3c425ef05043ff835da5c1c92348bbdbf5a99e512f5fd4",
+      "guacamoleWarChecksum": "9c4e807aa70bc138f3b6cc66cc44b75daa944a015944b9ab6f780d7868498620",
+      "guacamoleAuthJdbcChecksum": "f47e066c4d3167202b9c866f63cba806f2cb0a00a5c00847e07870b124b5fb75",
+      "guacamoleAuthTotpChecksum": "c703f7c541f5a513c1588a5bedeae4461cd4135b11d6eb874ac059f48445942f",
+      "guacamoleAuthLdapChecksum": "4a97a6c88f5e27920725178abd154aa709498c9d0bbcfee835be448202037497",
+      "postgresqlDriverVersion": "42.5.4",
+      "postgresqlDriverChecksum": "f48fcb0b6959bc8b478657f57ba43c1acca4cade6abca5f17bf9bc9c363cb66f",
+      "nomachineVersion": "8.4.2_1",
+      "nomachineArm64Checksum": "7311c9a5699f5c981673d476a92d62e37267dcae4e464926ef600c86ff4d0d0c",
+      "nomachineAmd64Checksum": "0934b3cf8468d3748a84a084b5eebd4c06974499e29a1f512ae61488357962fa"
+    },
+    "install_scripts": [
+      "install-nomachine.sh",
+      "install-guacamole-remote-desktop.sh"
+    ],
+    "Description": "Apache Guacamole is a clientless remote desktop gateway. It supports standard protocols like VNC, RDP, and SSH.",
+    "shortcut_text": "Guacamole Remote Desktop",
+    "shortcut_icon": "remote-desktop.png",
+    "pre_install_scripts": [],
+    "post_install_scripts": [
+      "configureXrdpConnection.sh",
+      "installPgAdmin.sh",
+      "createDesktopShortcuts.sh"
+    ]
+  },
+  {
+    "name": "user-setup",
+    "namespace": "",
+    "installation_type": "script",
+    "installation_group_folder": "core",
+    "install_scripts": [
+      "createUsers.sh"
+    ],
+    "Description": "Create additional users defined in a KX.AS.CODE profile's users.json file",
+    "shortcut_text": "Create Users",
+    "shortcut_icon": "",
+    "pre_install_scripts": [],
+    "post_install_scripts": []
+  },
+  {
+    "name": "mssql-server",
+    "namespace": "mssql-server",
+    "installation_type": "script",
+    "installation_group_folder": "database",
+    "categories": [
+      "database",
+      "mssql",
+      "server"
+    ],
+    "retry": "false",
+    "Description": "Microsoft SQL 2019 database server.",
+    "shortcut_text": "MSSQL Database",
+    "shortcut_icon": "mssql-server.png",
+    "pre_install_scripts": [
+      "createKubernetesSecret.sh"
+    ],
+    "install_scripts": [
+      "deployMsSqlDatabaseServer.sh"
+    ],
+    "post_install_scripts": [
+      "installMssqlClient.sh"
+    ]
+  },
+  {
+    "name": "atom",
+    "namespace": "",
+    "installation_type": "script",
+    "installation_group_folder": "dev_tools",
+    "environment_variables": {
+      "atomVersion": "v1.60.0",
+      "atomChecksum": "5c7c0259062b9d4911d2537bfceaff5316f9de111698840a90d7cd497df891a6"
+    },
+    "install_scripts": [
+      "installAtom.sh"
+    ],
+    "Description": "Atom is a free and open-source text and source code editor for macOS, Linux, and Microsoft Windows with support for plug-ins written in JavaScript, and embedded Git Control",
+    "shortcut_text": "atom",
+    "shortcut_icon": "atom.png",
+    "pre_install_scripts": [],
+    "post_install_scripts": []
+  },
+  {
+    "name": "azure-data-studio",
+    "namespace": "",
+    "installation_type": "script",
+    "installation_group_folder": "core",
+    "environment_variables": {
+      "azureDataStudioVersion": "1.39.1",
+      "azureDataStudioChecksum": "b22fcdbb6b4c104b65c7ddf438af3f7678bfd1f49a07cf8f33c2602908e772fa"
+    },
+    "install_scripts": [
+      "installAzureDataStudio.sh"
+    ],
+    "Description": "Azure Data Studio is a cross-platform modern editor focused on data development. It&apos;s available for Linux, MacOS, and Windows. Plus, Azure Data Studio comes with an integrated terminal so you&apos;re never far away from psql.",
+    "shortcut_text": "Azure Data Studio",
+    "shortcut_icon": "azure-data-studio.png",
+    "pre_install_scripts": [],
+    "post_install_scripts": []
+  },
+  {
+    "name": "backstage",
+    "namespace": "backstage",
+    "installation_type": "script",
+    "installation_group_folder": "dev_tools",
+    "environment_variables": {},
+    "install_scripts": [],
+    "categories": [],
+    "urls": [
+      {
+        "url": "https://{{componentName}}.{{baseDomain}}",
+        "healthchecks": {
+          "liveliness": {
+            "http_path": "/",
+            "http_auth_required": false,
+            "expected_http_response_code": "200",
+            "expected_http_response_string": "",
+            "expected_json_response": {
+              "json_path": "",
+              "json_value": ""
+            },
+            "health_shell_check_command": "",
+            "expected_shell_check_command_response": ""
+          },
+          "readiness": {
+            "http_path": "/",
+            "http_auth_required": false,
+            "expected_http_response_code": "200",
+            "expected_http_response_string": "",
+            "expected_json_response": {
+              "json_path": "",
+              "json_value": ""
+            },
+            "health_shell_check_command": "",
+            "expected_shell_check_command_response": ""
+          }
+        }
+      }
+    ],
+    "Description": "An open platform for building developer portals. Powered by a centralized software catalog, Backstage restores order to your infrastructure and enables your product teams to ship high-quality code quickly.",
+    "shortcut_text": "Backstage",
+    "shortcut_icon": "backstage.png",
+    "pre_install_scripts": [],
+    "post_install_scripts": []
+  },
+  {
+    "name": "gimp",
+    "namespace": "",
+    "installation_type": "script",
+    "installation_group_folder": "dev_tools",
+    "install_scripts": [
+      "installGimp.sh"
+    ],
+    "Description": "GIMP is a free and open-source raster graphics editor used for image manipulation and image editing, free-form drawing, transcoding between different image file formats, and more specialized tasks.",
+    "shortcut_text": "Gimp",
+    "shortcut_icon": "gimp.png",
+    "pre_install_scripts": [],
+    "post_install_scripts": []
+  },
+  {
+    "name": "intellij-idea",
+    "namespace": "",
+    "installation_type": "script",
+    "installation_group_folder": "dev_tools",
+    "environment_variables": {
+      "intellijIdeaVersion": "2022.2.1",
+      "intellijIdeaChecksum": "93eb9391a898aad164ca47965e0445cbf0f04d7062b6875c4e4a3136799ee6cf"
+    },
+    "plugins_to_install": [
+      {
+        "name": "jprofiler",
+        "downloadUrl": "https://plugins.jetbrains.com/plugin/download?rel=true&updateId=254367",
+        "sha256Sum": "1aa10689f726eca6d431a7bb8c99680595b796523fbd0fbe725096972231cf2a"
+      }
+    ],
+    "install_scripts": [
+      "installIntelijIdea.sh"
+    ],
+    "Description": "IntelliJ IDEA is an integrated development environment (IDE) written in Java for developing computer software written in Java, Kotlin, Groovy, and other JVM-based languages",
+    "shortcut_text": "IntelliJ Idea",
+    "shortcut_icon": "intellij-idea.png",
+    "pre_install_scripts": [],
+    "post_install_scripts": [
+      "installPlugins.sh"
+    ]
+  },
+  {
+    "name": "jprofiler",
+    "namespace": "",
+    "installation_type": "script",
+    "installation_group_folder": "dev_tools",
+    "environment_variables": {
+      "jprofilerExecutableVersion": "13_0_5",
+      "jprofilerExecutableChecksum": "1c1c1f1c607ec6d4ced83573c65a3e5ff9b3e3ca24284a6f23a32657ccc38fb8"
+    },
+    "Description": "JPROFILER is a high-profile Java language profiler. Profiles in the programming world are tools that help programmers monitor program execution processes",
+    "shortcut_text": "JProfiler",
+    "shortcut_icon": "jprofiler.png",
+    "pre_install_scripts": [],
+    "install_scripts": [
+      "installJProfiler.sh"
+    ],
+    "post_install_scripts": []
+  },
+  {
+    "name": "postman",
+    "namespace": "",
+    "installation_type": "script",
+    "installation_group_folder": "dev_tools",
+    "environment_variables": {
+      "postmanVersion": "9.19.0",
+      "postmanChecksum": "9ba608c130e7936895dd9752ea0c55055b3be7649c445ff72f36d82042c1b996"
+    },
+    "install_scripts": [
+      "installPostman.sh"
+    ],
+    "Description": "Postman",
+    "shortcut_text": "Postman",
+    "shortcut_icon": "postman.png",
+    "pre_install_scripts": [],
+    "post_install_scripts": []
+  },
+  {
+    "name": "visual-studio-code",
+    "namespace": "",
+    "installation_type": "script",
+    "installation_group_folder": "dev_tools",
+    "environment_variables": {
+      "vscodeVersion": "",
+      "vscodeChecksum": ""
+    },
+    "install_scripts": [
+      "installVsCode.sh"
+    ],
+    "Description": "Visual Studio Code is a lightweight but powerful source code editor which runs on your desktop. It comes with built-in support for JavaScript, TypeScript and Node.js and has a rich ecosystem of extensions for other languages and runtimes (such as C++, C#, Java, Python, PHP, Go, .NET)",
+    "shortcut_text": "Visual Studio Code",
+    "shortcut_icon": "visual-studio-code.png",
+    "pre_install_scripts": [],
+    "post_install_scripts": []
+  },
+  {
+    "name": "hipster-shop",
+    "namespace": "shop-example",
+    "installation_type": "script",
+    "installation_group_folder": "examples",
+    "installation_input_arguments": [
+      {
+        "argumentKey": "branch",
+        "argumentDefaultValue": "main",
+        "fieldType": "alphaNumeric",
+        "mandatory": false
+      },
+      {
+        "argumentKey": "replicas",
+        "argumentDefaultValue": 1,
+        "minValue": 1,
+        "maxValue": 10,
+        "fieldType": "numeric",
+        "mandatory": false
+      }
+    ],
+    "environment_variables": {
+      "branch": ""
+    },
+    "categories": [
+      "content",
+      "hipster",
+      "shop",
+      "frontend",
+      "micro-services"
+    ],
+    "urls": [
+      {
+        "url": "https://{{componentName}}.{{baseDomain}}/",
+        "healthchecks": {
+          "liveliness": {
+            "http_path": "/",
+            "http_auth_required": false,
+            "expected_http_response_code": "200",
+            "expected_http_response_string": "",
+            "expected_json_response": {
+              "json_path": "",
+              "json_value": ""
+            },
+            "health_shell_check_command": "",
+            "expected_shell_check_command_response": ""
+          },
+          "readiness": {
+            "http_path": "/",
+            "http_auth_required": false,
+            "expected_http_response_code": "200",
+            "expected_http_response_string": "",
+            "expected_json_response": {
+              "json_path": "",
+              "json_value": ""
+            },
+            "health_shell_check_command": "",
+            "expected_shell_check_command_response": ""
+          }
+        }
+      }
+    ],
+    "retry": "true",
+    "Description": "Google's Hipster Shop micro-services example",
+    "shortcut_text": "Hipster Shop",
+    "shortcut_icon": "hipster-shop.png",
+    "pre_install_scripts": [],
+    "install_scripts": [
+      "deployHipsterShop.sh"
+    ],
+    "post_install_scripts": [],
+    "available_tasks": [
+      {
+        "name": "restartFrontend",
+        "title": "Restart frontend",
+        "description": "Restart the frontend microservice",
+        "script": "restartFrontend.sh",
+        "inputs": [
+          {
+            "argumentKey": "branch",
+            "argumentDefaultValue": "main",
+            "fieldType": "text",
+            "mandatory": false
+          },
+          {
+            "argumentKey": "replicas",
+            "argumentDefaultValue": 1,
+            "minValue": 1,
+            "maxValue": 10,
+            "fieldType": "number",
+            "mandatory": false
+          }
+        ]
+      },
+      {
+        "name": "Example Task 2",
+        "title": "Example Task",
+        "description": "Example",
+        "script": "example.sh",
+        "inputs": [
+         
+        ]
+      }
+    ]
+  },
+  {
+    "name": "elastic-auditbeat",
+    "namespace": "elastic-stack",
+    "installation_type": "script",
+    "installation_group_folder": "monitoring",
+    "environment_variables": {
+      "elasticVersion": "7.17.1"
+    },
+    "categories": [
+      "monitoring"
+    ],
+    "Description": "Auditbeat is a lightweight shipper that you can install on your servers to audit the activities of users and processes on your systems.",
+    "shortcut_text": "",
+    "shortcut_icon": "elastic-auditbeat",
+    "install_scripts": [
+      "installAuditbeat.sh"
+    ],
+    "pre_install_scripts": [],
+    "post_install_scripts": []
+  },
+  {
+    "name": "elastic-elasticsearch",
+    "namespace": "elastic-stack",
+    "installation_type": "helm",
+    "installation_group_folder": "monitoring",
+    "environment_variables": {
+      "elasticVersion": "7.17.1"
+    },
+    "helm_params": {
+      "repository_url": "https://helm.elastic.co",
+      "repository_name": "elastic/elasticsearch",
+      "helm_version": "7.17.1",
+      "set_key_values": []
+    },
+    "categories": [
+      "monitoring",
+      "datastore",
+      "search-engine"
+    ],
+    "urls": [
+      {
+        "url": "https://{{componentName}}.{{baseDomain}}",
+        "healthchecks": {
+          "liveliness": {
+            "http_path": "/",
+            "http_auth_required": true,
+            "http_auth_secret": {
+              "secret_name": "elastic-credentials",
+              "username_field": "username",
+              "password_field": "password"
+            },
+            "expected_http_response_code": "200",
+            "expected_http_response_string": "",
+            "expected_json_response": {
+              "json_path": "",
+              "json_value": ""
+            },
+            "health_shell_check_command": "",
+            "expected_shell_check_command_response": ""
+          },
+          "readiness": {
+            "http_path": "/",
+            "http_auth_required": true,
+            "http_auth_secret": {
+              "secret_name": "elastic-credentials",
+              "username_field": "username",
+              "password_field": "password"
+            },
+            "expected_http_response_code": "200",
+            "expected_http_response_string": "",
+            "expected_json_response": {
+              "json_path": "",
+              "json_value": ""
+            },
+            "health_shell_check_command": "",
+            "expected_shell_check_command_response": ""
+          }
+        }
+      }
+    ],
+    "Description": "Elasticsearch is a distributed, RESTful search and analytics engine capable of addressing a growing number of use cases.",
+    "shortcut_text": "Elasticsearch",
+    "shortcut_icon": "es.png",
+    "pre_install_scripts": [
+      "createSecret.sh"
+    ],
+    "post_install_scripts": []
+  },
+  {
+    "name": "elastic-filebeat",
+    "namespace": "elastic-stack",
+    "installation_type": "helm",
+    "installation_group_folder": "monitoring",
+    "environment_variables": {
+      "elasticVersion": "7.17.1"
+    },
+    "helm_params": {
+      "repository_url": "https://helm.elastic.co",
+      "repository_name": "elastic/filebeat",
+      "helm_version": "7.17.1",
+      "set_key_values": []
+    },
+    "categories": [
+      "monitoring",
+      "log-harvester"
+    ],
+    "Description": "Filebeat is a lightweight shipper for logs and is part of the Elastic Stack",
+    "shortcut_text": "",
+    "shortcut_icon": "elastic-filebeat.png",
+    "pre_install_scripts": [],
+    "post_install_scripts": []
+  },
+  {
+    "name": "elastic-heartbeat",
+    "namespace": "elastic-stack",
+    "installation_type": "script",
+    "installation_group_folder": "monitoring",
+    "environment_variables": {
+      "elasticVersion": "7.17.1"
+    },
+    "categories": [
+      "monitoring"
+    ],
+    "Description": "Lightweight shipper for uptime monitoring. Monitor services for their availability with active probing.",
+    "shortcut_text": "",
+    "shortcut_icon": "elastic-heartbeat.png",
+    "install_scripts": [
+      "installHeartbeat.sh"
+    ],
+    "pre_install_scripts": [
+      "createKxCertsSecret.sh",
+      "createConfigMap.sh"
+    ],
+    "post_install_scripts": []
+  },
+  {
+    "name": "elastic-kibana",
+    "namespace": "elastic-stack",
+    "installation_type": "helm",
+    "installation_group_folder": "monitoring",
+    "environment_variables": {
+      "elasticVersion": "7.17.1"
+    },
+    "helm_params": {
+      "repository_url": "https://helm.elastic.co",
+      "repository_name": "elastic/kibana",
+      "helm_version": "7.17.1",
+      "set_key_values": []
+    },
+    "categories": [
+      "monitoring",
+      "visualization"
+    ],
+    "urls": [
+      {
+        "url": "https://{{componentName}}.{{baseDomain}}",
+        "healthchecks": {
+          "liveliness": {
+            "http_path": "/status",
+            "http_auth_required": false,
+            "expected_http_response_code": "200",
+            "expected_http_response_string": "",
+            "expected_json_response": {
+              "json_path": "",
+              "json_value": ""
+            },
+            "health_shell_check_command": "",
+            "expected_shell_check_command_response": ""
+          },
+          "readiness": {
+            "http_path": "/status",
+            "http_auth_required": false,
+            "expected_http_response_code": "200",
+            "expected_http_response_string": "",
+            "expected_json_response": {
+              "json_path": "",
+              "json_value": ""
+            },
+            "health_shell_check_command": "",
+            "expected_shell_check_command_response": ""
+          }
+        }
+      }
+    ],
+    "Description": "Kibana is a free and open user interface that lets you visualize your Elasticsearch data and navigate the Elastic Stack",
+    "shortcut_text": "Kibana",
+    "shortcut_icon": "elastic-kibana.png",
+    "pre_install_scripts": [
+      "generateEncryptionKey.sh"
+    ],
+    "post_install_scripts": []
+  },
+  {
+    "name": "elastic-metricbeat",
+    "namespace": "elastic-stack",
+    "installation_type": "helm",
+    "installation_group_folder": "monitoring",
+    "environment_variables": {
+      "elasticVersion": "7.17.1"
+    },
+    "helm_params": {
+      "repository_url": "https://helm.elastic.co",
+      "repository_name": "elastic/metricbeat",
+      "helm_version": "7.17.1",
+      "set_key_values": []
+    },
+    "categories": [
+      "monitoring",
+      "metrics"
+    ],
+    "Description": "Lightweight shipper for metrics. Collect metrics from your systems and services. From CPU to memory, Redis to NGINX, and much more, Metricbeat is a lightweight way to send system and service statistics.",
+    "shortcut_text": "",
+    "shortcut_icon": "elastic-metricbeat.png",
+    "pre_install_scripts": [],
+    "post_install_scripts": []
+  },
+  {
+    "name": "elastic-packetbeat",
+    "namespace": "elastic-stack",
+    "installation_type": "script",
+    "installation_group_folder": "monitoring",
+    "environment_variables": {
+      "elasticVersion": "7.17.1"
+    },
+    "categories": [
+      "monitoring",
+      "network"
+    ],
+    "Description": "Lightweight shipper for network data. Monitoring your network traffic is critical to gaining observability and securing your environment — ensuring high levels of performance and security. Packetbeat is a lightweight network packet analyzer that sends data from your hosts and containers to Logstash or Elasticsearch.",
+    "shortcut_text": "",
+    "shortcut_icon": "elastic-packetbeat.png",
+    "install_scripts": [
+      "installPacketbeat.sh"
+    ],
+    "pre_install_scripts": [],
+    "post_install_scripts": []
+  },
+  {
+    "name": "grafana",
+    "namespace": "grafana",
+    "installation_type": "helm",
+    "installation_group_folder": "monitoring",
+    "environment_variables": {
+      "grafanaVersion": "9.3.6"
+    },
+    "helm_params": {
+      "repository_url": "https://grafana.github.io/helm-charts",
+      "repository_name": "grafana/grafana",
+      "helm_version": "6.50.7",
+      "set_key_values": [
+        "image.tag={{grafanaVersion}}",
+        "ingress.enabled=true",
+        "ingress.ingressClassName=nginx",
+        "ingress.hosts[0]={{componentName}}.{{baseDomain}}",
+        "ingress.tls[0].hosts[0]={{componentName}}.{{baseDomain}}",
+        "persistence.enabled=true",
+        "persistence.size=4Gi",
+        "admin.userKey=admin-user",
+        "admin.passwordKey=admin-password",
+        "admin.existingSecret=grafana-admin-credentials",
+        "datasources.\"datasources\\.yaml\".datasources[0].name=Prometheus",
+        "datasources.\"datasources\\.yaml\".datasources[0].type=prometheus",
+        "datasources.\"datasources\\.yaml\".datasources[0].url=http://prometheus-server.prometheus:80",
+        "datasources.\"datasources\\.yaml\".datasources[0].access=proxy",
+        "datasources.\"datasources\\.yaml\".datasources[0].isDefault=true",
+        "datasources.\"datasources\\.yaml\".datasources[1].name=Graphite",
+        "datasources.\"datasources\\.yaml\".datasources[1].type=graphite",
+        "datasources.\"datasources\\.yaml\".datasources[1].url=http://graphite.graphite:8080",
+        "datasources.\"datasources\\.yaml\".datasources[1].access=proxy",
+        "datasources.\"datasources\\.yaml\".datasources[1].isDefault=false",
+        "dashboardProviders.\"dashboardproviders\\.yaml\".apiVersion=1",
+        "dashboardProviders.\"dashboardproviders\\.yaml\".providers[0].name=default",
+        "dashboardProviders.\"dashboardproviders\\.yaml\".providers[0].orgId=1",
+        "dashboardProviders.\"dashboardproviders\\.yaml\".providers[0].type=file",
+        "dashboardProviders.\"dashboardproviders\\.yaml\".providers[0].disableDeletion=false",
+        "dashboardProviders.\"dashboardproviders\\.yaml\".providers[0].editable=true",
+        "dashboardProviders.\"dashboardproviders\\.yaml\".providers[0].options.path=/var/lib/grafana/dashboards/default",
+        "dashboards.default.node-exporter.gnetId=1860",
+        "dashboards.default.node-exporter.revision=21",
+        "dashboards.default.node-exporter.datasource=Prometheus",
+        "notifiers.\"notifiers\\.yaml\".notifiers[0].name=slack-notifier",
+        "notifiers.\"notifiers\\.yaml\".notifiers[0].type=slack",
+        "notifiers.\"notifiers\\.yaml\".notifiers[0].uid=slack",
+        "notifiers.\"notifiers\\.yaml\".notifiers[0].settings.url=http://mattermost-team-edition.mattermost:8065/hooks/{{monitoringWebhookId}}",
+        "plugins[0]=grafana-image-renderer",
+        "plugins[1]=grafana-piechart-panel"
+      ]
+    },
+    "categories": [
+      "visualization",
+      "monitoring"
+    ],
+    "urls": [
+      {
+        "url": "https://{{componentName}}.{{baseDomain}}",
+        "healthchecks": {
+          "liveliness": {
+            "http_path": "/api/health",
+            "http_auth_required": false,
+            "expected_http_response_code": "200",
+            "expected_http_response_string": "",
+            "expected_json_response": {
+              "json_path": "",
+              "json_value": ""
+            },
+            "health_shell_check_command": "",
+            "expected_shell_check_command_response": ""
+          },
+          "readiness": {
+            "http_path": "/api/health",
+            "http_auth_required": false,
+            "expected_http_response_code": "200",
+            "expected_http_response_string": "",
+            "expected_json_response": {
+              "json_path": "",
+              "json_value": ""
+            },
+            "health_shell_check_command": "",
+            "expected_shell_check_command_response": ""
+          }
+        }
+      }
+    ],
+    "Description": "Query, visualize, alert on, and understand your data no matter where it’s stored. With Grafana you can create, explore and share all of your data through beautiful, flexible dashboards.",
+    "shortcut_text": "Grafana",
+    "shortcut_icon": "grafana.png",
+    "api_docs_type": "web",
+    "api_docs_url": "https://grafana.com/docs/grafana/latest/http_api/curl-examples/?src=grafana_gettingstarted",
+    "vendor_docs_url": "https://grafana.com/docs/",
+    "pre_install_scripts": [
+      "createGitProject.sh",
+      "populateGitProject.sh",
+      "installGrafanaImageRenderer.sh",
+      "getMinIoAccessKey.sh",
+      "createAdminCredentialsSecret.sh",
+      "uploadCaConfigMap.sh",
+      "configureOauthLogin.sh",
+      "getMattermostApplicationId.sh"
+    ],
+    "post_install_scripts": []
+  },
+  {
+    "name": "graphite",
+    "namespace": "graphite",
+    "installation_type": "helm",
+    "installation_group_folder": "monitoring",
+    "environment_variables": {
+      "imageTag": "1.1.7-6"
+    },
+    "helm_params": {
+      "repository_url": "https://kiwigrid.github.io",
+      "repository_name": "kiwigrid/graphite",
+      "helm_version": "0.7.2",
+      "set_key_values": []
+    },
+    "categories": [
+      "time-series",
+      "database"
+    ],
+    "urls": [
+      {
+        "url": "https://{{componentName}}.{{baseDomain}}",
+        "healthchecks": {
+          "liveliness": {
+            "http_path": "/",
+            "http_auth_required": false,
+            "expected_http_response_code": "200",
+            "expected_http_response_string": "",
+            "expected_json_response": {
+              "json_path": "",
+              "json_value": ""
+            },
+            "health_shell_check_command": "",
+            "expected_shell_check_command_response": ""
+          },
+          "readiness": {
+            "http_path": "/",
+            "http_auth_required": false,
+            "expected_http_response_code": "200",
+            "expected_http_response_string": "",
+            "expected_json_response": {
+              "json_path": "",
+              "json_value": ""
+            },
+            "health_shell_check_command": "",
+            "expected_shell_check_command_response": ""
+          }
+        }
+      }
+    ],
+    "Description": "Graphite is an enterprise-ready monitoring tool that runs equally well on cheap hardware or Cloud infrastructure. Teams use Graphite to track the performance of their websites, applications, business services, and networked servers. It marked the start of a new generation of monitoring tools, making it easier than ever to store, retrieve, share, and visualize time-series data.",
+    "shortcut_text": "Graphite",
+    "shortcut_icon": "graphite.png",
+    "api_docs_type": "web",
+    "api_docs_url": "https://graphite.readthedocs.io/en/1.1.7/render_api.html",
+    "vendor_docs_url": "https://graphite.readthedocs.io/",
+    "pre_install_scripts": [
+      "createGraphiteIngress.sh"
+    ],
+    "post_install_scripts": []
+  },
+  {
+    "name": "influxdata-influxdb2",
+    "namespace": "influxdata",
+    "installation_type": "helm",
+    "installation_group_folder": "monitoring",
+    "environment_variables": {
+      "imageTag": "2.2.0-alpine"
+    },
+    "helm_params": {
+      "repository_url": "https://helm.influxdata.com/",
+      "repository_name": "influxdata/influxdb2",
+      "helm_version": "2.1.0",
+      "set_key_values": []
+    },
+    "categories": [
+      "time-series",
+      "database"
+    ],
+    "urls": [
+      {
+        "url": "https://{{componentName}}.{{baseDomain}}",
+        "healthchecks": {
+          "liveliness": {
+            "http_path": "/",
+            "http_auth_required": false,
+            "expected_http_response_code": "200",
+            "expected_http_response_string": "",
+            "expected_json_response": {
+              "json_path": "",
+              "json_value": ""
+            },
+            "health_shell_check_command": "",
+            "expected_shell_check_command_response": ""
+          },
+          "readiness": {
+            "http_path": "/",
+            "http_auth_required": false,
+            "expected_http_response_code": "200",
+            "expected_http_response_string": "",
+            "expected_json_response": {
+              "json_path": "",
+              "json_value": ""
+            },
+            "health_shell_check_command": "",
+            "expected_shell_check_command_response": ""
+          }
+        }
+      }
+    ],
+    "Description": "InfluxDB is an open-source time series database developed by the company InfluxData. It is written in the Go programming language for storage and retrieval of time series data in fields such as operations monitoring, application metrics, Internet of Things sensor data, and real-time analytics.",
+    "shortcut_text": "Influxdata InfluxDB2",
+    "shortcut_icon": "influxdata-influxdb2.png",
+    "pre_install_scripts": [
+      "createAuthSecret.sh"
+    ],
+    "post_install_scripts": []
+  },
+  {
+    "name": "influxdata-telegraf-ds",
+    "namespace": "influxdata",
+    "installation_type": "helm",
+    "installation_group_folder": "monitoring",
+    "environment_variables": {
+      "imageTag": "1.23.2-alpine"
+    },
+    "helm_params": {
+      "repository_url": "https://helm.influxdata.com/",
+      "repository_name": "influxdata/telegraf-ds",
+      "helm_version": "1.1.0",
+      "set_key_values": []
+    },
+    "categories": [
+      "data-collection",
+      "agent"
+    ],
+    "Description": "Telegraf is a server-based agent for collecting and sending all metrics and events from databases, systems, and IoT sensors.",
+    "shortcut_text": "Influxdata Telegraf DS",
+    "shortcut_icon": "influxdata-telegraf-ds.png",
+    "pre_install_scripts": [
+      "getAuthToken.sh"
+    ],
+    "post_install_scripts": [
+      "modifyConfiguration.sh"
+    ]
+  },
+  {
+    "name": "influxdata-telegraf",
+    "namespace": "influxdata",
+    "installation_type": "helm",
+    "installation_group_folder": "monitoring",
+    "environment_variables": {
+      "imageTag": "1.23.2-alpine"
+    },
+    "helm_params": {
+      "repository_url": "https://helm.influxdata.com/",
+      "repository_name": "influxdata/telegraf",
+      "helm_version": "1.8.18",
+      "set_key_values": []
+    },
+    "categories": [
+      "data-collection",
+      "agent"
+    ],
+    "Description": "Telegraf is a server-based agent for collecting and sending all metrics and events from databases, systems, and IoT sensors.",
+    "shortcut_text": "Influxdata Telegraf",
+    "shortcut_icon": "influxdata-telegraf.png",
+    "pre_install_scripts": [
+      "getAuthToken.sh"
+    ],
+    "post_install_scripts": []
+  },
+  {
+    "name": "loki",
+    "namespace": "loki",
+    "installation_type": "helm",
+    "installation_group_folder": "monitoring",
+    "environment_variables": {
+      "lokiVersion": "2.4.2"
+    },
+    "helm_params": {
+      "repository_url": "https://grafana.github.io/helm-charts",
+      "repository_name": "grafana/loki-stack",
+      "helm_version": "2.6.1",
+      "set_key_values": [
+        "promtail.enabled=true",
+        "grafana.enabled=false",
+        "prometheus.enabled=false",
+        "prometheus.alertmanager.persistentVolume.enabled=false",
+        "prometheus.server.persistentVolume.enabled=false"
+      ]
+    },
+    "categories": [
+      "monitoring",
+      "datastore"
+    ],
+    "Description": "Loki is a horizontally scalable, highly available, multi-tenant log aggregation system inspired by Prometheus. It is designed to be very cost effective and easy to operate. It does not index the contents of the logs, but rather a set of labels for each log stream.",
+    "shortcut_text": "",
+    "shortcut_icon": "loki.png",
+    "pre_install_scripts": [
+      "getGrafanaAccessKey.sh"
+    ],
+    "post_install_scripts": [
+      "configureLokiWithGrafana.sh",
+      "importGrafanaDashboard.sh"
+    ]
+  },
+  {
+    "name": "prometheus",
+    "namespace": "prometheus",
+    "installation_type": "helm",
+    "installation_group_folder": "monitoring",
+    "environment_variables": {
+      "prometheusImageTag": "v2.31.1",
+      "alertManagerImageTag": "v0.23.0",
+      "nodeExporterImageTag": "v1.3.0",
+      "pushGatewayImageTag": "v1.4.2"
+    },
+    "helm_params": {
+      "repository_url": "https://prometheus-community.github.io/helm-charts",
+      "repository_name": "prometheus-community/prometheus",
+      "helm_version": "15.5.3",
+      "set_key_values": [
+        "prometheus.image.tag={{prometheusImageTag}}",
+        "nodeExporter.image.tag={{nodeExporterImageTag}}",
+        "pushgateway.image.tag={{pushGatewayImageTag}}",
+        "alertmanager.image.tag={{alertManagerImageTag}}",
+        "alertmanager.persistentVolume.enabled=true",
+        "alertmanager.persistentVolume.storageClass=kadalu.storage-pool-1",
+        "alertmanager.ingress.enabled=true",
+        "alertmanager.ingress.annotations.\"kubernetes\\.io/ingress\\.class\"=nginx",
+        "alertmanager.ingress.hosts[0]=alertmanager.{{baseDomain}}",
+        "alertmanager.ingress.tls[0].hosts[0]=alertmanager.{{baseDomain}}",
+        "server.persistentVolume.enabled=true",
+        "server.persistentVolume.storageClass=local-storage-sc",
+        "server.ingress.enabled=true",
+        "server.ingress.annotations.\"kubernetes\\.io/ingress\\.class\"=nginx",
+        "server.ingress.hosts[0]={{componentName}}.{{baseDomain}}",
+        "server.ingress.tls[0].hosts[0]={{componentName}}.{{baseDomain}}"
+      ]
+    },
+    "categories": [
+      "monitoring"
+    ],
+    "urls": [
+      {
+        "url": "https://{{componentName}}.{{baseDomain}}",
+        "healthchecks": {
+          "liveliness": {
+            "http_path": "/-/ready",
+            "http_auth_required": false,
+            "expected_http_response_code": "200",
+            "expected_http_response_string": "",
+            "expected_json_response": {
+              "json_path": "",
+              "json_value": ""
+            },
+            "health_shell_check_command": "",
+            "expected_shell_check_command_response": ""
+          },
+          "readiness": {
+            "http_path": "/-/ready",
+            "http_auth_required": false,
+            "expected_http_response_code": "200",
+            "expected_http_response_string": "",
+            "expected_json_response": {
+              "json_path": "",
+              "json_value": ""
+            },
+            "health_shell_check_command": "",
+            "expected_shell_check_command_response": ""
+          }
+        }
+      }
+    ],
+    "Descriptions": "Prometheus collects and stores its metrics as time series data, i.e. metrics information is stored with the timestamp at which it was recorded, alongside optional key-value pairs called labels.",
+    "shortcut_text": "Prometheus",
+    "shortcut_icon": "prometheus.png",
+    "api_docs_url": "https://prometheus.io/docs/prometheus/latest/querying/api/",
+    "vendor_docs_url": "https://prometheus.io/docs",
+    "pre_install_scripts": [
+      "getMattermostIntegrationId.sh"
+    ],
+    "post_install_scripts": []
+  },
+  {
+    "name": "prometheus-stack",
+    "namespace": "prometheus-stack",
+    "installation_type": "helm",
+    "installation_group_folder": "monitoring",
+    "environment_variables": {},
+    "helm_params": {
+      "repository_url": "https://prometheus-community.github.io/helm-charts",
+      "repository_name": "prometheus-community/kube-prometheus-stack",
+      "helm_version": "45.1.0",
+      "set_key_values": []
+    },
+    "categories": [
+      "monitoring"
+    ],
+    "urls": [
+      {
+        "url": "https://prometheus.{{baseDomain}}",
+        "healthchecks": {
+          "liveliness": {
+            "http_path": "/-/ready",
+            "http_auth_required": false,
+            "expected_http_response_code": "200",
+            "expected_http_response_string": "",
+            "expected_json_response": {
+              "json_path": "",
+              "json_value": ""
+            },
+            "health_shell_check_command": "",
+            "expected_shell_check_command_response": ""
+          },
+          "readiness": {
+            "http_path": "/-/ready",
+            "http_auth_required": false,
+            "expected_http_response_code": "200",
+            "expected_http_response_string": "",
+            "expected_json_response": {
+              "json_path": "",
+              "json_value": ""
+            },
+            "health_shell_check_command": "",
+            "expected_shell_check_command_response": ""
+          }
+        }
+      }
+    ],
+    "Description": "Prometheus collects and stores its metrics as time series data, i.e. metrics information is stored with the timestamp at which it was recorded, alongside optional key-value pairs called labels.",
+    "shortcut_text": "Prometheus & Grafana Stack",
+    "shortcut_icon": "prometheus-stack.png",
+    "api_docs_url": "https://prometheus.io/docs/prometheus/latest/querying/api/",
+    "vendor_docs_url": "https://prometheus.io/docs",
+    "pre_install_scripts": [
+      "generateAdminPassword.sh"
+    ],
+    "post_install_scripts": [
+      "createGrafanaDesktopIcon.sh"
+    ]
+  },
+  {
+    "name": "selenium4",
+    "namespace": "selenium4",
+    "installation_type": "script",
+    "installation_group_folder": "test_automation",
+    "environment_variables": {
+      "gitTag": "4.1.2-20220317",
+      "imageTag": "4.1.2-20220317",
+      "nodesImageTag": "4.1.2-20220317"
+    },
+    "install_scripts": [
+      "install-selenium-grid-4.sh"
+    ],
+    "categories": [
+      "test-automation"
+    ],
+    "urls": [
+      {
+        "url": "https://{{componentName}}.{{baseDomain}}",
+        "healthchecks": {
+          "liveliness": {
+            "http_path": "/",
+            "http_auth_required": false,
+            "expected_http_response_code": "200",
+            "expected_http_response_string": "",
+            "expected_json_response": {
+              "json_path": "",
+              "json_value": ""
+            },
+            "health_shell_check_command": "",
+            "expected_shell_check_command_response": ""
+          },
+          "readiness": {
+            "http_path": "/",
+            "http_auth_required": false,
+            "expected_http_response_code": "200",
+            "expected_http_response_string": "",
+            "expected_json_response": {
+              "json_path": "",
+              "json_value": ""
+            },
+            "health_shell_check_command": "",
+            "expected_shell_check_command_response": ""
+          }
+        }
+      }
+    ],
+    "Description": "Selenium Grid allows the execution of WebDriver scripts on remote machines (virtual or real) by routing commands sent by the client to remote browser instances. It aims to provide an easy way to run tests in parallel on multiple machines.",
+    "shortcut_text": "Selenium Grid 4",
+    "shortcut_icon": "selenium4.png",
+    "pre_install_scripts": [],
+    "post_install_scripts": []
+  },
+  {
+    "name": "sonarqube",
+    "namespace": "sonarqube",
+    "installation_type": "helm",
+    "installation_group_folder": "quality_assurance",
+    "minimum_resources": {
+      "cpu": "1000",
+      "memory": "3000"
+    },
+    "environment_variables": {
+      "imageTag": "9.3.0-community"
+    },
+    "helm_params": {
+      "repository_url": "https://SonarSource.github.io/helm-chart-sonarqube",
+      "repository_name": "sonarqube/sonarqube",
+      "helm_version": "2.0.7",
+      "set_key_values": []
+    },
+    "categories": [
+      "code-quality",
+      "security",
+      "technical-debt",
+      "bugs"
+    ],
+    "urls": [
+      {
+        "url": "https://{{componentName}}.{{baseDomain}}",
+        "healthchecks": {
+          "liveliness": {
+            "http_path": "/",
+            "http_auth_required": false,
+            "expected_http_response_code": "200",
+            "expected_http_response_string": "",
+            "expected_json_response": {
+              "json_path": "",
+              "json_value": ""
+            },
+            "health_shell_check_command": "",
+            "expected_shell_check_command_response": ""
+          },
+          "readiness": {
+            "http_path": "/",
+            "http_auth_required": false,
+            "expected_http_response_code": "200",
+            "expected_http_response_string": "",
+            "expected_json_response": {
+              "json_path": "",
+              "json_value": ""
+            },
+            "health_shell_check_command": "",
+            "expected_shell_check_command_response": ""
+          }
+        }
+      }
+    ],
+    "Description": "SonarQube (formerly Sonar) is an open-source platform developed by SonarSource for continuous inspection of code quality to perform automatic reviews with static analysis of code to detect bugs, code smells on 17 programming languages. SonarQube offers reports on duplicated code, coding standards, unit tests, code coverage, code complexity, comments, bugs, and security recommendations.",
+    "shortcut_text": "Sonarqube",
+    "shortcut_icon": "sonarqube.png",
+    "api_docs_type": "help",
+    "api_docs_url": "https://{{componentName}}.{{baseDomain}}/web_api",
+    "vendor_docs_url": "https://docs.sonarqube.org/",
+    "pre_install_scripts": [
+      "createCaSecret.sh",
+      "createPostgresPassword.sh",
+      "createOauthIntegration.sh"
+    ],
+    "post_install_scripts": [
+      "createGitlabOauthApplication.sh",
+      "configureSonarQube.sh"
+    ]
+  },
+  {
+    "name": "bitwarden",
+    "namespace": "",
+    "installation_type": "script",
+    "installation_group_folder": "core",
+    "install_scripts": [
+      "install-and-configure-bitwarden.sh"
+    ],
+    "Description": "Bitwarden is an integrated open source password management solution for individuals, teams, and business organizations.",
+    "shortcut_text": "Bitwarden",
+    "shortcut_icon": "bitwarden.png",
+    "pre_install_scripts": [],
+    "post_install_scripts": [
+      "createDesktopShortcuts.sh"
+    ]
+  },
+  {
+    "name": "neuvector",
+    "namespace": "neuvector",
+    "installation_type": "helm",
+    "installation_group_folder": "security",
+    "environment_variables": {
+      "imageTag": "5.0.1"
+    },
+    "helm_params": {
+      "repository_url": "https://neuvector.github.io/neuvector-helm/",
+      "repository_name": "neuvector/core",
+      "helm_version": "2.2.0-b2",
+      "imagePullSecretsOverride": "imagePullSecrets=regcred",
+      "set_key_values": []
+    },
+    "categories": [
+      "security"
+    ],
+    "urls": [
+      {
+        "url": "https://{{componentName}}.{{baseDomain}}/",
+        "healthchecks": {
+          "liveliness": {
+            "http_path": "/",
+            "http_auth_required": false,
+            "expected_http_response_code": "400",
+            "expected_http_response_string": "",
+            "expected_json_response": {
+              "json_path": "",
+              "json_value": ""
+            },
+            "health_shell_check_command": "",
+            "expected_shell_check_command_response": ""
+          },
+          "readiness": {
+            "http_path": "/",
+            "http_auth_required": false,
+            "expected_http_response_code": "400",
+            "expected_http_response_string": "",
+            "expected_json_response": {
+              "json_path": "",
+              "json_value": ""
+            },
+            "health_shell_check_command": "",
+            "expected_shell_check_command_response": ""
+          }
+        }
+      }
+    ],
+    "Description": "NeuVector delivers Full Lifecycle Container Security with the only cloud-native, Kubernetes security platform providing end-to-end vulnerability management, automated CI/CD pipeline security, and complete run-time security including the industry’s only container firewall to protect your infrastructure from zero days and insider threats.",
+    "shortcut_text": "NeuVector",
+    "shortcut_icon": "neuvector.png",
+    "pre_install_scripts": [
+      "create_certs_secret.sh",
+      "create_service_account.sh",
+      "toggle_kube_orchestrator.sh"
+    ],
+    "post_install_scripts": []
+  },
+  {
+    "name": "sysdig-falco",
+    "namespace": "sysdig-falco",
+    "installation_type": "helm",
+    "installation_group_folder": "security",
+    "environment_variables": {
+      "logLevel": "debug",
+      "priority": "notice",
+      "appVersion": "0.31.1",
+      "falcoSideKickVersion": "2.24.0",
+      "falcosidekickUiVersion": "v1.1.0"
+    },
+    "helm_params": {
+      "repository_url": "https://falcosecurity.github.io/charts",
+      "repository_name": "falcosecurity/falco",
+      "helm_version": "1.17.4",
+      "set_key_values": []
+    },
+    "categories": [
+      "security"
+    ],
+    "urls": [
+      {
+        "url": "https://{{componentName}}.{{baseDomain}}/ui",
+        "healthchecks": {
+          "liveliness": {
+            "http_path": "/",
+            "http_auth_required": false,
+            "expected_http_response_code": "200",
+            "expected_http_response_string": "",
+            "expected_json_response": {
+              "json_path": "",
+              "json_value": ""
+            },
+            "health_shell_check_command": "",
+            "expected_shell_check_command_response": ""
+          },
+          "readiness": {
+            "http_path": "/",
+            "http_auth_required": false,
+            "expected_http_response_code": "200",
+            "expected_http_response_string": "",
+            "expected_json_response": {
+              "json_path": "",
+              "json_value": ""
+            },
+            "health_shell_check_command": "",
+            "expected_shell_check_command_response": ""
+          }
+        }
+      }
+    ],
+    "Description": "co is the open source standard tool for continuous risk and threat detection across Kubernetes, containers and cloud. Falco acts as your security camera, continuously detecting unexpected behavior, configuration changes, intrusions, and data theft in real time.",
+    "shortcut_text": "Sysdig Falco",
+    "shortcut_icon": "sysdig-falco.png",
+    "pre_install_scripts": [],
+    "post_install_scripts": []
+  },
+  {
+    "name": "vault",
+    "namespace": "vault",
+    "installation_type": "helm",
+    "installation_group_folder": "security",
+    "environment_variables": {
+      "vaultVersion": "1.9.3",
+      "vaultK8sVersion": "0.14.2"
+    },
+    "helm_params": {
+      "repository_url": "https://helm.releases.hashicorp.com",
+      "repository_name": "hashicorp/vault",
+      "helm_version": "0.19.0",
+      "set_key_values": []
+    },
+    "categories": [
+      "security",
+      "credential-store"
+    ],
+    "urls": [
+      {
+        "url": "https://{{componentName}}.{{baseDomain}}",
+        "healthchecks": {
+          "liveliness": {
+            "http_path": "/",
+            "http_auth_required": false,
+            "expected_http_response_code": "200",
+            "expected_http_response_string": "",
+            "expected_json_response": {
+              "json_path": "",
+              "json_value": ""
+            },
+            "health_shell_check_command": "",
+            "expected_shell_check_command_response": ""
+          },
+          "readiness": {
+            "http_path": "/",
+            "http_auth_required": false,
+            "expected_http_response_code": "200",
+            "expected_http_response_string": "",
+            "expected_json_response": {
+              "json_path": "",
+              "json_value": ""
+            },
+            "health_shell_check_command": "",
+            "expected_shell_check_command_response": ""
+          }
+        }
+      }
+    ],
+    "Description": "Secure, store and tightly control access to tokens, passwords, certificates, encryption keys for protecting secrets and other sensitive data using a UI, CLI, or HTTP API.",
+    "shortcut_text": "HashiCorp Vault",
+    "shortcut_icon": "vault.png",
+    "pre_install_scripts": [],
+    "post_install_scripts": [
+      "initialiseVault.sh",
+      "unsealVault.sh",
+      "enableUserPassAuth.sh",
+      "createKxUser.sh"
+    ]
+  },
+  {
+    "name": "minio-operator",
+    "namespace": "minio-operator",
+    "installation_type": "script",
+    "installation_group_folder": "storage",
+    "environment_variables": {
+      "operatorVersion": "4.4.28"
+    },
+    "categories": [
+      "s3",
+      "object-store"
+    ],
+    "urls": [
+      {
+        "url": "https://console-{{componentName}}.{{baseDomain}}",
+        "healthchecks": {
+          "liveliness": {
+            "http_path": "/",
+            "http_auth_required": false,
+            "expected_http_response_code": "200",
+            "expected_http_response_string": "",
+            "expected_json_response": {
+              "json_path": "",
+              "json_value": ""
+            },
+            "health_shell_check_command": "",
+            "expected_shell_check_command_response": ""
+          },
+          "readiness": {
+            "http_path": "/",
+            "http_auth_required": false,
+            "expected_http_response_code": "200",
+            "expected_http_response_string": "",
+            "expected_json_response": {
+              "json_path": "",
+              "json_value": ""
+            },
+            "health_shell_check_command": "",
+            "expected_shell_check_command_response": ""
+          }
+        }
+      }
+    ],
+    "Description": "MinIO offers high-performance, S3 compatible object storage. Native to Kubernetes, MinIO is the only object storage suite available on every public cloud, every Kubernetes distribution, the private cloud and the edge.",
+    "shortcut_text": "MinIO Console",
+    "shortcut_icon": "minio-operator.png",
+    "api_docs_type": "web",
+    "api_docs_url": "https://docs.min.io/docs/minio-client-complete-guide.html",
+    "vendor_docs_url": "https://docs.min.io",
+    "pre_install_scripts": [
+      "createSecrets.sh",
+      "installMinIoCli.sh"
+    ],
+    "install_scripts": [
+      "installMinioOperator.sh"
+    ],
+    "post_install_scripts": [
+      "intializeMinioOperator.sh"
+    ]
+  },
+  {
+    "name": "nextcloud",
+    "namespace": "nextcloud",
+    "installation_type": "helm",
+    "installation_group_folder": "storage",
+    "environment_variables": {
+      "imageTag": "23.0.2-apache"
+    },
+    "helm_params": {
+      "repository_url": "https://nextcloud.github.io/helm/",
+      "repository_name": "nextcloud/nextcloud",
+      "helm_version": "2.13.2",
+      "set_key_values": []
+    },
+    "categories": [
+      "storage",
+      "cloud"
+    ],
+    "urls": [
+      {
+        "url": "https://{{componentName}}.{{baseDomain}}",
+        "healthchecks": {
+          "liveliness": {
+            "http_path": "/status.php",
+            "http_auth_required": false,
+            "expected_http_response_code": "200",
+            "expected_http_response_string": "",
+            "expected_json_response": {
+              "json_path": ".installed",
+              "json_value": "true"
+            },
+            "health_shell_check_command": "",
+            "expected_shell_check_command_response": ""
+          },
+          "readiness": {
+            "http_path": "/status.php",
+            "http_auth_required": false,
+            "expected_http_response_code": "200",
+            "expected_http_response_string": "",
+            "expected_json_response": {
+              "json_path": ".installed",
+              "json_value": "true"
+            },
+            "health_shell_check_command": "",
+            "expected_shell_check_command_response": ""
+          }
+        }
+      }
+    ],
+    "Description": "Nextcloud is a suite of client-server software for creating and using file hosting services. It is enterprise-ready with comprehensive support options. Being free and open-source software, anyone is allowed to install and operate it on their own private server devices.",
+    "shortcut_text": "Nextcloud",
+    "shortcut_icon": "nextcloud.png",
+    "api_docs_type": "web",
+    "api_docs_url": "https://docs.nextcloud.com/server/18/developer_manual/client_apis/index.html",
+    "vendor_docs_url": "https://docs.nextcloud.com/",
+    "pre_install_scripts": [
+      "createPasswords.sh"
+    ],
+    "post_install_scripts": []
+  }
+]

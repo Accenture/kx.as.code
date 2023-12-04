@@ -13,41 +13,44 @@ waitForKubernetesResource "coredns" "configmap" "kube-system"
 
 if [[ "${kubeOrchestrator}" == "k8s" ]]; then
 
-coreDnsConfigMap=""
-customDnsConfig=""
+  coreDnsConfigMap=""
+  customDnsConfig=""
 
-# Export CoreDNS config map in JSON format
-kubernetesExportResource "coredns" "configmap" "kube-system" "json"
+  # Export CoreDNS config map in JSON format
+  kubernetesExportResource "coredns" "configmap" "kube-system" "json"
 
-if [[ -z $(cat ${installationWorkspace}/${resourceName}_${resourceType}_${namespace}.json | grep "${baseDomain}") ]]; then
+  if [[ -z $(cat ${installationWorkspace}/${resourceName}_${resourceType}_${namespace}.json | grep "${baseDomain}") ]]; then
 
-# Exctract "Corefile" config
-coreDnsConfigMap=$(cat ${installationWorkspace}/${resourceName}_${resourceType}_${namespace}.json | jq -r '.data.Corefile')
+    # Exctract "Corefile" config
+    coreDnsConfigMap=$(cat ${installationWorkspace}/${resourceName}_${resourceType}_${namespace}.json | jq -r '.data.Corefile')
 
-# Define custom DNS config
-customDnsConfig="""${baseDomain}:53 {
+    # Define custom DNS config
+    customDnsConfig="""${baseDomain}:53 {
         errors
         cache 30
         forward . ${mainIpAddress}
     }"""
 
-# Combine core and custom custom DNS server entries
-joinedConfigMap=$(echo -e "$coreDnsConfigMap\n$customDnsConfig")
+    # Combine core and custom DNS server entries
+    joinedConfigMap=$(echo -e "$coreDnsConfigMap\n$customDnsConfig")
 
-# Replace config map in exported json and convert to yaml for importing with Kubectl
-cat ${installationWorkspace}/${resourceName}_${resourceType}_${namespace}.json | \
-  jq -r --arg joinedConfigMap "${joinedConfigMap}" '.data.Corefile=$joinedConfigMap' | \
-  yq --prettyPrint | \
-  /usr/bin/sudo tee ${installationWorkspace}/${resourceName}_combined_${resourceType}_${namespace}.yaml
+    # Check if yq already downloaded. Download if not
+    downloadYq
 
-# Apply combined YAML file
-kubernetesApplyYamlFile "${installationWorkspace}/${resourceName}_combined_${resourceType}_${namespace}.yaml" "kube-system"
+    # Replace config map in exported json and convert to yaml for importing with Kubectl
+    cat ${installationWorkspace}/${resourceName}_${resourceType}_${namespace}.json |
+      jq -r --arg joinedConfigMap "${joinedConfigMap}" '.data.Corefile=$joinedConfigMap' |
+      /usr/bin/yq eval --prettyPrint |
+      sudo tee ${installationWorkspace}/${resourceName}_combined_${resourceType}_${namespace}.yaml
 
-fi
+    # Apply combined YAML file
+    kubernetesApplyYamlFile "${installationWorkspace}/${resourceName}_combined_${resourceType}_${namespace}.yaml" "kube-system"
+
+  fi
 
 else
 
-echo '''apiVersion: v1
+  echo '''apiVersion: v1
 kind: ConfigMap
 metadata:
   name: coredns-custom
@@ -59,10 +62,10 @@ data:
     '${baseDomain}':53 {
       forward . '${mainIpAddress}'
     }
-''' | /usr/bin/sudo tee ${installationWorkspace}/custom-coredns.yaml
+''' | sudo tee ${installationWorkspace}/custom-coredns.yaml
 
-# Validate and apply the updated config-map
-kubernetesApplyYamlFile "${installationWorkspace}/custom-coredns.yaml" "kube-system"
+  # Validate and apply the updated config-map
+  kubernetesApplyYamlFile "${installationWorkspace}/custom-coredns.yaml" "kube-system"
 
 fi
 
