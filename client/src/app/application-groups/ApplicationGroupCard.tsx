@@ -18,12 +18,13 @@ import { withStyles } from '@mui/styles';
 
 const StyledTooltip = withStyles({
   tooltip: {
-      fontSize: '20px',
+    fontSize: '20px',
   },
 })(Tooltip);
 
 interface ApplicationGroupCardProps {
   appGroup: any;
+  isListLayout: boolean;
 }
 
 const handleDragStart = (e: React.DragEvent<HTMLImageElement>) => e.preventDefault();
@@ -35,6 +36,8 @@ const ApplicationGroupCard: React.FC<ApplicationGroupCardProps> = (props) => {
 
   const [appGroupComponents, setAppGroupComponents] = useState<string[]>([]);
   const [itemsList, setItemsList] = useState<JSX.Element[]>([]);
+  // const [isListLayout, setIsListLayout] = useState<boolean>(true);
+
 
   useEffect(() => {
     fetchAllComponents(props.appGroup.action_queues);
@@ -91,94 +94,114 @@ const ApplicationGroupCard: React.FC<ApplicationGroupCardProps> = (props) => {
   };
 
   return (
-    <div className="col-span-full sm:col-span-6 md:col-span-6 xl:col-span-3 hover:bg-ghBlack3 bg-ghBlack2">
-      <div className="relative">
-        <div className="p-6">
-          {/* Header */}
-          <div className="pb-4">
-            <header className="items-start">
-              <div className="flex items-center">
-                <Link href={`/application-groups/${appGroupBreadcrumb}`}>
-                  <h2
-                    className="hover:underline hover:cursor-pointer text-lg font-extrabold uppercase text-white truncate"
-                  >
-                    {props.appGroup.title}
-                  </h2>
-                </Link>
-              </div>
-              <div className="text-gray-400 text-sm">
-                {appGroupComponents.length}{" "}
-                {appGroupComponents.length > 1 ? "Applications" : "Application"}
-              </div>
-            </header>
+    props.isListLayout ? (
+      <div className="col-span-full hover:bg-ghBlack3 bg-ghBlack2 p-2 px-5">
+        <div className="grid grid-cols-12">
+          <div className="col-span-4">
+            <Link href={`/application-groups/${appGroupBreadcrumb}`}>
+              <h2
+                className="hover:underline hover:cursor-pointer text-lg font-extrabold uppercase text-white truncate"
+              >
+                {props.appGroup.title}
+              </h2>
+            </Link>
+            <div className="text-gray-400 text-sm">
+                  {appGroupComponents.length}{" "}
+                  {appGroupComponents.length > 1 ? "Applications" : "Application"}
+                </div>
           </div>
-
-          {/* Main Card Content */}
-          <div className=" h-28">
-            <CarouselProvider
-              visibleSlides={4}
-              totalSlides={appGroupComponents.length}
-              step={1}
-              naturalSlideWidth={500}
-              naturalSlideHeight={500}
-            >
-              <div className="flex items-center py-5">
-                <div className="h-14">
-                  <ButtonBack className="hover:bg-ghBlack4 px-3 text-sm items-center flex h-full">
-                    <MdArrowBackIosNew />
-                  </ButtonBack>
-                </div>
-                <div className="w-full">
-                  <Slider className="">{itemsList.map((image, i) => {
-                    return (
-                      <Slide index={i} key={i}>
-                        <Tooltip
-                          title={transformName(appGroupComponents[i])}
-                          placement="top"
-                          arrow
-                        >
-                          <Link
-                            href={"/applications/" + appGroupComponents[i]}
-                            className=""
-                          >
-                          <div className="flex items-center justify-center hover:bg-ghBlack4 p-1 hover:pointer h-16" key={i}>
-                            {image}
-                          </div>
-                          </Link>
-                        </Tooltip>
-                      </Slide>
-                    );
-                  })}</Slider>
-                </div>
-                <div className="h-14">
-                  <ButtonNext className="hover:bg-ghBlack4 px-3 text-sm items-center flex h-full">
-                    <MdArrowForwardIos />
-                  </ButtonNext>
-                </div>
-              </div>
-            </CarouselProvider>
-          </div>
-          <StyledTooltip
-            title={"BETA"}
-            placement="top"
-            arrow
-          >
-            <div className="">
-
-              <ApplicationStatusActionButton
-                isMqConnected={true}
-                getQueueStatusList={() => { }}
-                appName={""}
-                category={""}
-                applicationInstallHandler={() => { }}
-                refreshActionButton={() => { }}
-              />
-
-            </div>
-          </StyledTooltip>
+          <div className="col-span-4"></div>
+          <div className="col-span-4"></div>
         </div>
-      </div>
-    </div>
+      </div>) : (
+      <div className="col-span-full sm:col-span-6 md:col-span-6 xl:col-span-3 hover:bg-ghBlack3 bg-ghBlack2">
+        <div className="relative">
+          <div className="p-6">
+            {/* Header */}
+            <div className="pb-4">
+              <header className="items-start">
+                <div className="flex items-center">
+                  <Link href={`/application-groups/${appGroupBreadcrumb}`}>
+                    <h2
+                      className="hover:underline hover:cursor-pointer text-lg font-extrabold uppercase text-white truncate"
+                    >
+                      {props.appGroup.title}
+                    </h2>
+                  </Link>
+                </div>
+                <div className="text-gray-400 text-sm">
+                  {appGroupComponents.length}{" "}
+                  {appGroupComponents.length > 1 ? "Applications" : "Application"}
+                </div>
+              </header>
+            </div>
+
+            {/* Main Card Content */}
+            <div className=" h-28">
+              <CarouselProvider
+                visibleSlides={4}
+                totalSlides={appGroupComponents.length}
+                step={1}
+                naturalSlideWidth={500}
+                naturalSlideHeight={500}
+              >
+                <div className="flex items-center py-5">
+                  <div className="h-14">
+                    <ButtonBack className="hover:bg-ghBlack4 px-3 text-sm items-center flex h-full">
+                      <MdArrowBackIosNew />
+                    </ButtonBack>
+                  </div>
+                  <div className="w-full">
+                    <Slider className="">{itemsList.map((image, i) => {
+                      return (
+                        <Slide index={i} key={i}>
+                          <Tooltip
+                            title={transformName(appGroupComponents[i])}
+                            placement="top"
+                            arrow
+                          >
+                            <Link
+                              href={"/applications/" + appGroupComponents[i]}
+                              className=""
+                            >
+                              <div className="flex items-center justify-center hover:bg-ghBlack4 p-1 hover:pointer h-16" key={i}>
+                                {image}
+                              </div>
+                            </Link>
+                          </Tooltip>
+                        </Slide>
+                      );
+                    })}</Slider>
+                  </div>
+                  <div className="h-14">
+                    <ButtonNext className="hover:bg-ghBlack4 px-3 text-sm items-center flex h-full">
+                      <MdArrowForwardIos />
+                    </ButtonNext>
+                  </div>
+                </div>
+              </CarouselProvider>
+            </div>
+            <StyledTooltip
+              title={"BETA"}
+              placement="top"
+              arrow
+            >
+              <div className="">
+
+                <ApplicationStatusActionButton
+                  isMqConnected={true}
+                  getQueueStatusList={() => { }}
+                  appName={""}
+                  category={""}
+                  applicationInstallHandler={() => { }}
+                  refreshActionButton={() => { }}
+                />
+
+              </div>
+            </StyledTooltip>
+          </div>
+        </div>
+      </div>)
   );
 };
 

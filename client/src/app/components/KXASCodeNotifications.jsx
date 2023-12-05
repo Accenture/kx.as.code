@@ -9,10 +9,10 @@ export default function KXASCodeNotifications() {
       const response = await axios.get(
         "http://localhost:5001/api/consume/notification_queue"
       );
-
       if (response.data.type === "success") {
         const payload = JSON.parse(response.data.content.payload);
         const message = payload.message;
+        console.log("DEBUG - Consumed message: ", message)
         notify(message, "info");
       } else {
         console.error("Error consuming queue:", response.data.message);

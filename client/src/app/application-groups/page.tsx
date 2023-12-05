@@ -11,6 +11,7 @@ const applicationGroupJson: ApplicationGroup[] = require("../../data/combined-ap
 const ApplicationGroups: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isListLayout, setIsListLayout] = useState<boolean>(true);
 
   useEffect(() => {
 
@@ -24,7 +25,7 @@ const ApplicationGroups: React.FC = () => {
         return searchTerm === "" || lowerCaseName.includes(searchTerm.toLowerCase().trim());
       })
       .map((appGroup, i) => (
-        <ApplicationGroupCard appGroup={appGroup} key={i} />
+        <ApplicationGroupCard appGroup={appGroup} key={i} isListLayout={isListLayout}/>
       ));
   };
 
@@ -42,7 +43,7 @@ const ApplicationGroups: React.FC = () => {
         </div>
       </div>
 
-      <div className="p-5 px-20 bg-ghBlack4">
+      <div className="p-10 px-20 bg-ghBlack4">
 
         <div className="flex items-center mb-10">
           {/* Search Input Field */}
@@ -73,10 +74,8 @@ const ApplicationGroups: React.FC = () => {
         </div>
 
         {/* Application Groups actions */}
-        <div className="grid grid-cols-12 gap-2">
+        <div className="grid grid-cols-12 gap-1">
           {isLoading ? (<div className="animate-pulse flex flex-col col-span-full">
-            {/* Loading Skeleton */}
-            <div className="h-20 bg-ghBlack2 mb-2"></div>
           </div>): drawApplicationGroupCards()}
         </div>
       </div>

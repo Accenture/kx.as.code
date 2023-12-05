@@ -25,7 +25,7 @@ const ApplicationStatusActionButton: React.FC<ApplicationStatusActionButtonProps
 
     const getActionButton = () => {
         if (props.isMqConnected) { // TODO: Disable in API Mock Mode
-            if (props.getQueueStatusList(props.appName).includes("pending_queue")) {
+            if (props.getQueueStatusList(props.appName).includes("pending_queue") || props.getQueueStatusList(props.appName).includes("wip_queue") || props.getQueueStatusList(props.appName).includes("retry_queue")) {
                 return (
                     <div className="flex w-full">
                         <button
