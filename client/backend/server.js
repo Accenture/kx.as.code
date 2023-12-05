@@ -1,3 +1,4 @@
+
 const express = require("express");
 const request = require("request");
 const fs = require("fs");
@@ -291,39 +292,6 @@ app.get("/api/applications/:app_name", (req, res) => {
     }
   });
 });
-
-
-// old
-// app.route("/api/consume/:queue_name").get(async (req, res) => {
-//   try {
-//     const rabbitMqConnectionString = `amqp://${rabbitMqUsername}:${rabbitMqPassword}@${rabbitMqHost}`;
-//     let connection = await amqp.connect(rabbitMqConnectionString);
-
-//     const channel = await connection.createChannel();
-//     await channel.assertExchange("action_workflow", "direct", {
-//       durable: true,
-//     });
-//     await channel.assertQueue(req.params.queue_name);
-//     channel.bindQueue(
-//       req.params.queue_name,
-//       "action_workflow",
-//       req.params.queue_name
-//     );
-
-//     let data = await channel.get(req.params.queue_name);
-
-//     if (data) {
-//       data.content ? eval("(" + data.content.toString() + ")()") : "";
-//       channel.ack(data);
-//     } else {
-//     }
-
-//     res.send("The POST request is being processed!");
-//   } catch (error) {
-//     console.error("Error consuming queue:", error);
-//     res.status(500).send("Internal Server Error");
-//   }
-// });
 
 app.route("/api/consume/:queue_name").get(async (req, res) => {
   try {
