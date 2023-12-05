@@ -13,7 +13,7 @@ export default function KXASCodeNotifications() {
         const payload = JSON.parse(response.data.content.payload);
         const message = payload.message;
         console.log("DEBUG - Consumed message: ", message)
-        notify(message, "info");
+        notify(message.message, "info");
       } else {
         console.error("Error consuming queue:", response.data.message);
       }
