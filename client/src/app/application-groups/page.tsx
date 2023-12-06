@@ -11,7 +11,7 @@ const applicationGroupJson: ApplicationGroup[] = require("../../data/combined-ap
 const ApplicationGroups: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [isListLayout, setIsListLayout] = useState<boolean>(false);
+  const [isListLayout, setIsListLayout] = useState<boolean>(true);
 
   useEffect(() => {
 

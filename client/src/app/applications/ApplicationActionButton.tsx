@@ -29,7 +29,7 @@ const ApplicationStatusActionButton: React.FC<ApplicationStatusActionButtonProps
                 return (
                     <div className="flex w-full">
                         <button
-                            className="bg-ghBlack4 p-3 items-center flex w-full py-1"
+                            className="bg-ghBlack4 p-3 items-center justify-center flex w-full py-1"
                             disabled
                         >
                             <svg

@@ -1,16 +1,11 @@
-
 const express = require("express");
 const request = require("request");
 const fs = require("fs");
 const amqp = require("amqplib");
 const cors = require('cors');
 const axios = require('axios');
-
-const app = express();
 const bodyParser = require("body-parser");
-app.use(bodyParser.json());
 
-const PORT = process.env.PORT || 5001;
 const dataPath = "./src/data/combined-metadata-files.json";
 const healthCheckDataPath = "./src/data/healthcheckdata.json";
 const profileConfig = "./src/data/profile-config.json"
@@ -18,6 +13,10 @@ const rabbitMqUsername = "guest";
 const rabbitMqPassword = "guest";
 const rabbitMqHost = "localhost";
 const rabbitMqPort = "15672";
+const PORT = process.env.PORT || 5001;
+
+const app = express();
+app.use(bodyParser.json());
 
 const healthCheckInterval = 60000; // 1 minute
 
@@ -223,20 +222,6 @@ app.route("/api/queues/:queue_name").get(async (req, res) => {
     res.status(500).json({ type: "error", message: error.message });
   }
 });
-
-// app.get('/api/queues/:queue_name', async (req, res) => {
-//   const { queue_name } = req.params;
-
-//   try {
-//     const response = await axios.get(`http://localhost:5001/api/queues/${queue_name}`);
-
-//     const responseData = response.data;
-
-//     res.json(responseData);
-//   } catch (error) {
-//     res.status(500).json({ error: error.message });
-//   }
-// });
 
 app.route("/api/move/:from_queue/:to_queue").get((req, res) => {
   console.log("move triggered.");

@@ -186,7 +186,7 @@ const HealthcheckDashboard: React.FC<HealthcheckDashboardProps> = (props) => {
                         })
                         .map((appNameObj: any) => (
                             <div key={appNameObj}>
-                                <div className='bg-ghBlack2 hover:bg-ghBlack3 mb-1 p-3 items-center text-white'>
+                                <div className='bg-ghBlack2 hover:bg-ghBlack3 mb-1 p-3 py-2 items-center text-white'>
                                     <div className='mb-2'>{transformName(appNameObj)}</div>
                                     <HealthCheckInfoComponent appHealthcheckDataArray={props.healthCheckData[appNameObj]} />
                                 </div>

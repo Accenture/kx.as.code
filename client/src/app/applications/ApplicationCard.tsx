@@ -224,7 +224,7 @@ function ApplicationCard(props: ApplicationCardProps) {
                             href={"/applications/" + getSlug()}
                             className=""
                           >
-                            <h2 className="hover:underline hover:cursor-pointer text-base text-white flex items-center font-bold">
+                            <h2 className="hover:underline hover:cursor-pointer text-base text-white flex items-center">
                               {/* {
                               allQueueStatus != "" && (
                                 <StatusPoint installStatus={allQueueStatus} />

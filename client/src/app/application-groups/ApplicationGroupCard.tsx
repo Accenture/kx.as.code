@@ -67,14 +67,17 @@ const ApplicationGroupCard: React.FC<ApplicationGroupCardProps> = (props) => {
         //   onDragStart={handleDragStart}
         //   role="presentation"
         // />
-        <img
-          className="p-1"
-          style={{ height: '60px', width: '60px', objectFit: 'contain' }}
-          src={`/media/png/appImgs/${appName}.png`}
-          onDragStart={handleDragStart}
-          role="presentation"
-          key={i}
-        />,
+        <span className="slider-image-container min-h-12 w-12 relative">
+          <img
+            alt=""
+            className="object-contain max-h-8 min-h-8"
+            src={`/media/png/appImgs/${appName}.png`}
+            onDragStart={handleDragStart}
+            role="presentation"
+            key={i}
+          />
+        </span>
+        ,
       ]);
     });
   };
@@ -100,18 +103,63 @@ const ApplicationGroupCard: React.FC<ApplicationGroupCardProps> = (props) => {
           <div className="col-span-4">
             <Link href={`/application-groups/${appGroupBreadcrumb}`}>
               <h2
-                className="hover:underline hover:cursor-pointer text-lg font-extrabold uppercase text-white truncate"
+                className="hover:underline hover:cursor-pointer text-base uppercase text-white truncate"
               >
                 {props.appGroup.title}
               </h2>
             </Link>
             <div className="text-gray-400 text-sm">
-                  {appGroupComponents.length}{" "}
-                  {appGroupComponents.length > 1 ? "Applications" : "Application"}
-                </div>
+              {appGroupComponents.length}{" "}
+              {appGroupComponents.length > 1 ? "Applications" : "Application"}
+            </div>
           </div>
-          <div className="col-span-4"></div>
-          <div className="col-span-4"></div>
+          <div className="col-span-4">
+            <div className="flex w-auto">
+            <CarouselProvider
+              visibleSlides={5}
+              totalSlides={appGroupComponents.length}
+              step={1}
+              naturalSlideWidth={30}
+              naturalSlideHeight={10}
+            >
+              <div className="flex items-center">
+                <div className="">
+                  <ButtonBack className="hover:bg-ghBlack4 p-3 text-sm items-center flex">
+                    <MdArrowBackIosNew />
+                  </ButtonBack>
+                </div>
+                <div className="w-full items-center flex">
+                  <Slider className="h-10 w-56 items-center mt-2">{itemsList.map((image, i) => {
+                    return (
+                      <Slide index={i} key={i}>
+                        <Tooltip
+                          title={transformName(appGroupComponents[i])}
+                          placement="top"
+                          arrow
+                        >
+                          <Link
+                            href={"/applications/" + appGroupComponents[i]}
+                            className=""
+                          >
+                            <div className="flex items-center justify-center hover:bg-ghBlack4 hover:pointer" key={i}>
+                              {image}
+                            </div>
+                          </Link>
+                        </Tooltip>
+                      </Slide>
+                    );
+                  })}</Slider>
+                </div>
+                <div className="">
+                  <ButtonNext className="hover:bg-ghBlack4 p-3 text-sm items-center">
+                    <MdArrowForwardIos />
+                  </ButtonNext>
+                </div>
+              </div>
+            </CarouselProvider>
+            </div>
+          </div>
+          <div className="col-span-5"></div>
         </div>
       </div>) : (
       <div className="col-span-full sm:col-span-6 md:col-span-6 xl:col-span-3 hover:bg-ghBlack3 bg-ghBlack2">
@@ -137,7 +185,7 @@ const ApplicationGroupCard: React.FC<ApplicationGroupCardProps> = (props) => {
             </div>
 
             {/* Main Card Content */}
-            <div className=" h-28">
+            <div className="h-28">
               <CarouselProvider
                 visibleSlides={4}
                 totalSlides={appGroupComponents.length}
