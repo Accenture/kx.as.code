@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile Configuration Form</title>
+</head>
+<body>
+
+    <h2>Profile Configuration Form</h2>
+    
+    <form method="post" action="/submit">
+        {{ range $key, $value := .Config }}
+            {{ if eq (printf "%T" $value) "bool" }}
+                <!-- If value is boolean, create a checkbox -->
+                <label for="{{ $key }}">{{ $key }}:</label>
+                <input type="checkbox" id="{{ $key }}" name="{{ $key }}" {{ if $value }}checked{{ end }}><br>
+            {{ else }}
+                <!-- If value is string, create an input field -->
+                <label for="{{ $key }}">{{ $key }}:</label>
+                <input type="text" id="{{ $key }}" name="{{ $key }}" placeholder="{{ $value }}"><br>
+            {{ end }}
+        {{ end }}
+
+        <input type="submit" value="Submit">
+    </form>
+
+</body>
+</html>

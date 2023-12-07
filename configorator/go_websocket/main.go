@@ -24,6 +24,7 @@ var html = []byte(
 				font: 1.3rem Inconsolata, monospace;
 				color: white; 
 				overflow: auto;
+				overflow-x: hidden;
 			}
 			#code-container{
 				display: flex;
@@ -112,7 +113,7 @@ func cmdToResponse(w http.ResponseWriter, r *http.Request) {
 	ws.WriteMessage(1, []byte("Starting...\n"))
 
 	// execute and get a pipe
-	cmd := exec.Command("./counter")
+	cmd := exec.Command("./vagExec")
 	stdout, err := cmd.StdoutPipe()
 	if err != nil {
 		log.Println(err)
