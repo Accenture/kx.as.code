@@ -42,7 +42,7 @@
         },
         "selectedTemplates": "",
         "sslProvider": "self-signed",
-        "standaloneMode": "true",
+        "standaloneMode": true,
         "startupMode": "minimal",
         "staticNetworkSetup": {
             "baseFixedIpAddresses": {
@@ -61,7 +61,7 @@
         "updateSourceOnStart": true,
         "virtualizationType": "local",
         "vm_properties": {
-            "3d_acceleration": "off",
+            "3d_acceleration": ["off", "on"],
             "main_admin_node_cpu_cores": 4,
             "main_admin_node_memory": 8192,
             "main_node_count": 1,
