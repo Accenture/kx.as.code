@@ -7,19 +7,68 @@ import (
 	"log"
 	"net/http"
 	"os/exec"
+	"time"
 
 	"github.com/gorilla/websocket"
 )
 
 var html = []byte(
-`<html>
+	`<html>
+	<head>
+		<style>
+			#code-block {
+				background-color: black;
+				height: 500px;
+				width: 800px;
+				padding: 15px;
+				font: 1.3rem Inconsolata, monospace;
+				color: white; 
+				overflow: auto;
+			}
+			#code-container{
+				display: flex;
+            	justify-content: center;
+            	align-items: center;
+			}
+			.inner-code {
+				overflow-y: auto;
+				height: 100%;
+				color: white;
+				scrollbar-width: bold;
+				scrollbar-color: gray black; 
+				margin-bottom: 5px;
+			}
+			.inner-code::-webkit-scrollbar {
+				width: 12px; /* WebKit */
+			}
+			.inner-code::-webkit-scrollbar-thumb {
+				background-color: gray; /* WebKit */
+				border-radius: none; /* WebKit */
+			}
+			.inner-code::-webkit-scrollbar-track {
+				background-color: black; /* WebKit */
+			}
+		</style>
+	</head>
 	<body>
 		<h1>blah.exe</h1>
-		<code></code>
+		<div id="code-container">
+			<div id="code-block">
+				<div class="inner-code" id="inner-code"></div>
+			</div>
+		</div>
 		<script>
-			var ws = new WebSocket("ws://127.0.0.1:9001/ws")
+			var ws = new WebSocket("ws://127.0.0.1:9001/ws");
+			var codeElement = document.getElementById("inner-code");
+
 			ws.onmessage = function(e) {
-				document.querySelector("code").innerHTML += e.data + "<br>"
+				var isScrolledToBottom = codeElement.scrollHeight - codeElement.clientHeight <= codeElement.scrollTop + 1;
+				
+				codeElement.innerHTML += "> " + e.data + "<br>";
+
+				if (isScrolledToBottom) {
+					codeElement.scrollTop = codeElement.scrollHeight;
+				}
 			}
 		</script>
 	</body>
@@ -63,7 +112,7 @@ func cmdToResponse(w http.ResponseWriter, r *http.Request) {
 	ws.WriteMessage(1, []byte("Starting...\n"))
 
 	// execute and get a pipe
-	cmd := exec.Command("C:\\Program Files\\tmp-test\\counter.exe")
+	cmd := exec.Command("./counter")
 	stdout, err := cmd.StdoutPipe()
 	if err != nil {
 		log.Println(err)
@@ -82,7 +131,9 @@ func cmdToResponse(w http.ResponseWriter, r *http.Request) {
 
 	s := bufio.NewScanner(io.MultiReader(stdout, stderr))
 	for s.Scan() {
-		ws.WriteMessage(1, s.Bytes())
+		line := s.Bytes()
+		ws.WriteMessage(1, line)
+		time.Sleep(1 * time.Second)
 	}
 
 	if err := cmd.Wait(); err != nil {
