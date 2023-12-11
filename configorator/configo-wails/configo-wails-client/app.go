@@ -62,6 +62,5 @@ func (a *App) Greet(name string) string {
 
 // Expose GetFormData method
 func (a *App) GetFormData() (string, error) {
-	fmt.Println("GetFormData method called ---------------------------------------- - - - - -")
 	return getFormData()
 }

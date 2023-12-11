@@ -1,1 +1,1 @@
-{ "dependencies": { "@dnd-kit/core": "^6.1.0", "react-dnd": "latest", "react-dnd-html5-backend": "latest", "react-draggable": "^4.4.6", "react-modal": "^3.16.1" } }
+{"dependencies":{"@dnd-kit/core":"^6.1.0","autoprefixer":"^10.4.16","postcss":"^8.4.32","postcss-cli":"^11.0.0","postcss-import":"^15.1.0","postcss-nesting":"^12.0.1","react-dnd":"latest","react-dnd-html5-backend":"latest","react-draggable":"^4.4.6","react-modal":"^3.16.1","react-router-dom":"^6.20.1","vite-plugin-windicss":"^1.9.2","windicss":"^3.5.6"},"devDependencies":{"tailwindcss":"^3.3.6"}}
