@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 26.2.1, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 512 512" style="enable-background:new 0 0 512 512;" xml:space="preserve">
+<style type="text/css">
+	.st0{fill:#828EA0;}
+	.st1{fill:none;}
+	.st2{font-family:'AvenirNext-Regular';}
+	.st3{font-size:200px;}
+</style>
+<g>
+	<g>
+		<path class="st0" d="M503.8,21.8H8.2C3.7,21.8,0,25.4,0,30V482c0,4.5,3.7,8.2,8.2,8.2h495.7c4.5,0,8.2-3.7,8.2-8.2V30
+			C512,25.4,508.3,21.8,503.8,21.8z M16.3,38.1H414v49H16.3V38.1z M495.7,473.9H16.3V103.5h479.3V473.9z M495.7,87.1h-65.4v-49h65.4
+			V87.1z"/>
+	</g>
+</g>
+<g>
+	<g>
+		<path class="st0" d="M471.1,119.8H40.9c-4.5,0-8.2,3.7-8.2,8.2v256c0,4.5,3.7,8.2,8.2,8.2s8.2-3.7,8.2-8.2V136.2h414v305H49v-24.5
+			c0-4.5-3.7-8.2-8.2-8.2s-8.2,3.7-8.2,8.2v32.7c0,4.5,3.7,8.2,8.2,8.2h430.3c4.5,0,8.2-3.7,8.2-8.2V128
+			C479.3,123.5,475.7,119.8,471.1,119.8z"/>
+	</g>
+</g>
+<g>
+	<g>
+		<circle class="st0" cx="463" cy="62.6" r="8.2"/>
+	</g>
+</g>
+<rect x="203.9" y="207.3" class="st1" width="106.2" height="162.8"/>
+<text transform="matrix(1 0 0 1 203.8999 358.4808)" class="st0 st2 st3">?</text>
+</svg>

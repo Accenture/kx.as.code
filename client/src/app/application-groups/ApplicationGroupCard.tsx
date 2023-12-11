@@ -1,0 +1,256 @@
+import React, { useState, useEffect } from "react";
+import Link from "next/link";
+import Image from 'next/image';
+import {
+  CarouselProvider,
+  Slider,
+  Slide,
+  ButtonBack,
+  ButtonNext,
+} from "pure-react-carousel";
+import "pure-react-carousel/dist/react-carousel.es.css";
+import { MdArrowBackIosNew, MdArrowForwardIos } from "react-icons/md";
+import ApplicationStatusActionButton from "../applications/ApplicationStatusActionButton";
+import Tooltip from "@mui/material/Tooltip";
+import { transformName } from "../utils/application";
+import { withStyles } from '@mui/styles';
+
+
+const StyledTooltip = withStyles({
+  tooltip: {
+    fontSize: '20px',
+  },
+})(Tooltip);
+
+interface ApplicationGroupCardProps {
+  appGroup: any;
+  isListLayout: boolean;
+}
+
+const handleDragStart = (e: React.DragEvent<HTMLImageElement>) => e.preventDefault();
+
+const ApplicationGroupCard: React.FC<ApplicationGroupCardProps> = (props) => {
+  const appGroupBreadcrumb = props.appGroup.title
+    .replaceAll(" ", "-")
+    .replace(/\b\w/g, (l: any) => l.toLowerCase());
+
+  const [appGroupComponents, setAppGroupComponents] = useState<string[]>([]);
+  const [itemsList, setItemsList] = useState<JSX.Element[]>([]);
+  // const [isListLayout, setIsListLayout] = useState<boolean>(true);
+
+
+  useEffect(() => {
+    fetchAllComponents(props.appGroup.action_queues);
+    return () => { };
+  }, [props.appGroup]);
+
+  async function fetchAllComponents(action_queues: { install: { name: string }[] }) {
+    const components = action_queues.install.map((q) => q.name);
+    setImageList(components);
+    setAppGroupComponents(components);
+  }
+
+  const setImageList = (appGroupComponents: string[]) => {
+    // Clear itemsList
+    setItemsList([]);
+
+    appGroupComponents.forEach((appName, i) => {
+      setItemsList((current) => [
+        ...current,
+        // <Image
+        //   className="p-1 object-contain"
+        //   src={`/media/png/appImgs/${appName}.png`}
+        //   height={50}
+        //   width={50}
+        //   alt=""
+        //   key={i}
+        //   onDragStart={handleDragStart}
+        //   role="presentation"
+        // />
+        <span className="slider-image-container min-h-12 w-12 relative">
+          <img
+            alt=""
+            className="object-contain max-h-8 min-h-8"
+            src={`/media/png/appImgs/${appName}.png`}
+            onDragStart={handleDragStart}
+            role="presentation"
+            key={i}
+          />
+        </span>
+        ,
+      ]);
+    });
+  };
+
+  const drawApplicationGroupCardComponentsTags = (appGroupComponentTags: string[]) => {
+    return appGroupComponentTags.map((appGroupComponent, i) => (
+      <li
+        key={i}
+        className="bg-gray-500 text-sm mr-1.5 mb-2 px-1.5 w-auto inline-block"
+      >
+        {appGroupComponent
+          .replaceAll("-", " ")
+          .replaceAll("_", " ")
+          .replace(/\b\w/g, (l) => l.toUpperCase())}
+      </li>
+    ));
+  };
+
+  return (
+    props.isListLayout ? (
+      <div className="col-span-full hover:bg-ghBlack3 bg-ghBlack2 p-2 px-5">
+        <div className="grid grid-cols-12">
+          <div className="col-span-4">
+            <Link href={`/application-groups/${appGroupBreadcrumb}`}>
+              <h2
+                className="hover:underline hover:cursor-pointer text-base uppercase text-white truncate"
+              >
+                {props.appGroup.title}
+              </h2>
+            </Link>
+            <div className="text-gray-400 text-sm">
+              {appGroupComponents.length}{" "}
+              {appGroupComponents.length > 1 ? "Applications" : "Application"}
+            </div>
+          </div>
+          <div className="col-span-4">
+            <div className="flex w-auto">
+            <CarouselProvider
+              visibleSlides={5}
+              totalSlides={appGroupComponents.length}
+              step={1}
+              naturalSlideWidth={30}
+              naturalSlideHeight={10}
+            >
+              <div className="flex items-center">
+                <div className="">
+                  <ButtonBack className="hover:bg-ghBlack4 p-3 text-sm items-center flex">
+                    <MdArrowBackIosNew />
+                  </ButtonBack>
+                </div>
+                <div className="w-full items-center flex">
+                  <Slider className="h-10 w-56 items-center mt-2">{itemsList.map((image, i) => {
+                    return (
+                      <Slide index={i} key={i}>
+                        <Tooltip
+                          title={transformName(appGroupComponents[i])}
+                          placement="top"
+                          arrow
+                        >
+                          <Link
+                            href={"/applications/" + appGroupComponents[i]}
+                            className=""
+                          >
+                            <div className="flex items-center justify-center hover:bg-ghBlack4 hover:pointer" key={i}>
+                              {image}
+                            </div>
+                          </Link>
+                        </Tooltip>
+                      </Slide>
+                    );
+                  })}</Slider>
+                </div>
+                <div className="">
+                  <ButtonNext className="hover:bg-ghBlack4 p-3 text-sm items-center">
+                    <MdArrowForwardIos />
+                  </ButtonNext>
+                </div>
+              </div>
+            </CarouselProvider>
+            </div>
+          </div>
+          <div className="col-span-5"></div>
+        </div>
+      </div>) : (
+      <div className="col-span-full sm:col-span-6 md:col-span-6 xl:col-span-3 hover:bg-ghBlack3 bg-ghBlack2">
+        <div className="relative">
+          <div className="p-6">
+            {/* Header */}
+            <div className="pb-4">
+              <header className="items-start">
+                <div className="flex items-center">
+                  <Link href={`/application-groups/${appGroupBreadcrumb}`}>
+                    <h2
+                      className="hover:underline hover:cursor-pointer text-lg font-extrabold uppercase text-white truncate"
+                    >
+                      {props.appGroup.title}
+                    </h2>
+                  </Link>
+                </div>
+                <div className="text-gray-400 text-sm">
+                  {appGroupComponents.length}{" "}
+                  {appGroupComponents.length > 1 ? "Applications" : "Application"}
+                </div>
+              </header>
+            </div>
+
+            {/* Main Card Content */}
+            <div className="h-28">
+              <CarouselProvider
+                visibleSlides={4}
+                totalSlides={appGroupComponents.length}
+                step={1}
+                naturalSlideWidth={500}
+                naturalSlideHeight={500}
+              >
+                <div className="flex items-center py-5">
+                  <div className="h-14">
+                    <ButtonBack className="hover:bg-ghBlack4 px-3 text-sm items-center flex h-full">
+                      <MdArrowBackIosNew />
+                    </ButtonBack>
+                  </div>
+                  <div className="w-full">
+                    <Slider className="">{itemsList.map((image, i) => {
+                      return (
+                        <Slide index={i} key={i}>
+                          <Tooltip
+                            title={transformName(appGroupComponents[i])}
+                            placement="top"
+                            arrow
+                          >
+                            <Link
+                              href={"/applications/" + appGroupComponents[i]}
+                              className=""
+                            >
+                              <div className="flex items-center justify-center hover:bg-ghBlack4 p-1 hover:pointer h-16" key={i}>
+                                {image}
+                              </div>
+                            </Link>
+                          </Tooltip>
+                        </Slide>
+                      );
+                    })}</Slider>
+                  </div>
+                  <div className="h-14">
+                    <ButtonNext className="hover:bg-ghBlack4 px-3 text-sm items-center flex h-full">
+                      <MdArrowForwardIos />
+                    </ButtonNext>
+                  </div>
+                </div>
+              </CarouselProvider>
+            </div>
+            <StyledTooltip
+              title={"BETA"}
+              placement="top"
+              arrow
+            >
+              <div className="">
+
+                <ApplicationStatusActionButton
+                  isMqConnected={true}
+                  getQueueStatusList={() => { }}
+                  appName={""}
+                  category={""}
+                  applicationInstallHandler={() => { }}
+                  refreshActionButton={() => { }}
+                />
+
+              </div>
+            </StyledTooltip>
+          </div>
+        </div>
+      </div>)
+  );
+};
+
+export default ApplicationGroupCard;

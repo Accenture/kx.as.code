@@ -63,6 +63,11 @@ getNetworkConfiguration
 # Source profile-config.json set for this KX.AS.CODE installation
 getProfileConfiguration
 
+# Source Keycloak variables if installed and accessible
+if checkApplicationInstalled "keycloak" "core"; then
+  sourceKeycloakEnvironment
+fi
+
 # Get latest source code if flag set accordingly in profile-config.json
 updateKxSourceOnFirstStart
 
@@ -70,6 +75,9 @@ updateKxSourceOnFirstStart
 if [[ "$(cat ${profileConfigJsonPath} | jq -r '.state.networking_configuration_status')" != "done" ]]; then
   applyCustomizations
 fi
+
+# Install envhandlebars needed to do moustache variable replacements
+installEnvhandlebars
 
 # Create and clean the external access directory
 createExternalAccessDirectory
@@ -123,6 +131,8 @@ sleep 5
 wipQueue=$(rabbitmqadmin list queues name messages --format raw_json | jq -r '.[] | select(.name=="wip_queue") | .messages')
 if [[ ${wipQueue} -ne 0 ]]; then
   payload=$(rabbitmqadmin get queue=wip_queue --format=raw_json ackmode=ack_requeue_false | jq -c -r '.[].payload')
+  waitForQueueToClear "wip_queue"
+  wipQueue=0
   componentName=$(echo "${payload}" | jq -c -r '.name')
   log_debug "Loaded payload from wip_queue after restart: ${payload}"
   retries=$(echo "${payload}" | jq -c -r '.retries')
@@ -177,12 +187,25 @@ while :; do
   pendingQueue=$(rabbitmqadmin list queues name messages --format raw_json | jq -r '.[] | select(.name=="pending_queue") | .messages')
   totalMessages=$((${pendingQueue} + ${completedQueue} + ${wipQueue} + ${failedQueue} + ${retryQueue}))
 
+  # If both failed and pending items have action "executeTask", then automatically purge failed queue and allow new task to start
+  if [[ ${failedQueue} -gt 0 ]] && [[ ${pendingQueue} -gt 0 ]]; then
+    failedQueueAction="$(curl  -s -u guest:guest -H "content-type:application/json" -X POST http://localhost:15672/api/queues/%2f/completed_queue/get -d"{\"count\":10000,\"ackmode\":\"ack_requeue_true\",\"encoding\":\"auto\",\"truncate\":50000}" | jq -r '. | last | .payload' | jq -r '.action | select(.!=null)')"
+    pendingQueueAction="$(curl  -s -u guest:guest -H "content-type:application/json" -X POST http://localhost:15672/api/queues/%2f/completed_queue/get -d"{\"count\":10000,\"ackmode\":\"ack_requeue_true\",\"encoding\":\"auto\",\"truncate\":50000}" | jq -r '. | last | .payload' | jq -r '.action | select(.!=null)')"
+    if [[ "${failedQueueAction}" == "executeTask" ]] && [[ "${pendingQueueAction}" == "executeTask" ]]; then
+      sudo rabbitmqctl purge_queue failed_queue
+      log_trace "Purging failed_queue, as both items in pending and failed queues have action executeTask"
+    fi
+  fi
+
   if [[ ${failedQueue} -eq 0 ]]; then
 
     if [[ ${wipQueue} -ne 0 ]]; then
 
       # Read payload from WIP queue, rather than relying on already set variables
       payload=$(rabbitmqadmin get queue=wip_queue --format=raw_json ackmode=ack_requeue_false | jq -c -r '.[].payload')
+      log_debug "Current payload before WIP queue cleared : ${payload}"
+      retryPayload=$(rabbitmqadmin get queue=retry_queue --format=raw_json ackmode=ack_requeue_false | jq -c -r '.[].payload')
+      log_debug "Current retry payload before WIP queue cleared : ${retryPayload}"
       # Wait for wip_queue to be cleared after consuming message as subsequent logic depends on this
       waitForQueueToClear "wip_queue"
       # Update wip_queue variable to take account of new state
@@ -327,7 +350,7 @@ while :; do
         rabbitmqadmin publish exchange=action_workflow routing_key=wip_queue properties="{\"delivery_mode\": 2}" payload=''${payload}''
         waitForMessageOnActionQueue "wip_queue" "${componentName}"
         if [[ ${retries} -eq 0 ]]; then
-          log_debug "Notifiying ${action} started for \"${componentName}\", as not a retry - retries: ${retries}"
+          log_trace "Notifying ${action} started for \"${componentName}\", as not a retry - retries: ${retries}"
           if [[ "$(echo "${payload}" | jq -r '.action')" == "executeTask" ]]; then
             message="Execution of task \"$(echo "${payload}" | jq -r '.task')\" started for \"${componentName}\""
           else
@@ -355,15 +378,14 @@ while :; do
         autoSetupStartEpochTimestamp=$(date "+%s.%N")
         autoSetupLogFilename=$(setLogFilename "${componentName}" "${retries}")
         autoSetupRc=0
-        ${autoSetupHome}/autoSetup.sh "${payload}" 2>&1 | logStreamFormatToFile || autoSetupRc=$?
-        #${autoSetupHome}/autoSetup.sh "${payload}" 2>&1 | /usr/bin/sudo tee -a ${autoSetupLogFilename} || autoSetupRc=$?
+        . ${autoSetupHome}/autoSetup.sh "${payload}" 2>&1 | logStreamFormatToFile || autoSetupRc=$?
         if [[ ${autoSetupRc} -eq 123 ]]; then
           log_debug "Received RC=123 from autoSetup.sh. This indicated a non-recoverable error. Preventing a retry for \"${componentName}\""
           sendToFailureQueue="true"
         fi
         autoSetupEndEpochTimestamp=$(date "+%s.%N")
         autoSetupDuration=$(calculateDuration "${autoSetupStartEpochTimestamp}" "${autoSetupEndEpochTimestamp}")
-
+        log_trace "Calculated duration for action ${action} for ${componentName} was ${autoSetupDuration}"
         if [[ ${autoSetupRc} -ne 0 ]]; then
           log_warn "autoSetup.sh returned to pollActionQueue.sh (for \"${componentName}\") with a non zero return code ($autoSetupRc)"
           echo "${payload}" | sudo tee ${installationWorkspace}/current_payload.err

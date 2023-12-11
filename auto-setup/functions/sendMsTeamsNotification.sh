@@ -1,7 +1,7 @@
 ####_EXCLUDE_FROM_FUNCTION_HEADER_FOOTER_INJECTION_####
 sendMsTeamsNotification() {
   set +x
-  local message=''${1:-}''
+  local message=${1:-}
   local logLevel=${2:-"info"}
   local actionStatus=${3:-"unknown"}
   local componentName=${4:-"not applicable"}
@@ -18,8 +18,6 @@ sendMsTeamsNotification() {
     if [[ -z ${notificationTitle} ]]; then
       notificationTitle="KX.AS.CODE"
     fi
-
-    parsedMessage=$(echo ''${message}'' | sed 's/"/\\"/g' | sed 's/\\$//g')
 
     if [[ "${logLevel}" == "error" ]] || [[ "${actionStatus}" == "failed" ]]; then
       local lastExecutingScript="$(cat ${installationWorkspace}/.retryDataStore.json | tr -d "[:cntrl:]" | jq -r '.script')"
@@ -64,7 +62,7 @@ sendMsTeamsNotification() {
                 "summary": "['${logLevel^^}'] '${action^}' for '${componentName^}' '${actionStatus}'",
                 "sections": [{
                     "activityTitle": "'${notificationTitle}' - '${baseDomain}'",
-                    "activitySubtitle": "'${statusEmoticon}' ['${logLevel^^}'] '${parsedMessage}'",
+                    "activitySubtitle": "'${statusEmoticon}' ['${logLevel^^}'] '$(echo ${message} | base64 -d)'",
                     "activityImage": "",
                     "facts": [{
                         "name": "Component",

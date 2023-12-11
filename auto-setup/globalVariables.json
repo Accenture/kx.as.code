@@ -14,6 +14,7 @@
   "shortcutsDirectory": "${sharedKxHome}/Applications",
   "applicationShortcutsDirectory": "${sharedKxHome}/Applications",
   "taskShortcutsDirectory": "${sharedKxHome}/Tasks",
+  "logsDirectory": "${sharedKxHome}/Logs",
   "adminShortcutsDirectory": "${sharedKxHome}/Admin Tools",
   "vmUser": "kx.hero",
   "vmUserId": "$(id -u ${vmUser})",
@@ -23,5 +24,10 @@
   "colourBlue": "33A2FF",
   "colourRed": "FA1806",
   "colourAmber": "FF7401",
-  "colourGrey": "A29E97"
+  "colourGrey": "A29E97",
+  "ansiRed": "\\\u001b[31m",
+  "ansiGreen": "\\\u001b[32m",
+  "ansiOrange": "\\\u001b[33m",
+  "ansiBlue": "\\\u001b[36m",
+  "ansiReset": "\\\u001b[0m"
 }

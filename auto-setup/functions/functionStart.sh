@@ -1,7 +1,7 @@
 ####_EXCLUDE_FROM_FUNCTION_HEADER_FOOTER_INJECTION_####
 functionStart() {
 
-    local skipFunctionCallCapture=${1:-false}
+    local skipFunctionCallCapture=${1:-"false"}
 
     # Set functionStart timestamps
     export functionStartFriendlyTimestamp=$(date "+%d-%m-%Y %H:%M:%S")
@@ -18,13 +18,13 @@ functionStart() {
 
     >&2 log_debug "Entered function ${FUNCNAME[1]}() at ${functionStartFriendlyTimestamp}"
 
-    if [[ "${logLevel}" == "trace" ]]; then
-        set -x
-    else
-        set +x
-    fi
-
+     if [[ "${logLevel}" == "trace" ]]; then
+         set -x
+     else
+         set +x
+     fi
+     
     set -eE -o functrace pipefail
     trap 'functionFailure "${LINENO}" "${BASH_COMMAND}" "$?"' ERR
-
+    >&2 log_trace "Exiting functionStart()"
 }

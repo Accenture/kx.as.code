@@ -66,11 +66,14 @@ log_debug "Initializing kadalu storage pool with - kubectl kadalu storage-add st
 # Wait for Kubernetest statefulset to become available
 waitForKubernetesResource "server-storage-pool-1-0" "statefulset" "kadalu"
 
+# Check if yq already downloaded. Download if not
+downloadYq
+
 # Edit default statefulset to allow it to be scheduled on master kx-main1, despite the node taint (needed due to the new control-plane node taint)
 kubectl get statefulset server-storage-pool-1-0 -n kadalu -o=json | \
   jq 'del(.metadata.resourceVersion,.metadata.uid,.metadata.selfLink,.metadata.creationTimestamp,.metadata.annotations,.metadata.generation,.metadata.ownerReferences,.status)' | \
   jq '.spec.template.spec.tolerations |= (. + [{"effect": "NoSchedule","key": "node-role.kubernetes.io/control-plane","operator": "Exists"},{"effect": "NoSchedule","key": "node-role.kubernetes.io/master","operator": "Exists"}] | unique)' | \
-  yq eval . --prettyPrint | /usr/bin/sudo tee ${installationWorkspace}/kadalu-server-storage-pool-statefulset.yaml
+  /usr/bin/yq eval . --prettyPrint | /usr/bin/sudo tee ${installationWorkspace}/kadalu-server-storage-pool-statefulset.yaml
 
 if [[ -f ${installationWorkspace}/kadalu-server-storage-pool-statefulset.yaml ]]; then
   # Validate and apply the updated statefulset yaml
