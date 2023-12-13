@@ -24,7 +24,7 @@ export function Form2() {
             if (typeof value === 'string' || typeof value === 'boolean' || typeof value === 'number') {
                 return (
                     <div key={key}>
-                        <label htmlFor={key}>{key}:</label>
+                        <label htmlFor={key} className="mr-2">{key}:</label>
                         {typeof value === 'boolean' ? (
                             <input
                                 type="checkbox"
@@ -55,7 +55,7 @@ export function Form2() {
             } else if (Array.isArray(value)) {
                 // If value is a string array, create a dropdown select field
                 return (
-                    <div key={key}>
+                    <div key={key} className="mt-3">
                         <label htmlFor={key}>{key}:</label>
                         <select id={key} name={key} onChange={(e) => handleChange(key, e.target.value)}>
                             {value.map((item, index) => (
@@ -70,7 +70,7 @@ export function Form2() {
                 // If value is a nested map, recurse into it
                 return (
                     <div key={key} style={{}} className="">
-                        <h3>{key}</h3>
+                        <h3 className="text-3xl font-semibold mt-5">{key}</h3>
                         {renderFields(value)}
                     </div>
                 );
@@ -82,9 +82,9 @@ export function Form2() {
 
     return (
         <div>
-            <form method="post" action="/submit" onSubmit={handleSubmit}>
+            <form method="post" action="/submit" onSubmit={handleSubmit} className="p-5">
                 {renderFields(config)}
-                <input type="submit" value="Submit" />
+                <button type="submit" className="bg-kxBlue p-3 my-5">Execute</button>
             </form>
         </div>
     );
