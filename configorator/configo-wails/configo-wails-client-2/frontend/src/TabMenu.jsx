@@ -14,7 +14,9 @@ import { useNavigate } from 'react-router-dom';
 import PlayCircleIcon from '@mui/icons-material/PlayCircle';
 import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
 import UserTable from './UserTable';
+import GlobalVariablesTable from './GlobalVariablesTable';
 import PersonAddAltIcon from '@mui/icons-material/PersonAddAlt';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 
 const TabMenu = () => {
     const [activeTab, setActiveTab] = useState('tab1');
@@ -131,6 +133,12 @@ const UIConfigTabContent = ({ activeTab, handleTabClick }) => (
             >
                 User Provisioning
             </button>
+            <button
+                onClick={() => handleTabClick('tab6')}
+                className={` ${activeTab === 'tab6' ? 'bg-kxBlue' : ''} p-3 py-1`}
+            >
+                Custom Variables
+            </button>
         </div>
 
         <div className="tab-content">
@@ -139,6 +147,7 @@ const UIConfigTabContent = ({ activeTab, handleTabClick }) => (
             {activeTab === 'tab3' && <TabContent3 />}
             {activeTab === 'tab4' && <TabContent4 />}
             {activeTab === 'tab5' && <TabContent5 />}
+            {activeTab === 'tab6' && <TabContent6 />}
         </div>
     </div>
 );
@@ -247,10 +256,19 @@ const TabContent2 = () => (
                 </TextField>
 
                 <h2 className='text-xl font-semibold text-gray-400'>Additional Toggles</h2>
-                <div className='px-1'>
-                    <FormControlLabel control={<Switch size="small" defaultChecked />} label="Enable Standalone Mode" />
-                    <FormControlLabel control={<Switch size="small" />} label="Allow Workloads on Kubernetes Master" />
-                    <FormControlLabel control={<Switch size="small" />} label="Disable Linux Desktop" />
+                <div className='px-1 text-sm'>
+                    <FormControlLabel
+                        control={<Switch size="small" defaultChecked />}
+                        label={<span style={{ fontSize: '16px' }}>Enable Standalone Mode</span>}
+                    />
+                    <FormControlLabel
+                        control={<Switch size="small" />}
+                        label={<span style={{ fontSize: '16px' }}>Allow Workloads on Kubernetes Master</span>}
+                    />
+                    <FormControlLabel
+                        control={<Switch size="small" />}
+                        label={<span style={{ fontSize: '16px' }}>Disable Linux Desktop</span>}
+                    />
                 </div>
             </div>
         </div>
@@ -352,7 +370,7 @@ const TabContent4 = () => (
         <div className='px-5 py-3 bg-ghBlack grid grid-cols-12'>
             <div className='col-span-6'>
                 <h2 className='text-xl font-semibold text-gray-400'>Network Storage</h2>
-                <p className='text-sm text-gray-400 text-justify'>Provision network storage with the set amount. The storage volume will be provisioned as a dedicated virtual drive in the virtual machine.</p>
+                {/* <p className='text-sm text-gray-400 text-justify'>Provision network storage with the set amount. The storage volume will be provisioned as a dedicated virtual drive in the virtual machine.</p> */}
                 <TextField
                     InputProps={{
                         startAdornment: <InputAdornment position="start">GB</InputAdornment>,
@@ -368,7 +386,7 @@ const TabContent4 = () => (
                 </TextField>
 
                 <h2 className='text-xl font-semibold text-gray-400'>Local Storage Volumes</h2>
-                <p className='text-sm text-gray-400 text-justify'>Define the number of volumes of a given size will be "pre-provisioned" for consumption by Kubernetes workloads.</p>
+                {/* <p className='text-sm text-gray-400 text-justify'>Define the number of volumes of a given size will be "pre-provisioned" for consumption by Kubernetes workloads.</p> */}
 
                 <TextField
                     InputProps={{
@@ -511,13 +529,13 @@ const TabContent5 = () => (
                     <MenuItem value="en-us">English (US)</MenuItem>
                     <MenuItem value="en-gb">English (GB)</MenuItem>
                     <MenuItem value="french">French</MenuItem>
-                    <MenuItem value="spanish">Spanish (GB)</MenuItem>
+                    <MenuItem value="spanish">Spanish</MenuItem>
 
                 </TextField>
                 <button type="submit items-center"
-                    className='bg-kxBlue mt-4 h-10 px-5'>
-                        <PersonAddAltIcon/>
-                    </button>
+                    className='bg-kxBlue mt-4 h-10 px-5 '>
+                    <PersonAddAltIcon />
+                </button>
 
             </div>
 
@@ -525,5 +543,46 @@ const TabContent5 = () => (
         <UserTable />
     </div>
 );
+
+const TabContent6 = () => (
+    <div className='text-left'>
+        <div className='px-5 py-3'>
+            <h2 className='text-3xl font-semibold'>Custom Global Variables</h2>
+            <p className='text-sm text-gray-400 text-justify'>Set key/value pairs that can be used by solutions when they are being installed.</p>
+        </div>
+        <div className='px-5 py-3 bg-ghBlack gap-2 flex items-center'>
+
+            <TextField
+                required
+                InputProps={{
+                }}
+                label="Key"
+                type='text'
+                fullWidth
+                size="small"
+                margin="normal"
+            />
+
+            <TextField
+                required
+                InputProps={{
+                }}
+                label="Value"
+                type='text'
+                fullWidth
+                size="small"
+                margin="normal"
+            />
+
+            <button className='p-3 h-10 items-center justify-center flex mt-2'>
+                <AddCircleOutlineIcon fontSize='medium' />
+            </button>
+
+        </div>
+        <div className='flex'>
+            <GlobalVariablesTable />
+        </div>
+    </div>
+)
 
 export default TabMenu;

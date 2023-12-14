@@ -16,13 +16,13 @@ export function ConsoleOutput() {
         <div className="">
             <div className="flex items-center">
                 <button onClick={() => { handleBackClick() }} className="p-3 bg-ghBlack">
-                    <ArrowBackIosNewIcon />
+                    <ArrowBackIosNewIcon sx={{ fontSize: 20 }} />
                 </button>
             </div>
-            <div className="text-3xl font-semibold">
+            <div className="text-xl font-semibold bg-ghBlack4 py-5">
                     Build Process Started!
                 </div>
-            <div className="pt-5">
+            <div className="">
                 <div className="bg-ghBlack w-full p-5 h-80">
                     Console output 
                 </div>
