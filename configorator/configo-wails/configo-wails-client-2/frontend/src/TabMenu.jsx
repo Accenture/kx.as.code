@@ -14,9 +14,13 @@ import { useNavigate } from 'react-router-dom';
 import PlayCircleIcon from '@mui/icons-material/PlayCircle';
 import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
 import UserTable from './UserTable';
+import JSONConfigTabContent from './JSONConfigTabContent';
 import GlobalVariablesTable from './GlobalVariablesTable';
 import PersonAddAltIcon from '@mui/icons-material/PersonAddAlt';
+import AddIcon from '@mui/icons-material/Add';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+
+
 
 const TabMenu = () => {
     const [activeTab, setActiveTab] = useState('tab1');
@@ -76,28 +80,6 @@ const BuildExecuteButton = () => {
                 <CloudDownloadIcon className='mr-1.5' /> Download Image from Vagrant Cloud</button>
         </div>
     )
-}
-
-const JSONConfigTabContent = (props) => {
-    const serializedState = localStorage.getItem('myEditorState');
-    const value = localStorage.getItem('myValue') || '';
-    const stateFields = { history: historyField };
-
-    return (
-        <div className='text-left text-black'>
-            <CodeMirror
-                value={props.jsonData}
-                options={{
-                    mode: 'json',
-                    theme: 'oneDark',
-                    lineNumbers: true,
-                }}
-                onChange={(value, viewUpdate) => {
-
-                }}
-            />
-        </div>
-    );
 }
 
 const UIConfigTabContent = ({ activeTab, handleTabClick }) => (
@@ -467,8 +449,8 @@ const TabContent5 = () => (
             <h2 className='text-3xl font-semibold'>User Provisioning</h2>
             <p className='text-sm text-gray-400 text-justify'>Define additional users to provision in the KX.AS.CODE environment. This is optional. If you do not specify additional users, then only the base user will be available for logging into the desktop and all provisioned tools.</p>
         </div>
-        <div className='px-5 py-3 bg-ghBlack gap-2 grid grid-cols-12'>
-            <div className='col-span-6'>
+        <div className='px-5 py-3 bg-ghBlack gap-2'>
+            <div className='flex gap-2'>
                 <TextField
                     required
                     InputProps={{
@@ -479,7 +461,6 @@ const TabContent5 = () => (
                     size="small"
                     margin="normal"
                 />
-
                 <TextField
                     InputProps={{
                     }}
@@ -489,7 +470,18 @@ const TabContent5 = () => (
                     size="small"
                     margin="normal"
                 />
+                <TextField
+                    InputProps={{
+                    }}
+                    label="E-Mail"
+                    type='email'
+                    fullWidth
+                    size="small"
+                    margin="normal"
+                />
+            </div>
 
+            <div className='flex gap-2'>
                 <TextField
                     label="Role"
                     select
@@ -503,18 +495,6 @@ const TabContent5 = () => (
                     <MenuItem value="normal">Normal</MenuItem>
 
                 </TextField>
-            </div>
-
-            <div className='col-span-6'>
-                <TextField
-                    InputProps={{
-                    }}
-                    label="E-Mail"
-                    type='email'
-                    fullWidth
-                    size="small"
-                    margin="normal"
-                />
 
                 <TextField
                     label="Keyboard Layout"
@@ -533,7 +513,7 @@ const TabContent5 = () => (
 
                 </TextField>
                 <button type="submit items-center"
-                    className='bg-kxBlue mt-4 h-10 px-5 '>
+                    className='border border-white mt-4 h-10 px-3'>
                     <PersonAddAltIcon />
                 </button>
 
@@ -574,8 +554,9 @@ const TabContent6 = () => (
                 margin="normal"
             />
 
-            <button className='p-3 h-10 items-center justify-center flex mt-2'>
-                <AddCircleOutlineIcon fontSize='medium' />
+            <button className='border border-white mt-2 h-10 px-3'>
+                {/* <AddCircleOutlineIcon fontSize='medium' /> */}
+                <AddIcon/>
             </button>
 
         </div>
