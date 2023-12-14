@@ -13,10 +13,20 @@ export function ConsoleOutput() {
     };
 
     return (
-        <div className="flex items-center">
-            <button onClick={() => {handleBackClick()}} className="p-3 bg-ghBlack">
-                <ArrowBackIosNewIcon />
+        <div className="">
+            <div className="flex items-center">
+                <button onClick={() => { handleBackClick() }} className="p-3 bg-ghBlack">
+                    <ArrowBackIosNewIcon />
                 </button>
+            </div>
+            <div className="text-3xl font-semibold">
+                    Build Process Started!
+                </div>
+            <div className="pt-5">
+                <div className="bg-ghBlack w-full p-5 h-80">
+                    Console output 
+                </div>
+            </div>
         </div>
     );
 }

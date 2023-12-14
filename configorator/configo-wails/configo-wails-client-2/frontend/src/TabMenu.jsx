@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import FormControlLabel from '@mui/material/FormControlLabel';
+import InputAdornment from '@mui/material/InputAdornment';
 import Switch from '@mui/material/Switch';
 import MenuItem from '@mui/material/MenuItem';
 import Slider from '@mui/material/Slider';
@@ -12,7 +13,8 @@ import { oneDark } from '@codemirror/theme-one-dark';
 import { useNavigate } from 'react-router-dom';
 import PlayCircleIcon from '@mui/icons-material/PlayCircle';
 import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
-
+import UserTable from './UserTable';
+import PersonAddAltIcon from '@mui/icons-material/PersonAddAlt';
 
 const TabMenu = () => {
     const [activeTab, setActiveTab] = useState('tab1');
@@ -65,10 +67,10 @@ const BuildExecuteButton = () => {
     };
 
     return (
-        <div>
+        <div className=''>
             <button onClick={() => { handleBuildClick() }} className='bg-kxBlue p-3 w-full flex justify-center items-center'>
                 <PlayCircleIcon className='mr-1' /> Build KX.AS.Code Image</button>
-            <button className='p-1 w-full font-normal hover:text-gray-400 px-3 my-2 w-auto flex justify-center items-center'>
+            <button className='p-3 w-full font-normal hover:text-gray-400 w-auto flex justify-center items-center'>
                 <CloudDownloadIcon className='mr-1.5' /> Download Image from Vagrant Cloud</button>
         </div>
     )
@@ -121,7 +123,7 @@ const UIConfigTabContent = ({ activeTab, handleTabClick }) => (
                 onClick={() => handleTabClick('tab4')}
                 className={` ${activeTab === 'tab4' ? 'bg-kxBlue' : ''} p-3 py-1`}
             >
-                Template
+                Storage
             </button>
             <button
                 onClick={() => handleTabClick('tab5')}
@@ -258,7 +260,7 @@ const TabContent2 = () => (
 const TabContent3 = () => (
     <div className='text-left'>
         <div className='px-5 py-3'>
-            <h2 className='text-3xl font-semibold'>Resources</h2>
+            <h2 className='text-3xl font-semibold'>Resource Configuration</h2>
             <p className='text-sm text-gray-400 text-justify'>Define how many physical resources you wish to allocate to the KX.AS.CODE virtual machines.</p>
         </div>
         <div className='px-5 py-3 bg-ghBlack grid grid-cols-12'>
@@ -298,6 +300,43 @@ const TabContent3 = () => (
                 >
                 </TextField>
 
+                <h2 className='text-xl font-semibold text-gray-400'>KX-Worker Parameters</h2>
+                <TextField
+                    label="KX Node Nodes"
+                    type='number'
+                    fullWidth
+                    size="small"
+                    margin="normal"
+                    defaultValue={0}
+                    InputProps={{ inputProps: { min: 0, max: 10 } }}
+                >
+                </TextField>
+
+                <TextField
+                    label="KX Node Cores"
+                    type='number'
+                    fullWidth
+                    size="small"
+                    margin="normal"
+                    defaultValue={6}
+                    InputProps={{ inputProps: { min: 1, max: 30 } }}
+                >
+                </TextField>
+
+                <TextField
+                    label="KX Node RAM"
+                    type='number'
+                    fullWidth
+                    size="small"
+                    margin="normal"
+                    defaultValue={8}
+                    InputProps={{
+                        startAdornment: <InputAdornment position="start">GB</InputAdornment>,
+                        inputProps: { min: 0, max: 1000 }
+                    }}
+                >
+                </TextField>
+
             </div>
         </div>
     </div>
@@ -306,8 +345,100 @@ const TabContent3 = () => (
 const TabContent4 = () => (
     <div className='text-left'>
         <div className='px-5 py-3'>
-            <h2 className='text-3xl font-semibold'>Template</h2>
-            <p className='text-sm text-gray-400 text-justify'></p>
+            <h2 className='text-3xl font-semibold'>Storage Parameters</h2>
+            <p className='text-sm text-gray-400 text-justify'>Define the amount of storage allocated to KX.AS.CODE. There are two types - (1) fast local, but not portable storage, eg. tied to a host, and (2) slower, but portable network storage.</p>
+
+        </div>
+        <div className='px-5 py-3 bg-ghBlack grid grid-cols-12'>
+            <div className='col-span-6'>
+                <h2 className='text-xl font-semibold text-gray-400'>Network Storage</h2>
+                <p className='text-sm text-gray-400 text-justify'>Provision network storage with the set amount. The storage volume will be provisioned as a dedicated virtual drive in the virtual machine.</p>
+                <TextField
+                    InputProps={{
+                        startAdornment: <InputAdornment position="start">GB</InputAdornment>,
+                        inputProps: { min: 0, max: 1000 }
+                    }}
+                    label="Network Storage"
+                    type='number'
+                    fullWidth
+                    size="small"
+                    margin="normal"
+                    defaultValue={60}
+                >
+                </TextField>
+
+                <h2 className='text-xl font-semibold text-gray-400'>Local Storage Volumes</h2>
+                <p className='text-sm text-gray-400 text-justify'>Define the number of volumes of a given size will be "pre-provisioned" for consumption by Kubernetes workloads.</p>
+
+                <TextField
+                    InputProps={{
+                        inputProps: { min: 0, max: 50 }
+                    }}
+                    label="1 GB"
+                    type='number'
+                    fullWidth
+                    size="small"
+                    margin="normal"
+                    defaultValue={10}
+                >
+                </TextField>
+                <TextField
+                    InputProps={{
+                        inputProps: { min: 0, max: 50 }
+                    }}
+                    label="1 GB"
+                    type='number'
+                    fullWidth
+                    size="small"
+                    margin="normal"
+                    defaultValue={10}
+                />
+                <TextField
+                    InputProps={{
+                        inputProps: { min: 0, max: 50 }
+                    }}
+                    label="5 GB"
+                    type='number'
+                    fullWidth
+                    size="small"
+                    margin="normal"
+                    defaultValue={10}
+                />
+                <TextField
+                    InputProps={{
+                        inputProps: { min: 0, max: 50 }
+                    }}
+                    label="10 GB"
+                    type='number'
+                    fullWidth
+                    size="small"
+                    margin="normal"
+                    defaultValue={0}
+                />
+                <TextField
+                    InputProps={{
+                        inputProps: { min: 0, max: 50 }
+                    }}
+                    label="30 GB"
+                    type='number'
+                    fullWidth
+                    size="small"
+                    margin="normal"
+                    defaultValue={0}
+                />
+                <TextField
+                    InputProps={{
+                        inputProps: { min: 0, max: 50 }
+                    }}
+                    label="50 GB"
+                    type='number'
+                    fullWidth
+                    size="small"
+                    margin="normal"
+                    defaultValue={0}
+                />
+
+            </div>
         </div>
     </div>
 );
@@ -316,8 +447,82 @@ const TabContent5 = () => (
     <div className='text-left'>
         <div className='px-5 py-3'>
             <h2 className='text-3xl font-semibold'>User Provisioning</h2>
-            <p className='text-sm text-gray-400 text-justify'></p>
+            <p className='text-sm text-gray-400 text-justify'>Define additional users to provision in the KX.AS.CODE environment. This is optional. If you do not specify additional users, then only the base user will be available for logging into the desktop and all provisioned tools.</p>
         </div>
+        <div className='px-5 py-3 bg-ghBlack gap-2 grid grid-cols-12'>
+            <div className='col-span-6'>
+                <TextField
+                    required
+                    InputProps={{
+                    }}
+                    label="First Name"
+                    type='text'
+                    fullWidth
+                    size="small"
+                    margin="normal"
+                />
+
+                <TextField
+                    InputProps={{
+                    }}
+                    label="Surname"
+                    type='text'
+                    fullWidth
+                    size="small"
+                    margin="normal"
+                />
+
+                <TextField
+                    label="Role"
+                    select
+                    fullWidth
+                    variant="outlined"
+                    size="small"
+                    margin="normal"
+                    defaultValue="admin"
+                >
+                    <MenuItem value="admin">Admin</MenuItem>
+                    <MenuItem value="normal">Normal</MenuItem>
+
+                </TextField>
+            </div>
+
+            <div className='col-span-6'>
+                <TextField
+                    InputProps={{
+                    }}
+                    label="E-Mail"
+                    type='email'
+                    fullWidth
+                    size="small"
+                    margin="normal"
+                />
+
+                <TextField
+                    label="Keyboard Layout"
+                    select
+                    fullWidth
+                    variant="outlined"
+                    size="small"
+                    margin="normal"
+                    defaultValue="german"
+                >
+                    <MenuItem value="german">German</MenuItem>
+                    <MenuItem value="en-us">English (US)</MenuItem>
+                    <MenuItem value="en-gb">English (GB)</MenuItem>
+                    <MenuItem value="french">French</MenuItem>
+                    <MenuItem value="spanish">Spanish (GB)</MenuItem>
+
+                </TextField>
+                <button type="submit items-center"
+                    className='bg-kxBlue mt-4 h-10 px-5'>
+                        <PersonAddAltIcon/>
+                    </button>
+
+            </div>
+
+        </div>
+        <UserTable />
     </div>
 );
 

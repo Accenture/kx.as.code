@@ -18,8 +18,8 @@ func main() {
 	// Create application with options
 	err := wails.Run(&options.App{
 		Title:  "KX.AS.Code Configurator",
-		Width:  800,
-		Height: 800,
+		Width:  900,
+		Height: 900,
 		AssetServer: &assetserver.Options{
 			Assets: assets,
 		},
@@ -28,10 +28,10 @@ func main() {
 		Bind: []interface{}{
 			app,
 		},
-		MinWidth:  800,
-		MaxWidth:  800,
-		MinHeight: 800,
-		MaxHeight: 800,
+		MinWidth:  900,
+		MaxWidth:  900,
+		MinHeight: 900,
+		MaxHeight: 900,
 	})
 
 	if err != nil {
