@@ -19,6 +19,7 @@ import GlobalVariablesTable from './GlobalVariablesTable';
 import PersonAddAltIcon from '@mui/icons-material/PersonAddAlt';
 import AddIcon from '@mui/icons-material/Add';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import {UpdateJsonFile} from "../wailsjs/go/main/App";
 
 
 
@@ -26,10 +27,29 @@ const TabMenu = () => {
     const [activeTab, setActiveTab] = useState('tab1');
     const [activeConfigTab, setActiveConfigTab] = useState('config-tab1');
     const [jsonData, setJsonData] = useState('');
+    const [updatedJsonData, setUpdatedJsonData] = useState('');
 
     const serializedState = localStorage.getItem('myEditorState');
     const value = localStorage.getItem('myValue') || '';
     const stateFields = { history: historyField };
+
+    const handleConfigChange = (event, key) => {
+        const selectedValue = event.target.value;
+      
+        let parsedData;
+        try {
+          parsedData = JSON.parse(jsonData);
+        } catch (error) {
+          console.error('Error parsing JSON:', error);
+          return;
+        }
+        parsedData.config[key] = selectedValue;
+        console.log(parsedData);
+        const updatedJsonString = JSON.stringify(parsedData, null, 2);
+        setJsonData(updatedJsonString);
+
+        UpdateJsonFile(updatedJsonString)
+      };
 
     const handleTabClick = (tab) => {
         setActiveTab(tab);
@@ -56,7 +76,7 @@ const TabMenu = () => {
             </div>
 
             <div className="config-tab-content">
-                {activeConfigTab === 'config-tab1' && <UIConfigTabContent activeTab={activeTab} handleTabClick={handleTabClick} />}
+                {activeConfigTab === 'config-tab1' && <UIConfigTabContent activeTab={activeTab} handleTabClick={handleTabClick} handleConfigChange={handleConfigChange} />}
                 {activeConfigTab === 'config-tab2' && <JSONConfigTabContent jsonData={jsonData} />}
             </div>
             <BuildExecuteButton />
@@ -82,7 +102,7 @@ const BuildExecuteButton = () => {
     )
 }
 
-const UIConfigTabContent = ({ activeTab, handleTabClick }) => (
+const UIConfigTabContent = ({ activeTab, handleTabClick, handleConfigChange }) => (
     <div id='config-ui-container' className=''>
         <div className="flex bg-ghBlack4 text-sm">
             <button
@@ -124,7 +144,7 @@ const UIConfigTabContent = ({ activeTab, handleTabClick }) => (
         </div>
 
         <div className="tab-content">
-            {activeTab === 'tab1' && <TabContent1 />}
+            {activeTab === 'tab1' && <TabContent1 handleConfigChange={handleConfigChange} />}
             {activeTab === 'tab2' && <TabContent2 />}
             {activeTab === 'tab3' && <TabContent3 />}
             {activeTab === 'tab4' && <TabContent4 />}
@@ -134,7 +154,7 @@ const UIConfigTabContent = ({ activeTab, handleTabClick }) => (
     </div>
 );
 
-const TabContent1 = () => (
+const TabContent1 = ({ handleConfigChange }) => (
     <div className='text-left'>
         <div className='px-5 py-3'>
             <h2 className='text-3xl font-semibold'>Profile</h2>
@@ -164,6 +184,7 @@ const TabContent1 = () => (
                     size="small"
                     margin="normal"
                     defaultValue="normal"
+                    onChange={(e) => { handleConfigChange(e, "startupMode") }}
                 >
                     <MenuItem value="normal">Normal</MenuItem>
                     <MenuItem value="lite">Lite</MenuItem>
@@ -178,6 +199,7 @@ const TabContent1 = () => (
                     size="small"
                     margin="normal"
                     defaultValue="k3s"
+                    onChange={(e) => { handleConfigChange(e, "kubeOrchestrator") }}
                 >
                     <MenuItem value="k8s">K8s</MenuItem>
                     <MenuItem value="k3s">K3s</MenuItem>
@@ -556,7 +578,7 @@ const TabContent6 = () => (
 
             <button className='border border-white mt-2 h-10 px-3'>
                 {/* <AddCircleOutlineIcon fontSize='medium' /> */}
-                <AddIcon/>
+                <AddIcon />
             </button>
 
         </div>

@@ -14,14 +14,8 @@ const JSONConfigTabContent = (props) => {
     const [isfileChanged, setIsFileChanged] = useState(false);
 
     const handleSaveClick = async () => {
-        // const targetFilePath = './assets/profile-config-template.json';
-        // fs.writeFileSync(targetFilePath, updatedData);
-        // console.log('JSON file updated successfully.');
-
         const updatedData = JSON.stringify(updatedJson, null, 2);
         try {
-            console.log("window: ", window.wails.wailsbindings);
-            // await window.wails.Call("updateJsonFile", updatedData);
             UpdateJsonFile(updatedData)
             console.log('File updated successfully.');
         } catch (error) {
