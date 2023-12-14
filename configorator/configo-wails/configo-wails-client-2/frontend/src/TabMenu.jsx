@@ -8,7 +8,7 @@ import MenuItem from '@mui/material/MenuItem';
 import Slider from '@mui/material/Slider';
 import CodeMirror from '@uiw/react-codemirror';
 import { historyField } from '@codemirror/commands';
-import configJSON from './assets/profile-config-template.json';
+import configJSON from './assets/config/config.json';
 import { oneDark } from '@codemirror/theme-one-dark';
 import { useNavigate } from 'react-router-dom';
 import PlayCircleIcon from '@mui/icons-material/PlayCircle';

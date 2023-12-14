@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import CodeMirror from '@uiw/react-codemirror';
 import { historyField } from '@codemirror/commands';
+import fs from 'fs';
+import {UpdateJsonFile} from "../wailsjs/go/main/App";
+
 
 const JSONConfigTabContent = (props) => {
     const serializedState = localStorage.getItem('myEditorState');
@@ -9,6 +12,22 @@ const JSONConfigTabContent = (props) => {
 
     const [updatedJson, setUpdatedJson] = useState("");
     const [isfileChanged, setIsFileChanged] = useState(false);
+
+    const handleSaveClick = async () => {
+        // const targetFilePath = './assets/profile-config-template.json';
+        // fs.writeFileSync(targetFilePath, updatedData);
+        // console.log('JSON file updated successfully.');
+
+        const updatedData = JSON.stringify(updatedJson, null, 2);
+        try {
+            console.log("window: ", window.wails.wailsbindings);
+            // await window.wails.Call("updateJsonFile", updatedData);
+            UpdateJsonFile(updatedData)
+            console.log('File updated successfully.');
+        } catch (error) {
+            console.error('Error updating file:', error);
+        }
+    }
 
     useEffect(() => {
 
@@ -21,7 +40,7 @@ const JSONConfigTabContent = (props) => {
             {isfileChanged && props.jsonData !== updatedJson && (<div className='text-white p-3 bg-ghBlack4 flex justify-between items-center'>
                 <div className=''>Change on profile-config.json file detected.</div>
                 <div className='flex'>
-                    <button className='bg-kxBlue text-white p-3 py-1 mr-2'>Save</button>
+                    <button onClick={() => {handleSaveClick()}} className='bg-kxBlue text-white p-3 py-1 mr-2'>Save</button>
                     <button className='bg-white text-black p-3 py-1'>Discard</button>
                 </div>
             </div>)}
