@@ -19,7 +19,15 @@ import GlobalVariablesTable from './GlobalVariablesTable';
 import PersonAddAltIcon from '@mui/icons-material/PersonAddAlt';
 import AddIcon from '@mui/icons-material/Add';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
-import {UpdateJsonFile} from "../wailsjs/go/main/App";
+import { UpdateJsonFile } from "../wailsjs/go/main/App";
+import FilledInput from '@mui/material/FilledInput';
+import OutlinedInput from '@mui/material/OutlinedInput';
+import InputLabel from '@mui/material/InputLabel';
+import FormHelperText from '@mui/material/FormHelperText';
+import FormControl from '@mui/material/FormControl';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import IconButton from '@mui/material/IconButton';
 
 
 
@@ -33,23 +41,24 @@ const TabMenu = () => {
     const value = localStorage.getItem('myValue') || '';
     const stateFields = { history: historyField };
 
-    const handleConfigChange = (event, key) => {
-        const selectedValue = event.target.value;
-      
+    const handleConfigChange = (value, key) => {
+        const selectedValue = value;
+
         let parsedData;
         try {
-          parsedData = JSON.parse(jsonData);
+            parsedData = JSON.parse(jsonData);
         } catch (error) {
-          console.error('Error parsing JSON:', error);
-          return;
+            console.error('Error parsing JSON:', error);
+            return;
         }
         parsedData.config[key] = selectedValue;
-        console.log(parsedData);
+        console.log("DEBUG: ", parsedData.config[key])
+        console.log("DEBUG: selectedValue", selectedValue)
         const updatedJsonString = JSON.stringify(parsedData, null, 2);
         setJsonData(updatedJsonString);
 
         UpdateJsonFile(updatedJsonString)
-      };
+    };
 
     const handleTabClick = (tab) => {
         setActiveTab(tab);
@@ -66,7 +75,7 @@ const TabMenu = () => {
 
     useEffect(() => {
         formatJSONData();
-    }, [activeConfigTab]);
+    }, [activeConfigTab, jsonData]);
 
     return (
         <div className=''>
@@ -88,7 +97,7 @@ const BuildExecuteButton = () => {
     const navigate = useNavigate();
 
     const handleBuildClick = () => {
-        console.log('Build KX.AS.COde Image clicked!');
+        console.log('KX.AS.Code Image build process started!');
         navigate('/console-output');
     };
 
@@ -145,141 +154,175 @@ const UIConfigTabContent = ({ activeTab, handleTabClick, handleConfigChange }) =
 
         <div className="tab-content">
             {activeTab === 'tab1' && <TabContent1 handleConfigChange={handleConfigChange} />}
-            {activeTab === 'tab2' && <TabContent2 />}
-            {activeTab === 'tab3' && <TabContent3 />}
-            {activeTab === 'tab4' && <TabContent4 />}
-            {activeTab === 'tab5' && <TabContent5 />}
-            {activeTab === 'tab6' && <TabContent6 />}
+            {activeTab === 'tab2' && <TabContent2 handleConfigChange={handleConfigChange} />}
+            {activeTab === 'tab3' && <TabContent3 handleConfigChange={handleConfigChange} />}
+            {activeTab === 'tab4' && <TabContent4 handleConfigChange={handleConfigChange} />}
+            {activeTab === 'tab5' && <TabContent5 handleConfigChange={handleConfigChange} />}
+            {activeTab === 'tab6' && <TabContent6 handleConfigChange={handleConfigChange} />}
         </div>
     </div>
 );
 
-const TabContent1 = ({ handleConfigChange }) => (
-    <div className='text-left'>
-        <div className='px-5 py-3'>
-            <h2 className='text-3xl font-semibold'>Profile</h2>
-            <p className='text-sm text-gray-400 text-justify'>Select the profile. A check is made on the system to see if the necessary virtualization software and associated Vagrant plugins are installed, as well as availability of built Vagrant boxes.</p>
-        </div>
-        <div className='px-5 py-3 bg-ghBlack grid grid-cols-12'>
-            <div className='col-span-6'>
-                <TextField
-                    label="Profiles"
-                    select
-                    fullWidth
-                    variant="outlined"
-                    size="small"
-                    margin="normal"
-                    defaultValue="virtualbox"
-                >
-                    <MenuItem value="virtualbox">Virtualbox</MenuItem>
-                    <MenuItem value="parallels">Parallels</MenuItem>
-                    <MenuItem value="vmware-desktop">VMWare Desktop</MenuItem>
-                </TextField>
+const TabContent1 = ({ handleConfigChange }) => {
 
-                <TextField
-                    label="Start Mode"
-                    select
-                    fullWidth
-                    variant="outlined"
-                    size="small"
-                    margin="normal"
-                    defaultValue="normal"
-                    onChange={(e) => { handleConfigChange(e, "startupMode") }}
-                >
-                    <MenuItem value="normal">Normal</MenuItem>
-                    <MenuItem value="lite">Lite</MenuItem>
-                    <MenuItem value="minimal">Minimal</MenuItem>
-                </TextField>
-
-                <TextField
-                    label="Orchestrator"
-                    select
-                    fullWidth
-                    variant="outlined"
-                    size="small"
-                    margin="normal"
-                    defaultValue="k3s"
-                    onChange={(e) => { handleConfigChange(e, "kubeOrchestrator") }}
-                >
-                    <MenuItem value="k8s">K8s</MenuItem>
-                    <MenuItem value="k3s">K3s</MenuItem>
-                </TextField>
+    return (
+        <div className='text-left'>
+            <div className='px-5 py-3'>
+                <h2 className='text-3xl font-semibold'>Profile</h2>
+                <p className='text-sm text-gray-400 text-justify'>Select the profile. A check is made on the system to see if the necessary virtualization software and associated Vagrant plugins are installed, as well as availability of built Vagrant boxes.</p>
             </div>
-        </div>
-    </div>
-);
+            <div className='px-5 py-3 bg-ghBlack grid grid-cols-12'>
+                <div className='col-span-6'>
+                    <TextField
+                        label="Profiles"
+                        select
+                        fullWidth
+                        variant="outlined"
+                        size="small"
+                        margin="normal"
+                        defaultValue="virtualbox"
+                    >
+                        <MenuItem value="virtualbox">Virtualbox</MenuItem>
+                        <MenuItem value="parallels">Parallels</MenuItem>
+                        <MenuItem value="vmware-desktop">VMWare Desktop</MenuItem>
+                    </TextField>
 
-const TabContent2 = () => (
-    <div className='text-left'>
-        <div className='px-5 py-3'>
-            <h2 className='text-3xl font-semibold'>General Parameters & Mode Selection</h2>
-            <p className='text-sm text-gray-400 text-justify'> Set the parameters to define the internal DNS of KX.AS.CODE.
-                {/* Set the parameters to define the internal DNS of KX.AS.CODE. Each new service that is provisioned in KX.AS.CODE will have the fully qualified domain name (FQDN) of &lt;service_name&gt;, &lt;team_name&gt;. &lt;base_domain&gt;. The username and password fields determine the base admin user password. It is possible to add additional users. In the last section, you determine if running in standalone or cluster mode. Standalone mode starts up one main node only. This is recommended for any physical environment with less than 16G ram. If enable worker nodes, then you can also choose to have workloads running on both main and worker nodes, or only on worker nodes. */}
-            </p>
-        </div>
-        <div className='px-5 py-3 bg-ghBlack grid grid-cols-12'>
-            <div className='col-span-6'>
-                <h2 className='text-xl font-semibold text-gray-400'>General Profile Parameters</h2>
+                    <TextField
+                        label="Start Mode"
+                        select
+                        fullWidth
+                        variant="outlined"
+                        size="small"
+                        margin="normal"
+                        defaultValue="normal"
+                        onChange={(e) => { handleConfigChange(e.target.value, "startupMode") }}
+                    >
+                        <MenuItem value="normal">Normal</MenuItem>
+                        <MenuItem value="lite">Lite</MenuItem>
+                        <MenuItem value="minimal">Minimal</MenuItem>
+                    </TextField>
 
-                <TextField
-                    label="Base Domain"
-                    fullWidth
-                    size="small"
-                    margin="normal"
-                    defaultValue="kx-as-code.local"
-                >
-                </TextField>
-                <TextField
-                    label="Team Name"
-                    fullWidth
-                    variant="outlined"
-                    size="small"
-                    margin="normal"
-                    defaultValue='demo1'
-                >
-                </TextField>
-
-                <TextField
-                    label="Username"
-                    fullWidth
-                    variant="outlined"
-                    size="small"
-                    margin="normal"
-                    defaultValue='kx.hero'
-                >
-                </TextField>
-                <TextField
-                    label="Password"
-                    fullWidth
-                    variant="outlined"
-                    size="small"
-                    margin="normal"
-                    type='password'
-                    defaultValue='L3arnandshare'
-                >
-                </TextField>
-
-                <h2 className='text-xl font-semibold text-gray-400'>Additional Toggles</h2>
-                <div className='px-1 text-sm'>
-                    <FormControlLabel
-                        control={<Switch size="small" defaultChecked />}
-                        label={<span style={{ fontSize: '16px' }}>Enable Standalone Mode</span>}
-                    />
-                    <FormControlLabel
-                        control={<Switch size="small" />}
-                        label={<span style={{ fontSize: '16px' }}>Allow Workloads on Kubernetes Master</span>}
-                    />
-                    <FormControlLabel
-                        control={<Switch size="small" />}
-                        label={<span style={{ fontSize: '16px' }}>Disable Linux Desktop</span>}
-                    />
+                    <TextField
+                        label="Orchestrator"
+                        select
+                        fullWidth
+                        variant="outlined"
+                        size="small"
+                        margin="normal"
+                        defaultValue="k3s"
+                        onChange={(e) => { handleConfigChange(e.target.value, "kubeOrchestrator") }}
+                    >
+                        <MenuItem value="k8s">K8s</MenuItem>
+                        <MenuItem value="k3s">K3s</MenuItem>
+                    </TextField>
                 </div>
             </div>
         </div>
-    </div>
-);
+    )
+};
 
-const TabContent3 = () => (
+const TabContent2 = ({ handleConfigChange }) => {
+    const [showPassword, setShowPassword] = React.useState(false);
+
+    const handleClickShowPassword = () => setShowPassword((show) => !show);
+
+    const handleMouseDownPassword = (event) => {
+        event.preventDefault();
+    };
+
+    return (
+        <div className='text-left'>
+            <div className='px-5 py-3'>
+                <h2 className='text-3xl font-semibold'>General Parameters & Mode Selection</h2>
+                <p className='text-sm text-gray-400 text-justify'> Set the parameters to define the internal DNS of KX.AS.CODE.
+                    {/* Set the parameters to define the internal DNS of KX.AS.CODE. Each new service that is provisioned in KX.AS.CODE will have the fully qualified domain name (FQDN) of &lt;service_name&gt;, &lt;team_name&gt;. &lt;base_domain&gt;. The username and password fields determine the base admin user password. It is possible to add additional users. In the last section, you determine if running in standalone or cluster mode. Standalone mode starts up one main node only. This is recommended for any physical environment with less than 16G ram. If enable worker nodes, then you can also choose to have workloads running on both main and worker nodes, or only on worker nodes. */}
+                </p>
+            </div>
+            <div className='px-5 py-3 bg-ghBlack grid grid-cols-12'>
+                <div className='col-span-6'>
+                    <h2 className='text-xl font-semibold text-gray-400'>General Profile Parameters</h2>
+
+                    <TextField
+                        label="Base Domain"
+                        fullWidth
+                        size="small"
+                        margin="normal"
+                        defaultValue={configJSON.config["baseDomain"]}
+                        onChange={(e) => { handleConfigChange(e.target.value, "baseDomain") }}
+                    >
+                    </TextField>
+                    <TextField
+                        label="Team Name"
+                        fullWidth
+                        variant="outlined"
+                        size="small"
+                        margin="normal"
+                        defaultValue={configJSON.config["environmentPrefix"]}
+                        onChange={(e) => { handleConfigChange(e.target.value, "environmentPrefix") }}
+                    >
+                    </TextField>
+
+                    <TextField
+                        label="Username"
+                        fullWidth
+                        variant="outlined"
+                        size="small"
+                        margin="normal"
+                        defaultValue={configJSON.config["baseUser"]}
+                        onChange={(e) => { handleConfigChange(e.target.value, "baseUser") }}
+                    >
+                    </TextField>
+
+                    <TextField
+                        fullWidth
+                        type={showPassword ? 'text' : 'password'}
+                        margin="normal"
+                        size='small'
+                        InputProps={{
+                            endAdornment: (
+                                <InputAdornment position="end">
+                                    <IconButton
+                                        aria-label="toggle password visibility"
+                                        onClick={handleClickShowPassword}
+                                        onMouseDown={handleMouseDownPassword}
+                                    >
+                                        {showPassword ? <Visibility /> : <VisibilityOff />}
+                                    </IconButton>
+                                </InputAdornment>
+                            )
+                        }}
+                        label="Password"
+                    />
+
+                    <h2 className='text-xl font-semibold text-gray-400'>Additional Toggles</h2>
+                    <div className='px-1 text-sm'>
+                        <FormControlLabel
+                            control={<Switch size="small"
+                                defaultChecked={configJSON.config["standaloneMode"]}
+                                onChange={(e) => { handleConfigChange(e.target.checked, "standaloneMode") }}
+                            />}
+                            label={<span style={{ fontSize: '16px' }}>Enable Standalone Mode</span>}
+                        />
+                        <FormControlLabel
+                            control={<Switch size="small"
+                                defaultChecked={configJSON.config["allowWorkloadsOnMaster"]}
+                                onChange={(e) => { handleConfigChange(e.target.checked, "allowWorkloadsOnMaster") }} />}
+                            label={<span style={{ fontSize: '16px' }}>Allow Workloads on Kubernetes Master</span>}
+                        />
+                        <FormControlLabel
+                            control={<Switch size="small"
+                                defaultChecked={configJSON.config["disableLinuxDesktop"]}
+                                onChange={(e) => { handleConfigChange(e.target.checked, "disableLinuxDesktop") }}
+                            />}
+                            label={<span style={{ fontSize: '16px' }}>Disable Linux Desktop</span>}
+                        />
+                    </div>
+                </div>
+            </div>
+        </div>)
+};
+
+const TabContent3 = ({ handleConfigChange }) => (
     <div className='text-left'>
         <div className='px-5 py-3'>
             <h2 className='text-3xl font-semibold'>Resource Configuration</h2>
@@ -364,7 +407,7 @@ const TabContent3 = () => (
     </div>
 );
 
-const TabContent4 = () => (
+const TabContent4 = ({ handleConfigChange }) => (
     <div className='text-left'>
         <div className='px-5 py-3'>
             <h2 className='text-3xl font-semibold'>Storage Parameters</h2>
@@ -465,7 +508,7 @@ const TabContent4 = () => (
     </div>
 );
 
-const TabContent5 = () => (
+const TabContent5 = ({ handleConfigChange }) => (
     <div className='text-left'>
         <div className='px-5 py-3'>
             <h2 className='text-3xl font-semibold'>User Provisioning</h2>
@@ -546,7 +589,7 @@ const TabContent5 = () => (
     </div>
 );
 
-const TabContent6 = () => (
+const TabContent6 = ({ handleConfigChange }) => (
     <div className='text-left'>
         <div className='px-5 py-3'>
             <h2 className='text-3xl font-semibold'>Custom Global Variables</h2>
