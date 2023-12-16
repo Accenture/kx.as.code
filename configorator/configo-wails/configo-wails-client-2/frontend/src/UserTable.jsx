@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { alpha } from '@mui/material/styles';
 import Box from '@mui/material/Box';
@@ -21,23 +21,6 @@ import Switch from '@mui/material/Switch';
 import DeleteIcon from '@mui/icons-material/Delete';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import { visuallyHidden } from '@mui/utils';
-
-function createData(id, firstname, surname, email, layout, role) {
-    return {
-        id,
-        firstname,
-        surname,
-        email,
-        layout,
-        role
-    };
-}
-
-const rows = [
-    createData(1, 'firstname1', "surname", "email@example.com", "German", "admin"),
-    createData(2, 'firstname2', "surname", "email@example.com", "German", "admin"),
-    createData(3, 'firstname3', "surname", "email@example.com", "German", "admin"),
-];
 
 function descendingComparator(a, b, orderBy) {
     if (b[orderBy] < a[orderBy]) {
@@ -185,7 +168,7 @@ function EnhancedTableToolbar(props) {
                 </Typography>
             ) : (
                 <Typography
-                className='text-gray-400 font-semibold font-xl'
+                    className='text-gray-400 font-semibold font-xl'
                     sx={{ flex: '1 1 100%' }}
                     variant="h6"
                     id="tableTitle"
@@ -216,7 +199,7 @@ EnhancedTableToolbar.propTypes = {
     numSelected: PropTypes.number.isRequired,
 };
 
-export default function UserTable() {
+export default function UserTable({ rows }) {
     const [order, setOrder] = React.useState('asc');
     const [orderBy, setOrderBy] = React.useState('firstname');
     const [selected, setSelected] = React.useState([]);
@@ -283,8 +266,13 @@ export default function UserTable() {
                 page * rowsPerPage,
                 page * rowsPerPage + rowsPerPage,
             ),
-        [order, orderBy, page, rowsPerPage],
+        [order, orderBy, page, rowsPerPage, rows],
     );
+
+    useEffect(() => {
+        setSelected([]);
+        setPage(0);
+    }, [rows]);
 
     return (
         <Box sx={{ width: '100%' }}>

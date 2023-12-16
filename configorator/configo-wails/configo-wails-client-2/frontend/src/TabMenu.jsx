@@ -42,23 +42,39 @@ const TabMenu = () => {
     const stateFields = { history: historyField };
 
     const handleConfigChange = (value, key) => {
-        const selectedValue = value;
+        let selectedValue;
 
-        let parsedData;
-        try {
-            parsedData = JSON.parse(jsonData);
-        } catch (error) {
-            console.error('Error parsing JSON:', error);
-            return;
+        if (!isNaN(value)) {
+            selectedValue = parseFloat(value);
+        } else {
+            selectedValue = value;
         }
-        parsedData.config[key] = selectedValue;
-        console.log("DEBUG: ", parsedData.config[key])
-        console.log("DEBUG: selectedValue", selectedValue)
-        const updatedJsonString = JSON.stringify(parsedData, null, 2);
-        setJsonData(updatedJsonString);
 
-        UpdateJsonFile(updatedJsonString)
+        let parsedData = { ...configJSON };
+
+        setNestedValue(parsedData, key, selectedValue)
+        // parsedData.config[key] = selectedValue;
+
+        console.log("DEBUG: ", parsedData.config[key]);
+        console.log("DEBUG: selectedValue", selectedValue);
+
+        const updatedJsonString = JSON.stringify(parsedData, null, 2);
+
+        setJsonData(updatedJsonString);
+        UpdateJsonFile(updatedJsonString);
     };
+
+    function setNestedValue(obj, key, value) {
+        const keys = key.split('.');
+        keys.reduce((acc, currentKey, index) => {
+            if (index === keys.length - 1) {
+                acc[currentKey] = value;
+            } else {
+                acc[currentKey] = acc[currentKey] || {};
+            }
+            return acc[currentKey];
+        }, obj);
+    }
 
     const handleTabClick = (tab) => {
         setActiveTab(tab);
@@ -80,8 +96,8 @@ const TabMenu = () => {
     return (
         <div className=''>
             <div className='flex grid-cols-12 items-center'>
-                <button onClick={() => handleConfigTabClick('config-tab1')} className={`${activeConfigTab === "config-tab1" ? "bg-kxBlue2" : ""} flex col-span-6 w-full text-center justify-center py-2`}>Config UI</button>
-                <button onClick={() => handleConfigTabClick('config-tab2')} className={`${activeConfigTab === "config-tab2" ? "bg-kxBlue2" : ""} flex col-span-6 w-full text-center justify-center py-2`}>Config JSON</button>
+                <button onClick={() => handleConfigTabClick('config-tab1')} className={`${activeConfigTab === "config-tab1" ? "bg-kxBlue2" : ""} flex col-span-6 w-full text-center justify-center py-1.5`}>Config UI</button>
+                <button onClick={() => handleConfigTabClick('config-tab2')} className={`${activeConfigTab === "config-tab2" ? "bg-kxBlue2" : ""} flex col-span-6 w-full text-center justify-center py-1.5`}>Config JSON</button>
             </div>
 
             <div className="config-tab-content">
@@ -113,40 +129,40 @@ const BuildExecuteButton = () => {
 
 const UIConfigTabContent = ({ activeTab, handleTabClick, handleConfigChange }) => (
     <div id='config-ui-container' className=''>
-        <div className="flex bg-ghBlack4 text-sm">
+        <div className="flex bg-ghBlack3 text-sm">
             <button
                 onClick={() => handleTabClick('tab1')}
-                className={` ${activeTab === 'tab1' ? 'bg-kxBlue' : ''} p-3 py-1`}
+                className={` ${activeTab === 'tab1' ? 'border-kxBlue border-b-3 bg-ghBlack4' : 'broder border-ghBlack3 border-b-3'} p-3 py-1`}
             >
                 Profile
             </button>
             <button
                 onClick={() => handleTabClick('tab2')}
-                className={` ${activeTab === 'tab2' ? 'bg-kxBlue' : ''} p-3 py-1`}
+                className={` ${activeTab === 'tab2' ? 'border-kxBlue border-b-3 bg-ghBlack4' : 'broder border-ghBlack3 border-b-3'} p-3 py-1`}
             >
                 Parameters & Mode
             </button>
             <button
                 onClick={() => handleTabClick('tab3')}
-                className={` ${activeTab === 'tab3' ? 'bg-kxBlue' : ''} p-3 py-1`}
+                className={` ${activeTab === 'tab3' ? 'border-kxBlue border-b-3 bg-ghBlack4' : 'broder border-ghBlack3 border-b-3'} p-3 py-1`}
             >
                 Resources
             </button>
             <button
                 onClick={() => handleTabClick('tab4')}
-                className={` ${activeTab === 'tab4' ? 'bg-kxBlue' : ''} p-3 py-1`}
+                className={` ${activeTab === 'tab4' ? 'border-kxBlue border-b-3 bg-ghBlack4' : 'broder border-ghBlack3 border-b-3'} p-3 py-1`}
             >
                 Storage
             </button>
             <button
                 onClick={() => handleTabClick('tab5')}
-                className={` ${activeTab === 'tab5' ? 'bg-kxBlue' : ''} p-3 py-1`}
+                className={` ${activeTab === 'tab5' ? 'border-kxBlue border-b-3 bg-ghBlack4' : 'broder border-ghBlack3 border-b-3'} p-3 py-1`}
             >
                 User Provisioning
             </button>
             <button
                 onClick={() => handleTabClick('tab6')}
-                className={` ${activeTab === 'tab6' ? 'bg-kxBlue' : ''} p-3 py-1`}
+                className={` ${activeTab === 'tab6' ? 'border-kxBlue border-b-3 bg-ghBlack4' : 'broder border-ghBlack3 border-b-3'} p-3 py-1`}
             >
                 Custom Variables
             </button>
@@ -295,26 +311,30 @@ const TabContent2 = ({ handleConfigChange }) => {
                     />
 
                     <h2 className='text-xl font-semibold text-gray-400'>Additional Toggles</h2>
-                    <div className='px-1 text-sm'>
+                    <div className='px-5 text-sm'>
                         <FormControlLabel
+                            className='my-1'
                             control={<Switch size="small"
                                 defaultChecked={configJSON.config["standaloneMode"]}
                                 onChange={(e) => { handleConfigChange(e.target.checked, "standaloneMode") }}
                             />}
-                            label={<span style={{ fontSize: '16px' }}>Enable Standalone Mode</span>}
+                            label={<span style={{ fontSize: '16px', marginLeft: "20px" }}>Enable Standalone Mode</span>}
                         />
                         <FormControlLabel
+                            className='my-1'
                             control={<Switch size="small"
                                 defaultChecked={configJSON.config["allowWorkloadsOnMaster"]}
-                                onChange={(e) => { handleConfigChange(e.target.checked, "allowWorkloadsOnMaster") }} />}
-                            label={<span style={{ fontSize: '16px' }}>Allow Workloads on Kubernetes Master</span>}
+                                onChange={(e) => { handleConfigChange(e.target.checked, "allowWorkloadsOnMaster") }}
+                            />}
+                            label={<span style={{ fontSize: '16px', marginLeft: "20px" }}>Allow Workloads on Kubernetes Master</span>}
                         />
                         <FormControlLabel
+                            className='my-1'
                             control={<Switch size="small"
                                 defaultChecked={configJSON.config["disableLinuxDesktop"]}
                                 onChange={(e) => { handleConfigChange(e.target.checked, "disableLinuxDesktop") }}
                             />}
-                            label={<span style={{ fontSize: '16px' }}>Disable Linux Desktop</span>}
+                            label={<span style={{ fontSize: '16px', marginLeft: "20px" }}>Disable Linux Desktop</span>}
                         />
                     </div>
                 </div>
@@ -325,7 +345,7 @@ const TabContent2 = ({ handleConfigChange }) => {
 const TabContent3 = ({ handleConfigChange }) => (
     <div className='text-left'>
         <div className='px-5 py-3'>
-            <h2 className='text-3xl font-semibold'>Resource Configuration</h2>
+            <h2 className='text-3xl font-semibold'>VM Properties</h2>
             <p className='text-sm text-gray-400 text-justify'>Define how many physical resources you wish to allocate to the KX.AS.CODE virtual machines.</p>
         </div>
         <div className='px-5 py-3 bg-ghBlack grid grid-cols-12'>
@@ -338,8 +358,9 @@ const TabContent3 = ({ handleConfigChange }) => (
                     fullWidth
                     size="small"
                     margin="normal"
-                    defaultValue={1}
                     InputProps={{ inputProps: { min: 1, max: 10 } }}
+                    defaultValue={configJSON.config.vm_properties["main_admin_node_cpu_cores"]}
+                    onChange={(e) => { handleConfigChange(e.target.value, "config.vm_properties.main_admin_node_cpu_cores") }}
                 >
                 </TextField>
 
@@ -349,8 +370,9 @@ const TabContent3 = ({ handleConfigChange }) => (
                     fullWidth
                     size="small"
                     margin="normal"
-                    defaultValue={8}
                     InputProps={{ inputProps: { min: 1, max: 30 } }}
+                    defaultValue={configJSON.config.vm_properties["main_admin_node_cpu_cores"]}
+                    onChange={(e) => { handleConfigChange(e.target.value, "config.vm_properties.main_admin_node_cpu_cores") }}
                 >
                 </TextField>
 
@@ -360,8 +382,12 @@ const TabContent3 = ({ handleConfigChange }) => (
                     fullWidth
                     size="small"
                     margin="normal"
-                    defaultValue={19}
-                    InputProps={{ inputProps: { min: 1, max: 50 } }}
+                    defaultValue={configJSON.config.vm_properties["main_admin_node_memory"]}
+                    onChange={(e) => { handleConfigChange(e.target.value, "config.vm_properties.main_admin_node_memory") }}
+                    InputProps={{
+                        startAdornment: <InputAdornment position="start">MB</InputAdornment>,
+                        inputProps: { min: 0, max: 30000 }
+                    }}
                 >
                 </TextField>
 
@@ -372,8 +398,9 @@ const TabContent3 = ({ handleConfigChange }) => (
                     fullWidth
                     size="small"
                     margin="normal"
-                    defaultValue={0}
                     InputProps={{ inputProps: { min: 0, max: 10 } }}
+                    defaultValue={configJSON.config.vm_properties["worker_node_count"]}
+                    onChange={(e) => { handleConfigChange(e.target.value, "config.vm_properties.worker_node_count") }}
                 >
                 </TextField>
 
@@ -383,8 +410,9 @@ const TabContent3 = ({ handleConfigChange }) => (
                     fullWidth
                     size="small"
                     margin="normal"
-                    defaultValue={6}
                     InputProps={{ inputProps: { min: 1, max: 30 } }}
+                    defaultValue={configJSON.config.vm_properties["worker_node_cpu_cores"]}
+                    onChange={(e) => { handleConfigChange(e.target.value, "config.vm_properties.worker_node_cpu_cores") }}
                 >
                 </TextField>
 
@@ -394,10 +422,11 @@ const TabContent3 = ({ handleConfigChange }) => (
                     fullWidth
                     size="small"
                     margin="normal"
-                    defaultValue={8}
+                    defaultValue={configJSON.config.vm_properties["worker_node_memory"]}
+                    onChange={(e) => { handleConfigChange(e.target.value, "config.vm_properties.worker_node_memory") }}
                     InputProps={{
-                        startAdornment: <InputAdornment position="start">GB</InputAdornment>,
-                        inputProps: { min: 0, max: 1000 }
+                        startAdornment: <InputAdornment position="start">MB</InputAdornment>,
+                        inputProps: { min: 0, max: 30000 }
                     }}
                 >
                 </TextField>
@@ -416,7 +445,7 @@ const TabContent4 = ({ handleConfigChange }) => (
         </div>
         <div className='px-5 py-3 bg-ghBlack grid grid-cols-12'>
             <div className='col-span-6'>
-                <h2 className='text-xl font-semibold text-gray-400'>Network Storage</h2>
+                <h2 className='text-xl font-semibold text-gray-400'>Local Volumes</h2>
                 {/* <p className='text-sm text-gray-400 text-justify'>Provision network storage with the set amount. The storage volume will be provisioned as a dedicated virtual drive in the virtual machine.</p> */}
                 <TextField
                     InputProps={{
@@ -428,13 +457,13 @@ const TabContent4 = ({ handleConfigChange }) => (
                     fullWidth
                     size="small"
                     margin="normal"
-                    defaultValue={60}
+                    defaultValue={0} // TODO: find correct parameter in json config
+                    onChange={(e) => { handleConfigChange(e.target.value, "config.local_volumes.one_gb") }}
                 >
                 </TextField>
 
                 <h2 className='text-xl font-semibold text-gray-400'>Local Storage Volumes</h2>
                 {/* <p className='text-sm text-gray-400 text-justify'>Define the number of volumes of a given size will be "pre-provisioned" for consumption by Kubernetes workloads.</p> */}
-
                 <TextField
                     InputProps={{
                         inputProps: { min: 0, max: 50 }
@@ -444,19 +473,8 @@ const TabContent4 = ({ handleConfigChange }) => (
                     fullWidth
                     size="small"
                     margin="normal"
-                    defaultValue={10}
-                >
-                </TextField>
-                <TextField
-                    InputProps={{
-                        inputProps: { min: 0, max: 50 }
-                    }}
-                    label="1 GB"
-                    type='number'
-                    fullWidth
-                    size="small"
-                    margin="normal"
-                    defaultValue={10}
+                    defaultValue={configJSON.config.local_volumes["one_gb"]}
+                    onChange={(e) => { handleConfigChange(e.target.value, "config.local_volumes.one_gb") }}
                 />
                 <TextField
                     InputProps={{
@@ -467,7 +485,8 @@ const TabContent4 = ({ handleConfigChange }) => (
                     fullWidth
                     size="small"
                     margin="normal"
-                    defaultValue={10}
+                    defaultValue={configJSON.config.local_volumes["five_gb"]}
+                    onChange={(e) => { handleConfigChange(e.target.value, "config.local_volumes.five_gb") }}
                 />
                 <TextField
                     InputProps={{
@@ -478,7 +497,8 @@ const TabContent4 = ({ handleConfigChange }) => (
                     fullWidth
                     size="small"
                     margin="normal"
-                    defaultValue={0}
+                    defaultValue={configJSON.config.local_volumes["ten_gb"]}
+                    onChange={(e) => { handleConfigChange(e.target.value, "config.local_volumes.ten_gb") }}
                 />
                 <TextField
                     InputProps={{
@@ -489,7 +509,8 @@ const TabContent4 = ({ handleConfigChange }) => (
                     fullWidth
                     size="small"
                     margin="normal"
-                    defaultValue={0}
+                    defaultValue={configJSON.config.local_volumes["thirty_gb"]}
+                    onChange={(e) => { handleConfigChange(e.target.value, "config.local_volumes.thirty_gb") }}
                 />
                 <TextField
                     InputProps={{
@@ -500,7 +521,8 @@ const TabContent4 = ({ handleConfigChange }) => (
                     fullWidth
                     size="small"
                     margin="normal"
-                    defaultValue={0}
+                    defaultValue={configJSON.config.local_volumes["fifty_gb"]}
+                    onChange={(e) => { handleConfigChange(e.target.value, "config.local_volumes.fifty_gb") }}
                 />
 
             </div>
@@ -508,127 +530,300 @@ const TabContent4 = ({ handleConfigChange }) => (
     </div>
 );
 
-const TabContent5 = ({ handleConfigChange }) => (
-    <div className='text-left'>
-        <div className='px-5 py-3'>
-            <h2 className='text-3xl font-semibold'>User Provisioning</h2>
-            <p className='text-sm text-gray-400 text-justify'>Define additional users to provision in the KX.AS.CODE environment. This is optional. If you do not specify additional users, then only the base user will be available for logging into the desktop and all provisioned tools.</p>
-        </div>
-        <div className='px-5 py-3 bg-ghBlack gap-2'>
-            <div className='flex gap-2'>
-                <TextField
-                    required
-                    InputProps={{
-                    }}
-                    label="First Name"
-                    type='text'
-                    fullWidth
-                    size="small"
-                    margin="normal"
-                />
-                <TextField
-                    InputProps={{
-                    }}
-                    label="Surname"
-                    type='text'
-                    fullWidth
-                    size="small"
-                    margin="normal"
-                />
-                <TextField
-                    InputProps={{
-                    }}
-                    label="E-Mail"
-                    type='email'
-                    fullWidth
-                    size="small"
-                    margin="normal"
-                />
+const TabContent5 = ({ handleConfigChange }) => {
+
+    const [rows, setRows] = React.useState([
+
+    ]);
+    const [firstName, setFirstName] = React.useState("");
+    const [surname, setSurname] = React.useState("");
+    const [email, setEmail] = React.useState("");
+    const [layout, setLayout] = React.useState("");
+    const [role, setRole] = React.useState("");
+
+    const [firstNameError, setFirstNameError] = React.useState("");
+    const [surnameError, setSurnameError] = React.useState("");
+    const [emailError, setEmailError] = React.useState("");
+    const [layoutError, setLayoutError] = React.useState("");
+    const [roleError, setRoleError] = React.useState("");
+
+    function createData(id, firstName, surname, email, layout, role) {
+        return {
+            id,
+            firstName,
+            surname,
+            email,
+            layout,
+            role
+        };
+    }
+
+    const handleAddUserClick = () => {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        if (!firstName.trim()) {
+            setFirstNameError('First name is required');
+        } else {
+            setFirstNameError('');
+        }
+
+        if (!surname.trim()) {
+            setSurnameError('Surname is required');
+        } else {
+            setSurnameError('');
+        }
+
+        if (!email.trim()) {
+            setEmailError('Email is required');
+        } else if (!emailRegex.test(email.trim())) {
+            setEmailError('Invalid email format');
+        } else {
+            setEmailError('');
+        }
+
+        if (!layout.trim()) {
+            setLayoutError('Layout is required');
+        } else {
+            setLayoutError('');
+        }
+
+        if (!role.trim()) {
+            setRoleError('Role is required');
+        } else {
+            setRoleError('');
+        }
+
+        if (!firstName.trim() || !surname.trim() || !email.trim() || !layout.trim() || !role.trim()) {
+            return;
+        }
+
+        handleAddRow(firstName, surname, email, layout, role);
+        setFirstName("")
+        setSurname("");
+        setEmail("");
+        setLayout("");
+        setRole("");
+    }
+
+    const handleAddRow = (firstName, surname, email, layout, role) => {
+        const newId = rows.length + 1;
+        const newRow = createData(newId, firstName, surname, email, layout, role);
+        setRows([...rows, newRow]);
+    };
+
+    useEffect(() => {
+
+    }, [firstName, surname, email, layout, role]);
+
+
+    return (
+        <div className='text-left'>
+            <div className='px-5 py-3'>
+                <h2 className='text-3xl font-semibold'>User Provisioning</h2>
+                <p className='text-sm text-gray-400 text-justify'>Define additional users to provision in the KX.AS.CODE environment. This is optional. If you do not specify additional users, then only the base user will be available for logging into the desktop and all provisioned tools.</p>
             </div>
+            <div className='px-5 py-3 bg-ghBlack gap-2'>
+                <form>
+                    <div className='flex gap-2'>
+                        <TextField
+                            required
+                            InputProps={{
+                            }}
+                            label="First Name"
+                            type='text'
+                            fullWidth
+                            size="small"
+                            margin="normal"
+                            value={firstName}
+                            onChange={(e) => { setFirstName(e.target.value); setFirstNameError(''); }}
+                            error={Boolean(firstNameError)}
+                            helperText={firstNameError}
+                        />
+                        <TextField
+                            required
+                            InputProps={{
+                            }}
+                            label="Surname"
+                            type='text'
+                            fullWidth
+                            size="small"
+                            margin="normal"
+                            value={surname}
+                            onChange={(e) => { setSurname(e.target.value); setSurnameError(''); }}
+                            error={Boolean(surnameError)}
+                            helperText={surnameError}
+                        />
+                        <TextField
+                            required
+                            InputProps={{
+                            }}
+                            label="E-Mail"
+                            type='email'
+                            fullWidth
+                            size="small"
+                            margin="normal"
+                            value={email}
+                            onChange={(e) => { setEmail(e.target.value); setEmailError(''); }}
+                            error={Boolean(emailError)}
+                            helperText={emailError}
+                        />
+                    </div>
 
-            <div className='flex gap-2'>
-                <TextField
-                    label="Role"
-                    select
-                    fullWidth
-                    variant="outlined"
-                    size="small"
-                    margin="normal"
-                    defaultValue="admin"
-                >
-                    <MenuItem value="admin">Admin</MenuItem>
-                    <MenuItem value="normal">Normal</MenuItem>
+                    <div className='flex gap-2'>
+                        <TextField
+                            required
+                            label="Keyboard Layout"
+                            select
+                            fullWidth
+                            variant="outlined"
+                            size="small"
+                            margin="normal"
+                            value={layout}
+                            onChange={(e) => { setLayout(e.target.value); setLayoutError(''); }}
+                            error={Boolean(layoutError)}
+                            helperText={layoutError}
+                        >
+                            <MenuItem value="german">German</MenuItem>
+                            <MenuItem value="en-us">English (US)</MenuItem>
+                            <MenuItem value="en-gb">English (GB)</MenuItem>
+                            <MenuItem value="french">French</MenuItem>
+                            <MenuItem value="spanish">Spanish</MenuItem>
 
-                </TextField>
+                        </TextField>
 
-                <TextField
-                    label="Keyboard Layout"
-                    select
-                    fullWidth
-                    variant="outlined"
-                    size="small"
-                    margin="normal"
-                    defaultValue="german"
-                >
-                    <MenuItem value="german">German</MenuItem>
-                    <MenuItem value="en-us">English (US)</MenuItem>
-                    <MenuItem value="en-gb">English (GB)</MenuItem>
-                    <MenuItem value="french">French</MenuItem>
-                    <MenuItem value="spanish">Spanish</MenuItem>
+                        <TextField
+                            required
+                            label="Role"
+                            select
+                            fullWidth
+                            variant="outlined"
+                            size="small"
+                            margin="normal"
+                            value={role}
+                            onChange={(e) => { setRole(e.target.value); setRoleError(''); }}
+                            error={Boolean(roleError)}
+                            helperText={roleError}
+                        >
+                            <MenuItem value="admin">Admin</MenuItem>
+                            <MenuItem value="normal">Normal</MenuItem>
 
-                </TextField>
-                <button type="submit items-center"
-                    className='border border-white mt-4 h-10 px-3'>
-                    <PersonAddAltIcon />
-                </button>
+                        </TextField>
+
+                        <button type="submit"
+                            className='border border-white mt-4 h-10 px-3 items-center flex justify-center'
+                            onClick={(e) => { e.preventDefault(); handleAddUserClick() }}>
+                            <PersonAddAltIcon />
+                        </button>
+
+                    </div>
+                </form>
 
             </div>
+            <UserTable rows={rows} />
+        </div>)
+};
 
-        </div>
-        <UserTable />
-    </div>
-);
+const TabContent6 = ({ handleConfigChange }) => {
 
-const TabContent6 = ({ handleConfigChange }) => (
-    <div className='text-left'>
-        <div className='px-5 py-3'>
-            <h2 className='text-3xl font-semibold'>Custom Global Variables</h2>
-            <p className='text-sm text-gray-400 text-justify'>Set key/value pairs that can be used by solutions when they are being installed.</p>
-        </div>
-        <div className='px-5 py-3 bg-ghBlack gap-2 flex items-center'>
+    const [rows, setRows] = React.useState([]);
 
-            <TextField
-                required
-                InputProps={{
-                }}
-                label="Key"
-                type='text'
-                fullWidth
-                size="small"
-                margin="normal"
-            />
+    const [key, setKey] = React.useState("");
+    const [value, setValue] = React.useState("");
 
-            <TextField
-                required
-                InputProps={{
-                }}
-                label="Value"
-                type='text'
-                fullWidth
-                size="small"
-                margin="normal"
-            />
+    const [keyError, setKeyError] = useState('');
+    const [valueError, setValueError] = useState('');
 
-            <button className='border border-white mt-2 h-10 px-3'>
-                {/* <AddCircleOutlineIcon fontSize='medium' /> */}
-                <AddIcon />
-            </button>
+    function createData(id, key, value) {
+        return {
+            id,
+            key,
+            value
+        };
+    }
 
-        </div>
-        <div className='flex'>
-            <GlobalVariablesTable />
-        </div>
-    </div>
-)
+    const handleAddKeyValuePairClick = () => {
+        // Check if either key or value is empty
+        if (!key.trim()) {
+            console.log("key: ", key);
+            setKeyError('Key is required');
+        } else {
+            setKeyError('');
+        }
+
+        if (!value.trim()) {
+            console.log("value: ", value);
+            setValueError('Value is required');
+        } else {
+            setValueError('');
+        }
+
+        // If either key or value is empty, return without adding the key-value pair
+        if (!key.trim() || !value.trim()) {
+            return;
+        }
+
+        // Add new key-value pair
+        handleAddRow(key, value);
+        setKey("");
+        setValue("");
+
+    };
+
+    const handleAddRow = (firstName, surname, password, email, layout, role) => {
+        const newId = rows.length + 1;
+        const newRow = createData(newId, firstName, surname, password, email, layout, role);
+        setRows([...rows, newRow]);
+    };
+
+    return (
+        <div className='text-left'>
+            <div className='px-5 py-3'>
+                <h2 className='text-3xl font-semibold'>Custom Global Variables</h2>
+                <p className='text-sm text-gray-400 text-justify'>Set key/value pairs that can be used by solutions when they are being installed.</p>
+            </div>
+            <form>
+                <div className='px-5 py-3 bg-ghBlack gap-2 flex items-center'>
+                    <TextField
+                        required
+                        InputProps={{
+                        }}
+                        label="Key"
+                        type='text'
+                        fullWidth
+                        size="small"
+                        margin="normal"
+                        value={key}
+                        onChange={(e) => { setKey(e.target.value); setKeyError(''); }}
+                        error={Boolean(keyError)}
+                        helperText={keyError}
+                    />
+                    <TextField
+                        required
+                        InputProps={{
+                        }}
+                        label="Value"
+                        type='text'
+                        fullWidth
+                        size="small"
+                        margin="normal"
+                        value={value}
+                        onChange={(e) => { setValue(e.target.value); setValueError(''); }}
+                        error={Boolean(valueError)}
+                        helperText={valueError}
+                    />
+                    <button className='border border-white mt-2 h-10 px-3'
+                        onClick={(e) => { e.preventDefault(); handleAddKeyValuePairClick(); }}
+                        type="submit">
+                        {/* <AddCircleOutlineIcon fontSize='medium' /> */}
+                        <AddIcon />
+                    </button>
+                </div>
+            </form>
+
+            <div className='flex'>
+                <GlobalVariablesTable rows={rows} />
+            </div>
+        </div>)
+}
 
 export default TabMenu;

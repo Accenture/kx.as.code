@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { alpha } from '@mui/material/styles';
 import Box from '@mui/material/Box';
@@ -16,26 +16,8 @@ import Paper from '@mui/material/Paper';
 import Checkbox from '@mui/material/Checkbox';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Switch from '@mui/material/Switch';
 import DeleteIcon from '@mui/icons-material/Delete';
-import FilterListIcon from '@mui/icons-material/FilterList';
 import { visuallyHidden } from '@mui/utils';
-
-function createData(id, key, value) {
-    return {
-        id,
-        key,
-        value
-    };
-}
-
-const rows = [
-    createData(1, 'key1', "value1"),
-    createData(2, 'key2', "value2"),
-    createData(3, 'key3', "value3"),
-    createData(4, 'key4', "value4"),
-];
 
 function descendingComparator(a, b, orderBy) {
     if (b[orderBy] < a[orderBy]) {
@@ -81,7 +63,7 @@ const headCells = [
         numeric: false,
         disablePadding: false,
         label: 'Value',
-    }
+    },
 ];
 
 function EnhancedTableHead(props) {
@@ -165,13 +147,13 @@ function EnhancedTableToolbar(props) {
                 </Typography>
             ) : (
                 <Typography
-                className='text-gray-400 font-semibold font-xl'
+                    className='text-gray-400 font-semibold font-xl'
                     sx={{ flex: '1 1 100%' }}
                     variant="h6"
                     id="tableTitle"
                     component="div"
                 >
-                    Global Custom Variables
+                    Global Variables
                 </Typography>
             )}
 
@@ -196,9 +178,9 @@ EnhancedTableToolbar.propTypes = {
     numSelected: PropTypes.number.isRequired,
 };
 
-export default function UserTable() {
+export default function GlobalVariablesTable({ rows }) {
     const [order, setOrder] = React.useState('asc');
-    const [orderBy, setOrderBy] = React.useState('firstname');
+    const [orderBy, setOrderBy] = React.useState('key');
     const [selected, setSelected] = React.useState([]);
     const [page, setPage] = React.useState(0);
     const [dense, setDense] = React.useState(true);
@@ -263,8 +245,13 @@ export default function UserTable() {
                 page * rowsPerPage,
                 page * rowsPerPage + rowsPerPage,
             ),
-        [order, orderBy, page, rowsPerPage],
+        [order, orderBy, page, rowsPerPage, rows],
     );
+
+    useEffect(() => {
+        setSelected([]);
+        setPage(0);
+    }, [rows]);
 
     return (
         <Box sx={{ width: '100%' }}>
