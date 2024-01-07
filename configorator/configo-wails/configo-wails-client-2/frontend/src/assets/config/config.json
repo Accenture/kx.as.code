@@ -1,17 +1,12 @@
 {
     "config": {
-        "allowWorkloadsOnMaster": true,
+        "allowWorkloadsOnMaster": "true",
         "baseDomain": "kx-as-code.local",
         "baseIpType": "static",
         "basePassword": "L3arnandshare",
         "baseUser": "kx.hero",
         "certificationMode": false,
-        "defaultKeyboardLanguage": [
-            "de",
-            "en",
-            "fr",
-            "ch"
-        ],
+        "defaultKeyboardLanguage": "de",
         "disableLinuxDesktop": false,
         "disableSessionTimeout": true,
         "dnsResolution": {
@@ -27,7 +22,7 @@
         },
         "environmentPrefix": "demo1",
         "glusterFsDiskSize": 200,
-        "kubeOrchestrator": "k3s",
+        "kubeOrchestrator": "k8s",
         "local_volumes": {
             "fifty_gb": 0,
             "five_gb": 10,
@@ -47,7 +42,7 @@
         },
         "selectedTemplates": "",
         "sslProvider": "self-signed",
-        "standaloneMode": true,
+        "standaloneMode": "true",
         "startupMode": "minimal",
         "staticNetworkSetup": {
             "baseFixedIpAddresses": {
@@ -63,14 +58,11 @@
             "dns2": "8.8.8.8",
             "gateway": "10.100.76.2"
         },
-        "updateSourceOnStart": true,
+        "updateSourceOnStart": "true",
         "virtualizationType": "local",
         "vm_properties": {
-            "3d_acceleration": [
-                "off",
-                "on"
-            ],
-            "main_admin_node_cpu_cores": 4,
+            "3d_acceleration": "off",
+            "main_admin_node_cpu_cores": 3,
             "main_admin_node_memory": 8192,
             "main_node_count": 1,
             "main_replica_node_cpu_cores": 2,
@@ -80,7 +72,6 @@
             "worker_node_memory": 8192
         }
     },
-    "disableLinuxDesktop": null,
     "notification_endpoints": {
         "email_address": "",
         "ms_teams_webhook": "",

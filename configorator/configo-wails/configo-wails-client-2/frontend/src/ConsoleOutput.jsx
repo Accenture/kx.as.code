@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 
 export function ConsoleOutput() {
-
     const navigate = useNavigate();
 
     const handleBackClick = () => {

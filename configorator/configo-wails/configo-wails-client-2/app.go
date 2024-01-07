@@ -6,11 +6,14 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"sync"
 )
 
 // App struct
 type App struct {
-	ctx context.Context
+	ctx      context.Context
+	output   string
+	outputMu sync.Mutex
 }
 
 // NewApp creates a new App application struct
@@ -57,3 +60,24 @@ func (a *App) UpdateJsonFile(data string) error {
 
 	return nil
 }
+
+func (a *App) ExeceuteBuildCommand() error {
+	// OS Checkup
+	// VM Checkup
+
+	return nil
+}
+
+func (a *App) ExeceuteDeployCommand() error {
+	// OS Checkup
+	// VM Checkup
+
+	return nil
+}
+
+// func isCommandAvailable(name string) bool {
+// 	cmd := exec.Command("/bin/sh", "-c", "command -v "+name)
+// 	if err := cmd.Run(); err != nil {
+// 			return false
+// 	}
+// }

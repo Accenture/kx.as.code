@@ -16,12 +16,12 @@ export function Header() {
     };
 
     return (
-        <div className="bg-ghBlack3 p-5 flex items-center justify-between">
+        <div className="bg-ghBlack2 p-5 flex items-center justify-between">
             <div className="flex items-center">
                 <img src={logo} height={50} width={60} />
                 <div className="text-left">
                     <div className="text-sm">KX.AS.Code</div>
-                    <div className="font-semibold text-lg">Configorator <span className="text-sm font-normal ml-1 bg-ghBlack2 p-1 px-2 rounded">v.0.8.16</span></div>
+                    <div className="font-semibold text-lg">Configurator <span className="text-sm font-normal ml-1 bg-ghBlack4 p-1 px-2 rounded">v.0.8.16</span></div>
                 </div>
             </div>
 

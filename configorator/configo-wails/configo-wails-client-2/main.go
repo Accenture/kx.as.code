@@ -29,9 +29,7 @@ func main() {
 			app,
 		},
 		MinWidth:  900,
-		MaxWidth:  900,
 		MinHeight: 900,
-		MaxHeight: 900,
 	})
 
 	if err != nil {

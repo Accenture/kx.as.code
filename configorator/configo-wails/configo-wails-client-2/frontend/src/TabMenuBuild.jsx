@@ -35,7 +35,7 @@ import StopCircleIcon from '@mui/icons-material/StopCircle';
 import DoneIcon from '@mui/icons-material/Done';
 
 
-const TabMenu = () => {
+const TabMenuBuild = () => {
     const [updatedJsonData, setUpdatedJsonData] = useState('');
     const [activeProcessTab, setActiveProcessTab] = useState('build');
     const serializedState = localStorage.getItem('myEditorState');
@@ -49,7 +49,7 @@ const TabMenu = () => {
     };
 
     return (
-        <div className=''>
+        <div className='mt-10'>
             {/* Build & Deploy Selection */}
             <div id="build-deploy-section" className='grid grid-cols-12 items-center px-5 bg-ghBlack3 py-1.5 justify-between'>
                 <div className='flex col-span-4 items-center'>
@@ -113,9 +113,10 @@ const TabMenu = () => {
                 </div> */}
 
             </div>
-            
-            {activeProcessTab === "build" && <BuildTabContent />}
-            {activeProcessTab === "deploy" && <DeployTabContent />}
+
+
+            <BuildTabContent />
+
 
             {/* <BuildExecuteButton /> */}
         </div>
@@ -1064,4 +1065,4 @@ const TabContent6 = ({ handleConfigChange }) => {
         </div>)
 }
 
-export default TabMenu;
+export default TabMenuBuild;
