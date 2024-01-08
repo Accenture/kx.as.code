@@ -93,6 +93,8 @@ export function App() {
 
     const handleDarkModeToggle = () => {
         setIsDarkMode(!isDarkMode);
+        const htmlElement = document.querySelector('html');
+        htmlElement.classList.toggle('dark');
     };
 
     const theme = createTheme({
@@ -110,13 +112,14 @@ export function App() {
 
     return (
         <ThemeProvider theme={theme}>
-            <div className="bg-ghBlack2">
+
+            <Box sx={{ display: "flex" }}>
                 <Drawer variant="permanent" open={open}>
-                    <DrawerHeader className="">
+                    {/* <DrawerHeader className="">
                         <IconButton onClick={handleDrawerClose}>
                             {theme.direction === "rtl" ? <ChevronRightIcon /> : <ChevronLeftIcon />}
                         </IconButton>
-                    </DrawerHeader>
+                    </DrawerHeader> */}
                     <List className="" style={{ paddingTop: "0" }}>
                         <ListItem key={"Build"} disablePadding sx={{ display: "block" }}>
                             <a href="/build">
@@ -174,16 +177,18 @@ export function App() {
                         </ListItem>
                     </List>
                 </Drawer>
-                <HeaderNew drawerWidth={drawerWidth} handleDrawerOpen={handleDrawerOpen} open={open} handleDarkModeToggle={handleDarkModeToggle}/>
-                <Router>
-                    <Routes>
-                        <Route exact path="/" element={<TabMenu />} />
-                        <Route path="/build" element={<TabMenuBuild />} />
-                        <Route path="/deploy" element={<TabMenuDeploy />} />
-                        <Route path="/console-output" element={<ConsoleOutput />} />
-                    </Routes>
-                </Router>
-            </div>
+                <Box component="main" sx={{ flexGrow: 1, p: 0 }}>
+                    <HeaderNew drawerWidth={drawerWidth} handleDrawerOpen={handleDrawerOpen} open={open} handleDarkModeToggle={handleDarkModeToggle} />
+                    <Router>
+                        <Routes>
+                            <Route exact path="/" element={<TabMenu />} />
+                            <Route path="/build" element={<TabMenuBuild />} />
+                            <Route path="/deploy" element={<TabMenuDeploy />} />
+                            <Route path="/console-output" element={<ConsoleOutput />} />
+                        </Routes>
+                    </Router>
+                </Box>
+            </Box>
         </ThemeProvider>
     );
 }

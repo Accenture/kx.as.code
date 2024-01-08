@@ -49,68 +49,18 @@ const TabMenuBuild = () => {
     };
 
     return (
-        <div className='mt-10'>
+        <div className='mt-24'>
             {/* Build & Deploy Selection */}
-            <div id="build-deploy-section" className='grid grid-cols-12 items-center px-5 bg-ghBlack3 py-1.5 justify-between'>
-                <div className='flex col-span-4 items-center'>
-                    <div className='w-44 items-center'>
-                        <TextField
-                            sx={{
-                                padding: "3px",
-                            }}
-                            InputProps={{
-                                disableUnderline: true,
-                            }}
-                            className='bg-ghBlack4 items-center'
-                            select
-                            fullWidth
-                            variant="standard"
-                            size="small"
-                            value={activeProcessTab}
-                            onChange={(e) => { handleProcessTabClick(e.target.value) }}
-                        >
-                            <MenuItem value="build" className="flex items-center">
-                                <PrecisionManufacturingIcon className="text-sm" />
-                                <span className='ml-1 text-sm'>Build</span>
-                            </MenuItem>
-                            <MenuItem value="deploy" className="flex items-center">
-                                <RocketLaunchIcon className="text-sm" />
-                                <span className='ml-1 text-sm items-center'>Deployment</span>
-                            </MenuItem>
-                        </TextField>
-                    </div>
+            <div id="build-deploy-section" className='items-center px-5 bg-ghBlack3 py-1.5'>
                     {/* Action Settings / Button */}
-                    <div className='ml-2 flex'>
+                    <div className='mx-5 flex justify-end'>
                         {isBuildStarted ? <IconButton>
                             <StopCircleIcon />
                         </IconButton> : <IconButton>
                             <PlayCircleIcon />
                         </IconButton>
                         }
-
-                    </div>
-
                 </div>
-                <div className='flex col-span-4'></div>
-
-                {/* Prcess Stages Status Circles*/}
-                {/* <div id="process-stages" className='flex col-span-4 items-center justify-end'>
-                    <div className="rounded-full border border-white bg-ghBlack4 h-8 w-8 text-sm flex items-center justify-center">
-                        <DoneIcon fontSize='inherit' className='' />
-                    </div>
-                    <div className='w-3 h-1 bg-white'></div>
-                    <div className="rounded-full border border-white bg-ghBlack4 h-8 w-8 text-sm flex items-center justify-center">
-                        <DoneIcon fontSize='inherit' className='' />
-                    </div>
-                    <div className='w-3 h-1 bg-white'></div>
-                    <div className="rounded-full border border-white bg-ghBlack4 h-8 w-8 text-sm flex items-center justify-center">
-                        <DoneIcon fontSize='inherit' className='' />
-                    </div>
-                    <div className='w-3 h-1 bg-white'></div>
-                    <div className="rounded-full border border-white bg-ghBlack4 h-8 w-8 text-sm flex items-center justify-center">
-                        <DoneIcon fontSize='inherit' className='' />
-                    </div>
-                </div> */}
 
             </div>
 
