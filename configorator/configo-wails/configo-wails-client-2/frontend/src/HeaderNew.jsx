@@ -12,11 +12,9 @@ import MenuIcon from "@mui/icons-material/Menu";
 
 export function HeaderNew(props) {
 
-    const [darkMode, setDarkMode] = useState(false);
-
     return (
         <MuiAppBar position="fixed" open={props.open} className="" elevation={0}>
-            <Toolbar className="bg-ghBlack2">
+            <Toolbar className="dark:bg-ghBlack2 bg-kxBlue">
                 <IconButton
                     color="inherit"
                     aria-label="open drawer"
@@ -30,12 +28,12 @@ export function HeaderNew(props) {
                 >
                     <MenuIcon className="" />
                 </IconButton>
-                <div className="bg-ghBlack2 p-5 flex items-center justify-between w-full">
+                <div className="dark:bg-ghBlack2 bg-kxBlue p-5 flex items-center justify-between w-full">
                     <div className="flex items-center">
                         <img src={logo} height={50} width={60} />
                         <div className="text-left">
                             <div className="text-sm">KX.AS.Code</div>
-                            <div className="font-semibold text-lg">Configurator <span className="text-sm font-normal ml-1 bg-ghBlack4 p-1 px-2 rounded">v.0.8.16</span></div>
+                            <div className="font-semibold text-lg">Configurator <span className="text-sm font-normal ml-1 dark:bg-ghBlack4 bg-gray-200 p-1 px-2 rounded text-black dark:text-white">v.0.8.16</span></div>
                         </div>
                     </div>
 
@@ -46,7 +44,7 @@ export function HeaderNew(props) {
                             aria-label="Toggle dark/light mode"
                             onClick={props.handleDarkModeToggle}
                         >
-                            {darkMode ? <Brightness3 /> : <WbSunnyIcon />}
+                            {props.isDarkMode ?  <WbSunnyIcon /> :  <Brightness3 />}
                         </IconButton>
                     </div>
                 </div>

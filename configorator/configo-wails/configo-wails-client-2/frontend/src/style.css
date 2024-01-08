@@ -5,12 +5,10 @@
 html {
     background-color: #161b22;
     text-align: center;
-    color: white;
 }
 
 body {
     margin: 0;
-    color: white;
     /* font-family: 'Poppins', sans-serif; */
     font-weight: 200; /* Specify the desired weight */
 }

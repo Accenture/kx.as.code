@@ -51,7 +51,7 @@ const JSONConfigTabContent = (props) => {
             {/* Save file changes */}
             {isfileChanged && props.jsonData !== updatedJson && (
                 <div className='text-white p-3 bg-ghBlack4 flex justify-between items-center text-xs'>
-                    <div className='text-base'>Change on profile-config.json file detected.</div>
+                    <div className='text-base'>{`Change on ${props.fileName} file detected.`}</div>
                     <div className='flex'>
                         {isValidJson(updatedJson) ? (
                             <div className='flex'>

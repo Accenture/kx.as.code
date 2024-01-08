@@ -151,7 +151,7 @@ const DeployTabContent = () => {
 
             <div className="config-tab-content">
                 {activeConfigTab === 'config-tab1' && <UIConfigTabContent activeTab={activeTab} handleTabClick={handleTabClick} handleConfigChange={handleConfigChange} />}
-                {activeConfigTab === 'config-tab2' && <JSONConfigTabContent jsonData={jsonData} />}
+                {activeConfigTab === 'config-tab2' && <JSONConfigTabContent jsonData={jsonData} fileName={"profile-config.json"} />}
             </div>
         </div>
     );

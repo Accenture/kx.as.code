@@ -9,6 +9,7 @@ module.exports = {
     './src/components/**/*.{js,ts,jsx,tsx,mdx}',
     './src/app/**/*.{js,ts,jsx,tsx,mdx}',
   ],
+  darkMode: 'class',
   theme: {
     extend: {
       boxShadow: {
@@ -18,6 +19,9 @@ module.exports = {
         xl: '0 20px 25px -5px rgba(0, 0, 0, 0.08), 0 10px 10px -5px rgba(0, 0, 0, 0.01)',
       },
       colors: {
+        light: {
+          kxBlue: '#5a86ff'
+        },
         gray: colors.slate,
         'light-blue': colors.sky,
         red: colors.rose,
@@ -63,6 +67,7 @@ module.exports = {
         statusNewYellow: '#F9C74F',
         statusNewOrange: '#F8961E',
         statusNewRed: '#F94144',
+
       },
       outline: {
         blue: 'rgb(90, 134, 255)',

@@ -1,9 +1,10 @@
-import { useState } from "preact/hooks";
+import { useState, useEffect } from "preact/hooks";
 import './app.css';
 import { Header } from "./Header";
 import { HeaderNew } from "./HeaderNew";
 import { Form2 } from "./Form2";
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import TabMenu from "./TabMenu";
 import TabMenuBuild from "./TabMenuBuild";
 import TabMenuDeploy from "./TabMenuDeploy";
@@ -78,10 +79,9 @@ export function App() {
 
     const [open, setOpen] = useState(false);
     const [isDarkMode, setIsDarkMode] = useState(true);
-    const pathname = ""
+    const [pathname, setPathname] = useState(window.location.pathname);
     const pathnames = pathname.split("/").filter((x) => x);
     const slug = pathnames[pathnames.length - 1];
-
 
     const handleDrawerOpen = () => {
         setOpen(true);
@@ -92,9 +92,8 @@ export function App() {
     };
 
     const handleDarkModeToggle = () => {
-        setIsDarkMode(!isDarkMode);
-        const htmlElement = document.querySelector('html');
-        htmlElement.classList.toggle('dark');
+        setIsDarkMode((prevIsDarkMode) => !prevIsDarkMode);
+        document.documentElement.classList.toggle('dark', !isDarkMode);
     };
 
     const theme = createTheme({
@@ -110,9 +109,27 @@ export function App() {
         },
     });
 
+    useEffect(() => {
+        const htmlElement = document.querySelector('html');
+        if (isDarkMode) {
+            htmlElement.classList.add('dark');
+        } else {
+            htmlElement.classList.remove('dark');
+        }
+        const handleLocationChange = () => {
+            setPathname(window.location.pathname);
+        };
+
+        window.addEventListener('popstate', handleLocationChange);
+
+        return () => {
+            window.removeEventListener('popstate', handleLocationChange);
+        };
+    }, [isDarkMode]);
+
+
     return (
         <ThemeProvider theme={theme}>
-
             <Box sx={{ display: "flex" }}>
                 <Drawer variant="permanent" open={open}>
                     {/* <DrawerHeader className="">
@@ -177,11 +194,11 @@ export function App() {
                         </ListItem>
                     </List>
                 </Drawer>
-                <Box component="main" sx={{ flexGrow: 1, p: 0 }}>
-                    <HeaderNew drawerWidth={drawerWidth} handleDrawerOpen={handleDrawerOpen} open={open} handleDarkModeToggle={handleDarkModeToggle} />
+                <Box component="main" sx={{ flexGrow: 1, p: 0 }} className="text-black dark:text-white">
+                    <HeaderNew drawerWidth={drawerWidth} handleDrawerOpen={handleDrawerOpen} open={open} handleDarkModeToggle={handleDarkModeToggle} isDarkMode={isDarkMode} />
                     <Router>
                         <Routes>
-                            <Route exact path="/" element={<TabMenu />} />
+                            {/* <Route exact path="/" element={<TabMenu />} /> */}
                             <Route path="/build" element={<TabMenuBuild />} />
                             <Route path="/deploy" element={<TabMenuDeploy />} />
                             <Route path="/console-output" element={<ConsoleOutput />} />
