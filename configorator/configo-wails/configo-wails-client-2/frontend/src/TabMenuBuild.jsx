@@ -9,6 +9,8 @@ import Slider from '@mui/material/Slider';
 import CodeMirror from '@uiw/react-codemirror';
 import { historyField } from '@codemirror/commands';
 import configJSON from './assets/config/build/darwin-linux/kx-main-local-profiles.json';
+import configDarwinLinuxMain from './assets/config/build/darwin-linux/kx-main-local-profiles.json';
+import configDarwinLinuxNode from './assets/config/build/darwin-linux/kx-node-local-profiles.json';
 import { oneDark } from '@codemirror/theme-one-dark';
 import { useNavigate } from 'react-router-dom';
 import PlayCircleIcon from '@mui/icons-material/PlayCircle';
@@ -52,14 +54,14 @@ const TabMenuBuild = () => {
         <div className='mt-24'>
             {/* Build & Deploy Selection */}
             <div id="build-deploy-section" className='items-center px-5 bg-ghBlack3 py-1.5'>
-                    {/* Action Settings / Button */}
-                    <div className='mx-5 flex justify-end'>
-                        {isBuildStarted ? <IconButton>
-                            <StopCircleIcon />
-                        </IconButton> : <IconButton>
-                            <PlayCircleIcon />
-                        </IconButton>
-                        }
+                {/* Action Settings / Button */}
+                <div className='mx-5 flex justify-end'>
+                    {isBuildStarted ? <IconButton>
+                        <StopCircleIcon />
+                    </IconButton> : <IconButton>
+                        <PlayCircleIcon />
+                    </IconButton>
+                    }
                 </div>
 
             </div>
@@ -78,6 +80,9 @@ const BuildTabContent = () => {
     const [activeConfigTab, setActiveConfigTab] = useState('config-tab1');
     const [jsonData, setJsonData] = useState('');
     const [isBuild, setIsBuild] = useState(true);
+    const [os, setOS] = useState("darwin-linux");
+    const [nodeType, setNodeType] = useState("main");
+
 
     const handleTabClick = (tab) => {
         setActiveTab(tab);
@@ -96,7 +101,18 @@ const BuildTabContent = () => {
             selectedValue = value;
         }
 
-        let parsedData = { ...configJSON };
+        let parsedData;
+
+        if (os == "darwin-linux") {
+            if (nodeType == "main") {
+                parsedData = { ...configJSON };
+            }else {
+                console.error("nodeType not defined.")
+            }
+        }else {
+            console.error("os not defined.")
+        }
+
 
         setNestedValue(parsedData, key, selectedValue)
 
@@ -131,8 +147,8 @@ const BuildTabContent = () => {
     }, [activeConfigTab, jsonData]);
 
     return (
-        <div>
-            <div className='flex grid-cols-12 items-center relative bg-ghBlack'>
+        <div className='relative'>
+            <div className='flex grid-cols-12 items-center relative bg-ghBlack sticky top-20 z-10'>
                 <button onClick={() => handleConfigTabClick('config-tab1')} className={`${activeConfigTab === "config-tab1" ? "bg-kxBlue2" : ""} h-10 flex col-span-6 w-full text-center items-center justify-center`}>
                     Packer Config UI
                 </button>
@@ -145,7 +161,7 @@ const BuildTabContent = () => {
                 </div>
 
                 <button onClick={() => handleConfigTabClick('config-tab2')} className={`${activeConfigTab === "config-tab2" ? "bg-kxBlue2" : ""} h-10 flex col-span-6 w-full text-center items-center justify-center`}>
-                   Packer Config JSON
+                    Packer Config JSON
                 </button>
             </div>
 

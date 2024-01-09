@@ -311,6 +311,24 @@ const UIConfigTabContent = ({ activeTab, handleTabClick, handleConfigChange, isB
                 >
                     Custom Variables
                 </button>
+                <button
+                    onClick={() => handleTabClick('tab7')}
+                    className={` ${activeTab === 'tab7' ? 'border-kxBlue border-b-3 bg-ghBlack4' : 'broder border-ghBlack3 border-b-3'} p-3 py-1`}
+                >
+                    Notification
+                </button>
+                <button
+                    onClick={() => handleTabClick('tab8')}
+                    className={` ${activeTab === 'tab8' ? 'border-kxBlue border-b-3 bg-ghBlack4' : 'broder border-ghBlack3 border-b-3'} p-3 py-1`}
+                >
+                    Docker
+                </button>
+                <button
+                    onClick={() => handleTabClick('tab9')}
+                    className={` ${activeTab === 'tab9' ? 'border-kxBlue border-b-3 bg-ghBlack4' : 'broder border-ghBlack3 border-b-3'} p-3 py-1`}
+                >
+                    Proxy
+                </button>
             </div>
 
             <div className="tab-content">
@@ -320,6 +338,10 @@ const UIConfigTabContent = ({ activeTab, handleTabClick, handleConfigChange, isB
                 {activeTab === 'tab4' && <TabContent4 handleConfigChange={handleConfigChange} />}
                 {activeTab === 'tab5' && <TabContent5 handleConfigChange={handleConfigChange} />}
                 {activeTab === 'tab6' && <TabContent6 handleConfigChange={handleConfigChange} />}
+                {activeTab === 'tab7' && <TabContent7 handleConfigChange={handleConfigChange} />}
+                {activeTab === 'tab8' && <TabContent8 handleConfigChange={handleConfigChange} />}
+                {activeTab === 'tab9' && <TabContent9 handleConfigChange={handleConfigChange} />}
+
             </div>
         </div>
 );
@@ -1015,5 +1037,42 @@ const TabContent6 = ({ handleConfigChange }) => {
             </div>
         </div>)
 }
+
+const TabContent7 = ({ handleConfigChange }) => {
+    return (
+        <div className='text-left'>
+            <div className='px-5 py-3'>
+                <h2 className='text-3xl font-semibold'>Notification Settings</h2>
+                <p className='text-sm text-gray-400 text-justify'>
+                    Lorem Ipsum
+                </p>
+            </div>
+        </div>)
+}
+
+const TabContent8 = ({ handleConfigChange }) => {
+    return (
+        <div className='text-left'>
+            <div className='px-5 py-3'>
+                <h2 className='text-3xl font-semibold'>Docker</h2>
+                <p className='text-sm text-gray-400 text-justify'>
+                    Lorem Ipsum
+                </p>
+            </div>
+        </div>)
+}
+
+const TabContent9 = ({ handleConfigChange }) => {
+    return (
+        <div className='text-left'>
+            <div className='px-5 py-3'>
+                <h2 className='text-3xl font-semibold'>Proxy</h2>
+                <p className='text-sm text-gray-400 text-justify'>
+                    Lorem Ipsum
+                </p>
+            </div>
+        </div>)
+}
+
 
 export default TabMenuDeploy;

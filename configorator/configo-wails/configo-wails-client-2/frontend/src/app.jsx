@@ -2,12 +2,14 @@ import { useState, useEffect } from "preact/hooks";
 import './app.css';
 import { Header } from "./Header";
 import { HeaderNew } from "./HeaderNew";
+import Footer from "./Footer";
 import { Form2 } from "./Form2";
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
 import TabMenu from "./TabMenu";
 import TabMenuBuild from "./TabMenuBuild";
 import TabMenuDeploy from "./TabMenuDeploy";
+import Home from "./Home";
 import { createTheme, ThemeProvider, styled } from '@mui/material/styles';
 import { ConsoleOutput } from "./ConsoleOutput";
 import Box from "@mui/material/Box";
@@ -23,6 +25,7 @@ import ListItemText from "@mui/material/ListItemText";
 import { MdDashboard } from "react-icons/md";
 import PrecisionManufacturingIcon from '@mui/icons-material/PrecisionManufacturing';
 import RocketLaunchIcon from '@mui/icons-material/RocketLaunch';
+import HomeIcon from '@mui/icons-material/Home';
 
 
 
@@ -129,83 +132,114 @@ export function App() {
 
 
     return (
-        <ThemeProvider theme={theme}>
-            <Box sx={{ display: "flex" }}>
-                <Drawer variant="permanent" open={open}>
-                    {/* <DrawerHeader className="">
+        <div className="">
+            <ThemeProvider theme={theme}>
+                <Box sx={{ display: "flex" }}>
+                    <Drawer variant="permanent" open={open}>
+                        {/* <DrawerHeader className="">
                         <IconButton onClick={handleDrawerClose}>
                             {theme.direction === "rtl" ? <ChevronRightIcon /> : <ChevronLeftIcon />}
                         </IconButton>
                     </DrawerHeader> */}
-                    <List className="" style={{ paddingTop: "0" }}>
-                        <ListItem key={"Build"} disablePadding sx={{ display: "block" }}>
-                            <a href="/build">
-                                <ListItemButton
-                                    sx={{
-                                        minHeight: 40,
-                                        justifyContent: open ? "initial" : "center",
-                                        px: 2.5,
-                                        backgroundColor: slug == "build" ? "#5a86ff" : "",
-                                        "&:hover": {
+                        <List className="" style={{ paddingTop: "0" }}>
+                            <ListItem key={"Home"} disablePadding sx={{ display: "block" }}>
+                                <a href="/home">
+                                    <ListItemButton
+                                        sx={{
+                                            minHeight: 40,
+                                            justifyContent: open ? "initial" : "center",
+                                            px: 2.5,
+                                            backgroundColor: slug == "home" ? "#5a86ff" : "",
+                                            "&:hover": {
+                                                backgroundColor: slug == "home" ? "#5a86ff" : "",
+                                            },
+                                        }}
+                                    >
+                                        <ListItemIcon
+                                            className="listItemIconContainer"
+                                            sx={{
+                                                minWidth: 0,
+                                                mr: open ? 3 : "auto",
+                                                justifyContent: "center",
+                                            }}
+                                        >
+                                            <HomeIcon className="text-3xl" />
+                                        </ListItemIcon>
+                                        <ListItemText primary={"Home"} sx={{ opacity: open ? 1 : 0 }} />
+                                    </ListItemButton>
+                                </a>
+                            </ListItem>
+                            <ListItem key={"Build"} disablePadding sx={{ display: "block" }}>
+                                <a href="/build">
+                                    <ListItemButton
+                                        sx={{
+                                            minHeight: 40,
+                                            justifyContent: open ? "initial" : "center",
+                                            px: 2.5,
                                             backgroundColor: slug == "build" ? "#5a86ff" : "",
-                                        },
-                                    }}
-                                >
-                                    <ListItemIcon
-                                        className="listItemIconContainer"
-                                        sx={{
-                                            minWidth: 0,
-                                            mr: open ? 3 : "auto",
-                                            justifyContent: "center",
+                                            "&:hover": {
+                                                backgroundColor: slug == "build" ? "#5a86ff" : "",
+                                            },
                                         }}
                                     >
-                                        <PrecisionManufacturingIcon className="text-3xl" />
-                                    </ListItemIcon>
-                                    <ListItemText primary={"Build"} sx={{ opacity: open ? 1 : 0 }} />
-                                </ListItemButton>
-                            </a>
-                        </ListItem>
-                        <ListItem key={"Deploy"} disablePadding sx={{ display: "block" }}>
-                            <a href="/deploy">
-                                <ListItemButton
-                                    sx={{
-                                        minHeight: 40,
-                                        justifyContent: open ? "initial" : "center",
-                                        px: 2.5,
-                                        backgroundColor: slug == "deploy" ? "#5a86ff" : "",
-                                        "&:hover": {
+                                        <ListItemIcon
+                                            className="listItemIconContainer"
+                                            sx={{
+                                                minWidth: 0,
+                                                mr: open ? 3 : "auto",
+                                                justifyContent: "center",
+                                            }}
+                                        >
+                                            <PrecisionManufacturingIcon className="text-3xl" />
+                                        </ListItemIcon>
+                                        <ListItemText primary={"Build"} sx={{ opacity: open ? 1 : 0 }} />
+                                    </ListItemButton>
+                                </a>
+                            </ListItem>
+                            <ListItem key={"Deploy"} disablePadding sx={{ display: "block" }}>
+                                <a href="/deploy">
+                                    <ListItemButton
+                                        sx={{
+                                            minHeight: 40,
+                                            justifyContent: open ? "initial" : "center",
+                                            px: 2.5,
                                             backgroundColor: slug == "deploy" ? "#5a86ff" : "",
-                                        },
-                                    }}
-                                >
-                                    <ListItemIcon
-                                        className="listItemIconContainer"
-                                        sx={{
-                                            minWidth: 0,
-                                            mr: open ? 3 : "auto",
-                                            justifyContent: "center",
+                                            "&:hover": {
+                                                backgroundColor: slug == "deploy" ? "#5a86ff" : "",
+                                            },
                                         }}
                                     >
-                                        <RocketLaunchIcon className="text-3xl" />
-                                    </ListItemIcon>
-                                    <ListItemText primary={"Deploy"} sx={{ opacity: open ? 1 : 0 }} />
-                                </ListItemButton>
-                            </a>
-                        </ListItem>
-                    </List>
-                </Drawer>
-                <Box component="main" sx={{ flexGrow: 1, p: 0 }} className="text-black dark:text-white">
-                    <HeaderNew drawerWidth={drawerWidth} handleDrawerOpen={handleDrawerOpen} open={open} handleDarkModeToggle={handleDarkModeToggle} isDarkMode={isDarkMode} />
-                    <Router>
-                        <Routes>
-                            {/* <Route exact path="/" element={<TabMenu />} /> */}
-                            <Route path="/build" element={<TabMenuBuild />} />
-                            <Route path="/deploy" element={<TabMenuDeploy />} />
-                            <Route path="/console-output" element={<ConsoleOutput />} />
-                        </Routes>
-                    </Router>
+                                        <ListItemIcon
+                                            className="listItemIconContainer"
+                                            sx={{
+                                                minWidth: 0,
+                                                mr: open ? 3 : "auto",
+                                                justifyContent: "center",
+                                            }}
+                                        >
+                                            <RocketLaunchIcon className="text-3xl" />
+                                        </ListItemIcon>
+                                        <ListItemText primary={"Deploy"} sx={{ opacity: open ? 1 : 0 }} />
+                                    </ListItemButton>
+                                </a>
+                            </ListItem>
+                        </List>
+                    </Drawer>
+                    <Box component="main" sx={{ flexGrow: 1, p: 0 }} className="text-black dark:text-white">
+                        <HeaderNew drawerWidth={drawerWidth} handleDrawerOpen={handleDrawerOpen} open={open} handleDarkModeToggle={handleDarkModeToggle} isDarkMode={isDarkMode} />
+                        <Router>
+                            <Routes>
+                                {/* <Route exact path="/" element={<TabMenu />} /> */}
+                                <Route path="/home" element={<Home />} />
+                                <Route path="/build" element={<TabMenuBuild />} />
+                                <Route path="/deploy" element={<TabMenuDeploy />} />
+                                <Route path="/console-output" element={<ConsoleOutput />} />
+                            </Routes>
+                        </Router>
+                    </Box>
                 </Box>
-            </Box>
-        </ThemeProvider>
+            </ThemeProvider>
+            {/* <Footer /> */}
+        </div>
     );
 }
