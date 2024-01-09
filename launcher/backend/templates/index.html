@@ -1,0 +1,40 @@
+{{ define "title"}}Launcher - Home{{ end }}
+{{ template "header" . }}
+
+<body class="">
+    <div class="container mx-auto m-16">
+        <h1 class="mb-8 font-bold text-4xl">Welcome to confiGo!</h1>
+        <p class="mt-8 mb-4 text-lg">Some subheader goes here.</p>
+        <form hx-post="/submit" hx-trigger="submit" hx-target="#result">
+            <div class="mb-16 h-[70vh] overflow-y-auto">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th class="text-lg">Setting</th>
+                            <th class="text-lg">Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><label class="font-mono text-base">Example Variable:</label></td>
+                            <td><input type="text" name="someVar" class="font-mono input w-full max-w-xs"
+                                    placeholder="Example Value" required></td>
+                        </tr>
+                        {{ range $key, $value := . }}
+                        <tr>
+                            <td><label class="font-mono text-base">{{ $key}}:</label></td>
+                            <td><input type="text" name="{{ $key }}" class="font-mono input w-full max-w-xs"
+                                    placeholder="{{ $value }}" required></td>
+                        </tr>
+                        {{ end }}
+                    </tbody>
+                </table>
+            </div>
+            <button type="submit" class="btn btn-active shadow-xl">Submit</button>
+        </form>
+        <!-- Display validation result here -->
+        <div id="result" class=""></div>
+    </div>
+</body>
+
+</html>
