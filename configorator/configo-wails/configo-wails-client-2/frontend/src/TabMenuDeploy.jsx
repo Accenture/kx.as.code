@@ -131,8 +131,8 @@ const DeployTabContent = () => {
     }, [activeConfigTab, jsonData]);
 
     return (
-        <div>
-            <div className='flex grid-cols-12 items-center relative bg-ghBlack'>
+        <div className='relative'>
+            <div className='flex grid-cols-12 items-center relative bg-ghBlack sticky top-[90px] z-10 h-[40px]'>
                 <button onClick={() => handleConfigTabClick('config-tab1')} className={`${activeConfigTab === "config-tab1" ? "bg-kxBlue2" : ""} h-10 flex col-span-6 w-full text-center items-center justify-center`}>
                     Profile  Config UI
                 </button>
@@ -156,92 +156,6 @@ const DeployTabContent = () => {
         </div>
     );
 }
-
-const BuildTabContent = () => {
-
-    const [activeTab, setActiveTab] = useState('tab1');
-    const [activeConfigTab, setActiveConfigTab] = useState('config-tab1');
-    const [jsonData, setJsonData] = useState('');
-    const [isBuild, setIsBuild] = useState(true);
-
-    const handleTabClick = (tab) => {
-        setActiveTab(tab);
-    };
-
-    const handleConfigTabClick = (configTab) => {
-        setActiveConfigTab(configTab);
-    };
-
-    const handleConfigChange = (value, key) => {
-        let selectedValue;
-
-        if (!isNaN(value)) {
-            selectedValue = parseFloat(value);
-        } else {
-            selectedValue = value;
-        }
-
-        let parsedData = { ...configJSON };
-
-        setNestedValue(parsedData, key, selectedValue)
-
-        console.log("DEBUG: ", parsedData.config[key]);
-        console.log("DEBUG: selectedValue", selectedValue);
-
-        const updatedJsonString = JSON.stringify(parsedData, null, 2);
-
-        setJsonData(updatedJsonString);
-        UpdateJsonFile(updatedJsonString);
-    };
-
-    function setNestedValue(obj, key, value) {
-        const keys = key.split('.');
-        keys.reduce((acc, currentKey, index) => {
-            if (index === keys.length - 1) {
-                acc[currentKey] = value;
-            } else {
-                acc[currentKey] = acc[currentKey] || {};
-            }
-            return acc[currentKey];
-        }, obj);
-    }
-
-    const formatJSONData = () => {
-        const jsonString = JSON.stringify(configJSON, null, 2);
-        setJsonData(jsonString);
-    }
-
-    useEffect(() => {
-        formatJSONData();
-    }, [activeConfigTab, jsonData]);
-
-    return (
-        <div className='relative'>
-            <div className='flex grid-cols-12 items-center relative bg-red-500 sticky top-[90px] z-10 h-[40px]'>
-                <button onClick={() => handleConfigTabClick('config-tab1')} className={`${activeConfigTab === "config-tab1" ? "bg-kxBlue2" : ""} h-10 flex col-span-6 w-full text-center items-center justify-center`}>
-                    Packer Config UI
-                </button>
-
-                {/* Centered Circle */}
-                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-                    <div className="w-10 h-10 bg-ghBlack4 items-center flex justify-center text-xl">
-                        <SettingsEthernetIcon fontSize='inherit' />
-                    </div>
-                </div>
-
-                <button onClick={() => handleConfigTabClick('config-tab2')} className={`${activeConfigTab === "config-tab2" ? "bg-kxBlue2" : ""} h-10 flex col-span-6 w-full text-center items-center justify-center`}>
-                    Packer Config JSON
-                </button>
-            </div>
-
-            <div className="config-tab-content">
-                {activeConfigTab === 'config-tab1' && <UIConfigTabContent isBuild={isBuild} activeTab={activeTab} handleTabClick={handleTabClick} handleConfigChange={handleConfigChange} />}
-                {activeConfigTab === 'config-tab2' && <JSONConfigTabContent jsonData={jsonData} />}
-            </div>
-        </div>
-    );
-}
-
 
 const UIConfigTabContent = ({ activeTab, handleTabClick, handleConfigChange, isBuild }) => (
         <div id='config-ui-container' className=''>
@@ -317,48 +231,6 @@ const UIConfigTabContent = ({ activeTab, handleTabClick, handleConfigChange, isB
             </div>
         </div>
 );
-
-const DeployContent = ({ handleConfigChange }) => {
-    return (
-        <div className='text-left'>
-            <div className='px-5 py-3'>
-                <h2 className='text-3xl font-semibold'>Build Config</h2>
-                <p className='text-sm text-gray-400 text-justify'>Lorem Ipsum...</p>
-            </div>
-            <div className='px-5 py-3 bg-ghBlack grid grid-cols-12'>
-                <div className='col-span-6'>
-                    <TextField
-                        label="Profiles"
-                        select
-                        fullWidth
-                        variant="outlined"
-                        size="small"
-                        margin="normal"
-                        defaultValue="virtualbox"
-                    >
-                        <MenuItem value="virtualbox">Virtualbox</MenuItem>
-                        <MenuItem value="parallels">Parallels</MenuItem>
-                        <MenuItem value="vmware-desktop">VMWare Desktop</MenuItem>
-                    </TextField>
-
-                    <TextField
-                        label="Image Type"
-                        select
-                        fullWidth
-                        variant="outlined"
-                        size="small"
-                        margin="normal"
-                        defaultValue="main"
-                        onChange={(e) => { }}
-                    >
-                        <MenuItem value="main">Main</MenuItem>
-                        <MenuItem value="node">Node</MenuItem>
-                    </TextField>
-                </div>
-            </div>
-        </div>
-    )
-}
 
 
 const TabContent1 = ({ handleConfigChange }) => {
