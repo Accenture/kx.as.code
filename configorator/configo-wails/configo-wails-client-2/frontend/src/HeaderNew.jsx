@@ -13,7 +13,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 export function HeaderNew(props) {
 
     return (
-        <MuiAppBar position="fixed" open={props.open} className="" elevation={0}>
+        <MuiAppBar position="fixed" open={props.open} className="h-[90px]" elevation={0}>
             <Toolbar className="dark:bg-ghBlack2 bg-kxBlue">
                 <IconButton
                     color="inherit"

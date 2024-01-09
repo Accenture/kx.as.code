@@ -49,7 +49,7 @@ const JSONConfigTabContent = (props) => {
         <div className='text-left text-black'>
             {/* Save file changes */}
             {isfileChanged && props.jsonData !== updatedJson && (
-                <div className='text-white p-3 flex justify-between items-center text-xs'>
+                <div className='text-white p-3 flex justify-between items-center text-xs sticky top-[130px] z-10 bg-ghBlack2'>
                     <div className='text-base'>{`Change on ${props.fileName} file detected.`}</div>
                     <div className='flex'>
                         {isValidJson(updatedJson) ? (
@@ -68,19 +68,21 @@ const JSONConfigTabContent = (props) => {
                     </div>
 
                 </div>)}
+            <div id="codemirror-container" className='overflow-x-scroll'>
+                <CodeMirror
+                    value={props.jsonData}
+                    options={{
+                        mode: 'json',
+                        theme: 'oneDark',
+                        lineNumbers: true,
+                    }}
+                    onChange={(value, viewUpdate) => {
+                        setIsFileChanged(true)
+                        setUpdatedJson(value)
+                    }}
+                />
+            </div>
 
-            <CodeMirror
-                value={props.jsonData}
-                options={{
-                    mode: 'json',
-                    theme: 'oneDark',
-                    lineNumbers: true,
-                }}
-                onChange={(value, viewUpdate) => {
-                    setIsFileChanged(true)
-                    setUpdatedJson(value)
-                }}
-            />
         </div>
     );
 }

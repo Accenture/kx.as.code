@@ -148,7 +148,7 @@ const BuildTabContent = () => {
 
     return (
         <div className='relative'>
-            <div className='flex grid-cols-12 items-center relative bg-ghBlack sticky top-20 z-10'>
+            <div className='flex grid-cols-12 items-center relative bg-ghBlack sticky top-[90px] z-10 h-[40px]'>
                 <button onClick={() => handleConfigTabClick('config-tab1')} className={`${activeConfigTab === "config-tab1" ? "bg-kxBlue2" : ""} h-10 flex col-span-6 w-full text-center items-center justify-center`}>
                     Packer Config UI
                 </button>
