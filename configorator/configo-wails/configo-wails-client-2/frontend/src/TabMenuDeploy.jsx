@@ -891,6 +891,22 @@ const TabContent7 = ({ handleConfigChange }) => {
                     Lorem Ipsum
                 </p>
             </div>
+
+            <div className='px-5 py-3 bg-ghBlack grid grid-cols-12'>
+                <div className='col-span-6'>
+                    <h2 className='text-xl font-semibold text-gray-400'>E-Mail</h2>
+                    <TextField
+                        label="E-Mail"
+                        fullWidth
+                        variant="outlined"
+                        size="small"
+                        margin="normal"
+                        value={configJSON.notification_endpoints["email_address"]}
+                        onChange={(e) => { handleConfigChange(e.target.value, "notification_endpoints.email_address") }}
+                    >
+                    </TextField>
+                </div>
+            </div>
         </div>)
 }
 
