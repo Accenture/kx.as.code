@@ -182,7 +182,7 @@ const DeployTabContent = () => {
         <div>
             <div className='flex grid-cols-12 items-center relative bg-ghBlack'>
                 <button onClick={() => handleConfigTabClick('config-tab1')} className={`${activeConfigTab === "config-tab1" ? "bg-kxBlue2" : ""} h-10 flex col-span-6 w-full text-center items-center justify-center`}>
-                    Profile  Config UI sasd
+                    Profile Config UI  
                 </button>
 
                 {/* Centered Circle */}

@@ -242,36 +242,8 @@ const BuildTabContent = () => {
     );
 }
 
-const BuildExecuteButton = () => {
-    const navigate = useNavigate();
-
-    const [output, setOutput] = useState('');
-
-    const handleExecuteClick = async () => {
-        console.log('KX.AS.Code Image build process started!');
-        navigate('/console-output');
-        ExecuteRealTimeCommand()
-    };
-
-
-    return (
-        <div className=''>
-            <button onClick={() => { handleExecuteClick() }} className='bg-kxBlue p-3 w-full flex justify-center items-center'>
-                <PlayCircleIcon className='mr-1' /> Build KX.AS.Code Image</button>
-            <button className='p-3 w-full font-normal hover:text-gray-400 w-auto flex justify-center items-center'>
-                <CloudDownloadIcon className='mr-1.5' /> Download Image from Vagrant Cloud</button>
-            <div id="output">{output}</div>
-        </div>
-    )
-}
-
 
 const UIConfigTabContent = ({ activeTab, handleTabClick, handleConfigChange, isBuild }) => (
-
-    isBuild ?
-        <div>
-            <BuildContent />
-        </div> :
         <div id='config-ui-container' className=''>
 
             <div className="flex bg-ghBlack3 text-sm">
@@ -346,7 +318,7 @@ const UIConfigTabContent = ({ activeTab, handleTabClick, handleConfigChange, isB
         </div>
 );
 
-const BuildContent = ({ handleConfigChange }) => {
+const DeployContent = ({ handleConfigChange }) => {
     return (
         <div className='text-left'>
             <div className='px-5 py-3'>
