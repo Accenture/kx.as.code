@@ -6,14 +6,11 @@ import (
 	"errors"
 	"fmt"
 	"os"
-	"sync"
 )
 
 // App struct
 type App struct {
-	ctx      context.Context
-	output   string
-	outputMu sync.Mutex
+	ctx context.Context
 }
 
 // NewApp creates a new App application struct
@@ -32,6 +29,7 @@ func (a *App) Greet(name string) string {
 }
 
 func (a *App) UpdateJsonFile(data string) error {
+	fmt.Printf("UpdateJsonFile triggered %s!\n", data)
 	if data == "" {
 		return errors.New("empty JSON string provided")
 	}
