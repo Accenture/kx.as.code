@@ -36,15 +36,7 @@ func (a *App) UpdateJsonFile(data string) error {
 		return errors.New("empty JSON string provided")
 	}
 
-	var jsonString string
-	if err := json.Unmarshal([]byte(data), &jsonString); err == nil {
-		if err := os.WriteFile("./frontend/src/assets/config/config.json", []byte(jsonString), 0644); err != nil {
-			return fmt.Errorf("error writing to file: %v", err)
-		}
-		return nil
-	}
-
-	var jsonData map[string]interface{}
+	var jsonData interface{}
 	if err := json.Unmarshal([]byte(data), &jsonData); err != nil {
 		return fmt.Errorf("error unmarshaling JSON: %v", err)
 	}
@@ -54,8 +46,10 @@ func (a *App) UpdateJsonFile(data string) error {
 		return fmt.Errorf("error marshaling JSON: %v", err)
 	}
 
-	if err := os.WriteFile("./frontend/src/assets/config/config.json", jsonDataStr, 0644); err != nil {
-		return fmt.Errorf("error writing to file: %v", err)
+	filePath := "./frontend/src/assets/config/config.json"
+	err = os.WriteFile(filePath, jsonDataStr, 0644)
+	if err != nil {
+		return fmt.Errorf("error writing to file %s: %v", filePath, err)
 	}
 
 	return nil

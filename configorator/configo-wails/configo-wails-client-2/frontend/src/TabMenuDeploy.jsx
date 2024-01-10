@@ -89,36 +89,39 @@ const DeployTabContent = () => {
 
     const handleConfigChange = (value, key) => {
         let selectedValue;
-
+    
         if (!isNaN(value)) {
             selectedValue = parseFloat(value);
         } else {
             selectedValue = value;
         }
-
-        let parsedData = { ...configJSON };
-
-        setNestedValue(parsedData, key, selectedValue)
-
-        console.log("DEBUG: ", parsedData.config[key]);
+    
+        const updatedConfigJSON = { ...configJSON };
+    
+        setNestedValue(updatedConfigJSON, key, selectedValue);
+    
+        console.log("Debug key: ", key);
+        console.log("type: ", typeof configJSON);
+        console.log("DEBUG Parsed data config key: ", updatedConfigJSON.config[key]);
         console.log("DEBUG: selectedValue", selectedValue);
-
-        const updatedJsonString = JSON.stringify(parsedData, null, 2);
-
+    
+        const updatedJsonString = JSON.stringify(updatedConfigJSON, null, 2);
+    
         setJsonData(updatedJsonString);
+        console.log("updatedJSON string: ", updatedJsonString)
         UpdateJsonFile(updatedJsonString);
     };
 
     function setNestedValue(obj, key, value) {
         const keys = key.split('.');
-        keys.reduce((acc, currentKey, index) => {
-            if (index === keys.length - 1) {
-                acc[currentKey] = value;
-            } else {
-                acc[currentKey] = acc[currentKey] || {};
-            }
-            return acc[currentKey];
-        }, obj);
+        let currentObj = obj;
+    
+        for (let i = 0; i < keys.length - 1; i++) {
+            const currentKey = keys[i];
+            currentObj = currentObj[currentKey];
+        }
+    
+        currentObj[keys[keys.length - 1]] = value;
     }
 
     const formatJSONData = () => {

@@ -82,7 +82,7 @@
   },
   "disableLinuxDesktop": null,
   "notification_endpoints": {
-      "email_address": "",
+      "email_address": "burak@123.de",
       "ms_teams_webhook": "",
       "slack_webhook": ""
   }
