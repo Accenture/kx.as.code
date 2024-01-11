@@ -89,9 +89,9 @@ sudo bash -c "cat << 'EOF' >> /etc/netplan/kx-netplan.yaml
           dhcp4: no
           addresses:
               - ${existingNicIpAddress}/24
-         routes:
-          - to: default
-            via: ${existingNicGateway}
+          routes:
+              - to: default
+                via: ${existingNicGateway}
           nameservers:
               addresses: [${fixedNicConfigDns1}, ${fixedNicConfigDns2}]
 EOF"
@@ -107,9 +107,9 @@ sudo bash -c "cat << 'EOF' >> /etc/netplan/kx-netplan.yaml
           dhcp4: no
           addresses:
               - ${mainIpAddress}/24
-         routes:
-          - to: default
-            via: ${fixedNicConfigGateway}
+          routes:
+              - to: default
+                via: ${fixedNicConfigGateway}
           nameservers:
               addresses: [${fixedNicConfigDns1}, ${fixedNicConfigDns2}]
 EOF"
