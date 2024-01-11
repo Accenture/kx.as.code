@@ -77,7 +77,6 @@ const JSONConfigTabContent = (props) => {
                     value={props.jsonData}
                     options={{
                         mode: 'json',
-                        theme: 'oneDark',
                         lineNumbers: true,
                     }}
                     onChange={(value, viewUpdate) => {

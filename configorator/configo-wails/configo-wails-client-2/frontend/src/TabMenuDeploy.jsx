@@ -7,8 +7,6 @@ import { Link } from "react-router-dom";
 import Switch from '@mui/material/Switch';
 import MenuItem from '@mui/material/MenuItem';
 import Slider from '@mui/material/Slider';
-import CodeMirror from '@uiw/react-codemirror';
-import { historyField } from '@codemirror/commands';
 import configJSON from './assets/config/config.json';
 import { oneDark } from '@codemirror/theme-one-dark';
 import { useNavigate } from 'react-router-dom';
@@ -44,7 +42,6 @@ const TabMenuDeploy = () => {
     const [isDeploymentStarted, setIsDeploymentStarted] = useState(false);
 
     const value = localStorage.getItem('myValue') || '';
-    const stateFields = { history: historyField };
 
     const handleProcessTabClick = (tab) => {
         setActiveProcessTab(tab);
@@ -145,14 +142,14 @@ const DeployTabContent = () => {
 
     return (
         <div className='relative'>
-            <div className='flex grid-cols-12 items-center relative bg-ghBlack sticky top-[90px] z-10 h-[40px]'>
-                <button onClick={() => handleConfigTabClick('config-tab1')} className={`${activeConfigTab === "config-tab1" ? "bg-kxBlue2" : ""} h-10 flex col-span-6 w-full text-center items-center justify-center`}>
+            <div className='flex grid-cols-12 items-center relative bg-gray-200 dark:bg-ghBlack sticky top-[90px] z-10 h-[40px]'>
+                <button onClick={() => handleConfigTabClick('config-tab1')} className={`${activeConfigTab === "config-tab1" ? "bg-kxBlue2 text-white" : ""} dark:text-white text-black h-10 flex col-span-6 w-full text-center items-center justify-center`}>
                     Profile  Config UI
                 </button>
 
                 {/* Centered Circle */}
                 <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-                    <div className="w-10 h-10 bg-ghBlack4 items-center flex justify-center text-xl">
+                    <div className="w-10 h-10 dark:bg-ghBlack4 bg-gray-300 items-center flex justify-center text-xl">
                         <SettingsEthernetIcon fontSize='inherit' />
                     </div>
                 </div>
@@ -173,64 +170,64 @@ const DeployTabContent = () => {
 const UIConfigTabContent = ({ activeTab, handleTabClick, handleConfigChange, isBuild }) => (
     <div id='config-ui-container' className=''>
 
-        <div className="flex bg-ghBlack3 text-sm">
+        <div className="flex dark:bg-ghBlack3 bg-gray-300 text-sm text-black dark:text-white">
             <button
                 onClick={() => handleTabClick('tab1')}
-                className={` ${activeTab === 'tab1' ? 'border-kxBlue border-b-3 bg-ghBlack4' : 'broder border-ghBlack3 border-b-3'} p-3 py-1`}
+                className={` ${activeTab === 'tab1' ? 'border-kxBlue border-b-3 dark:bg-ghBlack4 bg-gray-400' : 'broder dark:border-ghBlack3 border-gray-300 border-b-3'} p-3 py-1`}
             >
                 Profile
             </button>
             <button
                 onClick={() => handleTabClick('tab2')}
-                className={` ${activeTab === 'tab2' ? 'border-kxBlue border-b-3 bg-ghBlack4' : 'broder border-ghBlack3 border-b-3'} p-3 py-1`}
+                className={` ${activeTab === 'tab2' ? 'border-kxBlue border-b-3 dark:bg-ghBlack4 bg-gray-400' : 'broder dark:border-ghBlack3 border-gray-300 border-b-3'} p-3 py-1`}
             >
                 Parameters & Mode
             </button>
             <button
                 onClick={() => handleTabClick('tab3')}
-                className={` ${activeTab === 'tab3' ? 'border-kxBlue border-b-3 bg-ghBlack4' : 'broder border-ghBlack3 border-b-3'} p-3 py-1`}
+                className={` ${activeTab === 'tab3' ? 'border-kxBlue border-b-3 dark:bg-ghBlack4 bg-gray-400' : 'broder dark:border-ghBlack3 border-gray-300 border-b-3'} p-3 py-1`}
             >
                 Resources
             </button>
             <button
                 onClick={() => handleTabClick('tab4')}
-                className={` ${activeTab === 'tab4' ? 'border-kxBlue border-b-3 bg-ghBlack4' : 'broder border-ghBlack3 border-b-3'} p-3 py-1`}
+                className={` ${activeTab === 'tab4' ? 'border-kxBlue border-b-3 dark:bg-ghBlack4 bg-gray-400' : 'broder dark:border-ghBlack3 border-gray-300 border-b-3'} p-3 py-1`}
             >
                 Storage
             </button>
             <button
                 onClick={() => handleTabClick('tab5')}
-                className={` ${activeTab === 'tab5' ? 'border-kxBlue border-b-3 bg-ghBlack4' : 'broder border-ghBlack3 border-b-3'} p-3 py-1`}
+                className={` ${activeTab === 'tab5' ? 'border-kxBlue border-b-3 dark:bg-ghBlack4 bg-gray-400' : 'broder dark:border-ghBlack3 border-gray-300 border-b-3'} p-3 py-1`}
             >
                 User Provisioning
             </button>
             <button
                 onClick={() => handleTabClick('tab6')}
-                className={` ${activeTab === 'tab6' ? 'border-kxBlue border-b-3 bg-ghBlack4' : 'broder border-ghBlack3 border-b-3'} p-3 py-1`}
+                className={` ${activeTab === 'tab6' ? 'border-kxBlue border-b-3 dark:bg-ghBlack4 bg-gray-400' : 'broder dark:border-ghBlack3 border-gray-300 border-b-3'} p-3 py-1`}
             >
                 Custom Variables
             </button>
             <button
                 onClick={() => handleTabClick('tab7')}
-                className={` ${activeTab === 'tab7' ? 'border-kxBlue border-b-3 bg-ghBlack4' : 'broder border-ghBlack3 border-b-3'} p-3 py-1`}
+                className={` ${activeTab === 'tab7' ? 'border-kxBlue border-b-3 dark:bg-ghBlack4 bg-gray-400' : 'broder dark:border-ghBlack3 border-gray-300 border-b-3'} p-3 py-1`}
             >
                 Notification
             </button>
             <button
                 onClick={() => handleTabClick('tab8')}
-                className={` ${activeTab === 'tab8' ? 'border-kxBlue border-b-3 bg-ghBlack4' : 'broder border-ghBlack3 border-b-3'} p-3 py-1`}
+                className={` ${activeTab === 'tab8' ? 'border-kxBlue border-b-3 dark:bg-ghBlack4 bg-gray-400' : 'broder dark:border-ghBlack3 border-gray-300 border-b-3'} p-3 py-1`}
             >
                 Docker
             </button>
             <button
                 onClick={() => handleTabClick('tab9')}
-                className={` ${activeTab === 'tab9' ? 'border-kxBlue border-b-3 bg-ghBlack4' : 'broder border-ghBlack3 border-b-3'} p-3 py-1`}
+                className={` ${activeTab === 'tab9' ? 'border-kxBlue border-b-3 dark:bg-ghBlack4 bg-gray-400' : 'broder dark:border-ghBlack3 border-gray-300 border-b-3'} p-3 py-1`}
             >
                 Proxy
             </button>
         </div>
 
-        <div className="tab-content">
+        <div className="tab-content dark:text-white text-black">
             {activeTab === 'tab1' && <TabContent1 handleConfigChange={handleConfigChange} />}
             {activeTab === 'tab2' && <TabContent2 handleConfigChange={handleConfigChange} />}
             {activeTab === 'tab3' && <TabContent3 handleConfigChange={handleConfigChange} />}
@@ -252,9 +249,9 @@ const TabContent1 = ({ handleConfigChange }) => {
         <div className='text-left'>
             <div className='px-5 py-3'>
                 <h2 className='text-3xl font-semibold'>Profile</h2>
-                <p className='text-sm text-gray-400 text-justify'>Select the profile. A check is made on the system to see if the necessary virtualization software and associated Vagrant plugins are installed, as well as availability of built Vagrant boxes.</p>
+                <p className='text-sm dark:text-gray-400 text-justify'>Select the profile. A check is made on the system to see if the necessary virtualization software and associated Vagrant plugins are installed, as well as availability of built Vagrant boxes.</p>
             </div>
-            <div className='px-5 py-3 bg-ghBlack grid grid-cols-12'>
+            <div className='px-5 py-3 dark:bg-ghBlack bg-gray-200 grid grid-cols-12'>
                 <div className='col-span-6'>
                     <TextField
                         label="Profiles"
@@ -317,13 +314,13 @@ const TabContent2 = ({ handleConfigChange }) => {
         <div className='text-left'>
             <div className='px-5 py-3'>
                 <h2 className='text-3xl font-semibold'>General Parameters & Mode Selection</h2>
-                <p className='text-sm text-gray-400 text-justify'> Set the parameters to define the internal DNS of KX.AS.CODE.
+                <p className='text-sm dark:text-gray-400 text-justify'> Set the parameters to define the internal DNS of KX.AS.CODE.
                     {/* Set the parameters to define the internal DNS of KX.AS.CODE. Each new service that is provisioned in KX.AS.CODE will have the fully qualified domain name (FQDN) of &lt;service_name&gt;, &lt;team_name&gt;. &lt;base_domain&gt;. The username and password fields determine the base admin user password. It is possible to add additional users. In the last section, you determine if running in standalone or cluster mode. Standalone mode starts up one main node only. This is recommended for any physical environment with less than 16G ram. If enable worker nodes, then you can also choose to have workloads running on both main and worker nodes, or only on worker nodes. */}
                 </p>
             </div>
-            <div className='px-5 py-3 bg-ghBlack grid grid-cols-12'>
+            <div className='px-5 py-3 dark:bg-ghBlack bg-gray-200 grid grid-cols-12'>
                 <div className='col-span-6'>
-                    <h2 className='text-xl font-semibold text-gray-400'>General Profile Parameters</h2>
+                    <h2 className='text-xl font-semibold dark:text-gray-400'>General Profile Parameters</h2>
 
                     <TextField
                         label="Base Domain"
@@ -415,11 +412,11 @@ const TabContent3 = ({ handleConfigChange }) => (
     <div className='text-left'>
         <div className='px-5 py-3'>
             <h2 className='text-3xl font-semibold'>VM Properties</h2>
-            <p className='text-sm text-gray-400 text-justify'>Define how many physical resources you wish to allocate to the KX.AS.CODE virtual machines.</p>
+            <p className='text-sm dark:text-gray-400 text-justify'>Define how many physical resources you wish to allocate to the KX.AS.CODE virtual machines.</p>
         </div>
-        <div className='px-5 py-3 bg-ghBlack grid grid-cols-12'>
+        <div className='px-5 py-3 dark:bg-ghBlack bg-gray-200 grid grid-cols-12'>
             <div className='col-span-6'>
-                <h2 className='text-xl font-semibold text-gray-400'>KX-Main Parameters</h2>
+                <h2 className='text-xl font-semibold dark:text-gray-400'>KX-Main Parameters</h2>
                 {/* <p className='text-sm text-gray-400'>KX-Main nodes provide two core functions - Kubernetes master services as well as the desktop environment for easy access to deployed tools and documentation. Only the first KX-Main node hosts both the desktop environment, and the Kubernetes Master services. Subsequent KX-Main nodes host the Kubernetes Master services only.</p> */}
                 <TextField
                     label="KX Main Nodes"
@@ -509,12 +506,12 @@ const TabContent4 = ({ handleConfigChange }) => (
     <div className='text-left'>
         <div className='px-5 py-3'>
             <h2 className='text-3xl font-semibold'>Storage Parameters</h2>
-            <p className='text-sm text-gray-400 text-justify'>Define the amount of storage allocated to KX.AS.CODE. There are two types - (1) fast local, but not portable storage, eg. tied to a host, and (2) slower, but portable network storage.</p>
+            <p className='text-sm dark:text-gray-400 text-justify'>Define the amount of storage allocated to KX.AS.CODE. There are two types - (1) fast local, but not portable storage, eg. tied to a host, and (2) slower, but portable network storage.</p>
 
         </div>
-        <div className='px-5 py-3 bg-ghBlack grid grid-cols-12'>
+        <div className='px-5 py-3 dark:bg-ghBlack bg-gray-200 grid grid-cols-12'>
             <div className='col-span-6'>
-                <h2 className='text-xl font-semibold text-gray-400'>Local Volumes</h2>
+                <h2 className='text-xl font-semibold dark:text-gray-400'>Local Volumes</h2>
                 {/* <p className='text-sm text-gray-400 text-justify'>Provision network storage with the set amount. The storage volume will be provisioned as a dedicated virtual drive in the virtual machine.</p> */}
                 <TextField
                     InputProps={{
@@ -689,9 +686,9 @@ const TabContent5 = ({ handleConfigChange }) => {
         <div className='text-left'>
             <div className='px-5 py-3'>
                 <h2 className='text-3xl font-semibold'>User Provisioning</h2>
-                <p className='text-sm text-gray-400 text-justify'>Define additional users to provision in the KX.AS.CODE environment. This is optional. If you do not specify additional users, then only the base user will be available for logging into the desktop and all provisioned tools.</p>
+                <p className='text-sm dark:text-gray-400 text-justify'>Define additional users to provision in the KX.AS.CODE environment. This is optional. If you do not specify additional users, then only the base user will be available for logging into the desktop and all provisioned tools.</p>
             </div>
-            <div className='px-5 py-3 bg-ghBlack gap-2'>
+            <div className='px-5 py-3 dark:bg-ghBlack bg-gray-200 gap-2'>
                 <form>
                     <div className='flex gap-2'>
                         <TextField
@@ -848,10 +845,10 @@ const TabContent6 = ({ handleConfigChange }) => {
         <div className='text-left'>
             <div className='px-5 py-3'>
                 <h2 className='text-3xl font-semibold'>Custom Global Variables</h2>
-                <p className='text-sm text-gray-400 text-justify'>Set key/value pairs that can be used by solutions when they are being installed.</p>
+                <p className='text-sm dark:text-gray-400 text-justify'>Set key/value pairs that can be used by solutions when they are being installed.</p>
             </div>
             <form>
-                <div className='px-5 py-3 bg-ghBlack gap-2 flex items-center'>
+                <div className='px-5 py-3 dark:bg-ghBlack bg-gray-200 gap-2 flex items-center'>
                     <TextField
                         required
                         InputProps={{
@@ -900,12 +897,12 @@ const TabContent7 = ({ handleConfigChange }) => {
         <div className='text-left'>
             <div className='px-5 py-3'>
                 <h2 className='text-3xl font-semibold'>Notification Settings</h2>
-                <p className='text-sm text-gray-400 text-justify'>
+                <p className='text-sm dark:text-gray-400 text-justify'>
                     More Details about this section here.
                 </p>
             </div>
 
-            <div className='px-5 py-3 bg-ghBlack grid grid-cols-12'>
+            <div className='px-5 py-3 dark:bg-ghBlack bg-gray-200 grid grid-cols-12'>
                 <div className='col-span-6'>
                     <TextField
                         label="E-Mail"
@@ -952,12 +949,12 @@ const TabContent8 = ({ handleConfigChange }) => {
         <div className='text-left'>
             <div className='px-5 py-3'>
                 <h2 className='text-3xl font-semibold'>Docker</h2>
-                <p className='text-sm text-gray-400 text-justify'>
+                <p className='text-sm dark:text-gray-400 text-justify'>
                     More Details about this section here.
                 </p>
             </div>
 
-            <div className='px-5 py-3 bg-ghBlack grid grid-cols-12'>
+            <div className='px-5 py-3 dark:bg-ghBlack bg-gray-200 grid grid-cols-12'>
                 <div className='col-span-6'>
                     <TextField
                         label="Dockerhub E-Mail"
@@ -1003,12 +1000,12 @@ const TabContent9 = ({ handleConfigChange }) => {
         <div className='text-left'>
             <div className='px-5 py-3'>
                 <h2 className='text-3xl font-semibold'>Proxy Settings</h2>
-                <p className='text-sm text-gray-400 text-justify'>
+                <p className='text-sm dark:text-gray-400 text-justify'>
                     More Details about this section here.
                 </p>
             </div>
 
-            <div className='px-5 py-3 bg-ghBlack grid grid-cols-12'>
+            <div className='px-5 py-3 dark:bg-ghBlack bg-gray-200 grid grid-cols-12'>
                 <div className='col-span-6'>
                     <TextField
                         label="HTTP Proxy"

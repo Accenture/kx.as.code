@@ -134,7 +134,7 @@ export function App() {
 
     return (
 
-        <div className="">
+        <div className="dark:bg-ghBlack h-screen">
             <ThemeProvider theme={theme}>
                 <Box sx={{ display: "flex" }}>
                     <Drawer variant="permanent" open={open}>

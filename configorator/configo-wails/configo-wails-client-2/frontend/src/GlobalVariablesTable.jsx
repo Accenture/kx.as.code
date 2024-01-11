@@ -255,7 +255,8 @@ export default function GlobalVariablesTable({ rows }) {
 
     return (
         <Box sx={{ width: '100%' }}>
-            <Paper sx={{ width: '100%', backgroundColor: "#161b22" }}>
+            <Paper sx={{ width: '100%' }}>
+            {/* <Paper sx={{ width: '100%', backgroundColor: "#161b22" }}> */}
                 <EnhancedTableToolbar numSelected={selected.length} />
                 <TableContainer>
                     <Table
