@@ -17,7 +17,7 @@ func main() {
 
 	// Create application with options
 	err := wails.Run(&options.App{
-		Title:  "KX.AS.Code Configurator",
+		Title:  "KX.AS.Code Launcher",
 		Width:  900,
 		Height: 900,
 		AssetServer: &assetserver.Options{

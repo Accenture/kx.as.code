@@ -33,7 +33,7 @@ export function HeaderNew(props) {
                         <img src={logo} height={50} width={60} />
                         <div className="text-left">
                             <div className="text-sm">KX.AS.Code</div>
-                            <div className="font-semibold text-lg">Configurator <span className="text-sm font-normal ml-1 dark:bg-ghBlack4 bg-gray-200 p-1 px-2 rounded text-black dark:text-white">v.0.8.16</span></div>
+                            <div className="font-semibold text-lg">Launcher <span className="text-sm font-normal ml-1 dark:bg-ghBlack4 bg-gray-200 p-1 px-2 rounded text-black dark:text-white">v.0.8.16</span></div>
                         </div>
                     </div>
 

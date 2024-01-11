@@ -5,7 +5,7 @@ const Home = () => {
 
     return (
         <div className='mt-24'>
-           Home Lorem Ipsum
+           Home Content
         </div>
     );
 };
