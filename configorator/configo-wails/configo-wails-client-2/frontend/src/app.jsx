@@ -25,7 +25,7 @@ import { MdDashboard } from "react-icons/md";
 import PrecisionManufacturingIcon from '@mui/icons-material/PrecisionManufacturing';
 import RocketLaunchIcon from '@mui/icons-material/RocketLaunch';
 import HomeIcon from '@mui/icons-material/Home';
-
+import Tooltip from '@mui/material/Tooltip';
 
 
 const openedMixin = (theme) => ({
@@ -134,19 +134,19 @@ export function App() {
 
     return (
 
-            <div className="">
-                <ThemeProvider theme={theme}>
-                    <Box sx={{ display: "flex" }}>
-                        <Drawer variant="permanent" open={open}>
-                            <DrawerHeader className="">
-                                <IconButton onClick={handleDrawerClose}>
-                                    {theme.direction === "rtl" ? <ChevronRightIcon /> : <ChevronLeftIcon />}
-                                </IconButton>
-                            </DrawerHeader>
-                            <List className="" style={{ paddingTop: "0" }}>
+        <div className="">
+            <ThemeProvider theme={theme}>
+                <Box sx={{ display: "flex" }}>
+                    <Drawer variant="permanent" open={open}>
+                        <DrawerHeader className="">
+                            <IconButton onClick={handleDrawerClose}>
+                                {theme.direction === "rtl" ? <ChevronRightIcon /> : <ChevronLeftIcon />}
+                            </IconButton>
+                        </DrawerHeader>
+                        <List className="" style={{ paddingTop: "0" }}>
 
-                                <Link to="/home">
-
+                            <Link to="/home">
+                                <Tooltip title="Home" placement="right">
                                     <ListItemButton
                                         sx={{
                                             minHeight: 40,
@@ -158,6 +158,7 @@ export function App() {
                                             },
                                         }}
                                     >
+
                                         <ListItemIcon
                                             className="listItemIconContainer"
                                             sx={{
@@ -169,9 +170,11 @@ export function App() {
                                             <HomeIcon className="text-3xl" />
                                         </ListItemIcon>
                                     </ListItemButton>
-                                </Link>
+                                </Tooltip>
+                            </Link>
 
-                                <Link to="/build">
+                            <Link to="/build">
+                                <Tooltip title="Build" placement="right">
 
                                     <ListItemButton
                                         sx={{
@@ -196,9 +199,11 @@ export function App() {
 
                                         </ListItemIcon>
                                     </ListItemButton>
-                                </Link>
+                                </Tooltip>
+                            </Link>
 
-                                <Link to="/deploy">
+                            <Link to="/deploy">
+                                <Tooltip title="Deployment" placement="right">
 
                                     <ListItemButton
                                         sx={{
@@ -224,27 +229,28 @@ export function App() {
 
                                         </ListItemIcon>
                                     </ListItemButton>
-                                </Link>
+                                </Tooltip>
+                            </Link>
 
 
-                            </List>
-                        </Drawer>
-                        <Box component="main" sx={{ flexGrow: 1, p: 0 }} className="text-black dark:text-white">
-                            <HeaderNew drawerWidth={drawerWidth} handleDrawerOpen={handleDrawerOpen} open={open} handleDarkModeToggle={handleDarkModeToggle} isDarkMode={isDarkMode} />
+                        </List>
+                    </Drawer>
+                    <Box component="main" sx={{ flexGrow: 1, p: 0 }} className="text-black dark:text-white">
+                        <HeaderNew drawerWidth={drawerWidth} handleDrawerOpen={handleDrawerOpen} open={open} handleDarkModeToggle={handleDarkModeToggle} isDarkMode={isDarkMode} />
 
-                            <Routes>
-                                {/* <Route exact path="/" element={<TabMenu />} /> */}
-                                <Route path="/home" element={<Home />} />
-                                <Route path="/build" element={<TabMenuBuild />} />
-                                <Route path="/deploy" element={<TabMenuDeploy />} />
-                                <Route path="/console-output" element={<ConsoleOutput />} />
-                            </Routes>
+                        <Routes>
+                            {/* <Route exact path="/" element={<TabMenu />} /> */}
+                            <Route path="/home" element={<Home />} />
+                            <Route path="/build" element={<TabMenuBuild />} />
+                            <Route path="/deploy" element={<TabMenuDeploy />} />
+                            <Route path="/console-output" element={<ConsoleOutput />} />
+                        </Routes>
 
-                        </Box>
                     </Box>
-                </ThemeProvider>
-                {/* <Footer /> */}
-            </div >
+                </Box>
+            </ThemeProvider>
+            {/* <Footer /> */}
+        </div >
 
     );
 }

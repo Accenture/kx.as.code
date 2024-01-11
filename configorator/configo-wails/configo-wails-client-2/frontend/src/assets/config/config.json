@@ -21,9 +21,9 @@
           "resolutionType": "static"
       },
       "docker": {
-          "dockerhub_email": "",
-          "dockerhub_password": "",
-          "dockerhub_username": ""
+          "dockerhub_email": "default@email.xyz",
+          "dockerhub_password": "default password",
+          "dockerhub_username": "default username"
       },
       "environmentPrefix": "demo1",
       "glusterFsDiskSize": 200,
@@ -41,9 +41,9 @@
           "ipRangeStart": "10.10.76.100"
       },
       "proxy_settings": {
-          "http_proxy": "",
-          "https_proxy": "",
-          "no_proxy": ""
+          "http_proxy": "default proxy",
+          "https_proxy": "default proxy",
+          "no_proxy": "default proxy"
       },
       "selectedTemplates": "",
       "sslProvider": "self-signed",
@@ -82,8 +82,8 @@
   },
   "disableLinuxDesktop": null,
   "notification_endpoints": {
-      "email_address": "burak@123.de",
-      "ms_teams_webhook": "",
-      "slack_webhook": ""
+      "email_address": "default@email.xyz",
+      "ms_teams_webhook": "default webhook",
+      "slack_webhook": "default webhook"
   }
 }

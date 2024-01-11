@@ -34,12 +34,14 @@ import RocketLaunchIcon from '@mui/icons-material/RocketLaunch';
 import SettingsEthernetIcon from '@mui/icons-material/SettingsEthernet';
 import StopCircleIcon from '@mui/icons-material/StopCircle';
 import DoneIcon from '@mui/icons-material/Done';
+import Tooltip from '@mui/material/Tooltip';
+
 
 const TabMenuDeploy = () => {
     const [updatedJsonData, setUpdatedJsonData] = useState('');
     const [activeProcessTab, setActiveProcessTab] = useState('deploy');
     const serializedState = localStorage.getItem('myEditorState');
-    const [isBuildStarted, setIsBuildStarted] = useState(false);
+    const [isDeploymentStarted, setIsDeploymentStarted] = useState(false);
 
     const value = localStorage.getItem('myValue') || '';
     const stateFields = { history: historyField };
@@ -48,18 +50,28 @@ const TabMenuDeploy = () => {
         setActiveProcessTab(tab);
     };
 
+    const toggleDeploymentStart = () => {
+        setIsDeploymentStarted((prevIsDeploymentStarted) => !prevIsDeploymentStarted);
+    }
+
     return (
         <div className='mt-24'>
             {/* Build & Deploy Selection */}
-            <div id="build-deploy-section" className='items-center px-5 bg-ghBlack3 py-1.5'>
+            <div id="build-deploy-section" className='items-center px-5 dark:bg-ghBlack3 bg-white py-1.5'>
 
                 {/* Action Settings / Button */}
                 <div className='mx-5 flex justify-end'>
-                    {isBuildStarted ? <IconButton>
-                        <StopCircleIcon />
-                    </IconButton> : <IconButton>
-                        <PlayCircleIcon />
-                    </IconButton>
+                    {isDeploymentStarted ?
+                        <Tooltip title="Stop Deployment" placement="left">
+                            <IconButton onClick={() => { toggleDeploymentStart() }}>
+                                <StopCircleIcon />
+                            </IconButton>
+                        </Tooltip> :
+                        <Tooltip title="Start Deployment" placement="left">
+                            <IconButton onClick={() => { toggleDeploymentStart() }}>
+                                <PlayCircleIcon />
+                            </IconButton>
+                        </Tooltip>
                     }
 
                 </div>
@@ -159,78 +171,78 @@ const DeployTabContent = () => {
 }
 
 const UIConfigTabContent = ({ activeTab, handleTabClick, handleConfigChange, isBuild }) => (
-        <div id='config-ui-container' className=''>
+    <div id='config-ui-container' className=''>
 
-            <div className="flex bg-ghBlack3 text-sm">
-                <button
-                    onClick={() => handleTabClick('tab1')}
-                    className={` ${activeTab === 'tab1' ? 'border-kxBlue border-b-3 bg-ghBlack4' : 'broder border-ghBlack3 border-b-3'} p-3 py-1`}
-                >
-                    Profile
-                </button>
-                <button
-                    onClick={() => handleTabClick('tab2')}
-                    className={` ${activeTab === 'tab2' ? 'border-kxBlue border-b-3 bg-ghBlack4' : 'broder border-ghBlack3 border-b-3'} p-3 py-1`}
-                >
-                    Parameters & Mode
-                </button>
-                <button
-                    onClick={() => handleTabClick('tab3')}
-                    className={` ${activeTab === 'tab3' ? 'border-kxBlue border-b-3 bg-ghBlack4' : 'broder border-ghBlack3 border-b-3'} p-3 py-1`}
-                >
-                    Resources
-                </button>
-                <button
-                    onClick={() => handleTabClick('tab4')}
-                    className={` ${activeTab === 'tab4' ? 'border-kxBlue border-b-3 bg-ghBlack4' : 'broder border-ghBlack3 border-b-3'} p-3 py-1`}
-                >
-                    Storage
-                </button>
-                <button
-                    onClick={() => handleTabClick('tab5')}
-                    className={` ${activeTab === 'tab5' ? 'border-kxBlue border-b-3 bg-ghBlack4' : 'broder border-ghBlack3 border-b-3'} p-3 py-1`}
-                >
-                    User Provisioning
-                </button>
-                <button
-                    onClick={() => handleTabClick('tab6')}
-                    className={` ${activeTab === 'tab6' ? 'border-kxBlue border-b-3 bg-ghBlack4' : 'broder border-ghBlack3 border-b-3'} p-3 py-1`}
-                >
-                    Custom Variables
-                </button>
-                <button
-                    onClick={() => handleTabClick('tab7')}
-                    className={` ${activeTab === 'tab7' ? 'border-kxBlue border-b-3 bg-ghBlack4' : 'broder border-ghBlack3 border-b-3'} p-3 py-1`}
-                >
-                    Notification
-                </button>
-                <button
-                    onClick={() => handleTabClick('tab8')}
-                    className={` ${activeTab === 'tab8' ? 'border-kxBlue border-b-3 bg-ghBlack4' : 'broder border-ghBlack3 border-b-3'} p-3 py-1`}
-                >
-                    Docker
-                </button>
-                <button
-                    onClick={() => handleTabClick('tab9')}
-                    className={` ${activeTab === 'tab9' ? 'border-kxBlue border-b-3 bg-ghBlack4' : 'broder border-ghBlack3 border-b-3'} p-3 py-1`}
-                >
-                    Proxy
-                </button>
-            </div>
-
-            <div className="tab-content">
-                {activeTab === 'tab1' && <TabContent1 handleConfigChange={handleConfigChange} />}
-                {activeTab === 'tab2' && <TabContent2 handleConfigChange={handleConfigChange} />}
-                {activeTab === 'tab3' && <TabContent3 handleConfigChange={handleConfigChange} />}
-                {activeTab === 'tab4' && <TabContent4 handleConfigChange={handleConfigChange} />}
-                {activeTab === 'tab5' && <TabContent5 handleConfigChange={handleConfigChange} />}
-                {activeTab === 'tab6' && <TabContent6 handleConfigChange={handleConfigChange} />}
-                {activeTab === 'tab7' && <TabContent7 handleConfigChange={handleConfigChange} />}
-                {activeTab === 'tab8' && <TabContent8 handleConfigChange={handleConfigChange} />}
-                {activeTab === 'tab9' && <TabContent9 handleConfigChange={handleConfigChange} />}
-
-            </div>
+        <div className="flex bg-ghBlack3 text-sm">
+            <button
+                onClick={() => handleTabClick('tab1')}
+                className={` ${activeTab === 'tab1' ? 'border-kxBlue border-b-3 bg-ghBlack4' : 'broder border-ghBlack3 border-b-3'} p-3 py-1`}
+            >
+                Profile
+            </button>
+            <button
+                onClick={() => handleTabClick('tab2')}
+                className={` ${activeTab === 'tab2' ? 'border-kxBlue border-b-3 bg-ghBlack4' : 'broder border-ghBlack3 border-b-3'} p-3 py-1`}
+            >
+                Parameters & Mode
+            </button>
+            <button
+                onClick={() => handleTabClick('tab3')}
+                className={` ${activeTab === 'tab3' ? 'border-kxBlue border-b-3 bg-ghBlack4' : 'broder border-ghBlack3 border-b-3'} p-3 py-1`}
+            >
+                Resources
+            </button>
+            <button
+                onClick={() => handleTabClick('tab4')}
+                className={` ${activeTab === 'tab4' ? 'border-kxBlue border-b-3 bg-ghBlack4' : 'broder border-ghBlack3 border-b-3'} p-3 py-1`}
+            >
+                Storage
+            </button>
+            <button
+                onClick={() => handleTabClick('tab5')}
+                className={` ${activeTab === 'tab5' ? 'border-kxBlue border-b-3 bg-ghBlack4' : 'broder border-ghBlack3 border-b-3'} p-3 py-1`}
+            >
+                User Provisioning
+            </button>
+            <button
+                onClick={() => handleTabClick('tab6')}
+                className={` ${activeTab === 'tab6' ? 'border-kxBlue border-b-3 bg-ghBlack4' : 'broder border-ghBlack3 border-b-3'} p-3 py-1`}
+            >
+                Custom Variables
+            </button>
+            <button
+                onClick={() => handleTabClick('tab7')}
+                className={` ${activeTab === 'tab7' ? 'border-kxBlue border-b-3 bg-ghBlack4' : 'broder border-ghBlack3 border-b-3'} p-3 py-1`}
+            >
+                Notification
+            </button>
+            <button
+                onClick={() => handleTabClick('tab8')}
+                className={` ${activeTab === 'tab8' ? 'border-kxBlue border-b-3 bg-ghBlack4' : 'broder border-ghBlack3 border-b-3'} p-3 py-1`}
+            >
+                Docker
+            </button>
+            <button
+                onClick={() => handleTabClick('tab9')}
+                className={` ${activeTab === 'tab9' ? 'border-kxBlue border-b-3 bg-ghBlack4' : 'broder border-ghBlack3 border-b-3'} p-3 py-1`}
+            >
+                Proxy
+            </button>
         </div>
+
+        <div className="tab-content">
+            {activeTab === 'tab1' && <TabContent1 handleConfigChange={handleConfigChange} />}
+            {activeTab === 'tab2' && <TabContent2 handleConfigChange={handleConfigChange} />}
+            {activeTab === 'tab3' && <TabContent3 handleConfigChange={handleConfigChange} />}
+            {activeTab === 'tab4' && <TabContent4 handleConfigChange={handleConfigChange} />}
+            {activeTab === 'tab5' && <TabContent5 handleConfigChange={handleConfigChange} />}
+            {activeTab === 'tab6' && <TabContent6 handleConfigChange={handleConfigChange} />}
+            {activeTab === 'tab7' && <TabContent7 handleConfigChange={handleConfigChange} />}
+            {activeTab === 'tab8' && <TabContent8 handleConfigChange={handleConfigChange} />}
+            {activeTab === 'tab9' && <TabContent9 handleConfigChange={handleConfigChange} />}
+
+        </div>
+    </div>
 );
 
 
@@ -889,13 +901,12 @@ const TabContent7 = ({ handleConfigChange }) => {
             <div className='px-5 py-3'>
                 <h2 className='text-3xl font-semibold'>Notification Settings</h2>
                 <p className='text-sm text-gray-400 text-justify'>
-                    Lorem Ipsum
+                    More Details about this section here.
                 </p>
             </div>
 
             <div className='px-5 py-3 bg-ghBlack grid grid-cols-12'>
                 <div className='col-span-6'>
-                    <h2 className='text-xl font-semibold text-gray-400'>E-Mail</h2>
                     <TextField
                         label="E-Mail"
                         fullWidth
@@ -906,8 +917,33 @@ const TabContent7 = ({ handleConfigChange }) => {
                         onChange={(e) => { handleConfigChange(e.target.value, "notification_endpoints.email_address") }}
                     >
                     </TextField>
+
+                    <TextField
+                        label="MS Teams Webhook"
+                        fullWidth
+                        variant="outlined"
+                        size="small"
+                        margin="normal"
+                        value={configJSON.notification_endpoints["ms_teams_webhook"]}
+                        onChange={(e) => { handleConfigChange(e.target.value, "notification_endpoints.ms_teams_webhook") }}
+                    >
+                    </TextField>
+
+                    <TextField
+                        label="Slack Webhook"
+                        fullWidth
+                        variant="outlined"
+                        size="small"
+                        margin="normal"
+                        value={configJSON.notification_endpoints["slack_webhook"]}
+                        onChange={(e) => { handleConfigChange(e.target.value, "notification_endpoints.slack_webhook") }}
+                    >
+                    </TextField>
+
                 </div>
             </div>
+
+
         </div>)
 }
 
@@ -917,9 +953,48 @@ const TabContent8 = ({ handleConfigChange }) => {
             <div className='px-5 py-3'>
                 <h2 className='text-3xl font-semibold'>Docker</h2>
                 <p className='text-sm text-gray-400 text-justify'>
-                    Lorem Ipsum
+                    More Details about this section here.
                 </p>
             </div>
+
+            <div className='px-5 py-3 bg-ghBlack grid grid-cols-12'>
+                <div className='col-span-6'>
+                    <TextField
+                        label="Dockerhub E-Mail"
+                        fullWidth
+                        variant="outlined"
+                        size="small"
+                        margin="normal"
+                        value={configJSON.config.docker["dockerhub_email"]}
+                        onChange={(e) => { handleConfigChange(e.target.value, "config.docker.dockerhub_email") }}
+                    >
+                    </TextField>
+
+                    <TextField
+                        label="Dockerhub Username"
+                        fullWidth
+                        variant="outlined"
+                        size="small"
+                        margin="normal"
+                        value={configJSON.config.docker["dockerhub_username"]}
+                        onChange={(e) => { handleConfigChange(e.target.value, "config.docker.dockerhub_username") }}
+                    >
+                    </TextField>
+
+                    <TextField
+                        label="Dockerhub Password"
+                        fullWidth
+                        variant="outlined"
+                        size="small"
+                        margin="normal"
+                        value={configJSON.config.docker["dockerhub_password"]}
+                        onChange={(e) => { handleConfigChange(e.target.value, "config.docker.dockerhub_password") }}
+                    >
+                    </TextField>
+
+                </div>
+            </div>
+
         </div>)
 }
 
@@ -927,10 +1002,47 @@ const TabContent9 = ({ handleConfigChange }) => {
     return (
         <div className='text-left'>
             <div className='px-5 py-3'>
-                <h2 className='text-3xl font-semibold'>Proxy</h2>
+                <h2 className='text-3xl font-semibold'>Proxy Settings</h2>
                 <p className='text-sm text-gray-400 text-justify'>
-                    Lorem Ipsum
+                    More Details about this section here.
                 </p>
+            </div>
+
+            <div className='px-5 py-3 bg-ghBlack grid grid-cols-12'>
+                <div className='col-span-6'>
+                    <TextField
+                        label="HTTP Proxy"
+                        fullWidth
+                        variant="outlined"
+                        size="small"
+                        margin="normal"
+                        value={configJSON.config.proxy_settings["http_proxy"]}
+                        onChange={(e) => { handleConfigChange(e.target.value, "config.proxy_settings.http_proxy") }}
+                    >
+                    </TextField>
+
+                    <TextField
+                        label="HTTS Proxy"
+                        fullWidth
+                        variant="outlined"
+                        size="small"
+                        margin="normal"
+                        value={configJSON.config.proxy_settings["https_proxy"]}
+                        onChange={(e) => { handleConfigChange(e.target.value, "config.proxy_settings.https_proxy") }}
+                    >
+                    </TextField>
+
+                    <TextField
+                        label="No Proxy"
+                        fullWidth
+                        variant="outlined"
+                        size="small"
+                        margin="normal"
+                        value={configJSON.config.proxy_settings["no_proxy"]}
+                        onChange={(e) => { handleConfigChange(e.target.value, "config.proxy_settings.no_proxy") }}
+                    >
+                    </TextField>
+                </div>
             </div>
         </div>)
 }

@@ -35,6 +35,7 @@ import RocketLaunchIcon from '@mui/icons-material/RocketLaunch';
 import SettingsEthernetIcon from '@mui/icons-material/SettingsEthernet';
 import StopCircleIcon from '@mui/icons-material/StopCircle';
 import DoneIcon from '@mui/icons-material/Done';
+import Tooltip from '@mui/material/Tooltip';
 
 
 const TabMenuBuild = () => {
@@ -50,17 +51,27 @@ const TabMenuBuild = () => {
         setActiveProcessTab(tab);
     };
 
+    const toggleBuildStart = () => {
+        setIsBuildStarted((prevIsBuildStarted) => !prevIsBuildStarted);
+    }
+
     return (
         <div className='mt-24'>
             {/* Build & Deploy Selection */}
             <div id="build-deploy-section" className='items-center px-5 bg-ghBlack3 py-1.5'>
                 {/* Action Settings / Button */}
                 <div className='mx-5 flex justify-end'>
-                    {isBuildStarted ? <IconButton>
-                        <StopCircleIcon />
-                    </IconButton> : <IconButton>
-                        <PlayCircleIcon />
-                    </IconButton>
+                    {isBuildStarted ?
+                        <Tooltip title="Stop Build" placement="left">
+                            <IconButton onClick={() => { toggleBuildStart() }}>
+                                <StopCircleIcon />
+                            </IconButton>
+                        </Tooltip> :
+                        <Tooltip title="Start Build" placement="left">
+                            <IconButton onClick={() => { toggleBuildStart() }}>
+                                <PlayCircleIcon />
+                            </IconButton>
+                        </Tooltip>
                     }
                 </div>
 
@@ -106,10 +117,10 @@ const BuildTabContent = () => {
         if (os == "darwin-linux") {
             if (nodeType == "main") {
                 parsedData = { ...configJSON };
-            }else {
+            } else {
                 console.error("nodeType not defined.")
             }
-        }else {
+        } else {
             console.error("os not defined.")
         }
 
@@ -153,7 +164,7 @@ const BuildTabContent = () => {
                     Packer Config UI
                 </button>
 
-                {/* Centered Circle */} 
+                {/* Centered Circle */}
                 <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
                     <div className="w-10 h-10 bg-ghBlack4 items-center flex justify-center text-xl">
                         <SettingsEthernetIcon fontSize='inherit' />
@@ -265,7 +276,7 @@ const BuildContent = ({ handleConfigChange }) => {
             <div className='px-5 py-3 bg-ghBlack grid grid-cols-12'>
                 <div className='col-span-6'>
                     <TextField
-                        label="Profiles"
+                        label="VM Profile"
                         select
                         fullWidth
                         variant="outlined"
@@ -279,7 +290,7 @@ const BuildContent = ({ handleConfigChange }) => {
                     </TextField>
 
                     <TextField
-                        label="Image Type"
+                        label="Node Type"
                         select
                         fullWidth
                         variant="outlined"

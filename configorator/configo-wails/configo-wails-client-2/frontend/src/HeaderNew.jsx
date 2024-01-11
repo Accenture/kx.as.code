@@ -9,6 +9,8 @@ import { ThemeProvider, createTheme } from '@mui/system';
 import MuiAppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import MenuIcon from "@mui/icons-material/Menu";
+import Tooltip from '@mui/material/Tooltip';
+
 
 export function HeaderNew(props) {
 
@@ -38,14 +40,15 @@ export function HeaderNew(props) {
                     </div>
 
                     <div>
-
-                        <IconButton
-                            color="inherit"
-                            aria-label="Toggle dark/light mode"
-                            onClick={props.handleDarkModeToggle}
-                        >
-                            {props.isDarkMode ?  <WbSunnyIcon /> :  <Brightness3 />}
-                        </IconButton>
+                        <Tooltip title={`${props.isDarkMode ? "Lightmode" : "Darkmode" }`} placement="left">
+                            <IconButton
+                                color="inherit"
+                                aria-label="Toggle dark/light mode"
+                                onClick={props.handleDarkModeToggle}
+                            >
+                                {props.isDarkMode ? <WbSunnyIcon /> : <Brightness3 />}
+                            </IconButton>
+                        </Tooltip>
                     </div>
                 </div>
             </Toolbar>
