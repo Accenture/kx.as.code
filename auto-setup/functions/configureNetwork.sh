@@ -9,8 +9,8 @@ fi
 if [[ "$(cat ${profileConfigJsonPath} | jq -r '.state.networking_configuration_status')" != "done" ]]; then
 
     # Change DNS resolution to allow wildcards for resolving locally deployed K8s services
-    echo "DNSStubListener=no" | /usr/bin/sudo tee -a /etc/systemd/resolved.conf
-    /usr/bin/sudo systemctl restart systemd-resolved
+    #echo "DNSStubListener=no" | /usr/bin/sudo tee -a /etc/systemd/resolved.conf
+    #/usr/bin/sudo systemctl restart systemd-resolved
 
     # Configure DNS - /etc/resolv.conf
     /usr/bin/sudo rm -f /etc/resolv.conf
@@ -89,7 +89,9 @@ sudo bash -c "cat << 'EOF' >> /etc/netplan/kx-netplan.yaml
           dhcp4: no
           addresses:
               - ${existingNicIpAddress}/24
-          gateway4: ${existingNicGateway}
+         routes:
+          - to: default
+            via: ${existingNicGateway}
           nameservers:
               addresses: [${fixedNicConfigDns1}, ${fixedNicConfigDns2}]
 EOF"
@@ -105,7 +107,9 @@ sudo bash -c "cat << 'EOF' >> /etc/netplan/kx-netplan.yaml
           dhcp4: no
           addresses:
               - ${mainIpAddress}/24
-          gateway4: ${fixedNicConfigGateway}
+         routes:
+          - to: default
+            via: ${fixedNicConfigGateway}
           nameservers:
               addresses: [${fixedNicConfigDns1}, ${fixedNicConfigDns2}]
 EOF"
