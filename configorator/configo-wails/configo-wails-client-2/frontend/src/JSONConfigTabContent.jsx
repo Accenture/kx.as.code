@@ -5,6 +5,8 @@ import fs from 'fs';
 import { UpdateJsonFile } from "../wailsjs/go/main/App";
 import WarningIcon from '@mui/icons-material/Warning';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import { basicDark } from '@uiw/codemirror-theme-basic';
+import { langs } from '@uiw/codemirror-extensions-langs';
 
 const JSONConfigTabContent = (props) => {
     const editorRef = useRef(null);
@@ -70,6 +72,8 @@ const JSONConfigTabContent = (props) => {
                 </div>)}
             <div id="codemirror-container" className='overflow-x-scroll'>
                 <CodeMirror
+                    extensions={[langs.tsx()]}
+                    theme={basicDark}
                     value={props.jsonData}
                     options={{
                         mode: 'json',
