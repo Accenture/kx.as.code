@@ -4,8 +4,7 @@ import { Header } from "./Header";
 import { HeaderNew } from "./HeaderNew";
 import Footer from "./Footer";
 import { Form2 } from "./Form2";
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import { useLocation } from 'react-router-dom';
+import { Routes, Route, Link, useLocation } from "react-router-dom";
 import TabMenu from "./TabMenu";
 import TabMenuBuild from "./TabMenuBuild";
 import TabMenuDeploy from "./TabMenuDeploy";
@@ -82,8 +81,8 @@ export function App() {
 
     const [open, setOpen] = useState(false);
     const [isDarkMode, setIsDarkMode] = useState(true);
-    const [pathname, setPathname] = useState(window.location.pathname);
-    const pathnames = pathname.split("/").filter((x) => x);
+    const location = useLocation();
+    const pathnames = location.pathname.split("/").filter((x) => x);
     const slug = pathnames[pathnames.length - 1];
 
     const handleDrawerOpen = () => {
@@ -113,6 +112,8 @@ export function App() {
     });
 
     useEffect(() => {
+        console.log("pathnames: ", pathnames);
+
         const htmlElement = document.querySelector('html');
         if (isDarkMode) {
             htmlElement.classList.add('dark');
@@ -128,22 +129,24 @@ export function App() {
         return () => {
             window.removeEventListener('popstate', handleLocationChange);
         };
-    }, [isDarkMode]);
+    }, [isDarkMode, pathnames]);
 
 
     return (
-        <div className="">
-            <ThemeProvider theme={theme}>
-                <Box sx={{ display: "flex" }}>
-                    <Drawer variant="permanent" open={open}>
-                        {/* <DrawerHeader className="">
-                        <IconButton onClick={handleDrawerClose}>
-                            {theme.direction === "rtl" ? <ChevronRightIcon /> : <ChevronLeftIcon />}
-                        </IconButton>
-                        </DrawerHeader> */}
-                        <List className="" style={{ paddingTop: "0" }}>
-                            <ListItem key={"Home"} disablePadding sx={{ display: "block" }}>
-                                <a href="/home">
+
+            <div className="">
+                <ThemeProvider theme={theme}>
+                    <Box sx={{ display: "flex" }}>
+                        <Drawer variant="permanent" open={open}>
+                            <DrawerHeader className="">
+                                <IconButton onClick={handleDrawerClose}>
+                                    {theme.direction === "rtl" ? <ChevronRightIcon /> : <ChevronLeftIcon />}
+                                </IconButton>
+                            </DrawerHeader>
+                            <List className="" style={{ paddingTop: "0" }}>
+
+                                <Link to="/home">
+
                                     <ListItemButton
                                         sx={{
                                             minHeight: 40,
@@ -165,12 +168,11 @@ export function App() {
                                         >
                                             <HomeIcon className="text-3xl" />
                                         </ListItemIcon>
-                                        <ListItemText primary={"Home"} sx={{ opacity: open ? 1 : 0 }} />
                                     </ListItemButton>
-                                </a>
-                            </ListItem>
-                            <ListItem key={"Build"} disablePadding sx={{ display: "block" }}>
-                                <a href="/build">
+                                </Link>
+
+                                <Link to="/build">
+
                                     <ListItemButton
                                         sx={{
                                             minHeight: 40,
@@ -191,13 +193,13 @@ export function App() {
                                             }}
                                         >
                                             <PrecisionManufacturingIcon className="text-3xl" />
+
                                         </ListItemIcon>
-                                        <ListItemText primary={"Build"} sx={{ opacity: open ? 1 : 0 }} />
                                     </ListItemButton>
-                                </a>
-                            </ListItem>
-                            <ListItem key={"Deploy"} disablePadding sx={{ display: "block" }}>
-                                <a href="/deploy">
+                                </Link>
+
+                                <Link to="/deploy">
+
                                     <ListItemButton
                                         sx={{
                                             minHeight: 40,
@@ -218,16 +220,18 @@ export function App() {
                                             }}
                                         >
                                             <RocketLaunchIcon className="text-3xl" />
+
+
                                         </ListItemIcon>
-                                        <ListItemText primary={"Deploy"} sx={{ opacity: open ? 1 : 0 }} />
                                     </ListItemButton>
-                                </a>
-                            </ListItem>
-                        </List>
-                    </Drawer>
-                    <Box component="main" sx={{ flexGrow: 1, p: 0 }} className="text-black dark:text-white">
-                        <HeaderNew drawerWidth={drawerWidth} handleDrawerOpen={handleDrawerOpen} open={open} handleDarkModeToggle={handleDarkModeToggle} isDarkMode={isDarkMode} />
-                        <Router>
+                                </Link>
+
+
+                            </List>
+                        </Drawer>
+                        <Box component="main" sx={{ flexGrow: 1, p: 0 }} className="text-black dark:text-white">
+                            <HeaderNew drawerWidth={drawerWidth} handleDrawerOpen={handleDrawerOpen} open={open} handleDarkModeToggle={handleDarkModeToggle} isDarkMode={isDarkMode} />
+
                             <Routes>
                                 {/* <Route exact path="/" element={<TabMenu />} /> */}
                                 <Route path="/home" element={<Home />} />
@@ -235,11 +239,12 @@ export function App() {
                                 <Route path="/deploy" element={<TabMenuDeploy />} />
                                 <Route path="/console-output" element={<ConsoleOutput />} />
                             </Routes>
-                        </Router>
+
+                        </Box>
                     </Box>
-                </Box>
-            </ThemeProvider>
-            {/* <Footer /> */}
-        </div>
+                </ThemeProvider>
+                {/* <Footer /> */}
+            </div >
+
     );
 }
