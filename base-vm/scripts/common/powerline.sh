@@ -43,7 +43,8 @@ sudo -H -i -u $VM_USER sh -c 'cd fonts && ./install.sh && cd .. && rm -rf fonts'
 sudo chown -hR $VM_USER:$VM_USER /home/$VM_USER
 
 # System level updates
-sudo pip3 install git+https://github.com/Lokaltog/powerline
+# Modified pip3 to pipx as part of OS upgrade to Debian 12
+sudo pipx install git+https://github.com/Lokaltog/powerline --force
 sudo wget https://github.com/powerline/powerline/raw/develop/font/PowerlineSymbols.otf
 sudo wget https://github.com/powerline/powerline/raw/develop/font/10-powerline-symbols.conf
 sudo mv -f PowerlineSymbols.otf /usr/share/fonts/

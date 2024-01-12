@@ -47,10 +47,10 @@ fi
 
 # Install Powerline Status
 # TODO - Restore pipx when upgrading to Debian 12
-sudo apt-get install -y python3-setuptools # pipx
-#sudo pipx ensurepath
-#sudo pipx install powerline-status
-sudo pip3 install powerline-status
+sudo apt-get install -y python3-setuptools pipx
+sudo pipx ensurepath
+sudo pipx install powerline-status
+#sudo pip3 install powerline-status
 
 # Install Netplan for later NIC configuration on first start
 sudo apt-get install -y netplan.io

@@ -24,7 +24,7 @@ sudo rm -f /root/*.deb || true
 # Mark the vagrant box build time.
 date --utc | sudo tee /etc/vagrant_box_build_time
 
-# Cleanip old packages
+# Cleanup old packages
 sudo apt-get clean
 
 # Cleanup unused packages.

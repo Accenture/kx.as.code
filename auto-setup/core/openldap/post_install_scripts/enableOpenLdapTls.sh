@@ -34,10 +34,11 @@ fi
 if [[ -z $(grep -i "TLS_REQCERT allow" /etc/ldap/ldap.conf) ]]; then
     /usr/bin/sudo echo "TLS_REQCERT allow" >> /etc/ldap/ldap.conf
 fi
-/usr/bin/sudo sed -i 's/#ssl start_tls/ssl start_tls/g' /etc/pam_ldap.conf
-/usr/bin/sudo sed -i 's/base dc=example,dc=net/base '${ldapDn}'/g' /etc/libnss-ldap.conf
-/usr/bin/sudo sed -i 's/rootbinddn cn=manager,dc=example,dc=net/rootbinddn cn=admin,'${ldapDn}'/g' /etc/libnss-ldap.conf
-/usr/bin/sudo sed -i 's/#ssl start_tls/ssl start_tls/g' /etc/libnss-ldap.conf
+# No longer relevant for Debian 12
+#/usr/bin/sudo sed -i 's/#ssl start_tls/ssl start_tls/g' /etc/pam_ldap.conf
+#/usr/bin/sudo sed -i 's/base dc=example,dc=net/base '${ldapDn}'/g' /etc/libnss-ldap.conf
+#/usr/bin/sudo sed -i 's/rootbinddn cn=manager,dc=example,dc=net/rootbinddn cn=admin,'${ldapDn}'/g' /etc/libnss-ldap.conf
+#/usr/bin/sudo sed -i 's/#ssl start_tls/ssl start_tls/g' /etc/libnss-ldap.conf
 
 # Restart OpenLDAP to activate changes
 /usr/bin/sudo service slapd restart

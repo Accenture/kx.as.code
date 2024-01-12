@@ -2,9 +2,8 @@
 set -euo pipefail
 
 # Install Bind9 for local DNS resolution
-# TODO - Re-enable systemd-resolved for Debian 12
-sudo apt install -y bind9 bind9utils bind9-doc #systemd-resolved
-#sudo systemctl enable systemd-resolved
+sudo apt install -y bind9 bind9utils bind9-doc
+
 
 echo '''options {
         directory "/var/cache/bind";
@@ -36,3 +35,9 @@ echo '''options {
         allow-transfer { none; };
 
 };''' | sudo tee /etc/bind/named.conf.options
+
+# Ensure name resolver is using a valid domain name server
+sudo rm -f /etc/resolv.conf
+echo "nameserver 8.8.8.8" | sudo tee /etc/resolv.conf
+echo "nameserver 8.8.4.4" | sudo tee -a /etc/resolv.conf
+echo "nameserver 1.1.1.1" | sudo tee -a /etc/resolv.conf

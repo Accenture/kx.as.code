@@ -363,8 +363,8 @@ if [[ "$(cat ${profileConfigJsonPath} | jq -r '.state.networking_configuration_s
 
     if [[ ${baseIpType} == "static"  ]] || [[ ${dnsResolution} == "hybrid"   ]]; then
         # Change DNS resolution to allow wildcards for resolving locally deployed K8s services
-        echo "DNSStubListener=no" | /usr/bin/sudo tee -a /etc/systemd/resolved.conf
-        /usr/bin/sudo systemctl restart systemd-resolved
+        #echo "DNSStubListener=no" | /usr/bin/sudo tee -a /etc/systemd/resolved.conf
+        #/usr/bin/sudo systemctl restart systemd-resolved
         /usr/bin/sudo rm -f /etc/resolv.conf
         /usr/bin/sudo echo "nameserver ${kxMainIp}" | /usr/bin/sudo tee /etc/resolv.conf
 

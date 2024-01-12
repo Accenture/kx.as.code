@@ -13,7 +13,7 @@ else
 fi
 
 # if running in Windows WSL, set additional parameter
-if [ ! -z ${LOGNAME} ]; then
+if [ -z "${LOGNAME}" ]; then
     export VAGRANT_WSL_ENABLE_WINDOWS_ACCESS="1"
 fi
 

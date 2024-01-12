@@ -53,7 +53,7 @@ sha256sum="dce77cae95c2c115e43159169e2d2faaf93bce6862d5adad7262f3aa3cf60df8"
 echo "${sha256sum} ${INSTALLATION_WORKSPACE}/nvim-linux64.deb" | sha256sum --check
 sudo apt-get install -y ${INSTALLATION_WORKSPACE}/nvim-linux64.deb
 # TODO - Restore --break-system-packages for Debian 12
-sudo -H pip3 install neovim #--break-system-packages
+sudo -H pip3 install neovim --break-system-packages
 
 # Set User File Associations
 sudo update-alternatives --install /usr/bin/editor editor /usr/bin/nvim 100
@@ -77,7 +77,7 @@ else
 fi
 
 # Install YQ - version that wraps JQ and includes XQ (default on path)
-sudo -H pip3 install yq
+sudo -H pipx install yq
 
 # Install YQ - version with --prettyPrint
 yqVersion="v4.2.0"
@@ -92,11 +92,11 @@ yqUrl="https://github.com/mikefarah/yq/releases/download/${yqVersion}/${yqBinary
 curl -L -o ${INSTALLATION_WORKSPACE}/${yqBinary}.tar.gz ${yqUrl}
 echo "${sha256sum} ${INSTALLATION_WORKSPACE}/${yqBinary}.tar.gz" | sha256sum --check
 sudo tar xvzf ${INSTALLATION_WORKSPACE}/${yqBinary}.tar.gz -C ${INSTALLATION_WORKSPACE}
-sudo mv ${INSTALLATION_WORKSPACE}/${yqBinay} /usr/bin/yq
+sudo mv ${INSTALLATION_WORKSPACE}/${yqBinary} /usr/bin/yq
 sudo chmod +x /usr/bin/yq
 
 # Install Grip for showing WELCOME.md after desktop login
-sudo -H pip3 install grip
+sudo -H pipx install grip
 
 # Install Tilix
 sudo apt-get -y install tilix
@@ -164,30 +164,30 @@ cd ${INSTALLATION_WORKSPACE}/lens
 source /etc/profile.d/nvm.sh
 
 # Build OpenLens
-rc=0
-if [[ -z $(which raspinfo) ]]; then
-  for i in {1..3}; do
-    cd ${INSTALLATION_WORKSPACE}/lens
-    source /etc/profile.d/nvm.sh
-    nvm use --delete-prefix lts/gallium
-    npm config set fetch-retries 5
-    npm config set fetch-retry-factor 20
-    npm config set fetch-retry-mintimeout 20000
-    npm config set fetch-retry-maxtimeout 120000
-    npm config set fetch-timeout 600000
-    npm run all:install
-    sudo sed -i -e '/"rpm",/d' -e '/"AppImage"/d' -e 's/"deb",/"deb"/' ${INSTALLATION_WORKSPACE}/lens/open-lens/package.json
-    npx nx run open-lens:build:app --x64
-    if [[ ${rc} -ne 0 ]]; then
-      echo "Open-Lens build attempt #${i} failed. Trying again (max 3 times)."
-      rc=0 # Reset rc before next run
-    else
-      echo "Open-Lens build attempt #${i} succeeded. Continuing."
-      break
-    fi
-  done
-  debOpenLensInstaller=$(find ${INSTALLATION_WORKSPACE}/lens/open-lens/dist -name "OpenLens-*.deb")
-  sudo mv ${debOpenLensInstaller} ${INSTALLATION_WORKSPACE}
-  # Tidy up
-  sudo rm -rf ${INSTALLATION_WORKSPACE}/lens || true
-fi
+#rc=0
+#if [[ -z $(which raspinfo) ]]; then
+#  for i in {1..3}; do
+#    cd ${INSTALLATION_WORKSPACE}/lens
+#    source /etc/profile.d/nvm.sh
+#    nvm use --delete-prefix lts/gallium
+#    npm config set fetch-retries 5
+#    npm config set fetch-retry-factor 20
+#    npm config set fetch-retry-mintimeout 20000
+#    npm config set fetch-retry-maxtimeout 120000
+#    npm config set fetch-timeout 600000
+#    npm run all:install
+#    sudo sed -i -e '/"rpm",/d' -e '/"AppImage"/d' -e 's/"deb",/"deb"/' ${INSTALLATION_WORKSPACE}/lens/open-lens/package.json
+#    npx nx run open-lens:build:app --x64
+#    if [[ ${rc} -ne 0 ]]; then
+#      echo "Open-Lens build attempt #${i} failed. Trying again (max 3 times)."
+#      rc=0 # Reset rc before next run
+#    else
+#      echo "Open-Lens build attempt #${i} succeeded. Continuing."
+#      break
+#    fi
+#  done
+#  debOpenLensInstaller=$(find ${INSTALLATION_WORKSPACE}/lens/open-lens/dist -name "OpenLens-*.deb")
+#  sudo mv ${debOpenLensInstaller} ${INSTALLATION_WORKSPACE}
+#  # Tidy up
+#  sudo rm -rf ${INSTALLATION_WORKSPACE}/lens || true
+#fi
