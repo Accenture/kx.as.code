@@ -1,37 +1,23 @@
 import React, { useState, useEffect } from 'react';
-import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import InputAdornment from '@mui/material/InputAdornment';
-import { Link } from "react-router-dom";
 import Switch from '@mui/material/Switch';
 import MenuItem from '@mui/material/MenuItem';
-import Slider from '@mui/material/Slider';
 import configJSON from './assets/config/config.json';
-import { oneDark } from '@codemirror/theme-one-dark';
-import { useNavigate } from 'react-router-dom';
+import usersJSON from './assets/config/users.json';
 import PlayCircleIcon from '@mui/icons-material/PlayCircle';
-import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
 import UserTable from './UserTable';
 import JSONConfigTabContent from './JSONConfigTabContent';
 import GlobalVariablesTable from './GlobalVariablesTable';
 import PersonAddAltIcon from '@mui/icons-material/PersonAddAlt';
 import AddIcon from '@mui/icons-material/Add';
-import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import { UpdateJsonFile } from "../wailsjs/go/main/App";
-import FilledInput from '@mui/material/FilledInput';
-import OutlinedInput from '@mui/material/OutlinedInput';
-import InputLabel from '@mui/material/InputLabel';
-import FormHelperText from '@mui/material/FormHelperText';
-import FormControl from '@mui/material/FormControl';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import IconButton from '@mui/material/IconButton';
-import PrecisionManufacturingIcon from '@mui/icons-material/PrecisionManufacturing';
-import RocketLaunchIcon from '@mui/icons-material/RocketLaunch';
 import SettingsEthernetIcon from '@mui/icons-material/SettingsEthernet';
 import StopCircleIcon from '@mui/icons-material/StopCircle';
-import DoneIcon from '@mui/icons-material/Done';
 import Tooltip from '@mui/material/Tooltip';
 
 
@@ -97,6 +83,30 @@ const DeployTabContent = () => {
         setActiveConfigTab(configTab);
     };
 
+
+    const handleUsersChange = (value, key) => {
+        let selectedValue;
+
+        if (!isNaN(value)) {
+            selectedValue = parseFloat(value);
+        } else {
+            selectedValue = value;
+        }
+
+        let parsedData = { ...usersJSON };
+
+        setNestedValue(parsedData, key, selectedValue)
+
+        console.log("DEBUG: ", parsedData.config[key]);
+        console.log("DEBUG: selectedValue", selectedValue);
+
+        const updatedJsonString = JSON.stringify(parsedData, null, 2);
+
+        setJsonData(updatedJsonString);
+        UpdateJsonFile(updatedJsonString, "users");
+    }
+
+
     const handleConfigChange = (value, key) => {
         let selectedValue;
 
@@ -116,7 +126,7 @@ const DeployTabContent = () => {
         const updatedJsonString = JSON.stringify(parsedData, null, 2);
 
         setJsonData(updatedJsonString);
-        UpdateJsonFile(updatedJsonString);
+        UpdateJsonFile(updatedJsonString, "profile");
     };
 
     function setNestedValue(obj, key, value) {
@@ -160,14 +170,14 @@ const DeployTabContent = () => {
             </div>
 
             <div className="config-tab-content">
-                {activeConfigTab === 'config-tab1' && <UIConfigTabContent activeTab={activeTab} handleTabClick={handleTabClick} handleConfigChange={handleConfigChange} />}
+                {activeConfigTab === 'config-tab1' && <UIConfigTabContent activeTab={activeTab} handleTabClick={handleTabClick} handleConfigChange={handleConfigChange} handleUsersChange={handleUsersChange}/>}
                 {activeConfigTab === 'config-tab2' && <JSONConfigTabContent jsonData={jsonData} fileName={"profile-config.json"} />}
             </div>
         </div>
     );
 }
 
-const UIConfigTabContent = ({ activeTab, handleTabClick, handleConfigChange, isBuild }) => (
+const UIConfigTabContent = ({ activeTab, handleTabClick, handleConfigChange, handleUsersChange, isBuild }) => (
     <div id='config-ui-container' className=''>
 
         <div className="flex dark:bg-ghBlack3 bg-gray-300 text-sm text-black dark:text-white">
@@ -232,7 +242,7 @@ const UIConfigTabContent = ({ activeTab, handleTabClick, handleConfigChange, isB
             {activeTab === 'tab2' && <TabContent2 handleConfigChange={handleConfigChange} />}
             {activeTab === 'tab3' && <TabContent3 handleConfigChange={handleConfigChange} />}
             {activeTab === 'tab4' && <TabContent4 handleConfigChange={handleConfigChange} />}
-            {activeTab === 'tab5' && <TabContent5 handleConfigChange={handleConfigChange} />}
+            {activeTab === 'tab5' && <TabContent5 handleUsersChange={handleUsersChange} />}
             {activeTab === 'tab6' && <TabContent6 handleConfigChange={handleConfigChange} />}
             {activeTab === 'tab7' && <TabContent7 handleConfigChange={handleConfigChange} />}
             {activeTab === 'tab8' && <TabContent8 handleConfigChange={handleConfigChange} />}
@@ -596,11 +606,10 @@ const TabContent4 = ({ handleConfigChange }) => (
     </div>
 );
 
-const TabContent5 = ({ handleConfigChange }) => {
+const TabContent5 = ({ handleUsersChange }) => {
 
-    const [rows, setRows] = React.useState([
+    const [rows, setRows] = React.useState([]);
 
-    ]);
     const [firstName, setFirstName] = React.useState("");
     const [surname, setSurname] = React.useState("");
     const [email, setEmail] = React.useState("");

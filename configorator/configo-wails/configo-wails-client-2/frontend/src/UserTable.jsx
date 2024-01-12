@@ -324,7 +324,7 @@ export default function UserTable({ rows }) {
                                             scope="row"
                                             padding="none"
                                         >
-                                            {row.firstname}
+                                            {row.firstName}
                                         </TableCell>
                                         <TableCell align="left">{row.surname}</TableCell>
                                         <TableCell align="left">{row.email}</TableCell>

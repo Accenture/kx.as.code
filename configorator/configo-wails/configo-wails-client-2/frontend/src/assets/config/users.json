@@ -1,0 +1,29 @@
+{
+    "config": {
+        "owner": {
+            "firstname": "Kx",
+            "surname": "Hero",
+            "email": "kx.hero@pmi-dev-wkstn.io",
+            "keyboard_language": "us",
+            "role": "admin"
+        },
+        "additionalUsers": [
+            {
+                "user_id": 1,
+                "firstname": "Joe",
+                "surname": "Bloggs",
+                "email": "joe@kx-as-code.local",
+                "keyboard_language": "us",
+                "role": "admin"
+            },
+            {
+                "user_id": 2,
+                "firstname": "Max",
+                "surname": "Mustermann",
+                "email": "max@kx-as-code.local",
+                "keyboard_language": "de",
+                "role": "user"
+            }
+        ]
+    }
+}

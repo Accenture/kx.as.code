@@ -28,7 +28,7 @@ func (a *App) Greet(name string) string {
 	return fmt.Sprintf("Hello %s, It's show time!", name)
 }
 
-func (a *App) UpdateJsonFile(data string) error {
+func (a *App) UpdateJsonFile(data string, file string) error {
 	fmt.Printf("UpdateJsonFile triggered %s!\n", data)
 	if data == "" {
 		return errors.New("empty JSON string provided")
@@ -44,7 +44,18 @@ func (a *App) UpdateJsonFile(data string) error {
 		return fmt.Errorf("error marshaling JSON: %v", err)
 	}
 
-	filePath := "./frontend/src/assets/config/config.json"
+	var filePath string
+
+	// Choose file path based on the 'file' parameter
+	switch file {
+	case "profile":
+		filePath = "./frontend/src/assets/config/config.json"
+	case "users":
+		filePath = "./frontend/src/assets/config/users.json"
+	default:
+		return fmt.Errorf("unsupported file parameter: %s", file)
+	}
+
 	err = os.WriteFile(filePath, jsonDataStr, 0644)
 	if err != nil {
 		return fmt.Errorf("error writing to file %s: %v", filePath, err)
