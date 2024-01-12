@@ -56,7 +56,7 @@ const TabMenuBuild = () => {
     }
 
     return (
-        <div className='mt-24'>
+        <div className='mt-[90px]'>
             {/* Build & Deploy Selection */}
             <div id="build-deploy-section" className='items-center px-5 bg-ghBlack3 py-1.5'>
                 {/* Action Settings / Button */}
@@ -159,7 +159,7 @@ const BuildTabContent = () => {
 
     return (
         <div className='relative'>
-            <div className='flex grid-cols-12 items-center relative bg-ghBlack sticky top-[90px] z-10 h-[40px]'>
+            <div className='flex grid-cols-12 items-center relative dark:bg-ghBlack2 sticky top-[90px] z-10 h-[40px]'>
                 <button onClick={() => handleConfigTabClick('config-tab1')} className={`${activeConfigTab === "config-tab1" ? "bg-kxBlue2" : ""} h-10 flex col-span-6 w-full text-center items-center justify-center`}>
                     Packer Config UI
                 </button>
@@ -271,9 +271,9 @@ const BuildContent = ({ handleConfigChange }) => {
         <div className='text-left'>
             <div className='px-5 py-3'>
                 <h2 className='text-3xl font-semibold'>Build Config</h2>
-                <p className='text-sm text-gray-400 text-justify'>Lorem Ipsum...</p>
+                <p className='text-sm dark:text-gray-400 text-justify'>More Details about the Build process here.</p>
             </div>
-            <div className='px-5 py-3 bg-ghBlack grid grid-cols-12'>
+            <div className='px-5 py-3 dark:bg-ghBlack2 grid grid-cols-12'>
                 <div className='col-span-6'>
                     <TextField
                         label="VM Profile"

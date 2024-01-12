@@ -147,7 +147,7 @@ function EnhancedTableToolbar(props) {
                 </Typography>
             ) : (
                 <Typography
-                    className='text-gray-400 font-semibold font-xl'
+                    className='dark:text-gray-400 font-semibold font-xl'
                     sx={{ flex: '1 1 100%' }}
                     variant="h6"
                     id="tableTitle"

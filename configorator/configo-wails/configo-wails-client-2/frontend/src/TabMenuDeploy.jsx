@@ -52,9 +52,9 @@ const TabMenuDeploy = () => {
     }
 
     return (
-        <div className='mt-24'>
+        <div className='mt-[90px]'>
             {/* Build & Deploy Selection */}
-            <div id="build-deploy-section" className='items-center px-5 dark:bg-ghBlack3 bg-white py-1.5'>
+            <div id="build-deploy-section" className='items-center px-5 dark:bg-ghBlack3 bg-gray-400 py-1.5'>
 
                 {/* Action Settings / Button */}
                 <div className='mx-5 flex justify-end'>
@@ -142,7 +142,7 @@ const DeployTabContent = () => {
 
     return (
         <div className='relative'>
-            <div className='flex grid-cols-12 items-center relative bg-gray-200 dark:bg-ghBlack sticky top-[90px] z-10 h-[40px]'>
+            <div className='flex grid-cols-12 items-center relative bg-gray-200 dark:bg-ghBlack2 sticky top-[90px] z-10 h-[40px]'>
                 <button onClick={() => handleConfigTabClick('config-tab1')} className={`${activeConfigTab === "config-tab1" ? "bg-kxBlue2 text-white" : ""} dark:text-white text-black h-10 flex col-span-6 w-full text-center items-center justify-center`}>
                     Profile  Config UI
                 </button>
@@ -154,7 +154,7 @@ const DeployTabContent = () => {
                     </div>
                 </div>
 
-                <button onClick={() => handleConfigTabClick('config-tab2')} className={`${activeConfigTab === "config-tab2" ? "bg-kxBlue2" : ""} h-10 flex col-span-6 w-full text-center items-center justify-center`}>
+                <button onClick={() => handleConfigTabClick('config-tab2')} className={`${activeConfigTab === "config-tab2" ? "bg-kxBlue2 text-white" : ""} h-10 flex col-span-6 w-full text-center items-center justify-center`}>
                     Profile Config JSON
                 </button>
             </div>
@@ -251,7 +251,7 @@ const TabContent1 = ({ handleConfigChange }) => {
                 <h2 className='text-3xl font-semibold'>Profile</h2>
                 <p className='text-sm dark:text-gray-400 text-justify'>Select the profile. A check is made on the system to see if the necessary virtualization software and associated Vagrant plugins are installed, as well as availability of built Vagrant boxes.</p>
             </div>
-            <div className='px-5 py-3 dark:bg-ghBlack bg-gray-200 grid grid-cols-12'>
+            <div className='px-5 py-3 dark:bg-ghBlack2 bg-gray-300 grid grid-cols-12'>
                 <div className='col-span-6'>
                     <TextField
                         label="Profiles"
@@ -318,7 +318,7 @@ const TabContent2 = ({ handleConfigChange }) => {
                     {/* Set the parameters to define the internal DNS of KX.AS.CODE. Each new service that is provisioned in KX.AS.CODE will have the fully qualified domain name (FQDN) of &lt;service_name&gt;, &lt;team_name&gt;. &lt;base_domain&gt;. The username and password fields determine the base admin user password. It is possible to add additional users. In the last section, you determine if running in standalone or cluster mode. Standalone mode starts up one main node only. This is recommended for any physical environment with less than 16G ram. If enable worker nodes, then you can also choose to have workloads running on both main and worker nodes, or only on worker nodes. */}
                 </p>
             </div>
-            <div className='px-5 py-3 dark:bg-ghBlack bg-gray-200 grid grid-cols-12'>
+            <div className='px-5 py-3 dark:bg-ghBlack2 bg-gray-300 grid grid-cols-12'>
                 <div className='col-span-6'>
                     <h2 className='text-xl font-semibold dark:text-gray-400'>General Profile Parameters</h2>
 
@@ -376,7 +376,7 @@ const TabContent2 = ({ handleConfigChange }) => {
                         onChange={(e) => { handleConfigChange(e.target.value, "config.basePassword") }}
                     />
 
-                    <h2 className='text-xl font-semibold text-gray-400'>Additional Toggles</h2>
+                    <h2 className='text-xl font-semibold dark:text-gray-400'>Additional Toggles</h2>
                     <div className='px-5 text-sm'>
                         <FormControlLabel
                             className='my-1'
@@ -414,7 +414,7 @@ const TabContent3 = ({ handleConfigChange }) => (
             <h2 className='text-3xl font-semibold'>VM Properties</h2>
             <p className='text-sm dark:text-gray-400 text-justify'>Define how many physical resources you wish to allocate to the KX.AS.CODE virtual machines.</p>
         </div>
-        <div className='px-5 py-3 dark:bg-ghBlack bg-gray-200 grid grid-cols-12'>
+        <div className='px-5 py-3 dark:bg-ghBlack2 bg-gray-300 grid grid-cols-12'>
             <div className='col-span-6'>
                 <h2 className='text-xl font-semibold dark:text-gray-400'>KX-Main Parameters</h2>
                 {/* <p className='text-sm text-gray-400'>KX-Main nodes provide two core functions - Kubernetes master services as well as the desktop environment for easy access to deployed tools and documentation. Only the first KX-Main node hosts both the desktop environment, and the Kubernetes Master services. Subsequent KX-Main nodes host the Kubernetes Master services only.</p> */}
@@ -457,7 +457,7 @@ const TabContent3 = ({ handleConfigChange }) => (
                 >
                 </TextField>
 
-                <h2 className='text-xl font-semibold text-gray-400'>KX-Worker Parameters</h2>
+                <h2 className='text-xl font-semibold dark:text-gray-400'>KX-Worker Parameters</h2>
                 <TextField
                     label="KX Node Nodes"
                     type='number'
@@ -509,7 +509,7 @@ const TabContent4 = ({ handleConfigChange }) => (
             <p className='text-sm dark:text-gray-400 text-justify'>Define the amount of storage allocated to KX.AS.CODE. There are two types - (1) fast local, but not portable storage, eg. tied to a host, and (2) slower, but portable network storage.</p>
 
         </div>
-        <div className='px-5 py-3 dark:bg-ghBlack bg-gray-200 grid grid-cols-12'>
+        <div className='px-5 py-3 dark:bg-ghBlack2 bg-gray-300 grid grid-cols-12'>
             <div className='col-span-6'>
                 <h2 className='text-xl font-semibold dark:text-gray-400'>Local Volumes</h2>
                 {/* <p className='text-sm text-gray-400 text-justify'>Provision network storage with the set amount. The storage volume will be provisioned as a dedicated virtual drive in the virtual machine.</p> */}
@@ -528,7 +528,7 @@ const TabContent4 = ({ handleConfigChange }) => (
                 >
                 </TextField>
 
-                <h2 className='text-xl font-semibold text-gray-400'>Local Storage Volumes</h2>
+                <h2 className='text-xl font-semibold dark:text-gray-400'>Local Storage Volumes</h2>
                 {/* <p className='text-sm text-gray-400 text-justify'>Define the number of volumes of a given size will be "pre-provisioned" for consumption by Kubernetes workloads.</p> */}
                 <TextField
                     InputProps={{
@@ -688,7 +688,7 @@ const TabContent5 = ({ handleConfigChange }) => {
                 <h2 className='text-3xl font-semibold'>User Provisioning</h2>
                 <p className='text-sm dark:text-gray-400 text-justify'>Define additional users to provision in the KX.AS.CODE environment. This is optional. If you do not specify additional users, then only the base user will be available for logging into the desktop and all provisioned tools.</p>
             </div>
-            <div className='px-5 py-3 dark:bg-ghBlack bg-gray-200 gap-2'>
+            <div className='px-5 py-3 dark:bg-ghBlack2 bg-gray-300 gap-2'>
                 <form>
                     <div className='flex gap-2'>
                         <TextField
@@ -848,7 +848,7 @@ const TabContent6 = ({ handleConfigChange }) => {
                 <p className='text-sm dark:text-gray-400 text-justify'>Set key/value pairs that can be used by solutions when they are being installed.</p>
             </div>
             <form>
-                <div className='px-5 py-3 dark:bg-ghBlack bg-gray-200 gap-2 flex items-center'>
+                <div className='px-5 py-3 dark:bg-ghBlack2 bg-gray-300 gap-2 flex items-center'>
                     <TextField
                         required
                         InputProps={{
@@ -902,7 +902,7 @@ const TabContent7 = ({ handleConfigChange }) => {
                 </p>
             </div>
 
-            <div className='px-5 py-3 dark:bg-ghBlack bg-gray-200 grid grid-cols-12'>
+            <div className='px-5 py-3 dark:bg-ghBlack2 bg-gray-300 grid grid-cols-12'>
                 <div className='col-span-6'>
                     <TextField
                         label="E-Mail"
@@ -954,7 +954,7 @@ const TabContent8 = ({ handleConfigChange }) => {
                 </p>
             </div>
 
-            <div className='px-5 py-3 dark:bg-ghBlack bg-gray-200 grid grid-cols-12'>
+            <div className='px-5 py-3 dark:bg-ghBlack2 bg-gray-300 grid grid-cols-12'>
                 <div className='col-span-6'>
                     <TextField
                         label="Dockerhub E-Mail"
@@ -1005,7 +1005,7 @@ const TabContent9 = ({ handleConfigChange }) => {
                 </p>
             </div>
 
-            <div className='px-5 py-3 dark:bg-ghBlack bg-gray-200 grid grid-cols-12'>
+            <div className='px-5 py-3 dark:bg-ghBlack2 bg-gray-300 grid grid-cols-12'>
                 <div className='col-span-6'>
                     <TextField
                         label="HTTP Proxy"

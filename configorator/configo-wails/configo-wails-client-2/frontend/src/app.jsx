@@ -134,7 +134,7 @@ export function App() {
 
     return (
 
-        <div className="dark:bg-ghBlack h-screen">
+        <div className="dark:bg-ghBlack bg-gray-200 h-screen">
             <ThemeProvider theme={theme}>
                 <Box sx={{ display: "flex" }}>
                     <Drawer variant="permanent" open={open}>
@@ -158,7 +158,6 @@ export function App() {
                                             },
                                         }}
                                     >
-
                                         <ListItemIcon
                                             className="listItemIconContainer"
                                             sx={{
