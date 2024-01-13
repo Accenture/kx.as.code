@@ -709,7 +709,7 @@ const TabContent5 = ({ handleUsersChange }) => {
             "role": role
         }
 
-        addNewAdditionalUser(newAdditionalUser);
+        addNewAdditionalUser(newAdditionalUser, "users");
     };
 
     const getNextUserId = (data) => {
@@ -728,8 +728,8 @@ const TabContent5 = ({ handleUsersChange }) => {
         };
 
         setUsersData(updatedUsers);
-
-        console.log("Updated Users: ", updatedUsers);
+        const updatedUsersJsonString = JSON.stringify(updatedUsers, null, 2);
+        UpdateJsonFile(updatedUsersJsonString, "users")
     }
 
     useEffect(() => {
