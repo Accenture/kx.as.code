@@ -20,7 +20,6 @@ import SettingsEthernetIcon from '@mui/icons-material/SettingsEthernet';
 import StopCircleIcon from '@mui/icons-material/StopCircle';
 import Tooltip from '@mui/material/Tooltip';
 
-
 const TabMenuDeploy = () => {
     const [updatedJsonData, setUpdatedJsonData] = useState('');
     const [activeProcessTab, setActiveProcessTab] = useState('deploy');
@@ -36,12 +35,10 @@ const TabMenuDeploy = () => {
     const toggleDeploymentStart = () => {
         setIsDeploymentStarted((prevIsDeploymentStarted) => !prevIsDeploymentStarted);
     }
-
     return (
         <div className='mt-[90px]'>
             {/* Build & Deploy Selection */}
             <div id="build-deploy-section" className='items-center px-5 dark:bg-ghBlack3 bg-gray-400 py-1.5'>
-
                 {/* Action Settings / Button */}
                 <div className='mx-5 flex justify-end'>
                     {isDeploymentStarted ?
@@ -56,15 +53,9 @@ const TabMenuDeploy = () => {
                             </IconButton>
                         </Tooltip>
                     }
-
                 </div>
-
             </div>
-
-
-
             <DeployTabContent />
-
             {/* <BuildExecuteButton /> */}
         </div>
     );
@@ -157,7 +148,7 @@ const DeployTabContent = () => {
                     Profile  Config UI
                 </button>
 
-                {/* Centered Circle */}
+                {/* Centered icon */}
                 <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
                     <div className="w-10 h-10 dark:bg-ghBlack4 bg-gray-300 items-center flex justify-center text-xl">
                         <SettingsEthernetIcon fontSize='inherit' />
@@ -170,7 +161,7 @@ const DeployTabContent = () => {
             </div>
 
             <div className="config-tab-content">
-                {activeConfigTab === 'config-tab1' && <UIConfigTabContent activeTab={activeTab} handleTabClick={handleTabClick} handleConfigChange={handleConfigChange} handleUsersChange={handleUsersChange}/>}
+                {activeConfigTab === 'config-tab1' && <UIConfigTabContent activeTab={activeTab} handleTabClick={handleTabClick} handleConfigChange={handleConfigChange} handleUsersChange={handleUsersChange} />}
                 {activeConfigTab === 'config-tab2' && <JSONConfigTabContent jsonData={jsonData} fileName={"profile-config.json"} />}
             </div>
         </div>
@@ -179,7 +170,6 @@ const DeployTabContent = () => {
 
 const UIConfigTabContent = ({ activeTab, handleTabClick, handleConfigChange, handleUsersChange, isBuild }) => (
     <div id='config-ui-container' className=''>
-
         <div className="flex dark:bg-ghBlack3 bg-gray-300 text-sm text-black dark:text-white">
             <button
                 onClick={() => handleTabClick('tab1')}
@@ -622,6 +612,31 @@ const TabContent5 = ({ handleUsersChange }) => {
     const [layoutError, setLayoutError] = React.useState("");
     const [roleError, setRoleError] = React.useState("");
 
+    const [usersData, setUsersData] = useState(usersJSON);
+
+    const addUser = () => {
+
+        setUsersData((prevData) => ({
+            ...prevData,
+            config: {
+                ...prevData.config,
+                additionalUsers: [...prevData.config.additionalUsers, newAdditionalUser],
+            },
+        }));
+    };
+
+    const removeUser = (userIdToRemove) => {
+        setUsersData((prevData) => ({
+            ...prevData,
+            config: {
+                ...prevData.config,
+                additionalUsers: prevData.config.additionalUsers.filter(
+                    (user) => user.user_id !== userIdToRemove
+                ),
+            },
+        }));
+    };
+
     function createData(id, firstName, surname, email, layout, role) {
         return {
             id,
@@ -684,11 +699,42 @@ const TabContent5 = ({ handleUsersChange }) => {
         const newId = rows.length + 1;
         const newRow = createData(newId, firstName, surname, email, layout, role);
         setRows([...rows, newRow]);
+
+        const newAdditionalUser = {
+            "user_id": getNextUserId(usersData),
+            "firstname": firstName,
+            "surname": surname,
+            "email": email,
+            "keyboard_language": layout,
+            "role": role
+        }
+
+        addNewAdditionalUser(newAdditionalUser);
     };
 
-    useEffect(() => {
+    const getNextUserId = (data) => {
+        const additionalUsers = data?.config?.additionalUsers || [];
+        const maxUserId = additionalUsers.reduce((max, user) => (user.user_id > max ? user.user_id : max), -1);
+        return maxUserId + 1;
+    };
 
-    }, [firstName, surname, email, layout, role]);
+    const addNewAdditionalUser = (user) => {
+        const updatedUsers = {
+            ...usersData,
+            config: {
+                ...usersData.config,
+                additionalUsers: [...usersData.config.additionalUsers, user]
+            }
+        };
+
+        setUsersData(updatedUsers);
+
+        console.log("Updated Users: ", updatedUsers);
+    }
+
+    useEffect(() => {
+        console.log(JSON.stringify(usersData, null, 2));
+    }, [firstName, surname, email, layout, role, usersData]);
 
 
     return (
@@ -794,17 +840,15 @@ const TabContent5 = ({ handleUsersChange }) => {
                 </form>
 
             </div>
-            <UserTable rows={rows} />
+            <UserTable rows={usersData.config.additionalUsers} />
         </div>)
 };
 
 const TabContent6 = ({ handleConfigChange }) => {
 
     const [rows, setRows] = React.useState([]);
-
     const [key, setKey] = React.useState("");
     const [value, setValue] = React.useState("");
-
     const [keyError, setKeyError] = useState('');
     const [valueError, setValueError] = useState('');
 
@@ -841,7 +885,6 @@ const TabContent6 = ({ handleConfigChange }) => {
         handleAddRow(key, value);
         setKey("");
         setValue("");
-
     };
 
     const handleAddRow = (firstName, surname, password, email, layout, role) => {
@@ -849,6 +892,9 @@ const TabContent6 = ({ handleConfigChange }) => {
         const newRow = createData(newId, firstName, surname, password, email, layout, role);
         setRows([...rows, newRow]);
     };
+
+    useEffect(() => {
+    }, []);
 
     return (
         <div className='text-left'>

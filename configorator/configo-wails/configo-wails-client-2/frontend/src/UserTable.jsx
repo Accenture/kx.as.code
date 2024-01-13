@@ -22,6 +22,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import { visuallyHidden } from '@mui/utils';
 
+
 function descendingComparator(a, b, orderBy) {
     if (b[orderBy] < a[orderBy]) {
         return -1;
@@ -38,10 +39,6 @@ function getComparator(order, orderBy) {
         : (a, b) => -descendingComparator(a, b, orderBy);
 }
 
-// Since 2020 all major browsers ensure sort stability with Array.prototype.sort().
-// stableSort() brings sort stability to non-modern browsers (notably IE11). If you
-// only support modern browsers you can replace stableSort(exampleArray, exampleComparator)
-// with exampleArray.slice().sort(exampleComparator)
 function stableSort(array, comparator) {
     const stabilizedThis = array.map((el, index) => [el, index]);
     stabilizedThis.sort((a, b) => {
@@ -277,7 +274,7 @@ export default function UserTable({ rows }) {
     return (
         <Box sx={{ width: '100%' }}>
             <Paper sx={{ width: '100%' }}>
-            {/* <Paper sx={{ width: '100%', backgroundColor: "#161b22" }}> */}
+                {/* <Paper sx={{ width: '100%', backgroundColor: "#161b22" }}> */}
                 <EnhancedTableToolbar numSelected={selected.length} />
                 <TableContainer>
                     <Table
@@ -324,11 +321,11 @@ export default function UserTable({ rows }) {
                                             scope="row"
                                             padding="none"
                                         >
-                                            {row.firstName}
+                                            {row.firstname}
                                         </TableCell>
                                         <TableCell align="left">{row.surname}</TableCell>
                                         <TableCell align="left">{row.email}</TableCell>
-                                        <TableCell align="left">{row.layout}</TableCell>
+                                        <TableCell align="left">{row.keyboard_language}</TableCell>
                                         <TableCell align="left">{row.role}</TableCell>
 
                                     </TableRow>

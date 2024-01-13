@@ -134,7 +134,7 @@ export function App() {
 
     return (
 
-        <div className="dark:bg-ghBlack bg-gray-200 h-screen">
+        <div className="dark:bg-ghBlack4 bg-gray-200 h-screen">
             <ThemeProvider theme={theme}>
                 <Box sx={{ display: "flex" }}>
                     <Drawer variant="permanent" open={open}>
@@ -203,7 +203,6 @@ export function App() {
 
                             <Link to="/deploy">
                                 <Tooltip title="Deployment" placement="right">
-
                                     <ListItemButton
                                         sx={{
                                             minHeight: 40,
@@ -230,8 +229,6 @@ export function App() {
                                     </ListItemButton>
                                 </Tooltip>
                             </Link>
-
-
                         </List>
                     </Drawer>
                     <Box component="main" sx={{ flexGrow: 1, p: 0 }} className="text-black dark:text-white">
