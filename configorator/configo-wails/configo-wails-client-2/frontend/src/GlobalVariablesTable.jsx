@@ -125,6 +125,10 @@ EnhancedTableHead.propTypes = {
 function EnhancedTableToolbar(props) {
     const { numSelected } = props;
 
+    useEffect(() => {
+
+    }, [numSelected]);
+
     return (
         <Toolbar
             sx={{
@@ -159,8 +163,9 @@ function EnhancedTableToolbar(props) {
 
             {numSelected > 0 ? (
                 <Tooltip title="Delete">
-                    <IconButton onClick={() => {
+                    <IconButton id="delete-row-button" onClick={() => {
                             props.removeCustomVariable(props.selected)
+                            props.setSelected([]);
                     }}>
                         <DeleteIcon />
                     </IconButton>
@@ -258,7 +263,7 @@ export default function GlobalVariablesTable({ rows, removeCustomVariable }) {
         <Box sx={{ width: '100%' }}>
             <Paper sx={{ width: '100%' }}>
                 {/* <Paper sx={{ width: '100%', backgroundColor: "#161b22" }}> */}
-                <EnhancedTableToolbar numSelected={selected.length} selected={selected} removeCustomVariable={removeCustomVariable} />
+                <EnhancedTableToolbar numSelected={selected.length} selected={selected} removeCustomVariable={removeCustomVariable} setSelected={setSelected}/>
                 <TableContainer>
                     <Table
                         sx={{ minWidth: 750 }}
