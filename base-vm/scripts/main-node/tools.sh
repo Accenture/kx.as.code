@@ -77,6 +77,7 @@ else
 fi
 
 # Install YQ - version that wraps JQ and includes XQ (default on path)
+export PIPX_BIN_DIR=/usr/local/bin
 sudo -H pipx install yq
 
 # Install YQ - version with --prettyPrint
