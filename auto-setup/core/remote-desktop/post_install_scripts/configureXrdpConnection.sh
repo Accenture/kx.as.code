@@ -52,7 +52,7 @@ INSERT INTO guacamole_connection_parameter(
 fi
 
 # Restart services
-systemctl restart tomcat9
+systemctl restart tomcat${tomcatVersion}
 systemctl restart guacd
 systemctl restart xrdp.service
 systemctl restart xrdp-sesman.service
