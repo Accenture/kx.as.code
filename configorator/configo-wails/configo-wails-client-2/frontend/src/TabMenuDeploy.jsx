@@ -20,6 +20,7 @@ import IconButton from '@mui/material/IconButton';
 import SettingsEthernetIcon from '@mui/icons-material/SettingsEthernet';
 import StopCircleIcon from '@mui/icons-material/StopCircle';
 import Tooltip from '@mui/material/Tooltip';
+import Checkbox from '@mui/material/Checkbox';
 
 const TabMenuDeploy = () => {
     const [updatedJsonData, setUpdatedJsonData] = useState('');
@@ -96,17 +97,23 @@ const DeployTabContent = () => {
 
 
     const handleConfigChange = (value, key) => {
+        console.log("value: ", value);
+        console.log("key: ", key);
+
         let selectedValue;
 
-        if (!isNaN(value)) {
-            selectedValue = parseFloat(value);
-        } else {
+        if (typeof value === 'boolean' || typeof value === 'number') {
             selectedValue = value;
+        } else if (typeof value === 'string') {
+            selectedValue = value.trim();
+        } else {
+            console.error("Invalid data type for value parameter");
+            return;
         }
 
         let parsedData = { ...configJSON };
 
-        setNestedValue(parsedData, key, selectedValue)
+        setNestedValue(parsedData, key, selectedValue);
 
         const updatedJsonString = JSON.stringify(parsedData, null, 2);
 
@@ -371,30 +378,33 @@ const TabContent2 = ({ handleConfigChange }) => {
                     />
 
                     <h2 className='text-xl font-semibold dark:text-gray-400'>Additional Toggles</h2>
-                    <div className='px-5 text-sm'>
+                    <div className='text-sm'>
                         <FormControlLabel
-                            className='my-1'
-                            control={<Switch size="small"
+                            className=''
+                            control={<Checkbox size="small"
                                 defaultChecked={configJSON.config["standaloneMode"]}
-                                onChange={(e) => { handleConfigChange(e.target.checked, "standaloneMode") }}
+                                onChange={(e) => {
+                                    console.log("isChecked: ", e.target.checked)
+                                    handleConfigChange(e.target.checked, "config.standaloneMode")
+                                }}
                             />}
-                            label={<span style={{ fontSize: '16px', marginLeft: "20px" }}>Enable Standalone Mode</span>}
+                            label={<span style={{ fontSize: '16px' }}>Enable Standalone Mode</span>}
                         />
                         <FormControlLabel
-                            className='my-1'
-                            control={<Switch size="small"
+                            className=''
+                            control={<Checkbox size="small"
                                 defaultChecked={configJSON.config["allowWorkloadsOnMaster"]}
-                                onChange={(e) => { handleConfigChange(e.target.checked, "allowWorkloadsOnMaster") }}
+                                onChange={(e) => { handleConfigChange(e.target.checked, "config.allowWorkloadsOnMaster") }}
                             />}
-                            label={<span style={{ fontSize: '16px', marginLeft: "20px" }}>Allow Workloads on Kubernetes Master</span>}
+                            label={<span style={{ fontSize: '16px' }}>Allow Workloads on Kubernetes Master</span>}
                         />
                         <FormControlLabel
-                            className='my-1'
-                            control={<Switch size="small"
+                            className=''
+                            control={<Checkbox size="small"
                                 defaultChecked={configJSON.config["disableLinuxDesktop"]}
-                                onChange={(e) => { handleConfigChange(e.target.checked, "disableLinuxDesktop") }}
+                                onChange={(e) => { handleConfigChange(e.target.checked, "config.disableLinuxDesktop") }}
                             />}
-                            label={<span style={{ fontSize: '16px', marginLeft: "20px" }}>Disable Linux Desktop</span>}
+                            label={<span style={{ fontSize: '16px' }}>Disable Linux Desktop</span>}
                         />
                     </div>
                 </div>
@@ -608,16 +618,25 @@ const TabContent5 = ({ handleUsersChange }) => {
 
     const [usersData, setUsersData] = useState(usersJSON);
 
-    const removeUser = (userIdToRemove) => {
-        setUsersData((prevData) => ({
-            ...prevData,
-            config: {
-                ...prevData.config,
-                additionalUsers: prevData.config.additionalUsers.filter(
-                    (user) => user.user_id !== userIdToRemove
-                ),
-            },
-        }));
+    const removeUser = (userIdArrayToRemove) => {
+        console.log("id param List: ", userIdArrayToRemove);
+
+        setUsersData((prevData) => {
+            const updatedUsers = {
+                ...prevData,
+                config: {
+                    ...prevData.config,
+                    additionalUsers: prevData.config.additionalUsers.filter(
+                        (user) => !userIdArrayToRemove.includes(user.user_id)
+                    ),
+                },
+            };
+            const updatedUsersJsonString = JSON.stringify(updatedUsers, null, 2);
+            console.log("updatedUsersJsonString: ", updatedUsersJsonString);
+            UpdateJsonFile(updatedUsersJsonString, "users");
+
+            return updatedUsers;
+        });
     };
 
     function createData(id, firstName, surname, email, layout, role) {
@@ -823,7 +842,7 @@ const TabContent5 = ({ handleUsersChange }) => {
                 </form>
 
             </div>
-            <UserTable rows={usersData.config.additionalUsers} />
+            <UserTable rows={usersData.config.additionalUsers} removeUser={removeUser} />
         </div>)
 };
 
@@ -888,7 +907,7 @@ const TabContent6 = ({ handleConfigChange }) => {
 
     const removeCustomVariable = (customVariableIdArrayToRemove) => {
         console.log("id param List: ", customVariableIdArrayToRemove);
-    
+
         setCustomVariablesData((prevData) => {
             const updatedCustomVariables = {
                 ...prevData,
@@ -902,7 +921,7 @@ const TabContent6 = ({ handleConfigChange }) => {
             const updatedCustomVariablesJsonString = JSON.stringify(updatedCustomVariables, null, 2);
             console.log("updatedCustomVariablesJsonString: ", updatedCustomVariablesJsonString);
             UpdateJsonFile(updatedCustomVariablesJsonString, "customVariables");
-    
+
             return updatedCustomVariables;
         });
     };

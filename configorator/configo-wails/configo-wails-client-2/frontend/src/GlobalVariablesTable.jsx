@@ -163,7 +163,7 @@ function EnhancedTableToolbar(props) {
 
             {numSelected > 0 ? (
                 <Tooltip title="Delete">
-                    <IconButton id="delete-row-button" onClick={() => {
+                    <IconButton id="delete-row-button-custom-variables-table" onClick={() => {
                             props.removeCustomVariable(props.selected)
                             props.setSelected([]);
                     }}>
@@ -256,6 +256,7 @@ export default function GlobalVariablesTable({ rows, removeCustomVariable }) {
     );
 
     useEffect(() => {
+        setSelected([]);
         setPage(0);
     }, [rows]);
 

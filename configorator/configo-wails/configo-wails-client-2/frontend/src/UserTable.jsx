@@ -91,6 +91,10 @@ function EnhancedTableHead(props) {
         onRequestSort(event, property);
     };
 
+    useEffect(() => {
+
+    }, [numSelected]);
+
     return (
         <TableHead>
             <TableRow>
@@ -177,7 +181,10 @@ function EnhancedTableToolbar(props) {
 
             {numSelected > 0 ? (
                 <Tooltip title="Delete">
-                    <IconButton>
+                   <IconButton id="delete-row-button-usertable" onClick={() => {
+                            props.removeUser(props.selected)
+                            props.setSelected([]);
+                    }}>
                         <DeleteIcon />
                     </IconButton>
                 </Tooltip>
@@ -196,7 +203,7 @@ EnhancedTableToolbar.propTypes = {
     numSelected: PropTypes.number.isRequired,
 };
 
-export default function UserTable({ rows }) {
+export default function UserTable({ rows, removeUser }) {
     const [order, setOrder] = React.useState('asc');
     const [orderBy, setOrderBy] = React.useState('firstname');
     const [selected, setSelected] = React.useState([]);
@@ -212,7 +219,7 @@ export default function UserTable({ rows }) {
 
     const handleSelectAllClick = (event) => {
         if (event.target.checked) {
-            const newSelected = rows.map((n) => n.id);
+            const newSelected = rows.map((n) => n.user_id);
             setSelected(newSelected);
             return;
         }
@@ -275,7 +282,7 @@ export default function UserTable({ rows }) {
         <Box sx={{ width: '100%' }}>
             <Paper sx={{ width: '100%' }}>
                 {/* <Paper sx={{ width: '100%', backgroundColor: "#161b22" }}> */}
-                <EnhancedTableToolbar numSelected={selected.length} />
+                <EnhancedTableToolbar numSelected={selected.length} selected={selected} removeUser={removeUser} setSelected={setSelected}/>
                 <TableContainer>
                     <Table
                         sx={{ minWidth: 750 }}
@@ -292,17 +299,17 @@ export default function UserTable({ rows }) {
                         />
                         <TableBody>
                             {visibleRows.map((row, index) => {
-                                const isItemSelected = isSelected(row.id);
+                                const isItemSelected = isSelected(row.user_id);
                                 const labelId = `enhanced-table-checkbox-${index}`;
 
                                 return (
                                     <TableRow
                                         hover
-                                        onClick={(event) => handleClick(event, row.id)}
+                                        onClick={(event) => handleClick(event, row.user_id)}
                                         role="checkbox"
                                         aria-checked={isItemSelected}
                                         tabIndex={-1}
-                                        key={row.id}
+                                        key={row.user_id}
                                         selected={isItemSelected}
                                         sx={{ cursor: 'pointer' }}
                                     >

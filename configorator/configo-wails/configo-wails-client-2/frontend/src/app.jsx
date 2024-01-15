@@ -195,7 +195,6 @@ export function App() {
                                             }}
                                         >
                                             <PrecisionManufacturingIcon className="text-3xl" />
-
                                         </ListItemIcon>
                                     </ListItemButton>
                                 </Tooltip>
