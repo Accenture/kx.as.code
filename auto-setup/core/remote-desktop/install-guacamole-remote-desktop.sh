@@ -28,7 +28,7 @@ if [[ -z $(which raspinfo) ]] && [[ "${installGuacamole}" == "true" ]]; then
 
 	tar -xvf guacamole-server-${guacamoleVersion}.tar.gz --directory ${installationWorkspace}
 	cd ${installationWorkspace}/guacamole-server-${guacamoleVersion}
-	./configure --with-init-dir=/etc/init.d --enable-allow-freerdp-snapshots
+	./configure --enable-allow-freerdp-snapshots --with-systemd-dir=/etc/systemd/system/ --disable-guacenc
 	/usr/bin/sudo make
 	/usr/bin/sudo make install
 	/usr/bin/sudo ldconfig
@@ -321,23 +321,24 @@ ExecStop=/usr/bin/vncserver -kill :%i
 WantedBy=multi-user.target
 ''' | /usr/bin/sudo tee /etc/systemd/system/vncserver@.service
 
-	/usr/bin/sudo -H -i -u ${vmUser} bash -c "vncserver -kill :1 || true"
+  export displayToUseForVnc="$(( $( (cd /tmp/.X11-unix && for x in X*; do echo ":${x#X}"; done) | sed  's/://g' | tail -1) + 1 ))"
+	/usr/bin/sudo -H -i -u ${vmUser} bash -c "vncserver -kill :${displayToUseForVnc} || true"
 
 	# Starting up VNC service for Remote Desktop
 	for i in {1..5}; do
-		isActive=$(/usr/bin/sudo systemctl is-active vncserver@1.service || true)
+		isActive=$(/usr/bin/sudo systemctl is-active vncserver@${displayToUseForVnc}.service || true)
 		if [[ "${isActive}" != "active" ]]; then
 			log_info "VNC service is not running. Starting it up (attempt ${i} of 5)"
 			/usr/bin/sudo systemctl daemon-reload
-			/usr/bin/sudo systemctl start vncserver@1.service || true
+			/usr/bin/sudo systemctl start vncserver@${displayToUseForVnc}.service || true
 		else
 			log_info "VNC service up after attempt ${i} of 5"
 			break
 		fi
 		sleep 5
 	done
-	/usr/bin/sudo systemctl enable vncserver@1.service
-	/usr/bin/sudo systemctl status vncserver@1.service
+	/usr/bin/sudo systemctl enable vncserver@${displayToUseForVnc}.service
+	/usr/bin/sudo systemctl status vncserver@${displayToUseForVnc}.service
 
 	# Install NGINX as reverse proxy
 	/usr/bin/sudo apt install -y nginx
