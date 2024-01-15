@@ -1,0 +1,11 @@
+{
+    "config": {
+        "customVariables": [
+            {
+                "variable_id" : 0,
+                "key": "exampleKey",
+                "value": "exampleValue"
+            }
+        ]
+    }
+}

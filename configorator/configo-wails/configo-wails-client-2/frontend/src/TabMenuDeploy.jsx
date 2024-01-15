@@ -6,6 +6,7 @@ import Switch from '@mui/material/Switch';
 import MenuItem from '@mui/material/MenuItem';
 import configJSON from './assets/config/config.json';
 import usersJSON from './assets/config/users.json';
+import customVariablesJSON from './assets/config/customVariables.json';
 import PlayCircleIcon from '@mui/icons-material/PlayCircle';
 import UserTable from './UserTable';
 import JSONConfigTabContent from './JSONConfigTabContent';
@@ -614,17 +615,6 @@ const TabContent5 = ({ handleUsersChange }) => {
 
     const [usersData, setUsersData] = useState(usersJSON);
 
-    const addUser = () => {
-
-        setUsersData((prevData) => ({
-            ...prevData,
-            config: {
-                ...prevData.config,
-                additionalUsers: [...prevData.config.additionalUsers, newAdditionalUser],
-            },
-        }));
-    };
-
     const removeUser = (userIdToRemove) => {
         setUsersData((prevData) => ({
             ...prevData,
@@ -744,6 +734,7 @@ const TabContent5 = ({ handleUsersChange }) => {
                 <p className='text-sm dark:text-gray-400 text-justify'>Define additional users to provision in the KX.AS.CODE environment. This is optional. If you do not specify additional users, then only the base user will be available for logging into the desktop and all provisioned tools.</p>
             </div>
             <div className='px-5 py-3 dark:bg-ghBlack2 bg-gray-300 gap-2'>
+            <h2 className='text-md font-semibold dark:text-gray-400'>Create additional user</h2>
                 <form>
                     <div className='flex gap-2'>
                         <TextField
@@ -851,6 +842,8 @@ const TabContent6 = ({ handleConfigChange }) => {
     const [value, setValue] = React.useState("");
     const [keyError, setKeyError] = useState('');
     const [valueError, setValueError] = useState('');
+    const [customVariablesData, setCustomVariablesData] = useState(customVariablesJSON);
+
 
     function createData(id, key, value) {
         return {
@@ -887,14 +880,44 @@ const TabContent6 = ({ handleConfigChange }) => {
         setValue("");
     };
 
-    const handleAddRow = (firstName, surname, password, email, layout, role) => {
+    const handleAddRow = (key, value) => {
         const newId = rows.length + 1;
-        const newRow = createData(newId, firstName, surname, password, email, layout, role);
+        const newRow = createData(newId, key, value);
         setRows([...rows, newRow]);
+
+        const newCustomVariable = {
+            "variable_id": getNextVariableId(customVariablesData),
+            "key": key,
+            "value": value,
+        }
+
+        addNewCustomVariable(newCustomVariable, "customVariables")
+
     };
 
+    const getNextVariableId = (data) => {
+        const customVariables = data?.config?.customVariables || [];
+        const maxCustomVariablesId = customVariables.reduce((max, customVariable) => (customVariable.variable_id > max ? customVariable.customVariables : max), -1);
+        return maxCustomVariablesId + 1;
+    };
+
+    const addNewCustomVariable = (customVariable) => {
+        const updatedCustomVariables = {
+            ...customVariablesData,
+            config: {
+                ...customVariablesData.config,
+                customariable: [...customVariablesData.config.customVariablesData, customVariable]
+            }
+        };
+
+        setCustomVariablesData(updatedCustomVariables);
+        const updatedCustomVariablesJsonString = JSON.stringify(updatedCustomVariables, null, 2);
+        UpdateJsonFile(updatedCustomVariablesJsonString, "customVariables")
+    }
+
     useEffect(() => {
-    }, []);
+    }, [customVariablesData]);
+
 
     return (
         <div className='text-left'>
@@ -902,47 +925,52 @@ const TabContent6 = ({ handleConfigChange }) => {
                 <h2 className='text-3xl font-semibold'>Custom Global Variables</h2>
                 <p className='text-sm dark:text-gray-400 text-justify'>Set key/value pairs that can be used by solutions when they are being installed.</p>
             </div>
+
             <form>
-                <div className='px-5 py-3 dark:bg-ghBlack2 bg-gray-300 gap-2 flex items-center'>
-                    <TextField
-                        required
-                        InputProps={{
-                        }}
-                        label="Key"
-                        type='text'
-                        fullWidth
-                        size="small"
-                        margin="normal"
-                        value={key}
-                        onChange={(e) => { setKey(e.target.value); setKeyError(''); }}
-                        error={Boolean(keyError)}
-                        helperText={keyError}
-                    />
-                    <TextField
-                        required
-                        InputProps={{
-                        }}
-                        label="Value"
-                        type='text'
-                        fullWidth
-                        size="small"
-                        margin="normal"
-                        value={value}
-                        onChange={(e) => { setValue(e.target.value); setValueError(''); }}
-                        error={Boolean(valueError)}
-                        helperText={valueError}
-                    />
-                    <button className='border border-white mt-2 h-10 px-3'
-                        onClick={(e) => { e.preventDefault(); handleAddKeyValuePairClick(); }}
-                        type="submit">
-                        {/* <AddCircleOutlineIcon fontSize='medium' /> */}
-                        <AddIcon />
-                    </button>
+                <div className='dark:bg-ghBlack2 bg-gray-300 px-5 py-5'>
+                    <h2 className='text-md font-semibold dark:text-gray-400'>Create global variable</h2>
+                    <div className='flex items-center'>
+                        <TextField
+                            required
+                            InputProps={{
+                            }}
+                            label="Key"
+                            type='text'
+                            fullWidth
+                            size="small"
+                            margin="normal"
+                            value={key}
+                            onChange={(e) => { setKey(e.target.value); setKeyError(''); }}
+                            error={Boolean(keyError)}
+                            helperText={keyError}
+                        />
+                        <TextField
+                            required
+                            InputProps={{
+                            }}
+                            label="Value"
+                            type='text'
+                            fullWidth
+                            size="small"
+                            margin="normal"
+                            value={value}
+                            onChange={(e) => { setValue(e.target.value); setValueError(''); }}
+                            error={Boolean(valueError)}
+                            helperText={valueError}
+                        />
+                        <button className='border border-white mt-2 h-10 px-3 ml-2'
+                            onClick={(e) => { e.preventDefault(); handleAddKeyValuePairClick(); }}
+                            type="submit">
+                            {/* <AddCircleOutlineIcon fontSize='medium' /> */}
+                            <AddIcon />
+                        </button>
+                    </div>
                 </div>
+
             </form>
 
             <div className='flex'>
-                <GlobalVariablesTable rows={rows} />
+                <GlobalVariablesTable rows={customVariablesData.config.customVariables} />
             </div>
         </div>)
 }
