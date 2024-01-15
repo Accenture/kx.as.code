@@ -2,9 +2,9 @@
     "config": {
         "customVariables": [
             {
-                "variable_id" : 0,
                 "key": "exampleKey",
-                "value": "exampleValue"
+                "value": "exampleValue",
+                "variable_id": 1
             }
         ]
     }

@@ -891,14 +891,20 @@ const TabContent6 = ({ handleConfigChange }) => {
             "value": value,
         }
 
-        addNewCustomVariable(newCustomVariable, "customVariables")
+        addNewCustomVariable(newCustomVariable)
 
     };
 
     const getNextVariableId = (data) => {
         const customVariables = data?.config?.customVariables || [];
-        const maxCustomVariablesId = customVariables.reduce((max, customVariable) => (customVariable.variable_id > max ? customVariable.customVariables : max), -1);
-        return maxCustomVariablesId + 1;
+        const maxCustomVariableId = customVariables.reduce((max, customVariable) => (customVariable.variable_id > max ? customVariable.variable_id : max), -1);
+        return maxCustomVariableId + 1;
+    };
+
+    const getNextUserId = (data) => {
+        const additionalUsers = data?.config?.additionalUsers || [];
+        const maxUserId = additionalUsers.reduce((max, user) => (user.user_id > max ? user.user_id : max), -1);
+        return maxUserId + 1;
     };
 
     const addNewCustomVariable = (customVariable) => {
@@ -906,17 +912,19 @@ const TabContent6 = ({ handleConfigChange }) => {
             ...customVariablesData,
             config: {
                 ...customVariablesData.config,
-                customariable: [...customVariablesData.config.customVariablesData, customVariable]
+                customVariables: [...customVariablesData.config.customVariables, customVariable]
             }
         };
 
         setCustomVariablesData(updatedCustomVariables);
         const updatedCustomVariablesJsonString = JSON.stringify(updatedCustomVariables, null, 2);
         UpdateJsonFile(updatedCustomVariablesJsonString, "customVariables")
+
     }
 
     useEffect(() => {
-    }, [customVariablesData]);
+        console.log("custom Variables: ", JSON.stringify(customVariablesData, null, 2));
+    }, [key, value, customVariablesData]);
 
 
     return (
