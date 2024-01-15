@@ -159,7 +159,9 @@ function EnhancedTableToolbar(props) {
 
             {numSelected > 0 ? (
                 <Tooltip title="Delete">
-                    <IconButton>
+                    <IconButton onClick={() => {
+                            props.removeCustomVariable(props.selected)
+                    }}>
                         <DeleteIcon />
                     </IconButton>
                 </Tooltip>
@@ -178,7 +180,7 @@ EnhancedTableToolbar.propTypes = {
     numSelected: PropTypes.number.isRequired,
 };
 
-export default function GlobalVariablesTable({ rows }) {
+export default function GlobalVariablesTable({ rows, removeCustomVariable }) {
     const [order, setOrder] = React.useState('asc');
     const [orderBy, setOrderBy] = React.useState('key');
     const [selected, setSelected] = React.useState([]);
@@ -194,7 +196,7 @@ export default function GlobalVariablesTable({ rows }) {
 
     const handleSelectAllClick = (event) => {
         if (event.target.checked) {
-            const newSelected = rows.map((n) => n.id);
+            const newSelected = rows.map((n) => n.variable_id);
             setSelected(newSelected);
             return;
         }
@@ -249,15 +251,14 @@ export default function GlobalVariablesTable({ rows }) {
     );
 
     useEffect(() => {
-        setSelected([]);
         setPage(0);
     }, [rows]);
 
     return (
         <Box sx={{ width: '100%' }}>
             <Paper sx={{ width: '100%' }}>
-            {/* <Paper sx={{ width: '100%', backgroundColor: "#161b22" }}> */}
-                <EnhancedTableToolbar numSelected={selected.length} />
+                {/* <Paper sx={{ width: '100%', backgroundColor: "#161b22" }}> */}
+                <EnhancedTableToolbar numSelected={selected.length} selected={selected} removeCustomVariable={removeCustomVariable} />
                 <TableContainer>
                     <Table
                         sx={{ minWidth: 750 }}
@@ -274,17 +275,20 @@ export default function GlobalVariablesTable({ rows }) {
                         />
                         <TableBody>
                             {visibleRows.map((row, index) => {
-                                const isItemSelected = isSelected(row.id);
+                                const isItemSelected = isSelected(row.variable_id);
                                 const labelId = `enhanced-table-checkbox-${index}`;
 
                                 return (
                                     <TableRow
                                         hover
-                                        onClick={(event) => handleClick(event, row.id)}
+                                        onClick={(event) => {
+                                            handleClick(event, row.variable_id)
+                                            console.log("selected_id: ", row.variable_id)
+                                        }}
                                         role="checkbox"
                                         aria-checked={isItemSelected}
                                         tabIndex={-1}
-                                        key={row.id}
+                                        key={row.variable_id}
                                         selected={isItemSelected}
                                         sx={{ cursor: 'pointer' }}
                                     >

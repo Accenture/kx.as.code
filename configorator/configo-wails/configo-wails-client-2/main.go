@@ -28,7 +28,7 @@ func main() {
 		Bind: []interface{}{
 			app,
 		},
-		MinWidth:  900,
+		MinWidth:  1000,
 		MinHeight: 900,
 	})
 

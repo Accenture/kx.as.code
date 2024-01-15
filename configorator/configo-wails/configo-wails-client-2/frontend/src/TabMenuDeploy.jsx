@@ -89,13 +89,9 @@ const DeployTabContent = () => {
 
         setNestedValue(parsedData, key, selectedValue)
 
-        console.log("DEBUG: ", parsedData.config[key]);
-        console.log("DEBUG: selectedValue", selectedValue);
-
         const updatedJsonString = JSON.stringify(parsedData, null, 2);
 
         setJsonData(updatedJsonString);
-        UpdateJsonFile(updatedJsonString, "users");
     }
 
 
@@ -111,9 +107,6 @@ const DeployTabContent = () => {
         let parsedData = { ...configJSON };
 
         setNestedValue(parsedData, key, selectedValue)
-
-        console.log("DEBUG: ", parsedData.config[key]);
-        console.log("DEBUG: selectedValue", selectedValue);
 
         const updatedJsonString = JSON.stringify(parsedData, null, 2);
 
@@ -723,7 +716,6 @@ const TabContent5 = ({ handleUsersChange }) => {
     }
 
     useEffect(() => {
-        console.log(JSON.stringify(usersData, null, 2));
     }, [firstName, surname, email, layout, role, usersData]);
 
 
@@ -734,7 +726,7 @@ const TabContent5 = ({ handleUsersChange }) => {
                 <p className='text-sm dark:text-gray-400 text-justify'>Define additional users to provision in the KX.AS.CODE environment. This is optional. If you do not specify additional users, then only the base user will be available for logging into the desktop and all provisioned tools.</p>
             </div>
             <div className='px-5 py-3 dark:bg-ghBlack2 bg-gray-300 gap-2'>
-            <h2 className='text-md font-semibold dark:text-gray-400'>Create additional user</h2>
+                <h2 className='text-md font-semibold dark:text-gray-400'>Create additional user</h2>
                 <form>
                     <div className='flex gap-2'>
                         <TextField
@@ -881,7 +873,7 @@ const TabContent6 = ({ handleConfigChange }) => {
     };
 
     const handleAddRow = (key, value) => {
-        const newId = rows.length + 1;
+        const newId = getNextVariableId(customVariablesData);
         const newRow = createData(newId, key, value);
         setRows([...rows, newRow]);
 
@@ -892,19 +884,33 @@ const TabContent6 = ({ handleConfigChange }) => {
         }
 
         addNewCustomVariable(newCustomVariable)
+    };
 
+    const removeCustomVariable = (customVariableIdArrayToRemove) => {
+        console.log("id param List: ", customVariableIdArrayToRemove);
+    
+        setCustomVariablesData((prevData) => {
+            const updatedCustomVariables = {
+                ...prevData,
+                config: {
+                    ...prevData.config,
+                    customVariables: prevData.config.customVariables.filter(
+                        (customVariable) => !customVariableIdArrayToRemove.includes(customVariable.variable_id)
+                    ),
+                },
+            };
+            const updatedCustomVariablesJsonString = JSON.stringify(updatedCustomVariables, null, 2);
+            console.log("updatedCustomVariablesJsonString: ", updatedCustomVariablesJsonString);
+            UpdateJsonFile(updatedCustomVariablesJsonString, "customVariables");
+    
+            return updatedCustomVariables;
+        });
     };
 
     const getNextVariableId = (data) => {
         const customVariables = data?.config?.customVariables || [];
         const maxCustomVariableId = customVariables.reduce((max, customVariable) => (customVariable.variable_id > max ? customVariable.variable_id : max), -1);
         return maxCustomVariableId + 1;
-    };
-
-    const getNextUserId = (data) => {
-        const additionalUsers = data?.config?.additionalUsers || [];
-        const maxUserId = additionalUsers.reduce((max, user) => (user.user_id > max ? user.user_id : max), -1);
-        return maxUserId + 1;
     };
 
     const addNewCustomVariable = (customVariable) => {
@@ -923,7 +929,6 @@ const TabContent6 = ({ handleConfigChange }) => {
     }
 
     useEffect(() => {
-        console.log("custom Variables: ", JSON.stringify(customVariablesData, null, 2));
     }, [key, value, customVariablesData]);
 
 
@@ -978,7 +983,7 @@ const TabContent6 = ({ handleConfigChange }) => {
             </form>
 
             <div className='flex'>
-                <GlobalVariablesTable rows={customVariablesData.config.customVariables} />
+                <GlobalVariablesTable rows={customVariablesData.config.customVariables} removeCustomVariable={removeCustomVariable} />
             </div>
         </div>)
 }
