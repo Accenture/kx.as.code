@@ -77,8 +77,21 @@ else
 fi
 
 # Install YQ - version that wraps JQ and includes XQ (default on path)
-export PIPX_BIN_DIR=/usr/local/bin
-sudo -H pipx install yq
+ pipx() {
+  # TODO - Remove work around once pipx supports global install natively
+  # --- https://github.com/pypa/pipx/issues/754#issuecomment-1871660321
+  if [[ "$@" =~ '--global' ]]; then
+    args=()
+    for arg in "$@"; do
+      # Ignore bad argument
+      [[ $arg != '--global' ]] && args+=("$arg")
+    done
+    command sudo PIPX_HOME=/opt/pipx PIPX_BIN_DIR=/usr/local/bin PIPX_MAN_DIR=/usr/local/share/man pipx "${args[@]}"
+  else
+    command pipx "$@"
+  fi
+}
+pipx install yq
 
 # Install YQ - version with --prettyPrint
 yqVersion="v4.2.0"
@@ -97,7 +110,7 @@ sudo mv ${INSTALLATION_WORKSPACE}/${yqBinary} /usr/bin/yq
 sudo chmod +x /usr/bin/yq
 
 # Install Grip for showing WELCOME.md after desktop login
-sudo -H pipx install grip
+pipx install grip
 
 # Install Tilix
 sudo apt-get -y install tilix
