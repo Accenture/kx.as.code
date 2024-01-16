@@ -91,7 +91,7 @@ fi
     command pipx "$@"
   fi
 }
-pipx install yq
+pipx install yq --global
 
 # Install YQ - version with --prettyPrint
 yqVersion="v4.2.0"
@@ -110,7 +110,7 @@ sudo mv ${INSTALLATION_WORKSPACE}/${yqBinary} /usr/bin/yq
 sudo chmod +x /usr/bin/yq
 
 # Install Grip for showing WELCOME.md after desktop login
-pipx install grip
+pipx install grip --global
 
 # Install Tilix
 sudo apt-get -y install tilix
