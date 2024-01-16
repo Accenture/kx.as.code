@@ -11,6 +11,8 @@ import TabMenuDeploy from "./TabMenuDeploy";
 import Home from "./Home";
 import { createTheme, ThemeProvider, styled } from '@mui/material/styles';
 import { ConsoleOutput } from "./ConsoleOutput";
+import AdditionalUsers from "./AdditionalUsers";
+import CustomVariables from "./CustomVariables";
 import Box from "@mui/material/Box";
 import MuiDrawer from "@mui/material/Drawer";
 import IconButton from "@mui/material/IconButton";
@@ -26,6 +28,8 @@ import PrecisionManufacturingIcon from '@mui/icons-material/PrecisionManufacturi
 import RocketLaunchIcon from '@mui/icons-material/RocketLaunch';
 import HomeIcon from '@mui/icons-material/Home';
 import Tooltip from '@mui/material/Tooltip';
+import PeopleIcon from '@mui/icons-material/People';
+import DataArrayIcon from '@mui/icons-material/DataArray';
 
 
 const openedMixin = (theme) => ({
@@ -228,6 +232,61 @@ export function App() {
                                     </ListItemButton>
                                 </Tooltip>
                             </Link>
+
+                            <Link to="/additional-users">
+                                <Tooltip title="User Provisioning" placement="right">
+                                    <ListItemButton
+                                        sx={{
+                                            minHeight: 40,
+                                            justifyContent: open ? "initial" : "center",
+                                            px: 2.5,
+                                            backgroundColor: slug == "additional-users" ? "#5a86ff" : "",
+                                            "&:hover": {
+                                                backgroundColor: slug == "additional-users" ? "#5a86ff" : "",
+                                            },
+                                        }}
+                                    >
+                                        <ListItemIcon
+                                            className="listItemIconContainer"
+                                            sx={{
+                                                minWidth: 0,
+                                                mr: open ? 3 : "auto",
+                                                justifyContent: "center",
+                                            }}
+                                        >
+                                            <PeopleIcon className="text-3xl" />
+                                        </ListItemIcon>
+                                    </ListItemButton>
+                                </Tooltip>
+                            </Link>
+
+                            <Link to="/custom-variables">
+                                <Tooltip title="Custom Variables" placement="right">
+                                    <ListItemButton
+                                        sx={{
+                                            minHeight: 40,
+                                            justifyContent: open ? "initial" : "center",
+                                            px: 2.5,
+                                            backgroundColor: slug == "custom-variables" ? "#5a86ff" : "",
+                                            "&:hover": {
+                                                backgroundColor: slug == "custom-variables" ? "#5a86ff" : "",
+                                            },
+                                        }}
+                                    >
+                                        <ListItemIcon
+                                            className="listItemIconContainer"
+                                            sx={{
+                                                minWidth: 0,
+                                                mr: open ? 3 : "auto",
+                                                justifyContent: "center",
+                                            }}
+                                        >
+                                            <DataArrayIcon className="text-3xl" />
+                                        </ListItemIcon>
+                                    </ListItemButton>
+                                </Tooltip>
+                            </Link>
+                            
                         </List>
                     </Drawer>
                     <Box component="main" sx={{ flexGrow: 1, p: 0 }} className="text-black dark:text-white">
@@ -238,6 +297,8 @@ export function App() {
                             <Route path="/home" element={<Home />} />
                             <Route path="/build" element={<TabMenuBuild />} />
                             <Route path="/deploy" element={<TabMenuDeploy />} />
+                            <Route path="/additional-users" element={<AdditionalUsers />} />
+                            <Route path="/custom-variables" element={<CustomVariables />} />
                             <Route path="/console-output" element={<ConsoleOutput />} />
                         </Routes>
 
