@@ -509,10 +509,11 @@ build {
     output = "kx-main-${ local.version }_manifest.json"
   }
   post-processor "shell-local" {
-    environment_vars = ["VM_VERSION=${ local.version }", "VM_NAME=kx-main"]
-    execute_command  = ["bash", "-c", "{{ .Vars }} {{ .Script }}"]
-    only_on          = ["darwin", "linux"]
-    script           = "../../../scripts/post-processing/create-info-json.sh"
+    environment_vars  = ["VM_VERSION=${ local.version }", "VM_NAME=kx-main"]
+    execute_command   = ["powershell.exe", "{{.Vars}} {{.Script}}"]
+    env_var_format    = "$env:%s=\"%s\"; "
+    only_on           = ["windows"]
+    script            = "../../../scripts/post-processing/create-info-json.ps1"
   }
   post-processor "vagrant" {
     keep_input_artifact  = true
@@ -523,34 +524,31 @@ build {
   }
   post-processor "vagrant" {
     keep_input_artifact  = true
-    include              = ["../../../boxes/parallels-${ local.version }/info.json", "kx-main-${ local.version }_manifest.json"]
-    only                 = ["parallels-iso.kx-main-parallels"]
-    output               = "../../../boxes/{{ .Provider }}-${ local.version }/kx-main-${ local.version }.box"
-    vagrantfile_template = "../../../boxes/kx.as.code-main-parallels.Vagrantfile"
-  }
-  post-processor "vagrant" {
-    keep_input_artifact  = true
     include              = ["../../../boxes/vmware-desktop-${ local.version }/info.json", "kx-main-${ local.version }_manifest.json"]
     only                 = ["vmware-iso.kx-main-vmware-desktop"]
     output               = "../../../boxes/vmware-desktop-${ local.version }/kx-main-${ local.version }.box"
     vagrantfile_template = "../../../boxes/kx.as.code-main-vmware.Vagrantfile"
   }
   post-processor "shell-local" {
-    environment_vars = ["VM_VERSION=${ local.version }", "VM_NAME=kx-main"]
-    execute_command  = ["bash", "-c", "{{ .Vars }} {{ .Script }}"]
-    only_on          = ["darwin", "linux"]
-    script           = "../../../scripts/post-processing/move-manifest-json.sh"
+    environment_vars  = ["VM_VERSION=${ local.version }", "VM_NAME=kx-main"]
+    execute_command   = ["powershell.exe", "{{.Vars}} {{.Script}}"]
+    env_var_format    = "$env:%s=\"%s\"; "
+    only_on           = ["windows"]
+    script            = "../../../scripts/post-processing/move-manifest-json.ps1"
   }
   post-processor "shell-local" {
-    environment_vars = ["VM_VERSION=${ local.version }", "VM_NAME=kx-main"]
-    only             = ["kx-main-vmware-desktop"]
-    only_on          = ["darwin", "linux"]
-    script           = "../../../scripts/post-processing/export-vmware-ova.sh"
+    environment_vars  = ["VM_VERSION=${ local.version }", "VM_NAME=kx-main"]
+    execute_command   = ["powershell.exe", "{{.Vars}} {{.Script}}"]
+    env_var_format    = "$env:%s=\"%s\"; "
+    only              = ["kx-main-vmware-desktop"]
+    only_on           = ["windows"]
+    script            = "../../../scripts/post-processing/export-vmware-ova.ps1"
   }
   post-processor "shell-local" {
-    environment_vars = ["VM_VERSION=${ local.version }", "VM_NAME=kx-main"]
-    execute_command  = ["bash", "-c", "{{ .Vars }} {{ .Script }}"]
-    only_on          = ["darwin", "linux"]
-    scripts          = ["../../../scripts/post-processing/create-metadata-json.sh", "../../../scripts/post-processing/add-vagrant-box.sh"]
+    environment_vars  = ["VM_VERSION=${ local.version }", "VM_NAME=kx-main"]
+    execute_command   = ["powershell.exe", "{{.Vars}} {{.Script}}"]
+    env_var_format    = "$env:%s=\"%s\"; "
+    only_on           = ["windows"]
+    scripts           = ["../../../scripts/post-processing/create-metadata-json.ps1", "../../../scripts/post-processing/add-vagrant-box.ps1"]
   }
 }

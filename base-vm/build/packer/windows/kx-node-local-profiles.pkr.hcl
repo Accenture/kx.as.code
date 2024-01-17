@@ -29,26 +29,6 @@ variable "vm_password" {
   default = "L3arnandshare"
 }
 
-variable "git_source_url" {
-  type    = string
-  default = "https://github.com/Accenture/kx.as.code.git"
-}
-
-variable "git_source_branch" {
-  type    = string
-  default = "main"
-}
-
-variable "git_source_user" {
-  type    = string
-  default = ""
-}
-
-variable "git_source_token" {
-  type    = string
-  default = ""
-}
-
 variable "disable_ipv6" {
   type    = string
   default = "true"
@@ -56,7 +36,7 @@ variable "disable_ipv6" {
 
 variable "disk_size" {
   type    = string
-  default = "168960"
+  default = "153600"
 }
 
 variable "guest_additions_checksum" {
@@ -76,7 +56,7 @@ variable "headless" {
 
 variable "hostname" {
   type    = string
-  default = "kx-main"
+  default = "kx-node"
 }
 
 variable "http_bind_address" {
@@ -111,7 +91,7 @@ variable "https_proxy" {
 
 variable "iso_checksum" {
   type    = string
-  default = "64d727dd5785ae5fcfd3ae8ffbede5f40cca96f1580aaa2820e8b99dae989d94"
+  default = "d7a74813a734083df30c8d35784926deaa36bc41e5c0766388e9f591ab056b72"
 }
 
 variable "iso_checksum_type" {
@@ -121,7 +101,7 @@ variable "iso_checksum_type" {
 
 variable "iso_file" {
   type    = string
-  default = "debian-12.4.0-amd64-netinst.iso"
+  default = "debian-11.8.0-amd64-netinst.iso"
 }
 
 variable "iso_path" {
@@ -131,7 +111,7 @@ variable "iso_path" {
 
 variable "iso_url" {
   type    = string
-  default = "https://cdimage.debian.org/mirror/cdimage/release/12.4.0/amd64/iso-cd/debian-12.4.0-amd64-netinst.iso"
+  default = "https://cdimage.debian.org/cdimage/archive/11.8.0/amd64/iso-cd/debian-11.8.0-amd64-netinst.iso"
 }
 
 variable "kx_home" {
@@ -216,7 +196,7 @@ variable "virtualbox_guest_os_type" {
 
 variable "vm_name" {
   type    = string
-  default = "kx-main"
+  default = "kx-node"
 }
 
 variable "vmware_guest_os_type" {
@@ -228,7 +208,7 @@ locals {
   boot_command = "<esc><wait>install <wait> preseed/url=http://{{ .HTTPIP }}:{{ .HTTPPort }}//${ var.preseed_path} <wait>debian-installer=en_US.UTF-8 <wait>auto <wait>locale=en_US.UTF-8 <wait>kbd-chooser/method=de <wait>keyboard-configuration/xkb-keymap=de <wait>netcfg/get_hostname={{ .Name }} <wait>netcfg/get_domain=vagrantup.com <wait>fb=false <wait>debconf/frontend=noninteractive <wait>console-setup/ask_detect=false <wait>console-keymaps-at/keymap=us <wait>grub-installer/bootdev=/dev/sda <wait><enter><wait>"
 }
 
-source "parallels-iso" "kx-main-parallels" {
+source "parallels-iso" "kx-node-parallels" {
   boot_command               = [ "${ local.boot_command }{{.HTTPIP}}:{{.HTTPPort}}// ${ var.preseed_path }<wait> , --- <enter>" ]
   boot_wait                  = "1s"
   disk_size                  = var.disk_size
@@ -260,10 +240,10 @@ source "parallels-iso" "kx-main-parallels" {
   ssh_port                   = 22
   ssh_username               = "vagrant"
   ssh_wait_timeout           = "3600s"
-  vm_name                    = "kx-main-${ local.version }"
+  vm_name                    = "kx-node-${ local.version }"
 }
 
-source "virtualbox-iso" "kx-main-virtualbox" {
+source "virtualbox-iso" "kx-node-virtualbox" {
   boot_command            = [
     "<esc><wait>",
     "install <wait>",
@@ -315,13 +295,13 @@ source "virtualbox-iso" "kx-main-virtualbox" {
     ["modifyvm", "{{.Name}}", "--nic1", "natnetwork", "--natnetwork1", "kxascode"]
   ]
   virtualbox_version_file = "VBoxVersion.txt"
-  vm_name                 = "kx-main-${ local.version }"
+  vm_name                 = "kx-node-${ local.version }"
   vrdp_bind_address       = "127.0.0.1"
   vrdp_port_max           = 12000
   vrdp_port_min           = 11000
 }
 
-source "vmware-iso" "kx-main-vmware-desktop" {
+source "vmware-iso" "kx-node-vmware-desktop" {
   boot_command      = [
     "<esc><wait>",
     "install <wait>",
@@ -356,7 +336,7 @@ source "vmware-iso" "kx-main-vmware-desktop" {
   ssh_port          = 22
   ssh_timeout       = "3600s"
   ssh_username      = "vagrant"
-  vm_name           = "kx-main-${ local.version }"
+  vm_name           = "kx-node-${ local.version }"
   vmx_data = {
     "isolation.tools.hgfs.disable" = "FALSE"
     memsize                        = var.memory
@@ -366,9 +346,9 @@ source "vmware-iso" "kx-main-vmware-desktop" {
 
 build {
   sources = [
-    "source.parallels-iso.kx-main-parallels",
-    "source.virtualbox-iso.kx-main-virtualbox",
-    "source.vmware-iso.kx-main-vmware-desktop"
+    "source.parallels-iso.kx-node-parallels",
+    "source.virtualbox-iso.kx-node-virtualbox",
+    "source.vmware-iso.kx-node-vmware-desktop"
   ]
 
   provisioner "shell" {
@@ -384,8 +364,8 @@ build {
       "../../../scripts/base/directories.sh",
       "../../../scripts/base/vagrant-user.sh",
       "../../../scripts/base/kx-user.sh",
-      "../../../scripts/base/update.sh",
-      "../../../scripts/base/locale.sh"]
+      "../../../scripts/base/update.sh"
+    ]
     start_retry_timeout = "15m"
   }
 
@@ -395,7 +375,7 @@ build {
       "VBOX_GUEST_ADDITIONS_DEB_URL=${ var.vbox_guest_additions_deb_url }",
       "VBOX_GUEST_ADDITIONS_DEB_CHECKSUM=${ var.vbox_guest_additions_deb_checksum}"
     ]
-    only             = ["kx-main-virtualbox"]
+    only             = ["kx-node-virtualbox"]
     script           = "../../../scripts/base/virtualbox.sh"
   }
 
@@ -403,12 +383,12 @@ build {
     environment_vars = [
       "PARALLELS_TOOLS_GUEST_PATH=${ var.parallels_tools_guest_path }"
     ]
-    only             = ["kx-main-parallels"]
+    only             = ["kx-node-parallels"]
     script           = "../../../scripts/base/parallels.sh"
   }
 
   provisioner "shell" {
-    only   = ["kx-main-vmware-desktop"]
+    only   = ["kx-node-vmware-desktop"]
     script = "../../../scripts/base/vmware.sh"
   }
 
@@ -435,8 +415,8 @@ build {
   }
 
   provisioner "file" {
-    destination = "${ var.kx_home }/workspace/scripts"
-    source      = "../../../scripts/main-node"
+    destination = "${var.kx_home}/workspace/scripts"
+    source      = "../../../scripts/cluster-node"
   }
 
   provisioner "file" {
@@ -444,20 +424,21 @@ build {
     source      = "../../../../versions.json"
   }
 
+  provisioner "file" {
+    destination = "${var.kx_home}/workspace/globalVariables.json"
+    source      = "../../../../auto-setup/globalVariables.json"
+  }
+
   provisioner "shell" {
     environment_vars    = [
       "BASE_IMAGE_SSH_USER=${ var.base_image_ssh_user }",
       "VM_USER=${ var.vm_user }",
       "VM_PASSWORD=${ var.vm_password }",
-      "GIT_SOURCE_BRANCH=${ var.git_source_branch }",
-      "GIT_SOURCE_USER=${ var.git_source_user }",
-      "GIT_SOURCE_TOKEN=${ var.git_source_token }",
       "VERSION=${ local.version }",
       "KUBE_VERSION=${ local.kube_version }",
       "COMPUTE_ENGINE_BUILD=${ var.compute_engine_build }",
       "KX_HOME=${ var.kx_home }",
       "SKELDIR=${ var.kx_home }/skel",
-      "SHARED_GIT_REPOSITORIES=${ var.kx_home }/git",
       "INSTALLATION_WORKSPACE=${ var.kx_home }/workspace"
     ]
     expect_disconnect   = "true"
@@ -466,8 +447,8 @@ build {
       "../../../scripts/common/motd.sh",
       "../../../scripts/common/kx.as.code.sh",
       "../../../scripts/common/tools.sh",
-      "../../../scripts/common/powerline.sh",
-      "../../../scripts/common/docker.sh"
+      "../../../scripts/common/docker.sh",
+      "../../../scripts/common/calico.sh"
     ]
     start_retry_timeout = "15m"
   }
@@ -477,27 +458,19 @@ build {
       "BASE_IMAGE_SSH_USER=${ var.base_image_ssh_user }",
       "VM_USER=${ var.vm_user }",
       "VM_PASSWORD=${ var.vm_password }",
-      "GIT_SOURCE_USER=${ var.git_source_user }",
-      "GIT_SOURCE_TOKEN=${ var.git_source_token}",
-      "GIT_SOURCE_URL=${ var.git_source_url }",
-      "GIT_SOURCE_BRANCH=${ var.git_source_branch }",
-      "VERSION=${ local.version }", "KX_HOME=${ var.kx_home }",
-      "SKELDIR=${ var.kx_home }/skel", "SHARED_GIT_REPOSITORIES=${ var.kx_home }/git",
+      "VERSION=${ local.version }",
+      "KX_HOME=${ var.kx_home }",
+      "SKELDIR=${ var.kx_home }/skel",
+      "SHARED_GIT_REPOSITORIES=${ var.kx_home }/git",
       "INSTALLATION_WORKSPACE=${ var.kx_home }/workspace",
       "COMPUTE_ENGINE_BUILD=${ var.compute_engine_build }"
     ]
     expect_disconnect   = "true"
     pause_before        = "1m0s"
     scripts             = [
-      "../../../scripts/main-node/tools.sh",
-      "../../../scripts/main-node/kx.as.code.sh",
-      "../../../scripts/main-node/profile.sh",
-      "../../../scripts/main-node/look-and-feel.sh",
-      "../../../scripts/main-node/rabbitmq.sh",
-      "../../../scripts/main-node/vscode.sh",
-      "../../../scripts/main-node/dns.sh",
-      "../../../scripts/main-node/update-skel.sh",
-      "../../../scripts/main-node/cleanup.sh"
+      "../../../scripts/cluster-node/tools.sh",
+      "../../../scripts/cluster-node/k8s-base.sh",
+      "../../../scripts/cluster-node/cleanup.sh"
     ]
     start_retry_timeout = "15m"
   }
@@ -506,51 +479,49 @@ build {
     custom_data = {
       version = "${ local.version }"
     }
-    output = "kx-main-${ local.version }_manifest.json"
+    output = "kx-node-${ local.version }_manifest.json"
   }
   post-processor "shell-local" {
-    environment_vars = ["VM_VERSION=${ local.version }", "VM_NAME=kx-main"]
-    execute_command  = ["bash", "-c", "{{ .Vars }} {{ .Script }}"]
-    only_on          = ["darwin", "linux"]
-    script           = "../../../scripts/post-processing/create-info-json.sh"
+    environment_vars = ["VM_VERSION=${ local.version }", "VM_NAME=kx-node"]
+    execute_command   = ["powershell.exe", "{{.Vars}} {{.Script}}"]
+    env_var_format    = "$env:%s=\"%s\"; "
+    only_on          = ["windows"]
+    script           = "../../../scripts/post-processing/create-info-json.ps1"
   }
   post-processor "vagrant" {
     keep_input_artifact  = true
-    include              = ["../../../boxes/virtualbox-${ local.version }/info.json", "kx-main-${ local.version }_manifest.json"]
-    only                 = ["virtualbox-iso.kx-main-virtualbox"]
-    output               = "../../../boxes/{{ .Provider }}-${ local.version }/kx-main-${ local.version }.box"
-    vagrantfile_template = "../../../boxes/kx.as.code-main-virtualbox.Vagrantfile"
+    include              = ["../../../boxes/virtualbox-${ local.version }/info.json", "kx-node-${ local.version }_manifest.json"]
+    only                 = ["kx-node-virtualbox"]
+    output               = "../../../boxes/{{ .Provider }}-${ local.version }/kx-node-${ local.version }.box"
+    vagrantfile_template = "../../../boxes/kx.as.code-node-virtualbox.Vagrantfile"
   }
   post-processor "vagrant" {
     keep_input_artifact  = true
-    include              = ["../../../boxes/parallels-${ local.version }/info.json", "kx-main-${ local.version }_manifest.json"]
-    only                 = ["parallels-iso.kx-main-parallels"]
-    output               = "../../../boxes/{{ .Provider }}-${ local.version }/kx-main-${ local.version }.box"
-    vagrantfile_template = "../../../boxes/kx.as.code-main-parallels.Vagrantfile"
-  }
-  post-processor "vagrant" {
-    keep_input_artifact  = true
-    include              = ["../../../boxes/vmware-desktop-${ local.version }/info.json", "kx-main-${ local.version }_manifest.json"]
-    only                 = ["vmware-iso.kx-main-vmware-desktop"]
-    output               = "../../../boxes/vmware-desktop-${ local.version }/kx-main-${ local.version }.box"
-    vagrantfile_template = "../../../boxes/kx.as.code-main-vmware.Vagrantfile"
+    include              = ["../../../boxes/vmware-desktop-${ local.version }/info.json", "kx-node-${ local.version }_manifest.json"]
+    only                 = ["kx-node-vmware-desktop"]
+    output               = "../../../boxes/vmware-desktop-${ local.version }/kx-node-${ local.version }.box"
+    vagrantfile_template = "../../../boxes/kx.as.code-node-vmware.Vagrantfile"
   }
   post-processor "shell-local" {
-    environment_vars = ["VM_VERSION=${ local.version }", "VM_NAME=kx-main"]
-    execute_command  = ["bash", "-c", "{{ .Vars }} {{ .Script }}"]
-    only_on          = ["darwin", "linux"]
-    script           = "../../../scripts/post-processing/move-manifest-json.sh"
+    environment_vars = ["VM_VERSION=${ local.version }", "VM_NAME=kx-node"]
+    execute_command   = ["powershell.exe", "{{.Vars}} {{.Script}}"]
+    env_var_format    = "$env:%s=\"%s\"; "
+    only_on          = ["windows"]
+    script           = "../../../scripts/post-processing/move-manifest-json.ps1"
   }
   post-processor "shell-local" {
-    environment_vars = ["VM_VERSION=${ local.version }", "VM_NAME=kx-main"]
-    only             = ["kx-main-vmware-desktop"]
-    only_on          = ["darwin", "linux"]
-    script           = "../../../scripts/post-processing/export-vmware-ova.sh"
+    environment_vars = ["VM_VERSION=${ local.version }", "VM_NAME=kx-node"]
+    execute_command   = ["powershell.exe", "{{.Vars}} {{.Script}}"]
+    env_var_format    = "$env:%s=\"%s\"; "
+    only             = ["kx-node-vmware-desktop"]
+    only_on          = ["windows"]
+    script           = "../../../scripts/post-processing/export-vmware-ova.ps1"
   }
   post-processor "shell-local" {
-    environment_vars = ["VM_VERSION=${ local.version }", "VM_NAME=kx-main"]
-    execute_command  = ["bash", "-c", "{{ .Vars }} {{ .Script }}"]
-    only_on          = ["darwin", "linux"]
-    scripts          = ["../../../scripts/post-processing/create-metadata-json.sh", "../../../scripts/post-processing/add-vagrant-box.sh"]
+    environment_vars = ["VM_VERSION=${ local.version }", "VM_NAME=kx-node"]
+    execute_command   = ["powershell.exe", "{{.Vars}} {{.Script}}"]
+    env_var_format    = "$env:%s=\"%s\"; "
+    only_on          = ["windows"]
+    scripts          = ["../../../scripts/post-processing/create-metadata-json.ps1", "../../../scripts/post-processing/add-vagrant-box.ps1"]
   }
 }
