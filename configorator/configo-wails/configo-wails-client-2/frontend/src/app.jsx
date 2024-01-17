@@ -1,17 +1,13 @@
 import { useState, useEffect } from "preact/hooks";
 import './app.css';
-import { Header } from "./Header";
 import { HeaderNew } from "./HeaderNew";
-import Footer from "./Footer";
-import { Form2 } from "./Form2";
 import { Routes, Route, Link, useLocation } from "react-router-dom";
-import TabMenu from "./TabMenu";
 import TabMenuBuild from "./TabMenuBuild";
 import TabMenuDeploy from "./TabMenuDeploy";
 import Home from "./Home";
 import { createTheme, ThemeProvider, styled } from '@mui/material/styles';
 import { ConsoleOutput } from "./ConsoleOutput";
-import AdditionalUsers from "./AdditionalUsers";
+import UserProvisioning from "./UserProvisioning";
 import CustomVariables from "./CustomVariables";
 import Box from "@mui/material/Box";
 import MuiDrawer from "@mui/material/Drawer";
@@ -19,11 +15,8 @@ import IconButton from "@mui/material/IconButton";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
-import ListItemText from "@mui/material/ListItemText";
-import { MdDashboard } from "react-icons/md";
 import PrecisionManufacturingIcon from '@mui/icons-material/PrecisionManufacturing';
 import RocketLaunchIcon from '@mui/icons-material/RocketLaunch';
 import HomeIcon from '@mui/icons-material/Home';
@@ -233,7 +226,10 @@ export function App() {
                                 </Tooltip>
                             </Link>
 
-                            <Link to="/additional-users">
+                            {/* Separator */}
+                            <div className="w-full h-[1px] bg-gray-400"></div>
+
+                            <Link to="/user-provisioning">
                                 <Tooltip title="User Provisioning" placement="right">
                                     <ListItemButton
                                         sx={{
@@ -297,7 +293,7 @@ export function App() {
                             <Route path="/home" element={<Home />} />
                             <Route path="/build" element={<TabMenuBuild />} />
                             <Route path="/deploy" element={<TabMenuDeploy />} />
-                            <Route path="/additional-users" element={<AdditionalUsers />} />
+                            <Route path="/user-provisioning" element={<UserProvisioning />} />
                             <Route path="/custom-variables" element={<CustomVariables />} />
                             <Route path="/console-output" element={<ConsoleOutput />} />
                         </Routes>

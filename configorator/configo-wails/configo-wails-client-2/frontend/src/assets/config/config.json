@@ -6,12 +6,7 @@
         "basePassword": "L3arnandshare",
         "baseUser": "kx.hero",
         "certificationMode": false,
-        "defaultKeyboardLanguage": [
-            "de",
-            "en",
-            "fr",
-            "ch"
-        ],
+        "defaultKeyboardLanguage": "en",
         "disableLinuxDesktop": false,
         "disableSessionTimeout": true,
         "dnsResolution": {

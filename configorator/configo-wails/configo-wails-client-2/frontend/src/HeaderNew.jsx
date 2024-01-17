@@ -16,7 +16,7 @@ export function HeaderNew(props) {
 
     return (
         <MuiAppBar position="fixed" open={props.open} className="h-[90px]" elevation={0}>
-            <Toolbar className="dark:bg-ghBlack2 bg-kxBlue">
+            <Toolbar className="dark:bg-ghBlack bg-kxBlue">
                 <IconButton
                     color="inherit"
                     aria-label="open drawer"
@@ -30,7 +30,7 @@ export function HeaderNew(props) {
                 >
                     <MenuIcon className="" />
                 </IconButton>
-                <div className="dark:bg-ghBlack2 bg-kxBlue p-5 flex items-center justify-between w-full">
+                <div className="dark:bg-ghBlack bg-kxBlue p-5 flex items-center justify-between w-full">
                     <div className="flex items-center">
                         <img src={logo} height={50} width={60} />
                         <div className="text-left">
