@@ -33,7 +33,7 @@ sudo rm -rf /usr/share/wallpapers/*
 
 # Change SDDM Login Screen
 sudo cp -r ${INSTALLATION_WORKSPACE}/theme/sddm/Nordic /usr/share/sddm/themes
-sudo update-alternatives --install /usr/share/sddm/themes/debian-theme sddm-debian-theme /usr/share/sddm/themes/Nordic 50
+sudo update-alternatives --install /usr/share/sddm/themes/debian-theme sddm-debian-theme /usr/share/sddm/themes/Nordic 100
 update-alternatives --query sddm-debian-theme
 
 # Fix to reduce CPU usage (20%!) on idle SDDM login screen
