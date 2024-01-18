@@ -911,7 +911,7 @@ fi
 # Set default keyboard language
 defaultUserKeyboardLanguage=$(jq -r '.config.defaultKeyboardLanguage' ${profileConfigJsonPath})
 keyboardLanguages=""
-availableLanguages="us"
+availableLanguages="us,de,it,in,gb,fr,es,cn,ru"
 for language in ${availableLanguages}; do
     if [[ -z ${keyboardLanguages} ]]; then
         keyboardLanguages="${language}"
@@ -932,9 +932,9 @@ echo '''
 XKBMODEL="pc105"
 XKBLAYOUT="'${keyboardLanguages}'"
 XKBVARIANT=""
-XKBOPTIONS=""
+XKBOPTIONS="grp:alt_shift_toggle"
 
-BACKSPACE=\"guess\"
+BACKSPACE="guess"
 ''' | /usr/bin/sudo tee /etc/default/keyboard
 
 log_info "Keyboard language settings updated"

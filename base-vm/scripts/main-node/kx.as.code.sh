@@ -99,7 +99,7 @@ lookandfeeltool -a org.kde.breezedark.desktop
 # Set default keyboard language as per users.json
 defaultUserKeyboardLanguage=$(jq -r '\''.config.defaultKeyboardLanguage'\'' '${INSTALLATION_WORKSPACE}'/profile-config.json)
 keyboardLanguages=""
-availableLanguages="us"
+availableLanguages="us,de,it,in,gb,fr,es,cn,ru"
 for language in ${availableLanguages}
 do
 if [[ -z ${keyboardLanguages} ]]; then
@@ -113,12 +113,24 @@ fi
 fi
 done
 
-echo """[Desktop Entry]
-Type=Application
-Name=SetKeyboardLanguage
-Exec=setxkbmap ${keyboardLanguages}
-""" | sudo tee /home/'${VM_USER}'/.config/autostart/keyboard-language.desktop
+#echo """[Desktop Entry]
+#Type=Application
+#Name=SetKeyboardLanguage
+#Exec=setxkbmap ${keyboardLanguages}
+#""" | sudo tee /home/'${VM_USER}'/.config/autostart/keyboard-language.desktop
 
+echo """
+# KEYBOARD CONFIGURATION FILE
+
+# Consult the keyboard(5) manual page.
+
+XKBMODEL="pc105"
+XKBLAYOUT="'${keyboardLanguages}'"
+XKBVARIANT=""
+XKBOPTIONS="grp:alt_shift_toggle"
+
+BACKSPACE="guess"
+""" | /usr/bin/sudo tee /etc/default/keyboard
 
 # Correct permissions
 vmUser=$(id -nu)

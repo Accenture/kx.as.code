@@ -2,7 +2,7 @@ configureKeyboardSettings() {
 
     # Set default keyboard language
     keyboardLanguages=""
-    availableLanguages="us"
+    availableLanguages="us,de,it,in,gb,fr,es,cn,ru"
     for language in ${availableLanguages}; do
       if [[ -z ${keyboardLanguages} ]]; then
         keyboardLanguages="${language}"
@@ -23,9 +23,9 @@ configureKeyboardSettings() {
   XKBMODEL="pc105"
   XKBLAYOUT="'${keyboardLanguages}'"
   XKBVARIANT=""
-  XKBOPTIONS=""
+  XKBOPTIONS="grp:alt_shift_toggle"
 
-  BACKSPACE=\"guess\"
+  BACKSPACE="guess"
   ''' | sed -e 's/^[ \t]*//' | /usr/bin/sudo tee /etc/default/keyboard
 
 }

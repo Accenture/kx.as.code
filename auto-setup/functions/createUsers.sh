@@ -221,7 +221,7 @@ createUsers() {
 
         # Set default keyboard language as per users.json
         keyboardLanguages=""
-        availableLanguages="us"
+        availableLanguages="us,de,it,in,gb,fr,es,cn,ru"
         for language in ${availableLanguages}; do
           if [[ -z ${keyboardLanguages} ]]; then
             keyboardLanguages="${language}"
@@ -234,13 +234,26 @@ createUsers() {
           fi
         done
 
-        if /usr/bin/sudo test ! -f /home/${userid}/.config/autostart/keyboard-language.desktop; then
-          echo """[Desktop Entry]
-                Type=Application
-                Name=SetKeyboardLanguage
-                Exec=setxkbmap ${keyboardLanguages}
-                """ | sed -e 's/^[ \t]*//' | sed '/^$/d' | /usr/bin/sudo tee /home/${userid}/.config/autostart/keyboard-language.desktop
-        fi
+        echo '''
+        # KEYBOARD CONFIGURATION FILE
+
+        # Consult the keyboard(5) manual page.
+
+        XKBMODEL="pc105"
+        XKBLAYOUT="'${keyboardLanguages}'"
+        XKBVARIANT=""
+        XKBOPTIONS="grp:alt_shift_toggle"
+
+        BACKSPACE="guess"
+        ''' | sed -e 's/^[ \t]*//' | /usr/bin/sudo tee /etc/default/keyboard
+
+        #if /usr/bin/sudo test ! -f /home/${userid}/.config/autostart/keyboard-language.desktop; then
+        #  echo """[Desktop Entry]
+        #        Type=Application
+        #        Name=SetKeyboardLanguage
+        #        Exec=setxkbmap ${keyboardLanguages}
+        #        """ | sed -e 's/^[ \t]*//' | sed '/^$/d' | /usr/bin/sudo tee /home/${userid}/.config/autostart/keyboard-language.desktop
+        #fi
 
         # Assign random avatar to user
         ls /usr/share/avatars/avatar_*.png | sort -R | tail -1 | while read file; do
