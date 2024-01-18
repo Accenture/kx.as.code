@@ -124,12 +124,12 @@ echo """
 
 # Consult the keyboard(5) manual page.
 
-XKBMODEL="pc105"
-XKBLAYOUT="'${keyboardLanguages}'"
-XKBVARIANT=""
-XKBOPTIONS="grp:alt_shift_toggle"
+XKBMODEL=\"pc105\"
+XKBLAYOUT=\"${keyboardLanguages}\"
+XKBVARIANT=\"\"
+XKBOPTIONS=\"grp:alt_shift_toggle\"
 
-BACKSPACE="guess"
+BACKSPACE=\"guess\"
 """ | /usr/bin/sudo tee /etc/default/keyboard
 
 # Correct permissions
