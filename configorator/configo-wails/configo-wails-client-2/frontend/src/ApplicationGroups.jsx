@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import usersJSON from './assets/config/users.json';
+import usersJSON from './assets/templates/applicationGroups.json';
 import TextField from '@mui/material/TextField';
 import MenuItem from '@mui/material/MenuItem';
 import UserTable from './UserTable';
@@ -8,7 +8,7 @@ import { UpdateJsonFile } from "../wailsjs/go/main/App";
 import SettingsEthernetIcon from '@mui/icons-material/SettingsEthernet';
 import JSONConfigTabContent from './JSONConfigTabContent';
 
-const UserProvisioning = () => {
+const ApplicationGroups = () => {
 
     const [activeTab, setActiveTab] = useState('tab1');
     const [activeConfigTab, setActiveConfigTab] = useState('config-tab1');
@@ -32,7 +32,7 @@ const UserProvisioning = () => {
                 {/* Config View Tabs */}
                 <div className='flex grid-cols-12 items-center relative bg-gray-200 dark:bg-ghBlack2 sticky top-[90px] z-10 h-[40px]'>
                     <button onClick={() => handleConfigTabClick('config-tab1')} className={`${activeConfigTab === "config-tab1" ? "bg-kxBlue2 text-white" : ""} dark:text-white text-black h-10 flex col-span-6 w-full text-center items-center justify-center`}>
-                        Users Config UI
+                        Application Groups UI
                     </button>
 
                     {/* Centered icon */}
@@ -43,27 +43,27 @@ const UserProvisioning = () => {
                     </div>
 
                     <button onClick={() => handleConfigTabClick('config-tab2')} className={`${activeConfigTab === "config-tab2" ? "bg-kxBlue2 text-white" : ""} h-10 flex col-span-6 w-full text-center items-center justify-center`}>
-                        Users Config JSON
+                    Application Groups JSON
                     </button>
                 </div>
             </div>
 
             <div className="config-tab-content">
                 {activeConfigTab === 'config-tab1' && <UIConfigTabContent activeTab={activeTab} handleTabClick={handleTabClick} setJsonData={setJsonData} />}
-                {activeConfigTab === 'config-tab2' && <JSONConfigTabContent jsonData={jsonData} fileName={"users.json"} />}
+                {activeConfigTab === 'config-tab2' && <JSONConfigTabContent jsonData={jsonData} fileName={"applicationGroups.json"} />}
             </div>
         </div>)
 
 };
 
-export default UserProvisioning;
+export default ApplicationGroups;
 
 
 const UIConfigTabContent = ({ activeTab, handleTabClick, setJsonData }) => (
     <div id='config-ui-container' className=''>
         <div className='px-5 py-3 dark:bg-ghBlack2'>
-            <h2 className='text-3xl font-semibold'>User Provisioning</h2>
-            <p className='text-sm dark:text-gray-400 text-justify'>Define additional users to provision in the KX.AS.CODE environment. This is optional. If you do not specify additional users, then only the base user will be available for logging into the desktop and all provisioned tools.</p>
+            <h2 className='text-3xl font-semibold'>Application Groups</h2>
+            <p className='text-sm dark:text-gray-400 text-justify'>More details about this section here.</p>
         </div>
 
         <div className="flex dark:bg-ghBlack3 bg-gray-300 text-sm text-black dark:text-white">
@@ -71,18 +71,18 @@ const UIConfigTabContent = ({ activeTab, handleTabClick, setJsonData }) => (
                 onClick={() => handleTabClick('tab1')}
                 className={` ${activeTab === 'tab1' ? 'border-kxBlue border-b-3 dark:bg-ghBlack4 bg-gray-400' : 'broder dark:border-ghBlack3 border-gray-300 border-b-3'} p-3 py-1`}
             >
-                Owner
+                Tab1
             </button>
             <button
                 onClick={() => handleTabClick('tab2')}
                 className={` ${activeTab === 'tab2' ? 'border-kxBlue border-b-3 dark:bg-ghBlack4 bg-gray-400' : 'broder dark:border-ghBlack3 border-gray-300 border-b-3'} p-3 py-1`}
             >
-                Additional Users
+                Tab2
             </button>
         </div>
 
         <div className="tab-content dark:text-white text-black">
-            {activeTab === 'tab1' && <TabContent1 setJsonData={setJsonData} />}
+            {activeTab === 'tab1' && <TabContent1 setJsonData={setJsonData}/>}
             {activeTab === 'tab2' && <TabContent2 />}
 
         </div>
@@ -91,24 +91,6 @@ const UIConfigTabContent = ({ activeTab, handleTabClick, setJsonData }) => (
 
 
 const TabContent1 = ({ setJsonData }) => {
-
-    const [firstName, setFirstName] = React.useState("");
-    const [surname, setSurname] = React.useState("");
-
-    const generateUsername = (firstname, surname) => {
-        firstname = firstname || '';
-        surname = surname || '';
-
-        let firstnameSubstringLength = 8 - surname.length;
-
-        if (firstnameSubstringLength <= 0) {
-            firstnameSubstringLength = 1;
-        }
-
-        const userId = `${surname.toLowerCase().substring(0, 7)}${firstname.toLowerCase().substring(0, firstnameSubstringLength)}`;
-
-        return userId;
-    };
 
     const handleConfigChange = (value, key) => {
         console.log("value: ", value);
@@ -154,85 +136,27 @@ const TabContent1 = ({ setJsonData }) => {
 
     useEffect(() => {
         formatJSONData();
-        setFirstName(usersJSON.config.owner["firstname"])
-        setSurname(usersJSON.config.owner["surname"])
-    }, [firstName, surname]);
+    }, []);
 
 
     return (
         <div className='text-left'>
             <div className='px-5 py-3'>
-                <h2 className='text-3xl font-semibold'>Owner</h2>
+                <h2 className='text-3xl font-semibold'>Tab1</h2>
                 <p className='text-sm dark:text-gray-400 text-justify'>More details about this section here.</p>
             </div>
             <div className='px-5 py-3 dark:bg-ghBlack2 bg-gray-300 grid grid-cols-12'>
                 <div className='col-span-6'>
-                    <div className='dark:text-gray-400 py-1 dark:bg-ghBlack3 p-2 my-2'>
-                       Owner UserId:  <span className='font-semibold'>{generateUsername(firstName, surname)}</span></div>
-
                     <TextField
                         label="E-Mail"
                         fullWidth
                         variant="outlined"
                         size="small"
                         margin="normal"
-                        value={usersJSON.config.owner["email"]}
-                        onChange={(e) => { handleConfigChange(e.target.value, "config.owner.email") }}
+                        value={""}
+                        onChange={(e) => { handleConfigChange(e.target.value, "") }}
                     >
                     </TextField>
-
-                    <TextField
-                        label="Firstname"
-                        fullWidth
-                        variant="outlined"
-                        size="small"
-                        margin="normal"
-                        value={usersJSON.config.owner["firstname"]}
-                        onChange={(e) => { handleConfigChange(e.target.value, "config.owner.firstname") }}
-                    >
-                    </TextField>
-
-                    <TextField
-                        label="Surname"
-                        fullWidth
-                        variant="outlined"
-                        size="small"
-                        margin="normal"
-                        value={usersJSON.config.owner["surname"]}
-                        onChange={(e) => { handleConfigChange(e.target.value, "config.owner.surname") }}
-                    >
-                    </TextField>
-
-                    <TextField
-                        required
-                        label="Keyboard Layout"
-                        select
-                        fullWidth
-                        variant="outlined"
-                        size="small"
-                        margin="normal"
-                        value={usersJSON.config.owner["keyboard_language"]}
-                        onChange={(e) => { handleConfigChange(e.target.value, "config.owner.keyboard_language") }}
-                    >
-                        <MenuItem value="de">German</MenuItem>
-                        <MenuItem value="us">English (US)</MenuItem>
-                        <MenuItem value="gb">English (GB)</MenuItem>
-                        <MenuItem value="french">French</MenuItem>
-                        <MenuItem value="spanish">Spanish</MenuItem>
-
-                    </TextField>
-
-                    {/* <TextField
-                        label="Role"
-                        fullWidth
-                        variant="outlined"
-                        size="small"
-                        margin="normal"
-                        value={usersJSON.config.owner["role"]}
-                        onChange={(e) => { handleConfigChange(e.target.value, "config.owner.role") }}
-                    >
-                    </TextField> */}
-
                 </div>
             </div>
         </div>
@@ -253,21 +177,6 @@ const TabContent2 = ({ }) => {
     const [emailError, setEmailError] = React.useState("");
     const [layoutError, setLayoutError] = React.useState("");
     const [roleError, setRoleError] = React.useState("");
-
-    const generateUsername = (firstname, surname) => {
-        firstname = firstname || '';
-        surname = surname || '';
-
-        let firstnameSubstringLength = 8 - surname.length;
-
-        if (firstnameSubstringLength <= 0) {
-            firstnameSubstringLength = 1;
-        }
-
-        const userId = `${surname.toLowerCase().substring(0, 7)}${firstname.toLowerCase().substring(0, firstnameSubstringLength)}`;
-
-        return userId;
-    };
 
     const removeUser = (userIdArrayToRemove) => {
         console.log("id param List: ", userIdArrayToRemove);
@@ -354,7 +263,7 @@ const TabContent2 = ({ }) => {
         setRows([...rows, newRow]);
 
         const newAdditionalUser = {
-            "user_id": generateUsername(firstName, surname),
+            "user_id": getNextUserId(usersData),
             "firstname": firstName,
             "surname": surname,
             "email": email,
@@ -392,112 +301,14 @@ const TabContent2 = ({ }) => {
     return (
         <div className='text-left'>
             <div className='px-5 py-3'>
-                <h2 className='text-3xl font-semibold'>Additional Users</h2>
+                <h2 className='text-3xl font-semibold'>Tab2</h2>
                 <p className='text-sm dark:text-gray-400 text-justify'>More details about this section here.</p>
             </div>
 
 
             <div className='px-5 py-3 dark:bg-ghBlack2 bg-gray-300 gap-2'>
-                <h2 className='text-md font-semibold dark:text-gray-400'>Create additional user</h2>
-                <form>
-                    <div className='flex gap-2'>
-                        <TextField
-                            required
-                            InputProps={{
-                            }}
-                            label="First Name"
-                            type='text'
-                            fullWidth
-                            size="small"
-                            margin="normal"
-                            value={firstName}
-                            onChange={(e) => { setFirstName(e.target.value); setFirstNameError(''); }}
-                            error={Boolean(firstNameError)}
-                            helperText={firstNameError}
-                        />
-                        <TextField
-                            required
-                            InputProps={{
-                            }}
-                            label="Surname"
-                            type='text'
-                            fullWidth
-                            size="small"
-                            margin="normal"
-                            value={surname}
-                            onChange={(e) => { setSurname(e.target.value); setSurnameError(''); }}
-                            error={Boolean(surnameError)}
-                            helperText={surnameError}
-                        />
-                        <TextField
-                            required
-                            InputProps={{
-                            }}
-                            label="E-Mail"
-                            type='email'
-                            fullWidth
-                            size="small"
-                            margin="normal"
-                            value={email}
-                            onChange={(e) => { setEmail(e.target.value); setEmailError(''); }}
-                            error={Boolean(emailError)}
-                            helperText={emailError}
-                        />
-                    </div>
-
-                    <div className='flex gap-2'>
-                        <TextField
-                            required
-                            label="Keyboard Layout"
-                            select
-                            fullWidth
-                            variant="outlined"
-                            size="small"
-                            margin="normal"
-                            value={layout}
-                            onChange={(e) => { setLayout(e.target.value); setLayoutError(''); }}
-                            error={Boolean(layoutError)}
-                            helperText={layoutError}
-                        >
-                            <MenuItem value="de">German</MenuItem>
-                            <MenuItem value="us">English (US)</MenuItem>
-                            <MenuItem value="gb">English (GB)</MenuItem>
-                            <MenuItem value="fr">French</MenuItem>
-                            <MenuItem value="sp">Spanish</MenuItem>
-
-                        </TextField>
-
-                        <TextField
-                            required
-                            label="Role"
-                            select
-                            fullWidth
-                            variant="outlined"
-                            size="small"
-                            margin="normal"
-                            value={role}
-                            onChange={(e) => { setRole(e.target.value); setRoleError(''); }}
-                            error={Boolean(roleError)}
-                            helperText={roleError}
-                        >
-                            <MenuItem value="admin">Admin</MenuItem>
-                            <MenuItem value="normal">Normal</MenuItem>
-
-                        </TextField>
-
-                        <button type="submit"
-                            className='border border-white mt-4 h-10 px-3 items-center flex justify-center'
-                            onClick={(e) => { e.preventDefault(); handleAddUserClick() }}>
-                            <PersonAddAltIcon />
-                        </button>
-
-                    </div>
-                </form>
-
+               
             </div>
-            <UserTable rows={usersData.config.additionalUsers} removeUser={removeUser} />
-
-
         </div>
     )
 };

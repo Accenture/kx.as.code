@@ -23,6 +23,8 @@ import HomeIcon from '@mui/icons-material/Home';
 import Tooltip from '@mui/material/Tooltip';
 import PeopleIcon from '@mui/icons-material/People';
 import DataArrayIcon from '@mui/icons-material/DataArray';
+import LayersIcon from '@mui/icons-material/Layers';
+import ApplicationGroups from "./ApplicationGroups";
 
 
 const openedMixin = (theme) => ({
@@ -227,7 +229,34 @@ export function App() {
                             </Link>
 
                             {/* Separator */}
-                            <div className="w-full h-[1px] bg-gray-400"></div>
+                            <div className="w-full h-[1px] bg-gray-400 my-2"></div>
+
+                            <Link to="/application-groups">
+                                <Tooltip title="Application Groups" placement="right">
+                                    <ListItemButton
+                                        sx={{
+                                            minHeight: 40,
+                                            justifyContent: open ? "initial" : "center",
+                                            px: 2.5,
+                                            backgroundColor: slug == "application-groups" ? "#5a86ff" : "",
+                                            "&:hover": {
+                                                backgroundColor: slug == "application-groups" ? "#5a86ff" : "",
+                                            },
+                                        }}
+                                    >
+                                        <ListItemIcon
+                                            className="listItemIconContainer"
+                                            sx={{
+                                                minWidth: 0,
+                                                mr: open ? 3 : "auto",
+                                                justifyContent: "center",
+                                            }}
+                                        >
+                                            <LayersIcon className="text-3xl" />
+                                        </ListItemIcon>
+                                    </ListItemButton>
+                                </Tooltip>
+                            </Link>
 
                             <Link to="/user-provisioning">
                                 <Tooltip title="User Provisioning" placement="right">
@@ -236,9 +265,9 @@ export function App() {
                                             minHeight: 40,
                                             justifyContent: open ? "initial" : "center",
                                             px: 2.5,
-                                            backgroundColor: slug == "additional-users" ? "#5a86ff" : "",
+                                            backgroundColor: slug == "user-provisioning" ? "#5a86ff" : "",
                                             "&:hover": {
-                                                backgroundColor: slug == "additional-users" ? "#5a86ff" : "",
+                                                backgroundColor: slug == "user-provisioning" ? "#5a86ff" : "",
                                             },
                                         }}
                                     >
@@ -293,6 +322,7 @@ export function App() {
                             <Route path="/home" element={<Home />} />
                             <Route path="/build" element={<TabMenuBuild />} />
                             <Route path="/deploy" element={<TabMenuDeploy />} />
+                            <Route path="/application-groups" element={<ApplicationGroups />} />
                             <Route path="/user-provisioning" element={<UserProvisioning />} />
                             <Route path="/custom-variables" element={<CustomVariables />} />
                             <Route path="/console-output" element={<ConsoleOutput />} />

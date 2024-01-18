@@ -53,6 +53,12 @@ function stableSort(array, comparator) {
 
 const headCells = [
     {
+        id: 'user_id',
+        numeric: false,
+        disablePadding: true,
+        label: 'UserId',
+    },
+    {
         id: 'firstname',
         numeric: false,
         disablePadding: true,
@@ -328,8 +334,9 @@ export default function UserTable({ rows, removeUser }) {
                                             scope="row"
                                             padding="none"
                                         >
-                                            {row.firstname}
+                                            {row.user_id}
                                         </TableCell>
+                                        <TableCell align="left">{row.firstname}</TableCell>
                                         <TableCell align="left">{row.surname}</TableCell>
                                         <TableCell align="left">{row.email}</TableCell>
                                         <TableCell align="left">{row.keyboard_language}</TableCell>

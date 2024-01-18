@@ -2,20 +2,20 @@
     "config": {
         "additionalUsers": [
             {
-                "email": "joe@kx-as-code.local",
-                "firstname": "Joe",
-                "keyboard_language": "us",
-                "role": "admin",
-                "surname": "Bloggs",
-                "user_id": 1
-            },
-            {
-                "email": "max@kx-as-code.local",
+                "email": "max@kxascode.com",
                 "firstname": "Max",
                 "keyboard_language": "de",
-                "role": "user",
+                "role": "admin",
                 "surname": "Mustermann",
-                "user_id": 2
+                "user_id": "mustermm"
+            },
+            {
+                "email": "doe@kxascode.com",
+                "firstname": "John",
+                "keyboard_language": "de",
+                "role": "admin",
+                "surname": "Doe",
+                "user_id": "doejohn"
             }
         ],
         "owner": {
