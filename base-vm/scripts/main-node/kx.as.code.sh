@@ -132,6 +132,10 @@ XKBOPTIONS=\"grp:alt_shift_toggle\"
 BACKSPACE=\"guess\"
 """ | /usr/bin/sudo tee /etc/default/keyboard
 
+# Update screen resolution
+screenName=$(kscreen-doctor --json | jq -r ".outputs[0].name")
+kscreen-doctor output.${screenName}.mode.1920x1080@60
+
 # Correct permissions
 vmUser=$(id -nu)
 vmUserId=$(id -u)
