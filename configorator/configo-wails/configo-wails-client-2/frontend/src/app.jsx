@@ -24,7 +24,7 @@ import Tooltip from '@mui/material/Tooltip';
 import PeopleIcon from '@mui/icons-material/People';
 import DataArrayIcon from '@mui/icons-material/DataArray';
 import LayersIcon from '@mui/icons-material/Layers';
-import ApplicationGroups from "./ApplicationGroups";
+import {ApplicationGroups} from "./ApplicationGroups";
 
 
 const openedMixin = (theme) => ({
