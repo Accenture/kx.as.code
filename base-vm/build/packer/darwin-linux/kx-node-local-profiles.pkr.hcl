@@ -201,7 +201,7 @@ variable "vm_name" {
 
 variable "vmware_guest_os_type" {
   type    = string
-  default = "ubuntu64Guest"
+  default = "debian12-64"
 }
 
 locals {
