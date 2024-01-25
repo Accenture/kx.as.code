@@ -21,6 +21,7 @@ import SettingsEthernetIcon from '@mui/icons-material/SettingsEthernet';
 import StopCircleIcon from '@mui/icons-material/StopCircle';
 import Tooltip from '@mui/material/Tooltip';
 import Checkbox from '@mui/material/Checkbox';
+import ProcessOutputView from './ProcessOutputView';
 
 const TabMenuDeploy = () => {
     const [updatedJsonData, setUpdatedJsonData] = useState('');
@@ -57,7 +58,9 @@ const TabMenuDeploy = () => {
                     }
                 </div>
             </div>
-            <DeployTabContent />
+            
+            {isDeploymentStarted ? <ProcessOutputView processType={"deploy"}/> : <DeployTabContent /> }
+
             {/* <BuildExecuteButton /> */}
         </div>
     );

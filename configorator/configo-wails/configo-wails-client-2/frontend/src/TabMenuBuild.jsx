@@ -36,6 +36,8 @@ import SettingsEthernetIcon from '@mui/icons-material/SettingsEthernet';
 import StopCircleIcon from '@mui/icons-material/StopCircle';
 import DoneIcon from '@mui/icons-material/Done';
 import Tooltip from '@mui/material/Tooltip';
+import ProcessOutputView from './ProcessOutputView';
+import LastProcessView from './LastProcessView';
 
 
 const TabMenuBuild = () => {
@@ -76,11 +78,11 @@ const TabMenuBuild = () => {
                 </div>
 
             </div>
-
-
-            <BuildTabContent />
-
-
+            
+            {isBuildStarted ? <ProcessOutputView processType={"build"}/> : <BuildTabContent />}
+            
+            <LastProcessView processType={"build"} />
+            
             {/* <BuildExecuteButton /> */}
         </div>
     );

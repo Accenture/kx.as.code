@@ -193,7 +193,7 @@ export function App() {
                                                 justifyContent: "center",
                                             }}
                                         >
-                                            <PrecisionManufacturingIcon className="text-3xl" />
+                                            <PrecisionManufacturingIcon className={`text-3xl`} />
                                         </ListItemIcon>
                                     </ListItemButton>
                                 </Tooltip>
