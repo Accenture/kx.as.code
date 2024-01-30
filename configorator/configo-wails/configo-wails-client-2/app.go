@@ -5,12 +5,18 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"log"
 	"os"
+	"os/exec"
+	"sync"
+	"time"
 )
 
 // App struct
 type App struct {
 	ctx context.Context
+	mu  sync.Mutex
+	cmd *exec.Cmd
 }
 
 // NewApp creates a new App application struct
@@ -86,3 +92,60 @@ func (a *App) ExeceuteDeployCommand() error {
 // 			return false
 // 	}
 // }
+
+func (a *App) ExeBuild() string {
+	a.mu.Lock()
+	defer a.mu.Unlock()
+
+	outfile, err := os.Create("./frontend/src/assets/time.txt")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer outfile.Close()
+
+	a.cmd = exec.Command("ping", "google.com")
+	a.cmd.Stdout = outfile
+
+	err = a.cmd.Start()
+	if err != nil {
+		return "An error occurred: " + err.Error()
+	}
+
+	go func() {
+		log.Printf("Waiting for build to finish...")
+		err = a.cmd.Wait()
+		log.Printf("Build finished with error: %v", err)
+	}()
+
+	return "Build executed successfully"
+}
+
+func (a *App) StopExe() {
+	log.Printf("Build stop...")
+	a.mu.Lock()
+	defer a.mu.Unlock()
+
+	if a.cmd != nil && a.cmd.Process != nil {
+		a.cmd.Process.Kill()
+		a.cmd = nil
+	}
+
+	// Delete content of log file
+	os.Truncate("./frontend/src/assets/time.txt", 0)
+}
+
+func (a *App) WriteTimeToFile() {
+
+	for {
+		fmt.Println("Hello World!")
+		f, err := os.OpenFile("output.txt", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+		if err != nil {
+			fmt.Println(err)
+		}
+		defer f.Close()
+		if _, err := f.WriteString("Hello World!\n"); err != nil {
+			fmt.Println(err)
+		}
+		time.Sleep(10 * time.Second)
+	}
+}

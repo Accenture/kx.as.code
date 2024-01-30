@@ -63,7 +63,7 @@ var html = []byte(
 			var codeElement = document.getElementById("inner-code");
 
 			ws.onmessage = function(e) {
-				var isScrolledToBottom = codeElement.scrollHeight - codeElement.clientHeight <= codeElement.scrollTop + 1;
+				var isScrolledToB	ottom = codeElement.scrollHeight - codeElement.clientHeight <= codeElement.scrollTop + 1;
 				
 				codeElement.innerHTML += "> " + e.data + "<br>";
 

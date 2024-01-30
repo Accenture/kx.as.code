@@ -80,9 +80,7 @@ const TabMenuBuild = () => {
             </div>
             
             {isBuildStarted ? <ProcessOutputView processType={"build"}/> : <BuildTabContent />}
-            
-            <LastProcessView processType={"build"} />
-            
+                        
             {/* <BuildExecuteButton /> */}
         </div>
     );
@@ -182,6 +180,9 @@ const BuildTabContent = () => {
                 {activeConfigTab === 'config-tab1' && <UIConfigTabContent isBuild={isBuild} handleTabClick={handleTabClick} handleConfigChange={handleConfigChange} />}
                 {activeConfigTab === 'config-tab2' && <JSONConfigTabContent jsonData={jsonData} fileName={"kx-main-local-profiles.json"} />}
             </div>
+
+            <LastProcessView processType={"build"} />
+
         </div>
     );
 }
