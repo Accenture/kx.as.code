@@ -38,6 +38,9 @@ import DoneIcon from '@mui/icons-material/Done';
 import Tooltip from '@mui/material/Tooltip';
 import ProcessOutputView from './ProcessOutputView';
 import LastProcessView from './LastProcessView';
+import { ExeBuild, StopExe } from "../wailsjs/go/main/App"
+import buildOutput from './assets/buildOutput.txt';
+import { build } from 'vite';
 
 
 const TabMenuBuild = () => {
@@ -49,13 +52,36 @@ const TabMenuBuild = () => {
     const value = localStorage.getItem('myValue') || '';
     const stateFields = { history: historyField };
 
+    const [logOutput, setLogOutput] = useState('');
+
     const handleProcessTabClick = (tab) => {
         setActiveProcessTab(tab);
     };
 
     const toggleBuildStart = () => {
         setIsBuildStarted((prevIsBuildStarted) => !prevIsBuildStarted);
+
+        if (isBuildStarted) {
+            StopExe()
+        }
+        else {
+            ExeBuild().then(result => {
+                setLogOutput(result);
+            });
+        }
     }
+
+    useEffect(() => {
+        setProcessType(props.processType)
+
+        const interval = setInterval(() => {
+            fetch(buildOutput)
+                .then(response => response.text())
+                .then(text => setLogOutput(text));
+        }, 1000);
+
+        return () => clearInterval(interval);
+    }, []);
 
     return (
         <div className='mt-[90px]'>
@@ -78,9 +104,9 @@ const TabMenuBuild = () => {
                 </div>
 
             </div>
-            
-            {isBuildStarted ? <ProcessOutputView processType={"build"}/> : <BuildTabContent />}
-                        
+
+            {isBuildStarted ? <ProcessOutputView processType={"build"} logOutput={logOutput} /> : <BuildTabContent />}
+
             {/* <BuildExecuteButton /> */}
         </div>
     );
