@@ -155,7 +155,7 @@ Vagrant.configure("2") do |config|
       v.name = "kx.as.code-#{ENVIRONMENT_PREFIX}-main1-#{MAIN_BOX_VERSION}"
       v.memory = MAIN_ADMIN_NODE_MEMORY
       v.cpus = MAIN_ADMIN_NODE_CPU_CORES
-      v.customize ["set", :id, "--3d-accelerate", "off"]
+      v.customize ["set", :id, "--3d-accelerate", "highest"]
       v.customize ["set", :id, "--high-resolution", "on"]
       if STANDALONE_MODE != "true"
         v.customize ["set", :id, "--device-add", "hdd", "--size", GLUSTERFS_KUBE_VOLUMES_DISK_SIZE.to_i * 1024]

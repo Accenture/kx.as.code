@@ -65,6 +65,7 @@ notify() {
               log_trace "Idle time in seconds: ${idleTimeMinutes}"
 
               if [[ ${idleTimeMinutes} -le 15 ]]; then
+
                 /usr/bin/sudo -H -i -u ${user} bash -c " \
                     source /home/${user}/.dbus/Xdbus && \
                     notify-send -t \"${messageTimeout}\" \"${notificationTitle}\" \"$(echo ${message} | base64 -d)\" --icon=\"${messageType}\""

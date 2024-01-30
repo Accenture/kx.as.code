@@ -170,38 +170,38 @@ sudo chown -R ${BASE_IMAGE_SSH_USER}:${BASE_IMAGE_SSH_USER} /home/${BASE_IMAGE_S
 #sudo apt-get install -y openvpn3
 
 # Compiling OpenLens for later installation when KX.AS.CODE comes up
-cd ${INSTALLATION_WORKSPACE}
-sudo chmod 777 ${INSTALLATION_WORKSPACE}
-export lensVersion="v6.5.2"
-git clone --depth 1 --branch ${lensVersion} https://github.com/lensapp/lens.git
-cd ${INSTALLATION_WORKSPACE}/lens
-source /etc/profile.d/nvm.sh
-
-# Build OpenLens
-rc=0
-if [[ -z $(which raspinfo) ]]; then
-  for i in {1..3}; do
-    cd ${INSTALLATION_WORKSPACE}/lens
-    source /etc/profile.d/nvm.sh
-    nvm use --delete-prefix lts/gallium
-    npm config set fetch-retries 5
-    npm config set fetch-retry-factor 20
-    npm config set fetch-retry-mintimeout 20000
-    npm config set fetch-retry-maxtimeout 120000
-    npm config set fetch-timeout 600000
-    npm run all:install
-    sudo sed -i -e '/"rpm",/d' -e '/"AppImage"/d' -e 's/"deb",/"deb"/' ${INSTALLATION_WORKSPACE}/lens/open-lens/package.json
-    npx nx run open-lens:build:app --x64
-    if [[ ${rc} -ne 0 ]]; then
-      echo "Open-Lens build attempt #${i} failed. Trying again (max 3 times)."
-      rc=0 # Reset rc before next run
-    else
-      echo "Open-Lens build attempt #${i} succeeded. Continuing."
-      break
-    fi
-  done
-  debOpenLensInstaller=$(find ${INSTALLATION_WORKSPACE}/lens/open-lens/dist -name "OpenLens-*.deb")
-  sudo mv ${debOpenLensInstaller} ${INSTALLATION_WORKSPACE}
-  # Tidy up
-  sudo rm -rf ${INSTALLATION_WORKSPACE}/lens || true
-fi
+#cd ${INSTALLATION_WORKSPACE}
+#sudo chmod 777 ${INSTALLATION_WORKSPACE}
+#export lensVersion="v2024.1.170738-latest"
+#git clone --depth 1 --branch ${lensVersion} https://github.com/lensapp/lens.git
+#cd ${INSTALLATION_WORKSPACE}/lens
+#source /etc/profile.d/nvm.sh
+#
+## Build OpenLens
+#rc=0
+#if [[ -z $(which raspinfo) ]]; then
+#  for i in {1..3}; do
+#    cd ${INSTALLATION_WORKSPACE}/lens
+#    source /etc/profile.d/nvm.sh
+#    nvm use --delete-prefix lts/gallium
+#    npm config set fetch-retries 5
+#    npm config set fetch-retry-factor 20
+#    npm config set fetch-retry-mintimeout 20000
+#    npm config set fetch-retry-maxtimeout 120000
+#    npm config set fetch-timeout 600000
+#    npm run all:install
+#    sudo sed -i -e '/"rpm",/d' -e '/"AppImage"/d' -e 's/"deb",/"deb"/' ${INSTALLATION_WORKSPACE}/lens/open-lens/package.json
+#    npx nx run open-lens:build:app --x64
+#    if [[ ${rc} -ne 0 ]]; then
+#      echo "Open-Lens build attempt #${i} failed. Trying again (max 3 times)."
+#      rc=0 # Reset rc before next run
+#    else
+#      echo "Open-Lens build attempt #${i} succeeded. Continuing."
+#      break
+#    fi
+#  done
+#  debOpenLensInstaller=$(find ${INSTALLATION_WORKSPACE}/lens/open-lens/dist -name "OpenLens-*.deb")
+#  sudo mv ${debOpenLensInstaller} ${INSTALLATION_WORKSPACE}
+#  # Tidy up
+#  sudo rm -rf ${INSTALLATION_WORKSPACE}/lens || true
+#fi

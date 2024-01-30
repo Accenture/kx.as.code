@@ -35,10 +35,6 @@
             },
             {
                 "install_folder": "core",
-                "name": "openlens"
-            },
-            {
-                "install_folder": "core",
                 "name": "calico-network"
             },
             {

@@ -1,3 +1,24 @@
+packer {
+  required_plugins {
+    vagrant = {
+      version = "~> 1"
+      source = "github.com/hashicorp/vagrant"
+    }
+    virtualbox = {
+      version = "~> 1"
+      source  = "github.com/hashicorp/virtualbox"
+    }
+    vmware = {
+      version = "~> 1"
+      source = "github.com/hashicorp/vmware"
+    }
+    parallels = {
+      version = ">= 1.1.5"
+      source  = "github.com/parallels/parallels"
+    }
+  }
+}
+
 locals {
   raw_version = jsondecode(file("../../../../versions.json"))
   version  = local.raw_version.kxascode
@@ -375,7 +396,7 @@ build {
       "VBOX_GUEST_ADDITIONS_DEB_URL=${ var.vbox_guest_additions_deb_url }",
       "VBOX_GUEST_ADDITIONS_DEB_CHECKSUM=${ var.vbox_guest_additions_deb_checksum}"
     ]
-    only             = ["kx-node-virtualbox"]
+    only             = ["virtualbox-iso.kx-main-virtualbox"]
     script           = "../../../scripts/base/virtualbox.sh"
   }
 
@@ -383,13 +404,13 @@ build {
     environment_vars = [
       "PARALLELS_TOOLS_GUEST_PATH=${ var.parallels_tools_guest_path }"
     ]
-    only             = ["kx-node-parallels"]
+    only             = ["parallels-iso.kx-main-parallels"]
     script           = "../../../scripts/base/parallels.sh"
   }
 
   provisioner "shell" {
-    only   = ["kx-node-vmware-desktop"]
-    script = "../../../scripts/base/vmware.sh"
+    only              = ["vmware-iso.kx-main-vmware-desktop"]
+    script            = "../../../scripts/base/vmware.sh"
   }
 
   provisioner "shell" {
