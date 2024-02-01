@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import FormControlLabel from '@mui/material/FormControlLabel';
@@ -40,7 +40,6 @@ import ProcessOutputView from './ProcessOutputView';
 import LastProcessView from './LastProcessView';
 import { ExeBuild, StopExe } from "../wailsjs/go/main/App"
 import buildOutput from './assets/buildOutput.txt';
-import { build } from 'vite';
 
 
 const TabMenuBuild = () => {
@@ -48,6 +47,7 @@ const TabMenuBuild = () => {
     const [activeProcessTab, setActiveProcessTab] = useState('build');
     const serializedState = localStorage.getItem('myEditorState');
     const [isBuildStarted, setIsBuildStarted] = useState(false);
+    // const [intervalId, setIntervalId] = useState(null);
 
     const value = localStorage.getItem('myValue') || '';
     const stateFields = { history: historyField };
@@ -58,30 +58,28 @@ const TabMenuBuild = () => {
         setActiveProcessTab(tab);
     };
 
-    const toggleBuildStart = () => {
+    const toggleBuildStart = useCallback(() => {
         setIsBuildStarted((prevIsBuildStarted) => !prevIsBuildStarted);
 
         if (isBuildStarted) {
-            StopExe()
-        }
-        else {
+            StopExe();
+        } else {
             ExeBuild().then(result => {
                 setLogOutput(result);
             });
         }
-    }
+    }, [isBuildStarted]);
 
     useEffect(() => {
-        setProcessType(props.processType)
-
         const interval = setInterval(() => {
             fetch(buildOutput)
-                .then(response => response.text())
-                .then(text => setLogOutput(text));
-        }, 1000);
-
-        return () => clearInterval(interval);
-    }, []);
+              .then(response => response.text())
+              .then(text => setLogOutput(text));
+          }, 1000);
+      
+          return () => clearInterval(interval);
+      
+    }, [isBuildStarted]);
 
     return (
         <div className='mt-[90px]'>
@@ -221,7 +219,6 @@ const BuildExecuteButton = () => {
     const handleExecuteClick = async () => {
         console.log('KX.AS.Code Image build process started!');
         navigate('/console-output');
-        ExecuteRealTimeCommand()
     };
 
 

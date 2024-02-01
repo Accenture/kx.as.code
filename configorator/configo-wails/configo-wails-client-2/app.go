@@ -94,12 +94,15 @@ func (a *App) ExeceuteDeployCommand() error {
 // }
 
 func (a *App) ExeBuild() string {
+	a.StopExe()
+
 	a.mu.Lock()
 	defer a.mu.Unlock()
 
-	outfile, err := os.Create("./frontend/src/assets/time.txt")
+	outfile, err := os.Create("./frontend/src/assets/buildOutput.txt")
 	if err != nil {
 		log.Fatal(err)
+		return "An error occurred: " + err.Error()
 	}
 	defer outfile.Close()
 
@@ -120,6 +123,20 @@ func (a *App) ExeBuild() string {
 	return "Build executed successfully"
 }
 
+func isPrintable(r rune) bool {
+	return r >= 32 && r < 127
+}
+
+func filterPrintable(s string) string {
+	var filtered string
+	for _, r := range s {
+		if isPrintable(r) {
+			filtered += string(r)
+		}
+	}
+	return filtered
+}
+
 func (a *App) StopExe() {
 	log.Printf("Build stop...")
 	a.mu.Lock()
@@ -131,7 +148,7 @@ func (a *App) StopExe() {
 	}
 
 	// Delete content of log file
-	os.Truncate("./frontend/src/assets/time.txt", 0)
+	os.Truncate("./frontend/src/assets/buildOutput.txt", 0)
 }
 
 func (a *App) WriteTimeToFile() {
