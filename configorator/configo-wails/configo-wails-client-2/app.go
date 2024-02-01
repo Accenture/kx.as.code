@@ -111,7 +111,26 @@ func (a *App) ExeBuild() string {
 		return fmt.Sprintf("Unsupported operating system: %v", runtime.GOOS)
 	}
 
-	a.cmd = exec.Command(packerBinaryPath, "version")
+	// a.cmd = exec.Command(packerBinaryPath, "version")
+	a.cmd = exec.Command(packerBinaryPath, "build", "-force",
+		"-on-error=abort",
+		"-only", "kx-main-virtualbox",
+		"-var", "compute_engine_build=false",
+		"-var", "memory=8192",
+		"-var", "cpus=2",
+		"-var", "video_memory=128",
+		"-var", "hostname=kx-main",
+		"-var", "domain=kx-as-code.local",
+		"-var", "version=0.8.8",
+		"-var", "kube_version=1.21.3-00",
+		"-var", "vm_user=kx.hero",
+		"-var", "vm_password=L3arnandshare",
+		"-var", "git_source_url=https://github.com/Accenture/kx.as.code.git",
+		"-var", "git_source_branch=main",
+		"-var", "git_source_user=username",
+		"-var", "git_source_token=token",
+		"-var", "base_image_ssh_user=vagrant",
+		"./frontend/src/assets/config/build/darwin-linux/kx-main-local-profiles.json")
 	a.cmd.Stdout = outfile
 
 	if err := a.cmd.Start(); err != nil {
