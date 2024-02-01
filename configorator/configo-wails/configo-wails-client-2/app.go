@@ -9,7 +9,6 @@ import (
 	"os"
 	"os/exec"
 	"sync"
-	"time"
 )
 
 // App struct
@@ -149,20 +148,4 @@ func (a *App) StopExe() {
 
 	// Delete content of log file
 	os.Truncate("./frontend/src/assets/buildOutput.txt", 0)
-}
-
-func (a *App) WriteTimeToFile() {
-
-	for {
-		fmt.Println("Hello World!")
-		f, err := os.OpenFile("output.txt", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
-		if err != nil {
-			fmt.Println(err)
-		}
-		defer f.Close()
-		if _, err := f.WriteString("Hello World!\n"); err != nil {
-			fmt.Println(err)
-		}
-		time.Sleep(10 * time.Second)
-	}
 }

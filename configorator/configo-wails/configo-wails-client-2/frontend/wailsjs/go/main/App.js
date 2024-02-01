@@ -25,7 +25,3 @@ export function StopExe() {
 export function UpdateJsonFile(arg1, arg2) {
   return window['go']['main']['App']['UpdateJsonFile'](arg1, arg2);
 }
-
-export function WriteTimeToFile() {
-  return window['go']['main']['App']['WriteTimeToFile']();
-}
