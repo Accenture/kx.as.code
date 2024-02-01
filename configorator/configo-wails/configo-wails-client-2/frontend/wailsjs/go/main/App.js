@@ -6,18 +6,6 @@ export function ExeBuild() {
   return window['go']['main']['App']['ExeBuild']();
 }
 
-export function ExeceuteBuildCommand() {
-  return window['go']['main']['App']['ExeceuteBuildCommand']();
-}
-
-export function ExeceuteDeployCommand() {
-  return window['go']['main']['App']['ExeceuteDeployCommand']();
-}
-
-export function Greet(arg1) {
-  return window['go']['main']['App']['Greet'](arg1);
-}
-
 export function StopExe() {
   return window['go']['main']['App']['StopExe']();
 }

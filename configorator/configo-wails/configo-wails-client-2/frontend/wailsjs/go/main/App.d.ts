@@ -3,12 +3,6 @@
 
 export function ExeBuild():Promise<string>;
 
-export function ExeceuteBuildCommand():Promise<void>;
-
-export function ExeceuteDeployCommand():Promise<void>;
-
-export function Greet(arg1:string):Promise<string>;
-
 export function StopExe():Promise<void>;
 
 export function UpdateJsonFile(arg1:string,arg2:string):Promise<void>;

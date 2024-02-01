@@ -1,13 +1,18 @@
 package main
 
 import (
+	"archive/zip"
 	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"log"
+	"net/http"
 	"os"
 	"os/exec"
+	"path/filepath"
+	"runtime"
 	"sync"
 )
 
@@ -27,10 +32,6 @@ func NewApp() *App {
 // so we can call the runtime methods
 func (a *App) startup(ctx context.Context) {
 	a.ctx = ctx
-}
-
-func (a *App) Greet(name string) string {
-	return fmt.Sprintf("Hello %s, It's show time!", name)
 }
 
 func (a *App) UpdateJsonFile(data string, file string) error {
@@ -71,27 +72,6 @@ func (a *App) UpdateJsonFile(data string, file string) error {
 	return nil
 }
 
-func (a *App) ExeceuteBuildCommand() error {
-	// OS Checkup
-	// VM Checkup
-
-	return nil
-}
-
-func (a *App) ExeceuteDeployCommand() error {
-	// OS Checkup
-	// VM Checkup
-
-	return nil
-}
-
-// func isCommandAvailable(name string) bool {
-// 	cmd := exec.Command("/bin/sh", "-c", "command -v "+name)
-// 	if err := cmd.Run(); err != nil {
-// 			return false
-// 	}
-// }
-
 func (a *App) ExeBuild() string {
 	a.StopExe()
 
@@ -100,26 +80,168 @@ func (a *App) ExeBuild() string {
 
 	outfile, err := os.Create("./frontend/src/assets/buildOutput.txt")
 	if err != nil {
-		log.Fatal(err)
-		return "An error occurred: " + err.Error()
+		log.Printf("Failed to create output file: %v", err)
+		return fmt.Sprintf("An error occurred: %v", err)
 	}
-	defer outfile.Close()
 
-	a.cmd = exec.Command("ping", "google.com")
+	var packerBinaryPath string
+
+	switch runtime.GOOS {
+	case "darwin", "linux":
+		// currentUser, userErr := user.Current()
+		// if userErr != nil {
+		// 	log.Printf("Failed to get user information: %v", userErr)
+		// 	return fmt.Sprintf("An error occurred while getting user information: %v", userErr)
+		// }
+
+		// packerBinaryPath = currentUser.HomeDir + "/kxascode-launcher/packer"
+		packerBinaryPath = "./frontend/src/assets/packer/packer"
+		if err := downloadPackerBinary(packerBinaryPath); err != nil {
+			log.Printf("Failed to download Packer: %v", err)
+			return fmt.Sprintf("An error occurred while downloading Packer: %v", err)
+		}
+
+		chmodCmd := exec.Command("chmod", "+x", packerBinaryPath)
+		if chmodErr := chmodCmd.Run(); chmodErr != nil {
+			log.Printf("Failed to set execute permissions: %v", chmodErr)
+			return fmt.Sprintf("An error occurred while setting execute permissions: %v", chmodErr)
+		}
+	default:
+		log.Printf("Unsupported operating system: %v", runtime.GOOS)
+		return fmt.Sprintf("Unsupported operating system: %v", runtime.GOOS)
+	}
+
+	a.cmd = exec.Command(packerBinaryPath, "version")
 	a.cmd.Stdout = outfile
 
-	err = a.cmd.Start()
-	if err != nil {
-		return "An error occurred: " + err.Error()
+	if err := a.cmd.Start(); err != nil {
+		log.Printf("Failed to start command: %v", err)
+		return fmt.Sprintf("An error occurred: %v", err)
 	}
 
 	go func() {
 		log.Printf("Waiting for build to finish...")
-		err = a.cmd.Wait()
-		log.Printf("Build finished with error: %v", err)
+		if waitErr := a.cmd.Wait(); waitErr != nil {
+			log.Printf("Build finished with error: %v", waitErr)
+		}
+
+		// Close file after build has finished
+		outfile.Close()
 	}()
 
 	return "Build executed successfully"
+}
+
+func downloadPackerBinary(destination string) error {
+	var url string
+
+	switch runtime.GOOS {
+	case "darwin":
+		if runtime.GOARCH == "amd64" {
+			url = "https://releases.hashicorp.com/packer/1.10.1/packer_1.10.1_darwin_amd64.zip"
+		} else if runtime.GOARCH == "arm64" {
+			url = "https://releases.hashicorp.com/packer/1.10.1/packer_1.10.1_darwin_arm64.zip"
+		} else if runtime.GOARCH == "arm" {
+			url = "https://releases.hashicorp.com/packer/1.10.1/packer_1.10.1_darwin_arm.zip"
+		} else {
+			return fmt.Errorf("unsupported architecture: %s", runtime.GOARCH)
+		}
+	case "linux":
+		return fmt.Errorf("unsupported architecture: %s", runtime.GOARCH)
+	default:
+		return fmt.Errorf("unsupported operating system: %s", runtime.GOOS)
+	}
+
+	resp, err := http.Get(url)
+	if err != nil {
+		return fmt.Errorf("failed to download Packer binary: %v", err)
+	}
+	defer resp.Body.Close()
+
+	err = os.MkdirAll(filepath.Dir(destination), 0755)
+	if err != nil {
+		return fmt.Errorf("failed to create directory: %v", err)
+	}
+
+	file, err := os.Create(destination + ".zip")
+	if err != nil {
+		return fmt.Errorf("failed to create file: %v", err)
+	}
+	defer file.Close()
+
+	_, err = io.Copy(file, resp.Body)
+	if err != nil {
+		return fmt.Errorf("failed to write to file: %v", err)
+	}
+
+	if err := unzipFile(file.Name(), filepath.Dir(destination)); err != nil {
+		return fmt.Errorf("failed to unzip file: %v", err)
+	}
+
+	chmodCmd := exec.Command("chmod", "+x", destination)
+	if err := chmodCmd.Run(); err != nil {
+		return fmt.Errorf("failed to set execute permissions: %v", err)
+	}
+
+	return nil
+}
+
+func downloadFile(url, destination string) error {
+	resp, err := http.Get(url)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return fmt.Errorf("failed to download: %s", resp.Status)
+	}
+
+	out, err := os.Create(destination)
+	if err != nil {
+		return err
+	}
+	defer out.Close()
+
+	_, err = io.Copy(out, resp.Body)
+	return err
+}
+
+func unzipFile(source, destination string) error {
+	r, err := zip.OpenReader(source)
+	if err != nil {
+		return err
+	}
+	defer r.Close()
+
+	err = os.MkdirAll(destination, 0755)
+	if err != nil {
+		return err
+	}
+
+	for _, f := range r.File {
+		rc, err := f.Open()
+		if err != nil {
+			return err
+		}
+		defer rc.Close()
+
+		path := filepath.Join(destination, f.Name)
+
+		f, err := os.Create(path)
+		if err != nil {
+			return err
+		}
+		defer f.Close()
+
+		_, err = io.Copy(f, rc)
+		if err != nil {
+			return err
+		}
+
+	}
+
+	return nil
 }
 
 func isPrintable(r rune) bool {
