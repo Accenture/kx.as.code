@@ -96,15 +96,17 @@ func (a *App) ExeBuild() string {
 
 		// packerBinaryPath = currentUser.HomeDir + "/kxascode-launcher/packer"
 		packerBinaryPath = "./frontend/src/assets/packer/packer"
-		if err := downloadPackerBinary(packerBinaryPath); err != nil {
-			log.Printf("Failed to download Packer: %v", err)
-			return fmt.Sprintf("An error occurred while downloading Packer: %v", err)
-		}
+		if _, err := os.Stat(packerBinaryPath); os.IsNotExist(err) {
+			if err := downloadPackerBinary(packerBinaryPath); err != nil {
+				log.Printf("Failed to download Packer: %v", err)
+				return fmt.Sprintf("An error occurred while downloading Packer: %v", err)
+			}
 
-		chmodCmd := exec.Command("chmod", "+x", packerBinaryPath)
-		if chmodErr := chmodCmd.Run(); chmodErr != nil {
-			log.Printf("Failed to set execute permissions: %v", chmodErr)
-			return fmt.Sprintf("An error occurred while setting execute permissions: %v", chmodErr)
+			chmodCmd := exec.Command("chmod", "+x", packerBinaryPath)
+			if chmodErr := chmodCmd.Run(); chmodErr != nil {
+				log.Printf("Failed to set execute permissions: %v", chmodErr)
+				return fmt.Sprintf("An error occurred while setting execute permissions: %v", chmodErr)
+			}
 		}
 	default:
 		log.Printf("Unsupported operating system: %v", runtime.GOOS)
