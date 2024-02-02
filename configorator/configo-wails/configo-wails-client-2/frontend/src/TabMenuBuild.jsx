@@ -73,12 +73,12 @@ const TabMenuBuild = () => {
     useEffect(() => {
         const interval = setInterval(() => {
             fetch(buildOutput)
-              .then(response => response.text())
-              .then(text => setLogOutput(text));
-          }, 1000);
-      
-          return () => clearInterval(interval);
-      
+                .then(response => response.text())
+                .then(text => setLogOutput(text));
+        }, 1000);
+
+        return () => clearInterval(interval);
+
     }, [isBuildStarted]);
 
     return (
@@ -88,12 +88,12 @@ const TabMenuBuild = () => {
                 {/* Action Settings / Button */}
                 <div className='mx-5 flex justify-end'>
                     {isBuildStarted ?
-                        <Tooltip title="Stop Build" placement="left">
+                        <Tooltip title="Stop Build Process" placement="left">
                             <IconButton onClick={() => { toggleBuildStart() }}>
                                 <StopCircleIcon />
                             </IconButton>
                         </Tooltip> :
-                        <Tooltip title="Start Build" placement="left">
+                        <Tooltip title="Start New Build" placement="left">
                             <IconButton onClick={() => { toggleBuildStart() }}>
                                 <PlayCircleIcon />
                             </IconButton>
@@ -204,9 +204,6 @@ const BuildTabContent = () => {
                 {activeConfigTab === 'config-tab1' && <UIConfigTabContent isBuild={isBuild} handleTabClick={handleTabClick} handleConfigChange={handleConfigChange} />}
                 {activeConfigTab === 'config-tab2' && <JSONConfigTabContent jsonData={jsonData} fileName={"kx-main-local-profiles.json"} />}
             </div>
-
-            <LastProcessView processType={"build"} />
-
         </div>
     );
 }
@@ -239,6 +236,7 @@ const UIConfigTabContent = ({ activeTab, handleTabClick, handleConfigChange, isB
     isBuild ?
         <div>
             <BuildContent />
+            <LastProcessView processType={"build"} />
         </div> :
         <div id='config-ui-container' className=''>
 
@@ -289,6 +287,7 @@ const UIConfigTabContent = ({ activeTab, handleTabClick, handleConfigChange, isB
                 {activeTab === 'tab5' && <TabContent5 handleConfigChange={handleConfigChange} />}
                 {activeTab === 'tab6' && <TabContent6 handleConfigChange={handleConfigChange} />}
             </div>
+
         </div>
 );
 
