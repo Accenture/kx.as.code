@@ -40,6 +40,7 @@ import ProcessOutputView from './ProcessOutputView';
 import LastProcessView from './LastProcessView';
 import { ExeBuild, StopExe } from "../wailsjs/go/main/App"
 import buildOutput from './assets/buildOutput.txt';
+import MonitorHeartIcon from '@mui/icons-material/MonitorHeart';
 
 
 const TabMenuBuild = () => {
@@ -84,9 +85,15 @@ const TabMenuBuild = () => {
     return (
         <div className='mt-[90px]'>
             {/* Build & Deploy Selection */}
-            <div id="build-deploy-section" className='items-center px-5 bg-ghBlack3 py-1.5'>
+            <div id="build-deploy-section" className='items-center px-5 bg-ghBlack3 p-1.5'>
                 {/* Action Settings / Button */}
-                <div className='mx-5 flex justify-end'>
+                <div className='mx-5 flex justify-end items-center'>
+                    {/* <div className="flex">
+                        <button className='bg-ghBlack4 hover:bg-gray-700 px-2 pt-1 mr-1 items-center'>
+                            <MonitorHeartIcon className='mb-1 mr-1'/>
+                            <span>Build Console Output</span>
+                        </button>
+                    </div> */}
                     {isBuildStarted ?
                         <Tooltip title="Stop Build Process" placement="left">
                             <IconButton onClick={() => { toggleBuildStart() }}>

@@ -16,7 +16,7 @@
     "@emotion/styled": "^11.11.0",
     "@mui/icons-material": "^5.15.0",
     "@mui/material": "^5.15.2",
-    "@mui/system": "^5.14.20",
+    "@mui/system": "^5.15.7",
     "@uiw/codemirror-extensions-langs": "^4.21.21",
     "@uiw/codemirror-theme-basic": "^4.21.21",
     "@uiw/codemirror-theme-github": "^4.21.21",

@@ -8,4 +8,11 @@ export default defineConfig({
     preact(),
     WindiCSS(),
   ],
+  server: {
+    port: 5173,
+    strictPort: true, 
+    hmr: {
+      clientPort: 5173,
+    },
+  },
 });

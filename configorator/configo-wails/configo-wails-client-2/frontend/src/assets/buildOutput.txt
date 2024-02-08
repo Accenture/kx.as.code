@@ -1,0 +1,10 @@
+Error: Failed to initialize build "kx-main-virtualbox"
+
+The builder virtualbox-iso is unknown by Packer, and is likely part of a plugin
+that is not installed.
+You may find the needed plugin along with installation instructions documented
+on the Packer integrations page.
+
+https://developer.hashicorp.com/packer/integrations?filter=virtualbox
+
+

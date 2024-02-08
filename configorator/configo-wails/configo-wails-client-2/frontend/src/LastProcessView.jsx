@@ -62,7 +62,7 @@ const LastProcessView = (props) => {
                   <td className="px-5">{row.vmProfile}</td>
                   <td className="px-5 capitalize">{row.nodeType}</td>
                   <td className="px-5 text-xs font-semibold uppercase">{getStatusComponent(row.buildStatus)}</td>
-                  <td className=''>
+                  <td className='pr-10 flex justify-end'>
                     {/* Build action buttons */}
                     <div className="w-20">
                       <IconButton onClick={() => { }}>
