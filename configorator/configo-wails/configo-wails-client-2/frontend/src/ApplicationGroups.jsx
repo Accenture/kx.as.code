@@ -81,14 +81,14 @@ const UIConfigTabContent = ({ activeTab, handleTabClick, setJsonData }) => {
 
     return (
         <div id='config-ui-container' className=''>
-            <div className='px-5 py-3 dark:bg-ghBlack2'>
+            <div className='px-5 py-3 dark:bg-ghBlack4'>
                 <h2 className='text-3xl font-semibold'>Application Groups</h2>
                 <p className='text-sm dark:text-gray-400 text-justify'>More details about this section here.</p>
             </div>
 
-            <div className="tab-content dark:text-white text-black">
+            <div className="tab-content dark:text-white text-black pb-3 bg-ghBlack4">
                 <div className='text-left'>
-                    <div className="flex items-center mb-3">
+                    <div className="flex items-center m-3">
                         {/* Search Input Field */}
                         <div className="group relative mr-3">
                             <svg
@@ -113,7 +113,7 @@ const UIConfigTabContent = ({ activeTab, handleTabClick, setJsonData }) => {
                                 }}
                             />
                         </div>
-                        <div className='text-gray-400 text-base'>Available Application Groups: {applicationGroupJson.length}</div>
+                        <div className='text-gray-400 text-sm'>Available Application Groups: {applicationGroupJson.length}</div>
                     </div>
 
                     {/* Application Groups actions */}
