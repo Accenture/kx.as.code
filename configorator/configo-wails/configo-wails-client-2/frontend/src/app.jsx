@@ -1,4 +1,4 @@
-import { useState, useEffect } from "preact/hooks";
+import { useState, useEffect, useCallback } from "preact/hooks";
 import './app.css';
 import { HeaderNew } from "./HeaderNew";
 import { Routes, Route, Link, useLocation } from "react-router-dom";
@@ -26,8 +26,8 @@ import DataArrayIcon from '@mui/icons-material/DataArray';
 import LayersIcon from '@mui/icons-material/Layers';
 import { ApplicationGroups } from "./ApplicationGroups";
 import { BuildOutputProvider } from './BuildOutputContext';
-
-
+import { ExeBuild, StopExe } from "../wailsjs/go/main/App"
+import buildOutput from './assets/buildOutput.txt';
 
 const openedMixin = (theme) => ({
     width: drawerWidth,
@@ -49,7 +49,7 @@ const closedMixin = (theme) => ({
         width: `calc(${theme.spacing(8)} + 1px)`,
     },
 });
-
+ 
 const DrawerHeader = styled("div")(({ theme }) => ({
     display: "flex",
     alignItems: "center",
@@ -79,12 +79,16 @@ const drawerWidth = 240;
 
 
 export function App() {
-
     const [open, setOpen] = useState(false);
     const [isDarkMode, setIsDarkMode] = useState(true);
     const location = useLocation();
     const pathnames = location.pathname.split("/").filter((x) => x);
     const slug = pathnames[pathnames.length - 1];
+
+    const [buildOutputFileContent, setBuildOutputFileContent] = useState('');
+    const [isBuildStarted, setIsBuildStarted] = useState(false);
+    const [buildLogOutput, setBuildLogOutput] = useState('');
+    const [intervalId, setIntervalId] = useState(null);
 
     const handleDrawerOpen = () => {
         setOpen(true);
@@ -112,6 +116,18 @@ export function App() {
         },
     });
 
+    const toggleBuildStart = useCallback(() => {
+        setIsBuildStarted((prevIsBuildStarted) => !prevIsBuildStarted);
+
+        if (isBuildStarted) {
+            StopExe();
+        } else {
+            ExeBuild().then(result => {
+                setBuildOutputFileContent(result);
+            });
+        }
+    }, [isBuildStarted]);
+
     useEffect(() => {
         console.log("pathnames: ", pathnames);
 
@@ -127,10 +143,24 @@ export function App() {
 
         window.addEventListener('popstate', handleLocationChange);
 
+        // buildOput Monitoring
+        if (isBuildStarted) {
+            const id = setInterval(() => {
+                fetch(buildOutput)
+                    .then(response => response.text())
+                    .then(text => setBuildOutputFileContent(text));
+            }, 1000);
+            setIntervalId(id)
+        }
+
         return () => {
             window.removeEventListener('popstate', handleLocationChange);
+            if (intervalId) {
+                clearInterval(intervalId);
+            }
         };
-    }, [isDarkMode, pathnames]);
+
+    }, [isDarkMode, pathnames, isBuildStarted, buildOutputFileContent, intervalId]);
 
 
     return (
@@ -323,7 +353,7 @@ export function App() {
                             <Routes>
                                 {/* <Route exact path="/" element={<TabMenu />} /> */}
                                 <Route path="/home" element={<Home />} />
-                                <Route path="/build" element={<TabMenuBuild />} />
+                                <Route path="/build" element={<TabMenuBuild buildOutputFileContent={buildOutputFileContent} toggleBuildStart={toggleBuildStart} isBuildStarted={isBuildStarted} />} />
                                 <Route path="/deploy" element={<TabMenuDeploy />} />
                                 <Route path="/application-groups" element={<ApplicationGroups />} />
                                 <Route path="/user-provisioning" element={<UserProvisioning />} />

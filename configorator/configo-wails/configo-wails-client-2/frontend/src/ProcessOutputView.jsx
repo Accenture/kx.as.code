@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import BuildStages from './BuildStages';
 
-const ProcessOutputView = (props) => {
+const ProcessOutputView = ({logOutput, processType}) => {
   const [fileContent, setFileContent] = useState("")
   const outputContainer = useRef(null);
   const [isUserScroll, setIsUserScroll] = useState(false);
@@ -21,7 +21,7 @@ const ProcessOutputView = (props) => {
 
   useEffect(() => {
     return () => clearInterval(interval);
-  }, [isUserScroll]);
+  }, [isUserScroll, logOutput]);
 
   return (
     <div className=''>
@@ -38,12 +38,12 @@ const ProcessOutputView = (props) => {
             </svg>
           </span>
           <span>
-            &lt;BUILD ID&gt; - {props.processType} process console output:
+            &lt;BUILD ID&gt; - {processType} process console output:
           </span>
         </div>
         <div className="bg-ghBlack2 m-3">
           {/* {processType} Process started... */}
-          <pre id="output-container" ref={outputContainer} onScroll={handleScroll} className='text-white text-sm text-left p-4 font-mono whitespace-pre-wrap overflow-y-scroll h-[400px]'>{props.logOutput}</pre>
+          <pre id="output-container" ref={outputContainer} onScroll={handleScroll} className='text-white text-sm text-left p-4 font-mono whitespace-pre-wrap overflow-y-scroll h-[400px]'>{logOutput}</pre>
         </div>
       </div>
     </div>

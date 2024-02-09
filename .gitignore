@@ -86,3 +86,5 @@ base-vm/build/jenkins/initial-setup/jobs/KX.AS.CODE_Launcher/config.xml_backup
 **/.vagrant
 /profiles/**/actionQueues.json
 /client/.next/*
+configorator/configo-wails/configo-wails-client-2/frontend/src/assets/packer/packer
+configorator/configo-wails/configo-wails-client-2/frontend/src/assets/packer/packer.zip

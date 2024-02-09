@@ -1,86 +1,47 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import InputAdornment from '@mui/material/InputAdornment';
-import Switch from '@mui/material/Switch';
 import MenuItem from '@mui/material/MenuItem';
-import Slider from '@mui/material/Slider';
-import CodeMirror from '@uiw/react-codemirror';
-import { historyField } from '@codemirror/commands';
 import configJSON from './assets/config/build/darwin-linux/kx-main-local-profiles.json';
-import configDarwinLinuxMain from './assets/config/build/darwin-linux/kx-main-local-profiles.json';
-import configDarwinLinuxNode from './assets/config/build/darwin-linux/kx-node-local-profiles.json';
-import { oneDark } from '@codemirror/theme-one-dark';
 import { useNavigate } from 'react-router-dom';
 import PlayCircleIcon from '@mui/icons-material/PlayCircle';
 import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
-import UserTable from './UserTable';
 import JSONConfigTabContent from './JSONConfigTabContent';
-import GlobalVariablesTable from './GlobalVariablesTable';
-import PersonAddAltIcon from '@mui/icons-material/PersonAddAlt';
-import AddIcon from '@mui/icons-material/Add';
-import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import { UpdateJsonFile } from "../wailsjs/go/main/App";
-import FilledInput from '@mui/material/FilledInput';
-import OutlinedInput from '@mui/material/OutlinedInput';
-import InputLabel from '@mui/material/InputLabel';
-import FormHelperText from '@mui/material/FormHelperText';
-import FormControl from '@mui/material/FormControl';
-import Visibility from '@mui/icons-material/Visibility';
-import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import IconButton from '@mui/material/IconButton';
-import PrecisionManufacturingIcon from '@mui/icons-material/PrecisionManufacturing';
-import RocketLaunchIcon from '@mui/icons-material/RocketLaunch';
 import SettingsEthernetIcon from '@mui/icons-material/SettingsEthernet';
 import StopCircleIcon from '@mui/icons-material/StopCircle';
-import DoneIcon from '@mui/icons-material/Done';
 import Tooltip from '@mui/material/Tooltip';
 import ProcessOutputView from './ProcessOutputView';
 import LastProcessView from './LastProcessView';
 import { ExeBuild, StopExe } from "../wailsjs/go/main/App"
 import buildOutput from './assets/buildOutput.txt';
-import MonitorHeartIcon from '@mui/icons-material/MonitorHeart';
 
+const TabMenuBuild = (props) => {
+    // const [isBuildStarted, setIsBuildStarted] = useState(false);
+    // const [logOutput, setLogOutput] = useState('');
 
-const TabMenuBuild = () => {
-    const [updatedJsonData, setUpdatedJsonData] = useState('');
-    const [activeProcessTab, setActiveProcessTab] = useState('build');
-    const serializedState = localStorage.getItem('myEditorState');
-    const [isBuildStarted, setIsBuildStarted] = useState(false);
-    // const [intervalId, setIntervalId] = useState(null);
+    // const toggleBuildStart = useCallback(() => {
+    //     setIsBuildStarted((prevIsBuildStarted) => !prevIsBuildStarted);
 
-    const value = localStorage.getItem('myValue') || '';
-    const stateFields = { history: historyField };
-
-    const [logOutput, setLogOutput] = useState('');
-
-    const handleProcessTabClick = (tab) => {
-        setActiveProcessTab(tab);
-    };
-
-    const toggleBuildStart = useCallback(() => {
-        setIsBuildStarted((prevIsBuildStarted) => !prevIsBuildStarted);
-
-        if (isBuildStarted) {
-            StopExe();
-        } else {
-            ExeBuild().then(result => {
-                setLogOutput(result);
-            });
-        }
-    }, [isBuildStarted]);
+    //     if (isBuildStarted) {
+    //         StopExe();
+    //     } else {
+    //         ExeBuild().then(result => {
+    //             setLogOutput(result);
+    //         });
+    //     }
+    // }, [isBuildStarted]);
 
     useEffect(() => {
-        const interval = setInterval(() => {
-            fetch(buildOutput)
-                .then(response => response.text())
-                .then(text => setLogOutput(text));
-        }, 1000);
+        // const interval = setInterval(() => {
+        //     fetch(buildOutput)
+        //         .then(response => response.text())
+        //         .then(text => setLogOutput(text));
+        // }, 1000);
 
-        return () => clearInterval(interval);
+        // return () => clearInterval(interval);
 
-    }, [isBuildStarted]);
+    }, []);
 
     return (
         <div className='mt-[90px]'>
@@ -94,14 +55,14 @@ const TabMenuBuild = () => {
                             <span>Build Console Output</span>
                         </button>
                     </div> */}
-                    {isBuildStarted ?
+                    {props.isBuildStarted ?
                         <Tooltip title="Stop Build Process" placement="left">
-                            <IconButton onClick={() => { toggleBuildStart() }}>
+                            <IconButton onClick={() => { props.toggleBuildStart() }}>
                                 <StopCircleIcon />
                             </IconButton>
                         </Tooltip> :
                         <Tooltip title="Start New Build" placement="left">
-                            <IconButton onClick={() => { toggleBuildStart() }}>
+                            <IconButton onClick={() => { props.toggleBuildStart() }}>
                                 <PlayCircleIcon />
                             </IconButton>
                         </Tooltip>
@@ -110,7 +71,7 @@ const TabMenuBuild = () => {
 
             </div>
 
-            {isBuildStarted ? <ProcessOutputView processType={"build"} logOutput={logOutput} /> : <BuildTabContent />}
+            {props.isBuildStarted ? <ProcessOutputView processType={"build"} logOutput={props.buildOutputFileContent} /> : <BuildTabContent />}
 
             {/* <BuildExecuteButton /> */}
         </div>
