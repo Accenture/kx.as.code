@@ -3,6 +3,10 @@
 
 export function ExeBuild():Promise<string>;
 
+export function GetCurrentBuildStage():Promise<string>;
+
+export function SetCurrentBuildStage(arg1:string):Promise<void>;
+
 export function StopExe():Promise<void>;
 
 export function UpdateJsonFile(arg1:string,arg2:string):Promise<void>;

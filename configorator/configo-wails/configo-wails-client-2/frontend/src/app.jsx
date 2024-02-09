@@ -129,8 +129,6 @@ export function App() {
     }, [isBuildStarted]);
 
     useEffect(() => {
-        console.log("pathnames: ", pathnames);
-
         const htmlElement = document.querySelector('html');
         if (isDarkMode) {
             htmlElement.classList.add('dark');
@@ -143,7 +141,7 @@ export function App() {
 
         window.addEventListener('popstate', handleLocationChange);
 
-        // buildOput Monitoring
+        // buildOutput Monitoring
         if (isBuildStarted) {
             const id = setInterval(() => {
                 fetch(buildOutput)

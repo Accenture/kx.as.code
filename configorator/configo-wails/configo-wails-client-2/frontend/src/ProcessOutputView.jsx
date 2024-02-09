@@ -6,21 +6,12 @@ const ProcessOutputView = ({logOutput, processType}) => {
   const outputContainer = useRef(null);
   const [isUserScroll, setIsUserScroll] = useState(false);
 
-
-  const handleButtonClick = () => {
-
-  };
-
-  const handleBuildStopButtonClick = () => {
-  };
-
   const handleScroll = (e) => {
     const { scrollTop, scrollHeight, clientHeight } = e.currentTarget;
     setIsUserScroll(scrollTop !== scrollHeight - clientHeight);
   };
 
   useEffect(() => {
-    return () => clearInterval(interval);
   }, [isUserScroll, logOutput]);
 
   return (

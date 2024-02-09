@@ -1,16 +1,36 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import ErrorIcon from '@mui/icons-material/Error';
+import { GetCurrentBuildStage } from "../wailsjs/go/main/App"
 
 const BuildStages = () => {
     // const [isBuildStarted, setIsBuildStarted] = useState(false);
 
-    useEffect(() => {
+    const [isBuildInitStarted, setIsBuildInit] = useState(false);
+    const [isBuildPackerDownloadStarted, setIsBuildPackerDownloadStarted] = useState(false);
+    const [isBuildPackerInstallationStarted, setIsBuildPackerInstallationStarted] = useState(false);
+    const [isBuildPackerExecutionStarted, setIsBuildPackerExecutionStarted] = useState(false);
+    const [isBuildCompleted, setIsBuildCompleted] = useState(false);
 
+    const [currentStage, setCurrentStage] = useState('NA');
+
+    useEffect(() => {
+        const fetchBuildStage = async () => {
+            try {
+                const stage = await GetCurrentBuildStage();
+                setCurrentStage(stage);
+                console.log("STAGE: ", stage);
+            } catch (error) {
+                console.error('Error fetching build stage:', error);
+            }
+        };    
+
+        fetchBuildStage();
     }, []);
 
     return (
         <div className='flex justify-center p-4 text-xs bg-ghBlack2 pt-6'>
+            {currentStage}
             <div>
                 <div className='pb-1 text-gray-400'>Stage 1</div>
                 <div className='flex justify-center items-center w-[130px]'>

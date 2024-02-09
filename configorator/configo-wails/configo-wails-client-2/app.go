@@ -18,14 +18,24 @@ import (
 
 // App struct
 type App struct {
-	ctx context.Context
-	mu  sync.Mutex
-	cmd *exec.Cmd
+	ctx          context.Context
+	mu           sync.Mutex
+	cmd          *exec.Cmd
+	currentStage string
 }
 
 // NewApp creates a new App application struct
 func NewApp() *App {
 	return &App{}
+}
+
+func (a *App) GetCurrentBuildStage() string {
+	return a.currentStage
+}
+
+func (a *App) SetCurrentBuildStage(stage string) {
+	a.currentStage = stage
+	log.Printf("Current build stage set to: %s", stage)
 }
 
 // startup is called when the app starts. The context is saved
@@ -73,6 +83,7 @@ func (a *App) UpdateJsonFile(data string, file string) error {
 }
 
 func (a *App) ExeBuild() string {
+	a.SetCurrentBuildStage("stage 1")
 	a.StopExe()
 
 	a.mu.Lock()

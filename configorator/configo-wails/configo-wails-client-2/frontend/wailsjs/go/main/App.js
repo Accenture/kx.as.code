@@ -6,6 +6,14 @@ export function ExeBuild() {
   return window['go']['main']['App']['ExeBuild']();
 }
 
+export function GetCurrentBuildStage() {
+  return window['go']['main']['App']['GetCurrentBuildStage']();
+}
+
+export function SetCurrentBuildStage(arg1) {
+  return window['go']['main']['App']['SetCurrentBuildStage'](arg1);
+}
+
 export function StopExe() {
   return window['go']['main']['App']['StopExe']();
 }
