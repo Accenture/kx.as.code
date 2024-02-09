@@ -29,7 +29,7 @@ import { BuildOutputProvider } from './BuildOutputContext';
 import { ExeBuild, StopExe } from "../wailsjs/go/main/App"
 import buildOutput from './assets/buildOutput.txt';
 
-const openedMixin = (theme) => ({
+const openedMixin = (theme) => ({ 
     width: drawerWidth,
     transition: theme.transitions.create("width", {
         easing: theme.transitions.easing.sharp,

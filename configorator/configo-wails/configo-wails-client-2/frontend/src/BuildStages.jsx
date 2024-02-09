@@ -15,18 +15,20 @@ const BuildStages = () => {
     const [currentStage, setCurrentStage] = useState('NA');
 
     useEffect(() => {
-        const fetchBuildStage = async () => {
+        const intervalId = setInterval(async () => {
             try {
-                const stage = await GetCurrentBuildStage();
-                setCurrentStage(stage);
-                console.log("STAGE: ", stage);
+                const newStage = await GetCurrentBuildStage();
+                if (newStage !== currentStage) {
+                    setCurrentStage(newStage);
+                    console.log('Current build stage:', newStage);
+                }
             } catch (error) {
                 console.error('Error fetching build stage:', error);
             }
-        };    
+        }, 2000);
 
-        fetchBuildStage();
-    }, []);
+        return () => clearInterval(intervalId);
+    }, [currentStage]);
 
     return (
         <div className='flex justify-center p-4 text-xs bg-ghBlack2 pt-6'>

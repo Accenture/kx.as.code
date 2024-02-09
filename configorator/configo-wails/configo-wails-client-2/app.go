@@ -14,6 +14,7 @@ import (
 	"path/filepath"
 	"runtime"
 	"sync"
+	"time"
 )
 
 // App struct
@@ -84,6 +85,7 @@ func (a *App) UpdateJsonFile(data string, file string) error {
 
 func (a *App) ExeBuild() string {
 	a.SetCurrentBuildStage("stage 1")
+	time.Sleep(2 * time.Second)
 	a.StopExe()
 
 	a.mu.Lock()
@@ -106,6 +108,10 @@ func (a *App) ExeBuild() string {
 		// }
 
 		// packerBinaryPath = currentUser.HomeDir + "/kxascode-launcher/packer"
+		defer func() {
+			a.SetCurrentBuildStage("stage 2")
+			time.Sleep(2 * time.Second)
+		}()
 		packerBinaryPath = "./frontend/src/assets/packer/packer"
 		if _, err := os.Stat(packerBinaryPath); os.IsNotExist(err) {
 			if err := downloadPackerBinary(packerBinaryPath); err != nil {
