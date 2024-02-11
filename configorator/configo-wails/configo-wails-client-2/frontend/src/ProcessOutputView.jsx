@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import BuildStages from './BuildStages';
+import BuildStagesTracker from './BuildStagesTracker';
 
 const ProcessOutputView = ({logOutput, processType}) => {
   const [fileContent, setFileContent] = useState("")
@@ -9,14 +9,14 @@ const ProcessOutputView = ({logOutput, processType}) => {
   const handleScroll = (e) => {
     const { scrollTop, scrollHeight, clientHeight } = e.currentTarget;
     setIsUserScroll(scrollTop !== scrollHeight - clientHeight);
-  };
+  }; 
 
   useEffect(() => {
   }, [isUserScroll, logOutput]);
 
   return (
     <div className=''>
-      <BuildStages />
+      <BuildStagesTracker />
       {/* <button onClick={handleButtonClick} className='bg-ghBlack3 m-3 p-3 hover:bg-ghBlack2'>Temp Exec Btn</button>
       <button onClick={handleBuildStopButtonClick} className='bg-ghBlack3 m-3 p-3 hover:bg-ghBlack2'>Temp Stop Exec Btn</button> */}
 
@@ -32,9 +32,9 @@ const ProcessOutputView = ({logOutput, processType}) => {
             &lt;BUILD ID&gt; - {processType} process console output:
           </span>
         </div>
-        <div className="bg-ghBlack2 m-3">
+        <div className="bg-ghBlack2 m-3 rounded-xl">
           {/* {processType} Process started... */}
-          <pre id="output-container" ref={outputContainer} onScroll={handleScroll} className='text-white text-sm text-left p-4 font-mono whitespace-pre-wrap overflow-y-scroll h-[400px]'>{logOutput}</pre>
+          <pre id="output-container" ref={outputContainer} onScroll={handleScroll} className='text-white text-sm text-left p-4 font-mono whitespace-pre-wrap overflow-y-scroll h-[450px]'>{logOutput}</pre>
         </div>
       </div>
     </div>

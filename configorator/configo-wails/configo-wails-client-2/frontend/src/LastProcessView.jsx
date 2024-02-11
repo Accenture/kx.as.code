@@ -19,11 +19,11 @@ const LastProcessView = (props) => {
   const getStatusComponent = (status) => {
     switch (status) {
       case 'success':
-        return <div className="bg-green-600 flex justify-center py-0.5 w-20">Success</div>;
+        return <div className="bg-green-600 flex justify-center py-0.5 w-20 rounded">Success</div>;
       case 'failed':
-        return <div className="bg-red-600 flex justify-center py-0.5 w-20">Failed</div>;
+        return <div className="bg-red-600 flex justify-center py-0.5 w-20 rounded">Failed</div>;
       case 'stopped':
-        return <div className="bg-gray-500 flex justify-center py-0.5 w-20">Stopped</div>;
+        return <div className="bg-gray-500 flex justify-center py-0.5 w-20 rounded">Stopped</div>;
       default:
         return <div className="">Unknown Status</div>;
     }

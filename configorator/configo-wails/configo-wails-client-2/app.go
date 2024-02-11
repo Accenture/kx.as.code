@@ -84,18 +84,37 @@ func (a *App) UpdateJsonFile(data string, file string) error {
 }
 
 func (a *App) ExeBuild() string {
-	a.SetCurrentBuildStage("stage 1")
-	time.Sleep(2 * time.Second)
-	a.StopExe()
-
-	a.mu.Lock()
-	defer a.mu.Unlock()
 
 	outfile, err := os.Create("./frontend/src/assets/buildOutput.txt")
 	if err != nil {
 		log.Printf("Failed to create output file: %v", err)
 		return fmt.Sprintf("An error occurred: %v", err)
 	}
+
+	if err := outfile.Truncate(0); err != nil {
+		log.Printf("Failed to truncate file: %v", err)
+		return fmt.Sprintf("An error occurred: %v", err)
+	}
+
+	if _, err := outfile.Seek(0, 0); err != nil {
+		log.Printf("Failed to seek file: %v", err)
+		return fmt.Sprintf("An error occurred: %v", err)
+	}
+
+	writeStage := func(stageNumber int) {
+		fmt.Fprintf(outfile, "[stage-%d]\n", stageNumber)
+		// Ensure data is immediately flushed to the file
+		outfile.Sync()
+	}
+
+	writeStage(1)
+	a.SetCurrentBuildStage("stage 1")
+	time.Sleep(1 * time.Second)
+
+	a.StopExe()
+
+	a.mu.Lock()
+	defer a.mu.Unlock()
 
 	var packerBinaryPath string
 
@@ -108,10 +127,11 @@ func (a *App) ExeBuild() string {
 		// }
 
 		// packerBinaryPath = currentUser.HomeDir + "/kxascode-launcher/packer"
-		defer func() {
-			a.SetCurrentBuildStage("stage 2")
-			time.Sleep(2 * time.Second)
-		}()
+
+		writeStage(2)
+		a.SetCurrentBuildStage("stage 2")
+		time.Sleep(1 * time.Second)
+
 		packerBinaryPath = "./frontend/src/assets/packer/packer"
 		if _, err := os.Stat(packerBinaryPath); os.IsNotExist(err) {
 			if err := downloadPackerBinary(packerBinaryPath); err != nil {
@@ -119,16 +139,28 @@ func (a *App) ExeBuild() string {
 				return fmt.Sprintf("An error occurred while downloading Packer: %v", err)
 			}
 
+			writeStage(3)
+			a.SetCurrentBuildStage("stage 3")
+			time.Sleep(3 * time.Second)
+
 			chmodCmd := exec.Command("chmod", "+x", packerBinaryPath)
 			if chmodErr := chmodCmd.Run(); chmodErr != nil {
 				log.Printf("Failed to set execute permissions: %v", chmodErr)
 				return fmt.Sprintf("An error occurred while setting execute permissions: %v", chmodErr)
 			}
+		} else {
+			writeStage(3)
+			a.SetCurrentBuildStage("stage 3")
+			time.Sleep(1 * time.Second)
 		}
 	default:
 		log.Printf("Unsupported operating system: %v", runtime.GOOS)
 		return fmt.Sprintf("Unsupported operating system: %v", runtime.GOOS)
 	}
+
+	writeStage(4)
+	a.SetCurrentBuildStage("stage 4")
+	time.Sleep(1 * time.Second)
 
 	// a.cmd = exec.Command(packerBinaryPath, "version")
 	a.cmd = exec.Command(packerBinaryPath, "build", "-force",
@@ -155,19 +187,25 @@ func (a *App) ExeBuild() string {
 	if err := a.cmd.Start(); err != nil {
 		log.Printf("Failed to start command: %v", err)
 		return fmt.Sprintf("An error occurred: %v", err)
+	} else {
+
 	}
 
 	go func() {
 		log.Printf("Waiting for build to finish...")
 		if waitErr := a.cmd.Wait(); waitErr != nil {
 			log.Printf("Build finished with error: %v", waitErr)
+		} else {
+			writeStage(5)
+			a.SetCurrentBuildStage("stage 5")
+			time.Sleep(1 * time.Second)
 		}
 
 		// Close file after build has finished
 		outfile.Close()
 	}()
 
-	return "Build executed successfully"
+	return "Initialize Build..."
 }
 
 func downloadPackerBinary(destination string) error {

@@ -29,7 +29,7 @@ import { BuildOutputProvider } from './BuildOutputContext';
 import { ExeBuild, StopExe } from "../wailsjs/go/main/App"
 import buildOutput from './assets/buildOutput.txt';
 
-const openedMixin = (theme) => ({ 
+const openedMixin = (theme) => ({
     width: drawerWidth,
     transition: theme.transitions.create("width", {
         easing: theme.transitions.easing.sharp,
@@ -49,7 +49,7 @@ const closedMixin = (theme) => ({
         width: `calc(${theme.spacing(8)} + 1px)`,
     },
 });
- 
+
 const DrawerHeader = styled("div")(({ theme }) => ({
     display: "flex",
     alignItems: "center",
@@ -128,6 +128,13 @@ export function App() {
         }
     }, [isBuildStarted]);
 
+    const fetchBuildOutput = useCallback(() => {
+        fetch(buildOutput)
+            .then(response => response.text())
+            .then(text => setBuildOutputFileContent(text))
+            .catch(error => console.error("Error fetching build output:", error));
+    }, [buildOutput]);
+
     useEffect(() => {
         const htmlElement = document.querySelector('html');
         if (isDarkMode) {
@@ -144,12 +151,12 @@ export function App() {
         // buildOutput Monitoring
         if (isBuildStarted) {
             const id = setInterval(() => {
-                fetch(buildOutput)
-                    .then(response => response.text())
-                    .then(text => setBuildOutputFileContent(text));
+                console.log("OUTPUT DEBUG: ", buildOutputFileContent);
+                fetchBuildOutput();
             }, 1000);
-            setIntervalId(id)
+            setIntervalId(id);
         }
+
 
         return () => {
             window.removeEventListener('popstate', handleLocationChange);
@@ -167,182 +174,27 @@ export function App() {
             <BuildOutputProvider>
                 <ThemeProvider theme={theme}>
                     <Box sx={{ display: "flex" }}>
-                        <Drawer variant="permanent" open={open}>
+                        <Drawer variant="permanent" open={open}
+                            sx={{
+                                '& .MuiDrawer-paper': {
+                                    borderRight: 'none',
+                                    backgroundColor: "#0d1117"
+                                }
+                            }} >
                             <DrawerHeader className="">
                                 <IconButton onClick={handleDrawerClose}>
                                     {theme.direction === "rtl" ? <ChevronRightIcon /> : <ChevronLeftIcon />}
                                 </IconButton>
                             </DrawerHeader>
                             <List className="" style={{ paddingTop: "0" }}>
-
-                                <Link to="/home">
-                                    <Tooltip title="Home" placement="right">
-                                        <ListItemButton
-                                            sx={{
-                                                minHeight: 40,
-                                                justifyContent: open ? "initial" : "center",
-                                                px: 2.5,
-                                                backgroundColor: slug == "home" ? "#5a86ff" : "",
-                                                "&:hover": {
-                                                    backgroundColor: slug == "home" ? "#5a86ff" : "",
-                                                },
-                                            }}
-                                        >
-                                            <ListItemIcon
-                                                className="listItemIconContainer"
-                                                sx={{
-                                                    minWidth: 0,
-                                                    mr: open ? 3 : "auto",
-                                                    justifyContent: "center",
-                                                }}
-                                            >
-                                                <HomeIcon className="text-3xl" />
-                                            </ListItemIcon>
-                                        </ListItemButton>
-                                    </Tooltip>
-                                </Link>
-
-                                <Link to="/build">
-                                    <Tooltip title="Build" placement="right">
-
-                                        <ListItemButton
-                                            sx={{
-                                                minHeight: 40,
-                                                justifyContent: open ? "initial" : "center",
-                                                px: 2.5,
-                                                backgroundColor: slug == "build" ? "#5a86ff" : "",
-                                                "&:hover": {
-                                                    backgroundColor: slug == "build" ? "#5a86ff" : "",
-                                                },
-                                            }}
-                                        >
-                                            <ListItemIcon
-                                                className="listItemIconContainer"
-                                                sx={{
-                                                    minWidth: 0,
-                                                    mr: open ? 3 : "auto",
-                                                    justifyContent: "center",
-                                                }}
-                                            >
-                                                <PrecisionManufacturingIcon className={`text-3xl`} />
-                                            </ListItemIcon>
-                                        </ListItemButton>
-                                    </Tooltip>
-                                </Link>
-
-                                <Link to="/deploy">
-                                    <Tooltip title="Deployment" placement="right">
-                                        <ListItemButton
-                                            sx={{
-                                                minHeight: 40,
-                                                justifyContent: open ? "initial" : "center",
-                                                px: 2.5,
-                                                backgroundColor: slug == "deploy" ? "#5a86ff" : "",
-                                                "&:hover": {
-                                                    backgroundColor: slug == "deploy" ? "#5a86ff" : "",
-                                                },
-                                            }}
-                                        >
-                                            <ListItemIcon
-                                                className="listItemIconContainer"
-                                                sx={{
-                                                    minWidth: 0,
-                                                    mr: open ? 3 : "auto",
-                                                    justifyContent: "center",
-                                                }}
-                                            >
-                                                <RocketLaunchIcon className="text-3xl" />
-
-
-                                            </ListItemIcon>
-                                        </ListItemButton>
-                                    </Tooltip>
-                                </Link>
-
+                                <MenuItem menuItemName={"home"} slug={slug} />
+                                <MenuItem menuItemName={"build"} slug={slug} />
+                                <MenuItem menuItemName={"deploy"} slug={slug} />
                                 {/* Separator */}
-                                <div className="w-full h-[1px] bg-gray-400 my-2"></div>
-
-                                <Link to="/application-groups">
-                                    <Tooltip title="Application Groups" placement="right">
-                                        <ListItemButton
-                                            sx={{
-                                                minHeight: 40,
-                                                justifyContent: open ? "initial" : "center",
-                                                px: 2.5,
-                                                backgroundColor: slug == "application-groups" ? "#5a86ff" : "",
-                                                "&:hover": {
-                                                    backgroundColor: slug == "application-groups" ? "#5a86ff" : "",
-                                                },
-                                            }}
-                                        >
-                                            <ListItemIcon
-                                                className="listItemIconContainer"
-                                                sx={{
-                                                    minWidth: 0,
-                                                    mr: open ? 3 : "auto",
-                                                    justifyContent: "center",
-                                                }}
-                                            >
-                                                <LayersIcon className="text-3xl" />
-                                            </ListItemIcon>
-                                        </ListItemButton>
-                                    </Tooltip>
-                                </Link>
-
-                                <Link to="/user-provisioning">
-                                    <Tooltip title="User Provisioning" placement="right">
-                                        <ListItemButton
-                                            sx={{
-                                                minHeight: 40,
-                                                justifyContent: open ? "initial" : "center",
-                                                px: 2.5,
-                                                backgroundColor: slug == "user-provisioning" ? "#5a86ff" : "",
-                                                "&:hover": {
-                                                    backgroundColor: slug == "user-provisioning" ? "#5a86ff" : "",
-                                                },
-                                            }}
-                                        >
-                                            <ListItemIcon
-                                                className="listItemIconContainer"
-                                                sx={{
-                                                    minWidth: 0,
-                                                    mr: open ? 3 : "auto",
-                                                    justifyContent: "center",
-                                                }}
-                                            >
-                                                <PeopleIcon className="text-3xl" />
-                                            </ListItemIcon>
-                                        </ListItemButton>
-                                    </Tooltip>
-                                </Link>
-
-                                <Link to="/custom-variables">
-                                    <Tooltip title="Custom Variables" placement="right">
-                                        <ListItemButton
-                                            sx={{
-                                                minHeight: 40,
-                                                justifyContent: open ? "initial" : "center",
-                                                px: 2.5,
-                                                backgroundColor: slug == "custom-variables" ? "#5a86ff" : "",
-                                                "&:hover": {
-                                                    backgroundColor: slug == "custom-variables" ? "#5a86ff" : "",
-                                                },
-                                            }}
-                                        >
-                                            <ListItemIcon
-                                                className="listItemIconContainer"
-                                                sx={{
-                                                    minWidth: 0,
-                                                    mr: open ? 3 : "auto",
-                                                    justifyContent: "center",
-                                                }}
-                                            >
-                                                <DataArrayIcon className="text-3xl" />
-                                            </ListItemIcon>
-                                        </ListItemButton>
-                                    </Tooltip>
-                                </Link>
-
+                                <div className="w-full h-[1px] bg-gray-400 mt-0 mb-2"></div>
+                                <MenuItem menuItemName={"application-groups"} slug={slug} />
+                                <MenuItem menuItemName={"user-provisioning"} slug={slug} />
+                                <MenuItem menuItemName={"custom-variables"} slug={slug} />
                             </List>
                         </Drawer>
                         <Box component="main" sx={{ flexGrow: 1, p: 0 }} className="text-black dark:text-white">
@@ -368,3 +220,56 @@ export function App() {
 
     );
 }
+
+const MenuItem = ({ menuItemName, slug }) => {
+
+    const getMenuItemIcon = (menuItemName) => {
+        switch (menuItemName) {
+            case "home":
+                return <HomeIcon className="text-3xl" />
+            case "build":
+                return <PrecisionManufacturingIcon className={`text-3xl`} />
+            case "deploy":
+                return <RocketLaunchIcon className="text-3xl" />
+            case "application-groups":
+                return <LayersIcon className="text-3xl" />
+            case "user-provisioning":
+                return <PeopleIcon className="text-3xl" />
+            case "custom-variables":
+                return <DataArrayIcon className="text-3xl" />
+            default:
+                break;
+        }
+    }
+
+    return (
+        <Link to={`/${menuItemName}`} className="flex justify-center">
+            <Tooltip title={`${menuItemName}`} placement="right">
+                <ListItemButton
+                    sx={{
+                        minHeight: 20,
+                        justifyContent: open ? "initial" : "center",
+                        px: 1.5,
+                        backgroundColor: slug == menuItemName ? "#5a86ff" : "",
+                        margin: "8px",
+                        borderRadius: "5px",
+                        marginTop: "0px",
+                        "&:hover": {
+                            backgroundColor: slug == menuItemName ? "#5a86ff" : "",
+                        },
+                    }}
+                >
+                    <ListItemIcon
+                        className="listItemIconContainer"
+                        sx={{
+                            minWidth: 0,
+                            mr: open ? 3 : "auto",
+                        }}
+                    >
+                        {getMenuItemIcon(menuItemName)}
+                    </ListItemIcon>
+                </ListItemButton>
+            </Tooltip>
+        </Link>
+    );
+};

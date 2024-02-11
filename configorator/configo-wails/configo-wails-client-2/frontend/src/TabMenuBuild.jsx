@@ -14,11 +14,12 @@ import Tooltip from '@mui/material/Tooltip';
 import ProcessOutputView from './ProcessOutputView';
 import LastProcessView from './LastProcessView';
 
-const TabMenuBuild = (props) => {
+const TabMenuBuild = ({ buildOutputFileContent, isBuildStarted, toggleBuildStart }) => {
+
 
     useEffect(() => {
- 
-    }, []);
+
+    }, [buildOutputFileContent]);
 
     return (
         <div className='mt-[90px]'>
@@ -32,14 +33,14 @@ const TabMenuBuild = (props) => {
                             <span>Build Console Output</span>
                         </button>
                     </div> */}
-                    {props.isBuildStarted ?
+                    {isBuildStarted ?
                         <Tooltip title="Stop Build Process" placement="left">
-                            <IconButton onClick={() => { props.toggleBuildStart() }}>
+                            <IconButton onClick={() => { toggleBuildStart() }}>
                                 <StopCircleIcon />
                             </IconButton>
                         </Tooltip> :
                         <Tooltip title="Start New Build" placement="left">
-                            <IconButton onClick={() => { props.toggleBuildStart() }}>
+                            <IconButton onClick={() => { toggleBuildStart() }}>
                                 <PlayCircleIcon />
                             </IconButton>
                         </Tooltip>
@@ -48,7 +49,7 @@ const TabMenuBuild = (props) => {
 
             </div>
 
-            {props.isBuildStarted ? <ProcessOutputView processType={"build"} logOutput={props.buildOutputFileContent} /> : <BuildTabContent />}
+            {isBuildStarted ? <ProcessOutputView processType={"build"} logOutput={buildOutputFileContent} /> : <BuildTabContent />}
 
             {/* <BuildExecuteButton /> */}
         </div>
@@ -186,45 +187,16 @@ const UIConfigTabContent = ({ activeTab, handleTabClick, handleConfigChange, isB
         <div id='config-ui-container' className=''>
 
             <div className="flex bg-ghBlack3 text-sm">
-                <button
-                    onClick={() => handleTabClick('tab1')}
-                    className={` ${activeTab === 'tab1' ? 'border-kxBlue border-b-3 bg-ghBlack4' : 'broder border-ghBlack3 border-b-3'} p-3 py-1`}
-                >
-                    Profile
-                </button>
-                <button
-                    onClick={() => handleTabClick('tab2')}
-                    className={` ${activeTab === 'tab2' ? 'border-kxBlue border-b-3 bg-ghBlack4' : 'broder border-ghBlack3 border-b-3'} p-3 py-1`}
-                >
-                    Parameters & Mode
-                </button>
-                <button
-                    onClick={() => handleTabClick('tab3')}
-                    className={` ${activeTab === 'tab3' ? 'border-kxBlue border-b-3 bg-ghBlack4' : 'broder border-ghBlack3 border-b-3'} p-3 py-1`}
-                >
-                    Resources
-                </button>
-                <button
-                    onClick={() => handleTabClick('tab4')}
-                    className={` ${activeTab === 'tab4' ? 'border-kxBlue border-b-3 bg-ghBlack4' : 'broder border-ghBlack3 border-b-3'} p-3 py-1`}
-                >
-                    Storage
-                </button>
-                <button
-                    onClick={() => handleTabClick('tab5')}
-                    className={` ${activeTab === 'tab5' ? 'border-kxBlue border-b-3 bg-ghBlack4' : 'broder border-ghBlack3 border-b-3'} p-3 py-1`}
-                >
-                    User Provisioning
-                </button>
-                <button
-                    onClick={() => handleTabClick('tab6')}
-                    className={` ${activeTab === 'tab6' ? 'border-kxBlue border-b-3 bg-ghBlack4' : 'broder border-ghBlack3 border-b-3'} p-3 py-1`}
-                >
-                    Custom Variables
-                </button>
+                <TabButton buttonText={"Profile"} tabId={"tab1"} />
+                <TabButton buttonText={"Parameters & Mode"} tabId={"tab2"} />
+                <TabButton buttonText={"Resources"} tabId={"tab3"} />
+                <TabButton buttonText={"Storage"} tabId={"tab4"} />
+                <TabButton buttonText={"User Provisioning"} tabId={"tab5"} />
+                <TabButton buttonText={"Custom Variables"} tabId={"tab6"} />
+                <TabButton buttonText={"tab-content"} tabId={"tab7"} />
             </div>
 
-            <div className="tab-content">
+            <div className="">
                 {activeTab === 'tab1' && <TabContent1 handleConfigChange={handleConfigChange} />}
                 {activeTab === 'tab2' && <TabContent2 handleConfigChange={handleConfigChange} />}
                 {activeTab === 'tab3' && <TabContent3 handleConfigChange={handleConfigChange} />}
@@ -235,6 +207,17 @@ const UIConfigTabContent = ({ activeTab, handleTabClick, handleConfigChange, isB
 
         </div>
 );
+
+const TabButton = ({ buttonText, tabId }) => {
+    return (
+        <button
+            onClick={() => handleTabClick(tabId)}
+            className={` ${activeTab === tabId ? 'border-kxBlue border-b-3 bg-ghBlack4' : 'broder border-ghBlack3 border-b-3'} p-3 py-1`}
+        >
+            {buttonText}
+        </button>
+    );
+}
 
 const BuildContent = ({ handleConfigChange }) => {
     return (
