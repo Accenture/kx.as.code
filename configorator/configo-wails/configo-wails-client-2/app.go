@@ -101,13 +101,15 @@ func (a *App) ExeBuild() string {
 		return fmt.Sprintf("An error occurred: %v", err)
 	}
 
-	writeStage := func(stageNumber int) {
-		fmt.Fprintf(outfile, "[stage-%d]\n", stageNumber)
+	writeStage := func(stageNumber int, stageName string) {
+		fmt.Fprintf(outfile, "[stage-%d]-%s\n", stageNumber, stageName)
 		// Ensure data is immediately flushed to the file
 		outfile.Sync()
 	}
 
-	writeStage(1)
+	// Add stage details in build output file
+	writeStage(1, "Initialize Build")
+	// Set current stage. Will be returned to client with GetCurrentBuildStage()
 	a.SetCurrentBuildStage("stage 1")
 	time.Sleep(1 * time.Second)
 
@@ -128,7 +130,7 @@ func (a *App) ExeBuild() string {
 
 		// packerBinaryPath = currentUser.HomeDir + "/kxascode-launcher/packer"
 
-		writeStage(2)
+		writeStage(2, "Download Packer")
 		a.SetCurrentBuildStage("stage 2")
 		time.Sleep(1 * time.Second)
 
@@ -139,7 +141,7 @@ func (a *App) ExeBuild() string {
 				return fmt.Sprintf("An error occurred while downloading Packer: %v", err)
 			}
 
-			writeStage(3)
+			writeStage(3, "Install Packer")
 			a.SetCurrentBuildStage("stage 3")
 			time.Sleep(3 * time.Second)
 
@@ -149,7 +151,7 @@ func (a *App) ExeBuild() string {
 				return fmt.Sprintf("An error occurred while setting execute permissions: %v", chmodErr)
 			}
 		} else {
-			writeStage(3)
+			writeStage(3, "Install Packer")
 			a.SetCurrentBuildStage("stage 3")
 			time.Sleep(1 * time.Second)
 		}
@@ -158,7 +160,7 @@ func (a *App) ExeBuild() string {
 		return fmt.Sprintf("Unsupported operating system: %v", runtime.GOOS)
 	}
 
-	writeStage(4)
+	writeStage(4, "Execute Packer")
 	a.SetCurrentBuildStage("stage 4")
 	time.Sleep(1 * time.Second)
 
@@ -196,7 +198,7 @@ func (a *App) ExeBuild() string {
 		if waitErr := a.cmd.Wait(); waitErr != nil {
 			log.Printf("Build finished with error: %v", waitErr)
 		} else {
-			writeStage(5)
+			writeStage(5, "Build Completed")
 			a.SetCurrentBuildStage("stage 5")
 			time.Sleep(1 * time.Second)
 		}

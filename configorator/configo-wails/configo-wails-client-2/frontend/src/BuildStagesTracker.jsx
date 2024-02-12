@@ -68,11 +68,11 @@ const Stage = ({ stageNumber, title, status, currentStage }) => {
     };
 
     return (
-        <div className={`bg-ghBlack3 mx-1 p-2 rounded`}>
+        <div className={`mx-1 p-2 rounded ${status != "Completed" ? "bg-ghBlack3": "bg-ghBlack4"}`}>
             <div className='pb-2 text-gray-400'>{`Stage ${stageNumber}`}</div>
             <div className='flex justify-center items-center w-[130px]'>
-                <div className='mx-[5px] rounded-full h-[10px] w-[10px] bg-white flex justify-center items-center'>
-                    {/* <div className='rounded-full h-3 w-3 bg-ghBlack2'></div> */}
+                <div className={`mx-[5px] rounded-full h-[13px] w-[13px] flex justify-center items-center ${status != "Completed" ? "bg-gray-400": "bg-white"}`}>
+                    <div className={`rounded-full h-2 w-2 bg-ghBlack2 ${status != "Completed" ? "bg-gray-400": "bg-green-500"}`}></div>
                 </div>
             </div>
             <div className='pt-1 flex justify-center'>

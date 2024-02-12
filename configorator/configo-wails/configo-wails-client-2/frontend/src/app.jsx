@@ -27,7 +27,7 @@ import LayersIcon from '@mui/icons-material/Layers';
 import { ApplicationGroups } from "./ApplicationGroups";
 import { BuildOutputProvider } from './BuildOutputContext';
 import { ExeBuild, StopExe } from "../wailsjs/go/main/App"
-import buildOutput from './assets/buildOutput.txt';
+import buildOutputFile from './assets/buildOutput.txt';
 
 const openedMixin = (theme) => ({
     width: drawerWidth,
@@ -129,11 +129,23 @@ export function App() {
     }, [isBuildStarted]);
 
     const fetchBuildOutput = useCallback(() => {
-        fetch(buildOutput)
+        fetch(buildOutputFile)
             .then(response => response.text())
             .then(text => setBuildOutputFileContent(text))
             .catch(error => console.error("Error fetching build output:", error));
-    }, [buildOutput]);
+    }, [buildOutputFile]);
+
+
+    const fetchFileContentNew = async () => {
+        try {
+            const response = await fetch(buildOutputFile);
+            const text = await response.text();
+            setBuildLogOutput(text)
+            console.log('File Content:', text);
+        } catch (error) {
+            console.error('Error fetching file content:', error);
+        }
+    };
 
     useEffect(() => {
         const htmlElement = document.querySelector('html');
@@ -149,13 +161,18 @@ export function App() {
         window.addEventListener('popstate', handleLocationChange);
 
         // buildOutput Monitoring
-        if (isBuildStarted) {
-            const id = setInterval(() => {
-                console.log("OUTPUT DEBUG: ", buildOutputFileContent);
-                fetchBuildOutput();
-            }, 1000);
-            setIntervalId(id);
-        }
+        // if (isBuildStarted) {
+        //     const id = setInterval(() => {
+        //         fetchBuildOutput();
+        //     }, 1000);
+        //     setIntervalId(id);
+        // }
+
+        fetchFileContentNew(); // Initial fetch
+
+        const intervalId = setInterval(() => {
+            fetchFileContentNew();
+        }, 2000);
 
 
         return () => {
@@ -203,7 +220,7 @@ export function App() {
                             <Routes>
                                 {/* <Route exact path="/" element={<TabMenu />} /> */}
                                 <Route path="/home" element={<Home />} />
-                                <Route path="/build" element={<TabMenuBuild buildOutputFileContent={buildOutputFileContent} toggleBuildStart={toggleBuildStart} isBuildStarted={isBuildStarted} />} />
+                                <Route path="/build" element={<TabMenuBuild buildOutputFileContent={buildLogOutput} toggleBuildStart={toggleBuildStart} isBuildStarted={isBuildStarted} />} />
                                 <Route path="/deploy" element={<TabMenuDeploy />} />
                                 <Route path="/application-groups" element={<ApplicationGroups />} />
                                 <Route path="/user-provisioning" element={<UserProvisioning />} />

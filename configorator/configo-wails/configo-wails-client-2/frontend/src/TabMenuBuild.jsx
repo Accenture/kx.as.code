@@ -19,7 +19,7 @@ const TabMenuBuild = ({ buildOutputFileContent, isBuildStarted, toggleBuildStart
 
     useEffect(() => {
 
-    }, [buildOutputFileContent]);
+    }, [buildOutputFileContent, isBuildStarted]);
 
     return (
         <div className='mt-[90px]'>

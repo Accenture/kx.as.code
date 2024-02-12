@@ -84,7 +84,7 @@ export function ApplicationGroupCard(props) {
                     </div>
                     <div className="col-span-4">
                         <div className="flex w-auto">
-                            <CarouselProvider
+                            {/* <CarouselProvider
                                 visibleSlides={5}
                                 totalSlides={appGroupComponents.length}
                                 step={1}
@@ -125,7 +125,7 @@ export function ApplicationGroupCard(props) {
                                         </ButtonNext>
                                     </div>
                                 </div>
-                            </CarouselProvider>
+                            </CarouselProvider> */}
                         </div>
                     </div>
                     <div className="col-span-5"></div>
