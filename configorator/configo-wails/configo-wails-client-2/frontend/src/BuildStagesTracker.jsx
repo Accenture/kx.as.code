@@ -45,10 +45,18 @@ const BuildStagesTracker = () => {
     const completionStatus = generateCompletionStatus(currentStage);
 
     return (
-        <div className='flex justify-center p-4 text-xs bg-ghBlack2 pt-4'>
-            {completionStatus.map(({ stageNumber, status, title }) => (
-                <Stage key={stageNumber} stageNumber={stageNumber} status={status} title={title} currentStage={currentStage}/>
-            ))}
+        <div>
+            <div>
+                <div className='px-5 py-3'>
+                    <h2 className='text-3xl font-semibold text-left'>Build Image Status</h2>
+                    <p className='text-sm dark:text-gray-400 text-justify'>More Details about the Build process here.</p>
+                </div>
+            </div>
+            <div className='flex justify-center p-4 text-xs bg-ghBlack2 pt-4'>
+                {completionStatus.map(({ stageNumber, status, title }) => (
+                    <Stage key={stageNumber} stageNumber={stageNumber} status={status} title={title} currentStage={currentStage} />
+                ))}
+            </div>
         </div>
     );
 };
@@ -68,16 +76,16 @@ const Stage = ({ stageNumber, title, status, currentStage }) => {
     };
 
     return (
-        <div className={`mx-1 p-2 rounded ${status != "Completed" ? "bg-ghBlack3": "bg-ghBlack4"}`}>
+        <div className={`mx-1 p-2 rounded ${status != "Completed" ? "bg-ghBlack3" : "bg-ghBlack4"}`}>
             <div className='pb-2 text-gray-400'>{`Stage ${stageNumber}`}</div>
             <div className='flex justify-center items-center w-[130px]'>
-                <div className={`mx-[5px] rounded-full h-[13px] w-[13px] flex justify-center items-center ${status != "Completed" ? "bg-gray-400": "bg-white"}`}>
+                {/* <div className={`mx-[5px] rounded-full h-[13px] w-[13px] flex justify-center items-center ${status != "Completed" ? "bg-gray-400": "bg-white"}`}>
                     <div className={`rounded-full h-2 w-2 bg-ghBlack2 ${status != "Completed" ? "bg-gray-400": "bg-green-500"}`}></div>
-                </div>
+                </div> */}
             </div>
             <div className='pt-1 flex justify-center'>
                 <div className="text-left">
-                    <div className={`font-semibold text-sm ${status != "Completed" ? "text-gray-400": "text-white"}`}>{title}</div>
+                    <div className={`font-semibold text-sm ${status != "Completed" ? "text-gray-400" : "text-white"}`}>{title}</div>
                     <div className={`${getStatusColor(status)} items-center flex`}>
                         {status === 'Completed' && (
                             <span className='text-sm mb-0.5 mr-0.5'>

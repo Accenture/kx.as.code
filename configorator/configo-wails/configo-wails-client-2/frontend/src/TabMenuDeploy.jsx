@@ -22,6 +22,9 @@ import StopCircleIcon from '@mui/icons-material/StopCircle';
 import Tooltip from '@mui/material/Tooltip';
 import Checkbox from '@mui/material/Checkbox';
 import ProcessOutputView from './ProcessOutputView';
+import { ApplicationGroupCard } from './ApplicationGroupCard';
+import applicationGroupJson from './assets/templates/applicationGroups.json';
+
 
 const TabMenuDeploy = () => {
     const [updatedJsonData, setUpdatedJsonData] = useState('');
@@ -58,8 +61,8 @@ const TabMenuDeploy = () => {
                     }
                 </div>
             </div>
-            
-            {isDeploymentStarted ? <ProcessOutputView processType={"deploy"}/> : <DeployTabContent /> }
+
+            {isDeploymentStarted ? <ProcessOutputView processType={"deploy"} /> : <DeployTabContent />}
 
             {/* <BuildExecuteButton /> */}
         </div>
@@ -175,48 +178,15 @@ const DeployTabContent = () => {
 const UIConfigTabContent = ({ activeTab, handleTabClick, handleConfigChange, handleUsersChange, isBuild }) => (
     <div id='config-ui-container' className=''>
         <div className="flex dark:bg-ghBlack3 bg-gray-300 text-sm text-black dark:text-white">
-            <button
-                onClick={() => handleTabClick('tab1')}
-                className={` ${activeTab === 'tab1' ? 'border-kxBlue border-b-3 dark:bg-ghBlack4 bg-gray-400' : 'broder dark:border-ghBlack3 border-gray-300 border-b-3'} p-3 py-1`}
-            >
-                Profile
-            </button>
-            <button
-                onClick={() => handleTabClick('tab2')}
-                className={` ${activeTab === 'tab2' ? 'border-kxBlue border-b-3 dark:bg-ghBlack4 bg-gray-400' : 'broder dark:border-ghBlack3 border-gray-300 border-b-3'} p-3 py-1`}
-            >
-                Parameters & Mode
-            </button>
-            <button
-                onClick={() => handleTabClick('tab3')}
-                className={` ${activeTab === 'tab3' ? 'border-kxBlue border-b-3 dark:bg-ghBlack4 bg-gray-400' : 'broder dark:border-ghBlack3 border-gray-300 border-b-3'} p-3 py-1`}
-            >
-                Resources
-            </button>
-            <button
-                onClick={() => handleTabClick('tab4')}
-                className={` ${activeTab === 'tab4' ? 'border-kxBlue border-b-3 dark:bg-ghBlack4 bg-gray-400' : 'broder dark:border-ghBlack3 border-gray-300 border-b-3'} p-3 py-1`}
-            >
-                Storage
-            </button>
-            <button
-                onClick={() => handleTabClick('tab7')}
-                className={` ${activeTab === 'tab7' ? 'border-kxBlue border-b-3 dark:bg-ghBlack4 bg-gray-400' : 'broder dark:border-ghBlack3 border-gray-300 border-b-3'} p-3 py-1`}
-            >
-                Notification
-            </button>
-            <button
-                onClick={() => handleTabClick('tab8')}
-                className={` ${activeTab === 'tab8' ? 'border-kxBlue border-b-3 dark:bg-ghBlack4 bg-gray-400' : 'broder dark:border-ghBlack3 border-gray-300 border-b-3'} p-3 py-1`}
-            >
-                Docker
-            </button>
-            <button
-                onClick={() => handleTabClick('tab9')}
-                className={` ${activeTab === 'tab9' ? 'border-kxBlue border-b-3 dark:bg-ghBlack4 bg-gray-400' : 'broder dark:border-ghBlack3 border-gray-300 border-b-3'} p-3 py-1`}
-            >
-                Proxy
-            </button>
+
+            <TabButton buttonText={"Profile"} tabId={"tab1"} activeTab={activeTab} handleTabClick={handleTabClick} />
+            <TabButton buttonText={"Parameters & Mode"} tabId={"tab2"} activeTab={activeTab} handleTabClick={handleTabClick} />
+            <TabButton buttonText={"Resources"} tabId={"tab3"} activeTab={activeTab} handleTabClick={handleTabClick} />
+            <TabButton buttonText={"Storage"} tabId={"tab4"} activeTab={activeTab} handleTabClick={handleTabClick} />
+            <TabButton buttonText={"Notification"} tabId={"tab5"} activeTab={activeTab} handleTabClick={handleTabClick} />
+            <TabButton buttonText={"Docker"} tabId={"tab6"} activeTab={activeTab} handleTabClick={handleTabClick} />
+            <TabButton buttonText={"Proxy"} tabId={"tab7"} activeTab={activeTab} handleTabClick={handleTabClick} />
+            <TabButton buttonText={"App Groups"} tabId={"tab8"} activeTab={activeTab} handleTabClick={handleTabClick} />
         </div>
 
         <div className="tab-content dark:text-white text-black">
@@ -224,16 +194,25 @@ const UIConfigTabContent = ({ activeTab, handleTabClick, handleConfigChange, han
             {activeTab === 'tab2' && <TabContent2 handleConfigChange={handleConfigChange} />}
             {activeTab === 'tab3' && <TabContent3 handleConfigChange={handleConfigChange} />}
             {activeTab === 'tab4' && <TabContent4 handleConfigChange={handleConfigChange} />}
-            {activeTab === 'tab5' && <TabContent5 handleUsersChange={handleUsersChange} />}
+            {activeTab === 'tab5' && <TabContent5 handleConfigChange={handleConfigChange} />}
             {activeTab === 'tab6' && <TabContent6 handleConfigChange={handleConfigChange} />}
             {activeTab === 'tab7' && <TabContent7 handleConfigChange={handleConfigChange} />}
             {activeTab === 'tab8' && <TabContent8 handleConfigChange={handleConfigChange} />}
-            {activeTab === 'tab9' && <TabContent9 handleConfigChange={handleConfigChange} />}
 
         </div>
     </div>
 );
 
+const TabButton = ({ buttonText, tabId, activeTab, handleTabClick }) => {
+    return (
+        <button
+            onClick={() => handleTabClick(tabId)}
+            className={` ${activeTab === tabId ? 'border-kxBlue border-b-3 bg-ghBlack4' : 'broder border-ghBlack3 border-b-3'} p-3 py-1`}
+        >
+            {buttonText}
+        </button>
+    );
+}
 
 const TabContent1 = ({ handleConfigChange }) => {
 
@@ -591,7 +570,7 @@ const TabContent4 = ({ handleConfigChange }) => (
     </div>
 );
 
-const TabContent7 = ({ handleConfigChange }) => {
+const TabContent5 = ({ handleConfigChange }) => {
     return (
         <div className='text-left'>
             <div className='px-5 py-3'>
@@ -643,7 +622,7 @@ const TabContent7 = ({ handleConfigChange }) => {
         </div>)
 }
 
-const TabContent8 = ({ handleConfigChange }) => {
+const TabContent6 = ({ handleConfigChange }) => {
     return (
         <div className='text-left'>
             <div className='px-5 py-3'>
@@ -694,7 +673,7 @@ const TabContent8 = ({ handleConfigChange }) => {
         </div>)
 }
 
-const TabContent9 = ({ handleConfigChange }) => {
+const TabContent7 = ({ handleConfigChange }) => {
     return (
         <div className='text-left'>
             <div className='px-5 py-3'>
@@ -740,6 +719,53 @@ const TabContent9 = ({ handleConfigChange }) => {
                     </TextField>
                 </div>
             </div>
+        </div>)
+}
+
+const TabContent8 = ({ handleConfigChange }) => {
+    const [searchTerm, setSearchTerm] = useState("");
+
+    const drawApplicationGroupCards = () => {
+        return applicationGroupJson
+            .filter((appGroup) => {
+                const lowerCaseName = (appGroup.title || "").toLowerCase();
+                return searchTerm === "" || lowerCaseName.includes(searchTerm.toLowerCase().trim());
+            })
+            .map((appGroup, i) => (
+                <ApplicationGroupCard appGroup={appGroup} key={i} isListLayout={true} />
+            ));
+    };
+
+    return (
+        <div className='text-left'>
+            <div className='px-5 py-3'>
+                <h2 className='text-3xl font-semibold'>Application Groups</h2>
+                <p className='text-sm dark:text-gray-400 text-justify'>
+                    More Details about this section here.
+                </p>
+            </div>
+
+            <div className='px-5 py-3 dark:bg-ghBlack2 bg-gray-300 grid grid-cols-12'>
+                <div className='col-span-6'>
+                    <TextField
+                        fullWidth
+                        variant="outlined"
+                        size="small"
+                        margin="normal"
+                        placeholder='Search application groups...'
+                        onChange={(e) => { setSearchTerm(e.target.value) }}
+                    >
+                    </TextField>
+
+                    {/* Application Groups Container */}
+                    <div className="h-[250px] overflow-y-auto border border-gray-600">
+                        {drawApplicationGroupCards()}
+                    </div>
+
+                </div>
+            </div>
+
+
         </div>)
 }
 

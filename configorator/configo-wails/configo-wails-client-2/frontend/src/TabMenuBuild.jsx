@@ -183,29 +183,7 @@ const UIConfigTabContent = ({ activeTab, handleTabClick, handleConfigChange, isB
         <div>
             <BuildContent />
             <LastProcessView processType={"build"} />
-        </div> :
-        <div id='config-ui-container' className=''>
-
-            <div className="flex bg-ghBlack3 text-sm">
-                <TabButton buttonText={"Profile"} tabId={"tab1"} />
-                <TabButton buttonText={"Parameters & Mode"} tabId={"tab2"} />
-                <TabButton buttonText={"Resources"} tabId={"tab3"} />
-                <TabButton buttonText={"Storage"} tabId={"tab4"} />
-                <TabButton buttonText={"User Provisioning"} tabId={"tab5"} />
-                <TabButton buttonText={"Custom Variables"} tabId={"tab6"} />
-                <TabButton buttonText={"tab-content"} tabId={"tab7"} />
-            </div>
-
-            <div className="">
-                {activeTab === 'tab1' && <TabContent1 handleConfigChange={handleConfigChange} />}
-                {activeTab === 'tab2' && <TabContent2 handleConfigChange={handleConfigChange} />}
-                {activeTab === 'tab3' && <TabContent3 handleConfigChange={handleConfigChange} />}
-                {activeTab === 'tab4' && <TabContent4 handleConfigChange={handleConfigChange} />}
-                {activeTab === 'tab5' && <TabContent5 handleConfigChange={handleConfigChange} />}
-                {activeTab === 'tab6' && <TabContent6 handleConfigChange={handleConfigChange} />}
-            </div>
-
-        </div>
+        </div> : <></>
 );
 
 const TabButton = ({ buttonText, tabId }) => {
