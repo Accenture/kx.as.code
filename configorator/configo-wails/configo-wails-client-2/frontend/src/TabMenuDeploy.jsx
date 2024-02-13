@@ -24,6 +24,9 @@ import Checkbox from '@mui/material/Checkbox';
 import ProcessOutputView from './ProcessOutputView';
 import { ApplicationGroupCard } from './ApplicationGroupCard';
 import applicationGroupJson from './assets/templates/applicationGroups.json';
+import { Button } from '@mui/material';
+import RemoveIcon from '@mui/icons-material/Remove';
+import Remove from '@mui/icons-material/Remove';
 
 
 const TabMenuDeploy = () => {
@@ -50,12 +53,12 @@ const TabMenuDeploy = () => {
                     {isDeploymentStarted ?
                         <Tooltip title="Stop Deployment" placement="left">
                             <IconButton onClick={() => { toggleDeploymentStart() }}>
-                                <StopCircleIcon />
+                                <StopCircleIcon fontSize='large' />
                             </IconButton>
                         </Tooltip> :
                         <Tooltip title="Start Deployment" placement="left">
                             <IconButton onClick={() => { toggleDeploymentStart() }}>
-                                <PlayCircleIcon />
+                                <PlayCircleIcon fontSize='large' />
                             </IconButton>
                         </Tooltip>
                     }
@@ -724,6 +727,31 @@ const TabContent7 = ({ handleConfigChange }) => {
 
 const TabContent8 = ({ handleConfigChange }) => {
     const [searchTerm, setSearchTerm] = useState("");
+    const [selectedApplicationGroups, setSelectedApplicationGroups] = useState([]);
+
+    useEffect(() => {
+
+    }, [selectedApplicationGroups]);
+
+    const handleAddButtonClick = (e, appGroup) => {
+        e.preventDefault();
+        if (!selectedApplicationGroups.includes(appGroup.title)) {
+            setSelectedApplicationGroups(prevSelected => [...prevSelected, appGroup.title]);
+        }
+        console.log("List: ", selectedApplicationGroups)
+    };
+
+    const handleRemoveButtonClick = (e, appGroup) => {
+        e.preventDefault();
+        setSelectedApplicationGroups(prevSelected => {
+            const updatedSelectedGroups = prevSelected.filter(title => title !== appGroup.title);
+            return updatedSelectedGroups;
+        });
+    };
+
+    const isInSelectedGroups = (item) => {
+        return selectedApplicationGroups.includes(item);
+    };
 
     const drawApplicationGroupCards = () => {
         return applicationGroupJson
@@ -732,20 +760,22 @@ const TabContent8 = ({ handleConfigChange }) => {
                 return searchTerm === "" || lowerCaseName.includes(searchTerm.toLowerCase().trim());
             })
             .map((appGroup, i) => (
-                <ApplicationGroupCard appGroup={appGroup} key={i} isListLayout={true} />
+                <ApplicationGroupListItem appGroup={appGroup} key={i} handleAddButtonClick={handleAddButtonClick} handleRemoveButtonClick={handleRemoveButtonClick} isInSelectedGroups={isInSelectedGroups} />
             ));
     };
+
+
 
     return (
         <div className='text-left'>
             <div className='px-5 py-3'>
                 <h2 className='text-3xl font-semibold'>Application Groups</h2>
                 <p className='text-sm dark:text-gray-400 text-justify'>
-                    More Details about this section here.
+                    Choose the application groups that are to be integrated into the deployment process.
                 </p>
             </div>
 
-            <div className='px-5 py-3 dark:bg-ghBlack2 bg-gray-300 grid grid-cols-12'>
+            <div className='px-5 pb-5 dark:bg-ghBlack2 bg-gray-300 grid grid-cols-12'>
                 <div className='col-span-6'>
                     <TextField
                         fullWidth
@@ -758,10 +788,15 @@ const TabContent8 = ({ handleConfigChange }) => {
                     </TextField>
 
                     {/* Application Groups Container */}
-                    <div className="h-[250px] overflow-y-auto border border-gray-600">
+                    <div className="h-[270px] overflow-y-auto">
                         {drawApplicationGroupCards()}
                     </div>
-
+                </div>
+                <div className='col-span-6 p-3 pr-0'>
+                    <div className='text-gray-400 font-semibold'>Selected Application Groups for Deplyoment:</div>
+                    {selectedApplicationGroups.map((appGroup) => {
+                        return <div id="item" className='py-1 px-5 bg-ghBlack3 rounded-full my-1 inline-block mr-1'>{appGroup}</div>
+                    })}
                 </div>
             </div>
 
@@ -769,5 +804,32 @@ const TabContent8 = ({ handleConfigChange }) => {
         </div>)
 }
 
-
 export default TabMenuDeploy;
+
+
+const ApplicationGroupListItem = ({ appGroup, key, handleAddButtonClick, handleRemoveButtonClick, isInSelectedGroups }) => {
+
+    useEffect(() => {
+
+    }, []);
+
+    return (
+        <div key={key} className='w-full py-1 px-6 bg-ghBlack3 hover:bg-ghBlack4 items-center flex justify-between mb-1'>
+            <div className=''>{appGroup.title}</div>
+            {isInSelectedGroups(appGroup.title) ? (
+                <IconButton className='hover:bg-ghBlack4 border border-gray-400 hover:border-white p-0.5 rounded flex justify-center items-center text-gray-400 hover:text-white'
+                    onClick={(e) => { handleRemoveButtonClick(e, appGroup) }}
+                    type="submit">
+                    <Remove color='inherit' />
+                </IconButton>
+            ) : (
+                <IconButton className='hover:bg-ghBlack4 border border-gray-400 hover:border-white p-0.5 rounded flex justify-center items-center text-gray-400 hover:text-white'
+                    onClick={(e) => { handleAddButtonClick(e, appGroup) }}
+                    type="submit">
+                    <AddIcon color='inherit' />
+                </IconButton>
+            )}
+
+
+        </div>)
+}
