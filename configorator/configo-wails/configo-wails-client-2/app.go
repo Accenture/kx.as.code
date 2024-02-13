@@ -102,7 +102,8 @@ func (a *App) ExeBuild() string {
 	}
 
 	writeStage := func(stageNumber int, stageName string) {
-		fmt.Fprintf(outfile, "[stage-%d]-%s\n", stageNumber, stageName)
+		timestamp := time.Now().Format(time.RFC3339)
+		fmt.Fprintf(outfile, "[%s] [stage-%d] - %s\n", timestamp, stageNumber, stageName)
 		// Ensure data is immediately flushed to the file
 		outfile.Sync()
 	}

@@ -36,12 +36,12 @@ const TabMenuBuild = ({ buildOutputFileContent, isBuildStarted, toggleBuildStart
                     {isBuildStarted ?
                         <Tooltip title="Stop Build Process" placement="left">
                             <IconButton onClick={() => { toggleBuildStart() }}>
-                                <StopCircleIcon />
+                                <StopCircleIcon fontSize="large" />
                             </IconButton>
                         </Tooltip> :
                         <Tooltip title="Start New Build" placement="left">
                             <IconButton onClick={() => { toggleBuildStart() }}>
-                                <PlayCircleIcon />
+                                <PlayCircleIcon fontSize="large" />
                             </IconButton>
                         </Tooltip>
                     }
