@@ -11,6 +11,14 @@ const ProcessOutputView = ({logOutput, processType}) => {
     setIsUserScroll(scrollTop !== scrollHeight - clientHeight);
   }; 
 
+  const highlightErrorText = (logOutput) => {
+    const regex = new RegExp('.*error.*', 'ig');
+    const lines = logOutput.split('\n');
+    return lines.map((line, index) => (
+      regex.test(line) ? <div key={index} className="text-red-500">{line}</div> : <div key={index}>{line}</div>
+    ));
+  };
+
   useEffect(() => {
   }, [isUserScroll, logOutput]);
 
@@ -34,7 +42,7 @@ const ProcessOutputView = ({logOutput, processType}) => {
         </div>
         <div className="bg-ghBlack2 m-3 rounded-xl">
           {/* {processType} Process started... */}
-          <pre id="output-container" ref={outputContainer} onScroll={handleScroll} className='text-white text-sm text-left p-4 font-mono whitespace-pre-wrap overflow-y-scroll h-[450px]'>{logOutput}</pre>
+          <pre id="output-container" ref={outputContainer} onScroll={handleScroll} className='text-white text-sm text-left p-4 font-mono whitespace-pre-wrap overflow-y-scroll h-[450px]'>{highlightErrorText(logOutput)}</pre>
         </div>
       </div>
     </div>
