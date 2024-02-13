@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import ErrorIcon from '@mui/icons-material/Error';
 import { GetCurrentBuildStage } from "../wailsjs/go/main/App"
+import Pending from '@mui/icons-material/Pending';
 
 const BuildStagesTracker = () => {
     // const [isBuildStarted, setIsBuildStarted] = useState(false);
@@ -42,6 +43,11 @@ const BuildStagesTracker = () => {
         }));
     };
 
+    const getCurrentStageIndex = () => {
+        const stages = ['stage 1', 'stage 2', 'stage 3', 'stage 4', 'stage 5'];
+        return stages.indexOf(currentStage);
+    };
+
     const completionStatus = generateCompletionStatus(currentStage);
 
     return (
@@ -54,7 +60,7 @@ const BuildStagesTracker = () => {
             </div>
             <div className='flex justify-center p-4 text-xs bg-ghBlack2 pt-4'>
                 {completionStatus.map(({ stageNumber, status, title }) => (
-                    <Stage key={stageNumber} stageNumber={stageNumber} status={status} title={title} currentStage={currentStage} />
+                    <Stage key={stageNumber} stageNumber={stageNumber} status={status} title={title} getCurrentStageIndex={getCurrentStageIndex} />
                 ))}
             </div>
         </div>
@@ -64,7 +70,12 @@ const BuildStagesTracker = () => {
 export default BuildStagesTracker;
 
 
-const Stage = ({ stageNumber, title, status, currentStage }) => {
+const Stage = ({ stageNumber, title, status, getCurrentStageIndex }) => {
+
+    useEffect(() => {
+
+    }, []);
+
     const getStatusColor = (status) => {
         if (status === 'Completed') {
             return 'text-green-500';
@@ -75,29 +86,58 @@ const Stage = ({ stageNumber, title, status, currentStage }) => {
         }
     };
 
+
+    const getProgressLine = (position, stageNumber, currentIndex) => {
+        const isLeft = position === "left";
+        const isRight = position === "right";
+
+        if (isLeft && stageNumber === 1 || isRight && stageNumber === 5) {
+            return <div className={`w-full h-[2px] bg-ghBlack2`}></div>;
+        }
+
+        const shouldHighlight = (isLeft && stageNumber <= currentIndex + 1) || (isRight && stageNumber <= currentIndex);
+
+        return (
+            <div className={`w-full h-[2px] ${shouldHighlight ? "bg-white" : "bg-gray-600"}`}></div>
+        );
+    };
+
+
     return (
-        <div className={`mx-1 p-2 rounded ${status != "Completed" ? "bg-ghBlack3" : "bg-ghBlack4"}`}>
-            <div className='pb-2 text-gray-400'>{`Stage ${stageNumber}`}</div>
-            <div className='flex justify-center items-center w-[130px]'>
-                {/* <div className={`mx-[5px] rounded-full h-[13px] w-[13px] flex justify-center items-center ${status != "Completed" ? "bg-gray-400": "bg-white"}`}>
-                    <div className={`rounded-full h-2 w-2 bg-ghBlack2 ${status != "Completed" ? "bg-gray-400": "bg-green-500"}`}></div>
-                </div> */}
+        <div className=''>
+            <div className='flex justify-center mb-[-5px] items-center'>
+                {getProgressLine("left", stageNumber, getCurrentStageIndex())}
+                <div className={`border-[8px] border-ghBlack2 mx-[5px] rounded-full h-[25px] w-[25px] flex justify-center items-center`}>
+                    <div className={`rounded-full h-2 w-2 bg-ghBlack2 ${status != "Completed" ? "bg-gray-600" : "bg-green-500"}`}></div>
+                </div>
+                {getProgressLine("right", stageNumber, getCurrentStageIndex())}
             </div>
-            <div className='pt-1 flex justify-center'>
-                <div className="text-left">
-                    <div className={`font-semibold text-sm ${status != "Completed" ? "text-gray-400" : "text-white"}`}>{title}</div>
-                    <div className={`${getStatusColor(status)} items-center flex`}>
-                        {status === 'Completed' && (
-                            <span className='text-sm mb-0.5 mr-0.5'>
-                                <CheckCircleIcon fontSize='inherit' />
-                            </span>
-                        )}
-                        {status === 'Failed' && (
-                            <span className='text-sm mb-0.5 mr-0.5'>
-                                <ErrorIcon fontSize='inherit' />
-                            </span>
-                        )}
-                        <span>{status}</span>
+
+            <div className={`mx-1 p-2 rounded ${status != "Completed" ? "bg-ghBlack3" : "bg-ghBlack4"}`}>
+                <div className='pb-2 text-gray-400'>{`Stage ${stageNumber}`}</div>
+                <div className='flex justify-center items-center w-[130px]'>
+                </div>
+                <div className='pt-1 flex justify-center'>
+                    <div className="text-left">
+                        <div className={`font-semibold text-sm ${status != "Completed" ? "text-gray-400" : "text-white"}`}>{title}</div>
+                        <div className={`${getStatusColor(status)} items-center flex`}>
+                            {status === 'Completed' && (
+                                <span className='text-sm mb-0.5 mr-0.5'>
+                                    <CheckCircleIcon fontSize='inherit' />
+                                </span>
+                            )}
+                            {status === 'Pending' && (
+                                <span className='text-sm mb-0.5 mr-0.5'>
+                                    <Pending fontSize='inherit' />
+                                </span>
+                            )}
+                            {status === 'Failed' && (
+                                <span className='text-sm mb-0.5 mr-0.5'>
+                                    <ErrorIcon fontSize='inherit' />
+                                </span>
+                            )}
+                            <span>{status}</span>
+                        </div>
                     </div>
                 </div>
             </div>
