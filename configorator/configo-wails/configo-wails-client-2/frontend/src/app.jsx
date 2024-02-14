@@ -106,7 +106,7 @@ export function App() {
     const theme = createTheme({
         components: {},
         shape: {
-            borderRadius: 0,
+            borderRadius: 5,
         },
         palette: {
             mode: isDarkMode ? "dark" : "light",

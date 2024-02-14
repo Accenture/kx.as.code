@@ -25,8 +25,8 @@ import ProcessOutputView from './ProcessOutputView';
 import { ApplicationGroupCard } from './ApplicationGroupCard';
 import applicationGroupJson from './assets/templates/applicationGroups.json';
 import { Button } from '@mui/material';
-import RemoveIcon from '@mui/icons-material/Remove';
 import Remove from '@mui/icons-material/Remove';
+import ClearIcon from '@mui/icons-material/Clear';
 
 
 const TabMenuDeploy = () => {
@@ -71,6 +71,8 @@ const TabMenuDeploy = () => {
         </div>
     );
 };
+
+export default TabMenuDeploy;
 
 const DeployTabContent = () => {
     const [activeTab, setActiveTab] = useState('tab1');
@@ -728,10 +730,11 @@ const TabContent7 = ({ handleConfigChange }) => {
 const TabContent8 = ({ handleConfigChange }) => {
     const [searchTerm, setSearchTerm] = useState("");
     const [selectedApplicationGroups, setSelectedApplicationGroups] = useState([]);
+    const [filteredGroupsCount, setFilteredGroupsCount] = useState(0);
 
     useEffect(() => {
 
-    }, [selectedApplicationGroups]);
+    }, [selectedApplicationGroups, searchTerm]);
 
     const handleAddButtonClick = (e, appGroup) => {
         e.preventDefault();
@@ -741,10 +744,11 @@ const TabContent8 = ({ handleConfigChange }) => {
         console.log("List: ", selectedApplicationGroups)
     };
 
-    const handleRemoveButtonClick = (e, appGroup) => {
+    const handleRemoveButtonClick = (e, appGroupTitle) => {
         e.preventDefault();
+        console.log('Removing:', appGroupTitle);
         setSelectedApplicationGroups(prevSelected => {
-            const updatedSelectedGroups = prevSelected.filter(title => title !== appGroup.title);
+            const updatedSelectedGroups = prevSelected.filter(title => title !== appGroupTitle);
             return updatedSelectedGroups;
         });
     };
@@ -753,18 +757,34 @@ const TabContent8 = ({ handleConfigChange }) => {
         return selectedApplicationGroups.includes(item);
     };
 
-    const drawApplicationGroupCards = () => {
-        return applicationGroupJson
-            .filter((appGroup) => {
-                const lowerCaseName = (appGroup.title || "").toLowerCase();
-                return searchTerm === "" || lowerCaseName.includes(searchTerm.toLowerCase().trim());
-            })
-            .map((appGroup, i) => (
-                <ApplicationGroupListItem appGroup={appGroup} key={i} handleAddButtonClick={handleAddButtonClick} handleRemoveButtonClick={handleRemoveButtonClick} isInSelectedGroups={isInSelectedGroups} />
-            ));
+    const findGroupByTitle = (title) => {
+        return applicationGroupJson.find(group => group.title.toLowerCase() === title.toLowerCase());
     };
 
+    const drawApplicationGroupCards = () => {
+        const lowerCaseSearchTerm = searchTerm.toLowerCase().trim();
 
+        const filteredGroups = applicationGroupJson.filter((appGroup) => {
+            const lowerCaseName = (appGroup.title || "").toLowerCase();
+            return lowerCaseName.includes(lowerCaseSearchTerm) && !selectedApplicationGroups.includes(appGroup.title);
+        });
+
+        setFilteredGroupsCount(filteredGroups.length)
+
+        return filteredGroups.map((appGroup, i) => (
+            <ApplicationGroupListItem
+                appGroup={appGroup}
+                key={i}
+                handleAddButtonClick={handleAddButtonClick}
+                handleRemoveButtonClick={handleRemoveButtonClick}
+                isInSelectedGroups={isInSelectedGroups}
+            />
+        ));
+    };
+
+    const handleClearSearch = () => {
+        setSearchTerm('');
+    };
 
     return (
         <div className='text-left'>
@@ -775,36 +795,73 @@ const TabContent8 = ({ handleConfigChange }) => {
                 </p>
             </div>
 
-            <div className='px-5 pb-5 dark:bg-ghBlack2 bg-gray-300 grid grid-cols-12'>
-                <div className='col-span-6'>
+            <div className='pl-5 dark:bg-ghBlack2 bg-gray-300 grid grid-cols-12'>
+                <div className='col-span-6 pb-5 pr-5'>
                     <TextField
-                        fullWidth
                         variant="outlined"
                         size="small"
                         margin="normal"
-                        placeholder='Search application groups...'
-                        onChange={(e) => { setSearchTerm(e.target.value) }}
-                    >
-                    </TextField>
+                        placeholder='Search...'
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        InputProps={{
+                            endAdornment: (
+                                <InputAdornment position="end">
+                                    {searchTerm !== "" ? <IconButton
+                                        size='small'
+                                        onClick={handleClearSearch}
+                                    >
+                                        <ClearIcon fontSize='inherit' />
+                                    </IconButton> : <IconButton size='small' disabled className='opacity-0'>
+                                        <ClearIcon fontSize='inherit' />
+                                    </IconButton>}
+                                </InputAdornment>
+                            )
+                        }}
+                    />
 
                     {/* Application Groups Container */}
-                    <div className="h-[270px] overflow-y-auto">
+                    <div className="h-[320px] overflow-y-auto">
+                        {searchTerm !== "" && filteredGroupsCount === 0 ? (
+                            <div className='text-gray-500 pr-5 font-semibold'>No results for "{searchTerm}".</div>
+                        ) : null}
+                        {filteredGroupsCount === 0 && searchTerm === "" ? (
+                            <div className='text-gray-500 text-sm pr-5'>
+                                All available application groups added to deployment. Remove groups by clicking on the remove button on each application group listed in the right section.
+                            </div>
+                        ) : null}
                         {drawApplicationGroupCards()}
                     </div>
                 </div>
-                <div className='col-span-6 p-3 pr-0'>
-                    <div className='text-gray-400 font-semibold'>Selected Application Groups for Deplyoment:</div>
-                    {selectedApplicationGroups.map((appGroup) => {
-                        return <div id="item" className='py-1 px-5 bg-ghBlack3 rounded-full my-1 inline-block mr-1'>{appGroup}</div>
-                    })}
+                <div className='col-span-6 p-5 pt-4 pb-0 bg-ghBlack3'>
+                    <div className='text-gray-400 flex justify-start items-center pt-2'>
+                        <span className='h-5 w-5 text-sm text-ghBlack font-bold p-1 py-0 mr-1 flex justify-center items-center bg-gray-400 rounded'>{selectedApplicationGroups.length}</span>
+                        <span className='text-2xl font-semibold'>Selected Application Groups:</span>
+                    </div>
+                    <div className='rounded py-2 overflow-y-auto h-[330px]'>
+                        {
+                            selectedApplicationGroups.length == 0 ? <div className='text-gray-500 text-sm pr-5'>No application groups selected. Search and select application groups listed in the left section.</div> :
+                                selectedApplicationGroups.map((appGroup) => {
+                                    return <div id="item" className='px-5 py-1 bg-ghBlack4 rounded mb-1 flex justify-between mr-2 items-center'>
+                                        <div>
+                                            <div className=''>{appGroup}</div>
+                                            <div className='text-sm uppercase text-gray-400'>{findGroupByTitle(appGroup).action_queues.install[0].install_folder}</div>
+                                        </div>
+                                        <IconButton className='hover:bg-ghBlack4 hover:border-white rounded flex justify-center items-center'
+                                            onClick={(e) => { handleRemoveButtonClick(e, appGroup) }}
+                                            type="submit">
+                                            <Remove color='inherit' />
+                                        </IconButton>
+                                    </div>
+                                })
+                        }
+                    </div>
                 </div>
             </div>
 
 
-        </div>)
+        </div >)
 }
-
-export default TabMenuDeploy;
 
 
 const ApplicationGroupListItem = ({ appGroup, key, handleAddButtonClick, handleRemoveButtonClick, isInSelectedGroups }) => {
@@ -814,8 +871,11 @@ const ApplicationGroupListItem = ({ appGroup, key, handleAddButtonClick, handleR
     }, []);
 
     return (
-        <div key={key} className='w-full py-1 px-6 bg-ghBlack3 hover:bg-ghBlack4 items-center flex justify-between mb-1'>
-            <div className=''>{appGroup.title}</div>
+        <div key={key} className='w-full rounded py-1 px-6 bg-ghBlack4 items-center flex justify-between mb-1'>
+            <div>
+                <div className=''>{appGroup.title}</div>
+                <div className='text-sm uppercase text-gray-400'>{appGroup.action_queues.install[0].install_folder}</div>
+            </div>
             {isInSelectedGroups(appGroup.title) ? (
                 <IconButton className='hover:bg-ghBlack4 border border-gray-400 hover:border-white p-0.5 rounded flex justify-center items-center text-gray-400 hover:text-white'
                     onClick={(e) => { handleRemoveButtonClick(e, appGroup) }}
@@ -829,7 +889,5 @@ const ApplicationGroupListItem = ({ appGroup, key, handleAddButtonClick, handleR
                     <AddIcon color='inherit' />
                 </IconButton>
             )}
-
-
         </div>)
 }

@@ -42,7 +42,7 @@ const ProcessOutputView = ({logOutput, processType}) => {
         </div>
         <div className="bg-ghBlack2 m-3 rounded-xl">
           {/* {processType} Process started... */}
-          <pre id="output-container" ref={outputContainer} onScroll={handleScroll} className='text-white text-sm text-left p-4 font-mono whitespace-pre-wrap overflow-y-scroll h-[450px]'>{highlightErrorText(logOutput)}</pre>
+          <pre id="output-container" ref={outputContainer} onScroll={handleScroll} className='text-white text-sm text-left p-4 font-mono whitespace-pre-wrap overflow-y-scroll h-[400px]'>{highlightErrorText(logOutput)}</pre>
         </div>
       </div>
     </div>

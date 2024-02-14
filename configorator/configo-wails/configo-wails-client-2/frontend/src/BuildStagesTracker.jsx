@@ -98,7 +98,7 @@ const Stage = ({ stageNumber, title, status, getCurrentStageIndex }) => {
         const shouldHighlight = (isLeft && stageNumber <= currentIndex + 1) || (isRight && stageNumber <= currentIndex);
 
         return (
-            <div className={`w-full h-[2px] ${shouldHighlight ? "bg-white" : "bg-gray-600"}`}></div>
+            <div className={`w-full h-[2px] ${shouldHighlight ? "bg-white" : "bg-ghBlack4"}`}></div>
         );
     };
 
@@ -108,7 +108,7 @@ const Stage = ({ stageNumber, title, status, getCurrentStageIndex }) => {
             <div className='flex justify-center mb-[-5px] items-center'>
                 {getProgressLine("left", stageNumber, getCurrentStageIndex())}
                 <div className={`border-[8px] border-ghBlack2 mx-[5px] rounded-full h-[25px] w-[25px] flex justify-center items-center`}>
-                    <div className={`rounded-full h-2 w-2 bg-ghBlack2 ${status != "Completed" ? "bg-gray-600" : "bg-green-500"}`}></div>
+                    <div className={`rounded-full h-2 w-2 bg-ghBlack4 ${status != "Completed" ? "bg-ghBlack4" : "bg-green-500"}`}></div>
                 </div>
                 {getProgressLine("right", stageNumber, getCurrentStageIndex())}
             </div>
