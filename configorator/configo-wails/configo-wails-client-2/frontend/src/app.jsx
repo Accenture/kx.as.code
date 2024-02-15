@@ -259,7 +259,7 @@ const MenuItem = ({ menuItemName, slug, isBuildStarted }) => {
                 {
                     return isBuildStarted ? (<div className="relative">
                         <svg
-                            className="absolute h-8 w-8 ml-[-5px] mt-[-2px] text-white animate-spin"
+                            className="absolute h-4 w-4 top-[-13px] right-[-18px] mt-2 mr-2  text-white animate-spin"
                             xmlns="http://www.w3.org/2000/svg"
                             fill="none"
                             viewBox="0 0 24 24"

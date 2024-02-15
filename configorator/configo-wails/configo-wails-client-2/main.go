@@ -6,6 +6,7 @@ import (
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"
 	"github.com/wailsapp/wails/v2/pkg/options/assetserver"
+	"github.com/wailsapp/wails/v2/pkg/options/mac"
 )
 
 //go:embed all:frontend/dist
@@ -17,13 +18,30 @@ func main() {
 
 	// Create application with options
 	err := wails.Run(&options.App{
-		Title:  "KX.AS.Code Launcher",
+		Title: "KX.AS.Code Launcher",
+		Mac: &mac.Options{
+			TitleBar: &mac.TitleBar{
+				TitlebarAppearsTransparent: false,
+				HideTitle:                  false,
+				HideTitleBar:               false,
+				FullSizeContent:            false,
+				UseToolbar:                 false,
+				HideToolbarSeparator:       true,
+			},
+			Appearance:           mac.NSAppearanceNameVibrantLight,
+			WebviewIsTransparent: false,
+			WindowIsTranslucent:  false,
+			About: &mac.AboutInfo{
+				Title:   "KX.AS.Code Launcher",
+				Message: "",
+			},
+		},
 		Width:  900,
 		Height: 900,
 		AssetServer: &assetserver.Options{
 			Assets: assets,
 		},
-		BackgroundColour: &options.RGBA{R: 31, G: 38, B: 46, A: 1},
+		BackgroundColour: &options.RGBA{R: 240, G: 117, B: 199, A: 1},
 		OnStartup:        app.startup,
 		Bind: []interface{}{
 			app,

@@ -63,3 +63,18 @@
     border: none;
     background-color: rgba(255, 255, 255, 1);
 }
+
+/* Coldmirror background overwrite */
+.ͼ1{
+    background-color: #1f262e;
+}
+
+/* Coldmirror line numbers background color overwrite */
+.ͼo .cm-gutters{
+    background-color: #161b22;
+}
+
+/* Coldmirror active line highlight background color overwrite */
+.ͼo .cm-activeLine{
+    background-color: #2f3640ff;
+}

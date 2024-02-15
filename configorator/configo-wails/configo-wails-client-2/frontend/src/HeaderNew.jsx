@@ -14,8 +14,6 @@ import { styled, useTheme } from '@mui/material/styles';
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 
-// <MuiAppBar position="fixed" open={props.open} className="h-[90px] dark:bg-ghBlack22 bg-kxBlue" elevation={0}>
-
 const drawerWidth = 180;
 
 const AppBar = styled(MuiAppBar, {
