@@ -24,15 +24,9 @@ const TabMenuBuild = ({ buildOutputFileContent, isBuildStarted, toggleBuildStart
     return (
         <div className='mt-[90px]'>
             {/* Build & Deploy Selection */}
-            <div id="build-deploy-section" className='items-center px-5 bg-ghBlack3 p-1.5'>
+            <div id="build-deploy-section" className='items-center px-5 bg-ghBlack4 p-1.5'>
                 {/* Action Settings / Button */}
                 <div className='mx-5 flex justify-end items-center'>
-                    {/* <div className="flex">
-                        <button className='bg-ghBlack4 hover:bg-gray-700 px-2 pt-1 mr-1 items-center'>
-                            <MonitorHeartIcon className='mb-1 mr-1'/>
-                            <span>Build Console Output</span>
-                        </button>
-                    </div> */}
                     {isBuildStarted ?
                         <Tooltip title="Stop Build Process" placement="left">
                             <IconButton onClick={() => { toggleBuildStart() }}>
@@ -129,13 +123,13 @@ const BuildTabContent = () => {
 
     return (
         <div className='relative'>
-            <div className='flex grid-cols-12 items-center relative dark:bg-ghBlack2 sticky top-[90px] z-10 h-[40px]'>
+            {/* <div className='flex grid-cols-12 items-center relative dark:bg-ghBlack3 sticky top-[90px] z-10 h-[40px]'>
                 <button onClick={() => handleConfigTabClick('config-tab1')} className={`${activeConfigTab === "config-tab1" ? "bg-kxBlue2" : ""} h-10 flex col-span-6 w-full text-center items-center justify-center`}>
                     Packer Config UI
                 </button>
 
-                {/* Centered Circle */}
-                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                // {/* Centered Icon Square */}
+            {/* <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
                     <div className="w-10 h-10 bg-ghBlack4 items-center flex justify-center text-xl">
                         <SettingsEthernetIcon fontSize='inherit' />
                     </div>
@@ -144,6 +138,45 @@ const BuildTabContent = () => {
                 <button onClick={() => handleConfigTabClick('config-tab2')} className={`${activeConfigTab === "config-tab2" ? "bg-kxBlue2" : ""} h-10 flex col-span-6 w-full text-center items-center justify-center`}>
                     Packer Config JSON
                 </button>
+            </div> */}
+
+            <div className='grid grid-cols-12 items-center dark:bg-ghBlack4 sticky top-[90px] z-10 p-1'>
+                <div className='col-span-4'></div>
+                <div className='col-span-4'>
+                    <div className="relative w-full h-[40px] p-1 bg-ghBlack3 rounded-md">
+                        <div className="relative w-full h-full flex items-center text-sm">
+                            <div
+                                onClick={() => setActiveConfigTab('config-tab1')}
+                                className="w-full flex justify-center text-gray-300 cursor-pointer"
+                            >
+                                <button>
+                                    Config UI
+                                </button>
+                            </div>
+                            <div
+                                onClick={() => setActiveConfigTab('config-tab2')}
+                                className="w-full flex justify-center text-gray-300 cursor-pointer"
+                            >
+                                <button>
+                                    JSON
+                                </button>
+                            </div>
+                        </div>
+
+                        <span
+                            className={`${activeConfigTab === 'config-tab1'
+                                ? 'left-1 ml-0'
+                                : 'left-1/2 -ml-1'
+                                } py-1 text-white bg-ghBlack4 text-sm font-semibold flex items-center justify-center w-1/2 rounded transition-all duration-150 ease-linear top-[5px] absolute`}
+                        >
+                            {activeConfigTab === 'config-tab1'
+                                ? "Config UI"
+                                : "JSON"}
+                        </span>
+                    </div>
+                </div>
+                <div className='col-span-4 flex'></div>
+
             </div>
 
             <div className="config-tab-content">
@@ -154,29 +187,6 @@ const BuildTabContent = () => {
     );
 }
 
-const BuildExecuteButton = () => {
-    const navigate = useNavigate();
-
-    const [output, setOutput] = useState('');
-
-    const handleExecuteClick = async () => {
-        console.log('KX.AS.Code Image build process started!');
-        navigate('/console-output');
-    };
-
-
-    return (
-        <div className=''>
-            <button onClick={() => { handleExecuteClick() }} className='bg-kxBlue p-3 w-full flex justify-center items-center'>
-                <PlayCircleIcon className='mr-1' /> Build KX.AS.Code Image</button>
-            <button className='p-3 w-full font-normal hover:text-gray-400 w-auto flex justify-center items-center'>
-                <CloudDownloadIcon className='mr-1.5' /> Download Image from Vagrant Cloud</button>
-            <div id="output">{output}</div>
-        </div>
-    )
-}
-
-
 const UIConfigTabContent = ({ activeTab, handleTabClick, handleConfigChange, isBuild }) => (
 
     isBuild ?
@@ -186,20 +196,9 @@ const UIConfigTabContent = ({ activeTab, handleTabClick, handleConfigChange, isB
         </div> : <></>
 );
 
-const TabButton = ({ buttonText, tabId }) => {
-    return (
-        <button
-            onClick={() => handleTabClick(tabId)}
-            className={` ${activeTab === tabId ? 'border-kxBlue border-b-3 bg-ghBlack4' : 'broder border-ghBlack3 border-b-3'} p-3 py-1`}
-        >
-            {buttonText}
-        </button>
-    );
-}
-
 const BuildContent = ({ handleConfigChange }) => {
     return (
-        <div className='text-left'>
+        <div className='text-left dark:bg-ghBlack4'>
             <div className='px-5 py-3'>
                 <h2 className='text-3xl font-semibold'>Build Config</h2>
                 <p className='text-sm dark:text-gray-400 text-justify'>More Details about the Build process here.</p>

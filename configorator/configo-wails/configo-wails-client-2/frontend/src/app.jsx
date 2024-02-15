@@ -28,6 +28,10 @@ import { ApplicationGroups } from "./ApplicationGroups";
 import { BuildOutputProvider } from './BuildOutputContext';
 import { ExeBuild, StopExe } from "../wailsjs/go/main/App"
 import buildOutputFile from './assets/buildOutput.txt';
+import TipsAndUpdatesIcon from '@mui/icons-material/TipsAndUpdates';
+import AppBar from '@mui/material/AppBar';
+import Toolbar from '@mui/material/Toolbar';
+import MenuIcon from '@mui/icons-material/Menu';
 
 const openedMixin = (theme) => ({
     width: drawerWidth,
@@ -75,7 +79,7 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== "open" 
     })
 );
 
-const drawerWidth = 240;
+const drawerWidth = 180;
 
 
 export function App() {
@@ -92,10 +96,12 @@ export function App() {
 
     const handleDrawerOpen = () => {
         setOpen(true);
+        console.log("drawer open click")
     };
 
     const handleDrawerClose = () => {
         setOpen(false);
+        console.log("drawer close click")
     };
 
     const handleDarkModeToggle = () => {
@@ -113,7 +119,8 @@ export function App() {
             primary: {
                 main: '#5a86ff',
             }
-        },
+        }
+        // direction: 'rtl'
     });
 
     const toggleBuildStart = useCallback(() => {
@@ -182,7 +189,7 @@ export function App() {
             }
         };
 
-    }, [isDarkMode, pathnames, isBuildStarted, buildOutputFileContent, intervalId]);
+    }, [isDarkMode, pathnames, isBuildStarted, buildOutputFileContent, intervalId, open]);
 
 
     return (
@@ -195,24 +202,24 @@ export function App() {
                             sx={{
                                 '& .MuiDrawer-paper': {
                                     borderRight: 'none',
-                                    backgroundColor: "#0d1117"
+                                    backgroundColor: "#1f262e"
                                 }
                             }} >
-                            <DrawerHeader className="">
+                            <DrawerHeader>
                                 <IconButton onClick={handleDrawerClose}>
-                                    {theme.direction === "rtl" ? <ChevronRightIcon /> : <ChevronLeftIcon />}
+                                    {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
                                 </IconButton>
                             </DrawerHeader>
-                            <List className="" style={{ paddingTop: "0" }}>
+                            <List className="" style={{ marginTop: "auto", marginBottom: "auto", paddingBottom: "150px" }}>
                                 <MenuItem menuItemName={"home"} slug={slug} />
                                 <MenuItem menuItemName={"build"} slug={slug} isBuildStarted={isBuildStarted} />
                                 <MenuItem menuItemName={"deploy"} slug={slug} />
                                 {/* Separator */}
-                                <div className="w-full h-[1px] bg-gray-400 mt-0 mb-2"></div>
+                                <div className="w-full h-[5px] bg-ghBlack4 mt-0 mb-2"></div>
                                 <MenuItem menuItemName={"application-groups"} slug={slug} />
                                 <MenuItem menuItemName={"user-provisioning"} slug={slug} />
                                 <MenuItem menuItemName={"custom-variables"} slug={slug} />
-                            </List>
+                            </List> 
                         </Drawer>
                         <Box component="main" sx={{ flexGrow: 1, p: 0 }} className="text-black dark:text-white">
                             <HeaderNew drawerWidth={drawerWidth} handleDrawerOpen={handleDrawerOpen} open={open} handleDarkModeToggle={handleDarkModeToggle} isDarkMode={isDarkMode} />
@@ -247,7 +254,7 @@ const MenuItem = ({ menuItemName, slug, isBuildStarted }) => {
     const getMenuItemIcon = (menuItemName) => {
         switch (menuItemName) {
             case "home":
-                return <HomeIcon className="text-3xl" />
+                return <TipsAndUpdatesIcon className="text-3xl" />
             case "build":
                 {
                     return isBuildStarted ? (<div className="relative">

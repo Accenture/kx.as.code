@@ -37,7 +37,7 @@ const LastProcessView = (props) => {
     <div>
       <div className="grid grid-cols-12">
 
-        <div className="col-span-12 bg-ghBlack3 py-2">
+        <div className="col-span-12 dark:bg-ghBlack2 py-2">
           <h1 className='flex text-gray-400 px-5 items-center font-semibold'>
             <span className='text-xl mb-0.5 mr-1'><HistoryIcon fontSize='inherit' /></span>
             Last {processType}s History:</h1>

@@ -70,14 +70,14 @@ const JSONConfigTabContent = (props) => {
                     </div>
 
                 </div>)}
-            <div id="codemirror-container" className='overflow-x-scroll'>
+            <div id="codemirror-container" className='w-full overflow-y-scroll h-[400px] text-base'>
                 <CodeMirror
                     extensions={[langs.tsx()]}
-                    theme={basicDark}
+                    theme={"dark"}
                     value={props.jsonData}
                     options={{
                         mode: 'json',
-                        lineNumbers: true,
+                        lineNumbers: true
                     }}
                     onChange={(value, viewUpdate) => {
                         setIsFileChanged(true)

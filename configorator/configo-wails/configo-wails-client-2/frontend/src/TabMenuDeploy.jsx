@@ -47,7 +47,7 @@ const TabMenuDeploy = () => {
     return (
         <div className='mt-[90px]'>
             {/* Build & Deploy Selection */}
-            <div id="build-deploy-section" className='items-center px-5 dark:bg-ghBlack3 bg-gray-400 py-1.5'>
+            <div id="build-deploy-section" className='items-center px-5 dark:bg-ghBlack4 bg-gray-400 py-1.5'>
                 {/* Action Settings / Button */}
                 <div className='mx-5 flex justify-end'>
                     {isDeploymentStarted ?
@@ -155,21 +155,40 @@ const DeployTabContent = () => {
 
     return (
         <div className='relative'>
-            <div className='flex grid-cols-12 items-center relative bg-gray-200 dark:bg-ghBlack2 sticky top-[90px] z-10 h-[40px]'>
-                <button onClick={() => handleConfigTabClick('config-tab1')} className={`${activeConfigTab === "config-tab1" ? "bg-kxBlue2 text-white" : ""} dark:text-white text-black h-10 flex col-span-6 w-full text-center items-center justify-center`}>
-                    Profile  Config UI
-                </button>
+            <div className='flex grid-cols-12 items-center dark:bg-kxBlue2 sticky top-[90px] z-10 p-2'>
 
-                {/* Centered icon */}
-                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-                    <div className="w-10 h-10 dark:bg-ghBlack4 bg-gray-300 items-center flex justify-center text-xl">
-                        <SettingsEthernetIcon fontSize='inherit' />
+                <div className="relative w-full rounded-md h-[45px] p-1 bg-kxBlue2">
+                    <div className="relative w-full h-full flex items-center text-sm">
+                        <div
+                            onClick={() => setActiveConfigTab('config-tab1')}
+                            className="w-full flex justify-center text-gray-300 cursor-pointer"
+                        >
+                            <button>
+                                Config UI
+                            </button>
+                        </div>
+                        <div
+                            onClick={() => setActiveConfigTab('config-tab2')}
+                            className="w-full flex justify-center text-gray-300 cursor-pointer"
+                        >
+                            <button>
+                                JSON
+                            </button>
+                        </div>
                     </div>
+
+                    <span
+                        className={`${activeConfigTab === 'config-tab1'
+                            ? 'left-1'
+                            : 'left-1/2 -ml-1'
+                            } py-2 text-white bg-kxBlue text-sm font-semibold flex items-center justify-center w-1/2 rounded transition-all duration-150 ease-linear top-[4px] absolute`}
+                    >
+                        {activeConfigTab === 'config-tab1'
+                            ? "Config UI"
+                            : "JSON"}
+                    </span>
                 </div>
 
-                <button onClick={() => handleConfigTabClick('config-tab2')} className={`${activeConfigTab === "config-tab2" ? "bg-kxBlue2 text-white" : ""} h-10 flex col-span-6 w-full text-center items-center justify-center`}>
-                    Profile Config JSON
-                </button>
             </div>
 
             <div className="config-tab-content">
