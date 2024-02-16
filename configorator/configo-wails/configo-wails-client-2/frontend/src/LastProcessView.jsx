@@ -35,7 +35,7 @@ const LastProcessView = (props) => {
 
   return (
     <div>
-      <div className="grid grid-cols-12 pl-4">
+      <div className="grid grid-cols-12">
 
         <div className="col-span-12 dark:bg-ghBlack3 py-2">
           <h1 className='flex text-gray-400 px-5 items-center font-semibold'>

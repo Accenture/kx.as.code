@@ -8,6 +8,7 @@ import { UpdateJsonFile } from "../wailsjs/go/main/App";
 import SettingsEthernetIcon from '@mui/icons-material/SettingsEthernet';
 import JSONConfigTabContent from './JSONConfigTabContent';
 import { ApplicationGroupCard } from './ApplicationGroupCard';
+import { ConfigSectionHeader } from './ConfigSectionHeader';
 
 
 export function ApplicationGroups() {
@@ -32,21 +33,44 @@ export function ApplicationGroups() {
         <div className='text-left mt-[90px]'>
             <div className='relative'>
                 {/* Config View Tabs */}
-                <div className='flex grid-cols-12 items-center relative bg-gray-200 dark:bg-ghBlack2 sticky top-[90px] z-10 h-[40px]'>
-                    <button onClick={() => handleConfigTabClick('config-tab1')} className={`${activeConfigTab === "config-tab1" ? "bg-kxBlue2 text-white" : ""} dark:text-white text-black h-10 flex col-span-6 w-full text-center items-center justify-center`}>
-                        Application Groups UI
-                    </button>
+                <div className='grid grid-cols-12 items-center dark:bg-ghBlack4 sticky top-[90px] z-10 p-1'>
+                    <div className='col-span-9'>
+                        <ConfigSectionHeader sectionTitle={"Application Groups"} SectionDescription={"More Details about this section here."} />
+                    </div>
+                    <div className='col-span-3 pr-10'>
+                        <div className="relative w-full h-[40px] p-1 bg-ghBlack3 rounded-md">
+                            <div className="relative w-full h-full flex items-center text-sm">
+                                <div
+                                    onClick={() => setActiveConfigTab('config-tab1')}
+                                    className="w-full flex justify-center text-gray-300 cursor-pointer"
+                                >
+                                    <button>
+                                        Config UI
+                                    </button>
+                                </div>
+                                <div
+                                    onClick={() => setActiveConfigTab('config-tab2')}
+                                    className="w-full flex justify-center text-gray-300 cursor-pointer"
+                                >
+                                    <button>
+                                        JSON
+                                    </button>
+                                </div>
+                            </div>
 
-                    {/* Centered icon */}
-                    <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-                        <div className="w-10 h-10 dark:bg-ghBlack4 bg-gray-300 items-center flex justify-center text-xl">
-                            <SettingsEthernetIcon fontSize='inherit' />
+                            <span
+                                className={`${activeConfigTab === 'config-tab1'
+                                    ? 'left-1 ml-0'
+                                    : 'left-1/2 -ml-1'
+                                    } py-1 text-white bg-ghBlack4 text-sm font-semibold flex items-center justify-center w-1/2 rounded transition-all duration-150 ease-linear top-[5px] absolute`}
+                            >
+                                {activeConfigTab === 'config-tab1'
+                                    ? "Config UI"
+                                    : "JSON"}
+                            </span>
                         </div>
                     </div>
 
-                    <button onClick={() => handleConfigTabClick('config-tab2')} className={`${activeConfigTab === "config-tab2" ? "bg-kxBlue2 text-white" : ""} h-10 flex col-span-6 w-full text-center items-center justify-center`}>
-                        Application Groups JSON
-                    </button>
                 </div>
             </div>
 
@@ -81,48 +105,41 @@ const UIConfigTabContent = ({ activeTab, handleTabClick, setJsonData }) => {
 
     return (
         <div id='config-ui-container' className=''>
-            <div className='px-5 py-3 dark:bg-ghBlack4'>
-                <h2 className='text-3xl font-semibold'>Application Groups</h2>
-                <p className='text-sm dark:text-gray-400 text-justify'>More details about this section here.</p>
+            <div className="flex items-center m-5">
+                {/* Search Input Field */}
+                <div className="group relative mr-3">
+                    <svg
+                        width="20"
+                        height="20"
+                        fill="currentColor"
+                        className="absolute left-3 top-1/2 -mt-2.5 text-gray-500 pointer-events-none group-focus-within:text-kxBlue"
+                        aria-hidden="true"
+                    >
+                        <path
+                            fillRule="evenodd"
+                            clipRule="evenodd"
+                            d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+                        />
+                    </svg>
+                    <input
+                        type="text"
+                        placeholder="Search Application Groups..."
+                        className="focus:ring-1 focus:ring-kxBlue focus:outline-none bg-ghBlack3 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 text-md border-0 shadow outline-none min-w-80 pl-10 rounded"
+                        onChange={(e) => {
+                            setSearchTerm(e.target.value);
+                        }}
+                    />
+                </div>
+                <div className='text-gray-400 text-sm'>Available Application Groups: {applicationGroupJson.length}</div>
             </div>
-
-            <div className="tab-content dark:text-white text-black pb-3 bg-ghBlack4">
-                <div className='text-left'>
-                    <div className="flex items-center m-3">
-                        {/* Search Input Field */}
-                        <div className="group relative mr-3">
-                            <svg
-                                width="20"
-                                height="20"
-                                fill="currentColor"
-                                className="absolute left-3 top-1/2 -mt-2.5 text-gray-500 pointer-events-none group-focus-within:text-kxBlue"
-                                aria-hidden="true"
-                            >
-                                <path
-                                    fillRule="evenodd"
-                                    clipRule="evenodd"
-                                    d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
-                                />
-                            </svg>
-                            <input
-                                type="text"
-                                placeholder="Search Application Groups..."
-                                className="focus:ring-1 focus:ring-kxBlue focus:outline-none bg-ghBlack px-3 py-2 placeholder-blueGray-300 text-blueGray-600 text-md border-0 shadow outline-none min-w-80 pl-10"
-                                onChange={(e) => {
-                                    setSearchTerm(e.target.value);
-                                }}
-                            />
-                        </div>
-                        <div className='text-gray-400 text-sm'>Available Application Groups: {applicationGroupJson.length}</div>
-                    </div>
-
-                    {/* Application Groups actions */}
-                    <div className="grid grid-cols-12 gap-1 dark:bg-ghBlack4">
-                            {isLoading ? (<div className="animate-pulse flex flex-col col-span-full">
-                            </div>) : drawApplicationGroupCards()}
-                        </div>
+            <div className="tab-content dark:text-white text-black bg-ghBlack3 grid grid-cols-12">
+                {/* Application Groups actions */}
+                <div className="dark:bg-ghBlack3 col-span-6 h-[400px] overflow-y-scroll p-5 pb-0">
+                    {isLoading ? (<div className="animate-pulse flex flex-col col-span-full">
+                    </div>) : drawApplicationGroupCards()}
                 </div>
 
+                <div className="col-span-6 bg-ghBlack2"></div>
             </div>
         </div>
     )

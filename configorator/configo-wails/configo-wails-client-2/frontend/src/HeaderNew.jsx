@@ -41,8 +41,8 @@ export function HeaderNew(props) {
     }, [props.open]);
 
     return (
-        <AppBar position="fixed" open={props.open} className="h-[90px] dark:bg-ghBlack2 bg-kxBlue" elevation={0}>
-            <Toolbar className="dark:bg-ghBlack2 bg-kxBlue">
+        <AppBar position="fixed" open={props.open} className="h-[90px] dark:bg-ghBlack3 bg-kxBlue" elevation={0}>
+            <Toolbar className="dark:bg-ghBlack3 bg-kxBlue">
                 <div className="">
                     <IconButton
                         color="inherit"
@@ -59,12 +59,12 @@ export function HeaderNew(props) {
                         <ChevronRightIcon />
                     </IconButton>
                 </div>
-                <div className="dark:bg-ghBlack2 bg-kxBlue p-4 pt-5 flex items-center justify-between w-full">
+                <div className="dark:bg-ghBlack3 bg-kxBlue p-4 pt-5 flex items-center justify-between w-full">
                     <div className="flex items-center">
                         <img src={logo} height={50} width={60} />
                         <div className="text-left">
                             <div className="text-sm">KX.AS.Code</div>
-                            <div className="font-semibold text-lg">Launcher <span className="text-sm font-normal ml-1 dark:bg-ghBlack4 bg-gray-200 p-0.5 px-1 text-black dark:text-white rounded">v.0.8.16</span></div>
+                            <div className="font-semibold text-lg">Launcher <span className="text-sm font-normal ml-1 dark:bg-ghBlack3 bg-gray-200 p-0.5 px-1 text-black dark:text-white rounded">v.0.8.16</span></div>
                         </div>
                     </div>
 

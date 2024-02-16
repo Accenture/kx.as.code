@@ -13,6 +13,7 @@ import StopCircleIcon from '@mui/icons-material/StopCircle';
 import Tooltip from '@mui/material/Tooltip';
 import ProcessOutputView from './ProcessOutputView';
 import LastProcessView from './LastProcessView';
+import { ConfigSectionHeader } from './ConfigSectionHeader';
 
 const TabMenuBuild = ({ buildOutputFileContent, isBuildStarted, toggleBuildStart }) => {
 
@@ -142,7 +143,7 @@ const BuildTabContent = () => {
 
             <div className='grid grid-cols-12 items-center dark:bg-ghBlack4 sticky top-[90px] z-10 p-1'>
                 <div className='col-span-9'>
-                    <ConfigSectionHeader />
+                <ConfigSectionHeader sectionTitle={"Build Configuration"} SectionDescription={"More Details about the Build process here."}/>
                 </div>
                 <div className='col-span-3 pr-10'>
                     <div className="relative w-full h-[40px] p-1 bg-ghBlack3 rounded-md">
@@ -177,7 +178,6 @@ const BuildTabContent = () => {
                         </span>
                     </div>
                 </div>
-
             </div>
 
             <div className="config-tab-content bg-ghBlack2">
@@ -197,20 +197,9 @@ const UIConfigTabContent = ({ activeTab, handleTabClick, handleConfigChange, isB
         </div> : <></>
 );
 
-const ConfigSectionHeader = ({ }) => {
-
-    return (
-        <div className='px-5 py-3'>
-            <h2 className='text-3xl font-semibold text-left'>Build Config</h2>
-            <p className='text-sm dark:text-gray-400 text-justify'>More Details about the Build process here.</p>
-        </div>
-    )
-
-};
-
 const BuildContent = ({ handleConfigChange }) => {
     return (
-        <div className='text-left pl-4'>
+        <div className='text-left'>
             <div className='px-5 py-3 dark:bg-ghBlack3 grid grid-cols-12'>
                 <div className='col-span-6'>
                     <TextField

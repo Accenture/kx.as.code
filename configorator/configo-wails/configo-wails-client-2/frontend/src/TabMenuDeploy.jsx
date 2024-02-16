@@ -27,6 +27,7 @@ import applicationGroupJson from './assets/templates/applicationGroups.json';
 import { Button } from '@mui/material';
 import Remove from '@mui/icons-material/Remove';
 import ClearIcon from '@mui/icons-material/Clear';
+import { ConfigSectionHeader } from './ConfigSectionHeader';
 
 
 const TabMenuDeploy = () => {
@@ -155,38 +156,42 @@ const DeployTabContent = () => {
 
     return (
         <div className='relative'>
-            <div className='flex grid-cols-12 items-center dark:bg-kxBlue2 sticky top-[90px] z-10 p-2'>
+            <div className='grid grid-cols-12 items-center dark:bg-ghBlack4 sticky top-[90px] z-10 p-1'>
+                <div className='col-span-9'>
+                    <ConfigSectionHeader sectionTitle={"Deployment Configuration"} SectionDescription={"More Details about the Build process here."} />
+                </div>
+                <div className='col-span-3 pr-10'>
+                    <div className="relative w-full h-[40px] p-1 bg-ghBlack3 rounded-md">
+                        <div className="relative w-full h-full flex items-center text-sm">
+                            <div
+                                onClick={() => setActiveConfigTab('config-tab1')}
+                                className="w-full flex justify-center text-gray-300 cursor-pointer"
+                            >
+                                <button>
+                                    Config UI
+                                </button>
+                            </div>
+                            <div
+                                onClick={() => setActiveConfigTab('config-tab2')}
+                                className="w-full flex justify-center text-gray-300 cursor-pointer"
+                            >
+                                <button>
+                                    JSON
+                                </button>
+                            </div>
+                        </div>
 
-                <div className="relative w-full rounded-md h-[45px] p-1 bg-kxBlue2">
-                    <div className="relative w-full h-full flex items-center text-sm">
-                        <div
-                            onClick={() => setActiveConfigTab('config-tab1')}
-                            className="w-full flex justify-center text-gray-300 cursor-pointer"
+                        <span
+                            className={`${activeConfigTab === 'config-tab1'
+                                ? 'left-1 ml-0'
+                                : 'left-1/2 -ml-1'
+                                } py-1 text-white bg-ghBlack4 text-sm font-semibold flex items-center justify-center w-1/2 rounded transition-all duration-150 ease-linear top-[5px] absolute`}
                         >
-                            <button>
-                                Config UI
-                            </button>
-                        </div>
-                        <div
-                            onClick={() => setActiveConfigTab('config-tab2')}
-                            className="w-full flex justify-center text-gray-300 cursor-pointer"
-                        >
-                            <button>
-                                JSON
-                            </button>
-                        </div>
+                            {activeConfigTab === 'config-tab1'
+                                ? "Config UI"
+                                : "JSON"}
+                        </span>
                     </div>
-
-                    <span
-                        className={`${activeConfigTab === 'config-tab1'
-                            ? 'left-1'
-                            : 'left-1/2 -ml-1'
-                            } py-2 text-white bg-kxBlue text-sm font-semibold flex items-center justify-center w-1/2 rounded transition-all duration-150 ease-linear top-[4px] absolute`}
-                    >
-                        {activeConfigTab === 'config-tab1'
-                            ? "Config UI"
-                            : "JSON"}
-                    </span>
                 </div>
 
             </div>
@@ -202,7 +207,6 @@ const DeployTabContent = () => {
 const UIConfigTabContent = ({ activeTab, handleTabClick, handleConfigChange, handleUsersChange, isBuild }) => (
     <div id='config-ui-container' className=''>
         <div className="flex dark:bg-ghBlack3 bg-gray-300 text-sm text-black dark:text-white">
-
             <TabButton buttonText={"Profile"} tabId={"tab1"} activeTab={activeTab} handleTabClick={handleTabClick} />
             <TabButton buttonText={"Parameters & Mode"} tabId={"tab2"} activeTab={activeTab} handleTabClick={handleTabClick} />
             <TabButton buttonText={"Resources"} tabId={"tab3"} activeTab={activeTab} handleTabClick={handleTabClick} />
@@ -231,7 +235,7 @@ const TabButton = ({ buttonText, tabId, activeTab, handleTabClick }) => {
     return (
         <button
             onClick={() => handleTabClick(tabId)}
-            className={` ${activeTab === tabId ? 'border-kxBlue border-b-3 bg-ghBlack4' : 'broder border-ghBlack3 border-b-3'} p-3 py-1`}
+            className={` ${activeTab === tabId ? 'border-kxBlue border-b-3 bg-ghBlack4' : 'broder border-ghBlack3 border-b-3'} p-3 px-5 py-1`}
         >
             {buttonText}
         </button>
@@ -816,28 +820,40 @@ const TabContent8 = ({ handleConfigChange }) => {
 
             <div className='pl-5 dark:bg-ghBlack2 bg-gray-300 grid grid-cols-12'>
                 <div className='col-span-6 pb-5 pr-5'>
-                    <TextField
-                        variant="outlined"
-                        size="small"
-                        margin="normal"
-                        placeholder='Search...'
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        InputProps={{
-                            endAdornment: (
-                                <InputAdornment position="end">
-                                    {searchTerm !== "" ? <IconButton
-                                        size='small'
-                                        onClick={handleClearSearch}
-                                    >
-                                        <ClearIcon fontSize='inherit' />
-                                    </IconButton> : <IconButton size='small' disabled className='opacity-0'>
-                                        <ClearIcon fontSize='inherit' />
-                                    </IconButton>}
-                                </InputAdornment>
-                            )
-                        }}
-                    />
+
+                    {/* Search Input Field */}
+                    <div className="group relative mr-3 my-3">
+                        <svg
+                            width="20"
+                            height="20"
+                            fill="currentColor"
+                            className="absolute left-3 top-1/2 -mt-2.5 text-gray-500 pointer-events-none group-focus-within:text-kxBlue"
+                            aria-hidden="true"
+                        >
+                            <path
+                                fillRule="evenodd"
+                                clipRule="evenodd"
+                                d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+                            />
+                        </svg>
+                        <input
+                            value={searchTerm}
+                            type="text"
+                            placeholder="Search Application Groups..."
+                            className="focus:ring-1 focus:ring-kxBlue focus:outline-none bg-ghBlack3 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 text-md border-0 shadow outline-none min-w-80 pl-10 rounded"
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                        />
+                        {/* Input Adornment for Second Input Field (Clear Button) */}
+                        {searchTerm !== "" && (
+                            <IconButton
+                                size="small"
+                                onClick={handleClearSearch}
+                                style={{ position: 'absolute', left: '280px', top: '50%', transform: 'translateY(-50%)' }}
+                            >
+                                <ClearIcon />
+                            </IconButton>
+                        )}
+                    </div>
 
                     {/* Application Groups Container */}
                     <div className="h-[320px] overflow-y-auto">
