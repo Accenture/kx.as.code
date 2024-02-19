@@ -9,7 +9,7 @@
 
 $scriptParam = ($MyInvocation.Line -replace ('^.*' + [regex]::Escape($MyInvocation.InvocationName)) -split '[;|]')[0].Trim()
 
-$Log_Level = "info"
+$Log_Level = "debug"
 
 # List all required version prerequisites. These are the versions this script has been tested with.
 # In particular Mac OpenSSL will cause issues if not the correct version
