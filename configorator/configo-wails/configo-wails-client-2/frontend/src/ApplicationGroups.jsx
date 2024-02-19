@@ -73,7 +73,7 @@ export function ApplicationGroups() {
 
                 </div>
             </div>
-
+            <div className='bg-ghBlack2 h-1'></div>
             <div className="config-tab-content">
                 {activeConfigTab === 'config-tab1' && <UIConfigTabContent activeTab={activeTab} handleTabClick={handleTabClick} setJsonData={setJsonData} />}
                 {activeConfigTab === 'config-tab2' && <JSONConfigTabContent jsonData={jsonData} fileName={"applicationGroups.json"} />}
@@ -161,6 +161,7 @@ const UIConfigTabContent = ({ activeTab, handleTabClick, setJsonData }) => {
                     </div>
                 </div>
             </div>
+            <div className='bg-ghBlack2 h-1'></div>
         </div>
     )
 };

@@ -141,14 +141,6 @@ func (a *App) ExeBuild() string {
 
 	switch runtime.GOOS {
 	case "darwin", "linux":
-		// currentUser, userErr := user.Current()
-		// if userErr != nil {
-		// 	log.Printf("Failed to get user information: %v", userErr)
-		// 	return fmt.Sprintf("An error occurred while getting user information: %v", userErr)
-		// }
-
-		// packerBinaryPath = currentUser.HomeDir + "/kxascode-launcher/packer"
-
 		writeStage(2, "Download Packer")
 		a.SetCurrentBuildStage("stage 2")
 		time.Sleep(1 * time.Second)
@@ -183,7 +175,6 @@ func (a *App) ExeBuild() string {
 	a.SetCurrentBuildStage("stage 4")
 	time.Sleep(1 * time.Second)
 
-	// a.cmd = exec.Command(packerBinaryPath, "version")
 	a.cmd = exec.Command(packerBinaryPath, "build", "-force",
 		"-on-error=abort",
 		"-only", "kx-main-virtualbox",
@@ -283,27 +274,6 @@ func downloadPackerBinary(destination string) error {
 	return nil
 }
 
-func downloadFile(url, destination string) error {
-	resp, err := http.Get(url)
-	if err != nil {
-		return err
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		return fmt.Errorf("failed to download: %s", resp.Status)
-	}
-
-	out, err := os.Create(destination)
-	if err != nil {
-		return err
-	}
-	defer out.Close()
-
-	_, err = io.Copy(out, resp.Body)
-	return err
-}
-
 func unzipFile(source, destination string) error {
 	r, err := zip.OpenReader(source)
 	if err != nil {
@@ -339,20 +309,6 @@ func unzipFile(source, destination string) error {
 	}
 
 	return nil
-}
-
-func isPrintable(r rune) bool {
-	return r >= 32 && r < 127
-}
-
-func filterPrintable(s string) string {
-	var filtered string
-	for _, r := range s {
-		if isPrintable(r) {
-			filtered += string(r)
-		}
-	}
-	return filtered
 }
 
 func (a *App) StopExe() {

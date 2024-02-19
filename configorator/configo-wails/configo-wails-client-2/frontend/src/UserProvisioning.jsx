@@ -66,7 +66,7 @@ const UserProvisioning = () => {
                     </div>
                 </div>
             </div>
-
+            <div className='bg-ghBlack2 h-1'></div>
             <div className="config-tab-content">
                 {activeConfigTab === 'config-tab1' && <UIConfigTabContent activeTab={activeTab} handleTabClick={handleTabClick} setJsonData={setJsonData} />}
                 {activeConfigTab === 'config-tab2' && <JSONConfigTabContent jsonData={jsonData} fileName={"users.json"} />}
@@ -94,11 +94,9 @@ const UIConfigTabContent = ({ activeTab, handleTabClick, setJsonData }) => (
                 Additional Users
             </button>
         </div>
-
         <div className="tab-content dark:text-white text-black">
             {activeTab === 'tab1' && <TabContent1 setJsonData={setJsonData} />}
             {activeTab === 'tab2' && <TabContent2 />}
-
         </div>
     </div>
 );
@@ -181,9 +179,6 @@ const TabContent1 = ({ setJsonData }) => {
             </div>
             <div className='px-5 py-3 dark:bg-ghBlack3 bg-gray-300 grid grid-cols-12'>
                 <div className='col-span-6'>
-                    {/* <div className='dark:text-gray-400 py-1 dark:bg-ghBlack3 p-2 my-2'>
-                        Owner UserId:  <span className='font-semibold'>{generateUsername(firstName, surname)}</span></div> */}
-
                     <TextField
                         label="E-Mail"
                         fullWidth
@@ -233,20 +228,7 @@ const TabContent1 = ({ setJsonData }) => {
                         <MenuItem value="gb">English (GB)</MenuItem>
                         <MenuItem value="french">French</MenuItem>
                         <MenuItem value="spanish">Spanish</MenuItem>
-
                     </TextField>
-
-                    {/* <TextField
-                        label="Role"
-                        fullWidth
-                        variant="outlined"
-                        size="small"
-                        margin="normal"
-                        value={usersJSON.config.owner["role"]}
-                        onChange={(e) => { handleConfigChange(e.target.value, "config.owner.role") }}
-                    >
-                    </TextField> */}
-
                 </div>
             </div>
         </div>

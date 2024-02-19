@@ -63,7 +63,7 @@ const CustomVariables = () => {
 
 
     return (
-        <div className='text-left mt-[90px]'>
+        <div className='text-left mt-[67px]'>
             <div className='grid grid-cols-12 items-center dark:bg-ghBlack4 sticky top-[67px] z-10 p-1'>
                 <div className='col-span-9'>
                     <ConfigSectionHeader sectionTitle={"Custom Global Variables"} SectionDescription={"Set key/value pairs that can be used by solutions when they are being installed."} />
@@ -101,11 +101,10 @@ const CustomVariables = () => {
                         </span>
                     </div>
                 </div>
-
             </div>
-
+            <div className='bg-ghBlack2 h-1'></div>
             <div className="config-tab-content">
-                {activeConfigTab === 'config-tab1' && <UIConfigTabContent  handleConfigChange={handleConfigChange} />}
+                {activeConfigTab === 'config-tab1' && <UIConfigTabContent handleConfigChange={handleConfigChange} />}
                 {activeConfigTab === 'config-tab2' && <JSONConfigTabContent jsonData={jsonData} fileName={"customVariables.json"} />}
             </div>
 

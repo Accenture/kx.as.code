@@ -2,6 +2,12 @@ import React, { useState, useEffect, useCallback } from 'react';
 import TextField from '@mui/material/TextField';
 import MenuItem from '@mui/material/MenuItem';
 import configJSON from './assets/config/build/darwin-linux/kx-main-local-profiles.json';
+import configJSONmainVirtualbox from './assets/config/build/darwin-linux/kx-main-local-profiles.json';
+import configJSONnodeVirtualbox from './assets/config/build/darwin-linux/kx-main-local-profiles.json';
+import configJSONmainParallels from './assets/config/build/darwin-linux/kx-main-local-profiles.json';
+import configJSONnodeParallels from './assets/config/build/darwin-linux/kx-main-local-profiles.json';
+import configJSONmainVMWare from './assets/config/build/darwin-linux/kx-main-local-profiles.json';
+import configJSONnodeVMWare from './assets/config/build/darwin-linux/kx-main-local-profiles.json';
 import { useNavigate } from 'react-router-dom';
 import PlayCircleIcon from '@mui/icons-material/PlayCircle';
 import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
@@ -25,8 +31,6 @@ const TabMenuBuild = ({ buildOutputFileContent, isBuildStarted, toggleBuildStart
     return (
         <div className='mt-[67px]'>
             {isBuildStarted ? <ProcessOutputView processType={"build"} logOutput={buildOutputFileContent} /> : <BuildTabContent />}
-
-            {/* <BuildExecuteButton /> */}
         </div>
     );
 };
@@ -138,7 +142,7 @@ const BuildTabContent = () => {
                     </div>
                 </div>
             </div>
-
+            <div className='bg-ghBlack2 h-1'></div>
             <div className="config-tab-content bg-ghBlack2">
                 {activeConfigTab === 'config-tab1' && <UIConfigTabContent isBuild={isBuild} handleTabClick={handleTabClick} handleConfigChange={handleConfigChange} />}
                 {activeConfigTab === 'config-tab2' && <JSONConfigTabContent jsonData={jsonData} fileName={"kx-main-local-profiles.json"} />}
@@ -177,23 +181,23 @@ const BuildContent = () => {
             }
         };
 
-        // Check installation status for each tool
         checkToolInstallation('virtualbox');
         checkToolInstallation('parallels');
         checkToolInstallation('vmware-desktop');
     }, []);
 
     const getInstallationMark = (toolName) => (
-        <div className='flex items-center pt-5 pl-2'>
+        <div className='flex items-center mt-3.5 ml-2 text-sm capitalize bg-ghBlack4 p-2 rounded'>
             {installationStatus[toolName] ? (
-                <span className='text-green-500'>
+                <span className='text-green-500 flex items-center px-1'>
                     <CheckCircleIcon />
-                    <span className='ml-1'>{toolName} is installed.</span>
+                    <span className='ml-1'>{toolName} installed.</span>
                 </span>
             ) : (
-                <span className='text-red-500'>
+                <span className='text-red-500 flex items-center'>
                     <ErrorIcon />
-                    <span className='ml-1'>{toolName} is not installed.</span>
+                    <span className='ml-1'>{toolName} not installed.</span>
+                    {/* <button className='ml-2 p-1 px-3 bg-kxBlue rounded text-white font-semibold text-xs'>Install</button> */}
                 </span>
             )}
         </div>
@@ -217,6 +221,20 @@ const BuildContent = () => {
                         <MenuItem value="parallels">Parallels</MenuItem>
                         <MenuItem value="vmware-desktop">VMWare Desktop</MenuItem>
                     </TextField>
+
+                    <div>
+                        <select
+                            value={selectedVM}
+                            onChange={(e) => setSelectedVM(e.target.value)}
+                            className="bg-blue-500 text-white border-none outline-none px-4 py-3 rounded-5 focus:ring focus:ring-blue-200"
+                        >
+                            <option value="" disabled>Select a value...</option>
+                            <option value="virtualbox">Option 1</option>
+                            <option value="vmware-desktop">Option 2</option>
+                            <option value="option3">Option 3</option>
+                        </select>
+                    </div>
+
                     <TextField
                         label="Node Type"
                         select
@@ -224,8 +242,8 @@ const BuildContent = () => {
                         variant="outlined"
                         size="small"
                         margin="normal"
-                        value="main" // Placeholder value; adjust as needed
-                        onChange={(e) => { /* handle onChange as needed */ }}
+                        value="main"
+                        onChange={(e) => { }}
                     >
                         <MenuItem value="main">Main</MenuItem>
                         <MenuItem value="node">Node</MenuItem>

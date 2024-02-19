@@ -13,7 +13,7 @@ import JSONConfigTabContent from './JSONConfigTabContent';
 import GlobalVariablesTable from './GlobalVariablesTable';
 import PersonAddAltIcon from '@mui/icons-material/PersonAddAlt';
 import AddIcon from '@mui/icons-material/Add';
-import { UpdateJsonFile } from "../wailsjs/go/main/App";
+import { UpdateJsonFile, IsVirtualizationToolInstalled } from "../wailsjs/go/main/App";
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import IconButton from '@mui/material/IconButton';
@@ -28,6 +28,8 @@ import { Button } from '@mui/material';
 import Remove from '@mui/icons-material/Remove';
 import ClearIcon from '@mui/icons-material/Clear';
 import { ConfigSectionHeader } from './ConfigSectionHeader';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import ErrorIcon from '@mui/icons-material/Error';
 
 
 const TabMenuDeploy = () => {
@@ -172,13 +174,14 @@ const DeployTabContent = () => {
                         </span>
                     </div>
                 </div>
-
             </div>
 
+            <div className='bg-ghBlack2 h-1'></div>
             <div className="config-tab-content">
                 {activeConfigTab === 'config-tab1' && <UIConfigTabContent activeTab={activeTab} handleTabClick={handleTabClick} handleConfigChange={handleConfigChange} handleUsersChange={handleUsersChange} />}
                 {activeConfigTab === 'config-tab2' && <JSONConfigTabContent jsonData={jsonData} fileName={"profile-config.json"} />}
             </div>
+            <div className='bg-ghBlack2 h-1'></div>
         </div>
     );
 }
@@ -222,6 +225,48 @@ const TabButton = ({ buttonText, tabId, activeTab, handleTabClick }) => {
 }
 
 const TabContent1 = ({ handleConfigChange }) => {
+    const [installationStatus, setInstallationStatus] = useState({
+        virtualbox: false,
+        parallels: false,
+        'vmware-desktop': false,
+    });
+
+    const [selectedVM, setSelectedVM] = useState("virtualbox");
+
+    const getInstallationMark = (toolName) => (
+        <div className='flex items-center mt-3.5 ml-2 text-sm capitalize bg-ghBlack4 p-2 rounded'>
+            {installationStatus[toolName] ? (
+                <span className='text-green-500 flex items-center px-1'>
+                    <CheckCircleIcon />
+                    <span className='ml-1'>{toolName} installed.</span>
+                </span>
+            ) : (
+                <span className='text-red-500 flex items-center'>
+                    <ErrorIcon />
+                    <span className='ml-1'>{toolName} not installed.</span>
+                    {/* <button className='ml-2 p-1 px-3 bg-kxBlue rounded text-white font-semibold text-xs'>Install</button> */}
+                </span>
+            )}
+        </div>
+    );
+
+    useEffect(() => {
+        const checkToolInstallation = async (toolName) => {
+            try {
+                const result = await IsVirtualizationToolInstalled(toolName);
+                setInstallationStatus(prevStatus => ({
+                    ...prevStatus,
+                    [toolName]: result,
+                }));
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        };
+
+        checkToolInstallation('virtualbox');
+        checkToolInstallation('parallels');
+        checkToolInstallation('vmware-desktop');
+    }, []);
 
     return (
         <div className='text-left'>
@@ -239,6 +284,7 @@ const TabContent1 = ({ handleConfigChange }) => {
                         size="small"
                         margin="normal"
                         defaultValue="virtualbox"
+                        onChange={(e) => setSelectedVM(e.target.value)}
                     >
                         <MenuItem value="virtualbox">Virtualbox</MenuItem>
                         <MenuItem value="parallels">Parallels</MenuItem>
@@ -274,6 +320,11 @@ const TabContent1 = ({ handleConfigChange }) => {
                         <MenuItem value="k3s">K3s</MenuItem>
                     </TextField>
                 </div>
+                <div className='col-span-6'>
+                    <div className='flex'>
+                        {getInstallationMark(selectedVM)}
+                    </div>
+                </div>
             </div>
         </div>
     )
@@ -296,7 +347,7 @@ const TabContent2 = ({ handleConfigChange }) => {
                     {/* Set the parameters to define the internal DNS of KX.AS.CODE. Each new service that is provisioned in KX.AS.CODE will have the fully qualified domain name (FQDN) of &lt;service_name&gt;, &lt;team_name&gt;. &lt;base_domain&gt;. The username and password fields determine the base admin user password. It is possible to add additional users. In the last section, you determine if running in standalone or cluster mode. Standalone mode starts up one main node only. This is recommended for any physical environment with less than 16G ram. If enable worker nodes, then you can also choose to have workloads running on both main and worker nodes, or only on worker nodes. */}
                 </p>
             </div>
-            <div className='px-5 py-3 dark:bg-ghBlack2 bg-gray-300 grid grid-cols-12'>
+            <div className='px-5 py-3 dark:bg-ghBlack3 bg-gray-300 grid grid-cols-12'>
                 <div className='col-span-6'>
                     <h2 className='text-xl font-semibold dark:text-gray-400'>General Profile Parameters</h2>
 
@@ -395,10 +446,9 @@ const TabContent3 = ({ handleConfigChange }) => (
             <h2 className='text-3xl font-semibold'>VM Properties</h2>
             <p className='text-sm dark:text-gray-400 text-justify'>Define how many physical resources you wish to allocate to the KX.AS.CODE virtual machines.</p>
         </div>
-        <div className='px-5 py-3 dark:bg-ghBlack2 bg-gray-300 grid grid-cols-12'>
+        <div className='px-5 py-3 dark:bg-ghBlack3 bg-gray-300 grid grid-cols-12'>
             <div className='col-span-6'>
                 <h2 className='text-xl font-semibold dark:text-gray-400'>KX-Main Parameters</h2>
-                {/* <p className='text-sm text-gray-400'>KX-Main nodes provide two core functions - Kubernetes master services as well as the desktop environment for easy access to deployed tools and documentation. Only the first KX-Main node hosts both the desktop environment, and the Kubernetes Master services. Subsequent KX-Main nodes host the Kubernetes Master services only.</p> */}
                 <TextField
                     label="KX Main Nodes"
                     type='number'
@@ -490,7 +540,7 @@ const TabContent4 = ({ handleConfigChange }) => (
             <p className='text-sm dark:text-gray-400 text-justify'>Define the amount of storage allocated to KX.AS.CODE. There are two types - (1) fast local, but not portable storage, eg. tied to a host, and (2) slower, but portable network storage.</p>
 
         </div>
-        <div className='px-5 py-3 dark:bg-ghBlack2 bg-gray-300 grid grid-cols-12'>
+        <div className='px-5 py-3 dark:bg-ghBlack3 bg-gray-300 grid grid-cols-12'>
             <div className='col-span-6'>
                 <h2 className='text-xl font-semibold dark:text-gray-400'>Local Volumes</h2>
                 {/* <p className='text-sm text-gray-400 text-justify'>Provision network storage with the set amount. The storage volume will be provisioned as a dedicated virtual drive in the virtual machine.</p> */}
@@ -587,7 +637,7 @@ const TabContent5 = ({ handleConfigChange }) => {
                 </p>
             </div>
 
-            <div className='px-5 py-3 dark:bg-ghBlack2 bg-gray-300 grid grid-cols-12'>
+            <div className='px-5 py-3 dark:bg-ghBlack3 bg-gray-300 grid grid-cols-12'>
                 <div className='col-span-6'>
                     <TextField
                         label="E-Mail"
@@ -639,7 +689,7 @@ const TabContent6 = ({ handleConfigChange }) => {
                 </p>
             </div>
 
-            <div className='px-5 py-3 dark:bg-ghBlack2 bg-gray-300 grid grid-cols-12'>
+            <div className='px-5 py-3 dark:bg-ghBlack3 bg-gray-300 grid grid-cols-12'>
                 <div className='col-span-6'>
                     <TextField
                         label="Dockerhub E-Mail"
@@ -690,7 +740,7 @@ const TabContent7 = ({ handleConfigChange }) => {
                 </p>
             </div>
 
-            <div className='px-5 py-3 dark:bg-ghBlack2 bg-gray-300 grid grid-cols-12'>
+            <div className='px-5 py-3 dark:bg-ghBlack3 bg-gray-300 grid grid-cols-12'>
                 <div className='col-span-6'>
                     <TextField
                         label="HTTP Proxy"
@@ -797,11 +847,10 @@ const TabContent8 = ({ handleConfigChange }) => {
                 </p>
             </div>
 
-            <div className='pl-5 dark:bg-ghBlack2 bg-gray-300 grid grid-cols-12'>
-                <div className='col-span-6 pr-5'>
+            <div className='dark:bg-ghBlack3 bg-gray-300 grid grid-cols-12'>
+                <div className='col-span-6 pr-2'>
 
-                    {/* Search Input Field */}
-                    <div className="group relative mr-3 my-3">
+                    <div className="group relative mr-3 my-3 ml-3">
                         <svg
                             width="20"
                             height="20"
@@ -819,10 +868,10 @@ const TabContent8 = ({ handleConfigChange }) => {
                             value={searchTerm}
                             type="text"
                             placeholder="Search Application Groups..."
-                            className="focus:ring-1 focus:ring-kxBlue focus:outline-none bg-ghBlack3 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 text-md border-0 shadow outline-none min-w-80 pl-10 rounded"
+                            className="focus:ring-1 focus:ring-kxBlue focus:outline-none bg-ghBlack4 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 text-md border-0 shadow outline-none min-w-80 pl-10 rounded"
                             onChange={(e) => setSearchTerm(e.target.value)}
                         />
-                        {/* Input Adornment for Second Input Field (Clear Button) */}
+
                         {searchTerm !== "" && (
                             <IconButton
                                 size="small"
@@ -856,7 +905,7 @@ const TabContent8 = ({ handleConfigChange }) => {
                         {
                             selectedApplicationGroups.length == 0 ? <div className='text-gray-500 text-sm pr-5'>No application groups selected. Search and select application groups listed in the left section.</div> :
                                 selectedApplicationGroups.map((appGroup) => {
-                                    return <div id="item" className='px-5 py-2 bg-ghBlack4 rounded mb-1 flex justify-between mr-2 items-center'>
+                                    return <div id="item" className='px-5 py-2 bg-ghBlack2 rounded mb-1 flex justify-between mr-2 items-center'>
                                         <div>
                                             <div className=''>{appGroup}</div>
                                             <div className='text-sm uppercase text-gray-400'>{findGroupByTitle(appGroup).action_queues.install[0].install_folder}</div>
@@ -885,7 +934,7 @@ const ApplicationGroupListItem = ({ appGroup, key, handleAddButtonClick, handleR
     }, []);
 
     return (
-        <div key={key} className={`w-full rounded py-2 px-6 bg-ghBlack4 items-center flex justify-between mb-1`}>
+        <div key={key} className={`w-full py-2 px-6 bg-ghBlack4 items-center flex justify-between mb-1`}>
             <div>
                 <div className=''>{appGroup.title}</div>
                 <div className='text-sm uppercase text-gray-400'>{appGroup.action_queues.install[0].install_folder}</div>
