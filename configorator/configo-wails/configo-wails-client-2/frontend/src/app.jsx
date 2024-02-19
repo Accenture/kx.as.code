@@ -126,10 +126,10 @@ export function App() {
     const toggleBuildStart = useCallback(() => {
         setIsBuildStarted((prevIsBuildStarted) => !prevIsBuildStarted);
         if (isBuildStarted) {
-            toast("Build stopped.")
+            toast("Build stopped.", { icon: <PrecisionManufacturingIcon/> })
             StopExe();
         } else {
-            toast("Build started.")
+            toast("Build started.",{ icon: <PrecisionManufacturingIcon/> })
             ExeBuild().then(result => {
                 setBuildOutputFileContent(result);
             });
@@ -227,7 +227,7 @@ export function App() {
                                 <Route path="/console-output" element={<ConsoleOutput />} />
                             </Routes>
                             <Toaster
-                                expand visibleToasts={5}
+                                expand visibleToasts={3}
                                 toastOptions={{
                                     style: {
                                         background: "#161b22",

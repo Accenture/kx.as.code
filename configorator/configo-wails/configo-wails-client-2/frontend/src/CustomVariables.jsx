@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import TextField from '@mui/material/TextField';
-import configJSON from './assets/config/config.json';
 import customVariablesJSON from './assets/config/customVariables.json';
 import GlobalVariablesTable from './GlobalVariablesTable';
 import AddIcon from '@mui/icons-material/Add';
@@ -25,7 +24,7 @@ const CustomVariables = () => {
 
         if (os == "darwin-linux") {
             if (nodeType == "main") {
-                parsedData = { ...configJSON };
+                parsedData = { ...customVariablesJSON };
             } else {
                 console.error("nodeType not defined.")
             }
@@ -54,7 +53,7 @@ const CustomVariables = () => {
     }
 
     const formatJSONData = () => {
-        const jsonString = JSON.stringify(configJSON, null, 2);
+        const jsonString = JSON.stringify(customVariablesJSON, null, 2);
         setJsonData(jsonString);
     }
 
