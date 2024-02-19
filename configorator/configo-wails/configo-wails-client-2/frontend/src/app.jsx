@@ -32,6 +32,9 @@ import TipsAndUpdatesIcon from '@mui/icons-material/TipsAndUpdates';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import MenuIcon from '@mui/icons-material/Menu';
+import { Toaster } from 'sonner';
+import { toast } from 'sonner';
+
 
 const openedMixin = (theme) => ({
     width: drawerWidth,
@@ -96,12 +99,10 @@ export function App() {
 
     const handleDrawerOpen = () => {
         setOpen(true);
-        console.log("drawer open click")
     };
 
     const handleDrawerClose = () => {
         setOpen(false);
-        console.log("drawer close click")
     };
 
     const handleDarkModeToggle = () => {
@@ -120,15 +121,15 @@ export function App() {
                 main: '#5a86ff',
             }
         }
-        // direction: 'rtl'
     });
 
     const toggleBuildStart = useCallback(() => {
         setIsBuildStarted((prevIsBuildStarted) => !prevIsBuildStarted);
-
         if (isBuildStarted) {
+            toast("Build stopped.")
             StopExe();
         } else {
+            toast("Build started.")
             ExeBuild().then(result => {
                 setBuildOutputFileContent(result);
             });
@@ -166,14 +167,6 @@ export function App() {
         };
 
         window.addEventListener('popstate', handleLocationChange);
-
-        // buildOutput Monitoring
-        // if (isBuildStarted) {
-        //     const id = setInterval(() => {
-        //         fetchBuildOutput();
-        //     }, 1000);
-        //     setIntervalId(id);
-        // }
 
         fetchFileContentNew(); // Initial fetch
 
@@ -215,15 +208,14 @@ export function App() {
                                 <MenuItem menuItemName={"build"} slug={slug} isBuildStarted={isBuildStarted} />
                                 <MenuItem menuItemName={"deploy"} slug={slug} />
                                 {/* Separator */}
-                                <div className="w-full h-[5px] bg-ghBlack4 mt-0 mb-2"></div>
+                                <div className="w-full h-[3px] bg-ghBlack4 mt-0 mb-2"></div>
                                 <MenuItem menuItemName={"application-groups"} slug={slug} />
                                 <MenuItem menuItemName={"user-provisioning"} slug={slug} />
                                 <MenuItem menuItemName={"custom-variables"} slug={slug} />
-                            </List> 
+                            </List>
                         </Drawer>
                         <Box component="main" sx={{ flexGrow: 1, p: 0 }} className="text-black dark:text-white">
-                            <HeaderNew drawerWidth={drawerWidth} handleDrawerOpen={handleDrawerOpen} open={open} handleDarkModeToggle={handleDarkModeToggle} isDarkMode={isDarkMode} />
-
+                            <HeaderNew drawerWidth={drawerWidth} handleDrawerOpen={handleDrawerOpen} open={open} handleDarkModeToggle={handleDarkModeToggle} isDarkMode={isDarkMode} toggleBuildStart={toggleBuildStart} isBuildStarted={isBuildStarted} />
                             <Routes>
                                 {/* <Route exact path="/" element={<TabMenu />} /> */}
                                 <Route path="/home" element={<Home />} />
@@ -234,7 +226,18 @@ export function App() {
                                 <Route path="/custom-variables" element={<CustomVariables />} />
                                 <Route path="/console-output" element={<ConsoleOutput />} />
                             </Routes>
-
+                            <Toaster
+                                expand visibleToasts={5}
+                                toastOptions={{
+                                    style: {
+                                        background: "#161b22",
+                                        borderRadius: "5px",
+                                        borderWidth: "0",
+                                        color: "white",
+                                        boxShadow: "none"
+                                    },
+                                    className: '',
+                                }} />
                         </Box>
                     </Box>
                 </ThemeProvider>

@@ -5,14 +5,146 @@ import customVariablesJSON from './assets/config/customVariables.json';
 import GlobalVariablesTable from './GlobalVariablesTable';
 import AddIcon from '@mui/icons-material/Add';
 import { UpdateJsonFile } from "../wailsjs/go/main/App";
+import { ConfigSectionHeader } from './ConfigSectionHeader';
+import JSONConfigTabContent from './JSONConfigTabContent';
 
 const CustomVariables = () => {
-    const [rows, setRows] = React.useState([]);
+    const [activeConfigTab, setActiveConfigTab] = useState('config-tab1');
+    const [jsonData, setJsonData] = useState('');
+
+    const handleConfigChange = (value, key) => {
+        let selectedValue;
+
+        if (!isNaN(value)) {
+            selectedValue = parseFloat(value);
+        } else {
+            selectedValue = value;
+        }
+
+        let parsedData;
+
+        if (os == "darwin-linux") {
+            if (nodeType == "main") {
+                parsedData = { ...configJSON };
+            } else {
+                console.error("nodeType not defined.")
+            }
+        } else {
+            console.error("os not defined.")
+        }
+
+        setNestedValue(parsedData, key, selectedValue)
+
+        const updatedJsonString = JSON.stringify(parsedData, null, 2);
+
+        setJsonData(updatedJsonString);
+        UpdateJsonFile(updatedJsonString);
+    };
+
+    function setNestedValue(obj, key, value) {
+        const keys = key.split('.');
+        keys.reduce((acc, currentKey, index) => {
+            if (index === keys.length - 1) {
+                acc[currentKey] = value;
+            } else {
+                acc[currentKey] = acc[currentKey] || {};
+            }
+            return acc[currentKey];
+        }, obj);
+    }
+
+    const formatJSONData = () => {
+        const jsonString = JSON.stringify(configJSON, null, 2);
+        setJsonData(jsonString);
+    }
+
+    useEffect(() => {
+        formatJSONData();
+    }, [activeConfigTab, jsonData]);
+
+
+    return (
+        <div className='text-left mt-[90px]'>
+            <div className='grid grid-cols-12 items-center dark:bg-ghBlack4 sticky top-[67px] z-10 p-1'>
+                <div className='col-span-9'>
+                    <ConfigSectionHeader sectionTitle={"Custom Global Variables"} SectionDescription={"Set key/value pairs that can be used by solutions when they are being installed."} />
+                </div>
+                <div className='col-span-3 pr-10'>
+                    <div className="relative w-full h-[40px] p-1 bg-ghBlack3 rounded-md">
+                        <div className="relative w-full h-full flex items-center text-sm">
+                            <div
+                                onClick={() => setActiveConfigTab('config-tab1')}
+                                className="w-full flex justify-center text-gray-300 cursor-pointer"
+                            >
+                                <button>
+                                    Config UI
+                                </button>
+                            </div>
+                            <div
+                                onClick={() => setActiveConfigTab('config-tab2')}
+                                className="w-full flex justify-center text-gray-300 cursor-pointer"
+                            >
+                                <button>
+                                    JSON
+                                </button>
+                            </div>
+                        </div>
+
+                        <span
+                            className={`${activeConfigTab === 'config-tab1'
+                                ? 'left-1 ml-0'
+                                : 'left-1/2 -ml-1'
+                                } py-1 text-white bg-ghBlack4 text-sm font-semibold flex items-center justify-center w-1/2 rounded transition-all duration-150 ease-linear top-[5px] absolute`}
+                        >
+                            {activeConfigTab === 'config-tab1'
+                                ? "Config UI"
+                                : "JSON"}
+                        </span>
+                    </div>
+                </div>
+
+            </div>
+
+            <div className="config-tab-content">
+                {activeConfigTab === 'config-tab1' && <UIConfigTabContent  handleConfigChange={handleConfigChange} />}
+                {activeConfigTab === 'config-tab2' && <JSONConfigTabContent jsonData={jsonData} fileName={"customVariables.json"} />}
+            </div>
+
+        </div>)
+}
+
+export default CustomVariables;
+
+
+const UIConfigTabContent = ({ setJsonData }) => {
     const [key, setKey] = React.useState("");
     const [value, setValue] = React.useState("");
     const [keyError, setKeyError] = useState('');
     const [valueError, setValueError] = useState('');
+    const [rows, setRows] = React.useState([]);
     const [customVariablesData, setCustomVariablesData] = useState(customVariablesJSON);
+
+    const removeCustomVariable = (customVariableIdArrayToRemove) => {
+
+        setCustomVariablesData((prevData) => {
+            const updatedCustomVariables = {
+                ...prevData,
+                config: {
+                    ...prevData.config,
+                    customVariables: prevData.config.customVariables.filter(
+                        (customVariable) => !customVariableIdArrayToRemove.includes(customVariable.variable_id)
+                    ),
+                },
+            };
+            const updatedCustomVariablesJsonString = JSON.stringify(updatedCustomVariables, null, 2);
+            UpdateJsonFile(updatedCustomVariablesJsonString, "customVariables");
+
+            return updatedCustomVariables;
+        });
+    };
+
+    useEffect(() => {
+    }, [key, value]);
 
 
     function createData(id, key, value) {
@@ -26,14 +158,12 @@ const CustomVariables = () => {
     const handleAddKeyValuePairClick = () => {
         // Check if either key or value is empty
         if (!key.trim()) {
-            console.log("key: ", key);
             setKeyError('Key is required');
         } else {
             setKeyError('');
         }
 
         if (!value.trim()) {
-            console.log("value: ", value);
             setValueError('Value is required');
         } else {
             setValueError('');
@@ -64,27 +194,6 @@ const CustomVariables = () => {
         addNewCustomVariable(newCustomVariable)
     };
 
-    const removeCustomVariable = (customVariableIdArrayToRemove) => {
-        console.log("id param List: ", customVariableIdArrayToRemove);
-
-        setCustomVariablesData((prevData) => {
-            const updatedCustomVariables = {
-                ...prevData,
-                config: {
-                    ...prevData.config,
-                    customVariables: prevData.config.customVariables.filter(
-                        (customVariable) => !customVariableIdArrayToRemove.includes(customVariable.variable_id)
-                    ),
-                },
-            };
-            const updatedCustomVariablesJsonString = JSON.stringify(updatedCustomVariables, null, 2);
-            console.log("updatedCustomVariablesJsonString: ", updatedCustomVariablesJsonString);
-            UpdateJsonFile(updatedCustomVariablesJsonString, "customVariables");
-
-            return updatedCustomVariables;
-        });
-    };
-
     const getNextVariableId = (data) => {
         const customVariables = data?.config?.customVariables || [];
         const maxCustomVariableId = customVariables.reduce((max, customVariable) => (customVariable.variable_id > max ? customVariable.variable_id : max), -1);
@@ -106,19 +215,10 @@ const CustomVariables = () => {
 
     }
 
-    useEffect(() => {
-    }, [key, value, customVariablesData]);
-
-
     return (
-        <div className='text-left mt-[90px]'>
-            <div className='px-5 py-3'>
-                <h2 className='text-3xl font-semibold'>Custom Global Variables</h2>
-                <p className='text-sm dark:text-gray-400 text-justify'>Set key/value pairs that can be used by solutions when they are being installed.</p>
-            </div>
-
+        <>
             <form>
-                <div className='dark:bg-ghBlack2 bg-gray-300 px-5 py-5'>
+                <div className='dark:bg-ghBlack3 bg-gray-300 px-5 py-5'>
                     <h2 className='text-md font-semibold dark:text-gray-400'>Create global variable</h2>
                     <div className='flex items-center'>
                         <TextField
@@ -157,66 +257,11 @@ const CustomVariables = () => {
                         </button>
                     </div>
                 </div>
-
             </form>
 
             <div className='flex'>
                 <GlobalVariablesTable rows={customVariablesData.config.customVariables} removeCustomVariable={removeCustomVariable} />
             </div>
-        </div>)
-}
-
-const TabContent7 = ({ handleConfigChange }) => {
-    return (
-        <div className='text-left'>
-            <div className='px-5 py-3'>
-                <h2 className='text-3xl font-semibold'>Notification Settings</h2>
-                <p className='text-sm dark:text-gray-400 text-justify'>
-                    More Details about this section here.
-                </p>
-            </div>
-
-            <div className='px-5 py-3 dark:bg-ghBlack2 bg-gray-300 grid grid-cols-12'>
-                <div className='col-span-6'>
-                    <TextField
-                        label="E-Mail"
-                        fullWidth
-                        variant="outlined"
-                        size="small"
-                        margin="normal"
-                        value={configJSON.notification_endpoints["email_address"]}
-                        onChange={(e) => { handleConfigChange(e.target.value, "notification_endpoints.email_address") }}
-                    >
-                    </TextField>
-
-                    <TextField
-                        label="MS Teams Webhook"
-                        fullWidth
-                        variant="outlined"
-                        size="small"
-                        margin="normal"
-                        value={configJSON.notification_endpoints["ms_teams_webhook"]}
-                        onChange={(e) => { handleConfigChange(e.target.value, "notification_endpoints.ms_teams_webhook") }}
-                    >
-                    </TextField>
-
-                    <TextField
-                        label="Slack Webhook"
-                        fullWidth
-                        variant="outlined"
-                        size="small"
-                        margin="normal"
-                        value={configJSON.notification_endpoints["slack_webhook"]}
-                        onChange={(e) => { handleConfigChange(e.target.value, "notification_endpoints.slack_webhook") }}
-                    >
-                    </TextField>
-
-                </div>
-            </div>
-
-
-        </div>)
-
+        </>
+    )
 };
-
-export default CustomVariables;

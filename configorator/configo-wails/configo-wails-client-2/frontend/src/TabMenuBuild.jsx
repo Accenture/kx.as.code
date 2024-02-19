@@ -8,7 +8,6 @@ import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
 import JSONConfigTabContent from './JSONConfigTabContent';
 import { UpdateJsonFile } from "../wailsjs/go/main/App";
 import IconButton from '@mui/material/IconButton';
-import SettingsEthernetIcon from '@mui/icons-material/SettingsEthernet';
 import StopCircleIcon from '@mui/icons-material/StopCircle';
 import Tooltip from '@mui/material/Tooltip';
 import ProcessOutputView from './ProcessOutputView';
@@ -23,27 +22,7 @@ const TabMenuBuild = ({ buildOutputFileContent, isBuildStarted, toggleBuildStart
     }, [buildOutputFileContent, isBuildStarted]);
 
     return (
-        <div className='mt-[90px]'>
-            {/* Build & Deploy Selection */}
-            <div id="build-deploy-section" className='items-center px-5 bg-ghBlack4 p-1.5'>
-                {/* Action Settings / Button */}
-                <div className='mx-5 flex justify-end items-center'>
-                    {isBuildStarted ?
-                        <Tooltip title="Stop Build Process" placement="left">
-                            <IconButton onClick={() => { toggleBuildStart() }}>
-                                <StopCircleIcon fontSize="large" />
-                            </IconButton>
-                        </Tooltip> :
-                        <Tooltip title="Start New Build" placement="left">
-                            <IconButton onClick={() => { toggleBuildStart() }}>
-                                <PlayCircleIcon fontSize="large" />
-                            </IconButton>
-                        </Tooltip>
-                    }
-                </div>
-
-            </div>
-
+        <div className='mt-[67px]'>
             {isBuildStarted ? <ProcessOutputView processType={"build"} logOutput={buildOutputFileContent} /> : <BuildTabContent />}
 
             {/* <BuildExecuteButton /> */}
@@ -89,11 +68,7 @@ const BuildTabContent = () => {
             console.error("os not defined.")
         }
 
-
         setNestedValue(parsedData, key, selectedValue)
-
-        console.log("DEBUG: ", parsedData.config[key]);
-        console.log("DEBUG: selectedValue", selectedValue);
 
         const updatedJsonString = JSON.stringify(parsedData, null, 2);
 
@@ -124,26 +99,9 @@ const BuildTabContent = () => {
 
     return (
         <div className='relative'>
-            {/* <div className='flex grid-cols-12 items-center relative dark:bg-ghBlack3 sticky top-[90px] z-10 h-[40px]'>
-                <button onClick={() => handleConfigTabClick('config-tab1')} className={`${activeConfigTab === "config-tab1" ? "bg-kxBlue2" : ""} h-10 flex col-span-6 w-full text-center items-center justify-center`}>
-                    Packer Config UI
-                </button>
-
-                // {/* Centered Icon Square */}
-            {/* <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-                    <div className="w-10 h-10 bg-ghBlack4 items-center flex justify-center text-xl">
-                        <SettingsEthernetIcon fontSize='inherit' />
-                    </div>
-                </div>
-
-                <button onClick={() => handleConfigTabClick('config-tab2')} className={`${activeConfigTab === "config-tab2" ? "bg-kxBlue2" : ""} h-10 flex col-span-6 w-full text-center items-center justify-center`}>
-                    Packer Config JSON
-                </button>
-            </div> */}
-
-            <div className='grid grid-cols-12 items-center dark:bg-ghBlack4 sticky top-[90px] z-10 p-1'>
+            <div className='grid grid-cols-12 items-center dark:bg-ghBlack4 sticky top-[67px] z-10 p-1'>
                 <div className='col-span-9'>
-                <ConfigSectionHeader sectionTitle={"Build Configuration"} SectionDescription={"More Details about the Build process here."}/>
+                    <ConfigSectionHeader sectionTitle={"Build Configuration"} SectionDescription={"More Details about the Build process here."} />
                 </div>
                 <div className='col-span-3 pr-10'>
                     <div className="relative w-full h-[40px] p-1 bg-ghBlack3 rounded-md">

@@ -15,6 +15,12 @@ import { Link } from "react-router-dom";
 
 export function ApplicationGroupCard(props) {
 
+    const [isSelected, setISelected] = useState(false);
+
+    const handleItemSelection = () => {
+        setISelected((prevIsSelected) => !prevIsSelected);
+    }
+
     const appGroupBreadcrumb = props.appGroup.title
         .replaceAll(" ", "-")
         .replace(/\b\w/g, (l) => l.toLowerCase());
@@ -25,7 +31,7 @@ export function ApplicationGroupCard(props) {
     useEffect(() => {
         fetchAllComponents(props.appGroup.action_queues);
         return () => { };
-    }, [props.appGroup]);
+    }, [props.appGroup, isSelected]);
 
     async function fetchAllComponents(action_queues) {
         const components = action_queues.install.map((q) => q.name);
@@ -66,7 +72,7 @@ export function ApplicationGroupCard(props) {
     };
 
     return (
-        <div className='w-full rounded py-2 px-6 bg-ghBlack4 items-center mb-1'>
+        <div className={`w-full py-2 px-6 items-center mb-1 bg-ghBlack4`}>
             <div className=''>{props.appGroup.title}</div>
             <div className='text-sm uppercase text-gray-400'>{props.appGroup.action_queues.install[0].install_folder}</div>
         </div>)

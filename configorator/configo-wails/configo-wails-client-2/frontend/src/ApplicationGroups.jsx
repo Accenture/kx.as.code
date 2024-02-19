@@ -30,10 +30,10 @@ export function ApplicationGroups() {
     }, [activeConfigTab, jsonData]);
 
     return (
-        <div className='text-left mt-[90px]'>
+        <div className='text-left mt-[67px]'>
             <div className='relative'>
                 {/* Config View Tabs */}
-                <div className='grid grid-cols-12 items-center dark:bg-ghBlack4 sticky top-[90px] z-10 p-1'>
+                <div className='grid grid-cols-12 items-center dark:bg-ghBlack4 sticky top-[67px] z-10 p-1'>
                     <div className='col-span-9'>
                         <ConfigSectionHeader sectionTitle={"Application Groups"} SectionDescription={"More Details about this section here."} />
                     </div>
@@ -88,6 +88,22 @@ const UIConfigTabContent = ({ activeTab, handleTabClick, setJsonData }) => {
     const [isLoading, setIsLoading] = useState(false);
     const [isListLayout, setIsListLayout] = useState(true);
 
+    const [selectedId, setSelectedId] = useState(null);
+
+    const handleDivClick = (id) => {
+        setSelectedId(id === selectedId ? null : id);
+    };
+
+    const handleKeyDown = (e) => {
+        if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+            e.preventDefault();
+            const currentIndex = jsonData.findIndex((item) => item.id === selectedId);
+            const nextIndex =
+                e.key === 'ArrowDown' ? (currentIndex + 1) % jsonData.length : (currentIndex - 1 + jsonData.length) % jsonData.length;
+            setSelectedId(jsonData[nextIndex].id);
+        }
+    };
+
     useEffect(() => {
         return () => { };
     }, []);
@@ -104,7 +120,7 @@ const UIConfigTabContent = ({ activeTab, handleTabClick, setJsonData }) => {
     };
 
     return (
-        <div id='config-ui-container' className=''>
+        <div id='config-ui-container' className='bg-ghBlack3 pt-5'>
             <div className="flex items-center m-5">
                 {/* Search Input Field */}
                 <div className="group relative mr-3">
@@ -124,7 +140,7 @@ const UIConfigTabContent = ({ activeTab, handleTabClick, setJsonData }) => {
                     <input
                         type="text"
                         placeholder="Search Application Groups..."
-                        className="focus:ring-1 focus:ring-kxBlue focus:outline-none bg-ghBlack3 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 text-md border-0 shadow outline-none min-w-80 pl-10 rounded"
+                        className="focus:ring-1 focus:ring-kxBlue focus:outline-none bg-ghBlack4 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 text-md border-0 shadow outline-none min-w-80 pl-10 rounded"
                         onChange={(e) => {
                             setSearchTerm(e.target.value);
                         }}
@@ -132,14 +148,18 @@ const UIConfigTabContent = ({ activeTab, handleTabClick, setJsonData }) => {
                 </div>
                 <div className='text-gray-400 text-sm'>Available Application Groups: {applicationGroupJson.length}</div>
             </div>
-            <div className="tab-content dark:text-white text-black bg-ghBlack3 grid grid-cols-12">
+            <div className="tab-content dark:text-white text-black grid grid-cols-12">
                 {/* Application Groups actions */}
-                <div className="dark:bg-ghBlack3 col-span-6 h-[400px] overflow-y-scroll p-5 pb-0">
+                <div className="dark:bg-ghBlack3 col-span-6 h-[400px] overflow-y-scroll pb-0">
                     {isLoading ? (<div className="animate-pulse flex flex-col col-span-full">
                     </div>) : drawApplicationGroupCards()}
                 </div>
 
-                <div className="col-span-6 bg-ghBlack2"></div>
+                <div className="col-span-6 bg-ghBlack3 ml-2">
+                    <div className='bg-ghBlack4 w-full h-full'>
+
+                    </div>
+                </div>
             </div>
         </div>
     )

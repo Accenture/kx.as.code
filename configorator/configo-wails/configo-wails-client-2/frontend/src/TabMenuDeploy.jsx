@@ -46,29 +46,8 @@ const TabMenuDeploy = () => {
         setIsDeploymentStarted((prevIsDeploymentStarted) => !prevIsDeploymentStarted);
     }
     return (
-        <div className='mt-[90px]'>
-            {/* Build & Deploy Selection */}
-            <div id="build-deploy-section" className='items-center px-5 dark:bg-ghBlack4 bg-gray-400 py-1.5'>
-                {/* Action Settings / Button */}
-                <div className='mx-5 flex justify-end'>
-                    {isDeploymentStarted ?
-                        <Tooltip title="Stop Deployment" placement="left">
-                            <IconButton onClick={() => { toggleDeploymentStart() }}>
-                                <StopCircleIcon fontSize='large' />
-                            </IconButton>
-                        </Tooltip> :
-                        <Tooltip title="Start Deployment" placement="left">
-                            <IconButton onClick={() => { toggleDeploymentStart() }}>
-                                <PlayCircleIcon fontSize='large' />
-                            </IconButton>
-                        </Tooltip>
-                    }
-                </div>
-            </div>
-
+        <div className='mt-[67px]'>
             {isDeploymentStarted ? <ProcessOutputView processType={"deploy"} /> : <DeployTabContent />}
-
-            {/* <BuildExecuteButton /> */}
         </div>
     );
 };
@@ -156,7 +135,7 @@ const DeployTabContent = () => {
 
     return (
         <div className='relative'>
-            <div className='grid grid-cols-12 items-center dark:bg-ghBlack4 sticky top-[90px] z-10 p-1'>
+            <div className='grid grid-cols-12 items-center dark:bg-ghBlack4 sticky top-[67px] z-10 p-1'>
                 <div className='col-span-9'>
                     <ConfigSectionHeader sectionTitle={"Deployment Configuration"} SectionDescription={"More Details about the Build process here."} />
                 </div>
@@ -250,7 +229,7 @@ const TabContent1 = ({ handleConfigChange }) => {
                 <h2 className='text-3xl font-semibold'>Profile</h2>
                 <p className='text-sm dark:text-gray-400 text-justify'>Select the profile. A check is made on the system to see if the necessary virtualization software and associated Vagrant plugins are installed, as well as availability of built Vagrant boxes.</p>
             </div>
-            <div className='px-5 py-3 dark:bg-ghBlack2 bg-gray-300 grid grid-cols-12'>
+            <div className='px-5 py-3 dark:bg-ghBlack3 bg-gray-300 grid grid-cols-12'>
                 <div className='col-span-6'>
                     <TextField
                         label="Profiles"
@@ -819,7 +798,7 @@ const TabContent8 = ({ handleConfigChange }) => {
             </div>
 
             <div className='pl-5 dark:bg-ghBlack2 bg-gray-300 grid grid-cols-12'>
-                <div className='col-span-6 pb-5 pr-5'>
+                <div className='col-span-6 pr-5'>
 
                     {/* Search Input Field */}
                     <div className="group relative mr-3 my-3">
@@ -869,15 +848,15 @@ const TabContent8 = ({ handleConfigChange }) => {
                     </div>
                 </div>
                 <div className='col-span-6 p-5 pt-4 pb-0 bg-ghBlack3'>
-                    <div className='text-gray-400 flex justify-start items-center pt-2'>
+                    <div className='text-gray-400 flex justify-start items-center py-2'>
                         <span className='h-5 w-5 text-sm text-ghBlack font-bold p-1 py-0 mr-1 flex justify-center items-center bg-gray-400 rounded'>{selectedApplicationGroups.length}</span>
                         <span className='text-2xl font-semibold'>Selected Application Groups:</span>
                     </div>
-                    <div className='rounded py-2 overflow-y-auto h-[330px]'>
+                    <div className='rounded py-2 overflow-y-auto h-[329px]'>
                         {
                             selectedApplicationGroups.length == 0 ? <div className='text-gray-500 text-sm pr-5'>No application groups selected. Search and select application groups listed in the left section.</div> :
                                 selectedApplicationGroups.map((appGroup) => {
-                                    return <div id="item" className='px-5 py-1 bg-ghBlack4 rounded mb-1 flex justify-between mr-2 items-center'>
+                                    return <div id="item" className='px-5 py-2 bg-ghBlack4 rounded mb-1 flex justify-between mr-2 items-center'>
                                         <div>
                                             <div className=''>{appGroup}</div>
                                             <div className='text-sm uppercase text-gray-400'>{findGroupByTitle(appGroup).action_queues.install[0].install_folder}</div>
@@ -906,7 +885,7 @@ const ApplicationGroupListItem = ({ appGroup, key, handleAddButtonClick, handleR
     }, []);
 
     return (
-        <div key={key} className='w-full rounded py-1 px-6 bg-ghBlack4 items-center flex justify-between mb-1'>
+        <div key={key} className={`w-full rounded py-2 px-6 bg-ghBlack4 items-center flex justify-between mb-1`}>
             <div>
                 <div className=''>{appGroup.title}</div>
                 <div className='text-sm uppercase text-gray-400'>{appGroup.action_queues.install[0].install_folder}</div>

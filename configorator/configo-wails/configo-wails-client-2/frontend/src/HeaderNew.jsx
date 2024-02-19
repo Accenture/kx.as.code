@@ -13,6 +13,9 @@ import Tooltip from '@mui/material/Tooltip';
 import { styled, useTheme } from '@mui/material/styles';
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import StopCircleIcon from '@mui/icons-material/StopCircle';
+import PlayCircleIcon from '@mui/icons-material/PlayCircle';
+
 
 const drawerWidth = 180;
 
@@ -41,7 +44,7 @@ export function HeaderNew(props) {
     }, [props.open]);
 
     return (
-        <AppBar position="fixed" open={props.open} className="h-[90px] dark:bg-ghBlack3 bg-kxBlue" elevation={0}>
+        <AppBar position="fixed" open={props.open} className="dark:bg-ghBlack3 bg-kxBlue" elevation={0}>
             <Toolbar className="dark:bg-ghBlack3 bg-kxBlue">
                 <div className="">
                     <IconButton
@@ -49,7 +52,6 @@ export function HeaderNew(props) {
                         aria-label="open drawer"
                         onClick={() => {
                             props.handleDrawerOpen()
-                            console.log("drawer open click")
                         }}
                         edge="start"
                         sx={{
@@ -59,7 +61,7 @@ export function HeaderNew(props) {
                         <ChevronRightIcon />
                     </IconButton>
                 </div>
-                <div className="dark:bg-ghBlack3 bg-kxBlue p-4 pt-5 flex items-center justify-between w-full">
+                <div className="dark:bg-ghBlack3 bg-kxBlue px-4 flex items-center justify-between w-full">
                     <div className="flex items-center">
                         <img src={logo} height={50} width={60} />
                         <div className="text-left">
@@ -68,8 +70,26 @@ export function HeaderNew(props) {
                         </div>
                     </div>
 
-                    <div>
-                        <Tooltip title={`${props.isDarkMode ? "Lightmode" : "Darkmode"}`} placement="left">
+                    <div className="flex items-center">
+                        <div className="bg-ghBlack2 p-2 justify-start flex items-center mr-2">
+                            {/* Action Settings / Button */}
+                            <div className='flex justify-center items-center'>
+                                {props.isBuildStarted ?
+                                    <Tooltip title="Stop Build Process" placement="right">
+                                        <IconButton onClick={() => { props.toggleBuildStart() }}>
+                                            <StopCircleIcon fontSize="large" />
+                                        </IconButton>
+                                    </Tooltip> :
+                                    <Tooltip title="Start New Build" placement="right">
+                                        <IconButton onClick={() => { props.toggleBuildStart() }}>
+                                            <PlayCircleIcon fontSize="large" />
+                                        </IconButton>
+                                    </Tooltip>
+                                }
+                            </div>
+                        </div>
+
+                        <div>
                             <IconButton
                                 color="inherit"
                                 aria-label="Toggle dark/light mode"
@@ -77,7 +97,7 @@ export function HeaderNew(props) {
                             >
                                 {props.isDarkMode ? <WbSunnyIcon /> : <Brightness3 />}
                             </IconButton>
-                        </Tooltip>
+                        </div>
                     </div>
                 </div>
             </Toolbar>
