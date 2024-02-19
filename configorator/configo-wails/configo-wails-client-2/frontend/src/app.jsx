@@ -120,16 +120,30 @@ export function App() {
             primary: {
                 main: '#5a86ff',
             }
+        },
+        overrides: {
+            MuiOutlinedInput: {
+                root: {
+                    '&$focused $notchedOutline': {
+                        borderColor: 'green', // Change this to the desired green color
+                    },
+                },
+            },
+            MuiSelect: {
+                icon: {
+                    color: 'green', // Change this to the desired green color
+                },
+            }
         }
     });
 
     const toggleBuildStart = useCallback(() => {
         setIsBuildStarted((prevIsBuildStarted) => !prevIsBuildStarted);
         if (isBuildStarted) {
-            toast("Build stopped.", { icon: <PrecisionManufacturingIcon/> })
+            toast("Build stopped.", { icon: <PrecisionManufacturingIcon /> })
             StopExe();
         } else {
-            toast("Build started.",{ icon: <PrecisionManufacturingIcon/> })
+            toast("Build started.", { icon: <PrecisionManufacturingIcon /> })
             ExeBuild().then(result => {
                 setBuildOutputFileContent(result);
             });

@@ -1,17 +1,10 @@
 import { useState, useEffect } from "preact/hooks";
 import './app.css';
-import {
-    CarouselProvider,
-    Slider,
-    Slide,
-    ButtonBack,
-    ButtonNext,
-} from "pure-react-carousel";
 import "pure-react-carousel/dist/react-carousel.es.css";
-import { MdArrowBackIosNew, MdArrowForwardIos } from "react-icons/md";
-import Tooltip from "@mui/material/Tooltip";
 import { transformName } from "./utils/application"
 import { Link } from "react-router-dom";
+import LayersIcon from '@mui/icons-material/Layers';
+
 
 export function ApplicationGroupCard(props) {
 
@@ -65,16 +58,23 @@ export function ApplicationGroupCard(props) {
             >
                 {appGroupComponent
                     .replaceAll("-", " ")
-                    .replaceAll("_", " ")
                     .replace(/\b\w/g, (l) => l.toUpperCase())}
             </li>
         ));
     };
 
     return (
-        <div className={`w-full py-2 px-6 items-center mb-1 bg-ghBlack4`}>
-            <div className=''>{props.appGroup.title}</div>
-            <div className='text-sm uppercase text-gray-400'>{props.appGroup.action_queues.install[0].install_folder}</div>
+        <div className={`flex grid grid-cols-12 items-center w-full py-2 px-6 items-center mb-1 bg-ghBlack4`}>
+            <div className="col-span-1">
+                <LayersIcon fontSize="large" />
+            </div>
+            <div className="col-span-4">
+                <div className=''>{props.appGroup.title}</div>
+                <div className='text-sm uppercase text-gray-400'>{props.appGroup.action_queues.install[0].install_folder}</div>
+            </div>
+            <div className="col-span-4">
+
+            </div>
         </div>)
         ;
 }

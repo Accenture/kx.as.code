@@ -36,7 +36,7 @@ func main() {
 				Message: "",
 			},
 		},
-		Width:  900,
+		Width:  1000,
 		Height: 800,
 		AssetServer: &assetserver.Options{
 			Assets: assets,

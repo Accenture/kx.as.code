@@ -51,33 +51,38 @@ const JSONConfigTabContent = (props) => {
         <div className='text-left text-black'>
             {/* Save file changes */}
             {isfileChanged && props.jsonData !== updatedJson && (
-                <div className='text-white p-3 flex justify-between items-center text-xs sticky top-[130px] z-10 bg-ghBlack2'>
-                    <div className='text-base'>{`Change on ${props.fileName} file detected.`}</div>
-                    <div className='flex'>
-                        {isValidJson(updatedJson) ? (
-                            <div className='flex'>
-                                <div className='text-statusGreen p-3 py-1 border-statusGreen border mr-2 items-center flex'>
-                                    <CheckCircleOutlineIcon fontSize='small' />
-                                    <span className='ml-1'>Valid JSON format!</span>
+                <>
+                    <div className='text-white p-3 px-5 flex justify-between items-center text-sm sticky top-[130px] z-10 bg-ghBlack3'>
+                        <div className='text-base'>{`Change on ${props.fileName} file detected.`}</div>
+                        <div className='flex'>
+                            {isValidJson(updatedJson) ? (
+                                <div className='flex'>
+                                    <div className='text-green-500 rounded p-3 py-1 border-statusGreen border mr-4 items-center flex'>
+                                        <CheckCircleOutlineIcon fontSize='inherit' />
+                                        <span className='ml-1'>Valid JSON format!</span>
+                                    </div>
+                                    <button onClick={() => { handleSaveClick() }} className='bg-kxBlue p-2 px-3.5 rounded text-white mr-2'>Save</button>
                                 </div>
-                                <button onClick={() => { handleSaveClick() }} className='bg-kxBlue text-white p-3 py-1 mr-2'>Save</button>
-                            </div>
-                        ) : (<div className='text-statusRed p-3 py-1 border-statusRed border text-xs mr-2 items-center flex'>
-                            <WarningIcon fontSize='small' />
-                            <span className='ml-1'>Invalid JSON format!</span>
-                        </div>)}
-                        <button onClick={() => { handleDiscardChangesClick() }} className='bg-white text-black p-3 py-1 text-xs'>Discard changes</button>
+                            ) : (<div className='text-red-500 rounded p-3 py-1 border-statusRed border text-sm mr-4 items-center flex'>
+                                <WarningIcon fontSize='inherit' />
+                                <span className='ml-1'>Invalid JSON format!</span>
+                            </div>)}
+                            <button onClick={() => { handleDiscardChangesClick() }} className='bg-ghBlack4 p-2 px-3.5 text-white rounded'>Discard changes</button>
+                        </div>
                     </div>
+                    <div className='h-1 bg-ghBlack2'></div>
+                </>
+            )}
 
-                </div>)}
-            <div id="codemirror-container" className='w-full overflow-y-scroll h-[442px] text-base'>
+            <div id="codemirror-container" className='w-[932px] overflow-y-scroll h-[442px] text-base bg-ghBlack3'>
                 <CodeMirror
                     extensions={[langs.tsx()]}
                     theme={"dark"}
                     value={props.jsonData}
                     options={{
                         mode: 'json',
-                        lineNumbers: true
+                        lineNumbers: true,
+                        lineWrapping: true,
                     }}
                     onChange={(value, viewUpdate) => {
                         setIsFileChanged(true)
@@ -85,7 +90,6 @@ const JSONConfigTabContent = (props) => {
                     }}
                 />
             </div>
-
         </div>
     );
 }

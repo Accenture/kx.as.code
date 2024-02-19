@@ -10,7 +10,6 @@ import JSONConfigTabContent from './JSONConfigTabContent';
 import { ApplicationGroupCard } from './ApplicationGroupCard';
 import { ConfigSectionHeader } from './ConfigSectionHeader';
 
-
 export function ApplicationGroups() {
 
     const [activeTab, setActiveTab] = useState('tab1');
@@ -121,44 +120,40 @@ const UIConfigTabContent = ({ activeTab, handleTabClick, setJsonData }) => {
 
     return (
         <div id='config-ui-container' className='bg-ghBlack3 pt-5'>
-            <div className="flex items-center m-5">
-                {/* Search Input Field */}
-                <div className="group relative mr-3">
-                    <svg
-                        width="20"
-                        height="20"
-                        fill="currentColor"
-                        className="absolute left-3 top-1/2 -mt-2.5 text-gray-500 pointer-events-none group-focus-within:text-kxBlue"
-                        aria-hidden="true"
-                    >
-                        <path
-                            fillRule="evenodd"
-                            clipRule="evenodd"
-                            d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+            <div className="flex justify-center items-center m-5 mb-3 mt-0">
+                <div>
+                    {/* Search Input Field */}
+                    <div className="group relative">
+                        <svg
+                            width="20"
+                            height="20"
+                            fill="currentColor"
+                            className="absolute left-3 top-1/2 -mt-2.5 text-gray-500 pointer-events-none group-focus-within:text-kxBlue"
+                            aria-hidden="true"
+                        >
+                            <path
+                                fillRule="evenodd"
+                                clipRule="evenodd"
+                                d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+                            />
+                        </svg>
+                        <input
+                            type="text"
+                            placeholder="Search Application Groups..."
+                            className="focus:ring-1 focus:ring-kxBlue focus:outline-none bg-ghBlack4 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 text-md border-0 shadow outline-none min-w-80 pl-10 rounded"
+                            onChange={(e) => {
+                                setSearchTerm(e.target.value);
+                            }}
                         />
-                    </svg>
-                    <input
-                        type="text"
-                        placeholder="Search Application Groups..."
-                        className="focus:ring-1 focus:ring-kxBlue focus:outline-none bg-ghBlack4 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 text-md border-0 shadow outline-none min-w-80 pl-10 rounded"
-                        onChange={(e) => {
-                            setSearchTerm(e.target.value);
-                        }}
-                    />
+                    </div>
+                    <div className='text-gray-400 flex justify-center text-sm pt-3'>Available Application Groups: {applicationGroupJson.length}</div>
                 </div>
-                <div className='text-gray-400 text-sm'>Available Application Groups: {applicationGroupJson.length}</div>
             </div>
             <div className="tab-content dark:text-white text-black grid grid-cols-12">
                 {/* Application Groups actions */}
-                <div className="dark:bg-ghBlack3 col-span-6 h-[400px] overflow-y-scroll pb-0">
+                <div className="dark:bg-ghBlack2 col-span-12 h-[400px] overflow-y-scroll py-5 px-10">
                     {isLoading ? (<div className="animate-pulse flex flex-col col-span-full">
                     </div>) : drawApplicationGroupCards()}
-                </div>
-
-                <div className="col-span-6 bg-ghBlack3 ml-2">
-                    <div className='bg-ghBlack4 w-full h-full'>
-
-                    </div>
                 </div>
             </div>
             <div className='bg-ghBlack2 h-1'></div>

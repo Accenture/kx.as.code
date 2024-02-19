@@ -24,7 +24,6 @@ import ErrorIcon from '@mui/icons-material/Error';
 
 const TabMenuBuild = ({ buildOutputFileContent, isBuildStarted, toggleBuildStart }) => {
 
-
     useEffect(() => {
     }, [buildOutputFileContent, isBuildStarted]);
 
@@ -143,7 +142,7 @@ const BuildTabContent = () => {
                 </div>
             </div>
             <div className='bg-ghBlack2 h-1'></div>
-            <div className="config-tab-content bg-ghBlack2">
+            <div className="config-tab-content">
                 {activeConfigTab === 'config-tab1' && <UIConfigTabContent isBuild={isBuild} handleTabClick={handleTabClick} handleConfigChange={handleConfigChange} />}
                 {activeConfigTab === 'config-tab2' && <JSONConfigTabContent jsonData={jsonData} fileName={"kx-main-local-profiles.json"} />}
             </div>
@@ -221,19 +220,6 @@ const BuildContent = () => {
                         <MenuItem value="parallels">Parallels</MenuItem>
                         <MenuItem value="vmware-desktop">VMWare Desktop</MenuItem>
                     </TextField>
-
-                    <div>
-                        <select
-                            value={selectedVM}
-                            onChange={(e) => setSelectedVM(e.target.value)}
-                            className="bg-blue-500 text-white border-none outline-none px-4 py-3 rounded-5 focus:ring focus:ring-blue-200"
-                        >
-                            <option value="" disabled>Select a value...</option>
-                            <option value="virtualbox">Option 1</option>
-                            <option value="vmware-desktop">Option 2</option>
-                            <option value="option3">Option 3</option>
-                        </select>
-                    </div>
 
                     <TextField
                         label="Node Type"

@@ -884,7 +884,7 @@ const TabContent8 = ({ handleConfigChange }) => {
                     </div>
 
                     {/* Application Groups Container */}
-                    <div className="h-[320px] overflow-y-auto">
+                    <div className="h-[320px] overflow-y-auto bg-ghBlack2 p-5">
                         {searchTerm !== "" && filteredGroupsCount === 0 ? (
                             <div className='text-gray-500 pr-5 font-semibold'>No results for "{searchTerm}".</div>
                         ) : null}

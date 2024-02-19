@@ -7,12 +7,14 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"runtime"
+	"sort"
 	"sync"
 	"time"
 )
@@ -103,6 +105,25 @@ func (a *App) UpdateJsonFile(data string, file string) error {
 
 func (a *App) ExeBuild() string {
 
+	id := time.Now().UnixNano()
+
+	buildHistory := struct {
+		ID        int64  `json:"id"`
+		Timestamp string `json:"timestamp"`
+		Status    string `json:"status"`
+	}{
+		ID:        id,
+		Timestamp: time.Now().Format(time.RFC3339),
+		Status:    "success",
+	}
+
+	if _, err := os.Stat("./frontend/src/assets/build-history/"); os.IsNotExist(err) {
+		if err := os.MkdirAll("./frontend/src/assets/build-history/", 0755); err != nil {
+			log.Printf("Failed to create build history directory: %v", err)
+			return fmt.Sprintf("An error occurred: %v", err)
+		}
+	}
+
 	outfile, err := os.Create("./frontend/src/assets/buildOutput.txt")
 	if err != nil {
 		log.Printf("Failed to create output file: %v", err)
@@ -122,7 +143,7 @@ func (a *App) ExeBuild() string {
 	writeStage := func(stageNumber int, stageName string) {
 		timestamp := time.Now().Format(time.RFC3339)
 		fmt.Fprintf(outfile, "[%s] [stage-%d] - %s\n", timestamp, stageNumber, stageName)
-		// Ensure data is immediately flushed to the file
+		// Data flushed to file
 		outfile.Sync()
 	}
 
@@ -147,7 +168,9 @@ func (a *App) ExeBuild() string {
 
 		packerBinaryPath = "./frontend/src/assets/packer/packer"
 		if _, err := os.Stat(packerBinaryPath); os.IsNotExist(err) {
+			buildHistory.Status = "failed"
 			if err := downloadPackerBinary(packerBinaryPath); err != nil {
+				buildHistory.Status = "failed"
 				log.Printf("Failed to download Packer: %v", err)
 				return fmt.Sprintf("An error occurred while downloading Packer: %v", err)
 			}
@@ -158,6 +181,7 @@ func (a *App) ExeBuild() string {
 
 			chmodCmd := exec.Command("chmod", "+x", packerBinaryPath)
 			if chmodErr := chmodCmd.Run(); chmodErr != nil {
+				buildHistory.Status = "failed"
 				log.Printf("Failed to set execute permissions: %v", chmodErr)
 				return fmt.Sprintf("An error occurred while setting execute permissions: %v", chmodErr)
 			}
@@ -194,27 +218,83 @@ func (a *App) ExeBuild() string {
 		"-var", "git_source_token=token",
 		"-var", "base_image_ssh_user=vagrant",
 		"./frontend/src/assets/config/build/darwin-linux/kx-main-local-profiles.json")
+
 	a.cmd.Stdout = outfile
 
 	if err := a.cmd.Start(); err != nil {
+		buildHistory.Status = "failed"
 		log.Printf("Failed to start command: %v", err)
 		return fmt.Sprintf("An error occurred: %v", err)
 	} else {
 
 	}
 
+	// WaitGroup to synchronize the completion of cmd.Wait()
+	var wg sync.WaitGroup
+	wg.Add(1)
+
 	go func() {
 		log.Printf("Waiting for build to finish...")
 		if waitErr := a.cmd.Wait(); waitErr != nil {
 			log.Printf("Build finished with error: %v", waitErr)
+			buildHistory.Status = "failed"
+			log.Printf("Status set to 'failed'")
 		} else {
+			log.Printf("Build completed successfully")
 			writeStage(5, "Build Completed")
 			a.SetCurrentBuildStage("stage 5")
 			time.Sleep(1 * time.Second)
 		}
 
-		// Close file after build has finished
-		outfile.Close()
+		// Signal that cmd.Wait() is completed
+		wg.Done()
+	}()
+
+	// Wait for completion of cmd.Wait() before executing the deferred function
+	wg.Wait()
+
+	defer func() {
+		jsonContent, jsonErr := json.MarshalIndent(buildHistory, "", "    ")
+		if jsonErr != nil {
+			log.Printf("Failed to marshal build history to JSON: %v", jsonErr)
+			return
+		}
+
+		fileName := fmt.Sprintf("./frontend/src/assets/build-history/build-%d.json", id)
+
+		// List of files in the build history directory
+		files, err := ioutil.ReadDir("./frontend/src/assets/build-history/")
+		if err != nil {
+			log.Printf("Failed to read build history directory: %v", err)
+			return
+		}
+
+		if _, err := os.Stat("./frontend/src/assets/build-history/"); os.IsNotExist(err) {
+			if err := os.MkdirAll("./frontend/src/assets/build-history/", 0755); err != nil {
+				log.Printf("Failed to create build history directory: %v", err)
+				return
+			}
+		}
+
+		// If there are 10 files, delete the oldest file
+		if len(files) >= 10 {
+			sort.Slice(files, func(i, j int) bool {
+				return files[i].ModTime().Before(files[j].ModTime())
+			})
+
+			oldestFileName := files[0].Name()
+			oldestFilePath := filepath.Join("./frontend/src/assets/build-history/", oldestFileName)
+
+			if err := os.Remove(oldestFilePath); err != nil {
+				log.Printf("Failed to delete the oldest file: %v", err)
+			}
+		}
+
+		if writeErr := os.WriteFile(fileName, jsonContent, 0644); writeErr != nil {
+			log.Printf("Failed to write build history to file: %v", writeErr)
+		}
+
+		log.Printf("Final buildHistory content: %s", jsonContent)
 	}()
 
 	return "Initialize Build..."
