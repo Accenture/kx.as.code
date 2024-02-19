@@ -10,6 +10,10 @@ export function GetCurrentBuildStage() {
   return window['go']['main']['App']['GetCurrentBuildStage']();
 }
 
+export function IsVirtualizationToolInstalled(arg1) {
+  return window['go']['main']['App']['IsVirtualizationToolInstalled'](arg1);
+}
+
 export function SetCurrentBuildStage(arg1) {
   return window['go']['main']['App']['SetCurrentBuildStage'](arg1);
 }

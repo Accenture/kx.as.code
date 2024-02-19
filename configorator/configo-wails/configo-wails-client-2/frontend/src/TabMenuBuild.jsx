@@ -6,19 +6,20 @@ import { useNavigate } from 'react-router-dom';
 import PlayCircleIcon from '@mui/icons-material/PlayCircle';
 import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
 import JSONConfigTabContent from './JSONConfigTabContent';
-import { UpdateJsonFile } from "../wailsjs/go/main/App";
+import { UpdateJsonFile, IsVirtualizationToolInstalled } from "../wailsjs/go/main/App";
 import IconButton from '@mui/material/IconButton';
 import StopCircleIcon from '@mui/icons-material/StopCircle';
 import Tooltip from '@mui/material/Tooltip';
 import ProcessOutputView from './ProcessOutputView';
 import LastProcessView from './LastProcessView';
 import { ConfigSectionHeader } from './ConfigSectionHeader';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import ErrorIcon from '@mui/icons-material/Error';
 
 const TabMenuBuild = ({ buildOutputFileContent, isBuildStarted, toggleBuildStart }) => {
 
 
     useEffect(() => {
-
     }, [buildOutputFileContent, isBuildStarted]);
 
     return (
@@ -147,7 +148,6 @@ const BuildTabContent = () => {
 }
 
 const UIConfigTabContent = ({ activeTab, handleTabClick, handleConfigChange, isBuild }) => (
-
     isBuild ?
         <div>
             <BuildContent />
@@ -155,7 +155,50 @@ const UIConfigTabContent = ({ activeTab, handleTabClick, handleConfigChange, isB
         </div> : <></>
 );
 
-const BuildContent = ({ handleConfigChange }) => {
+const BuildContent = () => {
+    const [installationStatus, setInstallationStatus] = useState({
+        virtualbox: false,
+        parallels: false,
+        'vmware-desktop': false,
+    });
+
+    const [selectedVM, setSelectedVM] = useState("virtualbox");
+
+    useEffect(() => {
+        const checkToolInstallation = async (toolName) => {
+            try {
+                const result = await IsVirtualizationToolInstalled(toolName);
+                setInstallationStatus(prevStatus => ({
+                    ...prevStatus,
+                    [toolName]: result,
+                }));
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        };
+
+        // Check installation status for each tool
+        checkToolInstallation('virtualbox');
+        checkToolInstallation('parallels');
+        checkToolInstallation('vmware-desktop');
+    }, []);
+
+    const getInstallationMark = (toolName) => (
+        <div className='flex items-center pt-5 pl-2'>
+            {installationStatus[toolName] ? (
+                <span className='text-green-500'>
+                    <CheckCircleIcon />
+                    <span className='ml-1'>{toolName} is installed.</span>
+                </span>
+            ) : (
+                <span className='text-red-500'>
+                    <ErrorIcon />
+                    <span className='ml-1'>{toolName} is not installed.</span>
+                </span>
+            )}
+        </div>
+    );
+
     return (
         <div className='text-left'>
             <div className='px-5 py-3 dark:bg-ghBlack3 grid grid-cols-12'>
@@ -167,13 +210,13 @@ const BuildContent = ({ handleConfigChange }) => {
                         variant="outlined"
                         size="small"
                         margin="normal"
-                        defaultValue="virtualbox"
+                        value={selectedVM}
+                        onChange={(e) => setSelectedVM(e.target.value)}
                     >
                         <MenuItem value="virtualbox">Virtualbox</MenuItem>
                         <MenuItem value="parallels">Parallels</MenuItem>
                         <MenuItem value="vmware-desktop">VMWare Desktop</MenuItem>
                     </TextField>
-
                     <TextField
                         label="Node Type"
                         select
@@ -181,16 +224,21 @@ const BuildContent = ({ handleConfigChange }) => {
                         variant="outlined"
                         size="small"
                         margin="normal"
-                        defaultValue="main"
-                        onChange={(e) => { }}
+                        value="main" // Placeholder value; adjust as needed
+                        onChange={(e) => { /* handle onChange as needed */ }}
                     >
                         <MenuItem value="main">Main</MenuItem>
                         <MenuItem value="node">Node</MenuItem>
                     </TextField>
                 </div>
+                <div className='col-span-6'>
+                    <div className='flex'>
+                        {getInstallationMark(selectedVM)}
+                    </div>
+                </div>
             </div>
         </div>
-    )
-}
+    );
+};
 
 export default TabMenuBuild;

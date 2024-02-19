@@ -228,6 +228,7 @@ export function App() {
                             </Routes>
                             <Toaster
                                 expand visibleToasts={3}
+                                duration={2000}
                                 toastOptions={{
                                     style: {
                                         background: "#161b22",

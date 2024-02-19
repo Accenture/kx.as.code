@@ -5,6 +5,8 @@ export function ExeBuild():Promise<string>;
 
 export function GetCurrentBuildStage():Promise<string>;
 
+export function IsVirtualizationToolInstalled(arg1:string):Promise<boolean>;
+
 export function SetCurrentBuildStage(arg1:string):Promise<void>;
 
 export function StopExe():Promise<void>;

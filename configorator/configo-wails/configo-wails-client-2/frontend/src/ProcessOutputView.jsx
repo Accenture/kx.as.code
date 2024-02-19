@@ -25,9 +25,6 @@ const ProcessOutputView = ({logOutput, processType}) => {
   return (
     <div className=''>
       <BuildStagesTracker />
-      {/* <button onClick={handleButtonClick} className='bg-ghBlack3 m-3 p-3 hover:bg-ghBlack2'>Temp Exec Btn</button>
-      <button onClick={handleBuildStopButtonClick} className='bg-ghBlack3 m-3 p-3 hover:bg-ghBlack2'>Temp Stop Exec Btn</button> */}
-
       <div className='py-3'>
         <div className='flex items-center pl-5 font-semibold text-gray-400 text-sm'>
           <span>
@@ -40,7 +37,7 @@ const ProcessOutputView = ({logOutput, processType}) => {
             &lt;BUILD ID&gt; - {processType} process console output:  
           </span>
         </div>
-        <div className="bg-ghBlack3 mt-3">
+        <div className="bg-ghBlack mt-3">
           {/* {processType} Process started... */}
           <pre id="output-container" ref={outputContainer} onScroll={handleScroll} className='text-white text-sm text-left p-4 font-mono whitespace-pre-wrap overflow-y-scroll h-[400px]'>{highlightErrorText(logOutput)}</pre>
         </div>

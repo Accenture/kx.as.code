@@ -45,6 +45,24 @@ func (a *App) startup(ctx context.Context) {
 	a.ctx = ctx
 }
 
+func (a *App) IsVirtualizationToolInstalled(toolName string) bool {
+	var cmd *exec.Cmd
+
+	switch toolName {
+	case "virtualbox":
+		cmd = exec.Command("VBoxManage", "--version")
+	case "parallels":
+		cmd = exec.Command("prlctl", "--version")
+	case "vmware-desktop":
+		cmd = exec.Command("vmware", "--version")
+	default:
+		return false
+	}
+
+	err := cmd.Run()
+	return err == nil
+}
+
 func (a *App) UpdateJsonFile(data string, file string) error {
 	fmt.Printf("UpdateJsonFile triggered %s!\n", data)
 	if data == "" {
