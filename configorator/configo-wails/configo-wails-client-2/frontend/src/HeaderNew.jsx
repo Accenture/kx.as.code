@@ -77,7 +77,7 @@ export function HeaderNew(props) {
                                 {props.isBuildStarted ?
                                     <Tooltip title="Stop Build Process" placement="right">
                                         <IconButton onClick={() => { props.toggleBuildStart() }}>
-                                            <StopCircleIcon fontSize="large" />
+                                            <StopCircleIcon fontSize="large" className="border-3 border-white rounded-full" />
                                         </IconButton>
                                     </Tooltip> :
                                     <Tooltip title="Start New Build" placement="right">

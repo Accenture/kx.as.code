@@ -393,7 +393,7 @@ const TabContent2 = ({ }) => {
             </div>
 
 
-            <div className='px-5 py-3 dark:bg-ghBlack2 bg-gray-300 gap-2'>
+            <div className='px-5 py-3 dark:bg-ghBlack3 bg-gray-300 gap-2'>
                 <h2 className='text-md font-semibold dark:text-gray-400'>Create additional user</h2>
                 <form>
                     <div className='flex gap-2'>

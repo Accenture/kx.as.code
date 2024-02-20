@@ -7,7 +7,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -25,6 +24,7 @@ type App struct {
 	mu           sync.Mutex
 	cmd          *exec.Cmd
 	currentStage string
+	buildId      int64
 }
 
 // NewApp creates a new App application struct
@@ -105,14 +105,14 @@ func (a *App) UpdateJsonFile(data string, file string) error {
 
 func (a *App) ExeBuild() string {
 
-	id := time.Now().UnixNano()
+	a.buildId = time.Now().UnixNano()
 
 	buildHistory := struct {
 		ID        int64  `json:"id"`
 		Timestamp string `json:"timestamp"`
 		Status    string `json:"status"`
 	}{
-		ID:        id,
+		ID:        int64(a.buildId),
 		Timestamp: time.Now().Format(time.RFC3339),
 		Status:    "success",
 	}
@@ -260,10 +260,10 @@ func (a *App) ExeBuild() string {
 			return
 		}
 
-		fileName := fmt.Sprintf("./frontend/src/assets/build-history/build-%d.json", id)
+		fileName := fmt.Sprintf("./frontend/src/assets/build-history/build-%d.json", a.buildId)
 
 		// List of files in the build history directory
-		files, err := ioutil.ReadDir("./frontend/src/assets/build-history/")
+		files, err := os.ReadDir("./frontend/src/assets/build-history/")
 		if err != nil {
 			log.Printf("Failed to read build history directory: %v", err)
 			return
@@ -279,7 +279,15 @@ func (a *App) ExeBuild() string {
 		// If there are 10 files, delete the oldest file
 		if len(files) >= 10 {
 			sort.Slice(files, func(i, j int) bool {
-				return files[i].ModTime().Before(files[j].ModTime())
+				infoI, errI := files[i].Info()
+				infoJ, errJ := files[j].Info()
+
+				if errI != nil || errJ != nil {
+					// Handle errors if needed
+					return false
+				}
+
+				return infoI.ModTime().Before(infoJ.ModTime())
 			})
 
 			oldestFileName := files[0].Name()
@@ -401,6 +409,60 @@ func (a *App) StopExe() {
 		a.cmd = nil
 	}
 
+	// Copy logs to build-logs
+	logFileName := fmt.Sprintf("./frontend/src/assets/build-logs/build-log-%d.txt", a.buildId)
+	if copyErr := copyFile("./frontend/src/assets/buildOutput.txt", logFileName); copyErr != nil {
+		log.Printf("Failed to copy build output file to build logs: %v", copyErr)
+	}
+
+	// Truncate buildOutput.txt file
+	if truncateErr := os.Truncate("./frontend/src/assets/buildOutput.txt", 0); truncateErr != nil {
+		log.Printf("Failed to truncate build output file: %v", truncateErr)
+	}
+
 	// Delete content of log file
 	os.Truncate("./frontend/src/assets/buildOutput.txt", 0)
+}
+
+func copyFile(src, dst string) error {
+	sourceFile, err := os.Open(src)
+	if err != nil {
+		return err
+	}
+	defer sourceFile.Close()
+
+	destinationFile, err := os.Create(dst)
+	if err != nil {
+		return err
+	}
+	defer destinationFile.Close()
+
+	_, err = io.Copy(destinationFile, sourceFile)
+	if err != nil {
+		return err
+	}
+
+	// Check the number of files in "build-logs" directory
+	files, err := os.ReadDir("./frontend/src/assets/build-logs/")
+	if err != nil {
+		return err
+	}
+
+	// If there are already 10 files, delete the oldest file
+	if len(files) >= 10 {
+		sort.Slice(files, func(i, j int) bool {
+			infoI, _ := files[i].Info()
+			infoJ, _ := files[j].Info()
+			return infoI.ModTime().Before(infoJ.ModTime())
+		})
+
+		oldestFileName := files[0].Name()
+		oldestFilePath := filepath.Join("./frontend/src/assets/build-logs/", oldestFileName)
+
+		if err := os.Remove(oldestFilePath); err != nil {
+			log.Printf("Failed to delete the oldest file in build-logs: %v", err)
+		}
+	}
+
+	return nil
 }

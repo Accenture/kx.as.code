@@ -34,6 +34,8 @@ import Toolbar from '@mui/material/Toolbar';
 import MenuIcon from '@mui/icons-material/Menu';
 import { Toaster } from 'sonner';
 import { toast } from 'sonner';
+import HistoryIcon from '@mui/icons-material/History';
+import BuildHistory from "./BuildHistory";
 
 
 const openedMixin = (theme) => ({
@@ -226,6 +228,7 @@ export function App() {
                                 <MenuItem menuItemName={"application-groups"} slug={slug} />
                                 <MenuItem menuItemName={"user-provisioning"} slug={slug} />
                                 <MenuItem menuItemName={"custom-variables"} slug={slug} />
+                                <MenuItem menuItemName={"build-history"} slug={slug} />
                             </List>
                         </Drawer>
                         <Box component="main" sx={{ flexGrow: 1, p: 0 }} className="text-black dark:text-white">
@@ -238,6 +241,7 @@ export function App() {
                                 <Route path="/application-groups" element={<ApplicationGroups />} />
                                 <Route path="/user-provisioning" element={<UserProvisioning />} />
                                 <Route path="/custom-variables" element={<CustomVariables />} />
+                                <Route path="/build-history" element={<BuildHistory />} />
                                 <Route path="/console-output" element={<ConsoleOutput />} />
                             </Routes>
                             <Toaster
@@ -297,6 +301,8 @@ const MenuItem = ({ menuItemName, slug, isBuildStarted }) => {
                 return <PeopleIcon className="text-3xl" />
             case "custom-variables":
                 return <DataArrayIcon className="text-3xl" />
+            case "build-history":
+                return <HistoryIcon className="text-3xl" />
             default:
                 break;
         }

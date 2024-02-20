@@ -35,9 +35,9 @@ const LastProcessView = (props) => {
 
   return (
     <div>
-      <div className="grid grid-cols-12">
+      <div className="grid grid-cols-12 dark:bg-ghBlack4">
 
-        <div className="col-span-12 dark:bg-ghBlack3 py-2">
+        <div className="col-span-12 py-2">
           <h1 className='flex text-gray-400 px-5 items-center font-semibold'>
             <span className='text-xl mb-0.5 mr-1'><HistoryIcon fontSize='inherit' /></span>
             Last {processType}s History:</h1>
@@ -56,7 +56,7 @@ const LastProcessView = (props) => {
             </thead>
             <tbody>
               {data.map((row) => (
-                <tr key={row.id} className='hover:bg-ghBlack4 hover:cursor-pointer'>
+                <tr key={row.id} className='hover:bg-ghBlack3 hover:cursor-pointer'>
                   <td className="px-5">#{row.id}</td>
                   <td className="px-5">{row.timestamp}</td>
                   <td className="px-5">{row.vmProfile}</td>
@@ -69,9 +69,9 @@ const LastProcessView = (props) => {
                         <MonitorHeartIcon />
                       </IconButton>
 
-                      <IconButton onClick={() => { }}>
+                      {/* <IconButton onClick={() => { }}>
                         <PlayCircleIcon />
-                      </IconButton>
+                      </IconButton> */}
 
                     </div>
                   </td>
@@ -80,9 +80,10 @@ const LastProcessView = (props) => {
             </tbody>
           </table>
         </div>
-
         <div className="col-span-6"></div>
       </div>
+      <div className='bg-ghBlack2 h-1'></div>
+
     </div>
   );
 };
