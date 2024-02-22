@@ -57,7 +57,7 @@ const BuildStagesTracker = () => {
                     <p className='text-sm dark:text-gray-400 text-justify'>More Details about the Build process here.</p>
                 </div>
             </div>
-            <div className='flex justify-center p-4 text-xs bg-ghBlack3 pt-4'>
+            <div className='flex justify-center p-4 text-xs bg-ghBlack2 pt-4'>
                 {completionStatus.map(({ stageNumber, status, title }) => (
                     <Stage key={stageNumber} stageNumber={stageNumber} status={status} title={title} getCurrentStageIndex={getCurrentStageIndex} />
                 ))}
@@ -91,7 +91,7 @@ const Stage = ({ stageNumber, title, status, getCurrentStageIndex }) => {
         const isRight = position === "right";
 
         if (isLeft && stageNumber === 1 || isRight && stageNumber === 5) {
-            return <div className={`w-full h-[2px] bg-ghBlack3`}></div>;
+            return <div className={`w-full h-[2px] bg-ghBlack2`}></div>;
         }
 
         const shouldHighlight = (isLeft && stageNumber <= currentIndex + 1) || (isRight && stageNumber <= currentIndex);
@@ -106,14 +106,14 @@ const Stage = ({ stageNumber, title, status, getCurrentStageIndex }) => {
         <div className=''>
             <div className='flex justify-center mb-[-5px] items-center'>
                 {getProgressLine("left", stageNumber, getCurrentStageIndex())}
-                <div className={`border-[8px] border-ghBlack3 mx-[5px] rounded-full h-[25px] w-[25px] flex justify-center items-center`}>
+                <div className={`border-[8px] border-ghBlack2 mx-[5px] rounded-full h-[25px] w-[25px] flex justify-center items-center`}>
                     <div className={`rounded-full h-2 w-2 bg-ghBlack4 ${status != "Completed" ? "bg-ghBlack4" : "bg-green-500"}`}></div>
                 </div>
                 {getProgressLine("right", stageNumber, getCurrentStageIndex())}
             </div>
 
-            <div className={`mx-1 p-2 rounded ${status != "Completed" ? "bg-ghBlack3" : ""}`}>
-                <div className='pb-2 text-gray-400'>{`Stage ${stageNumber}`}</div>
+            <div className={`mx-1 p-2 rounded ${status != "Completed" ? "bg-ghBlack2" : ""}`}>
+                <div className='pb-0 text-gray-400'>{`Stage ${stageNumber}`}</div>
                 <div className='flex justify-center items-center w-[130px]'>
                 </div>
                 <div className='pt-1 flex justify-center'>

@@ -37,7 +37,7 @@ export function ApplicationGroups() {
                         <ConfigSectionHeader sectionTitle={"Application Groups"} SectionDescription={"More Details about this section here."} />
                     </div>
                     <div className='col-span-3 pr-10'>
-                        <div className="relative w-full h-[40px] p-1 bg-ghBlack3 rounded-md">
+                        <div className="relative w-full h-[40px] p-1 bg-ghBlack2 rounded-md">
                             <div className="relative w-full h-full flex items-center text-sm">
                                 <div
                                     onClick={() => setActiveConfigTab('config-tab1')}
@@ -114,47 +114,57 @@ const UIConfigTabContent = ({ activeTab, handleTabClick, setJsonData }) => {
                 return searchTerm === "" || lowerCaseName.includes(searchTerm.toLowerCase().trim());
             })
             .map((appGroup, i) => (
-                <ApplicationGroupCard appGroup={appGroup} key={i} isListLayout={isListLayout} />
+                <ApplicationGroupCard appGroup={appGroup} id={appGroup.id} isListLayout={isListLayout} handleDivClick={handleDivClick} selectedId={selectedId}/>
             ));
     };
 
     return (
-        <div id='config-ui-container' className='bg-ghBlack3 pt-5'>
-            <div className="flex justify-center items-center m-5 mb-3 mt-0">
-                <div>
-                    {/* Search Input Field */}
-                    <div className="group relative">
-                        <svg
-                            width="20"
-                            height="20"
-                            fill="currentColor"
-                            className="absolute left-3 top-1/2 -mt-2.5 text-gray-500 pointer-events-none group-focus-within:text-kxBlue"
-                            aria-hidden="true"
-                        >
-                            <path
-                                fillRule="evenodd"
-                                clipRule="evenodd"
-                                d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
-                            />
-                        </svg>
-                        <input
-                            type="text"
-                            placeholder="Search Application Groups..."
-                            className="focus:ring-1 focus:ring-kxBlue focus:outline-none bg-ghBlack4 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 text-md border-0 shadow outline-none min-w-80 pl-10 rounded"
-                            onChange={(e) => {
-                                setSearchTerm(e.target.value);
-                            }}
-                        />
-                    </div>
-                    <div className='text-gray-400 flex justify-center text-sm pt-3'>Available Application Groups: {applicationGroupJson.length}</div>
-                </div>
-            </div>
+        <div id='config-ui-container' className='bg-ghBlack3'>
             <div className="tab-content dark:text-white text-black grid grid-cols-12">
-                {/* Application Groups actions */}
-                <div className="dark:bg-ghBlack2 col-span-12 h-[400px] overflow-y-scroll py-5 px-10">
-                    {isLoading ? (<div className="animate-pulse flex flex-col col-span-full">
-                    </div>) : drawApplicationGroupCards()}
+
+                <div className='col-span-4'>
+                    <div className='relative top-0 sticky bg-ghBlack2 py-2 shadow-lg px-3'>
+                        <div className="items-center">
+                            <div className='flex justify-center'>
+                                {/* Search Input Field */}
+                                <div className="group relative w-full">
+                                    <svg
+                                        width="20"
+                                        height="20"
+                                        fill="currentColor"
+                                        className="absolute left-3 top-1/2 -mt-2.5 text-gray-500 pointer-events-none group-focus-within:text-kxBlue"
+                                        aria-hidden="true"
+                                    >
+                                        <path
+                                            fillRule="evenodd"
+                                            clipRule="evenodd"
+                                            d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+                                        />
+                                    </svg>
+                                    <input
+                                        type="text"
+                                        placeholder="Search..."
+                                        className="focus:ring-1 focus:ring-kxBlue focus:outline-none bg-ghBlack4 px-3 py-1 placeholder-blueGray-300 text-blueGray-600 text-md border-0 shadow outline-none pl-10 rounded w-full"
+                                        onChange={(e) => {
+                                            setSearchTerm(e.target.value);
+                                        }}
+                                    />
+                                </div>
+
+                            </div>
+                            <div className='text-gray-400 flex justify-between pt-1'>
+                                <span>Application Groups</span>
+                                {applicationGroupJson.length}
+                            </div>
+                        </div>
+                    </div>
+                    {/* Application Groups actions */}
+                    <div className="dark:bg-ghBlack2 h-[500px] overflow-y-scroll px-3 py-2 custom-scrollbar">
+                        {isLoading ? (<div className="animate-pulse flex flex-col col-span-full px-3">
+                        </div>) : drawApplicationGroupCards()}
+                    </div>
                 </div>
+                <div className="col-span-8 bg-ghBlack3"></div>
             </div>
             <div className='bg-ghBlack2 h-1'></div>
         </div>

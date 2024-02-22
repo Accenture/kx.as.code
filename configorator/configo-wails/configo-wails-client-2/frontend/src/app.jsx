@@ -203,14 +203,16 @@ export function App() {
 
     return (
 
-        <div className="dark:bg-ghBlack4 bg-gray-200 h-screen">
+        <div className="dark:bg-ghBlack4 bg-gray-200 h-screen custom-scrollbar">
             <BuildOutputProvider>
                 <ThemeProvider theme={theme}>
                     <Box sx={{ display: "flex" }}>
                         <Drawer variant="permanent" open={open}
                             sx={{
                                 '& .MuiDrawer-paper': {
-                                    borderRight: 'none',
+                                    // borderRight: 'none',
+                                    borderRightWidth: "3px",
+                                    borderColor: "#2f3640",
                                     backgroundColor: "#161b22"
                                 }
                             }} >

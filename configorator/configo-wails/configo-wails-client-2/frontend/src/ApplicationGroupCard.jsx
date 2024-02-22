@@ -8,12 +8,6 @@ import LayersIcon from '@mui/icons-material/Layers';
 
 export function ApplicationGroupCard(props) {
 
-    const [isSelected, setISelected] = useState(false);
-
-    const handleItemSelection = () => {
-        setISelected((prevIsSelected) => !prevIsSelected);
-    }
-
     const appGroupBreadcrumb = props.appGroup.title
         .replaceAll(" ", "-")
         .replace(/\b\w/g, (l) => l.toLowerCase());
@@ -24,7 +18,7 @@ export function ApplicationGroupCard(props) {
     useEffect(() => {
         fetchAllComponents(props.appGroup.action_queues);
         return () => { };
-    }, [props.appGroup, isSelected]);
+    }, [props.appGroup, props.selectedId, props.id]);
 
     async function fetchAllComponents(action_queues) {
         const components = action_queues.install.map((q) => q.name);
@@ -64,16 +58,16 @@ export function ApplicationGroupCard(props) {
     };
 
     return (
-        <div className={`flex grid grid-cols-12 items-center w-full py-2 px-6 items-center mb-1 bg-ghBlack4`}>
-            <div className="col-span-1">
-                <LayersIcon fontSize="large" />
-            </div>
-            <div className="col-span-4">
-                <div className=''>{props.appGroup.title}</div>
-                <div className='text-sm uppercase text-gray-400'>{props.appGroup.action_queues.install[0].install_folder}</div>
-            </div>
-            <div className="col-span-4">
-
+        <div className={`flex grid grid-cols-12 items-center w-full py-1 px-3 items-center mb-1 ${props.selectedId == props.id ? "" : "hover:bg-ghBlack3"} ${props.selectedId == props.id ? "bg-ghBlack4" : ""} rounded cursor-pointer`}
+            onClick={(e) => {
+                props.handleDivClick(props.id)
+            }}>
+            <div className="col-span-12 flex items-center">
+                <LayersIcon fontSize="medium" className="mr-2" />
+                <div className="">
+                    <div className=''>{props.appGroup.title}</div>
+                    <div className='text-xs uppercase text-gray-400'>{props.appGroup.action_queues.install[0].install_folder}</div>
+                </div>
             </div>
         </div>)
         ;
