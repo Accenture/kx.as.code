@@ -49,10 +49,27 @@ const JSONConfigTabContent = (props) => {
 
     return (
         <div className='text-left text-black'>
+            <div id="codemirror-container" className='w-[932px] overflow-y-scroll h-[442px] text-base bg-ghBlack3'>
+                <CodeMirror
+                    extensions={[langs.tsx()]}
+                    theme={"dark"}
+                    value={props.jsonData}
+                    options={{
+                        mode: 'json',
+                        lineNumbers: true,
+                        lineWrapping: true,
+                    }}
+                    onChange={(value, viewUpdate) => {
+                        setIsFileChanged(true)
+                        setUpdatedJson(value)
+                    }}
+                />
+            </div>
+
             {/* Save file changes */}
             {isfileChanged && props.jsonData !== updatedJson && (
                 <>
-                    <div className='text-white p-3 px-5 flex justify-between items-center text-sm sticky top-[130px] z-10 bg-ghBlack3'>
+                    <div className='text-white p-3 px-5 flex justify-between items-center text-sm sticky top-[130px] z-10 bg-ghBlack2'>
                         <div className='text-base'>{`Change on ${props.fileName} file detected.`}</div>
                         <div className='flex'>
                             {isValidJson(updatedJson) ? (
@@ -73,23 +90,6 @@ const JSONConfigTabContent = (props) => {
                     <div className='h-1 bg-ghBlack2'></div>
                 </>
             )}
-
-            <div id="codemirror-container" className='w-[932px] overflow-y-scroll h-[442px] text-base bg-ghBlack3'>
-                <CodeMirror
-                    extensions={[langs.tsx()]}
-                    theme={"dark"}
-                    value={props.jsonData}
-                    options={{
-                        mode: 'json',
-                        lineNumbers: true,
-                        lineWrapping: true,
-                    }}
-                    onChange={(value, viewUpdate) => {
-                        setIsFileChanged(true)
-                        setUpdatedJson(value)
-                    }}
-                />
-            </div>
         </div>
     );
 }

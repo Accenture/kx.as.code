@@ -17,7 +17,7 @@ import StopCircleIcon from '@mui/icons-material/StopCircle';
 import PlayCircleIcon from '@mui/icons-material/PlayCircle';
 
 
-const drawerWidth = 180;
+const drawerWidth = 240;
 
 const AppBar = styled(MuiAppBar, {
     shouldForwardProp: (prop) => prop !== 'open',
@@ -66,7 +66,7 @@ export function HeaderNew(props) {
                         <img src={logo} height={50} width={60} />
                         <div className="text-left">
                             <div className="text-sm">KX.AS.Code</div>
-                            <div className="font-semibold text-lg">Launcher <span className="text-sm font-normal ml-1 dark:bg-ghBlack bg-gray-200 p-0.5 px-1 text-black dark:text-white rounded">v.0.8.16</span></div>
+                            <div className="font-semibold text-lg">Launcher <span className="text-sm font-normal ml-1 p-0.5 px-1 text-white">v.0.8.16</span></div>
                         </div>
                     </div>
 

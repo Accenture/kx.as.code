@@ -6,6 +6,7 @@ import UserTable from './UserTable';
 import PersonAddAltIcon from '@mui/icons-material/PersonAddAlt';
 import { UpdateJsonFile } from "../wailsjs/go/main/App";
 import SettingsEthernetIcon from '@mui/icons-material/SettingsEthernet';
+import EditIcon from '@mui/icons-material/Edit';
 import JSONConfigTabContent from './JSONConfigTabContent';
 import { ApplicationGroupCard } from './ApplicationGroupCard';
 import { ConfigSectionHeader } from './ConfigSectionHeader';
@@ -38,12 +39,12 @@ export function ApplicationGroups() {
                     </div>
                     <div className='col-span-3 pr-10'>
                         <div className="relative w-full h-[40px] p-1 bg-ghBlack2 rounded-md">
-                            <div className="relative w-full h-full flex items-center text-sm">
+                            <div className="relative w-full h-full flex items-center">
                                 <div
                                     onClick={() => setActiveConfigTab('config-tab1')}
                                     className="w-full flex justify-center text-gray-300 cursor-pointer"
                                 >
-                                    <button>
+                                    <button className='text-sm'>
                                         Config UI
                                     </button>
                                 </div>
@@ -51,7 +52,7 @@ export function ApplicationGroups() {
                                     onClick={() => setActiveConfigTab('config-tab2')}
                                     className="w-full flex justify-center text-gray-300 cursor-pointer"
                                 >
-                                    <button>
+                                    <button className='text-sm'>
                                         JSON
                                     </button>
                                 </div>
@@ -61,7 +62,7 @@ export function ApplicationGroups() {
                                 className={`${activeConfigTab === 'config-tab1'
                                     ? 'left-1 ml-0'
                                     : 'left-1/2 -ml-1'
-                                    } py-1 text-white bg-ghBlack4 text-sm font-semibold flex items-center justify-center w-1/2 rounded transition-all duration-150 ease-linear top-[5px] absolute`}
+                                    } py-1 text-white bg-ghBlack4 text-sm flex items-center justify-center w-1/2 rounded transition-all duration-150 ease-linear top-[5px] absolute`}
                             >
                                 {activeConfigTab === 'config-tab1'
                                     ? "Config UI"
@@ -86,11 +87,13 @@ const UIConfigTabContent = ({ activeTab, handleTabClick, setJsonData }) => {
     const [searchTerm, setSearchTerm] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const [isListLayout, setIsListLayout] = useState(true);
-
     const [selectedId, setSelectedId] = useState(null);
+    const [detailsObject, setDetailsObject] = useState({});
+
 
     const handleDivClick = (id) => {
         setSelectedId(id === selectedId ? null : id);
+        setDetailsObject(getObjectById(id))
     };
 
     const handleKeyDown = (e) => {
@@ -103,6 +106,10 @@ const UIConfigTabContent = ({ activeTab, handleTabClick, setJsonData }) => {
         }
     };
 
+    const getObjectById = (id) => {
+        return applicationGroupJson.find(item => item.id === id);
+    }
+
     useEffect(() => {
         return () => { };
     }, []);
@@ -114,7 +121,7 @@ const UIConfigTabContent = ({ activeTab, handleTabClick, setJsonData }) => {
                 return searchTerm === "" || lowerCaseName.includes(searchTerm.toLowerCase().trim());
             })
             .map((appGroup, i) => (
-                <ApplicationGroupCard appGroup={appGroup} id={appGroup.id} isListLayout={isListLayout} handleDivClick={handleDivClick} selectedId={selectedId}/>
+                <ApplicationGroupCard appGroup={appGroup} id={appGroup.id} isListLayout={isListLayout} handleDivClick={handleDivClick} selectedId={selectedId} />
             ));
     };
 
@@ -164,7 +171,43 @@ const UIConfigTabContent = ({ activeTab, handleTabClick, setJsonData }) => {
                         </div>) : drawApplicationGroupCards()}
                     </div>
                 </div>
-                <div className="col-span-8 bg-ghBlack3"></div>
+                <div className="col-span-8 bg-ghBlack2 p-3">
+
+                    {selectedId !== null && (
+                        <>
+                            <div className="grid grid-cols-12 rounded-md">
+                                <div className="col-span-12">
+                                    <div className="relative">
+                                        <input type="text" value={detailsObject.title} className='w-full focus:outline-none rounded text-2xl font-semibold mb-2 p-1 pr-10 bg-transparent border-dashed hover:border-gray-500 focus:border-kxBlue border border-transparent text-white' />
+                                        <div className="absolute right-4 top-2">
+                                            <EditIcon fontSize='small'/>
+                                        </div>
+                                    </div>
+                                    <div className="relative">
+                                        <textarea type="text" value={detailsObject.description} className='w-full focus:outline-none rounded mb-2 p-1 pr-10 bg-transparent border-dashed hover:border-gray-500 focus:border-kxBlue border border-transparent text-gray-400' />
+                                        <div className="absolute right-4 top-2">
+                                            <EditIcon fontSize='small'/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="grid gap-2 grid-cols-12">
+                                {detailsObject.action_queues.install.map((app) => {
+                                    return <div className='cursor-pointer border border-dashed border-gray-500 hover:bg-ghBlack3 p-3 rounded col-span-6'>
+                                        <div className='text-base'>{app.name}</div>
+                                        <div className='text-gray-400'>{app.install_folder}</div>
+                                    </div>
+                                })}
+                            </div>
+
+                            <div className="grid gap-1 grid-cols-12">
+                                <div className="col-span-12">
+                                    <button className='bg-kxBlue p-2 py-3 mt-5 rounded w-full'>Add Application</button>
+                                </div>
+                            </div>
+
+                        </>)}
+                </div>
             </div>
             <div className='bg-ghBlack2 h-1'></div>
         </div>

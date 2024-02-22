@@ -142,7 +142,7 @@ const DeployTabContent = () => {
                     <ConfigSectionHeader sectionTitle={"Deployment Configuration"} SectionDescription={"More Details about the Build process here."} />
                 </div>
                 <div className='col-span-3 pr-10'>
-                    <div className="relative w-full h-[40px] p-1 bg-ghBlack3 rounded-md">
+                    <div className="relative w-full h-[40px] p-1 bg-ghBlack2 rounded-md">
                         <div className="relative w-full h-full flex items-center text-sm">
                             <div
                                 onClick={() => setActiveConfigTab('config-tab1')}
@@ -166,7 +166,7 @@ const DeployTabContent = () => {
                             className={`${activeConfigTab === 'config-tab1'
                                 ? 'left-1 ml-0'
                                 : 'left-1/2 -ml-1'
-                                } py-1 text-white bg-ghBlack4 text-sm font-semibold flex items-center justify-center w-1/2 rounded transition-all duration-150 ease-linear top-[5px] absolute`}
+                                } py-1 text-white bg-ghBlack4 text-sm flex items-center justify-center w-1/2 rounded transition-all duration-150 ease-linear top-[5px] absolute`}
                         >
                             {activeConfigTab === 'config-tab1'
                                 ? "Config UI"
@@ -226,27 +226,27 @@ const TabButton = ({ buttonText, tabId, activeTab, handleTabClick }) => {
 
 const TabContent1 = ({ handleConfigChange }) => {
     const [installationStatus, setInstallationStatus] = useState({
-        virtualbox: false,
-        parallels: false,
-        'vmware-desktop': false,
+        virtualbox: null,
+        parallels: null,
+        'vmware-desktop': null,
     });
 
     const [selectedVM, setSelectedVM] = useState("virtualbox");
 
     const getInstallationMark = (toolName) => (
         <div className='flex items-center mt-3.5 ml-2 text-sm capitalize bg-ghBlack4 p-2 rounded'>
-            {installationStatus[toolName] ? (
+            {installationStatus[toolName] ? (installationStatus[toolName] ? (
                 <span className='text-green-500 flex items-center px-1'>
-                    <CheckCircleIcon fontSize='small'/>
+                    <CheckCircleIcon fontSize='small' />
                     <span className='ml-1'>{toolName} installed.</span>
                 </span>
             ) : (
                 <span className='text-red-500 flex items-center'>
-                    <ErrorIcon fontSize='small'/>
+                    <ErrorIcon fontSize='small' />
                     <span className='ml-1'>{toolName} not installed.</span>
                     {/* <button className='ml-2 p-1 px-3 bg-kxBlue rounded text-white font-semibold text-xs'>Install</button> */}
                 </span>
-            )}
+            )) : null}
         </div>
     );
 

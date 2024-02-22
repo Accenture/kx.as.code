@@ -76,7 +76,7 @@
 
 /* Coldmirror active line highlight background color overwrite */
 .ͼo .cm-activeLine{
-    background-color: #2f3640ff;
+    background-color: #2f3640;
 }
 
 /* WebKit browsers */
@@ -89,13 +89,13 @@
   }
   
   .custom-scrollbar::-webkit-scrollbar-track {
-    background-color: transparent; 
+    background-color: #1f262e; 
   }
   
   /* For other browsers */
   .custom-scrollbar {
     scrollbar-width: thin; /* Firefox */
-    scrollbar-color: #2f3640 transparent; /* Firefox */
+    scrollbar-color: #2f3640 #1f262e; /* Firefox */
   }
   
   .custom-scrollbar:hover {

@@ -32,7 +32,7 @@ const UserProvisioning = () => {
                         <ConfigSectionHeader sectionTitle={"User Provisioning"} SectionDescription={"Define additional users to provision in the KX.AS.CODE environment."} />
                     </div>
                     <div className='col-span-3 pr-10'>
-                        <div className="relative w-full h-[40px] p-1 bg-ghBlack3 rounded-md">
+                        <div className="relative w-full h-[40px] p-1 bg-ghBlack2 rounded-md">
                             <div className="relative w-full h-full flex items-center text-sm">
                                 <div
                                     onClick={() => setActiveConfigTab('config-tab1')}
@@ -56,7 +56,7 @@ const UserProvisioning = () => {
                                 className={`${activeConfigTab === 'config-tab1'
                                     ? 'left-1 ml-0'
                                     : 'left-1/2 -ml-1'
-                                    } py-1 text-white bg-ghBlack4 text-sm font-semibold flex items-center justify-center w-1/2 rounded transition-all duration-150 ease-linear top-[5px] absolute`}
+                                    } py-1 text-white bg-ghBlack4 text-sm flex items-center justify-center w-1/2 rounded transition-all duration-150 ease-linear top-[5px] absolute`}
                             >
                                 {activeConfigTab === 'config-tab1'
                                     ? "Config UI"

@@ -84,7 +84,7 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== "open" 
     })
 );
 
-const drawerWidth = 180;
+const drawerWidth = 240;
 
 
 export function App() {
@@ -312,32 +312,31 @@ const MenuItem = ({ menuItemName, slug, isBuildStarted }) => {
 
     return (
         <Link to={`/${menuItemName}`} className="flex justify-center">
-            <Tooltip title={`${menuItemName}`} placement="right">
-                <ListItemButton
-                    sx={{
-                        minHeight: 20,
-                        justifyContent: open ? "initial" : "center",
-                        px: 1.5,
+            <ListItemButton
+                sx={{
+                    minHeight: 20,
+                    justifyContent: open ? "initial" : "center",
+                    px: 1.5,
+                    backgroundColor: slug == menuItemName ? "#5a86ff" : "",
+                    margin: "8px",
+                    borderRadius: "5px",
+                    marginTop: "0px",
+                    "&:hover": {
                         backgroundColor: slug == menuItemName ? "#5a86ff" : "",
-                        margin: "8px",
-                        borderRadius: "5px",
-                        marginTop: "0px",
-                        "&:hover": {
-                            backgroundColor: slug == menuItemName ? "#5a86ff" : "",
-                        },
+                    },
+                }}
+            >
+                <ListItemIcon
+                    className="listItemIconContainer items-center flex"
+                    sx={{
+                        minWidth: 0,
+                        mr: open ? 3 : "auto",
                     }}
                 >
-                    <ListItemIcon
-                        className="listItemIconContainer"
-                        sx={{
-                            minWidth: 0,
-                            mr: open ? 3 : "auto",
-                        }}
-                    >
-                        {getMenuItemIcon(menuItemName)}
-                    </ListItemIcon>
-                </ListItemButton>
-            </Tooltip>
+                    {getMenuItemIcon(menuItemName)}
+                    <span className="ml-5 capitalize">{menuItemName}</span>
+                </ListItemIcon>
+            </ListItemButton>
         </Link>
     );
 };
