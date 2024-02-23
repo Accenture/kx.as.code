@@ -647,9 +647,6 @@ Lightweight shipper for logs. Filebeat is part of the Elastic Stack, meaning it 
                     <div class="filebeatImage fade">
                         <img class="zoom-table" src="../../assets/images/elastic-filebeat_screenshot2.png" style="width:100%">
                     </div>
-                    <div class="filebeatImage fade">
-                        <img class="zoom-table" src="../../assets/images/elastic-filebeat_screenshot3.png" style="width:100%">
-                    </div>
                     <a class="prev" onclick="plusSlides(-1,'filebeat')">&#10094;</a>
                     <a class="next" onclick="plusSlides(1,'filebeat')">&#10095;</a>
                 </div>
