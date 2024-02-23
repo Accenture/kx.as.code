@@ -1,8 +1,11 @@
-All the tools below are installable either from the [Jenkins based launcher](/Quick-Start-Guide/), the KX-Portal, or via the [command line](/Deployment/Manual-Provisioning/).
+# Application Library
+
+All the tools below are installable either from the [Jenkins based launcher](../Quick-Start-Guide.md), the KX-Portal, or via the [command line](../Deployment/Manual-Provisioning.md).
 
 ## Core
 
 ### Kubernetes Dashboard
+
 <a href="https://github.com/Accenture/kx.as.code/tree/main/auto-setup/core/kubernetes-dashboard" target="_blank">Installation Files</a> | <a href="https://kubernetes.io/docs/tasks/access-application-cluster/web-ui-dashboard/" target="_blank">Application Documentation</a> | <a href="https://github.com/kubernetes/dashboard" target="_blank">Application Source Code</a>
 <div class="description-dev"><q><i>
 Dashboard is a web-based Kubernetes user interface. You can use Dashboard to deploy containerized applications to a Kubernetes cluster, troubleshoot your containerized application, and manage the cluster resources. You can use Dashboard to get an overview of applications running on your cluster, as well as for creating or modifying individual Kubernetes resources (such as Deployments, Jobs, DaemonSets, etc). For example, you can scale a Deployment, initiate a rolling update, restart a pod or deploy new applications using a deploy wizard.
@@ -35,6 +38,7 @@ Dashboard also provides information on the state of Kubernetes resources in your
 <hr/>
 
 ### OpenLens
+
 <a href="https://github.com/Accenture/kx.as.code/tree/main/auto-setup/core/openlens" target="_blank">Installation Files</a> | <a href="https://docs.k8slens.dev/main/" target="_blank">Application Documentation</a> | <a href="https://github.com/lensapp/lens" target="_blank">Application Source Code</a>
 <div class="description-dev"><q><i>
 Lens IDE provides the full situational awareness for everything that runs in Kubernetes. It's lowering the barrier of entry for people just getting started and radically improving productivity for people with more experience.
@@ -74,6 +78,7 @@ Lens IDE provides the full situational awareness for everything that runs in Kub
 <hr/>
 
 ### GoPass
+
 <a href="https://github.com/Accenture/kx.as.code/tree/main/auto-setup/core/gopass" target="_blank">Installation Files</a> | <a href="https://github.com/gopasspw/gopass/tree/master/docs" target="_blank">Application Documentation</a> | <a href="https://github.com/gopasspw/gopass" target="_blank">Application Source Code</a>
 <div class="description-dev"><q><i>
 gopass is a password manager for the command line written in Go. It works on all major desktop and server operating systems (Linux, MacOS, BSD, Windows).
@@ -102,6 +107,7 @@ gopass is a password manager for the command line written in Go. It works on all
 <hr/>
 
 ### Keycloak
+
 <a href="https://github.com/Accenture/kx.as.code/tree/main/auto-setup/core/keycloak" target="_blank">Installation Files</a> | <a href="https://www.keycloak.org/documentation" target="_blank">Application Documentation</a> | <a href="https://github.com/keycloak/keycloak" target="_blank">Application Source Code</a>
 <div class="description-dev"><q><i>
 Add authentication to applications and secure services with minimum effort.
@@ -151,6 +157,7 @@ Keycloak provides user federation, strong authentication, user management, fine-
 <hr/>
 
 ### LDAP Account Manager
+
 <a href="https://github.com/Accenture/kx.as.code/tree/main/auto-setup/core/openldap" target="_blank">Installation Files</a> | <a href="https://www.ldap-account-manager.org/lamcms/documentation" target="_blank">Application Documentation</a> | <a href="https://github.com/LDAPAccountManager/lam" target="_blank">Application Source Code</a>
 <div class="description-dev"><q><i>LDAP Account Manager (LAM) is a webfrontend for managing entries (e.g. users, groups, DHCP settings) stored in an LDAP directory. LAM was designed to make LDAP management as easy as possible for the user. It abstracts from the technical details of LDAP and allows persons without technical background to manage LDAP entries. If needed, power users may still directly edit LDAP entries via the integrated LDAP browser.
 </i></q><br>- ldap-account-manager.org</div>
@@ -185,6 +192,7 @@ Keycloak provides user federation, strong authentication, user management, fine-
 <hr/>
 
 ### Rabbitmq Server
+
 <a href="http://localhost:8000/Development/Available-Functions/#rabbitmq-core-setup" target="_blank">Functions</a> | <a href="https://github.com/Accenture/kx.as.code/blob/main/base-vm/scripts/main-node/rabbitmq.sh" target="_blank">Installation Files</a> | <a href="https://www.rabbitmq.com/documentation.html" target="_blank">Application Documentation</a> | <a href="" target="_blank">Application Source Code</a>
 <div class="description-dev"><q><i>
 RabbitMQ is an open-source message-broker software (sometimes called message-oriented middleware) that originally implemented the Advanced Message Queuing Protocol (AMQP) and has since been extended with a plug-in architecture to support Streaming Text Oriented Messaging Protocol (STOMP), MQ Telemetry Transport (MQTT), and other protocols.[1]
@@ -221,6 +229,7 @@ Written in Erlang, the RabbitMQ server is built on the Open Telecom Platform fra
 <hr/>
 
 ### Postgresql Manager
+
 <a href="https://github.com/Accenture/kx.as.code/blob/main/auto-setup/core/remote-desktop/post_install_scripts/installPgAdmin.sh" target="_blank">Installation Files</a> | <a href="https://www.pgadmin.org/docs/pgadmin4/latest/index.html" target="_blank">Application Documentation</a> | <a href="https://github.com/postgres/pgadmin4" target="_blank">Application Source Code</a>
 <div class="description-dev"><q><i>
 pgAdmin is a management tool for PostgreSQL and derivative relational databases such as EnterpriseDB's EDB Advanced Server. It may be run either as a web or desktop application.
@@ -248,10 +257,12 @@ pgAdmin is a management tool for PostgreSQL and derivative relational databases 
 <hr/>
 
 ## CICD
+
 <hr/>
 <span style="background-color: rgb(205, 209, 228, 0.3);">
 
 ### ArgoCD
+
 <a href="https://github.com/Accenture/kx.as.code/tree/main/auto-setup/cicd/argocd" target="_blank">Installation Files</a> | <a href="https://argo-cd.readthedocs.io/en/stable/" target="_blank">Application Documentation</a> | <a href="https://github.com/argoproj/argo-cd/" target="_blank">Application Source Code</a>
 <div class="description-dev"><q><i>
 Argo CD is a declarative, GitOps continuous delivery tool for Kubernetes.
@@ -286,6 +297,7 @@ Argo CD is a declarative, GitOps continuous delivery tool for Kubernetes.
 </div>
 
 ### Artifactory
+
 <a href="https://github.com/Accenture/kx.as.code/tree/main/auto-setup/cicd/artifactory" target="_blank">Installation Files</a> | <a href="https://www.jfrog.com/confluence/display/JFROG/JFrog+Artifactory" target="_blank">Application Documentation</a> | <a href="https://releases.jfrog.io/artifactory/bintray-artifactory/org/artifactory/oss/jfrog-artifactory-oss/" target="_blank">Application Source Code</a>
 <div class="description-dev"><q><i>
 JFrog Artifactory is a universal DevOps solution providing end-to-end automation and management of binaries and artifacts through the application delivery process that improves productivity across your development ecosystem. It enables freedom of choice supporting 25+ software build packages, all major CI/CD platforms, and DevOps tools you already use. Artifactory is Kubernetes ready supporting containers, Docker, Helm Charts, and is your Kubernetes and Docker registry and comes with full CLI and REST APIs customizable to your ecosystem.
@@ -333,6 +345,7 @@ JFrog Artifactory is a universal DevOps solution providing end-to-end automation
 <hr/>
 
 ### Consul
+
 <a href="https://github.com/Accenture/kx.as.code/tree/main/auto-setup/cicd/consul" target="_blank">Installation Files</a> | <a href="https://www.consul.io/docs" target="_blank">Application Documentation</a> | <a href="https://github.com/hashicorp/consul" target="_blank">Application Source Code</a>
 <div class="description-dev"><q><i>
 Consul is a distributed, highly available, and data center aware solution to connect and configure applications across dynamic, distributed infrastructure.
@@ -364,6 +377,7 @@ Consul is a distributed, highly available, and data center aware solution to con
 <hr/>
 
 ### Gitea
+
 <a href="https://github.com/Accenture/kx.as.code/tree/main/auto-setup/cicd/gitea" target="_blank">Installation Files</a> | <a href="https://docs.gitea.io/" target="_blank">Application Documentation</a> | <a href="https://github.com/go-gitea/gitea" target="_blank">Application Source Code</a>
 <div class="description-dev"><q><i>Gitea is a community managed lightweight code hosting solution written in Go. It is published under the MIT license.
 </i></q><br>- Gitea</div>
@@ -398,6 +412,7 @@ Consul is a distributed, highly available, and data center aware solution to con
 <hr/>
 
 ### Gitlab
+
 <a href="https://github.com/Accenture/kx.as.code/tree/main/auto-setup/cicd/gitlab" target="_blank">Installation Files</a> | <a href="" target="_blank">Application Documentation</a> | <a href="https://gitlab.com/gitlab-org/gitlab" target="_blank">Application Source Code</a>
 <div class="description-dev"><q><i>
 GitLab is an open source end-to-end software development platform with built-in version control, issue tracking, code review, CI/CD, and more.
@@ -433,6 +448,7 @@ GitLab is an open source end-to-end software development platform with built-in 
 <hr/>
 
 ### Harbor
+
 <a href="https://github.com/Accenture/kx.as.code/tree/main/auto-setup/cicd/harbor" target="_blank">Installation Files</a> | <a href="https://goharbor.io/docs/2.5.0" target="_blank">Application Documentation</a> | <a href="https://github.com/goharbor/harbor" target="_blank">Application Source Code</a>
 <div class="description-dev"><q><i>
 Harbor is an open source registry that secures artifacts with policies and role-based access control, ensures images are scanned and free from vulnerabilities, and signs images as trusted. Harbor, a CNCF Graduated project, delivers compliance, performance, and interoperability to help you consistently and securely manage artifacts across cloud native compute platforms like Kubernetes and Docker.
@@ -463,6 +479,7 @@ Harbor is an open source registry that secures artifacts with policies and role-
 <hr/>
 
 ### Jenkins
+
 <a href="https://github.com/Accenture/kx.as.code/tree/main/auto-setup/cicd/jenkins" target="_blank">Installation Files</a> | <a href="https://www.jenkins.io/doc/" target="_blank">Application Documentation</a> | <a href="https://github.com/jenkinsci/jenkins" target="_blank">Application Source Code</a>
 <div class="description-dev"><q><i>
 The leading open source automation server, Jenkins provides hundreds of plugins to support building, deploying and automating any project.
@@ -493,9 +510,8 @@ The leading open source automation server, Jenkins provides hundreds of plugins 
 </div>
 <hr/>
 
-
-
 ### Nexus3
+
 <a href="https://github.com/Accenture/kx.as.code/tree/main/auto-setup/cicd/nexus3" target="_blank">Installation Files</a> | <a href="https://help.sonatype.com/repomanager3" target="_blank">Application Documentation</a> | <a href="https://github.com/sonatype/nexus-public" target="_blank">Application Source Code</a>
 <div class="description-dev"><q><i>
 Nexus3 manages binaries and build artifacts across your software supply chain.
@@ -535,6 +551,7 @@ Nexus3 manages binaries and build artifacts across your software supply chain.
 <hr/>
 
 ### Teamcity
+
 <a href="" target="_blank">Installation Files</a> | <a href="https://www.jetbrains.com/help/teamcity/teamcity-documentation.html" target="_blank">Application Documentation</a>
 <div class="description-dev"><q><i>
 TeamCity is a continuous integration server that integrates with all major IDEs, version control and issue tracking systems, and can be used by teams of any size.
@@ -571,6 +588,7 @@ TeamCity is a continuous integration server that integrates with all major IDEs,
 
 
 ## Monitoring
+
 <hr/>
 ### Elastic ElasticSearch
 <a href="https://github.com/Accenture/kx.as.code/tree/main/auto-setup/monitoring/elastic-elasticsearch" target="_blank">Installation Files</a> | <a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/index.html" target="_blank">Application Documentation</a> | <a href="https://github.com/elastic/elasticsearch" target="_blank">Application Source Code</a>
@@ -977,6 +995,7 @@ Telegraf is a server-based agent for collecting and sending all metrics and even
 <hr/>
 
 ### Prometheus
+
 <a href="https://github.com/Accenture/kx.as.code/tree/main/auto-setup/monitoring/prometheus" target="_blank">Installation Files</a> | <a href="https://prometheus.io/docs/introduction/overview/" target="_blank">Application Documentation</a> | <a href="https://github.com/prometheus/prometheus" target="_blank">Application Source Code</a>
 <div class="description-dev"><q><i>
 Prometheus collects and stores its metrics as time series data, i.e. metrics information is stored with the timestamp at which it was recorded, alongside optional key-value pairs called labels.

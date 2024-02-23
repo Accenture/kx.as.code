@@ -6,7 +6,7 @@ The solution works in the same way as for the local virtualization solutions, ex
 
 The best way to see how it works is to view the AWS profile terraform scripts [here](https://github.com/Accenture/kx.as.code/tree/main/profiles/terraform-aws){:target="\_blank"}.
 
-Before KX.AS.CODE can be started on AWS, it is necessary to build the AMI images. See [here](../../Build/Public-Clouds/) fore more details.
+Before KX.AS.CODE can be started on AWS, it is necessary to build the AMI images. See [here](../Build/Public-Clouds.md) fore more details.
 
 ### Deployment Profile
 

@@ -1,44 +1,45 @@
-# Welcome!
+# Welcome
 
 Welcome to the KX.AS.CODE workstation. This virtual workstation was initially created with two primary goals in mind, but has since become so much more!
 
 * Play, learn, experiment, innovate! :muscle: :trophy:
 * Share knowledge as code!
 
-Since then, due to the increase in the power and feature-set of KX.AS.CODE, the use case has expanded to the following more complex usage (see [use case example](../../Overview/Use-Case-Example/)):
+Since then, due to the increase in the power and feature-set of KX.AS.CODE, the use case has expanded to the following more complex usage (see [use case example](./Overview/Use-Case-Example.md)):
 
 * Dynamic on-demand provisioning/destruction of test environments in the public/private cloud
-* End-to-end developer workstation to enhance local quality assurance capabilities 
+* End-to-end developer workstation to enhance local quality assurance capabilities
 
 !!! tip
     KX.AS.CODE was built with the belief that playing and experimentation is the best way to learn new tricks and ultimately innovate.
 
 !!! abstract "Quick Start Guide"
-    Want to get started quickly? Read our [Quick Start Guide](./Quick-Start-Guide/).
+    Want to get started quickly? Read our [Quick Start Guide](./Quick-Start-Guide.md).
 
 ## What is the KX.AS.CODE Workstation?
 
-KX.AS.CODE is a dynamic fully configurable and customizable `local cloud like` `Kubernetes environment` with a number of functionalities you would expect to see when managing a `Kubernetes cluster` in the `cloud`, including an `ingress controller`, `local and network storage services`, `load-balancer`, `domain services`, `identity management`, `secrets management`, a `certificate authority`... and the best bit, you can launch it very quickly from our Jenkins based configurator and launcher. See the [Quick Start Guide](./Quick-Start-Guide/)!
+KX.AS.CODE is a dynamic fully configurable and customizable `local cloud like` `Kubernetes environment` with a number of functionalities you would expect to see when managing a `Kubernetes cluster` in the `cloud`, including an `ingress controller`, `local and network storage services`, `load-balancer`, `domain services`, `identity management`, `secrets management`, a `certificate authority`... and the best bit, you can launch it very quickly from our Jenkins based configurator and launcher. See the [Quick Start Guide](./Quick-Start-Guide.md)!
 
 Once the base services are up, KX.AS.CODE has a built in `App Store` for quickly installing additional solutions on top of the base outlined above, such as `Gitlab`, `Grafana`, `InfluxDB`, `SonarQube`, `NeuVector`, `IntelliJ IDEA`, `MSSQLServer`... and many many more!
 
 As a bonus, you also get a `desktop` for easily accessing and managing deployed applications. The desktop makes things easier, but if you prefer, you can also deploy KX.AS.CODE without it.
 
 !!! info "Applications Library"
-    Check out the [applications library](Overview/Application-Library/), to see which solutions can be installed with a single click!
+    Check out the [applications library](./Overview/Application-Library.md), to see which solutions can be installed with a single click!
 
 !!! question "Questions & Answers"
-    To find out more about what KX.AS.CODE is, and how it came about, read our [Questions and Answers](Overview/Questions-and-Answers/).
+    To find out more about what KX.AS.CODE is, and how it came about, read our [Questions and Answers](./Overview/Questions-and-Answers.md).
 
 ## Use Cases
 
 Currently, KX.AS.CODE fulfills the following use cases:
 
-1. Fullstack development/test environment (see [use case example](Overview/Use-Case-Example/))
+1. Fullstack development/test environment (see [use case example](./Overview/Use-Case-Example.md))
 2. DevOps training environment
 3. A HomeLab developer/DevOps environment - see below our Raspberry Pi project!
 
 ## Where can I deploy KX.AS.CODE?
+
 KX.AS.CODE can be deployed locally or in the cloud, be it a private or public cloud. The most tested solutions are currently OpenStack and VirtualBox. Here a full list of solutions we have run KX.AS.CODE on.
 
 1. VMWare Workstation/Fusion (MacOSX, Linux and Windows)
@@ -52,12 +53,12 @@ KX.AS.CODE can be deployed locally or in the cloud, be it a private or public cl
 
     ![](assets/images/raspberrypi_logo.png){ width="35" align=left loading=lazy }
 
-    We just started a new project to enable ARM64, and more specifically, KX.AS.CODE on a Rasbperry Pi cluster. Read more in the Raspberry Pi [build](Build/Raspberry-Pi-Cluster/) and [deployment](Deployment/Raspberry-Pi-Cluster/) guides.
+    We just started a new project to enable ARM64, and more specifically, KX.AS.CODE on a Rasbperry Pi cluster. Read more in the Raspberry Pi [build](./Build/Raspberry-Pi-Cluster.md) and [deployment](./Deployment/Raspberry-Pi-Cluster.md) guides.
 
     You can follow our Raspberry Pi enablement progress on our [Discord Raspberry Pi channel](https://discord.gg/XC64HNgeXK).
 
 !!! example "Contribute an application"
-    If you want to contribute another application to KX.AS.CODE, read our [development walk-through](Development/Adding-a-Solution/)
+    If you want to contribute another application to KX.AS.CODE, read our [development walk-through](./Development/Adding-a-Solution.md)
 
 ## KX.AS.CODE Highlights
 
@@ -86,9 +87,10 @@ Once done configuring KX.AS.CODE in the launcher, you can review the settings an
 ![](assets/images/jenkins_minimal_setup5.png){: .zoom}
 
 ### Login screen
-Depending on whether the defaults were changed or not, you can either log in with your own user, or the default `kx.hero`. 
 
-Additional users will also be available if applied before launching KX.AS.CODE. See the [User Management Guide](Deployment/User-Management/).
+Depending on whether the defaults were changed or not, you can either log in with your own user, or the default `kx.hero`.
+
+Additional users will also be available if applied before launching KX.AS.CODE. See the [User Management Guide](./Deployment/User-Management.md).
 
 ![](assets/images/kx.as.code_login_screen.png){: .zoom}
 
@@ -106,7 +108,7 @@ The tools for administering some elements of KX.AS.CODE. More details will be pu
 
 ### Installed applications
 
-The applications folder show the icons of the applications that have been installed so far and are available to launch. Use `GoPoass` to get the password for accessing the application. 
+The applications folder show the icons of the applications that have been installed so far and are available to launch. Use `GoPoass` to get the password for accessing the application.
 
 ![](assets/images/kx.as.code_applications.png){: .zoom}
 
@@ -162,7 +164,7 @@ Since KX.AS.CODE is all about sharing knowledge as code, a pre-configured VSCode
 
 The KX.AS.CODE portal makes adding and removing applications easier, and provides status on current installed items.
 
-!!! warning 
+!!! warning
     The portal is still in ALPHA, so may not always behave as expected. The basics such as installing `components` and executing `tasks` should be OK.
 
 ![](assets/images/kx.as.code_portal.png){: .zoom}
@@ -184,14 +186,12 @@ In the future, this screen will also allow the user to enter values for input ar
 ### KX.AS.CODE Portal - Application Groups
 
 Applications can be installed in integrated groups. This is still in development, so the install button currently does not execute the group installation.
-See the [manual installations](../../Deployment/Manual-Provisioning/#installation-groups) page, on how to install the groups manually without the portal.
-
+See the [manual installations](./Deployment/Manual-Provisioning.md/#installation-groups) page, on how to install the groups manually without the portal.
 
 ![](assets/images/kx.as.code_portal_application_groups.png){: .zoom}
 
 ## Contributing
+
 We are happy to receive contributions, ideas and dare I say it, bug fixes or suggestions on how to do things better! We never stop learning! :nerd_face:
 
-For more details on how you can contribute to the project, checkout the [CONTRIBUTE.md](Development/Contribution-Guidelines/) file
-
-
+For more details on how you can contribute to the project, checkout the [CONTRIBUTE.md](./Development/Contribution-Guidelines.md) file.

@@ -1,6 +1,6 @@
 # Raising a Bug Report
 
-Before raising an issue, be sure to follow the [troubleshooting](../../Deployment/Troubleshooting/) steps.
+Before raising an issue, be sure to follow the [troubleshooting](../Deployment/Troubleshooting.md) steps.
 
 !!! bug
     If that didn't help, then you can raise an issue on [Github.com](https://github.com/Accenture/kx.as.code/issues){:target="\_blank"}.
@@ -8,7 +8,7 @@ Before raising an issue, be sure to follow the [troubleshooting](../../Deploymen
 In some cases, it may be possible to confirm if it's a bug or not in the [KX.AS.CODE Discord channel](https://discord.gg/FXeavNQnC5){:target="\_blank"}, before raising the ticket.
 
 !!! important
-    Be aware that we will not be able to respond in real time, as this is currently more of a hobby project, and we still have our usual day job. 
+    Be aware that we will not be able to respond in real time, as this is currently more of a hobby project, and we still have our usual day job.
 
 Be sure to include the following information in your ticket.
 

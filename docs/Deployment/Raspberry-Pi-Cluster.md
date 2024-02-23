@@ -5,7 +5,7 @@ This guide will detail how to deploy the images you built for the KX.AS.CODE Ras
 This is still a work in progress. You can follow our Raspberry Pi enablement progress on our [Discord Raspberry Pi channel](https://discord.gg/XC64HNgeXK){:target="\_blank"}!
 
 !!! info
-    If you have not yet built the images, see the [Raspberry Image Build Guide](../../Build/Raspberry-Pi-Cluster/).
+    If you have not yet built the images, see the [Raspberry Image Build Guide](../Build/Raspberry-Pi-Cluster.md).
 
 !!! danger "Important"
     This has only been tested on an 8GB Raspberry Pi 4B. It is not recommended to use anything less, as the resources will not be sufficient to run all the KX.AS.CODE services! Also note that one Raspberry Pi 4B will not be enough. In our testing, we have used four Raspberry Pi 4B boards setup in a 1 x KX-Main and 3 x KX-Workers configuration.

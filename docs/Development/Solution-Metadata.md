@@ -1,6 +1,6 @@
 # Solution Metadata
 
-Where profile-config.json, as described [here](../../Deployment/Configuration-Options/), describes the global configuration items, each component that needs to be installed, additionally has its own configuration json, that describes, what, how, and in what order things need to be executed.
+Where profile-config.json, as described [here](../Deployment/Configuration-Options.md), describes the global configuration items, each component that needs to be installed, additionally has its own configuration json, that describes, what, how, and in what order things need to be executed.
 
 The content of metadata.json will depend on the installation method. Currently, the three methods are `Scripts`, `ArgoCD` or `Helm`.
 
@@ -8,12 +8,12 @@ There is a backlog item to support Operators in future, but for now these can be
 
 !!! info
     For an example of an Operator installed via the script based method, see the [MinIO Operator installation scripts](https://github.com/Accenture/kx.as.code/tree/main/auto-setup/storage/minio-operator){:target="\_blank"}.
-    
+
     This was based on Helm in the past, but was recently migrated to the Operator. It is described in detail below.
 
-This page is primarily for describing `metadata.json` options. For a more detailed development guide, see the [development walk-through](../../Development/Adding-a-Solution/).
+This page is primarily for describing `metadata.json` options. For a more detailed development guide, see the [development walk-through](./Adding-a-Solution.md).
 
-The first table describes the common configuration items for all installation routines. The subsequent tables show the additional configuration items needed specific to the installation method. 
+The first table describes the common configuration items for all installation routines. The subsequent tables show the additional configuration items needed specific to the installation method.
 
 ### Common - General Settings
 

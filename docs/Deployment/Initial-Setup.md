@@ -2,7 +2,7 @@
 
 ## Pre-install Steps
 
-Prepare prerequisites according to the [Build Environment](../../Build/Local-Virtualizations/) guide.
+Prepare prerequisites according to the [Build Environment](../Build/Local-Virtualizations.md) guide.
 
 !!! danger "MacOSX launchLocalBuildEnvironment.sh incompatibilities"
     MacOSX contains old packages for `screen` and `openssl`, compared to Linux and Windows. Please upgrade these packages. The easiest way to do this is with [Homebrew](https://brew.sh/){:target="\_blank"}.
@@ -12,8 +12,10 @@ Prepare prerequisites according to the [Build Environment](../../Build/Local-Vir
     ```
 
 ## Configure Jenkins.env
+
 1. Copy `base-vm/build/jenkins/jenkins.env_template` to `base-vm/build/jenkins/jenkins.env`.
-   1. At the minimal, ensure the yellow highlighted lines match your environment
+2. At the minimal, ensure the yellow highlighted lines match your environment
+
       ```bash linenums="1" hl_lines="3 4 5 6 7"
       # General Jenkins Variables. Minimal required. Enough for local virtualization
       # JNLP secret must be left blank for default agent that is installed with the initial setup
@@ -42,6 +44,7 @@ Prepare prerequisites according to the [Build Environment](../../Build/Local-Vir
       ```
 
 ## Run launchLocalBuildEnvironment
+
 Depending on whether you are running on MacOSX, Linux or Windows, you will need to execute the following launcher script from the repository root.
 
 ```bash
@@ -78,9 +81,8 @@ Select `1` if you do not intend to build VMWare images. You can download the nee
 
 If all goes well, you should see the following message in the console:
 
-!!! success 
+!!! success
     - [INFO] Congratulations! Jenkins for KX.AS.CODE is successfully configured and running. Access Jenkins via the following URL: [http://localhost:8080/job/KX.AS.CODE_Launcher/build?delay=0sec](http://localhost:8080/job/KX.AS.CODE_Launcher/build?delay=0sec){:target="\_blank"}."
 
 !!! warning
     If you changed the IP or port for Jenkins in `jenkins.env`, you will need to use that when launching the Jenkins URL, instead of the default `localhost:8080` combination."
-

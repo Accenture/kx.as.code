@@ -33,7 +33,7 @@ Next, ssh into that build environment with `vagrant ssh`.
 
 Once inside the VM, cd into `/vagrant` and launch the builder for KX-Main, and KX-Node.
 
-```
+```bash
 cd /kx.as.code/base-vm/build/packer/raspberry-pi/
 cp ~/packer-builder-arm/packer-builder-arm /kx.as.code/base-vm/build/packer/raspberry-pi/
 
@@ -59,7 +59,7 @@ Once the image is flashed to the SD card, you should be able to insert the SD ca
 
 If you kept all the defaults, you can log in with `kx.hero` and `L3arnandshare`.
 
-For more details on deploying the built images, see the [Raspberry Deployment Guide](../../Deployment/Raspberry-Pi-Cluster/).
+For more details on deploying the built images, see the [Raspberry Deployment Guide](../Deployment/Raspberry-Pi-Cluster.md).
 
 !!! info
     This guide is still a work in progress.

@@ -8,6 +8,7 @@ Here the instructions for building the AMI images needed to launch KX.AS.CODE on
 First, understand how the packer build process for AWS works by reading the following [documentation](https://learn.hashicorp.com/tutorials/packer/aws-get-started-build-image?in=packer/aws-get-started){:target="\_blank"}.
 
 ### Prerequisites
+
 - Packer installed
 - An AWS account with secret key and secret
 - Route to the internet in the AWS network where the packer build will be launched
@@ -22,13 +23,13 @@ The most important part of the packer build process are the packer JSON files th
 
 #### Windows
 
-* [Kx-Main](https://github.com/Accenture/kx.as.code/blob/main/base-vm/build/packer/windows/kx-main-local-profiles.json){:target="\_blank"}
-* [KX-Node](https://github.com/Accenture/kx.as.code/blob/main/base-vm/build/packer/windows/kx-node-cloud-profiles.json){:target="\_blank"}
+- [Kx-Main](https://github.com/Accenture/kx.as.code/blob/main/base-vm/build/packer/windows/kx-main-local-profiles.json){:target="\_blank"}
+- [KX-Node](https://github.com/Accenture/kx.as.code/blob/main/base-vm/build/packer/windows/kx-node-cloud-profiles.json){:target="\_blank"}
 
 #### Mac/Linux
 
-* [Kx-Main](https://github.com/Accenture/kx.as.code/blob/main/base-vm/build/packer/darwin-linux/kx-main-cloud-profiles.json){:target="\_blank"}
-* [KX-Node](https://github.com/Accenture/kx.as.code/blob/main/base-vm/build/packer/darwin-linux/kx-node-cloud-profiles.json){:target="\_blank"}
+- [Kx-Main](https://github.com/Accenture/kx.as.code/blob/main/base-vm/build/packer/darwin-linux/kx-main-cloud-profiles.json){:target="\_blank"}
+- [KX-Node](https://github.com/Accenture/kx.as.code/blob/main/base-vm/build/packer/darwin-linux/kx-node-cloud-profiles.json){:target="\_blank"}
 
 There is not a huge difference between Windows and Mac/Linux. Certainly KX.AS.CODE is built in exactly the same way, just some of the post processing steps differ, due to differing terminal sessions (Powershell versus Bash for example)
 
@@ -144,4 +145,4 @@ One of the parameters is the Debian 11 AMI id to use as the base image, on top o
 !!! note
     Remember to write down your AMI id once you have built the images. You will need to refer to them when deploying the built images.
 
-Once the images are built, see the following [guide](../../Deployment/Public-Clouds/) on how to deploy them.
+Once the images are built, see the following [guide](../Deployment/Public-Clouds.md) on how to deploy them.

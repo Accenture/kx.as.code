@@ -2,11 +2,11 @@
 
 If you just want to start KX.AS.CODE locally using the standard images, you do not need to build the images yourself. Both the main and worker nodes are available on the [Vagrant Cloud](https://app.vagrantup.com/kxascode/){:target="\_blank"}.
 
-For starting KX.AS.CODE without building the images yourself, follow the [Quick Start Guide](../../Quick-Start-Guide/).
+For starting KX.AS.CODE without building the images yourself, follow the [Quick Start Guide](../Quick-Start-Guide.md).
 
 ## Prerequisites
 
-!!! note 
+!!! note
     In order to build KX.AS.CODE, you will need the following pre-requisites
 
     - HashiCorp Packer - https://www.packer.io/downloads
@@ -26,14 +26,14 @@ The most comfortable way is to use the Jenkins based builder job.
 
 ### Jenkins Builder Jobs
 
-The process for Windows and Mac is the same if using the Launcher. Following the following [guide](../../Deployment/Initial-Setup/) for starting the KX.AS.CODE Builder & Launcher.
+The process for Windows and Mac is the same if using the Launcher. Following the following [guide](../Deployment/Initial-Setup.md) for starting the KX.AS.CODE Builder & Launcher.
 
 Once the launcher is up, select the profile to build and then click on the play icon in the `Builder Config Panel`, either in the KX-Main or KX-Node row, depending on which one you want to build.
 
 !!! info
     You only need to build KX-Node if you intend to start KX.AS.CODE in a multi-node setup, either multiple KX-Main nodes, multiple KX-Node nodes or both.
 
-!!! warning 
+!!! warning
     If the Cloud Box Versions are not shown, you likely have an old version of Vagrant running. Please upgrade and try again.
 
 ![build_images](../assets/images/kx-as-code_configurator_select-profile.png){: .zoom}
@@ -46,37 +46,36 @@ At any time you can hover over the log icon in the config panel to see the lates
 
 If you want to see the full log, click on the log icon, which will result in the full log being opened in a new tab.
 
-
 ### Manual
 
 The variables below are automatically generated with the correct values if you use the Jenkins job. Here you will need to ensure the correct values are in place.
 
-##### KX-Main
+#### KX-Main
 
 !!! example
     ```bash
     packer build -force \
       -on-error=abort \  # leave VM up on error for debugging
       -only kx-main-virtualbox \  # change depending on profile. here the KX-Main image is being built for VirtualBox
-      -var compute_engine_build=false \  # Disables grub boot splash screen as it doesn't work on public clouds 
+      -var compute_engine_build=false \  # Disables grub boot splash screen as it doesn't work on public clouds
       -var memory=8192 \
       -var cpus=2 \
-      -var video_memory=128 \ 
+      -var video_memory=128 \
       -var hostname=kx-main \
-      -var domain=kx-as-code.local \ 
+      -var domain=kx-as-code.local \
       -var version=0.8.8 \
-      -var kube_version=1.21.3-00 \ 
+      -var kube_version=1.21.3-00 \
       -var vm_user=kx.hero \
-      -var vm_password=L3arnandshare \ 
-      -var git_source_url=https://github.com/Accenture/kx.as.code.git \ 
-      -var git_source_branch=main \ 
+      -var vm_password=L3arnandshare \
+      -var git_source_url=https://github.com/Accenture/kx.as.code.git \
+      -var git_source_branch=main \
       -var git_source_user=**** \
       -var git_source_token=**** \
-      -var base_image_ssh_user=vagrant \ 
+      -var base_image_ssh_user=vagrant \
       ./kx-main-local-profiles.json
     ```
 
-##### KX-Node
+#### KX-Node
 
 !!! info
     You only need to build KX-Node if you intend to start KX.AS.CODE in a multi-node setup, either multiple KX-Main nodes, multiple KX-Node nodes or both.
@@ -86,24 +85,23 @@ The variables below are automatically generated with the correct values if you u
     packer build -force \
       -on-error=abort \  # leave VM up on error for debugging
       -only kx-node-virtualbox \  # change depending on profile. here the KX-Main image is being built for VirtualBox
-      -var compute_engine_build=false \  # Disables grub boot splash screen as it doesn't work on public clouds 
+      -var compute_engine_build=false \  # Disables grub boot splash screen as it doesn't work on public clouds
       -var memory=8192 \
       -var cpus=2 \
-      -var video_memory=128 \ 
+      -var video_memory=128 \
       -var hostname=kx-node \
-      -var domain=kx-as-code.local \ 
+      -var domain=kx-as-code.local \
       -var version=0.8.8 \
-      -var kube_version=1.21.3-00 \ 
+      -var kube_version=1.21.3-00 \
       -var vm_user=kx.hero \
-      -var vm_password=L3arnandshare \ 
-      -var git_source_url=https://github.com/Accenture/kx.as.code.git \ 
-      -var git_source_branch=main \ 
+      -var vm_password=L3arnandshare \
+      -var git_source_url=https://github.com/Accenture/kx.as.code.git \
+      -var git_source_branch=main \
       -var git_source_user=**** \
       -var git_source_token=**** \
-      -var base_image_ssh_user=vagrant \ 
+      -var base_image_ssh_user=vagrant \
       ./kx-node-local-profiles.json
     ```
-
 
 To get the checksum, just visit the link https://download.virtualbox.org/virtualbox and navigate to the latest version. In the version directory you will see a file called "SHA256SUMS". Find the checksum for the ISO and add that to json files.
 
@@ -125,7 +123,6 @@ Once done, you are good to go. Head to the Quick Start Guide, and select Paralle
 
 As with VirtualBox, you can also trigger the build process manually. Replace `kx-main-virtualbox` in the example above with `kx-main-parallels` for building the main node, and `kx-node-virtualbox` with `kx-node-parallels` for building the cluster node.
 
-
 #### VMWare
 
 !!! info
@@ -133,10 +130,9 @@ As with VirtualBox, you can also trigger the build process manually. Replace `kx
 
 For VMWare you will need a licensed version of either VMWare Fusion (Mac) or VMWare Workstation (Windows).
 
-
 #### Updating VirtualBox Guest Additions
 
-!!! warning 
+!!! warning
     For VirtualBox you will need to ensure you have the matching guest additions version in the worker and master node json files.
 
     ```json
@@ -146,10 +142,7 @@ For VMWare you will need a licensed version of either VMWare Fusion (Mac) or VMW
     }
     ```
 
-
 #### Building on MacOSX / Linux
 
 !!! danger "Important"
     Important. Currently, this process does not work on ARM based processors. However, work is in progress to enable ARM64. See here.
-
-

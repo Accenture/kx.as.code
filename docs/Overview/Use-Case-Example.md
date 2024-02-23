@@ -2,7 +2,7 @@
 
 There are many use cases for KX.AS.CODE, as outlined on the docs entry page. Here an example of a use case we currently have deployed at a major enterprise.
 
-### Use Case
+## Use Case
 
 The idea was to enable two things.
 
@@ -19,25 +19,22 @@ The customization for the enterprise user added the following components:
 
 The server side components are not available in the public version of KX.AS.CODE.
 
-### Developer Tools
+## Developer Tools
 
 - Azure Data Studio
 - Postman
 - IntelliJ IDEA
 
+![](../assets/images/devWorkstationPortal.png)
 
-![](../../assets/images/devWorkstationPortal.png)
+![](../assets/images/devWorkstation1.png)
 
-![](../../assets/images/devWorkstation1.png)
+![](../assets/images/devWorkstationAem1.png)
 
-![](../../assets/images/devWorkstationAem1.png)
-
-![](../../assets/images/devWorkstationAem2.png)
+![](../assets/images/devWorkstationAem2.png)
 
 ![](../assets/images/devWorkstationHybris1.png)
 
 ![](../assets/images/devWorkstationHybris2.png)
 
 ![](../assets/images/devWorkstationMssqlServer1.png)
-
-
