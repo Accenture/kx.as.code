@@ -22,7 +22,7 @@
         },
         "environmentPrefix": "demo1",
         "glusterFsDiskSize": 200,
-        "kubeOrchestrator": "k3s",
+        "kubeOrchestrator": "k8s",
         "local_volumes": {
             "fifty_gb": 0,
             "five_gb": 10,

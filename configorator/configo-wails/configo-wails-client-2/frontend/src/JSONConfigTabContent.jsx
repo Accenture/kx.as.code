@@ -49,7 +49,7 @@ const JSONConfigTabContent = (props) => {
 
     return (
         <div className='text-left text-black'>
-            <div id="codemirror-container" className='w-[932px] overflow-y-scroll h-[442px] text-base bg-ghBlack3'>
+            <div id="codemirror-container" className='w-[932px] overflow-y-scroll h-[442px] text-base bg-ghBlack2 custom-scrollbar'>
                 <CodeMirror
                     extensions={[langs.tsx()]}
                     theme={"dark"}

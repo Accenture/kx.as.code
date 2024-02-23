@@ -187,18 +187,21 @@ const BuildContent = () => {
 
     const getInstallationMark = (toolName) => (
         <div className='flex items-center mt-3.5 ml-2 text-sm capitalize bg-ghBlack4 p-2 rounded'>
-            {installationStatus[toolName] ? (installationStatus[toolName] ? (
-                <span className='text-green-500 flex items-center px-1'>
-                    <CheckCircleIcon fontSize='small' />
-                    <span className='ml-1'>{toolName} installed.</span>
-                </span>
-            ) : (
-                <span className='text-red-500 flex items-center'>
-                    <ErrorIcon fontSize='small' />
-                    <span className='ml-1'>{toolName} not installed.</span>
-                    {/* <button className='ml-2 p-1 px-3 bg-kxBlue rounded text-white font-semibold text-xs'>Install</button> */}
-                </span>
-            )) : null}
+            {
+                installationStatus[toolName] !== null ? (
+                    installationStatus[toolName] ? (
+                        <span className='text-green-500 flex items-center px-1'>
+                            <CheckCircleIcon fontSize='small' />
+                            <span className='ml-1'>{toolName} installed.</span>
+                        </span>
+                    ) : (
+                        <span className='text-red-500 flex items-center'>
+                            <ErrorIcon fontSize='small' />
+                            <span className='ml-1'>{toolName} not installed.</span>
+                            {/* <button className='ml-2 p-1 px-3 bg-kxBlue rounded text-white font-semibold text-xs'>Install</button> */}
+                        </span>
+                    )) : (null)
+            }
         </div>
     );
 

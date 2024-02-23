@@ -157,11 +157,10 @@ const UIConfigTabContent = ({ activeTab, handleTabClick, setJsonData }) => {
                                         }}
                                     />
                                 </div>
-
                             </div>
-                            <div className='text-gray-400 flex justify-between pt-1'>
+                            <div className='text-gray-400 flex justify-between pt-1 items-center'>
                                 <span>Application Groups</span>
-                                {applicationGroupJson.length}
+                                <span className='p-1.5 py-0 bg-ghBlack4 text-gray-400 rounded'>{applicationGroupJson.length}</span>
                             </div>
                         </div>
                     </div>
@@ -202,7 +201,7 @@ const UIConfigTabContent = ({ activeTab, handleTabClick, setJsonData }) => {
 
                             <div className="grid gap-1 grid-cols-12">
                                 <div className="col-span-12">
-                                    <button className='bg-kxBlue p-2 py-3 mt-5 rounded w-full'>Add Application</button>
+                                    <button className='bg-kxBlue p-2 py-2.5 mt-5 rounded w-full'>Add Application</button>
                                 </div>
                             </div>
 

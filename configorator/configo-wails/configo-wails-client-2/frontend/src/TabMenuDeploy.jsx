@@ -235,18 +235,21 @@ const TabContent1 = ({ handleConfigChange }) => {
 
     const getInstallationMark = (toolName) => (
         <div className='flex items-center mt-3.5 ml-2 text-sm capitalize bg-ghBlack4 p-2 rounded'>
-            {installationStatus[toolName] ? (installationStatus[toolName] ? (
-                <span className='text-green-500 flex items-center px-1'>
-                    <CheckCircleIcon fontSize='small' />
-                    <span className='ml-1'>{toolName} installed.</span>
-                </span>
-            ) : (
-                <span className='text-red-500 flex items-center'>
-                    <ErrorIcon fontSize='small' />
-                    <span className='ml-1'>{toolName} not installed.</span>
-                    {/* <button className='ml-2 p-1 px-3 bg-kxBlue rounded text-white font-semibold text-xs'>Install</button> */}
-                </span>
-            )) : null}
+            {
+                installationStatus[toolName] !== null ? (
+                    installationStatus[toolName] ? (
+                        <span className='text-green-500 flex items-center px-1'>
+                            <CheckCircleIcon fontSize='small' />
+                            <span className='ml-1'>{toolName} installed.</span>
+                        </span>
+                    ) : (
+                        <span className='text-red-500 flex items-center'>
+                            <ErrorIcon fontSize='small' />
+                            <span className='ml-1'>{toolName} not installed.</span>
+                            {/* <button className='ml-2 p-1 px-3 bg-kxBlue rounded text-white font-semibold text-xs'>Install</button> */}
+                        </span>
+                    )) : (null)
+            }
         </div>
     );
 
@@ -884,7 +887,7 @@ const TabContent8 = ({ handleConfigChange }) => {
                     </div>
 
                     {/* Application Groups Container */}
-                    <div className="h-[320px] overflow-y-auto bg-ghBlack2 p-5">
+                    <div className="h-[320px] overflow-y-auto bg-ghBlack2 p-5 custom-scrollbar">
                         {searchTerm !== "" && filteredGroupsCount === 0 ? (
                             <div className='text-gray-500 pr-5 font-semibold'>No results for "{searchTerm}".</div>
                         ) : null}
@@ -901,7 +904,7 @@ const TabContent8 = ({ handleConfigChange }) => {
                         <span className='h-5 w-5 text-sm text-ghBlack font-bold p-1 py-0 mr-1 flex justify-center items-center bg-gray-400 rounded'>{selectedApplicationGroups.length}</span>
                         <span className='text-2xl font-semibold'>Selected Application Groups:</span>
                     </div>
-                    <div className='rounded py-2 overflow-y-auto h-[329px]'>
+                    <div className='rounded py-2 overflow-y-auto h-[329px] custom-scrollbar'>
                         {
                             selectedApplicationGroups.length == 0 ? <div className='text-gray-500 text-sm pr-5'>No application groups selected. Search and select application groups listed in the left section.</div> :
                                 selectedApplicationGroups.map((appGroup) => {

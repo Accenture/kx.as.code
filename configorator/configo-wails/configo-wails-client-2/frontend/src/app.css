@@ -66,12 +66,12 @@
 
 /* Coldmirror background overwrite */
 .ͼ1{
-    background-color: #1f262e;
+    background-color: #161b22;
 }
 
 /* Coldmirror line numbers background color overwrite */
 .ͼo .cm-gutters{
-    background-color: #161b22;
+    background-color: #1f262e;
 }
 
 /* Coldmirror active line highlight background color overwrite */
