@@ -3,6 +3,7 @@ repo_url: 'https://github.com/Accenture/kx.as.code'
 repo_name: 'Github'
 site_description: 'KX.AS.CODE'
 site_author: 'Patrick Delamere'
+site_url: 'https://accenture.github.io/kx.as.code/'
 
 docs_dir: docs
 
