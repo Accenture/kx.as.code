@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import applicationGroupJson from './assets/templates/applicationGroups.json';
 import TextField from '@mui/material/TextField';
 import MenuItem from '@mui/material/MenuItem';
@@ -10,6 +10,14 @@ import EditIcon from '@mui/icons-material/Edit';
 import JSONConfigTabContent from './JSONConfigTabContent';
 import { ApplicationGroupCard } from './ApplicationGroupCard';
 import { ConfigSectionHeader } from './ConfigSectionHeader';
+import {
+    getPanelElement,
+    getPanelGroupElement,
+    getResizeHandleElement,
+    Panel,
+    PanelGroup,
+    PanelResizeHandle,
+} from "react-resizable-panels";
 
 export function ApplicationGroups() {
 
@@ -90,6 +98,7 @@ const UIConfigTabContent = ({ activeTab, handleTabClick, setJsonData }) => {
     const [selectedId, setSelectedId] = useState(null);
     const [detailsObject, setDetailsObject] = useState({});
 
+    const refs = useRef();
 
     const handleDivClick = (id) => {
         setSelectedId(id === selectedId ? null : id);
@@ -112,6 +121,18 @@ const UIConfigTabContent = ({ activeTab, handleTabClick, setJsonData }) => {
 
     useEffect(() => {
         return () => { };
+
+        const groupElement = getPanelGroupElement("group");
+        const leftPanelElement = getPanelElement("left-panel");
+        const rightPanelElement = getPanelElement("right-panel");
+        const resizeHandleElement = getResizeHandleElement("resize-handle");
+
+        refs.current = {
+            groupElement,
+            leftPanelElement,
+            rightPanelElement,
+            resizeHandleElement,
+        };
     }, []);
 
     const drawApplicationGroupCards = () => {
@@ -127,9 +148,8 @@ const UIConfigTabContent = ({ activeTab, handleTabClick, setJsonData }) => {
 
     return (
         <div id='config-ui-container' className='bg-ghBlack3'>
-            <div className="tab-content dark:text-white text-black grid grid-cols-12">
-
-                <div className='col-span-4'>
+            <PanelGroup direction="horizontal" id="group" className="tab-content dark:text-white text-black">
+                <Panel id="left-panel" className='min-w-[300px]'>
                     <div className='relative top-0 sticky bg-ghBlack2 py-2 shadow-lg px-3'>
                         <div className="items-center">
                             <div className='flex justify-center'>
@@ -169,8 +189,9 @@ const UIConfigTabContent = ({ activeTab, handleTabClick, setJsonData }) => {
                         {isLoading ? (<div className="animate-pulse flex flex-col col-span-full px-3">
                         </div>) : drawApplicationGroupCards()}
                     </div>
-                </div>
-                <div className="col-span-8 bg-ghBlack2 p-3">
+                </Panel>
+                <PanelResizeHandle id="resize-handle" className='w-1 hover:bg-kxBlue bg-ghBlack2' />
+                <Panel id="right-panel" className="bg-ghBlack2 p-3 min-w-[300px]">
 
                     {selectedId !== null && (
                         <>
@@ -179,13 +200,13 @@ const UIConfigTabContent = ({ activeTab, handleTabClick, setJsonData }) => {
                                     <div className="relative">
                                         <input type="text" value={detailsObject.title} className='w-full focus:outline-none rounded text-2xl font-semibold mb-2 p-1 pr-10 bg-transparent border-dashed hover:border-gray-500 focus:border-kxBlue border border-transparent text-white' />
                                         <div className="absolute right-4 top-2">
-                                            <EditIcon fontSize='small'/>
+                                            <EditIcon fontSize='small' />
                                         </div>
                                     </div>
                                     <div className="relative">
-                                        <textarea type="text" value={detailsObject.description} className='w-full focus:outline-none rounded mb-2 p-1 pr-10 bg-transparent border-dashed hover:border-gray-500 focus:border-kxBlue border border-transparent text-gray-400' />
+                                        <textarea type="text" value={detailsObject.description} className='w-full min-h-[100px] focus:outline-none rounded mb-2 p-1 pr-10 bg-transparent border-dashed hover:border-gray-500 focus:border-kxBlue border border-transparent text-gray-400' />
                                         <div className="absolute right-4 top-2">
-                                            <EditIcon fontSize='small'/>
+                                            <EditIcon fontSize='small' />
                                         </div>
                                     </div>
                                 </div>
@@ -206,8 +227,9 @@ const UIConfigTabContent = ({ activeTab, handleTabClick, setJsonData }) => {
                             </div>
 
                         </>)}
-                </div>
-            </div>
+                </Panel>
+
+            </PanelGroup>
             <div className='bg-ghBlack2 h-1'></div>
         </div>
     )
