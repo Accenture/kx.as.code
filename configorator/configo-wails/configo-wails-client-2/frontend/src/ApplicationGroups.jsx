@@ -10,6 +10,9 @@ import EditIcon from '@mui/icons-material/Edit';
 import JSONConfigTabContent from './JSONConfigTabContent';
 import { ApplicationGroupCard } from './ApplicationGroupCard';
 import { ConfigSectionHeader } from './ConfigSectionHeader';
+import AddIcon from '@mui/icons-material/Add';
+import DeleteIcon from '@mui/icons-material/Delete';
+
 import {
     getPanelElement,
     getPanelGroupElement,
@@ -18,6 +21,7 @@ import {
     PanelGroup,
     PanelResizeHandle,
 } from "react-resizable-panels";
+import Select from 'react-select';
 
 export function ApplicationGroups() {
 
@@ -97,6 +101,7 @@ const UIConfigTabContent = ({ activeTab, handleTabClick, setJsonData }) => {
     const [isListLayout, setIsListLayout] = useState(true);
     const [selectedId, setSelectedId] = useState(null);
     const [detailsObject, setDetailsObject] = useState({});
+    const [isEditable, setIsEditable] = useState(false);
 
     const refs = useRef();
 
@@ -120,7 +125,8 @@ const UIConfigTabContent = ({ activeTab, handleTabClick, setJsonData }) => {
     }
 
     useEffect(() => {
-        return () => { };
+        // Initial select first element of data array
+        handleDivClick(0)
 
         const groupElement = getPanelGroupElement("group");
         const leftPanelElement = getPanelElement("left-panel");
@@ -133,6 +139,7 @@ const UIConfigTabContent = ({ activeTab, handleTabClick, setJsonData }) => {
             rightPanelElement,
             resizeHandleElement,
         };
+        return () => { };
     }, []);
 
     const drawApplicationGroupCards = () => {
@@ -146,12 +153,42 @@ const UIConfigTabContent = ({ activeTab, handleTabClick, setJsonData }) => {
             ));
     };
 
+    const toggleIsEditable = () => {
+        setIsEditable((prevIsEditable) => !prevIsEditable);
+    }
+
+    const addNewApplication = (appName) => {
+
+    }
+
+    const options = [
+        { value: 'option1', label: 'Option 1' },
+        { value: 'option2', label: 'Option 2' },
+        { value: 'option3', label: 'Option 3' },
+    ];
+
+    const customSelectStyles = {
+        control: (provided) => ({
+            ...provided,
+            backgroundColor: '#2f3640',
+            color: 'white',
+            padding: '3px',
+            border: 'none'
+        }),
+        option: (provided, state) => ({
+            ...provided,
+            backgroundColor: "#2f3640",
+            backgroundColor: state.isSelected ? '#2f3640' : '#2f3640',
+            color: 'white',
+        }),
+    };
+
     return (
         <div id='config-ui-container' className='bg-ghBlack3'>
             <PanelGroup direction="horizontal" id="group" className="tab-content dark:text-white text-black">
                 <Panel id="left-panel" className='min-w-[300px]'>
-                    <div className='relative top-0 sticky bg-ghBlack2 py-2 shadow-lg px-3'>
-                        <div className="items-center">
+                    <div className='relative top-0 sticky bg-ghBlack2 p-3 shadow-lg flex'>
+                        <div className="items-center w-full pr-2">
                             <div className='flex justify-center'>
                                 {/* Search Input Field */}
                                 <div className="group relative w-full">
@@ -183,21 +220,30 @@ const UIConfigTabContent = ({ activeTab, handleTabClick, setJsonData }) => {
                                 <span className='p-1.5 py-0 bg-ghBlack4 text-gray-400 rounded'>{applicationGroupJson.length}</span>
                             </div>
                         </div>
+
+                        <div className='flex justify-end'>
+                            <button
+                                className='p-2 bg-ghBlack4 text-gray-400 hover:text-white rounded items-center'>
+                                <AddIcon fontSize='medium' />
+                            </button>
+                        </div>
+
                     </div>
                     {/* Application Groups actions */}
-                    <div className="dark:bg-ghBlack2 h-[500px] overflow-y-scroll px-3 py-2 custom-scrollbar">
+                    <div className="dark:bg-ghBlack2 h-[500px] overflow-y-scroll px-3 py-3 custom-scrollbar">
                         {isLoading ? (<div className="animate-pulse flex flex-col col-span-full px-3">
                         </div>) : drawApplicationGroupCards()}
                     </div>
                 </Panel>
                 <PanelResizeHandle id="resize-handle" className='w-1 hover:bg-kxBlue bg-ghBlack2' />
-                <Panel id="right-panel" className="bg-ghBlack2 p-3 min-w-[300px]">
+                <Panel id="right-panel" className="min-w-[370px]">
+                    <div className='bg-ghBlack2 h-[580px] overflow-y-scroll custom-scrollbar p-3'>
 
-                    {selectedId !== null && (
-                        <>
-                            <div className="grid grid-cols-12 rounded-md">
-                                <div className="col-span-12">
-                                    <div className="relative">
+                        {selectedId !== null && (
+                            <>
+                                <div className="grid grid-cols-12">
+                                    <div className="col-span-12">
+                                        {/* <div className="relative">
                                         <input type="text" value={detailsObject.title} className='w-full focus:outline-none rounded text-2xl font-semibold mb-2 p-1 pr-10 bg-transparent border-dashed hover:border-gray-500 focus:border-kxBlue border border-transparent text-white' />
                                         <div className="absolute right-4 top-2">
                                             <EditIcon fontSize='small' />
@@ -207,26 +253,97 @@ const UIConfigTabContent = ({ activeTab, handleTabClick, setJsonData }) => {
                                         <textarea type="text" value={detailsObject.description} className='w-full min-h-[100px] focus:outline-none rounded mb-2 p-1 pr-10 bg-transparent border-dashed hover:border-gray-500 focus:border-kxBlue border border-transparent text-gray-400' />
                                         <div className="absolute right-4 top-2">
                                             <EditIcon fontSize='small' />
+                                        </div>  
+                                    </div> */}
+
+                                        {/* Details Actions Header */}
+                                        <div className='flex justify-end'>
+                                            {/* <button className={`p-2 bg-ghBlack4 ${isEditable ? "text-white" : "text-gray-400"} hover:text-white rounded items-center mr-2`}
+                                                onClick={() => {
+                                                    toggleIsEditable()
+                                                }}>
+                                                <EditIcon fontSize='medium' />
+                                            </button> */}
+
+                                            <button
+                                                className='p-2 bg-ghBlack4 text-gray-400 hover:text-white rounded items-center'>
+                                                <DeleteIcon fontSize='medium' />
+                                            </button>
+                                        </div>
+
+                                        <div className="items-center mb-5" >
+                                            <div className='text-gray-400 text-sm'>Group Title: </div>
+                                            <input type="text" value={detailsObject.title} className={`w-full focus:outline-none rounded p-2 pr-10 bg-ghBlack4 focus:border-kxBlue ${isEditable ? "border-kxBlue" : "border-ghBlack4"} border text-white`} />
+                                        </div>
+
+                                        {/* <div className="items-center mb-2">
+                                            <div className='text-gray-400 text-sm'>Installation Group: </div>
+                                            <div className="relative">
+                                                <select
+                                                    className="appearance-none bg-ghBlack4 text-white p-2 pr-10 rounded focus:outline-none w-full focus:border-kxBlue border border-transparent"
+                                                >
+                                                    <option>Option 1</option>
+                                                    <option>Option 2</option>
+                                                    <option>Option 3</option>
+                                                </select>
+                                                <svg
+                                                    className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-white pointer-events-none"
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    fill="none"
+                                                    viewBox="0 0 24 24"
+                                                    stroke="currentColor"
+                                                >
+                                                    <path
+                                                        stroke-linecap="round"
+                                                        stroke-linejoin="round"
+                                                        stroke-width="2"
+                                                        d="M19 9l-7 7-7-7"
+                                                    />
+                                                </svg>
+                                            </div>
+                                        </div> */}
+
+                                        <div className="items-center mb-5">
+                                            <div className='text-gray-400 text-sm'>Group Description: </div>
+                                            <textarea type="text" value={detailsObject.description} className='w-full focus:outline-none rounded p-2 pr-10 bg-ghBlack4 focus:border-kxBlue border border-transparent text-white custom-scrollbar h-[150px] resize-none' />
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div className="grid gap-2 grid-cols-12">
-                                {detailsObject.action_queues.install.map((app) => {
-                                    return <div className='cursor-pointer border border-dashed border-gray-500 hover:bg-ghBlack3 p-3 rounded col-span-6'>
-                                        <div className='text-base'>{app.name}</div>
-                                        <div className='text-gray-400'>{app.install_folder}</div>
+
+                                {/* <div className="flex mb-5">
+                                    <button onClick={() => {
+                                        const newInstallObject = {
+                                            install_folder: 'Install Folder',
+                                            name: 'Application Name',
+                                        };
+                                        setDetailsObject((prevDetailsObject) => ({
+                                            ...prevDetailsObject,
+                                            action_queues: {
+                                                ...prevDetailsObject.action_queues,
+                                                install: [...prevDetailsObject.action_queues.install, newInstallObject],
+                                            },
+                                        }));
+                                    }} className='bg-kxBlue p-2 py-2 rounded w-full'>Add Application</button>
+                                </div> */}
+
+                                <div className="items-center mb-5">
+                                    <div className='text-gray-400 text-sm'>Applications: </div>
+                                    <div className="grid gap-2 grid-cols-12 p-2 bg-ghBlack4 rounded">
+                                        {detailsObject.action_queues.install.map((app) => {
+                                            return <div className='cursor-pointer border border-dashed border-gray-500 hover:bg-ghBlack3 p-3 rounded col-span-6'>
+                                                <div className='text-base'>{app.name}</div>
+                                                {/* Set first install folder value as Category  */}
+                                                <div className='text-gray-400'>{app.install_folder}</div>
+                                            </div>
+                                        })}
+                                        <button className='border border-dashed border-gray-500 hover:bg-ghBlack3 text-gray-400 hover:text-white p-3 rounded col-span-6 min-h-[60px]'>
+                                            <AddIcon fontSize='large' />
+                                        </button>
                                     </div>
-                                })}
-                            </div>
-
-                            <div className="grid gap-1 grid-cols-12">
-                                <div className="col-span-12">
-                                    <button className='bg-kxBlue p-2 py-2.5 mt-5 rounded w-full'>Add Application</button>
                                 </div>
-                            </div>
 
-                        </>)}
+                            </>)}
+                    </div>
                 </Panel>
 
             </PanelGroup>

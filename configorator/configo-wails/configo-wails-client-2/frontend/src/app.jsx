@@ -211,9 +211,9 @@ export function App() {
                             sx={{
                                 '& .MuiDrawer-paper': {
                                     // borderRight: 'none',
-                                    borderRightWidth: "3px",
+                                    borderRightWidth: "0px",
                                     borderColor: "#2f3640",
-                                    backgroundColor: "#161b22"
+                                    backgroundColor: "transparent"
                                 }
                             }} >
                             <DrawerHeader>
@@ -226,7 +226,7 @@ export function App() {
                                 <MenuItem menuItemName={"build"} slug={slug} isBuildStarted={isBuildStarted} />
                                 <MenuItem menuItemName={"deploy"} slug={slug} />
                                 {/* Separator */}
-                                <div className="w-full h-[3px] bg-ghBlack4 mt-0 mb-2"></div>
+                                <div className="w-full h-[3px] bg-ghBlack2 mt-0 mb-2"></div>
                                 <MenuItem menuItemName={"application-groups"} slug={slug} />
                                 <MenuItem menuItemName={"user-provisioning"} slug={slug} />
                                 <MenuItem menuItemName={"custom-variables"} slug={slug} />
@@ -261,6 +261,7 @@ export function App() {
                                 }} />
                         </Box>
                     </Box>
+                    <div className="h-16 bg-ghBlack3 p-3 w-full text-white absolute bottom-0">Bottom</div>
                 </ThemeProvider>
             </ BuildOutputProvider>
             {/* <Footer /> */}
@@ -334,7 +335,7 @@ const MenuItem = ({ menuItemName, slug, isBuildStarted }) => {
                     }}
                 >
                     {getMenuItemIcon(menuItemName)}
-                    <span className="ml-5 capitalize">{menuItemName}</span>
+                    <span className="ml-6 capitalize">{menuItemName}</span>
                 </ListItemIcon>
             </ListItemButton>
         </Link>
