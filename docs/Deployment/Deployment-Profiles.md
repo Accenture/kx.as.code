@@ -19,7 +19,7 @@ Here is a list of the platforms for which there are currently up-to-date and tes
 | [Parallels](https://github.com/Accenture/kx.as.code/tree/main/profiles/vagrant-parallels){:target="\_blank"} | Vagrant | MacOSX | x86_64 |
 | [VirtualBox](https://github.com/Accenture/kx.as.code/tree/main/profiles/vagrant-virtualbox){:target="\_blank"} | Vagrant | MacOSX, Linux, Windows | x86_64 |
 | [VMWare Workstation / Fusion](https://github.com/Accenture/kx.as.code/tree/main/profiles/vagrant-vmware-desktop){:target="\_blank"} | Vagrant | MacOSX, Linux, Windows | x86_64 |
-| [AWS](https://github.com/Accenture/kx.as.code/tree/main/profiles/terraform-aws){:target="\_blank"} | Public Cloud | Terraform | n/a |
+| [AWS](https://github.com/Accenture/kx.as.code/tree/main/profiles/terraform-aws-without-bastion-and-lb){:target="\_blank"} | Public Cloud | Terraform | n/a |
 | [OpenStack](https://github.com/Accenture/kx.as.code/tree/main/profiles/terraform-openstack){:target="\_blank"} | Private Cloud | Terraform | n/a |
 
 !!! warning

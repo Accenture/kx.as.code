@@ -186,7 +186,7 @@ In the future, this screen will also allow the user to enter values for input ar
 ### KX.AS.CODE Portal - Application Groups
 
 Applications can be installed in integrated groups. This is still in development, so the install button currently does not execute the group installation.
-See the [manual installations](./Deployment/Manual-Provisioning.md/#installation-groups) page, on how to install the groups manually without the portal.
+See the [manual installations](./Deployment/Manual-Provisioning.md) page, on how to install the groups manually without the portal.
 
 ![](assets/images/kx.as.code_portal_application_groups.png){: .zoom}
 

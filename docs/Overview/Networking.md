@@ -16,11 +16,11 @@ Networking options are also detailed out in the [Profile Configuration guide](..
 
 ## Kubernetes Networking
 
-Networking in Kubernetes is handled by [Calico](https://www.tigera.io/project-calico/){:target="\_blank"} and installed via the following [installation scripts](https://github.com/Accenture/kx.as.code/tree/main/auto-setup/core/calico-network){:target="\_blank"}.
+Networking in Kubernetes is handled by [Calico](https://www.tigera.io/project-calico/){:target="\_blank"} and installed via the following [installation scripts](https://github.com/Accenture/kx.as.code/tree/main/auto-setup/core/calico-network){:target="\_blank"}
 
 ## Domain Name Resolution
 
-Domain name resolution is carried out by an installed [Bind9](https://www.isc.org/bind/){:target="\_blank"} instance, installed via the script [configureBindDnsServer.sh](https://github.com/Accenture/kx.as.code/blob/main/auto-setup/functions/configureBindDnsServer.sh){:target="\_blank"}.
+Domain name resolution is carried out by an installed [Bind9](https://www.isc.org/bind/){:target="\_blank"} instance, installed via the script [configureBindDnsServer.sh](https://github.com/Accenture/kx.as.code/blob/main/auto-setup/functions/configureBindDnsServer.sh){:target="\_blank"} (for more details see [`configureBindDns()` in Central Functions documentation](../Development/Central-Functions.md#configurebinddns){:target="\_blank"}).
 
 The domain configured in Bind9 is the one that was either configured via the Jenkins based launcher or directly in `profile-config.json` (FQDN is `*.<environment prefix>.<base domain>`).
 The relevant properties in profile-config.json are `config.environmentPrefix` + `config.baseDomain`.

@@ -17,7 +17,7 @@ First, understand how the packer build process for AWS works by reading the foll
 
 Unlike with the local setup, for the private and public clouds, the build process has to be kicked off manually from the command line.
 
-Before you get started, see the following [documentation from Packer](hhttps://www.packer.io/plugins/builders/amazon){:target="\_blank"} to see how the AWS AMI packer builder works.
+Before you get started, see the following [documentation from Packer](https://www.packer.io/plugins/builders/amazon){:target="\_blank"} to see how the AWS AMI packer builder works.
 
 The most important part of the packer build process are the packer JSON files themselves. Here are their location, depending on the OS from where you are launching the build process from.
 

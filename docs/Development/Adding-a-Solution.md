@@ -13,7 +13,7 @@ Below an example walk-through adding NeuVector as an application installed via t
 !!! tip
     Remember that there are many [functions](./Central-Functions.md) available that you can directly utilize in your scripts.
 
-    In particular for [KeyCloak SSO integration](./Central-Functions.md/#keycloak-sso), it is highly advisable to use the [enableKeycloakSSOForSolution()](./Central-Functions.md#enablekeycloakssoforsolution) function, as it takes care to call all the other needed functions.
+    In particular for [KeyCloak SSO integration](./Central-Functions.md/#keycloak-iamsso), it is highly advisable to use the [enableKeycloakSSOForSolution()](./Central-Functions.md#enablekeycloakssoforsolution) function, as it takes care to call all the other needed functions.
 
 Below a complete walk through for adding an application with helm. ArgoCD and Script based methods will also be covered, but in less detail. as the main flow is the same.
 

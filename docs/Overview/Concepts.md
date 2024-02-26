@@ -20,7 +20,7 @@ There are currently three variations of this.
 - [Lite](https://github.com/Accenture/kx.as.code/blob/main/auto-setup/actionQueues.json_lite)
 - [Minimal](https://github.com/Accenture/kx.as.code/blob/main/auto-setup/actionQueues.json_minimal)
 
-Placing one of these in the profile directory (ensuring to renaming it actionQueues.json if using the lite or minimal JSON files), will ensure that less core components are installed. This can be selected via the Jenkins based launcher described in the [Quick Start Guide](http://localhost:8000/Quick-Start-Guide/).
+Placing one of these in the profile directory (ensuring to renaming it actionQueues.json if using the lite or minimal JSON files), will ensure that less core components are installed. This can be selected via the Jenkins based launcher described in the [Quick Start Guide](../Quick-Start-Guide.md).
 
 ## Components
 

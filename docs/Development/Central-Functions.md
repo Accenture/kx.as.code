@@ -342,7 +342,7 @@ Creates a single `actionQueues.json` from all the group JSON templates and the c
 
 ### populateActionQueuesRabbitMq()
 
-:material-git: Location: [auto-setup/functions/populateActionQueuesRabbitMq.sh](https://github.com/Accenture/kx.as.code/tree/main/auto-setup/functions/populateActionQueuesRabbitMq.sh){:target="\_blank"}
+:material-git: Location: [auto-setup/functions/actionQueuesPopulateRabbitMq.sh](https://github.com/Accenture/kx.as.code/tree/main/auto-setup/functions/actionQueuesPopulateRabbitMq.sh){:target="\_blank"}
 
 This function picks up the `actionQueues.json` and adds them to the RabbitMQ pending queue for processing.
 

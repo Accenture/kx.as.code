@@ -57,7 +57,7 @@ sudo helm_mattermost.sh
 
 Finally, if you need to check the scripts, you will find all source code under `~/Documents/kx.as.code_source`.
 
-Read  [CONTRIBUTE](../Development/Contribution-Guidelines.md) if you want to share any fixes on how to contribute to this project.
+Read the [Contribution Guidelines](../Development/Contribution-Guidelines.md) if you want to share any fixes and need info on how to contribute to this project.
 
 To make things easier, the KX.AS.CODE Git repositories are pre-configured into the Atom and VSCode applications.
 

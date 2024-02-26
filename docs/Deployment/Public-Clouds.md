@@ -10,7 +10,7 @@ Before KX.AS.CODE can be started on AWS, it is necessary to build the AMI images
 
 ### Deployment Profile
 
-Once the images are built, you need to adjust the [AWS deployment profile](https://github.com/Accenture/kx.as.code/blob/main/profiles/terraform-aws/profile-config.json){:target="\_blank"}.. Below an example. All the items specific to the deployment to AWS are highlighted.
+Once the images are built, you need to adjust the [AWS deployment profile](https://github.com/Accenture/kx.as.code/blob/main/profiles/terraform-aws-without-bastion-and-lb/profile-config.json){:target="\_blank"}. Below an example. All the items specific to the deployment to AWS are highlighted.
 
 The `sslProvider` is optional, but recommended for a public cloud setup. If setting  this to "self-signed", the users will need to import the hosts file and certificates located in `/kx-external-access` to their local machine.
 
