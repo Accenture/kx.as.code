@@ -5,6 +5,7 @@ iso/*.iso
 base-vm/*output*/**
 *~
 /docs/site/
+/site/
 variables.json
 *.log
 .DS_Store
