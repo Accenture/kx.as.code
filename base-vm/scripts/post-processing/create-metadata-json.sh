@@ -7,12 +7,18 @@ elif [[ ${PACKER_BUILDER_TYPE} =~ "parallels"   ]]; then
     export OUTPUT_DIR="parallels"
 elif [[ ${PACKER_BUILDER_TYPE} =~ "virtualbox"   ]]; then
     export OUTPUT_DIR="virtualbox"
+elif [[ ${PACKER_BUILDER_TYPE} =~ "qemu"   ]]; then
+    export OUTPUT_DIR="qemu"
 else
     echo "Packer build type ${PACKER_BUILDER_TYPE} not recognized. Exiting create-info.sh script"
     exit 1
 fi
 
-export PROVIDER=$(echo ${OUTPUT_DIR} | sed 's/-/_/g')
+if [[ ${OUTPUT_DIR} =~ "qemu"   ]]; then
+  export PROVIDER=qemu
+else
+  export PROVIDER=$(echo ${OUTPUT_DIR} | sed 's/-/_/g')
+fi
 
 export CHECKSUM=$(shasum -a 512 ..\/..\/..\/boxes\/${OUTPUT_DIR}-${VM_VERSION}\/${VM_NAME}-${VM_VERSION}.box | awk '{ print $1 }')
 

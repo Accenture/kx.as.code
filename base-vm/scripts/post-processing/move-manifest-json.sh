@@ -18,6 +18,8 @@ elif [[ ${PACKER_BUILDER_TYPE} =~ "parallels-iso"   ]]; then
     export OUTPUT_DIR="parallels"
 elif [[ ${PACKER_BUILDER_TYPE} =~ "virtualbox-iso"   ]]; then
     export OUTPUT_DIR="virtualbox"
+elif [[ ${PACKER_BUILDER_TYPE} =~ "qemu"   ]]; then
+    export OUTPUT_DIR="qemu"
 else
     echo "Packer build type ${PACKER_BUILDER_TYPE} not recognized. Exiting move-manifest.sh script"
     exit 1

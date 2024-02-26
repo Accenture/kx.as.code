@@ -86,3 +86,5 @@ base-vm/build/jenkins/initial-setup/jobs/KX.AS.CODE_Launcher/config.xml_backup
 **/.vagrant
 /profiles/**/actionQueues.json
 /client/.next/*
+base-vm/boxes/*/*
+base-vm/build/packer/darwin-linux/packer-mac.sh

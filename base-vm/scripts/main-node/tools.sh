@@ -26,18 +26,19 @@ sudo apt-get -y install \
   pwgen \
   kde-spectacle \
   wmctrl \
-  syslinux-utils \
   gnome-keyring \
   lynx \
   bsd-mailx \
   xprintidle \
   lnav
 
+
 # Install SHFMT
 if [[ "${ARCH}" == "arm64" ]]; then
   shfmtUrl=https://github.com/mvdan/sh/releases/download/v3.7.0/shfmt_v3.7.0_linux_arm64
   sha256sum="111612560d15bd53d8e8f8f85731176ce12f3b418ec473d39a40ed6bbec772de"
 else
+  sudo apt-get -y install syslinux-utils
   shfmtUrl=https://github.com/mvdan/sh/releases/download/v3.7.0/shfmt_v3.7.0_linux_amd64
   sha256sum="0264c424278b18e22453fe523ec01a19805ce3b8ebf18eaf3aadc1edc23f42e3"
 fi
@@ -47,16 +48,22 @@ echo "${sha256sum} ${INSTALLATION_WORKSPACE}/${filename}" | sha256sum --check
 sudo mv ${INSTALLATION_WORKSPACE}/${filename} /usr/local/bin/shfmt
 sudo chmod 755 /usr/local/bin/shfmt
 
-# Download and install NeoVIM - version in Debian distribution too old to work with new themes
-curl -L -o ${INSTALLATION_WORKSPACE}/nvim-linux64.deb https://github.com/neovim/neovim/releases/download/v0.7.2/nvim-linux64.deb
-sha256sum="dce77cae95c2c115e43159169e2d2faaf93bce6862d5adad7262f3aa3cf60df8"
-echo "${sha256sum} ${INSTALLATION_WORKSPACE}/nvim-linux64.deb" | sha256sum --check
-sudo apt-get install -y ${INSTALLATION_WORKSPACE}/nvim-linux64.deb
-# TODO - Restore --break-system-packages for Debian 12
-sudo -H pip3 install neovim --break-system-packages
-
-# Set User File Associations
-sudo update-alternatives --install /usr/bin/editor editor /usr/bin/nvim 100
+if [[ "${ARCH}" == "arm64" ]]; then
+   # 0.7.2-8_arm64 as of 07.02.2024
+   sudo apt install -y neovim
+   # Set User File Associations
+   sudo update-alternatives --install /usr/bin/editor editor /usr/bin/nvim 100
+else
+  # Download and install NeoVIM - version in Debian distribution too old to work with new themes
+  curl -L -o ${INSTALLATION_WORKSPACE}/nvim-linux64.deb https://github.com/neovim/neovim/releases/download/v0.7.2/nvim-linux64.deb
+  sha256sum="dce77cae95c2c115e43159169e2d2faaf93bce6862d5adad7262f3aa3cf60df8"
+  echo "${sha256sum} ${INSTALLATION_WORKSPACE}/nvim-linux64.deb" | sha256sum --check
+  sudo apt-get install -y ${INSTALLATION_WORKSPACE}/nvim-linux64.deb
+  # TODO - Restore --break-system-packages for Debian 12
+  sudo -H pip3 install neovim --break-system-packages
+  # Set User File Associations
+  sudo update-alternatives --install /usr/bin/editor editor /usr/bin/nvim 100
+fi
 
 # Install Google-Chrome
 if [[ "${ARCH}" == "arm64" ]]; then
@@ -132,11 +139,10 @@ sudo mkdir -p /home/${VM_USER}
 sudo chown -R ${VM_USER}:${VM_USER} /home/${VM_USER}
 
 # Install inotify-tools from source (version in Debian 11 is outdated)
-cd ${INSTALLATION_WORKSPACE}
-sudo wget http://ftp.debian.org/debian/pool/main/i/inotify-tools/inotify-tools_3.22.6.0-4\~bpo11+1_amd64.deb
-sudo wget http://ftp.debian.org/debian/pool/main/i/inotify-tools/libinotifytools0_3.22.6.0-4\~bpo11+1_amd64.deb
-sudo dpkg --install ./libinotifytools0_3.22.6.0-4~bpo11+1_amd64.deb
-sudo dpkg --install ./inotify-tools_3.22.6.0-4\~bpo11+1_amd64.deb
+sudo wget http://ftp.debian.org/debian/pool/main/i/inotify-tools/inotify-tools_3.22.6.0-4\~bpo11+1_${ARCH}.deb
+sudo wget http://ftp.debian.org/debian/pool/main/i/inotify-tools/libinotifytools0_3.22.6.0-4\~bpo11+1_${ARCH}.deb
+sudo dpkg --install ./libinotifytools0_3.22.6.0-4~bpo11+1_${ARCH}.deb
+sudo dpkg --install ./inotify-tools_3.22.6.0-4\~bpo11+1_${ARCH}.deb
 
 # Install Node & NPM packages
 sudo git clone -b v0.39.1 https://github.com/nvm-sh/nvm.git /opt/nvm

@@ -7,6 +7,8 @@ elif [[ ${PACKER_BUILDER_TYPE} =~ "parallels"   ]]; then
     export OUTPUT_DIR="parallels"
 elif [[ ${PACKER_BUILDER_TYPE} =~ "virtualbox"   ]]; then
     export OUTPUT_DIR="virtualbox"
+elif [[ ${PACKER_BUILDER_TYPE} =~ "qemu"   ]]; then
+    export OUTPUT_DIR="qemu"
 else
     echo "Packer build type ${PACKER_BUILDER_TYPE} not recognized. Exiting export-vmware-ova.sh script"
     exit 1
