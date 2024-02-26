@@ -20,8 +20,8 @@ As a bonus, you also get a `desktop` for easily accessing and managing deployed 
 
 Check out the [applications library](https://accenture.github.io/kx.as.code/Overview/Application-Library/), to see which solutions can be installed with a single click!
 
-
 ## Where can I deploy KX.AS.CODE?
+
 KX.AS.CODE can be deployed locally or in the cloud, be it a private or public cloud. The most tested solutions are currently OpenStack and VirtualBox. Here a full list of solutions we have run KX.AS.CODE on.
 
 1. VMWare Workstation/Fusion (MacOSX, Linux and Windows)
@@ -42,7 +42,7 @@ For the full guide on KX.AS.CODE, read full [documentation](https://accenture.gi
 </span>
 </div>
 <br>
-Whilst the solution already works on Parallels, VirtualBox, VMWare, OpenStack and AWS, it's time to prepare for ARM64 compatibility. Currently, KX.AS.CODE is limited to running on AMD64 CPU architectures. 
+Whilst the solution already works on Parallels, VirtualBox, VMWare, OpenStack and AWS, it's time to prepare for ARM64 compatibility. Currently, KX.AS.CODE is limited to running on AMD64 CPU architectures.
 
 The Raspberry Pi project will add ARM64 to the mix. Once done, the next step will be to test and optimize for Mac M1/M2 CPUs as well.
 
@@ -176,11 +176,11 @@ The application details screen shows more information about the application. It 
 In the future, this screen will also allow the user to enter values for input arguments.
 
 ![](docs/assets/images/kx.as.code_portal_application_details.png)
-![](assets/images/executeTasksDockerRegistry.png)
+![](docs/assets/images/executeTasksDockerRegistry.png)
 
 ### KX.AS.CODE Portal - Application Groups
 
 Applications can be installed in integrated groups. This is still in development, so the install button currently does not execute the group installation.
-See the [manual installations](Deployment/Manual-Provisioning/#installation-groups) page, on how to install the groups manually without the portal.
+See the [manual installations](https://accenture.github.io/kx.as.code/Deployment/Manual-Provisioning/) page, on how to install the groups manually without the portal.
 
 ![](docs/assets/images/kx.as.code_portal_application_groups.png)
