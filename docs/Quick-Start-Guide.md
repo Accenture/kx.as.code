@@ -19,7 +19,6 @@ As this is a quick start guide, we will concentrate on the Jenkins approach here
     There is no need to download the boxes manually. Vagrant will take care of that automatically when starting KX.AS.CODE.
 
 First you need to clone the KX.AS.CODE GitHub repository:
-
     ```
     git clone https://github.com/Accenture/kx.as.code.git
     ```

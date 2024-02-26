@@ -194,4 +194,4 @@ See the [manual installations](./Deployment/Manual-Provisioning.md/#installation
 
 We are happy to receive contributions, ideas and dare I say it, bug fixes or suggestions on how to do things better! We never stop learning! :nerd_face:
 
-For more details on how you can contribute to the project, checkout the [CONTRIBUTE.md](./Development/Contribution-Guidelines.md) file.
+For more details on how you can contribute to the project, checkout the [Contribution Guidelines](./Development/Contribution-Guidelines.md).

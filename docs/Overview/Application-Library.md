@@ -39,7 +39,7 @@ Dashboard also provides information on the state of Kubernetes resources in your
 
 ### OpenLens
 
-<a href="https://github.com/Accenture/kx.as.code/tree/main/auto-setup/core/openlens" target="_blank">Installation Files</a> | <a href="https://docs.k8slens.dev/main/" target="_blank">Application Documentation</a> | <a href="https://github.com/lensapp/lens" target="_blank">Application Source Code</a>
+<a href="https://github.com/Accenture/kx.as.code/tree/main/auto-setup/core/openlens" target="_blank">Installation Files</a> | <a href="https://docs.k8slens.dev/" target="_blank">Application Documentation</a> | <a href="https://github.com/lensapp/lens" target="_blank">Application Source Code</a>
 <div class="description-dev"><q><i>
 Lens IDE provides the full situational awareness for everything that runs in Kubernetes. It's lowering the barrier of entry for people just getting started and radically improving productivity for people with more experience.
 </i></q><br>- github.com/lensapp/lens</div>
@@ -83,7 +83,7 @@ Lens IDE provides the full situational awareness for everything that runs in Kub
 <div class="description-dev"><q><i>
 gopass is a password manager for the command line written in Go. It works on all major desktop and server operating systems (Linux, MacOS, BSD, Windows).
 </i></q><br>- github.com/gopasspw/gopass</div>
-(The GoPass UI is from https://github.com/codecentric/gopass-ui)
+(The GoPass UI is from <a href="https://github.com/codecentric/gopass-ui" target="_blank">github.com/codecentric/gopass-ui</a>)
 <div class="table">
     <div class="rowGroup">
         <div class="row">
@@ -193,7 +193,7 @@ Keycloak provides user federation, strong authentication, user management, fine-
 
 ### Rabbitmq Server
 
-<a href="http://localhost:8000/Development/Available-Functions/#rabbitmq-core-setup" target="_blank">Functions</a> | <a href="https://github.com/Accenture/kx.as.code/blob/main/base-vm/scripts/main-node/rabbitmq.sh" target="_blank">Installation Files</a> | <a href="https://www.rabbitmq.com/documentation.html" target="_blank">Application Documentation</a> | <a href="" target="_blank">Application Source Code</a>
+<a href="https://accenture.github.io/kx.as.code/Development/Central-Functions/#rabbitmq-core-setup" target="_blank">Functions</a> | <a href="https://github.com/Accenture/kx.as.code/blob/main/base-vm/scripts/main-node/rabbitmq.sh" target="_blank">Installation Files</a> | <a href="https://www.rabbitmq.com/documentation.html" target="_blank">Application Documentation</a> | <a href="" target="_blank">Application Source Code</a>
 <div class="description-dev"><q><i>
 RabbitMQ is an open-source message-broker software (sometimes called message-oriented middleware) that originally implemented the Advanced Message Queuing Protocol (AMQP) and has since been extended with a plug-in architecture to support Streaming Text Oriented Messaging Protocol (STOMP), MQ Telemetry Transport (MQTT), and other protocols.[1]
 Written in Erlang, the RabbitMQ server is built on the Open Telecom Platform framework for clustering and failover. Client libraries to interface with the broker are available for all major programming languages. The source code is released under the Mozilla Public License.
@@ -413,7 +413,7 @@ Consul is a distributed, highly available, and data center aware solution to con
 
 ### Gitlab
 
-<a href="https://github.com/Accenture/kx.as.code/tree/main/auto-setup/cicd/gitlab" target="_blank">Installation Files</a> | <a href="" target="_blank">Application Documentation</a> | <a href="https://gitlab.com/gitlab-org/gitlab" target="_blank">Application Source Code</a>
+<a href="https://github.com/Accenture/kx.as.code/tree/main/auto-setup/cicd/gitlab" target="_blank">Installation Files</a> | <a href="https://docs.gitlab.com/" target="_blank">Application Documentation</a> | <a href="https://gitlab.com/gitlab-org/gitlab" target="_blank">Application Source Code</a>
 <div class="description-dev"><q><i>
 GitLab is an open source end-to-end software development platform with built-in version control, issue tracking, code review, CI/CD, and more.
 </i></q><br>- gitlab.com/gitlab-org/gitlab</div>
@@ -552,7 +552,7 @@ Nexus3 manages binaries and build artifacts across your software supply chain.
 
 ### Teamcity
 
-<a href="" target="_blank">Installation Files</a> | <a href="https://www.jetbrains.com/help/teamcity/teamcity-documentation.html" target="_blank">Application Documentation</a>
+<a href="https://github.com/Accenture/kx.as.code/tree/main/auto-setup/cicd/teamcity" target="_blank">Installation Files</a> | <a href="https://www.jetbrains.com/help/teamcity/teamcity-documentation.html" target="_blank">Application Documentation</a>
 <div class="description-dev"><q><i>
 TeamCity is a continuous integration server that integrates with all major IDEs, version control and issue tracking systems, and can be used by teams of any size.
 </i></q><br>- teamcity.com</div>
@@ -693,7 +693,7 @@ Lightweight shipper for uptime monitoring. Monitor services for their availabili
 <hr/>
 
 ### Elastic Kibana
-<a href="https://github.com/Accenture/kx.as.code/tree/main/auto-setup/monitoring/elastic-kibana" target="_blank">Installation Files</a> | <a href="https://www.elastic.co/guide/en/kibana/current/index.html" target="_blank">Application Documentation</a> | <a href="" target="_blank">Application Source Code</a>
+<a href="https://github.com/Accenture/kx.as.code/tree/main/auto-setup/monitoring/elastic-kibana" target="_blank">Installation Files</a> | <a href="https://www.elastic.co/guide/en/kibana/current/index.html" target="_blank">Application Documentation</a> | <a href="https://github.com/elastic/kibana" target="_blank">Application Source Code</a>
 <div class="description-dev"><q><i>
 Kibana is a free and open user interface that lets you visualize your Elasticsearch data and navigate the Elastic Stack. Do anything from tracking query load to understanding the way requests flow through your apps.
 </i></q><br>- elastic.co</div>
