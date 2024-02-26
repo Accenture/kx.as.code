@@ -68,7 +68,7 @@ const CustomVariables = () => {
                 <div className='col-span-9'>
                     <ConfigSectionHeader sectionTitle={"Custom Global Variables"} SectionDescription={"Set key/value pairs that can be used by solutions when they are being installed."} />
                 </div>
-                <div className='col-span-3 pr-10'>
+                <div className='col-span-3 pr-10 mx-3'>
                     <div className="relative w-full h-[40px] p-1 bg-ghBlack2 rounded-md">
                         <div className="relative w-full h-full flex items-center text-sm">
                             <div

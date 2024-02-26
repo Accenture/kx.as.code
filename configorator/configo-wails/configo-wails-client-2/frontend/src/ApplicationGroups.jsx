@@ -49,7 +49,7 @@ export function ApplicationGroups() {
                     <div className='col-span-9'>
                         <ConfigSectionHeader sectionTitle={"Application Groups"} SectionDescription={"More Details about this section here."} />
                     </div>
-                    <div className='col-span-3 pr-10'>
+                    <div className='col-span-3 pr-10 mx-3'>
                         <div className="relative w-full h-[40px] p-1 bg-ghBlack2 rounded-md">
                             <div className="relative w-full h-full flex items-center">
                                 <div
@@ -102,6 +102,7 @@ const UIConfigTabContent = ({ activeTab, handleTabClick, setJsonData }) => {
     const [selectedId, setSelectedId] = useState(null);
     const [detailsObject, setDetailsObject] = useState({});
     const [isEditable, setIsEditable] = useState(false);
+    const [data, setData] = useState(applicationGroupJson);
 
     const refs = useRef();
 
@@ -121,12 +122,23 @@ const UIConfigTabContent = ({ activeTab, handleTabClick, setJsonData }) => {
     };
 
     const getObjectById = (id) => {
-        return applicationGroupJson.find(item => item.id === id);
+        console.log("details obj: ", data.find(item => item.id === id))
+        return data.find(item => item.id === id);
     }
 
+    const getLastId = (dataParam) => {
+        if (dataParam.length > 0) {
+          const maxId = dataParam.reduce((max, obj) => (obj.id > max ? obj.id : max), dataParam[0].id);
+          return maxId;
+        } else {
+          return null;
+        }
+      };
+
     useEffect(() => {
-        // Initial select first element of data array
-        handleDivClick(0)
+        // Initial select last element of data array (by id)
+        console.log("last id: ", getLastId(data))
+        handleDivClick(getLastId(data))
 
         const groupElement = getPanelGroupElement("group");
         const leftPanelElement = getPanelElement("left-panel");
@@ -140,14 +152,15 @@ const UIConfigTabContent = ({ activeTab, handleTabClick, setJsonData }) => {
             resizeHandleElement,
         };
         return () => { };
-    }, []);
+    }, [data, applicationGroupJson]);
 
     const drawApplicationGroupCards = () => {
-        return applicationGroupJson
+        return data
             .filter((appGroup) => {
                 const lowerCaseName = (appGroup.title || "").toLowerCase();
                 return searchTerm === "" || lowerCaseName.includes(searchTerm.toLowerCase().trim());
             })
+            .sort((a, b) => b.id - a.id)
             .map((appGroup, i) => (
                 <ApplicationGroupCard appGroup={appGroup} id={appGroup.id} isListLayout={isListLayout} handleDivClick={handleDivClick} selectedId={selectedId} />
             ));
@@ -157,8 +170,50 @@ const UIConfigTabContent = ({ activeTab, handleTabClick, setJsonData }) => {
         setIsEditable((prevIsEditable) => !prevIsEditable);
     }
 
-    const addNewApplication = (appName) => {
+    const addNewApplicationToApplicationGroup = (appName) => {
 
+    }
+
+    const removeApplicationGroupById = (id) => {
+        const updatedData = data.filter((item) => item.id !== id);
+        setData(updatedData)
+        const updatedJsonString = JSON.stringify(updatedData, null, 2);
+        UpdateJsonFile(updatedJsonString, "applicationGroups")
+    }
+
+    const addNewApplicationGroup = () => {
+        const maxId = data.reduce((max, obj) => (obj.id > max ? obj.id : max), -1);
+
+        const existingGroups = data.filter((obj) => obj.title.startsWith('New Group'));
+
+        let nextNumber = 1;
+        const existingNumbers = existingGroups.map((obj) => {
+            const match = obj.title.match(/\d+$/);
+            return match ? parseInt(match[0]) : 0;
+        });
+        while (existingNumbers.includes(nextNumber)) {
+            nextNumber++;
+        }
+
+        const newObject = {
+            id: maxId + 1,
+            title: `New Group ${nextNumber}`,
+            description: 'New Group Description',
+            action_queues: {
+                install: [
+                    {
+                        install_folder: 'unknown',
+                        name: 'unknown',
+                    },
+                ],
+            },
+        };
+
+        const updatedData = [newObject, ...data];
+        setData(updatedData)
+        const updatedJsonString = JSON.stringify(updatedData, null, 2);
+        UpdateJsonFile(updatedJsonString, "applicationGroups")
+        handleDivClick(getLastId(data))
     }
 
     const options = [
@@ -217,13 +272,16 @@ const UIConfigTabContent = ({ activeTab, handleTabClick, setJsonData }) => {
                             </div>
                             <div className='text-gray-400 flex justify-between pt-1 items-center'>
                                 <span>Application Groups</span>
-                                <span className='p-1.5 py-0 bg-ghBlack4 text-gray-400 rounded'>{applicationGroupJson.length}</span>
+                                <span className='p-1.5 py-0 bg-ghBlack4 text-gray-400 rounded'>{data.length}</span>
                             </div>
                         </div>
 
                         <div className='flex justify-end'>
                             <button
-                                className='p-2 bg-ghBlack4 text-gray-400 hover:text-white rounded items-center'>
+                                className='p-2 bg-kxBlue hover:text-white rounded items-center'
+                                onClick={() => {
+                                    addNewApplicationGroup()
+                                }}>
                                 <AddIcon fontSize='medium' />
                             </button>
                         </div>
@@ -266,7 +324,10 @@ const UIConfigTabContent = ({ activeTab, handleTabClick, setJsonData }) => {
                                             </button> */}
 
                                             <button
-                                                className='p-2 bg-ghBlack4 text-gray-400 hover:text-white rounded items-center'>
+                                                className='p-2 bg-ghBlack4 text-gray-400 hover:text-white rounded items-center'
+                                                onClick={() => {
+                                                    removeApplicationGroupById(selectedId)
+                                                }}>
                                                 <DeleteIcon fontSize='medium' />
                                             </button>
                                         </div>

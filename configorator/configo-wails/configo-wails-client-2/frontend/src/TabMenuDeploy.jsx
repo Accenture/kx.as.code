@@ -141,7 +141,7 @@ const DeployTabContent = () => {
                 <div className='col-span-9'>
                     <ConfigSectionHeader sectionTitle={"Deployment Configuration"} SectionDescription={"More Details about the Build process here."} />
                 </div>
-                <div className='col-span-3 pr-10'>
+                <div className='col-span-3 pr-10 mx-3'>
                     <div className="relative w-full h-[40px] p-1 bg-ghBlack2 rounded-md">
                         <div className="relative w-full h-full flex items-center text-sm">
                             <div

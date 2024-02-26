@@ -63,7 +63,7 @@ export function HeaderNew(props) {
                 </div>
                 <div className="dark:bg-ghBlack2 bg-kxBlue px-4 flex items-center justify-between w-full">
                     <div className="flex items-center">
-                        <img src={logo} height={50} width={60} />
+                        <img src={logo} height={40} width={40} />
                         <div className="text-left">
                             <div className="text-sm">KX.AS.Code</div>
                             <div className="font-semibold text-lg">Launcher <span className="text-sm font-normal ml-1 p-0.5 px-1 text-white">v.0.8.16</span></div>

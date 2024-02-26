@@ -91,6 +91,8 @@ func (a *App) UpdateJsonFile(data string, file string) error {
 		filePath = "./frontend/src/assets/config/users.json"
 	case "customVariables":
 		filePath = "./frontend/src/assets/config/customVariables.json"
+	case "applicationGroups":
+		filePath = "./frontend/src/assets/templates/applicationGroups.json"
 	default:
 		return fmt.Errorf("unsupported file parameter: %s", file)
 	}
