@@ -1,8 +1,9 @@
-boximage = ENV["HOME"]+"/.vagrant.d/boxes/chtrautwein-VAGRANTSLASH-kx-main/0.8.16/arm64/libvirt/box_0.img"
+box_version = "0.8.16"
+box_url = "../boxes/qemu-"+box_version+"/kx-main-"+box_version+".box"
+boximage = ENV["HOME"]+"/.vagrant.d/boxes/kxascode-VAGRANTSLASH-kx-main/"+box_version+"/arm64/libvirt/box_0.img"
 
 Vagrant.configure("2") do |config|
-  # TODO: config.vm.box = "kxascode/kx-main"
-  config.vm.box = "chtrautwein/kx-main"
+  config.vm.box = "kxascode/kx-main"
   config.vm.synced_folder ".", "/vagrant", disabled: true
   # See https://github.com/ppggff/vagrant-qemu
   config.vm.provider "qemu" do |v|

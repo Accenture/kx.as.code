@@ -8,16 +8,9 @@ if [ -z "$VAGRANT_CLOUD_TOKEN" ]; then
   exit
 fi
 
-if [ -z "$CI" ]; then
-  # TODO: 
-  USER_NAME=chtrautwein
-  BOX_NAME=kx-main
-  VERSION=0.8.16
-else
-  USER_NAME=kxascode
-  BOX_NAME=$VM_NAME
-  VERSION=$VM_VERSION
-fi
+USER_NAME=kxascode
+BOX_NAME=$VM_NAME
+VERSION=$VM_VERSION
 
 # PROVIDER_NAME=qemu
 PROVIDER_NAME=libvirt

@@ -149,7 +149,9 @@ For VMWare you will need a licensed version of either VMWare Fusion (Mac) or VMW
 
 #### Building on MacOSX / Linux
 
-!!! danger "Important"
-    Important. Currently, this process does not work on ARM based processors. However, work is in progress to enable ARM64. See here.
-
-
+To build a Vagrant Qemu box and push it to the cloud get a authentication token from https://app.vagrantup.com/settings/security . Then execute
+```shell
+export VAGRANT_CLOUD_TOKEN=...
+cd build/packer/darwin-linux
+./packer-mac.sh
+```

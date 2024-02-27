@@ -17,35 +17,20 @@ This is the software stack used:
 ```shell
 mkdir kx-master
 cd kx-master
-vagrant box add chtrautwein/kx-main
+vagrant box add kxascode/kx-main
 ```
 
-Create a file named `Vagrantfile`containing
+Create the `Vagrantfile`
 
 ```
-Vagrant.configure("2") do |config|
-  config.vm.provider :libvirt do |libvirt|
-    libvirt.driver = "qemu"
-  end
-end
-
-boximage = ENV["HOME"]+"/.vagrant.d/boxes/chtrautwein-VAGRANTSLASH-kx-main/0.8.16/arm64/libvirt/box_0.img"
-
-Vagrant.configure("2") do |config|
-  config.vm.box = "chtrautwein/kx-main"
-  config.vm.synced_folder ".", "/vagrant", disabled: true
-  # See https://github.com/ppggff/vagrant-qemu
-  config.vm.provider "qemu" do |v|
-    v.image_path = boximage
-    v.extra_qemu_args = %w(-vnc 127.0.0.1:56 -device virtio-gpu -usb -device usb-ehci -device usb-kbd -device usb-mouse -device usb-tablet -boot order=cdi,splash-time=30,menu=on)
-  end
-end
+curl -o kx.as.code_virtualbox.erb https:/raw.githubusercontent.com/Accenture/kx.as.code/feature/mac-arm-architecture/base-vm/templates/kx.as.code_qemu.erb
+vagrant init kxascode/kx-main --box-version 0.8.16 --template kx.as.code_qemu.erb
 ```
 
 ## First time start of the `kx-main` instance
 
 ```shell
-vagrant up --provider qemu
+vagrant up
 ````
 
 Use [VNC](https://www.realvnc.com/de/connect/download/viewer/) to connect to 127.0.0.1:56 . 

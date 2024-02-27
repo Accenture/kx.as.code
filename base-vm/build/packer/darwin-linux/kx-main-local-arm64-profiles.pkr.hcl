@@ -139,7 +139,7 @@ variable "iso_checksum_type" {
 
 variable "iso_file" {
   type    = string
-  default = "debian-12.4.0-arm64-netinst.iso"
+  default = "debian-12.5.0-arm64-netinst.iso"
 }
 
 variable "iso_path" {
@@ -149,7 +149,7 @@ variable "iso_path" {
 
 variable "iso_url" {
   type    = string
-  default = "https://cdimage.debian.org/mirror/cdimage/release/12.4.0/arm64/iso-cd/debian-12.4.0-arm64-netinst.iso"
+  default = "https://cdimage.debian.org/mirror/cdimage/release/12.5.0/arm64/iso-cd/debian-12.5.0-arm64-netinst.iso"
 }
 
 variable "kx_home" {
@@ -410,12 +410,6 @@ source "qemu" "kx-main-qemu" {
       "netcfg/get_nameservers=1.1.1.1 ",
       "netcfg/get_hostname=${ var.hostname } ",
       "netcfg/get_domain=${ var.domain } ",
-  #    "passwd/root-password=Zaekie2a ",
-  #    "passwd/root-password-again=Zaekie2a ",
-  #    "passwd/username=vagrant ",
-  #    "passwd/user-fullname=vagrant ",
-  #    "passwd/user-password=vagrant ",
-  #    "passwd/user-password-again=vagrant ",
       "--- quiet<enter>",
     "    initrd /install.a64/initrd.gz<enter>",
     "<enter>",
@@ -445,53 +439,21 @@ source "qemu" "kx-main-qemu" {
   net_device        = "virtio-net"
   disk_interface    = "virtio"
 
-  # Starts QEMU Monitor and types boot command
   # https://www.qemu.org/docs/master/system/qemu-manpage.html
   qemuargs = [
-    # [ "-D", "./log.txt" ],
-    # [ "-d", "cpu_reset" ],
     [ "-drive", "if=pflash,format=raw,readonly=on,file=/Users/c.trautwein/.colima/_lima/colima/qemu-efi-code.fd"],
-    [ "-drive", "id=cdrom0,file=/Users/c.trautwein/.cache/packer/ab432c96994541991827018a1e689471b838a2fc.iso,media=cdrom"],
+    [ "-drive", "id=cdrom0,file=${ var.iso_url },media=cdrom"],
     [ "-drive", "file=../../../output-main/qemu-${local.version}/kx-main-${local.version},format=qcow2" ],
     [ "-device", "virtio-scsi-pci,id=scsi0" ],
-    # [ "-netdev", "tap,id=user.0" ],
-    ## [ "-netdev", "user,id=usernet99" ],
-    # [ "-netdev", "user,id=user.0" ],
-    # [ "-netdev", "user,id=user.0,dns=10.0.2.3,ipv4=on,ipv6=off,guestfwd=tcp:1.1.1.1:53-tcp:10.0.2.53:53" ],
-    # [ "-netdev", "user,id=user.0,dns=10.0.2.53,ipv4=on,ipv6=off,guestfwd=tcp:10.0.2.54:53-tcp:1.1.1.1:53" ],
-    #### [ "-netdev", "user,id=user.0,dns=10.11.12.1,dnssearch=fritz.box,ipv4=on,ipv6=off" ],
-    #[ "-netdev", "user,id=user.0,dns=10.0.2.3,ipv4=on,ipv6=off" ],
-    # [ "-net", "user,guestfwd=tcp:1.1.1.1:53-tcp:10.0.2.53:53" ],
-    # [ "-netdev", "user,id=user.0,dns=1.1.1.1" ],
-    ###[ "-netdev", "user,id=user.0,dns=1.1.1.1,net=192.168.76.0/24,dhcpstart=192.168.76.9" ],
-    ## [ "-device", "virtio-net,netdev=usernet99" ],
-    # [ "-device", "virtio-net-pci,netdev=user.0" ],
-    # [ "-boot", "order=c,splash-time=30,menu=on" ],
     [ "-boot", "order=cdi,splash-time=30,menu=on" ],
     [ "-display", "none" ],
     [ "-usb", "" ],
-    # [ "-device", "usb-net" ],
     [ "-device", "usb-ehci" ],
     [ "-device", "usb-kbd" ],
     [ "-device", "usb-mouse" ],
     [ "-device", "usb-tablet" ],
     [ "-device", "virtio-gpu" ], # Ohne diese Zeile gehts zu QEMU Monitor
   ]
-
-  # qmp_enable          = true
-  # qmp_socket_path     = "/Users/c.trautwein/.colima/_lima/colima/serial.sock"
-  # disk_size         = "32768"
-  # floppy_files      = ["http/preseed.cfg"]
-  # iso_urls = [
-  #   "http://releases.ubuntu.com/16.04/ubuntu-16.04.7-server-amd64.iso"
-  # ]
-  # iso_checksum = "sha256:b23488689e16cad7a269eb2d3a3bf725d3457ee6b0868e00c8762d3816e25848"
-  # output_directory  = "output-ubuntu1804"
-  # shutdown_command  = "echo 'vagrant'|sudo -S shutdown -P now"
-  # ssh_password      = "vagrant"
-  # ssh_username      = "vagrant"
-  ssh_wait_timeout  = "10000s"
-  # vm_name           = "ubuntu1804"
   use_default_display = true
 }
 
@@ -512,7 +474,6 @@ build {
       "SHARED_GIT_REPOSITORIES=${ var.kx_home }/git",
       "INSTALLATION_WORKSPACE=${ var.kx_home }/workspace"]
     expect_disconnect   = "true"
-    except              = ["provisioners-disabled"]
     scripts             = [
       "../../../scripts/base/directories.sh",
       "../../../scripts/base/vagrant-user.sh",
@@ -558,25 +519,21 @@ build {
   }
 
   provisioner "file" {
-    except           = ["provisioners-disabled"]
     destination = "${ var.kx_home }"
     source      = "../../../dependencies/skel"
   }
 
   provisioner "file" {
-    except           = ["provisioners-disabled"]
     destination = "${ var.kx_home }/workspace/theme"
     source      = "../../../dependencies/theme"
   }
 
   provisioner "file" {
-    except           = ["provisioners-disabled"]
     destination = "${ var.kx_home }/workspace/scripts"
     source      = "../../../scripts/main-node"
   }
 
   provisioner "file" {
-    except           = ["provisioners-disabled"]
     destination = "${ var.kx_home }/workspace/versions.json"
     source      = "../../../../versions.json"
   }
@@ -598,7 +555,6 @@ build {
       "INSTALLATION_WORKSPACE=${ var.kx_home }/workspace"
     ]
     expect_disconnect   = "true"
-    except           = ["provisioners-disabled"]
     pause_before        = "0m10s"
     scripts             = [
       "../../../scripts/common/motd.sh",
@@ -625,8 +581,7 @@ build {
       "COMPUTE_ENGINE_BUILD=${ var.compute_engine_build }"
     ]
     expect_disconnect   = "true"
-    except           = ["provisioners-disabled"]
-    pause_before        = "1m0s"
+    pause_before        = "0m10s"
     scripts             = [
       "../../../scripts/main-node/tools.sh",
       "../../../scripts/main-node/kx.as.code.sh",
