@@ -14,6 +14,10 @@ export function IsVirtualizationToolInstalled(arg1) {
   return window['go']['main']['App']['IsVirtualizationToolInstalled'](arg1);
 }
 
+export function OpenURL(arg1) {
+  return window['go']['main']['App']['OpenURL'](arg1);
+}
+
 export function SetCurrentBuildStage(arg1) {
   return window['go']['main']['App']['SetCurrentBuildStage'](arg1);
 }

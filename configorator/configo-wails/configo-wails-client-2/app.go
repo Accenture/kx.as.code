@@ -452,3 +452,12 @@ func copyFile(src, dst string) error {
 
 	return nil
 }
+
+func (a *App) OpenURL(url string) error {
+	// cmd := exec.Command("xdg-open", url) // For Linux systems
+	cmd := exec.Command("open", url) // For macOS
+	// cmd := exec.Command("cmd", "/c", "start", url) // For Windows
+
+	err := cmd.Run()
+	return err
+}

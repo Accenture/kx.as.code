@@ -26,7 +26,7 @@ import DataArrayIcon from '@mui/icons-material/DataArray';
 import LayersIcon from '@mui/icons-material/Layers';
 import { ApplicationGroups } from "./ApplicationGroups";
 import { BuildOutputProvider } from './BuildOutputContext';
-import { ExeBuild, StopExe } from "../wailsjs/go/main/App"
+import { ExeBuild, StopExe, OpenURL } from "../wailsjs/go/main/App"
 import buildOutputFile from './assets/buildOutput.txt';
 import TipsAndUpdatesIcon from '@mui/icons-material/TipsAndUpdates';
 import AppBar from '@mui/material/AppBar';
@@ -36,6 +36,7 @@ import { Toaster } from 'sonner';
 import { toast } from 'sonner';
 import HistoryIcon from '@mui/icons-material/History';
 import BuildHistory from "./BuildHistory";
+import GitHubIcon from '@mui/icons-material/GitHub';
 
 
 const openedMixin = (theme) => ({
@@ -203,8 +204,8 @@ export function App() {
 
     return (
 
-        <div className="dark:bg-ghBlack4 bg-gray-200 h-screen custom-scrollbar">
-            <BuildOutputProvider>
+        <div className="dark:bg-ghBlack4 relative h-screen" >
+            <div>
                 <ThemeProvider theme={theme}>
                     <Box sx={{ display: "flex" }}>
                         <Drawer variant="permanent" open={open}
@@ -213,7 +214,7 @@ export function App() {
                                     // borderRight: 'none',
                                     borderRightWidth: "0px",
                                     borderColor: "#2f3640",
-                                    backgroundColor: "transparent"
+                                    backgroundColor: '#1f262e'
                                 }
                             }} >
                             <DrawerHeader>
@@ -226,7 +227,7 @@ export function App() {
                                 <MenuItem menuItemName={"build"} slug={slug} isBuildStarted={isBuildStarted} />
                                 <MenuItem menuItemName={"deploy"} slug={slug} />
                                 {/* Separator */}
-                                <div className="w-full h-[3px] bg-ghBlack2 mt-0 mb-2"></div>
+                                <div className="w-full h-[3px] bg-ghBlack4 mt-0 mb-2"></div>
                                 <MenuItem menuItemName={"application-groups"} slug={slug} />
                                 <MenuItem menuItemName={"user-provisioning"} slug={slug} />
                                 <MenuItem menuItemName={"custom-variables"} slug={slug} />
@@ -261,10 +262,15 @@ export function App() {
                                 }} />
                         </Box>
                     </Box>
-                    <div className="h-16 bg-ghBlack3 p-3 w-full text-white absolute bottom-0">Bottom</div>
+                    <div className="absolute bottom-0 bg-ghBlack p-3 w-full text-gray-400 hover:text-white flex justify-end px-5">
+                        <button onClick={() =>{
+                            OpenURL("https://github.com/Accenture/kx.as.code")
+                        }}>
+                            <GitHubIcon />
+                        </button>
+                    </div>
                 </ThemeProvider>
-            </ BuildOutputProvider>
-            {/* <Footer /> */}
+            </div>
         </div >
 
     );

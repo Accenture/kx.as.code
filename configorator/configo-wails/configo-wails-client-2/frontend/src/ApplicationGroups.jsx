@@ -12,6 +12,7 @@ import { ApplicationGroupCard } from './ApplicationGroupCard';
 import { ConfigSectionHeader } from './ConfigSectionHeader';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
+import DeleteForever from '@mui/icons-material/DeleteForever';
 
 import {
     getPanelElement,
@@ -22,6 +23,8 @@ import {
     PanelResizeHandle,
 } from "react-resizable-panels";
 import Select from 'react-select';
+import ApplicationGroupsModal from './ApplicationGroupsModal';
+
 
 export function ApplicationGroups() {
 
@@ -50,7 +53,7 @@ export function ApplicationGroups() {
                         <ConfigSectionHeader sectionTitle={"Application Groups"} SectionDescription={"More Details about this section here."} />
                     </div>
                     <div className='col-span-3 pr-10 mx-3'>
-                        <div className="relative w-full h-[40px] p-1 bg-ghBlack2 rounded-md">
+                        <div className="relative w-full h-[40px] p-1 bg-ghBlack rounded-md">
                             <div className="relative w-full h-full flex items-center">
                                 <div
                                     onClick={() => setActiveConfigTab('config-tab1')}
@@ -85,7 +88,7 @@ export function ApplicationGroups() {
 
                 </div>
             </div>
-            <div className='bg-ghBlack2 h-1'></div>
+            <div className='bg-ghBlack h-1'></div>
             <div className="config-tab-content">
                 {activeConfigTab === 'config-tab1' && <UIConfigTabContent activeTab={activeTab} handleTabClick={handleTabClick} setJsonData={setJsonData} />}
                 {activeConfigTab === 'config-tab2' && <JSONConfigTabContent jsonData={jsonData} fileName={"applicationGroups.json"} />}
@@ -103,6 +106,16 @@ const UIConfigTabContent = ({ activeTab, handleTabClick, setJsonData }) => {
     const [detailsObject, setDetailsObject] = useState({});
     const [isEditable, setIsEditable] = useState(false);
     const [data, setData] = useState(applicationGroupJson);
+    const [modalIsOpen, setModalIsOpen] = useState(false);
+
+    const openModal = () => {
+        setModalIsOpen(true);
+    };
+
+    const closeModal = () => {
+        setModalIsOpen(false);
+    };
+
 
     const refs = useRef();
 
@@ -128,12 +141,19 @@ const UIConfigTabContent = ({ activeTab, handleTabClick, setJsonData }) => {
 
     const getLastId = (dataParam) => {
         if (dataParam.length > 0) {
-          const maxId = dataParam.reduce((max, obj) => (obj.id > max ? obj.id : max), dataParam[0].id);
-          return maxId;
+            const maxId = dataParam.reduce((max, obj) => (obj.id > max ? obj.id : max), dataParam[0].id);
+            return maxId;
         } else {
-          return null;
+            return null;
         }
-      };
+    };
+
+    const removeApplicationGroupById = (id) => {
+        const updatedData = data.filter((item) => item.id !== id);
+        setData(updatedData)
+        const updatedJsonString = JSON.stringify(updatedData, null, 2);
+        UpdateJsonFile(updatedJsonString, "applicationGroups")
+    }
 
     useEffect(() => {
         // Initial select last element of data array (by id)
@@ -162,7 +182,7 @@ const UIConfigTabContent = ({ activeTab, handleTabClick, setJsonData }) => {
             })
             .sort((a, b) => b.id - a.id)
             .map((appGroup, i) => (
-                <ApplicationGroupCard appGroup={appGroup} id={appGroup.id} isListLayout={isListLayout} handleDivClick={handleDivClick} selectedId={selectedId} />
+                <ApplicationGroupCard removeApplicationGroupById={removeApplicationGroupById} appGroup={appGroup} id={appGroup.id} isListLayout={isListLayout} handleDivClick={handleDivClick} selectedId={selectedId} />
             ));
     };
 
@@ -172,13 +192,6 @@ const UIConfigTabContent = ({ activeTab, handleTabClick, setJsonData }) => {
 
     const addNewApplicationToApplicationGroup = (appName) => {
 
-    }
-
-    const removeApplicationGroupById = (id) => {
-        const updatedData = data.filter((item) => item.id !== id);
-        setData(updatedData)
-        const updatedJsonString = JSON.stringify(updatedData, null, 2);
-        UpdateJsonFile(updatedJsonString, "applicationGroups")
     }
 
     const addNewApplicationGroup = () => {
@@ -201,10 +214,6 @@ const UIConfigTabContent = ({ activeTab, handleTabClick, setJsonData }) => {
             description: 'New Group Description',
             action_queues: {
                 install: [
-                    {
-                        install_folder: 'unknown',
-                        name: 'unknown',
-                    },
                 ],
             },
         };
@@ -238,11 +247,32 @@ const UIConfigTabContent = ({ activeTab, handleTabClick, setJsonData }) => {
         }),
     };
 
+    const addSelectedApplicationsToApplicationGroupById = (id, selectedApplicationGroups) => {
+        console.log("id ", id)
+        console.log("selected Array: ", selectedApplicationGroups)
+        setJsonData((prevArray) => {
+            return prevArray.map((item) => {
+              if (item.id === id) {
+                if (!item.action_queues.install) {
+                  item.action_queues.install = [];
+                }
+                item.action_queues.install.push(...selectedApplicationGroups);
+              }
+              return item;
+            });
+          });
+
+        setData(jsonData)
+        const updatedJsonString = JSON.stringify(updatedData, null, 2);
+        UpdateJsonFile(updatedJsonString, "applicationGroups")
+        // handleDivClick(getLastId(data))
+    }
+
     return (
         <div id='config-ui-container' className='bg-ghBlack3'>
             <PanelGroup direction="horizontal" id="group" className="tab-content dark:text-white text-black">
                 <Panel id="left-panel" className='min-w-[300px]'>
-                    <div className='relative top-0 sticky bg-ghBlack2 p-3 shadow-lg flex'>
+                    <div className='relative top-0 sticky bg-ghBlack p-3 shadow-lg flex'>
                         <div className="items-center w-full pr-2">
                             <div className='flex justify-center'>
                                 {/* Search Input Field */}
@@ -288,14 +318,15 @@ const UIConfigTabContent = ({ activeTab, handleTabClick, setJsonData }) => {
 
                     </div>
                     {/* Application Groups actions */}
-                    <div className="dark:bg-ghBlack2 h-[500px] overflow-y-scroll px-3 py-3 custom-scrollbar">
+                    <div className="dark:bg-ghBlack h-[500px] overflow-y-scroll px-3 py-3 custom-scrollbar">
                         {isLoading ? (<div className="animate-pulse flex flex-col col-span-full px-3">
                         </div>) : drawApplicationGroupCards()}
                     </div>
                 </Panel>
-                <PanelResizeHandle id="resize-handle" className='w-1 hover:bg-kxBlue bg-ghBlack2' />
+                <PanelResizeHandle id="resize-handle" className='w-1 hover:bg-kxBlue bg-ghBlack' />
                 <Panel id="right-panel" className="min-w-[370px]">
-                    <div className='bg-ghBlack2 h-[580px] overflow-y-scroll custom-scrollbar p-3'>
+                    <ApplicationGroupsModal isOpen={modalIsOpen} onRequestClose={closeModal} applicationGroupTitle={detailsObject.title} applicationGroup={detailsObject} addSelectedApplicationsToApplicationGroupById={addSelectedApplicationsToApplicationGroupById} />
+                    <div className='bg-ghBlack h-[584px] overflow-y-scroll custom-scrollbar p-3'>
 
                         {selectedId !== null && (
                             <>
@@ -316,23 +347,12 @@ const UIConfigTabContent = ({ activeTab, handleTabClick, setJsonData }) => {
 
                                         {/* Details Actions Header */}
                                         <div className='flex justify-end'>
-                                            {/* <button className={`p-2 bg-ghBlack4 ${isEditable ? "text-white" : "text-gray-400"} hover:text-white rounded items-center mr-2`}
-                                                onClick={() => {
-                                                    toggleIsEditable()
-                                                }}>
-                                                <EditIcon fontSize='medium' />
-                                            </button> */}
 
-                                            <button
-                                                className='p-2 bg-ghBlack4 text-gray-400 hover:text-white rounded items-center'
-                                                onClick={() => {
-                                                    removeApplicationGroupById(selectedId)
-                                                }}>
-                                                <DeleteIcon fontSize='medium' />
-                                            </button>
+
+
                                         </div>
 
-                                        <div className="items-center mb-5" >
+                                        <div className="items-center mb-3" >
                                             <div className='text-gray-400 text-sm'>Group Title: </div>
                                             <input type="text" value={detailsObject.title} className={`w-full focus:outline-none rounded p-2 pr-10 bg-ghBlack4 focus:border-kxBlue ${isEditable ? "border-kxBlue" : "border-ghBlack4"} border text-white`} />
                                         </div>
@@ -364,7 +384,7 @@ const UIConfigTabContent = ({ activeTab, handleTabClick, setJsonData }) => {
                                             </div>
                                         </div> */}
 
-                                        <div className="items-center mb-5">
+                                        <div className="items-center mb-3">
                                             <div className='text-gray-400 text-sm'>Group Description: </div>
                                             <textarea type="text" value={detailsObject.description} className='w-full focus:outline-none rounded p-2 pr-10 bg-ghBlack4 focus:border-kxBlue border border-transparent text-white custom-scrollbar h-[150px] resize-none' />
                                         </div>
@@ -387,9 +407,9 @@ const UIConfigTabContent = ({ activeTab, handleTabClick, setJsonData }) => {
                                     }} className='bg-kxBlue p-2 py-2 rounded w-full'>Add Application</button>
                                 </div> */}
 
-                                <div className="items-center mb-5">
+                                <div className="items-center mb-3">
                                     <div className='text-gray-400 text-sm'>Applications: </div>
-                                    <div className="grid gap-2 grid-cols-12 p-2 bg-ghBlack4 rounded">
+                                    <div className="grid gap-2 grid-cols-12 rounded">
                                         {detailsObject.action_queues.install.map((app) => {
                                             return <div className='cursor-pointer border border-dashed border-gray-500 hover:bg-ghBlack3 p-3 rounded col-span-6'>
                                                 <div className='text-base'>{app.name}</div>
@@ -397,7 +417,8 @@ const UIConfigTabContent = ({ activeTab, handleTabClick, setJsonData }) => {
                                                 <div className='text-gray-400'>{app.install_folder}</div>
                                             </div>
                                         })}
-                                        <button className='border border-dashed border-gray-500 hover:bg-ghBlack3 text-gray-400 hover:text-white p-3 rounded col-span-6 min-h-[60px]'>
+                                        <button className='border border-dashed border-gray-500 hover:bg-ghBlack3 text-gray-400 hover:text-white p-3 rounded col-span-6 min-h-[60px]'
+                                            onClick={openModal}>
                                             <AddIcon fontSize='large' />
                                         </button>
                                     </div>
@@ -408,7 +429,7 @@ const UIConfigTabContent = ({ activeTab, handleTabClick, setJsonData }) => {
                 </Panel>
 
             </PanelGroup>
-            <div className='bg-ghBlack2 h-1'></div>
+            <div className='bg-ghBlack h-1'></div>
         </div>
     )
 };

@@ -37,7 +37,7 @@ func main() {
 			},
 		},
 		Width:  1000,
-		Height: 800,
+		Height: 860,
 		AssetServer: &assetserver.Options{
 			Assets: assets,
 		},
@@ -47,7 +47,7 @@ func main() {
 			app,
 		},
 		MinWidth:  1000,
-		MinHeight: 800,
+		MinHeight: 860,
 	})
 
 	if err != nil {

@@ -44,8 +44,8 @@ export function HeaderNew(props) {
     }, [props.open]);
 
     return (
-        <AppBar position="fixed" open={props.open} className="dark:bg-ghBlack2 bg-kxBlue" elevation={0}>
-            <Toolbar className="dark:bg-ghBlack2 bg-kxBlue">
+        <AppBar position="fixed" open={props.open} className="dark:bg-ghBlack bg-kxBlue" elevation={0}>
+            <Toolbar className="dark:bg-ghBlack bg-kxBlue">
                 <div className="">
                     <IconButton
                         color="inherit"
@@ -61,7 +61,7 @@ export function HeaderNew(props) {
                         <ChevronRightIcon />
                     </IconButton>
                 </div>
-                <div className="dark:bg-ghBlack2 bg-kxBlue px-4 flex items-center justify-between w-full">
+                <div className="dark:bg-ghBlack bg-kxBlue px-4 flex items-center justify-between w-full">
                     <div className="flex items-center">
                         <img src={logo} height={40} width={40} />
                         <div className="text-left">
