@@ -242,6 +242,12 @@ variable "vmware_guest_os_type" {
   default = "ubuntu64Guest"
 }
 
+variable "user_home" {
+  type    = string
+  default = "${env("HOME")}"
+}
+
+
 locals {
   boot_command = "<esc><wait>install <wait> preseed/url=http://{{ .HTTPIP }}:{{ .HTTPPort }}//${ var.preseed_path} <wait>debian-installer=en_US.UTF-8 <wait>auto <wait>locale=en_US.UTF-8 <wait>kbd-chooser/method=de <wait>keyboard-configuration/xkb-keymap=de <wait>netcfg/get_hostname={{ .Name }} <wait>netcfg/get_domain=vagrantup.com <wait>fb=false <wait>debconf/frontend=noninteractive <wait>console-setup/ask_detect=false <wait>console-keymaps-at/keymap=us <wait>grub-installer/bootdev=/dev/sda <wait><enter><wait>"
 }
@@ -441,7 +447,7 @@ source "qemu" "kx-main-qemu" {
 
   # https://www.qemu.org/docs/master/system/qemu-manpage.html
   qemuargs = [
-    [ "-drive", "if=pflash,format=raw,readonly=on,file=/Users/c.trautwein/.colima/_lima/colima/qemu-efi-code.fd"],
+    [ "-drive", "if=pflash,format=raw,readonly=on,file=${var.user_home}/.colima/_lima/colima/qemu-efi-code.fd"],
     [ "-drive", "id=cdrom0,file=${ var.iso_url },media=cdrom"],
     [ "-drive", "file=../../../output-main/qemu-${local.version}/kx-main-${local.version},format=qcow2" ],
     [ "-device", "virtio-scsi-pci,id=scsi0" ],
@@ -452,7 +458,7 @@ source "qemu" "kx-main-qemu" {
     [ "-device", "usb-kbd" ],
     [ "-device", "usb-mouse" ],
     [ "-device", "usb-tablet" ],
-    [ "-device", "virtio-gpu" ], # Ohne diese Zeile gehts zu QEMU Monitor
+    [ "-device", "virtio-gpu" ], 
   ]
   use_default_display = true
 }

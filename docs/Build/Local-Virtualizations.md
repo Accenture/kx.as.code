@@ -147,7 +147,19 @@ For VMWare you will need a licensed version of either VMWare Fusion (Mac) or VMW
     ```
 
 
-#### Building on MacOSX / Linux
+#### Building on MacOSX ARM/Apple Chip
+
+##### Software Pre-requisites
+
+This is the software stack used:
+- Chip: >= Apple M1 Pro. Check at Apple --> About this Mac
+- MacOS: >= Sonoma 14.2.1. Check at Apple --> About this Mac
+- [Homebrew](https://brew.sh/)
+- [Packer](https://developer.hashicorp.com/packer):`brew tap hashicorp/tap && brew install hashicorp/tap/packer`
+- [colima](https://github.com/abiosoft/colima): `brew install colima`
+- [Qemu](https://www.qemu.org/): `brew install qemu`
+- [Vagrant](https://developer.hashicorp.com/vagrant/install#darwin): `brew tap hashicorp/tap && brew install hashicorp/tap/hashicorp-vagrant`
+- [Vargrant qemu plugin](https://github.com/ppggff/vagrant-qemu): `vagrant plugin install vagrant-qemu`
 
 To build a Vagrant Qemu box and push it to the cloud get a authentication token from https://app.vagrantup.com/settings/security . Then execute
 ```shell
