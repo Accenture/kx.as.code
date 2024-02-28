@@ -3,10 +3,17 @@ set -euo pipefail
 
 export SHARED_GIT_REPOSITORIES=${SHARED_GIT_REPOSITORIES}
 
+# Determine CPU architecture
+if [[ -n $(uname -a | grep "aarch64") ]]; then
+  ARCH="arm64"
+else
+  ARCH="amd64"
+fi
+
 # Install Visual Studio Code editor
 curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg
 sudo install -o root -g root -m 644 microsoft.gpg /usr/share/keyrings/microsoft-archive-keyring.gpg
-sudo sh -c 'echo "deb [arch=amd64 signed-by=/usr/share/keyrings/microsoft-archive-keyring.gpg] https://packages.microsoft.com/repos/vscode stable main" > /etc/apt/sources.list.d/vscode.list'
+sudo sh -c 'echo "deb [arch='${ARCH}' signed-by=/usr/share/keyrings/microsoft-archive-keyring.gpg] https://packages.microsoft.com/repos/vscode stable main" > /etc/apt/sources.list.d/vscode.list'
 sudo apt-get install -y apt-transport-https
 sudo apt-get update -y
 sudo apt-get install -y code

@@ -365,6 +365,9 @@ checkVersions "${1}"
 
 # Versions that will be downloaded if already installed binaries not found
 javaDownloadVersion=11.0.3.7.1
+if [ $(uname -s) == "Darwin" -a $(uname -p) == "arm" ]; then
+  javaDownloadVersion=11.0.22.7.1
+fi
 jqDownloadVersion=1.6
 
 # Determine OS this script is running on and set appropriate download links and commands
@@ -377,10 +380,17 @@ Linux)
   os=linux
   ;;
 Darwin)
-  log_info "Script running on Darwin. Setting appropriate download links"
-  javaInstallerUrl="https://d3pxv6yz143wms.cloudfront.net/${javaDownloadVersion}/amazon-corretto-${javaDownloadVersion}-macosx-x64.tar.gz"
-  jqInstallerUrl="https://github.com/stedolan/jq/releases/download/jq-${jqDownloadVersion}/jq-osx-amd64"
-  os=darwin
+  if [ $(uname -p) == "arm" ]; then
+    log_info "Script running on Arm Darwin. Setting appropriate download links"
+    javaInstallerUrl="https://corretto.aws/downloads/resources/${javaDownloadVersion}/amazon-corretto-${javaDownloadVersion}-macosx-aarch64.tar.gz"
+    jqInstallerUrl="https://github.com/stedolan/jq/releases/download/jq-${jqDownloadVersion}/jq-macos-arm64"
+    os=darwin
+  else
+    log_info "Script running on Darwin. Setting appropriate download links"
+    javaInstallerUrl="https://d3pxv6yz143wms.cloudfront.net/${javaDownloadVersion}/amazon-corretto-${javaDownloadVersion}-macosx-x64.tar.gz"
+    jqInstallerUrl="https://github.com/stedolan/jq/releases/download/jq-${jqDownloadVersion}/jq-osx-amd64"
+    os=darwin
+  fi
   ;;
 *)
   log_info "Script running on Windows. Setting appropriate download links"

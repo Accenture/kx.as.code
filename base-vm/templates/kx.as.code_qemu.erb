@@ -1,0 +1,23 @@
+#################################################################################################################
+#                                                                                                               #
+#  Use this file for creating the vagrantfile after a packer build.                                             #
+#                                                                                                               #
+#  Command Example:                                                                                             #
+#  $ vagrant init kx-main kxascode/kx-main --template ../../kx.as.code_qemu.erb                                 #
+#                                                                                                               #
+#################################################################################################################
+
+Vagrant.configure("2") do |config|
+  config.vm.box = "<%= box_name %>"
+  <% if box_version -%>
+  config.vm.box_version = "<%= box_version %>"
+  <% end -%>
+  <% if box_url -%>
+  config.vm.box_url = "<%= box_url %>"
+  <% end -%>
+  config.vm.provider "qemu" do |v|
+    v.name = "<%= box_name %>"
+    v.image_path = "<%= ENV['HOME'] %>/.vagrant.d/boxes/kxascode-VAGRANTSLASH-kx-main/<%= box_version %>/arm64/libvirt/box_0.img"
+    v.extra_qemu_args = %w(-vnc 127.0.0.1:56 -device virtio-gpu -usb -device usb-ehci -device usb-kbd -device usb-mouse -device usb-tablet -boot order=i,splash-time=30,menu=on)
+  end
+end
