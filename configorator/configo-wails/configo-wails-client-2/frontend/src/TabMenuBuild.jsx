@@ -28,7 +28,7 @@ const TabMenuBuild = ({ buildOutputFileContent, isBuildStarted, toggleBuildStart
     }, [buildOutputFileContent, isBuildStarted]);
 
     return (
-        <div className='mt-[67px]'>
+        <div className=''>
             {isBuildStarted ? <ProcessOutputView processType={"build"} logOutput={buildOutputFileContent} /> : <BuildTabContent />}
         </div>
     );

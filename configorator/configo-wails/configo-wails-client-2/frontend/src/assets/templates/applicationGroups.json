@@ -1,7 +1,62 @@
 [
     {
         "action_queues": {
-            "install": []
+            "install": [
+                {
+                    "id": 0,
+                    "install_folder": "cicd",
+                    "name": "argocd"
+                },
+                {
+                    "id": 1,
+                    "install_folder": "cicd",
+                    "name": "artifactory"
+                },
+                {
+                    "id": 2,
+                    "install_folder": "cicd",
+                    "name": "nexus3"
+                },
+                {
+                    "id": 3,
+                    "install_folder": "cicd",
+                    "name": "consul"
+                },
+                {
+                    "id": 4,
+                    "install_folder": "cicd",
+                    "name": "jenkins"
+                },
+                {
+                    "id": 5,
+                    "install_folder": "collaboration",
+                    "name": "jira"
+                }
+            ]
+        },
+        "description": "New Group Description",
+        "id": 16,
+        "title": "New Group 6"
+    },
+    {
+        "action_queues": {
+            "install": [
+                {
+                    "id": 0,
+                    "install_folder": "cicd",
+                    "name": "argocd"
+                },
+                {
+                    "id": 1,
+                    "install_folder": "cicd",
+                    "name": "artifactory"
+                },
+                {
+                    "id": 2,
+                    "install_folder": "cicd",
+                    "name": "consul"
+                }
+            ]
         },
         "description": "New Group Description",
         "id": 15,
@@ -28,43 +83,40 @@
             "install": [
                 {
                     "id": 0,
-                    "install_folder": "storage",
-                    "name": "minio-operator"
+                    "install_folder": "cicd",
+                    "name": "artifactory"
                 },
                 {
                     "id": 1,
                     "install_folder": "cicd",
-                    "name": "gitlab"
+                    "name": "gitea"
                 },
                 {
                     "id": 2,
-                    "install_folder": "collaboration",
-                    "name": "mattermost"
+                    "install_folder": "cicd",
+                    "name": "gitlab"
                 },
                 {
                     "id": 3,
                     "install_folder": "cicd",
-                    "name": "harbor"
+                    "name": "argocd"
                 },
                 {
                     "id": 4,
                     "install_folder": "cicd",
-                    "name": "argocd"
+                    "name": "harbor"
                 },
                 {
                     "id": 5,
                     "install_folder": "cicd",
-                    "name": "artifactory"
+                    "name": "consul"
+                },
+                {
+                    "id": 6,
+                    "install_folder": "monitoring",
+                    "name": "loki"
                 }
             ]
-        },
-        "description": "CICD Group 1 for sites with a larger physical resources",
-        "id": 1,
-        "title": "CICD Group 1"
-    },
-    {
-        "action_queues": {
-            "install": []
         },
         "description": "New Group Description",
         "id": 12,
@@ -72,7 +124,13 @@
     },
     {
         "action_queues": {
-            "install": []
+            "install": [
+                {
+                    "id": 0,
+                    "install_folder": "cicd",
+                    "name": "argocd"
+                }
+            ]
         },
         "description": "New Group Description",
         "id": 11,
@@ -91,45 +149,6 @@
         "description": "Group used to show specific use cases and for debugging changes and enhancements to the framework",
         "id": 0,
         "title": "Examples Group 1"
-    },
-    {
-        "action_queues": {
-            "install": [
-                {
-                    "id": 0,
-                    "install_folder": "storage",
-                    "name": "minio-operator"
-                },
-                {
-                    "id": 1,
-                    "install_folder": "cicd",
-                    "name": "gitlab"
-                },
-                {
-                    "id": 2,
-                    "install_folder": "collaboration",
-                    "name": "mattermost"
-                },
-                {
-                    "id": 3,
-                    "install_folder": "cicd",
-                    "name": "harbor"
-                },
-                {
-                    "id": 4,
-                    "install_folder": "cicd",
-                    "name": "argocd"
-                },
-                {
-                    "id": 5,
-                    "install_folder": "cicd",
-                    "name": "artifactory"
-                }
-            ]
-        },
-        "description": "CICD Group 1 for sites with a larger physical resources",
-        "id": 1,
-        "title": "CICD Group 1"
     },
     {
         "action_queues": {
@@ -225,6 +244,11 @@
                     "id": 4,
                     "install_folder": "monitoring",
                     "name": "elastic-heartbeat"
+                },
+                {
+                    "id": 5,
+                    "install_folder": "cicd",
+                    "name": "artifactory"
                 }
             ]
         },
@@ -249,6 +273,11 @@
                     "id": 2,
                     "install_folder": "monitoring",
                     "name": "graphite"
+                },
+                {
+                    "id": 3,
+                    "install_folder": "cicd",
+                    "name": "consul"
                 }
             ]
         },
@@ -287,6 +316,11 @@
                     "id": 0,
                     "install_folder": "storage",
                     "name": "nextcloud"
+                },
+                {
+                    "id": 1,
+                    "install_folder": "core",
+                    "name": "gopass"
                 }
             ]
         },
@@ -325,6 +359,11 @@
                     "id": 0,
                     "install_folder": "security",
                     "name": "neuvector"
+                },
+                {
+                    "id": 1,
+                    "install_folder": "cicd",
+                    "name": "gitea"
                 }
             ]
         },

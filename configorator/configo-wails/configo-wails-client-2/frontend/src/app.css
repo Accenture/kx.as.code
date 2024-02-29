@@ -65,39 +65,50 @@
 }
 
 /* Coldmirror background overwrite */
-.ͼ1{
+.ͼ1 {
     background-color: #161b22;
 }
 
 /* Coldmirror line numbers background color overwrite */
-.ͼo .cm-gutters{
+.ͼo .cm-gutters {
     background-color: #1f262e;
 }
 
 /* Coldmirror active line highlight background color overwrite */
-.ͼo .cm-activeLine{
+.ͼo .cm-activeLine {
     background-color: #2f3640;
 }
 
 /* WebKit browsers */
 .custom-scrollbar::-webkit-scrollbar {
     width: 12px;
-  }
-  
-  .custom-scrollbar::-webkit-scrollbar-thumb {
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
     background-color: #2f3640;
-  }
-  
-  .custom-scrollbar::-webkit-scrollbar-track {
-    background-color: #1f262e; 
-  }
-  
-  /* For other browsers */
-  .custom-scrollbar {
-    scrollbar-width: thin; /* Firefox */
-    scrollbar-color: #2f3640 #1f262e; /* Firefox */
-  }
-  
-  .custom-scrollbar:hover {
-    scrollbar-color: #2f3640 #f1f1f1; /* Change on hover for Firefox */
-  }
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+    background-color: #1f262e;
+}
+
+/* For other browsers */
+.custom-scrollbar {
+    scrollbar-width: thin;
+    /* Firefox */
+    scrollbar-color: #2f3640 #1f262e;
+    /* Firefox */
+}
+
+.custom-scrollbar:hover {
+    scrollbar-color: #2f3640 #f1f1f1;
+    /* Change on hover for Firefox */
+}
+
+.CodeMirror {
+    z-index: 0
+}
+
+.CodeMirror pre {
+    z-index: 0;
+}

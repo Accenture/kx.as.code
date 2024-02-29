@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 const Home = () => {
 
     return (
-        <div className='mt-24'>
+        <div className=''>
            Home Content
         </div>
     );

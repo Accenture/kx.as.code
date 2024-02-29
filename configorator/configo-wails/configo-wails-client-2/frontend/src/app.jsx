@@ -85,6 +85,10 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== "open" 
     })
 );
 
+const handleDrawerToggle = () => {
+    setOpen(!open);
+};
+
 const drawerWidth = 240;
 
 
@@ -166,7 +170,6 @@ export function App() {
             const response = await fetch(buildOutputFile);
             const text = await response.text();
             setBuildLogOutput(text)
-            console.log('File Content:', text);
         } catch (error) {
             console.error('Error fetching file content:', error);
         }
@@ -204,38 +207,42 @@ export function App() {
 
     return (
 
-        <div className="dark:bg-ghBlack4 relative h-screen" >
-            <div>
-                <ThemeProvider theme={theme}>
-                    <Box sx={{ display: "flex" }}>
-                        <Drawer variant="permanent" open={open}
-                            sx={{
-                                '& .MuiDrawer-paper': {
-                                    // borderRight: 'none',
-                                    borderRightWidth: "0px",
-                                    borderColor: "#2f3640",
-                                    backgroundColor: '#1f262e'
-                                }
-                            }} >
-                            <DrawerHeader>
-                                <IconButton onClick={handleDrawerClose}>
-                                    {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
-                                </IconButton>
-                            </DrawerHeader>
-                            <List className="" style={{ marginTop: "auto", marginBottom: "auto", paddingBottom: "150px" }}>
-                                <MenuItem menuItemName={"home"} slug={slug} />
-                                <MenuItem menuItemName={"build"} slug={slug} isBuildStarted={isBuildStarted} />
-                                <MenuItem menuItemName={"deploy"} slug={slug} />
-                                {/* Separator */}
-                                <div className="w-full h-[3px] bg-ghBlack4 mt-0 mb-2"></div>
-                                <MenuItem menuItemName={"application-groups"} slug={slug} />
-                                <MenuItem menuItemName={"user-provisioning"} slug={slug} />
-                                <MenuItem menuItemName={"custom-variables"} slug={slug} />
-                                <MenuItem menuItemName={"build-history"} slug={slug} />
-                            </List>
-                        </Drawer>
-                        <Box component="main" sx={{ flexGrow: 1, p: 0 }} className="text-black dark:text-white">
+        <div className="dark:bg-green-500 relative min-h-screen flex flex-col" >
+            <ThemeProvider theme={theme}>
+                <Box sx={{ display: "flex" }}>
+                    <Drawer variant="permanent" open={open}
+                        sx={{
+                            '& .MuiDrawer-paper': {
+                                // borderRight: 'none',
+                                borderRightWidth: "0px",
+                                borderColor: "#2f3640",
+                                backgroundColor: '#1f262e'
+                            }
+                        }} >
+                        <DrawerHeader>
+                            <IconButton onClick={() => setOpen(!open)}>
+                                {open ? <ChevronLeftIcon /> : <ChevronRightIcon />}
+                            </IconButton>
+                        </DrawerHeader>
+                        <List className="" style={{ marginTop: "auto", marginBottom: "auto", paddingBottom: "150px" }}>
+                            <MenuItem menuItemName={"home"} slug={slug} />
+                            <MenuItem menuItemName={"build"} slug={slug} isBuildStarted={isBuildStarted} />
+                            <MenuItem menuItemName={"deploy"} slug={slug} />
+                            {/* Separator */}
+                            <div className="w-full h-[3px] bg-ghBlack4 mt-0 mb-2"></div>
+                            <MenuItem menuItemName={"application-groups"} slug={slug} />
+                            <MenuItem menuItemName={"user-provisioning"} slug={slug} />
+                            <MenuItem menuItemName={"custom-variables"} slug={slug} />
+                            <MenuItem menuItemName={"build-history"} slug={slug} />
+                        </List>
+                    </Drawer>
+
+                    <Box component="main" sx={{ flexGrow: 1, p: 0 }} className="text-black dark:text-white">
+
+                        <div className="bg-red-600 h-[100px]">
                             <HeaderNew drawerWidth={drawerWidth} handleDrawerOpen={handleDrawerOpen} open={open} handleDarkModeToggle={handleDarkModeToggle} isDarkMode={isDarkMode} toggleBuildStart={toggleBuildStart} isBuildStarted={isBuildStarted} />
+                        </div>
+                        <div className="bg-blue-500">
                             <Routes>
                                 {/* <Route exact path="/" element={<TabMenu />} /> */}
                                 <Route path="/home" element={<Home />} />
@@ -247,30 +254,32 @@ export function App() {
                                 <Route path="/build-history" element={<BuildHistory />} />
                                 <Route path="/console-output" element={<ConsoleOutput />} />
                             </Routes>
-                            <Toaster
-                                expand visibleToasts={3}
-                                duration={2000}
-                                toastOptions={{
-                                    style: {
-                                        background: "#161b22",
-                                        borderRadius: "5px",
-                                        borderWidth: "0",
-                                        color: "white",
-                                        boxShadow: "none"
-                                    },
-                                    className: '',
-                                }} />
-                        </Box>
+                        </div>
+                        {/* Footer Section */}
+                        <div className="bg-ghBlack p-3 w-full text-gray-400 hover:text-white flex justify-end px-5 pb-6 h-[50px]">
+                            <button onClick={() => {
+                                OpenURL("https://github.com/Accenture/kx.as.code")
+                            }}>
+                                <GitHubIcon />
+                            </button>
+                        </div>
                     </Box>
-                    <div className="absolute bottom-0 bg-ghBlack p-3 w-full text-gray-400 hover:text-white flex justify-end px-5">
-                        <button onClick={() =>{
-                            OpenURL("https://github.com/Accenture/kx.as.code")
-                        }}>
-                            <GitHubIcon />
-                        </button>
-                    </div>
-                </ThemeProvider>
-            </div>
+                    <Toaster
+                        expand visibleToasts={3}
+                        duration={2000}
+                        toastOptions={{
+                            style: {
+                                background: "#161b22",
+                                borderRadius: "5px",
+                                borderWidth: "0",
+                                color: "white",
+                                boxShadow: "none"
+                            },
+                            className: '',
+                        }} />
+
+                </Box>
+            </ThemeProvider>
         </div >
 
     );

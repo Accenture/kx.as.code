@@ -8,11 +8,11 @@ import applicationsJson from './assets/templates/applications.json';
 Modal.setAppElement('#app');
 Modal.defaultStyles.overlay.backgroundColor = 'transparent';
 
-export default function ApplicationGroupsModal({ isOpen, onRequestClose, applicationGroupTitle, applicationGroup, addSelectedApplicationsToApplicationGroupById }) {
+export default function ApplicationGroupsModal({ isOpen, onRequestClose, applicationGroupTitle, applicationGroup, addApplicationToApplicationGroupById }) {
     const [name, setName] = useState('');
     const [searchTerm, setSearchTerm] = useState('');
     const [matchedApplications, setMatchedApplications] = useState([]);
-    const [selectedApplicationsList, setSelectedApplicationsList] = useState([]);
+    // const [updatedIncludedApps, setUpdatedIncludedApps] = useState([]);
 
 
     const handleInputChange = (event) => {
@@ -30,17 +30,25 @@ export default function ApplicationGroupsModal({ isOpen, onRequestClose, applica
         onRequestClose();
     };
 
+    const doesObjectExist = (appName, includedAppsInGroupList) => {
+        return includedAppsInGroupList.some((obj) => obj.name === appName);
+    };
+
     const handleAddApplicationClick = (appName, installFolder) => {
         const maxId = applicationGroup.action_queues.install.reduce((max, obj) => (obj.id > max ? obj.id : max), -1);
 
         const newApplicationObject = {
             id: maxId + 1,
             name: appName,
-            install_folder : installFolder
+            install_folder: installFolder
         };
 
-        setMatchedApplications((prevArray) => [...prevArray, newApplicationObject]);
-        addSelectedApplicationsToApplicationGroupById(applicationGroup.id, matchedApplications)
+        // setUpdatedIncludedApps(prevArray => {
+        //     const newArray = Array.isArray(prevArray) ? [...prevArray, newApplicationObject] : [newApplicationObject];
+        //     console.log("DEBUG - selected apps: ", newArray);
+        //     return newArray;
+        // });
+        addApplicationToApplicationGroupById(applicationGroup.id, newApplicationObject)
     }
 
     const modalCustomStyles = {
@@ -108,15 +116,30 @@ export default function ApplicationGroupsModal({ isOpen, onRequestClose, applica
                                     <ul>
                                         {matchedApplications.map((app, i) => (
                                             <li className='p-2 mt-1 bg-ghBlack hover:bg-ghBlack3 rounded cursor-pointer mr-2 flex justify-between items-center' key={i}>
-                                                <div className='capitalize'>{app.name}</div>
+                                                <div className='text-left'>
+                                                    <div className='capitalize'>{app.name}</div>
+                                                    <div className='text-gray-400 uppercase text-sm'>{app.installation_group_folder}</div>
+                                                </div>
                                                 <div>
-                                                    <button
-                                                        className='p-1 bg-ghBlack4 text-gray-400 hover:text-white rounded items-center'
-                                                        onClick={() => {
-                                                            handleAddApplicationClick(app.name, app.install_folder)
-                                                        }}>
-                                                        <AddIcon />
-                                                    </button>
+                                                    {doesObjectExist(app.name, applicationGroup.action_queues.install) ? (
+                                                        <button
+                                                            className='p-1 bg-ghBlack4 text-white rounded items-center'
+                                                            onClick={() => {
+
+                                                            }}>
+                                                            <RemoveIcon />
+                                                        </button>
+                                                    ) : (
+                                                        <button
+                                                            className='p-1 bg- text-white rounded items-center'
+                                                            onClick={() => {
+                                                                handleAddApplicationClick(app.name, app.installation_group_folder)
+                                                                console.log("DEBUG - ID div select", applicationGroup.id)
+                                                            }}>
+                                                            <AddIcon />
+                                                        </button>
+                                                    )}
+
                                                 </div>
                                             </li>
                                         ))}

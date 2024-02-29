@@ -57,7 +57,7 @@ export default function BuildHistory() {
     }, [activeConfigTab, data]);
 
     return (
-        <div className='text-left mt-[67px]'>
+        <div className='text-left'>
             <div className='relative'>
                 {/* Config View Tabs */}
                 <div className='grid grid-cols-12 items-center dark:bg-ghBlack4 sticky top-[67px] z-10 p-1'>

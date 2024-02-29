@@ -17,7 +17,7 @@ import StopCircleIcon from '@mui/icons-material/StopCircle';
 import PlayCircleIcon from '@mui/icons-material/PlayCircle';
 
 
-const drawerWidth = 240;
+const drawerWidth = 0;
 
 const AppBar = styled(MuiAppBar, {
     shouldForwardProp: (prop) => prop !== 'open',
@@ -44,63 +44,46 @@ export function HeaderNew(props) {
     }, [props.open]);
 
     return (
-        <AppBar position="fixed" open={props.open} className="dark:bg-ghBlack bg-kxBlue" elevation={0}>
-            <Toolbar className="dark:bg-ghBlack bg-kxBlue">
-                <div className="">
-                    <IconButton
-                        color="inherit"
-                        aria-label="open drawer"
-                        onClick={() => {
-                            props.handleDrawerOpen()
-                        }}
-                        edge="start"
-                        sx={{
-                            ...(props.open && { display: "none" }),
-                        }}
-                    >
-                        <ChevronRightIcon />
-                    </IconButton>
+        <AppBar position="" open={props.open} className="dark:bg-ghBlack bg-kxBlue" elevation={0}>
+            <div className="dark:bg-ghBlack bg-kxBlue px-4 flex items-center justify-between w-full">
+                <div className="flex items-center">
+                    <img src={logo} height={40} width={40} />
+                    <div className="text-left">
+                        <div className="text-sm">KX.AS.Code</div>
+                        <div className="font-semibold text-lg">Launcher <span className="text-sm font-normal ml-1 p-0.5 px-1 text-white">v.0.8.16</span></div>
+                    </div>
                 </div>
-                <div className="dark:bg-ghBlack bg-kxBlue px-4 flex items-center justify-between w-full">
-                    <div className="flex items-center">
-                        <img src={logo} height={40} width={40} />
-                        <div className="text-left">
-                            <div className="text-sm">KX.AS.Code</div>
-                            <div className="font-semibold text-lg">Launcher <span className="text-sm font-normal ml-1 p-0.5 px-1 text-white">v.0.8.16</span></div>
+
+                <div className="flex items-center">
+                    <div className="bg-ghBlack3 p-2 justify-start flex items-center mr-2">
+                        {/* Action Settings / Button */}
+                        <div className='flex justify-center items-center'>
+                            {props.isBuildStarted ?
+                                <Tooltip title="Stop Build Process" placement="right">
+                                    <IconButton onClick={() => { props.toggleBuildStart() }}>
+                                        <StopCircleIcon fontSize="large" className="border-3 border-white rounded-full" />
+                                    </IconButton>
+                                </Tooltip> :
+                                <Tooltip title="Run Build & Deploy" placement="right">
+                                    <IconButton onClick={() => { props.toggleBuildStart() }}>
+                                        <PlayCircleIcon fontSize="large" className="border-3 border-kxBlue rounded-full" />
+                                    </IconButton>
+                                </Tooltip>
+                            }
                         </div>
                     </div>
 
-                    <div className="flex items-center">
-                        <div className="bg-ghBlack3 p-2 justify-start flex items-center mr-2">
-                            {/* Action Settings / Button */}
-                            <div className='flex justify-center items-center'>
-                                {props.isBuildStarted ?
-                                    <Tooltip title="Stop Build Process" placement="right">
-                                        <IconButton onClick={() => { props.toggleBuildStart() }}>
-                                            <StopCircleIcon fontSize="large" className="border-3 border-white rounded-full" />
-                                        </IconButton>
-                                    </Tooltip> :
-                                    <Tooltip title="Start New Build" placement="right">
-                                        <IconButton onClick={() => { props.toggleBuildStart() }}>
-                                            <PlayCircleIcon fontSize="large" className="border-3 border-kxBlue rounded-full"/>
-                                        </IconButton>
-                                    </Tooltip>
-                                }
-                            </div>
-                        </div>
-
-                        <div>
-                            <IconButton
-                                color="inherit"
-                                aria-label="Toggle dark/light mode"
-                                onClick={props.handleDarkModeToggle}
-                            >
-                                {props.isDarkMode ? <WbSunnyIcon /> : <Brightness3 />}
-                            </IconButton>
-                        </div>
+                    <div>
+                        <IconButton
+                            color="inherit"
+                            aria-label="Toggle dark/light mode"
+                            onClick={props.handleDarkModeToggle}
+                        >
+                            {props.isDarkMode ? <WbSunnyIcon /> : <Brightness3 />}
+                        </IconButton>
                     </div>
                 </div>
-            </Toolbar>
+            </div>
         </AppBar>
     );
 }

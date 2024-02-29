@@ -48,7 +48,7 @@ const TabMenuDeploy = () => {
         setIsDeploymentStarted((prevIsDeploymentStarted) => !prevIsDeploymentStarted);
     }
     return (
-        <div className='mt-[67px]'>
+        <div className=''>
             {isDeploymentStarted ? <ProcessOutputView processType={"deploy"} /> : <DeployTabContent />}
         </div>
     );
@@ -911,7 +911,7 @@ const TabContent8 = ({ handleConfigChange }) => {
                                     return <div id="item" className='px-5 py-2 bg-ghBlack2 rounded mb-1 flex justify-between mr-2 items-center'>
                                         <div>
                                             <div className=''>{appGroup}</div>
-                                            <div className='text-sm uppercase text-gray-400'>{findGroupByTitle(appGroup).action_queues.install[0].install_folder}</div>
+                                            {/* <div className='text-sm uppercase text-gray-400'>{findGroupByTitle(appGroup).action_queues.install[0].install_folder !== undefined && findGroupByTitle(appGroup).action_queues.install[0].install_folder }</div> */}
                                         </div>
                                         <IconButton className='hover:bg-ghBlack4 hover:border-white rounded flex justify-center items-center'
                                             onClick={(e) => { handleRemoveButtonClick(e, appGroup) }}
@@ -940,7 +940,7 @@ const ApplicationGroupListItem = ({ appGroup, key, handleAddButtonClick, handleR
         <div key={key} className={`w-full py-2 px-6 bg-ghBlack4 items-center flex justify-between mb-1`}>
             <div>
                 <div className=''>{appGroup.title}</div>
-                <div className='text-sm uppercase text-gray-400'>{appGroup.action_queues.install[0].install_folder}</div>
+                {/* <div className='text-sm uppercase text-gray-400'>{appGroup.action_queues.install[0].install_folder !== undefined && appGroup.action_queues.install[0].install_folder}</div> */}
             </div>
             {isInSelectedGroups(appGroup.title) ? (
                 <IconButton className='hover:bg-ghBlack4 border border-gray-400 hover:border-white p-0.5 rounded flex justify-center items-center text-gray-400 hover:text-white'
