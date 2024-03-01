@@ -44,7 +44,7 @@ export function HeaderNew(props) {
     }, [props.open]);
 
     return (
-        <AppBar position="" open={props.open} className="dark:bg-ghBlack bg-kxBlue" elevation={0}>
+        <AppBar position="" open={props.open} className="dark:bg-ghBlack bg-kxBlue h-[67px]" elevation={0}>
             <div className="dark:bg-ghBlack bg-kxBlue px-4 flex items-center justify-between w-full">
                 <div className="flex items-center">
                     <img src={logo} height={40} width={40} />

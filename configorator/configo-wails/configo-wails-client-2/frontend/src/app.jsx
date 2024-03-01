@@ -207,7 +207,7 @@ export function App() {
 
     return (
 
-        <div className="dark:bg-green-500 relative min-h-screen flex flex-col" >
+        <div className="dark:bg-ghBlack relative" >
             <ThemeProvider theme={theme}>
                 <Box sx={{ display: "flex" }}>
                     <Drawer variant="permanent" open={open}
@@ -237,12 +237,12 @@ export function App() {
                         </List>
                     </Drawer>
 
-                    <Box component="main" sx={{ flexGrow: 1, p: 0 }} className="text-black dark:text-white">
+                    <Box component="main" sx={{ flexGrow: 1, p: 0 }} className="text-black dark:text-white flex flex-col min-h-screen">
 
-                        <div className="bg-red-600 h-[100px]">
+                        <div className="">
                             <HeaderNew drawerWidth={drawerWidth} handleDrawerOpen={handleDrawerOpen} open={open} handleDarkModeToggle={handleDarkModeToggle} isDarkMode={isDarkMode} toggleBuildStart={toggleBuildStart} isBuildStarted={isBuildStarted} />
                         </div>
-                        <div className="bg-blue-500">
+                        <div className="bg-ghBlack">
                             <Routes>
                                 {/* <Route exact path="/" element={<TabMenu />} /> */}
                                 <Route path="/home" element={<Home />} />
@@ -256,7 +256,7 @@ export function App() {
                             </Routes>
                         </div>
                         {/* Footer Section */}
-                        <div className="bg-ghBlack p-3 w-full text-gray-400 hover:text-white flex justify-end px-5 pb-6 h-[50px]">
+                        <div className="bg-ghBlack4 p-3 w-full text-gray-400 hover:text-white flex justify-end px-5 h-[67px]">
                             <button onClick={() => {
                                 OpenURL("https://github.com/Accenture/kx.as.code")
                             }}>

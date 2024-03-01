@@ -4,11 +4,10 @@ import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import applicationsJson from './assets/templates/applications.json';
 
-export default function ApplicationSelection({ applicationGroupTitle, applicationGroup, addApplicationToApplicationGroupById }) {
+export default function ApplicationSelection({ applicationGroupTitle, applicationGroup, addApplicationToApplicationGroupById, windowHeight }) {
     const [name, setName] = useState('');
     const [searchTerm, setSearchTerm] = useState('');
     const [matchedApplications, setMatchedApplications] = useState([]);
-
 
     const handleInputChange = (event) => {
         const term = event.target.value;
@@ -72,7 +71,6 @@ export default function ApplicationSelection({ applicationGroupTitle, applicatio
 
                         <div className='h-[300px] overflow-y-scroll custom-scrollbar mt-3'>
                             <ul>
-
                                 {(searchTerm !== "" ? matchedApplications : applicationsJson).map((app, i) => (
                                     <li className='p-2 mt-1 bg-ghBlack hover:bg-ghBlack3 rounded cursor-pointer mr-2 flex justify-between items-center' key={i}>
                                         <div className='text-left'>
@@ -105,14 +103,17 @@ export default function ApplicationSelection({ applicationGroupTitle, applicatio
 
                         </div>
                     </div>
-                    <div className="col-span-6 p-2 h-[300px] overflow-y-scroll custom-scrollbar">
-                        {applicationGroup.action_queues.install.map((app) => {
-                            return <div className='cursor-pointer bg-kxBlue p-2 rounded mb-1 text-left'>
-                                <div className='text-base capitalize'>{app.name}</div>
-                                {/* Set first install folder value as Category  */}
-                                <div className='text-sm uppercase'>{app.install_folder}</div>
-                            </div>
-                        })}
+                    <div className="col-span-6 p-2">
+                        <div className='text-left text-gray-400 mb-3'>Added Applications to Group: </div>
+                        <div className='h-[300px] overflow-y-scroll custom-scrollbar'>
+                            {applicationGroup.action_queues.install.map((app) => {
+                                return <div className='cursor-pointer bg-kxBlue p-2 rounded mb-1 text-left'>
+                                    <div className='text-base capitalize'>{app.name}</div>
+                                    {/* Set first install folder value as Category  */}
+                                    <div className='text-sm uppercase'>{app.install_folder}</div>
+                                </div>
+                            })}
+                        </div>
                     </div>
                 </div>
 

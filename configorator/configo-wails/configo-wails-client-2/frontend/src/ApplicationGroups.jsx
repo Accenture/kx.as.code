@@ -35,6 +35,7 @@ export function ApplicationGroups({
     const [activeConfigTab, setActiveConfigTab] = useState('config-tab1');
     const [jsonData, setJsonData] = useState([]);
     const [applicationGroupDetailTab, setApplicationGroupDetailTab] = useState("config-ui");
+    const [windowHeight, setWindowHeight] = useState(window.innerHeight);
 
     const handleTabClick = (tab) => {
         setActiveTab(tab);
@@ -45,9 +46,19 @@ export function ApplicationGroups({
     };
 
     useEffect(() => {
+        const handleResize = () => {
+            setWindowHeight(window.innerHeight);
+        };
+        window.addEventListener('resize', handleResize);
+
         setJsonData(JSON.stringify(applicationGroupJson, null, 2))
 
-    }, [activeConfigTab, jsonData, applicationGroupDetailTab]);
+        // Detach event listener on component unmount
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        };
+
+    }, [activeConfigTab, jsonData, applicationGroupDetailTab, windowHeight]);
 
     return (
         <div className='text-left'>
@@ -93,10 +104,10 @@ export function ApplicationGroups({
 
                 </div>
             </div>
-            <div className="config-tab-content">
+            <div className="config-tab-content flexGrow">
                 <div className='bg-ghBlack h-1'></div>
 
-                {activeConfigTab === 'config-tab1' && <UIConfigTabContent activeTab={activeTab} handleTabClick={handleTabClick} setJsonData={setJsonData} applicationGroupDetailTab={applicationGroupDetailTab} setApplicationGroupDetailTab={setApplicationGroupDetailTab} />}
+                {activeConfigTab === 'config-tab1' && <UIConfigTabContent activeTab={activeTab} handleTabClick={handleTabClick} setJsonData={setJsonData} applicationGroupDetailTab={applicationGroupDetailTab} setApplicationGroupDetailTab={setApplicationGroupDetailTab} windowHeight={windowHeight}/>}
                 {activeConfigTab === 'config-tab2' && <JSONConfigTabContent jsonData={jsonData} fileName={"applicationGroups.json"} />}
             </div>
         </div>)
@@ -104,7 +115,7 @@ export function ApplicationGroups({
 };
 
 
-const UIConfigTabContent = ({ activeTab, handleTabClick, setJsonData, applicationGroupDetailTab, setApplicationGroupDetailTab,
+const UIConfigTabContent = ({ activeTab, handleTabClick, setJsonData, applicationGroupDetailTab, setApplicationGroupDetailTab, windowHeight,
     defaultLayout = [30, 70] }) => {
     const [searchTerm, setSearchTerm] = useState("");
     const [isLoading, setIsLoading] = useState(false);
@@ -114,6 +125,29 @@ const UIConfigTabContent = ({ activeTab, handleTabClick, setJsonData, applicatio
     const [isEditable, setIsEditable] = useState(false);
     const [data, setData] = useState(applicationGroupJson);
     const [modalIsOpen, setModalIsOpen] = useState(false);
+    const [currentId, setCurrentId] = useState(null);
+
+
+    const updateFieldInJsonObjectById = (id, fieldName, value) => {
+        const updatedArray = JSON.parse(JSON.stringify(applicationGroupJson));
+        const targetObject = updatedArray.find((obj) => obj.id === id);
+        if (targetObject) {
+            targetObject[fieldName] = value;
+        }
+        return updatedArray;
+    };
+
+    const handleAppGroupChange = (id, fieldName, value) => {
+        console.log("id : ", id)
+        console.log("fieldName : ", fieldName)
+        console.log("value : ", value)
+
+        const updatedJsonArray = updateFieldInJsonObjectById(id, fieldName, value)
+
+        const updatedJsonString = JSON.stringify(updatedJsonArray, null, 2);
+        setJsonData(updatedJsonString);
+        UpdateJsonFile(updatedJsonString, "applicationGroups");
+    }
 
     const openModal = () => {
         setModalIsOpen(true);
@@ -162,7 +196,7 @@ const UIConfigTabContent = ({ activeTab, handleTabClick, setJsonData, applicatio
 
     useEffect(() => {
         // Initial select last element of data array (by id)
-        handleDivClick(getLastId(data))
+        currentId !== null && handleDivClick(getLastId(data))
 
         const groupElement = getPanelGroupElement("group");
         const leftPanelElement = getPanelElement("left-panel");
@@ -176,7 +210,7 @@ const UIConfigTabContent = ({ activeTab, handleTabClick, setJsonData, applicatio
             resizeHandleElement,
         };
         return () => { };
-    }, [data, applicationGroupJson]);
+    }, [data, applicationGroupJson, windowHeight]);
 
     const drawApplicationGroupCards = () => {
         return data
@@ -186,7 +220,7 @@ const UIConfigTabContent = ({ activeTab, handleTabClick, setJsonData, applicatio
             })
             .sort((a, b) => b.id - a.id)
             .map((appGroup, i) => (
-                <ApplicationGroupCard removeApplicationGroupById={removeApplicationGroupById} appGroup={appGroup} id={appGroup.id} isListLayout={isListLayout} handleDivClick={handleDivClick} selectedId={selectedId} />
+                <ApplicationGroupCard setCurrentId={setCurrentId} removeApplicationGroupById={removeApplicationGroupById} appGroup={appGroup} id={appGroup.id} isListLayout={isListLayout} handleDivClick={handleDivClick} selectedId={selectedId} />
             ));
     };
 
@@ -267,12 +301,12 @@ const UIConfigTabContent = ({ activeTab, handleTabClick, setJsonData, applicatio
 
         const updatedJsonString = JSON.stringify(data, null, 2);
         UpdateJsonFile(updatedJsonString, "applicationGroups")
-        handleDivClick(id)
+        handleDivClick(currentId)
     }
 
     return (
-        <div id='config-ui-container' className='bg-ghBlack3'>
-            <PanelGroup direction="horizontal" id="group" className="tab-content dark:text-white text-black">
+        <div id='config-ui-container' className='bg-ghBlack flex flex-col'>
+            <PanelGroup direction="horizontal" id="group" className="tab-content dark:text-white text-black flex-1">
                 <Panel defaultSize={defaultLayout[0]} id="left-panel" className='min-w-[270px]'>
                     <div className='relative top-0 sticky bg-ghBlack p-3 shadow-lg flex'>
                         <div className="items-center w-full pr-2">
@@ -320,7 +354,7 @@ const UIConfigTabContent = ({ activeTab, handleTabClick, setJsonData, applicatio
 
                     </div>
                     {/* Application Groups actions */}
-                    <div className="dark:bg-ghBlack overflow-y-scroll px-3 py-3 custom-scrollbar flex-1 h-[500px]">
+                    <div className="dark:bg-ghBlack overflow-y-scroll px-3 py-3 custom-scrollbar" style={{ height: `${windowHeight - 123 - 67 - 67-67}px` }}>
                         {isLoading ? (<div className="animate-pulse flex flex-col col-span-full px-3">
                         </div>) : drawApplicationGroupCards()}
                     </div>
@@ -328,7 +362,7 @@ const UIConfigTabContent = ({ activeTab, handleTabClick, setJsonData, applicatio
                 <PanelResizeHandle id="resize-handle" className='w-1 hover:bg-kxBlue bg-ghBlack' />
                 <Panel defaultSize={defaultLayout[1]} id="right-panel" className="min-w-[370px]">
                     <ApplicationGroupsModal isOpen={modalIsOpen} onRequestClose={closeModal} applicationGroupTitle={detailsObject.title} applicationGroup={detailsObject} addApplicationToApplicationGroupById={addApplicationToApplicationGroupById} />
-                    <div className='bg-ghBlack overflow-y-scroll custom-scrollbar pt-0'>
+                    <div className='bg-ghBlack overflow-y-scroll custom-scrollbar pt-0' style={{ height: `${windowHeight - 123 - 67 - 57 }px` }}>
 
                         {/* Application Group Details JSON View Toggle */}
                         <div className="sticky relative top-0 dark:bg-ghBlack" style={{ zIndex: "10" }}>
@@ -362,7 +396,9 @@ const UIConfigTabContent = ({ activeTab, handleTabClick, setJsonData, applicatio
 
                                             <div className="items-center mb-3" >
                                                 <div className='text-gray-400 text-sm'>Group Title: </div>
-                                                <input type="text" value={detailsObject.title} className={`w-full focus:outline-none rounded p-2 pr-10 bg-ghBlack4 focus:border-kxBlue ${isEditable ? "border-kxBlue" : "border-ghBlack4"} border text-white`} />
+                                                <input type="text" value={detailsObject.title} className={`w-full focus:outline-none rounded p-2 pr-10 bg-ghBlack4 focus:border-kxBlue ${isEditable ? "border-kxBlue" : "border-ghBlack4"} border text-white`}
+                                                    onChange={(e) => { handleAppGroupChange(detailsObject.id, "title", e.target.value) }}
+                                                />
                                             </div>
 
                                             <div className="items-center mb-3">
@@ -373,7 +409,7 @@ const UIConfigTabContent = ({ activeTab, handleTabClick, setJsonData, applicatio
                                     </div>
 
                                     <div className="items-center mb-3">
-                                        <ApplicationSelection applicationGroupTitle={detailsObject.title} applicationGroup={detailsObject} addApplicationToApplicationGroupById={addApplicationToApplicationGroupById} />
+                                        <ApplicationSelection applicationGroupTitle={detailsObject.title} applicationGroup={detailsObject} addApplicationToApplicationGroupById={addApplicationToApplicationGroupById}/>
                                     </div>
 
                                     {/* <div className="items-center mb-3">

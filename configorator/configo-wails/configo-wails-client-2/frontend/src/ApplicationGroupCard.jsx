@@ -103,6 +103,7 @@ export function ApplicationGroupCard(props) {
         <div className={`flex grid grid-cols-12 items-center w-full py-1 px-3 items-center mb-1 ${props.selectedId == props.id ? "" : "hover:bg-ghBlack3"} ${props.selectedId == props.id ? "bg-ghBlack4" : ""} rounded cursor-pointer`}
             onClick={(e) => {
                 props.selectedId !== props.id && props.handleDivClick(props.id)
+                props.setCurrentId(props.id)
                 handleCloseContextMenu()
             }}
             onMouseEnter={() => {
