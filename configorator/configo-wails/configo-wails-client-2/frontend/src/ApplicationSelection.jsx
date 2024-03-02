@@ -41,10 +41,10 @@ export default function ApplicationSelection({ applicationGroupTitle, applicatio
 
     return (
 
-        <div className="text-center text-white flex justify-center w-full bg-ghBlack4 rounded-lg p-1">
+        <div className="text-center text-white flex justify-center w-full bg-ghBlack4 rounded-lg p-0.5">
 
-            <div className='p-2 rounded-lg w-full bg-ghBlack rounded-md'>
-                <div className="bg-ghBlack grid grid-cols-12">
+            <div className='p-2 rounded-lg w-full bg-ghBlack2 rounded-md'>
+                <div className="bg-ghBlack2 grid grid-cols-12">
                     <div className="col-span-6">
                         {/* Input Search  */}
                         <div className="group relative w-full">
@@ -72,7 +72,7 @@ export default function ApplicationSelection({ applicationGroupTitle, applicatio
                         <div className='h-[300px] overflow-y-scroll custom-scrollbar mt-3'>
                             <ul>
                                 {(searchTerm !== "" ? matchedApplications : applicationsJson).map((app, i) => (
-                                    <li className='p-2 mt-1 bg-ghBlack hover:bg-ghBlack3 rounded cursor-pointer mr-2 flex justify-between items-center' key={i}>
+                                    <li className='p-2 mt-1 bg-ghBlack2 hover:bg-ghBlack3 rounded cursor-pointer mr-2 flex justify-between items-center' key={i}>
                                         <div className='text-left'>
                                             <div className='capitalize'>{app.name}</div>
                                             <div className='text-gray-400 uppercase text-sm'>{app.installation_group_folder}</div>

@@ -36,6 +36,40 @@ export function ApplicationGroups({
     const [jsonData, setJsonData] = useState([]);
     const [applicationGroupDetailTab, setApplicationGroupDetailTab] = useState("config-ui");
     const [windowHeight, setWindowHeight] = useState(window.innerHeight);
+    const [dataNew, setDataNew] = useState(applicationGroupJson);
+
+    // *********** New Functions START ***********
+    const handleItemClick = (index) => {
+        setSelectedItem(index);
+    };
+
+    const handleInputChange = (field, value) => {
+        setData((prevData) => {
+            const newData = [...prevData];
+            newData[selectedItem][field] = value;
+            return newData;
+        });
+    };
+
+    const handleAddNewItem = () => {
+        setData((prevData) => {
+            const newData = [...prevData, { name: '', description: '', groupName: '', members: [] }];
+            setSelectedItem(newData.length - 1);
+            return newData;
+        });
+    };
+
+    const handleAddMember = () => {
+        setData((prevData) => {
+            const newData = [...prevData];
+            newData[selectedItem].members.push({ firstName: 'Peter', lastName: 'Mueller' });
+            return newData;
+        });
+    };
+    // *********** New Functions END ***********
+
+
+
 
     const handleTabClick = (tab) => {
         setActiveTab(tab);
@@ -58,7 +92,7 @@ export function ApplicationGroups({
             window.removeEventListener('resize', handleResize);
         };
 
-    }, [activeConfigTab, jsonData, applicationGroupDetailTab, windowHeight]);
+    }, [activeConfigTab, jsonData, applicationGroupDetailTab]);
 
     return (
         <div className='text-left'>
@@ -69,7 +103,7 @@ export function ApplicationGroups({
                         <ConfigSectionHeader sectionTitle={"Application Groups"} SectionDescription={"More Details about this section here."} />
                     </div>
                     <div className='col-span-3 pr-10 mx-3'>
-                        <div className="relative w-full h-[40px] p-1 bg-ghBlack rounded-md">
+                        <div className="relative w-full h-[40px] p-1 bg-ghBlack2 rounded-md">
                             <div className="relative w-full h-full flex items-center">
                                 <div
                                     onClick={() => setActiveConfigTab('config-tab1')}
@@ -105,10 +139,10 @@ export function ApplicationGroups({
                 </div>
             </div>
             <div className="config-tab-content flexGrow">
-                <div className='bg-ghBlack h-1'></div>
+                <div className='bg-ghBlack2 h-1'></div>
 
-                {activeConfigTab === 'config-tab1' && <UIConfigTabContent activeTab={activeTab} handleTabClick={handleTabClick} setJsonData={setJsonData} applicationGroupDetailTab={applicationGroupDetailTab} setApplicationGroupDetailTab={setApplicationGroupDetailTab} windowHeight={windowHeight}/>}
-                {activeConfigTab === 'config-tab2' && <JSONConfigTabContent jsonData={jsonData} fileName={"applicationGroups.json"} />}
+                {activeConfigTab === 'config-tab1' && <UIConfigTabContent activeTab={activeTab} handleTabClick={handleTabClick} setJsonData={setJsonData} applicationGroupDetailTab={applicationGroupDetailTab} setApplicationGroupDetailTab={setApplicationGroupDetailTab} windowHeight={windowHeight} />}
+                {activeConfigTab === 'config-tab2' && <JSONConfigTabContent jsonData={jsonData} fileName={"applicationGroups.json"} windowHeight={windowHeight} />}
             </div>
         </div>)
 
@@ -196,7 +230,7 @@ const UIConfigTabContent = ({ activeTab, handleTabClick, setJsonData, applicatio
 
     useEffect(() => {
         // Initial select last element of data array (by id)
-        currentId !== null && handleDivClick(getLastId(data))
+        // currentId !== null && handleDivClick(getLastId(data))
 
         const groupElement = getPanelGroupElement("group");
         const leftPanelElement = getPanelElement("left-panel");
@@ -305,10 +339,10 @@ const UIConfigTabContent = ({ activeTab, handleTabClick, setJsonData, applicatio
     }
 
     return (
-        <div id='config-ui-container' className='bg-ghBlack flex flex-col'>
+        <div id='config-ui-container' className='flex flex-col'>
             <PanelGroup direction="horizontal" id="group" className="tab-content dark:text-white text-black flex-1">
                 <Panel defaultSize={defaultLayout[0]} id="left-panel" className='min-w-[270px]'>
-                    <div className='relative top-0 sticky bg-ghBlack p-3 shadow-lg flex'>
+                    <div className='relative top-0 sticky bg-ghBlack2 p-3 shadow-lg flex'>
                         <div className="items-center w-full pr-2">
                             <div className='flex justify-center'>
                                 {/* Search Input Field */}
@@ -336,9 +370,9 @@ const UIConfigTabContent = ({ activeTab, handleTabClick, setJsonData, applicatio
                                     />
                                 </div>
                             </div>
-                            <div className='text-gray-400 flex justify-start pt-1 items-center'>
+                            <div className='text-gray-400 flex justify-between pt-1 items-center text-sm'>
                                 <span className='mr-1'>Application Groups</span>
-                                <span className='p-1.5 py-0 bg-ghBlack4 text-gray-400 rounded text-center'>{data.length}</span>
+                                <span className='p-1.5 py-0 bg-ghBlack3 text-gray-400 rounded text-center'>{data.length}</span>
                             </div>
                         </div>
 
@@ -354,28 +388,28 @@ const UIConfigTabContent = ({ activeTab, handleTabClick, setJsonData, applicatio
 
                     </div>
                     {/* Application Groups actions */}
-                    <div className="dark:bg-ghBlack overflow-y-scroll px-3 py-3 custom-scrollbar" style={{ height: `${windowHeight - 123 - 67 - 67-67}px` }}>
+                    <div className="dark:bg-ghBlack2 overflow-y-scroll px-3 py-3 custom-scrollbar" style={{ height: `${windowHeight - 123 - 67 - 67 - 67}px` }}>
                         {isLoading ? (<div className="animate-pulse flex flex-col col-span-full px-3">
                         </div>) : drawApplicationGroupCards()}
                     </div>
                 </Panel>
-                <PanelResizeHandle id="resize-handle" className='w-1 hover:bg-kxBlue bg-ghBlack' />
+                <PanelResizeHandle id="resize-handle" className='w-1 hover:bg-kxBlue bg-ghBlack2' />
                 <Panel defaultSize={defaultLayout[1]} id="right-panel" className="min-w-[370px]">
                     <ApplicationGroupsModal isOpen={modalIsOpen} onRequestClose={closeModal} applicationGroupTitle={detailsObject.title} applicationGroup={detailsObject} addApplicationToApplicationGroupById={addApplicationToApplicationGroupById} />
-                    <div className='bg-ghBlack overflow-y-scroll custom-scrollbar pt-0' style={{ height: `${windowHeight - 123 - 67 - 57 }px` }}>
+                    <div className={` ${applicationGroupDetailTab == "config-ui" ? "bg-ghBlack2" : "bg-ghBlack2"} overflow-y-scroll custom-scrollbar pt-0`} style={{ height: `${windowHeight - 123 - 67 - 53}px` }}>
 
                         {/* Application Group Details JSON View Toggle */}
-                        <div className="sticky relative top-0 dark:bg-ghBlack" style={{ zIndex: "10" }}>
+                        <div className="sticky relative top-0 dark:bg-ghBlack2" style={{ zIndex: "10" }}>
                             <div className='flex itmes-center text-sm '>
                                 <button
                                     onClick={() => { setApplicationGroupDetailTab("config-ui") }}
-                                    className={` ${applicationGroupDetailTab == "config-ui" ? 'border-kxBlue border-b-3 bg-ghBlack4' : 'border-ghBlack border-b-3'} p-3 px-5 py-1`}
+                                    className={` ${applicationGroupDetailTab == "config-ui" ? 'border-kxBlue border-b-3 bg-ghBlack4' : 'border-ghBlack2 border-b-3'} p-3 px-5 py-1 rounded-tl rounded-tr-md`}
                                 >
                                     Config UI
                                 </button>
                                 <button
                                     onClick={() => { setApplicationGroupDetailTab("json") }}
-                                    className={` ${applicationGroupDetailTab == "json" ? 'border-kxBlue border-b-3 bg-ghBlack4' : 'border-ghBlack border-b-3'} p-3 px-5 py-1`}
+                                    className={` ${applicationGroupDetailTab == "json" ? 'border-kxBlue border-b-3 bg-ghBlack4' : 'border-ghBlack2 border-b-3'} p-3 px-5 py-1 rounded-tl rounded-tr-md`}
                                 >
                                     JSON
                                 </button>
@@ -409,7 +443,7 @@ const UIConfigTabContent = ({ activeTab, handleTabClick, setJsonData, applicatio
                                     </div>
 
                                     <div className="items-center mb-3">
-                                        <ApplicationSelection applicationGroupTitle={detailsObject.title} applicationGroup={detailsObject} addApplicationToApplicationGroupById={addApplicationToApplicationGroupById}/>
+                                        <ApplicationSelection applicationGroupTitle={detailsObject.title} applicationGroup={detailsObject} addApplicationToApplicationGroupById={addApplicationToApplicationGroupById} />
                                     </div>
 
                                     {/* <div className="items-center mb-3">
@@ -430,16 +464,13 @@ const UIConfigTabContent = ({ activeTab, handleTabClick, setJsonData, applicatio
                                     </div> */}
 
                                 </div>) : (
-
                                 <JSONConfigTabContent jsonData={JSON.stringify(getObjectById(detailsObject.id), null, 2)} fileName={detailsObject.title} />
                             )
 
                         )}
                     </div>
                 </Panel>
-
             </PanelGroup>
-            <div className='bg-ghBlack h-1'></div>
         </div>
     )
 };

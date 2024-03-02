@@ -8,6 +8,7 @@ import ContextMenu from "./ContextMenu";
 import DeleteForever from '@mui/icons-material/DeleteForever';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { IconButton } from '@mui/material';
+import { ContentCopy } from '@mui/icons-material';
 
 export function ApplicationGroupCard(props) {
 
@@ -131,7 +132,7 @@ export function ApplicationGroupCard(props) {
                     {/* More Menu Popover */}
                     {isMoreMenuActive && (
                         <div ref={popoverRef}
-                            className="absolute top-full right-0 z-50 rounded bg-ghBlack2 shadow-md rounded-md w-auto p-1"
+                            className="absolute top-full right-0 z-50 rounded bg-ghBlack shadow-md rounded-md w-auto p-1 text-sm"
                         >
                             <button className='bg-ghBlack2 hover:bg-ghBlack4 text-white p-2 px-3 py-1 rounded w-full flex items-center'
                                 onClick={() => {
@@ -141,6 +142,16 @@ export function ApplicationGroupCard(props) {
                                     <DeleteForever fontSize='small' />
                                 </span>
                                 <span>Delete</span>
+
+                            </button>
+                            <button className='bg-ghBlack2 hover:bg-ghBlack4 text-white p-2 px-3 py-1 rounded w-full flex items-center'
+                                onClick={() => {
+                                    handleDeleteButtonClick()
+                                }}>
+                                <span className='mr-1'>
+                                    <ContentCopy fontSize='small' />
+                                </span>
+                                <span>Dublicate</span>
 
                             </button>
                         </div>

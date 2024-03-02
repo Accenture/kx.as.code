@@ -48,10 +48,10 @@ const JSONConfigTabContent = (props) => {
     }, []);
 
     return (
-        <div className='text-left text-black'>
+        <div className='text-left text-black bg-ghBlack2'>
             <div id="codemirror-container" className='w-auto overflow-y-scroll h-auto text-base bg-ghBlack2 custom-scrollbar'>
                 <CodeMirror
-                    height='400px'
+                    style={{ height: `${props.windowHeight - 95 - 67 - 67}px` }}
                     extensions={[langs.tsx()]}
                     theme={"dark"}
                     value={props.jsonData}
@@ -88,7 +88,6 @@ const JSONConfigTabContent = (props) => {
                             <button onClick={() => { handleDiscardChangesClick() }} className='bg-ghBlack4 p-2 px-3.5 text-white rounded'>Discard changes</button>
                         </div>
                     </div>
-                    <div className='h-1 bg-ghBlack2'></div>
                 </>
             )}
         </div>

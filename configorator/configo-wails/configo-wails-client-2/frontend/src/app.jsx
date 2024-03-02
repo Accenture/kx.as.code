@@ -37,6 +37,7 @@ import { toast } from 'sonner';
 import HistoryIcon from '@mui/icons-material/History';
 import BuildHistory from "./BuildHistory";
 import GitHubIcon from '@mui/icons-material/GitHub';
+import { Settings } from "@mui/icons-material";
 
 
 const openedMixin = (theme) => ({
@@ -234,6 +235,7 @@ export function App() {
                             <MenuItem menuItemName={"user-provisioning"} slug={slug} />
                             <MenuItem menuItemName={"custom-variables"} slug={slug} />
                             <MenuItem menuItemName={"build-history"} slug={slug} />
+                            <MenuItem menuItemName={"settings"} slug={slug} />
                         </List>
                     </Drawer>
 
@@ -256,7 +258,7 @@ export function App() {
                             </Routes>
                         </div>
                         {/* Footer Section */}
-                        <div className="bg-ghBlack4 p-3 w-full text-gray-400 hover:text-white flex justify-end px-5 h-[67px]">
+                        <div className="bg-ghBlack p-3 w-full text-gray-400 hover:text-white flex justify-end px-5 h-[67px]">
                             <button onClick={() => {
                                 OpenURL("https://github.com/Accenture/kx.as.code")
                             }}>
@@ -294,7 +296,7 @@ const MenuItem = ({ menuItemName, slug, isBuildStarted }) => {
     const getMenuItemIcon = (menuItemName) => {
         switch (menuItemName) {
             case "home":
-                return <TipsAndUpdatesIcon className="text-3xl" />
+                return <TipsAndUpdatesIcon fontSize="small" />
             case "build":
                 {
                     return isBuildStarted ? (<div className="relative">
@@ -308,19 +310,21 @@ const MenuItem = ({ menuItemName, slug, isBuildStarted }) => {
                             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                         </svg>
 
-                        <PrecisionManufacturingIcon className={`text-3xl`} />
-                    </div>) : (<PrecisionManufacturingIcon className={`text-3xl`} />)
+                        <PrecisionManufacturingIcon className={`text-lg`} />
+                    </div>) : (<PrecisionManufacturingIcon className={`text-lg`} />)
                 }
             case "deploy":
-                return <RocketLaunchIcon className="text-3xl" />
+                return <RocketLaunchIcon fontSize="small" />
             case "application-groups":
-                return <LayersIcon className="text-3xl" />
+                return <LayersIcon fontSize="small" />
             case "user-provisioning":
-                return <PeopleIcon className="text-3xl" />
+                return <PeopleIcon fontSize="small" />
             case "custom-variables":
-                return <DataArrayIcon className="text-3xl" />
+                return <DataArrayIcon fontSize="small" />
             case "build-history":
-                return <HistoryIcon className="text-3xl" />
+                return <HistoryIcon fontSize="small" />
+            case "settings":
+                return <Settings fontSize="small" />
             default:
                 break;
         }
@@ -330,11 +334,10 @@ const MenuItem = ({ menuItemName, slug, isBuildStarted }) => {
         <Link to={`/${menuItemName}`} className="flex justify-center">
             <ListItemButton
                 sx={{
-                    minHeight: 20,
                     justifyContent: open ? "initial" : "center",
                     px: 1.5,
                     backgroundColor: slug == menuItemName ? "#5a86ff" : "",
-                    margin: "8px",
+                    margin: "9px",
                     borderRadius: "5px",
                     marginTop: "0px",
                     "&:hover": {
