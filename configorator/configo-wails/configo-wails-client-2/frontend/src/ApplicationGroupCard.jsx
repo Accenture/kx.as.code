@@ -10,7 +10,7 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { IconButton } from '@mui/material';
 import { ContentCopy } from '@mui/icons-material';
 
-export function ApplicationGroupCard(props) {
+export function ApplicationGroupCard({ index, appGroup, selectedItem, handleItemClick, handleDeleteItem }) {
 
     const [contextMenu, setContextMenu] = useState(null);
     const parentRef = useRef();
@@ -19,7 +19,7 @@ export function ApplicationGroupCard(props) {
     const [isCardHovered, setIsCardHovered] = useState(false);
     const [isMoreMenuActive, setIsMoreMenuActive] = useState(false);
 
-    const appGroupBreadcrumb = props.appGroup.title
+    const appGroupBreadcrumb = appGroup.title
         .replaceAll(" ", "-")
         .replace(/\b\w/g, (l) => l.toLowerCase());
 
@@ -27,7 +27,7 @@ export function ApplicationGroupCard(props) {
     const [itemsList, setItemsList] = useState([]);
 
     useEffect(() => {
-        fetchAllComponents(props.appGroup.action_queues);
+        // fetchAllComponents(appGroup.action_queues);
 
         const handleClickOutside = (event) => {
             if (parentRef.current && !parentRef.current.contains(event.target)) {
@@ -46,7 +46,7 @@ export function ApplicationGroupCard(props) {
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
         };
-    }, [props.appGroup, props.selectedId, props.id]);
+    }, [appGroup]);
 
     const handleContextMenu = (e) => {
         e.preventDefault();
@@ -58,7 +58,7 @@ export function ApplicationGroupCard(props) {
     };
 
     const handleDeleteButtonClick = () => {
-        props.removeApplicationGroupById(props.id)
+        removeApplicationGroupById(id)
         handleCloseContextMenu();
         setIsMoreMenuActive(false)
     };
@@ -101,12 +101,12 @@ export function ApplicationGroupCard(props) {
     };
 
     return (
-        <div className={`flex grid grid-cols-12 items-center w-full py-1 px-3 items-center mb-1 ${props.selectedId == props.id ? "" : "hover:bg-ghBlack3"} ${props.selectedId == props.id ? "bg-ghBlack4" : ""} rounded cursor-pointer`}
-            onClick={(e) => {
-                props.selectedId !== props.id && props.handleDivClick(props.id)
-                props.setCurrentId(props.id)
+        <div key={index} className={`flex grid grid-cols-12 items-center w-full py-1 px-3 items-center mb-1 ${selectedItem === index ? "bg-ghBlack4" : "hover:bg-ghBlack3"} rounded cursor-pointer`}
+            onClick={() => {
+                handleItemClick(index)
                 handleCloseContextMenu()
             }}
+
             onMouseEnter={() => {
                 setIsCardHovered(true)
             }}
@@ -117,8 +117,8 @@ export function ApplicationGroupCard(props) {
                 <div className='flex items-center'>
                     <LayersIcon fontSize="medium" className="mr-2" />
                     <div className="">
-                        <div className='whitespace-nowrap w-[150px] overflow-hidden text-ellipsis'>{props.appGroup.title}</div>
-                        <div className='text-xs uppercase text-gray-400'>{props.appGroup.action_queues.install[0] !== undefined ? props.appGroup.action_queues.install[0].install_folder : "Group Category"}</div>
+                        <div className='whitespace-nowrap w-[150px] overflow-hidden text-ellipsis'>{appGroup.title}</div>
+                        <div className='text-xs uppercase text-gray-400'>{appGroup.action_queues.install[0] !== undefined ? appGroup.action_queues.install[0].install_folder : "Group Category"}</div>
                     </div>
                 </div>
                 <div className='text-white relative'>
@@ -126,7 +126,7 @@ export function ApplicationGroupCard(props) {
                         <IconButton onClick={() => {
                             setIsMoreMenuActive((prevIsMoreMenuActive) => !prevIsMoreMenuActive);
                         }}>
-                            <MoreVertIcon fontSize='small'/>
+                            <MoreVertIcon fontSize='small' />
                         </IconButton>
                     ) : null}
                     {/* More Menu Popover */}
@@ -135,8 +135,9 @@ export function ApplicationGroupCard(props) {
                             className="absolute top-full right-0 z-50 rounded bg-ghBlack shadow-md rounded-md w-auto p-1 text-sm"
                         >
                             <button className='bg-ghBlack2 hover:bg-ghBlack4 text-white p-2 px-3 py-1 rounded w-full flex items-center'
-                                onClick={() => {
-                                    handleDeleteButtonClick()
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleDeleteItem(index);
                                 }}>
                                 <span className='mr-1'>
                                     <DeleteForever fontSize='small' />
@@ -145,8 +146,9 @@ export function ApplicationGroupCard(props) {
 
                             </button>
                             <button className='bg-ghBlack2 hover:bg-ghBlack4 text-white p-2 px-3 py-1 rounded w-full flex items-center'
-                                onClick={() => {
-                                    handleDeleteButtonClick()
+                                onClick={(e) => {
+                                    e.stopPropagation();
+
                                 }}>
                                 <span className='mr-1'>
                                     <ContentCopy fontSize='small' />

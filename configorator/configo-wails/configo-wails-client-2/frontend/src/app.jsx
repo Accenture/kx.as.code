@@ -258,11 +258,11 @@ export function App() {
                             </Routes>
                         </div>
                         {/* Footer Section */}
-                        <div className="bg-ghBlack p-3 w-full text-gray-400 hover:text-white flex justify-end px-5 h-[40px] pt-2">
+                        <div className="bg-ghBlack p-3 w-full text-gray-400 hover:text-white flex justify-end px-5 h-[40px] pt-1">
                             <button onClick={() => {
                                 OpenURL("https://github.com/Accenture/kx.as.code")
                             }}>
-                                <GitHubIcon />
+                                <GitHubIcon fontSize="small"/>
                             </button>
                         </div>
                     </Box>
