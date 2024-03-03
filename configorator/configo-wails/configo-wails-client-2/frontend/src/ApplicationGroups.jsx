@@ -25,6 +25,7 @@ import {
 import Select from 'react-select';
 import ApplicationGroupsModal from './ApplicationGroupsModal';
 import ApplicationSelection from './ApplicationSelection';
+import FilterList from '@mui/icons-material/FilterList';
 
 
 export function ApplicationGroups({
@@ -36,7 +37,8 @@ export function ApplicationGroups({
     const [jsonData, setJsonData] = useState([]);
     const [applicationGroupDetailTab, setApplicationGroupDetailTab] = useState("config-ui");
     const [windowHeight, setWindowHeight] = useState(window.innerHeight);
-    const [dataNew, setDataNew] = useState(applicationGroupJson);
+    const [data2, setData2] = useState(applicationGroupJson);
+    const [selectedItem, setSelectedItem] = useState(null);
 
     // *********** New Functions START ***********
     const handleItemClick = (index) => {
@@ -44,22 +46,22 @@ export function ApplicationGroups({
     };
 
     const handleInputChange = (field, value) => {
-        setData((prevData) => {
+        setData2((prevData) => {
             const newData = [...prevData];
             newData[selectedItem][field] = value;
             return newData;
         });
     };
 
-    const handleAddNewItem = () => {
-        setData((prevData) => {
+    const handleAddNewApplicationGroup = () => {
+        setData2((prevData) => {
             const newData = [...prevData, { name: '', description: '', groupName: '', members: [] }];
             setSelectedItem(newData.length - 1);
             return newData;
         });
     };
 
-    const handleAddMember = () => {
+    const handleAddApplicationToGroup = () => {
         setData((prevData) => {
             const newData = [...prevData];
             newData[selectedItem].members.push({ firstName: 'Peter', lastName: 'Mueller' });
@@ -369,10 +371,21 @@ const UIConfigTabContent = ({ activeTab, handleTabClick, setJsonData, applicatio
                                         }}
                                     />
                                 </div>
+
+                                <button className='text-gray-400 p-1 hover:text-white hover:bg-ghBlack3 rounded ml-1'>
+                                    <FilterList />
+                                </button>
                             </div>
                             <div className='text-gray-400 flex justify-between pt-1 items-center text-sm'>
-                                <span className='mr-1'>Application Groups</span>
-                                <span className='p-1.5 py-0 bg-ghBlack3 text-gray-400 rounded text-center'>{data.length}</span>
+                                <div>
+                                    <span className='mr-1'>Application Groups</span>
+                                    <span className='p-1.5 py-0 bg-ghBlack3 text-gray-400 rounded text-center mr-1'>{data.length}</span>
+                                </div>
+                                {/* <span className='flex items-center'>
+                                    <button className=' p-1 hover:text-white hover:bg-ghBlack3 rounded'>
+                                        <FilterList />
+                                    </button>
+                                </span> */}
                             </div>
                         </div>
 
@@ -388,7 +401,7 @@ const UIConfigTabContent = ({ activeTab, handleTabClick, setJsonData, applicatio
 
                     </div>
                     {/* Application Groups actions */}
-                    <div className="dark:bg-ghBlack2 overflow-y-scroll px-3 py-3 custom-scrollbar" style={{ height: `${windowHeight - 123 - 67 - 67 - 67}px` }}>
+                    <div className="dark:bg-ghBlack2 overflow-y-scroll px-3 py-3 custom-scrollbar" style={{ height: `${windowHeight - 103 - 67 - 40 - 67}px` }}>
                         {isLoading ? (<div className="animate-pulse flex flex-col col-span-full px-3">
                         </div>) : drawApplicationGroupCards()}
                     </div>
@@ -396,7 +409,7 @@ const UIConfigTabContent = ({ activeTab, handleTabClick, setJsonData, applicatio
                 <PanelResizeHandle id="resize-handle" className='w-1 hover:bg-kxBlue bg-ghBlack2' />
                 <Panel defaultSize={defaultLayout[1]} id="right-panel" className="min-w-[370px]">
                     <ApplicationGroupsModal isOpen={modalIsOpen} onRequestClose={closeModal} applicationGroupTitle={detailsObject.title} applicationGroup={detailsObject} addApplicationToApplicationGroupById={addApplicationToApplicationGroupById} />
-                    <div className={` ${applicationGroupDetailTab == "config-ui" ? "bg-ghBlack2" : "bg-ghBlack2"} overflow-y-scroll custom-scrollbar pt-0`} style={{ height: `${windowHeight - 123 - 67 - 53}px` }}>
+                    <div className={` ${applicationGroupDetailTab == "config-ui" ? "bg-ghBlack2" : "bg-ghBlack2"} overflow-y-scroll custom-scrollbar pt-0`} style={{ height: `${windowHeight - 103 - 40 - 53}px` }}>
 
                         {/* Application Group Details JSON View Toggle */}
                         <div className="sticky relative top-0 dark:bg-ghBlack2" style={{ zIndex: "10" }}>

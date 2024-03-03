@@ -84,7 +84,7 @@ export default function ApplicationSelection({ applicationGroupTitle, applicatio
                                                     onClick={() => {
 
                                                     }}>
-                                                    <RemoveIcon />
+                                                    <RemoveIcon fontSize='small'/>
                                                 </button>
                                             ) : (
                                                 <button
@@ -93,7 +93,7 @@ export default function ApplicationSelection({ applicationGroupTitle, applicatio
                                                         handleAddApplicationClick(app.name, app.installation_group_folder)
                                                         console.log("DEBUG - ID div select", applicationGroup.id)
                                                     }}>
-                                                    <AddIcon />
+                                                    <AddIcon fontSize='small'/>
                                                 </button>
                                             )}
                                         </div>

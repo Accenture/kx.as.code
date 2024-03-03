@@ -1,6 +1,28 @@
 [
     {
         "action_queues": {
+            "install": [
+                {
+                    "id": 0,
+                    "install_folder": "cicd",
+                    "name": "argocd"
+                }
+            ]
+        },
+        "description": "New Group Description",
+        "id": 13,
+        "title": "New Group 3"
+    },
+    {
+        "action_queues": {
+            "install": []
+        },
+        "description": "New Group Description",
+        "id": 12,
+        "title": "New Group 2"
+    },
+    {
+        "action_queues": {
             "install": []
         },
         "description": "New Group Description",

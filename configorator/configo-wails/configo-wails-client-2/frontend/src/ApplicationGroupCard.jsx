@@ -126,7 +126,7 @@ export function ApplicationGroupCard(props) {
                         <IconButton onClick={() => {
                             setIsMoreMenuActive((prevIsMoreMenuActive) => !prevIsMoreMenuActive);
                         }}>
-                            <MoreVertIcon />
+                            <MoreVertIcon fontSize='small'/>
                         </IconButton>
                     ) : null}
                     {/* More Menu Popover */}
