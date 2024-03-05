@@ -9,7 +9,7 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { IconButton } from '@mui/material';
 import { ContentCopy } from '@mui/icons-material';
 
-export function ApplicationGroupCard({ index, appGroup, selectedItem, handleItemClick, handleDeleteItem }) {
+export function ApplicationGroupCard({ index, appGroup, selectedItem, handleItemClick, handleDeleteItem, handleDublicateItem }) {
     const parentRef = useRef();
     const buttonRef = useRef();
     const popoverRef = useRef();
@@ -69,7 +69,7 @@ export function ApplicationGroupCard({ index, appGroup, selectedItem, handleItem
     };
 
     return (
-        <div key={index} className={`grid grid-cols-12 w-full py-1 px-2 items-center mb-1 ${selectedItem === index ? "bg-ghBlack4" : "hover:bg-ghBlack3"} rounded cursor-pointer`}
+        <div key={index} className={`grid grid-cols-12 w-full py-1 px-2 items-center mb-1 ${selectedItem === index ? "bg-ghBlack4" : "hover:bg-ghBlack3"} rounded-sm cursor-pointer`}
             onClick={() => {
                 handleItemClick(index)
             }}
@@ -106,9 +106,9 @@ export function ApplicationGroupCard({ index, appGroup, selectedItem, handleItem
                     {/* More Menu Popover */}
                     {isMoreMenuActive && (
                         <div ref={popoverRef}
-                            className="absolute top-full right-0 z-50 bg-ghBlack3 shadow-md rounded w-auto p-1 text-sm"
+                            className="absolute top-full right-0 z-50 bg-ghBlack3 shadow-md rounded-sm w-auto p-1 text-sm"
                         >
-                            <button className='hover:bg-ghBlack4 text-white p-2 px-3 py-1 rounded w-full flex items-center'
+                            <button className='hover:bg-ghBlack4 text-white p-2 px-3 py-1 rounded-sm w-full flex items-center'
                                 onClick={(e) => {
                                     e.stopPropagation();
                                     handleDeleteItem(index);
@@ -118,12 +118,12 @@ export function ApplicationGroupCard({ index, appGroup, selectedItem, handleItem
                                     <DeleteForever fontSize='small' />
                                 </span>
                                 <span>Delete</span>
-
                             </button>
-                            <button className='hover:bg-ghBlack4 text-white p-2 px-3 py-1 rounded w-full flex items-center'
+                            <button className='hover:bg-ghBlack4 text-white p-2 px-3 py-1 rounded-sm w-full flex items-center'
                                 onClick={(e) => {
                                     e.stopPropagation();
-
+                                    handleDublicateItem(index);
+                                    setIsMoreMenuActive(false)
                                 }}>
                                 <span className='mr-1'>
                                     <ContentCopy fontSize='small' />

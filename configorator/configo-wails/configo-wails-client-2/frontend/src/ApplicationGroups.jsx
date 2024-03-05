@@ -74,7 +74,7 @@ export function ApplicationGroups({
                         <ConfigSectionHeader sectionTitle={"Application Groups"} SectionDescription={"More Details about this section here."} />
                     </div>
                     <div className='col-span-3 pr-10 mx-3'>
-                        <div className="relative w-full h-[40px] p-1 bg-ghBlack2 rounded-md">
+                        <div className="relative w-full h-[40px] p-1 bg-ghBlack2 rounded">
                             <div className="relative w-full h-full flex items-center">
                                 <div
                                     onClick={() => setActiveConfigTab('config-tab1')}
@@ -98,7 +98,7 @@ export function ApplicationGroups({
                                 className={`${activeConfigTab === 'config-tab1'
                                     ? 'left-1 ml-0'
                                     : 'left-1/2 -ml-1'
-                                    } py-1 text-white bg-ghBlack4 text-sm flex items-center justify-center w-1/2 rounded transition-all duration-150 ease-linear top-[5px] absolute`}
+                                    } py-1 text-white bg-ghBlack4 text-sm flex items-center justify-center w-1/2 rounded-sm transition-all duration-150 ease-linear top-[5px] absolute`}
                             >
                                 {activeConfigTab === 'config-tab1'
                                     ? "Config UI"
@@ -312,10 +312,24 @@ const UIConfigTabContent = ({ activeTab, handleTabClick, setJsonData, applicatio
         });
     };
 
-    const handleAddApplication = () => {
+    const handleAddApplication = (app) => {
+        console.log("app: ", app)
         setData2((prevData) => {
             const newData = [...prevData];
-            newData[selectedItem].action_queues.install.push({ install_folder: '', name: '' });
+            newData[selectedItem].action_queues.install.push({ install_folder: app.installation_group_folder, name: app.name });
+            return newData;
+        });
+    };
+
+    const handleRemoveApplication = (app) => {
+        setData2((prevData) => {
+            const newData = [...prevData];
+            const indexToRemove = newData[selectedItem].action_queues.install.findIndex(item => item.name === app.name);
+
+            if (indexToRemove !== -1) {
+                newData[selectedItem].action_queues.install.splice(indexToRemove, 1);
+            }
+
             return newData;
         });
     };
@@ -330,6 +344,33 @@ const UIConfigTabContent = ({ activeTab, handleTabClick, setJsonData, applicatio
             return newData;
         });
     };
+
+    const generateUniqueTitle = (title, newData) => {
+        let newTitle = title + "-COPY";
+        let count = 1;
+
+        while (newData.some(item => item.title === newTitle || item.title.startsWith(newTitle + '-'))) {
+            count++;
+            newTitle = title + `-COPY (${count})`;
+        }
+        return newTitle;
+    };
+
+    const handleDublicateItem = (index) => {
+        setData2((prevData) => {
+            const newData = [...prevData];
+            const itemToDuplicate = newData[index];
+
+            const duplicatedItem = { ...itemToDuplicate };
+
+            duplicatedItem.title = generateUniqueTitle(duplicatedItem.title, newData);
+
+            newData.splice(index + 1, 0, duplicatedItem);
+
+            return newData;
+        });
+    };
+
     // *********** New Functions END ***********
 
 
@@ -440,7 +481,7 @@ const UIConfigTabContent = ({ activeTab, handleTabClick, setJsonData, applicatio
 
         return filteredData
             .map((appGroup, index) => (
-                <ApplicationGroupCard appGroup={appGroup} isListLayout={isListLayout} index={index} selectedItem={selectedItem} handleItemClick={handleItemClick} handleDeleteItem={handleDeleteItem} />
+                <ApplicationGroupCard appGroup={appGroup} isListLayout={isListLayout} index={index} selectedItem={selectedItem} handleItemClick={handleItemClick} handleDeleteItem={handleDeleteItem} handleDublicateItem={handleDublicateItem} />
             ));
     };
 
@@ -472,7 +513,6 @@ const UIConfigTabContent = ({ activeTab, handleTabClick, setJsonData, applicatio
         // setData(updatedData)
         // const updatedJsonString = JSON.stringify(updatedData, null, 2);
         // UpdateJsonFile(updatedJsonString, "applicationGroups")
-        // handleDivClick(getLastId(data))
     }
 
     const addApplicationToApplicationGroupById = (id, newApplicationObject) => {
@@ -491,38 +531,38 @@ const UIConfigTabContent = ({ activeTab, handleTabClick, setJsonData, applicatio
 
         const updatedJsonString = JSON.stringify(data, null, 2);
         UpdateJsonFile(updatedJsonString, "applicationGroups")
-        // handleDivClick(currentId)
     }
 
     return (
         <div id='config-ui-container' className='flex flex-col'>
             <PanelGroup direction="horizontal" id="group" className="tab-content dark:text-white text-black flex-1">
                 <Panel defaultSize={defaultLayout[0]} id="left-panel" className='min-w-[290px]'>
-                    <div className='top-0 sticky bg-ghBlack2 p-2 shadow-lg flex'>
-                        <div className="items-center w-full pr-1">
-                            {/* Search Input Field with filter button */}
-                            <SearchInput setSearchTerm={setSearchTerm} searchTerm={searchTerm} />
-                            <div className='text-gray-400 flex justify-between pt-1 items-center text-sm'>
-                                <div>
-                                    <span className='mr-1'>Application Groups</span>
-                                    <span className='p-1.5 py-0 bg-ghBlack3 text-gray-400 rounded text-center mr-1'>{data2.length}</span>
-                                </div>
-                                {/* <span className='flex items-center'>
-                                    <button className=' p-1 hover:text-white hover:bg-ghBlack3 rounded'>
-                                        <FilterList />
-                                    </button>
-                                </span> */}
+
+                    <div className='top-0 sticky bg-ghBlack2 p-2 shadow-lg'>
+                        <div className='flex'>
+
+                            <div className="items-center w-full pr-1">
+                                {/* Search Input Field with filter button */}
+                                <SearchInput setSearchTerm={setSearchTerm} searchTerm={searchTerm} />
+                            </div>
+
+                            <div className='flex items-center justify-center'>
+                                <button
+                                    className='px-2 bg-kxBlue hover:text-white rounded-sm items-center font-semibold flex h-full'
+                                    onClick={() => {
+                                        handleAddNewItem()
+                                    }}
+                                >
+                                    <AddIcon fontSize='small' />
+                                </button>
                             </div>
                         </div>
 
-                        <div className='flex'>
-                            <button
-                                className='px-2 bg-kxBlue hover:text-white rounded items-center font-semibold'
-                                onClick={() => {
-                                    handleAddNewItem()
-                                }}>
-                                <AddIcon fontSize='small' />
-                            </button>
+                        <div className='text-gray-400 flex justify-between pt-1 items-center text-sm'>
+                            <div>
+                                <span className='mr-1'>Application Groups</span>
+                                <span className='p-1.5 py-0 bg-ghBlack3 text-gray-400 rounded-sm text-center mr-1'>{data2.length}</span>
+                            </div>
                         </div>
 
                     </div>
@@ -571,39 +611,22 @@ const UIConfigTabContent = ({ activeTab, handleTabClick, setJsonData, applicatio
                                             <div className="items-center mb-3" >
                                                 <div className='text-gray-400 text-sm font-semibold uppercase'>Group Title: </div>
                                                 <input type="text" value={data2[selectedItem].title}
-                                                    s className={`w-full focus:outline-none rounded p-2 bg-ghBlack4 focus:border-kxBlue border-ghBlack4 border text-white`}
+                                                    s className={`w-full focus:outline-none rounded-sm p-2 bg-ghBlack4 focus:border-kxBlue border-ghBlack4 border text-white`}
                                                     onChange={(e) => handleInputChange('title', e.target.value)}
                                                 />
                                             </div>
 
                                             <div className="items-center mb-3">
                                                 <div className='text-gray-400 text-sm font-semibold uppercase'>Group Description: </div>
-                                                <textarea type="text" value={data2[selectedItem].description} onChange={(e) => handleInputChange('description', e.target.value)} className='w-full focus:outline-none rounded p-2 pr-10 bg-ghBlack4 focus:border-kxBlue border border-transparent text-white custom-scrollbar h-[120px] resize-none' />
+                                                <textarea type="text" value={data2[selectedItem].description} onChange={(e) => handleInputChange('description', e.target.value)} className='w-full focus:outline-none rounded-sm p-2 pr-10 bg-ghBlack4 focus:border-kxBlue border border-transparent text-white custom-scrollbar h-[120px] resize-none' />
                                             </div>
                                         </div>
                                     </div>
 
                                     <div className="items-center mb-3">
                                         <div className='text-gray-400 text-sm font-semibold uppercase'>Applications: </div>
-                                        <ApplicationSelection applicationGroupTitle={data2[selectedItem].title} applicationGroup={data2[selectedItem]} addApplicationToApplicationGroupById={addApplicationToApplicationGroupById} />
+                                        <ApplicationSelection applicationGroupTitle={data2[selectedItem].title} applicationGroup={data2[selectedItem]} addApplicationToApplicationGroupById={addApplicationToApplicationGroupById} handleAddApplication={handleAddApplication} handleRemoveApplication={handleRemoveApplication}/>
                                     </div>
-
-                                    {/* <div className="items-center mb-3">
-                                        <div className='text-gray-400 text-sm'>Applications: </div>
-                                        <div className="grid gap-2 grid-cols-12 rounded">
-                                            {detailsObject.action_queues.install.map((app) => {
-                                                return <div className='cursor-pointer border border-dashed border-gray-500 hover:bg-ghBlack3 p-3 rounded col-span-6'>
-                                                    <div className='text-base capitalize'>{app.name}</div>
-                                                    Set first install folder value as Category 
-                                                    <div className='text-gray-400 text-sm uppercase'>{app.install_folder}</div>
-                                                </div>
-                                            })}
-                                            <button className='border border-dashed border-gray-500 hover:bg-ghBlack3 text-gray-400 hover:text-white p-3 rounded col-span-6 min-h-[60px]'
-                                                onClick={openModal}>
-                                                <AddIcon fontSize='large' />
-                                            </button>
-                                        </div>
-                                    </div> */}
 
                                 </div>) : (
                                 <JSONConfigTabContent jsonData={JSON.stringify(data2[selectedItem], null, 2)} fileName={data2[selectedItem].title} />

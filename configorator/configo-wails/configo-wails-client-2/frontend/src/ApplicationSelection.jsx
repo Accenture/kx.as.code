@@ -6,7 +6,7 @@ import applicationsJson from './assets/templates/applications.json';
 import { SearchInput } from './SearchInput';
 import { InfoBox } from './InfoBox';
 
-export default function ApplicationSelection({ applicationGroupTitle, applicationGroup, addApplicationToApplicationGroupById, windowHeight }) {
+export default function ApplicationSelection({ applicationGroup, addApplicationToApplicationGroupById, handleAddApplication, handleRemoveApplication }) {
     const [name, setName] = useState('');
     const [searchTerm, setSearchTerm] = useState('');
     const [matchedApplications, setMatchedApplications] = useState([]);
@@ -32,17 +32,21 @@ export default function ApplicationSelection({ applicationGroupTitle, applicatio
         addApplicationToApplicationGroupById(applicationGroup.id, newApplicationObject)
     }
 
+    const findApplicationByName = (appName) => {
+        return applicationsJson.find(obj => obj.name === appName);
+    }
+
     useEffect(() => {
         const filteredApplications = applicationsJson
-            .filter((app) => app.name.toLowerCase().includes(searchTerm.toLowerCase()))
+            .filter((app) => (app.name.toLowerCase() + findApplicationByName(app.name).environment_variables?.imageTag).includes(searchTerm.toLowerCase()))
         setMatchedApplications(filteredApplications);
     }, [matchedApplications]);
 
     return (
 
-        <div className="text-center text-white flex justify-center w-full rounded-lg border-2 border-ghBlack4">
+        <div className="text-center text-white flex justify-center w-full rounded border-2 border-ghBlack4">
 
-            <div className='p-2 p pr-0 rounded-lg w-full bg-ghBlack2'>
+            <div className='p-2 p pr-0 rounded-md w-full bg-ghBlack2'>
                 <div className="bg-ghBlack2 grid grid-cols-12">
                     <div className="col-span-6">
                         {/* Input Search  */}
@@ -54,7 +58,14 @@ export default function ApplicationSelection({ applicationGroupTitle, applicatio
                                         (searchTerm !== "" ? matchedApplications : applicationsJson).map((app, i) => (
                                             <li className='p-2 py-1 bg-ghBlack2 hover:bg-ghBlack3 rounded cursor-pointer flex justify-between items-center' key={i}>
                                                 <div className='text-left'>
-                                                    <div className='capitalize'>{app.name}</div>
+                                                    <div className='flex'>
+                                                        <span className='capitalize mr-1'>
+                                                            {app.name}
+                                                        </span>
+                                                        <span className='lowercase'>
+                                                            {app.environment_variables?.imageTag}
+                                                        </span>
+                                                    </div>
                                                     <div className='text-gray-400 uppercase text-sm'>{app.installation_group_folder}</div>
                                                 </div>
                                                 <div>
@@ -62,7 +73,7 @@ export default function ApplicationSelection({ applicationGroupTitle, applicatio
                                                         <button
                                                             className='p-1 bg-ghBlack4 text-white rounded items-center'
                                                             onClick={() => {
-                                                                // Handle the remove click logic here
+                                                                handleRemoveApplication(app)
                                                             }}
                                                         >
                                                             <RemoveIcon fontSize='small' />
@@ -71,8 +82,8 @@ export default function ApplicationSelection({ applicationGroupTitle, applicatio
                                                         <button
                                                             className='p-1 bg-kxBlue text-white rounded items-center'
                                                             onClick={() => {
-                                                                handleAddApplicationClick(app.name, app.installation_group_folder);
-                                                                console.log("DEBUG - ID div select", applicationGroup.id);
+                                                                console.log("app-2: ", app)
+                                                                handleAddApplication(app);
                                                             }}
                                                         >
                                                             <AddIcon fontSize='small' />
@@ -101,7 +112,14 @@ export default function ApplicationSelection({ applicationGroupTitle, applicatio
                         <div className='h-[300px] overflow-y-scroll custom-scrollbar pr-2'>
                             {applicationGroup.action_queues.install.map((app) => {
                                 return <div className='cursor-pointer bg-kxBlue2 p-2 py-1 rounded mb-1 text-left'>
-                                    <div className='text-base capitalize'>{app.name}</div>
+                                    <div className='flex'>
+                                        <span className='capitalize mr-1'>
+                                            {app.name}
+                                        </span>
+                                        <span className='lowercase'>
+                                            {findApplicationByName(app.name).environment_variables?.imageTag}
+                                        </span>
+                                    </div>
                                     {/* Set first install folder value as Category  */}
                                     <div className='text-sm uppercase text-gray-400'>{app.install_folder}</div>
                                 </div>

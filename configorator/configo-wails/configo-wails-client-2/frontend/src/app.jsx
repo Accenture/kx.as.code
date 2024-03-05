@@ -118,9 +118,17 @@ export function App() {
     };
 
     const theme = createTheme({
-        components: {},
+        components: {
+            MuiAutocomplete: {
+                styleOverrides: {
+                    option: {
+                        padding: 0,
+                    },
+                },
+            },
+        },
         shape: {
-            borderRadius: 5,
+            borderRadius: 3,
         },
         palette: {
             mode: isDarkMode ? "dark" : "light",
@@ -132,13 +140,13 @@ export function App() {
             MuiOutlinedInput: {
                 root: {
                     '&$focused $notchedOutline': {
-                        borderColor: 'green', // Change this to the desired green color
+                        borderColor: 'green',
                     },
                 },
             },
             MuiSelect: {
                 icon: {
-                    color: 'green', // Change this to the desired green color
+                    color: 'green',
                 },
             }
         }
@@ -245,7 +253,7 @@ export function App() {
                             <div className="">
                                 <HeaderNew drawerWidth={drawerWidth} handleDrawerOpen={handleDrawerOpen} open={open} handleDarkModeToggle={handleDarkModeToggle} isDarkMode={isDarkMode} toggleBuildStart={toggleBuildStart} isBuildStarted={isBuildStarted} />
                             </div>
-                            <div className="bg-ghBlack">
+                            <div className="">
                                 <Routes>
                                     {/* <Route exact path="/" element={<TabMenu />} /> */}
                                     <Route path="/home" element={<Home />} />
@@ -266,7 +274,7 @@ export function App() {
                             toastOptions={{
                                 style: {
                                     background: "#161b22",
-                                    borderRadius: "5px",
+                                    borderRadius: "3px",
                                     borderWidth: "0",
                                     color: "white",
                                     boxShadow: "none"
@@ -340,7 +348,7 @@ const MenuItem = ({ menuItemName, slug, isBuildStarted }) => {
                     px: 1.5,
                     backgroundColor: slug == menuItemName ? "#5a86ff" : "",
                     margin: "9px",
-                    borderRadius: "5px",
+                    borderRadius: "3px",
                     marginTop: "0px",
                     "&:hover": {
                         backgroundColor: slug == menuItemName ? "#5a86ff" : "",
