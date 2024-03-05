@@ -215,7 +215,7 @@ const UIConfigTabContent = ({ activeTab, handleTabClick, setJsonData, applicatio
                 "install": [
                     {
                         "install_folder": "monitoring",
-                        "name": "prometheus-stack"
+                        "name": "prometheus"
                     },
                     {
                         "install_folder": "monitoring",

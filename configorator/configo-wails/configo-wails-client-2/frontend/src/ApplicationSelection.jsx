@@ -33,8 +33,14 @@ export default function ApplicationSelection({ applicationGroup, addApplicationT
     }
 
     const findApplicationByName = (appName) => {
-        return applicationsJson.find(obj => obj.name === appName);
-    }
+        try {
+            const foundApp = applicationsJson.find(obj => obj.name === appName);
+            return foundApp || {} ;
+        } catch (error) {
+            console.error("Error while finding application by name:", error);
+            return {}; 
+        }
+    };
 
     useEffect(() => {
         const filteredApplications = applicationsJson
