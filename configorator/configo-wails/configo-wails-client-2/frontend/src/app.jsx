@@ -25,7 +25,6 @@ import PeopleIcon from '@mui/icons-material/People';
 import DataArrayIcon from '@mui/icons-material/DataArray';
 import LayersIcon from '@mui/icons-material/Layers';
 import { ApplicationGroups } from "./ApplicationGroups";
-import { BuildOutputProvider } from './BuildOutputContext';
 import { ExeBuild, StopExe, OpenURL } from "../wailsjs/go/main/App"
 import buildOutputFile from './assets/buildOutput.txt';
 import TipsAndUpdatesIcon from '@mui/icons-material/TipsAndUpdates';
@@ -208,81 +207,84 @@ export function App() {
 
     return (
 
-        <div className="dark:bg-ghBlack relative" >
-            <ThemeProvider theme={theme}>
-                <Box sx={{ display: "flex" }}>
-                    <Drawer variant="permanent" open={open}
-                        sx={{
-                            '& .MuiDrawer-paper': {
-                                // borderRight: 'none',
-                                borderRightWidth: "0px",
-                                borderColor: "#2f3640",
-                                backgroundColor: '#1f262e'
-                            }
-                        }} >
-                        <DrawerHeader>
-                            <IconButton onClick={() => setOpen(!open)}>
-                                {open ? <ChevronLeftIcon /> : <ChevronRightIcon />}
-                            </IconButton>
-                        </DrawerHeader>
-                        <List className="" style={{ marginTop: "auto", marginBottom: "auto", paddingBottom: "150px" }}>
-                            <MenuItem menuItemName={"home"} slug={slug} />
-                            <MenuItem menuItemName={"build"} slug={slug} isBuildStarted={isBuildStarted} />
-                            <MenuItem menuItemName={"deploy"} slug={slug} />
-                            {/* Separator */}
-                            <div className="w-full h-[3px] bg-ghBlack4 mt-0 mb-2"></div>
-                            <MenuItem menuItemName={"application-groups"} slug={slug} />
-                            <MenuItem menuItemName={"user-provisioning"} slug={slug} />
-                            <MenuItem menuItemName={"custom-variables"} slug={slug} />
-                            <MenuItem menuItemName={"build-history"} slug={slug} />
-                            <MenuItem menuItemName={"settings"} slug={slug} />
-                        </List>
-                    </Drawer>
+        <div className="relative">
+            <div className="dark:bg-ghBlack relative" >
+                <ThemeProvider theme={theme}>
+                    <Box sx={{ display: "flex" }}>
+                        <Drawer variant="permanent" open={open}
+                            sx={{
+                                '& .MuiDrawer-paper': {
+                                    // borderRight: 'none',
+                                    borderRightWidth: "0px",
+                                    borderColor: "#2f3640",
+                                    backgroundColor: '#1f262e',
+                                    zIndex: 0
+                                }
+                            }} >
+                            <DrawerHeader>
+                                <IconButton onClick={() => setOpen(!open)}>
+                                    {open ? <ChevronLeftIcon /> : <ChevronRightIcon />}
+                                </IconButton>
+                            </DrawerHeader>
+                            <List className="" style={{ marginTop: "auto", marginBottom: "auto", paddingBottom: "150px" }}>
+                                <MenuItem menuItemName={"home"} slug={slug} />
+                                <MenuItem menuItemName={"build"} slug={slug} isBuildStarted={isBuildStarted} />
+                                <MenuItem menuItemName={"deploy"} slug={slug} />
+                                {/* Separator */}
+                                <div className="w-full h-[3px] bg-ghBlack4 mt-0 mb-2"></div>
+                                <MenuItem menuItemName={"application-groups"} slug={slug} />
+                                <MenuItem menuItemName={"user-provisioning"} slug={slug} />
+                                <MenuItem menuItemName={"custom-variables"} slug={slug} />
+                                <MenuItem menuItemName={"build-history"} slug={slug} />
+                                <MenuItem menuItemName={"settings"} slug={slug} />
+                            </List>
+                        </Drawer>
 
-                    <Box component="main" sx={{ flexGrow: 1, p: 0 }} className="text-black dark:text-white flex flex-col min-h-screen">
+                        <Box component="main" sx={{ flexGrow: 1, p: 0 }} className="text-black dark:text-white flex flex-col min-h-screen">
 
-                        <div className="">
-                            <HeaderNew drawerWidth={drawerWidth} handleDrawerOpen={handleDrawerOpen} open={open} handleDarkModeToggle={handleDarkModeToggle} isDarkMode={isDarkMode} toggleBuildStart={toggleBuildStart} isBuildStarted={isBuildStarted} />
-                        </div>
-                        <div className="bg-ghBlack">
-                            <Routes>
-                                {/* <Route exact path="/" element={<TabMenu />} /> */}
-                                <Route path="/home" element={<Home />} />
-                                <Route path="/build" element={<TabMenuBuild buildOutputFileContent={buildLogOutput} toggleBuildStart={toggleBuildStart} isBuildStarted={isBuildStarted} />} />
-                                <Route path="/deploy" element={<TabMenuDeploy />} />
-                                <Route path="/application-groups" element={<ApplicationGroups />} />
-                                <Route path="/user-provisioning" element={<UserProvisioning />} />
-                                <Route path="/custom-variables" element={<CustomVariables />} />
-                                <Route path="/build-history" element={<BuildHistory />} />
-                                <Route path="/console-output" element={<ConsoleOutput />} />
-                            </Routes>
-                        </div>
-                        {/* Footer Section */}
-                        <div className="bg-ghBlack p-3 w-full text-gray-400 hover:text-white flex justify-end px-5 h-[40px] pt-1">
-                            <button onClick={() => {
-                                OpenURL("https://github.com/Accenture/kx.as.code")
-                            }}>
-                                <GitHubIcon fontSize="small"/>
-                            </button>
-                        </div>
+                            <div className="">
+                                <HeaderNew drawerWidth={drawerWidth} handleDrawerOpen={handleDrawerOpen} open={open} handleDarkModeToggle={handleDarkModeToggle} isDarkMode={isDarkMode} toggleBuildStart={toggleBuildStart} isBuildStarted={isBuildStarted} />
+                            </div>
+                            <div className="bg-ghBlack">
+                                <Routes>
+                                    {/* <Route exact path="/" element={<TabMenu />} /> */}
+                                    <Route path="/home" element={<Home />} />
+                                    <Route path="/build" element={<TabMenuBuild buildOutputFileContent={buildLogOutput} toggleBuildStart={toggleBuildStart} isBuildStarted={isBuildStarted} />} />
+                                    <Route path="/deploy" element={<TabMenuDeploy />} />
+                                    <Route path="/application-groups" element={<ApplicationGroups />} />
+                                    <Route path="/user-provisioning" element={<UserProvisioning />} />
+                                    <Route path="/custom-variables" element={<CustomVariables />} />
+                                    <Route path="/build-history" element={<BuildHistory />} />
+                                    <Route path="/console-output" element={<ConsoleOutput />} />
+                                </Routes>
+                            </div>
+
+                        </Box>
+                        <Toaster
+                            expand visibleToasts={3}
+                            duration={2000}
+                            toastOptions={{
+                                style: {
+                                    background: "#161b22",
+                                    borderRadius: "5px",
+                                    borderWidth: "0",
+                                    color: "white",
+                                    boxShadow: "none"
+                                },
+                                className: '',
+                            }} />
                     </Box>
-                    <Toaster
-                        expand visibleToasts={3}
-                        duration={2000}
-                        toastOptions={{
-                            style: {
-                                background: "#161b22",
-                                borderRadius: "5px",
-                                borderWidth: "0",
-                                color: "white",
-                                boxShadow: "none"
-                            },
-                            className: '',
-                        }} />
-
-                </Box>
-            </ThemeProvider>
-        </div >
+                </ThemeProvider>
+            </div >
+            {/* Footer Section */}
+            <div className="bg-ghBlack p-4 pt-3 absolute zIndex-20 bottom-0 w-full text-gray-400 hover:text-white flex justify-end px-10">
+                <button onClick={() => {
+                    OpenURL("https://github.com/Accenture/kx.as.code")
+                }}>
+                    <GitHubIcon fontSize="small" />
+                </button>
+            </div>
+        </div>
 
     );
 }

@@ -3,6 +3,8 @@ import CloseIcon from '@mui/icons-material/Close';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import applicationsJson from './assets/templates/applications.json';
+import { SearchInput } from './SearchInput';
+import { InfoBox } from './InfoBox';
 
 export default function ApplicationSelection({ applicationGroupTitle, applicationGroup, addApplicationToApplicationGroupById, windowHeight }) {
     const [name, setName] = useState('');
@@ -12,11 +14,6 @@ export default function ApplicationSelection({ applicationGroupTitle, applicatio
     const handleInputChange = (event) => {
         const term = event.target.value;
         setSearchTerm(term);
-
-        const filteredApplications = applicationsJson
-            .filter((app) => app.name.toLowerCase().includes(term.toLowerCase()))
-        // .slice(0, 5);
-        setMatchedApplications(filteredApplications);
     };
 
     const doesObjectExist = (appName, includedAppsInGroupList) => {
@@ -36,81 +33,77 @@ export default function ApplicationSelection({ applicationGroupTitle, applicatio
     }
 
     useEffect(() => {
-
-    }, []);
+        const filteredApplications = applicationsJson
+            .filter((app) => app.name.toLowerCase().includes(searchTerm.toLowerCase()))
+        setMatchedApplications(filteredApplications);
+    }, [matchedApplications]);
 
     return (
 
-        <div className="text-center text-white flex justify-center w-full bg-ghBlack4 rounded-lg p-0.5">
+        <div className="text-center text-white flex justify-center w-full rounded-lg border-2 border-ghBlack4">
 
-            <div className='p-2 rounded-lg w-full bg-ghBlack2 rounded-md'>
+            <div className='p-2 p pr-0 rounded-lg w-full bg-ghBlack2'>
                 <div className="bg-ghBlack2 grid grid-cols-12">
                     <div className="col-span-6">
                         {/* Input Search  */}
-                        <div className="group relative w-full">
-                            <svg
-                                width="20"
-                                height="20"
-                                fill="currentColor"
-                                className="absolute left-3 top-1/2 -mt-2.5 text-gray-500 pointer-events-none group-focus-within:text-kxBlue"
-                                aria-hidden="true"
-                            >
-                                <path
-                                    fillRule="evenodd"
-                                    clipRule="evenodd"
-                                    d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
-                                />
-                            </svg>
-                            <input
-                                onChange={handleInputChange}
-                                type="text"
-                                placeholder="Search..."
-                                className="focus:ring-1 focus:ring-kxBlue focus:outline-none bg-ghBlack4 px-3 py-1 placeholder-blueGray-300 text-blueGray-600 text-md border-0 shadow outline-none pl-10 rounded w-full"
-                            />
-                        </div>
-
-                        <div className='h-[300px] overflow-y-scroll custom-scrollbar mt-3'>
+                        <SearchInput setSearchTerm={setSearchTerm} searchTerm={searchTerm} />
+                        <div className='h-[300px] overflow-y-scroll custom-scrollbar mt-3 pr-2'>
                             <ul>
-                                {(searchTerm !== "" ? matchedApplications : applicationsJson).map((app, i) => (
-                                    <li className='p-2 mt-1 bg-ghBlack2 hover:bg-ghBlack3 rounded cursor-pointer mr-2 flex justify-between items-center' key={i}>
-                                        <div className='text-left'>
-                                            <div className='capitalize'>{app.name}</div>
-                                            <div className='text-gray-400 uppercase text-sm'>{app.installation_group_folder}</div>
-                                        </div>
-                                        <div>
-                                            {doesObjectExist(app.name, applicationGroup.action_queues.install) ? (
-                                                <button
-                                                    className='p-1 bg-ghBlack4 text-white rounded items-center'
-                                                    onClick={() => {
+                                {
+                                    (searchTerm !== "" ? matchedApplications : applicationsJson).length > 0 ? (
+                                        (searchTerm !== "" ? matchedApplications : applicationsJson).map((app, i) => (
+                                            <li className='p-2 py-1 bg-ghBlack2 hover:bg-ghBlack3 rounded cursor-pointer flex justify-between items-center' key={i}>
+                                                <div className='text-left'>
+                                                    <div className='capitalize'>{app.name}</div>
+                                                    <div className='text-gray-400 uppercase text-sm'>{app.installation_group_folder}</div>
+                                                </div>
+                                                <div>
+                                                    {doesObjectExist(app.name, applicationGroup.action_queues.install) ? (
+                                                        <button
+                                                            className='p-1 bg-ghBlack4 text-white rounded items-center'
+                                                            onClick={() => {
+                                                                // Handle the remove click logic here
+                                                            }}
+                                                        >
+                                                            <RemoveIcon fontSize='small' />
+                                                        </button>
+                                                    ) : (
+                                                        <button
+                                                            className='p-1 bg-kxBlue text-white rounded items-center'
+                                                            onClick={() => {
+                                                                handleAddApplicationClick(app.name, app.installation_group_folder);
+                                                                console.log("DEBUG - ID div select", applicationGroup.id);
+                                                            }}
+                                                        >
+                                                            <AddIcon fontSize='small' />
+                                                        </button>
+                                                    )}
+                                                </div>
+                                            </li>
+                                        ))
+                                    ) : (
+                                        <InfoBox>
+                                            <div className='ml-1'>
+                                                {searchTerm !== ""
+                                                    ? `No results found for "${searchTerm}".`
+                                                    : "No available Application Groups."}
+                                            </div>
+                                        </InfoBox>
+                                    )
+                                }
 
-                                                    }}>
-                                                    <RemoveIcon fontSize='small'/>
-                                                </button>
-                                            ) : (
-                                                <button
-                                                    className='p-1 bg-kxBlue text-white rounded items-center'
-                                                    onClick={() => {
-                                                        handleAddApplicationClick(app.name, app.installation_group_folder)
-                                                        console.log("DEBUG - ID div select", applicationGroup.id)
-                                                    }}>
-                                                    <AddIcon fontSize='small'/>
-                                                </button>
-                                            )}
-                                        </div>
-                                    </li>
-                                ))}
                             </ul>
 
                         </div>
                     </div>
                     <div className="col-span-6 p-2">
-                        <div className='text-left text-gray-400 mb-3'>Added Applications to Group: </div>
-                        <div className='h-[300px] overflow-y-scroll custom-scrollbar'>
+                        <div className='text-left text-gray-400 mb-3 font-semibold uppercase text-sm'>Added Applications to Group: </div>
+                        <div className='h-[300px] overflow-y-scroll custom-scrollbar pr-2'>
                             {applicationGroup.action_queues.install.map((app) => {
-                                return <div className='cursor-pointer bg-kxBlue p-2 rounded mb-1 text-left'>
+                                return <div className='cursor-pointer bg-kxBlue2 p-2 py-1 rounded mb-1 text-left'>
                                     <div className='text-base capitalize'>{app.name}</div>
                                     {/* Set first install folder value as Category  */}
-                                    <div className='text-sm uppercase'>{app.install_folder}</div>
+                                    <div className='text-sm uppercase text-gray-400'>{app.install_folder}</div>
                                 </div>
                             })}
                         </div>

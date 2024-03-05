@@ -4,15 +4,12 @@ import "pure-react-carousel/dist/react-carousel.es.css";
 import { transformName } from "./utils/application"
 import { Link } from "react-router-dom";
 import LayersIcon from '@mui/icons-material/Layers';
-import ContextMenu from "./ContextMenu";
 import DeleteForever from '@mui/icons-material/DeleteForever';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { IconButton } from '@mui/material';
 import { ContentCopy } from '@mui/icons-material';
 
 export function ApplicationGroupCard({ index, appGroup, selectedItem, handleItemClick, handleDeleteItem }) {
-
-    const [contextMenu, setContextMenu] = useState(null);
     const parentRef = useRef();
     const buttonRef = useRef();
     const popoverRef = useRef();
@@ -27,15 +24,7 @@ export function ApplicationGroupCard({ index, appGroup, selectedItem, handleItem
     const [itemsList, setItemsList] = useState([]);
 
     useEffect(() => {
-        // fetchAllComponents(appGroup.action_queues);
-
         const handleClickOutside = (event) => {
-            if (parentRef.current && !parentRef.current.contains(event.target)) {
-                if (!buttonRef.current || !buttonRef.current.contains(event.target)) {
-                    setContextMenu(null);
-                }
-            }
-
             if (popoverRef.current && !popoverRef.current.contains(event.target)) {
                 setIsMoreMenuActive(false)
             }
@@ -47,27 +36,6 @@ export function ApplicationGroupCard({ index, appGroup, selectedItem, handleItem
             document.removeEventListener('mousedown', handleClickOutside);
         };
     }, [appGroup]);
-
-    const handleContextMenu = (e) => {
-        e.preventDefault();
-        setContextMenu({ top: e.clientY, left: e.clientX });
-    };
-
-    const handleCloseContextMenu = () => {
-        setContextMenu(null);
-    };
-
-    const handleDeleteButtonClick = () => {
-        removeApplicationGroupById(id)
-        handleCloseContextMenu();
-        setIsMoreMenuActive(false)
-    };
-
-    async function fetchAllComponents(action_queues) {
-        const components = action_queues.install.map((q) => q.name);
-        setImageList(components);
-        setAppGroupComponents(components);
-    }
 
     const setImageList = (appGroupComponents) => {
         setItemsList([]);
@@ -101,10 +69,9 @@ export function ApplicationGroupCard({ index, appGroup, selectedItem, handleItem
     };
 
     return (
-        <div key={index} className={`flex grid grid-cols-12 items-center w-full py-1 px-3 items-center mb-1 ${selectedItem === index ? "bg-ghBlack4" : "hover:bg-ghBlack3"} rounded cursor-pointer`}
+        <div key={index} className={`grid grid-cols-12 w-full py-1 px-2 items-center mb-1 ${selectedItem === index ? "bg-ghBlack4" : "hover:bg-ghBlack3"} rounded cursor-pointer`}
             onClick={() => {
                 handleItemClick(index)
-                handleCloseContextMenu()
             }}
 
             onMouseEnter={() => {
@@ -113,15 +80,22 @@ export function ApplicationGroupCard({ index, appGroup, selectedItem, handleItem
             onMouseLeave={() => {
                 setIsCardHovered(false)
             }}>
-            <div ref={parentRef} onContextMenu={handleContextMenu} className="col-span-12 flex items-center justify-between">
+            <div ref={parentRef} className="col-span-12 flex items-center relative">
                 <div className='flex items-center'>
                     <LayersIcon fontSize="medium" className="mr-2" />
                     <div className="">
-                        <div className='whitespace-nowrap w-[150px] overflow-hidden text-ellipsis'>{appGroup.title}</div>
-                        <div className='text-xs uppercase text-gray-400'>{appGroup.action_queues.install[0] !== undefined ? appGroup.action_queues.install[0].install_folder : "Group Category"}</div>
+                        <div className='whitespace-nowrap w-[190px] overflow-hidden text-ellipsis'>{appGroup.title}</div>
+                        <div className='text-xs uppercase text-gray-400 text-ellipsis overflow-hidden flex'>
+                            {appGroup.action_queues.install[0] !== undefined ? (
+                                <span className='flex'>
+                                    {appGroup.action_queues.install[0].name}
+                                    {appGroup.action_queues.install.length > 0 && ` (+${appGroup.action_queues.install.length})`}
+                                </span>
+                            ) : "0 Applications"}
+                        </div>
                     </div>
                 </div>
-                <div className='text-white relative'>
+                <div className='text-white absolute right-0'>
                     {isCardHovered || isMoreMenuActive ? (
                         <IconButton onClick={() => {
                             setIsMoreMenuActive((prevIsMoreMenuActive) => !prevIsMoreMenuActive);
@@ -132,12 +106,13 @@ export function ApplicationGroupCard({ index, appGroup, selectedItem, handleItem
                     {/* More Menu Popover */}
                     {isMoreMenuActive && (
                         <div ref={popoverRef}
-                            className="absolute top-full right-0 z-50 rounded bg-ghBlack shadow-md rounded-md w-auto p-1 text-sm"
+                            className="absolute top-full right-0 z-50 bg-ghBlack3 shadow-md rounded w-auto p-1 text-sm"
                         >
-                            <button className='bg-ghBlack2 hover:bg-ghBlack4 text-white p-2 px-3 py-1 rounded w-full flex items-center'
+                            <button className='hover:bg-ghBlack4 text-white p-2 px-3 py-1 rounded w-full flex items-center'
                                 onClick={(e) => {
                                     e.stopPropagation();
                                     handleDeleteItem(index);
+                                    setIsMoreMenuActive(false)
                                 }}>
                                 <span className='mr-1'>
                                     <DeleteForever fontSize='small' />
@@ -145,7 +120,7 @@ export function ApplicationGroupCard({ index, appGroup, selectedItem, handleItem
                                 <span>Delete</span>
 
                             </button>
-                            <button className='bg-ghBlack2 hover:bg-ghBlack4 text-white p-2 px-3 py-1 rounded w-full flex items-center'
+                            <button className='hover:bg-ghBlack4 text-white p-2 px-3 py-1 rounded w-full flex items-center'
                                 onClick={(e) => {
                                     e.stopPropagation();
 
@@ -162,24 +137,6 @@ export function ApplicationGroupCard({ index, appGroup, selectedItem, handleItem
 
                 </div>
             </div>
-            {contextMenu && (
-                <ContextMenu
-                    top={contextMenu.top}
-                    left={contextMenu.left}
-                    onClose={handleCloseContextMenu}
-                >
-                    <button ref={buttonRef} className='bg-ghBlack2 hover:bg-ghBlack4 text-white p-1 rounded w-full flex items-center'
-                        onClick={() => {
-                            handleDeleteButtonClick()
-                        }}>
-                        <span className='mr-1'>
-                            <DeleteForever fontSize='small' />
-                        </span>
-                        <span>Delete</span>
-
-                    </button>
-                </ContextMenu>
-            )}
         </div>)
         ;
 }

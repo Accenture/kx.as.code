@@ -26,6 +26,10 @@ import Select from 'react-select';
 import ApplicationGroupsModal from './ApplicationGroupsModal';
 import ApplicationSelection from './ApplicationSelection';
 import FilterList from '@mui/icons-material/FilterList';
+import { Clear, Info } from '@mui/icons-material';
+import { IconButton } from '@mui/material';
+import { SearchInput } from './SearchInput';
+import { InfoBox } from './InfoBox';
 
 
 export function ApplicationGroups({
@@ -94,7 +98,7 @@ export function ApplicationGroups({
                                 className={`${activeConfigTab === 'config-tab1'
                                     ? 'left-1 ml-0'
                                     : 'left-1/2 -ml-1'
-                                    } py-1 text-white bg-kxBlue text-sm flex items-center justify-center w-1/2 rounded transition-all duration-150 ease-linear top-[5px] absolute`}
+                                    } py-1 text-white bg-ghBlack4 text-sm flex items-center justify-center w-1/2 rounded transition-all duration-150 ease-linear top-[5px] absolute`}
                             >
                                 {activeConfigTab === 'config-tab1'
                                     ? "Config UI"
@@ -121,46 +125,136 @@ const UIConfigTabContent = ({ activeTab, handleTabClick, setJsonData, applicatio
 
     const initialData = [
         {
-            "action_queues": {
-                "install": [
-                    {
-                        "install_folder": "cicd",
-                        "name": "argocd"
-                    }
-                ]
-            },
-            "description": "New Group Description",
-            "title": "New Group 3"
-        },
-        {
-            "action_queues": {
-                "install": []
-            },
-            "description": "New Group Description",
-            "title": "New Group 2"
-        },
-        {
-            "action_queues": {
-                "install": []
-            },
-            "description": "New Group Description",
-            "title": "New Group 1"
-        },
-        {
+            "title": "Examples Group 1",
+            "description": "Group used to show specific use cases and for debugging changes and enhancements to framework",
             "action_queues": {
                 "install": [
                     {
                         "install_folder": "examples",
                         "name": "hipster-shop"
+                    }
+                ]
+            }
+        },
+        {
+            "title": "CICD Group 1",
+            "description": "CICD Group 1 for sites with a larger physical resources",
+            "action_queues": {
+                "install": [
+                    {
+                        "install_folder": "storage",
+                        "name": "minio-operator"
+                    },
+                    {
+                        "install_folder": "cicd",
+                        "name": "gitlab"
+                    },
+                    {
+                        "install_folder": "collaboration",
+                        "name": "mattermost"
+                    },
+                    {
+                        "install_folder": "cicd",
+                        "name": "harbor"
+                    },
+                    {
+                        "install_folder": "cicd",
+                        "name": "argocd"
                     },
                     {
                         "install_folder": "cicd",
                         "name": "artifactory"
                     }
                 ]
-            },
-            "description": "Group used to show specific use cases and for debugging changes and enhancements to the framework",
-            "title": "Examples Group 1"
+            }
+        },
+        {
+            "title": "CICD Group 2",
+            "description": "CICD Group 1 for sites with a lower physical resources",
+            "action_queues": {
+                "install": [
+                    {
+                        "install_folder": "cicd",
+                        "name": "gitea"
+                    },
+                    {
+                        "install_folder": "cicd",
+                        "name": "jenkins"
+                    },
+                    {
+                        "install_folder": "collaboration",
+                        "name": "rocketchat"
+                    },
+                    {
+                        "install_folder": "cicd",
+                        "name": "nexus3"
+                    }
+                ]
+            }
+        },
+        {
+            "title": "QA Group 1",
+            "description": "QA group comprising of SonarQube and Selenium",
+            "action_queues": {
+                "install": [
+                    {
+                        "install_folder": "quality_assurance",
+                        "name": "sonarqube"
+                    },
+                    {
+                        "install_folder": "quality_assurance",
+                        "name": "selenium4"
+                    }
+                ]
+            }
+        },
+        {
+            "title": "Prometheus/Grafana Stack",
+            "description": "Monitoring group with the Prometheus/Grafana stack",
+            "action_queues": {
+                "install": [
+                    {
+                        "install_folder": "monitoring",
+                        "name": "prometheus-stack"
+                    },
+                    {
+                        "install_folder": "monitoring",
+                        "name": "loki"
+                    },
+                    {
+                        "install_folder": "monitoring",
+                        "name": "graphite"
+                    }
+                ]
+            }
+        },
+        {
+            "title": "Elastic-Stack",
+            "description": "Monitoring group with the Elastic-Stack",
+            "action_queues": {
+                "install": [
+                    {
+                        "install_folder": "monitoring",
+                        "name": "elastic-elasticsearch"
+                    },
+                    {
+                        "install_folder": "monitoring",
+                        "name": "elastic-kibana"
+                    },
+                    {
+                        "install_folder": "monitoring",
+                        "name": "elastic-filebeat"
+                    },
+                    {
+                        "install_folder": "monitoring",
+                        "name": "elastic-metricbeat"
+                    },
+                    {
+                        "install_folder": "monitoring",
+                        "name": "elastic-heartbeat"
+                    }
+                ]
+            }
         }
     ];
 
@@ -175,7 +269,7 @@ const UIConfigTabContent = ({ activeTab, handleTabClick, setJsonData, applicatio
     // const [currentId, setCurrentId] = useState(null);
 
     const [data2, setData2] = useState(initialData);
-    const [selectedItem, setSelectedItem] = useState(null);
+    const [selectedItem, setSelectedItem] = useState(0);
 
     // *********** New Functions START ***********
     const handleItemClick = (index) => {
@@ -191,8 +285,28 @@ const UIConfigTabContent = ({ activeTab, handleTabClick, setJsonData, applicatio
     };
 
     const handleAddNewItem = () => {
+        const existingGroups = data2.filter((obj) => obj.title.startsWith('New Group'));
+
+        let nextNumber = 1;
+        const existingNumbers = existingGroups.map((obj) => {
+            const match = obj.title.match(/\d+$/);
+            return match ? parseInt(match[0]) : 0;
+        });
+        while (existingNumbers.includes(nextNumber)) {
+            nextNumber++;
+        }
+
+        const newObject = {
+            title: `New Group ${nextNumber}`,
+            description: 'New Group Description',
+            action_queues: {
+                install: [
+                ],
+            },
+        };
+
         setData2((prevData) => {
-            const newData = [...prevData, { action_queues: { install: [] }, description: '', title: '' }];
+            const newData = [...prevData, newObject];
             setSelectedItem(newData.length - 1);
             return newData;
         });
@@ -270,6 +384,14 @@ const UIConfigTabContent = ({ activeTab, handleTabClick, setJsonData, applicatio
         UpdateJsonFile(updatedJsonString, "applicationGroups")
     }
 
+    const handleKeyDown = (e) => {
+        if (e.key === 'ArrowUp' && selectedItem > 0) {
+            handleItemClick(selectedItem - 1);
+        } else if (e.key === 'ArrowDown' && selectedItem < data2.length - 1) {
+            handleItemClick(selectedItem + 1);
+        }
+    };
+
     useEffect(() => {
         const groupElement = getPanelGroupElement("group");
         const leftPanelElement = getPanelElement("left-panel");
@@ -286,18 +408,39 @@ const UIConfigTabContent = ({ activeTab, handleTabClick, setJsonData, applicatio
         const listElement = document.getElementById('list');
         listElement.scrollTop = selectedItem * 50;
 
-        return () => { };
+        window.addEventListener('keydown', handleKeyDown);
+
+        return () => {
+            window.removeEventListener('keydown', handleKeyDown);
+        };
     }, [data2, applicationGroupJson, windowHeight, selectedItem]);
 
     const drawApplicationGroupCards = () => {
-        return data2
-            .filter((appGroup) => {
-                const lowerCaseName = (appGroup.title || "").toLowerCase();
-                return searchTerm === "" || lowerCaseName.includes(searchTerm.toLowerCase().trim());
-            })
-            // .sort((a, b) => b.id - a.id)
+        const filteredData = data2.filter((appGroup) => {
+            const lowerCaseName = (appGroup.title || "").toLowerCase();
+            return searchTerm === "" || lowerCaseName.includes(searchTerm.toLowerCase().trim());
+        });
+
+        if (filteredData.length === 0) {
+            if (searchTerm !== "") {
+                return (
+                    <InfoBox>
+                        <div className='ml-1'>No results found for "{searchTerm}".</div>
+                    </InfoBox>
+                );
+            }
+            else {
+                return (
+                    <InfoBox>
+                        <div className='ml-1'>No available Application Groups.</div>
+                    </InfoBox>
+                );
+            }
+        }
+
+        return filteredData
             .map((appGroup, index) => (
-                <ApplicationGroupCard appGroup={appGroup} isListLayout={isListLayout} index={index} selectedItem={selectedItem} handleItemClick={handleItemClick} handleDeleteItem={handleDeleteItem}/>
+                <ApplicationGroupCard appGroup={appGroup} isListLayout={isListLayout} index={index} selectedItem={selectedItem} handleItemClick={handleItemClick} handleDeleteItem={handleDeleteItem} />
             ));
     };
 
@@ -354,39 +497,11 @@ const UIConfigTabContent = ({ activeTab, handleTabClick, setJsonData, applicatio
     return (
         <div id='config-ui-container' className='flex flex-col'>
             <PanelGroup direction="horizontal" id="group" className="tab-content dark:text-white text-black flex-1">
-                <Panel defaultSize={defaultLayout[0]} id="left-panel" className='min-w-[270px]'>
-                    <div className='relative top-0 sticky bg-ghBlack2 p-3 shadow-lg flex'>
+                <Panel defaultSize={defaultLayout[0]} id="left-panel" className='min-w-[290px]'>
+                    <div className='top-0 sticky bg-ghBlack2 p-2 shadow-lg flex'>
                         <div className="items-center w-full pr-1">
-                            <div className='flex justify-center'>
-                                {/* Search Input Field */}
-                                <div className="group relative w-full">
-                                    <svg
-                                        width="20"
-                                        height="20"
-                                        fill="currentColor"
-                                        className="absolute left-3 top-1/2 -mt-2.5 text-gray-500 pointer-events-none group-focus-within:text-kxBlue"
-                                        aria-hidden="true"
-                                    >
-                                        <path
-                                            fillRule="evenodd"
-                                            clipRule="evenodd"
-                                            d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
-                                        />
-                                    </svg>
-                                    <input
-                                        type="text"
-                                        placeholder="Search..."
-                                        className="focus:ring-1 focus:ring-kxBlue focus:outline-none bg-ghBlack4 px-3 py-1 placeholder-blueGray-300 text-blueGray-600 text-md border-0 shadow outline-none pl-10 rounded w-full"
-                                        onChange={(e) => {
-                                            setSearchTerm(e.target.value);
-                                        }}
-                                    />
-                                </div>
-
-                                <button className='text-gray-400 p-1 hover:text-white hover:bg-ghBlack3 rounded ml-1'>
-                                    <FilterList />
-                                </button>
-                            </div>
+                            {/* Search Input Field with filter button */}
+                            <SearchInput setSearchTerm={setSearchTerm} searchTerm={searchTerm} />
                             <div className='text-gray-400 flex justify-between pt-1 items-center text-sm'>
                                 <div>
                                     <span className='mr-1'>Application Groups</span>
@@ -402,39 +517,39 @@ const UIConfigTabContent = ({ activeTab, handleTabClick, setJsonData, applicatio
 
                         <div className='flex'>
                             <button
-                                className='px-2 bg-kxBlue hover:text-white rounded items-center'
+                                className='px-2 bg-kxBlue hover:text-white rounded items-center font-semibold'
                                 onClick={() => {
-                                    addNewApplicationGroup()
+                                    handleAddNewItem()
                                 }}>
-                                <AddIcon fontSize='medium' />
+                                <AddIcon fontSize='small' />
                             </button>
                         </div>
 
                     </div>
                     {/* Application Groups actions */}
-                    <div className="dark:bg-ghBlack2 overflow-y-scroll px-3 py-3 custom-scrollbar" style={{ height: `${windowHeight - 103 - 67 - 40 - 67}px` }} id="list">
+                    <div className="dark:bg-ghBlack2 overflow-y-scroll px-2 py-3 custom-scrollbar" style={{ height: `${windowHeight - 103 - 67 - 40 - 67}px` }} id="list">
                         {isLoading ? (<div className="animate-pulse flex flex-col col-span-full px-3">
                         </div>) : drawApplicationGroupCards()}
                     </div>
                 </Panel>
                 <PanelResizeHandle id="resize-handle" className='w-1 hover:bg-kxBlue bg-ghBlack2' />
-                <Panel defaultSize={defaultLayout[1]} id="right-panel" className="min-w-[370px]">
+                <Panel defaultSize={defaultLayout[1]} id="right-panel" className="min-w-[500px]">
                     {/* <ApplicationGroupsModal isOpen={modalIsOpen} onRequestClose={closeModal} applicationGroupTitle={detailsObject.title} applicationGroup={detailsObject} addApplicationToApplicationGroupById={addApplicationToApplicationGroupById} /> */}
 
                     <div className={` ${applicationGroupDetailTab == "config-ui" ? "bg-ghBlack2" : "bg-ghBlack2"} overflow-y-scroll custom-scrollbar pt-0`} style={{ height: `${windowHeight - 103 - 40 - 53}px` }}>
 
                         {/* Application Group Details JSON View Toggle */}
-                        <div className="sticky relative top-0 dark:bg-ghBlack2" style={{ zIndex: "10" }}>
+                        <div className="sticky top-0 dark:bg-ghBlack2" style={{ zIndex: "10" }}>
                             <div className='flex itmes-center text-sm '>
                                 <button
                                     onClick={() => { setApplicationGroupDetailTab("config-ui") }}
-                                    className={` ${applicationGroupDetailTab == "config-ui" ? 'border-kxBlue border-b-3 bg-ghBlack4' : 'border-ghBlack2 border-b-3'} p-3 px-5 py-1 rounded-tl rounded-tr-md`}
+                                    className={` ${applicationGroupDetailTab == "config-ui" ? 'border-kxBlue border-b-3 bg-ghBlack4' : 'border-ghBlack2 hover:border-ghBlack4 border-b-3 hover:bg-ghBlack3'} px-3 py-0`}
                                 >
                                     Config UI
                                 </button>
                                 <button
                                     onClick={() => { setApplicationGroupDetailTab("json") }}
-                                    className={` ${applicationGroupDetailTab == "json" ? 'border-kxBlue border-b-3 bg-ghBlack4' : 'border-ghBlack2 border-b-3'} p-3 px-5 py-1 rounded-tl rounded-tr-md`}
+                                    className={` ${applicationGroupDetailTab == "json" ? 'border-kxBlue border-b-3 bg-ghBlack4' : 'border-ghBlack2 border-b-3 hover:border-ghBlack4 hover:bg-ghBlack3'} px-3 py-0`}
                                 >
                                     JSON
                                 </button>
@@ -454,21 +569,22 @@ const UIConfigTabContent = ({ activeTab, handleTabClick, setJsonData, applicatio
                                             </div>
 
                                             <div className="items-center mb-3" >
-                                                <div className='text-gray-400 text-sm'>Group Title: </div>
+                                                <div className='text-gray-400 text-sm font-semibold uppercase'>Group Title: </div>
                                                 <input type="text" value={data2[selectedItem].title}
-                                                    s className={`w-full focus:outline-none rounded p-2 pr-10 bg-ghBlack4 focus:border-kxBlue border-ghBlack4 border text-white`}
+                                                    s className={`w-full focus:outline-none rounded p-2 bg-ghBlack4 focus:border-kxBlue border-ghBlack4 border text-white`}
                                                     onChange={(e) => handleInputChange('title', e.target.value)}
                                                 />
                                             </div>
 
                                             <div className="items-center mb-3">
-                                                <div className='text-gray-400 text-sm'>Group Description: </div>
-                                                <textarea type="text" value={data2[selectedItem].description} onChange={(e) => handleInputChange('description', e.target.value)} className='w-full focus:outline-none rounded p-2 pr-10 bg-ghBlack4 focus:border-kxBlue border border-transparent text-white custom-scrollbar h-[150px] resize-none' />
+                                                <div className='text-gray-400 text-sm font-semibold uppercase'>Group Description: </div>
+                                                <textarea type="text" value={data2[selectedItem].description} onChange={(e) => handleInputChange('description', e.target.value)} className='w-full focus:outline-none rounded p-2 pr-10 bg-ghBlack4 focus:border-kxBlue border border-transparent text-white custom-scrollbar h-[120px] resize-none' />
                                             </div>
                                         </div>
                                     </div>
 
                                     <div className="items-center mb-3">
+                                        <div className='text-gray-400 text-sm font-semibold uppercase'>Applications: </div>
                                         <ApplicationSelection applicationGroupTitle={data2[selectedItem].title} applicationGroup={data2[selectedItem]} addApplicationToApplicationGroupById={addApplicationToApplicationGroupById} />
                                     </div>
 

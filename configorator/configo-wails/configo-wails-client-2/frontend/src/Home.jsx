@@ -90,17 +90,27 @@ export default function Home() {
         });
     };
 
+    const handleKeyDown = (e) => {
+        if (e.key === 'ArrowUp' && selectedItem > 0) {
+          handleItemClick(selectedItem - 1);
+        } else if (e.key === 'ArrowDown' && selectedItem < data.length - 1) {
+          handleItemClick(selectedItem + 1);
+        }
+      };
+
     useEffect(() => {
         const handleResize = () => {
             setWindowHeight(window.innerHeight);
         };
         window.addEventListener('resize', handleResize);
+        window.addEventListener('keydown', handleKeyDown);
 
         const listElement = document.getElementById('list');
         listElement.scrollTop = selectedItem * 50;
 
         return () => {
             window.removeEventListener('resize', handleResize);
+            window.removeEventListener('keydown', handleKeyDown);
         };
     }, [selectedItem, windowHeight]);
 
