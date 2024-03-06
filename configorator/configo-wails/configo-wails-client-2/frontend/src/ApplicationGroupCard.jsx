@@ -87,10 +87,14 @@ export function ApplicationGroupCard({ index, appGroup, selectedItem, handleItem
                         <div className='whitespace-nowrap w-[190px] overflow-hidden text-ellipsis'>{appGroup.title}</div>
                         <div className='text-xs uppercase text-gray-400 text-ellipsis overflow-hidden flex'>
                             {appGroup.action_queues.install[0] !== undefined ? (
-                                <span className='flex'>
-                                    {appGroup.action_queues.install[0].name}
-                                    {appGroup.action_queues.install.length > 0 && ` (+${appGroup.action_queues.install.length})`}
-                                </span>
+                                appGroup.action_queues.install.length > 1 ? (
+                                    <span className='flex'>
+                                        {appGroup.action_queues.install[0].name}
+                                        {appGroup.action_queues.install.length > 0 && ` (+${appGroup.action_queues.install.length - 1})`}
+                                    </span>
+                                ) : (
+                                    appGroup.action_queues.install[0].name
+                                )
                             ) : "0 Applications"}
                         </div>
                     </div>

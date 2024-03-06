@@ -74,7 +74,7 @@ export function ApplicationGroups({
                         <ConfigSectionHeader sectionTitle={"Application Groups"} SectionDescription={"More Details about this section here."} />
                     </div>
                     <div className='col-span-3 pr-10 mx-3'>
-                        <div className="relative w-full h-[40px] p-1 bg-ghBlack2 rounded">
+                        <div className="relative w-full h-[40px] p-1 bg-ghBlack3 rounded">
                             <div className="relative w-full h-full flex items-center">
                                 <div
                                     onClick={() => setActiveConfigTab('config-tab1')}
@@ -538,34 +538,8 @@ const UIConfigTabContent = ({ activeTab, handleTabClick, setJsonData, applicatio
             <PanelGroup direction="horizontal" id="group" className="tab-content dark:text-white text-black flex-1">
                 <Panel defaultSize={defaultLayout[0]} id="left-panel" className='min-w-[290px]'>
 
-                    <div className='top-0 sticky bg-ghBlack2 p-2 shadow-lg'>
-                        <div className='flex'>
-
-                            <div className="items-center w-full pr-1">
-                                {/* Search Input Field with filter button */}
-                                <SearchInput setSearchTerm={setSearchTerm} searchTerm={searchTerm} />
-                            </div>
-
-                            <div className='flex items-center justify-center'>
-                                <button
-                                    className='px-2 bg-kxBlue hover:text-white rounded-sm items-center font-semibold flex h-full'
-                                    onClick={() => {
-                                        handleAddNewItem()
-                                    }}
-                                >
-                                    <AddIcon fontSize='small' />
-                                </button>
-                            </div>
-                        </div>
-
-                        <div className='text-gray-400 flex justify-between pt-1 items-center text-sm'>
-                            <div>
-                                <span className='mr-1'>Application Groups</span>
-                                <span className='p-1.5 py-0 bg-ghBlack3 text-gray-400 rounded-sm text-center mr-1'>{data2.length}</span>
-                            </div>
-                        </div>
-
-                    </div>
+                    {/* Search Input Field with filter button */}
+                    <SearchInput setSearchTerm={setSearchTerm} searchTerm={searchTerm} itemsCount={data2.length} itemName={"Application Groups"} hasActionButton={true} actionFunction={handleAddNewItem} />
                     {/* Application Groups actions */}
                     <div className="dark:bg-ghBlack2 overflow-y-scroll px-2 py-3 custom-scrollbar" style={{ height: `${windowHeight - 103 - 67 - 40 - 67}px` }} id="list">
                         {isLoading ? (<div className="animate-pulse flex flex-col col-span-full px-3">
@@ -600,32 +574,31 @@ const UIConfigTabContent = ({ activeTab, handleTabClick, setJsonData, applicatio
 
                             applicationGroupDetailTab == "config-ui" ? (
                                 <div className='px-3'>
-                                    <div className="grid grid-cols-12">
-                                        <div className="col-span-12 pt-3">
 
-                                            {/* Details Actions Header */}
-                                            <div className='flex justify-end'>
+                                    <div className="pt-3">
 
-                                            </div>
+                                        {/* Details Actions Header */}
+                                        <div className='flex justify-end'>
 
-                                            <div className="items-center mb-3" >
-                                                <div className='text-gray-400 text-sm font-semibold uppercase'>Group Title: </div>
-                                                <input type="text" value={data2[selectedItem].title}
-                                                    s className={`w-full focus:outline-none rounded-sm p-2 bg-ghBlack4 focus:border-kxBlue border-ghBlack4 border text-white`}
-                                                    onChange={(e) => handleInputChange('title', e.target.value)}
-                                                />
-                                            </div>
+                                        </div>
 
-                                            <div className="items-center mb-3">
-                                                <div className='text-gray-400 text-sm font-semibold uppercase'>Group Description: </div>
-                                                <textarea type="text" value={data2[selectedItem].description} onChange={(e) => handleInputChange('description', e.target.value)} className='w-full focus:outline-none rounded-sm p-2 pr-10 bg-ghBlack4 focus:border-kxBlue border border-transparent text-white custom-scrollbar h-[120px] resize-none' />
-                                            </div>
+                                        <div className="items-center mb-3" >
+                                            <div className='text-gray-600 text-sm font-semibold uppercase'>Group Title: </div>
+                                            <input type="text" value={data2[selectedItem].title}
+                                                s className={`w-full focus:outline-none rounded-sm p-2 bg-ghBlack3 focus:bg-ghBlack4 text-white`}
+                                                onChange={(e) => handleInputChange('title', e.target.value)}
+                                            />
+                                        </div>
+
+                                        <div className="items-center mb-1.5">
+                                            <div className='text-gray-600 text-sm font-semibold uppercase'>Group Description: </div>
+                                            <textarea type="text" value={data2[selectedItem].description} onChange={(e) => handleInputChange('description', e.target.value)} className='border-ghBlack3 w-full focus:bg-ghBlack4 focus:outline-none rounded-sm p-2 pr-10 bg-ghBlack3 text-white custom-scrollbar h-[120px] resize-none' />
                                         </div>
                                     </div>
 
-                                    <div className="items-center mb-3">
-                                        <div className='text-gray-400 text-sm font-semibold uppercase'>Applications: </div>
-                                        <ApplicationSelection applicationGroupTitle={data2[selectedItem].title} applicationGroup={data2[selectedItem]} addApplicationToApplicationGroupById={addApplicationToApplicationGroupById} handleAddApplication={handleAddApplication} handleRemoveApplication={handleRemoveApplication}/>
+                                    <div className="items-center">
+                                        <div className='text-gray-600 text-sm font-semibold uppercase'>Applications: </div>
+                                        <ApplicationSelection applicationGroupTitle={data2[selectedItem].title} applicationGroup={data2[selectedItem]} addApplicationToApplicationGroupById={addApplicationToApplicationGroupById} handleAddApplication={handleAddApplication} handleRemoveApplication={handleRemoveApplication} />
                                     </div>
 
                                 </div>) : (

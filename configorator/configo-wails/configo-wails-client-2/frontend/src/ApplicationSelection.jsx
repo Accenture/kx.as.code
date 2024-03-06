@@ -5,8 +5,19 @@ import RemoveIcon from '@mui/icons-material/Remove';
 import applicationsJson from './assets/templates/applications.json';
 import { SearchInput } from './SearchInput';
 import { InfoBox } from './InfoBox';
+import AppLogo from './AppLogo';
+import {
+    getPanelElement,
+    getPanelGroupElement,
+    getResizeHandleElement,
+    Panel,
+    PanelGroup,
+    PanelResizeHandle,
+} from "react-resizable-panels";
 
-export default function ApplicationSelection({ applicationGroup, addApplicationToApplicationGroupById, handleAddApplication, handleRemoveApplication }) {
+export default function ApplicationSelection({ applicationGroup, addApplicationToApplicationGroupById, handleAddApplication, handleRemoveApplication,
+    defaultLayout = [50, 50]
+}) {
     const [name, setName] = useState('');
     const [searchTerm, setSearchTerm] = useState('');
     const [matchedApplications, setMatchedApplications] = useState([]);
@@ -35,16 +46,25 @@ export default function ApplicationSelection({ applicationGroup, addApplicationT
     const findApplicationByName = (appName) => {
         try {
             const foundApp = applicationsJson.find(obj => obj.name === appName);
-            return foundApp || {} ;
+            return foundApp || {};
         } catch (error) {
             console.error("Error while finding application by name:", error);
-            return {}; 
+            return {};
         }
     };
 
     useEffect(() => {
         const filteredApplications = applicationsJson
-            .filter((app) => (app.name.toLowerCase() + findApplicationByName(app.name).environment_variables?.imageTag).includes(searchTerm.toLowerCase()))
+            .filter((app) => {
+                const appName = app.name.toLowerCase();
+                const imageTag = findApplicationByName(app.name).environment_variables?.imageTag?.toLowerCase();
+
+                const formattedAppName = appName.replace(/\s/g, '');
+                const formattedImageTag = imageTag?.replace(/\s/g, '');
+                const formattedSearchTerm = searchTerm.toLowerCase().replace(/\s/g, '');
+
+                return (formattedAppName + formattedImageTag).includes(formattedSearchTerm);
+            });
         setMatchedApplications(filteredApplications);
     }, [matchedApplications]);
 
@@ -52,32 +72,38 @@ export default function ApplicationSelection({ applicationGroup, addApplicationT
 
         <div className="text-center text-white flex justify-center w-full rounded border-2 border-ghBlack4">
 
-            <div className='p-2 p pr-0 rounded-md w-full bg-ghBlack2'>
-                <div className="bg-ghBlack2 grid grid-cols-12">
-                    <div className="col-span-6">
+            <div className='pr-0 rounded-md w-full bg-ghBlack2'>
+                <PanelGroup direction="horizontal" id="group" className="tab-content dark:text-white text-black flex-1 bg-ghBlack2">
+                    <Panel defaultSize={defaultLayout[0]} id="left-panel" className='min-w-[300px]'>
                         {/* Input Search  */}
-                        <SearchInput setSearchTerm={setSearchTerm} searchTerm={searchTerm} />
-                        <div className='h-[300px] overflow-y-scroll custom-scrollbar mt-3 pr-2'>
+                        <SearchInput setSearchTerm={setSearchTerm} searchTerm={searchTerm} itemsCount={applicationsJson.length} itemName={"Applications"} hasActionButton={false} />
+                        <div className='h-[300px] overflow-y-scroll custom-scrollbar mt-3 px-2'>
                             <ul>
                                 {
                                     (searchTerm !== "" ? matchedApplications : applicationsJson).length > 0 ? (
                                         (searchTerm !== "" ? matchedApplications : applicationsJson).map((app, i) => (
                                             <li className='p-2 py-1 bg-ghBlack2 hover:bg-ghBlack3 rounded cursor-pointer flex justify-between items-center' key={i}>
-                                                <div className='text-left'>
-                                                    <div className='flex'>
+
+
+                                                <div className='text-left items-center flex'>
+
+                                                    <AppLogo appName={app.name} />
+
+                                                    <div className='ml-2'>
                                                         <span className='capitalize mr-1'>
                                                             {app.name}
                                                         </span>
                                                         <span className='lowercase'>
                                                             {app.environment_variables?.imageTag}
                                                         </span>
+                                                        <div className='text-gray-400 uppercase text-sm'>{app.installation_group_folder}</div>
                                                     </div>
-                                                    <div className='text-gray-400 uppercase text-sm'>{app.installation_group_folder}</div>
+
                                                 </div>
                                                 <div>
                                                     {doesObjectExist(app.name, applicationGroup.action_queues.install) ? (
                                                         <button
-                                                            className='p-1 bg-ghBlack4 text-white rounded items-center'
+                                                            className='flex items-center justify-center p-1 bg-ghBlack4 text-white rounded'
                                                             onClick={() => {
                                                                 handleRemoveApplication(app)
                                                             }}
@@ -86,7 +112,7 @@ export default function ApplicationSelection({ applicationGroup, addApplicationT
                                                         </button>
                                                     ) : (
                                                         <button
-                                                            className='p-1 bg-kxBlue text-white rounded items-center'
+                                                            className='flex items-center justify-center p-1 bg-kxBlue text-white rounded'
                                                             onClick={() => {
                                                                 console.log("app-2: ", app)
                                                                 handleAddApplication(app);
@@ -110,30 +136,31 @@ export default function ApplicationSelection({ applicationGroup, addApplicationT
                                 }
 
                             </ul>
-
                         </div>
-                    </div>
-                    <div className="col-span-6 p-2">
-                        <div className='text-left text-gray-400 mb-3 font-semibold uppercase text-sm'>Added Applications to Group: </div>
+                    </Panel>
+                    <PanelResizeHandle id="resize-handle" className='w-1 hover:bg-kxBlue bg-ghBlack2' />
+                    <Panel defaultSize={defaultLayout[1]} id="right-panel" className="min-w-[300px] p-2">
+                        <div className='text-left text-gray-600 mb-3 font-semibold uppercase text-sm'>Added Applications to Group ({applicationGroup.action_queues.install.length})</div>
                         <div className='h-[300px] overflow-y-scroll custom-scrollbar pr-2'>
                             {applicationGroup.action_queues.install.map((app) => {
                                 return <div className='cursor-pointer bg-kxBlue2 p-2 py-1 rounded mb-1 text-left'>
-                                    <div className='flex'>
-                                        <span className='capitalize mr-1'>
-                                            {app.name}
-                                        </span>
-                                        <span className='lowercase'>
-                                            {findApplicationByName(app.name).environment_variables?.imageTag}
-                                        </span>
+                                    <div className='flex items-center'>
+                                        <AppLogo appName={app.name} />
+                                        <div className='ml-1'>
+                                            <span className='capitalize mr-1'>
+                                                {app.name}
+                                            </span>
+                                            <span className='lowercase'>
+                                                {findApplicationByName(app.name).environment_variables?.imageTag}
+                                            </span>
+                                            <div className='text-sm uppercase text-gray-400'>{app.install_folder}</div>
+                                        </div>
                                     </div>
-                                    {/* Set first install folder value as Category  */}
-                                    <div className='text-sm uppercase text-gray-400'>{app.install_folder}</div>
                                 </div>
                             })}
                         </div>
-                    </div>
-                </div>
-
+                    </Panel>
+                </PanelGroup>
             </div>
 
         </div>

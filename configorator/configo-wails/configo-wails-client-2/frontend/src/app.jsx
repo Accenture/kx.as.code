@@ -56,7 +56,7 @@ const closedMixin = (theme) => ({
     overflowX: "hidden",
     width: `calc(${theme.spacing(7)} + 1px)`,
     [theme.breakpoints.up("sm")]: {
-        width: `calc(${theme.spacing(8)} + 1px)`,
+        width: `calc(${theme.spacing(6.2)} + 1px)`
     },
 });
 
@@ -267,6 +267,15 @@ export function App() {
                                 </Routes>
                             </div>
 
+                            {/* Footer Section */}
+                            <div className="bg-ghBlack p-4 pt-3 w-full text-gray-400 flex justify-end px-10">
+                                <button className="hover:text-white" onClick={() => {
+                                    OpenURL("https://github.com/Accenture/kx.as.code")
+                                }}>
+                                    <GitHubIcon fontSize="small" />
+                                </button>
+                            </div>
+
                         </Box>
                         <Toaster
                             expand visibleToasts={3}
@@ -284,14 +293,6 @@ export function App() {
                     </Box>
                 </ThemeProvider>
             </div >
-            {/* Footer Section */}
-            <div className="bg-ghBlack p-4 pt-3 absolute zIndex-20 bottom-0 w-full text-gray-400 hover:text-white flex justify-end px-10">
-                <button onClick={() => {
-                    OpenURL("https://github.com/Accenture/kx.as.code")
-                }}>
-                    <GitHubIcon fontSize="small" />
-                </button>
-            </div>
         </div>
 
     );
@@ -345,9 +346,9 @@ const MenuItem = ({ menuItemName, slug, isBuildStarted }) => {
             <ListItemButton
                 sx={{
                     justifyContent: open ? "initial" : "center",
-                    px: 1.5,
+                    padding: 1,
                     backgroundColor: slug == menuItemName ? "#5a86ff" : "",
-                    margin: "9px",
+                    margin: "6px",
                     borderRadius: "3px",
                     marginTop: "0px",
                     "&:hover": {
@@ -356,14 +357,14 @@ const MenuItem = ({ menuItemName, slug, isBuildStarted }) => {
                 }}
             >
                 <ListItemIcon
-                    className="listItemIconContainer items-center flex"
+                    className="listItemIconContainer items-center flex justify-center"
                     sx={{
                         minWidth: 0,
                         mr: open ? 3 : "auto",
                     }}
                 >
                     {getMenuItemIcon(menuItemName)}
-                    <span className="ml-6 capitalize">{menuItemName}</span>
+                    <span className="ml-7 capitalize">{menuItemName}</span>
                 </ListItemIcon>
             </ListItemButton>
         </Link>
