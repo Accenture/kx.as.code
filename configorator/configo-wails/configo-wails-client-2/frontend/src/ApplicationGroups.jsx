@@ -28,7 +28,7 @@ import ApplicationSelection from './ApplicationSelection';
 import FilterList from '@mui/icons-material/FilterList';
 import { Clear, Info } from '@mui/icons-material';
 import { IconButton } from '@mui/material';
-import { SearchInput } from './SearchInput';
+import { FilterInput } from './FilterInput';
 import { InfoBox } from './InfoBox';
 
 
@@ -298,7 +298,7 @@ const UIConfigTabContent = ({ activeTab, handleTabClick, setJsonData, applicatio
 
         const newObject = {
             title: `New Group ${nextNumber}`,
-            description: 'New Group Description',
+            description: '',
             action_queues: {
                 install: [
                 ],
@@ -339,14 +339,15 @@ const UIConfigTabContent = ({ activeTab, handleTabClick, setJsonData, applicatio
             const newData = [...prevData];
             newData.splice(index, 1);
             if (selectedItem === index) {
-                setSelectedItem(null);
+                setSelectedItem(selectedItem - 1);
             }
             return newData;
         });
     };
 
     const generateUniqueTitle = (title, newData) => {
-        let newTitle = title + "-COPY";
+        let newTitle = "";
+        newTitle = title !== "" ? newTitle = title + "-COPY" : "No Titel-COPY"
         let count = 1;
 
         while (newData.some(item => item.title === newTitle || item.title.startsWith(newTitle + '-'))) {
@@ -536,10 +537,10 @@ const UIConfigTabContent = ({ activeTab, handleTabClick, setJsonData, applicatio
     return (
         <div id='config-ui-container' className='flex flex-col'>
             <PanelGroup direction="horizontal" id="group" className="tab-content dark:text-white text-black flex-1">
-                <Panel defaultSize={defaultLayout[0]} id="left-panel" className='min-w-[290px]'>
+                <Panel defaultSize={defaultLayout[0]} id="left-panel" className='min-w-[250px]'>
 
                     {/* Search Input Field with filter button */}
-                    <SearchInput setSearchTerm={setSearchTerm} searchTerm={searchTerm} itemsCount={data2.length} itemName={"Application Groups"} hasActionButton={true} actionFunction={handleAddNewItem} />
+                    <FilterInput setSearchTerm={setSearchTerm} searchTerm={searchTerm} itemsCount={data2.length} itemName={"Application Groups"} hasActionButton={true} actionFunction={handleAddNewItem} />
                     {/* Application Groups actions */}
                     <div className="dark:bg-ghBlack2 overflow-y-scroll px-2 py-3 custom-scrollbar" style={{ height: `${windowHeight - 103 - 67 - 40 - 67}px` }} id="list">
                         {isLoading ? (<div className="animate-pulse flex flex-col col-span-full px-3">
@@ -547,7 +548,7 @@ const UIConfigTabContent = ({ activeTab, handleTabClick, setJsonData, applicatio
                     </div>
                 </Panel>
                 <PanelResizeHandle id="resize-handle" className='w-1 hover:bg-kxBlue bg-ghBlack2' />
-                <Panel defaultSize={defaultLayout[1]} id="right-panel" className="min-w-[500px]">
+                <Panel defaultSize={defaultLayout[1]} id="right-panel" className="min-w-[300px]">
                     {/* <ApplicationGroupsModal isOpen={modalIsOpen} onRequestClose={closeModal} applicationGroupTitle={detailsObject.title} applicationGroup={detailsObject} addApplicationToApplicationGroupById={addApplicationToApplicationGroupById} /> */}
 
                     <div className={` ${applicationGroupDetailTab == "config-ui" ? "bg-ghBlack2" : "bg-ghBlack2"} overflow-y-scroll custom-scrollbar pt-0`} style={{ height: `${windowHeight - 103 - 40 - 53}px` }}>
@@ -583,21 +584,18 @@ const UIConfigTabContent = ({ activeTab, handleTabClick, setJsonData, applicatio
                                         </div>
 
                                         <div className="items-center mb-3" >
-                                            <div className='text-gray-600 text-sm font-semibold uppercase'>Group Title: </div>
-                                            <input type="text" value={data2[selectedItem].title}
-                                                s className={`w-full focus:outline-none rounded-sm p-2 bg-ghBlack3 focus:bg-ghBlack4 text-white`}
+                                            <input type="text" placeholder='Add a group title' value={data2[selectedItem].title}
+                                                className={`w-full focus:outline-none rounded-sm p-2 bg-ghBlack3 focus:bg-ghBlack4 text-white`}
                                                 onChange={(e) => handleInputChange('title', e.target.value)}
                                             />
                                         </div>
 
                                         <div className="items-center mb-1.5">
-                                            <div className='text-gray-600 text-sm font-semibold uppercase'>Group Description: </div>
-                                            <textarea type="text" value={data2[selectedItem].description} onChange={(e) => handleInputChange('description', e.target.value)} className='border-ghBlack3 w-full focus:bg-ghBlack4 focus:outline-none rounded-sm p-2 pr-10 bg-ghBlack3 text-white custom-scrollbar h-[120px] resize-none' />
+                                            <textarea type="text" rows="3" placeholder='Add a group description' value={data2[selectedItem].description} onChange={(e) => handleInputChange('description', e.target.value)} className='border-ghBlack3 w-full focus:bg-ghBlack4 focus:outline-none rounded-sm p-2 pr-10 bg-ghBlack3 text-white custom-scrollbar resize-none' />
                                         </div>
                                     </div>
 
                                     <div className="items-center">
-                                        <div className='text-gray-600 text-sm font-semibold uppercase'>Applications: </div>
                                         <ApplicationSelection applicationGroupTitle={data2[selectedItem].title} applicationGroup={data2[selectedItem]} addApplicationToApplicationGroupById={addApplicationToApplicationGroupById} handleAddApplication={handleAddApplication} handleRemoveApplication={handleRemoveApplication} />
                                     </div>
 

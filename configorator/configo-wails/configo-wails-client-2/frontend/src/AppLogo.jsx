@@ -1,38 +1,57 @@
 import React, { useState, useEffect } from 'react';
 
-const AppLogo = ({ appName }) => {
+export default function AppLogo({ appName }) {
     const [image, setImage] = useState(null);
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
+        let isMounted = true; // Flag to track if the component is still mounted
+
         const fetchImage = async () => {
             try {
                 const { default: imageModule } = await import(`./assets/media/png/appImgs/${appName}.png`);
-                setImage(imageModule);
+                if (isMounted) {
+                    setImage(imageModule);
+                    setIsLoading(false);
+                }
             } catch (error) {
                 console.error('Error loading image:', error);
                 const noImagePath = './assets/media/svg/no_image_app.svg';
 
                 try {
                     const { default: imageModule } = await import(noImagePath);
-                    setImage(imageModule);
+                    if (isMounted) {
+                        setImage(imageModule);
+                    }
                 } catch (fallbackError) {
                     console.error('Error fetching or processing fallback image:', fallbackError);
-                    setImage(null); 
+                    if (isMounted) {
+                        setImage(null);
+                    }
                 }
             }
         };
 
         fetchImage();
-    }, [appName]);
 
-    return image ? (
-        <img
-            className='p-1'
-            src={image}
-            alt={appName}
-            style={{ maxHeight: '40px', width: '40px', display: 'block' }}
-        />
-    ) : null;
-};
+        // Cleanup function to set isMounted to false when the component unmounts
+        return () => {
+            isMounted = false;
+        };
+    }, [appName, setIsLoading, setImage]);
 
-export default AppLogo;
+    return (
+        !isLoading ? (
+            image ? (
+                <img
+                    className='p-1'
+                    src={image}
+                    alt={appName}
+                    style={{ maxHeight: '40px', width: '40px', display: 'block' }}
+                />
+            ) : null
+        ) : (
+            <div className='h-[36px] w-[36px] rounded-full animate-pulse bg-ghBlack4'></div>
+        )
+    );
+}

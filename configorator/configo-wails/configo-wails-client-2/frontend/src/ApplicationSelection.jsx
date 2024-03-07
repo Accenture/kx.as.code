@@ -3,7 +3,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import applicationsJson from './assets/templates/applications.json';
-import { SearchInput } from './SearchInput';
+import { FilterInput } from './FilterInput';
 import { InfoBox } from './InfoBox';
 import AppLogo from './AppLogo';
 import {
@@ -74,9 +74,9 @@ export default function ApplicationSelection({ applicationGroup, addApplicationT
 
             <div className='pr-0 rounded-md w-full bg-ghBlack2'>
                 <PanelGroup direction="horizontal" id="group" className="tab-content dark:text-white text-black flex-1 bg-ghBlack2">
-                    <Panel defaultSize={defaultLayout[0]} id="left-panel" className='min-w-[300px]'>
+                    <Panel defaultSize={defaultLayout[0]} id="left-panel" className='min-w-[200px]'>
                         {/* Input Search  */}
-                        <SearchInput setSearchTerm={setSearchTerm} searchTerm={searchTerm} itemsCount={applicationsJson.length} itemName={"Applications"} hasActionButton={false} />
+                        <FilterInput setSearchTerm={setSearchTerm} searchTerm={searchTerm} itemsCount={applicationsJson.length} itemName={"Applications"} hasActionButton={false} />
                         <div className='h-[300px] overflow-y-scroll custom-scrollbar mt-3 px-2'>
                             <ul>
                                 {
@@ -139,7 +139,7 @@ export default function ApplicationSelection({ applicationGroup, addApplicationT
                         </div>
                     </Panel>
                     <PanelResizeHandle id="resize-handle" className='w-1 hover:bg-kxBlue bg-ghBlack2' />
-                    <Panel defaultSize={defaultLayout[1]} id="right-panel" className="min-w-[300px] p-2">
+                    <Panel defaultSize={defaultLayout[1]} id="right-panel" className="min-w-[200px] p-2">
                         <div className='text-left text-gray-600 mb-3 font-semibold uppercase text-sm'>Added Applications to Group ({applicationGroup.action_queues.install.length})</div>
                         <div className='h-[300px] overflow-y-scroll custom-scrollbar pr-2'>
                             {applicationGroup.action_queues.install.map((app) => {

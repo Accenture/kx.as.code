@@ -84,7 +84,7 @@ export function ApplicationGroupCard({ index, appGroup, selectedItem, handleItem
                 <div className='flex items-center'>
                     <LayersIcon fontSize="medium" className="mr-2" />
                     <div className="">
-                        <div className='whitespace-nowrap w-[190px] overflow-hidden text-ellipsis'>{appGroup.title}</div>
+                        <div className='whitespace-nowrap w-[190px] overflow-hidden text-ellipsis'>{appGroup.title !== "" ? appGroup.title : "No Title"}</div>
                         <div className='text-xs uppercase text-gray-400 text-ellipsis overflow-hidden flex'>
                             {appGroup.action_queues.install[0] !== undefined ? (
                                 appGroup.action_queues.install.length > 1 ? (

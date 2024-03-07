@@ -268,7 +268,7 @@ export function App() {
                             </div>
 
                             {/* Footer Section */}
-                            <div className="bg-ghBlack p-4 pt-3 w-full text-gray-400 flex justify-end px-10">
+                            <div className="bg-ghBlack4 p-4 pt-3 w-full text-gray-400 flex justify-end px-10">
                                 <button className="hover:text-white" onClick={() => {
                                     OpenURL("https://github.com/Accenture/kx.as.code")
                                 }}>
