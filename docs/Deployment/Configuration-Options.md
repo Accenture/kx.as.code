@@ -1,6 +1,6 @@
 # Profile Configuration
 
-Each [deployment profile](../../Deployment/Deployment-Profiles/) needs a profile-config.json file to describe how it should start up, and once the VMs are up, how things such as networking and storage should be configured.
+Each [deployment profile](./Deployment-Profiles.md) needs a profile-config.json file to describe how it should start up, and once the VMs are up, how things such as networking and storage should be configured.
 
 All of this is described in the profile-config.json. Here an example file.
 
@@ -75,9 +75,10 @@ All of this is described in the profile-config.json. Here an example file.
         }
     }
 ```
+
 Each item in example JSON file above is described in more detail in the table below.
 
-Where a configuration item is marked as not "Configurable via Launcher", the setting must be completed directly in profile-config.json. For all others, see the Quick Start Guide on how to adjust the configuration in the [Jenkins based configurator and launcher](../../Quick-Start-Guide/).
+Where a configuration item is marked as not "Configurable via Launcher", the setting must be completed directly in profile-config.json. For all others, see the Quick Start Guide on how to adjust the configuration in the [Jenkins based configurator and launcher](../Quick-Start-Guide.md).
 
 | Property                                                            | Description                                                                                                                                                                                                                  | Configurable via Launcher? | Default Value            |
 |---------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------|--------------------------|

@@ -6,8 +6,7 @@ There are two approaches to accessing applications remotely.
 
 2. Access the desktop remotely
 
-This document describes number 2. For accessing the applications outside of the VM, see the following [guide](../../Deployment/External-Application-Access/).
-
+This document describes number 2. For accessing the applications outside of the VM, see the following [guide](./External-Application-Access.md).
 
 ## Accessing KX.AS.CODE Desktop Remotely
 
@@ -17,8 +16,6 @@ The solutions are installed via scripts in the following [GitHub location](https
 
 To reach them, the following ports needed to be opened and NATed.
 
-
-
 Table: Remote desktop listening ports
 
 | Technology                                       | Listening Port |
@@ -27,23 +24,18 @@ Table: Remote desktop listening ports
 | TigerVNC - https://tigervnc.org/                 | 5901 (TCP)     |
 | NoMachine - https://www.nomachine.com/           | 4000 (TCP/UDP) |
 
-
-
 Here are the three options in detail:
 
-
-
-#### Apache Guacamole
+### Apache Guacamole
 
 Whilst the performance of this option is the lowest of the three, the biggest advantage is that no client tools need to be installed to access this site. All you need is a browser and a route to the KX-Main server's Guacamole port.
-It also has the advantage of being 2FA enabled, so is the most secure of the three. It is also multi-user capable, unlike with the faster NoMachine (the free version included in KX.AS.CODE). 
+It also has the advantage of being 2FA enabled, so is the most secure of the three. It is also multi-user capable, unlike with the faster NoMachine (the free version included in KX.AS.CODE).
 
 This also has the advantage of SSL encryption between the client and the Guacamole server.
 
 For more information, see the code linked above, and visit [Guacamole's site](https://guacamole.apache.org/){:target="\_blank"}.
 
-
-#### TigerVNC
+### TigerVNC
 
 This service is used by Guacamole to serve up the VNC traffic remotely via VNC. It is not setup securely, so it is not recommended to use this connection, except for local installations of KX.AS.CODE, where in most cases, remote access will not be needed, because the local virtualization tools provide direct access to the desktop.
 
@@ -51,7 +43,7 @@ To access the VNC desktop, you will need a VNC client. There are a few available
 
 Read more about TigerVNC [here](https://tigervnc.org/){:target="\_blank"}.
 
-#### NoMachine
+### NoMachine
 
 NoMachine has its own proprietary security transport protocol (read more [here](https://www.nomachine.com/AR10K00705){:target="\_blank"}) and is the most performant of the options here.
 

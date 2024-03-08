@@ -3,6 +3,7 @@ repo_url: 'https://github.com/Accenture/kx.as.code'
 repo_name: 'Github'
 site_description: 'KX.AS.CODE'
 site_author: 'Patrick Delamere'
+site_url: 'https://accenture.github.io/kx.as.code/'
 
 docs_dir: docs
 
@@ -86,10 +87,10 @@ markdown_extensions:
     - pymdownx.superfences
     - pymdownx.magiclink
     - pymdownx.emoji:
-        emoji_index: !!python/name:materialx.emoji.twemoji
-        emoji_generator: !!python/name:materialx.emoji.to_svg
+        emoji_index: !!python/name:material.extensions.emoji.twemoji
+        emoji_generator: !!python/name:material.extensions.emoji.to_svg
     - toc:
-        permalink: true
+        permalink: "#"
     - codehilite:
         guess_lang: false
 

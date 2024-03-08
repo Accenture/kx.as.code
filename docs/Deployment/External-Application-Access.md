@@ -1,14 +1,14 @@
 # External Application Access
 
-Check the following [page](../../Deployment/Remote-Access/) for accessing the remote desktop. This page will cover how to access the application URLs remotely.
+Check the following [page](../Deployment/Remote-Access.md) for accessing the remote desktop. This page will cover how to access the application URLs remotely.
 
 This page is particularly relevant if you have gone for a minimal setup with the remote desktop disabled.
 
 There are just three things that need to be performed.
- 
+
 - Create a NAT rule within your virtualization solution, from your host machine to the KX-Main1 VM on port 443 (source and destination port) (already done automatically, just adding it here for completeness)
 - Install the KX.AS.CODE certificate authority root and intermediate root CAs to your certificate trust store
-- Add host entries to your `/etc/hosts` for Linux/Mac or `C:\Windows\System32\drivers\etc\hosts` for Windows 
+- Add host entries to your `/etc/hosts` for Linux/Mac or `C:\Windows\System32\drivers\etc\hosts` for Windows
 
 All the files you need are made available to you during the initial core setup of KX.AS.CODE.
 
@@ -16,7 +16,7 @@ All the files you need are made available to you during the initial core setup o
 !!! danger "Important"
     If you are running KX.AS.CODE in a public cloud, it is recommended to access the deployed applications via an `allow list`. Check your cloud's documentation on how to do this.
 
-### Fully Qualified Domain Name (FQDN) Resolution
+## Fully Qualified Domain Name (FQDN) Resolution
 
 To be able to access the application URLs from outside the VM, the ingress port is already exposed automatically.
 However, to access the applications, it is necessary to use the domain names, else the NGINX ingress controller will not know how to route the request.
@@ -39,7 +39,8 @@ The error that "Your connection is not private" is normal, as you have likely no
 
     If you are running in a cloud, you may want to create a DNS entry in your Route53 or equivalent service, for reaching the NGINX ingress controller. Don't forget you may also need to update your firewall rules. 
 
-### SSL
+## SSL
+
 When KX.AS.CODE is deployed, it creates a new `Certificates Authority`. All SSL certificates created for KX.AS.CODE are signed with this CA.
 
 Therefore, to access the URLs remotely and have a green padlock in your browser, you will need to install these to your workstation.
@@ -74,4 +75,3 @@ Certificate chain complete
 Gitlab now loading with a trusted certificate and the error message has gone
 
 ![](../assets/images/external_access_7.png){: .zoom}
-

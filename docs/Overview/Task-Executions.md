@@ -102,6 +102,6 @@ A shell script must be defined for each executable task and placed in a componen
 
 The tasks appear as follows in the KX-Portal and can be executed by clicking on the `Execute` button.
 
-![](../../assets/images/executeTasksAemDispatcher.png)
+![](../assets/images/executeTasksAemDispatcher.png)
 
-![](../../assets/images/executeTasksDockerRegistry.png)
+![](../assets/images/executeTasksDockerRegistry.png)

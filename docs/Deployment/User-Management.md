@@ -3,7 +3,7 @@
 There are two ways to deploy KX.AS.CODE with additional users. The first is via the Jenkins based KX.AS.CODE launcher, and the second is by editing `users.json` in the respective profile directory manually.
 
 !!! info
-    See also the [IAM and SSO Guide](../../Overview/IAM-and-SSO/) for more details on the backend 
+    See also the [IAM and SSO Guide](../Overview/IAM-and-SSO.md) for more details on the backend.
 
 !!! note
     The initial password for the users will be generated automatically on creation. They will be available in the GoPass password repository of the base user.
@@ -17,7 +17,7 @@ Go to the user management tab in the Jenkins based KX.AS.CODE configurator and a
 
 ![](../assets/images/kx-as-code_configurator_user-provisioning.png){: .zoom}
 
-Each time a user is added, the profile's `users.json` is updated. 
+Each time a user is added, the profile's `users.json` is updated.
 
 You cannot remove the `kx.hero` user as it is a standard user. It is possible to change the base default user by changing it in the general properties tab.
 
@@ -30,7 +30,7 @@ It is also possible to create / populate the `users.json` file manually. See bel
 
 ## Users.json
 
-To create additional user on first start of KX.AS.CODE, a `users.json` file must be placed in the profile's directory. 
+To create additional user on first start of KX.AS.CODE, a `users.json` file must be placed in the profile's directory.
 
 Most of the fields in the JSON below should be self-explanatory. For the keyboard_language field, there are currently the following valid options.
 
@@ -61,4 +61,3 @@ Example `user.json`:
     }
 }
 ```
-

@@ -8,6 +8,7 @@ Here the instructions for building the AMI images needed to launch KX.AS.CODE on
 First, understand how the packer build process for AWS works by reading the following [documentation](https://learn.hashicorp.com/tutorials/packer/aws-get-started-build-image?in=packer/aws-get-started){:target="\_blank"}.
 
 ### Prerequisites
+
 - Packer installed
 - An AWS account with secret key and secret
 - Route to the internet in the AWS network where the packer build will be launched
@@ -16,19 +17,19 @@ First, understand how the packer build process for AWS works by reading the foll
 
 Unlike with the local setup, for the private and public clouds, the build process has to be kicked off manually from the command line.
 
-Before you get started, see the following [documentation from Packer](hhttps://www.packer.io/plugins/builders/amazon){:target="\_blank"} to see how the AWS AMI packer builder works.
+Before you get started, see the following [documentation from Packer](https://www.packer.io/plugins/builders/amazon){:target="\_blank"} to see how the AWS AMI packer builder works.
 
 The most important part of the packer build process are the packer JSON files themselves. Here are their location, depending on the OS from where you are launching the build process from.
 
 #### Windows
 
-* [Kx-Main](https://github.com/Accenture/kx.as.code/blob/main/base-vm/build/packer/windows/kx-main-local-profiles.json){:target="\_blank"}
-* [KX-Node](https://github.com/Accenture/kx.as.code/blob/main/base-vm/build/packer/windows/kx-node-cloud-profiles.json){:target="\_blank"}
+- [Kx-Main](https://github.com/Accenture/kx.as.code/blob/main/base-vm/build/packer/windows/kx-main-local-profiles.json){:target="\_blank"}
+- [KX-Node](https://github.com/Accenture/kx.as.code/blob/main/base-vm/build/packer/windows/kx-node-cloud-profiles.json){:target="\_blank"}
 
 #### Mac/Linux
 
-* [Kx-Main](https://github.com/Accenture/kx.as.code/blob/main/base-vm/build/packer/darwin-linux/kx-main-cloud-profiles.json){:target="\_blank"}
-* [KX-Node](https://github.com/Accenture/kx.as.code/blob/main/base-vm/build/packer/darwin-linux/kx-node-cloud-profiles.json){:target="\_blank"}
+- [Kx-Main](https://github.com/Accenture/kx.as.code/blob/main/base-vm/build/packer/darwin-linux/kx-main-cloud-profiles.json){:target="\_blank"}
+- [KX-Node](https://github.com/Accenture/kx.as.code/blob/main/base-vm/build/packer/darwin-linux/kx-node-cloud-profiles.json){:target="\_blank"}
 
 There is not a huge difference between Windows and Mac/Linux. Certainly KX.AS.CODE is built in exactly the same way, just some of the post processing steps differ, due to differing terminal sessions (Powershell versus Bash for example)
 
@@ -144,4 +145,4 @@ One of the parameters is the Debian 11 AMI id to use as the base image, on top o
 !!! note
     Remember to write down your AMI id once you have built the images. You will need to refer to them when deploying the built images.
 
-Once the images are built, see the following [guide](../../Deployment/Public-Clouds/) on how to deploy them.
+Once the images are built, see the following [guide](../Deployment/Public-Clouds.md) on how to deploy them.
