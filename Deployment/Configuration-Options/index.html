@@ -1,0 +1,1993 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="KX.AS.CODE">
+      
+      
+        <meta name="author" content="Patrick Delamere">
+      
+      
+        <link rel="canonical" href="https://accenture.github.io/kx.as.code/Deployment/Configuration-Options/">
+      
+      
+        <link rel="prev" href="../../Build/Public-Clouds/">
+      
+      
+        <link rel="next" href="../Customizing/">
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.13">
+    
+    
+      
+        <title>Profile Configuration - KX.AS.CODE</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.7e359304.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=arial,+sans-serif:300,300i,400,400i,700,700i%7Cmonospace:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"arial, sans-serif";--md-code-font:"monospace"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/css/custom.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="pink">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#profile-configuration" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="KX.AS.CODE" class="md-header__button md-logo" aria-label="KX.AS.CODE" data-md-component="logo">
+      
+  <img src="../../assets/images/kxascode_white_logo.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            KX.AS.CODE
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Profile Configuration
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Share" aria-label="Share" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7 0-.24-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91 1.61 0 2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08Z"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/Accenture/kx.as.code" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Github
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="KX.AS.CODE" class="md-nav__button md-logo" aria-label="KX.AS.CODE" data-md-component="logo">
+      
+  <img src="../../assets/images/kxascode_white_logo.png" alt="logo">
+
+    </a>
+    KX.AS.CODE
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/Accenture/kx.as.code" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Github
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Welcome!
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Quick-Start-Guide/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Quick Start Guide
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    Overview
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Overview
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Overview/Architecture/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Architecture
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Overview/Application-Library/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Application Library
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Overview/Concepts/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Concepts
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Overview/Future-Roadmap/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Roadmap
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Overview/Questions-and-Answers/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Questions and Answers
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Overview/Raising-a-Bug-Report/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Raising a Bug Report
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Overview/Raising-a-Feature-Request/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Raising a Feature Request
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Overview/Networking/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Networking
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Overview/Orchestrators/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Orchestrators
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Overview/IAM-and-SSO/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    IAM and SSO
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Overview/Storage/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Storage
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Overview/Task-Executions/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Task Executions
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Overview/Use-Case-Example/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Use Case Example
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    Build
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Build
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Build/Local-Virtualizations/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Local Virtualization
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Build/Raspberry-Pi-Cluster/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Raspberry Pi Cluster
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Build/Private-Clouds/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Private Clouds
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Build/Public-Clouds/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Public Cloud
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    Deployment
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            Deployment
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Profile Configuration
+  </span>
+  
+
+      </a>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Customizing/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Customizing KX.AS.CODE
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Deployment-Profiles/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Deployment Profiles
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../External-Application-Access/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    External Application Access
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Initial-Setup/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Initialize Launcher
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Local-Virtualizations/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Local Virtualization
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Raspberry-Pi-Cluster/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Raspberry Pi Cluster
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Manual-Provisioning/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Manual Provisioning
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Minimal-Deployment/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Minimal Deployment
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Private-Clouds/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Private Cloud
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Provisioning-Flow/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Installation Flow
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Provisioning-Templates/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Installation Groups
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Public-Clouds/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Public Cloud
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Remote-Access/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Remote Access
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Troubleshooting/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Troubleshooting
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../User-Management/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    User Management
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    Development
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            Development
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Development/Adding-a-Solution/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Adding a Solution
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Development/Best-Practices/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Best Practices
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Development/Central-Functions/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Central Functions
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Development/Contribution-Guidelines/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Contribute
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Development/Debugging/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Debugging
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Development/Releasing/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Releasing
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Development/Solution-Metadata/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Solution Metadata
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Development/Testing/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Testing
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    Prerequisites
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            Prerequisites
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Prerequisites/OpenStack-Setup/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Setting up DevStack
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+  
+
+
+<h1 id="profile-configuration">Profile Configuration<a class="headerlink" href="#profile-configuration" title="Permanent link">#</a></h1>
+<p>Each <a href="../Deployment-Profiles/">deployment profile</a> needs a profile-config.json file to describe how it should start up, and once the VMs are up, how things such as networking and storage should be configured.</p>
+<p>All of this is described in the profile-config.json. Here an example file.</p>
+<div class="highlight"><pre><span></span><code><span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;config&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;allowWorkloadsOnMaster&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;true&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;baseDomain&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;kx-as-code.local&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;baseIpType&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;static&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;basePassword&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;L3arnandshare&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;baseUser&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;kx.hero&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;certificationMode&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;defaultKeyboardLanguage&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;de&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;disableLinuxDesktop&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;false&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;disableSessionTimeout&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;dnsResolution&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;static&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;docker&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">&quot;dockerhub_email&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+<span class="w">                </span><span class="nt">&quot;dockerhub_password&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+<span class="w">                </span><span class="nt">&quot;dockerhub_username&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="w">            </span><span class="p">},</span>
+<span class="w">            </span><span class="nt">&quot;environmentPrefix&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;demo1&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;glusterFsDiskSize&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">200</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;kubeOrchestrator&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;k8s&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;local_volumes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">&quot;fifty_gb&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">                </span><span class="nt">&quot;five_gb&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">10</span><span class="p">,</span>
+<span class="w">                </span><span class="nt">&quot;one_gb&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">10</span><span class="p">,</span>
+<span class="w">                </span><span class="nt">&quot;ten_gb&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">10</span><span class="p">,</span>
+<span class="w">                </span><span class="nt">&quot;thirty_gb&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span>
+<span class="w">            </span><span class="p">},</span>
+<span class="w">            </span><span class="nt">&quot;metalLbIpRange&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">&quot;ipRangeEnd&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;10.10.76.150&quot;</span><span class="p">,</span>
+<span class="w">                </span><span class="nt">&quot;ipRangeStart&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;10.10.76.100&quot;</span>
+<span class="w">            </span><span class="p">},</span>
+<span class="w">            </span><span class="nt">&quot;proxy_settings&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">&quot;http_proxy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+<span class="w">                </span><span class="nt">&quot;https_proxy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+<span class="w">                </span><span class="nt">&quot;no_proxy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="w">            </span><span class="p">},</span>
+<span class="w">            </span><span class="nt">&quot;selectedTemplates&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;null&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;sslProvider&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;self-signed&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;standaloneMode&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;false&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;startupMode&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;normal&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;staticNetworkSetup&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">&quot;baseFixedIpAddresses&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">&quot;kx-main1&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;10.100.76.200&quot;</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;kx-main2&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;10.100.76.201&quot;</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;kx-main3&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;10.100.76.202&quot;</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;kx-worker1&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;10.100.76.203&quot;</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;kx-worker2&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;10.100.76.204&quot;</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;kx-worker3&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;10.100.76.205&quot;</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;kx-worker4&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;10.100.76.206&quot;</span>
+<span class="w">                </span><span class="p">},</span>
+<span class="w">                </span><span class="nt">&quot;dns1&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;10.100.76.200&quot;</span><span class="p">,</span>
+<span class="w">                </span><span class="nt">&quot;dns2&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;8.8.8.8&quot;</span><span class="p">,</span>
+<span class="w">                </span><span class="nt">&quot;gateway&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;10.100.76.2&quot;</span>
+<span class="w">            </span><span class="p">},</span>
+<span class="w">            </span><span class="nt">&quot;updateSourceOnStart&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;true&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;virtualizationType&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;local&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;vm_properties&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">&quot;3d_acceleration&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;off&quot;</span><span class="p">,</span>
+<span class="w">                </span><span class="nt">&quot;main_admin_node_cpu_cores&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span>
+<span class="w">                </span><span class="nt">&quot;main_admin_node_memory&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">12288</span><span class="p">,</span>
+<span class="w">                </span><span class="nt">&quot;main_node_count&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">                </span><span class="nt">&quot;main_replica_node_cpu_cores&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span>
+<span class="w">                </span><span class="nt">&quot;main_replica_node_memory&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">8196</span><span class="p">,</span>
+<span class="w">                </span><span class="nt">&quot;worker_node_count&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span>
+<span class="w">                </span><span class="nt">&quot;worker_node_cpu_cores&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">6</span><span class="p">,</span>
+<span class="w">                </span><span class="nt">&quot;worker_node_memory&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">32768</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+</code></pre></div>
+<p>Each item in example JSON file above is described in more detail in the table below.</p>
+<p>Where a configuration item is marked as not "Configurable via Launcher", the setting must be completed directly in profile-config.json. For all others, see the Quick Start Guide on how to adjust the configuration in the <a href="../../Quick-Start-Guide/">Jenkins based configurator and launcher</a>.</p>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Description</th>
+<th>Configurable via Launcher?</th>
+<th>Default Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>config.allowWorkloadsOnMaster</td>
+<td>If false, taints will be removed from Kubernetes Kx-Main nodes, to allow pod scheduling on them</td>
+<td>Yes</td>
+<td><code>true</code></td>
+</tr>
+<tr>
+<td>config.baseDomain</td>
+<td>Configure wildcard domain that will be used to access all the applications</td>
+<td>Yes</td>
+<td><code>demo1.kx-as-code.local</code></td>
+</tr>
+<tr>
+<td>config.baseIpType</td>
+<td>This must be set to <code>dynamic</code> or <code>static</code></td>
+<td>No</td>
+<td>-</td>
+</tr>
+<tr>
+<td>config.basePassword</td>
+<td>The password of the initial user</td>
+<td>Yes</td>
+<td><code>L3arnandshare</code></td>
+</tr>
+<tr>
+<td>config.baseUser</td>
+<td>The initial user for accessing the desktop, all applications and SSH</td>
+<td>Yes</td>
+<td><code>kx.hero</code></td>
+</tr>
+<tr>
+<td>config.certificationMode</td>
+<td>[deprecated]</td>
+<td>-</td>
+<td>-</td>
+</tr>
+<tr>
+<td>config.defaultKeyboardLanguage</td>
+<td>The default language KX.AS.CODE has enabled initially. The language is adjustable onthe desktop via the tray icon</td>
+<td>No</td>
+<td><code>de</code></td>
+</tr>
+<tr>
+<td>config.disableLinuxDesktop</td>
+<td>Disables the Linux desktop completely and boot the main node to a compand prompt. There is a script in /usr/share/kx.as.code/workspace to re-enable it</td>
+<td>Yes</td>
+<td><code>false</code></td>
+</tr>
+<tr>
+<td>config.disableSessionTimeout</td>
+<td>Disables the timeout in the Kubernetes Dashboard</td>
+<td>No</td>
+<td><code>true</code></td>
+</tr>
+<tr>
+<td>config.dnsResolution</td>
+<td>----</td>
+<td>No</td>
+<td><code>hybrid</code></td>
+</tr>
+<tr>
+<td>config.docker<br/>.dockerhub_email</td>
+<td>Dockerhub login email. Only needed if exceeding the download rate limit</td>
+<td>No</td>
+<td>-</td>
+</tr>
+<tr>
+<td>config.docker<br/>.dockerhub_password</td>
+<td>Dockehub password. Only needed if exceeding the download rate limit</td>
+<td>No</td>
+<td>-</td>
+</tr>
+<tr>
+<td>config.docker<br/>.dockerhub_username</td>
+<td>Dockerhub username. Only needed if exceeding the download rate limit</td>
+<td>No</td>
+<td>-</td>
+</tr>
+<tr>
+<td>config.environmentPrefix</td>
+<td>The FQDN baseDomain is made  up of two parts. The <code>config.baseDomain</code> above and <code>config.environmentPrefix</code></td>
+<td>Yes</td>
+<td><code>demo1</code></td>
+</tr>
+<tr>
+<td>config.glusterFsDiskSize</td>
+<td>The size of the network storage to be thinly provisioned. Vagrant will take care to create and mount the drive which will be used by GlusterFS. This is not used in the minimal start mode.</td>
+<td>Yes</td>
+<td><code>200GB</code></td>
+</tr>
+<tr>
+<td>config.kubeOrchestrator</td>
+<td><code>k3s</code> or <code>k8s</code></td>
+<td>Yes</td>
+<td><code>k3s</code></td>
+</tr>
+<tr>
+<td>config.local_volumes.fifty_gb</td>
+<td>Number of local 50GB volumes to (thinly) provision on each node</td>
+<td>Yes</td>
+<td><code>0</code></td>
+</tr>
+<tr>
+<td>config.local_volumes.five_gb</td>
+<td>Number of local 5GB volumes to (thinly) provision on each node</td>
+<td>Yes</td>
+<td><code>10</code></td>
+</tr>
+<tr>
+<td>config.local_volumes.one_gb</td>
+<td>Number of local 1GB volumes to (thinly) provision on each node</td>
+<td>Yes</td>
+<td><code>10</code></td>
+</tr>
+<tr>
+<td>config.local_volumes.ten_gb</td>
+<td>Number of local 10GB volumes to (thinly) provision on each node</td>
+<td>Yes</td>
+<td><code>10</code></td>
+</tr>
+<tr>
+<td>config.local_volumes.thirty_gb</td>
+<td>Number of local 30GB volumes to (thinly) provision on each node</td>
+<td>Yes</td>
+<td><code>0</code></td>
+</tr>
+<tr>
+<td>config.metalLbIpRange<br/>.ipRangeEnd</td>
+<td>The end range for the MetalLB load-balancer. In most cases the default should be OK</td>
+<td>No</td>
+<td><code>10.10.76.150</code></td>
+</tr>
+<tr>
+<td>config.metalLbIpRange<br/>.ipRangeStart</td>
+<td>The start range for the MetalLB load-balancer. In most cases the default should be OK</td>
+<td>No</td>
+<td><code>10.10.76.100</code></td>
+</tr>
+<tr>
+<td>config.proxy_settings<br/>.http_proxy</td>
+<td>The http proxy URL. May be needed in some corporate situations</td>
+<td>No</td>
+<td>-</td>
+</tr>
+<tr>
+<td>config.proxy_settings<br/>.https_proxy</td>
+<td>The https proxy URL. May be needed in some corporate situations</td>
+<td>No</td>
+<td>-</td>
+</tr>
+<tr>
+<td>config.proxy_settings<br/>.no_proxy</td>
+<td>URLs/IPs the proxy setting should ignore. May be needed in some corporate situations</td>
+<td>No</td>
+<td>-</td>
+</tr>
+<tr>
+<td>config.selectedTemplates</td>
+<td>Relevant for the Jenkins based configurator only. A list of templates last selected in the Jenkins configurator</td>
+<td>No</td>
+<td>-</td>
+</tr>
+<tr>
+<td>config.sslProvider</td>
+<td>Can be self-signed or letsencrypt. Self-signed used the locally provisioned CFSSL based CALetsencrypt mainly makes sense in a cloud setting, where there is a route back to the service the certificate is being created for</td>
+<td>No</td>
+<td><code>self-signed</code></td>
+</tr>
+<tr>
+<td>config.standaloneMode</td>
+<td>May be deprecated soon, but determines if the set is running in a one-node (eg. just one kx-main node), which drives decisions later whether to install network storage or not</td>
+<td>Yes</td>
+<td><code>true</code></td>
+</tr>
+<tr>
+<td>config.startupMode</td>
+<td>normal, lite, or minimal. See the Quick Start Guide to see what is included in each mode</td>
+<td>Yes</td>
+<td><code>normal</code></td>
+</tr>
+<tr>
+<td>config.staticNetworkSetup<br/>.baseFixedIpAddresses<br/>.kx-main1</td>
+<td>Only has an effect if <code>baseIpType</code> is set to <code>static</code>. Sets the IP for the given node</td>
+<td>No</td>
+<td><code>10.10076.200</code></td>
+</tr>
+<tr>
+<td>config.staticNetworkSetup<br/>.baseFixedIpAddresses<br/>.kx-main2</td>
+<td>Only has an effect if <code>baseIpType</code> is set to <code>static</code>. Sets the IP for the given node</td>
+<td>No</td>
+<td><code>10.10076.201</code></td>
+</tr>
+<tr>
+<td>config.staticNetworkSetup<br/>.baseFixedIpAddresses<br/>.kx-main3</td>
+<td>Only has an effect if <code>baseIpType</code> is set to <code>static</code>. Sets the IP for the given node</td>
+<td>No</td>
+<td><code>10.10076.202</code></td>
+</tr>
+<tr>
+<td>config.staticNetworkSetup<br/>.baseFixedIpAddresses<br/>.kx-worker1</td>
+<td>Only has an effect if <code>baseIpType</code> is set to <code>static</code>. Sets the IP for the given node</td>
+<td>No</td>
+<td><code>10.10076.203</code></td>
+</tr>
+<tr>
+<td>config.staticNetworkSetup<br/>.baseFixedIpAddresses<br/>.kx-worker2</td>
+<td>Only has an effect if <code>baseIpType</code> is set to <code>static</code>. Sets the IP for the given node</td>
+<td>No</td>
+<td><code>10.10076.204</code></td>
+</tr>
+<tr>
+<td>config.staticNetworkSetup<br/>.baseFixedIpAddresses<br/>.kx-worker3</td>
+<td>Only has an effect if <code>baseIpType</code> is set to <code>static</code>. Sets the IP for the given node</td>
+<td>No</td>
+<td><code>10.10076.205</code></td>
+</tr>
+<tr>
+<td>config.staticNetworkSetup<br/>.baseFixedIpAddresses<br/>.kx-worker4</td>
+<td>Only has an effect if <code>baseIpType</code> is set to <code>static</code>. Sets the IP for the given node</td>
+<td>No</td>
+<td><code>10.10076.206</code></td>
+</tr>
+<tr>
+<td>config.staticNetworkSetup<br/>.dns1</td>
+<td>Only has an effect if <code>baseIpType</code> is set to <code>static</code>.</td>
+<td>No</td>
+<td><code>10.10076.200</code></td>
+</tr>
+<tr>
+<td>config.staticNetworkSetup<br/>.dns2</td>
+<td>Only has an effect if <code>baseIpType</code> is set to <code>static</code>.</td>
+<td>No</td>
+<td><code>8.8.8.8</code></td>
+</tr>
+<tr>
+<td>config.staticNetworkSetup<br/>.gateway</td>
+<td>Only has an effect if <code>baseIpType</code> is set to <code>static</code>.</td>
+<td>No</td>
+<td><code>10.10076.1</code></td>
+</tr>
+<tr>
+<td>config.updateSourceOnStart</td>
+<td>Determines whether the latest KX.AS.CODE source should be pulled from GitHub when the environment first initializes</td>
+<td>No</td>
+<td><code>true</code></td>
+</tr>
+<tr>
+<td>config.virtualizationType</td>
+<td><code>local_virtualization</code>, <code>private_cloud</code> or <code>public_cloud</code></td>
+<td>No</td>
+<td>-</td>
+</tr>
+<tr>
+<td>config.vm_properties<br/>.3d_acceleration</td>
+<td>VirtualBox specific. Turning it off solved some display issues</td>
+<td>No</td>
+<td><code>true</code></td>
+</tr>
+<tr>
+<td>config.vm_properties<br/>.main_admin_node_cpu_cores</td>
+<td>Number of CPU cores to allocate to KX-Main1 node. The node that contains the Kubernetes control-plane, and the desktop, plus all the admin tools, as well as network storage daemon etc</td>
+<td>Yes</td>
+<td><code>true</code></td>
+</tr>
+<tr>
+<td>config.vm_properties<br/>.main_admin_node_memory</td>
+<td>Memory size in MBs to allocate to KX-Main1 node</td>
+<td>Yes</td>
+<td><code>true</code></td>
+</tr>
+<tr>
+<td>config.vm_properties<br/>.main_node_count</td>
+<td>Number of Kx-Main nodes to start</td>
+<td>Yes</td>
+<td><code>true</code></td>
+</tr>
+<tr>
+<td>config.vm_properties<br/>.main_replica_node_cpu_cores</td>
+<td>Number of CPU cores to allocate to KX-Main* nodes (control-plane without the desktop and admin tools on Kx-Main1)</td>
+<td>Yes</td>
+<td><code>true</code></td>
+</tr>
+<tr>
+<td>config.vm_properties<br/>.main_replica_node_memory</td>
+<td>Memory size in MBs to allocate to KX-Main* nodes</td>
+<td>Yes</td>
+<td><code>true</code></td>
+</tr>
+<tr>
+<td>config.vm_properties<br/>.worker_node_count</td>
+<td>Number of Kx-Worker nodes to start</td>
+<td>Yes</td>
+<td><code>true</code></td>
+</tr>
+<tr>
+<td>config.vm_properties<br/>.worker_node_cpu_cores</td>
+<td>Number of CPU cores to allocate to KX-Worker nodes</td>
+<td>Yes</td>
+<td><code>true</code></td>
+</tr>
+<tr>
+<td>config.vm_properties<br/>.worker_node_memory</td>
+<td>Memory size in MBs to allocate to KX-Worker nodes</td>
+<td>Yes</td>
+<td><code>true</code></td>
+</tr>
+</tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12Z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.indexes", "navigation.sections", "navigation.top", "navigation.tracking", "navigation.expand", "search.highlight", "search.share", "search.suggest"], "search": "../../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.c8d2eff1.min.js"></script>
+      
+        <script src="../../assets/js/custom.js"></script>
+      
+    
+  </body>
+</html>

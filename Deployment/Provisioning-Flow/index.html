@@ -1,0 +1,2356 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="KX.AS.CODE">
+      
+      
+        <meta name="author" content="Patrick Delamere">
+      
+      
+        <link rel="canonical" href="https://accenture.github.io/kx.as.code/Deployment/Provisioning-Flow/">
+      
+      
+        <link rel="prev" href="../Private-Clouds/">
+      
+      
+        <link rel="next" href="../Provisioning-Templates/">
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.13">
+    
+    
+      
+        <title>Installation Flow - KX.AS.CODE</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.7e359304.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=arial,+sans-serif:300,300i,400,400i,700,700i%7Cmonospace:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"arial, sans-serif";--md-code-font:"monospace"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/css/custom.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="pink">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#installation-flow" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="KX.AS.CODE" class="md-header__button md-logo" aria-label="KX.AS.CODE" data-md-component="logo">
+      
+  <img src="../../assets/images/kxascode_white_logo.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            KX.AS.CODE
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Installation Flow
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Share" aria-label="Share" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7 0-.24-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91 1.61 0 2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08Z"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/Accenture/kx.as.code" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Github
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="KX.AS.CODE" class="md-nav__button md-logo" aria-label="KX.AS.CODE" data-md-component="logo">
+      
+  <img src="../../assets/images/kxascode_white_logo.png" alt="logo">
+
+    </a>
+    KX.AS.CODE
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/Accenture/kx.as.code" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Github
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Welcome!
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Quick-Start-Guide/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Quick Start Guide
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    Overview
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Overview
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Overview/Architecture/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Architecture
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Overview/Application-Library/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Application Library
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Overview/Concepts/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Concepts
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Overview/Future-Roadmap/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Roadmap
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Overview/Questions-and-Answers/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Questions and Answers
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Overview/Raising-a-Bug-Report/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Raising a Bug Report
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Overview/Raising-a-Feature-Request/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Raising a Feature Request
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Overview/Networking/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Networking
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Overview/Orchestrators/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Orchestrators
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Overview/IAM-and-SSO/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    IAM and SSO
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Overview/Storage/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Storage
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Overview/Task-Executions/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Task Executions
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Overview/Use-Case-Example/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Use Case Example
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    Build
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Build
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Build/Local-Virtualizations/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Local Virtualization
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Build/Raspberry-Pi-Cluster/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Raspberry Pi Cluster
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Build/Private-Clouds/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Private Clouds
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Build/Public-Clouds/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Public Cloud
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    Deployment
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            Deployment
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Configuration-Options/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Profile Configuration
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Customizing/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Customizing KX.AS.CODE
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Deployment-Profiles/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Deployment Profiles
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../External-Application-Access/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    External Application Access
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Initial-Setup/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Initialize Launcher
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Local-Virtualizations/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Local Virtualization
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Raspberry-Pi-Cluster/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Raspberry Pi Cluster
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Manual-Provisioning/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Manual Provisioning
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Minimal-Deployment/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Minimal Deployment
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Private-Clouds/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Private Cloud
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Installation Flow
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Installation Flow
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#general-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      General Options
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#use-of-variables" class="md-nav__link">
+    <span class="md-ellipsis">
+      Use of Variables
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Use of Variables">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pre-scripts" class="md-nav__link">
+    <span class="md-ellipsis">
+      Pre-Scripts
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-scripts" class="md-nav__link">
+    <span class="md-ellipsis">
+      Post Scripts
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#health-checks" class="md-nav__link">
+    <span class="md-ellipsis">
+      Health Checks
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#script-install-method" class="md-nav__link">
+    <span class="md-ellipsis">
+      Script Install Method
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#helm3-install-method" class="md-nav__link">
+    <span class="md-ellipsis">
+      Helm3 Install Method
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#argocd-install-method" class="md-nav__link">
+    <span class="md-ellipsis">
+      ArgoCD Install Method
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Provisioning-Templates/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Installation Groups
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Public-Clouds/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Public Cloud
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Remote-Access/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Remote Access
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Troubleshooting/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Troubleshooting
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../User-Management/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    User Management
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    Development
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            Development
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Development/Adding-a-Solution/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Adding a Solution
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Development/Best-Practices/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Best Practices
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Development/Central-Functions/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Central Functions
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Development/Contribution-Guidelines/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Contribute
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Development/Debugging/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Debugging
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Development/Releasing/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Releasing
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Development/Solution-Metadata/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Solution Metadata
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Development/Testing/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Testing
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    Prerequisites
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            Prerequisites
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Prerequisites/OpenStack-Setup/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Setting up DevStack
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#general-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      General Options
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#use-of-variables" class="md-nav__link">
+    <span class="md-ellipsis">
+      Use of Variables
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Use of Variables">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pre-scripts" class="md-nav__link">
+    <span class="md-ellipsis">
+      Pre-Scripts
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-scripts" class="md-nav__link">
+    <span class="md-ellipsis">
+      Post Scripts
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#health-checks" class="md-nav__link">
+    <span class="md-ellipsis">
+      Health Checks
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#script-install-method" class="md-nav__link">
+    <span class="md-ellipsis">
+      Script Install Method
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#helm3-install-method" class="md-nav__link">
+    <span class="md-ellipsis">
+      Helm3 Install Method
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#argocd-install-method" class="md-nav__link">
+    <span class="md-ellipsis">
+      ArgoCD Install Method
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+  
+
+
+<h1 id="installation-flow">Installation Flow<a class="headerlink" href="#installation-flow" title="Permanent link">#</a></h1>
+<p>This section describes the execution flow for items added for installation from the KX.AS.CODE frontend.</p>
+<p>Once the instruction to install a tool is received from the frontend (by adding it to the "pending" queue in RabbitMQ - either manually or via the KX-Portal), the installation flow is triggered.</p>
+<p>The metadata.json that accompanies each solution determines which main installation method is used:</p>
+<ul>
+<li>Script</li>
+<li>Helm3</li>
+<li>ArgoCD</li>
+</ul>
+<p>Below a detailed description for defining the contents of metadata.json.</p>
+<h4 id="general-options">General Options<a class="headerlink" href="#general-options" title="Permanent link">#</a></h4>
+<p>Before going into the detail of each installation type, here the general configuration items that are relevant for all types. The following options are an example from the metadata.json for the Gitlab CE installation.</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;gitlab-ce&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;namespace&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;gitlab-ce&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;installation_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;helm&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;installation_group_folder&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;cicd&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;environment_variables&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;gitabRunnerVersion&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;v13.4.1&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;s3BucketsToCreate&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;gitlab-artifacts-storage;gitlab-backup-storage;gitlab-lfs-storage;gitlab-packages-storage;gitlab-registry-storage;gitlab-uploads-storage;runner-cache&quot;</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;categories&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="s2">&quot;git-repository&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">&quot;docker-registry&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">&quot;cicd&quot;</span>
+<span class="w">    </span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;Description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Gitlab CE Git Repository and CICD&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;shortcut_text&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Gitlab CE&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;shortcut_icon&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;gitlab.png&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;api_docs_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;https://gitlab.{{baseDomain}}/help/api/api_resources.md&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;vendor_docs_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;https://docs.gitlab.com/ce/&quot;</span>
+<span class="p">}</span>
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+<th>Mandatory/Optional</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>name</td>
+<td>The name of the application to be installed.</td>
+<td>Mandatory</td>
+</tr>
+<tr>
+<td>namespace</td>
+<td>The Kubernetes namespace- Must be define if installing via ArgoCD or Helm, if if the script based installation process requires it.</td>
+<td>Optional</td>
+</tr>
+<tr>
+<td>installation_type</td>
+<td>Can be either <code>script</code>, <code>helm</code> or <code>argocd</code>. Is Helm or ArgoCD, then the Helm or ArgoCD parameters must also be defined</td>
+<td>Mandatory</td>
+</tr>
+<tr>
+<td>installation_group_folder</td>
+<td>The group folder under the "auto-setup" folder which contains the folder for the solution in question</td>
+<td>Mandatory</td>
+</tr>
+<tr>
+<td>environment_variables</td>
+<td>If any variables are needed during any parts of the installation, define them here. If you add them in configuration files as Mustache variables, ie <code>{{variable}}</code>, then these will automatically be replaced. Alternatively, just use<code>${variable}</code>  if using them in a script</td>
+<td>Optional</td>
+</tr>
+<tr>
+<td>categories[]</td>
+<td>This is for filtering on the front end</td>
+<td>Optional</td>
+</tr>
+<tr>
+<td>Description</td>
+<td>This is for showing a description of the tool on the frontend</td>
+<td>Optional</td>
+</tr>
+<tr>
+<td>shortcut_text</td>
+<td>The name of the tool for the tool's shortcut on the desktop</td>
+<td>Optional</td>
+</tr>
+<tr>
+<td>shortcut_icon</td>
+<td>Filename for the picture to use for the desktop shortcut icon. The file must be placed in the same folder as the metadata.json.</td>
+<td>Optional</td>
+</tr>
+<tr>
+<td>api_docs_url</td>
+<td>URL to the tool's API documentation provided by the vendor. Setting this will result in a desktop icon in the <code>API Docs</code> folder</td>
+<td>Optional</td>
+</tr>
+<tr>
+<td>vendor_docs_url</td>
+<td>URL to the tool's documentation provided by the vendor. Setting this will result in a desktop icon in the <code>Vendor Docs</code> folder</td>
+<td>Optional</td>
+</tr>
+<tr>
+<td>swagger_docs_url</td>
+<td>URL to the tool's live <code>Swagger API UI</code>. Setting this will result in a desktop icon in the "API Docs" folder</td>
+<td>Optional</td>
+</tr>
+<tr>
+<td>postman_docs_url</td>
+<td>URL to the tool's <code>Postman API</code>documentation provided by the vendor. Setting this will result in a desktop icon in the "API Docs" folder</td>
+<td>Optional</td>
+</tr>
+</tbody>
+</table>
+<h3 id="use-of-variables">Use of Variables<a class="headerlink" href="#use-of-variables" title="Permanent link">#</a></h3>
+<p><strong>Replacements</strong></p>
+<p>The installation process fully supports variable replacements with the <code>mustache</code> syntax. See the following <a href="https://mustache.github.io/mustache.5.html">link</a> for more details.</p>
+<p>Mustache placeholders can be placed in Helm parameters of the <code>values_template.yaml</code> files.</p>
+<p>For --set the <a href="https://github.com/tests-always-included/mo">mo</a> command is used to conduct the replacement. However, due to the limitation with "mo" (exclusion syntax not working), for the YAML value templates the mustache replacement utility is <a href="https://www.npmjs.com/package/envhandlebars">enhandlebars</a>, installed via NPM.</p>
+<p><strong>Global</strong></p>
+<p>These are defined in autoSetup.json and are available to all scripts and templates.</p>
+<p>Here a list of global variables that can be used in any script with <code>${variable}</code> or any ArgoCD/Helm template/--set parameters with <code>{{variable}}</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Example Value</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>componentName</td>
+<td>gitlab-ce</td>
+<td>Name of the component to be installed</td>
+</tr>
+<tr>
+<td>baseDomain</td>
+<td>kx-as-code.local</td>
+<td>The base domain. If a team name is defined, that will be added to the base domain. This is recommended if there are multiple KX.AS.CODE installations in one location</td>
+</tr>
+<tr>
+<td>environmentPrefix</td>
+<td>team1</td>
+<td>The name of the team for the KX.AS.CODE installation. This will be prepended to the base domain</td>
+</tr>
+<tr>
+<td>vmUser</td>
+<td>kx.hero</td>
+<td>The user for the VM login</td>
+</tr>
+<tr>
+<td>vmPassword</td>
+<td>L3arnandshare</td>
+<td>The password for the VM login</td>
+</tr>
+<tr>
+<td>installationWorkspace</td>
+<td>/home/kx.hero/Kubernetes</td>
+<td>The working area for all installations, including installation logs</td>
+</tr>
+<tr>
+<td>autoSetupHome</td>
+<td>/home/kx.hero/Documents/kx.as.code_source/auto-setup</td>
+<td>The root folder for all component installation sub folders</td>
+</tr>
+<tr>
+<td>mainIpAddress</td>
+<td>192.168.40.150</td>
+<td>The IP address of the KX.AS.CODE main machine</td>
+</tr>
+<tr>
+<td>defaultGitPath</td>
+<td>cicd/gitlab-ce</td>
+<td>The default path for the git server in this KX.AS.CODE installation</td>
+</tr>
+<tr>
+<td>gitDomain</td>
+<td>gitlab.team1.kx-as-code.local</td>
+<td>The domain of the default Git installation</td>
+</tr>
+<tr>
+<td>gitUrl</td>
+<td><a href="https://gitlab.team1.kx-as-code.local">https://gitlab.team1.kx-as-code.local</a></td>
+<td>The URL of the default Git installation</td>
+</tr>
+<tr>
+<td>defaultOauthPath</td>
+<td>cicd/gitlab-ce</td>
+<td>The default path for the OAUTH server in this KX.AS.CODE installation</td>
+</tr>
+<tr>
+<td>oauthDomain</td>
+<td>gitlab.team1.kx-as-code.local</td>
+<td>The domain of the default OAUTH installation</td>
+</tr>
+<tr>
+<td>oauthUrl</td>
+<td><a href="https://gitlab.team1.kx-as-code.local">https://gitlab.team1.kx-as-code.local</a></td>
+<td>The URL of the default Git installation</td>
+</tr>
+<tr>
+<td>defaultChatopsPath</td>
+<td>collaboration/mattermost</td>
+<td>The default path for the ChatOps server in this KX.AS.CODE installation</td>
+</tr>
+<tr>
+<td>chatopsDomain</td>
+<td>mattermost.team1.kx-as-code.local</td>
+<td>The domain of the default ChatOp sinstallation</td>
+</tr>
+<tr>
+<td>chatopsUrl</td>
+<td><a href="https://mattermost.team1.kx-as-code.local">https://mattermost.team1.kx-as-code.local</a></td>
+<td>The URL of the default ChatOp installation</td>
+</tr>
+<tr>
+<td>defaultDockerRegistryPath</td>
+<td>cicd/harbor</td>
+<td>The default path for the Docker Registry server in this KX.AS.CODE installation</td>
+</tr>
+<tr>
+<td>dockerRegistryDomain</td>
+<td>harbor.team1.kx-as-code.local</td>
+<td>The domain of the default Docker Registry installation</td>
+</tr>
+<tr>
+<td>dockerRegistryUrl</td>
+<td><a href="https://harbor.team1.kx-as-code.local">https://harbor.team1.kx-as-code.local</a></td>
+<td>The URL of the default Docker Registry installation</td>
+</tr>
+<tr>
+<td>defaultS3ObjectStorePath</td>
+<td>cicd/minio-s3</td>
+<td>The default path for the S3 object storage server in this KX.AS.CODE installation</td>
+</tr>
+<tr>
+<td>s3ObjectStoreDomain</td>
+<td>minio-s3.team1.kx-as-code.local</td>
+<td>The domain of the default S3 object storage installation</td>
+</tr>
+<tr>
+<td>s3ObjectStoreUrl</td>
+<td><a href="https://minio-s3.team1.kx-as-code.local">https://minio-s3.team1.kx-as-code.local</a></td>
+<td>The URL of the default S3 object storageinstallation</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Local</strong></p>
+<p>These are defined in each solution's metadata.json in the <code>environment_variables[]</code> array.</p>
+<p>For example, here from Grafana.</p>
+<p><div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;environment_variables&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;grafanaVersion&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;7.1.5&quot;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+In this example, this variable is later used in the <code>helm_params.set_key_values[]</code> array.</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;helm_params&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;set_key_values&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">             </span><span class="s2">&quot;image.repository={{dockerRegistryDomain}}/devops/grafana&quot;</span><span class="p">,</span>
+<span class="w">             </span><span class="s2">&quot;image.tag={{grafanaVersion}}&quot;</span>
+<span class="w">        </span><span class="p">]</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<h4 id="pre-scripts">Pre-Scripts<a class="headerlink" href="#pre-scripts" title="Permanent link">#</a></h4>
+<p>These scripts run before the main installation process. The usually define pre-requisites, such as creating passwords, users, S3 buckets or any other dependencies that are needed by the main installation process.</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;pre_install_scripts&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="s2">&quot;createGitProject.sh&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">&quot;populateGitProject.sh&quot;</span>
+<span class="w">    </span><span class="p">]</span>
+<span class="p">}</span>
+</code></pre></div>
+<h4 id="post-scripts">Post Scripts<a class="headerlink" href="#post-scripts" title="Permanent link">#</a></h4>
+<p>These scripts run after the main installation has completed. Example could be using the tool's API after the base installation for additional configuration steps.</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">   </span><span class="nt">&quot;post_install_scripts&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="s2">&quot;configureCoreDnsWithKxAsCodeDnsServer.sh&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">&quot;enableWorkloadsOnMaster.sh&quot;</span>
+<span class="w">    </span><span class="p">]</span>
+<span class="p">}</span>
+</code></pre></div>
+<h4 id="health-checks">Health Checks<a class="headerlink" href="#health-checks" title="Permanent link">#</a></h4>
+<p>Health checks are executed after the pre- and main installation routines have run, but before the post- steps are executed. This is so that the solution is up and working before any post-steps run, which may be reliant on the solution's API.</p>
+<p>Below is an example from the <code>metadata.json</code> for Gitlab CE.</p>
+<p>Apart from defining the expected HTTP return code, it is also possible to define either the expected string or json response on a successful health-check.</p>
+<p>The json_path uses the <code>JSONPath</code> notation. See the following <a href="https://restfulapi.net/json-jsonpath/#:~:text=JSONPath%20Syntax&amp;text=The%20dollar%20sign%20is%20followed,important%20JSONPath%20syntax%20rules%20are%3A&amp;text=%5B%20%5D%20is%20the%20subscript%20operator%2C,(by%20name%20or%20index).">link</a> for more details. The tool use at the backend is <code>jq</code>, so if your query works with that, it will work here too.</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;urls&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;https://gitlab.{{baseDomain}}&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;healthchecks&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">&quot;liveliness&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">&quot;http_path&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/-/liveliness&quot;</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;http_auth_required&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;expected_http_response_code&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;200&quot;</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;expected_http_response_string&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;expected_json_response&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                        </span><span class="nt">&quot;json_path&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;.status&quot;</span><span class="p">,</span>
+<span class="w">                        </span><span class="nt">&quot;json_value&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ok&quot;</span>
+<span class="w">                    </span><span class="p">},</span>
+<span class="w">                    </span><span class="nt">&quot;health_shell_check_command&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;expected_shell_check_command_response&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="w">                </span><span class="p">},</span>
+<span class="w">                </span><span class="nt">&quot;readiness&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">&quot;http_path&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/-/readiness&quot;</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;http_auth_required&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;expected_http_response_code&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;200&quot;</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;expected_http_response_string&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;expected_json_response&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                        </span><span class="nt">&quot;json_path&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;.status&quot;</span><span class="p">,</span>
+<span class="w">                        </span><span class="nt">&quot;json_value&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ok&quot;</span>
+<span class="w">                    </span><span class="p">}</span>
+<span class="w">                </span><span class="p">}</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">]</span>
+<span class="p">}</span>
+</code></pre></div>
+<h3 id="script-install-method">Script Install Method<a class="headerlink" href="#script-install-method" title="Permanent link">#</a></h3>
+<p>This is the simplest form of installation. In this case a bash script needs to be defined and dropped into the solution's installation directory along with the metadata.json.</p>
+<p>Here any example of a complete metadata.json file for the script installation method. As you can see, it's very simple.</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;kubernetes-base-services&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;Description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Kubernetes Base Services&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;namespace&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;kube-system&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;installation_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;script&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;installation_group_folder&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;kubernetes_core&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;install_scripts&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="s2">&quot;installKubernetesBaseServices.sh&quot;</span>
+<span class="w">    </span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;pre_install_scripts&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span>
+<span class="w">    </span><span class="nt">&quot;post_install_scripts&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="s2">&quot;configureCoreDnsWithKxAsCodeDnsServer.sh&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">&quot;enableWorkloadsOnMaster.sh&quot;</span>
+<span class="w">    </span><span class="p">]</span>
+<span class="p">}</span>
+</code></pre></div>
+<h3 id="helm3-install-method">Helm3 Install Method<a class="headerlink" href="#helm3-install-method" title="Permanent link">#</a></h3>
+<p>If you are familiar with the Helm installation process, you  will recognized the parameters below.  Again, here a full example from the Gitlab CE installation.</p>
+<p>For a Helm installation, the general parameters described have too be set, plus the helm specific parameters under <code>helm_params</code>.</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;harbor&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;namespace&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;harbor&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;installation_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;helm&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;installation_group_folder&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;cicd&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;helm_params&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;repository_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;https://helm.goharbor.io&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;repository_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;harbor/harbor&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;set_key_values&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="s2">&quot;persistence.enabled=true&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">&quot;persistence.persistentVolumeClaim.registry.storageClass=local-storage&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">&quot;persistence.persistentVolumeClaim.registry.size=9Gi&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">&quot;persistence.persistentVolumeClaim.chartmuseum.size=5Gi&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">&quot;persistence.persistentVolumeClaim.chartmuseum.storageClass=gluster-heketi&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">&quot;persistence.persistentVolumeClaim.database.size=5Gi&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">&quot;persistence.persistentVolumeClaim.database.storageClass=local-storage&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">&quot;persistence.persistentVolumeClaim.redis.storageClass=local-storage&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">&quot;persistence.persistentVolumeClaim.jobservice.storageClass=gluster-heketi&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">&quot;persistence.persistentVolumeClaim.trivy.storageClass=gluster-heketi&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">&quot;expose.type=ingress&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">&quot;externalURL=https://{{componentName}}.{{baseDomain}}&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">&quot;expose.ingress.hosts.core={{componentName}}.{{baseDomain}}&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">&quot;expose.ingress.hosts.notary=notary.{{baseDomain}}&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">&quot;expose.tls.enabled=true&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">&quot;expose.tls.caBundleSecretName=kx.as.code-wildcard-cert&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">&quot;expose.tls.caSecretName=kx.as.code-wildcard-cert&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">&quot;expose.tls.secretName=kx.as.code-wildcard-cert&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">&quot;expose.tls.notarySecretName=kx.as.code-wildcard-cert&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">&quot;harborAdminPassword=\&quot;{{vmPassword}}\&quot;&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">&quot;expose.ingress.annotations.\&quot;nginx\\.ingress\\.kubernetes\\.io/proxy-body-size\&quot;=\&quot;10000m\&quot;&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">&quot;logLevel=debug&quot;</span>
+<span class="w">        </span><span class="p">]</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;categories&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="s2">&quot;docker-registry&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">&quot;helm-repository&quot;</span>
+<span class="w">    </span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;urls&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;https://{{componentName}}.{{baseDomain}}&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;healthchecks&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">&quot;liveliness&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">&quot;http_path&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/&quot;</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;http_auth_required&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;expected_http_response_code&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;200&quot;</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;expected_http_response_string&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;expected_json_response&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                        </span><span class="nt">&quot;json_path&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+<span class="w">                        </span><span class="nt">&quot;json_value&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="w">                    </span><span class="p">},</span>
+<span class="w">                    </span><span class="nt">&quot;health_shell_check_command&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;expected_shell_check_command_response&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="w">                </span><span class="p">},</span>
+<span class="w">                </span><span class="nt">&quot;readiness&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">&quot;http_path&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/&quot;</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;http_auth_required&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;expected_http_response_code&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;200&quot;</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;expected_http_response_string&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;expected_json_response&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                        </span><span class="nt">&quot;json_path&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+<span class="w">                        </span><span class="nt">&quot;json_value&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="w">                    </span><span class="p">},</span>
+<span class="w">                    </span><span class="nt">&quot;health_shell_check_command&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;expected_shell_check_command_response&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="w">                </span><span class="p">}</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;Description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Harbor Description&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;shortcut_text&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Harbor&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;shortcut_icon&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;harbor.png&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;swagger_docs_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;https://{{componentName}}.{{baseDomain}}/devcenter-api-2.0&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;api_docs_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;https://goharbor.io/docs/2.1.0/build-customize-contribute/configure-swagger/&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;vendor_docs_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;https://goharbor.io/docs&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;pre_install_scripts&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="s2">&quot;createSecret.sh&quot;</span>
+<span class="w">    </span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;post_install_scripts&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="s2">&quot;createIngress.sh&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">&quot;createProjects.sh&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">&quot;createRobotAccounts.sh&quot;</span>
+<span class="w">    </span><span class="p">]</span>
+<span class="p">}</span>
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+<th>Mandatory/Optional</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>repository_url</td>
+<td>The URL of the repository where the Helm chart is located</td>
+<td>Mandatory</td>
+</tr>
+<tr>
+<td>repository_name</td>
+<td>The name of the chart repository to install</td>
+<td>Mandatory</td>
+</tr>
+<tr>
+<td>set_key_values[]</td>
+<td>This is an array where additional parameters can be defined. These will automatically be added as <code>--set</code> parameters when defining the Helm install command. Apart from using this array, it is also possible to define a <code>values_template.yaml</code>. More details below. Variable defined in the <code>mustache</code> syntax will automatically be replaced with either globally or locally defined values. Local value are defined in <code>metadata.json</code>, whilst global values are defined in <code>autoSetup.json</code>.</td>
+<td>Optional</td>
+</tr>
+</tbody>
+</table>
+<p>As well as defining additional parameters in the <code>set_key_values[]</code> array, it is also possible to define them in a values.yaml file.</p>
+<p>The file must be define with the name <code>values_template.yaml</code> and place in the same folder as metadata.json.</p>
+<p>Variable defined in the <code>mustache</code> syntax will automatically be replaced with either globally or locally defined values. Local value are defined in <code>metadata.json</code>, whilst global values are defined in <code>autoSetup.json</code>.</p>
+<p>For more details on the workings of the Helm value.yaml file, read the following <a href="https://helm.sh/docs/chart_template_guide/values_files/">documentation</a>.</p>
+<h3 id="argocd-install-method">ArgoCD Install Method<a class="headerlink" href="#argocd-install-method" title="Permanent link">#</a></h3>
+<p>As above, here an example metadata.json file for an installation via ArgoCD.</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;grafana-image-renderer&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;namespace&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;monitoring&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;installation_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;argocd&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;installation_group_folder&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;monitoring&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;argocd_params&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;repository&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;{{gitUrl}}/devops/grafana_image_renderer.git&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;path&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;.&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;dest_server&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;https://kubernetes.default.svc&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;dest_namespace&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;devops&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;sync_policy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;automated&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;auto_prune&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;self_heal&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;categories&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="s2">&quot;visualization&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">&quot;monitoring&quot;</span>
+<span class="w">    </span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;urls&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;healthchecks&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">&quot;liveliness&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">&quot;http_path&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/&quot;</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;http_auth_required&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;expected_http_response_code&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;200&quot;</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;expected_http_response_string&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;expected_json_response&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                        </span><span class="nt">&quot;json_path&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+<span class="w">                        </span><span class="nt">&quot;json_value&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="w">                    </span><span class="p">},</span>
+<span class="w">                    </span><span class="nt">&quot;health_shell_check_command&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;expected_shell_check_command_response&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="w">                </span><span class="p">},</span>
+<span class="w">                </span><span class="nt">&quot;readiness&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">&quot;http_path&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/&quot;</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;http_auth_required&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;expected_http_response_code&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;200&quot;</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;expected_http_response_string&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;expected_json_response&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                        </span><span class="nt">&quot;json_path&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+<span class="w">                        </span><span class="nt">&quot;json_value&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="w">                    </span><span class="p">},</span>
+<span class="w">                    </span><span class="nt">&quot;health_shell_check_command&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;expected_shell_check_command_response&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="w">                </span><span class="p">}</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;Description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Grafana Image Renderer Description&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;shortcut_text&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;shortcut_icon&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;pre_install_scripts&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="s2">&quot;createGitProject.sh&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">&quot;populateGitProject.sh&quot;</span>
+<span class="w">    </span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;post_install_scripts&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[]</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>Below a description for each parameter.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+<th>Mandatory/Optional</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>repository</td>
+<td>The GIT repository URL where the Kubernetes YAML file are stored</td>
+<td>Mandatory</td>
+</tr>
+<tr>
+<td>path</td>
+<td>The path the the YAML file within the Git repository. Just enter "." if the files are in the root of the repository</td>
+<td>Mandatory</td>
+</tr>
+<tr>
+<td>dest_server</td>
+<td>The destination Kubernetes server. If in doubt, use the Kubernetes default, <code>https://kubernetes.default.svc</code></td>
+<td>Mandatory</td>
+</tr>
+<tr>
+<td>dest_namespace</td>
+<td>The Kubernetes namespace into which the solution should be deployed</td>
+<td>Mandatory</td>
+</tr>
+<tr>
+<td>sync_policy</td>
+<td>If set to automated, will always sync the latest state in Git and ensure the state in Kubernetes matches that</td>
+<td>Mandatory</td>
+</tr>
+<tr>
+<td>auto_prune</td>
+<td>If set to true, automatically deletes resources in Kubernetes that are no longer defined in gIt.</td>
+<td>Mandatory</td>
+</tr>
+<tr>
+<td>self_heal</td>
+<td>If selfHeal flag is set to true then sync will be attempted again after self heal timeout (5 seconds by default)</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>For full instructions on the workings of ArgoCD, see their detailed <a href="https://argoproj.github.io/argo-cd/core_concepts/">documentation</a>.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12Z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.indexes", "navigation.sections", "navigation.top", "navigation.tracking", "navigation.expand", "search.highlight", "search.share", "search.suggest"], "search": "../../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.c8d2eff1.min.js"></script>
+      
+        <script src="../../assets/js/custom.js"></script>
+      
+    
+  </body>
+</html>
