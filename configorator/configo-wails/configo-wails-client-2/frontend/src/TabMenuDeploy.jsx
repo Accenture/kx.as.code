@@ -22,7 +22,6 @@ import StopCircleIcon from '@mui/icons-material/StopCircle';
 import Tooltip from '@mui/material/Tooltip';
 import Checkbox from '@mui/material/Checkbox';
 import ProcessOutputView from './ProcessOutputView';
-import { ApplicationGroupCard } from './ApplicationGroupCard';
 import applicationGroupJson from './assets/templates/applicationGroups.json';
 import { Button } from '@mui/material';
 import Remove from '@mui/icons-material/Remove';

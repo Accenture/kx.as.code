@@ -14,34 +14,36 @@ import {
     PanelGroup,
     PanelResizeHandle,
 } from "react-resizable-panels";
+import Modal from '@mui/material/Modal';
+import Box from '@mui/material/Box';
+import InputField from './InputField';
 
 export default function ApplicationSelection({ applicationGroup, addApplicationToApplicationGroupById, handleAddApplication, handleRemoveApplication,
     defaultLayout = [50, 50]
 }) {
-    const [name, setName] = useState('');
     const [searchTerm, setSearchTerm] = useState('');
     const [matchedApplications, setMatchedApplications] = useState([]);
 
-    const handleInputChange = (event) => {
-        const term = event.target.value;
-        setSearchTerm(term);
+    const [open, setOpen] = React.useState(false);
+    const handleOpen = () => setOpen(true);
+    const handleClose = () => setOpen(false);
+
+
+    const modalStyle = {
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        width: 700,
+        border: '0',
+        boxShadow: 24,
+        p: 4
     };
+
 
     const doesObjectExist = (appName, includedAppsInGroupList) => {
         return includedAppsInGroupList.some((obj) => obj.name === appName);
     };
-
-    const handleAddApplicationClick = (appName, installFolder) => {
-        const maxId = applicationGroup.action_queues.install.reduce((max, obj) => (obj.id > max ? obj.id : max), -1);
-
-        const newApplicationObject = {
-            id: maxId + 1,
-            name: appName,
-            install_folder: installFolder
-        };
-
-        addApplicationToApplicationGroupById(applicationGroup.id, newApplicationObject)
-    }
 
     const findApplicationByName = (appName) => {
         try {
@@ -52,6 +54,10 @@ export default function ApplicationSelection({ applicationGroup, addApplicationT
             return {};
         }
     };
+
+    const createNewApplication = () => {
+        handleOpen()
+    }
 
     useEffect(() => {
         const filteredApplications = applicationsJson
@@ -76,7 +82,7 @@ export default function ApplicationSelection({ applicationGroup, addApplicationT
                 <PanelGroup direction="horizontal" id="group" className="tab-content dark:text-white text-black flex-1 bg-ghBlack2">
                     <Panel defaultSize={defaultLayout[0]} id="left-panel" className='min-w-[200px]'>
                         {/* Input Search  */}
-                        <FilterInput setSearchTerm={setSearchTerm} searchTerm={searchTerm} itemsCount={applicationsJson.length} itemName={"Applications"} hasActionButton={false} />
+                        <FilterInput setSearchTerm={setSearchTerm} searchTerm={searchTerm} itemsCount={applicationsJson.length} itemName={"Applications"} hasActionButton={true} actionFunction={createNewApplication} />
                         <div className='h-[300px] overflow-y-scroll custom-scrollbar mt-3 px-2'>
                             <ul>
                                 {
@@ -134,7 +140,6 @@ export default function ApplicationSelection({ applicationGroup, addApplicationT
                                         </InfoBox>
                                     )
                                 }
-
                             </ul>
                         </div>
                     </Panel>
@@ -160,6 +165,21 @@ export default function ApplicationSelection({ applicationGroup, addApplicationT
                             })}
                         </div>
                     </Panel>
+                    <Modal
+                        open={open}
+                        onClose={handleClose}
+                        aria-labelledby="modal-modal-title"
+                        aria-describedby="modal-modal-description"
+                    >
+                        <Box sx={modalStyle} className="text-white bg-ghBlack2 focus:outline-none rounded-sm">
+                           <h2 className='mb-3'>Create a new Application</h2>
+
+                           <div className="bg-ghBlack3 h-[100px] w-[100px] rounded-sm mb-3 mx-auto"></div>
+                           <InputField inputType={"input"} type={"text"} placeholder={"Application name"} handleInputChange={null} dataKey={"application_name"} label={"Application Name"}/>
+
+                           <InputField inputType={"textarea"} type={"text"} placeholder={"Application Description"} handleInputChange={null} dataKey={"application_desc"} label={"Application Description"}/>
+                        </Box>
+                    </Modal>
                 </PanelGroup>
             </div>
 

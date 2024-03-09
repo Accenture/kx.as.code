@@ -9,19 +9,11 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { IconButton } from '@mui/material';
 import { ContentCopy } from '@mui/icons-material';
 
-export function ApplicationGroupCard({ index, appGroup, selectedItem, handleItemClick, handleDeleteItem, handleDublicateItem }) {
+export function ListItemCard({ index, itemData, selectedItem, handleItemClick, handleDeleteItem, handleDublicateItem }) {
     const parentRef = useRef();
-    const buttonRef = useRef();
     const popoverRef = useRef();
     const [isCardHovered, setIsCardHovered] = useState(false);
     const [isMoreMenuActive, setIsMoreMenuActive] = useState(false);
-
-    const appGroupBreadcrumb = appGroup.title
-        .replaceAll(" ", "-")
-        .replace(/\b\w/g, (l) => l.toLowerCase());
-
-    const [appGroupComponents, setAppGroupComponents] = useState([]);
-    const [itemsList, setItemsList] = useState([]);
 
     useEffect(() => {
         const handleClickOutside = (event) => {
@@ -35,38 +27,7 @@ export function ApplicationGroupCard({ index, appGroup, selectedItem, handleItem
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
         };
-    }, [appGroup]);
-
-    const setImageList = (appGroupComponents) => {
-        setItemsList([]);
-
-        appGroupComponents.forEach((appName, i) => {
-            setItemsList((current) => [
-                ...current,
-                <span className="slider-image-container min-h-12 w-12 relative" key={i}>
-                    <img
-                        alt=""
-                        className="object-contain max-h-8 min-h-8"
-                        src={`/src/assets/media/png/appImgs/${appName}.png`}
-                        role="presentation"
-                    />
-                </span>,
-            ]);
-        });
-    };
-
-    const drawApplicationGroupCardComponentsTags = (appGroupComponentTags) => {
-        return appGroupComponentTags.map((appGroupComponent, i) => (
-            <li
-                key={i}
-                className="bg-gray-500 text-sm mr-1.5 mb-2 px-1.5 w-auto inline-block"
-            >
-                {appGroupComponent
-                    .replaceAll("-", " ")
-                    .replace(/\b\w/g, (l) => l.toUpperCase())}
-            </li>
-        ));
-    };
+    }, [itemData]);
 
     return (
         <div key={index} className={`grid grid-cols-12 w-full py-1 px-2 items-center mb-1 ${selectedItem === index ? "bg-ghBlack4" : "hover:bg-ghBlack3"} rounded-sm cursor-pointer`}
@@ -84,16 +45,16 @@ export function ApplicationGroupCard({ index, appGroup, selectedItem, handleItem
                 <div className='flex items-center'>
                     <LayersIcon fontSize="medium" className="mr-2" />
                     <div className="">
-                        <div className='whitespace-nowrap w-[190px] overflow-hidden text-ellipsis'>{appGroup.title !== "" ? appGroup.title : "No Title"}</div>
+                        <div className='whitespace-nowrap w-[190px] overflow-hidden text-ellipsis'>{itemData.title !== "" ? itemData.title : "No Title"}</div>
                         <div className='text-xs uppercase text-gray-400 text-ellipsis overflow-hidden flex'>
-                            {appGroup.action_queues.install[0] !== undefined ? (
-                                appGroup.action_queues.install.length > 1 ? (
+                            {itemData.action_queues.install[0] !== undefined ? (
+                                itemData.action_queues.install.length > 1 ? (
                                     <span className='flex'>
-                                        {appGroup.action_queues.install[0].name}
-                                        {appGroup.action_queues.install.length > 0 && ` (+${appGroup.action_queues.install.length - 1})`}
+                                        {itemData.action_queues.install[0].name}
+                                        {itemData.action_queues.install.length > 0 && ` (+${itemData.action_queues.install.length - 1})`}
                                     </span>
                                 ) : (
-                                    appGroup.action_queues.install[0].name
+                                    itemData.action_queues.install[0].name
                                 )
                             ) : "0 Applications"}
                         </div>

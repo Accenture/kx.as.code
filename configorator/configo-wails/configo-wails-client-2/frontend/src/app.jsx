@@ -216,84 +216,69 @@ export function App() {
     return (
 
         <div className="relative">
-            <div className="dark:bg-ghBlack relative" >
+            <div className="dark:bg-ghBlack2 relative flex" >
                 <ThemeProvider theme={theme}>
-                    <Box sx={{ display: "flex" }}>
-                        <Drawer variant="permanent" open={open}
-                            sx={{
-                                '& .MuiDrawer-paper': {
-                                    // borderRight: 'none',
-                                    borderRightWidth: "0px",
-                                    borderColor: "#2f3640",
-                                    backgroundColor: '#1f262e',
-                                    zIndex: 0
-                                }
-                            }} >
-                            <DrawerHeader>
-                                <IconButton onClick={() => setOpen(!open)}>
-                                    {open ? <ChevronLeftIcon /> : <ChevronRightIcon />}
-                                </IconButton>
-                            </DrawerHeader>
-                            <List className="" style={{ marginTop: "auto", marginBottom: "auto", paddingBottom: "150px" }}>
-                                <MenuItem menuItemName={"home"} slug={slug} />
-                                <MenuItem menuItemName={"build"} slug={slug} isBuildStarted={isBuildStarted} />
-                                <MenuItem menuItemName={"deploy"} slug={slug} />
-                                {/* Separator */}
-                                <div className="w-full h-[3px] bg-ghBlack4 mt-0 mb-2"></div>
-                                <MenuItem menuItemName={"application-groups"} slug={slug} />
-                                <MenuItem menuItemName={"user-provisioning"} slug={slug} />
-                                <MenuItem menuItemName={"custom-variables"} slug={slug} />
-                                <MenuItem menuItemName={"build-history"} slug={slug} />
-                                <MenuItem menuItemName={"settings"} slug={slug} />
-                            </List>
-                        </Drawer>
+                    {/* Navigation */}
+                    <div className="bg-ghBlack2 mt-auto mb-auto border-ghBlack4">
+                        <List className="" sx={{ paddingY: "0" }}>
+                            <MenuItem menuItemName={"home"} slug={slug} />
+                            <MenuItem menuItemName={"build"} slug={slug} isBuildStarted={isBuildStarted} />
+                            <MenuItem menuItemName={"deploy"} slug={slug} />
+                            {/* Separator */}
+                            <div className="w-full h-[2px] bg-gray-400 my-3"></div>
+                            <MenuItem menuItemName={"application-groups"} slug={slug} />
+                            <MenuItem menuItemName={"user-provisioning"} slug={slug} />
+                            <MenuItem menuItemName={"custom-variables"} slug={slug} />
+                            <MenuItem menuItemName={"build-history"} slug={slug} />
+                            <MenuItem menuItemName={"settings"} slug={slug} />
+                        </List>
+                    </div>
 
-                        <Box component="main" sx={{ flexGrow: 1, p: 0 }} className="text-black dark:text-white flex flex-col min-h-screen">
+                    <Box component="main" sx={{ flexGrow: 1, p: 0 }} className="text-black dark:text-white flex flex-col min-h-screen">
 
-                            <div className="">
-                                <HeaderNew drawerWidth={drawerWidth} handleDrawerOpen={handleDrawerOpen} open={open} handleDarkModeToggle={handleDarkModeToggle} isDarkMode={isDarkMode} toggleBuildStart={toggleBuildStart} isBuildStarted={isBuildStarted} />
-                            </div>
-                            <div className="">
-                                <Routes>
-                                    {/* <Route exact path="/" element={<TabMenu />} /> */}
-                                    <Route path="/home" element={<Home />} />
-                                    <Route path="/build" element={<TabMenuBuild buildOutputFileContent={buildLogOutput} toggleBuildStart={toggleBuildStart} isBuildStarted={isBuildStarted} />} />
-                                    <Route path="/deploy" element={<TabMenuDeploy />} />
-                                    <Route path="/application-groups" element={<ApplicationGroups />} />
-                                    <Route path="/user-provisioning" element={<UserProvisioning />} />
-                                    <Route path="/custom-variables" element={<CustomVariables />} />
-                                    <Route path="/build-history" element={<BuildHistory />} />
-                                    <Route path="/console-output" element={<ConsoleOutput />} />
-                                </Routes>
-                            </div>
+                        <div className="">
+                            <HeaderNew drawerWidth={drawerWidth} handleDrawerOpen={handleDrawerOpen} open={open} handleDarkModeToggle={handleDarkModeToggle} isDarkMode={isDarkMode} toggleBuildStart={toggleBuildStart} isBuildStarted={isBuildStarted} />
+                        </div>
+                        <div className="">
+                            <Routes>
+                                {/* <Route exact path="/" element={<TabMenu />} /> */}
+                                <Route path="/home" element={<Home />} />
+                                <Route path="/build" element={<TabMenuBuild buildOutputFileContent={buildLogOutput} toggleBuildStart={toggleBuildStart} isBuildStarted={isBuildStarted} />} />
+                                <Route path="/deploy" element={<TabMenuDeploy />} />
+                                <Route path="/application-groups" element={<ApplicationGroups />} />
+                                <Route path="/user-provisioning" element={<UserProvisioning />} />
+                                <Route path="/custom-variables" element={<CustomVariables />} />
+                                <Route path="/build-history" element={<BuildHistory />} />
+                                <Route path="/console-output" element={<ConsoleOutput />} />
+                            </Routes>
+                        </div>
 
-                            {/* Footer Section */}
-                            <div className="bg-ghBlack4 p-4 pt-3 w-full text-gray-400 flex justify-end px-10">
-                                <button className="hover:text-white" onClick={() => {
-                                    OpenURL("https://github.com/Accenture/kx.as.code")
-                                }}>
-                                    <GitHubIcon fontSize="small" />
-                                </button>
-                            </div>
+                        {/* Footer Section */}
+                        <div className="bg-ghBlack4 p-4 pt-3 w-full text-gray-400 flex justify-end px-10">
+                            <button className="hover:text-white" onClick={() => {
+                                OpenURL("https://github.com/Accenture/kx.as.code")
+                            }}>
+                                <GitHubIcon fontSize="small" />
+                            </button>
+                        </div>
 
-                        </Box>
-                        <Toaster
-                            expand visibleToasts={3}
-                            duration={2000}
-                            toastOptions={{
-                                style: {
-                                    background: "#161b22",
-                                    borderRadius: "3px",
-                                    borderWidth: "0",
-                                    color: "white",
-                                    boxShadow: "none"
-                                },
-                                className: '',
-                            }} />
                     </Box>
-                </ThemeProvider>
-            </div >
-        </div>
+                    <Toaster
+                        expand visibleToasts={3}
+                        duration={2000}
+                        toastOptions={{
+                            style: {
+                                background: "#161b22",
+                                borderRadius: "3px",
+                                borderWidth: "0",
+                                color: "white",
+                                boxShadow: "none"
+                            },
+                            className: '',
+                        }} />
+            </ThemeProvider>
+        </div >
+        </div >
 
     );
 }
@@ -342,29 +327,22 @@ const MenuItem = ({ menuItemName, slug, isBuildStarted }) => {
     }
 
     return (
-        <Link to={`/${menuItemName}`} className="flex justify-center">
+        <Link to={`/${menuItemName}`} className="">
             <ListItemButton
                 sx={{
-                    justifyContent: open ? "initial" : "center",
-                    padding: 1,
-                    backgroundColor: slug == menuItemName ? "#5a86ff" : "",
-                    margin: "6px",
-                    borderRadius: "3px",
-                    marginTop: "0px",
+                    backgroundColor: slug == menuItemName ? "#2f3640" : "",
                     "&:hover": {
-                        backgroundColor: slug == menuItemName ? "#5a86ff" : "",
+                        backgroundColor: slug == menuItemName ? "#2f3640" : "#1f262e",
+                        borderLeft: slug == menuItemName ? "5px solid #5a86ff" : "5px solid #1f262e"
                     },
+                    borderLeft: slug == menuItemName ? "5px solid #5a86ff" : "5px solid #161b22",
+                    paddingX: "0px", 
                 }}
             >
                 <ListItemIcon
-                    className="listItemIconContainer items-center flex justify-center"
-                    sx={{
-                        minWidth: 0,
-                        mr: open ? 3 : "auto",
-                    }}
+                    className="listItemIconContainer items-center flex justify-center p-0"
                 >
                     {getMenuItemIcon(menuItemName)}
-                    <span className="ml-7 capitalize">{menuItemName}</span>
                 </ListItemIcon>
             </ListItemButton>
         </Link>

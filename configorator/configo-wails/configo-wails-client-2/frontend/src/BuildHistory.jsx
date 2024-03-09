@@ -8,7 +8,7 @@ import { UpdateJsonFile } from "../wailsjs/go/main/App";
 import SettingsEthernetIcon from '@mui/icons-material/SettingsEthernet';
 import EditIcon from '@mui/icons-material/Edit';
 import JSONConfigTabContent from './JSONConfigTabContent';
-import { ApplicationGroupCard } from './ApplicationGroupCard';
+import { ListItemCard } from './ListItemCard';
 import { ConfigSectionHeader } from './ConfigSectionHeader';
 import BuildHistoryItemCard from './BuildHistoryItemCard';
 
