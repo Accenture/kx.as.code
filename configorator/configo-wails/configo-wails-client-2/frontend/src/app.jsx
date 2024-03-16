@@ -37,6 +37,7 @@ import HistoryIcon from '@mui/icons-material/History';
 import BuildHistory from "./BuildHistory";
 import GitHubIcon from '@mui/icons-material/GitHub';
 import { Settings } from "@mui/icons-material";
+import Applications from "./Applications";
 
 
 const openedMixin = (theme) => ({
@@ -218,22 +219,23 @@ export function App() {
         <div className="relative">
             <div className="dark:bg-ghBlack2 relative flex" >
                 <ThemeProvider theme={theme}>
-                    {/* Navigation */}
-                    <div className="bg-ghBlack2 mt-auto mb-auto border-ghBlack4">
-                        <List className="" sx={{ paddingY: "0" }}>
-                            <MenuItem menuItemName={"home"} slug={slug} />
-                            <MenuItem menuItemName={"build"} slug={slug} isBuildStarted={isBuildStarted} />
-                            <MenuItem menuItemName={"deploy"} slug={slug} />
-                            {/* Separator */}
-                            <div className="w-full h-[2px] bg-gray-400 my-3"></div>
-                            <MenuItem menuItemName={"application-groups"} slug={slug} />
-                            <MenuItem menuItemName={"user-provisioning"} slug={slug} />
-                            <MenuItem menuItemName={"custom-variables"} slug={slug} />
-                            <MenuItem menuItemName={"build-history"} slug={slug} />
-                            <MenuItem menuItemName={"settings"} slug={slug} />
-                        </List>
+                    <div className="dark:bg-ghBlack2 h-screen flex items-center">
+                        {/* Navigation */}
+                        <div className="bg-ghBlack2 mt-auto mb-auto">
+                            <List className="" sx={{ paddingY: "0" }}>
+                                <MenuItem menuItemName={"home"} slug={slug} />
+                                <MenuItem menuItemName={"build"} slug={slug} isBuildStarted={isBuildStarted} />
+                                <MenuItem menuItemName={"deploy"} slug={slug} />
+                                {/* Separator */}
+                                <div className="w-full h-[2px] bg-gray-400 my-0"></div>
+                                <MenuItem menuItemName={"application-groups"} slug={slug} />
+                                <MenuItem menuItemName={"user-provisioning"} slug={slug} />
+                                <MenuItem menuItemName={"custom-variables"} slug={slug} />
+                                <MenuItem menuItemName={"build-history"} slug={slug} />
+                                <MenuItem menuItemName={"settings"} slug={slug} />
+                            </List>
+                        </div>
                     </div>
-
                     <Box component="main" sx={{ flexGrow: 1, p: 0 }} className="text-black dark:text-white flex flex-col min-h-screen">
 
                         <div className="">
@@ -250,6 +252,10 @@ export function App() {
                                 <Route path="/custom-variables" element={<CustomVariables />} />
                                 <Route path="/build-history" element={<BuildHistory />} />
                                 <Route path="/console-output" element={<ConsoleOutput />} />
+                                <Route path="/applications" element={<Applications />} />
+                                {/* <Route path="/users" element={<Users />} /> */}
+                                {/* <Route path="/custom-variable-groups" element={<CustomVariableGroups />} /> */}
+                                {/* <Route path="/user-groups" element={<CustomVariablesGroups />} /> */}
                             </Routes>
                         </div>
 
@@ -276,8 +282,8 @@ export function App() {
                             },
                             className: '',
                         }} />
-            </ThemeProvider>
-        </div >
+                </ThemeProvider>
+            </div >
         </div >
 
     );
@@ -336,7 +342,7 @@ const MenuItem = ({ menuItemName, slug, isBuildStarted }) => {
                         borderLeft: slug == menuItemName ? "5px solid #5a86ff" : "5px solid #1f262e"
                     },
                     borderLeft: slug == menuItemName ? "5px solid #5a86ff" : "5px solid #161b22",
-                    paddingX: "0px", 
+                    paddingX: "0px",
                 }}
             >
                 <ListItemIcon

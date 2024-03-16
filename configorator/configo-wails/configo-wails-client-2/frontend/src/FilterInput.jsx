@@ -128,7 +128,6 @@ export function FilterInput({ setSearchTerm, searchTerm, itemName, itemsCount, h
                         </div>
                     </div>
                 </div>
-
             </div>
 
         </div>

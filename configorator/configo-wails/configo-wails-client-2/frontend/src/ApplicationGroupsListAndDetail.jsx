@@ -386,13 +386,13 @@ export function ApplicationGroupsListAndDetail({ setJsonData, applicationGroupDe
                             <div className='flex itmes-center text-sm '>
                                 <button
                                     onClick={() => { setApplicationGroupDetailTab("config-ui") }}
-                                    className={` ${applicationGroupDetailTab == "config-ui" ? 'border-kxBlue border-b-3 bg-ghBlack4' : 'border-ghBlack2 hover:border-ghBlack4 border-b-3 hover:bg-ghBlack3'} px-3 py-0`}
+                                    className={` ${applicationGroupDetailTab == "config-ui" ? 'border-kxBlue border-b-3 bg-ghBlack4 text-white' : 'border-ghBlack2 hover:border-ghBlack4 border-b-3 hover:bg-ghBlack3'} px-3 py-0 text-gray-400 hover:text-white`}
                                 >
                                     Config UI
                                 </button>
                                 <button
                                     onClick={() => { setApplicationGroupDetailTab("json") }}
-                                    className={` ${applicationGroupDetailTab == "json" ? 'border-kxBlue border-b-3 bg-ghBlack4' : 'border-ghBlack2 border-b-3 hover:border-ghBlack4 hover:bg-ghBlack3'} px-3 py-0`}
+                                    className={` ${applicationGroupDetailTab == "json" ? 'border-kxBlue border-b-3 bg-ghBlack4 text-white' : 'border-ghBlack2 border-b-3 hover:border-ghBlack4 hover:bg-ghBlack3'} px-3 py-0 text-gray-400 hover:text-white`}
                                 >
                                     JSON
                                 </button>

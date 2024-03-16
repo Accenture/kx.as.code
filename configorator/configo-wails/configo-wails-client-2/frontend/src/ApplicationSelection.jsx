@@ -6,6 +6,8 @@ import applicationsJson from './assets/templates/applications.json';
 import { FilterInput } from './FilterInput';
 import { InfoBox } from './InfoBox';
 import AppLogo from './AppLogo';
+import { Routes, Route, Link, useLocation } from "react-router-dom";
+
 import {
     getPanelElement,
     getPanelGroupElement,
@@ -17,6 +19,8 @@ import {
 import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
 import InputField from './InputField';
+import { ApplicationDetailsModal } from './ApplicationDetailsModal';
+import { Settings, SettingsApplications, SettingsSuggest } from '@mui/icons-material';
 
 export default function ApplicationSelection({ applicationGroup, addApplicationToApplicationGroupById, handleAddApplication, handleRemoveApplication,
     defaultLayout = [50, 50]
@@ -28,17 +32,6 @@ export default function ApplicationSelection({ applicationGroup, addApplicationT
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
 
-
-    const modalStyle = {
-        position: 'absolute',
-        top: '50%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-        width: 700,
-        border: '0',
-        boxShadow: 24,
-        p: 4
-    };
 
 
     const doesObjectExist = (appName, includedAppsInGroupList) => {
@@ -82,7 +75,15 @@ export default function ApplicationSelection({ applicationGroup, addApplicationT
                 <PanelGroup direction="horizontal" id="group" className="tab-content dark:text-white text-black flex-1 bg-ghBlack2">
                     <Panel defaultSize={defaultLayout[0]} id="left-panel" className='min-w-[200px]'>
                         {/* Input Search  */}
-                        <FilterInput setSearchTerm={setSearchTerm} searchTerm={searchTerm} itemsCount={applicationsJson.length} itemName={"Applications"} hasActionButton={true} actionFunction={createNewApplication} />
+                        <FilterInput setSearchTerm={setSearchTerm} searchTerm={searchTerm} itemsCount={applicationsJson.length} itemName={"Applications"} hasActionButton={false} />
+                        <div className='flex justify-center mb-2 sticky top-0 bg-ghBlack2 w-full zIndex-10 px-2'>
+                            <Link to={"/applications"} className='w-full py-1 border bg-ghBlack2 hover:border-white hover:text-white text-gray-400 border-gray-400 rounded-sm text-sm items-center'>
+                                <span className='items-center mr-1'>
+                                    <SettingsSuggest fontSize="small" />
+                                </span>
+                                <span className='items-center'>Manage Applications</span>
+                            </Link>
+                        </div>
                         <div className='h-[300px] overflow-y-scroll custom-scrollbar mt-3 px-2'>
                             <ul>
                                 {
@@ -165,21 +166,7 @@ export default function ApplicationSelection({ applicationGroup, addApplicationT
                             })}
                         </div>
                     </Panel>
-                    <Modal
-                        open={open}
-                        onClose={handleClose}
-                        aria-labelledby="modal-modal-title"
-                        aria-describedby="modal-modal-description"
-                    >
-                        <Box sx={modalStyle} className="text-white bg-ghBlack2 focus:outline-none rounded-sm">
-                           <h2 className='mb-3'>Create a new Application</h2>
-
-                           <div className="bg-ghBlack3 h-[100px] w-[100px] rounded-sm mb-3 mx-auto"></div>
-                           <InputField inputType={"input"} type={"text"} placeholder={"Application name"} handleInputChange={null} dataKey={"application_name"} label={"Application Name"}/>
-
-                           <InputField inputType={"textarea"} type={"text"} placeholder={"Application Description"} handleInputChange={null} dataKey={"application_desc"} label={"Application Description"}/>
-                        </Box>
-                    </Modal>
+                    <ApplicationDetailsModal open={open} handleClose={handleClose} />
                 </PanelGroup>
             </div>
 

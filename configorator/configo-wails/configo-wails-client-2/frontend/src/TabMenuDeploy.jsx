@@ -29,6 +29,9 @@ import ClearIcon from '@mui/icons-material/Clear';
 import { ConfigSectionHeader } from './ConfigSectionHeader';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import ErrorIcon from '@mui/icons-material/Error';
+import InputField from './InputField';
+import { RocketLaunch } from '@mui/icons-material';
+import { CircularProgressbar } from './CircularProgressBar';
 
 
 const TabMenuDeploy = () => {
@@ -63,30 +66,6 @@ const DeployTabContent = () => {
     const handleTabClick = (tab) => {
         setActiveTab(tab);
     };
-
-    const handleConfigTabClick = (configTab) => {
-        setActiveConfigTab(configTab);
-    };
-
-
-    const handleUsersChange = (value, key) => {
-        let selectedValue;
-
-        if (!isNaN(value)) {
-            selectedValue = parseFloat(value);
-        } else {
-            selectedValue = value;
-        }
-
-        let parsedData = { ...usersJSON };
-
-        setNestedValue(parsedData, key, selectedValue)
-
-        const updatedJsonString = JSON.stringify(parsedData, null, 2);
-
-        setJsonData(updatedJsonString);
-    }
-
 
     const handleConfigChange = (value, key) => {
         console.log("value: ", value);
@@ -136,7 +115,7 @@ const DeployTabContent = () => {
 
     return (
         <div className='relative'>
-            <div className='grid grid-cols-12 items-center dark:bg-ghBlack4 sticky top-[67px] z-10 p-1'>
+            <div className='grid grid-cols-12 items-center dark:bg-ghBlack4 p-1'>
                 <div className='col-span-9'>
                     <ConfigSectionHeader sectionTitle={"Deployment Configuration"} SectionDescription={"More Details about the Build process here."} />
                 </div>
@@ -177,15 +156,59 @@ const DeployTabContent = () => {
 
             <div className='bg-ghBlack2 h-1'></div>
             <div className="config-tab-content">
-                {activeConfigTab === 'config-tab1' && <UIConfigTabContent activeTab={activeTab} handleTabClick={handleTabClick} handleConfigChange={handleConfigChange} handleUsersChange={handleUsersChange} />}
+                {activeConfigTab === 'config-tab1' && <UIConfigTabContent activeTab={activeTab} handleTabClick={handleTabClick} handleConfigChange={handleConfigChange} />}
                 {activeConfigTab === 'config-tab2' && <JSONConfigTabContent jsonData={jsonData} fileName={"profile-config.json"} />}
             </div>
             <div className='bg-ghBlack2 h-1'></div>
+            {/* Review & Launch */}
+            <div className='dark:bg-ghBlack2 p-2 pb-5'>
+                <div className='flex justify-center text-gray-600 font-semibold mb-3'>Review & Launch Deployment</div>
+                <div className='flex justify-center space-x-5 text-sm text-gray-400'>
+
+                    <div className='flex items-center space-x-2'>
+
+                        <div className='parent flex flex-col items-center'>
+                            <div className='text-gray-400 text-left mb-2'>
+                                <div className='font-semibold text-base'>Processor</div>
+                                <div className='text-sm'>8/16 Cores</div>
+                            </div>
+                            <CircularProgressbar percentage={50} />
+                        </div>
+
+                        <div className='parent flex flex-col items-center'>
+                            <div className='text-gray-400 text-left mb-2'>
+                                <div className='font-semibold text-base'>Memory</div>
+                                <div className='text-sm'>19/31</div>
+                            </div>
+                            <CircularProgressbar percentage={59} />
+                        </div>
+
+                        <div className='parent flex flex-col items-center'>
+                            <div className='text-gray-400 text-left mb-2'>
+                                <div className='font-semibold text-base'>Disk</div>
+                                <div className='text-sm'>400/288</div>
+                            </div>
+                            <CircularProgressbar percentage={138} />
+                        </div>
+
+
+                    </div>
+
+                </div>
+                <div className='mt-5'>
+                    <button className="p-2 px-4 bg-ghBlack4 text-white rounded-sm text-sm items-center space-x-1">
+                        <PlayCircleIcon fontSize='small' />
+                        <span>
+                            Launch Deployment
+                        </span>
+                    </button>
+                </div>
+            </div>
         </div>
     );
 }
 
-const UIConfigTabContent = ({ activeTab, handleTabClick, handleConfigChange, handleUsersChange, isBuild }) => (
+const UIConfigTabContent = ({ activeTab, handleTabClick, handleConfigChange, isBuild }) => (
     <div id='config-ui-container' className=''>
         <div className="flex dark:bg-ghBlack3 bg-gray-300 text-sm text-black dark:text-white">
             <TabButton buttonText={"Profile"} tabId={"tab1"} activeTab={activeTab} handleTabClick={handleTabClick} />
@@ -196,6 +219,8 @@ const UIConfigTabContent = ({ activeTab, handleTabClick, handleConfigChange, han
             <TabButton buttonText={"Docker"} tabId={"tab6"} activeTab={activeTab} handleTabClick={handleTabClick} />
             <TabButton buttonText={"Proxy"} tabId={"tab7"} activeTab={activeTab} handleTabClick={handleTabClick} />
             <TabButton buttonText={"App Groups"} tabId={"tab8"} activeTab={activeTab} handleTabClick={handleTabClick} />
+            <TabButton buttonText={"User Groups"} tabId={"tab9"} activeTab={activeTab} handleTabClick={handleTabClick} />
+            <TabButton buttonText={"Variable Groups"} tabId={"tab10"} activeTab={activeTab} handleTabClick={handleTabClick} />
         </div>
 
         <div className="tab-content dark:text-white text-black">
@@ -216,7 +241,7 @@ const TabButton = ({ buttonText, tabId, activeTab, handleTabClick }) => {
     return (
         <button
             onClick={() => handleTabClick(tabId)}
-            className={` ${activeTab === tabId ? 'border-kxBlue border-b-3 bg-ghBlack4' : 'broder border-ghBlack3 border-b-3'} p-3 px-5 py-1`}
+            className={` ${activeTab === tabId ? 'border-kxBlue border-b-3 bg-ghBlack4 text-white' : 'broder border-ghBlack3 border-b-3'} px-2 py-0.5 text-gray-400 hover:text-white`}
         >
             {buttonText}
         </button>
@@ -343,70 +368,22 @@ const TabContent2 = ({ handleConfigChange }) => {
 
     return (
         <div className='text-left'>
-            <div className='px-5 py-3'>
+            <div className='px-5 py-3 dark:bg-ghBlack4'>
                 <h2 className='text-3xl font-semibold'>General Parameters & Mode Selection</h2>
                 <p className='text-sm dark:text-gray-400 text-justify'> Set the parameters to define the internal DNS of KX.AS.CODE.
                     {/* Set the parameters to define the internal DNS of KX.AS.CODE. Each new service that is provisioned in KX.AS.CODE will have the fully qualified domain name (FQDN) of &lt;service_name&gt;, &lt;team_name&gt;. &lt;base_domain&gt;. The username and password fields determine the base admin user password. It is possible to add additional users. In the last section, you determine if running in standalone or cluster mode. Standalone mode starts up one main node only. This is recommended for any physical environment with less than 16G ram. If enable worker nodes, then you can also choose to have workloads running on both main and worker nodes, or only on worker nodes. */}
                 </p>
             </div>
-            <div className='px-5 py-3 dark:bg-ghBlack3 bg-gray-300 grid grid-cols-12'>
+            <div className='px-5 py-3 dark:bg-ghBlack2 bg-gray-300 grid grid-cols-12 gap-3'>
                 <div className='col-span-6'>
                     <h2 className='text-xl font-semibold dark:text-gray-400'>General Profile Parameters</h2>
 
-                    <TextField
-                        label="Base Domain"
-                        fullWidth
-                        size="small"
-                        margin="normal"
-                        value={configJSON.config["baseDomain"]}
-                        onChange={(e) => { handleConfigChange(e.target.value, "config.baseDomain") }}
-                    >
-                    </TextField>
-                    <TextField
-                        label="Team Name"
-                        fullWidth
-                        variant="outlined"
-                        size="small"
-                        margin="normal"
-                        defaultValue={configJSON.config["environmentPrefix"]}
-                        onChange={(e) => { handleConfigChange(e.target.value, "config.environmentPrefix") }}
-                    >
-                    </TextField>
-
-                    <TextField
-                        label="Username"
-                        fullWidth
-                        variant="outlined"
-                        size="small"
-                        margin="normal"
-                        value={configJSON.config["baseUser"]}
-                        onChange={(e) => { handleConfigChange(e.target.value, "config.baseUser") }}
-                    >
-                    </TextField>
-
-                    <TextField
-                        fullWidth
-                        type={showPassword ? 'text' : 'password'}
-                        margin="normal"
-                        size='small'
-                        InputProps={{
-                            endAdornment: (
-                                <InputAdornment position="end">
-                                    <IconButton
-                                        aria-label="toggle password visibility"
-                                        onClick={handleClickShowPassword}
-                                        onMouseDown={handleMouseDownPassword}
-                                    >
-                                        {showPassword ? <Visibility /> : <VisibilityOff />}
-                                    </IconButton>
-                                </InputAdornment>
-                            )
-                        }}
-                        label="Password"
-                        value={configJSON.config["basePassword"]}
-                        onChange={(e) => { handleConfigChange(e.target.value, "config.basePassword") }}
-                    />
-
+                    <InputField inputType={"input"} label={"Base Domain"} value={configJSON.config["baseDomain"]} onChange={(e) => { handleConfigChange(e.target.value, "config.baseDomain") }} />
+                    <InputField inputType={"input"} label={"Team Name"} value={configJSON.config["environmentPrefix"]} onChange={(e) => { handleConfigChange(e.target.value, "config.environmentPrefix") }} />
+                    <InputField inputType={"input"} label={"Username"} value={configJSON.config["baseUser"]} onChange={(e) => { handleConfigChange(e.target.value, "config.baseUser") }} />
+                    <InputField inputType={"password"} label={"Password"} value={configJSON.config["basePassword"]} onChange={(e) => { handleConfigChange(e.target.value, "config.basePassword") }} />
+                </div>
+                <div className="col-span-6">
                     <h2 className='text-xl font-semibold dark:text-gray-400'>Additional Toggles</h2>
                     <div className='text-sm'>
                         <FormControlLabel
@@ -444,92 +421,22 @@ const TabContent2 = ({ handleConfigChange }) => {
 
 const TabContent3 = ({ handleConfigChange }) => (
     <div className='text-left'>
-        <div className='px-5 py-3'>
+        <div className='px-5 py-3 dark:bg-ghBlack4'>
             <h2 className='text-3xl font-semibold'>VM Properties</h2>
             <p className='text-sm dark:text-gray-400 text-justify'>Define how many physical resources you wish to allocate to the KX.AS.CODE virtual machines.</p>
         </div>
-        <div className='px-5 py-3 dark:bg-ghBlack3 bg-gray-300 grid grid-cols-12'>
+        <div className='px-5 py-3 dark:bg-ghBlack2 bg-gray-300 grid grid-cols-12 gap-3'>
             <div className='col-span-6'>
                 <h2 className='text-xl font-semibold dark:text-gray-400'>KX-Main Parameters</h2>
-                <TextField
-                    label="KX Main Nodes"
-                    type='number'
-                    fullWidth
-                    size="small"
-                    margin="normal"
-                    InputProps={{ inputProps: { min: 1, max: 10 } }}
-                    defaultValue={configJSON.config.vm_properties["main_node_count"]}
-                    onChange={(e) => { handleConfigChange(e.target.value, "config.vm_properties.main_node_count") }}
-                >
-                </TextField>
-
-                <TextField
-                    label="KX Main Cores"
-                    type='number'
-                    fullWidth
-                    size="small"
-                    margin="normal"
-                    InputProps={{ inputProps: { min: 1, max: 30 } }}
-                    defaultValue={configJSON.config.vm_properties["main_admin_node_cpu_cores"]}
-                    onChange={(e) => { handleConfigChange(e.target.value, "config.vm_properties.main_admin_node_cpu_cores") }}
-                >
-                </TextField>
-
-                <TextField
-                    label="KX Main RAM"
-                    type='number'
-                    fullWidth
-                    size="small"
-                    margin="normal"
-                    defaultValue={configJSON.config.vm_properties["main_admin_node_memory"]}
-                    onChange={(e) => { handleConfigChange(e.target.value, "config.vm_properties.main_admin_node_memory") }}
-                    InputProps={{
-                        startAdornment: <InputAdornment position="start">MB</InputAdornment>,
-                        inputProps: { min: 0, max: 30000 }
-                    }}
-                >
-                </TextField>
-
+                <InputField inputType={"input"} label={"KX Main Nodes"} value={configJSON.config.vm_properties["main_node_count"]} onChange={(e) => { handleConfigChange(e.target.value, "config.vm_properties.main_node_count") }} type={"number"} minLength={1} maxLength={10} />
+                <InputField inputType={"input"} label={"KX Main Cores"} value={configJSON.config.vm_properties["main_admin_node_cpu_cores"]} onChange={(e) => { handleConfigChange(e.target.value, "config.vm_properties.main_admin_node_cpu_cores") }} type={"number"} minLength={1} maxLength={30} />
+                <InputField inputType={"input"} label={"KX Main RAM"} value={configJSON.config.vm_properties["main_admin_node_memory"]} onChange={(e) => { handleConfigChange(e.target.value, "config.vm_properties.main_admin_node_memory") }} type={"number"} minLength={1} maxLength={3000} />
+            </div>
+            <div className='col-span-6'>
                 <h2 className='text-xl font-semibold dark:text-gray-400'>KX-Worker Parameters</h2>
-                <TextField
-                    label="KX Node Nodes"
-                    type='number'
-                    fullWidth
-                    size="small"
-                    margin="normal"
-                    InputProps={{ inputProps: { min: 0, max: 10 } }}
-                    defaultValue={configJSON.config.vm_properties["worker_node_count"]}
-                    onChange={(e) => { handleConfigChange(e.target.value, "config.vm_properties.worker_node_count") }}
-                >
-                </TextField>
-
-                <TextField
-                    label="KX Node Cores"
-                    type='number'
-                    fullWidth
-                    size="small"
-                    margin="normal"
-                    InputProps={{ inputProps: { min: 1, max: 30 } }}
-                    defaultValue={configJSON.config.vm_properties["worker_node_cpu_cores"]}
-                    onChange={(e) => { handleConfigChange(e.target.value, "config.vm_properties.worker_node_cpu_cores") }}
-                >
-                </TextField>
-
-                <TextField
-                    label="KX Node RAM"
-                    type='number'
-                    fullWidth
-                    size="small"
-                    margin="normal"
-                    defaultValue={configJSON.config.vm_properties["worker_node_memory"]}
-                    onChange={(e) => { handleConfigChange(e.target.value, "config.vm_properties.worker_node_memory") }}
-                    InputProps={{
-                        startAdornment: <InputAdornment position="start">MB</InputAdornment>,
-                        inputProps: { min: 0, max: 30000 }
-                    }}
-                >
-                </TextField>
-
+                <InputField inputType={"input"} label={"KX Node Nodes"} value={configJSON.config.vm_properties["worker_node_count"]} onChange={(e) => { handleConfigChange(e.target.value, "config.vm_properties.worker_node_count") }} type={"number"} minLength={1} maxLength={10} />
+                <InputField inputType={"input"} label={"KX Node Cores"} value={configJSON.config.vm_properties["worker_node_cpu_cores"]} onChange={(e) => { handleConfigChange(e.target.value, "config.vm_properties.worker_node_cpu_cores") }} type={"number"} minLength={1} maxLength={30} />
+                <InputField inputType={"input"} label={"KX Node RAM"} value={configJSON.config.vm_properties["worker_node_memory"]} onChange={(e) => { handleConfigChange(e.target.value, "config.vm_properties.worker_node_memory") }} type={"number"} minLength={1} maxLength={30} unit={"MB"} />
             </div>
         </div>
     </div>
@@ -632,48 +539,20 @@ const TabContent4 = ({ handleConfigChange }) => (
 const TabContent5 = ({ handleConfigChange }) => {
     return (
         <div className='text-left'>
-            <div className='px-5 py-3'>
+            <div className='px-5 py-3 dark:bg-ghBlack4'>
                 <h2 className='text-3xl font-semibold'>Notification Settings</h2>
                 <p className='text-sm dark:text-gray-400 text-justify'>
                     More Details about this section here.
                 </p>
             </div>
 
-            <div className='px-5 py-3 dark:bg-ghBlack3 bg-gray-300 grid grid-cols-12'>
+            <div className='px-5 py-3 dark:bg-ghBlack2 bg-gray-300 grid grid-cols-12'>
                 <div className='col-span-6'>
-                    <TextField
-                        label="E-Mail"
-                        fullWidth
-                        variant="outlined"
-                        size="small"
-                        margin="normal"
-                        value={configJSON.notification_endpoints["email_address"]}
-                        onChange={(e) => { handleConfigChange(e.target.value, "notification_endpoints.email_address") }}
-                    >
-                    </TextField>
+                    <InputField inputType={"input"} label={"E-Mail"} value={configJSON.notification_endpoints["email_address"]} onChange={(e) => { handleConfigChange(e.target.value, "notification_endpoints.email_address") }} type={"text"} />
 
-                    <TextField
-                        label="MS Teams Webhook"
-                        fullWidth
-                        variant="outlined"
-                        size="small"
-                        margin="normal"
-                        value={configJSON.notification_endpoints["ms_teams_webhook"]}
-                        onChange={(e) => { handleConfigChange(e.target.value, "notification_endpoints.ms_teams_webhook") }}
-                    >
-                    </TextField>
+                    <InputField inputType={"input"} label={"MS Teams Webhook"} value={configJSON.notification_endpoints["ms_teams_webhook"]} onChange={(e) => { handleConfigChange(e.target.value, "notification_endpoints.ms_teams_webhook") }} type={"text"} />
 
-                    <TextField
-                        label="Slack Webhook"
-                        fullWidth
-                        variant="outlined"
-                        size="small"
-                        margin="normal"
-                        value={configJSON.notification_endpoints["slack_webhook"]}
-                        onChange={(e) => { handleConfigChange(e.target.value, "notification_endpoints.slack_webhook") }}
-                    >
-                    </TextField>
-
+                    <InputField inputType={"input"} label={"Slack Webhook"} value={configJSON.notification_endpoints["slack_webhook"]} onChange={(e) => { handleConfigChange(e.target.value, "notification_endpoints.slack_webhook") }} type={"text"} />
                 </div>
             </div>
 
@@ -684,47 +563,22 @@ const TabContent5 = ({ handleConfigChange }) => {
 const TabContent6 = ({ handleConfigChange }) => {
     return (
         <div className='text-left'>
-            <div className='px-5 py-3'>
+            <div className='px-5 py-3 dark:bg-ghBlack4'>
                 <h2 className='text-3xl font-semibold'>Docker</h2>
                 <p className='text-sm dark:text-gray-400 text-justify'>
                     More Details about this section here.
                 </p>
             </div>
 
-            <div className='px-5 py-3 dark:bg-ghBlack3 bg-gray-300 grid grid-cols-12'>
+            <div className='px-5 py-3 dark:bg-ghBlack2 bg-gray-300 grid grid-cols-12'>
                 <div className='col-span-6'>
-                    <TextField
-                        label="Dockerhub E-Mail"
-                        fullWidth
-                        variant="outlined"
-                        size="small"
-                        margin="normal"
-                        value={configJSON.config.docker["dockerhub_email"]}
-                        onChange={(e) => { handleConfigChange(e.target.value, "config.docker.dockerhub_email") }}
-                    >
-                    </TextField>
+                    <InputField inputType={"input"} label={"Dockerhub E-Mail"} value={configJSON.config.docker["dockerhub_email"]} onChange={(e) => { handleConfigChange(e.target.value, "config.docker.dockerhub_email") }} type={"text"} />
 
-                    <TextField
-                        label="Dockerhub Username"
-                        fullWidth
-                        variant="outlined"
-                        size="small"
-                        margin="normal"
-                        value={configJSON.config.docker["dockerhub_username"]}
-                        onChange={(e) => { handleConfigChange(e.target.value, "config.docker.dockerhub_username") }}
-                    >
-                    </TextField>
+                    <InputField inputType={"input"} label={"Dockerhub E-Mail"} value={configJSON.config.docker["dockerhub_email"]} onChange={(e) => { handleConfigChange(e.target.value, "config.docker.dockerhub_email") }} type={"text"} />
 
-                    <TextField
-                        label="Dockerhub Password"
-                        fullWidth
-                        variant="outlined"
-                        size="small"
-                        margin="normal"
-                        value={configJSON.config.docker["dockerhub_password"]}
-                        onChange={(e) => { handleConfigChange(e.target.value, "config.docker.dockerhub_password") }}
-                    >
-                    </TextField>
+                    <InputField inputType={"input"} label={"Dockerhub Username"} value={configJSON.config.docker["dockerhub_username"]} onChange={(e) => { handleConfigChange(e.target.value, "config.docker.dockerhub_username") }} type={"text"} />
+
+                    <InputField inputType={"password"} label={"Dockerhub Password"} value={configJSON.config.docker["dockerhub_password"]} onChange={(e) => { handleConfigChange(e.target.value, "config.docker.dockerhub_password") }} type={"password"} />
 
                 </div>
             </div>
@@ -735,47 +589,21 @@ const TabContent6 = ({ handleConfigChange }) => {
 const TabContent7 = ({ handleConfigChange }) => {
     return (
         <div className='text-left'>
-            <div className='px-5 py-3'>
+            <div className='px-5 py-3 dark:bg-ghBlack4'>
                 <h2 className='text-3xl font-semibold'>Proxy Settings</h2>
                 <p className='text-sm dark:text-gray-400 text-justify'>
                     More Details about this section here.
                 </p>
             </div>
 
-            <div className='px-5 py-3 dark:bg-ghBlack3 bg-gray-300 grid grid-cols-12'>
+            <div className='px-5 py-3 dark:bg-ghBlack2 bg-gray-300 grid grid-cols-12'>
                 <div className='col-span-6'>
-                    <TextField
-                        label="HTTP Proxy"
-                        fullWidth
-                        variant="outlined"
-                        size="small"
-                        margin="normal"
-                        value={configJSON.config.proxy_settings["http_proxy"]}
-                        onChange={(e) => { handleConfigChange(e.target.value, "config.proxy_settings.http_proxy") }}
-                    >
-                    </TextField>
+                    <InputField inputType={"input"} label={"HTTP Proxy"} value={configJSON.config.proxy_settings["http_proxy"]} onChange={(e) => { handleConfigChange(e.target.value, "config.proxy_settings.http_proxy") }} type={"input"} />
 
-                    <TextField
-                        label="HTTS Proxy"
-                        fullWidth
-                        variant="outlined"
-                        size="small"
-                        margin="normal"
-                        value={configJSON.config.proxy_settings["https_proxy"]}
-                        onChange={(e) => { handleConfigChange(e.target.value, "config.proxy_settings.https_proxy") }}
-                    >
-                    </TextField>
+                    <InputField inputType={"input"} label={"HTTS Proxy"} value={configJSON.config.proxy_settings["https_proxy"]} onChange={(e) => { handleConfigChange(e.target.value, "config.proxy_settings.https_proxy") }} type={"input"} />
 
-                    <TextField
-                        label="No Proxy"
-                        fullWidth
-                        variant="outlined"
-                        size="small"
-                        margin="normal"
-                        value={configJSON.config.proxy_settings["no_proxy"]}
-                        onChange={(e) => { handleConfigChange(e.target.value, "config.proxy_settings.no_proxy") }}
-                    >
-                    </TextField>
+                    <InputField inputType={"input"} label={"No Proxy"} value={configJSON.config.proxy_settings["no_proxy"]} onChange={(e) => { handleConfigChange(e.target.value, "config.proxy_settings.no_proxy") }} type={"input"} />
+
                 </div>
             </div>
         </div>)

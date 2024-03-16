@@ -75,9 +75,9 @@
 }
 
 /* Coldmirror active line highlight background color overwrite */
-.ͼo .cm-activeLine {
+/* .ͼo .cm-activeLine {
     background-color: #2f3640;
-}
+} */
 
 /* WebKit browsers */
 .custom-scrollbar::-webkit-scrollbar {

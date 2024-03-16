@@ -15,6 +15,7 @@ import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import StopCircleIcon from '@mui/icons-material/StopCircle';
 import PlayCircleIcon from '@mui/icons-material/PlayCircle';
+import { Breadcrumbs } from "./Breadcrumbs";
 
 
 const drawerWidth = 0;
@@ -44,8 +45,8 @@ export function HeaderNew(props) {
     }, [props.open]);
 
     return (
-        <AppBar position="" open={props.open} className="dark:bg-ghBlack bg-kxBlue h-[67px]" elevation={0}>
-            <div className="dark:bg-ghBlack bg-kxBlue px-4 flex items-center justify-between w-full">
+        <AppBar position="" open={props.open} className="dark:bg-ghBlack2 bg-kxBlue" elevation={0}>
+            <div className="dark:bg-ghBlack2 bg-kxBlue px-4 flex items-center justify-between w-full h-[67px]">
                 <div className="flex items-center">
                     <img src={logo} height={40} width={40} />
                     <div className="text-left">
@@ -79,11 +80,13 @@ export function HeaderNew(props) {
                             aria-label="Toggle dark/light mode"
                             onClick={props.handleDarkModeToggle}
                         >
-                            {props.isDarkMode ? <WbSunnyIcon /> : <Brightness3 />}
+                            {props.isDarkMode ? <WbSunnyIcon fontSize="small" /> : <Brightness3 fontSize="small" />}
                         </IconButton>
                     </div>
                 </div>
             </div>
+            {/* Breadcrumbs */}
+            <Breadcrumbs />
         </AppBar>
     );
 }
