@@ -89,7 +89,7 @@ export default function ApplicationSelection({ applicationGroup, addApplicationT
                                 {
                                     (searchTerm !== "" ? matchedApplications : applicationsJson).length > 0 ? (
                                         (searchTerm !== "" ? matchedApplications : applicationsJson).map((app, i) => (
-                                            <li className='p-2 py-1 bg-ghBlack2 hover:bg-ghBlack3 rounded cursor-pointer flex justify-between items-center' key={i}>
+                                            <li className='p-2 py-1 bg-ghBlack2 hover:bg-ghBlack3 rounded-sm cursor-pointer flex justify-between items-center' key={i}>
 
 
                                                 <div className='text-left items-center flex'>
@@ -149,7 +149,7 @@ export default function ApplicationSelection({ applicationGroup, addApplicationT
                         <div className='text-left text-gray-600 mb-3 font-semibold uppercase text-sm'>Added Applications to Group ({applicationGroup.action_queues.install.length})</div>
                         <div className='h-[300px] overflow-y-scroll custom-scrollbar pr-2'>
                             {applicationGroup.action_queues.install.map((app) => {
-                                return <div className='cursor-pointer bg-kxBlue2 p-2 py-1 rounded mb-1 text-left'>
+                                return <div className='cursor-pointer bg-kxBlue2 p-2 py-1 rounded-sm mb-1 text-left'>
                                     <div className='flex items-center'>
                                         <AppLogo appName={app.name} />
                                         <div className='ml-1'>

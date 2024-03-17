@@ -9,7 +9,7 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { IconButton } from '@mui/material';
 import { ContentCopy } from '@mui/icons-material';
 
-export function ListItemCard({ index, itemData, selectedItem, handleItemClick, handleDeleteItem, handleDublicateItem }) {
+export function ListItemCardApplication({ index, itemData, selectedItem, handleItemClick, handleDeleteItem, handleDublicateItem }) {
     const parentRef = useRef();
     const popoverRef = useRef();
     const [isCardHovered, setIsCardHovered] = useState(false);
@@ -45,18 +45,9 @@ export function ListItemCard({ index, itemData, selectedItem, handleItemClick, h
                 <div className='flex items-center'>
                     <LayersIcon fontSize="medium" className="mr-2" />
                     <div className="text-left">
-                        <div className='whitespace-nowrap w-[190px] overflow-hidden text-ellipsis'>{itemData.title !== "" ? itemData.title : "No Title"}</div>
+                        <div className='whitespace-nowrap w-[190px] overflow-hidden text-ellipsis capitalize'>{itemData.name !== "" ? itemData.name : "No Title"}</div>
                         <div className='text-xs uppercase text-gray-400 text-ellipsis overflow-hidden flex'>
-                            {itemData.action_queues.install[0] !== undefined ? (
-                                itemData.action_queues.install.length > 1 ? (
-                                    <span className='flex'>
-                                        {itemData.action_queues.install[0].name}
-                                        {itemData.action_queues.install.length > 0 && ` (+${itemData.action_queues.install.length - 1})`}
-                                    </span>
-                                ) : (
-                                    itemData.action_queues.install[0].name
-                                )
-                            ) : "0 Applications"}
+                           {itemData.installation_group_folder ? itemData.installation_group_folder : "Category N/A"}
                         </div>
                     </div>
                 </div>

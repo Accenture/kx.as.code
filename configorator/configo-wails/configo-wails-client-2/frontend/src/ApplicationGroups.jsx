@@ -36,43 +36,42 @@ export function ApplicationGroups({ }) {
         <div className='text-left'>
             <div className='relative'>
                 {/* Config View Tabs */}
-                <div className='grid grid-cols-12 items-center dark:bg-ghBlack4 sticky z-10 p-1'>
-                    <div className='col-span-9'>
-                        <ConfigSectionHeader sectionTitle={"Application Groups"} SectionDescription={"More Details about this section here."} />
-                    </div>
-                    <div className='col-span-3 pr-10 mx-3'>
-                        <div className="relative w-full h-[40px] p-1 bg-ghBlack3 rounded">
-                            <div className="relative w-full h-full flex items-center">
-                                <div
-                                    onClick={() => setActiveConfigTab('config-tab1')}
-                                    className="w-full flex justify-center text-gray-300 cursor-pointer"
-                                >
-                                    <button className='text-sm'>
-                                        Config UI
-                                    </button>
-                                </div>
-                                <div
-                                    onClick={() => setActiveConfigTab('config-tab2')}
-                                    className="w-full flex justify-center text-gray-300 cursor-pointer"
-                                >
-                                    <button className='text-sm'>
-                                        JSON
-                                    </button>
-                                </div>
-                            </div>
+                <div className='dark:bg-ghBlack4'>
+                    
+                    <ConfigSectionHeader sectionTitle={"Application Groups"} SectionDescription={"More Details about this section here."} setActiveConfigTab={setActiveConfigTab} activeConfigTab={activeConfigTab} contentName={"Appplication Groups"}/>
 
-                            <span
-                                className={`${activeConfigTab === 'config-tab1'
-                                    ? 'left-1 ml-0'
-                                    : 'left-1/2 -ml-1'
-                                    } py-1 text-white bg-ghBlack4 text-sm flex items-center justify-center w-1/2 rounded-sm transition-all duration-150 ease-linear top-[5px] absolute`}
+                    {/* <div className="relative w-full h-[40px] p-1 bg-ghBlack3 rounded">
+                        <div className="relative w-full h-full flex items-center">
+                            <div
+                                onClick={() => setActiveConfigTab('config-tab1')}
+                                className="w-full flex justify-center text-gray-300 cursor-pointer"
                             >
-                                {activeConfigTab === 'config-tab1'
-                                    ? "Config UI"
-                                    : "JSON"}
-                            </span>
+                                <button className='text-sm'>
+                                    Config UI
+                                </button>
+                            </div>
+                            <div
+                                onClick={() => setActiveConfigTab('config-tab2')}
+                                className="w-full flex justify-center text-gray-300 cursor-pointer"
+                            >
+                                <button className='text-sm'>
+                                    JSON
+                                </button>
+                            </div>
                         </div>
-                    </div>
+
+                        <span
+                            className={`${activeConfigTab === 'config-tab1'
+                                ? 'left-1 ml-0'
+                                : 'left-1/2 -ml-1'
+                                } py-1 text-white bg-ghBlack4 text-sm flex items-center justify-center w-1/2 rounded-sm transition-all duration-150 ease-linear top-[5px] absolute`}
+                        >
+                            {activeConfigTab === 'config-tab1'
+                                ? "Config UI"
+                                : "JSON"}
+                        </span>
+
+                    </div> */}
 
                 </div>
             </div>

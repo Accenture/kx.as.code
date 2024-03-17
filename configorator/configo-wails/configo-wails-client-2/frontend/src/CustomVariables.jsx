@@ -64,44 +64,13 @@ const CustomVariables = () => {
 
     return (
         <div className='text-left'>
-            <div className='grid grid-cols-12 items-center dark:bg-ghBlack4 sticky top-[67px] z-10 p-1'>
-                <div className='col-span-9'>
-                    <ConfigSectionHeader sectionTitle={"Custom Global Variables"} SectionDescription={"Set key/value pairs that can be used by solutions when they are being installed."} />
-                </div>
-                <div className='col-span-3 pr-10 mx-3'>
-                    <div className="relative w-full h-[40px] p-1 bg-ghBlack2 rounded-md">
-                        <div className="relative w-full h-full flex items-center text-sm">
-                            <div
-                                onClick={() => setActiveConfigTab('config-tab1')}
-                                className="w-full flex justify-center text-gray-300 cursor-pointer"
-                            >
-                                <button>
-                                    Config UI
-                                </button>
-                            </div>
-                            <div
-                                onClick={() => setActiveConfigTab('config-tab2')}
-                                className="w-full flex justify-center text-gray-300 cursor-pointer"
-                            >
-                                <button>
-                                    JSON
-                                </button>
-                            </div>
-                        </div>
-
-                        <span
-                            className={`${activeConfigTab === 'config-tab1'
-                                ? 'left-1 ml-0'
-                                : 'left-1/2 -ml-1'
-                                } py-1 text-white bg-ghBlack4 text-sm flex items-center justify-center w-1/2 rounded transition-all duration-150 ease-linear top-[5px] absolute`}
-                        >
-                            {activeConfigTab === 'config-tab1'
-                                ? "Config UI"
-                                : "JSON"}
-                        </span>
-                    </div>
+            <div className='relative'>
+                {/* Config View Tabs */}
+                <div className='dark:bg-ghBlack4'>
+                    <ConfigSectionHeader sectionTitle={"Custom Variable Groups"} SectionDescription={"More Details about this section here."} setActiveConfigTab={setActiveConfigTab} activeConfigTab={activeConfigTab} contentName={"CV Groups"}/>
                 </div>
             </div>
+
             <div className='bg-ghBlack2 h-1'></div>
             <div className="config-tab-content">
                 {activeConfigTab === 'config-tab1' && <UIConfigTabContent handleConfigChange={handleConfigChange} />}

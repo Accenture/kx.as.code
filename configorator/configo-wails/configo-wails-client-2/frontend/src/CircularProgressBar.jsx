@@ -12,7 +12,7 @@ export function CircularProgressbar({ percentage }) {
     if (animatedPercentage < percentage) {
       animationInterval = setInterval(() => {
         setAnimatedPercentage((prevPercentage) => {
-          const nextPercentage = prevPercentage + 1 <= percentage ? prevPercentage + 1 : percentage;
+          const nextPercentage = prevPercentage + 2 <= percentage ? prevPercentage + 2 : percentage;
           return nextPercentage <= 100 ? nextPercentage : 100;
         });
       }, 10);
