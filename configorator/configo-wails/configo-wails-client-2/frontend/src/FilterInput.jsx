@@ -1,4 +1,4 @@
-import { Add, Clear, FilterList } from '@mui/icons-material';
+import { Add, Clear, FilterList, SwapVert } from '@mui/icons-material';
 import { IconButton } from '@mui/material';
 import React, { useState, useEffect, useRef } from 'react';
 import Autocomplete from '@mui/material/Autocomplete';
@@ -72,11 +72,14 @@ export function FilterInput({ setSearchTerm, searchTerm, itemName, itemsCount, h
                                     </IconButton>
                                 )}
                             </div>
-                            <button className={`text-gray-400 p-1 ${isFilterSectionActive ? "bg-white text-black " : "text-black hover:bg-ghBlack3"} rounded-sm ml-1 h-full`}
+                            <button className={`text-gray-400 p-1 ${isFilterSectionActive ? "bg-white text-black " : "text-black hover:bg-ghBlack3"} rounded-sm ml-1 h-full flex justify-center items-center`}
                                 onClick={() => {
                                     toggleFilterSectionActive()
                                 }}>
                                 <FilterList fontSize='small' />
+                            </button>
+                            <button className={`text-gray-400 p-1 rounded-sm ml-1 h-full flex justify-center items-center hover:bg-ghBlack3`}>
+                                <SwapVert className="" fontSize='small' />
                             </button>
 
                             {hasActionButton && (

@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 
-export default function AppLogo({ appName }) {
+export default function AppLogo({ appName, size }) {
     const [image, setImage] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        let isMounted = true; // Flag to track if the component is still mounted
+        let isMounted = true;
 
         const fetchImage = async () => {
             try {
@@ -34,7 +34,6 @@ export default function AppLogo({ appName }) {
 
         fetchImage();
 
-        // Cleanup function to set isMounted to false when the component unmounts
         return () => {
             isMounted = false;
         };
@@ -44,14 +43,16 @@ export default function AppLogo({ appName }) {
         !isLoading ? (
             image ? (
                 <img
-                    className='p-1'
+                    className={`p-1`}
+                    height={size}
+                    width={size}
                     src={image}
                     alt={appName}
-                    style={{ maxHeight: '40px', width: '40px', display: 'block' }}
+                    style={{display: 'block' }}
                 />
             ) : null
         ) : (
-            <div className='h-[36px] w-[36px] rounded-full animate-pulse bg-ghBlack4'></div>
+            <div className={`rounded-full animate-pulse bg-ghBlack4`}></div>
         )
     );
 }

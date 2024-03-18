@@ -94,7 +94,7 @@ export default function ApplicationSelection({ applicationGroup, addApplicationT
 
                                                 <div className='text-left items-center flex'>
 
-                                                    <AppLogo appName={app.name} />
+                                                    <AppLogo appName={app.name} size={40}/>
 
                                                     <div className='ml-2'>
                                                         <span className='capitalize mr-1'>
@@ -119,7 +119,7 @@ export default function ApplicationSelection({ applicationGroup, addApplicationT
                                                         </button>
                                                     ) : (
                                                         <button
-                                                            className='flex items-center justify-center p-1 bg-kxBlue text-white rounded'
+                                                            className='flex items-center justify-center p-1 bg-kxBlue text-white rounded-sm'
                                                             onClick={() => {
                                                                 console.log("app-2: ", app)
                                                                 handleAddApplication(app);
@@ -151,7 +151,7 @@ export default function ApplicationSelection({ applicationGroup, addApplicationT
                             {applicationGroup.action_queues.install.map((app) => {
                                 return <div className='cursor-pointer bg-kxBlue2 p-2 py-1 rounded-sm mb-1 text-left'>
                                     <div className='flex items-center'>
-                                        <AppLogo appName={app.name} />
+                                        <AppLogo appName={app.name} size={40}/>
                                         <div className='ml-1'>
                                             <span className='capitalize mr-1'>
                                                 {app.name}

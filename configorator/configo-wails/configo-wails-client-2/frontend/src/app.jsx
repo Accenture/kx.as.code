@@ -217,17 +217,17 @@ export function App() {
     return (
 
         <div className="relative">
-            <div className="dark:bg-ghBlack2 relative flex" >
+            <div className="dark:bg-ghBlack3 relative flex" >
                 <ThemeProvider theme={theme}>
-                    <div className="dark:bg-ghBlack2 h-screen flex items-center">
+                    <div className="dark:bg-ghBlack3 h-screen flex items-center border-ghBlack2 border-r-[2px]">
                         {/* Navigation */}
-                        <div className="bg-ghBlack2 mt-auto mb-auto">
+                        <div className="bg-ghBlack3 mt-auto mb-auto">
                             <List className="" sx={{ paddingY: "0" }}>
                                 <MenuItem menuItemName={"home"} slug={slug} />
                                 <MenuItem menuItemName={"build"} slug={slug} isBuildStarted={isBuildStarted} />
                                 <MenuItem menuItemName={"deploy"} slug={slug} />
                                 {/* Separator */}
-                                <div className="w-full h-[2px] bg-gray-400 my-0"></div>
+                                <div className="w-full h-1 bg-ghBlack2 my-0"></div>
                                 <MenuItem menuItemName={"application-groups"} slug={slug} />
                                 <MenuItem menuItemName={"user-provisioning"} slug={slug} />
                                 <MenuItem menuItemName={"custom-variables"} slug={slug} />
@@ -316,7 +316,7 @@ const MenuItem = ({ menuItemName, slug, isBuildStarted }) => {
                     </div>) : (<PrecisionManufacturingIcon className={`text-lg`} />)
                 }
             case "deploy":
-                return <RocketLaunchIcon fontSize="small" />
+                return <RocketLaunchIcon fontSize="small" color="inherit"/>
             case "application-groups":
                 return <LayersIcon fontSize="small" />
             case "user-provisioning":
@@ -341,7 +341,7 @@ const MenuItem = ({ menuItemName, slug, isBuildStarted }) => {
                         backgroundColor: slug == menuItemName ? "#2f3640" : "#1f262e",
                         borderLeft: slug == menuItemName ? "5px solid #5a86ff" : "5px solid #1f262e"
                     },
-                    borderLeft: slug == menuItemName ? "5px solid #5a86ff" : "5px solid #161b22",
+                    borderLeft: slug == menuItemName ? "5px solid #5a86ff" : "5px solid #1f262e",
                     paddingX: "0px",
                 }}
             >

@@ -38,12 +38,12 @@ export default function Applications() {
                 {/* Config View Tabs */}
                 <div className='dark:bg-ghBlack4'>
                     
-                    <ConfigSectionHeader sectionTitle={"Applications"} SectionDescription={"More Details about this section here."} setActiveConfigTab={setActiveConfigTab} activeConfigTab={activeConfigTab} contentName={"Appplications"}/>
+                    <ConfigSectionHeader sectionTitle={"Manage Applications"} SectionDescription={"More Details about this section here."} setActiveConfigTab={setActiveConfigTab} activeConfigTab={activeConfigTab} contentName={"Appplications"}/>
 
                 </div>
             </div>
 
-            <div className='bg-ghBlack2 h-1'></div>
+            <div className='bg-ghBlack2 h-[2px]'></div>
             <div className="config-tab-content">
                 {activeConfigTab === 'config-tab1' && <ApplicationsListAndDetail activeTab={activeTab} handleTabClick={handleTabClick} setJsonData={setJsonData} applicationGroupDetailTab={applicationGroupDetailTab} setApplicationGroupDetailTab={setApplicationGroupDetailTab} windowHeight={windowHeight} />}
                 {activeConfigTab === 'config-tab2' && <JSONConfigTabContent jsonData={jsonData} fileName={"profile-config.json"} />}

@@ -8,6 +8,7 @@ import DeleteForever from '@mui/icons-material/DeleteForever';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { IconButton } from '@mui/material';
 import { ContentCopy } from '@mui/icons-material';
+import AppLogo from './AppLogo';
 
 export function ListItemCardApplication({ index, itemData, selectedItem, handleItemClick, handleDeleteItem, handleDublicateItem }) {
     const parentRef = useRef();
@@ -43,8 +44,8 @@ export function ListItemCardApplication({ index, itemData, selectedItem, handleI
             }}>
             <div ref={parentRef} className="col-span-12 flex items-center relative">
                 <div className='flex items-center'>
-                    <LayersIcon fontSize="medium" className="mr-2" />
-                    <div className="text-left">
+                    <AppLogo appName={itemData.name} size={40} />
+                    <div className="text-left ml-2">
                         <div className='whitespace-nowrap w-[190px] overflow-hidden text-ellipsis capitalize'>{itemData.name !== "" ? itemData.name : "No Title"}</div>
                         <div className='text-xs uppercase text-gray-400 text-ellipsis overflow-hidden flex'>
                            {itemData.installation_group_folder ? itemData.installation_group_folder : "Category N/A"}
