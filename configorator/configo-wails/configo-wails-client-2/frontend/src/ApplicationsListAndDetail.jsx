@@ -996,17 +996,16 @@ export function ApplicationsListAndDetail({ setJsonData, applicationGroupDetailT
 
                                     <div className="pt-3">
 
-                                        {/* Details Actions Header */}
-                                        <div className='flex justify-end'>
-
+                                        {/* AppLogo, Name & Description */}
+                                        <div className="flex w-full">
+                                            <div className="bg-ghBlack3 rounded-sm mr-3 size-[172px] flex justify-center items-center">
+                                                <AppLogo appName={data2[selectedItem].name} size={90} className="" />
+                                            </div>
+                                            <div className='w-full'>
+                                                <InputField inputType={"input"} type={"text"} placeholder={"Add an Application name"} dataKey={"application_name"} label={"Application Name"} value={data2[selectedItem].name} />
+                                                <InputField inputType={"textarea"} type={"text"} placeholder={"Add an Application Description"} dataKey={"application_desc"} label={"Application Description"} value={data2[selectedItem].Description} />
+                                            </div>
                                         </div>
-                                        <div className="bg-ghBlack3 h-[120px] w-[120px] rounded-sm mb-3 mx-auto" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                                            <AppLogo appName={data2[selectedItem].name} size={90} className="" />
-                                        </div>
-
-                                        <InputField inputType={"input"} type={"text"} placeholder={"Add an Application name"} dataKey={"application_name"} label={"Application Name"} value={data2[selectedItem].name}/>
-
-                                        <InputField inputType={"textarea"} type={"text"} placeholder={"Add an Application Description"} dataKey={"application_desc"} label={"Application Description"} value={data2[selectedItem].Description} />
 
                                         <InputField inputType={"input"} type={"text"} placeholder={"Add a Namespace"} dataKey={"application_namespace"} label={"Namespace"} value={data2[selectedItem].namespace} />
 

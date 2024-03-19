@@ -16,6 +16,10 @@ export function ListItemCardApplication({ index, itemData, selectedItem, handleI
     const [isCardHovered, setIsCardHovered] = useState(false);
     const [isMoreMenuActive, setIsMoreMenuActive] = useState(false);
 
+    const openLinkInNewWindow = (url) => {
+        window.open(url, '_blank', 'noopener,noreferrer');
+    }
+
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (popoverRef.current && !popoverRef.current.contains(event.target)) {
@@ -46,9 +50,14 @@ export function ListItemCardApplication({ index, itemData, selectedItem, handleI
                 <div className='flex items-center'>
                     <AppLogo appName={itemData.name} size={40} />
                     <div className="text-left ml-2">
-                        <div className='whitespace-nowrap w-[190px] overflow-hidden text-ellipsis capitalize'>{itemData.name !== "" ? itemData.name : "No Title"}</div>
+                        <Link
+                            to={`/applications/${itemData.name}`}
+                            className={`whitespace-nowrap w-[190px] overflow-hidden text-ellipsis capitalize hover:underline`}
+                        >
+                            {itemData.name !== "" ? itemData.name : "No Title"}
+                        </Link>
                         <div className='text-xs uppercase text-gray-400 text-ellipsis overflow-hidden flex'>
-                           {itemData.installation_group_folder ? itemData.installation_group_folder : "Category N/A"}
+                            {itemData.installation_group_folder ? itemData.installation_group_folder : "Category N/A"}
                         </div>
                     </div>
                 </div>

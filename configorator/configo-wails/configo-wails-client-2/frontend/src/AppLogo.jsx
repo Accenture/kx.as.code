@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { HiMiniCube } from "react-icons/hi2";
 
 export default function AppLogo({ appName, size }) {
     const [image, setImage] = useState(null);
@@ -15,19 +16,10 @@ export default function AppLogo({ appName, size }) {
                     setIsLoading(false);
                 }
             } catch (error) {
+                setImage(null)
                 console.error('Error loading image:', error);
-                const noImagePath = './assets/media/svg/no_image_app.svg';
-
-                try {
-                    const { default: imageModule } = await import(noImagePath);
-                    if (isMounted) {
-                        setImage(imageModule);
-                    }
-                } catch (fallbackError) {
-                    console.error('Error fetching or processing fallback image:', fallbackError);
-                    if (isMounted) {
-                        setImage(null);
-                    }
+                if (isMounted) {
+                    setIsLoading(false);
                 }
             }
         };
@@ -48,11 +40,13 @@ export default function AppLogo({ appName, size }) {
                     width={size}
                     src={image}
                     alt={appName}
-                    style={{display: 'block' }}
+                    style={{ display: 'block' }}
                 />
-            ) : null
+            ) : (
+                <HiMiniCube size={size} className={`text-white p-1.5`} />
+            )
         ) : (
-            <div className={`rounded-full animate-pulse bg-ghBlack4`}></div>
+            <div className={`rounded-full animate-pulse bg-ghBlack4`} style={{ width: size, height: size }}></div>
         )
     );
 }

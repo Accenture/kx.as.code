@@ -1,26 +1,22 @@
-import { useState, useEffect, useCallback } from "preact/hooks";
+import React, { useState, useEffect, useCallback } from 'react';
 import './app.css';
 import { HeaderNew } from "./HeaderNew";
 import { Routes, Route, Link, useLocation } from "react-router-dom";
 import TabMenuBuild from "./TabMenuBuild";
 import TabMenuDeploy from "./TabMenuDeploy";
 import Home from "./Home";
+import Dashboard from "./Dashboard";
 import { createTheme, ThemeProvider, styled } from '@mui/material/styles';
 import { ConsoleOutput } from "./ConsoleOutput";
 import UserProvisioning from "./UserProvisioning";
 import CustomVariables from "./CustomVariables";
 import Box from "@mui/material/Box";
 import MuiDrawer from "@mui/material/Drawer";
-import IconButton from "@mui/material/IconButton";
-import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import List from "@mui/material/List";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import PrecisionManufacturingIcon from '@mui/icons-material/PrecisionManufacturing';
 import RocketLaunchIcon from '@mui/icons-material/RocketLaunch';
-import HomeIcon from '@mui/icons-material/Home';
-import Tooltip from '@mui/material/Tooltip';
 import PeopleIcon from '@mui/icons-material/People';
 import DataArrayIcon from '@mui/icons-material/DataArray';
 import LayersIcon from '@mui/icons-material/Layers';
@@ -28,16 +24,14 @@ import { ApplicationGroups } from "./ApplicationGroups";
 import { ExeBuild, StopExe, OpenURL } from "../wailsjs/go/main/App"
 import buildOutputFile from './assets/buildOutput.txt';
 import TipsAndUpdatesIcon from '@mui/icons-material/TipsAndUpdates';
-import AppBar from '@mui/material/AppBar';
-import Toolbar from '@mui/material/Toolbar';
-import MenuIcon from '@mui/icons-material/Menu';
 import { Toaster } from 'sonner';
 import { toast } from 'sonner';
 import HistoryIcon from '@mui/icons-material/History';
 import BuildHistory from "./BuildHistory";
 import GitHubIcon from '@mui/icons-material/GitHub';
-import { Settings } from "@mui/icons-material";
+import { Apps, DashboardCustomize, DashboardSharp, Settings } from "@mui/icons-material";
 import Applications from "./Applications";
+import { ApplicationDetails } from "./ApplicationDetails";
 
 
 const openedMixin = (theme) => ({
@@ -215,7 +209,6 @@ export function App() {
 
 
     return (
-
         <div className="relative">
             <div className="dark:bg-ghBlack3 relative flex" >
                 <ThemeProvider theme={theme}>
@@ -223,12 +216,13 @@ export function App() {
                         {/* Navigation */}
                         <div className="bg-ghBlack3 mt-auto mb-auto">
                             <List className="" sx={{ paddingY: "0" }}>
-                                <MenuItem menuItemName={"home"} slug={slug} />
+                                <MenuItem menuItemName={"dashboard"} slug={slug} />
                                 <MenuItem menuItemName={"build"} slug={slug} isBuildStarted={isBuildStarted} />
                                 <MenuItem menuItemName={"deploy"} slug={slug} />
                                 {/* Separator */}
                                 <div className="w-full h-1 bg-ghBlack2 my-0"></div>
                                 <MenuItem menuItemName={"application-groups"} slug={slug} />
+                                <MenuItem menuItemName={"applications"} slug={slug} />
                                 <MenuItem menuItemName={"user-provisioning"} slug={slug} />
                                 <MenuItem menuItemName={"custom-variables"} slug={slug} />
                                 <MenuItem menuItemName={"build-history"} slug={slug} />
@@ -244,7 +238,8 @@ export function App() {
                         <div className="">
                             <Routes>
                                 {/* <Route exact path="/" element={<TabMenu />} /> */}
-                                <Route path="/home" element={<Home />} />
+                                <Route path="/" element={<Home />} />
+                                <Route path="/dashboard" element={<Dashboard />} />
                                 <Route path="/build" element={<TabMenuBuild buildOutputFileContent={buildLogOutput} toggleBuildStart={toggleBuildStart} isBuildStarted={isBuildStarted} />} />
                                 <Route path="/deploy" element={<TabMenuDeploy />} />
                                 <Route path="/application-groups" element={<ApplicationGroups />} />
@@ -253,6 +248,7 @@ export function App() {
                                 <Route path="/build-history" element={<BuildHistory />} />
                                 <Route path="/console-output" element={<ConsoleOutput />} />
                                 <Route path="/applications" element={<Applications />} />
+                                <Route path="/applications/:id" component={ApplicationDetails} />
                                 {/* <Route path="/users" element={<Users />} /> */}
                                 {/* <Route path="/custom-variable-groups" element={<CustomVariableGroups />} /> */}
                                 {/* <Route path="/user-groups" element={<CustomVariablesGroups />} /> */}
@@ -260,10 +256,14 @@ export function App() {
                         </div>
 
                         {/* Footer Section */}
-                        <div className="bg-ghBlack4 p-4 pt-3 w-full text-gray-400 flex justify-end px-10">
-                            <button className="hover:text-white" onClick={() => {
+                        <div className="bg-ghBlack4 p-4 pt-3 w-full text-gray-400 flex justify-end px-10 items-center">
+                            <button className="hover:text-white text-gray-400 p-1 rounded-sm hover:underline mr-2 text-sm px-2" onClick={() => {
                                 OpenURL("https://github.com/Accenture/kx.as.code")
                             }}>
+                                Docs
+                            </button>
+
+                            <button className="flex items-center hover:text-white" onClick={() => OpenURL("https://accenture.github.io/kx.as.code/")}>
                                 <GitHubIcon fontSize="small" />
                             </button>
                         </div>
@@ -274,7 +274,7 @@ export function App() {
                         duration={2000}
                         toastOptions={{
                             style: {
-                                background: "#161b22",
+                                background: "#3e5db2",
                                 borderRadius: "3px",
                                 borderWidth: "0",
                                 color: "white",
@@ -297,8 +297,6 @@ const MenuItem = ({ menuItemName, slug, isBuildStarted }) => {
 
     const getMenuItemIcon = (menuItemName) => {
         switch (menuItemName) {
-            case "home":
-                return <TipsAndUpdatesIcon fontSize="small" />
             case "build":
                 {
                     return isBuildStarted ? (<div className="relative">
@@ -316,7 +314,7 @@ const MenuItem = ({ menuItemName, slug, isBuildStarted }) => {
                     </div>) : (<PrecisionManufacturingIcon className={`text-lg`} />)
                 }
             case "deploy":
-                return <RocketLaunchIcon fontSize="small" color="inherit"/>
+                return <RocketLaunchIcon fontSize="small" color="inherit" />
             case "application-groups":
                 return <LayersIcon fontSize="small" />
             case "user-provisioning":
@@ -327,6 +325,10 @@ const MenuItem = ({ menuItemName, slug, isBuildStarted }) => {
                 return <HistoryIcon fontSize="small" />
             case "settings":
                 return <Settings fontSize="small" />
+            case "applications":
+                return <Apps fontSize="small" />
+            case "dashboard":
+                return <DashboardSharp fontSize="small" />
             default:
                 break;
         }
@@ -339,10 +341,10 @@ const MenuItem = ({ menuItemName, slug, isBuildStarted }) => {
                     backgroundColor: slug == menuItemName ? "#2f3640" : "",
                     "&:hover": {
                         backgroundColor: slug == menuItemName ? "#2f3640" : "#1f262e",
-                        borderLeft: slug == menuItemName ? "5px solid #5a86ff" : "5px solid #1f262e"
+                        borderLeft: slug == menuItemName ? "3px solid #5a86ff" : "3px solid #1f262e"
                     },
-                    borderLeft: slug == menuItemName ? "5px solid #5a86ff" : "5px solid #1f262e",
-                    paddingX: "0px",
+                    borderLeft: slug == menuItemName ? "3px solid #5a86ff" : "3px solid #1f262e",
+                    paddingX: "3px",
                 }}
             >
                 <ListItemIcon

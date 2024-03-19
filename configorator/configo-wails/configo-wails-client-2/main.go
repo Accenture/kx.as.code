@@ -18,11 +18,12 @@ func main() {
 
 	// Create application with options
 	err := wails.Run(&options.App{
-		Title: "KX.AS.Code Launcher",
+		Title:            "KX.AS.Code Launcher",
+		BackgroundColour: &options.RGBA{R: 0, G: 0, B: 0, A: 255},
 		Mac: &mac.Options{
 			TitleBar: &mac.TitleBar{
-				TitlebarAppearsTransparent: false,
-				HideTitle:                  false,
+				TitlebarAppearsTransparent: true,
+				HideTitle:                  true,
 				HideTitleBar:               false,
 				FullSizeContent:            false,
 				UseToolbar:                 false,
@@ -41,8 +42,7 @@ func main() {
 		AssetServer: &assetserver.Options{
 			Assets: assets,
 		},
-		BackgroundColour: &options.RGBA{R: 240, G: 117, B: 199, A: 1},
-		OnStartup:        app.startup,
+		OnStartup: app.startup,
 		Bind: []interface{}{
 			app,
 		},

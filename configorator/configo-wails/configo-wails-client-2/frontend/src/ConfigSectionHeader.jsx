@@ -8,8 +8,8 @@ export function ConfigSectionHeader({ sectionTitle, SectionDescription, activeCo
                 <h2 className='text-2xl font-semibold text-left'>{sectionTitle}</h2>
                 <p className='text-sm dark:text-gray-400 text-justify'>{SectionDescription}</p>
             </div>
-            <div className="col-span-6 relative">
-                {/* JSON View Toggle */}
+            {/* <div className="col-span-6 relative">
+                JSON View Toggle
                 <div className="flex justify-end bottom-0 right-0 absolute">
                     <div className='flex itmes-center text-sm '>
                         <button
@@ -26,7 +26,7 @@ export function ConfigSectionHeader({ sectionTitle, SectionDescription, activeCo
                         </button>
                     </div>
                 </div>
-            </div>
+            </div> */}
         </div>
     )
 

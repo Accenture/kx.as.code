@@ -1,14 +1,10 @@
-import { useEffect, useState } from "preact/hooks";
+import { useEffect, useState } from "react";
 import './app.css';
 import logo from "./assets/images/ks-logo-w.svg"
-import Switch from '@mui/material/Switch';
 import IconButton from '@mui/material/IconButton';
 import Brightness3 from '@mui/icons-material/Brightness3';
 import WbSunnyIcon from '@mui/icons-material/WbSunny';
-import { ThemeProvider, createTheme } from '@mui/system';
 import MuiAppBar from "@mui/material/AppBar";
-import Toolbar from "@mui/material/Toolbar";
-import MenuIcon from "@mui/icons-material/Menu";
 import Tooltip from '@mui/material/Tooltip';
 import { styled, useTheme } from '@mui/material/styles';
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
@@ -16,7 +12,7 @@ import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import StopCircleIcon from '@mui/icons-material/StopCircle';
 import PlayCircleIcon from '@mui/icons-material/PlayCircle';
 import { Breadcrumbs } from "./Breadcrumbs";
-
+import { Link } from "react-router-dom"
 
 const drawerWidth = 0;
 
@@ -46,12 +42,14 @@ export function HeaderNew(props) {
 
     return (
         <AppBar position="" open={props.open} className="dark:bg-ghBlack2 bg-kxBlue" elevation={0}>
-            <div className="dark:bg-ghBlack2 bg-kxBlue px-4 flex items-center justify-between w-full h-[67px]">
+            <div className="dark:bg-ghBlack2 bg-kxBlue px-4 flex items-center justify-between w-full h-[67px]" style="--wails-draggable:drag">
                 <div className="flex items-center">
-                    <img src={logo} height={40} width={40} />
+                    <Link to={"/"}>
+                        <img src={logo} height={40} width={40} className="hover:p-0.5"/>
+                    </Link>
                     <div className="text-left">
-                        <div className="text-sm">KX.AS.Code</div>
-                        <div className="font-semibold text-lg">Launcher <span className="text-sm font-normal ml-1 p-0.5 px-1 text-white">v.0.8.16</span></div>
+                        <div className="text-sm">KX.AS.Code <span className="italic font-bold">ALPHA</span></div>
+                        <div className="font-bold text-lg">Launcher <span className="text-sm font-normal p-0.5 px-1 text-white">v.0.8.16</span></div>
                     </div>
                 </div>
 
@@ -85,6 +83,7 @@ export function HeaderNew(props) {
                     </div>
                 </div>
             </div>
+
             {/* Breadcrumbs */}
             <Breadcrumbs />
         </AppBar>

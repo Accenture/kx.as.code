@@ -38,7 +38,7 @@ export function ApplicationGroups({ }) {
                 {/* Config View Tabs */}
                 <div className='dark:bg-ghBlack4'>
                     
-                    <ConfigSectionHeader sectionTitle={"Application Groups"} SectionDescription={"More Details about this section here."} setActiveConfigTab={setActiveConfigTab} activeConfigTab={activeConfigTab} contentName={"Appplication Groups"}/>
+                    <ConfigSectionHeader sectionTitle={"Application Groups"} SectionDescription={"More Details about this section here."} setActiveConfigTab={setActiveConfigTab} activeConfigTab={activeConfigTab} contentName={"App Groups"}/>
 
                     {/* <div className="relative w-full h-[40px] p-1 bg-ghBlack3 rounded">
                         <div className="relative w-full h-full flex items-center">
@@ -76,7 +76,7 @@ export function ApplicationGroups({ }) {
                 </div>
             </div>
             <div className="config-tab-content flexGrow">
-                <div className='bg-ghBlack2 h-1'></div>
+                <div className='bg-ghBlack2 h-[2px]'></div>
 
                 {activeConfigTab === 'config-tab1' && <ApplicationGroupsListAndDetail activeTab={activeTab} handleTabClick={handleTabClick} setJsonData={setJsonData} applicationGroupDetailTab={applicationGroupDetailTab} setApplicationGroupDetailTab={setApplicationGroupDetailTab} windowHeight={windowHeight} />}
                 {activeConfigTab === 'config-tab2' && <JSONConfigTabContent jsonData={jsonData} fileName={"applicationGroups.json"} windowHeight={windowHeight} />}

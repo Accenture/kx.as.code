@@ -30,7 +30,7 @@ export function FilterInput({ setSearchTerm, searchTerm, itemName, itemsCount, h
 
     return (
 
-        <div className='top-0 sticky bg-ghBlack2 p-2 shadow-lg'>
+        <div className='top-0 sticky bg-ghBlack2 p-2 shadow-lg pt-1'>
             <div className='flex'>
 
                 <div className="items-center w-full pr-1">

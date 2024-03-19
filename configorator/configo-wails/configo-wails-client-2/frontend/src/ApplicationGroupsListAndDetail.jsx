@@ -370,8 +370,8 @@ export function ApplicationGroupsListAndDetail({ setJsonData, applicationGroupDe
                     {/* Search Input Field with filter button */}
                     <FilterInput setSearchTerm={setSearchTerm} searchTerm={searchTerm} itemsCount={data2.length} itemName={"Application Groups"} hasActionButton={true} actionFunction={handleAddNewItem} />
                     {/* Application Groups actions */}
-                    <div className="dark:bg-ghBlack2 overflow-y-scroll px-2 py-3 custom-scrollbar" style={{ height: `${windowHeight - 103 - 67 - 40 - 67}px` }} id="list">
-                        {isLoading ? (<div className="animate-pulse flex flex-col col-span-full px-3">
+                    <div className="dark:bg-ghBlack2 overflow-y-scroll px-2 py-2 custom-scrollbar" style={{ height: `${windowHeight - 103 - 67 - 40 - 67}px` }} id="list">
+                        {isLoading ? (<div className="animate-pulse flex flex-col col-span-full">
                         </div>) : drawApplicationGroupCards()}
                     </div>
                 </Panel>
