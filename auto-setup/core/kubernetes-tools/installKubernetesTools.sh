@@ -10,19 +10,18 @@ cd ${certificatesWorkspace}
 if [[ "${kubeOrchestrator}" == "k8s" ]]; then
 
   # Download and install latest Kubectl and kubeadm binaries
-  apt-get update
+  majorKubeVersion="$(echo ${kubeVersion} | awk -F \. {'print $1"."$2'})"
   DEBIAN_FRONTEND=noninteractive /usr/bin/sudo apt-get install -y apt-transport-https
-  /usr/bin/sudo curl -fsSL https://dl.k8s.io/apt/doc/apt-key.gpg | apt-key add -
-  echo "deb [signed-by=/etc/apt/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | /usr/bin/sudo tee /etc/apt/sources.list.d/kubernetes.list
-  echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" | /usr/bin/sudo tee /etc/apt/sources.list.d/kubernetes.list
-  
+  curl -fsSL https://pkgs.k8s.io/core:/stable:/v${majorKubeVersion}/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+  echo "deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v${majorKubeVersion}/deb/ /" | sudo tee /etc/apt/sources.list.d/kubernetes.list
+
   # Read Kubernetes version to be installed
   kubeVersion=$(cat ${installationWorkspace}/versions.json | jq -r '.kubernetes')
-  for i in {1..5}
-  do
+  for i in {1..5}; do
     log_info "Installing Kubernetes tools (Attempt ${i} of 5)."
     /usr/bin/sudo apt-get update
-    DEBIAN_FRONTEND=noninteractive /usr/bin/sudo apt-get install -y kubelet=${kubeVersion} kubeadm=${kubeVersion} kubectl=${kubeVersion}
+    #DEBIAN_FRONTEND=noninteractive /usr/bin/sudo apt-get install -y kubelet=${kubeVersion} kubeadm=${kubeVersion} kubectl=${kubeVersion}
+    DEBIAN_FRONTEND=noninteractive sudo apt-get install -y kubelet kubeadm kubectl
     /usr/bin/sudo apt-mark hold kubelet kubeadm kubectl
     if [[ -n $(kubectl version) ]]; then
       log_info "Kubectl accessible after install. Looks good. Continuing."
@@ -43,8 +42,7 @@ if [[ "${kubeOrchestrator}" == "k8s" ]]; then
 
 else
   # Install K3s instead, as K8s not specified in profile
-  for i in {1..5}
-  do
+  for i in {1..5}; do
     curl -sfL https://get.k3s.io -o ${installationWorkspace}/k3s-install.sh
     if [[ -f ${installationWorkspace}/k3s-install.sh ]]; then
       log_info "k3s-install.sh downloaded. Looks good. Continuing."
@@ -66,28 +64,27 @@ if [[ "${cpuArchitecture}" == "amd64" ]]; then
   tar xf ${installationWorkspace}/kubeval-linux-amd64.tar.gz -C ${installationWorkspace}
   /usr/bin/sudo cp -f ${installationWorkspace}/kubeval /usr/local/bin
 else
-    # Build binary for ARM64 as not available yet (at time of writing)
-    /usr/bin/sudo apt-get install -y golang
-    mkdir -p ${installationWorkspace}/kubeval
-    git clone --depth 1 --branch ${kubevalVersion} https://github.com/instrumenta/kubeval.git ${installationWorkspace}/kubeval
-    cd ${installationWorkspace}/kubeval
-    make build
-    /usr/bin/sudo ${installationWorkspace}/kubeval/bin/kubeval /usr/local/bin
+  # Build binary for ARM64 as not available yet (at time of writing)
+  /usr/bin/sudo apt-get install -y golang
+  mkdir -p ${installationWorkspace}/kubeval
+  git clone --depth 1 --branch ${kubevalVersion} https://github.com/instrumenta/kubeval.git ${installationWorkspace}/kubeval
+  cd ${installationWorkspace}/kubeval
+  make build
+  /usr/bin/sudo ${installationWorkspace}/kubeval/bin/kubeval /usr/local/bin
 fi
 
 # Install Helm 3
-for i in {1..5}
-do
-    log_info "Installing Helm (Attempt ${i} of 5)."
-    curl -fsSL --output ${certificatesWorkspace}/get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
-    chmod 700 ${certificatesWorkspace}/get_helm.sh
-    ${certificatesWorkspace}/get_helm.sh
-    if [[ -n $(helm version) ]]; then
-      log_info "Helm accessible after install. Looks good. Continuing."
-      break
-    else
-      log_warn "Helm not accessible after install. Trying again."
-    fi
+for i in {1..5}; do
+  log_info "Installing Helm (Attempt ${i} of 5)."
+  curl -fsSL --output ${certificatesWorkspace}/get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
+  chmod 700 ${certificatesWorkspace}/get_helm.sh
+  ${certificatesWorkspace}/get_helm.sh
+  if [[ -n $(helm version) ]]; then
+    log_info "Helm accessible after install. Looks good. Continuing."
+    break
+  else
+    log_warn "Helm not accessible after install. Trying again."
+  fi
 done
 
 # Correct permissions before next step
@@ -96,7 +93,7 @@ done
 # Add stable helm repo if it does not already exist
 helmRepoExists=$(helm repo list --output json | jq -r '.[] | select(.name=="stable") | .name' || true)
 if [[ -z ${helmRepoExists} ]]; then
-    helm repo add stable https://charts.helm.sh/stable
+  helm repo add stable https://charts.helm.sh/stable
 fi
 helm repo update
 
