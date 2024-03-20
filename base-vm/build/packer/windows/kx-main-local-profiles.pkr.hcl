@@ -73,7 +73,7 @@ variable "disable_ipv6" {
 
 variable "disk_size" {
   type    = string
-  default = "168960"
+  default = "204800"
 }
 
 variable "guest_additions_checksum" {
