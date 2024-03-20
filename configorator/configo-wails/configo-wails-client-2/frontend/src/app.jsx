@@ -223,8 +223,8 @@ export function App() {
                                 <div className="w-full h-1 bg-ghBlack2 my-0"></div>
                                 <MenuItem menuItemName={"application-groups"} slug={slug} />
                                 <MenuItem menuItemName={"applications"} slug={slug} />
-                                <MenuItem menuItemName={"user-provisioning"} slug={slug} />
-                                <MenuItem menuItemName={"custom-variables"} slug={slug} />
+                                <MenuItem menuItemName={"user-groups"} slug={slug} />
+                                <MenuItem menuItemName={"custom-variable-groups"} slug={slug} />
                                 <MenuItem menuItemName={"build-history"} slug={slug} />
                                 <MenuItem menuItemName={"settings"} slug={slug} />
                             </List>
@@ -243,12 +243,12 @@ export function App() {
                                 <Route path="/build" element={<TabMenuBuild buildOutputFileContent={buildLogOutput} toggleBuildStart={toggleBuildStart} isBuildStarted={isBuildStarted} />} />
                                 <Route path="/deploy" element={<TabMenuDeploy />} />
                                 <Route path="/application-groups" element={<ApplicationGroups />} />
-                                <Route path="/user-provisioning" element={<UserProvisioning />} />
-                                <Route path="/custom-variables" element={<CustomVariables />} />
+                                <Route path="/user-groups" element={<UserProvisioning />} />
+                                <Route path="/custom-variable-groups" element={<CustomVariables />} />
                                 <Route path="/build-history" element={<BuildHistory />} />
                                 <Route path="/console-output" element={<ConsoleOutput />} />
                                 <Route path="/applications" element={<Applications />} />
-                                <Route path="/applications/:id" component={ApplicationDetails} />
+                                <Route path="/applications/:id" element={<ApplicationDetails />} />
                                 {/* <Route path="/users" element={<Users />} /> */}
                                 {/* <Route path="/custom-variable-groups" element={<CustomVariableGroups />} /> */}
                                 {/* <Route path="/user-groups" element={<CustomVariablesGroups />} /> */}
@@ -258,12 +258,12 @@ export function App() {
                         {/* Footer Section */}
                         <div className="bg-ghBlack4 p-4 pt-3 w-full text-gray-400 flex justify-end px-10 items-center">
                             <button className="hover:text-white text-gray-400 p-1 rounded-sm hover:underline mr-2 text-sm px-2" onClick={() => {
-                                OpenURL("https://github.com/Accenture/kx.as.code")
+                                OpenURL("https://accenture.github.io/kx.as.code/")
                             }}>
                                 Docs
                             </button>
 
-                            <button className="flex items-center hover:text-white" onClick={() => OpenURL("https://accenture.github.io/kx.as.code/")}>
+                            <button className="flex items-center hover:text-white" onClick={() => OpenURL("https://github.com/Accenture/kx.as.code")}>
                                 <GitHubIcon fontSize="small" />
                             </button>
                         </div>
@@ -317,9 +317,9 @@ const MenuItem = ({ menuItemName, slug, isBuildStarted }) => {
                 return <RocketLaunchIcon fontSize="small" color="inherit" />
             case "application-groups":
                 return <LayersIcon fontSize="small" />
-            case "user-provisioning":
+            case "user-groups":
                 return <PeopleIcon fontSize="small" />
-            case "custom-variables":
+            case "custom-variable-groups":
                 return <DataArrayIcon fontSize="small" />
             case "build-history":
                 return <HistoryIcon fontSize="small" />

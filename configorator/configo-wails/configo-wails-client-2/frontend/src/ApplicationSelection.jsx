@@ -97,9 +97,9 @@ export default function ApplicationSelection({ applicationGroup, addApplicationT
                                                     <AppLogo appName={app.name} size={40}/>
 
                                                     <div className='ml-2'>
-                                                        <span className='capitalize mr-1'>
+                                                        <Link to={`/applications/${app.name}`} className='capitalize mr-1 hover:underline'>
                                                             {app.name}
-                                                        </span>
+                                                        </Link>
                                                         <span className='lowercase'>
                                                             {app.environment_variables?.imageTag}
                                                         </span>

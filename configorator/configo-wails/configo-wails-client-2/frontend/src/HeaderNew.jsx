@@ -45,7 +45,7 @@ export function HeaderNew(props) {
             <div className="dark:bg-ghBlack2 bg-kxBlue px-4 flex items-center justify-between w-full h-[67px]" style="--wails-draggable:drag">
                 <div className="flex items-center">
                     <Link to={"/"}>
-                        <img src={logo} height={40} width={40} className="hover:p-0.5"/>
+                        <img src={logo} height={40} width={40} className=""/>
                     </Link>
                     <div className="text-left">
                         <div className="text-sm">KX.AS.Code <span className="italic font-bold">ALPHA</span></div>
@@ -64,7 +64,7 @@ export function HeaderNew(props) {
                                     </IconButton>
                                 </Tooltip> :
                                 <Tooltip title="Run Build & Deploy" placement="right">
-                                    <IconButton onClick={() => { props.toggleBuildStart() }}>
+                                    <IconButton onClick={() => { props.toggleBuildStart() }} >
                                         <PlayCircleIcon fontSize="large" className="border-3 border-kxBlue rounded-full" />
                                     </IconButton>
                                 </Tooltip>
