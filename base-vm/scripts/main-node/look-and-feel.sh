@@ -8,7 +8,8 @@ if [[ -z $(which raspinfo) ]]; then
 
   # Install KDE-Plasma GUI
   sudo DEBIAN_FRONTEND=noninteractive apt install -y kde-plasma-desktop
-
+  # Remove Wayland profile
+  sudo apt purge -y plasma-workspace-wayland
   # Uninstall default KDE Konqueror browser
   sudo apt-get remove -y konqueror
 
