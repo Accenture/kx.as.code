@@ -20,6 +20,16 @@ downloadFile() {
     local outputFilename="${installationWorkspace}/$(basename ${url})"
   fi
 
+  # Determine if checksum or sha256sum url.
+  if [[ -n $( echo "${checksum}" | grep -E "^https?://") ]]; then
+    # Get hash value from sha256sums file
+    curl -o ${outputFilename}_sha256sum ${checksum}
+    checksum=$(cat ${outputFilename}_sha256sum | grep "$(basename ${outputFilename})" | cut -d' ' -f1)
+  else
+    # Assume hash value is in checksum variable and use it directly
+    log_debug "URL not detected in checksum variable from metadata.json. Using value directly as checksum"
+  fi
+
   # Exit the script if the file already downloaded successfully in the past
   if [[ -f ${outputFilename} ]]; then
     local checkResult=$(echo "${checksum}" "${outputFilename}" | sha256sum -c --quiet && echo "OK" || echo "NOK")
