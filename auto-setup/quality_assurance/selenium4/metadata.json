@@ -2,13 +2,14 @@
     "name": "selenium4",
     "namespace": "selenium4",
     "installation_type": "script",
-    "installation_group_folder": "test_automation",
+    "installation_group_folder": "quality_assurance",
     "environment_variables": {
         "gitTag": "4.1.2-20220317",
         "imageTag": "4.1.2-20220317",
         "nodesImageTag": "4.1.2-20220317"
 
     },
+    "retry": "false",
     "install_scripts": [
         "install-selenium-grid-4.sh"
     ],
