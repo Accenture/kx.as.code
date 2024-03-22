@@ -1,0 +1,18 @@
+{
+    "name": "vbox-guest-additions",
+    "namespace": "",
+    "installation_type": "script",
+    "installation_group_folder": "utilities",
+    "environment_variables": {
+        "virtualBoxVersionFallback": "7.0.12"
+    },
+    "retry": "false",
+    "install_scripts": [
+        "install.sh"
+    ],
+    "Description": "VirtualBox Guest Additions.",
+    "shortcut_text": "VirtualBox Guest Additions",
+    "shortcut_icon": "",
+    "pre_install_scripts": [],
+    "post_install_scripts": []
+}
