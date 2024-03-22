@@ -38,11 +38,14 @@ EOF
     # Pull Kubernetes images
     sudo kubeadm config images pull
 
-    # Inititalise Kubernetes
-    sudo kubeadm init --apiserver-advertise-address=${mainIpAddress} --pod-network-cidr=20.96.0.0/12 --upload-certs --control-plane-endpoint=api-internal.${baseDomain}:6443 --apiserver-cert-extra-sans=api-internal.${baseDomain},localhost,127.0.0.1,${mainIpAddress},$(hostname)
+    # Check if Kubernetes already initialized before running kubeadm init (in case of script restart)
+    if [[ ! -f /etc/kubernetes/admin.conf ]]; then
+      # Inititalise Kubernetes
+      sudo kubeadm init --apiserver-advertise-address=${mainIpAddress} --pod-network-cidr=20.96.0.0/12 --upload-certs --control-plane-endpoint=api-internal.${baseDomain}:6443 --apiserver-cert-extra-sans=api-internal.${baseDomain},localhost,127.0.0.1,${mainIpAddress},$(hostname)
+    fi
 
-    # Ensure Kubelet listenson correct IP. Especially important for VirtualBox with the additional NAT NIC
-    sudo sed -i '/^\[Service\]/a Environment="KUBELET_EXTRA_ARGS=--node-ip='${mainIpAddress}'"' /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+    # Ensure Kubelet listens on correct IP. Especially important for VirtualBox with the additional NAT NIC
+    sudo sed -i '/^\[Service\]/a Environment="KUBELET_EXTRA_ARGS=--node-ip='${mainIpAddress}'"' /usr/lib/systemd/system/kubelet.service.d/10-kubeadm.conf
 
     # As --resolv.conf was deprecated, use new method to update resolv.conf
     sudo sed -i 's/^\(resolvConf:\).*/\1 \/etc\/resolv.conf/' /var/lib/kubelet/config.yaml
