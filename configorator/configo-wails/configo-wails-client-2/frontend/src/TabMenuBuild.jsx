@@ -13,43 +13,32 @@ import PlayCircleIcon from '@mui/icons-material/PlayCircle';
 import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
 import JSONConfigTabContent from './JSONConfigTabContent';
 import { UpdateJsonFile, IsVirtualizationToolInstalled } from "../wailsjs/go/main/App";
-import IconButton from '@mui/material/IconButton';
-import StopCircleIcon from '@mui/icons-material/StopCircle';
-import Tooltip from '@mui/material/Tooltip';
 import ProcessOutputView from './ProcessOutputView';
 import LastProcessView from './LastProcessView';
 import { ConfigSectionHeader } from './ConfigSectionHeader';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import ErrorIcon from '@mui/icons-material/Error';
+import InputField from './InputField';
 
-const TabMenuBuild = ({ buildOutputFileContent, isBuildStarted, toggleBuildStart }) => {
+const TabMenuBuild = ({ buildOutputFileContent, isBuildStarted, toggleBuildStart, setHasError, isJsonView }) => {
 
     useEffect(() => {
     }, [buildOutputFileContent, isBuildStarted]);
 
     return (
         <div className=''>
-            {isBuildStarted ? <ProcessOutputView processType={"build"} logOutput={buildOutputFileContent} /> : <BuildTabContent />}
+            {isBuildStarted ? <ProcessOutputView processType={"build"} logOutput={buildOutputFileContent} /> : <BuildTabContent setHasError={setHasError} isJsonView={isJsonView} />}
         </div>
     );
 };
 
-const BuildTabContent = () => {
+const BuildTabContent = ({ setHasError, isJsonView }) => {
 
-    const [activeConfigTab, setActiveConfigTab] = useState('config-tab1');
     const [jsonData, setJsonData] = useState('');
     const [isBuild, setIsBuild] = useState(true);
     const [os, setOS] = useState("darwin-linux");
     const [nodeType, setNodeType] = useState("main");
 
-
-    const handleTabClick = (tab) => {
-        setActiveTab(tab);
-    };
-
-    const handleConfigTabClick = (configTab) => {
-        setActiveConfigTab(configTab);
-    };
 
     const handleConfigChange = (value, key) => {
         let selectedValue;
@@ -99,35 +88,66 @@ const BuildTabContent = () => {
 
     useEffect(() => {
         formatJSONData();
-    }, [activeConfigTab, jsonData]);
+    }, [jsonData]);
 
     return (
         <div className=''>
             <div className='relative'>
                 {/* Config View Tabs */}
                 <div className='dark:bg-ghBlack4'>
-                    <ConfigSectionHeader sectionTitle={"Build Configuration"} SectionDescription={"More Details about this section here."} setActiveConfigTab={setActiveConfigTab} activeConfigTab={activeConfigTab} contentName={"Build"} />
+                    <ConfigSectionHeader sectionTitle={"Build Configuration"} SectionDescription={"More Details about this section here."} contentName={"Build"} />
+
+                    {/* <div className="relative w-full h-[40px] p-1 bg-ghBlack3 rounded">
+                        <div className="relative w-full h-full flex items-center">
+                            <div
+                                onClick={() => setActiveConfigTab('config-tab1')}
+                                className="w-full flex justify-center text-gray-300 cursor-pointer"
+                            >
+                                <button className='text-sm'>
+                                    Config UI
+                                </button>
+                            </div>
+                            <div
+                                onClick={() => setActiveConfigTab('config-tab2')}
+                                className="w-full flex justify-center text-gray-300 cursor-pointer"
+                            >
+                                <button className='text-sm'>
+                                    JSON
+                                </button>
+                            </div>
+                        </div>
+                        <span
+                            className={`${activeConfigTab === 'config-tab1'
+                                ? 'left-1 ml-0'
+                                : 'left-1/2 -ml-1'
+                                } py-1 text-white bg-ghBlack4 text-sm flex items-center justify-center w-1/2 rounded-sm transition-all duration-150 ease-linear top-[5px] absolute`}
+                        >
+                            {activeConfigTab === 'config-tab1'
+                                ? "Config UI"
+                                : "JSON"}
+                        </span>
+                    </div> */}
+
                 </div>
             </div>
 
             <div className='bg-ghBlack2 h-1'></div>
             <div className="config-tab-content">
-                {activeConfigTab === 'config-tab1' && <UIConfigTabContent isBuild={isBuild} handleTabClick={handleTabClick} handleConfigChange={handleConfigChange} />}
-                {activeConfigTab === 'config-tab2' && <JSONConfigTabContent jsonData={jsonData} fileName={"kx-main-local-profiles.json"} />}
+                {!isJsonView ? <UIConfigTabContent isBuild={isBuild} setHasError={setHasError} /> : <JSONConfigTabContent jsonData={jsonData} fileName={"kx-main-local-profiles.json"} />}
             </div>
         </div>
     );
 }
 
-const UIConfigTabContent = ({ activeTab, handleTabClick, handleConfigChange, isBuild }) => (
+const UIConfigTabContent = ({ isBuild, setHasError }) => (
     isBuild ?
         <div>
-            <BuildContent />
+            <BuildContent setHasError={setHasError} />
             <LastProcessView processType={"build"} />
         </div> : <></>
 );
 
-const BuildContent = () => {
+const BuildContent = ({ setHasError }) => {
     const [installationStatus, setInstallationStatus] = useState({
         virtualbox: null,
         parallels: null,
@@ -139,6 +159,7 @@ const BuildContent = () => {
     useEffect(() => {
         const checkToolInstallation = async (toolName) => {
             try {
+                setHasError((prev) => !prev)
                 const result = await IsVirtualizationToolInstalled(toolName);
                 setInstallationStatus(prevStatus => ({
                     ...prevStatus,
@@ -148,11 +169,10 @@ const BuildContent = () => {
                 console.error('Error:', error);
             }
         };
-
         checkToolInstallation('virtualbox');
         checkToolInstallation('parallels');
         checkToolInstallation('vmware-desktop');
-    }, []);
+    }, [selectedVM]);
 
     const getInstallationMark = (toolName) => (
         <div className='flex items-center mt-3.5 ml-2 text-sm capitalize bg-ghBlack4 p-2 rounded'>
@@ -176,9 +196,20 @@ const BuildContent = () => {
 
     return (
         <div className='text-left'>
-            <div className='px-5 py-3 dark:bg-ghBlack3 grid grid-cols-12'>
+            <div className='px-5 py-3 dark:bg-ghBlack2 grid grid-cols-12'>
                 <div className='col-span-6'>
-                    <TextField
+                    <InputField inputType={"select"} label={"VM Profile"} options={[
+                        { label: "Virtualbox", value: "virtualbox" },
+                        { label: "Parallels", value: "parallels" },
+                        { label: "VMWare Desktop", value: "vmware-desktop" },
+                    ]} selectTitle={"Select VM Profile"} onChange={(e) => setSelectedVM(e.target.value)} />
+
+                    <InputField inputType={"select"} label={"Node Type"} options={[
+                        { label: "Main", value: "main" },
+                        { label: "Node", value: "node" },
+                    ]} selectTitle={"Select VM Profile"} onChange={(e) => { }} />
+
+                    {/* <TextField
                         label="VM Profile"
                         select
                         fullWidth
@@ -205,7 +236,7 @@ const BuildContent = () => {
                     >
                         <MenuItem value="main">Main</MenuItem>
                         <MenuItem value="node">Node</MenuItem>
-                    </TextField>
+                    </TextField> */}
                 </div>
                 <div className='col-span-6'>
                     <div className='flex'>

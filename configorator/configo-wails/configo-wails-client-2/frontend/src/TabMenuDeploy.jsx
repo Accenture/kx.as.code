@@ -34,7 +34,7 @@ import { RocketLaunch } from '@mui/icons-material';
 import { CircularProgressbar } from './CircularProgressBar';
 
 
-const TabMenuDeploy = () => {
+const TabMenuDeploy = ({ isJsonView }) => {
     const [updatedJsonData, setUpdatedJsonData] = useState('');
     const [activeProcessTab, setActiveProcessTab] = useState('deploy');
     const serializedState = localStorage.getItem('myEditorState');
@@ -51,14 +51,14 @@ const TabMenuDeploy = () => {
     }
     return (
         <div className=''>
-            {isDeploymentStarted ? <ProcessOutputView processType={"deploy"} /> : <DeployTabContent />}
+            {isDeploymentStarted ? <ProcessOutputView processType={"deploy"} /> : <DeployTabContent isJsonView={isJsonView} />}
         </div>
     );
 };
 
 export default TabMenuDeploy;
 
-const DeployTabContent = () => {
+const DeployTabContent = ({ isJsonView }) => {
     const [activeTab, setActiveTab] = useState('tab1');
     const [activeConfigTab, setActiveConfigTab] = useState('config-tab1');
     const [jsonData, setJsonData] = useState('');
@@ -115,19 +115,16 @@ const DeployTabContent = () => {
 
     return (
         <div className=''>
-           <div className='relative'>
+            <div className='relative'>
                 {/* Config View Tabs */}
                 <div className='dark:bg-ghBlack4'>
-                    
-                    <ConfigSectionHeader sectionTitle={"Deployment Configuration"} SectionDescription={"More Details about this section here."} setActiveConfigTab={setActiveConfigTab} activeConfigTab={activeConfigTab} contentName={"Deployment"}/>
-
+                    <ConfigSectionHeader sectionTitle={"Deployment Configuration"} SectionDescription={"More Details about this section here."} setActiveConfigTab={setActiveConfigTab} activeConfigTab={activeConfigTab} contentName={"Deployment"} />
                 </div>
             </div>
 
             <div className='bg-ghBlack2 h-1'></div>
             <div className="config-tab-content">
-                {activeConfigTab === 'config-tab1' && <UIConfigTabContent activeTab={activeTab} handleTabClick={handleTabClick} handleConfigChange={handleConfigChange} />}
-                {activeConfigTab === 'config-tab2' && <JSONConfigTabContent jsonData={jsonData} fileName={"profile-config.json"} />}
+                {!isJsonView ? <UIConfigTabContent activeTab={activeTab} handleTabClick={handleTabClick} handleConfigChange={handleConfigChange} /> : <JSONConfigTabContent jsonData={jsonData} fileName={"profile-config.json"} />}
             </div>
             <div className='bg-ghBlack2 h-1'></div>
             {/* Review & Launch */}

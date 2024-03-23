@@ -81,7 +81,7 @@
 
 /* WebKit browsers */
 .custom-scrollbar::-webkit-scrollbar {
-    width: 12px;
+    width: 10px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {

@@ -32,63 +32,9 @@ import GitHubIcon from '@mui/icons-material/GitHub';
 import { Apps, DashboardCustomize, DashboardSharp, Settings } from "@mui/icons-material";
 import Applications from "./Applications";
 import { ApplicationDetails } from "./ApplicationDetails";
-
-
-const openedMixin = (theme) => ({
-    width: drawerWidth,
-    transition: theme.transitions.create("width", {
-        easing: theme.transitions.easing.sharp,
-        duration: theme.transitions.duration.enteringScreen,
-    }),
-    overflowX: "hidden",
-});
-
-const closedMixin = (theme) => ({
-    transition: theme.transitions.create("width", {
-        easing: theme.transitions.easing.sharp,
-        duration: theme.transitions.duration.leavingScreen,
-    }),
-    overflowX: "hidden",
-    width: `calc(${theme.spacing(7)} + 1px)`,
-    [theme.breakpoints.up("sm")]: {
-        width: `calc(${theme.spacing(6.2)} + 1px)`
-    },
-});
-
-const DrawerHeader = styled("div")(({ theme }) => ({
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "flex-end",
-    padding: theme.spacing(0, 1),
-    ...theme.mixins.toolbar,
-}));
-
-const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== "open" })(
-    ({ theme, open }) => ({
-        width: drawerWidth,
-        flexShrink: 0,
-        whiteSpace: "nowrap",
-        boxSizing: "border-box",
-        ...(open && {
-            ...openedMixin(theme),
-            "& .MuiDrawer-paper": openedMixin(theme),
-        }),
-        ...(!open && {
-            ...closedMixin(theme),
-            "& .MuiDrawer-paper": closedMixin(theme),
-        }),
-    })
-);
-
-const handleDrawerToggle = () => {
-    setOpen(!open);
-};
-
-const drawerWidth = 240;
-
+import Test from './Test';
 
 export function App() {
-    const [open, setOpen] = useState(false);
     const [isDarkMode, setIsDarkMode] = useState(true);
     const location = useLocation();
     const pathnames = location.pathname.split("/").filter((x) => x);
@@ -99,13 +45,11 @@ export function App() {
     const [buildLogOutput, setBuildLogOutput] = useState('');
     const [intervalId, setIntervalId] = useState(null);
 
-    const handleDrawerOpen = () => {
-        setOpen(true);
-    };
+    const [hasError, setHasError] = useState(false);
+    const [isTestError, setIsTestError] = useState(false);
+    const [isJsonView, setIsJsonView] = useState(false);
 
-    const handleDrawerClose = () => {
-        setOpen(false);
-    };
+
 
     const handleDarkModeToggle = () => {
         setIsDarkMode((prevIsDarkMode) => !prevIsDarkMode);
@@ -205,43 +149,28 @@ export function App() {
             }
         };
 
-    }, [isDarkMode, pathnames, isBuildStarted, buildOutputFileContent, intervalId, open]);
+    }, [isDarkMode, pathnames, isBuildStarted, buildOutputFileContent, intervalId]);
 
 
     return (
         <div className="relative">
             <div className="dark:bg-ghBlack3 relative flex" >
                 <ThemeProvider theme={theme}>
-                    <div className="dark:bg-ghBlack3 h-screen flex items-center border-ghBlack2 border-r-[2px]">
-                        {/* Navigation */}
-                        <div className="bg-ghBlack3 mt-auto mb-auto">
-                            <List className="" sx={{ paddingY: "0" }}>
-                                <MenuItem menuItemName={"dashboard"} slug={slug} />
-                                <MenuItem menuItemName={"build"} slug={slug} isBuildStarted={isBuildStarted} />
-                                <MenuItem menuItemName={"deploy"} slug={slug} />
-                                {/* Separator */}
-                                <div className="w-full h-1 bg-ghBlack2 my-0"></div>
-                                <MenuItem menuItemName={"application-groups"} slug={slug} />
-                                <MenuItem menuItemName={"applications"} slug={slug} />
-                                <MenuItem menuItemName={"user-groups"} slug={slug} />
-                                <MenuItem menuItemName={"custom-variable-groups"} slug={slug} />
-                                <MenuItem menuItemName={"build-history"} slug={slug} />
-                                <MenuItem menuItemName={"settings"} slug={slug} />
-                            </List>
-                        </div>
-                    </div>
                     <Box component="main" sx={{ flexGrow: 1, p: 0 }} className="text-black dark:text-white flex flex-col min-h-screen">
 
                         <div className="">
-                            <HeaderNew drawerWidth={drawerWidth} handleDrawerOpen={handleDrawerOpen} open={open} handleDarkModeToggle={handleDarkModeToggle} isDarkMode={isDarkMode} toggleBuildStart={toggleBuildStart} isBuildStarted={isBuildStarted} />
+                            {/* isTestValue: <span className={`${isTestError ? "text-green-500" : "text-red-500"}`}>{isTestError.toString()}</span>
+                            <Test setIsTestError={setIsTestError}/> */}
+                            <HeaderNew handleDarkModeToggle={handleDarkModeToggle} isDarkMode={isDarkMode} toggleBuildStart={toggleBuildStart} isBuildStarted={isBuildStarted} hasError={hasError} isJsonView={isJsonView} setIsJsonView={setIsJsonView} />
+                            {/* <div><span className={`${hasError ? "text-green-500" : "text-red-500"}`}>{hasError.toString()}</span></div> */}
                         </div>
                         <div className="">
                             <Routes>
                                 {/* <Route exact path="/" element={<TabMenu />} /> */}
                                 <Route path="/" element={<Home />} />
                                 <Route path="/dashboard" element={<Dashboard />} />
-                                <Route path="/build" element={<TabMenuBuild buildOutputFileContent={buildLogOutput} toggleBuildStart={toggleBuildStart} isBuildStarted={isBuildStarted} />} />
-                                <Route path="/deploy" element={<TabMenuDeploy />} />
+                                <Route path="/build" element={<TabMenuBuild buildOutputFileContent={buildLogOutput} toggleBuildStart={toggleBuildStart} isBuildStarted={isBuildStarted} setHasError={setHasError} isJsonView={isJsonView} />} />
+                                <Route path="/deploy" element={<TabMenuDeploy isJsonView={isJsonView} />} />
                                 <Route path="/application-groups" element={<ApplicationGroups />} />
                                 <Route path="/user-groups" element={<UserProvisioning />} />
                                 <Route path="/custom-variable-groups" element={<CustomVariables />} />
@@ -256,7 +185,7 @@ export function App() {
                         </div>
 
                         {/* Footer Section */}
-                        <div className="bg-ghBlack4 p-4 pt-3 w-full text-gray-400 flex justify-end px-10 items-center">
+                        <div className="bg-ghBlack p-4 pt-3 w-full text-gray-400 flex justify-end px-10 items-center border-t border-ghBlack4">
                             <button className="hover:text-white text-gray-400 p-1 rounded-sm hover:underline mr-2 text-sm px-2" onClick={() => {
                                 OpenURL("https://accenture.github.io/kx.as.code/")
                             }}>
@@ -288,71 +217,3 @@ export function App() {
 
     );
 }
-
-const MenuItem = ({ menuItemName, slug, isBuildStarted }) => {
-
-    useEffect(() => {
-
-    }, [isBuildStarted]);
-
-    const getMenuItemIcon = (menuItemName) => {
-        switch (menuItemName) {
-            case "build":
-                {
-                    return isBuildStarted ? (<div className="relative">
-                        <svg
-                            className="absolute h-4 w-4 top-[-13px] right-[-18px] mt-2 mr-2  text-white animate-spin"
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                        >
-                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                        </svg>
-
-                        <PrecisionManufacturingIcon className={`text-lg`} />
-                    </div>) : (<PrecisionManufacturingIcon className={`text-lg`} />)
-                }
-            case "deploy":
-                return <RocketLaunchIcon fontSize="small" color="inherit" />
-            case "application-groups":
-                return <LayersIcon fontSize="small" />
-            case "user-groups":
-                return <PeopleIcon fontSize="small" />
-            case "custom-variable-groups":
-                return <DataArrayIcon fontSize="small" />
-            case "build-history":
-                return <HistoryIcon fontSize="small" />
-            case "settings":
-                return <Settings fontSize="small" />
-            case "applications":
-                return <Apps fontSize="small" />
-            case "dashboard":
-                return <DashboardSharp fontSize="small" />
-            default:
-                break;
-        }
-    }
-
-    return (
-        <Link to={`/${menuItemName}`} className="">
-            <ListItemButton
-                sx={{
-                    backgroundColor: slug == menuItemName ? "#2f3640" : "",
-                    "&:hover": {
-                        backgroundColor: slug == menuItemName ? "#2f3640" : "#1f262e",
-                        borderLeft: slug == menuItemName ? "3px solid #5a86ff" : "3px solid #1f262e"
-                    },
-                    borderLeft: slug == menuItemName ? "3px solid #5a86ff" : "3px solid #1f262e",
-                    paddingX: "3px",
-                }}
-            >
-                <ListItemIcon
-                    className="listItemIconContainer items-center flex justify-center p-0"
-                >
-                    {getMenuItemIcon(menuItemName)}
-                </ListItemIcon>
-            </ListItemButton>
-        </Link>
-    );
-};

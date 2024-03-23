@@ -72,7 +72,7 @@ export default function ApplicationSelection({ applicationGroup, addApplicationT
         <div className="text-center text-white flex justify-center w-full rounded border-2 border-ghBlack4">
 
             <div className='pr-0 rounded-md w-full bg-ghBlack2'>
-                <PanelGroup direction="horizontal" id="group" className="tab-content dark:text-white text-black flex-1 bg-ghBlack2">
+                <PanelGroup direction="horizontal" id="group" className="tab-content dark:text-white text-black flex-1 ">
                     <Panel defaultSize={defaultLayout[0]} id="left-panel" className='min-w-[200px]'>
                         {/* Input Search  */}
                         <FilterInput setSearchTerm={setSearchTerm} searchTerm={searchTerm} itemsCount={applicationsJson.length} itemName={"Applications"} hasActionButton={false} />

@@ -30,7 +30,7 @@ export function ListItemCard({ index, itemData, selectedItem, handleItemClick, h
     }, [itemData]);
 
     return (
-        <div key={index} className={`grid grid-cols-12 w-full py-1 px-2 items-center mb-1 ${selectedItem === index ? "bg-ghBlack4 border-kxBlue border-l-2" : "hover:bg-ghBlack3 border-ghBlack2 border-l-2 hover:border-ghBlack3 hover:border-l-2"} rounded-sm cursor-pointer`}
+        <div key={index} className={`grid grid-cols-12 w-full py-1 px-2 items-center ${selectedItem === index ? "bg-ghBlack4 border-kxBlue border-l-2" : "hover:bg-ghBlack3 border-ghBlack2 border-l-2 hover:border-ghBlack3 hover:border-l-2"} cursor-pointer`}
             onClick={() => {
                 handleItemClick(index)
             }}

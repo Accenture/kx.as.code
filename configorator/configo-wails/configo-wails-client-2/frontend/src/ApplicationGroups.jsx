@@ -38,7 +38,7 @@ export function ApplicationGroups({ }) {
                 {/* Config View Tabs */}
                 <div className='dark:bg-ghBlack4'>
                     
-                    <ConfigSectionHeader sectionTitle={"Application Groups"} SectionDescription={"More Details about this section here."} setActiveConfigTab={setActiveConfigTab} activeConfigTab={activeConfigTab} contentName={"App Groups"}/>
+                    {/* <ConfigSectionHeader sectionTitle={"Application Groups"} SectionDescription={"More Details about this section here."} setActiveConfigTab={setActiveConfigTab} activeConfigTab={activeConfigTab} contentName={"App Groups"}/> */}
 
                     {/* <div className="relative w-full h-[40px] p-1 bg-ghBlack3 rounded">
                         <div className="relative w-full h-full flex items-center">

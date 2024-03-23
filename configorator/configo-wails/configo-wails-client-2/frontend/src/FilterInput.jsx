@@ -6,6 +6,7 @@ import TextField from '@mui/material/TextField';
 import Checkbox from '@mui/material/Checkbox';
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
+import { LuReplace } from "react-icons/lu";
 
 const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
 const checkedIcon = <CheckBoxIcon fontSize="small" />;
@@ -30,7 +31,7 @@ export function FilterInput({ setSearchTerm, searchTerm, itemName, itemsCount, h
 
     return (
 
-        <div className='top-0 sticky bg-ghBlack2 p-2 shadow-lg pt-1'>
+        <div className='top-0 sticky bg-ghBlack2 py-2 shadow-lg'>
             <div className='flex'>
 
                 <div className="items-center w-full pr-1">
@@ -123,10 +124,15 @@ export function FilterInput({ setSearchTerm, searchTerm, itemName, itemsCount, h
                             </div>
                         )}
 
-                        <div className='text-gray-400 flex justify-between pt-1 items-center text-sm'>
+                        <div className='text-gray-400 flex justify-between pt-1 items-center text-sm pl-2'>
                             <div>
                                 <span className='mr-1'>{itemName}</span>
                                 <span className='p-1.5 py-0 bg-ghBlack3 text-gray-400 rounded-sm text-center mr-1'>{itemsCount}</span>
+                            </div>
+                            <div>
+                                <button onClick={() => {}} className="p-1 flex items-center justify-center hover:bg-ghBlack3 text-gray-400 hover:text-white rounded-sm ml-1">
+                                    <LuReplace className='text-lg'/>
+                                </button>
                             </div>
                         </div>
                     </div>

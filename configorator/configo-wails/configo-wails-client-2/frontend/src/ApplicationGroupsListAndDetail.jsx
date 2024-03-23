@@ -370,7 +370,7 @@ export function ApplicationGroupsListAndDetail({ setJsonData, applicationGroupDe
                     {/* Search Input Field with filter button */}
                     <FilterInput setSearchTerm={setSearchTerm} searchTerm={searchTerm} itemsCount={data2.length} itemName={"Application Groups"} hasActionButton={true} actionFunction={handleAddNewItem} />
                     {/* Application Groups actions */}
-                    <div className="dark:bg-ghBlack2 overflow-y-scroll px-2 py-2 custom-scrollbar" style={{ height: `${windowHeight - 103 - 67 - 40 - 67}px` }} id="list">
+                    <div className="dark:bg-ghBlack2 overflow-y-scroll custom-scrollbar" style={{ height: `${windowHeight - 103 - 67 - 40 - 67}px` }} id="list">
                         {isLoading ? (<div className="animate-pulse flex flex-col col-span-full">
                         </div>) : drawApplicationGroupCards()}
                     </div>
@@ -386,13 +386,13 @@ export function ApplicationGroupsListAndDetail({ setJsonData, applicationGroupDe
                             <div className='flex itmes-center text-sm '>
                                 <button
                                     onClick={() => { setApplicationGroupDetailTab("config-ui") }}
-                                    className={` ${applicationGroupDetailTab == "config-ui" ? 'border-kxBlue border-b-3 bg-ghBlack4 text-white' : 'border-ghBlack2 hover:border-ghBlack4 border-b-3 hover:bg-ghBlack3'} px-3 py-0 text-gray-400 hover:text-white`}
+                                    className={` ${applicationGroupDetailTab == "config-ui" ? 'border-kxBlue border-b-[2px] bg-ghBlack4 text-white' : 'border-ghBlack2 hover:border-ghBlack4 border-b-[2px] hover:bg-ghBlack2'} px-3 py-0 text-gray-400 hover:text-white`}
                                 >
                                     Config UI
                                 </button>
                                 <button
                                     onClick={() => { setApplicationGroupDetailTab("json") }}
-                                    className={` ${applicationGroupDetailTab == "json" ? 'border-kxBlue border-b-3 bg-ghBlack4 text-white' : 'border-ghBlack2 border-b-3 hover:border-ghBlack4 hover:bg-ghBlack3'} px-3 py-0 text-gray-400 hover:text-white`}
+                                    className={` ${applicationGroupDetailTab == "json" ? 'border-kxBlue border-b-[2px] bg-ghBlack4 text-white' : 'border-ghBlack2 border-b-[2px] hover:border-ghBlack4 hover:bg-ghBlack2'} px-3 py-0 text-gray-400 hover:text-white`}
                                 >
                                     JSON
                                 </button>

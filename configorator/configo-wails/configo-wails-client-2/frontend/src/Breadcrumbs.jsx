@@ -23,7 +23,7 @@ export function Breadcrumbs() {
     }, []);
 
     return (
-        <nav aria-label="breadcrumb" className="flex items-center dark:bg-ghBlack4 capitalize text-sm text-gray-400">
+        <nav aria-label="breadcrumb" className="flex items-center dark:bg-ghBlack2 capitalize text-sm text-gray-400">
             <div className="flex items-center">
                 <button onClick={handleGoBack} className="p-1 hover:bg-ghBlack3 text-gray-400 hover:text-white flex items-center justify-center">
                     <ChevronLeft fontSize="small" />
@@ -34,7 +34,7 @@ export function Breadcrumbs() {
             </div>
             <ul className="flex items-center ml-2">
                 <li className="breadcrumb-item">
-                    <Link to="/" className="hover:underline hover:cursor-pointer">Home</Link>
+                    <Link to="/" className="hover:underline hover:cursor-pointer">Workspace 1</Link>
                     <span className="text-gray-400 mx-2">/</span>
                 </li>
                 {pathnames.map((name, index) => {

@@ -38,7 +38,7 @@ export default function Applications() {
                 {/* Config View Tabs */}
                 <div className='dark:bg-ghBlack4'>
                     
-                    <ConfigSectionHeader sectionTitle={"Manage Applications"} SectionDescription={"More Details about this section here."} setActiveConfigTab={setActiveConfigTab} activeConfigTab={activeConfigTab} contentName={"Appplications"}/>
+                    {/* <ConfigSectionHeader sectionTitle={"Manage Applications"} SectionDescription={"More Details about this section here."} setActiveConfigTab={setActiveConfigTab} activeConfigTab={activeConfigTab} contentName={"Appplications"}/> */}
 
                 </div>
             </div>

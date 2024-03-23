@@ -461,3 +461,7 @@ func (a *App) OpenURL(url string) error {
 	err := cmd.Run()
 	return err
 }
+
+func (a *App) CreateWorkspaceFile(string, error) {
+
+}
