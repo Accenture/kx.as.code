@@ -7,7 +7,7 @@
         "baseUser": "kx.hero",
         "certificationMode": false,
         "defaultKeyboardLanguage": "en",
-        "disableLinuxDesktop": false,
+        "disableLinuxDesktop": true,
         "disableSessionTimeout": true,
         "dnsResolution": {
             "dns1": "10.100.76.200",

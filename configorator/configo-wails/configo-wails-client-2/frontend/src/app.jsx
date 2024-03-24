@@ -32,7 +32,7 @@ import GitHubIcon from '@mui/icons-material/GitHub';
 import { Apps, DashboardCustomize, DashboardSharp, Settings } from "@mui/icons-material";
 import Applications from "./Applications";
 import { ApplicationDetails } from "./ApplicationDetails";
-import Test from './Test';
+import { Workspaces } from './Workspaces';
 
 export function App() {
     const [isDarkMode, setIsDarkMode] = useState(true);
@@ -159,15 +159,13 @@ export function App() {
                     <Box component="main" sx={{ flexGrow: 1, p: 0 }} className="text-black dark:text-white flex flex-col min-h-screen">
 
                         <div className="">
-                            {/* isTestValue: <span className={`${isTestError ? "text-green-500" : "text-red-500"}`}>{isTestError.toString()}</span>
-                            <Test setIsTestError={setIsTestError}/> */}
                             <HeaderNew handleDarkModeToggle={handleDarkModeToggle} isDarkMode={isDarkMode} toggleBuildStart={toggleBuildStart} isBuildStarted={isBuildStarted} hasError={hasError} isJsonView={isJsonView} setIsJsonView={setIsJsonView} />
-                            {/* <div><span className={`${hasError ? "text-green-500" : "text-red-500"}`}>{hasError.toString()}</span></div> */}
                         </div>
                         <div className="">
                             <Routes>
                                 {/* <Route exact path="/" element={<TabMenu />} /> */}
                                 <Route path="/" element={<Home />} />
+                                <Route path="/workspaces" element={<Workspaces isJsonView={isJsonView} />} />
                                 <Route path="/dashboard" element={<Dashboard />} />
                                 <Route path="/build" element={<TabMenuBuild buildOutputFileContent={buildLogOutput} toggleBuildStart={toggleBuildStart} isBuildStarted={isBuildStarted} setHasError={setHasError} isJsonView={isJsonView} />} />
                                 <Route path="/deploy" element={<TabMenuDeploy isJsonView={isJsonView} />} />
@@ -178,9 +176,6 @@ export function App() {
                                 <Route path="/console-output" element={<ConsoleOutput />} />
                                 <Route path="/applications" element={<Applications />} />
                                 <Route path="/applications/:id" element={<ApplicationDetails />} />
-                                {/* <Route path="/users" element={<Users />} /> */}
-                                {/* <Route path="/custom-variable-groups" element={<CustomVariableGroups />} /> */}
-                                {/* <Route path="/user-groups" element={<CustomVariablesGroups />} /> */}
                             </Routes>
                         </div>
 

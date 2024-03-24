@@ -34,7 +34,7 @@ export function Breadcrumbs() {
             </div>
             <ul className="flex items-center ml-2">
                 <li className="breadcrumb-item">
-                    <Link to="/" className="hover:underline hover:cursor-pointer">Workspace 1</Link>
+                    <Link to="/" className="hover:underline hover:cursor-pointer">Home</Link>
                     <span className="text-gray-400 mx-2">/</span>
                 </li>
                 {pathnames.map((name, index) => {

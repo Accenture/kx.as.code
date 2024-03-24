@@ -26,10 +26,13 @@ import Add from "@mui/icons-material/Add";
 import { WorkspaceTabs } from "./WorkspaceTabs";
 import { IoPlayCircleSharp } from "react-icons/io5";
 import ConfigUiJsonSwitch from "./ConfigUiJsonSwitch";
+import { useLocation } from 'react-router-dom';
+
 
 
 export function HeaderNew(props) {
 
+    const location = useLocation();
     const [filename, setFilename] = useState('');
     const [searchTerm, setSearchTerm] = useState("")
     const [workspaces, setWorkspaces] = useState([
@@ -87,7 +90,7 @@ export function HeaderNew(props) {
                         value={searchTerm}
                         type="text"
                         placeholder="Search..."
-                        className="focus:ring-1 focus:ring-kxBlue focus:outline-none bg-ghBlack3 focus:bg-ghBlack4 py-1 placeholder-blueGray-300 text-blueGray-600 text-md border-0 shadow outline-none pl-10 pr-8 rounded-sm w-full"
+                        className="border focus:border-kxBlue border-ghBlack3 focus:ring-1 focus:ring-kxBlue focus:outline-none bg-ghBlack3 focus:bg-ghBlack4 py-1 placeholder-blueGray-300 text-blueGray-600 text-md shadow outline-none pl-10 pr-8 rounded-sm w-full"
                         onChange={(e) => {
 
                         }}
@@ -151,13 +154,16 @@ export function HeaderNew(props) {
             <Breadcrumbs />
 
             {/* Workspace Tabs */}
-            <WorkspaceTabs />
+            {/* <WorkspaceTabs /> */}
 
-            <div className="flex items-center justify-between">
-                {/* Navigation Horizontal */}
-                <NavigationHorizontal />
-                <ConfigUiJsonSwitch isJsonView={props.isJsonView} setIsJsonView={props.setIsJsonView} />
-            </div>
+            {location.pathname !== "/" && location.pathname !== "/workspaces" && (
+                <div className="flex items-center justify-between">
+                    {/* Navigation Horizontal */}
+                    <NavigationHorizontal />
+                    <ConfigUiJsonSwitch isJsonView={props.isJsonView} setIsJsonView={props.setIsJsonView} />
+                </div>)
+            }
+
 
         </div>
     );

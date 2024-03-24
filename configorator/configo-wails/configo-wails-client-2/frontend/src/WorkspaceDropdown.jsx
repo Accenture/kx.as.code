@@ -1,15 +1,16 @@
 import { Settings } from '@mui/icons-material';
 import React, { useState } from 'react';
 import { IoBriefcaseSharp } from "react-icons/io5";
+import { Link } from "react-router-dom"
 
 export function WorkspaceDropdown({ workspaces }) {
 
     return (
         <div className="relative flex text-sm">
             <div className='p-1 bg-ghBlack3'>
-                <button className="p-1 flex items-center justify-center hover:bg-ghBlack4 text-gray-400 hover:text-white rounded-sm ml-1 text-[16px]">
+                <Link to={"/workspaces"} className="p-1 flex items-center justify-center hover:bg-ghBlack4 text-gray-400 hover:text-white rounded-sm ml-1 text-[16px]">
                     <IoBriefcaseSharp />
-                </button>
+                </Link>
             </div>
 
             <select

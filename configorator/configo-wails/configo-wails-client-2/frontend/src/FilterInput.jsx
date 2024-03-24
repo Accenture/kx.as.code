@@ -58,7 +58,7 @@ export function FilterInput({ setSearchTerm, searchTerm, itemName, itemsCount, h
                                     value={searchTerm}
                                     type="text"
                                     placeholder="Filter..."
-                                    className="focus:ring-1 focus:ring-kxBlue focus:outline-none bg-ghBlack3 focus:bg-ghBlack4 py-1 placeholder-blueGray-300 text-blueGray-600 text-md border-0 shadow outline-none pl-10 pr-8 rounded-sm w-full"
+                                    className="border focus:border-kxBlue border-ghBlack3 focus:ring-1 focus:ring-kxBlue focus:outline-none bg-ghBlack3 focus:bg-ghBlack4 py-1 placeholder-blueGray-300 text-blueGray-600 text-md shadow outline-none pl-10 pr-8 rounded-sm w-full"
                                     onChange={(e) => {
                                         setSearchTerm((e.target.value))
                                     }}

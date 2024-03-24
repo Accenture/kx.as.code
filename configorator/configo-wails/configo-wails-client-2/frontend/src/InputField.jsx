@@ -57,7 +57,7 @@ export default function InputField({ inputType, type, value, placeholder, onChan
                 <input
                     type={type}
                     placeholder={placeholder}
-                    className={`w-full focus:outline-none rounded-sm p-2 pt-6 bg-ghBlack3 focus:bg-ghBlack4 text-white ${unit && "pl-9"}`}
+                    className={`w-full focus:outline-none rounded-sm p-2 pt-6 bg-ghBlack3 focus:bg-ghBlack4 text-white border focus:border-kxBlue border-ghBlack3 ${unit && "pl-9"}`}
                     onChange={onChange}
                     value={value}
                     minLength={minLength}

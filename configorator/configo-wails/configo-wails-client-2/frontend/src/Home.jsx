@@ -56,9 +56,10 @@ export default function Home() {
                         </div>
 
                         <div className='flex justify-start mt-5'>
-                            <button className='p-1.5 px-5 rounded-sm bg-ghBlack4 flex items-center border-white/50 border'>
-                                Create Workspace
-                            </button>
+                            <Link to={"/dashboard"} className='p-1.5 px-5 rounded-sm bg-ghBlack4 flex items-center border-white/50 border'>
+                                Workspace Dashboard
+                                {/* If no workspace -> show no dashbord found corner case components */}
+                            </Link>
                         </div>
                     </div>
                 </div>
